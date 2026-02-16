@@ -11,6 +11,76 @@ Agent Skills are structured folders of instructions that teach GitHub Copilot to
 
 ## 🎯 Available Skills
 
+### 🔌 [mcp-server-development](./mcp-server-development/SKILL.md)
+**MCP protocol patterns and tool implementation**
+
+Teaches Copilot to implement Model Context Protocol (MCP) servers following specification. Covers:
+- Tool implementation with Zod validation
+- Resource URI patterns and handlers
+- Prompt template design
+- MCP-compliant error handling
+- Testing MCP implementations
+
+**When to use:** Implementing MCP tools, resources, prompts for European Parliament data
+
+---
+
+### 🏛️ [european-parliament-api](./european-parliament-api/SKILL.md)
+**European Parliament API integration patterns**
+
+Ensures proper integration with European Parliament Open Data Portal. Covers:
+- API client configuration with rate limiting
+- Response caching strategies (1h-24h TTL)
+- Multilingual data handling (24 EU languages)
+- Data attribution requirements
+- GDPR-compliant data access
+
+**When to use:** Integrating EP API, caching parliamentary data, ensuring attribution
+
+---
+
+### 🔒 [gdpr-compliance](./gdpr-compliance/SKILL.md)
+**GDPR and data protection patterns**
+
+Enforces GDPR compliance for European Parliament personal data. Covers:
+- Data minimization and purpose limitation
+- Audit logging for personal data access
+- Right to rectification and erasure
+- Storage limitation (max 24h cache)
+- Privacy by design principles
+
+**When to use:** Processing MEP data, implementing GDPR rights, audit logging
+
+---
+
+### 📐 [typescript-strict-patterns](./typescript-strict-patterns/SKILL.md)
+**TypeScript strict mode patterns and type safety**
+
+Enforces TypeScript strict mode compliance and advanced patterns. Covers:
+- Branded types for IDs (prevent mixing)
+- Discriminated unions for type-safe variants
+- Zod schema to TypeScript type inference
+- Null safety and type guards
+- Utility types (Pick, Omit, Partial)
+
+**When to use:** Writing TypeScript code, defining types, ensuring type safety
+
+---
+
+### 🧪 [testing-mcp-tools](./testing-mcp-tools/SKILL.md)
+**Testing patterns for MCP implementations**
+
+Enforces comprehensive testing with 80%+ coverage target. Covers:
+- Unit tests for MCP tools and resources
+- Mocking European Parliament API
+- Testing Zod schema validation
+- Integration tests for MCP server
+- Performance testing (<200ms target)
+
+**When to use:** Writing tests, improving coverage, testing MCP handlers
+
+---
+
 ### 🔒 [security-by-design](./security-by-design/SKILL.md)
 **High-level security principles and enforcement rules**
 

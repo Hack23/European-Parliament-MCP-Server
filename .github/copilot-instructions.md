@@ -15,10 +15,14 @@ This file provides guidance for GitHub Copilot coding agent when working on this
 
 ## 🎯 Agent Skills Catalog
 
-This repository includes 6 comprehensive skills that provide reusable patterns:
+This repository includes 11 comprehensive skills that provide reusable patterns:
+- **mcp-server-development** - MCP protocol patterns, tool implementation
+- **european-parliament-api** - EP API integration, caching, attribution
+- **gdpr-compliance** - GDPR and data protection patterns
+- **typescript-strict-patterns** - Branded types, discriminated unions, strict typing
+- **testing-mcp-tools** - MCP testing patterns, 80%+ coverage
 - **security-by-design** - Defense-in-depth, OWASP, secure coding for APIs
 - **isms-compliance** - ISO 27001, NIST CSF 2.0, CIS Controls alignment
-- **mcp-server-development** - MCP protocol patterns, tool implementation
 - **testing-strategy** - 80%+ coverage, deterministic API tests
 - **documentation-standards** - JSDoc, OpenAPI, ISMS documentation
 - **performance-optimization** - Node.js/API performance optimization
