@@ -9,6 +9,7 @@
 import type { z } from 'zod';
 import { GenerateReportSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { MEPDetails } from '../types/europeanParliament.js';
 
 /**
  * Report structure
@@ -22,13 +23,18 @@ interface Report {
   };
   generatedAt: string;
   summary: string;
-  sections: {
-    title: string;
-    content: string;
-    data?: Record<string, unknown>;
-  }[];
+  sections: ReportSection[];
   statistics: Record<string, number | string>;
   recommendations?: string[];
+}
+
+/**
+ * Report section structure
+ */
+interface ReportSection {
+  title: string;
+  content: string;
+  data?: Record<string, unknown>;
 }
 
 /**
@@ -90,36 +96,70 @@ export async function handleGenerateReport(
 }
 
 /**
+ * Extract MEP data for report generation
+ */
+function extractMEPData(params: z.infer<typeof GenerateReportSchema>, mep: MEPDetails | null): {
+  mepName: string;
+  dateFrom: string;
+  dateTo: string;
+  totalVotes: number;
+  committeesLength: number;
+} {
+  return {
+    mepName: mep?.name ?? 'Unknown MEP',
+    dateFrom: params.dateFrom ?? '2024-01-01',
+    dateTo: params.dateTo ?? '2024-12-31',
+    totalVotes: mep?.votingStatistics?.totalVotes ?? 0,
+    committeesLength: mep?.committees.length ?? 0
+  };
+}
+
+/**
+ * Create voting activity section
+ */
+function createVotingSection(totalVotes: number, mep: MEPDetails | null): ReportSection {
+  const section: ReportSection = {
+    title: 'Voting Activity',
+    content: `The MEP participated in ${String(totalVotes)} votes during this period.`
+  };
+  
+  if (mep?.votingStatistics !== undefined) {
+    section.data = mep.votingStatistics as unknown as Record<string, unknown>;
+  }
+  
+  return section;
+}
+
+/**
+ * Create committee involvement section
+ */
+function createCommitteeSection(committeesLength: number, mep: MEPDetails | null): ReportSection {
+  return {
+    title: 'Committee Involvement',
+    content: `Active member of ${String(committeesLength)} committees.`,
+    data: { committees: mep?.committees }
+  };
+}
+
+/**
  * Generate MEP activity report
  */
 async function generateMEPActivityReport(params: z.infer<typeof GenerateReportSchema>): Promise<Report> {
   const mep = params.subjectId !== undefined ? await epClient.getMEPDetails(params.subjectId) : null;
-  const mepName = mep?.name ?? 'Unknown MEP';
-  const dateFrom = params.dateFrom ?? '2024-01-01';
-  const dateTo = params.dateTo ?? '2024-12-31';
-  const totalVotes = mep?.votingStatistics?.totalVotes ?? 0;
-  const committeesLength = mep?.committees.length ?? 0;
+  const data = extractMEPData(params, mep);
   
   return {
     reportType: 'MEP_ACTIVITY',
-    subject: mepName,
+    subject: data.mepName,
     period: {
-      from: dateFrom,
-      to: dateTo
+      from: data.dateFrom,
+      to: data.dateTo
     },
     generatedAt: new Date().toISOString(),
-    summary: `Activity report for ${mepName} covering the period from ${dateFrom} to ${dateTo}.`,
+    summary: `Activity report for ${data.mepName} covering the period from ${data.dateFrom} to ${data.dateTo}.`,
     sections: [
-      {
-        title: 'Voting Activity',
-        content: `The MEP participated in ${String(totalVotes)} votes during this period.`,
-        ...(mep?.votingStatistics && { data: mep.votingStatistics as unknown as Record<string, unknown> })
-      },
-      {
-        title: 'Committee Involvement',
-        content: `Active member of ${String(committeesLength)} committees.`,
-        data: { committees: mep?.committees }
-      },
+      createVotingSection(data.totalVotes, mep),
+      createCommitteeSection(data.committeesLength, mep),
       {
         title: 'Parliamentary Questions',
         content: 'Submitted 25 written questions and 3 oral questions.'

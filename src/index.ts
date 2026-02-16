@@ -130,32 +130,7 @@ class EuropeanParliamentMCPServer {
       const { name, arguments: args } = request.params;
 
       try {
-        switch (name) {
-          // Core tools
-          case 'get_meps':
-            return await handleGetMEPs(args);
-          case 'get_mep_details':
-            return await handleGetMEPDetails(args);
-          case 'get_plenary_sessions':
-            return await handleGetPlenarySessions(args);
-          case 'get_voting_records':
-            return await handleGetVotingRecords(args);
-          case 'search_documents':
-            return await handleSearchDocuments(args);
-          case 'get_committee_info':
-            return await handleGetCommitteeInfo(args);
-          case 'get_parliamentary_questions':
-            return await handleGetParliamentaryQuestions(args);
-          // Advanced analysis tools
-          case 'analyze_voting_patterns':
-            return await handleAnalyzeVotingPatterns(args);
-          case 'track_legislation':
-            return await handleTrackLegislation(args);
-          case 'generate_report':
-            return await handleGenerateReport(args);
-          default:
-            throw new Error(`Unknown tool: ${name}`);
-        }
+        return await this.dispatchToolCall(name, args);
       } catch (error) {
         // Log error to stderr (stdout is used for MCP protocol)
         console.error(`[ERROR] Tool ${name} failed:`, error);
@@ -170,18 +145,39 @@ class EuropeanParliamentMCPServer {
   }
 
   /**
-   * Handle get_meps tool call
+   * Dispatch tool calls to appropriate handlers
    * 
-   * Retrieves Members of European Parliament with optional filtering.
-   * This tool provides access to MEP data from the European Parliament Open Data Portal.
-   * Results are cached for 15 minutes to improve performance and reduce API load.
-   * All access to personal data is logged for GDPR compliance.
-   * 
-   * @param args - Query parameters for filtering MEPs
-   * @param args.country - ISO 3166-1 alpha-2 country code (e.g., "SE" for Sweden)
-   * @param args.group - Political group identifier (e.g., "EPP", "S&D")
-   * @param args.limit - Maximum number of results (1-100, default: 50)
-   * 
+   * @internal
+   * @param name - Tool name
+   * @param args - Tool arguments
+   * @returns Tool execution result
+   */
+  private async dispatchToolCall(
+    name: string,
+    args: unknown
+  ): Promise<{ content: { type: string; text: string }[] }> {
+    const toolHandlers: Record<string, (args: unknown) => Promise<{ content: { type: string; text: string }[] }>> = {
+      // Core tools
+      'get_meps': handleGetMEPs,
+      'get_mep_details': handleGetMEPDetails,
+      'get_plenary_sessions': handleGetPlenarySessions,
+      'get_voting_records': handleGetVotingRecords,
+      'search_documents': handleSearchDocuments,
+      'get_committee_info': handleGetCommitteeInfo,
+      'get_parliamentary_questions': handleGetParliamentaryQuestions,
+      // Advanced analysis tools
+      'analyze_voting_patterns': handleAnalyzeVotingPatterns,
+      'track_legislation': handleTrackLegislation,
+      'generate_report': handleGenerateReport
+    };
+    
+    const handler = toolHandlers[name];
+    if (handler === undefined) {
+      throw new Error(`Unknown tool: ${name}`);
+    }
+    
+    return await handler(args);
+  }
 
   /**
    * Start the MCP server
