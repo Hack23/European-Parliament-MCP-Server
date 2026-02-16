@@ -1,0 +1,13 @@
+{
+  "checks": [
+   { "name": "checkForPresenceReadme"},
+   { "name": "checkForPresenceLicense"},
+   { "name": "checkForPresenceChangelog"},
+   { "name": "checkForPresenceSecurity"},
+   { "name": "checkForPresenceCiConfig"},
+   { "name": "checkForPresenceCodeowners"},    
+   { "name": "checkForPresenceContributing"},
+   { "name": "checkForPresenceTemplateIssues"},
+   { "name": "checkForPresenceTemplatePullRequests"}
+  ]
+}

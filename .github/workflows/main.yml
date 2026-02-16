@@ -1,0 +1,14 @@
+on: [push]
+
+permissions:
+  checks: write
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run StandardLint
+        uses: mikaelvesavuori/standardlint-action@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
