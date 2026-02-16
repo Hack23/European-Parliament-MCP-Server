@@ -22,9 +22,11 @@ const SERVER_VERSION = '1.0.0';
  * Main MCP Server class for European Parliament data access
  */
 class EuropeanParliamentMCPServer {
+  // Using Server for now until McpServer is available in the SDK version
   private server: Server;
 
   constructor() {
+    // Using Server for now until McpServer is available in the SDK version
     this.server = new Server(
       {
         name: SERVER_NAME,
@@ -47,8 +49,8 @@ class EuropeanParliamentMCPServer {
    */
   private setupHandlers(): void {
     // List available tools
-    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
-      return {
+    this.server.setRequestHandler(ListToolsRequestSchema, () => {
+      return Promise.resolve({
         tools: [
           {
             name: 'get_meps',
@@ -76,16 +78,16 @@ class EuropeanParliamentMCPServer {
             },
           },
         ],
-      };
+      });
     });
 
     // Handle tool calls
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, (request) => {
       const { name, arguments: args } = request.params;
 
       switch (name) {
         case 'get_meps':
-          return await this.handleGetMEPs(args);
+          return this.handleGetMEPs(args);
         default:
           throw new Error(`Unknown tool: ${name}`);
       }
@@ -95,7 +97,7 @@ class EuropeanParliamentMCPServer {
   /**
    * Handle get_meps tool call
    */
-  private async handleGetMEPs(args: unknown): Promise<{ content: Array<{ type: string; text: string }> }> {
+  private handleGetMEPs(args: unknown): Promise<{ content: { type: string; text: string }[] }> {
     // TODO: Implement actual API call to European Parliament
     // For now, return mock data
     const response = {
@@ -107,14 +109,14 @@ class EuropeanParliamentMCPServer {
       },
     };
 
-    return {
+    return Promise.resolve({
       content: [
         {
           type: 'text',
           text: JSON.stringify(response, null, 2),
         },
       ],
-    };
+    });
   }
 
   /**
@@ -132,7 +134,7 @@ class EuropeanParliamentMCPServer {
 
 // Start the server
 const server = new EuropeanParliamentMCPServer();
-server.start().catch((error) => {
+server.start().catch((error: unknown) => {
   console.error('Fatal error:', error);
   process.exit(1);
 });

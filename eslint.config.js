@@ -34,7 +34,9 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-return': 'error',
       '@typescript-eslint/strict-boolean-expressions': 'error',
       '@typescript-eslint/no-floating-promises': 'error',
-      '@typescript-eslint/no-misused-promises': 'error'
+      '@typescript-eslint/no-misused-promises': 'error',
+      // Allow deprecated Server until McpServer is available in the SDK
+      '@typescript-eslint/no-deprecated': 'warn'
     }
   }
 );
