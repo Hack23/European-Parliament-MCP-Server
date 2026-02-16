@@ -37,12 +37,12 @@ export async function handleGetParliamentaryQuestions(
       limit: params.limit,
       offset: params.offset
     };
-    if (params.type !== undefined) apiParams.type = params.type;
-    if (params.author !== undefined) apiParams.author = params.author;
-    if (params.topic !== undefined) apiParams.topic = params.topic;
-    if (params.status !== undefined) apiParams.status = params.status;
-    if (params.dateFrom !== undefined) apiParams.dateFrom = params.dateFrom;
-    if (params.dateTo !== undefined) apiParams.dateTo = params.dateTo;
+    if (params['type'] !== undefined) apiParams['type'] = params['type'];
+    if (params['author'] !== undefined) apiParams['author'] = params['author'];
+    if (params['topic'] !== undefined) apiParams['topic'] = params['topic'];
+    if (params['status'] !== undefined) apiParams['status'] = params['status'];
+    if (params['dateFrom'] !== undefined) apiParams['dateFrom'] = params['dateFrom'];
+    if (params['dateTo'] !== undefined) apiParams['dateTo'] = params['dateTo'];
     
     const result = await epClient.getParliamentaryQuestions(apiParams as Parameters<typeof epClient.getParliamentaryQuestions>[0]);
     

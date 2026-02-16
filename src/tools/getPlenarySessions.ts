@@ -36,9 +36,9 @@ export async function handleGetPlenarySessions(
       limit: params.limit,
       offset: params.offset
     };
-    if (params.dateFrom !== undefined) apiParams.dateFrom = params.dateFrom;
-    if (params.dateTo !== undefined) apiParams.dateTo = params.dateTo;
-    if (params.location !== undefined) apiParams.location = params.location;
+    if (params['dateFrom'] !== undefined) apiParams['dateFrom'] = params['dateFrom'];
+    if (params['dateTo'] !== undefined) apiParams['dateTo'] = params['dateTo'];
+    if (params['location'] !== undefined) apiParams['location'] = params['location'];
     
     const result = await epClient.getPlenarySessions(apiParams as Parameters<typeof epClient.getPlenarySessions>[0]);
     

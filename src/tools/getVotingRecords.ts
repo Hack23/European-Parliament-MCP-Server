@@ -36,11 +36,11 @@ export async function handleGetVotingRecords(
       limit: params.limit,
       offset: params.offset
     };
-    if (params.sessionId !== undefined) apiParams.sessionId = params.sessionId;
-    if (params.mepId !== undefined) apiParams.mepId = params.mepId;
-    if (params.topic !== undefined) apiParams.topic = params.topic;
-    if (params.dateFrom !== undefined) apiParams.dateFrom = params.dateFrom;
-    if (params.dateTo !== undefined) apiParams.dateTo = params.dateTo;
+    if (params['sessionId'] !== undefined) apiParams['sessionId'] = params['sessionId'];
+    if (params['mepId'] !== undefined) apiParams['mepId'] = params['mepId'];
+    if (params['topic'] !== undefined) apiParams['topic'] = params['topic'];
+    if (params['dateFrom'] !== undefined) apiParams['dateFrom'] = params['dateFrom'];
+    if (params['dateTo'] !== undefined) apiParams['dateTo'] = params['dateTo'];
     
     const result = await epClient.getVotingRecords(apiParams as Parameters<typeof epClient.getVotingRecords>[0]);
     

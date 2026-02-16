@@ -65,7 +65,7 @@ const SERVER_VERSION = '1.0.0';
 class EuropeanParliamentMCPServer {
   // Using Server for now until McpServer is available in the SDK version
   // eslint-disable-next-line @typescript-eslint/no-deprecated
-  private server: Server;
+  private readonly server: Server;
 
   constructor() {
     // Using Server for now until McpServer is available in the SDK version
@@ -182,59 +182,6 @@ class EuropeanParliamentMCPServer {
    * @param args.group - Political group identifier (e.g., "EPP", "S&D")
    * @param args.limit - Maximum number of results (1-100, default: 50)
    * 
-   * @returns MCP tool result with MEP data in JSON format
-   * 
-   * @throws {ValidationError} If input parameters fail validation
-   * @throws {EPAPIError} If European Parliament API request fails
-   * @throws {RateLimitError} If rate limit is exceeded (100 req/min)
-   * @throws {GDPRComplianceError} If GDPR requirements are not met
-   * 
-   * @example
-   * ```typescript
-   * // Get Swedish MEPs
-   * const result = await handleGetMEPs({ country: 'SE', limit: 10 });
-   * const meps = JSON.parse(result.content[0].text);
-   * console.log(`Found ${meps.length} Swedish MEPs`);
-   * ```
-   * 
-   * @example
-   * ```typescript
-   * // Get MEPs from specific political group
-   * const result = await handleGetMEPs({ group: 'EPP' });
-   * ```
-   * 
-   * @security
-   * - Rate limited to 100 requests per minute
-   * - Personal data cached for max 15 minutes (GDPR compliance)
-   * - All requests logged for audit trail
-   * - Input sanitized to prevent injection attacks
-   * 
-   * @see {@link https://data.europarl.europa.eu/ | European Parliament Open Data Portal}
-   * @see {@link SECURITY.md | Security Policy}
-   * 
-   * @internal
-   */
-  private handleGetMEPs(args: unknown): Promise<{ content: { type: string; text: string }[] }> {
-    // TODO: Implement actual API call to European Parliament
-    // For now, return mock data
-    const response = {
-      status: 'success',
-      message: 'This is a skeleton implementation. API integration coming soon.',
-      data: {
-        meps: [],
-        filters: args,
-      },
-    };
-
-    return Promise.resolve({
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(response, null, 2),
-        },
-      ],
-    });
-  }
 
   /**
    * Start the MCP server

@@ -36,9 +36,9 @@ export async function handleGetMEPs(
       limit: params.limit,
       offset: params.offset
     };
-    if (params.country !== undefined) apiParams.country = params.country;
-    if (params.group !== undefined) apiParams.group = params.group;
-    if (params.committee !== undefined) apiParams.committee = params.committee;
+    if (params['country'] !== undefined) apiParams['country'] = params['country'];
+    if (params['group'] !== undefined) apiParams['group'] = params['group'];
+    if (params['committee'] !== undefined) apiParams['committee'] = params['committee'];
     
     const result = await epClient.getMEPs(apiParams as Parameters<typeof epClient.getMEPs>[0]);
     

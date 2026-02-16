@@ -6,7 +6,7 @@
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
-import { z } from 'zod';
+import type { z } from 'zod';
 import { GenerateReportSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 

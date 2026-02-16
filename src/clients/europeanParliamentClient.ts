@@ -68,9 +68,9 @@ export interface EPClientConfig {
  * European Parliament API Client
  */
 export class EuropeanParliamentClient {
-  private cache: LRUCache<string, Record<string, unknown>>;
-  private baseURL: string;
-  private rateLimiter: RateLimiter;
+  private readonly cache: LRUCache<string, Record<string, unknown>>;
+  private readonly baseURL: string;
+  private readonly rateLimiter: RateLimiter;
 
   constructor(config: EPClientConfig = {}) {
     this.baseURL = config.baseURL ?? 'https://data.europarl.europa.eu/api/v2/';

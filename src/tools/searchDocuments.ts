@@ -38,10 +38,10 @@ export async function handleSearchDocuments(
       limit: params.limit,
       offset: params.offset
     };
-    if (params.documentType !== undefined) apiParams.documentType = params.documentType;
-    if (params.dateFrom !== undefined) apiParams.dateFrom = params.dateFrom;
-    if (params.dateTo !== undefined) apiParams.dateTo = params.dateTo;
-    if (params.committee !== undefined) apiParams.committee = params.committee;
+    if (params['documentType'] !== undefined) apiParams['documentType'] = params['documentType'];
+    if (params['dateFrom'] !== undefined) apiParams['dateFrom'] = params['dateFrom'];
+    if (params['dateTo'] !== undefined) apiParams['dateTo'] = params['dateTo'];
+    if (params['committee'] !== undefined) apiParams['committee'] = params['committee'];
     
     const result = await epClient.searchDocuments(apiParams as Parameters<typeof epClient.searchDocuments>[0]);
     

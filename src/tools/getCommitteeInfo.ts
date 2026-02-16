@@ -31,8 +31,8 @@ export async function handleGetCommitteeInfo(
   try {
     // Fetch committee info from EP API (only pass defined properties)
     const apiParams: Record<string, string> = {};
-    if (params.id !== undefined) apiParams.id = params.id;
-    if (params.abbreviation !== undefined) apiParams.abbreviation = params.abbreviation;
+    if (params['id'] !== undefined) apiParams['id'] = params['id'];
+    if (params['abbreviation'] !== undefined) apiParams['abbreviation'] = params['abbreviation'];
     
     const result = await epClient.getCommitteeInfo(apiParams as Parameters<typeof epClient.getCommitteeInfo>[0]);
     
