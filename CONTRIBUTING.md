@@ -17,18 +17,99 @@ We'd also love PRs. If you're thinking of a large PR, we advise opening up an is
 ## Submitting a pull request
 
 1. [Fork][fork] and clone the repository.
-1. Configure and install the dependencies: 
-1. Make sure the tests pass on your machine:
-1. Create a new branch: 
-1. Make your change, add tests, and make sure the tests still pass.
-1. Push to your fork and [submit a pull request][pr].
-1. Pat your self on the back and wait for your pull request to be reviewed and merged.
+2. Configure and install the dependencies: `npm install`
+3. Make sure the tests pass on your machine: `npm test`
+4. Create a new branch: `git checkout -b my-branch-name`
+5. Make your change, add tests, and make sure the tests still pass.
+6. Push to your fork and [submit a pull request][pr].
+7. Pat your self on the back and wait for your pull request to be reviewed and merged.
+
+### Pull Request Guidelines
 
 Here are a few things you can do that will increase the likelihood of your pull request being accepted:
 
-- Write and update tests.
-- Keep your changes as focused as possible. If there are multiple changes you would like to make that are not dependent upon each other, consider submitting them as separate pull requests.
-- Write a [good commit message](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
+- **Write and update tests** - Maintain 80%+ code coverage (95% for security code)
+- **Keep your changes focused** - If there are multiple changes you would like to make that are not dependent upon each other, consider submitting them as separate pull requests.
+- **Write a [good commit message](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)** - Follow [Conventional Commits](https://www.conventionalcommits.org/)
+- **Follow code style** - Run `npm run lint` and `npm run format` before committing
+- **Update documentation** - Keep README.md and other docs up to date with your changes
+
+### Automatic PR Labeling
+
+When you submit a pull request, our automated labeler will automatically apply labels based on the files you've changed:
+
+#### 🔌 MCP Development Labels
+- `mcp-tools` - Changes to MCP tool implementations (src/tools/)
+- `mcp-resources` - Changes to MCP resources (src/resources/)
+- `mcp-prompts` - Changes to MCP prompts (src/prompts/)
+- `mcp-protocol` - MCP protocol changes
+
+#### 🏛️ European Parliament Labels
+- `ep-api` - European Parliament API integration
+- `ep-data` - European Parliament data handling
+- `meps` - MEP-related changes
+- `plenary` - Plenary session features
+- `committees` - Committee features
+- `documents` - Document handling
+
+#### 🚀 General Labels
+- `feature` - New features or functionality
+- `enhancement` - Improvements to existing features
+- `bug` - Bug fixes
+- `documentation` - Documentation updates
+- `dependencies` - Dependency updates
+- `security` - Security improvements
+- `performance` - Performance optimizations
+- `testing` - Test improvements
+
+#### 🔒 Compliance Labels
+- `gdpr` - GDPR compliance changes
+- `isms-compliance` - ISMS policy compliance
+- `security` - Security enhancements
+
+You can also manually add labels by including them in your PR description using checkboxes:
+```markdown
+- [x] 🚀 New Feature/Enhancement
+- [x] 🔌 MCP Tools
+- [x] 🏛️ European Parliament API
+```
+
+### Commit Message Format
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Types:**
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, missing semicolons, etc)
+- `refactor`: Code refactoring
+- `perf`: Performance improvements
+- `test`: Adding or updating tests
+- `build`: Changes to build system or dependencies
+- `ci`: CI/CD changes
+- `chore`: Other changes that don't modify src or test files
+
+**Examples:**
+```bash
+feat(mcp-tools): add getMEPs tool for fetching MEP information
+
+fix(ep-api): handle rate limiting in European Parliament API calls
+
+docs: update README with new MCP tools documentation
+
+test: add unit tests for plenary session tools
+
+build(deps): update @modelcontextprotocol/sdk to v1.0.5
+```
 
 Work in Progress pull requests are also welcome to get feedback early on, or if there is something blocked you.
 
