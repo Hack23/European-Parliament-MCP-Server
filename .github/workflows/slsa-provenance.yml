@@ -110,8 +110,10 @@ jobs:
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
     with:
       base64-subjects: "${{ needs.build.outputs.hashes }}"
-      upload-assets: true
-      upload-tag-name: ${{ github.ref_name }}
+      # Only upload to release when triggered by release event
+      upload-assets: ${{ github.event_name == 'release' }}
+      # Only set tag name for release events; empty string for other triggers
+      upload-tag-name: ${{ github.event_name == 'release' && github.ref_name || '' }}
       provenance-name: "provenance.intoto.jsonl"
 
   verify:
