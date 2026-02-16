@@ -95,7 +95,7 @@ jobs:
 
       - name: Attach SBOM to Release
         if: github.event_name == 'release'
-        uses: softprops/action-gh-release@01570a1f39cb168c169c802c3bceb9e93fb10974 # v2.2.1
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.2.1
         with:
           files: |
             sbom.spdx.json
