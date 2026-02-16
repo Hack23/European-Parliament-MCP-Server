@@ -657,6 +657,7 @@ describe('RateLimiter', () => {
   
   it('should reset rate limit after window expires', async () => {
     // Arrange
+    vi.useFakeTimers();
     const clientId = 'test-client-7';
     
     // Fill up burst limit
@@ -670,14 +671,16 @@ describe('RateLimiter', () => {
       .toThrow(RateLimitError);
     
     // Act
-    // Wait for burst window to expire (10 seconds + buffer)
-    await new Promise(resolve => setTimeout(resolve, 11000));
+    // Fast-forward time by 11 seconds (burst window + buffer)
+    await vi.advanceTimersByTimeAsync(11000);
     
     // Assert
     // Should be able to make requests again
     await expect(rateLimiter.checkLimit(clientId))
       .resolves
       .not.toThrow();
+    
+    vi.useRealTimers();
   });
 });
 ```
