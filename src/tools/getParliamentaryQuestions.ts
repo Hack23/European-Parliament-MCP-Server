@@ -27,7 +27,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetParliamentaryQuestions(
   args: unknown
-): Promise<{ content: Array<{ type: string; text: string }> }> {
+): Promise<{ content: { type: string; text: string }[] }> {
   // Validate input
   const params = GetParliamentaryQuestionsSchema.parse(args);
   
@@ -37,12 +37,12 @@ export async function handleGetParliamentaryQuestions(
       limit: params.limit,
       offset: params.offset
     };
-    if (params.type) apiParams.type = params.type;
-    if (params.author) apiParams.author = params.author;
-    if (params.topic) apiParams.topic = params.topic;
-    if (params.status) apiParams.status = params.status;
-    if (params.dateFrom) apiParams.dateFrom = params.dateFrom;
-    if (params.dateTo) apiParams.dateTo = params.dateTo;
+    if (params.type !== undefined) apiParams.type = params.type;
+    if (params.author !== undefined) apiParams.author = params.author;
+    if (params.topic !== undefined) apiParams.topic = params.topic;
+    if (params.status !== undefined) apiParams.status = params.status;
+    if (params.dateFrom !== undefined) apiParams.dateFrom = params.dateFrom;
+    if (params.dateTo !== undefined) apiParams.dateTo = params.dateTo;
     
     const result = await epClient.getParliamentaryQuestions(apiParams as Parameters<typeof epClient.getParliamentaryQuestions>[0]);
     

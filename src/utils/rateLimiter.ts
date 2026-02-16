@@ -50,7 +50,8 @@ export class RateLimiter {
         this.intervalMs = 60 * 60 * 1000;
         break;
       default:
-        throw new Error(`Invalid interval: ${options.interval}`);
+        const exhaustive: never = options.interval;
+        throw new Error(`Invalid interval: ${String(exhaustive)}`);
     }
   }
 
@@ -93,8 +94,8 @@ export class RateLimiter {
     // For now, throw error instead of waiting
     // In production, you might want to implement waiting or backoff
     throw new Error(
-      `Rate limit exceeded. Available tokens: ${this.tokens}, required: ${count}. ` +
-      `Retry after ${Math.ceil(waitMs / 1000)} seconds.`
+      `Rate limit exceeded. Available tokens: ${String(this.tokens)}, required: ${String(count)}. ` +
+      `Retry after ${String(Math.ceil(waitMs / 1000))} seconds.`
     );
   }
 

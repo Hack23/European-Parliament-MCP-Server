@@ -17,36 +17,36 @@ interface LegislativeProcedure {
   type: string;
   status: 'DRAFT' | 'COMMITTEE' | 'PLENARY' | 'ADOPTED' | 'REJECTED';
   currentStage: string;
-  timeline: Array<{
+  timeline: {
     date: string;
     stage: string;
     description: string;
     responsible?: string;
-  }>;
-  committees: Array<{
+  }[];
+  committees: {
     abbreviation: string;
     role: 'LEAD' | 'OPINION';
     rapporteur?: string;
-  }>;
+  }[];
   amendments: {
     proposed: number;
     adopted: number;
     rejected: number;
   };
-  voting: Array<{
+  voting: {
     date: string;
     stage: string;
     result: 'ADOPTED' | 'REJECTED';
     votesFor: number;
     votesAgainst: number;
     abstentions: number;
-  }>;
-  documents: Array<{
+  }[];
+  documents: {
     id: string;
     type: string;
     date: string;
     title: string;
-  }>;
+  }[];
   nextSteps?: string[];
 }
 
@@ -65,7 +65,7 @@ interface LegislativeProcedure {
  */
 export async function handleTrackLegislation(
   args: unknown
-): Promise<{ content: Array<{ type: string; text: string }> }> {
+): Promise<{ content: { type: string; text: string }[] }> {
   // Validate input
   const params = TrackLegislationSchema.parse(args);
   

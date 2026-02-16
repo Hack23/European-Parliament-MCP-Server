@@ -24,15 +24,15 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetCommitteeInfo(
   args: unknown
-): Promise<{ content: Array<{ type: string; text: string }> }> {
+): Promise<{ content: { type: string; text: string }[] }> {
   // Validate input
   const params = GetCommitteeInfoSchema.parse(args);
   
   try {
     // Fetch committee info from EP API (only pass defined properties)
     const apiParams: Record<string, string> = {};
-    if (params.id) apiParams.id = params.id;
-    if (params.abbreviation) apiParams.abbreviation = params.abbreviation;
+    if (params.id !== undefined) apiParams.id = params.id;
+    if (params.abbreviation !== undefined) apiParams.abbreviation = params.abbreviation;
     
     const result = await epClient.getCommitteeInfo(apiParams as Parameters<typeof epClient.getCommitteeInfo>[0]);
     

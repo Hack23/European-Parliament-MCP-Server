@@ -22,11 +22,11 @@ interface Report {
   };
   generatedAt: string;
   summary: string;
-  sections: Array<{
+  sections: {
     title: string;
     content: string;
     data?: Record<string, unknown>;
-  }>;
+  }[];
   statistics: Record<string, number | string>;
   recommendations?: string[];
 }
@@ -49,7 +49,7 @@ interface Report {
  */
 export async function handleGenerateReport(
   args: unknown
-): Promise<{ content: Array<{ type: string; text: string }> }> {
+): Promise<{ content: { type: string; text: string }[] }> {
   // Validate input
   const params = GenerateReportSchema.parse(args);
   

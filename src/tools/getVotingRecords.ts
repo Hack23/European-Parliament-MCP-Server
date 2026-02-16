@@ -26,7 +26,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetVotingRecords(
   args: unknown
-): Promise<{ content: Array<{ type: string; text: string }> }> {
+): Promise<{ content: { type: string; text: string }[] }> {
   // Validate input
   const params = GetVotingRecordsSchema.parse(args);
   
@@ -36,11 +36,11 @@ export async function handleGetVotingRecords(
       limit: params.limit,
       offset: params.offset
     };
-    if (params.sessionId) apiParams.sessionId = params.sessionId;
-    if (params.mepId) apiParams.mepId = params.mepId;
-    if (params.topic) apiParams.topic = params.topic;
-    if (params.dateFrom) apiParams.dateFrom = params.dateFrom;
-    if (params.dateTo) apiParams.dateTo = params.dateTo;
+    if (params.sessionId !== undefined) apiParams.sessionId = params.sessionId;
+    if (params.mepId !== undefined) apiParams.mepId = params.mepId;
+    if (params.topic !== undefined) apiParams.topic = params.topic;
+    if (params.dateFrom !== undefined) apiParams.dateFrom = params.dateFrom;
+    if (params.dateTo !== undefined) apiParams.dateTo = params.dateTo;
     
     const result = await epClient.getVotingRecords(apiParams as Parameters<typeof epClient.getVotingRecords>[0]);
     

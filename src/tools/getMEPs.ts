@@ -25,7 +25,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetMEPs(
   args: unknown
-): Promise<{ content: Array<{ type: string; text: string }> }> {
+): Promise<{ content: { type: string; text: string }[] }> {
   // Validate input
   const params = GetMEPsSchema.parse(args);
   
@@ -36,9 +36,9 @@ export async function handleGetMEPs(
       limit: params.limit,
       offset: params.offset
     };
-    if (params.country) apiParams.country = params.country;
-    if (params.group) apiParams.group = params.group;
-    if (params.committee) apiParams.committee = params.committee;
+    if (params.country !== undefined) apiParams.country = params.country;
+    if (params.group !== undefined) apiParams.group = params.group;
+    if (params.committee !== undefined) apiParams.committee = params.committee;
     
     const result = await epClient.getMEPs(apiParams as Parameters<typeof epClient.getMEPs>[0]);
     

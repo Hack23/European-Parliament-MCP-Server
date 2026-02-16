@@ -98,7 +98,7 @@ export class EuropeanParliamentClient {
    * @returns API response data
    */
   // @ts-expect-error - Unused method, planned for production use
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   private async get<T extends Record<string, unknown>>(
     endpoint: string,
     params?: Record<string, unknown>

@@ -24,7 +24,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetMEPDetails(
   args: unknown
-): Promise<{ content: Array<{ type: string; text: string }> }> {
+): Promise<{ content: { type: string; text: string }[] }> {
   // Validate input
   const params = GetMEPDetailsSchema.parse(args);
   

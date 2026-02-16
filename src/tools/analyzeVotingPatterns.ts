@@ -31,10 +31,10 @@ interface VotingPatternAnalysis {
     alignmentRate: number;
     divergentVotes: number;
   };
-  topTopics: Array<{
+  topTopics: {
     topic: string;
     voteCount: number;
-  }>;
+  }[];
   crossPartyVoting?: {
     withOtherGroups: number;
     rate: number;
@@ -59,7 +59,7 @@ interface VotingPatternAnalysis {
  */
 export async function handleAnalyzeVotingPatterns(
   args: unknown
-): Promise<{ content: Array<{ type: string; text: string }> }> {
+): Promise<{ content: { type: string; text: string }[] }> {
   // Validate input
   const params = AnalyzeVotingPatternsSchema.parse(args);
   
