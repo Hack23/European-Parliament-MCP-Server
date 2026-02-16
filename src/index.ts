@@ -15,6 +15,18 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
+// Import tool handlers
+import { handleGetMEPs, getMEPsToolMetadata } from './tools/getMEPs.js';
+import { handleGetMEPDetails, getMEPDetailsToolMetadata } from './tools/getMEPDetails.js';
+import { handleGetPlenarySessions, getPlenarySessionsToolMetadata } from './tools/getPlenarySessions.js';
+import { handleGetVotingRecords, getVotingRecordsToolMetadata } from './tools/getVotingRecords.js';
+import { handleSearchDocuments, searchDocumentsToolMetadata } from './tools/searchDocuments.js';
+import { handleGetCommitteeInfo, getCommitteeInfoToolMetadata } from './tools/getCommitteeInfo.js';
+import { handleGetParliamentaryQuestions, getParliamentaryQuestionsToolMetadata } from './tools/getParliamentaryQuestions.js';
+import { handleAnalyzeVotingPatterns, analyzeVotingPatternsToolMetadata } from './tools/analyzeVotingPatterns.js';
+import { handleTrackLegislation, trackLegislationToolMetadata } from './tools/trackLegislation.js';
+import { handleGenerateReport, generateReportToolMetadata } from './tools/generateReport.js';
+
 const SERVER_NAME = 'european-parliament-mcp-server';
 const SERVER_VERSION = '1.0.0';
 
@@ -52,70 +64,63 @@ class EuropeanParliamentMCPServer {
     this.server.setRequestHandler(ListToolsRequestSchema, () => {
       return Promise.resolve({
         tools: [
-          {
-            name: 'get_meps',
-            description:
-              'Get Members of European Parliament with optional filters (country, political group)',
-            inputSchema: {
-              type: 'object',
-              properties: {
-                country: {
-                  type: 'string',
-                  description: 'ISO 3166-1 alpha-2 country code (e.g., "SE" for Sweden)',
-                },
-                group: {
-                  type: 'string',
-                  description: 'Political group abbreviation',
-                },
-                limit: {
-                  type: 'number',
-                  description: 'Maximum number of results (1-100)',
-                  minimum: 1,
-                  maximum: 100,
-                  default: 50,
-                },
-              },
-            },
-          },
+          // Core tools
+          getMEPsToolMetadata,
+          getMEPDetailsToolMetadata,
+          getPlenarySessionsToolMetadata,
+          getVotingRecordsToolMetadata,
+          searchDocumentsToolMetadata,
+          getCommitteeInfoToolMetadata,
+          getParliamentaryQuestionsToolMetadata,
+          // Advanced analysis tools
+          analyzeVotingPatternsToolMetadata,
+          trackLegislationToolMetadata,
+          generateReportToolMetadata
         ],
       });
     });
 
     // Handle tool calls
-    this.server.setRequestHandler(CallToolRequestSchema, (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
 
-      switch (name) {
-        case 'get_meps':
-          return this.handleGetMEPs(args);
-        default:
-          throw new Error(`Unknown tool: ${name}`);
+      try {
+        switch (name) {
+          // Core tools
+          case 'get_meps':
+            return await handleGetMEPs(args);
+          case 'get_mep_details':
+            return await handleGetMEPDetails(args);
+          case 'get_plenary_sessions':
+            return await handleGetPlenarySessions(args);
+          case 'get_voting_records':
+            return await handleGetVotingRecords(args);
+          case 'search_documents':
+            return await handleSearchDocuments(args);
+          case 'get_committee_info':
+            return await handleGetCommitteeInfo(args);
+          case 'get_parliamentary_questions':
+            return await handleGetParliamentaryQuestions(args);
+          // Advanced analysis tools
+          case 'analyze_voting_patterns':
+            return await handleAnalyzeVotingPatterns(args);
+          case 'track_legislation':
+            return await handleTrackLegislation(args);
+          case 'generate_report':
+            return await handleGenerateReport(args);
+          default:
+            throw new Error(`Unknown tool: ${name}`);
+        }
+      } catch (error) {
+        // Log error to stderr (stdout is used for MCP protocol)
+        console.error(`[ERROR] Tool ${name} failed:`, error);
+        
+        // Re-throw with clean error message
+        if (error instanceof Error) {
+          throw error;
+        }
+        throw new Error(`Tool execution failed: ${String(error)}`);
       }
-    });
-  }
-
-  /**
-   * Handle get_meps tool call
-   */
-  private handleGetMEPs(args: unknown): Promise<{ content: { type: string; text: string }[] }> {
-    // TODO: Implement actual API call to European Parliament
-    // For now, return mock data
-    const response = {
-      status: 'success',
-      message: 'This is a skeleton implementation. API integration coming soon.',
-      data: {
-        meps: [],
-        filters: args,
-      },
-    };
-
-    return Promise.resolve({
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(response, null, 2),
-        },
-      ],
     });
   }
 
@@ -129,6 +134,7 @@ class EuropeanParliamentMCPServer {
     // Log to stderr (stdout is used for MCP protocol)
     console.error(`${SERVER_NAME} v${SERVER_VERSION} started`);
     console.error('Server ready to handle requests');
+    console.error('Available tools: 10 (7 core + 3 advanced analysis)');
   }
 }
 
