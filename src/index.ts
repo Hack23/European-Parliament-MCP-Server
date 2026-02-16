@@ -15,6 +15,10 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
+// Export types for public API
+export type * from './types/index.js';
+export * from './types/index.js';
+
 const SERVER_NAME = 'european-parliament-mcp-server';
 const SERVER_VERSION = '1.0.0';
 
