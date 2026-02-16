@@ -1,0 +1,264 @@
+name: Build, Attest and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (vX.Y.Z format)"
+        required: true
+        default: "v0.1.0"
+      prerelease:
+        description: "Is this a pre-release?"
+        type: boolean
+        default: false
+  push:
+    tags:
+      - "v*"
+
+# Restrict top-level permissions to minimum required defaults
+permissions: read-all
+
+jobs:
+  prepare:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    # Only prepare job needs write permissions for commit and tagging
+    permissions:
+      contents: write # Required for git auto-commit
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+      is_prerelease: ${{ github.event.inputs.prerelease || 'false' }}
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Get version
+        id: get-version
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          else
+            VERSION=${{ github.event.inputs.version }}
+          fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Version: ${VERSION}"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Cache dependencies
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      # TypeScript compilation check
+      - name: TypeScript compilation check
+        run: npm run build || npx tsc --noEmit
+
+      # Run tests if available
+      - name: Run tests
+        run: npm test || echo "No tests configured yet"
+        continue-on-error: true
+
+      - name: Set Version for release
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          PLAIN_VERSION="${{ github.event.inputs.version }}"
+          # Remove 'v' prefix if present
+          PLAIN_VERSION="${PLAIN_VERSION#v}"
+          npm version $PLAIN_VERSION --no-git-tag-version
+
+      - uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          commit_message: "chore(release): bump version to ${{ github.event.inputs.version }}"
+          tagging_message: "${{ github.event.inputs.version }}"
+
+  build:
+    name: Build Release Package
+    needs: [prepare]
+    runs-on: ubuntu-latest
+    # Build job needs specific permissions for attestations
+    permissions:
+      contents: read
+      id-token: write # Required for OIDC
+      attestations: write # Required for SBOM and build attestations
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          # Use GITHUB_REF directly for tag events
+          ref: ${{ github.event_name == 'push' && github.ref || github.event_name == 'workflow_dispatch' && github.event.inputs.version || '' }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Cache dependencies
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build MCP Server
+        run: npm run build
+        env:
+          APP_VERSION: ${{ needs.prepare.outputs.version }}
+
+      - name: Create release artifacts
+        run: |
+          # Create package directory
+          mkdir -p release-package
+          
+          # Copy built files
+          cp -r dist release-package/ 2>/dev/null || echo "No dist directory"
+          cp -r src release-package/ 2>/dev/null || echo "No src directory"
+          
+          # Copy essential files
+          cp package.json release-package/
+          cp package-lock.json release-package/ 2>/dev/null || echo "No package-lock.json"
+          cp README.md release-package/ 2>/dev/null || echo "No README.md"
+          cp LICENSE* release-package/ 2>/dev/null || echo "No LICENSE"
+          
+          # Create the zip file
+          cd release-package
+          zip -r ../european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.zip .
+          cd ..
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: build-artifacts
+          path: |
+            release-package/
+            european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.zip
+          if-no-files-found: error
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@28d71544de8eaf1b958d335707167c5f783590ad # v0.22.2
+        id: sbom
+        with:
+          format: spdx-json
+          output-file: european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.spdx.json
+          artifact-name: european-parliament-mcp-server-${{ needs.prepare.outputs.version }}
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # v3.2.0
+        id: attest
+        with:
+          subject-path: european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.zip
+
+      - name: Copy artifact attestation for zip
+        run: cp ${{ steps.attest.outputs.bundle-path }} european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.zip.intoto.jsonl
+
+      - name: Generate SBOM attestation
+        id: attestsbom
+        uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34 # v3.0.0
+        with:
+          subject-path: european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.zip
+          sbom-path: european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.spdx.json
+
+      - name: Copy SBOM attestation for zip
+        run: cp ${{ steps.attestsbom.outputs.bundle-path }} european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.spdx.json.intoto.jsonl
+
+      - name: Upload security artifacts
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: security-artifacts
+          path: |
+            european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.spdx.json
+            european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.zip.intoto.jsonl
+            european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.spdx.json.intoto.jsonl
+          if-no-files-found: error
+
+  release:
+    name: Create Release
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    # Release job needs specific permissions to create GitHub releases
+    permissions:
+      contents: write # Required to create releases
+      id-token: write # Required for OIDC
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+        with:
+          egress-policy: audit
+
+      # Checkout main branch to get latest documentation
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          ref: main # Always use main branch
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: build-artifacts
+          path: artifacts/build
+
+      - name: Download security artifacts
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: security-artifacts
+          path: artifacts/security
+
+      - name: Draft Release Notes
+        id: release-drafter
+        uses: release-drafter/release-drafter@6db134d15f3909ccc9eefd369f02bd1e9cffdf97 # v6.2.0
+        with:
+          version: ${{ needs.prepare.outputs.version }}
+          tag: ${{ needs.prepare.outputs.version }}
+          name: European Parliament MCP Server ${{ needs.prepare.outputs.version }}
+          publish: false
+          prerelease: ${{ needs.prepare.outputs.is_prerelease }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Create GitHub Release with all artifacts
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
+        with:
+          tag: ${{ needs.prepare.outputs.version }}
+          name: European Parliament MCP Server ${{ needs.prepare.outputs.version }}
+          body: ${{ steps.release-drafter.outputs.body }}
+          generateReleaseNotes: false
+          immutableCreate: true
+          draft: false
+          prerelease: ${{ needs.prepare.outputs.is_prerelease }}
+          artifacts: |
+            artifacts/build/european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.zip
+            artifacts/security/european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.spdx.json
+            artifacts/security/european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.zip.intoto.jsonl
+            artifacts/security/european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.spdx.json.intoto.jsonl
+          token: ${{ secrets.GITHUB_TOKEN }}

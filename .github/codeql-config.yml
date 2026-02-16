@@ -1,0 +1,8 @@
+name: "CodeQL Config for European Parliament MCP Server"
+
+paths-ignore:
+  - docs/**
+  - "**/*.md"
+  - "**/*.json"
+  - ".github/**"
+  - "LICENSE*"

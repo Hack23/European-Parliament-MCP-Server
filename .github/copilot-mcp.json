@@ -1,0 +1,33 @@
+{
+  "mcpServers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/insiders",
+      "headers": {
+        "Authorization": "Bearer ${{ secrets.COPILOT_MCP_GITHUB_PERSONAL_ACCESS_TOKEN }}",
+        "X-MCP-Toolsets": "all"
+      },
+      "tools": ["*"]
+    },
+    "filesystem": {
+      "type": "local",
+      "command": "mcp-server-filesystem",
+      "args": [
+        "/home/runner/work/European-Parliament-MCP-Server/European-Parliament-MCP-Server"
+      ],
+      "tools": ["*"]
+    },
+    "memory": {
+      "type": "local",
+      "command": "mcp-server-memory",
+      "args": [],
+      "tools": ["*"]
+    },
+    "sequential-thinking": {
+      "type": "local",
+      "command": "mcp-server-sequential-thinking",
+      "args": [],
+      "tools": ["*"]
+    }
+  }
+}

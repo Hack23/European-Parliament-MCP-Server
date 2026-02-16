@@ -1,0 +1,90 @@
+{
+  "name": "European Parliament MCP Server Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:22-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "nodeGypDependencies": true,
+      "version": "22"
+    }
+  },
+  // MCP Servers: See .github/copilot-mcp.json for Model Context Protocol configuration
+  // These enhance GitHub Copilot with filesystem, memory, and sequential-thinking capabilities
+  // Update system dependencies
+  "onCreateCommand": "sudo apt-get update && sudo apt-get install -y graphviz",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Core Development
+        "dbaeumer.vscode-eslint",
+
+        // GitHub extensions - Copilot with MCP server support
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "github.vscode-github-actions",
+
+        // TypeScript/Node.js support
+        "christian-kohler.npm-intellisense",
+
+        // Formatting and linting
+        "esbenp.prettier-vscode",
+        
+        // Testing
+        "vitest.explorer"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        // ESLint configuration
+        "eslint.workingDirectories": [
+          { "mode": "auto" },
+          { "directory": "./src", "changeProcessCWD": true }
+        ],
+        "typescript.updateImportsOnFileMove.enabled": "always",
+        "javascript.updateImportsOnFileMove.enabled": "always",
+        "typescript.suggest.completeFunctionCalls": true,
+
+        // Better import organization
+        "typescript.preferences.importModuleSpecifier": "shortest",
+        "javascript.preferences.importModuleSpecifier": "shortest",
+
+        // Ensure Copilot prefers TypeScript file extensions
+        "github.copilot.fileTypes": {
+          "javascript": "typescript",
+          "javascriptreact": "typescriptreact"
+        }
+      },
+      // Add VS Code tasks properly in the customizations section
+      "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+          {
+            "label": "build",
+            "type": "npm",
+            "script": "build",
+            "problemMatcher": ["$tsc"],
+            "group": {
+              "kind": "build",
+              "isDefault": true
+            }
+          }
+        ]
+      }
+    }
+  },
+  // Update post-create commands to install dependencies
+  "postCreateCommand": "npm install -g npm@latest && npm install",
+  // Add post-start command to ensure build is run when container starts
+  "postStartCommand": "npm run build || echo 'Build will be available after initial setup'",
+  "remoteUser": "node",
+  // Expand environment variables
+  "containerEnv": {
+    "NODE_OPTIONS": "--max-old-space-size=4096"
+  },
+  // Fix: Use proper shutdown action instead of postStopCommand
+  "shutdownAction": "none"
+}
