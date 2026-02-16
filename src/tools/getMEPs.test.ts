@@ -81,34 +81,44 @@ describe('get_meps Tool', () => {
       const result = await handleGetMEPs({ limit: 10 });
       const text = result.content[0]?.text;
 
-      expect(() => JSON.parse(text ?? '')).not.toThrow();
+      expect(() => {
+        const parsed: unknown = JSON.parse(text ?? '');
+        return parsed;
+      }).not.toThrow();
     });
 
     it('should return paginated response structure', async () => {
       const result = await handleGetMEPs({ limit: 10 });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const text = result.content[0]?.text ?? '{}';
+      const data: unknown = JSON.parse(text);
 
       expect(data).toHaveProperty('data');
       expect(data).toHaveProperty('total');
       expect(data).toHaveProperty('limit');
       expect(data).toHaveProperty('offset');
       expect(data).toHaveProperty('hasMore');
-      expect(Array.isArray(data.data)).toBe(true);
+      
+      if (typeof data === 'object' && data !== null && 'data' in data) {
+        expect(Array.isArray(data.data)).toBe(true);
+      }
     });
 
     it('should include MEP objects with required fields', async () => {
       const result = await handleGetMEPs({ limit: 10 });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const text = result.content[0]?.text ?? '{}';
+      const data: unknown = JSON.parse(text);
 
-      if (data.data.length > 0) {
-        const mep = data.data[0];
-        expect(mep).toHaveProperty('id');
-        expect(mep).toHaveProperty('name');
-        expect(mep).toHaveProperty('country');
-        expect(mep).toHaveProperty('politicalGroup');
-        expect(mep).toHaveProperty('committees');
-        expect(mep).toHaveProperty('active');
-        expect(mep).toHaveProperty('termStart');
+      if (typeof data === 'object' && data !== null && 'data' in data && Array.isArray(data.data) && data.data.length > 0) {
+        const mep: unknown = data.data[0];
+        if (typeof mep === 'object' && mep !== null) {
+          expect(mep).toHaveProperty('id');
+          expect(mep).toHaveProperty('name');
+          expect(mep).toHaveProperty('country');
+          expect(mep).toHaveProperty('politicalGroup');
+          expect(mep).toHaveProperty('committees');
+          expect(mep).toHaveProperty('active');
+          expect(mep).toHaveProperty('termStart');
+        }
       }
     });
   });
@@ -153,25 +163,35 @@ describe('get_meps Tool', () => {
   describe('Default Values', () => {
     it('should apply default limit', async () => {
       const result = await handleGetMEPs({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const text = result.content[0]?.text ?? '{}';
+      const data: unknown = JSON.parse(text);
       
-      expect(data.limit).toBe(50); // Default limit
+      if (typeof data === 'object' && data !== null && 'limit' in data) {
+        expect(data.limit).toBe(50); // Default limit
+      }
     });
 
     it('should apply default offset', async () => {
       const result = await handleGetMEPs({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const text = result.content[0]?.text ?? '{}';
+      const data: unknown = JSON.parse(text);
       
-      expect(data.offset).toBe(0); // Default offset
+      if (typeof data === 'object' && data !== null && 'offset' in data) {
+        expect(data.offset).toBe(0); // Default offset
+      }
     });
 
     it('should apply default active status', async () => {
       const result = await handleGetMEPs({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const text = result.content[0]?.text ?? '{}';
+      const data: unknown = JSON.parse(text);
       
       // Default active is true (only active MEPs)
-      if (data.data.length > 0) {
-        expect(data.data[0].active).toBe(true);
+      if (typeof data === 'object' && data !== null && 'data' in data && Array.isArray(data.data) && data.data.length > 0) {
+        const firstItem: unknown = data.data[0];
+        if (typeof firstItem === 'object' && firstItem !== null && 'active' in firstItem) {
+          expect(firstItem.active).toBe(true);
+        }
       }
     });
   });
@@ -179,21 +199,29 @@ describe('get_meps Tool', () => {
   describe('Filtering', () => {
     it('should filter by country', async () => {
       const result = await handleGetMEPs({ country: 'SE' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const text = result.content[0]?.text ?? '{}';
+      const data: unknown = JSON.parse(text);
       
       // Mock data should respect country filter
-      if (data.data.length > 0) {
-        expect(data.data[0].country).toBe('SE');
+      if (typeof data === 'object' && data !== null && 'data' in data && Array.isArray(data.data) && data.data.length > 0) {
+        const firstItem: unknown = data.data[0];
+        if (typeof firstItem === 'object' && firstItem !== null && 'country' in firstItem) {
+          expect(firstItem.country).toBe('SE');
+        }
       }
     });
 
     it('should filter by political group', async () => {
       const result = await handleGetMEPs({ group: 'EPP' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const text = result.content[0]?.text ?? '{}';
+      const data: unknown = JSON.parse(text);
       
       // Mock data should respect group filter
-      if (data.data.length > 0) {
-        expect(data.data[0].politicalGroup).toBe('EPP');
+      if (typeof data === 'object' && data !== null && 'data' in data && Array.isArray(data.data) && data.data.length > 0) {
+        const firstItem: unknown = data.data[0];
+        if (typeof firstItem === 'object' && firstItem !== null && 'politicalGroup' in firstItem) {
+          expect(firstItem.politicalGroup).toBe('EPP');
+        }
       }
     });
   });

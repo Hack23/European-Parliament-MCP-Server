@@ -35,10 +35,12 @@ const SERVER_VERSION = '1.0.0';
  */
 class EuropeanParliamentMCPServer {
   // Using Server for now until McpServer is available in the SDK version
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   private server: Server;
 
   constructor() {
     // Using Server for now until McpServer is available in the SDK version
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     this.server = new Server(
       {
         name: SERVER_NAME,

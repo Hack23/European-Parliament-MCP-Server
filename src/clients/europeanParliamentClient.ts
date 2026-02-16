@@ -120,7 +120,21 @@ export class EuropeanParliamentClient {
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          url.searchParams.append(key, String(value));
+          // Convert value to string, handling different types properly
+          let stringValue: string;
+          if (typeof value === 'string') {
+            stringValue = value;
+          } else if (typeof value === 'number') {
+            stringValue = value.toString();
+          } else if (typeof value === 'boolean') {
+            stringValue = value.toString();
+          } else if (typeof value === 'object') {
+            stringValue = JSON.stringify(value);
+          } else {
+            // For any other type, convert to JSON for safety
+            stringValue = JSON.stringify(value);
+          }
+          url.searchParams.append(key, stringValue);
         }
       });
     }
@@ -172,7 +186,7 @@ export class EuropeanParliamentClient {
    * @param params - Query parameters
    * @returns Paginated list of MEPs
    */
-  async getMEPs(params: {
+  getMEPs(params: {
     country?: string;
     group?: string;
     committee?: string;
@@ -208,7 +222,7 @@ export class EuropeanParliamentClient {
       
       auditLogger.logDataAccess(action, params, mockData.data.length);
       
-      return mockData;
+      return Promise.resolve(mockData);
     } catch (error) {
       auditLogger.logError(
         action,
@@ -225,7 +239,7 @@ export class EuropeanParliamentClient {
    * @param id - MEP identifier
    * @returns Detailed MEP information
    */
-  async getMEPDetails(id: string): Promise<MEPDetails> {
+  getMEPDetails(id: string): Promise<MEPDetails> {
     const action = 'get_mep_details';
     const params = { id };
     
@@ -255,7 +269,7 @@ export class EuropeanParliamentClient {
       
       auditLogger.logDataAccess(action, params, 1);
       
-      return mockData;
+      return Promise.resolve(mockData);
     } catch (error) {
       auditLogger.logError(
         action,
@@ -272,7 +286,7 @@ export class EuropeanParliamentClient {
    * @param params - Query parameters
    * @returns Paginated list of plenary sessions
    */
-  async getPlenarySessions(params: {
+  getPlenarySessions(params: {
     dateFrom?: string;
     dateTo?: string;
     location?: string;
@@ -301,7 +315,7 @@ export class EuropeanParliamentClient {
       
       auditLogger.logDataAccess(action, params, mockData.data.length);
       
-      return mockData;
+      return Promise.resolve(mockData);
     } catch (error) {
       auditLogger.logError(
         action,
@@ -318,7 +332,7 @@ export class EuropeanParliamentClient {
    * @param params - Query parameters
    * @returns Paginated list of voting records
    */
-  async getVotingRecords(params: {
+  getVotingRecords(params: {
     sessionId?: string;
     mepId?: string;
     topic?: string;
@@ -351,7 +365,7 @@ export class EuropeanParliamentClient {
       
       auditLogger.logDataAccess(action, params, mockData.data.length);
       
-      return mockData;
+      return Promise.resolve(mockData);
     } catch (error) {
       auditLogger.logError(
         action,
@@ -368,7 +382,7 @@ export class EuropeanParliamentClient {
    * @param params - Query parameters
    * @returns Paginated list of documents
    */
-  async searchDocuments(params: {
+  searchDocuments(params: {
     keyword: string;
     documentType?: string;
     dateFrom?: string;
@@ -402,7 +416,7 @@ export class EuropeanParliamentClient {
       
       auditLogger.logDataAccess(action, params, mockData.data.length);
       
-      return mockData;
+      return Promise.resolve(mockData);
     } catch (error) {
       auditLogger.logError(
         action,
@@ -419,7 +433,7 @@ export class EuropeanParliamentClient {
    * @param params - Query parameters
    * @returns Committee information
    */
-  async getCommitteeInfo(params: {
+  getCommitteeInfo(params: {
     id?: string;
     abbreviation?: string;
   }): Promise<Committee> {
@@ -442,7 +456,7 @@ export class EuropeanParliamentClient {
       
       auditLogger.logDataAccess(action, params, 1);
       
-      return mockData;
+      return Promise.resolve(mockData);
     } catch (error) {
       auditLogger.logError(
         action,
@@ -459,7 +473,7 @@ export class EuropeanParliamentClient {
    * @param params - Query parameters
    * @returns Paginated list of parliamentary questions
    */
-  async getParliamentaryQuestions(params: {
+  getParliamentaryQuestions(params: {
     type?: 'WRITTEN' | 'ORAL';
     author?: string;
     topic?: string;
@@ -496,7 +510,7 @@ export class EuropeanParliamentClient {
       
       auditLogger.logDataAccess(action, params, mockData.data.length);
       
-      return mockData;
+      return Promise.resolve(mockData);
     } catch (error) {
       auditLogger.logError(
         action,

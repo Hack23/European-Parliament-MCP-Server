@@ -69,8 +69,10 @@ export async function handleGenerateReport(
       case 'LEGISLATION_PROGRESS':
         report = await generateLegislationProgressReport(params);
         break;
-      default:
-        throw new Error(`Unknown report type: ${params.reportType}`);
+      default: {
+        const exhaustiveCheck: never = params.reportType;
+        throw new Error(`Unknown report type: ${String(exhaustiveCheck)}`);
+      }
     }
     
     // Return MCP-compliant response
@@ -91,26 +93,31 @@ export async function handleGenerateReport(
  * Generate MEP activity report
  */
 async function generateMEPActivityReport(params: z.infer<typeof GenerateReportSchema>): Promise<Report> {
-  const mep = params.subjectId ? await epClient.getMEPDetails(params.subjectId) : null;
+  const mep = params.subjectId !== undefined ? await epClient.getMEPDetails(params.subjectId) : null;
+  const mepName = mep?.name ?? 'Unknown MEP';
+  const dateFrom = params.dateFrom ?? '2024-01-01';
+  const dateTo = params.dateTo ?? '2024-12-31';
+  const totalVotes = mep?.votingStatistics?.totalVotes ?? 0;
+  const committeesLength = mep?.committees.length ?? 0;
   
   return {
     reportType: 'MEP_ACTIVITY',
-    subject: mep?.name ?? 'Unknown MEP',
+    subject: mepName,
     period: {
-      from: params.dateFrom ?? '2024-01-01',
-      to: params.dateTo ?? '2024-12-31'
+      from: dateFrom,
+      to: dateTo
     },
     generatedAt: new Date().toISOString(),
-    summary: `Activity report for ${mep?.name} covering the period from ${params.dateFrom ?? '2024-01-01'} to ${params.dateTo ?? '2024-12-31'}.`,
+    summary: `Activity report for ${mepName} covering the period from ${dateFrom} to ${dateTo}.`,
     sections: [
       {
         title: 'Voting Activity',
-        content: `The MEP participated in ${mep?.votingStatistics?.totalVotes ?? 0} votes during this period.`,
+        content: `The MEP participated in ${String(totalVotes)} votes during this period.`,
         ...(mep?.votingStatistics && { data: mep.votingStatistics as unknown as Record<string, unknown> })
       },
       {
         title: 'Committee Involvement',
-        content: `Active member of ${mep?.committees.length ?? 0} committees.`,
+        content: `Active member of ${String(committeesLength)} committees.`,
         data: { committees: mep?.committees }
       },
       {
@@ -136,17 +143,21 @@ async function generateMEPActivityReport(params: z.infer<typeof GenerateReportSc
  * Generate committee performance report
  */
 async function generateCommitteePerformanceReport(params: z.infer<typeof GenerateReportSchema>): Promise<Report> {
-  const committee = params.subjectId ? await epClient.getCommitteeInfo({ id: params.subjectId }) : null;
+  const committee = params.subjectId !== undefined ? await epClient.getCommitteeInfo({ id: params.subjectId }) : null;
+  const committeeName = committee?.name ?? 'Unknown Committee';
+  const dateFrom = params.dateFrom ?? '2024-01-01';
+  const dateTo = params.dateTo ?? '2024-12-31';
+  const membersLength = committee?.members.length ?? 0;
   
   return {
     reportType: 'COMMITTEE_PERFORMANCE',
-    subject: committee?.name ?? 'Unknown Committee',
+    subject: committeeName,
     period: {
-      from: params.dateFrom ?? '2024-01-01',
-      to: params.dateTo ?? '2024-12-31'
+      from: dateFrom,
+      to: dateTo
     },
     generatedAt: new Date().toISOString(),
-    summary: `Performance report for ${committee?.name} committee.`,
+    summary: `Performance report for ${committeeName} committee.`,
     sections: [
       {
         title: 'Meeting Activity',
@@ -158,7 +169,7 @@ async function generateCommitteePerformanceReport(params: z.infer<typeof Generat
       },
       {
         title: 'Member Participation',
-        content: `Average attendance rate: 85%. ${committee?.members.length ?? 0} active members.`
+        content: `Average attendance rate: 85%. ${String(membersLength)} active members.`
       }
     ],
     statistics: {
@@ -166,7 +177,7 @@ async function generateCommitteePerformanceReport(params: z.infer<typeof Generat
       reportsProduced: 15,
       opinionsIssued: 28,
       averageAttendance: 85,
-      memberCount: committee?.members.length ?? 0
+      memberCount: membersLength
     }
   };
 }
@@ -174,13 +185,16 @@ async function generateCommitteePerformanceReport(params: z.infer<typeof Generat
 /**
  * Generate voting statistics report
  */
-async function generateVotingStatisticsReport(params: z.infer<typeof GenerateReportSchema>): Promise<Report> {
-  return {
+function generateVotingStatisticsReport(params: z.infer<typeof GenerateReportSchema>): Promise<Report> {
+  const dateFrom = params.dateFrom ?? '2024-01-01';
+  const dateTo = params.dateTo ?? '2024-12-31';
+  
+  return Promise.resolve({
     reportType: 'VOTING_STATISTICS',
     subject: 'Parliament-wide Voting Analysis',
     period: {
-      from: params.dateFrom ?? '2024-01-01',
-      to: params.dateTo ?? '2024-12-31'
+      from: dateFrom,
+      to: dateTo
     },
     generatedAt: new Date().toISOString(),
     summary: 'Comprehensive voting statistics for European Parliament.',
@@ -205,19 +219,22 @@ async function generateVotingStatisticsReport(params: z.infer<typeof GenerateRep
       withdrawn: 38,
       averageTurnout: 91.5
     }
-  };
+  });
 }
 
 /**
  * Generate legislation progress report
  */
-async function generateLegislationProgressReport(params: z.infer<typeof GenerateReportSchema>): Promise<Report> {
-  return {
+function generateLegislationProgressReport(params: z.infer<typeof GenerateReportSchema>): Promise<Report> {
+  const dateFrom = params.dateFrom ?? '2024-01-01';
+  const dateTo = params.dateTo ?? '2024-12-31';
+  
+  return Promise.resolve({
     reportType: 'LEGISLATION_PROGRESS',
     subject: 'Legislative Activity Overview',
     period: {
-      from: params.dateFrom ?? '2024-01-01',
-      to: params.dateTo ?? '2024-12-31'
+      from: dateFrom,
+      to: dateTo
     },
     generatedAt: new Date().toISOString(),
     summary: 'Progress report on legislative procedures.',
@@ -241,7 +258,7 @@ async function generateLegislationProgressReport(params: z.infer<typeof Generate
       ongoing: 87,
       averageDuration: 18.5
     }
-  };
+  });
 }
 
 /**

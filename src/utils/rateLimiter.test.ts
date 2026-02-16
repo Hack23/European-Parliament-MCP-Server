@@ -56,7 +56,7 @@ describe('RateLimiter', () => {
       vi.useRealTimers();
     });
 
-    it('should not exceed maximum tokens', async () => {
+    it('should not exceed maximum tokens', () => {
       vi.useFakeTimers();
       
       const limiter = new RateLimiter({

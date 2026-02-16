@@ -88,7 +88,8 @@ export const MEPSchema = z.object({
   country: z.string(),
   politicalGroup: z.string(),
   committees: z.array(z.string()),
-  email: z.string().email().optional(),
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
+  email: z.string().email('Invalid email format').optional(),
   active: z.boolean(),
   termStart: z.string(),
   termEnd: z.string().optional()
@@ -112,7 +113,8 @@ export const MEPDetailsSchema = MEPSchema.extend({
   biography: z.string().optional(),
   phone: z.string().optional(),
   address: z.string().optional(),
-  website: z.string().url().optional(),
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
+  website: z.string().url('Invalid URL format').optional(),
   twitter: z.string().optional(),
   facebook: z.string().optional(),
   votingStatistics: VotingStatisticsSchema.optional(),
@@ -261,8 +263,10 @@ export const LegislativeDocumentSchema = z.object({
   authors: z.array(z.string()),
   committee: z.string().optional(),
   status: z.enum(['DRAFT', 'SUBMITTED', 'IN_COMMITTEE', 'PLENARY', 'ADOPTED', 'REJECTED']),
-  pdfUrl: z.string().url().optional(),
-  xmlUrl: z.string().url().optional(),
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
+  pdfUrl: z.string().url('Invalid PDF URL format').optional(),
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
+  xmlUrl: z.string().url('Invalid XML URL format').optional(),
   summary: z.string().optional()
 });
 
@@ -389,7 +393,15 @@ export const GenerateReportSchema = z.object({
 /**
  * Paginated response schema
  */
-export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
+export const PaginatedResponseSchema = <T extends z.ZodType>(
+  dataSchema: T
+): z.ZodObject<{
+  data: z.ZodArray<T>;
+  total: z.ZodNumber;
+  limit: z.ZodNumber;
+  offset: z.ZodNumber;
+  hasMore: z.ZodBoolean;
+}> =>
   z.object({
     data: z.array(dataSchema),
     total: z.number().int().min(0),

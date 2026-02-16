@@ -63,7 +63,7 @@ interface LegislativeProcedure {
  * }
  * ```
  */
-export async function handleTrackLegislation(
+export function handleTrackLegislation(
   args: unknown
 ): Promise<{ content: { type: string; text: string }[] }> {
   // Validate input
@@ -153,12 +153,12 @@ export async function handleTrackLegislation(
     };
     
     // Return MCP-compliant response
-    return {
+    return Promise.resolve({
       content: [{
         type: 'text',
         text: JSON.stringify(procedure, null, 2)
       }]
-    };
+    });
   } catch (error) {
     // Handle errors without exposing internal details
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
