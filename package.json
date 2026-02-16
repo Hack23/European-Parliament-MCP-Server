@@ -16,6 +16,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "type-check": "tsc --noEmit",
+    "type-coverage": "type-coverage --at-least 95 --strict --detail",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:ci": "vitest run --coverage --reporter=junit --reporter=json --outputFile=coverage/junit.xml",
@@ -63,6 +64,7 @@
     "license-compliance": "^3.0.1",
     "prettier": "^3.4.2",
     "tsx": "^4.19.2",
+    "type-coverage": "^2.29.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.55.0",
     "vitest": "^4.0.6"
