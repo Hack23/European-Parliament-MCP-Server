@@ -1,89 +1,131 @@
 version: 2
 updates:
-  # GitHub Actions
-  - package-ecosystem: github-actions
-    directory: /
+  # npm dependencies
+  - package-ecosystem: npm
+    directory: "/"
     schedule:
       interval: daily
+      time: "03:00"
+      timezone: "Europe/Stockholm"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "hack23-security-architect"
+    labels:
+      - "dependencies"
+      - "javascript"
+    commit-message:
+      prefix: "build(deps)"
     groups:
-      github-actions:
+      # Group MCP SDK updates
+      mcp-sdk:
+        patterns:
+          - "@modelcontextprotocol/*"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Group security updates (highest priority)
+      security:
         patterns:
           - "*"
         update-types:
-          - "minor"
-          - "patch"
-
-  # npm dependencies
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: daily
-    groups:
-      # TypeScript and type definitions
+          - "security"
+      
+      # Group TypeScript ecosystem
       typescript:
         patterns:
           - "typescript"
-          - "@types/*"
-        update-types:
-          - "minor"
-          - "patch"
-      
-      # Testing frameworks
-      vitest:
-        patterns:
-          - "vitest"
-          - "@vitest/*"
-        update-types:
-          - "minor"
-          - "patch"
-      
-      # ESLint and linting
-      eslint:
-        patterns:
-          - "eslint"
-          - "@eslint/*"
-          - "eslint-*"
           - "@typescript-eslint/*"
+          - "@types/*"
           - "typescript-eslint"
         update-types:
           - "minor"
           - "patch"
       
-      # MCP SDK and related packages
-      mcp:
+      # Group testing tools
+      testing:
         patterns:
-          - "@modelcontextprotocol/*"
-          - "mcp-*"
+          - "vitest"
+          - "@vitest/*"
+          - "jest"
+          - "@jest/*"
         update-types:
           - "minor"
           - "patch"
       
-      # Express and API frameworks
-      express:
+      # Group HTTP/networking
+      networking:
         patterns:
-          - "express"
-          - "@types/express"
-          - "express-*"
+          - "undici"
+          - "node-fetch"
+          - "axios"
         update-types:
           - "minor"
           - "patch"
       
-      # Validation libraries
+      # Group validation libraries
       validation:
         patterns:
           - "zod"
-          - "joi"
           - "yup"
+          - "joi"
         update-types:
           - "minor"
           - "patch"
       
-      # HTTP clients
-      http-clients:
+      # Group caching libraries
+      caching:
         patterns:
-          - "axios"
-          - "node-fetch"
-          - "undici"
+          - "lru-cache"
+          - "*cache*"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Group linting tools
+      linting:
+        patterns:
+          - "eslint"
+          - "@eslint/*"
+          - "eslint-*"
+          - "prettier"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Group development tools
+      dev-tools:
+        patterns:
+          - "tsx"
+          - "ts-node"
+          - "nodemon"
+          - "concurrently"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      # Ignore major updates for stable releases (manual review required)
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # GitHub Actions
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: "monday"
+      time: "03:00"
+      timezone: "Europe/Stockholm"
+    labels:
+      - "dependencies"
+      - "github_actions"
+      - "infrastructure"
+    commit-message:
+      prefix: "ci"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
         update-types:
           - "minor"
           - "patch"

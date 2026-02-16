@@ -33,49 +33,120 @@ bug:
       - title: "bug:*"
       - body: "- [x] 🐛 Bug Fix"
 
-# 🔌 MCP Server Specific
-mcp-server:
-  - any:
-      - changed-files:
-          - any-glob-to-any-file:
-              - "src/**/server/**"
-              - "src/**/mcp/**"
-              - "src/index.ts"
-      - title: "server:*"
-      - title: "mcp:*"
-      - body: "- [x] 🔌 MCP Server"
-
+# 🔌 MCP Development
 mcp-tools:
   - any:
       - changed-files:
           - any-glob-to-any-file:
+              - "src/tools/**"
               - "src/**/tools/**"
-              - "src/**/handlers/**"
-      - title: "tools:*"
-      - title: "handler:*"
-      - body: "- [x] 🛠️ MCP Tools"
+      - title: "mcp:*"
+      - title: "tool:*"
+      - body: "- [x] 🔌 MCP Tools"
 
-# 📊 Data & API Integration
-data-access:
+mcp-resources:
   - any:
       - changed-files:
           - any-glob-to-any-file:
+              - "src/resources/**"
+              - "src/**/resources/**"
+      - title: "resource:*"
+      - body: "- [x] 🔌 MCP Resources"
+
+mcp-prompts:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/prompts/**"
+              - "src/**/prompts/**"
+      - title: "prompt:*"
+      - body: "- [x] 🔌 MCP Prompts"
+
+mcp-protocol:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/protocol/**"
+              - "src/**/protocol/**"
+              - "src/**/mcp/**"
+      - title: "protocol:*"
+      - body: "- [x] 🔌 MCP Protocol"
+
+# 🏛️ European Parliament
+ep-api:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/api/**"
               - "src/**/api/**"
-              - "src/**/data/**"
               - "src/**/client/**"
-      - title: "data:*"
+      - title: "ep-api:*"
       - title: "api:*"
-      - body: "- [x] 📊 Data Access"
+      - body: "- [x] 🏛️ European Parliament API"
 
-european-parliament:
+ep-data:
   - any:
       - changed-files:
           - any-glob-to-any-file:
-              - "src/**/parliament/**"
-              - "src/**/europarl/**"
-      - title: "parliament:*"
-      - title: "europarl:*"
-      - body: "- [x] 🏛️ European Parliament"
+              - "src/data/**"
+              - "src/**/data/**"
+      - title: "ep-data:*"
+      - title: "data:*"
+      - body: "- [x] 🏛️ European Parliament Data"
+
+meps:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/meps/**"
+              - "src/**/*mep*"
+      - title: "meps:*"
+      - title: "mep:*"
+      - body: "- [x] 🏛️ MEPs"
+
+plenary:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/plenary/**"
+              - "src/**/*plenary*"
+      - title: "plenary:*"
+      - body: "- [x] 🏛️ Plenary Sessions"
+
+committees:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/committees/**"
+              - "src/**/*committee*"
+      - title: "committees:*"
+      - title: "committee:*"
+      - body: "- [x] 🏛️ Committees"
+
+documents:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/documents/**"
+              - "src/**/*document*"
+      - title: "documents:*"
+      - title: "document:*"
+      - body: "- [x] 🏛️ Documents"
+
+# 🎨 UI/UX Improvements
+ui:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/ui/**"
+              - "src/**/*.css"
+              - "src/**/*.scss"
+              - "src/**/*.less"
+              - "src/**/*.styles.*"
+      - title: "ui:*"
+      - title: "style:*"
+      - title: "design:*"
+      - body: "- [x] 🎨 UI/UX Improvements"
 
 # 🏗️ Infrastructure & Performance
 infrastructure:
@@ -86,7 +157,8 @@ infrastructure:
               - "configs/**"
               - "scripts/**"
               - "docker/**"
-              - "**/*.json"
+              - "**/vite.config.*"
+              - "**/vitest.config.*"
               - "**/tsconfig.json"
               - ".env*"
       - title: "infra:*"
@@ -106,6 +178,30 @@ performance:
       - title: "optimize:*"
       - body: "- [x] 🏗️ Infrastructure & Performance"
 
+build:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "package.json"
+              - "tsconfig*.json"
+              - "**/vite.config.*"
+              - "**/vitest.config.*"
+              - "**/eslint.config.*"
+      - title: "build:*"
+      - body: "- [x] 🏗️ Build Configuration"
+
+config:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "**/*.config.*"
+              - "**/eslint.config.*"
+              - "**/tsconfig*.json"
+              - ".prettierrc*"
+              - ".editorconfig"
+      - title: "config:*"
+      - body: "- [x] 🏗️ Configuration"
+
 # 🔄 Code Quality & Refactoring
 refactor:
   - any:
@@ -121,11 +217,21 @@ testing:
           - any-glob-to-any-file:
               - "src/**/*.test.*"
               - "src/**/*.spec.*"
-              - "test/**"
+              - "tests/**"
               - "__tests__/**"
               - "src/**/__tests__/**"
       - title: "test:*"
       - body: "- [x] 🔄 Code Quality & Refactoring"
+
+types:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/types/**"
+              - "**/*.d.ts"
+      - title: "types:*"
+      - title: "type:*"
+      - body: "- [x] 🔄 Type Definitions"
 
 # 🔒 Security & Compliance
 security:
@@ -135,24 +241,35 @@ security:
               - "src/**/security/**"
               - "src/**/auth/**"
               - ".github/workflows/codeql.yml"
-              - ".github/workflows/scorecards.yml"
+              - ".github/workflows/scorecard.yml"
               - "security/**"
-              - "SECURITY.md"
-              - "SECURITY_HEADERS.md"
+              - "SECURITY*.md"
       - title: "security:*"
       - title: "auth:*"
       - title: "fix-vuln:*"
       - body: "- [x] 🔒 Security & Compliance"
 
+gdpr:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/privacy/**"
+              - "src/**/gdpr/**"
+              - "**/privacy*"
+      - title: "gdpr:*"
+      - title: "privacy:*"
+      - body: "- [x] 🔒 GDPR Compliance"
+
 isms-compliance:
   - any:
       - changed-files:
           - any-glob-to-any-file:
-              - "SECURITY*.md"
-              - ".github/skills/isms-compliance/**"
+              - "**/ISMS*"
+              - "**/*ISMS*"
+              - "*_Policy.md"
       - title: "isms:*"
       - title: "compliance:*"
-      - body: "- [x] 📋 ISMS Compliance"
+      - body: "- [x] 🔒 ISMS Compliance"
 
 # 📝 Documentation
 documentation:
@@ -182,73 +299,68 @@ dependencies:
       - title: "dependencies:*"
       - body: "- [x] 📦 Dependencies Update"
 
-# TypeScript specific
-typescript:
+javascript:
   - changed-files:
       - any-glob-to-any-file:
-          - "**/*.ts"
-          - "**/*.tsx"
-          - "**/tsconfig*.json"
+          - "package.json"
+          - "package-lock.json"
 
-# Type definitions
-types:
+github_actions:
   - changed-files:
       - any-glob-to-any-file:
+          - ".github/workflows/**"
+          - ".github/actions/**"
+
+# 🧪 Testing Labels
+test-coverage-impact:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "**/*.test.{ts,tsx}"
+              - "**/__tests__/**"
+
+needs-tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/tools/**"
+          - "src/resources/**"
+          - "src/api/**"
+
+high-coverage:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/index.ts"
           - "src/types/**"
-          - "**/*.d.ts"
 
-# Configuration files
-config:
+e2e:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "e2e/**"
+              - "**/*.e2e.*"
+      - title: "e2e:*"
+
+# ⚙️ Component Labels
+component-tools:
   - changed-files:
       - any-glob-to-any-file:
-          - "**/*.config.*"
-          - "**/tsconfig*.json"
+          - "src/tools/**"
 
-# MCP Protocol specific
-mcp-protocol:
+component-resources:
   - changed-files:
       - any-glob-to-any-file:
-          - "src/**/protocol/**"
-          - "src/**/schema/**"
+          - "src/resources/**"
 
-# Caching and optimization
-caching:
+component-client:
   - changed-files:
       - any-glob-to-any-file:
-          - "src/**/cache/**"
-          - "src/**/redis/**"
+          - "src/client/**"
+          - "src/api/**"
 
-# Error handling
-error-handling:
+# MCP Schema validation
+schemas:
   - changed-files:
       - any-glob-to-any-file:
-          - "src/**/errors/**"
-          - "src/**/error-handler/**"
-
-# Logging
-logging:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "src/**/logging/**"
-          - "src/**/logger/**"
-
-# Validation
-validation:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "src/**/validation/**"
-          - "src/**/validators/**"
-
-# Models and schemas
-models:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "src/**/models/**"
-          - "src/**/schemas/**"
-
-# Utils and helpers
-utilities:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "src/**/utils/**"
-          - "src/**/helpers/**"
+          - "src/schemas/**"
+          - "src/**/*schema*"
+          - "src/**/*validation*"

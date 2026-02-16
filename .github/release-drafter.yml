@@ -3,27 +3,36 @@ tag-template: "$RESOLVED_VERSION"
 
 # Categories match exactly with PR labels from labeler.yml
 categories:
+  - title: "🚀 New MCP Tools"
+    labels:
+      - "mcp-tools"
+      - "mcp-resources"
+      - "mcp-prompts"
+
+  - title: "🏛️ European Parliament Features"
+    labels:
+      - "ep-api"
+      - "ep-data"
+      - "meps"
+      - "plenary"
+      - "committees"
+      - "documents"
+
   - title: "🚀 New Features"
     labels:
       - "feature"
       - "enhancement"
 
-  - title: "🔌 MCP Server"
+  - title: "🎨 UI/UX Improvements"
     labels:
-      - "mcp-server"
-      - "mcp-tools"
-      - "mcp-protocol"
-
-  - title: "📊 Data & API Integration"
-    labels:
-      - "data-access"
-      - "european-parliament"
+      - "ui"
+      - "design"
 
   - title: "🏗️ Infrastructure & Performance"
     labels:
       - "infrastructure"
       - "performance"
-      - "caching"
+      - "build"
       - "config"
 
   - title: "🔄 Code Quality & Refactoring"
@@ -31,11 +40,12 @@ categories:
       - "refactor"
       - "testing"
       - "types"
-      - "typescript"
+      - "schemas"
 
   - title: "🔒 Security & Compliance"
     labels:
       - "security"
+      - "gdpr"
       - "isms-compliance"
 
   - title: "📝 Documentation"
@@ -47,19 +57,28 @@ categories:
       - "dependencies"
       - "javascript"
       - "github_actions"
-    
+
   - title: "🐛 Bug Fixes"
     labels:
       - "bug"
       - "fix"
 
-  - title: "🛠️ Technical Improvements"
+  - title: "🧪 Test Coverage Improvements"
     labels:
-      - "error-handling"
-      - "logging"
-      - "validation"
-      - "models"
-      - "utilities"
+      - "test-coverage-impact"
+      - "needs-tests"
+      - "high-coverage"
+      - "e2e"
+
+  - title: "🔌 MCP Protocol Updates"
+    labels:
+      - "mcp-protocol"
+
+  - title: "⚙️ Component Updates"
+    labels:
+      - "component-tools"
+      - "component-resources"
+      - "component-client"
 
 change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
 change-title-escapes: '\<*_&' # Escape markdown special characters
@@ -70,16 +89,34 @@ template: |
 
   ## Security & Quality
   [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge)](https://scorecard.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server)
-
+  
   ## Security Compliance
   [![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://github.com/Hack23/European-Parliament-MCP-Server/attestations/)
 
   ## Technology Stack
+  - 🔌 **Model Context Protocol** - MCP SDK for AI integration
+  - ⚡ **Node.js 22+** - Modern JavaScript runtime
   - 🔷 **TypeScript** - Strict typing with latest standards
-  - 🔌 **MCP Protocol** - Model Context Protocol server implementation
-  - 🏛️ **European Parliament Data** - Access to EP datasets and APIs
-  - 🧪 **Vitest/Jest** - Testing framework (planned)
-  - 📦 **Node.js 22+** - Modern JavaScript runtime
+  - 🏛️ **European Parliament API** - Official open data access
+  - 🔒 **Zod** - Runtime schema validation
+  - 🌐 **Undici** - Fast HTTP/1.1 client
+  - 💾 **LRU Cache** - Efficient caching for API responses
+  - 🧪 **Vitest** - Fast unit testing with coverage
+
+  ## European Parliament Data Access
+  - 👥 **MEPs**: Current and historical member information
+  - 📊 **Plenary**: Sessions, votes, and attendance records
+  - 🏛️ **Committees**: Meetings, documents, and membership
+  - 📄 **Documents**: Legislative texts, reports, amendments
+  - ❓ **Questions**: Parliamentary questions and answers
+
+  ## ISMS Compliance
+  This release maintains compliance with:
+  - ✅ ISO 27001:2022 - Information Security Management
+  - ✅ NIST CSF 2.0 - Cybersecurity Framework
+  - ✅ CIS Controls v8.1 - Security Best Practices
+  - ✅ GDPR - Data Protection & Privacy
+  - ✅ SLSA Level 3 - Supply Chain Security
 
   ## Contributors
   Thanks to $CONTRIBUTORS for their contributions to this release!
@@ -95,9 +132,11 @@ version-resolver:
     labels:
       - "feature"
       - "enhancement"
-      - "mcp-server"
-      - "data-access"
-      - "european-parliament"
+      - "mcp-tools"
+      - "mcp-resources"
+      - "mcp-prompts"
+      - "ep-api"
+      - "ep-data"
   patch:
     labels:
       - "bug"
@@ -118,24 +157,90 @@ autolabeler:
       - '/^feat(\([^)]+\))?:/i'
       - '/^feature(\([^)]+\))?:/i'
       - '/^add(\([^)]+\))?:/i'
-  
+
   - label: "enhancement"
     title:
       - '/^enhance(\([^)]+\))?:/i'
       - '/^improve(\([^)]+\))?:/i'
       - '/^improvement(\([^)]+\))?:/i'
-  
+
   # Bug Fixes
   - label: "bug"
     title:
       - '/^fix(\([^)]+\))?:/i'
       - '/^bug(\([^)]+\))?:/i'
       - '/^bugfix(\([^)]+\))?:/i'
-  
-  - label: "fix"
+
+  # MCP Development
+  - label: "mcp-tools"
     title:
-      - '/^fix(\([^)]+\))?:/i'
-  
+      - '/^mcp(\([^)]+\))?:/i'
+      - '/^tool(\([^)]+\))?:/i'
+    files:
+      - 'src/tools/**/*'
+
+  - label: "mcp-resources"
+    title:
+      - '/^resource(\([^)]+\))?:/i'
+    files:
+      - 'src/resources/**/*'
+
+  - label: "mcp-prompts"
+    title:
+      - '/^prompt(\([^)]+\))?:/i'
+    files:
+      - 'src/prompts/**/*'
+
+  - label: "mcp-protocol"
+    title:
+      - '/^protocol(\([^)]+\))?:/i'
+    files:
+      - 'src/protocol/**/*'
+      - 'src/**/mcp/**/*'
+
+  # European Parliament
+  - label: "ep-api"
+    title:
+      - '/^ep-api(\([^)]+\))?:/i'
+      - '/^api(\([^)]+\))?:/i'
+    files:
+      - 'src/api/**/*'
+      - 'src/**/client/**/*'
+
+  - label: "ep-data"
+    title:
+      - '/^ep-data(\([^)]+\))?:/i'
+      - '/^data(\([^)]+\))?:/i'
+    files:
+      - 'src/data/**/*'
+
+  - label: "meps"
+    title:
+      - '/^meps(\([^)]+\))?:/i'
+      - '/^mep(\([^)]+\))?:/i'
+    files:
+      - 'src/**/meps/**/*'
+
+  - label: "plenary"
+    title:
+      - '/^plenary(\([^)]+\))?:/i'
+    files:
+      - 'src/**/plenary/**/*'
+
+  - label: "committees"
+    title:
+      - '/^committees(\([^)]+\))?:/i'
+      - '/^committee(\([^)]+\))?:/i'
+    files:
+      - 'src/**/committees/**/*'
+
+  - label: "documents"
+    title:
+      - '/^documents(\([^)]+\))?:/i'
+      - '/^document(\([^)]+\))?:/i'
+    files:
+      - 'src/**/documents/**/*'
+
   # Documentation
   - label: "documentation"
     title:
@@ -145,43 +250,8 @@ autolabeler:
       - '**/*.md'
       - 'docs/**/*'
       - '**/*.mdx'
-  
-  # MCP Server
-  - label: "mcp-server"
-    title:
-      - '/^server(\([^)]+\))?:/i'
-      - '/^mcp(\([^)]+\))?:/i'
-    files:
-      - 'src/**/server/**/*'
-      - 'src/**/mcp/**/*'
-  
-  - label: "mcp-tools"
-    title:
-      - '/^tools(\([^)]+\))?:/i'
-      - '/^handler(\([^)]+\))?:/i'
-    files:
-      - 'src/**/tools/**/*'
-      - 'src/**/handlers/**/*'
-  
-  # Data Access
-  - label: "data-access"
-    title:
-      - '/^data(\([^)]+\))?:/i'
-      - '/^api(\([^)]+\))?:/i'
-    files:
-      - 'src/**/api/**/*'
-      - 'src/**/data/**/*'
-      - 'src/**/client/**/*'
-  
-  - label: "european-parliament"
-    title:
-      - '/^parliament(\([^)]+\))?:/i'
-      - '/^europarl(\([^)]+\))?:/i'
-    files:
-      - 'src/**/parliament/**/*'
-      - 'src/**/europarl/**/*'
-  
-  # Dependencies - CRITICAL FOR DEPENDABOT/RENOVATE
+
+  # Dependencies - CRITICAL FOR DEPENDABOT
   - label: "dependencies"
     title:
       - '/^build\(deps\):/i'
@@ -194,7 +264,7 @@ autolabeler:
       - '/^bump/i'
       - '/^update.*dependenc/i'
       - '/^upgrade.*dependenc/i'
-  
+
   # Security
   - label: "security"
     title:
@@ -202,21 +272,29 @@ autolabeler:
       - '/^sec(\([^)]+\))?:/i'
       - '/^fix-vuln(\([^)]+\))?:/i'
       - '/\[security\]/i'
-  
+
+  - label: "gdpr"
+    title:
+      - '/^gdpr(\([^)]+\))?:/i'
+      - '/^privacy(\([^)]+\))?:/i'
+    files:
+      - 'src/**/privacy/**/*'
+      - 'src/**/gdpr/**/*'
+
   - label: "isms-compliance"
     title:
       - '/^isms(\([^)]+\))?:/i'
       - '/^compliance(\([^)]+\))?:/i'
     files:
-      - 'SECURITY*.md'
-      - '.github/skills/isms-compliance/**/*'
-  
+      - '**/ISMS*'
+      - '*_Policy.md'
+
   # Performance
   - label: "performance"
     title:
       - '/^perf(\([^)]+\))?:/i'
       - '/^optimize(\([^)]+\))?:/i'
-  
+
   # Infrastructure
   - label: "infrastructure"
     title:
@@ -225,9 +303,15 @@ autolabeler:
       - '/^cd(\([^)]+\))?:/i'
     files:
       - '.github/**/*'
-      - 'scripts/**/*'
-      - 'docker/**/*'
-  
+
+  - label: "build"
+    title:
+      - '/^build(\([^)]+\))?:/i'
+      - '/^chore\(build\):/i'
+    files:
+      - 'tsconfig.json'
+      - 'vitest.config.*'
+
   - label: "config"
     title:
       - '/^config(\([^)]+\))?:/i'
@@ -235,12 +319,12 @@ autolabeler:
     files:
       - '**/*.config.*'
       - '**/tsconfig*.json'
-  
+
   # Code Quality
   - label: "refactor"
     title:
       - '/^refactor(\([^)]+\))?:/i'
-  
+
   - label: "testing"
     title:
       - '/^test(\([^)]+\))?:/i'
@@ -248,8 +332,7 @@ autolabeler:
       - '**/*.test.*'
       - '**/*.spec.*'
       - '__tests__/**/*'
-      - 'test/**/*'
-  
+
   - label: "types"
     title:
       - '/^types(\([^)]+\))?:/i'
@@ -257,45 +340,46 @@ autolabeler:
     files:
       - '**/*.d.ts'
       - 'src/types/**/*'
-  
-  - label: "typescript"
+
+  # Test Coverage
+  - label: "test-coverage-impact"
     files:
-      - '**/*.ts'
-      - '**/*.tsx'
-      - '**/tsconfig*.json'
-  
-  # Technical components
-  - label: "error-handling"
+      - '**/*.test.{ts,tsx}'
+      - '**/__tests__/**'
+
+  - label: "needs-tests"
     files:
-      - 'src/**/errors/**/*'
-      - 'src/**/error-handler/**/*'
-  
-  - label: "logging"
+      - 'src/tools/**/*'
+      - 'src/resources/**/*'
+
+  - label: "high-coverage"
     files:
-      - 'src/**/logging/**/*'
-      - 'src/**/logger/**/*'
-  
-  - label: "validation"
+      - 'src/index.ts'
+      - 'src/types/**/*'
+
+  - label: "e2e"
+    title:
+      - '/^e2e(\([^)]+\))?:/i'
     files:
-      - 'src/**/validation/**/*'
-      - 'src/**/validators/**/*'
-  
-  - label: "models"
+      - 'e2e/**/*'
+      - '**/*.e2e.*'
+
+  # Component labels
+  - label: "component-tools"
     files:
-      - 'src/**/models/**/*'
-      - 'src/**/schemas/**/*'
-  
-  - label: "utilities"
+      - 'src/tools/**/*'
+
+  - label: "component-resources"
     files:
-      - 'src/**/utils/**/*'
-      - 'src/**/helpers/**/*'
-  
-  - label: "caching"
+      - 'src/resources/**/*'
+
+  - label: "component-client"
     files:
-      - 'src/**/cache/**/*'
-      - 'src/**/redis/**/*'
-  
-  - label: "mcp-protocol"
+      - 'src/client/**/*'
+      - 'src/api/**/*'
+
+  # Schemas
+  - label: "schemas"
     files:
-      - 'src/**/protocol/**/*'
-      - 'src/**/schema/**/*'
+      - 'src/schemas/**/*'
+      - 'src/**/*schema*'
