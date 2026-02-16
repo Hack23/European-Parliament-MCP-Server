@@ -10,17 +10,54 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/LICENSE.md"><img src="https://img.shields.io/github/license/Hack23/European-Parliament-MCP-Server.svg" alt="License"></a>
-  <a href="https://securityscorecards.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server"><img src="https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge" alt="OpenSSF Scorecard"></a>
-  <a href="https://slsa.dev"><img src="https://slsa.dev/images/gh-badge-level3.svg" alt="SLSA 3"></a>
-  <a href="https://spdx.dev"><img src="https://img.shields.io/badge/SBOM-SPDX-blue" alt="SBOM"></a>
+  <!-- Build Status -->
+  <a href="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/main.yml">
+    <img src="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/main.yml/badge.svg" alt="Build Status">
+  </a>
+  
+  <!-- License -->
+  <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/LICENSE.md">
+    <img src="https://img.shields.io/github/license/Hack23/European-Parliament-MCP-Server.svg" alt="License">
+  </a>
+  
+  <!-- OpenSSF Scorecard -->
+  <a href="https://securityscorecards.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server">
+    <img src="https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge" alt="OpenSSF Scorecard">
+  </a>
+  
+  <!-- SLSA Level 3 -->
+  <a href="https://slsa.dev">
+    <img src="https://slsa.dev/images/gh-badge-level3.svg" alt="SLSA 3">
+  </a>
+  
+  <!-- SBOM -->
+  <a href="https://spdx.dev">
+    <img src="https://img.shields.io/badge/SBOM-SPDX-blue" alt="SBOM">
+  </a>
+  
+  <!-- SBOM Quality -->
+  <img src="https://img.shields.io/badge/SBOM%20Quality-8.5%2F10-brightgreen" alt="SBOM Quality">
+  
+  <!-- Code Coverage -->
+  <a href="https://codecov.io/gh/Hack23/European-Parliament-MCP-Server">
+    <img src="https://codecov.io/gh/Hack23/European-Parliament-MCP-Server/branch/main/graph/badge.svg" alt="Code Coverage">
+  </a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/Hack23/ISMS-PUBLIC"><img src="https://img.shields.io/badge/ISMS-ISO%2027001-success?style=flat-square" alt="ISO 27001"></a>
-  <a href="https://github.com/Hack23/ISMS-PUBLIC"><img src="https://img.shields.io/badge/ISMS-NIST%20CSF%202.0-success?style=flat-square" alt="NIST CSF 2.0"></a>
-  <a href="https://github.com/Hack23/ISMS-PUBLIC"><img src="https://img.shields.io/badge/ISMS-CIS%20Controls%20v8.1-success?style=flat-square" alt="CIS Controls"></a>
-  <a href="https://gdpr.eu/"><img src="https://img.shields.io/badge/GDPR-Compliant-success?style=flat-square" alt="GDPR"></a>
+  <!-- ISMS Compliance -->
+  <a href="https://github.com/Hack23/ISMS-PUBLIC">
+    <img src="https://img.shields.io/badge/ISMS-ISO%2027001-success?style=flat-square" alt="ISO 27001">
+  </a>
+  <a href="https://github.com/Hack23/ISMS-PUBLIC">
+    <img src="https://img.shields.io/badge/ISMS-NIST%20CSF%202.0-success?style=flat-square" alt="NIST CSF 2.0">
+  </a>
+  <a href="https://github.com/Hack23/ISMS-PUBLIC">
+    <img src="https://img.shields.io/badge/ISMS-CIS%20Controls%20v8.1-success?style=flat-square" alt="CIS Controls">
+  </a>
+  <a href="https://gdpr.eu/">
+    <img src="https://img.shields.io/badge/GDPR-Compliant-success?style=flat-square" alt="GDPR">
+  </a>
 </p>
 
 ---
@@ -109,6 +146,7 @@ Configure in `.vscode/mcp.json`:
 - [**ARCHITECTURE.md**](./ARCHITECTURE.md) - Complete architecture and design documentation
 - [**SECURITY.md**](./SECURITY.md) - Security policy and vulnerability disclosure
 - [**SECURITY_HEADERS.md**](./SECURITY_HEADERS.md) - API security headers implementation
+- [**docs/SBOM.md**](./docs/SBOM.md) - Software Bill of Materials documentation
 - [**CONTRIBUTING.md**](./CONTRIBUTING.md) - Contribution guidelines
 - [**CODE_OF_CONDUCT.md**](./CODE_OF_CONDUCT.md) - Community code of conduct
 - [**.github/copilot-instructions.md**](./.github/copilot-instructions.md) - Development guidelines for GitHub Copilot
