@@ -15,7 +15,9 @@ This file provides guidance for GitHub Copilot coding agent when working on this
 
 ## 🎯 Agent Skills Catalog
 
-This repository includes 11 comprehensive skills that provide reusable patterns:
+This repository includes **17 comprehensive skills** that provide reusable patterns:
+
+### Core Development Skills (11)
 - **mcp-server-development** - MCP protocol patterns, tool implementation
 - **european-parliament-api** - EP API integration, caching, attribution
 - **gdpr-compliance** - GDPR and data protection patterns
@@ -26,8 +28,17 @@ This repository includes 11 comprehensive skills that provide reusable patterns:
 - **testing-strategy** - 80%+ coverage, deterministic API tests
 - **documentation-standards** - JSDoc, OpenAPI, ISMS documentation
 - **performance-optimization** - Node.js/API performance optimization
+- **testing-mcp-tools** - MCP tool testing, 80%+ coverage
 
-Reference these skills when working on related tasks.
+### Comprehensive ISMS Skills (6)
+- **open-source-governance** - OpenSSF Scorecard, SLSA, SBOM, license compliance, vulnerability management
+- **threat-modeling-framework** - STRIDE methodology, threat model docs, trust boundaries
+- **architecture-documentation** - C4 model, SECURITY_ARCHITECTURE.md, Mermaid diagrams
+- **aws-security-architecture** - AWS Control Tower, Well-Architected, VPC, GuardDuty, HA/DR
+- **compliance-frameworks** - ISO 27001, NIST CSF 2.0, CIS Controls, EU CRA mapping
+- **ai-development-governance** - AI-augmented dev controls, GitHub Copilot governance
+
+Reference these skills when working on related tasks. All skills include evidence links to [Hack23 ISMS-PUBLIC](https://github.com/Hack23/ISMS-PUBLIC) policies.
 
 ## Project Overview
 
