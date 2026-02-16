@@ -115,23 +115,31 @@ Work in Progress pull requests are also welcome to get feedback early on, or if 
 
 ## Supply Chain Security
 
-This project generates a Software Bill of Materials (SBOM) for every release to ensure supply chain transparency and security. The SBOM includes:
+This project generates a Software Bill of Materials (SBOM) for every release and implements SLSA Level 3 build provenance to ensure supply chain transparency and security.
 
+**Build Attestations (SLSA Level 3):**
+- Cryptographic proof of build integrity for all release artifacts
+- Non-falsifiable provenance using GitHub Sigstore
+- Verify with: `gh attestation verify <artifact> --owner Hack23 --repo European-Parliament-MCP-Server`
+- npm packages published with provenance: `npm view european-parliament-mcp-server dist.attestations`
+
+**SBOM Generation:**
 - All direct and transitive dependencies
 - Package versions, licenses, and checksums
 - Vulnerability scanning results
-
-**SBOM Generation:**
-- Automatically runs on pushes to `main`, releases, and tags
 - Generated in SPDX 2.3+ and CycloneDX formats
 - Quality validated with SBOMQS (minimum score 7.0/10)
 - Vulnerability scanned with Grype
 
-**Accessing SBOM:**
+**Accessing Security Artifacts:**
 - Download from [latest release](https://github.com/Hack23/European-Parliament-MCP-Server/releases/latest)
-- Verify with: `gh attestation verify sbom.spdx.json --owner Hack23 --repo European-Parliament-MCP-Server`
+- SBOM: `sbom.spdx.json` and `sbom.cyclonedx.json`
+- Provenance: `provenance.intoto.jsonl`
+- Checksums: `checksums.txt`
 
-For more details, see [SBOM Documentation](./docs/SBOM.md).
+For more details, see:
+- [SBOM Documentation](./docs/SBOM.md)
+- [Attestations Documentation](./docs/ATTESTATIONS.md)
 
 ## Resources
 
