@@ -22,7 +22,7 @@ We'd also love PRs. If you're thinking of a large PR, we advise opening up an is
 4. Create a new branch: `git checkout -b my-branch-name`
 5. Make your change, add tests, and make sure the tests still pass.
 6. Push to your fork and [submit a pull request][pr].
-7. Pat your self on the back and wait for your pull request to be reviewed and merged.
+7. Pat yourself on the back and wait for your pull request to be reviewed and merged.
 
 ### Pull Request Guidelines
 

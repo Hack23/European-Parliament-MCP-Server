@@ -33,16 +33,16 @@ query-filters:
   
   # Include MCP-specific security patterns
   - include:
-      tags contain: ["external/cwe/cwe-20", "external/cwe/cwe-79", "external/cwe/cwe-89", "external/cwe/cwe-22", "external/cwe/cwe-502"]
+      tags containAny: ["external/cwe/cwe-20", "external/cwe/cwe-79", "external/cwe/cwe-89", "external/cwe/cwe-22", "external/cwe/cwe-502"]
   
   # Include injection vulnerabilities
   - include:
-      tags contain: ["external/cwe/cwe-78", "external/cwe/cwe-94"]
+      tags containAny: ["external/cwe/cwe-78", "external/cwe/cwe-94"]
   
   # Include authentication and authorization issues
   - include:
-      tags contain: ["external/cwe/cwe-287", "external/cwe/cwe-306"]
+      tags containAny: ["external/cwe/cwe-287", "external/cwe/cwe-306"]
   
   # Include sensitive data exposure
   - include:
-      tags contain: ["external/cwe/cwe-200", "external/cwe/cwe-312"]
+      tags containAny: ["external/cwe/cwe-200", "external/cwe/cwe-312"]

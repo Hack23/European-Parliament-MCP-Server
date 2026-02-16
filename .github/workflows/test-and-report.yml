@@ -167,9 +167,6 @@ jobs:
 
       - name: Run unit tests with coverage
         run: npm run test:coverage
-        env:
-          JEST_JUNIT_OUTPUT_DIR: "coverage"
-          JEST_JUNIT_OUTPUT_NAME: "junit.xml"
 
       - name: Check coverage thresholds
         run: |
@@ -178,8 +175,11 @@ jobs:
             COVERAGE=$(jq '.total.lines.pct' coverage/coverage-summary.json)
             echo "Current coverage: $COVERAGE%"
             
-            # Check if coverage meets requirements (80% minimum)
-            if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+            # Convert coverage to integer (percentage * 100) for comparison
+            COVERAGE_INT=$(awk -v c="$COVERAGE" 'BEGIN { printf "%d", c * 100 }')
+            
+            # Check if coverage meets requirements (80% minimum = 8000)
+            if [ "$COVERAGE_INT" -lt 8000 ]; then
               echo "⚠️ Coverage $COVERAGE% is below required 80%"
               echo "::warning::Coverage $COVERAGE% is below required 80%"
             else
