@@ -41,7 +41,6 @@
     
     // Type Checking
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
     
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
