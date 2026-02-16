@@ -87,6 +87,144 @@ Specialized in:
 
 ---
 
+### 🔌 mcp-developer
+**Expert in Model Context Protocol implementation and MCP server architecture**
+
+Specialized in:
+- MCP protocol specification compliance (tools, resources, prompts)
+- Tool development with Zod schema validation
+- Resource URI patterns and handlers
+- Prompt template design for AI assistants
+- StdioServerTransport and HTTP transport
+- MCP-compliant error handling and logging
+- @modelcontextprotocol/sdk best practices
+
+**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+
+**Key Capabilities:**
+- 🛠️ Implement MCP tools with comprehensive input validation
+- 📦 Design resource URIs for European Parliament data
+- 💬 Create effective prompt templates for AI workflows
+- ⚡ Optimize MCP handler performance
+- 🔒 Implement security controls for MCP endpoints
+
+---
+
+### 🏛️ european-parliament-specialist
+**Expert in European Parliament datasets, APIs, and GDPR compliance**
+
+Specialized in:
+- European Parliament Open Data Portal (`data.europarl.europa.eu`)
+- MEPs, plenary sessions, committees, documents, questions datasets
+- Parliamentary procedures and legislative processes
+- GDPR compliance for parliamentary data
+- Multilingual support (24 EU languages)
+- Data attribution and European Parliament terms of use
+- API rate limiting and caching strategies
+
+**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+
+**Key Capabilities:**
+- 🗳️ Navigate all 5 core European Parliament datasets
+- 📊 Implement proper API caching (1h-24h based on data type)
+- 🌍 Handle multilingual parliamentary data
+- 🔒 Ensure GDPR compliance for MEP personal data
+- ⚖️ Apply proper European Parliament data attribution
+
+---
+
+### 🔗 api-integration-engineer
+**Expert in API client design, rate limiting, retry strategies, and fault tolerance**
+
+Specialized in:
+- RESTful API client architecture
+- HTTP caching with ETag and Cache-Control
+- Rate limiting algorithms (token bucket, leaky bucket)
+- Retry strategies with exponential backoff and jitter
+- Circuit breaker patterns for fault tolerance
+- Connection pooling and HTTP/2
+- Request metrics and latency tracking
+
+**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+
+**Key Capabilities:**
+- 🚀 Design high-performance API clients with connection pooling
+- 🔄 Implement robust retry logic with exponential backoff
+- ⚡ Optimize response caching for <200ms API responses
+- 📊 Track request metrics (P50, P95, P99 latencies)
+- 🛡️ Implement circuit breakers for resilience
+
+---
+
+### 📐 zod-schema-architect
+**Expert in Zod schema design, runtime validation, and TypeScript type inference**
+
+Specialized in:
+- Comprehensive Zod schema design and validation
+- TypeScript type inference with `z.infer<>`
+- Branded types for IDs and sensitive data
+- Discriminated unions for type-safe variants
+- Custom refinements and transformations
+- Async validation patterns
+- Schema composition and reusability
+
+**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+
+**Key Capabilities:**
+- ✅ Create bulletproof input validation with Zod schemas
+- 🏷️ Design branded types to prevent ID mixing
+- 🔀 Implement discriminated unions for type safety
+- 🔄 Build reusable schema patterns (extend, merge, pick)
+- 📝 Provide clear, actionable validation error messages
+
+---
+
+### ⚡ performance-optimizer
+**Expert in Node.js performance optimization and sub-200ms response times**
+
+Specialized in:
+- API response time optimization (<200ms P95 target)
+- LRU caching strategies with proper TTL
+- Memory management and leak detection
+- Event loop monitoring and async optimization
+- Database query optimization
+- HTTP/2 and response compression
+- CPU profiling and flame graph analysis
+
+**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+
+**Key Capabilities:**
+- 🏃 Achieve <200ms P95 API response times
+- 💾 Implement multi-tier caching (L1: memory, L2: Redis)
+- 🧠 Monitor memory usage and detect leaks
+- 📊 Profile CPU bottlenecks with flame graphs
+- ⚙️ Optimize Promise usage for parallel execution
+
+---
+
+### 🔐 isms-compliance-auditor
+**Expert in ISMS policy alignment, ISO 27001, NIST CSF, CIS Controls, and compliance**
+
+Specialized in:
+- ISO 27001:2022 control implementation and mapping
+- NIST Cybersecurity Framework 2.0 alignment
+- CIS Controls v8.1 safeguard implementation
+- GDPR compliance verification
+- SLSA Level 3 and OSSF Scorecard optimization
+- Security audit logging and monitoring
+- Vulnerability management and SLA tracking
+
+**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+
+**Key Capabilities:**
+- 📋 Map code to ISO 27001, NIST CSF, CIS Controls
+- 🔍 Audit ISMS policy compliance across codebase
+- 📝 Generate compliance checklists and reports
+- 🚨 Track vulnerabilities with remediation SLAs
+- 🛡️ Verify GDPR and supply chain security controls
+
+---
+
 ## 🔄 Agent Workflow
 
 ```mermaid
@@ -238,11 +376,17 @@ You specialize in:
 |--------|--------------|-----------------|------------|
 | Product Analysis | 🎯 product-task-agent | All agents | GitHub |
 | Issue Management | 🎯 product-task-agent | - | GitHub |
-| TypeScript/API | 🎨 frontend-specialist | 🧪 test-engineer | Filesystem |
+| MCP Protocol | 🔌 mcp-developer | 🎨 frontend-specialist | Filesystem |
+| EP Data Integration | 🏛️ european-parliament-specialist | 🔗 api-integration-engineer | Filesystem |
+| API Client Design | 🔗 api-integration-engineer | 🏛️ european-parliament-specialist | Filesystem |
+| Input Validation | 📐 zod-schema-architect | 🔌 mcp-developer | Filesystem |
+| Performance | ⚡ performance-optimizer | 🔗 api-integration-engineer | Filesystem |
+| TypeScript/API | 🎨 frontend-specialist | 📐 zod-schema-architect | Filesystem |
 | Testing | 🧪 test-engineer | 🎨 frontend-specialist | Filesystem |
-| Security | 🔒 security-specialist | 🎯 product-task-agent | GitHub |
+| Security | 🔒 security-specialist | 🔐 isms-compliance-auditor | GitHub |
 | Documentation | 📝 documentation-writer | - | Filesystem |
-| ISMS Compliance | 🔒 security-specialist | 🎯 product-task-agent | GitHub |
+| ISMS Compliance | 🔐 isms-compliance-auditor | 🔒 security-specialist | GitHub |
+| GDPR Compliance | 🏛️ european-parliament-specialist | 🔐 isms-compliance-auditor | Filesystem |
 
 ## 📚 Resources
 
