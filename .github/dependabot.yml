@@ -9,7 +9,7 @@ updates:
       timezone: "Europe/Stockholm"
     open-pull-requests-limit: 10
     reviewers:
-      - "Hack23/security-team"
+      - "@Hack23/security-team"
     labels:
       - "dependencies"
       - "javascript"
