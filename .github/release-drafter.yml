@@ -1,0 +1,301 @@
+name-template: "Release $RESOLVED_VERSION"
+tag-template: "$RESOLVED_VERSION"
+
+# Categories match exactly with PR labels from labeler.yml
+categories:
+  - title: "🚀 New Features"
+    labels:
+      - "feature"
+      - "enhancement"
+
+  - title: "🔌 MCP Server"
+    labels:
+      - "mcp-server"
+      - "mcp-tools"
+      - "mcp-protocol"
+
+  - title: "📊 Data & API Integration"
+    labels:
+      - "data-access"
+      - "european-parliament"
+
+  - title: "🏗️ Infrastructure & Performance"
+    labels:
+      - "infrastructure"
+      - "performance"
+      - "caching"
+      - "config"
+
+  - title: "🔄 Code Quality & Refactoring"
+    labels:
+      - "refactor"
+      - "testing"
+      - "types"
+      - "typescript"
+
+  - title: "🔒 Security & Compliance"
+    labels:
+      - "security"
+      - "isms-compliance"
+
+  - title: "📝 Documentation"
+    labels:
+      - "documentation"
+
+  - title: "📦 Dependencies"
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "github_actions"
+    
+  - title: "🐛 Bug Fixes"
+    labels:
+      - "bug"
+      - "fix"
+
+  - title: "🛠️ Technical Improvements"
+    labels:
+      - "error-handling"
+      - "logging"
+      - "validation"
+      - "models"
+      - "utilities"
+
+change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
+change-title-escapes: '\<*_&' # Escape markdown special characters
+
+template: |
+  # Highlights
+  $CHANGES
+
+  ## Security & Quality
+  [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge)](https://scorecard.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server)
+
+  ## Security Compliance
+  [![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://github.com/Hack23/European-Parliament-MCP-Server/attestations/)
+
+  ## Technology Stack
+  - 🔷 **TypeScript** - Strict typing with latest standards
+  - 🔌 **MCP Protocol** - Model Context Protocol server implementation
+  - 🏛️ **European Parliament Data** - Access to EP datasets and APIs
+  - 🧪 **Vitest/Jest** - Testing framework (planned)
+  - 📦 **Node.js 22+** - Modern JavaScript runtime
+
+  ## Contributors
+  Thanks to $CONTRIBUTORS for their contributions to this release!
+
+  **Full Changelog**: https://github.com/Hack23/European-Parliament-MCP-Server/compare/$PREVIOUS_TAG...$RESOLVED_VERSION
+
+version-resolver:
+  major:
+    labels:
+      - "major"
+      - "breaking"
+  minor:
+    labels:
+      - "feature"
+      - "enhancement"
+      - "mcp-server"
+      - "data-access"
+      - "european-parliament"
+  patch:
+    labels:
+      - "bug"
+      - "fix"
+      - "security"
+      - "dependencies"
+      - "documentation"
+      - "performance"
+      - "refactor"
+  default: patch
+
+# Autolabeler is BACKUP for PRs without labels
+# Primary labeling happens via .github/labeler.yml
+autolabeler:
+  # Features & Enhancements
+  - label: "feature"
+    title:
+      - '/^feat(\([^)]+\))?:/i'
+      - '/^feature(\([^)]+\))?:/i'
+      - '/^add(\([^)]+\))?:/i'
+  
+  - label: "enhancement"
+    title:
+      - '/^enhance(\([^)]+\))?:/i'
+      - '/^improve(\([^)]+\))?:/i'
+      - '/^improvement(\([^)]+\))?:/i'
+  
+  # Bug Fixes
+  - label: "bug"
+    title:
+      - '/^fix(\([^)]+\))?:/i'
+      - '/^bug(\([^)]+\))?:/i'
+      - '/^bugfix(\([^)]+\))?:/i'
+  
+  - label: "fix"
+    title:
+      - '/^fix(\([^)]+\))?:/i'
+  
+  # Documentation
+  - label: "documentation"
+    title:
+      - '/^docs(\([^)]+\))?:/i'
+      - '/^doc(\([^)]+\))?:/i'
+    files:
+      - '**/*.md'
+      - 'docs/**/*'
+      - '**/*.mdx'
+  
+  # MCP Server
+  - label: "mcp-server"
+    title:
+      - '/^server(\([^)]+\))?:/i'
+      - '/^mcp(\([^)]+\))?:/i'
+    files:
+      - 'src/**/server/**/*'
+      - 'src/**/mcp/**/*'
+  
+  - label: "mcp-tools"
+    title:
+      - '/^tools(\([^)]+\))?:/i'
+      - '/^handler(\([^)]+\))?:/i'
+    files:
+      - 'src/**/tools/**/*'
+      - 'src/**/handlers/**/*'
+  
+  # Data Access
+  - label: "data-access"
+    title:
+      - '/^data(\([^)]+\))?:/i'
+      - '/^api(\([^)]+\))?:/i'
+    files:
+      - 'src/**/api/**/*'
+      - 'src/**/data/**/*'
+      - 'src/**/client/**/*'
+  
+  - label: "european-parliament"
+    title:
+      - '/^parliament(\([^)]+\))?:/i'
+      - '/^europarl(\([^)]+\))?:/i'
+    files:
+      - 'src/**/parliament/**/*'
+      - 'src/**/europarl/**/*'
+  
+  # Dependencies - CRITICAL FOR DEPENDABOT/RENOVATE
+  - label: "dependencies"
+    title:
+      - '/^build\(deps\):/i'
+      - '/^build\(deps-dev\):/i'
+      - '/^chore\(deps\):/i'
+      - '/^chore\(deps-dev\):/i'
+      - '/^deps(\([^)]+\))?:/i'
+      - '/^dependency(\([^)]+\))?:/i'
+      - '/^dependencies(\([^)]+\))?:/i'
+      - '/^bump/i'
+      - '/^update.*dependenc/i'
+      - '/^upgrade.*dependenc/i'
+  
+  # Security
+  - label: "security"
+    title:
+      - '/^security(\([^)]+\))?:/i'
+      - '/^sec(\([^)]+\))?:/i'
+      - '/^fix-vuln(\([^)]+\))?:/i'
+      - '/\[security\]/i'
+  
+  - label: "isms-compliance"
+    title:
+      - '/^isms(\([^)]+\))?:/i'
+      - '/^compliance(\([^)]+\))?:/i'
+    files:
+      - 'SECURITY*.md'
+      - '.github/skills/isms-compliance/**/*'
+  
+  # Performance
+  - label: "performance"
+    title:
+      - '/^perf(\([^)]+\))?:/i'
+      - '/^optimize(\([^)]+\))?:/i'
+  
+  # Infrastructure
+  - label: "infrastructure"
+    title:
+      - '/^infra(\([^)]+\))?:/i'
+      - '/^ci(\([^)]+\))?:/i'
+      - '/^cd(\([^)]+\))?:/i'
+    files:
+      - '.github/**/*'
+      - 'scripts/**/*'
+      - 'docker/**/*'
+  
+  - label: "config"
+    title:
+      - '/^config(\([^)]+\))?:/i'
+      - '/^chore\(config\):/i'
+    files:
+      - '**/*.config.*'
+      - '**/tsconfig*.json'
+  
+  # Code Quality
+  - label: "refactor"
+    title:
+      - '/^refactor(\([^)]+\))?:/i'
+  
+  - label: "testing"
+    title:
+      - '/^test(\([^)]+\))?:/i'
+    files:
+      - '**/*.test.*'
+      - '**/*.spec.*'
+      - '__tests__/**/*'
+      - 'test/**/*'
+  
+  - label: "types"
+    title:
+      - '/^types(\([^)]+\))?:/i'
+      - '/^type(\([^)]+\))?:/i'
+    files:
+      - '**/*.d.ts'
+      - 'src/types/**/*'
+  
+  - label: "typescript"
+    files:
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/tsconfig*.json'
+  
+  # Technical components
+  - label: "error-handling"
+    files:
+      - 'src/**/errors/**/*'
+      - 'src/**/error-handler/**/*'
+  
+  - label: "logging"
+    files:
+      - 'src/**/logging/**/*'
+      - 'src/**/logger/**/*'
+  
+  - label: "validation"
+    files:
+      - 'src/**/validation/**/*'
+      - 'src/**/validators/**/*'
+  
+  - label: "models"
+    files:
+      - 'src/**/models/**/*'
+      - 'src/**/schemas/**/*'
+  
+  - label: "utilities"
+    files:
+      - 'src/**/utils/**/*'
+      - 'src/**/helpers/**/*'
+  
+  - label: "caching"
+    files:
+      - 'src/**/cache/**/*'
+      - 'src/**/redis/**/*'
+  
+  - label: "mcp-protocol"
+    files:
+      - 'src/**/protocol/**/*'
+      - 'src/**/schema/**/*'

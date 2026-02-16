@@ -1,0 +1,254 @@
+# Label definitions for European Parliament MCP Server project
+
+# 🚀 Features and Enhancements
+feature:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/feature/**"
+              - "src/**/feat/**"
+      - title: "feat:*"
+      - title: "feature:*"
+      - title: "add:*"
+      - body: "- [x] 🚀 New Feature/Enhancement"
+
+enhancement:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/enhance/**"
+              - "src/**/improvement/**"
+      - title: "enhance:*"
+      - title: "improvement:*"
+      - body: "- [x] 🚀 New Feature/Enhancement"
+
+# 🐛 Bug Fixes
+bug:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/fix/**"
+              - "src/**/bug/**"
+      - title: "fix:*"
+      - title: "bug:*"
+      - body: "- [x] 🐛 Bug Fix"
+
+# 🔌 MCP Server Specific
+mcp-server:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/server/**"
+              - "src/**/mcp/**"
+              - "src/index.ts"
+      - title: "server:*"
+      - title: "mcp:*"
+      - body: "- [x] 🔌 MCP Server"
+
+mcp-tools:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/tools/**"
+              - "src/**/handlers/**"
+      - title: "tools:*"
+      - title: "handler:*"
+      - body: "- [x] 🛠️ MCP Tools"
+
+# 📊 Data & API Integration
+data-access:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/api/**"
+              - "src/**/data/**"
+              - "src/**/client/**"
+      - title: "data:*"
+      - title: "api:*"
+      - body: "- [x] 📊 Data Access"
+
+european-parliament:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/parliament/**"
+              - "src/**/europarl/**"
+      - title: "parliament:*"
+      - title: "europarl:*"
+      - body: "- [x] 🏛️ European Parliament"
+
+# 🏗️ Infrastructure & Performance
+infrastructure:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - ".github/**"
+              - "configs/**"
+              - "scripts/**"
+              - "docker/**"
+              - "**/*.json"
+              - "**/tsconfig.json"
+              - ".env*"
+      - title: "infra:*"
+      - title: "ci:*"
+      - title: "cd:*"
+      - body: "- [x] 🏗️ Infrastructure & Performance"
+
+performance:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/perf/**"
+              - "src/**/performance/**"
+              - "src/**/optimize/**"
+              - "src/**/cache/**"
+      - title: "perf:*"
+      - title: "optimize:*"
+      - body: "- [x] 🏗️ Infrastructure & Performance"
+
+# 🔄 Code Quality & Refactoring
+refactor:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/refactor/**"
+      - title: "refactor:*"
+      - body: "- [x] 🔄 Code Quality & Refactoring"
+
+testing:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/*.test.*"
+              - "src/**/*.spec.*"
+              - "test/**"
+              - "__tests__/**"
+              - "src/**/__tests__/**"
+      - title: "test:*"
+      - body: "- [x] 🔄 Code Quality & Refactoring"
+
+# 🔒 Security & Compliance
+security:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/security/**"
+              - "src/**/auth/**"
+              - ".github/workflows/codeql.yml"
+              - ".github/workflows/scorecards.yml"
+              - "security/**"
+              - "SECURITY.md"
+              - "SECURITY_HEADERS.md"
+      - title: "security:*"
+      - title: "auth:*"
+      - title: "fix-vuln:*"
+      - body: "- [x] 🔒 Security & Compliance"
+
+isms-compliance:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "SECURITY*.md"
+              - ".github/skills/isms-compliance/**"
+      - title: "isms:*"
+      - title: "compliance:*"
+      - body: "- [x] 📋 ISMS Compliance"
+
+# 📝 Documentation
+documentation:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "**/*.md"
+              - "docs/**"
+              - "LICENSE"
+              - "**/*.mdx"
+      - title: "docs:*"
+      - title: "doc:*"
+      - body: "- [x] 📝 Documentation"
+
+# 📦 Dependencies
+dependencies:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "package.json"
+              - "package-lock.json"
+              - "yarn.lock"
+              - "pnpm-lock.yaml"
+      - title: "build(deps):*"
+      - title: "deps:*"
+      - title: "dependency:*"
+      - title: "dependencies:*"
+      - body: "- [x] 📦 Dependencies Update"
+
+# TypeScript specific
+typescript:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.ts"
+          - "**/*.tsx"
+          - "**/tsconfig*.json"
+
+# Type definitions
+types:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/types/**"
+          - "**/*.d.ts"
+
+# Configuration files
+config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.config.*"
+          - "**/tsconfig*.json"
+
+# MCP Protocol specific
+mcp-protocol:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/**/protocol/**"
+          - "src/**/schema/**"
+
+# Caching and optimization
+caching:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/**/cache/**"
+          - "src/**/redis/**"
+
+# Error handling
+error-handling:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/**/errors/**"
+          - "src/**/error-handler/**"
+
+# Logging
+logging:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/**/logging/**"
+          - "src/**/logger/**"
+
+# Validation
+validation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/**/validation/**"
+          - "src/**/validators/**"
+
+# Models and schemas
+models:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/**/models/**"
+          - "src/**/schemas/**"
+
+# Utils and helpers
+utilities:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/**/utils/**"
+          - "src/**/helpers/**"
