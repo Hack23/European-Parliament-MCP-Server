@@ -22,23 +22,6 @@ const DateStringSchema = z.string()
   .describe('Date in YYYY-MM-DD format');
 
 /**
- * Pagination parameters schema
- */
-export const PaginationParamsSchema = z.object({
-  limit: z.number()
-    .int()
-    .min(1)
-    .max(100)
-    .default(50)
-    .describe('Maximum number of results (1-100)'),
-  offset: z.number()
-    .int()
-    .min(0)
-    .default(0)
-    .describe('Pagination offset')
-});
-
-/**
  * Get MEPs input schema
  */
 export const GetMEPsSchema = z.object({
@@ -97,8 +80,9 @@ export const MEPSchema = z.object({
 
 /**
  * Voting statistics schema
+ * @internal - Used internally within MEPDetailsSchema
  */
-export const VotingStatisticsSchema = z.object({
+const VotingStatisticsSchema = z.object({
   totalVotes: z.number().int().min(0),
   votesFor: z.number().int().min(0),
   votesAgainst: z.number().int().min(0),
@@ -209,8 +193,9 @@ export const VotingRecordSchema = z.object({
 
 /**
  * Document type enum
+ * @internal - Used internally within SearchDocumentsSchema and other schemas
  */
-export const DocumentTypeSchema = z.enum([
+const DocumentTypeSchema = z.enum([
   'REPORT',
   'RESOLUTION',
   'DECISION',

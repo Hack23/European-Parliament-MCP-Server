@@ -7,7 +7,11 @@
  * and regulatory compliance.
  */
 
-export interface AuditLogEntry {
+/**
+ * Audit log entry structure
+ * @internal - Used only within AuditLogger implementation
+ */
+interface AuditLogEntry {
   /**
    * Timestamp of the event
    */

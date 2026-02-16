@@ -7,7 +7,11 @@
  * and ensure fair resource allocation.
  */
 
-export interface RateLimiterOptions {
+/**
+ * Rate limiter configuration options
+ * @internal - Used only for RateLimiter initialization
+ */
+interface RateLimiterOptions {
   /**
    * Maximum number of tokens in the bucket
    */

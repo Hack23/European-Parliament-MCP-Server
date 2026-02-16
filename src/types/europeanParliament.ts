@@ -141,23 +141,6 @@ export interface ParliamentaryQuestion {
 }
 
 /**
- * API error response
- */
-export interface APIError {
-  code: string;
-  message: string;
-  details?: unknown;
-}
-
-/**
- * Pagination parameters
- */
-export interface PaginationParams {
-  limit: number;
-  offset: number;
-}
-
-/**
  * Paginated response
  */
 export interface PaginatedResponse<T> {

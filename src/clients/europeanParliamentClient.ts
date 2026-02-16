@@ -41,8 +41,9 @@ export class APIError extends Error {
 
 /**
  * European Parliament API Client configuration
+ * @internal - Used only for client initialization
  */
-export interface EPClientConfig {
+interface EPClientConfig {
   /**
    * Base URL for EP API
    */
