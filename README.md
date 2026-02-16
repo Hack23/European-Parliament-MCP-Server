@@ -218,10 +218,16 @@ This project aligns with [Hack23 AB's Information Security Management System (IS
 
 ### Supply Chain Security
 
-- **SLSA Level 3**: Build provenance and attestations
-- **SBOM**: SPDX-format Software Bill of Materials
-- **Dependency Review**: Automated vulnerability scanning
-- **License Compliance**: Only MIT, Apache-2.0, BSD, ISC allowed
+This project achieves **SLSA Level 3** compliance:
+- ✅ **Build Provenance** - Cryptographic proof of build integrity
+- ✅ **Attestations** - All artifacts cryptographically signed
+- ✅ **Verification** - `gh attestation verify <artifact> --owner Hack23 --repo European-Parliament-MCP-Server`
+- ✅ **npm Provenance** - Published with provenance for package integrity
+- ✅ **SBOM** - SPDX-format Software Bill of Materials
+- ✅ **Dependency Review** - Automated vulnerability scanning
+- ✅ **License Compliance** - Only MIT, Apache-2.0, BSD, ISC allowed
+
+See [**ATTESTATIONS.md**](docs/ATTESTATIONS.md) for verification instructions and security benefits.
 
 ---
 

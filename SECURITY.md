@@ -124,6 +124,7 @@ This MCP server implements comprehensive security measures aligned with our **[S
   - Policy: [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
   - Verification: `gh attestation verify <artifact> --owner Hack23 --repo European-Parliament-MCP-Server`
   - Level: SLSA Level 3+ compliant
+  - Documentation: [ATTESTATIONS.md](./docs/ATTESTATIONS.md)
 
 - **🛡️ Immutable Releases** - Release artifacts cannot be tampered with
   - Policy: [Data Classification Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Data_Classification_Policy.md)
