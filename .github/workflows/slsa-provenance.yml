@@ -80,7 +80,7 @@ jobs:
             source.tar.gz
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@84480863f228bb9747b473957fcc9e309aa96097 # v6.0.2
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.2
         with:
           name: build-artifacts
           path: |
