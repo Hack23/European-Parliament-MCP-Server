@@ -19,7 +19,7 @@
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:ci": "vitest run --coverage --reporter=junit --reporter=json --outputFile=coverage/junit.xml",
-    "test:licenses": "license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0'",
+    "test:licenses": "license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0;BlueOak-1.0.0'",
     "knip": "knip",
     "clean": "rm -rf dist coverage"
   },

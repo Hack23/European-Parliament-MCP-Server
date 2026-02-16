@@ -293,6 +293,31 @@ This repository includes custom agents and skills for GitHub Copilot:
 - **Skills**: Reusable patterns for MCP development, security, testing, and performance
 - See [.github/agents/README.md](./.github/agents/README.md) and [.github/skills/README.md](./.github/skills/README.md)
 
+### Release Process
+
+We follow [Semantic Versioning](https://semver.org/) and use automated release management:
+
+**Version Types:**
+- **Major** (x.0.0): Breaking changes (e.g., API incompatible changes)
+- **Minor** (0.x.0): New features, backward compatible (e.g., new MCP tools)
+- **Patch** (0.0.x): Bug fixes, security updates, backward compatible
+
+**Automated Release Workflow:**
+1. Develop features in feature branches
+2. Create PR with descriptive title using [Conventional Commits](https://www.conventionalcommits.org/)
+3. Labels are automatically applied based on changed files
+4. After merge to main, release draft is automatically created
+5. Review and publish release (creates git tag automatically)
+
+**Release Notes Include:**
+- Categorized changes by feature area
+- Security badges (OpenSSF Scorecard, SLSA)
+- Technology stack and compatibility
+- ISMS compliance status
+- Full changelog link
+
+For detailed workflow documentation, see [.github/WORKFLOWS.md](./.github/WORKFLOWS.md).
+
 ---
 
 ## 📜 License

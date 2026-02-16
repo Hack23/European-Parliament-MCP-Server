@@ -81,19 +81,21 @@ jobs:
             ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}-
             ${{ runner.os }}-build-
 
-      # TypeScript compilation check
-      - name: TypeScript compilation
-        run: npm run build || npx tsc --noEmit
+      # TypeScript type checking
+      - name: Type check
+        run: npm run type-check
 
-      # Run linter if available
-      - name: Run linter
-        run: npm run lint || echo "No linter configured"
-        continue-on-error: true
+      # Run linter
+      - name: Lint
+        run: npm run lint
 
       # Check for unused dependencies with knip
       - name: Check for unused dependencies
-        run: npx knip || echo "Knip check skipped"
-        continue-on-error: true
+        run: npm run knip
+
+      # Check licenses
+      - name: Check licenses
+        run: npm run test:licenses
 
       - name: Generate SBOM
         uses: anchore/sbom-action@28d71544de8eaf1b958d335707167c5f783590ad # v0.22.2
@@ -163,26 +165,38 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # TODO: Implement unit tests with Vitest or Jest
       - name: Run unit tests with coverage
+        run: npm run test:coverage
+
+      - name: Check coverage thresholds
         run: |
-          if npm run test:ci 2>/dev/null; then
-            echo "Tests passed"
-          elif npm run test 2>/dev/null; then
-            echo "Tests passed"
+          # Extract coverage from report
+          if [ -f "coverage/coverage-summary.json" ]; then
+            COVERAGE=$(jq '.total.lines.pct' coverage/coverage-summary.json)
+            echo "Current coverage: $COVERAGE%"
+            
+            # Convert coverage to integer (percentage * 100) for comparison
+            COVERAGE_INT=$(awk -v c="$COVERAGE" 'BEGIN { printf "%d", c * 100 }')
+            
+            # Check if coverage meets requirements (80% minimum = 8000)
+            if [ "$COVERAGE_INT" -lt 8000 ]; then
+              echo "⚠️ Coverage $COVERAGE% is below required 80%"
+              echo "::warning::Coverage $COVERAGE% is below required 80%"
+            else
+              echo "✅ Coverage $COVERAGE% meets requirement"
+            fi
           else
-            echo "⚠️ No tests configured yet - this is a template workflow"
-            echo "To implement:"
-            echo "1. Install Vitest: npm install -D vitest @vitest/ui"
-            echo "2. Add test script to package.json: 'test': 'vitest'"
-            echo "3. Add test:ci script: 'test:ci': 'vitest run --coverage'"
-            echo "4. Create test files: src/**/*.test.ts"
-            exit 0
+            echo "⚠️ Coverage summary not found"
           fi
         continue-on-error: true
-        env:
-          JEST_JUNIT_OUTPUT_DIR: "coverage"
-          JEST_JUNIT_OUTPUT_NAME: "junit.xml"
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@7f8b4b4bde536c465e797be725718b88c5d95e0e # v5.3.2
+        with:
+          files: ./coverage/coverage-final.json
+          fail_ci_if_error: false
+          verbose: true
+        continue-on-error: true
 
       - name: Upload coverage report
         if: always()
