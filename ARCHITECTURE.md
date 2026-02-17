@@ -30,7 +30,7 @@
 - [ISMS Compliance](#isms-compliance)
 - [Future Roadmap](#future-roadmap)
 
-📊 **[See complete architecture diagrams →](./docs/ARCHITECTURE_DIAGRAMS.md)**
+📊 **[See complete architecture diagrams →](./ARCHITECTURE_DIAGRAMS.md)**
 
 ---
 
@@ -693,4 +693,4 @@ export async function handleGetMEPs(args: unknown) {
 - Cache hit rate: >80%
 - Memory efficient
 
-⚡ **[Complete performance guide →](./docs/PERFORMANCE_GUIDE.md)**
+⚡ **[Complete performance guide →](./PERFORMANCE_GUIDE.md)**

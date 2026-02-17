@@ -367,4 +367,4 @@ All security practices are governed by our publicly available ISMS:
 - [x] No secrets in code
 - [x] GDPR compliance
 
-📋 **[Complete security guide →](./docs/TROUBLESHOOTING.md)**
+📋 **[Complete security guide →](./TROUBLESHOOTING.md)**

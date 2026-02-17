@@ -145,12 +145,12 @@ Configure in `.vscode/mcp.json`:
 
 ### Core Documentation
 
-- [**API Usage Guide**](./docs/API_USAGE_GUIDE.md) - Complete tool documentation with examples
-- [**Architecture Diagrams**](./docs/ARCHITECTURE_DIAGRAMS.md) - C4 model diagrams and data flows
-- [**Troubleshooting Guide**](./docs/TROUBLESHOOTING.md) - Common issues and solutions
-- [**Developer Guide**](./docs/DEVELOPER_GUIDE.md) - Development workflow and contributing
-- [**Deployment Guide**](./docs/DEPLOYMENT_GUIDE.md) - Claude Desktop, VS Code, Docker setup
-- [**Performance Guide**](./docs/PERFORMANCE_GUIDE.md) - Optimization strategies
+- [**API Usage Guide**](./API_USAGE_GUIDE.md) - Complete tool documentation with examples
+- [**Architecture Diagrams**](./ARCHITECTURE_DIAGRAMS.md) - C4 model diagrams and data flows
+- [**Troubleshooting Guide**](./TROUBLESHOOTING.md) - Common issues and solutions
+- [**Developer Guide**](./DEVELOPER_GUIDE.md) - Development workflow and contributing
+- [**Deployment Guide**](./DEPLOYMENT_GUIDE.md) - Claude Desktop, VS Code, Docker setup
+- [**Performance Guide**](./PERFORMANCE_GUIDE.md) - Optimization strategies
 
 ### Additional Documentation
 
@@ -172,18 +172,18 @@ Configure in `.vscode/mcp.json`:
 
 | Tool | Description | Key Parameters | Response |
 |------|-------------|----------------|----------|
-| [`get_meps`](./docs/API_USAGE_GUIDE.md#tool-get_meps) | List MEPs with filters | country, group, committee, limit | Paginated list |
-| [`get_mep_details`](./docs/API_USAGE_GUIDE.md#tool-get_mep_details) | Detailed MEP information | id (required) | Single object |
-| [`get_plenary_sessions`](./docs/API_USAGE_GUIDE.md#tool-get_plenary_sessions) | List plenary sessions | dateFrom, dateTo, limit | Paginated list |
-| [`get_voting_records`](./docs/API_USAGE_GUIDE.md#tool-get_voting_records) | Retrieve voting records | mepId, sessionId, topic, dateFrom | Paginated list |
-| [`search_documents`](./docs/API_USAGE_GUIDE.md#tool-search_documents) | Search legislative documents | keywords (required), docType, author | Paginated list |
-| [`get_committee_info`](./docs/API_USAGE_GUIDE.md#tool-get_committee_info) | Committee information | id or abbreviation (required) | Single object |
-| [`get_parliamentary_questions`](./docs/API_USAGE_GUIDE.md#tool-get_parliamentary_questions) | Parliamentary Q&A | author, topic, questionType, dateFrom | Paginated list |
-| [`analyze_voting_patterns`](./docs/API_USAGE_GUIDE.md#tool-analyze_voting_patterns) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
-| [`track_legislation`](./docs/API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
-| [`generate_report`](./docs/API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
+| [`get_meps`](./API_USAGE_GUIDE.md#tool-get_meps) | List MEPs with filters | country, group, committee, limit | Paginated list |
+| [`get_mep_details`](./API_USAGE_GUIDE.md#tool-get_mep_details) | Detailed MEP information | id (required) | Single object |
+| [`get_plenary_sessions`](./API_USAGE_GUIDE.md#tool-get_plenary_sessions) | List plenary sessions | dateFrom, dateTo, limit | Paginated list |
+| [`get_voting_records`](./API_USAGE_GUIDE.md#tool-get_voting_records) | Retrieve voting records | mepId, sessionId, topic, dateFrom | Paginated list |
+| [`search_documents`](./API_USAGE_GUIDE.md#tool-search_documents) | Search legislative documents | keywords (required), docType, author | Paginated list |
+| [`get_committee_info`](./API_USAGE_GUIDE.md#tool-get_committee_info) | Committee information | id or abbreviation (required) | Single object |
+| [`get_parliamentary_questions`](./API_USAGE_GUIDE.md#tool-get_parliamentary_questions) | Parliamentary Q&A | author, topic, questionType, dateFrom | Paginated list |
+| [`analyze_voting_patterns`](./API_USAGE_GUIDE.md#tool-analyze_voting_patterns) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
+| [`track_legislation`](./API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
+| [`generate_report`](./API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
 
-📖 **[Complete API documentation with examples →](./docs/API_USAGE_GUIDE.md)**
+📖 **[Complete API documentation with examples →](./API_USAGE_GUIDE.md)**
 
 ### Common Use Cases
 
@@ -209,7 +209,7 @@ Configure in `.vscode/mcp.json`:
 3. Generate report: generate_report → {reportType: "COMMITTEE_PERFORMANCE", subjectId: "COMM-ENVI"}
 ```
 
-🎯 **[More use cases and examples →](./docs/API_USAGE_GUIDE.md#common-use-cases)**
+🎯 **[More use cases and examples →](./API_USAGE_GUIDE.md#common-use-cases)**
 
 ---
 
