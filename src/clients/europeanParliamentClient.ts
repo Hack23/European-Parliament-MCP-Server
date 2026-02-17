@@ -198,21 +198,48 @@ export class EuropeanParliamentClient {
   }
 
   /**
+   * Safely convert unknown value to string
+   * @internal
+   */
+  private toSafeString(value: unknown): string {
+    if (typeof value === 'string') {
+      return value;
+    }
+    if (typeof value === 'number') {
+      return String(value);
+    }
+    if (typeof value === 'boolean') {
+      return String(value);
+    }
+    return '';
+  }
+
+  /**
    * Transform EP API MEP data to internal format
    * @internal
    */
   private transformMEP(apiData: Record<string, unknown>): MEP {
     // EP API returns data in JSON-LD format with different field names
-    const id = String(apiData['identifier'] ?? apiData['id'] ?? '');
-    const name = String(apiData['label'] ?? '');
-    const familyName = String(apiData['familyName'] ?? '');
-    const givenName = String(apiData['givenName'] ?? '');
+    // Safe string conversion with type guards
+    const identifier = apiData['identifier'];
+    const idField = apiData['id'];
+    const labelField = apiData['label'];
+    const familyNameField = apiData['familyName'];
+    const givenNameField = apiData['givenName'];
+    
+    const id = this.toSafeString(identifier) || this.toSafeString(idField) || '';
+    const name = this.toSafeString(labelField) || '';
+    const familyName = this.toSafeString(familyNameField) || '';
+    const givenName = this.toSafeString(givenNameField) || '';
     
     // Construct full name if label is not provided
     const fullName = name || `${givenName} ${familyName}`.trim();
     
+    // Generate fallback ID
+    const fallbackId = this.toSafeString(identifier) || 'unknown';
+    
     return {
-      id: id || `person/${apiData['identifier'] ?? 'unknown'}`,
+      id: id || `person/${fallbackId}`,
       name: fullName,
       // These fields are not in basic MEP list, will be populated from mock/defaults
       country: 'Unknown',
@@ -224,29 +251,56 @@ export class EuropeanParliamentClient {
   }
 
   /**
+   * Extract date from EP API activity date field
+   * @internal
+   */
+  private extractActivityDate(activityDate: unknown): string {
+    const defaultDate = new Date().toISOString().split('T')[0] ?? '2024-01-01';
+    
+    if (activityDate === null || activityDate === undefined) {
+      return defaultDate;
+    }
+    
+    if (typeof activityDate === 'object' && '@value' in activityDate) {
+      const dateValue = (activityDate as Record<string, unknown>)['@value'];
+      if (typeof dateValue === 'string') {
+        return dateValue.split('T')[0] ?? defaultDate;
+      }
+    }
+    
+    return defaultDate;
+  }
+
+  /**
+   * Extract location from hasLocality URL
+   * @internal
+   */
+  private extractLocation(localityUrl: string): string {
+    if (localityUrl.includes('FRA_SXB')) {
+      return 'Strasbourg';
+    }
+    if (localityUrl.includes('BEL_BRU')) {
+      return 'Brussels';
+    }
+    return 'Unknown';
+  }
+
+  /**
    * Transform EP API plenary session data to internal format
    * @internal
    */
   private transformPlenarySession(apiData: Record<string, unknown>): PlenarySession {
-    const id = String(apiData['activity_id'] ?? apiData['id'] ?? '');
-    const activityDate = apiData['eli-dl:activity_date'];
-    let date = new Date().toISOString().split('T')[0] ?? '2024-01-01';
+    const activityId = apiData['activity_id'];
+    const idField = apiData['id'];
+    const id = this.toSafeString(activityId) || this.toSafeString(idField) || '';
     
-    if (activityDate && typeof activityDate === 'object' && '@value' in activityDate) {
-      const dateValue = (activityDate as Record<string, unknown>)['@value'];
-      if (typeof dateValue === 'string') {
-        date = dateValue.split('T')[0] ?? date;
-      }
-    }
+    const activityDate = apiData['eli-dl:activity_date'];
+    const date = this.extractActivityDate(activityDate);
     
     // Extract location from hasLocality
-    let location = 'Unknown';
-    const localityUrl = String(apiData['hasLocality'] ?? '');
-    if (localityUrl.includes('FRA_SXB')) {
-      location = 'Strasbourg';
-    } else if (localityUrl.includes('BEL_BRU')) {
-      location = 'Brussels';
-    }
+    const localityField = apiData['hasLocality'];
+    const localityUrl = this.toSafeString(localityField) || '';
+    const location = this.extractLocation(localityUrl);
     
     return {
       id,
@@ -266,8 +320,10 @@ export class EuropeanParliamentClient {
     // Start with basic MEP transformation
     const basicMEP = this.transformMEP(apiData);
     
-    // Extract additional details
-    const bday = String(apiData['bday'] ?? '');
+    // Extract additional details with type safety
+    const bdayField = apiData['bday'];
+    const bday = this.toSafeString(bdayField) || '';
+    
     const memberships = apiData['hasMembership'];
     const committees: string[] = [];
     
@@ -275,7 +331,8 @@ export class EuropeanParliamentClient {
     if (Array.isArray(memberships)) {
       for (const membership of memberships) {
         if (typeof membership === 'object' && membership !== null) {
-          const org = String((membership as Record<string, unknown>)['organization'] ?? '');
+          const orgField = (membership as Record<string, unknown>)['organization'];
+          const org = this.toSafeString(orgField) || '';
           if (org) {
             committees.push(org);
           }
