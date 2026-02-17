@@ -6,33 +6,6 @@
  * ISMS Policy: SC-002 (Secure Testing)
  */
 
-import { setTimeout as sleep } from 'timers/promises';
-
-/**
- * Wait for a condition to be true
- * 
- * @param condition - Function that returns true when condition is met
- * @param timeout - Maximum time to wait in milliseconds
- * @param interval - Check interval in milliseconds
- * @throws Error if timeout is reached
- */
-export async function waitFor(
-  condition: () => boolean | Promise<boolean>,
-  timeout = 5000,
-  interval = 100
-): Promise<void> {
-  const startTime = Date.now();
-  
-  while (Date.now() - startTime < timeout) {
-    if (await condition()) {
-      return;
-    }
-    await sleep(interval);
-  }
-  
-  throw new Error(`Condition not met within ${timeout}ms`);
-}
-
 /**
  * Retry a function with exponential backoff
  * 
@@ -56,7 +29,7 @@ export async function retry<T>(
       
       if (i < maxRetries) {
         const delay = baseDelay * Math.pow(2, i);
-        await sleep(delay);
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
   }
@@ -78,43 +51,6 @@ export async function measureTime<T>(
   const duration = performance.now() - start;
   
   return [result, duration];
-}
-
-/**
- * Create a rate-limited function executor
- * 
- * @param requestsPerWindow - Number of requests allowed per window
- * @param windowMs - Window duration in milliseconds
- * @returns Function that executes with rate limiting
- */
-export function createRateLimitedExecutor(
-  requestsPerWindow: number,
-  windowMs: number
-) {
-  const requests: number[] = [];
-  
-  return async <T>(fn: () => Promise<T>): Promise<T> => {
-    const now = Date.now();
-    
-    // Remove old requests outside window
-    while (requests.length > 0 && requests[0]! < now - windowMs) {
-      requests.shift();
-    }
-    
-    // Wait if at limit
-    if (requests.length >= requestsPerWindow) {
-      const oldestRequest = requests[0]!;
-      const waitTime = (oldestRequest + windowMs) - now;
-      if (waitTime > 0) {
-        await sleep(waitTime);
-      }
-    }
-    
-    // Record this request
-    requests.push(Date.now());
-    
-    return fn();
-  };
 }
 
 /**
@@ -176,20 +112,4 @@ export function validateMCPResponse(
   if (response.content.length === 0) {
     throw new Error('Response content is empty');
   }
-}
-
-/**
- * Clean up test environment
- * 
- * @param cleanup - Cleanup function
- * @returns Cleanup handler that catches errors
- */
-export function createCleanupHandler(cleanup: () => Promise<void>) {
-  return async (): Promise<void> => {
-    try {
-      await cleanup();
-    } catch (error) {
-      console.error('Cleanup error:', error);
-    }
-  };
 }

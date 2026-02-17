@@ -96,7 +96,7 @@ jobs:
 
       - name: Archive test results
         if: always()
-        uses: actions/upload-artifact@ea165f2db34b8eef68ab8a93e166fe35eb7bf169 # v6.0.1
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: test-results-${{ matrix.node-version }}
           path: |
