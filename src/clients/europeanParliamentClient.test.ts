@@ -400,4 +400,183 @@ describe('EuropeanParliamentClient', () => {
       await expect(client.getMEPs({ limit: 10 })).rejects.toThrow(APIError);
     });
   });
+
+  describe('Edge Cases - Data Transformation', () => {
+    it('should handle missing fields in MEP data', async () => {
+      // Mock response with minimal fields
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{
+            // Only minimal fields
+          }],
+          '@context': []
+        })
+      } as Response);
+
+      const result = await client.getMEPs({ limit: 1 });
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].id).toBeDefined();
+      expect(result.data[0].name).toBeDefined();
+    });
+
+    it('should handle MEP with no identifier', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{
+            label: 'Test MEP',
+            familyName: 'Doe',
+            givenName: 'John'
+          }],
+          '@context': []
+        })
+      } as Response);
+
+      const result = await client.getMEPs({ limit: 1 });
+      expect(result.data[0].id).toContain('person/');
+      expect(result.data[0].name).toBe('Test MEP');
+    });
+
+    it('should construct name from givenName and familyName when label missing', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{
+            identifier: '123',
+            familyName: 'Smith',
+            givenName: 'Jane'
+          }],
+          '@context': []
+        })
+      } as Response);
+
+      const result = await client.getMEPs({ limit: 1 });
+      expect(result.data[0].name).toBe('Jane Smith');
+    });
+
+    it('should handle plenary session with missing activity date', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{
+            identifier: 'session-1',
+            activityLabel: 'Test Session',
+            hasLocality: 'http://example.com/FRA_SXB'
+            // No activityDate field
+          }],
+          '@context': []
+        })
+      } as Response);
+
+      const result = await client.getPlenarySessions({ limit: 1 });
+      expect(result.data[0].date).toBe('');
+    });
+
+    it('should handle plenary session with null activity date', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{
+            identifier: 'session-1',
+            activityLabel: 'Test Session',
+            hasLocality: 'http://example.com/BEL_BRU',
+            activityDate: null
+          }],
+          '@context': []
+        })
+      } as Response);
+
+      const result = await client.getPlenarySessions({ limit: 1 });
+      expect(result.data[0].date).toBe('');
+      expect(result.data[0].location).toBe('Brussels');
+    });
+
+    it('should handle location with unknown locality', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{
+            identifier: 'session-1',
+            activityLabel: 'Test Session',
+            hasLocality: 'http://example.com/OTHER_CITY'
+          }],
+          '@context': []
+        })
+      } as Response);
+
+      const result = await client.getPlenarySessions({ limit: 1 });
+      expect(result.data[0].location).toBe('Unknown');
+    });
+
+    it('should handle MEP details with missing birth date', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{
+            identifier: '123',
+            label: 'Test MEP',
+            familyName: 'Doe',
+            givenName: 'John'
+            // No bday field
+          }],
+          '@context': []
+        })
+      } as Response);
+
+      const result = await client.getMEPDetails('123');
+      expect(result.biography).toBe('Born: Unknown');
+    });
+
+    it('should handle MEP details with null organization', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{
+            identifier: '123',
+            label: 'Test MEP',
+            familyName: 'Doe',
+            givenName: 'John',
+            organization: null
+          }],
+          '@context': []
+        })
+      } as Response);
+
+      const result = await client.getMEPDetails('123');
+      expect(result.politicalGroup).toBe('Unknown');
+    });
+
+    it('should normalize MEP ID by stripping MEP- prefix', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{
+            identifier: '124810',
+            label: 'Test MEP'
+          }],
+          '@context': []
+        })
+      } as Response);
+
+      const result = await client.getMEPDetails('MEP-124810');
+      expect(result).toBeDefined();
+    });
+
+    it('should normalize MEP ID by extracting from person/ format', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{
+            identifier: '124810',
+            label: 'Test MEP'
+          }],
+          '@context': []
+        })
+      } as Response);
+
+      const result = await client.getMEPDetails('person/124810');
+      expect(result).toBeDefined();
+    });
+  });
 });
