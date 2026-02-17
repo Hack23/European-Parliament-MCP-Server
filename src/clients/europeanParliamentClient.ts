@@ -72,11 +72,6 @@ interface EPClientConfig {
    * Rate limiter instance
    */
   rateLimiter?: RateLimiter;
-  
-  /**
-   * Use mock data instead of real API (for testing)
-   */
-  useMockData?: boolean;
 }
 
 /**
@@ -86,13 +81,9 @@ export class EuropeanParliamentClient {
   private readonly cache: LRUCache<string, Record<string, unknown>>;
   private readonly baseURL: string;
   private readonly rateLimiter: RateLimiter;
-  // Reserved for future use to enable mock data fallback in tests
-  // @ts-expect-error - Unused until mock fallback feature is implemented
-  private readonly useMockData: boolean;
 
   constructor(config: EPClientConfig = {}) {
     this.baseURL = config.baseURL ?? 'https://data.europarl.europa.eu/api/v2/';
-    this.useMockData = config.useMockData ?? false;
     
     // Initialize LRU cache
     this.cache = new LRUCache<string, Record<string, unknown>>({
@@ -246,7 +237,7 @@ export class EuropeanParliamentClient {
       politicalGroup: 'Unknown',
       committees: [],
       active: true,
-      termStart: new Date().toISOString().split('T')[0] ?? '2024-01-01'
+      termStart: new Date().toISOString().split('T')[0]!
     };
   }
 
@@ -255,7 +246,7 @@ export class EuropeanParliamentClient {
    * @internal
    */
   private extractActivityDate(activityDate: unknown): string {
-    const defaultDate = new Date().toISOString().split('T')[0] ?? '2024-01-01';
+    const defaultDate = new Date().toISOString().split('T')[0]!;
     
     if (activityDate === null || activityDate === undefined) {
       return defaultDate;
@@ -264,7 +255,7 @@ export class EuropeanParliamentClient {
     if (typeof activityDate === 'object' && '@value' in activityDate) {
       const dateValue = (activityDate as Record<string, unknown>)['@value'];
       if (typeof dateValue === 'string') {
-        return dateValue.split('T')[0] ?? defaultDate;
+        return dateValue.split('T')[0]!;
       }
     }
     
