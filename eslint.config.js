@@ -47,6 +47,9 @@ export default tseslint.config(
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-misused-promises': 'error',
       
+      // Disable dot-notation rule to allow bracket notation required by noPropertyAccessFromIndexSignature
+      '@typescript-eslint/dot-notation': 'off',
+      
       // Deprecated API warning (not error)
       '@typescript-eslint/no-deprecated': 'warn',
       
