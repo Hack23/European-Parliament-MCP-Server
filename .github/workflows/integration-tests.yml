@@ -15,22 +15,34 @@ on:
         required: false
         default: 'false'
 
+# Set default permissions to read-only
+permissions: read-all
+
 jobs:
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    
+    # Only needs read permissions
+    permissions:
+      contents: read # Required to check out code
 
     strategy:
       matrix:
         node-version: [22.x]
 
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+        with:
+          egress-policy: audit
+
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -54,7 +66,8 @@ jobs:
         run: npm run test:integration
         env:
           EP_API_URL: ${{ secrets.EP_API_URL || 'https://data.europarl.europa.eu/api/v2' }}
-          EP_INTEGRATION_TESTS: ${{ github.event.inputs.run_integration_tests || 'false' }}
+          # Enable integration tests for scheduled runs or manual workflow dispatch
+          EP_INTEGRATION_TESTS: ${{ (github.event_name == 'schedule' && 'true') || github.event.inputs.run_integration_tests || 'false' }}
           NODE_ENV: test
 
       - name: Run E2E tests
@@ -72,7 +85,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@7afa10ed9b269c561c2336fd862446844e0cbf71 # v5.2.0
         with:
           files: ./coverage/lcov.info
           flags: integration,e2e
@@ -83,7 +96,7 @@ jobs:
 
       - name: Archive test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f2db34b8eef68ab8a93e166fe35eb7bf169 # v6.0.1
         with:
           name: test-results-${{ matrix.node-version }}
           path: |
@@ -95,13 +108,22 @@ jobs:
     name: Security Scan
     runs-on: ubuntu-latest
     needs: integration-tests
+    
+    # Only needs read permissions
+    permissions:
+      contents: read
 
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+        with:
+          egress-policy: audit
+
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: 22.x
           cache: 'npm'

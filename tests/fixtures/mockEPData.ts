@@ -17,20 +17,18 @@ export const mockMEPs: MEP[] = [
     name: 'Anna Andersson',
     country: 'SE',
     politicalGroup: 'S&D',
-    nationalParty: 'Swedish Social Democratic Party',
+    committees: ['ENVI', 'ITRE'],
     active: true,
-    termStart: '2019-07-02',
-    committees: ['ENVI', 'ITRE']
+    termStart: '2019-07-02'
   },
   {
     id: 'mep-12346',
     name: 'Lars Larsson',
     country: 'SE',
     politicalGroup: 'EPP',
-    nationalParty: 'Moderate Party',
+    committees: ['ECON', 'BUDG'],
     active: true,
-    termStart: '2019-07-02',
-    committees: ['ECON', 'BUDG']
+    termStart: '2019-07-02'
   }
 ];
 
@@ -42,8 +40,8 @@ export const mockPlenarySessions: PlenarySession[] = [
     id: 'session-2024-01',
     date: '2024-01-15',
     location: 'Strasbourg',
-    agenda: ['Budget discussion', 'Climate policy debate'],
-    attendees: ['mep-12345', 'mep-12346'],
+    agendaItems: ['Budget discussion', 'Climate policy debate'],
+    attendanceCount: 705,
     documents: ['doc-001', 'doc-002']
   }
 ];
@@ -54,19 +52,17 @@ export const mockPlenarySessions: PlenarySession[] = [
 export const mockVotingRecords: VotingRecord[] = [
   {
     id: 'vote-001',
+    sessionId: 'session-2024-01',
+    topic: 'Climate Action Amendment',
     date: '2024-01-15',
-    title: 'Climate Action Amendment',
-    mepId: 'mep-12345',
-    vote: 'FOR',
-    sessionId: 'session-2024-01'
-  },
-  {
-    id: 'vote-002',
-    date: '2024-01-15',
-    title: 'Climate Action Amendment',
-    mepId: 'mep-12346',
-    vote: 'AGAINST',
-    sessionId: 'session-2024-01'
+    votesFor: 450,
+    votesAgainst: 200,
+    abstentions: 55,
+    result: 'ADOPTED',
+    mepVotes: {
+      'mep-12345': 'FOR',
+      'mep-12346': 'AGAINST'
+    }
   }
 ];
 
@@ -76,11 +72,11 @@ export const mockVotingRecords: VotingRecord[] = [
 export const mockDocuments: LegislativeDocument[] = [
   {
     id: 'doc-001',
-    title: 'Regulation on Climate Neutrality',
     type: 'REGULATION',
+    title: 'Regulation on Climate Neutrality',
     date: '2024-01-10',
-    status: 'IN_PROGRESS',
-    rapporteur: 'mep-12345',
+    authors: ['mep-12345'],
+    status: 'IN_COMMITTEE',
     summary: 'Regulation establishing framework for climate neutrality by 2050'
   }
 ];
@@ -92,14 +88,14 @@ export const mockCommittees: Committee[] = [
   {
     id: 'ENVI',
     name: 'Committee on the Environment, Public Health and Food Safety',
-    acronym: 'ENVI',
+    abbreviation: 'ENVI',
     members: ['mep-12345'],
     chair: 'mep-12345'
   },
   {
     id: 'ECON',
     name: 'Committee on Economic and Monetary Affairs',
-    acronym: 'ECON',
+    abbreviation: 'ECON',
     members: ['mep-12346'],
     chair: 'mep-12346'
   }
@@ -111,12 +107,14 @@ export const mockCommittees: Committee[] = [
 export const mockQuestions: ParliamentaryQuestion[] = [
   {
     id: 'q-001',
-    date: '2024-01-10',
+    type: 'WRITTEN',
     author: 'mep-12345',
-    title: 'Question on EU Climate Policy Implementation',
-    body: 'What measures is the Commission taking to ensure member states meet 2030 climate targets?',
-    answered: true,
-    answerDate: '2024-01-20'
+    date: '2024-01-10',
+    topic: 'EU Climate Policy Implementation',
+    questionText: 'What measures is the Commission taking to ensure member states meet 2030 climate targets?',
+    answerText: 'The Commission is implementing various measures including...',
+    answerDate: '2024-01-20',
+    status: 'ANSWERED'
   }
 ];
 
@@ -135,8 +133,8 @@ export function getMockMEPsByCountry(country: string): MEP[] {
 }
 
 /**
- * Get mock voting records by MEP
+ * Get mock voting records by session
  */
-export function getMockVotingRecordsByMEP(mepId: string): VotingRecord[] {
-  return mockVotingRecords.filter(vote => vote.mepId === mepId);
+export function getMockVotingRecordsBySession(sessionId: string): VotingRecord[] {
+  return mockVotingRecords.filter(vote => vote.sessionId === sessionId);
 }
