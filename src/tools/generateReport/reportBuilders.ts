@@ -21,7 +21,7 @@ export function createVotingSection(
   };
   
   if (mep?.votingStatistics !== undefined) {
-    section.data = mep.votingStatistics as unknown as Record<string, unknown>;
+    section.data = { votingStatistics: mep.votingStatistics };
   }
   
   return section;
