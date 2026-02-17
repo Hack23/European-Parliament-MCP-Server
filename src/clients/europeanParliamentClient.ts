@@ -450,13 +450,9 @@ export class EuropeanParliamentClient {
   }
 
   /**
-   * Get plenary sessions
-   * 
-   * @param params - Query parameters
-   * @returns Paginated list of plenary sessions
-   */
-  /**
    * Build API parameters for meetings endpoint
+   *
+   * @internal
    */
   private buildMeetingsAPIParams(params: {
     dateFrom?: string;
@@ -482,6 +478,12 @@ export class EuropeanParliamentClient {
     return apiParams;
   }
 
+  /**
+   * Get plenary sessions
+   * 
+   * @param params - Query parameters
+   * @returns Paginated list of plenary sessions
+   */
   async getPlenarySessions(params: {
     dateFrom?: string;
     dateTo?: string;
