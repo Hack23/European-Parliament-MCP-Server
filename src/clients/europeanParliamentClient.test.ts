@@ -2,8 +2,16 @@
  * Tests for European Parliament API Client
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { EuropeanParliamentClient, APIError } from './europeanParliamentClient.js';
+
+// Mock the undici fetch
+vi.mock('undici', () => ({
+  fetch: vi.fn()
+}));
+
+import { fetch } from 'undici';
+const mockFetch = fetch as ReturnType<typeof vi.fn>;
 
 describe('EuropeanParliamentClient', () => {
   let client: EuropeanParliamentClient;
@@ -11,6 +19,50 @@ describe('EuropeanParliamentClient', () => {
   beforeEach(() => {
     client = new EuropeanParliamentClient();
     client.clearCache();
+    vi.clearAllMocks();
+  });
+
+  // Helper to create mock API responses
+  const createMockMEPsResponse = (count: number = 2) => ({
+    data: Array.from({ length: count }, (_, i) => ({
+      id: `person/${i + 1}`,
+      type: 'Person',
+      identifier: String(i + 1),
+      label: `Test MEP ${i + 1}`,
+      familyName: `LastName${i + 1}`,
+      givenName: `FirstName${i + 1}`,
+      sortLabel: `LASTNAME${i + 1}`
+    })),
+    '@context': [
+      {
+        data: '@graph',
+        '@base': 'https://data.europarl.europa.eu/'
+      },
+      'https://data.europarl.europa.eu/api/v2/context.jsonld'
+    ]
+  });
+
+  const createMockMeetingsResponse = (count: number = 1) => ({
+    data: Array.from({ length: count }, (_, i) => ({
+      id: `eli/dl/event/MTG-PL-2024-01-${10 + i}`,
+      type: 'Activity',
+      'eli-dl:activity_date': {
+        '@value': `2024-01-${10 + i}T00:00:00+01:00`,
+        type: 'xsd:dateTime'
+      },
+      activity_id: `MTG-PL-2024-01-${10 + i}`,
+      activity_label: {
+        en: `Meeting ${i + 1}`
+      },
+      hasLocality: 'http://publications.europa.eu/resource/authority/place/FRA_SXB'
+    })),
+    '@context': [
+      {
+        data: '@graph',
+        '@base': 'https://data.europarl.europa.eu/'
+      },
+      'https://data.europarl.europa.eu/api/v2/context.jsonld'
+    ]
   });
 
   describe('Initialization', () => {
@@ -31,6 +83,12 @@ describe('EuropeanParliamentClient', () => {
 
   describe('getMEPs', () => {
     it('should return paginated MEP data', async () => {
+      // Mock successful API response
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMEPsResponse(10)
+      } as Response);
+
       const result = await client.getMEPs({ limit: 10 });
 
       expect(result).toHaveProperty('data');
@@ -39,21 +97,59 @@ describe('EuropeanParliamentClient', () => {
       expect(result).toHaveProperty('offset', 0);
       expect(result).toHaveProperty('hasMore');
       expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data).toHaveLength(10);
     });
 
     it('should respect country filter', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMEPsResponse(2)
+      } as Response);
+
       const result = await client.getMEPs({ country: 'SE' });
       
       expect(result.data).toBeDefined();
-      if (result.data.length > 0) {
-        expect(result.data[0]?.country).toBe('SE');
-      }
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('country-code=SE'),
+        expect.any(Object)
+      );
     });
 
     it('should respect limit parameter', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMEPsResponse(25)
+      } as Response);
+
       const result = await client.getMEPs({ limit: 25 });
       
       expect(result.limit).toBe(25);
+    });
+
+    it('should handle API errors', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error'
+      } as Response);
+
+      await expect(client.getMEPs({ limit: 10 })).rejects.toThrow(APIError);
+    });
+
+    it('should use cache for repeated requests', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMEPsResponse(2)
+      } as Response);
+
+      // First request
+      await client.getMEPs({ limit: 10 });
+      
+      // Second request should use cache
+      await client.getMEPs({ limit: 10 });
+      
+      // Fetch should only be called once
+      expect(mockFetch).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -80,6 +176,11 @@ describe('EuropeanParliamentClient', () => {
 
   describe('getPlenarySessions', () => {
     it('should return paginated session data', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMeetingsResponse(10)
+      } as Response);
+
       const result = await client.getPlenarySessions({ limit: 10 });
 
       expect(result).toHaveProperty('data');
@@ -88,6 +189,11 @@ describe('EuropeanParliamentClient', () => {
     });
 
     it('should include session details', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMeetingsResponse(1)
+      } as Response);
+
       const result = await client.getPlenarySessions({ limit: 10 });
 
       if (result.data.length > 0) {
@@ -97,6 +203,17 @@ describe('EuropeanParliamentClient', () => {
         expect(session).toHaveProperty('location');
         expect(session).toHaveProperty('agendaItems');
       }
+    });
+
+    it('should transform location correctly', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMeetingsResponse(1)
+      } as Response);
+
+      const result = await client.getPlenarySessions({ limit: 1 });
+
+      expect(result.data[0]?.location).toBe('Strasbourg');
     });
   });
 
@@ -190,6 +307,12 @@ describe('EuropeanParliamentClient', () => {
 
   describe('Caching', () => {
     it('should cache API responses', async () => {
+      // Mock API response
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: async () => createMockMEPsResponse(2)
+      } as Response);
+
       // First call
       const result1 = await client.getMEPs({ country: 'SE', limit: 10 });
       
@@ -197,6 +320,8 @@ describe('EuropeanParliamentClient', () => {
       const result2 = await client.getMEPs({ country: 'SE', limit: 10 });
       
       expect(result1).toEqual(result2);
+      // Should only call fetch once due to caching
+      expect(mockFetch).toHaveBeenCalledTimes(1);
     });
 
     it('should provide cache statistics', () => {
@@ -208,6 +333,12 @@ describe('EuropeanParliamentClient', () => {
     });
 
     it('should clear cache', async () => {
+      // Mock API response
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: async () => createMockMEPsResponse(2)
+      } as Response);
+
       // First call should populate cache
       await client.getMEPs({ limit: 10 });
       
@@ -222,12 +353,14 @@ describe('EuropeanParliamentClient', () => {
 
   describe('Error Handling', () => {
     it('should throw APIError for invalid requests', async () => {
-      // This is mock data so won't actually fail, but demonstrates error handling
-      try {
-        await client.getMEPs({ limit: 10 });
-      } catch (error) {
-        expect(error).toBeInstanceOf(APIError);
-      }
+      // Mock failed response
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error'
+      } as Response);
+
+      await expect(client.getMEPs({ limit: 10 })).rejects.toThrow(APIError);
     });
   });
 });

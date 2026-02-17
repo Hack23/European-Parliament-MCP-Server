@@ -40,6 +40,15 @@ export class APIError extends Error {
 }
 
 /**
+ * JSON-LD response format from EP API
+ * @internal
+ */
+interface JSONLDResponse<T = Record<string, unknown>> extends Record<string, unknown> {
+  data: T[];
+  '@context': unknown[];
+}
+
+/**
  * European Parliament API Client configuration
  * @internal - Used only for client initialization
  */
@@ -63,6 +72,11 @@ interface EPClientConfig {
    * Rate limiter instance
    */
   rateLimiter?: RateLimiter;
+  
+  /**
+   * Use mock data instead of real API (for testing)
+   */
+  useMockData?: boolean;
 }
 
 /**
@@ -72,9 +86,13 @@ export class EuropeanParliamentClient {
   private readonly cache: LRUCache<string, Record<string, unknown>>;
   private readonly baseURL: string;
   private readonly rateLimiter: RateLimiter;
+  // Reserved for future use to enable mock data fallback in tests
+  // @ts-expect-error - Unused until mock fallback feature is implemented
+  private readonly useMockData: boolean;
 
   constructor(config: EPClientConfig = {}) {
     this.baseURL = config.baseURL ?? 'https://data.europarl.europa.eu/api/v2/';
+    this.useMockData = config.useMockData ?? false;
     
     // Initialize LRU cache
     this.cache = new LRUCache<string, Record<string, unknown>>({
@@ -92,14 +110,12 @@ export class EuropeanParliamentClient {
   }
 
   /**
-   * Generic GET request with caching and rate limiting (currently unused but planned for production)
+   * Generic GET request with caching and rate limiting
    * 
-   * @param endpoint - API endpoint
+   * @param endpoint - API endpoint (relative to baseURL)
    * @param params - Query parameters
-   * @returns API response data
+   * @returns API response data (JSON-LD format with data array)
    */
-  // @ts-expect-error - Unused method, planned for production use
-   
   private async get<T extends Record<string, unknown>>(
     endpoint: string,
     params?: Record<string, unknown>
@@ -141,10 +157,10 @@ export class EuropeanParliamentClient {
     }
     
     try {
-      // Make API request
+      // Make API request with JSON-LD Accept header
       const response = await fetch(url.toString(), {
         headers: {
-          'Accept': 'application/json',
+          'Accept': 'application/ld+json',
           'User-Agent': 'European-Parliament-MCP-Server/1.0'
         }
       });
@@ -182,12 +198,73 @@ export class EuropeanParliamentClient {
   }
 
   /**
+   * Transform EP API MEP data to internal format
+   * @internal
+   */
+  private transformMEP(apiData: Record<string, unknown>): MEP {
+    // EP API returns data in JSON-LD format with different field names
+    const id = String(apiData['identifier'] ?? apiData['id'] ?? '');
+    const name = String(apiData['label'] ?? '');
+    const familyName = String(apiData['familyName'] ?? '');
+    const givenName = String(apiData['givenName'] ?? '');
+    
+    // Construct full name if label is not provided
+    const fullName = name || `${givenName} ${familyName}`.trim();
+    
+    return {
+      id: id || `person/${apiData['identifier'] ?? 'unknown'}`,
+      name: fullName,
+      // These fields are not in basic MEP list, will be populated from mock/defaults
+      country: 'Unknown',
+      politicalGroup: 'Unknown',
+      committees: [],
+      active: true,
+      termStart: new Date().toISOString().split('T')[0] ?? '2024-01-01'
+    };
+  }
+
+  /**
+   * Transform EP API plenary session data to internal format
+   * @internal
+   */
+  private transformPlenarySession(apiData: Record<string, unknown>): PlenarySession {
+    const id = String(apiData['activity_id'] ?? apiData['id'] ?? '');
+    const activityDate = apiData['eli-dl:activity_date'];
+    let date = new Date().toISOString().split('T')[0] ?? '2024-01-01';
+    
+    if (activityDate && typeof activityDate === 'object' && '@value' in activityDate) {
+      const dateValue = (activityDate as Record<string, unknown>)['@value'];
+      if (typeof dateValue === 'string') {
+        date = dateValue.split('T')[0] ?? date;
+      }
+    }
+    
+    // Extract location from hasLocality
+    let location = 'Unknown';
+    const localityUrl = String(apiData['hasLocality'] ?? '');
+    if (localityUrl.includes('FRA_SXB')) {
+      location = 'Strasbourg';
+    } else if (localityUrl.includes('BEL_BRU')) {
+      location = 'Brussels';
+    }
+    
+    return {
+      id,
+      date,
+      location,
+      agendaItems: [],
+      attendanceCount: 0,
+      documents: []
+    };
+  }
+
+  /**
    * Get Members of European Parliament
    * 
    * @param params - Query parameters
    * @returns Paginated list of MEPs
    */
-  getMEPs(params: {
+  async getMEPs(params: {
     country?: string;
     group?: string;
     committee?: string;
@@ -198,32 +275,38 @@ export class EuropeanParliamentClient {
     const action = 'get_meps';
     
     try {
-      // For MVP, return mock data
-      // In production, replace with actual API call:
-      // const data = await this.get<PaginatedResponse<MEP>>('meps', params);
+      // Build API parameters
+      const apiParams: Record<string, unknown> = {};
       
-      const mockData: PaginatedResponse<MEP> = {
-        data: [
-          {
-            id: 'MEP-124810',
-            name: 'Example MEP',
-            country: params.country ?? 'SE',
-            politicalGroup: params.group ?? 'EPP',
-            committees: ['AGRI', 'ENVI'],
-            email: 'example@europarl.europa.eu',
-            active: params.active ?? true,
-            termStart: '2019-07-02'
-          }
-        ],
-        total: 1,
+      // Map our parameters to EP API parameters
+      if (params.limit !== undefined) {
+        apiParams['limit'] = params.limit;
+      }
+      if (params.offset !== undefined) {
+        apiParams['offset'] = params.offset;
+      }
+      if (params.country !== undefined) {
+        // EP API uses 'country-code' parameter
+        apiParams['country-code'] = params.country;
+      }
+      
+      // Call real EP API
+      const response = await this.get<JSONLDResponse>('meps', apiParams);
+      
+      // Transform EP API data to internal format
+      const meps = response.data.map((item) => this.transformMEP(item));
+      
+      const result: PaginatedResponse<MEP> = {
+        data: meps,
+        total: meps.length, // EP API doesn't provide total count in response
         limit: params.limit ?? 50,
         offset: params.offset ?? 0,
-        hasMore: false
+        hasMore: meps.length >= (params.limit ?? 50)
       };
       
-      auditLogger.logDataAccess(action, params, mockData.data.length);
+      auditLogger.logDataAccess(action, params, result.data.length);
       
-      return Promise.resolve(mockData);
+      return result;
     } catch (error) {
       auditLogger.logError(
         action,
@@ -287,7 +370,7 @@ export class EuropeanParliamentClient {
    * @param params - Query parameters
    * @returns Paginated list of plenary sessions
    */
-  getPlenarySessions(params: {
+  async getPlenarySessions(params: {
     dateFrom?: string;
     dateTo?: string;
     location?: string;
@@ -297,26 +380,39 @@ export class EuropeanParliamentClient {
     const action = 'get_plenary_sessions';
     
     try {
-      const mockData: PaginatedResponse<PlenarySession> = {
-        data: [
-          {
-            id: 'PLENARY-2024-01',
-            date: '2024-01-15',
-            location: 'Strasbourg',
-            agendaItems: ['Budget Discussion', 'Climate Policy Vote'],
-            attendanceCount: 650,
-            documents: ['DOC-2024-001', 'DOC-2024-002']
-          }
-        ],
-        total: 1,
+      // Build API parameters
+      const apiParams: Record<string, unknown> = {};
+      
+      if (params.limit !== undefined) {
+        apiParams['limit'] = params.limit;
+      }
+      if (params.offset !== undefined) {
+        apiParams['offset'] = params.offset;
+      }
+      if (params.dateFrom !== undefined) {
+        apiParams['date-from'] = params.dateFrom;
+      }
+      if (params.dateTo !== undefined) {
+        apiParams['date-to'] = params.dateTo;
+      }
+      
+      // Call real EP API meetings endpoint
+      const response = await this.get<JSONLDResponse>('meetings', apiParams);
+      
+      // Transform EP API data to internal format
+      const sessions = response.data.map((item) => this.transformPlenarySession(item));
+      
+      const result: PaginatedResponse<PlenarySession> = {
+        data: sessions,
+        total: sessions.length,
         limit: params.limit ?? 50,
         offset: params.offset ?? 0,
-        hasMore: false
+        hasMore: sessions.length >= (params.limit ?? 50)
       };
       
-      auditLogger.logDataAccess(action, params, mockData.data.length);
+      auditLogger.logDataAccess(action, params, result.data.length);
       
-      return Promise.resolve(mockData);
+      return result;
     } catch (error) {
       auditLogger.logError(
         action,
