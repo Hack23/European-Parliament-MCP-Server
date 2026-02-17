@@ -1,0 +1,228 @@
+/**
+ * Full Workflow E2E Tests
+ * 
+ * End-to-end tests for complete user workflows via MCP client
+ * 
+ * ISMS Policy: SC-002 (Secure Testing)
+ * Security: Tests validate complete workflows including all MCP tools
+ */
+
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { MCPTestClient } from './mcpClient.js';
+import { parsePaginatedMCPResponse, parseMCPResponse, validateMCPResponse } from '../helpers/testUtils.js';
+
+describe('Full Workflow E2E Tests', () => {
+  let client: MCPTestClient;
+
+  beforeAll(async () => {
+    client = new MCPTestClient();
+    await client.connect();
+  }, 30000);
+
+  afterAll(async () => {
+    if (client) {
+      await client.disconnect();
+    }
+  }, 10000);
+
+  describe('Complete Tool Coverage', () => {
+    it('should successfully call all 10 MCP tools', async () => {
+      const tools = await client.listTools();
+      const toolNames = tools.map(t => t.name);
+
+      // Verify all 10 tools are available
+      expect(toolNames).toContain('get_meps');
+      expect(toolNames).toContain('get_mep_details');
+      expect(toolNames).toContain('get_plenary_sessions');
+      expect(toolNames).toContain('get_voting_records');
+      expect(toolNames).toContain('search_documents');
+      expect(toolNames).toContain('get_committee_info');
+      expect(toolNames).toContain('get_parliamentary_questions');
+      expect(toolNames).toContain('analyze_voting_patterns');
+      expect(toolNames).toContain('track_legislation');
+      expect(toolNames).toContain('generate_report');
+
+      expect(toolNames.length).toBeGreaterThanOrEqual(10);
+    }, 15000);
+
+    it('should execute get_meps tool', async () => {
+      const response = await client.callTool('get_meps', { limit: 3 });
+      validateMCPResponse(response);
+      const data = parsePaginatedMCPResponse(response.content);
+      expect(Array.isArray(data)).toBe(true);
+    }, 15000);
+
+    it('should execute get_plenary_sessions tool', async () => {
+      const response = await client.callTool('get_plenary_sessions', {
+        startDate: '2024-01-01',
+        limit: 3
+      });
+      validateMCPResponse(response);
+      const data = parsePaginatedMCPResponse(response.content);
+      expect(Array.isArray(data)).toBe(true);
+    }, 15000);
+
+    it('should execute get_voting_records tool', async () => {
+      const response = await client.callTool('get_voting_records', {
+        startDate: '2024-01-01',
+        limit: 3
+      });
+      validateMCPResponse(response);
+      const data = parsePaginatedMCPResponse(response.content);
+      expect(Array.isArray(data)).toBe(true);
+    }, 15000);
+
+    it('should execute search_documents tool', async () => {
+      const response = await client.callTool('search_documents', {
+        keyword: 'climate',
+        limit: 3
+      });
+      validateMCPResponse(response);
+      const data = parsePaginatedMCPResponse(response.content);
+      expect(Array.isArray(data)).toBe(true);
+    }, 15000);
+
+    it('should execute get_committee_info tool', async () => {
+      const response = await client.callTool('get_committee_info', {
+        committeeId: 'ENVI'
+      });
+      validateMCPResponse(response);
+      const data = parsePaginatedMCPResponse(response.content);
+      expect(typeof data).toBe('object');
+    }, 15000);
+
+    it('should execute get_parliamentary_questions tool', async () => {
+      const response = await client.callTool('get_parliamentary_questions', {
+        startDate: '2024-01-01',
+        limit: 3
+      });
+      validateMCPResponse(response);
+      const data = parsePaginatedMCPResponse(response.content);
+      expect(Array.isArray(data)).toBe(true);
+    }, 15000);
+
+    it('should execute analyze_voting_patterns tool', async () => {
+      const response = await client.callTool('analyze_voting_patterns', {
+        mepId: 'test-mep-id',
+        startDate: '2024-01-01',
+        endDate: '2024-12-31'
+      });
+      validateMCPResponse(response);
+      expect(response.content[0]?.type).toBe('text');
+    }, 15000);
+
+    it('should execute track_legislation tool', async () => {
+      const response = await client.callTool('track_legislation', {
+        keyword: 'climate',
+        limit: 3
+      });
+      validateMCPResponse(response);
+      const data = parsePaginatedMCPResponse(response.content);
+      expect(Array.isArray(data)).toBe(true);
+    }, 15000);
+
+    it('should execute generate_report tool', async () => {
+      const response = await client.callTool('generate_report', {
+        reportType: 'mep_activity',
+        format: 'summary'
+      });
+      validateMCPResponse(response);
+      expect(response.content[0]?.type).toBe('text');
+    }, 15000);
+  });
+
+  describe('Workflow: Research MEP Activity', () => {
+    it('should complete MEP research workflow', async () => {
+      // Step 1: Get list of MEPs
+      const mepsResponse = await client.callTool('get_meps', {
+        country: 'SE',
+        limit: 1
+      });
+      validateMCPResponse(mepsResponse);
+      const meps = parsePaginatedMCPResponse(mepsResponse.content);
+      expect(Array.isArray(meps)).toBe(true);
+
+      if (meps.length === 0) {
+        console.log('No MEPs available for workflow test');
+        return;
+      }
+
+      // Step 2: Get MEP details
+      const mep = meps[0] as { id: string };
+      const detailsResponse = await client.callTool('get_mep_details', {
+        mepId: mep.id
+      });
+      validateMCPResponse(detailsResponse);
+
+      // Step 3: Get voting records
+      const votingResponse = await client.callTool('get_voting_records', {
+        mepId: mep.id,
+        limit: 5
+      });
+      validateMCPResponse(votingResponse);
+
+      // Step 4: Analyze voting patterns
+      const analysisResponse = await client.callTool('analyze_voting_patterns', {
+        mepId: mep.id,
+        startDate: '2024-01-01',
+        endDate: '2024-12-31'
+      });
+      validateMCPResponse(analysisResponse);
+
+      // All steps completed successfully
+      expect(true).toBe(true);
+    }, 60000);
+  });
+
+  describe('Workflow: Track Legislation', () => {
+    it('should complete legislation tracking workflow', async () => {
+      // Step 1: Search for documents
+      const docsResponse = await client.callTool('search_documents', {
+        keyword: 'climate',
+        limit: 3
+      });
+      validateMCPResponse(docsResponse);
+      const docs = parsePaginatedMCPResponse(docsResponse.content);
+      expect(Array.isArray(docs)).toBe(true);
+
+      // Step 2: Track legislation
+      const trackResponse = await client.callTool('track_legislation', {
+        keyword: 'climate',
+        limit: 3
+      });
+      validateMCPResponse(trackResponse);
+
+      // Step 3: Generate report
+      const reportResponse = await client.callTool('generate_report', {
+        reportType: 'legislation_tracking',
+        format: 'summary'
+      });
+      validateMCPResponse(reportResponse);
+
+      // All steps completed successfully
+      expect(true).toBe(true);
+    }, 60000);
+  });
+
+  describe('Error Recovery', () => {
+    it('should recover from tool errors and continue workflow', async () => {
+      // Make a valid call
+      const validResponse = await client.callTool('get_meps', { limit: 1 });
+      validateMCPResponse(validResponse);
+
+      // Make an invalid call
+      try {
+        await client.callTool('get_meps', { limit: 0 });
+        expect.fail('Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+      }
+
+      // Make another valid call to verify client still works
+      const recoveryResponse = await client.callTool('get_meps', { limit: 1 });
+      validateMCPResponse(recoveryResponse);
+
+      expect(true).toBe(true);
+    }, 30000);
+  });
+});

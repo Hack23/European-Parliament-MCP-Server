@@ -13,7 +13,8 @@ export default defineConfig({
         '**/*.test.ts',
         '**/*.spec.ts',
         '**/*.config.ts',
-        '**/types/**'
+        '**/types/**',
+        'tests/**'
       ],
       // Updated thresholds to enforce 80%+ coverage
       // Security-critical files have 95%+ coverage (tools: 97.2%, utils: 95.45%, schemas: 100%)
@@ -26,7 +27,11 @@ export default defineConfig({
         statements: 80
       }
     },
-    include: ['src/**/*.test.ts', 'src/**/*.spec.ts'],
+    include: [
+      'src/**/*.test.ts',
+      'src/**/*.spec.ts',
+      'tests/**/*.test.ts'
+    ],
     exclude: ['node_modules/', 'dist/'],
     testTimeout: 10000,
     hookTimeout: 10000
