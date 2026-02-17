@@ -9,7 +9,7 @@
 /**
  * Metric types
  */
-export type MetricType = 'counter' | 'gauge' | 'histogram';
+type MetricType = 'counter' | 'gauge' | 'histogram';
 
 /**
  * Metric value

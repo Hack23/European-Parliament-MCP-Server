@@ -7,4 +7,3 @@
  */
 
 export { handleGenerateReport, generateReportToolMetadata } from './generateReport/index.js';
-export type { Report, ReportSection, ReportType } from './generateReport/types.js';

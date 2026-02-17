@@ -7,11 +7,3 @@
  */
 
 export { handleTrackLegislation, trackLegislationToolMetadata } from './trackLegislation/index.js';
-export type {
-  LegislativeProcedure,
-  TimelineEvent,
-  CommitteeAssignment,
-  AmendmentStats,
-  VotingRecord,
-  DocumentReference
-} from './trackLegislation/types.js';

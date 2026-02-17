@@ -106,6 +106,3 @@ export const generateReportToolMetadata = {
     required: ['reportType']
   }
 };
-
-// Re-export types for external use
-export type { Report, ReportSection, ReportType } from './types.js';

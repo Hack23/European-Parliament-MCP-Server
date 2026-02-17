@@ -10,12 +10,12 @@
 /**
  * Service lifetime options
  */
-export type ServiceLifetime = 'singleton' | 'transient';
+type ServiceLifetime = 'singleton' | 'transient';
 
 /**
  * Service factory function type
  */
-export type ServiceFactory<T> = (container: DIContainer) => T;
+type ServiceFactory<T> = (container: DIContainer) => T;
 
 /**
  * Service descriptor
@@ -117,8 +117,3 @@ export class DIContainer {
     this.services.clear();
   }
 }
-
-/**
- * Global DI container instance
- */
-export const container = new DIContainer();

@@ -67,13 +67,3 @@ export const trackLegislationToolMetadata = {
     required: ['procedureId']
   }
 };
-
-// Re-export types for external use
-export type {
-  LegislativeProcedure,
-  TimelineEvent,
-  CommitteeAssignment,
-  AmendmentStats,
-  VotingRecord,
-  DocumentReference
-} from './types.js';
