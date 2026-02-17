@@ -331,3 +331,40 @@ All security practices are governed by our publicly available ISMS:
 *Part of Hack23 AB's commitment to transparency and security excellence*
 
 </div>
+
+---
+
+## 🔌 MCP-Specific Security
+
+### Tool Invocation Security
+
+**Input Validation**: All tool parameters validated with Zod schemas
+- Country codes: ISO 3166-1 alpha-2 format
+- Dates: YYYY-MM-DD format
+- Keywords: Alphanumeric + spaces/hyphens only
+
+**Rate Limiting**: 100 requests per 15 minutes per IP address
+
+**Output Sanitization**: Error messages sanitized to prevent information disclosure
+
+### Threat Model
+
+**Threats Addressed**:
+- ✅ Injection attacks → Zod validation
+- ✅ DoS attacks → Rate limiting
+- ✅ Data exfiltration → Audit logging
+- ✅ Information disclosure → Error sanitization
+
+🔒 **[Complete security architecture →](./docs/ARCHITECTURE_DIAGRAMS.md#security-architecture)**
+
+### MCP Security Checklist
+
+- [x] Input validation (Zod schemas)
+- [x] Rate limiting (Token bucket)
+- [x] Audit logging (All requests)
+- [x] Error sanitization
+- [x] HTTPS only
+- [x] No secrets in code
+- [x] GDPR compliance
+
+📋 **[Complete security guide →](./docs/TROUBLESHOOTING.md)**

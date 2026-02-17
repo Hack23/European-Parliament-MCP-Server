@@ -18,6 +18,8 @@
 - [Overview](#overview)
 - [Architecture Overview](#architecture-overview)
 - [MCP Protocol Implementation](#mcp-protocol-implementation)
+- [Tool Implementation Patterns](#tool-implementation-patterns)
+- [Caching Strategy](#caching-strategy)
 - [European Parliament Data Sources](#european-parliament-data-sources)
 - [Security Architecture](#security-architecture)
 - [Technology Stack](#technology-stack)
@@ -27,6 +29,8 @@
 - [Performance Considerations](#performance-considerations)
 - [ISMS Compliance](#isms-compliance)
 - [Future Roadmap](#future-roadmap)
+
+📊 **[See complete architecture diagrams →](./docs/ARCHITECTURE_DIAGRAMS.md)**
 
 ---
 
@@ -643,3 +647,50 @@ This architecture aligns with Hack23 ISMS policies:
 **Last Updated**: 2026-02-16  
 **Owner**: Hack23 AB  
 **Review Cycle**: Quarterly
+
+---
+
+## 🔧 Tool Implementation Patterns
+
+All 10 MCP tools follow a consistent implementation pattern:
+
+**Pattern**: Input Validation → EP API Client → Output Validation → MCP Response
+
+**Example**:
+```typescript
+export async function handleGetMEPs(args: unknown) {
+  // 1. Validate input with Zod
+  const params = GetMEPsSchema.parse(args);
+  
+  // 2. Call EP API client with validated params
+  const result = await epClient.getMEPs(params);
+  
+  // 3. Validate output structure
+  const validated = PaginatedResponseSchema(MEPSchema).parse(result);
+  
+  // 4. Return MCP-compliant response
+  return {
+    content: [{ type: 'text', text: JSON.stringify(validated, null, 2) }]
+  };
+}
+```
+
+📖 **[Complete implementation guide →](./docs/DEVELOPER_GUIDE.md#adding-new-tools)**
+
+---
+
+## 💾 Caching Strategy
+
+**LRU Cache Configuration**:
+- Max entries: 500
+- TTL: 15 minutes
+- Memory: ~2.5MB
+
+**Cache Keys**: `{method}:{JSON.stringify(sorted_params)}`
+
+**Performance**:
+- Cached responses: <1ms
+- Cache hit rate: >80%
+- Memory efficient
+
+⚡ **[Complete performance guide →](./docs/PERFORMANCE_GUIDE.md)**
