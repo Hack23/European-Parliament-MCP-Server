@@ -683,8 +683,14 @@ The codebase has been refactored to follow clean architecture principles with fo
 Located in `src/di/container.ts`, provides type-safe service registration and resolution:
 
 ```typescript
-import { container, DIContainer } from './di/container.js';
-import { ReportServiceToken } from './di/tokens.js';
+import { DIContainer } from './di/container.js';
+
+// Create a container instance
+const container = new DIContainer();
+
+// Define injection tokens
+const ReportServiceToken = Symbol('ReportService');
+const EPClientToken = Symbol('EPClient');
 
 // Register a service
 container.register(
@@ -763,11 +769,13 @@ console.log(`p95: ${summary?.p95}ms, p99: ${summary?.p99}ms`);
 - Each module has single, clear responsibility
 
 **Test Coverage:**
-- Overall: 83.25% statement coverage
-- DI Container: 100% coverage
-- MetricsService: 100% coverage
-- Security-critical code: 95%+ coverage
-- 249 tests across 16 test files
+- Coverage thresholds (configured in `vitest.config.ts`):
+  - Statements: ≥ 80%
+  - Lines: ≥ 78.9%
+  - Branches: ≥ 70%
+  - Functions: ≥ 80%
+  - Security-critical code: ≥ 95% coverage target
+- For up-to-date coverage metrics and test counts, run `npm run test:coverage` and refer to the generated coverage report.
 
 ### Design Patterns Applied
 

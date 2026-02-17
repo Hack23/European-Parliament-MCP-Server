@@ -6,6 +6,7 @@
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
+import type { z } from 'zod';
 import { GenerateReportSchema } from '../../schemas/europeanParliament.js';
 import {
   generateMEPActivityReport,
@@ -16,12 +17,16 @@ import {
 import type { Report, ReportType } from './types.js';
 
 /**
+ * Report parameters type inferred from schema
+ */
+type ReportParams = z.infer<typeof GenerateReportSchema>;
+
+/**
  * Report generator map for O(1) lookup
  */
 const reportGenerators: Record<
   ReportType,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (params: any) => Promise<Report>
+  (params: ReportParams) => Promise<Report>
 > = {
   MEP_ACTIVITY: generateMEPActivityReport,
   COMMITTEE_PERFORMANCE: generateCommitteePerformanceReport,
@@ -54,8 +59,7 @@ export async function handleGenerateReport(
   
   try {
     // Use map lookup instead of switch for O(1) access
-    const generator = reportGenerators[params.reportType as ReportType];
-    
+    const generator = reportGenerators[params.reportType];
     const report = await generator(params);
     
     // Return MCP-compliant response

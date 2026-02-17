@@ -7,26 +7,40 @@
  */
 
 /**
- * Metric types
+ * Single value metric (counter/gauge)
  */
-type MetricType = 'counter' | 'gauge' | 'histogram';
-
-/**
- * Metric value
- */
-interface MetricValue {
-  type: MetricType;
+interface SingleMetric {
+  type: 'counter' | 'gauge';
   value: number;
   labels?: Record<string, string> | undefined;
   timestamp: number;
 }
 
 /**
+ * Histogram metric with bounded samples
+ */
+interface HistogramMetric {
+  type: 'histogram';
+  samples: number[]; // Bounded array of samples
+  count: number; // Total observation count
+  sum: number; // Running sum
+  labels?: Record<string, string> | undefined;
+  timestamp: number;
+}
+
+type MetricValue = SingleMetric | HistogramMetric;
+
+/**
  * Performance Metrics Service
  * Cyclomatic complexity: 8
  */
 export class MetricsService {
-  private readonly metrics = new Map<string, MetricValue[]>();
+  private readonly metrics = new Map<string, MetricValue>();
+  private readonly maxHistogramSamples: number;
+
+  constructor(maxHistogramSamples = 1000) {
+    this.maxHistogramSamples = maxHistogramSamples;
+  }
 
   /**
    * Increment a counter metric
@@ -39,9 +53,9 @@ export class MetricsService {
   incrementCounter(name: string, value = 1, labels?: Record<string, string>): void {
     const key = this.buildKey(name, labels);
     const current = this.metrics.get(key);
-    const lastValue = current?.[current.length - 1]?.value ?? 0;
+    const lastValue = current?.type === 'counter' ? current.value : 0;
 
-    this.recordMetric(key, {
+    this.metrics.set(key, {
       type: 'counter',
       value: lastValue + value,
       labels,
@@ -59,7 +73,7 @@ export class MetricsService {
    */
   setGauge(name: string, value: number, labels?: Record<string, string>): void {
     const key = this.buildKey(name, labels);
-    this.recordMetric(key, {
+    this.metrics.set(key, {
       type: 'gauge',
       value,
       labels,
@@ -69,7 +83,7 @@ export class MetricsService {
 
   /**
    * Record a histogram observation
-   * Cyclomatic complexity: 2
+   * Cyclomatic complexity: 3
    * 
    * @param name - Metric name
    * @param value - Observed value
@@ -77,17 +91,39 @@ export class MetricsService {
    */
   observeHistogram(name: string, value: number, labels?: Record<string, string>): void {
     const key = this.buildKey(name, labels);
-    this.recordMetric(key, {
-      type: 'histogram',
-      value,
-      labels,
-      timestamp: Date.now()
-    });
+    const current = this.metrics.get(key);
+
+    if (current?.type === 'histogram') {
+      // Add to existing histogram with reservoir sampling for bounded size
+      current.count += 1;
+      current.sum += value;
+      
+      if (current.samples.length < this.maxHistogramSamples) {
+        current.samples.push(value);
+      } else {
+        // Reservoir sampling: replace random element
+        const randomIndex = Math.floor(Math.random() * current.count);
+        if (randomIndex < this.maxHistogramSamples) {
+          current.samples[randomIndex] = value;
+        }
+      }
+      current.timestamp = Date.now();
+    } else {
+      // Create new histogram
+      this.metrics.set(key, {
+        type: 'histogram',
+        samples: [value],
+        count: 1,
+        sum: value,
+        labels,
+        timestamp: Date.now()
+      });
+    }
   }
 
   /**
    * Get current metric value
-   * Cyclomatic complexity: 2
+   * Cyclomatic complexity: 3
    * 
    * @param name - Metric name
    * @param labels - Optional labels
@@ -95,13 +131,14 @@ export class MetricsService {
    */
   getMetric(name: string, labels?: Record<string, string>): number | undefined {
     const key = this.buildKey(name, labels);
-    const values = this.metrics.get(key);
-    return values?.[values.length - 1]?.value;
+    const metric = this.metrics.get(key);
+    
+    return metric?.type === 'histogram' ? undefined : metric?.value;
   }
 
   /**
    * Get histogram summary
-   * Cyclomatic complexity: 5
+   * Cyclomatic complexity: 3
    * 
    * @param name - Metric name
    * @param labels - Optional labels
@@ -116,23 +153,19 @@ export class MetricsService {
     p99: number;
   } | undefined {
     const key = this.buildKey(name, labels);
-    const values = this.metrics.get(key);
+    const metric = this.metrics.get(key);
     
-    if (values === undefined || values.length === 0) {
+    if (metric?.type !== 'histogram' || metric.samples.length === 0) {
       return undefined;
     }
 
-    const sorted = [...values.map(v => v.value)].sort((a, b) => a - b);
-    const count = sorted.length;
-    const sum = sorted.reduce((acc, val) => acc + val, 0);
-
     return {
-      count,
-      sum,
-      avg: sum / count,
-      p50: this.percentile(sorted, 50),
-      p95: this.percentile(sorted, 95),
-      p99: this.percentile(sorted, 99)
+      count: metric.count,
+      sum: metric.sum,
+      avg: metric.sum / metric.count,
+      p50: this.percentileFromUnsorted(metric.samples, 50),
+      p95: this.percentileFromUnsorted(metric.samples, 95),
+      p99: this.percentileFromUnsorted(metric.samples, 99)
     };
   }
 
@@ -160,24 +193,90 @@ export class MetricsService {
   }
 
   /**
-   * Record a metric value
-   * Cyclomatic complexity: 2
+   * Compute a percentile value from an unsorted array using quickselect
+   * Cyclomatic complexity: 3
+   * 
+   * @param values - Array of samples
+   * @param percentile - Percentile to compute (0-100)
+   * @returns Percentile value
    */
-  private recordMetric(key: string, value: MetricValue): void {
-    const existing = this.metrics.get(key);
-    if (existing === undefined) {
-      this.metrics.set(key, [value]);
-    } else {
-      existing.push(value);
+  private percentileFromUnsorted(values: number[], percentile: number): number {
+    if (values.length === 0) {
+      return 0;
     }
+
+    // Use ceiling-based index for consistency with original implementation
+    const index = Math.ceil((percentile / 100) * values.length) - 1;
+    const clampedIndex = Math.min(values.length - 1, Math.max(0, index));
+
+    // Work on a copy to avoid mutating the original
+    const work = values.slice();
+    return this.selectKth(work, clampedIndex);
   }
 
   /**
-   * Calculate percentile
-   * Cyclomatic complexity: 2
+   * Select the k-th smallest element using quickselect
+   * Cyclomatic complexity: 5
+   * 
+   * @param arr - Array to select from (will be mutated)
+   * @param k - Index of element to select (0-based)
+   * @returns The k-th smallest element
    */
-  private percentile(sorted: number[], p: number): number {
-    const index = Math.ceil((p / 100) * sorted.length) - 1;
-    return sorted[Math.max(0, index)] ?? 0;
+  private selectKth(arr: number[], k: number): number {
+    let left = 0;
+    let right = arr.length - 1;
+
+    while (left <= right) {
+      if (left === right) {
+        return arr[left] ?? 0;
+      }
+
+      const pivotIndex = left + Math.floor((right - left) / 2);
+      const newPivotIndex = this.partition(arr, left, right, pivotIndex);
+
+      if (k === newPivotIndex) {
+        return arr[k] ?? 0;
+      }
+
+      if (k < newPivotIndex) {
+        right = newPivotIndex - 1;
+      } else {
+        left = newPivotIndex + 1;
+      }
+    }
+
+    return arr[Math.min(Math.max(k, 0), arr.length - 1)] ?? 0;
+  }
+
+  /**
+   * Partition helper for quickselect (Lomuto-style)
+   * Cyclomatic complexity: 4
+   * 
+   * @param arr - Array to partition
+   * @param left - Left bound
+   * @param right - Right bound
+   * @param pivotIndex - Pivot index
+   * @returns New pivot index
+   */
+  private partition(arr: number[], left: number, right: number, pivotIndex: number): number {
+    const pivotValue = arr[pivotIndex] ?? 0;
+    const rightVal = arr[right] ?? 0;
+    const pivotVal = arr[pivotIndex] ?? 0;
+    [arr[pivotIndex], arr[right]] = [rightVal, pivotVal];
+
+    let storeIndex = left;
+    for (let i = left; i < right; i += 1) {
+      const arrI = arr[i] ?? 0;
+      const arrStore = arr[storeIndex] ?? 0;
+      if (arrI < pivotValue) {
+        [arr[storeIndex], arr[i]] = [arrI, arrStore];
+        storeIndex += 1;
+      }
+    }
+
+    const rightValue = arr[right] ?? 0;
+    const storeValue = arr[storeIndex] ?? 0;
+    [arr[right], arr[storeIndex]] = [storeValue, rightValue];
+    return storeIndex;
   }
 }
