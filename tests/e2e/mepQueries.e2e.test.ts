@@ -110,7 +110,7 @@ describe('MEP Query E2E Tests', () => {
     it('should validate MEP ID format', async () => {
       await expect(async () => {
         await client.callTool('get_mep_details', {
-          mepId: '' // Empty ID
+          id: '' // Empty ID
         });
       }).rejects.toThrow();
     }, 15000);
