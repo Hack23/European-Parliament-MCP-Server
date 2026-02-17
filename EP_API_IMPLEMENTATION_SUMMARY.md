@@ -10,7 +10,7 @@ Successfully replaced mock European Parliament API implementation with real API 
 
 1. **getMEPs()** - `/meps`
    - Returns list of MEPs with basic information
-   - Supports filtering by country, political group, committee
+   - Supports filtering by country
    - Pagination support (limit, offset)
    - Transform: JSON-LD → MEP type
 

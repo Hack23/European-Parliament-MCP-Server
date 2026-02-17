@@ -237,29 +237,30 @@ export class EuropeanParliamentClient {
       politicalGroup: 'Unknown',
       committees: [],
       active: true,
-      termStart: new Date().toISOString().split('T')[0]!
+      termStart: 'Unknown'
     };
   }
 
   /**
    * Extract date from EP API activity date field
+   * Returns empty string when date is missing or invalid so callers can
+   * explicitly handle unknown dates instead of receiving a fabricated value.
    * @internal
    */
   private extractActivityDate(activityDate: unknown): string {
-    const defaultDate = new Date().toISOString().split('T')[0]!;
-    
     if (activityDate === null || activityDate === undefined) {
-      return defaultDate;
+      return '';
     }
     
     if (typeof activityDate === 'object' && '@value' in activityDate) {
       const dateValue = (activityDate as Record<string, unknown>)['@value'];
       if (typeof dateValue === 'string') {
-        return dateValue.split('T')[0]!;
+        const parts = dateValue.split('T');
+        return parts[0] ?? '';
       }
     }
     
-    return defaultDate;
+    return '';
   }
 
   /**
@@ -407,16 +408,24 @@ export class EuropeanParliamentClient {
   /**
    * Get detailed information about a specific MEP
    * 
-   * @param id - MEP identifier
+   * @param id - MEP identifier (supports formats: numeric, person/ID, MEP-ID)
    * @returns Detailed MEP information
    */
   async getMEPDetails(id: string): Promise<MEPDetails> {
     const action = 'get_mep_details';
     const params = { id };
     
+    // Normalize ID format: strip MEP- prefix if present, extract numeric ID from person/ID format
+    let normalizedId = id;
+    if (id.startsWith('MEP-')) {
+      normalizedId = id.substring(4);
+    } else if (id.startsWith('person/')) {
+      normalizedId = id.substring(7);
+    }
+    
     try {
-      // Call real EP API
-      const response = await this.get<JSONLDResponse>(`meps/${id}`, {});
+      // Call real EP API with normalized ID
+      const response = await this.get<JSONLDResponse>(`meps/${normalizedId}`, {});
       
       // Transform first result (EP API returns array even for single item)
       if (response.data.length > 0) {

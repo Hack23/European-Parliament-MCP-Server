@@ -125,11 +125,11 @@ EP API → Internal Format:
   "politicalGroup": "Unknown",  // Not in basic list
   "committees": [],  // Extracted from memberships
   "active": true,
-  "termStart": "2024-01-01"
+  "termStart": "Unknown"  // Set to "Unknown" when not available from API
 }
 ```
 
-**Note:** Country and political group information is not available in the basic MEP list. This requires fetching individual MEP details or using additional queries.
+**Note:** Country, political group, and term start date are not available in the basic MEP list. This requires fetching individual MEP details or using additional queries.
 
 ### Plenary Session Transformation
 
@@ -302,18 +302,6 @@ vi.mocked(epClient.getMEPs).mockResolvedValue({
   hasMore: false
 });
 ```
-
-### Integration Tests (Optional)
-
-For manual testing against the real API:
-
-```bash
-# Set environment variable to enable real API tests
-export EP_INTEGRATION_TESTS=true
-npm run test:integration
-```
-
-⚠️ **Note:** Integration tests hit the real API and count against rate limits.
 
 ## 📚 Additional Resources
 
