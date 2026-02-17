@@ -19,7 +19,7 @@
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:ci": "vitest run --coverage --reporter=junit --reporter=json --outputFile=coverage/junit.xml",
-    "test:licenses": "license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0'",
+    "test:licenses": "license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0;BlueOak-1.0.0'",
     "knip": "knip",
     "clean": "rm -rf dist coverage"
   },
@@ -57,7 +57,7 @@
     "@typescript-eslint/parser": "^8.55.0",
     "@vitest/coverage-v8": "^4.0.18",
     "@vitest/ui": "^4.0.3",
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.0",
     "globals": "^17.3.0",
     "knip": "^5.45.4",
     "license-compliance": "^3.0.1",

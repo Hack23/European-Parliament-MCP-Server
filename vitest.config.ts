@@ -6,7 +6,7 @@ export default defineConfig({
     environment: 'node',
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html', 'lcov'],
+      reporter: ['text', 'json', 'json-summary', 'html', 'lcov'],
       exclude: [
         'node_modules/',
         'dist/',
@@ -15,13 +15,15 @@ export default defineConfig({
         '**/*.config.ts',
         '**/types/**'
       ],
-      // Adjusted thresholds for skeleton implementation
-      // Will be increased to 80/70/80/80 as implementation progresses
+      // Updated thresholds to enforce 80%+ coverage
+      // Security-critical files have 95%+ coverage (tools: 97.2%, utils: 95.45%, schemas: 100%)
+      // Line threshold set to 78.9% (current: 78.96%) due to index.ts and europeanParliamentClient.ts
+      // requiring integration tests (deferred to separate task)
       thresholds: {
-        lines: 50,
-        branches: 0,
-        functions: 40,
-        statements: 50
+        lines: 78.9,
+        branches: 70,
+        functions: 80,
+        statements: 80
       }
     },
     include: ['src/**/*.test.ts', 'src/**/*.spec.ts'],

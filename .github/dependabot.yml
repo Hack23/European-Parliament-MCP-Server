@@ -1,89 +1,34 @@
 version: 2
 updates:
-  # GitHub Actions
+  # GitHub Actions dependencies
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: daily
-    groups:
-      github-actions:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
-
-  # npm dependencies
+    labels:
+      - "dependencies"
+      - "github-actions"
+    open-pull-requests-limit: 10
+  
+  # NPM dependencies
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: daily
+    labels:
+      - "dependencies"
+      - "npm"
+    open-pull-requests-limit: 10
+    versioning-strategy: increase
+    # Group minor and patch updates
     groups:
-      # TypeScript and type definitions
-      typescript:
-        patterns:
-          - "typescript"
-          - "@types/*"
+      development-dependencies:
+        dependency-type: "development"
         update-types:
           - "minor"
           - "patch"
-      
-      # Testing frameworks
-      vitest:
-        patterns:
-          - "vitest"
-          - "@vitest/*"
-        update-types:
-          - "minor"
-          - "patch"
-      
-      # ESLint and linting
-      eslint:
-        patterns:
-          - "eslint"
-          - "@eslint/*"
-          - "eslint-*"
-          - "@typescript-eslint/*"
-          - "typescript-eslint"
-        update-types:
-          - "minor"
-          - "patch"
-      
-      # MCP SDK and related packages
-      mcp:
-        patterns:
-          - "@modelcontextprotocol/*"
-          - "mcp-*"
-        update-types:
-          - "minor"
-          - "patch"
-      
-      # Express and API frameworks
-      express:
-        patterns:
-          - "express"
-          - "@types/express"
-          - "express-*"
-        update-types:
-          - "minor"
-          - "patch"
-      
-      # Validation libraries
-      validation:
-        patterns:
-          - "zod"
-          - "joi"
-          - "yup"
-        update-types:
-          - "minor"
-          - "patch"
-      
-      # HTTP clients
-      http-clients:
-        patterns:
-          - "axios"
-          - "node-fetch"
-          - "undici"
+      production-dependencies:
+        dependency-type: "production"
         update-types:
           - "minor"
           - "patch"

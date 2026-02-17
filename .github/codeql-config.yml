@@ -1,8 +1,48 @@
-name: "CodeQL Config for European Parliament MCP Server"
+name: "CodeQL Configuration - European Parliament MCP Server"
 
+# Disable default queries to use only security-focused queries
+disable-default-queries: false
+
+# Use security-extended query suite for comprehensive security scanning
+queries:
+  - uses: security-extended
+  - uses: security-and-quality
+
+# Paths to analyze
+paths:
+  - src/
+
+# Paths to ignore
 paths-ignore:
-  - docs/**
-  - "**/*.md"
-  - "**/*.json"
-  - ".github/**"
-  - "LICENSE*"
+  - node_modules/
+  - dist/
+  - coverage/
+  - "**/*.test.ts"
+  - "**/*.spec.ts"
+  - "**/__tests__/**"
+
+# Query filters for Node.js/TypeScript specific issues
+query-filters:
+  # Focus on high and critical severity issues
+  - exclude:
+      problem.severity: ["note"]
+  
+  # Focus on security issues
+  - include:
+      tags contain: "security"
+  
+  # Include MCP-specific security patterns
+  - include:
+      tags containAny: ["external/cwe/cwe-20", "external/cwe/cwe-79", "external/cwe/cwe-89", "external/cwe/cwe-22", "external/cwe/cwe-502"]
+  
+  # Include injection vulnerabilities
+  - include:
+      tags containAny: ["external/cwe/cwe-78", "external/cwe/cwe-94"]
+  
+  # Include authentication and authorization issues
+  - include:
+      tags containAny: ["external/cwe/cwe-287", "external/cwe/cwe-306"]
+  
+  # Include sensitive data exposure
+  - include:
+      tags containAny: ["external/cwe/cwe-200", "external/cwe/cwe-312"]

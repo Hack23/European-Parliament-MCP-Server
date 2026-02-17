@@ -103,11 +103,14 @@ This MCP server implements comprehensive security measures aligned with our **[S
 
 - **📄 SBOM Generation** - Software Bill of Materials in SPDX format
   - Policy: [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md)
+  - Implementation: [SBOM Generation Workflow](.github/workflows/sbom-generation.yml)
+  - Documentation: [SBOM.md](./docs/SBOM.md)
   - Location: Included in every release
   - Format: SPDX 2.3+ JSON
 
 - **📊 SBOM Quality Validation** - Automated quality scoring with SBOMQS
   - Policy: [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
+  - Implementation: [SBOM Generation Workflow](.github/workflows/sbom-generation.yml)
   - Minimum Score: 7.0/10
   - Standards: NTIA-minimum-elements, BSI v1.1/v2.0
 
@@ -121,6 +124,7 @@ This MCP server implements comprehensive security measures aligned with our **[S
   - Policy: [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
   - Verification: `gh attestation verify <artifact> --owner Hack23 --repo European-Parliament-MCP-Server`
   - Level: SLSA Level 3+ compliant
+  - Documentation: [ATTESTATIONS.md](./docs/ATTESTATIONS.md)
 
 - **🛡️ Immutable Releases** - Release artifacts cannot be tampered with
   - Policy: [Data Classification Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Data_Classification_Policy.md)

@@ -11,6 +11,80 @@ Agent Skills are structured folders of instructions that teach GitHub Copilot to
 
 ## 🎯 Available Skills
 
+**Total: 17 Skills** (11 existing + 6 comprehensive ISMS skills)
+
+### Core MCP Development Skills
+
+### 🔌 [mcp-server-development](./mcp-server-development/SKILL.md)
+**MCP protocol patterns and tool implementation**
+
+Teaches Copilot to implement Model Context Protocol (MCP) servers following specification. Covers:
+- Tool implementation with Zod validation
+- Resource URI patterns and handlers
+- Prompt template design
+- MCP-compliant error handling
+- Testing MCP implementations
+
+**When to use:** Implementing MCP tools, resources, prompts for European Parliament data
+
+---
+
+### 🏛️ [european-parliament-api](./european-parliament-api/SKILL.md)
+**European Parliament API integration patterns**
+
+Ensures proper integration with European Parliament Open Data Portal. Covers:
+- API client configuration with rate limiting
+- Response caching strategies (1h-24h TTL)
+- Multilingual data handling (24 EU languages)
+- Data attribution requirements
+- GDPR-compliant data access
+
+**When to use:** Integrating EP API, caching parliamentary data, ensuring attribution
+
+---
+
+### 🔒 [gdpr-compliance](./gdpr-compliance/SKILL.md)
+**GDPR and data protection patterns**
+
+Enforces GDPR compliance for European Parliament personal data. Covers:
+- Data minimization and purpose limitation
+- Audit logging for personal data access
+- Right to rectification and erasure
+- Storage limitation (max 24h cache)
+- Privacy by design principles
+
+**When to use:** Processing MEP data, implementing GDPR rights, audit logging
+
+---
+
+### 📐 [typescript-strict-patterns](./typescript-strict-patterns/SKILL.md)
+**TypeScript strict mode patterns and type safety**
+
+Enforces TypeScript strict mode compliance and advanced patterns. Covers:
+- Branded types for IDs (prevent mixing)
+- Discriminated unions for type-safe variants
+- Zod schema to TypeScript type inference
+- Null safety and type guards
+- Utility types (Pick, Omit, Partial)
+
+**When to use:** Writing TypeScript code, defining types, ensuring type safety
+
+---
+
+### 🧪 [testing-mcp-tools](./testing-mcp-tools/SKILL.md)
+**Testing patterns for MCP implementations**
+
+Enforces comprehensive testing with 80%+ coverage target. Covers:
+- Unit tests for MCP tools and resources
+- Mocking European Parliament API
+- Testing Zod schema validation
+- Integration tests for MCP server
+- Performance testing (<200ms target)
+
+**When to use:** Writing tests, improving coverage, testing MCP handlers
+
+---
+
 ### 🔒 [security-by-design](./security-by-design/SKILL.md)
 **High-level security principles and enforcement rules**
 
@@ -78,6 +152,95 @@ Patterns for optimizing Node.js API performance, MCP protocol efficiency, and da
 - Profile and measure performance
 
 **When to use:** Performance improvements, optimization work, profiling
+
+---
+
+### Comprehensive ISMS Compliance Skills
+
+### 🎖️ [open-source-governance](./open-source-governance/SKILL.md)
+**Open source governance, security badges, license compliance, SBOM**
+
+Comprehensive coverage of [Hack23 Open Source Policy v2.3](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md). Covers:
+- Security posture evidence (OpenSSF Scorecard ≥7.0, SLSA Level 3, CII Best Practices)
+- License compliance framework (approved/prohibited licenses)
+- SBOM generation and validation (CycloneDX)
+- Supply chain security (dependency scanning, pinning)
+- Vulnerability management (disclosure, remediation SLAs)
+- Exception management process
+
+**When to use:** Repository setup, badge integration, license compliance, SBOM generation, vulnerability handling
+
+---
+
+### 🕷️ [threat-modeling-framework](./threat-modeling-framework/SKILL.md)
+**STRIDE threat modeling, security analysis, SDLC integration**
+
+Enforces [Secure Development Policy Section 🕷️](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#advanced-security-testing-framework) requirements. Covers:
+- STRIDE methodology (Spoofing, Tampering, Repudiation, Information Disclosure, DoS, Elevation of Privilege)
+- Threat model documentation (THREAT_MODEL.md)
+- Trust boundary analysis with Mermaid diagrams
+- Mitigation strategies and risk assessment
+- SDLC integration (planning through maintenance)
+
+**When to use:** Feature design, security architecture, threat analysis, PR reviews
+
+---
+
+### 🏗️ [architecture-documentation](./architecture-documentation/SKILL.md)
+**C4 model, security architecture, Mermaid diagrams**
+
+Implements [Secure Development Policy Section 🏗️](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#architecture-documentation-matrix) standards. Covers:
+- C4 architecture levels (Context, Container, Component, Code)
+- SECURITY_ARCHITECTURE.md requirements
+- FUTURE_SECURITY_ARCHITECTURE.md planning
+- Mermaid diagram color coding (red=untrusted, green=trusted, yellow=external, blue=data)
+- Compliance mapping (ISO 27001, NIST CSF, CIS Controls)
+
+**When to use:** Architecture design, security documentation, creating diagrams, compliance mapping
+
+---
+
+### ☁️ [aws-security-architecture](./aws-security-architecture/SKILL.md)
+**AWS Control Tower, Well-Architected Framework, VPC security**
+
+AWS-specific security patterns per [Secure Development Policy AWS sections](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#aws-control-tower-objective-mapping). Covers:
+- AWS Control Tower objectives (CO.1-CO.15)
+- AWS Well-Architected Framework (Security, Reliability, Operational Excellence, Performance, Cost, Sustainability)
+- VPC endpoints and private connectivity
+- GuardDuty, Security Hub, CloudTrail integration
+- High availability and resilience (multi-AZ, Route 53)
+- AWS Resilience Hub and Fault Injection Simulator (FIS)
+
+**When to use:** AWS cloud architecture, VPC design, security monitoring, HA/DR planning
+
+---
+
+### 📜 [compliance-frameworks](./compliance-frameworks/SKILL.md)
+**ISO 27001, NIST CSF 2.0, CIS Controls, EU CRA compliance**
+
+Multi-standard compliance mapping per [Hack23 ISMS policies](https://github.com/Hack23/ISMS-PUBLIC). Covers:
+- ISO 27001:2022 control implementation (A.5, A.8, A.12, A.13, A.14)
+- NIST CSF 2.0 functions (GOVERN, IDENTIFY, PROTECT, DETECT, RESPOND, RECOVER)
+- CIS Controls v8.1 safeguards (IG1, IG2, IG3)
+- EU Cyber Resilience Act (CRA) conformity assessment
+- Compliance evidence generation and tracking
+
+**When to use:** Compliance documentation, control mapping, audit preparation, certification
+
+---
+
+### 🤖 [ai-development-governance](./ai-development-governance/SKILL.md)
+**AI-augmented development, GitHub Copilot governance, LLM security**
+
+Enforces [Secure Development Policy Section 🤖](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#ai-augmented-development-controls) for responsible AI use. Covers:
+- AI as proposal generator (not authority) principle
+- PR review requirements for AI-generated code
+- Custom Copilot agent governance
+- Security requirements (no secrets in prompts, human review mandatory)
+- AI code disclosure and documentation
+- Test coverage requirements (80%+)
+
+**When to use:** Using GitHub Copilot, reviewing AI code, creating custom agents, AI security
 
 ---
 
