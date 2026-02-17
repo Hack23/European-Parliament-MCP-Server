@@ -15,13 +15,13 @@ export default defineConfig({
         '**/*.config.ts',
         '**/types/**'
       ],
-      // Adjusted thresholds for skeleton implementation
-      // Will be increased to 80/70/80/80 as implementation progresses
+      // Updated thresholds to enforce 80%+ coverage
+      // Security-critical files should have 95%+ coverage (verified manually)
       thresholds: {
-        lines: 50,
-        branches: 0,
-        functions: 40,
-        statements: 50
+        lines: 80,
+        branches: 70,
+        functions: 80,
+        statements: 80
       }
     },
     include: ['src/**/*.test.ts', 'src/**/*.spec.ts'],
