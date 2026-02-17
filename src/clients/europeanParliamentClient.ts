@@ -183,6 +183,8 @@ export class EuropeanParliamentClient {
 
   /**
    * Generate cache key from endpoint and params
+   *
+   * @internal
    */
   private getCacheKey(endpoint: string, params?: Record<string, unknown>): string {
     return JSON.stringify({ endpoint, params });
