@@ -54,7 +54,8 @@ describe('Full Workflow E2E Tests', () => {
 
     it('should execute get_plenary_sessions tool', async () => {
       const response = await client.callTool('get_plenary_sessions', {
-        startDate: '2024-01-01',
+        dateFrom: '2024-01-01',
+        dateTo: '2024-12-31',
         limit: 3
       });
       validateMCPResponse(response);
@@ -64,7 +65,7 @@ describe('Full Workflow E2E Tests', () => {
 
     it('should execute get_voting_records tool', async () => {
       const response = await client.callTool('get_voting_records', {
-        startDate: '2024-01-01',
+        dateFrom: '2024-01-01',
         limit: 3
       });
       validateMCPResponse(response);
@@ -93,7 +94,7 @@ describe('Full Workflow E2E Tests', () => {
 
     it('should execute get_parliamentary_questions tool', async () => {
       const response = await client.callTool('get_parliamentary_questions', {
-        startDate: '2024-01-01',
+        dateFrom: '2024-01-01',
         limit: 3
       });
       validateMCPResponse(response);
@@ -104,8 +105,8 @@ describe('Full Workflow E2E Tests', () => {
     it('should execute analyze_voting_patterns tool', async () => {
       const response = await client.callTool('analyze_voting_patterns', {
         mepId: 'test-mep-id',
-        startDate: '2024-01-01',
-        endDate: '2024-12-31'
+        dateFrom: '2024-01-01',
+        dateTo: '2024-12-31'
       });
       validateMCPResponse(response);
       expect(response.content[0]?.type).toBe('text');
@@ -122,8 +123,7 @@ describe('Full Workflow E2E Tests', () => {
 
     it('should execute generate_report tool', async () => {
       const response = await client.callTool('generate_report', {
-        reportType: 'MEP_ACTIVITY',
-        format: 'summary'
+        reportType: 'MEP_ACTIVITY'
       });
       validateMCPResponse(response);
       expect(response.content[0]?.type).toBe('text');
@@ -163,8 +163,8 @@ describe('Full Workflow E2E Tests', () => {
       // Step 4: Analyze voting patterns
       const analysisResponse = await client.callTool('analyze_voting_patterns', {
         mepId: mep.id,
-        startDate: '2024-01-01',
-        endDate: '2024-12-31'
+        dateFrom: '2024-01-01',
+        dateTo: '2024-12-31'
       });
       validateMCPResponse(analysisResponse);
 
@@ -192,8 +192,7 @@ describe('Full Workflow E2E Tests', () => {
 
       // Step 3: Generate report
       const reportResponse = await client.callTool('generate_report', {
-        reportType: 'LEGISLATION_PROGRESS',
-        format: 'summary'
+        reportType: 'LEGISLATION_PROGRESS'
       });
       validateMCPResponse(reportResponse);
 
