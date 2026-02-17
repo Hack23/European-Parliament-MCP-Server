@@ -84,10 +84,10 @@ describe('Full Workflow E2E Tests', () => {
 
     it('should execute get_committee_info tool', async () => {
       const response = await client.callTool('get_committee_info', {
-        committeeId: 'ENVI'
+        abbreviation: 'ENVI'
       });
       validateMCPResponse(response);
-      const data = parsePaginatedMCPResponse(response.content);
+      const data = parseMCPResponse(response.content); // Non-paginated response
       expect(typeof data).toBe('object');
     }, 15000);
 
@@ -113,17 +113,16 @@ describe('Full Workflow E2E Tests', () => {
 
     it('should execute track_legislation tool', async () => {
       const response = await client.callTool('track_legislation', {
-        keyword: 'climate',
-        limit: 3
+        procedureId: '2024/0001(COD)'
       });
       validateMCPResponse(response);
-      const data = parsePaginatedMCPResponse(response.content);
-      expect(Array.isArray(data)).toBe(true);
+      const data = parseMCPResponse(response.content); // Non-paginated response
+      expect(typeof data).toBe('object');
     }, 15000);
 
     it('should execute generate_report tool', async () => {
       const response = await client.callTool('generate_report', {
-        reportType: 'mep_activity',
+        reportType: 'MEP_ACTIVITY',
         format: 'summary'
       });
       validateMCPResponse(response);
@@ -150,7 +149,7 @@ describe('Full Workflow E2E Tests', () => {
       // Step 2: Get MEP details
       const mep = meps[0] as { id: string };
       const detailsResponse = await client.callTool('get_mep_details', {
-        mepId: mep.id
+        id: mep.id
       });
       validateMCPResponse(detailsResponse);
 
@@ -187,14 +186,13 @@ describe('Full Workflow E2E Tests', () => {
 
       // Step 2: Track legislation
       const trackResponse = await client.callTool('track_legislation', {
-        keyword: 'climate',
-        limit: 3
+        procedureId: '2024/0001(COD)'
       });
       validateMCPResponse(trackResponse);
 
       // Step 3: Generate report
       const reportResponse = await client.callTool('generate_report', {
-        reportType: 'legislation_tracking',
+        reportType: 'LEGISLATION_PROGRESS',
         format: 'summary'
       });
       validateMCPResponse(reportResponse);

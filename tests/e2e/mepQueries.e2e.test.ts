@@ -96,7 +96,7 @@ describe('MEP Query E2E Tests', () => {
 
       // Get details
       const detailsResponse = await client.callTool('get_mep_details', {
-        mepId
+        id: mepId
       });
 
       validateMCPResponse(detailsResponse);
