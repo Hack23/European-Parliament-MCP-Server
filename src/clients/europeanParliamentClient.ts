@@ -259,6 +259,45 @@ export class EuropeanParliamentClient {
   }
 
   /**
+   * Transform EP API MEP details to internal format
+   * @internal
+   */
+  private transformMEPDetails(apiData: Record<string, unknown>): MEPDetails {
+    // Start with basic MEP transformation
+    const basicMEP = this.transformMEP(apiData);
+    
+    // Extract additional details
+    const bday = String(apiData['bday'] ?? '');
+    const memberships = apiData['hasMembership'];
+    const committees: string[] = [];
+    
+    // Extract committees from memberships if available
+    if (Array.isArray(memberships)) {
+      for (const membership of memberships) {
+        if (typeof membership === 'object' && membership !== null) {
+          const org = String((membership as Record<string, unknown>)['organization'] ?? '');
+          if (org) {
+            committees.push(org);
+          }
+        }
+      }
+    }
+    
+    return {
+      ...basicMEP,
+      committees: committees.length > 0 ? committees : basicMEP.committees,
+      biography: `Born: ${bday || 'Unknown'}`,
+      votingStatistics: {
+        totalVotes: 0,
+        votesFor: 0,
+        votesAgainst: 0,
+        abstentions: 0,
+        attendanceRate: 0
+      }
+    };
+  }
+
+  /**
    * Get Members of European Parliament
    * 
    * @param params - Query parameters
@@ -323,37 +362,25 @@ export class EuropeanParliamentClient {
    * @param id - MEP identifier
    * @returns Detailed MEP information
    */
-  getMEPDetails(id: string): Promise<MEPDetails> {
+  async getMEPDetails(id: string): Promise<MEPDetails> {
     const action = 'get_mep_details';
     const params = { id };
     
     try {
-      // For MVP, return mock data
-      const mockData: MEPDetails = {
-        id,
-        name: 'Example MEP',
-        country: 'SE',
-        politicalGroup: 'EPP',
-        committees: ['AGRI', 'ENVI'],
-        email: 'example@europarl.europa.eu',
-        active: true,
-        termStart: '2019-07-02',
-        biography: 'Example biography of the MEP.',
-        phone: '+32 2 28 45001',
-        website: 'https://www.europarl.europa.eu',
-        votingStatistics: {
-          totalVotes: 1250,
-          votesFor: 850,
-          votesAgainst: 200,
-          abstentions: 200,
-          attendanceRate: 92.5
-        },
-        roles: ['Member of AGRI Committee', 'Substitute in ENVI Committee']
-      };
+      // Call real EP API
+      const response = await this.get<JSONLDResponse>(`meps/${id}`, {});
       
-      auditLogger.logDataAccess(action, params, 1);
+      // Transform first result (EP API returns array even for single item)
+      if (response.data.length > 0) {
+        const mepDetails = this.transformMEPDetails(response.data[0] ?? {});
+        
+        auditLogger.logDataAccess(action, params, 1);
+        
+        return mepDetails;
+      }
       
-      return Promise.resolve(mockData);
+      // If no data, throw error
+      throw new APIError(`MEP with ID ${id} not found`, 404);
     } catch (error) {
       auditLogger.logError(
         action,

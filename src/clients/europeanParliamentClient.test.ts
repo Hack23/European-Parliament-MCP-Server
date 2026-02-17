@@ -155,6 +155,27 @@ describe('EuropeanParliamentClient', () => {
 
   describe('getMEPDetails', () => {
     it('should return detailed MEP information', async () => {
+      // Mock successful API response for MEP details
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{
+            id: 'person/124810',
+            type: 'Person',
+            identifier: '124810',
+            label: 'Test MEP',
+            familyName: 'Testson',
+            givenName: 'Test',
+            bday: '1970-01-01',
+            hasMembership: []
+          }],
+          '@context': [
+            { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
+            'https://data.europarl.europa.eu/api/v2/context.jsonld'
+          ]
+        })
+      } as Response);
+
       const result = await client.getMEPDetails('MEP-124810');
 
       expect(result).toHaveProperty('id');
@@ -165,6 +186,22 @@ describe('EuropeanParliamentClient', () => {
     });
 
     it('should include voting statistics', async () => {
+      // Mock successful API response
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{
+            id: 'person/124810',
+            identifier: '124810',
+            label: 'Test MEP',
+            familyName: 'Testson',
+            givenName: 'Test',
+            bday: '1970-01-01'
+          }],
+          '@context': []
+        })
+      } as Response);
+
       const result = await client.getMEPDetails('MEP-124810');
 
       expect(result.votingStatistics).toBeDefined();
