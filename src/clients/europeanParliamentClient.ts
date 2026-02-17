@@ -455,6 +455,33 @@ export class EuropeanParliamentClient {
    * @param params - Query parameters
    * @returns Paginated list of plenary sessions
    */
+  /**
+   * Build API parameters for meetings endpoint
+   */
+  private buildMeetingsAPIParams(params: {
+    dateFrom?: string;
+    dateTo?: string;
+    limit?: number;
+    offset?: number;
+  }): Record<string, unknown> {
+    const apiParams: Record<string, unknown> = {};
+    
+    if (params.limit !== undefined) {
+      apiParams['limit'] = params.limit;
+    }
+    if (params.offset !== undefined) {
+      apiParams['offset'] = params.offset;
+    }
+    if (params.dateFrom !== undefined) {
+      apiParams['date-from'] = params.dateFrom;
+    }
+    if (params.dateTo !== undefined) {
+      apiParams['date-to'] = params.dateTo;
+    }
+    
+    return apiParams;
+  }
+
   async getPlenarySessions(params: {
     dateFrom?: string;
     dateTo?: string;
@@ -466,20 +493,7 @@ export class EuropeanParliamentClient {
     
     try {
       // Build API parameters
-      const apiParams: Record<string, unknown> = {};
-      
-      if (params.limit !== undefined) {
-        apiParams['limit'] = params.limit;
-      }
-      if (params.offset !== undefined) {
-        apiParams['offset'] = params.offset;
-      }
-      if (params.dateFrom !== undefined) {
-        apiParams['date-from'] = params.dateFrom;
-      }
-      if (params.dateTo !== undefined) {
-        apiParams['date-to'] = params.dateTo;
-      }
+      const apiParams = this.buildMeetingsAPIParams(params);
       
       // Call real EP API meetings endpoint
       const response = await this.get<JSONLDResponse>('meetings', apiParams);
