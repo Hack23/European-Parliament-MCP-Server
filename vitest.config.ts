@@ -29,9 +29,16 @@ export default defineConfig({
     },
     include: [
       'src/**/*.test.ts',
-      'src/**/*.spec.ts'
+      'src/**/*.spec.ts',
+      'tests/**/*.test.ts'
     ],
-    exclude: ['node_modules/', 'dist/'],
+    exclude: [
+      'node_modules/',
+      'dist/',
+      'tests/e2e/mcpClient.ts', // Utility class, not a test file
+      'tests/helpers/**', // Test utilities
+      'tests/fixtures/**' // Test data
+    ],
     testTimeout: 10000,
     hookTimeout: 10000
   }
