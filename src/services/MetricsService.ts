@@ -17,7 +17,7 @@ export type MetricType = 'counter' | 'gauge' | 'histogram';
 interface MetricValue {
   type: MetricType;
   value: number;
-  labels?: Record<string, string>;
+  labels?: Record<string, string> | undefined;
   timestamp: number;
 }
 

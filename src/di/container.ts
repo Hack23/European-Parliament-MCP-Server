@@ -72,6 +72,7 @@ export class DIContainer {
    * const reportService = container.resolve(ReportServiceToken);
    * ```
    */
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   resolve<T>(token: symbol): T {
     const descriptor = this.services.get(token) as ServiceDescriptor<T> | undefined;
 

@@ -20,7 +20,8 @@ import type { Report, ReportType } from './types.js';
  */
 const reportGenerators: Record<
   ReportType,
-  (params: unknown) => Promise<Report>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (params: any) => Promise<Report>
 > = {
   MEP_ACTIVITY: generateMEPActivityReport,
   COMMITTEE_PERFORMANCE: generateCommitteePerformanceReport,
@@ -54,10 +55,6 @@ export async function handleGenerateReport(
   try {
     // Use map lookup instead of switch for O(1) access
     const generator = reportGenerators[params.reportType as ReportType];
-    
-    if (generator === undefined) {
-      throw new Error(`Unknown report type: ${String(params.reportType)}`);
-    }
     
     const report = await generator(params);
     
