@@ -386,7 +386,8 @@ export class EuropeanParliamentClient {
       
       const result: PaginatedResponse<MEP> = {
         data: meps,
-        total: meps.length, // EP API doesn't provide total count in response
+        // EP API doesn't provide total count; use lower bound estimate
+        total: (params.offset ?? 0) + meps.length,
         limit: params.limit ?? 50,
         offset: params.offset ?? 0,
         hasMore: meps.length >= (params.limit ?? 50)
@@ -488,7 +489,8 @@ export class EuropeanParliamentClient {
       
       const result: PaginatedResponse<PlenarySession> = {
         data: sessions,
-        total: sessions.length,
+        // EP API doesn't provide total count; use lower bound estimate
+        total: (params.offset ?? 0) + sessions.length,
         limit: params.limit ?? 50,
         offset: params.offset ?? 0,
         hasMore: sessions.length >= (params.limit ?? 50)

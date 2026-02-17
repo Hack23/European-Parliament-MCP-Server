@@ -137,11 +137,12 @@ describe('MetricsService', () => {
   });
 
   describe('Histogram Edge Cases', () => {
-    it('should handle empty histogram summary', () => {
-      // Create histogram but don't add samples
+    it('should return undefined for histogram after clearing metrics', () => {
+      // Observe a value and then clear all metrics
       service.observeHistogram('empty_test', 10);
       service.clear();
       
+      // Should return undefined after clear
       const summary = service.getHistogramSummary('empty_test');
       expect(summary).toBeUndefined();
     });

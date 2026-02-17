@@ -460,10 +460,10 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         json: async () => ({
           data: [{
-            identifier: 'session-1',
-            activityLabel: 'Test Session',
+            activity_id: 'session-1',
+            label: 'Test Session',
             hasLocality: 'http://example.com/FRA_SXB'
-            // No activityDate field
+            // No eli-dl:activity_date field
           }],
           '@context': []
         })
@@ -478,10 +478,10 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         json: async () => ({
           data: [{
-            identifier: 'session-1',
-            activityLabel: 'Test Session',
+            activity_id: 'session-1',
+            label: 'Test Session',
             hasLocality: 'http://example.com/BEL_BRU',
-            activityDate: null
+            'eli-dl:activity_date': null
           }],
           '@context': []
         })
@@ -497,8 +497,8 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         json: async () => ({
           data: [{
-            identifier: 'session-1',
-            activityLabel: 'Test Session',
+            activity_id: 'session-1',
+            label: 'Test Session',
             hasLocality: 'http://example.com/OTHER_CITY'
           }],
           '@context': []
@@ -528,7 +528,7 @@ describe('EuropeanParliamentClient', () => {
       expect(result.biography).toBe('Born: Unknown');
     });
 
-    it('should handle MEP details with null organization', async () => {
+    it('should handle MEP details with null organization in membership', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -537,14 +537,18 @@ describe('EuropeanParliamentClient', () => {
             label: 'Test MEP',
             familyName: 'Doe',
             givenName: 'John',
-            organization: null
+            hasMembership: [
+              { organization: null },
+              { organization: '' }
+            ]
           }],
           '@context': []
         })
       } as Response);
 
       const result = await client.getMEPDetails('123');
-      expect(result.politicalGroup).toBe('Unknown');
+      // With null/empty organizations, should fall back to empty committees array from transformMEP
+      expect(result.committees).toEqual([]);
     });
 
     it('should normalize MEP ID by stripping MEP- prefix', async () => {
@@ -561,6 +565,16 @@ describe('EuropeanParliamentClient', () => {
 
       const result = await client.getMEPDetails('MEP-124810');
       expect(result).toBeDefined();
+      
+      // Verify the normalized ID (124810) was used in the URL
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://data.europarl.europa.eu/api/v2/meps/124810',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Accept: 'application/ld+json'
+          })
+        })
+      );
     });
 
     it('should normalize MEP ID by extracting from person/ format', async () => {
@@ -577,6 +591,16 @@ describe('EuropeanParliamentClient', () => {
 
       const result = await client.getMEPDetails('person/124810');
       expect(result).toBeDefined();
+      
+      // Verify the normalized ID (124810) was used in the URL
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://data.europarl.europa.eu/api/v2/meps/124810',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Accept: 'application/ld+json'
+          })
+        })
+      );
     });
   });
 });

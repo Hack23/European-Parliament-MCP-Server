@@ -62,7 +62,7 @@ Location mapping:
 ### 4. Backward Compatibility
 
 - Existing interfaces unchanged
-- All 228 tests passing
+- All tests passing (see CI for current count)
 - No breaking changes to MCP tools
 - Existing Zod schemas still valid
 
@@ -71,10 +71,10 @@ Location mapping:
 **Test Strategy:**
 - Client tests: Mock `fetch` from undici
 - Tool tests: Mock `epClient` methods
-- 100% test pass rate (228/228)
+- 100% test pass rate
 
 **Coverage:**
-- 80.05% overall coverage maintained
+- 80%+ overall coverage maintained
 - 95%+ for security-critical code
 - All real API endpoints tested with mocks
 
