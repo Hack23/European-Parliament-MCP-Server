@@ -76,6 +76,8 @@ describe('RateLimiter', () => {
 
   describe('tryRemoveTokens', () => {
     it('should return true when tokens available', () => {
+      vi.useFakeTimers();
+      
       const limiter = new RateLimiter({
         tokensPerInterval: 10,
         interval: 'second'
@@ -83,9 +85,13 @@ describe('RateLimiter', () => {
 
       expect(limiter.tryRemoveTokens(5)).toBe(true);
       expect(limiter.getAvailableTokens()).toBe(5);
+      
+      vi.useRealTimers();
     });
 
     it('should return false when tokens not available', () => {
+      vi.useFakeTimers();
+      
       const limiter = new RateLimiter({
         tokensPerInterval: 5,
         interval: 'second'
@@ -94,11 +100,15 @@ describe('RateLimiter', () => {
       limiter.tryRemoveTokens(5);
       expect(limiter.tryRemoveTokens(1)).toBe(false);
       expect(limiter.getAvailableTokens()).toBe(0);
+      
+      vi.useRealTimers();
     });
   });
 
   describe('reset', () => {
     it('should reset tokens to full capacity', () => {
+      vi.useFakeTimers();
+      
       const limiter = new RateLimiter({
         tokensPerInterval: 10,
         interval: 'second'
@@ -109,6 +119,8 @@ describe('RateLimiter', () => {
 
       limiter.reset();
       expect(limiter.getAvailableTokens()).toBe(10);
+      
+      vi.useRealTimers();
     });
   });
 
