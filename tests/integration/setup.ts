@@ -28,10 +28,9 @@ beforeAll(async () => {
     interval: 'minute'
   });
   
-  // Initialize EP client with caching enabled
+  // Initialize EP client
   epClient = new EuropeanParliamentClient({
     baseURL,
-    cacheEnabled: true,
     cacheTTL: 900000, // 15 minutes
     maxCacheSize: 500,
     rateLimiter
