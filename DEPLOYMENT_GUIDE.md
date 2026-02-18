@@ -16,6 +16,7 @@
 ## 📋 Table of Contents
 
 - [Prerequisites](#prerequisites)
+- [Testing Before Deployment](#testing-before-deployment)
 - [Claude Desktop Deployment](#claude-desktop-deployment)
 - [VS Code Extension Deployment](#vs-code-extension-deployment)
 - [Docker Deployment](#docker-deployment)
@@ -31,9 +32,20 @@
 
 - **Node.js**: v24.x or higher
 - **npm**: v10.x or higher
-- **Git**: Latest version
+- **Git**: Latest version (for development)
 
-### Build Requirements
+### Quick Installation Test
+
+```bash
+# Test with npx (no installation needed)
+npx european-parliament-mcp-server --health
+
+# Expected output: JSON with status "healthy"
+```
+
+**If the health check works**, you're ready to configure your MCP client! See [Testing Before Deployment](#testing-before-deployment) for comprehensive testing.
+
+### Build Requirements (Development Only)
 
 ```bash
 # Clone repository
@@ -46,28 +58,82 @@ npm install
 # Build project
 npm run build
 
-# Verify build
-test -f dist/index.js && echo "Build successful"
+# Run comprehensive tests
+npm run test-mcp
+
+# Verify package integrity
+npm run verify-package
 ```
+
+---
+
+## 🧪 Testing Before Deployment
+
+**Before configuring any MCP client**, test the server independently:
+
+### Quick Health Check
+
+```bash
+# Test with npx (recommended)
+npx european-parliament-mcp-server --health
+
+# Or test global installation
+european-parliament-mcp --health
+```
+
+**Expected Output:**
+```json
+{
+  "name": "european-parliament-mcp-server",
+  "version": "1.0.0",
+  "status": "healthy",
+  "capabilities": ["tools", "resources", "prompts"],
+  "tools": {
+    "total": 10,
+    "core": 7,
+    "advanced": 3
+  }
+}
+```
+
+### CLI Commands Reference
+
+```bash
+# Show version
+npx european-parliament-mcp-server --version
+
+# Show help and configuration examples
+npx european-parliament-mcp-server --help
+
+# Check health and capabilities
+npx european-parliament-mcp-server --health
+```
+
+### Comprehensive Testing
+
+For complete testing instructions including MCP Inspector integration, see:
+
+📖 **[LOCAL_TESTING.md](./LOCAL_TESTING.md)** - Complete local testing guide
+
+Key test scenarios:
+- ✅ CLI commands (--health, --version, --help)
+- ✅ MCP protocol initialization
+- ✅ Tool listing and execution
+- ✅ Integration with MCP Inspector
+- ✅ Package integrity verification
 
 ---
 
 ## 🖥️ Claude Desktop Deployment
 
-### 1. Build the Server
+### Method 1: npx (Recommended - Production)
 
-```bash
-cd /path/to/European-Parliament-MCP-Server
-npm install
-npm run build
-```
-
-### 2. Configure Claude Desktop
+**No build required!** Just configure Claude Desktop to use npx.
 
 **Config Location**:
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Linux**: `~/.config/claude/claude_desktop_config.json`
 - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **Linux**: `~/.config/Claude/claude_desktop_config.json`
 
 **Configuration**:
 
@@ -75,12 +141,57 @@ npm run build
 {
   "mcpServers": {
     "european-parliament": {
+      "command": "npx",
+      "args": ["european-parliament-mcp-server"],
+      "env": {
+        "EP_API_URL": "https://data.europarl.europa.eu/api/v2/",
+        "EP_CACHE_TTL": "900000",
+        "EP_RATE_LIMIT": "60"
+      }
+    }
+  }
+}
+```
+
+**Advantages**:
+- ✅ Always uses latest version
+- ✅ No build required
+- ✅ No manual updates needed
+- ✅ Works immediately
+
+---
+
+### Method 2: Local Development Build
+
+Use this for development or when contributing to the project.
+
+#### 1. Build the Server
+
+```bash
+cd /path/to/European-Parliament-MCP-Server
+npm install
+npm run build
+
+# Verify build
+npm run test-mcp
+```
+
+#### 2. Configure Claude Desktop
+
+**Configuration**:
+
+```json
+{
+  "mcpServers": {
+    "european-parliament-dev": {
       "command": "node",
       "args": [
         "/absolute/path/to/European-Parliament-MCP-Server/dist/index.js"
       ],
       "env": {
-        "LOG_LEVEL": "info"
+        "EP_API_URL": "https://data.europarl.europa.eu/api/v2/",
+        "EP_CACHE_TTL": "900000",
+        "EP_RATE_LIMIT": "60"
       }
     }
   }
@@ -92,26 +203,63 @@ npm run build
 - Use forward slashes `/` even on Windows
 - Restart Claude Desktop after configuration changes
 
+---
+
 ### 3. Verify Installation
 
-1. Open Claude Desktop
-2. Start a new conversation
-3. Type: "What European Parliament tools are available?"
-4. Claude should list the 10 MCP tools
+1. **Test server independently first:**
+   ```bash
+   npx european-parliament-mcp-server --health
+   ```
+
+2. **Restart Claude Desktop completely** (quit, don't just close)
+
+3. **Open Claude Desktop** and start a new conversation
+
+4. **Test the integration:**
+   - Type: "What European Parliament tools are available?"
+   - Claude should list the 10 MCP tools
+
+5. **Try a tool:**
+   - Type: "Show me MEPs from Sweden"
+   - Claude should use the `get_meps` tool
+
+---
 
 ### Troubleshooting
 
 **Tools not appearing**:
-```bash
-# Check file exists
-test -f /path/to/dist/index.js && echo "OK" || echo "Missing"
 
-# Check permissions
-ls -la /path/to/dist/index.js
+1. **Verify server works independently:**
+   ```bash
+   npx european-parliament-mcp-server --health
+   # Should return JSON with status "healthy"
+   ```
 
-# Check Claude logs (macOS)
-tail -f ~/Library/Logs/Claude/main.log
-```
+2. **Check configuration file syntax:**
+   - Use a JSON validator
+   - Ensure no trailing commas
+   - Ensure double quotes (not single)
+
+3. **Check Claude Desktop logs:**
+   ```bash
+   # macOS
+   tail -f ~/Library/Logs/Claude/main.log
+   
+   # Windows
+   type %APPDATA%\Claude\Logs\main.log
+   
+   # Linux
+   tail -f ~/.config/Claude/logs/main.log
+   ```
+
+4. **For local builds, verify file exists:**
+   ```bash
+   test -f /path/to/dist/index.js && echo "OK" || echo "Missing"
+   ls -la /path/to/dist/index.js
+   ```
+
+📖 **For more troubleshooting**, see [LOCAL_TESTING.md](./LOCAL_TESTING.md#troubleshooting)
 
 ---
 
