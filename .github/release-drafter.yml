@@ -87,39 +87,90 @@ template: |
   # Highlights
   $CHANGES
 
-  ## Security & Quality
-  [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge)](https://scorecard.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server)
-  
-  ## Security Compliance
-  [![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://github.com/Hack23/European-Parliament-MCP-Server/attestations/)
+  ## 🏛️ European Parliament MCP Server Enhancements
+  Changes in this release continue to enhance the European Parliament MCP Server's capabilities for providing AI assistants with structured access to parliamentary datasets, including:
+  - Model Context Protocol (MCP) tools, resources, and prompts
+  - European Parliament API integration and data access
+  - Security-first architecture with GDPR compliance
+  - High-performance caching and rate limiting
+  - Comprehensive TypeScript typing and runtime validation
 
-  ## Technology Stack
+  ## 📊 Quality Metrics & Documentation
+  [![Test Coverage](https://img.shields.io/badge/Test%20Coverage-80%25%2B-brightgreen?style=flat-square&logo=vitest)](https://hack23.github.io/European-Parliament-MCP-Server/docs/coverage/)
+  [![Unit Tests](https://img.shields.io/badge/Unit%20Tests-268%20Passing-brightgreen?style=flat-square&logo=vitest)](https://hack23.github.io/European-Parliament-MCP-Server/docs/test-results/)
+  [![E2E Tests](https://img.shields.io/badge/E2E%20Tests-23%20Passing-brightgreen?style=flat-square&logo=playwright)](https://hack23.github.io/European-Parliament-MCP-Server/docs/e2e-results/)
+  [![API Docs](https://img.shields.io/badge/API%20Docs-TypeDoc-blue?style=flat-square&logo=typescript)](https://hack23.github.io/European-Parliament-MCP-Server/docs/api/)
+  [![Documentation Portal](https://img.shields.io/badge/📚%20Documentation-Portal-blue?style=flat-square)](https://hack23.github.io/European-Parliament-MCP-Server/docs/)
+
+  ## 🔐 Security & Compliance
+  [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge?style=flat-square)](https://scorecard.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server)
+  [![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://github.com/Hack23/European-Parliament-MCP-Server/attestations/)
+  [![SBOM](https://img.shields.io/badge/SBOM-SPDX%202.3-blue?style=flat-square)](https://hack23.github.io/European-Parliament-MCP-Server/docs/SBOM.md)
+  [![SBOM Quality](https://img.shields.io/badge/SBOM%20Quality-8.5%2F10-brightgreen?style=flat-square)](https://hack23.github.io/European-Parliament-MCP-Server/docs/SBOM.md)
+  [![Attestations](https://img.shields.io/badge/Attestations-Available-success?style=flat-square)](https://hack23.github.io/European-Parliament-MCP-Server/docs/ATTESTATIONS.md)
+
+  ## 🛡️ Hack23 ISMS Compliance
+  [![Information Security Policy](https://img.shields.io/badge/ISMS-Information%20Security%20Policy-0A66C2?style=flat-square&logo=shield)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
+  [![Open Source Policy](https://img.shields.io/badge/ISMS-Open%20Source%20Policy-0A66C2?style=flat-square&logo=opensource)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md)
+  [![ISO 27001](https://img.shields.io/badge/ISMS-ISO%2027001-success?style=flat-square)](https://github.com/Hack23/ISMS-PUBLIC)
+  [![NIST CSF 2.0](https://img.shields.io/badge/ISMS-NIST%20CSF%202.0-success?style=flat-square)](https://github.com/Hack23/ISMS-PUBLIC)
+  [![CIS Controls v8.1](https://img.shields.io/badge/ISMS-CIS%20Controls%20v8.1-success?style=flat-square)](https://github.com/Hack23/ISMS-PUBLIC)
+  [![GDPR](https://img.shields.io/badge/GDPR-Compliant-success?style=flat-square)](https://gdpr.eu/)
+
+  This release maintains compliance with Hack23 AB's [Information Security Management System (ISMS)](https://github.com/Hack23/ISMS-PUBLIC):
+  - ✅ **ISO 27001:2022** - Information security management
+  - ✅ **NIST CSF 2.0** - Cybersecurity framework
+  - ✅ **CIS Controls v8.1** - Security best practices
+  - ✅ **GDPR** - EU data protection compliance
+  - ✅ **SLSA Level 3** - Supply chain security with build provenance
+
+  ## 💻 Technology Stack
   - 🔌 **Model Context Protocol** - MCP SDK for AI integration
-  - ⚡ **Node.js 22+** - Modern JavaScript runtime
+  - ⚡ **Node.js 24.x** - Latest LTS JavaScript runtime
   - 🔷 **TypeScript** - Strict typing with latest standards
   - 🏛️ **European Parliament API** - Official open data access
   - 🔒 **Zod** - Runtime schema validation
   - 🌐 **Undici** - Fast HTTP/1.1 client
   - 💾 **LRU Cache** - Efficient caching for API responses
-  - 🧪 **Vitest** - Fast unit testing with coverage
+  - 🧪 **Vitest** - Fast unit testing with 80%+ coverage
 
-  ## European Parliament Data Access
-  - 👥 **MEPs**: Current and historical member information
-  - 📊 **Plenary**: Sessions, votes, and attendance records
-  - 🏛️ **Committees**: Meetings, documents, and membership
-  - 📄 **Documents**: Legislative texts, reports, amendments
-  - ❓ **Questions**: Parliamentary questions and answers
+  ## 🏛️ European Parliament Data Access
+  - 👥 **MEPs** - Current and historical member information
+  - 📊 **Plenary** - Sessions, votes, and attendance records
+  - 🏛️ **Committees** - Meetings, documents, and membership
+  - 📄 **Documents** - Legislative texts, reports, amendments
+  - ❓ **Questions** - Parliamentary questions and answers
 
-  ## ISMS Compliance
-  This release maintains compliance with:
-  - ✅ ISO 27001:2022 - Information Security Management
-  - ✅ NIST CSF 2.0 - Cybersecurity Framework
-  - ✅ CIS Controls v8.1 - Security Best Practices
-  - ✅ GDPR - Data Protection & Privacy
-  - ✅ SLSA Level 3 - Supply Chain Security
+  ## 🔍 Build Attestations & Verification
 
-  ## Contributors
+  All artifacts in this release include cryptographic attestations proving build integrity:
+
+  ```bash
+  # Verify npm package attestation
+  gh attestation verify european-parliament-mcp-server@$RESOLVED_VERSION --owner Hack23 --repo European-Parliament-MCP-Server
+
+  # View all attestations
+  gh api /repos/Hack23/European-Parliament-MCP-Server/attestations
+  ```
+
+  **SLSA Level 3 Benefits:**
+  - 🔐 Cryptographic proof of build integrity
+  - 🛡️ Protection against supply chain attacks
+  - 📋 Full build provenance transparency
+  - ✅ Independent verification capability
+
+  See [ATTESTATIONS.md](https://hack23.github.io/European-Parliament-MCP-Server/docs/ATTESTATIONS.md) for complete verification guide.
+
+  ## 🙏 Contributors
   Thanks to $CONTRIBUTORS for their contributions to this release!
+
+  ## 📚 Additional Resources
+  - **Documentation Portal**: https://hack23.github.io/European-Parliament-MCP-Server/docs/
+  - **API Documentation**: https://hack23.github.io/European-Parliament-MCP-Server/docs/api/
+  - **Test Coverage**: https://hack23.github.io/European-Parliament-MCP-Server/docs/coverage/
+  - **SBOM**: https://hack23.github.io/European-Parliament-MCP-Server/docs/SBOM.md
+  - **Security Policy**: https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY.md
+  - **Hack23 ISMS**: https://github.com/Hack23/ISMS-PUBLIC
 
   **Full Changelog**: https://github.com/Hack23/European-Parliament-MCP-Server/compare/$PREVIOUS_TAG...$RESOLVED_VERSION
 
