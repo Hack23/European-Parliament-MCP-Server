@@ -143,6 +143,17 @@ Configure in `.vscode/mcp.json`:
 
 ## 📚 Documentation
 
+### Core Documentation
+
+- [**API Usage Guide**](./API_USAGE_GUIDE.md) - Complete tool documentation with examples
+- [**Architecture Diagrams**](./ARCHITECTURE_DIAGRAMS.md) - C4 model diagrams and data flows
+- [**Troubleshooting Guide**](./TROUBLESHOOTING.md) - Common issues and solutions
+- [**Developer Guide**](./DEVELOPER_GUIDE.md) - Development workflow and contributing
+- [**Deployment Guide**](./DEPLOYMENT_GUIDE.md) - Claude Desktop, VS Code, Docker setup
+- [**Performance Guide**](./PERFORMANCE_GUIDE.md) - Optimization strategies
+
+### Additional Documentation
+
 - [**ARCHITECTURE.md**](./ARCHITECTURE.md) - Complete architecture and design documentation
 - [**SECURITY.md**](./SECURITY.md) - Security policy and vulnerability disclosure
 - [**SECURITY_HEADERS.md**](./SECURITY_HEADERS.md) - API security headers implementation
@@ -157,23 +168,48 @@ Configure in `.vscode/mcp.json`:
 
 ## 🔌 MCP Tools
 
-### Core Tools
+### Quick Reference
 
-| Tool | Description | Example |
-|------|-------------|---------|
-| `get_meps` | List Members of European Parliament | Filter by country, political group |
-| `get_mep_details` | Get detailed MEP information | Biography, contact, activities |
-| `get_plenary_sessions` | List plenary sessions | Sessions, agendas, voting records |
-| `get_voting_records` | Retrieve voting records | MEP votes, patterns, statistics |
-| `search_documents` | Search legislative documents | Bills, resolutions, amendments |
-| `get_committee_info` | Get committee information | Composition, meetings, documents |
-| `get_parliamentary_questions` | List parliamentary questions | Written/oral questions, answers |
+| Tool | Description | Key Parameters | Response |
+|------|-------------|----------------|----------|
+| [`get_meps`](./API_USAGE_GUIDE.md#tool-get_meps) | List MEPs with filters | country, group, committee, limit | Paginated list |
+| [`get_mep_details`](./API_USAGE_GUIDE.md#tool-get_mep_details) | Detailed MEP information | id (required) | Single object |
+| [`get_plenary_sessions`](./API_USAGE_GUIDE.md#tool-get_plenary_sessions) | List plenary sessions | dateFrom, dateTo, limit | Paginated list |
+| [`get_voting_records`](./API_USAGE_GUIDE.md#tool-get_voting_records) | Retrieve voting records | mepId, sessionId, topic, dateFrom | Paginated list |
+| [`search_documents`](./API_USAGE_GUIDE.md#tool-search_documents) | Search legislative documents | keywords (required), docType, author | Paginated list |
+| [`get_committee_info`](./API_USAGE_GUIDE.md#tool-get_committee_info) | Committee information | id or abbreviation (required) | Single object |
+| [`get_parliamentary_questions`](./API_USAGE_GUIDE.md#tool-get_parliamentary_questions) | Parliamentary Q&A | author, topic, questionType, dateFrom | Paginated list |
+| [`analyze_voting_patterns`](./API_USAGE_GUIDE.md#tool-analyze_voting_patterns) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
+| [`track_legislation`](./API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
+| [`generate_report`](./API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
 
-### Advanced Tools (Planned)
+📖 **[Complete API documentation with examples →](./API_USAGE_GUIDE.md)**
 
-- `analyze_voting_patterns` - Analyze MEP voting behavior
-- `track_legislation` - Track legislative procedure progress
-- `generate_report` - Generate analytical reports
+### Common Use Cases
+
+**Research a specific MEP**:
+```
+1. Find MEP: get_meps → {country: "SE"}
+2. Get details: get_mep_details → {id: "MEP-123"}
+3. Analyze voting: analyze_voting_patterns → {mepId: "MEP-123"}
+4. Generate report: generate_report → {reportType: "MEP_ACTIVITY", subjectId: "MEP-123"}
+```
+
+**Track legislation**:
+```
+1. Search documents: search_documents → {keywords: "climate change"}
+2. Track procedure: track_legislation → {procedureId: "2024/0001(COD)"}
+3. Get voting records: get_voting_records → {topic: "climate"}
+```
+
+**Committee analysis**:
+```
+1. Get committee: get_committee_info → {abbreviation: "ENVI"}
+2. List members: get_meps → {committee: "ENVI"}
+3. Generate report: generate_report → {reportType: "COMMITTEE_PERFORMANCE", subjectId: "COMM-ENVI"}
+```
+
+🎯 **[More use cases and examples →](./API_USAGE_GUIDE.md#common-use-cases)**
 
 ---
 
