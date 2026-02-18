@@ -183,6 +183,17 @@ Configure in `.vscode/mcp.json`:
 
 ## 📚 Documentation
 
+### 🌐 Documentation Portal
+
+**[📖 Complete Documentation Site](https://hack23.github.io/European-Parliament-MCP-Server/docs/)** - Live documentation portal with:
+- 📖 **API Reference** - TypeDoc generated API documentation
+- 📊 **Coverage Reports** - Test coverage analysis
+- ✅ **Test Reports** - Unit and E2E test results
+- 🔐 **Build Attestations** - SLSA Level 3 provenance
+- 📦 **SBOM** - Software Bill of Materials
+
+> 💡 **Note**: Documentation is automatically generated and deployed with each release
+
 ### Core Documentation
 
 - [**API Usage Guide**](./API_USAGE_GUIDE.md) - Complete tool documentation with examples
@@ -191,6 +202,7 @@ Configure in `.vscode/mcp.json`:
 - [**Developer Guide**](./DEVELOPER_GUIDE.md) - Development workflow and contributing
 - [**Deployment Guide**](./DEPLOYMENT_GUIDE.md) - Claude Desktop, VS Code, Docker setup
 - [**Performance Guide**](./PERFORMANCE_GUIDE.md) - Optimization strategies
+- [**Documentation as Code Guide**](./DOCUMENTATION_AS_CODE.md) - How documentation is generated
 
 ### Additional Documentation
 
