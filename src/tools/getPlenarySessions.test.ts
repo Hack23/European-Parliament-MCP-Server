@@ -6,9 +6,34 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetPlenarySessions } from './getPlenarySessions.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 
+// Mock the EP client
+vi.mock('../clients/europeanParliamentClient.js', () => ({
+  epClient: {
+    getPlenarySessions: vi.fn()
+  }
+}));
+
 describe('get_plenary_sessions Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Setup default mock implementation
+    vi.mocked(epClientModule.epClient.getPlenarySessions).mockResolvedValue({
+      data: [
+        {
+          id: 'PLENARY-2024-01',
+          date: '2024-01-15',
+          location: 'Strasbourg',
+          agendaItems: ['Budget Discussion'],
+          attendanceCount: 650,
+          documents: ['DOC-2024-001']
+        }
+      ],
+      total: 1,
+      limit: 50,
+      offset: 0,
+      hasMore: false
+    });
   });
 
   describe('Input Validation', () => {
