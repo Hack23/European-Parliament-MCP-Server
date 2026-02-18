@@ -135,4 +135,65 @@ describe('MetricsService', () => {
       expect(service.getMetric('test', { a: '1', b: '2' })).toBe(2);
     });
   });
+
+  describe('Histogram Edge Cases', () => {
+    it('should return undefined for histogram after clearing metrics', () => {
+      // Observe a value and then clear all metrics
+      service.observeHistogram('empty_test', 10);
+      service.clear();
+      
+      // Should return undefined after clear
+      const summary = service.getHistogramSummary('empty_test');
+      expect(summary).toBeUndefined();
+    });
+
+    it('should handle reservoir sampling when exceeding max samples', () => {
+      const smallService = new MetricsService(10); // Small max samples
+      
+      // Add more samples than max
+      for (let i = 1; i <= 20; i++) {
+        smallService.observeHistogram('test', i);
+      }
+      
+      const summary = smallService.getHistogramSummary('test');
+      expect(summary?.count).toBe(20);
+      expect(summary?.sum).toBe(210); // Sum of 1 to 20
+      expect(summary).toBeDefined();
+    });
+
+    it('should handle single value histogram', () => {
+      service.observeHistogram('single', 42);
+      
+      const summary = service.getHistogramSummary('single');
+      expect(summary?.count).toBe(1);
+      expect(summary?.sum).toBe(42);
+      expect(summary?.avg).toBe(42);
+      expect(summary?.p50).toBe(42);
+      expect(summary?.p95).toBe(42);
+      expect(summary?.p99).toBe(42);
+    });
+
+    it('should return undefined for histogram getMetric call', () => {
+      service.observeHistogram('test_histogram', 100);
+      
+      // getMetric should return undefined for histograms
+      const value = service.getMetric('test_histogram');
+      expect(value).toBeUndefined();
+    });
+  });
+
+  describe('Counter Edge Cases', () => {
+    it('should handle incrementing non-existent counter', () => {
+      service.incrementCounter('new_counter');
+      expect(service.getMetric('new_counter')).toBe(1);
+    });
+
+    it('should handle incrementing counter after gauge with same name', () => {
+      service.setGauge('metric', 50);
+      service.incrementCounter('metric', 10);
+      
+      // Counter should overwrite gauge
+      expect(service.getMetric('metric')).toBe(10);
+    });
+  });
 });

@@ -40,6 +40,15 @@ export class APIError extends Error {
 }
 
 /**
+ * JSON-LD response format from EP API
+ * @internal
+ */
+interface JSONLDResponse<T = Record<string, unknown>> extends Record<string, unknown> {
+  data: T[];
+  '@context': unknown[];
+}
+
+/**
  * European Parliament API Client configuration
  * @internal - Used only for client initialization
  */
@@ -92,14 +101,12 @@ export class EuropeanParliamentClient {
   }
 
   /**
-   * Generic GET request with caching and rate limiting (currently unused but planned for production)
+   * Generic GET request with caching and rate limiting
    * 
-   * @param endpoint - API endpoint
+   * @param endpoint - API endpoint (relative to baseURL)
    * @param params - Query parameters
-   * @returns API response data
+   * @returns API response data (JSON-LD format with data array)
    */
-  // @ts-expect-error - Unused method, planned for production use
-   
   private async get<T extends Record<string, unknown>>(
     endpoint: string,
     params?: Record<string, unknown>
@@ -141,10 +148,10 @@ export class EuropeanParliamentClient {
     }
     
     try {
-      // Make API request
+      // Make API request with JSON-LD Accept header
       const response = await fetch(url.toString(), {
         headers: {
-          'Accept': 'application/json',
+          'Accept': 'application/ld+json',
           'User-Agent': 'European-Parliament-MCP-Server/1.0'
         }
       });
@@ -176,9 +183,169 @@ export class EuropeanParliamentClient {
 
   /**
    * Generate cache key from endpoint and params
+   *
+   * @internal
    */
   private getCacheKey(endpoint: string, params?: Record<string, unknown>): string {
     return JSON.stringify({ endpoint, params });
+  }
+
+  /**
+   * Safely convert unknown value to string
+   * @internal
+   */
+  private toSafeString(value: unknown): string {
+    if (typeof value === 'string') {
+      return value;
+    }
+    if (typeof value === 'number') {
+      return String(value);
+    }
+    if (typeof value === 'boolean') {
+      return String(value);
+    }
+    return '';
+  }
+
+  /**
+   * Transform EP API MEP data to internal format
+   * @internal
+   */
+  private transformMEP(apiData: Record<string, unknown>): MEP {
+    // EP API returns data in JSON-LD format with different field names
+    // Safe string conversion with type guards
+    const identifier = apiData['identifier'];
+    const idField = apiData['id'];
+    const labelField = apiData['label'];
+    const familyNameField = apiData['familyName'];
+    const givenNameField = apiData['givenName'];
+    
+    const id = this.toSafeString(identifier) || this.toSafeString(idField) || '';
+    const name = this.toSafeString(labelField) || '';
+    const familyName = this.toSafeString(familyNameField) || '';
+    const givenName = this.toSafeString(givenNameField) || '';
+    
+    // Construct full name if label is not provided
+    const fullName = name || `${givenName} ${familyName}`.trim();
+    
+    // Generate fallback ID
+    const fallbackId = this.toSafeString(identifier) || 'unknown';
+    
+    return {
+      id: id || `person/${fallbackId}`,
+      name: fullName,
+      // These fields are not in basic MEP list, will be populated from mock/defaults
+      country: 'Unknown',
+      politicalGroup: 'Unknown',
+      committees: [],
+      active: true,
+      termStart: 'Unknown'
+    };
+  }
+
+  /**
+   * Extract date from EP API activity date field
+   * Returns empty string when date is missing or invalid so callers can
+   * explicitly handle unknown dates instead of receiving a fabricated value.
+   * @internal
+   */
+  private extractActivityDate(activityDate: unknown): string {
+    if (activityDate === null || activityDate === undefined) {
+      return '';
+    }
+    
+    if (typeof activityDate === 'object' && '@value' in activityDate) {
+      const dateValue = (activityDate as Record<string, unknown>)['@value'];
+      if (typeof dateValue === 'string') {
+        const parts = dateValue.split('T');
+        return parts[0] ?? '';
+      }
+    }
+    
+    return '';
+  }
+
+  /**
+   * Extract location from hasLocality URL
+   * @internal
+   */
+  private extractLocation(localityUrl: string): string {
+    if (localityUrl.includes('FRA_SXB')) {
+      return 'Strasbourg';
+    }
+    if (localityUrl.includes('BEL_BRU')) {
+      return 'Brussels';
+    }
+    return 'Unknown';
+  }
+
+  /**
+   * Transform EP API plenary session data to internal format
+   * @internal
+   */
+  private transformPlenarySession(apiData: Record<string, unknown>): PlenarySession {
+    const activityId = apiData['activity_id'];
+    const idField = apiData['id'];
+    const id = this.toSafeString(activityId) || this.toSafeString(idField) || '';
+    
+    const activityDate = apiData['eli-dl:activity_date'];
+    const date = this.extractActivityDate(activityDate);
+    
+    // Extract location from hasLocality
+    const localityField = apiData['hasLocality'];
+    const localityUrl = this.toSafeString(localityField) || '';
+    const location = this.extractLocation(localityUrl);
+    
+    return {
+      id,
+      date,
+      location,
+      agendaItems: [],
+      attendanceCount: 0,
+      documents: []
+    };
+  }
+
+  /**
+   * Transform EP API MEP details to internal format
+   * @internal
+   */
+  private transformMEPDetails(apiData: Record<string, unknown>): MEPDetails {
+    // Start with basic MEP transformation
+    const basicMEP = this.transformMEP(apiData);
+    
+    // Extract additional details with type safety
+    const bdayField = apiData['bday'];
+    const bday = this.toSafeString(bdayField) || '';
+    
+    const memberships = apiData['hasMembership'];
+    const committees: string[] = [];
+    
+    // Extract committees from memberships if available
+    if (Array.isArray(memberships)) {
+      for (const membership of memberships) {
+        if (typeof membership === 'object' && membership !== null) {
+          const orgField = (membership as Record<string, unknown>)['organization'];
+          const org = this.toSafeString(orgField) || '';
+          if (org) {
+            committees.push(org);
+          }
+        }
+      }
+    }
+    
+    return {
+      ...basicMEP,
+      committees: committees.length > 0 ? committees : basicMEP.committees,
+      biography: `Born: ${bday || 'Unknown'}`,
+      votingStatistics: {
+        totalVotes: 0,
+        votesFor: 0,
+        votesAgainst: 0,
+        abstentions: 0,
+        attendanceRate: 0
+      }
+    };
   }
 
   /**
@@ -187,7 +354,7 @@ export class EuropeanParliamentClient {
    * @param params - Query parameters
    * @returns Paginated list of MEPs
    */
-  getMEPs(params: {
+  async getMEPs(params: {
     country?: string;
     group?: string;
     committee?: string;
@@ -198,32 +365,39 @@ export class EuropeanParliamentClient {
     const action = 'get_meps';
     
     try {
-      // For MVP, return mock data
-      // In production, replace with actual API call:
-      // const data = await this.get<PaginatedResponse<MEP>>('meps', params);
+      // Build API parameters
+      const apiParams: Record<string, unknown> = {};
       
-      const mockData: PaginatedResponse<MEP> = {
-        data: [
-          {
-            id: 'MEP-124810',
-            name: 'Example MEP',
-            country: params.country ?? 'SE',
-            politicalGroup: params.group ?? 'EPP',
-            committees: ['AGRI', 'ENVI'],
-            email: 'example@europarl.europa.eu',
-            active: params.active ?? true,
-            termStart: '2019-07-02'
-          }
-        ],
-        total: 1,
+      // Map our parameters to EP API parameters
+      if (params.limit !== undefined) {
+        apiParams['limit'] = params.limit;
+      }
+      if (params.offset !== undefined) {
+        apiParams['offset'] = params.offset;
+      }
+      if (params.country !== undefined) {
+        // EP API uses 'country-code' parameter
+        apiParams['country-code'] = params.country;
+      }
+      
+      // Call real EP API
+      const response = await this.get<JSONLDResponse>('meps', apiParams);
+      
+      // Transform EP API data to internal format
+      const meps = response.data.map((item) => this.transformMEP(item));
+      
+      const result: PaginatedResponse<MEP> = {
+        data: meps,
+        // EP API doesn't provide total count; use lower bound estimate
+        total: (params.offset ?? 0) + meps.length,
         limit: params.limit ?? 50,
         offset: params.offset ?? 0,
-        hasMore: false
+        hasMore: meps.length >= (params.limit ?? 50)
       };
       
-      auditLogger.logDataAccess(action, params, mockData.data.length);
+      auditLogger.logDataAccess(action, params, result.data.length);
       
-      return Promise.resolve(mockData);
+      return result;
     } catch (error) {
       auditLogger.logError(
         action,
@@ -237,40 +411,36 @@ export class EuropeanParliamentClient {
   /**
    * Get detailed information about a specific MEP
    * 
-   * @param id - MEP identifier
+   * @param id - MEP identifier (supports formats: numeric, person/ID, MEP-ID)
    * @returns Detailed MEP information
    */
-  getMEPDetails(id: string): Promise<MEPDetails> {
+  async getMEPDetails(id: string): Promise<MEPDetails> {
     const action = 'get_mep_details';
     const params = { id };
     
+    // Normalize ID format: strip MEP- prefix if present, extract numeric ID from person/ID format
+    let normalizedId = id;
+    if (id.startsWith('MEP-')) {
+      normalizedId = id.substring(4);
+    } else if (id.startsWith('person/')) {
+      normalizedId = id.substring(7);
+    }
+    
     try {
-      // For MVP, return mock data
-      const mockData: MEPDetails = {
-        id,
-        name: 'Example MEP',
-        country: 'SE',
-        politicalGroup: 'EPP',
-        committees: ['AGRI', 'ENVI'],
-        email: 'example@europarl.europa.eu',
-        active: true,
-        termStart: '2019-07-02',
-        biography: 'Example biography of the MEP.',
-        phone: '+32 2 28 45001',
-        website: 'https://www.europarl.europa.eu',
-        votingStatistics: {
-          totalVotes: 1250,
-          votesFor: 850,
-          votesAgainst: 200,
-          abstentions: 200,
-          attendanceRate: 92.5
-        },
-        roles: ['Member of AGRI Committee', 'Substitute in ENVI Committee']
-      };
+      // Call real EP API with normalized ID
+      const response = await this.get<JSONLDResponse>(`meps/${normalizedId}`, {});
       
-      auditLogger.logDataAccess(action, params, 1);
+      // Transform first result (EP API returns array even for single item)
+      if (response.data.length > 0) {
+        const mepDetails = this.transformMEPDetails(response.data[0] ?? {});
+        
+        auditLogger.logDataAccess(action, params, 1);
+        
+        return mepDetails;
+      }
       
-      return Promise.resolve(mockData);
+      // If no data, throw error
+      throw new APIError(`MEP with ID ${id} not found`, 404);
     } catch (error) {
       auditLogger.logError(
         action,
@@ -282,12 +452,41 @@ export class EuropeanParliamentClient {
   }
 
   /**
+   * Build API parameters for meetings endpoint
+   *
+   * @internal
+   */
+  private buildMeetingsAPIParams(params: {
+    dateFrom?: string;
+    dateTo?: string;
+    limit?: number;
+    offset?: number;
+  }): Record<string, unknown> {
+    const apiParams: Record<string, unknown> = {};
+    
+    if (params.limit !== undefined) {
+      apiParams['limit'] = params.limit;
+    }
+    if (params.offset !== undefined) {
+      apiParams['offset'] = params.offset;
+    }
+    if (params.dateFrom !== undefined) {
+      apiParams['date-from'] = params.dateFrom;
+    }
+    if (params.dateTo !== undefined) {
+      apiParams['date-to'] = params.dateTo;
+    }
+    
+    return apiParams;
+  }
+
+  /**
    * Get plenary sessions
    * 
    * @param params - Query parameters
    * @returns Paginated list of plenary sessions
    */
-  getPlenarySessions(params: {
+  async getPlenarySessions(params: {
     dateFrom?: string;
     dateTo?: string;
     location?: string;
@@ -297,26 +496,27 @@ export class EuropeanParliamentClient {
     const action = 'get_plenary_sessions';
     
     try {
-      const mockData: PaginatedResponse<PlenarySession> = {
-        data: [
-          {
-            id: 'PLENARY-2024-01',
-            date: '2024-01-15',
-            location: 'Strasbourg',
-            agendaItems: ['Budget Discussion', 'Climate Policy Vote'],
-            attendanceCount: 650,
-            documents: ['DOC-2024-001', 'DOC-2024-002']
-          }
-        ],
-        total: 1,
+      // Build API parameters
+      const apiParams = this.buildMeetingsAPIParams(params);
+      
+      // Call real EP API meetings endpoint
+      const response = await this.get<JSONLDResponse>('meetings', apiParams);
+      
+      // Transform EP API data to internal format
+      const sessions = response.data.map((item) => this.transformPlenarySession(item));
+      
+      const result: PaginatedResponse<PlenarySession> = {
+        data: sessions,
+        // EP API doesn't provide total count; use lower bound estimate
+        total: (params.offset ?? 0) + sessions.length,
         limit: params.limit ?? 50,
         offset: params.offset ?? 0,
-        hasMore: false
+        hasMore: sessions.length >= (params.limit ?? 50)
       };
       
-      auditLogger.logDataAccess(action, params, mockData.data.length);
+      auditLogger.logDataAccess(action, params, result.data.length);
       
-      return Promise.resolve(mockData);
+      return result;
     } catch (error) {
       auditLogger.logError(
         action,
