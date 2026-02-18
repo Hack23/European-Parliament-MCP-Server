@@ -141,7 +141,7 @@ npx european-parliament-mcp-server --help
 npm install -g european-parliament-mcp-server
 
 # Run directly
-european-parliament-mcp --health
+european-parliament-mcp-server --health
 
 # Update to latest version
 npm update -g european-parliament-mcp-server
@@ -179,7 +179,7 @@ node dist/index.js --health
 
 # Link for development
 npm link
-european-parliament-mcp --health
+european-parliament-mcp-server --health
 ```
 
 **Pros:**
@@ -374,7 +374,7 @@ npm run verify-package
 
 # 6. Test with local link
 npm link
-european-parliament-mcp --health
+european-parliament-mcp-server --health
 
 # 7. Test with MCP client
 # Configure Claude Desktop to use local build (see above)
@@ -479,7 +479,7 @@ npx european-parliament-mcp-server --health
 # Docker test
 docker run -it node:24-bookworm bash
 npm install -g european-parliament-mcp-server
-european-parliament-mcp --health
+european-parliament-mcp-server --health
 ```
 
 ---
@@ -580,7 +580,7 @@ npx --registry=https://registry.npmjs.org european-parliament-mcp-server --healt
 
 # Or install globally instead
 npm install -g european-parliament-mcp-server
-european-parliament-mcp --health
+european-parliament-mcp-server --health
 ```
 
 ---

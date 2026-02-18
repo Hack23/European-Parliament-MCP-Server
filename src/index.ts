@@ -167,13 +167,10 @@ function sanitizeUrl(urlString: string): string {
     url.hash = '';
     return url.toString();
   } catch {
-    // If URL parsing fails, return the host part only or a safe default
-    const parts = urlString.split('?')[0];
-    if (parts === undefined) {
-      return urlString;
-    }
-    const finalPart = parts.split('#')[0];
-    return finalPart !== undefined ? finalPart : urlString;
+    // If URL parsing fails, remove query and fragment parts as a safe fallback
+    const withoutQuery = urlString.split('?')[0] ?? urlString;
+    const withoutFragment = withoutQuery.split('#')[0] ?? withoutQuery;
+    return withoutFragment;
   }
 }
 

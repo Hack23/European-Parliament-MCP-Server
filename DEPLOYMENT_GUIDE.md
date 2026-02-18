@@ -78,7 +78,7 @@ npm run verify-package
 npx european-parliament-mcp-server --health
 
 # Or test global installation
-european-parliament-mcp --health
+european-parliament-mcp-server --health
 ```
 
 **Expected Output:**

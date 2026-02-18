@@ -186,7 +186,7 @@ npx european-parliament-mcp-server --help
 npm install -g european-parliament-mcp-server
 
 # Test installation
-european-parliament-mcp --health
+european-parliament-mcp-server --health
 ```
 
 #### Option 3: Install from Source (Development)
