@@ -33,7 +33,7 @@
 Run these commands to verify the server is working correctly:
 
 ```bash
-# Check Node.js version (must be 22.x+)
+# Check Node.js version (must be 24.x+)
 node --version
 
 # Build the server
@@ -106,7 +106,7 @@ test -f dist/index.js && echo "Build OK" || echo "Build failed"
 # Check version
 node --version
 
-# Must be v22.x or higher
+# Must be v24.x or higher
 # Install correct version using nvm
 nvm install 22
 nvm use 22

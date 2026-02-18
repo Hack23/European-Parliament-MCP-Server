@@ -33,7 +33,7 @@
 ### Prerequisites
 
 **Required**:
-- Node.js 22.x or higher
+- Node.js 24.x or higher
 - npm 10.x or higher
 - Git
 - TypeScript knowledge

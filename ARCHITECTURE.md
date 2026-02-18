@@ -275,7 +275,7 @@ See [SECURITY_HEADERS.md](./SECURITY_HEADERS.md) for complete implementation.
 
 | Component | Technology | Version | Purpose |
 |-----------|-----------|---------|---------|
-| Runtime | Node.js | 22.x | JavaScript runtime |
+| Runtime | Node.js | 24.x | JavaScript runtime |
 | Language | TypeScript | 5.x | Type-safe development |
 | Protocol | MCP SDK | Latest | Model Context Protocol |
 | Validation | Zod | 3.x | Runtime schema validation |

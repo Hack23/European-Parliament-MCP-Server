@@ -117,7 +117,7 @@ graph TB
         CLIENT[MCP Client<br/><i>Claude, VS Code, Custom</i>]
     end
     
-    subgraph "MCP Server [Node.js 22.x]"
+    subgraph "MCP Server [Node.js 24.x]"
         SERVER[MCP Protocol Handler<br/><i>@modelcontextprotocol/sdk</i>]
         
         subgraph "Business Logic"
@@ -663,7 +663,7 @@ graph TB
         end
         
         subgraph "MCP Server Process"
-            NODE[Node.js Runtime<br/>v22.x]
+            NODE[Node.js Runtime<br/>v24.x]
             SERVER[EP MCP Server<br/>stdio transport]
         end
         
@@ -767,7 +767,7 @@ graph TB
 graph TB
     subgraph "Docker Host"
         subgraph "Container: ep-mcp-server"
-            NODEJS[Node.js 22-alpine<br/>Runtime]
+            NODEJS[Node.js 24-alpine<br/>Runtime]
             SERVER[EP MCP Server<br/>WebSocket transport]
             CACHE_LOCAL[Local Cache]
         end
@@ -805,7 +805,7 @@ graph TB
 **Dockerfile**:
 
 ```dockerfile
-FROM node:22-alpine
+FROM node:24-alpine
 
 WORKDIR /app
 

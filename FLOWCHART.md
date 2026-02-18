@@ -486,7 +486,7 @@ flowchart TD
 flowchart TD
     Push[Git Push] --> Trigger[GitHub Actions Trigger]
     Trigger --> Checkout[Checkout Code]
-    Checkout --> SetupNode[Setup Node.js 22.x]
+    Checkout --> SetupNode[Setup Node.js 24.x]
     
     SetupNode --> InstallDeps[Install Dependencies]
     InstallDeps --> Lint[ESLint Code Quality]
