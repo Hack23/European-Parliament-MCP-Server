@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "european-parliament-mcp": "dist/index.js"
+    "european-parliament-mcp-server": "dist/index.js"
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",
