@@ -16,11 +16,24 @@
 ## 📋 Document Information
 
 **Document Owner:** Security Team  
-**Version:** 1.0  
-**Last Updated:** 2026-02-17  
+**Version:** 1.1  
+**Last Updated:** 2026-02-18  
 **Classification:** Public  
 **Review Cycle:** Quarterly  
-**Next Review:** 2026-05-17
+**Next Review:** 2026-05-18
+
+---
+
+## 🔗 Related Documents
+
+| Document | Description | Link |
+|----------|-------------|------|
+| **Workflows Documentation** | CI/CD automation and security | [WORKFLOWS.md](./.github/WORKFLOWS.md) |
+| **Future Workflows** | Planned CI/CD enhancements | [FUTURE_WORKFLOWS.md](./.github/FUTURE_WORKFLOWS.md) |
+| **Architecture Diagrams** | System architecture visualization | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) |
+| **Threat Model** | Threat analysis using STRIDE | [THREAT_MODEL.md](./THREAT_MODEL.md) *(planned)* |
+| **Secure Development Policy** | ISMS secure development guidelines | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
+| **Open Source Policy** | ISMS open source governance | [Open_Source_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
 
 ---
 
@@ -709,7 +722,121 @@ if (!await rateLimiter.tryRemoveTokens(1)) {
 
 ---
 
-## 🛡️ 13. Application Security Controls
+---
+
+## 🔄 14. CI/CD Pipeline Security
+
+### Workflow Automation
+
+The CI/CD pipeline implements comprehensive security controls following SLSA Level 3 requirements and Hack23 ISMS standards.
+
+**Complete Workflow Documentation:** [WORKFLOWS.md](./.github/WORKFLOWS.md)  
+**Future Enhancements:** [FUTURE_WORKFLOWS.md](./.github/FUTURE_WORKFLOWS.md)
+
+### CI/CD Security Architecture
+
+```mermaid
+graph TB
+    subgraph "Security Gates"
+        SG1[🔒 Code Scanning<br/>CodeQL SAST]
+        SG2[📦 SBOM Generation<br/>SPDX 2.3]
+        SG3[🔍 Dependency Review<br/>Vulnerability Check]
+        SG4[🧪 Test Coverage<br/>≥80% Required]
+        SG5[🏆 OpenSSF Scorecard<br/>≥8.0 Target]
+    end
+    
+    subgraph "Automated Controls"
+        AC1[📌 Pinned Actions<br/>SHA256 Hashes]
+        AC2[🔐 Minimal Permissions<br/>Least Privilege]
+        AC3[📝 Audit Logging<br/>Egress Tracking]
+        AC4[🔄 Auto-Updates<br/>Dependabot]
+    end
+    
+    subgraph "Attestations"
+        AT1[🛡️ SLSA Provenance]
+        AT2[✍️ Sigstore Signing]
+        AT3[📊 Build Evidence]
+    end
+    
+    SG1 --> AC3
+    SG2 --> AT1
+    SG3 --> AC4
+    SG4 --> AT3
+    SG5 --> AT2
+    
+    AC1 --> AT1
+    AC2 --> AT1
+    AC3 --> AT3
+    
+    style SG1 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
+    style SG2 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
+    style SG3 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
+    style SG4 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
+    style SG5 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
+    style AC1 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
+    style AC2 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
+    style AC3 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
+    style AC4 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
+    style AT1 fill:#00C853,stroke:#00695C,stroke-width:2px,color:white
+    style AT2 fill:#00C853,stroke:#00695C,stroke-width:2px,color:white
+    style AT3 fill:#00C853,stroke:#00695C,stroke-width:2px,color:white
+```
+
+### Security Controls in CI/CD
+
+| Control | Implementation | Evidence Location |
+|---------|----------------|-------------------|
+| **Static Analysis** | CodeQL with security-extended queries | [codeql.yml](../.github/workflows/codeql.yml) |
+| **Dependency Scanning** | Dependency Review + Dependabot | [dependency-review.yml](../.github/workflows/dependency-review.yml) |
+| **SBOM Generation** | CycloneDX + SBOMQS validation | [sbom-generation.yml](../.github/workflows/sbom-generation.yml) |
+| **Test Coverage** | Vitest with 80% threshold | [integration-tests.yml](../.github/workflows/integration-tests.yml) |
+| **Security Scoring** | OpenSSF Scorecard (≥8.0) | [scorecard.yml](../.github/workflows/scorecard.yml) |
+| **Hardened Runners** | Step Security harden-runner | All workflows |
+| **Pinned Dependencies** | Actions pinned to SHA256 | All workflows |
+| **Minimal Permissions** | Read-only by default | All workflows |
+| **Attestations** | SLSA Level 3 provenance | [release.yml](../.github/workflows/release.yml) |
+
+### Workflow Security Requirements
+
+**All workflows must implement:**
+
+1. **Step Security Harden Runner**
+   ```yaml
+   - uses: step-security/harden-runner@v2
+     with:
+       egress-policy: audit
+   ```
+
+2. **Pinned Action Versions**
+   ```yaml
+   - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+   ```
+
+3. **Minimal Permissions**
+   ```yaml
+   permissions:
+     contents: read  # Default read-only
+   ```
+
+4. **ISMS Evidence Collection**
+   - Workflow execution logs preserved
+   - Security scan results published to docs/
+   - SBOM and attestations available via GitHub Pages
+
+### ISMS Evidence Links
+
+| ISMS Control | Evidence | Link |
+|--------------|----------|------|
+| **ISO 27001 A.14.2.8** | Test data management | [Coverage Reports](https://hack23.github.io/European-Parliament-MCP-Server/docs/coverage/) |
+| **ISO 27001 A.14.2.1** | Secure development policy | [Workflows Documentation](./.github/WORKFLOWS.md) |
+| **NIST CSF PR.DS-6** | Integrity checking | [CodeQL Results](../.github/workflows/codeql.yml) |
+| **NIST CSF DE.CM-8** | Vulnerability scanning | [Scorecard](https://securityscorecards.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server) |
+| **CIS Controls 2.2** | Software inventory | [SBOM](https://hack23.github.io/European-Parliament-MCP-Server/docs/SBOM.md) |
+| **CIS Controls 16.6** | App security testing | [Test Results](https://hack23.github.io/European-Parliament-MCP-Server/docs/test-results/) |
+
+---
+
+## 🛡️ 15. Defense-in-Depth Strategy
 
 ### OWASP Top 10 Mitigation
 
@@ -799,7 +926,7 @@ graph TB
 
 ---
 
-## 📋 15. Compliance Framework Mapping
+## 📋 17. Compliance Framework Mapping
 
 ### ISO 27001 Controls
 
