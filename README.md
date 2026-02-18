@@ -31,27 +31,54 @@
   </a>
 </p>
 
-## 📊 Quality Metrics
+## 📊 Quality Metrics & Documentation
 
 <p align="center">
   <!-- Test Coverage -->
   <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/coverage/">
-    <img src="https://img.shields.io/badge/Test%20Coverage-80%25%2B-brightgreen?style=flat-square" alt="Test Coverage">
+    <img src="https://img.shields.io/badge/Test%20Coverage-80%25%2B-brightgreen?style=flat-square&logo=vitest" alt="Test Coverage">
+  </a>
+  
+  <!-- Unit Tests -->
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/test-results/">
+    <img src="https://img.shields.io/badge/Unit%20Tests-268%20Passing-brightgreen?style=flat-square&logo=vitest" alt="Unit Test Results">
+  </a>
+  
+  <!-- E2E Tests -->
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/e2e-results/">
+    <img src="https://img.shields.io/badge/E2E%20Tests-23%20Passing-brightgreen?style=flat-square&logo=playwright" alt="E2E Test Results">
   </a>
   
   <!-- API Documentation -->
   <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/api/">
-    <img src="https://img.shields.io/badge/API%20Docs-TypeDoc-blue?style=flat-square" alt="API Documentation">
+    <img src="https://img.shields.io/badge/API%20Docs-TypeDoc-blue?style=flat-square&logo=typescript" alt="API Documentation">
   </a>
   
   <!-- Documentation Portal -->
   <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/">
-    <img src="https://img.shields.io/badge/Documentation-Portal-blue?style=flat-square" alt="Documentation Portal">
+    <img src="https://img.shields.io/badge/📚%20Documentation-Portal-blue?style=flat-square" alt="Documentation Portal">
+  </a>
+</p>
+
+<p align="center">
+  <!-- Security Architecture -->
+  <a href="./SECURITY_ARCHITECTURE.md">
+    <img src="https://img.shields.io/badge/🛡️%20Security-Architecture-blue?style=flat-square" alt="Security Architecture">
   </a>
   
-  <!-- Test Results -->
-  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/test-results/">
-    <img src="https://img.shields.io/badge/Tests-268%20Passing-brightgreen?style=flat-square" alt="Test Results">
+  <!-- Architecture Diagrams -->
+  <a href="./ARCHITECTURE_DIAGRAMS.md">
+    <img src="https://img.shields.io/badge/🏗️%20Architecture-Diagrams-blue?style=flat-square" alt="Architecture Diagrams">
+  </a>
+  
+  <!-- Workflows Documentation -->
+  <a href="./.github/WORKFLOWS.md">
+    <img src="https://img.shields.io/badge/⚙️%20CI%2FCD-Workflows-blue?style=flat-square" alt="Workflows Documentation">
+  </a>
+  
+  <!-- Performance Guide -->
+  <a href="./PERFORMANCE_GUIDE.md">
+    <img src="https://img.shields.io/badge/⚡%20Performance-Guide-blue?style=flat-square" alt="Performance Guide">
   </a>
 </p>
 
