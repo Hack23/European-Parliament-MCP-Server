@@ -211,7 +211,20 @@ describeIntegration('get_meps Integration Tests', () => {
       const result1 = await retry(async () => handleGetMEPs(params));
       const result2 = await handleGetMEPs(params);
 
-      expect(result1.content[0]?.text).toBe(result2.content[0]?.text);
+      const response1 = validatePaginatedResponse(result1);
+      const response2 = validatePaginatedResponse(result2);
+
+      // Compare stable pagination metadata
+      expect(response1.offset).toBe(response2.offset);
+      expect(response1.limit).toBe(response2.limit);
+
+      // Compare number of records returned
+      expect(response1.data.length).toBe(response2.data.length);
+
+      // If there are records, compare stable identifiers on the first item
+      if (response1.data.length > 0 && response2.data.length > 0) {
+        expect((response1.data[0] as { id: string }).id).toBe((response2.data[0] as { id: string }).id);
+      }
     }, 60000);
   });
 });

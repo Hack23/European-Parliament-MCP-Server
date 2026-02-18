@@ -145,9 +145,12 @@ saveMCPResponseFixture('get_meps', 'swedish-meps', result);
 Integration tests implement several strategies to respect rate limits:
 
 1. **Sequential Execution**: Tests run one at a time within each suite
-2. **Inter-Test Delays**: 100ms wait between tests
-3. **Retry Logic**: Exponential backoff for transient failures
+2. **Inter-Test Delays**: 100ms wait between tests (provides breathing room, not strict rate limiting)
+3. **Retry Logic**: Exponential backoff for transient failures (adds additional delays on errors)
 4. **Caching**: Leverages LRU cache to minimize API calls
+5. **Test Execution Strategy**: Run tests manually or on schedule (not on every commit) to avoid overwhelming the API
+
+**Note**: The 100ms inter-test delay is a courtesy pause between tests, not a strict rate limiter. With 107 tests and retry logic, the effective request rate is much lower than the theoretical maximum. The EP API client includes its own rate limiting (100 tokens per minute) that provides the primary throttling mechanism. For production use, tests should be run individually or in small batches rather than the full suite at once.
 
 ```typescript
 beforeEach(async () => {

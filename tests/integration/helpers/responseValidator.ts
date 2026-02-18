@@ -22,6 +22,8 @@ export function validateMCPStructure(
   expect((result as { content: unknown[] }).content.length).toBeGreaterThan(0);
   expect((result as { content: Array<{ type: string }> }).content[0]).toHaveProperty('type');
   expect((result as { content: Array<{ type: string }> }).content[0]?.type).toBe('text');
+  expect((result as { content: Array<{ text: unknown }> }).content[0]).toHaveProperty('text');
+  expect(typeof (result as { content: Array<{ text: unknown }> }).content[0]?.text).toBe('string');
 }
 
 /**
@@ -33,13 +35,13 @@ export function validateMCPStructure(
  * 
  * @example
  * ```typescript
- * const data = await validateAPIResponse(result, MEPSchema);
+ * const data = validateAPIResponse(result, MEPSchema);
  * ```
  */
-export async function validateAPIResponse<T>(
+export function validateAPIResponse<T>(
   result: { content: Array<{ type: string; text: string }> },
   schema: z.ZodType<T>
-): Promise<T> {
+): T {
   validateMCPStructure(result);
   
   const textContent = result.content[0];

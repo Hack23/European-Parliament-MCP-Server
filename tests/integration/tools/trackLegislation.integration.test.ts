@@ -1,11 +1,14 @@
 /**
  * Integration Tests: track_legislation Tool
  * 
- * Tests the trackLegislation tool against real European Parliament API
+ * Tests the trackLegislation tool response structure and contract
  * 
  * ISMS Policy: SC-002 (Secure Testing), PE-001 (Performance Testing)
  * 
- * Note: This tool currently returns mock data but tests structure for future API integration
+ * Note: This tool currently returns mock data for MVP. These tests validate the
+ * response structure and contract that will be maintained when real EP API
+ * integration is implemented. Performance and caching tests validate the tool's
+ * behavior patterns regardless of data source.
  * 
  * @see https://data.europarl.europa.eu/api/v2/
  */
