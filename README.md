@@ -153,21 +153,39 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 - Node.js 24.x or higher
 - npm 10.x or higher
-- Git
 
 ### Installation
 
-#### Option 1: Install from npm (Recommended)
+#### Option 1: Use with npx (Recommended - No Installation Required)
+
+```bash
+# Test the server immediately with npx
+npx european-parliament-mcp-server --version
+
+# Check server health
+npx european-parliament-mcp-server --health
+
+# View help and usage
+npx european-parliament-mcp-server --help
+```
+
+**Why npx?**
+- ✅ No global installation needed
+- ✅ Always uses the latest version
+- ✅ Works immediately
+- ✅ Perfect for MCP clients
+
+#### Option 2: Global Installation
 
 ```bash
 # Install the package globally
 npm install -g european-parliament-mcp-server
 
-# Or install as a dependency in your project
-npm install european-parliament-mcp-server
+# Test installation
+european-parliament-mcp --health
 ```
 
-#### Option 2: Install from source
+#### Option 3: Install from Source (Development)
 
 ```bash
 # Clone the repository
@@ -180,13 +198,54 @@ npm install
 # Build the project
 npm run build
 
-# Run tests
-npm test
+# Test the build
+npm run test-mcp
+
+# Verify package integrity
+npm run verify-package
+```
+
+### CLI Commands
+
+```bash
+# Show version information
+npx european-parliament-mcp-server --version
+
+# Check server health and capabilities
+npx european-parliament-mcp-server --health
+
+# Display help and usage instructions
+npx european-parliament-mcp-server --help
+```
+
+**Health Check Output:**
+```json
+{
+  "name": "european-parliament-mcp-server",
+  "version": "1.0.0",
+  "status": "healthy",
+  "capabilities": ["tools", "resources", "prompts"],
+  "tools": {
+    "total": 10,
+    "core": 7,
+    "advanced": 3
+  },
+  "environment": {
+    "nodeVersion": "v24.13.0",
+    "platform": "linux",
+    "arch": "x64"
+  },
+  "configuration": {
+    "apiUrl": "https://data.europarl.europa.eu/api/v2/",
+    "cacheTTL": "900000",
+    "rateLimit": "60"
+  }
+}
 ```
 
 ### Usage with MCP Client
 
-#### Claude Desktop Configuration (npm install)
+#### Claude Desktop Configuration (npx - Recommended)
 
 Add to your `claude_desktop_config.json`:
 
@@ -197,25 +256,34 @@ Add to your `claude_desktop_config.json`:
       "command": "npx",
       "args": ["european-parliament-mcp-server"],
       "env": {
-        "EP_API_KEY": "your-api-key-if-needed"
+        "EP_API_URL": "https://data.europarl.europa.eu/api/v2/",
+        "EP_CACHE_TTL": "900000",
+        "EP_RATE_LIMIT": "60"
       }
     }
   }
 }
 ```
 
-#### Claude Desktop Configuration (source install)
+**Configuration File Locations:**
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+#### Claude Desktop Configuration (Local Development)
 
 Add to your `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
-    "european-parliament": {
+    "european-parliament-dev": {
       "command": "node",
-      "args": ["/path/to/European-Parliament-MCP-Server/dist/index.js"],
+      "args": ["/absolute/path/to/European-Parliament-MCP-Server/dist/index.js"],
       "env": {
-        "EP_API_KEY": "your-api-key-if-needed"
+        "EP_API_URL": "https://data.europarl.europa.eu/api/v2/",
+        "EP_CACHE_TTL": "900000",
+        "EP_RATE_LIMIT": "60"
       }
     }
   }
@@ -255,6 +323,7 @@ Configure in `.vscode/mcp.json`:
 
 ### Core Documentation
 
+- [**🧪 Local Testing Guide**](./LOCAL_TESTING.md) - **NEW!** Complete guide for local installation and testing
 - [**API Usage Guide**](./API_USAGE_GUIDE.md) - Complete tool documentation with examples
 - [**Architecture Diagrams**](./ARCHITECTURE_DIAGRAMS.md) - C4 model diagrams and data flows
 - [**Troubleshooting Guide**](./TROUBLESHOOTING.md) - Common issues and solutions
