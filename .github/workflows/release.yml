@@ -322,7 +322,7 @@ jobs:
 
   publish-npm:
     name: Publish to npm
-    needs: [prepare, build, security, attest, release]
+    needs: [prepare, build, release]
     runs-on: ubuntu-latest
     # npm publish needs specific permissions
     permissions:
