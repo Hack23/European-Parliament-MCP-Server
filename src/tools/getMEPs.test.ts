@@ -6,9 +6,35 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetMEPs } from './getMEPs.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 
+// Mock the EP client
+vi.mock('../clients/europeanParliamentClient.js', () => ({
+  epClient: {
+    getMEPs: vi.fn()
+  }
+}));
+
 describe('get_meps Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Setup default mock implementation
+    vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      data: [
+        {
+          id: 'MEP-1',
+          name: 'Test MEP',
+          country: 'SE',
+          politicalGroup: 'EPP',
+          committees: ['AGRI'],
+          active: true,
+          termStart: '2019-07-02'
+        }
+      ],
+      total: 1,
+      limit: 50,
+      offset: 0,
+      hasMore: false
+    });
   });
 
   describe('Input Validation', () => {
