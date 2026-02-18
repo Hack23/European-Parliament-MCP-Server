@@ -38,6 +38,97 @@ This document describes the implemented security architecture for the European P
 
 ---
 
+## 🔐 Information Classification & Asset Management
+
+### CIA Triad Assessment
+
+The European Parliament MCP Server has been classified using the CIA triad methodology to determine appropriate security controls:
+
+| Asset Category | Confidentiality | Integrity | Availability | Rationale |
+|----------------|-----------------|-----------|--------------|-----------|
+| **System Data** | 🟢 Public/Low | 🟠 High | 🟡 Medium-High | Public EP data, but integrity critical for trust |
+| **Source Code** | 🟢 Internal/Low | 🟠 High | 🟡 Medium | Open source (public), integrity ensures supply chain security |
+| **Service Reputation** | 🟢 Public | 🟠 High | 🟡 Medium-High | Public service, reputation depends on reliability |
+| **API Access** | 🟢 Public | 🟡 Medium | 🟡 Medium | No authentication required, rate-limited access |
+| **Audit Logs** | 🟢 Internal/Low | 🟠 High | 🟢 Low | GDPR compliance logs, integrity for legal requirements |
+
+**Legend:**
+- 🔴 Critical/Very High | 🟠 High | 🟡 Medium | 🟢 Low/Public
+
+### Crown Jewel Analysis
+
+The following assets represent the most critical business value requiring prioritized protection:
+
+```mermaid
+graph TD
+    subgraph "Crown Jewels - Critical Business Value"
+        CJ1[🔒 Data Integrity<br/>C: Public | I: High | A: Medium-High]
+        CJ2[🧠 Source Code<br/>C: Internal | I: High | A: Medium]
+        CJ3[🏆 Service Reputation<br/>C: Public | I: High | A: Medium-High]
+    end
+    
+    subgraph "High Value Assets"
+        HV1[📊 Performance Metrics<br/>C: Internal | I: Medium | A: Low]
+        HV2[🔐 Audit Trail<br/>C: Internal | I: High | A: Low]
+        HV3[⚡ Cache Data<br/>C: Public | I: Medium | A: Medium]
+    end
+    
+    subgraph "Standard Assets"
+        SA1[📄 Documentation<br/>C: Public | I: Low | A: Low]
+        SA2[🔧 Configuration<br/>C: Internal | I: Medium | A: Medium]
+        SA3[🧪 Test Data<br/>C: Public | I: Low | A: Low]
+    end
+    
+    CJ1 -.->|Protects| CJ3
+    CJ2 -.->|Ensures| CJ1
+    HV2 -.->|Validates| CJ1
+    
+    style CJ1 fill:#FF3D00,stroke:#BF360C,stroke-width:3px,color:white,font-weight:bold
+    style CJ2 fill:#FF3D00,stroke:#BF360C,stroke-width:3px,color:white,font-weight:bold
+    style CJ3 fill:#FF3D00,stroke:#BF360C,stroke-width:3px,color:white,font-weight:bold
+    style HV1 fill:#FF9800,stroke:#E65100,stroke-width:2px,color:white
+    style HV2 fill:#FF9800,stroke:#E65100,stroke-width:2px,color:white
+    style HV3 fill:#FF9800,stroke:#E65100,stroke-width:2px,color:white
+    style SA1 fill:#4CAF50,stroke:#2E7D32,stroke-width:1px,color:white
+    style SA2 fill:#4CAF50,stroke:#2E7D32,stroke-width:1px,color:white
+    style SA3 fill:#4CAF50,stroke:#2E7D32,stroke-width:1px,color:white
+```
+
+### Regulatory & Compliance Profile
+
+| Framework | Impact Level | Requirements | Status |
+|-----------|--------------|--------------|--------|
+| **🇪🇺 GDPR** | Medium | Minimal personal data (public role MEP info only), 15-min cache, audit logging | ✅ Compliant |
+| **🇪🇺 EU Cyber Resilience Act** | Medium | Medium baseline (non-safety-critical), vulnerability disclosure | ✅ Compliant |
+| **📋 ISO 27001** | Medium | A.8.2 (Classification), A.12.6 (Vulnerability Mgmt), A.14.2 (Secure Dev) | ✅ Aligned |
+| **🎯 NIST CSF 2.0** | Medium | ID.AM (Asset Mgmt), ID.RA (Risk Assessment), PR.DS (Data Security) | ✅ Aligned |
+| **🛡️ CIS Controls v8.1** | Medium | 1.1 (Asset Inventory), 3.1-3.3 (Data Protection), 4.1 (Secure Config) | ✅ Aligned |
+
+### Protection Requirements by Classification
+
+| Classification Level | Data Examples | Protection Controls |
+|---------------------|---------------|---------------------|
+| **🔴 High Integrity** | Source code, audit logs, EP data integrity | Code signing, immutable logs, checksums, Git integrity, automated validation |
+| **🟡 Medium Integrity** | Cache data, configuration, metrics | Version control, validation, monitoring |
+| **🟢 Public Data** | Documentation, EP open data, test data | Standard version control, public transparency |
+
+### Service Level Targets
+
+- **RTO (Recovery Time Objective):** 30 minutes (server restart + cache rebuild)
+- **RPO (Recovery Point Objective):** 1 hour (acceptable cache data loss)
+- **SLA (Service Level Agreement):** 99.5% availability target
+- **MTD (Maximum Tolerable Downtime):** 4 hours before significant impact
+
+### Data Lifecycle Management
+
+1. **Collection:** European Parliament API (public data only)
+2. **Processing:** In-memory transformation, validation, rate limiting
+3. **Storage:** Minimal caching (15-min TTL), no persistent storage of personal data
+4. **Transmission:** HTTPS only, no data transmitted to third parties
+5. **Disposal:** Automatic cache eviction (LRU), log rotation (30 days)
+
+---
+
 ## 🏗️ Security Architecture Overview
 
 ```mermaid
