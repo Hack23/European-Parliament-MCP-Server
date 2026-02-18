@@ -7,10 +7,7 @@ dist/
 build/
 *.tsbuildinfo
 
-# Test coverage
-coverage/
 .nyc_output/
-*.lcov
 
 # Environment variables
 .env
@@ -37,10 +34,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
-# Testing
-junit.xml
-test-results/
 
 # Temporary files
 tmp/
