@@ -767,7 +767,7 @@ graph TB
 graph TB
     subgraph "Docker Host"
         subgraph "Container: ep-mcp-server"
-            NODEJS[Node.js 24-alpine<br/>Runtime]
+            NODEJS[Node.js 22-alpine<br/>Runtime]
             SERVER[EP MCP Server<br/>WebSocket transport]
             CACHE_LOCAL[Local Cache]
         end

@@ -1,6 +1,45 @@
-# GitHub Workflows Documentation
+<p align="center">
+  <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
+</p>
 
-This document describes the automated workflows configured for the European Parliament MCP Server repository.
+<h1 align="center">⚙️ GitHub Workflows Documentation</h1>
+
+<p align="center">
+  <strong>CI/CD Automation for European Parliament MCP Server</strong><br>
+  <em>Comprehensive workflow documentation following Hack23 ISMS standards</em>
+</p>
+
+---
+
+## 📋 Document Information
+
+| Property | Value |
+|----------|-------|
+| **Owner** | DevOps Team |
+| **Version** | 2.0 |
+| **Last Updated** | 2026-02-18 |
+| **Classification** | Internal |
+| **Review Cycle** | Quarterly |
+| **Next Review** | 2026-05-18 |
+
+[![Owner](https://img.shields.io/badge/Owner-DevOps%20Team-blue?style=for-the-badge)](https://github.com/Hack23)
+[![Version](https://img.shields.io/badge/Version-2.0-green?style=for-the-badge)](https://github.com/Hack23/European-Parliament-MCP-Server)
+[![Updated](https://img.shields.io/badge/Updated-2026--02--18-orange?style=for-the-badge)](https://github.com/Hack23/European-Parliament-MCP-Server)
+[![Review](https://img.shields.io/badge/Next%20Review-2026--05--18-red?style=for-the-badge)](https://github.com/Hack23/European-Parliament-MCP-Server)
+
+---
+
+## 🔗 Related Documents
+
+| Document | Description | Link |
+|----------|-------------|------|
+| **Security Architecture** | Security design and controls | [SECURITY_ARCHITECTURE.md](../SECURITY_ARCHITECTURE.md) |
+| **Architecture Diagrams** | System architecture visualization | [ARCHITECTURE_DIAGRAMS.md](../ARCHITECTURE_DIAGRAMS.md) |
+| **Secure Development Policy** | ISMS secure development guidelines | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
+| **Open Source Policy** | ISMS open source governance | [Open_Source_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
+| **Documentation Portal** | Live documentation and reports | [docs/](https://hack23.github.io/European-Parliament-MCP-Server/docs/) |
+
+---
 
 ## 📋 Table of Contents
 
@@ -14,20 +53,158 @@ This document describes the automated workflows configured for the European Parl
 
 ## Overview
 
-The repository uses GitHub Actions for comprehensive CI/CD automation including:
+The repository uses GitHub Actions for comprehensive CI/CD automation following Hack23 ISMS requirements and industry best practices.
 
-- **Automated PR labeling** based on file changes
-- **Automated release drafting** with semantic versioning
-- **Security scanning** with CodeQL and Scorecard
-- **Test automation** with coverage reporting
-- **Dependency management** with Dependabot
-- **SBOM generation** and quality checking
+### 🎯 ISMS Compliance & Evidence
 
-All workflows follow **security best practices** with:
-- Step Security harden-runner for egress auditing
-- Pinned action versions with SHA256 hashes
-- Minimal required permissions (SLSA Level 3)
-- Regular dependency updates
+All workflows implement security controls and provide evidence for:
+
+- **ISO 27001:2022** - Information Security Management
+  - A.8.31: Change Management
+  - A.14.2: Security in Development
+  - A.12.1: Operational Procedures
+- **NIST CSF 2.0** - Cybersecurity Framework
+  - PR.DS-6: Integrity Checking
+  - DE.CM-8: Vulnerability Scans
+  - RS.AN-5: Process Established
+- **CIS Controls v8.1** - Security Best Practices
+  - 2.2: Software Inventory (SBOM)
+  - 4.1: Security Configuration (CodeQL)
+  - 16.6: Application Software Security
+
+**Evidence Location:** All workflow execution logs, SBOM, security scan results, and test reports are available in the [Documentation Portal](https://hack23.github.io/European-Parliament-MCP-Server/docs/)
+
+### 🔐 Workflow Security Principles
+
+All workflows follow **SLSA Level 3** supply chain security requirements:
+
+```mermaid
+graph LR
+    subgraph "Security Layers"
+        SL1[🔒 Step Security<br/>Harden Runner]
+        SL2[📌 Pinned Actions<br/>SHA256 Hashes]
+        SL3[🔑 Minimal Permissions<br/>Least Privilege]
+        SL4[📝 Audit Logging<br/>Egress Tracking]
+    end
+    
+    subgraph "Compliance"
+        C1[ISO 27001]
+        C2[NIST CSF]
+        C3[CIS Controls]
+        C4[SLSA Level 3]
+    end
+    
+    SL1 --> SL4
+    SL2 --> SL3
+    SL3 --> SL4
+    
+    SL4 -.Evidence.-> C1
+    SL4 -.Evidence.-> C2
+    SL4 -.Evidence.-> C3
+    SL4 -.Evidence.-> C4
+    
+    style SL1 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
+    style SL2 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
+    style SL3 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
+    style SL4 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
+    style C1 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
+    style C2 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
+    style C3 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
+    style C4 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
+```
+
+### 📊 Workflow Portfolio
+
+The repository maintains **10 automated workflows** providing comprehensive CI/CD coverage:
+
+| Workflow | Purpose | Trigger | ISMS Evidence |
+|----------|---------|---------|---------------|
+| **Main CI** | Orchestrates all workflows | Push, PR | [main.yml](.github/workflows/main.yml) |
+| **Test & Report** | Testing and coverage | Push, PR | [Secure Dev Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
+| **CodeQL Analysis** | SAST security scanning | Push, PR, Weekly | ISO 27001 A.14.2.8 |
+| **Scorecard** | Security best practices | Weekly | [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
+| **SBOM Generation** | Software Bill of Materials | Build | CIS Controls 2.2 |
+| **Release** | Automated releases | Tag push | SLSA Level 3 Provenance |
+| **Labeler** | PR auto-labeling | PR | Process Automation |
+| **Setup Labels** | Label management | Manual | Configuration Management |
+| **Dependency Review** | Vulnerability scanning | PR | NIST CSF DE.CM-8 |
+| **Integration Tests** | E2E validation | Push, PR | Quality Assurance |
+
+**All Workflows:** [.github/workflows/](../workflows/)
+
+---
+
+## 🔐 CI/CD Architecture
+
+### Workflow Execution Flow
+
+```mermaid
+graph TB
+    subgraph "Developer Activity"
+        DEV1[👨‍💻 Code Changes]
+        DEV2[🔀 Create PR]
+        DEV3[✅ Merge to Main]
+    end
+    
+    subgraph "Automated Checks"
+        AC1[🏷️ Auto Labeling]
+        AC2[🔍 Dependency Review]
+        AC3[🧪 Test & Report]
+        AC4[🔒 CodeQL SAST]
+        AC5[📦 SBOM Generation]
+    end
+    
+    subgraph "Quality Gates"
+        QG1{Coverage ≥80%?}
+        QG2{SBOM Quality ≥7.0?}
+        QG3{CodeQL Pass?}
+        QG4{Tests Pass?}
+    end
+    
+    subgraph "Release Process"
+        RP1[📝 Draft Release]
+        RP2[🏷️ Create Tag]
+        RP3[📦 Publish npm]
+        RP4[📚 Deploy Docs]
+    end
+    
+    DEV1 --> DEV2
+    DEV2 --> AC1
+    AC1 --> AC2
+    AC2 --> AC3
+    AC3 --> AC4
+    AC4 --> AC5
+    
+    AC3 --> QG4
+    QG4 -->|Pass| QG1
+    QG1 -->|Pass| QG3
+    QG3 -->|Pass| QG2
+    QG2 -->|Pass| DEV3
+    
+    DEV3 --> RP1
+    RP1 --> RP2
+    RP2 --> RP3
+    RP3 --> RP4
+    
+    style DEV1 fill:#2979FF,stroke:#1565C0,stroke-width:2px,color:white
+    style DEV2 fill:#2979FF,stroke:#1565C0,stroke-width:2px,color:white
+    style DEV3 fill:#2979FF,stroke:#1565C0,stroke-width:2px,color:white
+    style AC1 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
+    style AC2 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
+    style AC3 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
+    style AC4 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
+    style AC5 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
+    style QG1 fill:#FDD835,stroke:#F9A825,stroke-width:2px,color:black
+    style QG2 fill:#FDD835,stroke:#F9A825,stroke-width:2px,color:black
+    style QG3 fill:#FDD835,stroke:#F9A825,stroke-width:2px,color:black
+    style QG4 fill:#FDD835,stroke:#F9A825,stroke-width:2px,color:black
+    style RP1 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
+    style RP2 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
+    style RP3 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
+    style RP4 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
+```
+
+---
 
 ## Workflows
 
@@ -36,6 +213,11 @@ All workflows follow **security best practices** with:
 **Trigger:** Pull requests (opened, synchronized, reopened, edited)
 
 **Purpose:** Automatically applies labels to pull requests based on files changed
+
+**ISMS Evidence:**
+- **ISO 27001 A.12.1.2** - Change Management
+- **Workflow File:** [labeler.yml](../workflows/labeler.yml)
+- **Policy Reference:** [Secure Development Policy - Section 4.2](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
 
 **Labels Applied:**
 - **MCP Development**: `mcp-tools`, `mcp-resources`, `mcp-prompts`, `mcp-protocol`

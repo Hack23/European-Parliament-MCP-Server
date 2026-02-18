@@ -172,7 +172,7 @@ Cmd+Shift+P (macOS) or Ctrl+Shift+P (Windows/Linux)
 ### 1. Create Dockerfile
 
 ```dockerfile
-FROM node:24-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 
