@@ -10,6 +10,16 @@
 </p>
 
 <p align="center">
+  <!-- npm version -->
+  <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
+    <img src="https://img.shields.io/npm/v/european-parliament-mcp-server.svg" alt="npm version">
+  </a>
+  
+  <!-- npm downloads -->
+  <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
+    <img src="https://img.shields.io/npm/dm/european-parliament-mcp-server.svg" alt="npm downloads">
+  </a>
+  
   <!-- Build Status -->
   <a href="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/main.yml">
     <img src="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/main.yml/badge.svg" alt="Build Status">
@@ -88,6 +98,18 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ### Installation
 
+#### Option 1: Install from npm (Recommended)
+
+```bash
+# Install the package globally
+npm install -g european-parliament-mcp-server
+
+# Or install as a dependency in your project
+npm install european-parliament-mcp-server
+```
+
+#### Option 2: Install from source
+
 ```bash
 # Clone the repository
 git clone https://github.com/Hack23/European-Parliament-MCP-Server.git
@@ -105,7 +127,25 @@ npm test
 
 ### Usage with MCP Client
 
-#### Claude Desktop Configuration
+#### Claude Desktop Configuration (npm install)
+
+Add to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "european-parliament": {
+      "command": "npx",
+      "args": ["european-parliament-mcp-server"],
+      "env": {
+        "EP_API_KEY": "your-api-key-if-needed"
+      }
+    }
+  }
+}
+```
+
+#### Claude Desktop Configuration (source install)
 
 Add to your `claude_desktop_config.json`:
 

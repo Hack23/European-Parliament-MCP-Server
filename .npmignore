@@ -1,0 +1,71 @@
+# Source files (only ship compiled dist/)
+src/
+tests/
+*.test.ts
+*.test.js
+
+# Configuration files
+.github/
+.devcontainer/
+.vscode/
+.env*
+.prettierrc.json
+eslint.config.js
+knip.json
+standardlint.json
+tsconfig.json
+tsconfig.node.json
+vitest.config.ts
+
+# Build artifacts
+coverage/
+node_modules/
+*.log
+*.tsbuildinfo
+
+# Documentation (keep only essential docs in package)
+docs/
+ARCHITECTURE.md
+ARCHITECTURE_DIAGRAMS.md
+AGENTS_AND_SKILLS_GUIDE.md
+API_USAGE_GUIDE.md
+CI_FAILURE_FIX_SUMMARY.md
+CI_FIX_SUMMARY.md
+CODEOWNERS
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+DATA_MODEL.md
+DEPLOYMENT_GUIDE.md
+DEVELOPER_GUIDE.md
+EP_API_IMPLEMENTATION_SUMMARY.md
+FLOWCHART.md
+FUTURE_SECURITY_ARCHITECTURE.md
+IMPLEMENTATION_SUMMARY.md
+ISMS_SKILLS_MAPPING.md
+MIGRATION_SUMMARY.md
+MINDMAP.md
+Open_Source_Policy.md
+PERFORMANCE_GUIDE.md
+POST_DEPLOYMENT_CHECKLIST.md
+PULL_REQUEST_TEMPLATE.md
+SECURITY_ARCHITECTURE.md
+SECURITY_HEADERS.md
+Secure_Development_Policy.md
+STATEDIAGRAM.md
+SWOT.md
+TASK_COMPLETION_SUMMARY.md
+TASK_COMPLETION_SUMMARY_TESTING.md
+TEST_COVERAGE_REPORT.md
+TEST_DISCOVERY_FIX_SUMMARY.md
+TROUBLESHOOTING.md
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD artifacts
+*.zip
+*.tgz
+*.intoto.jsonl
+*.spdx.json

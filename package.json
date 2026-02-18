@@ -26,7 +26,9 @@
     "test:ci": "vitest run --coverage --reporter=junit --reporter=json --outputFile=coverage/junit.xml",
     "test:licenses": "license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0;BlueOak-1.0.0'",
     "knip": "knip",
-    "clean": "rm -rf dist coverage"
+    "clean": "rm -rf dist coverage",
+    "prepublishOnly": "npm run lint && npm run knip && npm run test:unit && npm run build",
+    "prepack": "npm run build"
   },
   "keywords": [
     "mcp",
@@ -46,6 +48,18 @@
     "url": "https://github.com/Hack23/European-Parliament-MCP-Server/issues"
   },
   "homepage": "https://github.com/Hack23/European-Parliament-MCP-Server#readme",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE.md",
+    "SECURITY.md",
+    "CHANGELOG.md"
+  ],
   "engines": {
     "node": ">=22.0.0",
     "npm": ">=10.0.0"

@@ -133,6 +133,17 @@ This MCP server implements comprehensive security measures aligned with our **[S
 - **🔏 Artifact Signing** - Cryptographic proof of build integrity
   - Policy: [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
   - Format: In-toto attestations in JSONL format
+
+- **📦 npm Provenance** - Build transparency for npm packages
+  - Policy: [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md)
+  - Package: [european-parliament-mcp-server](https://www.npmjs.com/package/european-parliament-mcp-server)
+  - Verification: `npm audit signatures`
+  - Documentation: [NPM_PUBLISHING.md](./NPM_PUBLISHING.md)
+  - Features:
+    - ✅ Cryptographic provenance for every published version
+    - ✅ Transparent build process via GitHub Actions
+    - ✅ SLSA Level 3 compliance for npm packages
+    - ✅ Verifiable with `npm audit signatures`
   - Algorithm: SHA-256 cryptographic hashing
 
 ### 🧪 Testing & Quality Assurance
