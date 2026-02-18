@@ -27,9 +27,7 @@ bug:
   - any:
       - changed-files:
           - any-glob-to-any-file:
-              - "src/**/fix/**"
               - "src/**/bug/**"
-      - title: "fix:*"
       - title: "bug:*"
       - body: "- [x] 🐛 Bug Fix"
 
@@ -155,19 +153,14 @@ ui:
               - "src/**/*.styles.*"
       - title: "ui:*"
       - title: "style:*"
-      - title: "design:*"
       - body: "- [x] 🎨 UI/UX Improvements"
 
 design:
   - any:
       - changed-files:
           - any-glob-to-any-file:
-              - "src/**/ui/**"
               - "src/**/design/**"
-              - "src/**/*.css"
-              - "src/**/*.scss"
       - title: "design:*"
-      - title: "ui:*"
       - body: "- [x] 🎨 UI/UX Design"
 
 # 🏗️ Infrastructure & Performance
