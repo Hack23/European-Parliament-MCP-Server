@@ -133,6 +133,7 @@ export async function withRetry<T>(
     maxRetries: number;
     timeoutMs: number;
     retryDelayMs?: number;
+    timeoutErrorMessage?: string;
     shouldRetry?: (error: unknown) => boolean;
   }
 ): Promise<T> {
@@ -140,6 +141,7 @@ export async function withRetry<T>(
     maxRetries,
     timeoutMs,
     retryDelayMs = 1000,
+    timeoutErrorMessage,
     shouldRetry = (): boolean => true
   } = options;
   
@@ -148,7 +150,7 @@ export async function withRetry<T>(
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       // Add timeout to each attempt
-      return await withTimeout(fn(), timeoutMs);
+      return await withTimeout(fn(), timeoutMs, timeoutErrorMessage);
     } catch (error) {
       lastError = error;
       

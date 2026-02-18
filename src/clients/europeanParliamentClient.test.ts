@@ -404,6 +404,50 @@ describe('EuropeanParliamentClient', () => {
 
       await expect(clientNoRetry.getMEPs({ limit: 10 })).rejects.toThrow(APIError);
     });
+
+    it('should retry requests on 5xx errors when retry is enabled', async () => {
+      // First call fails with 500, second call succeeds
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          statusText: 'Internal Server Error'
+        } as Response)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => createMockMEPsResponse(1)
+        } as Response);
+
+      const result = await client.getMEPs({ limit: 10 });
+
+      expect(result.data).toHaveLength(1);
+      // Should have retried once after the initial 5xx
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('should not retry requests on 4xx errors', async () => {
+      // Mock a client error response
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        statusText: 'Bad Request'
+      } as Response);
+
+      await expect(client.getMEPs({ limit: 10 })).rejects.toThrow(APIError);
+      // 4xx errors should not be retried
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should convert TimeoutError to APIError with 408 status code', async () => {
+      // Mock TimeoutError directly by rejecting with it
+      const { TimeoutError } = await import('../utils/timeout.js');
+      mockFetch.mockRejectedValueOnce(new TimeoutError('Request timed out', 10000));
+
+      await expect(client.getMEPs({ limit: 10 })).rejects.toMatchObject({
+        name: 'APIError',
+        statusCode: 408
+      });
+    });
   });
 
   describe('Edge Cases - Data Transformation', () => {

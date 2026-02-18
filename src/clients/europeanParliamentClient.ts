@@ -16,7 +16,7 @@ import { fetch } from 'undici';
 import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../utils/rateLimiter.js';
 import { auditLogger } from '../utils/auditLogger.js';
-import { withTimeout, withRetry, TimeoutError } from '../utils/timeout.js';
+import { withRetry, TimeoutError } from '../utils/timeout.js';
 import { performanceMonitor } from '../utils/performance.js';
 import type {
   MEP,
@@ -193,17 +193,13 @@ export class EuropeanParliamentClient {
       
       // Create fetch function for retry logic
       const fetchFn = async (): Promise<T> => {
-        // Make API request with JSON-LD Accept header and timeout
-        const response = await withTimeout(
-          fetch(url.toString(), {
-            headers: {
-              'Accept': 'application/ld+json',
-              'User-Agent': 'European-Parliament-MCP-Server/1.0'
-            }
-          }),
-          this.timeoutMs,
-          `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`
-        );
+        // Make API request with JSON-LD Accept header
+        const response = await fetch(url.toString(), {
+          headers: {
+            'Accept': 'application/ld+json',
+            'User-Agent': 'European-Parliament-MCP-Server/1.0'
+          }
+        });
         
         if (!response.ok) {
           throw new APIError(
@@ -221,8 +217,9 @@ export class EuropeanParliamentClient {
             maxRetries: this.maxRetries,
             timeoutMs: this.timeoutMs,
             retryDelayMs: 1000,
+            timeoutErrorMessage: `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`,
             shouldRetry: (error) => {
-              // Retry on timeout or 5xx errors, but not 4xx client errors
+              // Retry on 5xx errors, but not 4xx client errors or timeouts
               if (error instanceof TimeoutError) return false; // Don't retry timeouts
               if (error instanceof APIError) {
                 return (error.statusCode ?? 500) >= 500;
