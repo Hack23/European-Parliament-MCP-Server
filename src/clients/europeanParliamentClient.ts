@@ -30,6 +30,21 @@ import type {
 } from '../types/europeanParliament.js';
 
 /**
+ * Default configuration values for European Parliament API client
+ * 
+ * These constants serve as the single source of truth for default values,
+ * preventing documentation drift and ensuring consistency.
+ */
+export const DEFAULT_EP_API_BASE_URL = 'https://data.europarl.europa.eu/api/v2/';
+export const DEFAULT_REQUEST_TIMEOUT_MS = 10000; // 10 seconds
+export const DEFAULT_RETRY_ENABLED = true;
+export const DEFAULT_MAX_RETRIES = 2;
+export const DEFAULT_CACHE_TTL_MS = 900000; // 15 minutes
+export const DEFAULT_MAX_CACHE_SIZE = 500;
+export const DEFAULT_RATE_LIMIT_TOKENS = 100;
+export const DEFAULT_RATE_LIMIT_INTERVAL = 'minute' as const;
+
+/**
  * API Error class
  */
 export class APIError extends Error {
@@ -105,23 +120,23 @@ export class EuropeanParliamentClient {
   private readonly maxRetries: number;
 
   constructor(config: EPClientConfig = {}) {
-    this.baseURL = config.baseURL ?? 'https://data.europarl.europa.eu/api/v2/';
-    this.timeoutMs = config.timeoutMs ?? 10000; // 10 second default
-    this.enableRetry = config.enableRetry ?? true;
-    this.maxRetries = config.maxRetries ?? 2;
+    this.baseURL = config.baseURL ?? DEFAULT_EP_API_BASE_URL;
+    this.timeoutMs = config.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
+    this.enableRetry = config.enableRetry ?? DEFAULT_RETRY_ENABLED;
+    this.maxRetries = config.maxRetries ?? DEFAULT_MAX_RETRIES;
     
     // Initialize LRU cache
     this.cache = new LRUCache<string, Record<string, unknown>>({
-      max: config.maxCacheSize ?? 500,
-      ttl: config.cacheTTL ?? 1000 * 60 * 15, // 15 minutes
+      max: config.maxCacheSize ?? DEFAULT_MAX_CACHE_SIZE,
+      ttl: config.cacheTTL ?? DEFAULT_CACHE_TTL_MS,
       allowStale: false,
       updateAgeOnGet: true
     });
     
     // Initialize rate limiter
     this.rateLimiter = config.rateLimiter ?? new RateLimiter({
-      tokensPerInterval: 100,
-      interval: 'minute'
+      tokensPerInterval: DEFAULT_RATE_LIMIT_TOKENS,
+      interval: DEFAULT_RATE_LIMIT_INTERVAL
     });
   }
 
