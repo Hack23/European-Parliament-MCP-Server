@@ -8,12 +8,16 @@
  * - Rate limiting to prevent abuse
  * - Error handling and retry logic
  * - GDPR-compliant data access logging
+ * - Request timeout handling (10s default)
+ * - Performance monitoring
  */
 
 import { fetch } from 'undici';
 import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../utils/rateLimiter.js';
 import { auditLogger } from '../utils/auditLogger.js';
+import { withTimeout, withRetry, TimeoutError } from '../utils/timeout.js';
+import { performanceMonitor } from '../utils/performance.js';
 import type {
   MEP,
   MEPDetails,
@@ -72,6 +76,21 @@ interface EPClientConfig {
    * Rate limiter instance
    */
   rateLimiter?: RateLimiter;
+  
+  /**
+   * Request timeout in milliseconds (default: 10000)
+   */
+  timeoutMs?: number;
+  
+  /**
+   * Enable retry logic for transient failures (default: true)
+   */
+  enableRetry?: boolean;
+  
+  /**
+   * Maximum number of retries (default: 2)
+   */
+  maxRetries?: number;
 }
 
 /**
@@ -81,9 +100,15 @@ export class EuropeanParliamentClient {
   private readonly cache: LRUCache<string, Record<string, unknown>>;
   private readonly baseURL: string;
   private readonly rateLimiter: RateLimiter;
+  private readonly timeoutMs: number;
+  private readonly enableRetry: boolean;
+  private readonly maxRetries: number;
 
   constructor(config: EPClientConfig = {}) {
     this.baseURL = config.baseURL ?? 'https://data.europarl.europa.eu/api/v2/';
+    this.timeoutMs = config.timeoutMs ?? 10000; // 10 second default
+    this.enableRetry = config.enableRetry ?? true;
+    this.maxRetries = config.maxRetries ?? 2;
     
     // Initialize LRU cache
     this.cache = new LRUCache<string, Record<string, unknown>>({
@@ -101,7 +126,7 @@ export class EuropeanParliamentClient {
   }
 
   /**
-   * Generic GET request with caching and rate limiting
+   * Generic GET request with caching, rate limiting, timeout, and performance monitoring
    * 
    * @param endpoint - API endpoint (relative to baseURL)
    * @param params - Query parameters
@@ -111,67 +136,107 @@ export class EuropeanParliamentClient {
     endpoint: string,
     params?: Record<string, unknown>
   ): Promise<T> {
-    // Check rate limit
-    await this.rateLimiter.removeTokens(1);
-    
-    // Generate cache key
-    const cacheKey = this.getCacheKey(endpoint, params);
-    
-    // Check cache
-    const cached = this.cache.get(cacheKey);
-    if (cached !== undefined) {
-      return cached as T;
-    }
-    
-    // Build URL
-    const url = new URL(endpoint, this.baseURL);
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          // Convert value to string, handling different types properly
-          let stringValue: string;
-          if (typeof value === 'string') {
-            stringValue = value;
-          } else if (typeof value === 'number') {
-            stringValue = value.toString();
-          } else if (typeof value === 'boolean') {
-            stringValue = value.toString();
-          } else if (typeof value === 'object') {
-            stringValue = JSON.stringify(value);
-          } else {
-            // For any other type, convert to JSON for safety
-            stringValue = JSON.stringify(value);
-          }
-          url.searchParams.append(key, stringValue);
-        }
-      });
-    }
+    const startTime = performance.now();
     
     try {
-      // Make API request with JSON-LD Accept header
-      const response = await fetch(url.toString(), {
-        headers: {
-          'Accept': 'application/ld+json',
-          'User-Agent': 'European-Parliament-MCP-Server/1.0'
-        }
-      });
+      // Check rate limit
+      await this.rateLimiter.removeTokens(1);
       
-      if (!response.ok) {
-        throw new APIError(
-          `EP API request failed: ${response.statusText}`,
-          response.status
-        );
+      // Generate cache key
+      const cacheKey = this.getCacheKey(endpoint, params);
+      
+      // Check cache
+      const cached = this.cache.get(cacheKey);
+      if (cached !== undefined) {
+        performanceMonitor.recordDuration('ep_api_cache_hit', performance.now() - startTime);
+        return cached as T;
       }
       
-      const data = await response.json() as T;
+      // Build URL
+      const url = new URL(endpoint, this.baseURL);
+      if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            // Convert value to string, handling different types properly
+            let stringValue: string;
+            if (typeof value === 'string') {
+              stringValue = value;
+            } else if (typeof value === 'number') {
+              stringValue = value.toString();
+            } else if (typeof value === 'boolean') {
+              stringValue = value.toString();
+            } else if (typeof value === 'object') {
+              stringValue = JSON.stringify(value);
+            } else {
+              // For any other type, convert to JSON for safety
+              stringValue = JSON.stringify(value);
+            }
+            url.searchParams.append(key, stringValue);
+          }
+        });
+      }
+      
+      // Create fetch function for retry logic
+      const fetchFn = async () => {
+        // Make API request with JSON-LD Accept header and timeout
+        const response = await withTimeout(
+          fetch(url.toString(), {
+            headers: {
+              'Accept': 'application/ld+json',
+              'User-Agent': 'European-Parliament-MCP-Server/1.0'
+            }
+          }),
+          this.timeoutMs,
+          `EP API request to ${endpoint} timed out after ${this.timeoutMs}ms`
+        );
+        
+        if (!response.ok) {
+          throw new APIError(
+            `EP API request failed: ${response.statusText}`,
+            response.status
+          );
+        }
+        
+        return await response.json() as T;
+      };
+      
+      // Execute with retry logic if enabled
+      const data = this.enableRetry
+        ? await withRetry(fetchFn, {
+            maxRetries: this.maxRetries,
+            timeoutMs: this.timeoutMs,
+            retryDelayMs: 1000,
+            shouldRetry: (error) => {
+              // Retry on timeout or 5xx errors, but not 4xx client errors
+              if (error instanceof TimeoutError) return false; // Don't retry timeouts
+              if (error instanceof APIError) {
+                return (error.statusCode ?? 500) >= 500;
+              }
+              return true; // Retry other errors (network issues, etc.)
+            }
+          })
+        : await fetchFn();
       
       // Cache the response
       this.cache.set(cacheKey, data);
       
+      // Record performance
+      performanceMonitor.recordDuration('ep_api_request', performance.now() - startTime);
+      
       return data;
     } catch (error) {
+      // Record failed request performance
+      performanceMonitor.recordDuration('ep_api_request_failed', performance.now() - startTime);
+      
       if (error instanceof APIError) {
         throw error;
+      }
+      if (error instanceof TimeoutError) {
+        throw new APIError(
+          `EP API timeout: ${error.message}`,
+          408, // Request Timeout
+          { timeoutMs: error.timeoutMs }
+        );
       }
       throw new APIError(
         `EP API request error: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -363,6 +428,7 @@ export class EuropeanParliamentClient {
     offset?: number;
   }): Promise<PaginatedResponse<MEP>> {
     const action = 'get_meps';
+    const startTime = performance.now();
     
     try {
       // Build API parameters
@@ -395,14 +461,17 @@ export class EuropeanParliamentClient {
         hasMore: meps.length >= (params.limit ?? 50)
       };
       
-      auditLogger.logDataAccess(action, params, result.data.length);
+      const duration = performance.now() - startTime;
+      auditLogger.logDataAccess(action, params, result.data.length, duration);
       
       return result;
     } catch (error) {
+      const duration = performance.now() - startTime;
       auditLogger.logError(
         action,
         params,
-        error instanceof Error ? error.message : 'Unknown error'
+        error instanceof Error ? error.message : 'Unknown error',
+        duration
       );
       throw error;
     }
