@@ -52,7 +52,7 @@ export interface PerformanceStats {
  * ```
  */
 export class PerformanceMonitor {
-  private metrics = new Map<string, number[]>();
+  private readonly metrics = new Map<string, number[]>();
   private readonly maxSamples: number;
   
   /**
@@ -123,14 +123,20 @@ export class PerformanceMonitor {
     
     // Calculate statistics
     const sum = sorted.reduce((acc, val) => acc + val, 0);
+    const min = sorted[0];
+    const max = sorted[count - 1];
+    
+    if (min === undefined || max === undefined) {
+      return null;
+    }
     
     return {
       p50: this.percentile(sorted, 0.5),
       p95: this.percentile(sorted, 0.95),
       p99: this.percentile(sorted, 0.99),
       avg: sum / count,
-      min: sorted[0]!,
-      max: sorted[count - 1]!,
+      min,
+      max,
       count
     };
   }
@@ -148,7 +154,9 @@ export class PerformanceMonitor {
    */
   private percentile(sorted: number[], p: number): number {
     if (sorted.length === 0) return 0;
-    if (sorted.length === 1) return sorted[0]!;
+    
+    const first = sorted[0];
+    if (sorted.length === 1 && first !== undefined) return first;
     
     const index = (sorted.length - 1) * p;
     const lower = Math.floor(index);
@@ -156,10 +164,17 @@ export class PerformanceMonitor {
     const weight = index % 1;
     
     if (lower === upper) {
-      return sorted[lower]!;
+      return sorted[lower] ?? 0;
     }
     
-    return sorted[lower]! * (1 - weight) + sorted[upper]! * weight;
+    const lowerValue = sorted[lower];
+    const upperValue = sorted[upper];
+    
+    if (lowerValue === undefined || upperValue === undefined) {
+      return 0;
+    }
+    
+    return lowerValue * (1 - weight) + upperValue * weight;
   }
   
   /**

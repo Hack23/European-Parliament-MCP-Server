@@ -76,7 +76,7 @@ export async function withTimeout<T>(
     timeoutHandle = setTimeout(() => {
       reject(
         new TimeoutError(
-          errorMessage ?? `Operation timed out after ${timeoutMs}ms`,
+          errorMessage ?? `Operation timed out after ${String(timeoutMs)}ms`,
           timeoutMs
         )
       );
@@ -140,7 +140,7 @@ export async function withRetry<T>(
     maxRetries,
     timeoutMs,
     retryDelayMs = 1000,
-    shouldRetry = () => true
+    shouldRetry = (): boolean => true
   } = options;
   
   let lastError: unknown;

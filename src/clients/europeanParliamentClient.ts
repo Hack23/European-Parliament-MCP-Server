@@ -177,7 +177,7 @@ export class EuropeanParliamentClient {
       }
       
       // Create fetch function for retry logic
-      const fetchFn = async () => {
+      const fetchFn = async (): Promise<T> => {
         // Make API request with JSON-LD Accept header and timeout
         const response = await withTimeout(
           fetch(url.toString(), {
@@ -187,7 +187,7 @@ export class EuropeanParliamentClient {
             }
           }),
           this.timeoutMs,
-          `EP API request to ${endpoint} timed out after ${this.timeoutMs}ms`
+          `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`
         );
         
         if (!response.ok) {
