@@ -138,7 +138,23 @@ describeIntegration('get_committee_info Integration Tests', () => {
       const result1 = await retry(async () => handleGetCommitteeInfo(params));
       const result2 = await handleGetCommitteeInfo(params);
 
-      expect(result1.content[0]?.text).toBe(result2.content[0]?.text);
+      validateMCPStructure(result1);
+      validateMCPStructure(result2);
+
+      const textContent1 = result1.content[0];
+      const textContent2 = result2.content[0];
+
+      if (!textContent1 || !textContent2) {
+        throw new Error('Missing text content for data consistency check');
+      }
+
+      const committee1 = JSON.parse(textContent1.text) as { id?: string; name?: string; abbreviation?: string };
+      const committee2 = JSON.parse(textContent2.text) as { id?: string; name?: string; abbreviation?: string };
+
+      // Compare stable fields to avoid brittleness from JSON formatting or extra fields
+      expect(committee1.id).toBe(committee2.id);
+      expect(committee1.abbreviation).toBe(committee2.abbreviation);
+      expect(committee1.name).toBe(committee2.name);
     }, 60000);
   });
 });

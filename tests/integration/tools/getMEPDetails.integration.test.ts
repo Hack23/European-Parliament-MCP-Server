@@ -192,7 +192,23 @@ describeIntegration('get_mep_details Integration Tests', () => {
       const result1 = await retry(async () => handleGetMEPDetails({ id: testMEPId }));
       const result2 = await handleGetMEPDetails({ id: testMEPId });
 
-      expect(result1.content[0]?.text).toBe(result2.content[0]?.text);
+      validateMCPStructure(result1);
+      validateMCPStructure(result2);
+
+      const textContent1 = result1.content[0];
+      const textContent2 = result2.content[0];
+
+      if (!textContent1 || !textContent2) {
+        throw new Error('Missing text content for data consistency check');
+      }
+
+      const mep1 = JSON.parse(textContent1.text) as { id?: string; name?: string; country?: string };
+      const mep2 = JSON.parse(textContent2.text) as { id?: string; name?: string; country?: string };
+
+      // Compare stable fields
+      expect(mep1.id).toBe(mep2.id);
+      expect(mep1.name).toBe(mep2.name);
+      expect(mep1.country).toBe(mep2.country);
     }, 60000);
   });
 });

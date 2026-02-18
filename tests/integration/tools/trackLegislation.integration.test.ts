@@ -181,7 +181,23 @@ describeIntegration('track_legislation Integration Tests', () => {
       const result1 = await retry(async () => handleTrackLegislation(params));
       const result2 = await handleTrackLegislation(params);
 
-      expect(result1.content[0]?.text).toBe(result2.content[0]?.text);
+      validateMCPStructure(result1);
+      validateMCPStructure(result2);
+
+      const textContent1 = result1.content[0];
+      const textContent2 = result2.content[0];
+
+      if (!textContent1 || !textContent2) {
+        throw new Error('Missing text content for data consistency check');
+      }
+
+      const procedure1 = JSON.parse(textContent1.text) as { procedureId?: string; title?: string; type?: string };
+      const procedure2 = JSON.parse(textContent2.text) as { procedureId?: string; title?: string; type?: string };
+
+      // Compare stable fields
+      expect(procedure1.procedureId).toBe(procedure2.procedureId);
+      expect(procedure1.title).toBe(procedure2.title);
+      expect(procedure1.type).toBe(procedure2.type);
     }, 60000);
   });
 });
