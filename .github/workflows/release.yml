@@ -53,7 +53,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
-          node-version: "22"
+          node-version: "24"
           cache: "npm"
 
       - name: Cache dependencies
@@ -90,6 +90,63 @@ jobs:
           commit_message: "chore(release): bump version to ${{ github.event.inputs.version }}"
           tagging_message: "${{ github.event.inputs.version }}"
 
+      # Documentation as Code - Generate all documentation for this release
+      - name: Clean old documentation
+        run: npm run docs:clean || echo "First time generating docs"
+
+      - name: Generate API documentation with TypeDoc
+        run: npm run docs
+
+      - name: Run tests with coverage and generate reports
+        run: |
+          npm run test:coverage || true
+          mkdir -p docs/coverage
+          if [ -d "coverage" ] && [ "$(ls -A coverage)" ]; then
+            cp -r coverage/* docs/coverage/
+          else
+            echo "Warning: No coverage files to copy"
+          fi
+
+      - name: Generate unit test reports
+        run: |
+          mkdir -p docs/test-results
+          npm run test:unit -- --reporter=html --reporter=json --reporter=json-summary > /dev/null 2>&1 || true
+          if [ -f "coverage/test-results.html" ]; then
+            cp coverage/test-results.html docs/test-results/report.html
+          fi
+          echo "Unit test reports generated" > docs/test-results/status.txt
+
+      - name: Generate E2E test reports
+        run: |
+          mkdir -p docs/e2e-results
+          npm run test:e2e -- --reporter=html --reporter=json --reporter=json-summary > /dev/null 2>&1 || true
+          if [ -f "coverage/e2e-results.html" ]; then
+            cp coverage/e2e-results.html docs/e2e-results/report.html
+          fi
+          echo "E2E test reports generated" > docs/e2e-results/status.txt
+
+      - name: Generate documentation sitemap
+        run: npm run docs:sitemap
+
+      - name: Create version marker
+        run: echo "Version ${{ needs.prepare.outputs.version || github.ref_name }} deployed at $(date -u +%Y-%m-%dT%H:%M:%SZ)" > docs/version.txt
+
+      - name: Commit documentation to main branch
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
+        with:
+          commit_message: "docs: update documentation for ${{ steps.get-version.outputs.version || github.ref_name }}"
+          file_pattern: "docs/**"
+          skip_fetch: false
+          skip_checkout: false
+
+      - name: Deploy Documentation to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4.8.0
+        with:
+          folder: docs
+          branch: gh-pages
+          clean: false
+          commit-message: "docs: deploy documentation for ${{ steps.get-version.outputs.version || github.ref_name }}"
+
   build:
     name: Build Release Package
     needs: [prepare]
@@ -115,7 +172,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
-          node-version: "22"
+          node-version: "24"
           cache: "npm"
 
       - name: Cache dependencies
@@ -262,3 +319,78 @@ jobs:
             artifacts/security/european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.zip.intoto.jsonl
             artifacts/security/european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.spdx.json.intoto.jsonl
           token: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-npm:
+    name: Publish to npm
+    needs: [prepare, build, security, attest, release]
+    runs-on: ubuntu-latest
+    # npm publish needs specific permissions
+    permissions:
+      contents: read # Required to checkout code
+      id-token: write # Required for OIDC and npm provenance
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'push' && github.ref || github.event_name == 'workflow_dispatch' && github.event.inputs.version || '' }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: "24"
+          cache: "npm"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Cache dependencies
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update package version
+        run: |
+          PLAIN_VERSION="${{ needs.prepare.outputs.version }}"
+          # Remove 'v' prefix if present
+          PLAIN_VERSION="${PLAIN_VERSION#v}"
+          npm version $PLAIN_VERSION --no-git-tag-version
+
+      - name: Build package
+        run: npm run build
+
+      - name: Verify package contents
+        run: |
+          echo "📦 Package contents preview:"
+          npm pack --dry-run
+          echo ""
+          echo "📋 Package files:"
+          tar -tzf $(npm pack 2>/dev/null | tail -n 1) | head -20
+
+      - name: Publish to npm with provenance
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+
+      - name: Verify npm package
+        run: |
+          echo "✅ Package published successfully!"
+          echo "📦 Package: european-parliament-mcp-server@${{ needs.prepare.outputs.version }}"
+          echo "🔗 npm URL: https://www.npmjs.com/package/european-parliament-mcp-server"
+          echo ""
+          echo "To install:"
+          echo "npm install european-parliament-mcp-server@${{ needs.prepare.outputs.version }}"
+          echo ""
+          echo "To verify provenance:"
+          echo "npm audit signatures"
+

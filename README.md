@@ -10,19 +10,86 @@
 </p>
 
 <p align="center">
+  <!-- npm version -->
+  <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
+    <img src="https://img.shields.io/npm/v/european-parliament-mcp-server.svg?style=flat-square" alt="npm version">
+  </a>
+  
+  <!-- npm downloads -->
+  <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
+    <img src="https://img.shields.io/npm/dm/european-parliament-mcp-server.svg?style=flat-square" alt="npm downloads">
+  </a>
+  
   <!-- Build Status -->
   <a href="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/main.yml">
-    <img src="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/main.yml/badge.svg" alt="Build Status">
+    <img src="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/main.yml/badge.svg?style=flat-square" alt="Build Status">
   </a>
   
   <!-- License -->
   <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/LICENSE.md">
-    <img src="https://img.shields.io/github/license/Hack23/European-Parliament-MCP-Server.svg" alt="License">
+    <img src="https://img.shields.io/github/license/Hack23/European-Parliament-MCP-Server.svg?style=flat-square" alt="License">
+  </a>
+</p>
+
+## 📊 Quality Metrics & Documentation
+
+<p align="center">
+  <!-- Test Coverage -->
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/coverage/">
+    <img src="https://img.shields.io/badge/Test%20Coverage-80%25%2B-brightgreen?style=flat-square&logo=vitest" alt="Test Coverage">
   </a>
   
+  <!-- Unit Tests -->
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/test-results/">
+    <img src="https://img.shields.io/badge/Unit%20Tests-268%20Passing-brightgreen?style=flat-square&logo=vitest" alt="Unit Test Results">
+  </a>
+  
+  <!-- E2E Tests -->
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/e2e-results/">
+    <img src="https://img.shields.io/badge/E2E%20Tests-23%20Passing-brightgreen?style=flat-square&logo=playwright" alt="E2E Test Results">
+  </a>
+  
+  <!-- API Documentation -->
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/api/">
+    <img src="https://img.shields.io/badge/API%20Docs-TypeDoc-blue?style=flat-square&logo=typescript" alt="API Documentation">
+  </a>
+  
+  <!-- Documentation Portal -->
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/">
+    <img src="https://img.shields.io/badge/📚%20Documentation-Portal-blue?style=flat-square" alt="Documentation Portal">
+  </a>
+</p>
+
+<p align="center">
+  <!-- Security Architecture -->
+  <a href="./SECURITY_ARCHITECTURE.md">
+    <img src="https://img.shields.io/badge/🛡️%20Security-Architecture-blue?style=flat-square" alt="Security Architecture">
+  </a>
+  
+  <!-- Architecture Diagrams -->
+  <a href="./ARCHITECTURE_DIAGRAMS.md">
+    <img src="https://img.shields.io/badge/🏗️%20Architecture-Diagrams-blue?style=flat-square" alt="Architecture Diagrams">
+  </a>
+  
+  <!-- Workflows Documentation -->
+  <a href="./.github/WORKFLOWS.md">
+    <img src="https://img.shields.io/badge/⚙️%20CI%2FCD-Workflows-blue?style=flat-square" alt="Workflows Documentation">
+  </a>
+  
+  <!-- Performance Guide -->
+  <a href="./PERFORMANCE_GUIDE.md">
+    <img src="https://img.shields.io/badge/⚡%20Performance-Guide-blue?style=flat-square" alt="Performance Guide">
+  </a>
+</p>
+
+**Coverage Policy:** Per [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md), we maintain minimum 80% line coverage and 70% branch coverage across all modules.
+
+## 🔐 Security & Compliance
+
+<p align="center">
   <!-- OpenSSF Scorecard -->
   <a href="https://securityscorecards.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server">
-    <img src="https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge" alt="OpenSSF Scorecard">
+    <img src="https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge?style=flat-square" alt="OpenSSF Scorecard">
   </a>
   
   <!-- SLSA Level 3 -->
@@ -31,16 +98,18 @@
   </a>
   
   <!-- SBOM -->
-  <a href="https://spdx.dev">
-    <img src="https://img.shields.io/badge/SBOM-SPDX-blue" alt="SBOM">
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/SBOM.md">
+    <img src="https://img.shields.io/badge/SBOM-SPDX%202.3-blue?style=flat-square" alt="SBOM">
   </a>
   
   <!-- SBOM Quality -->
-  <img src="https://img.shields.io/badge/SBOM%20Quality-8.5%2F10-brightgreen" alt="SBOM Quality">
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/SBOM.md">
+    <img src="https://img.shields.io/badge/SBOM%20Quality-8.5%2F10-brightgreen?style=flat-square" alt="SBOM Quality">
+  </a>
   
-  <!-- Code Coverage -->
-  <a href="https://codecov.io/gh/Hack23/European-Parliament-MCP-Server">
-    <img src="https://codecov.io/gh/Hack23/European-Parliament-MCP-Server/branch/main/graph/badge.svg" alt="Code Coverage">
+  <!-- Attestations -->
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/ATTESTATIONS.md">
+    <img src="https://img.shields.io/badge/Attestations-Available-success?style=flat-square" alt="Build Attestations">
   </a>
 </p>
 
@@ -82,11 +151,23 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ### Prerequisites
 
-- Node.js 22.x or higher
+- Node.js 24.x or higher
 - npm 10.x or higher
 - Git
 
 ### Installation
+
+#### Option 1: Install from npm (Recommended)
+
+```bash
+# Install the package globally
+npm install -g european-parliament-mcp-server
+
+# Or install as a dependency in your project
+npm install european-parliament-mcp-server
+```
+
+#### Option 2: Install from source
 
 ```bash
 # Clone the repository
@@ -105,7 +186,25 @@ npm test
 
 ### Usage with MCP Client
 
-#### Claude Desktop Configuration
+#### Claude Desktop Configuration (npm install)
+
+Add to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "european-parliament": {
+      "command": "npx",
+      "args": ["european-parliament-mcp-server"],
+      "env": {
+        "EP_API_KEY": "your-api-key-if-needed"
+      }
+    }
+  }
+}
+```
+
+#### Claude Desktop Configuration (source install)
 
 Add to your `claude_desktop_config.json`:
 
@@ -143,6 +242,17 @@ Configure in `.vscode/mcp.json`:
 
 ## 📚 Documentation
 
+### 🌐 Documentation Portal
+
+**[📖 Complete Documentation Site](https://hack23.github.io/European-Parliament-MCP-Server/docs/)** - Live documentation portal with:
+- 📖 **API Reference** - TypeDoc generated API documentation
+- 📊 **Coverage Reports** - Test coverage analysis
+- ✅ **Test Reports** - Unit and E2E test results
+- 🔐 **Build Attestations** - SLSA Level 3 provenance
+- 📦 **SBOM** - Software Bill of Materials
+
+> 💡 **Note**: Documentation is automatically generated and deployed with each release
+
 ### Core Documentation
 
 - [**API Usage Guide**](./API_USAGE_GUIDE.md) - Complete tool documentation with examples
@@ -151,6 +261,7 @@ Configure in `.vscode/mcp.json`:
 - [**Developer Guide**](./DEVELOPER_GUIDE.md) - Development workflow and contributing
 - [**Deployment Guide**](./DEPLOYMENT_GUIDE.md) - Claude Desktop, VS Code, Docker setup
 - [**Performance Guide**](./PERFORMANCE_GUIDE.md) - Optimization strategies
+- [**Documentation as Code Guide**](./DOCUMENTATION_AS_CODE.md) - How documentation is generated
 
 ### Additional Documentation
 

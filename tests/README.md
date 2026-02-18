@@ -178,7 +178,7 @@ describe('Performance', () => {
 Tests run in GitHub Actions via `.github/workflows/integration-tests.yml`:
 
 - Runs on: pull requests, pushes to main, daily schedule
-- Environment: Node.js 22.x, Ubuntu latest
+- Environment: Node.js 24.x, Ubuntu latest
 - Artifacts: Coverage reports, test results
 - Integration: Codecov for coverage reporting
 

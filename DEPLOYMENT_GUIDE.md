@@ -29,7 +29,7 @@
 
 ### Required Software
 
-- **Node.js**: v22.x or higher
+- **Node.js**: v24.x or higher
 - **npm**: v10.x or higher
 - **Git**: Latest version
 
@@ -481,7 +481,7 @@ export RATE_LIMIT_REQUESTS=100
 
 ```bash
 # Check Node.js version
-node --version  # Must be v22.x+
+node --version  # Must be v24.x+
 
 # Check if port is in use
 lsof -i :3000

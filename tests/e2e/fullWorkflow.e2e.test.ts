@@ -103,8 +103,20 @@ describe('Full Workflow E2E Tests', () => {
     }, 15000);
 
     it('should execute analyze_voting_patterns tool', async () => {
+      // First get a real MEP ID
+      const mepsResponse = await client.callTool('get_meps', { limit: 1 });
+      validateMCPResponse(mepsResponse);
+      const meps = parsePaginatedMCPResponse(mepsResponse.content);
+      
+      if (meps.length === 0) {
+        console.log('No MEPs available for voting patterns test');
+        return;
+      }
+
+      const mepId = meps[0]!.id;
+
       const response = await client.callTool('analyze_voting_patterns', {
-        mepId: 'test-mep-id',
+        mepId,
         dateFrom: '2024-01-01',
         dateTo: '2024-12-31'
       });

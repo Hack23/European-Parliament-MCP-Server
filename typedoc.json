@@ -1,0 +1,48 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts"],
+  "out": "docs/api",
+  "plugin": [],
+  "name": "European Parliament MCP Server API Documentation",
+  "includeVersion": true,
+  "readme": "README.md",
+  "categorizeByGroup": true,
+  "categoryOrder": [
+    "Tools",
+    "Clients",
+    "Schemas",
+    "Types",
+    "Utils",
+    "*"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/node_modules/**"
+  ],
+  "excludePrivate": false,
+  "excludeProtected": false,
+  "excludeInternal": true,
+  "hideGenerator": false,
+  "sort": ["kind", "instance-first", "required-first", "alphabetical"],
+  "kindSortOrder": [
+    "Function",
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Enum",
+    "Variable"
+  ],
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true
+  },
+  "visibilityFilters": {
+    "protected": true,
+    "private": true,
+    "inherited": true,
+    "external": false
+  },
+  "searchInComments": true,
+  "cleanOutputDir": true
+}
