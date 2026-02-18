@@ -31,6 +31,9 @@
   </a>
 </p>
 
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FHack23%2FEuropean-Parliament-MCP-Server.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FHack23%2FEuropean-Parliament-MCP-Server?ref=badge_large)
+
 ## 📊 Quality Metrics & Documentation
 
 <p align="center">
@@ -121,6 +124,7 @@
   <a href="https://github.com/Hack23/ISMS-PUBLIC">
     <img src="https://img.shields.io/badge/ISMS-NIST%20CSF%202.0-success?style=flat-square" alt="NIST CSF 2.0">
   </a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2FHack23%2FEuropean-Parliament-MCP-Server?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FHack23%2FEuropean-Parliament-MCP-Server.svg?type=shield"/></a>
   <a href="https://github.com/Hack23/ISMS-PUBLIC">
     <img src="https://img.shields.io/badge/ISMS-CIS%20Controls%20v8.1-success?style=flat-square" alt="CIS Controls">
   </a>
