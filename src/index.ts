@@ -34,6 +34,12 @@ const SERVER_NAME = 'european-parliament-mcp-server';
 const SERVER_VERSION = '1.0.0';
 
 /**
+ * Number of core tools (non-advanced analysis tools)
+ * Update this constant when adding/removing core tools in getToolMetadataArray()
+ */
+const CORE_TOOL_COUNT = 7;
+
+/**
  * Display help message
  */
 function showHelp(): void {
@@ -118,8 +124,7 @@ function getToolMetadataArray() {
  */
 function showHealth(): void {
   const tools = getToolMetadataArray();
-  const coreToolCount = 7; // First 7 tools in the array are core tools
-  const advancedToolCount = tools.length - coreToolCount;
+  const advancedToolCount = tools.length - CORE_TOOL_COUNT;
   
   const health = {
     name: SERVER_NAME,
@@ -128,7 +133,7 @@ function showHealth(): void {
     capabilities: ['tools', 'resources', 'prompts'],
     tools: {
       total: tools.length,
-      core: coreToolCount,
+      core: CORE_TOOL_COUNT,
       advanced: advancedToolCount
     },
     environment: {
@@ -336,13 +341,12 @@ class EuropeanParliamentMCPServer {
     await this.server.connect(transport);
 
     const tools = getToolMetadataArray();
-    const coreToolCount = 7;
-    const advancedToolCount = tools.length - coreToolCount;
+    const advancedToolCount = tools.length - CORE_TOOL_COUNT;
 
     // Log to stderr (stdout is used for MCP protocol)
     console.error(`${SERVER_NAME} v${SERVER_VERSION} started`);
     console.error('Server ready to handle requests');
-    console.error(`Available tools: ${tools.length} (${coreToolCount} core + ${advancedToolCount} advanced analysis)`);
+    console.error(`Available tools: ${tools.length} (${CORE_TOOL_COUNT} core + ${advancedToolCount} advanced analysis)`);
   }
 }
 

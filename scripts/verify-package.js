@@ -158,12 +158,15 @@ if (!existsSync(pkgPath)) {
       success(`Binary entry points: ${binKeys.join(', ')}`);
       
       // Check if npx-compatible bin entry exists
-      const packageBaseName = pkg.name;
-      const hasNpxCompatibleBin = binKeys.includes(packageBaseName) || 
-                                  binKeys.some(key => packageBaseName.includes(key));
+      // npx looks for exact package name match or scoped package basename
+      const packageBaseName = pkg.name.startsWith('@')
+        ? pkg.name.split('/')[1]
+        : pkg.name;
+      const hasNpxCompatibleBin =
+        binKeys.includes(pkg.name) || binKeys.includes(packageBaseName);
       
       if (!hasNpxCompatibleBin) {
-        warn(`No bin entry for '${packageBaseName}' - npx ${packageBaseName} may not work as expected`);
+        warn(`No bin entry for '${pkg.name}' - npx ${pkg.name} may not work as expected`);
       } else {
         success(`npx-compatible bin entry exists for package`);
       }
