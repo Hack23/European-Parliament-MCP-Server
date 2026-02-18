@@ -106,8 +106,8 @@ describeIntegration('track_legislation Integration Tests', () => {
     it('should reject invalid procedure ID format', async () => {
       await expect(async () => {
         return handleTrackLegislation({ 
-          // @ts-expect-error - Testing invalid format
-          procedureId: 'INVALID' 
+          // @ts-expect-error - Testing invalid format (missing procedure type in parentheses)
+          procedureId: '2024/0003' 
         });
       }).rejects.toThrow();
     }, 10000);

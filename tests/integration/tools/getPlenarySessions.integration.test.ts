@@ -141,7 +141,7 @@ describeIntegration('get_plenary_sessions Integration Tests', () => {
     it('should reject invalid date format', async () => {
       await expect(async () => {
         return handleGetPlenarySessions({ 
-          // @ts-expect-error - Testing invalid date format
+          // @ts-expect-error - Testing invalid date format (expected 'YYYY-MM-DD')
           startDate: '2024/01/01' 
         });
       }).rejects.toThrow();
