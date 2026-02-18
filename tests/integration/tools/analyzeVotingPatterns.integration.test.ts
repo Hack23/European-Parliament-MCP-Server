@@ -43,8 +43,8 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
       const result = await retry(async () => {
         return handleAnalyzeVotingPatterns({ 
           mepId: testMEPId,
-          startDate: '2024-01-01',
-          endDate: '2024-12-31'
+          dateFrom: '2024-01-01',
+          dateTo: '2024-12-31'
         });
       });
 
@@ -69,8 +69,8 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
       const result = await retry(async () => {
         return handleAnalyzeVotingPatterns({ 
           mepId: testMEPId,
-          startDate: '2024-01-01',
-          endDate: '2024-12-31'
+          dateFrom: '2024-01-01',
+          dateTo: '2024-12-31'
         });
       });
 
@@ -101,8 +101,8 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
       const result = await retry(async () => {
         return handleAnalyzeVotingPatterns({ 
           mepId: testMEPId,
-          startDate,
-          endDate
+          dateFrom: startDate,
+          dateTo: endDate
         });
       });
 
@@ -129,8 +129,8 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
       await expect(async () => {
         return handleAnalyzeVotingPatterns({ 
           mepId: 'INVALID_MEP_ID',
-          startDate: '2024-01-01',
-          endDate: '2024-12-31'
+          dateFrom: '2024-01-01',
+          dateTo: '2024-12-31'
         });
       }).rejects.toThrow();
     }, 10000);
@@ -140,8 +140,8 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
         return handleAnalyzeVotingPatterns({ 
           mepId: testMEPId,
           // @ts-expect-error - Testing invalid date format
-          startDate: 'invalid-date',
-          endDate: '2024-12-31'
+          dateFrom: 'invalid-date',
+          dateTo: '2024-12-31'
         });
       }).rejects.toThrow();
     }, 10000);
@@ -152,8 +152,8 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
       const result = await retry(async () => {
         return handleAnalyzeVotingPatterns({ 
           mepId: testMEPId,
-          startDate: '2024-01-01',
-          endDate: '2024-12-31'
+          dateFrom: '2024-01-01',
+          dateTo: '2024-12-31'
         });
       });
 
@@ -182,8 +182,8 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
       const [, duration] = await measureTime(async () => {
         return retry(async () => handleAnalyzeVotingPatterns({ 
           mepId: testMEPId,
-          startDate: '2024-01-01',
-          endDate: '2024-12-31'
+          dateFrom: '2024-01-01',
+          dateTo: '2024-12-31'
         }));
       });
 

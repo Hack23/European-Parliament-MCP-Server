@@ -86,8 +86,8 @@ describeIntegration('get_voting_records Integration Tests', () => {
       
       const result = await retry(async () => {
         return handleGetVotingRecords({ 
-          startDate,
-          endDate,
+          dateFrom: startDate,
+          dateTo: endDate,
           limit: 10 
         });
       });
@@ -137,7 +137,7 @@ describeIntegration('get_voting_records Integration Tests', () => {
       await expect(async () => {
         return handleGetVotingRecords({ 
           // @ts-expect-error - Testing invalid date format
-          startDate: 'invalid-date' 
+          dateFrom: 'invalid-date' 
         });
       }).rejects.toThrow();
     }, 10000);

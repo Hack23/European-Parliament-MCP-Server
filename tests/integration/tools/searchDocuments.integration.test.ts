@@ -27,9 +27,9 @@ describeIntegration('search_documents Integration Tests', () => {
   describe('Keyword Search', () => {
     it('should search documents by keyword', async () => {
       const result = await retry(async () => {
-        return handleSearchDocuments({ 
-          query: 'climate',
-          limit: 10 
+        return handleSearchDocuments({
+          keyword: 'climate',
+          limit: 10
         });
       });
 
@@ -48,7 +48,7 @@ describeIntegration('search_documents Integration Tests', () => {
     it('should search documents with complex query', async () => {
       const result = await retry(async () => {
         return handleSearchDocuments({ 
-          query: 'digital transformation',
+          keyword: 'digital transformation',
           limit: 10 
         });
       });
@@ -68,7 +68,7 @@ describeIntegration('search_documents Integration Tests', () => {
     it('should filter documents by type', async () => {
       const result = await retry(async () => {
         return handleSearchDocuments({ 
-          query: 'environment',
+          keyword: 'environment',
           documentType: 'REPORT',
           limit: 10 
         });
@@ -95,9 +95,9 @@ describeIntegration('search_documents Integration Tests', () => {
       
       const result = await retry(async () => {
         return handleSearchDocuments({ 
-          query: 'policy',
-          startDate,
-          endDate,
+          keyword: 'policy',
+          dateFrom: startDate,
+          dateTo: endDate,
           limit: 10 
         });
       });
@@ -150,16 +150,16 @@ describeIntegration('search_documents Integration Tests', () => {
   describe('Error Handling', () => {
     it('should reject empty query', async () => {
       await expect(async () => {
-        return handleSearchDocuments({ query: '' });
+        return handleSearchDocuments({ keyword: '' });
       }).rejects.toThrow();
     }, 10000);
 
     it('should reject invalid date format', async () => {
       await expect(async () => {
         return handleSearchDocuments({ 
-          query: 'test',
+          keyword: 'test',
           // @ts-expect-error - Testing invalid date format
-          startDate: 'invalid-date' 
+          dateFrom: 'invalid-date' 
         });
       }).rejects.toThrow();
     }, 10000);
@@ -167,7 +167,7 @@ describeIntegration('search_documents Integration Tests', () => {
     it('should reject negative limit', async () => {
       await expect(async () => {
         return handleSearchDocuments({ 
-          query: 'test',
+          keyword: 'test',
           limit: -1 
         });
       }).rejects.toThrow();
@@ -178,7 +178,7 @@ describeIntegration('search_documents Integration Tests', () => {
     it('should return valid document data', async () => {
       const result = await retry(async () => {
         return handleSearchDocuments({ 
-          query: 'agriculture',
+          keyword: 'agriculture',
           limit: 5 
         });
       });
@@ -204,7 +204,7 @@ describeIntegration('search_documents Integration Tests', () => {
     it('should complete API requests within acceptable time', async () => {
       const [, duration] = await measureTime(async () => {
         return retry(async () => handleSearchDocuments({ 
-          query: 'transport',
+          keyword: 'transport',
           limit: 10 
         }));
       });
@@ -214,7 +214,7 @@ describeIntegration('search_documents Integration Tests', () => {
     }, 30000);
 
     it('should benefit from caching on repeated searches', async () => {
-      const params = { query: 'healthcare', limit: 5 };
+      const params = { keyword: 'healthcare', limit: 5 };
 
       // First request
       await retry(async () => handleSearchDocuments(params));
@@ -231,7 +231,7 @@ describeIntegration('search_documents Integration Tests', () => {
 
   describe('Data Consistency', () => {
     it('should return consistent results for identical searches', async () => {
-      const params = { query: 'education', limit: 5 };
+      const params = { keyword: 'education', limit: 5 };
 
       const result1 = await retry(async () => handleSearchDocuments(params));
       const result2 = await handleSearchDocuments(params);

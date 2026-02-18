@@ -90,8 +90,8 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
       
       const result = await retry(async () => {
         return handleGetParliamentaryQuestions({ 
-          startDate,
-          endDate,
+          dateFrom: startDate,
+          dateTo: endDate,
           limit: 10 
         });
       });
@@ -144,7 +144,7 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
       await expect(async () => {
         return handleGetParliamentaryQuestions({ 
           // @ts-expect-error - Testing invalid date format
-          startDate: 'invalid-date' 
+          dateFrom: 'invalid-date' 
         });
       }).rejects.toThrow();
     }, 10000);

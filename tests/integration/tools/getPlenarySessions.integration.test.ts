@@ -49,7 +49,7 @@ describeIntegration('get_plenary_sessions Integration Tests', () => {
       const startDate = '2024-01-01';
       const result = await retry(async () => {
         return handleGetPlenarySessions({ 
-          startDate,
+          dateFrom: startDate,
           limit: 10 
         });
       });
@@ -71,7 +71,7 @@ describeIntegration('get_plenary_sessions Integration Tests', () => {
       const endDate = '2025-12-31';
       const result = await retry(async () => {
         return handleGetPlenarySessions({ 
-          endDate,
+          dateTo: endDate,
           limit: 10 
         });
       });
@@ -92,8 +92,8 @@ describeIntegration('get_plenary_sessions Integration Tests', () => {
       
       const result = await retry(async () => {
         return handleGetPlenarySessions({ 
-          startDate,
-          endDate,
+          dateFrom: startDate,
+          dateTo: endDate,
           limit: 10 
         });
       });
@@ -142,7 +142,7 @@ describeIntegration('get_plenary_sessions Integration Tests', () => {
       await expect(async () => {
         return handleGetPlenarySessions({ 
           // @ts-expect-error - Testing invalid date format (expected 'YYYY-MM-DD')
-          startDate: '2024/01/01' 
+          dateFrom: '2024/01/01' 
         });
       }).rejects.toThrow();
     }, 10000);
@@ -202,7 +202,7 @@ describeIntegration('get_plenary_sessions Integration Tests', () => {
 
   describe('Data Consistency', () => {
     it('should return consistent data for identical requests', async () => {
-      const params = { startDate: '2024-01-01', limit: 5 };
+      const params = { dateFrom: '2024-01-01', limit: 5 };
 
       const result1 = await retry(async () => handleGetPlenarySessions(params));
       const result2 = await handleGetPlenarySessions(params);
