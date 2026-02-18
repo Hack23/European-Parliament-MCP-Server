@@ -1,5 +1,13 @@
 {
   "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": [
+    "tests/**/*.test.ts",
+    "tests/e2e/mcpClient.ts"
+  ],
+  "project": [
+    "src/**/*.ts",
+    "tests/**/*.ts"
+  ],
   "ignoreDependencies": [
     "@typescript-eslint/eslint-plugin",
     "@typescript-eslint/parser"
@@ -10,6 +18,8 @@
   "ignore": [
     "dist/**",
     "coverage/**",
-    "node_modules/**"
-  ]
+    "node_modules/**",
+    "tests/fixtures/**"
+  ],
+  "ignoreExportsUsedInFile": true
 }
