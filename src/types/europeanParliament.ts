@@ -1,152 +1,50 @@
 /**
  * Type definitions for European Parliament data structures
  * 
+ * These types are now automatically inferred from Zod schemas.
+ * Import from schemas for the most up-to-date types.
+ * 
  * ISMS Policy: SC-002 (Secure Coding Standards)
+ * 
+ * @deprecated Import types directly from schemas/europeanParliament.ts instead
+ * @see src/schemas/europeanParliament.ts
  */
 
-/**
- * Member of European Parliament
- */
-export interface MEP {
-  id: string;
-  name: string;
-  country: string;
-  politicalGroup: string;
-  committees: string[];
-  email?: string;
-  active: boolean;
-  termStart: string;
-  termEnd?: string;
-}
+// Re-export types from schemas for backward compatibility
+export type {
+  MEP,
+  MEPDetails,
+  PlenarySession,
+  VotingRecord,
+  Committee,
+  LegislativeDocument,
+  ParliamentaryQuestion,
+  PaginatedResponse,
+  // New types
+  MEPId,
+  SessionId,
+  DocumentId,
+  CommitteeId,
+  VotingRecordId,
+  QuestionId,
+  PoliticalGroup,
+  CommitteeMembership,
+  SessionType,
+  SessionStatus,
+  VoteResult,
+  IndividualVote,
+  VoteType,
+  DocumentType,
+  DocumentStatus,
+  RelatedDocument,
+  Rapporteur,
+  CommitteeType,
+  QuestionType,
+  QuestionStatus,
+  QuestionAddressee,
+  ReportType
+} from '../schemas/europeanParliament.js';
 
-/**
- * Detailed MEP information including biography
- */
-export interface MEPDetails extends MEP {
-  biography?: string;
-  phone?: string;
-  address?: string;
-  website?: string;
-  twitter?: string;
-  facebook?: string;
-  votingStatistics?: VotingStatistics;
-  roles?: string[];
-}
-
-/**
- * Voting statistics for an MEP
- */
-export interface VotingStatistics {
-  totalVotes: number;
-  votesFor: number;
-  votesAgainst: number;
-  abstentions: number;
-  attendanceRate: number;
-}
-
-/**
- * Plenary session information
- */
-export interface PlenarySession {
-  id: string;
-  date: string;
-  location: string;
-  agendaItems: string[];
-  votingRecords?: VotingRecord[];
-  attendanceCount?: number;
-  documents?: string[];
-}
-
-/**
- * Voting record for a plenary vote
- */
-export interface VotingRecord {
-  id: string;
-  sessionId: string;
-  topic: string;
-  date: string;
-  votesFor: number;
-  votesAgainst: number;
-  abstentions: number;
-  result: 'ADOPTED' | 'REJECTED';
-  mepVotes?: Record<string, 'FOR' | 'AGAINST' | 'ABSTAIN'>;
-}
-
-/**
- * Committee information
- */
-export interface Committee {
-  id: string;
-  name: string;
-  abbreviation: string;
-  members: string[];
-  chair?: string;
-  viceChairs?: string[];
-  meetingSchedule?: string[];
-  responsibilities?: string[];
-}
-
-/**
- * Legislative document
- */
-export interface LegislativeDocument {
-  id: string;
-  type: DocumentType;
-  title: string;
-  date: string;
-  authors: string[];
-  committee?: string;
-  status: DocumentStatus;
-  pdfUrl?: string;
-  xmlUrl?: string;
-  summary?: string;
-}
-
-/**
- * Document types
- */
-export type DocumentType = 
-  | 'REPORT' 
-  | 'RESOLUTION' 
-  | 'DECISION' 
-  | 'DIRECTIVE' 
-  | 'REGULATION' 
-  | 'OPINION'
-  | 'AMENDMENT';
-
-/**
- * Document status
- */
-export type DocumentStatus = 
-  | 'DRAFT' 
-  | 'SUBMITTED' 
-  | 'IN_COMMITTEE' 
-  | 'PLENARY' 
-  | 'ADOPTED' 
-  | 'REJECTED';
-
-/**
- * Parliamentary question
- */
-export interface ParliamentaryQuestion {
-  id: string;
-  type: 'WRITTEN' | 'ORAL';
-  author: string;
-  date: string;
-  topic: string;
-  questionText: string;
-  answerText?: string;
-  answerDate?: string;
-  status: 'PENDING' | 'ANSWERED';
-}
-
-/**
- * Paginated response
- */
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  limit: number;
-  offset: number;
-  hasMore: boolean;
-}
+// Legacy type aliases for backward compatibility
+export type { MEP as MemberOfEuropeanParliament } from '../schemas/europeanParliament.js';
+export type { LegislativeDocument as Document } from '../schemas/europeanParliament.js';

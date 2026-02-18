@@ -68,6 +68,10 @@ export async function handleAnalyzeVotingPatterns(
     const mep = await epClient.getMEPDetails(params.mepId);
     
     // Analyze voting patterns (mock analysis for MVP)
+    const politicalGroupString = typeof mep.politicalGroup === 'string' 
+      ? mep.politicalGroup 
+      : mep.politicalGroup.code;
+    
     const analysis: VotingPatternAnalysis = {
       mepId: params.mepId,
       mepName: mep.name,
@@ -84,7 +88,7 @@ export async function handleAnalyzeVotingPatterns(
       },
       ...(params.compareWithGroup && {
         groupAlignment: {
-          politicalGroup: mep.politicalGroup,
+          politicalGroup: politicalGroupString,
           alignmentRate: 87.5,
           divergentVotes: 156
         }
