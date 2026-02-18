@@ -34,6 +34,94 @@ const SERVER_NAME = 'european-parliament-mcp-server';
 const SERVER_VERSION = '1.0.0';
 
 /**
+ * Display help message
+ */
+function showHelp(): void {
+  console.log(`
+${SERVER_NAME} v${SERVER_VERSION}
+
+Model Context Protocol server for European Parliament open data
+
+Usage:
+  npx european-parliament-mcp-server [options]
+
+Options:
+  --health    Check server health and capabilities
+  --version   Show version information
+  --help      Show this help message
+
+Environment Variables:
+  EP_API_URL          European Parliament API base URL
+                      (default: https://data.europarl.europa.eu/api/v2/)
+  EP_CACHE_TTL        Cache TTL in milliseconds (default: 900000)
+  EP_RATE_LIMIT       Rate limit requests per minute (default: 60)
+
+MCP Client Configuration:
+
+  Claude Desktop (claude_desktop_config.json):
+  {
+    "mcpServers": {
+      "european-parliament": {
+        "command": "npx",
+        "args": ["european-parliament-mcp-server"]
+      }
+    }
+  }
+
+  VS Code / Cursor (settings.json):
+  {
+    "mcp.servers": {
+      "european-parliament": {
+        "command": "npx",
+        "args": ["european-parliament-mcp-server"]
+      }
+    }
+  }
+
+For more information:
+  Documentation: https://hack23.github.io/European-Parliament-MCP-Server/docs/
+  GitHub: https://github.com/Hack23/European-Parliament-MCP-Server
+  Issues: https://github.com/Hack23/European-Parliament-MCP-Server/issues
+`);
+}
+
+/**
+ * Display version information
+ */
+function showVersion(): void {
+  console.log(`${SERVER_NAME} v${SERVER_VERSION}`);
+}
+
+/**
+ * Display health check information
+ */
+function showHealth(): void {
+  const health = {
+    name: SERVER_NAME,
+    version: SERVER_VERSION,
+    status: 'healthy',
+    capabilities: ['tools', 'resources', 'prompts'],
+    tools: {
+      total: 10,
+      core: 7,
+      advanced: 3
+    },
+    environment: {
+      nodeVersion: process.version,
+      platform: process.platform,
+      arch: process.arch
+    },
+    configuration: {
+      apiUrl: process.env['EP_API_URL'] || 'https://data.europarl.europa.eu/api/v2/',
+      cacheTTL: process.env['EP_CACHE_TTL'] || '900000',
+      rateLimit: process.env['EP_RATE_LIMIT'] || '60'
+    }
+  };
+  
+  console.log(JSON.stringify(health, null, 2));
+}
+
+/**
  * Main MCP Server class for European Parliament data access
  * 
  * Implements the Model Context Protocol (MCP) to provide AI assistants,
@@ -216,7 +304,26 @@ class EuropeanParliamentMCPServer {
   }
 }
 
-// Start the server
+// Parse command-line arguments
+const args = process.argv.slice(2);
+
+// Handle CLI commands
+if (args.includes('--help') || args.includes('-h')) {
+  showHelp();
+  process.exit(0);
+}
+
+if (args.includes('--version') || args.includes('-v')) {
+  showVersion();
+  process.exit(0);
+}
+
+if (args.includes('--health')) {
+  showHealth();
+  process.exit(0);
+}
+
+// Start the MCP server (default behavior)
 const server = new EuropeanParliamentMCPServer();
 server.start().catch((error: unknown) => {
   console.error('Fatal error:', error);

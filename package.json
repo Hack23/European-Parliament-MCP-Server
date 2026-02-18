@@ -27,6 +27,8 @@
     "test:licenses": "license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0;BlueOak-1.0.0'",
     "knip": "knip",
     "clean": "rm -rf dist coverage",
+    "verify-package": "npm run build && node scripts/verify-package.js",
+    "test-mcp": "node scripts/test-mcp-server.js",
     "prepublishOnly": "npm run lint && npm run knip && npm run test:unit && npm run build",
     "prepack": "npm run build",
     "docs": "typedoc --out docs/api src/index.ts",
