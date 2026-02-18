@@ -1,6 +1,6 @@
 # European Parliament API - Structure Comparison
 
-This document provides visual comparisons between our current implementation and the real API structure.
+This document provides visual comparisons between our simplified (client-transformed) schemas and the complex (raw JSON-LD) European Parliament API structure. The client already transforms the real API data from JSON-LD format to simplified schemas for easier consumption.
 
 ---
 
