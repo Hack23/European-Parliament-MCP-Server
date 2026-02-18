@@ -12,27 +12,57 @@
 <p align="center">
   <!-- npm version -->
   <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
-    <img src="https://img.shields.io/npm/v/european-parliament-mcp-server.svg" alt="npm version">
+    <img src="https://img.shields.io/npm/v/european-parliament-mcp-server.svg?style=flat-square" alt="npm version">
   </a>
   
   <!-- npm downloads -->
   <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
-    <img src="https://img.shields.io/npm/dm/european-parliament-mcp-server.svg" alt="npm downloads">
+    <img src="https://img.shields.io/npm/dm/european-parliament-mcp-server.svg?style=flat-square" alt="npm downloads">
   </a>
   
   <!-- Build Status -->
   <a href="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/main.yml">
-    <img src="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/main.yml/badge.svg" alt="Build Status">
+    <img src="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/main.yml/badge.svg?style=flat-square" alt="Build Status">
   </a>
   
   <!-- License -->
   <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/LICENSE.md">
-    <img src="https://img.shields.io/github/license/Hack23/European-Parliament-MCP-Server.svg" alt="License">
+    <img src="https://img.shields.io/github/license/Hack23/European-Parliament-MCP-Server.svg?style=flat-square" alt="License">
+  </a>
+</p>
+
+## 📊 Quality Metrics
+
+<p align="center">
+  <!-- Test Coverage -->
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/coverage/">
+    <img src="https://img.shields.io/badge/Test%20Coverage-80%25%2B-brightgreen?style=flat-square" alt="Test Coverage">
   </a>
   
+  <!-- API Documentation -->
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/api/">
+    <img src="https://img.shields.io/badge/API%20Docs-TypeDoc-blue?style=flat-square" alt="API Documentation">
+  </a>
+  
+  <!-- Documentation Portal -->
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/">
+    <img src="https://img.shields.io/badge/Documentation-Portal-blue?style=flat-square" alt="Documentation Portal">
+  </a>
+  
+  <!-- Test Results -->
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/test-results/">
+    <img src="https://img.shields.io/badge/Tests-268%20Passing-brightgreen?style=flat-square" alt="Test Results">
+  </a>
+</p>
+
+**Coverage Policy:** Per [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md), we maintain minimum 80% line coverage and 70% branch coverage across all modules.
+
+## 🔐 Security & Compliance
+
+<p align="center">
   <!-- OpenSSF Scorecard -->
   <a href="https://securityscorecards.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server">
-    <img src="https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge" alt="OpenSSF Scorecard">
+    <img src="https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge?style=flat-square" alt="OpenSSF Scorecard">
   </a>
   
   <!-- SLSA Level 3 -->
@@ -41,16 +71,18 @@
   </a>
   
   <!-- SBOM -->
-  <a href="https://spdx.dev">
-    <img src="https://img.shields.io/badge/SBOM-SPDX-blue" alt="SBOM">
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/SBOM.md">
+    <img src="https://img.shields.io/badge/SBOM-SPDX%202.3-blue?style=flat-square" alt="SBOM">
   </a>
   
   <!-- SBOM Quality -->
-  <img src="https://img.shields.io/badge/SBOM%20Quality-8.5%2F10-brightgreen" alt="SBOM Quality">
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/SBOM.md">
+    <img src="https://img.shields.io/badge/SBOM%20Quality-8.5%2F10-brightgreen?style=flat-square" alt="SBOM Quality">
+  </a>
   
-  <!-- Code Coverage -->
-  <a href="https://codecov.io/gh/Hack23/European-Parliament-MCP-Server">
-    <img src="https://codecov.io/gh/Hack23/European-Parliament-MCP-Server/branch/main/graph/badge.svg" alt="Code Coverage">
+  <!-- Attestations -->
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/ATTESTATIONS.md">
+    <img src="https://img.shields.io/badge/Attestations-Available-success?style=flat-square" alt="Build Attestations">
   </a>
 </p>
 
