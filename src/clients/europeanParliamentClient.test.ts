@@ -390,6 +390,11 @@ describe('EuropeanParliamentClient', () => {
 
   describe('Error Handling', () => {
     it('should throw APIError for invalid requests', async () => {
+      // Create client with retry disabled for this test
+      const clientNoRetry = new EuropeanParliamentClient({
+        enableRetry: false
+      });
+      
       // Mock failed response
       mockFetch.mockResolvedValueOnce({
         ok: false,
@@ -397,7 +402,7 @@ describe('EuropeanParliamentClient', () => {
         statusText: 'Internal Server Error'
       } as Response);
 
-      await expect(client.getMEPs({ limit: 10 })).rejects.toThrow(APIError);
+      await expect(clientNoRetry.getMEPs({ limit: 10 })).rejects.toThrow(APIError);
     });
   });
 
