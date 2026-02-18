@@ -18,6 +18,8 @@
 - [Overview](#overview)
 - [Architecture Overview](#architecture-overview)
 - [MCP Protocol Implementation](#mcp-protocol-implementation)
+- [Tool Implementation Patterns](#tool-implementation-patterns)
+- [Caching Strategy](#caching-strategy)
 - [European Parliament Data Sources](#european-parliament-data-sources)
 - [Security Architecture](#security-architecture)
 - [Technology Stack](#technology-stack)
@@ -27,6 +29,8 @@
 - [Performance Considerations](#performance-considerations)
 - [ISMS Compliance](#isms-compliance)
 - [Future Roadmap](#future-roadmap)
+
+📊 **[See complete architecture diagrams →](./ARCHITECTURE_DIAGRAMS.md)**
 
 ---
 
@@ -646,177 +650,47 @@ This architecture aligns with Hack23 ISMS policies:
 
 ---
 
-## 🏗️ Code Quality & Architecture Improvements
+## 🔧 Tool Implementation Patterns
 
-### Modular Structure
+All 10 MCP tools follow a consistent implementation pattern:
 
-The codebase has been refactored to follow clean architecture principles with focused, single-responsibility modules:
+**Pattern**: Input Validation → EP API Client → Output Validation → MCP Response
 
-#### Report Generation Module (`src/tools/generateReport/`)
-
-- **index.ts** (114 lines): Main handler with map-based report type dispatcher
-- **reportGenerators.ts** (194 lines): Report generation logic for all report types
-- **reportBuilders.ts** (153 lines): Reusable section builders
-- **types.ts** (40 lines): Type definitions for reports
-
-**Benefits:**
-- Cyclomatic complexity reduced to <10 per function
-- Easy to add new report types via factory pattern
-- Clear separation between data fetching and formatting
-- Improved testability with isolated units
-
-#### Legislation Tracking Module (`src/tools/trackLegislation/`)
-
-- **index.ts** (79 lines): Main handler with error handling
-- **procedureTracker.ts** (105 lines): Procedure tracking logic
-- **timelineBuilder.ts** (52 lines): Timeline construction utilities
-- **types.ts** (72 lines): Type definitions for legislative procedures
-
-**Benefits:**
-- Builder pattern for complex timeline construction
-- Separate concerns for different aspects of legislation tracking
-- Easy to extend with additional legislative stages
-- Maintainable, focused modules
-
-### Dependency Injection Container
-
-Located in `src/di/container.ts`, provides type-safe service registration and resolution:
-
+**Example**:
 ```typescript
-import { DIContainer } from './di/container.js';
-
-// Create a container instance
-const container = new DIContainer();
-
-// Define injection tokens
-const ReportServiceToken = Symbol('ReportService');
-const EPClientToken = Symbol('EPClient');
-
-// Register a service
-container.register(
-  ReportServiceToken,
-  (c) => new ReportService(c.resolve(EPClientToken)),
-  'singleton'
-);
-
-// Resolve a service
-const reportService = container.resolve<ReportService>(ReportServiceToken);
+export async function handleGetMEPs(args: unknown) {
+  // 1. Validate input with Zod
+  const params = GetMEPsSchema.parse(args);
+  
+  // 2. Call EP API client with validated params
+  const result = await epClient.getMEPs(params);
+  
+  // 3. Validate output structure
+  const validated = PaginatedResponseSchema(MEPSchema).parse(result);
+  
+  // 4. Return MCP-compliant response
+  return {
+    content: [{ type: 'text', text: JSON.stringify(validated, null, 2) }]
+  };
+}
 ```
 
-**Features:**
-- **Singleton lifetime**: Single instance shared across application
-- **Transient lifetime**: New instance created on each resolution
-- **Type-safe**: Full TypeScript type inference
-- **Dependency injection**: Services can depend on other services
+📖 **[Complete implementation guide →](./docs/DEVELOPER_GUIDE.md#adding-new-tools)**
 
-**Benefits:**
-- Improved testability (easy to mock dependencies)
-- Loose coupling between components
-- Centralized service configuration
-- Better separation of concerns
+---
 
-### Performance Monitoring
+## 💾 Caching Strategy
 
-The `MetricsService` (`src/services/MetricsService.ts`) provides Prometheus-style metrics:
+**LRU Cache Configuration**:
+- Max entries: 500
+- TTL: 15 minutes
+- Memory: ~2.5MB
 
-```typescript
-import { MetricsService } from './services/MetricsService.js';
+**Cache Keys**: `{method}:{JSON.stringify(sorted_params)}`
 
-const metrics = new MetricsService();
+**Performance**:
+- Cached responses: <1ms
+- Cache hit rate: >80%
+- Memory efficient
 
-// Counter for request counts
-metrics.incrementCounter('http_requests_total', 1, { 
-  method: 'GET', 
-  endpoint: '/meps' 
-});
-
-// Gauge for current memory usage
-metrics.setGauge('memory_usage_bytes', process.memoryUsage().heapUsed);
-
-// Histogram for request durations
-metrics.observeHistogram('request_duration_ms', 125, { 
-  endpoint: '/meps' 
-});
-
-// Get histogram summary with percentiles
-const summary = metrics.getHistogramSummary('request_duration_ms', { 
-  endpoint: '/meps' 
-});
-console.log(`p95: ${summary?.p95}ms, p99: ${summary?.p99}ms`);
-```
-
-**Metric Types:**
-- **Counter**: Monotonically increasing values (requests, errors)
-- **Gauge**: Values that can go up or down (memory, active connections)
-- **Histogram**: Distribution of values (latencies, response sizes)
-
-**Benefits:**
-- Track performance metrics over time
-- Identify bottlenecks and optimization opportunities
-- Monitor cache hit rates and API response times
-- Support for multi-dimensional metrics via labels
-
-### Code Quality Metrics
-
-**Cyclomatic Complexity:**
-- All functions maintain complexity <10
-- Enforced via ESLint with `complexity: ['error', { max: 10 }]`
-- Complex switch statements replaced with map-based dispatchers
-
-**File Size:**
-- All files under 200 lines (target: <150)
-- Large files refactored into focused modules
-- Each module has single, clear responsibility
-
-**Test Coverage:**
-- Coverage thresholds (configured in `vitest.config.ts`):
-  - Statements: ≥ 80%
-  - Lines: ≥ 78.9%
-  - Branches: ≥ 70%
-  - Functions: ≥ 80%
-  - Security-critical code: ≥ 95% coverage target
-- For up-to-date coverage metrics and test counts, run `npm run test:coverage` and refer to the generated coverage report.
-
-### Design Patterns Applied
-
-1. **Factory Pattern**: Report type dispatcher in `generateReport/index.ts`
-2. **Builder Pattern**: Timeline and section builders
-3. **Dependency Injection**: Service registration and resolution
-4. **Strategy Pattern**: Different report generators for different types
-5. **Observer Pattern**: Metrics collection (implicit)
-
-### Future Architectural Enhancements
-
-**Service Layer Expansion:**
-- Extract business logic from MCP tool handlers
-- Implement `ReportService`, `LegislationService`, `AnalyticsService`
-- Use DI for all service dependencies
-
-**Advanced Caching:**
-- Cache warming for frequently accessed data
-- Smart cache invalidation based on data age
-- Multi-tier caching (L1: memory, L2: Redis)
-- Cache hit/miss metrics tracking
-
-**Observability:**
-- Integration with external monitoring systems
-- Structured logging with correlation IDs
-- Distributed tracing for API calls
-- Health check endpoints
-
-### Migration Guide
-
-The refactoring maintains backward compatibility:
-
-```typescript
-// Old import (still works)
-import { handleGenerateReport } from './tools/generateReport.js';
-
-// New modular imports (also available)
-import { handleGenerateReport } from './tools/generateReport/index.js';
-import { generateMEPActivityReport } from './tools/generateReport/reportGenerators.js';
-import type { Report, ReportType } from './tools/generateReport/types.js';
-```
-
-All existing tests pass without modification, ensuring no breaking changes to the public API.
-
+⚡ **[Complete performance guide →](./PERFORMANCE_GUIDE.md)**
