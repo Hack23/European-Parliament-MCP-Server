@@ -90,6 +90,51 @@ jobs:
           commit_message: "chore(release): bump version to ${{ github.event.inputs.version }}"
           tagging_message: "${{ github.event.inputs.version }}"
 
+      # Documentation as Code - Generate all documentation for this release
+      - name: Clean old documentation
+        run: npm run docs:clean || echo "First time generating docs"
+
+      - name: Generate API documentation with TypeDoc
+        run: npm run docs
+
+      - name: Run tests with coverage and generate reports
+        run: |
+          npm run test:coverage || true
+          mkdir -p docs/coverage
+          cp -r coverage/* docs/coverage/ 2>/dev/null || echo "No coverage to copy"
+
+      - name: Generate unit test reports
+        run: |
+          mkdir -p docs/test-results
+          npm run test:unit -- --reporter=html --reporter=json --reporter=json-summary > /dev/null 2>&1 || true
+          if [ -f "coverage/test-results.html" ]; then
+            cp coverage/test-results.html docs/test-results/report.html
+          fi
+          echo "Unit test reports generated" > docs/test-results/status.txt
+
+      - name: Generate E2E test reports
+        run: |
+          mkdir -p docs/e2e-results
+          npm run test:e2e -- --reporter=html --reporter=json --reporter=json-summary > /dev/null 2>&1 || true
+          if [ -f "coverage/e2e-results.html" ]; then
+            cp coverage/e2e-results.html docs/e2e-results/report.html
+          fi
+          echo "E2E test reports generated" > docs/e2e-results/status.txt
+
+      - name: Generate documentation sitemap
+        run: npm run docs:sitemap
+
+      - name: Create version marker
+        run: echo "Version ${{ needs.prepare.outputs.version || github.ref_name }} deployed at $(date -u +%Y-%m-%dT%H:%M:%SZ)" > docs/version.txt
+
+      - name: Commit documentation to main branch
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
+        with:
+          commit_message: "docs: update documentation for ${{ needs.prepare.outputs.version || github.ref_name }}"
+          file_pattern: "docs/**"
+          skip_fetch: false
+          skip_checkout: false
+
   build:
     name: Build Release Package
     needs: [prepare]
