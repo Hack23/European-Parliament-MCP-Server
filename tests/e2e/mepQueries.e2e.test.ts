@@ -55,6 +55,11 @@ describe('MEP Query E2E Tests', () => {
       
       // When filtering by country, results should either match the filter or be 'Unknown'
       // EP API may return 'Unknown' for some MEPs when country data is unavailable
+      // This is a known data quality issue with the European Parliament API where:
+      // - Some MEP records have incomplete country information
+      // - Historical records may not have been fully migrated
+      // - Recent appointments may not have complete profile data yet
+      // We accept 'Unknown' to avoid test flakiness while still validating the filter works
       data.forEach((mep) => {
         expect(['SE', 'Unknown']).toContain(mep.country);
       });

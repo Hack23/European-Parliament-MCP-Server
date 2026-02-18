@@ -101,7 +101,11 @@ jobs:
         run: |
           npm run test:coverage || true
           mkdir -p docs/coverage
-          cp -r coverage/* docs/coverage/ 2>/dev/null || echo "No coverage to copy"
+          if [ -d "coverage" ] && [ "$(ls -A coverage)" ]; then
+            cp -r coverage/* docs/coverage/
+          else
+            echo "Warning: No coverage files to copy"
+          fi
 
       - name: Generate unit test reports
         run: |
@@ -318,7 +322,7 @@ jobs:
 
   publish-npm:
     name: Publish to npm
-    needs: [prepare, build, release]
+    needs: [prepare, build, security, attest, release]
     runs-on: ubuntu-latest
     # npm publish needs specific permissions
     permissions:

@@ -22,7 +22,7 @@
   ],
   "excludePrivate": false,
   "excludeProtected": false,
-  "excludeInternal": false,
+  "excludeInternal": true,
   "hideGenerator": false,
   "sort": ["kind", "instance-first", "required-first", "alphabetical"],
   "kindSortOrder": [
