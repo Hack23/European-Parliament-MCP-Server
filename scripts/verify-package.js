@@ -115,11 +115,19 @@ if (existsSync(indexPath)) {
     success('Shebang present in dist/index.js');
   }
   
-  // Check that it's ES module
-  if (!indexContent.includes('export ')) {
-    warn('dist/index.js may not be ES module format');
-  } else {
+  // Check module format using a simple heuristic
+  const hasImportSyntax = indexContent.includes('import ');
+  const hasCommonJsSyntax =
+    indexContent.includes('require(') ||
+    indexContent.includes('module.exports') ||
+    indexContent.includes('exports.');
+
+  if (hasImportSyntax && !hasCommonJsSyntax) {
     success('ES module format detected');
+  } else if (hasCommonJsSyntax && !hasImportSyntax) {
+    warn('dist/index.js appears to be CommonJS format');
+  } else {
+    warn('dist/index.js module format could not be reliably determined');
   }
 }
 
@@ -148,6 +156,17 @@ if (!existsSync(pkgPath)) {
     if (pkg.bin) {
       const binKeys = Object.keys(pkg.bin);
       success(`Binary entry points: ${binKeys.join(', ')}`);
+      
+      // Check if npx-compatible bin entry exists
+      const packageBaseName = pkg.name;
+      const hasNpxCompatibleBin = binKeys.includes(packageBaseName) || 
+                                  binKeys.some(key => packageBaseName.includes(key));
+      
+      if (!hasNpxCompatibleBin) {
+        warn(`No bin entry for '${packageBaseName}' - npx ${packageBaseName} may not work as expected`);
+      } else {
+        success(`npx-compatible bin entry exists for package`);
+      }
       
       for (const binName of binKeys) {
         const binPath = pkg.bin[binName];
@@ -208,9 +227,9 @@ if (!existsSync(pkgPath)) {
         success('Public access configured');
       }
       if (pkg.publishConfig.provenance === true) {
-        success('npm provenance enabled (SLSA compliance)');
+        success('npm provenance is configured/enabled');
       } else {
-        warn('npm provenance not enabled');
+        warn('npm provenance is not configured/enabled');
       }
     } else {
       warn('No publishConfig specified');
@@ -289,7 +308,7 @@ console.log('\n🚀 Ready to publish with: npm publish');
 console.log('   Or test locally with: npm link');
 console.log('\n📦 ISMS Compliance:');
 console.log('   ✓ Documentation complete (README, LICENSE, SECURITY, CHANGELOG)');
-console.log('   ✓ npm provenance enabled (SLSA Level 3)');
+console.log('   ✓ npm provenance configuration enabled');
 console.log('   ✓ All required files included');
 
 process.exit(0);

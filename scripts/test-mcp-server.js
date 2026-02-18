@@ -141,8 +141,16 @@ async function listTools() {
           const parsed = JSON.parse(line);
           
           if (!initialized && parsed.result) {
-            // Initialization succeeded, now request tools
+            // Initialization succeeded, send initialized notification
             initialized = true;
+            const initializedNotification = {
+              jsonrpc: '2.0',
+              method: 'notifications/initialized',
+              params: {}
+            };
+            proc.stdin.write(JSON.stringify(initializedNotification) + '\n');
+            
+            // Then request tools
             const toolsRequest = {
               jsonrpc: '2.0',
               id: 2,

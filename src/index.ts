@@ -46,9 +46,9 @@ Usage:
   npx european-parliament-mcp-server [options]
 
 Options:
-  --health    Check server health and capabilities
-  --version   Show version information
-  --help      Show this help message
+  --health         Check server health and capabilities
+  -v, --version    Show version information
+  -h, --help       Show this help message
 
 Environment Variables:
   EP_API_URL          European Parliament API base URL
@@ -93,18 +93,43 @@ function showVersion(): void {
 }
 
 /**
+ * Get tool metadata array
+ * @internal
+ */
+function getToolMetadataArray() {
+  return [
+    // Core tools
+    getMEPsToolMetadata,
+    getMEPDetailsToolMetadata,
+    getPlenarySessionsToolMetadata,
+    getVotingRecordsToolMetadata,
+    searchDocumentsToolMetadata,
+    getCommitteeInfoToolMetadata,
+    getParliamentaryQuestionsToolMetadata,
+    // Advanced analysis tools
+    analyzeVotingPatternsToolMetadata,
+    trackLegislationToolMetadata,
+    generateReportToolMetadata
+  ];
+}
+
+/**
  * Display health check information
  */
 function showHealth(): void {
+  const tools = getToolMetadataArray();
+  const coreToolCount = 7; // First 7 tools in the array are core tools
+  const advancedToolCount = tools.length - coreToolCount;
+  
   const health = {
     name: SERVER_NAME,
     version: SERVER_VERSION,
     status: 'healthy',
     capabilities: ['tools', 'resources', 'prompts'],
     tools: {
-      total: 10,
-      core: 7,
-      advanced: 3
+      total: tools.length,
+      core: coreToolCount,
+      advanced: advancedToolCount
     },
     environment: {
       nodeVersion: process.version,
@@ -112,13 +137,39 @@ function showHealth(): void {
       arch: process.arch
     },
     configuration: {
-      apiUrl: process.env['EP_API_URL'] || 'https://data.europarl.europa.eu/api/v2/',
+      apiUrl: sanitizeUrl(process.env['EP_API_URL'] || 'https://data.europarl.europa.eu/api/v2/'),
       cacheTTL: process.env['EP_CACHE_TTL'] || '900000',
       rateLimit: process.env['EP_RATE_LIMIT'] || '60'
     }
   };
   
   console.log(JSON.stringify(health, null, 2));
+}
+
+/**
+ * Sanitize URL to remove credentials
+ * @param urlString - URL to sanitize
+ * @returns Sanitized URL without credentials
+ */
+function sanitizeUrl(urlString: string): string {
+  try {
+    const url = new URL(urlString);
+    // Remove username and password
+    url.username = '';
+    url.password = '';
+    // Remove query parameters and fragment that might contain tokens
+    url.search = '';
+    url.hash = '';
+    return url.toString();
+  } catch {
+    // If URL parsing fails, return the host part only or a safe default
+    const parts = urlString.split('?')[0];
+    if (parts === undefined) {
+      return urlString;
+    }
+    const finalPart = parts.split('#')[0];
+    return finalPart !== undefined ? finalPart : urlString;
+  }
 }
 
 /**
@@ -196,20 +247,7 @@ class EuropeanParliamentMCPServer {
     // List available tools
     this.server.setRequestHandler(ListToolsRequestSchema, () => {
       return Promise.resolve({
-        tools: [
-          // Core tools
-          getMEPsToolMetadata,
-          getMEPDetailsToolMetadata,
-          getPlenarySessionsToolMetadata,
-          getVotingRecordsToolMetadata,
-          searchDocumentsToolMetadata,
-          getCommitteeInfoToolMetadata,
-          getParliamentaryQuestionsToolMetadata,
-          // Advanced analysis tools
-          analyzeVotingPatternsToolMetadata,
-          trackLegislationToolMetadata,
-          generateReportToolMetadata
-        ],
+        tools: getToolMetadataArray(),
       });
     });
 
@@ -297,10 +335,14 @@ class EuropeanParliamentMCPServer {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
 
+    const tools = getToolMetadataArray();
+    const coreToolCount = 7;
+    const advancedToolCount = tools.length - coreToolCount;
+
     // Log to stderr (stdout is used for MCP protocol)
     console.error(`${SERVER_NAME} v${SERVER_VERSION} started`);
     console.error('Server ready to handle requests');
-    console.error('Available tools: 10 (7 core + 3 advanced analysis)');
+    console.error(`Available tools: ${tools.length} (${coreToolCount} core + ${advancedToolCount} advanced analysis)`);
   }
 }
 
