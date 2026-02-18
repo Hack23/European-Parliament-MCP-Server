@@ -27,10 +27,18 @@ bug:
   - any:
       - changed-files:
           - any-glob-to-any-file:
-              - "src/**/fix/**"
               - "src/**/bug/**"
-      - title: "fix:*"
       - title: "bug:*"
+      - body: "- [x] 🐛 Bug Fix"
+
+fix:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/fix/**"
+              - "src/**/bugfix/**"
+      - title: "fix:*"
+      - title: "bugfix:*"
       - body: "- [x] 🐛 Bug Fix"
 
 # 🔌 MCP Development
@@ -145,8 +153,15 @@ ui:
               - "src/**/*.styles.*"
       - title: "ui:*"
       - title: "style:*"
-      - title: "design:*"
       - body: "- [x] 🎨 UI/UX Improvements"
+
+design:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - "src/**/design/**"
+      - title: "design:*"
+      - body: "- [x] 🎨 UI/UX Design"
 
 # 🏗️ Infrastructure & Performance
 infrastructure:
