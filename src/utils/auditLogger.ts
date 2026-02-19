@@ -104,7 +104,7 @@ export class AuditLogger {
         count,
         success: true
       },
-      duration
+      ...(duration !== undefined && { duration })
     });
   }
   
@@ -129,7 +129,7 @@ export class AuditLogger {
         success: false,
         error
       },
-      duration
+      ...(duration !== undefined && { duration })
     });
   }
   
