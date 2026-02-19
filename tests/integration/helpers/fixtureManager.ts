@@ -9,6 +9,9 @@
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
 
+// Module-level Set for efficient PII field lookup (hoisted for performance)
+const PII_FIELDS = new Set(['email', 'phone', 'address', 'phoneNumber', 'personalEmail', 'officeAddress']);
+
 /**
  * Sanitize PII fields from data before saving fixtures (GDPR compliance)
  * 
@@ -26,10 +29,9 @@ function sanitizePII(data: unknown): unknown {
   
   if (typeof data === 'object') {
     const sanitized: Record<string, unknown> = {};
-    const piiFields = ['email', 'phone', 'address', 'phoneNumber', 'personalEmail', 'officeAddress'];
     
     for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
-      if (piiFields.includes(key)) {
+      if (PII_FIELDS.has(key)) {
         // Redact PII fields
         sanitized[key] = '[REDACTED]';
       } else {

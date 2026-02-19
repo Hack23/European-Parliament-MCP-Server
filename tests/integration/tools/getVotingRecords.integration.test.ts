@@ -33,7 +33,7 @@ describeIntegration('get_voting_records Integration Tests', () => {
   });
 
   describe('Basic Retrieval', () => {
-    it('should fetch voting records from real API', async () => {
+    it('should return voting records matching the expected contract', async () => {
       const result = await retry(async () => {
         return handleGetVotingRecords({ limit: 10 });
       });

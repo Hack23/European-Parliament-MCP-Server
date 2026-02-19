@@ -1,9 +1,7 @@
 /**
- * Integration Tests: analyze_voting_patterns Tool
+ * Contract/behavior tests for the analyzeVotingPatterns tool, using real European Parliament data indirectly via other tools (e.g. getMEPs/getMEPDetails) rather than direct end-to-end EP API calls.
  * 
- * Tests the analyzeVotingPatterns tool against real European Parliament API
- * 
- * ISMS Policy: SC-002 (Secure Testing), PE-001 (Performance Testing)
+ * ISMS Policy: SC-002 (Secure Testing), PE-001 (Performance Testing) — integration behavior tests with partial real API dependency.
  * 
  * @see https://data.europarl.europa.eu/api/v2/
  */

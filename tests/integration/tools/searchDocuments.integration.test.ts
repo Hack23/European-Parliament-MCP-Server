@@ -1,7 +1,7 @@
 /**
- * Integration Tests: search_documents Tool
- * 
- * Tests the searchDocuments tool against real European Parliament API
+ * Contract/structure tests for the searchDocuments tool, validating response shape
+ * and pagination behavior against the expected European Parliament API model.
+ * These tests currently run against the mock-backed EP client, not the live API.
  * 
  * ISMS Policy: SC-002 (Secure Testing), PE-001 (Performance Testing)
  * 
@@ -107,13 +107,20 @@ describeIntegration('search_documents Integration Tests', () => {
       const response = validatePaginatedResponse(result);
       expect(response.data).toBeDefined();
 
+      const startTime = Date.parse(startDate);
+      const endTime = Date.parse(endDate);
+      expect(Number.isNaN(startTime)).toBe(false);
+      expect(Number.isNaN(endTime)).toBe(false);
+
       response.data.forEach((document: unknown) => {
         validateDocumentStructure(document);
         // Documents should have dates if available
         if ('date' in (document as object)) {
           const docDate = (document as { date: string }).date;
-          expect(docDate >= startDate).toBe(true);
-          expect(docDate <= endDate).toBe(true);
+          const docTime = Date.parse(docDate);
+          expect(Number.isNaN(docTime)).toBe(false);
+          expect(docTime >= startTime).toBe(true);
+          expect(docTime <= endTime).toBe(true);
         }
       });
     }, 30000);

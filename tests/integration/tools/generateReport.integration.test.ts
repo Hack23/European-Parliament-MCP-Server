@@ -1,11 +1,9 @@
 /**
- * Integration Tests: generate_report Tool
- * 
- * Tests the generateReport tool against real European Parliament API
+ * Validates the generateReport tool MCP integration, including selected flows that use the real European Parliament API
  * 
  * ISMS Policy: SC-002 (Secure Testing), PE-001 (Performance Testing)
  * 
- * Note: This tool generates reports using data from various EP API endpoints
+ * Note: Only some report generators call live EP API endpoints; many statistics and sections in generated reports are synthetic/mock for testing purposes
  * 
  * @see https://data.europarl.europa.eu/api/v2/
  */

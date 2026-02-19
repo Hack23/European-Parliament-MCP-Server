@@ -77,7 +77,9 @@ EP_INTEGRATION_TESTS=true npm run test:integration -- --reporter=verbose
 |----------|---------|-------------|
 | `EP_INTEGRATION_TESTS` | `false` | Enable integration tests (set to `true` to run) |
 | `EP_SAVE_FIXTURES` | `false` | Save real API responses as test fixtures |
-| `EP_API_URL` | `https://data.europarl.europa.eu/api/v2` | European Parliament API base URL |
+| `EP_API_URL` | `https://data.europarl.europa.eu/api/v2/` | European Parliament API base URL (must include trailing `/`) |
+
+> **Important**: Always include a trailing `/` in `EP_API_URL`. The client builds URLs with `new URL(endpoint, baseURL)`, and omitting the trailing slash (for example using `/api/v2` instead of `/api/v2/`) can cause the `v2` path segment to be dropped when resolving endpoints.
 
 ---
 

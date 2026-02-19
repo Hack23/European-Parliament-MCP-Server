@@ -1,7 +1,5 @@
 /**
- * Integration Tests: get_committee_info Tool
- * 
- * Tests the getCommitteeInfo tool against real European Parliament API
+ * Integration tests for the getCommitteeInfo tool (current EP client implementation uses mocked data, not live API calls).
  * 
  * ISMS Policy: SC-002 (Secure Testing), PE-001 (Performance Testing)
  * 

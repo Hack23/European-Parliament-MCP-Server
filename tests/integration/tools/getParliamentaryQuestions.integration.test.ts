@@ -1,7 +1,8 @@
 /**
- * Integration Tests: get_parliamentary_questions Tool
+ * Integration/Contract Tests: get_parliamentary_questions Tool
  * 
- * Tests the getParliamentaryQuestions tool against real European Parliament API
+ * Validates the getParliamentaryQuestions tool response structure/contract against the European Parliament API model.
+ * This test currently runs against the mock-backed EP client, not the live API.
  * 
  * ISMS Policy: SC-002 (Secure Testing), PE-001 (Performance Testing)
  * 
@@ -47,7 +48,7 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
     it('should filter by question type (written)', async () => {
       const result = await retry(async () => {
         return handleGetParliamentaryQuestions({ 
-          type: 'written',
+          type: 'WRITTEN',
           limit: 10 
         });
       });
@@ -67,7 +68,7 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
     it('should filter by question type (oral)', async () => {
       const result = await retry(async () => {
         return handleGetParliamentaryQuestions({ 
-          type: 'oral',
+          type: 'ORAL',
           limit: 10 
         });
       });
@@ -188,7 +189,7 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
     }, 30000);
 
     it('should benefit from caching on repeated requests', async () => {
-      const params = { type: 'written', limit: 5 };
+      const params = { type: 'WRITTEN' as const, limit: 5 };
 
       // First request
       await retry(async () => handleGetParliamentaryQuestions(params));
