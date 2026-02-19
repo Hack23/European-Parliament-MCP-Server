@@ -311,7 +311,7 @@ console.log('\n🚀 Ready to publish with: npm publish');
 console.log('   Or test locally with: npm link');
 console.log('\n📦 ISMS Compliance:');
 console.log('   ✓ Documentation complete (README, LICENSE, SECURITY, CHANGELOG)');
-console.log('   ✓ npm provenance configuration enabled');
+console.log('   ✓ npm provenance configuration verified (see checks above)');
 console.log('   ✓ All required files included');
 
 process.exit(0);

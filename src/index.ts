@@ -14,6 +14,8 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
+import { fileURLToPath } from 'url';
+import { resolve } from 'path';
 
 // Import tool handlers
 import { handleGetMEPs, getMEPsToolMetadata } from './tools/getMEPs.js';
@@ -249,20 +251,7 @@ class EuropeanParliamentMCPServer {
     // List available tools
     this.server.setRequestHandler(ListToolsRequestSchema, () => {
       return Promise.resolve({
-        tools: [
-          // Core tools
-          getMEPsToolMetadata,
-          getMEPDetailsToolMetadata,
-          getPlenarySessionsToolMetadata,
-          getVotingRecordsToolMetadata,
-          searchDocumentsToolMetadata,
-          getCommitteeInfoToolMetadata,
-          getParliamentaryQuestionsToolMetadata,
-          // Advanced analysis tools
-          analyzeVotingPatternsToolMetadata,
-          trackLegislationToolMetadata,
-          generateReportToolMetadata
-        ],
+        tools: getToolMetadataArray(),
       });
     });
 
@@ -360,23 +349,29 @@ class EuropeanParliamentMCPServer {
   }
 }
 
-// Parse command-line arguments
-const args = process.argv.slice(2);
+// Only execute CLI logic if this module is the entry point
+// This prevents CLI behavior from interfering when imported as a library
+const isMainModule = process.argv[1] && resolve(fileURLToPath(import.meta.url)) === resolve(process.argv[1]);
 
-// Handle CLI commands
-if (args.includes('--help') || args.includes('-h')) {
-  showHelp();
-  process.exit(0);
-}
+if (isMainModule) {
+  // Parse command-line arguments
+  const args = process.argv.slice(2);
 
-if (args.includes('--version') || args.includes('-v')) {
-  showVersion();
-  process.exit(0);
-}
+  // Handle CLI commands
+  if (args.includes('--help') || args.includes('-h')) {
+    showHelp();
+    process.exit(0);
+  }
 
-if (args.includes('--health')) {
-  showHealth();
-  process.exit(0);
+  if (args.includes('--version') || args.includes('-v')) {
+    showVersion();
+    process.exit(0);
+  }
+
+  if (args.includes('--health')) {
+    showHealth();
+    process.exit(0);
+  }
 }
 
 // Start the MCP server (default behavior)

@@ -205,7 +205,7 @@ european-parliament-mcp-server --health
 ```bash
 # Test 1: Version command
 npx european-parliament-mcp-server --version
-# Expected: european-parliament-mcp-server v1.0.0
+# Expected: european-parliament-mcp-server v0.0.4
 
 # Test 2: Health check
 npx european-parliament-mcp-server --health
