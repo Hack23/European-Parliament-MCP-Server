@@ -457,7 +457,7 @@ export class EuropeanParliamentClient {
     
     try {
       // Define fetch function for retry logic
-      const fetchFn = async () => {
+      const fetchFn = async (): Promise<T> => {
         // Make API request with JSON-LD Accept header
         const response = await fetch(url.toString(), {
           headers: {
