@@ -9,6 +9,9 @@ build/
 
 .nyc_output/
 
+# Test results (auto-generated)
+docs/test-results/
+
 # Environment variables
 .env
 .env.local
