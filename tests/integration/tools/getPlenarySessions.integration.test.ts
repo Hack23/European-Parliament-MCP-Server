@@ -60,10 +60,15 @@ describeIntegration('get_plenary_sessions Integration Tests', () => {
       expect(response.data).toBeDefined();
 
       // All sessions should be on or after start date
+      const startTime = Date.parse(startDate);
+      expect(Number.isNaN(startTime)).toBe(false);
+      
       response.data.forEach((session: unknown) => {
         validatePlenarySessionStructure(session);
         const sessionDate = (session as { date: string }).date;
-        expect(sessionDate >= startDate).toBe(true);
+        const sessionTime = Date.parse(sessionDate);
+        expect(Number.isNaN(sessionTime)).toBe(false);
+        expect(sessionTime >= startTime).toBe(true);
       });
     }, 30000);
 
@@ -80,9 +85,14 @@ describeIntegration('get_plenary_sessions Integration Tests', () => {
       expect(response.data).toBeDefined();
 
       // All sessions should be on or before end date
+      const endTime = Date.parse(endDate);
+      expect(Number.isNaN(endTime)).toBe(false);
+      
       response.data.forEach((session: unknown) => {
         const sessionDate = (session as { date: string }).date;
-        expect(sessionDate <= endDate).toBe(true);
+        const sessionTime = Date.parse(sessionDate);
+        expect(Number.isNaN(sessionTime)).toBe(false);
+        expect(sessionTime <= endTime).toBe(true);
       });
     }, 30000);
 
