@@ -80,11 +80,13 @@ export function validatePaginatedResponse<T>(
   expect(parsed).toHaveProperty('total');
   expect(parsed).toHaveProperty('limit');
   expect(parsed).toHaveProperty('offset');
+  expect(parsed).toHaveProperty('hasMore');
   
   expect(Array.isArray((parsed as { data: unknown }).data)).toBe(true);
   expect(typeof (parsed as { total: unknown }).total).toBe('number');
   expect(typeof (parsed as { limit: unknown }).limit).toBe('number');
   expect(typeof (parsed as { offset: unknown }).offset).toBe('number');
+  expect(typeof (parsed as { hasMore: unknown }).hasMore).toBe('boolean');
   
   return parsed as PaginatedResponse<T>;
 }

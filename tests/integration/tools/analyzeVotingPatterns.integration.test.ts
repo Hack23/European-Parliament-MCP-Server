@@ -30,9 +30,10 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
         return handleGetMEPs({ limit: 1 });
       });
       const response = validatePaginatedResponse(mepsResult);
-      if (response.data.length > 0) {
-        testMEPId = (response.data[0] as { id: string }).id;
+      if (response.data.length === 0) {
+        throw new Error('No MEPs returned from handleGetMEPs for integration tests');
       }
+      testMEPId = (response.data[0] as { id: string }).id;
     }
   });
 

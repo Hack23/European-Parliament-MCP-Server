@@ -397,16 +397,16 @@ DEBUG=* EP_INTEGRATION_TESTS=true npm run test:integration
 
 | Tool | Uncached | Cached | Notes |
 |------|----------|--------|-------|
-| get_meps | <2s | <200ms | Basic retrieval |
-| get_mep_details | <2s | <200ms | Individual MEP |
-| get_plenary_sessions | <2s | <200ms | Session data |
-| get_voting_records | <3s | <200ms | Large datasets |
-| search_documents | <3s | <200ms | Full-text search |
-| get_committee_info | <2s | <200ms | Committee data |
-| get_parliamentary_questions | <2s | <200ms | Question data |
-| analyze_voting_patterns | <5s | <500ms | Complex analysis |
-| track_legislation | <2s | <200ms | Procedure tracking |
-| generate_report | <5s | <500ms | Report generation |
+| get_meps | <2s | <1000ms | Basic retrieval |
+| get_mep_details | <2s | <1000ms | Individual MEP |
+| get_plenary_sessions | <2s | <1000ms | Session data |
+| get_voting_records | <3s | <1000ms | Large datasets |
+| search_documents | <3s | <1000ms | Full-text search |
+| get_committee_info | <2s | <1000ms | Committee data |
+| get_parliamentary_questions | <2s | <1000ms | Question data |
+| analyze_voting_patterns | <5s | <1000ms | Complex analysis |
+| track_legislation | <2s | <1000ms | Procedure tracking |
+| generate_report | <5s | <1000ms | Report generation |
 
 ### Performance Tests
 

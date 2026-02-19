@@ -36,6 +36,13 @@ describeIntegration('generate_report Integration Tests', () => {
         testMEPId = (response.data[0] as { id: string }).id;
       }
     }
+
+    // Ensure we have a valid MEP ID before running tests that depend on it
+    if (!testMEPId) {
+      throw new Error(
+        'Failed to retrieve a MEP ID for integration tests: handleGetMEPs returned no data.'
+      );
+    }
   });
 
   describe('MEP Activity Report', () => {

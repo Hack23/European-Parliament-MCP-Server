@@ -33,9 +33,26 @@ describeIntegration('get_mep_details Integration Tests', () => {
         return handleGetMEPs({ limit: 1 });
       });
       const response = validatePaginatedResponse(mepsResult);
-      if (response.data.length > 0) {
-        testMEPId = (response.data[0] as { id: string }).id;
+      if (!response.data || response.data.length === 0) {
+        throw new Error(
+          'Integration setup failed: handleGetMEPs({ limit: 1 }) returned no MEP records, cannot initialize testMEPId',
+        );
       }
+
+      const firstMep = response.data[0] as { id?: string };
+      if (!firstMep || !firstMep.id) {
+        throw new Error(
+          'Integration setup failed: first MEP record does not contain a valid id field, cannot initialize testMEPId',
+        );
+      }
+
+      testMEPId = firstMep.id;
+    }
+
+    if (!testMEPId) {
+      throw new Error(
+        'Integration setup failed: testMEPId was not initialized before running get_mep_details integration tests',
+      );
     }
   });
 
