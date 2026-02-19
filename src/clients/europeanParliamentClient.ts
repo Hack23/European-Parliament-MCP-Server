@@ -482,10 +482,10 @@ export class EuropeanParliamentClient {
         }, this.timeoutMs, `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`);
       };
       
-      // Execute request with retry logic; each attempt has its own timeout via withTimeoutAndAbort
+      // Execute request with retry logic; fetchFn already handles timeout via withTimeoutAndAbort
       const data = await withRetry(fetchFn, {
         maxRetries: this.enableRetry ? this.maxRetries : 0,
-        timeoutMs: this.timeoutMs, // Single timeout policy per attempt
+        // timeoutMs omitted - fetchFn already handles timeout with withTimeoutAndAbort
         retryDelayMs: 1000,
         shouldRetry: (error) => {
           // Retry on 5xx errors, but not 4xx client errors or timeouts

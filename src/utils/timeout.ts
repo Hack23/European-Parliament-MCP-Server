@@ -160,13 +160,13 @@ export async function withTimeoutAndAbort<T>(
  */
 function validateRetryOptions(
   maxRetries: number,
-  timeoutMs: number,
+  timeoutMs: number | undefined,
   retryDelayMs: number
 ): void {
   if (maxRetries < 0) {
     throw new Error('maxRetries must be non-negative');
   }
-  if (timeoutMs <= 0) {
+  if (timeoutMs !== undefined && timeoutMs <= 0) {
     throw new Error('timeoutMs must be positive');
   }
   if (retryDelayMs <= 0) {
@@ -179,7 +179,7 @@ function validateRetryOptions(
  * 
  * Retries the operation up to {@link options.maxRetries} times (for a total
  * of maxRetries + 1 attempts including the initial call). Each retry has its
- * own timeout.
+ * own timeout (if timeoutMs is provided).
  * 
  * By default, all non-{@link TimeoutError} failures are considered retryable.
  * To restrict retries to transient failures only (for example, network
@@ -190,7 +190,7 @@ function validateRetryOptions(
  * @param fn - Async function to execute
  * @param options - Retry and timeout configuration
  * @param options.maxRetries - Maximum number of retry attempts after the initial call
- * @param options.timeoutMs - Per-attempt timeout in milliseconds
+ * @param options.timeoutMs - Optional per-attempt timeout in milliseconds (omit if fn handles timeout internally)
  * @param options.retryDelayMs - Base delay between retry attempts in milliseconds (default: 1000)
  * @param options.timeoutErrorMessage - Custom error message for timeout errors
  * @param options.shouldRetry - Predicate that decides if a failed attempt should be retried (default: retry all non-timeout errors)
@@ -201,7 +201,7 @@ function validateRetryOptions(
  * 
  * @example
  * ```typescript
- * // Retry up to 3 times (4 total attempts) on 5xx errors only
+ * // Retry up to 3 times (4 total attempts) on 5xx errors only with timeout
  * const data = await withRetry(
  *   () => fetchFromAPI('/endpoint'),
  *   {
@@ -211,18 +211,28 @@ function validateRetryOptions(
  *     shouldRetry: (error) => error.statusCode >= 500
  *   }
  * );
+ * 
+ * // Retry without additional timeout (fn handles timeout internally)
+ * const data2 = await withRetry(
+ *   () => withTimeoutAndAbort(signal => fetch(url, { signal }), 5000),
+ *   {
+ *     maxRetries: 3,
+ *     retryDelayMs: 1000,
+ *     shouldRetry: (error) => error.statusCode >= 500
+ *   }
+ * );
  * ```
  * 
  * @security
  * - Prevents retry storms with exponential backoff
- * - Respects timeout limits per attempt
+ * - Respects timeout limits per attempt (when provided)
  * - Configurable retry conditions for security
  */
 export async function withRetry<T>(
   fn: () => Promise<T>,
   options: {
     maxRetries: number;
-    timeoutMs: number;
+    timeoutMs?: number;
     retryDelayMs?: number;
     timeoutErrorMessage?: string;
     shouldRetry?: (error: unknown) => boolean;
@@ -243,8 +253,12 @@ export async function withRetry<T>(
   
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      // Add timeout to each attempt
-      return await withTimeout(fn(), timeoutMs, timeoutErrorMessage);
+      // Add timeout to each attempt only if timeoutMs is provided
+      // If the function handles timeout internally (e.g., withTimeoutAndAbort), skip wrapping
+      const result = timeoutMs !== undefined
+        ? await withTimeout(fn(), timeoutMs, timeoutErrorMessage)
+        : await fn();
+      return result;
     } catch (error) {
       lastError = error;
       

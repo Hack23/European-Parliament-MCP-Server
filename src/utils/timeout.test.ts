@@ -338,7 +338,7 @@ describe('withRetry', () => {
     })).rejects.toThrow('maxRetries must be non-negative');
   });
 
-  it('should throw error for zero or negative timeoutMs', async () => {
+  it('should throw error for zero or negative timeoutMs when provided', async () => {
     const fn = vi.fn();
     
     await expect(withRetry(fn, {
@@ -350,6 +350,18 @@ describe('withRetry', () => {
       maxRetries: 2,
       timeoutMs: -100
     })).rejects.toThrow('timeoutMs must be positive');
+  });
+
+  it('should allow omitting timeoutMs when fn handles timeout internally', async () => {
+    const fn = vi.fn().mockResolvedValue('success');
+    
+    const result = await withRetry(fn, {
+      maxRetries: 2,
+      retryDelayMs: 100
+    });
+
+    expect(result).toBe('success');
+    expect(fn).toHaveBeenCalledTimes(1);
   });
 
   it('should throw error for zero or negative retryDelayMs', async () => {
