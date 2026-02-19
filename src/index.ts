@@ -102,7 +102,7 @@ function showVersion(): void {
  * Get tool metadata array
  * @internal
  */
-function getToolMetadataArray() {
+function getToolMetadataArray(): Array<{ name: string; description: string; inputSchema: unknown }> {
   return [
     // Core tools
     getMEPsToolMetadata,
@@ -142,9 +142,9 @@ function showHealth(): void {
       arch: process.arch
     },
     configuration: {
-      apiUrl: sanitizeUrl(process.env['EP_API_URL'] || 'https://data.europarl.europa.eu/api/v2/'),
-      cacheTTL: process.env['EP_CACHE_TTL'] || '900000',
-      rateLimit: process.env['EP_RATE_LIMIT'] || '60'
+      apiUrl: sanitizeUrl(process.env['EP_API_URL'] ?? 'https://data.europarl.europa.eu/api/v2/'),
+      cacheTTL: process.env['EP_CACHE_TTL'] ?? '900000',
+      rateLimit: process.env['EP_RATE_LIMIT'] ?? '60'
     }
   };
   
@@ -356,7 +356,7 @@ class EuropeanParliamentMCPServer {
     // Log to stderr (stdout is used for MCP protocol)
     console.error(`${SERVER_NAME} v${SERVER_VERSION} started`);
     console.error('Server ready to handle requests');
-    console.error(`Available tools: ${tools.length} (${CORE_TOOL_COUNT} core + ${advancedToolCount} advanced analysis)`);
+    console.error(`Available tools: ${String(tools.length)} (${String(CORE_TOOL_COUNT)} core + ${String(advancedToolCount)} advanced analysis)`);
   }
 }
 
