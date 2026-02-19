@@ -421,10 +421,12 @@ export class EuropeanParliamentClient {
     // Generate cache key
     const cacheKey = this.getCacheKey(endpoint, params);
     
-    // Check cache
+    // Check cache with performance measurement
+    const cacheStart = performance.now();
     const cached = this.cache.get(cacheKey);
     if (cached !== undefined) {
-      performanceMonitor.recordDuration('ep_api_cache_hit', 0);
+      const cacheDuration = performance.now() - cacheStart;
+      performanceMonitor.recordDuration('ep_api_cache_hit', cacheDuration);
       return cached as T;
     }
     
@@ -483,7 +485,7 @@ export class EuropeanParliamentClient {
       // Execute request with retry logic; each attempt has its own timeout via withTimeoutAndAbort
       const data = await withRetry(fetchFn, {
         maxRetries: this.enableRetry ? this.maxRetries : 0,
-        timeoutMs: this.timeoutMs * 100, // Large timeout since each attempt already has withTimeoutAndAbort
+        timeoutMs: this.timeoutMs, // Single timeout policy per attempt
         retryDelayMs: 1000,
         shouldRetry: (error) => {
           // Retry on 5xx errors, but not 4xx client errors or timeouts

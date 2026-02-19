@@ -61,6 +61,9 @@ export class PerformanceMonitor {
    * @param maxSamples - Maximum number of samples to retain per operation (default: 1000)
    */
   constructor(maxSamples = 1000) {
+    if (!Number.isFinite(maxSamples) || !Number.isInteger(maxSamples) || maxSamples <= 0) {
+      throw new RangeError('maxSamples must be a positive integer');
+    }
     this.maxSamples = maxSamples;
   }
   

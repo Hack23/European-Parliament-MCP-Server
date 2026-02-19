@@ -328,6 +328,45 @@ describe('withRetry', () => {
     
     await expect(resultPromise).resolves.toBe('success');
   });
+
+  it('should throw error for negative maxRetries', async () => {
+    const fn = vi.fn();
+    
+    await expect(withRetry(fn, {
+      maxRetries: -1,
+      timeoutMs: 1000
+    })).rejects.toThrow('maxRetries must be non-negative');
+  });
+
+  it('should throw error for zero or negative timeoutMs', async () => {
+    const fn = vi.fn();
+    
+    await expect(withRetry(fn, {
+      maxRetries: 2,
+      timeoutMs: 0
+    })).rejects.toThrow('timeoutMs must be positive');
+
+    await expect(withRetry(fn, {
+      maxRetries: 2,
+      timeoutMs: -100
+    })).rejects.toThrow('timeoutMs must be positive');
+  });
+
+  it('should throw error for zero or negative retryDelayMs', async () => {
+    const fn = vi.fn();
+    
+    await expect(withRetry(fn, {
+      maxRetries: 2,
+      timeoutMs: 1000,
+      retryDelayMs: 0
+    })).rejects.toThrow('retryDelayMs must be positive');
+
+    await expect(withRetry(fn, {
+      maxRetries: 2,
+      timeoutMs: 1000,
+      retryDelayMs: -100
+    })).rejects.toThrow('retryDelayMs must be positive');
+  });
 });
 
 describe('isTimeoutError', () => {

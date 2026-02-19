@@ -69,7 +69,7 @@ export async function withTimeout<T>(
   timeoutMs: number,
   errorMessage?: string
 ): Promise<T> {
-  let timeoutHandle: NodeJS.Timeout | undefined;
+  let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
   
   // Create timeout promise that rejects after specified time
   const timeoutPromise = new Promise<never>((_, reject) => {
@@ -123,7 +123,7 @@ export async function withTimeoutAndAbort<T>(
   errorMessage?: string
 ): Promise<T> {
   const controller = new AbortController();
-  let timeoutHandle: NodeJS.Timeout | undefined;
+  let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
   
   // Create timeout promise that rejects and aborts after specified time
   const timeoutPromise = new Promise<never>((_, reject) => {
@@ -141,17 +141,36 @@ export async function withTimeoutAndAbort<T>(
   // Race between the actual operation and timeout
   try {
     const result = await Promise.race([fn(controller.signal), timeoutPromise]);
-    // Operation completed successfully - clear timeout but don't abort
-    if (timeoutHandle !== undefined) {
-      clearTimeout(timeoutHandle);
-    }
     return result;
-  } catch (error) {
-    // Operation failed or timed out - clear timeout
+  } finally {
+    // Always clear timeout to prevent memory leaks
     if (timeoutHandle !== undefined) {
       clearTimeout(timeoutHandle);
     }
-    throw error;
+  }
+}
+
+/**
+ * Validate withRetry options
+ * 
+ * @param maxRetries - Maximum retry count
+ * @param timeoutMs - Timeout duration  
+ * @param retryDelayMs - Retry delay duration
+ * @throws {Error} If any option is invalid
+ */
+function validateRetryOptions(
+  maxRetries: number,
+  timeoutMs: number,
+  retryDelayMs: number
+): void {
+  if (maxRetries < 0) {
+    throw new Error('maxRetries must be non-negative');
+  }
+  if (timeoutMs <= 0) {
+    throw new Error('timeoutMs must be positive');
+  }
+  if (retryDelayMs <= 0) {
+    throw new Error('retryDelayMs must be positive');
   }
 }
 
@@ -218,12 +237,7 @@ export async function withRetry<T>(
   } = options;
   
   // Input validation
-  if (maxRetries < 0) {
-    throw new Error('maxRetries must be non-negative');
-  }
-  if (timeoutMs <= 0) {
-    throw new Error('timeoutMs must be positive');
-  }
+  validateRetryOptions(maxRetries, timeoutMs, retryDelayMs);
   
   let lastError: unknown;
   

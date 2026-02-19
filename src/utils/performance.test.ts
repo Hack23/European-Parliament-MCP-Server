@@ -14,6 +14,31 @@ describe('PerformanceMonitor', () => {
   beforeEach(() => {
     monitor = new PerformanceMonitor();
   });
+
+  describe('constructor', () => {
+    it('should throw error for zero maxSamples', () => {
+      expect(() => new PerformanceMonitor(0)).toThrow('maxSamples must be a positive integer');
+    });
+
+    it('should throw error for negative maxSamples', () => {
+      expect(() => new PerformanceMonitor(-100)).toThrow('maxSamples must be a positive integer');
+    });
+
+    it('should throw error for non-integer maxSamples', () => {
+      expect(() => new PerformanceMonitor(100.5)).toThrow('maxSamples must be a positive integer');
+    });
+
+    it('should throw error for non-finite maxSamples', () => {
+      expect(() => new PerformanceMonitor(Infinity)).toThrow('maxSamples must be a positive integer');
+      expect(() => new PerformanceMonitor(NaN)).toThrow('maxSamples must be a positive integer');
+    });
+
+    it('should accept positive integer maxSamples', () => {
+      expect(() => new PerformanceMonitor(100)).not.toThrow();
+      expect(() => new PerformanceMonitor(1)).not.toThrow();
+      expect(() => new PerformanceMonitor(10000)).not.toThrow();
+    });
+  });
   
   describe('recordDuration', () => {
     it('should record a single duration', () => {

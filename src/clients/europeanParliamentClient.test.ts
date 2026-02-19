@@ -406,23 +406,33 @@ describe('EuropeanParliamentClient', () => {
     });
 
     it('should retry requests on 5xx errors when retry is enabled', async () => {
-      // First call fails with 500, second call succeeds
-      mockFetch
-        .mockResolvedValueOnce({
-          ok: false,
-          status: 500,
-          statusText: 'Internal Server Error'
-        } as Response)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => createMockMEPsResponse(1)
-        } as Response);
+      vi.useFakeTimers();
+      try {
+        // First call fails with 500, second call succeeds
+        mockFetch
+          .mockResolvedValueOnce({
+            ok: false,
+            status: 500,
+            statusText: 'Internal Server Error'
+          } as Response)
+          .mockResolvedValueOnce({
+            ok: true,
+            json: async () => createMockMEPsResponse(1)
+          } as Response);
 
-      const result = await client.getMEPs({ limit: 10 });
+        const requestPromise = client.getMEPs({ limit: 10 });
 
-      expect(result.data).toHaveLength(1);
-      // Should have retried once after the initial 5xx
-      expect(mockFetch).toHaveBeenCalledTimes(2);
+        // Advance timers to trigger retry delay
+        await vi.runAllTimersAsync();
+
+        const result = await requestPromise;
+
+        expect(result.data).toHaveLength(1);
+        // Should have retried once after the initial 5xx
+        expect(mockFetch).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should not retry requests on 4xx errors', async () => {
