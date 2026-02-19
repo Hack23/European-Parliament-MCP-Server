@@ -39,6 +39,8 @@ describe('withTimeout', () => {
   });
   
   afterEach(() => {
+    // Clear all pending timers to prevent unhandled rejections
+    vi.clearAllTimers();
     vi.useRealTimers();
   });
   
@@ -112,6 +114,8 @@ describe('withRetry', () => {
   });
   
   afterEach(() => {
+    // Clear all pending timers to prevent unhandled rejections
+    vi.clearAllTimers();
     vi.useRealTimers();
   });
   
