@@ -92,7 +92,7 @@ npx european-parliament-mcp-server --help
 ```json
 {
   "name": "european-parliament-mcp-server",
-  "version": "1.0.0",
+  "version": "0.0.4",
   "status": "healthy",
   "capabilities": ["tools", "resources", "prompts"],
   "tools": {
@@ -104,6 +104,11 @@ npx european-parliament-mcp-server --help
     "nodeVersion": "v24.13.0",
     "platform": "linux",
     "arch": "x64"
+  },
+  "configuration": {
+    "apiUrl": "https://data.europarl.europa.eu/api/v2/",
+    "cacheTTL": "900000",
+    "rateLimit": "60"
   }
 }
 ```

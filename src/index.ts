@@ -31,7 +31,7 @@ export type * from './types/index.js';
 export * from './types/index.js';
 
 const SERVER_NAME = 'european-parliament-mcp-server';
-const SERVER_VERSION = '1.0.0';
+const SERVER_VERSION = '0.0.4';
 
 /**
  * Number of core tools (non-advanced analysis tools)
