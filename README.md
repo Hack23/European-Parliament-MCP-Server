@@ -430,6 +430,40 @@ European-Parliament-MCP-Server/
 └── docs/                    # Additional documentation
 ```
 
+### Documentation
+
+#### 📚 Developer Documentation
+
+- **[JSDoc Coverage Report](./JSDOC_COVERAGE_REPORT.md)** - Detailed analysis of JSDoc documentation coverage across all source files
+- **[JSDoc Quick Reference](./docs/JSDOC_QUICK_REFERENCE.md)** - Quick reference guide for writing comprehensive JSDoc comments
+- **[JSDoc Coverage Summary](./JSDOC_COVERAGE_SUMMARY.md)** - Executive summary of documentation status and priorities
+- **[JSDoc Coverage Visualization](./docs/JSDOC_COVERAGE_VISUALIZATION.md)** - Visual representation of documentation coverage with charts and graphs
+
+#### 🏗️ Architecture & Design
+
+- **[Architecture Documentation](./ARCHITECTURE.md)** - System architecture and design patterns
+- **[Data Model](./DATA_MODEL.md)** - Data structures and type definitions
+- **[API Usage Guide](./API_USAGE_GUIDE.md)** - Guide for using the MCP server API
+
+#### 🧪 Testing & Quality
+
+- **[Test Coverage Report](./TEST_COVERAGE_REPORT.md)** - Test coverage statistics and analysis
+- **[Developer Guide](./DEVELOPER_GUIDE.md)** - Development setup and guidelines
+- **[Performance Guide](./PERFORMANCE_GUIDE.md)** - Performance optimization strategies
+
+#### 🔒 Security & Compliance
+
+- **[Security Policy](./SECURITY.md)** - Vulnerability reporting and security practices
+- **[Security Architecture](./SECURITY_ARCHITECTURE.md)** - Security controls and architecture
+- **[Secure Development Policy](./Secure_Development_Policy.md)** - Secure coding standards
+- **[Open Source Policy](./Open_Source_Policy.md)** - Open source compliance guidelines
+
+#### 📦 Deployment & Operations
+
+- **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Production deployment instructions
+- **[Troubleshooting Guide](./TROUBLESHOOTING.md)** - Common issues and solutions
+- **[NPM Publishing Guide](./NPM_PUBLISHING.md)** - Package publishing workflow
+
 ### Testing
 
 ```bash
