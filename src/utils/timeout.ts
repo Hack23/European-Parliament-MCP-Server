@@ -140,16 +140,18 @@ export async function withTimeoutAndAbort<T>(
   
   // Race between the actual operation and timeout
   try {
-    return await Promise.race([fn(controller.signal), timeoutPromise]);
-  } finally {
-    // Always clear timeout and abort controller to prevent memory leaks
+    const result = await Promise.race([fn(controller.signal), timeoutPromise]);
+    // Operation completed successfully - clear timeout but don't abort
     if (timeoutHandle !== undefined) {
       clearTimeout(timeoutHandle);
     }
-    // Abort if not already aborted (e.g., operation completed successfully)
-    if (!controller.signal.aborted) {
-      controller.abort();
+    return result;
+  } catch (error) {
+    // Operation failed or timed out - clear timeout
+    if (timeoutHandle !== undefined) {
+      clearTimeout(timeoutHandle);
     }
+    throw error;
   }
 }
 

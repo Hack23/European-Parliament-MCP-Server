@@ -18,7 +18,7 @@ import { fetch } from 'undici';
 import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../utils/rateLimiter.js';
 import { auditLogger } from '../utils/auditLogger.js';
-import { withRetry, TimeoutError } from '../utils/timeout.js';
+import { withRetry, withTimeoutAndAbort, TimeoutError } from '../utils/timeout.js';
 import { performanceMonitor } from '../utils/performance.js';
 import type {
   MEP,
@@ -456,32 +456,35 @@ export class EuropeanParliamentClient {
     const requestStart = performance.now();
     
     try {
-      // Define fetch function for retry logic
+      // Define fetch function with abort support for retry logic
       const fetchFn = async (): Promise<T> => {
-        // Make API request with JSON-LD Accept header
-        const response = await fetch(url.toString(), {
-          headers: {
-            'Accept': 'application/ld+json',
-            'User-Agent': 'European-Parliament-MCP-Server/1.0'
+        // Wrap fetch with timeout and abort controller to ensure requests can be cancelled
+        return await withTimeoutAndAbort(async (signal) => {
+          // Make API request with JSON-LD Accept header and abort signal
+          const response = await fetch(url.toString(), {
+            headers: {
+              'Accept': 'application/ld+json',
+              'User-Agent': 'European-Parliament-MCP-Server/1.0'
+            },
+            signal // Pass abort signal to actually cancel the HTTP request on timeout
+          });
+          
+          if (!response.ok) {
+            throw new APIError(
+              `EP API request failed: ${response.statusText}`,
+              response.status
+            );
           }
-        });
-        
-        if (!response.ok) {
-          throw new APIError(
-            `EP API request failed: ${response.statusText}`,
-            response.status
-          );
-        }
-        
-        return response.json() as Promise<T>;
+          
+          return response.json() as Promise<T>;
+        }, this.timeoutMs, `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`);
       };
       
-      // Execute request with timeout handling; enable retries only when configured
+      // Execute request with retry logic; each attempt has its own timeout via withTimeoutAndAbort
       const data = await withRetry(fetchFn, {
         maxRetries: this.enableRetry ? this.maxRetries : 0,
-        timeoutMs: this.timeoutMs,
+        timeoutMs: this.timeoutMs * 100, // Large timeout since each attempt already has withTimeoutAndAbort
         retryDelayMs: 1000,
-        timeoutErrorMessage: `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`,
         shouldRetry: (error) => {
           // Retry on 5xx errors, but not 4xx client errors or timeouts
           if (error instanceof TimeoutError) return false; // Don't retry timeouts

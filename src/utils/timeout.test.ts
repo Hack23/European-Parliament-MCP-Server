@@ -6,6 +6,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   TimeoutError,
   withTimeout,
+  withTimeoutAndAbort,
   withRetry,
   isTimeoutError
 } from './timeout.js';
@@ -105,6 +106,105 @@ describe('withTimeout', () => {
     const resultPromise = withTimeout(promise, 1000);
     
     await expect(resultPromise).rejects.toThrow('Original error');
+  });
+});
+
+describe('withTimeoutAndAbort', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  
+  afterEach(() => {
+    vi.clearAllTimers();
+    vi.useRealTimers();
+  });
+  
+  it('should resolve if operation completes before timeout', async () => {
+    const operation = vi.fn(async (signal: AbortSignal) => {
+      expect(signal.aborted).toBe(false);
+      return 'success';
+    });
+    
+    const resultPromise = withTimeoutAndAbort(operation, 1000);
+    
+    const result = await resultPromise;
+    
+    expect(result).toBe('success');
+    expect(operation).toHaveBeenCalled();
+  });
+  
+  it('should abort the signal when timeout fires', async () => {
+    let signalAborted = false;
+    const operation = async (signal: AbortSignal) => {
+      // Simulate long-running operation
+      return new Promise<string>((resolve) => {
+        setTimeout(() => resolve('late'), 2000);
+        signal.addEventListener('abort', () => {
+          signalAborted = true;
+        });
+      });
+    };
+    
+    const resultPromise = withTimeoutAndAbort(operation, 1000);
+    
+    // Advance time past timeout
+    vi.advanceTimersByTime(1001);
+    
+    await expect(resultPromise).rejects.toThrow(TimeoutError);
+    await vi.runAllTimersAsync();
+    
+    expect(signalAborted).toBe(true);
+  });
+  
+  it('should not abort signal when operation completes successfully', async () => {
+    let signalAborted = false;
+    const operation = async (signal: AbortSignal) => {
+      signal.addEventListener('abort', () => {
+        signalAborted = true;
+      });
+      return 'success';
+    };
+    
+    const result = await withTimeoutAndAbort(operation, 1000);
+    
+    expect(result).toBe('success');
+    expect(signalAborted).toBe(false);
+  });
+  
+  it('should use custom error message', async () => {
+    const operation = async (signal: AbortSignal) => {
+      return new Promise<string>((resolve) => {
+        setTimeout(() => resolve('late'), 2000);
+      });
+    };
+    
+    const resultPromise = withTimeoutAndAbort(operation, 500, 'Custom timeout message');
+    
+    vi.advanceTimersByTime(501);
+    
+    await expect(resultPromise).rejects.toThrow('Custom timeout message');
+  });
+  
+  it('should propagate operation errors', async () => {
+    const operation = async (signal: AbortSignal) => {
+      throw new Error('Operation failed');
+    };
+    
+    const resultPromise = withTimeoutAndAbort(operation, 1000);
+    
+    await expect(resultPromise).rejects.toThrow('Operation failed');
+  });
+  
+  it('should clear timeout when operation completes', async () => {
+    const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
+    
+    const operation = async (signal: AbortSignal) => 'success';
+    
+    await withTimeoutAndAbort(operation, 1000);
+    
+    expect(clearTimeoutSpy).toHaveBeenCalled();
+    
+    clearTimeoutSpy.mockRestore();
   });
 });
 
