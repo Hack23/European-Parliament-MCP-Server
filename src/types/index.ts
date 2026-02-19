@@ -54,6 +54,49 @@ export {
   formatMCPError
 } from './errors.js';
 
-// Export European Parliament types and utilities
-export type * from './europeanParliament.js';
-export * from './europeanParliament.js';
+// Export European Parliament types
+// Note: Using explicit exports to maintain controlled public API surface.
+// Only types and utilities intended for external consumption are exported here.
+export type {
+  MEP,
+  MEPDetails,
+  PlenarySession,
+  VotingRecord,
+  Committee,
+  LegislativeDocument,
+  ParliamentaryQuestion,
+  PaginatedResponse,
+  // Branded ID types
+  MEPId,
+  SessionId,
+  DocumentId,
+  CommitteeId,
+  VotingRecordId,
+  QuestionId,
+  // Schema helper types
+  PoliticalGroup,
+  CommitteeMembership,
+  SessionType,
+  SessionStatus,
+  VoteResult,
+  IndividualVote,
+  VoteType,
+  DocumentType,
+  DocumentStatus,
+  RelatedDocument,
+  Rapporteur,
+  CommitteeType,
+  QuestionType,
+  QuestionStatus,
+  QuestionAddressee,
+  ReportType
+} from './europeanParliament.js';
+
+// Export validation helpers and reference data
+export {
+  safeValidate,
+  formatValidationErrors,
+  EU_MEMBER_STATES,
+  EU_LANGUAGES,
+  EP_PARTY_GROUPS
+} from './europeanParliament.js';
