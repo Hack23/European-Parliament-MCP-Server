@@ -206,7 +206,7 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
 
   describe('Data Consistency', () => {
     it('should return consistent data for identical requests', async () => {
-      const params = { type: 'written', limit: 5 };
+      const params = { type: 'WRITTEN' as const, limit: 5 };
 
       const result1 = await retry(async () => handleGetParliamentaryQuestions(params));
       const result2 = await handleGetParliamentaryQuestions(params);
