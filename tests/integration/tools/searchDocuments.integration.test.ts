@@ -69,7 +69,7 @@ describeIntegration('search_documents Integration Tests', () => {
       const result = await retry(async () => {
         return handleSearchDocuments({ 
           keyword: 'environment',
-          documentType: 'REPORT',
+          documentType: 'REPORT' as const,
           limit: 10 
         });
       });

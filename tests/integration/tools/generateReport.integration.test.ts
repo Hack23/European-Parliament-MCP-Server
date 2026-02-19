@@ -42,7 +42,7 @@ describeIntegration('generate_report Integration Tests', () => {
     it('should generate MEP activity report', async () => {
       const result = await retry(async () => {
         return handleGenerateReport({ 
-          reportType: 'MEP_ACTIVITY',
+          reportType: 'MEP_ACTIVITY' as const,
           subjectId: testMEPId,
           dateFrom: '2024-01-01',
           dateTo: '2024-12-31'
@@ -73,7 +73,7 @@ describeIntegration('generate_report Integration Tests', () => {
     it('should generate committee performance report', async () => {
       const result = await retry(async () => {
         return handleGenerateReport({ 
-          reportType: 'COMMITTEE_PERFORMANCE',
+          reportType: 'COMMITTEE_PERFORMANCE' as const,
           subjectId: 'ENVI',
           dateFrom: '2024-01-01',
           dateTo: '2024-12-31'
@@ -99,7 +99,7 @@ describeIntegration('generate_report Integration Tests', () => {
     it('should generate voting statistics report', async () => {
       const result = await retry(async () => {
         return handleGenerateReport({ 
-          reportType: 'VOTING_STATISTICS',
+          reportType: 'VOTING_STATISTICS' as const,
           dateFrom: '2024-01-01',
           dateTo: '2024-12-31'
         });
@@ -124,7 +124,7 @@ describeIntegration('generate_report Integration Tests', () => {
     it('should generate legislation progress report', async () => {
       const result = await retry(async () => {
         return handleGenerateReport({ 
-          reportType: 'LEGISLATION_PROGRESS',
+          reportType: 'LEGISLATION_PROGRESS' as const,
           dateFrom: '2024-01-01',
           dateTo: '2024-12-31'
         });
@@ -160,7 +160,7 @@ describeIntegration('generate_report Integration Tests', () => {
     it('should reject invalid date format', async () => {
       await expect(async () => {
         return handleGenerateReport({ 
-          reportType: 'VOTING_STATISTICS',
+          reportType: 'VOTING_STATISTICS' as const,
           // @ts-expect-error - Testing invalid date format
           dateFrom: 'invalid-date',
           dateTo: '2024-12-31'
@@ -173,7 +173,7 @@ describeIntegration('generate_report Integration Tests', () => {
     it('should return complete report structure', async () => {
       const result = await retry(async () => {
         return handleGenerateReport({ 
-          reportType: 'VOTING_STATISTICS',
+          reportType: 'VOTING_STATISTICS' as const,
           dateFrom: '2024-01-01',
           dateTo: '2024-12-31'
         });
@@ -204,7 +204,7 @@ describeIntegration('generate_report Integration Tests', () => {
     it('should complete report generation within acceptable time', async () => {
       const [, duration] = await measureTime(async () => {
         return retry(async () => handleGenerateReport({ 
-          reportType: 'VOTING_STATISTICS',
+          reportType: 'VOTING_STATISTICS' as const,
           dateFrom: '2024-01-01',
           dateTo: '2024-12-31'
         }));

@@ -103,10 +103,17 @@ describeIntegration('get_plenary_sessions Integration Tests', () => {
       const response = validatePaginatedResponse(result);
       expect(response.data).toBeDefined();
 
+      const startTime = Date.parse(startDate);
+      const endTime = Date.parse(endDate);
+      expect(Number.isNaN(startTime)).toBe(false);
+      expect(Number.isNaN(endTime)).toBe(false);
+
       response.data.forEach((session: unknown) => {
         const sessionDate = (session as { date: string }).date;
-        expect(sessionDate >= startDate).toBe(true);
-        expect(sessionDate <= endDate).toBe(true);
+        const sessionTime = Date.parse(sessionDate);
+        expect(Number.isNaN(sessionTime)).toBe(false);
+        expect(sessionTime >= startTime).toBe(true);
+        expect(sessionTime <= endTime).toBe(true);
       });
     }, 30000);
   });

@@ -48,7 +48,7 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
     it('should filter by question type (written)', async () => {
       const result = await retry(async () => {
         return handleGetParliamentaryQuestions({ 
-          type: 'WRITTEN',
+          type: 'WRITTEN' as const,
           limit: 10 
         });
       });
@@ -68,7 +68,7 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
     it('should filter by question type (oral)', async () => {
       const result = await retry(async () => {
         return handleGetParliamentaryQuestions({ 
-          type: 'ORAL',
+          type: 'ORAL' as const,
           limit: 10 
         });
       });
@@ -102,13 +102,20 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
       const response = validatePaginatedResponse(result);
       expect(response.data).toBeDefined();
 
+      const startTime = Date.parse(startDate);
+      const endTime = Date.parse(endDate);
+      expect(Number.isNaN(startTime)).toBe(false);
+      expect(Number.isNaN(endTime)).toBe(false);
+
       response.data.forEach((question: unknown) => {
         validateParliamentaryQuestionStructure(question);
         // Questions should have dates if available
         if ('date' in (question as object)) {
           const questionDate = (question as { date: string }).date;
-          expect(questionDate >= startDate).toBe(true);
-          expect(questionDate <= endDate).toBe(true);
+          const questionTime = Date.parse(questionDate);
+          expect(Number.isNaN(questionTime)).toBe(false);
+          expect(questionTime >= startTime).toBe(true);
+          expect(questionTime <= endTime).toBe(true);
         }
       });
     }, 30000);
