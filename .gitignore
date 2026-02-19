@@ -43,4 +43,5 @@ temp/
 # OS files
 Thumbs.db
 .DS_Store
-tests/fixtures/real-api/
+docs/test-results/html.meta.json.gz
+docs/test-results/results.json
