@@ -105,7 +105,7 @@ function showVersion(): void {
  * Get tool metadata array
  * @internal
  */
-function getToolMetadataArray(): Array<{ name: string; description: string; inputSchema: unknown }> {
+function getToolMetadataArray(): { name: string; description: string; inputSchema: unknown }[] {
   return [
     // Core tools
     getMEPsToolMetadata,
@@ -353,10 +353,9 @@ class EuropeanParliamentMCPServer {
 // Only execute CLI logic if this module is the entry point
 // This prevents CLI behavior from interfering when imported as a library
 // Use realpathSync to handle npm bin symlinks/shims correctly
-const isMainModule: boolean = Boolean(
-  process.argv[1] &&
-  realpathSync(resolve(fileURLToPath(import.meta.url))) === realpathSync(resolve(process.argv[1]))
-);
+const isMainModule =
+  process.argv[1] !== undefined &&
+  realpathSync(resolve(fileURLToPath(import.meta.url))) === realpathSync(resolve(process.argv[1]));
 
 if (isMainModule) {
   // Parse command-line arguments
