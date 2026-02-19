@@ -89,6 +89,16 @@ export function parsePaginatedMCPResponse<T = unknown>(
 }
 
 /**
+ * Check if E2E tests should run
+ *
+ * E2E tests are disabled by default and only run when explicitly enabled
+ * via EP_E2E_TESTS=true to avoid accidental real API calls and rate limit issues.
+ */
+export function shouldRunE2ETests(): boolean {
+  return process.env.EP_E2E_TESTS === 'true';
+}
+
+/**
  * Validate MCP response structure
  * 
  * @param response - MCP response to validate

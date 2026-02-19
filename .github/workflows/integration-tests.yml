@@ -74,6 +74,8 @@ jobs:
         run: npm run test:e2e
         env:
           NODE_ENV: test
+          # Enable E2E tests for scheduled runs or manual workflow dispatch
+          EP_E2E_TESTS: ${{ (github.event_name == 'schedule' && 'true') || (github.event.inputs.run_integration_tests == 'true' && 'true') || 'false' }}
 
       - name: Run performance tests
         run: npm run test:performance

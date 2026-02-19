@@ -9,10 +9,12 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { MCPTestClient } from './mcpClient.js';
-import { parsePaginatedMCPResponse, parseMCPResponse, validateMCPResponse } from '../helpers/testUtils.js';
+import { parsePaginatedMCPResponse, parseMCPResponse, validateMCPResponse, shouldRunE2ETests } from '../helpers/testUtils.js';
 import type { MEP } from '../../src/types/europeanParliament.js';
 
-describe('MEP Query E2E Tests', () => {
+const describeE2E = shouldRunE2ETests() ? describe : describe.skip;
+
+describeE2E('MEP Query E2E Tests', () => {
   let client: MCPTestClient;
 
   beforeAll(async () => {
