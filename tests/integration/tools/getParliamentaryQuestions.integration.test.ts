@@ -26,7 +26,7 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
   });
 
   describe('Basic Retrieval', () => {
-    it('should fetch parliamentary questions from real API', async () => {
+    it('should return parliamentary questions matching expected contract', async () => {
       const result = await retry(async () => {
         return handleGetParliamentaryQuestions({ limit: 10 });
       });

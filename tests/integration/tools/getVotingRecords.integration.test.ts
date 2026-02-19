@@ -91,13 +91,18 @@ describeIntegration('get_voting_records Integration Tests', () => {
       const response = validatePaginatedResponse(result);
       expect(response.data).toBeDefined();
 
+      // Precompute and validate date range timestamps
+      const startTimestamp = Date.parse(startDate);
+      const endTimestamp = Date.parse(endDate);
+      expect(Number.isNaN(startTimestamp)).toBe(false);
+      expect(Number.isNaN(endTimestamp)).toBe(false);
+
       response.data.forEach((record: unknown) => {
         validateVotingRecordStructure(record);
         const recordDate = (record as { date: string }).date;
         // Parse dates to timestamps for reliable comparison
         const recordTimestamp = Date.parse(recordDate);
-        const startTimestamp = Date.parse(startDate);
-        const endTimestamp = Date.parse(endDate);
+        expect(Number.isNaN(recordTimestamp)).toBe(false);
         expect(recordTimestamp >= startTimestamp).toBe(true);
         expect(recordTimestamp <= endTimestamp).toBe(true);
       });

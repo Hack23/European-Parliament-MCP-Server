@@ -23,7 +23,7 @@ describeIntegration('get_committee_info Integration Tests', () => {
   });
 
   describe('Committee Retrieval by ID', () => {
-    it('should fetch committee info by ID from real API', async () => {
+    it('should return committee info by ID matching expected contract', async () => {
       // Using a known committee ID (example - may need adjustment)
       const result = await retry(async () => {
         return handleGetCommitteeInfo({ id: 'ENVI' });
