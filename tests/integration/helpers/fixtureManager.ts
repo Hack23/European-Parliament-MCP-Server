@@ -10,6 +10,41 @@ import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
 
 /**
+ * Sanitize PII fields from data before saving fixtures (GDPR compliance)
+ * 
+ * @param data - Data to sanitize
+ * @returns Sanitized copy of data
+ */
+function sanitizePII(data: unknown): unknown {
+  if (data === null || data === undefined) {
+    return data;
+  }
+  
+  if (Array.isArray(data)) {
+    return data.map(item => sanitizePII(item));
+  }
+  
+  if (typeof data === 'object') {
+    const sanitized: Record<string, unknown> = {};
+    const piiFields = ['email', 'phone', 'address', 'phoneNumber', 'personalEmail', 'officeAddress'];
+    
+    for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
+      if (piiFields.includes(key)) {
+        // Redact PII fields
+        sanitized[key] = '[REDACTED]';
+      } else {
+        // Recursively sanitize nested objects
+        sanitized[key] = sanitizePII(value);
+      }
+    }
+    
+    return sanitized;
+  }
+  
+  return data;
+}
+
+/**
  * Check if fixture saving is enabled
  */
 export function shouldSaveFixtures(): boolean {
@@ -48,8 +83,11 @@ export function saveFixture(
     const filename = `${testName}.json`;
     const filepath = join(fixturesDir, filename);
     
+    // Sanitize PII before saving (GDPR compliance)
+    const sanitizedData = sanitizePII(data);
+    
     // Save with pretty formatting
-    const json = JSON.stringify(data, null, 2);
+    const json = JSON.stringify(sanitizedData, null, 2);
     writeFileSync(filepath, json, 'utf-8');
     
     console.log(`[Fixture] Saved: ${toolName}/${filename}`);

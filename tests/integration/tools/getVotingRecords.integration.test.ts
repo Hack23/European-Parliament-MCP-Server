@@ -1,7 +1,8 @@
 /**
  * Integration Tests: get_voting_records Tool
  * 
- * Tests the getVotingRecords tool against real European Parliament API
+ * Contract/structure tests for the getVotingRecords tool against its current (mocked) implementation,
+ * aligned with the European Parliament API schema rather than the live API.
  * 
  * ISMS Policy: SC-002 (Secure Testing), PE-001 (Performance Testing)
  * 
@@ -10,7 +11,6 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { handleGetVotingRecords } from '../../../src/tools/getVotingRecords.js';
-import { handleGetPlenarySessions } from '../../../src/tools/getPlenarySessions.js';
 import { shouldRunIntegrationTests } from '../setup.js';
 import { retry, measureTime } from '../../helpers/testUtils.js';
 import { validatePaginatedResponse, validateVotingRecordStructure } from '../helpers/responseValidator.js';
@@ -94,8 +94,12 @@ describeIntegration('get_voting_records Integration Tests', () => {
       response.data.forEach((record: unknown) => {
         validateVotingRecordStructure(record);
         const recordDate = (record as { date: string }).date;
-        expect(recordDate >= startDate).toBe(true);
-        expect(recordDate <= endDate).toBe(true);
+        // Parse dates to timestamps for reliable comparison
+        const recordTimestamp = Date.parse(recordDate);
+        const startTimestamp = Date.parse(startDate);
+        const endTimestamp = Date.parse(endDate);
+        expect(recordTimestamp >= startTimestamp).toBe(true);
+        expect(recordTimestamp <= endTimestamp).toBe(true);
       });
     }, 30000);
   });

@@ -126,17 +126,10 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
       const response1 = validatePaginatedResponse(page1);
       const response2 = validatePaginatedResponse(page2);
 
-      // Pages should have different data when backend supports real paging.
-      if (response1.data.length > 0 && response2.data.length > 0) {
-        const firstIdPage1 = (response1.data[0] as { id: string }).id;
-        const firstIdPage2 = (response2.data[0] as { id: string }).id;
-
-        // With the current mock client, paging may return the same item on all pages.
-        // Only assert differing IDs when the backend actually returns different records.
-        if (firstIdPage1 !== firstIdPage2) {
-          expect(firstIdPage1).not.toBe(firstIdPage2);
-        }
-      }
+      // Note: With the current mock client, paging may return the same item on all pages.
+      // We only validate pagination metadata and basic data presence here.
+      expect(Array.isArray(response1.data)).toBe(true);
+      expect(Array.isArray(response2.data)).toBe(true);
 
       // Pagination metadata
       expect(response1.offset).toBe(0);
