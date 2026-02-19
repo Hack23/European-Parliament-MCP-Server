@@ -157,39 +157,21 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 - Node.js 24.x or higher
 - npm 10.x or higher
+- Git
 
 ### Installation
 
-#### Option 1: Use with npx (Recommended - No Installation Required)
-
-```bash
-# Test the server immediately with npx
-npx european-parliament-mcp-server --version
-
-# Check server health
-npx european-parliament-mcp-server --health
-
-# View help and usage
-npx european-parliament-mcp-server --help
-```
-
-**Why npx?**
-- ✅ No global installation needed
-- ✅ Always uses the latest version
-- ✅ Works immediately
-- ✅ Perfect for MCP clients
-
-#### Option 2: Global Installation
+#### Option 1: Install from npm (Recommended)
 
 ```bash
 # Install the package globally
 npm install -g european-parliament-mcp-server
 
-# Test installation
-european-parliament-mcp-server --health
+# Or install as a dependency in your project
+npm install european-parliament-mcp-server
 ```
 
-#### Option 3: Install from Source (Development)
+#### Option 2: Install from source
 
 ```bash
 # Clone the repository
@@ -202,54 +184,13 @@ npm install
 # Build the project
 npm run build
 
-# Test the build
-npm run test-mcp
-
-# Verify package integrity
-npm run verify-package
-```
-
-### CLI Commands
-
-```bash
-# Show version information
-npx european-parliament-mcp-server --version
-
-# Check server health and capabilities
-npx european-parliament-mcp-server --health
-
-# Display help and usage instructions
-npx european-parliament-mcp-server --help
-```
-
-**Health Check Output:**
-```json
-{
-  "name": "european-parliament-mcp-server",
-  "version": "1.0.0",
-  "status": "healthy",
-  "capabilities": ["tools", "resources", "prompts"],
-  "tools": {
-    "total": 10,
-    "core": 7,
-    "advanced": 3
-  },
-  "environment": {
-    "nodeVersion": "v24.13.0",
-    "platform": "linux",
-    "arch": "x64"
-  },
-  "configuration": {
-    "apiUrl": "https://data.europarl.europa.eu/api/v2/",
-    "cacheTTL": "900000",
-    "rateLimit": "60"
-  }
-}
+# Run tests
+npm test
 ```
 
 ### Usage with MCP Client
 
-#### Claude Desktop Configuration (npx - Recommended)
+#### Claude Desktop Configuration (npm install)
 
 Add to your `claude_desktop_config.json`:
 
@@ -260,34 +201,25 @@ Add to your `claude_desktop_config.json`:
       "command": "npx",
       "args": ["european-parliament-mcp-server"],
       "env": {
-        "EP_API_URL": "https://data.europarl.europa.eu/api/v2/",
-        "EP_CACHE_TTL": "900000",
-        "EP_RATE_LIMIT": "60"
+        "EP_API_KEY": "your-api-key-if-needed"
       }
     }
   }
 }
 ```
 
-**Configuration File Locations:**
-- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
-- **Linux**: `~/.config/Claude/claude_desktop_config.json`
-
-#### Claude Desktop Configuration (Local Development)
+#### Claude Desktop Configuration (source install)
 
 Add to your `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
-    "european-parliament-dev": {
+    "european-parliament": {
       "command": "node",
-      "args": ["/absolute/path/to/European-Parliament-MCP-Server/dist/index.js"],
+      "args": ["/path/to/European-Parliament-MCP-Server/dist/index.js"],
       "env": {
-        "EP_API_URL": "https://data.europarl.europa.eu/api/v2/",
-        "EP_CACHE_TTL": "900000",
-        "EP_RATE_LIMIT": "60"
+        "EP_API_KEY": "your-api-key-if-needed"
       }
     }
   }
@@ -327,7 +259,6 @@ Configure in `.vscode/mcp.json`:
 
 ### Core Documentation
 
-- [**🧪 Local Testing Guide**](./LOCAL_TESTING.md) - **NEW!** Complete guide for local installation and testing
 - [**API Usage Guide**](./API_USAGE_GUIDE.md) - Complete tool documentation with examples
 - [**Architecture Diagrams**](./ARCHITECTURE_DIAGRAMS.md) - C4 model diagrams and data flows
 - [**Troubleshooting Guide**](./TROUBLESHOOTING.md) - Common issues and solutions
@@ -498,6 +429,40 @@ European-Parliament-MCP-Server/
 │   └── workflows/          # CI/CD workflows
 └── docs/                    # Additional documentation
 ```
+
+### Documentation
+
+#### 📚 Developer Documentation
+
+- **[JSDoc Coverage Report](./JSDOC_COVERAGE_REPORT.md)** - Detailed analysis of JSDoc documentation coverage across all source files
+- **[JSDoc Quick Reference](./docs/JSDOC_QUICK_REFERENCE.md)** - Quick reference guide for writing comprehensive JSDoc comments
+- **[JSDoc Coverage Summary](./JSDOC_COVERAGE_SUMMARY.md)** - Executive summary of documentation status and priorities
+- **[JSDoc Coverage Visualization](./docs/JSDOC_COVERAGE_VISUALIZATION.md)** - Visual representation of documentation coverage with charts and graphs
+
+#### 🏗️ Architecture & Design
+
+- **[Architecture Documentation](./ARCHITECTURE.md)** - System architecture and design patterns
+- **[Data Model](./DATA_MODEL.md)** - Data structures and type definitions
+- **[API Usage Guide](./API_USAGE_GUIDE.md)** - Guide for using the MCP server API
+
+#### 🧪 Testing & Quality
+
+- **[Test Coverage Report](./TEST_COVERAGE_REPORT.md)** - Test coverage statistics and analysis
+- **[Developer Guide](./DEVELOPER_GUIDE.md)** - Development setup and guidelines
+- **[Performance Guide](./PERFORMANCE_GUIDE.md)** - Performance optimization strategies
+
+#### 🔒 Security & Compliance
+
+- **[Security Policy](./SECURITY.md)** - Vulnerability reporting and security practices
+- **[Security Architecture](./SECURITY_ARCHITECTURE.md)** - Security controls and architecture
+- **[Secure Development Policy](./Secure_Development_Policy.md)** - Secure coding standards
+- **[Open Source Policy](./Open_Source_Policy.md)** - Open source compliance guidelines
+
+#### 📦 Deployment & Operations
+
+- **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Production deployment instructions
+- **[Troubleshooting Guide](./TROUBLESHOOTING.md)** - Common issues and solutions
+- **[NPM Publishing Guide](./NPM_PUBLISHING.md)** - Package publishing workflow
 
 ### Testing
 

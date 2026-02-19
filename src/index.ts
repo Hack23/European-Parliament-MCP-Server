@@ -34,147 +34,6 @@ const SERVER_NAME = 'european-parliament-mcp-server';
 const SERVER_VERSION = '1.0.0';
 
 /**
- * Number of core tools (non-advanced analysis tools)
- * Update this constant when adding/removing core tools in getToolMetadataArray()
- */
-const CORE_TOOL_COUNT = 7;
-
-/**
- * Display help message
- */
-function showHelp(): void {
-  console.log(`
-${SERVER_NAME} v${SERVER_VERSION}
-
-Model Context Protocol server for European Parliament open data
-
-Usage:
-  npx european-parliament-mcp-server [options]
-
-Options:
-  --health         Check server health and capabilities
-  -v, --version    Show version information
-  -h, --help       Show this help message
-
-Environment Variables:
-  EP_API_URL          European Parliament API base URL
-                      (default: https://data.europarl.europa.eu/api/v2/)
-  EP_CACHE_TTL        Cache TTL in milliseconds (default: 900000)
-  EP_RATE_LIMIT       Rate limit requests per minute (default: 60)
-
-MCP Client Configuration:
-
-  Claude Desktop (claude_desktop_config.json):
-  {
-    "mcpServers": {
-      "european-parliament": {
-        "command": "npx",
-        "args": ["european-parliament-mcp-server"]
-      }
-    }
-  }
-
-  VS Code / Cursor (settings.json):
-  {
-    "mcp.servers": {
-      "european-parliament": {
-        "command": "npx",
-        "args": ["european-parliament-mcp-server"]
-      }
-    }
-  }
-
-For more information:
-  Documentation: https://hack23.github.io/European-Parliament-MCP-Server/docs/
-  GitHub: https://github.com/Hack23/European-Parliament-MCP-Server
-  Issues: https://github.com/Hack23/European-Parliament-MCP-Server/issues
-`);
-}
-
-/**
- * Display version information
- */
-function showVersion(): void {
-  console.log(`${SERVER_NAME} v${SERVER_VERSION}`);
-}
-
-/**
- * Get tool metadata array
- * @internal
- */
-function getToolMetadataArray() {
-  return [
-    // Core tools
-    getMEPsToolMetadata,
-    getMEPDetailsToolMetadata,
-    getPlenarySessionsToolMetadata,
-    getVotingRecordsToolMetadata,
-    searchDocumentsToolMetadata,
-    getCommitteeInfoToolMetadata,
-    getParliamentaryQuestionsToolMetadata,
-    // Advanced analysis tools
-    analyzeVotingPatternsToolMetadata,
-    trackLegislationToolMetadata,
-    generateReportToolMetadata
-  ];
-}
-
-/**
- * Display health check information
- */
-function showHealth(): void {
-  const tools = getToolMetadataArray();
-  const advancedToolCount = tools.length - CORE_TOOL_COUNT;
-  
-  const health = {
-    name: SERVER_NAME,
-    version: SERVER_VERSION,
-    status: 'healthy',
-    capabilities: ['tools', 'resources', 'prompts'],
-    tools: {
-      total: tools.length,
-      core: CORE_TOOL_COUNT,
-      advanced: advancedToolCount
-    },
-    environment: {
-      nodeVersion: process.version,
-      platform: process.platform,
-      arch: process.arch
-    },
-    configuration: {
-      apiUrl: sanitizeUrl(process.env['EP_API_URL'] || 'https://data.europarl.europa.eu/api/v2/'),
-      cacheTTL: process.env['EP_CACHE_TTL'] || '900000',
-      rateLimit: process.env['EP_RATE_LIMIT'] || '60'
-    }
-  };
-  
-  console.log(JSON.stringify(health, null, 2));
-}
-
-/**
- * Sanitize URL to remove credentials
- * @param urlString - URL to sanitize
- * @returns Sanitized URL without credentials
- */
-function sanitizeUrl(urlString: string): string {
-  try {
-    const url = new URL(urlString);
-    // Remove username and password
-    url.username = '';
-    url.password = '';
-    // Remove query parameters and fragment that might contain tokens
-    url.search = '';
-    url.hash = '';
-    return url.toString();
-  } catch {
-    // If URL parsing fails, remove query and fragment parts as a safe fallback
-    const withoutQuery = urlString.split('?')[0] ?? urlString;
-    const withoutFragment = withoutQuery.split('#')[0] ?? withoutQuery;
-    return withoutFragment;
-  }
-}
-
-/**
  * Main MCP Server class for European Parliament data access
  * 
  * Implements the Model Context Protocol (MCP) to provide AI assistants,
@@ -249,7 +108,20 @@ class EuropeanParliamentMCPServer {
     // List available tools
     this.server.setRequestHandler(ListToolsRequestSchema, () => {
       return Promise.resolve({
-        tools: getToolMetadataArray(),
+        tools: [
+          // Core tools
+          getMEPsToolMetadata,
+          getMEPDetailsToolMetadata,
+          getPlenarySessionsToolMetadata,
+          getVotingRecordsToolMetadata,
+          searchDocumentsToolMetadata,
+          getCommitteeInfoToolMetadata,
+          getParliamentaryQuestionsToolMetadata,
+          // Advanced analysis tools
+          analyzeVotingPatternsToolMetadata,
+          trackLegislationToolMetadata,
+          generateReportToolMetadata
+        ],
       });
     });
 
@@ -337,36 +209,14 @@ class EuropeanParliamentMCPServer {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
 
-    const tools = getToolMetadataArray();
-    const advancedToolCount = tools.length - CORE_TOOL_COUNT;
-
     // Log to stderr (stdout is used for MCP protocol)
     console.error(`${SERVER_NAME} v${SERVER_VERSION} started`);
     console.error('Server ready to handle requests');
-    console.error(`Available tools: ${tools.length} (${CORE_TOOL_COUNT} core + ${advancedToolCount} advanced analysis)`);
+    console.error('Available tools: 10 (7 core + 3 advanced analysis)');
   }
 }
 
-// Parse command-line arguments
-const args = process.argv.slice(2);
-
-// Handle CLI commands
-if (args.includes('--help') || args.includes('-h')) {
-  showHelp();
-  process.exit(0);
-}
-
-if (args.includes('--version') || args.includes('-v')) {
-  showVersion();
-  process.exit(0);
-}
-
-if (args.includes('--health')) {
-  showHealth();
-  process.exit(0);
-}
-
-// Start the MCP server (default behavior)
+// Start the server
 const server = new EuropeanParliamentMCPServer();
 server.start().catch((error: unknown) => {
   console.error('Fatal error:', error);
