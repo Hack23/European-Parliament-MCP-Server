@@ -53,3 +53,7 @@ export {
   isMCPServerError,
   formatMCPError
 } from './errors.js';
+
+// Export European Parliament types and utilities
+export type * from './europeanParliament.js';
+export * from './europeanParliament.js';

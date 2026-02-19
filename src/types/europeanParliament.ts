@@ -48,3 +48,16 @@ export type {
 // Legacy type aliases for backward compatibility
 export type { MEP as MemberOfEuropeanParliament } from '../schemas/europeanParliament.js';
 export type { LegislativeDocument as Document } from '../schemas/europeanParliament.js';
+
+// Export helper functions for schema validation
+export {
+  safeValidate,
+  formatValidationErrors
+} from '../schemas/europeanParliament.js';
+
+// Export reference data constants
+export {
+  EU_MEMBER_STATES,
+  EU_LANGUAGES,
+  EP_PARTY_GROUPS
+} from '../schemas/europeanParliament.js';
