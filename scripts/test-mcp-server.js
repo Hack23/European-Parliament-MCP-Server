@@ -209,7 +209,8 @@ async function testMCPServer() {
   // Test 1: Health check
   try {
     console.log('1️⃣  Testing health check...');
-    const health = await runCommand('node', ['dist/index.js', '--health']);
+    // Test via npm exec to simulate actual npx usage
+    const health = await runCommand('npm', ['exec', '--', 'european-parliament-mcp-server', '--health']);
     const healthData = JSON.parse(health);
     
     if (healthData.status === 'healthy' && healthData.name === 'european-parliament-mcp-server') {
@@ -229,7 +230,8 @@ async function testMCPServer() {
   // Test 2: Version command
   try {
     console.log('2️⃣  Testing version command...');
-    const version = await runCommand('node', ['dist/index.js', '--version']);
+    // Test via npm exec to simulate actual npx usage
+    const version = await runCommand('npm', ['exec', '--', 'european-parliament-mcp-server', '--version']);
     
     if (version.includes('european-parliament-mcp-server') && version.includes('v')) {
       console.log('✅ Version command passed');
@@ -247,7 +249,8 @@ async function testMCPServer() {
   // Test 3: Help command
   try {
     console.log('3️⃣  Testing help command...');
-    const help = await runCommand('node', ['dist/index.js', '--help']);
+    // Test via npm exec to simulate actual npx usage
+    const help = await runCommand('npm', ['exec', '--', 'european-parliament-mcp-server', '--help']);
     
     if (help.includes('Usage:') && help.includes('Options:') && help.includes('--health')) {
       console.log('✅ Help command passed');

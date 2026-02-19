@@ -16,6 +16,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { fileURLToPath } from 'url';
 import { resolve } from 'path';
+import { realpathSync } from 'fs';
 
 // Import tool handlers
 import { handleGetMEPs, getMEPsToolMetadata } from './tools/getMEPs.js';
@@ -351,7 +352,11 @@ class EuropeanParliamentMCPServer {
 
 // Only execute CLI logic if this module is the entry point
 // This prevents CLI behavior from interfering when imported as a library
-const isMainModule = process.argv[1] && resolve(fileURLToPath(import.meta.url)) === resolve(process.argv[1]);
+// Use realpathSync to handle npm bin symlinks/shims correctly
+const isMainModule: boolean = Boolean(
+  process.argv[1] &&
+  realpathSync(resolve(fileURLToPath(import.meta.url))) === realpathSync(resolve(process.argv[1]))
+);
 
 if (isMainModule) {
   // Parse command-line arguments
