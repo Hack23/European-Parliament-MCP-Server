@@ -211,23 +211,21 @@ export class EuropeanParliamentClient {
         return await response.json() as T;
       };
       
-      // Execute with retry logic if enabled
-      const data = this.enableRetry
-        ? await withRetry(fetchFn, {
-            maxRetries: this.maxRetries,
-            timeoutMs: this.timeoutMs,
-            retryDelayMs: 1000,
-            timeoutErrorMessage: `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`,
-            shouldRetry: (error) => {
-              // Retry on 5xx errors, but not 4xx client errors or timeouts
-              if (error instanceof TimeoutError) return false; // Don't retry timeouts
-              if (error instanceof APIError) {
-                return (error.statusCode ?? 500) >= 500;
-              }
-              return true; // Retry other errors (network issues, etc.)
-            }
-          })
-        : await fetchFn();
+      // Execute request with timeout handling; enable retries only when configured
+      const data = await withRetry(fetchFn, {
+        maxRetries: this.enableRetry ? this.maxRetries : 0,
+        timeoutMs: this.timeoutMs,
+        retryDelayMs: 1000,
+        timeoutErrorMessage: `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`,
+        shouldRetry: (error) => {
+          // Retry on 5xx errors, but not 4xx client errors or timeouts
+          if (error instanceof TimeoutError) return false; // Don't retry timeouts
+          if (error instanceof APIError) {
+            return (error.statusCode ?? 500) >= 500;
+          }
+          return true; // Retry other errors (network issues, etc.)
+        }
+      });
       
       // Cache the response
       this.cache.set(cacheKey, data);

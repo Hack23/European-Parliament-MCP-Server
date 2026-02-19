@@ -97,13 +97,23 @@ export async function withTimeout<T>(
 /**
  * Execute a function with retry logic and timeout
  * 
- * Retries the operation up to maxRetries times if it fails with
- * transient errors (network errors, 5xx status codes). Each retry
- * has its own timeout.
+ * Retries the operation up to {@link options.maxRetries} times (for a total
+ * of maxRetries + 1 attempts including the initial call). Each retry has its
+ * own timeout.
+ * 
+ * By default, all non-{@link TimeoutError} failures are considered retryable.
+ * To restrict retries to transient failures only (for example, network
+ * errors or 5xx status codes), provide a {@link options.shouldRetry}
+ * predicate that returns true only for errors that should be retried.
  * 
  * @template T - Type of the function result
  * @param fn - Async function to execute
  * @param options - Retry and timeout configuration
+ * @param options.maxRetries - Maximum number of retry attempts after the initial call
+ * @param options.timeoutMs - Per-attempt timeout in milliseconds
+ * @param options.retryDelayMs - Base delay between retry attempts in milliseconds (default: 1000)
+ * @param options.timeoutErrorMessage - Custom error message for timeout errors
+ * @param options.shouldRetry - Predicate that decides if a failed attempt should be retried (default: retry all non-timeout errors)
  * @returns Promise that resolves with the result
  * 
  * @throws {TimeoutError} If any attempt exceeds timeout
@@ -111,6 +121,7 @@ export async function withTimeout<T>(
  * 
  * @example
  * ```typescript
+ * // Retry up to 3 times (4 total attempts) on 5xx errors only
  * const data = await withRetry(
  *   () => fetchFromAPI('/endpoint'),
  *   {

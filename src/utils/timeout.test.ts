@@ -2,7 +2,7 @@
  * Tests for timeout utilities
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   TimeoutError,
   withTimeout,
@@ -36,6 +36,10 @@ describe('TimeoutError', () => {
 describe('withTimeout', () => {
   beforeEach(() => {
     vi.useFakeTimers();
+  });
+  
+  afterEach(() => {
+    vi.useRealTimers();
   });
   
   it('should resolve if promise completes before timeout', async () => {
