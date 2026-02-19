@@ -2,7 +2,7 @@
 
 ## 📋 Overview
 
-This guide explains how to run integration tests for the European Parliament MCP Server against the real European Parliament Open Data API. Integration tests validate that all MCP tools correctly interact with the live API and handle real data appropriately.
+This guide explains how to run integration tests for the European Parliament MCP Server. Integration tests validate that all MCP tools work correctly, either against the real European Parliament Open Data API (for fully implemented tools) or against mock implementations (for tools still in development).
 
 **ISMS Policy**: [Hack23 Secure Development Policy - Testing](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#testing)
 
@@ -14,16 +14,21 @@ This guide explains how to run integration tests for the European Parliament MCP
 
 ### All 10 MCP Tools Tested
 
+**Real API Integration** (fully implemented):
 1. **get_meps** - MEP retrieval with filtering
 2. **get_mep_details** - Individual MEP information
 3. **get_plenary_sessions** - Plenary session data
-4. **get_voting_records** - Voting record access
-5. **search_documents** - Document search
-6. **get_committee_info** - Committee information
-7. **get_parliamentary_questions** - Parliamentary questions
-8. **analyze_voting_patterns** - Voting pattern analysis
-9. **track_legislation** - Legislative procedure tracking
-10. **generate_report** - Report generation
+
+**Contract/Structure Tests** (mock implementations):
+4. **get_voting_records** - Voting record access (mock data)
+5. **search_documents** - Document search (mock data)
+6. **get_committee_info** - Committee information (mock data)
+7. **get_parliamentary_questions** - Parliamentary questions (mock data)
+8. **analyze_voting_patterns** - Voting pattern analysis (mock data)
+9. **track_legislation** - Legislative procedure tracking (mock data)
+10. **generate_report** - Report generation (mock data)
+
+> **Note**: Tools using mock implementations validate response structure and contract compliance. They will be updated to use the real EP API in future releases.
 
 ### Test Categories
 
