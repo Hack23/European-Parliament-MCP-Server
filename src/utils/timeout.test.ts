@@ -62,8 +62,17 @@ describe('withTimeout', () => {
     const resultPromise = withTimeout(promise, 1000);
     await vi.advanceTimersByTimeAsync(1001);
     
-    await expect(resultPromise).rejects.toThrow(TimeoutError);
-    await expect(resultPromise).rejects.toThrow('Operation timed out after 1000ms');
+    // Await the promise rejection to handle it
+    try {
+      await resultPromise;
+      expect.fail('Should have thrown TimeoutError');
+    } catch (error) {
+      expect(error).toBeInstanceOf(TimeoutError);
+      expect(error).toHaveProperty('message', 'Operation timed out after 1000ms');
+    }
+    
+    // Advance remaining time to clear inner timeout
+    await vi.advanceTimersByTimeAsync(1000);
   });
   
   it('should use custom error message', async () => {
@@ -78,7 +87,16 @@ describe('withTimeout', () => {
     );
     await vi.advanceTimersByTimeAsync(1001);
     
-    await expect(resultPromise).rejects.toThrow('Custom timeout message');
+    // Await the promise rejection to handle it
+    try {
+      await resultPromise;
+      expect.fail('Should have thrown TimeoutError');
+    } catch (error) {
+      expect(error).toHaveProperty('message', 'Custom timeout message');
+    }
+    
+    // Advance remaining time to clear inner timeout
+    await vi.advanceTimersByTimeAsync(1000);
   });
   
   it('should include timeout duration in error', async () => {
@@ -98,6 +116,9 @@ describe('withTimeout', () => {
         expect(error.timeoutMs).toBe(1500);
       }
     }
+    
+    // Advance remaining time to clear inner timeout
+    await vi.advanceTimersByTimeAsync(500);
   });
   
   it('should propagate promise rejection', async () => {
@@ -115,6 +136,7 @@ describe('withTimeoutAndAbort', () => {
   });
   
   afterEach(() => {
+    // Clear all pending timers to prevent unhandled rejections
     vi.clearAllTimers();
     vi.useRealTimers();
   });
@@ -266,7 +288,13 @@ describe('withRetry', () => {
     await vi.advanceTimersByTimeAsync(100); // First retry
     await vi.advanceTimersByTimeAsync(200); // Second retry
     
-    await expect(resultPromise).rejects.toThrow('Always fails');
+    // Await the promise rejection to handle it
+    try {
+      await resultPromise;
+      expect.fail('Should have thrown error');
+    } catch (error) {
+      expect(error).toHaveProperty('message', 'Always fails');
+    }
     expect(fn).toHaveBeenCalledTimes(3); // Initial + 2 retries
   });
   
@@ -286,8 +314,17 @@ describe('withRetry', () => {
     // Advance past timeout
     await vi.advanceTimersByTimeAsync(101);
     
-    await expect(resultPromise).rejects.toThrow(TimeoutError);
+    // Await the promise rejection to handle it
+    try {
+      await resultPromise;
+      expect.fail('Should have thrown TimeoutError');
+    } catch (error) {
+      expect(error).toBeInstanceOf(TimeoutError);
+    }
     expect(fn).toHaveBeenCalledTimes(1); // No retries on timeout
+    
+    // Advance remaining time to clear inner timeout
+    await vi.advanceTimersByTimeAsync(1900);
   });
   
   it('should respect shouldRetry predicate', async () => {
