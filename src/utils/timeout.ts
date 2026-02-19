@@ -95,6 +95,65 @@ export async function withTimeout<T>(
 }
 
 /**
+ * Wraps a promise with a timeout and optional AbortSignal support.
+ * 
+ * For operations that support cancellation (like fetch), pass a function that
+ * accepts an AbortSignal. The signal will be aborted when the timeout fires,
+ * allowing the underlying operation to clean up resources.
+ * 
+ * @template T - Type of the promise result
+ * @param fn - Function that returns a promise and optionally accepts an AbortSignal
+ * @param timeoutMs - Timeout in milliseconds
+ * @param errorMessage - Custom error message (optional)
+ * @returns Promise that resolves/rejects with the operation result or timeout
+ * 
+ * @example
+ * ```typescript
+ * // With AbortSignal support (for fetch, etc.)
+ * await withTimeoutAndAbort(
+ *   (signal) => fetch(url, { signal }),
+ *   5000,
+ *   'API request timed out'
+ * );
+ * ```
+ */
+export async function withTimeoutAndAbort<T>(
+  fn: (signal: AbortSignal) => Promise<T>,
+  timeoutMs: number,
+  errorMessage?: string
+): Promise<T> {
+  const controller = new AbortController();
+  let timeoutHandle: NodeJS.Timeout | undefined;
+  
+  // Create timeout promise that rejects and aborts after specified time
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutHandle = setTimeout(() => {
+      controller.abort(); // Cancel the underlying operation
+      reject(
+        new TimeoutError(
+          errorMessage ?? `Operation timed out after ${String(timeoutMs)}ms`,
+          timeoutMs
+        )
+      );
+    }, timeoutMs);
+  });
+  
+  // Race between the actual operation and timeout
+  try {
+    return await Promise.race([fn(controller.signal), timeoutPromise]);
+  } finally {
+    // Always clear timeout and abort controller to prevent memory leaks
+    if (timeoutHandle !== undefined) {
+      clearTimeout(timeoutHandle);
+    }
+    // Abort if not already aborted (e.g., operation completed successfully)
+    if (!controller.signal.aborted) {
+      controller.abort();
+    }
+  }
+}
+
+/**
  * Execute a function with retry logic and timeout
  * 
  * Retries the operation up to {@link options.maxRetries} times (for a total
@@ -156,6 +215,14 @@ export async function withRetry<T>(
     shouldRetry = (): boolean => true
   } = options;
   
+  // Input validation
+  if (maxRetries < 0) {
+    throw new Error('maxRetries must be non-negative');
+  }
+  if (timeoutMs <= 0) {
+    throw new Error('timeoutMs must be positive');
+  }
+  
   let lastError: unknown;
   
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -184,7 +251,7 @@ export async function withRetry<T>(
     }
   }
   
-  // All retries exhausted
+  // All retries exhausted - this should always have a value since we attempt at least once
   throw lastError;
 }
 

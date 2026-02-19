@@ -95,8 +95,8 @@ describe('PerformanceMonitor', () => {
       }
       
       const stats = monitor.getStats('op');
-      // With linear interpolation: (99-1) * 0.99 = 97.02 + 1 = 98.02
-      // Between values 99 and 100, weight 0.02: 99 * 0.98 + 100 * 0.02 = 99.02
+      // With linear interpolation: (sorted.length - 1) * 0.99 = 99 * 0.99 = 98.01
+      // Between values 99 and 100, weight 0.01: 99 * 0.99 + 100 * 0.01 = 99.01
       expect(stats?.p99).toBeCloseTo(99.01, 1);
     });
     

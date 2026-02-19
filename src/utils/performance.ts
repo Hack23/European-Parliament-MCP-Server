@@ -88,8 +88,11 @@ export class PerformanceMonitor {
     durations.push(durationMs);
     
     // Limit number of samples to prevent memory growth
+    // Use slice to create a new array starting from the overflow point
+    // This is more efficient than shift() which is O(n)
     if (durations.length > this.maxSamples) {
-      durations.shift();
+      const overflow = durations.length - this.maxSamples;
+      durations.splice(0, overflow);
     }
   }
   
