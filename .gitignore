@@ -43,3 +43,5 @@ temp/
 # OS files
 Thumbs.db
 .DS_Store
+docs/test-results/html.meta.json.gz
+docs/test-results/results.json
