@@ -111,6 +111,10 @@ describe('withRetry', () => {
     vi.useFakeTimers();
   });
   
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+  
   it('should succeed on first attempt', async () => {
     const fn = vi.fn().mockResolvedValue('success');
     
