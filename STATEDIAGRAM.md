@@ -17,7 +17,7 @@
 </p>
 
 **📋 Document Owner:** Architecture Team | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-17 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-08-17  
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-17  
 **🏷️ Classification:** Public (Open Source MCP Server)  
 **✅ ISMS Compliance:** ISO 27001 (A.12.1), NIST CSF 2.0 (PR.IP), CIS Controls v8.1 (4.1)
 
