@@ -1,9 +1,25 @@
-# 💼 European Parliament MCP Server - SWOT Analysis
+<p align="center">
+  <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
+</p>
 
-**Document Version:** 1.0  
-**Last Updated:** 2026-02-17  
-**Status:** Current State Strategic Analysis  
-**ISMS Compliance:** ISO 27001 (A.6.1), NIST CSF 2.0 (ID.BE), CIS Controls v8.1 (15.1)
+<h1 align="center">💼 European Parliament MCP Server - SWOT Analysis</h1>
+
+<p align="center">
+  <strong>Strategic Analysis and Positioning</strong><br>
+  <em>Strengths, Weaknesses, Opportunities, and Threats Assessment</em>
+</p>
+
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/Owner-CEO-0A66C2?style=for-the-badge" alt="Owner"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--17-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
+</p>
+
+**📋 Document Owner:** CEO/Product Management | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-17 (UTC)  
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-17  
+**🏷️ Classification:** Public (Open Source MCP Server)  
+**✅ ISMS Compliance:** ISO 27001 (A.6.1), NIST CSF 2.0 (ID.BE), CIS Controls v8.1 (15.1)
 
 ---
 
@@ -727,8 +743,7 @@ quadrantChart
 
 ---
 
-**Document Control:**
-- **Owner**: CEO/Product Management
-- **Reviewers**: CTO, CFO, Security Team
-- **Approval**: Board of Directors
-- **Next Review**: 2026-05-17 (Quarterly)
+<p align="center">
+  <strong>Built with ❤️ by <a href="https://hack23.com">Hack23 AB</a></strong><br>
+  <em>SWOT analysis documentation following ISMS standards</em>
+</p>
