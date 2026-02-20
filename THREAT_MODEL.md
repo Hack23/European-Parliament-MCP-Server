@@ -24,6 +24,8 @@
 
 ## 📑 Table of Contents
 
+- [ISMS Policy Alignment](#-isms-policy-alignment)
+- [Security Documentation Map](#-security-documentation-map)
 - [Purpose \& Scope](#-purpose--scope)
 - [System Classification](#-system-classification--operating-profile)
 - [💎 Critical Assets \& Crown Jewel Analysis](#-critical-assets--crown-jewel-analysis)
@@ -48,6 +50,54 @@
 - [🏛️ Comprehensive Security Control Framework](#️-comprehensive-security-control-framework)
 - [Policy Alignment](#-policy-alignment)
 - [Related Documents](#-related-documents)
+
+---
+
+## 🔐 ISMS Policy Alignment
+
+### Related ISMS Policies
+
+| Policy | Relevance | Link |
+|--------|-----------|------|
+| **Open Source Policy** | Security transparency, vulnerability disclosure | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
+| **Secure Development Policy** | Secure coding practices, supply chain security | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
+| **Risk Management Policy** | Threat assessment, risk mitigation | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Risk_Management_Policy.md) |
+| **Privacy Policy** | GDPR compliance, data protection | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) |
+
+### Security Control Implementation Status
+
+| Control Area | Status | Evidence |
+|-------------|--------|----------|
+| Input Validation (Zod) | ✅ Implemented | Mitigates E-1, D-4, E-3 |
+| Rate Limiting | ✅ Implemented | Mitigates D-1, D-2 |
+| HTTPS/TLS | ✅ Implemented | Default EP API base URL uses HTTPS; `EP_API_URL` must be configured with `https://` (Mitigates S-2, T-1) |
+| SLSA Level 3 | ✅ Implemented | Mitigates T-3, S-4 |
+| Dependabot + npm audit | ✅ Implemented | Mitigates T-2 |
+| Error Sanitization | ⚠️ Partial | Mitigates I-1, I-2 |
+
+### Compliance Framework Mapping
+
+| Framework | Controls | Status |
+|-----------|----------|--------|
+| **ISO 27001:2022** | A.5.1, A.8.2, A.8.8, A.8.25, A.14.2, A.18.1 | ✅ Aligned |
+| **NIST CSF 2.0** | ID.AM, ID.RA, PR.DS, PR.IP, DE.CM, RS.AN | ✅ Aligned |
+| **CIS Controls v8.1** | 1.1, 2.7, 3.3, 6.2, 7.1, 16.7 | ✅ Aligned |
+
+> **See also**: [Policy Alignment](#-policy-alignment) below for the complete threat-specific ISMS policy mapping (Threat Modeling, Vulnerability Management, Network Security, Access Control, Cryptography, and Incident Response policies).
+
+---
+
+## 🗺️ Security Documentation Map
+
+| Document | Type | Description | Status |
+|----------|------|-------------|--------|
+| [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | 🛡️ Current | Implemented security design and controls | ✅ Current |
+| [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) | 🚀 Future | Security roadmap and planned enhancements | ✅ Current |
+| [THREAT_MODEL.md](./THREAT_MODEL.md) | 🎯 Analysis | STRIDE threat analysis and risk assessment | ✅ Current |
+| [BCPPlan.md](./BCPPlan.md) | 🔄 Continuity | Business continuity and disaster recovery | ✅ Current |
+| [CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md) | 📋 Compliance | EU Cyber Resilience Act conformity assessment | ✅ Current |
+| [SECURITY.md](./SECURITY.md) | 📜 Policy | Security policy and vulnerability disclosure | ✅ Current |
+| [SECURITY_HEADERS.md](./SECURITY_HEADERS.md) | 🔒 Technical | API security headers implementation | ✅ Current |
 
 ---
 

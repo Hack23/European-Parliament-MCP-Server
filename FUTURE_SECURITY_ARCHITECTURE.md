@@ -65,18 +65,15 @@
 
 This document is part of the comprehensive security documentation portfolio for the European Parliament MCP Server.
 
-| Document | Purpose | Status | Link |
-|----------|---------|--------|------|
-| **SECURITY_ARCHITECTURE.md** | Current implemented security design and controls | ✅ Active | [View](./SECURITY_ARCHITECTURE.md) |
-| **FUTURE_SECURITY_ARCHITECTURE.md** | Planned security enhancements and roadmap | ✅ This Document | — |
-| **THREAT_MODEL.md** | STRIDE threat analysis and risk register | ✅ Active | [View](./THREAT_MODEL.md) |
-| **SECURITY.md** | Security policy and vulnerability disclosure | ✅ Active | [View](./SECURITY.md) |
-| **SECURITY_HEADERS.md** | HTTP security headers implementation | ✅ Active | [View](./SECURITY_HEADERS.md) |
-| **CRA-ASSESSMENT.md** | EU Cyber Resilience Act compliance assessment | ✅ Active | [View](./CRA-ASSESSMENT.md) |
-| **BCPPlan.md** | Business Continuity Plan | ✅ Active | [View](./BCPPlan.md) |
-| **ARCHITECTURE.md** | Current C4 system architecture | ✅ Active | [View](./ARCHITECTURE.md) |
-| **FUTURE_ARCHITECTURE.md** | Planned serverless AWS architecture | ✅ Active | [View](./FUTURE_ARCHITECTURE.md) |
-| **Hack23 ISMS Policies** | Parent ISMS framework and policies | ✅ Active | [View](https://github.com/Hack23/ISMS-PUBLIC) |
+| Document | Type | Description | Status |
+|----------|------|-------------|--------|
+| [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | 🛡️ Current | Implemented security design and controls | ✅ Current |
+| [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) | 🚀 Future | Security roadmap and planned enhancements | ✅ Current |
+| [THREAT_MODEL.md](./THREAT_MODEL.md) | 🎯 Analysis | STRIDE threat analysis and risk assessment | ✅ Current |
+| [BCPPlan.md](./BCPPlan.md) | 🔄 Continuity | Business continuity and disaster recovery | ✅ Current |
+| [CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md) | 📋 Compliance | EU Cyber Resilience Act conformity assessment | ✅ Current |
+| [SECURITY.md](./SECURITY.md) | 📜 Policy | Security policy and vulnerability disclosure | ✅ Current |
+| [SECURITY_HEADERS.md](./SECURITY_HEADERS.md) | 🔒 Technical | API security headers implementation | ✅ Current |
 
 ### Security Documentation Relationships
 
@@ -118,13 +115,12 @@ graph TD
 
 The future security architecture aligns with the following Hack23 AB ISMS policies:
 
-| Policy | Relevance | Control Areas | Link |
-|--------|-----------|---------------|------|
-| **Secure Development Policy** | Primary — SDLC security, DevSecOps, SLSA Level 3 | SDL, code signing, supply chain | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
-| **Risk Management Policy** | Primary — Risk identification and treatment roadmap | Risk register, residual risk, PDCA | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Risk_Management_Policy.md) |
-| **Access Control Policy** | Phase 1 — Authentication, RBAC, Cognito | IAM, least privilege, Zero Trust | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) |
-| **Incident Response Policy** | Phase 3-5 — SOC, automated response | IR playbooks, MTTD/MTTR SLAs | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Policy.md) |
-| **Open Source Policy** | Ongoing — Supply chain security | SBOM, license compliance, Scorecard | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
+| Policy | Relevance | Link |
+|--------|-----------|------|
+| **Open Source Policy** | Security transparency, vulnerability disclosure | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
+| **Secure Development Policy** | Secure coding practices, supply chain security | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
+| **Risk Management Policy** | Threat assessment, risk mitigation | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Risk_Management_Policy.md) |
+| **Privacy Policy** | GDPR compliance, data protection | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) |
 
 ### Security Control Implementation Roadmap
 

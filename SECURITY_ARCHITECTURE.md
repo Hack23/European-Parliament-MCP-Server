@@ -24,6 +24,54 @@
 
 ---
 
+## 🔐 ISMS Policy Alignment
+
+### Related ISMS Policies
+
+| Policy | Relevance | Link |
+|--------|-----------|------|
+| **Open Source Policy** | Security transparency, vulnerability disclosure | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
+| **Secure Development Policy** | Secure coding practices, supply chain security | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
+| **Risk Management Policy** | Threat assessment, risk mitigation | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Risk_Management_Policy.md) |
+| **Privacy Policy** | GDPR compliance, data protection | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) |
+
+### Security Control Implementation Status
+
+| Control Area | Status | Evidence |
+|-------------|--------|----------|
+| Input Validation | ✅ Implemented | Zod schemas in `src/schemas/` and `src/tools/` |
+| Rate Limiting | ✅ Implemented | Token bucket algorithm in `src/utils/rateLimiter.ts` |
+| Audit Logging | ✅ Implemented | Structured audit logger in `src/utils/auditLogger.ts` |
+| Supply Chain Security | ✅ Implemented | SLSA Level 3, Dependabot, CycloneDX SBOM |
+| Transport Security | ✅ Implemented | Default EP API base URL uses HTTPS; operators MUST configure `EP_API_URL` with an `https://` URL |
+| Error Sanitization | ⚠️ Partial | Sanitized errors, stack traces excluded |
+| Data Minimization | ✅ Implemented | 15-min cache TTL, no persistent storage |
+| Authentication | 🔄 Planned | OAuth 2.0 planned Q2 2026 |
+
+### Compliance Framework Mapping
+
+| Framework | Controls | Status |
+|-----------|----------|--------|
+| **ISO 27001:2022** | A.5.1, A.8.2, A.8.8, A.8.25, A.14.2, A.18.1 | ✅ Aligned |
+| **NIST CSF 2.0** | ID.AM, ID.RA, PR.DS, PR.IP, DE.CM, RS.AN | ✅ Aligned |
+| **CIS Controls v8.1** | 1.1, 2.7, 3.3, 6.2, 7.1, 16.7 | ✅ Aligned |
+
+---
+
+## 🗺️ Security Documentation Map
+
+| Document | Type | Description | Status |
+|----------|------|-------------|--------|
+| [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | 🛡️ Current | Implemented security design and controls | ✅ Current |
+| [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) | 🚀 Future | Security roadmap and planned enhancements | ✅ Current |
+| [THREAT_MODEL.md](./THREAT_MODEL.md) | 🎯 Analysis | STRIDE threat analysis and risk assessment | ✅ Current |
+| [BCPPlan.md](./BCPPlan.md) | 🔄 Continuity | Business continuity and disaster recovery | ✅ Current |
+| [CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md) | 📋 Compliance | EU Cyber Resilience Act conformity assessment | ✅ Current |
+| [SECURITY.md](./SECURITY.md) | 📜 Policy | Security policy and vulnerability disclosure | ✅ Current |
+| [SECURITY_HEADERS.md](./SECURITY_HEADERS.md) | 🔒 Technical | API security headers implementation | ✅ Current |
+
+---
+
 ## 🔗 Related Documents
 
 | Document | Description | Link |
@@ -34,25 +82,6 @@
 | **Threat Model** | Threat analysis using STRIDE | [THREAT_MODEL.md](./THREAT_MODEL.md) |
 | **Secure Development Policy** | ISMS secure development guidelines | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
 | **Open Source Policy** | ISMS open source governance | [Open_Source_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
-
----
-
-## 📚 Security Documentation Map
-
-This document is part of a comprehensive security documentation suite for the European Parliament MCP Server:
-
-| Document | Purpose | Status |
-|----------|---------|--------|
-| **SECURITY_ARCHITECTURE.md** | Current architecture and controls (this document) | ✅ Complete |
-| **[FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md)** | Security roadmap and planned enhancements | ✅ Complete |
-| **[THREAT_MODEL.md](./THREAT_MODEL.md)** | STRIDE threat analysis and mitigations | ✅ Complete |
-| **[SECURITY.md](./SECURITY.md)** | Security policy and vulnerability reporting | ✅ Complete |
-| **[SECURITY_HEADERS.md](./SECURITY_HEADERS.md)** | HTTP security headers configuration | ✅ Complete |
-| **[Secure_Development_Policy.md](./Secure_Development_Policy.md)** | ISMS secure development guidelines | ✅ Complete |
-| **[Open_Source_Policy.md](./Open_Source_Policy.md)** | Open source governance and security | ✅ Complete |
-| **[BCPPlan.md](./BCPPlan.md)** | Business continuity and disaster recovery | ✅ Complete |
-| **[.github/WORKFLOWS.md](./.github/WORKFLOWS.md)** | CI/CD security automation | ✅ Complete |
-| **[CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md)** | EU Cyber Resilience Act compliance | ✅ Complete |
 
 ---
 
@@ -72,6 +101,8 @@ This document describes the implemented security architecture for the European P
 
 ## 📑 Table of Contents
 
+- [ISMS Policy Alignment](#-isms-policy-alignment)
+- [Security Documentation Map](#-security-documentation-map)
 - [Information Classification & Asset Management](#information-classification--asset-management)
 - [Security Architecture Overview](#security-architecture-overview)
 - [1. Authentication & Authorization](#1-authentication--authorization)
