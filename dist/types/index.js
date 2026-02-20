@@ -22,6 +22,4 @@
 export { isMEPID, isSessionID, isCommitteeID, isDocumentID, isGroupID, createMEPID, createSessionID, createCommitteeID, createDocumentID, createGroupID } from './branded.js';
 // Export error classes
 export { MCPServerError, ValidationError, RateLimitError, EPAPIError, GDPRComplianceError, isMCPServerError, formatMCPError } from './errors.js';
-// Export validation helpers and reference data
-export { safeValidate, formatValidationErrors, EU_MEMBER_STATES, EU_LANGUAGES, EP_PARTY_GROUPS } from '../schemas/europeanParliament.js';
 //# sourceMappingURL=index.js.map

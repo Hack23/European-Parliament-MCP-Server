@@ -22,6 +22,4 @@
 export type { Brand, MEPID, SessionID, CommitteeID, DocumentID, GroupID } from './branded.js';
 export { isMEPID, isSessionID, isCommitteeID, isDocumentID, isGroupID, createMEPID, createSessionID, createCommitteeID, createDocumentID, createGroupID } from './branded.js';
 export { MCPServerError, ValidationError, RateLimitError, EPAPIError, GDPRComplianceError, isMCPServerError, formatMCPError } from './errors.js';
-export type { MEP, MEPDetails, PlenarySession, VotingRecord, Committee, LegislativeDocument, ParliamentaryQuestion, PaginatedResponse, MEPId, SessionId, DocumentId, CommitteeId, VotingRecordId, QuestionId, PoliticalGroup, CommitteeMembership, SessionType, SessionStatus, VoteResult, IndividualVote, VoteType, DocumentType, DocumentStatus, RelatedDocument, Rapporteur, CommitteeType, QuestionType, QuestionStatus, QuestionAddressee, ReportType } from '../schemas/europeanParliament.js';
-export { safeValidate, formatValidationErrors, EU_MEMBER_STATES, EU_LANGUAGES, EP_PARTY_GROUPS } from '../schemas/europeanParliament.js';
 //# sourceMappingURL=index.d.ts.map

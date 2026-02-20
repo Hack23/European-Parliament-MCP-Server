@@ -32,6 +32,9 @@ coverage
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
 
+# Build report outputs (intermediate, copied to docs/ during release)
+builds/
+
 # Dependency directories
 node_modules/
 
@@ -44,6 +47,3 @@ node_modules/
 # OS files
 Thumbs.db
 .DS_Store
-
-# Test results (auto-generated, should not be committed)
-docs/test-results/
