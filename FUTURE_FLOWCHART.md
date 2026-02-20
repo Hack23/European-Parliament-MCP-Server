@@ -423,7 +423,7 @@ stateDiagram-v2
     SendNotification --> [*]: Report Delivered
     
     note right of ParallelAnalysis
-        Step Functions Choice State
+        Step Functions Parallel State
         Parallel execution of analytics
         Lambda concurrency: 3x
     end note

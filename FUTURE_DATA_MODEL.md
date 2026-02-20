@@ -376,16 +376,25 @@ const MEPSchema = z.object({
   id: z.string(),
   name: z.string(),
   politicalGroup: z.string().optional().describe('DEPRECATED: Use group instead'),
-  group: z.string(),
+  group: z.string().optional(),
   // ... other fields
-}).transform(data => {
-  // Auto-migrate old field to new field when only the deprecated field is present.
-  // If both fields exist, `group` takes precedence and `politicalGroup` is ignored.
-  if (data.politicalGroup && !data.group) {
-    data.group = data.politicalGroup;
-  }
-  return data;
-});
+})
+  // Ensure at least one of `group` or `politicalGroup` is provided.
+  .refine(
+    (data) => Boolean(data.group || data.politicalGroup),
+    {
+      message: 'Either group or politicalGroup must be provided',
+      path: ['group'],
+    }
+  )
+  .transform(data => {
+    // Auto-migrate old field to new field when only the deprecated field is present.
+    // If both fields exist, `group` takes precedence and `politicalGroup` is ignored.
+    if (data.politicalGroup && !data.group) {
+      data.group = data.politicalGroup;
+    }
+    return data;
+  });
 ```
 
 ---
