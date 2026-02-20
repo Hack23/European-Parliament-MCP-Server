@@ -110,7 +110,7 @@ jobs:
       - name: Generate unit test reports
         run: |
           mkdir -p builds/test-results docs/test-results
-          npm run test:unit -- --reporter=default --reporter=html --reporter=json || true
+          npm run test:unit -- --reporter=default --reporter=html --reporter=json --outputFile.html=./builds/test-results/index.html --outputFile.json=./builds/test-results/results.json || true
           if [ -d "builds/test-results" ] && [ "$(ls -A builds/test-results 2>/dev/null)" ]; then
             cp -r builds/test-results/* docs/test-results/
           fi
