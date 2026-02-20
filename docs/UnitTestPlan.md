@@ -102,7 +102,7 @@ tests/
 Tests for individual functions and modules in isolation.
 
 ```typescript
-describe('getMeps', () => {
+describe('get_meps Tool', () => {
   it('should return MEPs filtered by country', async () => {
     // Mock EP API response
     vi.mock('../clients/europeanParliamentClient');
