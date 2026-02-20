@@ -7,6 +7,7 @@ yarn-error.log*
 # Build outputs
 dist/
 build/
+builds/
 *.tsbuildinfo
 
 # IDE
@@ -44,3 +45,4 @@ Thumbs.db
 
 # Test results (auto-generated)
 docs/test-results/
+docs/e2e-results/

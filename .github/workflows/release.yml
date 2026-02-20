@@ -109,21 +109,21 @@ jobs:
 
       - name: Generate unit test reports
         run: |
-          mkdir -p docs/test-results
-          npm run test:unit -- --reporter=html --reporter=json --reporter=json-summary > /dev/null 2>&1 || true
-          if [ -f "coverage/test-results.html" ]; then
-            cp coverage/test-results.html docs/test-results/report.html
+          mkdir -p builds/test-results docs/test-results
+          npm run test:unit -- --reporter=default --reporter=html --reporter=json || true
+          if [ -d "builds/test-results" ] && [ "$(ls -A builds/test-results 2>/dev/null)" ]; then
+            cp -r builds/test-results/* docs/test-results/
           fi
-          echo "Unit test reports generated" > docs/test-results/status.txt
+          echo "Unit test reports generated at $(date -u +%Y-%m-%dT%H:%M:%SZ)" > docs/test-results/status.txt
 
       - name: Generate E2E test reports
         run: |
-          mkdir -p docs/e2e-results
-          npm run test:e2e -- --reporter=html --reporter=json --reporter=json-summary > /dev/null 2>&1 || true
-          if [ -f "coverage/e2e-results.html" ]; then
-            cp coverage/e2e-results.html docs/e2e-results/report.html
+          mkdir -p builds/e2e-results docs/e2e-results
+          npm run test:e2e -- --reporter=default --reporter=html --reporter=json --outputFile.html=./builds/e2e-results/index.html --outputFile.json=./builds/e2e-results/results.json || true
+          if [ -d "builds/e2e-results" ] && [ "$(ls -A builds/e2e-results 2>/dev/null)" ]; then
+            cp -r builds/e2e-results/* docs/e2e-results/
           fi
-          echo "E2E test reports generated" > docs/e2e-results/status.txt
+          echo "E2E test reports generated at $(date -u +%Y-%m-%dT%H:%M:%SZ)" > docs/e2e-results/status.txt
 
       - name: Generate documentation sitemap
         run: npm run docs:sitemap
