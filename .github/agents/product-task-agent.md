@@ -199,313 +199,44 @@ Match issues to specialized agents based on domain expertise:
 
 ## 🚀 GitHub MCP Insiders Features
 
-### Overview: Copilot-Powered Issue Assignments
+**ALWAYS use Copilot assignment features when creating issues** to enable autonomous implementation.
 
-**GitHub MCP Insiders provides powerful Copilot integration** that allows you to:
-1. Assign GitHub Copilot directly to issues for autonomous implementation
-2. Create pull requests with Copilot assignments for automated code generation
-3. Use custom agents for specialized task execution
-4. Track Copilot job status for monitoring progress
-5. Build stacked PRs for complex multi-step changes
-6. Chain sequential tasks with custom instructions
+> **Note:** `gh copilot` subcommands require MCP-specific integration. If unavailable, use GitHub UI or standard workflows.
 
-**ALWAYS use these features when creating issues** to enable autonomous implementation.
+### Copilot Assignment Methods
 
-### Method 1: Basic Copilot Assignment
+| Method | Use Case | Command |
+|--------|----------|---------|
+| **Basic** | Simple, self-contained issues | `gh copilot assign <issue>` |
+| **Base Branch** | Stacked PRs, feature branches | `gh copilot assign <issue> --base-ref "feature/branch"` |
+| **Custom Instructions** | Type safety, testing, security constraints | `gh copilot assign <issue> --custom-instructions "..."` |
+| **Direct PR** | Quick fixes, no issue needed | `gh pr create --assign-copilot --base "main"` |
+| **Custom Agent PR** | Specialized domain expertise | `gh pr create --assign-copilot --agent "frontend-specialist"` |
+| **Status Tracking** | Monitor progress | `gh copilot status <job-id>` |
 
-> **Important:** The `gh copilot` subcommands are **not part of the standard GitHub CLI**.  
-> They may require a private beta feature, an MCP-specific integration, or a custom `gh` extension configured for this repository.  
-> If `gh copilot` is not available in your environment, coordinate with the repository maintainers or use the standard GitHub UI / workflows to manage assignments instead.
+### Agent Selection
 
-**Use Case:** Simple, self-contained issues with clear scope
-
-```bash
-# Create issue and assign Copilot
-gh copilot assign <issue-number>
-
-# Copilot reads the issue description and implements autonomously
-# No additional configuration needed
-```
-
-**Best For:**
-- Bug fixes with clear reproduction steps
-- Small feature additions with explicit requirements
-- Documentation updates
-- Test additions for existing code
-
-### Method 2: Advanced Assignment with Base Branch
-
-**Use Case:** Feature branch work, stacked PRs, or non-main branch targets
-
-```bash
-# Assign Copilot to work on a specific feature branch
-gh copilot assign <issue-number> --base-ref "feature/new-mep-endpoints"
-
-# Copilot creates PR against the specified base branch
-# Enables stacked PRs and feature branch workflows
-```
-
-**Best For:**
-- Stacked PRs: Issue #2 builds on Issue #1's branch
-- Feature branches: Long-running development separate from main
-- Experimental work: Test changes in isolated branches
-- Sequential dependencies: Task B requires Task A completion
-
-**Example: Stacked PR Workflow**
-```bash
-# Step 1: Create base API infrastructure issue
-gh issue create \
-  --title "Add European Parliament Members API client" \
-  --body "Implement TypeScript API client for MEP data" \
-  --label "feature,api-design,european-parliament"
-# → Creates issue #100
-
-gh copilot assign 100 --custom-instructions "Use TypeScript strict mode. Include JSDoc. Add unit tests with 85%+ coverage. Follow MCP protocol patterns."
-# → Job: job-mep-api, PR #101 against main
-
-# Step 2: Create MCP tool issue that depends on API client
-gh issue create \
-  --title "Add get_member MCP tool using new API client" \
-  --body "Create MCP tool for fetching MEP details" \
-  --label "feature,mcp-tools"
-# → Creates issue #102
-
-gh copilot assign 102 \
-  --base-ref "copilot-100-mep-api-client" \
-  --custom-instructions "Use new MEP API client. Validate input parameters. Add error handling. Include JSDoc examples." \
-  --agent "frontend-specialist"
-# → Job: job-mcp-tool, PR #103 against PR #101's branch
-
-# Step 3: Monitor progress
-gh copilot status job-mep-api
-gh copilot status job-mcp-tool
-
-# Step 4: Merge in order once complete
-# PR #101 → main (after review)
-# PR #103 → main (after review)
-```
-
-### Method 3: Assignment with Custom Instructions
-
-**Use Case:** Issues requiring specific implementation guidance or constraints
-
-```bash
-# Assign with custom instructions for Copilot
-gh copilot assign <issue-number> --custom-instructions "Use TypeScript strict mode. Follow MCP protocol patterns. Add unit tests with 90%+ coverage. Include JSDoc with examples."
-
-# Copilot follows the custom instructions during implementation
-```
-
-**Best For:**
-- Type safety requirements (e.g., "Use TypeScript strict mode")
-- Technology constraints (e.g., "Use Zod for schema validation")
-- Testing requirements (e.g., "Include unit and integration tests")
-- Security mandates (e.g., "Follow OWASP input sanitization")
-- Architecture constraints (e.g., "Follow MCP protocol patterns")
-
-**Example: MCP Tool Implementation**
-```bash
-gh copilot assign 105 --custom-instructions "Implement as MCP tool following protocol. Use Zod for input validation. Add comprehensive error handling. Include JSDoc with examples. Test with 90%+ coverage."
-```
-
-### Method 4: Direct PR Creation with Copilot
-
-**Use Case:** When you want to skip issue creation and go straight to PR
-
-```bash
-# Create PR with Copilot implementation (no issue needed)
-gh pr create --title "Add search_votes MCP tool" \
-  --body "Implement MCP tool for searching European Parliament votes" \
-  --assign-copilot \
-  --base "main"
-
-# Copilot implements and pushes to the PR branch
-```
-
-**Best For:**
-- Quick fixes that don't need issue tracking
-- Trivial changes with obvious implementation
-- Documentation-only PRs
-- Dependency updates with automated changes
-
-### Method 5: Direct PR with Custom Agent
-
-**Use Case:** Complex PRs requiring specialized agent expertise
-
-```bash
-# Create PR and assign custom agent
-gh pr create --title "Refactor European Parliament API client" \
-  --body "Modernize API architecture with TypeScript strict mode" \
-  --assign-copilot \
-  --agent "frontend-specialist" \
-  --base "main"
-
-# The frontend-specialist agent implements using specialized knowledge
-```
-
-**Best For:**
-- MCP tool/resource development → Use `frontend-specialist` agent
-- Security hardening → Use `security-architect` agent
-- Test infrastructure → Use `test-specialist` agent
-- Documentation overhauls → Use `documentation-writer` agent
-- API client refactoring → Use `frontend-specialist` agent
-
-**Agent Selection Framework:**
 | Task Type | Agent | Rationale |
 |-----------|-------|-----------|
-| MCP tools/resources | `frontend-specialist` | Expert in TypeScript and API development |
-| European Parliament API | `frontend-specialist` | Expert in TypeScript API clients |
-| Testing/coverage | `test-specialist` | Expert in test strategies |
-| Security/compliance | `security-architect` | Expert in security and ISMS alignment |
-| Documentation | `documentation-writer` | Expert in technical writing and API docs |
+| MCP tools/resources | `frontend-specialist` | TypeScript and API development |
+| European Parliament API | `frontend-specialist` | TypeScript API clients |
+| Testing/coverage | `test-specialist` | Test strategies |
+| Security/compliance | `security-architect` | Security and ISMS alignment |
+| Documentation | `documentation-writer` | Technical writing and API docs |
 
-### Method 6: Track Copilot Job Status
-
-**Use Case:** Monitor progress of assigned Copilot tasks
+### Stacked PR Workflow Example
 
 ```bash
-# Check status of Copilot job
-gh copilot status <job-id>
+# Step 1: Base API client
+gh copilot assign 100 --custom-instructions "TypeScript strict. JSDoc. 85%+ coverage."
+# → PR #101 against main
 
-# Returns: queued, in_progress, completed, failed
+# Step 2: MCP tool (depends on Step 1)
+gh copilot assign 102 --base-ref "copilot-100-mep-api-client" --agent "frontend-specialist"
+# → PR #103 against PR #101's branch
 
-# Get job details
-gh copilot status <job-id> --json
-```
-
-**Best For:**
-- Long-running implementations
-- Tracking multiple parallel Copilot jobs
-- Debugging failed assignments
-- Monitoring stacked PR progress
-
-**Example: Multi-Issue Tracking**
-```bash
-# Assign multiple issues
-gh copilot assign 100  # Returns job-abc123
-gh copilot assign 101  # Returns job-def456
-gh copilot assign 102  # Returns job-ghi789
-
-# Monitor all jobs
+# Step 3: Monitor and merge in order
 gh copilot status job-abc123
-gh copilot status job-def456
-gh copilot status job-ghi789
-```
-
-### Complete Example: Complex Feature with Stacked PRs
-
-**Scenario:** Add comprehensive European Parliament committee data support
-
-```bash
-# Step 1: Create and assign base API infrastructure issue
-gh issue create \
-  --title "Add European Parliament Committees API client" \
-  --body "Implement TypeScript API client for committee data" \
-  --label "feature,api-design,european-parliament"
-# → Issue #200
-
-gh copilot assign 200 --custom-instructions "Use TypeScript strict mode. Add Zod schemas. Include unit tests with 85%+ coverage. Follow European Parliament API patterns."
-# → Job: job-committee-api, PR #201 against main
-
-# Step 2: Create MCP tools issue that depends on API client
-gh issue create \
-  --title "Add committee MCP tools (get_committee, list_committees)" \
-  --body "Create MCP tools for fetching committee data" \
-  --label "feature,mcp-tools"
-# → Issue #202
-
-gh copilot assign 202 \
-  --base-ref "copilot-200-committee-api" \
-  --custom-instructions "Use new Committee API client. Validate inputs with Zod. Add error handling. Include JSDoc examples. Follow MCP protocol." \
-  --agent "frontend-specialist"
-# → Job: job-committee-tools, PR #203 against PR #201's branch
-
-# Step 3: Create data schema enhancement issue building on both
-gh issue create \
-  --title "Enhance committee data schema with member relationships" \
-  --body "Add TypeScript interfaces for committee-member relationships" \
-  --label "enhancement,data-schema"
-# → Issue #204
-
-gh copilot assign 204 \
-  --base-ref "copilot-202-committee-tools" \
-  --custom-instructions "Extend TypeScript interfaces. Add JSDoc. Maintain type safety. Update API transformations." \
-  --agent "frontend-specialist"
-# → Job: job-schema-enhance, PR #205 against PR #203's branch
-
-# Step 4: Monitor progress
-gh copilot status job-committee-api
-gh copilot status job-committee-tools
-gh copilot status job-schema-enhance
-
-# Step 5: Merge in order once complete
-# PR #201 → main (after review)
-# PR #203 → main (after review)
-# PR #205 → main (after review)
-```
-
-### Decision Framework: Which Method to Use?
-
-**Use Method 1 (Basic Assignment)** when:
-- ✅ Issue is self-contained and clear
-- ✅ No special constraints or instructions needed
-- ✅ Targeting main branch
-- ✅ No dependencies on other issues
-
-**Use Method 2 (Base Branch)** when:
-- ✅ Building on another PR (stacked PRs)
-- ✅ Working on a feature branch
-- ✅ Sequential task dependencies exist
-- ✅ Experimental or long-running feature
-
-**Use Method 3 (Custom Instructions)** when:
-- ✅ Type safety requirements exist (e.g., TypeScript strict mode)
-- ✅ Technology constraints needed (e.g., Zod validation)
-- ✅ Testing coverage mandated (e.g., 90%+)
-- ✅ Security requirements critical (e.g., OWASP)
-- ✅ Architecture patterns must be followed (e.g., MCP protocol)
-
-**Use Method 4 (Direct PR)** when:
-- ✅ Quick fix, no issue tracking needed
-- ✅ Trivial change with obvious implementation
-- ✅ Documentation-only change
-- ✅ Automated dependency update
-
-**Use Method 5 (Custom Agent)** when:
-- ✅ Specialized domain expertise required
-- ✅ MCP server development needed → `frontend-specialist`
-- ✅ Security hardening required → `security-architect`
-- ✅ Complex testing needed → `test-specialist`
-- ✅ Major documentation work → `documentation-writer`
-
-**Use Method 6 (Status Tracking)** when:
-- ✅ Monitoring multiple parallel jobs
-- ✅ Long-running implementations
-- ✅ Debugging failed assignments
-- ✅ Coordinating stacked PR merges
-
-### GitHub CLI (gh) for Traditional Issue Management
-
-For issues you'll handle manually (not Copilot-assigned):
-
-```bash
-# Create issue without Copilot assignment
-gh issue create \
-  --title "Issue Title" \
-  --body "Issue Description" \
-  --label "feature,mcp-tools"
-
-# List existing issues
-gh issue list --state open --limit 10
-
-# Search for related issues
-gh issue list --search "label:mcp-tools"
-
-# Add labels to existing issue
-gh issue edit <issue-number> --add-label "compliance"
-
-# Assign to project or milestone
-gh issue edit <issue-number> --milestone "v1.3.0"
 ```
 
 ## Product Improvement Workflow
