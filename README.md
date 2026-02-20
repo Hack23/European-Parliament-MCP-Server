@@ -85,7 +85,6 @@
   </a>
 </p>
 
-**Coverage Policy:** Per [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md), we maintain minimum 80% line coverage and 70% branch coverage across all modules.
 
 ## 🔐 Security & Compliance
 
