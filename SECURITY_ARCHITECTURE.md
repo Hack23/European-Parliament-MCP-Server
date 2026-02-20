@@ -41,9 +41,9 @@
 |-------------|--------|----------|
 | Input Validation | ✅ Implemented | Zod schemas in `src/schemas/` and `src/tools/` |
 | Rate Limiting | ✅ Implemented | Token bucket algorithm in `src/utils/rateLimiter.ts` |
-| Audit Logging | ✅ Implemented | Winston logger in `src/utils/logger.ts` |
+| Audit Logging | ✅ Implemented | Structured audit logger in `src/utils/auditLogger.ts` |
 | Supply Chain Security | ✅ Implemented | SLSA Level 3, Dependabot, CycloneDX SBOM |
-| Transport Security | ✅ Implemented | HTTPS/TLS for all EP API calls |
+| Transport Security | ✅ Implemented | Default EP API base URL uses HTTPS; operators MUST configure `EP_API_URL` with an `https://` URL |
 | Error Sanitization | ⚠️ Partial | Sanitized errors, stack traces excluded |
 | Data Minimization | ✅ Implemented | 15-min cache TTL, no persistent storage |
 | Authentication | 🔄 Planned | OAuth 2.0 planned Q2 2026 |
@@ -64,7 +64,7 @@
 |----------|------|-------------|--------|
 | [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | 🛡️ Current | Implemented security design and controls | ✅ Current |
 | [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) | 🚀 Future | Security roadmap and planned enhancements | ✅ Current |
-| [THREAT_MODEL.md](./THREAT_MODEL.md) | 🎯 Analysis | STRIDE threat analysis and risk assessment | ✅ Current |
+| [THREAT_MODEL.md](./THREAT_MODEL.md) | 🎯 Analysis | STRIDE threat analysis and risk assessment | ✅ Active |
 | [BCPPlan.md](./BCPPlan.md) | 🔄 Continuity | Business continuity and disaster recovery | ✅ Current |
 | [CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md) | 📋 Compliance | EU Cyber Resilience Act conformity assessment | ✅ Current |
 | [SECURITY.md](./SECURITY.md) | 📜 Policy | Security policy and vulnerability disclosure | ✅ Current |
@@ -79,7 +79,7 @@
 | **Workflows Documentation** | CI/CD automation and security | [WORKFLOWS.md](./.github/WORKFLOWS.md) |
 | **Future Workflows** | Planned CI/CD enhancements | [FUTURE_WORKFLOWS.md](./.github/FUTURE_WORKFLOWS.md) |
 | **Architecture Diagrams** | System architecture visualization | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) |
-| **Threat Model** | Threat analysis using STRIDE | [THREAT_MODEL.md](./THREAT_MODEL.md) *(planned)* |
+| **Threat Model** | Threat analysis using STRIDE | [THREAT_MODEL.md](./THREAT_MODEL.md) |
 | **Secure Development Policy** | ISMS secure development guidelines | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
 | **Open Source Policy** | ISMS open source governance | [Open_Source_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
 

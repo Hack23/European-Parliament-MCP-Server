@@ -24,6 +24,8 @@
 
 ## 📑 Table of Contents
 
+- [ISMS Policy Alignment](#-isms-policy-alignment)
+- [Security Documentation Map](#️-security-documentation-map)
 - [Purpose \& Scope](#-purpose--scope)
 - [System Classification](#-system-classification--operating-profile)
 - [STRIDE Threat Analysis](#-stride-threat-analysis)
@@ -53,7 +55,7 @@
 |-------------|--------|----------|
 | Input Validation (Zod) | ✅ Implemented | Mitigates E-1, D-4, E-3 |
 | Rate Limiting | ✅ Implemented | Mitigates D-1, D-2 |
-| HTTPS/TLS | ✅ Implemented | Mitigates S-2, T-1 |
+| HTTPS/TLS | ✅ Implemented | Default EP API base URL uses HTTPS; `EP_API_URL` must be configured with `https://` (Mitigates S-2, T-1) |
 | SLSA Level 3 | ✅ Implemented | Mitigates T-3, S-4 |
 | Dependabot + npm audit | ✅ Implemented | Mitigates T-2 |
 | Error Sanitization | ⚠️ Partial | Mitigates I-1, I-2 |

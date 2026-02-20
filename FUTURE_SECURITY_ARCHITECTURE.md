@@ -254,8 +254,8 @@ graph LR
 | AWS WAF Integration | 🔄 Planned | Q3 2026 - Phase 2 |
 | DDoS Protection | 🔄 Planned | Q3 2026 - Phase 2 |
 | AI Threat Detection | 🔄 Planned | Q4 2026 - Phase 3 |
-| Zero-Trust Architecture | 🔄 Planned | Q1 2027 - Phase 4 |
-| Compliance Automation | 🔄 Planned | Q3 2027 - Phase 7 |
+| Zero-Trust Architecture | 🔄 Planned | Q4 2026 - Phase 4 |
+| Compliance Automation | 🔄 Planned | Q1 2027 - Phase 7 |
 
 ### Compliance Framework Mapping
 
