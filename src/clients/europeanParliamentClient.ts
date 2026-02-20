@@ -1701,9 +1701,14 @@ export class EuropeanParliamentClient {
  * Recommended for most use cases to share cache and rate limiter across application.
  * 
  * **Configuration:**
- * - Base URL: https://data.europarl.europa.eu/api/v2/
+ * - Base URL: https://data.europarl.europa.eu/api/v2/ (or EP_API_URL env var)
+ * - Timeout: 10 seconds (or EP_REQUEST_TIMEOUT_MS env var)
  * - Cache: 15 min TTL, 500 entry max
  * - Rate Limit: 100 requests/minute
+ * 
+ * **Environment Variables:**
+ * - `EP_API_URL`: Override base API URL
+ * - `EP_REQUEST_TIMEOUT_MS`: Override request timeout in milliseconds (default: 10000)
  * 
  * @example
  * ```typescript
@@ -1715,7 +1720,8 @@ export class EuropeanParliamentClient {
  * 
  * @example
  * ```typescript
- * // Access cache stats from singleton
+ * // Override timeout via environment variable for E2E tests
+ * // EP_REQUEST_TIMEOUT_MS=30000 npm run test:e2e
  * const stats = epClient.getCacheStats();
  * console.log(`Global cache: ${stats.size} entries`);
  * ```
@@ -1723,4 +1729,26 @@ export class EuropeanParliamentClient {
  * @public
  * @see {@link EuropeanParliamentClient} for client class documentation
  */
-export const epClient = new EuropeanParliamentClient();
+export const epClient = new EuropeanParliamentClient({
+  baseURL: ((): string => {
+    const rawBaseUrl = process.env['EP_API_URL'];
+    if (typeof rawBaseUrl === 'string') {
+      const trimmed = rawBaseUrl.trim();
+      if (trimmed.length > 0) {
+        // Ensure trailing slash for proper URL resolution with new URL(endpoint, baseURL)
+        return trimmed.endsWith('/') ? trimmed : `${trimmed}/`;
+      }
+    }
+    return DEFAULT_EP_API_BASE_URL;
+  })(),
+  timeoutMs: ((): number => {
+    const rawTimeout = process.env['EP_REQUEST_TIMEOUT_MS'];
+    if (typeof rawTimeout === 'string' && rawTimeout.trim().length > 0) {
+      const parsed = Number.parseInt(rawTimeout, 10);
+      if (Number.isFinite(parsed) && parsed > 0) {
+        return parsed;
+      }
+    }
+    return DEFAULT_REQUEST_TIMEOUT_MS;
+  })()
+});

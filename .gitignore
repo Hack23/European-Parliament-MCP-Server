@@ -35,6 +35,9 @@ build/Release
 # Build report outputs (intermediate, copied to docs/ during release)
 builds/
 
+# TypeScript compiled output (included in npm package via .npmignore)
+dist/
+
 # Dependency directories
 node_modules/
 

@@ -13,7 +13,7 @@
       "type": "local",
       "command": "mcp-server-filesystem",
       "args": [
-        "/home/runner/work/European-Parliament-MCP-Server/European-Parliament-MCP-Server"
+        "/home/runner/work/"
       ],
       "tools": ["*"]
     },
