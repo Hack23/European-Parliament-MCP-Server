@@ -265,12 +265,12 @@ Each MCP tool becomes an independent Lambda function:
 
 | Lambda Function | Runtime | Memory | Timeout | Trigger |
 |----------------|---------|--------|---------|---------|
-| `mcp-get-meps` | Node.js 22.x | 256 MB | 30s | API Gateway |
-| `mcp-analyze-coalition` | Node.js 22.x | 512 MB | 60s | API Gateway |
-| `mcp-intelligence-briefing` | Node.js 22.x | 1024 MB | 120s | API Gateway / Step Functions |
-| `mcp-network-analysis` | Node.js 22.x | 512 MB | 60s | API Gateway |
-| `mcp-scheduled-aggregation` | Node.js 22.x | 1024 MB | 300s | EventBridge (hourly) |
-| `mcp-risk-assessment` | Node.js 22.x | 512 MB | 60s | API Gateway |
+| `mcp-get-meps` | Node.js 24.x | 256 MB | 30s | API Gateway |
+| `mcp-analyze-coalition` | Node.js 24.x | 512 MB | 60s | API Gateway |
+| `mcp-intelligence-briefing` | Node.js 24.x | 1024 MB | 120s | API Gateway / Step Functions |
+| `mcp-network-analysis` | Node.js 24.x | 512 MB | 60s | API Gateway |
+| `mcp-scheduled-aggregation` | Node.js 24.x | 1024 MB | 300s | EventBridge (hourly) |
+| `mcp-risk-assessment` | Node.js 24.x | 512 MB | 60s | API Gateway |
 
 ### **💾 DynamoDB Data Architecture**
 

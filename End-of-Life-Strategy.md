@@ -88,10 +88,10 @@ graph TB
 
 | Component | Current Version | EOL Date | Risk Level | Migration Path |
 |-----------|----------------|----------|------------|---------------|
-| **Node.js** | 22.x LTS | April 2027 | 🟢 Low | Upgrade to Node.js 24 LTS |
+| **Node.js** | >=24.0.0 (24.x LTS) | April 2028 | 🟢 Low | Stay on Node.js 24 LTS; plan evaluation of Node.js 26 LTS |
 | **TypeScript** | 5.x | Active | 🟢 Low | Follow semver updates |
 | **MCP SDK** | Latest | Active | 🟡 Medium | Track protocol evolution |
-| **Zod** | 3.x | Active | 🟢 Low | Follow semver updates |
+| **Zod** | ^4.3.6 (4.x) | Active | 🟢 Low | Follow semver updates |
 | **Vitest** | Latest | Active | 🟢 Low | Follow semver updates |
 | **npm** | Registry | Indefinite | 🟢 Low | N/A |
 | **GitHub Actions** | Latest | Indefinite | 🟢 Low | Pin action versions |
@@ -100,10 +100,10 @@ graph TB
 
 | Event | Date | Action Required |
 |-------|------|----------------|
-| Node.js 22 LTS active | Oct 2024 - Oct 2025 | Current stable |
-| Node.js 22 maintenance | Oct 2025 - April 2027 | Security updates only |
-| Node.js 24 LTS release | Oct 2025 | Begin testing compatibility |
-| Node.js 22 EOL | April 2027 | Must migrate to Node.js 24+ |
+| Node.js 24 LTS active | Oct 2025 - Oct 2026 | Current stable |
+| Node.js 24 maintenance | Oct 2026 - April 2028 | Security updates only |
+| Node.js 26 LTS release | Oct 2027 | Begin testing compatibility |
+| Node.js 24 EOL | April 2028 | Must migrate to Node.js 26+ |
 
 ---
 
