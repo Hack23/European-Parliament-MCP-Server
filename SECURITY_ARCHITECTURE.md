@@ -31,7 +31,7 @@
 | **Workflows Documentation** | CI/CD automation and security | [WORKFLOWS.md](./.github/WORKFLOWS.md) |
 | **Future Workflows** | Planned CI/CD enhancements | [FUTURE_WORKFLOWS.md](./.github/FUTURE_WORKFLOWS.md) |
 | **Architecture Diagrams** | System architecture visualization | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) |
-| **Threat Model** | Threat analysis using STRIDE | [THREAT_MODEL.md](./THREAT_MODEL.md) *(planned)* |
+| **Threat Model** | Threat analysis using STRIDE | [THREAT_MODEL.md](./THREAT_MODEL.md) |
 | **Secure Development Policy** | ISMS secure development guidelines | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
 | **Open Source Policy** | ISMS open source governance | [Open_Source_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
 
@@ -72,29 +72,29 @@ This document describes the implemented security architecture for the European P
 
 ## 📑 Table of Contents
 
-- [Information Classification & Asset Management](#-information-classification--asset-management)
-- [Security Architecture Overview](#️-security-architecture-overview)
-- [1. Authentication & Authorization](#-1-authentication--authorization)
-- [2. Session & Action Tracking](#-2-session--action-tracking)
-- [3. Data Integrity & Auditing](#-3-data-integrity--auditing)
-- [4. Data Protection & Key Management](#-4-data-protection--key-management)
-- [5. Network Security & Perimeter Protection](#-5-network-security--perimeter-protection)
-- [6. VPC Endpoints & Private Access](#-6-vpc-endpoints--private-access)
-- [7. High Availability & Resilience](#️-7-high-availability--resilience)
-- [8. Threat Detection & Investigation](#-8-threat-detection--investigation)
-- [9. Vulnerability Management](#-9-vulnerability-management)
-- [10. Configuration & Compliance Management](#️-10-configuration--compliance-management)
-- [11. Security Monitoring & Analytics](#-11-security-monitoring--analytics)
-- [12. Automated Security Operations](#-12-automated-security-operations)
-- [13. Application Security Controls](#️-13-application-security-controls)
-- [14. CI/CD Pipeline Security](#-14-cicd-pipeline-security)
-- [15. Defense-in-Depth Strategy](#️-15-defense-in-depth-strategy)
-- [16. Security Operations](#-16-security-operations)
-- [17. Compliance Framework Mapping](#-17-compliance-framework-mapping)
-- [18. ISMS Policy Alignment](#-18-isms-policy-alignment)
-- [19. Security Investment](#-19-security-investment)
-- [Conclusion](#-conclusion)
-- [Related Documentation](#-related-documentation)
+- [Information Classification & Asset Management](#information-classification--asset-management)
+- [Security Architecture Overview](#security-architecture-overview)
+- [1. Authentication & Authorization](#1-authentication--authorization)
+- [2. Session & Action Tracking](#2-session--action-tracking)
+- [3. Data Integrity & Auditing](#3-data-integrity--auditing)
+- [4. Data Protection & Key Management](#4-data-protection--key-management)
+- [5. Network Security & Perimeter Protection](#5-network-security--perimeter-protection)
+- [6. VPC Endpoints & Private Access](#6-vpc-endpoints--private-access)
+- [7. High Availability & Resilience](#7-high-availability--resilience)
+- [8. Threat Detection & Investigation](#8-threat-detection--investigation)
+- [9. Vulnerability Management](#9-vulnerability-management)
+- [10. Configuration & Compliance Management](#10-configuration--compliance-management)
+- [11. Security Monitoring & Analytics](#11-security-monitoring--analytics)
+- [12. Automated Security Operations](#12-automated-security-operations)
+- [13. Application Security Controls](#13-application-security-controls)
+- [14. CI/CD Pipeline Security](#14-cicd-pipeline-security)
+- [15. Defense-in-Depth Strategy](#15-defense-in-depth-strategy)
+- [16. Security Operations](#16-security-operations)
+- [17. Compliance Framework Mapping](#17-compliance-framework-mapping)
+- [18. ISMS Policy Alignment](#18-isms-policy-alignment)
+- [19. Security Investment](#19-security-investment)
+- [Conclusion](#conclusion)
+- [Related Documentation](#related-documentation)
 
 ---
 
@@ -829,29 +829,19 @@ graph TB
 **Every MCP tool implements strict input validation:**
 
 ```typescript
-// Example: get_meps tool input validation
-import { z } from 'zod';
+// Example: get_meps tool input validation (matches actual implementation)
+import { GetMEPsSchema } from '../schemas/europeanParliament.js';
 
-const GetMepsArgsSchema = z.object({
-  country: z.string()
-    .regex(/^[A-Z]{2}$/, 'Country must be 2-letter ISO code')
-    .optional(),
-  name: z.string()
-    .regex(/^[a-zA-Z\s\-']+$/, 'Invalid name format')
-    .max(100, 'Name too long')
-    .optional(),
-  limit: z.number()
-    .int('Limit must be integer')
-    .min(1, 'Minimum 1')
-    .max(100, 'Maximum 100 results')
-    .optional()
-    .default(50)
-});
+// Actual schema: country (2-letter ISO code), group, committee, active, limit, offset
+const validatedInput = GetMEPsSchema.parse(args);
+// validated: { country?: 'SE', group?: 'EPP', committee?: 'AFET', active: true, limit: 50, offset: 0 }
 
-// Automatic validation - throws ValidationError on invalid input
-export async function handle_get_meps(args: unknown) {
-  const validated = GetMepsArgsSchema.parse(args);
-  // ... safe to use validated input
+// Automatic validation - throws ZodError on invalid input
+export async function handleGetMEPs(args: unknown) {
+  const params = GetMEPsSchema.parse(args);  // Validates all fields
+  // params.country is guaranteed to match /^[A-Z]{2}$/ if provided
+  // params.limit is guaranteed to be integer 1-100
+  // params.active defaults to true
 }
 ```
 
@@ -859,71 +849,63 @@ export async function handle_get_meps(args: unknown) {
 
 | Tool | Parameters | Validation Strategy | Status |
 |------|------------|---------------------|--------|
-| `get_meps` | country, name, limit | ISO code, name regex, numeric limits | ✅ |
-| `get_mep_details` | mep_id | Integer, positive, max 999999 | ✅ |
-| `get_documents` | date, keywords, type | ISO date, alphanumeric, enum | ✅ |
-| `get_plenary_sessions` | date_from, date_to | ISO date range, max 1 year | ✅ |
-| `get_committees` | code | Uppercase alphanumeric, 4 chars | ✅ |
-| `get_committee_members` | committee_code | Uppercase alphanumeric, 4 chars | ✅ |
-| `get_voting_records` | date, mep_id | ISO date, integer ID | ✅ |
-| `search_debates` | keywords, date | Sanitized text, ISO date | ✅ |
-| `get_activities` | mep_id, date_from | Integer ID, ISO date | ✅ |
-| `get_press_releases` | keywords, date | Sanitized text, ISO date | ✅ |
+| `get_meps` | country, group, committee, active, limit, offset | ISO-2 country, string max 50/100, boolean, int 1-100 | ✅ |
+| `get_mep_details` | id | String min 1, max 100 | ✅ |
+| `search_documents` | keyword, documentType, dateFrom, dateTo, committee, limit | Regex alphanum, enum, ISO date, int 1-100 | ✅ |
+| `get_plenary_sessions` | dateFrom, dateTo, location, limit, offset | ISO date range, string max 100, int 1-100 | ✅ |
+| `get_voting_records` | sessionId, mepId, topic, dateFrom, dateTo, limit | String max 100/200, ISO date range, int 1-100 | ✅ |
+| `get_parliamentary_questions` | type, author, topic, status, dateFrom, dateTo | Enum WRITTEN/ORAL, string max 100/200, enum, ISO date | ✅ |
+| `get_committee_info` | id, abbreviation | String max 100, string max 20 | ✅ |
+| `analyze_voting_patterns` | mepId, dateFrom, dateTo, compareWithGroup | String max 100, ISO date range, boolean | ✅ |
+| `track_legislation` | procedureId | String min 1, max 100 | ✅ |
+| `generate_report` | reportType, subjectId, dateFrom, dateTo | Enum 4 values, string max 100, ISO date range | ✅ |
 
 ### Resource Access Control
 
 **European Parliament API Access:**
 
 ```typescript
-// API client with access controls
+// EuropeanParliamentClient: access controls (illustrative — actual impl in src/clients/europeanParliamentClient.ts)
 class EuropeanParliamentClient {
-  private readonly baseUrl = 'https://data.europarl.europa.eu/api/v2';
-  private readonly timeout = 30000;  // 30 second timeout
+  private readonly baseURL = 'https://data.europarl.europa.eu/api/v2/';
+  private readonly timeoutMs = DEFAULT_REQUEST_TIMEOUT_MS;  // 10s default (EP_REQUEST_TIMEOUT_MS env var)
   
-  async makeRequest(endpoint: string, params: Record<string, any>) {
-    // 1. Rate limiting check
-    await rateLimiter.checkLimit();
-    
-    // 2. Validate endpoint (whitelist only)
-    if (!ALLOWED_ENDPOINTS.includes(endpoint)) {
-      throw new Error('Unauthorized endpoint');
+  private async get<T>(endpoint: string, params: Record<string, unknown>): Promise<T> {
+    // 1. Rate limiting check (100 req/min token bucket)
+    if (!await this.rateLimiter.tryRemoveTokens(1)) {
+      throw new Error('Rate limit exceeded');
     }
     
-    // 3. Parameter sanitization
-    const sanitized = sanitizeParams(params);
+    // 2. Build URL from validated endpoint only (no user-controlled URLs)
+    const url = new URL(endpoint, this.baseURL);
+    
+    // 3. Parameter sanitization — only pass validated params
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== undefined) url.searchParams.set(key, String(value));
+    }
     
     // 4. Make request with timeout
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+    const response = await fetch(url.toString(), {
       method: 'GET',
       headers: { 'Accept': 'application/json' },
-      signal: AbortSignal.timeout(this.timeout)
+      signal: AbortSignal.timeout(this.timeoutMs)
     });
     
-    // 5. Validate response structure
-    return this.validateResponse(response);
-  }
-  
-  private validateResponse(response: Response) {
+    // 5. Validate response structure before returning
     if (!response.ok) {
       logger.warn('API error', { status: response.status });
       throw new Error('API request failed');
     }
-    return response.json();
+    return response.json() as T;
   }
 }
 
-// Whitelist of allowed endpoints
-const ALLOWED_ENDPOINTS = [
-  '/meps',
-  '/mep',
-  '/documents',
-  '/plenary-sessions',
-  '/committees',
-  '/voting-records',
-  '/debates',
-  '/activities',
-  '/press-releases'
-];
+// Actual EP API endpoints used (all read-only, no user-controlled paths)
+// 'meps'          → getMEPs()
+// 'meps/{id}'     → getMEPDetails()
+// 'meetings'      → getPlenarySessions()
+// Other tools (getVotingRecords, searchDocuments, etc.) use structured data generation
+// with the same rate-limiting and timeout controls applied
 ```
 
 ### Prompt Injection Prevention
@@ -961,9 +943,9 @@ function sanitizeOutput(data: any): MCPResponse {
 - Limited to EP API read operations only
 - No user credentials stored or accessed
 
-### MCP Protocol Security
+### Protocol-Level Controls
 
-**Protocol-Level Controls:**
+**MCP Server Initialization:**
 
 ```typescript
 // MCP server initialization with security settings
@@ -977,9 +959,9 @@ const server = new Server(
   },
   {
     capabilities: {
-      tools: {},      // Only tools capability enabled
-      resources: {},  // Resources disabled
-      prompts: {}     // Prompts disabled
+      tools: {},      // Tools capability enabled with handlers registered
+      resources: {},  // Resources capability declared; no handlers registered yet
+      prompts: {}     // Prompts capability declared; no handlers registered yet
     },
   }
 );
@@ -1012,10 +994,10 @@ server.onerror = (error) => {
 |---------|----------------|---------------|
 | Input Validation | Zod schemas, regex filters | A03: Injection |
 | Output Encoding | JSON serialization | A03: Injection |
-| Rate Limiting | Token bucket, 100/15min | A01: Broken Access Control |
+| Rate Limiting | Token bucket, 100 req/min | A01: Broken Access Control |
 | Error Handling | Sanitized messages, no stack traces | A05: Security Misconfiguration |
 | Audit Logging | All operations logged | A09: Logging Failures |
-| Timeout Controls | 30s max request time | A05: Security Misconfiguration |
+| Timeout Controls | 10s default (configurable via EP_REQUEST_TIMEOUT_MS) | A05: Security Misconfiguration |
 | Resource Limits | Max 100 results per query | A01: Broken Access Control |
 | Cache Security | 15min TTL, deterministic keys | A08: Data Integrity Failures |
 
@@ -1578,10 +1560,10 @@ The European Parliament MCP Server security architecture is aligned with Hack23 
 
 | Requirement | Implementation | Evidence |
 |-------------|----------------|----------|
-| **SBOM** | SPDX 2.3 SBOM generated in CI/CD | [SBOM workflow](../.github/workflows/sbom-generation.yml) |
+| **SBOM** | SPDX 2.3 SBOM generated in CI/CD | [SBOM workflow](./.github/workflows/sbom-generation.yml) |
 | **Vulnerability Disclosure** | Public SECURITY.md, coordinated disclosure | [SECURITY.md](./SECURITY.md) |
-| **Security Updates** | Dependabot automated updates, CVE SLAs | [Dependency Review](../.github/workflows/dependency-review.yml) |
-| **Security Testing** | SAST, SCA, 80%+ test coverage | [CodeQL](../.github/workflows/codeql.yml), [Tests](../.github/workflows/integration-tests.yml) |
+| **Security Updates** | Dependabot automated updates, CVE SLAs | [Dependency Review](./.github/workflows/dependency-review.yml) |
+| **Security Testing** | SAST, SCA, 80%+ test coverage | [CodeQL](./.github/workflows/codeql.yml), [Tests](./.github/workflows/integration-tests.yml) |
 | **Documentation** | Comprehensive security architecture | This document |
 
 ---
