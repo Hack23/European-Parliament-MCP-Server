@@ -1,9 +1,25 @@
-# 📊 European Parliament MCP Server - State Diagrams
+<p align="center">
+  <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
+</p>
 
-**Document Version:** 1.0  
-**Last Updated:** 2026-02-17  
-**Status:** Current State Architecture  
-**ISMS Compliance:** ISO 27001 (A.12.1), NIST CSF 2.0 (PR.IP), CIS Controls v8.1 (4.1)
+<h1 align="center">📊 European Parliament MCP Server - State Diagrams</h1>
+
+<p align="center">
+  <strong>System State Transitions and Lifecycles</strong><br>
+  <em>State Machine Documentation for Operations and Compliance</em>
+</p>
+
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/Owner-Architect-0A66C2?style=for-the-badge" alt="Owner"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--17-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
+</p>
+
+**📋 Document Owner:** Architecture Team | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-17 (UTC)  
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-17  
+**🏷️ Classification:** Public (Open Source MCP Server)  
+**✅ ISMS Compliance:** ISO 27001 (A.12.1), NIST CSF 2.0 (PR.IP), CIS Controls v8.1 (4.1)
 
 ---
 
@@ -437,8 +453,7 @@ stateDiagram-v2
 
 ---
 
-**Document Control:**
-- **Owner**: CTO/Lead Architect
-- **Reviewers**: Security Team, DevOps Team
-- **Approval**: CEO
-- **Next Review**: 2026-08-17 (Quarterly)
+<p align="center">
+  <strong>Built with ❤️ by <a href="https://hack23.com">Hack23 AB</a></strong><br>
+  <em>State diagram documentation following ISMS standards</em>
+</p>
