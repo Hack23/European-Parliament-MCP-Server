@@ -160,7 +160,7 @@ mindmap
 | **Source Code & Build Pipeline** | T-2, T-3, S-4 | SLSA Level 3, branch protection, GPG signing, Dependabot | Low-Medium |
 | **Service Reputation & Trust** | All categories | OpenSSF Scorecard monitoring, security badges, transparent documentation | Low |
 | **EP API Access & Availability** | D-1, D-2, S-2 | Rate limiting, retry logic, circuit breaker, HTTPS verification | Medium |
-| **npm Package Distribution** | S-3, S-4, T-2 | Official namespace, npm 2FA, SBOM, npm provenance | Low-Medium |
+| **npm Package Distribution** | S-3, S-4, T-2 | Official package name ownership, npm 2FA, SBOM, npm provenance | Low-Medium |
 | **Audit Trail & Logging** | R-1, R-2, R-3 | Structured stderr logging, immutable logs, timestamp integrity | Low |
 
 ---
