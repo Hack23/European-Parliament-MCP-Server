@@ -73,7 +73,7 @@ jobs:
       - name: Run E2E tests
         run: npm run test:e2e
         env:
-          EP_REQUEST_TIMEOUT_MS: 30000
+          EP_REQUEST_TIMEOUT_MS: 60000
           NODE_ENV: test
 
       - name: Run performance tests

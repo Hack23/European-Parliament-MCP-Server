@@ -13,11 +13,14 @@ import { parsePaginatedMCPResponse, parseMCPResponse, validateMCPResponse } from
 import type { MEP } from '../../src/types/europeanParliament.js';
 
 /**
- * E2E test timeout: 35 seconds
- * - API timeout: up to 30s when EP_REQUEST_TIMEOUT_MS=30000 (default 10s)
+ * E2E test timeout: 65 seconds
+ * - API timeout: up to 60s when EP_REQUEST_TIMEOUT_MS=60000 (default 10s)
  * - Test overhead: ~5s (MCP protocol, framework)
+ * 
+ * Increased from 35s to 65s because European Parliament API can take 30-60+ seconds
+ * to respond during peak usage or when data is not cached.
  */
-const E2E_TEST_TIMEOUT_MS = 35000;
+const E2E_TEST_TIMEOUT_MS = 65000;
 
 describe('MEP Query E2E Tests', () => {
   let client: MCPTestClient;
