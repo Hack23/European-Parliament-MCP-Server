@@ -1,5 +1,3 @@
-# Data Model
-
 <p align="center">
   <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
 </p>
@@ -9,6 +7,13 @@
 <p align="center">
   <strong>Data Structures, Entities, and Relationships</strong><br>
   <em>Comprehensive Data Architecture Documentation</em>
+</p>
+
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/Owner-Architect-0A66C2?style=for-the-badge" alt="Owner"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--17-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
 ---
@@ -586,6 +591,44 @@ function transformMEP(apiData: any): MEP {
   };
 }
 ```
+
+---
+
+## 📋 ISMS Compliance
+
+### ISO 27001 Controls
+
+| Control | Requirement | Implementation |
+|---------|-------------|----------------|
+| A.8.1 | Asset Inventory | All data entities documented and classified |
+| A.8.2 | Information Classification | Data classification table (Public/Internal/Confidential) |
+| A.8.3 | Media Handling | No persistent storage; cache-only architecture |
+| A.18.1 | Privacy & Data Protection | GDPR compliance: no persistent PII, 15-min TTL cache |
+
+### NIST CSF 2.0 Functions
+
+| Function | Category | Implementation |
+|----------|----------|----------------|
+| ID.AM | Asset Management | Complete entity relationship documentation |
+| PR.DS | Data Security | GDPR-compliant data handling, TLS in transit |
+| PR.IP | Information Protection | Data minimization, purpose limitation |
+| DE.AE | Anomalies & Events | Audit logging for data access (IDs only) |
+
+### CIS Controls v8.1
+
+| Control | Description | Implementation |
+|---------|-------------|----------------|
+| 3.1 | Data Inventory | Complete data classification table |
+| 3.3 | Protect Data | Encryption in transit, minimal retention |
+| 3.6 | Encrypt Data on End-User Devices | No persistent storage on server |
+| 8.2 | Audit Logging | Access logging with 90-day retention |
+
+### ISMS Policy References
+
+| Policy | Relevance | Link |
+|--------|-----------|------|
+| 🔒 Secure Development Policy | Data handling requirements | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
+| 🌐 Open Source Policy | Public data transparency | [Open_Source_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
 
 ---
 
