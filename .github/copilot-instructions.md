@@ -15,9 +15,9 @@ This file provides guidance for GitHub Copilot coding agent when working on this
 
 ## 🎯 Agent Skills Catalog
 
-This repository includes **27 comprehensive skills** that provide reusable patterns:
+This repository includes **26 comprehensive skills** that provide reusable patterns:
 
-### Core Development Skills (11)
+### Core Development Skills (10)
 - **mcp-server-development** - MCP protocol patterns, tool implementation
 - **european-parliament-api** - EP API integration, caching, attribution
 - **gdpr-compliance** - GDPR and data protection patterns
@@ -28,7 +28,6 @@ This repository includes **27 comprehensive skills** that provide reusable patte
 - **testing-strategy** - 80%+ coverage, deterministic API tests
 - **documentation-standards** - JSDoc, OpenAPI, ISMS documentation
 - **performance-optimization** - Node.js/API performance optimization
-- **ai-development-governance** - AI-augmented development controls, GitHub Copilot governance
 
 ### Security & Compliance Skills (6)
 - **secure-code-review** - OWASP Top 10 review, input validation, TypeScript security
@@ -509,25 +508,20 @@ See `SECURITY.md` for complete compliance details.
 
 Every Hack23 AB repository MUST maintain comprehensive architectural documentation per the [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md):
 
-### Required Security Architecture Documents
+### Required Architecture Documentation Portfolio (14 documents total)
 
-| Document | Purpose |
-|----------|---------|
-| 🏛️ `SECURITY_ARCHITECTURE.md` | Current implemented security design and controls |
-| 🚀 `FUTURE_SECURITY_ARCHITECTURE.md` | Planned security improvements and roadmap |
-
-### Required Architecture Documentation Portfolio
-
-**Current State:**
+**Current State (7 documents):**
 - 🏛️ `ARCHITECTURE.md` — Complete C4 models (Context, Container, Component views)
+- 🏛️ `SECURITY_ARCHITECTURE.md` — Current implemented security design and controls
 - 📊 `DATA_MODEL.md` — Data structures, entities, and relationships
 - 🔄 `FLOWCHART.md` — Business process and data flows
 - 📈 `STATEDIAGRAM.md` — System state transitions and lifecycles
 - 🧠 `MINDMAP.md` — System conceptual relationships
 - 💼 `SWOT.md` — Strategic analysis and positioning
 
-**Future State:**
+**Future State (7 documents):**
 - 🚀 `FUTURE_ARCHITECTURE.md` — Architectural evolution roadmap
+- 🚀 `FUTURE_SECURITY_ARCHITECTURE.md` — Planned security improvements and roadmap
 - 📊 `FUTURE_DATA_MODEL.md` — Enhanced data architecture plans
 - 🔄 `FUTURE_FLOWCHART.md` — Improved process workflows
 - 📈 `FUTURE_STATEDIAGRAM.md` — Advanced state management

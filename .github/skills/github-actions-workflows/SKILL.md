@@ -78,7 +78,7 @@ jobs:
 - name: Run tests with coverage
   run: npm run test:coverage
 - name: Upload coverage
-  uses: codecov/codecov-action@v4
+  uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0
   with:
     files: ./coverage/lcov.info
 ```

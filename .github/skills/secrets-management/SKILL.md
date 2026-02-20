@@ -51,16 +51,17 @@ env:
 
 ### Rule 4: MCP Server Token Security
 
-```json
-{
-  "mcpServers": {
-    "github": {
-      "env": {
-        "GITHUB_TOKEN": "${{ secrets.COPILOT_MCP_GITHUB_PERSONAL_ACCESS_TOKEN }}"
-      }
-    }
-  }
-}
+MCP server tokens are injected at runtime by the GitHub Copilot environment via `.github/copilot-mcp.json`. Secrets are never stored in configuration files — GitHub resolves `${{ secrets.* }}` references during workflow execution:
+
+```yaml
+# .github/copilot-mcp.json uses secret references (resolved by GitHub at runtime)
+# The MCP client receives actual token values — never template strings
+# See .github/copilot-mcp.json for the canonical configuration
+```
+
+Environment variables for local development:
+```bash
+export GITHUB_TOKEN="ghp_your_token_here"  # Set in shell, never in code
 ```
 
 ## Detection and Prevention

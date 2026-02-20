@@ -55,20 +55,11 @@ Step 1: Data models (PR → main)
 
 ### MCP Server Configuration
 
-```json
-{
-  "mcpServers": {
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github", "--toolsets", "all", "--tools", "*"],
-      "env": {
-        "GITHUB_TOKEN": "${{ secrets.COPILOT_MCP_GITHUB_PERSONAL_ACCESS_TOKEN }}",
-        "GITHUB_API_URL": "https://api.githubcopilot.com/mcp/insiders"
-      }
-    }
-  }
-}
-```
+MCP server configuration is defined in `.github/copilot-mcp.json`. Secret references (`${{ secrets.* }}`) are resolved by the GitHub Copilot runtime — they are **not** literal JSON values. The MCP client receives actual token values at startup.
+
+**Supply chain note:** The `npx -y @modelcontextprotocol/server-github` pattern downloads the latest version on each invocation. For production environments, pin to a specific version (e.g., `@modelcontextprotocol/server-github@0.x.y`) or vendor the package locally to prevent supply chain attacks when injecting privileged tokens.
+
+See `.github/copilot-mcp.json` in this repository for the canonical configuration.
 
 ## OWASP Agentic Security
 

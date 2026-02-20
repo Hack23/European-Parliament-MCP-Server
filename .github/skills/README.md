@@ -11,7 +11,7 @@ Agent Skills are structured folders of instructions that teach GitHub Copilot to
 
 ## 🎯 Available Skills
 
-**Total: 27 Skills** across Core Development, Security & Compliance, DevOps & Quality, and ISMS domains.
+**Total: 26 Skills** across Core Development, Security & Compliance, DevOps & Quality, and ISMS domains.
 
 ### Core MCP Development Skills
 
@@ -152,21 +152,6 @@ Patterns for optimizing Node.js API performance, MCP protocol efficiency, and da
 - Profile and measure performance
 
 **When to use:** Performance improvements, optimization work, profiling
-
----
-
-### 🤖 [ai-development-governance](./ai-development-governance/SKILL.md)
-**AI-augmented development, GitHub Copilot governance, LLM security**
-
-Enforces [Secure Development Policy Section 🤖](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#ai-augmented-development-controls) for responsible AI use. Covers:
-- AI as proposal generator (not authority) principle
-- PR review requirements for AI-generated code
-- Custom Copilot agent governance
-- Security requirements (no secrets in prompts, human review mandatory)
-- AI code disclosure and documentation
-- Test coverage requirements (80%+)
-
-**When to use:** Using GitHub Copilot, reviewing AI code, creating custom agents, AI security
 
 ---
 
