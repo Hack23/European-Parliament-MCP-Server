@@ -93,7 +93,7 @@ Integrated with [🎯 Hack23 AB Threat Modeling Policy](https://github.com/Hack2
 
 | Property | Value |
 |----------|-------|
-| **Runtime** | Node.js 22+ (LTS) |
+| **Runtime** | Node.js 24+ (LTS) |
 | **Language** | TypeScript 5.x (strict mode) |
 | **Transport** | stdio (local process) |
 | **Data Source** | European Parliament Open Data API |

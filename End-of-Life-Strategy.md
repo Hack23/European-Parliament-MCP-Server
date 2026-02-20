@@ -61,12 +61,12 @@ This strategy aligns with [Hack23 AB's Vulnerability Management Policy](https://
 ```mermaid
 graph TB
     subgraph "🏗️ Core Runtime"
-        NODE[Node.js 22+ LTS]
+        NODE[Node.js 24.x+ LTS]
         TS[TypeScript 5.x]
     end
     subgraph "📦 Key Dependencies"
         MCP["@modelcontextprotocol/sdk"]
-        ZOD[Zod 3.x]
+        ZOD[Zod 4.x]
     end
     subgraph "🧪 Testing"
         VIT[Vitest]

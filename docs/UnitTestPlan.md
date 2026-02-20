@@ -106,7 +106,7 @@ describe('getMeps', () => {
   it('should return MEPs filtered by country', async () => {
     // Mock EP API response
     vi.mock('../clients/europeanParliamentClient');
-    const result = await getMeps({ country: 'Sweden' });
+    const result = await getMeps({ country: 'SE' });
     expect(result).toBeDefined();
     expect(Array.isArray(result)).toBe(true);
   });
@@ -126,11 +126,11 @@ Tests for Zod schema validation on all MCP tool inputs.
 | Test Case | Input | Expected |
 |-----------|-------|----------|
 | Valid country code | `{ country: "SE" }` | ✅ Pass |
-| Invalid country code | `{ country: "XX" }` | ✅ Pass (API handles) |
-| Empty string | `{ country: "" }` | Validated |
-| Missing required field | `{}` | Default values applied |
-| Injection attempt | `{ country: "'; DROP TABLE--" }` | Sanitized by Zod |
-| Excessive length | `{ country: "A".repeat(1000) }` | Validated |
+| Invalid country code | `{ country: "XX" }` | ❌ Validation error (invalid country code rejected) |
+| Empty string | `{ country: "" }` | ❌ Validation error (empty string rejected) |
+| Missing required field | `{}` | ❌ Validation error (required field missing) |
+| Injection attempt | `{ country: "'; DROP TABLE--" }` | ❌ Validation error (malformed input rejected) |
+| Excessive length | `{ country: "A".repeat(1000) }` | ❌ Validation error (excessive length rejected) |
 
 ### **3. Error Handling Tests**
 
@@ -261,7 +261,8 @@ npm run test:coverage
 
 | Document | Description | Link |
 |----------|-------------|------|
-| 📊 Test Coverage Report | Current coverage metrics | [TEST_COVERAGE_REPORT.md](../TEST_COVERAGE_REPORT.md) |
+| 📊 Test Coverage Report | Historical coverage snapshot | [TEST_COVERAGE_REPORT.md](../TEST_COVERAGE_REPORT.md) |
+| 📈 Current Coverage Metrics | Latest generated coverage summary (JSON) | [coverage/coverage-summary.json](coverage/coverage-summary.json) |
 | 🧪 Integration Testing | Integration test guide | [../INTEGRATION_TESTING.md](../INTEGRATION_TESTING.md) |
 | 🏛️ Architecture | System architecture | [../ARCHITECTURE.md](../ARCHITECTURE.md) |
 | 🛡️ Security Architecture | Security controls tested | [../SECURITY_ARCHITECTURE.md](../SECURITY_ARCHITECTURE.md) |
@@ -270,5 +271,5 @@ npm run test:coverage
 
 <p align="center">
   <em>This unit test plan is maintained as part of the <a href="https://github.com/Hack23/ISMS-PUBLIC">Hack23 AB ISMS</a> framework.</em><br>
-  <em>Licensed under <a href="LICENSE.md">Apache-2.0</a></em>
+  <em>Licensed under <a href="../LICENSE.md">Apache-2.0</a></em>
 </p>
