@@ -29,8 +29,8 @@ export default defineConfig({
     },
     reporters: ['default', 'html', 'json'],
     outputFile: {
-      html: './docs/test-results/index.html',
-      json: './docs/test-results/results.json'
+      html: './builds/test-results/index.html',
+      json: './builds/test-results/results.json'
     },
     include: [
       'src/**/*.test.ts',
