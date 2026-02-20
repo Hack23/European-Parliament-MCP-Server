@@ -46,7 +46,9 @@ export async function handleAnalyzeVotingPatterns(args) {
             },
             ...(params.compareWithGroup && {
                 groupAlignment: {
-                    politicalGroup: mep.politicalGroup,
+                    politicalGroup: typeof mep.politicalGroup === 'string'
+                        ? mep.politicalGroup
+                        : mep.politicalGroup.code,
                     alignmentRate: 87.5,
                     divergentVotes: 156
                 }

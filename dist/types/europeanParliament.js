@@ -1,19 +1,16 @@
 /**
  * Type definitions for European Parliament data structures
  *
- * This module provides type-safe interfaces for European Parliament Open Data Portal.
- * All types follow strict TypeScript standards and include runtime validation schemas.
+ * These types are now automatically inferred from Zod schemas.
+ * Import from schemas for the most up-to-date types.
  *
- * **Data Source:** European Parliament Open Data Portal v2
- * @see https://data.europarl.europa.eu/api/v2/
+ * ISMS Policy: SC-002 (Secure Coding Standards)
  *
- * **ISMS Policy:** SC-002 (Secure Coding Standards)
- * @see https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md
- *
- * **GDPR Compliance:** Personal data fields marked with @gdpr tag
- * @see https://gdpr-info.eu/
- *
- * @module europeanParliament
+ * @deprecated Import types directly from schemas/europeanParliament.ts instead
+ * @see src/schemas/europeanParliament.ts
  */
-export {};
+// Export helper functions for schema validation
+export { safeValidate, formatValidationErrors } from '../schemas/europeanParliament.js';
+// Export reference data constants
+export { EU_MEMBER_STATES, EU_LANGUAGES, EP_PARTY_GROUPS } from '../schemas/europeanParliament.js';
 //# sourceMappingURL=europeanParliament.js.map
