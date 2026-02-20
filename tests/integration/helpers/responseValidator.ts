@@ -27,37 +27,6 @@ export function validateMCPStructure(
 }
 
 /**
- * Validate and parse MCP response against a Zod schema
- * 
- * @param result - MCP tool result
- * @param schema - Zod schema to validate against
- * @returns Validated data
- * 
- * @example
- * ```typescript
- * const data = validateAPIResponse(result, MEPSchema);
- * ```
- */
-export function validateAPIResponse<T>(
-  result: { content: Array<{ type: string; text: string }> },
-  schema: z.ZodType<T>
-): T {
-  validateMCPStructure(result);
-  
-  const textContent = result.content[0];
-  if (!textContent) {
-    throw new Error('No content in MCP response');
-  }
-  
-  const parsed = JSON.parse(textContent.text) as unknown;
-  
-  // Validate against schema
-  const validated = schema.parse(parsed);
-  
-  return validated;
-}
-
-/**
  * Validate paginated response structure
  * 
  * @param result - MCP tool result

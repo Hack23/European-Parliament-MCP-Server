@@ -126,15 +126,3 @@ export function saveMCPResponseFixture(
     console.warn(`[Fixture] Failed to parse MCP response for ${toolName}/${testName}:`, error);
   }
 }
-
-/**
- * Create fixtures directory if it doesn't exist
- */
-export function ensureFixturesDirectory(): void {
-  const fixturesDir = join(process.cwd(), 'tests', 'fixtures', 'real-api');
-  
-  if (!existsSync(fixturesDir)) {
-    mkdirSync(fixturesDir, { recursive: true });
-    console.log('[Fixture] Created fixtures directory:', fixturesDir);
-  }
-}
