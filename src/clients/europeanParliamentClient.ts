@@ -18,6 +18,8 @@ import { fetch } from 'undici';
 import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../utils/rateLimiter.js';
 import { auditLogger } from '../utils/auditLogger.js';
+import { withRetry, withTimeoutAndAbort, TimeoutError } from '../utils/timeout.js';
+import { performanceMonitor } from '../utils/performance.js';
 import type {
   MEP,
   MEPDetails,
@@ -28,6 +30,21 @@ import type {
   ParliamentaryQuestion,
   PaginatedResponse
 } from '../types/europeanParliament.js';
+
+/**
+ * Default configuration values for European Parliament API client
+ * 
+ * These constants serve as the single source of truth for default values,
+ * preventing documentation drift and ensuring consistency.
+ */
+export const DEFAULT_EP_API_BASE_URL = 'https://data.europarl.europa.eu/api/v2/';
+export const DEFAULT_REQUEST_TIMEOUT_MS = 10000; // 10 seconds
+export const DEFAULT_RETRY_ENABLED = true;
+export const DEFAULT_MAX_RETRIES = 2;
+export const DEFAULT_CACHE_TTL_MS = 900000; // 15 minutes
+export const DEFAULT_MAX_CACHE_SIZE = 500;
+export const DEFAULT_RATE_LIMIT_TOKENS = 100;
+export const DEFAULT_RATE_LIMIT_INTERVAL = 'minute' as const;
 
 /**
  * API Error thrown when European Parliament API requests fail.
@@ -133,6 +150,25 @@ interface EPClientConfig {
    * @default RateLimiter with 100 tokens per minute
    */
   rateLimiter?: RateLimiter;
+  
+  /**
+   * Request timeout in milliseconds.
+   * Operations exceeding this timeout will be aborted.
+   * @default 10000 (10 seconds)
+   */
+  timeoutMs?: number;
+  
+  /**
+   * Enable automatic retry on transient failures (5xx errors).
+   * @default true
+   */
+  enableRetry?: boolean;
+  
+  /**
+   * Maximum number of retry attempts for failed requests.
+   * @default 2
+   */
+  maxRetries?: number;
 }
 
 /**
@@ -248,6 +284,30 @@ export class EuropeanParliamentClient {
    * @readonly
    */
   private readonly rateLimiter: RateLimiter;
+  
+  /**
+   * Request timeout in milliseconds.
+   * @private
+   * @readonly
+   * @default 10000 (10 seconds)
+   */
+  private readonly timeoutMs: number;
+  
+  /**
+   * Enable automatic retry on transient failures.
+   * @private
+   * @readonly
+   * @default true
+   */
+  private readonly enableRetry: boolean;
+  
+  /**
+   * Maximum number of retry attempts.
+   * @private
+   * @readonly
+   * @default 2
+   */
+  private readonly maxRetries: number;
 
   /**
    * Creates a new European Parliament API client.
@@ -277,21 +337,26 @@ export class EuropeanParliamentClient {
    * ```
    */
   constructor(config: EPClientConfig = {}) {
-    this.baseURL = config.baseURL ?? 'https://data.europarl.europa.eu/api/v2/';
+    this.baseURL = config.baseURL ?? DEFAULT_EP_API_BASE_URL;
     
     // Initialize LRU cache
     this.cache = new LRUCache<string, Record<string, unknown>>({
-      max: config.maxCacheSize ?? 500,
-      ttl: config.cacheTTL ?? 1000 * 60 * 15, // 15 minutes
+      max: config.maxCacheSize ?? DEFAULT_MAX_CACHE_SIZE,
+      ttl: config.cacheTTL ?? DEFAULT_CACHE_TTL_MS,
       allowStale: false,
       updateAgeOnGet: true
     });
     
     // Initialize rate limiter
     this.rateLimiter = config.rateLimiter ?? new RateLimiter({
-      tokensPerInterval: 100,
-      interval: 'minute'
+      tokensPerInterval: DEFAULT_RATE_LIMIT_TOKENS,
+      interval: DEFAULT_RATE_LIMIT_INTERVAL
     });
+    
+    // Initialize timeout and retry settings
+    this.timeoutMs = config.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
+    this.enableRetry = config.enableRetry ?? DEFAULT_RETRY_ENABLED;
+    this.maxRetries = config.maxRetries ?? DEFAULT_MAX_RETRIES;
   }
 
   /**
@@ -356,9 +421,12 @@ export class EuropeanParliamentClient {
     // Generate cache key
     const cacheKey = this.getCacheKey(endpoint, params);
     
-    // Check cache
+    // Check cache with performance measurement
+    const cacheStart = performance.now();
     const cached = this.cache.get(cacheKey);
     if (cached !== undefined) {
+      const cacheDuration = performance.now() - cacheStart;
+      performanceMonitor.recordDuration('ep_api_cache_hit', cacheDuration);
       return cached as T;
     }
     
@@ -386,29 +454,70 @@ export class EuropeanParliamentClient {
       });
     }
     
+    // Track request performance
+    const requestStart = performance.now();
+    
     try {
-      // Make API request with JSON-LD Accept header
-      const response = await fetch(url.toString(), {
-        headers: {
-          'Accept': 'application/ld+json',
-          'User-Agent': 'European-Parliament-MCP-Server/1.0'
+      // Define fetch function with abort support for retry logic
+      const fetchFn = async (): Promise<T> => {
+        // Wrap fetch with timeout and abort controller to ensure requests can be cancelled
+        return await withTimeoutAndAbort(async (signal) => {
+          // Make API request with JSON-LD Accept header and abort signal
+          const response = await fetch(url.toString(), {
+            headers: {
+              'Accept': 'application/ld+json',
+              'User-Agent': 'European-Parliament-MCP-Server/1.0'
+            },
+            signal // Pass abort signal to actually cancel the HTTP request on timeout
+          });
+          
+          if (!response.ok) {
+            throw new APIError(
+              `EP API request failed: ${response.statusText}`,
+              response.status
+            );
+          }
+          
+          return response.json() as Promise<T>;
+        }, this.timeoutMs, `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`);
+      };
+      
+      // Execute request with retry logic; fetchFn already handles timeout via withTimeoutAndAbort
+      const data = await withRetry(fetchFn, {
+        maxRetries: this.enableRetry ? this.maxRetries : 0,
+        // timeoutMs omitted - fetchFn already handles timeout with withTimeoutAndAbort
+        retryDelayMs: 1000,
+        shouldRetry: (error) => {
+          // Retry on 5xx errors, but not 4xx client errors or timeouts
+          if (error instanceof TimeoutError) return false; // Don't retry timeouts
+          if (error instanceof APIError) {
+            return (error.statusCode ?? 500) >= 500;
+          }
+          return true; // Retry other errors (network issues, etc.)
         }
       });
       
-      if (!response.ok) {
-        throw new APIError(
-          `EP API request failed: ${response.statusText}`,
-          response.status
-        );
-      }
-      
-      const data = await response.json() as T;
+      // Record successful request performance
+      const duration = performance.now() - requestStart;
+      performanceMonitor.recordDuration('ep_api_request', duration);
       
       // Cache the response
       this.cache.set(cacheKey, data);
       
       return data;
     } catch (error) {
+      // Record failed request
+      const duration = performance.now() - requestStart;
+      performanceMonitor.recordDuration('ep_api_request_failed', duration);
+      
+      // Convert TimeoutError to APIError with 408 status
+      if (error instanceof TimeoutError) {
+        throw new APIError(
+          `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`,
+          408
+        );
+      }
+      
       if (error instanceof APIError) {
         throw error;
       }

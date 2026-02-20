@@ -390,6 +390,11 @@ describe('EuropeanParliamentClient', () => {
 
   describe('Error Handling', () => {
     it('should throw APIError for invalid requests', async () => {
+      // Create client with retry disabled for this test
+      const clientNoRetry = new EuropeanParliamentClient({
+        enableRetry: false
+      });
+      
       // Mock failed response
       mockFetch.mockResolvedValueOnce({
         ok: false,
@@ -397,7 +402,61 @@ describe('EuropeanParliamentClient', () => {
         statusText: 'Internal Server Error'
       } as Response);
 
+      await expect(clientNoRetry.getMEPs({ limit: 10 })).rejects.toThrow(APIError);
+    });
+
+    it('should retry requests on 5xx errors when retry is enabled', async () => {
+      vi.useFakeTimers();
+      try {
+        // First call fails with 500, second call succeeds
+        mockFetch
+          .mockResolvedValueOnce({
+            ok: false,
+            status: 500,
+            statusText: 'Internal Server Error'
+          } as Response)
+          .mockResolvedValueOnce({
+            ok: true,
+            json: async () => createMockMEPsResponse(1)
+          } as Response);
+
+        const requestPromise = client.getMEPs({ limit: 10 });
+
+        // Advance timers to trigger retry delay
+        await vi.runAllTimersAsync();
+
+        const result = await requestPromise;
+
+        expect(result.data).toHaveLength(1);
+        // Should have retried once after the initial 5xx
+        expect(mockFetch).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should not retry requests on 4xx errors', async () => {
+      // Mock a client error response
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        statusText: 'Bad Request'
+      } as Response);
+
       await expect(client.getMEPs({ limit: 10 })).rejects.toThrow(APIError);
+      // 4xx errors should not be retried
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should convert TimeoutError to APIError with 408 status code', async () => {
+      // Mock TimeoutError directly by rejecting with it
+      const { TimeoutError } = await import('../utils/timeout.js');
+      mockFetch.mockRejectedValueOnce(new TimeoutError('Request timed out', 10000));
+
+      await expect(client.getMEPs({ limit: 10 })).rejects.toMatchObject({
+        name: 'APIError',
+        statusCode: 408
+      });
     });
   });
 
