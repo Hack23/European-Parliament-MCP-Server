@@ -51,7 +51,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Hack23/European-Parliament-MCP-Server.git"
+    "url": "git+https://github.com/Hack23/European-Parliament-MCP-Server.git"
   },
   "bugs": {
     "url": "https://github.com/Hack23/European-Parliament-MCP-Server/issues"
