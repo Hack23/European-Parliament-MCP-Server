@@ -1,6 +1,6 @@
 {
   "name": "european-parliament-mcp-server",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Model Context Protocol server for European Parliament open data",
   "type": "module",
   "main": "dist/index.js",
