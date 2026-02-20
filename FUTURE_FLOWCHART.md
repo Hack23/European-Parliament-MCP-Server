@@ -376,8 +376,8 @@ flowchart TB
 
 ### **Exponential Backoff Strategy**
 
-| Retry Attempt | Base Delay | Jitter Range | Max Delay | Cumulative Time |
-|--------------|------------|--------------|-----------|------------------|
+| Retry Attempt | Delay (before jitter) | Jitter Range | Max Delay | Cumulative Time |
+|--------------|------------------------|--------------|-----------|------------------|
 | 1 | 200ms | ±50ms | 200ms | 200ms |
 | 2 | 400ms | ±100ms | 400ms | 600ms |
 | 3 | 800ms | ±200ms | 800ms | 1400ms |
@@ -437,7 +437,7 @@ stateDiagram-v2
 
 ### **Step Functions State Machine Definition (Illustrative)**
 
-> **Note:** The following JSON illustrates the Step Functions pattern. Branch states (`AnalyzeVotingPatterns`, `AnalyzeCoalitions`, `GenerateNetworkGraph`) and terminal states (`ValidationFailed`, `GeneratePDFReport`) are omitted for brevity; a complete implementation would define all states in the `States` object.
+> **Note:** The following JSON illustrates the Step Functions pattern and is not exhaustive. Intermediate states (`FetchVotingData`, `FetchDocuments`) and branch task states (`AnalyzeVotingPatterns`, `AnalyzeCoalitions`, `GenerateNetworkGraph`) are omitted for brevity; a complete implementation would define all referenced states in the `States` object.
 
 ```json
 {
