@@ -1,7 +1,5 @@
-# European Parliament MCP Server - Architecture
-
 <p align="center">
-  <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="128" height="128">
+  <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
 </p>
 
 <h1 align="center">🏛️ European Parliament MCP Server</h1>
@@ -10,6 +8,18 @@
   <strong>Model Context Protocol Server for European Parliament Open Data</strong><br>
   <em>Providing structured access to parliamentary datasets via MCP protocol</em>
 </p>
+
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/Owner-Architect-0A66C2?style=for-the-badge" alt="Owner"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--20-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
+</p>
+
+**📋 Document Owner:** Architecture Team | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-20 (UTC)  
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-20  
+**🏷️ Classification:** Public (Open Source MCP Server)  
+**✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.12.1), NIST CSF 2.0 (ID.AM), CIS Controls v8.1 (2.1)
 
 ---
 
@@ -643,13 +653,6 @@ This architecture aligns with Hack23 ISMS policies:
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: 2026-02-16  
-**Owner**: Hack23 AB  
-**Review Cycle**: Quarterly
-
----
-
 ## 🔧 Tool Implementation Patterns
 
 All 10 MCP tools follow a consistent implementation pattern:
@@ -694,3 +697,27 @@ export async function handleGetMEPs(args: unknown) {
 - Memory efficient
 
 ⚡ **[Complete performance guide →](./PERFORMANCE_GUIDE.md)**
+
+---
+
+## 🔗 Related Documentation
+
+| Document | Description | Link |
+|----------|-------------|------|
+| **Security Architecture** | Security design and controls | [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) |
+| **Data Model** | Data structures and entity relationships | [DATA_MODEL.md](./DATA_MODEL.md) |
+| **Flowcharts** | Business process and data flows | [FLOWCHART.md](./FLOWCHART.md) |
+| **State Diagrams** | System state transitions | [STATEDIAGRAM.md](./STATEDIAGRAM.md) |
+| **Mind Map** | System conceptual relationships | [MINDMAP.md](./MINDMAP.md) |
+| **SWOT Analysis** | Strategic analysis and positioning | [SWOT.md](./SWOT.md) |
+| **Architecture Diagrams** | C4 model diagrams | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) |
+| **Future Architecture** | Architectural evolution roadmap | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) |
+| **Secure Development Policy** | ISMS secure development guidelines | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
+| **Open Source Policy** | ISMS open source governance | [Open_Source_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
+
+---
+
+<p align="center">
+  <strong>Built with ❤️ by <a href="https://hack23.com">Hack23 AB</a></strong><br>
+  <em>Architecture documentation following ISMS standards</em>
+</p>
