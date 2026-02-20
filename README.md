@@ -38,22 +38,22 @@
 
 <p align="center">
   <!-- Test Coverage -->
-  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/coverage/">
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/coverage/">
     <img src="https://img.shields.io/badge/Test%20Coverage-80%25%2B-brightgreen?style=flat-square&logo=vitest" alt="Test Coverage">
   </a>
   
   <!-- Unit Tests -->
-  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/test-results/">
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/test-results/">
     <img src="https://img.shields.io/badge/Unit%20Tests-268%20Passing-brightgreen?style=flat-square&logo=vitest" alt="Unit Test Results">
   </a>
   
   <!-- E2E Tests -->
-  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/e2e-results/">
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/e2e-results/">
     <img src="https://img.shields.io/badge/E2E%20Tests-23%20Passing-brightgreen?style=flat-square&logo=playwright" alt="E2E Test Results">
   </a>
   
   <!-- API Documentation -->
-  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/api/">
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/api/">
     <img src="https://img.shields.io/badge/API%20Docs-TypeDoc-blue?style=flat-square&logo=typescript" alt="API Documentation">
   </a>
   
@@ -85,7 +85,6 @@
   </a>
 </p>
 
-**Coverage Policy:** Per [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md), we maintain minimum 80% line coverage and 70% branch coverage across all modules.
 
 ## 🔐 Security & Compliance
 
