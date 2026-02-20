@@ -58,8 +58,8 @@ This unit test plan defines the testing strategy, coverage targets, and quality 
 ```
 src/
 ├── tools/
-│   ├── getMeps.ts
-│   ├── getMeps.test.ts          ← Colocated unit tests
+│   ├── getMEPs.ts
+│   ├── getMEPs.test.ts          ← Colocated unit tests
 │   ├── getVotingRecords.ts
 │   └── getVotingRecords.test.ts
 ├── clients/
@@ -169,6 +169,7 @@ Tests for component interactions (API client + tool handlers).
 | `get_parliamentary_questions` | ✅ | ✅ | ✅ | Complete |
 | `analyze_voting_patterns` | ✅ | ✅ | ✅ | Complete |
 | `track_legislation` | ✅ | ✅ | ✅ | Complete |
+| `get_mep_details` | ✅ | ✅ | ✅ | Complete |
 | `generate_report` | ✅ | ✅ | ✅ | Complete |
 
 ### **🌐 API Client Tests**
@@ -203,7 +204,7 @@ Tests for component interactions (API client + tool handlers).
 
 | Test | Description | Timeout |
 |------|-------------|---------|
-| Full workflow | All 9 tools sequentially | 65s |
+| Full workflow | All 10 tools sequentially | 65s |
 | MEP queries | Country/group filtering | 65s |
 | Voting records | Vote data retrieval | 65s |
 | Document search | Text search functionality | 65s |

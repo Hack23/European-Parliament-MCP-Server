@@ -91,7 +91,7 @@ flowchart LR
 | Performance tests | ❌ None | ✅ Response time benchmarks | Regression detection |
 | Mutation testing | ❌ None | ✅ Stryker mutation testing | Test quality validation |
 | API compatibility | ❌ None | ✅ Contract tests | Breaking change detection |
-| Multi-Node testing | Single version | Node.js 22 + 24 matrix | Forward compatibility |
+| Multi-Node testing | Single version | Node.js 24 + next LTS (e.g., 26) matrix | Forward compatibility |
 | Canary releases | ❌ None | ✅ npm dist-tag canary | Risk reduction |
 
 ---
