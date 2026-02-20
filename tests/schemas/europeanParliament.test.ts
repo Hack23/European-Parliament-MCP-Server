@@ -86,10 +86,6 @@ describe('safeValidate', () => {
 
     const result = safeValidate(MEPSchema, validMEP);
     
-    if (!result.success) {
-      console.log('Validation errors:', JSON.stringify(result.errors.issues, null, 2));
-    }
-    
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.id).toBe('mep-123');
