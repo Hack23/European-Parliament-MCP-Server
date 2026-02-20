@@ -38,7 +38,7 @@
 
 ## 🎯 Executive Summary
 
-This document outlines future process workflow improvements for the European Parliament MCP Server, including enhanced request processing, data pipelines, tool orchestration, and CI/CD evolution.
+This document outlines future process workflow improvements for the European Parliament MCP Server, including enhanced request processing, data pipelines, tool orchestration, and CI/CD evolution. **All future infrastructure follows a serverless AWS-only strategy** — see [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md).
 
 ---
 
@@ -109,15 +109,17 @@ flowchart LR
     end
 ```
 
-### **📊 Pipeline Improvements**
+### **📊 Pipeline Improvements (Serverless AWS)**
 
-| Stage | Enhancement | Impact |
-|-------|-------------|--------|
-| **Ingestion** | Parallel fetching, batch requests | 3-5x throughput |
-| **Validation** | Schema versioning, migration support | Forward compatibility |
-| **Storage** | Multi-tier caching, TTL management | Reduced API calls |
-| **Delivery** | Streaming, compression, pagination | Lower latency |
-| **Monitoring** | Pipeline metrics, health checks | Observability |
+| Stage | Enhancement | AWS Service | Impact |
+|-------|-------------|-------------|--------|
+| **Ingestion** | Parallel fetching, batch requests | Lambda + SQS | 3-5x throughput |
+| **Validation** | Schema versioning, migration support | Lambda | Forward compatibility |
+| **Storage** | Multi-tier caching, TTL management | DynamoDB + S3 | Reduced API calls |
+| **Delivery** | Streaming, compression, pagination | API Gateway + CloudFront | Lower latency |
+| **Monitoring** | Pipeline metrics, health checks | CloudWatch + X-Ray | Observability |
+
+> **☁️ AWS Strategy:** All pipeline stages run on serverless AWS — Lambda for compute, DynamoDB for cache, S3 for archives, CloudWatch for monitoring. See [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md).
 
 ---
 

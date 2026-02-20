@@ -37,7 +37,7 @@
 
 ## 🎯 Executive Summary
 
-This future SWOT analysis evaluates the strategic trajectory of the European Parliament MCP Server, building on the current state analysis in [SWOT.md](SWOT.md). It identifies how planned architectural improvements will strengthen the platform's competitive position.
+This future SWOT analysis evaluates the strategic trajectory of the European Parliament MCP Server, building on the current state analysis in [SWOT.md](SWOT.md). It identifies how planned **serverless AWS infrastructure** and **OSINT-grade intelligence tools** (inspired by [Hack23 CIA](https://github.com/Hack23/cia)) will strengthen the platform's competitive position.
 
 ```mermaid
 quadrantChart
@@ -64,13 +64,14 @@ quadrantChart
 
 | # | Strength | Impact | Timeline |
 |---|----------|--------|----------|
-| S1 | **Multi-parliament data access** — Unique cross-parliament analysis capability | 🟢 High | Phase 3 |
-| S2 | **Enterprise-grade security** — OAuth 2.0, RBAC, comprehensive audit logging | 🟢 High | Phase 3 |
-| S3 | **Streaming & performance** — Real-time data delivery, persistent caching | 🟢 High | Phase 2 |
-| S4 | **15+ MCP tools** — Most comprehensive parliamentary data MCP server | 🟡 Medium | Phase 1 |
-| S5 | **HTTP transport** — Remote deployment for teams and organizations | 🟢 High | Phase 2 |
+| S1 | **Multi-parliament OSINT data access** — Unique cross-parliament intelligence analysis capability | 🟢 High | Phase 3 |
+| S2 | **Enterprise-grade AWS security** — Cognito, IAM, KMS, GuardDuty, Security Hub | 🟢 High | Phase 3 |
+| S3 | **Serverless auto-scaling** — Lambda + DynamoDB handles any traffic pattern, pay-per-use | 🟢 High | Phase 2 |
+| S4 | **20+ MCP tools with OSINT intelligence** — Most comprehensive parliamentary data MCP server | 🟢 High | Phase 1 |
+| S5 | **API Gateway HTTP transport** — Remote deployment via AWS CloudFront edge delivery | 🟢 High | Phase 2 |
 | S6 | **Full ISMS documentation** — Industry-leading security transparency | 🟡 Medium | Current |
 | S7 | **SLSA Level 3 + EU CRA** — Regulatory compliance advantage | 🟡 Medium | Current |
+| S8 | **CIA-style intelligence products** — MEP scorecards, coalition analysis, risk assessments, network maps | 🟢 High | Phase 1 |
 
 ---
 

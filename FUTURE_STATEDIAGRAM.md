@@ -38,7 +38,7 @@
 
 ## 🎯 Executive Summary
 
-This document outlines future state management improvements for the European Parliament MCP Server, including enhanced connection lifecycle, multi-tier caching, circuit breaker patterns, and security session management.
+This document outlines future state management improvements for the European Parliament MCP Server, including enhanced connection lifecycle, multi-tier caching, circuit breaker patterns, and security session management. **All future infrastructure runs on serverless AWS** (Lambda, DynamoDB, API Gateway, Cognito) — see [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md).
 
 ---
 

@@ -38,7 +38,7 @@
 
 ## 🎯 Executive Summary
 
-This document outlines the future CI/CD workflow evolution for the European Parliament MCP Server, enhancing automation, security scanning, and release management practices.
+This document outlines the future CI/CD workflow evolution for the European Parliament MCP Server, enhancing automation, security scanning, and release management practices. **All future deployment targets serverless AWS** (Lambda, CDK, CloudFormation) — see [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md).
 
 ---
 
@@ -132,22 +132,34 @@ flowchart TB
 
 ### **🔄 Future Release Process**
 
-| Phase | Actions | Automation |
-|-------|---------|------------|
-| **Pre-release** | Version bump, changelog generation | `standard-version` |
-| **Validation** | Full test suite, security scans | GitHub Actions |
-| **Build** | TypeScript compilation, artifact creation | `tsc`, npm pack |
-| **Attestation** | SLSA Level 3 provenance, SBOM | GitHub attestation |
-| **Publish** | npm publish with provenance | Automated |
-| **Post-release** | GitHub release, notification | Automated |
+| Phase | Actions | Automation | AWS Target |
+|-------|---------|------------|------------|
+| **Pre-release** | Version bump, changelog generation | `standard-version` | — |
+| **Validation** | Full test suite, security scans | GitHub Actions | — |
+| **Build** | TypeScript compilation, artifact creation | `tsc`, npm pack | — |
+| **Attestation** | SLSA Level 3 provenance, SBOM | GitHub attestation | — |
+| **Publish npm** | npm publish with provenance | Automated | npm registry |
+| **Deploy AWS** | CDK deploy Lambda + API Gateway | GitHub Actions → CDK | Lambda, API GW, DynamoDB |
+| **Post-release** | GitHub release, notification | Automated | SNS notification |
 
-### **📋 Canary Release Strategy**
+### **☁️ AWS Deployment Pipeline**
 
-```
-1. Push to main → Build + Test
-2. Publish as @canary dist-tag
-3. Integration testing with canary
-4. Promote to @latest after validation
+```mermaid
+flowchart LR
+    subgraph "🔄 Build"
+        PUSH2[Push to main] --> BUILD2[npm run build]
+        BUILD2 --> TEST2[npm test]
+    end
+    subgraph "📦 Package"
+        TEST2 --> NPM2[npm publish]
+        TEST2 --> CDK[CDK synth]
+    end
+    subgraph "☁️ Deploy (AWS)"
+        CDK --> STAGING[Deploy Staging]
+        STAGING --> E2E2[E2E Tests]
+        E2E2 --> PROD[Deploy Production]
+        PROD --> SMOKE[Smoke Tests]
+    end
 ```
 
 ---

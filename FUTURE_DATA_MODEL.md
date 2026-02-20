@@ -168,28 +168,30 @@ erDiagram
 | **Political Group Analysis** | Group alignment and fragmentation | Votes, Groups, MEPs |
 | **Country Representation** | National delegation analysis | MEPs, Votes, Countries |
 
-### **🔍 Future Search Enhancements**
+### **🔍 Future Search Enhancements (Serverless AWS)**
 
 ```mermaid
 graph LR
-    subgraph "🔍 Search Layer"
+    subgraph "🔍 Search Layer (OpenSearch Serverless)"
         FT[Full-Text Search]
         FAC[Faceted Filtering]
         SEM[Semantic Search]
     end
-    subgraph "📊 Analytics Layer"
+    subgraph "📊 Analytics Layer (Lambda + Step Functions)"
         AGG[Aggregation Pipelines]
         TREND[Trend Analysis]
         COMP[Comparative Analysis]
     end
-    subgraph "📦 Data Layer"
-        IDX[Search Indices]
-        CACHE[Computed Metrics Cache]
-        RAW[Raw EP Data]
+    subgraph "📦 Data Layer (DynamoDB + S3)"
+        IDX[OpenSearch Indices]
+        CACHE[DynamoDB Score Cache]
+        RAW[S3 Raw Data Archive]
     end
 
     FT & FAC & SEM --> AGG & TREND & COMP --> IDX & CACHE & RAW
 ```
+
+> **☁️ AWS Strategy:** All search and analytics run on **serverless AWS** — OpenSearch Serverless for full-text search, DynamoDB for pre-computed scores and cache, S3 for raw data archive, Lambda for aggregation pipelines. See [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md) for full serverless AWS strategy.
 
 ---
 

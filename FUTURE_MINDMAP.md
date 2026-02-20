@@ -37,7 +37,7 @@
 
 ## 🎯 Executive Summary
 
-This document maps the strategic capability expansion for the European Parliament MCP Server, visualizing the evolution from a focused EP data access tool to a comprehensive parliamentary data intelligence platform.
+This document maps the strategic capability expansion for the European Parliament MCP Server, visualizing the evolution from a focused EP data access tool to a **serverless AWS-powered parliamentary intelligence platform** inspired by [Hack23 CIA](https://github.com/Hack23/cia) OSINT methodologies. **All future infrastructure is serverless AWS-only** — see [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md).
 
 ---
 
@@ -47,8 +47,9 @@ This document maps the strategic capability expansion for the European Parliamen
 mindmap
   root((🏛️ EP MCP<br>Server))
     🔌 MCP Protocol
-      🔧 Current Tools (9)
+      🔧 Current Tools (10)
         get_meps
+        get_mep_details
         get_plenary_sessions
         get_voting_records
         search_documents
@@ -57,15 +58,38 @@ mindmap
         analyze_voting_patterns
         track_legislation
         generate_report
-      📋 Future Tools
-        get_amendments
-        get_debates
-        get_delegations
-        compare_meps
+      🕵️ OSINT Intelligence Tools
+        assess_mep_influence
+        analyze_coalition_dynamics
+        map_political_network
+        detect_voting_anomalies
+        generate_political_risk_assessment
+        track_policy_positions
+        analyze_legislative_effectiveness
+        compare_political_groups
+        generate_intelligence_briefing
+        monitor_legislative_pipeline
       📡 Transport
         stdio (current)
-        HTTP (planned)
-        WebSocket (planned)
+        API Gateway HTTP (AWS)
+        WebSocket (AWS)
+    ☁️ AWS Serverless
+      ⚡ Compute
+        Lambda Functions
+        Step Functions
+      💾 Storage
+        DynamoDB Cache
+        S3 Reports
+        OpenSearch Serverless
+      🌐 Edge
+        CloudFront CDN
+        WAF v2
+        Route 53
+      🔒 Security
+        Cognito Auth
+        IAM Policies
+        KMS Encryption
+        GuardDuty
     🌐 Data Sources
       🇪🇺 European Parliament
         Open Data API
@@ -80,20 +104,17 @@ mindmap
         Rate Limiting
         SLSA Level 3
         OpenSSF Scorecard
-      📋 Future
-        OAuth 2.0
-        RBAC
-        Audit Logging
-        Security Monitoring
-    📊 Quality
-      🧪 Testing
-        Unit Tests (268+)
-        E2E Tests (23+)
-        80%+ Coverage
-      📦 Supply Chain
-        Dependabot
-        npm audit
-        SBOM
+      📋 Future (AWS)
+        Cognito OAuth 2.0
+        IAM RBAC
+        CloudTrail Audit
+        Security Hub Monitoring
+    🕵️ Intelligence Products
+      📋 MEP Scorecards
+      🤝 Coalition Reports
+      🌐 Network Maps
+      🎯 Risk Assessments
+      📊 Intelligence Briefings
     👨‍💻 Developer Experience
       📖 Documentation
         API Docs (TypeDoc)
@@ -103,11 +124,7 @@ mindmap
         TypeScript Strict
         ESLint
         Vitest
-    🤖 AI Integration
-      Claude
-      ChatGPT
-      Custom Clients
-      Agent Workflows
+        CDK IaC
 ```
 
 ---
