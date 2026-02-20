@@ -1486,7 +1486,8 @@ export const epClient = new EuropeanParliamentClient({
         if (typeof rawBaseUrl === 'string') {
             const trimmed = rawBaseUrl.trim();
             if (trimmed.length > 0) {
-                return trimmed;
+                // Ensure trailing slash for proper URL resolution with new URL(endpoint, baseURL)
+                return trimmed.endsWith('/') ? trimmed : `${trimmed}/`;
             }
         }
         return DEFAULT_EP_API_BASE_URL;
