@@ -85,25 +85,6 @@
 
 ---
 
-## 📚 Security Documentation Map
-
-This document is part of a comprehensive security documentation suite for the European Parliament MCP Server:
-
-| Document | Purpose | Status |
-|----------|---------|--------|
-| **SECURITY_ARCHITECTURE.md** | Current architecture and controls (this document) | ✅ Complete |
-| **[FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md)** | Security roadmap and planned enhancements | ✅ Complete |
-| **[THREAT_MODEL.md](./THREAT_MODEL.md)** | STRIDE threat analysis and mitigations | ✅ Complete |
-| **[SECURITY.md](./SECURITY.md)** | Security policy and vulnerability reporting | ✅ Complete |
-| **[SECURITY_HEADERS.md](./SECURITY_HEADERS.md)** | HTTP security headers configuration | ✅ Complete |
-| **[Secure_Development_Policy.md](./Secure_Development_Policy.md)** | ISMS secure development guidelines | ✅ Complete |
-| **[Open_Source_Policy.md](./Open_Source_Policy.md)** | Open source governance and security | ✅ Complete |
-| **[BCPPlan.md](./BCPPlan.md)** | Business continuity and disaster recovery | ✅ Complete |
-| **[.github/WORKFLOWS.md](./.github/WORKFLOWS.md)** | CI/CD security automation | ✅ Complete |
-| **[CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md)** | EU Cyber Resilience Act compliance | ✅ Complete |
-
----
-
 ## 🎯 Executive Summary
 
 This document describes the implemented security architecture for the European Parliament MCP Server, a TypeScript/Node.js application providing structured access to European Parliament open datasets via the Model Context Protocol (MCP). The architecture implements defense-in-depth principles with multiple security layers to protect against common threats while maintaining GDPR compliance and ISMS alignment.
@@ -3803,7 +3784,7 @@ Data Protection Regulation alignment:
 
 ---
 
-## 🏛️ 18. ISMS Policy Alignment
+## 🏛️ 18. Detailed ISMS Controls Alignment
 
 ### Related ISMS Policies
 

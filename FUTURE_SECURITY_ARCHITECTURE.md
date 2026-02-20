@@ -234,53 +234,6 @@ graph LR
 
 ---
 
-## 🔐 ISMS Policy Alignment
-
-### Related ISMS Policies
-
-| Policy | Relevance | Link |
-|--------|-----------|------|
-| **Open Source Policy** | Security transparency, vulnerability disclosure | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
-| **Secure Development Policy** | Secure coding practices, supply chain security | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
-| **Risk Management Policy** | Threat assessment, risk mitigation | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Risk_Management_Policy.md) |
-| **Privacy Policy** | GDPR compliance, data protection | [View](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) |
-
-### Security Control Implementation Status
-
-| Control Area | Status | Evidence |
-|-------------|--------|----------|
-| OAuth 2.0 Authentication | 🔄 Planned | Q2 2026 - Phase 1 |
-| RBAC Authorization | 🔄 Planned | Q2 2026 - Phase 1 |
-| AWS WAF Integration | 🔄 Planned | Q3 2026 - Phase 2 |
-| DDoS Protection | 🔄 Planned | Q3 2026 - Phase 2 |
-| AI Threat Detection | 🔄 Planned | Q4 2026 - Phase 3 |
-| Zero-Trust Architecture | 🔄 Planned | Q1 2027 - Phase 4 |
-| Compliance Automation | 🔄 Planned | Q3 2027 - Phase 7 |
-
-### Compliance Framework Mapping
-
-| Framework | Controls | Status |
-|-----------|----------|--------|
-| **ISO 27001:2022** | A.5.1, A.8.2, A.8.8, A.8.25, A.14.2, A.18.1 | ✅ Aligned |
-| **NIST CSF 2.0** | ID.AM, ID.RA, PR.DS, PR.IP, DE.CM, RS.AN | ✅ Aligned |
-| **CIS Controls v8.1** | 1.1, 2.7, 3.3, 6.2, 7.1, 16.7 | ✅ Aligned |
-
----
-
-## 🗺️ Security Documentation Map
-
-| Document | Type | Description | Status |
-|----------|------|-------------|--------|
-| [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | 🛡️ Current | Implemented security design and controls | ✅ Current |
-| [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) | 🚀 Future | Security roadmap and planned enhancements | ✅ Current |
-| [THREAT_MODEL.md](./THREAT_MODEL.md) | 🎯 Analysis | STRIDE threat analysis and risk assessment | ✅ Current |
-| [BCPPlan.md](./BCPPlan.md) | 🔄 Continuity | Business continuity and disaster recovery | ✅ Current |
-| [CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md) | 📋 Compliance | EU Cyber Resilience Act conformity assessment | ✅ Current |
-| [SECURITY.md](./SECURITY.md) | 📜 Policy | Security policy and vulnerability disclosure | ✅ Current |
-| [SECURITY_HEADERS.md](./SECURITY_HEADERS.md) | 🔒 Technical | API security headers implementation | ✅ Current |
-
----
-
 ## 🎯 Vision Statement
 
 Evolve the European Parliament MCP Server from a secure open-source tool to an enterprise-grade serverless platform with advanced authentication, comprehensive monitoring, and cloud-native security controls while maintaining transparency and GDPR compliance.

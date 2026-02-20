@@ -83,6 +83,8 @@
 | **NIST CSF 2.0** | ID.AM, ID.RA, PR.DS, PR.IP, DE.CM, RS.AN | ✅ Aligned |
 | **CIS Controls v8.1** | 1.1, 2.7, 3.3, 6.2, 7.1, 16.7 | ✅ Aligned |
 
+> **See also**: [Policy Alignment](#-policy-alignment) below for the complete threat-specific ISMS policy mapping (Threat Modeling, Vulnerability Management, Network Security, Access Control, Cryptography, and Incident Response policies).
+
 ---
 
 ## 🗺️ Security Documentation Map
