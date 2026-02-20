@@ -22,17 +22,6 @@
     <td>
       <p><strong>Model Context Protocol Server for European Parliament Open Data</strong> — providing AI assistants with structured access to MEPs, plenary sessions, committees, legislative documents, and parliamentary questions through a secure, type-safe TypeScript implementation.</p>
       <div>
-        <a href="https://scorecard.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server">
-          <img src="https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge" alt="OpenSSF Scorecard">
-        </a>
-        <a href="https://github.com/Hack23/European-Parliament-MCP-Server/attestations">
-          <img src="https://slsa.dev/images/gh-badge-level3.svg" alt="SLSA 3">
-        </a>
-        <a href="https://github.com/Hack23/European-Parliament-MCP-Server/license">
-          <img src="https://img.shields.io/github/license/Hack23/European-Parliament-MCP-Server.svg" alt="License">
-        </a>
-      </div>
-      <div>
         <a href="https://github.com/Hack23/European-Parliament-MCP-Server"><strong>📂 Repository</strong></a> •
         <a href="https://hack23.com/european-parliament-mcp-features.html"><strong>✨ Features</strong></a> •
         <a href="https://hack23.com/european-parliament-mcp-docs.html"><strong>📚 Documentation</strong></a> •
