@@ -13,8 +13,8 @@ import { parsePaginatedMCPResponse, parseMCPResponse, validateMCPResponse } from
 
 /**
  * E2E test timeout: 35 seconds
- * - API timeout: 30s (EP_REQUEST_TIMEOUT_MS)
- * - Test overhead: 5s (MCP protocol, framework)
+ * - API timeout: up to 30s when EP_REQUEST_TIMEOUT_MS=30000 (default 10s / 10000ms)
+ * - Test overhead: ~5s (MCP protocol, framework)
  */
 const E2E_TEST_TIMEOUT_MS = 35000;
 

@@ -14,8 +14,8 @@ import type { MEP } from '../../src/types/europeanParliament.js';
 
 /**
  * E2E test timeout: 35 seconds
- * - API timeout: 30s (EP_REQUEST_TIMEOUT_MS)
- * - Test overhead: 5s (MCP protocol, framework)
+ * - API timeout: up to 30s when EP_REQUEST_TIMEOUT_MS=30000 (default 10s)
+ * - Test overhead: ~5s (MCP protocol, framework)
  */
 const E2E_TEST_TIMEOUT_MS = 35000;
 
