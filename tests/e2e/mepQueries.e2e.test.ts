@@ -12,6 +12,16 @@ import { MCPTestClient } from './mcpClient.js';
 import { parsePaginatedMCPResponse, parseMCPResponse, validateMCPResponse } from '../helpers/testUtils.js';
 import type { MEP } from '../../src/types/europeanParliament.js';
 
+/**
+ * E2E test timeout: 65 seconds
+ * - API timeout: up to 60s when EP_REQUEST_TIMEOUT_MS=60000 (default 10s)
+ * - Test overhead: ~5s (MCP protocol, framework)
+ * 
+ * Increased from 35s to 65s because European Parliament API can take 30-60+ seconds
+ * to respond during peak usage or when data is not cached.
+ */
+const E2E_TEST_TIMEOUT_MS = 65000;
+
 describe('MEP Query E2E Tests', () => {
   let client: MCPTestClient;
 
@@ -40,7 +50,7 @@ describe('MEP Query E2E Tests', () => {
       expect(Array.isArray(data)).toBe(true);
       expect(data.length).toBeGreaterThan(0);
       expect(data.length).toBeLessThanOrEqual(5);
-    }, 15000);
+    }, E2E_TEST_TIMEOUT_MS);
 
     it('should filter MEPs by country', async () => {
       const response = await client.callTool('get_meps', {
@@ -63,7 +73,7 @@ describe('MEP Query E2E Tests', () => {
       data.forEach((mep) => {
         expect(['SE', 'Unknown']).toContain(mep.country);
       });
-    }, 15000);
+    }, E2E_TEST_TIMEOUT_MS);
 
     it('should validate input parameters', async () => {
       await expect(async () => {
@@ -71,7 +81,7 @@ describe('MEP Query E2E Tests', () => {
           country: 'INVALID' // Invalid country code
         });
       }).rejects.toThrow();
-    }, 15000);
+    }, E2E_TEST_TIMEOUT_MS);
 
     it('should handle pagination parameters', async () => {
       const response = await client.callTool('get_meps', {
@@ -85,7 +95,7 @@ describe('MEP Query E2E Tests', () => {
       expect(Array.isArray(data)).toBe(true);
       expect(data.length).toBeGreaterThan(0);
       expect(data.length).toBeLessThanOrEqual(3);
-    }, 15000);
+    }, E2E_TEST_TIMEOUT_MS);
   });
 
   describe('get_mep_details Tool', () => {
@@ -113,7 +123,7 @@ describe('MEP Query E2E Tests', () => {
       const details = parseMCPResponse(detailsResponse.content);
       expect(typeof details).toBe('object');
       expect(details).not.toBeNull();
-    }, 15000);
+    }, E2E_TEST_TIMEOUT_MS);
 
     it('should validate MEP ID format', async () => {
       await expect(async () => {
@@ -121,7 +131,7 @@ describe('MEP Query E2E Tests', () => {
           id: '' // Empty ID
         });
       }).rejects.toThrow();
-    }, 15000);
+    }, E2E_TEST_TIMEOUT_MS);
   });
 
   describe('MCP Protocol Compliance', () => {
@@ -135,7 +145,7 @@ describe('MEP Query E2E Tests', () => {
       const toolNames = tools.map(t => t.name);
       expect(toolNames).toContain('get_meps');
       expect(toolNames).toContain('get_mep_details');
-    }, 15000);
+    }, E2E_TEST_TIMEOUT_MS);
 
     it('should return valid MCP response format', async () => {
       const response = await client.callTool('get_meps', { limit: 1 });
@@ -150,7 +160,7 @@ describe('MEP Query E2E Tests', () => {
         expect(item).toHaveProperty('type');
         expect(typeof item.type).toBe('string');
       });
-    }, 15000);
+    }, E2E_TEST_TIMEOUT_MS);
 
     it('should handle tool errors with proper error responses', async () => {
       try {
@@ -163,7 +173,7 @@ describe('MEP Query E2E Tests', () => {
         const errorMessage = (error as Error).message;
         expect(errorMessage).toBeTruthy();
       }
-    }, 15000);
+    }, E2E_TEST_TIMEOUT_MS);
   });
 
   describe('Data Validation', () => {
@@ -184,6 +194,6 @@ describe('MEP Query E2E Tests', () => {
         // Country should be either 2-letter ISO code or 'Unknown' when data is unavailable
         expect(mep.country).toMatch(/^([A-Z]{2}|Unknown)$/);
       });
-    }, 15000);
+    }, E2E_TEST_TIMEOUT_MS);
   });
 });
