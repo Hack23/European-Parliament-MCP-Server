@@ -211,6 +211,307 @@ All European Parliament data is publicly available under parliamentary transpare
 
 ---
 
+## 🔄 Data Migration Strategy
+
+### **Migration Approach**
+
+Migrating from in-memory data structures to **serverless AWS DynamoDB + S3** architecture requires careful planning to ensure zero downtime and data integrity.
+
+```mermaid
+flowchart TB
+    START([🚀 Migration Start]) --> ASSESS[📊 Assess Current Data]
+    ASSESS --> DESIGN[🏗️ Design DynamoDB Schema]
+    DESIGN --> PARALLEL{Parallel Migration?}
+    
+    PARALLEL -->|Yes| DUAL[🔄 Dual Write Mode]
+    DUAL --> VERIFY[✅ Verify Data Consistency]
+    VERIFY --> CUTOVER[🔀 Traffic Cutover]
+    CUTOVER --> MONITOR[📊 Monitor Performance]
+    
+    PARALLEL -->|No| EXPORT[📤 Export Current Data]
+    EXPORT --> TRANSFORM[🔄 Transform to DynamoDB Format]
+    TRANSFORM --> IMPORT[📥 Bulk Import to DynamoDB]
+    IMPORT --> VALIDATE[✅ Validate Import]
+    VALIDATE --> SWITCH[🔀 Switch to DynamoDB]
+    SWITCH --> MONITOR
+    
+    MONITOR --> ROLLBACK{Issues Detected?}
+    ROLLBACK -->|Yes| REVERT[⏮️ Rollback to In-Memory]
+    ROLLBACK -->|No| COMPLETE[✅ Migration Complete]
+    REVERT --> ANALYZE[🔍 Analyze Issues]
+    ANALYZE --> DESIGN
+    COMPLETE --> END([🎉 Production on DynamoDB])
+```
+
+### **Migration Phases**
+
+| Phase | Duration | Activities | Success Criteria |
+|-------|----------|-----------|------------------|
+| **Phase 1: Schema Design** | 2 weeks | DynamoDB table design, partition/sort key selection, GSI planning | Schema review approved |
+| **Phase 2: Dual Write** | 3 weeks | Implement dual-write logic, write to both in-memory + DynamoDB | 100% write consistency |
+| **Phase 3: Data Sync** | 1 week | Backfill historical data, validate checksums | Zero data discrepancies |
+| **Phase 4: Read Cutover** | 2 weeks | Gradually shift reads to DynamoDB (10%→50%→100%) | <200ms p95 latency |
+| **Phase 5: Cleanup** | 1 week | Remove dual-write code, decommission in-memory cache | Code simplified |
+
+**Total Migration Timeline:** 9 weeks
+
+---
+
+## 🗄️ DynamoDB Data Model Design
+
+### **Table Structure**
+
+**Primary Table: `ep-mcp-data`**
+
+| Attribute | Type | Purpose |
+|-----------|------|----------|
+| **PK** (Partition Key) | String | Entity type + ID (e.g., `MEP#123`, `VOTE#456`) |
+| **SK** (Sort Key) | String | Version timestamp or related entity (e.g., `v#2026-02-20`, `COMMITTEE#789`) |
+| **EntityType** | String | `MEP`, `VOTE`, `SESSION`, `DOCUMENT`, etc. |
+| **Data** | Map | Full entity JSON |
+| **TTL** | Number | Expiration timestamp (Unix epoch) for cache eviction |
+| **GSI1PK** | String | Secondary access pattern (e.g., `COUNTRY#FR`) |
+| **GSI1SK** | String | Secondary sort key (e.g., `NAME#SURNAME`) |
+
+**GSI1 (Global Secondary Index):** Enables queries by country, political group, committee
+
+**Example Records:**
+
+```json
+{
+  "PK": "MEP#197846",
+  "SK": "v#2026-02-20T10:30:00Z",
+  "EntityType": "MEP",
+  "Data": {
+    "id": "197846",
+    "name": "Jane Doe",
+    "country": "FR",
+    "politicalGroup": "EPP",
+    "committees": ["ENVI", "ITRE"]
+  },
+  "TTL": 1740211200,
+  "GSI1PK": "COUNTRY#FR",
+  "GSI1SK": "MEP#DOE"
+}
+```
+
+### **Access Patterns**
+
+| Query | Primary/GSI | Key Condition |
+|-------|-------------|---------------|
+| Get MEP by ID | Primary | `PK = MEP#123` |
+| Get all MEPs from France | GSI1 | `GSI1PK = COUNTRY#FR` |
+| Get voting record | Primary | `PK = VOTE#456` |
+| Get all votes by MEP | Primary | `PK = MEP#123, SK begins_with VOTE#` |
+| Get all EPP group members | GSI1 | `GSI1PK = GROUP#EPP` |
+
+---
+
+## 🔄 GDPR Data Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Collected: EP API Fetch
+    Collected --> Validated: Schema Check
+    Validated --> Stored: DynamoDB Write
+    
+    Stored --> Cached: In-Memory Cache
+    Cached --> Served: MCP Response
+    Served --> Cached: TTL Active
+    Cached --> Expired: TTL Exceeded
+    Expired --> Refreshed: Background Sync
+    Refreshed --> Stored: Updated Record
+    
+    Stored --> Archived: S3 Cold Storage
+    Archived --> Retained: 7-Year Retention
+    Retained --> Deleted: Retention Expired
+    Deleted --> [*]: Permanent Deletion
+    
+    note right of Stored
+        Data Classification: Public
+        No PII processing
+        GDPR Art. 6(1)(e): Public task
+    end note
+    
+    note right of Archived
+        S3 Glacier Deep Archive
+        Compliance retention: 7 years
+        ISO 27001 A.18.1.3
+    end note
+```
+
+### **GDPR Compliance Table**
+
+| GDPR Article | Requirement | Implementation |
+|--------------|-------------|----------------|
+| Art. 6(1)(e) | Lawful basis (public task) | European Parliament data is public parliamentary information |
+| Art. 5(1)(b) | Purpose limitation | Data used solely for parliamentary transparency |
+| Art. 5(1)(c) | Data minimization | Only public parliamentary data collected |
+| Art. 5(1)(e) | Storage limitation | 7-year retention policy, automatic deletion |
+| Art. 15 | Right to access | All data publicly accessible via EP portal |
+| Art. 17 | Right to erasure | Not applicable (public parliamentary records) |
+| Art. 25 | Data protection by design | Privacy by default, no tracking, HTTPS-only |
+
+---
+
+## 📋 Validation Schema Evolution
+
+### **Schema Version History**
+
+| Version | Date | Changes | Breaking? |
+|---------|------|---------|----------|
+| v1.0 | 2024-12-01 | Initial MEP, VOTE, SESSION schemas | N/A |
+| v1.1 | 2025-03-15 | Added `socialMedia` field to MEP | ❌ No |
+| v1.2 | 2025-06-01 | Added `rollCallDetails` to VOTE | ❌ No |
+| v2.0 | 2026-01-15 | Renamed `politicalGroup` to `group` (deprecated old field) | ⚠️ Yes |
+| v2.1 | 2026-09-01 | Added AMENDMENT, SPEECH entities | ❌ No |
+
+### **Backward Compatibility Strategy**
+
+**Approach:** Dual-field deprecation with 6-month sunset period
+
+```typescript
+// v2.0: Deprecated field with migration warning
+const MEPSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  politicalGroup: z.string().optional().describe('DEPRECATED: Use group instead'),
+  group: z.string(),
+  // ... other fields
+}).transform(data => {
+  // Auto-migrate old field to new field when only the deprecated field is present.
+  // If both fields exist, `group` takes precedence and `politicalGroup` is ignored.
+  if (data.politicalGroup && !data.group) {
+    data.group = data.politicalGroup;
+  }
+  return data;
+});
+```
+
+---
+
+## 📊 Implementation Phases
+
+### **Phase 1: DynamoDB Foundation** (Q3 2026)
+
+**Objectives:**
+- Design and deploy DynamoDB tables with proper partition/sort keys
+- Implement dual-write mode (in-memory + DynamoDB)
+- Achieve 100% write consistency
+
+**Success Metrics:**
+- ✅ DynamoDB tables deployed in `us-east-1` and `eu-west-1`
+- ✅ 100% write success rate to both datastores
+- ✅ <50ms p95 write latency to DynamoDB
+- ✅ Zero data loss during dual-write period
+
+**KPIs:**
+- Write consistency rate: 100%
+- DynamoDB write latency p95: <50ms
+- Data integrity checks passed: 100%
+
+---
+
+### **Phase 2: Read Cutover** (Q4 2026)
+
+**Objectives:**
+- Gradually shift read traffic from in-memory to DynamoDB
+- Implement DynamoDB query optimization (GSI usage)
+- Monitor performance and error rates
+
+**Success Metrics:**
+- ✅ 10% → 50% → 100% read traffic migrated
+- ✅ <200ms p95 read latency from DynamoDB
+- ✅ Zero data discrepancies between datastores
+- ✅ 99.9% read success rate
+
+**KPIs:**
+- Read latency p95: <200ms (target <150ms)
+- Cache hit rate: >80%
+- Error rate: <0.1%
+
+---
+
+### **Phase 3: S3 Archival** (Q1 2027)
+
+**Objectives:**
+- Implement S3 cold storage for historical data
+- Configure lifecycle policies (Glacier Deep Archive after 90 days)
+- Enable cross-region replication for compliance
+
+**Success Metrics:**
+- ✅ S3 bucket with versioning and MFA delete enabled
+- ✅ Lifecycle policy: Standard → Glacier → Deep Archive → Delete (7 years)
+- ✅ Cross-region replication to EU backup region
+- ✅ Data restoration test completed successfully
+
+**KPIs:**
+- Storage cost reduction: 70% (vs. DynamoDB hot storage)
+- Data durability: 99.999999999% (11 nines)
+- Restoration time: <12 hours (Glacier Deep Archive)
+
+---
+
+## ⚠️ Risk Assessment
+
+### **Data Migration Risks**
+
+| Risk | Severity | Probability | Impact | Mitigation |
+|------|----------|-------------|--------|------------|
+| **Data loss during migration** | 🔴 Critical | 🟡 Low | Production outage, data integrity issues | Dual-write mode, continuous validation, rollback plan |
+| **Performance degradation** | 🟠 High | 🟠 Medium | Slow response times, user dissatisfaction | Load testing, DynamoDB auto-scaling, caching |
+| **Schema incompatibility** | 🟡 Medium | 🟡 Low | Tool failures, parsing errors | Schema versioning, backward compatibility tests |
+| **Cost overrun** | 🟡 Medium | 🟠 Medium | Budget exceeded | DynamoDB on-demand mode initially, monitor costs |
+| **Compliance violation** | 🟠 High | 🟢 Very Low | GDPR/ISO 27001 non-compliance | Legal review, GDPR compliance checklist |
+
+### **Risk Mitigation Timeline**
+
+| Risk | Mitigation Action | Owner | Deadline |
+|------|-------------------|-------|----------|
+| Data loss | Implement dual-write + checksums | Engineering | Before Phase 2 |
+| Performance | Load test with 10x expected traffic | DevOps | Before Phase 2 cutover |
+| Schema issues | Implement schema versioning + tests | Engineering | Before Phase 1 |
+| Cost overrun | Set CloudWatch billing alarms | FinOps | Week 1 of Phase 1 |
+| Compliance | Complete GDPR impact assessment | Legal + CISO | Before Phase 1 |
+
+---
+
+## 🔗 ISO 27001 Controls Mapping
+
+| Control | Description | Implementation |
+|---------|-------------|----------------|
+| **A.8.1.1** | Inventory of assets | DynamoDB tables and S3 buckets documented in Asset Register |
+| **A.8.1.2** | Ownership of assets | Data Owner: CEO; Data Custodian: Engineering Team |
+| **A.8.1.3** | Acceptable use of assets | All data classified as Public per Classification Framework |
+| **A.8.2.1** | Classification of information | All EP data classified as Public (no PII processing) |
+| **A.8.2.2** | Labelling of information | EntityType field indicates data category |
+| **A.8.2.3** | Handling of assets | Public data, HTTPS-only transport, CloudTrail audit logging |
+| **A.18.1.3** | Protection of records | 7-year retention in S3 Glacier, cross-region replication |
+| **A.18.1.4** | Privacy and protection of PII | No PII processing; parliamentary data is public |
+
+### **NIST CSF 2.0 Mapping**
+
+| Function | Category | Implementation |
+|----------|----------|----------------|
+| **ID.AM-1** | Physical devices and systems inventoried | DynamoDB, S3, Lambda documented in CMDB |
+| **ID.AM-2** | Software platforms inventoried | Node.js 24, TypeScript 5, AWS SDK v3 |
+| **ID.AM-5** | Resources prioritized by classification | Public data, medium integrity, high availability |
+| **PR.DS-1** | Data at rest protected | DynamoDB encryption with KMS, S3 SSE-KMS |
+| **PR.DS-2** | Data in transit protected | TLS 1.3 for all connections |
+| **PR.DS-5** | Protections against data leaks | No sensitive data processed; CloudTrail monitoring |
+
+### **CIS Controls v8.1 Mapping**
+
+| Control | Safeguard | Implementation |
+|---------|-----------|----------------|
+| **1.1** | Establish and maintain asset inventory | DynamoDB tables, S3 buckets in Asset Register |
+| **3.3** | Configure data access control lists | IAM policies restrict DynamoDB/S3 access to authorized Lambda functions |
+| **3.11** | Encrypt sensitive data at rest | All DynamoDB tables use KMS encryption |
+| **11.1** | Establish and maintain data recovery processes | Daily DynamoDB backups to S3 with cross-region replication |
+| **11.3** | Protect recovery data | S3 versioning, MFA delete, Vault Lock for immutability |
+
+---
+
 ## 🔗 Policy Alignment
 
 | ISMS Policy | Relevance | Link |

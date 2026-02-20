@@ -229,6 +229,392 @@ mindmap
 
 ---
 
+## 🕵️ OSINT Intelligence Capability Mindmap
+
+```mermaid
+mindmap
+  root((OSINT<br>Intelligence<br>Platform))
+    🎯 MEP Influence Assessment
+      📊 Quantitative Metrics
+        Voting attendance rate
+        Legislative amendments authored
+        Committee leadership roles
+        Speech frequency
+      🤝 Network Metrics
+        Co-voting patterns
+        Cross-party alliances
+        Committee influence score
+        Media mentions
+      📋 MEP Scorecard
+        Influence score 0-100
+        Activity ranking
+        Policy focus areas
+        Transparency index
+    🤝 Coalition Dynamics Analysis
+      📊 Group Cohesion
+        Voting discipline rate
+        Factional splits
+        Policy alignment score
+      🔄 Alliance Shifts
+        Temporary coalitions
+        Issue-based alliances
+        Power bloc formation
+      📊 Stability Report
+        Coalition fragility index
+        Predicted voting outcomes
+        Policy consensus areas
+    🌐 Political Network Mapping
+      🕸️ Graph Visualization
+        Node: MEPs
+        Edge: Co-voting strength
+        Cluster: Political groups
+      📊 Centrality Metrics
+        Betweenness centrality
+        Eigenvector centrality
+        Closeness centrality
+      🧩 Network Insights
+        Power brokers
+        Bridge members
+        Isolated actors
+    ⚠️ Voting Anomaly Detection
+      📊 Statistical Methods
+        Z-score outlier detection
+        Bayesian anomaly detection
+        Time-series analysis
+      🚨 Alert Types
+        Party discipline break
+        Unexpected coalition vote
+        Pattern deviation
+      📊 Anomaly Report
+        Anomaly score 0-10
+        Historical context
+        Potential explanations
+    🎲 Political Risk Assessment
+      📊 Risk Factors
+        Coalition instability
+        Policy deadlock risk
+        External pressure
+      📈 Trend Analysis
+        Legislative progress tracking
+        Policy shift detection
+        Power balance changes
+      📋 Risk Briefing
+        Risk score 0-100
+        Threat scenarios
+        Mitigation strategies
+```
+
+---
+
+## 👥 Stakeholder Impact Mindmap
+
+```mermaid
+mindmap
+  root((Stakeholder<br>Ecosystem))
+    🏛️ EU Researchers
+      🎯 Use Cases
+        Cross-parliament comparison
+        Legislative effectiveness studies
+        Political network analysis
+      📊 Data Needs
+        Historical voting records
+        MEP biography data
+        Committee transcripts
+      🛠️ Tools Required
+        Bulk data export
+        Statistical analysis APIs
+        Citation-ready datasets
+    📰 Journalists & Media
+      🎯 Use Cases
+        Fact-checking claims
+        Investigative reporting
+        Real-time vote tracking
+      📊 Data Needs
+        Live voting results
+        MEP contact information
+        Financial declarations
+      🛠️ Tools Required
+        Real-time alerts
+        Simplified visualizations
+        Embeddable widgets
+    🏬 Advocacy Organizations
+      🎯 Use Cases
+        Lobbying target identification
+        Policy impact tracking
+        Coalition building
+      📊 Data Needs
+        MEP influence scores
+        Committee membership
+        Voting patterns by issue
+      🛠️ Tools Required
+        OSINT intelligence products
+        Custom report generation
+        API access for integration
+    🏛️ Political Parties
+      🎯 Use Cases
+        Opposition research
+        Voter communication
+        Strategic planning
+      📊 Data Needs
+        Group cohesion metrics
+        Cross-party voting
+        Policy position tracking
+      🛠️ Tools Required
+        Coalition analysis
+        Risk assessments
+        Predictive voting models
+    🏭 Public Citizens
+      🎯 Use Cases
+        Hold representatives accountable
+        Understand EU politics
+        Engage in democracy
+      📊 Data Needs
+        Simplified MEP profiles
+        Voting explanations
+        Legislative impact
+      🛠️ Tools Required
+        User-friendly interfaces
+        Mobile apps
+        Educational content
+```
+
+---
+
+## 🔒 Security Capability Growth Mindmap
+
+```mermaid
+mindmap
+  root((Security<br>Maturity<br>Journey))
+    ✅ Level 1: Basic Implemented
+      🛡️ Input Validation
+        Zod schemas
+        Type safety
+        Error handling
+      🔒 Dependency Security
+        Dependabot
+        npm audit
+        SBOM generation
+      🔍 Security Scanning
+        CodeQL SAST
+        OpenSSF Scorecard
+        Secret scanning
+    ✅ Level 2: Managed Achieved
+      🔐 Access Control
+        Rate limiting
+        Request throttling
+        IP allowlisting
+      📜 Compliance
+        SLSA Level 3
+        ISO 27001 alignment
+        GDPR compliance
+      📈 Monitoring
+        Error tracking
+        Performance metrics
+        Usage analytics
+    📅 Level 3: Planned Q3-Q4 2026
+      🔑 Authentication
+        AWS Cognito OAuth 2.0
+        JWT token validation
+        MFA support
+      🛡️ Authorization
+        RBAC policies
+        IAM integration
+        Fine-grained permissions
+      🔍 Advanced Monitoring
+        CloudWatch dashboards
+        X-Ray tracing
+        GuardDuty alerts
+    🔮 Level 4: Future 2027+
+      🤖 AI Security
+        Anomaly detection
+        Behavioral analysis
+        Automated response
+      🌐 Zero Trust
+        Micro-segmentation
+        Continuous verification
+        Least privilege by default
+      📊 Security Analytics
+        Threat intelligence
+        Attack surface monitoring
+        Predictive security
+```
+
+---
+
+## 📊 Implementation Phases Table
+
+### **Phase 1: Foundation Enhancement** (Q3 2026)
+
+| Deliverable | Description | Owner | Status |
+|------------|-------------|-------|--------|
+| **New MCP Tools** | Add 5 OSINT intelligence tools | Engineering | 📅 Planned |
+| **Enhanced Data Models** | Expand MEP, Vote, Session entities | Engineering | 📅 Planned |
+| **DynamoDB Migration** | Migrate from in-memory to DynamoDB | DevOps | 📅 Planned |
+| **API Documentation** | TypeDoc comprehensive docs | Technical Writer | 📅 Planned |
+| **Performance Optimization** | Sub-200ms p95 latency target | SRE | 📅 Planned |
+
+**Duration:** 12 weeks  
+**Budget:** $25,000 (engineering time + AWS costs)  
+**Risk Level:** 🟡 Medium
+
+---
+
+### **Phase 2: Scale & Reliability** (Q1 2027)
+
+| Deliverable | Description | Owner | Status |
+|------------|-------------|-------|--------|
+| **HTTP Transport** | API Gateway + Lambda backend | DevOps | 📅 Planned |
+| **Persistent Caching** | DynamoDB with TTL management | Engineering | 📅 Planned |
+| **Circuit Breakers** | Per-endpoint fault tolerance | SRE | 📅 Planned |
+| **CloudWatch Observability** | Dashboards, alarms, X-Ray | DevOps | 📅 Planned |
+| **Load Testing** | 10,000 RPS capacity validation | QA | 📅 Planned |
+
+**Duration:** 16 weeks  
+**Budget:** $40,000 (engineering + infrastructure)  
+**Risk Level:** 🟠 High (architectural changes)
+
+---
+
+### **Phase 3: Enterprise Intelligence** (Q3 2027)
+
+| Deliverable | Description | Owner | Status |
+|------------|-------------|-------|--------|
+| **Cognito Authentication** | OAuth 2.0 + MFA integration | Security | 🔮 Future |
+| **Multi-Parliament Support** | Riksdag, Bundestag, UK Parliament | Engineering | 🔮 Future |
+| **OpenSearch Integration** | Semantic search capabilities | Data Engineering | 🔮 Future |
+| **Step Functions Workflows** | Complex report generation | Engineering | 🔮 Future |
+| **Usage Analytics Dashboard** | Customer insights and metrics | Product | 🔮 Future |
+
+**Duration:** 20 weeks  
+**Budget:** $60,000 (enterprise features + data sources)  
+**Risk Level:** 🟠 High (external dependencies)
+
+---
+
+## 🎯 KPI Success Metrics Table
+
+### **Performance KPIs**
+
+| KPI | Baseline | Phase 1 Target | Phase 2 Target | Phase 3 Target | Measurement |
+|-----|----------|----------------|----------------|----------------|-------------|
+| **Response Time p95** | 500ms | 200ms | 150ms | 100ms | CloudWatch metrics |
+| **Cache Hit Rate** | 60% | 75% | 85% | 90% | DynamoDB metrics |
+| **Availability** | 99.5% | 99.9% | 99.95% | 99.99% | API Gateway uptime |
+| **Error Rate** | 2% | 1% | 0.5% | 0.1% | Lambda error logs |
+| **Cold Start Rate** | 5% | 2% | 1% | <0.5% | Lambda metrics |
+
+---
+
+### **Capability KPIs**
+
+| KPI | Baseline | Phase 1 Target | Phase 2 Target | Phase 3 Target | Measurement |
+|-----|----------|----------------|----------------|----------------|-------------|
+| **MCP Tools** | 10 | 15 | 20 | 25 | Tool registry |
+| **Data Entities** | 6 | 10 | 12 | 15 | Schema count |
+| **Data Sources** | 1 (EP) | 1 | 1 | 4 parliaments | API integrations |
+| **Intelligence Products** | 2 | 7 | 10 | 15 | OSINT tool count |
+| **API Coverage** | 40% | 60% | 80% | 95% | TypeDoc coverage |
+
+---
+
+### **Security KPIs**
+
+| KPI | Baseline | Phase 1 Target | Phase 2 Target | Phase 3 Target | Measurement |
+|-----|----------|----------------|----------------|----------------|-------------|
+| **OpenSSF Score** | 7.5/10 | 8.0/10 | 8.5/10 | 9.0/10 | Scorecard scan |
+| **SLSA Level** | 3 | 3 (+ Provenance V1) | 3 (+ SBOM attestation) | 4 | SLSA attestation |
+| **Vulnerability SLA** | 30 days | 14 days | 7 days | 3 days | Dependabot metrics |
+| **Audit Log Coverage** | 80% | 90% | 95% | 100% | CloudTrail events |
+| **Security Incidents** | 0 | 0 | 0 | 0 | Incident log |
+
+---
+
+### **Business KPIs**
+
+| KPI | Baseline | Phase 1 Target | Phase 2 Target | Phase 3 Target | Measurement |
+|-----|----------|----------------|----------------|----------------|-------------|
+| **Monthly Active Users** | 50 | 200 | 500 | 1000 | Analytics |
+| **API Requests/Month** | 100K | 500K | 2M | 5M | CloudWatch |
+| **GitHub Stars** | 15 | 50 | 100 | 250 | GitHub metrics |
+| **Documentation Quality** | 70% | 85% | 90% | 95% | Readability score |
+| **Community PRs** | 0 | 2 | 5 | 10 | GitHub PRs |
+
+---
+
+## ⚠️ Risk Register
+
+### **Strategic Risks**
+
+| Risk ID | Risk | Impact | Probability | Severity | Mitigation | Owner |
+|---------|------|--------|-------------|----------|------------|-------|
+| **R1** | MCP protocol breaking changes | High | Low | 🟠 High | Active MCP community participation | CTO |
+| **R2** | EP API deprecation or changes | High | Medium | 🔴 Critical | Adapter pattern, API versioning | Engineering |
+| **R3** | Competitor launches superior product | Medium | Medium | 🟡 Medium | Feature leadership, OSINT differentiation | Product |
+| **R4** | Funding sustainability | High | Medium | 🟠 High | Sponsorship program, consulting services | CEO |
+| **R5** | EU AI Act compliance burden | Medium | Low | 🟡 Medium | Proactive GDPR compliance, legal review | Legal |
+
+---
+
+### **Technical Risks**
+
+| Risk ID | Risk | Impact | Probability | Severity | Mitigation | Owner |
+|---------|------|--------|-------------|----------|------------|-------|
+| **T1** | DynamoDB throttling | Medium | Low | 🟡 Medium | On-demand mode, auto-scaling | DevOps |
+| **T2** | Lambda cold start latency | Low | Medium | 🟢 Low | Provisioned concurrency, optimization | SRE |
+| **T3** | Data migration failure | High | Low | 🟠 High | Dual-write mode, rollback plan | Engineering |
+| **T4** | OpenSearch cost overrun | Medium | Medium | 🟡 Medium | Serverless OpenSearch, query optimization | FinOps |
+| **T5** | Multi-parliament API complexity | High | Medium | 🟠 High | Adapter pattern, phased rollout | Architecture |
+
+---
+
+### **Operational Risks**
+
+| Risk ID | Risk | Impact | Probability | Severity | Mitigation | Owner |
+|---------|------|--------|-------------|----------|------------|-------|
+| **O1** | Insufficient documentation | Medium | Medium | 🟡 Medium | Documentation sprints, TypeDoc automation | Tech Writer |
+| **O2** | Team scaling challenges | High | Low | 🟠 High | Modular architecture, clear ownership | CTO |
+| **O3** | Security incident | High | Very Low | 🔴 Critical | ISMS compliance, incident response plan | CISO |
+| **O4** | Community engagement decline | Medium | Medium | 🟡 Medium | Regular updates, responsive maintainership | Product |
+| **O5** | Technical debt accumulation | High | Medium | 🟠 High | 20% time for refactoring, code reviews | Engineering |
+
+---
+
+## 🔗 ISO 27001 Controls Mapping
+
+| Control | Description | Implementation |
+|---------|-------------|----------------|
+| **A.6.1.1** | Information security roles and responsibilities | Documented in ISMS, RACI matrix for capability development |
+| **A.6.1.2** | Segregation of duties | Separate roles for development, operations, security |
+| **A.12.6.1** | Management of technical vulnerabilities | Dependabot automated vulnerability scanning |
+| **A.12.6.2** | Restrictions on software installation | Lambda runtime managed by AWS, no custom OS packages |
+| **A.14.2.1** | Secure development policy | All capabilities follow Secure Development Policy |
+| **A.14.2.5** | Secure system engineering principles | Zero-trust architecture, least privilege, defense-in-depth |
+| **A.14.2.8** | System security testing | Integration tests with 80%+ coverage for all new capabilities |
+
+### **NIST CSF 2.0 Mapping**
+
+| Function | Category | Implementation |
+|----------|----------|----------------|
+| **ID.BE-3** | Priorities for organizational mission established | KPI framework aligns capabilities with business objectives |
+| **ID.RA-1** | Asset vulnerabilities identified | Risk register tracks technical and strategic risks |
+| **ID.RA-5** | Threats, vulnerabilities, likelihoods, impacts determined | Risk assessment per capability with mitigation plans |
+| **PR.IP-1** | Baseline configuration established | All infrastructure as code (CDK), version controlled |
+| **PR.IP-2** | System development life cycle managed | Phased implementation with gates and reviews |
+| **DE.CM-4** | Malicious code detected | CodeQL SAST scans on every commit |
+
+### **CIS Controls v8.1 Mapping**
+
+| Control | Safeguard | Implementation |
+|---------|-----------|----------------|
+| **1.1** | Establish and maintain detailed enterprise asset inventory | All AWS resources documented in Asset Register |
+| **2.1** | Establish and maintain software inventory | SBOM generated for all dependencies |
+| **4.1** | Establish and maintain secure configuration | Lambda configurations in IaC, immutable |
+| **16.1** | Establish and maintain security awareness program | Security training for all contributors |
+| **16.11** | Establish and maintain security incident response processes | Incident response plan documented in ISMS |
+| **18.3** | Remediate penetration test findings | Annual security audit with remediation SLA |
+
+---
+
 ## 🔗 Policy Alignment
 
 | ISMS Policy | Relevance | Link |
