@@ -1481,7 +1481,16 @@ export class EuropeanParliamentClient {
  * @see {@link EuropeanParliamentClient} for client class documentation
  */
 export const epClient = new EuropeanParliamentClient({
-    baseURL: process.env['EP_API_URL'] ?? DEFAULT_EP_API_BASE_URL,
+    baseURL: (() => {
+        const rawBaseUrl = process.env['EP_API_URL'];
+        if (typeof rawBaseUrl === 'string') {
+            const trimmed = rawBaseUrl.trim();
+            if (trimmed.length > 0) {
+                return trimmed;
+            }
+        }
+        return DEFAULT_EP_API_BASE_URL;
+    })(),
     timeoutMs: (() => {
         const rawTimeout = process.env['EP_REQUEST_TIMEOUT_MS'];
         if (typeof rawTimeout === 'string' && rawTimeout.trim().length > 0) {
