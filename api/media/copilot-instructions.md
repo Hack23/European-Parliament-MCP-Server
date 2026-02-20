@@ -15,9 +15,9 @@ This file provides guidance for GitHub Copilot coding agent when working on this
 
 ## 🎯 Agent Skills Catalog
 
-This repository includes **17 comprehensive skills** that provide reusable patterns:
+This repository includes **26 comprehensive skills** that provide reusable patterns:
 
-### Core Development Skills (11)
+### Core Development Skills (10)
 - **mcp-server-development** - MCP protocol patterns, tool implementation
 - **european-parliament-api** - EP API integration, caching, attribution
 - **gdpr-compliance** - GDPR and data protection patterns
@@ -28,7 +28,20 @@ This repository includes **17 comprehensive skills** that provide reusable patte
 - **testing-strategy** - 80%+ coverage, deterministic API tests
 - **documentation-standards** - JSDoc, OpenAPI, ISMS documentation
 - **performance-optimization** - Node.js/API performance optimization
-- **testing-mcp-tools** - MCP tool testing, 80%+ coverage
+
+### Security & Compliance Skills (6)
+- **secure-code-review** - OWASP Top 10 review, input validation, TypeScript security
+- **secrets-management** - Credential handling, environment variables, GitHub secrets
+- **vulnerability-management** - Vulnerability lifecycle, SLAs, Dependabot handling
+- **secure-development-lifecycle** - SDLC security, DevSecOps, supply chain security
+- **incident-response** - Detection, containment, recovery per NIST SP 800-61r2
+- **contribution-guidelines** - PR workflow, code review standards, commit conventions
+
+### DevOps & Quality Skills (4)
+- **github-agentic-workflows** - Copilot coding agent orchestration, stacked PRs
+- **c4-architecture-documentation** - C4 model, architecture documentation portfolio
+- **github-actions-workflows** - CI/CD pipelines, security scans, deployments
+- **code-quality-excellence** - ESLint, TypeScript strict, quality gates
 
 ### Comprehensive ISMS Skills (6)
 - **open-source-governance** - OpenSSF Scorecard, SLSA, SBOM, license compliance, vulnerability management
@@ -36,7 +49,7 @@ This repository includes **17 comprehensive skills** that provide reusable patte
 - **architecture-documentation** - C4 model, SECURITY_ARCHITECTURE.md, Mermaid diagrams
 - **aws-security-architecture** - AWS Control Tower, Well-Architected, VPC, GuardDuty, HA/DR
 - **compliance-frameworks** - ISO 27001, NIST CSF 2.0, CIS Controls, EU CRA mapping
-- **ai-development-governance** - AI-augmented dev controls, GitHub Copilot governance
+- **ai-development-governance** - AI-augmented development controls, GitHub Copilot governance
 
 Reference these skills when working on related tasks. All skills include evidence links to [Hack23 ISMS-PUBLIC](https://github.com/Hack23/ISMS-PUBLIC) policies.
 
@@ -490,6 +503,38 @@ This project follows Hack23 AB's ISMS policies:
 - **Access Control Policy**: Least privilege, role-based access
 
 See `SECURITY.md` for complete compliance details.
+
+## 📐 Architecture Documentation Requirements
+
+Every Hack23 AB repository MUST maintain comprehensive architectural documentation per the [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md):
+
+### Required Architecture Documentation Portfolio (14 documents total)
+
+**Current State (7 documents):**
+- 🏛️ `ARCHITECTURE.md` — Complete C4 models (Context, Container, Component views)
+- 🏛️ `SECURITY_ARCHITECTURE.md` — Current implemented security design and controls
+- 📊 `DATA_MODEL.md` — Data structures, entities, and relationships
+- 🔄 `FLOWCHART.md` — Business process and data flows
+- 📈 `STATEDIAGRAM.md` — System state transitions and lifecycles
+- 🧠 `MINDMAP.md` — System conceptual relationships
+- 💼 `SWOT.md` — Strategic analysis and positioning
+
+**Future State (7 documents):**
+- 🚀 `FUTURE_ARCHITECTURE.md` — Architectural evolution roadmap
+- 🚀 `FUTURE_SECURITY_ARCHITECTURE.md` — Planned security improvements and roadmap
+- 📊 `FUTURE_DATA_MODEL.md` — Enhanced data architecture plans
+- 🔄 `FUTURE_FLOWCHART.md` — Improved process workflows
+- 📈 `FUTURE_STATEDIAGRAM.md` — Advanced state management
+- 🧠 `FUTURE_MINDMAP.md` — Capability expansion plans
+- 💼 `FUTURE_SWOT.md` — Future strategic opportunities
+
+### Reference Implementations
+
+See architecture documentation in other Hack23 repositories:
+- [CIA Security Architecture](https://github.com/Hack23/cia/blob/master/SECURITY_ARCHITECTURE.md)
+- [CIA Architecture](https://github.com/Hack23/cia/blob/master/ARCHITECTURE.md)
+- [Black Trigram Security Architecture](https://github.com/Hack23/blacktrigram/blob/master/SECURITY_ARCHITECTURE.md)
+- [CIA Compliance Manager Security Architecture](https://github.com/Hack23/cia-compliance-manager/blob/main/SECURITY_ARCHITECTURE.md)
 
 ## Resources
 
