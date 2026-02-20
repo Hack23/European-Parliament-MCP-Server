@@ -19,7 +19,7 @@
     "test": "vitest",
     "test:unit": "vitest run src",
     "test:integration": "vitest run tests/integration",
-    "test:e2e": "EP_REQUEST_TIMEOUT_MS=30000 vitest run tests/e2e",
+    "test:e2e": "vitest run tests/e2e",
     "test:performance": "vitest run tests/performance",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e && npm run test:performance",
     "test:coverage": "vitest run src --coverage",
