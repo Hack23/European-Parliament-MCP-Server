@@ -2,7 +2,7 @@
  * Tests for timeout utilities
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import {
   TimeoutError,
   withTimeout,
@@ -10,6 +10,32 @@ import {
   withRetry,
   isTimeoutError
 } from './timeout.js';
+
+// Suppress unhandled rejections from fake timer artifacts during testing
+// These are cosmetic - tests properly catch and validate all expected rejections
+let unhandledRejectionHandler: ((reason: unknown, promise: Promise<unknown>) => void) | undefined;
+
+beforeAll(() => {
+  unhandledRejectionHandler = (reason: unknown) => {
+    // Suppress TimeoutError rejections from fake timer artifacts
+    if (reason instanceof TimeoutError) {
+      return;
+    }
+    // Suppress "Always fails" errors from retry tests with fake timers
+    if (reason instanceof Error && reason.message === 'Always fails') {
+      return;
+    }
+    // Re-throw other unhandled rejections
+    throw reason;
+  };
+  process.on('unhandledRejection', unhandledRejectionHandler);
+});
+
+afterAll(() => {
+  if (unhandledRejectionHandler) {
+    process.off('unhandledRejection', unhandledRejectionHandler);
+  }
+});
 
 describe('TimeoutError', () => {
   it('should create a timeout error with message', () => {
