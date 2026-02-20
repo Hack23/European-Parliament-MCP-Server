@@ -37,6 +37,11 @@ interface AuditLogEntry {
   };
   
   /**
+   * Duration of the operation in milliseconds
+   */
+  duration?: number;
+  
+  /**
    * User identifier (if authenticated)
    */
   userId?: string;
@@ -84,11 +89,13 @@ export class AuditLogger {
    * @param action - Action name
    * @param params - Action parameters
    * @param count - Number of records accessed
+   * @param duration - Optional operation duration in milliseconds
    */
   logDataAccess(
     action: string,
     params: Record<string, unknown>,
-    count: number
+    count: number,
+    duration?: number
   ): void {
     this.log({
       action,
@@ -96,7 +103,8 @@ export class AuditLogger {
       result: {
         count,
         success: true
-      }
+      },
+      ...(duration !== undefined && { duration })
     });
   }
   
@@ -106,11 +114,13 @@ export class AuditLogger {
    * @param action - Action name
    * @param params - Action parameters
    * @param error - Error message
+   * @param duration - Optional operation duration in milliseconds
    */
   logError(
     action: string,
     params: Record<string, unknown>,
-    error: string
+    error: string,
+    duration?: number
   ): void {
     this.log({
       action,
@@ -118,7 +128,8 @@ export class AuditLogger {
       result: {
         success: false,
         error
-      }
+      },
+      ...(duration !== undefined && { duration })
     });
   }
   

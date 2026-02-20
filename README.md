@@ -31,6 +31,9 @@
   </a>
 </p>
 
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FHack23%2FEuropean-Parliament-MCP-Server.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FHack23%2FEuropean-Parliament-MCP-Server?ref=badge_large)
+
 ## 📊 Quality Metrics & Documentation
 
 <p align="center">
@@ -121,6 +124,7 @@
   <a href="https://github.com/Hack23/ISMS-PUBLIC">
     <img src="https://img.shields.io/badge/ISMS-NIST%20CSF%202.0-success?style=flat-square" alt="NIST CSF 2.0">
   </a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2FHack23%2FEuropean-Parliament-MCP-Server?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FHack23%2FEuropean-Parliament-MCP-Server.svg?type=shield"/></a>
   <a href="https://github.com/Hack23/ISMS-PUBLIC">
     <img src="https://img.shields.io/badge/ISMS-CIS%20Controls%20v8.1-success?style=flat-square" alt="CIS Controls">
   </a>
@@ -426,14 +430,51 @@ European-Parliament-MCP-Server/
 └── docs/                    # Additional documentation
 ```
 
+### Documentation
+
+#### 📚 Developer Documentation
+
+- **[JSDoc Coverage Report](./JSDOC_COVERAGE_REPORT.md)** - Detailed analysis of JSDoc documentation coverage across all source files
+- **[JSDoc Quick Reference](./docs/JSDOC_QUICK_REFERENCE.md)** - Quick reference guide for writing comprehensive JSDoc comments
+- **[JSDoc Coverage Summary](./JSDOC_COVERAGE_SUMMARY.md)** - Executive summary of documentation status and priorities
+- **[JSDoc Coverage Visualization](./docs/JSDOC_COVERAGE_VISUALIZATION.md)** - Visual representation of documentation coverage with charts and graphs
+
+#### 🏗️ Architecture & Design
+
+- **[Architecture Documentation](./ARCHITECTURE.md)** - System architecture and design patterns
+- **[Data Model](./DATA_MODEL.md)** - Data structures and type definitions
+- **[API Usage Guide](./API_USAGE_GUIDE.md)** - Guide for using the MCP server API
+
+#### 🧪 Testing & Quality
+
+- **[Test Coverage Report](./TEST_COVERAGE_REPORT.md)** - Test coverage statistics and analysis
+- **[Developer Guide](./DEVELOPER_GUIDE.md)** - Development setup and guidelines
+- **[Performance Guide](./PERFORMANCE_GUIDE.md)** - Performance optimization strategies
+
+#### 🔒 Security & Compliance
+
+- **[Security Policy](./SECURITY.md)** - Vulnerability reporting and security practices
+- **[Security Architecture](./SECURITY_ARCHITECTURE.md)** - Security controls and architecture
+- **[Secure Development Policy](./Secure_Development_Policy.md)** - Secure coding standards
+- **[Open Source Policy](./Open_Source_Policy.md)** - Open source compliance guidelines
+
+#### 📦 Deployment & Operations
+
+- **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Production deployment instructions
+- **[Troubleshooting Guide](./TROUBLESHOOTING.md)** - Common issues and solutions
+- **[NPM Publishing Guide](./NPM_PUBLISHING.md)** - Package publishing workflow
+
 ### Testing
 
 ```bash
 # Unit tests
 npm test
 
-# Integration tests
-npm run test:integration
+# Integration tests (requires EP_INTEGRATION_TESTS=true)
+EP_INTEGRATION_TESTS=true npm run test:integration
+
+# Integration tests with fixture capture
+EP_INTEGRATION_TESTS=true EP_SAVE_FIXTURES=true npm run test:integration
 
 # E2E tests
 npm run test:e2e
@@ -444,6 +485,8 @@ npm run test:coverage
 # Watch mode
 npm run test:watch
 ```
+
+**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, tools that are wired to the live European Parliament API execute against the real endpoints, while tools that still depend on a mocked `epClient` run contract tests against their mock implementations. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](INTEGRATION_TESTING.md) for the complete guide.
 
 ### Code Quality
 

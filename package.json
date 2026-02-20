@@ -1,12 +1,12 @@
 {
   "name": "european-parliament-mcp-server",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Model Context Protocol server for European Parliament open data",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "european-parliament-mcp": "dist/index.js"
+    "european-parliament-mcp-server": "dist/index.js"
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -26,14 +26,16 @@
     "test:ci": "vitest run --coverage --reporter=junit --reporter=json --outputFile=coverage/junit.xml",
     "test:licenses": "license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0;BlueOak-1.0.0'",
     "knip": "knip",
-    "clean": "rm -rf dist coverage",
+    "clean": "rm -rf dist coverage builds",
+    "verify-package": "npm run build && node scripts/verify-package.js",
+    "test-mcp": "node scripts/test-mcp-server.js",
     "prepublishOnly": "npm run lint && npm run knip && npm run test:unit && npm run build",
     "prepack": "npm run build",
     "docs": "typedoc --out docs/api src/index.ts",
-    "docs:clean": "rm -rf docs/api docs/coverage docs/test-results docs/e2e-results",
+    "docs:clean": "rm -rf docs/api docs/coverage docs/test-results docs/e2e-results builds",
     "docs:coverage": "npm run test:coverage && mkdir -p docs/coverage && cp -r coverage/* docs/coverage/",
-    "docs:test-reports": "mkdir -p docs/test-results && vitest run --reporter=html --reporter=json || true",
-    "docs:e2e-reports": "mkdir -p docs/e2e-results && vitest run tests/e2e --reporter=html --reporter=json || true",
+    "docs:test-reports": "mkdir -p builds/test-results docs/test-results; vitest run src --reporter=default --reporter=html --reporter=json --outputFile.html=./builds/test-results/index.html --outputFile.json=./builds/test-results/results.json || true; cp -r builds/test-results/* docs/test-results/ 2>/dev/null || true",
+    "docs:e2e-reports": "mkdir -p builds/e2e-results docs/e2e-results; vitest run tests/e2e --reporter=default --reporter=html --reporter=json --outputFile.html=./builds/e2e-results/index.html --outputFile.json=./builds/e2e-results/results.json || true; cp -r builds/e2e-results/* docs/e2e-results/ 2>/dev/null || true",
     "docs:build": "npm run docs:clean && npm run docs && npm run docs:coverage && npm run docs:test-reports && npm run docs:e2e-reports",
     "docs:sitemap": "node scripts/generate-sitemap.js"
   },
@@ -78,14 +80,14 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/node": "^25.2.3",
+    "@types/node": "^25.3.0",
     "@typescript-eslint/eslint-plugin": "^8.55.0",
     "@typescript-eslint/parser": "^8.55.0",
     "@vitest/coverage-v8": "^4.0.18",
     "@vitest/ui": "^4.0.3",
     "eslint": "^10.0.0",
     "globals": "^17.3.0",
-    "knip": "^5.45.4",
+    "knip": "^5.84.1",
     "license-compliance": "^3.0.1",
     "prettier": "^3.4.2",
     "tsx": "^4.19.2",
