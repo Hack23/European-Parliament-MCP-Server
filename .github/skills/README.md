@@ -11,7 +11,7 @@ Agent Skills are structured folders of instructions that teach GitHub Copilot to
 
 ## 🎯 Available Skills
 
-**Total: 17 Skills** (11 existing + 6 comprehensive ISMS skills)
+**Total: 26 Skills** across Core Development, Security & Compliance, DevOps & Quality, and ISMS domains.
 
 ### Core MCP Development Skills
 
@@ -152,6 +152,138 @@ Patterns for optimizing Node.js API performance, MCP protocol efficiency, and da
 - Profile and measure performance
 
 **When to use:** Performance improvements, optimization work, profiling
+
+---
+
+### Security, DevOps & Quality Skills
+
+### 🔄 [github-agentic-workflows](./github-agentic-workflows/SKILL.md)
+**GitHub Agentic Workflows with MCP tools and Copilot coding agent orchestration**
+
+Comprehensive guidance for AI-powered automations using Copilot coding agent. Covers:
+- Copilot coding agent assignment (basic, base_ref, custom_instructions)
+- Stacked PR workflows for multi-step implementations
+- MCP server configuration for agent tools
+- OWASP Agentic security and safe output handling
+
+**When to use:** Orchestrating Copilot assignments, building agentic workflows, agent security
+
+---
+
+### 🏛️ [c4-architecture-documentation](./c4-architecture-documentation/SKILL.md)
+**C4 model architecture documentation with Mermaid diagrams**
+
+Document system architecture using C4 model abstraction levels. Covers:
+- Required documentation portfolio (12 current + future state docs)
+- C4 levels: Context, Container, Component views
+- Mermaid diagram standards and patterns
+- Security architecture documentation
+
+**When to use:** Documenting system architecture, creating ARCHITECTURE.md, SECURITY_ARCHITECTURE.md
+
+---
+
+### ⚙️ [github-actions-workflows](./github-actions-workflows/SKILL.md)
+**Secure CI/CD workflows with GitHub Actions for TypeScript/Node.js**
+
+Create efficient CI/CD pipelines for MCP server projects. Covers:
+- Build, test, and security scan pipelines
+- Action version pinning with SHA hashes
+- npm package publishing workflows
+- Test and coverage reporting
+
+**When to use:** Setting up CI/CD, automating security scans, configuring deployments
+
+---
+
+### 📊 [code-quality-excellence](./code-quality-excellence/SKILL.md)
+**Code quality with ESLint, TypeScript strict mode, and quality gates**
+
+Maintain high quality through automated static analysis. Covers:
+- TypeScript strict mode configuration
+- ESLint strict rules compliance
+- Quality gate thresholds (80%+ coverage)
+- Knip unused export detection
+
+**When to use:** Code quality reviews, configuring linters, quality audits
+
+---
+
+### 🔍 [secure-code-review](./secure-code-review/SKILL.md)
+**Security code review using OWASP Top 10 for TypeScript/MCP servers**
+
+Conduct thorough security reviews identifying vulnerabilities. Covers:
+- OWASP Top 10 review checklist for TypeScript
+- Input validation with Zod schemas
+- API security and error handling review
+- Dependency security scanning
+
+**When to use:** PR security reviews, periodic audits, pre-release security checks
+
+---
+
+### 🔑 [secrets-management](./secrets-management/SKILL.md)
+**Secure credential handling with environment variables and GitHub secrets**
+
+Zero-tolerance policy for hardcoded secrets. Covers:
+- Environment variable patterns for Node.js
+- GitHub secrets for CI/CD pipelines
+- MCP server token security
+- Secret exposure incident response
+
+**When to use:** Adding API integrations, configuring CI/CD, managing credentials
+
+---
+
+### 🛡️ [vulnerability-management](./vulnerability-management/SKILL.md)
+**Systematic vulnerability lifecycle management with SLAs**
+
+Vulnerability discovery, assessment, remediation, and tracking. Covers:
+- CVSS severity classification and SLA timelines
+- npm audit and Dependabot alert handling
+- Remediation workflow for Node.js dependencies
+- Compliance mapping (ISO 27001, NIST CSF, CIS Controls)
+
+**When to use:** Handling Dependabot alerts, triaging security findings, SLA tracking
+
+---
+
+### 🔐 [secure-development-lifecycle](./secure-development-lifecycle/SKILL.md)
+**Comprehensive SDLC security with DevSecOps automation**
+
+Security practices across all development phases. Covers:
+- Security requirements analysis and threat modeling
+- Secure implementation patterns (input validation, error handling)
+- Automated security testing in CI/CD
+- Supply chain security (OSSF Scorecard, SLSA, SBOM)
+
+**When to use:** Planning features, implementing security controls, release security reviews
+
+---
+
+### 🚨 [incident-response](./incident-response/SKILL.md)
+**Security incident detection, containment, and recovery**
+
+Procedures for handling security incidents per NIST SP 800-61r2. Covers:
+- Incident classification and response timelines
+- Containment and eradication procedures
+- Recovery and lessons learned
+- Communication and disclosure (SECURITY.md, GDPR notifications)
+
+**When to use:** Responding to vulnerability reports, managing secret exposures, security incidents
+
+---
+
+### 🤝 [contribution-guidelines](./contribution-guidelines/SKILL.md)
+**Open source contribution process with PR workflow and code review standards**
+
+Proper contribution process for the project. Covers:
+- Fork, clone, and PR workflow
+- Conventional commit message format
+- Code review checklists (contributor and reviewer)
+- Quality gates before merge
+
+**When to use:** Submitting PRs, conducting code reviews, contributing to the project
 
 ---
 
