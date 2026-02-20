@@ -1701,9 +1701,14 @@ export class EuropeanParliamentClient {
  * Recommended for most use cases to share cache and rate limiter across application.
  * 
  * **Configuration:**
- * - Base URL: https://data.europarl.europa.eu/api/v2/
+ * - Base URL: https://data.europarl.europa.eu/api/v2/ (or EP_API_URL env var)
+ * - Timeout: 10 seconds (or EP_REQUEST_TIMEOUT_MS env var)
  * - Cache: 15 min TTL, 500 entry max
  * - Rate Limit: 100 requests/minute
+ * 
+ * **Environment Variables:**
+ * - `EP_API_URL`: Override base API URL
+ * - `EP_REQUEST_TIMEOUT_MS`: Override request timeout in milliseconds (default: 10000)
  * 
  * @example
  * ```typescript
@@ -1715,7 +1720,8 @@ export class EuropeanParliamentClient {
  * 
  * @example
  * ```typescript
- * // Access cache stats from singleton
+ * // Override timeout via environment variable for E2E tests
+ * // EP_REQUEST_TIMEOUT_MS=30000 npm run test:e2e
  * const stats = epClient.getCacheStats();
  * console.log(`Global cache: ${stats.size} entries`);
  * ```
@@ -1723,4 +1729,9 @@ export class EuropeanParliamentClient {
  * @public
  * @see {@link EuropeanParliamentClient} for client class documentation
  */
-export const epClient = new EuropeanParliamentClient();
+export const epClient = new EuropeanParliamentClient({
+  baseURL: process.env['EP_API_URL'] || DEFAULT_EP_API_BASE_URL,
+  timeoutMs: process.env['EP_REQUEST_TIMEOUT_MS'] 
+    ? parseInt(process.env['EP_REQUEST_TIMEOUT_MS'], 10) 
+    : DEFAULT_REQUEST_TIMEOUT_MS
+});
