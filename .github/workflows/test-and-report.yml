@@ -93,6 +93,14 @@ jobs:
       - name: Check for unused dependencies
         run: npm run knip
 
+      # Build the project (ensures dist/ output is valid)
+      - name: Build
+        run: npm run build
+
+      # Verify package can be packed (catches prepublish issues before release)
+      - name: Validate package
+        run: npm pack --dry-run
+
       # Check licenses
       - name: Check licenses
         run: npm run test:licenses

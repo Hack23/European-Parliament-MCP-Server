@@ -36,6 +36,8 @@ const CORE_TOOL_COUNT = 7;
  * Display help message
  */
 function showHelp() {
+    // CLI output - intentional stdout usage
+    // eslint-disable-next-line no-console
     console.log(`
 ${SERVER_NAME} v${SERVER_VERSION}
 
@@ -87,6 +89,8 @@ For more information:
  * Display version information
  */
 function showVersion() {
+    // CLI output - intentional stdout usage
+    // eslint-disable-next-line no-console
     console.log(`${SERVER_NAME} v${SERVER_VERSION}`);
 }
 /**
@@ -136,6 +140,8 @@ function showHealth() {
             rateLimit: process.env['EP_RATE_LIMIT'] ?? '60'
         }
     };
+    // CLI output - intentional stdout usage
+    // eslint-disable-next-line no-console
     console.log(JSON.stringify(health, null, 2));
 }
 /**
