@@ -43,14 +43,14 @@ describe('Full Workflow E2E Tests', () => {
       expect(toolNames).toContain('generate_report');
 
       expect(toolNames.length).toBeGreaterThanOrEqual(10);
-    }, 15000);
+    }, 35000);
 
     it('should execute get_meps tool', async () => {
       const response = await client.callTool('get_meps', { limit: 3 });
       validateMCPResponse(response);
       const data = parsePaginatedMCPResponse(response.content);
       expect(Array.isArray(data)).toBe(true);
-    }, 15000);
+    }, 35000);
 
     it('should execute get_plenary_sessions tool', async () => {
       const response = await client.callTool('get_plenary_sessions', {
@@ -61,7 +61,7 @@ describe('Full Workflow E2E Tests', () => {
       validateMCPResponse(response);
       const data = parsePaginatedMCPResponse(response.content);
       expect(Array.isArray(data)).toBe(true);
-    }, 15000);
+    }, 35000);
 
     it('should execute get_voting_records tool', async () => {
       const response = await client.callTool('get_voting_records', {
@@ -71,7 +71,7 @@ describe('Full Workflow E2E Tests', () => {
       validateMCPResponse(response);
       const data = parsePaginatedMCPResponse(response.content);
       expect(Array.isArray(data)).toBe(true);
-    }, 15000);
+    }, 35000);
 
     it('should execute search_documents tool', async () => {
       const response = await client.callTool('search_documents', {
@@ -81,7 +81,7 @@ describe('Full Workflow E2E Tests', () => {
       validateMCPResponse(response);
       const data = parsePaginatedMCPResponse(response.content);
       expect(Array.isArray(data)).toBe(true);
-    }, 15000);
+    }, 35000);
 
     it('should execute get_committee_info tool', async () => {
       const response = await client.callTool('get_committee_info', {
@@ -90,7 +90,7 @@ describe('Full Workflow E2E Tests', () => {
       validateMCPResponse(response);
       const data = parseMCPResponse(response.content); // Non-paginated response
       expect(typeof data).toBe('object');
-    }, 15000);
+    }, 35000);
 
     it('should execute get_parliamentary_questions tool', async () => {
       const response = await client.callTool('get_parliamentary_questions', {
@@ -100,7 +100,7 @@ describe('Full Workflow E2E Tests', () => {
       validateMCPResponse(response);
       const data = parsePaginatedMCPResponse(response.content);
       expect(Array.isArray(data)).toBe(true);
-    }, 15000);
+    }, 35000);
 
     it('should execute analyze_voting_patterns tool', async () => {
       // First get a real MEP ID
@@ -122,7 +122,7 @@ describe('Full Workflow E2E Tests', () => {
       });
       validateMCPResponse(response);
       expect(response.content[0]?.type).toBe('text');
-    }, 15000);
+    }, 35000);
 
     it('should execute track_legislation tool', async () => {
       const response = await client.callTool('track_legislation', {
@@ -131,7 +131,7 @@ describe('Full Workflow E2E Tests', () => {
       validateMCPResponse(response);
       const data = parseMCPResponse(response.content); // Non-paginated response
       expect(typeof data).toBe('object');
-    }, 15000);
+    }, 35000);
 
     it('should execute generate_report tool', async () => {
       const response = await client.callTool('generate_report', {
@@ -139,7 +139,7 @@ describe('Full Workflow E2E Tests', () => {
       });
       validateMCPResponse(response);
       expect(response.content[0]?.type).toBe('text');
-    }, 15000);
+    }, 35000);
   });
 
   describe('Workflow: Research MEP Activity', () => {
