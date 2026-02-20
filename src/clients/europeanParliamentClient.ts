@@ -1730,8 +1730,8 @@ export class EuropeanParliamentClient {
  * @see {@link EuropeanParliamentClient} for client class documentation
  */
 export const epClient = new EuropeanParliamentClient({
-  baseURL: process.env['EP_API_URL'] || DEFAULT_EP_API_BASE_URL,
-  timeoutMs: (() => {
+  baseURL: process.env['EP_API_URL'] ?? DEFAULT_EP_API_BASE_URL,
+  timeoutMs: ((): number => {
     const rawTimeout = process.env['EP_REQUEST_TIMEOUT_MS'];
     if (typeof rawTimeout === 'string' && rawTimeout.trim().length > 0) {
       const parsed = Number.parseInt(rawTimeout, 10);
