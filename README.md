@@ -470,8 +470,11 @@ European-Parliament-MCP-Server/
 # Unit tests
 npm test
 
-# Integration tests
-npm run test:integration
+# Integration tests (requires EP_INTEGRATION_TESTS=true)
+EP_INTEGRATION_TESTS=true npm run test:integration
+
+# Integration tests with fixture capture
+EP_INTEGRATION_TESTS=true EP_SAVE_FIXTURES=true npm run test:integration
 
 # E2E tests
 npm run test:e2e
@@ -482,6 +485,8 @@ npm run test:coverage
 # Watch mode
 npm run test:watch
 ```
+
+**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, tools that are wired to the live European Parliament API execute against the real endpoints, while tools that still depend on a mocked `epClient` run contract tests against their mock implementations. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](INTEGRATION_TESTING.md) for the complete guide.
 
 ### Code Quality
 

@@ -19,8 +19,8 @@ let rateLimiter: RateLimiter;
  * Initialize test environment before all tests
  */
 beforeAll(async () => {
-  // Use test environment variables or defaults
-  const baseURL = process.env.EP_API_URL || 'https://data.europarl.europa.eu/api/v2';
+  // Use test environment variables or defaults (must include trailing slash)
+  const baseURL = process.env.EP_API_URL || 'https://data.europarl.europa.eu/api/v2/';
   
   // Create rate limiter for testing (more permissive for faster tests)
   rateLimiter = new RateLimiter({
