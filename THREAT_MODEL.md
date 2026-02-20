@@ -882,7 +882,7 @@ git commit -m "threat-model: Ad-Hoc - CVE-2025-12345 in ws dependency assessment
 git commit -m "threat-model: Annual Revision - MITRE ATT&CK coverage expansion"
 ```
 
-**📊 Threat Model Changelog:** Maintained in Git history with quarterly summary in [CHANGELOG.md](CHANGELOG.md)
+**📊 Threat Model Changelog:** Maintained via Git commit history using the `threat-model:` commit-message convention described above.
 
 ---
 
