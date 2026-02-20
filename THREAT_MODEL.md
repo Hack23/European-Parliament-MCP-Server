@@ -25,7 +25,7 @@
 ## 📑 Table of Contents
 
 - [ISMS Policy Alignment](#-isms-policy-alignment)
-- [Security Documentation Map](#️-security-documentation-map)
+- [Security Documentation Map](#-security-documentation-map)
 - [Purpose \& Scope](#-purpose--scope)
 - [System Classification](#-system-classification--operating-profile)
 - [💎 Critical Assets \& Crown Jewel Analysis](#-critical-assets--crown-jewel-analysis)

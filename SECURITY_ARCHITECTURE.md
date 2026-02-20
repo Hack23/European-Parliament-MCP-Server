@@ -101,6 +101,8 @@ This document describes the implemented security architecture for the European P
 
 ## 📑 Table of Contents
 
+- [ISMS Policy Alignment](#-isms-policy-alignment)
+- [Security Documentation Map](#-security-documentation-map)
 - [Information Classification & Asset Management](#information-classification--asset-management)
 - [Security Architecture Overview](#security-architecture-overview)
 - [1. Authentication & Authorization](#1-authentication--authorization)
@@ -3784,7 +3786,7 @@ Data Protection Regulation alignment:
 
 ---
 
-## 🏛️ 18. Detailed ISMS Controls Alignment
+## 🏛️ 18. ISMS Policy Alignment
 
 ### Related ISMS Policies
 
