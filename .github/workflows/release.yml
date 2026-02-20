@@ -319,27 +319,6 @@ jobs:
             artifacts/security/european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.zip.intoto.jsonl
             artifacts/security/european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.spdx.json.intoto.jsonl
           token: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-npm:
-    name: Publish to npm
-    needs: [prepare, build, release]
-    runs-on: ubuntu-latest
-    # npm publish needs specific permissions
-    permissions:
-      contents: read # Required to checkout code
-      id-token: write # Required for OIDC and npm provenance
-    steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
-        with:
-          egress-policy: audit
-
-      - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event_name == 'push' && github.ref || github.event_name == 'workflow_dispatch' && github.event.inputs.version || '' }}
-
       - name: Setup Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
@@ -357,13 +336,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Update package version
-        run: |
-          PLAIN_VERSION="${{ needs.prepare.outputs.version }}"
-          # Remove 'v' prefix if present
-          PLAIN_VERSION="${PLAIN_VERSION#v}"
-          npm version $PLAIN_VERSION --no-git-tag-version
 
       - name: Build package
         run: npm run build
@@ -393,4 +365,3 @@ jobs:
           echo ""
           echo "To verify provenance:"
           echo "npm audit signatures"
-
