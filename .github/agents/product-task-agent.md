@@ -201,6 +201,8 @@ Match issues to specialized agents based on domain expertise:
 
 **ALWAYS use Copilot assignment features when creating issues** to enable autonomous implementation.
 
+> **Note:** `gh copilot` subcommands require MCP-specific integration. If unavailable, use GitHub UI or standard workflows.
+
 ### Copilot Assignment Methods
 
 | Method | Use Case | Command |
@@ -211,8 +213,6 @@ Match issues to specialized agents based on domain expertise:
 | **Direct PR** | Quick fixes, no issue needed | `gh pr create --assign-copilot --base "main"` |
 | **Custom Agent PR** | Specialized domain expertise | `gh pr create --assign-copilot --agent "frontend-specialist"` |
 | **Status Tracking** | Monitor progress | `gh copilot status <job-id>` |
-
-> **Note:** `gh copilot` subcommands require MCP-specific integration. If unavailable, use GitHub UI or standard workflows.
 
 ### Agent Selection
 

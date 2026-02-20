@@ -56,7 +56,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: [build, security]
-    if: github.ref == 'refs/heads/main' && startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/')
     steps:
       - run: npm publish
         env:

@@ -28,7 +28,7 @@ This repository includes **27 comprehensive skills** that provide reusable patte
 - **testing-strategy** - 80%+ coverage, deterministic API tests
 - **documentation-standards** - JSDoc, OpenAPI, ISMS documentation
 - **performance-optimization** - Node.js/API performance optimization
-- **ai-development-governance** - AI-augmented dev controls, GitHub Copilot governance
+- **ai-development-governance** - AI-augmented development controls, GitHub Copilot governance
 
 ### Security & Compliance Skills (6)
 - **secure-code-review** - OWASP Top 10 review, input validation, TypeScript security
@@ -50,7 +50,7 @@ This repository includes **27 comprehensive skills** that provide reusable patte
 - **architecture-documentation** - C4 model, SECURITY_ARCHITECTURE.md, Mermaid diagrams
 - **aws-security-architecture** - AWS Control Tower, Well-Architected, VPC, GuardDuty, HA/DR
 - **compliance-frameworks** - ISO 27001, NIST CSF 2.0, CIS Controls, EU CRA mapping
-- **ai-development-governance** - AI-augmented dev controls, GitHub Copilot governance
+- **ai-development-governance** - AI-augmented development controls, GitHub Copilot governance
 
 Reference these skills when working on related tasks. All skills include evidence links to [Hack23 ISMS-PUBLIC](https://github.com/Hack23/ISMS-PUBLIC) policies.
 
