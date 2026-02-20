@@ -18,7 +18,8 @@
 
 **📋 Document Owner:** Architecture Team | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-20 (UTC)  
 **🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-20  
-**🏷️ Classification:** Public (Open Source MCP Server)
+**🏷️ Classification:** Public (Open Source MCP Server)  
+**✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.12.1), NIST CSF 2.0 (ID.AM), CIS Controls v8.1 (2.1)
 
 ---
 

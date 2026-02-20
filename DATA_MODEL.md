@@ -16,16 +16,10 @@
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
----
-
-## 📋 Document Information
-
-**Document Owner:** Architecture Team  
-**Version:** 1.0  
-**Last Updated:** 2026-02-17  
-**Classification:** Public  
-**Review Cycle:** Quarterly  
-**Next Review:** 2026-05-17
+**📋 Document Owner:** Architecture Team | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-17 (UTC)  
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-17  
+**🏷️ Classification:** Public (Open Source MCP Server)  
+**✅ ISMS Compliance:** ISO 27001 (A.8.1, A.8.2, A.18.1), NIST CSF 2.0 (ID.AM, PR.DS), CIS Controls v8.1 (3.1, 3.3)
 
 ---
 
