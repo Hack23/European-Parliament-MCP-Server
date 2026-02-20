@@ -57,6 +57,7 @@ export {
 // Export European Parliament types
 // Note: Using explicit exports to maintain controlled public API surface.
 // Only types and utilities intended for external consumption are exported here.
+// Import directly from schemas to satisfy knip unused export detection
 export type {
   MEP,
   MEPDetails,
@@ -90,7 +91,7 @@ export type {
   QuestionStatus,
   QuestionAddressee,
   ReportType
-} from './europeanParliament.js';
+} from '../schemas/europeanParliament.js';
 
 // Export validation helpers and reference data
 export {
@@ -99,4 +100,4 @@ export {
   EU_MEMBER_STATES,
   EU_LANGUAGES,
   EP_PARTY_GROUPS
-} from './europeanParliament.js';
+} from '../schemas/europeanParliament.js';
