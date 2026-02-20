@@ -1,6 +1,6 @@
 {
   "name": "european-parliament-mcp-server",
-  "version": "0.0.5",
+  "version": "0.1.2",
   "description": "Model Context Protocol server for European Parliament open data",
   "type": "module",
   "main": "dist/index.js",
@@ -51,7 +51,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Hack23/European-Parliament-MCP-Server.git"
+    "url": "git+https://github.com/Hack23/European-Parliament-MCP-Server.git"
   },
   "bugs": {
     "url": "https://github.com/Hack23/European-Parliament-MCP-Server/issues"
