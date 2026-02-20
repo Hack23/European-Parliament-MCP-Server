@@ -9,30 +9,30 @@
   <em>Providing AI assistants with structured access to parliamentary datasets</em>
 </p>
 
-<p align="center">
-  <!-- npm version -->
-  <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
-    <img src="https://img.shields.io/npm/v/european-parliament-mcp-server.svg?style=flat-square" alt="npm version">
-  </a>
-  
-  <!-- npm downloads -->
-  <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
-    <img src="https://img.shields.io/npm/dm/european-parliament-mcp-server.svg?style=flat-square" alt="npm downloads">
-  </a>
-  
-  <!-- Build Status -->
-  <a href="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/main.yml">
-    <img src="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/main.yml/badge.svg?style=flat-square" alt="Build Status">
-  </a>
-  
-  <!-- License -->
-  <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/LICENSE.md">
-    <img src="https://img.shields.io/github/license/Hack23/European-Parliament-MCP-Server.svg?style=flat-square" alt="License">
-  </a>
-</p>
+<table>
+  <tr>
+    <td width="120" align="center">
+      <img src="https://img.shields.io/badge/MCP-Server-6366F1?style=for-the-badge&logo=typescript&logoColor=white" width="80" alt="European Parliament MCP Server"/>
+      <div>
+        <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
+          <img src="https://img.shields.io/npm/v/european-parliament-mcp-server.svg" alt="npm version">
+        </a>
+      </div>
+    </td>
+    <td>
+      <p><strong>Model Context Protocol Server for European Parliament Open Data</strong> — providing AI assistants with structured access to MEPs, plenary sessions, committees, legislative documents, and parliamentary questions through a secure, type-safe TypeScript implementation.</p>
+      <div>
+        <a href="https://github.com/Hack23/European-Parliament-MCP-Server"><strong>📂 Repository</strong></a> •
+        <a href="https://hack23.com/european-parliament-mcp-features.html"><strong>✨ Features</strong></a> •
+        <a href="https://hack23.com/european-parliament-mcp-docs.html"><strong>📚 Documentation</strong></a> •
+        <a href="https://www.npmjs.com/package/european-parliament-mcp-server"><strong>📦 npm</strong></a>
+      </div>
+    </td>
+  </tr>
+</table>
 
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FHack23%2FEuropean-Parliament-MCP-Server.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FHack23%2FEuropean-Parliament-MCP-Server?ref=badge_large)
+[![ISMS](https://img.shields.io/badge/Hack23-ISMS-blue)](https://github.com/Hack23/ISMS-PUBLIC)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Hack23/European-Parliament-MCP-Server)
 
 ## 📊 Quality Metrics & Documentation
 
