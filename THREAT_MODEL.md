@@ -231,7 +231,7 @@ To visualize this threat landscape comprehensively, the European Parliament MCP 
 - **Score-based heatmap:** Effectiveness ratings (0-100) for each technique
 - **Filter views:** Supply Chain, MCP Protocol, API Layer, Runtime
 
-**📊 ATT&CK Navigator Layer JSON:** The layer JSON will be published in a future update to the `docs/threat-model/` directory once the visualization is finalized.
+**📊 ATT&CK Navigator Layer JSON:** The layer JSON is a planned deliverable and will be added in a future release under a `docs/threat-model/` directory once the visualization is finalized; it is not yet available in this repository.
 
 **🔗 Online Visualization:** Use [MITRE ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/) to load the layer JSON for interactive exploration.
 
@@ -375,7 +375,7 @@ The European Parliament MCP Server operates within a dynamic threat environment 
 
 ### **EU Cyber Resilience Act (CRA) Context**
 
-The **EU Cyber Resilience Act (Regulation 2024/2847)** imposes mandatory cybersecurity requirements for products with digital elements. The EP MCP Server, as an open-source component with parliamentary data access, falls under CRA scope:
+The **EU Cyber Resilience Act (Regulation (EU) 2024/2847)** imposes mandatory cybersecurity requirements for products with digital elements. The EP MCP Server, as an open-source component with parliamentary data access, falls under CRA scope:
 
 - **📋 Vulnerability Disclosure:** Mandatory 24-hour reporting of actively exploited vulnerabilities to ENISA
 - **📦 SBOM Requirements:** CycloneDX SBOM generation already implemented
@@ -452,7 +452,7 @@ graph LR
 
 **Attack Steps:**
 1. **Initial Compromise:** Attacker exploits vulnerability in transitive npm dependency (e.g., malicious `lodash` substitute)
-2. **Code Injection:** Malicious code intercepts `europeanParliament.searchVotingRecords()` tool
+2. **Code Injection:** Malicious code intercepts the `get_voting_records` MCP tool
 3. **Data Manipulation:** Alters vote outcomes (e.g., changes "Against" to "For" for specific MEPs)
 4. **Propagation:** AI assistant uses corrupted data to generate policy analysis
 5. **Impact:** Political decisions, news articles, or research based on false parliamentary data
@@ -497,7 +497,7 @@ graph LR
 ```
 
 **Attack Steps:**
-1. **Reconnaissance:** Attacker identifies MCP tool `getMEPByName()` for biographical data
+1. **Reconnaissance:** Attacker identifies MCP tools `get_meps` and `get_mep_details` for biographical data (using `get_meps` to enumerate MEPs and `get_mep_details` to retrieve full profiles)
 2. **Automation:** Script iterates through all 705 MEPs to harvest contact details, office locations, party affiliations
 3. **Exfiltration:** Bulk collection of GDPR Article 9 special category data (political opinions)
 4. **Monetization:** Sells MEP database to lobbying firms or political campaigns
