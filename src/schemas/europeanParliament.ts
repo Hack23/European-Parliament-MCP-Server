@@ -442,7 +442,10 @@ export const DetectVotingAnomaliesSchema = z.object({
     .max(1)
     .default(0.3)
     .describe('Anomaly sensitivity (lower = more anomalies detected)')
-});
+}).refine(
+  data => !(data.mepId !== undefined && data.groupId !== undefined),
+  { message: 'Cannot specify both mepId and groupId — use one or neither' }
+);
 
 /**
  * Compare political groups input schema

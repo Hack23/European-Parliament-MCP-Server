@@ -128,13 +128,13 @@ function getNextAction(isCompleted: boolean, stageIndex: number): string {
  * Create a single pipeline item
  */
 function createPipelineItem(
-  sessionId: string, itemIndex: number, agendaItem: string, committee: string | undefined
+  sessionId: string, itemIndex: number, agendaItem: string
 ): PipelineItem {
   const stageIndex = (agendaItem.length + itemIndex) % LEGISLATIVE_STAGES.length;
   const currentStage = LEGISLATIVE_STAGES[stageIndex] ?? 'PROPOSAL';
   const daysInStage = 10 + (agendaItem.length * 3) % 90;
-  const isStalled = daysInStage > 60;
   const isCompleted = currentStage === 'ADOPTED';
+  const isStalled = !isCompleted && daysInStage > 60;
   const progressPercentage = Math.round(((stageIndex + 1) / LEGISLATIVE_STAGES.length) * 100);
   const velocityScore = isStalled ? 20 : Math.min(100, 100 - daysInStage);
   const estimatedDays = Math.round(
@@ -146,7 +146,7 @@ function createPipelineItem(
     title: agendaItem,
     type: getProcedureType(itemIndex),
     currentStage,
-    committee: committee ?? (itemIndex % 2 === 0 ? 'ENVI' : 'AGRI'),
+    committee: itemIndex % 2 === 0 ? 'ENVI' : 'AGRI',
     daysInCurrentStage: daysInStage,
     isStalled,
     nextExpectedAction: getNextAction(isCompleted, stageIndex),
@@ -172,6 +172,14 @@ function matchesStatusFilter(item: PipelineItem, status: string): boolean {
 }
 
 /**
+ * Check if item matches committee filter
+ */
+function matchesCommitteeFilter(item: PipelineItem, committee: string | undefined): boolean {
+  if (committee === undefined) return true;
+  return item.committee === committee;
+}
+
+/**
  * Generate pipeline items from session data
  */
 function generatePipelineItems(
@@ -184,8 +192,8 @@ function generatePipelineItems(
     const maxItems = Math.min(session.agendaItems.length, 3);
     for (let i = 0; i < maxItems; i++) {
       const agendaItem = session.agendaItems[i] ?? 'Unknown procedure';
-      const item = createPipelineItem(session.id, i, agendaItem, committee);
-      if (matchesStatusFilter(item, status)) {
+      const item = createPipelineItem(session.id, i, agendaItem);
+      if (matchesStatusFilter(item, status) && matchesCommitteeFilter(item, committee)) {
         items.push(item);
       }
     }

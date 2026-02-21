@@ -70,6 +70,11 @@ describe('detect_voting_anomalies Tool', () => {
       expect(result).toHaveProperty('content');
     });
 
+    it('should reject when both mepId and groupId are provided', async () => {
+      await expect(handleDetectVotingAnomalies({ mepId: 'MEP-1', groupId: 'EPP' }))
+        .rejects.toThrow();
+    });
+
     it('should accept sensitivity threshold', async () => {
       const result = await handleDetectVotingAnomalies({ sensitivityThreshold: 0.5 });
       expect(result).toHaveProperty('content');

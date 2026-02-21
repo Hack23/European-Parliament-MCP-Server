@@ -99,14 +99,16 @@ function checkAttendanceAnomaly(
   threshold: number,
   detectedDate: string
 ): VotingAnomaly | undefined {
-  if (stats.attendanceRate < ((1 - threshold) * 100)) {
+  const expectedAttendance = Math.round((1 - threshold) * 100 * 100) / 100;
+
+  if (stats.attendanceRate < expectedAttendance) {
     return {
       type: 'LOW_ATTENDANCE',
       severity: classifyAttendanceSeverity(stats.attendanceRate),
       mepId: mep.id,
       mepName: mep.name,
-      description: `Attendance rate ${String(stats.attendanceRate)}% below expected threshold for ${mep.politicalGroup}`,
-      metrics: { expectedValue: 80, actualValue: stats.attendanceRate, deviation: Math.round((80 - stats.attendanceRate) * 100) / 100 },
+      description: `Attendance rate ${String(stats.attendanceRate)}% below expected threshold of ${String(expectedAttendance)}% for ${mep.politicalGroup}`,
+      metrics: { expectedValue: expectedAttendance, actualValue: stats.attendanceRate, deviation: Math.round((expectedAttendance - stats.attendanceRate) * 100) / 100 },
       detectedDate
     };
   }
