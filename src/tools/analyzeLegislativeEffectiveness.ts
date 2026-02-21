@@ -210,7 +210,7 @@ export async function handleAnalyzeLegislativeEffectiveness(
         legislativeOutputPerMonth: outputPerMonth,
         avgImpactPerReport: avgImpact,
         questionFollowUpRate: Math.round(metrics.questionsAsked > 0 ? 65 + (metrics.questionsAsked % 20) : 0),
-        committeeCoverageRate: Math.round((subjectData.committeeCount / 5) * 100 * 100) / 100,
+        committeeCoverageRate: Math.min(100, Math.round((subjectData.committeeCount / 5) * 100 * 100) / 100),
         peerComparisonPercentile: percentile,
         effectivenessRank: classifyEffectivenessRank(scores.overallEffectiveness)
       },

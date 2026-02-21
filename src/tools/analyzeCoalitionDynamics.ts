@@ -115,7 +115,12 @@ function computeGroupCohesion(groupMeps: { votingStatistics?: { totalVotes: numb
 /**
  * Compute coalition pair cohesion
  */
-function computePairCohesion(groupA: string, groupB: string, seed: number): CoalitionPairAnalysis {
+function computePairCohesion(
+  groupA: string,
+  groupB: string,
+  seed: number,
+  minimumCohesion: number
+): CoalitionPairAnalysis {
   const baseCohesion = 0.3 + (seed % 50) / 100;
   const sharedVotes = 200 + (seed % 300);
   const totalVotes = sharedVotes + 100 + (seed % 200);
@@ -123,7 +128,7 @@ function computePairCohesion(groupA: string, groupB: string, seed: number): Coal
 
   return {
     groupA, groupB, cohesionScore, sharedVotes, totalVotes,
-    allianceSignal: cohesionScore > 0.7,
+    allianceSignal: cohesionScore > minimumCohesion,
     trend: classifyCohesionTrend(cohesionScore)
   };
 }
@@ -169,14 +174,14 @@ async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionM
 /**
  * Build pairwise coalition pairs
  */
-function buildCoalitionPairs(targetGroups: string[]): CoalitionPairAnalysis[] {
+function buildCoalitionPairs(targetGroups: string[], minimumCohesion: number): CoalitionPairAnalysis[] {
   const pairs: CoalitionPairAnalysis[] = [];
   for (let i = 0; i < targetGroups.length; i++) {
     for (let j = i + 1; j < targetGroups.length; j++) {
       const groupA = targetGroups[i] ?? '';
       const groupB = targetGroups[j] ?? '';
       const seed = (groupA.length + groupB.length) * 17 + i * 31 + j * 13;
-      pairs.push(computePairCohesion(groupA, groupB, seed));
+      pairs.push(computePairCohesion(groupA, groupB, seed, minimumCohesion));
     }
   }
   return pairs;
@@ -268,7 +273,7 @@ export async function handleAnalyzeCoalitionDynamics(
   try {
     const targetGroups = params.groupIds ?? POLITICAL_GROUPS;
     const groupMetrics = await buildGroupMetrics(targetGroups);
-    const coalitionPairs = buildCoalitionPairs(targetGroups);
+    const coalitionPairs = buildCoalitionPairs(targetGroups, params.minimumCohesion);
     const sortedPairs = [...coalitionPairs].sort((a, b) => b.cohesionScore - a.cohesionScore);
     const stressIndicators = computeStressIndicators(groupMetrics);
     const fragMetrics = computeFragmentationMetrics(groupMetrics);

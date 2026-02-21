@@ -117,25 +117,26 @@ function calculateOverallScore(dims: GroupComparisonMetrics['dimensions']): numb
  * Fetch and build group metrics
  */
 async function buildGroupMetrics(groupIds: string[]): Promise<GroupComparisonMetrics[]> {
-  const groups: GroupComparisonMetrics[] = [];
-  for (const groupId of groupIds) {
-    const mepsResult = await epClient.getMEPs({ group: groupId, limit: 100 });
-    const { dimensions, totalVotesPerMember } = computeGroupDimensions(mepsResult.data, mepsResult.total);
-    const overallScore = calculateOverallScore(dimensions);
+  const groups = await Promise.all(
+    groupIds.map(async (groupId): Promise<GroupComparisonMetrics> => {
+      const mepsResult = await epClient.getMEPs({ group: groupId, limit: 100 });
+      const { dimensions, totalVotesPerMember } = computeGroupDimensions(mepsResult.data, mepsResult.total);
+      const overallScore = calculateOverallScore(dimensions);
 
-    groups.push({
-      groupId,
-      memberCount: mepsResult.total,
-      dimensions,
-      computedAttributes: {
-        overallPerformanceScore: overallScore,
-        relativeStrength: 0,
-        seatShare: 0,
-        effectivenessPerMember: Math.round((totalVotesPerMember / 10) * 100) / 100,
-        engagementIntensity: Math.round((dimensions.attendance * dimensions.activityLevel / 100) * 100) / 100
-      }
-    });
-  }
+      return {
+        groupId,
+        memberCount: mepsResult.total,
+        dimensions,
+        computedAttributes: {
+          overallPerformanceScore: overallScore,
+          relativeStrength: 0,
+          seatShare: 0,
+          effectivenessPerMember: Math.round((totalVotesPerMember / 10) * 100) / 100,
+          engagementIntensity: Math.round((dimensions.attendance * dimensions.activityLevel / 100) * 100) / 100
+        }
+      };
+    })
+  );
   return groups;
 }
 

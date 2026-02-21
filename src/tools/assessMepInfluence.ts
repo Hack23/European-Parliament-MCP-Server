@@ -276,7 +276,7 @@ export async function handleAssessMepInfluence(
       computedAttributes: {
         participationRate: stats.attendanceRate,
         loyaltyScore,
-        diversityIndex: Math.round((mep.committees.length / 5) * 100 * 100) / 100,
+        diversityIndex: Math.min(100, Math.max(0, Math.round((mep.committees.length / 5) * 100 * 100) / 100)),
         effectivenessRatio: Math.round((votingDim.score + legislativeDim.score) / 2 * 100) / 100,
         leadershipIndicator: committeeDim.score
       },

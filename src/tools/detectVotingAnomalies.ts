@@ -82,6 +82,15 @@ function classifyRiskLevel(highCount: number): string {
 }
 
 /**
+ * Determine confidence based on data volume, not anomaly count
+ */
+function getDataVolumeConfidence(scope: string, isSingleMep: boolean): string {
+  if (isSingleMep) return 'MEDIUM';
+  if (scope === 'All MEPs') return 'HIGH';
+  return 'MEDIUM';
+}
+
+/**
  * Check for low attendance anomaly
  */
 function checkAttendanceAnomaly(
@@ -90,7 +99,7 @@ function checkAttendanceAnomaly(
   threshold: number,
   detectedDate: string
 ): VotingAnomaly | undefined {
-  if (stats.attendanceRate < (threshold * 100)) {
+  if (stats.attendanceRate < ((1 - threshold) * 100)) {
     return {
       type: 'LOW_ATTENDANCE',
       severity: classifyAttendanceSeverity(stats.attendanceRate),
@@ -114,7 +123,7 @@ function checkAbstentionAnomaly(
   detectedDate: string
 ): VotingAnomaly | undefined {
   const rate = (stats.abstentions / stats.totalVotes) * 100;
-  if (rate > (1 - threshold) * 50) {
+  if (rate > threshold * 50) {
     return {
       type: 'ABSTENTION_SPIKE',
       severity: classifyAbstentionSeverity(rate),
@@ -139,7 +148,7 @@ function checkDefectionAnomaly(
 ): VotingAnomaly | undefined {
   const decisive = stats.votesFor + stats.votesAgainst;
   const rate = decisive > 0 ? (stats.votesAgainst / decisive) * 100 : 0;
-  if (rate > (1 - threshold) * 60) {
+  if (rate > threshold * 60) {
     return {
       type: 'PARTY_DEFECTION',
       severity: classifyDefectionSeverity(rate),
@@ -256,7 +265,7 @@ export async function handleDetectVotingAnomalies(
         defectionTrend: classifyDefectionTrend(highSeverity),
         riskLevel: classifyRiskLevel(highSeverity)
       },
-      confidenceLevel: result.anomalies.length > 0 ? 'MEDIUM' : 'HIGH',
+      confidenceLevel: getDataVolumeConfidence(result.scope, params.mepId !== undefined),
       methodology: 'Statistical deviation analysis with configurable sensitivity threshold'
     };
 

@@ -127,6 +127,22 @@ describe('detect_voting_anomalies Tool', () => {
 
       expect(data.summary.totalAnomalies).toBeGreaterThanOrEqual(0);
     });
+    it('should detect more anomalies with lower sensitivity threshold', async () => {
+      const resultLow = await handleDetectVotingAnomalies({
+        sensitivityThreshold: 0.1
+      });
+      const resultHigh = await handleDetectVotingAnomalies({
+        sensitivityThreshold: 0.9
+      });
+      const dataLow = JSON.parse(resultLow.content[0]?.text ?? '{}') as {
+        summary: { totalAnomalies: number };
+      };
+      const dataHigh = JSON.parse(resultHigh.content[0]?.text ?? '{}') as {
+        summary: { totalAnomalies: number };
+      };
+
+      expect(dataLow.summary.totalAnomalies).toBeGreaterThanOrEqual(dataHigh.summary.totalAnomalies);
+    });
   });
 
   describe('Anomaly Detection', () => {

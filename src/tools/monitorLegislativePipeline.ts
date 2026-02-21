@@ -275,7 +275,8 @@ export async function handleMonitorLegislativePipeline(
     const sessionParams = buildSessionParams(params.dateFrom, params.dateTo, params.limit);
     const sessions = await epClient.getPlenarySessions(sessionParams);
 
-    const pipeline = generatePipelineItems(sessions, params.committee, params.status);
+    const allItems = generatePipelineItems(sessions, params.committee, params.status);
+    const pipeline = allItems.slice(0, params.limit);
     const summary = computePipelineSummary(pipeline);
     const bottlenecks = detectBottlenecks(pipeline);
     const health = computeHealthMetrics(pipeline, summary);
@@ -283,7 +284,7 @@ export async function handleMonitorLegislativePipeline(
     const analysis: LegislativePipelineAnalysis = {
       period: { from: params.dateFrom ?? '2024-01-01', to: params.dateTo ?? '2024-12-31' },
       filter: { ...(params.committee !== undefined ? { committee: params.committee } : {}), status: params.status },
-      pipeline: pipeline.slice(0, params.limit),
+      pipeline,
       summary: {
         totalProcedures: pipeline.length,
         activeCount: summary.activeCount,
@@ -295,7 +296,7 @@ export async function handleMonitorLegislativePipeline(
       computedAttributes: {
         pipelineHealthScore: health.healthScore,
         throughputRate: health.throughputRate,
-        bottleneckIndex: Math.round(health.stalledRate * 100 * 100) / 100,
+        bottleneckIndex: Math.round(health.stalledRate * summary.avgDays * 100) / 100,
         stalledProcedureRate: Math.round(health.stalledRate * 100 * 100) / 100,
         estimatedClearanceTime: summary.avgDays * Math.max(1, summary.activeCount),
         legislativeMomentum: classifyMomentum(health.healthScore)
