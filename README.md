@@ -58,7 +58,7 @@
   </a>
   
   <!-- Documentation Portal -->
-  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/">
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/">
     <img src="https://img.shields.io/badge/📚%20Documentation-Portal-blue?style=flat-square" alt="Documentation Portal">
   </a>
 </p>
@@ -100,17 +100,17 @@
   </a>
   
   <!-- SBOM -->
-  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/SBOM.md">
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/SBOM.md">
     <img src="https://img.shields.io/badge/SBOM-SPDX%202.3-blue?style=flat-square" alt="SBOM">
   </a>
   
   <!-- SBOM Quality -->
-  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/SBOM.md">
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/SBOM.md">
     <img src="https://img.shields.io/badge/SBOM%20Quality-8.5%2F10-brightgreen?style=flat-square" alt="SBOM Quality">
   </a>
   
   <!-- Attestations -->
-  <a href="https://hack23.github.io/European-Parliament-MCP-Server/docs/ATTESTATIONS.md">
+  <a href="https://hack23.github.io/European-Parliament-MCP-Server/ATTESTATIONS.md">
     <img src="https://img.shields.io/badge/Attestations-Available-success?style=flat-square" alt="Build Attestations">
   </a>
 </p>
@@ -247,7 +247,7 @@ Configure in `.vscode/mcp.json`:
 
 ### 🌐 Documentation Portal
 
-**[📖 Complete Documentation Site](https://hack23.github.io/European-Parliament-MCP-Server/docs/)** - Live documentation portal with:
+**[📖 Complete Documentation Site](https://hack23.github.io/European-Parliament-MCP-Server/)** - Live documentation portal with:
 - 📖 **API Reference** - TypeDoc generated API documentation
 - 📊 **Coverage Reports** - Test coverage analysis
 - ✅ **Test Reports** - Unit and E2E test results

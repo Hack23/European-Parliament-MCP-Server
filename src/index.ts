@@ -102,7 +102,7 @@ MCP Client Configuration:
   }
 
 For more information:
-  Documentation: https://hack23.github.io/European-Parliament-MCP-Server/docs/
+  Documentation: https://hack23.github.io/European-Parliament-MCP-Server/api/
   GitHub: https://github.com/Hack23/European-Parliament-MCP-Server
   Issues: https://github.com/Hack23/European-Parliament-MCP-Server/issues
 `);
