@@ -41,6 +41,13 @@ import { handleGetParliamentaryQuestions, getParliamentaryQuestionsToolMetadata 
 import { handleAnalyzeVotingPatterns, analyzeVotingPatternsToolMetadata } from './tools/analyzeVotingPatterns.js';
 import { handleTrackLegislation, trackLegislationToolMetadata } from './tools/trackLegislation.js';
 import { handleGenerateReport, generateReportToolMetadata } from './tools/generateReport.js';
+// Phase 1 OSINT Intelligence Tools
+import { handleAssessMepInfluence, assessMepInfluenceToolMetadata } from './tools/assessMepInfluence.js';
+import { handleAnalyzeCoalitionDynamics, analyzeCoalitionDynamicsToolMetadata } from './tools/analyzeCoalitionDynamics.js';
+import { handleDetectVotingAnomalies, detectVotingAnomaliesToolMetadata } from './tools/detectVotingAnomalies.js';
+import { handleComparePoliticalGroups, comparePoliticalGroupsToolMetadata } from './tools/comparePoliticalGroups.js';
+import { handleAnalyzeLegislativeEffectiveness, analyzeLegislativeEffectivenessToolMetadata } from './tools/analyzeLegislativeEffectiveness.js';
+import { handleMonitorLegislativePipeline, monitorLegislativePipelineToolMetadata } from './tools/monitorLegislativePipeline.js';
 // Export types for public API
 export type * from './types/index.js';
 export * from './types/index.js';
@@ -134,7 +141,14 @@ function getToolMetadataArray(): { name: string; description: string; inputSchem
     // Advanced analysis tools
     analyzeVotingPatternsToolMetadata,
     trackLegislationToolMetadata,
-    generateReportToolMetadata
+    generateReportToolMetadata,
+    // Phase 1 OSINT Intelligence Tools
+    assessMepInfluenceToolMetadata,
+    analyzeCoalitionDynamicsToolMetadata,
+    detectVotingAnomaliesToolMetadata,
+    comparePoliticalGroupsToolMetadata,
+    analyzeLegislativeEffectivenessToolMetadata,
+    monitorLegislativePipelineToolMetadata
   ];
 }
 
@@ -317,7 +331,14 @@ class EuropeanParliamentMCPServer {
       // Advanced analysis tools
       'analyze_voting_patterns': handleAnalyzeVotingPatterns,
       'track_legislation': handleTrackLegislation,
-      'generate_report': handleGenerateReport
+      'generate_report': handleGenerateReport,
+      // Phase 1 OSINT Intelligence Tools
+      'assess_mep_influence': handleAssessMepInfluence,
+      'analyze_coalition_dynamics': handleAnalyzeCoalitionDynamics,
+      'detect_voting_anomalies': handleDetectVotingAnomalies,
+      'compare_political_groups': handleComparePoliticalGroups,
+      'analyze_legislative_effectiveness': handleAnalyzeLegislativeEffectiveness,
+      'monitor_legislative_pipeline': handleMonitorLegislativePipeline
     };
     
     const handler = toolHandlers[name];
