@@ -115,20 +115,21 @@ graph LR
 
 ### 📊 Workflow Portfolio
 
-The repository maintains **10 automated workflows** providing comprehensive CI/CD coverage:
+The repository maintains **11 automated workflows** providing comprehensive CI/CD coverage:
 
 | Workflow | Purpose | Trigger | ISMS Evidence |
 |----------|---------|---------|---------------|
-| **Main CI** | Orchestrates all workflows | Push, PR | [main.yml](.github/workflows/main.yml) |
 | **Test & Report** | Testing and coverage | Push, PR | [Secure Dev Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
 | **CodeQL Analysis** | SAST security scanning | Push, PR, Weekly | ISO 27001 A.14.2.8 |
 | **Scorecard** | Security best practices | Weekly | [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
 | **SBOM Generation** | Software Bill of Materials | Build | CIS Controls 2.2 |
-| **Release** | Automated releases | Tag push | SLSA Level 3 Provenance |
+| **Release** | Automated releases | Push (main), Manual | SLSA Level 3 Provenance |
+| **SLSA Provenance** | Build provenance attestation | Push (main), Manual | SLSA Level 3 |
 | **Labeler** | PR auto-labeling | PR | Process Automation |
 | **Setup Labels** | Label management | Manual | Configuration Management |
 | **Dependency Review** | Vulnerability scanning | PR | NIST CSF DE.CM-8 |
-| **Integration Tests** | E2E validation | Push, PR | Quality Assurance |
+| **Integration Tests** | E2E validation | Push, PR, Weekly | Quality Assurance |
+| **Copilot Setup** | Copilot agent environment | Push, PR, Manual | Dev Tooling |
 
 **All Workflows:** [.github/workflows/](../workflows/)
 

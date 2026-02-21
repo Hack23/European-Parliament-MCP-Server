@@ -467,7 +467,35 @@
 <a name='L402'></a><a href='#L402'>402</a>
 <a name='L403'></a><a href='#L403'>403</a>
 <a name='L404'></a><a href='#L404'>404</a>
-<a name='L405'></a><a href='#L405'>405</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L405'></a><a href='#L405'>405</a>
+<a name='L406'></a><a href='#L406'>406</a>
+<a name='L407'></a><a href='#L407'>407</a>
+<a name='L408'></a><a href='#L408'>408</a>
+<a name='L409'></a><a href='#L409'>409</a>
+<a name='L410'></a><a href='#L410'>410</a>
+<a name='L411'></a><a href='#L411'>411</a>
+<a name='L412'></a><a href='#L412'>412</a>
+<a name='L413'></a><a href='#L413'>413</a>
+<a name='L414'></a><a href='#L414'>414</a>
+<a name='L415'></a><a href='#L415'>415</a>
+<a name='L416'></a><a href='#L416'>416</a>
+<a name='L417'></a><a href='#L417'>417</a>
+<a name='L418'></a><a href='#L418'>418</a>
+<a name='L419'></a><a href='#L419'>419</a>
+<a name='L420'></a><a href='#L420'>420</a>
+<a name='L421'></a><a href='#L421'>421</a>
+<a name='L422'></a><a href='#L422'>422</a>
+<a name='L423'></a><a href='#L423'>423</a>
+<a name='L424'></a><a href='#L424'>424</a>
+<a name='L425'></a><a href='#L425'>425</a>
+<a name='L426'></a><a href='#L426'>426</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -611,6 +639,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -775,6 +810,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -914,6 +956,13 @@ import { handleGetParliamentaryQuestions, getParliamentaryQuestionsToolMetadata 
 import { handleAnalyzeVotingPatterns, analyzeVotingPatternsToolMetadata } from './tools/analyzeVotingPatterns.js';
 import { handleTrackLegislation, trackLegislationToolMetadata } from './tools/trackLegislation.js';
 import { handleGenerateReport, generateReportToolMetadata } from './tools/generateReport.js';
+// Phase 1 OSINT Intelligence Tools
+import { handleAssessMepInfluence, assessMepInfluenceToolMetadata } from './tools/assessMepInfluence.js';
+import { handleAnalyzeCoalitionDynamics, analyzeCoalitionDynamicsToolMetadata } from './tools/analyzeCoalitionDynamics.js';
+import { handleDetectVotingAnomalies, detectVotingAnomaliesToolMetadata } from './tools/detectVotingAnomalies.js';
+import { handleComparePoliticalGroups, comparePoliticalGroupsToolMetadata } from './tools/comparePoliticalGroups.js';
+import { handleAnalyzeLegislativeEffectiveness, analyzeLegislativeEffectivenessToolMetadata } from './tools/analyzeLegislativeEffectiveness.js';
+import { handleMonitorLegislativePipeline, monitorLegislativePipelineToolMetadata } from './tools/monitorLegislativePipeline.js';
 // Export types for public API
 export type * from './types/index.js';
 export * from './types/index.js';
@@ -1007,7 +1056,14 @@ function getToolMetadataArray(): { name: string; description: string; inputSchem
     // Advanced analysis tools
     analyzeVotingPatternsToolMetadata,
     trackLegislationToolMetadata,
-    generateReportToolMetadata
+    generateReportToolMetadata,
+    // Phase 1 OSINT Intelligence Tools
+    assessMepInfluenceToolMetadata,
+    analyzeCoalitionDynamicsToolMetadata,
+    detectVotingAnomaliesToolMetadata,
+    comparePoliticalGroupsToolMetadata,
+    analyzeLegislativeEffectivenessToolMetadata,
+    monitorLegislativePipelineToolMetadata
   ];
 }
 &nbsp;
@@ -1190,7 +1246,14 @@ class EuropeanParliamentMCPServer {
       // Advanced analysis tools
       'analyze_voting_patterns': handleAnalyzeVotingPatterns,
       'track_legislation': handleTrackLegislation,
-      'generate_report': handleGenerateReport
+      'generate_report': handleGenerateReport,
+      // Phase 1 OSINT Intelligence Tools
+      'assess_mep_influence': handleAssessMepInfluence,
+      'analyze_coalition_dynamics': handleAnalyzeCoalitionDynamics,
+      'detect_voting_anomalies': handleDetectVotingAnomalies,
+      'compare_political_groups': handleComparePoliticalGroups,
+      'analyze_legislative_effectiveness': handleAnalyzeLegislativeEffectiveness,
+      'monitor_legislative_pipeline': handleMonitorLegislativePipeline
     };
     
     const handler = <span class="cstat-no" title="statement not covered" >toolHandlers[name];</span>
@@ -1282,7 +1345,7 @@ server.start().catch(<span class="fstat-no" title="function not covered" >(e</sp
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-21T20:01:45.416Z
+                at 2026-02-21T22:41:59.813Z
             </div>
         <script src="../prettify.js"></script>
         <script>
