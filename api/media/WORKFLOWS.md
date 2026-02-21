@@ -37,7 +37,7 @@
 | **Architecture Diagrams** | System architecture visualization | [ARCHITECTURE_DIAGRAMS.md](../ARCHITECTURE_DIAGRAMS.md) |
 | **Secure Development Policy** | ISMS secure development guidelines | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
 | **Open Source Policy** | ISMS open source governance | [Open_Source_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
-| **Documentation Portal** | Live documentation and reports | [docs/](https://hack23.github.io/European-Parliament-MCP-Server/docs/) |
+| **Documentation Portal** | Live documentation and reports | [docs/](https://hack23.github.io/European-Parliament-MCP-Server/) |
 
 ---
 
@@ -72,7 +72,7 @@ All workflows implement security controls and provide evidence for:
   - 4.1: Security Configuration (CodeQL)
   - 16.6: Application Software Security
 
-**Evidence Location:** All workflow execution logs, SBOM, security scan results, and test reports are available in the [Documentation Portal](https://hack23.github.io/European-Parliament-MCP-Server/docs/)
+**Evidence Location:** All workflow execution logs, SBOM, security scan results, and test reports are available in the [Documentation Portal](https://hack23.github.io/European-Parliament-MCP-Server/)
 
 ### 🔐 Workflow Security Principles
 
