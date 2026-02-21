@@ -3251,7 +3251,7 @@ graph TB
    - Per-client quotas and monitoring
 
 2. **Application Layer**
-   - Input validation with Zod schemas (all 10 tools)
+   - Input validation with Zod schemas (all 16 tools)
    - Output validation ensures structure integrity
    - No user-controlled file paths or URLs
 

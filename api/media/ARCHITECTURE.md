@@ -81,6 +81,7 @@ graph TB
         E --> I[Plenary Tools]
         E --> J[Committee Tools]
         E --> K[Document Tools]
+        E --> H2[OSINT Intelligence Tools]
         F --> L[Resource Handlers]
         G --> M[Prompt Templates]
     end
@@ -90,6 +91,7 @@ graph TB
         I --> N
         J --> N
         K --> N
+        H2 --> N
         N --> O[Cache Layer]
         N --> P[Rate Limiter]
     end
@@ -502,6 +504,17 @@ sequenceDiagram
 | `track_legislation` | Track legislative procedure | Lower limit |
 | `generate_report` | Generate analysis report | Lowest limit |
 
+#### 🕵️ OSINT Intelligence Tools
+
+| Tool Name | Description | Rate Limit |
+|-----------|-------------|------------|
+| `assess_mep_influence` | MEP influence scoring (5-dimension model) | Lower limit |
+| `analyze_coalition_dynamics` | Coalition cohesion & stress analysis | Lower limit |
+| `detect_voting_anomalies` | Party defection & anomaly detection | Lower limit |
+| `compare_political_groups` | Cross-group comparative analysis | Lower limit |
+| `analyze_legislative_effectiveness` | MEP/committee legislative scoring | Lower limit |
+| `monitor_legislative_pipeline` | Pipeline status & bottleneck detection | Lower limit |
+
 ### Error Handling
 
 ```typescript
@@ -604,6 +617,13 @@ This architecture aligns with Hack23 ISMS policies:
 - ✅ Basic MEP and plenary data access
 - ✅ Security headers and input validation
 - ✅ ISMS compliance documentation
+- ✅ OSINT Intelligence Tools (Phase 1)
+  - ✅ MEP influence scoring (5-dimension model)
+  - ✅ Coalition dynamics analysis
+  - ✅ Voting anomaly detection
+  - ✅ Political group comparison
+  - ✅ Legislative effectiveness scoring
+  - ✅ Legislative pipeline monitoring
 
 ### Phase 2: Enhanced Features (Q2 2026)
 - [ ] Full dataset coverage (all 5 datasets)
@@ -613,11 +633,11 @@ This architecture aligns with Hack23 ISMS policies:
 - [ ] Redis caching for production
 
 ### Phase 3: Intelligence Layer (Q3 2026)
-- [ ] Voting pattern analysis
+- [ ] Political network mapping
 - [ ] Legislative trend detection
-- [ ] MEP influence scoring
-- [ ] Committee activity tracking
-- [ ] Automated report generation
+- [ ] Automated intelligence briefings
+- [ ] Political risk assessments
+- [ ] Policy position tracking
 
 ### Phase 4: Integration & Scale (Q4 2026)
 - [ ] GraphQL API
@@ -655,7 +675,7 @@ This architecture aligns with Hack23 ISMS policies:
 
 ## 🔧 Tool Implementation Patterns
 
-All 10 MCP tools follow a consistent implementation pattern:
+All 16 MCP tools (10 core + 6 OSINT intelligence) follow a consistent implementation pattern:
 
 **Pattern**: Input Validation → EP API Client → Output Validation → MCP Response
 
@@ -710,6 +730,7 @@ export async function handleGetMEPs(args: unknown) {
 | **State Diagrams** | System state transitions | [STATEDIAGRAM.md](./STATEDIAGRAM.md) |
 | **Mind Map** | System conceptual relationships | [MINDMAP.md](./MINDMAP.md) |
 | **SWOT Analysis** | Strategic analysis and positioning | [SWOT.md](./SWOT.md) |
+| **Workflows** | CI/CD pipeline documentation | [WORKFLOWS.md](./WORKFLOWS.md) |
 | **Architecture Diagrams** | C4 model diagrams | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) |
 | **Future Architecture** | Architectural evolution roadmap | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) |
 | **Secure Development Policy** | ISMS secure development guidelines | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |

@@ -7,7 +7,7 @@
 <h1 align="center">European Parliament MCP Server - API Usage Guide</h1>
 
 <p align="center">
-  <strong>Comprehensive guide to using all 10 MCP tools</strong><br>
+  <strong>Comprehensive guide to using all 16 MCP tools</strong><br>
   <em>Real-world examples, best practices, and query patterns</em>
 </p>
 
@@ -28,6 +28,13 @@
   - [analyze_voting_patterns](#tool-analyze_voting_patterns)
   - [track_legislation](#tool-track_legislation)
   - [generate_report](#tool-generate_report)
+- [OSINT Intelligence Tools](#osint-intelligence-tools)
+  - [assess_mep_influence](#tool-assess_mep_influence)
+  - [analyze_coalition_dynamics](#tool-analyze_coalition_dynamics)
+  - [detect_voting_anomalies](#tool-detect_voting_anomalies)
+  - [compare_political_groups](#tool-compare_political_groups)
+  - [analyze_legislative_effectiveness](#tool-analyze_legislative_effectiveness)
+  - [monitor_legislative_pipeline](#tool-monitor_legislative_pipeline)
 - [Common Use Cases](#common-use-cases)
 - [Best Practices](#best-practices)
 - [Error Handling](#error-handling)
@@ -36,7 +43,7 @@
 
 ## 🎯 Overview
 
-The European Parliament MCP Server provides 10 specialized tools for accessing parliamentary data through the Model Context Protocol. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
+The European Parliament MCP Server provides 16 specialized tools for accessing parliamentary data through the Model Context Protocol — including 10 core data tools and 6 OSINT intelligence tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
 
 ### Key Features
 
@@ -66,6 +73,17 @@ Currently, the server does **not require authentication** for tool access. Futur
 | `analyze_voting_patterns` | Voting analysis | mepId, dateFrom | Analysis object |
 | `track_legislation` | Track procedure | procedureId | Procedure object |
 | `generate_report` | Create reports | reportType, subjectId | Report object |
+
+### 🕵️ OSINT Intelligence Tools
+
+| Tool | Purpose | Key Parameters | Response Type |
+|------|---------|----------------|---------------|
+| `assess_mep_influence` | MEP influence scoring | mepId | Influence scorecard |
+| `analyze_coalition_dynamics` | Coalition cohesion analysis | politicalGroups, dateFrom | Coalition metrics |
+| `detect_voting_anomalies` | Anomaly detection | mepId, politicalGroup | Anomaly report |
+| `compare_political_groups` | Cross-group comparison | groups, metrics | Comparison matrix |
+| `analyze_legislative_effectiveness` | Legislative scoring | subjectId, subjectType | Effectiveness score |
+| `monitor_legislative_pipeline` | Pipeline monitoring | committeeId, status | Pipeline status |
 
 ---
 
@@ -845,6 +863,132 @@ const votingStats = await client.callTool('generate_report', {
 2. **Committee Analysis**: Assess committee productivity
 3. **Statistical Analysis**: Parliament-wide voting trends
 4. **Progress Tracking**: Monitor legislative progress
+
+---
+
+## 🕵️ OSINT Intelligence Tools
+
+### Tool: assess_mep_influence
+
+**Description**: Compute a comprehensive MEP influence score using a 5-dimension model: voting activity, legislative output, committee engagement, parliamentary oversight, and coalition building.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| mepId | string | Yes | MEP identifier |
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+#### Example Usage
+
+```
+Assess the influence of MEP with ID "124810" over the past year
+```
+
+---
+
+### Tool: analyze_coalition_dynamics
+
+**Description**: Analyze coalition cohesion and stress indicators across political groups, detecting voting alliances, defection rates, and fragmentation signals.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| politicalGroups | string[] | No | Political groups to analyze |
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+#### Example Usage
+
+```
+Analyze coalition dynamics between EPP and S&D over the last 6 months
+```
+
+---
+
+### Tool: detect_voting_anomalies
+
+**Description**: Detect unusual voting patterns including party defections, sudden alignment shifts, abstention spikes, and other anomalies.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| mepId | string | No | Specific MEP to analyze |
+| politicalGroup | string | No | Political group to analyze |
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+#### Example Usage
+
+```
+Detect voting anomalies in the EPP group over the past 3 months
+```
+
+---
+
+### Tool: compare_political_groups
+
+**Description**: Cross-group comparative analysis of voting discipline, activity levels, policy focus areas, and internal cohesion.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| groups | string[] | Yes | Political groups to compare |
+| metrics | string[] | No | Specific metrics to compare |
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+#### Example Usage
+
+```
+Compare EPP, S&D, and Renew Europe on voting cohesion and legislative output
+```
+
+---
+
+### Tool: analyze_legislative_effectiveness
+
+**Description**: Score MEP or committee legislative effectiveness — bills passed, amendments adopted, report quality, and overall impact.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| subjectId | string | Yes | MEP or committee identifier |
+| subjectType | string | No | "mep" or "committee" |
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+#### Example Usage
+
+```
+Analyze the legislative effectiveness of the ENVI committee
+```
+
+---
+
+### Tool: monitor_legislative_pipeline
+
+**Description**: Monitor real-time legislative pipeline status with bottleneck detection, timeline forecasting, and procedure progress tracking.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| committeeId | string | No | Filter by committee |
+| status | string | No | Filter by procedure status |
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+#### Example Usage
+
+```
+Show the current legislative pipeline status and identify bottlenecks
+```
 
 ---
 
