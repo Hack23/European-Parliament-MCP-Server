@@ -15,7 +15,7 @@ This file provides guidance for GitHub Copilot coding agent when working on this
 
 ## 🎯 Agent Skills Catalog
 
-This repository includes **26 comprehensive skills** that provide reusable patterns:
+This repository includes **41 comprehensive skills** that provide reusable patterns:
 
 ### Core Development Skills (10)
 - **mcp-server-development** - MCP protocol patterns, tool implementation
@@ -42,6 +42,27 @@ This repository includes **26 comprehensive skills** that provide reusable patte
 - **c4-architecture-documentation** - C4 model, architecture documentation portfolio
 - **github-actions-workflows** - CI/CD pipelines, security scans, deployments
 - **code-quality-excellence** - ESLint, TypeScript strict, quality gates
+
+### 🔍 Intelligence & OSINT Skills (10)
+- **political-science-analysis** - Comparative politics, political behavior, public policy analysis
+- **osint-methodologies** - OSINT collection, source evaluation, data integration, verification
+- **intelligence-analysis-techniques** - ACH, SWOT, Devil's Advocacy, Red Team, structured analytics
+- **european-political-system** - EU Parliament structure, political groups, legislative procedures
+- **data-science-for-intelligence** - Statistical analysis, ML, NLP, time series, network analysis
+- **electoral-analysis** - Election forecasting, campaign analysis, seat projection
+- **behavioral-analysis** - Political psychology, cognitive biases, leadership analysis
+- **strategic-communication-analysis** - Narrative analysis, media analysis, discourse analysis
+- **legislative-monitoring** - Voting pattern analysis, committee effectiveness, bill tracking
+- **risk-assessment-frameworks** - Political risk, institutional risk, democratic accountability
+
+### 💼 Business Strategy & Marketing Skills (2)
+- **business-model-canvas** - Value proposition, customer segments, revenue streams, business model design
+- **seo-best-practices** - On-page SEO, technical SEO, keyword research, content optimization
+
+### 🤖 AI & MCP Gateway Skills (3)
+- **ai-governance** - EU AI Act compliance, OWASP LLM security, responsible AI practices
+- **mcp-gateway-configuration** - Multi-server MCP setup, tool routing, access control
+- **mcp-gateway-security** - MCP security patterns, token management, request validation
 
 ### Comprehensive ISMS Skills (6)
 - **open-source-governance** - OpenSSF Scorecard, SLSA, SBOM, license compliance, vulnerability management
