@@ -3,6 +3,16 @@
  * 
  * Retrieve voting records from European Parliament plenary sessions
  * 
+ * **Intelligence Perspective:** Core intelligence product for voting pattern analysis,
+ * political group cohesion measurement, cross-party alliance detection, and MEP
+ * loyalty/independence scoring through structured analytic techniques.
+ * 
+ * **Business Perspective:** High-value data product for political risk assessment firms,
+ * policy analysis consultancies, and corporate government affairs departments.
+ * 
+ * **Marketing Perspective:** Most compelling data for data journalism partnerships,
+ * academic research collaborations, and transparency advocacy organizations.
+ * 
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 

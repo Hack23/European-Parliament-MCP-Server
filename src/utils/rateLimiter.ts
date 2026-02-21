@@ -1,6 +1,15 @@
 /**
  * Rate Limiter utility using token bucket algorithm
  * 
+ * **Intelligence Perspective:** Ensures sustainable OSINT collection rates from EP API,
+ * preventing service disruption that would compromise intelligence product reliability.
+ * 
+ * **Business Perspective:** SLA compliance depends on rate limiting—ensures fair resource
+ * allocation across API tiers and prevents abuse from high-volume customers.
+ * 
+ * **Marketing Perspective:** Responsible API usage demonstrates platform maturity
+ * and reliability commitment to potential enterprise customers and partners.
+ * 
  * ISMS Policy: SC-002 (Secure Coding), AC-003 (Access Control)
  * 
  * Implements token bucket algorithm for rate limiting to prevent abuse
