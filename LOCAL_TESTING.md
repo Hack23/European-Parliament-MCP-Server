@@ -777,7 +777,7 @@ If you discover a security vulnerability:
   <a href="https://github.com/Hack23/ISMS-PUBLIC">
     <img src="https://img.shields.io/badge/ISMS-ISO%2027001%20Compliant-brightgreen?style=flat-square" alt="ISMS Compliant">
   </a>
-  <a href="https://slsa.dev">
+  <a href="https://github.com/Hack23/European-Parliament-MCP-Server/attestations/">
     <img src="https://slsa.dev/images/gh-badge-level3.svg" alt="SLSA 3">
   </a>
 </p>

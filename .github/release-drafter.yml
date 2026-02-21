@@ -96,18 +96,18 @@ template: |
   - Comprehensive TypeScript typing and runtime validation
 
   ## 📊 Quality Metrics & Documentation
-  [![Test Coverage](https://img.shields.io/badge/Test%20Coverage-80%25%2B-brightgreen?style=flat-square&logo=vitest)](https://hack23.github.io/European-Parliament-MCP-Server/docs/coverage/)
-  [![Unit Tests](https://img.shields.io/badge/Unit%20Tests-Passing-brightgreen?style=flat-square&logo=vitest)](https://hack23.github.io/European-Parliament-MCP-Server/docs/test-results/)
-  [![E2E Tests](https://img.shields.io/badge/E2E%20Tests-Passing-brightgreen?style=flat-square&logo=playwright)](https://hack23.github.io/European-Parliament-MCP-Server/docs/e2e-results/)
-  [![API Docs](https://img.shields.io/badge/API%20Docs-TypeDoc-blue?style=flat-square&logo=typescript)](https://hack23.github.io/European-Parliament-MCP-Server/docs/api/)
-  [![Documentation Portal](https://img.shields.io/badge/📚%20Documentation-Portal-blue?style=flat-square)](https://hack23.github.io/European-Parliament-MCP-Server/docs/)
+  [![Test Coverage](https://img.shields.io/badge/Test%20Coverage-80%25%2B-brightgreen?style=flat-square&logo=vitest)](https://hack23.github.io/European-Parliament-MCP-Server/coverage/)
+  [![Unit Tests](https://img.shields.io/badge/Unit%20Tests-Passing-brightgreen?style=flat-square&logo=vitest)](https://hack23.github.io/European-Parliament-MCP-Server/test-results/)
+  [![E2E Tests](https://img.shields.io/badge/E2E%20Tests-Passing-brightgreen?style=flat-square&logo=playwright)](https://hack23.github.io/European-Parliament-MCP-Server/e2e-results/)
+  [![API Docs](https://img.shields.io/badge/API%20Docs-TypeDoc-blue?style=flat-square&logo=typescript)](https://hack23.github.io/European-Parliament-MCP-Server/api/)
+  [![Documentation Portal](https://img.shields.io/badge/📚%20Documentation-Portal-blue?style=flat-square)](https://hack23.github.io/European-Parliament-MCP-Server/)
 
   ## 🔐 Security & Compliance
   [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge?style=flat-square)](https://scorecard.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server)
   [![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://github.com/Hack23/European-Parliament-MCP-Server/attestations/)
-  [![SBOM](https://img.shields.io/badge/SBOM-SPDX%202.3-blue?style=flat-square)](https://hack23.github.io/European-Parliament-MCP-Server/docs/SBOM.md)
-  [![SBOM Quality](https://img.shields.io/badge/SBOM%20Quality-Report-blue?style=flat-square)](https://hack23.github.io/European-Parliament-MCP-Server/docs/SBOM.md)
-  [![Attestations](https://img.shields.io/badge/Attestations-Available-success?style=flat-square)](https://hack23.github.io/European-Parliament-MCP-Server/docs/ATTESTATIONS.md)
+  [![SBOM](https://img.shields.io/badge/SBOM-SPDX%202.3-blue?style=flat-square)](https://hack23.github.io/European-Parliament-MCP-Server/SBOM.md)
+  [![SBOM Quality](https://img.shields.io/badge/SBOM%20Quality-Report-blue?style=flat-square)](https://hack23.github.io/European-Parliament-MCP-Server/SBOM.md)
+  [![Attestations](https://img.shields.io/badge/Attestations-Available-success?style=flat-square)](https://hack23.github.io/European-Parliament-MCP-Server/ATTESTATIONS.md)
 
   ## 🛡️ Hack23 ISMS Compliance
   [![Information Security Policy](https://img.shields.io/badge/ISMS-Information%20Security%20Policy-0A66C2?style=flat-square&logo=shield)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
@@ -165,16 +165,16 @@ template: |
   - 📋 Full build provenance transparency
   - ✅ Independent verification capability
 
-  See [ATTESTATIONS.md](https://hack23.github.io/European-Parliament-MCP-Server/docs/ATTESTATIONS.md) for complete verification guide.
+  See [ATTESTATIONS.md](https://hack23.github.io/European-Parliament-MCP-Server/ATTESTATIONS.md) for complete verification guide.
 
   ## 🙏 Contributors
   Thanks to $CONTRIBUTORS for their contributions to this release!
 
   ## 📚 Additional Resources
-  - **Documentation Portal**: https://hack23.github.io/European-Parliament-MCP-Server/docs/
-  - **API Documentation**: https://hack23.github.io/European-Parliament-MCP-Server/docs/api/
-  - **Test Coverage**: https://hack23.github.io/European-Parliament-MCP-Server/docs/coverage/
-  - **SBOM**: https://hack23.github.io/European-Parliament-MCP-Server/docs/SBOM.md
+  - **Documentation Portal**: https://hack23.github.io/European-Parliament-MCP-Server/
+  - **API Documentation**: https://hack23.github.io/European-Parliament-MCP-Server/api/
+  - **Test Coverage**: https://hack23.github.io/European-Parliament-MCP-Server/coverage/
+  - **SBOM**: https://hack23.github.io/European-Parliament-MCP-Server/SBOM.md
   - **Security Policy**: https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY.md
   - **Hack23 ISMS**: https://github.com/Hack23/ISMS-PUBLIC
 

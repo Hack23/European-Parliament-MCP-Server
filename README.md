@@ -95,7 +95,7 @@
   </a>
   
   <!-- SLSA Level 3 -->
-  <a href="https://slsa.dev">
+  <a href="https://github.com/Hack23/European-Parliament-MCP-Server/attestations/">
     <img src="https://slsa.dev/images/gh-badge-level3.svg" alt="SLSA 3">
   </a>
   
