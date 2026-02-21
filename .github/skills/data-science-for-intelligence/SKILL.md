@@ -29,7 +29,7 @@ All data science activities must comply with [Hack23 ISMS policies](https://gith
 5. **GDPR-Aware Processing**: When analyzing MEP personal data, apply data minimization — aggregate where possible, pseudonymize when individual tracking is not analytically necessary
 6. **Bias Awareness**: Account for selection bias in roll-call votes (only ~30% of EP votes are roll-call), survivorship bias (only re-elected MEPs span terms), and measurement bias (attendance ≠ engagement)
 7. **Domain Validation**: Validate statistical findings against political science domain knowledge — a statistically significant pattern must also be institutionally plausible
-8. **Scalable Pipelines**: Design analysis pipelines that can process data across legislative terms (EP5–EP10) and scale to 705+ MEPs per term
+8. **Scalable Pipelines**: Design analysis pipelines that can process data across legislative terms (EP5–EP10) and scale to 720+ MEPs per term
 9. **Visualization Standards**: Use clear, accessible visualizations — label axes, include legends, use colorblind-safe palettes, and annotate key political events on time series
 10. **Ethical AI**: If applying ML models to MEP behavior prediction, disclose model limitations, avoid deterministic predictions about individual MEPs, and never use models for discriminatory profiling
 
