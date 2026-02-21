@@ -140,8 +140,9 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ### 🎯 Key Features
 
-- 🔌 **Full MCP Implementation**: Tools, Resources, and Prompts for comprehensive data access
+- 🔌 **Full MCP Implementation**: 16 tools (10 core + 6 OSINT intelligence), Resources, and Prompts
 - 🏛️ **European Parliament Data**: Access to 5 core parliamentary datasets
+- 🕵️ **OSINT Intelligence**: MEP influence scoring, coalition analysis, anomaly detection
 - 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance
 - 🚀 **High Performance**: <200ms API responses, intelligent caching, rate limiting
 - 📊 **Type Safety**: TypeScript strict mode + Zod runtime validation
@@ -282,7 +283,7 @@ Configure in `.vscode/mcp.json`:
 
 ## 🔌 MCP Tools
 
-### Quick Reference
+### Quick Reference — Core Data Tools
 
 | Tool | Description | Key Parameters | Response |
 |------|-------------|----------------|----------|
@@ -296,6 +297,17 @@ Configure in `.vscode/mcp.json`:
 | [`analyze_voting_patterns`](./API_USAGE_GUIDE.md#tool-analyze_voting_patterns) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
 | [`track_legislation`](./API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
 | [`generate_report`](./API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
+
+### 🕵️ OSINT Intelligence Tools
+
+| Tool | Description | Key Parameters | Response |
+|------|-------------|----------------|----------|
+| [`assess_mep_influence`](./API_USAGE_GUIDE.md#tool-assess_mep_influence) | MEP influence scoring (5-dimension model) | mepId (required), dateFrom, dateTo | Influence scorecard |
+| [`analyze_coalition_dynamics`](./API_USAGE_GUIDE.md#tool-analyze_coalition_dynamics) | Coalition cohesion & stress analysis | politicalGroups, dateFrom, dateTo | Coalition metrics |
+| [`detect_voting_anomalies`](./API_USAGE_GUIDE.md#tool-detect_voting_anomalies) | Party defection & anomaly detection | mepId, politicalGroup, dateFrom | Anomaly report |
+| [`compare_political_groups`](./API_USAGE_GUIDE.md#tool-compare_political_groups) | Cross-group comparative analysis | groups (required), metrics, dateFrom | Comparison matrix |
+| [`analyze_legislative_effectiveness`](./API_USAGE_GUIDE.md#tool-analyze_legislative_effectiveness) | MEP/committee legislative scoring | subjectId (required), subjectType, dateFrom | Effectiveness score |
+| [`monitor_legislative_pipeline`](./API_USAGE_GUIDE.md#tool-monitor_legislative_pipeline) | Pipeline status & bottleneck detection | committeeId, status, dateFrom | Pipeline status |
 
 📖 **[Complete API documentation with examples →](./API_USAGE_GUIDE.md)**
 
@@ -321,6 +333,15 @@ Configure in `.vscode/mcp.json`:
 1. Get committee: get_committee_info → {abbreviation: "ENVI"}
 2. List members: get_meps → {committee: "ENVI"}
 3. Generate report: generate_report → {reportType: "COMMITTEE_PERFORMANCE", subjectId: "COMM-ENVI"}
+```
+
+**OSINT Intelligence analysis**:
+```
+1. Score MEP influence: assess_mep_influence → {mepId: "MEP-123"}
+2. Detect anomalies: detect_voting_anomalies → {mepId: "MEP-123"}
+3. Analyze coalitions: analyze_coalition_dynamics → {politicalGroups: ["EPP", "S&D"]}
+4. Compare groups: compare_political_groups → {groups: ["EPP", "S&D", "Renew"]}
+5. Pipeline status: monitor_legislative_pipeline → {committeeId: "ENVI"}
 ```
 
 🎯 **[More use cases and examples →](./API_USAGE_GUIDE.md#common-use-cases)**

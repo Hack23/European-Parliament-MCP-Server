@@ -397,6 +397,163 @@ enum QuestionStatus {
 
 ---
 
+## 🕵️ OSINT Intelligence Data Model
+
+The OSINT intelligence tools produce **computed analytical data** derived from the core entities above. These are real-time aggregations, not stored entities.
+
+### Intelligence Entity Relationship
+
+```mermaid
+erDiagram
+    MEP ||--o{ INFLUENCE_SCORE : "scored by"
+    MEP ||--o{ VOTING_ANOMALY : "detected in"
+    MEP ||--o{ LEGISLATIVE_EFFECTIVENESS : "measured by"
+    
+    POLITICAL_GROUP ||--o{ COALITION_METRIC : "analyzed in"
+    POLITICAL_GROUP ||--o{ GROUP_COMPARISON : "compared in"
+    
+    LEGISLATION ||--o{ PIPELINE_STATUS : "tracked in"
+    COMMITTEE ||--o{ PIPELINE_STATUS : "monitored by"
+    
+    INFLUENCE_SCORE {
+        string mepId FK
+        number overallScore
+        number votingActivity
+        number legislativeOutput
+        number committeeEngagement
+        number oversight
+        number coalitionBuilding
+        number confidence
+    }
+    
+    COALITION_METRIC {
+        string groupPair
+        number cohesionScore
+        number stressIndicator
+        number defectionRate
+        string period
+    }
+    
+    VOTING_ANOMALY {
+        string mepId FK
+        string anomalyType
+        number severity
+        string description
+        date detectedDate
+    }
+    
+    GROUP_COMPARISON {
+        string groupId FK
+        number votingDiscipline
+        number activityLevel
+        number legislativeOutput
+        string period
+    }
+    
+    LEGISLATIVE_EFFECTIVENESS {
+        string subjectId FK
+        string subjectType
+        number effectivenessScore
+        number billsPassed
+        number amendmentsAdopted
+        number confidence
+    }
+    
+    PIPELINE_STATUS {
+        string procedureId FK
+        string currentStage
+        number daysInStage
+        boolean bottleneck
+        string forecast
+    }
+```
+
+### 9. Influence Score (Computed)
+
+```typescript
+interface InfluenceScore {
+  mepId: string;                   // Reference to MEP
+  overallScore: number;            // 0-10 composite score
+  dimensions: {
+    votingActivity: number;        // 0-10 (weight: 25%)
+    legislativeOutput: number;     // 0-10 (weight: 25%)
+    committeeEngagement: number;   // 0-10 (weight: 20%)
+    oversight: number;             // 0-10 (weight: 15%)
+    coalitionBuilding: number;     // 0-10 (weight: 15%)
+  };
+  confidence: number;              // 0-1 confidence level
+  trend: 'rising' | 'stable' | 'declining';
+  period: string;                  // Analysis period
+}
+```
+
+### 10. Coalition Metric (Computed)
+
+```typescript
+interface CoalitionMetric {
+  groupPair: string;               // e.g., "EPP-S&D"
+  cohesionScore: number;           // 0-1 agreement rate
+  stressIndicator: number;         // Δ cohesion over time
+  defectionRate: number;           // Party line breaks rate
+  allianceSignal: boolean;         // Cohesion > 0.7 for non-allied groups
+  period: string;                  // Analysis window
+}
+```
+
+### 11. Voting Anomaly (Computed)
+
+```typescript
+interface VotingAnomaly {
+  mepId: string;                   // Reference to MEP
+  anomalyType: AnomalyType;       // Type classification
+  severity: 'low' | 'medium' | 'high';
+  description: string;             // Human-readable explanation
+  detectedDate: string;            // ISO 8601 date
+  relatedVotes: string[];          // Vote IDs involved
+}
+
+enum AnomalyType {
+  PARTY_DEFECTION = 'party_defection',
+  ALIGNMENT_SHIFT = 'alignment_shift',
+  ABSTENTION_SPIKE = 'abstention_spike',
+  ATTENDANCE_DROP = 'attendance_drop'
+}
+```
+
+### 12. Legislative Effectiveness (Computed)
+
+```typescript
+interface LegislativeEffectiveness {
+  subjectId: string;               // MEP or Committee ID
+  subjectType: 'mep' | 'committee';
+  effectivenessScore: number;      // 0-10 composite score
+  metrics: {
+    billsPassed: number;
+    amendmentsAdopted: number;
+    reportsAuthored: number;
+    averageProcessingTime: number;
+  };
+  confidence: number;              // 0-1 confidence level
+  period: string;                  // Analysis period
+}
+```
+
+### 13. Pipeline Status (Computed)
+
+```typescript
+interface PipelineStatus {
+  procedureId: string;             // Procedure reference
+  title: string;                   // Procedure title
+  currentStage: string;            // Current legislative stage
+  daysInStage: number;             // Days at current stage
+  bottleneck: boolean;             // Bottleneck detected
+  forecast: string;                // Timeline forecast
+  healthIndicator: 'on_track' | 'delayed' | 'stalled';
+}
+```
+
+---
+
 ## 🔄 Data Flow
 
 ### Data Acquisition Flow
