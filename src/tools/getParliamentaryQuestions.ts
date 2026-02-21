@@ -3,6 +3,15 @@
  * 
  * Retrieve European Parliament questions and answers
  * 
+ * **Intelligence Perspective:** Reveals MEP policy priorities, Commission/Council scrutiny
+ * patterns, and emerging political concerns through question topic analysis and frequency.
+ * 
+ * **Business Perspective:** Enables regulatory early-warning products—questions often signal
+ * upcoming policy initiatives, making this valuable for compliance and government affairs.
+ * 
+ * **Marketing Perspective:** Unique dataset showcasing democratic accountability—ideal
+ * for transparency advocates, investigative journalists, and academic researchers.
+ * 
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 

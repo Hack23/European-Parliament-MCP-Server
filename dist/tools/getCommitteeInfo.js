@@ -3,6 +3,15 @@
  *
  * Retrieve European Parliament committee information
  *
+ * **Intelligence Perspective:** Maps committee power structures, membership networks,
+ * and policy domain specialization for institutional analysis and influence mapping.
+ *
+ * **Business Perspective:** Powers committee monitoring products for industry associations,
+ * trade groups, and corporate government affairs tracking specific policy areas.
+ *
+ * **Marketing Perspective:** Highlights structured access to EP's 20+ standing committees—
+ * compelling for policy monitoring platforms and civic tech integrations.
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 import { GetCommitteeInfoSchema, CommitteeSchema } from '../schemas/europeanParliament.js';

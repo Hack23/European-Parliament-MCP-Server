@@ -3,6 +3,15 @@
  *
  * Search European Parliament legislative documents
  *
+ * **Intelligence Perspective:** Essential for legislative monitoring, policy tracking,
+ * amendment analysis, and building intelligence products around EU regulatory developments.
+ *
+ * **Business Perspective:** Enables document search products for legal firms, compliance
+ * teams, and regulatory intelligence services requiring legislative text access.
+ *
+ * **Marketing Perspective:** Demonstrates comprehensive document search capability—
+ * key for attracting legal tech, RegTech, and policy research customer segments.
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 /**

@@ -11,7 +11,7 @@ Agent Skills are structured folders of instructions that teach GitHub Copilot to
 
 ## 🎯 Available Skills
 
-**Total: 36 Skills** across Core Development, Security & Compliance, DevOps & Quality, ISMS, and Political Intelligence domains.
+**Total: 41 Skills** across Core Development, Security & Compliance, DevOps & Quality, ISMS, Political Intelligence, Business Strategy, Marketing, and AI & MCP Gateway domains.
 
 ### Core MCP Development Skills
 
@@ -426,6 +426,80 @@ Structured risk frameworks for EU parliamentary analysis. Covers:
 - ISO 27001-aligned risk assessment methodology
 
 **When to use:** Assessing political risk, monitoring institutional stability, evaluating coalition dynamics
+
+---
+
+### 💼 Business Strategy & Marketing Skills
+
+### 💼 [business-model-canvas](./business-model-canvas/SKILL.md)
+**Business model design for EU parliamentary data platforms**
+
+Apply Business Model Canvas framework to MCP server and civic tech products. Covers:
+- Value proposition design for parliamentary transparency
+- Customer segment mapping (AI developers, journalists, researchers, NGOs, governments)
+- Revenue stream modeling (open core, API tiers, consulting, EU grants)
+- Key partnerships (EP, civic tech, academia, media)
+- Cost structure and sustainability planning
+
+**When to use:** Strategic planning, revenue modeling, partnership evaluation, market analysis
+
+---
+
+### 📈 [seo-best-practices](./seo-best-practices/SKILL.md)
+**SEO and content optimization for developer platforms**
+
+Optimize discoverability for EU parliamentary data MCP server. Covers:
+- npm package SEO (keywords, description, README)
+- GitHub repository optimization (topics, About, social preview)
+- Documentation site SEO (meta tags, structured data, sitemaps)
+- Developer content strategy (blog posts, tutorials, API guides)
+- Keyword research for civic tech and EU parliamentary data
+
+**When to use:** Improving discoverability, content optimization, documentation SEO, npm publishing
+
+---
+
+### 🤖 AI & MCP Gateway Skills
+
+### 🤖 [ai-governance](./ai-governance/SKILL.md)
+**EU AI Act compliance and responsible AI for parliamentary data**
+
+Ensure AI/LLM applications using EP data comply with EU regulations. Covers:
+- EU AI Act risk classification for parliamentary data tools
+- OWASP LLM Top 10 security for MCP servers
+- Output sanitization and hallucination mitigation
+- Transparency requirements for AI-generated parliamentary analysis
+- Responsible AI principles for democratic data
+
+**When to use:** Building AI features, LLM integration, EU AI Act compliance, output validation
+
+---
+
+### 🔌 [mcp-gateway-configuration](./mcp-gateway-configuration/SKILL.md)
+**Multi-server MCP gateway setup and tool routing**
+
+Configure MCP gateways for multi-source parliamentary data. Covers:
+- Multi-server MCP setup with tool routing
+- EP data source integration patterns
+- Access control for parliamentary data tools
+- Health checks and monitoring
+- Rate limiting across MCP tool invocations
+
+**When to use:** Multi-server MCP setup, gateway configuration, tool routing, access control
+
+---
+
+### 🔐 [mcp-gateway-security](./mcp-gateway-security/SKILL.md)
+**MCP gateway security patterns and audit logging**
+
+Secure MCP communications for parliamentary data access. Covers:
+- Token management and validation for MCP endpoints
+- Request validation and schema enforcement
+- Audit logging for all MCP tool invocations
+- Input sanitization for parliamentary data queries
+- GDPR-compliant request logging
+
+**When to use:** MCP security hardening, token management, audit logging, request validation
 
 ---
 

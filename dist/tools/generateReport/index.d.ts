@@ -3,6 +3,16 @@
  *
  * Generate analytical reports on European Parliament data
  *
+ * **Intelligence Perspective:** Produces structured intelligence products including MEP
+ * activity scorecards, committee effectiveness assessments, voting pattern reports, and
+ * legislative progress tracking aligned with intelligence analysis best practices.
+ *
+ * **Business Perspective:** Premium report generation capability enabling consulting
+ * deliverables, automated briefings, and white-label reporting for enterprise customers.
+ *
+ * **Marketing Perspective:** Flagship feature demonstrating automated parliamentary
+ * intelligence—key for content marketing, case studies, and product demonstrations.
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 /**

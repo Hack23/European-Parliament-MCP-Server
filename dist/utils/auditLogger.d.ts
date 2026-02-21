@@ -1,6 +1,15 @@
 /**
  * Audit Logger for GDPR compliance and security monitoring
  *
+ * **Intelligence Perspective:** Audit trails enable accountability analysis and
+ * access pattern intelligence—essential for data governance in political data systems.
+ *
+ * **Business Perspective:** GDPR audit compliance is a prerequisite for enterprise
+ * customers and EU institutional partnerships requiring demonstrable data governance.
+ *
+ * **Marketing Perspective:** GDPR-compliant audit logging is a trust signal for
+ * EU-focused customers and differentiates against non-compliant alternatives.
+ *
  * ISMS Policy: AU-002 (Audit Logging and Monitoring), GDPR Article 30
  *
  * Logs all access to personal data (MEP information) for audit trails

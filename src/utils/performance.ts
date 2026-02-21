@@ -1,6 +1,15 @@
 /**
  * Performance Monitoring Utilities
  * 
+ * **Intelligence Perspective:** Performance metrics enable operational intelligence
+ * on system health—critical for maintaining reliable intelligence product delivery.
+ * 
+ * **Business Perspective:** P95 latency targets (<200ms) directly impact customer
+ * satisfaction and SLA compliance for premium API tier customers.
+ * 
+ * **Marketing Perspective:** Sub-200ms response times are a key performance claim
+ * for developer marketing and competitive positioning against alternatives.
+ * 
  * ISMS Policy: PE-001 (Performance Standards), MO-001 (Monitoring)
  * 
  * Provides performance monitoring and metrics collection for:

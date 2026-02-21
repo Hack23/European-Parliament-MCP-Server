@@ -3,6 +3,15 @@
  *
  * Retrieve European Parliament plenary session information
  *
+ * **Intelligence Perspective:** Critical for legislative monitoring, session activity tracking,
+ * debate analysis, and identifying legislative priorities across parliamentary terms.
+ *
+ * **Business Perspective:** Enables real-time legislative tracking products for compliance
+ * teams, regulatory affairs departments, and policy monitoring services.
+ *
+ * **Marketing Perspective:** Showcases live parliamentary data access—compelling for
+ * journalists, media organizations, and civic tech platforms.
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 import { GetPlenarySessionsSchema, PlenarySessionSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';

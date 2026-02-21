@@ -3,6 +3,16 @@
  *
  * Retrieve detailed information about a specific MEP
  *
+ * **Intelligence Perspective:** Enables deep-dive MEP profiling including voting statistics,
+ * committee memberships, political group alignment, and behavioral pattern analysis for
+ * individual actor intelligence assessments.
+ *
+ * **Business Perspective:** Powers premium MEP profile products for corporate affairs teams,
+ * lobbyists, and political consultancies requiring comprehensive stakeholder intelligence.
+ *
+ * **Marketing Perspective:** Demonstrates depth of EP data access—key differentiator
+ * for attracting enterprise customers and academic researchers.
+ *
  * ISMS Policy: SC-002 (Input Validation), AU-002 (Audit Logging), GDPR Compliance
  */
 import { GetMEPDetailsSchema, MEPDetailsSchema } from '../schemas/europeanParliament.js';

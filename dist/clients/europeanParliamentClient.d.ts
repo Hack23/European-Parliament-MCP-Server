@@ -4,6 +4,15 @@
  * Provides type-safe access to European Parliament Open Data Portal with
  * comprehensive security and performance features.
  *
+ * **Intelligence Perspective:** Primary OSINT data collection interface—implements
+ * rate-limited, cached access to all EP datasets for intelligence product generation.
+ *
+ * **Business Perspective:** Core API client powering all data products—reliability,
+ * caching, and rate limiting directly impact SLA commitments and customer experience.
+ *
+ * **Marketing Perspective:** Client performance metrics (cache hit rate, response time)
+ * serve as key technical differentiators in developer marketing materials.
+ *
  * **ISMS Policies:**
  * - SC-002 (Secure Coding Standards)
  * - PE-001 (Performance Standards)

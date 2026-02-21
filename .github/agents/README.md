@@ -225,6 +225,72 @@ Specialized in:
 
 ---
 
+### 🕵️ intelligence-operative
+**Expert in political analysis, OSINT, and EU parliamentary intelligence**
+
+Specialized in:
+- Political science analysis and comparative politics across 27 EU member states
+- Open-source intelligence (OSINT) from European Parliament data
+- Structured analytic techniques (ACH, SWOT, Devil's Advocacy)
+- MEP behavioral analysis and voting pattern intelligence
+- Coalition analysis and political risk assessment
+- Strategic communication and narrative analysis
+
+**Tools:** All tools (`*`)
+
+**Key Capabilities:**
+- 🔍 Produce political scorecards and MEP activity profiles
+- 📊 Analyze voting coalitions and political group dynamics
+- 🗳️ Forecast legislative outcomes and coalition stability
+- ⚠️ Assess political risk and institutional accountability
+- 📢 Analyze EP communication patterns and media influence
+
+---
+
+### 💼 business-development-specialist
+**Expert in strategic planning, revenue models, and market expansion for EU parliamentary data**
+
+Specialized in:
+- Strategic planning with Business Model Canvas framework
+- Partnership development (EU institutions, civic tech, academia, media)
+- Revenue models (open core, API monetization, consulting, EU grants)
+- Market segmentation (AI developers, journalists, researchers, NGOs, government)
+- Go-to-market strategy for MCP ecosystem
+- Competitive analysis in civic tech and parliamentary data space
+
+**Tools:** All tools (`*`)
+
+**Key Capabilities:**
+- 💰 Design GDPR-compliant revenue models for parliamentary data
+- 🤝 Develop partnership proposals for EU institutions and civic tech
+- 📈 Create growth strategies for MCP ecosystem adoption
+- 🎯 Segment and target customer personas
+- 📋 Build business cases for EP data product features
+
+---
+
+### 📢 marketing-specialist
+**Expert in digital marketing, developer advocacy, and brand positioning for EU parliamentary data**
+
+Specialized in:
+- Developer marketing and MCP ecosystem advocacy
+- Content strategy for civic tech and parliamentary transparency
+- SEO optimization for npm packages and documentation sites
+- Community building in open-source and AI developer communities
+- Brand positioning with strict political neutrality
+- GDPR-compliant marketing practices
+
+**Tools:** All tools (`*`)
+
+**Key Capabilities:**
+- 🚀 Drive adoption of EP MCP Server in AI developer community
+- ✍️ Create content pillars (EU Democracy, MCP/AI Integration, Developer Guides)
+- 📈 Optimize SEO for npm, GitHub, and documentation discoverability
+- 🌐 Build developer community around parliamentary transparency
+- 🎨 Maintain brand consistency with political neutrality
+
+---
+
 ## 🔄 Agent Workflow
 
 ```mermaid
@@ -237,12 +303,18 @@ graph TB
     AgentSelect -->|Testing| TestEng[🧪 test-engineer]
     AgentSelect -->|Security| Security[🔒 security-specialist]
     AgentSelect -->|Documentation| DocWriter[📝 documentation-writer]
+    AgentSelect -->|Intelligence| Intel[🕵️ intelligence-operative]
+    AgentSelect -->|Business| BizDev[💼 business-development-specialist]
+    AgentSelect -->|Marketing| Marketing[📢 marketing-specialist]
     
     TaskAgent --> Tools[Agent Tools]
     Frontend --> Tools
     TestEng --> Tools
     Security --> Tools
     DocWriter --> Tools
+    Intel --> Tools
+    BizDev --> Tools
+    Marketing --> Tools
     
     Tools --> MCP[MCP Servers]
     MCP --> FS[📁 Filesystem]
@@ -256,12 +328,18 @@ graph TB
     TaskAgent -.->|Assigns| TestEng
     TaskAgent -.->|Assigns| Security
     TaskAgent -.->|Assigns| DocWriter
+    TaskAgent -.->|Assigns| Intel
+    TaskAgent -.->|Assigns| BizDev
+    TaskAgent -.->|Assigns| Marketing
     
     style TaskAgent fill:#FFC107,stroke:#F57C00,stroke-width:3px,color:#000
     style Frontend fill:#2196F3
     style TestEng fill:#FF9800
     style Security fill:#D32F2F
     style DocWriter fill:#9C27B0
+    style Intel fill:#607D8B
+    style BizDev fill:#00897B
+    style Marketing fill:#E91E63
 ```
 
 ## 💡 How to Use
@@ -387,6 +465,11 @@ You specialize in:
 | Documentation | 📝 documentation-writer | - | Filesystem |
 | ISMS Compliance | 🔐 isms-compliance-auditor | 🔒 security-specialist | GitHub |
 | GDPR Compliance | 🏛️ european-parliament-specialist | 🔐 isms-compliance-auditor | Filesystem |
+| Political Intelligence | 🕵️ intelligence-operative | 🏛️ european-parliament-specialist | Filesystem |
+| Business Strategy | 💼 business-development-specialist | 🎯 product-task-agent | GitHub |
+| Marketing & Growth | 📢 marketing-specialist | 💼 business-development-specialist | GitHub |
+| Coalition Analysis | 🕵️ intelligence-operative | 📊 data-science | Filesystem |
+| Legislative Tracking | 🕵️ intelligence-operative | 🏛️ european-parliament-specialist | Filesystem |
 
 ## 📚 Resources
 

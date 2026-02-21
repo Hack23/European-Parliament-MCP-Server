@@ -3,6 +3,16 @@
  * 
  * Track legislative procedure progress through European Parliament
  * 
+ * **Intelligence Perspective:** Enables real-time legislative pipeline monitoring,
+ * procedure stage analysis, and trilogue outcome tracking for strategic intelligence
+ * on EU regulatory developments and policy trajectory forecasting.
+ * 
+ * **Business Perspective:** Core compliance monitoring product—essential for enterprises
+ * tracking regulatory changes, industry associations monitoring sector-specific legislation.
+ * 
+ * **Marketing Perspective:** Demonstrates end-to-end legislative tracking capability—
+ * differentiator for RegTech market and EU affairs consultancy customer acquisition.
+ * 
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
