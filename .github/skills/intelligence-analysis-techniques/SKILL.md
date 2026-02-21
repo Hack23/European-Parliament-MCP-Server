@@ -67,7 +67,7 @@ Subject: Renew Europe Group — EP10 Strategic Position
 Strengths:
 - Centrist positioning enables coalition flexibility (EPP or S&D)
 - Strong presence in key committees (ECON, ITRE)
-- Data source: get-meps (group filter), committee membership records
+- Data source: get_meps (group filter), committee membership records
 
 Weaknesses:
 - Internal ideological diversity (liberal vs. centrist tensions)
@@ -77,7 +77,7 @@ Weaknesses:
 Opportunities:
 - Kingmaker role when EPP-S&D grand coalition insufficient
 - Growing influence on digital/tech policy where group has expertise
-- Data source: get-procedures filtered by policy area
+- Data source: track_legislation filtered by policy area
 
 Threats:
 - National delegation losses in next EP elections

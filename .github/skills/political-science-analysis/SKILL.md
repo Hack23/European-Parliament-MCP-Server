@@ -51,13 +51,13 @@ Compare Swedish MEP voting patterns across political groups:
 - Map Swedish national parties to EP political groups (S → S&D, M → EPP, etc.)
 - Calculate loyalty scores: how often Swedish MEPs vote with their group majority
 - Identify policy areas where national interest overrides group discipline
-- Use MCP Server tools: get-meps (country filter), get-plenary-documents
+- Use MCP Server tools: get_meps (country filter), get_voting_records
 ```
 
 ### Legislative Procedure Analysis
 ```
 Track legislative outcomes through the ordinary legislative procedure:
-- Use get-procedures tool to identify dossiers by policy area
+- Use track_legislation tool to identify dossiers by policy area
 - Analyze first-reading agreements vs. second-reading/conciliation outcomes
 - Study rapporteur influence: compare committee vote to plenary vote alignment
 - Assess EP vs. Council bargaining success rates by policy domain

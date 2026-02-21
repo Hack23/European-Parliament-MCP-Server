@@ -45,8 +45,8 @@ Using MCP Server historical data and current national polls:
    - France (81 seats): D'Hondt, 5% threshold, closed lists
    - Ireland (14 seats): STV, multi-seat constituencies
 3. Aggregate national projections into political group totals
-4. Map: Use get-meps to identify current group affiliations
-5. Compare: Historical composition via get-meps (term filter)
+4. Map: Use get_meps to identify current group affiliations
+5. Compare: Historical composition via get_meps (term filter)
 6. Report with confidence intervals per group
 
 Expected output: EPP 175–190, S&D 135–150, Renew 75–90, etc.
@@ -60,7 +60,7 @@ Analyze EP election turnout trends using MCP Server data:
 - Identify correlation between turnout and political group representation
 - Compare compulsory voting states (BE, LU, EL) vs. voluntary states
 - Track youth turnout impact on Greens/EFA and new party representation
-- Use get-meps with country filter for state-level composition analysis
+- Use get_meps with country filter for state-level composition analysis
 ```
 
 ### Party Fragmentation Assessment
@@ -69,7 +69,7 @@ Measure effective number of parties (ENP) across EP terms:
 
 ENP = 1 / Σ(pi²)  where pi = seat share of party i
 
-- Calculate ENP per member state delegation using get-meps data
+- Calculate ENP per member state delegation using get_meps data
 - Track fragmentation trends: EP6 (2004) → EP10 (2024)
 - Identify states with highest fragmentation driving group instability
 - Correlate ENP with coalition formation difficulty in EP

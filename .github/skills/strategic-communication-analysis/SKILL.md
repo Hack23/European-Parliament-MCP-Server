@@ -39,7 +39,7 @@ This skill supports transparent analysis of public parliamentary communications,
 ```
 Analyze framing of EU Green Deal debates using MCP Server data:
 
-1. Retrieve debate documents: get-plenary-documents (Green Deal dossiers)
+1. Retrieve debate documents: search_documents (Green Deal dossiers)
 2. Identify competing frames across political groups:
    - EPP: "Competitiveness + environment" (economic opportunity frame)
    - S&D: "Just transition" (social justice frame)
@@ -55,7 +55,7 @@ Analyze framing of EU Green Deal debates using MCP Server data:
 ```
 Map communication priorities through written questions:
 
-Using get-documents (parliamentary questions filter):
+Using get_parliamentary_questions (parliamentary questions filter):
 1. Categorize questions by policy domain and political group
 2. Identify emerging issues: topics with rapidly increasing question frequency
 3. Detect scrutiny campaigns: coordinated questions on same topic from one group
@@ -72,7 +72,7 @@ Influence indicators:
 ```
 Track how EP communication shapes legislative outcomes:
 
-Dossier tracking (using get-procedures):
+Dossier tracking (using track_legislation):
 1. Commission proposal: identify initial policy narrative and framing
 2. Committee report: analyze how rapporteur reframes the issue
 3. Plenary amendments: map competing narratives from political groups

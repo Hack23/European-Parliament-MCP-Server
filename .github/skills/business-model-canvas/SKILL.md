@@ -1,7 +1,7 @@
 ---
 name: business-model-canvas
 description: Value proposition, customer segments, revenue streams, and business model design for EU parliamentary data platforms
-license: MIT
+license: Apache-2.0
 ---
 
 # Business Model Canvas Skill
@@ -21,7 +21,7 @@ The EP MCP Server operates at the intersection of open data, civic technology, a
 
 ## Rules
 
-1. **Lead with Open Core**: Keep the core MCP Server open source (MIT); offer premium tools, SLAs, or managed hosting as paid tiers
+1. **Lead with Open Core**: Keep the core MCP Server open source (Apache-2.0); offer premium tools, SLAs, or managed hosting as paid tiers
 2. **Define Customer Segments Clearly**: Primary segments are AI/LLM developers, investigative journalists, academic researchers, transparency NGOs, and EU affairs consultancies
 3. **Validate Value Propositions per Segment**: AI developers need structured MCP tools; journalists need real-time alerts; researchers need historical datasets; NGOs need bulk access
 4. **Design Sustainable Revenue Streams**: Combine API usage tiers, consulting engagements, EU Horizon/CEF grants, and sponsorships from civic tech foundations
@@ -111,7 +111,7 @@ funding_model: "Hope that contributors keep working for free"
 
 ## ISMS Compliance
 
-- **OS-001**: Open source governance and transparent licensing (MIT)
+- **OS-001**: Open source governance and transparent licensing (Apache-2.0)
 - **DP-001**: Business model must respect GDPR data minimization for personal MEP data
 - **AC-003**: Tiered access controls aligned with customer segment authorization levels
 

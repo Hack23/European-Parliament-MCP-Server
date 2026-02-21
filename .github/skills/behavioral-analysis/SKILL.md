@@ -40,9 +40,9 @@ This skill integrates behavioral science with EP MCP Server data, aligned with [
 Construct behavioral profiles from MCP Server data:
 
 Dimensions (all from public EP data):
-1. Legislative productivity: get-meps → count reports authored per term
+1. Legislative productivity: get_meps → count reports authored per term
 2. Plenary engagement: voting participation rate from roll-call data
-3. Scrutiny activity: get-documents → parliamentary questions filed
+3. Scrutiny activity: get_parliamentary_questions → parliamentary questions filed
 4. Coalition-building: cross-group amendment co-signatures
 5. Specialization: committee assignment stability across terms
 
@@ -63,8 +63,8 @@ Indicators of groupthink in EP committee decisions:
 4. Dissent tolerance: how dissenters are treated in subsequent rapporteur assignments
 
 Using MCP Server tools:
-- get-plenary-documents (committee reports with vote tallies)
-- get-meps (committee membership and role assignments)
+- get_voting_records (committee vote tallies and unanimity rates)
+- get_meps (committee membership and role assignments)
 - Track committees with consistently high unanimity for groupthink risk
 ```
 

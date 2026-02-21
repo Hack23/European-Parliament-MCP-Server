@@ -38,7 +38,7 @@ Developer platforms compete for visibility among AI tooling, open data, and civi
 
 ```json
 {
-  "name": "@anthropic/european-parliament-mcp-server",
+  "name": "european-parliament-mcp-server",
   "description": "MCP server providing AI-ready access to European Parliament data — MEPs, votes, legislation, and committees",
   "keywords": [
     "mcp", "model-context-protocol", "european-parliament",

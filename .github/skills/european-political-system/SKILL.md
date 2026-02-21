@@ -59,14 +59,14 @@ Non-Inscrits                 | NI    | Unaffiliated           | Various
 ```
 MCP Server tools for tracking each stage:
 
-1. Commission Proposal → get-documents (COM documents)
+1. Commission Proposal → search_documents (COM documents)
 2. EP First Reading:
-   - Committee stage → get-plenary-documents (committee reports)
-   - Plenary vote → get-plenary-documents (adopted texts)
+   - Committee stage → get_voting_records (committee reports)
+   - Plenary vote → get_voting_records (adopted texts)
 3. Council First Reading → (external: Council register)
-4. EP Second Reading (if needed) → get-procedures (procedure status)
-5. Conciliation Committee (if needed) → get-procedures
-6. Third Reading → get-plenary-documents (joint text vote)
+4. EP Second Reading (if needed) → track_legislation (procedure status)
+5. Conciliation Committee (if needed) → track_legislation
+6. Third Reading → get_voting_records (joint text vote)
 
 ~85% of dossiers concluded at first reading via informal trilogues
 ```
@@ -83,7 +83,7 @@ Legislative committees relevant to MCP Server data:
 - LIBE (Civil Liberties) — fundamental rights, migration, data protection
 - JURI (Legal Affairs) — legal basis, legislative quality
 
-Use get-meps with committee filter to identify committee members
+Use get_meps with committee filter to identify committee members
 ```
 
 ## Anti-Patterns

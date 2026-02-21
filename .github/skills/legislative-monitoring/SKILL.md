@@ -39,17 +39,17 @@ This skill enables systematic legislative oversight using EP MCP Server data, al
 ```
 Track a legislative dossier end-to-end using MCP Server tools:
 
-1. Identify dossier: get-procedures (procedure reference, e.g., 2021/0106(COD))
-2. Retrieve Commission proposal: get-documents (COM document type)
+1. Identify dossier: track_legislation (procedure reference, e.g., 2021/0106(COD))
+2. Retrieve Commission proposal: search_documents (COM document type)
 3. Monitor committee stage:
-   - Identify lead committee and rapporteur: get-meps (committee filter)
-   - Track committee amendments and vote: get-plenary-documents
+   - Identify lead committee and rapporteur: get_meps (committee filter)
+   - Track committee amendments and vote: get_voting_records
 4. Track plenary first reading:
-   - Retrieve adopted amendments: get-plenary-documents (adopted texts)
+   - Retrieve adopted amendments: get_voting_records (adopted texts)
    - Analyze voting results: roll-call vote data
 5. Monitor Council position: (external source, cross-reference)
-6. Track trilogue outcomes: get-procedures (procedure status updates)
-7. Final adoption: get-plenary-documents (final adopted text)
+6. Track trilogue outcomes: track_legislation (procedure status updates)
+7. Final adoption: search_documents (final adopted text)
 
 Output: Timeline, key decision points, voting outcomes per stage
 ```
@@ -59,8 +59,8 @@ Output: Timeline, key decision points, voting outcomes per stage
 Analyze voting patterns in ENVI committee on climate legislation:
 
 Methodology:
-1. Identify ENVI climate dossiers: get-procedures (committee + policy filter)
-2. Retrieve committee vote results: get-plenary-documents (committee reports)
+1. Identify ENVI climate dossiers: track_legislation (committee + policy filter)
+2. Retrieve committee vote results: get_voting_records (committee reports)
 3. Calculate per-group voting patterns on ENVI climate dossiers:
    - EPP support rate for ambitious climate targets
    - S&D-Greens alignment frequency

@@ -38,7 +38,7 @@ All OSINT activities must comply with [Hack23 ISMS policies](https://github.com/
 ### EP Data Source Hierarchy
 ```
 Tier 1 (Primary/Authoritative):
-  - EP Open Data Portal API (via MCP Server tools: get-meps, get-plenary-documents)
+  - EP Open Data Portal API (via MCP Server tools: get_meps, get_voting_records, search_documents)
   - EUR-Lex (EU legislation full text)
   - EP Legislative Observatory (procedure tracking)
 
@@ -61,8 +61,8 @@ Tier 4 (Media/Unstructured):
 ### MEP Activity Verification
 ```
 To verify an MEP's claimed legislative activity:
-1. Query MCP Server: get-meps with MEP identifier
-2. Cross-reference with get-plenary-documents for speeches and votes
+1. Query MCP Server: get_meps with MEP identifier
+2. Cross-reference with get_voting_records for votes and get_plenary_sessions for speeches
 3. Check committee membership and rapporteur assignments
 4. Verify attendance patterns against official EP attendance records
 5. Compare self-reported activity with EP roll-call vote participation rate
@@ -72,7 +72,7 @@ To verify an MEP's claimed legislative activity:
 ### Legislative Procedure Tracking
 ```
 Track EU legislative dossier through institutional lifecycle:
-1. Use get-procedures to identify the dossier reference (e.g., 2023/0079(COD))
+1. Use track_legislation to identify the dossier reference (e.g., 2023/0079(COD))
 2. Map committee responsible and committees for opinion
 3. Track amendments: committee stage → plenary stage → trilogue
 4. Cross-reference Council general approach with EP position

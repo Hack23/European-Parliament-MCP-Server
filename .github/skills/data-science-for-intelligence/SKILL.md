@@ -38,7 +38,7 @@ All data science activities must comply with [Hack23 ISMS policies](https://gith
 ### Ideological Scaling with PCA/MDS
 ```python
 # Map MEP positions from roll-call vote data (conceptual pipeline)
-# Data source: EP MCP Server → get-plenary-documents (vote results)
+# Data source: EP MCP Server → get_voting_records (vote results)
 
 1. Construct vote matrix: MEPs (rows) × roll-call votes (columns)
    - Values: +1 (Yes), -1 (No), 0 (Abstain), NaN (Absent)
@@ -60,7 +60,7 @@ All data science activities must comply with [Hack23 ISMS policies](https://gith
 ### NLP Analysis of Legislative Texts
 ```
 Pipeline for analyzing EP legislative amendments:
-Data source: EP MCP Server → get-documents, get-procedures
+Data source: EP MCP Server → search_documents, track_legislation
 
 1. Text Extraction: Parse legislative amendment texts (24 languages)
 2. Language Detection: Identify primary language, align translations
@@ -89,9 +89,9 @@ Metrics to compute:
 - Assortativity: Do MEPs collaborate within or across national lines?
 
 Data sources:
-- get-meps: Node attributes (country, group, committee membership)
-- get-plenary-documents: Co-sponsorship and amendment data
-- get-procedures: Rapporteur and shadow rapporteur pairs
+- get_meps: Node attributes (country, group, committee membership)
+- get_voting_records: Co-sponsorship and amendment data
+- track_legislation: Rapporteur and shadow rapporteur pairs
 ```
 
 ### Time Series Analysis of Legislative Productivity
@@ -109,7 +109,7 @@ Techniques:
 - Change point detection (new legislative term, leadership change)
 - Granger causality (do committee votes predict plenary outcomes?)
 
-Data: EP MCP Server → get-procedures, get-plenary-documents
+Data: EP MCP Server → track_legislation, get_voting_records
 ```
 
 ## Anti-Patterns

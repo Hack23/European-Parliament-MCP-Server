@@ -60,7 +60,7 @@ Scenario Analysis:
 - Adverse: Fragmentation reduces alignment to 50-55%
 - Severe: No stable majority; ad-hoc coalitions per dossier
 
-Mitigation: Monitor get-meps group affiliations and voting data weekly
+Mitigation: Monitor get_meps group affiliations and voting data weekly
 ```
 
 ### Legislative Pipeline Risk Dashboard
@@ -68,7 +68,7 @@ Mitigation: Monitor get-meps group affiliations and voting data weekly
 Risk: Legislative backlog and procedure failure in EP committees
 
 Assessment methodology using MCP Server tools:
-1. Pipeline volume: get-procedures (active dossier count per committee)
+1. Pipeline volume: track_legislation (active dossier count per committee)
 2. Throughput: dossiers completed per session vs. historical average
 3. Aging analysis: time since committee referral for pending dossiers
 4. Bottleneck detection: committees with highest pending-to-completed ratio
@@ -94,8 +94,8 @@ Risk: Gaps in EP democratic accountability and transparency
 
 Indicator Framework:
 1. Transparency: Trilogue document publication rate, committee vote completeness
-2. Participation: Plenary voting rates (get-meps), committee attendance
-3. Oversight: Questions per MEP (get-documents), Commission response rates
+2. Participation: Plenary voting rates (get_meps), committee attendance
+3. Oversight: Questions per MEP (get_parliamentary_questions), Commission response rates
 
 Risk Levels:
 - Green: All indicators within normal ranges
