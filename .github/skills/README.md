@@ -11,7 +11,7 @@ Agent Skills are structured folders of instructions that teach GitHub Copilot to
 
 ## 🎯 Available Skills
 
-**Total: 31 Skills** across Core Development, Security & Compliance, DevOps & Quality, ISMS, and Political Intelligence domains.
+**Total: 36 Skills** across Core Development, Security & Compliance, DevOps & Quality, ISMS, and Political Intelligence domains.
 
 ### Core MCP Development Skills
 
@@ -356,6 +356,76 @@ Data science techniques tailored to European Parliament datasets. Covers:
 - GDPR-compliant data processing pipelines
 
 **When to use:** Statistical analysis of voting patterns, text analysis of legislation, network modeling of political alliances
+
+---
+
+### 🗳️ [electoral-analysis](./electoral-analysis/SKILL.md)
+**European election forecasting, campaign analysis, seat projection**
+
+Frameworks for analyzing EP elections across 27 member states. Covers:
+- Seat projection using D'Hondt/Sainte-Laguë allocation methods
+- Turnout pattern analysis (compulsory vs. voluntary voting states)
+- Party fragmentation metrics (Effective Number of Parties)
+- Degressive proportionality and representation ratios
+- Political group mapping from national election results
+
+**When to use:** Election forecasting, turnout analysis, seat projections, party system analysis
+
+---
+
+### 🧠 [behavioral-analysis](./behavioral-analysis/SKILL.md)
+**Political psychology and MEP behavioral analysis**
+
+Apply behavioral science to EP decision-making patterns. Covers:
+- MEP activity profiling (legislative, scrutiny, networking dimensions)
+- Cognitive bias detection in legislative decisions (anchoring, groupthink)
+- Strategic behavior patterns (vote-trading, strategic abstention)
+- Leadership typology from observable parliamentary metrics
+- Group dynamics and conformity analysis
+
+**When to use:** MEP behavior analysis, group dynamics assessment, leadership evaluation
+
+---
+
+### 📢 [strategic-communication-analysis](./strategic-communication-analysis/SKILL.md)
+**Narrative and discourse analysis for EU parliamentary communications**
+
+Analyze EP communication patterns and influence. Covers:
+- Policy frame analysis across political groups in EP debates
+- Parliamentary question pattern analysis for communication priorities
+- Narrative evolution tracking through legislative stages
+- Multilingual framing effects across 24 EU languages
+- Influence measurement through amendment adoption and media pickup
+
+**When to use:** Analyzing EP debates, tracking policy narratives, assessing communication influence
+
+---
+
+### 📋 [legislative-monitoring](./legislative-monitoring/SKILL.md)
+**Legislative procedure tracking and committee effectiveness analysis**
+
+Systematic oversight of EP legislative activity. Covers:
+- Dossier lifecycle tracking (Commission proposal to adoption)
+- Committee voting pattern analysis and rapporteur effectiveness
+- Amendment success rate measurement by political group
+- Trilogue outcome monitoring and transparency assessment
+- Legislative pipeline metrics and temporal benchmarking
+
+**When to use:** Tracking legislation, monitoring committees, analyzing amendment outcomes
+
+---
+
+### ⚠️ [risk-assessment-frameworks](./risk-assessment-frameworks/SKILL.md)
+**Political risk indicators and institutional risk assessment**
+
+Structured risk frameworks for EU parliamentary analysis. Covers:
+- Coalition stability risk indicators (cohesion indices, group-switching)
+- Legislative pipeline risk dashboards (backlog, throughput, bottlenecks)
+- Democratic accountability risk assessment (transparency, participation, oversight)
+- Scenario analysis (baseline, adverse, severe) for political risk
+- ISO 27001-aligned risk assessment methodology
+
+**When to use:** Assessing political risk, monitoring institutional stability, evaluating coalition dynamics
 
 ---
 

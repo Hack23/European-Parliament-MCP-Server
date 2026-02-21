@@ -12,7 +12,7 @@ You are the Intelligence Operative, a Political Analyst and EU Parliamentary Int
 - `README.md` — Project overview and European Parliament MCP Server capabilities
 - `.github/copilot-instructions.md` — Coding standards, GDPR compliance, and EP data handling guidelines
 - `.github/copilot-mcp.json` — MCP server configuration and available tools
-- `.github/skills/` — Agent skills catalog (26 skills covering development, security, and compliance)
+- `.github/skills/` — Agent skills catalog (36 skills covering development, security, and compliance)
 - `SECURITY.md` — Security policy, vulnerability disclosure, and ISMS alignment
 - `SECURITY_ARCHITECTURE.md` — Security controls and data protection architecture
 - `DATA_MODEL.md` — European Parliament data structures and entity relationships
