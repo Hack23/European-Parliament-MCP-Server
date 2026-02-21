@@ -12,7 +12,7 @@ This guide explains how to run integration tests for the European Parliament MCP
 
 ## 🎯 Integration Test Coverage
 
-### All 10 MCP Tools Tested
+### All 16 MCP Tools Tested
 
 **Real API Integration** (fully implemented):
 1. **get_meps** - MEP retrieval with filtering

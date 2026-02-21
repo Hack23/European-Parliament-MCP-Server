@@ -43,7 +43,7 @@
 
 ## 🎯 Executive Summary
 
-This document outlines the architectural evolution of the European Parliament MCP Server from a local 10-tool MCP server into a **serverless AWS-powered parliamentary intelligence platform** — inspired by [Hack23 Citizen Intelligence Agency (CIA)](https://github.com/Hack23/cia) OSINT methodologies.
+This document outlines the architectural evolution of the European Parliament MCP Server from a local 16-tool MCP server into a **serverless AWS-powered parliamentary intelligence platform** — inspired by [Hack23 Citizen Intelligence Agency (CIA)](https://github.com/Hack23/cia) OSINT methodologies.
 
 The future architecture embraces **advanced aggregate analytics** for political intelligence, combining European Parliament open data with structured analytic techniques (ACH, SWOT, network analysis) to provide AI assistants with **OSINT-grade parliamentary intelligence capabilities**.
 

@@ -730,6 +730,7 @@ export async function handleGetMEPs(args: unknown) {
 | **State Diagrams** | System state transitions | [STATEDIAGRAM.md](./STATEDIAGRAM.md) |
 | **Mind Map** | System conceptual relationships | [MINDMAP.md](./MINDMAP.md) |
 | **SWOT Analysis** | Strategic analysis and positioning | [SWOT.md](./SWOT.md) |
+| **Workflows** | CI/CD pipeline documentation | [WORKFLOWS.md](./WORKFLOWS.md) |
 | **Architecture Diagrams** | C4 model diagrams | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) |
 | **Future Architecture** | Architectural evolution roadmap | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) |
 | **Secure Development Policy** | ISMS secure development guidelines | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
