@@ -43,7 +43,7 @@
 
 ## 🎯 Executive Summary
 
-This document outlines the architectural evolution of the European Parliament MCP Server from a local 10-tool MCP server into a **serverless AWS-powered parliamentary intelligence platform** — inspired by [Hack23 Citizen Intelligence Agency (CIA)](https://github.com/Hack23/cia) OSINT methodologies.
+This document outlines the architectural evolution of the European Parliament MCP Server from a local 16-tool MCP server into a **serverless AWS-powered parliamentary intelligence platform** — inspired by [Hack23 Citizen Intelligence Agency (CIA)](https://github.com/Hack23/cia) OSINT methodologies.
 
 The future architecture embraces **advanced aggregate analytics** for political intelligence, combining European Parliament open data with structured analytic techniques (ACH, SWOT, network analysis) to provide AI assistants with **OSINT-grade parliamentary intelligence capabilities**.
 
@@ -54,11 +54,16 @@ The future architecture embraces **advanced aggregate analytics** for political 
 ```mermaid
 timeline
     title Serverless AWS Intelligence Platform Roadmap
-    section Phase 1 — OSINT Intelligence Tools
-        Q3 2026 : Advanced aggregate MCP tools
-                : Political intelligence analytics
-                : MEP scorecards & risk assessments
-                : Coalition analysis & network mapping
+    section Phase 1 — OSINT Intelligence Tools ✅
+        Q1 2026 : 6 OSINT tools implemented
+                : MEP influence scoring
+                : Coalition dynamics analysis
+                : Voting anomaly detection
+    section Phase 1.5 — Extended Intelligence
+        Q3 2026 : Network mapping tool
+                : Political risk assessments
+                : Intelligence briefings
+                : Policy position tracking
     section Phase 2 — Serverless AWS Platform
         Q1 2027 : AWS Lambda MCP handlers
                 : DynamoDB persistent cache
@@ -153,7 +158,9 @@ graph TB
 
 The current architecture is documented in [ARCHITECTURE.md](ARCHITECTURE.md).
 
-**Current Capabilities (10 MCP Tools):**
+**Current Capabilities (16 MCP Tools):**
+
+#### Core Data Tools (10)
 
 | # | Tool | Type | Purpose |
 |---|------|------|---------|
@@ -168,30 +175,46 @@ The current architecture is documented in [ARCHITECTURE.md](ARCHITECTURE.md).
 | 9 | `track_legislation` | Tracking | Legislative procedure tracking |
 | 10 | `generate_report` | Reporting | Multi-source report generation |
 
+#### OSINT Intelligence Tools (6) — Phase 1 Complete ✅
+
+| # | Tool | Type | Purpose |
+|---|------|------|---------|
+| 11 | `assess_mep_influence` | 🕵️ Intelligence Scorecard | 5-dimension MEP influence scoring |
+| 12 | `analyze_coalition_dynamics` | 🤝 Coalition Analysis | Cohesion, stress, defection detection |
+| 13 | `detect_voting_anomalies` | ⚠️ Anomaly Detection | Party defection & pattern detection |
+| 14 | `compare_political_groups` | ⚖️ Comparative Analysis | Cross-group comparison metrics |
+| 15 | `analyze_legislative_effectiveness` | 📈 Performance Analysis | MEP/committee legislative scoring |
+| 16 | `monitor_legislative_pipeline` | 🔄 Pipeline Monitoring | Pipeline status & bottleneck detection |
+
 **Current Infrastructure:** Local Node.js process, stdio transport, in-memory LRU cache.
 
 ---
 
-## 🕵️ Phase 1: OSINT Intelligence Tools
+## 🕵️ Phase 1: OSINT Intelligence Tools — ✅ COMPLETE
 
-**Timeline:** Q3 2026 | **Priority:** Critical | **Infrastructure:** Local + Lambda-ready
+**Timeline:** Completed | **Priority:** Critical | **Infrastructure:** Local + Lambda-ready
 
-Inspired by [Hack23 CIA Intelligence Operative](https://github.com/Hack23/cia/blob/master/.github/agents/intelligence-operative.md) OSINT methodologies, Phase 1 introduces **advanced aggregate intelligence tools** that transform raw parliamentary data into actionable political intelligence.
+Phase 1 OSINT intelligence tools have been **successfully implemented** as part of the current 16-tool MCP server, inspired by [Hack23 CIA Intelligence Operative](https://github.com/Hack23/cia/blob/master/.github/agents/intelligence-operative.md) OSINT methodologies.
 
-### **🔍 New OSINT Intelligence MCP Tools**
+### **🔍 Implemented OSINT Intelligence MCP Tools**
+
+| # | Tool | Category | Status |
+|---|------|----------|--------|
+| 11 | `assess_mep_influence` | 🕵️ Intelligence Scorecard | ✅ Implemented |
+| 12 | `analyze_coalition_dynamics` | 🤝 Coalition Analysis | ✅ Implemented |
+| 13 | `detect_voting_anomalies` | ⚠️ Anomaly Detection | ✅ Implemented |
+| 14 | `compare_political_groups` | ⚖️ Comparative Analysis | ✅ Implemented |
+| 15 | `analyze_legislative_effectiveness` | 📈 Performance Analysis | ✅ Implemented |
+| 16 | `monitor_legislative_pipeline` | 🔄 Pipeline Monitoring | ✅ Implemented |
+
+### **🔮 Phase 1.5: Future OSINT Tools (Planned)**
 
 | # | Tool | Category | Purpose | CIA Methodology |
 |---|------|----------|---------|----------------|
-| 11 | `assess_mep_influence` | 🕵️ Intelligence Scorecard | Compute MEP influence score from voting activity, committee roles, rapporteurships, questions filed, speeches | Political Scorecards |
-| 12 | `analyze_coalition_dynamics` | 🤝 Coalition Analysis | Detect voting coalitions, cross-party alliances, group cohesion rates, coalition stress indicators | Coalition Analysis |
-| 13 | `map_political_network` | 🌐 Network Analysis | Build MEP relationship graph from co-voting patterns, shared committee memberships, co-authored questions | Network Analysis |
-| 14 | `detect_voting_anomalies` | ⚠️ Anomaly Detection | Flag unusual voting patterns — party defections, sudden alignment shifts, abstention spikes | Pattern Recognition |
-| 15 | `generate_political_risk_assessment` | 🎯 Risk Assessment | Assess political risk indicators — legislative gridlock, coalition fragmentation, procedural delays | Risk Assessments |
-| 16 | `track_policy_positions` | 📋 Policy Tracking | Track party/MEP positions across policy domains using voting history on tagged legislation | Policy Tracking |
-| 17 | `analyze_legislative_effectiveness` | 📈 Performance Analysis | Score MEP/committee legislative output — bills passed, amendments adopted, report quality | Legislative Monitoring |
-| 18 | `compare_political_groups` | ⚖️ Comparative Analysis | Cross-group comparison of voting discipline, activity levels, policy focus areas, internal cohesion | SWOT / PESTLE |
-| 19 | `generate_intelligence_briefing` | 📊 Intelligence Product | Produce structured intelligence briefing combining multiple data sources with confidence levels | Estimative Intelligence |
-| 20 | `monitor_legislative_pipeline` | 🔄 Pipeline Monitoring | Real-time legislative pipeline status with bottleneck detection and timeline forecasting | Predictive Analytics |
+| 17 | `map_political_network` | 🌐 Network Analysis | Build MEP relationship graph from co-voting patterns, shared committee memberships, co-authored questions | Network Analysis |
+| 18 | `generate_political_risk_assessment` | 🎯 Risk Assessment | Assess political risk indicators — legislative gridlock, coalition fragmentation, procedural delays | Risk Assessments |
+| 19 | `track_policy_positions` | 📋 Policy Tracking | Track party/MEP positions across policy domains using voting history on tagged legislation | Policy Tracking |
+| 20 | `generate_intelligence_briefing` | 📊 Intelligence Product | Produce structured intelligence briefing combining multiple data sources with confidence levels | Estimative Intelligence |
 
 ### **📊 Intelligence Scorecard Architecture**
 
@@ -570,6 +593,7 @@ Security roadmap is detailed in [FUTURE_SECURITY_ARCHITECTURE.md](FUTURE_SECURIT
 | 📈 State Diagram | [STATEDIAGRAM.md](STATEDIAGRAM.md) |
 | 🧠 Mindmap | [MINDMAP.md](MINDMAP.md) |
 | 💼 SWOT | [SWOT.md](SWOT.md) |
+| ⚙️ Workflows | [WORKFLOWS.md](WORKFLOWS.md) |
 | 🛡️ Security Architecture | [SECURITY_ARCHITECTURE.md](SECURITY_ARCHITECTURE.md) |
 
 ### **Future State Documentation**

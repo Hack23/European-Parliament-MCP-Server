@@ -44,13 +44,25 @@ This document outlines the future CI/CD workflow evolution for the European Parl
 
 ## 📊 Current Workflows Baseline
 
-Current workflows are documented in [.github/WORKFLOWS.md](.github/WORKFLOWS.md).
+Current workflows are documented in [WORKFLOWS.md](WORKFLOWS.md) and [.github/WORKFLOWS.md](.github/WORKFLOWS.md).
 
-**Current Workflows:**
-- `main.yml` — Build, lint, test on push/PR
-- `release.yml` — npm publishing with SLSA attestations
-- `integration-tests.yml` — E2E tests against live EP API
-- `scorecard.yml` — OpenSSF Scorecard analysis
+**Current Workflows (11 total):**
+
+| # | Workflow | Purpose |
+|---|---------|---------|
+| 1 | `test-and-report.yml` | Build, lint, test, coverage |
+| 2 | `codeql.yml` | SAST security scanning |
+| 3 | `release.yml` | npm publish with attestations |
+| 4 | `integration-tests.yml` | Live API and E2E tests |
+| 5 | `sbom-generation.yml` | Software Bill of Materials |
+| 6 | `slsa-provenance.yml` | Build provenance attestation |
+| 7 | `scorecard.yml` | OpenSSF security assessment |
+| 8 | `dependency-review.yml` | Vulnerability & license scan |
+| 9 | `labeler.yml` | Automatic PR labeling |
+| 10 | `setup-labels.yml` | Repository label management |
+| 11 | `copilot-setup-steps.yml` | Copilot agent environment |
+
+**Current Tool Count:** 16 MCP tools (10 core data + 6 OSINT intelligence)
 
 ---
 
@@ -191,6 +203,89 @@ flowchart LR
 | Security score | OpenSSF Scorecard | < 8.0 |
 | npm download trend | npm stats | > 50% drop week-over-week |
 | Coverage trend | Vitest coverage | > 2% decrease |
+| OSINT tool accuracy | Intelligence validation | < 90% confidence |
+| API response time | Performance monitoring | > 200ms p95 |
+
+---
+
+## 🚀 Visionary Workflow Advancements
+
+### **🤖 AI-Augmented CI/CD**
+
+| Feature | Description | Timeline |
+|---------|-------------|----------|
+| **AI Code Review** | LLM-powered code review for MCP tool patterns | Q3 2026 |
+| **Intelligent Test Generation** | AI-generated tests for new OSINT tools | Q4 2026 |
+| **Predictive Failure Detection** | ML model to predict build failures before they occur | Q1 2027 |
+| **Auto-remediation** | Automated fix suggestions for common CI failures | Q1 2027 |
+| **Copilot Agent Workflows** | GitHub Copilot agents for automated issue resolution | Q2 2027 |
+
+### **☁️ AWS CDK Deployment Pipeline**
+
+```mermaid
+flowchart LR
+    subgraph "🔄 CI"
+        PUSH[Push to main] --> BUILD[npm run build]
+        BUILD --> TEST[npm test]
+        TEST --> SECURITY[Security Scans]
+    end
+    subgraph "📦 Package"
+        SECURITY --> NPM[npm publish]
+        SECURITY --> CDK[CDK synth]
+        CDK --> DIFF[CDK diff]
+    end
+    subgraph "☁️ AWS Deploy"
+        DIFF --> STAGE[Deploy Staging]
+        STAGE --> SMOKE[Smoke Tests]
+        SMOKE --> CANARY[Canary Deploy 10%]
+        CANARY --> FULL[Full Production]
+        FULL --> MONITOR[CloudWatch Monitor]
+    end
+```
+
+### **🔄 Multi-Environment Promotion**
+
+| Environment | Trigger | Validation | AWS Region |
+|------------|---------|------------|------------|
+| **Development** | Every push | Unit tests, linting | `eu-west-1` |
+| **Staging** | Merge to main | Integration + E2E tests | `eu-west-1` |
+| **Canary** | After staging pass | 10% traffic, error rate <0.1% | `eu-west-1` |
+| **Production** | After canary pass | Full traffic, CloudWatch alarms | `eu-west-1` + `us-east-1` |
+
+### **📊 Intelligence Pipeline Automation**
+
+Future workflows will include automated OSINT intelligence pipelines:
+
+```mermaid
+flowchart TB
+    subgraph "⏰ Scheduled Intelligence"
+        SCHED[EventBridge Schedule] --> FETCH[Fetch EP Data]
+        FETCH --> COMPUTE[Compute Scores]
+        COMPUTE --> DETECT[Detect Anomalies]
+        DETECT --> BRIEF[Generate Briefing]
+        BRIEF --> STORE[Store in DynamoDB]
+        STORE --> NOTIFY[SNS Alert]
+    end
+    
+    subgraph "🔄 Continuous Monitoring"
+        WEBHOOK[EP API Webhook] --> VALIDATE[Validate Data]
+        VALIDATE --> UPDATE[Update Scores]
+        UPDATE --> CHECK{Anomaly?}
+        CHECK -->|Yes| ALERT[🚨 Priority Alert]
+        CHECK -->|No| LOG[📝 Log Update]
+    end
+```
+
+### **🧪 Advanced Testing Evolution**
+
+| Capability | Current | Future | Target |
+|-----------|---------|--------|--------|
+| **Mutation Testing** | ❌ None | Stryker mutation testing | >80% mutation score |
+| **Chaos Testing** | ❌ None | API failure injection | 100% graceful degradation |
+| **Load Testing** | ❌ None | k6 performance tests | <200ms p95 under load |
+| **Contract Testing** | Basic mocks | Pact contract tests | 100% EP API compatibility |
+| **Visual Regression** | ❌ None | Report output validation | Zero visual regressions |
+| **OSINT Validation** | Confidence scores | Ground truth comparison | >90% accuracy |
 
 ---
 
@@ -209,7 +304,8 @@ flowchart LR
 
 | Document | Description | Link |
 |----------|-------------|------|
-| ⚙️ Workflows (Current) | Current CI/CD documentation | [.github/WORKFLOWS.md](.github/WORKFLOWS.md) |
+| ⚙️ Workflows (Current) | Current CI/CD documentation | [WORKFLOWS.md](WORKFLOWS.md) |
+| ⚙️ Workflows (Detailed) | Detailed GitHub workflow docs | [.github/WORKFLOWS.md](.github/WORKFLOWS.md) |
 | 🚀 Future Architecture | Architecture roadmap | [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md) |
 | 🔄 Future Flowchart | Process evolution | [FUTURE_FLOWCHART.md](FUTURE_FLOWCHART.md) |
 | 🛡️ Security Architecture | Security controls | [SECURITY_ARCHITECTURE.md](SECURITY_ARCHITECTURE.md) |

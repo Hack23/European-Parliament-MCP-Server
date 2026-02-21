@@ -135,7 +135,7 @@ mindmap
 
 | Capability | Current | Future |
 |-----------|---------|--------|
-| MCP Tools | 10 tools | 15+ tools |
+| MCP Tools | 16 tools (10 core + 6 OSINT) | 20+ tools |
 | Transport | stdio | stdio, HTTP, WebSocket |
 | Streaming | ❌ | ✅ Progressive delivery |
 | Batch Operations | ❌ | ✅ Multi-tool batching |

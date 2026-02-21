@@ -54,6 +54,8 @@ Current data model is documented in [DATA_MODEL.md](DATA_MODEL.md).
 
 **Current Entities:**
 
+#### Core Data Entities
+
 | Entity | Tool | Fields |
 |--------|------|--------|
 | MEP | `get_meps` | id, name, country, politicalGroup, committees |
@@ -62,6 +64,17 @@ Current data model is documented in [DATA_MODEL.md](DATA_MODEL.md).
 | Committee | `get_committee_info` | id, name, type, members |
 | Document | `search_documents` | id, title, type, date, reference |
 | Parliamentary Question | `get_parliamentary_questions` | id, title, author, date, subject |
+
+#### OSINT Intelligence Computed Entities (Phase 1 ✅)
+
+| Entity | Tool | Fields |
+|--------|------|--------|
+| Influence Score | `assess_mep_influence` | mepId, overallScore, dimensions (5), confidence, trend |
+| Coalition Metric | `analyze_coalition_dynamics` | groupPair, cohesionScore, stressIndicator, defectionRate |
+| Voting Anomaly | `detect_voting_anomalies` | mepId, anomalyType, severity, description |
+| Group Comparison | `compare_political_groups` | groupId, votingDiscipline, activityLevel, legislativeOutput |
+| Legislative Effectiveness | `analyze_legislative_effectiveness` | subjectId, effectivenessScore, billsPassed, amendmentsAdopted |
+| Pipeline Status | `monitor_legislative_pipeline` | procedureId, currentStage, bottleneck, forecast |
 
 ---
 
@@ -192,6 +205,118 @@ graph LR
 ```
 
 > **☁️ AWS Strategy:** All search and analytics run on **serverless AWS** — OpenSearch Serverless for full-text search, DynamoDB for pre-computed scores and cache, S3 for raw data archive, Lambda for aggregation pipelines. See [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md) for full serverless AWS strategy.
+
+---
+
+## 🔮 Visionary Data Model Advancements
+
+### **🌐 Political Network Graph Model**
+
+Future network analysis will require a graph-based data model for MEP relationship mapping:
+
+```mermaid
+erDiagram
+    MEP_NODE ||--o{ NETWORK_EDGE : "connected to"
+    MEP_NODE ||--o{ CLUSTER : "belongs to"
+    CLUSTER ||--o{ NETWORK_EDGE : "internal edges"
+    
+    MEP_NODE {
+        string mepId PK
+        number degreeCentrality
+        number betweennessCentrality
+        number pageRank
+        number clusteringCoefficient
+        string dominantCluster
+    }
+    
+    NETWORK_EDGE {
+        string sourceMepId FK
+        string targetMepId FK
+        number coVotingScore
+        number sharedCommittees
+        number coAuthoredQuestions
+        number edgeWeight
+        string edgeType
+    }
+    
+    CLUSTER {
+        string clusterId PK
+        string label
+        number memberCount
+        number cohesion
+        string[] topTopics
+    }
+```
+
+### **🎯 Political Risk Assessment Model**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| assessmentId | string | Unique risk assessment identifier |
+| period | string | Assessment time window |
+| overallRiskLevel | enum | low, medium, high, critical |
+| dimensions | object | Multi-dimensional risk breakdown |
+| dimensions.legislativeGridlock | number | Bill passage rate and procedure duration |
+| dimensions.coalitionFragmentation | number | Cohesion decline and defection rate |
+| dimensions.policyInstability | number | Position reversals and committee conflicts |
+| dimensions.proceduralAnomalies | number | Rule suspensions and session irregularities |
+| dimensions.externalPressure | number | Crisis topic debate intensity |
+| confidence | number | 0-1 confidence level |
+| mitigationSuggestions | string[] | Recommended actions |
+
+### **📊 Intelligence Briefing Model**
+
+```typescript
+interface IntelligenceBriefing {
+  briefingId: string;
+  generatedAt: string;             // ISO 8601
+  period: string;                  // Analysis window
+  classification: 'ROUTINE' | 'PRIORITY' | 'URGENT';
+  
+  executiveSummary: string;
+  
+  sections: {
+    keyDevelopments: Development[];
+    riskAssessment: RiskSummary;
+    coalitionStatus: CoalitionSummary;
+    legislativeProgress: PipelineSummary;
+    anomaliesDetected: AnomalySummary[];
+    outlook: string;
+  };
+  
+  confidence: number;              // 0-1 overall confidence
+  dataSources: string[];           // EP API endpoints used
+  methodology: string;             // Analytical methodology applied
+}
+```
+
+### **📈 Time-Series Intelligence Model**
+
+Future analytics will require time-series storage for trend detection:
+
+| Table | Partition Key | Sort Key | Purpose |
+|-------|--------------|----------|---------|
+| `ep-influence-history` | `mep_id` | `timestamp` | MEP influence score evolution |
+| `ep-cohesion-history` | `group_pair` | `timestamp` | Coalition cohesion trends |
+| `ep-anomaly-history` | `entity_id` | `detected_at` | Historical anomaly timeline |
+| `ep-pipeline-history` | `procedure_id` | `snapshot_at` | Legislative progress snapshots |
+| `ep-risk-history` | `assessment_type` | `timestamp` | Political risk time series |
+
+### **🌍 Multi-Parliament Data Federation**
+
+| Parliament | Entity Prefix | Adapter | Status |
+|-----------|--------------|---------|--------|
+| 🇪🇺 European Parliament | `EP::` | `ep-adapter` | ✅ Active |
+| 🇸🇪 Swedish Riksdag | `SE::` | `riksdag-adapter` | 📋 Planned |
+| 🇬🇧 UK Parliament | `UK::` | `uk-adapter` | 📋 Planned |
+| 🇩🇪 German Bundestag | `DE::` | `bundestag-adapter` | 📋 Planned |
+| 🇫🇷 French Assemblée | `FR::` | `assemblee-adapter` | 🔮 Vision |
+
+Cross-parliament analysis will require a **unified entity schema** that normalizes:
+- Member identifiers across parliaments
+- Voting record formats
+- Legislative procedure stages
+- Committee structures and mappings
 
 ---
 

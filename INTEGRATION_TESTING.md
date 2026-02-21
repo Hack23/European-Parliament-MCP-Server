@@ -12,7 +12,7 @@ This guide explains how to run integration tests for the European Parliament MCP
 
 ## 🎯 Integration Test Coverage
 
-### All 10 MCP Tools Tested
+### All 16 MCP Tools Tested
 
 **Real API Integration** (fully implemented):
 1. **get_meps** - MEP retrieval with filtering
@@ -27,6 +27,14 @@ This guide explains how to run integration tests for the European Parliament MCP
 8. **analyze_voting_patterns** - Voting pattern analysis (mock data)
 9. **track_legislation** - Legislative procedure tracking (mock data)
 10. **generate_report** - Report generation (mock data)
+
+**OSINT Intelligence Tools** (computed analytics):
+11. **assess_mep_influence** - MEP influence scoring (5-dimension model)
+12. **analyze_coalition_dynamics** - Coalition cohesion & stress analysis
+13. **detect_voting_anomalies** - Party defection & anomaly detection
+14. **compare_political_groups** - Cross-group comparative analysis
+15. **analyze_legislative_effectiveness** - MEP/committee legislative scoring
+16. **monitor_legislative_pipeline** - Pipeline status & bottleneck detection
 
 > **Note**: Tools using mock implementations validate response structure and contract compliance. They will be updated to use the real EP API in future releases.
 

@@ -121,7 +121,7 @@ graph TB
         SERVER[MCP Protocol Handler<br/><i>@modelcontextprotocol/sdk</i>]
         
         subgraph "Business Logic"
-            TOOLS[Tool Registry<br/><i>10 MCP Tools</i>]
+            TOOLS[Tool Registry<br/><i>16 MCP Tools</i>]
             RESOURCES[Resource Handlers<br/><i>MEP, Session, Committee</i>]
             PROMPTS[Prompt Templates<br/><i>Query assistance</i>]
         end
