@@ -77,7 +77,7 @@ This skill enforces **[Hack23 Open Source Policy v2.3](https://github.com/Hack23
   <a href="https://bestpractices.coreinfrastructure.org/projects/XXXXX">
     <img src="https://bestpractices.coreinfrastructure.org/projects/XXXXX/badge" alt="CII Best Practices"/>
   </a>
-  <a href="https://slsa.dev">
+  <a href="https://github.com/Hack23/European-Parliament-MCP-Server/attestations/">
     <img src="https://slsa.dev/images/gh-badge-level3.svg" alt="SLSA 3"/>
   </a>
   <a href="https://sonarcloud.io/dashboard?id=Hack23_European-Parliament-MCP-Server">

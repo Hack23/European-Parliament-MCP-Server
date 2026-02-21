@@ -1,6 +1,7 @@
 {
   "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["src/index.ts"],
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
   "out": "docs/api",
   "plugin": [],
   "name": "European Parliament MCP Server API Documentation",

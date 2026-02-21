@@ -591,7 +591,7 @@ This architecture aligns with Hack23 ISMS policies:
 
 ```markdown
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge)](https://securityscorecards.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server)
-[![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://slsa.dev)
+[![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://github.com/Hack23/European-Parliament-MCP-Server/attestations/)
 [![SBOM](https://img.shields.io/badge/SBOM-SPDX-blue)](https://spdx.dev)
 ```
 
