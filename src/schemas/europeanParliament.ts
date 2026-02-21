@@ -1,6 +1,15 @@
 /**
  * Zod validation schemas for European Parliament data
  * 
+ * **Intelligence Perspective:** Schema definitions enforce data quality standards
+ * critical for reliable intelligence analysis—invalid data produces flawed assessments.
+ * 
+ * **Business Perspective:** Runtime validation ensures API reliability and data contract
+ * compliance for enterprise customers with strict data quality requirements.
+ * 
+ * **Marketing Perspective:** Comprehensive validation demonstrates enterprise-grade
+ * data quality—key differentiator for developer trust and API adoption.
+ * 
  * ISMS Policy: SC-002 (Input Validation), SI-10 (Information Input Validation)
  */
 
