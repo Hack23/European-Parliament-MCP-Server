@@ -11,7 +11,7 @@ Agent Skills are structured folders of instructions that teach GitHub Copilot to
 
 ## 🎯 Available Skills
 
-**Total: 26 Skills** across Core Development, Security & Compliance, DevOps & Quality, and ISMS domains.
+**Total: 31 Skills** across Core Development, Security & Compliance, DevOps & Quality, ISMS, and Political Intelligence domains.
 
 ### Core MCP Development Skills
 
@@ -284,6 +284,78 @@ Proper contribution process for the project. Covers:
 - Quality gates before merge
 
 **When to use:** Submitting PRs, conducting code reviews, contributing to the project
+
+---
+
+### Political Intelligence & Analysis Skills
+
+### 🏛️ [political-science-analysis](./political-science-analysis/SKILL.md)
+**Comparative politics and policy analysis for European Parliament data**
+
+Apply political science methodologies to EP datasets. Covers:
+- MEP voting behavior analysis across 27 member states
+- Political group cohesion measurement (Agreement Index)
+- Comparative national delegation analysis
+- Legislative procedure outcome analysis
+- Ideological scaling from roll-call votes
+
+**When to use:** Analyzing MEP voting patterns, political group dynamics, legislative outcomes
+
+---
+
+### 🔍 [osint-methodologies](./osint-methodologies/SKILL.md)
+**OSINT collection and verification for EU parliamentary intelligence**
+
+Structured open-source intelligence techniques for EP data. Covers:
+- EP data source hierarchy and evaluation (CRAAP framework)
+- Multi-source triangulation and verification
+- MEP activity verification against official records
+- Legislative procedure tracking across institutions
+- GDPR-compliant collection with audit trails
+
+**When to use:** Collecting parliamentary intelligence, verifying MEP activity claims, cross-referencing sources
+
+---
+
+### 🧠 [intelligence-analysis-techniques](./intelligence-analysis-techniques/SKILL.md)
+**Structured analytic techniques for EU parliamentary intelligence**
+
+Reduce cognitive bias in parliamentary analysis with structured methods. Covers:
+- Analysis of Competing Hypotheses (ACH) for legislative outcomes
+- SWOT analysis for political group strategy assessment
+- Key Assumptions Check for coalition predictions
+- Devil's Advocacy and Red Team techniques
+- Confidence level assessment and communication
+
+**When to use:** Evaluating legislative outcomes, assessing political group strategy, reducing analytical bias
+
+---
+
+### 🇪🇺 [european-political-system](./european-political-system/SKILL.md)
+**EU Parliament structure, political groups, and legislative procedures**
+
+Essential institutional context for EP MCP Server usage. Covers:
+- EP political group composition and ideology mapping
+- Ordinary legislative procedure (Art. 294 TFEU) stages
+- Committee structure and powers (20 standing committees)
+- Trilogue negotiation dynamics (EP-Council-Commission)
+- Electoral system variations across 27 member states
+
+**When to use:** Interpreting EP data, understanding institutional context, explaining EU legislative process
+
+---
+
+### 📊 [data-science-for-intelligence](./data-science-for-intelligence/SKILL.md)
+**Statistical analysis, ML, NLP, and network analysis for EP data**
+
+Data science techniques tailored to European Parliament datasets. Covers:
+- Ideological scaling with PCA/MDS from roll-call votes
+- NLP analysis of legislative texts and amendments
+- Network analysis of MEP collaboration and co-sponsorship
+- Time series analysis of legislative productivity
+- GDPR-compliant data processing pipelines
+
+**When to use:** Statistical analysis of voting patterns, text analysis of legislation, network modeling of political alliances
 
 ---
 
