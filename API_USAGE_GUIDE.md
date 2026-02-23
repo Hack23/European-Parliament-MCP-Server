@@ -91,7 +91,7 @@ Currently, the server does **not require authentication** for tool access. Futur
 | `analyze_legislative_effectiveness` | Legislative scoring | subjectId, subjectType | Effectiveness score |
 | `monitor_legislative_pipeline` | Pipeline monitoring | committeeId, status | Pipeline status |
 | `analyze_committee_activity` | Committee workload & engagement | committeeId (required) | Activity report |
-| `track_mep_attendance` | MEP attendance patterns | mepId (required) | Attendance report |
+| `track_mep_attendance` | MEP attendance patterns | mepId, country, groupId, limit | Attendance report |
 | `analyze_country_delegation` | Country delegation analysis | country (required) | Delegation analysis |
 | `generate_political_landscape` | Parliament-wide landscape | dateFrom, dateTo | Landscape overview |
 
@@ -1024,15 +1024,20 @@ Analyze the ENVI committee's activity, document output, and member engagement ov
 
 ### Tool: track_mep_attendance
 
-**Description**: Track MEP attendance patterns across plenary and committee sessions with trend detection, engagement scoring, and participation rate analysis.
+**Description**: Track MEP plenary attendance patterns with trend detection, engagement scoring, and participation rate analysis. Supports both individual MEP queries and high-level overviews by country or political group.
 
 #### Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| mepId | string | Yes | MEP identifier |
+| mepId | string | No | MEP identifier for individual attendance analysis |
+| country | string | No | ISO 3166-1 alpha-2 country code for delegation overview |
+| groupId | string | No | Political group identifier for group-level overview |
+| limit | number | No | Maximum number of MEPs to include in overview queries |
 | dateFrom | string | No | Start date (ISO 8601) |
 | dateTo | string | No | End date (ISO 8601) |
+
+At least one of `mepId`, `country`, or `groupId` is typically provided to scope the analysis.
 
 #### Example Usage
 
@@ -1083,16 +1088,16 @@ Generate a current political landscape overview including group sizes, coalition
 
 ## 📝 MCP Prompts
 
-Pre-built intelligence analysis prompt templates for common parliamentary research workflows.
+Pre-built intelligence analysis prompt templates for common parliamentary research workflows. For the exact argument schemas, refer to the prompt definitions in `src/prompts/index.ts`.
 
-| Prompt | Description | Required Arguments |
-|--------|-------------|--------------------|
-| `mep_briefing` | Comprehensive MEP intelligence briefing with voting record, committee work, and influence assessment | mepId |
-| `coalition_analysis` | Coalition dynamics and voting bloc analysis across political groups | politicalGroups |
-| `legislative_tracking` | Legislative procedure tracking report with timeline and status | procedureId |
-| `political_group_comparison` | Multi-dimensional comparison of political groups | groups |
-| `committee_activity_report` | Committee workload, engagement, and document production report | committeeId |
-| `voting_pattern_analysis` | Voting pattern trend detection and anomaly identification | mepId |
+| Prompt | Description | Arguments |
+|--------|-------------|-----------|
+| `mep_briefing` | Comprehensive MEP intelligence briefing with voting record, committee work, and influence assessment | mepId (required), period? |
+| `coalition_analysis` | Coalition dynamics and voting bloc analysis across political groups | policyArea?, period? |
+| `legislative_tracking` | Legislative procedure tracking report with timeline and status | procedureId?, committee? |
+| `political_group_comparison` | Multi-dimensional comparison of political groups | groups? |
+| `committee_activity_report` | Committee workload, engagement, and document production report | committeeId (required) |
+| `voting_pattern_analysis` | Voting pattern trend detection and anomaly identification | topic?, mepId? |
 
 ### Example: Using MCP Prompts
 

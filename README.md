@@ -309,9 +309,9 @@ Configure in `.vscode/mcp.json`:
 | [`analyze_legislative_effectiveness`](./API_USAGE_GUIDE.md#tool-analyze_legislative_effectiveness) | MEP/committee legislative scoring | subjectId (required), subjectType, dateFrom | Effectiveness score |
 | [`monitor_legislative_pipeline`](./API_USAGE_GUIDE.md#tool-monitor_legislative_pipeline) | Pipeline status & bottleneck detection | committeeId, status, dateFrom | Pipeline status |
 | [`analyze_committee_activity`](./API_USAGE_GUIDE.md#tool-analyze_committee_activity) | Committee workload & engagement analysis | committeeId (required), dateFrom, dateTo | Activity report |
-| [`track_mep_attendance`](./API_USAGE_GUIDE.md#tool-track_mep_attendance) | MEP attendance patterns & trends | mepId (required), dateFrom, dateTo | Attendance report |
+| [`track_mep_attendance`](./API_USAGE_GUIDE.md#tool-track_mep_attendance) | MEP attendance patterns & trends | mepId, country, groupId, dateFrom, dateTo, limit | Attendance report |
 | [`analyze_country_delegation`](./API_USAGE_GUIDE.md#tool-analyze_country_delegation) | Country delegation voting & composition | country (required), dateFrom, dateTo | Delegation analysis |
-| [`generate_political_landscape`](./API_USAGE_GUIDE.md#tool-generate_political_landscape) | Parliament-wide political landscape | dateFrom, dateTo, includeDetails | Landscape overview |
+| [`generate_political_landscape`](./API_USAGE_GUIDE.md#tool-generate_political_landscape) | Parliament-wide political landscape | dateFrom, dateTo | Landscape overview |
 
 📖 **[Complete API documentation with examples →](./API_USAGE_GUIDE.md)**
 
@@ -356,14 +356,14 @@ Configure in `.vscode/mcp.json`:
 
 Pre-built intelligence analysis prompt templates:
 
-| Prompt | Description | Required Arguments |
-|--------|-------------|--------------------|
-| `mep_briefing` | Comprehensive MEP intelligence briefing | mepId |
-| `coalition_analysis` | Coalition dynamics and voting bloc analysis | politicalGroups |
-| `legislative_tracking` | Legislative procedure tracking report | procedureId |
-| `political_group_comparison` | Multi-dimensional group comparison | groups |
-| `committee_activity_report` | Committee workload and engagement | committeeId |
-| `voting_pattern_analysis` | Voting pattern trend detection | mepId |
+| Prompt | Description | Arguments |
+|--------|-------------|-----------|
+| `mep_briefing` | Comprehensive MEP intelligence briefing | mepId (required), period? |
+| `coalition_analysis` | Coalition dynamics and voting bloc analysis | policyArea?, period? |
+| `legislative_tracking` | Legislative procedure tracking report | procedureId?, committee? |
+| `political_group_comparison` | Multi-dimensional group comparison | groups? |
+| `committee_activity_report` | Committee workload and engagement | committeeId (required) |
+| `voting_pattern_analysis` | Voting pattern trend detection | topic?, mepId? |
 
 ### 📦 MCP Resources
 
