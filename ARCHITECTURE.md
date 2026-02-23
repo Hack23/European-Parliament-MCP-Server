@@ -514,6 +514,10 @@ sequenceDiagram
 | `compare_political_groups` | Cross-group comparative analysis | Lower limit |
 | `analyze_legislative_effectiveness` | MEP/committee legislative scoring | Lower limit |
 | `monitor_legislative_pipeline` | Pipeline status & bottleneck detection | Lower limit |
+| `analyze_committee_activity` | Committee workload & engagement analysis | Lower limit |
+| `track_mep_attendance` | MEP attendance patterns & trends | Lower limit |
+| `analyze_country_delegation` | Country delegation voting & composition | Lower limit |
+| `generate_political_landscape` | Parliament-wide political landscape | Lower limit |
 
 ### Error Handling
 
@@ -625,7 +629,15 @@ This architecture aligns with Hack23 ISMS policies:
   - ✅ Legislative effectiveness scoring
   - ✅ Legislative pipeline monitoring
 
-### Phase 2: Enhanced Features (Q2 2026)
+### Phase 2: Enhanced Features (Current)
+- ✅ OSINT Intelligence Tools (Phase 2)
+  - ✅ Committee activity analysis
+  - ✅ MEP attendance tracking
+- ✅ OSINT Intelligence Tools (Phase 3)
+  - ✅ Country delegation analysis
+  - ✅ Political landscape generation
+- ✅ MCP Prompts (6 templates)
+- ✅ MCP Resources (6 resource templates)
 - [ ] Full dataset coverage (all 5 datasets)
 - [ ] Advanced search and filtering
 - [ ] Real-time notifications via WebSocket
@@ -675,7 +687,7 @@ This architecture aligns with Hack23 ISMS policies:
 
 ## 🔧 Tool Implementation Patterns
 
-All 16 MCP tools (10 core + 6 OSINT intelligence) follow a consistent implementation pattern:
+All 20 MCP tools (10 core + 10 OSINT intelligence) follow a consistent implementation pattern:
 
 **Pattern**: Input Validation → EP API Client → Output Validation → MCP Response
 

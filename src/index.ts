@@ -66,8 +66,10 @@ import { getResourceTemplateArray, handleReadResource } from './resources/index.
 export type * from './types/index.js';
 export * from './types/index.js';
 
-const SERVER_NAME = 'european-parliament-mcp-server';
-const SERVER_VERSION = '0.0.4';
+/** @internal Server name constant */
+export const SERVER_NAME = 'european-parliament-mcp-server';
+/** @internal Server version constant */
+export const SERVER_VERSION = '0.0.4';
 
 /**
  * Number of core tools (non-advanced analysis tools)
@@ -142,7 +144,7 @@ function showVersion(): void {
  * Get tool metadata array
  * @internal
  */
-function getToolMetadataArray(): { name: string; description: string; inputSchema: unknown }[] {
+export function getToolMetadataArray(): { name: string; description: string; inputSchema: unknown }[] {
   return [
     // Core tools
     getMEPsToolMetadata,
@@ -218,8 +220,9 @@ function showHealth(): void {
  * Sanitize URL to remove credentials
  * @param urlString - URL to sanitize
  * @returns Sanitized URL without credentials
+ * @internal
  */
-function sanitizeUrl(urlString: string): string {
+export function sanitizeUrl(urlString: string): string {
   try {
     const url = new URL(urlString);
     // Remove username and password

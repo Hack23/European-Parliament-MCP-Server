@@ -35,6 +35,12 @@
   - [compare_political_groups](#tool-compare_political_groups)
   - [analyze_legislative_effectiveness](#tool-analyze_legislative_effectiveness)
   - [monitor_legislative_pipeline](#tool-monitor_legislative_pipeline)
+  - [analyze_committee_activity](#tool-analyze_committee_activity)
+  - [track_mep_attendance](#tool-track_mep_attendance)
+  - [analyze_country_delegation](#tool-analyze_country_delegation)
+  - [generate_political_landscape](#tool-generate_political_landscape)
+- [MCP Prompts](#mcp-prompts)
+- [MCP Resources](#mcp-resources)
 - [Common Use Cases](#common-use-cases)
 - [Best Practices](#best-practices)
 - [Error Handling](#error-handling)
@@ -84,6 +90,10 @@ Currently, the server does **not require authentication** for tool access. Futur
 | `compare_political_groups` | Cross-group comparison | groups, metrics | Comparison matrix |
 | `analyze_legislative_effectiveness` | Legislative scoring | subjectId, subjectType | Effectiveness score |
 | `monitor_legislative_pipeline` | Pipeline monitoring | committeeId, status | Pipeline status |
+| `analyze_committee_activity` | Committee workload & engagement | committeeId (required) | Activity report |
+| `track_mep_attendance` | MEP attendance patterns | mepId (required) | Attendance report |
+| `analyze_country_delegation` | Country delegation analysis | country (required) | Delegation analysis |
+| `generate_political_landscape` | Parliament-wide landscape | dateFrom, dateTo | Landscape overview |
 
 ---
 
@@ -988,6 +998,132 @@ Analyze the legislative effectiveness of the ENVI committee
 
 ```
 Show the current legislative pipeline status and identify bottlenecks
+```
+
+---
+
+### Tool: analyze_committee_activity
+
+**Description**: Analyze committee workload, document production, meeting frequency, and member engagement metrics. Provides intelligence on committee operational efficiency and policy focus areas.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| committeeId | string | Yes | Committee identifier (e.g., "ENVI", "ITRE") |
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+#### Example Usage
+
+```
+Analyze the ENVI committee's activity, document output, and member engagement over the last 6 months
+```
+
+---
+
+### Tool: track_mep_attendance
+
+**Description**: Track MEP attendance patterns across plenary and committee sessions with trend detection, engagement scoring, and participation rate analysis.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| mepId | string | Yes | MEP identifier |
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+#### Example Usage
+
+```
+Track attendance patterns and engagement trends for MEP-124810 over the current parliamentary term
+```
+
+---
+
+### Tool: analyze_country_delegation
+
+**Description**: Analyze a country's MEP delegation composition, political group distribution, voting behavior, committee representation, and national cohesion metrics.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| country | string | Yes | ISO 3166-1 alpha-2 country code (e.g., "SE", "DE", "FR") |
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+#### Example Usage
+
+```
+Analyze the Swedish delegation's composition, voting behavior, and committee representation
+```
+
+---
+
+### Tool: generate_political_landscape
+
+**Description**: Generate a comprehensive political landscape overview of the European Parliament, including group composition, power dynamics, coalition thresholds, bloc analysis, and fragmentation metrics.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+#### Example Usage
+
+```
+Generate a current political landscape overview including group sizes, coalition possibilities, and bloc dynamics
+```
+
+---
+
+## 📝 MCP Prompts
+
+Pre-built intelligence analysis prompt templates for common parliamentary research workflows.
+
+| Prompt | Description | Required Arguments |
+|--------|-------------|--------------------|
+| `mep_briefing` | Comprehensive MEP intelligence briefing with voting record, committee work, and influence assessment | mepId |
+| `coalition_analysis` | Coalition dynamics and voting bloc analysis across political groups | politicalGroups |
+| `legislative_tracking` | Legislative procedure tracking report with timeline and status | procedureId |
+| `political_group_comparison` | Multi-dimensional comparison of political groups | groups |
+| `committee_activity_report` | Committee workload, engagement, and document production report | committeeId |
+| `voting_pattern_analysis` | Voting pattern trend detection and anomaly identification | mepId |
+
+### Example: Using MCP Prompts
+
+```typescript
+// Request a pre-built prompt template
+const prompt = await client.getPrompt('mep_briefing', { mepId: 'MEP-124810' });
+// Returns structured messages for LLM consumption
+```
+
+---
+
+## 📦 MCP Resources
+
+Direct data access via European Parliament resource URIs using the `ep://` scheme.
+
+| Resource URI | Description |
+|-------------|-------------|
+| `ep://meps` | List of all current MEPs |
+| `ep://meps/{mepId}` | Individual MEP profile and details |
+| `ep://committees/{committeeId}` | Committee information and membership |
+| `ep://plenary-sessions` | Recent plenary session listing |
+| `ep://votes/{sessionId}` | Voting records for a specific session |
+| `ep://political-groups` | Political group listing with seat counts |
+
+### Example: Reading MCP Resources
+
+```typescript
+// Read a resource directly
+const meps = await client.readResource('ep://meps');
+const mepDetails = await client.readResource('ep://meps/MEP-124810');
+const committee = await client.readResource('ep://committees/ENVI');
 ```
 
 ---
