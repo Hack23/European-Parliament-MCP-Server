@@ -232,7 +232,8 @@ async function buildDelegationAnalysis(
     },
     votingBehavior: {
       averageAttendance: avgAttendance,
-      averageLoyalty: Math.round((75 + Math.random() * 15) * 100) / 100,
+      // Loyalty approximated from group fragmentation; detailed roll-call analysis not yet available
+      averageLoyalty: Math.round(Math.max(60, 95 - distribution.length * 5) * 100) / 100,
       nationalCohesion: Math.round(nationalCohesion * 100) / 100
     },
     committeePresence,
