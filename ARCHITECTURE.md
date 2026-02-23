@@ -687,7 +687,7 @@ This architecture aligns with Hack23 ISMS policies:
 
 ## 🔧 Tool Implementation Patterns
 
-All 20 MCP tools (10 core + 10 OSINT intelligence) follow a consistent implementation pattern:
+All 20 MCP tools (7 core + 3 advanced + 10 OSINT intelligence) follow a consistent implementation pattern:
 
 **Pattern**: Input Validation → EP API Client → Output Validation → MCP Response
 

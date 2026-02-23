@@ -408,12 +408,18 @@ erDiagram
     MEP ||--o{ INFLUENCE_SCORE : "scored by"
     MEP ||--o{ VOTING_ANOMALY : "detected in"
     MEP ||--o{ LEGISLATIVE_EFFECTIVENESS : "measured by"
+    MEP ||--o{ MEP_ATTENDANCE : "tracked in"
     
     POLITICAL_GROUP ||--o{ COALITION_METRIC : "analyzed in"
     POLITICAL_GROUP ||--o{ GROUP_COMPARISON : "compared in"
+    POLITICAL_GROUP ||--o{ POLITICAL_LANDSCAPE : "mapped in"
     
     LEGISLATION ||--o{ PIPELINE_STATUS : "tracked in"
     COMMITTEE ||--o{ PIPELINE_STATUS : "monitored by"
+    COMMITTEE ||--o{ COMMITTEE_ACTIVITY : "analyzed in"
+    
+    COUNTRY_DELEGATION ||--o{ MEP : "composed of"
+    COUNTRY_DELEGATION ||--o{ DELEGATION_ANALYSIS : "assessed in"
     
     INFLUENCE_SCORE {
         string mepId FK
@@ -465,6 +471,42 @@ erDiagram
         number daysInStage
         boolean bottleneck
         string forecast
+    }
+    
+    COMMITTEE_ACTIVITY {
+        string committeeId FK
+        number meetingCount
+        number documentCount
+        number legislativeOutput
+        number workloadScore
+        string period
+    }
+    
+    MEP_ATTENDANCE {
+        string mepId FK
+        number plenaryRate
+        number committeeRate
+        number overallRate
+        string trend
+        string period
+    }
+    
+    DELEGATION_ANALYSIS {
+        string country
+        number mepCount
+        number cohesionScore
+        number averageInfluence
+        string dominantGroup
+        string period
+    }
+    
+    POLITICAL_LANDSCAPE {
+        string parliamentTerm
+        number seatDistribution
+        number effectiveParties
+        number fragmentationIndex
+        string coalitionScenario
+        string period
     }
 ```
 
@@ -549,6 +591,78 @@ interface PipelineStatus {
   bottleneck: boolean;             // Bottleneck detected
   forecast: string;                // Timeline forecast
   healthIndicator: 'on_track' | 'delayed' | 'stalled';
+}
+```
+
+### 14. Committee Activity (Computed)
+
+```typescript
+interface CommitteeActivity {
+  committeeId: string;             // Committee reference
+  committeeName: string;           // Committee name
+  meetingCount: number;            // Number of meetings in period
+  documentCount: number;           // Documents produced
+  legislativeOutput: number;       // Legislative files processed
+  workloadScore: number;           // 0-10 workload intensity
+  memberCount: number;             // Active members
+  engagementRate: number;          // 0-100 member participation rate
+  period: string;                  // Analysis period
+  confidence: number;              // 0-1 confidence level
+}
+```
+
+### 15. MEP Attendance (Computed)
+
+```typescript
+interface MepAttendance {
+  mepId: string;                   // Reference to MEP
+  mepName: string;                 // MEP name
+  plenaryRate: number;             // 0-100 plenary attendance rate
+  committeeRate: number;           // 0-100 committee attendance rate
+  overallRate: number;             // 0-100 overall attendance rate
+  trend: 'improving' | 'stable' | 'declining';
+  missedSessions: number;          // Count of missed sessions
+  period: string;                  // Analysis period
+  confidence: number;              // 0-1 confidence level
+}
+```
+
+### 16. Country Delegation Analysis (Computed)
+
+```typescript
+interface DelegationAnalysis {
+  country: string;                 // ISO 3166-1 alpha-2 code
+  countryName: string;             // Full country name
+  mepCount: number;                // Number of MEPs from country
+  cohesionScore: number;           // 0-1 how unified the delegation votes
+  averageInfluence: number;        // 0-10 average MEP influence
+  dominantGroup: string;           // Largest political group
+  groupDistribution: Record<string, number>; // MEPs per group
+  committeePresence: string[];     // Committees where delegation is active
+  period: string;                  // Analysis period
+  confidence: number;              // 0-1 confidence level
+}
+```
+
+### 17. Political Landscape (Computed)
+
+```typescript
+interface PoliticalLandscape {
+  parliamentTerm: string;          // Parliamentary term identifier
+  totalMeps: number;               // Total MEP count
+  seatDistribution: Record<string, number>; // Seats per group
+  effectiveParties: number;        // Effective number of parties index
+  fragmentationIndex: number;      // 0-1 fragmentation measure
+  majorityThreshold: number;       // Seats needed for majority
+  coalitionScenarios: {
+    name: string;                  // Coalition name
+    groups: string[];              // Groups in coalition
+    seats: number;                 // Total seats
+    viable: boolean;               // Exceeds majority threshold
+  }[];
+  powerBalance: 'left' | 'center' | 'right' | 'fragmented';
+  period: string;                  // Analysis period
+  confidence: number;              // 0-1 confidence level
 }
 ```
 

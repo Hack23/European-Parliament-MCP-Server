@@ -7,7 +7,7 @@
 <h1 align="center">European Parliament MCP Server - API Usage Guide</h1>
 
 <p align="center">
-  <strong>Comprehensive guide to using all 16 MCP tools</strong><br>
+  <strong>Comprehensive guide to using all 20 MCP tools</strong><br>
   <em>Real-world examples, best practices, and query patterns</em>
 </p>
 
@@ -49,7 +49,7 @@
 
 ## 🎯 Overview
 
-The European Parliament MCP Server provides 16 specialized tools for accessing parliamentary data through the Model Context Protocol — including 10 core data tools and 6 OSINT intelligence tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
+The European Parliament MCP Server provides 20 specialized tools for accessing parliamentary data through the Model Context Protocol — including 7 core data tools, 3 advanced analysis tools, and 10 OSINT intelligence tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
 
 ### Key Features
 
