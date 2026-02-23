@@ -16,9 +16,6 @@
     "playwright"
   ],
   "ignore": [
-    "dist/**",
-    "coverage/**",
-    "node_modules/**",
     "tests/fixtures/**"
   ],
   "ignoreExportsUsedInFile": true

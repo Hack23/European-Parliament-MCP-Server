@@ -113,6 +113,12 @@ const PromptArgsSchema = z.record(
 
 // ─── Prompt Result Generators ────────────────────────────────
 
+/**
+ * Generate an MEP intelligence briefing prompt
+ *
+ * @param args - Prompt arguments containing mepId and optional period
+ * @returns Structured prompt result for MEP profiling analysis
+ */
 function generateMepBriefing(args: Record<string, string>): PromptResult {
   const mepId = args['mepId'] ?? 'unknown';
   const period = args['period'] ?? 'current term';
@@ -149,6 +155,12 @@ Confidence levels: HIGH (>80% data coverage), MEDIUM (50-80%), LOW (<50%)`
   };
 }
 
+/**
+ * Generate a coalition dynamics analysis prompt
+ *
+ * @param args - Prompt arguments containing optional policyArea and period
+ * @returns Structured prompt result for coalition mapping
+ */
 function generateCoalitionAnalysis(args: Record<string, string>): PromptResult {
   const policyArea = args['policyArea'] ?? 'all policy areas';
   const period = args['period'] ?? 'current term';
@@ -184,6 +196,12 @@ Data source: European Parliament Open Data Portal`
   };
 }
 
+/**
+ * Generate a legislative tracking prompt
+ *
+ * @param args - Prompt arguments containing optional procedureId and committee
+ * @returns Structured prompt result for legislative pipeline monitoring
+ */
 function generateLegislativeTracking(args: Record<string, string>): PromptResult {
   const procedureId = args['procedureId'];
   const committee = args['committee'];
@@ -228,6 +246,12 @@ Data source: European Parliament Open Data Portal`
   };
 }
 
+/**
+ * Generate a political group comparison prompt
+ *
+ * @param args - Prompt arguments containing optional groups list
+ * @returns Structured prompt result for multi-group comparison
+ */
 function generateGroupComparison(args: Record<string, string>): PromptResult {
   const groups = args['groups'] ?? 'EPP, S&D, Renew Europe, Greens/EFA, ECR, ID, The Left';
 
@@ -262,6 +286,12 @@ Data source: European Parliament Open Data Portal`
   };
 }
 
+/**
+ * Generate a committee activity report prompt
+ *
+ * @param args - Prompt arguments containing committeeId
+ * @returns Structured prompt result for committee workload analysis
+ */
 function generateCommitteeActivity(args: Record<string, string>): PromptResult {
   const committeeId = args['committeeId'] ?? 'unknown';
 
@@ -295,6 +325,12 @@ Data source: European Parliament Open Data Portal`
   };
 }
 
+/**
+ * Generate a voting pattern analysis prompt
+ *
+ * @param args - Prompt arguments containing optional topic and mepId
+ * @returns Structured prompt result for voting pattern detection
+ */
 function generateVotingAnalysis(args: Record<string, string>): PromptResult {
   const topic = args['topic'] ?? 'key legislative votes';
   const mepId = args['mepId'];

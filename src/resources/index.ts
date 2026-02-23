@@ -174,6 +174,12 @@ function parseResourceUri(uri: string): { template: string; params: Record<strin
 
 // ─── Resource Handlers ───────────────────────────────────────
 
+/**
+ * Handle MEP detail resource request
+ *
+ * @param mepId - MEP identifier to look up
+ * @returns Resource content with MEP details as JSON
+ */
 async function handleMepDetail(mepId: string): Promise<ResourceContent> {
   const validId = MepIdSchema.parse(mepId);
   const data = await epClient.getMEPDetails(validId);
@@ -189,6 +195,11 @@ async function handleMepDetail(mepId: string): Promise<ResourceContent> {
   };
 }
 
+/**
+ * Handle MEP list resource request
+ *
+ * @returns Resource content with paginated MEP list as JSON
+ */
 async function handleMepList(): Promise<ResourceContent> {
   const data = await epClient.getMEPs({ limit: 50 });
 
@@ -203,6 +214,12 @@ async function handleMepList(): Promise<ResourceContent> {
   };
 }
 
+/**
+ * Handle committee detail resource request
+ *
+ * @param committeeId - Committee identifier or abbreviation
+ * @returns Resource content with committee details as JSON
+ */
 async function handleCommitteeDetail(committeeId: string): Promise<ResourceContent> {
   const validId = MepIdSchema.parse(committeeId);
   const data = await epClient.getCommitteeInfo({ abbreviation: validId });
@@ -218,6 +235,11 @@ async function handleCommitteeDetail(committeeId: string): Promise<ResourceConte
   };
 }
 
+/**
+ * Handle plenary sessions resource request
+ *
+ * @returns Resource content with recent plenary sessions as JSON
+ */
 async function handlePlenarySessions(): Promise<ResourceContent> {
   const data = await epClient.getPlenarySessions({ limit: 20 });
 
@@ -232,6 +254,12 @@ async function handlePlenarySessions(): Promise<ResourceContent> {
   };
 }
 
+/**
+ * Handle voting record resource request
+ *
+ * @param sessionId - Session identifier for vote retrieval
+ * @returns Resource content with voting records as JSON
+ */
 async function handleVotingRecord(sessionId: string): Promise<ResourceContent> {
   const validId = MepIdSchema.parse(sessionId);
   const data = await epClient.getVotingRecords({ sessionId: validId });
@@ -247,6 +275,11 @@ async function handleVotingRecord(sessionId: string): Promise<ResourceContent> {
   };
 }
 
+/**
+ * Handle political groups resource request
+ *
+ * @returns Resource content with political group composition as JSON
+ */
 async function handlePoliticalGroups(): Promise<ResourceContent> {
   const data = await epClient.getMEPs({ limit: 100 });
 
@@ -341,5 +374,5 @@ export async function handleReadResource(uri: string): Promise<ResourceReadResul
   return { contents: [content] };
 }
 
-// Export for testing
+/** Export parseResourceUri for testing */
 export { parseResourceUri };
