@@ -36,11 +36,11 @@ describe('Full Workflow E2E Tests', () => {
   }, 10000);
 
   describe('Complete Tool Coverage', () => {
-    it('should successfully call all 10 MCP tools', async () => {
+    it('should successfully call all 20 MCP tools', async () => {
       const tools = await client.listTools();
       const toolNames = tools.map(t => t.name);
 
-      // Verify all 10 tools are available
+      // Verify all 20 tools are available (7 core + 3 advanced + 10 OSINT)
       expect(toolNames).toContain('get_meps');
       expect(toolNames).toContain('get_mep_details');
       expect(toolNames).toContain('get_plenary_sessions');
@@ -52,7 +52,23 @@ describe('Full Workflow E2E Tests', () => {
       expect(toolNames).toContain('track_legislation');
       expect(toolNames).toContain('generate_report');
 
-      expect(toolNames.length).toBeGreaterThanOrEqual(10);
+      // OSINT Phase 1 tools
+      expect(toolNames).toContain('assess_mep_influence');
+      expect(toolNames).toContain('analyze_coalition_dynamics');
+      expect(toolNames).toContain('detect_voting_anomalies');
+      expect(toolNames).toContain('compare_political_groups');
+      expect(toolNames).toContain('analyze_legislative_effectiveness');
+      expect(toolNames).toContain('monitor_legislative_pipeline');
+
+      // OSINT Phase 2 tools
+      expect(toolNames).toContain('analyze_committee_activity');
+      expect(toolNames).toContain('track_mep_attendance');
+
+      // OSINT Phase 3 tools
+      expect(toolNames).toContain('analyze_country_delegation');
+      expect(toolNames).toContain('generate_political_landscape');
+
+      expect(toolNames.length).toBeGreaterThanOrEqual(20);
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute get_meps tool', async () => {

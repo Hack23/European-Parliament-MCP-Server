@@ -40,7 +40,7 @@ export default defineConfig({
     exclude: [
       'node_modules/',
       'dist/',
-      'tests/e2e/mcpClient.ts', // Utility class, not a test file
+      'tests/e2e/**', // E2E tests require live EP API — run via `npm run test:e2e`
       'tests/helpers/**', // Test utilities
       'tests/fixtures/**' // Test data
     ],
