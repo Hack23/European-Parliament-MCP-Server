@@ -380,6 +380,62 @@ Direct data access via EP resource URIs:
 
 ---
 
+## 🌍 Hack23 Political Intelligence Ecosystem
+
+This MCP server is part of **[Hack23's](https://hack23.com/)** mission to **disrupt journalism with AI-generated news coverage and real-time analysis of democratic governments** — increasing transparency and accountability through open-source intelligence.
+
+### 🔗 Hack23 Projects
+
+| Project | Description | Link |
+|---------|-------------|------|
+| 🏛️ **EU Parliament Monitor** | AI-powered monitoring of European Parliament activities, voting patterns, and legislative tracking | [euparliamentmonitor.hack23.com](https://euparliamentmonitor.hack23.com/) · [GitHub](https://github.com/Hack23/euparliamentmonitor) |
+| 🇸🇪 **Riksdagsmonitor** | AI-powered monitoring of the Swedish Parliament (Riksdag) — government accountability dashboard | [riksdagsmonitor.com](https://riksdagsmonitor.com/) · [GitHub](https://github.com/Hack23/riksdagsmonitor) |
+| 🕵️ **European Parliament MCP Server** | This project — OSINT intelligence tools for EU Parliament open data via MCP protocol | [npm](https://www.npmjs.com/package/european-parliament-mcp-server) · [GitHub](https://github.com/Hack23/European-Parliament-MCP-Server) |
+| 🔐 **CIA** | Citizen Intelligence Agency — comprehensive political intelligence platform | [cia.hack23.com](https://cia.hack23.com/) · [GitHub](https://github.com/Hack23/cia) |
+
+### 🎯 Vision: AI-Powered Democratic Transparency
+
+Hack23 builds **open-source intelligence platforms** that enable citizens, journalists, and researchers to monitor democratic institutions in real-time. By combining MCP servers, AI analysis, and open parliamentary data, we create automated intelligence products that were previously only available to well-funded lobbying organizations.
+
+> *"Democratizing access to political intelligence — what used to require a team of analysts can now be done by any citizen with an AI assistant."*
+
+---
+
+## 🗺️ Global Political MCP Servers & OSINT Coverage
+
+The European Parliament MCP Server is part of a growing ecosystem of **political and government open data MCP servers** enabling AI-powered OSINT analysis of democratic institutions worldwide.
+
+### 🌐 Political & Government MCP Servers
+
+| Country | Server | Data Source | Coverage |
+|---------|--------|-------------|----------|
+| 🇪🇺 **European Union** | [European Parliament MCP Server](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions |
+| 🇺🇸 **United States** | [Congress.gov MCP Server](https://github.com/bsmi021/mcp-congress_gov_server) | congress.gov | Bills, members, votes, committees |
+| 🇸🇪 **Sweden** | [Riksdag & Regering MCP](https://mcpservers.org/servers/isakskogstad/riksdag-regering-mcp) | riksdagen.se | Swedish Parliament data (used by [riksdagsmonitor.com](https://riksdagsmonitor.com/)) |
+| 🇫🇷 **France** | Data Gouv MCP Server | data.gouv.fr | French government open data portal |
+| 🇮🇱 **Israel** | Data.gov.il MCP | data.gov.il | Israeli national open data portal |
+| 🌍 **Multi-portal** | OpenGov MCP Server | Socrata-powered portals | City/county/state/federal open data (US & global) |
+
+### 🕵️ OSINT Intelligence Capabilities Comparison
+
+| Capability | 🇪🇺 EU Parliament MCP | 🇺🇸 Congress.gov MCP | 🇸🇪 Riksdag MCP |
+|------------|----------------------|---------------------|-----------------|
+| Member profiling | ✅ 5-dimension influence model | ✅ Basic profiles | ✅ Basic profiles |
+| Voting analysis | ✅ Anomaly detection + patterns | ✅ Roll call votes | ✅ Vote records |
+| Coalition dynamics | ✅ Cohesion & stress analysis | ❌ | ❌ |
+| Committee intelligence | ✅ Workload & engagement metrics | ✅ Committee data | ❌ |
+| Legislative pipeline | ✅ Bottleneck detection + forecasting | ✅ Bill tracking | ✅ Bill tracking |
+| Country delegation analysis | ✅ National cohesion metrics | N/A | N/A |
+| Political landscape | ✅ Parliament-wide situational awareness | ❌ | ❌ |
+| Attendance tracking | ✅ Trend detection + engagement scoring | ❌ | ❌ |
+| GDPR compliance | ✅ Privacy-first design | N/A | ✅ |
+| MCP prompts & resources | ✅ 6 prompts + 6 resources | ❌ | ❌ |
+| OSINT tool count | **20 tools** | ~5 tools | ~4 tools |
+
+> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with 20 specialized tools including advanced analytics like coalition stress analysis, voting anomaly detection, and political landscape generation.
+
+---
+
 ## 🏛️ European Parliament Datasets
 
 ### Available Data
@@ -620,6 +676,12 @@ This project is licensed under the **Apache License 2.0** - see [LICENSE.md](./L
 - [Discussions](https://github.com/Hack23/European-Parliament-MCP-Server/discussions)
 - [Security Policy](./SECURITY.md)
 
+### Hack23 Ecosystem
+- [Hack23](https://hack23.com/) — AI-powered democratic transparency platform
+- [EU Parliament Monitor](https://github.com/Hack23/euparliamentmonitor) — European Parliament monitoring dashboard
+- [Riksdagsmonitor](https://riksdagsmonitor.com/) · [GitHub](https://github.com/Hack23/riksdagsmonitor) — Swedish Parliament monitoring
+- [Citizen Intelligence Agency](https://github.com/Hack23/cia) — Comprehensive political intelligence platform
+
 ### European Parliament
 - [Open Data Portal](https://data.europarl.europa.eu/)
 - [Developer Corner](https://data.europarl.europa.eu/en/developer-corner)
@@ -629,6 +691,10 @@ This project is licensed under the **Apache License 2.0** - see [LICENSE.md](./L
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
 - [MCP SDK](https://github.com/modelcontextprotocol/sdk)
 - [MCP Documentation](https://modelcontextprotocol.io/docs)
+
+### Political MCP Servers
+- [Congress.gov MCP Server](https://github.com/bsmi021/mcp-congress_gov_server) — US Congress data
+- [Riksdag & Regering MCP](https://mcpservers.org/servers/isakskogstad/riksdag-regering-mcp) — Swedish Parliament data
 
 ### Hack23 ISMS
 - [ISMS Policies](https://github.com/Hack23/ISMS-PUBLIC)
