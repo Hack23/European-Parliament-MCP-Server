@@ -178,6 +178,14 @@ describe('MCP Prompts', () => {
           mepId: '' // Too short
         })).toThrow();
       });
+
+      it('should throw when required mepId is missing for mep_briefing', () => {
+        expect(() => handleGetPrompt('mep_briefing', {})).toThrow('Missing required argument');
+      });
+
+      it('should throw when required committeeId is missing for committee_activity_report', () => {
+        expect(() => handleGetPrompt('committee_activity_report', {})).toThrow('Missing required argument');
+      });
     });
   });
 });

@@ -2,7 +2,9 @@
  * MCP Tool: track_mep_attendance
  * 
  * Track and analyze MEP attendance patterns across plenary sessions
- * and committee meetings with trend detection.
+ * with trend detection. Attendance is derived from votingStatistics
+ * (plenary vote participation); committee meeting attendance is not
+ * currently tracked.
  * 
  * **Intelligence Perspective:** Attendance analysis reveals MEP engagement levels,
  * potential disengagement signals, and participation patterns that correlate with

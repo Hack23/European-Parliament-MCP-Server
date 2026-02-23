@@ -1,8 +1,9 @@
 /**
  * MCP Tool: analyze_committee_activity
  * 
- * Analyze committee workload, meeting frequency, document production,
- * legislative output, and member engagement for EP committees.
+ * Analyze committee workload and member engagement for EP committees.
+ * Metrics are heuristic estimates derived from committee membership size;
+ * real meeting/document/procedure data is not fetched from the EP API.
  * 
  * **Intelligence Perspective:** Committee activity analysis reveals institutional
  * priorities, resource allocation patterns, and policy domain intensity—essential
@@ -154,9 +155,10 @@ async function buildAnalysis(
       engagementLevel: computeEngagementLevel(avgAttendance),
       policyImpactRating: computePolicyImpactRating(reportsAdopted, successRate)
     },
-    confidenceLevel: 'MEDIUM',
-    methodology: 'Committee activity analysis using EP Open Data: workload assessment, '
-      + 'member engagement scoring, and legislative output metrics. '
+    confidenceLevel: 'LOW',
+    methodology: 'Committee activity analysis based on committee membership size from EP Open Data. '
+      + 'Workload, attendance, and legislative output metrics are heuristic estimates '
+      + 'derived from member count and are not backed by real meeting/document data. '
       + 'Data source: European Parliament Open Data Portal.'
   };
 

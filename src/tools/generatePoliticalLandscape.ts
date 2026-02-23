@@ -223,10 +223,10 @@ async function buildLandscape(
     },
     groups,
     powerDynamics,
-    // Activity metrics estimated from group count; detailed session data not fetched
+    // Activity metrics are heuristic estimates — no real session/attendance data fetched
     activityMetrics: {
-      averageAttendance: Math.min(85, 65 + groups.length * 2),
-      recentSessionCount: Math.max(4, groups.length + 4)
+      averageAttendance: Math.min(85, 65 + groups.length * 2), // estimate
+      recentSessionCount: Math.max(4, groups.length + 4) // estimate
     },
     computedAttributes: {
       fragmentationIndex: computeFragmentation(groups.length),
@@ -237,9 +237,11 @@ async function buildLandscape(
       ),
       overallEngagement: computeEngagement(Math.min(85, 65 + groups.length * 2))
     },
-    confidenceLevel: totalMEPs > 50 ? 'HIGH' : 'MEDIUM',
+    confidenceLevel: totalMEPs > 50 ? 'MEDIUM' : 'LOW',
     methodology: 'Political landscape analysis using EP Open Data: group composition mapping, '
       + 'bloc classification, coalition threshold calculation, and fragmentation indexing. '
+      + 'Activity metrics (attendance, session count) are heuristic estimates derived from '
+      + 'group count and are not backed by real session/attendance data. '
       + 'Data source: European Parliament Open Data Portal.'
   };
 }

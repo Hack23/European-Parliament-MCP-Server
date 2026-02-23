@@ -20,12 +20,12 @@ function isRateLimitOrNetworkError(error: unknown): boolean {
 
 /**
  * Retry a function with exponential backoff.
- * If skipOnRateLimit is true, logs a warning and returns undefined instead of throwing on rate limit / network errors.
+ * Always throws on final failure (use `retryOrSkip` to skip on rate limit errors).
  * 
  * @param fn - Function to retry
  * @param maxRetries - Maximum number of retries
  * @param baseDelay - Base delay in milliseconds
- * @returns Result from function, or undefined if skipped due to rate limiting
+ * @returns Result from function
  */
 export async function retry<T>(
   fn: () => Promise<T>,

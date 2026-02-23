@@ -160,16 +160,19 @@ function computeCohesionLevel(cohesion: number): string {
 async function fetchMepDetails(
   meps: { id: string }[]
 ): Promise<MEPDetails[]> {
-  const detailResults = await Promise.allSettled(
-    meps.slice(0, 50).map(
-      (mep: { id: string }) => epClient.getMEPDetails(mep.id)
-    )
-  );
-
   const details: MEPDetails[] = [];
-  for (const r of detailResults) {
-    if (r.status === 'fulfilled') {
-      details.push(r.value);
+  const batch = meps.slice(0, 50);
+  const batchSize = 5;
+
+  for (let i = 0; i < batch.length; i += batchSize) {
+    const chunk = batch.slice(i, i + batchSize);
+    const results = await Promise.allSettled(
+      chunk.map((mep: { id: string }) => epClient.getMEPDetails(mep.id))
+    );
+    for (const r of results) {
+      if (r.status === 'fulfilled') {
+        details.push(r.value);
+      }
     }
   }
   return details;

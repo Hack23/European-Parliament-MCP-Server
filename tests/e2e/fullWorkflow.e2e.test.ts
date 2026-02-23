@@ -36,7 +36,7 @@ describe('Full Workflow E2E Tests', () => {
   }, 10000);
 
   describe('Complete Tool Coverage', () => {
-    it('should successfully call all 20 MCP tools', async () => {
+    it('should verify all 20 MCP tools are registered', async () => {
       const tools = await client.listTools();
       const toolNames = tools.map(t => t.name);
 
