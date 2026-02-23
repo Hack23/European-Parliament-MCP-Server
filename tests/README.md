@@ -45,7 +45,7 @@ Tests integration with the real European Parliament API:
 ### E2E Tests (`tests/e2e/`)
 
 Tests complete user workflows via MCP client:
-- All 10 MCP tools
+- All 20 MCP tools
 - MCP protocol compliance
 - Tool input validation
 - Error handling
