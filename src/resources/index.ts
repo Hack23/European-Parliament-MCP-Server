@@ -91,7 +91,7 @@ const politicalGroupsResourceTemplate: ResourceTemplate = {
 
 // ─── URI Validation ──────────────────────────────────────────
 
-const MepIdSchema = z.string().min(1).max(100).regex(/^[a-zA-Z0-9_-]+$/);
+const MepIdSchema = z.string().min(1).max(100);
 
 /**
  * Match MEP resource URIs

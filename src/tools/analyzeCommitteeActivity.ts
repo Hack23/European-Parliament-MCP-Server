@@ -33,9 +33,6 @@ export const AnalyzeCommitteeActivitySchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')
     .optional()
     .describe('End date for analysis period'),
-  includeMembers: z.boolean()
-    .default(false)
-    .describe('Include individual member engagement metrics')
 });
 
 /**
@@ -107,8 +104,7 @@ function computePolicyImpactRating(reportsAdopted: number, successRate: number):
 async function buildAnalysis(
   committeeId: string,
   dateFrom: string,
-  dateTo: string,
-  _includeMembers: boolean
+  dateTo: string
 ): Promise<CommitteeActivityAnalysis> {
   const committeeData = await epClient.getCommitteeInfo({
     abbreviation: committeeId
@@ -186,8 +182,7 @@ export async function handleAnalyzeCommitteeActivity(
   const analysis = await buildAnalysis(
     params.committeeId,
     dateFrom,
-    dateTo,
-    params.includeMembers
+    dateTo
   );
 
   return {
@@ -221,10 +216,6 @@ export const analyzeCommitteeActivityToolMetadata = {
         type: 'string',
         description: 'End date (YYYY-MM-DD)'
       },
-      includeMembers: {
-        type: 'boolean',
-        description: 'Include individual member engagement metrics'
-      }
     },
     required: ['committeeId']
   }

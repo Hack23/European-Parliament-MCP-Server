@@ -71,7 +71,11 @@ export function validateMEPStructure(mep: unknown): void {
   expect(typeof (mep as { id: unknown }).id).toBe('string');
   expect(typeof (mep as { name: unknown }).name).toBe('string');
   expect(typeof (mep as { country: unknown }).country).toBe('string');
-  expect((mep as { country: string }).country).toMatch(/^[A-Z]{2}$/);
+  // EP API may return 'Unknown' for some MEPs without mapped country
+  const country = (mep as { country: string }).country;
+  if (country !== 'Unknown') {
+    expect(country).toMatch(/^[A-Z]{2}$/);
+  }
 }
 
 /**

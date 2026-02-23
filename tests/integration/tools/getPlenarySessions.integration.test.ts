@@ -21,7 +21,7 @@ const describeIntegration = shouldRunIntegrationTests() ? describe : describe.sk
 describeIntegration('get_plenary_sessions Integration Tests', () => {
   beforeEach(async () => {
     // Wait between tests to respect rate limits
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   });
 
   describe('Basic Retrieval', () => {

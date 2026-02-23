@@ -412,5 +412,23 @@ export function handleGetPrompt(
     throw new Error(`Unknown prompt: ${name}`);
   }
 
+  // Enforce required arguments based on prompt metadata
+  const metadata = getPromptMetadataArray().find((prompt) => prompt.name === name);
+  if (metadata?.arguments !== undefined) {
+    const missingRequired = metadata.arguments
+      .filter((arg) => arg.required)
+      .filter((arg) => {
+        const value = validatedArgs[arg.name];
+        return value === undefined || value.trim() === '';
+      })
+      .map((arg) => arg.name);
+
+    if (missingRequired.length > 0) {
+      throw new Error(
+        `Missing required argument(s) for prompt "${name}": ${missingRequired.join(', ')}`
+      );
+    }
+  }
+
   return generator(validatedArgs);
 }

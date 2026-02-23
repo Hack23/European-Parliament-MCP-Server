@@ -31,10 +31,7 @@ export const GeneratePoliticalLandscapeSchema = z.object({
   dateTo: z.string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')
     .optional()
-    .describe('End date for analysis period'),
-  includeDetails: z.boolean()
-    .default(false)
-    .describe('Include detailed per-group metrics')
+    .describe('End date for analysis period')
 });
 
 /**
@@ -291,10 +288,6 @@ export const generatePoliticalLandscapeToolMetadata = {
       dateTo: {
         type: 'string',
         description: 'End date (YYYY-MM-DD)'
-      },
-      includeDetails: {
-        type: 'boolean',
-        description: 'Include detailed per-group metrics'
       }
     },
     required: []

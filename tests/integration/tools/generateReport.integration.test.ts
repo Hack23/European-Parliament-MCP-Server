@@ -24,7 +24,7 @@ describeIntegration('generate_report Integration Tests', () => {
 
   beforeEach(async () => {
     // Wait between tests to respect rate limits
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Get a real MEP ID if not already set
     if (!testMEPId) {

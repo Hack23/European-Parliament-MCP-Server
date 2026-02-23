@@ -142,8 +142,9 @@ function buildAttendanceRecord(
     };
   }
 ): MepAttendanceRecord {
-  const rate = mep.votingStatistics?.attendanceRate ?? 70;
-  const total = mep.votingStatistics?.totalVotes ?? 500;
+  const hasStats = mep.votingStatistics !== undefined;
+  const rate = mep.votingStatistics?.attendanceRate ?? 0;
+  const total = mep.votingStatistics?.totalVotes ?? 0;
   const attended = Math.round(total * (rate / 100));
 
   return {
@@ -154,8 +155,8 @@ function buildAttendanceRecord(
     attendanceRate: rate,
     totalSessions: total,
     sessionsAttended: attended,
-    trend: determineTrend(rate),
-    category: classifyAttendance(rate)
+    trend: hasStats ? determineTrend(rate) : 'UNKNOWN',
+    category: hasStats ? classifyAttendance(rate) : 'UNKNOWN'
   };
 }
 
@@ -193,6 +194,37 @@ async function buildSingleMepAnalysis(
 }
 
 /**
+ * Compute confidence level from data coverage ratio
+ */
+function computeConfidence(dataCoverage: number): string {
+  if (dataCoverage > 0.8) return 'HIGH';
+  if (dataCoverage > 0.4) return 'MEDIUM';
+  return 'LOW';
+}
+
+/**
+ * Fetch MEP details in batches to avoid overwhelming the EP API
+ */
+async function fetchMepDetailsBatched(
+  meps: { id: string }[],
+  batchSize: number
+): Promise<NonNullable<Awaited<ReturnType<typeof epClient.getMEPDetails>>>[]> {
+  const details: NonNullable<Awaited<ReturnType<typeof epClient.getMEPDetails>>>[] = [];
+  for (let i = 0; i < meps.length; i += batchSize) {
+    const batch = meps.slice(i, i + batchSize);
+    const batchResults = await Promise.allSettled(
+      batch.map((mep) => epClient.getMEPDetails(mep.id))
+    );
+    for (const r of batchResults) {
+      if (r.status === 'fulfilled') {
+        details.push(r.value);
+      }
+    }
+  }
+  return details;
+}
+
+/**
  * Build attendance analysis for multiple MEPs
  */
 async function buildGroupAnalysis(
@@ -211,19 +243,9 @@ async function buildGroupAnalysis(
   const mepResult = await epClient.getMEPs(mepParams);
   const meps = Array.isArray(mepResult.data) ? mepResult.data : [];
 
-  // Fetch details for each MEP to get voting statistics
-  const detailPromises = meps.slice(0, params.limit).map(
-    async (mep: { id: string }) => {
-      try {
-        return await epClient.getMEPDetails(mep.id);
-      } catch {
-        return null;
-      }
-    }
-  );
-
-  const details = (await Promise.all(detailPromises)).filter(
-    (d): d is NonNullable<typeof d> => d !== null
+  const details = await fetchMepDetailsBatched(
+    meps.slice(0, params.limit) as { id: string }[],
+    5
   );
 
   const records = details.map(d => buildAttendanceRecord(d));
@@ -242,6 +264,9 @@ async function buildGroupAnalysis(
   if (params.groupId !== undefined) scopeParts.push(`Group: ${params.groupId}`);
   const scope = scopeParts.length > 0 ? scopeParts.join(', ') : 'All MEPs';
 
+  const withStats = records.filter(r => r.totalSessions > 0).length;
+  const dataCoverage = totalMEPs > 0 ? withStats / totalMEPs : 0;
+
   return {
     period: { from: dateFrom, to: dateTo },
     scope,
@@ -258,7 +283,7 @@ async function buildGroupAnalysis(
       attendanceTrend: avgAttendance >= 70 ? 'STABLE' : 'DECLINING',
       absenteeismRisk: computeAbsenteeismRisk(low, totalMEPs)
     },
-    confidenceLevel: totalMEPs > 10 ? 'HIGH' : 'MEDIUM',
+    confidenceLevel: computeConfidence(dataCoverage),
     methodology: 'Group attendance analysis using EP Open Data voting statistics. '
       + 'Individual attendance rates derived from plenary vote participation. '
       + 'Data source: European Parliament Open Data Portal.'

@@ -128,6 +128,15 @@ function computeInfluence(totalMEPs: number, leadershipRoles: number): string {
 }
 
 /**
+ * Compute confidence level from data coverage ratio
+ */
+function computeDataConfidence(dataCoverage: number): string {
+  if (dataCoverage > 0.8) return 'HIGH';
+  if (dataCoverage > 0.4) return 'MEDIUM';
+  return 'LOW';
+}
+
+/**
  * Compute engagement level from attendance
  */
 function computeEngagement(avgAttendance: number): string {
@@ -214,13 +223,16 @@ async function buildDelegationAnalysis(
 
   const avgAttendance = attendances.length > 0
     ? Math.round(attendances.reduce((s, a) => s + a, 0) / attendances.length * 100) / 100
-    : 70;
+    : 0;
 
   const committeePresence = computeCommitteePresence(details);
 
   // National cohesion - approximated from group concentration
   const topGroupShare = distribution[0]?.percentage ?? 0;
   const nationalCohesion = Math.min(100, topGroupShare + 10);
+
+  // Confidence based on data coverage, not just delegation size
+  const dataCoverage = totalMEPs > 0 ? attendances.length / totalMEPs : 0;
 
   return {
     country,
@@ -243,7 +255,7 @@ async function buildDelegationAnalysis(
       groupFragmentation: computeFragmentation(distribution),
       engagementLevel: computeEngagement(avgAttendance)
     },
-    confidenceLevel: totalMEPs > 10 ? 'HIGH' : 'MEDIUM',
+    confidenceLevel: computeDataConfidence(dataCoverage),
     methodology: 'Country delegation analysis using EP Open Data: political group distribution, '
       + 'voting behavior aggregation, committee representation mapping, and national cohesion scoring. '
       + 'Data source: European Parliament Open Data Portal.'
