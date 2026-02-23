@@ -502,10 +502,10 @@ erDiagram
     
     POLITICAL_LANDSCAPE {
         string parliamentTerm
-        number seatDistribution
+        string seatDistribution
         number effectiveParties
         number fragmentationIndex
-        string coalitionScenario
+        string coalitionScenarios
         string period
     }
 ```
