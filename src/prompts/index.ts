@@ -419,7 +419,7 @@ export function handleGetPrompt(
       .filter((arg) => arg.required)
       .filter((arg) => {
         const value = validatedArgs[arg.name];
-        return value === undefined || value.trim() === '';
+        return value === undefined || (typeof value === 'string' && value.trim() === '');
       })
       .map((arg) => arg.name);
 

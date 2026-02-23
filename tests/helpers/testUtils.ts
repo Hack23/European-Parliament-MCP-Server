@@ -7,12 +7,25 @@
  */
 
 /**
- * Retry a function with exponential backoff
+ * Check if an error is caused by rate limiting or network issues
+ */
+function isRateLimitOrNetworkError(error: unknown): boolean {
+  const msg = error instanceof Error ? error.message : String(error);
+  return msg.includes('fetch failed')
+    || msg.includes('timed out')
+    || msg.includes('rate limit')
+    || msg.includes('429')
+    || msg.includes('503');
+}
+
+/**
+ * Retry a function with exponential backoff.
+ * If skipOnRateLimit is true, logs a warning and returns undefined instead of throwing on rate limit / network errors.
  * 
  * @param fn - Function to retry
  * @param maxRetries - Maximum number of retries
  * @param baseDelay - Base delay in milliseconds
- * @returns Result from function
+ * @returns Result from function, or undefined if skipped due to rate limiting
  */
 export async function retry<T>(
   fn: () => Promise<T>,
@@ -35,6 +48,33 @@ export async function retry<T>(
   }
   
   throw lastError ?? new Error('Retry failed');
+}
+
+/**
+ * Retry, but skip test (log warning) on rate limit or network errors instead of failing.
+ * 
+ * @param fn - Function to retry
+ * @param testName - Name of the test for logging
+ * @param maxRetries - Maximum number of retries
+ * @param baseDelay - Base delay in milliseconds
+ * @returns Result from function
+ * @throws Only non-rate-limit errors
+ */
+export async function retryOrSkip<T>(
+  fn: () => Promise<T>,
+  testName: string,
+  maxRetries = 3,
+  baseDelay = 1000
+): Promise<T | undefined> {
+  try {
+    return await retry(fn, maxRetries, baseDelay);
+  } catch (error) {
+    if (isRateLimitOrNetworkError(error)) {
+      console.warn(`[SKIP] ${testName}: rate limited or network error — ${(error as Error).message}`);
+      return undefined;
+    }
+    throw error;
+  }
 }
 
 /**
