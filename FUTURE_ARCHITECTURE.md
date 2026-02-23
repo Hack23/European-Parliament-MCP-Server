@@ -57,11 +57,11 @@ The future architecture embraces **advanced aggregate analytics** for political 
 ```mermaid
 timeline
     title Serverless AWS Intelligence Platform Roadmap
-    section Phase 1 — OSINT Intelligence Tools ✅
-        Q1 2026 : 6 OSINT tools implemented
-                : MEP influence scoring
-                : Coalition dynamics analysis
-                : Voting anomaly detection
+    section Phase 1-3 — OSINT Intelligence Tools ✅
+        Q1 2026 : 10 OSINT tools implemented
+                : MEP influence, coalition, anomalies
+                : Committee activity, attendance
+                : Country delegation, landscape
     section Phase 1.5 — Extended Intelligence
         Q3 2026 : Network mapping tool
                 : Political risk assessments
@@ -161,9 +161,9 @@ graph TB
 
 The current architecture is documented in [ARCHITECTURE.md](ARCHITECTURE.md).
 
-**Current Capabilities (16 MCP Tools):**
+**Current Capabilities (20 MCP Tools):**
 
-#### Core Data Tools (10)
+#### Core Data Tools (7)
 
 | # | Tool | Type | Purpose |
 |---|------|------|---------|
@@ -174,11 +174,16 @@ The current architecture is documented in [ARCHITECTURE.md](ARCHITECTURE.md).
 | 5 | `search_documents` | Search | Document search |
 | 6 | `get_committee_info` | Data Retrieval | Committee information |
 | 7 | `get_parliamentary_questions` | Data Retrieval | Parliamentary questions |
+
+#### Advanced Analysis Tools (3)
+
+| # | Tool | Type | Purpose |
+|---|------|------|---------|
 | 8 | `analyze_voting_patterns` | Analytics | Voting pattern analysis |
 | 9 | `track_legislation` | Tracking | Legislative procedure tracking |
 | 10 | `generate_report` | Reporting | Multi-source report generation |
 
-#### OSINT Intelligence Tools (6) — Phase 1 Complete ✅
+#### OSINT Intelligence Tools (10) — Phase 1-3 Complete ✅
 
 | # | Tool | Type | Purpose |
 |---|------|------|---------|
@@ -188,6 +193,10 @@ The current architecture is documented in [ARCHITECTURE.md](ARCHITECTURE.md).
 | 14 | `compare_political_groups` | ⚖️ Comparative Analysis | Cross-group comparison metrics |
 | 15 | `analyze_legislative_effectiveness` | 📈 Performance Analysis | MEP/committee legislative scoring |
 | 16 | `monitor_legislative_pipeline` | 🔄 Pipeline Monitoring | Pipeline status & bottleneck detection |
+| 17 | `analyze_committee_activity` | 🏢 Committee Analysis | Committee workload & effectiveness |
+| 18 | `track_mep_attendance` | 📊 Attendance Tracking | MEP attendance & engagement metrics |
+| 19 | `analyze_country_delegation` | 🌍 Delegation Analysis | National delegation performance |
+| 20 | `generate_political_landscape` | 🗺️ Political Landscape | Political landscape overview |
 
 **Current Infrastructure:** Local Node.js process, stdio transport, in-memory LRU cache.
 
@@ -197,27 +206,31 @@ The current architecture is documented in [ARCHITECTURE.md](ARCHITECTURE.md).
 
 **Timeline:** Completed | **Priority:** Critical | **Infrastructure:** Local + Lambda-ready
 
-Phase 1 OSINT intelligence tools have been **successfully implemented** as part of the current 16-tool MCP server, inspired by [Hack23 CIA Intelligence Operative](https://github.com/Hack23/cia/blob/master/.github/agents/intelligence-operative.md) OSINT methodologies.
+Phase 1 OSINT intelligence tools have been **successfully implemented** as part of the current 20-tool MCP server, inspired by [Hack23 CIA Intelligence Operative](https://github.com/Hack23/cia/blob/master/.github/agents/intelligence-operative.md) OSINT methodologies.
 
 ### **🔍 Implemented OSINT Intelligence MCP Tools**
 
-| # | Tool | Category | Status |
-|---|------|----------|--------|
-| 11 | `assess_mep_influence` | 🕵️ Intelligence Scorecard | ✅ Implemented |
-| 12 | `analyze_coalition_dynamics` | 🤝 Coalition Analysis | ✅ Implemented |
-| 13 | `detect_voting_anomalies` | ⚠️ Anomaly Detection | ✅ Implemented |
-| 14 | `compare_political_groups` | ⚖️ Comparative Analysis | ✅ Implemented |
-| 15 | `analyze_legislative_effectiveness` | 📈 Performance Analysis | ✅ Implemented |
-| 16 | `monitor_legislative_pipeline` | 🔄 Pipeline Monitoring | ✅ Implemented |
+| # | Tool | Category | Phase | Status |
+|---|------|----------|-------|--------|
+| 11 | `assess_mep_influence` | 🕵️ Intelligence Scorecard | Phase 1 | ✅ Implemented |
+| 12 | `analyze_coalition_dynamics` | 🤝 Coalition Analysis | Phase 1 | ✅ Implemented |
+| 13 | `detect_voting_anomalies` | ⚠️ Anomaly Detection | Phase 1 | ✅ Implemented |
+| 14 | `compare_political_groups` | ⚖️ Comparative Analysis | Phase 1 | ✅ Implemented |
+| 15 | `analyze_legislative_effectiveness` | 📈 Performance Analysis | Phase 1 | ✅ Implemented |
+| 16 | `monitor_legislative_pipeline` | 🔄 Pipeline Monitoring | Phase 1 | ✅ Implemented |
+| 17 | `analyze_committee_activity` | 🏢 Committee Analysis | Phase 2 | ✅ Implemented |
+| 18 | `track_mep_attendance` | 📊 Attendance Tracking | Phase 2 | ✅ Implemented |
+| 19 | `analyze_country_delegation` | 🌍 Delegation Analysis | Phase 3 | ✅ Implemented |
+| 20 | `generate_political_landscape` | 🗺️ Political Landscape | Phase 3 | ✅ Implemented |
 
 ### **🔮 Phase 1.5: Future OSINT Tools (Planned)**
 
 | # | Tool | Category | Purpose | CIA Methodology |
 |---|------|----------|---------|----------------|
-| 17 | `map_political_network` | 🌐 Network Analysis | Build MEP relationship graph from co-voting patterns, shared committee memberships, co-authored questions | Network Analysis |
-| 18 | `generate_political_risk_assessment` | 🎯 Risk Assessment | Assess political risk indicators — legislative gridlock, coalition fragmentation, procedural delays | Risk Assessments |
-| 19 | `track_policy_positions` | 📋 Policy Tracking | Track party/MEP positions across policy domains using voting history on tagged legislation | Policy Tracking |
-| 20 | `generate_intelligence_briefing` | 📊 Intelligence Product | Produce structured intelligence briefing combining multiple data sources with confidence levels | Estimative Intelligence |
+| 21 | `map_political_network` | 🌐 Network Analysis | Build MEP relationship graph from co-voting patterns, shared committee memberships, co-authored questions | Network Analysis |
+| 22 | `generate_political_risk_assessment` | 🎯 Risk Assessment | Assess political risk indicators — legislative gridlock, coalition fragmentation, procedural delays | Risk Assessments |
+| 23 | `track_policy_positions` | 📋 Policy Tracking | Track party/MEP positions across policy domains using voting history on tagged legislation | Policy Tracking |
+| 24 | `generate_intelligence_briefing` | 📊 Intelligence Product | Produce structured intelligence briefing combining multiple data sources with confidence levels | Estimative Intelligence |
 
 ### **📊 Intelligence Scorecard Architecture**
 

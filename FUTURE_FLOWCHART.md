@@ -503,7 +503,7 @@ stateDiagram-v2
 - Deploy 5 core tool handler Lambdas
 
 **Success Metrics:**
-- ✅ All 10 current MCP tools migrated to Lambda handlers
+- ✅ All 20 current MCP tools migrated to Lambda handlers
 - ✅ API Gateway HTTP API deployed with custom domain
 - ✅ <100ms cold start time for router Lambda
 - ✅ <500ms warm invocation latency p95

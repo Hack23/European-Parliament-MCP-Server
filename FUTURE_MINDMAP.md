@@ -50,28 +50,30 @@ This document maps the strategic capability expansion for the European Parliamen
 mindmap
   root((🏛️ EP MCP<br>Server))
     🔌 MCP Protocol
-      🔧 Current Tools (10)
-        get_meps
-        get_mep_details
-        get_plenary_sessions
-        get_voting_records
-        search_documents
-        get_committee_info
-        get_parliamentary_questions
-        analyze_voting_patterns
-        track_legislation
-        generate_report
-      🕵️ OSINT Intelligence Tools
-        assess_mep_influence
-        analyze_coalition_dynamics
-        map_political_network
-        detect_voting_anomalies
-        generate_political_risk_assessment
-        track_policy_positions
-        analyze_legislative_effectiveness
-        compare_political_groups
-        generate_intelligence_briefing
-        monitor_legislative_pipeline
+      🔧 Current Tools (20)
+        Core (7)
+          get_meps
+          get_mep_details
+          get_plenary_sessions
+          get_voting_records
+          search_documents
+          get_committee_info
+          get_parliamentary_questions
+        Advanced (3)
+          analyze_voting_patterns
+          track_legislation
+          generate_report
+        OSINT Intelligence (10)
+          assess_mep_influence
+          analyze_coalition_dynamics
+          detect_voting_anomalies
+          compare_political_groups
+          analyze_legislative_effectiveness
+          monitor_legislative_pipeline
+          analyze_committee_activity
+          track_mep_attendance
+          analyze_country_delegation
+          generate_political_landscape
       📡 Transport
         stdio (current)
         API Gateway HTTP (AWS)
@@ -138,7 +140,7 @@ mindmap
 
 | Capability | Current | Future |
 |-----------|---------|--------|
-| MCP Tools | 16 tools (10 core + 6 OSINT) | 20+ tools |
+| MCP Tools | 20 tools (7 core + 3 advanced + 10 OSINT) | 35+ tools |
 | Transport | stdio | stdio, HTTP, WebSocket |
 | Streaming | ❌ | ✅ Progressive delivery |
 | Batch Operations | ❌ | ✅ Multi-tool batching |
@@ -170,7 +172,7 @@ mindmap
 
 ### **Phase 1: Foundation Enhancement** (Q3 2026)
 
-- 🔧 Add 5 new MCP tools
+- 🔧 Add 15 new MCP tools (targeting 35+ total)
 - 📊 Enhance existing entity models
 - ⚡ Improve caching and performance
 - 📖 Comprehensive API documentation
@@ -450,7 +452,7 @@ mindmap
 
 | Deliverable | Description | Owner | Status |
 |------------|-------------|-------|--------|
-| **New MCP Tools** | Add 5 OSINT intelligence tools | Engineering | 📅 Planned |
+| **New MCP Tools** | Add 15 new tools (targeting 35+ total) | Engineering | 📅 Planned |
 | **Enhanced Data Models** | Expand MEP, Vote, Session entities | Engineering | 📅 Planned |
 | **DynamoDB Migration** | Migrate from in-memory to DynamoDB | DevOps | 📅 Planned |
 | **API Documentation** | TypeDoc comprehensive docs | Technical Writer | 📅 Planned |

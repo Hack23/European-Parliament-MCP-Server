@@ -70,7 +70,7 @@ export * from './types/index.js';
 /** @internal Server name constant */
 export const SERVER_NAME = 'european-parliament-mcp-server';
 /** @internal Server version constant */
-export const SERVER_VERSION = '0.4.0';
+export const SERVER_VERSION = '0.5.0';
 
 /**
  * Number of core tools (non-advanced analysis tools)

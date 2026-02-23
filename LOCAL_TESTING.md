@@ -92,13 +92,19 @@ npx european-parliament-mcp-server --help
 ```json
 {
   "name": "european-parliament-mcp-server",
-  "version": "0.0.4",
+  "version": "0.5.0",
   "status": "healthy",
   "capabilities": ["tools", "resources", "prompts"],
   "tools": {
-    "total": 10,
+    "total": 20,
     "core": 7,
-    "advanced": 3
+    "advanced": 13
+  },
+  "prompts": {
+    "total": 6
+  },
+  "resources": {
+    "templates": 6
   },
   "environment": {
     "nodeVersion": "v24.13.0",
@@ -205,7 +211,7 @@ european-parliament-mcp-server --health
 ```bash
 # Test 1: Version command
 npx european-parliament-mcp-server --version
-# Expected: european-parliament-mcp-server v0.0.4
+# Expected: european-parliament-mcp-server v0.5.0
 
 # Test 2: Health check
 npx european-parliament-mcp-server --health
