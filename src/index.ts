@@ -55,6 +55,9 @@ import { handleMonitorLegislativePipeline, monitorLegislativePipelineToolMetadat
 // Phase 2 OSINT Intelligence Tools
 import { handleAnalyzeCommitteeActivity, analyzeCommitteeActivityToolMetadata } from './tools/analyzeCommitteeActivity.js';
 import { handleTrackMepAttendance, trackMepAttendanceToolMetadata } from './tools/trackMepAttendance.js';
+// Phase 3 OSINT Intelligence Tools
+import { handleAnalyzeCountryDelegation, analyzeCountryDelegationToolMetadata } from './tools/analyzeCountryDelegation.js';
+import { handleGeneratePoliticalLandscape, generatePoliticalLandscapeToolMetadata } from './tools/generatePoliticalLandscape.js';
 // MCP Prompts
 import { getPromptMetadataArray, handleGetPrompt } from './prompts/index.js';
 // MCP Resources
@@ -162,7 +165,10 @@ function getToolMetadataArray(): { name: string; description: string; inputSchem
     monitorLegislativePipelineToolMetadata,
     // Phase 2 OSINT Intelligence Tools
     analyzeCommitteeActivityToolMetadata,
-    trackMepAttendanceToolMetadata
+    trackMepAttendanceToolMetadata,
+    // Phase 3 OSINT Intelligence Tools
+    analyzeCountryDelegationToolMetadata,
+    generatePoliticalLandscapeToolMetadata
   ];
 }
 
@@ -407,7 +413,10 @@ class EuropeanParliamentMCPServer {
       'monitor_legislative_pipeline': handleMonitorLegislativePipeline,
       // Phase 2 OSINT Intelligence Tools
       'analyze_committee_activity': handleAnalyzeCommitteeActivity,
-      'track_mep_attendance': handleTrackMepAttendance
+      'track_mep_attendance': handleTrackMepAttendance,
+      // Phase 3 OSINT Intelligence Tools
+      'analyze_country_delegation': handleAnalyzeCountryDelegation,
+      'generate_political_landscape': handleGeneratePoliticalLandscape
     };
     
     const handler = toolHandlers[name];
