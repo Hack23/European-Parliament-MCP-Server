@@ -7,7 +7,7 @@
 <h1 align="center">European Parliament MCP Server - API Usage Guide</h1>
 
 <p align="center">
-  <strong>Comprehensive guide to using all 16 MCP tools</strong><br>
+  <strong>Comprehensive guide to using all 20 MCP tools</strong><br>
   <em>Real-world examples, best practices, and query patterns</em>
 </p>
 
@@ -35,6 +35,12 @@
   - [compare_political_groups](#tool-compare_political_groups)
   - [analyze_legislative_effectiveness](#tool-analyze_legislative_effectiveness)
   - [monitor_legislative_pipeline](#tool-monitor_legislative_pipeline)
+  - [analyze_committee_activity](#tool-analyze_committee_activity)
+  - [track_mep_attendance](#tool-track_mep_attendance)
+  - [analyze_country_delegation](#tool-analyze_country_delegation)
+  - [generate_political_landscape](#tool-generate_political_landscape)
+- [MCP Prompts](#mcp-prompts)
+- [MCP Resources](#mcp-resources)
 - [Common Use Cases](#common-use-cases)
 - [Best Practices](#best-practices)
 - [Error Handling](#error-handling)
@@ -43,7 +49,7 @@
 
 ## 🎯 Overview
 
-The European Parliament MCP Server provides 16 specialized tools for accessing parliamentary data through the Model Context Protocol — including 10 core data tools and 6 OSINT intelligence tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
+The European Parliament MCP Server provides 20 specialized tools for accessing parliamentary data through the Model Context Protocol — including 7 core data tools, 3 advanced analysis tools, and 10 OSINT intelligence tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
 
 ### Key Features
 
@@ -84,6 +90,10 @@ Currently, the server does **not require authentication** for tool access. Futur
 | `compare_political_groups` | Cross-group comparison | groups, metrics | Comparison matrix |
 | `analyze_legislative_effectiveness` | Legislative scoring | subjectId, subjectType | Effectiveness score |
 | `monitor_legislative_pipeline` | Pipeline monitoring | committeeId, status | Pipeline status |
+| `analyze_committee_activity` | Committee workload & engagement | committeeId (required) | Activity report |
+| `track_mep_attendance` | MEP attendance patterns | mepId, country, groupId, limit | Attendance report |
+| `analyze_country_delegation` | Country delegation analysis | country (required) | Delegation analysis |
+| `generate_political_landscape` | Parliament-wide landscape | dateFrom, dateTo | Landscape overview |
 
 ---
 
@@ -992,6 +1002,137 @@ Show the current legislative pipeline status and identify bottlenecks
 
 ---
 
+### Tool: analyze_committee_activity
+
+**Description**: Analyze committee workload, document production, meeting frequency, and member engagement metrics. Provides intelligence on committee operational efficiency and policy focus areas.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| committeeId | string | Yes | Committee identifier (e.g., "ENVI", "ITRE") |
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+#### Example Usage
+
+```
+Analyze the ENVI committee's activity, document output, and member engagement over the last 6 months
+```
+
+---
+
+### Tool: track_mep_attendance
+
+**Description**: Track MEP plenary attendance patterns with trend detection, engagement scoring, and participation rate analysis. Supports both individual MEP queries and high-level overviews by country or political group.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| mepId | string | No | MEP identifier for individual attendance analysis |
+| country | string | No | ISO 3166-1 alpha-2 country code for delegation overview |
+| groupId | string | No | Political group identifier for group-level overview |
+| limit | number | No | Maximum number of MEPs to include in overview queries |
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+At least one of `mepId`, `country`, or `groupId` is typically provided to scope the analysis.
+
+#### Example Usage
+
+```
+Track attendance patterns and engagement trends for MEP-124810 over the current parliamentary term
+```
+
+---
+
+### Tool: analyze_country_delegation
+
+**Description**: Analyze a country's MEP delegation composition, political group distribution, voting behavior, committee representation, and national cohesion metrics.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| country | string | Yes | ISO 3166-1 alpha-2 country code (e.g., "SE", "DE", "FR") |
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+#### Example Usage
+
+```
+Analyze the Swedish delegation's composition, voting behavior, and committee representation
+```
+
+---
+
+### Tool: generate_political_landscape
+
+**Description**: Generate a comprehensive political landscape overview of the European Parliament, including group composition, power dynamics, coalition thresholds, bloc analysis, and fragmentation metrics.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| dateFrom | string | No | Start date (ISO 8601) |
+| dateTo | string | No | End date (ISO 8601) |
+
+#### Example Usage
+
+```
+Generate a current political landscape overview including group sizes, coalition possibilities, and bloc dynamics
+```
+
+---
+
+## 📝 MCP Prompts
+
+Pre-built intelligence analysis prompt templates for common parliamentary research workflows. For the exact argument schemas, refer to the prompt definitions in `src/prompts/index.ts`.
+
+| Prompt | Description | Arguments |
+|--------|-------------|-----------|
+| `mep_briefing` | Comprehensive MEP intelligence briefing with voting record, committee work, and influence assessment | mepId (required), period? |
+| `coalition_analysis` | Coalition dynamics and voting bloc analysis across political groups | policyArea?, period? |
+| `legislative_tracking` | Legislative procedure tracking report with timeline and status | procedureId?, committee? |
+| `political_group_comparison` | Multi-dimensional comparison of political groups | groups? |
+| `committee_activity_report` | Committee workload, engagement, and document production report | committeeId (required) |
+| `voting_pattern_analysis` | Voting pattern trend detection and anomaly identification | topic?, mepId? |
+
+### Example: Using MCP Prompts
+
+```typescript
+// Request a pre-built prompt template
+const prompt = await client.getPrompt('mep_briefing', { mepId: 'MEP-124810' });
+// Returns structured messages for LLM consumption
+```
+
+---
+
+## 📦 MCP Resources
+
+Direct data access via European Parliament resource URIs using the `ep://` scheme.
+
+| Resource URI | Description |
+|-------------|-------------|
+| `ep://meps` | List of all current MEPs |
+| `ep://meps/{mepId}` | Individual MEP profile and details |
+| `ep://committees/{committeeId}` | Committee information and membership |
+| `ep://plenary-sessions` | Recent plenary session listing |
+| `ep://votes/{sessionId}` | Voting records for a specific session |
+| `ep://political-groups` | Political group listing with seat counts |
+
+### Example: Reading MCP Resources
+
+```typescript
+// Read a resource directly
+const meps = await client.readResource('ep://meps');
+const mepDetails = await client.readResource('ep://meps/MEP-124810');
+const committee = await client.readResource('ep://committees/ENVI');
+```
+
+---
+
 ## 🎯 Common Use Cases
 
 ### Use Case 1: Research a Specific MEP
@@ -1408,6 +1549,69 @@ X-RateLimit-Reset: 1640995200
 
 ---
 
+## 🌍 Hack23 Ecosystem Integration
+
+This MCP server powers [Hack23's](https://hack23.com/) political intelligence ecosystem — **disrupting journalism with AI-generated news coverage and real-time analysis of democratic governments**.
+
+### How Hack23 Projects Use This Server
+
+| Project | Integration | Use Case |
+|---------|-------------|----------|
+| [**EU Parliament Monitor**](https://github.com/Hack23/euparliamentmonitor) | MCP tools + prompts | Automated MEP activity tracking, voting pattern dashboards, committee workload monitoring |
+| [**Riksdagsmonitor**](https://riksdagsmonitor.com/) ([GitHub](https://github.com/Hack23/riksdagsmonitor)) | Riksdag MCP + this server | Cross-parliament comparison between EU and Swedish Parliament data |
+| [**Citizen Intelligence Agency**](https://github.com/Hack23/cia) | Full OSINT tool suite | Comprehensive political intelligence analysis across institutions |
+
+### Example: Cross-Platform Intelligence Workflow
+
+```typescript
+// Step 1: Get Swedish MEPs from EU Parliament
+const swedishMEPs = await epClient.callTool('get_meps', { country: 'SE' });
+
+// Step 2: Analyze Swedish delegation cohesion
+const delegation = await epClient.callTool('analyze_country_delegation', { country: 'SE' });
+
+// Step 3: Score individual MEP influence
+const influence = await epClient.callTool('assess_mep_influence', { mepId: 'MEP-124810' });
+
+// Step 4: Compare with riksdagsmonitor.com data for full picture
+// → Cross-reference EU voting patterns with national parliament positions
+```
+
+---
+
+## 🗺️ Global Political OSINT MCP Landscape
+
+The European Parliament MCP Server is the **most feature-rich political MCP server** in a growing global ecosystem of 35+ government and parliamentary open data MCP servers spanning 15+ countries.
+
+### Parliament-Specific MCP Servers
+
+| Country | Server | Key Capabilities |
+|---------|--------|-----------------|
+| 🇪🇺 **EU** | [**European Parliament MCP**](https://github.com/Hack23/European-Parliament-MCP-Server) | **20 tools** — MEP profiling, coalition analysis, anomaly detection, political landscape |
+| 🇺🇸 **USA** | [Congress.gov API MCP](https://github.com/bsmi021/mcp-congress_gov_server) | Bills, members, votes, committees |
+| 🇬🇧 **UK** | [Parliament MCP](https://github.com/i-dot-ai/parliament-mcp) | Hansard, members, debates, divisions |
+| 🇸🇪 **Sweden** | [Riksdag & Regering MCP](https://github.com/isakskogstad/Riksdag-Regering-MCP) | Parliament & government data |
+| 🇳🇱 **Netherlands** | [OpenTK MCP](https://github.com/r-huijts/opentk-mcp) | Tweede Kamer documents |
+| 🇵🇱 **Poland** | [Sejm MCP](https://github.com/janisz/sejm-mcp) | Parliament data + legislation |
+| 🇮🇱 **Israel** | [Knesset MCP](https://github.com/zohar/knesset-mcp) | Knesset parliament API |
+| 🇧🇷 **Brazil** | [Senado BR MCP](https://mcpservers.org/servers/sidneybissoli/senado-br-mcp) | Federal Senate data |
+
+### Government Open Data MCP Servers
+
+| Country | Server | Data Portal |
+|---------|--------|------------|
+| 🇫🇷 France | [data.gouv.fr MCP](https://github.com/datagouv/datagouv-mcp) | data.gouv.fr |
+| 🇮🇱 Israel | [Data.gov.il MCP](https://github.com/DavidOsherProceed/data-gov-il-mcp) | data.gov.il |
+| 🇮🇳 India | [Data.gov.in MCP](https://github.com/adwait-ai/mcp_data_gov_in) | data.gov.in |
+| 🇸🇬 Singapore | [Gahmen MCP](https://github.com/aniruddha-adhikary/gahmen-mcp) | data.gov.sg |
+| 🇦🇺 Australia | [ABS MCP](https://github.com/seansoreilly/mcp-server-abs) | abs.gov.au |
+| 🌐 Global | [CKAN MCP Server](https://github.com/ondata/ckan-mcp-server) | Any CKAN portal |
+| 🌐 Global | [OpenGov MCP Server](https://github.com/srobbin/opengov-mcp-server) | Socrata portals |
+
+> 📖 **See [README.md](./README.md#-global-political-mcp-servers--osint-coverage)** for the complete 35+ server directory with OSINT capability comparison.
+
+---
+
 ## 📚 Additional Resources
 
 ### Documentation
@@ -1421,6 +1625,12 @@ X-RateLimit-Reset: 1640995200
 - [MCP Specification](https://spec.modelcontextprotocol.io/) - Protocol documentation
 - [European Parliament Open Data](https://data.europarl.europa.eu/) - Data source
 - [Hack23 ISMS Policies](https://github.com/Hack23/ISMS-PUBLIC) - Security standards
+
+### Hack23 Ecosystem
+- [Hack23](https://hack23.com/) — AI-powered democratic transparency platform
+- [EU Parliament Monitor](https://github.com/Hack23/euparliamentmonitor) — European Parliament monitoring
+- [Riksdagsmonitor](https://riksdagsmonitor.com/) · [GitHub](https://github.com/Hack23/riksdagsmonitor) — Swedish Parliament monitoring
+- [Citizen Intelligence Agency](https://github.com/Hack23/cia) — Comprehensive political intelligence
 
 ---
 

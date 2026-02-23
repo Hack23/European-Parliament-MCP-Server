@@ -1,10 +1,10 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>European Parliament MCP Server API Documentation - v0.4.0</title><meta name="description" content="Documentation for European Parliament MCP Server API Documentation"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="index.html" class="title">European Parliament MCP Server API Documentation - v0.4.0</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h1>European Parliament MCP Server API Documentation - v0.4.0</h1></div><div class="tsd-panel tsd-typography"><p align="center">
+<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>European Parliament MCP Server API Documentation - v0.5.0</title><meta name="description" content="Documentation for European Parliament MCP Server API Documentation"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="index.html" class="title">European Parliament MCP Server API Documentation - v0.5.0</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h1>European Parliament MCP Server API Documentation - v0.5.0</h1></div><div class="tsd-panel tsd-typography"><p align="center">
   <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="128" height="128">
 </p>
 <h1 align="center">🏛️ European Parliament MCP Server</h1>
 <p align="center">
   <strong>Model Context Protocol Server for European Parliament Open Data</strong><br>
-  <em>Providing AI assistants with structured access to parliamentary datasets</em>
+  <em>Providing AI assistants with structured access to parliamentary datasets and OSINT Intelligence Capabilities</em>
 </p>
 <table>
   <tr>
@@ -18,6 +18,7 @@
     </td>
     <td>
       <p><strong>Model Context Protocol Server for European Parliament Open Data</strong> — providing AI assistants with structured access to MEPs, plenary sessions, committees, legislative documents, and parliamentary questions through a secure, type-safe TypeScript implementation.</p>
+      <p>MEP influence scoring (5-dimension model), Coalition cohesion & stress analysis, Party defection & anomaly detection, Cross-group comparative analysis, MEP/committee legislative scoring, Pipeline status & bottleneck detection, Committee workload & engagement analysis, MEP attendance patterns & trends, Country delegation voting & composition, Parliament-wide political landscape</p>
       <div>
         <a href="https://github.com/Hack23/European-Parliament-MCP-Server"><strong>📂 Repository</strong></a> •
         <a href="https://hack23.com/european-parliament-mcp-features.html"><strong>✨ Features</strong></a> •
@@ -52,6 +53,60 @@
     <img src="https://img.shields.io/badge/📚%20Documentation-Portal-blue?style=flat-square" alt="Documentation Portal">
   </a>
 </p>
+<h2 id="📋-overview" class="tsd-anchor-link">📋 Overview<a href="#📋-overview" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The <strong>European Parliament MCP Server</strong> implements the <a href="https://spec.modelcontextprotocol.io/">Model Context Protocol (MCP)</a> to provide AI assistants, IDEs, and other MCP clients with structured access to European Parliament open datasets. Access information about MEPs, plenary sessions, committees, legislative documents, and parliamentary questions through a secure, type-safe TypeScript/Node.js implementation.</p>
+<h3 id="🎯-key-features" class="tsd-anchor-link">🎯 Key Features<a href="#🎯-key-features" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li>🔌 <strong>Full MCP Implementation</strong>: 20 tools (7 core + 3 advanced + 10 OSINT intelligence), 6 Resources, and 6 Prompts</li>
+<li>🏛️ <strong>European Parliament Data</strong>: Access to 5 core parliamentary datasets</li>
+<li>🕵️ <strong>OSINT Intelligence</strong>: MEP influence scoring, coalition analysis, anomaly detection</li>
+<li>🔒 <strong>Security First</strong>: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance</li>
+<li>🚀 <strong>High Performance</strong>: &lt;200ms API responses, intelligent caching, rate limiting</li>
+<li>📊 <strong>Type Safety</strong>: TypeScript strict mode + Zod runtime validation</li>
+<li>🧪 <strong>Well-Tested</strong>: 80%+ code coverage (95% for security-critical code)</li>
+<li>📚 <strong>Complete Documentation</strong>: Architecture, API docs, security guidelines</li>
+</ul>
+<hr>
+<h2 id="🌍-hack23-political-intelligence-ecosystem" class="tsd-anchor-link">🌍 Hack23 Political Intelligence Ecosystem<a href="#🌍-hack23-political-intelligence-ecosystem" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>This MCP server is part of <strong><a href="https://hack23.com/">Hack23's</a></strong> mission to <strong>disrupt journalism with AI-generated news coverage and real-time analysis of democratic governments</strong> — increasing transparency and accountability through open-source intelligence.</p>
+<h3 id="🔗-hack23-projects" class="tsd-anchor-link">🔗 Hack23 Projects<a href="#🔗-hack23-projects" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Description</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🏛️ <strong>EU Parliament Monitor</strong></td>
+<td>AI-powered monitoring of European Parliament activities, voting patterns, and legislative tracking</td>
+<td><a href="https://euparliamentmonitor.hack23.com/">euparliamentmonitor.hack23.com</a> · <a href="https://github.com/Hack23/euparliamentmonitor">GitHub</a></td>
+</tr>
+<tr>
+<td>🇸🇪 <strong>Riksdagsmonitor</strong></td>
+<td>AI-powered monitoring of the Swedish Parliament (Riksdag) — government accountability dashboard</td>
+<td><a href="https://riksdagsmonitor.com/">riksdagsmonitor.com</a> · <a href="https://github.com/Hack23/riksdagsmonitor">GitHub</a></td>
+</tr>
+<tr>
+<td>🕵️ <strong>European Parliament MCP Server</strong></td>
+<td>This project — OSINT intelligence tools for EU Parliament open data via MCP protocol</td>
+<td><a href="https://www.npmjs.com/package/european-parliament-mcp-server">npm</a> · <a href="https://github.com/Hack23/European-Parliament-MCP-Server">GitHub</a></td>
+</tr>
+<tr>
+<td>🔐 <strong>CIA</strong></td>
+<td>Citizen Intelligence Agency — comprehensive political intelligence platform</td>
+<td><a href="https://cia.hack23.com/">cia.hack23.com</a> · <a href="https://github.com/Hack23/cia">GitHub</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="🎯-vision-ai-powered-democratic-transparency" class="tsd-anchor-link">🎯 Vision: AI-Powered Democratic Transparency<a href="#🎯-vision-ai-powered-democratic-transparency" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Hack23 builds <strong>open-source intelligence platforms</strong> that enable citizens, journalists, and researchers to monitor democratic institutions in real-time. By combining MCP servers, AI analysis, and open parliamentary data, we create automated intelligence products that were previously only available to well-funded lobbying organizations.</p>
+<blockquote>
+<p><em>&quot;Democratizing access to political intelligence — what used to require a team of analysts can now be done by any citizen with an AI assistant.&quot;</em></p>
+</blockquote>
+<hr>
 <p align="center">
   <!-- Security Architecture -->
   <a href="media/SECURITY_ARCHITECTURE.md">
@@ -109,20 +164,6 @@
     <img src="https://img.shields.io/badge/GDPR-Compliant-success?style=flat-square" alt="GDPR">
   </a>
 </p>
-<hr>
-<h2 id="📋-overview" class="tsd-anchor-link">📋 Overview<a href="#📋-overview" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>The <strong>European Parliament MCP Server</strong> implements the <a href="https://spec.modelcontextprotocol.io/">Model Context Protocol (MCP)</a> to provide AI assistants, IDEs, and other MCP clients with structured access to European Parliament open datasets. Access information about MEPs, plenary sessions, committees, legislative documents, and parliamentary questions through a secure, type-safe TypeScript/Node.js implementation.</p>
-<h3 id="🎯-key-features" class="tsd-anchor-link">🎯 Key Features<a href="#🎯-key-features" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul>
-<li>🔌 <strong>Full MCP Implementation</strong>: 16 tools (10 core + 6 OSINT intelligence), Resources, and Prompts</li>
-<li>🏛️ <strong>European Parliament Data</strong>: Access to 5 core parliamentary datasets</li>
-<li>🕵️ <strong>OSINT Intelligence</strong>: MEP influence scoring, coalition analysis, anomaly detection</li>
-<li>🔒 <strong>Security First</strong>: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance</li>
-<li>🚀 <strong>High Performance</strong>: &lt;200ms API responses, intelligent caching, rate limiting</li>
-<li>📊 <strong>Type Safety</strong>: TypeScript strict mode + Zod runtime validation</li>
-<li>🧪 <strong>Well-Tested</strong>: 80%+ code coverage (95% for security-critical code)</li>
-<li>📚 <strong>Complete Documentation</strong>: Architecture, API docs, security guidelines</li>
-</ul>
 <hr>
 <h2 id="🚀-quick-start" class="tsd-anchor-link">🚀 Quick Start<a href="#🚀-quick-start" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <h3 id="prerequisites" class="tsd-anchor-link">Prerequisites<a href="#prerequisites" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
@@ -314,6 +355,30 @@
 <td>committeeId, status, dateFrom</td>
 <td>Pipeline status</td>
 </tr>
+<tr>
+<td><a href="media/API_USAGE_GUIDE.md#tool-analyze_committee_activity"><code>analyze_committee_activity</code></a></td>
+<td>Committee workload &amp; engagement analysis</td>
+<td>committeeId (required), dateFrom, dateTo</td>
+<td>Activity report</td>
+</tr>
+<tr>
+<td><a href="media/API_USAGE_GUIDE.md#tool-track_mep_attendance"><code>track_mep_attendance</code></a></td>
+<td>MEP attendance patterns &amp; trends</td>
+<td>mepId, country, groupId, dateFrom, dateTo, limit</td>
+<td>Attendance report</td>
+</tr>
+<tr>
+<td><a href="media/API_USAGE_GUIDE.md#tool-analyze_country_delegation"><code>analyze_country_delegation</code></a></td>
+<td>Country delegation voting &amp; composition</td>
+<td>country (required), dateFrom, dateTo</td>
+<td>Delegation analysis</td>
+</tr>
+<tr>
+<td><a href="media/API_USAGE_GUIDE.md#tool-generate_political_landscape"><code>generate_political_landscape</code></a></td>
+<td>Parliament-wide political landscape</td>
+<td>dateFrom, dateTo</td>
+<td>Landscape overview</td>
+</tr>
 </tbody>
 </table>
 <p>📖 <strong><a href="media/API_USAGE_GUIDE.md">Complete API documentation with examples →</a></strong></p>
@@ -331,10 +396,447 @@
 </code><button>Copy</button></pre>
 
 <p><strong>OSINT Intelligence analysis</strong>:</p>
-<pre><code><span class="hl-6">1.</span><span class="hl-2"> </span><span class="hl-7">Score</span><span class="hl-2"> </span><span class="hl-9">MEP</span><span class="hl-2"> </span><span class="hl-8">influence</span><span class="hl-2">: </span><span class="hl-7">assess_mep_influence</span><span class="hl-2"> → {</span><span class="hl-8">mepId</span><span class="hl-2">: </span><span class="hl-3">&quot;MEP-123&quot;</span><span class="hl-2">}</span><br/><span class="hl-6">2.</span><span class="hl-2"> </span><span class="hl-7">Detect</span><span class="hl-2"> </span><span class="hl-8">anomalies</span><span class="hl-2">: </span><span class="hl-7">detect_voting_anomalies</span><span class="hl-2"> → {</span><span class="hl-8">mepId</span><span class="hl-2">: </span><span class="hl-3">&quot;MEP-123&quot;</span><span class="hl-2">}</span><br/><span class="hl-6">3.</span><span class="hl-2"> </span><span class="hl-7">Analyze</span><span class="hl-2"> </span><span class="hl-8">coalitions</span><span class="hl-2">: </span><span class="hl-7">analyze_coalition_dynamics</span><span class="hl-2"> → {</span><span class="hl-8">politicalGroups</span><span class="hl-2">: [</span><span class="hl-3">&quot;EPP&quot;</span><span class="hl-2">, </span><span class="hl-3">&quot;S&amp;D&quot;</span><span class="hl-2">]}</span><br/><span class="hl-6">4.</span><span class="hl-2"> </span><span class="hl-7">Compare</span><span class="hl-2"> </span><span class="hl-8">groups</span><span class="hl-2">: </span><span class="hl-7">compare_political_groups</span><span class="hl-2"> → {</span><span class="hl-8">groups</span><span class="hl-2">: [</span><span class="hl-3">&quot;EPP&quot;</span><span class="hl-2">, </span><span class="hl-3">&quot;S&amp;D&quot;</span><span class="hl-2">, </span><span class="hl-3">&quot;Renew&quot;</span><span class="hl-2">]}</span><br/><span class="hl-6">5.</span><span class="hl-2"> </span><span class="hl-7">Pipeline</span><span class="hl-2"> </span><span class="hl-8">status</span><span class="hl-2">: </span><span class="hl-7">monitor_legislative_pipeline</span><span class="hl-2"> → {</span><span class="hl-8">committeeId</span><span class="hl-2">: </span><span class="hl-3">&quot;ENVI&quot;</span><span class="hl-2">}</span>
+<pre><code><span class="hl-6">1.</span><span class="hl-2"> </span><span class="hl-7">Score</span><span class="hl-2"> </span><span class="hl-9">MEP</span><span class="hl-2"> </span><span class="hl-8">influence</span><span class="hl-2">: </span><span class="hl-7">assess_mep_influence</span><span class="hl-2"> → {</span><span class="hl-8">mepId</span><span class="hl-2">: </span><span class="hl-3">&quot;MEP-123&quot;</span><span class="hl-2">}</span><br/><span class="hl-6">2.</span><span class="hl-2"> </span><span class="hl-7">Detect</span><span class="hl-2"> </span><span class="hl-8">anomalies</span><span class="hl-2">: </span><span class="hl-7">detect_voting_anomalies</span><span class="hl-2"> → {</span><span class="hl-8">mepId</span><span class="hl-2">: </span><span class="hl-3">&quot;MEP-123&quot;</span><span class="hl-2">}</span><br/><span class="hl-6">3.</span><span class="hl-2"> </span><span class="hl-7">Analyze</span><span class="hl-2"> </span><span class="hl-8">coalitions</span><span class="hl-2">: </span><span class="hl-7">analyze_coalition_dynamics</span><span class="hl-2"> → {</span><span class="hl-8">politicalGroups</span><span class="hl-2">: [</span><span class="hl-3">&quot;EPP&quot;</span><span class="hl-2">, </span><span class="hl-3">&quot;S&amp;D&quot;</span><span class="hl-2">]}</span><br/><span class="hl-6">4.</span><span class="hl-2"> </span><span class="hl-7">Compare</span><span class="hl-2"> </span><span class="hl-8">groups</span><span class="hl-2">: </span><span class="hl-7">compare_political_groups</span><span class="hl-2"> → {</span><span class="hl-8">groups</span><span class="hl-2">: [</span><span class="hl-3">&quot;EPP&quot;</span><span class="hl-2">, </span><span class="hl-3">&quot;S&amp;D&quot;</span><span class="hl-2">, </span><span class="hl-3">&quot;Renew&quot;</span><span class="hl-2">]}</span><br/><span class="hl-6">5.</span><span class="hl-2"> </span><span class="hl-7">Pipeline</span><span class="hl-2"> </span><span class="hl-8">status</span><span class="hl-2">: </span><span class="hl-7">monitor_legislative_pipeline</span><span class="hl-2"> → {</span><span class="hl-8">committeeId</span><span class="hl-2">: </span><span class="hl-3">&quot;ENVI&quot;</span><span class="hl-2">}</span><br/><span class="hl-6">6.</span><span class="hl-2"> </span><span class="hl-7">Country</span><span class="hl-2"> </span><span class="hl-8">delegation</span><span class="hl-2">: </span><span class="hl-7">analyze_country_delegation</span><span class="hl-2"> → {</span><span class="hl-8">country</span><span class="hl-2">: </span><span class="hl-3">&quot;SE&quot;</span><span class="hl-2">}</span><br/><span class="hl-6">7.</span><span class="hl-2"> </span><span class="hl-7">Political</span><span class="hl-2"> </span><span class="hl-8">landscape</span><span class="hl-2">: </span><span class="hl-7">generate_political_landscape</span><span class="hl-2"> → {}</span>
 </code><button>Copy</button></pre>
 
 <p>🎯 <strong><a href="media/API_USAGE_GUIDE.md#common-use-cases">More use cases and examples →</a></strong></p>
+<h3 id="📝-mcp-prompts" class="tsd-anchor-link">📝 MCP Prompts<a href="#📝-mcp-prompts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Pre-built intelligence analysis prompt templates:</p>
+<table>
+<thead>
+<tr>
+<th>Prompt</th>
+<th>Description</th>
+<th>Arguments</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mep_briefing</code></td>
+<td>Comprehensive MEP intelligence briefing</td>
+<td>mepId (required), period?</td>
+</tr>
+<tr>
+<td><code>coalition_analysis</code></td>
+<td>Coalition dynamics and voting bloc analysis</td>
+<td>policyArea?, period?</td>
+</tr>
+<tr>
+<td><code>legislative_tracking</code></td>
+<td>Legislative procedure tracking report</td>
+<td>procedureId?, committee?</td>
+</tr>
+<tr>
+<td><code>political_group_comparison</code></td>
+<td>Multi-dimensional group comparison</td>
+<td>groups?</td>
+</tr>
+<tr>
+<td><code>committee_activity_report</code></td>
+<td>Committee workload and engagement</td>
+<td>committeeId (required)</td>
+</tr>
+<tr>
+<td><code>voting_pattern_analysis</code></td>
+<td>Voting pattern trend detection</td>
+<td>topic?, mepId?</td>
+</tr>
+</tbody>
+</table>
+<h3 id="📦-mcp-resources" class="tsd-anchor-link">📦 MCP Resources<a href="#📦-mcp-resources" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Direct data access via EP resource URIs:</p>
+<table>
+<thead>
+<tr>
+<th>Resource URI</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ep://meps</code></td>
+<td>List of all current MEPs</td>
+</tr>
+<tr>
+<td><code>ep://meps/{mepId}</code></td>
+<td>Individual MEP profile</td>
+</tr>
+<tr>
+<td><code>ep://committees/{committeeId}</code></td>
+<td>Committee information</td>
+</tr>
+<tr>
+<td><code>ep://plenary-sessions</code></td>
+<td>Recent plenary sessions</td>
+</tr>
+<tr>
+<td><code>ep://votes/{sessionId}</code></td>
+<td>Voting records for a session</td>
+</tr>
+<tr>
+<td><code>ep://political-groups</code></td>
+<td>Political group listing</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🗺️-global-political-mcp-servers-osint-coverage" class="tsd-anchor-link">🗺️ Global Political MCP Servers &amp; OSINT Coverage<a href="#🗺️-global-political-mcp-servers-osint-coverage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The European Parliament MCP Server is part of a growing ecosystem of <strong>political and government open data MCP servers</strong> enabling AI-powered OSINT analysis of democratic institutions worldwide. Below is the most comprehensive directory of political and government MCP servers available.</p>
+<h3 id="🏛️-parliamentary-legislative-mcp-servers" class="tsd-anchor-link">🏛️ Parliamentary &amp; Legislative MCP Servers<a href="#🏛️-parliamentary-legislative-mcp-servers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Country</th>
+<th>Server</th>
+<th>Data Source</th>
+<th>Coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🇪🇺 <strong>European Union</strong></td>
+<td><a href="https://github.com/Hack23/European-Parliament-MCP-Server"><strong>European Parliament MCP Server</strong></a></td>
+<td><a href="http://data.europarl.europa.eu">data.europarl.europa.eu</a></td>
+<td>MEPs, votes, legislation, committees, questions — <strong>20 OSINT tools</strong></td>
+</tr>
+<tr>
+<td>🇺🇸 <strong>United States</strong></td>
+<td><a href="https://github.com/bsmi021/mcp-congress_gov_server">Congress.gov API MCP Server</a></td>
+<td><a href="http://congress.gov">congress.gov</a></td>
+<td>Bills, members, votes, committees (TypeScript, v3 API)</td>
+</tr>
+<tr>
+<td>🇺🇸 <strong>United States</strong></td>
+<td><a href="https://github.com/amurshak/congressMCP">CongressMCP</a></td>
+<td><a href="http://congress.gov">congress.gov</a></td>
+<td>Real-time Congress data — bills, votes, members</td>
+</tr>
+<tr>
+<td>🇺🇸 <strong>United States</strong></td>
+<td><a href="https://github.com/AshwinSundar/congress_gov_mcp">Congress.gov MCP</a></td>
+<td><a href="http://congress.gov">congress.gov</a></td>
+<td>Unofficial <a href="http://Congress.gov">Congress.gov</a> API access</td>
+</tr>
+<tr>
+<td>🇬🇧 <strong>United Kingdom</strong></td>
+<td><a href="https://github.com/i-dot-ai/parliament-mcp">Parliament MCP</a></td>
+<td><a href="http://parliament.uk">parliament.uk</a></td>
+<td>Hansard, members, debates, divisions</td>
+</tr>
+<tr>
+<td>🇸🇪 <strong>Sweden</strong></td>
+<td><a href="https://github.com/isakskogstad/Riksdag-Regering-MCP">Riksdag &amp; Regering MCP</a></td>
+<td><a href="http://riksdagen.se">riksdagen.se</a></td>
+<td>Swedish Parliament &amp; Government data (used by <a href="https://riksdagsmonitor.com/">riksdagsmonitor.com</a>)</td>
+</tr>
+<tr>
+<td>🇳🇱 <strong>Netherlands</strong></td>
+<td><a href="https://github.com/r-huijts/opentk-mcp">OpenTK MCP</a></td>
+<td><a href="http://tweedekamer.nl">tweedekamer.nl</a></td>
+<td>Dutch Parliament (Tweede Kamer) documents</td>
+</tr>
+<tr>
+<td>🇵🇱 <strong>Poland</strong></td>
+<td><a href="https://github.com/pkolawa/parliament-poland-mcp-server">Parliament of Poland MCP</a></td>
+<td><a href="http://sejm.gov.pl">sejm.gov.pl</a></td>
+<td>Members, votes, committees</td>
+</tr>
+<tr>
+<td>🇵🇱 <strong>Poland</strong></td>
+<td><a href="https://github.com/janisz/sejm-mcp">Sejm MCP</a></td>
+<td><a href="http://api.sejm.gov.pl">api.sejm.gov.pl</a></td>
+<td>Parliament data + legislation</td>
+</tr>
+<tr>
+<td>🇮🇱 <strong>Israel</strong></td>
+<td><a href="https://github.com/zohar/knesset-mcp">Knesset MCP Server</a></td>
+<td><a href="http://knesset.gov.il">knesset.gov.il</a></td>
+<td>Knesset parliament API</td>
+</tr>
+<tr>
+<td>🇧🇷 <strong>Brazil</strong></td>
+<td><a href="https://mcpservers.org/servers/sidneybissoli/senado-br-mcp">Senado BR MCP</a></td>
+<td><a href="http://senado.leg.br">senado.leg.br</a></td>
+<td>Federal Senate — members, proposals, votes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="📊-government-open-data-mcp-servers" class="tsd-anchor-link">📊 Government Open Data MCP Servers<a href="#📊-government-open-data-mcp-servers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Country</th>
+<th>Server</th>
+<th>Data Source</th>
+<th>Coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🇺🇸 <strong>United States</strong></td>
+<td><a href="https://github.com/thsmale/usaspending-mcp-server">USA Spending MCP</a></td>
+<td><a href="http://usaspending.gov">usaspending.gov</a></td>
+<td>Federal spending data</td>
+</tr>
+<tr>
+<td>🇺🇸 <strong>United States</strong></td>
+<td><a href="https://mcpservers.org/servers/brockwebb/open-census-mcp-server">Open Census MCP</a></td>
+<td><a href="http://census.gov">census.gov</a></td>
+<td>Demographics &amp; statistics (natural language)</td>
+</tr>
+<tr>
+<td>🇺🇸 <strong>United States</strong></td>
+<td><a href="https://github.com/melaodoidao/datagov-mcp-server">Data.gov MCP Server</a></td>
+<td><a href="http://data.gov">data.gov</a></td>
+<td>Federal dataset catalog</td>
+</tr>
+<tr>
+<td>🇺🇸 <strong>United States</strong></td>
+<td><a href="https://github.com/clarifyhealth/cms-datagov-mcp-server">CMS Data.gov MCP</a></td>
+<td><a href="http://data.cms.gov">data.cms.gov</a></td>
+<td>Healthcare data — search/filter/pagination</td>
+</tr>
+<tr>
+<td>🇺🇸 <strong>United States</strong></td>
+<td><a href="https://github.com/stefanoamorelli/sec-edgar-mcp">SEC EDGAR MCP</a></td>
+<td><a href="http://sec.gov">sec.gov</a></td>
+<td>SEC filings — annual reports, insider data</td>
+</tr>
+<tr>
+<td>🇺🇸 <strong>United States</strong></td>
+<td><a href="https://github.com/amysatterlee/nps_mcp">NPS MCP</a></td>
+<td><a href="http://nps.gov">nps.gov</a></td>
+<td>National Park Service API</td>
+</tr>
+<tr>
+<td>🇸🇪 <strong>Sweden</strong></td>
+<td><a href="https://mcpservers.org/servers/isakskogstad/scb-mcp">SCB MCP Server</a></td>
+<td><a href="http://scb.se">scb.se</a></td>
+<td>Official Swedish statistics</td>
+</tr>
+<tr>
+<td>🇸🇪 <strong>Sweden</strong></td>
+<td><a href="https://mcpservers.org/servers/ksaklfszf921/skolverket-mcp">Skolverket MCP</a></td>
+<td><a href="http://skolverket.se">skolverket.se</a></td>
+<td>Swedish National Agency for Education</td>
+</tr>
+<tr>
+<td>🇫🇷 <strong>France</strong></td>
+<td><a href="https://github.com/datagouv/datagouv-mcp">data.gouv.fr MCP</a></td>
+<td><a href="http://data.gouv.fr">data.gouv.fr</a></td>
+<td>National open data platform</td>
+</tr>
+<tr>
+<td>🇫🇷 <strong>France</strong></td>
+<td><a href="https://mcpservers.org/servers/csonigo/datagouv-mcp-server">Data Gouv MCP Server</a></td>
+<td><a href="http://data.gouv.fr">data.gouv.fr</a></td>
+<td>Companies &amp; organizations search</td>
+</tr>
+<tr>
+<td>🇬🇧 <strong>United Kingdom</strong></td>
+<td><a href="https://github.com/alizoli/planningdatagovuk-api">Planning Data MCP</a></td>
+<td><a href="http://planning.data.gov.uk">planning.data.gov.uk</a></td>
+<td>Planning &amp; land use data</td>
+</tr>
+<tr>
+<td>🇬🇧 <strong>United Kingdom</strong></td>
+<td><a href="https://github.com/joemclo/property-prices-mcp">Property Prices MCP</a></td>
+<td><a href="http://landregistry.data.gov.uk">landregistry.data.gov.uk</a></td>
+<td>Housing price search</td>
+</tr>
+<tr>
+<td>🇳🇱 <strong>Netherlands</strong></td>
+<td><a href="https://github.com/dstotijn/mcp-cbs-cijfers-open-data">CBS Open Data MCP</a></td>
+<td><a href="http://cbs.nl">cbs.nl</a></td>
+<td>Dutch statistics bureau</td>
+</tr>
+<tr>
+<td>🇮🇱 <strong>Israel</strong></td>
+<td><a href="https://github.com/DavidOsherProceed/data-gov-il-mcp">Data.gov.il MCP</a></td>
+<td><a href="http://data.gov.il">data.gov.il</a></td>
+<td>National CKAN data portal</td>
+</tr>
+<tr>
+<td>🇮🇱 <strong>Israel</strong></td>
+<td><a href="https://github.com/aviveldan/datagov-mcp">DataGov Israel MCP</a></td>
+<td><a href="http://data.gov.il">data.gov.il</a></td>
+<td>Alternative implementation + visualization</td>
+</tr>
+<tr>
+<td>🇮🇱 <strong>Israel</strong></td>
+<td><a href="https://github.com/reuvenaor/israel-statistics-mcp">Israel Statistics MCP</a></td>
+<td><a href="http://cbs.gov.il">cbs.gov.il</a></td>
+<td>CPI &amp; economic time series</td>
+</tr>
+<tr>
+<td>🇮🇱 <strong>Israel</strong></td>
+<td><a href="https://github.com/OpenBudget/budgetkey-mcp">BudgetKey MCP</a></td>
+<td><a href="http://open-budget.org.il">open-budget.org.il</a></td>
+<td>State budget, contracts, grants</td>
+</tr>
+<tr>
+<td>🇹🇷 <strong>Turkey</strong></td>
+<td><a href="https://mcpservers.org/servers/MCP-Mirror/saidsurucu_mevzuat-mcp">Mevzuat MCP</a></td>
+<td><a href="http://mevzuat.gov.tr">mevzuat.gov.tr</a></td>
+<td>Legislation system — search/retrieve laws</td>
+</tr>
+<tr>
+<td>🇭🇰 <strong>Hong Kong</strong></td>
+<td><a href="https://github.com/hkopenai/hk-datagovhk-mcp-server">HK Data.gov.hk MCP</a></td>
+<td><a href="http://data.gov.hk">data.gov.hk</a></td>
+<td>Hong Kong open data portal</td>
+</tr>
+<tr>
+<td>🇲🇾 <strong>Malaysia</strong></td>
+<td><a href="https://github.com/manfye/data-dosm-mcp-nodejs">Data.gov.my MCP</a></td>
+<td><a href="http://data.gov.my">data.gov.my</a></td>
+<td>National data portal</td>
+</tr>
+<tr>
+<td>🇮🇳 <strong>India</strong></td>
+<td><a href="https://github.com/adwait-ai/mcp_data_gov_in">Data.gov.in MCP</a></td>
+<td><a href="http://data.gov.in">data.gov.in</a></td>
+<td>Semantic search + dataset access</td>
+</tr>
+<tr>
+<td>🇸🇬 <strong>Singapore</strong></td>
+<td><a href="https://github.com/aniruddha-adhikary/gahmen-mcp">Gahmen MCP Server</a></td>
+<td><a href="http://data.gov.sg">data.gov.sg</a></td>
+<td>Government datasets + CKAN search</td>
+</tr>
+<tr>
+<td>🇸🇬 <strong>Singapore</strong></td>
+<td><a href="https://github.com/prezgamer/Singapore-Data-MCPs">Singapore Data MCPs</a></td>
+<td><a href="http://data.gov.sg">data.gov.sg</a></td>
+<td>Multiple servers (parking, health, datasets)</td>
+</tr>
+<tr>
+<td>🇦🇺 <strong>Australia</strong></td>
+<td><a href="https://github.com/seansoreilly/mcp-server-abs">ABS MCP Server</a></td>
+<td><a href="http://abs.gov.au">abs.gov.au</a></td>
+<td>Bureau of Statistics (SDMX-ML)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="🌍-multi-portal-generic-mcp-servers" class="tsd-anchor-link">🌍 Multi-Portal &amp; Generic MCP Servers<a href="#🌍-multi-portal-generic-mcp-servers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Server</th>
+<th>Platform</th>
+<th>Coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🌐 <strong>Global (CKAN)</strong></td>
+<td><a href="https://github.com/ondata/ckan-mcp-server">CKAN MCP Server</a></td>
+<td>CKAN portals</td>
+<td>Generic server for any CKAN-based open data portal</td>
+</tr>
+<tr>
+<td>🌐 <strong>Global (Socrata)</strong></td>
+<td><a href="https://github.com/srobbin/opengov-mcp-server">OpenGov MCP Server</a></td>
+<td>Socrata portals</td>
+<td>City/county/state/federal Socrata-powered portals</td>
+</tr>
+</tbody>
+</table>
+<h3 id="🕵️-osint-intelligence-capabilities-comparison" class="tsd-anchor-link">🕵️ OSINT Intelligence Capabilities Comparison<a href="#🕵️-osint-intelligence-capabilities-comparison" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>🇪🇺 EU Parliament MCP</th>
+<th>🇺🇸 <a href="http://Congress.gov">Congress.gov</a> MCP</th>
+<th>🇬🇧 UK Parliament MCP</th>
+<th>🇸🇪 Riksdag MCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Member profiling</td>
+<td>✅ 5-dimension influence model</td>
+<td>✅ Basic profiles</td>
+<td>✅ Basic profiles</td>
+<td>✅ Basic profiles</td>
+</tr>
+<tr>
+<td>Voting analysis</td>
+<td>✅ Anomaly detection + patterns</td>
+<td>✅ Roll call votes</td>
+<td>✅ Division records</td>
+<td>✅ Vote records</td>
+</tr>
+<tr>
+<td>Coalition dynamics</td>
+<td>✅ Cohesion &amp; stress analysis</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Committee intelligence</td>
+<td>✅ Workload &amp; engagement metrics</td>
+<td>✅ Committee data</td>
+<td>✅ Committee data</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Legislative pipeline</td>
+<td>✅ Bottleneck detection + forecasting</td>
+<td>✅ Bill tracking</td>
+<td>✅ Bill tracking</td>
+<td>✅ Bill tracking</td>
+</tr>
+<tr>
+<td>Country delegation analysis</td>
+<td>✅ National cohesion metrics</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Political landscape</td>
+<td>✅ Parliament-wide situational awareness</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Attendance tracking</td>
+<td>✅ Trend detection + engagement scoring</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>GDPR compliance</td>
+<td>✅ Privacy-first design</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>MCP prompts &amp; resources</td>
+<td>✅ 6 prompts + 6 resources</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>OSINT tool count</td>
+<td><strong>20 tools</strong></td>
+<td>~5 tools</td>
+<td>~5 tools</td>
+<td>~4 tools</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <strong>The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities</strong> of any political MCP server, with <strong>20 specialized tools</strong> including advanced analytics like coalition stress analysis, voting anomaly detection, and political landscape generation. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.</p>
+</blockquote>
 <hr>
 <h2 id="🏛️-european-parliament-datasets" class="tsd-anchor-link">🏛️ European Parliament Datasets<a href="#🏛️-european-parliament-datasets" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <h3 id="available-data" class="tsd-anchor-link">Available Data<a href="#available-data" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
@@ -489,6 +991,13 @@
 <li><a href="https://github.com/Hack23/European-Parliament-MCP-Server/discussions">Discussions</a></li>
 <li><a href="media/SECURITY.md">Security Policy</a></li>
 </ul>
+<h3 id="hack23-ecosystem" class="tsd-anchor-link">Hack23 Ecosystem<a href="#hack23-ecosystem" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li><a href="https://hack23.com/">Hack23</a> — AI-powered democratic transparency platform</li>
+<li><a href="https://github.com/Hack23/euparliamentmonitor">EU Parliament Monitor</a> — European Parliament monitoring dashboard</li>
+<li><a href="https://riksdagsmonitor.com/">Riksdagsmonitor</a> · <a href="https://github.com/Hack23/riksdagsmonitor">GitHub</a> — Swedish Parliament monitoring</li>
+<li><a href="https://github.com/Hack23/cia">Citizen Intelligence Agency</a> — Comprehensive political intelligence platform</li>
+</ul>
 <h3 id="european-parliament" class="tsd-anchor-link">European Parliament<a href="#european-parliament" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul>
 <li><a href="https://data.europarl.europa.eu/">Open Data Portal</a></li>
@@ -500,6 +1009,17 @@
 <li><a href="https://spec.modelcontextprotocol.io/">MCP Specification</a></li>
 <li><a href="https://github.com/modelcontextprotocol/sdk">MCP SDK</a></li>
 <li><a href="https://modelcontextprotocol.io/docs">MCP Documentation</a></li>
+</ul>
+<h3 id="political-government-mcp-servers" class="tsd-anchor-link">Political &amp; Government MCP Servers<a href="#political-government-mcp-servers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li><a href="https://github.com/bsmi021/mcp-congress_gov_server">Congress.gov API MCP Server</a> — US Congress data (TypeScript)</li>
+<li><a href="https://github.com/i-dot-ai/parliament-mcp">UK Parliament MCP</a> — UK Hansard, members, debates</li>
+<li><a href="https://github.com/isakskogstad/Riksdag-Regering-MCP">Riksdag &amp; Regering MCP</a> — Swedish Parliament data</li>
+<li><a href="https://github.com/pkolawa/parliament-poland-mcp-server">Parliament of Poland MCP</a> — Polish Parliament data</li>
+<li><a href="https://github.com/r-huijts/opentk-mcp">OpenTK MCP</a> — Dutch Parliament (Tweede Kamer) documents</li>
+<li><a href="https://github.com/zohar/knesset-mcp">Knesset MCP</a> — Israeli Parliament data</li>
+<li><a href="https://github.com/ondata/ckan-mcp-server">CKAN MCP Server</a> — Generic CKAN portal access</li>
+<li><a href="https://github.com/srobbin/opengov-mcp-server">OpenGov MCP Server</a> — Socrata-powered portals</li>
 </ul>
 <h3 id="hack23-isms" class="tsd-anchor-link">Hack23 ISMS<a href="#hack23-isms" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul>
@@ -520,4 +1040,4 @@
 <p align="center">
   <strong>Built with ❤️ by <a href="https://hack23.com">Hack23 AB</a></strong><br>
   <em>Demonstrating security excellence through transparent open source</em>
-</p></div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#📊-quality-metrics-documentation"><span>📊 <wbr/>Quality <wbr/>Metrics &amp; <wbr/>Documentation</span></a><a href="#🔐-security-compliance"><span>🔐 <wbr/>Security &amp; <wbr/>Compliance</span></a><a href="#📋-overview"><span>📋 <wbr/>Overview</span></a><ul><li><a href="#🎯-key-features"><span>🎯 <wbr/>Key <wbr/>Features</span></a></li></ul><a href="#🚀-quick-start"><span>🚀 <wbr/>Quick <wbr/>Start</span></a><ul><li><a href="#prerequisites"><span>Prerequisites</span></a></li><li><a href="#installation"><span>Installation</span></a></li><li><ul><li><a href="#option-1-install-from-npm-recommended"><span>Option 1: <wbr/>Install from npm (<wbr/>Recommended)</span></a></li><li><a href="#option-2-install-from-source"><span>Option 2: <wbr/>Install from source</span></a></li></ul></li><li><a href="#usage-with-mcp-client"><span>Usage with <wbr/>MCP <wbr/>Client</span></a></li><li><ul><li><a href="#claude-desktop-configuration-npm-install"><span>Claude <wbr/>Desktop <wbr/>Configuration (npm install)</span></a></li><li><a href="#claude-desktop-configuration-source-install"><span>Claude <wbr/>Desktop <wbr/>Configuration (source install)</span></a></li><li><a href="#vs-code-extension"><span>VS <wbr/>Code <wbr/>Extension</span></a></li></ul></li></ul><a href="#📚-documentation"><span>📚 <wbr/>Documentation</span></a><ul><li><a href="#🌐-documentation-portal"><span>🌐 <wbr/>Documentation <wbr/>Portal</span></a></li><li><a href="#core-documentation"><span>Core <wbr/>Documentation</span></a></li><li><a href="#additional-documentation"><span>Additional <wbr/>Documentation</span></a></li></ul><a href="#🔌-mcp-tools"><span>🔌 <wbr/>MCP <wbr/>Tools</span></a><ul><li><a href="#quick-reference-core-data-tools"><span>Quick <wbr/>Reference — <wbr/>Core <wbr/>Data <wbr/>Tools</span></a></li><li><a href="#🕵️-osint-intelligence-tools"><span>🕵️ <wbr/>OSINT <wbr/>Intelligence <wbr/>Tools</span></a></li><li><a href="#common-use-cases"><span>Common <wbr/>Use <wbr/>Cases</span></a></li></ul><a href="#🏛️-european-parliament-datasets"><span>🏛️ <wbr/>European <wbr/>Parliament <wbr/>Datasets</span></a><ul><li><a href="#available-data"><span>Available <wbr/>Data</span></a></li><li><a href="#data-source"><span>Data <wbr/>Source</span></a></li></ul><a href="#🔒-security-compliance"><span>🔒 <wbr/>Security &amp; <wbr/>Compliance</span></a><ul><li><a href="#isms-compliance"><span>ISMS <wbr/>Compliance</span></a></li><li><a href="#security-features"><span>Security <wbr/>Features</span></a></li><li><a href="#supply-chain-security"><span>Supply <wbr/>Chain <wbr/>Security</span></a></li></ul><a href="#🧪-development"><span>🧪 <wbr/>Development</span></a><ul><li><a href="#setup-development-environment"><span>Setup <wbr/>Development <wbr/>Environment</span></a></li><li><a href="#project-structure"><span>Project <wbr/>Structure</span></a></li><li><a href="#documentation"><span>Documentation</span></a></li><li><ul><li><a href="#📚-developer-documentation"><span>📚 <wbr/>Developer <wbr/>Documentation</span></a></li><li><a href="#🏗️-architecture-design"><span>🏗️ <wbr/>Architecture &amp; <wbr/>Design</span></a></li><li><a href="#🧪-testing-quality"><span>🧪 <wbr/>Testing &amp; <wbr/>Quality</span></a></li><li><a href="#🔒-security-compliance-1"><span>🔒 <wbr/>Security &amp; <wbr/>Compliance</span></a></li><li><a href="#📦-deployment-operations"><span>📦 <wbr/>Deployment &amp; <wbr/>Operations</span></a></li></ul></li><li><a href="#testing"><span>Testing</span></a></li><li><a href="#code-quality"><span>Code <wbr/>Quality</span></a></li></ul><a href="#🤝-contributing"><span>🤝 <wbr/>Contributing</span></a><ul><li><a href="#github-copilot-integration"><span>Git<wbr/>Hub <wbr/>Copilot <wbr/>Integration</span></a></li><li><a href="#release-process"><span>Release <wbr/>Process</span></a></li></ul><a href="#📜-license"><span>📜 <wbr/>License</span></a><a href="#🔗-links"><span>🔗 <wbr/>Links</span></a><ul><li><a href="#project-resources"><span>Project <wbr/>Resources</span></a></li><li><a href="#european-parliament"><span>European <wbr/>Parliament</span></a></li><li><a href="#mcp-protocol"><span>MCP <wbr/>Protocol</span></a></li><li><a href="#hack23-isms"><span>Hack23 <wbr/>ISMS</span></a></li></ul><a href="#🙏-acknowledgments"><span>🙏 <wbr/>Acknowledgments</span></a></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="modules.html">European Parliament MCP Server API Documentation - v0.4.0</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>
+</p></div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#📊-quality-metrics-documentation"><span>📊 <wbr/>Quality <wbr/>Metrics &amp; <wbr/>Documentation</span></a><a href="#📋-overview"><span>📋 <wbr/>Overview</span></a><ul><li><a href="#🎯-key-features"><span>🎯 <wbr/>Key <wbr/>Features</span></a></li></ul><a href="#🌍-hack23-political-intelligence-ecosystem"><span>🌍 <wbr/>Hack23 <wbr/>Political <wbr/>Intelligence <wbr/>Ecosystem</span></a><ul><li><a href="#🔗-hack23-projects"><span>🔗 <wbr/>Hack23 <wbr/>Projects</span></a></li><li><a href="#🎯-vision-ai-powered-democratic-transparency"><span>🎯 <wbr/>Vision: <wbr/>AI-<wbr/>Powered <wbr/>Democratic <wbr/>Transparency</span></a></li></ul><a href="#🔐-security-compliance"><span>🔐 <wbr/>Security &amp; <wbr/>Compliance</span></a><a href="#🚀-quick-start"><span>🚀 <wbr/>Quick <wbr/>Start</span></a><ul><li><a href="#prerequisites"><span>Prerequisites</span></a></li><li><a href="#installation"><span>Installation</span></a></li><li><ul><li><a href="#option-1-install-from-npm-recommended"><span>Option 1: <wbr/>Install from npm (<wbr/>Recommended)</span></a></li><li><a href="#option-2-install-from-source"><span>Option 2: <wbr/>Install from source</span></a></li></ul></li><li><a href="#usage-with-mcp-client"><span>Usage with <wbr/>MCP <wbr/>Client</span></a></li><li><ul><li><a href="#claude-desktop-configuration-npm-install"><span>Claude <wbr/>Desktop <wbr/>Configuration (npm install)</span></a></li><li><a href="#claude-desktop-configuration-source-install"><span>Claude <wbr/>Desktop <wbr/>Configuration (source install)</span></a></li><li><a href="#vs-code-extension"><span>VS <wbr/>Code <wbr/>Extension</span></a></li></ul></li></ul><a href="#📚-documentation"><span>📚 <wbr/>Documentation</span></a><ul><li><a href="#🌐-documentation-portal"><span>🌐 <wbr/>Documentation <wbr/>Portal</span></a></li><li><a href="#core-documentation"><span>Core <wbr/>Documentation</span></a></li><li><a href="#additional-documentation"><span>Additional <wbr/>Documentation</span></a></li></ul><a href="#🔌-mcp-tools"><span>🔌 <wbr/>MCP <wbr/>Tools</span></a><ul><li><a href="#quick-reference-core-data-tools"><span>Quick <wbr/>Reference — <wbr/>Core <wbr/>Data <wbr/>Tools</span></a></li><li><a href="#🕵️-osint-intelligence-tools"><span>🕵️ <wbr/>OSINT <wbr/>Intelligence <wbr/>Tools</span></a></li><li><a href="#common-use-cases"><span>Common <wbr/>Use <wbr/>Cases</span></a></li><li><a href="#📝-mcp-prompts"><span>📝 <wbr/>MCP <wbr/>Prompts</span></a></li><li><a href="#📦-mcp-resources"><span>📦 <wbr/>MCP <wbr/>Resources</span></a></li></ul><a href="#🗺️-global-political-mcp-servers-osint-coverage"><span>🗺️ <wbr/>Global <wbr/>Political <wbr/>MCP <wbr/>Servers &amp; <wbr/>OSINT <wbr/>Coverage</span></a><ul><li><a href="#🏛️-parliamentary-legislative-mcp-servers"><span>🏛️ <wbr/>Parliamentary &amp; <wbr/>Legislative <wbr/>MCP <wbr/>Servers</span></a></li><li><a href="#📊-government-open-data-mcp-servers"><span>📊 <wbr/>Government <wbr/>Open <wbr/>Data <wbr/>MCP <wbr/>Servers</span></a></li><li><a href="#🌍-multi-portal-generic-mcp-servers"><span>🌍 <wbr/>Multi-<wbr/>Portal &amp; <wbr/>Generic <wbr/>MCP <wbr/>Servers</span></a></li><li><a href="#🕵️-osint-intelligence-capabilities-comparison"><span>🕵️ <wbr/>OSINT <wbr/>Intelligence <wbr/>Capabilities <wbr/>Comparison</span></a></li></ul><a href="#🏛️-european-parliament-datasets"><span>🏛️ <wbr/>European <wbr/>Parliament <wbr/>Datasets</span></a><ul><li><a href="#available-data"><span>Available <wbr/>Data</span></a></li><li><a href="#data-source"><span>Data <wbr/>Source</span></a></li></ul><a href="#🔒-security-compliance"><span>🔒 <wbr/>Security &amp; <wbr/>Compliance</span></a><ul><li><a href="#isms-compliance"><span>ISMS <wbr/>Compliance</span></a></li><li><a href="#security-features"><span>Security <wbr/>Features</span></a></li><li><a href="#supply-chain-security"><span>Supply <wbr/>Chain <wbr/>Security</span></a></li></ul><a href="#🧪-development"><span>🧪 <wbr/>Development</span></a><ul><li><a href="#setup-development-environment"><span>Setup <wbr/>Development <wbr/>Environment</span></a></li><li><a href="#project-structure"><span>Project <wbr/>Structure</span></a></li><li><a href="#documentation"><span>Documentation</span></a></li><li><ul><li><a href="#📚-developer-documentation"><span>📚 <wbr/>Developer <wbr/>Documentation</span></a></li><li><a href="#🏗️-architecture-design"><span>🏗️ <wbr/>Architecture &amp; <wbr/>Design</span></a></li><li><a href="#🧪-testing-quality"><span>🧪 <wbr/>Testing &amp; <wbr/>Quality</span></a></li><li><a href="#🔒-security-compliance-1"><span>🔒 <wbr/>Security &amp; <wbr/>Compliance</span></a></li><li><a href="#📦-deployment-operations"><span>📦 <wbr/>Deployment &amp; <wbr/>Operations</span></a></li></ul></li><li><a href="#testing"><span>Testing</span></a></li><li><a href="#code-quality"><span>Code <wbr/>Quality</span></a></li></ul><a href="#🤝-contributing"><span>🤝 <wbr/>Contributing</span></a><ul><li><a href="#github-copilot-integration"><span>Git<wbr/>Hub <wbr/>Copilot <wbr/>Integration</span></a></li><li><a href="#release-process"><span>Release <wbr/>Process</span></a></li></ul><a href="#📜-license"><span>📜 <wbr/>License</span></a><a href="#🔗-links"><span>🔗 <wbr/>Links</span></a><ul><li><a href="#project-resources"><span>Project <wbr/>Resources</span></a></li><li><a href="#hack23-ecosystem"><span>Hack23 <wbr/>Ecosystem</span></a></li><li><a href="#european-parliament"><span>European <wbr/>Parliament</span></a></li><li><a href="#mcp-protocol"><span>MCP <wbr/>Protocol</span></a></li><li><a href="#political-government-mcp-servers"><span>Political &amp; <wbr/>Government <wbr/>MCP <wbr/>Servers</span></a></li><li><a href="#hack23-isms"><span>Hack23 <wbr/>ISMS</span></a></li></ul><a href="#🙏-acknowledgments"><span>🙏 <wbr/>Acknowledgments</span></a></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="modules.html">European Parliament MCP Server API Documentation - v0.5.0</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

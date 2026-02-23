@@ -28,7 +28,7 @@ This project implements a comprehensive testing strategy across four layers:
 - **Security-Critical Code**: 95%+ coverage
 - **Branch Coverage**: 70%+
 - **Integration Tests**: All API client methods
-- **E2E Tests**: All 10 MCP tools
+- **E2E Tests**: All 20 MCP tools
 
 ## Test Structure
 
@@ -170,7 +170,7 @@ await client.disconnect();
 ### Features Tested
 
 - ✅ MCP protocol compliance
-- ✅ All 10 MCP tools functionality
+- ✅ All 20 MCP tools functionality
 - ✅ Tool input validation
 - ✅ Tool error handling
 - ✅ Complete user workflows

@@ -33,7 +33,7 @@ graph TB
     Root --> Utils[utils/ - 2 files]
     Root --> Services[services/ - 1 file]
     Root --> DI[di/ - 1 file]
-    Root --> Tools[tools/ - 18 files]
+    Root --> Tools[tools/ - 20 files]
     Root --> Index[index.ts]
     
     Types --> TypesStatus[✅ Excellent: 75%<br/>⚠️ Good: 25%]
@@ -115,7 +115,7 @@ Priority 2: Security & Validation
 
 Priority 3: Tools & Advanced Features
 ┌─────────────────────────────────────────────────┐
-│ tools/*.ts (10 files)            🔧 LOW         │
+│ tools/*.ts (20 files)            🔧 LOW         │
 │   └─ All handlers                🔧 Missing @throws │
 │   └─ All handlers                🔧 Missing @security│
 │                                                  │
@@ -170,6 +170,18 @@ Score 1-2/5 (Minimal) 🔧
 ├─ tools/getCommitteeInfo.ts
 ├─ tools/getParliamentaryQuestions.ts
 ├─ tools/analyzeVotingPatterns.ts
+├─ tools/trackLegislation.ts
+├─ tools/generateReport.ts
+├─ tools/assessMepInfluence.ts
+├─ tools/analyzeCoalitionDynamics.ts
+├─ tools/detectVotingAnomalies.ts
+├─ tools/comparePoliticalGroups.ts
+├─ tools/analyzeLegislativeEffectiveness.ts
+├─ tools/monitorLegislativePipeline.ts
+├─ tools/analyzeCommitteeActivity.ts
+├─ tools/trackMepAttendance.ts
+├─ tools/analyzeCountryDelegation.ts
+├─ tools/generatePoliticalLandscape.ts
 ├─ tools/trackLegislation/index.ts
 ├─ tools/trackLegislation/types.ts
 ├─ tools/trackLegislation/procedureTracker.ts
@@ -284,7 +296,7 @@ graph LR
 | utils/auditLogger.ts | ✅ | ✅ | ❌ | ❌ | ❌ | 2/5 |
 | services/MetricsService.ts | ✅ | ✅ | ❌ | ❌ | ❌ | 2/5 |
 | di/container.ts | ✅ | ✅ | ✅ | ❌ | ❌ | 3/5 |
-| tools/*.ts (10 files) | ✅ | ✅ | ✅ | ❌ | ❌ | 3/5 |
+| tools/*.ts (20 files) | ✅ | ✅ | ✅ | ❌ | ❌ | 3/5 |
 | tools/trackLegislation/* | ⚠️ | ⚠️ | ❌ | ❌ | ❌ | 1/5 |
 | tools/generateReport/* | ⚠️ | ⚠️ | ❌ | ❌ | ❌ | 1/5 |
 
