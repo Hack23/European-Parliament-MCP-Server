@@ -247,7 +247,7 @@ graph TB
         end
         
         subgraph "Application Layer"
-            TOOLS[MCP Tools<br/>10 Handlers]
+            TOOLS[MCP Tools<br/>20 Handlers]
             CLIENT[EP API Client<br/>HTTP Client]
         end
         
@@ -2860,7 +2860,7 @@ graph TB
         end
         
         subgraph "Processing Layer"
-            P1[Business Logic<br/>10 Tools]
+            P1[Business Logic<br/>20 Tools]
             P2[API Client<br/>HTTP Client]
             P3[Cache Layer<br/>LRU 15min TTL]
         end
