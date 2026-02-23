@@ -85,20 +85,146 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 This MCP server is part of **[Hack23's](https://hack23.com/)** mission to **disrupt journalism with AI-generated news coverage and real-time analysis of democratic governments** — increasing transparency and accountability through open-source intelligence.
 
-### 🔗 Hack23 Projects
-
-| Project | Description | Link |
-|---------|-------------|------|
-| 🏛️ **EU Parliament Monitor** | AI-powered monitoring of European Parliament activities, voting patterns, and legislative tracking | [euparliamentmonitor.hack23.com](https://euparliamentmonitor.hack23.com/) · [GitHub](https://github.com/Hack23/euparliamentmonitor) |
-| 🇸🇪 **Riksdagsmonitor** | AI-powered monitoring of the Swedish Parliament (Riksdag) — government accountability dashboard | [riksdagsmonitor.com](https://riksdagsmonitor.com/) · [GitHub](https://github.com/Hack23/riksdagsmonitor) |
-| 🕵️ **European Parliament MCP Server** | This project — OSINT intelligence tools for EU Parliament open data via MCP protocol | [npm](https://www.npmjs.com/package/european-parliament-mcp-server) · [GitHub](https://github.com/Hack23/European-Parliament-MCP-Server) |
-| 🔐 **CIA** | Citizen Intelligence Agency — comprehensive political intelligence platform | [cia.hack23.com](https://cia.hack23.com/) · [GitHub](https://github.com/Hack23/cia) |
-
 ### 🎯 Vision: AI-Powered Democratic Transparency
 
 Hack23 builds **open-source intelligence platforms** that enable citizens, journalists, and researchers to monitor democratic institutions in real-time. By combining MCP servers, AI analysis, and open parliamentary data, we create automated intelligence products that were previously only available to well-funded lobbying organizations.
 
 > *"Democratizing access to political intelligence — what used to require a team of analysts can now be done by any citizen with an AI assistant."*
+
+### 🔗 Hack23 Projects
+
+### 🇪🇺 EU Parliament Monitor
+
+<table>
+  <tr>
+    <td width="120" align="center">
+      <img src="https://img.shields.io/badge/EU-Parliament-003399?style=for-the-badge&logo=european-union&logoColor=FFCC00" width="80" alt="EU Parliament Monitor"/>
+      <div>
+        <a href="https://github.com/Hack23/euparliamentmonitor">
+          <img src="https://img.shields.io/github/v/release/Hack23/euparliamentmonitor" alt="Release">
+        </a>
+      </div>
+    </td>
+    <td>
+      <p><strong>European Parliament Intelligence Platform</strong> — an automated multi-language news platform that monitors EU Parliament activities with 14-language support, covering plenary sessions, committee reports, propositions, and breaking news.</p>
+      <div>
+        <a href="https://scorecard.dev/viewer/?uri=github.com/Hack23/euparliamentmonitor">
+          <img src="https://api.securityscorecards.dev/projects/github.com/Hack23/euparliamentmonitor/badge" alt="OpenSSF Scorecard">
+        </a>
+        <a href="https://github.com/Hack23/euparliamentmonitor/attestations">
+          <img src="https://slsa.dev/images/gh-badge-level3.svg" alt="SLSA 3">
+        </a>
+        <a href="https://github.com/Hack23/euparliamentmonitor/license">
+          <img src="https://img.shields.io/github/license/Hack23/euparliamentmonitor" alt="License">
+        </a>
+      </div>
+      <div>
+        <a href="https://euparliamentmonitor.com"><strong>EU Parliament Monitor - News</strong></a> •
+        <a href="https://github.com/Hack23/euparliamentmonitor"><strong>📂 Repository</strong></a> •
+        <a href="https://hack23.com/euparliamentmonitor-features.html"><strong>✨ Features</strong></a> •
+        <a href="https://hack23.com/euparliamentmonitor-docs.html"><strong>📚 Documentation</strong></a>
+      </div>
+    </td>
+  </tr>
+</table>
+
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Hack23/euparliamentmonitor/badge)](https://scorecard.dev/viewer/?uri=github.com/Hack23/euparliamentmonitor)
+[![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://github.com/Hack23/euparliamentmonitor/attestations)
+[![News Generation](https://github.com/Hack23/euparliamentmonitor/actions/workflows/news-generation.yml/badge.svg)](https://github.com/Hack23/euparliamentmonitor/actions/workflows/news-generation.yml)
+[![Test and Report](https://github.com/Hack23/euparliamentmonitor/actions/workflows/test-and-report.yml/badge.svg)](https://github.com/Hack23/euparliamentmonitor/actions/workflows/test-and-report.yml)
+[![License](https://img.shields.io/github/license/Hack23/euparliamentmonitor)](https://github.com/Hack23/euparliamentmonitor/blob/main/LICENSE)
+[![ISMS](https://img.shields.io/badge/Hack23-ISMS-blue)](https://github.com/Hack23/ISMS-PUBLIC)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Hack23/euparliamentmonitor)
+
+
+### 🗳️ Riksdagsmonitor
+
+<table>
+  <tr>
+    <td width="120" align="center">
+      <img src="https://img.shields.io/badge/Riksdag-Monitor-00338D?style=for-the-badge&logo=swedish&logoColor=FECC00" width="80" alt="Riksdagsmonitor"/>
+      <div>
+        <a href="https://riksdagsmonitor.com">
+          <img src="https://img.shields.io/website?url=https://riksdagsmonitor.com" alt="Website Status">
+        </a>
+      </div>
+    </td>
+    <td>
+      <p><strong>Swedish Parliament Intelligence Platform</strong> monitoring political activity in Sweden's Riksdag with systematic transparency through real-time analysis and 50+ years of historical data (1971-2024).</p>
+      <div>
+        <a href="https://scorecard.dev/viewer/?uri=github.com/Hack23/riksdagsmonitor">
+          <img src="https://api.securityscorecards.dev/projects/github.com/Hack23/riksdagsmonitor/badge" alt="OpenSSF Scorecard">
+        </a>
+        <a href="https://github.com/Hack23/riksdagsmonitor/actions/workflows/quality-checks.yml">
+          <img src="https://github.com/Hack23/riksdagsmonitor/actions/workflows/quality-checks.yml/badge.svg" alt="Quality Checks">
+        </a>
+        <a href="https://github.com/Hack23/riksdagsmonitor/license">
+          <img src="https://img.shields.io/github/license/Hack23/riksdagsmonitor" alt="License">
+        </a>
+      </div>
+      <div>
+        <a href="https://riksdagsmonitor.com"><strong>🌐 Riksdags Monitor</strong></a> •
+        <a href="https://riksdagsmonitor.com/news/"><strong>🌐 Riksdags Monitor News</strong></a> •
+        <a href="https://github.com/Hack23/riksdagsmonitor"><strong>📂 Repository</strong></a> •
+        <a href="https://hack23.com/riksdagsmonitor-features.html"><strong>✨ Features</strong></a> •
+        <a href="https://hack23.com/riksdagsmonitor-docs.html"><strong>📚 Documentation</strong></a>
+      </div>
+    </td>
+  </tr>
+</table>
+
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Hack23/riksdagsmonitor/badge)](https://scorecard.dev/viewer/?uri=github.com/Hack23/riksdagsmonitor)
+[![Quality Checks](https://github.com/Hack23/riksdagsmonitor/actions/workflows/quality-checks.yml/badge.svg)](https://github.com/Hack23/riksdagsmonitor/actions/workflows/quality-checks.yml)
+[![Dependency Review](https://github.com/Hack23/riksdagsmonitor/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/Hack23/riksdagsmonitor/actions/workflows/dependency-review.yml)
+[![License](https://img.shields.io/github/license/Hack23/riksdagsmonitor)](https://github.com/Hack23/riksdagsmonitor/blob/main/LICENSE)
+[![ISMS](https://img.shields.io/badge/Hack23-ISMS-blue)](https://github.com/Hack23/ISMS-PUBLIC)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Hack23/riksdagsmonitor)
+
+
+### 🔍 Citizen Intelligence Agency
+
+<table>
+  <tr>
+    <td width="120" align="center">
+      <img src="https://raw.githubusercontent.com/Hack23/cia/refs/heads/master/citizen-intelligence-agency/src/main/webapp/VAADIN/themes/cia/cia-logo.png" width="80" height="80" alt="CIA Logo"/>
+      <div>
+        <a href="https://github.com/Hack23/cia">
+          <img src="https://img.shields.io/github/v/release/Hack23/cia" alt="Release">
+        </a>
+      </div>
+    </td>
+    <td>
+      <p><strong>Political transparency platform</strong> monitoring Swedish political activity with data-driven insights, analytics, dashboard visualizations, and accountability metrics.</p>
+      <div>
+        <a href="https://bestpractices.coreinfrastructure.org/projects/770">
+          <img src="https://bestpractices.coreinfrastructure.org/projects/770/badge" alt="CII Best Practices">
+        </a>
+        <a href="[https://slsa.dev/spec/v1.0/levels](https://github.com/Hack23/cia/attestations)">
+          <img src="https://slsa.dev/images/gh-badge-level3.svg" alt="SLSA 3">
+        </a>
+        <a href="https://sonarcloud.io/summary/new_code?id=Hack23_cia">
+          <img src="https://sonarcloud.io/api/project_badges/measure?project=Hack23_cia&metric=security_rating" alt="Security Rating">
+        </a>
+      </div>
+      <div>
+        <a href="https://github.com/Hack23/cia"><strong>📂 Repository</strong></a> •
+        <a href="https://hack23.com/cia-features.html"><strong>✨ Features</strong></a> •
+        <a href="https://hack23.com/cia-docs.html"><strong>📚 Documentation</strong></a>
+      </div>
+    </td>
+  </tr>
+</table>
+
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/770/badge)](https://bestpractices.coreinfrastructure.org/projects/770)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Hack23/cia/badge)](https://scorecard.dev/viewer/?uri=github.com/Hack23/cia)
+[![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://slsa.dev/spec/v1.0/levels)
+[![Verify & Deploy](https://github.com/Hack23/cia/actions/workflows/release.yml/badge.svg?branch=master)](https://github.com/Hack23/cia/actions/workflows/release.yml)
+[![Scorecard supply-chain security](https://github.com/Hack23/cia/actions/workflows/scorecards.yml/badge.svg?branch=master)](https://github.com/Hack23/cia/actions/workflows/scorecards.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Hack23_cia&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Hack23_cia)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Hack23_cia&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Hack23_cia)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Hack23/cia)
+
+
 
 ---
 
