@@ -140,7 +140,7 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ### 🎯 Key Features
 
-- 🔌 **Full MCP Implementation**: 16 tools (10 core + 6 OSINT intelligence), Resources, and Prompts
+- 🔌 **Full MCP Implementation**: 20 tools (7 core + 3 advanced + 10 OSINT intelligence), 6 Resources, and 6 Prompts
 - 🏛️ **European Parliament Data**: Access to 5 core parliamentary datasets
 - 🕵️ **OSINT Intelligence**: MEP influence scoring, coalition analysis, anomaly detection
 - 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance
@@ -308,6 +308,10 @@ Configure in `.vscode/mcp.json`:
 | [`compare_political_groups`](./API_USAGE_GUIDE.md#tool-compare_political_groups) | Cross-group comparative analysis | groups (required), metrics, dateFrom | Comparison matrix |
 | [`analyze_legislative_effectiveness`](./API_USAGE_GUIDE.md#tool-analyze_legislative_effectiveness) | MEP/committee legislative scoring | subjectId (required), subjectType, dateFrom | Effectiveness score |
 | [`monitor_legislative_pipeline`](./API_USAGE_GUIDE.md#tool-monitor_legislative_pipeline) | Pipeline status & bottleneck detection | committeeId, status, dateFrom | Pipeline status |
+| [`analyze_committee_activity`](./API_USAGE_GUIDE.md#tool-analyze_committee_activity) | Committee workload & engagement analysis | committeeId (required), dateFrom, dateTo | Activity report |
+| [`track_mep_attendance`](./API_USAGE_GUIDE.md#tool-track_mep_attendance) | MEP attendance patterns & trends | mepId, country, groupId, dateFrom, dateTo, limit | Attendance report |
+| [`analyze_country_delegation`](./API_USAGE_GUIDE.md#tool-analyze_country_delegation) | Country delegation voting & composition | country (required), dateFrom, dateTo | Delegation analysis |
+| [`generate_political_landscape`](./API_USAGE_GUIDE.md#tool-generate_political_landscape) | Parliament-wide political landscape | dateFrom, dateTo | Landscape overview |
 
 📖 **[Complete API documentation with examples →](./API_USAGE_GUIDE.md)**
 
@@ -342,9 +346,134 @@ Configure in `.vscode/mcp.json`:
 3. Analyze coalitions: analyze_coalition_dynamics → {politicalGroups: ["EPP", "S&D"]}
 4. Compare groups: compare_political_groups → {groups: ["EPP", "S&D", "Renew"]}
 5. Pipeline status: monitor_legislative_pipeline → {committeeId: "ENVI"}
+6. Country delegation: analyze_country_delegation → {country: "SE"}
+7. Political landscape: generate_political_landscape → {}
 ```
 
 🎯 **[More use cases and examples →](./API_USAGE_GUIDE.md#common-use-cases)**
+
+### 📝 MCP Prompts
+
+Pre-built intelligence analysis prompt templates:
+
+| Prompt | Description | Arguments |
+|--------|-------------|-----------|
+| `mep_briefing` | Comprehensive MEP intelligence briefing | mepId (required), period? |
+| `coalition_analysis` | Coalition dynamics and voting bloc analysis | policyArea?, period? |
+| `legislative_tracking` | Legislative procedure tracking report | procedureId?, committee? |
+| `political_group_comparison` | Multi-dimensional group comparison | groups? |
+| `committee_activity_report` | Committee workload and engagement | committeeId (required) |
+| `voting_pattern_analysis` | Voting pattern trend detection | topic?, mepId? |
+
+### 📦 MCP Resources
+
+Direct data access via EP resource URIs:
+
+| Resource URI | Description |
+|-------------|-------------|
+| `ep://meps` | List of all current MEPs |
+| `ep://meps/{mepId}` | Individual MEP profile |
+| `ep://committees/{committeeId}` | Committee information |
+| `ep://plenary-sessions` | Recent plenary sessions |
+| `ep://votes/{sessionId}` | Voting records for a session |
+| `ep://political-groups` | Political group listing |
+
+---
+
+## 🌍 Hack23 Political Intelligence Ecosystem
+
+This MCP server is part of **[Hack23's](https://hack23.com/)** mission to **disrupt journalism with AI-generated news coverage and real-time analysis of democratic governments** — increasing transparency and accountability through open-source intelligence.
+
+### 🔗 Hack23 Projects
+
+| Project | Description | Link |
+|---------|-------------|------|
+| 🏛️ **EU Parliament Monitor** | AI-powered monitoring of European Parliament activities, voting patterns, and legislative tracking | [euparliamentmonitor.hack23.com](https://euparliamentmonitor.hack23.com/) · [GitHub](https://github.com/Hack23/euparliamentmonitor) |
+| 🇸🇪 **Riksdagsmonitor** | AI-powered monitoring of the Swedish Parliament (Riksdag) — government accountability dashboard | [riksdagsmonitor.com](https://riksdagsmonitor.com/) · [GitHub](https://github.com/Hack23/riksdagsmonitor) |
+| 🕵️ **European Parliament MCP Server** | This project — OSINT intelligence tools for EU Parliament open data via MCP protocol | [npm](https://www.npmjs.com/package/european-parliament-mcp-server) · [GitHub](https://github.com/Hack23/European-Parliament-MCP-Server) |
+| 🔐 **CIA** | Citizen Intelligence Agency — comprehensive political intelligence platform | [cia.hack23.com](https://cia.hack23.com/) · [GitHub](https://github.com/Hack23/cia) |
+
+### 🎯 Vision: AI-Powered Democratic Transparency
+
+Hack23 builds **open-source intelligence platforms** that enable citizens, journalists, and researchers to monitor democratic institutions in real-time. By combining MCP servers, AI analysis, and open parliamentary data, we create automated intelligence products that were previously only available to well-funded lobbying organizations.
+
+> *"Democratizing access to political intelligence — what used to require a team of analysts can now be done by any citizen with an AI assistant."*
+
+---
+
+## 🗺️ Global Political MCP Servers & OSINT Coverage
+
+The European Parliament MCP Server is part of a growing ecosystem of **political and government open data MCP servers** enabling AI-powered OSINT analysis of democratic institutions worldwide. Below is the most comprehensive directory of political and government MCP servers available.
+
+### 🏛️ Parliamentary & Legislative MCP Servers
+
+| Country | Server | Data Source | Coverage |
+|---------|--------|-------------|----------|
+| 🇪🇺 **European Union** | [**European Parliament MCP Server**](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions — **20 OSINT tools** |
+| 🇺🇸 **United States** | [Congress.gov API MCP Server](https://github.com/bsmi021/mcp-congress_gov_server) | congress.gov | Bills, members, votes, committees (TypeScript, v3 API) |
+| 🇺🇸 **United States** | [CongressMCP](https://github.com/amurshak/congressMCP) | congress.gov | Real-time Congress data — bills, votes, members |
+| 🇺🇸 **United States** | [Congress.gov MCP](https://github.com/AshwinSundar/congress_gov_mcp) | congress.gov | Unofficial Congress.gov API access |
+| 🇬🇧 **United Kingdom** | [Parliament MCP](https://github.com/i-dot-ai/parliament-mcp) | parliament.uk | Hansard, members, debates, divisions |
+| 🇸🇪 **Sweden** | [Riksdag & Regering MCP](https://github.com/isakskogstad/Riksdag-Regering-MCP) | riksdagen.se | Swedish Parliament & Government data (used by [riksdagsmonitor.com](https://riksdagsmonitor.com/)) |
+| 🇳🇱 **Netherlands** | [OpenTK MCP](https://github.com/r-huijts/opentk-mcp) | tweedekamer.nl | Dutch Parliament (Tweede Kamer) documents |
+| 🇵🇱 **Poland** | [Parliament of Poland MCP](https://github.com/pkolawa/parliament-poland-mcp-server) | sejm.gov.pl | Members, votes, committees |
+| 🇵🇱 **Poland** | [Sejm MCP](https://github.com/janisz/sejm-mcp) | api.sejm.gov.pl | Parliament data + legislation |
+| 🇮🇱 **Israel** | [Knesset MCP Server](https://github.com/zohar/knesset-mcp) | knesset.gov.il | Knesset parliament API |
+| 🇧🇷 **Brazil** | [Senado BR MCP](https://mcpservers.org/servers/sidneybissoli/senado-br-mcp) | senado.leg.br | Federal Senate — members, proposals, votes |
+
+### 📊 Government Open Data MCP Servers
+
+| Country | Server | Data Source | Coverage |
+|---------|--------|-------------|----------|
+| 🇺🇸 **United States** | [USA Spending MCP](https://github.com/thsmale/usaspending-mcp-server) | usaspending.gov | Federal spending data |
+| 🇺🇸 **United States** | [Open Census MCP](https://mcpservers.org/servers/brockwebb/open-census-mcp-server) | census.gov | Demographics & statistics (natural language) |
+| 🇺🇸 **United States** | [Data.gov MCP Server](https://github.com/melaodoidao/datagov-mcp-server) | data.gov | Federal dataset catalog |
+| 🇺🇸 **United States** | [CMS Data.gov MCP](https://github.com/clarifyhealth/cms-datagov-mcp-server) | data.cms.gov | Healthcare data — search/filter/pagination |
+| 🇺🇸 **United States** | [SEC EDGAR MCP](https://github.com/stefanoamorelli/sec-edgar-mcp) | sec.gov | SEC filings — annual reports, insider data |
+| 🇺🇸 **United States** | [NPS MCP](https://github.com/amysatterlee/nps_mcp) | nps.gov | National Park Service API |
+| 🇸🇪 **Sweden** | [SCB MCP Server](https://mcpservers.org/servers/isakskogstad/scb-mcp) | scb.se | Official Swedish statistics |
+| 🇸🇪 **Sweden** | [Skolverket MCP](https://mcpservers.org/servers/ksaklfszf921/skolverket-mcp) | skolverket.se | Swedish National Agency for Education |
+| 🇫🇷 **France** | [data.gouv.fr MCP](https://github.com/datagouv/datagouv-mcp) | data.gouv.fr | National open data platform |
+| 🇫🇷 **France** | [Data Gouv MCP Server](https://mcpservers.org/servers/csonigo/datagouv-mcp-server) | data.gouv.fr | Companies & organizations search |
+| 🇬🇧 **United Kingdom** | [Planning Data MCP](https://github.com/alizoli/planningdatagovuk-api) | planning.data.gov.uk | Planning & land use data |
+| 🇬🇧 **United Kingdom** | [Property Prices MCP](https://github.com/joemclo/property-prices-mcp) | landregistry.data.gov.uk | Housing price search |
+| 🇳🇱 **Netherlands** | [CBS Open Data MCP](https://github.com/dstotijn/mcp-cbs-cijfers-open-data) | cbs.nl | Dutch statistics bureau |
+| 🇮🇱 **Israel** | [Data.gov.il MCP](https://github.com/DavidOsherProceed/data-gov-il-mcp) | data.gov.il | National CKAN data portal |
+| 🇮🇱 **Israel** | [DataGov Israel MCP](https://github.com/aviveldan/datagov-mcp) | data.gov.il | Alternative implementation + visualization |
+| 🇮🇱 **Israel** | [Israel Statistics MCP](https://github.com/reuvenaor/israel-statistics-mcp) | cbs.gov.il | CPI & economic time series |
+| 🇮🇱 **Israel** | [BudgetKey MCP](https://github.com/OpenBudget/budgetkey-mcp) | open-budget.org.il | State budget, contracts, grants |
+| 🇹🇷 **Turkey** | [Mevzuat MCP](https://mcpservers.org/servers/MCP-Mirror/saidsurucu_mevzuat-mcp) | mevzuat.gov.tr | Legislation system — search/retrieve laws |
+| 🇭🇰 **Hong Kong** | [HK Data.gov.hk MCP](https://github.com/hkopenai/hk-datagovhk-mcp-server) | data.gov.hk | Hong Kong open data portal |
+| 🇲🇾 **Malaysia** | [Data.gov.my MCP](https://github.com/manfye/data-dosm-mcp-nodejs) | data.gov.my | National data portal |
+| 🇮🇳 **India** | [Data.gov.in MCP](https://github.com/adwait-ai/mcp_data_gov_in) | data.gov.in | Semantic search + dataset access |
+| 🇸🇬 **Singapore** | [Gahmen MCP Server](https://github.com/aniruddha-adhikary/gahmen-mcp) | data.gov.sg | Government datasets + CKAN search |
+| 🇸🇬 **Singapore** | [Singapore Data MCPs](https://github.com/prezgamer/Singapore-Data-MCPs) | data.gov.sg | Multiple servers (parking, health, datasets) |
+| 🇦🇺 **Australia** | [ABS MCP Server](https://github.com/seansoreilly/mcp-server-abs) | abs.gov.au | Bureau of Statistics (SDMX-ML) |
+
+### 🌍 Multi-Portal & Generic MCP Servers
+
+| Scope | Server | Platform | Coverage |
+|-------|--------|----------|----------|
+| 🌐 **Global (CKAN)** | [CKAN MCP Server](https://github.com/ondata/ckan-mcp-server) | CKAN portals | Generic server for any CKAN-based open data portal |
+| 🌐 **Global (Socrata)** | [OpenGov MCP Server](https://github.com/srobbin/opengov-mcp-server) | Socrata portals | City/county/state/federal Socrata-powered portals |
+
+### 🕵️ OSINT Intelligence Capabilities Comparison
+
+| Capability | 🇪🇺 EU Parliament MCP | 🇺🇸 Congress.gov MCP | 🇬🇧 UK Parliament MCP | 🇸🇪 Riksdag MCP |
+|------------|----------------------|---------------------|----------------------|-----------------|
+| Member profiling | ✅ 5-dimension influence model | ✅ Basic profiles | ✅ Basic profiles | ✅ Basic profiles |
+| Voting analysis | ✅ Anomaly detection + patterns | ✅ Roll call votes | ✅ Division records | ✅ Vote records |
+| Coalition dynamics | ✅ Cohesion & stress analysis | ❌ | ❌ | ❌ |
+| Committee intelligence | ✅ Workload & engagement metrics | ✅ Committee data | ✅ Committee data | ❌ |
+| Legislative pipeline | ✅ Bottleneck detection + forecasting | ✅ Bill tracking | ✅ Bill tracking | ✅ Bill tracking |
+| Country delegation analysis | ✅ National cohesion metrics | N/A | N/A | N/A |
+| Political landscape | ✅ Parliament-wide situational awareness | ❌ | ❌ | ❌ |
+| Attendance tracking | ✅ Trend detection + engagement scoring | ❌ | ❌ | ❌ |
+| GDPR compliance | ✅ Privacy-first design | N/A | N/A | ✅ |
+| MCP prompts & resources | ✅ 6 prompts + 6 resources | ❌ | ❌ | ❌ |
+| OSINT tool count | **20 tools** | ~5 tools | ~5 tools | ~4 tools |
+
+> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **20 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, and political landscape generation. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
 
 ---
 
@@ -588,6 +717,12 @@ This project is licensed under the **Apache License 2.0** - see [LICENSE.md](./L
 - [Discussions](https://github.com/Hack23/European-Parliament-MCP-Server/discussions)
 - [Security Policy](./SECURITY.md)
 
+### Hack23 Ecosystem
+- [Hack23](https://hack23.com/) — AI-powered democratic transparency platform
+- [EU Parliament Monitor](https://github.com/Hack23/euparliamentmonitor) — European Parliament monitoring dashboard
+- [Riksdagsmonitor](https://riksdagsmonitor.com/) · [GitHub](https://github.com/Hack23/riksdagsmonitor) — Swedish Parliament monitoring
+- [Citizen Intelligence Agency](https://github.com/Hack23/cia) — Comprehensive political intelligence platform
+
 ### European Parliament
 - [Open Data Portal](https://data.europarl.europa.eu/)
 - [Developer Corner](https://data.europarl.europa.eu/en/developer-corner)
@@ -597,6 +732,16 @@ This project is licensed under the **Apache License 2.0** - see [LICENSE.md](./L
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
 - [MCP SDK](https://github.com/modelcontextprotocol/sdk)
 - [MCP Documentation](https://modelcontextprotocol.io/docs)
+
+### Political & Government MCP Servers
+- [Congress.gov API MCP Server](https://github.com/bsmi021/mcp-congress_gov_server) — US Congress data (TypeScript)
+- [UK Parliament MCP](https://github.com/i-dot-ai/parliament-mcp) — UK Hansard, members, debates
+- [Riksdag & Regering MCP](https://github.com/isakskogstad/Riksdag-Regering-MCP) — Swedish Parliament data
+- [Parliament of Poland MCP](https://github.com/pkolawa/parliament-poland-mcp-server) — Polish Parliament data
+- [OpenTK MCP](https://github.com/r-huijts/opentk-mcp) — Dutch Parliament (Tweede Kamer) documents
+- [Knesset MCP](https://github.com/zohar/knesset-mcp) — Israeli Parliament data
+- [CKAN MCP Server](https://github.com/ondata/ckan-mcp-server) — Generic CKAN portal access
+- [OpenGov MCP Server](https://github.com/srobbin/opengov-mcp-server) — Socrata-powered portals
 
 ### Hack23 ISMS
 - [ISMS Policies](https://github.com/Hack23/ISMS-PUBLIC)

@@ -171,6 +171,16 @@ Tests for component interactions (API client + tool handlers).
 | `track_legislation` | ✅ | ✅ | ✅ | Complete |
 | `get_mep_details` | ✅ | ✅ | ✅ | Complete |
 | `generate_report` | ✅ | ✅ | ✅ | Complete |
+| `assess_mep_influence` | ✅ | ✅ | ✅ | Complete |
+| `analyze_coalition_dynamics` | ✅ | ✅ | ✅ | Complete |
+| `detect_voting_anomalies` | ✅ | ✅ | ✅ | Complete |
+| `compare_political_groups` | ✅ | ✅ | ✅ | Complete |
+| `analyze_legislative_effectiveness` | ✅ | ✅ | ✅ | Complete |
+| `monitor_legislative_pipeline` | ✅ | ✅ | ✅ | Complete |
+| `analyze_committee_activity` | ✅ | ✅ | ✅ | Complete |
+| `track_mep_attendance` | ✅ | ✅ | ✅ | Complete |
+| `analyze_country_delegation` | ✅ | ✅ | ✅ | Complete |
+| `generate_political_landscape` | ✅ | ✅ | ✅ | Complete |
 
 ### **🌐 API Client Tests**
 
@@ -204,7 +214,7 @@ Tests for component interactions (API client + tool handlers).
 
 | Test | Description | Timeout |
 |------|-------------|---------|
-| Full workflow | All 10 tools sequentially | 65s |
+| Full workflow | All 20 tools sequentially | 65s |
 | MEP queries | Country/group filtering | 65s |
 | Voting records | Vote data retrieval | 65s |
 | Document search | Text search functionality | 65s |

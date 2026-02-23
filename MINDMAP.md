@@ -35,25 +35,44 @@ This mind map visualizes the conceptual relationships and organizational structu
 mindmap
   root((European Parliament<br/>MCP Server))
     MCP Protocol
-      Tools
-        get_meps
-        get_mep_details
-        get_plenary_sessions
-        get_voting_records
-        search_documents
-        get_committee_info
-        get_parliamentary_questions
-        analyze_voting_patterns
-        track_legislation
-        generate_report
-      Resources
-        EP API Endpoints
-        Cached Data
-        System Metrics
-      Prompts
-        Query Templates
-        Usage Examples
-        Best Practices
+      Tools 20 MCP Tools
+        Core Data Tools
+          get_meps
+          get_mep_details
+          get_plenary_sessions
+          get_voting_records
+          search_documents
+          get_committee_info
+          get_parliamentary_questions
+        Advanced Analysis Tools
+          analyze_voting_patterns
+          track_legislation
+          generate_report
+        OSINT Intelligence Tools
+          assess_mep_influence
+          analyze_coalition_dynamics
+          detect_voting_anomalies
+          compare_political_groups
+          analyze_legislative_effectiveness
+          monitor_legislative_pipeline
+          analyze_committee_activity
+          track_mep_attendance
+          analyze_country_delegation
+          generate_political_landscape
+      Resources 6 MCP Resources
+        ep://meps MEP listings
+        ep://meps/mepId MEP details
+        ep://committees/committeeId Committee details
+        ep://plenary-sessions Session data
+        ep://votes/sessionId Vote records
+        ep://political-groups Group info
+      Prompts 6 MCP Prompts
+        mep_briefing
+        coalition_analysis
+        legislative_tracking
+        political_group_comparison
+        committee_activity_report
+        voting_pattern_analysis
       
     European Parliament Domain
       Entities

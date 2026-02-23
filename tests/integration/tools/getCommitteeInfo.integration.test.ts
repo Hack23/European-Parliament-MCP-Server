@@ -19,7 +19,7 @@ const describeIntegration = shouldRunIntegrationTests() ? describe : describe.sk
 describeIntegration('get_committee_info Integration Tests', () => {
   beforeEach(async () => {
     // Wait between tests to respect rate limits
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   });
 
   describe('Committee Retrieval by ID', () => {

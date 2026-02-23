@@ -26,7 +26,7 @@ const describeIntegration = shouldRunIntegrationTests() ? describe : describe.sk
 describeIntegration('track_legislation Integration Tests', () => {
   beforeEach(async () => {
     // Wait between tests to respect rate limits
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   });
 
   describe('Legislative Procedure Tracking', () => {
@@ -139,13 +139,13 @@ describeIntegration('track_legislation Integration Tests', () => {
       expect(procedure).toHaveProperty('procedureId');
       expect(procedure).toHaveProperty('title');
       expect(procedure).toHaveProperty('type');
-      expect(procedure).toHaveProperty('stage');
+      expect(procedure).toHaveProperty('currentStage');
 
       // Type validation
       expect(typeof (procedure as { procedureId: unknown }).procedureId).toBe('string');
       expect(typeof (procedure as { title: unknown }).title).toBe('string');
       expect(typeof (procedure as { type: unknown }).type).toBe('string');
-      expect(typeof (procedure as { stage: unknown }).stage).toBe('string');
+      expect(typeof (procedure as { currentStage: unknown }).currentStage).toBe('string');
     }, 30000);
   });
 

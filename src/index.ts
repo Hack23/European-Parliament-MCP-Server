@@ -25,6 +25,10 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
+  ListPromptsRequestSchema,
+  GetPromptRequestSchema,
+  ListResourceTemplatesRequestSchema,
+  ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { fileURLToPath } from 'url';
 import { resolve } from 'path';
@@ -48,12 +52,25 @@ import { handleDetectVotingAnomalies, detectVotingAnomaliesToolMetadata } from '
 import { handleComparePoliticalGroups, comparePoliticalGroupsToolMetadata } from './tools/comparePoliticalGroups.js';
 import { handleAnalyzeLegislativeEffectiveness, analyzeLegislativeEffectivenessToolMetadata } from './tools/analyzeLegislativeEffectiveness.js';
 import { handleMonitorLegislativePipeline, monitorLegislativePipelineToolMetadata } from './tools/monitorLegislativePipeline.js';
-// Export types for public API
+// Phase 2 OSINT Intelligence Tools
+import { handleAnalyzeCommitteeActivity, analyzeCommitteeActivityToolMetadata } from './tools/analyzeCommitteeActivity.js';
+import { handleTrackMepAttendance, trackMepAttendanceToolMetadata } from './tools/trackMepAttendance.js';
+// Phase 3 OSINT Intelligence Tools
+import { handleAnalyzeCountryDelegation, analyzeCountryDelegationToolMetadata } from './tools/analyzeCountryDelegation.js';
+import { handleGeneratePoliticalLandscape, generatePoliticalLandscapeToolMetadata } from './tools/generatePoliticalLandscape.js';
+// MCP Prompts
+import { getPromptMetadataArray, handleGetPrompt } from './prompts/index.js';
+// MCP Resources
+import { getResourceTemplateArray, handleReadResource } from './resources/index.js';
+/** Re-export all public types, branded identifiers, and error classes */
 export type * from './types/index.js';
+/** Re-export all runtime type guards, factory functions, and error utilities */
 export * from './types/index.js';
 
-const SERVER_NAME = 'european-parliament-mcp-server';
-const SERVER_VERSION = '0.0.4';
+/** @internal Server name constant */
+export const SERVER_NAME = 'european-parliament-mcp-server';
+/** @internal Server version constant */
+export const SERVER_VERSION = '0.4.0';
 
 /**
  * Number of core tools (non-advanced analysis tools)
@@ -128,7 +145,7 @@ function showVersion(): void {
  * Get tool metadata array
  * @internal
  */
-function getToolMetadataArray(): { name: string; description: string; inputSchema: unknown }[] {
+export function getToolMetadataArray(): { name: string; description: string; inputSchema: unknown }[] {
   return [
     // Core tools
     getMEPsToolMetadata,
@@ -148,7 +165,13 @@ function getToolMetadataArray(): { name: string; description: string; inputSchem
     detectVotingAnomaliesToolMetadata,
     comparePoliticalGroupsToolMetadata,
     analyzeLegislativeEffectivenessToolMetadata,
-    monitorLegislativePipelineToolMetadata
+    monitorLegislativePipelineToolMetadata,
+    // Phase 2 OSINT Intelligence Tools
+    analyzeCommitteeActivityToolMetadata,
+    trackMepAttendanceToolMetadata,
+    // Phase 3 OSINT Intelligence Tools
+    analyzeCountryDelegationToolMetadata,
+    generatePoliticalLandscapeToolMetadata
   ];
 }
 
@@ -158,6 +181,8 @@ function getToolMetadataArray(): { name: string; description: string; inputSchem
 function showHealth(): void {
   const tools = getToolMetadataArray();
   const advancedToolCount = tools.length - CORE_TOOL_COUNT;
+  const prompts = getPromptMetadataArray();
+  const resourceTemplates = getResourceTemplateArray();
   
   const health = {
     name: SERVER_NAME,
@@ -168,6 +193,12 @@ function showHealth(): void {
       total: tools.length,
       core: CORE_TOOL_COUNT,
       advanced: advancedToolCount
+    },
+    prompts: {
+      total: prompts.length
+    },
+    resources: {
+      templates: resourceTemplates.length
     },
     environment: {
       nodeVersion: process.version,
@@ -190,8 +221,9 @@ function showHealth(): void {
  * Sanitize URL to remove credentials
  * @param urlString - URL to sanitize
  * @returns Sanitized URL without credentials
+ * @internal
  */
-function sanitizeUrl(urlString: string): string {
+export function sanitizeUrl(urlString: string): string {
   try {
     const url = new URL(urlString);
     // Remove username and password
@@ -305,6 +337,50 @@ class EuropeanParliamentMCPServer {
         throw new Error(`Tool execution failed: ${String(error)}`);
       }
     });
+
+    // List available prompts
+    this.server.setRequestHandler(ListPromptsRequestSchema, () => {
+      return Promise.resolve({
+        prompts: getPromptMetadataArray(),
+      });
+    });
+
+    // Handle prompt requests
+    this.server.setRequestHandler(GetPromptRequestSchema, (request) => {
+      const { name, arguments: args } = request.params;
+
+      try {
+        return Promise.resolve(handleGetPrompt(name, args));
+      } catch (error) {
+        console.error(`[ERROR] Prompt ${name} failed:`, error);
+        if (error instanceof Error) {
+          throw error;
+        }
+        throw new Error(`Prompt execution failed: ${String(error)}`);
+      }
+    });
+
+    // List resource templates
+    this.server.setRequestHandler(ListResourceTemplatesRequestSchema, () => {
+      return Promise.resolve({
+        resourceTemplates: getResourceTemplateArray(),
+      });
+    });
+
+    // Handle resource reads
+    this.server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+      const { uri } = request.params;
+
+      try {
+        return await handleReadResource(uri);
+      } catch (error) {
+        console.error(`[ERROR] Resource ${uri} failed:`, error);
+        if (error instanceof Error) {
+          throw error;
+        }
+        throw new Error(`Resource read failed: ${String(error)}`);
+      }
+    });
   }
 
   /**
@@ -338,7 +414,13 @@ class EuropeanParliamentMCPServer {
       'detect_voting_anomalies': handleDetectVotingAnomalies,
       'compare_political_groups': handleComparePoliticalGroups,
       'analyze_legislative_effectiveness': handleAnalyzeLegislativeEffectiveness,
-      'monitor_legislative_pipeline': handleMonitorLegislativePipeline
+      'monitor_legislative_pipeline': handleMonitorLegislativePipeline,
+      // Phase 2 OSINT Intelligence Tools
+      'analyze_committee_activity': handleAnalyzeCommitteeActivity,
+      'track_mep_attendance': handleTrackMepAttendance,
+      // Phase 3 OSINT Intelligence Tools
+      'analyze_country_delegation': handleAnalyzeCountryDelegation,
+      'generate_political_landscape': handleGeneratePoliticalLandscape
     };
     
     const handler = toolHandlers[name];
@@ -381,11 +463,15 @@ class EuropeanParliamentMCPServer {
 
     const tools = getToolMetadataArray();
     const advancedToolCount = tools.length - CORE_TOOL_COUNT;
+    const prompts = getPromptMetadataArray();
+    const resourceTemplates = getResourceTemplateArray();
 
     // Log to stderr (stdout is used for MCP protocol)
     console.error(`${SERVER_NAME} v${SERVER_VERSION} started`);
     console.error('Server ready to handle requests');
     console.error(`Available tools: ${String(tools.length)} (${String(CORE_TOOL_COUNT)} core + ${String(advancedToolCount)} advanced analysis)`);
+    console.error(`Available prompts: ${String(prompts.length)}`);
+    console.error(`Available resource templates: ${String(resourceTemplates.length)}`);
   }
 }
 

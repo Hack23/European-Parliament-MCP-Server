@@ -9,7 +9,7 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { MCPTestClient } from './mcpClient.js';
-import { parsePaginatedMCPResponse, parseMCPResponse, validateMCPResponse } from '../helpers/testUtils.js';
+import { parsePaginatedMCPResponse, parseMCPResponse, validateMCPResponse, retryOrSkip } from '../helpers/testUtils.js';
 import type { MEP } from '../../src/types/europeanParliament.js';
 
 /**
@@ -38,9 +38,11 @@ describe('MEP Query E2E Tests', () => {
 
   describe('get_meps Tool', () => {
     it('should retrieve MEPs via MCP client', async () => {
-      const response = await client.callTool('get_meps', {
-        limit: 5
-      });
+      const response = await retryOrSkip(
+        () => client.callTool('get_meps', { limit: 5 }),
+        'get_meps retrieve'
+      );
+      if (response === undefined) return; // Skipped due to rate limit/timeout
 
       validateMCPResponse(response);
       expect(response.content).toBeDefined();
@@ -53,10 +55,11 @@ describe('MEP Query E2E Tests', () => {
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should filter MEPs by country', async () => {
-      const response = await client.callTool('get_meps', {
-        country: 'SE',
-        limit: 10
-      });
+      const response = await retryOrSkip(
+        () => client.callTool('get_meps', { country: 'SE', limit: 10 }),
+        'get_meps filter by country'
+      );
+      if (response === undefined) return; // Skipped due to rate limit/timeout
 
       validateMCPResponse(response);
       const data = parsePaginatedMCPResponse<MEP>(response.content);
@@ -84,10 +87,11 @@ describe('MEP Query E2E Tests', () => {
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should handle pagination parameters', async () => {
-      const response = await client.callTool('get_meps', {
-        limit: 3,
-        offset: 0
-      });
+      const response = await retryOrSkip(
+        () => client.callTool('get_meps', { limit: 3, offset: 0 }),
+        'get_meps pagination'
+      );
+      if (response === undefined) return; // Skipped due to rate limit/timeout
 
       validateMCPResponse(response);
       const data = parsePaginatedMCPResponse<MEP>(response.content);
@@ -101,7 +105,11 @@ describe('MEP Query E2E Tests', () => {
   describe('get_mep_details Tool', () => {
     it('should retrieve detailed MEP information', async () => {
       // First get a MEP ID
-      const listResponse = await client.callTool('get_meps', { limit: 1 });
+      const listResponse = await retryOrSkip(
+        () => client.callTool('get_meps', { limit: 1 }),
+        'get_meps for MEP details'
+      );
+      if (listResponse === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(listResponse);
       const meps = parsePaginatedMCPResponse<MEP>(listResponse.content);
       
@@ -148,7 +156,11 @@ describe('MEP Query E2E Tests', () => {
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should return valid MCP response format', async () => {
-      const response = await client.callTool('get_meps', { limit: 1 });
+      const response = await retryOrSkip(
+        () => client.callTool('get_meps', { limit: 1 }),
+        'get_meps MCP format'
+      );
+      if (response === undefined) return; // Skipped due to rate limit/timeout
 
       // MCP response should have content array
       expect(response).toHaveProperty('content');
@@ -178,7 +190,11 @@ describe('MEP Query E2E Tests', () => {
 
   describe('Data Validation', () => {
     it('should return valid MEP data structure', async () => {
-      const response = await client.callTool('get_meps', { limit: 5 });
+      const response = await retryOrSkip(
+        () => client.callTool('get_meps', { limit: 5 }),
+        'get_meps data validation'
+      );
+      if (response === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(response);
       const data = parsePaginatedMCPResponse<MEP>(response.content);
 

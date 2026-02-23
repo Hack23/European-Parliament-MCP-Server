@@ -322,4 +322,4 @@ vi.mocked(epClient.getMEPs).mockResolvedValue({
 
 **Last Updated:** 2026-02-17  
 **API Version:** v2  
-**MCP Server Version:** 0.0.1
+**MCP Server Version:** 0.4.0

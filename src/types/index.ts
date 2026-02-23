@@ -30,7 +30,7 @@
  * @see {@link errors} - Custom error classes
  */
 
-// Export branded types
+/** Branded type definitions for compile-time type safety of EP entity identifiers */
 export type {
   Brand,
   MEPID,
@@ -40,6 +40,7 @@ export type {
   GroupID
 } from './branded.js';
 
+/** Type guard and factory functions for branded EP entity identifiers */
 export {
   isMEPID,
   isSessionID,
@@ -53,7 +54,7 @@ export {
   createGroupID
 } from './branded.js';
 
-// Export error classes
+/** Structured error classes for MCP-compliant error responses with GDPR-safe sanitization */
 export {
   MCPServerError,
   ValidationError,

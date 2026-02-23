@@ -46,13 +46,21 @@ import type {
  * These constants serve as the single source of truth for default values,
  * preventing documentation drift and ensuring consistency.
  */
+/** Default base URL for European Parliament Open Data Portal API v2 */
 export const DEFAULT_EP_API_BASE_URL = 'https://data.europarl.europa.eu/api/v2/';
+/** Default HTTP request timeout in milliseconds (10 seconds) */
 export const DEFAULT_REQUEST_TIMEOUT_MS = 10000; // 10 seconds
+/** Whether automatic retry on transient failures is enabled by default */
 export const DEFAULT_RETRY_ENABLED = true;
+/** Default maximum number of retry attempts for failed requests */
 export const DEFAULT_MAX_RETRIES = 2;
+/** Default cache time-to-live in milliseconds (15 minutes) */
 export const DEFAULT_CACHE_TTL_MS = 900000; // 15 minutes
+/** Default maximum number of entries in the LRU response cache */
 export const DEFAULT_MAX_CACHE_SIZE = 500;
+/** Default rate limit token bucket size (requests per interval) */
 export const DEFAULT_RATE_LIMIT_TOKENS = 100;
+/** Default rate limit interval unit */
 export const DEFAULT_RATE_LIMIT_INTERVAL = 'minute' as const;
 
 /**

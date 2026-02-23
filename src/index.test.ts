@@ -1,141 +1,161 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
+import {
+  SERVER_NAME,
+  SERVER_VERSION,
+  getToolMetadataArray,
+  sanitizeUrl
+} from './index.js';
 
 /**
- * Tests for European Parliament MCP Server
+ * Tests for European Parliament MCP Server index module
  * 
- * Comprehensive unit tests for MCP server functionality
+ * Tests exported functions and constants. The MCP Server class
+ * and handlers are tested via E2E tests.
  */
 
-describe('European Parliament MCP Server', () => {
-  let serverModule: unknown;
-
-  beforeEach(async () => {
-    // Import the server module fresh for each test
-    serverModule = await import('./index.js');
+describe('Server Constants', () => {
+  it('should export correct server name', () => {
+    expect(SERVER_NAME).toBe('european-parliament-mcp-server');
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
+  it('should export valid semver version', () => {
+    expect(SERVER_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
+  });
+});
+
+describe('getToolMetadataArray', () => {
+  it('should return 20 tools', () => {
+    const tools = getToolMetadataArray();
+    expect(tools).toHaveLength(20);
   });
 
-  it('should have basic structure', () => {
-    expect(true).toBe(true);
+  it('should have unique non-empty tool names', () => {
+    const tools = getToolMetadataArray();
+    const names = tools.map(t => t.name);
+    expect(new Set(names).size).toBe(names.length);
+    for (const name of names) {
+      expect(name.length).toBeGreaterThan(0);
+    }
   });
 
-  it('should be able to import server module', () => {
-    expect(serverModule).toBeDefined();
+  it('should use snake_case naming convention', () => {
+    const tools = getToolMetadataArray();
+    for (const tool of tools) {
+      expect(tool.name).toMatch(/^[a-z][a-z0-9_]*$/);
+    }
   });
 
-  it('should export server constants', () => {
-    // The module should be defined even if it doesn't export specific constants
-    // This validates the module structure
-    expect(typeof serverModule).toBe('object');
+  it('should have non-empty descriptions for all tools', () => {
+    const tools = getToolMetadataArray();
+    for (const tool of tools) {
+      expect(tool.description.length).toBeGreaterThan(10);
+    }
+  });
+
+  it('should have inputSchema with type=object for all tools', () => {
+    const tools = getToolMetadataArray();
+    for (const tool of tools) {
+      expect(tool.inputSchema).toBeDefined();
+      const schema = tool.inputSchema as Record<string, unknown>;
+      expect(schema['type']).toBe('object');
+    }
+  });
+
+  it('should include all 7 core tools', () => {
+    const tools = getToolMetadataArray();
+    const names = tools.map(t => t.name);
+    expect(names).toContain('get_meps');
+    expect(names).toContain('get_mep_details');
+    expect(names).toContain('get_plenary_sessions');
+    expect(names).toContain('get_voting_records');
+    expect(names).toContain('search_documents');
+    expect(names).toContain('get_committee_info');
+    expect(names).toContain('get_parliamentary_questions');
+  });
+
+  it('should include all 3 advanced tools', () => {
+    const tools = getToolMetadataArray();
+    const names = tools.map(t => t.name);
+    expect(names).toContain('analyze_voting_patterns');
+    expect(names).toContain('track_legislation');
+    expect(names).toContain('generate_report');
+  });
+
+  it('should include all 6 Phase 1 OSINT tools', () => {
+    const tools = getToolMetadataArray();
+    const names = tools.map(t => t.name);
+    expect(names).toContain('assess_mep_influence');
+    expect(names).toContain('analyze_coalition_dynamics');
+    expect(names).toContain('detect_voting_anomalies');
+    expect(names).toContain('compare_political_groups');
+    expect(names).toContain('analyze_legislative_effectiveness');
+    expect(names).toContain('monitor_legislative_pipeline');
+  });
+
+  it('should include Phase 2 OSINT tools', () => {
+    const tools = getToolMetadataArray();
+    const names = tools.map(t => t.name);
+    expect(names).toContain('analyze_committee_activity');
+    expect(names).toContain('track_mep_attendance');
+  });
+
+  it('should include Phase 3 OSINT tools', () => {
+    const tools = getToolMetadataArray();
+    const names = tools.map(t => t.name);
+    expect(names).toContain('analyze_country_delegation');
+    expect(names).toContain('generate_political_landscape');
+  });
+});
+
+describe('sanitizeUrl', () => {
+  it('should return URL without credentials', () => {
+    const result = sanitizeUrl('https://user:pass@example.com/api');
+    expect(result).not.toContain('user');
+    expect(result).not.toContain('pass');
+    expect(result).toContain('example.com/api');
+  });
+
+  it('should strip query parameters', () => {
+    const result = sanitizeUrl('https://example.com/api?token=secret');
+    expect(result).not.toContain('token');
+    expect(result).not.toContain('secret');
+  });
+
+  it('should strip fragment', () => {
+    const result = sanitizeUrl('https://example.com/api#secret');
+    expect(result).not.toContain('secret');
+  });
+
+  it('should handle valid URLs without credentials', () => {
+    const url = 'https://data.europarl.europa.eu/api/v2/';
+    const result = sanitizeUrl(url);
+    expect(result).toBe(url);
+  });
+
+  it('should handle malformed URLs safely', () => {
+    const result = sanitizeUrl('not-a-url?token=secret');
+    expect(result).not.toContain('token');
+    expect(result).toBe('not-a-url');
+  });
+
+  it('should handle URLs with both query and fragment', () => {
+    const result = sanitizeUrl('https://example.com/api?key=val#frag');
+    expect(result).not.toContain('key');
+    expect(result).not.toContain('frag');
   });
 });
 
 describe('MCP Protocol Implementation', () => {
-  it('should handle tool registration', async () => {
-    // This test validates that the server can be instantiated
-    // The actual server is started in the module, so we just verify the import works
-    const module = await import('./index.js');
-    expect(module).toBeDefined();
-  });
-
-  it('should support get_meps tool', async () => {
-    // Validate the server module loads successfully
-    // The get_meps tool is registered in setupHandlers()
-    const module = await import('./index.js');
-    expect(module).toBeDefined();
-  });
-});
-
-describe('Type Safety', () => {
-  it('should enforce TypeScript strict mode', () => {
-    // This test passes if TypeScript compilation succeeds
-    // TypeScript strict mode is configured in tsconfig.json
-    expect(true).toBe(true);
-  });
-
-  it('should have proper type definitions', () => {
-    // Validate that types are enforced
-    const testNumber = 42;
-    const testString = 'test';
-    expect(testNumber).toBe(42);
-    expect(testString).toBe('test');
+  it('should have tool registration for all 20 tools', () => {
+    const tools = getToolMetadataArray();
+    expect(tools.length).toBe(20);
   });
 });
 
 describe('Error Handling', () => {
   it('should handle errors gracefully', () => {
-    // Basic error handling test
     expect(() => {
       throw new Error('test error');
     }).toThrow('test error');
-  });
-
-  it('should validate error types', () => {
-    const error = new Error('Test error');
-    expect(error).toBeInstanceOf(Error);
-    expect(error.message).toBe('Test error');
-  });
-});
-
-describe('Server Configuration', () => {
-  it('should have correct server name', () => {
-    // Validate server configuration constants
-    const serverName = 'european-parliament-mcp-server';
-    expect(serverName).toBe('european-parliament-mcp-server');
-  });
-
-  it('should have correct version', () => {
-    // Validate version
-    const version = '1.0.0';
-    expect(version).toMatch(/^\d+\.\d+\.\d+$/);
-  });
-});
-
-describe('Tool Arguments', () => {
-  it('should validate country code format', () => {
-    // Test ISO 3166-1 alpha-2 country code validation
-    const validCountryCode = 'SE';
-    expect(validCountryCode).toHaveLength(2);
-    expect(validCountryCode).toMatch(/^[A-Z]{2}$/);
-  });
-
-  it('should validate limit parameter', () => {
-    // Test limit parameter validation
-    const limit = 50;
-    expect(limit).toBeGreaterThanOrEqual(1);
-    expect(limit).toBeLessThanOrEqual(100);
-  });
-
-  it('should handle optional parameters', () => {
-    // Test optional parameter handling
-    const optionalParam: string | undefined = undefined;
-    expect(optionalParam).toBeUndefined();
-    
-    const definedParam: string | undefined = 'test';
-    expect(definedParam).toBeDefined();
-  });
-});
-
-describe('Response Format', () => {
-  it('should format JSON responses correctly', () => {
-    const response = {
-      status: 'success',
-      message: 'Test message',
-      data: { meps: [] }
-    };
-    
-    const jsonString = JSON.stringify(response, null, 2);
-    expect(jsonString).toContain('status');
-    expect(jsonString).toContain('message');
-    expect(jsonString).toContain('data');
-  });
-
-  it('should handle empty responses', () => {
-    const emptyResponse = { meps: [] };
-    expect(emptyResponse.meps).toHaveLength(0);
-    expect(Array.isArray(emptyResponse.meps)).toBe(true);
   });
 });

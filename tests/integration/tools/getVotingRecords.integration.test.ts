@@ -24,7 +24,7 @@ describeIntegration('get_voting_records Integration Tests', () => {
 
   beforeEach(async () => {
     // Wait between tests to respect rate limits
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Use a stable hard-coded sessionId for testing since getVotingRecords uses mock data
     if (!testSessionId) {
