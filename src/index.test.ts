@@ -29,10 +29,13 @@ describe('getToolMetadataArray', () => {
     expect(tools).toHaveLength(20);
   });
 
-  it('should have unique tool names', () => {
+  it('should have unique non-empty tool names', () => {
     const tools = getToolMetadataArray();
     const names = tools.map(t => t.name);
     expect(new Set(names).size).toBe(names.length);
+    for (const name of names) {
+      expect(name.length).toBeGreaterThan(0);
+    }
   });
 
   it('should use snake_case naming convention', () => {
@@ -52,8 +55,9 @@ describe('getToolMetadataArray', () => {
   it('should have inputSchema with type=object for all tools', () => {
     const tools = getToolMetadataArray();
     for (const tool of tools) {
-      const schema = tool.inputSchema as { type: string };
-      expect(schema.type).toBe('object');
+      expect(tool.inputSchema).toBeDefined();
+      const schema = tool.inputSchema as Record<string, unknown>;
+      expect(schema['type']).toBe('object');
     }
   });
 
@@ -108,7 +112,7 @@ describe('sanitizeUrl', () => {
     const result = sanitizeUrl('https://user:pass@example.com/api');
     expect(result).not.toContain('user');
     expect(result).not.toContain('pass');
-    expect(result).toContain('example.com');
+    expect(result).toContain('example.com/api');
   });
 
   it('should strip query parameters', () => {
