@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Model Context Protocol Server for European Parliament Open Data</strong><br>
-  <em>Providing AI assistants with structured access to parliamentary datasets</em>
+  <em>Providing AI assistants with structured access to parliamentary datasets and OSINT Intelligence Capabilities</em>
 </p>
 
 <table>
@@ -62,6 +62,45 @@
     <img src="https://img.shields.io/badge/📚%20Documentation-Portal-blue?style=flat-square" alt="Documentation Portal">
   </a>
 </p>
+
+## 📋 Overview
+
+The **European Parliament MCP Server** implements the [Model Context Protocol (MCP)](https://spec.modelcontextprotocol.io/) to provide AI assistants, IDEs, and other MCP clients with structured access to European Parliament open datasets. Access information about MEPs, plenary sessions, committees, legislative documents, and parliamentary questions through a secure, type-safe TypeScript/Node.js implementation.
+
+### 🎯 Key Features
+
+- 🔌 **Full MCP Implementation**: 20 tools (7 core + 3 advanced + 10 OSINT intelligence), 6 Resources, and 6 Prompts
+- 🏛️ **European Parliament Data**: Access to 5 core parliamentary datasets
+- 🕵️ **OSINT Intelligence**: MEP influence scoring, coalition analysis, anomaly detection
+- 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance
+- 🚀 **High Performance**: <200ms API responses, intelligent caching, rate limiting
+- 📊 **Type Safety**: TypeScript strict mode + Zod runtime validation
+- 🧪 **Well-Tested**: 80%+ code coverage (95% for security-critical code)
+- 📚 **Complete Documentation**: Architecture, API docs, security guidelines
+
+---
+
+## 🌍 Hack23 Political Intelligence Ecosystem
+
+This MCP server is part of **[Hack23's](https://hack23.com/)** mission to **disrupt journalism with AI-generated news coverage and real-time analysis of democratic governments** — increasing transparency and accountability through open-source intelligence.
+
+### 🔗 Hack23 Projects
+
+| Project | Description | Link |
+|---------|-------------|------|
+| 🏛️ **EU Parliament Monitor** | AI-powered monitoring of European Parliament activities, voting patterns, and legislative tracking | [euparliamentmonitor.hack23.com](https://euparliamentmonitor.hack23.com/) · [GitHub](https://github.com/Hack23/euparliamentmonitor) |
+| 🇸🇪 **Riksdagsmonitor** | AI-powered monitoring of the Swedish Parliament (Riksdag) — government accountability dashboard | [riksdagsmonitor.com](https://riksdagsmonitor.com/) · [GitHub](https://github.com/Hack23/riksdagsmonitor) |
+| 🕵️ **European Parliament MCP Server** | This project — OSINT intelligence tools for EU Parliament open data via MCP protocol | [npm](https://www.npmjs.com/package/european-parliament-mcp-server) · [GitHub](https://github.com/Hack23/European-Parliament-MCP-Server) |
+| 🔐 **CIA** | Citizen Intelligence Agency — comprehensive political intelligence platform | [cia.hack23.com](https://cia.hack23.com/) · [GitHub](https://github.com/Hack23/cia) |
+
+### 🎯 Vision: AI-Powered Democratic Transparency
+
+Hack23 builds **open-source intelligence platforms** that enable citizens, journalists, and researchers to monitor democratic institutions in real-time. By combining MCP servers, AI analysis, and open parliamentary data, we create automated intelligence products that were previously only available to well-funded lobbying organizations.
+
+> *"Democratizing access to political intelligence — what used to require a team of analysts can now be done by any citizen with an AI assistant."*
+
+---
+
 
 <p align="center">
   <!-- Security Architecture -->
@@ -131,23 +170,6 @@
     <img src="https://img.shields.io/badge/GDPR-Compliant-success?style=flat-square" alt="GDPR">
   </a>
 </p>
-
----
-
-## 📋 Overview
-
-The **European Parliament MCP Server** implements the [Model Context Protocol (MCP)](https://spec.modelcontextprotocol.io/) to provide AI assistants, IDEs, and other MCP clients with structured access to European Parliament open datasets. Access information about MEPs, plenary sessions, committees, legislative documents, and parliamentary questions through a secure, type-safe TypeScript/Node.js implementation.
-
-### 🎯 Key Features
-
-- 🔌 **Full MCP Implementation**: 20 tools (7 core + 3 advanced + 10 OSINT intelligence), 6 Resources, and 6 Prompts
-- 🏛️ **European Parliament Data**: Access to 5 core parliamentary datasets
-- 🕵️ **OSINT Intelligence**: MEP influence scoring, coalition analysis, anomaly detection
-- 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance
-- 🚀 **High Performance**: <200ms API responses, intelligent caching, rate limiting
-- 📊 **Type Safety**: TypeScript strict mode + Zod runtime validation
-- 🧪 **Well-Tested**: 80%+ code coverage (95% for security-critical code)
-- 📚 **Complete Documentation**: Architecture, API docs, security guidelines
 
 ---
 
@@ -377,27 +399,6 @@ Direct data access via EP resource URIs:
 | `ep://plenary-sessions` | Recent plenary sessions |
 | `ep://votes/{sessionId}` | Voting records for a session |
 | `ep://political-groups` | Political group listing |
-
----
-
-## 🌍 Hack23 Political Intelligence Ecosystem
-
-This MCP server is part of **[Hack23's](https://hack23.com/)** mission to **disrupt journalism with AI-generated news coverage and real-time analysis of democratic governments** — increasing transparency and accountability through open-source intelligence.
-
-### 🔗 Hack23 Projects
-
-| Project | Description | Link |
-|---------|-------------|------|
-| 🏛️ **EU Parliament Monitor** | AI-powered monitoring of European Parliament activities, voting patterns, and legislative tracking | [euparliamentmonitor.hack23.com](https://euparliamentmonitor.hack23.com/) · [GitHub](https://github.com/Hack23/euparliamentmonitor) |
-| 🇸🇪 **Riksdagsmonitor** | AI-powered monitoring of the Swedish Parliament (Riksdag) — government accountability dashboard | [riksdagsmonitor.com](https://riksdagsmonitor.com/) · [GitHub](https://github.com/Hack23/riksdagsmonitor) |
-| 🕵️ **European Parliament MCP Server** | This project — OSINT intelligence tools for EU Parliament open data via MCP protocol | [npm](https://www.npmjs.com/package/european-parliament-mcp-server) · [GitHub](https://github.com/Hack23/European-Parliament-MCP-Server) |
-| 🔐 **CIA** | Citizen Intelligence Agency — comprehensive political intelligence platform | [cia.hack23.com](https://cia.hack23.com/) · [GitHub](https://github.com/Hack23/cia) |
-
-### 🎯 Vision: AI-Powered Democratic Transparency
-
-Hack23 builds **open-source intelligence platforms** that enable citizens, journalists, and researchers to monitor democratic institutions in real-time. By combining MCP servers, AI analysis, and open parliamentary data, we create automated intelligence products that were previously only available to well-funded lobbying organizations.
-
-> *"Democratizing access to political intelligence — what used to require a team of analysts can now be done by any citizen with an AI assistant."*
 
 ---
 
