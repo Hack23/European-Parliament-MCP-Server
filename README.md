@@ -21,6 +21,7 @@
     </td>
     <td>
       <p><strong>Model Context Protocol Server for European Parliament Open Data</strong> — providing AI assistants with structured access to MEPs, plenary sessions, committees, legislative documents, and parliamentary questions through a secure, type-safe TypeScript implementation.</p>
+      <p>MEP influence scoring (5-dimension model), Coalition cohesion & stress analysis, Party defection & anomaly detection, Cross-group comparative analysis, MEP/committee legislative scoring, Pipeline status & bottleneck detection, Committee workload & engagement analysis, MEP attendance patterns & trends, Country delegation voting & composition, Parliament-wide political landscape</p>
       <div>
         <a href="https://github.com/Hack23/European-Parliament-MCP-Server"><strong>📂 Repository</strong></a> •
         <a href="https://hack23.com/european-parliament-mcp-features.html"><strong>✨ Features</strong></a> •
