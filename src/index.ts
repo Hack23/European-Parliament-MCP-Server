@@ -62,8 +62,9 @@ import { handleGeneratePoliticalLandscape, generatePoliticalLandscapeToolMetadat
 import { getPromptMetadataArray, handleGetPrompt } from './prompts/index.js';
 // MCP Resources
 import { getResourceTemplateArray, handleReadResource } from './resources/index.js';
-// Export types for public API
+/** Re-export all public types, branded identifiers, and error classes */
 export type * from './types/index.js';
+/** Re-export all runtime type guards, factory functions, and error utilities */
 export * from './types/index.js';
 
 /** @internal Server name constant */

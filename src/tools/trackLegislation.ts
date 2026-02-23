@@ -6,4 +6,5 @@
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
+/** Re-export legislation tracking handler and metadata from modular implementation */
 export { handleTrackLegislation, trackLegislationToolMetadata } from './trackLegislation/index.js';
