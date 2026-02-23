@@ -293,6 +293,17 @@ export function getResourceTemplateArray(): ResourceTemplate[] {
 }
 
 /**
+ * Validate and extract required parameter from params
+ */
+function requireParam(params: Record<string, string>, key: string, uriPattern: string): string {
+  const value = params[key];
+  if (value === undefined || value === '') {
+    throw new Error(`${key} is required for ${uriPattern}`);
+  }
+  return value;
+}
+
+/**
  * Handle ReadResource request
  * 
  * @param uri - Resource URI (e.g., "ep://meps/12345")
@@ -306,19 +317,19 @@ export async function handleReadResource(uri: string): Promise<ResourceReadResul
 
   switch (template) {
     case 'mep_detail':
-      content = await handleMepDetail(params['mepId'] ?? '');
+      content = await handleMepDetail(requireParam(params, 'mepId', 'ep://meps/{mepId}'));
       break;
     case 'mep_list':
       content = await handleMepList();
       break;
     case 'committee_detail':
-      content = await handleCommitteeDetail(params['committeeId'] ?? '');
+      content = await handleCommitteeDetail(requireParam(params, 'committeeId', 'ep://committees/{committeeId}'));
       break;
     case 'plenary_sessions':
       content = await handlePlenarySessions();
       break;
     case 'voting_record':
-      content = await handleVotingRecord(params['sessionId'] ?? '');
+      content = await handleVotingRecord(requireParam(params, 'sessionId', 'ep://votes/{sessionId}'));
       break;
     case 'political_groups':
       content = await handlePoliticalGroups();

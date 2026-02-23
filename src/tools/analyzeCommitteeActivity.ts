@@ -108,7 +108,7 @@ async function buildAnalysis(
   committeeId: string,
   dateFrom: string,
   dateTo: string,
-  includeMembers: boolean
+  _includeMembers: boolean
 ): Promise<CommitteeActivityAnalysis> {
   const committeeData = await epClient.getCommitteeInfo({
     abbreviation: committeeId
@@ -145,7 +145,7 @@ async function buildAnalysis(
     memberEngagement: {
       totalMembers: memberCount,
       averageAttendance: Math.round(avgAttendance * 100) / 100,
-      activeContributors: includeMembers ? activeContributors : activeContributors
+      activeContributors
     },
     legislativeOutput: {
       reportsAdopted,
