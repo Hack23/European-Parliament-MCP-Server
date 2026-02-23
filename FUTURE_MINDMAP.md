@@ -11,13 +11,13 @@
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-CEO-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--20-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-2.0-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--23-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** CEO | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-20 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-20  
+**📋 Document Owner:** CEO | **📄 Version:** 2.0 | **📅 Last Updated:** 2026-02-23 (UTC)  
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-23  
 **🏷️ Classification:** Public (Open Source MCP Server)
 
 ---
@@ -30,6 +30,7 @@
 - [Capability Roadmap](#-capability-roadmap)
 - [Technology Exploration](#-technology-exploration)
 - [Security Capability Growth](#️-security-capability-growth)
+- [🔮 Visionary Roadmap: 2027–2037](#-visionary-roadmap-20272037)
 - [Policy Alignment](#-policy-alignment)
 - [Related Documents](#-related-documents)
 
@@ -38,6 +39,8 @@
 ## 🎯 Executive Summary
 
 This document maps the strategic capability expansion for the European Parliament MCP Server, visualizing the evolution from a focused EP data access tool to a **serverless AWS-powered parliamentary intelligence platform** inspired by [Hack23 CIA](https://github.com/Hack23/cia) OSINT methodologies. **All future infrastructure is serverless AWS-only** — see [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md).
+
+> **🤖 AI Evolution Context:** Capability expansion assumes progression from **Anthropic Opus 4.6** (2026) through future AI generations, with **minor updates every ~2.3 months** and **major version upgrades annually** through 2037. The capability mindmap extends to encompass AI-native intelligence, multi-parliament federation, and eventual AGI-powered democratic analysis tools.
 
 ---
 
@@ -612,6 +615,132 @@ mindmap
 | **16.1** | Establish and maintain security awareness program | Security training for all contributors |
 | **16.11** | Establish and maintain security incident response processes | Incident response plan documented in ISMS |
 | **18.3** | Remediate penetration test findings | Annual security audit with remediation SLA |
+
+---
+
+## 🔮 Visionary Roadmap: 2027–2037
+
+> **Capability Expansion Vision** — From 20-tool MCP server to universal democratic intelligence platform, mapping capability growth alongside AI model evolution from Anthropic Opus 4.6 through future AGI.
+
+### 📅 Capability Version Strategy
+
+| Year | Version | AI Context | Capability Milestone |
+|------|---------|-----------|---------------------|
+| **2026** | v1.0 | Anthropic Opus 4.6 | 20 tools, 6 prompts, 6 resources — OSINT parliamentary intelligence |
+| **2027** | v2.0 | Opus 5.x | 35+ tools with cloud-native analytics and enterprise APIs |
+| **2028** | v3.0 | Next-gen multimodal | 50+ tools spanning EU + national parliament federation |
+| **2029** | v4.0 | Specialized political AI | 75+ tools with AI-autonomous orchestration |
+| **2030** | v5.0 | Near-AGI reasoning | 100+ tools with knowledge graph reasoning |
+| **2031** | v6.0 | Early AGI | Self-generating tools — AI creates new analysis capabilities |
+| **2032** | v7.0 | AGI-assisted | 200+ tools with predictive governance capabilities |
+| **2033** | v8.0 | AGI co-development | Global parliament coverage — 50+ democracies |
+| **2034** | v9.0 | Mature AGI | AGI-native tool composition — emergent capabilities |
+| **2035** | v10.0 | Post-AGI | 500+ tools across decentralized instances |
+| **2036** | v11.0 | AGI-native | Universal governance toolkit — ISO standardized |
+| **2037** | v12.0 | Superintelligent | Transcendent analysis — capabilities beyond human design |
+
+> **Minor updates every ~2.3 months** deliver new tools, capability refinements, and integration expansions.
+
+### 🧠 Long-Term Capability Mindmap
+
+```mermaid
+mindmap
+  root((🏛️ EP MCP Server<br>2027-2037 Vision))
+    🔌 Protocol Evolution
+      MCP v2-v5 Protocol
+      Multi-modal Inputs
+      Streaming Intelligence
+      AGI-Native Interface
+      Universal Governance Protocol
+    📊 Data Intelligence
+      Knowledge Graphs
+      Semantic Parliamentary Web
+      Causal Policy Models
+      Predictive Legislation
+      Cross-Democracy Correlation
+    🤖 AI Integration
+      Anthropic Opus 4.6+ Models
+      Multi-LLM Orchestration
+      Specialized Political AI
+      AGI Collaboration Layer
+      Superintelligent Analysis
+    🌍 Parliament Coverage
+      EU Parliament - Complete
+      27 National Parliaments
+      Global Democracy Network
+      50+ Parliaments Federated
+      Real-time Legislative Streams
+    🛡️ Security Evolution
+      Post-Quantum Cryptography
+      Zero-Trust Everything
+      AI-Powered Threat Detection
+      Sovereign Data Deployment
+      Cryptographic Provenance
+    💼 Business Capabilities
+      Enterprise SaaS Platform
+      Government Contracts
+      Media Intelligence APIs
+      Citizen Engagement Tools
+      Democratic Infrastructure
+```
+
+### 🎯 Capability Growth Phases
+
+#### Phase 4: AI-Native Intelligence (2029–2030)
+
+- **Autonomous tool composition** — AI discovers optimal tool combinations for complex political analysis
+- **Multilingual intelligence** — native analysis across all 24 EU official languages
+- **Real-time event processing** — streaming pipeline for live parliamentary proceedings
+- **Predictive analytics** — forecast voting outcomes, coalition stability, and policy trajectories
+- **Cross-domain enrichment** — integrate economic, social, and environmental data with parliamentary data
+
+#### Phase 5: Global Democracy Platform (2031–2033)
+
+- **50+ parliament federation** — unified intelligence across global democratic institutions
+- **AI-generated tools** — AGI creates new analysis tools based on user needs and data patterns
+- **Collaborative intelligence** — multiple AGI agents cooperate on complex geopolitical analysis
+- **Legislative impact simulation** — digital twin of democratic systems for scenario modeling
+- **Institutional memory** — preserve and reason over decades of legislative history
+
+#### Phase 6: Universal Democratic Infrastructure (2034–2037)
+
+- **Democratic standard protocol** — ISO/W3C standard for democratic data interchange
+- **Citizen intelligence tools** — AGI-powered tools for direct citizen engagement with democracy
+- **Sovereignty-preserving federation** — each nation runs sovereign instances with shared intelligence
+- **Continuous governance monitoring** — 24/7 autonomous oversight of democratic health indicators
+- **Post-human analysis** — AGI capabilities that exceed human analytical capacity for governance
+
+### 🤖 AI Model Co-Evolution
+
+```mermaid
+timeline
+    title AI Model & Capability Alignment
+    2026 : Opus 4.6
+         : 20 MCP Tools
+         : Human-prompted
+    2027-2028 : Opus 5.x / Competitors
+             : 50+ Tools
+             : AI-assisted analysis
+    2029-2030 : Specialized Political AI
+             : 100+ Tools
+             : Autonomous orchestration
+    2031-2033 : Early AGI
+             : 200+ Self-generating
+             : Multi-agent collaboration
+    2034-2037 : Mature AGI / Post-AGI
+             : 500+ Universal
+             : Transcendent analysis
+```
+
+### 🏛️ Disruption Capability Mapping
+
+| Disruption Scenario | Capability Response | Timeline |
+|---------------------|-------------------|----------|
+| **Competitor MCP ecosystems** emerge | Interoperability layer; become the federation hub | 2027–2028 |
+| **LLM paradigm shift** (beyond transformers) | Protocol abstraction; capabilities survive model changes | 2028–2030 |
+| **Open-source AGI** eliminates proprietary advantage | Domain expertise moat; parliamentary data is irreplaceable | 2030–2033 |
+| **Government AI regulation** constrains capabilities | Compliance-by-design; participate in regulation drafting | 2027–2029 |
+| **Quantum computing** enables new analysis | Quantum-ready algorithms for complex policy simulation | 2032–2037 |
 
 ---
 
