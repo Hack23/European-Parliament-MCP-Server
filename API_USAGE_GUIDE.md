@@ -1544,6 +1544,69 @@ X-RateLimit-Reset: 1640995200
 
 ---
 
+## 🌍 Hack23 Ecosystem Integration
+
+This MCP server powers [Hack23's](https://hack23.com/) political intelligence ecosystem — **disrupting journalism with AI-generated news coverage and real-time analysis of democratic governments**.
+
+### How Hack23 Projects Use This Server
+
+| Project | Integration | Use Case |
+|---------|-------------|----------|
+| [**EU Parliament Monitor**](https://github.com/Hack23/euparliamentmonitor) | MCP tools + prompts | Automated MEP activity tracking, voting pattern dashboards, committee workload monitoring |
+| [**Riksdagsmonitor**](https://riksdagsmonitor.com/) ([GitHub](https://github.com/Hack23/riksdagsmonitor)) | Riksdag MCP + this server | Cross-parliament comparison between EU and Swedish Parliament data |
+| [**Citizen Intelligence Agency**](https://github.com/Hack23/cia) | Full OSINT tool suite | Comprehensive political intelligence analysis across institutions |
+
+### Example: Cross-Platform Intelligence Workflow
+
+```typescript
+// Step 1: Get Swedish MEPs from EU Parliament
+const swedishMEPs = await epClient.callTool('get_meps', { country: 'SE' });
+
+// Step 2: Analyze Swedish delegation cohesion
+const delegation = await epClient.callTool('analyze_country_delegation', { country: 'SE' });
+
+// Step 3: Score individual MEP influence
+const influence = await epClient.callTool('assess_mep_influence', { mepId: 'MEP-124810' });
+
+// Step 4: Compare with riksdagsmonitor.com data for full picture
+// → Cross-reference EU voting patterns with national parliament positions
+```
+
+---
+
+## 🗺️ Global Political OSINT MCP Landscape
+
+The European Parliament MCP Server is the **most feature-rich political MCP server** in a growing global ecosystem of 35+ government and parliamentary open data MCP servers spanning 15+ countries.
+
+### Parliament-Specific MCP Servers
+
+| Country | Server | Key Capabilities |
+|---------|--------|-----------------|
+| 🇪🇺 **EU** | [**European Parliament MCP**](https://github.com/Hack23/European-Parliament-MCP-Server) | **20 tools** — MEP profiling, coalition analysis, anomaly detection, political landscape |
+| 🇺🇸 **USA** | [Congress.gov API MCP](https://github.com/bsmi021/mcp-congress_gov_server) | Bills, members, votes, committees |
+| 🇬🇧 **UK** | [Parliament MCP](https://github.com/i-dot-ai/parliament-mcp) | Hansard, members, debates, divisions |
+| 🇸🇪 **Sweden** | [Riksdag & Regering MCP](https://github.com/isakskogstad/Riksdag-Regering-MCP) | Parliament & government data |
+| 🇳🇱 **Netherlands** | [OpenTK MCP](https://github.com/r-huijts/opentk-mcp) | Tweede Kamer documents |
+| 🇵🇱 **Poland** | [Sejm MCP](https://github.com/janisz/sejm-mcp) | Parliament data + legislation |
+| 🇮🇱 **Israel** | [Knesset MCP](https://github.com/zohar/knesset-mcp) | Knesset parliament API |
+| 🇧🇷 **Brazil** | [Senado BR MCP](https://mcpservers.org/servers/sidneybissoli/senado-br-mcp) | Federal Senate data |
+
+### Government Open Data MCP Servers
+
+| Country | Server | Data Portal |
+|---------|--------|------------|
+| 🇫🇷 France | [data.gouv.fr MCP](https://github.com/datagouv/datagouv-mcp) | data.gouv.fr |
+| 🇮🇱 Israel | [Data.gov.il MCP](https://github.com/DavidOsherProceed/data-gov-il-mcp) | data.gov.il |
+| 🇮🇳 India | [Data.gov.in MCP](https://github.com/adwait-ai/mcp_data_gov_in) | data.gov.in |
+| 🇸🇬 Singapore | [Gahmen MCP](https://github.com/aniruddha-adhikary/gahmen-mcp) | data.gov.sg |
+| 🇦🇺 Australia | [ABS MCP](https://github.com/seansoreilly/mcp-server-abs) | abs.gov.au |
+| 🌐 Global | [CKAN MCP Server](https://github.com/ondata/ckan-mcp-server) | Any CKAN portal |
+| 🌐 Global | [OpenGov MCP Server](https://github.com/srobbin/opengov-mcp-server) | Socrata portals |
+
+> 📖 **See [README.md](./README.md#-global-political-mcp-servers--osint-coverage)** for the complete 35+ server directory with OSINT capability comparison.
+
+---
+
 ## 📚 Additional Resources
 
 ### Documentation
@@ -1557,6 +1620,12 @@ X-RateLimit-Reset: 1640995200
 - [MCP Specification](https://spec.modelcontextprotocol.io/) - Protocol documentation
 - [European Parliament Open Data](https://data.europarl.europa.eu/) - Data source
 - [Hack23 ISMS Policies](https://github.com/Hack23/ISMS-PUBLIC) - Security standards
+
+### Hack23 Ecosystem
+- [Hack23](https://hack23.com/) — AI-powered democratic transparency platform
+- [EU Parliament Monitor](https://github.com/Hack23/euparliamentmonitor) — European Parliament monitoring
+- [Riksdagsmonitor](https://riksdagsmonitor.com/) · [GitHub](https://github.com/Hack23/riksdagsmonitor) — Swedish Parliament monitoring
+- [Citizen Intelligence Agency](https://github.com/Hack23/cia) — Comprehensive political intelligence
 
 ---
 
