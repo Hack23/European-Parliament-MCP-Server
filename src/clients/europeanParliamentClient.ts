@@ -38,8 +38,6 @@ import type {
   Committee,
   ParliamentaryQuestion,
   PaginatedResponse,
-  DocumentType,
-  DocumentStatus,
   Speech,
   Procedure,
   AdoptedText,
@@ -47,6 +45,22 @@ import type {
   MeetingActivity,
   MEPDeclaration
 } from '../types/europeanParliament.js';
+import {
+  toSafeString as _toSafeString,
+  transformMEP as _transformMEP,
+  transformMEPDetails as _transformMEPDetails,
+  transformPlenarySession as _transformPlenarySession,
+  transformVoteResult as _transformVoteResult,
+  transformCorporateBody as _transformCorporateBody,
+  transformDocument as _transformDocument,
+  transformParliamentaryQuestion as _transformParliamentaryQuestion,
+  transformSpeech as _transformSpeech,
+  transformProcedure as _transformProcedure,
+  transformAdoptedText as _transformAdoptedText,
+  transformEvent as _transformEvent,
+  transformMeetingActivity as _transformMeetingActivity,
+  transformMEPDeclaration as _transformMEPDeclaration,
+} from './ep/index.js';
 
 /**
  * Default configuration values for European Parliament API client
@@ -578,39 +592,6 @@ export class EuropeanParliamentClient {
   }
 
   /**
-   * Safely converts unknown value to string.
-   * 
-   * Type-safe conversion handling string, number, boolean, and other types.
-   * Returns empty string for unsupported types to prevent injection attacks.
-   * 
-   * @param value - Value to convert to string
-   * @returns String representation or empty string
-   * 
-   * @example
-   * ```typescript
-   * this.toSafeString('text');      // 'text'
-   * this.toSafeString(123);         // '123'
-   * this.toSafeString(true);        // 'true'
-   * this.toSafeString(undefined);   // ''
-   * ```
-   * 
-   * @private
-   * @internal
-   */
-  private toSafeString(value: unknown): string {
-    if (typeof value === 'string') {
-      return value;
-    }
-    if (typeof value === 'number') {
-      return String(value);
-    }
-    if (typeof value === 'boolean') {
-      return String(value);
-    }
-    return '';
-  }
-
-  /**
    * Transforms EP API MEP data to internal format.
    * 
    * Converts JSON-LD MEP data from European Parliament API to standardized
@@ -641,107 +622,7 @@ export class EuropeanParliamentClient {
    * @see {@link MEP} for output type structure
    */
   private transformMEP(apiData: Record<string, unknown>): MEP {
-    // EP API returns data in JSON-LD format with different field names
-    // Safe string conversion with type guards
-    const identifier = apiData['identifier'];
-    const idField = apiData['id'];
-    const labelField = apiData['label'];
-    const familyNameField = apiData['familyName'];
-    const givenNameField = apiData['givenName'];
-    
-    const id = this.toSafeString(identifier) || this.toSafeString(idField) || '';
-    const name = this.toSafeString(labelField) || '';
-    const familyName = this.toSafeString(familyNameField) || '';
-    const givenName = this.toSafeString(givenNameField) || '';
-    
-    // Construct full name if label is not provided
-    const fullName = name || `${givenName} ${familyName}`.trim();
-    
-    // Generate fallback ID
-    const fallbackId = this.toSafeString(identifier) || 'unknown';
-    
-    return {
-      id: id || `person/${fallbackId}`,
-      name: fullName,
-      // EP API /meps list endpoint does not include country or political group;
-      // 'Unknown' indicates data not available from this endpoint
-      country: 'Unknown',
-      politicalGroup: 'Unknown',
-      committees: [],
-      active: true,
-      termStart: 'Unknown'
-    };
-  }
-
-  /**
-   * Extracts date from EP API activity date field.
-   * 
-   * Parses JSON-LD date format with @value wrapper and ISO 8601 timestamp.
-   * Returns empty string when date is missing or invalid so callers can
-   * explicitly handle unknown dates instead of receiving fabricated values.
-   * 
-   * **Input Format:** `{ "@value": "2024-01-15T14:30:00Z" }`
-   * 
-   * **Output Format:** `"2024-01-15"` (ISO 8601 date only)
-   * 
-   * @param activityDate - Activity date field from EP API (JSON-LD format)
-   * @returns ISO 8601 date string (YYYY-MM-DD) or empty string
-   * 
-   * @example
-   * ```typescript
-   * const date1 = this.extractActivityDate({ '@value': '2024-01-15T14:30:00Z' });
-   * // Returns: '2024-01-15'
-   * 
-   * const date2 = this.extractActivityDate(null);
-   * // Returns: ''
-   * ```
-   * 
-   * @private
-   * @internal
-   */
-  private extractActivityDate(activityDate: unknown): string {
-    if (activityDate === null || activityDate === undefined) {
-      return '';
-    }
-    
-    if (typeof activityDate === 'object' && '@value' in activityDate) {
-      const dateValue = (activityDate as Record<string, unknown>)['@value'];
-      if (typeof dateValue === 'string') {
-        const parts = dateValue.split('T');
-        return parts[0] ?? '';
-      }
-    }
-    
-    return '';
-  }
-
-  /**
-   * Extracts location name from hasLocality URL.
-   * 
-   * Maps EP API locality URLs to human-readable city names.
-   * Handles Strasbourg and Brussels parliament locations.
-   * 
-   * @param localityUrl - Locality URL from EP API
-   * @returns City name ('Strasbourg', 'Brussels', or 'Unknown')
-   * 
-   * @example
-   * ```typescript
-   * this.extractLocation('http://..../FRA_SXB');  // 'Strasbourg'
-   * this.extractLocation('http://..../BEL_BRU');  // 'Brussels'
-   * this.extractLocation('http://..../OTHER');    // 'Unknown'
-   * ```
-   * 
-   * @private
-   * @internal
-   */
-  private extractLocation(localityUrl: string): string {
-    if (localityUrl.includes('FRA_SXB')) {
-      return 'Strasbourg';
-    }
-    if (localityUrl.includes('BEL_BRU')) {
-      return 'Brussels';
-    }
-    return 'Unknown';
+    return _transformMEP(apiData);
   }
 
   /**
@@ -770,26 +651,7 @@ export class EuropeanParliamentClient {
    * @see {@link PlenarySession} for output type structure
    */
   private transformPlenarySession(apiData: Record<string, unknown>): PlenarySession {
-    const activityId = apiData['activity_id'];
-    const idField = apiData['id'];
-    const id = this.toSafeString(activityId) || this.toSafeString(idField) || '';
-    
-    const activityDate = apiData['eli-dl:activity_date'];
-    const date = this.extractActivityDate(activityDate);
-    
-    // Extract location from hasLocality
-    const localityField = apiData['hasLocality'];
-    const localityUrl = this.toSafeString(localityField) || '';
-    const location = this.extractLocation(localityUrl);
-    
-    return {
-      id,
-      date,
-      location,
-      agendaItems: [],
-      attendanceCount: 0,
-      documents: []
-    };
+    return _transformPlenarySession(apiData);
   }
 
   /**
@@ -823,43 +685,7 @@ export class EuropeanParliamentClient {
    * @see {@link transformMEP} for basic MEP transformation
    */
   private transformMEPDetails(apiData: Record<string, unknown>): MEPDetails {
-    // Start with basic MEP transformation
-    const basicMEP = this.transformMEP(apiData);
-    
-    // Extract additional details with type safety
-    const bdayField = apiData['bday'];
-    const bday = this.toSafeString(bdayField) || '';
-    
-    const memberships = apiData['hasMembership'];
-    const committees: string[] = [];
-    
-    // Extract committees from memberships if available
-    if (Array.isArray(memberships)) {
-      for (const membership of memberships) {
-        if (typeof membership === 'object' && membership !== null) {
-          const orgField = (membership as Record<string, unknown>)['organization'];
-          const org = this.toSafeString(orgField) || '';
-          if (org) {
-            committees.push(org);
-          }
-        }
-      }
-    }
-    
-    return {
-      ...basicMEP,
-      committees: committees.length > 0 ? committees : basicMEP.committees,
-      biography: `Born: ${bday || 'Unknown'}`,
-      // EP API /meps/{id} endpoint does not return voting statistics;
-      // zeros indicate "no data available" rather than fabricated numbers
-      votingStatistics: {
-        totalVotes: 0,
-        votesFor: 0,
-        votesAgainst: 0,
-        abstentions: 0,
-        attendanceRate: 0
-      }
-    };
+    return _transformMEPDetails(apiData);
   }
 
   /**
@@ -1289,59 +1115,7 @@ export class EuropeanParliamentClient {
    * @see {@link VotingRecord} for output type structure
    */
   private transformVoteResult(apiData: Record<string, unknown>, sessionId: string): VotingRecord {
-    const id = this.toSafeString(apiData['activity_id']) || this.toSafeString(apiData['id']) || '';
-    const date = this.extractActivityDate(apiData['eli-dl:activity_date']);
-    const topic = this.toSafeString(apiData['label']) || this.toSafeString(apiData['notation']) || 'Unknown';
-
-    const votesFor = this.extractVoteCount(apiData['had_voter_favor'] ?? apiData['number_of_votes_favor']);
-    const votesAgainst = this.extractVoteCount(apiData['had_voter_against'] ?? apiData['number_of_votes_against']);
-    const abstentions = this.extractVoteCount(apiData['had_voter_abstention'] ?? apiData['number_of_votes_abstention']);
-
-    const decisionStr = this.toSafeString(apiData['decision_method'] ?? apiData['had_decision_outcome']);
-    const result = this.determineVoteOutcome(decisionStr, votesFor, votesAgainst);
-
-    return { id, sessionId, topic, date, votesFor, votesAgainst, abstentions, result };
-  }
-
-  /**
-   * Determines vote outcome from decision string or vote counts.
-   * @param decisionStr - Decision outcome string from EP API
-   * @param votesFor - Number of votes in favor
-   * @param votesAgainst - Number of votes against
-   * @returns 'ADOPTED' or 'REJECTED'
-   * @private
-   */
-  private determineVoteOutcome(decisionStr: string, votesFor: number, votesAgainst: number): 'ADOPTED' | 'REJECTED' {
-    if (decisionStr.includes('ADOPTED') || decisionStr.includes('APPROVED')) return 'ADOPTED';
-    if (decisionStr.includes('REJECTED')) return 'REJECTED';
-    return votesFor >= votesAgainst ? 'ADOPTED' : 'REJECTED';
-  }
-
-  /**
-   * Extracts a numeric vote count from EP API data.
-   * 
-   * Handles various formats: direct numbers, string numbers, or
-   * JSON-LD objects with `@value` or array of voter references.
-   * 
-   * @param value - Raw vote count value from EP API
-   * @returns Numeric vote count or 0 if not parseable
-   * 
-   * @private
-   * @internal
-   */
-  private extractVoteCount(value: unknown): number {
-    if (value === null || value === undefined) return 0;
-    if (typeof value === 'number') return value;
-    if (typeof value === 'string') {
-      const parsed = parseInt(value, 10);
-      return isNaN(parsed) ? 0 : parsed;
-    }
-    if (Array.isArray(value)) return value.length;
-    const objValue = (value as Record<string, unknown>)['@value'];
-    if (objValue !== undefined) {
-      return this.extractVoteCount(objValue);
-    }
-    return 0;
+    return _transformVoteResult(apiData, sessionId);
   }
 
   /**
@@ -1492,7 +1266,7 @@ export class EuropeanParliamentClient {
     const recordLimit = params.limit ?? 50;
 
     for (const meeting of meetingsResponse.data) {
-      const meetingId = this.toSafeString(meeting['activity_id']) || this.toSafeString(meeting['id']) || '';
+      const meetingId = _toSafeString(meeting['activity_id']) || _toSafeString(meeting['id']) || '';
       if (meetingId === '') continue;
       try {
         const voteResponse = await this.get<JSONLDResponse>(
@@ -1551,66 +1325,7 @@ export class EuropeanParliamentClient {
    * @see {@link LegislativeDocument} for output type structure
    */
   private transformDocument(apiData: Record<string, unknown>): LegislativeDocument {
-    const id = this.extractField(apiData, ['work_id', 'id', 'identifier']);
-    const title = this.extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']);
-    const mappedType = this.mapDocumentType(this.extractField(apiData, ['work_type', 'ep-document-types', 'type']));
-    const date = this.extractDateValue(apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']);
-    const committeeValue = this.extractField(apiData, ['was_attributed_to', 'committee']);
-    const mappedStatus = this.mapDocumentStatus(this.extractField(apiData, ['resource_legal_in-force', 'status']));
-
-    const doc: LegislativeDocument = {
-      id,
-      type: mappedType,
-      title: title !== '' ? title : `Document ${id}`,
-      date,
-      authors: [],
-      status: mappedStatus,
-      summary: title
-    };
-    if (committeeValue !== '') {
-      doc.committee = committeeValue;
-    }
-    return doc;
-  }
-
-  /**
-   * Extracts a string value from the first matching field name.
-   * @param data - Record to search
-   * @param fields - Field names to try in order
-   * @returns String value from first matching field or empty string
-   * @private
-   */
-  private extractField(data: Record<string, unknown>, fields: string[]): string {
-    for (const field of fields) {
-      const value = data[field];
-      if (value !== undefined && value !== null) {
-        return this.toSafeString(value);
-      }
-    }
-    return '';
-  }
-
-  /**
-   * Maps a raw work-type string to a valid DocumentType.
-   * @param rawType - Raw type string from EP API
-   * @returns Valid DocumentType
-   * @private
-   */
-  private mapDocumentType(rawType: string): DocumentType {
-    const normalized = (rawType !== '' ? rawType : 'REPORT').replace(/.*\//, '').toUpperCase();
-    const validTypes: DocumentType[] = ['REPORT', 'RESOLUTION', 'DECISION', 'DIRECTIVE', 'REGULATION', 'OPINION', 'AMENDMENT'];
-    return validTypes.find(t => normalized.includes(t)) ?? 'REPORT';
-  }
-
-  /**
-   * Maps a raw status string to a valid DocumentStatus.
-   * @param rawStatus - Raw status string from EP API
-   * @returns Valid DocumentStatus
-   * @private
-   */
-  private mapDocumentStatus(rawStatus: string): DocumentStatus {
-    const validStatuses: DocumentStatus[] = ['DRAFT', 'SUBMITTED', 'IN_COMMITTEE', 'PLENARY', 'ADOPTED', 'REJECTED'];
-    return validStatuses.find(s => rawStatus.toUpperCase().includes(s)) ?? 'SUBMITTED';
+    return _transformDocument(apiData);
   }
 
   /**
@@ -1670,108 +1385,6 @@ export class EuropeanParliamentClient {
       );
     }
     return filtered;
-  }
-
-  /**
-   * Extracts a date value from various EP API date formats.
-   * 
-   * @param dateField - Raw date field from EP API
-   * @returns ISO 8601 date string (YYYY-MM-DD) or empty string
-   * 
-   * @private
-   * @internal
-   */
-  private extractDateValue(dateField: unknown): string {
-    if (dateField === null || dateField === undefined) return '';
-    if (typeof dateField === 'string') {
-      const parts = dateField.split('T');
-      return parts[0] ?? '';
-    }
-    if (typeof dateField === 'object' && '@value' in dateField) {
-      const val = (dateField as Record<string, unknown>)['@value'];
-      if (typeof val === 'string') {
-        const parts = val.split('T');
-        return parts[0] ?? '';
-      }
-    }
-    return '';
-  }
-
-  /**
-   * Extracts a multilingual text value from EP API JSON-LD field.
-   * 
-   * Handles various JSON-LD formats: plain strings, language-tagged objects,
-   * and arrays of language variants. Prefers English ('en') or multilingual ('mul').
-   * 
-   * @param field - Raw field from EP API (string, object, or array)
-   * @returns Extracted text string or empty string
-   * 
-   * @private
-   * @internal
-   */
-  private extractMultilingualText(field: unknown): string {
-    if (field === null || field === undefined) return '';
-    if (typeof field === 'string') return field;
-    if (typeof field === 'number' || typeof field === 'boolean') return String(field);
-
-    if (Array.isArray(field)) {
-      return this.extractTextFromLangArray(field);
-    }
-
-    if (typeof field === 'object') {
-      const obj = field as Record<string, unknown>;
-      const enValue = this.toSafeString(obj['en'] ?? obj['@value'] ?? obj['mul']);
-      return enValue;
-    }
-
-    return '';
-  }
-
-  /**
-   * Extracts preferred-language text from array of language-tagged objects.
-   * 
-   * @param items - Array of JSON-LD language-tagged objects
-   * @returns Text in preferred language or first available
-   * 
-   * @private
-   * @internal
-   */
-  private extractTextFromLangArray(items: unknown[]): string {
-    let fallback = '';
-    for (const item of items) {
-      if (typeof item !== 'object' || item === null) continue;
-      const obj = item as Record<string, unknown>;
-      const lang = this.toSafeString(obj['@language']);
-      const value = this.toSafeString(obj['@value']);
-      if (lang === 'en' || lang === 'mul') return value;
-      if (fallback === '') fallback = value;
-    }
-    return fallback;
-  }
-
-  /**
-   * Extracts member IDs from EP API membership data.
-   * 
-   * @param memberships - Raw membership field from EP API
-   * @returns Array of member ID strings
-   * 
-   * @private
-   * @internal
-   */
-  private extractMemberIds(memberships: unknown): string[] {
-    const members: string[] = [];
-    if (!Array.isArray(memberships)) return members;
-
-    for (const m of memberships) {
-      if (typeof m === 'string') {
-        members.push(m);
-      } else if (typeof m === 'object' && m !== null) {
-        const mObj = m as Record<string, unknown>;
-        const memberId = this.toSafeString(mObj['person'] ?? mObj['id'] ?? mObj['@id']);
-        if (memberId !== '') members.push(memberId);
-      }
-    }
-    return members;
   }
 
   /**
@@ -1892,28 +1505,7 @@ export class EuropeanParliamentClient {
    * @see {@link Committee} for output type structure
    */
   private transformCorporateBody(apiData: Record<string, unknown>): Committee {
-    const id = this.extractField(apiData, ['body_id', 'id', 'identifier']);
-    const name = this.extractMultilingualText(apiData['label'] ?? apiData['prefLabel'] ?? apiData['skos:prefLabel']);
-    const abbreviation = this.extractField(apiData, ['notation', 'skos:notation']) || id;
-    const effectiveId = id !== '' ? id : abbreviation;
-
-    if (effectiveId === '') {
-      throw new APIError('Corporate body data missing required identifier', 400);
-    }
-
-    const members = this.extractMemberIds(apiData['hasMembership'] ?? apiData['org:hasMember']);
-    const classification = this.extractField(apiData, ['classification', 'org:classification']);
-    const responsibilities = classification !== '' ? [classification.replace(/.*\//, '')] : [];
-
-    return {
-      id: effectiveId,
-      name: name !== '' ? name : `Committee ${abbreviation}`,
-      abbreviation,
-      members,
-      chair: members[0] ?? '',
-      viceChairs: members.slice(1, 3),
-      responsibilities
-    };
+    return _transformCorporateBody(apiData);
   }
 
   /**
@@ -2073,73 +1665,7 @@ export class EuropeanParliamentClient {
    * @see {@link ParliamentaryQuestion} for output type structure
    */
   private transformParliamentaryQuestion(apiData: Record<string, unknown>): ParliamentaryQuestion {
-    const id = this.extractField(apiData, ['work_id', 'id', 'identifier']);
-    const questionType = this.mapQuestionType(this.extractField(apiData, ['work_type', 'ep-document-types']));
-    const author = this.extractAuthorId(apiData['was_created_by'] ?? apiData['created_by'] ?? apiData['author']);
-    const date = this.extractDateValue(apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']);
-    const topic = this.extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']);
-    const hasAnswer = apiData['was_realized_by'] !== undefined && apiData['was_realized_by'] !== null;
-    const topicText = topic !== '' ? topic : `Question ${id}`;
-
-    return this.buildQuestionResult(
-      { id, type: questionType, author, date },
-      topicText, hasAnswer
-    );
-  }
-
-  /**
-   * Builds a ParliamentaryQuestion result object.
-   * @private
-   */
-  private buildQuestionResult(
-    fields: { id: string; type: 'WRITTEN' | 'ORAL'; author: string; date: string },
-    topicText: string, hasAnswer: boolean
-  ): ParliamentaryQuestion {
-    const result: ParliamentaryQuestion = {
-      id: fields.id,
-      type: fields.type,
-      author: fields.author !== '' ? fields.author : 'Unknown',
-      date: fields.date,
-      topic: topicText,
-      questionText: topicText,
-      status: hasAnswer ? 'ANSWERED' : 'PENDING'
-    };
-    if (hasAnswer) {
-      result.answerText = 'Answer available - see EP document portal for full text';
-      result.answerDate = fields.date;
-    }
-    return result;
-  }
-
-  /**
-   * Maps work-type string to question type.
-   * @param workType - Raw work-type from EP API
-   * @returns 'WRITTEN' or 'ORAL'
-   * @private
-   */
-  private mapQuestionType(workType: string): 'WRITTEN' | 'ORAL' {
-    if (workType.includes('ORAL') || workType.includes('INTERPELLATION') || workType.includes('QUESTION_TIME')) {
-      return 'ORAL';
-    }
-    return 'WRITTEN';
-  }
-
-  /**
-   * Extracts an author/person ID from EP API author field.
-   * @param authorField - Raw author field (string, array, or object)
-   * @returns Author identifier string
-   * @private
-   */
-  private extractAuthorId(authorField: unknown): string {
-    if (typeof authorField === 'string') return authorField;
-    if (Array.isArray(authorField) && authorField.length > 0) {
-      return this.toSafeString(authorField[0]);
-    }
-    if (typeof authorField === 'object' && authorField !== null) {
-      const obj = authorField as Record<string, unknown>;
-      return this.toSafeString(obj['@id'] ?? obj['id']);
-    }
-    return '';
+    return _transformParliamentaryQuestion(apiData);
   }
 
   /**
@@ -3227,17 +2753,7 @@ export class EuropeanParliamentClient {
    * @private
    */
   private transformSpeech(apiData: Record<string, unknown>): Speech {
-    return {
-      id: this.extractField(apiData, ['identifier', 'id']),
-      title: this.extractMultilingualText(apiData['had_activity_type'] ?? apiData['label'] ?? apiData['title']),
-      speakerId: this.extractAuthorId(apiData['had_participant_person'] ?? apiData['was_attributed_to']),
-      speakerName: this.extractMultilingualText(apiData['participant_label'] ?? apiData['label']),
-      date: this.extractDateValue(apiData['activity_date'] ?? apiData['date']),
-      type: this.extractField(apiData, ['had_activity_type', 'type']),
-      language: this.extractField(apiData, ['language', 'was_created_in_language']),
-      text: this.extractMultilingualText(apiData['text'] ?? apiData['content'] ?? ''),
-      sessionReference: this.extractField(apiData, ['was_part_of', 'is_part_of', 'event'])
-    };
+    return _transformSpeech(apiData);
   }
 
   /**
@@ -3247,38 +2763,7 @@ export class EuropeanParliamentClient {
    * @private
    */
   private transformProcedure(apiData: Record<string, unknown>): Procedure {
-    const titleField = this.firstDefined(apiData, 'title_dcterms', 'label', 'title');
-    const dateStartField = this.firstDefined(apiData, 'process_date_start', 'date_start', 'date');
-    const dateUpdateField = this.firstDefined(apiData, 'process_date_update', 'date_update');
-    const subjectField = this.firstDefined(apiData, 'subject_matter', 'subject');
-    return {
-      id: this.extractField(apiData, ['identifier', 'id', 'process_id']),
-      title: this.extractMultilingualText(titleField),
-      reference: this.extractField(apiData, ['identifier', 'process_id']),
-      type: this.extractField(apiData, ['process_type', 'type']),
-      subjectMatter: this.extractMultilingualText(subjectField),
-      stage: this.extractField(apiData, ['process_stage', 'stage']),
-      status: this.extractField(apiData, ['process_status', 'status']),
-      dateInitiated: this.extractDateValue(dateStartField),
-      dateLastActivity: this.extractDateValue(dateUpdateField),
-      responsibleCommittee: this.extractField(apiData, ['was_attributed_to', 'committee']),
-      rapporteur: this.extractMultilingualText(apiData['rapporteur']),
-      documents: this.extractDocumentRefs(apiData['had_document'] ?? apiData['documents'])
-    };
-  }
-
-  /**
-   * Returns first defined value from named fields in apiData.
-   * @param data - Record to search
-   * @param keys - Field names to try in order
-   * @returns First defined value or empty string
-   * @private
-   */
-  private firstDefined(data: Record<string, unknown>, ...keys: string[]): unknown {
-    for (const k of keys) {
-      if (data[k] !== undefined) return data[k];
-    }
-    return '';
+    return _transformProcedure(apiData);
   }
 
   /**
@@ -3288,15 +2773,7 @@ export class EuropeanParliamentClient {
    * @private
    */
   private transformAdoptedText(apiData: Record<string, unknown>): AdoptedText {
-    return {
-      id: this.extractField(apiData, ['work_id', 'identifier', 'id']),
-      title: this.extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']),
-      reference: this.extractField(apiData, ['work_id', 'identifier']),
-      type: this.extractField(apiData, ['work_type', 'type']),
-      dateAdopted: this.extractDateValue(apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']),
-      procedureReference: this.extractField(apiData, ['based_on_a_concept_procedure', 'procedure']),
-      subjectMatter: this.extractMultilingualText(apiData['subject_matter'] ?? apiData['subject'] ?? '')
-    };
+    return _transformAdoptedText(apiData);
   }
 
   /**
@@ -3306,16 +2783,7 @@ export class EuropeanParliamentClient {
    * @private
    */
   private transformEvent(apiData: Record<string, unknown>): EPEvent {
-    return {
-      id: this.extractField(apiData, ['identifier', 'id']),
-      title: this.extractMultilingualText(apiData['label'] ?? apiData['title'] ?? ''),
-      date: this.extractDateValue(apiData['activity_start_date'] ?? apiData['date'] ?? apiData['activity_date']),
-      endDate: this.extractDateValue(apiData['activity_end_date'] ?? ''),
-      type: this.extractField(apiData, ['had_activity_type', 'type']),
-      location: this.extractField(apiData, ['had_locality', 'location']),
-      organizer: this.extractField(apiData, ['was_organized_by', 'organizer']),
-      status: this.extractField(apiData, ['activity_status', 'status'])
-    };
+    return _transformEvent(apiData);
   }
 
   /**
@@ -3325,17 +2793,7 @@ export class EuropeanParliamentClient {
    * @private
    */
   private transformMeetingActivity(apiData: Record<string, unknown>): MeetingActivity {
-    const orderVal = apiData['activity_order'] ?? apiData['order'];
-    const order = typeof orderVal === 'number' ? orderVal : 0;
-    return {
-      id: this.extractField(apiData, ['identifier', 'id']),
-      title: this.extractMultilingualText(apiData['label'] ?? apiData['title'] ?? ''),
-      type: this.extractField(apiData, ['had_activity_type', 'type']),
-      date: this.extractDateValue(apiData['activity_date'] ?? apiData['date']),
-      order,
-      reference: this.extractField(apiData, ['had_document', 'reference']),
-      responsibleBody: this.extractField(apiData, ['was_attributed_to', 'committee'])
-    };
+    return _transformMeetingActivity(apiData);
   }
 
   /**
@@ -3345,38 +2803,9 @@ export class EuropeanParliamentClient {
    * @private
    */
   private transformMEPDeclaration(apiData: Record<string, unknown>): MEPDeclaration {
-    return {
-      id: this.extractField(apiData, ['work_id', 'identifier', 'id']),
-      title: this.extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']),
-      mepId: this.extractAuthorId(apiData['was_attributed_to'] ?? apiData['author']),
-      mepName: this.extractMultilingualText(apiData['author_label'] ?? ''),
-      type: this.extractField(apiData, ['work_type', 'type']),
-      dateFiled: this.extractDateValue(apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']),
-      status: this.extractField(apiData, ['resource_legal_in-force', 'status'])
-    };
+    return _transformMEPDeclaration(apiData);
   }
 
-  /**
-   * Extracts document reference IDs from an array-like field.
-   * @param docs - Documents field from API (string, array, or object)
-   * @returns Array of document reference strings
-   * @private
-   */
-  private extractDocumentRefs(docs: unknown): string[] {
-    if (docs === null || docs === undefined) return [];
-    if (typeof docs === 'string') return [docs];
-    if (Array.isArray(docs)) {
-      return docs.map(d => {
-        if (typeof d === 'string') return d;
-        if (typeof d === 'object' && d !== null) {
-          const obj = d as Record<string, unknown>;
-          return this.toSafeString(obj['id'] ?? obj['identifier'] ?? '');
-        }
-        return '';
-      }).filter(s => s !== '');
-    }
-    return [];
-  }
 }
 
 /**
