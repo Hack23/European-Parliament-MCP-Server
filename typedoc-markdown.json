@@ -1,0 +1,55 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "out": "docs/api-markdown",
+  "plugin": [
+    "typedoc-plugin-markdown",
+    "typedoc-plugin-mdn-links",
+    "typedoc-plugin-zod"
+  ],
+  "name": "European Parliament MCP Server API",
+  "includeVersion": true,
+  "readme": "README.md",
+  "categorizeByGroup": true,
+  "categoryOrder": [
+    "MCP Tools - Core Data",
+    "MCP Tools - Advanced Analysis",
+    "MCP Tools - OSINT Intelligence",
+    "MCP Tools - EP API v2 Data",
+    "MCP Tools - EP API v2 Documents",
+    "MCP Prompts",
+    "MCP Resources",
+    "EP API Client",
+    "Schemas",
+    "Types",
+    "Utils",
+    "Tools",
+    "Intelligence",
+    "Business",
+    "Marketing",
+    "Clients",
+    "*"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/node_modules/**"
+  ],
+  "excludePrivate": false,
+  "excludeProtected": false,
+  "excludeInternal": true,
+  "sort": ["kind", "instance-first", "required-first", "alphabetical"],
+  "kindSortOrder": [
+    "Function",
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Enum",
+    "Variable"
+  ],
+  "searchInComments": true,
+  "cleanOutputDir": true,
+  "hidePageHeader": false,
+  "hideBreadcrumbs": false
+}
