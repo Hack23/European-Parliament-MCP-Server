@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">80% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>7/7</span>
+                <span class='fraction'>8/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>3/4</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">77.77% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>7/9</span>
             </div>
         
             
@@ -121,7 +121,28 @@
 <a name='L56'></a><a href='#L56'>56</a>
 <a name='L57'></a><a href='#L57'>57</a>
 <a name='L58'></a><a href='#L58'>58</a>
-<a name='L59'></a><a href='#L59'>59</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -151,10 +172,20 @@
 <span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -179,17 +210,23 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * MCP Tool: get_adopted_texts
  *
  * Retrieve European Parliament adopted texts (legislative resolutions,
  * positions, non-legislative resolutions).
+ * Supports single document lookup by docId or list with year filtering.
  *
  * **Intelligence Perspective:** Adopted texts represent final legislative outputs—
  * tracking them enables assessment of legislative productivity and policy direction.
  *
  * **Business Perspective:** Adopted text monitoring powers regulatory compliance
  * products and legislative change management services.
+ *
+ * **EP API Endpoints:**
+ * - `GET /adopted-texts` (list)
+ * - `GET /adopted-texts/{doc-id}` (single)
  *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
@@ -207,6 +244,16 @@ export async function handleGetAdoptedTexts(
   args: unknown
 ): Promise&lt;{ content: { type: string; text: string }[] }&gt; {
   const params = GetAdoptedTextsSchema.parse(args);
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (params.docId !== undefined) {
+    const result = <span class="cstat-no" title="statement not covered" >await epClient.getAdoptedTextById(params.docId);</span>
+<span class="cstat-no" title="statement not covered" >    return {</span>
+      content: [{
+        type: 'text',
+        text: JSON.stringify(result, null, 2)
+      }]
+    };
+  }
 &nbsp;
   const apiParams: Record&lt;string, unknown&gt; = {
     limit: params.limit,
@@ -227,10 +274,11 @@ export async function handleGetAdoptedTexts(
 /** Tool metadata for get_adopted_texts */
 export const getAdoptedTextsToolMetadata = {
   name: 'get_adopted_texts',
-  description: 'Get European Parliament adopted texts including legislative resolutions, positions, and non-legislative resolutions. Filter by year. Data source: European Parliament Open Data Portal.',
+  description: 'Get European Parliament adopted texts including legislative resolutions, positions, and non-legislative resolutions. Supports single document lookup by docId or list with year filter. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
+      docId: { type: 'string', description: 'Document ID for single adopted text lookup' },
       year: { type: 'number', description: 'Filter by year of adoption (e.g., 2024)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 }
@@ -244,7 +292,7 @@ export const getAdoptedTextsToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-24T04:24:11.817Z
+                at 2026-02-24T13:47:20.026Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -2,445 +2,250 @@
   <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
 </p>
 
-<h1 align="center">🏛️ European Parliament MCP Server</h1>
+<h1 align="center">🏛️ European Parliament MCP Server — Architecture</h1>
 
 <p align="center">
   <strong>Model Context Protocol Server for European Parliament Open Data</strong><br>
-  <em>Providing structured access to parliamentary datasets via MCP protocol</em>
+  <em>C4 Architecture Documentation — 28 Tools, 6 Resources, 6 Prompts</em>
 </p>
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-Architect-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--20-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-0.6.2-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2025--06--20-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** Architecture Team | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-20 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-20  
+**📋 Document Owner:** Architecture Team | **📄 Version:** 0.6.2 | **📅 Last Updated:** 2025-06-20 (UTC)  
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2025-09-20  
 **🏷️ Classification:** Public (Open Source MCP Server)  
-**✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.12.1), NIST CSF 2.0 (ID.AM), CIS Controls v8.1 (2.1)
+**✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.14.2), NIST CSF 2.0 (ID.AM, PR.DS), CIS Controls v8.1 (2.1, 16.1)
 
 ---
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
-- [Architecture Overview](#architecture-overview)
-- [MCP Protocol Implementation](#mcp-protocol-implementation)
-- [Tool Implementation Patterns](#tool-implementation-patterns)
-- [Caching Strategy](#caching-strategy)
-- [European Parliament Data Sources](#european-parliament-data-sources)
-- [Security Architecture](#security-architecture)
-- [Technology Stack](#technology-stack)
-- [Component Design](#component-design)
-- [Data Flow](#data-flow)
-- [API Design](#api-design)
-- [Performance Considerations](#performance-considerations)
-- [ISMS Compliance](#isms-compliance)
-- [Future Roadmap](#future-roadmap)
-
-📊 **[See complete architecture diagrams →](./ARCHITECTURE_DIAGRAMS.md)**
+1. [Architecture Documentation Map](#architecture-documentation-map)
+2. [Executive Summary](#executive-summary)
+3. [C4 System Context Diagram](#c4-system-context-diagram)
+4. [C4 Container Diagram](#c4-container-diagram)
+5. [C4 Component Diagram — Tool Engine](#c4-component-diagram--tool-engine)
+6. [MCP Protocol Surface](#mcp-protocol-surface)
+7. [Data Flow](#data-flow)
+8. [Technology Stack](#technology-stack)
+9. [Security Architecture](#security-architecture)
+10. [Performance Architecture](#performance-architecture)
+11. [ISMS Compliance](#isms-compliance)
+12. [Related Documentation](#related-documentation)
 
 ---
 
-## 🎯 Overview
+## 🗺️ Architecture Documentation Map
 
-The European Parliament MCP Server is a **Model Context Protocol (MCP)** implementation that provides structured access to European Parliament open datasets. It enables AI assistants and other MCP clients to query parliamentary data including MEPs, plenary sessions, committees, legislative documents, and parliamentary questions.
-
-### Key Features
-
-- 🔌 **MCP Protocol**: Full implementation of Model Context Protocol for AI integration
-- 🏛️ **European Parliament Data**: Access to comprehensive parliamentary datasets
-- 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3
-- 🚀 **Performance**: Caching, rate limiting, <200ms API response times
-- 📊 **Type Safety**: TypeScript with Zod runtime validation
-- 🧪 **Well-Tested**: 80%+ test coverage (95% for security code)
+| Document | Current | Future | Description |
+|----------|---------|--------|-------------|
+| **Architecture** | [ARCHITECTURE.md](./ARCHITECTURE.md) | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) | C4 model, containers, components |
+| **Mind Map** | [MINDMAP.md](./MINDMAP.md) | [FUTURE_MINDMAP.md](./FUTURE_MINDMAP.md) | System concepts and relationships |
+| **SWOT Analysis** | [SWOT.md](./SWOT.md) | [FUTURE_SWOT.md](./FUTURE_SWOT.md) | Strategic positioning |
+| **Data Model** | [DATA_MODEL.md](./DATA_MODEL.md) | [FUTURE_DATA_MODEL.md](./FUTURE_DATA_MODEL.md) | Entity relationships and schemas |
+| **Flowchart** | [FLOWCHART.md](./FLOWCHART.md) | [FUTURE_FLOWCHART.md](./FUTURE_FLOWCHART.md) | Business process flows |
+| **State Diagram** | [STATEDIAGRAM.md](./STATEDIAGRAM.md) | [FUTURE_STATEDIAGRAM.md](./FUTURE_STATEDIAGRAM.md) | System state transitions |
+| **Workflows** | [WORKFLOWS.md](./WORKFLOWS.md) | [FUTURE_WORKFLOWS.md](./FUTURE_WORKFLOWS.md) | CI/CD pipeline documentation |
+| **Security Architecture** | [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) | Security controls and design |
+| **Threat Model** | [THREAT_MODEL.md](./THREAT_MODEL.md) | — | STRIDE-based threat analysis |
+| **CRA Assessment** | [CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md) | — | EU Cyber Resilience Act review |
+| **Architecture Diagrams** | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) | — | Supplementary C4 diagrams |
 
 ---
 
-## 🏗️ Architecture Overview
+## 🎯 Executive Summary
+
+The **European Parliament MCP Server** (v0.6.2) is a TypeScript/Node.js [Model Context Protocol](https://spec.modelcontextprotocol.io/) server that provides AI assistants with structured, type-safe access to European Parliament open data. It exposes **28 MCP tools** (7 core data access + 21 advanced/OSINT intelligence), **6 resource templates**, and **6 prompt templates** — all backed by a centralized EP API client with LRU caching, Zod input validation, rate limiting, and GDPR-compliant audit logging.
+
+### Key Capabilities
+
+| Capability | Count | Description |
+|------------|-------|-------------|
+| 🔧 **MCP Tools** | 28 | Core data access + OSINT intelligence analysis |
+| 📄 **MCP Resources** | 6 | URI-based read access to parliamentary entities |
+| 💬 **MCP Prompts** | 6 | Pre-configured analysis templates for AI assistants |
+| 🏛️ **EP API Endpoints** | 12+ | MEPs, plenary sessions, committees, votes, documents, speeches |
+| 🔒 **Security Controls** | 4 layers | Zod validation, rate limiting, audit logging, GDPR compliance |
+
+---
+
+## 🏗️ C4 System Context Diagram
+
+The system context shows the European Parliament MCP Server and its external actors.
 
 ```mermaid
-graph TB
-    subgraph "MCP Clients"
-        A[AI Assistant/IDE]
-        B[Claude Desktop]
-        C[VS Code Extension]
-    end
-    
-    subgraph "MCP Server Layer"
-        D[MCP Protocol Handler]
-        D --> E[Tool Registry]
-        D --> F[Resource Registry]
-        D --> G[Prompt Registry]
-    end
-    
-    subgraph "Business Logic Layer"
-        E --> H[MEP Tools]
-        E --> I[Plenary Tools]
-        E --> J[Committee Tools]
-        E --> K[Document Tools]
-        E --> H2[OSINT Intelligence Tools]
-        F --> L[Resource Handlers]
-        G --> M[Prompt Templates]
-    end
-    
-    subgraph "Data Access Layer"
-        H --> N[EP API Client]
-        I --> N
-        J --> N
-        K --> N
-        H2 --> N
-        N --> O[Cache Layer]
-        N --> P[Rate Limiter]
-    end
-    
-    subgraph "External Services"
-        O --> Q[European Parliament API]
-        P --> Q
-    end
-    
-    subgraph "Infrastructure"
-        R[Security Headers]
-        S[Input Validation]
-        T[Audit Logging]
-        U[Error Handling]
-    end
-    
-    D -.-> R
-    H -.-> S
-    N -.-> T
-    N -.-> U
-    
-    A --> D
-    B --> D
-    C --> D
-    
-    style D fill:#4CAF50
-    style Q fill:#2196F3
-    style R fill:#FF9800
+C4Context
+    title European Parliament MCP Server — System Context (v0.6.2)
+
+    Person(aiClient, "AI/LLM Client", "Claude Desktop, Copilot, or any MCP-compatible AI assistant consuming parliamentary data")
+    Person(developer, "Developer", "Integrates MCP server into applications, configures tools and resources")
+
+    System(mcpServer, "European Parliament MCP Server", "TypeScript/Node.js MCP server exposing 28 tools, 6 resources, 6 prompts for EP open data access and OSINT intelligence analysis")
+
+    System_Ext(epApi, "European Parliament Open Data Portal", "REST API v2 at data.europarl.europa.eu providing MEPs, plenary sessions, committees, votes, documents, speeches")
+    System_Ext(npmRegistry, "npm Registry", "Package distribution for european-parliament-mcp-server")
+
+    Rel(aiClient, mcpServer, "Calls tools, reads resources, uses prompts", "MCP over stdio")
+    Rel(developer, mcpServer, "Configures, deploys, monitors", "CLI / npm")
+    Rel(mcpServer, epApi, "Fetches parliamentary data", "HTTPS/REST JSON-LD")
+    Rel(developer, npmRegistry, "Installs package", "npm install")
+
+    UpdateRelStyle(aiClient, mcpServer, $offsetY="-30")
+    UpdateRelStyle(mcpServer, epApi, $offsetY="20")
 ```
 
 ---
 
-## 🔌 MCP Protocol Implementation
+## 📦 C4 Container Diagram
 
-### Protocol Components
-
-The MCP server implements three core protocol features:
-
-#### 1. **Tools** (Function Calling)
-Tools allow clients to execute specific actions on European Parliament data.
-
-```typescript
-// Example: Get MEP Information Tool
-{
-  name: "get_meps",
-  description: "Retrieve information about Members of European Parliament",
-  inputSchema: {
-    type: "object",
-    properties: {
-      country: { type: "string", description: "ISO country code (e.g., 'SE')" },
-      group: { type: "string", description: "Political group" },
-      limit: { type: "number", minimum: 1, maximum: 100, default: 50 }
-    }
-  }
-}
-```
-
-#### 2. **Resources** (Data Access)
-Resources provide read access to specific data entities via URIs.
-
-```typescript
-// Example: MEP Resource
-{
-  uri: "ep://meps/{id}",
-  name: "MEP Profile",
-  description: "Detailed information about a specific MEP",
-  mimeType: "application/json"
-}
-```
-
-#### 3. **Prompts** (Templates)
-Prompts provide pre-configured query templates for common use cases.
-
-```typescript
-// Example: Legislative Analysis Prompt
-{
-  name: "analyze_legislation",
-  description: "Analyze legislative procedure and voting patterns",
-  arguments: [
-    { name: "procedure_id", description: "Legislative procedure ID", required: true }
-  ]
-}
-```
-
----
-
-## 🏛️ European Parliament Data Sources
-
-### Primary Data Source
-
-- **Base URL**: `https://data.europarl.europa.eu/api/v2/`
-- **Documentation**: https://data.europarl.europa.eu/en/developer-corner
-- **Data Format**: JSON-LD, RDF/XML, Turtle
-- **Update Frequency**: Real-time to daily (varies by dataset)
-
-### Available Datasets
-
-#### 1. **MEPs (Members of European Parliament)**
-- Current and historical members
-- Personal information, contact details
-- Political group affiliations
-- Committee memberships
-- Parliamentary activities
-
-#### 2. **Plenary Sessions**
-- Session schedules and agendas
-- Voting records and results
-- Attendance tracking
-- Debate transcripts
-
-#### 3. **Committees**
-- Committee composition
-- Meeting schedules
-- Working documents
-- Reports and opinions
-
-#### 4. **Legislative Documents**
-- Bills and resolutions
-- Amendments
-- Legislative procedures
-- Consolidated texts
-
-#### 5. **Parliamentary Questions**
-- Written questions
-- Oral questions
-- Question time transcripts
-- Responses and answers
-
----
-
-## 🔒 Security Architecture
-
-### Defense in Depth
+The container diagram shows the major runtime components inside the MCP server.
 
 ```mermaid
-graph LR
-    A[Client Request] --> B[TLS/HTTPS]
-    B --> C[Rate Limiting]
-    C --> D[Authentication]
-    D --> E[Input Validation]
-    E --> F[Authorization]
-    F --> G[Data Access]
-    G --> H[Audit Logging]
-    H --> I[Response Sanitization]
-    I --> J[Security Headers]
-    J --> K[Client Response]
-    
-    style C fill:#FF9800
-    style E fill:#FF9800
-    style H fill:#FF9800
-    style J fill:#FF9800
+C4Container
+    title European Parliament MCP Server — Container Diagram (v0.6.2)
+
+    Person(aiClient, "AI/LLM Client", "MCP-compatible assistant")
+
+    System_Boundary(mcpBoundary, "European Parliament MCP Server") {
+        Container(protocolHandler, "MCP Protocol Handler", "TypeScript, @modelcontextprotocol/sdk", "Handles MCP JSON-RPC over stdio transport; routes tool calls, resource reads, prompt requests")
+        Container(toolEngine, "Tool Engine", "TypeScript, Zod", "28 MCP tools: 7 core + 21 advanced/OSINT intelligence; input validation, business logic, response formatting")
+        Container(resourceHandler, "Resource Handler", "TypeScript", "6 URI-based resource templates providing read access to parliamentary entities (ep:// scheme)")
+        Container(promptHandler, "Prompt Handler", "TypeScript", "6 prompt templates for structured analysis: briefings, coalition analysis, legislative tracking")
+        Container(epClient, "EP API Client", "TypeScript, undici, lru-cache", "Centralized HTTP client with LRU cache (500 entries, 15-min TTL), rate limiting, error handling")
+        Container(diContainer, "DI Container", "TypeScript", "Dependency injection container wiring all services")
+        Container(infraLayer, "Infrastructure", "TypeScript", "Audit logger, rate limiter, performance monitoring, timeout handling, metrics service")
+    }
+
+    System_Ext(epApi, "EP Open Data API v2", "data.europarl.europa.eu/api/v2/")
+
+    Rel(aiClient, protocolHandler, "MCP JSON-RPC", "stdio")
+    Rel(protocolHandler, toolEngine, "Dispatches tool calls")
+    Rel(protocolHandler, resourceHandler, "Dispatches resource reads")
+    Rel(protocolHandler, promptHandler, "Dispatches prompt requests")
+    Rel(toolEngine, epClient, "Fetches data via")
+    Rel(resourceHandler, epClient, "Fetches data via")
+    Rel(epClient, epApi, "REST requests", "HTTPS JSON-LD")
+    Rel(toolEngine, infraLayer, "Uses validation, audit, rate limiting")
+    Rel(epClient, infraLayer, "Uses rate limiter, timeout, metrics")
+
+    UpdateRelStyle(aiClient, protocolHandler, $offsetY="-30")
+    UpdateRelStyle(epClient, epApi, $offsetY="20")
 ```
-
-### Security Layers
-
-#### 1. **Transport Security**
-- TLS 1.3 minimum
-- HSTS with 1-year max-age
-- Certificate pinning recommended
-
-#### 2. **Rate Limiting**
-- 100 requests per 15 minutes per IP
-- Token bucket algorithm
-- Graceful degradation
-
-#### 3. **Input Validation**
-- Zod schema validation
-- Type-safe parsing
-- SQL injection prevention
-- XSS protection
-
-#### 4. **Authentication & Authorization**
-- API key authentication
-- OAuth 2.0 support (future)
-- Role-based access control
-- Principle of least privilege
-
-#### 5. **Data Protection (GDPR)**
-- Data minimization
-- Purpose limitation
-- Storage limitation
-- Right to erasure support
-- Audit trail for personal data access
-
-#### 6. **Security Headers**
-See [SECURITY_HEADERS.md](./SECURITY_HEADERS.md) for complete implementation.
 
 ---
 
-## 🛠️ Technology Stack
+## 🔧 C4 Component Diagram — Tool Engine
 
-### Core Technologies
+The Tool Engine contains all 28 MCP tools organized into four functional groups.
 
-| Component | Technology | Version | Purpose |
-|-----------|-----------|---------|---------|
-| Runtime | Node.js | 24.x | JavaScript runtime |
-| Language | TypeScript | 5.x | Type-safe development |
-| Protocol | MCP SDK | Latest | Model Context Protocol |
-| Validation | Zod | 3.x | Runtime schema validation |
-| HTTP Client | Undici | Latest | Fast HTTP/1.1 client |
-| Testing | Vitest | Latest | Unit testing framework |
-| Linting | ESLint | 9.x | Code quality |
+```mermaid
+C4Component
+    title Tool Engine — Component Diagram (28 Tools)
 
-### Development Tools
+    Container_Boundary(toolEngine, "Tool Engine") {
 
-| Tool | Purpose |
-|------|---------|
-| tsx | TypeScript execution |
-| tsc | TypeScript compilation |
-| prettier | Code formatting |
-| knip | Unused dependency detection |
-| npm-audit | Security vulnerability scanning |
+        Component(coreTools, "Core Data Access Tools", "7 tools", "get_meps, get_mep_details, get_plenary_sessions, get_voting_records, search_documents, get_committee_info, get_parliamentary_questions")
 
-### Security Tools
+        Component(osintTools, "OSINT Intelligence Tools", "10 tools", "assess_mep_influence, analyze_coalition_dynamics, detect_voting_anomalies, compare_political_groups, analyze_legislative_effectiveness, monitor_legislative_pipeline, analyze_committee_activity, track_mep_attendance, analyze_country_delegation, generate_political_landscape")
 
-| Tool | Purpose |
-|------|---------|
-| CodeQL | Static security analysis |
-| Dependabot | Automated dependency updates |
-| OSSF Scorecard | Supply chain security |
-| Syft | SBOM generation |
-| Grype | Vulnerability scanning |
+        Component(epDataTools, "EP Data Access Tools", "8 tools", "get_current_meps, get_speeches, get_procedures, get_adopted_texts, get_events, get_meeting_activities, get_meeting_decisions, get_mep_declarations")
+
+        Component(advancedTools, "Advanced Analysis Tools", "3 tools", "analyze_voting_patterns, track_legislation, generate_report")
+    }
+
+    Container_Ext(epClient, "EP API Client", "Centralized HTTP client with LRU cache")
+    Container_Ext(infraLayer, "Infrastructure", "Zod validation, audit logger, rate limiter")
+
+    Rel(coreTools, epClient, "Queries EP data")
+    Rel(osintTools, epClient, "Aggregates & analyzes EP data")
+    Rel(epDataTools, epClient, "Queries new EP API v2 endpoints")
+    Rel(advancedTools, epClient, "Complex multi-step analysis")
+    Rel(coreTools, infraLayer, "Input validation, audit logging")
+    Rel(osintTools, infraLayer, "Input validation, audit logging")
+    Rel(epDataTools, infraLayer, "Input validation, audit logging")
+    Rel(advancedTools, infraLayer, "Input validation, audit logging")
+```
 
 ---
 
-## 🧩 Component Design
+## 🔌 MCP Protocol Surface
 
-### 1. MCP Server Core
+### Tools (28 total)
 
-```typescript
-// src/server.ts
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+#### Core Data Access Tools (7)
 
-export class EuropeanParliamentMCPServer {
-  private server: Server;
-  
-  constructor() {
-    this.server = new Server({
-      name: 'european-parliament-mcp-server',
-      version: '1.0.0'
-    }, {
-      capabilities: {
-        tools: {},
-        resources: {},
-        prompts: {}
-      }
-    });
-    
-    this.registerTools();
-    this.registerResources();
-    this.registerPrompts();
-  }
-  
-  async start() {
-    const transport = new StdioServerTransport();
-    await this.server.connect(transport);
-  }
-}
-```
+| Tool | Function | Description |
+|------|----------|-------------|
+| `get_meps` | `getMEPs` | List MEPs with country/group filters |
+| `get_mep_details` | `getMEPDetails` | Detailed MEP profile by ID |
+| `get_plenary_sessions` | `getPlenarySessions` | Plenary session listings |
+| `get_voting_records` | `getVotingRecords` | Session voting records |
+| `search_documents` | `searchDocuments` | Legislative document search |
+| `get_committee_info` | `getCommitteeInfo` | Committee details |
+| `get_parliamentary_questions` | `getParliamentaryQuestions` | Written/oral questions |
 
-### 2. Tool Implementation
+#### OSINT Intelligence Tools (10)
 
-```typescript
-// src/tools/getMEPs.ts
-import { z } from 'zod';
-import { Tool } from '../types/mcp';
+| Tool | Function | Description |
+|------|----------|-------------|
+| `assess_mep_influence` | `assessMepInfluence` | 5-dimension influence scoring model |
+| `analyze_coalition_dynamics` | `analyzeCoalitionDynamics` | Coalition cohesion & stress analysis |
+| `detect_voting_anomalies` | `detectVotingAnomalies` | Party defection & anomaly detection |
+| `compare_political_groups` | `comparePoliticalGroups` | Cross-group comparative analysis |
+| `analyze_legislative_effectiveness` | `analyzeLegislativeEffectiveness` | MEP/committee legislative scoring |
+| `monitor_legislative_pipeline` | `monitorLegislativePipeline` | Pipeline status & bottleneck detection |
+| `analyze_committee_activity` | `analyzeCommitteeActivity` | Committee workload & engagement |
+| `track_mep_attendance` | `trackMepAttendance` | MEP attendance patterns & trends |
+| `analyze_country_delegation` | `analyzeCountryDelegation` | Country delegation voting & composition |
+| `generate_political_landscape` | `generatePoliticalLandscape` | Parliament-wide political landscape |
 
-const GetMEPsSchema = z.object({
-  country: z.string().length(2).optional(),
-  group: z.string().optional(),
-  limit: z.number().min(1).max(100).default(50)
-});
+#### EP Data Access Tools (8)
 
-export const getMEPsTool: Tool = {
-  name: 'get_meps',
-  description: 'Get Members of European Parliament',
-  inputSchema: zodToJsonSchema(GetMEPsSchema),
-  
-  async handler(args) {
-    const params = GetMEPsSchema.parse(args);
-    const meps = await fetchMEPsFromAPI(params);
-    
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(meps, null, 2)
-      }]
-    };
-  }
-};
-```
+| Tool | Function | Description |
+|------|----------|-------------|
+| `get_current_meps` | `getCurrentMEPs` | Currently serving MEPs |
+| `get_speeches` | `getSpeeches` | Plenary speeches |
+| `get_procedures` | `getProcedures` | Legislative procedures |
+| `get_adopted_texts` | `getAdoptedTexts` | Adopted legislative texts |
+| `get_events` | `getEvents` | Parliamentary events |
+| `get_meeting_activities` | `getMeetingActivities` | Meeting activity records |
+| `get_meeting_decisions` | `getMeetingDecisions` | Meeting decision outcomes |
+| `get_mep_declarations` | `getMEPDeclarations` | MEP financial declarations |
 
-### 3. European Parliament API Client
+#### Advanced Analysis Tools (3)
 
-```typescript
-// src/clients/europeanParliamentClient.ts
-import { fetch } from 'undici';
-import { LRUCache } from 'lru-cache';
+| Tool | Function | Description |
+|------|----------|-------------|
+| `analyze_voting_patterns` | `analyzeVotingPatterns` | Multi-session voting analysis |
+| `track_legislation` | `trackLegislation` | End-to-end legislative tracking |
+| `generate_report` | `generateReport` | Structured analysis report generation |
 
-export class EuropeanParliamentClient {
-  private cache: LRUCache<string, unknown>;
-  private baseURL = 'https://data.europarl.europa.eu/api/v2/';
-  
-  constructor() {
-    this.cache = new LRUCache({
-      max: 500,
-      ttl: 1000 * 60 * 15, // 15 minutes
-      allowStale: false
-    });
-  }
-  
-  async get<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
-    const cacheKey = this.getCacheKey(endpoint, params);
-    
-    // Check cache
-    const cached = this.cache.get(cacheKey);
-    if (cached) return cached as T;
-    
-    // Fetch from API
-    const url = new URL(endpoint, this.baseURL);
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        url.searchParams.append(key, String(value));
-      });
-    }
-    
-    const response = await fetch(url, {
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'European-Parliament-MCP-Server/1.0'
-      }
-    });
-    
-    if (!response.ok) {
-      throw new APIError(`API request failed: ${response.statusText}`, response.status);
-    }
-    
-    const data = await response.json() as T;
-    this.cache.set(cacheKey, data);
-    
-    return data;
-  }
-  
-  private getCacheKey(endpoint: string, params?: Record<string, unknown>): string {
-    return JSON.stringify({ endpoint, params });
-  }
-}
-```
+### Resources (6 templates)
+
+| URI Template | Name | Description |
+|-------------|------|-------------|
+| `ep://meps` | MEP List | All Members of European Parliament |
+| `ep://meps/{mepId}` | MEP Profile | Individual MEP details |
+| `ep://committees/{committeeId}` | Committee Information | Committee details and membership |
+| `ep://plenary-sessions` | Plenary Sessions | Session listings and schedules |
+| `ep://votes/{sessionId}` | Voting Record | Session voting results |
+| `ep://political-groups` | Political Groups | Party group listings |
+
+### Prompts (6 templates)
+
+| Prompt Name | Description | Key Arguments |
+|-------------|-------------|---------------|
+| `mep_briefing` | MEP intelligence briefing | `mepId` |
+| `coalition_analysis` | Coalition dynamics analysis | `partyGroup` |
+| `legislative_tracking` | Legislative pipeline tracking | `procedureId` |
+| `political_group_comparison` | Political group comparison | `groups` |
+| `committee_activity_report` | Committee activity analysis | `committeeId` |
+| `voting_pattern_analysis` | Voting pattern detection | `mepId`, `sessionId` |
 
 ---
 
@@ -450,134 +255,178 @@ export class EuropeanParliamentClient {
 
 ```mermaid
 sequenceDiagram
-    participant Client as MCP Client
-    participant Server as MCP Server
-    participant Validator as Input Validator
-    participant RateLimit as Rate Limiter
-    participant Cache as Cache Layer
-    participant API as EP API
-    participant Logger as Audit Logger
-    
-    Client->>Server: Tool Request (get_meps)
-    Server->>Validator: Validate Input
-    Validator->>RateLimit: Check Rate Limit
-    RateLimit->>Cache: Check Cache
-    
-    alt Cache Hit
-        Cache-->>Server: Return Cached Data
+    participant Client as MCP Client (AI/LLM)
+    participant Protocol as MCP Protocol Handler
+    participant Validator as Zod Input Validator
+    participant RateLimiter as Rate Limiter
+    participant Tool as Tool Handler
+    participant Cache as LRU Cache (500 entries)
+    participant API as EP Open Data API v2
+    participant Audit as Audit Logger
+
+    Client->>Protocol: MCP JSON-RPC Request (tool call)
+    Protocol->>Validator: Validate input schema (Zod)
+    Validator->>RateLimiter: Check rate limit
+    RateLimiter->>Tool: Execute tool logic
+    Tool->>Cache: Check LRU cache
+
+    alt Cache Hit (TTL < 15 min)
+        Cache-->>Tool: Return cached response
     else Cache Miss
-        Cache->>API: Fetch from EP API
-        API-->>Cache: API Response
-        Cache->>Cache: Store in Cache
-        Cache-->>Server: Return Fresh Data
+        Cache->>API: HTTPS GET (JSON-LD)
+        API-->>Cache: API response
+        Cache->>Cache: Store (15-min TTL)
+        Cache-->>Tool: Return fresh data
     end
-    
-    Server->>Logger: Log Access
-    Server-->>Client: Return Response
-    
-    Note over Client,Logger: All requests audited for GDPR compliance
+
+    Tool->>Audit: Log access (GDPR compliance)
+    Tool-->>Protocol: Formatted MCP response
+    Protocol-->>Client: MCP JSON-RPC Response
+
+    Note over Client,Audit: All requests audited · Read-only public data · No PII stored
 ```
 
 ---
 
-## 🌐 API Design
+## 🛠️ Technology Stack
 
-### MCP Tools
+### Runtime & Language
 
-#### Core Tools
+| Component | Technology | Version | Purpose |
+|-----------|-----------|---------|---------|
+| Runtime | Node.js | 24.x | JavaScript runtime |
+| Language | TypeScript | 5.x | Type-safe development |
+| Module System | ESM | ES2022 | Native ES modules |
 
-| Tool Name | Description | Rate Limit |
-|-----------|-------------|------------|
-| `get_meps` | List MEPs with filters | Standard |
-| `get_mep_details` | Get detailed MEP info | Standard |
-| `get_plenary_sessions` | List plenary sessions | Standard |
-| `get_voting_records` | Get voting records | Standard |
-| `search_documents` | Search legislative docs | Higher limit |
-| `get_committee_info` | Get committee details | Standard |
-| `get_parliamentary_questions` | List questions | Standard |
+### Core Dependencies
 
-#### Advanced Tools
+| Package | Purpose |
+|---------|---------|
+| `@modelcontextprotocol/sdk` | MCP protocol implementation (server, stdio transport) |
+| `lru-cache` | In-memory LRU cache (500 entries, 15-min TTL) |
+| `undici` | High-performance HTTP client for EP API |
+| `zod` | Runtime input validation and schema definition |
 
-| Tool Name | Description | Rate Limit |
-|-----------|-------------|------------|
-| `analyze_voting_patterns` | Analyze MEP voting | Lower limit |
-| `track_legislation` | Track legislative procedure | Lower limit |
-| `generate_report` | Generate analysis report | Lowest limit |
+### Type System
 
-#### 🕵️ OSINT Intelligence Tools
+| Type | Module | Description |
+|------|--------|-------------|
+| `MEPID` | `src/types/branded.ts` | Branded type for MEP identifiers |
+| `SessionID` | `src/types/branded.ts` | Branded type for session identifiers |
+| `CommitteeID` | `src/types/branded.ts` | Branded type for committee identifiers |
+| `DocumentID` | `src/types/branded.ts` | Branded type for document identifiers |
+| `GroupID` | `src/types/branded.ts` | Branded type for political group identifiers |
 
-| Tool Name | Description | Rate Limit |
-|-----------|-------------|------------|
-| `assess_mep_influence` | MEP influence scoring (5-dimension model) | Lower limit |
-| `analyze_coalition_dynamics` | Coalition cohesion & stress analysis | Lower limit |
-| `detect_voting_anomalies` | Party defection & anomaly detection | Lower limit |
-| `compare_political_groups` | Cross-group comparative analysis | Lower limit |
-| `analyze_legislative_effectiveness` | MEP/committee legislative scoring | Lower limit |
-| `monitor_legislative_pipeline` | Pipeline status & bottleneck detection | Lower limit |
-| `analyze_committee_activity` | Committee workload & engagement analysis | Lower limit |
-| `track_mep_attendance` | MEP attendance patterns & trends | Lower limit |
-| `analyze_country_delegation` | Country delegation voting & composition | Lower limit |
-| `generate_political_landscape` | Parliament-wide political landscape | Lower limit |
+### Testing
 
-### Error Handling
+| Tool | Purpose |
+|------|---------|
+| Vitest | Unit, integration, E2E, and performance testing |
+| Coverage target | 80%+ line coverage |
+| Test types | Unit (`.test.ts`), integration, E2E (`vitest.e2e.config.ts`), performance |
 
-```typescript
-// Standardized error responses
-interface MCPError {
-  code: string;
-  message: string;
-  details?: unknown;
-}
+### Development & Quality
 
-// Error codes
-enum ErrorCode {
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
-  API_ERROR = 'API_ERROR',
-  NOT_FOUND = 'NOT_FOUND',
-  AUTHENTICATION_FAILED = 'AUTHENTICATION_FAILED',
-  INTERNAL_ERROR = 'INTERNAL_ERROR'
-}
-```
+| Tool | Purpose |
+|------|---------|
+| ESLint 9.x | Code quality and style enforcement |
+| TypeDoc | API documentation generation |
+| knip | Unused export/dependency detection |
+| standardlint | Project standards enforcement |
+
+### CI/CD Workflows (11)
+
+| Workflow | File | Purpose |
+|----------|------|---------|
+| Test & Report | `test-and-report.yml` | Unit/integration tests, coverage reporting |
+| CodeQL | `codeql.yml` | Static security analysis (SAST) |
+| Release | `release.yml` | npm publish, GitHub Release |
+| Integration Tests | `integration-tests.yml` | End-to-end EP API validation |
+| SBOM Generation | `sbom-generation.yml` | CycloneDX software bill of materials |
+| SLSA Provenance | `slsa-provenance.yml` | SLSA Level 3 build provenance |
+| Scorecard | `scorecard.yml` | OpenSSF Scorecard supply chain audit |
+| Dependency Review | `dependency-review.yml` | PR dependency change review |
+| Labeler | `labeler.yml` | Automatic PR labeling |
+| Setup Labels | `setup-labels.yml` | Repository label initialization |
+| Copilot Setup | `copilot-setup-steps.yml` | GitHub Copilot MCP configuration |
 
 ---
 
-## ⚡ Performance Considerations
+## 🔒 Security Architecture
+
+### Defense-in-Depth Layers
+
+```mermaid
+graph LR
+    A[MCP Request] --> B[Rate Limiter]
+    B --> C[Zod Input Validation]
+    C --> D[Branded Type Enforcement]
+    D --> E[EP API Client]
+    E --> F[HTTPS/TLS to EP API]
+    F --> G[Response Processing]
+    G --> H[Audit Logger]
+    H --> I[MCP Response]
+
+    style B fill:#FF9800,color:#000
+    style C fill:#FF9800,color:#000
+    style D fill:#FF9800,color:#000
+    style H fill:#FF9800,color:#000
+```
+
+### Security Controls
+
+| Layer | Control | Implementation |
+|-------|---------|----------------|
+| **Input** | Schema validation | Zod schemas for all 28 tool inputs |
+| **Input** | Type safety | Branded types (MEPID, SessionID, CommitteeID, DocumentID, GroupID) |
+| **Transport** | Rate limiting | Token bucket per client, configurable limits |
+| **Transport** | Timeout handling | Request timeouts via `src/utils/timeout.ts` |
+| **Data** | Read-only access | No write operations to EP API |
+| **Data** | Public data only | No authentication secrets, no PII storage |
+| **Audit** | Access logging | GDPR-compliant audit trail via `src/utils/auditLogger.ts` |
+| **Supply Chain** | SBOM | CycloneDX format, generated per release |
+| **Supply Chain** | Provenance | SLSA Level 3 build attestations |
+| **Supply Chain** | Scorecard | OpenSSF Scorecard continuous monitoring |
+
+### GDPR Compliance
+
+- **Data Minimization**: Only public EP data accessed; no personal data stored
+- **Audit Trail**: All data access logged with timestamps
+- **No PII Storage**: Server is stateless; cache holds only public EP API responses
+- **Right of Access**: Audit logs queryable for compliance requests
+
+> 📖 See [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) for full security design  
+> 📖 See [THREAT_MODEL.md](./THREAT_MODEL.md) for STRIDE-based threat analysis
+
+---
+
+## ⚡ Performance Architecture
 
 ### Caching Strategy
 
-```typescript
-// Three-tier caching
-1. Memory Cache (LRU, 15 min TTL)
-   - Fast access for repeated queries
-   - Max 500 entries
-   
-2. Redis Cache (Optional, 1 hour TTL)
-   - Shared cache across instances
-   - Suitable for production deployment
-   
-3. HTTP Cache (via Cache-Control)
-   - Leverage browser/proxy caching
-   - Reduce server load
-```
+| Tier | Technology | TTL | Max Entries | Purpose |
+|------|-----------|-----|-------------|---------|
+| **L1 — Memory** | LRU Cache (`lru-cache`) | 15 min | 500 | Fast access for repeated queries |
 
 ### Performance Targets
 
 | Metric | Target | Measurement |
 |--------|--------|-------------|
 | P50 Response Time | <100ms | Cached requests |
-| P95 Response Time | <200ms | Cache miss |
-| P99 Response Time | <500ms | Complex queries |
-| Throughput | 100 req/min/client | Rate limit |
-| Cache Hit Rate | >80% | Production typical |
+| P95 Response Time | <200ms | Cache miss (EP API call) |
+| P99 Response Time | <500ms | Complex OSINT analysis |
+| Cache Hit Rate | >80% | Typical production usage |
+| Memory Footprint | ~2.5 MB | LRU cache at capacity |
 
-### Optimization Techniques
+### Key Design Decisions
 
-1. **Query Optimization**: Minimize API calls through batching
-2. **Pagination**: Limit result sets to 50-100 items by default
-3. **Field Selection**: Only request needed fields from EP API
-4. **Connection Pooling**: Reuse HTTP connections
-5. **Compression**: Use gzip/brotli for responses
+- **Single EP API Client**: Centralized in `src/clients/europeanParliamentClient.ts` — all tools share one cached client instance
+- **DI Container**: `src/di/container.ts` wires dependencies; ensures single cache instance
+- **Metrics Service**: `src/services/MetricsService.ts` tracks performance counters
+- **Connection Reuse**: Undici HTTP client with keep-alive connections
+
+> ⚡ See [PERFORMANCE_GUIDE.md](./PERFORMANCE_GUIDE.md) for optimization details  
+> 📊 See [PERFORMANCE_MONITORING.md](./PERFORMANCE_MONITORING.md) for observability
 
 ---
 
@@ -585,172 +434,62 @@ enum ErrorCode {
 
 ### Policy Alignment
 
-This architecture aligns with Hack23 ISMS policies:
+This architecture aligns with [Hack23 ISMS policies](https://github.com/Hack23/ISMS-PUBLIC):
 
-| Policy | Requirement | Implementation |
-|--------|-------------|----------------|
-| [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) | Public transparency | SBOM, badges, documentation |
-| [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) | Security by design | Input validation, auth, audit |
-| Privacy Policy | GDPR compliance | Data minimization, erasure support |
-| Access Control Policy | Least privilege | RBAC, API keys |
+| ISMS Policy | Requirement | Implementation |
+|-------------|-------------|----------------|
+| [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md) | Risk-based security | Defense-in-depth, rate limiting, audit logging |
+| [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) | Security by design | Zod validation, branded types, CodeQL SAST |
+| [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) | Transparency & supply chain | SBOM, SLSA provenance, OpenSSF Scorecard |
+| [Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) | Least privilege | Read-only API access, rate limiting |
+| [Business Continuity Plan](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Business_Continuity_Plan.md) | Resilience | Graceful degradation, cache fallback |
 
-### Security Controls
+### Compliance Framework Mapping
 
-| Control | Type | Implementation |
-|---------|------|----------------|
-| AC-3 | Access Enforcement | API key authentication |
-| AU-2 | Audit Events | All data access logged |
-| IA-2 | User Identification | API key validation |
-| SC-8 | Transmission Confidentiality | TLS 1.3 |
-| SI-10 | Information Input Validation | Zod schemas |
-
-### Compliance Badges
-
-```markdown
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge)](https://securityscorecards.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server)
-[![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://github.com/Hack23/European-Parliament-MCP-Server/attestations/)
-[![SBOM](https://img.shields.io/badge/SBOM-SPDX-blue)](https://spdx.dev)
-```
-
----
-
-## 🚀 Future Roadmap
-
-### Phase 1: MVP (Current)
-- ✅ Core MCP protocol implementation
-- ✅ Basic MEP and plenary data access
-- ✅ Security headers and input validation
-- ✅ ISMS compliance documentation
-- ✅ OSINT Intelligence Tools (Phase 1)
-  - ✅ MEP influence scoring (5-dimension model)
-  - ✅ Coalition dynamics analysis
-  - ✅ Voting anomaly detection
-  - ✅ Political group comparison
-  - ✅ Legislative effectiveness scoring
-  - ✅ Legislative pipeline monitoring
-
-### Phase 2: Enhanced Features (Completed)
-- ✅ OSINT Intelligence Tools (Phase 2)
-  - ✅ Committee activity analysis
-  - ✅ MEP attendance tracking
-- ✅ OSINT Intelligence Tools (Phase 3)
-  - ✅ Country delegation analysis
-  - ✅ Political landscape generation
-- ✅ MCP Prompts (6 templates)
-- ✅ MCP Resources (6 resource templates)
-- [ ] Full dataset coverage (all 5 datasets)
-- [ ] Advanced search and filtering
-- [ ] Real-time notifications via WebSocket
-- [ ] OAuth 2.0 authentication
-- [ ] Redis caching for production
-
-### Phase 3: Intelligence Layer (Q3 2026)
-- [ ] Political network mapping
-- [ ] Legislative trend detection
-- [ ] Automated intelligence briefings
-- [ ] Political risk assessments
-- [ ] Policy position tracking
-
-### Phase 4: Integration & Scale (Q4 2026)
-- [ ] GraphQL API
-- [ ] Multi-language support
-- [ ] Kubernetes deployment
-- [ ] High availability setup
-- [ ] CDN integration
-
----
-
-## 📚 References
-
-### European Parliament
-- [Open Data Portal](https://data.europarl.europa.eu/)
-- [Developer Corner](https://data.europarl.europa.eu/en/developer-corner)
-- [Data Privacy Policy](https://www.europarl.europa.eu/portal/en/legal-notice)
-
-### MCP Protocol
-- [MCP Specification](https://spec.modelcontextprotocol.io/)
-- [MCP SDK Documentation](https://github.com/modelcontextprotocol/sdk)
-
-### Security Standards
-- [OWASP API Security Top 10](https://owasp.org/www-project-api-security/)
-- [OpenSSF Scorecard](https://securityscorecards.dev/)
-- [SLSA Framework](https://slsa.dev/)
-- [SBOM Guide](https://www.cisa.gov/sbom)
-
-### ISMS Policies
-- [Hack23 ISMS Public](https://github.com/Hack23/ISMS-PUBLIC)
-- [ISO 27001:2022](https://www.iso.org/standard/27001)
-- [NIST Cybersecurity Framework 2.0](https://www.nist.gov/cyberframework)
-- [CIS Controls v8.1](https://www.cisecurity.org/controls/)
-
----
-
-## 🔧 Tool Implementation Patterns
-
-All 20 MCP tools (7 core + 3 advanced + 10 OSINT intelligence) follow a consistent implementation pattern:
-
-**Pattern**: Input Validation → EP API Client → Output Validation → MCP Response
-
-**Example**:
-```typescript
-export async function handleGetMEPs(args: unknown) {
-  // 1. Validate input with Zod
-  const params = GetMEPsSchema.parse(args);
-  
-  // 2. Call EP API client with validated params
-  const result = await epClient.getMEPs(params);
-  
-  // 3. Validate output structure
-  const validated = PaginatedResponseSchema(MEPSchema).parse(result);
-  
-  // 4. Return MCP-compliant response
-  return {
-    content: [{ type: 'text', text: JSON.stringify(validated, null, 2) }]
-  };
-}
-```
-
-📖 **[Complete implementation guide →](./docs/DEVELOPER_GUIDE.md#adding-new-tools)**
-
----
-
-## 💾 Caching Strategy
-
-**LRU Cache Configuration**:
-- Max entries: 500
-- TTL: 15 minutes
-- Memory: ~2.5MB
-
-**Cache Keys**: `{method}:{JSON.stringify(sorted_params)}`
-
-**Performance**:
-- Cached responses: <1ms
-- Cache hit rate: >80%
-- Memory efficient
-
-⚡ **[Complete performance guide →](./PERFORMANCE_GUIDE.md)**
+| Framework | Control | Implementation |
+|-----------|---------|----------------|
+| **ISO 27001** | A.8.1 — Asset management | All components documented in this architecture |
+| **ISO 27001** | A.14.2 — Secure development | TypeScript strict mode, Zod validation, CodeQL |
+| **ISO 27001** | A.12.4 — Logging & monitoring | Audit logger, metrics service |
+| **NIST CSF 2.0** | ID.AM — Asset management | Architecture documentation map (above) |
+| **NIST CSF 2.0** | PR.DS — Data security | Read-only access, no PII storage, cache TTL |
+| **NIST CSF 2.0** | DE.CM — Continuous monitoring | OpenSSF Scorecard, Dependabot, CodeQL |
+| **CIS Controls v8.1** | 2.1 — Software inventory | SBOM (CycloneDX), `package.json` locked |
+| **CIS Controls v8.1** | 16.1 — Application security | Zod input validation, branded types |
 
 ---
 
 ## 🔗 Related Documentation
 
-| Document | Description | Link |
-|----------|-------------|------|
-| **Security Architecture** | Security design and controls | [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) |
-| **Data Model** | Data structures and entity relationships | [DATA_MODEL.md](./DATA_MODEL.md) |
-| **Flowcharts** | Business process and data flows | [FLOWCHART.md](./FLOWCHART.md) |
-| **State Diagrams** | System state transitions | [STATEDIAGRAM.md](./STATEDIAGRAM.md) |
-| **Mind Map** | System conceptual relationships | [MINDMAP.md](./MINDMAP.md) |
-| **SWOT Analysis** | Strategic analysis and positioning | [SWOT.md](./SWOT.md) |
-| **Workflows** | CI/CD pipeline documentation | [WORKFLOWS.md](./WORKFLOWS.md) |
-| **Architecture Diagrams** | C4 model diagrams | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) |
-| **Future Architecture** | Architectural evolution roadmap | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) |
-| **Secure Development Policy** | ISMS secure development guidelines | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
-| **Open Source Policy** | ISMS open source governance | [Open_Source_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
+### Project Documentation
+
+| Document | Description |
+|----------|-------------|
+| [README.md](./README.md) | Project overview, quick start, badges |
+| [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) | Development setup, contribution guide |
+| [API_USAGE_GUIDE.md](./API_USAGE_GUIDE.md) | Tool usage examples and patterns |
+| [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) | Deployment and configuration |
+| [LOCAL_TESTING.md](./LOCAL_TESTING.md) | Local development testing |
+| [INTEGRATION_TESTING.md](./INTEGRATION_TESTING.md) | Integration test guide |
+| [PERFORMANCE_GUIDE.md](./PERFORMANCE_GUIDE.md) | Performance optimization |
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | Contribution guidelines |
+| [SECURITY.md](./SECURITY.md) | Vulnerability reporting policy |
+
+### External References
+
+| Resource | URL |
+|----------|-----|
+| EP Open Data Portal | https://data.europarl.europa.eu/ |
+| EP Developer Corner | https://data.europarl.europa.eu/en/developer-corner |
+| MCP Specification | https://spec.modelcontextprotocol.io/ |
+| MCP SDK | https://github.com/modelcontextprotocol/sdk |
+| OpenSSF Scorecard | https://securityscorecards.dev/ |
+| SLSA Framework | https://slsa.dev/ |
+| Hack23 ISMS Policies | https://github.com/Hack23/ISMS-PUBLIC |
 
 ---
 
 <p align="center">
   <strong>Built with ❤️ by <a href="https://hack23.com">Hack23 AB</a></strong><br>
-  <em>Architecture documentation following ISMS standards</em>
+  <em>Architecture documentation following C4 model and ISMS standards</em>
 </p>
