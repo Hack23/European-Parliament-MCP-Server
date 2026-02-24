@@ -60,7 +60,7 @@
 
 ## 🎯 Overview
 
-This document defines all state machines and state transitions for the **European Parliament MCP Server v0.6.2** — a TypeScript/Node.js server implementing the Model Context Protocol over stdio transport. The server exposes **28 tools**, **6 resources**, and **6 prompts** for querying the EP Open Data Portal API v2 (`https://data.europarl.europa.eu/api/v2/`).
+This document defines all state machines and state transitions for the **European Parliament MCP Server v0.7.1** — a TypeScript/Node.js server implementing the Model Context Protocol over stdio transport. The server exposes **39 tools**, **6 resources**, and **6 prompts** for querying the EP Open Data Portal API v2 (`https://data.europarl.europa.eu/api/v2/`).
 
 State diagrams provide:
 
@@ -131,7 +131,7 @@ stateDiagram-v2
 
 | State | Description | Entry Condition | Exit Condition |
 |-------|-------------|-----------------|----------------|
-| **Initializing** | Reads environment variables (`EP_API_URL`, `EP_CACHE_TTL`, `EP_RATE_LIMIT`), instantiates `Server` with capabilities (tools, resources, prompts), registers all 28 tool handlers, 6 resource handlers, and 6 prompt handlers, creates `StdioServerTransport` | Process start (`npm start`) | `server.connect(transport)` resolves |
+| **Initializing** | Reads environment variables (`EP_API_URL`, `EP_CACHE_TTL`, `EP_RATE_LIMIT`), instantiates `Server` with capabilities (tools, resources, prompts), registers all 39 tool handlers, 6 resource handlers, and 6 prompt handlers, creates `StdioServerTransport` | Process start (`npm start`) | `server.connect(transport)` resolves |
 | **Ready** | Listening on stdin for JSON-RPC messages, all handlers registered, LRU cache initialized (500 max entries), rate limiter active (60 req/min default) | Transport connected | Request arrives or shutdown signal |
 | **Processing** | Actively executing an MCP request (tool call, resource read, or prompt get) | JSON-RPC message parsed from stdin | Response written to stdout |
 | **ShuttingDown** | Graceful shutdown initiated, in-flight requests drain, transport closes | `SIGINT`, `SIGTERM`, or stdin EOF | All connections closed |
@@ -206,7 +206,7 @@ stateDiagram-v2
 
 | Method | Handler Count | Example | Registration |
 |--------|---------------|---------|-------------|
-| `tools/list` | 1 | Returns metadata for all 28 tools | `ListToolsRequestSchema` |
+| `tools/list` | 1 | Returns metadata for all 39 tools | `ListToolsRequestSchema` |
 | `tools/call` | 28 | `get_meps`, `analyze_voting_patterns` | `CallToolRequestSchema` → `dispatchToolCall()` |
 | `resources/list` | 1 | Returns 6 resource templates | `ListResourcesRequestSchema` |
 | `resources/read` | 6 | `ep://meps/{mepId}`, `ep://committees/{id}` | `ReadResourceRequestSchema` |
@@ -222,7 +222,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   return await this.dispatchToolCall(name, args);  // Dispatching → Executing
 });
 
-// Dispatch (src/index.ts — 28 tool mappings)
+// Dispatch (src/index.ts — 39 tool mappings)
 private async dispatchToolCall(name: string, args: unknown) {
   switch (name) {
     case 'get_meps':        return handleGetMEPs(this.client, args);
@@ -236,7 +236,7 @@ private async dispatchToolCall(name: string, args: unknown) {
 
 ## 🔧 Tool Execution Pipeline
 
-Each of the 28 tools follows the same execution pipeline: input validation via Zod schema, LRU cache check, EP API HTTP call (if cache miss), JSON-LD response transformation, and MCP response formatting. Error states branch at each stage.
+Each of the 39 tools follows the same execution pipeline: input validation via Zod schema, LRU cache check, EP API HTTP call (if cache miss), JSON-LD response transformation, and MCP response formatting. Error states branch at each stage.
 
 ```mermaid
 stateDiagram-v2
@@ -306,7 +306,7 @@ stateDiagram-v2
 
 ### Zod Schema Validation Example
 
-All 28 tools define strict Zod schemas for input validation:
+All 39 tools define strict Zod schemas for input validation:
 
 ```typescript
 // src/tools/analyzeCountryDelegation.ts

@@ -58,7 +58,7 @@
 mindmap
   root((European Parliament<br/>MCP Server<br/>v0.6.2))
     🔌 MCP Protocol
-      🛠️ Tools — 28 MCP Tools
+      🛠️ Tools — 39 MCP Tools
         Core Data Tools — 7
         OSINT Intelligence Tools — 21
       📦 Resources — 6
@@ -179,7 +179,7 @@ mindmap
 
 ## 🛠️ MCP Tool Ecosystem Mindmap
 
-**🔧 Tools Focus:** Shows the complete hierarchy of all 28 MCP tools organized by functional category. See the [API Usage Guide](API_USAGE_GUIDE.md) for detailed parameter and response documentation.
+**🔧 Tools Focus:** Shows the complete hierarchy of all 39 MCP tools organized by functional category. See the [API Usage Guide](API_USAGE_GUIDE.md) for detailed parameter and response documentation.
 
 ```mermaid
 mindmap
@@ -504,7 +504,7 @@ graph TD
 ---
 
 <div class="visualization-legend">
-These mindmaps provide a conceptual overview of the European Parliament MCP Server, showing how MCP tools, resources, and prompts relate to European Parliament data domains, OSINT intelligence capabilities, and the underlying technical architecture. The maps help stakeholders understand the scope and organization of the server's 28 tools, 6 resources, and 6 prompts.
+These mindmaps provide a conceptual overview of the European Parliament MCP Server, showing how MCP tools, resources, and prompts relate to European Parliament data domains, OSINT intelligence capabilities, and the underlying technical architecture. The maps help stakeholders understand the scope and organization of the server's 39 tools, 6 resources, and 6 prompts.
 
 For practical demonstrations, visit the <a href="https://hack23.com/european-parliament-mcp-features.html">EP MCP Features page</a> which provides detailed explanations of the platform's capabilities.
 
@@ -541,7 +541,7 @@ This documentation aligns with [Hack23 ISMS policies](https://github.com/Hack23/
 ### ISO 27001 Controls
 
 - **A.5.1** — Information Security Policies: System scope and component relationships documented
-- **A.8.1** — Asset Inventory: All 28 tools, 6 resources, 6 prompts, and 4 dependencies cataloged
+- **A.8.1** — Asset Inventory: All 39 tools, 6 resources, 6 prompts, and 4 dependencies cataloged
 - **A.14.2** — Secure Development: TypeScript strict mode, Zod validation, branded types documented
 - **A.18.1** — Compliance Review: GDPR, data protection, and audit obligations identified
 
