@@ -105,6 +105,91 @@ describe('analyze_committee_activity Tool', () => {
     });
   });
 
+  describe('Workload Intensity Computation', () => {
+    it('should classify VERY_HIGH workload for large committees', async () => {
+      vi.mocked(epClientModule.epClient.getCommitteeInfo).mockResolvedValue({
+        id: 'ENVI', name: 'Environment', abbreviation: 'ENVI',
+        members: Array.from({ length: 60 }, (_, i) => `MEP-${i}`)
+      });
+      const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      expect(data.computedAttributes.workloadIntensity).toBe('VERY_HIGH');
+    });
+
+    it('should classify HIGH workload for medium-large committees', async () => {
+      vi.mocked(epClientModule.epClient.getCommitteeInfo).mockResolvedValue({
+        id: 'ITRE', name: 'Industry', abbreviation: 'ITRE',
+        members: Array.from({ length: 25 }, (_, i) => `MEP-${i}`)
+      });
+      const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ITRE' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      expect(data.computedAttributes.workloadIntensity).toBe('HIGH');
+    });
+
+    it('should classify MODERATE workload for medium committees', async () => {
+      vi.mocked(epClientModule.epClient.getCommitteeInfo).mockResolvedValue({
+        id: 'AFET', name: 'Foreign Affairs', abbreviation: 'AFET',
+        members: Array.from({ length: 12 }, (_, i) => `MEP-${i}`)
+      });
+      const result = await handleAnalyzeCommitteeActivity({ committeeId: 'AFET' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      expect(data.computedAttributes.workloadIntensity).toBe('MODERATE');
+    });
+
+    it('should classify LOW workload for small committees', async () => {
+      vi.mocked(epClientModule.epClient.getCommitteeInfo).mockResolvedValue({
+        id: 'DROI', name: 'Human Rights', abbreviation: 'DROI',
+        members: ['MEP-1', 'MEP-2']
+      });
+      const result = await handleAnalyzeCommitteeActivity({ committeeId: 'DROI' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      expect(data.computedAttributes.workloadIntensity).toBe('LOW');
+    });
+  });
+
+  describe('Engagement and Impact Computation', () => {
+    it('should classify HIGH engagement for large committees', async () => {
+      vi.mocked(epClientModule.epClient.getCommitteeInfo).mockResolvedValue({
+        id: 'ENVI', name: 'Environment', abbreviation: 'ENVI',
+        members: Array.from({ length: 50 }, (_, i) => `MEP-${i}`)
+      });
+      const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      expect(data.computedAttributes.engagementLevel).toBe('HIGH');
+    });
+
+    it('should classify MODERATE engagement for small committees', async () => {
+      vi.mocked(epClientModule.epClient.getCommitteeInfo).mockResolvedValue({
+        id: 'DROI', name: 'Human Rights', abbreviation: 'DROI',
+        members: ['MEP-1']
+      });
+      const result = await handleAnalyzeCommitteeActivity({ committeeId: 'DROI' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      expect(['MODERATE', 'LOW']).toContain(data.computedAttributes.engagementLevel);
+    });
+
+    it('should handle empty members array', async () => {
+      vi.mocked(epClientModule.epClient.getCommitteeInfo).mockResolvedValue({
+        id: 'TEST', name: 'Test Committee', abbreviation: 'TEST',
+        members: []
+      });
+      const result = await handleAnalyzeCommitteeActivity({ committeeId: 'TEST' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      expect(data.memberEngagement.totalMembers).toBe(0);
+      expect(data.workload.activeLegislativeFiles).toBeGreaterThanOrEqual(5);
+    });
+
+    it('should compute policy impact rating based on reports and success rate', async () => {
+      vi.mocked(epClientModule.epClient.getCommitteeInfo).mockResolvedValue({
+        id: 'ENVI', name: 'Environment', abbreviation: 'ENVI',
+        members: Array.from({ length: 40 }, (_, i) => `MEP-${i}`)
+      });
+      const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      expect(['HIGH', 'MEDIUM', 'LOW']).toContain(data.computedAttributes.policyImpactRating);
+    });
+  });
+
   describe('Error Handling', () => {
     it('should propagate API errors', async () => {
       vi.mocked(epClientModule.epClient.getCommitteeInfo).mockRejectedValue(

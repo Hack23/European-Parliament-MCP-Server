@@ -220,4 +220,138 @@ describe('track_mep_attendance Tool', () => {
       expect(data.records.length).toBe(1);
     });
   });
+
+  describe('Attendance Classification Edge Cases', () => {
+    it('should classify HIGH attendance for rate >= 80', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-1', name: 'Active MEP', country: 'SE', politicalGroup: 'EPP',
+        committees: ['ENVI'], active: true, termStart: '2019-07-02',
+        votingStatistics: { totalVotes: 1000, votesFor: 600, votesAgainst: 300, abstentions: 100, attendanceRate: 92 }
+      });
+
+      const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.records[0]?.category).toBe('HIGH');
+      expect(data.records[0]?.trend).toBe('STABLE_HIGH');
+    });
+
+    it('should classify MODERATE attendance for rate 60-79', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-1', name: 'Moderate MEP', country: 'SE', politicalGroup: 'EPP',
+        committees: ['ENVI'], active: true, termStart: '2019-07-02',
+        votingStatistics: { totalVotes: 1000, votesFor: 400, votesAgainst: 400, abstentions: 200, attendanceRate: 65 }
+      });
+
+      const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.records[0]?.category).toBe('MODERATE');
+    });
+
+    it('should classify LOW attendance for rate < 60', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-1', name: 'Absent MEP', country: 'SE', politicalGroup: 'EPP',
+        committees: ['ENVI'], active: true, termStart: '2019-07-02',
+        votingStatistics: { totalVotes: 1000, votesFor: 200, votesAgainst: 200, abstentions: 600, attendanceRate: 40 }
+      });
+
+      const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.records[0]?.category).toBe('LOW');
+      expect(data.records[0]?.trend).toBe('CONCERNING');
+      expect(data.computedAttributes.absenteeismRisk).toBe('HIGH');
+    });
+
+    it('should classify DECLINING trend for rate 50-69', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-1', name: 'Declining MEP', country: 'SE', politicalGroup: 'EPP',
+        committees: ['ENVI'], active: true, termStart: '2019-07-02',
+        votingStatistics: { totalVotes: 1000, votesFor: 300, votesAgainst: 400, abstentions: 300, attendanceRate: 55 }
+      });
+
+      const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.records[0]?.trend).toBe('DECLINING');
+    });
+
+    it('should handle MEP without votingStatistics', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-1', name: 'New MEP', country: 'SE', politicalGroup: 'EPP',
+        committees: ['ENVI'], active: true, termStart: '2024-07-02'
+        // No votingStatistics
+      });
+
+      const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.records[0]?.trend).toBe('UNKNOWN');
+      expect(data.records[0]?.category).toBe('UNKNOWN');
+      expect(data.records[0]?.attendanceRate).toBe(0);
+    });
+  });
+
+  describe('Group Analysis Edge Cases', () => {
+    it('should build scope with both country and groupId', async () => {
+      const result = await handleTrackMepAttendance({ country: 'SE', groupId: 'EPP' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.scope).toContain('Country: SE');
+      expect(data.scope).toContain('Group: EPP');
+    });
+
+    it('should default scope to "All MEPs" when no filters', async () => {
+      const result = await handleTrackMepAttendance({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.scope).toBe('All MEPs');
+    });
+
+    it('should classify DECLINING attendance trend for low group average', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-1', name: 'Low MEP', country: 'SE', politicalGroup: 'EPP',
+        committees: ['ENVI'], active: true, termStart: '2019-07-02',
+        votingStatistics: { totalVotes: 500, votesFor: 200, votesAgainst: 200, abstentions: 100, attendanceRate: 50 }
+      });
+
+      const result = await handleTrackMepAttendance({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.computedAttributes.attendanceTrend).toBe('DECLINING');
+    });
+
+    it('should compute HIGH absenteeism risk when many MEPs have LOW attendance', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: Array.from({ length: 5 }, (_, i) => ({
+          id: `MEP-${i}`, name: `MEP ${i}`, country: 'IT', politicalGroup: 'S&D',
+          committees: [], active: true, termStart: '2019-07-02'
+        })),
+        total: 5, limit: 20, offset: 0, hasMore: false
+      });
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-1', name: 'Low MEP', country: 'IT', politicalGroup: 'S&D',
+        committees: [], active: true, termStart: '2019-07-02',
+        votingStatistics: { totalVotes: 200, votesFor: 50, votesAgainst: 100, abstentions: 50, attendanceRate: 30 }
+      });
+
+      const result = await handleTrackMepAttendance({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.computedAttributes.absenteeismRisk).toBe('HIGH');
+    });
+
+    it('should handle empty MEP list', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [], total: 0, limit: 20, offset: 0, hasMore: false
+      });
+
+      const result = await handleTrackMepAttendance({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.summary.totalMEPs).toBe(0);
+      expect(data.summary.averageAttendance).toBe(0);
+    });
+  });
 });

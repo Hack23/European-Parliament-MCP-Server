@@ -167,4 +167,122 @@ describe('analyze_country_delegation Tool', () => {
       expect(data.delegation.totalMEPs).toBe(3);
     });
   });
+
+  describe('Edge Cases', () => {
+    it('should handle empty MEP delegation', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [],
+        total: 0,
+        limit: 100,
+        offset: 0,
+        hasMore: false
+      });
+
+      const result = await handleAnalyzeCountryDelegation({ country: 'MT' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.delegation.totalMEPs).toBe(0);
+      expect(data.delegation.groupDistribution).toEqual([]);
+      expect(data.votingBehavior.averageAttendance).toBe(0);
+      expect(data.computedAttributes.engagementLevel).toBe('LOW');
+      expect(data.confidenceLevel).toBe('LOW');
+    });
+
+    it('should handle MEPs without voting statistics', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-1', name: 'MEP One', country: 'SE', politicalGroup: 'EPP',
+        committees: ['ENVI'], active: true, termStart: '2019-07-02'
+        // No votingStatistics
+      });
+
+      const result = await handleAnalyzeCountryDelegation({ country: 'SE' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.votingBehavior.averageAttendance).toBe(0);
+      expect(data.confidenceLevel).toBe('LOW');
+    });
+
+    it('should compute HIGH fragmentation for diverse delegation', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [
+          { id: 'MEP-1', name: 'A', country: 'DE', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-2', name: 'B', country: 'DE', politicalGroup: 'S&D', committees: [], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-3', name: 'C', country: 'DE', politicalGroup: 'Renew', committees: [], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-4', name: 'D', country: 'DE', politicalGroup: 'Greens', committees: [], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-5', name: 'E', country: 'DE', politicalGroup: 'ECR', committees: [], active: true, termStart: '2019-07-02' },
+        ],
+        total: 5, limit: 100, offset: 0, hasMore: false
+      });
+
+      const result = await handleAnalyzeCountryDelegation({ country: 'DE' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.computedAttributes.groupFragmentation).toBe('HIGH');
+    });
+
+    it('should compute LOW fragmentation for single-group delegation', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [
+          { id: 'MEP-1', name: 'A', country: 'CY', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-2', name: 'B', country: 'CY', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' },
+        ],
+        total: 2, limit: 100, offset: 0, hasMore: false
+      });
+
+      const result = await handleAnalyzeCountryDelegation({ country: 'CY' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.computedAttributes.groupFragmentation).toBe('LOW');
+    });
+
+    it('should compute HIGH influence for large delegations with leadership', async () => {
+      const largeDelegation = Array.from({ length: 96 }, (_, i) => ({
+        id: `MEP-${i}`, name: `MEP ${i}`, country: 'DE', politicalGroup: 'EPP',
+        committees: [], active: true, termStart: '2019-07-02'
+      }));
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: largeDelegation, total: 96, limit: 100, offset: 0, hasMore: false
+      });
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-1', name: 'MEP One', country: 'DE', politicalGroup: 'EPP',
+        committees: ['ENVI', 'ITRE'], active: true, termStart: '2019-07-02',
+        roles: ['Chair of ENVI'],
+        votingStatistics: { totalVotes: 1000, votesFor: 700, votesAgainst: 200, abstentions: 100, attendanceRate: 90 }
+      });
+
+      const result = await handleAnalyzeCountryDelegation({ country: 'DE' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.computedAttributes.delegationInfluence).toBe('HIGH');
+    });
+
+    it('should compute HIGH confidence when most MEPs have stats', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-1', name: 'MEP One', country: 'SE', politicalGroup: 'EPP',
+        committees: ['ENVI'], active: true, termStart: '2019-07-02',
+        votingStatistics: { totalVotes: 1000, votesFor: 700, votesAgainst: 200, abstentions: 100, attendanceRate: 90 }
+      });
+
+      const result = await handleAnalyzeCountryDelegation({ country: 'SE' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.confidenceLevel).toBe('HIGH');
+    });
+
+    it('should compute HIGH national cohesion when delegation is dominated by one group', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [
+          { id: 'MEP-1', name: 'A', country: 'HU', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-2', name: 'B', country: 'HU', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-3', name: 'C', country: 'HU', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' },
+        ],
+        total: 3, limit: 100, offset: 0, hasMore: false
+      });
+
+      const result = await handleAnalyzeCountryDelegation({ country: 'HU' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}');
+
+      expect(data.computedAttributes.nationalCohesionLevel).toBe('HIGH');
+    });
+  });
 });

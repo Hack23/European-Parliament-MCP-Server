@@ -21,6 +21,14 @@ describe('Server Constants', () => {
   it('should export valid semver version', () => {
     expect(SERVER_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
   });
+
+  it('should have version matching package.json', async () => {
+    const fs = await import('fs');
+    const path = await import('path');
+    const pkgPath = path.resolve(process.cwd(), 'package.json');
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+    expect(SERVER_VERSION).toBe(pkg.version);
+  });
 });
 
 describe('getToolMetadataArray', () => {
@@ -58,6 +66,15 @@ describe('getToolMetadataArray', () => {
       expect(tool.inputSchema).toBeDefined();
       const schema = tool.inputSchema as Record<string, unknown>;
       expect(schema['type']).toBe('object');
+    }
+  });
+
+  it('should have properties defined in all inputSchemas', () => {
+    const tools = getToolMetadataArray();
+    for (const tool of tools) {
+      const schema = tool.inputSchema as Record<string, unknown>;
+      expect(schema).toHaveProperty('properties');
+      expect(typeof schema['properties']).toBe('object');
     }
   });
 
@@ -105,6 +122,37 @@ describe('getToolMetadataArray', () => {
     expect(names).toContain('analyze_country_delegation');
     expect(names).toContain('generate_political_landscape');
   });
+
+  it('should have core tools first in array', () => {
+    const tools = getToolMetadataArray();
+    const coreTools = ['get_meps', 'get_mep_details', 'get_plenary_sessions',
+      'get_voting_records', 'search_documents', 'get_committee_info', 'get_parliamentary_questions'];
+    for (let i = 0; i < coreTools.length; i++) {
+      expect(tools[i]?.name).toBe(coreTools[i]);
+    }
+  });
+
+  it('should have descriptions that mention European Parliament', () => {
+    const tools = getToolMetadataArray();
+    const epMentions = tools.filter(t =>
+      t.description.toLowerCase().includes('european parliament') ||
+      t.description.toLowerCase().includes('eu parliament') ||
+      t.description.toLowerCase().includes('mep') ||
+      t.description.toLowerCase().includes('parliament')
+    );
+    // Most tools should reference Parliament context
+    expect(epMentions.length).toBeGreaterThanOrEqual(15);
+  });
+
+  it('should have required fields defined for tools that need them', () => {
+    const tools = getToolMetadataArray();
+    const toolsWithRequired = tools.filter(t => {
+      const schema = t.inputSchema as Record<string, unknown>;
+      return Array.isArray(schema['required']) && (schema['required'] as string[]).length > 0;
+    });
+    // Core tools like get_mep_details should have required fields
+    expect(toolsWithRequired.length).toBeGreaterThan(0);
+  });
 });
 
 describe('sanitizeUrl', () => {
@@ -143,12 +191,46 @@ describe('sanitizeUrl', () => {
     expect(result).not.toContain('key');
     expect(result).not.toContain('frag');
   });
+
+  it('should handle empty string', () => {
+    const result = sanitizeUrl('');
+    expect(result).toBe('');
+  });
+
+  it('should handle URL with only fragment', () => {
+    const result = sanitizeUrl('not-valid#secret');
+    expect(result).toBe('not-valid');
+  });
+
+  it('should preserve path components', () => {
+    const result = sanitizeUrl('https://example.com/path/to/resource');
+    expect(result).toBe('https://example.com/path/to/resource');
+  });
 });
 
 describe('MCP Protocol Implementation', () => {
   it('should have tool registration for all 20 tools', () => {
     const tools = getToolMetadataArray();
     expect(tools.length).toBe(20);
+  });
+
+  it('should have exactly 7 core + 3 advanced + 10 OSINT tools', () => {
+    const tools = getToolMetadataArray();
+    const coreToolNames = ['get_meps', 'get_mep_details', 'get_plenary_sessions',
+      'get_voting_records', 'search_documents', 'get_committee_info', 'get_parliamentary_questions'];
+    const advancedToolNames = ['analyze_voting_patterns', 'track_legislation', 'generate_report'];
+    const osintToolNames = [
+      'assess_mep_influence', 'analyze_coalition_dynamics', 'detect_voting_anomalies',
+      'compare_political_groups', 'analyze_legislative_effectiveness', 'monitor_legislative_pipeline',
+      'analyze_committee_activity', 'track_mep_attendance',
+      'analyze_country_delegation', 'generate_political_landscape'
+    ];
+
+    const names = tools.map(t => t.name);
+    for (const name of [...coreToolNames, ...advancedToolNames, ...osintToolNames]) {
+      expect(names).toContain(name);
+    }
+    expect(coreToolNames.length + advancedToolNames.length + osintToolNames.length).toBe(20);
   });
 });
 
