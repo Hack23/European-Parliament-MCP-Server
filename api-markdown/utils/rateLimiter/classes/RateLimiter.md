@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.1**](../../../README.md)
+[**European Parliament MCP Server API v0.7.2**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: RateLimiter
 
-Defined in: [utils/rateLimiter.ts:43](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/rateLimiter.ts#L43)
+Defined in: [utils/rateLimiter.ts:43](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/rateLimiter.ts#L43)
 
 Token bucket rate limiter implementation
 
@@ -16,7 +16,7 @@ Token bucket rate limiter implementation
 
 > **new RateLimiter**(`options`): `RateLimiter`
 
-Defined in: [utils/rateLimiter.ts:49](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/rateLimiter.ts#L49)
+Defined in: [utils/rateLimiter.ts:49](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/rateLimiter.ts#L49)
 
 #### Parameters
 
@@ -34,7 +34,7 @@ Defined in: [utils/rateLimiter.ts:49](https://github.com/Hack23/European-Parliam
 
 > `private` `readonly` **intervalMs**: `number`
 
-Defined in: [utils/rateLimiter.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/rateLimiter.ts#L46)
+Defined in: [utils/rateLimiter.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/rateLimiter.ts#L46)
 
 ***
 
@@ -42,7 +42,7 @@ Defined in: [utils/rateLimiter.ts:46](https://github.com/Hack23/European-Parliam
 
 > `private` **lastRefill**: `number`
 
-Defined in: [utils/rateLimiter.ts:47](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/rateLimiter.ts#L47)
+Defined in: [utils/rateLimiter.ts:47](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/rateLimiter.ts#L47)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: [utils/rateLimiter.ts:47](https://github.com/Hack23/European-Parliam
 
 > `private` **tokens**: `number`
 
-Defined in: [utils/rateLimiter.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/rateLimiter.ts#L44)
+Defined in: [utils/rateLimiter.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/rateLimiter.ts#L44)
 
 ***
 
@@ -58,7 +58,7 @@ Defined in: [utils/rateLimiter.ts:44](https://github.com/Hack23/European-Parliam
 
 > `private` `readonly` **tokensPerInterval**: `number`
 
-Defined in: [utils/rateLimiter.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/rateLimiter.ts#L45)
+Defined in: [utils/rateLimiter.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/rateLimiter.ts#L45)
 
 ## Methods
 
@@ -66,7 +66,7 @@ Defined in: [utils/rateLimiter.ts:45](https://github.com/Hack23/European-Parliam
 
 > **getAvailableTokens**(): `number`
 
-Defined in: [utils/rateLimiter.ts:135](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/rateLimiter.ts#L135)
+Defined in: [utils/rateLimiter.ts:135](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/rateLimiter.ts#L135)
 
 Get current available tokens
 
@@ -80,7 +80,7 @@ Get current available tokens
 
 > `private` **refill**(): `void`
 
-Defined in: [utils/rateLimiter.ts:74](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/rateLimiter.ts#L74)
+Defined in: [utils/rateLimiter.ts:74](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/rateLimiter.ts#L74)
 
 Refill tokens based on elapsed time
 
@@ -94,7 +94,7 @@ Refill tokens based on elapsed time
 
 > **removeTokens**(`count`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
-Defined in: [utils/rateLimiter.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/rateLimiter.ts#L95)
+Defined in: [utils/rateLimiter.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/rateLimiter.ts#L95)
 
 Remove tokens from the bucket
 
@@ -122,7 +122,7 @@ Error if rate limit exceeded
 
 > **reset**(): `void`
 
-Defined in: [utils/rateLimiter.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/rateLimiter.ts#L143)
+Defined in: [utils/rateLimiter.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/rateLimiter.ts#L143)
 
 Reset the rate limiter to full capacity
 
@@ -136,7 +136,7 @@ Reset the rate limiter to full capacity
 
 > **tryRemoveTokens**(`count`): `boolean`
 
-Defined in: [utils/rateLimiter.ts:121](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/rateLimiter.ts#L121)
+Defined in: [utils/rateLimiter.ts:121](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/rateLimiter.ts#L121)
 
 Try to remove tokens without throwing error
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.1**](../../../README.md)
+[**European Parliament MCP Server API v0.7.2**](../../../README.md)
 
 ***
 
@@ -8,9 +8,14 @@
 
 > **handleMonitorLegislativePipeline**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
 
-Defined in: [tools/monitorLegislativePipeline.ts:277](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/monitorLegislativePipeline.ts#L277)
+Defined in: [tools/monitorLegislativePipeline.ts:244](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/monitorLegislativePipeline.ts#L244)
 
-Monitor legislative pipeline tool handler
+Monitor legislative pipeline tool handler.
+
+Fetches real procedures from the EP API and computes pipeline
+health metrics. All procedure data comes from the API—computed
+attributes (health score, velocity, bottleneck risk) are derived
+from real dates and stages.
 
 ## Parameters
 

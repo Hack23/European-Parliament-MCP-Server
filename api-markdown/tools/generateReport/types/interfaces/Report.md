@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.1**](../../../../README.md)
+[**European Parliament MCP Server API v0.7.2**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: Report
 
-Defined in: [tools/generateReport/types.ts:10](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/generateReport/types.ts#L10)
+Defined in: [tools/generateReport/types.ts:10](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/generateReport/types.ts#L10)
 
 Report structure
 
@@ -16,7 +16,7 @@ Report structure
 
 > **generatedAt**: `string`
 
-Defined in: [tools/generateReport/types.ts:17](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/generateReport/types.ts#L17)
+Defined in: [tools/generateReport/types.ts:17](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/generateReport/types.ts#L17)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [tools/generateReport/types.ts:17](https://github.com/Hack23/Europea
 
 > **period**: `object`
 
-Defined in: [tools/generateReport/types.ts:13](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/generateReport/types.ts#L13)
+Defined in: [tools/generateReport/types.ts:13](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/generateReport/types.ts#L13)
 
 #### from
 
@@ -40,7 +40,7 @@ Defined in: [tools/generateReport/types.ts:13](https://github.com/Hack23/Europea
 
 > **reportType**: `string`
 
-Defined in: [tools/generateReport/types.ts:11](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/generateReport/types.ts#L11)
+Defined in: [tools/generateReport/types.ts:11](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/generateReport/types.ts#L11)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [tools/generateReport/types.ts:11](https://github.com/Hack23/Europea
 
 > **sections**: [`ReportSection`](ReportSection.md)[]
 
-Defined in: [tools/generateReport/types.ts:19](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/generateReport/types.ts#L19)
+Defined in: [tools/generateReport/types.ts:19](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/generateReport/types.ts#L19)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [tools/generateReport/types.ts:19](https://github.com/Hack23/Europea
 
 > **statistics**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `number` \| `string`\>
 
-Defined in: [tools/generateReport/types.ts:20](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/generateReport/types.ts#L20)
+Defined in: [tools/generateReport/types.ts:20](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/generateReport/types.ts#L20)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [tools/generateReport/types.ts:20](https://github.com/Hack23/Europea
 
 > **subject**: `string`
 
-Defined in: [tools/generateReport/types.ts:12](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/generateReport/types.ts#L12)
+Defined in: [tools/generateReport/types.ts:12](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/generateReport/types.ts#L12)
 
 ***
 
@@ -72,7 +72,7 @@ Defined in: [tools/generateReport/types.ts:12](https://github.com/Hack23/Europea
 
 > **summary**: `string`
 
-Defined in: [tools/generateReport/types.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/generateReport/types.ts#L18)
+Defined in: [tools/generateReport/types.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/generateReport/types.ts#L18)
 
 ***
 
@@ -80,4 +80,4 @@ Defined in: [tools/generateReport/types.ts:18](https://github.com/Hack23/Europea
 
 > `optional` **recommendations**: `string`[]
 
-Defined in: [tools/generateReport/types.ts:21](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/generateReport/types.ts#L21)
+Defined in: [tools/generateReport/types.ts:21](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/generateReport/types.ts#L21)

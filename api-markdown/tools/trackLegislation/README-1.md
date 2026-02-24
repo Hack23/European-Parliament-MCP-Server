@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.1**](../../README.md)
+[**European Parliament MCP Server API v0.7.2**](../../README.md)
 
 ***
 
@@ -11,6 +11,12 @@
 ### handleTrackLegislation
 
 Re-exports [handleTrackLegislation](functions/handleTrackLegislation.md)
+
+***
+
+### toProcessId
+
+Re-exports [toProcessId](functions/toProcessId.md)
 
 ***
 

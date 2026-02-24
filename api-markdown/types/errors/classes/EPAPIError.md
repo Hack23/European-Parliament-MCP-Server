@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.1**](../../../README.md)
+[**European Parliament MCP Server API v0.7.2**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: EPAPIError
 
-Defined in: [types/errors.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/types/errors.ts#L134)
+Defined in: [types/errors.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/types/errors.ts#L134)
 
 EP API error for European Parliament API failures
 
@@ -37,7 +37,7 @@ if (!response.ok) {
 
 > **new EPAPIError**(`message`, `statusCode`, `details?`): `EPAPIError`
 
-Defined in: [types/errors.ts:142](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/types/errors.ts#L142)
+Defined in: [types/errors.ts:142](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/types/errors.ts#L142)
 
 Create a new EP API error
 
@@ -75,7 +75,7 @@ Optional details about the failure
 
 > `readonly` **code**: `string`
 
-Defined in: [types/errors.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/types/errors.ts#L44)
+Defined in: [types/errors.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/types/errors.ts#L44)
 
 Machine-readable error code (e.g., 'VALIDATION_ERROR')
 
@@ -89,7 +89,7 @@ Machine-readable error code (e.g., 'VALIDATION_ERROR')
 
 > `readonly` **statusCode**: `number` = `500`
 
-Defined in: [types/errors.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/types/errors.ts#L45)
+Defined in: [types/errors.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/types/errors.ts#L45)
 
 HTTP status code (default: 500)
 
@@ -103,7 +103,7 @@ HTTP status code (default: 500)
 
 > `readonly` `optional` **details**: `unknown`
 
-Defined in: [types/errors.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/types/errors.ts#L46)
+Defined in: [types/errors.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/types/errors.ts#L46)
 
 Optional additional error details for debugging
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.1**](../../README.md)
+[**European Parliament MCP Server API v0.7.2**](../../README.md)
 
 ***
 
@@ -6,51 +6,268 @@
 
 # schemas/europeanParliament
 
-## Variables
+Zod validation schemas for European Parliament data.
 
-- [AnalyzeCoalitionDynamicsSchema](variables/AnalyzeCoalitionDynamicsSchema.md)
-- [AnalyzeLegislativeEffectivenessSchema](variables/AnalyzeLegislativeEffectivenessSchema.md)
-- [AnalyzeVotingPatternsSchema](variables/AnalyzeVotingPatternsSchema.md)
-- [AssessMepInfluenceSchema](variables/AssessMepInfluenceSchema.md)
-- [CommitteeSchema](variables/CommitteeSchema.md)
-- [ComparePoliticalGroupsSchema](variables/ComparePoliticalGroupsSchema.md)
-- [DetectVotingAnomaliesSchema](variables/DetectVotingAnomaliesSchema.md)
-- [GenerateReportSchema](variables/GenerateReportSchema.md)
-- [GetAdoptedTextsSchema](variables/GetAdoptedTextsSchema.md)
-- [GetCommitteeDocumentsSchema](variables/GetCommitteeDocumentsSchema.md)
-- [GetCommitteeInfoSchema](variables/GetCommitteeInfoSchema.md)
-- [GetControlledVocabulariesSchema](variables/GetControlledVocabulariesSchema.md)
-- [GetCurrentMEPsSchema](variables/GetCurrentMEPsSchema.md)
-- [GetEventsSchema](variables/GetEventsSchema.md)
-- [GetExternalDocumentsSchema](variables/GetExternalDocumentsSchema.md)
-- [GetHomonymMEPsSchema](variables/GetHomonymMEPsSchema.md)
-- [GetIncomingMEPsSchema](variables/GetIncomingMEPsSchema.md)
-- [GetMeetingActivitiesSchema](variables/GetMeetingActivitiesSchema.md)
-- [GetMeetingDecisionsSchema](variables/GetMeetingDecisionsSchema.md)
-- [GetMeetingForeseenActivitiesSchema](variables/GetMeetingForeseenActivitiesSchema.md)
-- [GetMEPDeclarationsSchema](variables/GetMEPDeclarationsSchema.md)
-- [GetMEPDetailsSchema](variables/GetMEPDetailsSchema.md)
-- [GetMEPsSchema](variables/GetMEPsSchema.md)
-- [GetOutgoingMEPsSchema](variables/GetOutgoingMEPsSchema.md)
-- [GetParliamentaryQuestionsSchema](variables/GetParliamentaryQuestionsSchema.md)
-- [GetPlenaryDocumentsSchema](variables/GetPlenaryDocumentsSchema.md)
-- [GetPlenarySessionDocumentItemsSchema](variables/GetPlenarySessionDocumentItemsSchema.md)
-- [GetPlenarySessionDocumentsSchema](variables/GetPlenarySessionDocumentsSchema.md)
-- [GetPlenarySessionsSchema](variables/GetPlenarySessionsSchema.md)
-- [GetProcedureEventsSchema](variables/GetProcedureEventsSchema.md)
-- [GetProceduresSchema](variables/GetProceduresSchema.md)
-- [GetSpeechesSchema](variables/GetSpeechesSchema.md)
-- [GetVotingRecordsSchema](variables/GetVotingRecordsSchema.md)
-- [LegislativeDocumentSchema](variables/LegislativeDocumentSchema.md)
-- [MEPDetailsSchema](variables/MEPDetailsSchema.md)
-- [MEPSchema](variables/MEPSchema.md)
-- [MonitorLegislativePipelineSchema](variables/MonitorLegislativePipelineSchema.md)
-- [ParliamentaryQuestionSchema](variables/ParliamentaryQuestionSchema.md)
-- [PlenarySessionSchema](variables/PlenarySessionSchema.md)
-- [SearchDocumentsSchema](variables/SearchDocumentsSchema.md)
-- [TrackLegislationSchema](variables/TrackLegislationSchema.md)
-- [VotingRecordSchema](variables/VotingRecordSchema.md)
+Barrel re-export from domain-specific modules organized by bounded context.
 
-## Functions
+## See
 
-- [PaginatedResponseSchema](functions/PaginatedResponseSchema.md)
+https://data.europarl.europa.eu/api/v2/
+
+## References
+
+### AnalyzeCoalitionDynamicsSchema
+
+Re-exports [AnalyzeCoalitionDynamicsSchema](../ep/analysis/variables/AnalyzeCoalitionDynamicsSchema.md)
+
+***
+
+### AnalyzeLegislativeEffectivenessSchema
+
+Re-exports [AnalyzeLegislativeEffectivenessSchema](../ep/analysis/variables/AnalyzeLegislativeEffectivenessSchema.md)
+
+***
+
+### AnalyzeVotingPatternsSchema
+
+Re-exports [AnalyzeVotingPatternsSchema](../ep/analysis/variables/AnalyzeVotingPatternsSchema.md)
+
+***
+
+### AssessMepInfluenceSchema
+
+Re-exports [AssessMepInfluenceSchema](../ep/analysis/variables/AssessMepInfluenceSchema.md)
+
+***
+
+### CommitteeSchema
+
+Re-exports [CommitteeSchema](../ep/committee/variables/CommitteeSchema.md)
+
+***
+
+### ComparePoliticalGroupsSchema
+
+Re-exports [ComparePoliticalGroupsSchema](../ep/analysis/variables/ComparePoliticalGroupsSchema.md)
+
+***
+
+### DetectVotingAnomaliesSchema
+
+Re-exports [DetectVotingAnomaliesSchema](../ep/analysis/variables/DetectVotingAnomaliesSchema.md)
+
+***
+
+### GenerateReportSchema
+
+Re-exports [GenerateReportSchema](../ep/analysis/variables/GenerateReportSchema.md)
+
+***
+
+### GetAdoptedTextsSchema
+
+Re-exports [GetAdoptedTextsSchema](../ep/activities/variables/GetAdoptedTextsSchema.md)
+
+***
+
+### GetCommitteeDocumentsSchema
+
+Re-exports [GetCommitteeDocumentsSchema](../ep/document/variables/GetCommitteeDocumentsSchema.md)
+
+***
+
+### GetCommitteeInfoSchema
+
+Re-exports [GetCommitteeInfoSchema](../ep/committee/variables/GetCommitteeInfoSchema.md)
+
+***
+
+### GetControlledVocabulariesSchema
+
+Re-exports [GetControlledVocabulariesSchema](../ep/activities/variables/GetControlledVocabulariesSchema.md)
+
+***
+
+### GetCurrentMEPsSchema
+
+Re-exports [GetCurrentMEPsSchema](../ep/mep/variables/GetCurrentMEPsSchema.md)
+
+***
+
+### GetEventsSchema
+
+Re-exports [GetEventsSchema](../ep/activities/variables/GetEventsSchema.md)
+
+***
+
+### GetExternalDocumentsSchema
+
+Re-exports [GetExternalDocumentsSchema](../ep/document/variables/GetExternalDocumentsSchema.md)
+
+***
+
+### GetHomonymMEPsSchema
+
+Re-exports [GetHomonymMEPsSchema](../ep/mep/variables/GetHomonymMEPsSchema.md)
+
+***
+
+### GetIncomingMEPsSchema
+
+Re-exports [GetIncomingMEPsSchema](../ep/mep/variables/GetIncomingMEPsSchema.md)
+
+***
+
+### GetMeetingActivitiesSchema
+
+Re-exports [GetMeetingActivitiesSchema](../ep/activities/variables/GetMeetingActivitiesSchema.md)
+
+***
+
+### GetMeetingDecisionsSchema
+
+Re-exports [GetMeetingDecisionsSchema](../ep/activities/variables/GetMeetingDecisionsSchema.md)
+
+***
+
+### GetMeetingForeseenActivitiesSchema
+
+Re-exports [GetMeetingForeseenActivitiesSchema](../ep/activities/variables/GetMeetingForeseenActivitiesSchema.md)
+
+***
+
+### GetMEPDeclarationsSchema
+
+Re-exports [GetMEPDeclarationsSchema](../ep/activities/variables/GetMEPDeclarationsSchema.md)
+
+***
+
+### GetMEPDetailsSchema
+
+Re-exports [GetMEPDetailsSchema](../ep/mep/variables/GetMEPDetailsSchema.md)
+
+***
+
+### GetMEPsSchema
+
+Re-exports [GetMEPsSchema](../ep/mep/variables/GetMEPsSchema.md)
+
+***
+
+### GetOutgoingMEPsSchema
+
+Re-exports [GetOutgoingMEPsSchema](../ep/mep/variables/GetOutgoingMEPsSchema.md)
+
+***
+
+### GetParliamentaryQuestionsSchema
+
+Re-exports [GetParliamentaryQuestionsSchema](../ep/question/variables/GetParliamentaryQuestionsSchema.md)
+
+***
+
+### GetPlenaryDocumentsSchema
+
+Re-exports [GetPlenaryDocumentsSchema](../ep/document/variables/GetPlenaryDocumentsSchema.md)
+
+***
+
+### GetPlenarySessionDocumentItemsSchema
+
+Re-exports [GetPlenarySessionDocumentItemsSchema](../ep/document/variables/GetPlenarySessionDocumentItemsSchema.md)
+
+***
+
+### GetPlenarySessionDocumentsSchema
+
+Re-exports [GetPlenarySessionDocumentsSchema](../ep/document/variables/GetPlenarySessionDocumentsSchema.md)
+
+***
+
+### GetPlenarySessionsSchema
+
+Re-exports [GetPlenarySessionsSchema](../ep/plenary/variables/GetPlenarySessionsSchema.md)
+
+***
+
+### GetProcedureEventsSchema
+
+Re-exports [GetProcedureEventsSchema](../ep/activities/variables/GetProcedureEventsSchema.md)
+
+***
+
+### GetProceduresSchema
+
+Re-exports [GetProceduresSchema](../ep/activities/variables/GetProceduresSchema.md)
+
+***
+
+### GetSpeechesSchema
+
+Re-exports [GetSpeechesSchema](../ep/activities/variables/GetSpeechesSchema.md)
+
+***
+
+### GetVotingRecordsSchema
+
+Re-exports [GetVotingRecordsSchema](../ep/plenary/variables/GetVotingRecordsSchema.md)
+
+***
+
+### LegislativeDocumentSchema
+
+Re-exports [LegislativeDocumentSchema](../ep/document/variables/LegislativeDocumentSchema.md)
+
+***
+
+### MEPDetailsSchema
+
+Re-exports [MEPDetailsSchema](../ep/mep/variables/MEPDetailsSchema.md)
+
+***
+
+### MEPSchema
+
+Re-exports [MEPSchema](../ep/mep/variables/MEPSchema.md)
+
+***
+
+### MonitorLegislativePipelineSchema
+
+Re-exports [MonitorLegislativePipelineSchema](../ep/analysis/variables/MonitorLegislativePipelineSchema.md)
+
+***
+
+### PaginatedResponseSchema
+
+Re-exports [PaginatedResponseSchema](../ep/common/functions/PaginatedResponseSchema.md)
+
+***
+
+### ParliamentaryQuestionSchema
+
+Re-exports [ParliamentaryQuestionSchema](../ep/question/variables/ParliamentaryQuestionSchema.md)
+
+***
+
+### PlenarySessionSchema
+
+Re-exports [PlenarySessionSchema](../ep/plenary/variables/PlenarySessionSchema.md)
+
+***
+
+### SearchDocumentsSchema
+
+Re-exports [SearchDocumentsSchema](../ep/document/variables/SearchDocumentsSchema.md)
+
+***
+
+### TrackLegislationSchema
+
+Re-exports [TrackLegislationSchema](../ep/analysis/variables/TrackLegislationSchema.md)
+
+***
+
+### VotingRecordSchema
+
+Re-exports [VotingRecordSchema](../ep/plenary/variables/VotingRecordSchema.md)

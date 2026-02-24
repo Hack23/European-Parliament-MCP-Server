@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.1**](../../../../README.md)
+[**European Parliament MCP Server API v0.7.2**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: TimelineEvent
 
-Defined in: [tools/trackLegislation/types.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/trackLegislation/types.ts#L29)
+Defined in: [tools/trackLegislation/types.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/trackLegislation/types.ts#L42)
 
 Timeline event
 
@@ -16,7 +16,7 @@ Timeline event
 
 > **date**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/trackLegislation/types.ts#L30)
+Defined in: [tools/trackLegislation/types.ts:43](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/trackLegislation/types.ts#L43)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [tools/trackLegislation/types.ts:30](https://github.com/Hack23/Europ
 
 > **description**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/trackLegislation/types.ts#L32)
+Defined in: [tools/trackLegislation/types.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/trackLegislation/types.ts#L45)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [tools/trackLegislation/types.ts:32](https://github.com/Hack23/Europ
 
 > **stage**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:31](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/trackLegislation/types.ts#L31)
+Defined in: [tools/trackLegislation/types.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/trackLegislation/types.ts#L44)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [tools/trackLegislation/types.ts:31](https://github.com/Hack23/Europ
 
 > `optional` **responsible**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/trackLegislation/types.ts#L33)
+Defined in: [tools/trackLegislation/types.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/trackLegislation/types.ts#L46)

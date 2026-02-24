@@ -1,18 +1,32 @@
-[**European Parliament MCP Server API v0.7.1**](README.md)
+[**European Parliament MCP Server API v0.7.2**](README.md)
 
 ***
 
-# European Parliament MCP Server API v0.7.1
+# European Parliament MCP Server API v0.7.2
 
 ## Modules
 
+- [clients/ep](clients/ep/README.md)
+- [clients/ep/jsonLdHelpers](clients/ep/jsonLdHelpers/README.md)
+- [clients/ep/transformers](clients/ep/transformers/README.md)
 - [clients/europeanParliamentClient](clients/europeanParliamentClient/README.md)
 - [di/container](di/container/README.md)
 - [europeanParliament](europeanParliament/README.md)
 - [index](index/README.md)
 - [prompts](prompts/README.md)
 - [resources](resources/README.md)
+- [schemas/ep](schemas/ep/README.md)
+- [schemas/ep/activities](schemas/ep/activities/README.md)
+- [schemas/ep/analysis](schemas/ep/analysis/README.md)
+- [schemas/ep/committee](schemas/ep/committee/README.md)
+- [schemas/ep/common](schemas/ep/common/README.md)
+- [schemas/ep/document](schemas/ep/document/README.md)
+- [schemas/ep/mep](schemas/ep/mep/README.md)
+- [schemas/ep/plenary](schemas/ep/plenary/README.md)
+- [schemas/ep/question](schemas/ep/question/README.md)
 - [schemas/europeanParliament](schemas/europeanParliament/README.md)
+- [server/cli](server/cli/README.md)
+- [server/toolRegistry](server/toolRegistry/README.md)
 - [services/MetricsService](services/MetricsService/README.md)
 - [tools/analyzeCoalitionDynamics](tools/analyzeCoalitionDynamics/README.md)
 - [tools/analyzeCommitteeActivity](tools/analyzeCommitteeActivity/README.md)
@@ -58,11 +72,17 @@
 - [tools/trackLegislation](tools/trackLegislation/README.md)
 - [tools/trackLegislation](tools/trackLegislation/README-1.md)
 - [tools/trackLegislation/procedureTracker](tools/trackLegislation/procedureTracker/README.md)
-- [tools/trackLegislation/timelineBuilder](tools/trackLegislation/timelineBuilder/README.md)
 - [tools/trackLegislation/types](tools/trackLegislation/types/README.md)
 - [tools/trackMepAttendance](tools/trackMepAttendance/README.md)
 - [types](types/README.md)
 - [types/branded](types/branded/README.md)
+- [types/ep/activities](types/ep/activities/README.md)
+- [types/ep/committee](types/ep/committee/README.md)
+- [types/ep/common](types/ep/common/README.md)
+- [types/ep/document](types/ep/document/README.md)
+- [types/ep/mep](types/ep/mep/README.md)
+- [types/ep/plenary](types/ep/plenary/README.md)
+- [types/ep/question](types/ep/question/README.md)
 - [types/errors](types/errors/README.md)
 - [utils/auditLogger](utils/auditLogger/README.md)
 - [utils/performance](utils/performance/README.md)

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.1**](../../../../README.md)
+[**European Parliament MCP Server API v0.7.2**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: AmendmentStats
 
-Defined in: [tools/trackLegislation/types.ts:48](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/trackLegislation/types.ts#L48)
+Defined in: [tools/trackLegislation/types.ts:61](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/trackLegislation/types.ts#L61)
 
 Amendment statistics
 
@@ -16,7 +16,7 @@ Amendment statistics
 
 > **adopted**: `number`
 
-Defined in: [tools/trackLegislation/types.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/trackLegislation/types.ts#L50)
+Defined in: [tools/trackLegislation/types.ts:63](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/trackLegislation/types.ts#L63)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [tools/trackLegislation/types.ts:50](https://github.com/Hack23/Europ
 
 > **proposed**: `number`
 
-Defined in: [tools/trackLegislation/types.ts:49](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/trackLegislation/types.ts#L49)
+Defined in: [tools/trackLegislation/types.ts:62](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/trackLegislation/types.ts#L62)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [tools/trackLegislation/types.ts:49](https://github.com/Hack23/Europ
 
 > **rejected**: `number`
 
-Defined in: [tools/trackLegislation/types.ts:51](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/trackLegislation/types.ts#L51)
+Defined in: [tools/trackLegislation/types.ts:64](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/trackLegislation/types.ts#L64)

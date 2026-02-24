@@ -2,7 +2,7 @@
 
 ## 📋 Overview
 
-This guide explains how to run integration tests for the European Parliament MCP Server. Integration tests validate that all MCP tools work correctly, either against the real European Parliament Open Data API (for fully implemented tools) or against mock implementations (for tools still in development).
+This guide explains how to run integration tests for the European Parliament MCP Server. Integration tests validate that all 39 MCP tools work correctly against the real European Parliament Open Data API. **All tools return real data — no mock or placeholder data is used.**
 
 **ISMS Policy**: [Hack23 Secure Development Policy - Testing](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#testing)
 
@@ -12,39 +12,62 @@ This guide explains how to run integration tests for the European Parliament MCP
 
 ## 🎯 Integration Test Coverage
 
-### All 20 MCP Tools Tested
+### All 39 MCP Tools Tested
 
-**Real API Integration** (fully implemented):
+**Core Data Access Tools** (7 — real EP API):
 1. **get_meps** - MEP retrieval with filtering
 2. **get_mep_details** - Individual MEP information
 3. **get_plenary_sessions** - Plenary session data
+4. **get_voting_records** - Voting record access
+5. **search_documents** - Document search
+6. **get_committee_info** - Committee information
+7. **get_parliamentary_questions** - Parliamentary questions
 
-**Contract/Structure Tests** (mock implementations):
-4. **get_voting_records** - Voting record access (mock data)
-5. **search_documents** - Document search (mock data)
-6. **get_committee_info** - Committee information (mock data)
-7. **get_parliamentary_questions** - Parliamentary questions (mock data)
-8. **analyze_voting_patterns** - Voting pattern analysis (mock data)
-9. **track_legislation** - Legislative procedure tracking (mock data)
-10. **generate_report** - Report generation (mock data)
+**Advanced Analysis Tools** (3 — real EP API data):
+8. **analyze_voting_patterns** - Voting pattern analysis
+9. **track_legislation** - Legislative procedure tracking (real EP API `/procedures`)
+10. **generate_report** - Report generation
 
-**OSINT Intelligence Tools — Phase 1** (computed analytics):
+**OSINT Intelligence Tools — Phase 1** (6 — real EP API data):
 11. **assess_mep_influence** - MEP influence scoring (5-dimension model)
 12. **analyze_coalition_dynamics** - Coalition cohesion & stress analysis
 13. **detect_voting_anomalies** - Party defection & anomaly detection
 14. **compare_political_groups** - Cross-group comparative analysis
 15. **analyze_legislative_effectiveness** - MEP/committee legislative scoring
-16. **monitor_legislative_pipeline** - Pipeline status & bottleneck detection
+16. **monitor_legislative_pipeline** - Pipeline status (real EP API `/procedures`)
 
-**OSINT Intelligence Tools — Phase 2** (computed analytics):
+**OSINT Intelligence Tools — Phase 2** (2 — real EP API data):
 17. **analyze_committee_activity** - Committee workload & engagement analysis
 18. **track_mep_attendance** - MEP attendance patterns & trends
 
-**OSINT Intelligence Tools — Phase 3** (computed analytics):
+**OSINT Intelligence Tools — Phase 3** (2 — real EP API data):
 19. **analyze_country_delegation** - Country delegation voting & composition analysis
 20. **generate_political_landscape** - Parliament-wide political landscape overview
 
-> **Note**: Tools using mock implementations validate response structure and contract compliance. They will be updated to use the real EP API in future releases.
+**EP Data Access Tools — Phase 4** (8 — real EP API v2):
+21. **get_current_meps** - Currently serving MEPs
+22. **get_speeches** - Plenary speeches
+23. **get_procedures** - Legislative procedures
+24. **get_adopted_texts** - Adopted legislative texts
+25. **get_events** - Parliamentary events
+26. **get_meeting_activities** - Meeting activity records
+27. **get_meeting_decisions** - Meeting decision outcomes
+28. **get_mep_declarations** - MEP financial declarations
+
+**EP Complete Coverage Tools — Phase 5** (11 — real EP API v2):
+29. **get_incoming_meps** - Incoming MEPs (new members)
+30. **get_outgoing_meps** - Outgoing MEPs (departing members)
+31. **get_homonym_meps** - MEPs with duplicate names
+32. **get_plenary_documents** - Plenary-specific documents
+33. **get_committee_documents** - Committee-specific documents
+34. **get_plenary_session_documents** - Session-specific documents
+35. **get_plenary_session_document_items** - Document items within sessions
+36. **get_controlled_vocabularies** - EP controlled vocabulary terms
+37. **get_external_documents** - External reference documents
+38. **get_meeting_foreseen_activities** - Planned meeting activities
+39. **get_procedure_events** - Events linked to a procedure
+
+> **No Mock Data**: All 39 tools are validated to return real data from the EP API. The integration test suite (`allTools.integration.test.ts`) explicitly checks that no tool returns `confidenceLevel: 'NONE'` or `PLACEHOLDER DATA` markers.
 
 ### Test Categories
 
@@ -112,6 +135,7 @@ tests/
 │   │   ├── responseValidator.ts        # Response validation utilities
 │   │   └── fixtureManager.ts          # Fixture capture utilities
 │   └── tools/
+│       ├── allTools.integration.test.ts         # All 39 tools coverage
 │       ├── getMEPs.integration.test.ts
 │       ├── getMEPDetails.integration.test.ts
 │       ├── getPlenarySessions.integration.test.ts
