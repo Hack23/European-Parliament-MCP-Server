@@ -31,9 +31,9 @@ describe('Server Constants', () => {
 });
 
 describe('getToolMetadataArray', () => {
-  it('should return 20 tools', () => {
+  it('should return 28 tools', () => {
     const tools = getToolMetadataArray();
-    expect(tools).toHaveLength(20);
+    expect(tools).toHaveLength(28);
   });
 
   it('should have unique non-empty tool names', () => {
@@ -208,12 +208,12 @@ describe('sanitizeUrl', () => {
 });
 
 describe('MCP Protocol Implementation', () => {
-  it('should have tool registration for all 20 tools', () => {
+  it('should have tool registration for all 28 tools', () => {
     const tools = getToolMetadataArray();
-    expect(tools.length).toBe(20);
+    expect(tools.length).toBe(28);
   });
 
-  it('should have exactly 7 core + 3 advanced + 10 OSINT tools', () => {
+  it('should have exactly 7 core + 3 advanced + 10 OSINT + 8 Phase 4 tools', () => {
     const tools = getToolMetadataArray();
     const coreToolNames = ['get_meps', 'get_mep_details', 'get_plenary_sessions',
       'get_voting_records', 'search_documents', 'get_committee_info', 'get_parliamentary_questions'];
@@ -224,12 +224,16 @@ describe('MCP Protocol Implementation', () => {
       'analyze_committee_activity', 'track_mep_attendance',
       'analyze_country_delegation', 'generate_political_landscape'
     ];
+    const phase4ToolNames = [
+      'get_current_meps', 'get_speeches', 'get_procedures', 'get_adopted_texts',
+      'get_events', 'get_meeting_activities', 'get_meeting_decisions', 'get_mep_declarations'
+    ];
 
     const names = tools.map(t => t.name);
-    for (const name of [...coreToolNames, ...advancedToolNames, ...osintToolNames]) {
+    for (const name of [...coreToolNames, ...advancedToolNames, ...osintToolNames, ...phase4ToolNames]) {
       expect(names).toContain(name);
     }
-    expect(coreToolNames.length + advancedToolNames.length + osintToolNames.length).toBe(20);
+    expect(coreToolNames.length + advancedToolNames.length + osintToolNames.length + phase4ToolNames.length).toBe(28);
   });
 });
 

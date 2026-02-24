@@ -39,7 +39,13 @@ import type {
   ParliamentaryQuestion,
   PaginatedResponse,
   DocumentType,
-  DocumentStatus
+  DocumentStatus,
+  Speech,
+  Procedure,
+  AdoptedText,
+  EPEvent,
+  MeetingActivity,
+  MEPDeclaration
 } from '../types/europeanParliament.js';
 
 /**
@@ -2368,6 +2374,614 @@ export class EuropeanParliamentClient {
       maxSize: this.cache.max,
       hitRate: 0 // LRUCache doesn't track hit rate by default
     };
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // New EP API v2 endpoints – Phase 4
+  // ──────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Returns the list of all currently active MEPs for today's date.
+   *
+   * **EP API Endpoint:** `GET /meps/show-current`
+   *
+   * @param params - Pagination parameters
+   * @returns Paginated list of active MEPs
+   */
+  async getCurrentMEPs(params: {
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<MEP>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>('meps/show-current', {
+      format: 'application/ld+json',
+      offset,
+      limit
+    });
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const meps = items.map(item => this.transformMEP(item));
+
+    return { data: meps, total: meps.length + offset, limit, offset, hasMore: meps.length === limit };
+  }
+
+  /**
+   * Returns the list of all incoming MEPs for the current parliamentary term.
+   *
+   * **EP API Endpoint:** `GET /meps/show-incoming`
+   *
+   * @param params - Pagination parameters
+   * @returns Paginated list of incoming MEPs
+   */
+  async getIncomingMEPs(params: {
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<MEP>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>('meps/show-incoming', {
+      format: 'application/ld+json',
+      offset,
+      limit
+    });
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const meps = items.map(item => this.transformMEP(item));
+
+    return { data: meps, total: meps.length + offset, limit, offset, hasMore: meps.length === limit };
+  }
+
+  /**
+   * Returns the list of all outgoing MEPs for the current parliamentary term.
+   *
+   * **EP API Endpoint:** `GET /meps/show-outgoing`
+   *
+   * @param params - Pagination parameters
+   * @returns Paginated list of outgoing MEPs
+   */
+  async getOutgoingMEPs(params: {
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<MEP>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>('meps/show-outgoing', {
+      format: 'application/ld+json',
+      offset,
+      limit
+    });
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const meps = items.map(item => this.transformMEP(item));
+
+    return { data: meps, total: meps.length + offset, limit, offset, hasMore: meps.length === limit };
+  }
+
+  /**
+   * Returns plenary speeches and speech-related activities.
+   *
+   * **EP API Endpoint:** `GET /speeches`
+   *
+   * @param params - Search and pagination parameters
+   * @returns Paginated list of speeches
+   */
+  async getSpeeches(params: {
+    dateFrom?: string;
+    dateTo?: string;
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<Speech>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const apiParams: Record<string, unknown> = {
+      format: 'application/ld+json',
+      offset,
+      limit
+    };
+    if (params.dateFrom !== undefined) apiParams['date-from'] = params.dateFrom;
+    if (params.dateTo !== undefined) apiParams['date-to'] = params.dateTo;
+
+    const response = await this.get<JSONLDResponse>('speeches', apiParams);
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const speeches = items.map(item => this.transformSpeech(item));
+
+    return { data: speeches, total: speeches.length + offset, limit, offset, hasMore: speeches.length === limit };
+  }
+
+  /**
+   * Returns legislative procedures.
+   *
+   * **EP API Endpoint:** `GET /procedures`
+   *
+   * @param params - Search and pagination parameters
+   * @returns Paginated list of procedures
+   */
+  async getProcedures(params: {
+    year?: number;
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<Procedure>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const apiParams: Record<string, unknown> = {
+      format: 'application/ld+json',
+      offset,
+      limit
+    };
+    if (params.year !== undefined) apiParams['year'] = params.year;
+
+    const response = await this.get<JSONLDResponse>('procedures', apiParams);
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const procedures = items.map(item => this.transformProcedure(item));
+
+    return { data: procedures, total: procedures.length + offset, limit, offset, hasMore: procedures.length === limit };
+  }
+
+  /**
+   * Returns a single procedure by ID.
+   *
+   * **EP API Endpoint:** `GET /procedures/{process-id}`
+   *
+   * @param processId - Procedure process ID
+   * @returns Single procedure
+   */
+  async getProcedureById(processId: string): Promise<Procedure> {
+    if (processId.trim() === '') {
+      throw new APIError('Procedure process-id is required', 400);
+    }
+    const response = await this.get<Record<string, unknown>>(`procedures/${processId}`, {
+      format: 'application/ld+json'
+    });
+    return this.transformProcedure(response);
+  }
+
+  /**
+   * Returns adopted texts.
+   *
+   * **EP API Endpoint:** `GET /adopted-texts`
+   *
+   * @param params - Search and pagination parameters
+   * @returns Paginated list of adopted texts
+   */
+  async getAdoptedTexts(params: {
+    year?: number;
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<AdoptedText>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const apiParams: Record<string, unknown> = {
+      format: 'application/ld+json',
+      offset,
+      limit
+    };
+    if (params.year !== undefined) apiParams['year'] = params.year;
+
+    const response = await this.get<JSONLDResponse>('adopted-texts', apiParams);
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const texts = items.map(item => this.transformAdoptedText(item));
+
+    return { data: texts, total: texts.length + offset, limit, offset, hasMore: texts.length === limit };
+  }
+
+  /**
+   * Returns EP events (hearings, conferences, etc.).
+   *
+   * **EP API Endpoint:** `GET /events`
+   *
+   * @param params - Search and pagination parameters
+   * @returns Paginated list of events
+   */
+  async getEvents(params: {
+    dateFrom?: string;
+    dateTo?: string;
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<EPEvent>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const apiParams: Record<string, unknown> = {
+      format: 'application/ld+json',
+      offset,
+      limit
+    };
+    if (params.dateFrom !== undefined) apiParams['date-from'] = params.dateFrom;
+    if (params.dateTo !== undefined) apiParams['date-to'] = params.dateTo;
+
+    const response = await this.get<JSONLDResponse>('events', apiParams);
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const events = items.map(item => this.transformEvent(item));
+
+    return { data: events, total: events.length + offset, limit, offset, hasMore: events.length === limit };
+  }
+
+  /**
+   * Returns activities linked to a specific meeting (plenary sitting).
+   *
+   * **EP API Endpoint:** `GET /meetings/{sitting-id}/activities`
+   *
+   * @param sittingId - Meeting / sitting identifier
+   * @param params - Pagination parameters
+   * @returns Paginated list of meeting activities
+   */
+  async getMeetingActivities(sittingId: string, params: {
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<MeetingActivity>> {
+    if (sittingId.trim() === '') {
+      throw new APIError('Meeting sitting-id is required', 400);
+    }
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>(`meetings/${sittingId}/activities`, {
+      format: 'application/ld+json',
+      offset,
+      limit
+    });
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const activities = items.map(item => this.transformMeetingActivity(item));
+
+    return { data: activities, total: activities.length + offset, limit, offset, hasMore: activities.length === limit };
+  }
+
+  /**
+   * Returns decisions made in a specific meeting (plenary sitting).
+   *
+   * **EP API Endpoint:** `GET /meetings/{sitting-id}/decisions`
+   *
+   * @param sittingId - Meeting / sitting identifier
+   * @param params - Pagination parameters
+   * @returns Paginated list of meeting decisions (as generic documents)
+   */
+  async getMeetingDecisions(sittingId: string, params: {
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
+    if (sittingId.trim() === '') {
+      throw new APIError('Meeting sitting-id is required', 400);
+    }
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>(`meetings/${sittingId}/decisions`, {
+      format: 'application/ld+json',
+      offset,
+      limit
+    });
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const decisions = items.map(item => this.transformDocument(item));
+
+    return { data: decisions, total: decisions.length + offset, limit, offset, hasMore: decisions.length === limit };
+  }
+
+  /**
+   * Returns MEP declarations of financial interests.
+   *
+   * **EP API Endpoint:** `GET /meps-declarations`
+   *
+   * @param params - Search and pagination parameters
+   * @returns Paginated list of MEP declarations
+   * @gdpr Declarations contain personal financial data – access is audit-logged
+   */
+  async getMEPDeclarations(params: {
+    year?: number;
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<MEPDeclaration>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const apiParams: Record<string, unknown> = {
+      format: 'application/ld+json',
+      offset,
+      limit
+    };
+    if (params.year !== undefined) apiParams['year'] = params.year;
+
+    const response = await this.get<JSONLDResponse>('meps-declarations', apiParams);
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const declarations = items.map(item => this.transformMEPDeclaration(item));
+
+    auditLogger.logDataAccess('getMEPDeclarations', apiParams, declarations.length);
+
+    return { data: declarations, total: declarations.length + offset, limit, offset, hasMore: declarations.length === limit };
+  }
+
+  /**
+   * Returns plenary documents.
+   *
+   * **EP API Endpoint:** `GET /plenary-documents`
+   *
+   * @param params - Search and pagination parameters
+   * @returns Paginated list of plenary documents
+   */
+  async getPlenaryDocuments(params: {
+    year?: number;
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const apiParams: Record<string, unknown> = {
+      format: 'application/ld+json',
+      offset,
+      limit
+    };
+    if (params.year !== undefined) apiParams['year'] = params.year;
+
+    const response = await this.get<JSONLDResponse>('plenary-documents', apiParams);
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const docs = items.map(item => this.transformDocument(item));
+
+    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
+  }
+
+  /**
+   * Returns committee documents.
+   *
+   * **EP API Endpoint:** `GET /committee-documents`
+   *
+   * @param params - Search and pagination parameters
+   * @returns Paginated list of committee documents
+   */
+  async getCommitteeDocuments(params: {
+    year?: number;
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const apiParams: Record<string, unknown> = {
+      format: 'application/ld+json',
+      offset,
+      limit
+    };
+    if (params.year !== undefined) apiParams['year'] = params.year;
+
+    const response = await this.get<JSONLDResponse>('committee-documents', apiParams);
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const docs = items.map(item => this.transformDocument(item));
+
+    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
+  }
+
+  /**
+   * Returns plenary session documents.
+   *
+   * **EP API Endpoint:** `GET /plenary-session-documents`
+   *
+   * @param params - Pagination parameters
+   * @returns Paginated list of plenary session documents
+   */
+  async getPlenarySessionDocuments(params: {
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>('plenary-session-documents', {
+      format: 'application/ld+json',
+      offset,
+      limit
+    });
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const docs = items.map(item => this.transformDocument(item));
+
+    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
+  }
+
+  /**
+   * Returns EP controlled vocabularies.
+   *
+   * **EP API Endpoint:** `GET /controlled-vocabularies`
+   *
+   * @param params - Pagination parameters
+   * @returns Raw API response with vocabulary items
+   */
+  async getControlledVocabularies(params: {
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<Record<string, unknown>>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>('controlled-vocabularies', {
+      format: 'application/ld+json',
+      offset,
+      limit
+    });
+
+    const items = Array.isArray(response.data) ? response.data : [];
+
+    return {
+      data: items,
+      total: items.length + offset,
+      limit,
+      offset,
+      hasMore: items.length === limit
+    };
+  }
+
+  // ── Private transform helpers for new endpoints ──────────────────────
+
+  /**
+   * Transforms EP API speech JSON-LD into Speech type.
+   * @param apiData - Raw API response data
+   * @returns Transformed Speech object
+   * @private
+   */
+  private transformSpeech(apiData: Record<string, unknown>): Speech {
+    return {
+      id: this.extractField(apiData, ['identifier', 'id']),
+      title: this.extractMultilingualText(apiData['had_activity_type'] ?? apiData['label'] ?? apiData['title']),
+      speakerId: this.extractAuthorId(apiData['had_participant_person'] ?? apiData['was_attributed_to']),
+      speakerName: this.extractMultilingualText(apiData['participant_label'] ?? apiData['label']),
+      date: this.extractDateValue(apiData['activity_date'] ?? apiData['date']),
+      type: this.extractField(apiData, ['had_activity_type', 'type']),
+      language: this.extractField(apiData, ['language', 'was_created_in_language']),
+      text: this.extractMultilingualText(apiData['text'] ?? apiData['content'] ?? ''),
+      sessionReference: this.extractField(apiData, ['was_part_of', 'is_part_of', 'event'])
+    };
+  }
+
+  /**
+   * Transforms EP API procedure JSON-LD into Procedure type.
+   * @param apiData - Raw API response data
+   * @returns Transformed Procedure object
+   * @private
+   */
+  private transformProcedure(apiData: Record<string, unknown>): Procedure {
+    const titleField = this.firstDefined(apiData, 'title_dcterms', 'label', 'title');
+    const dateStartField = this.firstDefined(apiData, 'process_date_start', 'date_start', 'date');
+    const dateUpdateField = this.firstDefined(apiData, 'process_date_update', 'date_update');
+    const subjectField = this.firstDefined(apiData, 'subject_matter', 'subject');
+    return {
+      id: this.extractField(apiData, ['identifier', 'id', 'process_id']),
+      title: this.extractMultilingualText(titleField),
+      reference: this.extractField(apiData, ['identifier', 'process_id']),
+      type: this.extractField(apiData, ['process_type', 'type']),
+      subjectMatter: this.extractMultilingualText(subjectField),
+      stage: this.extractField(apiData, ['process_stage', 'stage']),
+      status: this.extractField(apiData, ['process_status', 'status']),
+      dateInitiated: this.extractDateValue(dateStartField),
+      dateLastActivity: this.extractDateValue(dateUpdateField),
+      responsibleCommittee: this.extractField(apiData, ['was_attributed_to', 'committee']),
+      rapporteur: this.extractMultilingualText(apiData['rapporteur']),
+      documents: this.extractDocumentRefs(apiData['had_document'] ?? apiData['documents'])
+    };
+  }
+
+  /**
+   * Returns first defined value from named fields in apiData.
+   * @param data - Record to search
+   * @param keys - Field names to try in order
+   * @returns First defined value or empty string
+   * @private
+   */
+  private firstDefined(data: Record<string, unknown>, ...keys: string[]): unknown {
+    for (const k of keys) {
+      if (data[k] !== undefined) return data[k];
+    }
+    return '';
+  }
+
+  /**
+   * Transforms EP API adopted text JSON-LD into AdoptedText type.
+   * @param apiData - Raw API response data
+   * @returns Transformed AdoptedText object
+   * @private
+   */
+  private transformAdoptedText(apiData: Record<string, unknown>): AdoptedText {
+    return {
+      id: this.extractField(apiData, ['work_id', 'identifier', 'id']),
+      title: this.extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']),
+      reference: this.extractField(apiData, ['work_id', 'identifier']),
+      type: this.extractField(apiData, ['work_type', 'type']),
+      dateAdopted: this.extractDateValue(apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']),
+      procedureReference: this.extractField(apiData, ['based_on_a_concept_procedure', 'procedure']),
+      subjectMatter: this.extractMultilingualText(apiData['subject_matter'] ?? apiData['subject'] ?? '')
+    };
+  }
+
+  /**
+   * Transforms EP API event JSON-LD into EPEvent type.
+   * @param apiData - Raw API response data
+   * @returns Transformed EPEvent object
+   * @private
+   */
+  private transformEvent(apiData: Record<string, unknown>): EPEvent {
+    return {
+      id: this.extractField(apiData, ['identifier', 'id']),
+      title: this.extractMultilingualText(apiData['label'] ?? apiData['title'] ?? ''),
+      date: this.extractDateValue(apiData['activity_start_date'] ?? apiData['date'] ?? apiData['activity_date']),
+      endDate: this.extractDateValue(apiData['activity_end_date'] ?? ''),
+      type: this.extractField(apiData, ['had_activity_type', 'type']),
+      location: this.extractField(apiData, ['had_locality', 'location']),
+      organizer: this.extractField(apiData, ['was_organized_by', 'organizer']),
+      status: this.extractField(apiData, ['activity_status', 'status'])
+    };
+  }
+
+  /**
+   * Transforms EP API meeting activity JSON-LD into MeetingActivity type.
+   * @param apiData - Raw API response data
+   * @returns Transformed MeetingActivity object
+   * @private
+   */
+  private transformMeetingActivity(apiData: Record<string, unknown>): MeetingActivity {
+    const orderVal = apiData['activity_order'] ?? apiData['order'];
+    const order = typeof orderVal === 'number' ? orderVal : 0;
+    return {
+      id: this.extractField(apiData, ['identifier', 'id']),
+      title: this.extractMultilingualText(apiData['label'] ?? apiData['title'] ?? ''),
+      type: this.extractField(apiData, ['had_activity_type', 'type']),
+      date: this.extractDateValue(apiData['activity_date'] ?? apiData['date']),
+      order,
+      reference: this.extractField(apiData, ['had_document', 'reference']),
+      responsibleBody: this.extractField(apiData, ['was_attributed_to', 'committee'])
+    };
+  }
+
+  /**
+   * Transforms EP API MEP declaration JSON-LD into MEPDeclaration type.
+   * @param apiData - Raw API response data
+   * @returns Transformed MEPDeclaration object
+   * @private
+   */
+  private transformMEPDeclaration(apiData: Record<string, unknown>): MEPDeclaration {
+    return {
+      id: this.extractField(apiData, ['work_id', 'identifier', 'id']),
+      title: this.extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']),
+      mepId: this.extractAuthorId(apiData['was_attributed_to'] ?? apiData['author']),
+      mepName: this.extractMultilingualText(apiData['author_label'] ?? ''),
+      type: this.extractField(apiData, ['work_type', 'type']),
+      dateFiled: this.extractDateValue(apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']),
+      status: this.extractField(apiData, ['resource_legal_in-force', 'status'])
+    };
+  }
+
+  /**
+   * Extracts document reference IDs from an array-like field.
+   * @param docs - Documents field from API (string, array, or object)
+   * @returns Array of document reference strings
+   * @private
+   */
+  private extractDocumentRefs(docs: unknown): string[] {
+    if (docs === null || docs === undefined) return [];
+    if (typeof docs === 'string') return [docs];
+    if (Array.isArray(docs)) {
+      return docs.map(d => {
+        if (typeof d === 'string') return d;
+        if (typeof d === 'object' && d !== null) {
+          const obj = d as Record<string, unknown>;
+          return this.toSafeString(obj['id'] ?? obj['identifier'] ?? '');
+        }
+        return '';
+      }).filter(s => s !== '');
+    }
+    return [];
   }
 }
 

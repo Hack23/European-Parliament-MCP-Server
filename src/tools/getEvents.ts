@@ -1,0 +1,59 @@
+/**
+ * MCP Tool: get_events
+ *
+ * Retrieve European Parliament events (hearings, conferences, seminars).
+ *
+ * **Intelligence Perspective:** Event monitoring enables early detection of emerging
+ * policy priorities and stakeholder engagement patterns.
+ *
+ * **Business Perspective:** Event data powers calendar integration and stakeholder
+ * engagement tracking products.
+ *
+ * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
+ */
+
+import { GetEventsSchema } from '../schemas/europeanParliament.js';
+import { epClient } from '../clients/europeanParliamentClient.js';
+
+/**
+ * Get events tool handler.
+ *
+ * @param args - Tool arguments
+ * @returns MCP tool result with event data
+ */
+export async function handleGetEvents(
+  args: unknown
+): Promise<{ content: { type: string; text: string }[] }> {
+  const params = GetEventsSchema.parse(args);
+
+  const apiParams: Record<string, unknown> = {
+    limit: params.limit,
+    offset: params.offset
+  };
+  if (params.dateFrom !== undefined) apiParams['dateFrom'] = params.dateFrom;
+  if (params.dateTo !== undefined) apiParams['dateTo'] = params.dateTo;
+
+  const result = await epClient.getEvents(apiParams as Parameters<typeof epClient.getEvents>[0]);
+
+  return {
+    content: [{
+      type: 'text',
+      text: JSON.stringify(result, null, 2)
+    }]
+  };
+}
+
+/** Tool metadata for get_events */
+export const getEventsToolMetadata = {
+  name: 'get_events',
+  description: 'Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports date range filtering. Data source: European Parliament Open Data Portal.',
+  inputSchema: {
+    type: 'object' as const,
+    properties: {
+      dateFrom: { type: 'string', description: 'Start date (YYYY-MM-DD)' },
+      dateTo: { type: 'string', description: 'End date (YYYY-MM-DD)' },
+      limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
+      offset: { type: 'number', description: 'Pagination offset', default: 0 }
+    }
+  }
+};

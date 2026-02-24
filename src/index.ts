@@ -58,6 +58,15 @@ import { handleTrackMepAttendance, trackMepAttendanceToolMetadata } from './tool
 // Phase 3 OSINT Intelligence Tools
 import { handleAnalyzeCountryDelegation, analyzeCountryDelegationToolMetadata } from './tools/analyzeCountryDelegation.js';
 import { handleGeneratePoliticalLandscape, generatePoliticalLandscapeToolMetadata } from './tools/generatePoliticalLandscape.js';
+// Phase 4 – New EP API v2 endpoint tools
+import { handleGetCurrentMEPs, getCurrentMEPsToolMetadata } from './tools/getCurrentMEPs.js';
+import { handleGetSpeeches, getSpeechesToolMetadata } from './tools/getSpeeches.js';
+import { handleGetProcedures, getProceduresToolMetadata } from './tools/getProcedures.js';
+import { handleGetAdoptedTexts, getAdoptedTextsToolMetadata } from './tools/getAdoptedTexts.js';
+import { handleGetEvents, getEventsToolMetadata } from './tools/getEvents.js';
+import { handleGetMeetingActivities, getMeetingActivitiesToolMetadata } from './tools/getMeetingActivities.js';
+import { handleGetMeetingDecisions, getMeetingDecisionsToolMetadata } from './tools/getMeetingDecisions.js';
+import { handleGetMEPDeclarations, getMEPDeclarationsToolMetadata } from './tools/getMEPDeclarations.js';
 // MCP Prompts
 import { getPromptMetadataArray, handleGetPrompt } from './prompts/index.js';
 // MCP Resources
@@ -171,7 +180,16 @@ export function getToolMetadataArray(): { name: string; description: string; inp
     trackMepAttendanceToolMetadata,
     // Phase 3 OSINT Intelligence Tools
     analyzeCountryDelegationToolMetadata,
-    generatePoliticalLandscapeToolMetadata
+    generatePoliticalLandscapeToolMetadata,
+    // Phase 4 – New EP API v2 endpoint tools
+    getCurrentMEPsToolMetadata,
+    getSpeechesToolMetadata,
+    getProceduresToolMetadata,
+    getAdoptedTextsToolMetadata,
+    getEventsToolMetadata,
+    getMeetingActivitiesToolMetadata,
+    getMeetingDecisionsToolMetadata,
+    getMEPDeclarationsToolMetadata
   ];
 }
 
@@ -420,7 +438,16 @@ class EuropeanParliamentMCPServer {
       'track_mep_attendance': handleTrackMepAttendance,
       // Phase 3 OSINT Intelligence Tools
       'analyze_country_delegation': handleAnalyzeCountryDelegation,
-      'generate_political_landscape': handleGeneratePoliticalLandscape
+      'generate_political_landscape': handleGeneratePoliticalLandscape,
+      // Phase 4 – New EP API v2 endpoint tools
+      'get_current_meps': handleGetCurrentMEPs,
+      'get_speeches': handleGetSpeeches,
+      'get_procedures': handleGetProcedures,
+      'get_adopted_texts': handleGetAdoptedTexts,
+      'get_events': handleGetEvents,
+      'get_meeting_activities': handleGetMeetingActivities,
+      'get_meeting_decisions': handleGetMeetingDecisions,
+      'get_mep_declarations': handleGetMEPDeclarations
     };
     
     const handler = toolHandlers[name];

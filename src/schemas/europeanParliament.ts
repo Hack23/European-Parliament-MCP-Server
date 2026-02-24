@@ -522,3 +522,177 @@ export const PaginatedResponseSchema = <T extends z.ZodType>(
     offset: z.number().int().min(0),
     hasMore: z.boolean()
   });
+
+// ──────────────────────────────────────────────────────────────────
+// Phase 4 Schemas – New EP API v2 endpoints
+// ──────────────────────────────────────────────────────────────────
+
+/**
+ * Get current MEPs input schema
+ */
+export const GetCurrentMEPsSchema = z.object({
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get speeches input schema
+ */
+export const GetSpeechesSchema = z.object({
+  dateFrom: DateStringSchema.optional()
+    .describe('Start date filter (YYYY-MM-DD)'),
+  dateTo: DateStringSchema.optional()
+    .describe('End date filter (YYYY-MM-DD)'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get procedures input schema
+ */
+export const GetProceduresSchema = z.object({
+  year: z.number()
+    .int()
+    .min(1990)
+    .max(2040)
+    .optional()
+    .describe('Filter by year'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get adopted texts input schema
+ */
+export const GetAdoptedTextsSchema = z.object({
+  year: z.number()
+    .int()
+    .min(1990)
+    .max(2040)
+    .optional()
+    .describe('Filter by year of adoption'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get events input schema
+ */
+export const GetEventsSchema = z.object({
+  dateFrom: DateStringSchema.optional()
+    .describe('Start date filter (YYYY-MM-DD)'),
+  dateTo: DateStringSchema.optional()
+    .describe('End date filter (YYYY-MM-DD)'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get meeting activities input schema
+ */
+export const GetMeetingActivitiesSchema = z.object({
+  sittingId: z.string()
+    .min(1)
+    .max(200)
+    .describe('Meeting / sitting identifier'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get meeting decisions input schema
+ */
+export const GetMeetingDecisionsSchema = z.object({
+  sittingId: z.string()
+    .min(1)
+    .max(200)
+    .describe('Meeting / sitting identifier'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get MEP declarations input schema
+ */
+export const GetMEPDeclarationsSchema = z.object({
+  year: z.number()
+    .int()
+    .min(1990)
+    .max(2040)
+    .optional()
+    .describe('Filter by filing year'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
