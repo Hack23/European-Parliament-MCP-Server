@@ -2,458 +2,777 @@
   <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
 </p>
 
-<h1 align="center">📊 European Parliament MCP Server - State Diagrams</h1>
+<h1 align="center">📊 European Parliament MCP Server — State Diagrams</h1>
 
 <p align="center">
-  <strong>System State Transitions and Lifecycles</strong><br>
-  <em>State Machine Documentation for Operations and Compliance</em>
+  <strong>System State Machines, Transitions, and Lifecycle Documentation</strong><br>
+  <em>Comprehensive state modeling for a TypeScript/Node.js MCP server (stdio transport)</em>
 </p>
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-Architect-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--17-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-0.6.2-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2025--06--20-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** Architecture Team | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-17 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-17  
-**🏷️ Classification:** Public (Open Source MCP Server)  
-**✅ ISMS Compliance:** ISO 27001 (A.12.1), NIST CSF 2.0 (PR.IP), CIS Controls v8.1 (4.1)
+**📋 Document Owner:** Architecture Team | **📄 Version:** 0.6.2 | **📅 Last Updated:** 2025-06-20 (UTC)
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2025-09-20
+**🏷️ Classification:** Public (Open Source MCP Server)
+**✅ ISMS Compliance:** ISO 27001 (A.12.1, A.12.4), NIST CSF 2.0 (PR.IP, DE.AE, DE.CM), CIS Controls v8.1 (4.1, 8.2)
 
 ---
 
 ## 📋 Table of Contents
 
-1. [Overview](#overview)
-2. [Server Lifecycle States](#server-lifecycle-states)
-3. [Tool Execution States](#tool-execution-states)
-4. [Cache Entry Lifecycle](#cache-entry-lifecycle)
-5. [Rate Limiter Token States](#rate-limiter-token-states)
-6. [Request Processing States](#request-processing-states)
-7. [Circuit Breaker States (Planned)](#circuit-breaker-states-planned)
-8. [Health Check States](#health-check-states)
+1. [Architecture Documentation Map](#-architecture-documentation-map)
+2. [Overview](#-overview)
+3. [MCP Server Lifecycle](#-mcp-server-lifecycle)
+4. [MCP Request Processing](#-mcp-request-processing)
+5. [Tool Execution Pipeline](#-tool-execution-pipeline)
+6. [EP API Client State Machine](#-ep-api-client-state-machine)
+7. [Cache Entry Lifecycle](#-cache-entry-lifecycle)
+8. [Rate Limiter Token Bucket](#-rate-limiter-token-bucket)
+9. [OSINT Analysis Pipeline](#-osint-analysis-pipeline)
+10. [State Diagram Legend](#-state-diagram-legend)
+11. [ISMS Compliance](#-isms-compliance)
+12. [Related Documentation](#-related-documentation)
+
+---
+
+## 🗺️ Architecture Documentation Map
+
+| Document | Current | Future | Description |
+|----------|---------|--------|-------------|
+| **Architecture** | [ARCHITECTURE.md](./ARCHITECTURE.md) | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) | C4 model, containers, components |
+| **Data Model** | [DATA_MODEL.md](./DATA_MODEL.md) | [FUTURE_DATA_MODEL.md](./FUTURE_DATA_MODEL.md) | Entity relationships and schemas |
+| **Flowchart** | [FLOWCHART.md](./FLOWCHART.md) | [FUTURE_FLOWCHART.md](./FUTURE_FLOWCHART.md) | Request processing and data flows |
+| **Mind Map** | [MINDMAP.md](./MINDMAP.md) | [FUTURE_MINDMAP.md](./FUTURE_MINDMAP.md) | System concepts and relationships |
+| **State Diagram** | **STATEDIAGRAM.md** *(this document)* | [FUTURE_STATEDIAGRAM.md](./FUTURE_STATEDIAGRAM.md) | System state transitions and lifecycles |
+| **SWOT Analysis** | [SWOT.md](./SWOT.md) | [FUTURE_SWOT.md](./FUTURE_SWOT.md) | Strategic positioning |
+| **Workflows** | [WORKFLOWS.md](./WORKFLOWS.md) | [FUTURE_WORKFLOWS.md](./FUTURE_WORKFLOWS.md) | CI/CD pipeline documentation |
+| **Security Architecture** | [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) | Security controls and design |
+| **Threat Model** | [THREAT_MODEL.md](./THREAT_MODEL.md) | — | STRIDE-based threat analysis |
+| **CRA Assessment** | [CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md) | — | EU Cyber Resilience Act review |
+| **Architecture Diagrams** | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) | — | Supplementary C4 diagrams |
 
 ---
 
 ## 🎯 Overview
 
-This document defines all state machines and state transitions in the European Parliament MCP Server. State diagrams ensure predictable behavior, aid debugging, and support audit compliance.
+This document defines all state machines and state transitions for the **European Parliament MCP Server v0.6.2** — a TypeScript/Node.js server implementing the Model Context Protocol over stdio transport. The server exposes **28 tools**, **6 resources**, and **6 prompts** for querying the EP Open Data Portal API v2 (`https://data.europarl.europa.eu/api/v2/`).
+
+State diagrams provide:
+
+- **Predictable behavior** — every component follows a well-defined state machine
+- **Audit compliance** — state transitions are logged and traceable per ISO 27001 A.12.4.1
+- **Debugging support** — each error state has a clear entry path and recovery strategy
+- **Operational visibility** — operators can identify system state at any point in time
+
+### System at a Glance
+
+| Component | States | Key Transitions | Implementation |
+|-----------|--------|-----------------|----------------|
+| MCP Server Lifecycle | 5 | Init → Ready → Processing → Shutdown | `src/index.ts` |
+| MCP Request Processing | 6 | Received → Validated → Dispatched → Complete | `server.setRequestHandler()` |
+| Tool Execution | 5 | Validate → Cache → API → Transform → Respond | `src/tools/*.ts` |
+| EP API Client | 6 | Idle → Request → Retry → Response | `src/clients/europeanParliamentClient.ts` |
+| LRU Cache Entry | 5 | Empty → Populated → Active → Stale → Evicted | `lru-cache` (500 entries, 15-min TTL) |
+| Rate Limiter | 5 | Full → Consuming → Partial → Empty → Refilling | `src/utils/rateLimiter.ts` |
+| OSINT Analysis | 5 | Collect → Aggregate → Compute → Report → Complete | `src/tools/analyze*.ts` |
 
 ---
 
-## 🚀 Server Lifecycle States
+## 🚀 MCP Server Lifecycle
+
+The server lifecycle models the complete life of an `EuropeanParliamentMCPServer` instance from process start to termination. The server is instantiated in `src/index.ts`, creates a `StdioServerTransport`, and calls `server.connect(transport)` to enter the Ready state.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Initializing: npm start
-    Initializing --> Loading: Load Configuration
-    Loading --> Validating: Validate Settings
-    Validating --> Starting: Start MCP Server
-    Starting --> Running: Server Ready
-    
-    Running --> Degraded: Partial Failure
-    Running --> Stopping: Shutdown Signal
-    Degraded --> Running: Recovery
-    Degraded --> Failed: Critical Error
-    
-    Stopping --> Cleanup: Close Connections
-    Cleanup --> Stopped: Cleanup Complete
-    Failed --> Stopped: Force Stop
-    Stopped --> [*]
-    
-    note right of Running
-        Accepting MCP requests
-        Health checks: OK
-        All services operational
-    end note
-    
-    note right of Degraded
-        Accepting requests
-        Some services impaired
-        Automatic recovery attempted
-    end note
+    direction LR
+
+    [*] --> Initializing: process start
+
+    state Initializing {
+        [*] --> LoadConfig: read env vars
+        LoadConfig --> CreateServer: new Server()
+        CreateServer --> RegisterHandlers: setupHandlers()
+        RegisterHandlers --> CreateTransport: new StdioServerTransport()
+        CreateTransport --> ConnectTransport: server.connect(transport)
+        ConnectTransport --> [*]
+    }
+
+    Initializing --> Ready: transport connected
+    Initializing --> Terminated: startup error → exit(1)
+
+    Ready --> Processing: request received on stdin
+    Processing --> Ready: response written to stdout
+
+    Ready --> ShuttingDown: SIGINT / SIGTERM / stdin close
+    Processing --> ShuttingDown: SIGINT during request
+
+    ShuttingDown --> Terminated: cleanup complete
+    Terminated --> [*]
+
+    classDef init fill:#42A5F5,stroke:#1565C0,color:#fff
+    classDef active fill:#66BB6A,stroke:#2E7D32,color:#fff
+    classDef processing fill:#FFA726,stroke:#E65100,color:#fff
+    classDef shutdown fill:#EF5350,stroke:#B71C1C,color:#fff
+    classDef terminal fill:#78909C,stroke:#37474F,color:#fff
+
+    class Initializing init
+    class Ready active
+    class Processing processing
+    class ShuttingDown shutdown
+    class Terminated terminal
 ```
 
-**State Descriptions:**
-- **Initializing** - Loading modules, establishing connections
-- **Loading** - Reading configuration from environment
-- **Validating** - Checking configuration validity
-- **Starting** - Initializing MCP server components
-- **Running** - Fully operational, accepting requests
-- **Degraded** - Partial functionality (e.g., cache unavailable)
-- **Stopping** - Graceful shutdown in progress
-- **Cleanup** - Closing connections, flushing logs
-- **Failed** - Critical error, forced shutdown
-- **Stopped** - Server terminated
+### State Descriptions
+
+| State | Description | Entry Condition | Exit Condition |
+|-------|-------------|-----------------|----------------|
+| **Initializing** | Reads environment variables (`EP_API_URL`, `EP_CACHE_TTL`, `EP_RATE_LIMIT`), instantiates `Server` with capabilities (tools, resources, prompts), registers all 28 tool handlers, 6 resource handlers, and 6 prompt handlers, creates `StdioServerTransport` | Process start (`npm start`) | `server.connect(transport)` resolves |
+| **Ready** | Listening on stdin for JSON-RPC messages, all handlers registered, LRU cache initialized (500 max entries), rate limiter active (60 req/min default) | Transport connected | Request arrives or shutdown signal |
+| **Processing** | Actively executing an MCP request (tool call, resource read, or prompt get) | JSON-RPC message parsed from stdin | Response written to stdout |
+| **ShuttingDown** | Graceful shutdown initiated, in-flight requests drain, transport closes | `SIGINT`, `SIGTERM`, or stdin EOF | All connections closed |
+| **Terminated** | Process exited, all resources released | Shutdown complete or fatal error | `process.exit()` |
+
+### Key Implementation Details
+
+```typescript
+// src/index.ts — Server startup sequence
+const server = new EuropeanParliamentMCPServer();
+server.start().catch((error) => {
+  console.error('Fatal error:', error);
+  process.exit(1);  // Initializing → Terminated
+});
+
+// Inside start():
+const transport = new StdioServerTransport();
+await this.server.connect(transport);  // Initializing → Ready
+```
 
 ---
 
-## 🔧 Tool Execution States
+## 🔄 MCP Request Processing
+
+Every MCP request (tool call, resource read, or prompt get) follows the same processing pipeline. The MCP SDK parses JSON-RPC messages from stdin, validates the message format, and dispatches to the appropriate registered handler.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Received: Client Request
-    Received --> Validating: Parse Parameters
-    Validating --> Queued: Schema Valid
-    Validating --> ValidationFailed: Schema Invalid
-    
-    Queued --> CheckingAuth: Rate Limit OK
-    Queued --> RateLimited: Rate Limit Exceeded
-    
-    CheckingAuth --> Authorized: Auth OK
-    CheckingAuth --> Unauthorized: Auth Failed
-    
-    Authorized --> CheckingCache: Check Cache
-    CheckingCache --> CacheHit: Data Found
-    CheckingCache --> CacheMiss: Data Not Found
-    
-    CacheHit --> Formatting: Use Cached Data
-    CacheMiss --> Fetching: Call EP API
-    
-    Fetching --> Transforming: API Success
-    Fetching --> APIFailed: API Error
-    
-    Transforming --> Caching: Transform OK
-    Transforming --> TransformFailed: Transform Error
-    
-    Caching --> Formatting: Cache Updated
-    Formatting --> Completed: MCP Response Ready
-    
-    ValidationFailed --> Failed
-    RateLimited --> Failed
-    Unauthorized --> Failed
-    APIFailed --> Failed
-    TransformFailed --> Failed
-    
-    Completed --> [*]: Return Success
-    Failed --> [*]: Return Error
+    [*] --> Received: JSON-RPC message on stdin
+
+    Received --> Validating: parse JSON-RPC envelope
+    Validating --> Dispatching: valid method + params
+    Validating --> ErrorResponse: malformed request
+
+    state Dispatching {
+        [*] --> IdentifyType
+        IdentifyType --> ToolHandler: tools/call
+        IdentifyType --> ResourceHandler: resources/read
+        IdentifyType --> PromptHandler: prompts/get
+        IdentifyType --> ListHandler: */list
+    }
+
+    Dispatching --> Executing: handler matched
+    Dispatching --> ErrorResponse: unknown method
+
+    Executing --> Responding: handler returns result
+    Executing --> ErrorResponse: handler throws error
+
+    Responding --> Complete: JSON-RPC response on stdout
+    ErrorResponse --> Complete: JSON-RPC error on stdout
+
+    Complete --> [*]
+
+    classDef receive fill:#42A5F5,stroke:#1565C0,color:#fff
+    classDef validate fill:#AB47BC,stroke:#6A1B9A,color:#fff
+    classDef dispatch fill:#FFA726,stroke:#E65100,color:#fff
+    classDef execute fill:#66BB6A,stroke:#2E7D32,color:#fff
+    classDef respond fill:#26C6DA,stroke:#00838F,color:#fff
+    classDef error fill:#EF5350,stroke:#B71C1C,color:#fff
+    classDef complete fill:#78909C,stroke:#37474F,color:#fff
+
+    class Received receive
+    class Validating validate
+    class Dispatching dispatch
+    class Executing execute
+    class Responding respond
+    class ErrorResponse error
+    class Complete complete
 ```
 
-**State Transitions:**
-1. `Received` → `Validating` - Begin request processing
-2. `Validating` → `Queued` - Input validation successful
-3. `Queued` → `CheckingAuth` - Rate limit check passed
-4. `CheckingAuth` → `Authorized` - Authentication successful
-5. `Authorized` → `CheckingCache` - Check for cached response
-6. `CheckingCache` → `CacheHit` - Found in cache
-7. `CheckingCache` → `CacheMiss` - Not in cache
-8. `CacheMiss` → `Fetching` - Fetch from EP API
-9. `Fetching` → `Transforming` - API call successful
-10. `Transforming` → `Caching` - Data transformation successful
-11. `Caching` → `Formatting` - Cache updated
-12. `Formatting` → `Completed` - MCP response formatted
+### Handler Dispatch Map
+
+| Method | Handler Count | Example | Registration |
+|--------|---------------|---------|-------------|
+| `tools/list` | 1 | Returns metadata for all 28 tools | `ListToolsRequestSchema` |
+| `tools/call` | 28 | `get_meps`, `analyze_voting_patterns` | `CallToolRequestSchema` → `dispatchToolCall()` |
+| `resources/list` | 1 | Returns 6 resource templates | `ListResourcesRequestSchema` |
+| `resources/read` | 6 | `ep://meps/{mepId}`, `ep://committees/{id}` | `ReadResourceRequestSchema` |
+| `prompts/list` | 1 | Returns 6 prompt templates | `ListPromptsRequestSchema` |
+| `prompts/get` | 6 | `mep_briefing`, `coalition_analysis` | `GetPromptRequestSchema` |
+
+### Request-Response Flow
+
+```typescript
+// Registration (src/index.ts)
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const { name, arguments: args } = request.params;
+  return await this.dispatchToolCall(name, args);  // Dispatching → Executing
+});
+
+// Dispatch (src/index.ts — 28 tool mappings)
+private async dispatchToolCall(name: string, args: unknown) {
+  switch (name) {
+    case 'get_meps':        return handleGetMEPs(this.client, args);
+    case 'get_mep_details': return handleGetMEPDetails(this.client, args);
+    // ... 26 more tools
+  }
+}
+```
+
+---
+
+## 🔧 Tool Execution Pipeline
+
+Each of the 28 tools follows the same execution pipeline: input validation via Zod schema, LRU cache check, EP API HTTP call (if cache miss), JSON-LD response transformation, and MCP response formatting. Error states branch at each stage.
+
+```mermaid
+stateDiagram-v2
+    [*] --> InputValidation: tool invoked with args
+
+    state InputValidation {
+        [*] --> ParseSchema: Zod .parse(args)
+        ParseSchema --> SchemaValid: all fields valid
+        ParseSchema --> SchemaInvalid: validation error
+    }
+
+    InputValidation --> CacheCheck: schema validated
+    InputValidation --> Error: ZodError thrown
+
+    state CacheCheck {
+        [*] --> ComputeKey: JSON.stringify({endpoint, params})
+        ComputeKey --> LookupCache: cache.get(key)
+        LookupCache --> CacheHit: entry found & TTL valid
+        LookupCache --> CacheMiss: not found or expired
+    }
+
+    CacheCheck --> ResponseTransform: cache hit (skip API)
+    CacheCheck --> APICall: cache miss
+
+    state APICall {
+        [*] --> BuildRequest: construct URL + headers
+        BuildRequest --> CheckRateLimit: rateLimiter.removeTokens(1)
+        CheckRateLimit --> SendHTTP: tokens available
+        CheckRateLimit --> RateLimited: no tokens
+        SendHTTP --> ReceiveResponse: HTTP 200
+        SendHTTP --> RetryableError: HTTP 5xx / network error
+        RetryableError --> SendHTTP: retry (max 2, exponential backoff)
+        RetryableError --> APIFailure: retries exhausted
+    }
+
+    APICall --> ResponseTransform: API success
+    APICall --> Error: API failure or rate limited
+
+    state ResponseTransform {
+        [*] --> ParseJSON: parse JSON-LD response
+        ParseJSON --> ExtractData: extract from @graph
+        ExtractData --> FormatMCP: build MCP content[]
+        FormatMCP --> UpdateCache: cache.set(key, result)
+        UpdateCache --> [*]
+    }
+
+    ResponseTransform --> Complete: MCP response ready
+    ResponseTransform --> Error: transform error
+
+    Complete --> [*]: return {content: [{type, text}]}
+    Error --> [*]: return {content: [{type, text}], isError: true}
+
+    classDef validate fill:#AB47BC,stroke:#6A1B9A,color:#fff
+    classDef cache fill:#42A5F5,stroke:#1565C0,color:#fff
+    classDef api fill:#FFA726,stroke:#E65100,color:#fff
+    classDef transform fill:#26C6DA,stroke:#00838F,color:#fff
+    classDef success fill:#66BB6A,stroke:#2E7D32,color:#fff
+    classDef error fill:#EF5350,stroke:#B71C1C,color:#fff
+
+    class InputValidation validate
+    class CacheCheck cache
+    class APICall api
+    class ResponseTransform transform
+    class Complete success
+    class Error error
+```
+
+### Zod Schema Validation Example
+
+All 28 tools define strict Zod schemas for input validation:
+
+```typescript
+// src/tools/analyzeCountryDelegation.ts
+export const AnalyzeCountryDelegationSchema = z.object({
+  country: z.string()
+    .length(2)
+    .regex(/^[A-Z]{2}$/, 'Country code must be 2 uppercase letters')
+    .describe('ISO 3166-1 alpha-2 country code'),
+  dateFrom: z.string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format')
+    .optional()
+    .describe('Start date for analysis period'),
+});
+```
+
+### Error State Transitions
+
+| Error State | Trigger | MCP Response |
+|-------------|---------|-------------|
+| `SchemaInvalid` | Zod validation fails (missing/malformed fields) | `isError: true` with validation details |
+| `RateLimited` | Token bucket empty (60 req/min exceeded) | `isError: true` with "Rate limit exceeded" |
+| `APIFailure` | HTTP 4xx/5xx after 2 retries exhausted | `isError: true` with EP API error details |
+| `TransformError` | Unexpected JSON-LD structure | `isError: true` with parse error |
+
+---
+
+## 🌐 EP API Client State Machine
+
+The `EuropeanParliamentClient` manages all HTTP communication with the EP Open Data Portal API v2 (`https://data.europarl.europa.eu/api/v2/`). It implements LRU caching, rate limiting, retry with exponential backoff, and configurable timeouts.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle: client instantiated
+
+    Idle --> Requesting: fetchFromApi() called
+
+    state Requesting {
+        [*] --> CheckCache: compute cache key
+        CheckCache --> CacheHit: lru-cache hit
+        CheckCache --> PrepareHTTP: cache miss
+
+        PrepareHTTP --> RateLimitCheck: build URL + headers
+        RateLimitCheck --> SendRequest: tokens available
+        RateLimitCheck --> RateLimited: bucket empty
+
+        SendRequest --> AwaitResponse: undici fetch()
+        AwaitResponse --> ParseResponse: HTTP 200
+        AwaitResponse --> Retrying: HTTP 5xx / timeout
+
+        state Retrying {
+            [*] --> BackoffWait: delay = 1000ms × 2^attempt
+            BackoffWait --> RetrySend: backoff elapsed
+            RetrySend --> RetryResponse: HTTP response
+            RetryResponse --> RetrySuccess: HTTP 200
+            RetryResponse --> RetryAgain: attempt < 2
+            RetryAgain --> BackoffWait
+            RetryResponse --> RetriesFailed: attempt >= 2
+        }
+
+        Retrying --> ParseResponse: retry succeeded
+        Retrying --> RequestError: retries exhausted
+
+        ParseResponse --> CacheStore: cache.set(key, data)
+        CacheStore --> [*]
+        CacheHit --> [*]
+    }
+
+    Requesting --> ResponseReceived: success (cached or fresh)
+    Requesting --> Error: all attempts failed
+
+    ResponseReceived --> Idle: return data to caller
+    RateLimited --> Error: reject with rate limit error
+    Error --> Idle: throw error to caller
+
+    classDef idle fill:#78909C,stroke:#37474F,color:#fff
+    classDef requesting fill:#42A5F5,stroke:#1565C0,color:#fff
+    classDef success fill:#66BB6A,stroke:#2E7D32,color:#fff
+    classDef retry fill:#FFA726,stroke:#E65100,color:#fff
+    classDef error fill:#EF5350,stroke:#B71C1C,color:#fff
+    classDef ratelimit fill:#FF7043,stroke:#BF360C,color:#fff
+
+    class Idle idle
+    class Requesting requesting
+    class ResponseReceived success
+    class Retrying retry
+    class Error error
+    class RateLimited ratelimit
+```
+
+### Client Configuration
+
+| Parameter | Default | Env Variable | Description |
+|-----------|---------|--------------|-------------|
+| Base URL | `https://data.europarl.europa.eu/api/v2/` | `EP_API_URL` | EP Open Data Portal endpoint |
+| Cache TTL | 900,000 ms (15 min) | `EP_CACHE_TTL` | LRU cache time-to-live |
+| Max Cache Size | 500 entries | — | Maximum LRU cache entries |
+| Request Timeout | 10,000 ms (10 s) | — | Per-request HTTP timeout |
+| Max Retries | 2 | — | Retry attempts (3 total calls) |
+| Retry Delay | 1,000 ms base | — | Exponential backoff base |
+| Rate Limit | 60 req/min | `EP_RATE_LIMIT` | Token bucket capacity |
+
+### Retry Backoff Schedule
+
+```
+Attempt 0: immediate request
+Attempt 1: 1,000 ms delay  (1s)
+Attempt 2: 2,000 ms delay  (2s)
+─────────────────────────────────
+Total max wait: 3,000 ms + request time
+```
+
+```typescript
+// src/utils/timeout.ts — Exponential backoff
+const delay = retryDelayMs * Math.pow(2, attempt);
+// attempt 0 → 1000ms, attempt 1 → 2000ms
+```
+
+### Retry Decision Logic
+
+| Condition | Retry? | Reason |
+|-----------|--------|--------|
+| HTTP 5xx | ✅ Yes | Server error, may be transient |
+| Network error | ✅ Yes | Connection failure, may recover |
+| HTTP 4xx | ❌ No | Client error, retrying won't help |
+| Timeout | ❌ No | `TimeoutError` — not retried |
+| HTTP 200 | ❌ N/A | Success, no retry needed |
 
 ---
 
 ## 💾 Cache Entry Lifecycle
 
+The server uses an in-memory LRU cache (`lru-cache` npm package) to reduce redundant EP API calls. Each cache entry has a fixed TTL of 15 minutes. When the cache reaches 500 entries, the least recently used entry is evicted.
+
 ```mermaid
 stateDiagram-v2
-    [*] --> Creating: Store Data
-    Creating --> Active: Entry Created
-    Active --> Active: Access (TTL Reset)
-    Active --> Expiring: TTL Countdown
-    Expiring --> Expired: TTL Reached
-    Expired --> Evicted: Remove Entry
-    Active --> Evicted: LRU Eviction
+    [*] --> Empty: cache initialized (max: 500)
+
+    Empty --> Populated: cache.set(key, data)
+
+    state Populated {
+        [*] --> Active: TTL starts (900,000ms)
+        Active --> Active: cache.get(key) — hit
+        Active --> Stale: TTL expired (15 min)
+    }
+
+    Populated --> Active: entry accessible
+    Active --> Evicted: LRU eviction (cache full)
+    Stale --> Evicted: accessed after TTL → miss
+
+    Evicted --> Empty: slot freed
     Evicted --> [*]
-    
+
     note right of Active
-        TTL: 15 minutes
-        Accessible for reads
-        LRU position updated
+        ✅ Accessible for reads
+        ⏱️ Fixed TTL: 15 minutes
+        📊 LRU position updated on access
+        🔑 Key: JSON.stringify({endpoint, params})
     end note
-    
-    note right of Expired
-        No longer accessible
-        Awaiting eviction
-        Memory still allocated
+
+    note right of Stale
+        ❌ No longer served
+        ⏱️ TTL exceeded
+        🗑️ Evicted on next access or LRU sweep
     end note
+
+    note right of Empty
+        📦 Slot available
+        📊 Cache size < 500
+    end note
+
+    classDef empty fill:#78909C,stroke:#37474F,color:#fff
+    classDef active fill:#66BB6A,stroke:#2E7D32,color:#fff
+    classDef stale fill:#FFA726,stroke:#E65100,color:#fff
+    classDef evicted fill:#EF5350,stroke:#B71C1C,color:#fff
+
+    class Empty empty
+    class Active active
+    class Stale stale
+    class Evicted evicted
 ```
 
-**Cache States:**
-- **Creating** - Entry being added to cache
-- **Active** - Valid, accessible, TTL active
-- **Expiring** - TTL countdown in progress
-- **Expired** - TTL reached, no longer valid
-- **Evicted** - Removed from cache (LRU or expired)
+### Cache Configuration
 
-**TTL Management:**
-- Initial TTL: 900 seconds (15 minutes)
-- TTL reset on access: No (fixed TTL)
-- Max cache size: 500 entries
-- Eviction policy: LRU when size exceeded
+| Parameter | Value | Source |
+|-----------|-------|--------|
+| Implementation | `lru-cache` npm package | `src/clients/europeanParliamentClient.ts` |
+| Max Entries | 500 (`DEFAULT_MAX_CACHE_SIZE`) | Hardcoded constant |
+| TTL | 900,000 ms / 15 min (`DEFAULT_CACHE_TTL_MS`) | `EP_CACHE_TTL` env override |
+| TTL Reset on Access | No (fixed TTL from creation) | LRU cache config |
+| Eviction Policy | Least Recently Used (when full) | `lru-cache` default |
+| Cache Key | `JSON.stringify({endpoint, params})` | Deterministic serialization |
+
+### Cache Performance Targets
+
+| Metric | Target | Description |
+|--------|--------|-------------|
+| P50 (cached) | < 100 ms | Median response time for cache hits |
+| P95 (cached) | < 200 ms | 95th percentile for cache hits |
+| P99 (uncached) | < 2,000 ms | 99th percentile for API calls |
 
 ---
 
-## 🚦 Rate Limiter Token States
+## 🚦 Rate Limiter Token Bucket
+
+The `RateLimiter` class (`src/utils/rateLimiter.ts`) implements a token bucket algorithm to control request throughput to the EP API. The default configuration allows 60 requests per minute, configurable via `EP_RATE_LIMIT`.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Full: Initialize
-    Full --> Consuming: Request Received
-    Consuming --> Partial: Token Consumed
-    Consuming --> Empty: Last Token Consumed
-    
-    Partial --> Consuming: Request Received
-    Partial --> Refilling: Time Elapsed
-    Empty --> Blocked: Request Received
-    Empty --> Refilling: Time Elapsed
-    
-    Refilling --> Partial: Tokens Added
-    Refilling --> Full: Full Capacity
-    
-    Blocked --> Rejected: Return 429
-    Rejected --> Empty: Wait for Refill
-    
+    [*] --> Full: initialize (60 tokens)
+
+    Full --> Consuming: removeTokens(1)
+    Consuming --> Partial: tokens remaining > 0
+    Consuming --> Empty: last token consumed
+
+    Partial --> Consuming: removeTokens(1)
+    Partial --> Refilling: interval elapsed
+
+    Empty --> Blocked: removeTokens(1) — no tokens
+    Empty --> Refilling: interval elapsed
+
+    Refilling --> Partial: tokens added (< capacity)
+    Refilling --> Full: tokens restored to capacity
+
+    Blocked --> Rejected: throw "Rate limit exceeded"
+    Rejected --> Empty: await refill
+
     note right of Full
-        Tokens: 100/100
+        🟢 All tokens available
+        Capacity: 60 tokens/min
         All requests allowed
     end note
-    
+
     note right of Empty
-        Tokens: 0/100
+        🔴 No tokens available
         All requests blocked
+        Awaiting refill interval
     end note
-    
+
     note right of Refilling
-        Rate: 100 tokens/15min
-        = 0.111 tokens/second
+        🔄 Tokens replenished
+        Rate: 1 token/second
+        Up to capacity (60)
     end note
+
+    classDef full fill:#66BB6A,stroke:#2E7D32,color:#fff
+    classDef partial fill:#42A5F5,stroke:#1565C0,color:#fff
+    classDef empty fill:#EF5350,stroke:#B71C1C,color:#fff
+    classDef refill fill:#FFA726,stroke:#E65100,color:#fff
+    classDef blocked fill:#FF7043,stroke:#BF360C,color:#fff
+
+    class Full full
+    class Partial partial
+    class Empty empty
+    class Refilling refill
+    class Blocked blocked
+    class Rejected blocked
 ```
 
-**Token Bucket States:**
-- **Full** - All 100 tokens available
-- **Consuming** - Token being removed for request
-- **Partial** - Some tokens available (1-99)
-- **Empty** - No tokens available, requests blocked
-- **Refilling** - Tokens being added based on elapsed time
-- **Blocked** - Request rejected due to no tokens
-- **Rejected** - HTTP 429 response sent
+### Token Bucket Configuration
 
-**Refill Algorithm:**
+| Parameter | Default | Env Variable | Description |
+|-----------|---------|--------------|-------------|
+| Capacity | 60 tokens | `EP_RATE_LIMIT` | Maximum tokens in bucket |
+| Interval | per minute | — | Token refill interval |
+| Tokens per Request | 1 | — | Tokens consumed per API call |
+| Behavior on Empty | Throw error | — | `"Rate limit exceeded"` |
+
+### Rate Limiter API
+
 ```typescript
-const elapsed = now - lastRefillTime;
-const tokensToAdd = Math.floor(elapsed * refillRate);
-const newTokens = Math.min(capacity, currentTokens + tokensToAdd);
-```
-
----
-
-## 🔄 Request Processing States
-
-```mermaid
-stateDiagram-v2
-    [*] --> Pending: Request Arrival
-    Pending --> Processing: Start Handler
-    Processing --> WaitingAPI: Call EP API
-    WaitingAPI --> WaitingAPI: Retry with Backoff
-    WaitingAPI --> ProcessingResponse: API Response
-    WaitingAPI --> TimedOut: Timeout Exceeded
-    
-    ProcessingResponse --> Success: Valid Response
-    ProcessingResponse --> DataError: Invalid Data
-    
-    Success --> LoggingMetrics: Record Metrics
-    DataError --> LoggingError: Record Error
-    TimedOut --> LoggingError
-    
-    LoggingMetrics --> Completed
-    LoggingError --> Completed
-    Completed --> [*]: Return to Client
-```
-
-**Processing States:**
-- **Pending** - Request queued, awaiting processing
-- **Processing** - Handler executing business logic
-- **WaitingAPI** - Awaiting external API response
-- **ProcessingResponse** - Transforming API data
-- **Success** - Request completed successfully
-- **DataError** - Invalid response data received
-- **TimedOut** - API call exceeded timeout
-- **LoggingMetrics** - Recording success metrics
-- **LoggingError** - Recording error metrics
-- **Completed** - Final state, response sent
-
-**Timeouts:**
-- API call timeout: 30 seconds
-- Total request timeout: 60 seconds
-- Retry attempts: 3 with exponential backoff
-
----
-
-## 🔄 Circuit Breaker States (Planned)
-
-```mermaid
-stateDiagram-v2
-    [*] --> Closed: Initialize
-    Closed --> Closed: Success (Counter Reset)
-    Closed --> Open: Failure Threshold Exceeded
-    
-    Open --> HalfOpen: Timeout Elapsed
-    Open --> Open: Requests Rejected
-    
-    HalfOpen --> Closed: Success
-    HalfOpen --> Open: Failure
-    
-    note right of Closed
-        Normal operation
-        Requests passed through
-        Failure counter active
-    end note
-    
-    note right of Open
-        Circuit tripped
-        All requests fail fast
-        Timeout: 60 seconds
-    end note
-    
-    note right of HalfOpen
-        Testing recovery
-        Limited requests allowed
-        Quick failure/recovery
-    end note
-```
-
-**Circuit Breaker Configuration (Planned Q3 2026):**
-- **Failure Threshold**: 5 failures in 10 seconds
-- **Open Duration**: 60 seconds
-- **Half-Open Test Requests**: 3 requests
-- **Success Threshold**: 2 consecutive successes
-- **Scope**: Per EP API endpoint
-
-**Benefits:**
-- Prevent cascading failures
-- Faster failure detection
-- Automatic recovery testing
-- Reduced load on failing services
-
----
-
-## ✅ Health Check States
-
-```mermaid
-stateDiagram-v2
-    [*] --> Checking: Health Check Request
-    Checking --> TestingServer: Test MCP Server
-    TestingServer --> TestingCache: Server OK
-    TestingServer --> Unhealthy: Server Down
-    
-    TestingCache --> TestingAPI: Cache OK
-    TestingCache --> Degraded: Cache Unavailable
-    
-    TestingAPI --> Healthy: API OK
-    TestingAPI --> Degraded: API Unavailable
-    
-    Degraded --> CheckingSeverity: Assess Impact
-    CheckingSeverity --> DegradedOK: Non-Critical
-    CheckingSeverity --> Unhealthy: Critical
-    
-    Healthy --> [*]: Return 200 OK
-    DegradedOK --> [*]: Return 200 OK (Warning)
-    Unhealthy --> [*]: Return 503 Service Unavailable
-    
-    note right of Healthy
-        All systems operational
-        Status: "ok"
-        HTTP 200
-    end note
-    
-    note right of Degraded
-        Partial functionality
-        Status: "degraded"
-        HTTP 200 with warnings
-    end note
-    
-    note right of Unhealthy
-        Critical failure
-        Status: "unhealthy"
-        HTTP 503
-    end note
-```
-
-**Health Check Endpoints:**
-
-**`GET /health`** - Basic liveness check
-```json
-{
-  "status": "ok",
-  "timestamp": "2026-02-17T22:40:00Z",
-  "uptime": 86400
+// src/utils/rateLimiter.ts
+class RateLimiter {
+  removeTokens(count: number): void;     // Consume tokens (throws if empty)
+  tryRemoveTokens(count: number): boolean; // Non-throwing variant
+  reset(): void;                          // Restore to full capacity
+  getAvailableTokens(): number;           // Current token count
 }
 ```
 
-**`GET /health/ready`** - Readiness check
-```json
-{
-  "status": "ok",
-  "checks": {
-    "server": "ok",
-    "cache": "ok",
-    "api": "ok"
-  },
-  "timestamp": "2026-02-17T22:40:00Z"
-}
-```
+---
 
-**`GET /health/detailed`** - Detailed diagnostics
-```json
-{
-  "status": "degraded",
-  "checks": {
-    "server": {
-      "status": "ok",
-      "responseTime": "2ms"
-    },
-    "cache": {
-      "status": "degraded",
-      "message": "High eviction rate",
-      "metrics": {
-        "size": 495,
-        "hitRate": 0.55
-      }
-    },
-    "api": {
-      "status": "ok",
-      "responseTime": "234ms"
+## 🔍 OSINT Analysis Pipeline
+
+The OSINT (Open Source Intelligence) analysis tools follow a multi-stage data processing pipeline. These tools — including `assess_mep_influence`, `analyze_coalition_dynamics`, `detect_voting_anomalies`, and `generate_political_landscape` — collect data from multiple EP API endpoints, aggregate results, perform statistical computation, and generate formatted intelligence reports.
+
+```mermaid
+stateDiagram-v2
+    [*] --> DataCollection: analysis tool invoked
+
+    state DataCollection {
+        [*] --> FetchMEPs: get MEP data
+        FetchMEPs --> FetchVotes: get voting records
+        FetchVotes --> FetchCommittees: get committee data
+        FetchCommittees --> FetchDocuments: get related documents
+        FetchDocuments --> [*]
+        note right of FetchMEPs
+            Multiple parallel API calls
+            Each uses cache + rate limiter
+            Data from EP API v2 endpoints
+        end note
     }
-  },
-  "timestamp": "2026-02-17T22:40:00Z"
-}
+
+    DataCollection --> Aggregation: all data collected
+    DataCollection --> Error: API failure in collection
+
+    state Aggregation {
+        [*] --> MergeDatasets: combine API responses
+        MergeDatasets --> NormalizeFields: standardize formats
+        NormalizeFields --> IndexByEntity: group by MEP/party/country
+        IndexByEntity --> [*]
+    }
+
+    Aggregation --> Computation: data normalized
+
+    state Computation {
+        [*] --> CalculateMetrics: influence scores, patterns
+        CalculateMetrics --> DetectAnomalies: statistical analysis
+        DetectAnomalies --> RankResults: sort by significance
+        RankResults --> [*]
+    }
+
+    Computation --> ReportGeneration: analysis complete
+
+    state ReportGeneration {
+        [*] --> FormatSections: structure report sections
+        FormatSections --> AddStatistics: embed computed metrics
+        AddStatistics --> GenerateMarkdown: format as Markdown text
+        GenerateMarkdown --> [*]
+    }
+
+    ReportGeneration --> Complete: report ready
+    Error --> [*]: return error content
+
+    Complete --> [*]: return {content: [{type: "text", text: report}]}
+
+    classDef collect fill:#42A5F5,stroke:#1565C0,color:#fff
+    classDef aggregate fill:#AB47BC,stroke:#6A1B9A,color:#fff
+    classDef compute fill:#FFA726,stroke:#E65100,color:#fff
+    classDef report fill:#26C6DA,stroke:#00838F,color:#fff
+    classDef success fill:#66BB6A,stroke:#2E7D32,color:#fff
+    classDef error fill:#EF5350,stroke:#B71C1C,color:#fff
+
+    class DataCollection collect
+    class Aggregation aggregate
+    class Computation compute
+    class ReportGeneration report
+    class Complete success
+    class Error error
 ```
+
+### OSINT Tool Categories
+
+| Phase | Tools | Data Sources |
+|-------|-------|-------------|
+| **Phase 1 — Intelligence** | `assess_mep_influence`, `analyze_coalition_dynamics`, `detect_voting_anomalies`, `compare_political_groups`, `analyze_legislative_effectiveness`, `monitor_legislative_pipeline` | MEPs, votes, procedures |
+| **Phase 2 — Activity** | `analyze_committee_activity`, `track_mep_attendance` | Committees, events |
+| **Phase 3 — Geographic** | `analyze_country_delegation`, `generate_political_landscape` | MEPs by country, parties |
+| **Core Analysis** | `analyze_voting_patterns`, `track_legislation`, `generate_report` | Cross-cutting data |
+
+### Pipeline Characteristics
+
+| Aspect | Detail |
+|--------|--------|
+| **Data Collection** | 2–6 parallel EP API calls per analysis tool |
+| **Aggregation** | In-memory data merging and normalization |
+| **Computation** | Statistical metrics (influence scores, voting coherence, anomaly detection) |
+| **Output Format** | Structured Markdown text in MCP `content[]` response |
+| **Caching** | Each underlying API call is individually cached (15-min TTL) |
+| **Error Handling** | Partial results returned when possible; full error on critical failure |
+
+---
+
+## 🎨 State Diagram Legend
+
+All state diagrams in this document use consistent color coding to indicate state categories:
+
+```mermaid
+stateDiagram-v2
+    direction LR
+
+    state "🔵 Initialization" as Init
+    state "🟢 Active / Success" as Active
+    state "🟠 Processing / Warning" as Processing
+    state "🟣 Validation" as Validation
+    state "🔴 Error / Failure" as Error
+    state "⚫ Terminal / Idle" as Terminal
+
+    [*] --> Init
+    Init --> Active
+    Active --> Processing
+    Processing --> Validation
+    Validation --> Error
+    Error --> Terminal
+    Terminal --> [*]
+
+    classDef init fill:#42A5F5,stroke:#1565C0,color:#fff
+    classDef active fill:#66BB6A,stroke:#2E7D32,color:#fff
+    classDef processing fill:#FFA726,stroke:#E65100,color:#fff
+    classDef validation fill:#AB47BC,stroke:#6A1B9A,color:#fff
+    classDef error fill:#EF5350,stroke:#B71C1C,color:#fff
+    classDef terminal fill:#78909C,stroke:#37474F,color:#fff
+
+    class Init init
+    class Active active
+    class Processing processing
+    class Validation validation
+    class Error error
+    class Terminal terminal
+```
+
+| Color | Category | Usage |
+|-------|----------|-------|
+| 🔵 Blue (`#42A5F5`) | Initialization / Request | States during setup, incoming requests, cache operations |
+| 🟢 Green (`#66BB6A`) | Active / Success | Healthy operational states, successful completions |
+| 🟠 Orange (`#FFA726`) | Processing / Warning | In-progress states, retry logic, degraded conditions |
+| 🟣 Purple (`#AB47BC`) | Validation | Schema validation, data transformation stages |
+| 🔴 Red (`#EF5350`) | Error / Failure | Error states, rate limit blocks, API failures |
+| ⚫ Gray (`#78909C`) | Terminal / Idle | Idle states, terminated processes, evicted entries |
 
 ---
 
 ## 📋 ISMS Compliance
 
 ### ISO 27001 Controls
-- **A.12.1.2** - Change Management: State transitions documented for audit
-- **A.12.1.3** - Capacity Management: State-based resource allocation
-- **A.12.4.1** - Event Logging: State transitions logged for audit trail
+
+| Control | Title | State Diagram Relevance |
+|---------|-------|------------------------|
+| **A.12.1.2** | Change Management | State transitions documented; changes to state machines require review |
+| **A.12.1.3** | Capacity Management | Cache and rate limiter states enforce resource boundaries |
+| **A.12.4.1** | Event Logging | All state transitions logged to stderr for audit trail |
+| **A.12.6.1** | Technical Vulnerability Management | Error states trigger logging for vulnerability detection |
 
 ### NIST CSF 2.0 Functions
-- **PR.IP-3** - Configuration Change Control: State machine definitions
-- **DE.AE-3** - Event Data Collection: State transition logging
-- **DE.CM-3** - Continuous Monitoring: Health check state monitoring
+
+| Function | Category | State Diagram Relevance |
+|----------|----------|------------------------|
+| **PR.IP-3** | Configuration Change Control | State machine definitions version-controlled in Git |
+| **DE.AE-3** | Event Data Collection | State transitions produce structured log events |
+| **DE.CM-3** | Continuous Monitoring | Server lifecycle states enable health monitoring |
+| **RS.MI-1** | Incident Mitigation | Error states define containment and recovery paths |
 
 ### CIS Controls v8.1
-- **4.1** - Configuration Management: State definitions documented
-- **8.2** - Audit Log Management: State transitions logged
-- **12.3** - Secure Configuration: State machine enforcement
+
+| Control | Title | State Diagram Relevance |
+|---------|-------|------------------------|
+| **4.1** | Secure Configuration | State machines enforce secure default configurations |
+| **8.2** | Audit Log Management | State transitions generate timestamped audit records |
+| **8.5** | Detailed Audit Logging | Error states capture complete context for forensic analysis |
+| **12.3** | Secure Network Infrastructure | Rate limiter states enforce API call boundaries |
 
 ---
 
 ## 🔗 Related Documentation
 
-- [FLOWCHART.md](./FLOWCHART.md) - Business process flows
-- [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) - Security implementation
-- [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) - C4 model diagrams
-- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - State-based debugging
+- [ARCHITECTURE.md](./ARCHITECTURE.md) — C4 model, containers, and component architecture
+- [FLOWCHART.md](./FLOWCHART.md) — Request processing and data flow diagrams
+- [DATA_MODEL.md](./DATA_MODEL.md) — Entity relationships and Zod schemas
+- [MINDMAP.md](./MINDMAP.md) — System concepts and feature relationships
+- [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) — Security controls and threat boundaries
+- [THREAT_MODEL.md](./THREAT_MODEL.md) — STRIDE-based threat analysis
+- [WORKFLOWS.md](./WORKFLOWS.md) — CI/CD pipeline and release workflows
+- [FUTURE_STATEDIAGRAM.md](./FUTURE_STATEDIAGRAM.md) — Planned state machine enhancements
 
 ---
 
 <p align="center">
   <strong>Built with ❤️ by <a href="https://hack23.com">Hack23 AB</a></strong><br>
-  <em>State diagram documentation following ISMS standards</em>
+  <em>State diagram documentation following ISMS standards — ISO 27001, NIST CSF 2.0, CIS Controls v8.1</em>
 </p>
