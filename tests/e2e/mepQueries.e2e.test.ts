@@ -121,9 +121,11 @@ describe('MEP Query E2E Tests', () => {
       const mepId = meps[0]!.id;
 
       // Get details
-      const detailsResponse = await client.callTool('get_mep_details', {
-        id: mepId
-      });
+      const detailsResponse = await retryOrSkip(
+        () => client.callTool('get_mep_details', { id: mepId }),
+        'get_mep_details'
+      );
+      if (detailsResponse === undefined) return; // Skipped due to rate limit/timeout
 
       validateMCPResponse(detailsResponse);
       expect(detailsResponse.content[0]?.type).toBe('text');

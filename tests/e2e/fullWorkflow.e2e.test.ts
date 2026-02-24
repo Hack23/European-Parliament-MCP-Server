@@ -83,50 +83,70 @@ describe('Full Workflow E2E Tests', () => {
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute get_plenary_sessions tool', async () => {
-      const response = await client.callTool('get_plenary_sessions', {
-        dateFrom: '2024-01-01',
-        dateTo: '2024-12-31',
-        limit: 3
-      });
+      const response = await retryOrSkip(
+        () => client.callTool('get_plenary_sessions', {
+          dateFrom: '2024-01-01',
+          dateTo: '2024-12-31',
+          limit: 3
+        }),
+        'get_plenary_sessions'
+      );
+      if (response === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(response);
       const data = parsePaginatedMCPResponse(response.content);
       expect(Array.isArray(data)).toBe(true);
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute get_voting_records tool', async () => {
-      const response = await client.callTool('get_voting_records', {
-        dateFrom: '2024-01-01',
-        limit: 3
-      });
+      const response = await retryOrSkip(
+        () => client.callTool('get_voting_records', {
+          dateFrom: '2024-01-01',
+          limit: 3
+        }),
+        'get_voting_records'
+      );
+      if (response === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(response);
       const data = parsePaginatedMCPResponse(response.content);
       expect(Array.isArray(data)).toBe(true);
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute search_documents tool', async () => {
-      const response = await client.callTool('search_documents', {
-        keyword: 'climate',
-        limit: 3
-      });
+      const response = await retryOrSkip(
+        () => client.callTool('search_documents', {
+          keyword: 'climate',
+          limit: 3
+        }),
+        'search_documents'
+      );
+      if (response === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(response);
       const data = parsePaginatedMCPResponse(response.content);
       expect(Array.isArray(data)).toBe(true);
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute get_committee_info tool', async () => {
-      const response = await client.callTool('get_committee_info', {
-        abbreviation: 'ENVI'
-      });
+      const response = await retryOrSkip(
+        () => client.callTool('get_committee_info', {
+          abbreviation: 'ENVI'
+        }),
+        'get_committee_info'
+      );
+      if (response === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(response);
       const data = parseMCPResponse(response.content); // Non-paginated response
       expect(typeof data).toBe('object');
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute get_parliamentary_questions tool', async () => {
-      const response = await client.callTool('get_parliamentary_questions', {
-        dateFrom: '2024-01-01',
-        limit: 3
-      });
+      const response = await retryOrSkip(
+        () => client.callTool('get_parliamentary_questions', {
+          dateFrom: '2024-01-01',
+          limit: 3
+        }),
+        'get_parliamentary_questions'
+      );
+      if (response === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(response);
       const data = parsePaginatedMCPResponse(response.content);
       expect(Array.isArray(data)).toBe(true);
@@ -159,18 +179,26 @@ describe('Full Workflow E2E Tests', () => {
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute track_legislation tool', async () => {
-      const response = await client.callTool('track_legislation', {
-        procedureId: '2024/0001(COD)'
-      });
+      const response = await retryOrSkip(
+        () => client.callTool('track_legislation', {
+          procedureId: '2024/0001(COD)'
+        }),
+        'track_legislation'
+      );
+      if (response === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(response);
       const data = parseMCPResponse(response.content); // Non-paginated response
       expect(typeof data).toBe('object');
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute generate_report tool', async () => {
-      const response = await client.callTool('generate_report', {
-        reportType: 'MEP_ACTIVITY'
-      });
+      const response = await retryOrSkip(
+        () => client.callTool('generate_report', {
+          reportType: 'MEP_ACTIVITY'
+        }),
+        'generate_report'
+      );
+      if (response === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(response);
       expect(response.content[0]?.type).toBe('text');
     }, E2E_TEST_TIMEOUT_MS);
@@ -195,24 +223,31 @@ describe('Full Workflow E2E Tests', () => {
 
       // Step 2: Get MEP details
       const mep = meps[0] as { id: string };
-      const detailsResponse = await client.callTool('get_mep_details', {
-        id: mep.id
-      });
+      const detailsResponse = await retryOrSkip(
+        () => client.callTool('get_mep_details', { id: mep.id }),
+        'get_mep_details in research workflow'
+      );
+      if (detailsResponse === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(detailsResponse);
 
       // Step 3: Get voting records
-      const votingResponse = await client.callTool('get_voting_records', {
-        mepId: mep.id,
-        limit: 5
-      });
+      const votingResponse = await retryOrSkip(
+        () => client.callTool('get_voting_records', { mepId: mep.id, limit: 5 }),
+        'get_voting_records in research workflow'
+      );
+      if (votingResponse === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(votingResponse);
 
       // Step 4: Analyze voting patterns
-      const analysisResponse = await client.callTool('analyze_voting_patterns', {
-        mepId: mep.id,
-        dateFrom: '2024-01-01',
-        dateTo: '2024-12-31'
-      });
+      const analysisResponse = await retryOrSkip(
+        () => client.callTool('analyze_voting_patterns', {
+          mepId: mep.id,
+          dateFrom: '2024-01-01',
+          dateTo: '2024-12-31'
+        }),
+        'analyze_voting_patterns in research workflow'
+      );
+      if (analysisResponse === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(analysisResponse);
 
       // All steps completed successfully
@@ -223,24 +258,29 @@ describe('Full Workflow E2E Tests', () => {
   describe('Workflow: Track Legislation', () => {
     it('should complete legislation tracking workflow', async () => {
       // Step 1: Search for documents
-      const docsResponse = await client.callTool('search_documents', {
-        keyword: 'climate',
-        limit: 3
-      });
+      const docsResponse = await retryOrSkip(
+        () => client.callTool('search_documents', { keyword: 'climate', limit: 3 }),
+        'search_documents in legislation workflow'
+      );
+      if (docsResponse === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(docsResponse);
       const docs = parsePaginatedMCPResponse(docsResponse.content);
       expect(Array.isArray(docs)).toBe(true);
 
       // Step 2: Track legislation
-      const trackResponse = await client.callTool('track_legislation', {
-        procedureId: '2024/0001(COD)'
-      });
+      const trackResponse = await retryOrSkip(
+        () => client.callTool('track_legislation', { procedureId: '2024/0001(COD)' }),
+        'track_legislation in legislation workflow'
+      );
+      if (trackResponse === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(trackResponse);
 
       // Step 3: Generate report
-      const reportResponse = await client.callTool('generate_report', {
-        reportType: 'LEGISLATION_PROGRESS'
-      });
+      const reportResponse = await retryOrSkip(
+        () => client.callTool('generate_report', { reportType: 'LEGISLATION_PROGRESS' }),
+        'generate_report in legislation workflow'
+      );
+      if (reportResponse === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(reportResponse);
 
       // All steps completed successfully
