@@ -81,7 +81,7 @@ export function buildLegislativeTracking(procedure: Procedure): LegislativeProce
     procedureId: procedure.id,
     title: procedure.title,
     type: procedure.type,
-    status: (procedure.status as LegislativeProcedure['status']) || 'COMMITTEE',
+    status: procedure.status || 'COMMITTEE',
     currentStage: procedure.stage || 'Unknown',
     timeline: buildTimeline(procedure),
     committees: buildCommittees(procedure),

@@ -75,7 +75,7 @@ interface LegislativePipelineAnalysis {
  */
 function daysBetween(dateStr: string, endStr?: string): number {
   const start = new Date(dateStr);
-  const end = endStr ? new Date(endStr) : new Date();
+  const end = endStr !== undefined && endStr !== '' ? new Date(endStr) : new Date();
   if (isNaN(start.getTime())) return 0;
   if (isNaN(end.getTime())) return 0;
   return Math.max(0, Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
@@ -111,37 +111,64 @@ function classifyMomentum(healthScore: number): string {
 }
 
 /**
+ * Check if a procedure status indicates completion.
+ */
+function isStatusCompleted(status: string): boolean {
+  const lower = status.toLowerCase();
+  return lower.includes('adopted') || lower.includes('completed');
+}
+
+/**
+ * Compute progress metrics for a procedure.
+ */
+function computePipelineMetrics(proc: Procedure): {
+  daysInStage: number; isCompleted: boolean; isStalled: boolean;
+  totalDays: number; progressEstimate: number; velocityScore: number; estimatedDays: number;
+} {
+  const lastActivity = proc.dateLastActivity !== '' ? proc.dateLastActivity : proc.dateInitiated;
+  const daysInStage = daysBetween(lastActivity);
+  const isCompleted = isStatusCompleted(proc.status);
+  const isStalled = !isCompleted && daysInStage > 60;
+  const initiated = proc.dateInitiated !== '' ? proc.dateInitiated : '';
+  const lastAct = proc.dateLastActivity !== '' ? proc.dateLastActivity : undefined;
+  const totalDays = daysBetween(initiated, lastAct);
+  const progressEstimate = isCompleted ? 100 : Math.min(90, Math.max(5, Math.round(totalDays / 10)));
+  const velocityScore = isStalled ? 20 : Math.min(100, 100 - Math.min(80, daysInStage));
+  const estimatedDays = isCompleted ? 0 : Math.max(30, daysInStage * 2);
+  return { daysInStage, isCompleted, isStalled, totalDays, progressEstimate, velocityScore, estimatedDays };
+}
+
+/**
  * Transform a real EP API Procedure into a PipelineItem.
  * All data is derived from the real procedure fields.
  */
 function procedureToPipelineItem(proc: Procedure): PipelineItem {
-  const daysInStage = daysBetween(
-    proc.dateLastActivity || proc.dateInitiated || '',
-  );
-  const isCompleted = (proc.status || '').toLowerCase().includes('adopted')
-    || (proc.status || '').toLowerCase().includes('completed');
-  const isStalled = !isCompleted && daysInStage > 60;
-
-  const totalDays = daysBetween(proc.dateInitiated || '', proc.dateLastActivity || undefined);
-  const progressEstimate = isCompleted ? 100 : Math.min(90, Math.max(5, Math.round(totalDays / 10)));
-  const velocityScore = isStalled ? 20 : Math.min(100, 100 - Math.min(80, daysInStage));
-  const estimatedDays = isCompleted ? 0 : Math.max(30, daysInStage * 2);
+  const m = computePipelineMetrics(proc);
+  let currentStage = 'Unknown';
+  if (proc.stage !== '') {
+    currentStage = proc.stage;
+  } else if (proc.status !== '') {
+    currentStage = proc.status;
+  }
+  const committee = proc.responsibleCommittee !== '' ? proc.responsibleCommittee : 'Unknown';
+  const stageLabel = proc.stage !== '' ? proc.stage : 'processing';
+  const nextAction = m.isCompleted ? 'COMPLETED' : `Continue ${stageLabel}`;
 
   return {
     procedureId: proc.id,
     title: proc.title,
     type: proc.type,
-    currentStage: proc.stage || proc.status || 'Unknown',
-    committee: proc.responsibleCommittee || 'Unknown',
-    daysInCurrentStage: daysInStage,
-    isStalled,
-    nextExpectedAction: isCompleted ? 'COMPLETED' : `Continue ${proc.stage || 'processing'}`,
+    currentStage,
+    committee,
+    daysInCurrentStage: m.daysInStage,
+    isStalled: m.isStalled,
+    nextExpectedAction: nextAction,
     computedAttributes: {
-      progressPercentage: progressEstimate,
-      velocityScore,
-      complexityIndicator: classifyComplexity(daysInStage),
-      estimatedCompletionDays: estimatedDays,
-      bottleneckRisk: classifyBottleneckRisk(isStalled, daysInStage),
+      progressPercentage: m.progressEstimate,
+      velocityScore: m.velocityScore,
+      complexityIndicator: classifyComplexity(m.daysInStage),
+      estimatedCompletionDays: m.estimatedDays,
+      bottleneckRisk: classifyBottleneckRisk(m.isStalled, m.daysInStage),
     },
   };
 }
