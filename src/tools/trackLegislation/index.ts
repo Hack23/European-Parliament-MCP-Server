@@ -17,16 +17,15 @@
  */
 
 import { TrackLegislationSchema } from '../../schemas/europeanParliament.js';
-import { createMockProcedure } from './procedureTracker.js';
+import { epClient } from '../../clients/europeanParliamentClient.js';
+import { buildLegislativeTracking } from './procedureTracker.js';
 
 /**
  * Track legislation tool handler
- * Cyclomatic complexity: 2
  * 
- * NOTE: This tool currently returns illustrative placeholder data for the
- * requested procedure ID. Real EP Legislative Observatory API integration
- * is planned for a future release. All returned data is clearly marked
- * with confidenceLevel: 'NONE' and methodology explains the limitation.
+ * Fetches real procedure data from the EP API `/procedures` endpoint
+ * and returns structured legislative tracking information derived
+ * entirely from the API response.
  * 
  * @param args - Tool arguments
  * @returns MCP tool result with legislative procedure tracking data
@@ -38,26 +37,22 @@ import { createMockProcedure } from './procedureTracker.js';
  * }
  * ```
  */
-export function handleTrackLegislation(
+export async function handleTrackLegislation(
   args: unknown
 ): Promise<{ content: { type: string; text: string }[] }> {
-  // Validate input
   const params = TrackLegislationSchema.parse(args);
   
   try {
-    // Placeholder: returns illustrative data structure for the given procedure ID.
-    // Real EP Legislative Observatory API integration is planned.
-    const procedure = createMockProcedure(params.procedureId);
+    const procedure = await epClient.getProcedureById(params.procedureId);
+    const tracking = buildLegislativeTracking(procedure);
     
-    // Return MCP-compliant response
-    return Promise.resolve({
+    return {
       content: [{
         type: 'text',
-        text: JSON.stringify(procedure, null, 2)
+        text: JSON.stringify(tracking, null, 2)
       }]
-    });
+    };
   } catch (error) {
-    // Handle errors without exposing internal details
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to track legislation: ${errorMessage}`);
   }

@@ -9,45 +9,65 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getPlenarySessions: vi.fn()
+    getProcedures: vi.fn()
   }
 }));
+
+const mockProcedures = {
+  data: [
+    {
+      id: 'PROC-001',
+      title: 'Digital Services Act implementation',
+      reference: '2024/0001(COD)',
+      type: 'COD',
+      subjectMatter: 'Digital',
+      stage: 'Committee consideration',
+      status: 'Ongoing',
+      dateInitiated: '2024-01-15',
+      dateLastActivity: '2024-06-20',
+      responsibleCommittee: 'IMCO',
+      rapporteur: 'MEP Test',
+      documents: ['DOC-1'],
+    },
+    {
+      id: 'PROC-002',
+      title: 'Climate adaptation strategy',
+      reference: '2024/0002(COD)',
+      type: 'COD',
+      subjectMatter: 'Environment',
+      stage: 'Plenary vote',
+      status: 'Ongoing',
+      dateInitiated: '2023-06-01',
+      dateLastActivity: '2024-03-15',
+      responsibleCommittee: 'ENVI',
+      rapporteur: 'MEP Climate',
+      documents: ['DOC-2', 'DOC-3'],
+    },
+    {
+      id: 'PROC-003',
+      title: 'Agricultural reform proposal',
+      reference: '2024/0003(NLE)',
+      type: 'NLE',
+      subjectMatter: 'Agriculture',
+      stage: 'Adopted',
+      status: 'Adopted',
+      dateInitiated: '2023-01-01',
+      dateLastActivity: '2024-01-01',
+      responsibleCommittee: 'AGRI',
+      rapporteur: 'MEP Agri',
+      documents: [],
+    },
+  ],
+  total: 3,
+  limit: 20,
+  offset: 0,
+  hasMore: false,
+};
 
 describe('monitor_legislative_pipeline Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
-    vi.mocked(epClientModule.epClient.getPlenarySessions).mockResolvedValue({
-      data: [
-        {
-          id: 'SESSION-1',
-          date: '2024-03-15',
-          location: 'Strasbourg',
-          agendaItems: [
-            'Digital Services Act implementation',
-            'Climate adaptation strategy',
-            'Agricultural reform proposal'
-          ],
-          attendanceCount: 650,
-          documents: ['DOC-1', 'DOC-2']
-        },
-        {
-          id: 'SESSION-2',
-          date: '2024-04-10',
-          location: 'Brussels',
-          agendaItems: [
-            'AI regulation framework',
-            'Migration policy reform'
-          ],
-          attendanceCount: 600,
-          documents: ['DOC-3']
-        }
-      ],
-      total: 2,
-      limit: 20,
-      offset: 0,
-      hasMore: false
-    });
+    vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(mockProcedures);
   });
 
   describe('Input Validation', () => {
@@ -98,7 +118,7 @@ describe('monitor_legislative_pipeline Tool', () => {
     });
 
     it('should include pipeline data', async () => {
-      const result = await handleMonitorLegislativePipeline({});
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL' });
       const data: unknown = JSON.parse(result.content[0]?.text ?? '{}');
 
       expect(data).toHaveProperty('pipeline');
@@ -110,7 +130,7 @@ describe('monitor_legislative_pipeline Tool', () => {
     });
 
     it('should include summary counts', async () => {
-      const result = await handleMonitorLegislativePipeline({});
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL' });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         summary: Record<string, unknown>;
       };
@@ -123,7 +143,7 @@ describe('monitor_legislative_pipeline Tool', () => {
     });
 
     it('should include computed attributes', async () => {
-      const result = await handleMonitorLegislativePipeline({});
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL' });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         computedAttributes: Record<string, unknown>;
       };
@@ -136,21 +156,31 @@ describe('monitor_legislative_pipeline Tool', () => {
       expect(data.computedAttributes).toHaveProperty('legislativeMomentum');
     });
 
-    it('should include pipeline item details', async () => {
+    it('should include pipeline item details from real API data', async () => {
       const result = await handleMonitorLegislativePipeline({ status: 'ALL' });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
-        pipeline: { computedAttributes: Record<string, unknown> }[];
+        pipeline: { procedureId: string; title: string; committee: string; computedAttributes: Record<string, unknown> }[];
       };
 
       if (data.pipeline.length > 0) {
         const item = data.pipeline[0];
         expect(item).toHaveProperty('procedureId');
         expect(item).toHaveProperty('title');
-        expect(item).toHaveProperty('currentStage');
         expect(item?.computedAttributes).toHaveProperty('progressPercentage');
         expect(item?.computedAttributes).toHaveProperty('velocityScore');
         expect(item?.computedAttributes).toHaveProperty('bottleneckRisk');
+        // Verify data comes from mock (real API structure)
+        expect(item.procedureId).toBe('PROC-001');
+        expect(item.title).toBe('Digital Services Act implementation');
+        expect(item.committee).toBe('IMCO');
       }
+    });
+
+    it('should reference EP API in methodology', async () => {
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { methodology: string };
+      expect(data.methodology).toContain('EP API');
+      expect(data.methodology).toContain('/procedures');
     });
   });
 
@@ -178,7 +208,7 @@ describe('monitor_legislative_pipeline Tool', () => {
 
   describe('Error Handling', () => {
     it('should wrap API errors', async () => {
-      vi.mocked(epClientModule.epClient.getPlenarySessions)
+      vi.mocked(epClientModule.epClient.getProcedures)
         .mockRejectedValueOnce(new Error('API Error'));
 
       await expect(handleMonitorLegislativePipeline({}))

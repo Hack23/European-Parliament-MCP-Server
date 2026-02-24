@@ -1,9 +1,32 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleTrackLegislation, trackLegislationToolMetadata } from './trackLegislation.js';
+import * as epClientModule from '../clients/europeanParliamentClient.js';
+
+// Mock the EP client
+vi.mock('../clients/europeanParliamentClient.js', () => ({
+  epClient: {
+    getProcedureById: vi.fn()
+  }
+}));
 
 describe('track_legislation Tool', () => {
   beforeEach(() => {
-    // No mocks needed - this tool returns mock data
+    vi.clearAllMocks();
+
+    vi.mocked(epClientModule.epClient.getProcedureById).mockResolvedValue({
+      id: '2024/0001(COD)',
+      title: 'Digital Markets Act Amendment',
+      reference: '2024/0001(COD)',
+      type: 'COD',
+      subjectMatter: 'Internal Market',
+      stage: 'Awaiting committee decision',
+      status: 'Ongoing',
+      dateInitiated: '2024-01-15',
+      dateLastActivity: '2024-06-20',
+      responsibleCommittee: 'IMCO',
+      rapporteur: 'Test Rapporteur',
+      documents: ['COM(2024)0001', 'A9-0123/2024'],
+    });
   });
 
   describe('Input Validation', () => {
@@ -42,7 +65,7 @@ describe('track_legislation Tool', () => {
       expect(typeof parsed === 'object' && parsed !== null).toBe(true);
     });
 
-    it('should include procedure ID in response', async () => {
+    it('should include procedure ID derived from API', async () => {
       const result = await handleTrackLegislation({
         procedureId: '2024/0001(COD)'
       });
@@ -55,110 +78,75 @@ describe('track_legislation Tool', () => {
       }
     });
 
-    it('should include title', async () => {
+    it('should include title from API data', async () => {
       const result = await handleTrackLegislation({
         procedureId: '2024/0001(COD)'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('title' in parsed).toBe(true);
-        expect('title' in parsed && typeof parsed.title === 'string').toBe(true);
-      }
+      const parsed = JSON.parse(result.content[0].text) as { title: string };
+      expect(parsed.title).toBe('Digital Markets Act Amendment');
     });
 
-    it('should include status', async () => {
+    it('should include status from API data', async () => {
       const result = await handleTrackLegislation({
         procedureId: '2024/0001(COD)'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('status' in parsed).toBe(true);
-      }
+      const parsed = JSON.parse(result.content[0].text) as { status: string };
+      expect(parsed.status).toBe('Ongoing');
     });
 
-    it('should include timeline', async () => {
+    it('should include timeline derived from API dates', async () => {
       const result = await handleTrackLegislation({
         procedureId: '2024/0001(COD)'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('timeline' in parsed).toBe(true);
-        if ('timeline' in parsed) {
-          expect(Array.isArray(parsed.timeline)).toBe(true);
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as { timeline: { date: string; stage: string }[] };
+      expect(Array.isArray(parsed.timeline)).toBe(true);
+      expect(parsed.timeline.length).toBeGreaterThan(0);
+      expect(parsed.timeline[0].date).toBe('2024-01-15');
     });
 
-    it('should include committees', async () => {
+    it('should include committees from API data', async () => {
       const result = await handleTrackLegislation({
         procedureId: '2024/0001(COD)'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('committees' in parsed).toBe(true);
-        if ('committees' in parsed) {
-          expect(Array.isArray(parsed.committees)).toBe(true);
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as { committees: { abbreviation: string; role: string }[] };
+      expect(Array.isArray(parsed.committees)).toBe(true);
+      expect(parsed.committees.length).toBeGreaterThan(0);
+      expect(parsed.committees[0].abbreviation).toBe('IMCO');
     });
 
-    it('should include amendments', async () => {
+    it('should include amendments structure', async () => {
       const result = await handleTrackLegislation({
         procedureId: '2024/0001(COD)'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('amendments' in parsed).toBe(true);
-        if ('amendments' in parsed) {
-          const amendments = parsed.amendments;
-          expect(typeof amendments === 'object' && amendments !== null).toBe(true);
-          if (typeof amendments === 'object' && amendments !== null) {
-            expect('proposed' in amendments).toBe(true);
-            expect('adopted' in amendments).toBe(true);
-            expect('rejected' in amendments).toBe(true);
-          }
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as { amendments: { proposed: number; adopted: number; rejected: number } };
+      expect(parsed.amendments).toHaveProperty('proposed');
+      expect(parsed.amendments).toHaveProperty('adopted');
+      expect(parsed.amendments).toHaveProperty('rejected');
     });
 
-    it('should include voting records', async () => {
+    it('should include voting records array', async () => {
       const result = await handleTrackLegislation({
         procedureId: '2024/0001(COD)'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('voting' in parsed).toBe(true);
-        if ('voting' in parsed) {
-          expect(Array.isArray(parsed.voting)).toBe(true);
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as { voting: unknown[] };
+      expect(Array.isArray(parsed.voting)).toBe(true);
     });
 
-    it('should include documents', async () => {
+    it('should include documents from API data', async () => {
       const result = await handleTrackLegislation({
         procedureId: '2024/0001(COD)'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('documents' in parsed).toBe(true);
-        if ('documents' in parsed) {
-          expect(Array.isArray(parsed.documents)).toBe(true);
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as { documents: { id: string }[] };
+      expect(Array.isArray(parsed.documents)).toBe(true);
+      expect(parsed.documents.length).toBe(2);
+      expect(parsed.documents[0].id).toBe('COM(2024)0001');
     });
 
     it('should include next steps', async () => {
@@ -166,86 +154,37 @@ describe('track_legislation Tool', () => {
         procedureId: '2024/0001(COD)'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('nextSteps' in parsed).toBe(true);
-        if ('nextSteps' in parsed) {
-          expect(Array.isArray(parsed.nextSteps)).toBe(true);
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as { nextSteps: string[] };
+      expect(Array.isArray(parsed.nextSteps)).toBe(true);
     });
-  });
 
-  describe('Data Structure', () => {
-    it('should have valid timeline entries', async () => {
+    it('should have MEDIUM confidence level (real API data)', async () => {
       const result = await handleTrackLegislation({
         procedureId: '2024/0001(COD)'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      if (typeof parsed === 'object' && parsed !== null && 'timeline' in parsed) {
-        const timeline = parsed.timeline;
-        if (Array.isArray(timeline) && timeline.length > 0) {
-          const entry = timeline[0];
-          expect(typeof entry === 'object' && entry !== null).toBe(true);
-          if (typeof entry === 'object' && entry !== null) {
-            expect('date' in entry).toBe(true);
-            expect('stage' in entry).toBe(true);
-            expect('description' in entry).toBe(true);
-          }
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as { confidenceLevel: string };
+      expect(parsed.confidenceLevel).toBe('MEDIUM');
     });
 
-    it('should have valid committee entries', async () => {
+    it('should reference EP API in methodology', async () => {
       const result = await handleTrackLegislation({
         procedureId: '2024/0001(COD)'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      if (typeof parsed === 'object' && parsed !== null && 'committees' in parsed) {
-        const committees = parsed.committees;
-        if (Array.isArray(committees) && committees.length > 0) {
-          const committee = committees[0];
-          expect(typeof committee === 'object' && committee !== null).toBe(true);
-          if (typeof committee === 'object' && committee !== null) {
-            expect('abbreviation' in committee).toBe(true);
-            expect('role' in committee).toBe(true);
-          }
-        }
-      }
-    });
-
-    it('should have valid voting entries', async () => {
-      const result = await handleTrackLegislation({
-        procedureId: '2024/0001(COD)'
-      });
-
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      if (typeof parsed === 'object' && parsed !== null && 'voting' in parsed) {
-        const voting = parsed.voting;
-        if (Array.isArray(voting) && voting.length > 0) {
-          const vote = voting[0];
-          expect(typeof vote === 'object' && vote !== null).toBe(true);
-          if (typeof vote === 'object' && vote !== null) {
-            expect('date' in vote).toBe(true);
-            expect('stage' in vote).toBe(true);
-            expect('result' in vote).toBe(true);
-            expect('votesFor' in vote).toBe(true);
-            expect('votesAgainst' in vote).toBe(true);
-            expect('abstentions' in vote).toBe(true);
-          }
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as { methodology: string };
+      expect(parsed.methodology).toContain('EP API');
+      expect(parsed.methodology).toContain('/procedures');
     });
   });
 
   describe('Error Handling', () => {
-    it('should provide meaningful output for valid inputs', async () => {
-      const result = await handleTrackLegislation({ procedureId: '2024/0001(COD)' });
-      expect(result).toBeDefined();
-      expect(result.content[0].type).toBe('text');
+    it('should wrap API errors', async () => {
+      vi.mocked(epClientModule.epClient.getProcedureById)
+        .mockRejectedValueOnce(new Error('API Error'));
+
+      await expect(handleTrackLegislation({ procedureId: '2024/0001(COD)' }))
+        .rejects.toThrow('Failed to track legislation');
     });
   });
 
