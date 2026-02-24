@@ -176,7 +176,7 @@ function procedureToPipelineItem(proc: Procedure): PipelineItem {
 /** Check if item matches status filter */
 function matchesStatusFilter(item: PipelineItem, status: string): boolean {
   if (status === 'ALL') return true;
-  if (status === 'ACTIVE') return !item.isStalled && item.currentStage !== 'ADOPTED';
+  if (status === 'ACTIVE') return !item.isStalled && item.computedAttributes.progressPercentage < 100;
   if (status === 'STALLED') return item.isStalled;
   if (status === 'COMPLETED') return item.computedAttributes.progressPercentage >= 100;
   return true;
@@ -249,7 +249,17 @@ export async function handleMonitorLegislativePipeline(
   try {
     const procedures = await epClient.getProcedures({ limit: params.limit });
 
-    const allItems = procedures.data
+    const dateFrom = params.dateFrom;
+    const dateTo = params.dateTo;
+    const filteredProcs = procedures.data.filter(proc => {
+      const lastActivity = proc.dateLastActivity !== '' ? proc.dateLastActivity : proc.dateInitiated;
+      const initiated = proc.dateInitiated !== '' ? proc.dateInitiated : undefined;
+      if (dateFrom !== undefined && lastActivity !== '' && lastActivity < dateFrom) return false;
+      if (dateTo !== undefined && initiated !== undefined && initiated > dateTo) return false;
+      return true;
+    });
+
+    const allItems = filteredProcs
       .map(proc => procedureToPipelineItem(proc))
       .filter(item => matchesStatusFilter(item, params.status))
       .filter(item => matchesCommitteeFilter(item, params.committee));

@@ -214,7 +214,7 @@ export interface MEP {
  *     votesFor: 800,
  *     votesAgainst: 350,
  *     abstentions: 100,
- *     attendanceRate: 0.92
+ *     attendanceRate: 92 // 92% participation
  *   },
  *   roles: ["Vice-Chair of DEVE Committee", "Member of ENVI Committee"]
  * };
@@ -393,7 +393,7 @@ export interface MEPDetails extends MEP {
  *   votesFor: 800,
  *   votesAgainst: 350,
  *   abstentions: 100,
- *   attendanceRate: 0.92 // 92% participation
+ *   attendanceRate: 92 // 92% participation
  * };
  * 
  * // Calculate vote percentages
@@ -409,7 +409,7 @@ export interface MEPDetails extends MEP {
  *   votesFor: 300,
  *   votesAgainst: 150,
  *   abstentions: 50,
- *   attendanceRate: 0.45 // Only 45% of possible votes
+ *   attendanceRate: 45 // Only 45% of possible votes
  * };
  * ```
  * 
@@ -471,19 +471,19 @@ export interface VotingStatistics {
   abstentions: number;
 
   /**
-   * Attendance rate as decimal (0.0 to 1.0).
+   * Attendance rate as percentage (0 to 100).
    * 
    * Percentage of possible votes where the MEP participated
    * (voted for, against, or abstained). Does not distinguish
    * between physical absence and strategic non-participation.
    * 
-   * **Calculation:** `totalVotes / possibleVotes`
-   * **Format:** Decimal between 0.0 and 1.0
-   * **Display:** Multiply by 100 for percentage
+   * **Calculation:** `(totalVotes / possibleVotes) * 100`
+   * **Format:** Number between 0 and 100
+   * **Schema:** `z.number().min(0).max(100)`
    * 
-   * @example 0.92 // 92% attendance
-   * @example 0.78 // 78% attendance
-   * @example 1.0  // 100% attendance (perfect record)
+   * @example 92.5 // 92.5% attendance
+   * @example 78   // 78% attendance
+   * @example 100  // 100% attendance (perfect record)
    */
   attendanceRate: number;
 }
