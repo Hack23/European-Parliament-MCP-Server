@@ -94,8 +94,11 @@ jobs:
       - name: Clean old documentation
         run: npm run docs:clean || echo "First time generating docs"
 
-      - name: Generate API documentation with TypeDoc
+      - name: Generate API documentation with TypeDoc (HTML)
         run: npm run docs
+
+      - name: Generate API documentation with TypeDoc (Markdown)
+        run: npm run docs:md
 
       - name: Run tests with coverage and generate reports
         run: |
