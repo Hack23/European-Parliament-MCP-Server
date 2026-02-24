@@ -1870,8 +1870,13 @@ export class EuropeanParliamentClient {
    * `/corporate-bodies/{body-id}` endpoint to the standardized internal
    * Committee type.
    * 
+   * **Note:** Chair and vice-chair assignments are approximate since the EP API
+   * `/corporate-bodies` endpoint does not provide role-specific membership data.
+   * The first member is assigned as chair, next two as vice-chairs. For accurate
+   * role data, consumers should cross-reference with committee membership endpoints.
+   * 
    * @param apiData - Raw corporate body data from EP API (JSON-LD format)
-   * @returns Transformed Committee object
+   * @returns Transformed Committee object with best-effort role assignments
    * 
    * @private
    * @internal
@@ -1881,12 +1886,18 @@ export class EuropeanParliamentClient {
     const id = this.extractField(apiData, ['body_id', 'id', 'identifier']);
     const name = this.extractMultilingualText(apiData['label'] ?? apiData['prefLabel'] ?? apiData['skos:prefLabel']);
     const abbreviation = this.extractField(apiData, ['notation', 'skos:notation']) || id;
+    const effectiveId = id !== '' ? id : abbreviation;
+
+    if (effectiveId === '') {
+      throw new APIError('Corporate body data missing required identifier', 400);
+    }
+
     const members = this.extractMemberIds(apiData['hasMembership'] ?? apiData['org:hasMember']);
     const classification = this.extractField(apiData, ['classification', 'org:classification']);
     const responsibilities = classification !== '' ? [classification.replace(/.*\//, '')] : [];
 
     return {
-      id: id !== '' ? id : abbreviation,
+      id: effectiveId,
       name: name !== '' ? name : `Committee ${abbreviation}`,
       abbreviation,
       members,
