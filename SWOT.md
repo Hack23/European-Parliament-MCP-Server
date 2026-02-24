@@ -2,748 +2,496 @@
   <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
 </p>
 
-<h1 align="center">💼 European Parliament MCP Server - SWOT Analysis</h1>
+<h1 align="center">🧩 European Parliament MCP Server — SWOT Analysis</h1>
 
 <p align="center">
-  <strong>Strategic Analysis and Positioning</strong><br>
-  <em>Strengths, Weaknesses, Opportunities, and Threats Assessment</em>
+  <strong>💼 Strategic Assessment for European Parliament MCP Server</strong><br>
+  <em>🎯 Strengths, Weaknesses, Opportunities, and Threats Analysis</em>
 </p>
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-CEO-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--17-success?style=for-the-badge" alt="Effective Date"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-0.6.2-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2025--09--18-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Review-Annual-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** CEO/Product Management | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-17 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-17  
-**🏷️ Classification:** Public (Open Source MCP Server)  
-**✅ ISMS Compliance:** ISO 27001 (A.6.1), NIST CSF 2.0 (ID.BE), CIS Controls v8.1 (15.1)
+**📋 Document Owner:** CEO | **📄 Version:** 0.6.2 | **📅 Last Updated:** 2025-09-18 (UTC)  
+**🔄 Review Cycle:** Annual | **⏰ Next Review:** 2026-09-18
 
 ---
 
-## 📋 Table of Contents
-
-1. [Executive Summary](#executive-summary)
-2. [Strengths](#strengths)
-3. [Weaknesses](#weaknesses)
-4. [Opportunities](#opportunities)
-5. [Threats](#threats)
-6. [Strategic Initiatives Matrix](#strategic-initiatives-matrix)
-7. [Risk Mitigation Strategies](#risk-mitigation-strategies)
-8. [ISMS Compliance](#isms-compliance)
-
----
-
-## 🎯 Executive Summary
-
-This SWOT analysis evaluates the European Parliament MCP Server's strategic position, identifying internal capabilities and external factors that influence project success. The analysis informs architectural decisions, resource allocation, and risk management strategies.
-
-**Current Position:**
-- ✅ Strong technical foundation (OpenSSF 8.5/10, SLSA Level 3)
-- ⚠️ Early development stage (v1.0, limited production deployments)
-- 🚀 High growth potential (MCP protocol adoption, EP data demand)
-- 🔒 Robust security posture (comprehensive ISMS documentation)
-
----
-
-## 💪 Strengths
-
-### S1: Technical Excellence
-
-**Security & Quality:**
-- ✅ **OpenSSF Scorecard: 8.5/10** - Top 15% of open source projects
-- ✅ **SLSA Level 3** - Supply chain security verified
-- ✅ **80% Test Coverage** - Comprehensive unit/integration/E2E tests
-- ✅ **SonarCloud A Rating** - Zero code smells, 0% duplication
-- ✅ **Zero Known Vulnerabilities** - Continuous Dependabot monitoring
-- ✅ **TypeScript Strict Mode** - Type-safe implementation
-
-**Evidence:**
-```bash
-# OpenSSF Scorecard Results
-Branch-Protection: 10/10
-CI-Tests: 10/10
-Code-Review: 10/10
-Dependency-Update-Tool: 10/10
-Fuzzing: 0/10 (not applicable for API server)
-License: 10/10
-Maintained: 10/10
-Packaging: 10/10
-Pinned-Dependencies: 10/10
-SAST: 10/10
-Security-Policy: 10/10
-Signed-Releases: 5/10 (planned for Q2 2026)
-Token-Permissions: 10/10
-Vulnerabilities: 10/10
-
-Overall Score: 8.5/10
-```
-
-### S2: Comprehensive Documentation
-
-**ISMS-Compliant Architecture:**
-- ✅ **19 Architecture Documents** - Complete C4 model implementation
-- ✅ **ISO 27001 Alignment** - All controls mapped and evidenced
-- ✅ **NIST CSF 2.0** - Full framework coverage
-- ✅ **CIS Controls v8.1** - Best practices implemented
-- ✅ **Living Documentation** - Version controlled, continuously updated
-- ✅ **Audit-Ready** - Comprehensive evidence portfolio
-
-**Documentation Portfolio:**
-| Category | Documents | Total Size |
-|----------|-----------|------------|
-| Security Architecture | 2 | 46KB |
-| C4 Architecture Model | 4 | 79KB |
-| API & Operations | 6 | 147KB |
-| ISMS Evidence | 7 | 110KB |
-| **Total** | **19** | **382KB** |
-
-### S3: Modern Technology Stack
-
-**Cutting-Edge Technologies:**
-- ✅ **MCP Protocol** - Anthropic's Model Context Protocol (emerging standard)
-- ✅ **Node.js 22.x** - Latest LTS with performance improvements
-- ✅ **TypeScript 5.x** - Modern type system with strict mode
-- ✅ **Vitest** - Fast testing framework (4x faster than Jest)
-- ✅ **Zod** - Runtime validation and TypeScript inference
-- ✅ **undici** - High-performance HTTP client
-- ✅ **Winston** - Structured logging for audit compliance
-
-### S4: EP Data Integration
-
-**Unique Value Proposition:**
-- ✅ **Exclusive MCP Server** - First and only EP MCP server
-- ✅ **10 Specialized Tools** - Comprehensive EP data access
-- ✅ **Public Data API** - No authentication complexity
-- ✅ **GDPR Compliant** - Privacy by design, no persistent PII
-- ✅ **JSON-LD Support** - Semantic web standards
-- ✅ **Multi-language Ready** - 24 EU languages supported by EP
-
-### S5: Performance Optimization
-
-**High-Performance Architecture:**
-- ✅ **<200ms Response Time** - Cached requests average 0.5-1ms
-- ✅ **80%+ Cache Hit Rate** - Efficient LRU caching
-- ✅ **Token Bucket Rate Limiting** - Scalable request throttling
-- ✅ **<512MB Memory** - Efficient resource utilization
-- ✅ **Concurrent Request Handling** - Async/await architecture
-- ✅ **Prometheus Metrics** - Real-time performance monitoring
-
----
-
-## ⚠️ Weaknesses
-
-### W1: Limited Authentication
-
-**Current State:**
-- ❌ **No Authentication** - Public access only (no OAuth, API keys)
-- ❌ **No RBAC** - Cannot differentiate user roles/permissions
-- ❌ **No Audit Trail by User** - Cannot track individual user actions
-- ❌ **No Rate Limiting per User** - Only IP-based rate limiting
-- ❌ **No Monetization** - Cannot offer tiered access (free/premium)
-
-**Impact:**
-- **Security Risk**: Cannot prevent abuse or unauthorized access
-- **Business Risk**: No path to monetization or SLA guarantees
-- **Compliance Risk**: Limited audit capabilities for user actions
-
-**Mitigation** (Planned Q2 2026):
-```typescript
-// OAuth 2.0 Integration
-interface AuthConfig {
-  provider: 'github' | 'auth0' | 'keycloak';
-  clientId: string;
-  clientSecret: string;
-  scopes: ['read:meps', 'read:plenary', 'admin'];
-  rbac: {
-    anonymous: { rateLimit: 100, features: ['read-only'] },
-    user: { rateLimit: 1000, features: ['read', 'export'] },
-    premium: { rateLimit: 10000, features: ['all'] },
-    admin: { rateLimit: 'unlimited', features: ['all', 'management'] }
-  };
-}
-```
-
-### W2: Single-Instance Deployment
-
-**Current State:**
-- ❌ **No Load Balancing** - Single point of failure
-- ❌ **No Auto-scaling** - Cannot handle traffic spikes
-- ❌ **No Geographic Distribution** - Single region only
-- ❌ **No High Availability** - No redundancy or failover
-- ❌ **No Disaster Recovery** - No backup/restore procedures
-
-**Impact:**
-- **Availability Risk**: Downtime affects all users
-- **Performance Risk**: Cannot scale horizontally
-- **Geographic Risk**: High latency for non-EU users
-
-**Mitigation** (Planned Q3 2026):
-```yaml
-# AWS ECS Deployment with Auto-scaling
-Service:
-  DesiredCount: 3
-  MinCount: 2
-  MaxCount: 10
-  TargetCPUUtilization: 70%
-  HealthCheck:
-    Path: /health/ready
-    Interval: 30s
-    Timeout: 5s
-    HealthyThreshold: 2
-    UnhealthyThreshold: 3
-  LoadBalancer:
-    Type: Application
-    SSL: true
-    Certificate: ACM
-```
-
-### W3: Limited EP API Coverage
-
-**Current Coverage:**
-- ✅ **3/7 Endpoints Real API** - getMEPs, getPlenarySessions, getMEPDetails
-- ❌ **4/7 Endpoints Mock Data** - getVotingRecords, searchDocuments, getCommitteeInfo, getParliamentaryQuestions
-- ❌ **No Real-time Updates** - Polling only, no webhooks
-- ❌ **No Historical Data Archive** - Limited to EP API retention
-- ❌ **No Data Enrichment** - No additional metadata or analysis
-
-**Impact:**
-- **Data Quality**: Mock data for 4/7 endpoints reduces value
-- **Feature Completeness**: Cannot offer full parliamentary data access
-- **User Trust**: Mixed real/mock data may confuse users
-
-**Mitigation** (Q2 2026):
-- Complete real EP API integration for all 7 endpoints
-- Implement EP API response validation and monitoring
-- Add data quality indicators to responses
-
-### W4: No Multi-language Support
-
-**Current State:**
-- ❌ **English Only** - All responses in English
-- ❌ **No Translation API** - Cannot translate EP documents
-- ❌ **No Localized Dates/Numbers** - No locale-specific formatting
-- ❌ **No Multi-language Search** - Cannot search in native languages
-
-**Impact:**
-- **Market Limitation**: Excludes non-English speaking users
-- **EU Compliance**: EP data available in 24 languages not leveraged
-- **User Experience**: Reduced accessibility for European citizens
-
-**Mitigation** (Q1 2027):
-```typescript
-// Multi-language Support
-interface LocalizationConfig {
-  supportedLanguages: ['en', 'fr', 'de', 'es', 'it', 'pl', 'nl', ...]; // 24 EU languages
-  translationAPI: 'DeepL' | 'Google Translate';
-  dateFormat: { [locale: string]: string };
-  numberFormat: { [locale: string]: NumberFormatOptions };
-}
-```
-
-### W5: No Enterprise Features
-
-**Current State:**
-- ❌ **No Multi-tenancy** - Cannot isolate customer data
-- ❌ **No White-labeling** - Cannot rebrand for customers
-- ❌ **No SLA Guarantees** - Best-effort only
-- ❌ **No Premium Support** - Community support only
-- ❌ **No Custom Deployments** - SaaS only, no on-premise
-
-**Impact:**
-- **Revenue Limitation**: Cannot target enterprise customers
-- **Competitive Disadvantage**: Enterprise alternatives may emerge
-- **Growth Constraint**: Limited to individual/small team users
-
-**Mitigation** (Q2 2027):
-- Implement multi-tenant architecture with data isolation
-- Add enterprise-grade SLA monitoring and guarantees
-- Offer on-premise deployment option for sensitive customers
-
----
-
-## 🚀 Opportunities
-
-### O1: MCP Protocol Adoption
-
-**Market Trends:**
-- 📈 **Growing Adoption** - Anthropic, OpenAI, Microsoft backing MCP
-- 📈 **Claude Desktop Integration** - Native MCP support in AI assistants
-- 📈 **VS Code Extension** - MCP integration in developer tools
-- 📈 **Community Growth** - Increasing MCP server implementations
-- 📈 **Standards Emergence** - MCP becoming de facto standard
-
-**Opportunity:**
-- **First-Mover Advantage**: Only EP MCP server in ecosystem
-- **Ecosystem Growth**: Rising tide lifts all MCP servers
-- **Partnership Potential**: Collaborate with MCP client developers
-- **Thought Leadership**: Position as MCP best practices example
-
-**Strategic Actions:**
-1. Contribute to MCP protocol development
-2. Publish case studies and best practices
-3. Build partnerships with AI assistant vendors
-4. Create MCP integration templates and tooling
-
-### O2: EU AI Act Compliance
-
-**Regulatory Landscape:**
-- 📈 **EU AI Act** - Comprehensive AI regulation (2024-2027 rollout)
-- 📈 **Transparency Requirements** - AI systems must explain decisions
-- 📈 **Data Access Rights** - Citizens' right to access AI training data
-- 📈 **Accountability** - Clear audit trails required
-- 📈 **Risk-Based Approach** - High-risk AI systems face strict requirements
-
-**Opportunity:**
-- **Compliance Differentiation**: GDPR-compliant architecture positions for EU AI Act
-- **Parliamentary Transparency**: EP data enables AI explainability
-- **Audit-Ready Platform**: Comprehensive logging meets compliance needs
-- **Market Entry**: EU AI Act compliance as competitive advantage
-
-**Strategic Actions:**
-1. Implement AI Act-compliant audit logging
-2. Develop explainability features for AI decision-making
-3. Create compliance certification documentation
-4. Market as EU AI Act-ready solution
-
-### O3: Civic Tech Market Growth
-
-**Market Opportunity:**
-- 📈 **Democratic Engagement** - Rising citizen interest in governance
-- 📈 **Transparency Initiatives** - Government open data mandates
-- 📈 **Civic Tech Startups** - Growing ecosystem of democracy tech
-- 📈 **Journalist Tools** - Demand for parliamentary monitoring tools
-- 📈 **Academic Research** - Political science research needs
-
-**Total Addressable Market (TAM):**
-- **Civic Tech Startups**: 500+ globally, $50M+ annual budget
-- **Journalists**: 10,000+ EU political journalists, $100M+ tools budget
-- **Researchers**: 5,000+ political science researchers, $25M+ data budget
-- **Citizens**: 447M EU citizens (potential indirect users)
-
-**Strategic Actions:**
-1. Build marketplace of civic tech integrations
-2. Offer free tier for journalists and researchers
-3. Create academic research program with free access
-4. Develop case studies showcasing civic impact
-
-### O4: Multi-language Expansion
-
-**Opportunity:**
-- 📈 **24 EU Official Languages** - Massive addressable market
-- 📈 **Translation Technology** - DeepL, Google Translate mature and affordable
-- 📈 **EP Multilingual Data** - EP already provides translations
-- 📈 **Localization Demand** - Non-English speakers underserved
-- 📈 **Global Expansion** - Beyond EU to other parliaments (UK, US, Canada, etc.)
-
-**Revenue Potential:**
-```
-Base Market (English): 100 users
-German Market (16% of EU): +50 users (50% penetration)
-French Market (13% of EU): +40 users (40% penetration)
-Spanish Market (8% of EU): +25 users (40% penetration)
-Italian Market (11% of EU): +35 users (40% penetration)
-Polish Market (7% of EU): +20 users (40% penetration)
-Other Languages: +30 users (20% penetration)
-
-Total Addressable: 300 users (+200% growth)
-Average Revenue per User: $10/month
-Monthly Recurring Revenue: $3,000/month ($36K/year)
-```
-
-**Strategic Actions:**
-1. Integrate DeepL API for real-time translation
-2. Implement locale-specific formatting and UI
-3. Create language-specific marketing campaigns
-4. Partner with non-English civic tech communities
-
-### O5: Enterprise & Government Sales
-
-**Opportunity:**
-- 📈 **Government Transparency** - National parliaments need EP monitoring
-- 📈 **Consulting Firms** - Political consulting firms need data access
-- 📈 **Lobbying Firms** - EU affairs firms need legislative tracking
-- 📈 **Compliance Teams** - Corporations need EU legislative monitoring
-- 📈 **Think Tanks** - Policy research organizations need data analysis
-
-**Enterprise Customer Profile:**
-```
-Segment: EU Affairs Consulting Firms
-Size: 200-500 firms globally
-Budget: $50K-$500K/year for tools and data
-Pain Points:
-  - Manual EP monitoring is time-consuming
-  - Multiple data sources are fragmented
-  - Custom development is expensive
-  - API access is complex
-
-Value Proposition:
-  - Turnkey EP data integration
-  - No custom development required
-  - GDPR-compliant by design
-  - Enterprise SLA and support
-  - White-label capability
-
-Pricing: $1,000-$5,000/month per tenant
-Annual Contract Value: $12K-$60K
-
-Target: 20 enterprise customers by 2027
-Revenue Potential: $240K-$1.2M annually
-```
-
-**Strategic Actions:**
-1. Develop enterprise sales materials and case studies
-2. Implement multi-tenancy and white-labeling
-3. Create SLA framework with guarantees
-4. Hire enterprise sales and support team
-
----
-
-## 🌩️ Threats
-
-### T1: EP API Rate Limiting
-
-**Threat Description:**
-- ⚠️ **500 requests/5min** - Aggressive rate limit per endpoint
-- ⚠️ **No Rate Limit Increase** - EP does not offer higher limits
-- ⚠️ **Shared Rate Limits** - All users share same limits
-- ⚠️ **No Paid Tier** - Cannot pay for higher access
-- ⚠️ **Unpredictable Enforcement** - Rate limit behavior may change
-
-**Impact:**
-- **Scalability Ceiling**: Cannot serve > 100 concurrent users
-- **Performance Degradation**: Rate limit errors affect user experience
-- **Competitive Disadvantage**: Cannot offer premium high-volume access
-- **Business Risk**: Growth constrained by external dependency
-
-**Mitigation Strategy:**
-```typescript
-// Multi-layer Caching Strategy
-interface CacheStrategy {
-  l1Cache: {
-    type: 'memory';
-    ttl: 900; // 15 minutes
-    maxSize: 500;
-    hitRate: 0.80;
-  };
-  l2Cache: {
-    type: 'redis';
-    ttl: 3600; // 1 hour
-    maxSize: 10000;
-    hitRate: 0.95;
-  };
-  l3Cache: {
-    type: 's3';
-    ttl: 86400; // 24 hours
-    maxSize: 'unlimited';
-    hitRate: 0.99;
-  };
-  aggregateHitRate: 0.99; // 99% cache hit rate target
-  rateLimit Impact: 0.01; // Only 1% of requests hit EP API
-}
-```
-
-**Additional Mitigations:**
-1. Request batching and deduplication
-2. Predictive pre-fetching of popular queries
-3. Long-term cache with revalidation
-4. Partner with EP to negotiate higher limits
-
-### T2: EP API Changes
-
-**Threat Description:**
-- ⚠️ **Breaking Changes** - EP API may introduce breaking changes
-- ⚠️ **No Deprecation Notices** - Limited advance warning
-- ⚠️ **Documentation Lag** - API docs may be outdated
-- ⚠️ **Field Name Changes** - JSON-LD field names may change
-- ⚠️ **Response Format Changes** - Data structures may evolve
-
-**Impact:**
-- **Service Disruption**: Breaking changes cause immediate failures
-- **Data Quality**: Field changes lead to missing/incorrect data
-- **Maintenance Burden**: Frequent updates required
-- **User Trust**: Unexpected errors damage reputation
-
-**Mitigation Strategy:**
-```typescript
-// Defensive API Integration
-interface APIIntegration {
-  schemaValidation: {
-    strict: false; // Allow unknown fields
-    required: ['minimal-required-fields'];
-    optional: ['best-effort-parsing'];
-  };
-  fallbackHandling: {
-    missingFields: 'return-default-values';
-    unknownFields: 'log-and-ignore';
-    structureChanges: 'graceful-degradation';
-  };
-  monitoring: {
-    schemaChanges: 'alert-on-new-fields';
-    errorRates: 'alert-on-spike';
-    responseTime: 'alert-on-degradation';
-  };
-  versioning: {
-    clientVersion: 'include-in-user-agent';
-    apiVersion: 'detect-and-adapt';
-    backwardCompatibility: 'maintain-3-versions';
-  };
-}
-```
-
-**Additional Mitigations:**
-1. Comprehensive integration testing with real API
-2. EP API monitoring and change detection
-3. Automated alerts for schema changes
-4. Maintain backward compatibility layer
-
-### T3: Security Vulnerabilities
-
-**Threat Description:**
-- ⚠️ **Dependency Vulnerabilities** - npm packages may have CVEs
-- ⚠️ **Zero-Day Exploits** - Unknown vulnerabilities in runtime
-- ⚠️ **Supply Chain Attacks** - Compromised dependencies
-- ⚠️ **DoS Attacks** - Overwhelm server with requests
-- ⚠️ **Data Exposure** - Accidental logging of sensitive data
-
-**Impact:**
-- **Reputation Damage**: Security breach destroys trust
-- **Legal Liability**: GDPR violations lead to fines
-- **Service Disruption**: DDoS causes downtime
-- **Data Loss**: Compromised cache data exposes MEP info
-
-**Current Protections:**
-- ✅ **Dependabot**: Automated dependency updates
-- ✅ **CodeQL**: Static analysis on every commit
-- ✅ **npm audit**: Vulnerability scanning in CI/CD
-- ✅ **OpenSSF Scorecard 8.5/10**: Industry-leading security posture
-- ✅ **SLSA Level 3**: Supply chain security verified
-
-**Enhanced Mitigation** (Q3 2026):
-```typescript
-// Comprehensive Security Controls
-interface SecurityEnhancements {
-  waf: {
-    provider: 'AWS WAF';
-    rules: ['OWASP-Core-Rule-Set', 'Rate-Limiting', 'GeoBlocking'];
-    logging: 'CloudWatch';
-  };
-  ddosProtection: {
-    provider: 'AWS Shield Standard';
-    upgrade: 'AWS Shield Advanced'; // $3K/month
-    autoScaling: true;
-  };
-  secrets Management: {
-    provider: 'AWS Secrets Manager';
-    rotation: 'automatic-30-days';
-    encryption: 'KMS-managed';
-  };
-  monitoring: {
-    threatDetection: 'AWS GuardDuty';
-    alerting: 'PagerDuty';
-    incidentResponse: '24/7';
-  };
-}
-```
-
-### T4: Competition
-
-**Threat Description:**
-- ⚠️ **New MCP Servers** - Competitors may build EP MCP servers
-- ⚠️ **Better Features** - Competitors may offer superior functionality
-- ⚠️ **Lower Pricing** - Free or cheaper alternatives
-- ⚠️ **Official EP MCP Server** - EP may build their own server
-- ⚠️ **Alternative Protocols** - New API standards emerge
-
-**Competitive Landscape:**
-```
-Current State:
-  - Only EP MCP server in existence
-  - First-mover advantage
-  - Strong technical foundation
-
-Potential Competitors:
-  1. Official EP MCP Server (High Threat)
-     - Direct access to EP systems
-     - No rate limiting issues
-     - Official endorsement
-     - Timeline: Unknown
-
-  2. Commercial MCP Providers (Medium Threat)
-     - Better resources and marketing
-     - Enterprise features
-     - Professional support
-     - Timeline: 12-18 months
-
-  3. Open Source Alternatives (Low Threat)
-     - Community-driven development
-     - Free and open
-     - May lack maintenance
-     - Timeline: 6-12 months
-```
-
-**Competitive Advantages (Moats):**
-1. **First-Mover Advantage**: Established user base and ecosystem
-2. **Technical Excellence**: OpenSSF 8.5/10, SLSA Level 3
-3. **Comprehensive Documentation**: 19 architecture documents
-4. **ISMS Compliance**: ISO 27001, NIST CSF 2.0, CIS Controls
-5. **Community Trust**: Open source, transparent, audit-ready
-
-**Competitive Strategy:**
-1. Continuously innovate with new features
-2. Build strong community and ecosystem
-3. Partner with EP for official endorsement
-4. Offer enterprise features competitors lack
-5. Maintain technical leadership (OpenSSF > 9/10)
-
-### T5: Funding and Sustainability
-
-**Threat Description:**
-- ⚠️ **No Revenue Model** - Currently free/open source
-- ⚠️ **Maintenance Burden** - Time-intensive development
-- ⚠️ **Infrastructure Costs** - Cloud hosting expenses
-- ⚠️ **Developer Burnout** - Volunteer maintainer fatigue
-- ⚠️ **Dependency on Single Developer** - Bus factor = 1
-
-**Financial Sustainability:**
-```
-Current Costs (2026):
-  - Development Time: $0 (volunteer)
-  - Infrastructure: $0 (GitHub Actions free tier)
-  - Third-party Services: $0 (open source tools)
-  Total: $0/month
-
-Future Costs (2027 with 1,000 users):
-  - Cloud Infrastructure: $500/month (AWS ECS, RDS, ElastiCache)
-  - Monitoring: $200/month (Grafana Cloud, PagerDuty)
-  - Translation API: $300/month (DeepL)
-  - Support: $2,000/month (part-time support engineer)
-  Total: $3,000/month ($36K/year)
-
-Revenue Potential (2027):
-  - Free Tier: 800 users × $0 = $0
-  - Premium Tier: 150 users × $10/month = $1,500/month
-  - Enterprise: 5 customers × $1,000/month = $5,000/month
-  Total: $6,500/month ($78K/year)
-
-  Net Profit: $42K/year
-```
-
-**Sustainability Strategy:**
-1. **Phase 1 (2026)**: Stay on free tiers, volunteer development
-2. **Phase 2 (Q3 2026)**: Launch premium tier for revenue
-3. **Phase 3 (Q4 2026)**: Hire part-time developer for support
-4. **Phase 4 (Q1 2027)**: Expand to enterprise customers
-5. **Phase 5 (Q2 2027)**: Achieve profitability and sustainability
-
----
-
-## 📊 Strategic Initiatives Matrix
-
-### Priority Matrix (Effort vs Impact)
+## 🎯 Purpose
+
+This document provides a strategic analysis of the European Parliament MCP Server's current strengths, weaknesses, opportunities, and threats. This analysis helps inform the roadmap for future development and strategic decision-making. The EP MCP Server (v0.6.2) is a TypeScript/Node.js implementation of the Model Context Protocol providing AI assistants with structured access to European Parliament Open Data, featuring 28 tools, 6 resources, 6 prompts, and 10 OSINT intelligence analysis capabilities.
+
+## 📚 Related Architecture Documentation
+
+<div class="documentation-map">
+
+| Document | Focus | Description | Documentation Link |
+| --- | --- | --- | --- |
+| **[Architecture](ARCHITECTURE.md)** | 🏛️ Architecture | C4 model showing current system structure | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/ARCHITECTURE.md) |
+| **[Future Architecture](FUTURE_ARCHITECTURE.md)** | 🏛️ Architecture | C4 model showing future system structure | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/FUTURE_ARCHITECTURE.md) |
+| **[Architecture Diagrams](ARCHITECTURE_DIAGRAMS.md)** | 🏛️ Architecture | Detailed architectural visualizations | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/ARCHITECTURE_DIAGRAMS.md) |
+| **[Mindmaps](MINDMAP.md)** | 🧠 Concept | Current system component relationships | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/MINDMAP.md) |
+| **[Future Mindmaps](FUTURE_MINDMAP.md)** | 🧠 Concept | Future capability evolution | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/FUTURE_MINDMAP.md) |
+| **[SWOT Analysis](SWOT.md)** | 💼 Business | Current strategic assessment | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SWOT.md) |
+| **[Future SWOT Analysis](FUTURE_SWOT.md)** | 💼 Business | Future strategic opportunities | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/FUTURE_SWOT.md) |
+| **[Data Model](DATA_MODEL.md)** | 📊 Data | Current data structures and relationships | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DATA_MODEL.md) |
+| **[Future Data Model](FUTURE_DATA_MODEL.md)** | 📊 Data | Enhanced parliamentary data architecture | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/FUTURE_DATA_MODEL.md) |
+| **[Flowcharts](FLOWCHART.md)** | 🔄 Process | Current data processing workflows | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/FLOWCHART.md) |
+| **[Future Flowcharts](FUTURE_FLOWCHART.md)** | 🔄 Process | Enhanced AI-driven workflows | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/FUTURE_FLOWCHART.md) |
+| **[State Diagrams](STATEDIAGRAM.md)** | 🔄 Behavior | Current system state transitions | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/STATEDIAGRAM.md) |
+| **[Future State Diagrams](FUTURE_STATEDIAGRAM.md)** | 🔄 Behavior | Enhanced adaptive state transitions | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/FUTURE_STATEDIAGRAM.md) |
+| **[CI/CD Workflows](WORKFLOWS.md)** | 🔧 DevOps | Current automation processes | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/WORKFLOWS.md) |
+| **[Future Workflows](FUTURE_WORKFLOWS.md)** | 🔧 DevOps | Enhanced CI/CD with ML | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/FUTURE_WORKFLOWS.md) |
+| **[End-of-Life Strategy](End-of-Life-Strategy.md)** | 📅 Lifecycle | Maintenance and EOL planning | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/End-of-Life-Strategy.md) |
+| **[Financial Security Plan](FinancialSecurityPlan.md)** | 💰 Security | Cost and security implementation | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/FinancialSecurityPlan.md) |
+| **[Security Architecture](SECURITY_ARCHITECTURE.md)** | 🛡️ Security | Defense-in-depth security overview | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md) |
+| **[Future Security Architecture](FUTURE_SECURITY_ARCHITECTURE.md)** | 🛡️ Security | Future security posture roadmap | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/FUTURE_SECURITY_ARCHITECTURE.md) |
+| **[Threat Model](THREAT_MODEL.md)** | 🛡️ Security | STRIDE/MITRE threat analysis | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md) |
+| **[CRA Assessment](CRA-ASSESSMENT.md)** | 🛡️ Compliance | EU Cyber Resilience Act conformity | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md) |
+| **[BCP Plan](BCPPlan.md)** | 🛡️ Continuity | Business continuity planning | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/BCPPlan.md) |
+| **[API Usage Guide](API_USAGE_GUIDE.md)** | 📖 Guide | EP API integration reference | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md) |
+| **[Performance Guide](PERFORMANCE_GUIDE.md)** | ⚡ Performance | Performance optimization reference | [View Source](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/PERFORMANCE_GUIDE.md) |
+
+</div>
+
+## SWOT Overview
+
+### Traditional SWOT Quadrant Chart
+
+**Strategic Focus:** This quadrant chart provides a visual representation of the European Parliament MCP Server's strengths, weaknesses, opportunities, and threats arranged by their internal/external nature and positive/negative impact.
 
 ```mermaid
 quadrantChart
-    title Strategic Initiatives - Effort vs Impact
-    x-axis Low Effort --> High Effort
-    y-axis Low Impact --> High Impact
-    quadrant-1 Major Projects
-    quadrant-2 Quick Wins
-    quadrant-3 Fill-Ins
-    quadrant-4 Avoid
-    OAuth 2.0 Implementation: [0.65, 0.85]
-    Complete EP API Integration: [0.45, 0.75]
-    AWS Cloud Deployment: [0.75, 0.90]
-    Multi-language Support: [0.70, 0.65]
-    Enterprise Features: [0.80, 0.75]
-    AI-Powered Analytics: [0.85, 0.60]
-    Performance Optimization: [0.35, 0.70]
-    Documentation Enhancement: [0.25, 0.50]
-    Community Building: [0.30, 0.55]
-    Compliance Automation: [0.60, 0.45]
+    title European Parliament MCP Server SWOT Analysis
+    x-axis Internal --> External
+    y-axis Negative --> Positive
+
+    quadrant-1 Opportunities
+    quadrant-2 Strengths
+    quadrant-3 Weaknesses
+    quadrant-4 Threats
+
+    "Comprehensive EP Data (28 Tools)": [0.15, 0.9]
+    "Strong Type Safety (Zod/TS)": [0.2, 0.8]
+    "Modern MCP Protocol": [0.25, 0.85]
+    "Minimal Dependencies (4 deps)": [0.3, 0.75]
+    "Extensive Security Posture": [0.1, 0.7]
+    "OSINT Intelligence (10 tools)": [0.2, 0.72]
+    "GDPR-Aware Design": [0.35, 0.68]
+
+    "Read-Only Access": [0.2, 0.35]
+    "EP API Dependency": [0.3, 0.25]
+    "In-Memory Cache Only": [0.25, 0.3]
+    "Single Data Source": [0.15, 0.2]
+    "No User Authentication": [0.35, 0.32]
+
+    "AI/LLM Market Growth": [0.8, 0.9]
+    "Multi-Parliament Expansion": [0.85, 0.75]
+    "MCP Marketplace Listing": [0.7, 0.85]
+    "Academic Research Partnerships": [0.9, 0.7]
+    "EU AI Act Compliance Tooling": [0.75, 0.8]
+    "Civic Tech Integration": [0.9, 0.78]
+
+    "EP API Changes/Deprecation": [0.8, 0.25]
+    "Competing Data Services": [0.7, 0.3]
+    "MCP Spec Changes": [0.75, 0.2]
+    "EP API Rate Limiting": [0.9, 0.35]
+    "Open Source Sustainability": [0.85, 0.15]
+    "LLM Hallucination Risk": [0.7, 0.18]
 ```
 
-### Implementation Roadmap (2026-2027)
+### Alternative Network Visualization
 
-| Quarter | Initiative | Category | Priority |
-|---------|-----------|----------|----------|
-| **Q2 2026** | OAuth 2.0 & RBAC | Security | 🔴 Critical |
-| Q2 2026 | Complete EP API Integration | Features | 🟡 High |
-| Q2 2026 | Performance Optimization | Performance | 🟡 High |
-| **Q3 2026** | AWS Cloud Deployment | Infrastructure | 🔴 Critical |
-| Q3 2026 | Premium Tier Launch | Revenue | 🟡 High |
-| Q3 2026 | Enhanced Monitoring | Operations | 🟢 Medium |
-| **Q4 2026** | AI-Powered Analytics | Features | 🟡 High |
-| Q4 2026 | Real-time Features | Features | 🟢 Medium |
-| Q4 2026 | Community Building | Marketing | 🟢 Medium |
-| **Q1 2027** | Multi-language Support | Expansion | 🟡 High |
-| Q1 2027 | Enterprise Sales Launch | Revenue | 🔴 Critical |
-| Q1 2027 | Advanced Security (WAF, GuardDuty) | Security | 🟡 High |
-| **Q2 2027** | Enterprise Features | Features | 🟡 High |
-| Q2 2027 | Multi-tenancy & White-label | Platform | 🟡 High |
-| Q2 2027 | SLA Guarantees | Operations | 🟡 High |
-| **Q3 2027** | Compliance Automation | Governance | 🟢 Medium |
-| Q3 2027 | Policy as Code (OPA) | Automation | 🟢 Medium |
-| Q3 2027 | Global Expansion | Growth | 🟢 Medium |
+<!-- Quadrant charts are not well supported in GitHub Markdown, so providing an alternative mermaid diagram -->
+
+```mermaid
+graph TD
+    subgraph "Strengths (Internal, Positive)"
+        S1["Comprehensive EP Data Coverage (28 tools)"]
+        S2["Strong Type Safety (TypeScript strict + Zod)"]
+        S3["Modern MCP Protocol Implementation"]
+        S4["Minimal Dependencies (4 runtime)"]
+        S5["Extensive Security Posture (SLSA/SBOM/CodeQL)"]
+        S6["Rich OSINT Intelligence (10 analysis tools)"]
+        S7["GDPR-Aware Design"]
+    end
+
+    subgraph "Weaknesses (Internal, Negative)"
+        W1["Read-Only Access (no write operations)"]
+        W2["EP API Dependency & Rate Limits"]
+        W3["In-Memory LRU Cache Only"]
+        W4["Single Data Source (EP only)"]
+        W5["No User Authentication"]
+    end
+
+    subgraph "Opportunities (External, Positive)"
+        O1["AI/LLM Market Growth & MCP Adoption"]
+        O2["Multi-Parliament Expansion"]
+        O3["MCP Marketplace/Registry Listing"]
+        O4["Academic Research Partnerships"]
+        O5["EU AI Act Compliance Tooling"]
+        O6["Civic Tech Ecosystem Integration"]
+    end
+
+    subgraph "Threats (External, Negative)"
+        T1["EP API Changes or Deprecation"]
+        T2["Competing Parliamentary Data Services"]
+        T3["MCP Protocol Specification Changes"]
+        T4["EP API Rate Limiting"]
+        T5["Open Source Sustainability"]
+        T6["LLM Hallucination Risk with Political Data"]
+    end
+
+    %% Style
+    classDef strengths fill:#c8e6c9,stroke:#333,stroke-width:1px,color:black
+    classDef weaknesses fill:#fff2cc,stroke:#333,stroke-width:1px,color:black
+    classDef opportunities fill:#d1c4e9,stroke:#333,stroke-width:1px,color:black
+    classDef threats fill:#f8cecc,stroke:#333,stroke-width:1px,color:black
+
+    class S1,S2,S3,S4,S5,S6,S7 strengths
+    class W1,W2,W3,W4,W5 weaknesses
+    class O1,O2,O3,O4,O5,O6 opportunities
+    class T1,T2,T3,T4,T5,T6 threats
+```
+
+## Strengths
+
+```mermaid
+mindmap
+  root((Strengths))
+    id1(Comprehensive EP Data Coverage)
+      id1.1[28 MCP tools for MEPs, votes, committees]
+      id1.2[6 resources & 6 prompts]
+      id1.3[Full parliamentary lifecycle coverage]
+    id2(Strong Type Safety)
+      id2.1[TypeScript strict mode]
+      id2.2[Zod runtime validation]
+      id2.3[Branded types for domain modeling]
+    id3(Modern MCP Protocol)
+      id3.1[AI/LLM native integration]
+      id3.2[Standardized tool interface]
+      id3.3[Real-time EP data access]
+    id4(Minimal Dependencies)
+      id4.1[Only 4 runtime deps]
+      id4.2[Small attack surface]
+      id4.3[Fast install & startup]
+    id5(Extensive Security Posture)
+      id5.1[SLSA provenance & SBOM generation]
+      id5.2[OpenSSF Scorecard & CodeQL]
+      id5.3[11 GitHub Actions workflows]
+    id6(Rich OSINT Intelligence)
+      id6.1[10 specialized analysis tools]
+      id6.2[MEP influence scoring]
+      id6.3[Coalition cohesion & defection detection]
+    id7(GDPR-Aware Design)
+      id7.1[No personal data storage]
+      id7.2[Data minimization by design]
+      id7.3[Public data only]
+```
+
+### Current Strengths Analysis
+
+The European Parliament MCP Server has established several key strengths that provide a solid foundation for its mission of enabling AI-powered access to European Parliament data:
+
+1. **Comprehensive EP Data Coverage**: The server provides 28 specialized MCP tools covering the full parliamentary lifecycle — MEPs, plenary sessions, votes, committees, legislative documents, procedures, events, speeches, and declarations — with 6 resources and 6 prompts offering structured access patterns for AI assistants.
+
+2. **Strong Type Safety**: Built with TypeScript strict mode and Zod runtime validation throughout, the codebase employs branded types for domain modeling (e.g., `MepId`, `CommitteeId`), ensuring data integrity from API ingestion through to MCP response serialization with zero runtime type errors.
+
+3. **Modern MCP Protocol Implementation**: As the first and only MCP server for European Parliament data, the platform enables AI assistants (Claude, GPT, Copilot) to query parliamentary data natively through the Model Context Protocol, eliminating the need for custom API client development.
+
+4. **Minimal Dependencies**: With only 4 runtime dependencies (`@modelcontextprotocol/sdk`, `lru-cache`, `undici`, `zod`), the server maintains a minimal attack surface, fast installation, and reduced supply chain risk compared to typical Node.js projects.
+
+5. **Extensive Security Posture**: The project implements SLSA build provenance, SBOM generation (CycloneDX), OpenSSF Scorecard monitoring, CodeQL static analysis, and dependency review across 11 GitHub Actions workflows, establishing defense-in-depth security practices.
+
+6. **Rich OSINT Intelligence Capabilities**: Beyond raw data access, 10 specialized analysis tools provide MEP influence scoring (5-dimension model), coalition cohesion analysis, party defection detection, cross-group comparisons, legislative pipeline tracking, and political landscape assessments.
+
+7. **GDPR-Aware Design**: The server processes only publicly available EP data with no persistent personal data storage, implementing data minimization by design and relying on the in-memory LRU cache that is automatically cleared on restart.
+
+## Weaknesses
+
+```mermaid
+mindmap
+  root((Weaknesses))
+    id1(Read-Only Access)
+      id1.1[No write operations to EP data]
+      id1.2[Cannot submit amendments or proposals]
+      id1.3[Observation-only capabilities]
+    id2(EP API Dependency)
+      id2.1[Dependent on EP API availability]
+      id2.2[Subject to EP rate limits]
+      id2.3[No fallback data source]
+    id3(In-Memory Cache Only)
+      id3.1[LRU cache lost on restart]
+      id3.2[No persistent caching layer]
+      id3.3[Cold start performance penalty]
+    id4(Single Data Source)
+      id4.1[European Parliament only]
+      id4.2[No national parliament data]
+      id4.3[No cross-parliament comparison]
+    id5(No User Authentication)
+      id5.1[Relies entirely on MCP client]
+      id5.2[No per-user access control]
+      id5.3[No usage tracking or quotas]
+```
+
+### Current Weaknesses Analysis
+
+Several weaknesses present challenges for the ongoing development and adoption of the platform:
+
+1. **Read-Only Access**: The server provides observation-only access to European Parliament data with no write operations. While appropriate for a transparency tool, this limits use cases for organizations that need to interact with parliamentary processes programmatically.
+
+2. **EP API Dependency**: The server is entirely dependent on the European Parliament Open Data Portal API (v2) for its data. Any EP API outages, rate limit changes, or deprecations directly impact service availability with no fallback data source available.
+
+3. **In-Memory Cache Only**: The LRU cache (`lru-cache`) operates exclusively in-memory, meaning all cached data is lost on server restart. This results in cold-start performance penalties and increased EP API load after deployments or crashes.
+
+4. **Single Data Source**: Coverage is limited to the European Parliament, with no integration of national parliament data from EU member states. This prevents cross-parliament comparisons and limits the platform's value for comprehensive EU legislative tracking.
+
+5. **No User Authentication**: The server relies entirely on the MCP client for authentication and authorization, providing no built-in user management, access control, usage tracking, or rate limiting per user — limiting the ability to offer tiered service levels.
+
+## Opportunities
+
+```mermaid
+mindmap
+  root((Opportunities))
+    id1(AI/LLM Market Growth)
+      id1.1[Anthropic, OpenAI, Microsoft MCP support]
+      id1.2[Growing AI assistant adoption]
+      id1.3[MCP becoming de facto standard]
+    id2(Multi-Parliament Expansion)
+      id2.1[National parliament integration]
+      id2.2[Cross-parliament analysis tools]
+      id2.3[Council of EU & Commission data]
+    id3(MCP Marketplace Listing)
+      id3.1[Registry/directory visibility]
+      id3.2[Discovery by AI assistant users]
+      id3.3[Community contribution growth]
+    id4(Academic Research Partnerships)
+      id4.1[Political science research tools]
+      id4.2[EU studies programs integration]
+      id4.3[Peer-reviewed methodology]
+    id5(EU AI Act Compliance Tooling)
+      id5.1[Transparency requirement support]
+      id5.2[Audit trail capabilities]
+      id5.3[Explainability for AI decisions]
+    id6(Civic Tech Integration)
+      id6.1[Democracy platform partnerships]
+      id6.2[Journalist investigation tools]
+      id6.3[Citizen engagement applications]
+```
+
+### Future Opportunities Analysis
+
+Looking forward, several opportunities exist for growth and enhancement:
+
+1. **AI/LLM Market Growth Driving MCP Adoption**: The rapid expansion of AI assistants from Anthropic (Claude), OpenAI, and Microsoft — all supporting or adopting MCP — creates a growing addressable market. As MCP becomes the de facto standard for tool integration, the EP MCP Server benefits from ecosystem-wide adoption without additional marketing investment.
+
+2. **Multi-Parliament Expansion**: Extending coverage beyond the European Parliament to national parliaments (Bundestag, Assemblée nationale, Riksdag) and other EU institutions (Council of the EU, European Commission) would create a comprehensive EU legislative intelligence platform with cross-institution analysis capabilities.
+
+3. **MCP Marketplace/Registry Listing**: Listing in emerging MCP server registries and directories would increase discoverability, driving organic adoption by AI assistant users seeking parliamentary data tools without direct marketing effort.
+
+4. **Academic Research Partnerships**: Political science departments, EU studies programs, and think tanks represent a high-value user segment that can provide peer-reviewed validation of analysis methodologies, enhance credibility, and drive adoption through academic publications and citations.
+
+5. **EU AI Act Compliance Tooling**: The EU AI Act's transparency and explainability requirements create demand for tools that provide verifiable data provenance. The EP MCP Server's structured access to official parliamentary data positions it as a compliance enabler for AI systems processing EU legislative information.
+
+6. **Civic Tech Ecosystem Integration**: Partnerships with democracy platforms, journalist investigation tools, and citizen engagement applications would embed EP data access into existing civic technology workflows, expanding reach through established user communities.
+
+## Threats
+
+```mermaid
+mindmap
+  root((Threats))
+    id1(EP API Changes or Deprecation)
+      id1.1[Breaking API changes without notice]
+      id1.2[JSON-LD format evolution]
+      id1.3[Endpoint retirement or restructuring]
+    id2(Competing Data Services)
+      id2.1[Official EP MCP server]
+      id2.2[Commercial parliamentary analytics]
+      id2.3[Alternative open source projects]
+    id3(MCP Protocol Specification Changes)
+      id3.1[Breaking protocol changes]
+      id3.2[SDK version incompatibilities]
+      id3.3[New competing protocols]
+    id4(EP API Rate Limiting)
+      id4.1[Stricter rate limit enforcement]
+      id4.2[No paid tier for higher limits]
+      id4.3[Scalability ceiling]
+    id5(Open Source Sustainability)
+      id5.1[Volunteer maintainer fatigue]
+      id5.2[Bus factor risk]
+      id5.3[Infrastructure cost growth]
+    id6(LLM Hallucination Risk)
+      id6.1[Misinterpreted political data]
+      id6.2[Incorrect attribution to MEPs]
+      id6.3[Reputational harm from AI errors]
+```
+
+### Current Threats Analysis
+
+Several external threats could impact the project's success:
+
+1. **EP API Changes or Deprecation**: The server's complete dependency on the European Parliament Open Data Portal API creates vulnerability to breaking changes in JSON-LD response formats, endpoint restructuring, or API deprecation. The EP provides limited advance notice of API changes, requiring constant monitoring and defensive parsing.
+
+2. **Competing Parliamentary Data Services**: The first-mover advantage is time-limited. The European Parliament itself could build an official MCP server with direct system access and no rate limiting. Commercial parliamentary analytics firms and alternative open source projects may emerge with superior resources or feature sets.
+
+3. **MCP Protocol Specification Changes**: As an evolving protocol, MCP may introduce breaking changes that require significant server refactoring. SDK version incompatibilities or the emergence of competing protocols (e.g., OpenAI function calling evolution) could fragment the ecosystem.
+
+4. **EP API Rate Limiting**: Stricter enforcement of rate limits or reduction of allowed request quotas would directly constrain the server's ability to serve concurrent users. With no paid tier available for higher limits, scalability is bounded by EP's access policies.
+
+5. **Open Source Sustainability Challenges**: As a volunteer-maintained project, the server faces risks from maintainer fatigue, knowledge concentration (bus factor), and growing infrastructure costs as adoption increases — common challenges for open source projects without sustainable funding models.
+
+6. **LLM Hallucination Risk with Political Data**: AI assistants may misinterpret, fabricate, or incorrectly attribute political data provided by the server, creating reputational risk when LLM-generated content cites incorrect voting records or policy positions for real MEPs and political groups.
+
+## Strategic Focus Areas
+
+Based on the SWOT analysis, the following strategic focus areas emerge as priorities:
+
+1. **Strengthen EP API Resilience**:
+   - Implement defensive parsing with graceful degradation for API changes
+   - Add persistent caching layer (Redis/SQLite) to reduce API dependency
+   - Monitor EP API schema changes with automated change detection
+   - Build comprehensive integration tests against real EP API responses
+
+2. **Expand MCP Ecosystem Presence**:
+   - List in MCP server registries and directories for discoverability
+   - Publish integration guides for major AI assistants (Claude, GPT, Copilot)
+   - Contribute to MCP protocol development and community best practices
+   - Create example applications showcasing EP data analysis use cases
+
+3. **Prepare for Multi-Parliament Expansion**:
+   - Abstract data source interfaces to support pluggable parliament backends
+   - Design common data models for cross-parliament analysis
+   - Identify candidate national parliament APIs for integration
+   - Create roadmap for [Future Architecture](FUTURE_ARCHITECTURE.md) implementation
+
+4. **Mitigate LLM Hallucination Risk**:
+   - Include data provenance metadata in all tool responses
+   - Add confidence indicators and data freshness timestamps
+   - Develop prompt engineering guidance for accurate political data use
+   - Implement structured response formats that reduce misinterpretation
+
+5. **Ensure Open Source Sustainability**:
+   - Document all architecture and operational knowledge comprehensively
+   - Build contributor pipeline through civic tech community engagement
+   - Evaluate sponsorship and grant funding opportunities
+   - Maintain minimal dependency footprint to reduce maintenance burden
+
+## Implementation Prioritization
+
+```mermaid
+graph TD
+    subgraph "Immediate Priorities"
+        IP1[Persistent Caching Layer]
+        IP2[EP API Change Monitoring]
+        IP3[MCP Registry Listing]
+    end
+
+    subgraph "Short-Term Priorities"
+        ST1[Multi-Parliament Data Abstraction]
+        ST2[LLM Hallucination Safeguards]
+        ST3[Community Contributor Program]
+    end
+
+    subgraph "Medium-Term Priorities"
+        MT1[National Parliament Integration]
+        MT2[Academic Partnership Program]
+        MT3[Advanced OSINT Analytics]
+    end
+
+    subgraph "Long-Term Vision"
+        LT1[EU Legislative Intelligence Platform]
+        LT2[Civic Tech Ecosystem Hub]
+        LT3[AI Act Compliance Toolkit]
+    end
+
+    IP1 --> ST1
+    IP1 --> ST2
+    IP2 --> ST1
+    IP3 --> ST3
+
+    ST1 --> MT1
+    ST1 --> MT2
+    ST2 --> MT3
+    ST3 --> MT2
+
+    MT1 --> LT1
+    MT1 --> LT2
+    MT2 --> LT3
+    MT3 --> LT1
+    MT3 --> LT2
+
+    classDef immediate fill:#f8cecc,stroke:#333,stroke-width:1px,color:black
+    classDef shortTerm fill:#fff2cc,stroke:#333,stroke-width:1px,color:black
+    classDef mediumTerm fill:#d1c4e9,stroke:#333,stroke-width:1px,color:black
+    classDef longTerm fill:#c8e6c9,stroke:#333,stroke-width:1px,color:black
+
+    class IP1,IP2,IP3 immediate
+    class ST1,ST2,ST3 shortTerm
+    class MT1,MT2,MT3 mediumTerm
+    class LT1,LT2,LT3 longTerm
+```
+
+## Development Timeline
+
+```mermaid
+gantt
+    title Strategic Development Timeline
+    dateFormat YYYY-MM-DD
+    axisFormat %Y-Q%q
+
+    section API Resilience
+    Persistent Caching Layer (Redis/SQLite)    :a1, 2025-10-01, 90d
+    EP API Change Detection & Monitoring       :a2, 2025-10-01, 60d
+    Defensive Parsing & Graceful Degradation   :a3, 2025-11-01, 60d
+
+    section MCP Ecosystem
+    MCP Registry & Directory Listing           :b1, 2025-10-01, 30d
+    AI Assistant Integration Guides            :b2, 2025-11-01, 60d
+    Example Applications & Use Cases           :b3, 2026-01-01, 90d
+
+    section Data Expansion
+    Multi-Parliament Data Abstraction          :c1, 2026-01-01, 90d
+    National Parliament API Integration        :c2, 2026-04-01, 120d
+    Cross-Parliament Analysis Tools            :c3, 2026-07-01, 90d
+
+    section Intelligence & Safety
+    LLM Hallucination Safeguards               :d1, 2025-11-01, 60d
+    Advanced OSINT Analytics Enhancement       :d2, 2026-02-01, 90d
+    EU AI Act Compliance Toolkit               :d3, 2026-06-01, 120d
+
+    section Community & Sustainability
+    Contributor Program Launch                 :e1, 2026-01-01, 60d
+    Academic Partnership Program               :e2, 2026-03-01, 90d
+    Civic Tech Ecosystem Integration           :e3, 2026-06-01, 90d
+```
+
+## Conclusion
+
+The European Parliament MCP Server has established strong foundations with its comprehensive parliamentary data coverage (28 tools), modern MCP protocol implementation, strong type safety, and minimal dependency footprint. By addressing key weaknesses in cache persistence, EP API resilience, and single-source dependency, while simultaneously preparing for multi-parliament expansion and LLM hallucination mitigation, the platform can maintain its first-mover advantage and expand its impact.
+
+Strategic priorities should balance immediate API resilience needs with incremental progress toward the multi-parliament, AI-enhanced future vision outlined in the [Future SWOT Analysis](FUTURE_SWOT.md) and [Future Architecture](FUTURE_ARCHITECTURE.md). The open source nature of the project necessitates careful sustainability planning, with community building and academic partnerships helping to distribute maintenance burden and validate analytical methodologies.
+
+The ultimate goal remains enabling AI-powered democratic transparency, with the MCP protocol serving as the bridge between European Parliament open data and the rapidly growing ecosystem of AI assistants used by researchers, journalists, civic technologists, and engaged citizens.
+
+<div class="chart-legend">
+The color scheme used in these diagrams follows the consistent palette used throughout the architecture documentation:
+
+- **Strengths** (Green - #c8e6c9): Represents positive internal factors
+- **Weaknesses** (Yellow - #fff2cc): Represents negative internal factors
+- **Opportunities** (Purple - #d1c4e9): Represents positive external factors
+- **Threats** (Red - #f8cecc): Represents negative external factors
+</div>
 
 ---
 
-## 🛡️ Risk Mitigation Strategies
-
-### High-Priority Risks
-
-| Risk | Probability | Impact | Mitigation | Owner |
-|------|-------------|--------|------------|-------|
-| EP API Rate Limiting | High | High | Multi-layer caching (99% hit rate) | DevOps |
-| No Authentication | High | Medium | OAuth 2.0 (Q2 2026) | Security Team |
-| Single Point of Failure | Medium | High | AWS ECS multi-AZ (Q3 2026) | Infrastructure |
-| Security Vulnerabilities | Medium | High | Continuous scanning, WAF (Q3 2026) | Security Team |
-| Competition | Medium | Medium | Innovation, community, partnerships | Product Team |
-| Funding Sustainability | Medium | Medium | Premium tier, enterprise sales (Q3 2026) | Business Team |
-
-### Risk Monitoring
-
-**Key Risk Indicators (KRIs):**
-- API Rate Limit Violations per Day: Target < 10
-- Security Vulnerability Count: Target 0 (critical/high)
-- System Uptime: Target > 99.9%
-- Response Time p95: Target < 500ms
-- Cache Hit Rate: Target > 80%
-- Revenue Growth Rate: Target > 20% MoM
-
----
-
-## 📋 ISMS Compliance
-
-### ISO 27001 Controls
-- **A.6.1.1** - Information Security Roles: Strategic owners identified
-- **A.6.1.2** - Segregation of Duties: Risk/opportunity owners assigned
-- **A.6.1.5** - Information Security Management: Strategic planning documented
-
-### NIST CSF 2.0 Functions
-- **ID.BE-1** - Business Environment: Organizational context defined
-- **ID.BE-2** - Value Chain: Dependencies and suppliers identified
-- **ID.RM-1** - Risk Strategy: SWOT analysis informs risk management
-
-### CIS Controls v8.1
-- **15.1** - Asset Governance: Strategic assets identified
-- **15.7** - Risk Management: Continuous risk assessment
-
----
-
-## 🔗 Related Documentation
-
-- [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) - Security implementation
-- [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) - Security roadmap
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - Technical architecture
-- [MINDMAP.md](./MINDMAP.md) - System relationships
-- [FLOWCHART.md](./FLOWCHART.md) - Process flows
-
----
-
-<p align="center">
-  <strong>Built with ❤️ by <a href="https://hack23.com">Hack23 AB</a></strong><br>
-  <em>SWOT analysis documentation following ISMS standards</em>
-</p>
+**📋 Document Control:**  
+**✅ Approved by:** James Pether Sörling, CEO - Hack23 AB  
+**📤 Distribution:** Public  
+**🏷️ Classification:** [![Confidentiality: Public](https://img.shields.io/badge/C-Public-lightgrey?style=flat-square&logo=shield&logoColor=black)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md#confidentiality-levels) [![Integrity: High](https://img.shields.io/badge/I-High-orange?style=flat-square&logo=check-circle&logoColor=white)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md#integrity-levels) [![Availability: Moderate](https://img.shields.io/badge/A-Moderate-yellow?style=flat-square)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md#availability-levels)  
+**📅 Effective Date:** 2025-09-18  
+**⏰ Next Review:** 2026-09-18  
+**🎯 Framework Compliance:** [![ISO 27001](https://img.shields.io/badge/ISO_27001-2022_Aligned-blue?style=flat-square&logo=iso&logoColor=white)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md) [![NIST CSF 2.0](https://img.shields.io/badge/NIST_CSF-2.0_Aligned-green?style=flat-square&logo=nist&logoColor=white)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md) [![CIS Controls](https://img.shields.io/badge/CIS_Controls-v8.1_Aligned-orange?style=flat-square&logo=cisecurity&logoColor=white)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md)
