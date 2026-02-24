@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.1**](../README.md)
+[**European Parliament MCP Server API v0.7.2**](../README.md)
 
 ***
 
@@ -6,56 +6,123 @@
 
 # europeanParliament
 
-Type definitions for European Parliament data structures
+Type definitions for European Parliament data structures.
 
-This module provides type-safe interfaces for European Parliament Open Data Portal.
-All types follow strict TypeScript standards and include runtime validation schemas.
+Barrel re-export from domain-specific modules organized by bounded context.
+Each sub-module contains well-documented, strictly-typed interfaces for
+a single EP data domain.
 
-**Intelligence Perspective:** These types form the foundation for political intelligence
-products—MEP profiling, voting analysis, coalition detection, and legislative monitoring.
-Each interface maps to a distinct OSINT collection target from EP open data.
-
-**Business Perspective:** Type-safe data contracts enabling reliable API products,
-enterprise integrations, and premium data services for B2B/B2G customers.
-
-**Marketing Perspective:** Well-documented types demonstrate API quality and developer
-experience—key for developer advocacy, documentation SEO, and technical marketing.
-
-**Data Source:** European Parliament Open Data Portal v2
+**Sub-modules:**
+- module:types/ep/mep – MEP profiles and voting statistics
+- module:types/ep/plenary – Plenary sessions and voting records
+- module:types/ep/committee – Committee information
+- module:types/ep/document – Legislative documents, types, and statuses
+- module:types/ep/question – Parliamentary questions
+- module:types/ep/common – Shared pagination types
+- module:types/ep/activities – Speeches, procedures, events, declarations
 
 ## See
 
- - https://data.europarl.europa.eu/api/v2/
+https://data.europarl.europa.eu/api/v2/
 
-**ISMS Policy:** SC-002 (Secure Coding Standards)
- - https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md
+## References
 
-**GDPR Compliance:** Personal data fields marked with
- - https://gdpr-info.eu/
+### AdoptedText
 
-## Gdpr
+Re-exports [AdoptedText](../types/ep/activities/interfaces/AdoptedText.md)
 
-tag
+***
 
-## Interfaces
+### Committee
 
-- [AdoptedText](interfaces/AdoptedText.md)
-- [Committee](interfaces/Committee.md)
-- [EPEvent](interfaces/EPEvent.md)
-- [LegislativeDocument](interfaces/LegislativeDocument.md)
-- [MeetingActivity](interfaces/MeetingActivity.md)
-- [MEP](interfaces/MEP.md)
-- [MEPDeclaration](interfaces/MEPDeclaration.md)
-- [MEPDetails](interfaces/MEPDetails.md)
-- [PaginatedResponse](interfaces/PaginatedResponse.md)
-- [ParliamentaryQuestion](interfaces/ParliamentaryQuestion.md)
-- [PlenarySession](interfaces/PlenarySession.md)
-- [Procedure](interfaces/Procedure.md)
-- [Speech](interfaces/Speech.md)
-- [VotingRecord](interfaces/VotingRecord.md)
-- [VotingStatistics](interfaces/VotingStatistics.md)
+Re-exports [Committee](../types/ep/committee/interfaces/Committee.md)
 
-## Type Aliases
+***
 
-- [DocumentStatus](type-aliases/DocumentStatus.md)
-- [DocumentType](type-aliases/DocumentType.md)
+### DocumentStatus
+
+Re-exports [DocumentStatus](../types/ep/document/type-aliases/DocumentStatus.md)
+
+***
+
+### DocumentType
+
+Re-exports [DocumentType](../types/ep/document/type-aliases/DocumentType.md)
+
+***
+
+### EPEvent
+
+Re-exports [EPEvent](../types/ep/activities/interfaces/EPEvent.md)
+
+***
+
+### LegislativeDocument
+
+Re-exports [LegislativeDocument](../types/ep/document/interfaces/LegislativeDocument.md)
+
+***
+
+### MeetingActivity
+
+Re-exports [MeetingActivity](../types/ep/activities/interfaces/MeetingActivity.md)
+
+***
+
+### MEP
+
+Re-exports [MEP](../types/ep/mep/interfaces/MEP.md)
+
+***
+
+### MEPDeclaration
+
+Re-exports [MEPDeclaration](../types/ep/activities/interfaces/MEPDeclaration.md)
+
+***
+
+### MEPDetails
+
+Re-exports [MEPDetails](../types/ep/mep/interfaces/MEPDetails.md)
+
+***
+
+### PaginatedResponse
+
+Re-exports [PaginatedResponse](../types/ep/common/interfaces/PaginatedResponse.md)
+
+***
+
+### ParliamentaryQuestion
+
+Re-exports [ParliamentaryQuestion](../types/ep/question/interfaces/ParliamentaryQuestion.md)
+
+***
+
+### PlenarySession
+
+Re-exports [PlenarySession](../types/ep/plenary/interfaces/PlenarySession.md)
+
+***
+
+### Procedure
+
+Re-exports [Procedure](../types/ep/activities/interfaces/Procedure.md)
+
+***
+
+### Speech
+
+Re-exports [Speech](../types/ep/activities/interfaces/Speech.md)
+
+***
+
+### VotingRecord
+
+Re-exports [VotingRecord](../types/ep/plenary/interfaces/VotingRecord.md)
+
+***
+
+### VotingStatistics
+
+Re-exports [VotingStatistics](../types/ep/mep/interfaces/VotingStatistics.md)

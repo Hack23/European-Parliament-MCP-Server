@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.1**](../../../README.md)
+[**European Parliament MCP Server API v0.7.2**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: PerformanceMonitor
 
-Defined in: [utils/performance.ts:63](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/performance.ts#L63)
+Defined in: [utils/performance.ts:63](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/performance.ts#L63)
 
 Performance monitor for tracking operation metrics
 
@@ -33,7 +33,7 @@ console.log(`p95: ${stats.p95}ms`);
 
 > **new PerformanceMonitor**(`maxSamples?`): `PerformanceMonitor`
 
-Defined in: [utils/performance.ts:72](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/performance.ts#L72)
+Defined in: [utils/performance.ts:72](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/performance.ts#L72)
 
 Create a new performance monitor
 
@@ -55,7 +55,7 @@ Maximum number of samples to retain per operation (default: 1000)
 
 > `private` `readonly` **maxSamples**: `number`
 
-Defined in: [utils/performance.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/performance.ts#L65)
+Defined in: [utils/performance.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/performance.ts#L65)
 
 ***
 
@@ -63,7 +63,7 @@ Defined in: [utils/performance.ts:65](https://github.com/Hack23/European-Parliam
 
 > `private` `readonly` **metrics**: [`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, `number`[]\>
 
-Defined in: [utils/performance.ts:64](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/performance.ts#L64)
+Defined in: [utils/performance.ts:64](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/performance.ts#L64)
 
 ## Methods
 
@@ -71,7 +71,7 @@ Defined in: [utils/performance.ts:64](https://github.com/Hack23/European-Parliam
 
 > **clear**(): `void`
 
-Defined in: [utils/performance.ts:226](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/performance.ts#L226)
+Defined in: [utils/performance.ts:226](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/performance.ts#L226)
 
 Clear all recorded metrics
 
@@ -96,7 +96,7 @@ afterEach(() => {
 
 > **clearOperation**(`operation`): `void`
 
-Defined in: [utils/performance.ts:240](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/performance.ts#L240)
+Defined in: [utils/performance.ts:240](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/performance.ts#L240)
 
 Clear metrics for a specific operation
 
@@ -124,7 +124,7 @@ monitor.clearOperation('api_call');
 
 > **getOperations**(): `string`[]
 
-Defined in: [utils/performance.ts:209](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/performance.ts#L209)
+Defined in: [utils/performance.ts:209](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/performance.ts#L209)
 
 Get all operation names being tracked
 
@@ -150,7 +150,7 @@ operations.forEach(op => {
 
 > **getStats**(`operation`): [`PerformanceStats`](../interfaces/PerformanceStats.md) \| `null`
 
-Defined in: [utils/performance.ts:128](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/performance.ts#L128)
+Defined in: [utils/performance.ts:128](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/performance.ts#L128)
 
 Get performance statistics for an operation
 
@@ -186,7 +186,7 @@ if (stats && stats.p95 > 1000) {
 
 > **recordDuration**(`operation`, `durationMs`): `void`
 
-Defined in: [utils/performance.ts:92](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/utils/performance.ts#L92)
+Defined in: [utils/performance.ts:92](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/utils/performance.ts#L92)
 
 Record an operation duration
 

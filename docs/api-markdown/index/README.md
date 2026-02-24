@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.1**](../README.md)
+[**European Parliament MCP Server API v0.7.2**](../README.md)
 
 ***
 
@@ -75,6 +75,12 @@ Re-exports [formatMCPError](../types/errors/functions/formatMCPError.md)
 ### GDPRComplianceError
 
 Re-exports [GDPRComplianceError](../types/errors/classes/GDPRComplianceError.md)
+
+***
+
+### getToolMetadataArray
+
+Re-exports [getToolMetadataArray](../server/toolRegistry/functions/getToolMetadataArray.md)
 
 ***
 

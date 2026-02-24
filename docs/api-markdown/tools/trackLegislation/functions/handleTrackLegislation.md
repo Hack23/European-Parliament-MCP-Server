@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.1**](../../../README.md)
+[**European Parliament MCP Server API v0.7.2**](../../../README.md)
 
 ***
 
@@ -8,15 +8,16 @@
 
 > **handleTrackLegislation**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
 
-Defined in: [tools/trackLegislation/index.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/tools/trackLegislation/index.ts#L41)
+Defined in: [tools/trackLegislation/index.ts:71](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/trackLegislation/index.ts#L71)
 
 Track legislation tool handler
-Cyclomatic complexity: 2
 
-NOTE: This tool currently returns illustrative placeholder data for the
-requested procedure ID. Real EP Legislative Observatory API integration
-is planned for a future release. All returned data is clearly marked
-with confidenceLevel: 'NONE' and methodology explains the limitation.
+Fetches real procedure data from the EP API `/procedures` endpoint
+and returns structured legislative tracking information derived
+entirely from the API response.
+
+Accepts both EP API process-id format (`2024-0006`) and human-readable
+reference format (`2024/0006(COD)`).
 
 ## Parameters
 
@@ -36,6 +37,6 @@ MCP tool result with legislative procedure tracking data
 
 ```json
 {
-  "procedureId": "2024/0001(COD)"
+  "procedureId": "2024/0006(COD)"
 }
 ```

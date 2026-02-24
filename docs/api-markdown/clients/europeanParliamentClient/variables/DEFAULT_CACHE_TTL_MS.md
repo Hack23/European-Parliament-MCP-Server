@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.1**](../../../README.md)
+[**European Parliament MCP Server API v0.7.2**](../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_CACHE\_TTL\_MS**: `900000` = `900000`
 
-Defined in: [clients/europeanParliamentClient.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/b9df29e7535477dcc3eb0083d22c22c499f6176d/src/clients/europeanParliamentClient.ts#L66)
+Defined in: [clients/europeanParliamentClient.ts:80](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/clients/europeanParliamentClient.ts#L80)
 
 Default cache time-to-live in milliseconds (15 minutes)
