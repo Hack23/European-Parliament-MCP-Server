@@ -118,6 +118,11 @@ export const MEPDetailsSchema = MEPSchema.extend({
  * Get plenary sessions input schema
  */
 export const GetPlenarySessionsSchema = z.object({
+  eventId: z.string()
+    .min(1)
+    .max(200)
+    .optional()
+    .describe('Meeting event ID for single meeting lookup'),
   dateFrom: DateStringSchema.optional(),
   dateTo: DateStringSchema.optional(),
   location: z.string()
@@ -218,10 +223,16 @@ const DocumentTypeSchema = z.enum([
  * Search documents input schema
  */
 export const SearchDocumentsSchema = z.object({
+  docId: z.string()
+    .min(1)
+    .max(200)
+    .optional()
+    .describe('Document ID for single document lookup (bypasses keyword search)'),
   keyword: z.string()
     .min(1)
     .max(200)
     .regex(/^[a-zA-Z0-9\s\-_]+$/, 'Invalid characters in keyword')
+    .optional()
     .describe('Search keyword or phrase'),
   documentType: DocumentTypeSchema
     .optional()
@@ -277,7 +288,11 @@ export const GetCommitteeInfoSchema = z.object({
     .min(1)
     .max(20)
     .optional()
-    .describe('Committee abbreviation')
+    .describe('Committee abbreviation'),
+  showCurrent: z.boolean()
+    .default(false)
+    .optional()
+    .describe('If true, returns only current active bodies')
 });
 
 /**
@@ -298,6 +313,11 @@ export const CommitteeSchema = z.object({
  * Get parliamentary questions input schema
  */
 export const GetParliamentaryQuestionsSchema = z.object({
+  docId: z.string()
+    .min(1)
+    .max(200)
+    .optional()
+    .describe('Document ID for single question lookup'),
   type: z.enum(['WRITTEN', 'ORAL'])
     .optional()
     .describe('Question type'),
@@ -548,6 +568,11 @@ export const GetCurrentMEPsSchema = z.object({
  * Get speeches input schema
  */
 export const GetSpeechesSchema = z.object({
+  speechId: z.string()
+    .min(1)
+    .max(200)
+    .optional()
+    .describe('Speech ID for single speech lookup'),
   dateFrom: DateStringSchema.optional()
     .describe('Start date filter (YYYY-MM-DD)'),
   dateTo: DateStringSchema.optional()
@@ -569,6 +594,11 @@ export const GetSpeechesSchema = z.object({
  * Get procedures input schema
  */
 export const GetProceduresSchema = z.object({
+  processId: z.string()
+    .min(1)
+    .max(200)
+    .optional()
+    .describe('Process ID for single procedure lookup'),
   year: z.number()
     .int()
     .min(1990)
@@ -592,6 +622,11 @@ export const GetProceduresSchema = z.object({
  * Get adopted texts input schema
  */
 export const GetAdoptedTextsSchema = z.object({
+  docId: z.string()
+    .min(1)
+    .max(200)
+    .optional()
+    .describe('Document ID for single adopted text lookup'),
   year: z.number()
     .int()
     .min(1990)
@@ -615,6 +650,11 @@ export const GetAdoptedTextsSchema = z.object({
  * Get events input schema
  */
 export const GetEventsSchema = z.object({
+  eventId: z.string()
+    .min(1)
+    .max(200)
+    .optional()
+    .describe('Event ID for single event lookup'),
   dateFrom: DateStringSchema.optional()
     .describe('Start date filter (YYYY-MM-DD)'),
   dateTo: DateStringSchema.optional()
@@ -678,12 +718,259 @@ export const GetMeetingDecisionsSchema = z.object({
  * Get MEP declarations input schema
  */
 export const GetMEPDeclarationsSchema = z.object({
+  docId: z.string()
+    .min(1)
+    .max(200)
+    .optional()
+    .describe('Declaration document ID for single declaration lookup'),
   year: z.number()
     .int()
     .min(1990)
     .max(2040)
     .optional()
     .describe('Filter by filing year'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+// ──────────────────────────────────────────────────────────────────
+// Phase 5 Schemas – Complete EP API v2 endpoint coverage
+// ──────────────────────────────────────────────────────────────────
+
+/**
+ * Get incoming MEPs input schema
+ */
+export const GetIncomingMEPsSchema = z.object({
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get outgoing MEPs input schema
+ */
+export const GetOutgoingMEPsSchema = z.object({
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get homonym MEPs input schema
+ */
+export const GetHomonymMEPsSchema = z.object({
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get plenary documents input schema
+ */
+export const GetPlenaryDocumentsSchema = z.object({
+  docId: z.string()
+    .min(1)
+    .max(200)
+    .optional()
+    .describe('Document ID for single document lookup'),
+  year: z.number()
+    .int()
+    .min(1990)
+    .max(2040)
+    .optional()
+    .describe('Filter by year'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get committee documents input schema
+ */
+export const GetCommitteeDocumentsSchema = z.object({
+  docId: z.string()
+    .min(1)
+    .max(200)
+    .optional()
+    .describe('Document ID for single document lookup'),
+  year: z.number()
+    .int()
+    .min(1990)
+    .max(2040)
+    .optional()
+    .describe('Filter by year'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get plenary session documents input schema
+ */
+export const GetPlenarySessionDocumentsSchema = z.object({
+  docId: z.string()
+    .min(1)
+    .max(200)
+    .optional()
+    .describe('Document ID for single document lookup'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get plenary session document items input schema
+ */
+export const GetPlenarySessionDocumentItemsSchema = z.object({
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get controlled vocabularies input schema
+ */
+export const GetControlledVocabulariesSchema = z.object({
+  vocId: z.string()
+    .min(1)
+    .max(200)
+    .optional()
+    .describe('Vocabulary ID for single vocabulary lookup'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get external documents input schema
+ */
+export const GetExternalDocumentsSchema = z.object({
+  docId: z.string()
+    .min(1)
+    .max(200)
+    .optional()
+    .describe('Document ID for single document lookup'),
+  year: z.number()
+    .int()
+    .min(1990)
+    .max(2040)
+    .optional()
+    .describe('Filter by year'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get meeting foreseen activities input schema
+ */
+export const GetMeetingForeseenActivitiesSchema = z.object({
+  sittingId: z.string()
+    .min(1)
+    .max(200)
+    .describe('Meeting / sitting identifier'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get procedure events input schema
+ */
+export const GetProcedureEventsSchema = z.object({
+  processId: z.string()
+    .min(1)
+    .max(200)
+    .describe('Procedure process ID'),
   limit: z.number()
     .int()
     .min(1)

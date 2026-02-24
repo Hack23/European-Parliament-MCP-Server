@@ -40,6 +40,17 @@ export async function handleGetPlenarySessions(
   const params = GetPlenarySessionsSchema.parse(args);
   
   try {
+    // Single meeting lookup by ID
+    if (params.eventId !== undefined) {
+      const result = await epClient.getMeetingById(params.eventId);
+      return {
+        content: [{
+          type: 'text',
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    }
+
     // Fetch plenary sessions from EP API (only pass defined properties)
     const apiParams: Record<string, unknown> = {
       limit: params.limit,
@@ -74,10 +85,14 @@ export async function handleGetPlenarySessions(
  */
 export const getPlenarySessionsToolMetadata = {
   name: 'get_plenary_sessions',
-  description: 'Retrieve European Parliament plenary sessions with optional date and location filters. Returns session details including date, location, agenda items, voting records, and attendance statistics.',
+  description: 'Retrieve European Parliament plenary sessions/meetings. Supports single meeting lookup by eventId or list with date and location filters. Returns session details including date, location, agenda items, voting records, and attendance statistics.',
   inputSchema: {
     type: 'object' as const,
     properties: {
+      eventId: {
+        type: 'string',
+        description: 'Meeting event ID for single meeting lookup'
+      },
       dateFrom: {
         type: 'string',
         description: 'Start date filter (YYYY-MM-DD format)',

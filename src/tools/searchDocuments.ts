@@ -1,7 +1,7 @@
 /**
  * MCP Tool: search_documents
  * 
- * Search European Parliament legislative documents
+ * Search European Parliament legislative documents or retrieve a single document by ID.
  * 
  * **Intelligence Perspective:** Essential for legislative monitoring, policy tracking,
  * amendment analysis, and building intelligence products around EU regulatory developments.
@@ -11,6 +11,10 @@
  * 
  * **Marketing Perspective:** Demonstrates comprehensive document search capability—
  * key for attracting legal tech, RegTech, and policy research customer segments.
+ * 
+ * **EP API Endpoints:**
+ * - `GET /documents` (list/search)
+ * - `GET /documents/{doc-id}` (single)
  * 
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
@@ -41,9 +45,20 @@ export async function handleSearchDocuments(
   const params = SearchDocumentsSchema.parse(args);
   
   try {
+    // Single document lookup by ID
+    if (params.docId !== undefined) {
+      const result = await epClient.getDocumentById(params.docId);
+      return {
+        content: [{
+          type: 'text',
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    }
+
     // Search documents via EP API (only pass defined properties)
     const apiParams: Record<string, unknown> = {
-      keyword: params.keyword,
+      keyword: params.keyword ?? '',
       limit: params.limit,
       offset: params.offset
     };
@@ -77,10 +92,14 @@ export async function handleSearchDocuments(
  */
 export const searchDocumentsToolMetadata = {
   name: 'search_documents',
-  description: 'Search European Parliament legislative documents by keyword. Filter by document type (REPORT, RESOLUTION, DECISION, DIRECTIVE, REGULATION, OPINION), date range, and committee. Returns document metadata including title, authors, status, and PDF/XML links.',
+  description: 'Search European Parliament legislative documents by keyword, or retrieve a single document by docId. Filter by document type (REPORT, RESOLUTION, DECISION, DIRECTIVE, REGULATION, OPINION), date range, and committee. Returns document metadata including title, authors, status, and PDF/XML links.',
   inputSchema: {
     type: 'object' as const,
     properties: {
+      docId: {
+        type: 'string',
+        description: 'Document ID for single document lookup (bypasses keyword search)'
+      },
       keyword: {
         type: 'string',
         description: 'Search keyword or phrase (alphanumeric, spaces, hyphens, underscores only)',
@@ -122,7 +141,6 @@ export const searchDocumentsToolMetadata = {
         minimum: 0,
         default: 0
       }
-    },
-    required: ['keyword']
+    }
   }
 };
