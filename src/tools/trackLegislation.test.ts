@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { handleTrackLegislation, trackLegislationToolMetadata } from './trackLegislation.js';
+import { handleTrackLegislation, trackLegislationToolMetadata, toProcessId } from './trackLegislation.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 
 // Mock the EP client
@@ -210,6 +210,28 @@ describe('track_legislation Tool', () => {
       expect(schema.properties?.procedureId).toBeDefined();
       const procedureId = schema.properties?.procedureId;
       expect(typeof procedureId === 'object' && procedureId !== null).toBe(true);
+    });
+  });
+
+  describe('toProcessId conversion', () => {
+    it('should convert reference format to process-id', () => {
+      expect(toProcessId('2024/0006(COD)')).toBe('2024-0006');
+    });
+
+    it('should convert reference with different type suffix', () => {
+      expect(toProcessId('2024/0003(BUD)')).toBe('2024-0003');
+    });
+
+    it('should pass through already-valid process-id', () => {
+      expect(toProcessId('2024-0006')).toBe('2024-0006');
+    });
+
+    it('should handle reference with slash only (fallback)', () => {
+      expect(toProcessId('2024/0001')).toBe('2024-0001');
+    });
+
+    it('should handle non-standard format via fallback', () => {
+      expect(toProcessId('proc/2024/extra')).toBe('proc-2024-extra');
     });
   });
 });

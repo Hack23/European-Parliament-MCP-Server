@@ -2056,8 +2056,12 @@ export class EuropeanParliamentClient {
    *
    * **EP API Endpoint:** `GET /procedures/{process-id}`
    *
-   * @param processId - Procedure process ID
+   * The EP API wraps even single-item responses in a JSON-LD `data` array,
+   * so this method extracts `data[0]` before transforming.
+   *
+   * @param processId - Procedure process ID (e.g. `"2024-0006"`)
    * @returns Single procedure
+   * @throws {APIError} When the procedure is not found (404)
    */
   async getProcedureById(processId: string): Promise<Procedure> {
     if (processId.trim() === '') {
@@ -2066,6 +2070,11 @@ export class EuropeanParliamentClient {
     const response = await this.get<Record<string, unknown>>(`procedures/${processId}`, {
       format: 'application/ld+json'
     });
+    // EP API wraps single-item responses in data array
+    const dataArray = response['data'];
+    if (Array.isArray(dataArray) && dataArray.length > 0) {
+      return this.transformProcedure(dataArray[0] as Record<string, unknown>);
+    }
     return this.transformProcedure(response);
   }
 

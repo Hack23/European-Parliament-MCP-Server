@@ -181,7 +181,7 @@ describe('Full Workflow E2E Tests', () => {
     it('should execute track_legislation tool', async () => {
       const response = await retryOrSkip(
         () => client.callTool('track_legislation', {
-          procedureId: '2024/0001(COD)'
+          procedureId: '2024/0006(COD)'
         }),
         'track_legislation'
       );
@@ -269,7 +269,7 @@ describe('Full Workflow E2E Tests', () => {
 
       // Step 2: Track legislation
       const trackResponse = await retryOrSkip(
-        () => client.callTool('track_legislation', { procedureId: '2024/0001(COD)' }),
+        () => client.callTool('track_legislation', { procedureId: '2024/0006(COD)' }),
         'track_legislation in legislation workflow'
       );
       if (trackResponse === undefined) return; // Skipped due to rate limit/timeout
