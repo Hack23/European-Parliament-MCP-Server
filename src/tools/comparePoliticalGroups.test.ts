@@ -168,4 +168,66 @@ describe('compare_political_groups Tool', () => {
         .rejects.toThrow('Failed to compare political groups');
     });
   });
+
+  describe('Branch Coverage - Computation Edge Cases', () => {
+    it('should handle empty MEP data with fallback computation', async () => {
+      // Arrange: No MEPs returned → mepData.length=0 → count||1 fallback
+      // decisive=0 → discipline fallback to 50
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [],
+        total: 0, limit: 100, offset: 0, hasMore: false
+      });
+
+      // Act
+      const result = await handleComparePoliticalGroups({
+        groupIds: ['EPP', 'S&D']
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        groups: { memberCount: number; dimensions: { votingDiscipline: number; activityLevel: number } }[];
+      };
+
+      // Assert: With zero MEPs, discipline falls back to 50, activity to 0
+      expect(data.groups).toHaveLength(2);
+      for (const group of data.groups) {
+        expect(group.memberCount).toBe(0);
+        expect(group.dimensions.votingDiscipline).toBe(50);
+        expect(group.dimensions.activityLevel).toBe(0);
+      }
+    });
+
+    it('should handle single MEP per group correctly', async () => {
+      // Arrange: Single MEP with short name
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [
+          { id: 'MEP-S1', name: 'Solo MEP', country: 'DE', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' }
+        ],
+        total: 1, limit: 100, offset: 0, hasMore: false
+      });
+
+      // Act
+      const result = await handleComparePoliticalGroups({
+        groupIds: ['EPP', 'S&D', 'Renew']
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        groups: { memberCount: number; dimensions: { votingDiscipline: number } }[];
+        confidenceLevel: string;
+      };
+
+      // Assert
+      expect(data.groups).toHaveLength(3);
+      expect(data.confidenceLevel).toBe('MEDIUM'); // 3 groups >= 3
+      for (const group of data.groups) {
+        expect(group.dimensions.votingDiscipline).toBeGreaterThan(0);
+      }
+    });
+
+    it('should handle non-Error exceptions with Unknown error message', async () => {
+      // Arrange: Reject with a non-Error value to cover instanceof Error false branch
+      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue('string error');
+
+      // Act & Assert
+      await expect(handleComparePoliticalGroups({ groupIds: ['EPP', 'S&D'] }))
+        .rejects.toThrow('Failed to compare political groups: Unknown error');
+    });
+  });
 });

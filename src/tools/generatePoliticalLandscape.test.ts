@@ -167,4 +167,76 @@ describe('generate_political_landscape Tool', () => {
       expect(data.parliament.totalMEPs).toBe(0);
     });
   });
+
+  describe('Branch Coverage - Political Balance and Engagement', () => {
+    it('should classify political balance as CONSERVATIVE_LEANING when ratio < 0.77', async () => {
+      // Arrange: Mostly conservative groups (ECR, ID) with few progressive (S&D)
+      // progressive=1 (S&D), conservative=4 (ECR*2 + ID*2), ratio=1/4=0.25 → CONSERVATIVE_LEANING
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [
+          { id: 'MEP-1', name: 'MEP One', country: 'PL', politicalGroup: 'ECR', committees: ['AFET'], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-2', name: 'MEP Two', country: 'IT', politicalGroup: 'ID', committees: ['LIBE'], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-3', name: 'MEP Three', country: 'HU', politicalGroup: 'ECR', committees: ['BUDG'], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-4', name: 'MEP Four', country: 'FR', politicalGroup: 'ID', committees: ['ITRE'], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-5', name: 'MEP Five', country: 'SE', politicalGroup: 'S&D', committees: ['ENVI'], active: true, termStart: '2019-07-02' }
+        ],
+        total: 5, limit: 100, offset: 0, hasMore: false
+      });
+
+      // Act
+      const result = await handleGeneratePoliticalLandscape({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        computedAttributes: { politicalBalance: string };
+        powerDynamics: { progressiveBloc: number; conservativeBloc: number };
+      };
+
+      // Assert
+      expect(data.computedAttributes.politicalBalance).toBe('CONSERVATIVE_LEANING');
+      expect(data.powerDynamics.conservativeBloc).toBeGreaterThan(data.powerDynamics.progressiveBloc);
+    });
+
+    it('should classify political balance as BALANCED when ratio between 0.77 and 1.3', async () => {
+      // Arrange: Equal progressive and conservative representation
+      // progressive=1 (S&D), conservative=1 (ECR), center=1 (EPP), ratio=1/1=1.0 → BALANCED
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [
+          { id: 'MEP-1', name: 'MEP One', country: 'FR', politicalGroup: 'S&D', committees: ['ENVI'], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-2', name: 'MEP Two', country: 'PL', politicalGroup: 'ECR', committees: ['AFET'], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-3', name: 'MEP Three', country: 'DE', politicalGroup: 'EPP', committees: ['AGRI'], active: true, termStart: '2019-07-02' }
+        ],
+        total: 3, limit: 100, offset: 0, hasMore: false
+      });
+
+      // Act
+      const result = await handleGeneratePoliticalLandscape({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        computedAttributes: { politicalBalance: string };
+      };
+
+      // Assert
+      expect(data.computedAttributes.politicalBalance).toBe('BALANCED');
+    });
+
+    it('should classify engagement as HIGH when many groups are present', async () => {
+      // Arrange: 8 distinct groups → avgAttendance = Math.min(85, 65+8*2) = 81 → HIGH
+      const groups = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID', 'The Left', 'NI'];
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: groups.map((g, i) => ({
+          id: `MEP-${i}`, name: `MEP ${i}`, country: 'DE',
+          politicalGroup: g, committees: [], active: true as const, termStart: '2019-07-02'
+        })),
+        total: groups.length, limit: 100, offset: 0, hasMore: false
+      });
+
+      // Act
+      const result = await handleGeneratePoliticalLandscape({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        computedAttributes: { overallEngagement: string; fragmentationIndex: string };
+      };
+
+      // Assert
+      expect(data.computedAttributes.overallEngagement).toBe('HIGH');
+      expect(data.computedAttributes.fragmentationIndex).toBe('HIGH'); // 8 groups >= 8
+    });
+  });
 });
