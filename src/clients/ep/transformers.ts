@@ -44,49 +44,51 @@ import {
 
 // ─── MEP transformers ───────────────────────────────────────────
 
+/** Extract the resolved MEP identifier string. */
+function resolveMEPId(apiData: Record<string, unknown>): string {
+  const identifier = firstDefined(apiData, 'identifier', '@id', 'id');
+  const idStr = toSafeString(identifier) || toSafeString(apiData['id']) || '';
+  const fallbackId = idStr || 'unknown';
+  return idStr.includes('/') ? idStr : `person/${fallbackId}`;
+}
+
+/** Build the MEP display name from available label / name fields. */
+function resolveMEPName(apiData: Record<string, unknown>): string {
+  const label = toSafeString(apiData['label']) || '';
+  const familyName = toSafeString(firstDefined(apiData, 'familyName', 'family_name')) || '';
+  const givenName = toSafeString(firstDefined(apiData, 'givenName', 'given_name')) || '';
+  return label || `${givenName} ${familyName}`.trim() || 'Unknown MEP';
+}
+
+/** Extract committee list from raw API data. */
+function extractMEPCommittees(apiData: Record<string, unknown>): string[] {
+  const raw = firstDefined(apiData, 'committees', 'committeeRoles');
+  if (!Array.isArray(raw)) return [];
+  return raw.map((item: unknown) => toSafeString(item));
+}
+
 /**
  * Transforms EP API MEP data to internal {@link MEP} format.
  */
 export function transformMEP(apiData: Record<string, unknown>): MEP {
-  const identifier = apiData['identifier'] ?? apiData['@id'] ?? apiData['id'];
-  const idField = apiData['id'];
-  const labelField = apiData['label'];
-  const familyNameField = apiData['familyName'] ?? apiData['family_name'];
-  const givenNameField = apiData['givenName'] ?? apiData['given_name'];
-
-  const id = toSafeString(identifier) || toSafeString(idField) || '';
-  const name = toSafeString(labelField) || '';
-  const familyName = toSafeString(familyNameField) || '';
-  const givenName = toSafeString(givenNameField) || '';
-
-  const fullName = name || `${givenName} ${familyName}`.trim();
-
-  const fallbackId = toSafeString(identifier) || 'unknown';
-  const mepId = id.includes('/') ? id : `person/${fallbackId}`;
+  const mepId = resolveMEPId(apiData);
+  const name = resolveMEPName(apiData);
 
   // Note: /meps endpoint doesn't return country/politicalGroup — defaults to 'Unknown'
-  const country = toSafeString(apiData['country'] ?? apiData['citizenship'] ?? apiData['nationality']) || 'Unknown';
-  const politicalGroup = toSafeString(apiData['politicalGroup'] ?? apiData['political_group']) || 'Unknown';
-
-  const committees: string[] = [];
-  const rawCommittees = apiData['committees'] ?? apiData['committeeRoles'];
-  if (Array.isArray(rawCommittees)) {
-    for (const c of rawCommittees) {
-      committees.push(toSafeString(c));
-    }
-  }
+  const country = toSafeString(firstDefined(apiData, 'country', 'citizenship', 'nationality')) || 'Unknown';
+  const politicalGroup = toSafeString(firstDefined(apiData, 'politicalGroup', 'political_group')) || 'Unknown';
 
   const emailValue = toSafeString(apiData['email']);
-  const termEndValue = toSafeString(apiData['termEnd'] ?? apiData['term_end']);
+  const termEndValue = toSafeString(firstDefined(apiData, 'termEnd', 'term_end'));
 
   const mep: MEP = {
     id: mepId,
-    name: fullName || 'Unknown MEP',
+    name,
     country,
     politicalGroup,
-    committees,
+    committees: extractMEPCommittees(apiData),
     active: apiData['active'] === true || apiData['active'] === 'true',
-    termStart: toSafeString(apiData['termStart'] ?? apiData['term_start']) || '',
+    termStart: toSafeString(firstDefined(apiData, 'termStart', 'term_start')) || '',
   };
   if (emailValue !== '') mep.email = emailValue;
   if (termEndValue !== '') mep.termEnd = termEndValue;
@@ -229,10 +231,10 @@ export function transformDocument(apiData: Record<string, unknown>): Legislative
 export function transformParliamentaryQuestion(apiData: Record<string, unknown>): ParliamentaryQuestion {
   const id = extractField(apiData, ['work_id', 'id', 'identifier']);
   const questionType = mapQuestionType(extractField(apiData, ['work_type', 'ep-document-types']));
-  const author = extractAuthorId(apiData['was_created_by'] ?? apiData['created_by'] ?? apiData['author']);
-  const date = extractDateValue(apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']);
-  const topic = extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']);
-  const hasAnswer = apiData['was_realized_by'] !== undefined && apiData['was_realized_by'] !== null;
+  const author = extractAuthorId(firstDefined(apiData, 'was_created_by', 'created_by', 'author'));
+  const date = extractDateValue(firstDefined(apiData, 'work_date_document', 'date_document', 'date'));
+  const topic = extractMultilingualText(firstDefined(apiData, 'title_dcterms', 'label', 'title'));
+  const hasAnswer = apiData['was_realized_by'] != null;
   const topicText = topic !== '' ? topic : `Question ${id}`;
 
   const result: ParliamentaryQuestion = {

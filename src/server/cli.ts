@@ -60,7 +60,7 @@ OPTIONS:
   --health    Show health check / diagnostics
 
 CAPABILITIES:
-  Tools:     ${tools.length} (${CORE_TOOL_COUNT} core + ${advancedToolCount} advanced)
+  Tools:     ${String(tools.length)} (${String(CORE_TOOL_COUNT)} core + ${String(advancedToolCount)} advanced)
   Protocol:  Model Context Protocol (MCP) via stdio
 
 ENVIRONMENT VARIABLES:

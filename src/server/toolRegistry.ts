@@ -64,7 +64,7 @@ import { handleGetMeetingForeseenActivities, getMeetingForeseenActivitiesToolMet
 import { handleGetProcedureEvents, getProcedureEventsToolMetadata } from '../tools/getProcedureEvents.js';
 
 /** Tool result shape returned by every handler */
-export type ToolResult = { content: { type: string; text: string }[] };
+export interface ToolResult { content: { type: string; text: string }[] }
 
 /**
  * Returns the full ordered list of tool metadata for the MCP `ListTools` response.
