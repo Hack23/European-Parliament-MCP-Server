@@ -5,21 +5,34 @@
  */
 
 /**
- * Legislative procedure status
+ * Legislative procedure tracking result
  */
 export interface LegislativeProcedure {
+  /** Procedure identifier from EP API */
   procedureId: string;
+  /** Procedure title from EP API */
   title: string;
+  /** Procedure type (e.g., COD, NLE) */
   type: string;
-  status: 'DRAFT' | 'COMMITTEE' | 'PLENARY' | 'ADOPTED' | 'REJECTED';
+  /** Current status */
+  status: string;
+  /** Current stage description */
   currentStage: string;
+  /** Timeline of key events */
   timeline: TimelineEvent[];
+  /** Committee assignments */
   committees: CommitteeAssignment[];
+  /** Amendment statistics */
   amendments: AmendmentStats;
+  /** Voting records */
   voting: VotingRecord[];
+  /** Associated documents */
   documents: DocumentReference[];
+  /** Predicted next steps */
   nextSteps?: string[];
+  /** Data quality indicator */
   confidenceLevel: string;
+  /** Methodology and data source description */
   methodology: string;
 }
 

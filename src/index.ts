@@ -34,51 +34,9 @@ import { fileURLToPath } from 'url';
 import { resolve } from 'path';
 import { readFileSync, realpathSync } from 'fs';
 
-// Import tool handlers
-import { handleGetMEPs, getMEPsToolMetadata } from './tools/getMEPs.js';
-import { handleGetMEPDetails, getMEPDetailsToolMetadata } from './tools/getMEPDetails.js';
-import { handleGetPlenarySessions, getPlenarySessionsToolMetadata } from './tools/getPlenarySessions.js';
-import { handleGetVotingRecords, getVotingRecordsToolMetadata } from './tools/getVotingRecords.js';
-import { handleSearchDocuments, searchDocumentsToolMetadata } from './tools/searchDocuments.js';
-import { handleGetCommitteeInfo, getCommitteeInfoToolMetadata } from './tools/getCommitteeInfo.js';
-import { handleGetParliamentaryQuestions, getParliamentaryQuestionsToolMetadata } from './tools/getParliamentaryQuestions.js';
-import { handleAnalyzeVotingPatterns, analyzeVotingPatternsToolMetadata } from './tools/analyzeVotingPatterns.js';
-import { handleTrackLegislation, trackLegislationToolMetadata } from './tools/trackLegislation.js';
-import { handleGenerateReport, generateReportToolMetadata } from './tools/generateReport.js';
-// Phase 1 OSINT Intelligence Tools
-import { handleAssessMepInfluence, assessMepInfluenceToolMetadata } from './tools/assessMepInfluence.js';
-import { handleAnalyzeCoalitionDynamics, analyzeCoalitionDynamicsToolMetadata } from './tools/analyzeCoalitionDynamics.js';
-import { handleDetectVotingAnomalies, detectVotingAnomaliesToolMetadata } from './tools/detectVotingAnomalies.js';
-import { handleComparePoliticalGroups, comparePoliticalGroupsToolMetadata } from './tools/comparePoliticalGroups.js';
-import { handleAnalyzeLegislativeEffectiveness, analyzeLegislativeEffectivenessToolMetadata } from './tools/analyzeLegislativeEffectiveness.js';
-import { handleMonitorLegislativePipeline, monitorLegislativePipelineToolMetadata } from './tools/monitorLegislativePipeline.js';
-// Phase 2 OSINT Intelligence Tools
-import { handleAnalyzeCommitteeActivity, analyzeCommitteeActivityToolMetadata } from './tools/analyzeCommitteeActivity.js';
-import { handleTrackMepAttendance, trackMepAttendanceToolMetadata } from './tools/trackMepAttendance.js';
-// Phase 3 OSINT Intelligence Tools
-import { handleAnalyzeCountryDelegation, analyzeCountryDelegationToolMetadata } from './tools/analyzeCountryDelegation.js';
-import { handleGeneratePoliticalLandscape, generatePoliticalLandscapeToolMetadata } from './tools/generatePoliticalLandscape.js';
-// Phase 4 – New EP API v2 endpoint tools
-import { handleGetCurrentMEPs, getCurrentMEPsToolMetadata } from './tools/getCurrentMEPs.js';
-import { handleGetSpeeches, getSpeechesToolMetadata } from './tools/getSpeeches.js';
-import { handleGetProcedures, getProceduresToolMetadata } from './tools/getProcedures.js';
-import { handleGetAdoptedTexts, getAdoptedTextsToolMetadata } from './tools/getAdoptedTexts.js';
-import { handleGetEvents, getEventsToolMetadata } from './tools/getEvents.js';
-import { handleGetMeetingActivities, getMeetingActivitiesToolMetadata } from './tools/getMeetingActivities.js';
-import { handleGetMeetingDecisions, getMeetingDecisionsToolMetadata } from './tools/getMeetingDecisions.js';
-import { handleGetMEPDeclarations, getMEPDeclarationsToolMetadata } from './tools/getMEPDeclarations.js';
-// Phase 5 – Complete EP API v2 coverage tools
-import { handleGetIncomingMEPs, getIncomingMEPsToolMetadata } from './tools/getIncomingMEPs.js';
-import { handleGetOutgoingMEPs, getOutgoingMEPsToolMetadata } from './tools/getOutgoingMEPs.js';
-import { handleGetHomonymMEPs, getHomonymMEPsToolMetadata } from './tools/getHomonymMEPs.js';
-import { handleGetPlenaryDocuments, getPlenaryDocumentsToolMetadata } from './tools/getPlenaryDocuments.js';
-import { handleGetCommitteeDocuments, getCommitteeDocumentsToolMetadata } from './tools/getCommitteeDocuments.js';
-import { handleGetPlenarySessionDocuments, getPlenarySessionDocumentsToolMetadata } from './tools/getPlenarySessionDocuments.js';
-import { handleGetPlenarySessionDocumentItems, getPlenarySessionDocumentItemsToolMetadata } from './tools/getPlenarySessionDocumentItems.js';
-import { handleGetControlledVocabularies, getControlledVocabulariesToolMetadata } from './tools/getControlledVocabularies.js';
-import { handleGetExternalDocuments, getExternalDocumentsToolMetadata } from './tools/getExternalDocuments.js';
-import { handleGetMeetingForeseenActivities, getMeetingForeseenActivitiesToolMetadata } from './tools/getMeetingForeseenActivities.js';
-import { handleGetProcedureEvents, getProcedureEventsToolMetadata } from './tools/getProcedureEvents.js';
+// ── Extracted modules ─────────────────────────────────────────────
+import { getToolMetadataArray, dispatchToolCall } from './server/toolRegistry.js';
+import { showHelp, showVersion, showHealth } from './server/cli.js';
 // MCP Prompts
 import { getPromptMetadataArray, handleGetPrompt } from './prompts/index.js';
 // MCP Resources
@@ -87,6 +45,10 @@ import { getResourceTemplateArray, handleReadResource } from './resources/index.
 export type * from './types/index.js';
 /** Re-export all runtime type guards, factory functions, and error utilities */
 export * from './types/index.js';
+/** Re-export tool registry for consumers */
+export { getToolMetadataArray } from './server/toolRegistry.js';
+/** Re-export CLI utilities */
+export { sanitizeUrl } from './server/cli.js';
 
 /** @internal Server name constant */
 export const SERVER_NAME = 'european-parliament-mcp-server';
@@ -99,190 +61,6 @@ export const SERVER_VERSION: string = packageJson.version;
  * Update this constant when adding/removing core tools in getToolMetadataArray()
  */
 const CORE_TOOL_COUNT = 7;
-
-/**
- * Display help message
- */
-function showHelp(): void {
-  // CLI output - intentional stdout usage
-  // eslint-disable-next-line no-console
-  console.log(`
-${SERVER_NAME} v${SERVER_VERSION}
-
-Model Context Protocol server for European Parliament open data
-
-Usage:
-  npx european-parliament-mcp-server [options]
-
-Options:
-  --health         Check server health and capabilities
-  -v, --version    Show version information
-  -h, --help       Show this help message
-
-Environment Variables:
-  EP_API_URL          European Parliament API base URL
-                      (default: https://data.europarl.europa.eu/api/v2/)
-  EP_CACHE_TTL        Cache TTL in milliseconds (default: 900000)
-  EP_RATE_LIMIT       Rate limit requests per minute (default: 60)
-
-MCP Client Configuration:
-
-  Claude Desktop (claude_desktop_config.json):
-  {
-    "mcpServers": {
-      "european-parliament": {
-        "command": "npx",
-        "args": ["european-parliament-mcp-server"]
-      }
-    }
-  }
-
-  VS Code / Cursor (settings.json):
-  {
-    "mcp.servers": {
-      "european-parliament": {
-        "command": "npx",
-        "args": ["european-parliament-mcp-server"]
-      }
-    }
-  }
-
-For more information:
-  Documentation: https://hack23.github.io/European-Parliament-MCP-Server/api/
-  GitHub: https://github.com/Hack23/European-Parliament-MCP-Server
-  Issues: https://github.com/Hack23/European-Parliament-MCP-Server/issues
-`);
-}
-
-/**
- * Display version information
- */
-function showVersion(): void {
-  // CLI output - intentional stdout usage
-  // eslint-disable-next-line no-console
-  console.log(`${SERVER_NAME} v${SERVER_VERSION}`);
-}
-
-/**
- * Get tool metadata array
- * @internal
- */
-export function getToolMetadataArray(): { name: string; description: string; inputSchema: unknown }[] {
-  return [
-    // Core tools
-    getMEPsToolMetadata,
-    getMEPDetailsToolMetadata,
-    getPlenarySessionsToolMetadata,
-    getVotingRecordsToolMetadata,
-    searchDocumentsToolMetadata,
-    getCommitteeInfoToolMetadata,
-    getParliamentaryQuestionsToolMetadata,
-    // Advanced analysis tools
-    analyzeVotingPatternsToolMetadata,
-    trackLegislationToolMetadata,
-    generateReportToolMetadata,
-    // Phase 1 OSINT Intelligence Tools
-    assessMepInfluenceToolMetadata,
-    analyzeCoalitionDynamicsToolMetadata,
-    detectVotingAnomaliesToolMetadata,
-    comparePoliticalGroupsToolMetadata,
-    analyzeLegislativeEffectivenessToolMetadata,
-    monitorLegislativePipelineToolMetadata,
-    // Phase 2 OSINT Intelligence Tools
-    analyzeCommitteeActivityToolMetadata,
-    trackMepAttendanceToolMetadata,
-    // Phase 3 OSINT Intelligence Tools
-    analyzeCountryDelegationToolMetadata,
-    generatePoliticalLandscapeToolMetadata,
-    // Phase 4 – New EP API v2 endpoint tools
-    getCurrentMEPsToolMetadata,
-    getSpeechesToolMetadata,
-    getProceduresToolMetadata,
-    getAdoptedTextsToolMetadata,
-    getEventsToolMetadata,
-    getMeetingActivitiesToolMetadata,
-    getMeetingDecisionsToolMetadata,
-    getMEPDeclarationsToolMetadata,
-    // Phase 5 – Complete EP API v2 coverage tools
-    getIncomingMEPsToolMetadata,
-    getOutgoingMEPsToolMetadata,
-    getHomonymMEPsToolMetadata,
-    getPlenaryDocumentsToolMetadata,
-    getCommitteeDocumentsToolMetadata,
-    getPlenarySessionDocumentsToolMetadata,
-    getPlenarySessionDocumentItemsToolMetadata,
-    getControlledVocabulariesToolMetadata,
-    getExternalDocumentsToolMetadata,
-    getMeetingForeseenActivitiesToolMetadata,
-    getProcedureEventsToolMetadata
-  ];
-}
-
-/**
- * Display health check information
- */
-function showHealth(): void {
-  const tools = getToolMetadataArray();
-  const advancedToolCount = tools.length - CORE_TOOL_COUNT;
-  const prompts = getPromptMetadataArray();
-  const resourceTemplates = getResourceTemplateArray();
-  
-  const health = {
-    name: SERVER_NAME,
-    version: SERVER_VERSION,
-    status: 'healthy',
-    capabilities: ['tools', 'resources', 'prompts'],
-    tools: {
-      total: tools.length,
-      core: CORE_TOOL_COUNT,
-      advanced: advancedToolCount
-    },
-    prompts: {
-      total: prompts.length
-    },
-    resources: {
-      templates: resourceTemplates.length
-    },
-    environment: {
-      nodeVersion: process.version,
-      platform: process.platform,
-      arch: process.arch
-    },
-    configuration: {
-      apiUrl: sanitizeUrl(process.env['EP_API_URL'] ?? 'https://data.europarl.europa.eu/api/v2/'),
-      cacheTTL: process.env['EP_CACHE_TTL'] ?? '900000',
-      rateLimit: process.env['EP_RATE_LIMIT'] ?? '60'
-    }
-  };
-  
-  // CLI output - intentional stdout usage
-  // eslint-disable-next-line no-console
-  console.log(JSON.stringify(health, null, 2));
-}
-
-/**
- * Sanitize URL to remove credentials
- * @param urlString - URL to sanitize
- * @returns Sanitized URL without credentials
- * @internal
- */
-export function sanitizeUrl(urlString: string): string {
-  try {
-    const url = new URL(urlString);
-    // Remove username and password
-    url.username = '';
-    url.password = '';
-    // Remove query parameters and fragment that might contain tokens
-    url.search = '';
-    url.hash = '';
-    return url.toString();
-  } catch {
-    // If URL parsing fails, remove query and fragment parts as a safe fallback
-    const withoutQuery = urlString.split('?')[0] ?? urlString;
-    const withoutFragment = withoutQuery.split('#')[0] ?? withoutQuery;
-    return withoutFragment;
-  }
-}
 
 /**
  * Main MCP Server class for European Parliament data access
@@ -438,61 +216,7 @@ class EuropeanParliamentMCPServer {
     name: string,
     args: unknown
   ): Promise<{ content: { type: string; text: string }[] }> {
-    const toolHandlers: Record<string, (args: unknown) => Promise<{ content: { type: string; text: string }[] }>> = {
-      // Core tools
-      'get_meps': handleGetMEPs,
-      'get_mep_details': handleGetMEPDetails,
-      'get_plenary_sessions': handleGetPlenarySessions,
-      'get_voting_records': handleGetVotingRecords,
-      'search_documents': handleSearchDocuments,
-      'get_committee_info': handleGetCommitteeInfo,
-      'get_parliamentary_questions': handleGetParliamentaryQuestions,
-      // Advanced analysis tools
-      'analyze_voting_patterns': handleAnalyzeVotingPatterns,
-      'track_legislation': handleTrackLegislation,
-      'generate_report': handleGenerateReport,
-      // Phase 1 OSINT Intelligence Tools
-      'assess_mep_influence': handleAssessMepInfluence,
-      'analyze_coalition_dynamics': handleAnalyzeCoalitionDynamics,
-      'detect_voting_anomalies': handleDetectVotingAnomalies,
-      'compare_political_groups': handleComparePoliticalGroups,
-      'analyze_legislative_effectiveness': handleAnalyzeLegislativeEffectiveness,
-      'monitor_legislative_pipeline': handleMonitorLegislativePipeline,
-      // Phase 2 OSINT Intelligence Tools
-      'analyze_committee_activity': handleAnalyzeCommitteeActivity,
-      'track_mep_attendance': handleTrackMepAttendance,
-      // Phase 3 OSINT Intelligence Tools
-      'analyze_country_delegation': handleAnalyzeCountryDelegation,
-      'generate_political_landscape': handleGeneratePoliticalLandscape,
-      // Phase 4 – New EP API v2 endpoint tools
-      'get_current_meps': handleGetCurrentMEPs,
-      'get_speeches': handleGetSpeeches,
-      'get_procedures': handleGetProcedures,
-      'get_adopted_texts': handleGetAdoptedTexts,
-      'get_events': handleGetEvents,
-      'get_meeting_activities': handleGetMeetingActivities,
-      'get_meeting_decisions': handleGetMeetingDecisions,
-      'get_mep_declarations': handleGetMEPDeclarations,
-      // Phase 5 – Complete EP API v2 coverage tools
-      'get_incoming_meps': handleGetIncomingMEPs,
-      'get_outgoing_meps': handleGetOutgoingMEPs,
-      'get_homonym_meps': handleGetHomonymMEPs,
-      'get_plenary_documents': handleGetPlenaryDocuments,
-      'get_committee_documents': handleGetCommitteeDocuments,
-      'get_plenary_session_documents': handleGetPlenarySessionDocuments,
-      'get_plenary_session_document_items': handleGetPlenarySessionDocumentItems,
-      'get_controlled_vocabularies': handleGetControlledVocabularies,
-      'get_external_documents': handleGetExternalDocuments,
-      'get_meeting_foreseen_activities': handleGetMeetingForeseenActivities,
-      'get_procedure_events': handleGetProcedureEvents
-    };
-    
-    const handler = toolHandlers[name];
-    if (handler === undefined) {
-      throw new Error(`Unknown tool: ${name}`);
-    }
-    
-    return await handler(args);
+    return await dispatchToolCall(name, args);
   }
 
   /**

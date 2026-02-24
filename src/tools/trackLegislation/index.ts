@@ -17,16 +17,46 @@
  */
 
 import { TrackLegislationSchema } from '../../schemas/europeanParliament.js';
-import { createMockProcedure } from './procedureTracker.js';
+import { epClient } from '../../clients/europeanParliamentClient.js';
+import { buildLegislativeTracking } from './procedureTracker.js';
+
+/**
+ * Convert a user-supplied procedure reference to the EP API process-id format.
+ *
+ * The EP API uses process IDs like `2024-0006` (dashes, no type suffix),
+ * while users typically supply references like `2024/0006(COD)`.
+ *
+ * Supported input formats:
+ * - Process-id: `"2024-0006"` (returned as-is)
+ * - Reference: `"2024/0006(COD)"` → `"2024-0006"`
+ * - Bare reference: `"2024/0006"` → `"2024-0006"` (fallback)
+ *
+ * @param ref - Procedure reference (e.g. `"2024/0006(COD)"` or `"2024-0006"`)
+ * @returns Process ID suitable for the EP API (e.g. `"2024-0006"`)
+ */
+export function toProcessId(ref: string): string {
+  // Already in process-id format (e.g. "2024-0006")
+  if (/^\d{4}-\d{4}$/.test(ref)) {
+    return ref;
+  }
+  // Reference format: "2024/0006(COD)" → "2024-0006"
+  const match = /^(\d{4})\/(\d{4})\(.*\)$/.exec(ref);
+  if (match?.[1] !== undefined && match[2] !== undefined) {
+    return `${match[1]}-${match[2]}`;
+  }
+  // Fallback: replace slashes with dashes and strip parenthetical suffix
+  return ref.replace(/\(.*\)$/, '').replace(/\//g, '-');
+}
 
 /**
  * Track legislation tool handler
- * Cyclomatic complexity: 2
  * 
- * NOTE: This tool currently returns illustrative placeholder data for the
- * requested procedure ID. Real EP Legislative Observatory API integration
- * is planned for a future release. All returned data is clearly marked
- * with confidenceLevel: 'NONE' and methodology explains the limitation.
+ * Fetches real procedure data from the EP API `/procedures` endpoint
+ * and returns structured legislative tracking information derived
+ * entirely from the API response.
+ * 
+ * Accepts both EP API process-id format (`2024-0006`) and human-readable
+ * reference format (`2024/0006(COD)`).
  * 
  * @param args - Tool arguments
  * @returns MCP tool result with legislative procedure tracking data
@@ -34,30 +64,27 @@ import { createMockProcedure } from './procedureTracker.js';
  * @example
  * ```json
  * {
- *   "procedureId": "2024/0001(COD)"
+ *   "procedureId": "2024/0006(COD)"
  * }
  * ```
  */
-export function handleTrackLegislation(
+export async function handleTrackLegislation(
   args: unknown
 ): Promise<{ content: { type: string; text: string }[] }> {
-  // Validate input
   const params = TrackLegislationSchema.parse(args);
+  const processId = toProcessId(params.procedureId);
   
   try {
-    // Placeholder: returns illustrative data structure for the given procedure ID.
-    // Real EP Legislative Observatory API integration is planned.
-    const procedure = createMockProcedure(params.procedureId);
+    const procedure = await epClient.getProcedureById(processId);
+    const tracking = buildLegislativeTracking(procedure);
     
-    // Return MCP-compliant response
-    return Promise.resolve({
+    return {
       content: [{
         type: 'text',
-        text: JSON.stringify(procedure, null, 2)
+        text: JSON.stringify(tracking, null, 2)
       }]
-    });
+    };
   } catch (error) {
-    // Handle errors without exposing internal details
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to track legislation: ${errorMessage}`);
   }

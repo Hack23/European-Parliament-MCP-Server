@@ -6,18 +6,18 @@
 
 <p align="center">
   <strong>Model Context Protocol Server for European Parliament Open Data</strong><br>
-  <em>C4 Architecture Documentation — 28 Tools, 6 Resources, 6 Prompts</em>
+  <em>C4 Architecture Documentation — 39 Tools, 6 Resources, 6 Prompts</em>
 </p>
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-Architect-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-0.6.2-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2025--06--20-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-0.7.1-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2025--06--24-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** Architecture Team | **📄 Version:** 0.6.2 | **📅 Last Updated:** 2025-06-20 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2025-09-20  
+**📋 Document Owner:** Architecture Team | **📄 Version:** 0.7.1 | **📅 Last Updated:** 2025-06-24 (UTC)  
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2025-09-24  
 **🏷️ Classification:** Public (Open Source MCP Server)  
 **✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.14.2), NIST CSF 2.0 (ID.AM, PR.DS), CIS Controls v8.1 (2.1, 16.1)
 
@@ -60,16 +60,16 @@
 
 ## 🎯 Executive Summary
 
-The **European Parliament MCP Server** (v0.6.2) is a TypeScript/Node.js [Model Context Protocol](https://spec.modelcontextprotocol.io/) server that provides AI assistants with structured, type-safe access to European Parliament open data. It exposes **28 MCP tools** (7 core data access + 21 advanced/OSINT intelligence), **6 resource templates**, and **6 prompt templates** — all backed by a centralized EP API client with LRU caching, Zod input validation, rate limiting, and GDPR-compliant audit logging.
+The **European Parliament MCP Server** (v0.7.1) is a TypeScript/Node.js [Model Context Protocol](https://spec.modelcontextprotocol.io/) server that provides AI assistants with structured, type-safe access to European Parliament open data. It exposes **39 MCP tools** (7 core data access + 3 advanced analysis + 10 OSINT intelligence + 8 EP API v2 data access + 11 EP API v2 complete coverage), **6 resource templates**, and **6 prompt templates** — all backed by a centralized EP API client with LRU caching, Zod input validation, rate limiting, and GDPR-compliant audit logging. All tools return real data from the EP API with no mock or placeholder data.
 
 ### Key Capabilities
 
 | Capability | Count | Description |
 |------------|-------|-------------|
-| 🔧 **MCP Tools** | 28 | Core data access + OSINT intelligence analysis |
+| 🔧 **MCP Tools** | 39 | Core data access + OSINT intelligence + complete EP API v2 coverage |
 | 📄 **MCP Resources** | 6 | URI-based read access to parliamentary entities |
 | 💬 **MCP Prompts** | 6 | Pre-configured analysis templates for AI assistants |
-| 🏛️ **EP API Endpoints** | 12+ | MEPs, plenary sessions, committees, votes, documents, speeches |
+| 🏛️ **EP API Endpoints** | 22+ | MEPs, plenary sessions, committees, votes, documents, speeches, procedures, adopted texts, events |
 | 🔒 **Security Controls** | 4 layers | Zod validation, rate limiting, audit logging, GDPR compliance |
 
 ---
@@ -80,12 +80,12 @@ The system context shows the European Parliament MCP Server and its external act
 
 ```mermaid
 C4Context
-    title European Parliament MCP Server — System Context (v0.6.2)
+    title European Parliament MCP Server — System Context (v0.7.1)
 
     Person(aiClient, "AI/LLM Client", "Claude Desktop, Copilot, or any MCP-compatible AI assistant consuming parliamentary data")
     Person(developer, "Developer", "Integrates MCP server into applications, configures tools and resources")
 
-    System(mcpServer, "European Parliament MCP Server", "TypeScript/Node.js MCP server exposing 28 tools, 6 resources, 6 prompts for EP open data access and OSINT intelligence analysis")
+    System(mcpServer, "European Parliament MCP Server", "TypeScript/Node.js MCP server exposing 39 tools, 6 resources, 6 prompts for EP open data access and OSINT intelligence analysis")
 
     System_Ext(epApi, "European Parliament Open Data Portal", "REST API v2 at data.europarl.europa.eu providing MEPs, plenary sessions, committees, votes, documents, speeches")
     System_Ext(npmRegistry, "npm Registry", "Package distribution for european-parliament-mcp-server")
@@ -107,13 +107,13 @@ The container diagram shows the major runtime components inside the MCP server.
 
 ```mermaid
 C4Container
-    title European Parliament MCP Server — Container Diagram (v0.6.2)
+    title European Parliament MCP Server — Container Diagram (v0.7.1)
 
     Person(aiClient, "AI/LLM Client", "MCP-compatible assistant")
 
     System_Boundary(mcpBoundary, "European Parliament MCP Server") {
         Container(protocolHandler, "MCP Protocol Handler", "TypeScript, @modelcontextprotocol/sdk", "Handles MCP JSON-RPC over stdio transport; routes tool calls, resource reads, prompt requests")
-        Container(toolEngine, "Tool Engine", "TypeScript, Zod", "28 MCP tools: 7 core + 21 advanced/OSINT intelligence; input validation, business logic, response formatting")
+        Container(toolEngine, "Tool Engine", "TypeScript, Zod", "39 MCP tools: 7 core + 3 advanced + 10 OSINT + 8 EP data v2 + 11 EP complete; input validation, business logic, response formatting")
         Container(resourceHandler, "Resource Handler", "TypeScript", "6 URI-based resource templates providing read access to parliamentary entities (ep:// scheme)")
         Container(promptHandler, "Prompt Handler", "TypeScript", "6 prompt templates for structured analysis: briefings, coalition analysis, legislative tracking")
         Container(epClient, "EP API Client", "TypeScript, undici, lru-cache", "Centralized HTTP client with LRU cache (500 entries, 15-min TTL), rate limiting, error handling")
@@ -141,11 +141,11 @@ C4Container
 
 ## 🔧 C4 Component Diagram — Tool Engine
 
-The Tool Engine contains all 28 MCP tools organized into four functional groups.
+The Tool Engine contains all 39 MCP tools organized into five functional groups.
 
 ```mermaid
 C4Component
-    title Tool Engine — Component Diagram (28 Tools)
+    title Tool Engine — Component Diagram (39 Tools)
 
     Container_Boundary(toolEngine, "Tool Engine") {
 
@@ -154,6 +154,8 @@ C4Component
         Component(osintTools, "OSINT Intelligence Tools", "10 tools", "assess_mep_influence, analyze_coalition_dynamics, detect_voting_anomalies, compare_political_groups, analyze_legislative_effectiveness, monitor_legislative_pipeline, analyze_committee_activity, track_mep_attendance, analyze_country_delegation, generate_political_landscape")
 
         Component(epDataTools, "EP Data Access Tools", "8 tools", "get_current_meps, get_speeches, get_procedures, get_adopted_texts, get_events, get_meeting_activities, get_meeting_decisions, get_mep_declarations")
+
+        Component(epCompleteTools, "EP Complete Coverage Tools", "11 tools", "get_incoming_meps, get_outgoing_meps, get_homonym_meps, get_plenary_documents, get_committee_documents, get_plenary_session_documents, get_plenary_session_document_items, get_controlled_vocabularies, get_external_documents, get_meeting_foreseen_activities, get_procedure_events")
 
         Component(advancedTools, "Advanced Analysis Tools", "3 tools", "analyze_voting_patterns, track_legislation, generate_report")
     }
@@ -164,10 +166,12 @@ C4Component
     Rel(coreTools, epClient, "Queries EP data")
     Rel(osintTools, epClient, "Aggregates & analyzes EP data")
     Rel(epDataTools, epClient, "Queries new EP API v2 endpoints")
+    Rel(epCompleteTools, epClient, "Complete EP API v2 coverage")
     Rel(advancedTools, epClient, "Complex multi-step analysis")
     Rel(coreTools, infraLayer, "Input validation, audit logging")
     Rel(osintTools, infraLayer, "Input validation, audit logging")
     Rel(epDataTools, infraLayer, "Input validation, audit logging")
+    Rel(epCompleteTools, infraLayer, "Input validation, audit logging")
     Rel(advancedTools, infraLayer, "Input validation, audit logging")
 ```
 
@@ -175,7 +179,7 @@ C4Component
 
 ## 🔌 MCP Protocol Surface
 
-### Tools (28 total)
+### Tools (39 total)
 
 #### Core Data Access Tools (7)
 
@@ -217,12 +221,28 @@ C4Component
 | `get_meeting_decisions` | `getMeetingDecisions` | Meeting decision outcomes |
 | `get_mep_declarations` | `getMEPDeclarations` | MEP financial declarations |
 
+#### EP Complete Coverage Tools (11)
+
+| Tool | Function | Description |
+|------|----------|-------------|
+| `get_incoming_meps` | `getIncomingMEPs` | Incoming MEPs (new members) |
+| `get_outgoing_meps` | `getOutgoingMEPs` | Outgoing MEPs (departing members) |
+| `get_homonym_meps` | `getHomonymMEPs` | MEPs with duplicate names |
+| `get_plenary_documents` | `getPlenaryDocuments` | Plenary-specific documents |
+| `get_committee_documents` | `getCommitteeDocuments` | Committee-specific documents |
+| `get_plenary_session_documents` | `getPlenarySessionDocuments` | Session-specific documents |
+| `get_plenary_session_document_items` | `getPlenarySessionDocumentItems` | Document items within sessions |
+| `get_controlled_vocabularies` | `getControlledVocabularies` | EP controlled vocabulary terms |
+| `get_external_documents` | `getExternalDocuments` | External reference documents |
+| `get_meeting_foreseen_activities` | `getMeetingForeseenActivities` | Planned meeting activities |
+| `get_procedure_events` | `getProcedureEvents` | Events linked to a procedure |
+
 #### Advanced Analysis Tools (3)
 
 | Tool | Function | Description |
 |------|----------|-------------|
 | `analyze_voting_patterns` | `analyzeVotingPatterns` | Multi-session voting analysis |
-| `track_legislation` | `trackLegislation` | End-to-end legislative tracking |
+| `track_legislation` | `trackLegislation` | End-to-end legislative tracking (real EP API data) |
 | `generate_report` | `generateReport` | Structured analysis report generation |
 
 ### Resources (6 templates)
@@ -377,7 +397,7 @@ graph LR
 
 | Layer | Control | Implementation |
 |-------|---------|----------------|
-| **Input** | Schema validation | Zod schemas for all 28 tool inputs |
+| **Input** | Schema validation | Zod schemas for all 39 tool inputs |
 | **Input** | Type safety | Branded types (MEPID, SessionID, CommitteeID, DocumentID, GroupID) |
 | **Transport** | Rate limiting | Token bucket per client, configurable limits |
 | **Transport** | Timeout handling | Request timeouts via `src/utils/timeout.ts` |
@@ -421,9 +441,11 @@ graph LR
 ### Key Design Decisions
 
 - **Single EP API Client**: Centralized in `src/clients/europeanParliamentClient.ts` — all tools share one cached client instance
+- **Bounded Context Modules**: Types split into `src/types/ep/` (7 domain modules), schemas into `src/schemas/ep/` (8 modules), client helpers into `src/clients/ep/` (JSON-LD parsing + transformers), server into `src/server/` (tool registry + CLI)
 - **DI Container**: `src/di/container.ts` wires dependencies; ensures single cache instance
 - **Metrics Service**: `src/services/MetricsService.ts` tracks performance counters
 - **Connection Reuse**: Undici HTTP client with keep-alive connections
+- **No Mock Data**: All 39 tools return real data derived from EP API responses — no placeholder or fabricated data
 
 > ⚡ See [PERFORMANCE_GUIDE.md](./PERFORMANCE_GUIDE.md) for optimization details  
 > 📊 See [PERFORMANCE_MONITORING.md](./PERFORMANCE_MONITORING.md) for observability

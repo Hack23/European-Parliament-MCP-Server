@@ -60,7 +60,7 @@
 
 ## 🎯 Executive Summary
 
-The **European Parliament MCP Server** (v0.6.2) is a stateless TypeScript/Node.js server implementing the [Model Context Protocol](https://spec.modelcontextprotocol.io/) over **stdio transport**. It proxies requests to the **EP Open Data Portal API v2** (`https://data.europarl.europa.eu/api/v2/`), transforming JSON-LD responses into structured MCP tool results. The server exposes **28 tools**, **6 resource templates**, and **6 prompt templates** — all validated with Zod schemas and backed by an LRU cache (500 entries, 15-minute TTL).
+The **European Parliament MCP Server** (v0.7.1) is a stateless TypeScript/Node.js server implementing the [Model Context Protocol](https://spec.modelcontextprotocol.io/) over **stdio transport**. It proxies requests to the **EP Open Data Portal API v2** (`https://data.europarl.europa.eu/api/v2/`), transforming JSON-LD responses into structured MCP tool results. The server exposes **39 tools**, **6 resource templates**, and **6 prompt templates** — all validated with Zod schemas and backed by an LRU cache (500 entries, 15-minute TTL).
 
 This document maps every process flow in the system: from MCP request ingestion through stdio, to tool dispatch and Zod validation, EP API integration with retry logic, LRU cache management, multi-source OSINT analysis, and comprehensive error handling with GDPR compliance.
 
@@ -125,7 +125,7 @@ flowchart TD
 
 | Method | Handler | Response |
 |--------|---------|----------|
-| `tools/list` | `ListToolsRequestSchema` | 28 tool definitions with JSON Schema |
+| `tools/list` | `ListToolsRequestSchema` | 39 tool definitions with JSON Schema |
 | `tools/call` | `CallToolRequestSchema` → `dispatchToolCall()` | Tool execution result |
 | `resources/templates/list` | `ListResourceTemplatesRequestSchema` | 6 URI templates |
 | `resources/read` | `ReadResourceRequestSchema` | Resource content |

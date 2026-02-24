@@ -13,7 +13,9 @@
 
 import { MonitorLegislativePipelineSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { Procedure } from '../types/europeanParliament.js';
 
+/** Computed attributes for a single pipeline item */
 interface PipelineItemComputedAttrs {
   progressPercentage: number;
   velocityScore: number;
@@ -22,6 +24,7 @@ interface PipelineItemComputedAttrs {
   bottleneckRisk: string;
 }
 
+/** A single procedure in the pipeline */
 interface PipelineItem {
   procedureId: string;
   title: string;
@@ -34,6 +37,7 @@ interface PipelineItem {
   computedAttributes: PipelineItemComputedAttrs;
 }
 
+/** Bottleneck analysis */
 interface BottleneckInfo {
   stage: string;
   procedureCount: number;
@@ -41,6 +45,7 @@ interface BottleneckInfo {
   severity: string;
 }
 
+/** Full pipeline analysis result */
 interface LegislativePipelineAnalysis {
   period: { from: string; to: string };
   filter: { committee?: string; status: string };
@@ -65,41 +70,39 @@ interface LegislativePipelineAnalysis {
   methodology: string;
 }
 
-const LEGISLATIVE_STAGES = [
-  'PROPOSAL', 'COMMITTEE_REFERRAL', 'COMMITTEE_CONSIDERATION', 'COMMITTEE_VOTE',
-  'PLENARY_DEBATE', 'PLENARY_VOTE', 'TRILOGUE', 'SECOND_READING', 'ADOPTED'
-] as const;
-
 /**
- * Classify complexity from days in stage
+ * Calculate days between two date strings (or since a date).
  */
+function daysBetween(dateStr: string, endStr?: string): number {
+  const start = new Date(dateStr);
+  const end = endStr !== undefined && endStr !== '' ? new Date(endStr) : new Date();
+  if (isNaN(start.getTime())) return 0;
+  if (isNaN(end.getTime())) return 0;
+  return Math.max(0, Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
+}
+
+/** Classify complexity from days in stage */
 function classifyComplexity(days: number): string {
   if (days > 60) return 'HIGH';
   if (days > 30) return 'MEDIUM';
   return 'LOW';
 }
 
-/**
- * Classify bottleneck risk
- */
+/** Classify bottleneck risk */
 function classifyBottleneckRisk(isStalled: boolean, days: number): string {
   if (isStalled) return 'HIGH';
   if (days > 45) return 'MEDIUM';
   return 'LOW';
 }
 
-/**
- * Classify bottleneck severity
- */
+/** Classify bottleneck severity */
 function classifyBottleneckSeverity(count: number): string {
   if (count > 3) return 'CRITICAL';
   if (count > 1) return 'HIGH';
   return 'MODERATE';
 }
 
-/**
- * Classify legislative momentum
- */
+/** Classify legislative momentum */
 function classifyMomentum(healthScore: number): string {
   if (healthScore > 80) return 'STRONG';
   if (healthScore > 60) return 'MODERATE';
@@ -108,102 +111,84 @@ function classifyMomentum(healthScore: number): string {
 }
 
 /**
- * Get procedure type from index
+ * Check if a procedure status indicates completion.
  */
-function getProcedureType(index: number): string {
-  const types = ['REGULATION', 'DIRECTIVE', 'DECISION'];
-  return types[index % 3] ?? 'REGULATION';
+function isStatusCompleted(status: string): boolean {
+  const lower = status.toLowerCase();
+  return lower.includes('adopted') || lower.includes('completed');
 }
 
 /**
- * Get next expected action for a stage
+ * Compute progress metrics for a procedure.
  */
-function getNextAction(isCompleted: boolean, stageIndex: number): string {
-  if (isCompleted) return 'COMPLETED';
-  const nextIndex = Math.min(stageIndex + 1, LEGISLATIVE_STAGES.length - 1);
-  return `Proceed to ${LEGISLATIVE_STAGES[nextIndex] ?? 'ADOPTED'}`;
-}
-
-/**
- * Create a single pipeline item
- */
-function createPipelineItem(
-  sessionId: string, itemIndex: number, agendaItem: string
-): PipelineItem {
-  const stageIndex = (agendaItem.length + itemIndex) % LEGISLATIVE_STAGES.length;
-  const currentStage = LEGISLATIVE_STAGES[stageIndex] ?? 'PROPOSAL';
-  const daysInStage = 10 + (agendaItem.length * 3) % 90;
-  const isCompleted = currentStage === 'ADOPTED';
+function computePipelineMetrics(proc: Procedure): {
+  daysInStage: number; isCompleted: boolean; isStalled: boolean;
+  totalDays: number; progressEstimate: number; velocityScore: number; estimatedDays: number;
+} {
+  const lastActivity = proc.dateLastActivity !== '' ? proc.dateLastActivity : proc.dateInitiated;
+  const daysInStage = daysBetween(lastActivity);
+  const isCompleted = isStatusCompleted(proc.status);
   const isStalled = !isCompleted && daysInStage > 60;
-  const progressPercentage = Math.round(((stageIndex + 1) / LEGISLATIVE_STAGES.length) * 100);
-  const velocityScore = isStalled ? 20 : Math.min(100, 100 - daysInStage);
-  const estimatedDays = Math.round(
-    ((LEGISLATIVE_STAGES.length - stageIndex - 1) * daysInStage) / Math.max(1, stageIndex + 1)
-  );
+  const initiated = proc.dateInitiated !== '' ? proc.dateInitiated : '';
+  const lastAct = proc.dateLastActivity !== '' ? proc.dateLastActivity : undefined;
+  const totalDays = daysBetween(initiated, lastAct);
+  const progressEstimate = isCompleted ? 100 : Math.min(90, Math.max(5, Math.round(totalDays / 10)));
+  const velocityScore = isStalled ? 20 : Math.min(100, 100 - Math.min(80, daysInStage));
+  const estimatedDays = isCompleted ? 0 : Math.max(30, daysInStage * 2);
+  return { daysInStage, isCompleted, isStalled, totalDays, progressEstimate, velocityScore, estimatedDays };
+}
+
+/**
+ * Transform a real EP API Procedure into a PipelineItem.
+ * All data is derived from the real procedure fields.
+ */
+function procedureToPipelineItem(proc: Procedure): PipelineItem {
+  const m = computePipelineMetrics(proc);
+  let currentStage = 'Unknown';
+  if (proc.stage !== '') {
+    currentStage = proc.stage;
+  } else if (proc.status !== '') {
+    currentStage = proc.status;
+  }
+  const committee = proc.responsibleCommittee !== '' ? proc.responsibleCommittee : 'Unknown';
+  const stageLabel = proc.stage !== '' ? proc.stage : 'processing';
+  const nextAction = m.isCompleted ? 'COMPLETED' : `Continue ${stageLabel}`;
 
   return {
-    procedureId: `PROC-${sessionId}-${String(itemIndex)}`,
-    title: agendaItem,
-    type: getProcedureType(itemIndex),
+    procedureId: proc.id,
+    title: proc.title,
+    type: proc.type,
     currentStage,
-    committee: itemIndex % 2 === 0 ? 'ENVI' : 'AGRI',
-    daysInCurrentStage: daysInStage,
-    isStalled,
-    nextExpectedAction: getNextAction(isCompleted, stageIndex),
+    committee,
+    daysInCurrentStage: m.daysInStage,
+    isStalled: m.isStalled,
+    nextExpectedAction: nextAction,
     computedAttributes: {
-      progressPercentage,
-      velocityScore,
-      complexityIndicator: classifyComplexity(daysInStage),
-      estimatedCompletionDays: estimatedDays,
-      bottleneckRisk: classifyBottleneckRisk(isStalled, daysInStage)
-    }
+      progressPercentage: m.progressEstimate,
+      velocityScore: m.velocityScore,
+      complexityIndicator: classifyComplexity(m.daysInStage),
+      estimatedCompletionDays: m.estimatedDays,
+      bottleneckRisk: classifyBottleneckRisk(m.isStalled, m.daysInStage),
+    },
   };
 }
 
-/**
- * Check if item matches status filter
- */
+/** Check if item matches status filter */
 function matchesStatusFilter(item: PipelineItem, status: string): boolean {
   if (status === 'ALL') return true;
-  if (status === 'ACTIVE') return !item.isStalled && item.currentStage !== 'ADOPTED';
+  if (status === 'ACTIVE') return !item.isStalled && item.computedAttributes.progressPercentage < 100;
   if (status === 'STALLED') return item.isStalled;
-  if (status === 'COMPLETED') return item.currentStage === 'ADOPTED';
+  if (status === 'COMPLETED') return item.computedAttributes.progressPercentage >= 100;
   return true;
 }
 
-/**
- * Check if item matches committee filter
- */
+/** Check if item matches committee filter */
 function matchesCommitteeFilter(item: PipelineItem, committee: string | undefined): boolean {
   if (committee === undefined) return true;
   return item.committee === committee;
 }
 
-/**
- * Generate pipeline items from session data
- */
-function generatePipelineItems(
-  sessionData: { data: { id: string; agendaItems: string[] }[] },
-  committee: string | undefined,
-  status: string
-): PipelineItem[] {
-  const items: PipelineItem[] = [];
-  for (const session of sessionData.data) {
-    const maxItems = Math.min(session.agendaItems.length, 3);
-    for (let i = 0; i < maxItems; i++) {
-      const agendaItem = session.agendaItems[i] ?? 'Unknown procedure';
-      const item = createPipelineItem(session.id, i, agendaItem);
-      if (matchesStatusFilter(item, status) && matchesCommitteeFilter(item, committee)) {
-        items.push(item);
-      }
-    }
-  }
-  return items;
-}
-
-/**
- * Detect bottlenecks from stalled pipeline items
- */
+/** Detect bottlenecks from stalled pipeline items */
 function detectBottlenecks(pipeline: PipelineItem[]): BottleneckInfo[] {
   const stageCounts: Record<string, { count: number; totalDays: number }> = {};
   for (const item of pipeline) {
@@ -219,49 +204,26 @@ function detectBottlenecks(pipeline: PipelineItem[]): BottleneckInfo[] {
       stage,
       procedureCount: data.count,
       avgDaysStuck: Math.round(data.totalDays / data.count),
-      severity: classifyBottleneckSeverity(data.count)
+      severity: classifyBottleneckSeverity(data.count),
     }))
     .sort((a, b) => b.procedureCount - a.procedureCount);
 }
 
-/**
- * Compute pipeline summary statistics
- */
+/** Compute pipeline summary statistics */
 function computePipelineSummary(pipeline: PipelineItem[]): {
-  activeCount: number;
-  stalledCount: number;
-  completedCount: number;
-  avgDays: number;
+  activeCount: number; stalledCount: number; completedCount: number; avgDays: number;
 } {
-  const activeCount = pipeline.filter(p => !p.isStalled && p.currentStage !== 'ADOPTED').length;
+  const activeCount = pipeline.filter(p => !p.isStalled && p.computedAttributes.progressPercentage < 100).length;
   const stalledCount = pipeline.filter(p => p.isStalled).length;
-  const completedCount = pipeline.filter(p => p.currentStage === 'ADOPTED').length;
+  const completedCount = pipeline.filter(p => p.computedAttributes.progressPercentage >= 100).length;
   const totalDays = pipeline.reduce((sum, p) => sum + p.daysInCurrentStage, 0);
   const avgDays = pipeline.length > 0 ? Math.round(totalDays / pipeline.length) : 0;
   return { activeCount, stalledCount, completedCount, avgDays };
 }
 
-/**
- * Build session query params excluding undefined values
- */
-function buildSessionParams(dateFrom: string | undefined, dateTo: string | undefined, limit: number): {
-  dateFrom?: string;
-  dateTo?: string;
-  limit?: number;
-} {
-  const result: { dateFrom?: string; dateTo?: string; limit?: number } = { limit };
-  if (dateFrom !== undefined) result.dateFrom = dateFrom;
-  if (dateTo !== undefined) result.dateTo = dateTo;
-  return result;
-}
-
-/**
- * Compute pipeline health metrics
- */
-function computeHealthMetrics(pipeline: PipelineItem[], summary: { activeCount: number; stalledCount: number; completedCount: number; avgDays: number }): {
-  healthScore: number;
-  throughputRate: number;
-  stalledRate: number;
+/** Compute pipeline health metrics */
+function computeHealthMetrics(pipeline: PipelineItem[], summary: ReturnType<typeof computePipelineSummary>): {
+  healthScore: number; throughputRate: number; stalledRate: number;
 } {
   const stalledRate = pipeline.length > 0 ? summary.stalledCount / pipeline.length : 0;
   const healthScore = Math.round((1 - stalledRate) * 100 * 100) / 100;
@@ -272,7 +234,12 @@ function computeHealthMetrics(pipeline: PipelineItem[], summary: { activeCount: 
 }
 
 /**
- * Monitor legislative pipeline tool handler
+ * Monitor legislative pipeline tool handler.
+ * 
+ * Fetches real procedures from the EP API and computes pipeline
+ * health metrics. All procedure data comes from the API—computed
+ * attributes (health score, velocity, bottleneck risk) are derived
+ * from real dates and stages.
  */
 export async function handleMonitorLegislativePipeline(
   args: unknown
@@ -280,10 +247,23 @@ export async function handleMonitorLegislativePipeline(
   const params = MonitorLegislativePipelineSchema.parse(args);
 
   try {
-    const sessionParams = buildSessionParams(params.dateFrom, params.dateTo, params.limit);
-    const sessions = await epClient.getPlenarySessions(sessionParams);
+    const procedures = await epClient.getProcedures({ limit: params.limit });
 
-    const allItems = generatePipelineItems(sessions, params.committee, params.status);
+    const dateFrom = params.dateFrom;
+    const dateTo = params.dateTo;
+    const filteredProcs = procedures.data.filter(proc => {
+      const lastActivity = proc.dateLastActivity !== '' ? proc.dateLastActivity : proc.dateInitiated;
+      const initiated = proc.dateInitiated !== '' ? proc.dateInitiated : undefined;
+      if (dateFrom !== undefined && lastActivity !== '' && lastActivity < dateFrom) return false;
+      if (dateTo !== undefined && initiated !== undefined && initiated > dateTo) return false;
+      return true;
+    });
+
+    const allItems = filteredProcs
+      .map(proc => procedureToPipelineItem(proc))
+      .filter(item => matchesStatusFilter(item, params.status))
+      .filter(item => matchesCommitteeFilter(item, params.committee));
+
     const pipeline = allItems.slice(0, params.limit);
     const summary = computePipelineSummary(pipeline);
     const bottlenecks = detectBottlenecks(pipeline);
@@ -298,7 +278,7 @@ export async function handleMonitorLegislativePipeline(
         activeCount: summary.activeCount,
         stalledCount: summary.stalledCount,
         completedCount: summary.completedCount,
-        avgDaysInPipeline: summary.avgDays
+        avgDaysInPipeline: summary.avgDays,
       },
       bottlenecks,
       computedAttributes: {
@@ -307,10 +287,14 @@ export async function handleMonitorLegislativePipeline(
         bottleneckIndex: Math.round(health.stalledRate * summary.avgDays * 100) / 100,
         stalledProcedureRate: Math.round(health.stalledRate * 100 * 100) / 100,
         estimatedClearanceTime: summary.avgDays * Math.max(1, summary.activeCount),
-        legislativeMomentum: classifyMomentum(health.healthScore)
+        legislativeMomentum: classifyMomentum(health.healthScore),
       },
       confidenceLevel: pipeline.length >= 10 ? 'MEDIUM' : 'LOW',
-      methodology: 'Stage-based pipeline analysis with bottleneck detection and velocity scoring'
+      methodology: 'Real-time pipeline analysis using EP API /procedures endpoint. '
+        + 'All procedure data (title, type, stage, status, dates, committee) sourced from '
+        + 'European Parliament open data. Computed attributes (health score, velocity, '
+        + 'bottleneck risk, momentum) are derived from real procedure dates and stages. '
+        + 'Data source: https://data.europarl.europa.eu/api/v2/procedures',
     };
 
     return { content: [{ type: 'text', text: JSON.stringify(analysis, null, 2) }] };

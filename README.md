@@ -827,7 +827,7 @@ npm run test:coverage
 npm run test:watch
 ```
 
-**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, tools that are wired to the live European Parliament API execute against the real endpoints, while tools that still depend on a mocked `epClient` run contract tests against their mock implementations. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](INTEGRATION_TESTING.md) for the complete guide.
+**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, all 39 MCP tools are tested against the real European Parliament API endpoints. All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](INTEGRATION_TESTING.md) for the complete guide.
 
 ### Code Quality
 

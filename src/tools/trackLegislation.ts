@@ -7,4 +7,4 @@
  */
 
 /** Re-export legislation tracking handler and metadata from modular implementation */
-export { handleTrackLegislation, trackLegislationToolMetadata } from './trackLegislation/index.js';
+export { handleTrackLegislation, trackLegislationToolMetadata, toProcessId } from './trackLegislation/index.js';

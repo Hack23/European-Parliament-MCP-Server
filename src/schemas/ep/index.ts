@@ -1,17 +1,21 @@
 /**
- * Zod validation schemas for European Parliament data.
+ * European Parliament Zod validation schemas – barrel re-export.
  *
- * Barrel re-export from domain-specific modules organized by bounded context.
+ * Organized by bounded context:
+ * - **common** – shared primitives (CountryCode, DateString, PaginatedResponse)
+ * - **mep** – MEP input/output schemas
+ * - **plenary** – plenary session and voting record schemas
+ * - **committee** – committee schemas
+ * - **document** – legislative document schemas
+ * - **question** – parliamentary question schemas
+ * - **analysis** – OSINT intelligence analysis tool schemas
+ * - **activities** – speeches, procedures, events, declarations
  *
- * @module schemas/europeanParliament
- * @see https://data.europarl.europa.eu/api/v2/
+ * @module schemas/ep
  */
 
+export { CountryCodeSchema, DateStringSchema, PaginatedResponseSchema } from './common.js';
 export {
-  // Common primitives
-  PaginatedResponseSchema,
-
-  // MEP schemas
   GetMEPsSchema,
   GetMEPDetailsSchema,
   MEPSchema,
@@ -20,18 +24,15 @@ export {
   GetIncomingMEPsSchema,
   GetOutgoingMEPsSchema,
   GetHomonymMEPsSchema,
-
-  // Plenary schemas
+} from './mep.js';
+export {
   GetPlenarySessionsSchema,
   PlenarySessionSchema,
   GetVotingRecordsSchema,
   VotingRecordSchema,
-
-  // Committee schemas
-  GetCommitteeInfoSchema,
-  CommitteeSchema,
-
-  // Document schemas
+} from './plenary.js';
+export { GetCommitteeInfoSchema, CommitteeSchema } from './committee.js';
+export {
   SearchDocumentsSchema,
   LegislativeDocumentSchema,
   GetPlenaryDocumentsSchema,
@@ -39,12 +40,9 @@ export {
   GetPlenarySessionDocumentsSchema,
   GetPlenarySessionDocumentItemsSchema,
   GetExternalDocumentsSchema,
-
-  // Question schemas
-  GetParliamentaryQuestionsSchema,
-  ParliamentaryQuestionSchema,
-
-  // Analysis/OSINT schemas
+} from './document.js';
+export { GetParliamentaryQuestionsSchema, ParliamentaryQuestionSchema } from './question.js';
+export {
   AnalyzeVotingPatternsSchema,
   TrackLegislationSchema,
   GenerateReportSchema,
@@ -54,8 +52,8 @@ export {
   ComparePoliticalGroupsSchema,
   AnalyzeLegislativeEffectivenessSchema,
   MonitorLegislativePipelineSchema,
-
-  // Activity schemas
+} from './analysis.js';
+export {
   GetSpeechesSchema,
   GetProceduresSchema,
   GetAdoptedTextsSchema,
@@ -66,4 +64,4 @@ export {
   GetControlledVocabulariesSchema,
   GetMeetingForeseenActivitiesSchema,
   GetProcedureEventsSchema,
-} from './ep/index.js';
+} from './activities.js';
