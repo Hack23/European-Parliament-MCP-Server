@@ -24,9 +24,8 @@ describe('Server Constants', () => {
 
   it('should have version matching package.json', async () => {
     const fs = await import('fs');
-    const path = await import('path');
-    const pkgPath = path.resolve(process.cwd(), 'package.json');
-    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+    const pkgPath = new URL('../package.json', import.meta.url).pathname;
+    const pkg = JSON.parse(await fs.promises.readFile(pkgPath, 'utf-8'));
     expect(SERVER_VERSION).toBe(pkg.version);
   });
 });
