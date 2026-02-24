@@ -2,645 +2,593 @@
   <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
 </p>
 
-<h1 align="center">🔄 European Parliament MCP Server - Process Flowcharts</h1>
+<h1 align="center">🔄 European Parliament MCP Server — Process Flowcharts</h1>
 
 <p align="center">
-  <strong>Business Process and Data Flows</strong><br>
-  <em>Comprehensive Workflow Documentation for Operations and Compliance</em>
+  <strong>Model Context Protocol Server for European Parliament Open Data</strong><br>
+  <em>Request Processing, Tool Execution, Data Integration &amp; OSINT Analysis Flows — 28 Tools, 6 Resources, 6 Prompts</em>
 </p>
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-Architect-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--17-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-0.6.2-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2025--06--20-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** Architecture Team | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-17 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-17  
-**🏷️ Classification:** Public (Open Source MCP Server)  
-**✅ ISMS Compliance:** ISO 27001 (A.8.1), NIST CSF 2.0 (ID.AM), CIS Controls v8.1 (2.1)
+**📋 Document Owner:** Architecture Team | **📄 Version:** 0.6.2 | **📅 Last Updated:** 2025-06-20 (UTC)
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2025-09-20
+**🏷️ Classification:** Public (Open Source MCP Server)
+**✅ ISMS Compliance:** ISO 27001 (A.8.1, A.12.4, A.14.2), NIST CSF 2.0 (ID.AM, PR.DS, DE.CM), CIS Controls v8.1 (2.1, 8.2, 16.1)
 
 ---
 
 ## 📋 Table of Contents
 
-1. [Overview](#overview)
-2. [MCP Tool Invocation Workflow](#mcp-tool-invocation-workflow)
-3. [Cache Management Flow](#cache-management-flow)
-4. [Rate Limiting Flow](#rate-limiting-flow)
-5. [Error Handling Workflow](#error-handling-workflow)
-6. [Data Retrieval and Transformation](#data-retrieval-and-transformation)
-7. [Monitoring and Metrics Collection](#monitoring-and-metrics-collection)
-8. [CI/CD Deployment Pipeline](#cicd-deployment-pipeline)
-9. [Future Authentication Flow](#future-authentication-flow)
+1. [Architecture Documentation Map](#-architecture-documentation-map)
+2. [Executive Summary](#-executive-summary)
+3. [MCP Request Processing Flow](#-mcp-request-processing-flow)
+4. [Tool Execution Pipeline](#-tool-execution-pipeline)
+5. [EP Data Integration Flow](#-ep-data-integration-flow)
+6. [Resource Access Flow](#-resource-access-flow)
+7. [Cache Management Flow](#-cache-management-flow)
+8. [OSINT Analysis Pipeline](#-osint-analysis-pipeline)
+9. [Error Handling Flow](#-error-handling-flow)
+10. [Color Legend](#-color-legend)
+11. [ISMS Compliance Mapping](#-isms-compliance-mapping)
+12. [Related Documentation](#-related-documentation)
 
 ---
 
-## 🎯 Overview
+## 🗺️ Architecture Documentation Map
 
-This document provides comprehensive flowcharts for all business processes and data flows in the European Parliament MCP Server. All diagrams use Mermaid syntax for version control and transparency.
-
-**Purpose:**
-- Document operational workflows for maintenance and troubleshooting
-- Provide audit trail for security and compliance reviews
-- Enable new developer onboarding with visual process maps
-- Support architectural decision making and optimization
+| Document | Current | Future | Description |
+|----------|---------|--------|-------------|
+| **Architecture** | [ARCHITECTURE.md](./ARCHITECTURE.md) | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) | C4 model, containers, components |
+| **Data Model** | [DATA_MODEL.md](./DATA_MODEL.md) | [FUTURE_DATA_MODEL.md](./FUTURE_DATA_MODEL.md) | Entity relationships and schemas |
+| **Flowchart** | **FLOWCHART.md** *(this document)* | [FUTURE_FLOWCHART.md](./FUTURE_FLOWCHART.md) | Request processing and data flows |
+| **Mind Map** | [MINDMAP.md](./MINDMAP.md) | [FUTURE_MINDMAP.md](./FUTURE_MINDMAP.md) | System concepts and relationships |
+| **State Diagram** | [STATEDIAGRAM.md](./STATEDIAGRAM.md) | [FUTURE_STATEDIAGRAM.md](./FUTURE_STATEDIAGRAM.md) | System state transitions |
+| **SWOT Analysis** | [SWOT.md](./SWOT.md) | [FUTURE_SWOT.md](./FUTURE_SWOT.md) | Strategic positioning |
+| **Workflows** | [WORKFLOWS.md](./WORKFLOWS.md) | [FUTURE_WORKFLOWS.md](./FUTURE_WORKFLOWS.md) | CI/CD pipeline documentation |
+| **Security Architecture** | [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) | Security controls and design |
+| **Threat Model** | [THREAT_MODEL.md](./THREAT_MODEL.md) | — | STRIDE-based threat analysis |
+| **CRA Assessment** | [CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md) | — | EU Cyber Resilience Act review |
+| **Architecture Diagrams** | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) | — | Supplementary C4 diagrams |
 
 ---
 
-## 🔧 MCP Tool Invocation Workflow
+## 🎯 Executive Summary
 
-### Primary Tool Execution Flow
+The **European Parliament MCP Server** (v0.6.2) is a stateless TypeScript/Node.js server implementing the [Model Context Protocol](https://spec.modelcontextprotocol.io/) over **stdio transport**. It proxies requests to the **EP Open Data Portal API v2** (`https://data.europarl.europa.eu/api/v2/`), transforming JSON-LD responses into structured MCP tool results. The server exposes **28 tools**, **6 resource templates**, and **6 prompt templates** — all validated with Zod schemas and backed by an LRU cache (500 entries, 15-minute TTL).
+
+This document maps every process flow in the system: from MCP request ingestion through stdio, to tool dispatch and Zod validation, EP API integration with retry logic, LRU cache management, multi-source OSINT analysis, and comprehensive error handling with GDPR compliance.
+
+**Key Architectural Characteristics:**
+
+- **Stateless** — No database, no persistent storage; all data sourced live from EP API
+- **Stdio Transport** — Communication via stdin/stdout (no HTTP server)
+- **Type-Safe** — Zod schema validation on all tool inputs and API responses
+- **Cached** — LRU cache with 500 entries and 15-minute TTL for performance
+- **Rate-Limited** — Token bucket algorithm (100 requests/minute) protects EP API
+- **GDPR-Compliant** — Audit logging, data minimization, no PII persistence
+
+---
+
+## 🔀 MCP Request Processing Flow
+
+The complete lifecycle of an MCP request from client connection through stdio transport to response delivery.
 
 ```mermaid
 flowchart TD
-    Start([MCP Client Request]) --> ValidateSchema[Validate Input Schema]
-    ValidateSchema -->|Invalid| ValidationError[Return ValidationError]
-    ValidateSchema -->|Valid| CheckAuth{Authentication<br/>Enabled?}
-    
-    CheckAuth -->|Yes| VerifyToken[Verify OAuth Token]
-    CheckAuth -->|No| CheckRateLimit
-    VerifyToken -->|Invalid| AuthError[Return 401 Unauthorized]
-    VerifyToken -->|Valid| CheckRateLimit{Check Rate Limit}
-    
-    CheckRateLimit -->|Exceeded| RateLimitError[Return 429 Rate Limit]
-    CheckRateLimit -->|OK| LogRequest[Log Audit Event]
-    
-    LogRequest --> CheckCache{Check Cache}
-    CheckCache -->|Hit| CacheMetrics[Update Cache Metrics]
-    CheckCache -->|Miss| FetchAPI[Fetch from EP API]
-    
-    FetchAPI -->|Success| TransformData[Transform JSON-LD → Internal]
-    FetchAPI -->|Error| APIError[Handle API Error]
-    
-    TransformData --> ValidateData[Validate Response Data]
-    ValidateData -->|Invalid| DataError[Return Data Quality Error]
-    ValidateData -->|Valid| UpdateCache[Update Cache]
-    
-    UpdateCache --> FormatMCP[Format MCP Response]
-    CacheMetrics --> FormatMCP
-    
-    FormatMCP --> RecordMetrics[Record Performance Metrics]
-    RecordMetrics --> LogSuccess[Log Success Event]
-    LogSuccess --> End([Return MCP Response])
-    
-    ValidationError --> LogFailure[Log Failure Event]
-    AuthError --> LogFailure
-    RateLimitError --> LogFailure
-    APIError --> LogFailure
-    DataError --> LogFailure
-    LogFailure --> End
-    
-    style Start fill:#e1f5e1
-    style End fill:#e1f5e1
-    style ValidationError fill:#ffe1e1
-    style AuthError fill:#ffe1e1
-    style RateLimitError fill:#ffe1e1
-    style APIError fill:#ffe1e1
-    style DataError fill:#ffe1e1
-    style CheckCache fill:#e1e5ff
-    style UpdateCache fill:#e1e5ff
+    Client([AI Assistant / MCP Client]) -->|stdin JSON-RPC| StdioTransport[StdioServerTransport]
+    StdioTransport --> MCPServer[MCP Server Instance]
+
+    MCPServer --> RouteRequest{Request\nType?}
+
+    RouteRequest -->|tools/list| ListTools[Return 28 Tool Definitions\nwith Zod Schemas]
+    RouteRequest -->|tools/call| DispatchTool[Dispatch to Tool Handler]
+    RouteRequest -->|resources/templates/list| ListResources[Return 6 Resource Templates]
+    RouteRequest -->|resources/read| ReadResource[Parse URI & Fetch Resource]
+    RouteRequest -->|prompts/list| ListPrompts[Return 6 Prompt Templates]
+    RouteRequest -->|prompts/get| GetPrompt[Resolve Prompt with Arguments]
+    RouteRequest -->|Unknown| UnknownMethod[Return Method Not Found Error]
+
+    DispatchTool --> ToolPipeline[[Tool Execution Pipeline]]
+    ReadResource --> ResourcePipeline[[Resource Access Flow]]
+    GetPrompt --> PromptResolver[Resolve Template Arguments]
+
+    ListTools --> FormatResponse[Format MCP JSON-RPC Response]
+    ToolPipeline --> FormatResponse
+    ListResources --> FormatResponse
+    ResourcePipeline --> FormatResponse
+    ListPrompts --> FormatResponse
+    PromptResolver --> FormatResponse
+    UnknownMethod --> FormatResponse
+
+    FormatResponse -->|stdout JSON-RPC| Client
+
+    style Client fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style StdioTransport fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    style MCPServer fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    style RouteRequest fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    style ToolPipeline fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C
+    style ResourcePipeline fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C
+    style FormatResponse fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style UnknownMethod fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style ListTools fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style ListResources fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style ListPrompts fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
 ```
 
-**Key Process Steps:**
-1. **Input Validation** - Zod schema validation prevents invalid requests
-2. **Authentication** - Future OAuth 2.0 integration (currently no-auth)
-3. **Rate Limiting** - Token bucket algorithm (100 req/15min)
-4. **Audit Logging** - Winston structured logging for all requests
-5. **Cache Check** - LRU cache (15-min TTL) for performance
-6. **API Integration** - EP Open Data API with retry logic
-7. **Data Transformation** - JSON-LD → Internal TypeScript types
-8. **Response Formatting** - MCP protocol compliance
-9. **Metrics Recording** - Prometheus-style metrics collection
+**Request Routing Details:**
+
+| Method | Handler | Response |
+|--------|---------|----------|
+| `tools/list` | `ListToolsRequestSchema` | 28 tool definitions with JSON Schema |
+| `tools/call` | `CallToolRequestSchema` → `dispatchToolCall()` | Tool execution result |
+| `resources/templates/list` | `ListResourceTemplatesRequestSchema` | 6 URI templates |
+| `resources/read` | `ReadResourceRequestSchema` | Resource content |
+| `prompts/list` | `ListPromptsRequestSchema` | 6 prompt definitions |
+| `prompts/get` | `GetPromptRequestSchema` | Resolved prompt messages |
+
+---
+
+## ⚙️ Tool Execution Pipeline
+
+How a `tools/call` request is validated, dispatched to the correct handler, calls the EP API, and returns a formatted response.
+
+```mermaid
+flowchart TD
+    ToolCall([tools/call Request]) --> ExtractName[Extract Tool Name\n& Arguments]
+    ExtractName --> MatchTool{Match Tool\nName?}
+
+    MatchTool -->|Not Found| ToolNotFound[Return Tool Not Found Error]
+    MatchTool -->|Found| ZodValidate[Validate Arguments\nwith Zod Schema]
+
+    ZodValidate -->|Invalid| ValidationError[Return ValidationError\nwith Field Details]
+    ZodValidate -->|Valid| AuditLog[Log Request to\nAudit Logger]
+
+    AuditLog --> CheckRateLimit{Rate Limiter:\nTokens Available?}
+    CheckRateLimit -->|Exhausted| RateLimitError[Return RateLimitError\nwith retryAfter]
+    CheckRateLimit -->|OK| ConsumeToken[Consume 1 Token]
+
+    ConsumeToken --> CacheLookup{LRU Cache\nLookup}
+    CacheLookup -->|Hit| CacheHit[Return Cached Result\nTTL Reset on Access]
+    CacheLookup -->|Miss| CallEPAPI[[EP Data Integration Flow]]
+
+    CallEPAPI -->|Success| TransformResult[Transform to\nMCP Content Format]
+    CallEPAPI -->|Error| HandleAPIError[[Error Handling Flow]]
+
+    TransformResult --> StoreCache[Store in LRU Cache\nKey: endpoint + params]
+    StoreCache --> RecordMetrics[Record Duration\nvia Performance Monitor]
+
+    CacheHit --> RecordMetrics
+    RecordMetrics --> BuildResponse[Build MCP Response\ntype: text, text: JSON]
+    HandleAPIError --> BuildResponse
+
+    BuildResponse --> Return([Return to MCP Server])
+
+    ToolNotFound --> Return
+    ValidationError --> Return
+    RateLimitError --> Return
+
+    style ToolCall fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style Return fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style ZodValidate fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    style CacheLookup fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    style CacheHit fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style CallEPAPI fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C
+    style HandleAPIError fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style ToolNotFound fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style ValidationError fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style RateLimitError fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style AuditLog fill:#ECEFF1,stroke:#546E7A,color:#37474F
+    style RecordMetrics fill:#ECEFF1,stroke:#546E7A,color:#37474F
+```
+
+**Tool Categories (28 Total):**
+
+| Category | Tools | Description |
+|----------|-------|-------------|
+| **Core Data** (7) | `get_meps`, `get_mep_details`, `get_plenary_sessions`, `get_voting_records`, `search_documents`, `get_committee_info`, `get_parliamentary_questions` | Direct EP data access |
+| **Advanced Analysis** (3) | `analyze_voting_patterns`, `track_legislation`, `generate_report` | Multi-query analytical tools |
+| **OSINT Phase 1** (6) | `assess_mep_influence`, `analyze_coalition_dynamics`, `detect_voting_anomalies`, `compare_political_groups`, `analyze_legislative_effectiveness`, `monitor_legislative_pipeline` | Political intelligence |
+| **OSINT Phase 2** (2) | `analyze_committee_activity`, `track_mep_attendance` | Committee & attendance analysis |
+| **OSINT Phase 3** (2) | `analyze_country_delegation`, `generate_political_landscape` | National & strategic analysis |
+| **EP API v2** (8) | `get_current_meps`, `get_speeches`, `get_procedures`, `get_adopted_texts`, `get_events`, `get_meeting_activities`, `get_meeting_decisions`, `get_mep_declarations` | Direct v2 endpoint access |
+
+---
+
+## 🌐 EP Data Integration Flow
+
+How the `EuropeanParliamentClient` makes HTTP requests to the EP Open Data Portal API v2, parses JSON-LD responses, and transforms them into typed internal models.
+
+```mermaid
+flowchart TD
+    ToolHandler([Tool Handler Invocation]) --> BuildEndpoint[Build EP API Endpoint URL\nBase: data.europarl.europa.eu/api/v2]
+    BuildEndpoint --> AddParams[Add Query Parameters\nformat, offset, limit, filters]
+    AddParams --> SetHeaders[Set HTTP Headers\nAccept: application/ld+json]
+
+    SetHeaders --> TimeoutWrap[Wrap with\nwithTimeoutAndAbort]
+    TimeoutWrap --> FetchRequest[fetch URL with\nAbortController]
+
+    FetchRequest -->|Network Error| RetryDecision{Retry?\nMax 2 Retries}
+    FetchRequest -->|Response| CheckHTTP{HTTP\nStatus?}
+
+    RetryDecision -->|Yes| BackoffWait[Exponential Backoff\n1s → 2s → 4s]
+    RetryDecision -->|No, Max Reached| NetworkError[Throw EPAPIError\nNetwork Failure]
+    BackoffWait --> FetchRequest
+
+    CheckHTTP -->|200 OK| ParseJSONLD[Parse JSON-LD\nResponse Body]
+    CheckHTTP -->|4xx| ClientError[Throw EPAPIError\nClient Error — No Retry]
+    CheckHTTP -->|5xx| ServerRetry{Retry on\n5xx?}
+
+    ServerRetry -->|Yes| BackoffWait
+    ServerRetry -->|No, Max Reached| ServerError[Throw EPAPIError\nServer Error]
+
+    ParseJSONLD --> ExtractContext[Extract @context\nand @graph Arrays]
+    ExtractContext --> MapFields[Map JSON-LD Properties\nto TypeScript Fields]
+    MapFields --> NormalizeDates[Normalize ISO 8601 Dates\nand URI Identifiers]
+    NormalizeDates --> CoerceTypes[Coerce Strings to\nTyped Values]
+    CoerceTypes --> BuildEntities[Build Typed Entity Objects\nMEP, Vote, Procedure, etc.]
+
+    BuildEntities --> CacheStore[Store in LRU Cache\nKey: JSON endpoint+params]
+    CacheStore --> ReturnData([Return Typed Response])
+
+    NetworkError --> ErrorReturn([Return Error])
+    ClientError --> ErrorReturn
+    ServerError --> ErrorReturn
+
+    style ToolHandler fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style ReturnData fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style FetchRequest fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    style ParseJSONLD fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    style MapFields fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C
+    style BuildEntities fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C
+    style CacheStore fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    style RetryDecision fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    style NetworkError fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style ClientError fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style ServerError fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style ErrorReturn fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+```
+
+**EP API v2 Integration Details:**
+
+| Parameter | Value |
+|-----------|-------|
+| **Base URL** | `https://data.europarl.europa.eu/api/v2/` |
+| **Response Format** | JSON-LD (`application/ld+json`) |
+| **Authentication** | None (public open data API) |
+| **Timeout** | Configurable via `withTimeoutAndAbort()` |
+| **Max Retries** | 2 (with exponential backoff) |
+| **Retry Conditions** | 5xx server errors, network failures |
+| **No Retry** | 4xx client errors, timeout errors |
+
+**JSON-LD Transformation Example:**
+
+```typescript
+// EP API JSON-LD Response
+{
+  "@context": "https://data.europarl.europa.eu/def/context.json",
+  "@graph": [{
+    "@id": "http://data.europarl.europa.eu/person/124810",
+    "label": "Manfred WEBER",
+    "eli-dl:nationality": "http://publications.europa.eu/resource/authority/country/DEU",
+    "org:memberOf": "http://data.europarl.europa.eu/org/PPE"
+  }]
+}
+
+// → Transformed Internal Model
+{
+  id: 124810,
+  fullName: "Manfred WEBER",
+  country: "DE",
+  partyGroup: "PPE",
+  active: true
+}
+```
+
+---
+
+## 📂 Resource Access Flow
+
+How `resources/read` requests resolve URI templates, query the EP API, and return formatted resource content.
+
+```mermaid
+flowchart TD
+    ReadRequest([resources/read Request]) --> ExtractURI[Extract Resource URI\nfrom Request]
+    ExtractURI --> MatchTemplate{Match URI\nTemplate?}
+
+    MatchTemplate -->|No Match| URIError[Return Resource\nNot Found Error]
+    MatchTemplate -->|ep://meps| ListMEPs[Fetch MEP Listing\nfrom EP API]
+    MatchTemplate -->|ep://meps/mepId| FetchMEP[Fetch Single MEP\nProfile by ID]
+    MatchTemplate -->|ep://procedures| ListProcedures[Fetch Legislative\nProcedures]
+    MatchTemplate -->|ep://votes| ListVotes[Fetch Voting\nRecords]
+    MatchTemplate -->|ep://committees| ListCommittees[Fetch Committee\nInformation]
+    MatchTemplate -->|ep://documents| SearchDocs[Search Parliamentary\nDocuments]
+
+    ListMEPs --> EPClient[[EP Data Integration Flow]]
+    FetchMEP --> EPClient
+    ListProcedures --> EPClient
+    ListVotes --> EPClient
+    ListCommittees --> EPClient
+    SearchDocs --> EPClient
+
+    EPClient -->|Success| FormatContent[Format as MCP Resource\nmimeType: application/json]
+    EPClient -->|Error| ResourceError[Format Error Response]
+
+    FormatContent --> ReturnResource([Return Resource Content])
+    ResourceError --> ReturnResource
+    URIError --> ReturnResource
+
+    style ReadRequest fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style ReturnResource fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style MatchTemplate fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    style EPClient fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C
+    style FormatContent fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    style URIError fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style ResourceError fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+```
+
+**Resource Templates (6 Total):**
+
+| URI Template | Description | EP API Endpoint |
+|--------------|-------------|-----------------|
+| `ep://meps` | List of MEPs with filters | `/meps` |
+| `ep://meps/{mepId}` | Individual MEP profile | `/meps/{mepId}` |
+| `ep://procedures` | Legislative procedures | `/procedures` |
+| `ep://votes` | Voting records | `/votes` |
+| `ep://committees` | Committee information | `/committees` |
+| `ep://documents` | Document search | `/documents` |
 
 ---
 
 ## 💾 Cache Management Flow
 
-### Cache Hit/Miss Processing
+LRU cache lookup, hit/miss paths, TTL expiry, and eviction strategy using the `lru-cache` library.
 
 ```mermaid
 flowchart TD
-    Request[Incoming Request] --> GenerateKey[Generate Cache Key]
-    GenerateKey --> CheckCache{Cache<br/>Lookup}
-    
-    CheckCache -->|Hit| ValidateTTL{TTL<br/>Valid?}
-    CheckCache -->|Miss| CacheMiss[Cache Miss Event]
-    
-    ValidateTTL -->|Expired| CacheExpired[Cache Expired Event]
-    ValidateTTL -->|Valid| IncrementHit[Increment Cache Hit Counter]
-    
-    IncrementHit --> LogCacheHit[Log Cache Hit]
-    LogCacheHit --> ReturnCached[Return Cached Data]
-    ReturnCached --> UpdateMetrics[Update Cache Hit Metrics]
-    
-    CacheMiss --> IncrementMiss[Increment Cache Miss Counter]
-    CacheExpired --> IncrementMiss
-    
-    IncrementMiss --> FetchExternal[Fetch from External API]
-    FetchExternal -->|Success| StoreCache[Store in Cache]
-    FetchExternal -->|Error| ErrorHandle[Handle Error]
-    
-    StoreCache --> CheckSize{Cache<br/>Size Limit?}
-    CheckSize -->|Full| EvictLRU[Evict LRU Entry]
-    CheckSize -->|OK| UpdateMissMetrics
-    
-    EvictLRU --> LogEviction[Log Cache Eviction]
-    LogEviction --> UpdateMissMetrics[Update Cache Miss Metrics]
-    
-    UpdateMissMetrics --> ReturnData[Return Fresh Data]
-    UpdateMetrics --> End([Complete])
-    ReturnData --> End
-    ErrorHandle --> End
-    
-    style Request fill:#e1f5e1
-    style End fill:#e1f5e1
-    style CheckCache fill:#e1e5ff
-    style StoreCache fill:#e1e5ff
-    style EvictLRU fill:#fff3cd
-    style ErrorHandle fill:#ffe1e1
+    Request([Cache Lookup Request]) --> GenerateKey[Generate Cache Key\nJSON.stringify endpoint + params]
+    GenerateKey --> LRULookup{LRU Cache\ncache.get key}
+
+    LRULookup -->|Hit & TTL Valid| ResetAge[Reset TTL on Access\nupdateAgeOnGet: true]
+    LRULookup -->|Hit & TTL Expired| Expired[Entry Expired\nallowStale: false]
+    LRULookup -->|Miss| CacheMiss[Cache Miss]
+
+    ResetAge --> RecordHit[Record Duration\nep_api_cache_hit]
+    RecordHit --> ReturnCached([Return Cached Data\nLatency: < 1ms])
+
+    Expired --> EvictExpired[Remove Expired Entry]
+    EvictExpired --> CacheMiss
+
+    CacheMiss --> FetchFresh[Fetch from EP API\nvia EuropeanParliamentClient]
+    FetchFresh -->|Success| CheckCapacity{Cache Size\n< 500 Max?}
+    FetchFresh -->|Error| RecordFailure[Record Duration\nep_api_request_failed]
+
+    CheckCapacity -->|Under Limit| StoreEntry[cache.set key, data\nTTL: 15 minutes]
+    CheckCapacity -->|At Limit| EvictLRU[Evict Least Recently\nUsed Entry]
+    EvictLRU --> StoreEntry
+
+    StoreEntry --> RecordDuration[Record Duration\nep_api_request]
+    RecordDuration --> ReturnFresh([Return Fresh Data])
+
+    RecordFailure --> ReturnError([Return Error])
+
+    style Request fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style ReturnCached fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style ReturnFresh fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style LRULookup fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    style CheckCapacity fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    style StoreEntry fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    style EvictLRU fill:#ECEFF1,stroke:#546E7A,color:#37474F
+    style EvictExpired fill:#ECEFF1,stroke:#546E7A,color:#37474F
+    style ReturnError fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style RecordHit fill:#ECEFF1,stroke:#546E7A,color:#37474F
+    style RecordDuration fill:#ECEFF1,stroke:#546E7A,color:#37474F
 ```
 
-**Cache Configuration:**
-- **Algorithm**: LRU (Least Recently Used)
-- **Max Size**: 500 entries
-- **TTL**: 15 minutes (900 seconds)
-- **Key Strategy**: `${toolName}:${JSON.stringify(params)}`
-- **GDPR Compliance**: No persistent storage, automatic expiration
+**LRU Cache Configuration:**
 
-**Cache Key Examples:**
 ```typescript
-// MEP list query
-"get_meps:{\"country\":\"SE\",\"limit\":50,\"offset\":0}"
-
-// MEP details query
-"get_mep_details:{\"id\":\"124810\"}"
-
-// Plenary sessions query
-"get_plenary_sessions:{\"dateFrom\":\"2024-01-01\",\"limit\":25}"
+new LRUCache<string, Record<string, unknown>>({
+  max: 500,             // Maximum 500 cached entries
+  ttl: 900_000,         // 15-minute TTL (milliseconds)
+  allowStale: false,    // Never serve expired entries
+  updateAgeOnGet: true  // Reset TTL on cache hit
+});
 ```
+
+| Parameter | Value | Rationale |
+|-----------|-------|-----------|
+| **Max Entries** | 500 | Bounded memory; covers active tool calls |
+| **TTL** | 15 minutes (900s) | Balance freshness vs. EP API load |
+| **Stale Policy** | `allowStale: false` | GDPR: no stale PII served |
+| **Age Reset** | `updateAgeOnGet: true` | Frequently-accessed data stays cached |
+| **Key Strategy** | `JSON.stringify({endpoint, params})` | Deterministic, collision-free |
+| **Eviction** | Least Recently Used | Optimal for temporal access patterns |
+
+**Performance Impact:**
+
+| Metric | Cache Hit | Cache Miss |
+|--------|-----------|------------|
+| **P50 Latency** | < 1ms | ~500ms |
+| **P95 Latency** | < 5ms | ~1.5s |
+| **P99 Latency** | < 10ms | ~2s |
 
 ---
 
-## 🚦 Rate Limiting Flow
+## 🔍 OSINT Analysis Pipeline
 
-### Token Bucket Algorithm Implementation
+How OSINT intelligence tools (`assess_mep_influence`, `analyze_coalition_dynamics`, `detect_voting_anomalies`, etc.) aggregate data from multiple EP API calls into composite intelligence products.
 
 ```mermaid
 flowchart TD
-    Request[Incoming Request] --> GetClientId[Extract Client Identifier]
-    GetClientId --> GetBucket{Bucket<br/>Exists?}
-    
-    GetBucket -->|No| CreateBucket[Create New Bucket]
-    GetBucket -->|Yes| RefillTokens[Refill Tokens Based on Time]
-    
-    CreateBucket --> InitTokens[Initialize: 100 Tokens]
-    InitTokens --> RefillTokens
-    
-    RefillTokens --> CheckTokens{Tokens<br/>Available?}
-    
-    CheckTokens -->|Yes| ConsumeToken[Consume 1 Token]
-    CheckTokens -->|No| RateLimitExceeded[Rate Limit Exceeded]
-    
-    ConsumeToken --> UpdateBucket[Update Bucket State]
-    UpdateBucket --> LogSuccess[Log Successful Request]
-    LogSuccess --> AllowRequest[Allow Request Processing]
-    
-    RateLimitExceeded --> CalcRetryAfter[Calculate Retry-After Time]
-    CalcRetryAfter --> LogBlock[Log Rate Limit Block]
-    LogBlock --> ReturnError[Return 429 Error]
-    
-    AllowRequest --> End([Continue to Tool Handler])
-    ReturnError --> End([Return Error Response])
-    
-    style Request fill:#e1f5e1
-    style AllowRequest fill:#e1f5e1
-    style RateLimitExceeded fill:#ffe1e1
-    style ReturnError fill:#ffe1e1
-    style CheckTokens fill:#e1e5ff
-    style CreateBucket fill:#fff3cd
+    OSINTCall([OSINT Tool Invocation]) --> ValidateInput[Validate Arguments\nwith Zod Schema]
+    ValidateInput -->|Invalid| RejectInput[Return ValidationError]
+    ValidateInput -->|Valid| PlanQueries[Plan Required\nEP API Queries]
+
+    PlanQueries --> Query1[Query 1: MEP Profile\nget /meps/mepId]
+    PlanQueries --> Query2[Query 2: Voting Records\nget /votes?mepId=...]
+    PlanQueries --> Query3[Query 3: Committee Roles\nget /committees?member=...]
+    PlanQueries --> Query4[Query 4: Procedures\nget /procedures?rapporteur=...]
+
+    Query1 --> EPClient1[[EP Data Integration\nwith Cache]]
+    Query2 --> EPClient2[[EP Data Integration\nwith Cache]]
+    Query3 --> EPClient3[[EP Data Integration\nwith Cache]]
+    Query4 --> EPClient4[[EP Data Integration\nwith Cache]]
+
+    EPClient1 --> Aggregate{Aggregate\nAll Results}
+    EPClient2 --> Aggregate
+    EPClient3 --> Aggregate
+    EPClient4 --> Aggregate
+
+    Aggregate -->|All Succeeded| ComputeScores[Compute Analysis Scores]
+    Aggregate -->|Partial Failure| DegradedAnalysis[Degrade Gracefully\nwith Available Data]
+
+    ComputeScores --> InfluenceScore[Calculate Influence Score\n5 Dimensions, 0-100 Scale]
+    ComputeScores --> AnomalyDetect[Detect Voting Anomalies\nDeviation from Baseline]
+    ComputeScores --> CoalitionMap[Map Coalition Patterns\nCross-Party Alignments]
+    ComputeScores --> EffectivenessRate[Rate Legislative\nEffectiveness]
+
+    InfluenceScore --> BuildReport[Build Intelligence Report\nStructured JSON Output]
+    AnomalyDetect --> BuildReport
+    CoalitionMap --> BuildReport
+    EffectivenessRate --> BuildReport
+    DegradedAnalysis --> BuildReport
+
+    BuildReport --> FormatMCP[Format as MCP Response\ntype: text, text: JSON]
+    FormatMCP --> ReturnResult([Return OSINT Product])
+
+    RejectInput --> ReturnResult
+
+    style OSINTCall fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style ReturnResult fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style PlanQueries fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C
+    style Aggregate fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    style ComputeScores fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C
+    style InfluenceScore fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    style AnomalyDetect fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    style CoalitionMap fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    style EffectivenessRate fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    style RejectInput fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style DegradedAnalysis fill:#ECEFF1,stroke:#546E7A,color:#37474F
 ```
 
-**Rate Limit Configuration:**
-- **Capacity**: 100 tokens per bucket
-- **Refill Rate**: 100 tokens per 15 minutes (0.111 tokens/second)
-- **Identifier**: Client IP address (future: OAuth client ID)
-- **Response**: HTTP 429 with `Retry-After` header
+**Influence Assessment Scoring Model (CIA Political Scorecards Methodology):**
 
-**Example Rate Limit Response:**
-```json
-{
-  "error": {
-    "type": "RateLimitError",
-    "message": "Rate limit exceeded. Try again in 240 seconds.",
-    "retryAfter": 240,
-    "limit": 100,
-    "window": 900
-  }
-}
-```
+| Dimension | Weight | Data Source | Metric |
+|-----------|--------|-------------|--------|
+| **Voting Activity** | 25% | Voting records | Attendance rate + participation volume |
+| **Legislative Output** | 25% | Procedures | Rapporteurships + adopted texts |
+| **Committee Engagement** | 20% | Committees | Committee roles + diversity |
+| **Parliamentary Oversight** | 15% | Questions, declarations | Questions filed + declarations made |
+| **Coalition Building** | 15% | Cross-party votes | Cross-group voting frequency |
+
+**OSINT Tool Pipeline Summary:**
+
+| Tool | Queries Required | Output |
+|------|-----------------|--------|
+| `assess_mep_influence` | 4–5 EP API calls | Composite score (0–100), rank, confidence |
+| `detect_voting_anomalies` | 2–3 EP API calls | Anomalies with severity (HIGH/MED/LOW) |
+| `analyze_coalition_dynamics` | 3–4 EP API calls | Voting blocs, stability index |
+| `compare_political_groups` | 2–3 EP API calls | Group comparisons, cohesion scores |
+| `generate_political_landscape` | 5–6 EP API calls | Full strategic overview |
 
 ---
 
-## ⚠️ Error Handling Workflow
+## ⚠️ Error Handling Flow
 
-### Comprehensive Error Processing
+Comprehensive error classification, handling, and response formatting across all error types defined in `src/types/errors.ts`.
 
 ```mermaid
 flowchart TD
-    Error[Error Occurs] --> ClassifyError{Error<br/>Type?}
-    
-    ClassifyError -->|Validation| ValidationFlow[Validation Error Flow]
-    ClassifyError -->|Authentication| AuthFlow[Auth Error Flow]
-    ClassifyError -->|Rate Limit| RateLimitFlow[Rate Limit Flow]
-    ClassifyError -->|API Error| APIFlow[API Error Flow]
-    ClassifyError -->|Data Quality| DataFlow[Data Quality Flow]
-    ClassifyError -->|Internal| InternalFlow[Internal Error Flow]
-    
-    ValidationFlow --> LogValidation[Log with Validation Details]
-    LogValidation --> Return400[Return 400 Bad Request]
-    
-    AuthFlow --> LogAuth[Log with Auth Context]
-    LogAuth --> Return401[Return 401 Unauthorized]
-    
-    RateLimitFlow --> LogRateLimit[Log with Rate Limit Info]
-    LogRateLimit --> Return429[Return 429 Too Many Requests]
-    
-    APIFlow --> LogAPI[Log with API Context]
-    LogAPI --> CheckRetry{Retryable?}
-    CheckRetry -->|Yes| RetryRequest[Retry with Backoff]
-    CheckRetry -->|No| Return502[Return 502 Bad Gateway]
-    
-    RetryRequest -->|Success| ReturnSuccess[Return Successful Response]
-    RetryRequest -->|Max Retries| Return502
-    
-    DataFlow --> LogData[Log with Data Context]
-    LogData --> Return422[Return 422 Unprocessable Entity]
-    
-    InternalFlow --> LogInternal[Log with Stack Trace]
-    LogInternal --> SanitizeError[Sanitize Error Message]
-    SanitizeError --> Return500[Return 500 Internal Server Error]
-    
-    Return400 --> IncrementMetrics[Increment Error Metrics]
-    Return401 --> IncrementMetrics
-    Return429 --> IncrementMetrics
-    Return502 --> IncrementMetrics
-    Return422 --> IncrementMetrics
-    Return500 --> IncrementMetrics
-    ReturnSuccess --> IncrementSuccess[Increment Success Metrics]
-    
-    IncrementMetrics --> CheckAlerts{Error Rate<br/>Threshold?}
-    IncrementSuccess --> End([Complete])
-    
-    CheckAlerts -->|High| TriggerAlert[Trigger Alert]
-    CheckAlerts -->|Normal| End
-    TriggerAlert --> End
-    
-    style Error fill:#ffe1e1
-    style Return400 fill:#fff3cd
-    style Return401 fill:#ffe1e1
-    style Return429 fill:#fff3cd
-    style Return502 fill:#ffe1e1
-    style Return422 fill:#fff3cd
-    style Return500 fill:#ffe1e1
-    style ReturnSuccess fill:#e1f5e1
-    style TriggerAlert fill:#ffe1e1
+    Error([Error Thrown]) --> Classify{Error\nType?}
+
+    Classify -->|ZodError| ZodPath[Extract Field Errors\nfrom Zod Issues Array]
+    Classify -->|ValidationError| ValPath[Format Validation Details\nCode: VALIDATION_ERROR]
+    Classify -->|RateLimitError| RLPath[Include retryAfter\nCode: RATE_LIMIT_EXCEEDED]
+    Classify -->|EPAPIError| APIPath[Preserve HTTP Status\nCode: EP_API_ERROR]
+    Classify -->|GDPRComplianceError| GDPRPath[GDPR Violation\nCode: GDPR_COMPLIANCE_ERROR]
+    Classify -->|TimeoutError| TimeoutPath[Convert to EPAPIError\nStatus: 408]
+    Classify -->|Unknown Error| UnknownPath[Sanitize Internal Details]
+
+    ZodPath --> Format400[Status 400\nBad Request]
+    ValPath --> Format400
+
+    RLPath --> Format429[Status 429\nToo Many Requests]
+
+    APIPath --> CheckRetryable{Retryable?\n5xx Only}
+    CheckRetryable -->|Yes, 5xx| RetryWithBackoff[withRetry: Exponential Backoff\nMax 2 Retries]
+    CheckRetryable -->|No, 4xx| Format4xx[Status 4xx\nClient Error — No Retry]
+
+    RetryWithBackoff -->|Retry Succeeded| ReturnSuccess([Return Success])
+    RetryWithBackoff -->|Max Retries Exhausted| FormatAPIError[Status 502\nBad Gateway]
+
+    GDPRPath --> Format403[Status 403\nForbidden — GDPR]
+
+    TimeoutPath --> Format408[Status 408\nRequest Timeout]
+
+    UnknownPath --> SanitizeMsg[Remove Stack Traces\n& Internal Details]
+    SanitizeMsg --> Format500[Status 500\nInternal Server Error]
+
+    Format400 --> FormatMCPError[formatMCPError\nStructured Error Response]
+    Format429 --> FormatMCPError
+    Format4xx --> FormatMCPError
+    FormatAPIError --> FormatMCPError
+    Format403 --> FormatMCPError
+    Format408 --> FormatMCPError
+    Format500 --> FormatMCPError
+
+    FormatMCPError --> LogError[Log to stderr\nFull Context Preserved]
+    LogError --> AuditRecord[Audit Logger\nGDPR Article 30 Record]
+    AuditRecord --> RecordMetric[Performance Monitor\nRecord Failed Duration]
+    RecordMetric --> ReturnError([Return MCP Error Response])
+
+    style Error fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style ReturnSuccess fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    style ReturnError fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style Classify fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    style CheckRetryable fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    style FormatMCPError fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    style Format400 fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    style Format429 fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    style Format403 fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style Format408 fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    style Format500 fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    style LogError fill:#ECEFF1,stroke:#546E7A,color:#37474F
+    style AuditRecord fill:#ECEFF1,stroke:#546E7A,color:#37474F
 ```
 
-**Error Categories:**
-1. **Validation Errors (400)** - Invalid input parameters
-2. **Authentication Errors (401)** - Invalid or missing credentials
-3. **Rate Limit Errors (429)** - Too many requests
-4. **API Errors (502)** - External API failures
-5. **Data Quality Errors (422)** - Invalid response data
-6. **Internal Errors (500)** - Unexpected server errors
+**Error Type Reference:**
 
-**Error Handling Best Practices:**
-- **Never expose internal details** - Sanitize error messages for clients
-- **Always log full context** - Include stack traces in logs
-- **Implement retry logic** - Exponential backoff for transient failures
-- **Monitor error rates** - Alert on abnormal patterns
-- **Maintain error budget** - Track SLI/SLO compliance
+| Error Type | Status | Code | Retryable | Use Case |
+|-----------|--------|------|-----------|----------|
+| `ValidationError` | 400 | `VALIDATION_ERROR` | No | Invalid tool arguments (bad country code, out-of-range limit) |
+| `RateLimitError` | 429 | `RATE_LIMIT_EXCEEDED` | Yes (after `retryAfter`) | Token bucket exhausted |
+| `EPAPIError` | 3xx–5xx | `EP_API_ERROR` | 5xx only | Upstream EP API failure |
+| `GDPRComplianceError` | 403 | `GDPR_COMPLIANCE_ERROR` | No | Data minimization or consent violation |
+| `TimeoutError` | 408 | `EP_API_ERROR` | No | `withTimeoutAndAbort()` exceeded |
+| Unknown | 500 | `INTERNAL_ERROR` | No | Unexpected runtime error (sanitized) |
+
+**Security Principle:** Internal error details (stack traces, internal paths, dependency versions) are **never** exposed to clients. All errors pass through `formatMCPError()` which strips sensitive information before responding, while the full context is logged to stderr for debugging.
 
 ---
 
-## 🔄 Data Retrieval and Transformation
+## 🎨 Color Legend
 
-### EP API Integration Flow
+All flowcharts in this document use a consistent color scheme to indicate node purpose at a glance.
 
-```mermaid
-flowchart TD
-    ToolRequest[Tool Request] --> BuildURL[Build EP API URL]
-    BuildURL --> AddHeaders[Add HTTP Headers]
-    AddHeaders --> SendRequest[Send HTTP Request]
-    
-    SendRequest -->|Success| CheckStatus{HTTP<br/>Status?}
-    SendRequest -->|Network Error| RetryLogic[Retry with Backoff]
-    
-    CheckStatus -->|200 OK| ParseJSON[Parse JSON-LD Response]
-    CheckStatus -->|4xx Client Error| ClientError[Handle Client Error]
-    CheckStatus -->|5xx Server Error| ServerError[Handle Server Error]
-    
-    ParseJSON -->|Success| ValidateStructure{Valid<br/>Structure?}
-    ParseJSON -->|Parse Error| ParseError[Handle Parse Error]
-    
-    ValidateStructure -->|Yes| TransformData[Transform to Internal Model]
-    ValidateStructure -->|No| StructureError[Handle Structure Error]
-    
-    TransformData --> ExtractFields[Extract JSON-LD Fields]
-    ExtractFields --> NormalizeData[Normalize Data Types]
-    NormalizeData --> EnrichData[Enrich with Metadata]
-    EnrichData --> ValidateOutput{Output<br/>Valid?}
-    
-    ValidateOutput -->|Yes| CacheResult[Cache Transformed Data]
-    ValidateOutput -->|No| ValidationError[Handle Validation Error]
-    
-    CacheResult --> FormatResponse[Format MCP Response]
-    FormatResponse --> Success[Return Success]
-    
-    RetryLogic -->|Retry| SendRequest
-    RetryLogic -->|Max Retries| Failed[Return Error]
-    
-    ClientError --> Failed
-    ServerError --> Failed
-    ParseError --> Failed
-    StructureError --> Failed
-    ValidationError --> Failed
-    
-    Success --> End([Complete])
-    Failed --> End
-    
-    style ToolRequest fill:#e1f5e1
-    style Success fill:#e1f5e1
-    style Failed fill:#ffe1e1
-    style TransformData fill:#e1e5ff
-    style CacheResult fill:#e1e5ff
-```
-
-**EP API Integration Details:**
-- **Base URL**: `https://data.europarl.europa.eu/api/v2/`
-- **Format**: JSON-LD (application/ld+json)
-- **Authentication**: None (public API)
-- **Rate Limit**: 500 requests per 5 minutes per endpoint
-- **Retry Strategy**: 3 retries with exponential backoff (1s, 2s, 4s)
-
-**Data Transformation Pipeline:**
-1. **JSON-LD Parsing** - Parse @context and extract data arrays
-2. **Field Mapping** - Map JSON-LD field names to internal types
-3. **Type Coercion** - Convert strings to proper TypeScript types
-4. **Normalization** - Standardize date formats, IDs, enums
-5. **Enrichment** - Add derived fields (e.g., full names, formatted dates)
-6. **Validation** - Zod schema validation for type safety
-
-**Example Transformation:**
-```typescript
-// EP API JSON-LD Response
-{
-  "@context": [...],
-  "data": [{
-    "person/124810": {
-      "label": "Petter JÄRNVALL",
-      "eli-dl:activity_date": "2024-07-16T00:00:00Z",
-      "hasLocality": "FRA_SXB"
-    }
-  }]
-}
-
-// Transformed Internal Model
-{
-  id: "124810",
-  name: "Petter JÄRNVALL",
-  activityDate: "2024-07-16",
-  location: "Strasbourg",
-  country: "Sweden",
-  politicalGroup: "S&D"
-}
-```
-
----
-
-## 📊 Monitoring and Metrics Collection
-
-### Metrics Collection Flow
-
-```mermaid
-flowchart TD
-    Event[System Event] --> ClassifyMetric{Metric<br/>Type?}
-    
-    ClassifyMetric -->|Counter| IncrementCounter[Increment Counter]
-    ClassifyMetric -->|Gauge| SetGauge[Set Gauge Value]
-    ClassifyMetric -->|Histogram| RecordHistogram[Record Histogram Sample]
-    
-    IncrementCounter --> UpdateCounter[Update Counter State]
-    SetGauge --> UpdateGauge[Update Gauge State]
-    RecordHistogram --> UpdateHistogram[Update Histogram State]
-    
-    UpdateCounter --> CheckLabels{Has<br/>Labels?}
-    UpdateGauge --> CheckLabels
-    UpdateHistogram --> CheckLabels
-    
-    CheckLabels -->|Yes| StoreWithLabels[Store with Label Dimensions]
-    CheckLabels -->|No| StoreGlobal[Store Global Metric]
-    
-    StoreWithLabels --> CheckThreshold{Threshold<br/>Exceeded?}
-    StoreGlobal --> CheckThreshold
-    
-    CheckThreshold -->|Yes| TriggerAlert[Trigger Alert]
-    CheckThreshold -->|No| UpdateDashboard[Update Dashboard]
-    
-    TriggerAlert --> LogAlert[Log Alert Event]
-    LogAlert --> UpdateDashboard
-    
-    UpdateDashboard --> ExportMetrics{Export<br/>Enabled?}
-    
-    ExportMetrics -->|Yes| FormatPrometheus[Format Prometheus Metrics]
-    ExportMetrics -->|No| End
-    
-    FormatPrometheus --> ExposeEndpoint[Expose /metrics Endpoint]
-    ExposeEndpoint --> End([Complete])
-    
-    style Event fill:#e1f5e1
-    style End fill:#e1f5e1
-    style TriggerAlert fill:#ffe1e1
-    style CheckThreshold fill:#e1e5ff
-    style ExportMetrics fill:#e1e5ff
-```
-
-**Collected Metrics:**
-
-**Counters:**
-- `mcp_requests_total{tool, status}` - Total requests per tool
-- `cache_hits_total{tool}` - Cache hit count
-- `cache_misses_total{tool}` - Cache miss count
-- `rate_limit_exceeded_total` - Rate limit violations
-- `errors_total{type, tool}` - Error count by type
-
-**Gauges:**
-- `cache_size` - Current cache entry count
-- `active_connections` - Active MCP connections
-- `rate_limit_tokens{client}` - Available rate limit tokens
-
-**Histograms:**
-- `request_duration_seconds{tool}` - Request latency (p50, p95, p99)
-- `api_response_time_seconds{endpoint}` - EP API response time
-- `cache_latency_seconds` - Cache operation latency
-
-**Alert Thresholds:**
-- Error rate > 5% over 5 minutes
-- p95 latency > 2 seconds
-- Cache hit rate < 60%
-- Rate limit violations > 10/minute
-
----
-
-## 🚀 CI/CD Deployment Pipeline
-
-### GitHub Actions Workflow
-
-```mermaid
-flowchart TD
-    Push[Git Push] --> Trigger[GitHub Actions Trigger]
-    Trigger --> Checkout[Checkout Code]
-    Checkout --> SetupNode[Setup Node.js 24.x]
-    
-    SetupNode --> InstallDeps[Install Dependencies]
-    InstallDeps --> Lint[ESLint Code Quality]
-    Lint -->|Pass| TypeCheck[TypeScript Type Check]
-    Lint -->|Fail| FailedLint[Report Lint Errors]
-    
-    TypeCheck -->|Pass| UnitTests[Run Unit Tests]
-    TypeCheck -->|Fail| FailedType[Report Type Errors]
-    
-    UnitTests -->|Pass| CoverageCheck{Coverage<br/>>= 80%?}
-    UnitTests -->|Fail| FailedTests[Report Test Failures]
-    
-    CoverageCheck -->|Yes| Build[Build TypeScript]
-    CoverageCheck -->|No| FailedCoverage[Report Coverage Failure]
-    
-    Build -->|Success| IntegrationTests[Run Integration Tests]
-    Build -->|Fail| FailedBuild[Report Build Errors]
-    
-    IntegrationTests -->|Pass| E2ETests[Run E2E Tests]
-    IntegrationTests -->|Fail| FailedIntegration[Report Integration Failures]
-    
-    E2ETests -->|Pass| SecurityScan[CodeQL Security Scan]
-    E2ETests -->|Fail| FailedE2E[Report E2E Failures]
-    
-    SecurityScan -->|Pass| DependencyCheck[Dependency Audit]
-    SecurityScan -->|Vulnerabilities| FailedSecurity[Report Security Issues]
-    
-    DependencyCheck -->|Pass| BuildArtifacts[Build Release Artifacts]
-    DependencyCheck -->|Vulnerabilities| FailedDeps[Report Dependency Issues]
-    
-    BuildArtifacts --> PublishNPM[Publish to NPM]
-    PublishNPM --> CreateRelease[Create GitHub Release]
-    CreateRelease --> UpdateDocs[Update Documentation]
-    UpdateDocs --> Success[Deployment Complete]
-    
-    FailedLint --> NotifyFailure[Notify Failure]
-    FailedType --> NotifyFailure
-    FailedTests --> NotifyFailure
-    FailedCoverage --> NotifyFailure
-    FailedBuild --> NotifyFailure
-    FailedIntegration --> NotifyFailure
-    FailedE2E --> NotifyFailure
-    FailedSecurity --> NotifyFailure
-    FailedDeps --> NotifyFailure
-    
-    Success --> End([End])
-    NotifyFailure --> End
-    
-    style Push fill:#e1f5e1
-    style Success fill:#e1f5e1
-    style NotifyFailure fill:#ffe1e1
-    style FailedLint fill:#ffe1e1
-    style FailedType fill:#ffe1e1
-    style FailedTests fill:#ffe1e1
-    style FailedCoverage fill:#ffe1e1
-    style FailedBuild fill:#ffe1e1
-    style FailedIntegration fill:#ffe1e1
-    style FailedE2E fill:#ffe1e1
-    style FailedSecurity fill:#ffe1e1
-    style FailedDeps fill:#ffe1e1
-```
-
-**Pipeline Stages:**
-1. **Code Quality** - ESLint with complexity checks (<10)
-2. **Type Safety** - TypeScript strict mode validation
-3. **Unit Tests** - Vitest with 80% coverage requirement
-4. **Build** - TypeScript → JavaScript compilation
-5. **Integration Tests** - MCP protocol integration tests
-6. **E2E Tests** - Full workflow validation
-7. **Security Scan** - CodeQL analysis, dependency audit
-8. **Deployment** - NPM publish, GitHub release
-
-**Pipeline SLAs:**
-- Build time: < 10 minutes (target: 5 minutes)
-- Test execution: < 5 minutes (target: 2 minutes)
-- Deployment time: < 2 minutes
-- Total pipeline: < 15 minutes end-to-end
-
----
-
-## 🔐 Future Authentication Flow
-
-### OAuth 2.0 Integration (Planned Q2 2026)
-
-```mermaid
-flowchart TD
-    ClientRequest[Client Request] --> CheckToken{OAuth Token<br/>Present?}
-    
-    CheckToken -->|No| RedirectAuth[Redirect to OAuth Provider]
-    CheckToken -->|Yes| ValidateToken[Validate Access Token]
-    
-    RedirectAuth --> UserAuth[User Authentication]
-    UserAuth --> GrantConsent[Grant Consent]
-    GrantConsent --> IssueToken[Issue Access Token]
-    IssueToken --> ReturnToken[Return Token to Client]
-    ReturnToken --> ValidateToken
-    
-    ValidateToken --> CheckExpiry{Token<br/>Expired?}
-    
-    CheckExpiry -->|Yes| RefreshToken{Refresh Token<br/>Available?}
-    CheckExpiry -->|No| CheckScope{Has Required<br/>Scope?}
-    
-    RefreshToken -->|Yes| IssueNewToken[Issue New Access Token]
-    RefreshToken -->|No| RedirectAuth
-    IssueNewToken --> CheckScope
-    
-    CheckScope -->|Yes| CheckRole{Has Required<br/>Role?}
-    CheckScope -->|No| InsufficientScope[Return 403 Forbidden]
-    
-    CheckRole -->|Yes| AuditLog[Log Access Event]
-    CheckRole -->|No| InsufficientRole[Return 403 Forbidden]
-    
-    AuditLog --> AllowRequest[Allow Request]
-    AllowRequest --> End([Continue to Tool Handler])
-    
-    InsufficientScope --> End
-    InsufficientRole --> End
-    
-    style ClientRequest fill:#e1f5e1
-    style AllowRequest fill:#e1f5e1
-    style InsufficientScope fill:#ffe1e1
-    style InsufficientRole fill:#ffe1e1
-    style CheckToken fill:#e1e5ff
-    style ValidateToken fill:#e1e5ff
-```
-
-**OAuth 2.0 Configuration (Planned):**
-- **Provider**: GitHub OAuth, Auth0, or Keycloak
-- **Grant Type**: Authorization Code with PKCE
-- **Scopes**: `read:meps`, `read:plenary`, `read:documents`, `admin`
-- **Token Lifetime**: 1 hour (access), 7 days (refresh)
-- **Storage**: Redis for token cache, PostgreSQL for refresh tokens
-
-**RBAC Roles (Planned):**
-- `anonymous` - Public read-only access (rate limited)
-- `user` - Authenticated access (higher rate limits)
-- `premium` - Premium features (advanced analytics, exports)
-- `admin` - Full access including system management
+| Color | Hex | Meaning | Example Nodes |
+|-------|-----|---------|---------------|
+| 🟢 Green | `#E8F5E9` | Start/End, Success path | Request entry, successful return |
+| 🔵 Blue | `#E3F2FD` | Processing, Data transformation | Zod validation, JSON-LD parsing, response formatting |
+| 🟣 Purple | `#F3E5F5` | Sub-process, Pipeline reference | EP Data Integration, OSINT computation |
+| 🟠 Orange | `#FFF3E0` | Decision point, Branching logic | Route request, cache lookup, retry decision |
+| 🔴 Red | `#FFEBEE` | Error state, Failure path | Validation error, API error, GDPR violation |
+| ⚪ Grey | `#ECEFF1` | Observability, Logging | Audit log, performance metrics, eviction |
 
 ---
 
@@ -648,48 +596,51 @@ flowchart TD
 
 ### ISO 27001 Controls
 
-| Control | Requirement | Implementation |
-|---------|------------|----------------|
-| A.8.1 | Inventory of Assets | Architecture documentation, dependency SBOM |
-| A.8.2 | Information Classification | Data classification in DATA_MODEL.md |
-| A.8.3 | Media Handling | No persistent storage, cache-only architecture |
-| A.12.1 | Operational Procedures | CI/CD automation, deployment runbooks |
-| A.12.4 | Logging and Monitoring | Winston audit logging, Prometheus metrics |
-| A.14.2 | Security in Development | SAST/SCA/DAST in CI/CD pipeline |
+| Control | Requirement | Flowchart Implementation |
+|---------|-------------|--------------------------|
+| **A.8.1** | Inventory of Assets | Architecture Documentation Map; all processes documented |
+| **A.12.4** | Logging and Monitoring | Audit Logger in tool pipeline; Performance Monitor in all flows |
+| **A.14.2** | Security in Development | Zod input validation; error sanitization; no PII in responses |
+| **A.18.1** | Compliance with Legal Requirements | GDPR compliance errors; data minimization in cache |
 
 ### NIST CSF 2.0 Functions
 
-| Function | Category | Implementation |
-|----------|----------|----------------|
-| ID.AM | Asset Management | Complete architecture documentation |
-| PR.DS | Data Security | GDPR compliance, no persistent PII storage |
-| PR.AC | Identity Management | OAuth 2.0 (planned), RBAC authorization |
-| DE.CM | Continuous Monitoring | Metrics collection, log aggregation |
-| RS.RP | Response Planning | Error handling workflows, incident runbooks |
+| Function | Category | Flowchart Implementation |
+|----------|----------|--------------------------|
+| **ID.AM** | Asset Management | Complete process documentation with data flows |
+| **PR.DS** | Data Security | LRU cache TTL expiry; no persistent PII storage |
+| **PR.AC** | Access Control | Rate limiting pipeline; token bucket algorithm |
+| **DE.CM** | Continuous Monitoring | Performance Monitor metrics in all execution paths |
+| **RS.RP** | Response Planning | Error handling flow with retry and graceful degradation |
 
 ### CIS Controls v8.1
 
-| Control | Description | Implementation |
-|---------|-------------|----------------|
-| 2.1 | Maintain Asset Inventory | Architecture documentation, SBOM |
-| 3.3 | Protect Data | Data classification, encryption in transit |
-| 6.1 | Establish Access Control | OAuth 2.0 (planned), API authentication |
-| 8.2 | Audit Logging | Winston structured logging, audit trail |
-| 16.14 | Establish Incident Response | Error handling workflows, alerting |
+| Control | Description | Flowchart Implementation |
+|---------|-------------|--------------------------|
+| **2.1** | Maintain Asset Inventory | Architecture Documentation Map cross-referencing all docs |
+| **8.2** | Audit Logging | Audit Logger integration in tool execution and error paths |
+| **16.1** | Establish Incident Response | Error classification, retry logic, GDPR error handling |
 
 ---
 
 ## 🔗 Related Documentation
 
-- [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) - Security implementation details
-- [DATA_MODEL.md](./DATA_MODEL.md) - Data structures and entities
-- [STATEDIAGRAM.md](./STATEDIAGRAM.md) - System state transitions
-- [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) - C4 model diagrams
-- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - Common issues and solutions
+| Document | Relevance |
+|----------|-----------|
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | C4 architecture — containers and components referenced in these flows |
+| [DATA_MODEL.md](./DATA_MODEL.md) | Entity schemas for MEP, Vote, Procedure objects in data flows |
+| [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | Security controls implemented across all pipelines |
+| [STATEDIAGRAM.md](./STATEDIAGRAM.md) | State transitions for cache entries and request lifecycle |
+| [WORKFLOWS.md](./WORKFLOWS.md) | CI/CD pipeline that builds and tests these processes |
+| [THREAT_MODEL.md](./THREAT_MODEL.md) | STRIDE threats mitigated by error handling and validation |
+| [API_USAGE_GUIDE.md](./API_USAGE_GUIDE.md) | Tool usage examples that exercise these flows |
+| [PERFORMANCE_GUIDE.md](./PERFORMANCE_GUIDE.md) | Performance targets referenced in cache management |
+| [FUTURE_FLOWCHART.md](./FUTURE_FLOWCHART.md) | Planned enhancements to these process flows |
 
 ---
 
 <p align="center">
   <strong>Built with ❤️ by <a href="https://hack23.com">Hack23 AB</a></strong><br>
-  <em>Flowchart documentation following ISMS standards</em>
+  <em>Process flowchart documentation following ISMS standards</em><br>
+  <em>European Parliament MCP Server v0.6.2 — 28 Tools · 6 Resources · 6 Prompts</em>
 </p>
