@@ -1280,48 +1280,32 @@ export class EuropeanParliamentClient {
    * @see {@link VotingRecord} for output type structure
    */
   private transformVoteResult(apiData: Record<string, unknown>, sessionId: string): VotingRecord {
-    const activityId = apiData['activity_id'];
-    const idField = apiData['id'];
-    const id = this.toSafeString(activityId) || this.toSafeString(idField) || '';
+    const id = this.toSafeString(apiData['activity_id']) || this.toSafeString(apiData['id']) || '';
+    const date = this.extractActivityDate(apiData['eli-dl:activity_date']);
+    const topic = this.toSafeString(apiData['label']) || this.toSafeString(apiData['notation']) || 'Unknown';
 
-    // Extract date from activity_date
-    const activityDate = apiData['eli-dl:activity_date'];
-    const date = this.extractActivityDate(activityDate);
-
-    // Extract topic/title from notation or label
-    const notation = apiData['notation'];
-    const label = apiData['label'];
-    const topic = this.toSafeString(label) || this.toSafeString(notation) || 'Unknown';
-
-    // Extract vote counts - EP API may provide these as numbers or nested objects
     const votesFor = this.extractVoteCount(apiData['had_voter_favor'] ?? apiData['number_of_votes_favor']);
     const votesAgainst = this.extractVoteCount(apiData['had_voter_against'] ?? apiData['number_of_votes_against']);
     const abstentions = this.extractVoteCount(apiData['had_voter_abstention'] ?? apiData['number_of_votes_abstention']);
 
-    // Determine result based on vote counts or decision field
-    const decisionField = apiData['decision_method'] ?? apiData['had_decision_outcome'];
-    const decisionStr = this.toSafeString(decisionField);
-    let result: 'ADOPTED' | 'REJECTED';
-    if (decisionStr.includes('ADOPTED') || decisionStr.includes('APPROVED')) {
-      result = 'ADOPTED';
-    } else if (decisionStr.includes('REJECTED')) {
-      result = 'REJECTED';
-    } else if (votesFor >= votesAgainst) {
-      result = 'ADOPTED';
-    } else {
-      result = 'REJECTED';
-    }
+    const decisionStr = this.toSafeString(apiData['decision_method'] ?? apiData['had_decision_outcome']);
+    const result = this.determineVoteOutcome(decisionStr, votesFor, votesAgainst);
 
-    return {
-      id,
-      sessionId,
-      topic,
-      date,
-      votesFor,
-      votesAgainst,
-      abstentions,
-      result
-    };
+    return { id, sessionId, topic, date, votesFor, votesAgainst, abstentions, result };
+  }
+
+  /**
+   * Determines vote outcome from decision string or vote counts.
+   * @param decisionStr - Decision outcome string from EP API
+   * @param votesFor - Number of votes in favor
+   * @param votesAgainst - Number of votes against
+   * @returns 'ADOPTED' or 'REJECTED'
+   * @private
+   */
+  private determineVoteOutcome(decisionStr: string, votesFor: number, votesAgainst: number): 'ADOPTED' | 'REJECTED' {
+    if (decisionStr.includes('ADOPTED') || decisionStr.includes('APPROVED')) return 'ADOPTED';
+    if (decisionStr.includes('REJECTED')) return 'REJECTED';
+    return votesFor >= votesAgainst ? 'ADOPTED' : 'REJECTED';
   }
 
   /**
@@ -1344,11 +1328,9 @@ export class EuropeanParliamentClient {
       return isNaN(parsed) ? 0 : parsed;
     }
     if (Array.isArray(value)) return value.length;
-    if (typeof value === 'object' && value !== null) {
-      const objValue = (value as Record<string, unknown>)['@value'];
-      if (objValue !== undefined) {
-        return this.extractVoteCount(objValue);
-      }
+    const objValue = (value as Record<string, unknown>)['@value'];
+    if (objValue !== undefined) {
+      return this.extractVoteCount(objValue);
     }
     return 0;
   }
@@ -1426,50 +1408,17 @@ export class EuropeanParliamentClient {
       if (params.limit !== undefined) apiParams['limit'] = params.limit;
       if (params.offset !== undefined) apiParams['offset'] = params.offset;
 
-      let records: VotingRecord[] = [];
       const effectiveSessionId = params.sessionId ?? '';
+      let records: VotingRecord[];
 
-      if (effectiveSessionId) {
-        // Fetch vote results for a specific sitting
-        const response = await this.get<JSONLDResponse>(
-          `meetings/${effectiveSessionId}/vote-results`,
-          apiParams
-        );
-        records = response.data.map((item) => this.transformVoteResult(item, effectiveSessionId));
+      if (effectiveSessionId !== '') {
+        records = await this.fetchVoteResultsForSession(effectiveSessionId, apiParams);
       } else {
-        // Without sessionId, fetch recent meetings first and get their vote results
-        const meetingsParams: Record<string, unknown> = { limit: 5 };
-        if (params.dateFrom) meetingsParams['year'] = params.dateFrom.substring(0, 4);
-        const meetingsResponse = await this.get<JSONLDResponse>('meetings', meetingsParams);
-        
-        for (const meeting of meetingsResponse.data) {
-          const meetingId = this.toSafeString(meeting['activity_id']) || this.toSafeString(meeting['id']) || '';
-          if (!meetingId) continue;
-          try {
-            const voteResponse = await this.get<JSONLDResponse>(
-              `meetings/${meetingId}/vote-results`,
-              { limit: params.limit ?? 50 }
-            );
-            const transformed = voteResponse.data.map((item) => this.transformVoteResult(item, meetingId));
-            records.push(...transformed);
-          } catch {
-            // Some meetings may not have vote results - continue silently
-          }
-          if (records.length >= (params.limit ?? 50)) break;
-        }
+        records = await this.fetchVoteResultsFromRecentMeetings(params);
       }
 
       // Apply client-side filters
-      if (params.topic) {
-        const topicLower = params.topic.toLowerCase();
-        records = records.filter(r => r.topic.toLowerCase().includes(topicLower));
-      }
-      if (params.dateFrom) {
-        records = records.filter(r => r.date >= params.dateFrom!);
-      }
-      if (params.dateTo) {
-        records = records.filter(r => r.date <= params.dateTo!);
-      }
+      records = this.filterVotingRecords(records, params);
 
       // Apply pagination
       const offset = params.offset ?? 0;
@@ -1498,6 +1447,87 @@ export class EuropeanParliamentClient {
   }
 
   /**
+   * Fetches vote results for a specific sitting/session.
+   * @param sessionId - Sitting identifier
+   * @param apiParams - Query parameters
+   * @returns Array of VotingRecord
+   * @private
+   */
+  private async fetchVoteResultsForSession(
+    sessionId: string,
+    apiParams: Record<string, unknown>
+  ): Promise<VotingRecord[]> {
+    const response = await this.get<JSONLDResponse>(
+      `meetings/${sessionId}/vote-results`,
+      apiParams
+    );
+    return response.data.map((item) => this.transformVoteResult(item, sessionId));
+  }
+
+  /**
+   * Fetches vote results from recent meetings when no sessionId is given.
+   * @param params - Original query parameters
+   * @returns Array of VotingRecord
+   * @private
+   */
+  private async fetchVoteResultsFromRecentMeetings(params: {
+    dateFrom?: string;
+    limit?: number;
+  }): Promise<VotingRecord[]> {
+    const meetingsParams: Record<string, unknown> = { limit: 5 };
+    if (params.dateFrom !== undefined && params.dateFrom !== '') {
+      meetingsParams['year'] = params.dateFrom.substring(0, 4);
+    }
+    const meetingsResponse = await this.get<JSONLDResponse>('meetings', meetingsParams);
+    const records: VotingRecord[] = [];
+    const recordLimit = params.limit ?? 50;
+
+    for (const meeting of meetingsResponse.data) {
+      const meetingId = this.toSafeString(meeting['activity_id']) || this.toSafeString(meeting['id']) || '';
+      if (meetingId === '') continue;
+      try {
+        const voteResponse = await this.get<JSONLDResponse>(
+          `meetings/${meetingId}/vote-results`,
+          { limit: recordLimit }
+        );
+        const transformed = voteResponse.data.map((item) => this.transformVoteResult(item, meetingId));
+        records.push(...transformed);
+      } catch {
+        // Some meetings may not have vote results - continue silently
+      }
+      if (records.length >= recordLimit) break;
+    }
+    return records;
+  }
+
+  /**
+   * Applies client-side filters to voting records.
+   * @param records - Records to filter
+   * @param params - Filter parameters
+   * @returns Filtered records
+   * @private
+   */
+  private filterVotingRecords(
+    records: VotingRecord[],
+    params: { topic?: string; dateFrom?: string; dateTo?: string }
+  ): VotingRecord[] {
+    let filtered = records;
+    if (params.topic !== undefined && params.topic !== '') {
+      const topicLower = params.topic.toLowerCase();
+      filtered = filtered.filter(r => r.topic.toLowerCase().includes(topicLower));
+    }
+    if (params.dateFrom !== undefined && params.dateFrom !== '') {
+      const fromDate = params.dateFrom;
+      filtered = filtered.filter(r => r.date >= fromDate);
+    }
+    if (params.dateTo !== undefined && params.dateTo !== '') {
+      const toDate = params.dateTo;
+      filtered = filtered.filter(r => r.date <= toDate);
+    }
+    return filtered;
+  }
+
+  /**
    * Transforms EP API document data to internal LegislativeDocument format.
    * 
    * Converts JSON-LD document data from the European Parliament API
@@ -1512,63 +1542,125 @@ export class EuropeanParliamentClient {
    * @see {@link LegislativeDocument} for output type structure
    */
   private transformDocument(apiData: Record<string, unknown>): LegislativeDocument {
-    const idField = apiData['work_id'] ?? apiData['id'] ?? apiData['identifier'];
-    const id = this.toSafeString(idField) || '';
-
-    const titleField = apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title'];
-    let title = '';
-    if (typeof titleField === 'object' && titleField !== null && !Array.isArray(titleField)) {
-      // JSON-LD may wrap titles in language-tagged objects
-      const langObj = titleField as Record<string, unknown>;
-      title = this.toSafeString(langObj['en'] ?? langObj['@value'] ?? langObj['mul']) || '';
-    } else if (Array.isArray(titleField)) {
-      // May be array of language variants; pick first English or first available
-      for (const t of titleField) {
-        if (typeof t === 'object' && t !== null) {
-          const tObj = t as Record<string, unknown>;
-          const lang = this.toSafeString(tObj['@language']);
-          if (lang === 'en' || lang === 'mul') {
-            title = this.toSafeString(tObj['@value']) || '';
-            break;
-          }
-          if (!title) title = this.toSafeString(tObj['@value']) || '';
-        }
-      }
-    } else {
-      title = this.toSafeString(titleField) || '';
-    }
-
-    const typeField = apiData['work_type'] ?? apiData['ep-document-types'] ?? apiData['type'];
-    const docType = this.toSafeString(typeField) || 'REPORT';
-    // Map EP API work-type to our DocumentType
-    const normalizedType = docType.replace(/.*\//, '').toUpperCase();
-    const validTypes: DocumentType[] = ['REPORT', 'RESOLUTION', 'DECISION', 'DIRECTIVE', 'REGULATION', 'OPINION', 'AMENDMENT'];
-    const mappedType: DocumentType = validTypes.find(t => normalizedType.includes(t)) ?? 'REPORT';
-
-    const dateField = apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date'];
-    const date = this.extractDateValue(dateField);
-
-    const committeeField = apiData['was_attributed_to'] ?? apiData['committee'];
-    const committeeValue = this.toSafeString(committeeField);
-
-    const statusField = apiData['resource_legal_in-force'] ?? apiData['status'];
-    const statusStr = this.toSafeString(statusField) || '';
-    const validStatuses: DocumentStatus[] = ['DRAFT', 'SUBMITTED', 'IN_COMMITTEE', 'PLENARY', 'ADOPTED', 'REJECTED'];
-    const mappedStatus: DocumentStatus = validStatuses.find(s => statusStr.toUpperCase().includes(s)) ?? 'SUBMITTED';
+    const id = this.extractField(apiData, ['work_id', 'id', 'identifier']);
+    const title = this.extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']);
+    const mappedType = this.mapDocumentType(this.extractField(apiData, ['work_type', 'ep-document-types', 'type']));
+    const date = this.extractDateValue(apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']);
+    const committeeValue = this.extractField(apiData, ['was_attributed_to', 'committee']);
+    const mappedStatus = this.mapDocumentStatus(this.extractField(apiData, ['resource_legal_in-force', 'status']));
 
     const doc: LegislativeDocument = {
       id,
       type: mappedType,
-      title: title || `Document ${id}`,
+      title: title !== '' ? title : `Document ${id}`,
       date,
       authors: [],
       status: mappedStatus,
       summary: title
     };
-    if (committeeValue) {
+    if (committeeValue !== '') {
       doc.committee = committeeValue;
     }
     return doc;
+  }
+
+  /**
+   * Extracts a string value from the first matching field name.
+   * @param data - Record to search
+   * @param fields - Field names to try in order
+   * @returns String value from first matching field or empty string
+   * @private
+   */
+  private extractField(data: Record<string, unknown>, fields: string[]): string {
+    for (const field of fields) {
+      const value = data[field];
+      if (value !== undefined && value !== null) {
+        return this.toSafeString(value);
+      }
+    }
+    return '';
+  }
+
+  /**
+   * Maps a raw work-type string to a valid DocumentType.
+   * @param rawType - Raw type string from EP API
+   * @returns Valid DocumentType
+   * @private
+   */
+  private mapDocumentType(rawType: string): DocumentType {
+    const normalized = (rawType !== '' ? rawType : 'REPORT').replace(/.*\//, '').toUpperCase();
+    const validTypes: DocumentType[] = ['REPORT', 'RESOLUTION', 'DECISION', 'DIRECTIVE', 'REGULATION', 'OPINION', 'AMENDMENT'];
+    return validTypes.find(t => normalized.includes(t)) ?? 'REPORT';
+  }
+
+  /**
+   * Maps a raw status string to a valid DocumentStatus.
+   * @param rawStatus - Raw status string from EP API
+   * @returns Valid DocumentStatus
+   * @private
+   */
+  private mapDocumentStatus(rawStatus: string): DocumentStatus {
+    const validStatuses: DocumentStatus[] = ['DRAFT', 'SUBMITTED', 'IN_COMMITTEE', 'PLENARY', 'ADOPTED', 'REJECTED'];
+    return validStatuses.find(s => rawStatus.toUpperCase().includes(s)) ?? 'SUBMITTED';
+  }
+
+  /**
+   * Builds EP API parameters for document search.
+   * @param params - Search parameters
+   * @returns EP API compatible parameters
+   * @private
+   */
+  private buildDocumentSearchParams(params: {
+    documentType?: string;
+    dateFrom?: string;
+    limit?: number;
+    offset?: number;
+  }): Record<string, unknown> {
+    const apiParams: Record<string, unknown> = {};
+    if (params.limit !== undefined) apiParams['limit'] = params.limit;
+    if (params.offset !== undefined) apiParams['offset'] = params.offset;
+    if (params.documentType !== undefined && params.documentType !== '') {
+      const typeMap: Record<string, string> = {
+        'REPORT': 'REPORT_PLENARY',
+        'AMENDMENT': 'AMENDMENT_LIST',
+        'RESOLUTION': 'RESOLUTION_MOTION',
+        'ADOPTED': 'TEXT_ADOPTED',
+      };
+      apiParams['work-type'] = typeMap[params.documentType.toUpperCase()] ?? params.documentType;
+    }
+    if (params.dateFrom !== undefined && params.dateFrom !== '') {
+      apiParams['year'] = params.dateFrom.substring(0, 4);
+    }
+    return apiParams;
+  }
+
+  /**
+   * Applies client-side filters to documents.
+   * @param documents - Documents to filter
+   * @param params - Filter parameters
+   * @returns Filtered documents
+   * @private
+   */
+  private filterDocuments(
+    documents: LegislativeDocument[],
+    params: { keyword?: string; committee?: string }
+  ): LegislativeDocument[] {
+    let filtered = documents;
+    if (params.keyword !== undefined && params.keyword !== '') {
+      const keywordLower = params.keyword.toLowerCase();
+      filtered = filtered.filter(d =>
+        d.title.toLowerCase().includes(keywordLower) ||
+        d.summary?.toLowerCase().includes(keywordLower) === true ||
+        d.id.toLowerCase().includes(keywordLower)
+      );
+    }
+    if (params.committee !== undefined && params.committee !== '') {
+      const committeeLower = params.committee.toLowerCase();
+      filtered = filtered.filter(d =>
+        d.committee?.toLowerCase().includes(committeeLower) === true
+      );
+    }
+    return filtered;
   }
 
   /**
@@ -1594,6 +1686,83 @@ export class EuropeanParliamentClient {
       }
     }
     return '';
+  }
+
+  /**
+   * Extracts a multilingual text value from EP API JSON-LD field.
+   * 
+   * Handles various JSON-LD formats: plain strings, language-tagged objects,
+   * and arrays of language variants. Prefers English ('en') or multilingual ('mul').
+   * 
+   * @param field - Raw field from EP API (string, object, or array)
+   * @returns Extracted text string or empty string
+   * 
+   * @private
+   * @internal
+   */
+  private extractMultilingualText(field: unknown): string {
+    if (field === null || field === undefined) return '';
+    if (typeof field === 'string') return field;
+    if (typeof field === 'number' || typeof field === 'boolean') return String(field);
+
+    if (Array.isArray(field)) {
+      return this.extractTextFromLangArray(field);
+    }
+
+    if (typeof field === 'object') {
+      const obj = field as Record<string, unknown>;
+      const enValue = this.toSafeString(obj['en'] ?? obj['@value'] ?? obj['mul']);
+      return enValue;
+    }
+
+    return '';
+  }
+
+  /**
+   * Extracts preferred-language text from array of language-tagged objects.
+   * 
+   * @param items - Array of JSON-LD language-tagged objects
+   * @returns Text in preferred language or first available
+   * 
+   * @private
+   * @internal
+   */
+  private extractTextFromLangArray(items: unknown[]): string {
+    let fallback = '';
+    for (const item of items) {
+      if (typeof item !== 'object' || item === null) continue;
+      const obj = item as Record<string, unknown>;
+      const lang = this.toSafeString(obj['@language']);
+      const value = this.toSafeString(obj['@value']);
+      if (lang === 'en' || lang === 'mul') return value;
+      if (fallback === '') fallback = value;
+    }
+    return fallback;
+  }
+
+  /**
+   * Extracts member IDs from EP API membership data.
+   * 
+   * @param memberships - Raw membership field from EP API
+   * @returns Array of member ID strings
+   * 
+   * @private
+   * @internal
+   */
+  private extractMemberIds(memberships: unknown): string[] {
+    const members: string[] = [];
+    if (!Array.isArray(memberships)) return members;
+
+    for (const m of memberships) {
+      if (typeof m === 'string') {
+        members.push(m);
+      } else if (typeof m === 'object' && m !== null) {
+        const mObj = m as Record<string, unknown>;
+        const memberId = this.toSafeString(mObj['person'] ?? mObj['id'] ?? mObj['@id']);
+        if (memberId !== '') members.push(memberId);
+      }
+    }
+    return members;
   }
 
   /**
@@ -1662,22 +1831,7 @@ export class EuropeanParliamentClient {
     const action = 'search_documents';
     
     try {
-      const apiParams: Record<string, unknown> = {};
-      if (params.limit !== undefined) apiParams['limit'] = params.limit;
-      if (params.offset !== undefined) apiParams['offset'] = params.offset;
-      if (params.documentType) {
-        // Map common document types to EP API work-type values
-        const typeMap: Record<string, string> = {
-          'REPORT': 'REPORT_PLENARY',
-          'AMENDMENT': 'AMENDMENT_LIST',
-          'RESOLUTION': 'RESOLUTION_MOTION',
-          'ADOPTED': 'TEXT_ADOPTED',
-        };
-        apiParams['work-type'] = typeMap[params.documentType.toUpperCase()] ?? params.documentType;
-      }
-      if (params.dateFrom) {
-        apiParams['year'] = params.dateFrom.substring(0, 4);
-      }
+      const apiParams = this.buildDocumentSearchParams(params);
 
       // Call real EP API documents endpoint
       const response = await this.get<JSONLDResponse>('documents', apiParams);
@@ -1685,23 +1839,8 @@ export class EuropeanParliamentClient {
       // Transform EP API data to internal format
       let documents = response.data.map((item) => this.transformDocument(item));
 
-      // Apply client-side keyword filter (EP documents API doesn't have text search on this endpoint)
-      if (params.keyword) {
-        const keywordLower = params.keyword.toLowerCase();
-        documents = documents.filter(d =>
-          d.title.toLowerCase().includes(keywordLower) ||
-          d.summary?.toLowerCase().includes(keywordLower) ||
-          d.id.toLowerCase().includes(keywordLower)
-        );
-      }
-
-      // Apply committee filter client-side if needed
-      if (params.committee) {
-        const committeeLower = params.committee.toLowerCase();
-        documents = documents.filter(d =>
-          d.committee?.toLowerCase().includes(committeeLower)
-        );
-      }
+      // Apply client-side filters
+      documents = this.filterDocuments(documents, params);
 
       const result: PaginatedResponse<LegislativeDocument> = {
         data: documents,
@@ -1739,59 +1878,16 @@ export class EuropeanParliamentClient {
    * @see {@link Committee} for output type structure
    */
   private transformCorporateBody(apiData: Record<string, unknown>): Committee {
-    const idField = apiData['body_id'] ?? apiData['id'] ?? apiData['identifier'];
-    const id = this.toSafeString(idField) || '';
-
-    const labelField = apiData['label'] ?? apiData['prefLabel'] ?? apiData['skos:prefLabel'];
-    let name = '';
-    if (typeof labelField === 'object' && labelField !== null && !Array.isArray(labelField)) {
-      const langObj = labelField as Record<string, unknown>;
-      name = this.toSafeString(langObj['en'] ?? langObj['@value'] ?? langObj['mul']) || '';
-    } else if (Array.isArray(labelField)) {
-      for (const l of labelField) {
-        if (typeof l === 'object' && l !== null) {
-          const lObj = l as Record<string, unknown>;
-          const lang = this.toSafeString(lObj['@language']);
-          if (lang === 'en' || lang === 'mul') {
-            name = this.toSafeString(lObj['@value']) || '';
-            break;
-          }
-          if (!name) name = this.toSafeString(lObj['@value']) || '';
-        }
-      }
-    } else {
-      name = this.toSafeString(labelField) || '';
-    }
-
-    const notation = apiData['notation'] ?? apiData['skos:notation'];
-    const abbreviation = this.toSafeString(notation) || id;
-
-    // Extract members from hasMembership if available
-    const memberships = apiData['hasMembership'] ?? apiData['org:hasMember'];
-    const members: string[] = [];
-    if (Array.isArray(memberships)) {
-      for (const m of memberships) {
-        if (typeof m === 'string') {
-          members.push(m);
-        } else if (typeof m === 'object' && m !== null) {
-          const mObj = m as Record<string, unknown>;
-          const memberId = this.toSafeString(mObj['person'] ?? mObj['id'] ?? mObj['@id']);
-          if (memberId) members.push(memberId);
-        }
-      }
-    }
-
-    // Extract classification for responsibilities
-    const classificationField = apiData['classification'] ?? apiData['org:classification'];
-    const classification = this.toSafeString(classificationField) || '';
-    const responsibilities: string[] = [];
-    if (classification) {
-      responsibilities.push(classification.replace(/.*\//, ''));
-    }
+    const id = this.extractField(apiData, ['body_id', 'id', 'identifier']);
+    const name = this.extractMultilingualText(apiData['label'] ?? apiData['prefLabel'] ?? apiData['skos:prefLabel']);
+    const abbreviation = this.extractField(apiData, ['notation', 'skos:notation']) || id;
+    const members = this.extractMemberIds(apiData['hasMembership'] ?? apiData['org:hasMember']);
+    const classification = this.extractField(apiData, ['classification', 'org:classification']);
+    const responsibilities = classification !== '' ? [classification.replace(/.*\//, '')] : [];
 
     return {
-      id: id || abbreviation,
-      name: name || `Committee ${abbreviation}`,
+      id: id !== '' ? id : abbreviation,
+      name: name !== '' ? name : `Committee ${abbreviation}`,
       abbreviation,
       members,
       chair: members[0] ?? '',
@@ -1861,48 +1957,10 @@ export class EuropeanParliamentClient {
     const action = 'get_committee_info';
     
     try {
-      // Use abbreviation or ID to look up the specific corporate body
-      const bodyId = params.abbreviation ?? params.id ?? '';
-      
-      if (bodyId) {
-        try {
-          // Fetch specific corporate body by ID
-          const response = await this.get<JSONLDResponse>(`corporate-bodies/${bodyId}`, {});
-          
-          if (response.data.length > 0) {
-            const committee = this.transformCorporateBody(response.data[0] ?? {});
-            auditLogger.logDataAccess(action, params, 1);
-            return committee;
-          }
-        } catch {
-          // Body not found by direct lookup - fall through to list search
-        }
-      }
-      
-      // Fallback: search corporate bodies list with committee classification
-      const listParams: Record<string, unknown> = {
-        'body-classification': 'COMMITTEE_PARLIAMENTARY_STANDING',
-        limit: 50
-      };
-      const response = await this.get<JSONLDResponse>('corporate-bodies', listParams);
-      
-      // Find matching committee
-      for (const item of response.data) {
-        const committee = this.transformCorporateBody(item);
-        if (
-          committee.abbreviation === (params.abbreviation ?? params.id) ||
-          committee.id === (params.id ?? params.abbreviation)
-        ) {
-          auditLogger.logDataAccess(action, params, 1);
-          return committee;
-        }
-      }
-      
-      // If not found, throw appropriate error
-      throw new APIError(
-        `Committee not found: ${params.abbreviation ?? params.id ?? 'unknown'}`,
-        404
-      );
+      const searchTerm = params.abbreviation ?? params.id ?? '';
+      const committee = await this.resolveCommittee(searchTerm);
+      auditLogger.logDataAccess(action, params, 1);
+      return committee;
     } catch (error) {
       auditLogger.logError(
         action,
@@ -1911,6 +1969,65 @@ export class EuropeanParliamentClient {
       );
       throw error;
     }
+  }
+
+  /**
+   * Resolves a committee by trying direct lookup then list search.
+   * @param searchTerm - Committee abbreviation or ID
+   * @returns Committee
+   * @throws {APIError} If committee not found
+   * @private
+   */
+  private async resolveCommittee(searchTerm: string): Promise<Committee> {
+    if (searchTerm !== '') {
+      const directResult = await this.fetchCommitteeDirectly(searchTerm);
+      if (directResult !== null) return directResult;
+    }
+    
+    const found = await this.searchCommitteeInList(searchTerm);
+    if (found !== null) return found;
+    
+    throw new APIError(`Committee not found: ${searchTerm || 'unknown'}`, 404);
+  }
+
+  /**
+   * Attempts to fetch a committee directly by body ID.
+   * @param bodyId - Corporate body identifier
+   * @returns Committee or null if not found
+   * @private
+   */
+  private async fetchCommitteeDirectly(bodyId: string): Promise<Committee | null> {
+    try {
+      const response = await this.get<JSONLDResponse>(`corporate-bodies/${bodyId}`, {});
+      if (response.data.length > 0) {
+        return this.transformCorporateBody(response.data[0] ?? {});
+      }
+    } catch {
+      // Body not found by direct lookup
+    }
+    return null;
+  }
+
+  /**
+   * Searches the corporate bodies list for a matching committee.
+   * @param searchTerm - Abbreviation or ID to match
+   * @returns Matching Committee or null
+   * @private
+   */
+  private async searchCommitteeInList(searchTerm: string): Promise<Committee | null> {
+    const listParams: Record<string, unknown> = {
+      'body-classification': 'COMMITTEE_PARLIAMENTARY_STANDING',
+      limit: 50
+    };
+    const response = await this.get<JSONLDResponse>('corporate-bodies', listParams);
+    
+    for (const item of response.data) {
+      const committee = this.transformCorporateBody(item);
+      if (committee.abbreviation === searchTerm || committee.id === searchTerm) {
+        return committee;
+      }
+    }
+    return null;
   }
 
   /**
@@ -1936,71 +2053,122 @@ export class EuropeanParliamentClient {
    * @see {@link ParliamentaryQuestion} for output type structure
    */
   private transformParliamentaryQuestion(apiData: Record<string, unknown>): ParliamentaryQuestion {
-    const idField = apiData['work_id'] ?? apiData['id'] ?? apiData['identifier'];
-    const id = this.toSafeString(idField) || '';
+    const id = this.extractField(apiData, ['work_id', 'id', 'identifier']);
+    const questionType = this.mapQuestionType(this.extractField(apiData, ['work_type', 'ep-document-types']));
+    const author = this.extractAuthorId(apiData['was_created_by'] ?? apiData['created_by'] ?? apiData['author']);
+    const date = this.extractDateValue(apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']);
+    const topic = this.extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']);
+    const hasAnswer = apiData['was_realized_by'] !== undefined && apiData['was_realized_by'] !== null;
+    const topicText = topic !== '' ? topic : `Question ${id}`;
 
-    // Determine question type from work_type
-    const workTypeField = apiData['work_type'] ?? apiData['ep-document-types'];
-    const workType = this.toSafeString(workTypeField) || '';
-    let questionType: 'WRITTEN' | 'ORAL' = 'WRITTEN';
-    if (workType.includes('ORAL') || workType.includes('INTERPELLATION') || workType.includes('QUESTION_TIME')) {
-      questionType = 'ORAL';
-    }
+    return this.buildQuestionResult(
+      { id, type: questionType, author, date },
+      topicText, hasAnswer
+    );
+  }
 
-    // Extract author
-    const authorField = apiData['was_created_by'] ?? apiData['created_by'] ?? apiData['author'];
-    let author = '';
-    if (typeof authorField === 'string') {
-      author = authorField;
-    } else if (Array.isArray(authorField) && authorField.length > 0) {
-      author = this.toSafeString(authorField[0]);
-    } else if (typeof authorField === 'object' && authorField !== null) {
-      author = this.toSafeString((authorField as Record<string, unknown>)['@id'] ?? (authorField as Record<string, unknown>)['id']);
-    }
-
-    // Extract date
-    const dateField = apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date'];
-    const date = this.extractDateValue(dateField);
-
-    // Extract title/topic
-    const titleField = apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title'];
-    let topic = '';
-    if (typeof titleField === 'object' && titleField !== null && !Array.isArray(titleField)) {
-      const langObj = titleField as Record<string, unknown>;
-      topic = this.toSafeString(langObj['en'] ?? langObj['@value'] ?? langObj['mul']) || '';
-    } else if (Array.isArray(titleField)) {
-      for (const t of titleField) {
-        if (typeof t === 'object' && t !== null) {
-          const tObj = t as Record<string, unknown>;
-          const lang = this.toSafeString(tObj['@language']);
-          if (lang === 'en' || lang === 'mul') {
-            topic = this.toSafeString(tObj['@value']) || '';
-            break;
-          }
-          if (!topic) topic = this.toSafeString(tObj['@value']) || '';
-        }
-      }
-    } else {
-      topic = this.toSafeString(titleField) || '';
-    }
-
-    // Check for answer
-    const answerField = apiData['was_realized_by'] ?? apiData['answer'];
-    const hasAnswer = answerField !== null && answerField !== undefined;
-
-    return {
-      id,
-      type: questionType,
-      author: author || 'Unknown',
-      date,
-      topic: topic || `Question ${id}`,
-      questionText: topic || `Question ${id}`,
-      status: hasAnswer ? 'ANSWERED' : 'PENDING',
-      ...(hasAnswer && {
-        answerText: 'Answer available - see EP document portal for full text',
-        answerDate: date
-      })
+  /**
+   * Builds a ParliamentaryQuestion result object.
+   * @private
+   */
+  private buildQuestionResult(
+    fields: { id: string; type: 'WRITTEN' | 'ORAL'; author: string; date: string },
+    topicText: string, hasAnswer: boolean
+  ): ParliamentaryQuestion {
+    const result: ParliamentaryQuestion = {
+      id: fields.id,
+      type: fields.type,
+      author: fields.author !== '' ? fields.author : 'Unknown',
+      date: fields.date,
+      topic: topicText,
+      questionText: topicText,
+      status: hasAnswer ? 'ANSWERED' : 'PENDING'
     };
+    if (hasAnswer) {
+      result.answerText = 'Answer available - see EP document portal for full text';
+      result.answerDate = fields.date;
+    }
+    return result;
+  }
+
+  /**
+   * Maps work-type string to question type.
+   * @param workType - Raw work-type from EP API
+   * @returns 'WRITTEN' or 'ORAL'
+   * @private
+   */
+  private mapQuestionType(workType: string): 'WRITTEN' | 'ORAL' {
+    if (workType.includes('ORAL') || workType.includes('INTERPELLATION') || workType.includes('QUESTION_TIME')) {
+      return 'ORAL';
+    }
+    return 'WRITTEN';
+  }
+
+  /**
+   * Extracts an author/person ID from EP API author field.
+   * @param authorField - Raw author field (string, array, or object)
+   * @returns Author identifier string
+   * @private
+   */
+  private extractAuthorId(authorField: unknown): string {
+    if (typeof authorField === 'string') return authorField;
+    if (Array.isArray(authorField) && authorField.length > 0) {
+      return this.toSafeString(authorField[0]);
+    }
+    if (typeof authorField === 'object' && authorField !== null) {
+      const obj = authorField as Record<string, unknown>;
+      return this.toSafeString(obj['@id'] ?? obj['id']);
+    }
+    return '';
+  }
+
+  /**
+   * Builds EP API parameters for parliamentary question search.
+   * @param params - Search parameters
+   * @returns EP API compatible parameters
+   * @private
+   */
+  private buildQuestionSearchParams(params: {
+    type?: 'WRITTEN' | 'ORAL';
+    dateFrom?: string;
+    limit?: number;
+    offset?: number;
+  }): Record<string, unknown> {
+    const apiParams: Record<string, unknown> = {};
+    if (params.limit !== undefined) apiParams['limit'] = params.limit;
+    if (params.offset !== undefined) apiParams['offset'] = params.offset;
+    if (params.type === 'WRITTEN') apiParams['work-type'] = 'QUESTION_WRITTEN';
+    else if (params.type === 'ORAL') apiParams['work-type'] = 'QUESTION_ORAL';
+    if (params.dateFrom !== undefined && params.dateFrom !== '') {
+      apiParams['year'] = params.dateFrom.substring(0, 4);
+    }
+    return apiParams;
+  }
+
+  /**
+   * Applies client-side filters to parliamentary questions.
+   * @param questions - Questions to filter
+   * @param params - Filter parameters
+   * @returns Filtered questions
+   * @private
+   */
+  private filterQuestions(
+    questions: ParliamentaryQuestion[],
+    params: { author?: string; topic?: string; status?: 'PENDING' | 'ANSWERED' }
+  ): ParliamentaryQuestion[] {
+    let filtered = questions;
+    if (params.author !== undefined && params.author !== '') {
+      const authorLower = params.author.toLowerCase();
+      filtered = filtered.filter(q => q.author.toLowerCase().includes(authorLower));
+    }
+    if (params.topic !== undefined && params.topic !== '') {
+      const topicLower = params.topic.toLowerCase();
+      filtered = filtered.filter(q => q.topic.toLowerCase().includes(topicLower));
+    }
+    if (params.status !== undefined) {
+      filtered = filtered.filter(q => q.status === params.status);
+    }
+    return filtered;
   }
 
   /**
@@ -2079,21 +2247,7 @@ export class EuropeanParliamentClient {
     const action = 'get_parliamentary_questions';
     
     try {
-      const apiParams: Record<string, unknown> = {};
-      if (params.limit !== undefined) apiParams['limit'] = params.limit;
-      if (params.offset !== undefined) apiParams['offset'] = params.offset;
-      
-      // Map type filter to EP API work-type parameter
-      if (params.type === 'WRITTEN') {
-        apiParams['work-type'] = 'QUESTION_WRITTEN';
-      } else if (params.type === 'ORAL') {
-        apiParams['work-type'] = 'QUESTION_ORAL';
-      }
-      
-      // Map date to year parameter
-      if (params.dateFrom !== undefined && params.dateFrom !== '') {
-        apiParams['year'] = params.dateFrom.substring(0, 4);
-      }
+      const apiParams = this.buildQuestionSearchParams(params);
       
       // Call real EP API parliamentary-questions endpoint
       const response = await this.get<JSONLDResponse>('parliamentary-questions', apiParams);
@@ -2102,17 +2256,7 @@ export class EuropeanParliamentClient {
       let questions = response.data.map((item) => this.transformParliamentaryQuestion(item));
       
       // Apply client-side filters
-      if (params.author !== undefined && params.author !== '') {
-        const authorLower = params.author.toLowerCase();
-        questions = questions.filter(q => q.author.toLowerCase().includes(authorLower));
-      }
-      if (params.topic !== undefined && params.topic !== '') {
-        const topicLower = params.topic.toLowerCase();
-        questions = questions.filter(q => q.topic.toLowerCase().includes(topicLower));
-      }
-      if (params.status) {
-        questions = questions.filter(q => q.status === params.status);
-      }
+      questions = this.filterQuestions(questions, params);
       
       const result: PaginatedResponse<ParliamentaryQuestion> = {
         data: questions,
