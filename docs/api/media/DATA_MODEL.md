@@ -2,744 +2,992 @@
   <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
 </p>
 
-<h1 align="center">📊 European Parliament MCP Server - Data Model</h1>
+<h1 align="center">📊 European Parliament MCP Server — Data Model</h1>
 
 <p align="center">
-  <strong>Data Structures, Entities, and Relationships</strong><br>
-  <em>Comprehensive Data Architecture Documentation</em>
+  <strong>Entity Relationships, Type Definitions, and Data Flow Architecture</strong><br>
+  <em>Stateless MCP Server — 12 Domain Types, 5 Branded IDs, 12 Analytical Output Types</em>
 </p>
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-Architect-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--17-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-0.6.2-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2025--06--20-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** Architecture Team | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-17 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-17  
+**📋 Document Owner:** Architecture Team | **📄 Version:** 0.6.2 | **📅 Last Updated:** 2025-06-20 (UTC)  
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2025-09-20  
 **🏷️ Classification:** Public (Open Source MCP Server)  
 **✅ ISMS Compliance:** ISO 27001 (A.8.1, A.8.2, A.18.1), NIST CSF 2.0 (ID.AM, PR.DS), CIS Controls v8.1 (3.1, 3.3)
 
 ---
 
+## 📋 Table of Contents
+
+1. [Architecture Documentation Map](#-architecture-documentation-map)
+2. [Data Model Overview](#-data-model-overview)
+3. [Core Data Model — Entity Relationships](#-core-data-model--entity-relationships)
+4. [MEP Data Model](#-mep-data-model)
+5. [Parliamentary Session & Voting Data Model](#-parliamentary-session--voting-data-model)
+6. [Committee Data Model](#-committee-data-model)
+7. [Legislative Document Data Model](#-legislative-document-data-model)
+8. [Legislative Procedure Data Model](#-legislative-procedure-data-model)
+9. [Parliamentary Activity Data Model](#-parliamentary-activity-data-model)
+10. [Analytical Output Data Model](#-analytical-output-data-model)
+11. [Pagination & Response Wrapper](#-pagination--response-wrapper)
+12. [Data Flow Architecture](#-data-flow-architecture)
+13. [Type Safety — Branded Types](#-type-safety--branded-types)
+14. [Data Classification](#-data-classification)
+15. [ISMS Compliance](#-isms-compliance)
+16. [Related Documentation](#-related-documentation)
+
+---
+
+## 🗺️ Architecture Documentation Map
+
+| Document | Current | Future | Description |
+|----------|---------|--------|-------------|
+| **Architecture** | [ARCHITECTURE.md](./ARCHITECTURE.md) | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) | C4 model, containers, components |
+| **Mind Map** | [MINDMAP.md](./MINDMAP.md) | [FUTURE_MINDMAP.md](./FUTURE_MINDMAP.md) | System concepts and relationships |
+| **SWOT Analysis** | [SWOT.md](./SWOT.md) | [FUTURE_SWOT.md](./FUTURE_SWOT.md) | Strategic positioning |
+| **Data Model** | **[DATA_MODEL.md](./DATA_MODEL.md)** ← You are here | [FUTURE_DATA_MODEL.md](./FUTURE_DATA_MODEL.md) | Entity relationships and schemas |
+| **Flowchart** | [FLOWCHART.md](./FLOWCHART.md) | [FUTURE_FLOWCHART.md](./FUTURE_FLOWCHART.md) | Business process flows |
+| **State Diagram** | [STATEDIAGRAM.md](./STATEDIAGRAM.md) | [FUTURE_STATEDIAGRAM.md](./FUTURE_STATEDIAGRAM.md) | System state transitions |
+| **Workflows** | [WORKFLOWS.md](./WORKFLOWS.md) | [FUTURE_WORKFLOWS.md](./FUTURE_WORKFLOWS.md) | CI/CD pipeline documentation |
+| **Security Architecture** | [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) | Security controls and design |
+| **Threat Model** | [THREAT_MODEL.md](./THREAT_MODEL.md) | — | STRIDE-based threat analysis |
+| **CRA Assessment** | [CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md) | — | EU Cyber Resilience Act review |
+| **Architecture Diagrams** | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) | — | Supplementary C4 diagrams |
+
+---
+
 ## 🎯 Data Model Overview
 
-The European Parliament MCP Server operates on **read-only public data** from the European Parliament Open Data Portal. The data model reflects the structure of European Parliament entities and their relationships.
+The **European Parliament MCP Server** (v0.6.2) is a **stateless, read-only** [Model Context Protocol](https://spec.modelcontextprotocol.io/) server. It has **no local database** — all parliamentary data is fetched on demand from the [European Parliament Open Data Portal API v2](https://data.europarl.europa.eu/api/v2/) in JSON-LD format, transformed into strongly-typed TypeScript interfaces, and returned as structured MCP content blocks.
 
-**Key Characteristics**:
-- 📖 Read-only (no data modification)
-- 🌐 Public data (no sensitive information stored)
-- ⚡ Cached responses (15-minute TTL)
-- 🔄 Real-time EP API queries
-- 📝 Audit trail for GDPR compliance
+### Key Data Architecture Characteristics
+
+| Characteristic | Detail |
+|----------------|--------|
+| **Data Source** | European Parliament Open Data Portal API v2 (JSON-LD) |
+| **Storage** | None — stateless proxy; no local database |
+| **Caching** | LRU in-memory cache: 500 entries max, 15-minute TTL |
+| **Domain Types** | 12 core interfaces (+ 5 supporting types) |
+| **Branded IDs** | 5 compile-time-safe identifier types (MEPID, SessionID, CommitteeID, DocumentID, GroupID) |
+| **Analytical Types** | 12 computed output interfaces (OSINT intelligence products) |
+| **Validation** | Zod schemas for all 28 tool inputs; runtime type guards for branded IDs |
+| **Pagination** | Offset-based `PaginatedResponse<T>` wrapper |
+| **GDPR** | Personal data fields tagged `@gdpr`; audit logging for access; 15-min cache TTL |
+
+### Data Type Inventory
+
+| # | Interface | Source File | EP API Endpoint | Description |
+|---|-----------|-------------|-----------------|-------------|
+| 1 | `MEP` | `europeanParliament.ts` | `/meps` | Member of European Parliament |
+| 2 | `MEPDetails` | `europeanParliament.ts` | `/meps/{id}` | Extended MEP profile (extends MEP) |
+| 3 | `VotingStatistics` | `europeanParliament.ts` | `/meps/{id}/voting-statistics` | MEP voting behavior metrics |
+| 4 | `PlenarySession` | `europeanParliament.ts` | `/plenary-sessions` | Plenary meetings |
+| 5 | `VotingRecord` | `europeanParliament.ts` | `/voting-records` | Roll-call vote results |
+| 6 | `Committee` | `europeanParliament.ts` | `/committees` | Parliamentary committees |
+| 7 | `LegislativeDocument` | `europeanParliament.ts` | `/documents` | Parliamentary documents |
+| 8 | `ParliamentaryQuestion` | `europeanParliament.ts` | `/parliamentary-questions` | Questions to EU institutions |
+| 9 | `Speech` | `europeanParliament.ts` | `/speeches` | Plenary speeches |
+| 10 | `Procedure` | `europeanParliament.ts` | `/procedures` | Legislative procedures |
+| 11 | `AdoptedText` | `europeanParliament.ts` | `/adopted-texts` | Adopted texts |
+| 12 | `EPEvent` | `europeanParliament.ts` | `/events` | Parliamentary events |
+| 13 | `MeetingActivity` | `europeanParliament.ts` | `/meeting-activities` | Meeting activities |
+| 14 | `MEPDeclaration` | `europeanParliament.ts` | `/declarations` | MEP declarations |
+| 15 | `PaginatedResponse<T>` | `europeanParliament.ts` | — | Generic pagination wrapper |
 
 ---
 
-## 🏛️ Core Entities
-
-### Entity Relationship Diagram
+## 🏛️ Core Data Model — Entity Relationships
 
 ```mermaid
 erDiagram
-    MEP ||--o{ COMMITTEE_MEMBERSHIP : "member of"
-    MEP ||--o{ POLITICAL_GROUP_MEMBERSHIP : "member of"
-    MEP ||--o{ VOTING_RECORD : "casts"
-    MEP ||--o{ PARLIAMENTARY_QUESTION : "authors"
-    MEP ||--o{ ACTIVITY : "performs"
-    
-    COMMITTEE ||--o{ COMMITTEE_MEMBERSHIP : "has members"
-    COMMITTEE ||--o{ COMMITTEE_MEETING : "holds"
-    
-    POLITICAL_GROUP ||--o{ POLITICAL_GROUP_MEMBERSHIP : "has members"
-    POLITICAL_GROUP ||--o{ GROUP_POSITION : "takes"
-    
-    PLENARY_SESSION ||--o{ VOTE : "includes"
-    PLENARY_SESSION ||--o{ DOCUMENT : "discusses"
-    
-    VOTE ||--o{ VOTING_RECORD : "recorded in"
-    
-    LEGISLATION ||--o{ DOCUMENT : "consists of"
-    LEGISLATION ||--o{ VOTE : "voted on"
-    LEGISLATION ||--o{ AMENDMENT : "has"
-    
-    DOCUMENT ||--o{ PARLIAMENTARY_QUESTION : "answers"
-    
+    MEP ||--o| MEPDetails : "extends"
+    MEP ||--o{ VotingRecord : "votes in"
+    MEP ||--o{ ParliamentaryQuestion : "authors"
+    MEP ||--o{ Speech : "delivers"
+    MEP ||--o{ MEPDeclaration : "files"
+    MEP }o--|| Committee : "member of"
+    MEP }o--|| PoliticalGroup : "belongs to"
+
+    MEPDetails ||--o| VotingStatistics : "has"
+
+    PlenarySession ||--o{ VotingRecord : "contains"
+    PlenarySession ||--o{ Speech : "includes"
+    PlenarySession ||--o{ MeetingActivity : "schedules"
+    PlenarySession }o--o{ LegislativeDocument : "discusses"
+
+    Committee ||--o{ LegislativeDocument : "produces"
+    Committee ||--o{ MeetingActivity : "holds"
+
+    Procedure ||--o{ LegislativeDocument : "generates"
+    Procedure ||--o{ VotingRecord : "voted on"
+    Procedure ||--o| AdoptedText : "results in"
+    Procedure }o--|| Committee : "assigned to"
+
+    EPEvent ||--o{ MeetingActivity : "contains"
+
     MEP {
-        string id PK
-        string name
-        string country
-        string politicalGroup
-        date termStart
-        date termEnd
-        boolean active
+        string id PK "person/124936"
+        string name "Full name"
+        string country "ISO 3166-1 alpha-2"
+        string politicalGroup "EPP, S&D, etc."
+        string[] committees "DEVE, ENVI, etc."
+        string email "GDPR-protected"
+        boolean active "Currently serving"
+        string termStart "ISO 8601 date"
+        string termEnd "ISO 8601 date (optional)"
     }
-    
-    COMMITTEE {
-        string id PK
-        string name
-        string abbreviation
-        string type
+
+    PlenarySession {
+        string id PK "P9-2024-11-20"
+        string date "ISO 8601 date"
+        string location "Strasbourg or Brussels"
+        string[] agendaItems "Agenda topics"
+        number attendanceCount "MEPs present"
+        string[] documents "Document IDs"
     }
-    
-    POLITICAL_GROUP {
-        string id PK
-        string name
-        string abbreviation
-        number seatCount
+
+    VotingRecord {
+        string id PK "VOTE-2024-11-20-001"
+        string sessionId FK "PlenarySession.id"
+        string topic "Vote subject"
+        string date "ISO 8601 datetime"
+        number votesFor "Votes in favor"
+        number votesAgainst "Votes against"
+        number abstentions "Abstentions"
+        string result "ADOPTED or REJECTED"
     }
-    
-    PLENARY_SESSION {
-        string id PK
-        date startDate
-        date endDate
-        string location
-        string status
+
+    Committee {
+        string id PK "COMM-DEVE"
+        string name "Full committee name"
+        string abbreviation "4-letter code"
+        string[] members "MEP IDs"
+        string chair "MEP ID (optional)"
+        string[] viceChairs "MEP IDs (optional)"
     }
-    
-    VOTE {
-        string id PK
-        string sessionId FK
-        string subject
-        date date
-        string result
-        number favor
-        number against
-        number abstain
+
+    LegislativeDocument {
+        string id PK "A9-0123/2024"
+        string type "DocumentType enum"
+        string title "Official title"
+        string date "ISO 8601 date"
+        string[] authors "MEP or institution IDs"
+        string committee "Committee ID (optional)"
+        string status "DocumentStatus enum"
     }
-    
-    VOTING_RECORD {
-        string id PK
-        string mepId FK
-        string voteId FK
-        string position
-        date timestamp
+
+    ParliamentaryQuestion {
+        string id PK "E-000123/2024"
+        string type "WRITTEN or ORAL"
+        string author FK "MEP ID"
+        string date "ISO 8601 date"
+        string topic "Subject matter"
+        string questionText "Full question"
+        string status "PENDING or ANSWERED"
     }
-    
-    LEGISLATION {
-        string id PK
-        string procedureId
-        string title
-        string type
-        string status
-        date submitted
-        string rapporteur
+
+    Procedure {
+        string id PK "Procedure ID"
+        string title "Procedure title"
+        string reference "2023/0123(COD)"
+        string type "Procedure type"
+        string stage "Current stage"
+        string status "Current status"
+        string responsibleCommittee FK "Committee"
+        string rapporteur "MEP ID"
     }
-    
-    DOCUMENT {
-        string id PK
-        string type
-        string title
-        string author
-        date published
-        string language
+
+    Speech {
+        string id PK "Speech ID"
+        string speakerId FK "MEP ID"
+        string speakerName "Speaker name"
+        string date "ISO 8601 date"
+        string type "Speech type"
+        string language "Language code"
+        string text "Speech text"
+        string sessionReference "Session ID"
     }
-    
-    PARLIAMENTARY_QUESTION {
-        string id PK
-        string authorId FK
-        string questionType
-        string subject
-        date asked
-        date answered
-        string status
+
+    AdoptedText {
+        string id PK "Adopted text ID"
+        string title "Title"
+        string reference "Reference number"
+        string type "Text type"
+        string dateAdopted "ISO 8601 date"
+        string procedureReference "Procedure ref"
+        string subjectMatter "Subject"
     }
-    
-    COMMITTEE_MEETING {
-        string id PK
-        string committeeId FK
-        date date
-        string location
-        string agenda
+
+    EPEvent {
+        string id PK "Event ID"
+        string title "Event title"
+        string date "ISO 8601 date"
+        string endDate "ISO 8601 date"
+        string type "Event type"
+        string location "Location"
+        string organizer "Organizer"
+        string status "Event status"
+    }
+
+    MeetingActivity {
+        string id PK "Activity ID"
+        string title "Title"
+        string type "Activity type"
+        string date "ISO 8601 date"
+        number order "Order in agenda"
+        string reference "Reference"
+        string responsibleBody "Body"
+    }
+
+    MEPDeclaration {
+        string id PK "Declaration ID"
+        string mepId FK "MEP ID"
+        string mepName "MEP name"
+        string type "Declaration type"
+        string dateFiled "ISO 8601 date"
+        string status "Status"
     }
 ```
 
 ---
 
-## 📦 Data Schemas
+## 👤 MEP Data Model
 
-### 1. MEP (Member of European Parliament)
-
-```typescript
-interface MEP {
-  id: string;                    // Unique identifier (e.g., "124936")
-  name: string;                  // Full name
-  country: string;               // ISO 3166-1 alpha-2 (e.g., "SE")
-  politicalGroup: string;        // Political group abbreviation (e.g., "EPP")
-  committees: Committee[];       // Committee memberships
-  termStart: string;             // ISO 8601 date
-  termEnd?: string;              // ISO 8601 date (optional, current MEPs)
-  active: boolean;               // Currently serving
-  contact?: ContactInfo;         // Contact details (optional)
-}
-
-interface ContactInfo {
-  email?: string;
-  phone?: string;
-  office?: string;
-}
-```
-
-**Validation**:
-```typescript
-const MEPSchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  country: z.string().regex(/^[A-Z]{2}$/),
-  politicalGroup: z.string(),
-  committees: z.array(CommitteeSchema),
-  termStart: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  termEnd: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  active: z.boolean(),
-  contact: ContactInfoSchema.optional()
-});
-```
-
----
-
-### 2. Plenary Session
-
-```typescript
-interface PlenarySession {
-  id: string;                    // Unique identifier
-  startDate: string;             // ISO 8601 date
-  endDate: string;               // ISO 8601 date
-  location: string;              // "Strasbourg" or "Brussels"
-  status: SessionStatus;         // Enum: planned | ongoing | completed
-  votes: Vote[];                 // Votes held during session
-  documents: Document[];         // Documents discussed
-}
-
-enum SessionStatus {
-  PLANNED = 'planned',
-  ONGOING = 'ongoing',
-  COMPLETED = 'completed'
-}
-```
-
-**Validation**:
-```typescript
-const PlenarySessionSchema = z.object({
-  id: z.string().min(1),
-  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  location: z.enum(['Strasbourg', 'Brussels', 'Unknown']),
-  status: z.enum(['planned', 'ongoing', 'completed']),
-  votes: z.array(VoteSchema),
-  documents: z.array(DocumentSchema)
-});
-```
-
----
-
-### 3. Vote
-
-```typescript
-interface Vote {
-  id: string;                    // Unique identifier
-  sessionId: string;             // Reference to plenary session
-  subject: string;               // Vote subject/title
-  date: string;                  // ISO 8601 date
-  result: VoteResult;            // Enum: adopted | rejected | withdrawn
-  favor: number;                 // Votes in favor
-  against: number;               // Votes against
-  abstain: number;               // Abstentions
-  records: VotingRecord[];       // Individual MEP votes
-}
-
-enum VoteResult {
-  ADOPTED = 'adopted',
-  REJECTED = 'rejected',
-  WITHDRAWN = 'withdrawn'
-}
-```
-
----
-
-### 4. Voting Record
-
-```typescript
-interface VotingRecord {
-  id: string;                    // Unique identifier
-  mepId: string;                 // Reference to MEP
-  voteId: string;                // Reference to Vote
-  position: VotePosition;        // Enum: favor | against | abstain | absent
-  timestamp: string;             // ISO 8601 timestamp
-}
-
-enum VotePosition {
-  FAVOR = 'favor',
-  AGAINST = 'against',
-  ABSTAIN = 'abstain',
-  ABSENT = 'absent'
-}
-```
-
----
-
-### 5. Committee
-
-```typescript
-interface Committee {
-  id: string;                    // Unique identifier
-  name: string;                  // Full name
-  abbreviation: string;          // Short code (e.g., "AGRI")
-  type: CommitteeType;           // Enum: standing | special | subcommittee
-  members: MEP[];                // Committee members
-  meetings: CommitteeMeeting[];  // Scheduled meetings
-}
-
-enum CommitteeType {
-  STANDING = 'standing',
-  SPECIAL = 'special',
-  SUBCOMMITTEE = 'subcommittee'
-}
-```
-
----
-
-### 6. Legislative Procedure
-
-```typescript
-interface LegislativeProcedure {
-  id: string;                    // Unique identifier
-  procedureId: string;           // EP procedure reference (e.g., "2023/0123(COD)")
-  title: string;                 // Procedure title
-  type: ProcedureType;           // Enum: ordinary | consent | consultation
-  status: ProcedureStatus;       // Current stage
-  submitted: string;             // ISO 8601 date
-  rapporteur: string;            // MEP ID
-  committee: string;             // Committee ID
-  stages: ProcedureStage[];      // Procedure history
-  documents: Document[];         // Related documents
-}
-
-enum ProcedureType {
-  ORDINARY = 'ordinary',         // Co-decision (COD)
-  CONSENT = 'consent',           // CNS
-  CONSULTATION = 'consultation'  // CON
-}
-
-enum ProcedureStatus {
-  SUBMITTED = 'submitted',
-  COMMITTEE_STAGE = 'committee_stage',
-  FIRST_READING = 'first_reading',
-  SECOND_READING = 'second_reading',
-  THIRD_READING = 'third_reading',
-  ADOPTED = 'adopted',
-  REJECTED = 'rejected'
-}
-
-interface ProcedureStage {
-  stage: string;
-  date: string;
-  outcome?: string;
-}
-```
-
----
-
-### 7. Document
-
-```typescript
-interface Document {
-  id: string;                    // Unique identifier
-  type: DocumentType;            // Document category
-  title: string;                 // Document title
-  author: string;                // Author (MEP, Commission, Council)
-  published: string;             // ISO 8601 date
-  language: string;              // ISO 639-1 code (e.g., "en")
-  topics: string[];              // Subject tags
-  url?: string;                  // Link to document
-}
-
-enum DocumentType {
-  REPORT = 'report',
-  AMENDMENT = 'amendment',
-  RESOLUTION = 'resolution',
-  OPINION = 'opinion',
-  MOTION = 'motion',
-  QUESTION = 'question'
-}
-```
-
----
-
-### 8. Parliamentary Question
-
-```typescript
-interface ParliamentaryQuestion {
-  id: string;                    // Unique identifier
-  authorId: string;              // MEP ID
-  questionType: QuestionType;    // Question category
-  subject: string;               // Question subject
-  question: string;              // Question text
-  asked: string;                 // ISO 8601 date
-  answered?: string;             // ISO 8601 date (optional)
-  answer?: string;               // Answer text (optional)
-  status: QuestionStatus;        // Current status
-}
-
-enum QuestionType {
-  ORAL = 'oral',
-  WRITTEN = 'written',
-  PRIORITY = 'priority',
-  QUESTION_TIME = 'question_time'
-}
-
-enum QuestionStatus {
-  SUBMITTED = 'submitted',
-  PENDING = 'pending',
-  ANSWERED = 'answered',
-  WITHDRAWN = 'withdrawn'
-}
-```
-
----
-
-## 🕵️ OSINT Intelligence Data Model
-
-The OSINT intelligence tools produce **computed analytical data** derived from the core entities above. These are real-time aggregations, not stored entities.
-
-### Intelligence Entity Relationship
+The MEP (Member of European Parliament) data model forms the core entity. `MEPDetails` extends `MEP` with biographical, social, and statistical information.
 
 ```mermaid
-erDiagram
-    MEP ||--o{ INFLUENCE_SCORE : "scored by"
-    MEP ||--o{ VOTING_ANOMALY : "detected in"
-    MEP ||--o{ LEGISLATIVE_EFFECTIVENESS : "measured by"
-    MEP ||--o{ MEP_ATTENDANCE : "tracked in"
-    
-    POLITICAL_GROUP ||--o{ COALITION_METRIC : "analyzed in"
-    POLITICAL_GROUP ||--o{ GROUP_COMPARISON : "compared in"
-    POLITICAL_GROUP ||--o{ POLITICAL_LANDSCAPE : "mapped in"
-    
-    LEGISLATION ||--o{ PIPELINE_STATUS : "tracked in"
-    COMMITTEE ||--o{ PIPELINE_STATUS : "monitored by"
-    COMMITTEE ||--o{ COMMITTEE_ACTIVITY : "analyzed in"
-    
-    COUNTRY_DELEGATION ||--o{ MEP : "composed of"
-    COUNTRY_DELEGATION ||--o{ DELEGATION_ANALYSIS : "assessed in"
-    
-    INFLUENCE_SCORE {
-        string mepId FK
-        number overallScore
-        number votingActivity
-        number legislativeOutput
-        number committeeEngagement
-        number oversight
-        number coalitionBuilding
-        number confidence
+classDiagram
+    class MEP {
+        +string id
+        +string name
+        +string country
+        +string politicalGroup
+        +string[] committees
+        +string email~optional~
+        +boolean active
+        +string termStart
+        +string termEnd~optional~
     }
-    
-    COALITION_METRIC {
-        string groupPair
-        number cohesionScore
-        number stressIndicator
-        number defectionRate
-        string period
+
+    class MEPDetails {
+        +string biography~optional~
+        +string phone~optional~
+        +string address~optional~
+        +string website~optional~
+        +string twitter~optional~
+        +string facebook~optional~
+        +VotingStatistics votingStatistics~optional~
+        +string[] roles~optional~
     }
-    
-    VOTING_ANOMALY {
-        string mepId FK
-        string anomalyType
-        number severity
-        string description
-        date detectedDate
+
+    class VotingStatistics {
+        +number totalVotes
+        +number votesFor
+        +number votesAgainst
+        +number abstentions
+        +number attendanceRate
     }
-    
-    GROUP_COMPARISON {
-        string groupId FK
-        number votingDiscipline
-        number activityLevel
-        number legislativeOutput
-        string period
+
+    MEPDetails --|> MEP : extends
+    MEPDetails *-- VotingStatistics : contains
+
+    class MEPDeclaration {
+        +string id
+        +string title
+        +string mepId
+        +string mepName
+        +string type
+        +string dateFiled
+        +string status
     }
-    
-    LEGISLATIVE_EFFECTIVENESS {
-        string subjectId FK
-        string subjectType
-        number effectivenessScore
-        number billsPassed
-        number amendmentsAdopted
-        number confidence
-    }
-    
-    PIPELINE_STATUS {
-        string procedureId FK
-        string currentStage
-        number daysInStage
-        boolean bottleneck
-        string forecast
-    }
-    
-    COMMITTEE_ACTIVITY {
-        string committeeId FK
-        number meetingCount
-        number documentCount
-        number legislativeOutput
-        number workloadScore
-        string period
-    }
-    
-    MEP_ATTENDANCE {
-        string mepId FK
-        number plenaryRate
-        number committeeRate
-        number overallRate
-        string trend
-        string period
-    }
-    
-    DELEGATION_ANALYSIS {
-        string country
-        number mepCount
-        number cohesionScore
-        number averageInfluence
-        string dominantGroup
-        string period
-    }
-    
-    POLITICAL_LANDSCAPE {
-        string parliamentTerm
-        string seatDistribution
-        number effectiveParties
-        number fragmentationIndex
-        string coalitionScenarios
-        string period
-    }
+
+    MEP "1" --> "*" MEPDeclaration : files
 ```
 
-### 9. Influence Score (Computed)
+### MEP Field Reference
 
-```typescript
-interface InfluenceScore {
-  mepId: string;                   // Reference to MEP
-  overallScore: number;            // 0-10 composite score
-  dimensions: {
-    votingActivity: number;        // 0-10 (weight: 25%)
-    legislativeOutput: number;     // 0-10 (weight: 25%)
-    committeeEngagement: number;   // 0-10 (weight: 20%)
-    oversight: number;             // 0-10 (weight: 15%)
-    coalitionBuilding: number;     // 0-10 (weight: 15%)
-  };
-  confidence: number;              // 0-1 confidence level
-  trend: 'rising' | 'stable' | 'declining';
-  period: string;                  // Analysis period
-}
+| Field | Type | Required | GDPR | Description |
+|-------|------|----------|------|-------------|
+| `id` | `string` | ✅ | — | Unique identifier (`"person/{numeric-id}"`) |
+| `name` | `string` | ✅ | — | Full name in official format |
+| `country` | `string` | ✅ | — | ISO 3166-1 alpha-2 country code |
+| `politicalGroup` | `string` | ✅ | — | Political group abbreviation (EPP, S&D, Renew, etc.) |
+| `committees` | `string[]` | ✅ | — | Committee abbreviations (DEVE, ENVI, ECON, etc.) |
+| `email` | `string` | ❌ | ⚠️ | EP email address — GDPR audit required |
+| `active` | `boolean` | ✅ | — | Currently serving in Parliament |
+| `termStart` | `string` | ✅ | — | Term start date (ISO 8601) |
+| `termEnd` | `string` | ❌ | — | Term end date (ISO 8601), undefined if active |
+
+### MEPDetails Extended Fields
+
+| Field | Type | Required | GDPR | Description |
+|-------|------|----------|------|-------------|
+| `biography` | `string` | ❌ | — | Free-text biography |
+| `phone` | `string` | ❌ | ⚠️ | Office phone — GDPR audit required |
+| `address` | `string` | ❌ | ⚠️ | Office address — GDPR audit required |
+| `website` | `string` | ❌ | — | Personal/official website URL |
+| `twitter` | `string` | ❌ | — | Twitter/X handle |
+| `facebook` | `string` | ❌ | — | Facebook profile identifier |
+| `votingStatistics` | `VotingStatistics` | ❌ | — | Aggregated voting behavior metrics |
+| `roles` | `string[]` | ❌ | — | Parliamentary roles and positions |
+
+---
+
+## 🗳️ Parliamentary Session & Voting Data Model
+
+```mermaid
+classDiagram
+    class PlenarySession {
+        +string id
+        +string date
+        +string location
+        +string[] agendaItems
+        +VotingRecord[] votingRecords~optional~
+        +number attendanceCount~optional~
+        +string[] documents~optional~
+    }
+
+    class VotingRecord {
+        +string id
+        +string sessionId
+        +string topic
+        +string date
+        +number votesFor
+        +number votesAgainst
+        +number abstentions
+        +result: ADOPTED | REJECTED
+        +Record~string, VotePosition~ mepVotes~optional~
+    }
+
+    class Speech {
+        +string id
+        +string title
+        +string speakerId
+        +string speakerName
+        +string date
+        +string type
+        +string language
+        +string text
+        +string sessionReference
+    }
+
+    PlenarySession "1" *-- "*" VotingRecord : contains
+    PlenarySession "1" *-- "*" Speech : includes
+
+    class MeetingActivity {
+        +string id
+        +string title
+        +string type
+        +string date
+        +number order
+        +string reference
+        +string responsibleBody
+    }
+
+    PlenarySession "1" --> "*" MeetingActivity : schedules
 ```
 
-### 10. Coalition Metric (Computed)
+### VotingRecord Field Reference
 
-```typescript
-interface CoalitionMetric {
-  groupPair: string;               // e.g., "EPP-S&D"
-  cohesionScore: number;           // 0-1 agreement rate
-  stressIndicator: number;         // Δ cohesion over time
-  defectionRate: number;           // Party line breaks rate
-  allianceSignal: boolean;         // Cohesion > 0.7 for non-allied groups
-  period: string;                  // Analysis window
-}
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | `string` | ✅ | Unique vote ID (`"VOTE-YYYY-MM-DD-NNN"`) |
+| `sessionId` | `string` | ✅ | Reference to PlenarySession.id |
+| `topic` | `string` | ✅ | Vote subject description |
+| `date` | `string` | ✅ | ISO 8601 datetime with timezone |
+| `votesFor` | `number` | ✅ | Count of votes in favor |
+| `votesAgainst` | `number` | ✅ | Count of votes against |
+| `abstentions` | `number` | ✅ | Count of abstentions |
+| `result` | `'ADOPTED' \| 'REJECTED'` | ✅ | Vote outcome |
+| `mepVotes` | `Record<string, 'FOR' \| 'AGAINST' \| 'ABSTAIN'>` | ❌ | Individual MEP vote positions |
+
+---
+
+## 🏢 Committee Data Model
+
+```mermaid
+classDiagram
+    class Committee {
+        +string id
+        +string name
+        +string abbreviation
+        +string[] members
+        +string chair~optional~
+        +string[] viceChairs~optional~
+        +string[] meetingSchedule~optional~
+        +string[] responsibilities~optional~
+    }
+
+    Committee "1" --> "*" MEP : has members
+    Committee "1" --> "*" LegislativeDocument : produces
+    Committee "1" --> "*" MeetingActivity : holds
 ```
 
-### 11. Voting Anomaly (Computed)
+### Committee Field Reference
 
-```typescript
-interface VotingAnomaly {
-  mepId: string;                   // Reference to MEP
-  anomalyType: AnomalyType;       // Type classification
-  severity: 'low' | 'medium' | 'high';
-  description: string;             // Human-readable explanation
-  detectedDate: string;            // ISO 8601 date
-  relatedVotes: string[];          // Vote IDs involved
-}
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | `string` | ✅ | Unique ID (`"COMM-{ABBREV}"`, e.g., `"COMM-DEVE"`) |
+| `name` | `string` | ✅ | Full official committee name |
+| `abbreviation` | `string` | ✅ | 4-letter code (DEVE, ENVI, ECON, etc.) |
+| `members` | `string[]` | ✅ | Array of MEP IDs (full members) |
+| `chair` | `string` | ❌ | MEP ID of committee chair |
+| `viceChairs` | `string[]` | ❌ | MEP IDs of vice-chairs (1–4 typically) |
+| `meetingSchedule` | `string[]` | ❌ | ISO 8601 datetime strings for scheduled meetings |
+| `responsibilities` | `string[]` | ❌ | Policy areas within committee mandate |
 
-enum AnomalyType {
-  PARTY_DEFECTION = 'party_defection',
-  ALIGNMENT_SHIFT = 'alignment_shift',
-  ABSTENTION_SPIKE = 'abstention_spike',
-  ATTENDANCE_DROP = 'attendance_drop'
-}
+---
+
+## 📄 Legislative Document Data Model
+
+```mermaid
+classDiagram
+    class LegislativeDocument {
+        +string id
+        +DocumentType type
+        +string title
+        +string date
+        +string[] authors
+        +string committee~optional~
+        +DocumentStatus status
+        +string pdfUrl~optional~
+        +string xmlUrl~optional~
+        +string summary~optional~
+    }
+
+    class DocumentType {
+        <<enumeration>>
+        REPORT
+        RESOLUTION
+        DECISION
+        DIRECTIVE
+        REGULATION
+        OPINION
+        AMENDMENT
+    }
+
+    class DocumentStatus {
+        <<enumeration>>
+        DRAFT
+        SUBMITTED
+        IN_COMMITTEE
+        PLENARY
+        ADOPTED
+        REJECTED
+    }
+
+    LegislativeDocument --> DocumentType : classified as
+    LegislativeDocument --> DocumentStatus : progresses through
+
+    class AdoptedText {
+        +string id
+        +string title
+        +string reference
+        +string type
+        +string dateAdopted
+        +string procedureReference
+        +string subjectMatter
+    }
+
+    LegislativeDocument ..> AdoptedText : may become
 ```
 
-### 12. Legislative Effectiveness (Computed)
+### DocumentType Values
 
-```typescript
-interface LegislativeEffectiveness {
-  subjectId: string;               // MEP or Committee ID
-  subjectType: 'mep' | 'committee';
-  effectivenessScore: number;      // 0-10 composite score
-  metrics: {
-    billsPassed: number;
-    amendmentsAdopted: number;
-    reportsAuthored: number;
-    averageProcessingTime: number;
-  };
-  confidence: number;              // 0-1 confidence level
-  period: string;                  // Analysis period
-}
+| Value | Legal Effect | Reference Format | Description |
+|-------|-------------|------------------|-------------|
+| `REPORT` | Non-binding | `A9-{number}/{year}` | Committee report on legislative proposal |
+| `RESOLUTION` | Non-binding | `B9-{number}/{year}` | Motion for a resolution |
+| `DECISION` | Binding on addressees | Varies | Binding legal act addressed to specific recipients |
+| `DIRECTIVE` | Binding (requires transposition) | Varies | Requires member state implementation |
+| `REGULATION` | Directly applicable | Varies | Binding law with direct effect in all member states |
+| `OPINION` | Non-binding | Working documents | Opinion on another committee's report |
+| `AMENDMENT` | Modifies text if adopted | Amendment number | Proposed change to draft legislation |
+
+### DocumentStatus Workflow
+
+| Status | Description | Next Status |
+|--------|-------------|-------------|
+| `DRAFT` | Initial document preparation | → `SUBMITTED` |
+| `SUBMITTED` | Officially tabled/registered | → `IN_COMMITTEE` |
+| `IN_COMMITTEE` | Committee examination and amendments | → `PLENARY` or `DRAFT` |
+| `PLENARY` | Scheduled for full Parliament vote | → `ADOPTED` or `REJECTED` |
+| `ADOPTED` | Approved by Parliament (final) | — |
+| `REJECTED` | Not approved (final) | — |
+
+---
+
+## ⚖️ Legislative Procedure Data Model
+
+```mermaid
+classDiagram
+    class Procedure {
+        +string id
+        +string title
+        +string reference
+        +string type
+        +string subjectMatter
+        +string stage
+        +string status
+        +string dateInitiated
+        +string dateLastActivity
+        +string responsibleCommittee
+        +string rapporteur
+        +string[] documents
+    }
+
+    class ParliamentaryQuestion {
+        +string id
+        +type: WRITTEN | ORAL
+        +string author
+        +string date
+        +string topic
+        +string questionText
+        +string answerText~optional~
+        +string answerDate~optional~
+        +status: PENDING | ANSWERED
+    }
+
+    Procedure "1" --> "*" LegislativeDocument : generates
+    Procedure "1" --> "0..1" AdoptedText : results in
+    Procedure "1" --> "1" Committee : assigned to
+    MEP "1" --> "*" ParliamentaryQuestion : authors
 ```
 
-### 13. Pipeline Status (Computed)
+### Procedure Field Reference
 
-```typescript
-interface PipelineStatus {
-  procedureId: string;             // Procedure reference
-  title: string;                   // Procedure title
-  currentStage: string;            // Current legislative stage
-  daysInStage: number;             // Days at current stage
-  bottleneck: boolean;             // Bottleneck detected
-  forecast: string;                // Timeline forecast
-  healthIndicator: 'on_track' | 'delayed' | 'stalled';
-}
-```
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | `string` | ✅ | Unique procedure identifier |
+| `title` | `string` | ✅ | Procedure title |
+| `reference` | `string` | ✅ | EP reference (e.g., `"2023/0123(COD)"`) |
+| `type` | `string` | ✅ | Procedure type (ordinary, consent, consultation) |
+| `subjectMatter` | `string` | ✅ | Policy area / subject |
+| `stage` | `string` | ✅ | Current legislative stage |
+| `status` | `string` | ✅ | Current status |
+| `dateInitiated` | `string` | ✅ | ISO 8601 date when procedure started |
+| `dateLastActivity` | `string` | ✅ | ISO 8601 date of most recent activity |
+| `responsibleCommittee` | `string` | ✅ | Lead committee ID |
+| `rapporteur` | `string` | ✅ | MEP ID of rapporteur |
+| `documents` | `string[]` | ✅ | Array of related document IDs |
 
-### 14. Committee Activity (Computed)
+### ParliamentaryQuestion Field Reference
 
-```typescript
-interface CommitteeActivity {
-  committeeId: string;             // Committee reference
-  committeeName: string;           // Committee name
-  meetingCount: number;            // Number of meetings in period
-  documentCount: number;           // Documents produced
-  legislativeOutput: number;       // Legislative files processed
-  workloadScore: number;           // 0-10 workload intensity
-  memberCount: number;             // Active members
-  engagementRate: number;          // 0-100 member participation rate
-  period: string;                  // Analysis period
-  confidence: number;              // 0-1 confidence level
-}
-```
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | `string` | ✅ | Question reference (`"E-000123/2024"`, `"O-000045/2024"`) |
+| `type` | `'WRITTEN' \| 'ORAL'` | ✅ | Question type |
+| `author` | `string` | ✅ | MEP ID of question author |
+| `date` | `string` | ✅ | Submission date (ISO 8601) |
+| `topic` | `string` | ✅ | Subject matter (50–150 chars) |
+| `questionText` | `string` | ✅ | Full question text |
+| `answerText` | `string` | ❌ | Answer from institution (when answered) |
+| `answerDate` | `string` | ❌ | Date answer was provided (ISO 8601) |
+| `status` | `'PENDING' \| 'ANSWERED'` | ✅ | Current question status |
 
-### 15. MEP Attendance (Computed)
+---
 
-```typescript
-interface MepAttendance {
-  mepId: string;                   // Reference to MEP
-  mepName: string;                 // MEP name
-  plenaryRate: number;             // 0-100 plenary attendance rate
-  committeeRate: number;           // 0-100 committee attendance rate
-  overallRate: number;             // 0-100 overall attendance rate
-  trend: 'improving' | 'stable' | 'declining';
-  missedSessions: number;          // Count of missed sessions
-  period: string;                  // Analysis period
-  confidence: number;              // 0-1 confidence level
-}
-```
+## 📅 Parliamentary Activity Data Model
 
-### 16. Country Delegation Analysis (Computed)
+```mermaid
+classDiagram
+    class EPEvent {
+        +string id
+        +string title
+        +string date
+        +string endDate
+        +string type
+        +string location
+        +string organizer
+        +string status
+    }
 
-```typescript
-interface DelegationAnalysis {
-  country: string;                 // ISO 3166-1 alpha-2 code
-  countryName: string;             // Full country name
-  mepCount: number;                // Number of MEPs from country
-  cohesionScore: number;           // 0-1 how unified the delegation votes
-  averageInfluence: number;        // 0-10 average MEP influence
-  dominantGroup: string;           // Largest political group
-  groupDistribution: Record<string, number>; // MEPs per group
-  committeePresence: string[];     // Committees where delegation is active
-  period: string;                  // Analysis period
-  confidence: number;              // 0-1 confidence level
-}
-```
+    class MeetingActivity {
+        +string id
+        +string title
+        +string type
+        +string date
+        +number order
+        +string reference
+        +string responsibleBody
+    }
 
-### 17. Political Landscape (Computed)
+    class Speech {
+        +string id
+        +string title
+        +string speakerId
+        +string speakerName
+        +string date
+        +string type
+        +string language
+        +string text
+        +string sessionReference
+    }
 
-```typescript
-interface PoliticalLandscape {
-  parliamentTerm: string;          // Parliamentary term identifier
-  totalMeps: number;               // Total MEP count
-  seatDistribution: Record<string, number>; // Seats per group
-  effectiveParties: number;        // Effective number of parties index
-  fragmentationIndex: number;      // 0-1 fragmentation measure
-  majorityThreshold: number;       // Seats needed for majority
-  coalitionScenarios: {
-    name: string;                  // Coalition name
-    groups: string[];              // Groups in coalition
-    seats: number;                 // Total seats
-    viable: boolean;               // Exceeds majority threshold
-  }[];
-  powerBalance: 'left' | 'center' | 'right' | 'fragmented';
-  period: string;                  // Analysis period
-  confidence: number;              // 0-1 confidence level
-}
+    class MEPDeclaration {
+        +string id
+        +string title
+        +string mepId
+        +string mepName
+        +string type
+        +string dateFiled
+        +string status
+    }
+
+    EPEvent "1" --> "*" MeetingActivity : contains
+    PlenarySession "1" --> "*" Speech : includes
+    MEP "1" --> "*" MEPDeclaration : files
 ```
 
 ---
 
-## 🔄 Data Flow
+## 🔬 Analytical Output Data Model
 
-### Data Acquisition Flow
+The OSINT intelligence tools produce **computed analytical data** derived from core entities. These are **real-time aggregations returned by MCP tools**, not stored entities. All analytical outputs include `confidenceLevel` and `methodology` fields for transparency.
+
+```mermaid
+classDiagram
+    class VotingPatternAnalysis {
+        +string mepId
+        +string mepName
+        +period: from, to
+        +statistics: totalVotes, votesFor, votesAgainst, abstentions, attendanceRate
+        +groupAlignment: politicalGroup, alignmentRate, divergentVotes
+        +crossPartyVoting: withOtherGroups, rate
+        +string confidenceLevel
+        +string methodology
+    }
+
+    class MepInfluenceAssessment {
+        +string mepId
+        +string mepName
+        +string country
+        +string politicalGroup
+        +period: from, to
+        +number overallScore
+        +string rank
+        +DimensionScore[] dimensions
+        +computedAttributes: participationRate, loyaltyScore, diversityIndex, effectivenessRatio, leadershipIndicator
+        +string confidenceLevel
+        +string methodology
+    }
+
+    class CoalitionDynamicsAnalysis {
+        +period: from, to
+        +GroupCohesionMetrics[] groupMetrics
+        +CoalitionPairAnalysis[] coalitionPairs
+        +dominantCoalition: groups, combinedStrength, cohesion
+        +stressIndicators: indicator, severity, affectedGroups
+        +computedAttributes: parliamentaryFragmentation, effectiveNumberOfParties, grandCoalitionViability, oppositionStrength
+        +string confidenceLevel
+        +string methodology
+    }
+
+    class VotingAnomalyAnalysis {
+        +period: from, to
+        +string targetScope
+        +VotingAnomaly[] anomalies
+        +summary: totalAnomalies, highSeverity, mediumSeverity, lowSeverity
+        +computedAttributes: anomalyRate, groupStabilityScore, defectionTrend, riskLevel
+        +string confidenceLevel
+        +string methodology
+    }
+
+    class PoliticalGroupComparison {
+        +period: from, to
+        +number groupCount
+        +GroupComparisonMetrics[] groups
+        +rankings: dimension, ranking
+        +computedAttributes: mostDisciplined, mostActive, highestAttendance, mostCohesive, strongestOverall, parliamentaryBalance, competitiveIndex
+        +string confidenceLevel
+        +string methodology
+    }
+
+    class LegislativeEffectivenessAnalysis {
+        +string subjectType
+        +string subjectId
+        +string subjectName
+        +period: from, to
+        +LegislativeMetrics metrics
+        +LegislativeScores scores
+        +computedAttributes: amendmentSuccessRate, legislativeOutputPerMonth, avgImpactPerReport, questionFollowUpRate, committeeCoverageRate, peerComparisonPercentile, effectivenessRank
+        +string confidenceLevel
+        +string methodology
+    }
+
+    VotingPatternAnalysis ..> MEP : analyzes
+    MepInfluenceAssessment ..> MEP : scores
+    VotingAnomalyAnalysis ..> VotingRecord : detects in
+    CoalitionDynamicsAnalysis ..> PoliticalGroup : compares
+    PoliticalGroupComparison ..> PoliticalGroup : ranks
+    LegislativeEffectivenessAnalysis ..> MEP : evaluates
+```
+
+```mermaid
+classDiagram
+    class LegislativePipelineAnalysis {
+        +period: from, to
+        +filter: committee, status
+        +PipelineItem[] pipeline
+        +summary: totalProcedures, activeCount, stalledCount, completedCount, avgDaysInPipeline
+        +BottleneckInfo[] bottlenecks
+        +computedAttributes: pipelineHealthScore, throughputRate, bottleneckIndex, stalledProcedureRate, estimatedClearanceTime, legislativeMomentum
+        +string confidenceLevel
+        +string methodology
+    }
+
+    class CommitteeActivityAnalysis {
+        +string committeeId
+        +string committeeName
+        +period: from, to
+        +workload: activeLegislativeFiles, documentsProduced, meetingsHeld, opinionsIssued
+        +memberEngagement: totalMembers, averageAttendance, activeContributors
+        +legislativeOutput: reportsAdopted, amendmentsProcessed, successRate
+        +computedAttributes: workloadIntensity, productivityScore, engagementLevel, policyImpactRating
+        +string confidenceLevel
+        +string methodology
+    }
+
+    class AttendanceAnalysis {
+        +period: from, to
+        +string scope
+        +MepAttendanceRecord[] records
+        +summary: totalMEPs, averageAttendance, highAttendance, mediumAttendance, lowAttendance
+        +computedAttributes: overallEngagement, attendanceTrend, absenteeismRisk
+        +string confidenceLevel
+        +string methodology
+    }
+
+    class CountryDelegationAnalysis {
+        +string country
+        +period: from, to
+        +delegation: totalMEPs, activeMEPs, groupDistribution
+        +votingBehavior: averageAttendance, averageLoyalty, nationalCohesion
+        +committeePresence: committeesRepresented, leadershipRoles
+        +computedAttributes: delegationInfluence, nationalCohesionLevel, groupFragmentation, engagementLevel
+        +string confidenceLevel
+        +string methodology
+    }
+
+    class PoliticalLandscape {
+        +period: from, to
+        +parliament: totalMEPs, politicalGroups, countriesRepresented
+        +GroupSummary[] groups
+        +powerDynamics: largestGroup, majorityThreshold, grandCoalitionSize, progressiveBloc, conservativeBloc
+        +activityMetrics: averageAttendance, recentSessionCount
+        +computedAttributes: fragmentationIndex, majorityType, politicalBalance, overallEngagement
+        +string confidenceLevel
+        +string methodology
+    }
+
+    LegislativePipelineAnalysis ..> Procedure : monitors
+    CommitteeActivityAnalysis ..> Committee : evaluates
+    AttendanceAnalysis ..> MEP : tracks
+    CountryDelegationAnalysis ..> MEP : groups by country
+    PoliticalLandscape ..> PoliticalGroup : maps
+```
+
+### Analytical Output Inventory
+
+| # | Type | MCP Tool | Input Entity | Description |
+|---|------|----------|-------------|-------------|
+| 1 | `VotingPatternAnalysis` | `analyze_voting_patterns` | MEP, VotingRecord | MEP voting behavior and group alignment |
+| 2 | `MepInfluenceAssessment` | `assess_mep_influence` | MEP, Committee | Multi-dimensional MEP influence scoring |
+| 3 | `CoalitionDynamicsAnalysis` | `analyze_coalition_dynamics` | VotingRecord | Political group cohesion and alliances |
+| 4 | `VotingAnomalyAnalysis` | `detect_voting_anomalies` | VotingRecord | Statistical anomaly detection in voting |
+| 5 | `PoliticalGroupComparison` | `compare_political_groups` | VotingRecord | Cross-group performance ranking |
+| 6 | `LegislativeEffectivenessAnalysis` | `evaluate_legislative_effectiveness` | MEP, Procedure | Legislative productivity scoring |
+| 7 | `LegislativePipelineAnalysis` | `monitor_legislative_pipeline` | Procedure | Pipeline health and bottleneck detection |
+| 8 | `CommitteeActivityAnalysis` | `analyze_committee_activity` | Committee | Committee workload and productivity |
+| 9 | `AttendanceAnalysis` | `analyze_mep_attendance` | MEP, PlenarySession | Attendance tracking and trends |
+| 10 | `CountryDelegationAnalysis` | `analyze_country_delegation` | MEP | National delegation analysis |
+| 11 | `PoliticalLandscape` | `get_political_landscape` | All entities | Parliament-wide political mapping |
+| 12 | `LegislativeProcedure` | `track_legislation` | Procedure | Detailed procedure tracking with timeline |
+
+---
+
+## 📦 Pagination & Response Wrapper
+
+All list-returning MCP tools use the generic `PaginatedResponse<T>` wrapper for offset-based pagination.
+
+```mermaid
+classDiagram
+    class PaginatedResponse~T~ {
+        +T[] data
+        +number total
+        +number limit
+        +number offset
+        +boolean hasMore
+    }
+
+    PaginatedResponse~MEP~ ..> MEP : wraps
+    PaginatedResponse~VotingRecord~ ..> VotingRecord : wraps
+    PaginatedResponse~LegislativeDocument~ ..> LegislativeDocument : wraps
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data` | `T[]` | Array of items for current page (0 to `limit` items) |
+| `total` | `number` | Total count of matching items across all pages |
+| `limit` | `number` | Maximum items per page (recommended: 50–100) |
+| `offset` | `number` | Current offset position (0-indexed) |
+| `hasMore` | `boolean` | `true` if more pages are available after this one |
+
+---
+
+## 🔄 Data Flow Architecture
+
+### End-to-End Data Flow
+
+```mermaid
+flowchart LR
+    subgraph "MCP Client"
+        AI[AI Assistant]
+    end
+
+    subgraph "European Parliament MCP Server"
+        direction TB
+        ZOD[Zod Input<br/>Validation]
+        TOOLS[28 MCP Tools]
+        CACHE[LRU Cache<br/>500 entries<br/>15 min TTL]
+        TRANSFORM[JSON-LD<br/>Transformer]
+        AUDIT[GDPR<br/>Audit Log]
+    end
+
+    subgraph "EP Open Data Portal"
+        API[EP API v2<br/>JSON-LD]
+    end
+
+    AI -->|MCP Request| ZOD
+    ZOD -->|Validated Input| TOOLS
+    TOOLS -->|Cache Key| CACHE
+
+    CACHE -->|Hit| TOOLS
+    CACHE -.->|Miss| TRANSFORM
+    TRANSFORM -->|HTTP GET| API
+    API -->|JSON-LD| TRANSFORM
+    TRANSFORM -->|Typed Data| CACHE
+
+    TOOLS -->|MCP Content Block| AI
+    TOOLS -->|Access Event| AUDIT
+
+    style ZOD fill:#FF9800,stroke:#F57C00,color:#fff
+    style CACHE fill:#4CAF50,stroke:#388E3C,color:#fff
+    style API fill:#2196F3,stroke:#1565C0,color:#fff
+    style AUDIT fill:#9C27B0,stroke:#7B1FA2,color:#fff
+```
+
+### Data Transformation Pipeline
 
 ```mermaid
 sequenceDiagram
     participant Client as MCP Client
-    participant Server as MCP Server
-    participant Cache as LRU Cache
-    participant EP as EP API
-    
-    Client->>Server: Tool Request (get_meps)
-    Server->>Server: Validate Input (Zod)
-    
-    alt Cache Hit
-        Server->>Cache: Check Cache
-        Cache-->>Server: Cached Data
-        Server-->>Client: Response (cached)
-    else Cache Miss
-        Server->>Cache: Check Cache
-        Cache-->>Server: Cache Miss
-        Server->>EP: HTTP Request
-        EP-->>Server: JSON-LD Response
-        Server->>Server: Transform Data
-        Server->>Server: Validate Output (Zod)
-        Server->>Cache: Store (15 min TTL)
-        Server-->>Client: Response (fresh)
+    participant Zod as Zod Validator
+    participant Tool as MCP Tool
+    participant Cache as LRU Cache (500/15min)
+    participant Transform as JSON-LD Transformer
+    participant EP as EP API v2
+
+    Client->>Zod: Tool call with arguments
+    Zod->>Zod: Validate input schema
+    alt Invalid Input
+        Zod-->>Client: ValidationError
     end
+    Zod->>Tool: Validated input
+
+    Tool->>Cache: Lookup cache key
+    alt Cache Hit
+        Cache-->>Tool: Cached typed data
+    else Cache Miss
+        Cache-->>Tool: Miss
+        Tool->>Transform: Request data
+        Transform->>EP: HTTP GET (JSON-LD)
+        EP-->>Transform: JSON-LD response
+        Transform->>Transform: Parse JSON-LD → TypeScript types
+        Transform-->>Tool: Typed domain objects
+        Tool->>Cache: Store (15 min TTL)
+    end
+
+    Tool->>Tool: Format MCP content block
+    Tool-->>Client: Structured JSON response
 ```
 
 ---
 
-## 💾 Data Storage
+## 🛡️ Type Safety — Branded Types
 
-### Storage Architecture
+The server uses **branded types** (`src/types/branded.ts`) for compile-time type safety, preventing accidental mixing of different ID types at the TypeScript level.
 
 ```mermaid
-graph TB
-    subgraph "No Persistent Storage"
-        NOTE1[No Database]
-        NOTE2[No File Storage]
-        NOTE3[No MEP Personal Data]
-    end
-    
-    subgraph "In-Memory Cache"
-        CACHE[LRU Cache<br/>500 entries<br/>15 min TTL]
-    end
-    
-    subgraph "Audit Logs"
-        LOGS[Winston Logs<br/>90 day retention<br/>IDs only]
-    end
-    
-    subgraph "External Source"
-        EP_API[EP Open Data API<br/>Source of Truth]
-    end
-    
-    CLIENT[MCP Client] -->|Query| CACHE
-    CACHE -->|Cache Miss| EP_API
-    CACHE -->|Audit| LOGS
-    
-    style NOTE1 fill:#E85D75,stroke:#A53F52
-    style NOTE2 fill:#E85D75,stroke:#A53F52
-    style NOTE3 fill:#E85D75,stroke:#A53F52
-    style CACHE fill:#66BB6A,stroke:#43A047
+classDiagram
+    class Brand~K_T~ {
+        <<type>>
+        K & __brand: T
+    }
+
+    class MEPID {
+        <<branded string>>
+        format: numeric string
+        example: "124936"
+        guard: isMEPID()
+        factory: createMEPID()
+    }
+
+    class SessionID {
+        <<branded string>>
+        format: P{term}-YYYY-MM-DD
+        example: "P9-2024-11-20"
+        guard: isSessionID()
+        factory: createSessionID()
+    }
+
+    class CommitteeID {
+        <<branded string>>
+        format: 2-6 uppercase letters
+        example: "DEVE"
+        guard: isCommitteeID()
+        factory: createCommitteeID()
+    }
+
+    class DocumentID {
+        <<branded string>>
+        format: A{parliament}-YYYY/NNNN
+        example: "A9-2024/0123"
+        guard: isDocumentID()
+        factory: createDocumentID()
+    }
+
+    class GroupID {
+        <<branded string>>
+        values: EPP, S&D, Renew, Greens/EFA, ECR, ID, The Left, NI
+        guard: isGroupID()
+        factory: createGroupID()
+    }
+
+    Brand <|-- MEPID
+    Brand <|-- SessionID
+    Brand <|-- CommitteeID
+    Brand <|-- DocumentID
+    Brand <|-- GroupID
 ```
 
-**GDPR Compliance**:
-- ✅ No persistent storage of personal data
-- ✅ Cache TTL: 15 minutes (minimal retention)
-- ✅ Audit logs: MEP IDs only (no names/emails)
-- ✅ Right to erasure: Automatic via cache expiration
-- ✅ Data minimization: Query only necessary fields
+### Branded Type Reference
+
+| Branded Type | Base Type | Format / Validation | Factory Function | Type Guard |
+|-------------|-----------|---------------------|-----------------|------------|
+| `MEPID` | `string` | Numeric string (`/^[0-9]+$/`) | `createMEPID(value)` | `isMEPID(value)` |
+| `SessionID` | `string` | `P{term}-YYYY-MM-DD` (`/^P\d+-\d{4}-\d{2}-\d{2}$/`) | `createSessionID(value)` | `isSessionID(value)` |
+| `CommitteeID` | `string` | 2–6 uppercase letters (`/^[A-Z]{2,6}$/`) | `createCommitteeID(value)` | `isCommitteeID(value)` |
+| `DocumentID` | `string` | `A{parliament}-YYYY/NNNN` (`/^[A-Z]\d+-\d{4}\/\d{4}$/`) | `createDocumentID(value)` | `isDocumentID(value)` |
+| `GroupID` | `string` | Known abbreviations (EPP, S&D, Renew, Greens/EFA, ECR, ID, The Left, NI) | `createGroupID(value)` | `isGroupID(value)` |
+
+Each factory function **throws an `Error`** if the value does not match the expected format — preventing invalid IDs from entering the system at runtime.
 
 ---
 
@@ -747,115 +995,21 @@ graph TB
 
 | Data Type | Classification | Sensitivity | Retention | Encryption |
 |-----------|----------------|-------------|-----------|------------|
-| MEP Personal Data | Public | Low | 15 min cache | In-transit (TLS) |
+| MEP Public Info | Public | Low | 15 min cache | In-transit (TLS) |
+| MEP Contact Info (email, phone) | Public (GDPR-tagged) | Medium | 15 min cache | In-transit (TLS) |
 | Voting Records | Public | Low | 15 min cache | In-transit (TLS) |
 | Legislative Documents | Public | Low | 15 min cache | In-transit (TLS) |
-| Audit Logs (IDs) | Internal | Medium | 90 days | At-rest + TLS |
+| Analytical Outputs | Computed (not stored) | Low | Not retained | In-transit (TLS) |
+| Audit Logs (IDs only) | Internal | Medium | 90 days | At-rest + TLS |
 | Configuration | Internal | Medium | Permanent | Environment vars |
-| API Keys (future) | Confidential | High | Rotated | Secrets Manager |
 
----
-
-## 📋 API Response Formats
-
-### Paginated Response
-
-```typescript
-interface PaginatedResponse<T> {
-  data: T[];                     // Array of entities
-  total: number;                 // Total count
-  limit: number;                 // Page size
-  offset: number;                // Current offset
-}
-
-// Example
-const response: PaginatedResponse<MEP> = {
-  data: [
-    { id: "1", name: "Alice Smith", country: "SE", ... },
-    { id: "2", name: "Bob Jones", country: "FR", ... }
-  ],
-  total: 705,
-  limit: 50,
-  offset: 0
-};
-```
-
-### Single Entity Response
-
-```typescript
-interface SingleEntityResponse<T> {
-  data: T;                       // Single entity
-}
-
-// Example
-const response: SingleEntityResponse<MEP> = {
-  data: { id: "124936", name: "Alice Smith", ... }
-};
-```
-
-### Analysis Response
-
-```typescript
-interface AnalysisResponse {
-  summary: Summary;              // Key metrics
-  details: Detail[];             // Detailed breakdown
-  metadata: Metadata;            // Analysis metadata
-}
-
-// Voting Pattern Analysis Example
-interface VotingPatternAnalysis {
-  summary: {
-    totalVotes: number;
-    favorPercentage: number;
-    againstPercentage: number;
-    abstainPercentage: number;
-    alignmentWithGroup: number;
-  };
-  details: Array<{
-    topic: string;
-    voteCount: number;
-    favorRate: number;
-  }>;
-  metadata: {
-    mepId: string;
-    dateFrom: string;
-    dateTo: string;
-    groupComparison: string;
-  };
-}
-```
-
----
-
-## 🗂️ Data Transformation
-
-### EP API → Internal Model
-
-The European Parliament API returns JSON-LD format which requires transformation:
-
-```typescript
-// EP API Response (JSON-LD)
-const epApiResponse = {
-  "@context": "http://data.europarl.europa.eu/",
-  "identifier": "124936",
-  "label": "Alice SMITH",
-  "country": { "identifier": "SE" },
-  "politicalGroup": { "label": "Group of the European People's Party" }
-};
-
-// Transform to Internal Model
-function transformMEP(apiData: any): MEP {
-  return {
-    id: String(apiData.identifier),
-    name: apiData.label,
-    country: apiData.country?.identifier || 'Unknown',
-    politicalGroup: extractGroupAbbreviation(apiData.politicalGroup?.label),
-    committees: [],
-    termStart: extractDate(apiData.mandate?.start) || 'Unknown',
-    active: true
-  };
-}
-```
+**GDPR Compliance:**
+- ✅ **No persistent storage** of personal data — stateless architecture
+- ✅ **Cache TTL: 15 minutes** — minimal retention per ISMS Policy DP-003
+- ✅ **Audit logs: MEP IDs only** — no names, emails, or phone numbers in logs
+- ✅ **Right to erasure:** Automatic via cache expiration
+- ✅ **Data minimization:** Only fields needed for MCP response are fetched
+- ✅ **GDPR-tagged fields:** `email`, `phone`, `address` marked with `@gdpr` in source
 
 ---
 
@@ -865,48 +1019,56 @@ function transformMEP(apiData: any): MEP {
 
 | Control | Requirement | Implementation |
 |---------|-------------|----------------|
-| A.8.1 | Asset Inventory | All data entities documented and classified |
-| A.8.2 | Information Classification | Data classification table (Public/Internal/Confidential) |
-| A.8.3 | Media Handling | No persistent storage; cache-only architecture |
-| A.18.1 | Privacy & Data Protection | GDPR compliance: no persistent PII, 15-min TTL cache |
+| **A.8.1** | Asset Inventory | All 15 data types documented with field-level detail in this document |
+| **A.8.2** | Information Classification | Data classification table with sensitivity levels and retention |
+| **A.8.3** | Media Handling | No persistent storage; LRU cache-only architecture |
+| **A.14.2** | Secure Development | Branded types, Zod validation, TypeScript strict mode |
+| **A.18.1** | Privacy & Data Protection | GDPR compliance: no persistent PII, 15-min TTL, audit logging |
 
 ### NIST CSF 2.0 Functions
 
 | Function | Category | Implementation |
 |----------|----------|----------------|
-| ID.AM | Asset Management | Complete entity relationship documentation |
-| PR.DS | Data Security | GDPR-compliant data handling, TLS in transit |
-| PR.IP | Information Protection | Data minimization, purpose limitation |
-| DE.AE | Anomalies & Events | Audit logging for data access (IDs only) |
+| **ID.AM** | Asset Management | Complete entity relationship documentation with field references |
+| **PR.DS** | Data Security | GDPR-compliant data handling, TLS in transit, cache-only storage |
+| **PR.IP** | Information Protection | Data minimization, purpose limitation, branded type safety |
+| **DE.AE** | Anomalies & Events | GDPR audit logging for personal data access (IDs only) |
 
 ### CIS Controls v8.1
 
 | Control | Description | Implementation |
 |---------|-------------|----------------|
-| 3.1 | Data Inventory | Complete data classification table |
-| 3.3 | Protect Data | Encryption in transit, minimal retention |
-| 3.6 | Encrypt Data on End-User Devices | No persistent storage on server |
-| 8.2 | Audit Logging | Access logging with 90-day retention |
+| **3.1** | Data Inventory | Complete data type inventory with 15 domain types documented |
+| **3.3** | Protect Data | Encryption in transit (TLS), minimal retention (15 min), no at-rest storage |
+| **3.6** | Encrypt Data on End-User Devices | No persistent storage on server — stateless proxy |
+| **8.2** | Audit Logging | Access logging with 90-day retention, MEP IDs only |
+| **16.1** | Application Software Security | Zod input validation, branded types, TypeScript strict mode |
 
 ### ISMS Policy References
 
 | Policy | Relevance | Link |
 |--------|-----------|------|
-| 🔒 Secure Development Policy | Data handling requirements | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
-| 🌐 Open Source Policy | Public data transparency | [Open_Source_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
+| 🔒 **Secure Development Policy** | Data type safety, input validation, GDPR tagging | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
+| 🌐 **Open Source Policy** | Public data transparency, open-source licensing | [Open_Source_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
+| 🔑 **Information Security Policy** | Data classification, access controls, audit requirements | [Information_Security_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md) |
+| 📋 **Risk Management Policy** | Data handling risk assessment, GDPR compliance | [Risk_Management_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Risk_Management_Policy.md) |
 
 ---
 
 ## 🔗 Related Documentation
 
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture
-- [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) - Security design
-- [API_USAGE_GUIDE.md](./API_USAGE_GUIDE.md) - API endpoints and examples
-- [FUTURE_DATA_MODEL.md](./FUTURE_DATA_MODEL.md) - Future enhancements
+| Document | Description |
+|----------|-------------|
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | C4 system architecture, containers, components |
+| [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | Security controls, GDPR architecture, audit design |
+| [API_USAGE_GUIDE.md](./API_USAGE_GUIDE.md) | MCP tool usage, parameters, and response examples |
+| [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) | TypeScript development patterns, type system usage |
+| [THREAT_MODEL.md](./THREAT_MODEL.md) | STRIDE threat analysis for data flow |
+| [FUTURE_DATA_MODEL.md](./FUTURE_DATA_MODEL.md) | Planned data model enhancements |
 
 ---
 
 <p align="center">
   <strong>Built with ❤️ by <a href="https://hack23.com">Hack23 AB</a></strong><br>
-  <em>Data Model Documentation following ISMS standards</em>
+  <em>Data Model Documentation — Source: <code>src/types/europeanParliament.ts</code>, <code>src/types/branded.ts</code></em>
 </p>
