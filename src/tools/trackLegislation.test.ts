@@ -147,6 +147,7 @@ describe('track_legislation Tool', () => {
       expect(Array.isArray(parsed.documents)).toBe(true);
       expect(parsed.documents.length).toBe(2);
       expect(parsed.documents[0].id).toBe('COM(2024)0001');
+      expect(parsed.documents[0].title).toBe('Reference: COM(2024)0001');
     });
 
     it('should include next steps', async () => {

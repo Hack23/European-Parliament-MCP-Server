@@ -87,11 +87,11 @@ export function buildLegislativeTracking(procedure: Procedure): LegislativeProce
     committees: buildCommittees(procedure),
     amendments: { proposed: 0, adopted: 0, rejected: 0 },
     voting: [],
-    documents: procedure.documents.map((docRef, idx) => ({
+    documents: procedure.documents.map((docRef) => ({
       id: docRef,
       type: 'Document',
       date: procedure.dateLastActivity || procedure.dateInitiated || '',
-      title: `Document ${String(idx + 1)}`,
+      title: `Reference: ${docRef}`,
     })),
     nextSteps: buildNextSteps(procedure),
     confidenceLevel: 'MEDIUM',

@@ -23,7 +23,7 @@
 
 ## 🎯 Purpose
 
-This document provides a strategic analysis of the European Parliament MCP Server's current strengths, weaknesses, opportunities, and threats. This analysis helps inform the roadmap for future development and strategic decision-making. The EP MCP Server (v0.6.2) is a TypeScript/Node.js implementation of the Model Context Protocol providing AI assistants with structured access to European Parliament Open Data, featuring 28 tools, 6 resources, 6 prompts, and 10 OSINT intelligence analysis capabilities.
+This document provides a strategic analysis of the European Parliament MCP Server's current strengths, weaknesses, opportunities, and threats. This analysis helps inform the roadmap for future development and strategic decision-making. The EP MCP Server (v0.7.1) is a TypeScript/Node.js implementation of the Model Context Protocol providing AI assistants with structured access to European Parliament Open Data, featuring 39 tools, 6 resources, 6 prompts, and 10 OSINT intelligence analysis capabilities.
 
 ## 📚 Related Architecture Documentation
 
@@ -111,7 +111,7 @@ quadrantChart
 ```mermaid
 graph TD
     subgraph "Strengths (Internal, Positive)"
-        S1["Comprehensive EP Data Coverage (28 tools)"]
+        S1["Comprehensive EP Data Coverage (39 tools)"]
         S2["Strong Type Safety (TypeScript strict + Zod)"]
         S3["Modern MCP Protocol Implementation"]
         S4["Minimal Dependencies (4 runtime)"]
@@ -164,7 +164,7 @@ graph TD
 mindmap
   root((Strengths))
     id1(Comprehensive EP Data Coverage)
-      id1.1[28 MCP tools for MEPs, votes, committees]
+      id1.1[39 MCP tools for MEPs, votes, committees]
       id1.2[6 resources & 6 prompts]
       id1.3[Full parliamentary lifecycle coverage]
     id2(Strong Type Safety)
@@ -471,7 +471,7 @@ gantt
 
 ## Conclusion
 
-The European Parliament MCP Server has established strong foundations with its comprehensive parliamentary data coverage (28 tools), modern MCP protocol implementation, strong type safety, and minimal dependency footprint. By addressing key weaknesses in cache persistence, EP API resilience, and single-source dependency, while simultaneously preparing for multi-parliament expansion and LLM hallucination mitigation, the platform can maintain its first-mover advantage and expand its impact.
+The European Parliament MCP Server has established strong foundations with its comprehensive parliamentary data coverage (39 tools), modern MCP protocol implementation, strong type safety, and minimal dependency footprint. By addressing key weaknesses in cache persistence, EP API resilience, and single-source dependency, while simultaneously preparing for multi-parliament expansion and LLM hallucination mitigation, the platform can maintain its first-mover advantage and expand its impact.
 
 Strategic priorities should balance immediate API resilience needs with incremental progress toward the multi-parliament, AI-enhanced future vision outlined in the [Future SWOT Analysis](FUTURE_SWOT.md) and [Future Architecture](FUTURE_ARCHITECTURE.md). The open source nature of the project necessitates careful sustainability planning, with community building and academic partnerships helping to distribute maintenance burden and validate analytical methodologies.
 
