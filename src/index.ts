@@ -79,8 +79,8 @@ export * from './types/index.js';
 /** @internal Server name constant */
 export const SERVER_NAME = 'european-parliament-mcp-server';
 /** @internal Server version loaded from package.json */
-const __pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf-8')) as { version: string };
-export const SERVER_VERSION: string = __pkg.version;
+const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf-8')) as { version: string };
+export const SERVER_VERSION: string = packageJson.version;
 
 /**
  * Number of core tools (non-advanced analysis tools)
