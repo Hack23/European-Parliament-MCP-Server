@@ -108,6 +108,18 @@ describe('analyze_voting_patterns Tool', () => {
       expect(typeof parsed === 'object' && parsed !== null).toBe(true);
       if (typeof parsed === 'object' && parsed !== null) {
         expect('groupAlignment' in parsed).toBe(true);
+        if ('groupAlignment' in parsed) {
+          const ga = parsed.groupAlignment;
+          expect(typeof ga === 'object' && ga !== null).toBe(true);
+          if (typeof ga === 'object' && ga !== null) {
+            // Alignment should be derived from real voting data, not hardcoded 87.5
+            expect('alignmentRate' in ga).toBe(true);
+            expect('divergentVotes' in ga).toBe(true);
+            if ('divergentVotes' in ga) {
+              expect(ga.divergentVotes).toBe(200); // equals votesAgainst from mock
+            }
+          }
+        }
       }
     });
 
@@ -188,7 +200,7 @@ describe('analyze_voting_patterns Tool', () => {
       }
     });
 
-    it('should include top topics', async () => {
+    it('should include cross-party voting derived from real data', async () => {
       const mockMEP = {
         id: 'MEP-124810',
         name: 'John Doe',
@@ -197,6 +209,82 @@ describe('analyze_voting_patterns Tool', () => {
         active: true,
         dateOfBirth: '1970-01-01',
         email: 'john.doe@europarl.europa.eu',
+        committees: [],
+        votingStatistics: {
+          totalVotes: 1250,
+          votesFor: 850,
+          votesAgainst: 200,
+          abstentions: 200,
+          attendanceRate: 92.5
+        }
+      };
+      vi.mocked(epClient.getMEPDetails).mockResolvedValue(mockMEP);
+
+      const result = await handleAnalyzeVotingPatterns({ mepId: 'MEP-124810' });
+      const parsed: unknown = JSON.parse(result.content[0].text);
+
+      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
+      if (typeof parsed === 'object' && parsed !== null) {
+        expect('crossPartyVoting' in parsed).toBe(true);
+        if ('crossPartyVoting' in parsed) {
+          const cpv = parsed.crossPartyVoting;
+          expect(typeof cpv === 'object' && cpv !== null).toBe(true);
+          if (typeof cpv === 'object' && cpv !== null) {
+            expect('withOtherGroups' in cpv).toBe(true);
+            expect('rate' in cpv).toBe(true);
+            // Should be derived from actual voting data, not hardcoded
+            if ('withOtherGroups' in cpv) {
+              expect(cpv.withOtherGroups).toBe(200); // equals votesAgainst
+            }
+          }
+        }
+      }
+    });
+
+    it('should include confidence level and methodology', async () => {
+      const mockMEP = {
+        id: 'MEP-124810',
+        name: 'John Doe',
+        country: 'SE',
+        politicalGroup: 'EPP',
+        active: true,
+        committees: [],
+        votingStatistics: {
+          totalVotes: 1250,
+          votesFor: 850,
+          votesAgainst: 200,
+          abstentions: 200,
+          attendanceRate: 92.5
+        }
+      };
+      vi.mocked(epClient.getMEPDetails).mockResolvedValue(mockMEP);
+
+      const result = await handleAnalyzeVotingPatterns({ mepId: 'MEP-124810' });
+      const parsed: unknown = JSON.parse(result.content[0].text);
+
+      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
+      if (typeof parsed === 'object' && parsed !== null) {
+        expect('confidenceLevel' in parsed).toBe(true);
+        expect('methodology' in parsed).toBe(true);
+        if ('confidenceLevel' in parsed) {
+          expect(parsed.confidenceLevel).toBe('HIGH');
+        }
+        if ('methodology' in parsed) {
+          expect(typeof parsed.methodology === 'string').toBe(true);
+          if (typeof parsed.methodology === 'string') {
+            expect(parsed.methodology).toContain('European Parliament');
+          }
+        }
+      }
+    });
+
+    it('should handle MEP without voting statistics', async () => {
+      const mockMEP = {
+        id: 'MEP-124810',
+        name: 'New MEP',
+        country: 'SE',
+        politicalGroup: 'EPP',
+        active: true,
         committees: []
       };
       vi.mocked(epClient.getMEPDetails).mockResolvedValue(mockMEP);
@@ -206,9 +294,17 @@ describe('analyze_voting_patterns Tool', () => {
 
       expect(typeof parsed === 'object' && parsed !== null).toBe(true);
       if (typeof parsed === 'object' && parsed !== null) {
-        expect('topTopics' in parsed).toBe(true);
-        if ('topTopics' in parsed) {
-          expect(Array.isArray(parsed.topTopics)).toBe(true);
+        expect('statistics' in parsed).toBe(true);
+        if ('statistics' in parsed) {
+          const stats = parsed.statistics;
+          expect(typeof stats === 'object' && stats !== null).toBe(true);
+          if (typeof stats === 'object' && stats !== null && 'totalVotes' in stats) {
+            expect(stats.totalVotes).toBe(0);
+          }
+        }
+        expect('confidenceLevel' in parsed).toBe(true);
+        if ('confidenceLevel' in parsed) {
+          expect(parsed.confidenceLevel).toBe('LOW');
         }
       }
     });

@@ -218,4 +218,107 @@ describe('analyze_legislative_effectiveness Tool', () => {
       })).rejects.toThrow('Failed to analyze legislative effectiveness');
     });
   });
+
+  describe('Branch Coverage - Effectiveness Rank and Confidence', () => {
+    it('should classify effectiveness as DEVELOPING when score < 30', async () => {
+      // Arrange: MEP with no roles, very low totalVotes, no committees
+      // reportsAuthored=0, amendmentsTabled=0 → productivityScore=0
+      // qualityScore = 0+25*0.3=7.5, impactScore = (10/30)*100*0.5=16.67
+      // overall = 0*0.35+7.5*0.35+16.67*0.30 ≈ 7.63 → DEVELOPING
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-LOW',
+        name: 'Low Activity MEP',
+        country: 'RO',
+        politicalGroup: 'NI',
+        committees: [],
+        active: true,
+        termStart: '2019-07-02',
+        roles: [],
+        votingStatistics: {
+          totalVotes: 30, votesFor: 10, votesAgainst: 15,
+          abstentions: 5, attendanceRate: 25
+        }
+      });
+
+      // Act
+      const result = await handleAnalyzeLegislativeEffectiveness({
+        subjectType: 'MEP',
+        subjectId: 'MEP-LOW'
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        computedAttributes: { effectivenessRank: string };
+        scores: { overallEffectiveness: number };
+      };
+
+      // Assert
+      expect(data.computedAttributes.effectivenessRank).toBe('DEVELOPING');
+      expect(data.scores.overallEffectiveness).toBeLessThan(30);
+    });
+
+    it('should classify confidence as LOW when totalVotes <= 100', async () => {
+      // Arrange: MEP with totalVotes=50 → classifyConfidence(50) → LOW
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-NEW',
+        name: 'New MEP',
+        country: 'BG',
+        politicalGroup: 'EPP',
+        committees: ['AGRI'],
+        active: true,
+        termStart: '2024-01-15',
+        roles: [],
+        votingStatistics: {
+          totalVotes: 50, votesFor: 30, votesAgainst: 10,
+          abstentions: 10, attendanceRate: 40
+        }
+      });
+
+      // Act
+      const result = await handleAnalyzeLegislativeEffectiveness({
+        subjectType: 'MEP',
+        subjectId: 'MEP-NEW'
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        confidenceLevel: string;
+      };
+
+      // Assert
+      expect(data.confidenceLevel).toBe('LOW');
+    });
+
+    it('should classify effectiveness as MODERATE when score between 30 and 49', async () => {
+      // Arrange: MEP with moderate activity
+      // reportsAuthored=0, amendmentsTabled=2, amendmentsAdopted=1
+      // productivityScore=4, qualityScore=68, impactScore=45
+      // overall = 4*0.35+68*0.35+45*0.30 = 1.4+23.8+13.5 = 38.7 → MODERATE
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-MOD',
+        name: 'Moderate MEP',
+        country: 'ES',
+        politicalGroup: 'S&D',
+        committees: ['ENVI'],
+        active: true,
+        termStart: '2019-07-02',
+        roles: [],
+        votingStatistics: {
+          totalVotes: 200, votesFor: 140, votesAgainst: 40,
+          abstentions: 20, attendanceRate: 60
+        }
+      });
+
+      // Act
+      const result = await handleAnalyzeLegislativeEffectiveness({
+        subjectType: 'MEP',
+        subjectId: 'MEP-MOD'
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        computedAttributes: { effectivenessRank: string };
+        scores: { overallEffectiveness: number };
+      };
+
+      // Assert
+      expect(data.computedAttributes.effectivenessRank).toBe('MODERATE');
+      expect(data.scores.overallEffectiveness).toBeGreaterThanOrEqual(30);
+      expect(data.scores.overallEffectiveness).toBeLessThan(50);
+    });
+  });
 });

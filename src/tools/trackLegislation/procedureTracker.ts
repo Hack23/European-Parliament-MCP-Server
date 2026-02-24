@@ -83,10 +83,12 @@ function buildDocumentReferences(): DocumentReference[] {
 }
 
 /**
- * Create a mock legislative procedure
+ * Create a placeholder legislative procedure with illustrative data.
  * Cyclomatic complexity: 1
  * 
- * In production, this would fetch from EP Legislative Observatory API
+ * Returns a data structure showing what tracked legislation looks like.
+ * All data except the procedureId is illustrative—real EP Legislative
+ * Observatory API integration is planned for a future release.
  */
 export function createMockProcedure(procedureId: string): LegislativeProcedure {
   return {
@@ -100,6 +102,11 @@ export function createMockProcedure(procedureId: string): LegislativeProcedure {
     amendments: buildAmendmentStats(),
     voting: buildVotingRecords(),
     documents: buildDocumentReferences(),
-    nextSteps: buildNextSteps()
+    nextSteps: buildNextSteps(),
+    confidenceLevel: 'NONE',
+    methodology: 'PLACEHOLDER DATA — This tool currently returns illustrative data. '
+      + 'Real EP Legislative Observatory API integration is planned. '
+      + 'Only the procedureId reflects user input; all other fields are static examples. '
+      + 'Data source: None (placeholder).'
   };
 }

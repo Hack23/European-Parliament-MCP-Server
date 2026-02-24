@@ -23,6 +23,11 @@ import { createMockProcedure } from './procedureTracker.js';
  * Track legislation tool handler
  * Cyclomatic complexity: 2
  * 
+ * NOTE: This tool currently returns illustrative placeholder data for the
+ * requested procedure ID. Real EP Legislative Observatory API integration
+ * is planned for a future release. All returned data is clearly marked
+ * with confidenceLevel: 'NONE' and methodology explains the limitation.
+ * 
  * @param args - Tool arguments
  * @returns MCP tool result with legislative procedure tracking data
  * 
@@ -40,8 +45,8 @@ export function handleTrackLegislation(
   const params = TrackLegislationSchema.parse(args);
   
   try {
-    // For MVP, return mock legislative tracking data
-    // In production, fetch from EP Legislative Observatory API
+    // Placeholder: returns illustrative data structure for the given procedure ID.
+    // Real EP Legislative Observatory API integration is planned.
     const procedure = createMockProcedure(params.procedureId);
     
     // Return MCP-compliant response

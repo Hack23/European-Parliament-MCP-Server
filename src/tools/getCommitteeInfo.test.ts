@@ -6,9 +6,27 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetCommitteeInfo } from './getCommitteeInfo.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 
+// Mock the EP client
+vi.mock('../clients/europeanParliamentClient.js', () => ({
+  epClient: {
+    getCommitteeInfo: vi.fn()
+  }
+}));
+
 describe('get_committee_info Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Setup default mock implementation
+    vi.mocked(epClientModule.epClient.getCommitteeInfo).mockResolvedValue({
+      id: 'ENVI',
+      name: 'Committee on Environment, Public Health and Food Safety',
+      abbreviation: 'ENVI',
+      members: ['person/124810', 'person/124811'],
+      chair: 'person/124810',
+      viceChairs: ['person/124811'],
+      responsibilities: ['COMMITTEE_PARLIAMENTARY_STANDING']
+    });
   });
 
   describe('Input Validation', () => {

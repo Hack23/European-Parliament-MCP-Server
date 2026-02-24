@@ -6,9 +6,37 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleSearchDocuments } from './searchDocuments.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 
+// Mock the EP client
+vi.mock('../clients/europeanParliamentClient.js', () => ({
+  epClient: {
+    searchDocuments: vi.fn()
+  }
+}));
+
 describe('search_documents Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Setup default mock implementation
+    vi.mocked(epClientModule.epClient.searchDocuments).mockResolvedValue({
+      data: [
+        {
+          id: 'A-9-2024-0001',
+          type: 'REPORT',
+          title: 'Report on climate change policy',
+          date: '2024-01-10',
+          authors: ['person/124810'],
+          committee: 'ENVI',
+          status: 'ADOPTED',
+          pdfUrl: 'https://www.europarl.europa.eu/doceo/document/A-9-2024-0001_EN.pdf',
+          summary: 'Report on climate change policy'
+        }
+      ],
+      total: 1,
+      limit: 20,
+      offset: 0,
+      hasMore: false
+    });
   });
 
   describe('Input Validation', () => {
