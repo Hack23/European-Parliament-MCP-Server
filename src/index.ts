@@ -32,7 +32,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { fileURLToPath } from 'url';
 import { resolve } from 'path';
-import { realpathSync } from 'fs';
+import { readFileSync, realpathSync } from 'fs';
 
 // Import tool handlers
 import { handleGetMEPs, getMEPsToolMetadata } from './tools/getMEPs.js';
@@ -78,8 +78,9 @@ export * from './types/index.js';
 
 /** @internal Server name constant */
 export const SERVER_NAME = 'european-parliament-mcp-server';
-/** @internal Server version constant */
-export const SERVER_VERSION = '0.5.1';
+/** @internal Server version loaded from package.json */
+const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf-8')) as { version: string };
+export const SERVER_VERSION: string = packageJson.version;
 
 /**
  * Number of core tools (non-advanced analysis tools)
