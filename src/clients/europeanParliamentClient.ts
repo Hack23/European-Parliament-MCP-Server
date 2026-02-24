@@ -37,7 +37,9 @@ import type {
   LegislativeDocument,
   Committee,
   ParliamentaryQuestion,
-  PaginatedResponse
+  PaginatedResponse,
+  DocumentType,
+  DocumentStatus
 } from '../types/europeanParliament.js';
 
 /**
@@ -1257,16 +1259,116 @@ export class EuropeanParliamentClient {
   }
 
   /**
+   * Transforms EP API vote result data to internal VotingRecord format.
+   * 
+   * Converts JSON-LD vote result data from the European Parliament API
+   * `/meetings/{sitting-id}/vote-results` endpoint to the standardized
+   * internal VotingRecord type.
+   * 
+   * **Data Mapping:**
+   * - `activity_id` or `id` → VotingRecord.id
+   * - `had_activity_type` → determines result type
+   * - `recorded_in_a_realization_of` → VotingRecord.topic
+   * - Vote counts extracted from `had_voter_favor`, `had_voter_against`, `had_voter_abstention`
+   * 
+   * @param apiData - Raw vote result data from EP API (JSON-LD format)
+   * @param sessionId - Parent sitting/session identifier
+   * @returns Transformed VotingRecord object
+   * 
+   * @private
+   * @internal
+   * @see {@link VotingRecord} for output type structure
+   */
+  private transformVoteResult(apiData: Record<string, unknown>, sessionId: string): VotingRecord {
+    const activityId = apiData['activity_id'];
+    const idField = apiData['id'];
+    const id = this.toSafeString(activityId) || this.toSafeString(idField) || '';
+
+    // Extract date from activity_date
+    const activityDate = apiData['eli-dl:activity_date'];
+    const date = this.extractActivityDate(activityDate);
+
+    // Extract topic/title from notation or label
+    const notation = apiData['notation'];
+    const label = apiData['label'];
+    const topic = this.toSafeString(label) || this.toSafeString(notation) || 'Unknown';
+
+    // Extract vote counts - EP API may provide these as numbers or nested objects
+    const votesFor = this.extractVoteCount(apiData['had_voter_favor'] ?? apiData['number_of_votes_favor']);
+    const votesAgainst = this.extractVoteCount(apiData['had_voter_against'] ?? apiData['number_of_votes_against']);
+    const abstentions = this.extractVoteCount(apiData['had_voter_abstention'] ?? apiData['number_of_votes_abstention']);
+
+    // Determine result based on vote counts or decision field
+    const decisionField = apiData['decision_method'] ?? apiData['had_decision_outcome'];
+    const decisionStr = this.toSafeString(decisionField);
+    let result: 'ADOPTED' | 'REJECTED';
+    if (decisionStr.includes('ADOPTED') || decisionStr.includes('APPROVED')) {
+      result = 'ADOPTED';
+    } else if (decisionStr.includes('REJECTED')) {
+      result = 'REJECTED';
+    } else if (votesFor >= votesAgainst) {
+      result = 'ADOPTED';
+    } else {
+      result = 'REJECTED';
+    }
+
+    return {
+      id,
+      sessionId,
+      topic,
+      date,
+      votesFor,
+      votesAgainst,
+      abstentions,
+      result
+    };
+  }
+
+  /**
+   * Extracts a numeric vote count from EP API data.
+   * 
+   * Handles various formats: direct numbers, string numbers, or
+   * JSON-LD objects with `@value` or array of voter references.
+   * 
+   * @param value - Raw vote count value from EP API
+   * @returns Numeric vote count or 0 if not parseable
+   * 
+   * @private
+   * @internal
+   */
+  private extractVoteCount(value: unknown): number {
+    if (value === null || value === undefined) return 0;
+    if (typeof value === 'number') return value;
+    if (typeof value === 'string') {
+      const parsed = parseInt(value, 10);
+      return isNaN(parsed) ? 0 : parsed;
+    }
+    if (Array.isArray(value)) return value.length;
+    if (typeof value === 'object' && value !== null) {
+      const objValue = (value as Record<string, unknown>)['@value'];
+      if (objValue !== undefined) {
+        return this.extractVoteCount(objValue);
+      }
+    }
+    return 0;
+  }
+
+  /**
    * Retrieves voting records with filtering by session, MEP, topic, and date.
    * 
-   * **Note:** Currently returns mock data. Real EP API integration pending.
+   * Fetches vote results from the European Parliament API using the
+   * `/meetings/{sitting-id}/vote-results` endpoint. When a sessionId is provided,
+   * fetches vote results for that specific sitting. Otherwise returns results
+   * from recent sittings.
    * 
-   * Fetches voting records from plenary sessions including vote counts,
-   * outcomes, and individual MEP votes. Supports filtering by session,
-   * MEP, topic, and date range.
+   * **EP API Endpoint:** `GET /meetings/{sitting-id}/vote-results`
+   * 
+   * **Performance:**
+   * - Cached: <100ms (P50), <200ms (P95)
+   * - Uncached: <2s (P99)
    * 
    * @param params - Query parameters for filtering voting records
-   * @param params.sessionId - Plenary session identifier (e.g., "PLENARY-2024-01")
+   * @param params.sessionId - Plenary sitting identifier (e.g., "MTG-PL-2024-01-15")
    * @param params.mepId - MEP identifier to filter votes by specific MEP
    * @param params.topic - Topic or subject to filter votes
    * @param params.dateFrom - Start date (ISO 8601, e.g., "2024-01-01")
@@ -1280,9 +1382,9 @@ export class EuropeanParliamentClient {
    * 
    * @example
    * ```typescript
-   * // Get voting records for a session
+   * // Get voting records for a specific sitting
    * const result = await client.getVotingRecords({
-   *   sessionId: 'PLENARY-2024-01',
+   *   sessionId: 'MTG-PL-2024-01-15',
    *   limit: 20
    * });
    * 
@@ -1302,10 +1404,13 @@ export class EuropeanParliamentClient {
    * });
    * ```
    * 
+   * @security Audit logged per GDPR Article 30
+   * @performance Cached: <100ms P50, <200ms P95. Uncached: <2s P99
    * @see {@link VotingRecord} for voting record data structure
    * @see {@link PaginatedResponse} for response format
+   * @see https://data.europarl.europa.eu/api/v2/meetings/{sitting-id}/vote-results - EP API endpoint
    */
-  getVotingRecords(params: {
+  async getVotingRecords(params: {
     sessionId?: string;
     mepId?: string;
     topic?: string;
@@ -1317,28 +1422,71 @@ export class EuropeanParliamentClient {
     const action = 'get_voting_records';
     
     try {
-      const mockData: PaginatedResponse<VotingRecord> = {
-        data: [
-          {
-            id: 'VOTE-2024-001',
-            sessionId: params.sessionId ?? 'PLENARY-2024-01',
-            topic: 'Climate Change Resolution',
-            date: '2024-01-15',
-            votesFor: 450,
-            votesAgainst: 150,
-            abstentions: 50,
-            result: 'ADOPTED'
+      const apiParams: Record<string, unknown> = {};
+      if (params.limit !== undefined) apiParams['limit'] = params.limit;
+      if (params.offset !== undefined) apiParams['offset'] = params.offset;
+
+      let records: VotingRecord[] = [];
+      const effectiveSessionId = params.sessionId ?? '';
+
+      if (effectiveSessionId) {
+        // Fetch vote results for a specific sitting
+        const response = await this.get<JSONLDResponse>(
+          `meetings/${effectiveSessionId}/vote-results`,
+          apiParams
+        );
+        records = response.data.map((item) => this.transformVoteResult(item, effectiveSessionId));
+      } else {
+        // Without sessionId, fetch recent meetings first and get their vote results
+        const meetingsParams: Record<string, unknown> = { limit: 5 };
+        if (params.dateFrom) meetingsParams['year'] = params.dateFrom.substring(0, 4);
+        const meetingsResponse = await this.get<JSONLDResponse>('meetings', meetingsParams);
+        
+        for (const meeting of meetingsResponse.data) {
+          const meetingId = this.toSafeString(meeting['activity_id']) || this.toSafeString(meeting['id']) || '';
+          if (!meetingId) continue;
+          try {
+            const voteResponse = await this.get<JSONLDResponse>(
+              `meetings/${meetingId}/vote-results`,
+              { limit: params.limit ?? 50 }
+            );
+            const transformed = voteResponse.data.map((item) => this.transformVoteResult(item, meetingId));
+            records.push(...transformed);
+          } catch {
+            // Some meetings may not have vote results - continue silently
           }
-        ],
-        total: 1,
-        limit: params.limit ?? 50,
-        offset: params.offset ?? 0,
-        hasMore: false
+          if (records.length >= (params.limit ?? 50)) break;
+        }
+      }
+
+      // Apply client-side filters
+      if (params.topic) {
+        const topicLower = params.topic.toLowerCase();
+        records = records.filter(r => r.topic.toLowerCase().includes(topicLower));
+      }
+      if (params.dateFrom) {
+        records = records.filter(r => r.date >= params.dateFrom!);
+      }
+      if (params.dateTo) {
+        records = records.filter(r => r.date <= params.dateTo!);
+      }
+
+      // Apply pagination
+      const offset = params.offset ?? 0;
+      const limit = params.limit ?? 50;
+      const paginatedRecords = records.slice(offset, offset + limit);
+
+      const result: PaginatedResponse<VotingRecord> = {
+        data: paginatedRecords,
+        total: records.length,
+        limit,
+        offset,
+        hasMore: offset + paginatedRecords.length < records.length
       };
       
-      auditLogger.logDataAccess(action, params, mockData.data.length);
+      auditLogger.logDataAccess(action, params, result.data.length);
       
-      return Promise.resolve(mockData);
+      return result;
     } catch (error) {
       auditLogger.logError(
         action,
@@ -1350,13 +1498,123 @@ export class EuropeanParliamentClient {
   }
 
   /**
+   * Transforms EP API document data to internal LegislativeDocument format.
+   * 
+   * Converts JSON-LD document data from the European Parliament API
+   * `/documents` or `/plenary-documents` endpoint to the standardized
+   * internal LegislativeDocument type.
+   * 
+   * @param apiData - Raw document data from EP API (JSON-LD format)
+   * @returns Transformed LegislativeDocument object
+   * 
+   * @private
+   * @internal
+   * @see {@link LegislativeDocument} for output type structure
+   */
+  private transformDocument(apiData: Record<string, unknown>): LegislativeDocument {
+    const idField = apiData['work_id'] ?? apiData['id'] ?? apiData['identifier'];
+    const id = this.toSafeString(idField) || '';
+
+    const titleField = apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title'];
+    let title = '';
+    if (typeof titleField === 'object' && titleField !== null && !Array.isArray(titleField)) {
+      // JSON-LD may wrap titles in language-tagged objects
+      const langObj = titleField as Record<string, unknown>;
+      title = this.toSafeString(langObj['en'] ?? langObj['@value'] ?? langObj['mul']) || '';
+    } else if (Array.isArray(titleField)) {
+      // May be array of language variants; pick first English or first available
+      for (const t of titleField) {
+        if (typeof t === 'object' && t !== null) {
+          const tObj = t as Record<string, unknown>;
+          const lang = this.toSafeString(tObj['@language']);
+          if (lang === 'en' || lang === 'mul') {
+            title = this.toSafeString(tObj['@value']) || '';
+            break;
+          }
+          if (!title) title = this.toSafeString(tObj['@value']) || '';
+        }
+      }
+    } else {
+      title = this.toSafeString(titleField) || '';
+    }
+
+    const typeField = apiData['work_type'] ?? apiData['ep-document-types'] ?? apiData['type'];
+    const docType = this.toSafeString(typeField) || 'REPORT';
+    // Map EP API work-type to our DocumentType
+    const normalizedType = docType.replace(/.*\//, '').toUpperCase();
+    const validTypes: DocumentType[] = ['REPORT', 'RESOLUTION', 'DECISION', 'DIRECTIVE', 'REGULATION', 'OPINION', 'AMENDMENT'];
+    const mappedType: DocumentType = validTypes.find(t => normalizedType.includes(t)) ?? 'REPORT';
+
+    const dateField = apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date'];
+    const date = this.extractDateValue(dateField);
+
+    const committeeField = apiData['was_attributed_to'] ?? apiData['committee'];
+    const committeeValue = this.toSafeString(committeeField);
+
+    const statusField = apiData['resource_legal_in-force'] ?? apiData['status'];
+    const statusStr = this.toSafeString(statusField) || '';
+    const validStatuses: DocumentStatus[] = ['DRAFT', 'SUBMITTED', 'IN_COMMITTEE', 'PLENARY', 'ADOPTED', 'REJECTED'];
+    const mappedStatus: DocumentStatus = validStatuses.find(s => statusStr.toUpperCase().includes(s)) ?? 'SUBMITTED';
+
+    const doc: LegislativeDocument = {
+      id,
+      type: mappedType,
+      title: title || `Document ${id}`,
+      date,
+      authors: [],
+      status: mappedStatus,
+      summary: title
+    };
+    if (committeeValue) {
+      doc.committee = committeeValue;
+    }
+    return doc;
+  }
+
+  /**
+   * Extracts a date value from various EP API date formats.
+   * 
+   * @param dateField - Raw date field from EP API
+   * @returns ISO 8601 date string (YYYY-MM-DD) or empty string
+   * 
+   * @private
+   * @internal
+   */
+  private extractDateValue(dateField: unknown): string {
+    if (dateField === null || dateField === undefined) return '';
+    if (typeof dateField === 'string') {
+      const parts = dateField.split('T');
+      return parts[0] ?? '';
+    }
+    if (typeof dateField === 'object' && '@value' in dateField) {
+      const val = (dateField as Record<string, unknown>)['@value'];
+      if (typeof val === 'string') {
+        const parts = val.split('T');
+        return parts[0] ?? '';
+      }
+    }
+    return '';
+  }
+
+  /**
    * Searches legislative documents by keyword, type, date, and committee.
    * 
-   * **Note:** Currently returns mock data. Real EP API integration pending.
+   * Fetches documents from the European Parliament API using the `/documents`
+   * endpoint with support for work-type filtering, date ranges, and committee
+   * assignment filtering.
    * 
-   * Performs full-text search across legislative documents including reports,
-   * amendments, resolutions, and opinions. Supports filtering by document type,
-   * date range, and responsible committee.
+   * **EP API Endpoint:** `GET /documents`
+   * 
+   * **Supported work-type values:**
+   * - `REPORT_PLENARY` - Plenary reports
+   * - `RESOLUTION_MOTION` - Resolution motions
+   * - `TEXT_ADOPTED` - Adopted texts
+   * - `AMENDMENT_LIST` - Amendment lists
+   * - And others (see EP API documentation)
+   * 
+   * **Performance:**
+   * - Cached: <100ms (P50), <200ms (P95)
+   * - Uncached: <2s (P99)
    * 
    * @param params - Query parameters for searching documents
    * @param params.keyword - Search keyword or phrase (required)
@@ -1383,25 +1641,16 @@ export class EuropeanParliamentClient {
    * for (const doc of result.data) {
    *   console.log(`${doc.title} (${doc.type})`);
    *   console.log(`  Status: ${doc.status}`);
-   *   console.log(`  PDF: ${doc.pdfUrl}`);
    * }
    * ```
    * 
-   * @example
-   * ```typescript
-   * // Filter by committee and date range
-   * const documents = await client.searchDocuments({
-   *   keyword: 'environment',
-   *   committee: 'ENVI',
-   *   dateFrom: '2024-01-01',
-   *   dateTo: '2024-06-30'
-   * });
-   * ```
-   * 
+   * @security Audit logged per GDPR Article 30
+   * @performance Cached: <100ms P50, <200ms P95. Uncached: <2s P99
    * @see {@link LegislativeDocument} for document data structure
    * @see {@link PaginatedResponse} for response format
+   * @see https://data.europarl.europa.eu/api/v2/documents - EP API endpoint
    */
-  searchDocuments(params: {
+  async searchDocuments(params: {
     keyword: string;
     documentType?: string;
     dateFrom?: string;
@@ -1413,29 +1662,58 @@ export class EuropeanParliamentClient {
     const action = 'search_documents';
     
     try {
-      const mockData: PaginatedResponse<LegislativeDocument> = {
-        data: [
-          {
-            id: 'DOC-2024-001',
-            type: 'REPORT',
-            title: `Legislative Report on ${params.keyword}`,
-            date: '2024-01-10',
-            authors: ['MEP-124810'],
-            committee: params.committee ?? 'ENVI',
-            status: 'ADOPTED',
-            pdfUrl: 'https://www.europarl.europa.eu/doceo/document/A-9-2024-0001_EN.pdf',
-            summary: `Summary of document related to ${params.keyword}`
-          }
-        ],
-        total: 1,
+      const apiParams: Record<string, unknown> = {};
+      if (params.limit !== undefined) apiParams['limit'] = params.limit;
+      if (params.offset !== undefined) apiParams['offset'] = params.offset;
+      if (params.documentType) {
+        // Map common document types to EP API work-type values
+        const typeMap: Record<string, string> = {
+          'REPORT': 'REPORT_PLENARY',
+          'AMENDMENT': 'AMENDMENT_LIST',
+          'RESOLUTION': 'RESOLUTION_MOTION',
+          'ADOPTED': 'TEXT_ADOPTED',
+        };
+        apiParams['work-type'] = typeMap[params.documentType.toUpperCase()] ?? params.documentType;
+      }
+      if (params.dateFrom) {
+        apiParams['year'] = params.dateFrom.substring(0, 4);
+      }
+
+      // Call real EP API documents endpoint
+      const response = await this.get<JSONLDResponse>('documents', apiParams);
+
+      // Transform EP API data to internal format
+      let documents = response.data.map((item) => this.transformDocument(item));
+
+      // Apply client-side keyword filter (EP documents API doesn't have text search on this endpoint)
+      if (params.keyword) {
+        const keywordLower = params.keyword.toLowerCase();
+        documents = documents.filter(d =>
+          d.title.toLowerCase().includes(keywordLower) ||
+          d.summary?.toLowerCase().includes(keywordLower) ||
+          d.id.toLowerCase().includes(keywordLower)
+        );
+      }
+
+      // Apply committee filter client-side if needed
+      if (params.committee) {
+        const committeeLower = params.committee.toLowerCase();
+        documents = documents.filter(d =>
+          d.committee?.toLowerCase().includes(committeeLower)
+        );
+      }
+
+      const result: PaginatedResponse<LegislativeDocument> = {
+        data: documents,
+        total: (params.offset ?? 0) + documents.length,
         limit: params.limit ?? 20,
         offset: params.offset ?? 0,
-        hasMore: false
+        hasMore: documents.length >= (params.limit ?? 20)
       };
       
-      auditLogger.logDataAccess(action, params, mockData.data.length);
+      auditLogger.logDataAccess(action, params, result.data.length);
       
-      return Promise.resolve(mockData);
+      return result;
     } catch (error) {
       auditLogger.logError(
         action,
@@ -1447,15 +1725,104 @@ export class EuropeanParliamentClient {
   }
 
   /**
-   * Retrieves committee information by ID or abbreviation.
+   * Transforms EP API corporate body data to internal Committee format.
    * 
-   * **Note:** Currently returns mock data. Real EP API integration pending.
+   * Converts JSON-LD corporate body data from the European Parliament API
+   * `/corporate-bodies/{body-id}` endpoint to the standardized internal
+   * Committee type.
    * 
-   * Fetches detailed committee information including name, members, leadership,
-   * and areas of responsibility. Supports lookup by committee ID or abbreviation.
+   * @param apiData - Raw corporate body data from EP API (JSON-LD format)
+   * @returns Transformed Committee object
+   * 
+   * @private
+   * @internal
+   * @see {@link Committee} for output type structure
+   */
+  private transformCorporateBody(apiData: Record<string, unknown>): Committee {
+    const idField = apiData['body_id'] ?? apiData['id'] ?? apiData['identifier'];
+    const id = this.toSafeString(idField) || '';
+
+    const labelField = apiData['label'] ?? apiData['prefLabel'] ?? apiData['skos:prefLabel'];
+    let name = '';
+    if (typeof labelField === 'object' && labelField !== null && !Array.isArray(labelField)) {
+      const langObj = labelField as Record<string, unknown>;
+      name = this.toSafeString(langObj['en'] ?? langObj['@value'] ?? langObj['mul']) || '';
+    } else if (Array.isArray(labelField)) {
+      for (const l of labelField) {
+        if (typeof l === 'object' && l !== null) {
+          const lObj = l as Record<string, unknown>;
+          const lang = this.toSafeString(lObj['@language']);
+          if (lang === 'en' || lang === 'mul') {
+            name = this.toSafeString(lObj['@value']) || '';
+            break;
+          }
+          if (!name) name = this.toSafeString(lObj['@value']) || '';
+        }
+      }
+    } else {
+      name = this.toSafeString(labelField) || '';
+    }
+
+    const notation = apiData['notation'] ?? apiData['skos:notation'];
+    const abbreviation = this.toSafeString(notation) || id;
+
+    // Extract members from hasMembership if available
+    const memberships = apiData['hasMembership'] ?? apiData['org:hasMember'];
+    const members: string[] = [];
+    if (Array.isArray(memberships)) {
+      for (const m of memberships) {
+        if (typeof m === 'string') {
+          members.push(m);
+        } else if (typeof m === 'object' && m !== null) {
+          const mObj = m as Record<string, unknown>;
+          const memberId = this.toSafeString(mObj['person'] ?? mObj['id'] ?? mObj['@id']);
+          if (memberId) members.push(memberId);
+        }
+      }
+    }
+
+    // Extract classification for responsibilities
+    const classificationField = apiData['classification'] ?? apiData['org:classification'];
+    const classification = this.toSafeString(classificationField) || '';
+    const responsibilities: string[] = [];
+    if (classification) {
+      responsibilities.push(classification.replace(/.*\//, ''));
+    }
+
+    return {
+      id: id || abbreviation,
+      name: name || `Committee ${abbreviation}`,
+      abbreviation,
+      members,
+      chair: members[0] ?? '',
+      viceChairs: members.slice(1, 3),
+      responsibilities
+    };
+  }
+
+  /**
+   * Retrieves committee (corporate body) information by ID or abbreviation.
+   * 
+   * Fetches detailed committee information from the European Parliament API
+   * using the `/corporate-bodies/{body-id}` endpoint for specific lookups or
+   * `/corporate-bodies` for listing. Supports committee classification filtering.
+   * 
+   * **EP API Endpoint:** `GET /corporate-bodies/{body-id}` or `GET /corporate-bodies`
+   * 
+   * **Body Classifications:**
+   * - `COMMITTEE_PARLIAMENTARY_STANDING` - Standing committees
+   * - `COMMITTEE_PARLIAMENTARY_TEMPORARY` - Temporary committees
+   * - `COMMITTEE_PARLIAMENTARY_SPECIAL` - Special committees
+   * - `COMMITTEE_PARLIAMENTARY_SUB` - Subcommittees
+   * - `EU_POLITICAL_GROUP` - Political groups
+   * - `DELEGATION_PARLIAMENTARY` - Delegations
+   * 
+   * **Performance:**
+   * - Cached: <100ms (P50), <200ms (P95)
+   * - Uncached: <2s (P99)
    * 
    * @param params - Query parameters for committee lookup
-   * @param params.id - Committee identifier (e.g., "COMM-ENVI")
+   * @param params.id - Committee/corporate body identifier (e.g., "ENVI")
    * @param params.abbreviation - Committee abbreviation (e.g., "ENVI", "DEVE")
    * @returns Promise resolving to committee information
    * 
@@ -1470,47 +1837,72 @@ export class EuropeanParliamentClient {
    * });
    * 
    * console.log(`${committee.name} (${committee.abbreviation})`);
-   * console.log(`Chair: ${committee.chair}`);
    * console.log(`Members: ${committee.members.length}`);
-   * console.log('Responsibilities:');
-   * committee.responsibilities.forEach(r => console.log(`  - ${r}`));
    * ```
    * 
    * @example
    * ```typescript
    * // Get committee by ID
    * const committee = await client.getCommitteeInfo({
-   *   id: 'COMM-ENVI'
+   *   id: 'ENVI'
    * });
-   * console.log(`Vice-chairs: ${committee.viceChairs.join(', ')}`);
+   * console.log(`Chair: ${committee.chair}`);
    * ```
    * 
+   * @security Audit logged per GDPR Article 30
+   * @performance Cached: <100ms P50, <200ms P95. Uncached: <2s P99
    * @see {@link Committee} for committee data structure
+   * @see https://data.europarl.europa.eu/api/v2/corporate-bodies - EP API endpoint
    */
-  getCommitteeInfo(params: {
+  async getCommitteeInfo(params: {
     id?: string;
     abbreviation?: string;
   }): Promise<Committee> {
     const action = 'get_committee_info';
     
     try {
-      const mockData: Committee = {
-        id: params.id ?? 'COMM-ENVI',
-        name: 'Committee on Environment, Public Health and Food Safety',
-        abbreviation: params.abbreviation ?? 'ENVI',
-        members: ['MEP-124810', 'MEP-124811'],
-        chair: 'MEP-124810',
-        viceChairs: ['MEP-124811'],
-        responsibilities: [
-          'Environmental policy',
-          'Public health',
-          'Food safety'
-        ]
+      // Use abbreviation or ID to look up the specific corporate body
+      const bodyId = params.abbreviation ?? params.id ?? '';
+      
+      if (bodyId) {
+        try {
+          // Fetch specific corporate body by ID
+          const response = await this.get<JSONLDResponse>(`corporate-bodies/${bodyId}`, {});
+          
+          if (response.data.length > 0) {
+            const committee = this.transformCorporateBody(response.data[0] ?? {});
+            auditLogger.logDataAccess(action, params, 1);
+            return committee;
+          }
+        } catch {
+          // Body not found by direct lookup - fall through to list search
+        }
+      }
+      
+      // Fallback: search corporate bodies list with committee classification
+      const listParams: Record<string, unknown> = {
+        'body-classification': 'COMMITTEE_PARLIAMENTARY_STANDING',
+        limit: 50
       };
+      const response = await this.get<JSONLDResponse>('corporate-bodies', listParams);
       
-      auditLogger.logDataAccess(action, params, 1);
+      // Find matching committee
+      for (const item of response.data) {
+        const committee = this.transformCorporateBody(item);
+        if (
+          committee.abbreviation === (params.abbreviation ?? params.id) ||
+          committee.id === (params.id ?? params.abbreviation)
+        ) {
+          auditLogger.logDataAccess(action, params, 1);
+          return committee;
+        }
+      }
       
-      return Promise.resolve(mockData);
+      // If not found, throw appropriate error
+      throw new APIError(
+        `Committee not found: ${params.abbreviation ?? params.id ?? 'unknown'}`,
+        404
+      );
     } catch (error) {
       auditLogger.logError(
         action,
@@ -1522,13 +1914,115 @@ export class EuropeanParliamentClient {
   }
 
   /**
+   * Transforms EP API parliamentary question data to internal format.
+   * 
+   * Converts JSON-LD question data from the European Parliament API
+   * `/parliamentary-questions` endpoint to the standardized internal
+   * ParliamentaryQuestion type.
+   * 
+   * **EP API work-type values for questions:**
+   * - `QUESTION_WRITTEN_PRIORITY` - Priority written questions
+   * - `QUESTION_WRITTEN` - Written questions
+   * - `QUESTION_ORAL` - Oral questions
+   * - `INTERPELLATION_MAJOR` - Major interpellations
+   * - `INTERPELLATION_MINOR` - Minor interpellations
+   * - `QUESTION_TIME` - Questions during question time
+   * 
+   * @param apiData - Raw question data from EP API (JSON-LD format)
+   * @returns Transformed ParliamentaryQuestion object
+   * 
+   * @private
+   * @internal
+   * @see {@link ParliamentaryQuestion} for output type structure
+   */
+  private transformParliamentaryQuestion(apiData: Record<string, unknown>): ParliamentaryQuestion {
+    const idField = apiData['work_id'] ?? apiData['id'] ?? apiData['identifier'];
+    const id = this.toSafeString(idField) || '';
+
+    // Determine question type from work_type
+    const workTypeField = apiData['work_type'] ?? apiData['ep-document-types'];
+    const workType = this.toSafeString(workTypeField) || '';
+    let questionType: 'WRITTEN' | 'ORAL' = 'WRITTEN';
+    if (workType.includes('ORAL') || workType.includes('INTERPELLATION') || workType.includes('QUESTION_TIME')) {
+      questionType = 'ORAL';
+    }
+
+    // Extract author
+    const authorField = apiData['was_created_by'] ?? apiData['created_by'] ?? apiData['author'];
+    let author = '';
+    if (typeof authorField === 'string') {
+      author = authorField;
+    } else if (Array.isArray(authorField) && authorField.length > 0) {
+      author = this.toSafeString(authorField[0]);
+    } else if (typeof authorField === 'object' && authorField !== null) {
+      author = this.toSafeString((authorField as Record<string, unknown>)['@id'] ?? (authorField as Record<string, unknown>)['id']);
+    }
+
+    // Extract date
+    const dateField = apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date'];
+    const date = this.extractDateValue(dateField);
+
+    // Extract title/topic
+    const titleField = apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title'];
+    let topic = '';
+    if (typeof titleField === 'object' && titleField !== null && !Array.isArray(titleField)) {
+      const langObj = titleField as Record<string, unknown>;
+      topic = this.toSafeString(langObj['en'] ?? langObj['@value'] ?? langObj['mul']) || '';
+    } else if (Array.isArray(titleField)) {
+      for (const t of titleField) {
+        if (typeof t === 'object' && t !== null) {
+          const tObj = t as Record<string, unknown>;
+          const lang = this.toSafeString(tObj['@language']);
+          if (lang === 'en' || lang === 'mul') {
+            topic = this.toSafeString(tObj['@value']) || '';
+            break;
+          }
+          if (!topic) topic = this.toSafeString(tObj['@value']) || '';
+        }
+      }
+    } else {
+      topic = this.toSafeString(titleField) || '';
+    }
+
+    // Check for answer
+    const answerField = apiData['was_realized_by'] ?? apiData['answer'];
+    const hasAnswer = answerField !== null && answerField !== undefined;
+
+    return {
+      id,
+      type: questionType,
+      author: author || 'Unknown',
+      date,
+      topic: topic || `Question ${id}`,
+      questionText: topic || `Question ${id}`,
+      status: hasAnswer ? 'ANSWERED' : 'PENDING',
+      ...(hasAnswer && {
+        answerText: 'Answer available - see EP document portal for full text',
+        answerDate: date
+      })
+    };
+  }
+
+  /**
    * Retrieves parliamentary questions with filtering by type, author, and status.
    * 
-   * **Note:** Currently returns mock data. Real EP API integration pending.
+   * Fetches parliamentary questions from the European Parliament API using the
+   * `/parliamentary-questions` endpoint. Supports filtering by question type
+   * (written/oral), year, and work-type classification.
    * 
-   * Fetches parliamentary questions submitted by MEPs including written and oral
-   * questions. Supports filtering by question type, author, topic, status, and
-   * date range.
+   * **EP API Endpoint:** `GET /parliamentary-questions`
+   * 
+   * **Supported work-type filters:**
+   * - `QUESTION_WRITTEN_PRIORITY` - Priority written questions
+   * - `QUESTION_WRITTEN` - Standard written questions
+   * - `QUESTION_ORAL` - Oral questions
+   * - `INTERPELLATION_MAJOR` - Major interpellations
+   * - `INTERPELLATION_MINOR` - Minor interpellations
+   * - `QUESTION_TIME` - Question time
+   * 
+   * **Performance:**
+   * - Cached: <100ms (P50), <200ms (P95)
+   * - Uncached: <2s (P99)
    * 
    * @param params - Query parameters for filtering parliamentary questions
    * @param params.type - Question type ("WRITTEN" or "ORAL")
@@ -1546,46 +2040,33 @@ export class EuropeanParliamentClient {
    * 
    * @example
    * ```typescript
-   * // Get answered written questions
+   * // Get written questions
    * const result = await client.getParliamentaryQuestions({
    *   type: 'WRITTEN',
-   *   status: 'ANSWERED',
    *   limit: 20
    * });
    * 
    * for (const question of result.data) {
-   *   console.log(`Q: ${question.questionText}`);
-   *   if (question.answerText) {
-   *     console.log(`A: ${question.answerText}`);
-   *     console.log(`Answered: ${question.answerDate}`);
-   *   }
+   *   console.log(`Q: ${question.topic} (${question.status})`);
    * }
    * ```
    * 
    * @example
    * ```typescript
-   * // Get pending questions by specific MEP
+   * // Get oral questions by year
    * const questions = await client.getParliamentaryQuestions({
-   *   author: 'person/124936',
-   *   status: 'PENDING',
+   *   type: 'ORAL',
    *   dateFrom: '2024-01-01'
    * });
    * ```
    * 
-   * @example
-   * ```typescript
-   * // Filter oral questions by topic
-   * const oralQuestions = await client.getParliamentaryQuestions({
-   *   type: 'ORAL',
-   *   topic: 'Climate Policy',
-   *   limit: 10
-   * });
-   * ```
-   * 
+   * @security Audit logged per GDPR Article 30
+   * @performance Cached: <100ms P50, <200ms P95. Uncached: <2s P99
    * @see {@link ParliamentaryQuestion} for question data structure
    * @see {@link PaginatedResponse} for response format
+   * @see https://data.europarl.europa.eu/api/v2/parliamentary-questions - EP API endpoint
    */
-  getParliamentaryQuestions(params: {
+  async getParliamentaryQuestions(params: {
     type?: 'WRITTEN' | 'ORAL';
     author?: string;
     topic?: string;
@@ -1598,31 +2079,52 @@ export class EuropeanParliamentClient {
     const action = 'get_parliamentary_questions';
     
     try {
-      const mockData: PaginatedResponse<ParliamentaryQuestion> = {
-        data: [
-          {
-            id: 'Q-2024-001',
-            type: params.type ?? 'WRITTEN',
-            author: params.author ?? 'MEP-124810',
-            date: '2024-01-10',
-            topic: params.topic ?? 'Climate Policy',
-            questionText: 'What measures are being taken to address climate change?',
-            ...(params.status === 'ANSWERED' && {
-              answerText: 'The Commission has implemented several measures...',
-              answerDate: '2024-01-20'
-            }),
-            status: params.status ?? 'PENDING'
-          }
-        ],
-        total: 1,
+      const apiParams: Record<string, unknown> = {};
+      if (params.limit !== undefined) apiParams['limit'] = params.limit;
+      if (params.offset !== undefined) apiParams['offset'] = params.offset;
+      
+      // Map type filter to EP API work-type parameter
+      if (params.type === 'WRITTEN') {
+        apiParams['work-type'] = 'QUESTION_WRITTEN';
+      } else if (params.type === 'ORAL') {
+        apiParams['work-type'] = 'QUESTION_ORAL';
+      }
+      
+      // Map date to year parameter
+      if (params.dateFrom !== undefined && params.dateFrom !== '') {
+        apiParams['year'] = params.dateFrom.substring(0, 4);
+      }
+      
+      // Call real EP API parliamentary-questions endpoint
+      const response = await this.get<JSONLDResponse>('parliamentary-questions', apiParams);
+      
+      // Transform EP API data to internal format
+      let questions = response.data.map((item) => this.transformParliamentaryQuestion(item));
+      
+      // Apply client-side filters
+      if (params.author !== undefined && params.author !== '') {
+        const authorLower = params.author.toLowerCase();
+        questions = questions.filter(q => q.author.toLowerCase().includes(authorLower));
+      }
+      if (params.topic !== undefined && params.topic !== '') {
+        const topicLower = params.topic.toLowerCase();
+        questions = questions.filter(q => q.topic.toLowerCase().includes(topicLower));
+      }
+      if (params.status) {
+        questions = questions.filter(q => q.status === params.status);
+      }
+      
+      const result: PaginatedResponse<ParliamentaryQuestion> = {
+        data: questions,
+        total: (params.offset ?? 0) + questions.length,
         limit: params.limit ?? 50,
         offset: params.offset ?? 0,
-        hasMore: false
+        hasMore: questions.length >= (params.limit ?? 50)
       };
       
-      auditLogger.logDataAccess(action, params, mockData.data.length);
+      auditLogger.logDataAccess(action, params, result.data.length);
       
-      return Promise.resolve(mockData);
+      return result;
     } catch (error) {
       auditLogger.logError(
         action,

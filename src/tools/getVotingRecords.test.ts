@@ -6,9 +6,36 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetVotingRecords } from './getVotingRecords.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 
+// Mock the EP client
+vi.mock('../clients/europeanParliamentClient.js', () => ({
+  epClient: {
+    getVotingRecords: vi.fn()
+  }
+}));
+
 describe('get_voting_records Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Setup default mock implementation
+    vi.mocked(epClientModule.epClient.getVotingRecords).mockResolvedValue({
+      data: [
+        {
+          id: 'VOTE-2024-001',
+          sessionId: 'MTG-PL-2024-01-15',
+          topic: 'Resolution on climate change',
+          date: '2024-01-15',
+          votesFor: 450,
+          votesAgainst: 150,
+          abstentions: 50,
+          result: 'ADOPTED'
+        }
+      ],
+      total: 1,
+      limit: 50,
+      offset: 0,
+      hasMore: false
+    });
   });
 
   describe('Input Validation', () => {

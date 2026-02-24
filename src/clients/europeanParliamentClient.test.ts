@@ -65,6 +65,76 @@ describe('EuropeanParliamentClient', () => {
     ]
   });
 
+  const createMockVoteResultsResponse = (count: number = 2) => ({
+    data: Array.from({ length: count }, (_, i) => ({
+      id: `vote-result-${i + 1}`,
+      activity_id: `VOTE-2024-${String(i + 1).padStart(3, '0')}`,
+      notation: `Vote ${i + 1}`,
+      label: `Resolution on topic ${i + 1}`,
+      'eli-dl:activity_date': {
+        '@value': `2024-01-${String(15 + i)}T14:00:00Z`,
+        type: 'xsd:dateTime'
+      },
+      number_of_votes_favor: 350 + i * 10,
+      number_of_votes_against: 100 + i * 5,
+      number_of_votes_abstention: 30 + i * 2
+    })),
+    '@context': [
+      { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
+      'https://data.europarl.europa.eu/api/v2/context.jsonld'
+    ]
+  });
+
+  const createMockDocumentsResponse = (count: number = 2) => ({
+    data: Array.from({ length: count }, (_, i) => ({
+      id: `doc-${i + 1}`,
+      work_id: `A-9-2024-${String(i + 1).padStart(4, '0')}`,
+      work_type: 'REPORT_PLENARY',
+      title_dcterms: [{ '@language': 'en', '@value': `Climate report ${i + 1}` }],
+      work_date_document: `2024-01-${String(10 + i)}`,
+      was_attributed_to: 'ENVI',
+      status: 'ADOPTED'
+    })),
+    '@context': [
+      { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
+      'https://data.europarl.europa.eu/api/v2/context.jsonld'
+    ]
+  });
+
+  const createMockCorporateBodyResponse = () => ({
+    data: [{
+      id: 'org/ENVI',
+      body_id: 'ENVI',
+      label: [{ '@language': 'en', '@value': 'Committee on Environment, Public Health and Food Safety' }],
+      notation: 'ENVI',
+      classification: 'COMMITTEE_PARLIAMENTARY_STANDING',
+      hasMembership: [
+        { person: 'person/124810' },
+        { person: 'person/124811' }
+      ]
+    }],
+    '@context': [
+      { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
+      'https://data.europarl.europa.eu/api/v2/context.jsonld'
+    ]
+  });
+
+  const createMockQuestionsResponse = (count: number = 2) => ({
+    data: Array.from({ length: count }, (_, i) => ({
+      id: `q-${i + 1}`,
+      work_id: `E-9-2024-${String(i + 1).padStart(6, '0')}`,
+      work_type: 'QUESTION_WRITTEN',
+      title_dcterms: [{ '@language': 'en', '@value': `Question about climate policy ${i + 1}` }],
+      work_date_document: `2024-01-${String(10 + i)}`,
+      was_created_by: `person/12481${i}`,
+      was_realized_by: i === 0 ? 'answer-ref' : null
+    })),
+    '@context': [
+      { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
+      'https://data.europarl.europa.eu/api/v2/context.jsonld'
+    ]
+  });
+
   describe('Initialization', () => {
     it('should create client with default config', () => {
       const client = new EuropeanParliamentClient();
@@ -255,15 +325,25 @@ describe('EuropeanParliamentClient', () => {
   });
 
   describe('getVotingRecords', () => {
-    it('should return paginated voting records', async () => {
-      const result = await client.getVotingRecords({ limit: 10 });
+    it('should return paginated voting records with sessionId', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockVoteResultsResponse()
+      });
+
+      const result = await client.getVotingRecords({ sessionId: 'MTG-PL-2024-01-15', limit: 10 });
 
       expect(result).toHaveProperty('data');
       expect(Array.isArray(result.data)).toBe(true);
     });
 
     it('should include vote counts', async () => {
-      const result = await client.getVotingRecords({ limit: 10 });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockVoteResultsResponse()
+      });
+
+      const result = await client.getVotingRecords({ sessionId: 'MTG-PL-2024-01-15', limit: 10 });
 
       if (result.data.length > 0) {
         const vote = result.data[0];
@@ -273,10 +353,32 @@ describe('EuropeanParliamentClient', () => {
         expect(vote).toHaveProperty('result');
       }
     });
+
+    it('should fetch recent meetings when no sessionId given', async () => {
+      // First call: meetings list
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMeetingsResponse(1)
+      });
+      // Second call: vote results for that meeting
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockVoteResultsResponse()
+      });
+
+      const result = await client.getVotingRecords({ limit: 10 });
+      expect(result).toHaveProperty('data');
+      expect(Array.isArray(result.data)).toBe(true);
+    });
   });
 
   describe('searchDocuments', () => {
     it('should search documents by keyword', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse()
+      });
+
       const result = await client.searchDocuments({
         keyword: 'climate',
         limit: 10
@@ -287,6 +389,11 @@ describe('EuropeanParliamentClient', () => {
     });
 
     it('should include document metadata', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse()
+      });
+
       const result = await client.searchDocuments({
         keyword: 'climate',
         limit: 10
@@ -300,10 +407,30 @@ describe('EuropeanParliamentClient', () => {
         expect(doc).toHaveProperty('date');
       }
     });
+
+    it('should map document types correctly', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse()
+      });
+
+      const result = await client.searchDocuments({
+        keyword: 'climate',
+        documentType: 'REPORT',
+        limit: 10
+      });
+
+      expect(result).toHaveProperty('data');
+    });
   });
 
   describe('getCommitteeInfo', () => {
     it('should return committee details', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockCorporateBodyResponse()
+      });
+
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
       expect(result).toHaveProperty('id');
@@ -313,15 +440,44 @@ describe('EuropeanParliamentClient', () => {
     });
 
     it('should include committee composition', async () => {
-      const result = await client.getCommitteeInfo({ id: 'COMM-ENVI' });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockCorporateBodyResponse()
+      });
+
+      const result = await client.getCommitteeInfo({ id: 'ENVI' });
 
       expect(result.members).toBeDefined();
       expect(Array.isArray(result.members)).toBe(true);
+    });
+
+    it('should search committees list when body not found by ID', async () => {
+      // First call fails (specific body not found)
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        statusText: 'Not Found',
+        status: 404
+      });
+      // Second call: list all committees
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockCorporateBodyResponse()
+      });
+
+      // The first call throws, then client falls back to list search
+      // Since ENVI is in the mock, it should match
+      const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
+      expect(result).toHaveProperty('abbreviation');
     });
   });
 
   describe('getParliamentaryQuestions', () => {
     it('should return paginated questions', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockQuestionsResponse()
+      });
+
       const result = await client.getParliamentaryQuestions({ limit: 10 });
 
       expect(result).toHaveProperty('data');
@@ -329,6 +485,11 @@ describe('EuropeanParliamentClient', () => {
     });
 
     it('should include question details', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockQuestionsResponse()
+      });
+
       const result = await client.getParliamentaryQuestions({ limit: 10 });
 
       if (result.data.length > 0) {
@@ -338,6 +499,29 @@ describe('EuropeanParliamentClient', () => {
         expect(question).toHaveProperty('author');
         expect(question).toHaveProperty('questionText');
         expect(question).toHaveProperty('status');
+      }
+    });
+
+    it('should filter by question type', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockQuestionsResponse()
+      });
+
+      const result = await client.getParliamentaryQuestions({ type: 'WRITTEN', limit: 10 });
+      expect(result).toHaveProperty('data');
+    });
+
+    it('should detect answered status from was_realized_by', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockQuestionsResponse()
+      });
+
+      const result = await client.getParliamentaryQuestions({ limit: 10 });
+      // First question has was_realized_by set, should be ANSWERED
+      if (result.data.length > 0) {
+        expect(result.data[0]?.status).toBe('ANSWERED');
       }
     });
   });
