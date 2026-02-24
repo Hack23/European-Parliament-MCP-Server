@@ -657,7 +657,8 @@ export class EuropeanParliamentClient {
     return {
       id: id || `person/${fallbackId}`,
       name: fullName,
-      // These fields are not in basic MEP list, will be populated from mock/defaults
+      // EP API /meps list endpoint does not include country or political group;
+      // 'Unknown' indicates data not available from this endpoint
       country: 'Unknown',
       politicalGroup: 'Unknown',
       committees: [],
@@ -843,6 +844,8 @@ export class EuropeanParliamentClient {
       ...basicMEP,
       committees: committees.length > 0 ? committees : basicMEP.committees,
       biography: `Born: ${bday || 'Unknown'}`,
+      // EP API /meps/{id} endpoint does not return voting statistics;
+      // zeros indicate "no data available" rather than fabricated numbers
       votingStatistics: {
         totalVotes: 0,
         votesFor: 0,

@@ -41,14 +41,53 @@ interface VotingPatternAnalysis {
     alignmentRate: number;
     divergentVotes: number;
   };
-  topTopics: {
-    topic: string;
-    voteCount: number;
-  }[];
-  crossPartyVoting?: {
+  crossPartyVoting: {
     withOtherGroups: number;
     rate: number;
   };
+  confidenceLevel: string;
+  methodology: string;
+}
+
+/**
+ * Compute group alignment metrics from voting statistics.
+ * Alignment rate is derived from the ratio of 'for' votes to total decisive
+ * votes, approximating how often the MEP votes with the majority position.
+ */
+function computeGroupAlignment(
+  politicalGroup: string,
+  stats: { totalVotes: number; votesFor: number; votesAgainst: number }
+): { politicalGroup: string; alignmentRate: number; divergentVotes: number } {
+  const totalDecisive = stats.votesFor + stats.votesAgainst;
+  const alignmentRate = totalDecisive > 0
+    ? Math.round((stats.votesFor / totalDecisive) * 100 * 100) / 100
+    : 0;
+  const divergentVotes = stats.votesAgainst;
+  return { politicalGroup, alignmentRate, divergentVotes };
+}
+
+/**
+ * Compute cross-party voting metrics from voting statistics.
+ * Cross-party rate approximated from 'against' vote ratio—higher against
+ * rates suggest more independent voting that may cross party lines.
+ */
+function computeCrossPartyVoting(
+  stats: { totalVotes: number; votesFor: number; votesAgainst: number }
+): { withOtherGroups: number; rate: number } {
+  const totalDecisive = stats.votesFor + stats.votesAgainst;
+  const crossPartyRate = totalDecisive > 0
+    ? Math.round((stats.votesAgainst / totalDecisive) * 100 * 100) / 100
+    : 0;
+  return { withOtherGroups: stats.votesAgainst, rate: crossPartyRate };
+}
+
+/**
+ * Compute confidence level based on available voting data
+ */
+function computeConfidence(totalVotes: number): string {
+  if (totalVotes > 500) return 'HIGH';
+  if (totalVotes > 100) return 'MEDIUM';
+  return 'LOW';
 }
 
 /**
@@ -77,7 +116,14 @@ export async function handleAnalyzeVotingPatterns(
     // Fetch MEP details for context
     const mep = await epClient.getMEPDetails(params.mepId);
     
-    // Analyze voting patterns (mock analysis for MVP)
+    const stats = mep.votingStatistics ?? {
+      totalVotes: 0,
+      votesFor: 0,
+      votesAgainst: 0,
+      abstentions: 0,
+      attendanceRate: 0
+    };
+
     const analysis: VotingPatternAnalysis = {
       mepId: params.mepId,
       mepName: mep.name,
@@ -85,29 +131,16 @@ export async function handleAnalyzeVotingPatterns(
         from: params.dateFrom ?? '2024-01-01',
         to: params.dateTo ?? '2024-12-31'
       },
-      statistics: mep.votingStatistics ?? {
-        totalVotes: 1250,
-        votesFor: 850,
-        votesAgainst: 200,
-        abstentions: 200,
-        attendanceRate: 92.5
-      },
+      statistics: stats,
       ...(params.compareWithGroup && {
-        groupAlignment: {
-          politicalGroup: mep.politicalGroup,
-          alignmentRate: 87.5,
-          divergentVotes: 156
-        }
+        groupAlignment: computeGroupAlignment(mep.politicalGroup, stats)
       }),
-      topTopics: [
-        { topic: 'Climate Change', voteCount: 45 },
-        { topic: 'Agriculture Policy', voteCount: 38 },
-        { topic: 'Environmental Protection', voteCount: 32 }
-      ],
-      crossPartyVoting: {
-        withOtherGroups: 125,
-        rate: 10.0
-      }
+      crossPartyVoting: computeCrossPartyVoting(stats),
+      confidenceLevel: computeConfidence(stats.totalVotes),
+      methodology: 'Voting pattern analysis using EP Open Data. '
+        + 'Group alignment derived from for/against vote ratio. '
+        + 'Cross-party voting approximated from against-vote frequency. '
+        + 'Data source: European Parliament Open Data Portal.'
     };
     
     // Return MCP-compliant response

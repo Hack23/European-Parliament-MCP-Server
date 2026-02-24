@@ -19,6 +19,8 @@ export interface LegislativeProcedure {
   voting: VotingRecord[];
   documents: DocumentReference[];
   nextSteps?: string[];
+  confidenceLevel: string;
+  methodology: string;
 }
 
 /**
