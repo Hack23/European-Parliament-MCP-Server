@@ -2,12 +2,17 @@
  * MCP Tool: get_events
  *
  * Retrieve European Parliament events (hearings, conferences, seminars).
+ * Supports single event lookup by eventId or list with date range filtering.
  *
  * **Intelligence Perspective:** Event monitoring enables early detection of emerging
  * policy priorities and stakeholder engagement patterns.
  *
  * **Business Perspective:** Event data powers calendar integration and stakeholder
  * engagement tracking products.
+ *
+ * **EP API Endpoints:**
+ * - `GET /events` (list)
+ * - `GET /events/{event-id}` (single)
  *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
@@ -25,6 +30,16 @@ export async function handleGetEvents(
   args: unknown
 ): Promise<{ content: { type: string; text: string }[] }> {
   const params = GetEventsSchema.parse(args);
+
+  if (params.eventId !== undefined) {
+    const result = await epClient.getEventById(params.eventId);
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(result, null, 2)
+      }]
+    };
+  }
 
   const apiParams: Record<string, unknown> = {
     limit: params.limit,
@@ -46,10 +61,11 @@ export async function handleGetEvents(
 /** Tool metadata for get_events */
 export const getEventsToolMetadata = {
   name: 'get_events',
-  description: 'Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports date range filtering. Data source: European Parliament Open Data Portal.',
+  description: 'Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or list with date range filtering. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
+      eventId: { type: 'string', description: 'Event ID for single event lookup' },
       dateFrom: { type: 'string', description: 'Start date (YYYY-MM-DD)' },
       dateTo: { type: 'string', description: 'End date (YYYY-MM-DD)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },

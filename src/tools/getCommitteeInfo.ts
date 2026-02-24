@@ -38,6 +38,17 @@ export async function handleGetCommitteeInfo(
   const params = GetCommitteeInfoSchema.parse(args);
   
   try {
+    // Return current active bodies if showCurrent is true
+    if (params.showCurrent === true) {
+      const result = await epClient.getCurrentCorporateBodies();
+      return {
+        content: [{
+          type: 'text',
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    }
+
     // Fetch committee info from EP API (only pass defined properties)
     const apiParams: Record<string, string> = {};
     if (params['id'] !== undefined) apiParams['id'] = params['id'];
@@ -67,7 +78,7 @@ export async function handleGetCommitteeInfo(
  */
 export const getCommitteeInfoToolMetadata = {
   name: 'get_committee_info',
-  description: 'Retrieve detailed information about a European Parliament committee. Returns committee composition, chair and vice-chairs, members, meeting schedules, and areas of responsibility. Query by committee ID or abbreviation (e.g., "ENVI", "AGRI").',
+  description: 'Retrieve detailed information about EP corporate bodies/committees. Query by ID, abbreviation, or set showCurrent=true for all current active bodies. Returns composition, chair, vice-chairs, members, meeting schedules, and areas of responsibility.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -82,6 +93,11 @@ export const getCommitteeInfoToolMetadata = {
         description: 'Committee abbreviation (e.g., "ENVI", "AGRI", "ECON")',
         minLength: 1,
         maxLength: 20
+      },
+      showCurrent: {
+        type: 'boolean',
+        description: 'If true, returns all current active corporate bodies',
+        default: false
       }
     }
   }

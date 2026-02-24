@@ -2824,6 +2824,400 @@ export class EuropeanParliamentClient {
     };
   }
 
+  /**
+   * Returns the list of all homonym MEPs for the current parliamentary term.
+   *
+   * **EP API Endpoint:** `GET /meps/show-homonyms`
+   *
+   * @param params - Pagination parameters
+   * @returns Paginated list of homonym MEPs
+   */
+  async getHomonymMEPs(params: {
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<MEP>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>('meps/show-homonyms', {
+      format: 'application/ld+json',
+      offset,
+      limit
+    });
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const meps = items.map(item => this.transformMEP(item));
+
+    return { data: meps, total: meps.length + offset, limit, offset, hasMore: meps.length === limit };
+  }
+
+  /**
+   * Returns the list of all current EP Corporate Bodies for today's date.
+   *
+   * **EP API Endpoint:** `GET /corporate-bodies/show-current`
+   *
+   * @param params - Pagination parameters
+   * @returns Paginated list of current corporate bodies
+   */
+  async getCurrentCorporateBodies(params: {
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<Committee>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>('corporate-bodies/show-current', {
+      format: 'application/ld+json',
+      offset,
+      limit
+    });
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const bodies = items.map(item => this.transformCorporateBody(item));
+
+    return { data: bodies, total: bodies.length + offset, limit, offset, hasMore: bodies.length === limit };
+  }
+
+  /**
+   * Returns a single EP event by ID.
+   *
+   * **EP API Endpoint:** `GET /events/{event-id}`
+   *
+   * @param eventId - Event identifier
+   * @returns Single EP event
+   */
+  async getEventById(eventId: string): Promise<EPEvent> {
+    if (eventId.trim() === '') {
+      throw new APIError('Event ID is required', 400);
+    }
+    const response = await this.get<Record<string, unknown>>(`events/${eventId}`, {
+      format: 'application/ld+json'
+    });
+    return this.transformEvent(response);
+  }
+
+  /**
+   * Returns a single EP meeting by ID.
+   *
+   * **EP API Endpoint:** `GET /meetings/{event-id}`
+   *
+   * @param eventId - Meeting event identifier
+   * @returns Single meeting as plenary session
+   */
+  async getMeetingById(eventId: string): Promise<PlenarySession> {
+    if (eventId.trim() === '') {
+      throw new APIError('Meeting event ID is required', 400);
+    }
+    const response = await this.get<Record<string, unknown>>(`meetings/${eventId}`, {
+      format: 'application/ld+json'
+    });
+    return this.transformPlenarySession(response);
+  }
+
+  /**
+   * Returns foreseen activities linked to a specific meeting (plenary sitting).
+   *
+   * **EP API Endpoint:** `GET /meetings/{sitting-id}/foreseen-activities`
+   *
+   * @param sittingId - Meeting / sitting identifier
+   * @param params - Pagination parameters
+   * @returns Paginated list of foreseen meeting activities
+   */
+  async getMeetingForeseenActivities(sittingId: string, params: {
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<MeetingActivity>> {
+    if (sittingId.trim() === '') {
+      throw new APIError('Meeting sitting-id is required', 400);
+    }
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>(`meetings/${sittingId}/foreseen-activities`, {
+      format: 'application/ld+json',
+      offset,
+      limit
+    });
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const activities = items.map(item => this.transformMeetingActivity(item));
+
+    return { data: activities, total: activities.length + offset, limit, offset, hasMore: activities.length === limit };
+  }
+
+  /**
+   * Returns a single speech by ID.
+   *
+   * **EP API Endpoint:** `GET /speeches/{speech-id}`
+   *
+   * @param speechId - Speech identifier
+   * @returns Single speech
+   */
+  async getSpeechById(speechId: string): Promise<Speech> {
+    if (speechId.trim() === '') {
+      throw new APIError('Speech ID is required', 400);
+    }
+    const response = await this.get<Record<string, unknown>>(`speeches/${speechId}`, {
+      format: 'application/ld+json'
+    });
+    return this.transformSpeech(response);
+  }
+
+  /**
+   * Returns events linked to a procedure.
+   *
+   * **EP API Endpoint:** `GET /procedures/{process-id}/events`
+   *
+   * @param processId - Procedure process ID
+   * @param params - Pagination parameters
+   * @returns Paginated list of procedure events
+   */
+  async getProcedureEvents(processId: string, params: {
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<EPEvent>> {
+    if (processId.trim() === '') {
+      throw new APIError('Procedure process-id is required', 400);
+    }
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>(`procedures/${processId}/events`, {
+      format: 'application/ld+json',
+      offset,
+      limit
+    });
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const events = items.map(item => this.transformEvent(item));
+
+    return { data: events, total: events.length + offset, limit, offset, hasMore: events.length === limit };
+  }
+
+  /**
+   * Returns a single adopted text by document ID.
+   *
+   * **EP API Endpoint:** `GET /adopted-texts/{doc-id}`
+   *
+   * @param docId - Document identifier
+   * @returns Single adopted text
+   */
+  async getAdoptedTextById(docId: string): Promise<AdoptedText> {
+    if (docId.trim() === '') {
+      throw new APIError('Document ID is required', 400);
+    }
+    const response = await this.get<Record<string, unknown>>(`adopted-texts/${docId}`, {
+      format: 'application/ld+json'
+    });
+    return this.transformAdoptedText(response);
+  }
+
+  /**
+   * Returns a single document by ID.
+   *
+   * **EP API Endpoint:** `GET /documents/{doc-id}`
+   *
+   * @param docId - Document identifier
+   * @returns Single document
+   */
+  async getDocumentById(docId: string): Promise<LegislativeDocument> {
+    if (docId.trim() === '') {
+      throw new APIError('Document ID is required', 400);
+    }
+    const response = await this.get<Record<string, unknown>>(`documents/${docId}`, {
+      format: 'application/ld+json'
+    });
+    return this.transformDocument(response);
+  }
+
+  /**
+   * Returns a single committee document by ID.
+   *
+   * **EP API Endpoint:** `GET /committee-documents/{doc-id}`
+   *
+   * @param docId - Document identifier
+   * @returns Single committee document
+   */
+  async getCommitteeDocumentById(docId: string): Promise<LegislativeDocument> {
+    if (docId.trim() === '') {
+      throw new APIError('Document ID is required', 400);
+    }
+    const response = await this.get<Record<string, unknown>>(`committee-documents/${docId}`, {
+      format: 'application/ld+json'
+    });
+    return this.transformDocument(response);
+  }
+
+  /**
+   * Returns a single parliamentary question by document ID.
+   *
+   * **EP API Endpoint:** `GET /parliamentary-questions/{doc-id}`
+   *
+   * @param docId - Document identifier
+   * @returns Single parliamentary question
+   */
+  async getParliamentaryQuestionById(docId: string): Promise<ParliamentaryQuestion> {
+    if (docId.trim() === '') {
+      throw new APIError('Document ID is required', 400);
+    }
+    const response = await this.get<Record<string, unknown>>(`parliamentary-questions/${docId}`, {
+      format: 'application/ld+json'
+    });
+    return this.transformParliamentaryQuestion(response);
+  }
+
+  /**
+   * Returns a single plenary document by document ID.
+   *
+   * **EP API Endpoint:** `GET /plenary-documents/{doc-id}`
+   *
+   * @param docId - Document identifier
+   * @returns Single plenary document
+   */
+  async getPlenaryDocumentById(docId: string): Promise<LegislativeDocument> {
+    if (docId.trim() === '') {
+      throw new APIError('Document ID is required', 400);
+    }
+    const response = await this.get<Record<string, unknown>>(`plenary-documents/${docId}`, {
+      format: 'application/ld+json'
+    });
+    return this.transformDocument(response);
+  }
+
+  /**
+   * Returns a single plenary session document by document ID.
+   *
+   * **EP API Endpoint:** `GET /plenary-session-documents/{doc-id}`
+   *
+   * @param docId - Document identifier
+   * @returns Single plenary session document
+   */
+  async getPlenarySessionDocumentById(docId: string): Promise<LegislativeDocument> {
+    if (docId.trim() === '') {
+      throw new APIError('Document ID is required', 400);
+    }
+    const response = await this.get<Record<string, unknown>>(`plenary-session-documents/${docId}`, {
+      format: 'application/ld+json'
+    });
+    return this.transformDocument(response);
+  }
+
+  /**
+   * Returns the list of all Plenary Session Documents Items.
+   *
+   * **EP API Endpoint:** `GET /plenary-session-documents-items`
+   *
+   * @param params - Pagination parameters
+   * @returns Paginated list of plenary session document items
+   */
+  async getPlenarySessionDocumentItems(params: {
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>('plenary-session-documents-items', {
+      format: 'application/ld+json',
+      offset,
+      limit
+    });
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const docs = items.map(item => this.transformDocument(item));
+
+    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
+  }
+
+  /**
+   * Returns the list of all External Documents.
+   *
+   * **EP API Endpoint:** `GET /external-documents`
+   *
+   * @param params - Search and pagination parameters
+   * @returns Paginated list of external documents
+   */
+  async getExternalDocuments(params: {
+    year?: number;
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const apiParams: Record<string, unknown> = {
+      format: 'application/ld+json',
+      offset,
+      limit
+    };
+    if (params.year !== undefined) apiParams['year'] = params.year;
+
+    const response = await this.get<JSONLDResponse>('external-documents', apiParams);
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const docs = items.map(item => this.transformDocument(item));
+
+    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
+  }
+
+  /**
+   * Returns a single external document by ID.
+   *
+   * **EP API Endpoint:** `GET /external-documents/{doc-id}`
+   *
+   * @param docId - Document identifier
+   * @returns Single external document
+   */
+  async getExternalDocumentById(docId: string): Promise<LegislativeDocument> {
+    if (docId.trim() === '') {
+      throw new APIError('Document ID is required', 400);
+    }
+    const response = await this.get<Record<string, unknown>>(`external-documents/${docId}`, {
+      format: 'application/ld+json'
+    });
+    return this.transformDocument(response);
+  }
+
+  /**
+   * Returns a single EP Controlled Vocabulary by ID.
+   *
+   * **EP API Endpoint:** `GET /controlled-vocabularies/{voc-id}`
+   *
+   * @param vocId - Vocabulary identifier
+   * @returns Single vocabulary entry
+   */
+  async getControlledVocabularyById(vocId: string): Promise<Record<string, unknown>> {
+    if (vocId.trim() === '') {
+      throw new APIError('Vocabulary ID is required', 400);
+    }
+    const response = await this.get<Record<string, unknown>>(`controlled-vocabularies/${vocId}`, {
+      format: 'application/ld+json'
+    });
+    return response;
+  }
+
+  /**
+   * Returns a single MEP declaration by document ID.
+   *
+   * **EP API Endpoint:** `GET /meps-declarations/{doc-id}`
+   *
+   * @param docId - Document identifier
+   * @returns Single MEP declaration
+   * @gdpr Declarations contain personal financial data – access is audit-logged
+   */
+  async getMEPDeclarationById(docId: string): Promise<MEPDeclaration> {
+    if (docId.trim() === '') {
+      throw new APIError('Document ID is required', 400);
+    }
+    const response = await this.get<Record<string, unknown>>(`meps-declarations/${docId}`, {
+      format: 'application/ld+json'
+    });
+
+    const declaration = this.transformMEPDeclaration(response);
+    auditLogger.logDataAccess('getMEPDeclarationById', { docId }, 1);
+    return declaration;
+  }
+
   // ── Private transform helpers for new endpoints ──────────────────────
 
   /**

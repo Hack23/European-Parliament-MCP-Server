@@ -32,11 +32,12 @@
     "prepublishOnly": "npm run lint && npm run knip && npm run test:unit && npm run build",
     "prepack": "npm run build",
     "docs": "typedoc",
-    "docs:clean": "rm -rf docs/api docs/coverage docs/test-results docs/e2e-results builds",
+    "docs:md": "typedoc --options typedoc-markdown.json",
+    "docs:clean": "rm -rf docs/api docs/api-markdown docs/coverage docs/test-results docs/e2e-results builds",
     "docs:coverage": "npm run test:coverage && mkdir -p docs/coverage && cp -r coverage/* docs/coverage/",
     "docs:test-reports": "mkdir -p builds/test-results docs/test-results; vitest run src --reporter=default --reporter=html --reporter=json --outputFile.html=./builds/test-results/index.html --outputFile.json=./builds/test-results/results.json || true; cp -r builds/test-results/* docs/test-results/ 2>/dev/null || true",
     "docs:e2e-reports": "mkdir -p builds/e2e-results docs/e2e-results; vitest run tests/e2e --reporter=default --reporter=html --reporter=json --outputFile.html=./builds/e2e-results/index.html --outputFile.json=./builds/e2e-results/results.json || true; cp -r builds/e2e-results/* docs/e2e-results/ 2>/dev/null || true",
-    "docs:build": "npm run docs:clean && npm run docs && npm run docs:coverage && npm run docs:test-reports && npm run docs:e2e-reports",
+    "docs:build": "npm run docs:clean && npm run docs && npm run docs:md && npm run docs:coverage && npm run docs:test-reports && npm run docs:e2e-reports",
     "docs:sitemap": "node scripts/generate-sitemap.js"
   },
   "keywords": [
@@ -92,6 +93,9 @@
     "prettier": "^3.4.2",
     "tsx": "^4.19.2",
     "typedoc": "^0.28.17",
+    "typedoc-plugin-markdown": "4.10.0",
+    "typedoc-plugin-mdn-links": "5.1.1",
+    "typedoc-plugin-zod": "1.4.3",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.1",
     "vitest": "^4.0.6"

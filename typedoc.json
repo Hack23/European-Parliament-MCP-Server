@@ -3,20 +3,31 @@
   "entryPoints": ["src"],
   "entryPointStrategy": "expand",
   "out": "docs/api",
-  "plugin": [],
-  "name": "European Parliament MCP Server API Documentation",
+  "plugin": [
+    "typedoc-plugin-mdn-links",
+    "typedoc-plugin-zod"
+  ],
+  "name": "European Parliament MCP Server API",
   "includeVersion": true,
   "readme": "README.md",
   "categorizeByGroup": true,
   "categoryOrder": [
+    "MCP Tools - Core Data",
+    "MCP Tools - Advanced Analysis",
+    "MCP Tools - OSINT Intelligence",
+    "MCP Tools - EP API v2 Data",
+    "MCP Tools - EP API v2 Documents",
+    "MCP Prompts",
+    "MCP Resources",
+    "EP API Client",
+    "Schemas",
+    "Types",
+    "Utils",
     "Tools",
     "Intelligence",
     "Business",
     "Marketing",
     "Clients",
-    "Schemas",
-    "Types",
-    "Utils",
     "*"
   ],
   "exclude": [
@@ -48,5 +59,6 @@
     "external": false
   },
   "searchInComments": true,
-  "cleanOutputDir": true
+  "cleanOutputDir": true,
+  "hostedBaseUrl": "https://hack23.github.io/European-Parliament-MCP-Server/api/"
 }

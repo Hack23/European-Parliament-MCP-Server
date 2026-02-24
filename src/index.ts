@@ -67,6 +67,18 @@ import { handleGetEvents, getEventsToolMetadata } from './tools/getEvents.js';
 import { handleGetMeetingActivities, getMeetingActivitiesToolMetadata } from './tools/getMeetingActivities.js';
 import { handleGetMeetingDecisions, getMeetingDecisionsToolMetadata } from './tools/getMeetingDecisions.js';
 import { handleGetMEPDeclarations, getMEPDeclarationsToolMetadata } from './tools/getMEPDeclarations.js';
+// Phase 5 – Complete EP API v2 coverage tools
+import { handleGetIncomingMEPs, getIncomingMEPsToolMetadata } from './tools/getIncomingMEPs.js';
+import { handleGetOutgoingMEPs, getOutgoingMEPsToolMetadata } from './tools/getOutgoingMEPs.js';
+import { handleGetHomonymMEPs, getHomonymMEPsToolMetadata } from './tools/getHomonymMEPs.js';
+import { handleGetPlenaryDocuments, getPlenaryDocumentsToolMetadata } from './tools/getPlenaryDocuments.js';
+import { handleGetCommitteeDocuments, getCommitteeDocumentsToolMetadata } from './tools/getCommitteeDocuments.js';
+import { handleGetPlenarySessionDocuments, getPlenarySessionDocumentsToolMetadata } from './tools/getPlenarySessionDocuments.js';
+import { handleGetPlenarySessionDocumentItems, getPlenarySessionDocumentItemsToolMetadata } from './tools/getPlenarySessionDocumentItems.js';
+import { handleGetControlledVocabularies, getControlledVocabulariesToolMetadata } from './tools/getControlledVocabularies.js';
+import { handleGetExternalDocuments, getExternalDocumentsToolMetadata } from './tools/getExternalDocuments.js';
+import { handleGetMeetingForeseenActivities, getMeetingForeseenActivitiesToolMetadata } from './tools/getMeetingForeseenActivities.js';
+import { handleGetProcedureEvents, getProcedureEventsToolMetadata } from './tools/getProcedureEvents.js';
 // MCP Prompts
 import { getPromptMetadataArray, handleGetPrompt } from './prompts/index.js';
 // MCP Resources
@@ -190,7 +202,19 @@ export function getToolMetadataArray(): { name: string; description: string; inp
     getEventsToolMetadata,
     getMeetingActivitiesToolMetadata,
     getMeetingDecisionsToolMetadata,
-    getMEPDeclarationsToolMetadata
+    getMEPDeclarationsToolMetadata,
+    // Phase 5 – Complete EP API v2 coverage tools
+    getIncomingMEPsToolMetadata,
+    getOutgoingMEPsToolMetadata,
+    getHomonymMEPsToolMetadata,
+    getPlenaryDocumentsToolMetadata,
+    getCommitteeDocumentsToolMetadata,
+    getPlenarySessionDocumentsToolMetadata,
+    getPlenarySessionDocumentItemsToolMetadata,
+    getControlledVocabulariesToolMetadata,
+    getExternalDocumentsToolMetadata,
+    getMeetingForeseenActivitiesToolMetadata,
+    getProcedureEventsToolMetadata
   ];
 }
 
@@ -448,7 +472,19 @@ class EuropeanParliamentMCPServer {
       'get_events': handleGetEvents,
       'get_meeting_activities': handleGetMeetingActivities,
       'get_meeting_decisions': handleGetMeetingDecisions,
-      'get_mep_declarations': handleGetMEPDeclarations
+      'get_mep_declarations': handleGetMEPDeclarations,
+      // Phase 5 – Complete EP API v2 coverage tools
+      'get_incoming_meps': handleGetIncomingMEPs,
+      'get_outgoing_meps': handleGetOutgoingMEPs,
+      'get_homonym_meps': handleGetHomonymMEPs,
+      'get_plenary_documents': handleGetPlenaryDocuments,
+      'get_committee_documents': handleGetCommitteeDocuments,
+      'get_plenary_session_documents': handleGetPlenarySessionDocuments,
+      'get_plenary_session_document_items': handleGetPlenarySessionDocumentItems,
+      'get_controlled_vocabularies': handleGetControlledVocabularies,
+      'get_external_documents': handleGetExternalDocuments,
+      'get_meeting_foreseen_activities': handleGetMeetingForeseenActivities,
+      'get_procedure_events': handleGetProcedureEvents
     };
     
     const handler = toolHandlers[name];

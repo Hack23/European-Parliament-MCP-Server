@@ -41,6 +41,17 @@ export async function handleGetParliamentaryQuestions(
   const params = GetParliamentaryQuestionsSchema.parse(args);
   
   try {
+    // Single question lookup by ID
+    if (params.docId !== undefined) {
+      const result = await epClient.getParliamentaryQuestionById(params.docId);
+      return {
+        content: [{
+          type: 'text',
+          text: JSON.stringify(result, null, 2)
+        }]
+      };
+    }
+
     // Fetch parliamentary questions from EP API (only pass defined properties)
     const apiParams: Record<string, unknown> = {
       limit: params.limit,
@@ -78,10 +89,14 @@ export async function handleGetParliamentaryQuestions(
  */
 export const getParliamentaryQuestionsToolMetadata = {
   name: 'get_parliamentary_questions',
-  description: 'Retrieve European Parliament questions (written and oral) submitted by MEPs. Filter by question type, author, topic, status (pending/answered), and date range. Returns question text, answers if available, and metadata.',
+  description: 'Retrieve European Parliament questions (written and oral) submitted by MEPs, or a single question by docId. Filter by question type, author, topic, status (pending/answered), and date range. Returns question text, answers if available, and metadata.',
   inputSchema: {
     type: 'object' as const,
     properties: {
+      docId: {
+        type: 'string',
+        description: 'Document ID for single question lookup'
+      },
       type: {
         type: 'string',
         description: 'Question type',

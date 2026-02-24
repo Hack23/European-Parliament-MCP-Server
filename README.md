@@ -45,7 +45,7 @@
   
   <!-- Unit Tests -->
   <a href="https://hack23.github.io/European-Parliament-MCP-Server/test-results/">
-    <img src="https://img.shields.io/badge/Unit%20Tests-268%20Passing-brightgreen?style=flat-square&logo=vitest" alt="Unit Test Results">
+    <img src="https://img.shields.io/badge/Unit%20Tests-1130%20Passing-brightgreen?style=flat-square&logo=vitest" alt="Unit Test Results">
   </a>
   
   <!-- E2E Tests -->
@@ -70,14 +70,14 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ### 🎯 Key Features
 
-- 🔌 **Full MCP Implementation**: 20 tools (7 core + 3 advanced + 10 OSINT intelligence), 6 Resources, and 6 Prompts
-- 🏛️ **European Parliament Data**: Access to 5 core parliamentary datasets
+- 🔌 **Full MCP Implementation**: 39 tools (7 core + 3 advanced + 10 OSINT + 19 EP API v2), 6 Resources, and 6 Prompts
+- 🏛️ **Complete EP API v2 Coverage**: All European Parliament Open Data API endpoints covered
 - 🕵️ **OSINT Intelligence**: MEP influence scoring, coalition analysis, anomaly detection
 - 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance
 - 🚀 **High Performance**: <200ms API responses, intelligent caching, rate limiting
 - 📊 **Type Safety**: TypeScript strict mode + Zod runtime validation
-- 🧪 **Well-Tested**: 80%+ code coverage (95% for security-critical code)
-- 📚 **Complete Documentation**: Architecture, API docs, security guidelines
+- 🧪 **Well-Tested**: 80%+ code coverage, 1130+ unit tests, 23 E2E tests
+- 📚 **Complete Documentation**: Architecture, TypeDoc API (HTML + Markdown), security guidelines
 
 ---
 
@@ -398,13 +398,33 @@ Configure in `.vscode/mcp.json`:
 ### 🌐 Documentation Portal
 
 **[📖 Complete Documentation Site](https://hack23.github.io/European-Parliament-MCP-Server/)** - Live documentation portal with:
-- 📖 **API Reference** - TypeDoc generated API documentation
-- 📊 **Coverage Reports** - Test coverage analysis
-- ✅ **Test Reports** - Unit and E2E test results
+- 📖 **[API Reference (HTML)](https://hack23.github.io/European-Parliament-MCP-Server/api/)** - TypeDoc generated API documentation with search, hierarchy navigation, and full type information
+- 📖 **[API Reference (Markdown)](https://hack23.github.io/European-Parliament-MCP-Server/api-markdown/)** - SEO-friendly Markdown API documentation
+- 📊 **[Coverage Reports](https://hack23.github.io/European-Parliament-MCP-Server/coverage/)** - Test coverage analysis
+- ✅ **[Test Reports](https://hack23.github.io/European-Parliament-MCP-Server/test-results/)** - Unit and E2E test results
 - 🔐 **Build Attestations** - SLSA Level 3 provenance
 - 📦 **SBOM** - Software Bill of Materials
+- 🗺️ **[Sitemap](https://hack23.github.io/European-Parliament-MCP-Server/api/sitemap.xml)** - Auto-generated sitemap for search engines
 
-> 💡 **Note**: Documentation is automatically generated and deployed with each release
+> 💡 **Note**: Documentation is automatically generated and committed with each release via `npm run docs:build`
+
+### Generated API Documentation
+
+The API documentation is generated using [TypeDoc](https://typedoc.org/) with the following plugins:
+
+| Plugin | Purpose |
+|--------|---------|
+| **typedoc** | Core HTML documentation generator |
+| **typedoc-plugin-markdown** | Generates SEO-friendly Markdown alongside HTML |
+| **typedoc-plugin-mdn-links** | Links TypeScript built-in types to MDN documentation |
+| **typedoc-plugin-zod** | Renders Zod schema definitions as readable type documentation |
+
+Generate documentation locally:
+```bash
+npm run docs          # HTML API docs → docs/api/
+npm run docs:md       # Markdown API docs → docs/api-markdown/
+npm run docs:build    # Full documentation build (HTML + MD + coverage + test reports)
+```
 
 ### Core Documentation
 
@@ -430,27 +450,32 @@ Configure in `.vscode/mcp.json`:
 
 ---
 
-## 🔌 MCP Tools
+## 🔌 MCP Tools (39 Total)
 
-### Quick Reference — Core Data Tools
+### Quick Reference — Core Data Tools (7)
 
-| Tool | Description | Key Parameters | Response |
-|------|-------------|----------------|----------|
-| [`get_meps`](./API_USAGE_GUIDE.md#tool-get_meps) | List MEPs with filters | country, group, committee, limit | Paginated list |
-| [`get_mep_details`](./API_USAGE_GUIDE.md#tool-get_mep_details) | Detailed MEP information | id (required) | Single object |
-| [`get_plenary_sessions`](./API_USAGE_GUIDE.md#tool-get_plenary_sessions) | List plenary sessions | dateFrom, dateTo, limit | Paginated list |
-| [`get_voting_records`](./API_USAGE_GUIDE.md#tool-get_voting_records) | Retrieve voting records | mepId, sessionId, topic, dateFrom | Paginated list |
-| [`search_documents`](./API_USAGE_GUIDE.md#tool-search_documents) | Search legislative documents | keywords (required), docType, author | Paginated list |
-| [`get_committee_info`](./API_USAGE_GUIDE.md#tool-get_committee_info) | Committee information | id or abbreviation (required) | Single object |
-| [`get_parliamentary_questions`](./API_USAGE_GUIDE.md#tool-get_parliamentary_questions) | Parliamentary Q&A | author, topic, questionType, dateFrom | Paginated list |
+| Tool | Description | Key Parameters | EP API Endpoint |
+|------|-------------|----------------|-----------------|
+| [`get_meps`](./API_USAGE_GUIDE.md#tool-get_meps) | List MEPs with filters | country, group, committee, limit | `GET /meps` |
+| [`get_mep_details`](./API_USAGE_GUIDE.md#tool-get_mep_details) | Detailed MEP information | id (required) | `GET /meps/{id}` |
+| [`get_plenary_sessions`](./API_USAGE_GUIDE.md#tool-get_plenary_sessions) | List plenary sessions/meetings, or single by eventId | dateFrom, dateTo, eventId, limit | `GET /meetings`, `GET /meetings/{id}` |
+| [`get_voting_records`](./API_USAGE_GUIDE.md#tool-get_voting_records) | Retrieve voting records | mepId, sessionId, topic, dateFrom | `GET /meetings/{id}/vote-results` |
+| [`search_documents`](./API_USAGE_GUIDE.md#tool-search_documents) | Search documents or get single by docId | keyword, docId, documentType, dateFrom | `GET /documents`, `GET /documents/{id}` |
+| [`get_committee_info`](./API_USAGE_GUIDE.md#tool-get_committee_info) | Committee/corporate body info, or all current bodies | id, abbreviation, showCurrent | `GET /corporate-bodies`, `GET /corporate-bodies/show-current` |
+| [`get_parliamentary_questions`](./API_USAGE_GUIDE.md#tool-get_parliamentary_questions) | Parliamentary Q&A, or single by docId | type, author, topic, docId | `GET /parliamentary-questions`, `GET /parliamentary-questions/{id}` |
+
+### Advanced Analysis Tools (3)
+
+| Tool | Description | Key Parameters | Output |
+|------|-------------|----------------|--------|
 | [`analyze_voting_patterns`](./API_USAGE_GUIDE.md#tool-analyze_voting_patterns) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
 | [`track_legislation`](./API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
 | [`generate_report`](./API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
 
-### 🕵️ OSINT Intelligence Tools
+### 🕵️ OSINT Intelligence Tools (10)
 
-| Tool | Description | Key Parameters | Response |
-|------|-------------|----------------|----------|
+| Tool | Description | Key Parameters | Output |
+|------|-------------|----------------|--------|
 | [`assess_mep_influence`](./API_USAGE_GUIDE.md#tool-assess_mep_influence) | MEP influence scoring (5-dimension model) | mepId (required), dateFrom, dateTo | Influence scorecard |
 | [`analyze_coalition_dynamics`](./API_USAGE_GUIDE.md#tool-analyze_coalition_dynamics) | Coalition cohesion & stress analysis | politicalGroups, dateFrom, dateTo | Coalition metrics |
 | [`detect_voting_anomalies`](./API_USAGE_GUIDE.md#tool-detect_voting_anomalies) | Party defection & anomaly detection | mepId, politicalGroup, dateFrom | Anomaly report |
@@ -462,7 +487,36 @@ Configure in `.vscode/mcp.json`:
 | [`analyze_country_delegation`](./API_USAGE_GUIDE.md#tool-analyze_country_delegation) | Country delegation voting & composition | country (required), dateFrom, dateTo | Delegation analysis |
 | [`generate_political_landscape`](./API_USAGE_GUIDE.md#tool-generate_political_landscape) | Parliament-wide political landscape | dateFrom, dateTo | Landscape overview |
 
-📖 **[Complete API documentation with examples →](./API_USAGE_GUIDE.md)**
+### 🏛️ EP API v2 Data Tools (10)
+
+| Tool | Description | Key Parameters | EP API Endpoint |
+|------|-------------|----------------|-----------------|
+| `get_current_meps` | All currently active MEPs | limit, offset | `GET /meps/show-current` |
+| `get_incoming_meps` | Incoming MEPs for current term | limit, offset | `GET /meps/show-incoming` |
+| `get_outgoing_meps` | Outgoing MEPs for current term | limit, offset | `GET /meps/show-outgoing` |
+| `get_homonym_meps` | Homonym MEPs for current term | limit, offset | `GET /meps/show-homonyms` |
+| `get_speeches` | Plenary speeches, or single by speechId | speechId, year, limit | `GET /speeches`, `GET /speeches/{id}` |
+| `get_procedures` | Legislative procedures, or single by processId | processId, year, limit | `GET /procedures`, `GET /procedures/{id}` |
+| `get_events` | EP events, or single by eventId | eventId, year, limit | `GET /events`, `GET /events/{id}` |
+| `get_meeting_activities` | Activities linked to a meeting | sittingId (required), limit | `GET /meetings/{id}/activities` |
+| `get_meeting_decisions` | Decisions in a meeting | sittingId (required), limit | `GET /meetings/{id}/decisions` |
+| `get_meeting_foreseen_activities` | Foreseen activities for a meeting | sittingId (required), limit | `GET /meetings/{id}/foreseen-activities` |
+
+### 📄 EP API v2 Document Tools (9)
+
+| Tool | Description | Key Parameters | EP API Endpoint |
+|------|-------------|----------------|-----------------|
+| `get_adopted_texts` | Adopted texts, or single by docId | docId, year, limit | `GET /adopted-texts`, `GET /adopted-texts/{id}` |
+| `get_mep_declarations` | MEP declarations, or single by docId | docId, year, limit | `GET /meps-declarations`, `GET /meps-declarations/{id}` |
+| `get_plenary_documents` | Plenary documents, or single by docId | docId, year, limit | `GET /plenary-documents`, `GET /plenary-documents/{id}` |
+| `get_committee_documents` | Committee documents, or single by docId | docId, year, limit | `GET /committee-documents`, `GET /committee-documents/{id}` |
+| `get_plenary_session_documents` | Plenary session documents, or single by docId | docId, year, limit | `GET /plenary-session-documents`, `GET /plenary-session-documents/{id}` |
+| `get_plenary_session_document_items` | Plenary session document items | limit, offset | `GET /plenary-session-documents-items` |
+| `get_external_documents` | External documents, or single by docId | docId, limit | `GET /external-documents`, `GET /external-documents/{id}` |
+| `get_controlled_vocabularies` | Controlled vocabularies, or single by vocId | vocId, limit | `GET /controlled-vocabularies`, `GET /controlled-vocabularies/{id}` |
+| `get_procedure_events` | Events linked to a procedure | processId (required), limit | `GET /procedures/{id}/events` |
+
+📖 **[Complete TypeDoc API documentation →](https://hack23.github.io/European-Parliament-MCP-Server/api/)** · **[Markdown API docs →](https://hack23.github.io/European-Parliament-MCP-Server/api-markdown/)**
 
 ### Common Use Cases
 
@@ -599,21 +653,31 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 | Attendance tracking | ✅ Trend detection + engagement scoring | ❌ | ❌ | ❌ |
 | GDPR compliance | ✅ Privacy-first design | N/A | N/A | ✅ |
 | MCP prompts & resources | ✅ 6 prompts + 6 resources | ❌ | ❌ | ❌ |
-| OSINT tool count | **20 tools** | ~5 tools | ~5 tools | ~4 tools |
+| OSINT tool count | **39 tools** | ~5 tools | ~5 tools | ~4 tools |
 
-> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **20 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, and political landscape generation. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
+> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **39 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, and political landscape generation. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
 
 ---
 
 ## 🏛️ European Parliament Datasets
 
-### Available Data
+### Complete EP API v2 Coverage
 
-1. **MEPs**: Current and historical member information
-2. **Plenary**: Sessions, votes, attendance, debates
-3. **Committees**: Meetings, documents, membership
-4. **Documents**: Legislative texts, reports, amendments
-5. **Questions**: Parliamentary questions and answers
+All [European Parliament Open Data API v2](https://data.europarl.europa.eu/en/developer-corner/opendata-api) endpoint categories are fully covered:
+
+| Category | Endpoints | MCP Tools |
+|----------|-----------|-----------|
+| **MEPs** | `/meps`, `/meps/{id}`, `/meps/show-current`, `/meps/show-incoming`, `/meps/show-outgoing`, `/meps/show-homonyms` | `get_meps`, `get_mep_details`, `get_current_meps`, `get_incoming_meps`, `get_outgoing_meps`, `get_homonym_meps` |
+| **MEP Documents** | `/meps-declarations`, `/meps-declarations/{id}` | `get_mep_declarations` |
+| **Corporate Bodies** | `/corporate-bodies`, `/corporate-bodies/{id}`, `/corporate-bodies/show-current` | `get_committee_info` |
+| **Events** | `/events`, `/events/{id}` | `get_events` |
+| **Meetings** | `/meetings`, `/meetings/{id}`, `/meetings/{id}/activities`, `/meetings/{id}/decisions`, `/meetings/{id}/foreseen-activities`, `/meetings/{id}/vote-results` | `get_plenary_sessions`, `get_meeting_activities`, `get_meeting_decisions`, `get_meeting_foreseen_activities`, `get_voting_records` |
+| **Speeches** | `/speeches`, `/speeches/{id}` | `get_speeches` |
+| **Procedures** | `/procedures`, `/procedures/{id}`, `/procedures/{id}/events` | `get_procedures`, `get_procedure_events` |
+| **Documents** | `/documents`, `/documents/{id}`, `/adopted-texts`, `/adopted-texts/{id}`, `/committee-documents`, `/committee-documents/{id}`, `/plenary-documents`, `/plenary-documents/{id}`, `/plenary-session-documents`, `/plenary-session-documents/{id}`, `/plenary-session-documents-items` | `search_documents`, `get_adopted_texts`, `get_committee_documents`, `get_plenary_documents`, `get_plenary_session_documents`, `get_plenary_session_document_items` |
+| **Questions** | `/parliamentary-questions`, `/parliamentary-questions/{id}` | `get_parliamentary_questions` |
+| **External Documents** | `/external-documents`, `/external-documents/{id}` | `get_external_documents` |
+| **Vocabularies** | `/controlled-vocabularies`, `/controlled-vocabularies/{id}` | `get_controlled_vocabularies` |
 
 ### Data Source
 

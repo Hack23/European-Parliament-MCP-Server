@@ -2,12 +2,17 @@
  * MCP Tool: get_procedures
  *
  * Retrieve European Parliament legislative procedures.
+ * Supports single procedure lookup by processId or list with year filtering.
  *
  * **Intelligence Perspective:** Procedure data enables end-to-end legislative tracking,
  * outcome prediction, and timeline analysis—core for policy monitoring intelligence.
  *
  * **Business Perspective:** Procedure tracking powers legislative intelligence products,
  * regulatory risk assessments, and compliance early-warning systems.
+ *
+ * **EP API Endpoints:**
+ * - `GET /procedures` (list)
+ * - `GET /procedures/{process-id}` (single)
  *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
@@ -25,6 +30,16 @@ export async function handleGetProcedures(
   args: unknown
 ): Promise<{ content: { type: string; text: string }[] }> {
   const params = GetProceduresSchema.parse(args);
+
+  if (params.processId !== undefined) {
+    const result = await epClient.getProcedureById(params.processId);
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(result, null, 2)
+      }]
+    };
+  }
 
   const apiParams: Record<string, unknown> = {
     limit: params.limit,
@@ -45,10 +60,11 @@ export async function handleGetProcedures(
 /** Tool metadata for get_procedures */
 export const getProceduresToolMetadata = {
   name: 'get_procedures',
-  description: 'Get European Parliament legislative procedures (ordinary legislative procedure, consultation, consent). Filter by year. Data source: European Parliament Open Data Portal.',
+  description: 'Get European Parliament legislative procedures. Supports single procedure lookup by processId or list with year filter. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
+      processId: { type: 'string', description: 'Process ID for single procedure lookup' },
       year: { type: 'number', description: 'Filter by year (e.g., 2024)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 }

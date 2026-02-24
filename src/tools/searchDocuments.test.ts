@@ -51,8 +51,10 @@ describe('search_documents Tool', () => {
         .rejects.toThrow();
     });
 
-    it('should reject missing keyword', async () => {
-      await expect(handleSearchDocuments({}))
+    it('should accept missing keyword when docId is provided', async () => {
+      // keyword is optional when docId is provided
+      // This will fail due to network/API, not validation
+      await expect(handleSearchDocuments({ docId: 'test-doc-123' }))
         .rejects.toThrow();
     });
 

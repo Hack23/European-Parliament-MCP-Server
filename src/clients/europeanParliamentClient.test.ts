@@ -3166,6 +3166,917 @@ describe('EuropeanParliamentClient', () => {
     });
   });
 
+  // ── Phase 5: By-ID and additional list endpoint tests ──────────────
+
+  describe('getHomonymMEPs', () => {
+    it('should return paginated homonym MEP data', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMEPsResponse(3)
+      } as Response);
+
+      const result = await client.getHomonymMEPs({ limit: 10 });
+
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('total');
+      expect(result).toHaveProperty('limit', 10);
+      expect(result).toHaveProperty('offset', 0);
+      expect(result).toHaveProperty('hasMore');
+      expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data).toHaveLength(3);
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMEPsResponse(1)
+      } as Response);
+
+      await client.getHomonymMEPs({});
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('meps/show-homonyms'),
+        expect.any(Object)
+      );
+    });
+
+    it('should apply default limit and offset', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMEPsResponse(2)
+      } as Response);
+
+      const result = await client.getHomonymMEPs();
+
+      expect(result.limit).toBe(50);
+      expect(result.offset).toBe(0);
+    });
+
+    it('should handle API errors', async () => {
+      mockFetch.mockReset();
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error'
+      } as Response);
+
+      await expect(client.getHomonymMEPs({ limit: 10 })).rejects.toThrow(APIError);
+    });
+  });
+
+  describe('getCurrentCorporateBodies', () => {
+    it('should return paginated corporate bodies', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockCorporateBodyResponse()
+      } as Response);
+
+      const result = await client.getCurrentCorporateBodies({ limit: 10 });
+
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('total');
+      expect(result).toHaveProperty('limit', 10);
+      expect(result).toHaveProperty('offset', 0);
+      expect(Array.isArray(result.data)).toBe(true);
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockCorporateBodyResponse()
+      } as Response);
+
+      await client.getCurrentCorporateBodies({});
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('corporate-bodies/show-current'),
+        expect.any(Object)
+      );
+    });
+
+    it('should apply default limit and offset', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockCorporateBodyResponse()
+      } as Response);
+
+      const result = await client.getCurrentCorporateBodies();
+
+      expect(result.limit).toBe(50);
+      expect(result.offset).toBe(0);
+    });
+
+    it('should handle API errors', async () => {
+      mockFetch.mockReset();
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found'
+      } as Response);
+
+      await expect(client.getCurrentCorporateBodies({})).rejects.toThrow(APIError);
+    });
+  });
+
+  describe('getEventById', () => {
+    it('should return a single event', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'evt-1',
+          identifier: 'EVT-2024-001',
+          label: [{ '@language': 'en', '@value': 'Test Event' }],
+          activity_start_date: { '@value': '2024-06-10T09:00:00Z', type: 'xsd:dateTime' },
+          had_activity_type: 'HEARING',
+          had_locality: 'Brussels',
+          was_organized_by: 'IMCO',
+          activity_status: 'CONFIRMED'
+        })
+      } as Response);
+
+      const result = await client.getEventById('EVT-2024-001');
+
+      expect(result).toHaveProperty('id');
+      expect(result).toHaveProperty('title');
+      expect(result).toHaveProperty('type');
+    });
+
+    it('should throw for empty eventId', async () => {
+      await expect(client.getEventById('')).rejects.toThrow('Event ID is required');
+    });
+
+    it('should throw for whitespace-only eventId', async () => {
+      await expect(client.getEventById('   ')).rejects.toThrow('Event ID is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'evt-1',
+          identifier: 'EVT-2024-001',
+          label: [{ '@language': 'en', '@value': 'Test' }]
+        })
+      } as Response);
+
+      await client.getEventById('EVT-2024-001');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('events/EVT-2024-001'),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('getMeetingById', () => {
+    it('should return a single meeting', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'eli/dl/event/MTG-PL-2024-01-15',
+          type: 'Activity',
+          'eli-dl:activity_date': { '@value': '2024-01-15T00:00:00+01:00', type: 'xsd:dateTime' },
+          activity_id: 'MTG-PL-2024-01-15',
+          activity_label: { en: 'Plenary session' }
+        })
+      } as Response);
+
+      const result = await client.getMeetingById('MTG-PL-2024-01-15');
+
+      expect(result).toHaveProperty('id');
+    });
+
+    it('should throw for empty eventId', async () => {
+      await expect(client.getMeetingById('')).rejects.toThrow('Meeting event ID is required');
+    });
+
+    it('should throw for whitespace-only eventId', async () => {
+      await expect(client.getMeetingById('   ')).rejects.toThrow('Meeting event ID is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'eli/dl/event/MTG-PL-2024-01-15',
+          type: 'Activity',
+          activity_id: 'MTG-PL-2024-01-15'
+        })
+      } as Response);
+
+      await client.getMeetingById('MTG-PL-2024-01-15');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('meetings/MTG-PL-2024-01-15'),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('getMeetingForeseenActivities', () => {
+    it('should return paginated foreseen activities', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMeetingActivitiesResponse(2)
+      } as Response);
+
+      const result = await client.getMeetingForeseenActivities('MTG-PL-2024-001', { limit: 10 });
+
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('total');
+      expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data).toHaveLength(2);
+    });
+
+    it('should throw for empty sittingId', async () => {
+      await expect(client.getMeetingForeseenActivities('')).rejects.toThrow('Meeting sitting-id is required');
+    });
+
+    it('should throw for whitespace-only sittingId', async () => {
+      await expect(client.getMeetingForeseenActivities('   ')).rejects.toThrow('Meeting sitting-id is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMeetingActivitiesResponse(1)
+      } as Response);
+
+      await client.getMeetingForeseenActivities('MTG-PL-2024-001');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('meetings/MTG-PL-2024-001/foreseen-activities'),
+        expect.any(Object)
+      );
+    });
+
+    it('should apply default limit and offset', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockMeetingActivitiesResponse(1)
+      } as Response);
+
+      const result = await client.getMeetingForeseenActivities('MTG-PL-2024-001');
+
+      expect(result.limit).toBe(50);
+      expect(result.offset).toBe(0);
+    });
+  });
+
+  describe('getSpeechById', () => {
+    it('should return a single speech', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'speech-1',
+          identifier: 'SPEECH-1',
+          label: 'Speech on topic 1',
+          had_activity_type: 'DEBATE_SPEECH',
+          had_participant_person: 'person/10001',
+          participant_label: 'Speaker 1',
+          activity_date: { '@value': '2024-03-10T10:00:00Z', type: 'xsd:dateTime' },
+          language: 'en',
+          text: 'Speech content',
+          was_part_of: 'event/MTG-PL-2024-03-10'
+        })
+      } as Response);
+
+      const result = await client.getSpeechById('SPEECH-1');
+
+      expect(result).toHaveProperty('id');
+      expect(result).toHaveProperty('speakerName');
+      expect(result).toHaveProperty('type');
+    });
+
+    it('should throw for empty speechId', async () => {
+      await expect(client.getSpeechById('')).rejects.toThrow('Speech ID is required');
+    });
+
+    it('should throw for whitespace-only speechId', async () => {
+      await expect(client.getSpeechById('   ')).rejects.toThrow('Speech ID is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'speech-1',
+          identifier: 'SPEECH-1',
+          label: 'Speech'
+        })
+      } as Response);
+
+      await client.getSpeechById('SPEECH-1');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('speeches/SPEECH-1'),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('getProcedureEvents', () => {
+    it('should return paginated procedure events', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockEventsResponse(2)
+      } as Response);
+
+      const result = await client.getProcedureEvents('2024/0001(COD)', { limit: 10 });
+
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('total');
+      expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data).toHaveLength(2);
+    });
+
+    it('should throw for empty processId', async () => {
+      await expect(client.getProcedureEvents('')).rejects.toThrow('Procedure process-id is required');
+    });
+
+    it('should throw for whitespace-only processId', async () => {
+      await expect(client.getProcedureEvents('   ')).rejects.toThrow('Procedure process-id is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockEventsResponse(1)
+      } as Response);
+
+      await client.getProcedureEvents('2024/0001(COD)');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('procedures/2024/0001(COD)/events'),
+        expect.any(Object)
+      );
+    });
+
+    it('should apply default limit and offset', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockEventsResponse(1)
+      } as Response);
+
+      const result = await client.getProcedureEvents('2024/0001(COD)');
+
+      expect(result.limit).toBe(50);
+      expect(result.offset).toBe(0);
+    });
+  });
+
+  describe('getAdoptedTextById', () => {
+    it('should return a single adopted text', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'at-1',
+          work_id: 'TA-9-2024-0001',
+          title_dcterms: [{ '@language': 'en', '@value': 'Adopted text 1' }],
+          work_type: 'LEGISLATIVE_RESOLUTION',
+          work_date_document: '2024-03-10',
+          based_on_a_concept_procedure: '2023/0123(COD)',
+          subject_matter: [{ '@language': 'en', '@value': 'Digital policy' }]
+        })
+      } as Response);
+
+      const result = await client.getAdoptedTextById('TA-9-2024-0001');
+
+      expect(result).toHaveProperty('id');
+      expect(result).toHaveProperty('title');
+      expect(result).toHaveProperty('reference');
+    });
+
+    it('should throw for empty docId', async () => {
+      await expect(client.getAdoptedTextById('')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should throw for whitespace-only docId', async () => {
+      await expect(client.getAdoptedTextById('   ')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'at-1',
+          work_id: 'TA-9-2024-0001',
+          title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
+        })
+      } as Response);
+
+      await client.getAdoptedTextById('TA-9-2024-0001');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('adopted-texts/TA-9-2024-0001'),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('getDocumentById', () => {
+    it('should return a single document', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'doc-1',
+          work_id: 'A-9-2024-0001',
+          work_type: 'REPORT_PLENARY',
+          title_dcterms: [{ '@language': 'en', '@value': 'Climate report' }],
+          work_date_document: '2024-01-10'
+        })
+      } as Response);
+
+      const result = await client.getDocumentById('A-9-2024-0001');
+
+      expect(result).toHaveProperty('id');
+      expect(result).toHaveProperty('title');
+      expect(result).toHaveProperty('type');
+    });
+
+    it('should throw for empty docId', async () => {
+      await expect(client.getDocumentById('')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should throw for whitespace-only docId', async () => {
+      await expect(client.getDocumentById('   ')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'doc-1',
+          work_id: 'A-9-2024-0001',
+          title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
+        })
+      } as Response);
+
+      await client.getDocumentById('A-9-2024-0001');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('documents/A-9-2024-0001'),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('getCommitteeDocumentById', () => {
+    it('should return a single committee document', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'cdoc-1',
+          work_id: 'CM-9-2024-0001',
+          work_type: 'COMMITTEE_REPORT',
+          title_dcterms: [{ '@language': 'en', '@value': 'Committee report' }],
+          work_date_document: '2024-02-15'
+        })
+      } as Response);
+
+      const result = await client.getCommitteeDocumentById('CM-9-2024-0001');
+
+      expect(result).toHaveProperty('id');
+      expect(result).toHaveProperty('title');
+      expect(result).toHaveProperty('type');
+    });
+
+    it('should throw for empty docId', async () => {
+      await expect(client.getCommitteeDocumentById('')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should throw for whitespace-only docId', async () => {
+      await expect(client.getCommitteeDocumentById('   ')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'cdoc-1',
+          work_id: 'CM-9-2024-0001',
+          title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
+        })
+      } as Response);
+
+      await client.getCommitteeDocumentById('CM-9-2024-0001');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('committee-documents/CM-9-2024-0001'),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('getParliamentaryQuestionById', () => {
+    it('should return a single parliamentary question', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'q-1',
+          work_id: 'E-9-2024-000001',
+          work_type: 'QUESTION_WRITTEN',
+          title_dcterms: [{ '@language': 'en', '@value': 'Question about climate' }],
+          work_date_document: '2024-01-10',
+          was_created_by: 'person/124810',
+          was_realized_by: 'answer-ref'
+        })
+      } as Response);
+
+      const result = await client.getParliamentaryQuestionById('E-9-2024-000001');
+
+      expect(result).toHaveProperty('id');
+      expect(result).toHaveProperty('topic');
+      expect(result).toHaveProperty('type');
+    });
+
+    it('should throw for empty docId', async () => {
+      await expect(client.getParliamentaryQuestionById('')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should throw for whitespace-only docId', async () => {
+      await expect(client.getParliamentaryQuestionById('   ')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'q-1',
+          work_id: 'E-9-2024-000001',
+          title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
+        })
+      } as Response);
+
+      await client.getParliamentaryQuestionById('E-9-2024-000001');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('parliamentary-questions/E-9-2024-000001'),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('getPlenaryDocumentById', () => {
+    it('should return a single plenary document', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'pdoc-1',
+          work_id: 'PV-9-2024-0001',
+          work_type: 'PLENARY_REPORT',
+          title_dcterms: [{ '@language': 'en', '@value': 'Plenary report' }],
+          work_date_document: '2024-03-10'
+        })
+      } as Response);
+
+      const result = await client.getPlenaryDocumentById('PV-9-2024-0001');
+
+      expect(result).toHaveProperty('id');
+      expect(result).toHaveProperty('title');
+      expect(result).toHaveProperty('type');
+    });
+
+    it('should throw for empty docId', async () => {
+      await expect(client.getPlenaryDocumentById('')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should throw for whitespace-only docId', async () => {
+      await expect(client.getPlenaryDocumentById('   ')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'pdoc-1',
+          work_id: 'PV-9-2024-0001',
+          title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
+        })
+      } as Response);
+
+      await client.getPlenaryDocumentById('PV-9-2024-0001');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('plenary-documents/PV-9-2024-0001'),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('getPlenarySessionDocumentById', () => {
+    it('should return a single plenary session document', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'psdoc-1',
+          work_id: 'PS-9-2024-0001',
+          work_type: 'SESSION_DOCUMENT',
+          title_dcterms: [{ '@language': 'en', '@value': 'Session document' }],
+          work_date_document: '2024-04-01'
+        })
+      } as Response);
+
+      const result = await client.getPlenarySessionDocumentById('PS-9-2024-0001');
+
+      expect(result).toHaveProperty('id');
+      expect(result).toHaveProperty('title');
+      expect(result).toHaveProperty('type');
+    });
+
+    it('should throw for empty docId', async () => {
+      await expect(client.getPlenarySessionDocumentById('')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should throw for whitespace-only docId', async () => {
+      await expect(client.getPlenarySessionDocumentById('   ')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'psdoc-1',
+          work_id: 'PS-9-2024-0001',
+          title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
+        })
+      } as Response);
+
+      await client.getPlenarySessionDocumentById('PS-9-2024-0001');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('plenary-session-documents/PS-9-2024-0001'),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('getPlenarySessionDocumentItems', () => {
+    it('should return paginated document items', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse(3)
+      } as Response);
+
+      const result = await client.getPlenarySessionDocumentItems({ limit: 10 });
+
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('total');
+      expect(result).toHaveProperty('limit', 10);
+      expect(result).toHaveProperty('offset', 0);
+      expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data).toHaveLength(3);
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse(1)
+      } as Response);
+
+      await client.getPlenarySessionDocumentItems({});
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('plenary-session-documents-items'),
+        expect.any(Object)
+      );
+    });
+
+    it('should apply default limit and offset', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse(1)
+      } as Response);
+
+      const result = await client.getPlenarySessionDocumentItems();
+
+      expect(result.limit).toBe(50);
+      expect(result.offset).toBe(0);
+    });
+
+    it('should handle API errors', async () => {
+      mockFetch.mockReset();
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error'
+      } as Response);
+
+      await expect(client.getPlenarySessionDocumentItems({})).rejects.toThrow(APIError);
+    });
+  });
+
+  describe('getExternalDocuments', () => {
+    it('should return paginated external documents', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse(2)
+      } as Response);
+
+      const result = await client.getExternalDocuments({ limit: 10 });
+
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('total');
+      expect(result).toHaveProperty('limit', 10);
+      expect(result).toHaveProperty('offset', 0);
+      expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data).toHaveLength(2);
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse(1)
+      } as Response);
+
+      await client.getExternalDocuments({});
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('external-documents'),
+        expect.any(Object)
+      );
+    });
+
+    it('should pass year parameter', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse(1)
+      } as Response);
+
+      await client.getExternalDocuments({ year: 2024 });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('year=2024'),
+        expect.any(Object)
+      );
+    });
+
+    it('should apply default limit and offset', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse(1)
+      } as Response);
+
+      const result = await client.getExternalDocuments();
+
+      expect(result.limit).toBe(50);
+      expect(result.offset).toBe(0);
+    });
+
+    it('should handle API errors', async () => {
+      mockFetch.mockReset();
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found'
+      } as Response);
+
+      await expect(client.getExternalDocuments({})).rejects.toThrow(APIError);
+    });
+  });
+
+  describe('getExternalDocumentById', () => {
+    it('should return a single external document', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'edoc-1',
+          work_id: 'EXT-2024-0001',
+          work_type: 'EXTERNAL_REPORT',
+          title_dcterms: [{ '@language': 'en', '@value': 'External report' }],
+          work_date_document: '2024-05-01'
+        })
+      } as Response);
+
+      const result = await client.getExternalDocumentById('EXT-2024-0001');
+
+      expect(result).toHaveProperty('id');
+      expect(result).toHaveProperty('title');
+      expect(result).toHaveProperty('type');
+    });
+
+    it('should throw for empty docId', async () => {
+      await expect(client.getExternalDocumentById('')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should throw for whitespace-only docId', async () => {
+      await expect(client.getExternalDocumentById('   ')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'edoc-1',
+          work_id: 'EXT-2024-0001',
+          title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
+        })
+      } as Response);
+
+      await client.getExternalDocumentById('EXT-2024-0001');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('external-documents/EXT-2024-0001'),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('getControlledVocabularyById', () => {
+    it('should return a vocabulary entry', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'voc-1',
+          label: 'Test Vocabulary',
+          notation: 'TEST',
+          entries: [{ code: 'A', label: 'Alpha' }]
+        })
+      } as Response);
+
+      const result = await client.getControlledVocabularyById('voc-1');
+
+      expect(result).toHaveProperty('id');
+      expect(result).toHaveProperty('label');
+    });
+
+    it('should throw for empty vocId', async () => {
+      await expect(client.getControlledVocabularyById('')).rejects.toThrow('Vocabulary ID is required');
+    });
+
+    it('should throw for whitespace-only vocId', async () => {
+      await expect(client.getControlledVocabularyById('   ')).rejects.toThrow('Vocabulary ID is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'voc-1',
+          label: 'Test'
+        })
+      } as Response);
+
+      await client.getControlledVocabularyById('voc-1');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('controlled-vocabularies/voc-1'),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('getMEPDeclarationById', () => {
+    it('should return a single MEP declaration', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'decl-1',
+          work_id: 'DFI-9-2024-000001',
+          title_dcterms: [{ '@language': 'en', '@value': 'Declaration 1' }],
+          was_attributed_to: 'person/10001',
+          author_label: [{ '@language': 'en', '@value': 'MEP 1' }],
+          work_type: 'FINANCIAL_INTERESTS',
+          work_date_document: '2024-01-10',
+          'resource_legal_in-force': 'PUBLISHED'
+        })
+      } as Response);
+
+      const result = await client.getMEPDeclarationById('DFI-9-2024-000001');
+
+      expect(result).toHaveProperty('id');
+      expect(result).toHaveProperty('title');
+      expect(result).toHaveProperty('mepId');
+    });
+
+    it('should throw for empty docId', async () => {
+      await expect(client.getMEPDeclarationById('')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should throw for whitespace-only docId', async () => {
+      await expect(client.getMEPDeclarationById('   ')).rejects.toThrow('Document ID is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'decl-1',
+          work_id: 'DFI-9-2024-000001',
+          title_dcterms: [{ '@language': 'en', '@value': 'Test' }],
+          was_attributed_to: 'person/10001'
+        })
+      } as Response);
+
+      await client.getMEPDeclarationById('DFI-9-2024-000001');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('meps-declarations/DFI-9-2024-000001'),
+        expect.any(Object)
+      );
+    });
+  });
+
   describe('extractDocumentRefs edge cases', () => {
     it('should handle empty array in had_document', async () => {
       mockFetch.mockResolvedValueOnce({
