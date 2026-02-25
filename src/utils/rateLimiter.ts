@@ -29,22 +29,7 @@ export interface RateLimiterStatus {
 }
 
 /**
- * Public typed configuration interface for {@link RateLimiter}.
- * Mirrors {@link RateLimiterOptions} but is exported for use in
- * factories, health services, and DI container setup.
- */
-export interface RateLimiterConfig {
-  /** Maximum number of tokens in the bucket */
-  tokensPerInterval: number;
-  /** Time interval for token refill */
-  interval: 'second' | 'minute' | 'hour';
-  /** Initial number of tokens (defaults to tokensPerInterval) */
-  initialTokens?: number;
-}
-
-/**
  * Rate limiter configuration options
- * @internal - Used only for RateLimiter initialization
  */
 interface RateLimiterOptions {
   /**
@@ -62,6 +47,15 @@ interface RateLimiterOptions {
    */
   initialTokens?: number;
 }
+
+/**
+ * Public typed configuration for {@link RateLimiter}.
+ *
+ * Type alias of {@link RateLimiterOptions} so consumers can construct
+ * or configure a {@link RateLimiter} using {@link RateLimiterConfig}
+ * without any casting.
+ */
+export type RateLimiterConfig = RateLimiterOptions;
 
 /**
  * Token bucket rate limiter implementation

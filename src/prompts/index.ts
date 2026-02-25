@@ -495,7 +495,8 @@ export function getPromptMetadataArray(): PromptMetadata[] {
     legislativeTrackingPrompt,
     politicalGroupComparisonPrompt,
     committeeActivityPrompt,
-    votingPatternAnalysisPrompt
+    votingPatternAnalysisPrompt,
+    countryDelegationAnalysisPrompt,
   ];
 }
 
@@ -522,7 +523,6 @@ export function handleGetPrompt(
     'political_group_comparison': generateGroupComparison,
     'committee_activity_report': generateCommitteeActivity,
     'voting_pattern_analysis': generateVotingAnalysis,
-    // Additional prompt: accessible but not listed in getPromptMetadataArray()
     'country_delegation_analysis': generateCountryDelegationAnalysis,
   };
 

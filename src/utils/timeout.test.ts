@@ -464,3 +464,50 @@ describe('isTimeoutError', () => {
     expect(isTimeoutError({})).toBe(false);
   });
 });
+
+describe('withTimeoutConfig', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.clearAllTimers();
+    vi.useRealTimers();
+  });
+
+  it('should resolve when promise completes before config.timeoutMs', async () => {
+    const { withTimeoutConfig } = await import('./timeout.js');
+    const resultPromise = withTimeoutConfig(Promise.resolve('ok'), { timeoutMs: 1000 });
+    await expect(resultPromise).resolves.toBe('ok');
+  });
+
+  it('should reject with TimeoutError using operationName in message', async () => {
+    const { withTimeoutConfig } = await import('./timeout.js');
+    const slow = new Promise((resolve) => setTimeout(() => resolve('slow'), 2000));
+    const resultPromise = withTimeoutConfig(slow, { timeoutMs: 500, operationName: 'fetchMEPs' });
+    await vi.advanceTimersByTimeAsync(501);
+    try {
+      await resultPromise;
+      expect.fail('Should have thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(TimeoutError);
+      expect((error as TimeoutError).message).toContain('fetchMEPs');
+      expect((error as TimeoutError).message).toContain('500ms');
+    }
+    await vi.advanceTimersByTimeAsync(1500);
+  });
+
+  it('should use custom errorMessage when provided', async () => {
+    const { withTimeoutConfig } = await import('./timeout.js');
+    const slow = new Promise((resolve) => setTimeout(() => resolve('slow'), 2000));
+    const resultPromise = withTimeoutConfig(slow, { timeoutMs: 500, errorMessage: 'My custom error' });
+    await vi.advanceTimersByTimeAsync(501);
+    try {
+      await resultPromise;
+      expect.fail('Should have thrown');
+    } catch (error) {
+      expect((error as Error).message).toBe('My custom error');
+    }
+    await vi.advanceTimersByTimeAsync(1500);
+  });
+});

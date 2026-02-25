@@ -89,6 +89,27 @@ const politicalGroupsResourceTemplate: ResourceTemplate = {
   mimeType: 'application/json'
 };
 
+const procedureResourceTemplate: ResourceTemplate = {
+  uriTemplate: 'ep://procedures/{id}',
+  name: 'Procedure Details',
+  description: 'Legislative procedure details by process ID (format: YYYY-NNNN).',
+  mimeType: 'application/json'
+};
+
+const plenaryDetailResourceTemplate: ResourceTemplate = {
+  uriTemplate: 'ep://plenary/{id}',
+  name: 'Plenary Session Detail',
+  description: 'Specific plenary session details by session ID.',
+  mimeType: 'application/json'
+};
+
+const documentResourceTemplate: ResourceTemplate = {
+  uriTemplate: 'ep://documents/{id}',
+  name: 'Legislative Document',
+  description: 'Legislative document details by document ID.',
+  mimeType: 'application/json'
+};
+
 // ─── URI Validation ──────────────────────────────────────────
 
 const MepIdSchema = z.string().min(1).max(100);
@@ -376,7 +397,7 @@ async function handleProcedureDetail(procedureId: string): Promise<ResourceConte
  * Handle plenary detail resource request (extended URI: ep://plenary/{id})
  *
  * Fetches recent plenary sessions and filters by the requested session ID.
- * Falls back to the full list when no match is found.
+ * Falls back to the first available session when no match is found.
  *
  * @param plenaryId - Plenary session identifier
  * @returns Resource content with plenary session details as JSON
@@ -436,7 +457,10 @@ export function getResourceTemplateArray(): ResourceTemplate[] {
     committeeResourceTemplate,
     plenarySessionsResourceTemplate,
     votingRecordResourceTemplate,
-    politicalGroupsResourceTemplate
+    politicalGroupsResourceTemplate,
+    procedureResourceTemplate,
+    plenaryDetailResourceTemplate,
+    documentResourceTemplate,
   ];
 }
 
@@ -482,7 +506,6 @@ export async function handleReadResource(uri: string): Promise<ResourceReadResul
     case 'political_groups':
       content = await handlePoliticalGroups();
       break;
-    // Extended URI patterns (not listed in getResourceTemplateArray)
     case 'procedure_detail':
       content = await handleProcedureDetail(requireParam(params, 'procedureId', 'ep://procedures/{id}'));
       break;

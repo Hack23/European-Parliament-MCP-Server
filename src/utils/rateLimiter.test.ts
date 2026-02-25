@@ -157,4 +157,52 @@ describe('RateLimiter', () => {
       expect(limiter.getAvailableTokens()).toBe(100);
     });
   });
+
+  describe('getMaxTokens', () => {
+    it('should return the configured token capacity', () => {
+      const limiter = new RateLimiter({ tokensPerInterval: 42, interval: 'minute' });
+      expect(limiter.getMaxTokens()).toBe(42);
+    });
+  });
+
+  describe('getStatus', () => {
+    it('should return full status when bucket is full', () => {
+      const limiter = new RateLimiter({ tokensPerInterval: 100, interval: 'minute' });
+      const status = limiter.getStatus();
+      expect(status.maxTokens).toBe(100);
+      expect(status.availableTokens).toBe(100);
+      expect(status.utilizationPercent).toBe(0);
+    });
+
+    it('should reflect consumed tokens in utilization', () => {
+      vi.useFakeTimers();
+      const limiter = new RateLimiter({ tokensPerInterval: 100, interval: 'minute' });
+      limiter.tryRemoveTokens(50);
+      const status = limiter.getStatus();
+      expect(status.availableTokens).toBe(50);
+      expect(status.utilizationPercent).toBe(50);
+      vi.useRealTimers();
+    });
+
+    it('should round availableTokens and utilizationPercent', () => {
+      vi.useFakeTimers();
+      const limiter = new RateLimiter({ tokensPerInterval: 3, interval: 'minute' });
+      limiter.tryRemoveTokens(1);
+      const status = limiter.getStatus();
+      // 2 of 3 available → utilization = round((1/3)*100) = 33
+      expect(status.utilizationPercent).toBe(33);
+      expect(Number.isInteger(status.availableTokens)).toBe(true);
+      vi.useRealTimers();
+    });
+
+    it('should handle empty bucket (utilization 100%)', () => {
+      vi.useFakeTimers();
+      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second' });
+      limiter.tryRemoveTokens(10);
+      const status = limiter.getStatus();
+      expect(status.availableTokens).toBe(0);
+      expect(status.utilizationPercent).toBe(100);
+      vi.useRealTimers();
+    });
+  });
 });

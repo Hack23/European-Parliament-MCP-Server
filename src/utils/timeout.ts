@@ -26,7 +26,8 @@ export interface TimeoutConfig {
 
 /**
  * Default timeout configurations for common operation types.
- * Override via environment variables when needed.
+ * These are compile-time constants; override by passing a custom {@link TimeoutConfig}
+ * at the call site rather than relying on environment variables.
  */
 export const DEFAULT_TIMEOUTS = {
   /** Standard EP API HTTP request (10 s) */

@@ -306,9 +306,8 @@ if (isMainModule) {
   // (e.g., when run inside a container or orchestrator)
   function handleShutdownSignal(signal: string): void {
     console.error(`[${SERVER_NAME}] Received ${signal} — shutting down gracefully`);
-    // Allow in-flight requests to complete (Node will exit naturally once the
-    // event loop is empty; the MCP stdio transport drains on process close)
-    process.exitCode = 0;
+    // Explicitly exit so that stdio doesn't keep the event loop alive in containers
+    process.exit(0);
   }
 
   process.once('SIGTERM', () => { handleShutdownSignal('SIGTERM'); });

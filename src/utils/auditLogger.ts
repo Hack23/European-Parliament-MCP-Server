@@ -144,7 +144,9 @@ export class AuditLogger {
    * processing-activity records.
    *
    * @param toolName  - Name of the MCP tool that was invoked
-   * @param params    - Sanitised tool input parameters
+   * @param params    - Tool input parameters. **Callers are responsible for
+   *                    sanitising sensitive values before passing them here.**
+   *                    This method does not perform any sanitisation.
    * @param success   - Whether the tool call completed without error
    * @param duration  - Optional wall-clock duration in milliseconds
    * @param error     - Optional error message if the call failed
