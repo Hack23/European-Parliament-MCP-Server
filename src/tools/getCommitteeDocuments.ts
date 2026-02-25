@@ -18,6 +18,8 @@
 
 import { GetCommitteeDocumentsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get committee documents tool handler.
@@ -27,17 +29,12 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetCommitteeDocuments(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetCommitteeDocumentsSchema.parse(args);
 
   if (params.docId !== undefined) {
     const result = await epClient.getCommitteeDocumentById(params.docId);
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(result, null, 2)
-      }]
-    };
+    return buildToolResponse(result);
   }
 
   const apiParams: Record<string, unknown> = {
@@ -48,12 +45,7 @@ export async function handleGetCommitteeDocuments(
 
   const result = await epClient.getCommitteeDocuments(apiParams as Parameters<typeof epClient.getCommitteeDocuments>[0]);
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_committee_documents */

@@ -14,6 +14,8 @@
 
 import { GetCurrentMEPsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get currently active MEPs tool handler.
@@ -23,7 +25,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetCurrentMEPs(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetCurrentMEPsSchema.parse(args);
 
   const result = await epClient.getCurrentMEPs({
@@ -31,12 +33,7 @@ export async function handleGetCurrentMEPs(
     offset: params.offset
   });
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_current_meps */

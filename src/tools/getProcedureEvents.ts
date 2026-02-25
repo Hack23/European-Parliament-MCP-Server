@@ -17,6 +17,8 @@
 
 import { GetProcedureEventsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get procedure events tool handler.
@@ -26,7 +28,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetProcedureEvents(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetProcedureEventsSchema.parse(args);
 
   const result = await epClient.getProcedureEvents(params.processId, {
@@ -34,12 +36,7 @@ export async function handleGetProcedureEvents(
     offset: params.offset
   });
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_procedure_events */

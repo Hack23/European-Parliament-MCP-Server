@@ -13,6 +13,8 @@
 
 import { ComparePoliticalGroupsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 interface GroupComparisonMetrics {
   groupId: string;
@@ -144,7 +146,7 @@ function topByDimension(groups: GroupComparisonMetrics[], dim: DimensionName): s
  */
 export async function handleComparePoliticalGroups(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = ComparePoliticalGroupsSchema.parse(args);
 
   try {
@@ -190,7 +192,7 @@ export async function handleComparePoliticalGroups(
         + 'Data source: European Parliament Open Data Portal.'
     };
 
-    return { content: [{ type: 'text', text: JSON.stringify(comparison, null, 2) }] };
+    return buildToolResponse(comparison);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to compare political groups: ${errorMessage}`);

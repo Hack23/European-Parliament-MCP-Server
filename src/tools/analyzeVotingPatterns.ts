@@ -18,6 +18,8 @@
 
 import { AnalyzeVotingPatternsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Voting pattern analysis result
@@ -108,7 +110,7 @@ function computeConfidence(totalVotes: number): string {
  */
 export async function handleAnalyzeVotingPatterns(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   // Validate input
   const params = AnalyzeVotingPatternsSchema.parse(args);
   
@@ -123,6 +125,18 @@ export async function handleAnalyzeVotingPatterns(
       abstentions: 0,
       attendanceRate: 0
     };
+
+    // EP API /meps/{id} does not expose voting statistics — totalVotes is always 0
+    if (stats.totalVotes === 0) {
+      return buildToolResponse({
+        mepId: params.mepId,
+        mepName: mep.name,
+        dataAvailable: false,
+        confidenceLevel: 'LOW',
+        message: 'Voting statistics not available from EP API for this endpoint (/meps/{id}). '
+          + 'Use getVotingRecords tool to retrieve actual voting data.'
+      });
+    }
 
     const analysis: VotingPatternAnalysis = {
       mepId: params.mepId,
@@ -143,13 +157,7 @@ export async function handleAnalyzeVotingPatterns(
         + 'Data source: European Parliament Open Data Portal.'
     };
     
-    // Return MCP-compliant response
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(analysis, null, 2)
-      }]
-    };
+    return buildToolResponse(analysis);
   } catch (error) {
     // Handle errors without exposing internal details
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';

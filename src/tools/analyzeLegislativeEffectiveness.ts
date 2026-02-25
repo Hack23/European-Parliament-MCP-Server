@@ -13,6 +13,8 @@
 
 import { AnalyzeLegislativeEffectivenessSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 interface LegislativeMetrics {
   reportsAuthored: number;
@@ -165,9 +167,9 @@ async function fetchCommitteeSubjectData(subjectId: string): Promise<{
     subjectName: committee.name,
     committeeCount: 1,
     roles: [],
-    totalVotes: 500,
-    votesFor: 350,
-    attendanceRate: 82
+    totalVotes: 0, // Voting statistics not available from EP API committee endpoints
+    votesFor: 0,
+    attendanceRate: 0
   };
 }
 
@@ -176,7 +178,7 @@ async function fetchCommitteeSubjectData(subjectId: string): Promise<{
  */
 export async function handleAnalyzeLegislativeEffectiveness(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = AnalyzeLegislativeEffectivenessSchema.parse(args);
 
   try {
@@ -219,7 +221,7 @@ export async function handleAnalyzeLegislativeEffectiveness(
       methodology: 'Multi-factor legislative effectiveness scoring with peer benchmarking'
     };
 
-    return { content: [{ type: 'text', text: JSON.stringify(analysis, null, 2) }] };
+    return buildToolResponse(analysis);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to analyze legislative effectiveness: ${errorMessage}`);

@@ -116,6 +116,7 @@ describe('detect_voting_anomalies Tool', () => {
       };
 
       expect(data.computedAttributes).toHaveProperty('anomalyRate');
+      expect(data.computedAttributes).toHaveProperty('severityIndex');
       expect(data.computedAttributes).toHaveProperty('groupStabilityScore');
       expect(data.computedAttributes).toHaveProperty('defectionTrend');
       expect(data.computedAttributes).toHaveProperty('riskLevel');

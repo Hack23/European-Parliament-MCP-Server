@@ -16,6 +16,8 @@
 
 import { GetIncomingMEPsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get incoming MEPs tool handler.
@@ -25,7 +27,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetIncomingMEPs(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetIncomingMEPsSchema.parse(args);
 
   const result = await epClient.getIncomingMEPs({
@@ -33,12 +35,7 @@ export async function handleGetIncomingMEPs(
     offset: params.offset
   });
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_incoming_meps */

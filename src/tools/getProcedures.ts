@@ -19,6 +19,8 @@
 
 import { GetProceduresSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get procedures tool handler.
@@ -28,17 +30,12 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetProcedures(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetProceduresSchema.parse(args);
 
   if (params.processId !== undefined) {
     const result = await epClient.getProcedureById(params.processId);
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(result, null, 2)
-      }]
-    };
+    return buildToolResponse(result);
   }
 
   const apiParams: Record<string, unknown> = {
@@ -49,12 +46,7 @@ export async function handleGetProcedures(
 
   const result = await epClient.getProcedures(apiParams as Parameters<typeof epClient.getProcedures>[0]);
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_procedures */

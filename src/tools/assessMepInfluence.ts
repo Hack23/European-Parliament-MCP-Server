@@ -13,6 +13,8 @@
 
 import { AssessMepInfluenceSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Dimension weight configuration for influence scoring
@@ -56,6 +58,7 @@ interface MepInfluenceAssessment {
     effectivenessRatio: number;
     leadershipIndicator: number;
   };
+  votingDataAvailable: boolean;
   confidenceLevel: string;
   methodology: string;
 }
@@ -231,7 +234,7 @@ function getConfidenceLevel(totalVotes: number): string {
  */
 export async function handleAssessMepInfluence(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = AssessMepInfluenceSchema.parse(args);
 
   try {
@@ -293,17 +296,13 @@ export async function handleAssessMepInfluence(
         leadershipIndicator: committeeDim.score
       },
       confidenceLevel: getConfidenceLevel(stats.totalVotes),
+      votingDataAvailable: stats.totalVotes > 0,
       methodology: 'CIA Political Scorecards - 5-dimension weighted scoring model using real EP Open Data. '
         + 'Parliamentary questions fetched from /parliamentary-questions endpoint. '
         + 'Data source: European Parliament Open Data Portal.'
     };
 
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(assessment, null, 2)
-      }]
-    };
+    return buildToolResponse(assessment);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to assess MEP influence: ${errorMessage}`);

@@ -16,6 +16,8 @@
 
 import { GetHomonymMEPsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get homonym MEPs tool handler.
@@ -25,7 +27,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetHomonymMEPs(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetHomonymMEPsSchema.parse(args);
 
   const result = await epClient.getHomonymMEPs({
@@ -33,12 +35,7 @@ export async function handleGetHomonymMEPs(
     offset: params.offset
   });
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_homonym_meps */
