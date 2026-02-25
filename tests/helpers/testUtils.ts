@@ -67,10 +67,11 @@ export async function retry<T>(
 
 /**
  * Retry, but skip test (log warning) on rate limit or network errors instead of failing.
+ * Skips immediately on the FIRST rate-limit/timeout/network error; does not retry those.
  * 
  * @param fn - Function to retry
  * @param testName - Name of the test for logging
- * @param maxRetries - Maximum number of retries
+ * @param maxRetries - Maximum number of retries (only for non-rate-limit errors)
  * @param baseDelay - Base delay in milliseconds
  * @returns Result from function
  * @throws Only non-rate-limit errors
@@ -81,15 +82,30 @@ export async function retryOrSkip<T>(
   maxRetries = 3,
   baseDelay = 1000
 ): Promise<T | undefined> {
-  try {
-    return await retry(fn, maxRetries, baseDelay);
-  } catch (error) {
-    if (isRateLimitOrNetworkError(error)) {
-      console.warn(`[SKIP] ${testName}: rate limited or network error — ${(error as Error).message}`);
-      return undefined;
+  let lastError: Error | undefined;
+
+  for (let i = 0; i <= maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error as Error;
+
+      // Skip immediately on rate limit or network/timeout errors – do NOT retry.
+      // Retrying these would exceed the test timeout because each attempt can take
+      // up to EP_REQUEST_TIMEOUT_MS (default 10s, up to 60s in CI) before failing.
+      if (isRateLimitOrNetworkError(error)) {
+        console.warn(`[SKIP] ${testName}: rate limited or network error — ${lastError.message}`);
+        return undefined;
+      }
+
+      if (i < maxRetries) {
+        const delay = baseDelay * Math.pow(2, i);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
     }
-    throw error;
   }
+
+  throw lastError ?? new Error('Retry failed');
 }
 
 /**
