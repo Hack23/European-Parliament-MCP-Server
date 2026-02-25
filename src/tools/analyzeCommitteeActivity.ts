@@ -167,7 +167,8 @@ async function buildAnalysis(
     memberEngagement: {
       totalMembers: memberCount,
       averageAttendance: 0,
-      activeContributors: memberCount
+      // 0 indicates unknown due to lack of member-level activity data
+      activeContributors: 0
     },
     legislativeOutput: {
       reportsAdopted,

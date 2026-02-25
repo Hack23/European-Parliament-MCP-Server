@@ -247,9 +247,12 @@ export async function handleDetectVotingAnomalies(
     // For single MEP, confidence depends on available voting stats;
     // for group analysis, voting stats are unavailable so confidence is LOW.
     const isSingleMep = params.mepId !== undefined;
-    const confidence = isSingleMep
-      ? getDataVolumeConfidence(result.scope, true)
-      : 'LOW';
+    let confidence: string;
+    if (isSingleMep && result.anomalies.length > 0) {
+      confidence = getDataVolumeConfidence(result.scope, true);
+    } else {
+      confidence = 'LOW';
+    }
 
     const analysis: VotingAnomalyAnalysis = {
       period,
@@ -263,10 +266,11 @@ export async function handleDetectVotingAnomalies(
         riskLevel: classifyRiskLevel(highSeverity)
       },
       confidenceLevel: confidence,
-      methodology: 'Statistical deviation analysis of EP Open Data voting records. '
-        + 'Per-MEP voting statistics from /meps/{id} may report zeros when the EP API '
-        + 'does not expose vote counts; group-level analysis reflects data availability. '
-        + 'Data source: European Parliament Open Data Portal.'
+      methodology: 'Heuristic statistical analysis using aggregated voting statistics and MEP metadata '
+        + 'from /meps/{id} on the European Parliament Open Data API. Vote-level records are not fetched; '
+        + 'many voting statistic fields may be zero or unavailable from the EP API. Group-level analysis '
+        + 'reflects data availability — detected anomalies are approximate and indicative only. '
+        + 'Data source: European Parliament Open Data Portal (MEP metadata endpoints).'
     };
 
     return { content: [{ type: 'text', text: JSON.stringify(analysis, null, 2) }] };

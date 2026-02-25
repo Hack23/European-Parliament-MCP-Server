@@ -83,7 +83,7 @@ async function buildGroupMetrics(groupIds: string[]): Promise<GroupComparisonMet
         dimensions: {
           votingDiscipline: 0,
           activityLevel: 0,
-          legislativeOutput: memberCount > 0 ? Math.min(100, memberCount * 2) : 0,
+          legislativeOutput: 0,
           attendance: 0,
           cohesion: 0
         },

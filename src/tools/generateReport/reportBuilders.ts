@@ -46,10 +46,12 @@ export function createCommitteeSection(
  * Create parliamentary questions section with real data
  * Cyclomatic complexity: 1
  */
-export function createParliamentaryQuestionsSection(questionsCount: number): ReportSection {
+export function createParliamentaryQuestionsSection(questionsCount: number | null): ReportSection {
   return {
     title: 'Parliamentary Questions',
-    content: `${String(questionsCount)} parliamentary questions found in EP Open Data.`
+    content: questionsCount !== null
+      ? `${String(questionsCount)} parliamentary questions found in EP Open Data (lower bound, first page).`
+      : 'Parliamentary questions data not available from EP API.'
   };
 }
 
@@ -70,10 +72,19 @@ export function createMeetingActivitySection(meetingsCount: number): ReportSecti
  * Create legislative output section with real data
  * Cyclomatic complexity: 1
  */
-export function createLegislativeOutputSection(reportsCount: number, documentsCount: number): ReportSection {
+export function createLegislativeOutputSection(reportsCount: number | null, documentsCount: number | null): ReportSection {
+  if (reportsCount === null && documentsCount === null) {
+    return {
+      title: 'Legislative Output',
+      content: 'Legislative output data not available from EP API.'
+    };
+  }
+  const parts: string[] = [];
+  if (reportsCount !== null) parts.push(`${String(reportsCount)} adopted texts`);
+  if (documentsCount !== null) parts.push(`${String(documentsCount)} committee documents`);
   return {
     title: 'Legislative Output',
-    content: `${String(reportsCount)} adopted texts and ${String(documentsCount)} committee documents found in EP Open Data.`
+    content: `${parts.join(' and ')} found in EP Open Data (parliament-wide lower bound, first page).`
   };
 }
 
@@ -92,10 +103,12 @@ export function createMemberParticipationSection(memberCount: number): ReportSec
  * Create overall voting activity section with real data
  * Cyclomatic complexity: 1
  */
-export function createOverallVotingSection(sessionCount: number): ReportSection {
+export function createOverallVotingSection(sessionCount: number | null): ReportSection {
   return {
     title: 'Overall Voting Activity',
-    content: `${String(sessionCount)} plenary sessions found in EP Open Data for this period.`
+    content: sessionCount !== null
+      ? `${String(sessionCount)} plenary sessions found in EP Open Data for this period (lower bound, first page).`
+      : 'Plenary session data not available from EP API.'
   };
 }
 
@@ -103,10 +116,12 @@ export function createOverallVotingSection(sessionCount: number): ReportSection 
  * Create adoption rates section with real data
  * Cyclomatic complexity: 1
  */
-export function createAdoptionRatesSection(adoptedCount: number): ReportSection {
+export function createAdoptionRatesSection(adoptedCount: number | null): ReportSection {
   return {
     title: 'Adoption Rates',
-    content: `${String(adoptedCount)} adopted texts found in EP Open Data for this period.`
+    content: adoptedCount !== null
+      ? `${String(adoptedCount)} adopted texts found in EP Open Data for this period (lower bound, first page).`
+      : 'Adopted texts data not available from EP API.'
   };
 }
 
@@ -125,10 +140,12 @@ export function createPoliticalGroupSection(): ReportSection {
  * Create new proposals section with real data
  * Cyclomatic complexity: 1
  */
-export function createNewProposalsSection(procedureCount: number): ReportSection {
+export function createNewProposalsSection(procedureCount: number | null): ReportSection {
   return {
     title: 'New Proposals',
-    content: `${String(procedureCount)} legislative procedures found in EP Open Data for this period.`
+    content: procedureCount !== null
+      ? `${String(procedureCount)} legislative procedures found in EP Open Data for this period (lower bound, first page).`
+      : 'Legislative procedures data not available from EP API.'
   };
 }
 
@@ -136,10 +153,12 @@ export function createNewProposalsSection(procedureCount: number): ReportSection
  * Create completed procedures section with real data
  * Cyclomatic complexity: 1
  */
-export function createCompletedProceduresSection(completedCount: number): ReportSection {
+export function createCompletedProceduresSection(completedCount: number | null): ReportSection {
   return {
     title: 'Completed Procedures',
-    content: `${String(completedCount)} adopted texts recorded as completed in EP Open Data.`
+    content: completedCount !== null
+      ? `${String(completedCount)} adopted texts recorded as completed in EP Open Data (lower bound, first page).`
+      : 'Completed procedures data not available from EP API.'
   };
 }
 
@@ -147,9 +166,11 @@ export function createCompletedProceduresSection(completedCount: number): Report
  * Create ongoing procedures section with real data
  * Cyclomatic complexity: 1
  */
-export function createOngoingProceduresSection(ongoingCount: number): ReportSection {
+export function createOngoingProceduresSection(ongoingCount: number | null): ReportSection {
   return {
     title: 'Ongoing Procedures',
-    content: `${String(ongoingCount)} procedures estimated as ongoing (total procedures minus adopted texts).`
+    content: ongoingCount !== null
+      ? `${String(ongoingCount)} procedures estimated as ongoing (total procedures minus adopted texts, lower bound).`
+      : 'Ongoing procedures data not available from EP API.'
   };
 }

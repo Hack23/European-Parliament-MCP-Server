@@ -47,6 +47,57 @@ function extractMEPData(
   };
 }
 
+/** Fetch question count for an MEP (null if unavailable) */
+async function fetchQuestionCount(subjectId: string | undefined): Promise<number | null> {
+  if (subjectId === undefined) return null;
+  try {
+    const questions = await epClient.getParliamentaryQuestions({ author: subjectId, limit: 100 });
+    return questions.data.length;
+  } catch {
+    return null;
+  }
+}
+
+/** Fetch committee document count for a year (null if unavailable) */
+async function fetchDocumentCount(year: number): Promise<number | null> {
+  try {
+    const docs = await epClient.getCommitteeDocuments({ year, limit: 100 });
+    return docs.data.length;
+  } catch {
+    return null;
+  }
+}
+
+/** Fetch adopted text count for a year (null if unavailable) */
+async function fetchAdoptedTextCount(year: number): Promise<number | null> {
+  try {
+    const adopted = await epClient.getAdoptedTexts({ year, limit: 100 });
+    return adopted.data.length;
+  } catch {
+    return null;
+  }
+}
+
+/** Fetch plenary session count for a date range (null if unavailable) */
+async function fetchSessionCount(dateFrom: string, dateTo: string): Promise<number | null> {
+  try {
+    const sessions = await epClient.getPlenarySessions({ dateFrom, dateTo, limit: 100 });
+    return sessions.data.length;
+  } catch {
+    return null;
+  }
+}
+
+/** Fetch procedure count for a year (null if unavailable) */
+async function fetchProcedureCount(year: number): Promise<number | null> {
+  try {
+    const procedures = await epClient.getProcedures({ year, limit: 100 });
+    return procedures.data.length;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Generate MEP activity report using real EP API data
  * Cyclomatic complexity: 2
@@ -58,21 +109,7 @@ export async function generateMEPActivityReport(
     ? await epClient.getMEPDetails(params.subjectId) 
     : null;
   const data = extractMEPData(params, mep);
-
-  // Fetch real parliamentary questions for this MEP
-  // Use data.length instead of total because total is a lower-bound estimate
-  let questionsSubmitted = 0;
-  try {
-    if (params.subjectId !== undefined) {
-      const questions = await epClient.getParliamentaryQuestions({
-        author: params.subjectId,
-        limit: 100
-      });
-      questionsSubmitted = questions.data.length;
-    }
-  } catch {
-    // Questions may not be available — report zero
-  }
+  const questionsSubmitted = await fetchQuestionCount(params.subjectId);
   
   return {
     reportType: 'MEP_ACTIVITY',
@@ -91,7 +128,7 @@ export async function generateMEPActivityReport(
     statistics: {
       totalVotes: mep?.votingStatistics?.totalVotes ?? 0,
       attendanceRate: mep?.votingStatistics?.attendanceRate ?? 0,
-      questionsSubmitted,
+      questionsSubmitted: questionsSubmitted ?? 0,
       reportsAuthored: 0 // EP API does not provide per-MEP report authorship counts
     },
     recommendations: [
@@ -116,27 +153,11 @@ export async function generateCommitteePerformanceReport(
   const dateFrom = params.dateFrom ?? '2024-01-01';
   const dateTo = params.dateTo ?? '2024-12-31';
   const membersLength = committee?.members.length ?? 0;
+  const year = parseInt(dateFrom.substring(0, 4), 10);
 
-  // Fetch real document data from EP API (parliament-wide, not committee-specific)
-  // Use data.length instead of total because total is a lower-bound estimate
-  let documentsProduced = 0;
-  try {
-    const year = parseInt(dateFrom.substring(0, 4), 10);
-    const docs = await epClient.getCommitteeDocuments({ year, limit: 100 });
-    documentsProduced = docs.data.length;
-  } catch {
-    // Documents may not be available — report zero
-  }
-
-  // Fetch real adopted texts (parliament-wide, not committee-specific)
-  let reportsProduced = 0;
-  try {
-    const year = parseInt(dateFrom.substring(0, 4), 10);
-    const adopted = await epClient.getAdoptedTexts({ year, limit: 100 });
-    reportsProduced = adopted.data.length;
-  } catch {
-    // Adopted texts may not be available — report zero
-  }
+  // Parliament-wide counts (not filtered by committee)
+  const documentsProduced = await fetchDocumentCount(year);
+  const reportsProduced = await fetchAdoptedTextCount(year);
   
   return {
     reportType: 'COMMITTEE_PERFORMANCE',
@@ -146,7 +167,7 @@ export async function generateCommitteePerformanceReport(
       to: dateTo
     },
     generatedAt: new Date().toISOString(),
-    summary: `Performance report for ${committeeName} committee.`,
+    summary: `Performance report for ${committeeName} committee. Note: document and adopted text counts are parliament-wide lower bounds (first page, not filtered by committee).`,
     sections: [
       createMeetingActivitySection(0),
       createLegislativeOutputSection(reportsProduced, documentsProduced),
@@ -154,7 +175,7 @@ export async function generateCommitteePerformanceReport(
     ],
     statistics: {
       meetingsHeld: 0, // EP API does not provide committee-specific meeting counts
-      reportsProduced,
+      reportsProduced: reportsProduced ?? 0,
       opinionsIssued: 0, // EP API does not provide committee-specific opinion counts
       averageAttendance: 0, // EP API does not provide attendance data
       memberCount: membersLength
@@ -171,27 +192,10 @@ export async function generateVotingStatisticsReport(
 ): Promise<Report> {
   const dateFrom = params.dateFrom ?? '2024-01-01';
   const dateTo = params.dateTo ?? '2024-12-31';
+  const year = parseInt(dateFrom.substring(0, 4), 10);
 
-  // Fetch real plenary session data (use data.length, not total)
-  let sessionCount = 0;
-  try {
-    const sessions = await epClient.getPlenarySessions({
-      dateFrom, dateTo, limit: 100
-    });
-    sessionCount = sessions.data.length;
-  } catch {
-    // Sessions may not be available — report zero
-  }
-
-  // Fetch real adopted texts (use data.length, not total)
-  let adoptedCount = 0;
-  try {
-    const year = parseInt(dateFrom.substring(0, 4), 10);
-    const adopted = await epClient.getAdoptedTexts({ year, limit: 100 });
-    adoptedCount = adopted.data.length;
-  } catch {
-    // Adopted texts may not be available — report zero
-  }
+  const sessionCount = await fetchSessionCount(dateFrom, dateTo);
+  const adoptedCount = await fetchAdoptedTextCount(year);
   
   return {
     reportType: 'VOTING_STATISTICS',
@@ -208,8 +212,8 @@ export async function generateVotingStatisticsReport(
       createPoliticalGroupSection()
     ],
     statistics: {
-      totalSessions: sessionCount,
-      adopted: adoptedCount,
+      totalSessions: sessionCount ?? 0,
+      adopted: adoptedCount ?? 0,
       averageTurnout: 0 // EP API does not provide turnout data
     }
   };
@@ -226,25 +230,11 @@ export async function generateLegislationProgressReport(
   const dateTo = params.dateTo ?? '2024-12-31';
   const year = parseInt(dateFrom.substring(0, 4), 10);
 
-  // Fetch real procedure data (use data.length, not total)
-  let procedureCount = 0;
-  try {
-    const procedures = await epClient.getProcedures({ year, limit: 100 });
-    procedureCount = procedures.data.length;
-  } catch {
-    // Procedures may not be available — report zero
-  }
-
-  // Fetch real adopted texts (use data.length, not total)
-  let completedCount = 0;
-  try {
-    const adopted = await epClient.getAdoptedTexts({ year, limit: 100 });
-    completedCount = adopted.data.length;
-  } catch {
-    // Adopted texts may not be available — report zero
-  }
-
-  const ongoingCount = Math.max(0, procedureCount - completedCount);
+  const procedureCount = await fetchProcedureCount(year);
+  const completedCount = await fetchAdoptedTextCount(year);
+  const ongoingCount = (procedureCount !== null && completedCount !== null)
+    ? Math.max(0, procedureCount - completedCount)
+    : null;
   
   return {
     reportType: 'LEGISLATION_PROGRESS',
@@ -254,16 +244,16 @@ export async function generateLegislationProgressReport(
       to: dateTo
     },
     generatedAt: new Date().toISOString(),
-    summary: 'Progress report on legislative procedures based on EP Open Data.',
+    summary: 'Progress report on legislative procedures based on EP Open Data (lower bounds, first page).',
     sections: [
       createNewProposalsSection(procedureCount),
       createCompletedProceduresSection(completedCount),
       createOngoingProceduresSection(ongoingCount)
     ],
     statistics: {
-      totalProcedures: procedureCount,
-      completed: completedCount,
-      ongoing: ongoingCount
+      totalProcedures: procedureCount ?? 0,
+      completed: completedCount ?? 0,
+      ongoing: ongoingCount ?? 0
     }
   };
 }

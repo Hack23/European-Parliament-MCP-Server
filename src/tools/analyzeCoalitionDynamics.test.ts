@@ -143,18 +143,18 @@ describe('analyze_coalition_dynamics Tool', () => {
   });
 
   describe('Branch Coverage - Unity and Cohesion Classification', () => {
-    it('should report UNITED unity trend since voting stats are unavailable from EP API', async () => {
+    it('should report UNKNOWN unity trend since voting stats are unavailable from EP API', async () => {
       // Arrange: EP API /meps/{id} does not provide voting stats
-      // so cohesion/stress metrics are always zero → UNITED
+      // so cohesion/stress metrics are always zero → UNKNOWN
       const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         groupMetrics: { stressIndicator: number; computedAttributes: { unityTrend: string } }[];
         confidenceLevel: string;
       };
 
-      // Assert: Without voting data, stress=0 → UNITED, confidence=LOW
+      // Assert: Without voting data, stress=0 → UNKNOWN, confidence=LOW
       const group = data.groupMetrics[0];
-      expect(group?.computedAttributes.unityTrend).toBe('UNITED');
+      expect(group?.computedAttributes.unityTrend).toBe('UNKNOWN');
       expect(group?.stressIndicator).toBe(0);
       expect(data.confidenceLevel).toBe('LOW');
     });

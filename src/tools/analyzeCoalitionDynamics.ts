@@ -119,7 +119,7 @@ async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionM
       computedAttributes: {
         disciplineScore: 0,
         fragmentationRisk: 0,
-        unityTrend: 'UNITED',
+        unityTrend: 'UNKNOWN',
         activeParticipationRate: 0
       }
     });
