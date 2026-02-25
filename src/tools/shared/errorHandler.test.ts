@@ -45,10 +45,10 @@ describe('handleDataUnavailable', () => {
     expect(parsed.dataAvailable).toBe(false);
   });
 
-  it('should set confidence to LOW', () => {
+  it('should set confidenceLevel to LOW', () => {
     const result = handleDataUnavailable('tool', 'no data');
     const parsed = JSON.parse(result.content[0]?.text ?? '');
-    expect(parsed.confidence).toBe('LOW');
+    expect(parsed.confidenceLevel).toBe('LOW');
   });
 
   it('should include toolName and message', () => {

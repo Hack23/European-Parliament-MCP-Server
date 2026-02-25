@@ -19,6 +19,6 @@ export interface ToolError {
   error: string;
   toolName: string;
   dataAvailable?: boolean;
-  confidence?: 'LOW' | 'MEDIUM' | 'HIGH';
+  confidenceLevel?: 'LOW' | 'MEDIUM' | 'HIGH';
   message?: string;
 }

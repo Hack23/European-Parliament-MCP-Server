@@ -36,7 +36,7 @@ export function handleDataUnavailable(toolName: string, message: string): ToolRe
       type: 'text',
       text: JSON.stringify({
         dataAvailable: false,
-        confidence: 'LOW',
+        confidenceLevel: 'LOW',
         toolName,
         message
       }, null, 2)

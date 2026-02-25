@@ -14,7 +14,6 @@
 import { DetectVotingAnomaliesSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
-import { handleDataUnavailable } from './shared/errorHandler.js';
 import type { ToolResult } from './shared/types.js';
 
 interface VotingAnomaly {
@@ -243,7 +242,8 @@ function buildAnomalySummary(
 }
 
 /**
- * Resolve confidence level based on MEP scope and anomaly availability.
+ * Resolve confidence level: MEDIUM when a single MEP has detectable anomalies
+ * (indicating voting data was available and yielded results); LOW otherwise.
  */
 function resolveConfidence(isSingleMep: boolean, scope: string, anomalyCount: number): string {
   if (isSingleMep && anomalyCount > 0) {
@@ -269,13 +269,25 @@ export async function handleDetectVotingAnomalies(
       ? await detectSingleMepAnomalies(mepId, params.sensitivityThreshold, period)
       : await detectGroupAnomalies(params.groupId, params.sensitivityThreshold, period);
 
-    // When single MEP has no voting data, report unavailability honestly
+    // When single MEP has no voting data, report unavailability with same shape as normal path
     if (isSingleMep && 'dataAvailable' in result && !result.dataAvailable) {
-      return handleDataUnavailable(
-        'detect_voting_anomalies',
-        'The EP API /meps/{id} endpoint does not return voting statistics. '
-        + 'Anomaly detection requires voting data which is unavailable for this MEP.'
-      );
+      return buildToolResponse({
+        period,
+        targetScope: mepId,
+        anomalies: [],
+        summary: { totalAnomalies: 0, highSeverity: 0, mediumSeverity: 0, lowSeverity: 0 },
+        computedAttributes: {
+          anomalyRate: 0,
+          groupStabilityScore: 0,
+          defectionTrend: 'UNKNOWN',
+          riskLevel: 'UNKNOWN'
+        },
+        dataAvailable: false,
+        confidenceLevel: 'LOW',
+        methodology: 'The EP API /meps/{id} endpoint does not return voting statistics. '
+          + 'Anomaly detection requires voting data which is unavailable for this MEP. '
+          + 'Data source: European Parliament Open Data Portal.'
+      });
     }
 
     const { highSeverity, mediumSeverity, lowSeverity, anomalyRate } = buildAnomalySummary(result.anomalies);
