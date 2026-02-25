@@ -51,6 +51,24 @@ export { getToolMetadataArray } from './server/toolRegistry.js';
 export { sanitizeUrl } from './server/cli.js';
 /** Re-export server types */
 export type { ToolHandler, ToolMetadata, ToolCategory, CLIOptions } from './server/types.js';
+/** Re-export DI token registry */
+export type { DIToken } from './di/tokens.js';
+/** Re-export metric names and key type for consumers using the metrics service */
+export { MetricName } from './services/MetricsService.js';
+export type { MetricKey } from './services/MetricsService.js';
+/** Re-export performance thresholds and timeout defaults for consumers */
+export { DEFAULT_PERFORMANCE_THRESHOLDS } from './utils/performance.js';
+export { DEFAULT_TIMEOUTS } from './utils/timeout.js';
+/** Re-export prompt argument schemas for integration tests and client validation */
+export {
+  MepBriefingArgsSchema,
+  CoalitionAnalysisArgsSchema,
+  LegislativeTrackingArgsSchema,
+  PoliticalGroupComparisonArgsSchema,
+  CommitteeActivityArgsSchema,
+  VotingPatternArgsSchema,
+  CountryDelegationArgsSchema,
+} from './prompts/index.js';
 
 /** @internal Server name constant */
 export const SERVER_NAME = 'european-parliament-mcp-server';

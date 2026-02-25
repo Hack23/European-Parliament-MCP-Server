@@ -178,12 +178,6 @@ const countryDelegationAnalysisPrompt: PromptMetadata = {
   ],
 };
 
-/**
- * Get the country delegation analysis prompt metadata.
- * Exported separately so callers that want the full catalog can include it.
- */
-export const countryDelegationPromptMetadata: PromptMetadata = countryDelegationAnalysisPrompt;
-
 // ─── Prompt Result Generators ────────────────────────────────
 
 /**
