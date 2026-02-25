@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.2**](../../../README.md)
+[**European Parliament MCP Server API v0.7.3**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: MetricsService
 
-Defined in: [services/MetricsService.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L37)
+Defined in: [services/MetricsService.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L37)
 
 Performance Metrics Service
 Cyclomatic complexity: 8
@@ -17,7 +17,7 @@ Cyclomatic complexity: 8
 
 > **new MetricsService**(`maxHistogramSamples?`): `MetricsService`
 
-Defined in: [services/MetricsService.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L41)
+Defined in: [services/MetricsService.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L41)
 
 #### Parameters
 
@@ -35,7 +35,7 @@ Defined in: [services/MetricsService.ts:41](https://github.com/Hack23/European-P
 
 > `private` `readonly` **maxHistogramSamples**: `number`
 
-Defined in: [services/MetricsService.ts:39](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L39)
+Defined in: [services/MetricsService.ts:39](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L39)
 
 ***
 
@@ -43,7 +43,7 @@ Defined in: [services/MetricsService.ts:39](https://github.com/Hack23/European-P
 
 > `private` `readonly` **metrics**: [`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, `MetricValue`\>
 
-Defined in: [services/MetricsService.ts:38](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L38)
+Defined in: [services/MetricsService.ts:38](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L38)
 
 ## Methods
 
@@ -51,7 +51,7 @@ Defined in: [services/MetricsService.ts:38](https://github.com/Hack23/European-P
 
 > `private` **buildKey**(`name`, `labels?`): `string`
 
-Defined in: [services/MetricsService.ts:184](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L184)
+Defined in: [services/MetricsService.ts:184](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L184)
 
 Build metric key from name and labels
 Cyclomatic complexity: 2
@@ -76,7 +76,7 @@ Cyclomatic complexity: 2
 
 > **clear**(): `void`
 
-Defined in: [services/MetricsService.ts:176](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L176)
+Defined in: [services/MetricsService.ts:176](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L176)
 
 Clear all metrics
 Cyclomatic complexity: 1
@@ -91,7 +91,7 @@ Cyclomatic complexity: 1
 
 > **getHistogramSummary**(`name`, `labels?`): \{ `avg`: `number`; `count`: `number`; `p50`: `number`; `p95`: `number`; `p99`: `number`; `sum`: `number`; \} \| `undefined`
 
-Defined in: [services/MetricsService.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L147)
+Defined in: [services/MetricsService.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L147)
 
 Get histogram summary
 Cyclomatic complexity: 3
@@ -122,7 +122,7 @@ Histogram summary with percentiles
 
 > **getMetric**(`name`, `labels?`): `number` \| `undefined`
 
-Defined in: [services/MetricsService.ts:132](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L132)
+Defined in: [services/MetricsService.ts:132](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L132)
 
 Get current metric value
 Cyclomatic complexity: 3
@@ -153,7 +153,7 @@ Current metric value or undefined
 
 > **incrementCounter**(`name`, `value?`, `labels?`): `void`
 
-Defined in: [services/MetricsService.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L53)
+Defined in: [services/MetricsService.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L53)
 
 Increment a counter metric
 Cyclomatic complexity: 2
@@ -188,7 +188,7 @@ Optional labels for metric dimensions
 
 > **observeHistogram**(`name`, `value`, `labels?`): `void`
 
-Defined in: [services/MetricsService.ts:92](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L92)
+Defined in: [services/MetricsService.ts:92](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L92)
 
 Record a histogram observation
 Cyclomatic complexity: 3
@@ -223,7 +223,7 @@ Optional labels for metric dimensions
 
 > `private` **partition**(`arr`, `left`, `right`, `pivotIndex`): `number`
 
-Defined in: [services/MetricsService.ts:261](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L261)
+Defined in: [services/MetricsService.ts:261](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L261)
 
 Partition helper for quickselect (Lomuto-style)
 Cyclomatic complexity: 4
@@ -266,7 +266,7 @@ New pivot index
 
 > `private` **percentileFromUnsorted**(`values`, `percentile`): `number`
 
-Defined in: [services/MetricsService.ts:203](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L203)
+Defined in: [services/MetricsService.ts:203](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L203)
 
 Compute a percentile value from an unsorted array using quickselect
 Cyclomatic complexity: 3
@@ -297,7 +297,7 @@ Percentile value
 
 > `private` **selectKth**(`arr`, `k`): `number`
 
-Defined in: [services/MetricsService.ts:225](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L225)
+Defined in: [services/MetricsService.ts:225](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L225)
 
 Select the k-th smallest element using quickselect
 Cyclomatic complexity: 5
@@ -328,7 +328,7 @@ The k-th smallest element
 
 > **setGauge**(`name`, `value`, `labels?`): `void`
 
-Defined in: [services/MetricsService.ts:74](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/services/MetricsService.ts#L74)
+Defined in: [services/MetricsService.ts:74](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/services/MetricsService.ts#L74)
 
 Set a gauge metric value
 Cyclomatic complexity: 1

@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.58% </span>
+                <span class="strong">94.44% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>65/68</span>
+                <span class='fraction'>68/72</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">86% </span>
+                <span class="strong">84% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>43/50</span>
+                <span class='fraction'>42/50</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">98.27% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>57/58</span>
+                <span class='fraction'>62/62</span>
             </div>
         
             
@@ -360,7 +360,22 @@
 <a name='L295'></a><a href='#L295'>295</a>
 <a name='L296'></a><a href='#L296'>296</a>
 <a name='L297'></a><a href='#L297'>297</a>
-<a name='L298'></a><a href='#L298'>298</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a>
+<a name='L300'></a><a href='#L300'>300</a>
+<a name='L301'></a><a href='#L301'>301</a>
+<a name='L302'></a><a href='#L302'>302</a>
+<a name='L303'></a><a href='#L303'>303</a>
+<a name='L304'></a><a href='#L304'>304</a>
+<a name='L305'></a><a href='#L305'>305</a>
+<a name='L306'></a><a href='#L306'>306</a>
+<a name='L307'></a><a href='#L307'>307</a>
+<a name='L308'></a><a href='#L308'>308</a>
+<a name='L309'></a><a href='#L309'>309</a>
+<a name='L310'></a><a href='#L310'>310</a>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a>
+<a name='L313'></a><a href='#L313'>313</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -488,8 +503,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -576,7 +591,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -784,9 +814,9 @@ function computePoliticalBalance(
  * Compute engagement label
  */
 function computeEngagement(avgAttendance: number): string {
-  if (avgAttendance &gt;= 80) return 'HIGH';
-  <span class="missing-if-branch" title="else path not taken" >E</span>if (avgAttendance &gt;= 65) return 'MODERATE';
-<span class="cstat-no" title="statement not covered" >  return 'LOW';</span>
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (avgAttendance &gt;= 80) <span class="cstat-no" title="statement not covered" >return 'HIGH';</span>
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (avgAttendance &gt;= 65) <span class="cstat-no" title="statement not covered" >return 'MODERATE';</span>
+  return 'LOW';
 }
 &nbsp;
 /**
@@ -873,6 +903,21 @@ async function buildLandscape(
     (powerDynamics.grandCoalitionSize / Math.max(1, totalMEPs)) * 10000
   ) / 100;
 &nbsp;
+  // Fetch real plenary session data from EP API
+  // Use data.length instead of total because total is a lower-bound estimate
+  // capped by the page size at offset 0
+  let recentSessionCount = 0;
+  try {
+    const sessions = await epClient.getPlenarySessions({
+      dateFrom,
+      dateTo,
+      limit: 100
+    });
+    recentSessionCount = sessions.data.length;
+  } catch {
+    // API may not return sessions for this date range — report zero
+  }
+&nbsp;
   return {
     period: { from: dateFrom, to: dateTo },
     parliament: {
@@ -882,10 +927,10 @@ async function buildLandscape(
     },
     groups,
     powerDynamics,
-    // Activity metrics are heuristic estimates — no real session/attendance data fetched
+    // Activity metrics from real EP API data
     activityMetrics: {
-      averageAttendance: Math.min(85, 65 + groups.length * 2), // estimate
-      recentSessionCount: Math.max(4, groups.length + 4) // estimate
+      averageAttendance: 0, // EP API does not provide attendance data
+      recentSessionCount
     },
     computedAttributes: {
       fragmentationIndex: computeFragmentation(groups.length),
@@ -894,13 +939,13 @@ async function buildLandscape(
         powerDynamics.progressiveBloc,
         powerDynamics.conservativeBloc
       ),
-      overallEngagement: computeEngagement(Math.min(85, 65 + groups.length * 2))
+      overallEngagement: computeEngagement(0)
     },
     confidenceLevel: totalMEPs &gt; 50 ? <span class="branch-0 cbranch-no" title="branch not covered" >'MEDIUM' : '</span>LOW',
-    methodology: 'Political landscape analysis using EP Open Data: group composition mapping, '
-      + 'bloc classification, coalition threshold calculation, and fragmentation indexing. '
-      + 'Activity metrics (attendance, session count) are heuristic estimates derived from '
-      + 'group count and are not backed by real session/attendance data. '
+    methodology: 'Political landscape analysis using real EP Open Data: MEP records, '
+      + 'group composition mapping, bloc classification, coalition threshold calculation, '
+      + 'fragmentation indexing, and plenary session counts (fetched page count, lower bound). '
+      + 'Attendance data is not available from the EP API and is reported as zero. '
       + 'Data source: European Parliament Open Data Portal.'
   };
 }
@@ -961,7 +1006,7 @@ export const generatePoliticalLandscapeToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-24T22:22:59.519Z
+                at 2026-02-25T10:40:50.056Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

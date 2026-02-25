@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.2**](../../../../README.md)
+[**European Parliament MCP Server API v0.7.3**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **buildLegislativeTracking**(`procedure`): [`LegislativeProcedure`](../../types/interfaces/LegislativeProcedure.md)
 
-Defined in: [tools/trackLegislation/procedureTracker.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/trackLegislation/procedureTracker.ts#L79)
+Defined in: [tools/trackLegislation/procedureTracker.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/tools/trackLegislation/procedureTracker.ts#L79)
 
 Build a legislative tracking result from a real EP API Procedure.
 
