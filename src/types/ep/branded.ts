@@ -97,23 +97,26 @@ export function isProcedureID(value: string): value is ProcedureID {
 /**
  * Type guard: checks that a string looks like an EP speech ID.
  *
- * Example format: `"SPEECH-9-2024-01-15-001"`.
+ * Expected format: `"SPEECH-{term}-YYYY-MM-DD-NNN"` (e.g. `"SPEECH-9-2024-01-15-001"`).
  *
  * @param value - String to validate
  */
 export function isSpeechID(value: string): value is SpeechID {
-  return /^[A-Za-z0-9-]+$/.test(value);
+  return /^SPEECH-\d+-\d{4}-\d{2}-\d{2}-\d+$/.test(value);
 }
 
 /**
  * Type guard: checks that a string looks like an EP vocabulary ID.
+ *
+ * Must be at least 3 characters, contain at least one alphanumeric character,
+ * and consist only of letters, digits, hyphens, and underscores.
  *
  * Example: `"eurovoc"`.
  *
  * @param value - String to validate
  */
 export function isVocabularyID(value: string): value is VocabularyID {
-  return /^[A-Za-z0-9_-]+$/.test(value);
+  return /^(?=.*[A-Za-z0-9])[A-Za-z0-9_-]{3,}$/.test(value);
 }
 
 /**
