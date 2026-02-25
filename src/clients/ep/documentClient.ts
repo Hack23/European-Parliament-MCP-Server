@@ -134,6 +134,12 @@ export class DocumentClient extends BaseEPClient {
       const currentOffset = params.offset ?? 0;
 
       const apiParams = this.buildDocumentSearchParams(params);
+      // Always apply the resolved limit/offset so the server page size matches
+      // the pagination metadata we return (callers may omit them, in which case
+      // buildDocumentSearchParams would leave them unset and the server default
+      // could differ from our requestedLimit/currentOffset defaults).
+      apiParams['limit'] = requestedLimit;
+      apiParams['offset'] = currentOffset;
       const response = await this.get<JSONLDResponse>('documents', apiParams);
       const pageSize = response.data.length;
 
