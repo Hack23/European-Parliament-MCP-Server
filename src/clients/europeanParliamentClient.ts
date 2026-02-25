@@ -424,6 +424,7 @@ export class EuropeanParliamentClient {
    */
   async getVotingRecords(params: {
     sessionId?: string;
+    /** @deprecated Ignored; this endpoint only returns aggregate vote counts, not per-MEP positions. */
     mepId?: string;
     topic?: string;
     dateFrom?: string;

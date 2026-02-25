@@ -142,7 +142,10 @@ export class DocumentClient extends BaseEPClient {
 
       const result: PaginatedResponse<LegislativeDocument> = {
         data: documents,
-        // total/hasMore based on unfiltered server page to account for client-side filters
+        // total/hasMore are derived from the unfiltered server page size, not from
+        // `documents.length` after client-side filtering.  This means `hasMore` can
+        // be true even when the filtered result set is empty — callers should
+        // continue paginating until `data` is empty or `hasMore` is false.
         total: currentOffset + pageSize,
         limit: requestedLimit,
         offset: currentOffset,
