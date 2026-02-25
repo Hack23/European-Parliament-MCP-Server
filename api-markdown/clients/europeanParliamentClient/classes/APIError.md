@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.2**](../../../README.md)
+[**European Parliament MCP Server API v0.7.3**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: APIError
 
-Defined in: [clients/europeanParliamentClient.ts:120](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/clients/europeanParliamentClient.ts#L120)
+Defined in: [clients/europeanParliamentClient.ts:120](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/clients/europeanParliamentClient.ts#L120)
 
 API Error thrown when European Parliament API requests fail.
 
@@ -47,7 +47,7 @@ try {
 
 > **new APIError**(`message`, `statusCode?`, `details?`): `APIError`
 
-Defined in: [clients/europeanParliamentClient.ts:128](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/clients/europeanParliamentClient.ts#L128)
+Defined in: [clients/europeanParliamentClient.ts:128](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/clients/europeanParliamentClient.ts#L128)
 
 Creates a new API error instance.
 
@@ -85,7 +85,7 @@ Additional error context (optional)
 
 > `optional` **details**: `unknown`
 
-Defined in: [clients/europeanParliamentClient.ts:131](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/clients/europeanParliamentClient.ts#L131)
+Defined in: [clients/europeanParliamentClient.ts:131](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/clients/europeanParliamentClient.ts#L131)
 
 Additional error context (optional)
 
@@ -95,6 +95,6 @@ Additional error context (optional)
 
 > `optional` **statusCode**: `number`
 
-Defined in: [clients/europeanParliamentClient.ts:130](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/clients/europeanParliamentClient.ts#L130)
+Defined in: [clients/europeanParliamentClient.ts:130](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/clients/europeanParliamentClient.ts#L130)
 
 HTTP status code (optional, e.g., 404, 500)

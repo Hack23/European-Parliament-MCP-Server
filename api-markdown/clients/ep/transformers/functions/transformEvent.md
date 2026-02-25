@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.2**](../../../../README.md)
+[**European Parliament MCP Server API v0.7.3**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **transformEvent**(`apiData`): [`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)
 
-Defined in: [clients/ep/transformers.ts:317](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/clients/ep/transformers.ts#L317)
+Defined in: [clients/ep/transformers.ts:317](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/clients/ep/transformers.ts#L317)
 
 Transforms EP API event data to internal [EPEvent](../../../../types/ep/activities/interfaces/EPEvent.md) format.
 

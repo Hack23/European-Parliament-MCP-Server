@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.2**](../../../README.md)
+[**European Parliament MCP Server API v0.7.3**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: GDPRComplianceError
 
-Defined in: [types/errors.ts:169](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/types/errors.ts#L169)
+Defined in: [types/errors.ts:169](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/errors.ts#L169)
 
 GDPR compliance error
 
@@ -39,7 +39,7 @@ if (cacheAge > maxPersonalDataCacheAge) {
 
 > **new GDPRComplianceError**(`message`, `details?`): `GDPRComplianceError`
 
-Defined in: [types/errors.ts:176](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/types/errors.ts#L176)
+Defined in: [types/errors.ts:176](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/errors.ts#L176)
 
 Create a new GDPR compliance error
 
@@ -71,7 +71,7 @@ Optional details about the violation
 
 > `readonly` **code**: `string`
 
-Defined in: [types/errors.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/types/errors.ts#L44)
+Defined in: [types/errors.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/errors.ts#L44)
 
 Machine-readable error code (e.g., 'VALIDATION_ERROR')
 
@@ -85,7 +85,7 @@ Machine-readable error code (e.g., 'VALIDATION_ERROR')
 
 > `readonly` **statusCode**: `number` = `500`
 
-Defined in: [types/errors.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/types/errors.ts#L45)
+Defined in: [types/errors.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/errors.ts#L45)
 
 HTTP status code (default: 500)
 
@@ -99,7 +99,7 @@ HTTP status code (default: 500)
 
 > `readonly` `optional` **details**: `unknown`
 
-Defined in: [types/errors.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/types/errors.ts#L46)
+Defined in: [types/errors.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/errors.ts#L46)
 
 Optional additional error details for debugging
 

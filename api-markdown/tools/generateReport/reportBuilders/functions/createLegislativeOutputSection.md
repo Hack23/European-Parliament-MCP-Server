@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.2**](../../../../README.md)
+[**European Parliament MCP Server API v0.7.3**](../../../../README.md)
 
 ***
 
@@ -6,12 +6,22 @@
 
 # Function: createLegislativeOutputSection()
 
-> **createLegislativeOutputSection**(): [`ReportSection`](../../types/interfaces/ReportSection.md)
+> **createLegislativeOutputSection**(`reportsCount`, `documentsCount`): [`ReportSection`](../../types/interfaces/ReportSection.md)
 
-Defined in: [tools/generateReport/reportBuilders.ts:71](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/generateReport/reportBuilders.ts#L71)
+Defined in: [tools/generateReport/reportBuilders.ts:75](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/tools/generateReport/reportBuilders.ts#L75)
 
-Create legislative output section
+Create legislative output section with real data
 Cyclomatic complexity: 1
+
+## Parameters
+
+### reportsCount
+
+`number` | `null`
+
+### documentsCount
+
+`number` | `null`
 
 ## Returns
 

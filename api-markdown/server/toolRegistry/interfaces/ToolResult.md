@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.2**](../../../README.md)
+[**European Parliament MCP Server API v0.7.3**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: ToolResult
 
-Defined in: [server/toolRegistry.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/server/toolRegistry.ts#L67)
+Defined in: [server/toolRegistry.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/server/toolRegistry.ts#L67)
 
 Tool result shape returned by every handler
 
@@ -16,7 +16,7 @@ Tool result shape returned by every handler
 
 > **content**: `object`[]
 
-Defined in: [server/toolRegistry.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/server/toolRegistry.ts#L67)
+Defined in: [server/toolRegistry.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/server/toolRegistry.ts#L67)
 
 #### text
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.2**](../../../README.md)
+[**European Parliament MCP Server API v0.7.3**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetVotingRecords**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
 
-Defined in: [tools/getVotingRecords.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/105c91e5b7fa3b947ea8c0ec39c75a48519382f4/src/tools/getVotingRecords.ts#L37)
+Defined in: [tools/getVotingRecords.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/tools/getVotingRecords.ts#L37)
 
 Get voting records tool handler
 
