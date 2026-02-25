@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { measureTime, getTestTimeout, waitFor } from '../helpers/testUtils.js';
+import { measureTime, getTestTimeout } from '../helpers/testUtils.js';
 import {
   setupEPApiMocks,
   teardownEPApiMocks,
@@ -168,17 +168,10 @@ describe('EP API Endpoint Latency Benchmarks', () => {
       // Use getTestTimeout to allow CI overrides
       const testTimeout = getTestTimeout(LATENCY_THRESHOLD_MS * 10);
 
-      let completed = false;
-      const [, duration] = await measureTime(async () => {
-        const result = await handleGetMEPs({ limit: 5 });
-        completed = true;
-        return result;
-      });
+      const [, duration] = await measureTime(() =>
+        handleGetMEPs({ limit: 5 })
+      );
 
-      // Use waitFor as a polling check that the call completed
-      await waitFor(() => completed, testTimeout);
-
-      expect(completed).toBe(true);
       expect(duration).toBeLessThan(testTimeout);
       console.log(`  Completed in: ${duration.toFixed(2)}ms (timeout: ${testTimeout}ms)`);
     });

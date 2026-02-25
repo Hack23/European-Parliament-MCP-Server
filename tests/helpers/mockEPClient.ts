@@ -111,11 +111,9 @@ const meetingDecisionFixtures = [
     id: 'DEC-TEST-001',
     title: 'Decision on Committee Composition (synthetic)',
     date: '2024-01-15',
-    type: 'PROCEDURAL',
-    reference: 'DEC-TEST-001',
-    language: 'en',
+    type: 'DECISION',
     status: 'ADOPTED',
-    url: 'https://data.europarl.europa.eu/doc/DEC-TEST-001',
+    pdfUrl: 'https://data.europarl.europa.eu/doc/DEC-TEST-001',
     authors: []
   }
 ];
