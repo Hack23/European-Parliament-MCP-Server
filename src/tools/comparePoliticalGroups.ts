@@ -63,76 +63,36 @@ const DIMENSION_NAME_MAP: Record<string, DimensionName> = {
 };
 
 /**
- * Compute aggregate group metrics from member data
- */
-function computeGroupDimensions(
-  mepData: { name: string }[],
-  memberCount: number
-): { dimensions: GroupComparisonMetrics['dimensions']; totalVotesPerMember: number } {
-  let totalVotesSum = 0;
-  let forSum = 0;
-  let againstSum = 0;
-  let attendanceSum = 0;
-
-  for (const mep of mepData) {
-    totalVotesSum += 1000 + (mep.name.length * 50);
-    forSum += 700 + (mep.name.length * 30);
-    againstSum += 200 + (mep.name.length * 10);
-    attendanceSum += 75 + (mep.name.length % 20);
-  }
-
-  const count = mepData.length || 1;
-  const avgAttendance = attendanceSum / count;
-  const decisive = forSum + againstSum;
-  const discipline = decisive > 0 ? (forSum / decisive) * 100 : 50;
-  const activityLevel = Math.min(100, (totalVotesSum / count / 1500) * 100);
-  const legislativeOutput = Math.min(100, memberCount * 2);
-
-  return {
-    dimensions: {
-      votingDiscipline: Math.round(discipline * 100) / 100,
-      activityLevel: Math.round(activityLevel * 100) / 100,
-      legislativeOutput: Math.round(legislativeOutput * 100) / 100,
-      attendance: Math.round(avgAttendance * 100) / 100,
-      cohesion: Math.round(discipline * 100) / 100
-    },
-    totalVotesPerMember: Math.round(totalVotesSum / count)
-  };
-}
-
-/**
- * Calculate overall performance score from dimensions
- */
-function calculateOverallScore(dims: GroupComparisonMetrics['dimensions']): number {
-  return Math.round((
-    dims.votingDiscipline * 0.25 +
-    dims.activityLevel * 0.20 +
-    dims.legislativeOutput * 0.20 +
-    dims.attendance * 0.20 +
-    dims.cohesion * 0.15
-  ) * 100) / 100;
-}
-
-/**
- * Fetch and build group metrics
+ * Fetch and build group metrics using real EP API data.
+ * Note: The EP API /meps/{id} endpoint does not provide per-MEP voting
+ * statistics, so voting-related dimensions report zero. Member counts
+ * and group composition are real.
  */
 async function buildGroupMetrics(groupIds: string[]): Promise<GroupComparisonMetrics[]> {
   const groups = await Promise.all(
     groupIds.map(async (groupId): Promise<GroupComparisonMetrics> => {
       const mepsResult = await epClient.getMEPs({ group: groupId, limit: 100 });
-      const { dimensions, totalVotesPerMember } = computeGroupDimensions(mepsResult.data, mepsResult.total);
-      const overallScore = calculateOverallScore(dimensions);
+
+      // Per-MEP voting statistics are not available from the EP API,
+      // so voting-related dimensions report zero.
+      const memberCount = mepsResult.data.length;
 
       return {
         groupId,
-        memberCount: mepsResult.total,
-        dimensions,
+        memberCount,
+        dimensions: {
+          votingDiscipline: 0,
+          activityLevel: 0,
+          legislativeOutput: 0,
+          attendance: 0,
+          cohesion: 0
+        },
         computedAttributes: {
-          overallPerformanceScore: overallScore,
+          overallPerformanceScore: 0,
           relativeStrength: 0,
           seatShare: 0,
-          effectivenessPerMember: Math.round((totalVotesPerMember / 10) * 100) / 100,
-          engagementIntensity: Math.round((dimensions.attendance * dimensions.activityLevel / 100) * 100) / 100
+          effectivenessPerMember: 0,
+          engagementIntensity: 0
         }
       };
     })
@@ -222,8 +182,12 @@ export async function handleComparePoliticalGroups(
         parliamentaryBalance: Math.round(balance * 100) / 100,
         competitiveIndex
       },
-      confidenceLevel: groups.length >= 3 ? 'MEDIUM' : 'LOW',
-      methodology: 'Multi-dimensional comparative analysis with weighted scoring'
+      confidenceLevel: 'LOW',
+      methodology: 'Multi-dimensional comparative analysis using real EP Open Data MEP records. '
+        + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
+        + 'voting discipline, activity level, attendance, and cohesion dimensions report zero. '
+        + 'Member counts and group composition are real. '
+        + 'Data source: European Parliament Open Data Portal.'
     };
 
     return { content: [{ type: 'text', text: JSON.stringify(comparison, null, 2) }] };

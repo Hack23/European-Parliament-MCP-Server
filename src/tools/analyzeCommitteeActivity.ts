@@ -1,9 +1,8 @@
 /**
  * MCP Tool: analyze_committee_activity
  * 
- * Analyze committee workload and member engagement for EP committees.
- * Metrics are heuristic estimates derived from committee membership size;
- * real meeting/document/procedure data is not fetched from the EP API.
+ * Analyze committee workload and member engagement for EP committees
+ * using real data from the European Parliament Open Data Portal.
  * 
  * **Intelligence Perspective:** Committee activity analysis reveals institutional
  * priorities, resource allocation patterns, and policy domain intensity—essential
@@ -100,7 +99,37 @@ function computePolicyImpactRating(reportsAdopted: number, successRate: number):
 }
 
 /**
- * Build committee activity analysis from EP data
+ * Safely fetch a count from the EP API using data.length (actual items returned),
+ * not total (which is a lower-bound estimate capped by page size).
+ */
+async function safeCount(fetcher: () => Promise<{ data: unknown[] }>): Promise<number> {
+  try {
+    const result = await fetcher();
+    return result.data.length;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Fetch real EP data counts for committee analysis
+ */
+async function fetchCommitteeData(dateFrom: string): Promise<{
+  documentsProduced: number;
+  activeLegFiles: number;
+  reportsAdopted: number;
+}> {
+  const year = parseInt(dateFrom.substring(0, 4), 10);
+  const [documentsProduced, activeLegFiles, reportsAdopted] = await Promise.all([
+    safeCount(() => epClient.getCommitteeDocuments({ year, limit: 100 })),
+    safeCount(() => epClient.getProcedures({ year, limit: 100 })),
+    safeCount(() => epClient.getAdoptedTexts({ year, limit: 100 }))
+  ]);
+  return { documentsProduced, activeLegFiles, reportsAdopted };
+}
+
+/**
+ * Build committee activity analysis from real EP data
  */
 async function buildAnalysis(
   committeeId: string,
@@ -115,54 +144,51 @@ async function buildAnalysis(
     ? committeeData.members.length
     : 0;
 
-  // Compute derived metrics from committee structure
-  const activeLegFiles = Math.max(5, memberCount * 2);
-  const meetingsHeld = Math.max(10, Math.round(memberCount * 1.5));
-  const documentsProduced = activeLegFiles + meetingsHeld;
-  const opinionsIssued = Math.max(3, Math.round(activeLegFiles * 0.4));
-  const avgAttendance = Math.min(95, 60 + memberCount * 0.5);
-  const activeContributors = Math.round(memberCount * 0.7);
-  const reportsAdopted = Math.max(2, Math.round(activeLegFiles * 0.3));
-  const amendmentsProcessed = activeLegFiles * 8;
-  const successRate = Math.min(0.95, 0.5 + memberCount * 0.005);
-  const productivityScore = Math.round(
-    (reportsAdopted / Math.max(1, activeLegFiles)) * 100
-  );
+  const { documentsProduced, activeLegFiles, reportsAdopted } = await fetchCommitteeData(dateFrom);
 
-  const analysis: CommitteeActivityAnalysis = {
+  const successRate = activeLegFiles > 0 && reportsAdopted > 0
+    ? Math.min(1, reportsAdopted / activeLegFiles)
+    : 0;
+  const productivityScore = activeLegFiles > 0
+    ? Math.round((reportsAdopted / activeLegFiles) * 100)
+    : 0;
+  const hasRealData = documentsProduced > 0 || activeLegFiles > 0 || reportsAdopted > 0;
+
+  return {
     committeeId,
     committeeName: committeeData.name,
     period: { from: dateFrom, to: dateTo },
     workload: {
       activeLegislativeFiles: activeLegFiles,
       documentsProduced,
-      meetingsHeld,
-      opinionsIssued
+      meetingsHeld: 0,
+      opinionsIssued: 0
     },
     memberEngagement: {
       totalMembers: memberCount,
-      averageAttendance: Math.round(avgAttendance * 100) / 100,
-      activeContributors
+      averageAttendance: 0,
+      // 0 indicates unknown due to lack of member-level activity data
+      activeContributors: 0
     },
     legislativeOutput: {
       reportsAdopted,
-      amendmentsProcessed,
+      amendmentsProcessed: 0,
       successRate: Math.round(successRate * 100) / 100
     },
     computedAttributes: {
-      workloadIntensity: computeWorkloadIntensity(activeLegFiles, meetingsHeld),
+      workloadIntensity: computeWorkloadIntensity(activeLegFiles, 0),
       productivityScore,
-      engagementLevel: computeEngagementLevel(avgAttendance),
+      engagementLevel: computeEngagementLevel(0),
       policyImpactRating: computePolicyImpactRating(reportsAdopted, successRate)
     },
-    confidenceLevel: 'LOW',
-    methodology: 'Committee activity analysis based on committee membership size from EP Open Data. '
-      + 'Workload, attendance, and legislative output metrics are heuristic estimates '
-      + 'derived from member count and are not backed by real meeting/document data. '
+    confidenceLevel: hasRealData ? 'MEDIUM' : 'LOW',
+    methodology: 'Committee activity analysis using real data from EP Open Data Portal. '
+      + 'Committee membership from /corporate-bodies endpoint, documents from /committee-documents, '
+      + 'procedures from /procedures, adopted texts from /adopted-texts. '
+      + 'Document/procedure/adopted-text counts are parliament-wide lower bounds (single page, '
+      + 'not filtered by committee). Fields showing zero indicate data not available from the EP API. '
       + 'Data source: European Parliament Open Data Portal.'
   };
-
-  return analysis;
 }
 
 /**
