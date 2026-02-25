@@ -160,25 +160,12 @@ export class AuditLogger {
     duration?: number,
     error?: string
   ): void {
-    const event: AuditEvent = {
-      level: success ? LogLevel.INFO : LogLevel.ERROR,
-      timestamp: new Date().toISOString(),
-      action: 'tool_call',
-      toolName,
-      params,
-      result: {
-        success,
-        ...(error !== undefined && { error }),
-      },
-      ...(duration !== undefined && { duration }),
-    };
-
     // Persist via the existing internal log path so getLogs() captures it.
     // Tool-call data is nested under the 'tool' key to prevent user-controlled
     // param keys from colliding with reserved log schema fields.
     // this.log() already emits the structured entry to stderr via console.error.
     this.log({
-      action: event.action,
+      action: 'tool_call',
       params: { tool: { name: toolName, params } },
       result: {
         success,
