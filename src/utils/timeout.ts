@@ -358,6 +358,9 @@ export async function withTimeoutConfig<T>(
   promise: Promise<T>,
   config: TimeoutConfig
 ): Promise<T> {
+  if (config.timeoutMs <= 0) {
+    throw new Error(`withTimeoutConfig: timeoutMs must be > 0, got ${String(config.timeoutMs)}`);
+  }
   const message =
     config.errorMessage ??
     `${config.operationName ?? 'Operation'} timed out after ${String(config.timeoutMs)}ms`;

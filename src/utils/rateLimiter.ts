@@ -176,7 +176,7 @@ export class RateLimiter {
     const utilization = max > 0 ? Math.round(((max - available) / max) * 100) : 0;
 
     return {
-      availableTokens: Math.round(available),
+      availableTokens: Math.floor(available),
       maxTokens: max,
       utilizationPercent: utilization,
     };

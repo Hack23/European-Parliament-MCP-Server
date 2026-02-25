@@ -90,21 +90,21 @@ const politicalGroupsResourceTemplate: ResourceTemplate = {
 };
 
 const procedureResourceTemplate: ResourceTemplate = {
-  uriTemplate: 'ep://procedures/{id}',
+  uriTemplate: 'ep://procedures/{procedureId}',
   name: 'Procedure Details',
   description: 'Legislative procedure details by process ID (format: YYYY-NNNN).',
   mimeType: 'application/json'
 };
 
 const plenaryDetailResourceTemplate: ResourceTemplate = {
-  uriTemplate: 'ep://plenary/{id}',
+  uriTemplate: 'ep://plenary/{plenaryId}',
   name: 'Plenary Session Detail',
   description: 'Specific plenary session details by session ID.',
   mimeType: 'application/json'
 };
 
 const documentResourceTemplate: ResourceTemplate = {
-  uriTemplate: 'ep://documents/{id}',
+  uriTemplate: 'ep://documents/{documentId}',
   name: 'Legislative Document',
   description: 'Legislative document details by document ID.',
   mimeType: 'application/json'
@@ -147,7 +147,8 @@ function matchOtherUri(segments: string[]): { template: string; params: Record<s
   if (resource === 'political-groups' && segments.length === 1) {
     return { template: 'political_groups', params: {} };
   }
-  // Extended URI patterns (not listed in getResourceTemplateArray)
+  // Extended URI patterns — all listed in getResourceTemplateArray and
+  // discoverable via MCP ListResourceTemplates
   if (resource === 'procedures') {
     return matchProcedureUri(segments);
   }

@@ -95,9 +95,9 @@ describe('MCP Resources', () => {
       expect(uris).toContain('ep://plenary-sessions');
       expect(uris).toContain('ep://votes/{sessionId}');
       expect(uris).toContain('ep://political-groups');
-      expect(uris).toContain('ep://procedures/{id}');
-      expect(uris).toContain('ep://plenary/{id}');
-      expect(uris).toContain('ep://documents/{id}');
+      expect(uris).toContain('ep://procedures/{procedureId}');
+      expect(uris).toContain('ep://plenary/{plenaryId}');
+      expect(uris).toContain('ep://documents/{documentId}');
     });
   });
 

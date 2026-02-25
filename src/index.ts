@@ -302,10 +302,10 @@ if (isMainModule) {
   // Start the MCP server (default behavior)
   const server = new EuropeanParliamentMCPServer();
 
-  // Graceful shutdown handlers — ensure clean exit on SIGTERM / SIGINT
-  // (e.g., when run inside a container or orchestrator)
+  // Shutdown signal handlers — exit immediately on SIGTERM / SIGINT
+  // (stdio would otherwise keep the event loop alive in containers)
   function handleShutdownSignal(signal: string): void {
-    console.error(`[${SERVER_NAME}] Received ${signal} — shutting down gracefully`);
+    console.error(`[${SERVER_NAME}] Received ${signal} — exiting`);
     // Explicitly exit so that stdio doesn't keep the event loop alive in containers
     process.exit(0);
   }

@@ -61,8 +61,8 @@ export interface AuditEvent {
 }
 
 /**
- * Audit log entry structure
- * @internal - Used only within AuditLogger implementation
+ * Audit log entry structure, part of the public audit logging API.
+ * Represents a single audited operation and its contextual metadata.
  */
 export interface AuditLogEntry {
   /**
@@ -171,10 +171,12 @@ export class AuditLogger {
       ...(duration !== undefined && { duration }),
     };
 
-    // Persist via the existing internal log path so getLogs() captures it
+    // Persist via the existing internal log path so getLogs() captures it.
+    // Tool-call data is nested under the 'tool' key to prevent user-controlled
+    // param keys from colliding with reserved log schema fields.
     this.log({
       action: event.action,
-      params: { toolName, ...params },
+      params: { tool: { name: toolName, params } },
       result: {
         success,
         ...(error !== undefined && { error }),

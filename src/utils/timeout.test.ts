@@ -481,6 +481,13 @@ describe('withTimeoutConfig', () => {
     await expect(resultPromise).resolves.toBe('ok');
   });
 
+  it('should throw synchronously for timeoutMs <= 0', async () => {
+    const { withTimeoutConfig } = await import('./timeout.js');
+    await expect(withTimeoutConfig(Promise.resolve('x'), { timeoutMs: 0 })).rejects.toThrow(
+      'timeoutMs must be > 0'
+    );
+  });
+
   it('should reject with TimeoutError using operationName in message', async () => {
     const { withTimeoutConfig } = await import('./timeout.js');
     const slow = new Promise((resolve) => setTimeout(() => resolve('slow'), 2000));

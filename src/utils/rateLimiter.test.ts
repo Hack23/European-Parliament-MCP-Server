@@ -184,7 +184,7 @@ describe('RateLimiter', () => {
       vi.useRealTimers();
     });
 
-    it('should round availableTokens and utilizationPercent', () => {
+    it('should floor availableTokens and round utilizationPercent', () => {
       vi.useFakeTimers();
       const limiter = new RateLimiter({ tokensPerInterval: 3, interval: 'minute' });
       limiter.tryRemoveTokens(1);

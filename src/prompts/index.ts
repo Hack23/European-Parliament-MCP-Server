@@ -167,7 +167,6 @@ export const CountryDelegationArgsSchema = z.object({
 });
 
 // ─── Country Delegation Analysis Prompt ─────────────────────
-// Additional prompt (accessible via handleGetPrompt but not listed in getPromptMetadataArray)
 
 /** @internal Country delegation analysis prompt metadata */
 const countryDelegationAnalysisPrompt: PromptMetadata = {
