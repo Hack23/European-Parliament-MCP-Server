@@ -9,8 +9,7 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPs: vi.fn(),
-    getMEPDetails: vi.fn()
+    getMEPs: vi.fn()
   }
 }));
 
@@ -43,25 +42,6 @@ describe('compare_political_groups Tool', () => {
       limit: 100,
       offset: 0,
       hasMore: false
-    });
-
-    // Mock MEP details with real voting statistics
-    vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
-      id: 'MEP-1',
-      name: 'Test MEP',
-      country: 'SE',
-      politicalGroup: 'EPP',
-      committees: ['AGRI'],
-      active: true,
-      termStart: '2019-07-02',
-      biography: '',
-      votingStatistics: {
-        totalVotes: 800,
-        votesFor: 600,
-        votesAgainst: 150,
-        abstentions: 50,
-        attendanceRate: 85
-      }
     });
   });
 
@@ -214,24 +194,8 @@ describe('compare_political_groups Tool', () => {
       }
     });
 
-    it('should handle single MEP per group correctly', async () => {
-      // Arrange: Single MEP with real voting stats
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
-        data: [
-          { id: 'MEP-S1', name: 'Solo MEP', country: 'DE', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' }
-        ],
-        total: 1, limit: 100, offset: 0, hasMore: false
-      });
-      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
-        id: 'MEP-S1', name: 'Solo MEP', country: 'DE', politicalGroup: 'EPP',
-        committees: [], active: true, termStart: '2019-07-02', biography: '',
-        votingStatistics: {
-          totalVotes: 500, votesFor: 400, votesAgainst: 80,
-          abstentions: 20, attendanceRate: 90
-        }
-      });
-
-      // Act
+    it('should report LOW confidence since voting stats are unavailable from EP API', async () => {
+      // Arrange: MEPs exist but voting stats are not available
       const result = await handleComparePoliticalGroups({
         groupIds: ['EPP', 'S&D', 'Renew']
       });
@@ -240,13 +204,12 @@ describe('compare_political_groups Tool', () => {
         confidenceLevel: string;
       };
 
-      // Assert
+      // Assert: Confidence is LOW because per-MEP voting stats are not available
       expect(data.groups).toHaveLength(3);
-      expect(data.confidenceLevel).toBe('MEDIUM'); // 3 groups >= 3
-      // Groups with real voting data should have positive discipline
-      const groupWithData = data.groups.find(g => g.memberCount > 0);
-      if (groupWithData !== undefined) {
-        expect(groupWithData.dimensions.votingDiscipline).toBeGreaterThan(0);
+      expect(data.confidenceLevel).toBe('LOW');
+      // All voting dimensions should be zero
+      for (const group of data.groups) {
+        expect(group.dimensions.votingDiscipline).toBe(0);
       }
     });
 

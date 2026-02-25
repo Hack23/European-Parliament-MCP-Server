@@ -63,93 +63,36 @@ const DIMENSION_NAME_MAP: Record<string, DimensionName> = {
 };
 
 /**
- * Compute aggregate group metrics from real MEP data
- */
-function computeGroupDimensions(
-  mepData: { votingStatistics?: { totalVotes: number; votesFor: number; votesAgainst: number; attendanceRate: number } | undefined }[],
-  memberCount: number
-): { dimensions: GroupComparisonMetrics['dimensions']; totalVotesPerMember: number } {
-  let totalVotesSum = 0;
-  let forSum = 0;
-  let againstSum = 0;
-  let attendanceSum = 0;
-  let mepsWithData = 0;
-
-  for (const mep of mepData) {
-    const stats = mep.votingStatistics;
-    if (stats !== undefined && stats.totalVotes > 0) {
-      totalVotesSum += stats.totalVotes;
-      forSum += stats.votesFor;
-      againstSum += stats.votesAgainst;
-      attendanceSum += stats.attendanceRate;
-      mepsWithData++;
-    }
-  }
-
-  const count = mepsWithData || 1;
-  const avgAttendance = attendanceSum / count;
-  const decisive = forSum + againstSum;
-  const discipline = decisive > 0 ? (forSum / decisive) * 100 : 0;
-  const activityLevel = mepsWithData > 0 ? Math.min(100, (totalVotesSum / count / 1500) * 100) : 0;
-  const legislativeOutput = mepsWithData > 0 ? Math.min(100, memberCount * 2) : 0;
-
-  return {
-    dimensions: {
-      votingDiscipline: Math.round(discipline * 100) / 100,
-      activityLevel: Math.round(activityLevel * 100) / 100,
-      legislativeOutput: Math.round(legislativeOutput * 100) / 100,
-      attendance: Math.round(avgAttendance * 100) / 100,
-      cohesion: Math.round(discipline * 100) / 100
-    },
-    totalVotesPerMember: Math.round(totalVotesSum / count)
-  };
-}
-
-/**
- * Calculate overall performance score from dimensions
- */
-function calculateOverallScore(dims: GroupComparisonMetrics['dimensions']): number {
-  return Math.round((
-    dims.votingDiscipline * 0.25 +
-    dims.activityLevel * 0.20 +
-    dims.legislativeOutput * 0.20 +
-    dims.attendance * 0.20 +
-    dims.cohesion * 0.15
-  ) * 100) / 100;
-}
-
-/**
- * Fetch and build group metrics using real EP API data
+ * Fetch and build group metrics using real EP API data.
+ * Note: The EP API /meps/{id} endpoint does not provide per-MEP voting
+ * statistics, so voting-related dimensions report zero. Member counts
+ * and group composition are real.
  */
 async function buildGroupMetrics(groupIds: string[]): Promise<GroupComparisonMetrics[]> {
   const groups = await Promise.all(
     groupIds.map(async (groupId): Promise<GroupComparisonMetrics> => {
       const mepsResult = await epClient.getMEPs({ group: groupId, limit: 100 });
 
-      // Fetch real voting stats for each MEP
-      const mepStatsPromises = mepsResult.data.map(async (m) => {
-        try {
-          const details = await epClient.getMEPDetails(m.id);
-          return { votingStatistics: details.votingStatistics };
-        } catch {
-          return { votingStatistics: undefined };
-        }
-      });
-      const mepStats = await Promise.all(mepStatsPromises);
-
-      const { dimensions, totalVotesPerMember } = computeGroupDimensions(mepStats, mepsResult.total);
-      const overallScore = calculateOverallScore(dimensions);
+      // Per-MEP voting statistics are not available from the EP API,
+      // so voting-related dimensions report zero.
+      const memberCount = mepsResult.data.length;
 
       return {
         groupId,
-        memberCount: mepsResult.total,
-        dimensions,
+        memberCount,
+        dimensions: {
+          votingDiscipline: 0,
+          activityLevel: 0,
+          legislativeOutput: memberCount > 0 ? Math.min(100, memberCount * 2) : 0,
+          attendance: 0,
+          cohesion: 0
+        },
         computedAttributes: {
-          overallPerformanceScore: overallScore,
+          overallPerformanceScore: 0,
           relativeStrength: 0,
           seatShare: 0,
-          effectivenessPerMember: Math.round((totalVotesPerMember / 10) * 100) / 100,
-          engagementIntensity: Math.round((dimensions.attendance * dimensions.activityLevel / 100) * 100) / 100
+          effectivenessPerMember: 0,
+          engagementIntensity: 0
         }
       };
     })
@@ -239,8 +182,11 @@ export async function handleComparePoliticalGroups(
         parliamentaryBalance: Math.round(balance * 100) / 100,
         competitiveIndex
       },
-      confidenceLevel: groups.length >= 3 ? 'MEDIUM' : 'LOW',
+      confidenceLevel: 'LOW',
       methodology: 'Multi-dimensional comparative analysis using real EP Open Data MEP records. '
+        + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
+        + 'voting discipline, activity level, attendance, and cohesion dimensions report zero. '
+        + 'Member counts and group composition are real. '
         + 'Data source: European Parliament Open Data Portal.'
     };
 

@@ -215,6 +215,8 @@ async function buildLandscape(
   ) / 100;
 
   // Fetch real plenary session data from EP API
+  // Use data.length instead of total because total is a lower-bound estimate
+  // capped by the page size at offset 0
   let recentSessionCount = 0;
   try {
     const sessions = await epClient.getPlenarySessions({
@@ -222,7 +224,7 @@ async function buildLandscape(
       dateTo,
       limit: 100
     });
-    recentSessionCount = sessions.total;
+    recentSessionCount = sessions.data.length;
   } catch {
     // API may not return sessions for this date range — report zero
   }
@@ -253,7 +255,7 @@ async function buildLandscape(
     confidenceLevel: totalMEPs > 50 ? 'MEDIUM' : 'LOW',
     methodology: 'Political landscape analysis using real EP Open Data: MEP records, '
       + 'group composition mapping, bloc classification, coalition threshold calculation, '
-      + 'fragmentation indexing, and plenary session counts. '
+      + 'fragmentation indexing, and plenary session counts (fetched page count, lower bound). '
       + 'Attendance data is not available from the EP API and is reported as zero. '
       + 'Data source: European Parliament Open Data Portal.'
   };

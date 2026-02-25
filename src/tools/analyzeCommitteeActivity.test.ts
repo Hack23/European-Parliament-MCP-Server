@@ -28,15 +28,18 @@ describe('analyze_committee_activity Tool', () => {
                 'MEP-6', 'MEP-7', 'MEP-8', 'MEP-9', 'MEP-10']
     });
 
-    // Mock real EP API data responses
+    // Mock real EP API data responses — use data arrays since tool uses data.length
     vi.mocked(epClientModule.epClient.getCommitteeDocuments).mockResolvedValue({
-      data: [], total: 45, limit: 100, offset: 0, hasMore: false
+      data: Array.from({ length: 45 }, (_, i) => ({ id: `doc-${i}`, title: `Doc ${i}`, type: 'REPORT', date: '2024-01-01', reference: `REF-${i}`, committee: 'ENVI' })),
+      total: 45, limit: 100, offset: 0, hasMore: false
     });
     vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue({
-      data: [], total: 60, limit: 100, offset: 0, hasMore: false
+      data: Array.from({ length: 60 }, (_, i) => ({ id: `proc-${i}`, title: `Procedure ${i}`, reference: `2024/${i}(COD)`, type: 'COD', subjectMatter: '', stage: '', status: 'OPEN', dates: {} })),
+      total: 60, limit: 100, offset: 0, hasMore: false
     });
     vi.mocked(epClientModule.epClient.getAdoptedTexts).mockResolvedValue({
-      data: [], total: 20, limit: 100, offset: 0, hasMore: false
+      data: Array.from({ length: 20 }, (_, i) => ({ id: `at-${i}`, title: `Adopted ${i}`, reference: `AT-${i}`, type: 'RESOLUTION', dateAdopted: '2024-06-01' })),
+      total: 20, limit: 100, offset: 0, hasMore: false
     });
   });
 
@@ -120,28 +123,30 @@ describe('analyze_committee_activity Tool', () => {
   });
 
   describe('Real Data Integration', () => {
-    it('should use real procedure count for workload', async () => {
+    it('should use real procedure count for workload (data.length)', async () => {
       vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue({
-        data: [], total: 120, limit: 100, offset: 0, hasMore: true
+        data: Array.from({ length: 100 }, (_, i) => ({ id: `p-${i}`, title: `P ${i}`, reference: '', type: 'COD', subjectMatter: '', stage: '', status: 'OPEN', dates: {} })),
+        total: 100, limit: 100, offset: 0, hasMore: true
       });
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
       const data = JSON.parse(result.content[0]?.text ?? '{}');
-      expect(data.workload.activeLegislativeFiles).toBe(120);
-      expect(data.computedAttributes.workloadIntensity).toBe('VERY_HIGH');
+      expect(data.workload.activeLegislativeFiles).toBe(100);
     });
 
-    it('should use real document count', async () => {
+    it('should use real document count (data.length)', async () => {
       vi.mocked(epClientModule.epClient.getCommitteeDocuments).mockResolvedValue({
-        data: [], total: 80, limit: 100, offset: 0, hasMore: false
+        data: Array.from({ length: 80 }, (_, i) => ({ id: `d-${i}`, title: `D ${i}`, type: 'REPORT', date: '2024-01-01', reference: `REF-${i}`, committee: 'ENVI' })),
+        total: 80, limit: 100, offset: 0, hasMore: false
       });
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
       const data = JSON.parse(result.content[0]?.text ?? '{}');
       expect(data.workload.documentsProduced).toBe(80);
     });
 
-    it('should use real adopted texts count', async () => {
+    it('should use real adopted texts count (data.length)', async () => {
       vi.mocked(epClientModule.epClient.getAdoptedTexts).mockResolvedValue({
-        data: [], total: 35, limit: 100, offset: 0, hasMore: false
+        data: Array.from({ length: 35 }, (_, i) => ({ id: `a-${i}`, title: `A ${i}`, reference: '', type: 'RESOLUTION', dateAdopted: '2024-06-01' })),
+        total: 35, limit: 100, offset: 0, hasMore: false
       });
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
       const data = JSON.parse(result.content[0]?.text ?? '{}');
@@ -182,16 +187,18 @@ describe('analyze_committee_activity Tool', () => {
   });
 
   describe('Workload Intensity Computation', () => {
-    it('should classify VERY_HIGH workload when procedures exceed 100', async () => {
+    it('should classify HIGH workload when procedures reach page limit (100)', async () => {
       vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue({
-        data: [], total: 120, limit: 100, offset: 0, hasMore: true
+        data: Array.from({ length: 100 }, (_, i) => ({ id: `p-${i}`, title: `P ${i}`, reference: '', type: 'COD', subjectMatter: '', stage: '', status: 'OPEN', dates: {} })),
+        total: 100, limit: 100, offset: 0, hasMore: true
       });
       vi.mocked(epClientModule.epClient.getCommitteeDocuments).mockResolvedValue({
-        data: [], total: 30, limit: 100, offset: 0, hasMore: false
+        data: Array.from({ length: 30 }, (_, i) => ({ id: `d-${i}`, title: `D ${i}`, type: 'REPORT', date: '2024-01-01', reference: `REF-${i}`, committee: 'ENVI' })),
+        total: 30, limit: 100, offset: 0, hasMore: false
       });
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
       const data = JSON.parse(result.content[0]?.text ?? '{}');
-      expect(data.computedAttributes.workloadIntensity).toBe('VERY_HIGH');
+      expect(data.computedAttributes.workloadIntensity).toBe('HIGH');
     });
 
     it('should classify LOW workload when no data is available', async () => {

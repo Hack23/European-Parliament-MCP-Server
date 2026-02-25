@@ -241,13 +241,14 @@ export async function handleAssessMepInfluence(
     };
 
     // Fetch real parliamentary questions for this MEP
+    // Use data.length instead of total because total is a lower-bound estimate
     let questionCount = 0;
     try {
       const questions = await epClient.getParliamentaryQuestions({
         author: params.mepId,
         limit: 100
       });
-      questionCount = questions.total;
+      questionCount = questions.data.length;
     } catch {
       // Questions may not be available — report zero
     }

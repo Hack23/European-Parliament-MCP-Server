@@ -60,6 +60,7 @@ export async function generateMEPActivityReport(
   const data = extractMEPData(params, mep);
 
   // Fetch real parliamentary questions for this MEP
+  // Use data.length instead of total because total is a lower-bound estimate
   let questionsSubmitted = 0;
   try {
     if (params.subjectId !== undefined) {
@@ -67,7 +68,7 @@ export async function generateMEPActivityReport(
         author: params.subjectId,
         limit: 100
       });
-      questionsSubmitted = questions.total;
+      questionsSubmitted = questions.data.length;
     }
   } catch {
     // Questions may not be available — report zero
@@ -116,22 +117,23 @@ export async function generateCommitteePerformanceReport(
   const dateTo = params.dateTo ?? '2024-12-31';
   const membersLength = committee?.members.length ?? 0;
 
-  // Fetch real document data from EP API
+  // Fetch real document data from EP API (parliament-wide, not committee-specific)
+  // Use data.length instead of total because total is a lower-bound estimate
   let documentsProduced = 0;
   try {
     const year = parseInt(dateFrom.substring(0, 4), 10);
     const docs = await epClient.getCommitteeDocuments({ year, limit: 100 });
-    documentsProduced = docs.total;
+    documentsProduced = docs.data.length;
   } catch {
     // Documents may not be available — report zero
   }
 
-  // Fetch real adopted texts
+  // Fetch real adopted texts (parliament-wide, not committee-specific)
   let reportsProduced = 0;
   try {
     const year = parseInt(dateFrom.substring(0, 4), 10);
     const adopted = await epClient.getAdoptedTexts({ year, limit: 100 });
-    reportsProduced = adopted.total;
+    reportsProduced = adopted.data.length;
   } catch {
     // Adopted texts may not be available — report zero
   }
@@ -170,23 +172,23 @@ export async function generateVotingStatisticsReport(
   const dateFrom = params.dateFrom ?? '2024-01-01';
   const dateTo = params.dateTo ?? '2024-12-31';
 
-  // Fetch real plenary session data
+  // Fetch real plenary session data (use data.length, not total)
   let sessionCount = 0;
   try {
     const sessions = await epClient.getPlenarySessions({
       dateFrom, dateTo, limit: 100
     });
-    sessionCount = sessions.total;
+    sessionCount = sessions.data.length;
   } catch {
     // Sessions may not be available — report zero
   }
 
-  // Fetch real adopted texts
+  // Fetch real adopted texts (use data.length, not total)
   let adoptedCount = 0;
   try {
     const year = parseInt(dateFrom.substring(0, 4), 10);
     const adopted = await epClient.getAdoptedTexts({ year, limit: 100 });
-    adoptedCount = adopted.total;
+    adoptedCount = adopted.data.length;
   } catch {
     // Adopted texts may not be available — report zero
   }
@@ -224,20 +226,20 @@ export async function generateLegislationProgressReport(
   const dateTo = params.dateTo ?? '2024-12-31';
   const year = parseInt(dateFrom.substring(0, 4), 10);
 
-  // Fetch real procedure data
+  // Fetch real procedure data (use data.length, not total)
   let procedureCount = 0;
   try {
     const procedures = await epClient.getProcedures({ year, limit: 100 });
-    procedureCount = procedures.total;
+    procedureCount = procedures.data.length;
   } catch {
     // Procedures may not be available — report zero
   }
 
-  // Fetch real adopted texts
+  // Fetch real adopted texts (use data.length, not total)
   let completedCount = 0;
   try {
     const adopted = await epClient.getAdoptedTexts({ year, limit: 100 });
-    completedCount = adopted.total;
+    completedCount = adopted.data.length;
   } catch {
     // Adopted texts may not be available — report zero
   }

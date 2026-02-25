@@ -203,49 +203,23 @@ async function detectSingleMepAnomalies(
 }
 
 /**
- * Fetch real voting statistics for a single MEP from the EP API
- */
-async function fetchMepVotingStats(mepId: string): Promise<{
-  totalVotes: number; votesFor: number; votesAgainst: number;
-  abstentions: number; attendanceRate: number;
-} | undefined> {
-  try {
-    const mepDetails = await epClient.getMEPDetails(mepId);
-    const stats = mepDetails.votingStatistics;
-    if (stats !== undefined && stats.totalVotes > 0) {
-      return stats;
-    }
-    return undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-/**
- * Detect anomalies for a group or all MEPs using real EP API data
+ * Detect anomalies for a group or all MEPs.
+ * Note: The EP API /meps/{id} endpoint does not provide per-MEP voting
+ * statistics, so group-level anomaly detection reports data unavailability
+ * with LOW confidence rather than fabricating values.
  */
 async function detectGroupAnomalies(
-  groupId: string | undefined, threshold: number, period: { from: string; to: string }
-): Promise<{ scope: string; anomalies: VotingAnomaly[] }> {
+  groupId: string | undefined, _threshold: number, _period: { from: string; to: string }
+): Promise<{ scope: string; anomalies: VotingAnomaly[]; mepCount: number }> {
   const groupFilter: { group?: string } = {};
   if (groupId !== undefined) {
     groupFilter.group = groupId;
   }
   const scope = groupId !== undefined ? `Group: ${groupId}` : 'All MEPs';
   const mepsResult = await epClient.getMEPs({ ...groupFilter, limit: 50 });
-  const allAnomalies: VotingAnomaly[] = [];
-
-  for (const mep of mepsResult.data) {
-    const stats = await fetchMepVotingStats(mep.id);
-    const anomalies = detectMepAnomalies(
-      { id: mep.id, name: mep.name, politicalGroup: mep.politicalGroup },
-      stats,
-      threshold,
-      period.to
-    );
-    allAnomalies.push(...anomalies);
-  }
-  return { scope, anomalies: allAnomalies };
+  // Per-MEP voting statistics are not available from the EP API /meps/{id}
+  // endpoint, so we cannot detect group-wide anomalies from individual stats.
+  return { scope, anomalies: [], mepCount: mepsResult.data.length };
 }
 
 /**
@@ -270,6 +244,13 @@ export async function handleDetectVotingAnomalies(
       ? Math.round((highSeverity * 3 + mediumSeverity * 2 + lowSeverity) / result.anomalies.length * 100) / 100
       : 0;
 
+    // For single MEP, confidence depends on available voting stats;
+    // for group analysis, voting stats are unavailable so confidence is LOW.
+    const isSingleMep = params.mepId !== undefined;
+    const confidence = isSingleMep
+      ? getDataVolumeConfidence(result.scope, true)
+      : 'LOW';
+
     const analysis: VotingAnomalyAnalysis = {
       period,
       targetScope: result.scope,
@@ -281,8 +262,10 @@ export async function handleDetectVotingAnomalies(
         defectionTrend: classifyDefectionTrend(highSeverity),
         riskLevel: classifyRiskLevel(highSeverity)
       },
-      confidenceLevel: getDataVolumeConfidence(result.scope, params.mepId !== undefined),
-      methodology: 'Statistical deviation analysis using real EP Open Data voting records with configurable sensitivity threshold. '
+      confidenceLevel: confidence,
+      methodology: 'Statistical deviation analysis of EP Open Data voting records. '
+        + 'Per-MEP voting statistics from /meps/{id} may report zeros when the EP API '
+        + 'does not expose vote counts; group-level analysis reflects data availability. '
         + 'Data source: European Parliament Open Data Portal.'
     };
 

@@ -33,7 +33,10 @@ describe('generate_political_landscape Tool', () => {
     });
 
     vi.mocked(epClientModule.epClient.getPlenarySessions).mockResolvedValue({
-      data: [], total: 12, limit: 100, offset: 0, hasMore: false
+      data: Array.from({ length: 12 }, (_, i) => ({
+        id: `session-${i}`, date: '2024-03-01', title: `Session ${i}`,
+        location: 'Strasbourg', status: 'COMPLETED'
+      })), total: 12, limit: 100, offset: 0, hasMore: false
     });
   });
 

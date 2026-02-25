@@ -99,12 +99,13 @@ function computePolicyImpactRating(reportsAdopted: number, successRate: number):
 }
 
 /**
- * Safely fetch a count from the EP API, returning 0 on failure
+ * Safely fetch a count from the EP API using data.length (actual items returned),
+ * not total (which is a lower-bound estimate capped by page size).
  */
-async function safeCount(fetcher: () => Promise<{ total: number }>): Promise<number> {
+async function safeCount(fetcher: () => Promise<{ data: unknown[] }>): Promise<number> {
   try {
     const result = await fetcher();
-    return result.total;
+    return result.data.length;
   } catch {
     return 0;
   }
@@ -183,7 +184,8 @@ async function buildAnalysis(
     methodology: 'Committee activity analysis using real data from EP Open Data Portal. '
       + 'Committee membership from /corporate-bodies endpoint, documents from /committee-documents, '
       + 'procedures from /procedures, adopted texts from /adopted-texts. '
-      + 'Fields showing zero indicate data not available from the EP API for this filter. '
+      + 'Document/procedure/adopted-text counts are parliament-wide lower bounds (single page, '
+      + 'not filtered by committee). Fields showing zero indicate data not available from the EP API. '
       + 'Data source: European Parliament Open Data Portal.'
   };
 }
