@@ -2,7 +2,8 @@
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "entry": [
     "tests/**/*.test.ts",
-    "tests/e2e/mcpClient.ts"
+    "tests/e2e/mcpClient.ts",
+    "tests/helpers/testUtils.ts"
   ],
   "project": [
     "src/**/*.ts",
@@ -13,9 +14,7 @@
     "@typescript-eslint/parser",
     "typedoc-plugin-markdown"
   ],
-  "ignoreBinaries": [
-    "playwright"
-  ],
+  "ignoreBinaries": [],
   "ignore": [
     "tests/fixtures/**"
   ],

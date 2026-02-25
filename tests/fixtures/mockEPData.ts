@@ -1,12 +1,26 @@
 /**
  * Mock European Parliament API Data
  * 
- * Provides fixtures for testing without hitting real API
+ * Provides fixtures for testing without hitting real API.
+ * Extended with EP API v2 endpoints for comprehensive coverage.
  * 
  * ISMS Policy: SC-002 (Secure Testing), PE-001 (Performance Testing)
  */
 
-import type { MEP, PlenarySession, VotingRecord, LegislativeDocument, Committee, ParliamentaryQuestion } from '../../src/types/europeanParliament.js';
+import type {
+  MEP,
+  PlenarySession,
+  VotingRecord,
+  LegislativeDocument,
+  Committee,
+  ParliamentaryQuestion,
+  Speech,
+  Procedure,
+  AdoptedText,
+  EPEvent,
+  MeetingActivity,
+  MEPDeclaration,
+} from '../../src/types/europeanParliament.js';
 
 /**
  * Mock MEP data
@@ -119,6 +133,104 @@ export const mockQuestions: ParliamentaryQuestion[] = [
 ];
 
 /**
+ * Mock speech data — EP API v2 /speeches endpoint
+ */
+export const mockSpeeches: Speech[] = [
+  {
+    id: 'speech-2024-001',
+    title: 'Debate on Climate Regulation',
+    speakerId: 'mep-12345',
+    speakerName: 'Anna Andersson',
+    date: '2024-01-15',
+    type: 'DEBATE_SPEECH',
+    language: 'en',
+    text: 'We must act now to protect the environment for future generations...',
+    sessionReference: 'session-2024-01'
+  }
+];
+
+/**
+ * Mock procedure data — EP API v2 /procedures endpoint
+ */
+export const mockProcedures: Procedure[] = [
+  {
+    id: 'COD/2024/0001',
+    title: 'Regulation on Climate Neutrality Framework',
+    reference: '2024/0001(COD)',
+    type: 'COD',
+    subjectMatter: 'Environment',
+    stage: 'Awaiting Parliament position in 1st reading',
+    status: 'Ongoing',
+    dateInitiated: '2024-01-15',
+    dateLastActivity: '2024-06-10',
+    responsibleCommittee: 'ENVI',
+    rapporteur: 'Anna Andersson',
+    documents: ['doc-001']
+  }
+];
+
+/**
+ * Mock adopted text data — EP API v2 /adopted-texts endpoint
+ */
+export const mockAdoptedTexts: AdoptedText[] = [
+  {
+    id: 'adopted-2024-001',
+    title: 'Resolution on Climate Action',
+    reference: 'P9-TA(2024)0001',
+    type: 'LEGISLATIVE_RESOLUTION',
+    dateAdopted: '2024-01-15',
+    procedureReference: '2023/0001(COD)',
+    subjectMatter: 'Environment'
+  }
+];
+
+/**
+ * Mock event data — EP API v2 /events endpoint
+ */
+export const mockEvents: EPEvent[] = [
+  {
+    id: 'event-2024-001',
+    title: 'ENVI Committee Hearing on Climate',
+    type: 'COMMITTEE_HEARING',
+    date: '2024-01-20',
+    endDate: '2024-01-20',
+    location: 'Brussels',
+    organizer: 'ENVI',
+    status: 'CONFIRMED'
+  }
+];
+
+/**
+ * Mock meeting activity data — EP API v2 /meetings activities endpoint
+ */
+export const mockMeetingActivities: MeetingActivity[] = [
+  {
+    id: 'activity-2024-001',
+    type: 'VOTE',
+    title: 'Vote on Climate Amendment',
+    date: '2024-01-15',
+    order: 1,
+    reference: 'P9-CM(2024)0001',
+    responsibleBody: 'ENVI'
+  }
+];
+
+/**
+ * Mock MEP declaration data — EP API v2 /mep-declarations endpoint
+ */
+export const mockMEPDeclarations: MEPDeclaration[] = [
+  {
+    id: 'decl-2024-001',
+    mepId: 'mep-12345',
+    mepName: 'John Smith',
+    type: 'FINANCIAL_INTEREST',
+    title: 'Declaration of Financial Interests 2024',
+    dateFiled: '2024-01-10',
+    status: 'PUBLISHED'
+  }
+];
+
+/**
  * Get mock MEP by ID
  */
 export function getMockMEPById(id: string): MEP | undefined {
@@ -137,4 +249,25 @@ export function getMockMEPsByCountry(country: string): MEP[] {
  */
 export function getMockVotingRecordsBySession(sessionId: string): VotingRecord[] {
   return mockVotingRecords.filter(vote => vote.sessionId === sessionId);
+}
+
+/**
+ * Get mock speeches by MEP ID
+ */
+export function getMockSpeechesByMep(mepId: string): Speech[] {
+  return mockSpeeches.filter(s => s.speakerId === mepId);
+}
+
+/**
+ * Get mock procedures by status
+ */
+export function getMockProceduresByStatus(status: string): Procedure[] {
+  return mockProcedures.filter(p => p.status === status);
+}
+
+/**
+ * Get mock declarations by MEP ID
+ */
+export function getMockDeclarationsByMep(mepId: string): MEPDeclaration[] {
+  return mockMEPDeclarations.filter(d => d.mepId === mepId);
 }

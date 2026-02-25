@@ -18,13 +18,14 @@ export default defineConfig({
       ],
       // Updated thresholds to enforce 80%+ coverage
       // Security-critical files have 95%+ coverage (tools: 97.2%, utils: 95.45%, schemas: 100%)
-      // Line threshold set to 78.9% (current: 78.96%) due to index.ts and europeanParliamentClient.ts
-      // requiring integration tests (deferred to separate task)
+      // Line threshold set to 80% (up from 78.9%) — achievable with new test infrastructure
+      // Branch threshold set to 72% (up from 70%) — incremental improvement
+      // Function threshold set to 82% (up from 80%) — achievable with new mocked tests
       thresholds: {
-        lines: 78.9,
-        branches: 70,
-        functions: 80,
-        statements: 80
+        lines: 80,
+        branches: 72,
+        functions: 82,
+        statements: 82
       }
     },
     reporters: ['default', 'html', 'json'],
