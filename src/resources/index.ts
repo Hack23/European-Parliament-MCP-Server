@@ -397,28 +397,22 @@ async function handleProcedureDetail(procedureId: string): Promise<ResourceConte
 /**
  * Handle plenary detail resource request (extended URI: ep://plenary/{id})
  *
- * Fetches recent plenary sessions and filters by the requested session ID.
- * Falls back to the first available session when no match is found.
+ * Uses {@link EuropeanParliamentClient#getMeetingById} for a direct ID-based
+ * lookup. Throws a not-found error if the EP API returns no matching session.
  *
- * @param plenaryId - Plenary session identifier
+ * @param plenaryId - Plenary session / meeting identifier
  * @returns Resource content with plenary session details as JSON
  */
 async function handlePlenaryDetail(plenaryId: string): Promise<ResourceContent> {
   const validId = ResourceIdSchema.parse(plenaryId);
-  const data = await epClient.getPlenarySessions({ limit: 50 });
-
-  // Try to isolate the requested session from the returned list
-  const sessions = Array.isArray(data.data) ? data.data : [];
-  const session = sessions.find(
-    (s) => (s as { id?: string }).id === validId
-  ) ?? sessions[0];
+  const session = await epClient.getMeetingById(validId);
 
   return {
     uri: `ep://plenary/${validId}`,
     mimeType: 'application/json',
     text: JSON.stringify({
       plenaryId: validId,
-      session: session ?? null,
+      session,
       _source: 'European Parliament Open Data Portal',
       _accessedAt: new Date().toISOString()
     }, null, 2)
@@ -508,13 +502,13 @@ export async function handleReadResource(uri: string): Promise<ResourceReadResul
       content = await handlePoliticalGroups();
       break;
     case 'procedure_detail':
-      content = await handleProcedureDetail(requireParam(params, 'procedureId', 'ep://procedures/{id}'));
+      content = await handleProcedureDetail(requireParam(params, 'procedureId', 'ep://procedures/{procedureId}'));
       break;
     case 'plenary_detail':
-      content = await handlePlenaryDetail(requireParam(params, 'plenaryId', 'ep://plenary/{id}'));
+      content = await handlePlenaryDetail(requireParam(params, 'plenaryId', 'ep://plenary/{plenaryId}'));
       break;
     case 'document_detail':
-      content = await handleDocumentDetail(requireParam(params, 'documentId', 'ep://documents/{id}'));
+      content = await handleDocumentDetail(requireParam(params, 'documentId', 'ep://documents/{documentId}'));
       break;
     default:
       throw new Error(`Unhandled resource template: ${template}`);

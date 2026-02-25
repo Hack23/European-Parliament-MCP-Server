@@ -25,7 +25,7 @@
  * auto-complete; raw `string` is accepted for backward compatibility and
  * for ad-hoc metrics outside the standard set.
  */
-export type MetricKey = MetricName | string;
+export type MetricKey = MetricName | (string & {});
 
 export enum MetricName {
   /** Total MCP tool call invocations (label: `tool`) */

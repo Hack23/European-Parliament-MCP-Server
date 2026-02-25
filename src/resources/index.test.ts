@@ -51,6 +51,11 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
       title: 'Test Procedure',
       status: 'in progress'
     }),
+    getMeetingById: vi.fn().mockResolvedValue({
+      id: 'session-1',
+      date: '2024-01-15',
+      location: 'Strasbourg'
+    }),
     getDocumentById: vi.fn().mockResolvedValue({
       id: 'A-9-2024-0001',
       title: 'Test Document',
@@ -257,6 +262,7 @@ describe('MCP Resources', () => {
       expect(result.contents[0]?.uri).toBe('ep://plenary/session-1');
       const data = JSON.parse(result.contents[0]?.text ?? '{}');
       expect(data.plenaryId).toBe('session-1');
+      expect(data.session).toBeDefined();
       expect(data._source).toBe('European Parliament Open Data Portal');
     });
 

@@ -174,6 +174,7 @@ export class AuditLogger {
     // Persist via the existing internal log path so getLogs() captures it.
     // Tool-call data is nested under the 'tool' key to prevent user-controlled
     // param keys from colliding with reserved log schema fields.
+    // this.log() already emits the structured entry to stderr via console.error.
     this.log({
       action: event.action,
       params: { tool: { name: toolName, params } },
@@ -183,9 +184,6 @@ export class AuditLogger {
       },
       ...(duration !== undefined && { duration }),
     });
-
-    // Emit the richer structured event to stderr as well
-    console.error('[AUDIT:TOOL]', JSON.stringify(event));
   }
 
   /**
