@@ -11,14 +11,3 @@ export interface ToolResult {
   content: { type: 'text'; text: string }[];
   isError?: boolean;
 }
-
-/**
- * Structured error payload for tool error responses
- */
-export interface ToolError {
-  error: string;
-  toolName: string;
-  dataAvailable?: boolean;
-  confidenceLevel?: 'LOW' | 'MEDIUM' | 'HIGH';
-  message?: string;
-}
