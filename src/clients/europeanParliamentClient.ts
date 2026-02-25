@@ -74,14 +74,16 @@ import {
   type EPSharedResources,
 } from './ep/baseClient.js';
 
-import { MEPClient } from './ep/mepClient.js';
-import { PlenaryClient } from './ep/plenaryClient.js';
-import { VotingClient } from './ep/votingClient.js';
-import { CommitteeClient } from './ep/committeeClient.js';
-import { DocumentClient } from './ep/documentClient.js';
-import { LegislativeClient } from './ep/legislativeClient.js';
-import { QuestionClient } from './ep/questionClient.js';
-import { VocabularyClient } from './ep/vocabularyClient.js';
+import {
+  MEPClient,
+  PlenaryClient,
+  VotingClient,
+  CommitteeClient,
+  DocumentClient,
+  LegislativeClient,
+  QuestionClient,
+  VocabularyClient,
+} from './ep/index.js';
 
 // ─── Facade ───────────────────────────────────────────────────────────────────
 
