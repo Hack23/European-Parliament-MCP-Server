@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../README.md)
+[**European Parliament MCP Server API v0.8.0**](../README.md)
 
 ***
 
@@ -75,9 +75,33 @@ Re-exports [createMEPID](branded/functions/createMEPID.md)
 
 ***
 
+### createProcedureID
+
+Re-exports [createProcedureID](ep/branded/functions/createProcedureID.md)
+
+***
+
 ### createSessionID
 
 Re-exports [createSessionID](branded/functions/createSessionID.md)
+
+***
+
+### createSittingID
+
+Re-exports [createSittingID](ep/branded/functions/createSittingID.md)
+
+***
+
+### createSpeechID
+
+Re-exports [createSpeechID](ep/branded/functions/createSpeechID.md)
+
+***
+
+### createVocabularyID
+
+Re-exports [createVocabularyID](ep/branded/functions/createVocabularyID.md)
 
 ***
 
@@ -141,9 +165,33 @@ Re-exports [isMEPID](branded/functions/isMEPID.md)
 
 ***
 
+### isProcedureID
+
+Re-exports [isProcedureID](ep/branded/functions/isProcedureID.md)
+
+***
+
 ### isSessionID
 
 Re-exports [isSessionID](branded/functions/isSessionID.md)
+
+***
+
+### isSittingID
+
+Re-exports [isSittingID](ep/branded/functions/isSittingID.md)
+
+***
+
+### isSpeechID
+
+Re-exports [isSpeechID](ep/branded/functions/isSpeechID.md)
+
+***
+
+### isVocabularyID
+
+Re-exports [isVocabularyID](ep/branded/functions/isVocabularyID.md)
 
 ***
 
@@ -159,6 +207,12 @@ Re-exports [MEPID](branded/type-aliases/MEPID.md)
 
 ***
 
+### ProcedureID
+
+Re-exports [ProcedureID](ep/branded/type-aliases/ProcedureID.md)
+
+***
+
 ### RateLimitError
 
 Re-exports [RateLimitError](errors/classes/RateLimitError.md)
@@ -171,6 +225,24 @@ Re-exports [SessionID](branded/type-aliases/SessionID.md)
 
 ***
 
+### SittingID
+
+Re-exports [SittingID](ep/branded/type-aliases/SittingID.md)
+
+***
+
+### SpeechID
+
+Re-exports [SpeechID](ep/branded/type-aliases/SpeechID.md)
+
+***
+
 ### ValidationError
 
 Re-exports [ValidationError](errors/classes/ValidationError.md)
+
+***
+
+### VocabularyID
+
+Re-exports [VocabularyID](ep/branded/type-aliases/VocabularyID.md)

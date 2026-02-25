@@ -1,16 +1,26 @@
-[**European Parliament MCP Server API v0.7.3**](README.md)
+[**European Parliament MCP Server API v0.8.0**](README.md)
 
 ***
 
-# European Parliament MCP Server API v0.7.3
+# European Parliament MCP Server API v0.8.0
 
 ## Modules
 
 - [clients/ep](clients/ep/README.md)
+- [clients/ep/baseClient](clients/ep/baseClient/README.md)
+- [clients/ep/committeeClient](clients/ep/committeeClient/README.md)
+- [clients/ep/documentClient](clients/ep/documentClient/README.md)
 - [clients/ep/jsonLdHelpers](clients/ep/jsonLdHelpers/README.md)
+- [clients/ep/legislativeClient](clients/ep/legislativeClient/README.md)
+- [clients/ep/mepClient](clients/ep/mepClient/README.md)
+- [clients/ep/plenaryClient](clients/ep/plenaryClient/README.md)
+- [clients/ep/questionClient](clients/ep/questionClient/README.md)
 - [clients/ep/transformers](clients/ep/transformers/README.md)
+- [clients/ep/vocabularyClient](clients/ep/vocabularyClient/README.md)
+- [clients/ep/votingClient](clients/ep/votingClient/README.md)
 - [clients/europeanParliamentClient](clients/europeanParliamentClient/README.md)
 - [di/container](di/container/README.md)
+- [di/tokens](di/tokens/README.md)
 - [europeanParliament](europeanParliament/README.md)
 - [index](index/README.md)
 - [prompts](prompts/README.md)
@@ -27,6 +37,8 @@
 - [schemas/europeanParliament](schemas/europeanParliament/README.md)
 - [server/cli](server/cli/README.md)
 - [server/toolRegistry](server/toolRegistry/README.md)
+- [server/types](server/types/README.md)
+- [services/HealthService](services/HealthService/README.md)
 - [services/MetricsService](services/MetricsService/README.md)
 - [tools/analyzeCoalitionDynamics](tools/analyzeCoalitionDynamics/README.md)
 - [tools/analyzeCommitteeActivity](tools/analyzeCommitteeActivity/README.md)
@@ -69,6 +81,9 @@
 - [tools/getVotingRecords](tools/getVotingRecords/README.md)
 - [tools/monitorLegislativePipeline](tools/monitorLegislativePipeline/README.md)
 - [tools/searchDocuments](tools/searchDocuments/README.md)
+- [tools/shared/errorHandler](tools/shared/errorHandler/README.md)
+- [tools/shared/responseBuilder](tools/shared/responseBuilder/README.md)
+- [tools/shared/types](tools/shared/types/README.md)
 - [tools/trackLegislation](tools/trackLegislation/README.md)
 - [tools/trackLegislation](tools/trackLegislation/README-1.md)
 - [tools/trackLegislation/procedureTracker](tools/trackLegislation/procedureTracker/README.md)
@@ -77,6 +92,7 @@
 - [types](types/README.md)
 - [types/branded](types/branded/README.md)
 - [types/ep/activities](types/ep/activities/README.md)
+- [types/ep/branded](types/ep/branded/README.md)
 - [types/ep/committee](types/ep/committee/README.md)
 - [types/ep/common](types/ep/common/README.md)
 - [types/ep/document](types/ep/document/README.md)

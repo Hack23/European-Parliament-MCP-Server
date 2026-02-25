@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../README.md)
 
 ***
 
@@ -9,6 +9,14 @@
 ## Classes
 
 - [RateLimiter](classes/RateLimiter.md)
+
+## Interfaces
+
+- [RateLimiterStatus](interfaces/RateLimiterStatus.md)
+
+## Type Aliases
+
+- [RateLimiterConfig](type-aliases/RateLimiterConfig.md)
 
 ## Functions
 

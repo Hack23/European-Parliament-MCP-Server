@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../README.md)
 
 ***
 
@@ -8,14 +8,95 @@
 
 European Parliament API client internal modules.
 
+- **baseClient** – shared HTTP, caching, rate limiting, and retry infrastructure
+- **mepClient** – MEP-related API calls
+- **plenaryClient** – plenary sessions, meetings, and activities
+- **votingClient** – voting records and speeches
+- **committeeClient** – committee/corporate-body information
+- **documentClient** – documents and search
+- **legislativeClient** – procedures and adopted texts
+- **questionClient** – parliamentary questions
+- **vocabularyClient** – controlled vocabularies
 - **jsonLdHelpers** – pure JSON-LD parsing and extraction functions
 - **transformers** – pure data transformation functions (API → domain types)
 
 ## References
 
+### APIError
+
+Re-exports [APIError](baseClient/classes/APIError.md)
+
+***
+
+### BaseEPClient
+
+Re-exports [BaseEPClient](baseClient/classes/BaseEPClient.md)
+
+***
+
+### CommitteeClient
+
+Re-exports [CommitteeClient](committeeClient/classes/CommitteeClient.md)
+
+***
+
+### DEFAULT\_CACHE\_TTL\_MS
+
+Re-exports [DEFAULT_CACHE_TTL_MS](baseClient/variables/DEFAULT_CACHE_TTL_MS.md)
+
+***
+
+### DEFAULT\_EP\_API\_BASE\_URL
+
+Re-exports [DEFAULT_EP_API_BASE_URL](baseClient/variables/DEFAULT_EP_API_BASE_URL.md)
+
+***
+
+### DEFAULT\_MAX\_CACHE\_SIZE
+
+Re-exports [DEFAULT_MAX_CACHE_SIZE](baseClient/variables/DEFAULT_MAX_CACHE_SIZE.md)
+
+***
+
+### DEFAULT\_MAX\_RETRIES
+
+Re-exports [DEFAULT_MAX_RETRIES](baseClient/variables/DEFAULT_MAX_RETRIES.md)
+
+***
+
+### DEFAULT\_RATE\_LIMIT\_INTERVAL
+
+Re-exports [DEFAULT_RATE_LIMIT_INTERVAL](baseClient/variables/DEFAULT_RATE_LIMIT_INTERVAL.md)
+
+***
+
+### DEFAULT\_RATE\_LIMIT\_TOKENS
+
+Re-exports [DEFAULT_RATE_LIMIT_TOKENS](baseClient/variables/DEFAULT_RATE_LIMIT_TOKENS.md)
+
+***
+
+### DEFAULT\_REQUEST\_TIMEOUT\_MS
+
+Re-exports [DEFAULT_REQUEST_TIMEOUT_MS](baseClient/variables/DEFAULT_REQUEST_TIMEOUT_MS.md)
+
+***
+
+### DEFAULT\_RETRY\_ENABLED
+
+Re-exports [DEFAULT_RETRY_ENABLED](baseClient/variables/DEFAULT_RETRY_ENABLED.md)
+
+***
+
 ### determineVoteOutcome
 
 Re-exports [determineVoteOutcome](jsonLdHelpers/functions/determineVoteOutcome.md)
+
+***
+
+### DocumentClient
+
+Re-exports [DocumentClient](documentClient/classes/DocumentClient.md)
 
 ***
 
@@ -85,6 +166,12 @@ Re-exports [firstDefined](jsonLdHelpers/functions/firstDefined.md)
 
 ***
 
+### LegislativeClient
+
+Re-exports [LegislativeClient](legislativeClient/classes/LegislativeClient.md)
+
+***
+
 ### mapDocumentStatus
 
 Re-exports [mapDocumentStatus](jsonLdHelpers/functions/mapDocumentStatus.md)
@@ -100,6 +187,24 @@ Re-exports [mapDocumentType](jsonLdHelpers/functions/mapDocumentType.md)
 ### mapQuestionType
 
 Re-exports [mapQuestionType](jsonLdHelpers/functions/mapQuestionType.md)
+
+***
+
+### MEPClient
+
+Re-exports [MEPClient](mepClient/classes/MEPClient.md)
+
+***
+
+### PlenaryClient
+
+Re-exports [PlenaryClient](plenaryClient/classes/PlenaryClient.md)
+
+***
+
+### QuestionClient
+
+Re-exports [QuestionClient](questionClient/classes/QuestionClient.md)
 
 ***
 
@@ -184,3 +289,15 @@ Re-exports [transformSpeech](transformers/functions/transformSpeech.md)
 ### transformVoteResult
 
 Re-exports [transformVoteResult](transformers/functions/transformVoteResult.md)
+
+***
+
+### VocabularyClient
+
+Re-exports [VocabularyClient](vocabularyClient/classes/VocabularyClient.md)
+
+***
+
+### VotingClient
+
+Re-exports [VotingClient](votingClient/classes/VotingClient.md)

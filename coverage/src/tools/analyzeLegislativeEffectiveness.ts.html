@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">82.14% </span>
+                <span class="strong">85.71% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>23/28</span>
+                <span class='fraction'>24/28</span>
             </div>
         
             
@@ -325,7 +325,9 @@
 <a name='L260'></a><a href='#L260'>260</a>
 <a name='L261'></a><a href='#L261'>261</a>
 <a name='L262'></a><a href='#L262'>262</a>
-<a name='L263'></a><a href='#L263'>263</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -378,14 +380,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -394,7 +388,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -602,6 +606,8 @@
 &nbsp;
 import { AnalyzeLegislativeEffectivenessSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 &nbsp;
 interface LegislativeMetrics {
   reportsAuthored: number;
@@ -754,9 +760,9 @@ async function fetchCommitteeSubjectData(subjectId: string): Promise&lt;{
     subjectName: committee.name,
     committeeCount: 1,
     roles: [],
-    totalVotes: 500,
-    votesFor: 350,
-    attendanceRate: 82
+    totalVotes: 0, // Voting statistics not available from EP API committee endpoints
+    votesFor: 0,
+    attendanceRate: 0
   };
 }
 &nbsp;
@@ -765,7 +771,7 @@ async function fetchCommitteeSubjectData(subjectId: string): Promise&lt;{
  */
 export async function handleAnalyzeLegislativeEffectiveness(
   args: unknown
-): Promise&lt;{ content: { type: string; text: string }[] }&gt; {
+): Promise&lt;ToolResult&gt; {
   const params = AnalyzeLegislativeEffectivenessSchema.parse(args);
 &nbsp;
   try {
@@ -798,7 +804,7 @@ export async function handleAnalyzeLegislativeEffectiveness(
         amendmentSuccessRate: metrics.legislativeSuccessRate,
         legislativeOutputPerMonth: outputPerMonth,
         avgImpactPerReport: avgImpact,
-        questionFollowUpRate: Math.round(metrics.questionsAsked &gt; 0 ? 65 + (metrics.questionsAsked % 20) : <span class="branch-1 cbranch-no" title="branch not covered" >0)</span>,
+        questionFollowUpRate: Math.round(metrics.questionsAsked &gt; 0 ? 65 + (metrics.questionsAsked % 20) : 0),
         committeeCoverageRate: Math.min(100, Math.round((subjectData.committeeCount / 5) * 100 * 100) / 100),
         peerComparisonPercentile: percentile,
         effectivenessRank: classifyEffectivenessRank(scores.overallEffectiveness)
@@ -808,7 +814,7 @@ export async function handleAnalyzeLegislativeEffectiveness(
       methodology: 'Multi-factor legislative effectiveness scoring with peer benchmarking'
     };
 &nbsp;
-    return { content: [{ type: 'text', text: JSON.stringify(analysis, null, 2) }] };
+    return buildToolResponse(analysis);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : <span class="branch-1 cbranch-no" title="branch not covered" >'Unknown error';</span>
     throw new Error(`Failed to analyze legislative effectiveness: ${errorMessage}`);
@@ -856,7 +862,7 @@ export const analyzeLegislativeEffectivenessToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-25T10:40:50.056Z
+                at 2026-02-25T19:32:42.687Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

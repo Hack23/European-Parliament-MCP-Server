@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Model Context Protocol Server for European Parliament Open Data</strong><br>
-  <em>C4 Architecture Documentation — 39 Tools, 6 Resources, 6 Prompts</em>
+  <em>C4 Architecture Documentation — 39 Tools, 9 Resources, 7 Prompts</em>
 </p>
 
 <p align="center">
@@ -85,7 +85,7 @@ C4Context
     Person(aiClient, "AI/LLM Client", "Claude Desktop, Copilot, or any MCP-compatible AI assistant consuming parliamentary data")
     Person(developer, "Developer", "Integrates MCP server into applications, configures tools and resources")
 
-    System(mcpServer, "European Parliament MCP Server", "TypeScript/Node.js MCP server exposing 39 tools, 6 resources, 6 prompts for EP open data access and OSINT intelligence analysis")
+    System(mcpServer, "European Parliament MCP Server", "TypeScript/Node.js MCP server exposing 39 tools, 9 resources, 7 prompts for EP open data access and OSINT intelligence analysis")
 
     System_Ext(epApi, "European Parliament Open Data Portal", "REST API v2 at data.europarl.europa.eu providing MEPs, plenary sessions, committees, votes, documents, speeches")
     System_Ext(npmRegistry, "npm Registry", "Package distribution for european-parliament-mcp-server")

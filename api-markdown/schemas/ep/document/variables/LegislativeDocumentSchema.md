@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **LegislativeDocumentSchema**: `ZodObject`\<\{ `authors`: `ZodArray`\<`ZodString`\>; `committee`: `ZodOptional`\<`ZodString`\>; `date`: `ZodString`; `id`: `ZodString`; `pdfUrl`: `ZodOptional`\<`ZodString`\>; `status`: `ZodEnum`\<\{ `ADOPTED`: `"ADOPTED"`; `DRAFT`: `"DRAFT"`; `IN_COMMITTEE`: `"IN_COMMITTEE"`; `PLENARY`: `"PLENARY"`; `REJECTED`: `"REJECTED"`; `SUBMITTED`: `"SUBMITTED"`; \}\>; `summary`: `ZodOptional`\<`ZodString`\>; `title`: `ZodString`; `type`: `ZodEnum`\<\{ `AMENDMENT`: `"AMENDMENT"`; `DECISION`: `"DECISION"`; `DIRECTIVE`: `"DIRECTIVE"`; `OPINION`: `"OPINION"`; `REGULATION`: `"REGULATION"`; `REPORT`: `"REPORT"`; `RESOLUTION`: `"RESOLUTION"`; \}\>; `xmlUrl`: `ZodOptional`\<`ZodString`\>; \}, `$strip`\>
 
-Defined in: [schemas/ep/document.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/schemas/ep/document.ts#L65)
+Defined in: [schemas/ep/document.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/schemas/ep/document.ts#L65)
 
 Legislative document output schema

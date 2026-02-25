@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../README.md)
 
 ***
 
@@ -6,9 +6,18 @@
 
 # utils/auditLogger
 
+## Enumerations
+
+- [LogLevel](enumerations/LogLevel.md)
+
 ## Classes
 
 - [AuditLogger](classes/AuditLogger.md)
+
+## Interfaces
+
+- [AuditEvent](interfaces/AuditEvent.md)
+- [AuditLogEntry](interfaces/AuditLogEntry.md)
 
 ## Variables
 

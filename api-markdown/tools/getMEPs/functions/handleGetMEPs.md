@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../README.md)
 
 ***
 
@@ -6,9 +6,9 @@
 
 # Function: handleGetMEPs()
 
-> **handleGetMEPs**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+> **handleGetMEPs**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getMEPs.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/tools/getMEPs.ts#L46)
+Defined in: [tools/getMEPs.ts:48](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/tools/getMEPs.ts#L48)
 
 Get MEPs tool handler
 
@@ -33,7 +33,7 @@ Tool arguments
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result with MEP data
 

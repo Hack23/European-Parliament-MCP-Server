@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **performanceMonitor**: [`PerformanceMonitor`](../classes/PerformanceMonitor.md)
 
-Defined in: [utils/performance.ts:302](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/utils/performance.ts#L302)
+Defined in: [utils/performance.ts:327](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/performance.ts#L327)
 
 Global performance monitor instance
 

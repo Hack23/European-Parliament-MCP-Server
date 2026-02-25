@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: Speech
 
-Defined in: [types/ep/activities.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L35)
+Defined in: [types/ep/activities.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L35)
 
 European Parliament Speech or speech-related activity.
 
@@ -40,7 +40,7 @@ https://data.europarl.europa.eu/api/v2/speeches
 
 > **date**: `string`
 
-Defined in: [types/ep/activities.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L53)
+Defined in: [types/ep/activities.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L53)
 
 Date of the speech in ISO 8601 format.
 
@@ -56,7 +56,7 @@ Date of the speech in ISO 8601 format.
 
 > **id**: `string`
 
-Defined in: [types/ep/activities.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L37)
+Defined in: [types/ep/activities.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L37)
 
 Unique speech identifier from EP API.
 
@@ -72,7 +72,7 @@ Unique speech identifier from EP API.
 
 > **language**: `string`
 
-Defined in: [types/ep/activities.ts:57](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L57)
+Defined in: [types/ep/activities.ts:57](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L57)
 
 Language of the speech.
 
@@ -88,7 +88,7 @@ Language of the speech.
 
 > **sessionReference**: `string`
 
-Defined in: [types/ep/activities.ts:61](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L61)
+Defined in: [types/ep/activities.ts:61](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L61)
 
 Reference to the plenary session or meeting.
 
@@ -104,7 +104,7 @@ Reference to the plenary session or meeting.
 
 > **speakerId**: `string`
 
-Defined in: [types/ep/activities.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L45)
+Defined in: [types/ep/activities.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L45)
 
 MEP or speaker identifier.
 
@@ -124,7 +124,7 @@ Personal data - MEP identifier requires audit logging per ISMS AU-002
 
 > **speakerName**: `string`
 
-Defined in: [types/ep/activities.ts:51](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L51)
+Defined in: [types/ep/activities.ts:51](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L51)
 
 Speaker name.
 
@@ -144,7 +144,7 @@ Personal data - name requires audit logging per ISMS AU-002
 
 > **text**: `string`
 
-Defined in: [types/ep/activities.ts:59](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L59)
+Defined in: [types/ep/activities.ts:59](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L59)
 
 Speech text content or summary (if available).
 
@@ -154,7 +154,7 @@ Speech text content or summary (if available).
 
 > **title**: `string`
 
-Defined in: [types/ep/activities.ts:39](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L39)
+Defined in: [types/ep/activities.ts:39](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L39)
 
 Speech title or topic heading.
 
@@ -170,7 +170,7 @@ Speech title or topic heading.
 
 > **type**: `string`
 
-Defined in: [types/ep/activities.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L55)
+Defined in: [types/ep/activities.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L55)
 
 Type of speech activity.
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../README.md)
 
 ***
 
@@ -9,3 +9,19 @@
 ## Classes
 
 - [DIContainer](classes/DIContainer.md)
+
+## Functions
+
+- [createDefaultContainer](functions/createDefaultContainer.md)
+
+## References
+
+### DIToken
+
+Re-exports [DIToken](../tokens/type-aliases/DIToken.md)
+
+***
+
+### TOKENS
+
+Re-exports [TOKENS](../tokens/variables/TOKENS.md)

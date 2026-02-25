@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: ReportSection
 
-Defined in: [tools/generateReport/types.ts:27](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/tools/generateReport/types.ts#L27)
+Defined in: [tools/generateReport/types.ts:27](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/tools/generateReport/types.ts#L27)
 
 Report section structure
 
@@ -16,7 +16,7 @@ Report section structure
 
 > **content**: `string`
 
-Defined in: [tools/generateReport/types.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/tools/generateReport/types.ts#L29)
+Defined in: [tools/generateReport/types.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/tools/generateReport/types.ts#L29)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [tools/generateReport/types.ts:29](https://github.com/Hack23/Europea
 
 > **title**: `string`
 
-Defined in: [tools/generateReport/types.ts:28](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/tools/generateReport/types.ts#L28)
+Defined in: [tools/generateReport/types.ts:28](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/tools/generateReport/types.ts#L28)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [tools/generateReport/types.ts:28](https://github.com/Hack23/Europea
 
 > `optional` **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
-Defined in: [tools/generateReport/types.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/tools/generateReport/types.ts#L30)
+Defined in: [tools/generateReport/types.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/tools/generateReport/types.ts#L30)
