@@ -101,7 +101,12 @@ export class PlenaryClient extends BaseEPClient {
     try {
       const apiParams = this.buildMeetingsAPIParams(params);
       const response = await this.get<JSONLDResponse>('meetings', apiParams);
-      const sessions = response.data.map((item) => this.transformPlenarySession(item));
+      let sessions = response.data.map((item) => this.transformPlenarySession(item));
+
+      if (params.location !== undefined && params.location !== '') {
+        const locationLower = params.location.toLowerCase();
+        sessions = sessions.filter((s) => s.location.toLowerCase().includes(locationLower));
+      }
 
       const result: PaginatedResponse<PlenarySession> = {
         data: sessions,

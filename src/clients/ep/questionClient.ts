@@ -73,7 +73,7 @@ export class QuestionClient extends BaseEPClient {
    */
   private filterQuestions(
     questions: ParliamentaryQuestion[],
-    params: { author?: string; topic?: string; status?: 'PENDING' | 'ANSWERED' }
+    params: { author?: string; topic?: string; status?: 'PENDING' | 'ANSWERED'; dateTo?: string }
   ): ParliamentaryQuestion[] {
     let filtered = questions;
     if (params.author !== undefined && params.author !== '') {
@@ -90,6 +90,10 @@ export class QuestionClient extends BaseEPClient {
     }
     if (params.status !== undefined) {
       filtered = filtered.filter((q) => q.status === params.status);
+    }
+    if (params.dateTo !== undefined && params.dateTo !== '') {
+      const dateTo = params.dateTo;
+      filtered = filtered.filter((q) => q.date <= dateTo);
     }
     return filtered;
   }

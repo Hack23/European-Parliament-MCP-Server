@@ -140,17 +140,16 @@ export class VotingClient extends BaseEPClient {
   // ─── Public methods ───────────────────────────────────────────────────────
 
   /**
-   * Retrieves voting records with filtering by session, MEP, topic, and date.
+   * Retrieves voting records with filtering by session, topic, and date.
    *
    * **EP API Endpoint:** `GET /meetings/{sitting-id}/vote-results`
    *
-   * @param params - sessionId, mepId, topic, dateFrom, dateTo, limit, offset
+   * @param params - sessionId, topic, dateFrom, dateTo, limit, offset
    * @returns Paginated voting records list
    * @security Audit logged per GDPR Article 30
    */
   async getVotingRecords(params: {
     sessionId?: string;
-    mepId?: string;
     topic?: string;
     dateFrom?: string;
     dateTo?: string;

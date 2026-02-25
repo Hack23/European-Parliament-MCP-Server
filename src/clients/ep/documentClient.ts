@@ -127,18 +127,26 @@ export class DocumentClient extends BaseEPClient {
   }): Promise<PaginatedResponse<LegislativeDocument>> {
     const action = 'search_documents';
     try {
+      if (params.keyword.trim() === '') {
+        throw new APIError('keyword is required and must not be empty', 400);
+      }
+      const requestedLimit = params.limit ?? 20;
+      const currentOffset = params.offset ?? 0;
+
       const apiParams = this.buildDocumentSearchParams(params);
       const response = await this.get<JSONLDResponse>('documents', apiParams);
+      const pageSize = response.data.length;
 
       let documents = response.data.map((item) => this.transformDocument(item));
       documents = this.filterDocuments(documents, params);
 
       const result: PaginatedResponse<LegislativeDocument> = {
         data: documents,
-        total: (params.offset ?? 0) + documents.length,
-        limit: params.limit ?? 20,
-        offset: params.offset ?? 0,
-        hasMore: documents.length >= (params.limit ?? 20),
+        // total/hasMore based on unfiltered server page to account for client-side filters
+        total: currentOffset + pageSize,
+        limit: requestedLimit,
+        offset: currentOffset,
+        hasMore: pageSize === requestedLimit,
       };
 
       auditLogger.logDataAccess(action, params, result.data.length);
