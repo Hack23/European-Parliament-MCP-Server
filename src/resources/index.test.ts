@@ -45,6 +45,21 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
       limit: 50,
       offset: 0,
       hasMore: false
+    }),
+    getProcedureById: vi.fn().mockResolvedValue({
+      id: '2024-0006',
+      title: 'Test Procedure',
+      status: 'in progress'
+    }),
+    getMeetingById: vi.fn().mockResolvedValue({
+      id: 'session-1',
+      date: '2024-01-15',
+      location: 'Strasbourg'
+    }),
+    getDocumentById: vi.fn().mockResolvedValue({
+      id: 'A-9-2024-0001',
+      title: 'Test Document',
+      type: 'REPORT'
     })
   }
 }));
@@ -60,7 +75,7 @@ describe('MCP Resources', () => {
 
       expect(templates).toBeDefined();
       expect(Array.isArray(templates)).toBe(true);
-      expect(templates.length).toBe(6);
+      expect(templates.length).toBe(9);
     });
 
     it('should have required metadata fields', () => {
@@ -85,6 +100,9 @@ describe('MCP Resources', () => {
       expect(uris).toContain('ep://plenary-sessions');
       expect(uris).toContain('ep://votes/{sessionId}');
       expect(uris).toContain('ep://political-groups');
+      expect(uris).toContain('ep://procedures/{procedureId}');
+      expect(uris).toContain('ep://plenary/{plenaryId}');
+      expect(uris).toContain('ep://documents/{documentId}');
     });
   });
 
@@ -126,6 +144,27 @@ describe('MCP Resources', () => {
       const result = parseResourceUri('ep://political-groups');
 
       expect(result.template).toBe('political_groups');
+    });
+
+    it('should parse procedure detail URI', () => {
+      const result = parseResourceUri('ep://procedures/2024-0006');
+
+      expect(result.template).toBe('procedure_detail');
+      expect(result.params['procedureId']).toBe('2024-0006');
+    });
+
+    it('should parse plenary detail URI', () => {
+      const result = parseResourceUri('ep://plenary/session-42');
+
+      expect(result.template).toBe('plenary_detail');
+      expect(result.params['plenaryId']).toBe('session-42');
+    });
+
+    it('should parse document detail URI', () => {
+      const result = parseResourceUri('ep://documents/A-9-2024-0001');
+
+      expect(result.template).toBe('document_detail');
+      expect(result.params['documentId']).toBe('A-9-2024-0001');
     });
 
     it('should throw for invalid scheme', () => {
@@ -203,6 +242,43 @@ describe('MCP Resources', () => {
 
     it('should validate MEP ID input', async () => {
       await expect(handleReadResource('ep://meps/')).rejects.toThrow();
+    });
+
+    it('should read procedure detail resource', async () => {
+      const result = await handleReadResource('ep://procedures/2024-0006');
+
+      expect(result.contents).toHaveLength(1);
+      expect(result.contents[0]?.uri).toBe('ep://procedures/2024-0006');
+      expect(result.contents[0]?.mimeType).toBe('application/json');
+      const data = JSON.parse(result.contents[0]?.text ?? '{}');
+      expect(data._source).toBe('European Parliament Open Data Portal');
+      expect(data.id).toBe('2024-0006');
+    });
+
+    it('should read plenary detail resource', async () => {
+      const result = await handleReadResource('ep://plenary/session-1');
+
+      expect(result.contents).toHaveLength(1);
+      expect(result.contents[0]?.uri).toBe('ep://plenary/session-1');
+      const data = JSON.parse(result.contents[0]?.text ?? '{}');
+      expect(data.plenaryId).toBe('session-1');
+      expect(data.session).toBeDefined();
+      expect(data._source).toBe('European Parliament Open Data Portal');
+    });
+
+    it('should read document detail resource', async () => {
+      const result = await handleReadResource('ep://documents/A-9-2024-0001');
+
+      expect(result.contents).toHaveLength(1);
+      expect(result.contents[0]?.uri).toBe('ep://documents/A-9-2024-0001');
+      const data = JSON.parse(result.contents[0]?.text ?? '{}');
+      expect(data._source).toBe('European Parliament Open Data Portal');
+      expect(data.id).toBe('A-9-2024-0001');
+    });
+
+    it('should reject procedure IDs that do not match YYYY-NNNN format', async () => {
+      await expect(handleReadResource('ep://procedures/COD/2024/0001')).rejects.toThrow();
+      await expect(handleReadResource('ep://procedures/invalid')).rejects.toThrow();
     });
   });
 });

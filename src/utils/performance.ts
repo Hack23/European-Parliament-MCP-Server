@@ -42,6 +42,31 @@ export interface PerformanceStats {
 }
 
 /**
+ * Warning thresholds for performance alerting.
+ *
+ * Operations that exceed these thresholds should be flagged for
+ * review in dashboards or log-based alerting rules.
+ */
+export interface PerformanceThresholds {
+  /** Warn when p95 exceeds this value (milliseconds) */
+  p95WarningMs: number;
+  /** Warn when p99 exceeds this value (milliseconds) */
+  p99WarningMs: number;
+  /** Warn when average exceeds this value (milliseconds) */
+  avgWarningMs?: number;
+}
+
+/**
+ * Default performance thresholds aligned with the ISMS PE-001 standard
+ * (target: p95 < 200 ms for cached operations).
+ */
+export const DEFAULT_PERFORMANCE_THRESHOLDS: PerformanceThresholds = {
+  p95WarningMs: 200,
+  p99WarningMs: 500,
+  avgWarningMs: 150,
+} as const;
+
+/**
  * Performance monitor for tracking operation metrics
  * 
  * Tracks duration of operations and provides statistical analysis.

@@ -17,10 +17,54 @@
  */
 
 /**
- * Audit log entry structure
- * @internal - Used only within AuditLogger implementation
+ * Typed log levels for structured audit events.
+ *
+ * | Level   | Use case |
+ * |---------|----------|
+ * | `DEBUG` | Verbose trace information (dev only) |
+ * | `INFO`  | Normal data-access events |
+ * | `WARN`  | Recoverable anomalies |
+ * | `ERROR` | Failed operations |
  */
-interface AuditLogEntry {
+export enum LogLevel {
+  DEBUG = 'DEBUG',
+  INFO = 'INFO',
+  WARN = 'WARN',
+  ERROR = 'ERROR',
+}
+
+/**
+ * Structured audit event used for MCP tool call tracking.
+ *
+ * Designed to be serialised to JSON for append-only log sinks
+ * (CloudWatch, Elasticsearch, etc.).
+ */
+export interface AuditEvent {
+  /** Severity level of the event */
+  level: LogLevel;
+  /** ISO-8601 timestamp */
+  timestamp: string;
+  /** Action / tool name */
+  action: string;
+  /** MCP tool name (if the event was triggered by a tool call) */
+  toolName?: string;
+  /** Sanitised tool input parameters */
+  params?: Record<string, unknown>;
+  /** Outcome metadata */
+  result?: {
+    count?: number;
+    success: boolean;
+    error?: string;
+  };
+  /** Wall-clock duration of the operation in milliseconds */
+  duration?: number;
+}
+
+/**
+ * Audit log entry structure, part of the public audit logging API.
+ * Represents a single audited operation and its contextual metadata.
+ */
+export interface AuditLogEntry {
   /**
    * Timestamp of the event
    */
@@ -92,6 +136,45 @@ export class AuditLogger {
     console.error('[AUDIT]', JSON.stringify(fullEntry));
   }
   
+  /**
+   * Log an MCP tool call as an audit record.
+   *
+   * Persists an {@link AuditLogEntry} via {@link log} (which emits a single
+   * `[AUDIT]` record to stderr).  Tool-call data is nested under
+   * `{ tool: { name, params } }` to prevent user-controlled parameter keys
+   * from colliding with reserved log-schema fields.  Suitable for GDPR
+   * Article 30 processing-activity records.
+   *
+   * @param toolName  - Name of the MCP tool that was invoked
+   * @param params    - Tool input parameters. **Callers are responsible for
+   *                    sanitising sensitive values before passing them here.**
+   *                    This method does not perform any sanitisation.
+   * @param success   - Whether the tool call completed without error
+   * @param duration  - Optional wall-clock duration in milliseconds
+   * @param error     - Optional error message if the call failed
+   */
+  logToolCall(
+    toolName: string,
+    params: Record<string, unknown>,
+    success: boolean,
+    duration?: number,
+    error?: string
+  ): void {
+    // Persist via the existing internal log path so getLogs() captures it.
+    // Tool-call data is nested under the 'tool' key to prevent user-controlled
+    // param keys from colliding with reserved log schema fields.
+    // this.log() already emits the structured entry to stderr via console.error.
+    this.log({
+      action: 'tool_call',
+      params: { tool: { name: toolName, params } },
+      result: {
+        success,
+        ...(error !== undefined && { error }),
+      },
+      ...(duration !== undefined && { duration }),
+    });
+  }
+
   /**
    * Log a successful data access
    * 

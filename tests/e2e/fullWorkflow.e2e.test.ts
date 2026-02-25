@@ -21,6 +21,14 @@ import { parsePaginatedMCPResponse, parseMCPResponse, validateMCPResponse, retry
  */
 const E2E_TEST_TIMEOUT_MS = 65000;
 
+/**
+ * Extended timeout for multi-step workflow tests that make 3+ sequential EP API calls.
+ * EP_REQUEST_TIMEOUT_MS=60000 in CI means each call can take up to 60s before timing out.
+ * Three sequential successful-but-slow calls can individually take 20-25s each, totalling
+ * 60-75s — exceeding E2E_TEST_TIMEOUT_MS.  Using 3× the single-call timeout to be safe.
+ */
+const E2E_WORKFLOW_TIMEOUT_MS = E2E_TEST_TIMEOUT_MS * 3; // 195s
+
 describe('Full Workflow E2E Tests', () => {
   let client: MCPTestClient;
 
@@ -275,7 +283,7 @@ describe('Full Workflow E2E Tests', () => {
 
       // All steps completed successfully
       expect(true).toBe(true);
-    }, 60000);
+    }, E2E_TEST_TIMEOUT_MS);
   });
 
   describe('Workflow: Track Legislation', () => {
@@ -308,7 +316,7 @@ describe('Full Workflow E2E Tests', () => {
 
       // All steps completed successfully
       expect(true).toBe(true);
-    }, 60000);
+    }, E2E_WORKFLOW_TIMEOUT_MS);
   });
 
   describe('Error Recovery', () => {

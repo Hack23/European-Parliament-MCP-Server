@@ -7,6 +7,17 @@
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
+// Re-export tokens so callers only need one import
+export { TOKENS } from './tokens.js';
+export type { DIToken } from './tokens.js';
+
+import { TOKENS } from './tokens.js';
+import type { RateLimiter } from '../utils/rateLimiter.js';
+import { createStandardRateLimiter } from '../utils/rateLimiter.js';
+import { MetricsService } from '../services/MetricsService.js';
+import { auditLogger } from '../utils/auditLogger.js';
+import { HealthService } from '../services/HealthService.js';
+
 /**
  * Service lifetime options
  */
@@ -116,4 +127,37 @@ export class DIContainer {
   clear(): void {
     this.services.clear();
   }
+}
+
+/**
+ * Create a pre-configured DI container with the standard MCP server services
+ * registered as singletons.
+ *
+ * Registered services:
+ * - `TOKENS.RateLimiter`   → {@link RateLimiter} (standard EP API configuration)
+ * - `TOKENS.MetricsService` → {@link MetricsService}
+ * - `TOKENS.AuditLogger`   → {@link AuditLogger} (global singleton)
+ * - `TOKENS.HealthService` → {@link HealthService}
+ *
+ * @example
+ * ```typescript
+ * const container = createDefaultContainer();
+ * const health = container.resolve<HealthService>(TOKENS.HealthService);
+ * console.log(health.checkHealth());
+ * ```
+ */
+export function createDefaultContainer(): DIContainer {
+  const container = new DIContainer();
+
+  container.register(TOKENS.RateLimiter, () => createStandardRateLimiter());
+  container.register(TOKENS.MetricsService, () => new MetricsService());
+  container.register(TOKENS.AuditLogger, () => auditLogger);
+  container.register(TOKENS.HealthService, (c) =>
+    new HealthService(
+      c.resolve<RateLimiter>(TOKENS.RateLimiter),
+      c.resolve<MetricsService>(TOKENS.MetricsService)
+    )
+  );
+
+  return container;
 }

@@ -17,8 +17,19 @@
  */
 
 /**
+ * Rate-limiter status snapshot (used by health checks and monitoring).
+ */
+export interface RateLimiterStatus {
+  /** Number of tokens currently available in the bucket */
+  availableTokens: number;
+  /** Maximum capacity of the token bucket */
+  maxTokens: number;
+  /** Percentage of the bucket currently consumed (0–100) */
+  utilizationPercent: number;
+}
+
+/**
  * Rate limiter configuration options
- * @internal - Used only for RateLimiter initialization
  */
 interface RateLimiterOptions {
   /**
@@ -36,6 +47,15 @@ interface RateLimiterOptions {
    */
   initialTokens?: number;
 }
+
+/**
+ * Public typed configuration for {@link RateLimiter}.
+ *
+ * Type alias of {@link RateLimiterOptions} so consumers can construct
+ * or configure a {@link RateLimiter} using {@link RateLimiterConfig}
+ * without any casting.
+ */
+export type RateLimiterConfig = RateLimiterOptions;
 
 /**
  * Token bucket rate limiter implementation
@@ -135,6 +155,31 @@ export class RateLimiter {
   getAvailableTokens(): number {
     this.refill();
     return this.tokens;
+  }
+
+  /**
+   * Get the maximum token capacity of this bucket.
+   */
+  getMaxTokens(): number {
+    return this.tokensPerInterval;
+  }
+
+  /**
+   * Get a typed status snapshot for health checks and monitoring.
+   *
+   * @returns Current {@link RateLimiterStatus} snapshot
+   */
+  getStatus(): RateLimiterStatus {
+    this.refill();
+    const available = this.tokens;
+    const max = this.tokensPerInterval;
+    const utilization = max > 0 ? Math.round(((max - available) / max) * 100) : 0;
+
+    return {
+      availableTokens: Math.floor(available),
+      maxTokens: max,
+      utilizationPercent: utilization,
+    };
   }
 
   /**

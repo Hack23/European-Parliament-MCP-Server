@@ -12,6 +12,13 @@ import { SERVER_NAME, SERVER_VERSION } from '../index.js';
 import { getToolMetadataArray } from './toolRegistry.js';
 import { getPromptMetadataArray } from '../prompts/index.js';
 import { getResourceTemplateArray } from '../resources/index.js';
+import { RateLimiter } from '../utils/rateLimiter.js';
+import { MetricsService } from '../services/MetricsService.js';
+import { HealthService } from '../services/HealthService.js';
+import type { CLIOptions } from './types.js';
+
+/** Re-export CLIOptions for consumers */
+export type { CLIOptions };
 
 /** Number of core tools (non-advanced analysis tools) */
 const CORE_TOOL_COUNT = 7;
@@ -83,6 +90,9 @@ export function showVersion(): void {
 
 /**
  * Display health check / diagnostics.
+ *
+ * Combines a static capability report with a dynamic health snapshot
+ * produced by {@link HealthService}.
  */
 export function showHealth(): void {
   const tools = getToolMetadataArray();
@@ -90,10 +100,17 @@ export function showHealth(): void {
   const prompts = getPromptMetadataArray();
   const resourceTemplates = getResourceTemplateArray();
 
+  const rateLimitEnv = parseInt(process.env['EP_RATE_LIMIT'] ?? '100', 10);
+  const tokensPerInterval = Number.isFinite(rateLimitEnv) && rateLimitEnv > 0 ? rateLimitEnv : 100;
+  const rateLimiter = new RateLimiter({ tokensPerInterval, interval: 'minute' });
+  const metricsService = new MetricsService();
+  const healthService = new HealthService(rateLimiter, metricsService);
+  const dynamicHealth = healthService.checkHealth();
+
   const health = {
     name: SERVER_NAME,
     version: SERVER_VERSION,
-    status: 'healthy',
+    status: dynamicHealth.status,
     capabilities: ['tools', 'resources', 'prompts'],
     tools: {
       total: tools.length,
@@ -106,6 +123,10 @@ export function showHealth(): void {
     resources: {
       templates: resourceTemplates.length,
     },
+    epApiReachable: dynamicHealth.epApiReachable,
+    cache: dynamicHealth.cache,
+    rateLimiter: dynamicHealth.rateLimiter,
+    uptimeMs: dynamicHealth.uptimeMs,
     environment: {
       nodeVersion: process.version,
       platform: process.platform,
@@ -120,4 +141,27 @@ export function showHealth(): void {
 
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(health, null, 2));
+}
+
+/**
+ * Parse an array of CLI argument strings into a typed {@link CLIOptions} object.
+ *
+ * Supports the canonical flags `--help` / `-h`, `--version` / `-v`,
+ * and `--health`.
+ *
+ * @param argv - Array of raw argument strings (typically `process.argv.slice(2)`)
+ * @returns Typed CLI options with boolean flags
+ *
+ * @example
+ * ```typescript
+ * const opts = parseCLIArgs(['--health']);
+ * if (opts.health) showHealth();
+ * ```
+ */
+export function parseCLIArgs(argv: string[]): CLIOptions {
+  return {
+    help: argv.includes('--help') || argv.includes('-h'),
+    version: argv.includes('--version') || argv.includes('-v'),
+    health: argv.includes('--health'),
+  };
 }

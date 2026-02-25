@@ -11,7 +11,7 @@ describe('MCP Prompts', () => {
 
       expect(prompts).toBeDefined();
       expect(Array.isArray(prompts)).toBe(true);
-      expect(prompts.length).toBe(6);
+      expect(prompts.length).toBe(7);
     });
 
     it('should have required metadata fields', () => {
@@ -37,6 +37,7 @@ describe('MCP Prompts', () => {
       expect(names).toContain('political_group_comparison');
       expect(names).toContain('committee_activity_report');
       expect(names).toContain('voting_pattern_analysis');
+      expect(names).toContain('country_delegation_analysis');
     });
 
     it('should have arguments array where defined', () => {
@@ -185,6 +186,34 @@ describe('MCP Prompts', () => {
 
       it('should throw when required committeeId is missing for committee_activity_report', () => {
         expect(() => handleGetPrompt('committee_activity_report', {})).toThrow('Missing required argument');
+      });
+
+      it('should throw when required country is missing for country_delegation_analysis', () => {
+        expect(() => handleGetPrompt('country_delegation_analysis', {})).toThrow('Missing required argument');
+      });
+    });
+
+    describe('country_delegation_analysis', () => {
+      it('should generate country delegation prompt with country arg', () => {
+        const result = handleGetPrompt('country_delegation_analysis', { country: 'Sweden' });
+
+        expect(result.description).toContain('Sweden');
+        expect(result.messages[0]?.content.type).toBe('text');
+        expect(result.messages[0]?.content.text).toContain('get_meps');
+        expect(result.messages[0]?.content.text).toContain('analyze_country_delegation');
+      });
+
+      it('should include period when provided', () => {
+        const result = handleGetPrompt('country_delegation_analysis', { country: 'SE', period: '2024' });
+
+        expect(result.description).toContain('2024');
+        expect(result.messages[0]?.content.text).toContain('2024');
+      });
+
+      it('should use default period when not provided', () => {
+        const result = handleGetPrompt('country_delegation_analysis', { country: 'DE' });
+
+        expect(result.messages[0]?.content.text).toContain('current term');
       });
     });
   });

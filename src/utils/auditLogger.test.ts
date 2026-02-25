@@ -123,6 +123,39 @@ describe('AuditLogger', () => {
     });
   });
 
+  describe('logToolCall', () => {
+    it('should record a successful tool call in getLogs()', () => {
+      logger.logToolCall('get_meps', { country: 'SE' }, true);
+
+      const logs = logger.getLogs();
+      expect(logs).toHaveLength(1);
+      expect(logs[0]?.action).toBe('tool_call');
+      expect(logs[0]?.result?.success).toBe(true);
+    });
+
+    it('should record a failed tool call with error', () => {
+      logger.logToolCall('get_mep_details', { id: '999' }, false, undefined, 'Not found');
+
+      const logs = logger.getLogs();
+      expect(logs[0]?.result?.success).toBe(false);
+      expect(logs[0]?.result?.error).toBe('Not found');
+    });
+
+    it('should record optional duration', () => {
+      logger.logToolCall('search_documents', { keyword: 'test' }, true, 42);
+
+      const logs = logger.getLogs();
+      expect(logs[0]?.duration).toBe(42);
+    });
+
+    it('should omit duration when not provided', () => {
+      logger.logToolCall('get_meps', {}, true);
+
+      const logs = logger.getLogs();
+      expect(logs[0]).not.toHaveProperty('duration');
+    });
+  });
+
   describe('GDPR Compliance', () => {
     it('should log all required fields for compliance', () => {
       logger.log({

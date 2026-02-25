@@ -7,6 +7,38 @@
  */
 
 /**
+ * Preferred type for metric name parameters.
+ *
+ * Using {@link MetricName} values provides compile-time safety and IDE
+ * auto-complete; raw `string` is accepted for backward compatibility and
+ * for ad-hoc metrics outside the standard set.
+ */
+export type MetricKey = MetricName | (string & {});
+
+/**
+ * Typed metric name constants for MCP server and EP API instrumentation.
+ *
+ * Using an enum prevents typos in metric names and enables IDE
+ * auto-complete throughout the codebase.
+ *
+ * @example
+ * ```typescript
+ * metricsService.incrementCounter(MetricName.EP_API_CALL_COUNT, 1);
+ * metricsService.incrementCounter(MetricName.EP_CACHE_HIT_COUNT, 1);
+ * ```
+ */
+export enum MetricName {
+  /** Total EP API calls (label: `endpoint`) */
+  EP_API_CALL_COUNT = 'ep_api_call_count',
+  /** Failed EP API calls */
+  EP_API_ERROR_COUNT = 'ep_api_error_count',
+  /** Cache hits for EP API responses */
+  EP_CACHE_HIT_COUNT = 'ep_cache_hit_count',
+  /** Cache misses for EP API responses */
+  EP_CACHE_MISS_COUNT = 'ep_cache_miss_count',
+}
+
+/**
  * Single value metric (counter/gauge)
  */
 interface SingleMetric {
@@ -50,7 +82,7 @@ export class MetricsService {
    * @param value - Increment value (default: 1)
    * @param labels - Optional labels for metric dimensions
    */
-  incrementCounter(name: string, value = 1, labels?: Record<string, string>): void {
+  incrementCounter(name: MetricKey, value = 1, labels?: Record<string, string>): void {
     const key = this.buildKey(name, labels);
     const current = this.metrics.get(key);
     const lastValue = current?.type === 'counter' ? current.value : 0;
@@ -71,7 +103,7 @@ export class MetricsService {
    * @param value - Gauge value
    * @param labels - Optional labels for metric dimensions
    */
-  setGauge(name: string, value: number, labels?: Record<string, string>): void {
+  setGauge(name: MetricKey, value: number, labels?: Record<string, string>): void {
     const key = this.buildKey(name, labels);
     this.metrics.set(key, {
       type: 'gauge',
@@ -89,7 +121,7 @@ export class MetricsService {
    * @param value - Observed value
    * @param labels - Optional labels for metric dimensions
    */
-  observeHistogram(name: string, value: number, labels?: Record<string, string>): void {
+  observeHistogram(name: MetricKey, value: number, labels?: Record<string, string>): void {
     const key = this.buildKey(name, labels);
     const current = this.metrics.get(key);
 
@@ -129,7 +161,7 @@ export class MetricsService {
    * @param labels - Optional labels
    * @returns Current metric value or undefined
    */
-  getMetric(name: string, labels?: Record<string, string>): number | undefined {
+  getMetric(name: MetricKey, labels?: Record<string, string>): number | undefined {
     const key = this.buildKey(name, labels);
     const metric = this.metrics.get(key);
     
@@ -144,7 +176,7 @@ export class MetricsService {
    * @param labels - Optional labels
    * @returns Histogram summary with percentiles
    */
-  getHistogramSummary(name: string, labels?: Record<string, string>): {
+  getHistogramSummary(name: MetricKey, labels?: Record<string, string>): {
     count: number;
     sum: number;
     avg: number;
@@ -181,7 +213,7 @@ export class MetricsService {
    * Build metric key from name and labels
    * Cyclomatic complexity: 2
    */
-  private buildKey(name: string, labels?: Record<string, string>): string {
+  private buildKey(name: MetricKey, labels?: Record<string, string>): string {
     if (labels === undefined) {
       return name;
     }

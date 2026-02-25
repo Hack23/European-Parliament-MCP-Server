@@ -36,7 +36,7 @@ import { readFileSync, realpathSync } from 'fs';
 
 // ── Extracted modules ─────────────────────────────────────────────
 import { getToolMetadataArray, dispatchToolCall } from './server/toolRegistry.js';
-import { showHelp, showVersion, showHealth } from './server/cli.js';
+import { showHelp, showVersion, showHealth, parseCLIArgs } from './server/cli.js';
 // MCP Prompts
 import { getPromptMetadataArray, handleGetPrompt } from './prompts/index.js';
 // MCP Resources
@@ -49,6 +49,32 @@ export * from './types/index.js';
 export { getToolMetadataArray } from './server/toolRegistry.js';
 /** Re-export CLI utilities */
 export { sanitizeUrl } from './server/cli.js';
+/** Re-export server types */
+export type { ToolHandler, ToolMetadata, ToolCategory, CLIOptions } from './server/types.js';
+/** Re-export DI token registry */
+export type { DIToken } from './di/tokens.js';
+/** Re-export DI container and default factory for consumers */
+export { createDefaultContainer } from './di/container.js';
+/** Re-export metric names and key type for consumers using the metrics service */
+export { MetricName } from './services/MetricsService.js';
+export type { MetricKey } from './services/MetricsService.js';
+/** Re-export performance thresholds, timeout defaults, and related config types for consumers */
+export { DEFAULT_PERFORMANCE_THRESHOLDS } from './utils/performance.js';
+export type { PerformanceThresholds } from './utils/performance.js';
+export { DEFAULT_TIMEOUTS } from './utils/timeout.js';
+export type { TimeoutConfig } from './utils/timeout.js';
+export type { RateLimiterConfig, RateLimiterStatus } from './utils/rateLimiter.js';
+export type { AuditEvent, AuditLogEntry, LogLevel } from './utils/auditLogger.js';
+/** Re-export prompt argument schemas for integration tests and client validation */
+export {
+  MepBriefingArgsSchema,
+  CoalitionAnalysisArgsSchema,
+  LegislativeTrackingArgsSchema,
+  PoliticalGroupComparisonArgsSchema,
+  CommitteeActivityArgsSchema,
+  VotingPatternArgsSchema,
+  CountryDelegationArgsSchema,
+} from './prompts/index.js';
 
 /** @internal Server name constant */
 export const SERVER_NAME = 'european-parliament-mcp-server';
@@ -247,7 +273,13 @@ class EuropeanParliamentMCPServer {
    */
   async start(): Promise<void> {
     const transport = new StdioServerTransport();
-    await this.server.connect(transport);
+
+    try {
+      await this.server.connect(transport);
+    } catch (connectError) {
+      console.error('[FATAL] Failed to connect MCP transport:', connectError);
+      throw connectError;
+    }
 
     const tools = getToolMetadataArray();
     const advancedToolCount = tools.length - CORE_TOOL_COUNT;
@@ -271,29 +303,42 @@ const isMainModule =
   realpathSync(resolve(fileURLToPath(import.meta.url))) === realpathSync(resolve(process.argv[1]));
 
 if (isMainModule) {
-  // Parse command-line arguments
-  const args = process.argv.slice(2);
+  // Parse command-line arguments using typed CLIOptions
+  const cliArgs = process.argv.slice(2);
+  const opts = parseCLIArgs(cliArgs);
 
   // Handle CLI commands
-  if (args.includes('--help') || args.includes('-h')) {
+  if (opts.help === true) {
     showHelp();
     process.exit(0);
   }
 
-  if (args.includes('--version') || args.includes('-v')) {
+  if (opts.version === true) {
     showVersion();
     process.exit(0);
   }
 
-  if (args.includes('--health')) {
+  if (opts.health === true) {
     showHealth();
     process.exit(0);
   }
-}
 
-// Start the MCP server (default behavior)
-const server = new EuropeanParliamentMCPServer();
-server.start().catch((error: unknown) => {
-  console.error('Fatal error:', error);
-  process.exit(1);
-});
+  // Start the MCP server (default behavior)
+  const server = new EuropeanParliamentMCPServer();
+
+  // Shutdown signal handlers — exit immediately on SIGTERM / SIGINT
+  // (stdio would otherwise keep the event loop alive in containers)
+  function handleShutdownSignal(signal: string): void {
+    console.error(`[${SERVER_NAME}] Received ${signal} — exiting`);
+    // Explicitly exit so that stdio doesn't keep the event loop alive in containers
+    process.exit(0);
+  }
+
+  process.once('SIGTERM', () => { handleShutdownSignal('SIGTERM'); });
+  process.once('SIGINT', () => { handleShutdownSignal('SIGINT'); });
+
+  server.start().catch((error: unknown) => {
+    console.error('[FATAL] Server startup failed:', error);
+    process.exit(1);
+  });
+}
