@@ -20,7 +20,7 @@ import { z } from 'zod';
 /**
  * Prompt metadata for MCP listing
  */
-interface PromptMetadata {
+export interface PromptMetadata {
   name: string;
   description: string;
   arguments?: {
@@ -33,7 +33,7 @@ interface PromptMetadata {
 /**
  * Prompt message content
  */
-interface PromptMessage {
+export interface PromptMessage {
   role: 'user' | 'assistant';
   content: {
     type: 'text';
@@ -44,7 +44,7 @@ interface PromptMessage {
 /**
  * Prompt result
  */
-interface PromptResult {
+export interface PromptResult {
   description: string;
   messages: PromptMessage[];
   [key: string]: unknown;
@@ -110,6 +110,80 @@ const PromptArgsSchema = z.record(
   z.string().min(1).max(50),
   z.string().min(1).max(200)
 );
+
+/**
+ * Typed Zod schema for MEP briefing prompt arguments.
+ * Exported for use in integration tests and client validation.
+ */
+export const MepBriefingArgsSchema = z.object({
+  mepId: z.string().min(1).max(100).describe('MEP identifier'),
+  period: z.string().min(1).max(50).optional().describe('Analysis period'),
+});
+
+/**
+ * Typed Zod schema for coalition analysis prompt arguments.
+ */
+export const CoalitionAnalysisArgsSchema = z.object({
+  policyArea: z.string().min(1).max(100).optional().describe('Policy area to focus on'),
+  period: z.string().min(1).max(50).optional().describe('Analysis period'),
+});
+
+/**
+ * Typed Zod schema for legislative tracking prompt arguments.
+ */
+export const LegislativeTrackingArgsSchema = z.object({
+  procedureId: z.string().min(1).max(100).optional().describe('Legislative procedure identifier'),
+  committee: z.string().min(1).max(10).optional().describe('Committee abbreviation'),
+});
+
+/**
+ * Typed Zod schema for political group comparison prompt arguments.
+ */
+export const PoliticalGroupComparisonArgsSchema = z.object({
+  groups: z.string().min(1).max(200).optional().describe('Comma-separated political group names'),
+});
+
+/**
+ * Typed Zod schema for committee activity report prompt arguments.
+ */
+export const CommitteeActivityArgsSchema = z.object({
+  committeeId: z.string().min(1).max(10).describe('Committee abbreviation'),
+});
+
+/**
+ * Typed Zod schema for voting pattern analysis prompt arguments.
+ */
+export const VotingPatternArgsSchema = z.object({
+  topic: z.string().min(1).max(200).optional().describe('Policy topic or keyword'),
+  mepId: z.string().min(1).max(100).optional().describe('Focus on specific MEP'),
+});
+
+/**
+ * Typed Zod schema for country delegation analysis prompt arguments.
+ */
+export const CountryDelegationArgsSchema = z.object({
+  country: z.string().min(1).max(50).describe('EU member state name or ISO country code'),
+  period: z.string().min(1).max(50).optional().describe('Analysis period'),
+});
+
+// ─── Country Delegation Analysis Prompt ─────────────────────
+// Additional prompt (accessible via handleGetPrompt but not listed in getPromptMetadataArray)
+
+/** @internal Country delegation analysis prompt metadata */
+const countryDelegationAnalysisPrompt: PromptMetadata = {
+  name: 'country_delegation_analysis',
+  description: 'Analyse the MEP delegation from a specific EU member state, including voting cohesion, committee presence, legislative contribution, and cross-party dynamics.',
+  arguments: [
+    { name: 'country', description: 'EU member state name or ISO country code', required: true },
+    { name: 'period', description: 'Analysis period (e.g., "2024", "current-term")', required: false },
+  ],
+};
+
+/**
+ * Get the country delegation analysis prompt metadata.
+ * Exported separately so callers that want the full catalog can include it.
+ */
+export const countryDelegationPromptMetadata: PromptMetadata = countryDelegationAnalysisPrompt;
 
 // ─── Prompt Result Generators ────────────────────────────────
 
@@ -366,6 +440,49 @@ Data source: European Parliament Open Data Portal`
   };
 }
 
+/**
+ * Generate a country delegation analysis prompt
+ *
+ * @param args - Prompt arguments containing country and optional period
+ * @returns Structured prompt result for country delegation intelligence
+ */
+function generateCountryDelegationAnalysis(args: Record<string, string>): PromptResult {
+  const country = args['country'] ?? 'unknown';
+  const period = args['period'] ?? 'current term';
+
+  return {
+    description: `Country delegation analysis: ${country} (${period})`,
+    messages: [
+      {
+        role: 'user',
+        content: {
+          type: 'text',
+          text: `Analyse the European Parliament delegation from ${country} for the ${period} period.
+
+Use these MCP tools to gather data:
+1. **get_meps** — List all MEPs from ${country}
+2. **get_mep_details** — Individual MEP profiles and committee roles
+3. **analyze_voting_patterns** — Voting record and group alignment per MEP
+4. **analyze_country_delegation** — Aggregate delegation analytics
+5. **analyze_coalition_dynamics** — Cross-party alliances within delegation
+6. **assess_mep_influence** — Influence scores for key delegation members
+
+Analysis framework:
+- **Delegation Overview**: Total MEPs, political group distribution, parliamentary term
+- **Committee Presence**: Which committees delegation members chair or sit on
+- **Legislative Contributions**: Reports, amendments, opinions authored
+- **Voting Cohesion**: Intra-delegation agreement rate; deviations from group line
+- **Cross-Party Dynamics**: Alliances formed with MEPs from other member states
+- **Influence Profile**: Top-3 most influential MEPs and their policy focus areas
+- **Policy Priorities**: Recurring legislative topics championed by delegation
+
+Data source: European Parliament Open Data Portal`
+        }
+      }
+    ]
+  };
+}
+
 // ─── Public API ──────────────────────────────────────────────
 
 /**
@@ -404,7 +521,9 @@ export function handleGetPrompt(
     'legislative_tracking': generateLegislativeTracking,
     'political_group_comparison': generateGroupComparison,
     'committee_activity_report': generateCommitteeActivity,
-    'voting_pattern_analysis': generateVotingAnalysis
+    'voting_pattern_analysis': generateVotingAnalysis,
+    // Additional prompt: accessible but not listed in getPromptMetadataArray()
+    'country_delegation_analysis': generateCountryDelegationAnalysis,
   };
 
   const generator = promptGenerators[name];

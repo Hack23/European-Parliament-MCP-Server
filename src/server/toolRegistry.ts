@@ -63,67 +63,82 @@ import { handleGetExternalDocuments, getExternalDocumentsToolMetadata } from '..
 import { handleGetMeetingForeseenActivities, getMeetingForeseenActivitiesToolMetadata } from '../tools/getMeetingForeseenActivities.js';
 import { handleGetProcedureEvents, getProcedureEventsToolMetadata } from '../tools/getProcedureEvents.js';
 
-/** Tool result shape returned by every handler */
-export interface ToolResult { content: { type: string; text: string }[] }
+// ── Type imports ──────────────────────────────────────────────────
+import type { ToolHandler, ToolCategory, ToolResult } from './types.js';
+
+/** Re-export types for consumers */
+export type { ToolResult, ToolHandler, ToolMetadata, ToolCategory, CLIOptions } from './types.js';
+
+/**
+ * Helper: attach a category to a plain tool metadata object.
+ * @internal
+ */
+function withCategory(
+  meta: { name: string; description: string; inputSchema: unknown },
+  category: ToolCategory
+): { name: string; description: string; inputSchema: unknown; category: ToolCategory } {
+  return { ...meta, category };
+}
 
 /**
  * Returns the full ordered list of tool metadata for the MCP `ListTools` response.
+ * Each entry includes the tool's `category` in addition to the standard MCP fields.
  */
-export function getToolMetadataArray(): { name: string; description: string; inputSchema: unknown }[] {
+export function getToolMetadataArray(): { name: string; description: string; inputSchema: unknown; category: ToolCategory }[] {
   return [
     // Core tools
-    getMEPsToolMetadata,
-    getMEPDetailsToolMetadata,
-    getPlenarySessionsToolMetadata,
-    getVotingRecordsToolMetadata,
-    searchDocumentsToolMetadata,
-    getCommitteeInfoToolMetadata,
-    getParliamentaryQuestionsToolMetadata,
+    withCategory(getMEPsToolMetadata, 'core'),
+    withCategory(getMEPDetailsToolMetadata, 'core'),
+    withCategory(getPlenarySessionsToolMetadata, 'core'),
+    withCategory(getVotingRecordsToolMetadata, 'core'),
+    withCategory(searchDocumentsToolMetadata, 'core'),
+    withCategory(getCommitteeInfoToolMetadata, 'core'),
+    withCategory(getParliamentaryQuestionsToolMetadata, 'core'),
     // Advanced analysis tools
-    analyzeVotingPatternsToolMetadata,
-    trackLegislationToolMetadata,
-    generateReportToolMetadata,
+    withCategory(analyzeVotingPatternsToolMetadata, 'advanced'),
+    withCategory(trackLegislationToolMetadata, 'advanced'),
+    withCategory(generateReportToolMetadata, 'advanced'),
     // Phase 1 OSINT Intelligence Tools
-    assessMepInfluenceToolMetadata,
-    analyzeCoalitionDynamicsToolMetadata,
-    detectVotingAnomaliesToolMetadata,
-    comparePoliticalGroupsToolMetadata,
-    analyzeLegislativeEffectivenessToolMetadata,
-    monitorLegislativePipelineToolMetadata,
+    withCategory(assessMepInfluenceToolMetadata, 'osint'),
+    withCategory(analyzeCoalitionDynamicsToolMetadata, 'osint'),
+    withCategory(detectVotingAnomaliesToolMetadata, 'osint'),
+    withCategory(comparePoliticalGroupsToolMetadata, 'osint'),
+    withCategory(analyzeLegislativeEffectivenessToolMetadata, 'osint'),
+    withCategory(monitorLegislativePipelineToolMetadata, 'osint'),
     // Phase 2 OSINT Intelligence Tools
-    analyzeCommitteeActivityToolMetadata,
-    trackMepAttendanceToolMetadata,
+    withCategory(analyzeCommitteeActivityToolMetadata, 'osint'),
+    withCategory(trackMepAttendanceToolMetadata, 'osint'),
     // Phase 3 OSINT Intelligence Tools
-    analyzeCountryDelegationToolMetadata,
-    generatePoliticalLandscapeToolMetadata,
+    withCategory(analyzeCountryDelegationToolMetadata, 'osint'),
+    withCategory(generatePoliticalLandscapeToolMetadata, 'osint'),
     // Phase 4 – New EP API v2 endpoint tools
-    getCurrentMEPsToolMetadata,
-    getSpeechesToolMetadata,
-    getProceduresToolMetadata,
-    getAdoptedTextsToolMetadata,
-    getEventsToolMetadata,
-    getMeetingActivitiesToolMetadata,
-    getMeetingDecisionsToolMetadata,
-    getMEPDeclarationsToolMetadata,
+    withCategory(getCurrentMEPsToolMetadata, 'phase4'),
+    withCategory(getSpeechesToolMetadata, 'phase4'),
+    withCategory(getProceduresToolMetadata, 'phase4'),
+    withCategory(getAdoptedTextsToolMetadata, 'phase4'),
+    withCategory(getEventsToolMetadata, 'phase4'),
+    withCategory(getMeetingActivitiesToolMetadata, 'phase4'),
+    withCategory(getMeetingDecisionsToolMetadata, 'phase4'),
+    withCategory(getMEPDeclarationsToolMetadata, 'phase4'),
     // Phase 5 – Complete EP API v2 coverage tools
-    getIncomingMEPsToolMetadata,
-    getOutgoingMEPsToolMetadata,
-    getHomonymMEPsToolMetadata,
-    getPlenaryDocumentsToolMetadata,
-    getCommitteeDocumentsToolMetadata,
-    getPlenarySessionDocumentsToolMetadata,
-    getPlenarySessionDocumentItemsToolMetadata,
-    getControlledVocabulariesToolMetadata,
-    getExternalDocumentsToolMetadata,
-    getMeetingForeseenActivitiesToolMetadata,
-    getProcedureEventsToolMetadata,
+    withCategory(getIncomingMEPsToolMetadata, 'phase5'),
+    withCategory(getOutgoingMEPsToolMetadata, 'phase5'),
+    withCategory(getHomonymMEPsToolMetadata, 'phase5'),
+    withCategory(getPlenaryDocumentsToolMetadata, 'phase5'),
+    withCategory(getCommitteeDocumentsToolMetadata, 'phase5'),
+    withCategory(getPlenarySessionDocumentsToolMetadata, 'phase5'),
+    withCategory(getPlenarySessionDocumentItemsToolMetadata, 'phase5'),
+    withCategory(getControlledVocabulariesToolMetadata, 'phase5'),
+    withCategory(getExternalDocumentsToolMetadata, 'phase5'),
+    withCategory(getMeetingForeseenActivitiesToolMetadata, 'phase5'),
+    withCategory(getProcedureEventsToolMetadata, 'phase5'),
   ];
 }
 
 /**
  * Name → handler dispatch map. Populated once, reused for every call.
  */
-const toolHandlers: Record<string, (args: unknown) => Promise<ToolResult>> = {
+const toolHandlers: Record<string, ToolHandler> = {
   // Core tools
   'get_meps': handleGetMEPs,
   'get_mep_details': handleGetMEPDetails,

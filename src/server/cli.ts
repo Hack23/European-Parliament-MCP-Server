@@ -12,6 +12,10 @@ import { SERVER_NAME, SERVER_VERSION } from '../index.js';
 import { getToolMetadataArray } from './toolRegistry.js';
 import { getPromptMetadataArray } from '../prompts/index.js';
 import { getResourceTemplateArray } from '../resources/index.js';
+import type { CLIOptions } from './types.js';
+
+/** Re-export CLIOptions for consumers */
+export type { CLIOptions };
 
 /** Number of core tools (non-advanced analysis tools) */
 const CORE_TOOL_COUNT = 7;
@@ -120,4 +124,27 @@ export function showHealth(): void {
 
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(health, null, 2));
+}
+
+/**
+ * Parse an array of CLI argument strings into a typed {@link CLIOptions} object.
+ *
+ * Supports the canonical flags `--help` / `-h`, `--version` / `-v`,
+ * and `--health`.
+ *
+ * @param argv - Array of raw argument strings (typically `process.argv.slice(2)`)
+ * @returns Typed CLI options with boolean flags
+ *
+ * @example
+ * ```typescript
+ * const opts = parseCLIArgs(['--health']);
+ * if (opts.health) showHealth();
+ * ```
+ */
+export function parseCLIArgs(argv: string[]): CLIOptions {
+  return {
+    help: argv.includes('--help') || argv.includes('-h'),
+    version: argv.includes('--version') || argv.includes('-v'),
+    health: argv.includes('--health'),
+  };
 }

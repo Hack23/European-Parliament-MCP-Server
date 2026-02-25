@@ -36,7 +36,7 @@ import { readFileSync, realpathSync } from 'fs';
 
 // ── Extracted modules ─────────────────────────────────────────────
 import { getToolMetadataArray, dispatchToolCall } from './server/toolRegistry.js';
-import { showHelp, showVersion, showHealth } from './server/cli.js';
+import { showHelp, showVersion, showHealth, parseCLIArgs } from './server/cli.js';
 // MCP Prompts
 import { getPromptMetadataArray, handleGetPrompt } from './prompts/index.js';
 // MCP Resources
@@ -49,6 +49,8 @@ export * from './types/index.js';
 export { getToolMetadataArray } from './server/toolRegistry.js';
 /** Re-export CLI utilities */
 export { sanitizeUrl } from './server/cli.js';
+/** Re-export server types */
+export type { ToolHandler, ToolMetadata, ToolCategory, CLIOptions } from './server/types.js';
 
 /** @internal Server name constant */
 export const SERVER_NAME = 'european-parliament-mcp-server';
@@ -247,7 +249,13 @@ class EuropeanParliamentMCPServer {
    */
   async start(): Promise<void> {
     const transport = new StdioServerTransport();
-    await this.server.connect(transport);
+
+    try {
+      await this.server.connect(transport);
+    } catch (connectError) {
+      console.error('[FATAL] Failed to connect MCP transport:', connectError);
+      throw connectError;
+    }
 
     const tools = getToolMetadataArray();
     const advancedToolCount = tools.length - CORE_TOOL_COUNT;
@@ -271,21 +279,22 @@ const isMainModule =
   realpathSync(resolve(fileURLToPath(import.meta.url))) === realpathSync(resolve(process.argv[1]));
 
 if (isMainModule) {
-  // Parse command-line arguments
-  const args = process.argv.slice(2);
+  // Parse command-line arguments using typed CLIOptions
+  const cliArgs = process.argv.slice(2);
+  const opts = parseCLIArgs(cliArgs);
 
   // Handle CLI commands
-  if (args.includes('--help') || args.includes('-h')) {
+  if (opts.help === true) {
     showHelp();
     process.exit(0);
   }
 
-  if (args.includes('--version') || args.includes('-v')) {
+  if (opts.version === true) {
     showVersion();
     process.exit(0);
   }
 
-  if (args.includes('--health')) {
+  if (opts.health === true) {
     showHealth();
     process.exit(0);
   }
@@ -293,7 +302,20 @@ if (isMainModule) {
 
 // Start the MCP server (default behavior)
 const server = new EuropeanParliamentMCPServer();
+
+// Graceful shutdown handlers — ensure clean exit on SIGTERM / SIGINT
+// (e.g., when run inside a container or orchestrator)
+function handleShutdownSignal(signal: string): void {
+  console.error(`[${SERVER_NAME}] Received ${signal} — shutting down gracefully`);
+  // Allow in-flight requests to complete (Node will exit naturally once the
+  // event loop is empty; the MCP stdio transport drains on process close)
+  process.exitCode = 0;
+}
+
+process.once('SIGTERM', () => { handleShutdownSignal('SIGTERM'); });
+process.once('SIGINT', () => { handleShutdownSignal('SIGINT'); });
+
 server.start().catch((error: unknown) => {
-  console.error('Fatal error:', error);
+  console.error('[FATAL] Server startup failed:', error instanceof Error ? error.message : String(error));
   process.exit(1);
 });

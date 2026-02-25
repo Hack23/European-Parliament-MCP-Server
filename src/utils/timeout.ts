@@ -10,6 +10,34 @@
  */
 
 /**
+ * Typed configuration for timeout operations.
+ *
+ * Centralises timeout settings in a single object so they can be
+ * stored, passed, and validated without scattered magic numbers.
+ */
+export interface TimeoutConfig {
+  /** Timeout duration in milliseconds (must be > 0) */
+  timeoutMs: number;
+  /** Optional human-readable label for the timed operation */
+  operationName?: string;
+  /** Custom error message override for timeout errors */
+  errorMessage?: string;
+}
+
+/**
+ * Default timeout configurations for common operation types.
+ * Override via environment variables when needed.
+ */
+export const DEFAULT_TIMEOUTS = {
+  /** Standard EP API HTTP request (10 s) */
+  EP_API_REQUEST_MS: 10_000,
+  /** Short health-check probe (3 s) */
+  HEALTH_CHECK_MS: 3_000,
+  /** Retry delay base (1 s) */
+  RETRY_DELAY_MS: 1_000,
+} as const;
+
+/**
  * Timeout error thrown when an operation exceeds its time limit
  * 
  * @example
@@ -304,4 +332,34 @@ export async function withRetry<T>(
  */
 export function isTimeoutError(error: unknown): error is TimeoutError {
   return error instanceof TimeoutError;
+}
+
+/**
+ * Execute a promise with timeout settings from a {@link TimeoutConfig}.
+ *
+ * Convenience wrapper around {@link withTimeout} for callers that
+ * already hold a `TimeoutConfig` object (e.g., from environment config).
+ *
+ * @template T - Type of the promise result
+ * @param promise - Promise to execute with timeout
+ * @param config  - Timeout configuration object
+ * @returns Promise resolving with the result or rejecting with TimeoutError
+ *
+ * @throws {TimeoutError} If the operation exceeds `config.timeoutMs`
+ *
+ * @example
+ * ```typescript
+ * const config: TimeoutConfig = { timeoutMs: 5000, operationName: 'fetchMEPs' };
+ * const result = await withTimeoutConfig(fetchMEPs(), config);
+ * ```
+ */
+export async function withTimeoutConfig<T>(
+  promise: Promise<T>,
+  config: TimeoutConfig
+): Promise<T> {
+  const message =
+    config.errorMessage ??
+    `${config.operationName ?? 'Operation'} timed out after ${String(config.timeoutMs)}ms`;
+
+  return withTimeout(promise, config.timeoutMs, message);
 }

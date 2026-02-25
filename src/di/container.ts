@@ -7,6 +7,10 @@
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
+// Re-export tokens so callers only need one import
+export { TOKENS } from './tokens.js';
+export type { DIToken } from './tokens.js';
+
 /**
  * Service lifetime options
  */

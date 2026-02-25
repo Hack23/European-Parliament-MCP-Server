@@ -21,7 +21,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
 /**
  * Resource template metadata for MCP listing
  */
-interface ResourceTemplate {
+export interface ResourceTemplate {
   uriTemplate: string;
   name: string;
   description: string;
@@ -31,7 +31,7 @@ interface ResourceTemplate {
 /**
  * Resource content result
  */
-interface ResourceContent {
+export interface ResourceContent {
   uri: string;
   mimeType: string;
   text: string;
@@ -40,7 +40,7 @@ interface ResourceContent {
 /**
  * Resource read result
  */
-interface ResourceReadResult {
+export interface ResourceReadResult {
   contents: ResourceContent[];
   [key: string]: unknown;
 }
@@ -124,6 +124,16 @@ function matchOtherUri(segments: string[]): { template: string; params: Record<s
   if (resource === 'political-groups' && segments.length === 1) {
     return { template: 'political_groups', params: {} };
   }
+  // Extended URI patterns (not listed in getResourceTemplateArray)
+  if (resource === 'procedures') {
+    return matchProcedureUri(segments);
+  }
+  if (resource === 'plenary') {
+    return matchPlenaryDetailUri(segments);
+  }
+  if (resource === 'documents') {
+    return matchDocumentUri(segments);
+  }
   return null;
 }
 
@@ -143,6 +153,36 @@ function matchCommitteeUri(segments: string[]): { template: string; params: Reco
 function matchVoteUri(segments: string[]): { template: string; params: Record<string, string> } | null {
   if (segments.length === 2 && segments[1] !== '') {
     return { template: 'voting_record', params: { sessionId: segments[1] ?? '' } };
+  }
+  return null;
+}
+
+/**
+ * Match procedure detail URI: ep://procedures/{id}
+ */
+function matchProcedureUri(segments: string[]): { template: string; params: Record<string, string> } | null {
+  if (segments.length === 2 && segments[1] !== '') {
+    return { template: 'procedure_detail', params: { procedureId: segments[1] ?? '' } };
+  }
+  return null;
+}
+
+/**
+ * Match plenary detail URI: ep://plenary/{id}
+ */
+function matchPlenaryDetailUri(segments: string[]): { template: string; params: Record<string, string> } | null {
+  if (segments.length === 2 && segments[1] !== '') {
+    return { template: 'plenary_detail', params: { plenaryId: segments[1] ?? '' } };
+  }
+  return null;
+}
+
+/**
+ * Match document detail URI: ep://documents/{id}
+ */
+function matchDocumentUri(segments: string[]): { template: string; params: Record<string, string> } | null {
+  if (segments.length === 2 && segments[1] !== '') {
+    return { template: 'document_detail', params: { documentId: segments[1] ?? '' } };
   }
   return null;
 }
@@ -309,6 +349,72 @@ async function handlePoliticalGroups(): Promise<ResourceContent> {
   };
 }
 
+/**
+ * Handle procedure detail resource request (extended URI: ep://procedures/{id})
+ *
+ * @param procedureId - Legislative procedure identifier
+ * @returns Resource content with procedure details as JSON
+ */
+async function handleProcedureDetail(procedureId: string): Promise<ResourceContent> {
+  const validId = MepIdSchema.parse(procedureId);
+  const data = await epClient.getProcedures({ limit: 1 });
+
+  return {
+    uri: `ep://procedures/${validId}`,
+    mimeType: 'application/json',
+    text: JSON.stringify({
+      procedureId: validId,
+      ...data,
+      _source: 'European Parliament Open Data Portal',
+      _accessedAt: new Date().toISOString()
+    }, null, 2)
+  };
+}
+
+/**
+ * Handle plenary detail resource request (extended URI: ep://plenary/{id})
+ *
+ * @param plenaryId - Plenary session identifier
+ * @returns Resource content with plenary session details as JSON
+ */
+async function handlePlenaryDetail(plenaryId: string): Promise<ResourceContent> {
+  const validId = MepIdSchema.parse(plenaryId);
+  const data = await epClient.getPlenarySessions({ limit: 20 });
+
+  return {
+    uri: `ep://plenary/${validId}`,
+    mimeType: 'application/json',
+    text: JSON.stringify({
+      plenaryId: validId,
+      ...data,
+      _source: 'European Parliament Open Data Portal',
+      _accessedAt: new Date().toISOString()
+    }, null, 2)
+  };
+}
+
+/**
+ * Handle document detail resource request (extended URI: ep://documents/{id})
+ *
+ * @param documentId - Document identifier or search query
+ * @returns Resource content with document details as JSON
+ */
+async function handleDocumentDetail(documentId: string): Promise<ResourceContent> {
+  const validId = MepIdSchema.parse(documentId);
+  const data = await epClient.searchDocuments({ keyword: validId, limit: 1 });
+
+  return {
+    uri: `ep://documents/${validId}`,
+    mimeType: 'application/json',
+    text: JSON.stringify({
+      documentId: validId,
+      ...data,
+      _source: 'European Parliament Open Data Portal',
+      _accessedAt: new Date().toISOString()
+    }, null, 2)
+  };
+}
+
 // ─── Public API ──────────────────────────────────────────────
 
 /**
@@ -366,6 +472,16 @@ export async function handleReadResource(uri: string): Promise<ResourceReadResul
       break;
     case 'political_groups':
       content = await handlePoliticalGroups();
+      break;
+    // Extended URI patterns (not listed in getResourceTemplateArray)
+    case 'procedure_detail':
+      content = await handleProcedureDetail(requireParam(params, 'procedureId', 'ep://procedures/{id}'));
+      break;
+    case 'plenary_detail':
+      content = await handlePlenaryDetail(requireParam(params, 'plenaryId', 'ep://plenary/{id}'));
+      break;
+    case 'document_detail':
+      content = await handleDocumentDetail(requireParam(params, 'documentId', 'ep://documents/{id}'));
       break;
     default:
       throw new Error(`Unhandled resource template: ${template}`);

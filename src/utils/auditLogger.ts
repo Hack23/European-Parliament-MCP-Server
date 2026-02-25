@@ -17,10 +17,54 @@
  */
 
 /**
+ * Typed log levels for structured audit events.
+ *
+ * | Level   | Use case |
+ * |---------|----------|
+ * | `DEBUG` | Verbose trace information (dev only) |
+ * | `INFO`  | Normal data-access events |
+ * | `WARN`  | Recoverable anomalies |
+ * | `ERROR` | Failed operations |
+ */
+export enum LogLevel {
+  DEBUG = 'DEBUG',
+  INFO = 'INFO',
+  WARN = 'WARN',
+  ERROR = 'ERROR',
+}
+
+/**
+ * Structured audit event used for MCP tool call tracking.
+ *
+ * Designed to be serialised to JSON for append-only log sinks
+ * (CloudWatch, Elasticsearch, etc.).
+ */
+export interface AuditEvent {
+  /** Severity level of the event */
+  level: LogLevel;
+  /** ISO-8601 timestamp */
+  timestamp: string;
+  /** Action / tool name */
+  action: string;
+  /** MCP tool name (if the event was triggered by a tool call) */
+  toolName?: string;
+  /** Sanitised tool input parameters */
+  params?: Record<string, unknown>;
+  /** Outcome metadata */
+  result?: {
+    count?: number;
+    success: boolean;
+    error?: string;
+  };
+  /** Wall-clock duration of the operation in milliseconds */
+  duration?: number;
+}
+
+/**
  * Audit log entry structure
  * @internal - Used only within AuditLogger implementation
  */
-interface AuditLogEntry {
+export interface AuditLogEntry {
   /**
    * Timestamp of the event
    */
@@ -92,6 +136,54 @@ export class AuditLogger {
     console.error('[AUDIT]', JSON.stringify(fullEntry));
   }
   
+  /**
+   * Log an MCP tool call audit event.
+   *
+   * Emits a structured {@link AuditEvent} record that includes tool name,
+   * sanitised parameters, and outcome.  Suitable for GDPR Article 30
+   * processing-activity records.
+   *
+   * @param toolName  - Name of the MCP tool that was invoked
+   * @param params    - Sanitised tool input parameters
+   * @param success   - Whether the tool call completed without error
+   * @param duration  - Optional wall-clock duration in milliseconds
+   * @param error     - Optional error message if the call failed
+   */
+  logToolCall(
+    toolName: string,
+    params: Record<string, unknown>,
+    success: boolean,
+    duration?: number,
+    error?: string
+  ): void {
+    const event: AuditEvent = {
+      level: success ? LogLevel.INFO : LogLevel.ERROR,
+      timestamp: new Date().toISOString(),
+      action: 'tool_call',
+      toolName,
+      params,
+      result: {
+        success,
+        ...(error !== undefined && { error }),
+      },
+      ...(duration !== undefined && { duration }),
+    };
+
+    // Persist via the existing internal log path so getLogs() captures it
+    this.log({
+      action: event.action,
+      params: { toolName, ...params },
+      result: {
+        success,
+        ...(error !== undefined && { error }),
+      },
+      ...(duration !== undefined && { duration }),
+    });
+
+    // Emit the richer structured event to stderr as well
+    console.error('[AUDIT:TOOL]', JSON.stringify(event));
+  }
+
   /**
    * Log a successful data access
    * 

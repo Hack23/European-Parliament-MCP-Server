@@ -7,6 +7,39 @@
  */
 
 /**
+ * Typed metric name constants for MCP server and EP API instrumentation.
+ *
+ * Using an enum prevents typos in metric names and enables IDE
+ * auto-complete throughout the codebase.
+ *
+ * @example
+ * ```typescript
+ * metricsService.incrementCounter(MetricName.TOOL_CALL_COUNT, 1, { tool: 'get_meps' });
+ * metricsService.observeHistogram(MetricName.EP_API_LATENCY, responseTimeMs);
+ * ```
+ */
+export enum MetricName {
+  /** Total MCP tool call invocations (label: `tool`) */
+  TOOL_CALL_COUNT = 'tool_call_count',
+  /** Failed MCP tool call invocations (label: `tool`) */
+  TOOL_ERROR_COUNT = 'tool_error_count',
+  /** EP API HTTP round-trip latency in milliseconds (histogram) */
+  EP_API_LATENCY = 'ep_api_latency',
+  /** Total EP API calls (label: `endpoint`) */
+  EP_API_CALL_COUNT = 'ep_api_call_count',
+  /** Failed EP API calls */
+  EP_API_ERROR_COUNT = 'ep_api_error_count',
+  /** Cache hits for EP API responses */
+  EP_CACHE_HIT_COUNT = 'ep_cache_hit_count',
+  /** Cache misses for EP API responses */
+  EP_CACHE_MISS_COUNT = 'ep_cache_miss_count',
+  /** Rate limiter token consumption per interval */
+  RATE_LIMIT_CONSUMED = 'rate_limit_consumed',
+  /** Server uptime in seconds (gauge) */
+  SERVER_UPTIME_SECONDS = 'server_uptime_seconds',
+}
+
+/**
  * Single value metric (counter/gauge)
  */
 interface SingleMetric {
