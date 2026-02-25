@@ -32,8 +32,8 @@ describe('HealthService', () => {
       const svc = new HealthService(rateLimiter, metricsService);
       const status = svc.checkHealth();
 
-      // No calls yet → EP API assumed reachable
-      expect(status.epApiReachable).toBe(true);
+      // No calls yet → reachability unknown (null)
+      expect(status.epApiReachable).toBeNull();
       expect(status.status).toBe('healthy');
     });
 

@@ -100,8 +100,8 @@ export function showHealth(): void {
   const prompts = getPromptMetadataArray();
   const resourceTemplates = getResourceTemplateArray();
 
-  const rateLimitEnv = parseInt(process.env['EP_RATE_LIMIT'] ?? '60', 10);
-  const tokensPerInterval = Number.isFinite(rateLimitEnv) && rateLimitEnv > 0 ? rateLimitEnv : 60;
+  const rateLimitEnv = parseInt(process.env['EP_RATE_LIMIT'] ?? '100', 10);
+  const tokensPerInterval = Number.isFinite(rateLimitEnv) && rateLimitEnv > 0 ? rateLimitEnv : 100;
   const rateLimiter = new RateLimiter({ tokensPerInterval, interval: 'minute' });
   const metricsService = new MetricsService();
   const healthService = new HealthService(rateLimiter, metricsService);

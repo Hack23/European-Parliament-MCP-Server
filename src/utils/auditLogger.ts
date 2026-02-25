@@ -137,11 +137,13 @@ export class AuditLogger {
   }
   
   /**
-   * Log an MCP tool call audit event.
+   * Log an MCP tool call as an audit record.
    *
-   * Emits a structured {@link AuditEvent} record that includes tool name,
-   * sanitised parameters, and outcome.  Suitable for GDPR Article 30
-   * processing-activity records.
+   * Persists an {@link AuditLogEntry} via {@link log} (which emits a single
+   * `[AUDIT]` record to stderr).  Tool-call data is nested under
+   * `{ tool: { name, params } }` to prevent user-controlled parameter keys
+   * from colliding with reserved log-schema fields.  Suitable for GDPR
+   * Article 30 processing-activity records.
    *
    * @param toolName  - Name of the MCP tool that was invoked
    * @param params    - Tool input parameters. **Callers are responsible for

@@ -57,8 +57,11 @@ export interface CacheHealthStatus {
 export interface HealthStatus {
   /** Overall health verdict */
   status: HealthStatusLevel;
-  /** Whether the EP API base URL is reachable (based on recent metrics) */
-  epApiReachable: boolean;
+  /**
+   * Whether the EP API base URL is reachable (based on recent metrics).
+   * `null` means no API calls have been recorded yet — reachability is unknown.
+   */
+  epApiReachable: boolean | null;
   /** Cache subsystem status */
   cache: CacheHealthStatus;
   /** Rate-limiter subsystem status */
@@ -137,16 +140,17 @@ export class HealthService {
    * Determine EP API reachability from recorded metrics.
    * Cyclomatic complexity: 2
    *
-   * Returns `true` unless the error counter exists and the call counter
-   * is either absent or zero (all calls failed).
+   * Returns `null` when no API calls have been recorded yet (unknown state),
+   * `false` when all calls failed (error count >= call count > 0),
+   * `true` when at least some calls succeeded.
    */
-  private isEpApiReachable(): boolean {
+  private isEpApiReachable(): boolean | null {
     const errorCount = this.metricsService.getMetric(MetricName.EP_API_ERROR_COUNT) ?? 0;
     const callCount = this.metricsService.getMetric(MetricName.EP_API_CALL_COUNT) ?? 0;
 
     if (callCount === 0) {
-      // No calls yet — assume reachable until proven otherwise
-      return true;
+      // No calls yet — reachability is unknown
+      return null;
     }
 
     // Reachable if at least some calls succeeded
@@ -176,9 +180,10 @@ export class HealthService {
    */
   private deriveOverallStatus(
     rateLimiter: RateLimiterHealthStatus,
-    epApiReachable: boolean
+    epApiReachable: boolean | null
   ): HealthStatusLevel {
-    if (!epApiReachable) {
+    // null = unknown (no metrics yet) — treat as not failing
+    if (epApiReachable === false) {
       return 'unhealthy';
     }
 
