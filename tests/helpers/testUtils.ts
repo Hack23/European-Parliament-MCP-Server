@@ -7,6 +7,15 @@
  */
 
 /**
+ * Default timeout for test operations in milliseconds.
+ * Can be overridden via TEST_TIMEOUT_MS environment variable.
+ */
+export const DEFAULT_TEST_TIMEOUT_MS = parseInt(
+  process.env.TEST_TIMEOUT_MS ?? '10000',
+  10
+);
+
+/**
  * Check if an error is caused by rate limiting or network issues
  */
 function isRateLimitOrNetworkError(error: unknown): boolean {
@@ -94,6 +103,32 @@ export async function measureTime<T>(
 }
 
 /**
+ * Wait for a condition to become true, polling at the given interval.
+ * Throws if the condition is not met within the timeout.
+ *
+ * @param condition - Predicate to check
+ * @param timeoutMs - Maximum wait time in milliseconds (default: DEFAULT_TEST_TIMEOUT_MS)
+ * @param intervalMs - Polling interval in milliseconds (default: 100)
+ * @throws Error if condition not met within timeout
+ */
+export async function waitFor(
+  condition: () => boolean | Promise<boolean>,
+  timeoutMs = DEFAULT_TEST_TIMEOUT_MS,
+  intervalMs = 100
+): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    if (await condition()) {
+      return;
+    }
+    await new Promise(resolve => setTimeout(resolve, intervalMs));
+  }
+
+  throw new Error(`waitFor: condition not met within ${timeoutMs}ms`);
+}
+
+/**
  * Parse MCP tool response text content
  * 
  * @param content - MCP response content array
@@ -152,4 +187,23 @@ export function validateMCPResponse(
   if (response.content.length === 0) {
     throw new Error('Response content is empty');
   }
+}
+
+/**
+ * Get a configurable test timeout in milliseconds.
+ *
+ * Respects TEST_TIMEOUT_MS environment variable for CI overrides.
+ *
+ * @param defaultMs - Default timeout if env var not set
+ * @returns Timeout in milliseconds
+ */
+export function getTestTimeout(defaultMs = DEFAULT_TEST_TIMEOUT_MS): number {
+  const envVal = process.env.TEST_TIMEOUT_MS;
+  if (envVal) {
+    const parsed = parseInt(envVal, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+  return defaultMs;
 }

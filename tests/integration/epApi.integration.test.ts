@@ -10,11 +10,16 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { epClient, rateLimiter, shouldRunIntegrationTests } from './setup.js';
+import { epClient, rateLimiter, shouldRunIntegrationTests, useMockClient } from './setup.js';
 import { retry, measureTime } from '../helpers/testUtils.js';
 
 // Skip tests if integration tests are not enabled
 const describeIntegration = shouldRunIntegrationTests() ? describe : describe.skip;
+
+// Log test mode at module load time
+if (shouldRunIntegrationTests()) {
+  console.log(`[Integration] Running in ${useMockClient() ? 'MOCK' : 'REAL API'} mode`);
+}
 
 describeIntegration('European Parliament API Integration', () => {
   beforeEach(async () => {
