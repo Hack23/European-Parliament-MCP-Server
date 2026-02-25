@@ -2,9 +2,9 @@
  * Health Check Service
  *
  * Provides a lightweight, synchronous-friendly health snapshot for the
- * MCP server.  The snapshot is consumed by:
- * - The `--health` CLI flag (human-readable JSON)
- * - Future monitoring integrations (CloudWatch, Prometheus, etc.)
+ * MCP server.  The snapshot is designed to be consumed by:
+ * - Monitoring integrations (CloudWatch, Prometheus, etc.)
+ * - Future CLI health commands
  *
  * **Intelligence Perspective:** Operational health metrics are a
  * prerequisite for reliable intelligence product delivery—degraded
@@ -18,7 +18,7 @@
  * @module services/HealthService
  */
 
-import type { RateLimiter } from '../utils/rateLimiter.js';
+import type { RateLimiter, RateLimiterStatus } from '../utils/rateLimiter.js';
 import type { MetricsService } from './MetricsService.js';
 import { MetricName } from './MetricsService.js';
 
@@ -37,15 +37,9 @@ export type HealthStatusLevel = 'healthy' | 'degraded' | 'unhealthy';
 
 /**
  * Rate-limiter status snapshot for health reporting.
+ * Type alias of {@link RateLimiterStatus} to prevent the two from drifting.
  */
-export interface RateLimiterHealthStatus {
-  /** Number of tokens currently available */
-  availableTokens: number;
-  /** Maximum number of tokens in the bucket */
-  maxTokens: number;
-  /** Percentage of the bucket that is used (0–100) */
-  utilizationPercent: number;
-}
+export type RateLimiterHealthStatus = RateLimiterStatus;
 
 /**
  * Cache status snapshot for health reporting.

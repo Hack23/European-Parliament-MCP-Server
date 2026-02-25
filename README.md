@@ -581,9 +581,9 @@ Direct data access via EP resource URIs:
 | `ep://plenary-sessions` | Recent plenary sessions |
 | `ep://votes/{sessionId}` | Voting records for a session |
 | `ep://political-groups` | Political group listing |
-| `ep://procedures/{id}` | Legislative procedure details |
-| `ep://plenary/{id}` | Single plenary session details |
-| `ep://documents/{id}` | Legislative document details |
+| `ep://procedures/{procedureId}` | Legislative procedure details |
+| `ep://plenary/{plenaryId}` | Single plenary session details |
+| `ep://documents/{documentId}` | Legislative document details |
 
 ---
 

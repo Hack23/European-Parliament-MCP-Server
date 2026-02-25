@@ -374,7 +374,7 @@ async function handlePoliticalGroups(): Promise<ResourceContent> {
 }
 
 /**
- * Handle procedure detail resource request (extended URI: ep://procedures/{id})
+ * Handle procedure detail resource request (extended URI: ep://procedures/{procedureId})
  *
  * @param procedureId - Legislative procedure identifier (process-id format YYYY-NNNN)
  * @returns Resource content with procedure details as JSON
@@ -395,7 +395,7 @@ async function handleProcedureDetail(procedureId: string): Promise<ResourceConte
 }
 
 /**
- * Handle plenary detail resource request (extended URI: ep://plenary/{id})
+ * Handle plenary detail resource request (extended URI: ep://plenary/{plenaryId})
  *
  * Uses {@link EuropeanParliamentClient#getMeetingById} for a direct ID-based
  * lookup. Throws a not-found error if the EP API returns no matching session.
@@ -420,7 +420,7 @@ async function handlePlenaryDetail(plenaryId: string): Promise<ResourceContent> 
 }
 
 /**
- * Handle document detail resource request (extended URI: ep://documents/{id})
+ * Handle document detail resource request (extended URI: ep://documents/{documentId})
  *
  * @param documentId - Legislative document identifier
  * @returns Resource content with document details as JSON

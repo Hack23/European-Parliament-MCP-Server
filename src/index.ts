@@ -332,7 +332,7 @@ if (isMainModule) {
   process.once('SIGINT', () => { handleShutdownSignal('SIGINT'); });
 
   server.start().catch((error: unknown) => {
-    console.error('[FATAL] Server startup failed:', error instanceof Error ? error.message : String(error));
+    console.error('[FATAL] Server startup failed:', error);
     process.exit(1);
   });
 }

@@ -22,8 +22,10 @@
 /**
  * Centralised DI token registry.
  *
- * Use `as const` to ensure TypeScript treats each value as a unique
- * `symbol` literal rather than the wider `symbol` type.
+ * `as const` makes the registry object itself readonly and ensures each
+ * property value is inferred as `symbol` (not widened to `object`).
+ * For type-level uniqueness, each `Symbol(...)` is a distinct runtime value;
+ * `DIToken` is the union of all token values for generic container utilities.
  */
 export const TOKENS = {
   /**

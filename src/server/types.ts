@@ -15,6 +15,7 @@
  */
 export interface ToolResult {
   content: { type: string; text: string }[];
+  isError?: boolean;
 }
 
 /**
