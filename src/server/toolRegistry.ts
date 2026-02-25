@@ -64,7 +64,7 @@ import { handleGetMeetingForeseenActivities, getMeetingForeseenActivitiesToolMet
 import { handleGetProcedureEvents, getProcedureEventsToolMetadata } from '../tools/getProcedureEvents.js';
 
 // ── Type imports ──────────────────────────────────────────────────
-import type { ToolHandler, ToolCategory, ToolResult } from './types.js';
+import type { ToolHandler, ToolCategory, ToolResult, ToolMetadata } from './types.js';
 
 /** Re-export types for consumers */
 export type { ToolResult, ToolHandler, ToolMetadata, ToolCategory, CLIOptions } from './types.js';
@@ -76,7 +76,7 @@ export type { ToolResult, ToolHandler, ToolMetadata, ToolCategory, CLIOptions } 
 function withCategory(
   meta: { name: string; description: string; inputSchema: unknown },
   category: ToolCategory
-): { name: string; description: string; inputSchema: unknown; category: ToolCategory } {
+): ToolMetadata {
   return { ...meta, category };
 }
 
@@ -84,7 +84,7 @@ function withCategory(
  * Returns the full ordered list of tool metadata for the MCP `ListTools` response.
  * Each entry includes the tool's `category` in addition to the standard MCP fields.
  */
-export function getToolMetadataArray(): { name: string; description: string; inputSchema: unknown; category: ToolCategory }[] {
+export function getToolMetadataArray(): ToolMetadata[] {
   return [
     // Core tools
     withCategory(getMEPsToolMetadata, 'core'),
