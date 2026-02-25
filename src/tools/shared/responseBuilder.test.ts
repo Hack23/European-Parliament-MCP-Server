@@ -73,4 +73,11 @@ describe('buildErrorResponse', () => {
     const result = buildErrorResponse(new Error('test'), 'tool');
     expect(() => JSON.parse(result.content[0]?.text ?? '')).not.toThrow();
   });
+
+  it('should pretty-print with 2-space indentation', () => {
+    const result = buildErrorResponse(new Error('test'), 'tool');
+    const text = result.content[0]?.text ?? '';
+    expect(text).toContain('\n');
+    expect(text).toContain('  ');
+  });
 });

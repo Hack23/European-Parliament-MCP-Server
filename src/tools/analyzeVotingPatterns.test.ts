@@ -299,9 +299,9 @@ describe('analyze_voting_patterns Tool', () => {
         if ('dataAvailable' in parsed) {
           expect(parsed.dataAvailable).toBe(false);
         }
-        expect('confidence' in parsed).toBe(true);
-        if ('confidence' in parsed) {
-          expect(parsed.confidence).toBe('LOW');
+        expect('confidenceLevel' in parsed).toBe(true);
+        if ('confidenceLevel' in parsed) {
+          expect(parsed.confidenceLevel).toBe('LOW');
         }
       }
     });

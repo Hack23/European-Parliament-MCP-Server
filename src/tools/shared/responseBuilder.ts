@@ -36,7 +36,7 @@ export function buildErrorResponse(error: unknown, toolName: string): ToolResult
     message = 'Unknown error occurred';
   }
   return {
-    content: [{ type: 'text', text: JSON.stringify({ error: message, toolName }) }],
+    content: [{ type: 'text', text: JSON.stringify({ error: message, toolName }, null, 2) }],
     isError: true
   };
 }
