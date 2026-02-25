@@ -20,6 +20,7 @@
 
 import type { RateLimiter } from '../utils/rateLimiter.js';
 import type { MetricsService } from './MetricsService.js';
+import { MetricName } from './MetricsService.js';
 
 // ── Public types ──────────────────────────────────────────────────
 
@@ -131,19 +132,11 @@ export class HealthService {
   // ── Private helpers ─────────────────────────────────────────────
 
   /**
-   * Build rate-limiter snapshot.
+   * Build rate-limiter snapshot by delegating to RateLimiter.getStatus().
    * Cyclomatic complexity: 1
    */
   private buildRateLimiterStatus(): RateLimiterHealthStatus {
-    const available = this.rateLimiter.getAvailableTokens();
-    const max = this.rateLimiter.getMaxTokens();
-    const utilization = max > 0 ? Math.round(((max - available) / max) * 100) : 0;
-
-    return {
-      availableTokens: Math.round(available),
-      maxTokens: max,
-      utilizationPercent: utilization,
-    };
+    return this.rateLimiter.getStatus();
   }
 
   /**
@@ -154,8 +147,8 @@ export class HealthService {
    * is either absent or zero (all calls failed).
    */
   private isEpApiReachable(): boolean {
-    const errorCount = this.metricsService.getMetric('ep_api_error_count') ?? 0;
-    const callCount = this.metricsService.getMetric('ep_api_call_count') ?? 0;
+    const errorCount = this.metricsService.getMetric(MetricName.EP_API_ERROR_COUNT) ?? 0;
+    const callCount = this.metricsService.getMetric(MetricName.EP_API_CALL_COUNT) ?? 0;
 
     if (callCount === 0) {
       // No calls yet — assume reachable until proven otherwise
@@ -171,8 +164,8 @@ export class HealthService {
    * Cyclomatic complexity: 2
    */
   private buildCacheStatus(): CacheHealthStatus {
-    const hits = this.metricsService.getMetric('ep_cache_hit_count') ?? 0;
-    const misses = this.metricsService.getMetric('ep_cache_miss_count') ?? 0;
+    const hits = this.metricsService.getMetric(MetricName.EP_CACHE_HIT_COUNT) ?? 0;
+    const misses = this.metricsService.getMetric(MetricName.EP_CACHE_MISS_COUNT) ?? 0;
     const total = hits + misses;
 
     const populated = total > 0;

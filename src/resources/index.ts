@@ -92,6 +92,8 @@ const politicalGroupsResourceTemplate: ResourceTemplate = {
 // ─── URI Validation ──────────────────────────────────────────
 
 const MepIdSchema = z.string().min(1).max(100);
+/** Generic resource ID validator (reused for procedures, plenary sessions, documents) */
+const ResourceIdSchema = z.string().min(1).max(200);
 
 /**
  * Match MEP resource URIs
@@ -352,18 +354,17 @@ async function handlePoliticalGroups(): Promise<ResourceContent> {
 /**
  * Handle procedure detail resource request (extended URI: ep://procedures/{id})
  *
- * @param procedureId - Legislative procedure identifier
+ * @param procedureId - Legislative procedure identifier (process-id format YYYY-NNNN)
  * @returns Resource content with procedure details as JSON
  */
 async function handleProcedureDetail(procedureId: string): Promise<ResourceContent> {
-  const validId = MepIdSchema.parse(procedureId);
-  const data = await epClient.getProcedures({ limit: 1 });
+  const validId = ResourceIdSchema.parse(procedureId);
+  const data = await epClient.getProcedureById(validId);
 
   return {
     uri: `ep://procedures/${validId}`,
     mimeType: 'application/json',
     text: JSON.stringify({
-      procedureId: validId,
       ...data,
       _source: 'European Parliament Open Data Portal',
       _accessedAt: new Date().toISOString()
@@ -374,19 +375,28 @@ async function handleProcedureDetail(procedureId: string): Promise<ResourceConte
 /**
  * Handle plenary detail resource request (extended URI: ep://plenary/{id})
  *
+ * Fetches recent plenary sessions and filters by the requested session ID.
+ * Falls back to the full list when no match is found.
+ *
  * @param plenaryId - Plenary session identifier
  * @returns Resource content with plenary session details as JSON
  */
 async function handlePlenaryDetail(plenaryId: string): Promise<ResourceContent> {
-  const validId = MepIdSchema.parse(plenaryId);
-  const data = await epClient.getPlenarySessions({ limit: 20 });
+  const validId = ResourceIdSchema.parse(plenaryId);
+  const data = await epClient.getPlenarySessions({ limit: 50 });
+
+  // Try to isolate the requested session from the returned list
+  const sessions = Array.isArray(data.data) ? data.data : [];
+  const session = sessions.find(
+    (s) => (s as { id?: string }).id === validId
+  ) ?? sessions[0];
 
   return {
     uri: `ep://plenary/${validId}`,
     mimeType: 'application/json',
     text: JSON.stringify({
       plenaryId: validId,
-      ...data,
+      session: session ?? null,
       _source: 'European Parliament Open Data Portal',
       _accessedAt: new Date().toISOString()
     }, null, 2)
@@ -396,18 +406,17 @@ async function handlePlenaryDetail(plenaryId: string): Promise<ResourceContent> 
 /**
  * Handle document detail resource request (extended URI: ep://documents/{id})
  *
- * @param documentId - Document identifier or search query
+ * @param documentId - Legislative document identifier
  * @returns Resource content with document details as JSON
  */
 async function handleDocumentDetail(documentId: string): Promise<ResourceContent> {
-  const validId = MepIdSchema.parse(documentId);
-  const data = await epClient.searchDocuments({ keyword: validId, limit: 1 });
+  const validId = ResourceIdSchema.parse(documentId);
+  const data = await epClient.getDocumentById(validId);
 
   return {
     uri: `ep://documents/${validId}`,
     mimeType: 'application/json',
     text: JSON.stringify({
-      documentId: validId,
       ...data,
       _source: 'European Parliament Open Data Portal',
       _accessedAt: new Date().toISOString()
