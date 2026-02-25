@@ -16,6 +16,8 @@
 
 import { GetPlenarySessionDocumentItemsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get plenary session document items tool handler.
@@ -25,7 +27,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetPlenarySessionDocumentItems(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetPlenarySessionDocumentItemsSchema.parse(args);
 
   const result = await epClient.getPlenarySessionDocumentItems({
@@ -33,12 +35,7 @@ export async function handleGetPlenarySessionDocumentItems(
     offset: params.offset
   });
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_plenary_session_document_items */

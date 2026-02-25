@@ -17,6 +17,8 @@
 
 import { GetMEPsSchema, MEPSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get MEPs tool handler
@@ -45,7 +47,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetMEPs(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   // Validate input
   const params = GetMEPsSchema.parse(args);
   
@@ -66,13 +68,7 @@ export async function handleGetMEPs(
     const outputSchema = PaginatedResponseSchema(MEPSchema);
     const validated = outputSchema.parse(result);
     
-    // Return MCP-compliant response
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(validated, null, 2)
-      }]
-    };
+    return buildToolResponse(validated);
   } catch (error) {
     // Handle errors without exposing internal details
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';

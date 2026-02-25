@@ -19,6 +19,8 @@
 
 import { GetExternalDocumentsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get external documents tool handler.
@@ -28,17 +30,12 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetExternalDocuments(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetExternalDocumentsSchema.parse(args);
 
   if (params.docId !== undefined) {
     const result = await epClient.getExternalDocumentById(params.docId);
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(result, null, 2)
-      }]
-    };
+    return buildToolResponse(result);
   }
 
   const apiParams: Record<string, unknown> = {
@@ -49,12 +46,7 @@ export async function handleGetExternalDocuments(
 
   const result = await epClient.getExternalDocuments(apiParams as Parameters<typeof epClient.getExternalDocuments>[0]);
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_external_documents */

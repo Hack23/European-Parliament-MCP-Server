@@ -294,13 +294,10 @@ describe('analyze_voting_patterns Tool', () => {
 
       expect(typeof parsed === 'object' && parsed !== null).toBe(true);
       if (typeof parsed === 'object' && parsed !== null) {
-        expect('statistics' in parsed).toBe(true);
-        if ('statistics' in parsed) {
-          const stats = parsed.statistics;
-          expect(typeof stats === 'object' && stats !== null).toBe(true);
-          if (typeof stats === 'object' && stats !== null && 'totalVotes' in stats) {
-            expect(stats.totalVotes).toBe(0);
-          }
+        // EP API /meps/{id} never returns voting stats — expect dataAvailable: false
+        expect('dataAvailable' in parsed).toBe(true);
+        if ('dataAvailable' in parsed) {
+          expect(parsed.dataAvailable).toBe(false);
         }
         expect('confidenceLevel' in parsed).toBe(true);
         if ('confidenceLevel' in parsed) {

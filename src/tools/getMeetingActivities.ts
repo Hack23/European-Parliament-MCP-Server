@@ -14,6 +14,8 @@
 
 import { GetMeetingActivitiesSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get meeting activities tool handler.
@@ -23,7 +25,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetMeetingActivities(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetMeetingActivitiesSchema.parse(args);
 
   const result = await epClient.getMeetingActivities(params.sittingId, {
@@ -31,12 +33,7 @@ export async function handleGetMeetingActivities(
     offset: params.offset
   });
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_meeting_activities */

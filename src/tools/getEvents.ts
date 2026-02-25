@@ -19,6 +19,8 @@
 
 import { GetEventsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get events tool handler.
@@ -28,17 +30,12 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetEvents(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetEventsSchema.parse(args);
 
   if (params.eventId !== undefined) {
     const result = await epClient.getEventById(params.eventId);
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(result, null, 2)
-      }]
-    };
+    return buildToolResponse(result);
   }
 
   const apiParams: Record<string, unknown> = {
@@ -50,12 +47,7 @@ export async function handleGetEvents(
 
   const result = await epClient.getEvents(apiParams as Parameters<typeof epClient.getEvents>[0]);
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_events */

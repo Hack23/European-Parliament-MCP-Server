@@ -16,6 +16,8 @@
 
 import { GetMeetingForeseenActivitiesSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get meeting foreseen activities tool handler.
@@ -25,7 +27,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetMeetingForeseenActivities(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetMeetingForeseenActivitiesSchema.parse(args);
 
   const result = await epClient.getMeetingForeseenActivities(params.sittingId, {
@@ -33,12 +35,7 @@ export async function handleGetMeetingForeseenActivities(
     offset: params.offset
   });
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_meeting_foreseen_activities */
