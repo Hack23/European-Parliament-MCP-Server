@@ -33,6 +33,7 @@ interface VotingAnomalyAnalysis {
   summary: { totalAnomalies: number; highSeverity: number; mediumSeverity: number; lowSeverity: number };
   computedAttributes: {
     anomalyRate: number;
+    severityIndex: number;
     groupStabilityScore: number;
     defectionTrend: string;
     riskLevel: string;
@@ -231,14 +232,19 @@ async function detectGroupAnomalies(
  */
 function buildAnomalySummary(
   anomalies: VotingAnomaly[]
-): { highSeverity: number; mediumSeverity: number; lowSeverity: number; anomalyRate: number } {
+): { highSeverity: number; mediumSeverity: number; lowSeverity: number; anomalyRate: number; severityIndex: number } {
   const highSeverity = anomalies.filter(a => a.severity === 'HIGH').length;
   const mediumSeverity = anomalies.filter(a => a.severity === 'MEDIUM').length;
   const lowSeverity = anomalies.filter(a => a.severity === 'LOW').length;
+  // anomalyRate: true proportion of HIGH-severity anomalies in [0, 1]
   const anomalyRate = anomalies.length > 0
+    ? Math.round((highSeverity / anomalies.length) * 100) / 100
+    : 0;
+  // severityIndex: weighted-average severity on ~1–3 scale
+  const severityIndex = anomalies.length > 0
     ? Math.round((highSeverity * 3 + mediumSeverity * 2 + lowSeverity) / anomalies.length * 100) / 100
     : 0;
-  return { highSeverity, mediumSeverity, lowSeverity, anomalyRate };
+  return { highSeverity, mediumSeverity, lowSeverity, anomalyRate, severityIndex };
 }
 
 /**
@@ -278,6 +284,7 @@ export async function handleDetectVotingAnomalies(
         summary: { totalAnomalies: 0, highSeverity: 0, mediumSeverity: 0, lowSeverity: 0 },
         computedAttributes: {
           anomalyRate: 0,
+          severityIndex: 0,
           groupStabilityScore: 0,
           defectionTrend: 'UNKNOWN',
           riskLevel: 'UNKNOWN'
@@ -290,7 +297,7 @@ export async function handleDetectVotingAnomalies(
       });
     }
 
-    const { highSeverity, mediumSeverity, lowSeverity, anomalyRate } = buildAnomalySummary(result.anomalies);
+    const { highSeverity, mediumSeverity, lowSeverity, anomalyRate, severityIndex } = buildAnomalySummary(result.anomalies);
     const confidence = resolveConfidence(isSingleMep, result.scope, result.anomalies.length);
 
     const analysis: VotingAnomalyAnalysis = {
@@ -300,7 +307,8 @@ export async function handleDetectVotingAnomalies(
       summary: { totalAnomalies: result.anomalies.length, highSeverity, mediumSeverity, lowSeverity },
       computedAttributes: {
         anomalyRate,
-        groupStabilityScore: Math.round((1 - anomalyRate / 3) * 100 * 100) / 100,
+        severityIndex,
+        groupStabilityScore: Math.round((1 - severityIndex / 3) * 100 * 100) / 100,
         defectionTrend: classifyDefectionTrend(highSeverity),
         riskLevel: classifyRiskLevel(highSeverity)
       },
