@@ -214,6 +214,19 @@ async function buildLandscape(
     (powerDynamics.grandCoalitionSize / Math.max(1, totalMEPs)) * 10000
   ) / 100;
 
+  // Fetch real plenary session data from EP API
+  let recentSessionCount = 0;
+  try {
+    const sessions = await epClient.getPlenarySessions({
+      dateFrom,
+      dateTo,
+      limit: 100
+    });
+    recentSessionCount = sessions.total;
+  } catch {
+    // API may not return sessions for this date range — report zero
+  }
+
   return {
     period: { from: dateFrom, to: dateTo },
     parliament: {
@@ -223,10 +236,10 @@ async function buildLandscape(
     },
     groups,
     powerDynamics,
-    // Activity metrics are heuristic estimates — no real session/attendance data fetched
+    // Activity metrics from real EP API data
     activityMetrics: {
-      averageAttendance: Math.min(85, 65 + groups.length * 2), // estimate
-      recentSessionCount: Math.max(4, groups.length + 4) // estimate
+      averageAttendance: 0, // EP API does not provide attendance data
+      recentSessionCount
     },
     computedAttributes: {
       fragmentationIndex: computeFragmentation(groups.length),
@@ -235,13 +248,13 @@ async function buildLandscape(
         powerDynamics.progressiveBloc,
         powerDynamics.conservativeBloc
       ),
-      overallEngagement: computeEngagement(Math.min(85, 65 + groups.length * 2))
+      overallEngagement: computeEngagement(0)
     },
     confidenceLevel: totalMEPs > 50 ? 'MEDIUM' : 'LOW',
-    methodology: 'Political landscape analysis using EP Open Data: group composition mapping, '
-      + 'bloc classification, coalition threshold calculation, and fragmentation indexing. '
-      + 'Activity metrics (attendance, session count) are heuristic estimates derived from '
-      + 'group count and are not backed by real session/attendance data. '
+    methodology: 'Political landscape analysis using real EP Open Data: MEP records, '
+      + 'group composition mapping, bloc classification, coalition threshold calculation, '
+      + 'fragmentation indexing, and plenary session counts. '
+      + 'Attendance data is not available from the EP API and is reported as zero. '
       + 'Data source: European Parliament Open Data Portal.'
   };
 }

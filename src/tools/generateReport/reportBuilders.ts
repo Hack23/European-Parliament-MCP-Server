@@ -43,35 +43,37 @@ export function createCommitteeSection(
 }
 
 /**
- * Create parliamentary questions section
+ * Create parliamentary questions section with real data
  * Cyclomatic complexity: 1
  */
-export function createParliamentaryQuestionsSection(): ReportSection {
+export function createParliamentaryQuestionsSection(questionsCount: number): ReportSection {
   return {
     title: 'Parliamentary Questions',
-    content: 'Submitted 25 written questions and 3 oral questions.'
+    content: `${String(questionsCount)} parliamentary questions found in EP Open Data.`
   };
 }
 
 /**
- * Create meeting activity section
+ * Create meeting activity section with real data
  * Cyclomatic complexity: 1
  */
-export function createMeetingActivitySection(): ReportSection {
+export function createMeetingActivitySection(meetingsCount: number): ReportSection {
   return {
     title: 'Meeting Activity',
-    content: 'The committee held 24 meetings during this period.'
+    content: meetingsCount > 0
+      ? `${String(meetingsCount)} meetings recorded in EP Open Data during this period.`
+      : 'Meeting count data not available from EP API for this filter.'
   };
 }
 
 /**
- * Create legislative output section
+ * Create legislative output section with real data
  * Cyclomatic complexity: 1
  */
-export function createLegislativeOutputSection(): ReportSection {
+export function createLegislativeOutputSection(reportsCount: number, documentsCount: number): ReportSection {
   return {
     title: 'Legislative Output',
-    content: 'Produced 15 reports and 28 opinions on legislative proposals.'
+    content: `${String(reportsCount)} adopted texts and ${String(documentsCount)} committee documents found in EP Open Data.`
   };
 }
 
@@ -82,29 +84,29 @@ export function createLegislativeOutputSection(): ReportSection {
 export function createMemberParticipationSection(memberCount: number): ReportSection {
   return {
     title: 'Member Participation',
-    content: `Average attendance rate: 85%. ${String(memberCount)} active members.`
+    content: `${String(memberCount)} members listed in EP Open Data. Attendance rate data not available from EP API.`
   };
 }
 
 /**
- * Create overall voting activity section
+ * Create overall voting activity section with real data
  * Cyclomatic complexity: 1
  */
-export function createOverallVotingSection(): ReportSection {
+export function createOverallVotingSection(sessionCount: number): ReportSection {
   return {
     title: 'Overall Voting Activity',
-    content: '1,250 votes conducted across all plenary sessions.'
+    content: `${String(sessionCount)} plenary sessions found in EP Open Data for this period.`
   };
 }
 
 /**
- * Create adoption rates section
+ * Create adoption rates section with real data
  * Cyclomatic complexity: 1
  */
-export function createAdoptionRatesSection(): ReportSection {
+export function createAdoptionRatesSection(adoptedCount: number): ReportSection {
   return {
     title: 'Adoption Rates',
-    content: '82% of proposals were adopted, 15% rejected, 3% withdrawn.'
+    content: `${String(adoptedCount)} adopted texts found in EP Open Data for this period.`
   };
 }
 
@@ -115,39 +117,39 @@ export function createAdoptionRatesSection(): ReportSection {
 export function createPoliticalGroupSection(): ReportSection {
   return {
     title: 'Political Group Alignment',
-    content: 'Analysis of voting patterns across political groups shows high internal cohesion.'
+    content: 'Political group voting alignment data can be analyzed via the compare_political_groups tool.'
   };
 }
 
 /**
- * Create new proposals section
+ * Create new proposals section with real data
  * Cyclomatic complexity: 1
  */
-export function createNewProposalsSection(): ReportSection {
+export function createNewProposalsSection(procedureCount: number): ReportSection {
   return {
     title: 'New Proposals',
-    content: '45 new legislative proposals submitted during this period.'
+    content: `${String(procedureCount)} legislative procedures found in EP Open Data for this period.`
   };
 }
 
 /**
- * Create completed procedures section
+ * Create completed procedures section with real data
  * Cyclomatic complexity: 1
  */
-export function createCompletedProceduresSection(): ReportSection {
+export function createCompletedProceduresSection(completedCount: number): ReportSection {
   return {
     title: 'Completed Procedures',
-    content: '32 procedures completed with final adoption.'
+    content: `${String(completedCount)} adopted texts recorded as completed in EP Open Data.`
   };
 }
 
 /**
- * Create ongoing procedures section
+ * Create ongoing procedures section with real data
  * Cyclomatic complexity: 1
  */
-export function createOngoingProceduresSection(): ReportSection {
+export function createOngoingProceduresSection(ongoingCount: number): ReportSection {
   return {
     title: 'Ongoing Procedures',
-    content: '87 procedures currently in various stages of the legislative process.'
+    content: `${String(ongoingCount)} procedures estimated as ongoing (total procedures minus adopted texts).`
   };
 }

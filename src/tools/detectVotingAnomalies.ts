@@ -203,7 +203,26 @@ async function detectSingleMepAnomalies(
 }
 
 /**
- * Detect anomalies for a group or all MEPs
+ * Fetch real voting statistics for a single MEP from the EP API
+ */
+async function fetchMepVotingStats(mepId: string): Promise<{
+  totalVotes: number; votesFor: number; votesAgainst: number;
+  abstentions: number; attendanceRate: number;
+} | undefined> {
+  try {
+    const mepDetails = await epClient.getMEPDetails(mepId);
+    const stats = mepDetails.votingStatistics;
+    if (stats !== undefined && stats.totalVotes > 0) {
+      return stats;
+    }
+    return undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Detect anomalies for a group or all MEPs using real EP API data
  */
 async function detectGroupAnomalies(
   groupId: string | undefined, threshold: number, period: { from: string; to: string }
@@ -217,15 +236,10 @@ async function detectGroupAnomalies(
   const allAnomalies: VotingAnomaly[] = [];
 
   for (const mep of mepsResult.data) {
+    const stats = await fetchMepVotingStats(mep.id);
     const anomalies = detectMepAnomalies(
       { id: mep.id, name: mep.name, politicalGroup: mep.politicalGroup },
-      {
-        totalVotes: 1000 + (mep.name.length * 50),
-        votesFor: 700 + (mep.name.length * 30),
-        votesAgainst: 200 + (mep.name.length * 10),
-        abstentions: 100 + (mep.name.length * 10),
-        attendanceRate: 70 + (mep.name.length % 25)
-      },
+      stats,
       threshold,
       period.to
     );
@@ -268,7 +282,8 @@ export async function handleDetectVotingAnomalies(
         riskLevel: classifyRiskLevel(highSeverity)
       },
       confidenceLevel: getDataVolumeConfidence(result.scope, params.mepId !== undefined),
-      methodology: 'Statistical deviation analysis with configurable sensitivity threshold'
+      methodology: 'Statistical deviation analysis using real EP Open Data voting records with configurable sensitivity threshold. '
+        + 'Data source: European Parliament Open Data Portal.'
     };
 
     return { content: [{ type: 'text', text: JSON.stringify(analysis, null, 2) }] };

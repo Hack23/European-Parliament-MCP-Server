@@ -130,20 +130,19 @@ function computeCommitteeEngagementScore(committees: string[], roles: string[]):
 }
 
 /**
- * Compute parliamentary oversight score (0-100)
+ * Compute parliamentary oversight score (0-100) using real question data
  */
-function computeOversightScore(stats: { totalVotes: number }): {
+function computeOversightScore(questionCount: number): {
   score: number;
   metrics: Record<string, number>;
 } {
-  const estimatedQuestions = Math.round(stats.totalVotes * 0.05);
-  const questionVolume = Math.min(100, estimatedQuestions * 2);
-  const topicDiversity = Math.min(100, Math.round(estimatedQuestions * 0.7) * 10);
+  const questionVolume = Math.min(100, questionCount * 2);
+  const topicDiversity = Math.min(100, questionCount * 10);
   const score = questionVolume * 0.5 + topicDiversity * 0.5;
   return {
     score: Math.round(score * 100) / 100,
     metrics: {
-      estimatedQuestions,
+      questionsFound: questionCount,
       questionVolume: Math.round(questionVolume * 100) / 100,
       topicDiversity: Math.round(topicDiversity * 100) / 100
     }
@@ -241,10 +240,22 @@ export async function handleAssessMepInfluence(
       totalVotes: 0, votesFor: 0, votesAgainst: 0, abstentions: 0, attendanceRate: 0
     };
 
+    // Fetch real parliamentary questions for this MEP
+    let questionCount = 0;
+    try {
+      const questions = await epClient.getParliamentaryQuestions({
+        author: params.mepId,
+        limit: 100
+      });
+      questionCount = questions.total;
+    } catch {
+      // Questions may not be available — report zero
+    }
+
     const votingDim = computeVotingActivityScore(stats);
     const legislativeDim = computeLegislativeOutputScore(mep.roles ?? [], mep.committees);
     const committeeDim = computeCommitteeEngagementScore(mep.committees, mep.roles ?? []);
-    const oversightDim = computeOversightScore(stats);
+    const oversightDim = computeOversightScore(questionCount);
     const coalitionDim = computeCoalitionScore(stats);
 
     const dimensions = buildDimensions(
@@ -281,7 +292,9 @@ export async function handleAssessMepInfluence(
         leadershipIndicator: committeeDim.score
       },
       confidenceLevel: getConfidenceLevel(stats.totalVotes),
-      methodology: 'CIA Political Scorecards - 5-dimension weighted scoring model'
+      methodology: 'CIA Political Scorecards - 5-dimension weighted scoring model using real EP Open Data. '
+        + 'Parliamentary questions fetched from /parliamentary-questions endpoint. '
+        + 'Data source: European Parliament Open Data Portal.'
     };
 
     return {

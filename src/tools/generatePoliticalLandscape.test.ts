@@ -9,7 +9,8 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPs: vi.fn()
+    getMEPs: vi.fn(),
+    getPlenarySessions: vi.fn()
   }
 }));
 
@@ -29,6 +30,10 @@ describe('generate_political_landscape Tool', () => {
       limit: 100,
       offset: 0,
       hasMore: false
+    });
+
+    vi.mocked(epClientModule.epClient.getPlenarySessions).mockResolvedValue({
+      data: [], total: 12, limit: 100, offset: 0, hasMore: false
     });
   });
 
@@ -217,8 +222,8 @@ describe('generate_political_landscape Tool', () => {
       expect(data.computedAttributes.politicalBalance).toBe('BALANCED');
     });
 
-    it('should classify engagement as HIGH when many groups are present', async () => {
-      // Arrange: 8 distinct groups → avgAttendance = Math.min(85, 65+8*2) = 81 → HIGH
+    it('should classify engagement as LOW when attendance data is not available from EP API', async () => {
+      // Arrange: 8 distinct groups — attendance not available from EP API
       const groups = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID', 'The Left', 'NI'];
       vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
         data: groups.map((g, i) => ({
@@ -232,11 +237,14 @@ describe('generate_political_landscape Tool', () => {
       const result = await handleGeneratePoliticalLandscape({});
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         computedAttributes: { overallEngagement: string; fragmentationIndex: string };
+        activityMetrics: { recentSessionCount: number };
       };
 
-      // Assert
-      expect(data.computedAttributes.overallEngagement).toBe('HIGH');
+      // Assert — engagement is LOW because EP API does not provide attendance data
+      expect(data.computedAttributes.overallEngagement).toBe('LOW');
       expect(data.computedAttributes.fragmentationIndex).toBe('HIGH'); // 8 groups >= 8
+      // Session count comes from real EP API data (mocked as 12)
+      expect(data.activityMetrics.recentSessionCount).toBe(12);
     });
   });
 });

@@ -48,7 +48,7 @@ function extractMEPData(
 }
 
 /**
- * Generate MEP activity report
+ * Generate MEP activity report using real EP API data
  * Cyclomatic complexity: 2
  */
 export async function generateMEPActivityReport(
@@ -58,6 +58,20 @@ export async function generateMEPActivityReport(
     ? await epClient.getMEPDetails(params.subjectId) 
     : null;
   const data = extractMEPData(params, mep);
+
+  // Fetch real parliamentary questions for this MEP
+  let questionsSubmitted = 0;
+  try {
+    if (params.subjectId !== undefined) {
+      const questions = await epClient.getParliamentaryQuestions({
+        author: params.subjectId,
+        limit: 100
+      });
+      questionsSubmitted = questions.total;
+    }
+  } catch {
+    // Questions may not be available — report zero
+  }
   
   return {
     reportType: 'MEP_ACTIVITY',
@@ -71,13 +85,13 @@ export async function generateMEPActivityReport(
     sections: [
       createVotingSection(data.totalVotes, mep),
       createCommitteeSection(data.committeesLength, mep),
-      createParliamentaryQuestionsSection()
+      createParliamentaryQuestionsSection(questionsSubmitted)
     ],
     statistics: {
       totalVotes: mep?.votingStatistics?.totalVotes ?? 0,
       attendanceRate: mep?.votingStatistics?.attendanceRate ?? 0,
-      questionsSubmitted: 28,
-      reportsAuthored: 5
+      questionsSubmitted,
+      reportsAuthored: 0 // EP API does not provide per-MEP report authorship counts
     },
     recommendations: [
       'Continue active participation in committee work',
@@ -88,7 +102,7 @@ export async function generateMEPActivityReport(
 }
 
 /**
- * Generate committee performance report
+ * Generate committee performance report using real EP API data
  * Cyclomatic complexity: 2
  */
 export async function generateCommitteePerformanceReport(
@@ -101,6 +115,26 @@ export async function generateCommitteePerformanceReport(
   const dateFrom = params.dateFrom ?? '2024-01-01';
   const dateTo = params.dateTo ?? '2024-12-31';
   const membersLength = committee?.members.length ?? 0;
+
+  // Fetch real document data from EP API
+  let documentsProduced = 0;
+  try {
+    const year = parseInt(dateFrom.substring(0, 4), 10);
+    const docs = await epClient.getCommitteeDocuments({ year, limit: 100 });
+    documentsProduced = docs.total;
+  } catch {
+    // Documents may not be available — report zero
+  }
+
+  // Fetch real adopted texts
+  let reportsProduced = 0;
+  try {
+    const year = parseInt(dateFrom.substring(0, 4), 10);
+    const adopted = await epClient.getAdoptedTexts({ year, limit: 100 });
+    reportsProduced = adopted.total;
+  } catch {
+    // Adopted texts may not be available — report zero
+  }
   
   return {
     reportType: 'COMMITTEE_PERFORMANCE',
@@ -112,31 +146,52 @@ export async function generateCommitteePerformanceReport(
     generatedAt: new Date().toISOString(),
     summary: `Performance report for ${committeeName} committee.`,
     sections: [
-      createMeetingActivitySection(),
-      createLegislativeOutputSection(),
+      createMeetingActivitySection(0),
+      createLegislativeOutputSection(reportsProduced, documentsProduced),
       createMemberParticipationSection(membersLength)
     ],
     statistics: {
-      meetingsHeld: 24,
-      reportsProduced: 15,
-      opinionsIssued: 28,
-      averageAttendance: 85,
+      meetingsHeld: 0, // EP API does not provide committee-specific meeting counts
+      reportsProduced,
+      opinionsIssued: 0, // EP API does not provide committee-specific opinion counts
+      averageAttendance: 0, // EP API does not provide attendance data
       memberCount: membersLength
     }
   };
 }
 
 /**
- * Generate voting statistics report
+ * Generate voting statistics report using real EP API data
  * Cyclomatic complexity: 1
  */
-export function generateVotingStatisticsReport(
+export async function generateVotingStatisticsReport(
   params: z.infer<typeof GenerateReportSchema>
 ): Promise<Report> {
   const dateFrom = params.dateFrom ?? '2024-01-01';
   const dateTo = params.dateTo ?? '2024-12-31';
+
+  // Fetch real plenary session data
+  let sessionCount = 0;
+  try {
+    const sessions = await epClient.getPlenarySessions({
+      dateFrom, dateTo, limit: 100
+    });
+    sessionCount = sessions.total;
+  } catch {
+    // Sessions may not be available — report zero
+  }
+
+  // Fetch real adopted texts
+  let adoptedCount = 0;
+  try {
+    const year = parseInt(dateFrom.substring(0, 4), 10);
+    const adopted = await epClient.getAdoptedTexts({ year, limit: 100 });
+    adoptedCount = adopted.total;
+  } catch {
+    // Adopted texts may not be available — report zero
+  }
   
-  return Promise.resolve({
+  return {
     reportType: 'VOTING_STATISTICS',
     subject: 'Parliament-wide Voting Analysis',
     period: {
@@ -144,33 +199,52 @@ export function generateVotingStatisticsReport(
       to: dateTo
     },
     generatedAt: new Date().toISOString(),
-    summary: 'Comprehensive voting statistics for European Parliament.',
+    summary: 'Comprehensive voting statistics for European Parliament based on EP Open Data.',
     sections: [
-      createOverallVotingSection(),
-      createAdoptionRatesSection(),
+      createOverallVotingSection(sessionCount),
+      createAdoptionRatesSection(adoptedCount),
       createPoliticalGroupSection()
     ],
     statistics: {
-      totalVotes: 1250,
-      adopted: 1025,
-      rejected: 187,
-      withdrawn: 38,
-      averageTurnout: 91.5
+      totalSessions: sessionCount,
+      adopted: adoptedCount,
+      averageTurnout: 0 // EP API does not provide turnout data
     }
-  });
+  };
 }
 
 /**
- * Generate legislation progress report
+ * Generate legislation progress report using real EP API data
  * Cyclomatic complexity: 1
  */
-export function generateLegislationProgressReport(
+export async function generateLegislationProgressReport(
   params: z.infer<typeof GenerateReportSchema>
 ): Promise<Report> {
   const dateFrom = params.dateFrom ?? '2024-01-01';
   const dateTo = params.dateTo ?? '2024-12-31';
+  const year = parseInt(dateFrom.substring(0, 4), 10);
+
+  // Fetch real procedure data
+  let procedureCount = 0;
+  try {
+    const procedures = await epClient.getProcedures({ year, limit: 100 });
+    procedureCount = procedures.total;
+  } catch {
+    // Procedures may not be available — report zero
+  }
+
+  // Fetch real adopted texts
+  let completedCount = 0;
+  try {
+    const adopted = await epClient.getAdoptedTexts({ year, limit: 100 });
+    completedCount = adopted.total;
+  } catch {
+    // Adopted texts may not be available — report zero
+  }
+
+  const ongoingCount = Math.max(0, procedureCount - completedCount);
   
-  return Promise.resolve({
+  return {
     reportType: 'LEGISLATION_PROGRESS',
     subject: 'Legislative Activity Overview',
     period: {
@@ -178,17 +252,16 @@ export function generateLegislationProgressReport(
       to: dateTo
     },
     generatedAt: new Date().toISOString(),
-    summary: 'Progress report on legislative procedures.',
+    summary: 'Progress report on legislative procedures based on EP Open Data.',
     sections: [
-      createNewProposalsSection(),
-      createCompletedProceduresSection(),
-      createOngoingProceduresSection()
+      createNewProposalsSection(procedureCount),
+      createCompletedProceduresSection(completedCount),
+      createOngoingProceduresSection(ongoingCount)
     ],
     statistics: {
-      newProposals: 45,
-      completed: 32,
-      ongoing: 87,
-      averageDuration: 18.5
+      totalProcedures: procedureCount,
+      completed: completedCount,
+      ongoing: ongoingCount
     }
-  });
+  };
 }

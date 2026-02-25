@@ -9,7 +9,8 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPs: vi.fn()
+    getMEPs: vi.fn(),
+    getMEPDetails: vi.fn()
   }
 }));
 
@@ -42,6 +43,25 @@ describe('analyze_coalition_dynamics Tool', () => {
       limit: 50,
       offset: 0,
       hasMore: false
+    });
+
+    // Mock MEP details with real voting statistics
+    vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+      id: 'MEP-1',
+      name: 'Test MEP One',
+      country: 'SE',
+      politicalGroup: 'EPP',
+      committees: ['AGRI'],
+      active: true,
+      termStart: '2019-07-02',
+      biography: '',
+      votingStatistics: {
+        totalVotes: 800,
+        votesFor: 600,
+        votesAgainst: 150,
+        abstentions: 50,
+        attendanceRate: 85
+      }
     });
   });
 
@@ -143,16 +163,21 @@ describe('analyze_coalition_dynamics Tool', () => {
   });
 
   describe('Branch Coverage - Unity and Cohesion Classification', () => {
-    it('should classify unity trend as FRAGMENTED when stress >= 0.6', async () => {
-      // Arrange: MEPs with 40-char names (40%20=0) → attendance=75, high defection → stress≈0.61
-      // votesFor = 700+40*30=1900, votesAgainst = 200+40*10=600
-      // defectionRate = 600/2500=0.24, attendance = 75+(40%20)=75
-      // stress = 0.24*2 + (1-0.75)*0.5 = 0.48+0.125 = 0.605 → FRAGMENTED
-      const longName = 'MEP-With-A-Very-Long-Name-For-Testing-XX'; // exactly 40 chars
+    it('should classify unity trend based on real MEP voting data', async () => {
+      // Arrange: MEPs with high defection rate voting stats
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-F1', name: 'High Defection MEP', country: 'DE', politicalGroup: 'EPP',
+        committees: ['AGRI'], active: true, termStart: '2019-07-02', biography: '',
+        votingStatistics: {
+          totalVotes: 1000, votesFor: 400, votesAgainst: 500,
+          abstentions: 100, attendanceRate: 60
+        }
+      });
+
       vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
         data: [
-          { id: 'MEP-F1', name: longName, country: 'DE', politicalGroup: 'EPP', committees: ['AGRI'], active: true, termStart: '2019-07-02' },
-          { id: 'MEP-F2', name: longName, country: 'FR', politicalGroup: 'EPP', committees: ['ENVI'], active: true, termStart: '2019-07-02' }
+          { id: 'MEP-F1', name: 'High Defection MEP', country: 'DE', politicalGroup: 'EPP', committees: ['AGRI'], active: true, termStart: '2019-07-02' },
+          { id: 'MEP-F2', name: 'High Defection MEP 2', country: 'FR', politicalGroup: 'EPP', committees: ['ENVI'], active: true, termStart: '2019-07-02' }
         ],
         total: 2, limit: 50, offset: 0, hasMore: false
       });
@@ -163,26 +188,40 @@ describe('analyze_coalition_dynamics Tool', () => {
         groupMetrics: { stressIndicator: number; computedAttributes: { unityTrend: string } }[];
       };
 
-      // Assert
+      // Assert: With high defection rate, stress should be high → FRAGMENTED
       const group = data.groupMetrics[0];
       expect(group?.computedAttributes.unityTrend).toBe('FRAGMENTED');
       expect(group?.stressIndicator).toBeGreaterThanOrEqual(0.6);
     });
 
-    it('should classify cohesion trend as WEAKENING when score <= 0.4', async () => {
-      // Arrange: Group IDs with combined name length=11 → seed=(11)*17+0*31+1*13=200
-      // 200%50=0 → baseCohesion=0.3+0=0.3 → classifyCohesionTrend(0.3) → WEAKENING
+    it('should classify cohesion trend as WEAKENING when groups have unequal sizes', async () => {
+      // Arrange: Two groups with very different member counts
+      vi.mocked(epClientModule.epClient.getMEPs)
+        .mockResolvedValueOnce({
+          data: Array.from({ length: 10 }, (_, i) => ({
+            id: `MEP-A${i}`, name: `MEP A${i}`, country: 'DE', politicalGroup: 'BigGroup',
+            committees: [], active: true as const, termStart: '2019-07-02'
+          })),
+          total: 10, limit: 50, offset: 0, hasMore: false
+        })
+        .mockResolvedValueOnce({
+          data: [
+            { id: 'MEP-B1', name: 'MEP B1', country: 'FR', politicalGroup: 'SmallGroup',
+              committees: [], active: true as const, termStart: '2019-07-02' }
+          ],
+          total: 1, limit: 50, offset: 0, hasMore: false
+        });
 
       // Act
       const result = await handleAnalyzeCoalitionDynamics({
-        groupIds: ['GroupX', 'Grp_Y'],
+        groupIds: ['BigGroup', 'SmallGroup'],
         minimumCohesion: 0.5
       });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         coalitionPairs: { trend: string; cohesionScore: number }[];
       };
 
-      // Assert
+      // Assert: balance = min(1,10)/max(1,10) = 0.1 → WEAKENING
       const weakeningPairs = data.coalitionPairs.filter(p => p.trend === 'WEAKENING');
       expect(weakeningPairs.length).toBeGreaterThan(0);
       expect(weakeningPairs[0]?.cohesionScore).toBeLessThanOrEqual(0.4);

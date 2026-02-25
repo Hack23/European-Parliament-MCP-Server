@@ -78,7 +78,7 @@ function classifyCohesionTrend(score: number): string {
 /**
  * Compute group cohesion based on MEP data
  */
-function computeGroupCohesion(groupMeps: { votingStatistics?: { totalVotes: number; votesFor: number; votesAgainst: number; attendanceRate: number } }[]): {
+function computeGroupCohesion(groupMeps: { votingStatistics?: { totalVotes: number; votesFor: number; votesAgainst: number; attendanceRate: number } | undefined }[]): {
   cohesion: number;
   defectionRate: number;
   avgAttendance: number;
@@ -113,18 +113,25 @@ function computeGroupCohesion(groupMeps: { votingStatistics?: { totalVotes: numb
 }
 
 /**
- * Compute coalition pair cohesion
+ * Compute coalition pair cohesion from real member counts
+ * Note: Real pairwise voting data requires individual vote-level analysis
+ * which is not available from the EP API. Cohesion is derived from group sizes.
  */
 function computePairCohesion(
   groupA: string,
   groupB: string,
-  seed: number,
+  groupAMembers: number,
+  groupBMembers: number,
   minimumCohesion: number
 ): CoalitionPairAnalysis {
-  const baseCohesion = 0.3 + (seed % 50) / 100;
-  const sharedVotes = 200 + (seed % 300);
-  const totalVotes = sharedVotes + 100 + (seed % 200);
-  const cohesionScore = Math.round(baseCohesion * 100) / 100;
+  // Use relative group sizes as a proxy — no synthetic seed-based data
+  const totalMembers = groupAMembers + groupBMembers;
+  const balance = totalMembers > 0
+    ? Math.min(groupAMembers, groupBMembers) / Math.max(1, Math.max(groupAMembers, groupBMembers))
+    : 0;
+  const cohesionScore = Math.round(balance * 100) / 100;
+  const sharedVotes = 0; // Not available from EP API without vote-level analysis
+  const totalVotes = 0;
 
   return {
     groupA, groupB, cohesionScore, sharedVotes, totalVotes,
@@ -134,20 +141,29 @@ function computePairCohesion(
 }
 
 /**
- * Build group metrics from fetched MEP data
+ * Build group metrics from fetched MEP data using real EP API data
  */
 async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionMetrics[]> {
   const metrics: GroupCohesionMetrics[] = [];
   for (const groupId of targetGroups) {
     const mepsResult = await epClient.getMEPs({ group: groupId, limit: 50 });
-    const cohesionData = computeGroupCohesion(mepsResult.data.map(m => ({
-      votingStatistics: {
-        totalVotes: 1000 + (m.name.length * 50),
-        votesFor: 700 + (m.name.length * 30),
-        votesAgainst: 200 + (m.name.length * 10),
-        attendanceRate: 75 + (m.name.length % 20)
+
+    // Fetch real voting stats for each MEP where available
+    const mepStatsPromises = mepsResult.data.map(async (m) => {
+      try {
+        const details = await epClient.getMEPDetails(m.id);
+        const stats = details.votingStatistics;
+        if (stats !== undefined && stats.totalVotes > 0) {
+          return { votingStatistics: stats };
+        }
+        return { votingStatistics: undefined };
+      } catch {
+        return { votingStatistics: undefined };
       }
-    })));
+    });
+    const mepStats = await Promise.all(mepStatsPromises);
+
+    const cohesionData = computeGroupCohesion(mepStats);
 
     const stressIndicator = Math.max(0, Math.min(1,
       cohesionData.defectionRate * 2 + (1 - cohesionData.avgAttendance / 100) * 0.5
@@ -172,16 +188,21 @@ async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionM
 }
 
 /**
- * Build pairwise coalition pairs
+ * Build pairwise coalition pairs using real group member counts
  */
-function buildCoalitionPairs(targetGroups: string[], minimumCohesion: number): CoalitionPairAnalysis[] {
+function buildCoalitionPairs(
+  targetGroups: string[],
+  minimumCohesion: number,
+  groupMetrics: GroupCohesionMetrics[]
+): CoalitionPairAnalysis[] {
   const pairs: CoalitionPairAnalysis[] = [];
   for (let i = 0; i < targetGroups.length; i++) {
     for (let j = i + 1; j < targetGroups.length; j++) {
       const groupA = targetGroups[i] ?? '';
       const groupB = targetGroups[j] ?? '';
-      const seed = (groupA.length + groupB.length) * 17 + i * 31 + j * 13;
-      pairs.push(computePairCohesion(groupA, groupB, seed, minimumCohesion));
+      const groupAMembers = groupMetrics.find(g => g.groupId === groupA)?.memberCount ?? 0;
+      const groupBMembers = groupMetrics.find(g => g.groupId === groupB)?.memberCount ?? 0;
+      pairs.push(computePairCohesion(groupA, groupB, groupAMembers, groupBMembers, minimumCohesion));
     }
   }
   return pairs;
@@ -273,7 +294,7 @@ export async function handleAnalyzeCoalitionDynamics(
   try {
     const targetGroups = params.groupIds ?? POLITICAL_GROUPS;
     const groupMetrics = await buildGroupMetrics(targetGroups);
-    const coalitionPairs = buildCoalitionPairs(targetGroups, params.minimumCohesion);
+    const coalitionPairs = buildCoalitionPairs(targetGroups, params.minimumCohesion, groupMetrics);
     const sortedPairs = [...coalitionPairs].sort((a, b) => b.cohesionScore - a.cohesionScore);
     const stressIndicators = computeStressIndicators(groupMetrics);
     const fragMetrics = computeFragmentationMetrics(groupMetrics);
@@ -286,7 +307,8 @@ export async function handleAnalyzeCoalitionDynamics(
       stressIndicators,
       computedAttributes: buildCoalitionComputedAttrs(fragMetrics, sortedPairs),
       confidenceLevel: groupMetrics.length >= 3 ? 'MEDIUM' : 'LOW',
-      methodology: 'CIA Coalition Analysis — cohesion scoring with stress indicators'
+      methodology: 'CIA Coalition Analysis — cohesion scoring using real EP Open Data MEP records. '
+        + 'Data source: European Parliament Open Data Portal.'
     };
 
     return { content: [{ type: 'text', text: JSON.stringify(analysis, null, 2) }] };

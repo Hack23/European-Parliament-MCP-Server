@@ -63,30 +63,35 @@ const DIMENSION_NAME_MAP: Record<string, DimensionName> = {
 };
 
 /**
- * Compute aggregate group metrics from member data
+ * Compute aggregate group metrics from real MEP data
  */
 function computeGroupDimensions(
-  mepData: { name: string }[],
+  mepData: { votingStatistics?: { totalVotes: number; votesFor: number; votesAgainst: number; attendanceRate: number } | undefined }[],
   memberCount: number
 ): { dimensions: GroupComparisonMetrics['dimensions']; totalVotesPerMember: number } {
   let totalVotesSum = 0;
   let forSum = 0;
   let againstSum = 0;
   let attendanceSum = 0;
+  let mepsWithData = 0;
 
   for (const mep of mepData) {
-    totalVotesSum += 1000 + (mep.name.length * 50);
-    forSum += 700 + (mep.name.length * 30);
-    againstSum += 200 + (mep.name.length * 10);
-    attendanceSum += 75 + (mep.name.length % 20);
+    const stats = mep.votingStatistics;
+    if (stats !== undefined && stats.totalVotes > 0) {
+      totalVotesSum += stats.totalVotes;
+      forSum += stats.votesFor;
+      againstSum += stats.votesAgainst;
+      attendanceSum += stats.attendanceRate;
+      mepsWithData++;
+    }
   }
 
-  const count = mepData.length || 1;
+  const count = mepsWithData || 1;
   const avgAttendance = attendanceSum / count;
   const decisive = forSum + againstSum;
-  const discipline = decisive > 0 ? (forSum / decisive) * 100 : 50;
-  const activityLevel = Math.min(100, (totalVotesSum / count / 1500) * 100);
-  const legislativeOutput = Math.min(100, memberCount * 2);
+  const discipline = decisive > 0 ? (forSum / decisive) * 100 : 0;
+  const activityLevel = mepsWithData > 0 ? Math.min(100, (totalVotesSum / count / 1500) * 100) : 0;
+  const legislativeOutput = mepsWithData > 0 ? Math.min(100, memberCount * 2) : 0;
 
   return {
     dimensions: {
@@ -114,13 +119,25 @@ function calculateOverallScore(dims: GroupComparisonMetrics['dimensions']): numb
 }
 
 /**
- * Fetch and build group metrics
+ * Fetch and build group metrics using real EP API data
  */
 async function buildGroupMetrics(groupIds: string[]): Promise<GroupComparisonMetrics[]> {
   const groups = await Promise.all(
     groupIds.map(async (groupId): Promise<GroupComparisonMetrics> => {
       const mepsResult = await epClient.getMEPs({ group: groupId, limit: 100 });
-      const { dimensions, totalVotesPerMember } = computeGroupDimensions(mepsResult.data, mepsResult.total);
+
+      // Fetch real voting stats for each MEP
+      const mepStatsPromises = mepsResult.data.map(async (m) => {
+        try {
+          const details = await epClient.getMEPDetails(m.id);
+          return { votingStatistics: details.votingStatistics };
+        } catch {
+          return { votingStatistics: undefined };
+        }
+      });
+      const mepStats = await Promise.all(mepStatsPromises);
+
+      const { dimensions, totalVotesPerMember } = computeGroupDimensions(mepStats, mepsResult.total);
       const overallScore = calculateOverallScore(dimensions);
 
       return {
@@ -223,7 +240,8 @@ export async function handleComparePoliticalGroups(
         competitiveIndex
       },
       confidenceLevel: groups.length >= 3 ? 'MEDIUM' : 'LOW',
-      methodology: 'Multi-dimensional comparative analysis with weighted scoring'
+      methodology: 'Multi-dimensional comparative analysis using real EP Open Data MEP records. '
+        + 'Data source: European Parliament Open Data Portal.'
     };
 
     return { content: [{ type: 'text', text: JSON.stringify(comparison, null, 2) }] };

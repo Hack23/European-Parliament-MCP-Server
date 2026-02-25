@@ -9,7 +9,8 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPs: vi.fn()
+    getMEPs: vi.fn(),
+    getMEPDetails: vi.fn()
   }
 }));
 
@@ -42,6 +43,25 @@ describe('compare_political_groups Tool', () => {
       limit: 100,
       offset: 0,
       hasMore: false
+    });
+
+    // Mock MEP details with real voting statistics
+    vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+      id: 'MEP-1',
+      name: 'Test MEP',
+      country: 'SE',
+      politicalGroup: 'EPP',
+      committees: ['AGRI'],
+      active: true,
+      termStart: '2019-07-02',
+      biography: '',
+      votingStatistics: {
+        totalVotes: 800,
+        votesFor: 600,
+        votesAgainst: 150,
+        abstentions: 50,
+        attendanceRate: 85
+      }
     });
   });
 
@@ -170,9 +190,8 @@ describe('compare_political_groups Tool', () => {
   });
 
   describe('Branch Coverage - Computation Edge Cases', () => {
-    it('should handle empty MEP data with fallback computation', async () => {
-      // Arrange: No MEPs returned → mepData.length=0 → count||1 fallback
-      // decisive=0 → discipline fallback to 50
+    it('should handle empty MEP data with zero values', async () => {
+      // Arrange: No MEPs returned → all metrics should be zero
       vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
         data: [],
         total: 0, limit: 100, offset: 0, hasMore: false
@@ -186,22 +205,30 @@ describe('compare_political_groups Tool', () => {
         groups: { memberCount: number; dimensions: { votingDiscipline: number; activityLevel: number } }[];
       };
 
-      // Assert: With zero MEPs, discipline falls back to 50, activity to 0
+      // Assert: With zero MEPs, all dimensions should be zero (no synthetic fallback)
       expect(data.groups).toHaveLength(2);
       for (const group of data.groups) {
         expect(group.memberCount).toBe(0);
-        expect(group.dimensions.votingDiscipline).toBe(50);
+        expect(group.dimensions.votingDiscipline).toBe(0);
         expect(group.dimensions.activityLevel).toBe(0);
       }
     });
 
     it('should handle single MEP per group correctly', async () => {
-      // Arrange: Single MEP with short name
+      // Arrange: Single MEP with real voting stats
       vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
         data: [
           { id: 'MEP-S1', name: 'Solo MEP', country: 'DE', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' }
         ],
         total: 1, limit: 100, offset: 0, hasMore: false
+      });
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-S1', name: 'Solo MEP', country: 'DE', politicalGroup: 'EPP',
+        committees: [], active: true, termStart: '2019-07-02', biography: '',
+        votingStatistics: {
+          totalVotes: 500, votesFor: 400, votesAgainst: 80,
+          abstentions: 20, attendanceRate: 90
+        }
       });
 
       // Act
@@ -216,8 +243,10 @@ describe('compare_political_groups Tool', () => {
       // Assert
       expect(data.groups).toHaveLength(3);
       expect(data.confidenceLevel).toBe('MEDIUM'); // 3 groups >= 3
-      for (const group of data.groups) {
-        expect(group.dimensions.votingDiscipline).toBeGreaterThan(0);
+      // Groups with real voting data should have positive discipline
+      const groupWithData = data.groups.find(g => g.memberCount > 0);
+      if (groupWithData !== undefined) {
+        expect(groupWithData.dimensions.votingDiscipline).toBeGreaterThan(0);
       }
     });
 
