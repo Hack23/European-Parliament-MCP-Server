@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 /**
  * Verify Package Before Publishing
  *
@@ -177,8 +177,13 @@ for (const file of REQUIRED_DIST_FILES) {
   if (!existsSync(filePath)) {
     error(state, `Required file missing: ${file}`);
   } else {
-    const stats = statSync(filePath);
-    success(state, `${file} (${stats.size} bytes)`);
+    try {
+      const stats = statSync(filePath);
+      success(state, `${file} (${stats.size} bytes)`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      error(state, `Failed to stat ${file}: ${message}`);
+    }
   }
 }
 
@@ -188,8 +193,13 @@ for (const file of REQUIRED_DOCS) {
   if (!existsSync(filePath)) {
     error(state, `Required documentation missing: ${file}`);
   } else {
-    const stats = statSync(filePath);
-    success(state, `${file} (${stats.size} bytes)`);
+    try {
+      const stats = statSync(filePath);
+      success(state, `${file} (${stats.size} bytes)`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      error(state, `Failed to stat ${file}: ${message}`);
+    }
   }
 }
 

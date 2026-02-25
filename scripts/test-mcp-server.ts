@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 /**
  * MCP Server Testing CLI
  *
@@ -178,6 +178,7 @@ async function testMCPProtocol(): Promise<McpResponse> {
   return new Promise((resolve, reject) => {
     const proc = spawn('node', ['dist/index.js'], { cwd: ROOT_DIR });
     let response = '';
+    let settled = false;
     let timeout: ReturnType<typeof setTimeout>;
 
     proc.stdout.on('data', (data: Buffer) => {
@@ -188,6 +189,7 @@ async function testMCPProtocol(): Promise<McpResponse> {
         try {
           const parsed = JSON.parse(line) as McpResponse;
           if (parsed.result !== undefined || parsed.error !== undefined) {
+            settled = true;
             clearTimeout(timeout);
             proc.kill();
             resolve(parsed);
@@ -204,7 +206,18 @@ async function testMCPProtocol(): Promise<McpResponse> {
       console.warn(`[server stderr]: ${data.toString().trim()}`);
     });
 
+    proc.on('close', (code: number | null) => {
+      if (settled) return; // already resolved – ignore the close event
+      clearTimeout(timeout);
+      reject(
+        new Error(
+          `MCP server exited with code ${code ?? 'null'} before responding. Captured output: ${response}`,
+        ),
+      );
+    });
+
     proc.on('error', (err: Error) => {
+      settled = true;
       clearTimeout(timeout);
       reject(err);
     });
@@ -221,6 +234,7 @@ async function testMCPProtocol(): Promise<McpResponse> {
 
     // Timeout after DEFAULT_TIMEOUT_MS
     timeout = setTimeout(() => {
+      settled = true;
       proc.kill();
       reject(new Error('MCP protocol test timeout'));
     }, DEFAULT_TIMEOUT_MS);
@@ -242,6 +256,7 @@ async function listTools(): Promise<McpToolResult[]> {
     const proc = spawn('node', ['dist/index.js'], { cwd: ROOT_DIR });
     let response = '';
     let initialized = false;
+    let settled = false;
     let timeout: ReturnType<typeof setTimeout>;
 
     proc.stdout.on('data', (data: Buffer) => {
@@ -274,6 +289,7 @@ async function listTools(): Promise<McpToolResult[]> {
             }
           } else if (initialized && parsed.result?.tools !== undefined) {
             // Got the tools list
+            settled = true;
             clearTimeout(timeout);
             proc.kill();
             resolve(parsed.result.tools);
@@ -290,7 +306,18 @@ async function listTools(): Promise<McpToolResult[]> {
       console.warn(`[server stderr]: ${data.toString().trim()}`);
     });
 
+    proc.on('close', (code: number | null) => {
+      if (settled) return; // already resolved – ignore the close event
+      clearTimeout(timeout);
+      reject(
+        new Error(
+          `MCP server exited with code ${code ?? 'null'} before returning tool list. Captured output: ${response}`,
+        ),
+      );
+    });
+
     proc.on('error', (err: Error) => {
+      settled = true;
       clearTimeout(timeout);
       reject(err);
     });
@@ -303,6 +330,7 @@ async function listTools(): Promise<McpToolResult[]> {
     }
 
     timeout = setTimeout(() => {
+      settled = true;
       proc.kill();
       reject(new Error('Tools listing timeout'));
     }, DEFAULT_TIMEOUT_MS);
