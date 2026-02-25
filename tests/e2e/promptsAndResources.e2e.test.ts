@@ -22,7 +22,7 @@ const EXPECTED_PROMPTS = [
   'coalition_analysis',
   'legislative_tracking',
   'political_group_comparison',
-  'committee_activity',
+  'committee_activity_report',
   'voting_pattern_analysis'
 ] as const;
 
@@ -32,7 +32,7 @@ const EXPECTED_RESOURCE_TEMPLATES = [
   'ep://meps',
   'ep://committees/{committeeId}',
   'ep://plenary-sessions',
-  'ep://voting-records/{sessionId}',
+  'ep://votes/{sessionId}',
   'ep://political-groups'
 ] as const;
 
@@ -174,7 +174,7 @@ describe('Prompts and Resources E2E Tests', () => {
     it('should include voting records resource template', async () => {
       const templates = await client.listResourceTemplates();
       const votingTemplate = templates.find(t =>
-        t.uriTemplate.includes('voting-records')
+        t.uriTemplate.includes('votes')
       );
 
       expect(votingTemplate).toBeDefined();

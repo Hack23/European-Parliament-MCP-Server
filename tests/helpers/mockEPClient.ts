@@ -76,18 +76,20 @@ const eventFixtures = [
     title: 'ENVI Committee Hearing (synthetic)',
     type: 'COMMITTEE_HEARING',
     date: '2024-01-20',
+    endDate: '2024-01-20',
     location: 'Brussels',
-    committees: ['ENVI'],
-    description: 'Synthetic committee hearing on environmental topics.'
+    organizer: 'ENVI',
+    status: 'CONFIRMED'
   },
   {
     id: 'event-test-002',
     title: 'Plenary Debate on Budget (synthetic)',
     type: 'PLENARY_DEBATE',
     date: '2024-02-05',
+    endDate: '2024-02-05',
     location: 'Strasbourg',
-    committees: [],
-    description: 'Synthetic plenary debate on 2024 budget.'
+    organizer: 'EP-PLENARY',
+    status: 'CONFIRMED'
   }
 ];
 
@@ -95,12 +97,12 @@ const eventFixtures = [
 const meetingActivityFixtures = [
   {
     id: 'activity-test-001',
-    meetingId: 'session-test-001',
     type: 'VOTE',
     title: 'Vote on Climate Amendment (synthetic)',
     date: '2024-01-15',
-    result: 'ADOPTED',
-    documents: ['doc-test-001']
+    order: 1,
+    reference: 'ACT-TEST-001',
+    responsibleBody: 'ENVI'
   }
 ];
 
@@ -121,11 +123,11 @@ const mepDeclarationFixtures = [
   {
     id: 'decl-test-001',
     mepId: 'mep-test-001',
+    mepName: 'Test MEP',
     type: 'FINANCIAL_INTEREST',
     title: 'Declaration of Financial Interests 2024 (synthetic)',
-    date: '2024-01-10',
-    content: 'Synthetic declaration content...',
-    documentUrl: 'https://example.test/decl-test-001'
+    dateFiled: '2024-01-10',
+    status: 'PUBLISHED'
   }
 ];
 

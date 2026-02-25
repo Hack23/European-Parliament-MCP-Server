@@ -194,9 +194,10 @@ export const mockEvents: EPEvent[] = [
     title: 'ENVI Committee Hearing on Climate',
     type: 'COMMITTEE_HEARING',
     date: '2024-01-20',
+    endDate: '2024-01-20',
     location: 'Brussels',
-    committees: ['ENVI'],
-    description: 'Public hearing on implementation of climate regulation'
+    organizer: 'ENVI',
+    status: 'CONFIRMED'
   }
 ];
 
@@ -206,12 +207,12 @@ export const mockEvents: EPEvent[] = [
 export const mockMeetingActivities: MeetingActivity[] = [
   {
     id: 'activity-2024-001',
-    meetingId: 'session-2024-01',
     type: 'VOTE',
     title: 'Vote on Climate Amendment',
     date: '2024-01-15',
-    result: 'ADOPTED',
-    documents: ['doc-001']
+    order: 1,
+    reference: 'P9-CM(2024)0001',
+    responsibleBody: 'ENVI'
   }
 ];
 
@@ -222,11 +223,11 @@ export const mockMEPDeclarations: MEPDeclaration[] = [
   {
     id: 'decl-2024-001',
     mepId: 'mep-12345',
+    mepName: 'John Smith',
     type: 'FINANCIAL_INTEREST',
     title: 'Declaration of Financial Interests 2024',
-    date: '2024-01-10',
-    content: 'No financial interests to declare.',
-    documentUrl: 'https://www.europarl.europa.eu/meps/declarations/mep-12345.pdf'
+    dateFiled: '2024-01-10',
+    status: 'PUBLISHED'
   }
 ];
 

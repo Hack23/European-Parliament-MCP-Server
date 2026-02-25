@@ -10,152 +10,18 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { measureTime } from '../helpers/testUtils.js';
-import { getMockEPClient, resetMockEPClient } from '../helpers/mockEPClient.js';
-import { mepFixtures, mepDetailsFixtures } from '../fixtures/mepFixtures.js';
-import { plenaryFixtures } from '../fixtures/plenaryFixtures.js';
-import { votingFixtures } from '../fixtures/votingFixtures.js';
-import { documentFixtures } from '../fixtures/documentFixtures.js';
-import { committeeFixtures } from '../fixtures/committeeFixtures.js';
-import { questionFixtures } from '../fixtures/questionFixtures.js';
+import { createMockEPClient, getMockEPClient, resetMockEPClient } from '../helpers/mockEPClient.js';
+import { mepFixtures } from '../fixtures/mepFixtures.js';
 
 // Detect CI environment and set adaptive thresholds
 const isCI = process.env.CI === 'true';
 const CONCURRENT_THRESHOLD_MS = isCI ? 15000 : 5000;
 const PER_REQUEST_THRESHOLD_MS = isCI ? 500 : 200;
 
-/** Helper: build paginated response */
-function paginated<T>(items: T[], limit = 10, offset = 0) {
-  return {
-    data: items.slice(offset, offset + limit),
-    total: items.length,
-    limit,
-    offset,
-    hasMore: offset + limit < items.length
-  };
-}
-
-// Mock the EP client
-vi.mock('../../src/clients/europeanParliamentClient.js', () => {
-  const mockClient = {
-    getMEPs: vi.fn().mockImplementation(
-      (params: { country?: string; limit?: number; offset?: number } = {}) => {
-        const items = params.country
-          ? mepFixtures.filter(m => m.country === params.country)
-          : mepFixtures;
-        return Promise.resolve(paginated(items, params.limit ?? 10, params.offset ?? 0));
-      }
-    ),
-    getMEPDetails: vi.fn().mockImplementation((id: string) =>
-      Promise.resolve({ ...mepDetailsFixtures[0], id })
-    ),
-    getCurrentMEPs: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated(mepFixtures, params.limit ?? 10, params.offset ?? 0))
-    ),
-    getIncomingMEPs: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated(mepFixtures, params.limit ?? 10, params.offset ?? 0))
-    ),
-    getOutgoingMEPs: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated(mepFixtures, params.limit ?? 10, params.offset ?? 0))
-    ),
-    getHomonymMEPs: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated([], params.limit ?? 10, params.offset ?? 0))
-    ),
-    getPlenarySessions: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated(plenaryFixtures, params.limit ?? 10, params.offset ?? 0))
-    ),
-    getVotingRecords: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated(votingFixtures, params.limit ?? 10, params.offset ?? 0))
-    ),
-    searchDocuments: vi.fn().mockImplementation(
-      (params: { keyword?: string; limit?: number; offset?: number } = {}) => {
-        const items = params.keyword
-          ? documentFixtures.filter(d =>
-            d.title.toLowerCase().includes(params.keyword!.toLowerCase())
-          )
-          : documentFixtures;
-        return Promise.resolve(paginated(items, params.limit ?? 10, params.offset ?? 0));
-      }
-    ),
-    getCommitteeInfo: vi.fn().mockImplementation(
-      (params: { abbreviation?: string } = {}) => {
-        const committee = params.abbreviation
-          ? committeeFixtures.find(c => c.abbreviation === params.abbreviation)
-          : committeeFixtures[0];
-        return Promise.resolve(committee ?? committeeFixtures[0]);
-      }
-    ),
-    getParliamentaryQuestions: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated(questionFixtures, params.limit ?? 10, params.offset ?? 0))
-    ),
-    getSpeeches: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated([], params.limit ?? 10, params.offset ?? 0))
-    ),
-    getAdoptedTexts: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated([], params.limit ?? 10, params.offset ?? 0))
-    ),
-    getEvents: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated([], params.limit ?? 10, params.offset ?? 0))
-    ),
-    getMeetingActivities: vi.fn().mockImplementation(
-      (_id: string, params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated([], params.limit ?? 10, params.offset ?? 0))
-    ),
-    getMeetingDecisions: vi.fn().mockImplementation(
-      (_id: string, params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated([], params.limit ?? 10, params.offset ?? 0))
-    ),
-    getMEPDeclarations: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated([], params.limit ?? 10, params.offset ?? 0))
-    ),
-    getPlenaryDocuments: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated(documentFixtures, params.limit ?? 10, params.offset ?? 0))
-    ),
-    getCommitteeDocuments: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated(documentFixtures, params.limit ?? 10, params.offset ?? 0))
-    ),
-    getPlenarySessionDocuments: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated(documentFixtures, params.limit ?? 10, params.offset ?? 0))
-    ),
-    getPlenarySessionDocumentItems: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated(documentFixtures, params.limit ?? 10, params.offset ?? 0))
-    ),
-    getControlledVocabularies: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated([], params.limit ?? 10, params.offset ?? 0))
-    ),
-    getExternalDocuments: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated([], params.limit ?? 10, params.offset ?? 0))
-    ),
-    getMeetingForeseenActivities: vi.fn().mockImplementation(
-      (_id: string, params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated([], params.limit ?? 10, params.offset ?? 0))
-    ),
-    getProcedureEvents: vi.fn().mockImplementation(
-      (_id: string, params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated([], params.limit ?? 10, params.offset ?? 0))
-    ),
-    getProcedures: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number } = {}) =>
-        Promise.resolve(paginated([], params.limit ?? 10, params.offset ?? 0))
-    ),
-    clearCache: vi.fn()
-  };
+// Mock the EP client using the shared mock helper — no real API calls
+vi.mock('../../src/clients/europeanParliamentClient.js', async () => {
+  const { createMockEPClient: factory } = await import('../helpers/mockEPClient.js');
+  const mockClient = factory();
 
   return {
     epClient: mockClient,

@@ -13,8 +13,6 @@ import { handleGetMEPs } from '../../src/tools/getMEPs.js';
 import { handleGetMEPDetails } from '../../src/tools/getMEPDetails.js';
 import { handleSearchDocuments } from '../../src/tools/searchDocuments.js';
 import { measureTime } from '../helpers/testUtils.js';
-import { mepFixtures, mepDetailsFixtures } from '../fixtures/mepFixtures.js';
-import { documentFixtures } from '../fixtures/documentFixtures.js';
 
 // Detect CI environment and set adaptive thresholds
 const isCI = process.env.CI === 'true';
@@ -23,42 +21,9 @@ const CONCURRENT_THRESHOLD_MS = isCI ? 15000 : 5000;
 const THROUGHPUT_MIN_RPS = isCI ? 2 : 5;
 
 // Mock the EP client to use synthetic data — no real API calls
-vi.mock('../../src/clients/europeanParliamentClient.js', () => {
-  const paginated = <T>(items: T[], limit = 10, offset = 0) => ({
-    data: items.slice(offset, offset + limit),
-    total: items.length,
-    limit,
-    offset,
-    hasMore: offset + limit < items.length
-  });
-
-  const mockClient = {
-    getMEPs: vi.fn().mockImplementation(
-      (params: { limit?: number; offset?: number; country?: string } = {}) => {
-        const items = params.country
-          ? mepFixtures.filter(m => m.country === params.country)
-          : mepFixtures;
-        return Promise.resolve(paginated(items, params.limit ?? 10, params.offset ?? 0));
-      }
-    ),
-    getMEPDetails: vi.fn().mockImplementation((id: string) =>
-      Promise.resolve({
-        ...mepDetailsFixtures[0],
-        id
-      })
-    ),
-    searchDocuments: vi.fn().mockImplementation(
-      (params: { keyword?: string; limit?: number; offset?: number } = {}) => {
-        const items = params.keyword
-          ? documentFixtures.filter(d =>
-            d.title.toLowerCase().includes(params.keyword!.toLowerCase())
-          )
-          : documentFixtures;
-        return Promise.resolve(paginated(items, params.limit ?? 10, params.offset ?? 0));
-      }
-    ),
-    clearCache: vi.fn()
-  };
+vi.mock('../../src/clients/europeanParliamentClient.js', async () => {
+  const { createMockEPClient } = await import('../helpers/mockEPClient.js');
+  const mockClient = createMockEPClient();
 
   return {
     epClient: mockClient,
