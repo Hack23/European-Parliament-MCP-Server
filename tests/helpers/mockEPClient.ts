@@ -61,11 +61,10 @@ const adoptedTextFixtures = [
     id: 'adopted-test-001',
     title: 'Resolution on Climate Targets (synthetic)',
     reference: 'P9-TA(2024)0001',
-    date: '2024-01-15',
     type: 'LEGISLATIVE_RESOLUTION',
-    status: 'ADOPTED',
-    text: 'Synthetic adopted text content...',
-    votes: { for: 520, against: 140, abstentions: 55 }
+    dateAdopted: '2024-01-15',
+    procedureReference: '2023/0001(COD)',
+    subjectMatter: 'Environment'
   }
 ];
 
@@ -106,15 +105,18 @@ const meetingActivityFixtures = [
   }
 ];
 
-/** Synthetic meeting decision fixtures */
+/** Synthetic meeting decision fixtures — match LegislativeDocument shape */
 const meetingDecisionFixtures = [
   {
-    id: 'decision-test-001',
-    meetingId: 'session-test-001',
+    id: 'DEC-TEST-001',
     title: 'Decision on Committee Composition (synthetic)',
     date: '2024-01-15',
     type: 'PROCEDURAL',
-    documents: []
+    reference: 'DEC-TEST-001',
+    language: 'en',
+    status: 'ADOPTED',
+    url: 'https://data.europarl.europa.eu/doc/DEC-TEST-001',
+    authors: []
   }
 ];
 
@@ -149,28 +151,30 @@ const controlledVocabularyFixtures = [
   }
 ];
 
-/** Synthetic meeting foreseen activity fixtures */
+/** Synthetic meeting foreseen activity fixtures — match MeetingActivity shape */
 const meetingForeseenActivityFixtures = [
   {
     id: 'foreseen-test-001',
-    meetingId: 'session-test-001',
-    title: 'Planned Vote on Climate Package (synthetic)',
-    scheduledDate: '2024-01-15',
     type: 'VOTE',
-    description: 'Synthetic foreseen activity description.'
+    title: 'Planned Vote on Climate Package (synthetic)',
+    date: '2024-01-15',
+    order: 1,
+    reference: 'REF-FORESEEN-001',
+    responsibleBody: 'ENVI'
   }
 ];
 
-/** Synthetic procedure event fixtures */
+/** Synthetic procedure event fixtures — match EPEvent shape */
 const procedureEventFixtures = [
   {
     id: 'proc-event-test-001',
-    procedureId: 'proc-test-001',
     title: 'Committee vote on Climate Regulation (synthetic)',
     date: '2024-03-15',
+    endDate: '2024-03-15',
     type: 'COMMITTEE_VOTE',
-    institution: 'European Parliament',
-    documents: ['doc-test-001']
+    location: 'Brussels',
+    organizer: 'European Parliament',
+    status: 'SCHEDULED'
   }
 ];
 

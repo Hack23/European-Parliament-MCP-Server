@@ -177,11 +177,10 @@ export const mockAdoptedTexts: AdoptedText[] = [
     id: 'adopted-2024-001',
     title: 'Resolution on Climate Action',
     reference: 'P9-TA(2024)0001',
-    date: '2024-01-15',
     type: 'LEGISLATIVE_RESOLUTION',
-    status: 'ADOPTED',
-    text: 'The European Parliament, having regard to its Rules of Procedure...',
-    votes: { for: 520, against: 140, abstentions: 55 }
+    dateAdopted: '2024-01-15',
+    procedureReference: '2023/0001(COD)',
+    subjectMatter: 'Environment'
   }
 ];
 

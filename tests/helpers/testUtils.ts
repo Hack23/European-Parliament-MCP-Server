@@ -6,14 +6,20 @@
  * ISMS Policy: SC-002 (Secure Testing)
  */
 
-/**
- * Default timeout for test operations in milliseconds.
- * Can be overridden via TEST_TIMEOUT_MS environment variable.
- */
-export const DEFAULT_TEST_TIMEOUT_MS = parseInt(
+const _parsedTestTimeoutMs = parseInt(
   process.env.TEST_TIMEOUT_MS ?? '10000',
   10
 );
+
+/**
+ * Default timeout for test operations in milliseconds.
+ * Can be overridden via TEST_TIMEOUT_MS environment variable.
+ * Falls back to 10000ms if the env var is missing or non-numeric.
+ */
+export const DEFAULT_TEST_TIMEOUT_MS =
+  Number.isFinite(_parsedTestTimeoutMs) && _parsedTestTimeoutMs > 0
+    ? _parsedTestTimeoutMs
+    : 10000;
 
 /**
  * Check if an error is caused by rate limiting or network issues

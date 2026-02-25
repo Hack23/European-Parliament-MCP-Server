@@ -29,7 +29,7 @@ const isMockClient = process.env.EP_USE_MOCK === 'true';
 beforeAll(async () => {
   if (isMockClient) {
     // Use mock client with synthetic data — no real API calls
-    epClient = createMockEPClient() as unknown as EuropeanParliamentClient;
+    epClient = createMockEPClient();
     rateLimiter = new RateLimiter({ tokensPerInterval: 1000, interval: 'minute' });
     console.log('[Integration Tests] Mock EP Client initialized (EP_USE_MOCK=true)');
   } else {

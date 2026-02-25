@@ -76,7 +76,7 @@ Create `.env.test` for test configuration:
 
 ```env
 # European Parliament API
-EP_API_URL=https://data.europarl.europa.eu/api/v2
+EP_API_URL=https://data.europarl.europa.eu/api/v2/
 EP_INTEGRATION_TESTS=false
 EP_USE_MOCK=false
 
