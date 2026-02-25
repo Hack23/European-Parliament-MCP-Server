@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: PaginatedResponse\<T\>
 
-Defined in: [types/ep/common.ts:129](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/common.ts#L129)
+Defined in: [types/ep/common.ts:129](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/common.ts#L129)
 
 Generic paginated response wrapper for API results.
 
@@ -137,7 +137,7 @@ The type of items in the data array
 
 > **data**: `T`[]
 
-Defined in: [types/ep/common.ts:167](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/common.ts#L167)
+Defined in: [types/ep/common.ts:167](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/common.ts#L167)
 
 Array of items for current page.
 
@@ -180,7 +180,7 @@ data: []
 
 > **hasMore**: `boolean`
 
-Defined in: [types/ep/common.ts:249](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/common.ts#L249)
+Defined in: [types/ep/common.ts:249](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/common.ts#L249)
 
 Indicates if more items exist beyond current page.
 
@@ -217,7 +217,7 @@ if (response.hasMore) {
 
 > **limit**: `number`
 
-Defined in: [types/ep/common.ts:204](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/common.ts#L204)
+Defined in: [types/ep/common.ts:204](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/common.ts#L204)
 
 Maximum items per page (requested page size).
 
@@ -251,7 +251,7 @@ less on last page or with filtered queries.
 
 > **offset**: `number`
 
-Defined in: [types/ep/common.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/common.ts#L223)
+Defined in: [types/ep/common.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/common.ts#L223)
 
 Number of items skipped (pagination offset).
 
@@ -288,7 +288,7 @@ Used for offset-based pagination. To get page N, use
 
 > **total**: `number`
 
-Defined in: [types/ep/common.ts:185](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/common.ts#L185)
+Defined in: [types/ep/common.ts:185](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/common.ts#L185)
 
 Total number of items matching the query.
 

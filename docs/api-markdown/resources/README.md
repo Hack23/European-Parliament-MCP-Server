@@ -1,10 +1,16 @@
-[**European Parliament MCP Server API v0.7.3**](../README.md)
+[**European Parliament MCP Server API v0.8.0**](../README.md)
 
 ***
 
 [European Parliament MCP Server API](../modules.md) / resources
 
 # resources
+
+## Interfaces
+
+- [ResourceContent](interfaces/ResourceContent.md)
+- [ResourceReadResult](interfaces/ResourceReadResult.md)
+- [ResourceTemplate](interfaces/ResourceTemplate.md)
 
 ## Functions
 

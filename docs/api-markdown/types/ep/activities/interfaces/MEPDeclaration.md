@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: MEPDeclaration
 
-Defined in: [types/ep/activities.ts:263](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L263)
+Defined in: [types/ep/activities.ts:263](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L263)
 
 MEP Declaration (financial interests, activities, assets).
 
@@ -42,7 +42,7 @@ https://data.europarl.europa.eu/api/v2/meps-declarations
 
 > **dateFiled**: `string`
 
-Defined in: [types/ep/activities.ts:283](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L283)
+Defined in: [types/ep/activities.ts:283](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L283)
 
 Date the declaration was filed.
 
@@ -58,7 +58,7 @@ Date the declaration was filed.
 
 > **id**: `string`
 
-Defined in: [types/ep/activities.ts:265](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L265)
+Defined in: [types/ep/activities.ts:265](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L265)
 
 Unique declaration document identifier.
 
@@ -74,7 +74,7 @@ Unique declaration document identifier.
 
 > **mepId**: `string`
 
-Defined in: [types/ep/activities.ts:273](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L273)
+Defined in: [types/ep/activities.ts:273](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L273)
 
 MEP identifier who filed the declaration.
 
@@ -94,7 +94,7 @@ Personal data - MEP identifier requires audit logging per ISMS AU-002
 
 > **mepName**: `string`
 
-Defined in: [types/ep/activities.ts:279](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L279)
+Defined in: [types/ep/activities.ts:279](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L279)
 
 MEP name.
 
@@ -114,7 +114,7 @@ Personal data - name requires audit logging per ISMS AU-002
 
 > **status**: `string`
 
-Defined in: [types/ep/activities.ts:285](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L285)
+Defined in: [types/ep/activities.ts:285](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L285)
 
 Declaration status.
 
@@ -130,7 +130,7 @@ Declaration status.
 
 > **title**: `string`
 
-Defined in: [types/ep/activities.ts:267](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L267)
+Defined in: [types/ep/activities.ts:267](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L267)
 
 Declaration title.
 
@@ -146,7 +146,7 @@ Declaration title.
 
 > **type**: `string`
 
-Defined in: [types/ep/activities.ts:281](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/activities.ts#L281)
+Defined in: [types/ep/activities.ts:281](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/activities.ts#L281)
 
 Type of declaration.
 

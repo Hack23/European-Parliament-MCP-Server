@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: RateLimitError
 
-Defined in: [types/errors.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/errors.ts#L99)
+Defined in: [types/errors.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/errors.ts#L99)
 
 Rate limit error when API rate limit is exceeded
 
@@ -34,7 +34,7 @@ if (requestCount > maxRequests) {
 
 > **new RateLimitError**(`message`, `retryAfter?`): `RateLimitError`
 
-Defined in: [types/errors.ts:106](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/errors.ts#L106)
+Defined in: [types/errors.ts:106](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/errors.ts#L106)
 
 Create a new rate limit error
 
@@ -66,7 +66,7 @@ Number of seconds to wait before retrying (optional)
 
 > `readonly` **code**: `string`
 
-Defined in: [types/errors.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/errors.ts#L44)
+Defined in: [types/errors.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/errors.ts#L44)
 
 Machine-readable error code (e.g., 'VALIDATION_ERROR')
 
@@ -80,7 +80,7 @@ Machine-readable error code (e.g., 'VALIDATION_ERROR')
 
 > `readonly` **statusCode**: `number` = `500`
 
-Defined in: [types/errors.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/errors.ts#L45)
+Defined in: [types/errors.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/errors.ts#L45)
 
 HTTP status code (default: 500)
 
@@ -94,7 +94,7 @@ HTTP status code (default: 500)
 
 > `readonly` `optional` **details**: `unknown`
 
-Defined in: [types/errors.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/errors.ts#L46)
+Defined in: [types/errors.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/errors.ts#L46)
 
 Optional additional error details for debugging
 
@@ -108,6 +108,6 @@ Optional additional error details for debugging
 
 > `readonly` `optional` **retryAfter**: `number`
 
-Defined in: [types/errors.ts:108](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/errors.ts#L108)
+Defined in: [types/errors.ts:108](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/errors.ts#L108)
 
 Number of seconds to wait before retrying (optional)

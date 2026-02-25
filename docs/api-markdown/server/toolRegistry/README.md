@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../README.md)
 
 ***
 
@@ -14,11 +14,37 @@ tool calls. The [getToolMetadataArray](functions/getToolMetadataArray.md) functi
 MCP `ListTools` response, while [dispatchToolCall](functions/dispatchToolCall.md) routes
 incoming `CallTool` requests to the correct handler.
 
-## Interfaces
-
-- [ToolResult](interfaces/ToolResult.md)
-
 ## Functions
 
 - [dispatchToolCall](functions/dispatchToolCall.md)
 - [getToolMetadataArray](functions/getToolMetadataArray.md)
+
+## References
+
+### CLIOptions
+
+Re-exports [CLIOptions](../types/interfaces/CLIOptions.md)
+
+***
+
+### ToolCategory
+
+Re-exports [ToolCategory](../types/type-aliases/ToolCategory.md)
+
+***
+
+### ToolHandler
+
+Re-exports [ToolHandler](../types/type-aliases/ToolHandler.md)
+
+***
+
+### ToolMetadata
+
+Re-exports [ToolMetadata](../types/interfaces/ToolMetadata.md)
+
+***
+
+### ToolResult
+
+Re-exports [ToolResult](../types/interfaces/ToolResult.md)

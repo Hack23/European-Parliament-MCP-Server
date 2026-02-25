@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../README.md)
 
 ***
 
@@ -10,9 +10,18 @@
 
 - [TimeoutError](classes/TimeoutError.md)
 
+## Interfaces
+
+- [TimeoutConfig](interfaces/TimeoutConfig.md)
+
+## Variables
+
+- [DEFAULT\_TIMEOUTS](variables/DEFAULT_TIMEOUTS.md)
+
 ## Functions
 
 - [isTimeoutError](functions/isTimeoutError.md)
 - [withRetry](functions/withRetry.md)
 - [withTimeout](functions/withTimeout.md)
 - [withTimeoutAndAbort](functions/withTimeoutAndAbort.md)
+- [withTimeoutConfig](functions/withTimeoutConfig.md)

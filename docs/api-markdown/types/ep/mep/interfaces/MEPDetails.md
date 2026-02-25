@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: MEPDetails
 
-Defined in: [types/ep/mep.ts:243](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L243)
+Defined in: [types/ep/mep.ts:243](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L243)
 
 Detailed MEP information including biography and social media.
 
@@ -88,7 +88,7 @@ Contains personal data (phone, address) - requires audit logging
 
 > **active**: `boolean`
 
-Defined in: [types/ep/mep.ts:140](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L140)
+Defined in: [types/ep/mep.ts:140](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L140)
 
 Current active status.
 
@@ -117,7 +117,7 @@ false // Former MEP
 
 > **committees**: `string`[]
 
-Defined in: [types/ep/mep.ts:111](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L111)
+Defined in: [types/ep/mep.ts:111](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L111)
 
 Committee memberships.
 
@@ -173,7 +173,7 @@ Committee for committee details
 
 > **country**: `string`
 
-Defined in: [types/ep/mep.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L50)
+Defined in: [types/ep/mep.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L50)
 
 Country of representation.
 
@@ -207,7 +207,7 @@ Represents the EU member state the MEP represents.
 
 > **id**: `string`
 
-Defined in: [types/ep/mep.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L22)
+Defined in: [types/ep/mep.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L22)
 
 Unique MEP identifier.
 
@@ -236,7 +236,7 @@ Stable across parliamentary terms for historical tracking.
 
 > **name**: `string`
 
-Defined in: [types/ep/mep.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L35)
+Defined in: [types/ep/mep.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L35)
 
 Full name in official format.
 
@@ -265,7 +265,7 @@ May include titles in some cases.
 
 > **politicalGroup**: `string`
 
-Defined in: [types/ep/mep.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L73)
+Defined in: [types/ep/mep.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L73)
 
 Political group affiliation.
 
@@ -304,7 +304,7 @@ Groups may change during parliamentary terms due to realignments.
 
 > **termStart**: `string`
 
-Defined in: [types/ep/mep.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L156)
+Defined in: [types/ep/mep.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L156)
 
 Term start date.
 
@@ -336,7 +336,7 @@ For replacements, may be mid-term.
 
 > `optional` **address**: `string`
 
-Defined in: [types/ep/mep.ts:289](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L289)
+Defined in: [types/ep/mep.ts:289](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L289)
 
 Official office address.
 
@@ -366,7 +366,7 @@ Personal data - requires audit logging per ISMS AU-002
 
 > `optional` **biography**: `string`
 
-Defined in: [types/ep/mep.ts:257](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L257)
+Defined in: [types/ep/mep.ts:257](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L257)
 
 Biographical information.
 
@@ -390,7 +390,7 @@ and political career highlights. Content may be in multiple languages.
 
 > `optional` **email**: `string`
 
-Defined in: [types/ep/mep.ts:127](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L127)
+Defined in: [types/ep/mep.ts:127](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L127)
 
 Official European Parliament email address.
 
@@ -421,7 +421,7 @@ Personal data - requires audit logging per ISMS AU-002
 
 > `optional` **facebook**: `string`
 
-Defined in: [types/ep/mep.ts:334](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L334)
+Defined in: [types/ep/mep.ts:334](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L334)
 
 Facebook profile identifier.
 
@@ -447,7 +447,7 @@ username (facebook.com/username) or numeric ID (facebook.com/12345).
 
 > `optional` **phone**: `string`
 
-Defined in: [types/ep/mep.ts:273](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L273)
+Defined in: [types/ep/mep.ts:273](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L273)
 
 Contact phone number.
 
@@ -477,7 +477,7 @@ Personal data - requires audit logging per ISMS AU-002
 
 > `optional` **roles**: `string`[]
 
-Defined in: [types/ep/mep.ts:368](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L368)
+Defined in: [types/ep/mep.ts:368](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L368)
 
 Parliamentary roles and positions.
 
@@ -509,7 +509,7 @@ special assignments. Roles are current as of data fetch.
 
 > `optional` **termEnd**: `string`
 
-Defined in: [types/ep/mep.ts:172](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L172)
+Defined in: [types/ep/mep.ts:172](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L172)
 
 Term end date.
 
@@ -541,7 +541,7 @@ completed their term, resigned, or were replaced.
 
 > `optional` **twitter**: `string`
 
-Defined in: [types/ep/mep.ts:320](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L320)
+Defined in: [types/ep/mep.ts:320](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L320)
 
 Twitter/X handle.
 
@@ -569,7 +569,7 @@ availability.
 
 > `optional` **votingStatistics**: [`VotingStatistics`](VotingStatistics.md)
 
-Defined in: [types/ep/mep.ts:348](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L348)
+Defined in: [types/ep/mep.ts:348](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L348)
 
 Voting behavior statistics.
 
@@ -590,7 +590,7 @@ session roll-call votes.
 
 > `optional` **website**: `string`
 
-Defined in: [types/ep/mep.ts:304](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/mep.ts#L304)
+Defined in: [types/ep/mep.ts:304](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/mep.ts#L304)
 
 Personal or official website URL.
 

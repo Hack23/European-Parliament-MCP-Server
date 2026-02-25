@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: TimeoutError
 
-Defined in: [utils/timeout.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/utils/timeout.ts#L22)
+Defined in: [utils/timeout.ts:51](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/timeout.ts#L51)
 
 Timeout error thrown when an operation exceeds its time limit
 
@@ -28,7 +28,7 @@ if (Date.now() - startTime > timeout) {
 
 > **new TimeoutError**(`message`, `timeoutMs?`): `TimeoutError`
 
-Defined in: [utils/timeout.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/utils/timeout.ts#L29)
+Defined in: [utils/timeout.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/timeout.ts#L58)
 
 Create a new timeout error
 
@@ -60,6 +60,6 @@ The timeout duration in milliseconds
 
 > `readonly` `optional` **timeoutMs**: `number`
 
-Defined in: [utils/timeout.ts:31](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/utils/timeout.ts#L31)
+Defined in: [utils/timeout.ts:60](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/timeout.ts#L60)
 
 The timeout duration in milliseconds

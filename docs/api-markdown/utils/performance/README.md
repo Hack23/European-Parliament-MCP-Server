@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../README.md)
 
 ***
 
@@ -13,9 +13,11 @@
 ## Interfaces
 
 - [PerformanceStats](interfaces/PerformanceStats.md)
+- [PerformanceThresholds](interfaces/PerformanceThresholds.md)
 
 ## Variables
 
+- [DEFAULT\_PERFORMANCE\_THRESHOLDS](variables/DEFAULT_PERFORMANCE_THRESHOLDS.md)
 - [performanceMonitor](variables/performanceMonitor.md)
 
 ## Functions

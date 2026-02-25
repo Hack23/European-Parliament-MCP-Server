@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: VotingRecord
 
-Defined in: [types/ep/plenary.ts:253](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L253)
+Defined in: [types/ep/plenary.ts:253](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L253)
 
 Voting record for a plenary vote.
 
@@ -79,7 +79,7 @@ const aggregateVote: VotingRecord = {
 
 > **abstentions**: `number`
 
-Defined in: [types/ep/plenary.ts:358](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L358)
+Defined in: [types/ep/plenary.ts:358](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L358)
 
 Number of abstentions.
 
@@ -106,7 +106,7 @@ a recorded position distinct from absence.
 
 > **date**: `string`
 
-Defined in: [types/ep/plenary.ts:314](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L314)
+Defined in: [types/ep/plenary.ts:314](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L314)
 
 Vote timestamp.
 
@@ -134,7 +134,7 @@ and vote sequencing.
 
 > **id**: `string`
 
-Defined in: [types/ep/plenary.ts:267](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L267)
+Defined in: [types/ep/plenary.ts:267](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L267)
 
 Unique voting record identifier.
 
@@ -161,7 +161,7 @@ within the session day.
 
 > **result**: `"ADOPTED"` \| `"REJECTED"`
 
-Defined in: [types/ep/plenary.ts:376](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L376)
+Defined in: [types/ep/plenary.ts:376](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L376)
 
 Vote result outcome.
 
@@ -191,7 +191,7 @@ it failed.
 
 > **sessionId**: `string`
 
-Defined in: [types/ep/plenary.ts:282](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L282)
+Defined in: [types/ep/plenary.ts:282](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L282)
 
 Associated plenary session ID.
 
@@ -217,7 +217,7 @@ Links vote to session context including location and broader agenda.
 
 > **topic**: `string`
 
-Defined in: [types/ep/plenary.ts:298](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L298)
+Defined in: [types/ep/plenary.ts:298](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L298)
 
 Vote topic or subject matter.
 
@@ -248,7 +248,7 @@ Typically concise (50-200 characters).
 
 > **votesAgainst**: `number`
 
-Defined in: [types/ep/plenary.ts:343](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L343)
+Defined in: [types/ep/plenary.ts:343](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L343)
 
 Number of votes against.
 
@@ -274,7 +274,7 @@ Count of MEPs who voted "AGAINST" or "NO" on the measure.
 
 > **votesFor**: `number`
 
-Defined in: [types/ep/plenary.ts:329](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L329)
+Defined in: [types/ep/plenary.ts:329](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L329)
 
 Number of votes in favor.
 
@@ -301,7 +301,7 @@ Combined with votesAgainst and abstentions determines outcome.
 
 > `optional` **mepVotes**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `"FOR"` \| `"AGAINST"` \| `"ABSTAIN"`\>
 
-Defined in: [types/ep/plenary.ts:403](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L403)
+Defined in: [types/ep/plenary.ts:403](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L403)
 
 Individual MEP voting positions.
 

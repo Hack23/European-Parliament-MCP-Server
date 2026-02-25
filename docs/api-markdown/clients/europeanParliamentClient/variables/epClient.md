@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../README.md)
 
 ***
 
@@ -8,39 +8,25 @@
 
 > `const` **epClient**: [`EuropeanParliamentClient`](../classes/EuropeanParliamentClient.md)
 
-Defined in: [clients/europeanParliamentClient.ts:2855](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/clients/europeanParliamentClient.ts#L2855)
+Defined in: [clients/europeanParliamentClient.ts:745](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/clients/europeanParliamentClient.ts#L745)
 
 Singleton instance of European Parliament API client for global use.
 
-Pre-configured client with default settings (15 min cache, 100 req/min rate limit).
-Recommended for most use cases to share cache and rate limiter across application.
-
-**Configuration:**
-- Base URL: https://data.europarl.europa.eu/api/v2/ (or EP_API_URL env var)
-- Timeout: 10 seconds (or EP_REQUEST_TIMEOUT_MS env var)
-- Cache: 15 min TTL, 500 entry max
-- Rate Limit: 100 requests/minute
+Pre-configured with defaults (15 min cache, 100 req/min rate limit).
+Recommended for most use cases to share cache and rate limiter across
+the application.
 
 **Environment Variables:**
 - `EP_API_URL`: Override base API URL
 - `EP_REQUEST_TIMEOUT_MS`: Override request timeout in milliseconds (default: 10000)
 
-## Examples
+## Example
 
 ```typescript
 import { epClient } from './clients/europeanParliamentClient.js';
-
-// Use singleton instance
 const meps = await epClient.getMEPs({ country: 'SE' });
-```
-
-```typescript
-// Override timeout via environment variable for E2E tests
-// EP_REQUEST_TIMEOUT_MS=30000 npm run test:e2e
-const stats = epClient.getCacheStats();
-console.log(`Global cache: ${stats.size} entries`);
 ```
 
 ## See
 
-[EuropeanParliamentClient](../classes/EuropeanParliamentClient.md) for client class documentation
+[EuropeanParliamentClient](../classes/EuropeanParliamentClient.md)

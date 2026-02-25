@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../README.md)
 
 ***
 
@@ -14,6 +14,13 @@ and exit the process.
 
 ## Functions
 
+- [parseCLIArgs](functions/parseCLIArgs.md)
 - [showHealth](functions/showHealth.md)
 - [showHelp](functions/showHelp.md)
 - [showVersion](functions/showVersion.md)
+
+## References
+
+### CLIOptions
+
+Re-exports [CLIOptions](../types/interfaces/CLIOptions.md)

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **createGroupID**(`value`): [`GroupID`](../type-aliases/GroupID.md)
 
-Defined in: [types/branded.ts:301](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/branded.ts#L301)
+Defined in: [types/branded.ts:301](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/branded.ts#L301)
 
 Factory function to create a validated Political Group ID
 

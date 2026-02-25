@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.7.3**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: PlenarySession
 
-Defined in: [types/ep/plenary.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L65)
+Defined in: [types/ep/plenary.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L65)
 
 Plenary session information.
 
@@ -70,7 +70,7 @@ const miniPlenary: PlenarySession = {
 
 > **agendaItems**: `string`[]
 
-Defined in: [types/ep/plenary.ts:133](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L133)
+Defined in: [types/ep/plenary.ts:133](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L133)
 
 Agenda items for the session.
 
@@ -99,7 +99,7 @@ session schedule.
 
 > **date**: `string`
 
-Defined in: [types/ep/plenary.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L95)
+Defined in: [types/ep/plenary.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L95)
 
 Session date.
 
@@ -127,7 +127,7 @@ available through EP API session details.
 
 > **id**: `string`
 
-Defined in: [types/ep/plenary.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L79)
+Defined in: [types/ep/plenary.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L79)
 
 Unique session identifier.
 
@@ -154,7 +154,7 @@ Format: "{term}-{year}-{month}-{day}" where term is parliamentary term
 
 > **location**: `string`
 
-Defined in: [types/ep/plenary.ts:113](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L113)
+Defined in: [types/ep/plenary.ts:113](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L113)
 
 Session location.
 
@@ -184,7 +184,7 @@ additional sessions possible in Brussels.
 
 > `optional` **attendanceCount**: `number`
 
-Defined in: [types/ep/plenary.ts:165](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L165)
+Defined in: [types/ep/plenary.ts:165](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L165)
 
 Total attendance count.
 
@@ -213,7 +213,7 @@ and transparency reporting.
 
 > `optional` **documents**: `string`[]
 
-Defined in: [types/ep/plenary.ts:186](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L186)
+Defined in: [types/ep/plenary.ts:186](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L186)
 
 Associated document identifiers.
 
@@ -245,7 +245,7 @@ LegislativeDocument for document details
 
 > `optional` **votingRecords**: [`VotingRecord`](VotingRecord.md)[]
 
-Defined in: [types/ep/plenary.ts:148](https://github.com/Hack23/European-Parliament-MCP-Server/blob/c844f163befb571516b5718c5d197eff1e589dea/src/types/ep/plenary.ts#L148)
+Defined in: [types/ep/plenary.ts:148](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/ep/plenary.ts#L148)
 
 Voting records from the session.
 
