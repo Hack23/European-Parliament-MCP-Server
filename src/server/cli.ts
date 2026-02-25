@@ -12,6 +12,9 @@ import { SERVER_NAME, SERVER_VERSION } from '../index.js';
 import { getToolMetadataArray } from './toolRegistry.js';
 import { getPromptMetadataArray } from '../prompts/index.js';
 import { getResourceTemplateArray } from '../resources/index.js';
+import { createStandardRateLimiter } from '../utils/rateLimiter.js';
+import { MetricsService } from '../services/MetricsService.js';
+import { HealthService } from '../services/HealthService.js';
 import type { CLIOptions } from './types.js';
 
 /** Re-export CLIOptions for consumers */
@@ -87,6 +90,9 @@ export function showVersion(): void {
 
 /**
  * Display health check / diagnostics.
+ *
+ * Combines a static capability report with a dynamic health snapshot
+ * produced by {@link HealthService}.
  */
 export function showHealth(): void {
   const tools = getToolMetadataArray();
@@ -94,10 +100,15 @@ export function showHealth(): void {
   const prompts = getPromptMetadataArray();
   const resourceTemplates = getResourceTemplateArray();
 
+  const rateLimiter = createStandardRateLimiter();
+  const metricsService = new MetricsService();
+  const healthService = new HealthService(rateLimiter, metricsService);
+  const dynamicHealth = healthService.checkHealth();
+
   const health = {
     name: SERVER_NAME,
     version: SERVER_VERSION,
-    status: 'healthy',
+    status: dynamicHealth.status,
     capabilities: ['tools', 'resources', 'prompts'],
     tools: {
       total: tools.length,
@@ -110,6 +121,10 @@ export function showHealth(): void {
     resources: {
       templates: resourceTemplates.length,
     },
+    epApiReachable: dynamicHealth.epApiReachable,
+    cache: dynamicHealth.cache,
+    rateLimiter: dynamicHealth.rateLimiter,
+    uptimeMs: dynamicHealth.uptimeMs,
     environment: {
       nodeVersion: process.version,
       platform: process.platform,

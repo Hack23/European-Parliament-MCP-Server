@@ -53,12 +53,17 @@ export { sanitizeUrl } from './server/cli.js';
 export type { ToolHandler, ToolMetadata, ToolCategory, CLIOptions } from './server/types.js';
 /** Re-export DI token registry */
 export type { DIToken } from './di/tokens.js';
+/** Re-export DI container and default factory for consumers */
+export { createDefaultContainer } from './di/container.js';
 /** Re-export metric names and key type for consumers using the metrics service */
 export { MetricName } from './services/MetricsService.js';
 export type { MetricKey } from './services/MetricsService.js';
-/** Re-export performance thresholds and timeout defaults for consumers */
+/** Re-export performance thresholds, timeout defaults, and related config types for consumers */
 export { DEFAULT_PERFORMANCE_THRESHOLDS } from './utils/performance.js';
+export type { PerformanceThresholds } from './utils/performance.js';
 export { DEFAULT_TIMEOUTS } from './utils/timeout.js';
+export type { TimeoutConfig } from './utils/timeout.js';
+export type { RateLimiterConfig, RateLimiterStatus } from './utils/rateLimiter.js';
 /** Re-export prompt argument schemas for integration tests and client validation */
 export {
   MepBriefingArgsSchema,
