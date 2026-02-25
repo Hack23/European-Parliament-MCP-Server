@@ -275,7 +275,7 @@ describe('Full Workflow E2E Tests', () => {
 
       // All steps completed successfully
       expect(true).toBe(true);
-    }, 60000);
+    }, E2E_TEST_TIMEOUT_MS);
   });
 
   describe('Workflow: Track Legislation', () => {
@@ -308,7 +308,7 @@ describe('Full Workflow E2E Tests', () => {
 
       // All steps completed successfully
       expect(true).toBe(true);
-    }, 60000);
+    }, E2E_TEST_TIMEOUT_MS);
   });
 
   describe('Error Recovery', () => {
