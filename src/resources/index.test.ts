@@ -275,5 +275,10 @@ describe('MCP Resources', () => {
       expect(data._source).toBe('European Parliament Open Data Portal');
       expect(data.id).toBe('A-9-2024-0001');
     });
+
+    it('should reject procedure IDs that do not match YYYY-NNNN format', async () => {
+      await expect(handleReadResource('ep://procedures/COD/2024/0001')).rejects.toThrow();
+      await expect(handleReadResource('ep://procedures/invalid')).rejects.toThrow();
+    });
   });
 });

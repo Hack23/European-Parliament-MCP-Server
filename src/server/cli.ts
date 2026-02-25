@@ -12,7 +12,7 @@ import { SERVER_NAME, SERVER_VERSION } from '../index.js';
 import { getToolMetadataArray } from './toolRegistry.js';
 import { getPromptMetadataArray } from '../prompts/index.js';
 import { getResourceTemplateArray } from '../resources/index.js';
-import { createStandardRateLimiter } from '../utils/rateLimiter.js';
+import { RateLimiter } from '../utils/rateLimiter.js';
 import { MetricsService } from '../services/MetricsService.js';
 import { HealthService } from '../services/HealthService.js';
 import type { CLIOptions } from './types.js';
@@ -100,7 +100,9 @@ export function showHealth(): void {
   const prompts = getPromptMetadataArray();
   const resourceTemplates = getResourceTemplateArray();
 
-  const rateLimiter = createStandardRateLimiter();
+  const rateLimitEnv = parseInt(process.env['EP_RATE_LIMIT'] ?? '60', 10);
+  const tokensPerInterval = Number.isFinite(rateLimitEnv) && rateLimitEnv > 0 ? rateLimitEnv : 60;
+  const rateLimiter = new RateLimiter({ tokensPerInterval, interval: 'minute' });
   const metricsService = new MetricsService();
   const healthService = new HealthService(rateLimiter, metricsService);
   const dynamicHealth = healthService.checkHealth();

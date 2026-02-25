@@ -117,6 +117,15 @@ const MepIdSchema = z.string().min(1).max(100);
 const ResourceIdSchema = z.string().min(1).max(200);
 
 /**
+ * Procedure ID schema — enforces the YYYY-NNNN format expected by the EP API
+ * `/procedures/{process-id}` endpoint (e.g. `"2024-0006"`).
+ */
+const ProcedureIdSchema = ResourceIdSchema.regex(
+  /^\d{4}-\d{4}$/,
+  'Procedure ID must be in YYYY-NNNN format (e.g. "2024-0006")'
+);
+
+/**
  * Match MEP resource URIs
  */
 function matchMepUri(segments: string[]): { template: string; params: Record<string, string> } | null {
@@ -380,7 +389,7 @@ async function handlePoliticalGroups(): Promise<ResourceContent> {
  * @returns Resource content with procedure details as JSON
  */
 async function handleProcedureDetail(procedureId: string): Promise<ResourceContent> {
-  const validId = ResourceIdSchema.parse(procedureId);
+  const validId = ProcedureIdSchema.parse(procedureId);
   const data = await epClient.getProcedureById(validId);
 
   return {

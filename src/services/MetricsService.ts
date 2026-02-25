@@ -7,6 +7,15 @@
  */
 
 /**
+ * Preferred type for metric name parameters.
+ *
+ * Using {@link MetricName} values provides compile-time safety and IDE
+ * auto-complete; raw `string` is accepted for backward compatibility and
+ * for ad-hoc metrics outside the standard set.
+ */
+export type MetricKey = MetricName | (string & {});
+
+/**
  * Typed metric name constants for MCP server and EP API instrumentation.
  *
  * Using an enum prevents typos in metric names and enables IDE
@@ -18,15 +27,6 @@
  * metricsService.incrementCounter(MetricName.EP_CACHE_HIT_COUNT, 1);
  * ```
  */
-/**
- * Preferred type for metric name parameters.
- *
- * Using {@link MetricName} values provides compile-time safety and IDE
- * auto-complete; raw `string` is accepted for backward compatibility and
- * for ad-hoc metrics outside the standard set.
- */
-export type MetricKey = MetricName | (string & {});
-
 export enum MetricName {
   /** Total EP API calls (label: `endpoint`) */
   EP_API_CALL_COUNT = 'ep_api_call_count',
