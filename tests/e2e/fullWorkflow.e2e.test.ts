@@ -36,11 +36,11 @@ describe('Full Workflow E2E Tests', () => {
   }, 10000);
 
   describe('Complete Tool Coverage', () => {
-    it('should verify all 20 MCP tools are registered', async () => {
+    it('should verify all 39 MCP tools are registered', async () => {
       const tools = await client.listTools();
       const toolNames = tools.map(t => t.name);
 
-      // Verify all 20 tools are available (7 core + 3 advanced + 10 OSINT)
+      // Core tools (7)
       expect(toolNames).toContain('get_meps');
       expect(toolNames).toContain('get_mep_details');
       expect(toolNames).toContain('get_plenary_sessions');
@@ -48,11 +48,13 @@ describe('Full Workflow E2E Tests', () => {
       expect(toolNames).toContain('search_documents');
       expect(toolNames).toContain('get_committee_info');
       expect(toolNames).toContain('get_parliamentary_questions');
+
+      // Advanced tools (3)
       expect(toolNames).toContain('analyze_voting_patterns');
       expect(toolNames).toContain('track_legislation');
       expect(toolNames).toContain('generate_report');
 
-      // OSINT Phase 1 tools
+      // OSINT Phase 1 tools (6)
       expect(toolNames).toContain('assess_mep_influence');
       expect(toolNames).toContain('analyze_coalition_dynamics');
       expect(toolNames).toContain('detect_voting_anomalies');
@@ -60,15 +62,36 @@ describe('Full Workflow E2E Tests', () => {
       expect(toolNames).toContain('analyze_legislative_effectiveness');
       expect(toolNames).toContain('monitor_legislative_pipeline');
 
-      // OSINT Phase 2 tools
+      // OSINT Phase 2 tools (2)
       expect(toolNames).toContain('analyze_committee_activity');
       expect(toolNames).toContain('track_mep_attendance');
 
-      // OSINT Phase 3 tools
+      // OSINT Phase 3 tools (2)
       expect(toolNames).toContain('analyze_country_delegation');
       expect(toolNames).toContain('generate_political_landscape');
 
-      expect(toolNames.length).toBeGreaterThanOrEqual(20);
+      // EP API v2 extended tools (19)
+      expect(toolNames).toContain('get_current_meps');
+      expect(toolNames).toContain('get_speeches');
+      expect(toolNames).toContain('get_adopted_texts');
+      expect(toolNames).toContain('get_events');
+      expect(toolNames).toContain('get_meeting_activities');
+      expect(toolNames).toContain('get_meeting_decisions');
+      expect(toolNames).toContain('get_mep_declarations');
+      expect(toolNames).toContain('get_incoming_meps');
+      expect(toolNames).toContain('get_outgoing_meps');
+      expect(toolNames).toContain('get_homonym_meps');
+      expect(toolNames).toContain('get_plenary_documents');
+      expect(toolNames).toContain('get_committee_documents');
+      expect(toolNames).toContain('get_plenary_session_documents');
+      expect(toolNames).toContain('get_plenary_session_document_items');
+      expect(toolNames).toContain('get_controlled_vocabularies');
+      expect(toolNames).toContain('get_external_documents');
+      expect(toolNames).toContain('get_meeting_foreseen_activities');
+      expect(toolNames).toContain('get_procedure_events');
+      expect(toolNames).toContain('get_procedures');
+
+      expect(toolNames.length).toBeGreaterThanOrEqual(39);
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute get_meps tool', async () => {

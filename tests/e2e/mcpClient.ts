@@ -62,6 +62,34 @@ export class MCPTestClient {
   }
 
   /**
+   * List available prompts
+   * 
+   * @returns List of prompt definitions
+   */
+  async listPrompts(): Promise<Array<{ name: string; description?: string }>> {
+    if (!this.client || !this.connected) {
+      throw new Error('Client not connected');
+    }
+
+    const response = await this.client.listPrompts();
+    return response.prompts;
+  }
+
+  /**
+   * List available resource templates
+   * 
+   * @returns List of resource template definitions
+   */
+  async listResourceTemplates(): Promise<Array<{ uriTemplate: string; name: string; description?: string }>> {
+    if (!this.client || !this.connected) {
+      throw new Error('Client not connected');
+    }
+
+    const response = await this.client.listResourceTemplates();
+    return response.resourceTemplates;
+  }
+
+  /**
    * List available tools
    * 
    * @returns List of tool definitions

@@ -33,34 +33,42 @@ npm run test:coverage
 
 ### Integration Tests (`tests/integration/`)
 
-Tests integration with the real European Parliament API:
+Tests integration with the European Parliament API:
 - API client functionality
 - Caching behavior
 - Rate limiting
 - Error handling
 - Data validation
 
-**Configuration**: Set `EP_INTEGRATION_TESTS=true` to run against real API (disabled in CI by default).
+**Configuration**:
+- `EP_INTEGRATION_TESTS=true` — Run against real API (disabled in CI by default)
+- `EP_USE_MOCK=true` — Use synthetic fixture data instead of real API
+- `EP_API_URL=...` — Override API base URL
 
 ### E2E Tests (`tests/e2e/`)
 
 Tests complete user workflows via MCP client:
-- All 20 MCP tools
+- All 39 MCP tools (`fullWorkflow.e2e.test.ts`)
+- MEP query workflows (`mepQueries.e2e.test.ts`)
+- Prompts and resource templates (`promptsAndResources.e2e.test.ts`)
 - MCP protocol compliance
 - Tool input validation
-- Error handling
-- Client recovery
+- Error handling and recovery
 
 **Requires**: Built server (`npm run build`)
 
 ### Performance Tests (`tests/performance/`)
 
-Validates performance requirements:
-- Response time (<200ms cached)
-- Concurrent request handling
+Validates performance requirements using mocked EP client (no real API calls):
+- Response time benchmarks (`benchmarks.test.ts`) — <200ms (CI: <500ms)
+- EP API endpoint latency (`apiLatency.test.ts`) — per-tool latency
+- Concurrent request handling (`concurrency.test.ts`) — parallel request safety
 - Throughput (5+ req/s)
 - Cache effectiveness (80%+ hit rate)
 - Memory usage
+
+**CI Detection**: `CI=true` automatically increases thresholds to `500ms` for cached
+and `15000ms` for concurrent request tests.
 
 ## Environment Variables
 
@@ -68,8 +76,9 @@ Create `.env.test` for test configuration:
 
 ```env
 # European Parliament API
-EP_API_URL=https://data.europarl.europa.eu/api/v2
+EP_API_URL=https://data.europarl.europa.eu/api/v2/
 EP_INTEGRATION_TESTS=false
+EP_USE_MOCK=false
 
 # Test configuration
 NODE_ENV=test
@@ -77,17 +86,36 @@ TEST_RATE_LIMIT_TOKENS=50
 TEST_RATE_LIMIT_INTERVAL=minute
 TEST_CACHE_TTL=900000
 TEST_CACHE_MAX_SIZE=500
+
+# Timeout override (milliseconds)
+TEST_TIMEOUT_MS=10000
+
+# CI detection
+CI=false
 ```
 
 ## Test Utilities
 
 ### Fixtures (`tests/fixtures/`)
 
-Mock data for testing without hitting real API:
+GDPR-compliant **synthetic** data for testing without hitting real API:
 
 ```typescript
+// Original mock data
 import { mockMEPs, mockPlenarySessions } from './fixtures/mockEPData.js';
+
+// Extended fixture modules
+import { mepFixtures } from './fixtures/mepFixtures.js';
+import { plenaryFixtures } from './fixtures/plenaryFixtures.js';
+import { votingFixtures } from './fixtures/votingFixtures.js';
+import { documentFixtures } from './fixtures/documentFixtures.js';
+import { committeeFixtures } from './fixtures/committeeFixtures.js';
+import { procedureFixtures } from './fixtures/procedureFixtures.js';
+import { questionFixtures } from './fixtures/questionFixtures.js';
 ```
+
+All synthetic data uses clearly non-real names ("Anna Andersson", "Klaus Mueller")
+and test IDs ("mep-test-001"). No real EP personal data is used in tests.
 
 ### Helpers (`tests/helpers/`)
 
@@ -96,32 +124,68 @@ Test utilities for common operations:
 ```typescript
 import {
   retry,
+  retryOrSkip,
   measureTime,
   waitFor,
   parseMCPResponse,
   parsePaginatedMCPResponse,
-  validateMCPResponse
+  validateMCPResponse,
+  getTestTimeout,
+  DEFAULT_TEST_TIMEOUT_MS
 } from './helpers/testUtils.js';
+
+// Mock EP client for unit/performance tests
+import { createMockEPClient, getMockEPClient, resetMockEPClient } from './helpers/mockEPClient.js';
+
+// EP API mock server helpers
+import {
+  buildEPApiResponse,
+  buildPaginatedEPApiResponse,
+  createMockFetch,
+  createRateLimitingMockFetch,
+  setupEPApiMocks,
+  teardownEPApiMocks
+} from './helpers/epApiMock.js';
 ```
 
 ## Writing Tests
 
-### Integration Test Example
+### Performance Test Example (with vi.mock)
+
+```typescript
+import { describe, it, expect, vi } from 'vitest';
+import { measureTime } from '../helpers/testUtils.js';
+import { mepFixtures } from '../fixtures/mepFixtures.js';
+
+vi.mock('../../src/clients/europeanParliamentClient.js', () => ({
+  epClient: {
+    getMEPs: vi.fn().mockResolvedValue({ data: mepFixtures, total: 5 })
+  }
+}));
+
+const { handleGetMEPs } = await import('../../src/tools/getMEPs.js');
+
+describe('Performance', () => {
+  it('should respond in <200ms (mocked)', async () => {
+    const [, duration] = await measureTime(() => handleGetMEPs({ limit: 10 }));
+    expect(duration).toBeLessThan(200);
+  });
+});
+```
+
+### Integration Test Example (with mock client)
 
 ```typescript
 import { describe, it, expect } from 'vitest';
-import { epClient } from './setup.js';
-import { retry } from '../helpers/testUtils.js';
+import { epClient, useMockClient } from './setup.js';
 
 describe('EP API Integration', () => {
   it('should fetch MEPs data', async () => {
-    const result = await retry(async () => {
-      return epClient.getMEPs({ country: 'SE', limit: 10 });
-    });
-    
-    expect(result).toBeDefined();
-    expect(Array.isArray(result)).toBe(true);
-  }, 30000);
+    const result = await epClient.getMEPs({ country: 'SE', limit: 10 });
+    expect(result.data).toBeDefined();
+    expect(Array.isArray(result.data)).toBe(true);
+    // Works with both real API and mock (EP_USE_MOCK=true)
+  });
 });
 ```
 
@@ -147,28 +211,17 @@ describe('MEP Queries E2E', () => {
   it('should retrieve MEPs', async () => {
     const response = await client.callTool('get_meps', { limit: 5 });
     const data = parsePaginatedMCPResponse(response.content);
-    
     expect(Array.isArray(data)).toBe(true);
   });
-});
-```
 
-### Performance Test Example
+  it('should list prompts', async () => {
+    const prompts = await client.listPrompts();
+    expect(prompts.length).toBeGreaterThanOrEqual(6);
+  });
 
-```typescript
-import { describe, it, expect } from 'vitest';
-import { handleGetMEPs } from '../../src/tools/getMEPs.js';
-import { measureTime } from '../helpers/testUtils.js';
-
-describe('Performance', () => {
-  it('should respond in <200ms (cached)', async () => {
-    await handleGetMEPs({ limit: 10 }); // warm cache
-    
-    const [, duration] = await measureTime(async () => {
-      return handleGetMEPs({ limit: 10 });
-    });
-
-    expect(duration).toBeLessThan(200);
+  it('should list resource templates', async () => {
+    const templates = await client.listResourceTemplates();
+    expect(templates.length).toBeGreaterThanOrEqual(6);
   });
 });
 ```
@@ -182,13 +235,24 @@ Tests run in GitHub Actions via `.github/workflows/integration-tests.yml`:
 - Artifacts: Coverage reports, test results
 - Integration: Codecov for coverage reporting
 
+**Performance tests** now run in CI without `it.skip` — they use mocked EP client
+so no real API calls are made. CI detection (`CI=true`) adjusts thresholds automatically.
+
 ## Coverage Requirements
 
-- **Overall**: 80%+ (lines, statements, functions)
-- **Branches**: 70%+
-- **Security-Critical**: 95%+ (tools, utils, schemas)
+- **Lines**: 80%+ ✅
+- **Branches**: 72%+
+- **Functions**: 82%+
+- **Statements**: 82%+
+- **Security-Critical** (tools, utils, schemas): 95%+
 
-Current coverage: **80.05%** statements ✅
+## GDPR Compliance
+
+All test fixtures use **synthetic data** only:
+- Names: "Anna Andersson", "Klaus Mueller", "Marie Dupont" (clearly synthetic)
+- IDs: "mep-test-001", "session-test-001" (test prefix)
+- No real contact information, addresses, or personal data
+- Compliant with ISMS DP-001 (Data Protection and GDPR Compliance)
 
 ## ISMS Compliance
 
@@ -210,9 +274,10 @@ See: [Hack23 ISMS Policies](https://github.com/Hack23/ISMS-PUBLIC)
 ### Integration Tests Failing
 
 1. Check `EP_INTEGRATION_TESTS` environment variable
-2. Verify network connectivity
-3. Check rate limits not exceeded
-4. Review EP API status
+2. Try `EP_USE_MOCK=true` to use synthetic data instead
+3. Verify network connectivity
+4. Check rate limits not exceeded
+5. Review EP API status
 
 ### E2E Tests Failing
 
@@ -223,10 +288,10 @@ See: [Hack23 ISMS Policies](https://github.com/Hack23/ISMS-PUBLIC)
 
 ### Performance Tests Failing
 
-1. Clear caches: `rm -rf node_modules/.cache`
-2. Run in isolation: `npm run test:performance`
-3. Check system resources
-4. Verify no background processes
+1. Tests now use mocked EP client — should not fail from API issues
+2. If threshold exceeded: `CI=true` sets more lenient thresholds
+3. Clear caches: `rm -rf node_modules/.cache`
+4. Run in isolation: `npm run test:performance`
 
 ## Support
 

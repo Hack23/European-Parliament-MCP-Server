@@ -214,4 +214,70 @@ describe('MEP Query E2E Tests', () => {
       });
     }, E2E_TEST_TIMEOUT_MS);
   });
+
+  describe('Error Scenarios', () => {
+    it('should reject empty MEP ID', async () => {
+      await expect(async () => {
+        await client.callTool('get_mep_details', { id: '' });
+      }).rejects.toThrow();
+    }, E2E_TEST_TIMEOUT_MS);
+
+    it('should reject invalid limit (0)', async () => {
+      await expect(async () => {
+        await client.callTool('get_meps', { limit: 0 });
+      }).rejects.toThrow();
+    }, E2E_TEST_TIMEOUT_MS);
+
+    it('should reject invalid limit (negative)', async () => {
+      await expect(async () => {
+        await client.callTool('get_meps', { limit: -1 });
+      }).rejects.toThrow();
+    }, E2E_TEST_TIMEOUT_MS);
+
+    it('should reject invalid country code', async () => {
+      await expect(async () => {
+        await client.callTool('get_meps', { country: 'INVALID_COUNTRY' });
+      }).rejects.toThrow();
+    }, E2E_TEST_TIMEOUT_MS);
+
+    it('should reject limit exceeding maximum', async () => {
+      await expect(async () => {
+        await client.callTool('get_meps', { limit: 9999 });
+      }).rejects.toThrow();
+    }, E2E_TEST_TIMEOUT_MS);
+
+    it('should reject missing required parameter for get_mep_details', async () => {
+      await expect(async () => {
+        await client.callTool('get_mep_details', {});
+      }).rejects.toThrow();
+    }, E2E_TEST_TIMEOUT_MS);
+
+    it('should return valid MCP error format on schema violation', async () => {
+      try {
+        await client.callTool('get_meps', { country: 'NOT_A_VALID_CC' });
+        expect.fail('Should have thrown');
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect((error as Error).message).toBeTruthy();
+      }
+    }, E2E_TEST_TIMEOUT_MS);
+
+    it('should recover from error and process next valid request', async () => {
+      // Invalid request first
+      try {
+        await client.callTool('get_meps', { limit: 0 });
+      } catch {
+        // Expected to fail
+      }
+
+      // Valid request should still work
+      const response = await retryOrSkip(
+        () => client.callTool('get_meps', { limit: 1 }),
+        'get_meps recovery after error'
+      );
+      if (response === undefined) return;
+      validateMCPResponse(response);
+      expect(response.content.length).toBeGreaterThan(0);
+    }, E2E_TEST_TIMEOUT_MS);
+  });
 });
