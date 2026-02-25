@@ -17,9 +17,9 @@ import { buildErrorResponse } from './responseBuilder.js';
  */
 export function handleToolError(error: unknown, toolName: string): ToolResult {
   if (error instanceof Error) {
-    return buildErrorResponse(error.message, toolName);
+    return buildErrorResponse(error, toolName);
   }
-  return buildErrorResponse('Unknown error occurred', toolName);
+  return buildErrorResponse(new Error('Unknown error occurred'), toolName);
 }
 
 /**
@@ -39,7 +39,7 @@ export function handleDataUnavailable(toolName: string, message: string): ToolRe
         confidence: 'LOW',
         toolName,
         message
-      })
+      }, null, 2)
     }]
   };
 }

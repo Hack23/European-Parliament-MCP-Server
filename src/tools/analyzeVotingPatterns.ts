@@ -126,6 +126,18 @@ export async function handleAnalyzeVotingPatterns(
       attendanceRate: 0
     };
 
+    // EP API /meps/{id} does not expose voting statistics — totalVotes is always 0
+    if (stats.totalVotes === 0) {
+      return buildToolResponse({
+        mepId: params.mepId,
+        mepName: mep.name,
+        dataAvailable: false,
+        confidence: 'LOW',
+        message: 'Voting statistics not available from EP API for this endpoint (/meps/{id}). '
+          + 'Use getVotingRecords tool to retrieve actual voting data.'
+      });
+    }
+
     const analysis: VotingPatternAnalysis = {
       mepId: params.mepId,
       mepName: mep.name,

@@ -27,7 +27,11 @@ export function buildToolResponse(data: unknown): ToolResult {
  * @returns MCP-compliant ToolResult with isError flag set
  */
 export function buildErrorResponse(error: unknown, toolName: string): ToolResult {
-  const message = error instanceof Error ? error.message : 'Unknown error occurred';
+  const message = error instanceof Error
+    ? error.message
+    : typeof error === 'string'
+      ? error
+      : 'Unknown error occurred';
   return {
     content: [{ type: 'text', text: JSON.stringify({ error: message, toolName }) }],
     isError: true

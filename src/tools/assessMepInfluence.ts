@@ -58,6 +58,7 @@ interface MepInfluenceAssessment {
     effectivenessRatio: number;
     leadershipIndicator: number;
   };
+  votingDataAvailable: boolean;
   confidenceLevel: string;
   methodology: string;
 }
@@ -295,6 +296,7 @@ export async function handleAssessMepInfluence(
         leadershipIndicator: committeeDim.score
       },
       confidenceLevel: getConfidenceLevel(stats.totalVotes),
+      votingDataAvailable: stats.totalVotes > 0,
       methodology: 'CIA Political Scorecards - 5-dimension weighted scoring model using real EP Open Data. '
         + 'Parliamentary questions fetched from /parliamentary-questions endpoint. '
         + 'Data source: European Parliament Open Data Portal.'
