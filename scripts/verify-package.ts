@@ -427,7 +427,7 @@ if (existsSync(join(ROOT_DIR, 'dist', 'node_modules'))) {
 // ── Summary ─────────────────────────────────────────────────────────────────
 console.log('\n═══════════════════════════════════════════════════');
 console.log('📊 Verification Summary:');
-console.log(`   ✅ ${state.errors === 0 ? 'No errors' : `${state.errors} error(s)`}`);
+console.log(`   ${state.errors === 0 ? '✅ No errors' : `❌ ${state.errors} error(s)`}`);
 console.log(`   ⚠️  ${state.warnings === 0 ? 'No warnings' : `${state.warnings} warning(s)`}`);
 console.log('═══════════════════════════════════════════════════');
 

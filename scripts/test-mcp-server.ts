@@ -16,6 +16,7 @@
 import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import type { Tool, InitializeResult } from '@modelcontextprotocol/sdk/types.js';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -39,49 +40,28 @@ const ROOT_DIR = join(__dirname, '..');
 // Interfaces
 // ---------------------------------------------------------------------------
 
-/** Parameters for the MCP initialize request */
-interface McpInitParams {
-  protocolVersion: string;
-  capabilities: Record<string, unknown>;
-  clientInfo: {
-    name: string;
-    version: string;
-  };
-}
-
-/** A JSON-RPC 2.0 MCP request message */
+/** A JSON-RPC 2.0 MCP request message (wire format written to server stdin) */
 interface McpRequest {
   jsonrpc: '2.0';
   id?: number;
   method: string;
-  params?: McpInitParams | Record<string, unknown>;
+  params?: Record<string, unknown>;
 }
 
-/** A JSON-RPC 2.0 MCP response message */
+/**
+ * A JSON-RPC 2.0 MCP response message (wire format read from server stdout).
+ * `result` is typed as {@link InitializeResult} when an `initialize` response
+ * is expected, and as `{ tools: Tool[] }` for a `tools/list` response.
+ */
 interface McpResponse {
   jsonrpc: '2.0';
   id?: number;
-  result?: {
-    protocolVersion?: string;
-    serverInfo?: {
-      name: string;
-      version: string;
-    };
-    tools?: McpToolResult[];
-    [key: string]: unknown;
-  };
+  result?: InitializeResult & { tools?: Tool[] };
   error?: {
     code: number;
     message: string;
     data?: unknown;
   };
-}
-
-/** A single tool entry returned by the tools/list MCP method */
-interface McpToolResult {
-  name: string;
-  description?: string;
-  inputSchema?: Record<string, unknown>;
 }
 
 /** Shape of the JSON payload returned by the --health flag */
@@ -251,7 +231,7 @@ async function testMCPProtocol(): Promise<McpResponse> {
  *
  * @returns Resolves with the array of available MCP tools.
  */
-async function listTools(): Promise<McpToolResult[]> {
+async function listTools(): Promise<Tool[]> {
   return new Promise((resolve, reject) => {
     const proc = spawn('node', ['dist/index.js'], { cwd: ROOT_DIR });
     let response = '';
