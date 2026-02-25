@@ -75,12 +75,12 @@ export class DocumentClient extends BaseEPClient {
   }
 
   /**
-   * Applies client-side keyword and committee filters to documents.
+   * Applies client-side keyword, committee, and date-range filters to documents.
    * @private
    */
   private filterDocuments(
     documents: LegislativeDocument[],
-    params: { keyword?: string; committee?: string }
+    params: { keyword?: string; committee?: string; dateTo?: string }
   ): LegislativeDocument[] {
     let filtered = documents;
     if (params.keyword !== undefined && params.keyword !== '') {
@@ -97,6 +97,10 @@ export class DocumentClient extends BaseEPClient {
       filtered = filtered.filter(
         (d) => d.committee?.toLowerCase().includes(committeeLower) === true
       );
+    }
+    if (params.dateTo !== undefined && params.dateTo !== '') {
+      const dateTo = params.dateTo;
+      filtered = filtered.filter((d) => d.date <= dateTo);
     }
     return filtered;
   }

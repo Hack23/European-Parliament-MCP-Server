@@ -60,6 +60,30 @@ export class MEPClient extends BaseEPClient {
     return _transformMEPDeclaration(apiData);
   }
 
+  // ─── Private helpers ─────────────────────────────────────────────────────
+
+  /**
+   * Maps getMEPs params to EP API query parameters.
+   * @private
+   */
+  private buildMEPParams(params: {
+    country?: string;
+    group?: string;
+    committee?: string;
+    active?: boolean;
+    limit?: number;
+    offset?: number;
+  }): Record<string, unknown> {
+    const apiParams: Record<string, unknown> = {};
+    if (params.limit !== undefined) apiParams['limit'] = params.limit;
+    if (params.offset !== undefined) apiParams['offset'] = params.offset;
+    if (params.country !== undefined) apiParams['country-code'] = params.country;
+    if (params.group !== undefined) apiParams['political-group'] = params.group;
+    if (params.committee !== undefined) apiParams['committee'] = params.committee;
+    if (params.active !== undefined) apiParams['status'] = params.active ? 'current' : 'all';
+    return apiParams;
+  }
+
   // ─── Public methods ───────────────────────────────────────────────────────
 
   /**
@@ -79,10 +103,7 @@ export class MEPClient extends BaseEPClient {
   }): Promise<PaginatedResponse<MEP>> {
     const action = 'get_meps';
     try {
-      const apiParams: Record<string, unknown> = {};
-      if (params.limit !== undefined) apiParams['limit'] = params.limit;
-      if (params.offset !== undefined) apiParams['offset'] = params.offset;
-      if (params.country !== undefined) apiParams['country-code'] = params.country;
+      const apiParams = this.buildMEPParams(params);
 
       const response = await this.get<JSONLDResponse>('meps', apiParams);
       const meps = response.data.map((item) => this.transformMEP(item));

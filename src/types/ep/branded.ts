@@ -38,11 +38,11 @@ import type { Brand } from '../branded.js';
 /**
  * Procedure ID – identifies a legislative procedure.
  *
- * Format: `"YYYY/NNNN(type)"` (e.g. `"2024/0006(COD)"`)
+ * Format: `"YYYY-NNNN"` (e.g. `"2024-0006"`)
  *
  * @example
  * ```typescript
- * const procId: ProcedureID = '2024/0006(COD)' as ProcedureID;
+ * const procId: ProcedureID = '2024-0006' as ProcedureID;
  * ```
  */
 export type ProcedureID = Brand<string, 'ProcedureID'>;
@@ -84,10 +84,93 @@ export type SittingID = Brand<string, 'SittingID'>;
 // ─── Type guards ───────────────────────────────────────────────────────────────
 
 /**
+ * Type guard: checks that a string looks like an EP procedure ID.
+ *
+ * Expected format: `"YYYY-NNNN"` (e.g. `"2024-0006"`).
+ *
+ * @param value - String to validate
+ */
+export function isProcedureID(value: string): value is ProcedureID {
+  return /^\d{4}-\d{4}$/.test(value);
+}
+
+/**
+ * Type guard: checks that a string looks like an EP speech ID.
+ *
+ * Example format: `"SPEECH-9-2024-01-15-001"`.
+ *
+ * @param value - String to validate
+ */
+export function isSpeechID(value: string): value is SpeechID {
+  return /^[A-Za-z0-9-]+$/.test(value);
+}
+
+/**
+ * Type guard: checks that a string looks like an EP vocabulary ID.
+ *
+ * Example: `"eurovoc"`.
+ *
+ * @param value - String to validate
+ */
+export function isVocabularyID(value: string): value is VocabularyID {
+  return /^[A-Za-z0-9_-]+$/.test(value);
+}
+
+/**
  * Type guard: checks that a string looks like an EP sitting ID.
  *
  * @param value - String to validate
  */
 export function isSittingID(value: string): value is SittingID {
-  return /^MTG-PL-\d{4}-\d{2}-\d{2}/.test(value);
+  return /^MTG-PL-\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
+// ─── Factory functions ─────────────────────────────────────────────────────────
+
+/**
+ * Factory: validates and creates a ProcedureID.
+ *
+ * @throws {Error} If the value does not match the expected ProcedureID format.
+ */
+export function createProcedureID(value: string): ProcedureID {
+  if (!isProcedureID(value)) {
+    throw new Error(`Invalid ProcedureID: ${value}`);
+  }
+  return value;
+}
+
+/**
+ * Factory: validates and creates a SpeechID.
+ *
+ * @throws {Error} If the value does not match the expected SpeechID format.
+ */
+export function createSpeechID(value: string): SpeechID {
+  if (!isSpeechID(value)) {
+    throw new Error(`Invalid SpeechID: ${value}`);
+  }
+  return value;
+}
+
+/**
+ * Factory: validates and creates a VocabularyID.
+ *
+ * @throws {Error} If the value does not match the expected VocabularyID format.
+ */
+export function createVocabularyID(value: string): VocabularyID {
+  if (!isVocabularyID(value)) {
+    throw new Error(`Invalid VocabularyID: ${value}`);
+  }
+  return value;
+}
+
+/**
+ * Factory: validates and creates a SittingID.
+ *
+ * @throws {Error} If the value does not match the expected SittingID format.
+ */
+export function createSittingID(value: string): SittingID {
+  if (!isSittingID(value)) {
+    throw new Error(`Invalid SittingID: ${value}`);
+  }
+  return value;
 }
