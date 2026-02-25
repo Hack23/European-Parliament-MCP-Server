@@ -14,7 +14,7 @@ import type {
 } from '../../types/europeanParliament.js';
 import {
   transformParliamentaryQuestion as _transformParliamentaryQuestion,
-} from './index.js';
+} from './transformers.js';
 import {
   BaseEPClient,
   APIError,

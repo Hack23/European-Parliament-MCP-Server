@@ -21,7 +21,7 @@ import {
   transformMEP as _transformMEP,
   transformMEPDetails as _transformMEPDetails,
   transformMEPDeclaration as _transformMEPDeclaration,
-} from './index.js';
+} from './transformers.js';
 import {
   BaseEPClient,
   APIError,

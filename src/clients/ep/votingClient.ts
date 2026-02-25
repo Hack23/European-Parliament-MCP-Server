@@ -12,11 +12,11 @@ import type {
   Speech,
   PaginatedResponse,
 } from '../../types/europeanParliament.js';
+import { toSafeString as _toSafeString } from './jsonLdHelpers.js';
 import {
-  toSafeString as _toSafeString,
   transformVoteResult as _transformVoteResult,
   transformSpeech as _transformSpeech,
-} from './index.js';
+} from './transformers.js';
 import {
   BaseEPClient,
   APIError,

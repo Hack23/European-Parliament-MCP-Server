@@ -16,7 +16,7 @@ import {
   transformProcedure as _transformProcedure,
   transformAdoptedText as _transformAdoptedText,
   transformEvent as _transformEvent,
-} from './index.js';
+} from './transformers.js';
 import {
   BaseEPClient,
   APIError,
@@ -89,7 +89,9 @@ export class LegislativeClient extends BaseEPClient {
    *
    * **EP API Endpoint:** `GET /procedures/{process-id}`
    *
-   * @param processId - Procedure process ID (e.g. `"2024-0006"`)
+   * @param processId - Procedure **process-id** in `"YYYY-NNNN"` format (e.g. `"2024-0006"`).
+   *   This is different from the human-readable `Procedure.id` (`"COD/YYYY/NNNN"`) or
+   *   `Procedure.reference` (`"YYYY/NNNN(COD)"`) fields.
    * @throws {APIError} When the procedure is not found (404)
    */
   async getProcedureById(processId: string): Promise<Procedure> {

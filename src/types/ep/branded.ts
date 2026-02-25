@@ -36,9 +36,14 @@ import type { Brand } from '../branded.js';
 // ─── Additional EP-specific branded types ─────────────────────────────────────
 
 /**
- * Procedure ID – identifies a legislative procedure.
+ * Procedure ID – identifies a legislative procedure by its EP API **process-id**.
  *
+ * This is the URL path segment used by `/procedures/{process-id}` endpoints.
  * Format: `"YYYY-NNNN"` (e.g. `"2024-0006"`)
+ *
+ * **Note:** This is distinct from the human-readable procedure reference used in
+ * `Procedure.id` (`"COD/2023/0123"`) and `Procedure.reference` (`"2023/0123(COD)"`).
+ * Use the process-id format when calling `getProcedureById` / `getProcedureEvents`.
  *
  * @example
  * ```typescript

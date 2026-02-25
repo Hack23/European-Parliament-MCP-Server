@@ -20,7 +20,7 @@ import {
   transformEvent as _transformEvent,
   transformMeetingActivity as _transformMeetingActivity,
   transformDocument as _transformDocument,
-} from './index.js';
+} from './transformers.js';
 import {
   BaseEPClient,
   APIError,

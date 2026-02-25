@@ -412,9 +412,11 @@ export class EuropeanParliamentClient {
   // ─── Voting / speech endpoints ────────────────────────────────────────────
 
   /**
-   * Retrieves voting records with filtering by session, MEP, topic, and date.
+   * Retrieves voting records with filtering by session, topic, and date.
    *
-   * @param params - sessionId, mepId, topic, dateFrom, dateTo, limit, offset
+   * @param params - sessionId, topic, dateFrom, dateTo, limit, offset
+   * @param params.mepId - **Deprecated / ignored.** The EP API returns only aggregate
+   *   vote counts; per-MEP vote positions are not available from this endpoint.
    * @returns Paginated voting records list
    * @security Audit logged per GDPR Article 30
    * @performance Cached: <100ms P50, <200ms P95. Uncached: <2s P99
