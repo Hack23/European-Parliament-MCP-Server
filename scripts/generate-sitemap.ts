@@ -9,19 +9,147 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
+// ---------------------------------------------------------------------------
+// Interfaces
+// ---------------------------------------------------------------------------
+
+/** Configuration for the sitemap generator */
+interface SitemapConfig {
+  /** Absolute path to the docs output directory */
+  docsDir: string;
+  /** Absolute path to the output index.html file */
+  outputFile: string;
+  /** Package version string (e.g. "1.0.0") */
+  version: string;
+  /** ISO date string of today, e.g. "2024-06-01" */
+  lastUpdate: string;
+}
+
+/** Metadata for a documentation page card */
+interface PageMetadata {
+  /** Emoji icon displayed on the card */
+  icon: string;
+  /** Card heading */
+  title: string;
+  /** Short description shown on the card */
+  description: string;
+  /** Link target for the card */
+  href: string;
+  /** Optional badge label */
+  badge?: string;
+  /** Badge colour variant */
+  badgeType?: 'default' | 'success' | 'info';
+}
+
+// ---------------------------------------------------------------------------
+// Quality-metric constants (typed, single source of truth)
+// ---------------------------------------------------------------------------
+
+const SLSA_LEVEL = 'SLSA Level 3' as const;
+const COVERAGE_TARGET = '80%+ Coverage' as const;
+
+// ---------------------------------------------------------------------------
+// Path helpers
+// ---------------------------------------------------------------------------
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const DOCS_DIR = join(__dirname, '..', 'docs');
 const OUTPUT_FILE = join(DOCS_DIR, 'index.html');
 
-// Get package version
-const packageJsonPath = join(__dirname, '..', 'package.json');
-const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
-const version = packageJson.version;
+// ---------------------------------------------------------------------------
+// Type guard – validates that a parsed JSON value contains a version string
+// ---------------------------------------------------------------------------
 
-// Get current date
-const lastUpdate = new Date().toISOString().split('T')[0];
+function isValidPackageJson(data: unknown): data is { version: string } {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'version' in data &&
+    typeof (data as Record<string, unknown>)['version'] === 'string'
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Read and validate package.json
+// ---------------------------------------------------------------------------
+
+let version: string;
+const packageJsonPath = join(__dirname, '..', 'package.json');
+
+try {
+  const rawContent = readFileSync(packageJsonPath, 'utf8');
+  const parsed: unknown = JSON.parse(rawContent);
+
+  if (!isValidPackageJson(parsed)) {
+    throw new Error('package.json does not contain a valid "version" string field');
+  }
+
+  version = parsed.version;
+} catch (err) {
+  const message = err instanceof Error ? err.message : String(err);
+  console.error(`❌ Failed to read package.json: ${message}`);
+  process.exit(1);
+}
+
+// ---------------------------------------------------------------------------
+// Assemble config
+// ---------------------------------------------------------------------------
+
+const isoDate = new Date().toISOString();
+const lastUpdate: string = isoDate.split('T')[0] ?? isoDate.substring(0, 10);
+
+const config: SitemapConfig = {
+  docsDir: DOCS_DIR,
+  outputFile: OUTPUT_FILE,
+  version,
+  lastUpdate,
+};
+
+// ---------------------------------------------------------------------------
+// Page catalogue (illustrates PageMetadata usage)
+// ---------------------------------------------------------------------------
+
+/** Documentation pages rendered in the API Documentation section */
+const _apiPages: PageMetadata[] = [
+  {
+    icon: '📖',
+    title: 'API Reference (HTML)',
+    href: 'api/index.html',
+    description: 'Complete TypeScript API documentation with search, navigation, and type hierarchy',
+    badge: 'TypeDoc HTML',
+    badgeType: 'info',
+  },
+  {
+    icon: '📝',
+    title: 'API Reference (Markdown)',
+    href: 'api-markdown/modules.md',
+    description: 'SEO-friendly Markdown API documentation for all 39 tools, types, and schemas',
+    badge: 'TypeDoc Markdown',
+    badgeType: 'info',
+  },
+  {
+    icon: '📦',
+    title: 'SBOM',
+    href: 'SBOM.md',
+    description: 'Software Bill of Materials in SPDX format',
+    badge: 'SPDX 2.3',
+    badgeType: 'info',
+  },
+  {
+    icon: '🔐',
+    title: 'Attestations',
+    href: 'ATTESTATIONS.md',
+    description: 'Build provenance and supply chain security',
+    badge: 'SLSA L3',
+    badgeType: 'success',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// HTML template (uses config + typed constants)
+// ---------------------------------------------------------------------------
 
 const html = `<!DOCTYPE html>
 <html lang="en">
@@ -215,19 +343,19 @@ const html = `<!DOCTYPE html>
             <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo">
             <h1>🏛️ European Parliament MCP Server</h1>
             <p class="subtitle">Complete Documentation Portal</p>
-            <div class="version-badge">Version ${version}</div>
+            <div class="version-badge">Version ${config.version}</div>
             <div class="metadata">
                 <div class="metadata-item">
                     <span>📅</span>
-                    <span>Last Updated: ${lastUpdate}</span>
+                    <span>Last Updated: ${config.lastUpdate}</span>
                 </div>
                 <div class="metadata-item">
                     <span>🔐</span>
-                    <span>SLSA Level 3</span>
+                    <span>${SLSA_LEVEL}</span>
                 </div>
                 <div class="metadata-item">
                     <span>📊</span>
-                    <span>80%+ Coverage</span>
+                    <span>${COVERAGE_TARGET}</span>
                 </div>
             </div>
         </header>
@@ -343,15 +471,33 @@ const html = `<!DOCTYPE html>
 </html>
 `;
 
+// ---------------------------------------------------------------------------
 // Ensure docs directory exists
-if (!existsSync(DOCS_DIR)) {
-    mkdirSync(DOCS_DIR, { recursive: true });
+// ---------------------------------------------------------------------------
+
+try {
+  if (!existsSync(config.docsDir)) {
+    mkdirSync(config.docsDir, { recursive: true });
+  }
+} catch (err) {
+  const message = err instanceof Error ? err.message : String(err);
+  console.error(`❌ Failed to create docs directory "${config.docsDir}": ${message}`);
+  process.exit(1);
 }
 
+// ---------------------------------------------------------------------------
 // Write index.html
-writeFileSync(OUTPUT_FILE, html, 'utf8');
+// ---------------------------------------------------------------------------
+
+try {
+  writeFileSync(config.outputFile, html, 'utf8');
+} catch (err) {
+  const message = err instanceof Error ? err.message : String(err);
+  console.error(`❌ Failed to write "${config.outputFile}": ${message}`);
+  process.exit(1);
+}
 
 console.log('✅ Documentation sitemap generated successfully!');
-console.log(`📁 Output: ${OUTPUT_FILE}`);
-console.log(`📦 Version: ${version}`);
-console.log(`📅 Date: ${lastUpdate}`);
+console.log(`📁 Output: ${config.outputFile}`);
+console.log(`📦 Version: ${config.version}`);
+console.log(`📅 Date: ${config.lastUpdate}`);
