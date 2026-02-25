@@ -64,6 +64,7 @@ export type { PerformanceThresholds } from './utils/performance.js';
 export { DEFAULT_TIMEOUTS } from './utils/timeout.js';
 export type { TimeoutConfig } from './utils/timeout.js';
 export type { RateLimiterConfig, RateLimiterStatus } from './utils/rateLimiter.js';
+export type { AuditEvent, AuditLogEntry, LogLevel } from './utils/auditLogger.js';
 /** Re-export prompt argument schemas for integration tests and client validation */
 export {
   MepBriefingArgsSchema,
