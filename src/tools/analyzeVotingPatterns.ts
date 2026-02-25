@@ -18,6 +18,8 @@
 
 import { AnalyzeVotingPatternsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Voting pattern analysis result
@@ -108,7 +110,7 @@ function computeConfidence(totalVotes: number): string {
  */
 export async function handleAnalyzeVotingPatterns(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   // Validate input
   const params = AnalyzeVotingPatternsSchema.parse(args);
   
@@ -143,13 +145,7 @@ export async function handleAnalyzeVotingPatterns(
         + 'Data source: European Parliament Open Data Portal.'
     };
     
-    // Return MCP-compliant response
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(analysis, null, 2)
-      }]
-    };
+    return buildToolResponse(analysis);
   } catch (error) {
     // Handle errors without exposing internal details
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';

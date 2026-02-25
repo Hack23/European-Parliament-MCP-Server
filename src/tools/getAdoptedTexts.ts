@@ -20,6 +20,8 @@
 
 import { GetAdoptedTextsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get adopted texts tool handler.
@@ -29,17 +31,12 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetAdoptedTexts(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetAdoptedTextsSchema.parse(args);
 
   if (params.docId !== undefined) {
     const result = await epClient.getAdoptedTextById(params.docId);
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(result, null, 2)
-      }]
-    };
+    return buildToolResponse(result);
   }
 
   const apiParams: Record<string, unknown> = {
@@ -50,12 +47,7 @@ export async function handleGetAdoptedTexts(
 
   const result = await epClient.getAdoptedTexts(apiParams as Parameters<typeof epClient.getAdoptedTexts>[0]);
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_adopted_texts */

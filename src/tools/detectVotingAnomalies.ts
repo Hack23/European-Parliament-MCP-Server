@@ -13,6 +13,9 @@
 
 import { DetectVotingAnomaliesSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import { handleDataUnavailable } from './shared/errorHandler.js';
+import type { ToolResult } from './shared/types.js';
 
 interface VotingAnomaly {
   type: string;
@@ -124,6 +127,7 @@ function checkAbstentionAnomaly(
   threshold: number,
   detectedDate: string
 ): VotingAnomaly | undefined {
+  if (stats.totalVotes === 0) return undefined;
   const rate = (stats.abstentions / stats.totalVotes) * 100;
   if (rate > threshold * 50) {
     return {
@@ -190,16 +194,17 @@ function detectMepAnomalies(
  */
 async function detectSingleMepAnomalies(
   mepId: string, threshold: number, period: { from: string; to: string }
-): Promise<{ scope: string; anomalies: VotingAnomaly[] }> {
+): Promise<{ scope: string; anomalies: VotingAnomaly[]; dataAvailable: boolean }> {
   const mep = await epClient.getMEPDetails(mepId);
   const mepStats = mep.votingStatistics;
+  const dataAvailable = mepStats !== undefined && mepStats.totalVotes > 0;
   const anomalies = detectMepAnomalies(
     { id: mep.id, name: mep.name, politicalGroup: mep.politicalGroup },
     mepStats,
     threshold,
     period.to
   );
-  return { scope: `MEP: ${mepId}`, anomalies };
+  return { scope: `MEP: ${mepId}`, anomalies, dataAvailable };
 }
 
 /**
@@ -223,36 +228,58 @@ async function detectGroupAnomalies(
 }
 
 /**
+ * Build the anomaly analysis result object from anomaly detection results.
+ */
+function buildAnomalySummary(
+  anomalies: VotingAnomaly[]
+): { highSeverity: number; mediumSeverity: number; lowSeverity: number; anomalyRate: number } {
+  const highSeverity = anomalies.filter(a => a.severity === 'HIGH').length;
+  const mediumSeverity = anomalies.filter(a => a.severity === 'MEDIUM').length;
+  const lowSeverity = anomalies.filter(a => a.severity === 'LOW').length;
+  const anomalyRate = anomalies.length > 0
+    ? Math.round((highSeverity * 3 + mediumSeverity * 2 + lowSeverity) / anomalies.length * 100) / 100
+    : 0;
+  return { highSeverity, mediumSeverity, lowSeverity, anomalyRate };
+}
+
+/**
+ * Resolve confidence level based on MEP scope and anomaly availability.
+ */
+function resolveConfidence(isSingleMep: boolean, scope: string, anomalyCount: number): string {
+  if (isSingleMep && anomalyCount > 0) {
+    return getDataVolumeConfidence(scope, true);
+  }
+  return 'LOW';
+}
+
+/**
  * Detect voting anomalies tool handler
  */
 export async function handleDetectVotingAnomalies(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = DetectVotingAnomaliesSchema.parse(args);
 
   try {
     const period = { from: params.dateFrom ?? '2024-01-01', to: params.dateTo ?? '2024-12-31' };
+    const mepId = params.mepId;
+    const isSingleMep = mepId !== undefined;
 
-    const result = params.mepId !== undefined
-      ? await detectSingleMepAnomalies(params.mepId, params.sensitivityThreshold, period)
+    const result = mepId !== undefined
+      ? await detectSingleMepAnomalies(mepId, params.sensitivityThreshold, period)
       : await detectGroupAnomalies(params.groupId, params.sensitivityThreshold, period);
 
-    const highSeverity = result.anomalies.filter(a => a.severity === 'HIGH').length;
-    const mediumSeverity = result.anomalies.filter(a => a.severity === 'MEDIUM').length;
-    const lowSeverity = result.anomalies.filter(a => a.severity === 'LOW').length;
-    const anomalyRate = result.anomalies.length > 0
-      ? Math.round((highSeverity * 3 + mediumSeverity * 2 + lowSeverity) / result.anomalies.length * 100) / 100
-      : 0;
-
-    // For single MEP, confidence depends on available voting stats;
-    // for group analysis, voting stats are unavailable so confidence is LOW.
-    const isSingleMep = params.mepId !== undefined;
-    let confidence: string;
-    if (isSingleMep && result.anomalies.length > 0) {
-      confidence = getDataVolumeConfidence(result.scope, true);
-    } else {
-      confidence = 'LOW';
+    // When single MEP has no voting data, report unavailability honestly
+    if (isSingleMep && 'dataAvailable' in result && !result.dataAvailable) {
+      return handleDataUnavailable(
+        'detect_voting_anomalies',
+        'The EP API /meps/{id} endpoint does not return voting statistics. '
+        + 'Anomaly detection requires voting data which is unavailable for this MEP.'
+      );
     }
+
+    const { highSeverity, mediumSeverity, lowSeverity, anomalyRate } = buildAnomalySummary(result.anomalies);
+    const confidence = resolveConfidence(isSingleMep, result.scope, result.anomalies.length);
 
     const analysis: VotingAnomalyAnalysis = {
       period,
@@ -273,7 +300,7 @@ export async function handleDetectVotingAnomalies(
         + 'Data source: European Parliament Open Data Portal (MEP metadata endpoints).'
     };
 
-    return { content: [{ type: 'text', text: JSON.stringify(analysis, null, 2) }] };
+    return buildToolResponse(analysis);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to detect voting anomalies: ${errorMessage}`);

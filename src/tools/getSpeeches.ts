@@ -19,6 +19,8 @@
 
 import { GetSpeechesSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get speeches tool handler.
@@ -28,17 +30,12 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetSpeeches(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetSpeechesSchema.parse(args);
 
   if (params.speechId !== undefined) {
     const result = await epClient.getSpeechById(params.speechId);
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(result, null, 2)
-      }]
-    };
+    return buildToolResponse(result);
   }
 
   const apiParams: Record<string, unknown> = {
@@ -50,12 +47,7 @@ export async function handleGetSpeeches(
 
   const result = await epClient.getSpeeches(apiParams as Parameters<typeof epClient.getSpeeches>[0]);
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_speeches */

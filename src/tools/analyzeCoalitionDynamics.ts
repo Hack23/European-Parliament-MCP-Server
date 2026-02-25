@@ -13,6 +13,8 @@
 
 import { AnalyzeCoalitionDynamicsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 interface CoalitionPairAnalysis {
   groupA: string;
@@ -228,7 +230,7 @@ function buildCoalitionComputedAttrs(
  */
 export async function handleAnalyzeCoalitionDynamics(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = AnalyzeCoalitionDynamicsSchema.parse(args);
 
   try {
@@ -254,7 +256,7 @@ export async function handleAnalyzeCoalitionDynamics(
         + 'Data source: European Parliament Open Data Portal.'
     };
 
-    return { content: [{ type: 'text', text: JSON.stringify(analysis, null, 2) }] };
+    return buildToolResponse(analysis);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to analyze coalition dynamics: ${errorMessage}`);

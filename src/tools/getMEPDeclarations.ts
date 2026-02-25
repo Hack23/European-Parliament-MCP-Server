@@ -20,6 +20,8 @@
 
 import { GetMEPDeclarationsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get MEP declarations tool handler.
@@ -29,17 +31,12 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetMEPDeclarations(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetMEPDeclarationsSchema.parse(args);
 
   if (params.docId !== undefined) {
     const result = await epClient.getMEPDeclarationById(params.docId);
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(result, null, 2)
-      }]
-    };
+    return buildToolResponse(result);
   }
 
   const apiParams: Record<string, unknown> = {
@@ -50,12 +47,7 @@ export async function handleGetMEPDeclarations(
 
   const result = await epClient.getMEPDeclarations(apiParams as Parameters<typeof epClient.getMEPDeclarations>[0]);
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_mep_declarations */

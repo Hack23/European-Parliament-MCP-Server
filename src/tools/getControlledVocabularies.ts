@@ -18,6 +18,8 @@
 
 import { GetControlledVocabulariesSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get controlled vocabularies tool handler.
@@ -27,17 +29,12 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetControlledVocabularies(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GetControlledVocabulariesSchema.parse(args);
 
   if (params.vocId !== undefined) {
     const result = await epClient.getControlledVocabularyById(params.vocId);
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(result, null, 2)
-      }]
-    };
+    return buildToolResponse(result);
   }
 
   const result = await epClient.getControlledVocabularies({
@@ -45,12 +42,7 @@ export async function handleGetControlledVocabularies(
     offset: params.offset
   });
 
-  return {
-    content: [{
-      type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }]
-  };
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for get_controlled_vocabularies */
