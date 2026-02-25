@@ -54,6 +54,19 @@ export {
   createGroupID
 } from './branded.js';
 
+/** EP API-specific branded types (ProcedureID, SpeechID, VocabularyID, SittingID) */
+export type { ProcedureID, SpeechID, VocabularyID, SittingID } from './ep/branded.js';
+export {
+  isProcedureID,
+  isSpeechID,
+  isVocabularyID,
+  isSittingID,
+  createProcedureID,
+  createSpeechID,
+  createVocabularyID,
+  createSittingID,
+} from './ep/branded.js';
+
 /** Structured error classes for MCP-compliant error responses with GDPR-safe sanitization */
 export {
   MCPServerError,
