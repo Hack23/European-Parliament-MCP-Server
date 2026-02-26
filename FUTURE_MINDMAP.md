@@ -50,7 +50,7 @@ This document maps the strategic capability expansion for the European Parliamen
 mindmap
   root((🏛️ EP MCP<br>Server))
     🔌 MCP Protocol
-      🔧 Current Tools (20)
+      🔧 Current Tools (39)
         Core (7)
           get_meps
           get_mep_details
@@ -74,6 +74,26 @@ mindmap
           track_mep_attendance
           analyze_country_delegation
           generate_political_landscape
+        EP API v2 Data (19)
+          get_current_meps
+          get_incoming_meps
+          get_outgoing_meps
+          get_homonym_meps
+          get_speeches
+          get_procedures
+          get_procedure_events
+          get_adopted_texts
+          get_events
+          get_meeting_activities
+          get_meeting_decisions
+          get_meeting_foreseen_activities
+          get_mep_declarations
+          get_plenary_documents
+          get_committee_documents
+          get_plenary_session_documents
+          get_plenary_session_document_items
+          get_controlled_vocabularies
+          get_external_documents
       📡 Transport
         stdio (current)
         API Gateway HTTP (AWS)
@@ -140,7 +160,7 @@ mindmap
 
 | Capability | Current | Future |
 |-----------|---------|--------|
-| MCP Tools | 20 tools (7 core + 3 advanced + 10 OSINT) | 35+ tools |
+| MCP Tools | 39 tools (26 EP API data + 3 advanced + 10 OSINT) | 50+ tools |
 | Transport | stdio | stdio, HTTP, WebSocket |
 | Streaming | ❌ | ✅ Progressive delivery |
 | Batch Operations | ❌ | ✅ Multi-tool batching |
@@ -622,13 +642,13 @@ mindmap
 
 ## 🔮 Visionary Roadmap: 2027–2037
 
-> **Capability Expansion Vision** — From 20-tool MCP server to universal democratic intelligence platform, mapping capability growth alongside AI model evolution from Anthropic Opus 4.6 through future AGI.
+> **Capability Expansion Vision** — From 39-tool MCP server to universal democratic intelligence platform, mapping capability growth alongside AI model evolution from Anthropic Opus 4.6 through future AGI.
 
 ### 📅 Capability Version Strategy
 
 | Year | Version | AI Context | Capability Milestone |
 |------|---------|-----------|---------------------|
-| **2026** | v1.0 | Anthropic Opus 4.6 | 20 tools, 6 prompts, 6 resources — OSINT parliamentary intelligence |
+| **2026** | v1.0 | Anthropic Opus 4.6 | 39 tools, 7 prompts, 9 resources — OSINT parliamentary intelligence |
 | **2027** | v2.0 | Opus 5.x | 35+ tools with cloud-native analytics and enterprise APIs |
 | **2028** | v3.0 | Next-gen multimodal | 50+ tools spanning EU + national parliament federation |
 | **2029** | v4.0 | Specialized political AI | 75+ tools with AI-autonomous orchestration |
@@ -718,7 +738,7 @@ mindmap
 timeline
     title AI Model & Capability Alignment
     2026 : Opus 4.6
-         : 20 MCP Tools
+         : 39 MCP Tools
          : Human-prompted
     2027-2028 : Opus 5.x / Competitors
              : 50+ Tools
