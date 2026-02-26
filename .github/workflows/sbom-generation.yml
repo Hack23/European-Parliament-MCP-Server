@@ -104,7 +104,7 @@ jobs:
 
       - name: Attest SBOM
         if: github.event_name == 'release'
-        uses: actions/attest-sbom@1c608d11d69870c2092cfc7e1e13e6331d2e5bc9 # v2.0.1
+        uses: actions/attest-sbom@07e74fc4e78d1aad915e867f9a094073a9f71527 # v2.0.1
         with:
           subject-path: "sbom.spdx.json"
           sbom-path: "sbom.spdx.json"
