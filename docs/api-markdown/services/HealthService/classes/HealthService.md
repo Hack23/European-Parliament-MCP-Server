@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.1**](../../../README.md)
+[**European Parliament MCP Server API v0.8.2**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: HealthService
 
-Defined in: [services/HealthService.ts:94](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L94)
+Defined in: [services/HealthService.ts:94](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L94)
 
 Health Check Service
 
@@ -31,7 +31,7 @@ console.log(status.status); // 'healthy' | 'degraded' | 'unhealthy'
 
 > **new HealthService**(`rateLimiter`, `metricsService`): `HealthService`
 
-Defined in: [services/HealthService.ts:97](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L97)
+Defined in: [services/HealthService.ts:97](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L97)
 
 #### Parameters
 
@@ -53,7 +53,7 @@ Defined in: [services/HealthService.ts:97](https://github.com/Hack23/European-Pa
 
 > `private` `readonly` **metricsService**: [`MetricsService`](../../MetricsService/classes/MetricsService.md)
 
-Defined in: [services/HealthService.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L99)
+Defined in: [services/HealthService.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L99)
 
 ***
 
@@ -61,7 +61,7 @@ Defined in: [services/HealthService.ts:99](https://github.com/Hack23/European-Pa
 
 > `private` `readonly` **rateLimiter**: [`RateLimiter`](../../../utils/rateLimiter/classes/RateLimiter.md)
 
-Defined in: [services/HealthService.ts:98](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L98)
+Defined in: [services/HealthService.ts:98](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L98)
 
 ***
 
@@ -69,7 +69,7 @@ Defined in: [services/HealthService.ts:98](https://github.com/Hack23/European-Pa
 
 > `private` `readonly` **startTime**: `number`
 
-Defined in: [services/HealthService.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L95)
+Defined in: [services/HealthService.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L95)
 
 ## Methods
 
@@ -77,7 +77,7 @@ Defined in: [services/HealthService.ts:95](https://github.com/Hack23/European-Pa
 
 > `private` **buildCacheStatus**(): [`CacheHealthStatus`](../interfaces/CacheHealthStatus.md)
 
-Defined in: [services/HealthService.ts:164](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L164)
+Defined in: [services/HealthService.ts:164](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L164)
 
 Build a descriptive cache status object.
 Cyclomatic complexity: 2
@@ -92,7 +92,7 @@ Cyclomatic complexity: 2
 
 > `private` **buildRateLimiterStatus**(): [`RateLimiterStatus`](../../../utils/rateLimiter/interfaces/RateLimiterStatus.md)
 
-Defined in: [services/HealthService.ts:135](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L135)
+Defined in: [services/HealthService.ts:135](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L135)
 
 Build rate-limiter snapshot by delegating to RateLimiter.getStatus().
 Cyclomatic complexity: 1
@@ -107,7 +107,7 @@ Cyclomatic complexity: 1
 
 > **checkHealth**(): [`HealthStatus`](../interfaces/HealthStatus.md)
 
-Defined in: [services/HealthService.ts:113](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L113)
+Defined in: [services/HealthService.ts:113](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L113)
 
 Produce a health status snapshot.
 
@@ -127,7 +127,7 @@ Structured [HealthStatus](../interfaces/HealthStatus.md) object
 
 > `private` **deriveOverallStatus**(`rateLimiter`, `epApiReachable`): [`HealthStatusLevel`](../type-aliases/HealthStatusLevel.md)
 
-Defined in: [services/HealthService.ts:181](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L181)
+Defined in: [services/HealthService.ts:181](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L181)
 
 Derive the overall health verdict from sub-system checks.
 Cyclomatic complexity: 3
@@ -152,7 +152,7 @@ Cyclomatic complexity: 3
 
 > `private` **isEpApiReachable**(): `boolean` \| `null`
 
-Defined in: [services/HealthService.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L147)
+Defined in: [services/HealthService.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L147)
 
 Determine EP API reachability from recorded metrics.
 Cyclomatic complexity: 2

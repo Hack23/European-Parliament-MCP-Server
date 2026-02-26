@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.1**](../../../README.md)
+[**European Parliament MCP Server API v0.8.2**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: PerformanceThresholds
 
-Defined in: [utils/performance.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/performance.ts#L50)
+Defined in: [utils/performance.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L50)
 
 Warning thresholds for performance alerting.
 
@@ -19,7 +19,7 @@ review in dashboards or log-based alerting rules.
 
 > **p95WarningMs**: `number`
 
-Defined in: [utils/performance.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/performance.ts#L52)
+Defined in: [utils/performance.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L52)
 
 Warn when p95 exceeds this value (milliseconds)
 
@@ -29,7 +29,7 @@ Warn when p95 exceeds this value (milliseconds)
 
 > **p99WarningMs**: `number`
 
-Defined in: [utils/performance.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/performance.ts#L54)
+Defined in: [utils/performance.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L54)
 
 Warn when p99 exceeds this value (milliseconds)
 
@@ -39,6 +39,6 @@ Warn when p99 exceeds this value (milliseconds)
 
 > `optional` **avgWarningMs**: `number`
 
-Defined in: [utils/performance.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/performance.ts#L56)
+Defined in: [utils/performance.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L56)
 
 Warn when average exceeds this value (milliseconds)

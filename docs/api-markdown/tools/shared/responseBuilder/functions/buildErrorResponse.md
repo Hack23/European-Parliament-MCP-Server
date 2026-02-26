@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.1**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.2**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **buildErrorResponse**(`error`, `toolName`): [`ToolResult`](../../types/interfaces/ToolResult.md)
 
-Defined in: [tools/shared/responseBuilder.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/tools/shared/responseBuilder.ts#L29)
+Defined in: [tools/shared/responseBuilder.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/shared/responseBuilder.ts#L29)
 
 Build an error response from an error value or message string.
 Never exposes raw stack traces to MCP clients.

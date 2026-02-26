@@ -121,7 +121,7 @@ graph TB
         SERVER[MCP Protocol Handler<br/><i>@modelcontextprotocol/sdk</i>]
         
         subgraph "Business Logic"
-            TOOLS[Tool Registry<br/><i>20 MCP Tools</i>]
+            TOOLS[Tool Registry<br/><i>39 MCP Tools</i>]
             RESOURCES[Resource Handlers<br/><i>MEP, Session, Committee</i>]
             PROMPTS[Prompt Templates<br/><i>Query assistance</i>]
         end
@@ -171,7 +171,7 @@ graph TB
 **Container Descriptions**:
 
 1. **MCP Protocol Handler**: Implements Model Context Protocol for client communication
-2. **Tool Registry**: 20 registered MCP tools for parliamentary data access (7 core + 3 advanced + 10 OSINT)
+2. **Tool Registry**: 39 registered MCP tools for parliamentary data access (26 EP API data tools + 3 advanced analysis + 10 OSINT intelligence)
 3. **Resource Handlers**: MCP resource endpoints for structured data
 4. **EP API Client**: HTTP client for European Parliament API integration
 5. **Cache Layer**: LRU cache with 15-minute TTL for performance

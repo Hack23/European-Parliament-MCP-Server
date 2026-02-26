@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.1**](../../../README.md)
+[**European Parliament MCP Server API v0.8.2**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: AuditLogger
 
-Defined in: [utils/auditLogger.ts:119](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/auditLogger.ts#L119)
+Defined in: [utils/auditLogger.ts:119](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L119)
 
 Audit logger implementation
 
@@ -29,7 +29,7 @@ such as CloudWatch Logs, Elasticsearch, or a dedicated audit log service.
 
 > `private` **logs**: [`AuditLogEntry`](../interfaces/AuditLogEntry.md)[] = `[]`
 
-Defined in: [utils/auditLogger.ts:120](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/auditLogger.ts#L120)
+Defined in: [utils/auditLogger.ts:120](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L120)
 
 ## Methods
 
@@ -37,7 +37,7 @@ Defined in: [utils/auditLogger.ts:120](https://github.com/Hack23/European-Parlia
 
 > **clear**(): `void`
 
-Defined in: [utils/auditLogger.ts:238](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/auditLogger.ts#L238)
+Defined in: [utils/auditLogger.ts:238](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L238)
 
 Clear audit logs (for testing only)
 
@@ -51,7 +51,7 @@ Clear audit logs (for testing only)
 
 > **getLogs**(): [`AuditLogEntry`](../interfaces/AuditLogEntry.md)[]
 
-Defined in: [utils/auditLogger.ts:231](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/auditLogger.ts#L231)
+Defined in: [utils/auditLogger.ts:231](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L231)
 
 Get audit logs (for testing/debugging)
 
@@ -65,7 +65,7 @@ Get audit logs (for testing/debugging)
 
 > **log**(`entry`): `void`
 
-Defined in: [utils/auditLogger.ts:127](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/auditLogger.ts#L127)
+Defined in: [utils/auditLogger.ts:127](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L127)
 
 Log an audit event
 
@@ -87,7 +87,7 @@ Audit log entry
 
 > **logDataAccess**(`action`, `params`, `count`, `duration?`): `void`
 
-Defined in: [utils/auditLogger.ts:186](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/auditLogger.ts#L186)
+Defined in: [utils/auditLogger.ts:186](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L186)
 
 Log a successful data access
 
@@ -127,7 +127,7 @@ Optional operation duration in milliseconds
 
 > **logError**(`action`, `params`, `error`, `duration?`): `void`
 
-Defined in: [utils/auditLogger.ts:211](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/auditLogger.ts#L211)
+Defined in: [utils/auditLogger.ts:211](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L211)
 
 Log a failed operation
 
@@ -167,7 +167,7 @@ Optional operation duration in milliseconds
 
 > **logToolCall**(`toolName`, `params`, `success`, `duration?`, `error?`): `void`
 
-Defined in: [utils/auditLogger.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/auditLogger.ts#L156)
+Defined in: [utils/auditLogger.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L156)
 
 Log an MCP tool call as an audit record.
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.1**](../../../README.md)
+[**European Parliament MCP Server API v0.8.2**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: HealthStatus
 
-Defined in: [services/HealthService.ts:57](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L57)
+Defined in: [services/HealthService.ts:57](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L57)
 
 Full health status returned by [HealthService.checkHealth](../classes/HealthService.md#checkhealth).
 
@@ -16,7 +16,7 @@ Full health status returned by [HealthService.checkHealth](../classes/HealthServ
 
 > **cache**: [`CacheHealthStatus`](CacheHealthStatus.md)
 
-Defined in: [services/HealthService.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L66)
+Defined in: [services/HealthService.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L66)
 
 Cache subsystem status
 
@@ -26,7 +26,7 @@ Cache subsystem status
 
 > **epApiReachable**: `boolean` \| `null`
 
-Defined in: [services/HealthService.ts:64](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L64)
+Defined in: [services/HealthService.ts:64](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L64)
 
 Whether the EP API base URL is reachable (based on recent metrics).
 `null` means no API calls have been recorded yet — reachability is unknown.
@@ -37,7 +37,7 @@ Whether the EP API base URL is reachable (based on recent metrics).
 
 > **rateLimiter**: [`RateLimiterStatus`](../../../utils/rateLimiter/interfaces/RateLimiterStatus.md)
 
-Defined in: [services/HealthService.ts:68](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L68)
+Defined in: [services/HealthService.ts:68](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L68)
 
 Rate-limiter subsystem status
 
@@ -47,7 +47,7 @@ Rate-limiter subsystem status
 
 > **status**: [`HealthStatusLevel`](../type-aliases/HealthStatusLevel.md)
 
-Defined in: [services/HealthService.ts:59](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L59)
+Defined in: [services/HealthService.ts:59](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L59)
 
 Overall health verdict
 
@@ -57,7 +57,7 @@ Overall health verdict
 
 > **timestamp**: `string`
 
-Defined in: [services/HealthService.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L70)
+Defined in: [services/HealthService.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L70)
 
 ISO-8601 timestamp of this health snapshot
 
@@ -67,6 +67,6 @@ ISO-8601 timestamp of this health snapshot
 
 > **uptimeMs**: `number`
 
-Defined in: [services/HealthService.ts:72](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/services/HealthService.ts#L72)
+Defined in: [services/HealthService.ts:72](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L72)
 
 Server uptime in milliseconds

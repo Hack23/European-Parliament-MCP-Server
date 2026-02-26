@@ -113,9 +113,9 @@ C4Container
 
     System_Boundary(mcpBoundary, "European Parliament MCP Server") {
         Container(protocolHandler, "MCP Protocol Handler", "TypeScript, @modelcontextprotocol/sdk", "Handles MCP JSON-RPC over stdio transport; routes tool calls, resource reads, prompt requests")
-        Container(toolEngine, "Tool Engine", "TypeScript, Zod", "39 MCP tools: 7 core + 3 advanced + 10 OSINT + 8 EP data v2 + 11 EP complete; input validation, business logic, response formatting")
-        Container(resourceHandler, "Resource Handler", "TypeScript", "6 URI-based resource templates providing read access to parliamentary entities (ep:// scheme)")
-        Container(promptHandler, "Prompt Handler", "TypeScript", "6 prompt templates for structured analysis: briefings, coalition analysis, legislative tracking")
+        Container(toolEngine, "Tool Engine", "TypeScript, Zod", "39 MCP tools: 7 MEP + 7 plenary/meeting + 2 committee + 7 document + 3 legislative + 3 advanced + 10 OSINT; input validation, business logic, response formatting")
+        Container(resourceHandler, "Resource Handler", "TypeScript", "9 URI-based resource templates providing read access to parliamentary entities (ep:// scheme)")
+        Container(promptHandler, "Prompt Handler", "TypeScript", "7 prompt templates for structured analysis: briefings, coalition analysis, legislative tracking")
         Container(epClient, "EP API Client", "TypeScript, undici, lru-cache", "Centralized HTTP client with LRU cache (500 entries, 15-min TTL), rate limiting, error handling")
         Container(diContainer, "DI Container", "TypeScript", "Dependency injection container wiring all services")
         Container(infraLayer, "Infrastructure", "TypeScript", "Audit logger, rate limiter, performance monitoring, timeout handling, metrics service")
