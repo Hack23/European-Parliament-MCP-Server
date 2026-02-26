@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.0**](../../../README.md)
+[**European Parliament MCP Server API v0.8.1**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: RateLimiterStatus
 
-Defined in: [utils/rateLimiter.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/rateLimiter.ts#L22)
+Defined in: [utils/rateLimiter.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/rateLimiter.ts#L22)
 
 Rate-limiter status snapshot (used by health checks and monitoring).
 
@@ -16,7 +16,7 @@ Rate-limiter status snapshot (used by health checks and monitoring).
 
 > **availableTokens**: `number`
 
-Defined in: [utils/rateLimiter.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/rateLimiter.ts#L24)
+Defined in: [utils/rateLimiter.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/rateLimiter.ts#L24)
 
 Number of tokens currently available in the bucket
 
@@ -26,7 +26,7 @@ Number of tokens currently available in the bucket
 
 > **maxTokens**: `number`
 
-Defined in: [utils/rateLimiter.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/rateLimiter.ts#L26)
+Defined in: [utils/rateLimiter.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/rateLimiter.ts#L26)
 
 Maximum capacity of the token bucket
 
@@ -36,6 +36,6 @@ Maximum capacity of the token bucket
 
 > **utilizationPercent**: `number`
 
-Defined in: [utils/rateLimiter.ts:28](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/rateLimiter.ts#L28)
+Defined in: [utils/rateLimiter.ts:28](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/rateLimiter.ts#L28)
 
 Percentage of the bucket currently consumed (0–100)

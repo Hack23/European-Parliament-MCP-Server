@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.0**](../../../README.md)
+[**European Parliament MCP Server API v0.8.1**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Enumeration: LogLevel
 
-Defined in: [utils/auditLogger.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/auditLogger.ts#L29)
+Defined in: [utils/auditLogger.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/auditLogger.ts#L29)
 
 Typed log levels for structured audit events.
 
@@ -23,7 +23,7 @@ Typed log levels for structured audit events.
 
 > **DEBUG**: `"DEBUG"`
 
-Defined in: [utils/auditLogger.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/auditLogger.ts#L30)
+Defined in: [utils/auditLogger.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/auditLogger.ts#L30)
 
 ***
 
@@ -31,7 +31,7 @@ Defined in: [utils/auditLogger.ts:30](https://github.com/Hack23/European-Parliam
 
 > **ERROR**: `"ERROR"`
 
-Defined in: [utils/auditLogger.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/auditLogger.ts#L33)
+Defined in: [utils/auditLogger.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/auditLogger.ts#L33)
 
 ***
 
@@ -39,7 +39,7 @@ Defined in: [utils/auditLogger.ts:33](https://github.com/Hack23/European-Parliam
 
 > **INFO**: `"INFO"`
 
-Defined in: [utils/auditLogger.ts:31](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/auditLogger.ts#L31)
+Defined in: [utils/auditLogger.ts:31](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/auditLogger.ts#L31)
 
 ***
 
@@ -47,4 +47,4 @@ Defined in: [utils/auditLogger.ts:31](https://github.com/Hack23/European-Parliam
 
 > **WARN**: `"WARN"`
 
-Defined in: [utils/auditLogger.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/auditLogger.ts#L32)
+Defined in: [utils/auditLogger.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/auditLogger.ts#L32)

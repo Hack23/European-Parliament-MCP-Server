@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.0**](../../../README.md)
+[**European Parliament MCP Server API v0.8.1**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: TimeoutConfig
 
-Defined in: [utils/timeout.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/timeout.ts#L18)
+Defined in: [utils/timeout.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/timeout.ts#L18)
 
 Typed configuration for timeout operations.
 
@@ -19,7 +19,7 @@ stored, passed, and validated without scattered magic numbers.
 
 > **timeoutMs**: `number`
 
-Defined in: [utils/timeout.ts:20](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/timeout.ts#L20)
+Defined in: [utils/timeout.ts:20](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/timeout.ts#L20)
 
 Timeout duration in milliseconds (must be > 0)
 
@@ -29,7 +29,7 @@ Timeout duration in milliseconds (must be > 0)
 
 > `optional` **errorMessage**: `string`
 
-Defined in: [utils/timeout.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/timeout.ts#L24)
+Defined in: [utils/timeout.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/timeout.ts#L24)
 
 Custom error message override for timeout errors
 
@@ -39,6 +39,6 @@ Custom error message override for timeout errors
 
 > `optional` **operationName**: `string`
 
-Defined in: [utils/timeout.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/timeout.ts#L22)
+Defined in: [utils/timeout.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/timeout.ts#L22)
 
 Optional human-readable label for the timed operation

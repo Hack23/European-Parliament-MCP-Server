@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.0**](../../../README.md)
+[**European Parliament MCP Server API v0.8.1**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: ToolResult
 
-Defined in: [server/types.ts:16](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/server/types.ts#L16)
+Defined in: [server/types.ts:16](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/server/types.ts#L16)
 
 Standard MCP tool execution result.
 Each content item is a text block returned to the MCP client.
@@ -17,7 +17,7 @@ Each content item is a text block returned to the MCP client.
 
 > **content**: `object`[]
 
-Defined in: [server/types.ts:17](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/server/types.ts#L17)
+Defined in: [server/types.ts:17](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/server/types.ts#L17)
 
 #### text
 
@@ -33,4 +33,4 @@ Defined in: [server/types.ts:17](https://github.com/Hack23/European-Parliament-M
 
 > `optional` **isError**: `boolean`
 
-Defined in: [server/types.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/server/types.ts#L18)
+Defined in: [server/types.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/server/types.ts#L18)

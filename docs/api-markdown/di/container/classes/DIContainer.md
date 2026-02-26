@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.0**](../../../README.md)
+[**European Parliament MCP Server API v0.8.1**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: DIContainer
 
-Defined in: [di/container.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/di/container.ts#L44)
+Defined in: [di/container.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/di/container.ts#L44)
 
 Dependency Injection Container
 Cyclomatic complexity: 5
@@ -27,7 +27,7 @@ Cyclomatic complexity: 5
 
 > `private` `readonly` **services**: [`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`symbol`, `ServiceDescriptor`\<`unknown`\>\>
 
-Defined in: [di/container.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/di/container.ts#L45)
+Defined in: [di/container.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/di/container.ts#L45)
 
 ## Methods
 
@@ -35,7 +35,7 @@ Defined in: [di/container.ts:45](https://github.com/Hack23/European-Parliament-M
 
 > **clear**(): `void`
 
-Defined in: [di/container.ts:127](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/di/container.ts#L127)
+Defined in: [di/container.ts:127](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/di/container.ts#L127)
 
 Clear all registered services and cached instances
 Cyclomatic complexity: 1
@@ -52,7 +52,7 @@ Useful for testing and cleanup
 
 > **has**(`token`): `boolean`
 
-Defined in: [di/container.ts:117](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/di/container.ts#L117)
+Defined in: [di/container.ts:117](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/di/container.ts#L117)
 
 Check if a service is registered
 Cyclomatic complexity: 1
@@ -77,7 +77,7 @@ True if service is registered
 
 > **register**\<`T`\>(`token`, `factory`, `lifetime?`): `void`
 
-Defined in: [di/container.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/di/container.ts#L65)
+Defined in: [di/container.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/di/container.ts#L65)
 
 Register a service with the container
 Cyclomatic complexity: 1
@@ -129,7 +129,7 @@ container.register(
 
 > **resolve**\<`T`\>(`token`): `T`
 
-Defined in: [di/container.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/di/container.ts#L87)
+Defined in: [di/container.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/di/container.ts#L87)
 
 Resolve a service from the container
 Cyclomatic complexity: 4

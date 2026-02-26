@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.0**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.1**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **extractTextFromLangArray**(`items`): `string`
 
-Defined in: [clients/ep/jsonLdHelpers.ts:112](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/clients/ep/jsonLdHelpers.ts#L112)
+Defined in: [clients/ep/jsonLdHelpers.ts:112](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/clients/ep/jsonLdHelpers.ts#L112)
 
 Extracts preferred-language text from an array of language-tagged objects.
 Prefers English (`en`) or multilingual (`mul`).
