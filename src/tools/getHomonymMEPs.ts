@@ -20,10 +20,30 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get homonym MEPs tool handler.
+ * Handles the get_homonym_meps MCP tool request.
  *
- * @param args - Tool arguments
- * @returns MCP tool result with homonym MEP data
+ * Retrieves Members of European Parliament who share identical names with other MEPs in the
+ * current parliamentary term. Essential for disambiguation in data matching, identity
+ * resolution pipelines, and intelligence analysis workflows where name collisions could
+ * produce incorrect entity linkage.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetHomonymMEPsSchema}
+ * @returns MCP tool result containing a paginated list of MEP records with homonymous names
+ * @throws {ZodError} If `args` fails schema validation (e.g., limit out of range 1–100)
+ * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * const result = await handleGetHomonymMEPs({ limit: 50, offset: 0 });
+ * // Returns MEPs who share a name with at least one other MEP in the current term
+ * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Personal data in responses is minimised per GDPR Article 5(1)(c).
+ *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getHomonymMEPsToolMetadata} for MCP schema registration
+ * @see {@link handleGetMEPDetails} for disambiguating a specific MEP by unique ID
  */
 export async function handleGetHomonymMEPs(
   args: unknown

@@ -22,10 +22,36 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get plenary documents tool handler.
+ * Handles the get_plenary_documents MCP tool request.
  *
- * @param args - Tool arguments
- * @returns MCP tool result with plenary document data
+ * Retrieves European Parliament plenary documents including legislative texts, reports, and
+ * amendments. Supports both single-document lookup by document ID and list retrieval with
+ * optional year filtering. Central to policy analysis and legislative tracking workflows.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetPlenaryDocumentsSchema}
+ * @returns MCP tool result containing either a single plenary document (when `docId` is
+ *   provided) or a paginated list of documents, optionally filtered by year
+ * @throws {ZodError} If `args` fails schema validation (e.g., limit out of range 1–100)
+ * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * // List documents for a specific year
+ * const result = await handleGetPlenaryDocuments({ year: 2024, limit: 25 });
+ * // Returns up to 25 plenary documents from 2024
+ *
+ * // Fetch a single document by ID
+ * const single = await handleGetPlenaryDocuments({ docId: 'DOC-2024-001' });
+ * // Returns the full plenary document record
+ * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Personal data in responses is minimised per GDPR Article 5(1)(c).
+ *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getPlenaryDocumentsToolMetadata} for MCP schema registration
+ * @see {@link handleGetPlenarySessions} for the sessions associated with these documents
+ * @see {@link handleGetPlenarySessionDocuments} for session-level agendas and minutes
  */
 export async function handleGetPlenaryDocuments(
   args: unknown

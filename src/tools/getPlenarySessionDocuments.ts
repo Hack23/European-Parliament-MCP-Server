@@ -22,10 +22,37 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get plenary session documents tool handler.
+ * Handles the get_plenary_session_documents MCP tool request.
  *
- * @param args - Tool arguments
- * @returns MCP tool result with plenary session document data
+ * Retrieves European Parliament plenary session documents such as agendas, minutes, and
+ * voting lists. Supports both single-document lookup by document ID and paginated list
+ * retrieval. Core data source for parliamentary activity monitoring and meeting intelligence.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetPlenarySessionDocumentsSchema}
+ * @returns MCP tool result containing either a single plenary session document (when `docId`
+ *   is provided) or a paginated list of session documents including agendas, minutes, and
+ *   voting lists
+ * @throws {ZodError} If `args` fails schema validation (e.g., limit out of range 1–100)
+ * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * // List the most recent session documents
+ * const result = await handleGetPlenarySessionDocuments({ limit: 10, offset: 0 });
+ * // Returns up to 10 plenary session documents (agendas, minutes, voting lists)
+ *
+ * // Fetch a single session document by ID
+ * const single = await handleGetPlenarySessionDocuments({ docId: 'SESS-DOC-2024-042' });
+ * // Returns the full session document record
+ * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Personal data in responses is minimised per GDPR Article 5(1)(c).
+ *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getPlenarySessionDocumentsToolMetadata} for MCP schema registration
+ * @see {@link handleGetPlenarySessions} for the sessions these documents belong to
+ * @see {@link handleGetPlenaryDocuments} for broader legislative plenary documents
  */
 export async function handleGetPlenarySessionDocuments(
   args: unknown

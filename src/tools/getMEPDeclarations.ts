@@ -24,10 +24,37 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get MEP declarations tool handler.
+ * Handles the get_mep_declarations MCP tool request.
  *
- * @param args - Tool arguments
- * @returns MCP tool result with MEP declaration data
+ * Retrieves MEP declarations of financial interests filed under the Rules of Procedure.
+ * Supports both single-declaration lookup by document ID and list retrieval with optional
+ * year filtering. Financial declaration data enables conflict-of-interest detection,
+ * lobbying pattern analysis, and transparency assessments.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetMEPDeclarationsSchema}
+ * @returns MCP tool result containing either a single MEP financial declaration document
+ *   or a paginated list of declarations, optionally filtered by filing year
+ * @throws {ZodError} If `args` fails schema validation (e.g., invalid year or limit
+ *   out of range 1–100)
+ * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * // List declarations for a specific year
+ * const result = await handleGetMEPDeclarations({ year: 2024, limit: 20 });
+ * // Returns up to 20 financial declarations filed in 2024
+ *
+ * // Fetch a single declaration by document ID
+ * const single = await handleGetMEPDeclarations({ docId: 'DECL-2024-001' });
+ * // Returns the full declaration document
+ * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Access to financial declarations (personal data) is audit-logged per GDPR Art. 6(1)(e)
+ *   and ISMS Policy AU-002. Data minimisation applied per GDPR Article 5(1)(c).
+ * @since 0.8.0
+ * @see {@link getMEPDeclarationsToolMetadata} for MCP schema registration
+ * @see {@link handleGetMEPDetails} for retrieving broader MEP profile information
  */
 export async function handleGetMEPDeclarations(
   args: unknown
