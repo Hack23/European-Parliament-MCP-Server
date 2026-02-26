@@ -20,19 +20,33 @@ import { GetVotingRecordsSchema, VotingRecordSchema, PaginatedResponseSchema } f
 import { epClient } from '../clients/europeanParliamentClient.js';
 
 /**
- * Get voting records tool handler
- * 
- * @param args - Tool arguments
- * @returns MCP tool result with voting record data
- * 
+ * Handles the get_voting_records MCP tool request.
+ *
+ * Retrieves voting records from European Parliament plenary sessions, supporting
+ * filtering by session, MEP, topic, and date range. Returns vote tallies
+ * (for/against/abstain), final results, and optionally individual MEP votes.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetVotingRecordsSchema}
+ * @returns MCP tool result containing a paginated list of voting records with vote counts and results
+ * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ *
  * @example
- * ```json
- * {
- *   "sessionId": "PLENARY-2024-01",
- *   "topic": "Climate Change",
- *   "limit": 20
- * }
+ * ```typescript
+ * const result = await handleGetVotingRecords({
+ *   sessionId: 'PLENARY-2024-01',
+ *   topic: 'Climate Change',
+ *   limit: 20
+ * });
+ * // Returns voting records for the January 2024 plenary session on climate topics
  * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Personal data in responses is minimised per GDPR Article 5(1)(c).
+ *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getVotingRecordsToolMetadata} for MCP schema registration
+ * @see {@link handleGetMeetingDecisions} for retrieving decisions linked to a specific sitting
  */
 export async function handleGetVotingRecords(
   args: unknown

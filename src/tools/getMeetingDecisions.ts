@@ -18,10 +18,28 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get meeting decisions tool handler.
+ * Handles the get_meeting_decisions MCP tool request.
  *
- * @param args - Tool arguments
- * @returns MCP tool result with meeting decision data
+ * Retrieves decisions made in a specific European Parliament plenary sitting,
+ * including adopted decisions and voting outcomes. Requires a sitting identifier.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetMeetingDecisionsSchema}
+ * @returns MCP tool result containing a paginated list of decisions from the specified plenary sitting
+ * @throws {ZodError} If `args` fails schema validation (e.g., missing required `sittingId` or invalid format)
+ * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * const result = await handleGetMeetingDecisions({ sittingId: 'PV-9-2024-01-15', limit: 50 });
+ * // Returns up to 50 decisions from the specified plenary sitting
+ * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Personal data in responses is minimised per GDPR Article 5(1)(c).
+ *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getMeetingDecisionsToolMetadata} for MCP schema registration
+ * @see {@link handleGetMeetingActivities} for retrieving the broader agenda of the same sitting
  */
 export async function handleGetMeetingDecisions(
   args: unknown

@@ -19,20 +19,39 @@ import { GetParliamentaryQuestionsSchema, ParliamentaryQuestionSchema, Paginated
 import { epClient } from '../clients/europeanParliamentClient.js';
 
 /**
- * Get parliamentary questions tool handler
- * 
- * @param args - Tool arguments
- * @returns MCP tool result with parliamentary question data
- * 
+ * Handles the get_parliamentary_questions MCP tool request.
+ *
+ * Retrieves European Parliament questions (written and oral) submitted by MEPs,
+ * with optional single-question lookup by docId or list filtering by type, author,
+ * topic, status, and date range.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetParliamentaryQuestionsSchema}
+ * @returns MCP tool result containing either a single question record or a paginated list of parliamentary questions
+ * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ *
  * @example
- * ```json
- * {
- *   "type": "WRITTEN",
- *   "status": "ANSWERED",
- *   "topic": "climate policy",
- *   "limit": 20
- * }
+ * ```typescript
+ * // List answered written questions on climate policy
+ * const result = await handleGetParliamentaryQuestions({
+ *   type: 'WRITTEN',
+ *   status: 'ANSWERED',
+ *   topic: 'climate policy',
+ *   limit: 20
+ * });
+ * // Returns up to 20 answered written questions matching the topic
+ *
+ * // Single question lookup
+ * const single = await handleGetParliamentaryQuestions({ docId: 'E-000001/2024' });
+ * // Returns the full record for the specified question
  * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Personal data in responses is minimised per GDPR Article 5(1)(c).
+ *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getParliamentaryQuestionsToolMetadata} for MCP schema registration
+ * @see {@link handleGetVotingRecords} for retrieving plenary voting data
  */
 export async function handleGetParliamentaryQuestions(
   args: unknown
