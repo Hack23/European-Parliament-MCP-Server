@@ -251,3 +251,47 @@ export const GetProcedureEventsSchema = z.object({
     .default(0)
     .describe('Pagination offset')
 });
+
+/**
+ * Get meeting plenary session documents input schema
+ * Maps to `GET /meetings/{sitting-id}/plenary-session-documents`
+ */
+export const GetMeetingPlenarySessionDocumentsSchema = z.object({
+  sittingId: z.string()
+    .min(1)
+    .max(200)
+    .describe('Meeting / sitting identifier'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});
+
+/**
+ * Get meeting plenary session document items input schema
+ * Maps to `GET /meetings/{sitting-id}/plenary-session-document-items`
+ */
+export const GetMeetingPlenarySessionDocumentItemsSchema = z.object({
+  sittingId: z.string()
+    .min(1)
+    .max(200)
+    .describe('Meeting / sitting identifier'),
+  limit: z.number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(50)
+    .describe('Maximum results to return'),
+  offset: z.number()
+    .int()
+    .min(0)
+    .default(0)
+    .describe('Pagination offset')
+});

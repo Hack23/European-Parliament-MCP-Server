@@ -39,6 +39,8 @@ export const DEFAULT_MAX_CACHE_SIZE = 500;
 export const DEFAULT_RATE_LIMIT_TOKENS = 100;
 /** Default rate limit interval unit */
 export const DEFAULT_RATE_LIMIT_INTERVAL = 'minute' as const;
+/** Maximum allowed response body size in bytes (10 MB) to prevent memory exhaustion */
+export const DEFAULT_MAX_RESPONSE_BYTES = 10_485_760;
 
 // ─── Exported error class ─────────────────────────────────────────────────────
 
@@ -206,16 +208,26 @@ export class BaseEPClient {
 
   /**
    * Returns true when an error should trigger a retry.
+   *
+   * Retries on:
+   * - 429 Too Many Requests (rate-limited by EP API; exponential backoff applied)
+   * - 5xx Server Errors (transient server failures)
+   * - Network / unknown errors
+   *
+   * Does NOT retry on 4xx client errors (except 429).
    * @private
    */
   private shouldRetryRequest(error: unknown): boolean {
     if (error instanceof TimeoutError) return false;
-    if (error instanceof APIError) return (error.statusCode ?? 500) >= 500;
+    if (error instanceof APIError) {
+      const code = error.statusCode ?? 500;
+      return code === 429 || code >= 500;
+    }
     return true;
   }
 
   /**
-   * Executes the HTTP fetch with timeout/abort support.
+   * Executes the HTTP fetch with timeout/abort support and response size guard.
    * @private
    */
   private async fetchWithTimeout<T>(url: URL, endpoint: string): Promise<T> {
@@ -234,6 +246,20 @@ export class BaseEPClient {
             `EP API request failed: ${response.statusText}`,
             response.status
           );
+        }
+
+        // Guard against oversized responses to prevent memory exhaustion.
+        // Cast to allow for environments where headers may be unavailable.
+        const maybeHeaders = response.headers as (Headers | undefined);
+        const contentLength = maybeHeaders !== undefined ? maybeHeaders.get('content-length') : null;
+        if (contentLength !== null) {
+          const bytes = Number.parseInt(contentLength, 10);
+          if (Number.isFinite(bytes) && bytes > DEFAULT_MAX_RESPONSE_BYTES) {
+            throw new APIError(
+              `EP API response too large: ${String(bytes)} bytes exceeds limit of ${String(DEFAULT_MAX_RESPONSE_BYTES)} bytes`,
+              413
+            );
+          }
         }
 
         return response.json() as Promise<T>;

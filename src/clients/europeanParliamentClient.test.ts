@@ -4077,6 +4077,190 @@ describe('EuropeanParliamentClient', () => {
     });
   });
 
+  describe('getMeetingPlenarySessionDocuments', () => {
+    it('should return paginated plenary session documents for a meeting', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse(3)
+      } as Response);
+
+      const result = await client.getMeetingPlenarySessionDocuments('MTG-PL-2024-001', { limit: 10 });
+
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('total');
+      expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data).toHaveLength(3);
+    });
+
+    it('should throw for empty sittingId', async () => {
+      await expect(client.getMeetingPlenarySessionDocuments('')).rejects.toThrow('Meeting sitting-id is required');
+    });
+
+    it('should throw for whitespace-only sittingId', async () => {
+      await expect(client.getMeetingPlenarySessionDocuments('   ')).rejects.toThrow('Meeting sitting-id is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse(1)
+      } as Response);
+
+      await client.getMeetingPlenarySessionDocuments('MTG-PL-2024-001');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('meetings/MTG-PL-2024-001/plenary-session-documents'),
+        expect.any(Object)
+      );
+    });
+
+    it('should apply default limit and offset', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse(1)
+      } as Response);
+
+      const result = await client.getMeetingPlenarySessionDocuments('MTG-PL-2024-001');
+
+      expect(result.limit).toBe(50);
+      expect(result.offset).toBe(0);
+    });
+
+    it('should handle API errors', async () => {
+      mockFetch.mockReset();
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found'
+      } as Response);
+
+      await expect(client.getMeetingPlenarySessionDocuments('INVALID')).rejects.toThrow(APIError);
+    });
+  });
+
+  describe('getMeetingPlenarySessionDocumentItems', () => {
+    it('should return paginated plenary session document items for a meeting', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse(2)
+      } as Response);
+
+      const result = await client.getMeetingPlenarySessionDocumentItems('MTG-PL-2024-001', { limit: 10 });
+
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('total');
+      expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data).toHaveLength(2);
+    });
+
+    it('should throw for empty sittingId', async () => {
+      await expect(client.getMeetingPlenarySessionDocumentItems('')).rejects.toThrow('Meeting sitting-id is required');
+    });
+
+    it('should throw for whitespace-only sittingId', async () => {
+      await expect(client.getMeetingPlenarySessionDocumentItems('   ')).rejects.toThrow('Meeting sitting-id is required');
+    });
+
+    it('should call the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse(1)
+      } as Response);
+
+      await client.getMeetingPlenarySessionDocumentItems('MTG-PL-2024-001');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('meetings/MTG-PL-2024-001/plenary-session-document-items'),
+        expect.any(Object)
+      );
+    });
+
+    it('should apply default limit and offset', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createMockDocumentsResponse(1)
+      } as Response);
+
+      const result = await client.getMeetingPlenarySessionDocumentItems('MTG-PL-2024-001');
+
+      expect(result.limit).toBe(50);
+      expect(result.offset).toBe(0);
+    });
+
+    it('should handle API errors', async () => {
+      mockFetch.mockReset();
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error'
+      } as Response);
+
+      await expect(client.getMeetingPlenarySessionDocumentItems('MTG-1')).rejects.toThrow(APIError);
+    });
+  });
+
+  describe('429 Rate Limit Retry Logic', () => {
+    it('should retry on 429 Too Many Requests', async () => {
+      // First attempt returns 429, second succeeds
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 429,
+          statusText: 'Too Many Requests'
+        } as Response)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => createMockDocumentsResponse(1)
+        } as Response);
+
+      // Use a client with retry enabled and minimal delay
+      const retryClient = new EuropeanParliamentClient({ enableRetry: true, maxRetries: 1 });
+      retryClient.clearCache();
+
+      const result = await retryClient.getMeetingPlenarySessionDocuments('MTG-PL-2024-001');
+      expect(result.data).toHaveLength(1);
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('should not retry on 400 Bad Request', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        statusText: 'Bad Request'
+      } as Response);
+
+      const retryClient = new EuropeanParliamentClient({ enableRetry: true, maxRetries: 2 });
+      retryClient.clearCache();
+
+      await expect(retryClient.getMeetingPlenarySessionDocuments('MTG-1')).rejects.toThrow(APIError);
+      // Should only be called once (no retry on 400)
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Response Size Limit', () => {
+    it('should throw APIError when content-length exceeds limit', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-length': String(20 * 1024 * 1024) }), // 20 MB
+        json: async () => createMockDocumentsResponse(1)
+      } as unknown as Response);
+
+      await expect(client.getMeetingPlenarySessionDocuments('MTG-1')).rejects.toThrow(APIError);
+    });
+
+    it('should succeed when content-length is within limit', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-length': String(1024) }), // 1 KB
+        json: async () => createMockDocumentsResponse(1)
+      } as unknown as Response);
+
+      const result = await client.getMeetingPlenarySessionDocuments('MTG-PL-2024-001');
+      expect(result.data).toHaveLength(1);
+    });
+  });
+
   describe('extractDocumentRefs edge cases', () => {
     it('should handle empty array in had_document', async () => {
       mockFetch.mockResolvedValueOnce({

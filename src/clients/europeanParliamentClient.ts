@@ -58,6 +58,7 @@ export {
   DEFAULT_MAX_CACHE_SIZE,
   DEFAULT_RATE_LIMIT_TOKENS,
   DEFAULT_RATE_LIMIT_INTERVAL,
+  DEFAULT_MAX_RESPONSE_BYTES,
 } from './ep/baseClient.js';
 export type { EPClientConfig } from './ep/baseClient.js';
 
@@ -380,6 +381,28 @@ export class EuropeanParliamentClient {
     params: { limit?: number; offset?: number } = {}
   ): Promise<PaginatedResponse<MeetingActivity>> {
     return this.plenaryClient.getMeetingForeseenActivities(sittingId, params);
+  }
+
+  /**
+   * Returns plenary session documents for a specific meeting.
+   * **EP API Endpoint:** `GET /meetings/{sitting-id}/plenary-session-documents`
+   */
+  async getMeetingPlenarySessionDocuments(
+    sittingId: string,
+    params: { limit?: number; offset?: number } = {}
+  ): Promise<PaginatedResponse<LegislativeDocument>> {
+    return this.plenaryClient.getMeetingPlenarySessionDocuments(sittingId, params);
+  }
+
+  /**
+   * Returns plenary session document items for a specific meeting.
+   * **EP API Endpoint:** `GET /meetings/{sitting-id}/plenary-session-document-items`
+   */
+  async getMeetingPlenarySessionDocumentItems(
+    sittingId: string,
+    params: { limit?: number; offset?: number } = {}
+  ): Promise<PaginatedResponse<LegislativeDocument>> {
+    return this.plenaryClient.getMeetingPlenarySessionDocumentItems(sittingId, params);
   }
 
   /**
