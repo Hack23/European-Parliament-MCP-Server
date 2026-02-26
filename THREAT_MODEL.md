@@ -27,21 +27,20 @@
 - [ISMS Policy Alignment](#-isms-policy-alignment)
 - [Security Documentation Map](#-security-documentation-map)
 - [Purpose \& Scope](#-purpose--scope)
+- [Multi-Strategy Threat Modeling Integration](#-multi-strategy-threat-modeling-integration)
 - [System Classification](#-system-classification--operating-profile)
 - [💎 Critical Assets \& Crown Jewel Analysis](#-critical-assets--crown-jewel-analysis)
 - [STRIDE Threat Analysis](#-stride-threat-analysis)
 - [MITRE ATT\&CK Coverage Analysis](#️-mitre-attck-coverage-analysis)
+- [🏗️ Architecture-Centric STRIDE Analysis](#️-architecture-centric-stride-analysis)
+- [MITRE ATT\&CK Mapping](#️-mitre-attck-mapping)
+- [Kill Chain Disruption Analysis](#-kill-chain-disruption-analysis)
 - [Threat Agent Classification](#-threat-agent-classification)
 - [Current Threat Landscape](#-current-threat-landscape)
 - [Scenario-Centric Threat Modeling](#-scenario-centric-threat-modeling-ep-specific)
-- [Quantitative Risk Assessment](#-quantitative-risk-assessment)
-- [Security Controls \& Mitigations](#️-security-controls--mitigations)
-- [Attack Tree Analysis](#-attack-tree-analysis)
 - [Continuous Validation \& Assessment](#-continuous-validation--assessment)
 - [Assessment Lifecycle](#-assessment-lifecycle)
 - [Security Maturity Framework](#-security-maturity-framework)
-- [🏗️ Architecture-Centric STRIDE Analysis](#️-architecture-centric-stride-analysis)
-- [MITRE ATT\&CK Mapping](#️-mitre-attck-mapping)
 - [Quantitative Risk Assessment](#-quantitative-risk-assessment)
 - [Security Controls \& Mitigations](#️-security-controls--mitigations)
 - [Attack Tree Analysis](#-attack-tree-analysis)
@@ -94,6 +93,7 @@
 | [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | 🛡️ Current | Implemented security design and controls | ✅ Current |
 | [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) | 🚀 Future | Security roadmap and planned enhancements | ✅ Current |
 | [THREAT_MODEL.md](./THREAT_MODEL.md) | 🎯 Analysis | STRIDE threat analysis and risk assessment | ✅ Current |
+| [FUTURE_THREAT_MODEL.md](./FUTURE_THREAT_MODEL.md) | 🔮 Future | Threat analysis for planned architecture evolution | ✅ Current |
 | [BCPPlan.md](./BCPPlan.md) | 🔄 Continuity | Business continuity and disaster recovery | ✅ Current |
 | [CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md) | 📋 Compliance | EU Cyber Resilience Act conformity assessment | ✅ Current |
 | [SECURITY.md](./SECURITY.md) | 📜 Policy | Security policy and vulnerability disclosure | ✅ Current |
@@ -141,6 +141,53 @@ This threat model demonstrates **🛡️ cybersecurity consulting expertise** th
 ### **🔗 Policy Alignment**
 
 Integrated with [🎯 Hack23 AB Threat Modeling Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md) methodology and frameworks.
+
+---
+
+## 🎯 Multi-Strategy Threat Modeling Integration
+
+This threat model implements the **five integrated threat modeling strategies** mandated by [Hack23 AB Threat Modeling Policy §4](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md). Each strategy provides complementary perspectives to ensure comprehensive threat coverage for the European Parliament MCP Server.
+
+```mermaid
+mindmap
+  root((🎯 EP MCP Server<br/>Threat Modeling<br/>Strategies))
+    (🎖️ Attacker-Centric)
+      MITRE ATT&CK Mapping
+      Kill Chain Analysis
+      Threat Agent Classification
+      Attack Tree Analysis
+    (🏗️ Asset-Centric)
+      Crown Jewel Analysis
+      Critical Asset Inventory
+      Data Flow Threat Analysis
+      GDPR Data Classification
+    (🏛️ Architecture-Centric)
+      STRIDE per Component
+      Trust Boundary Analysis
+      Data Flow Diagrams
+      Defense-in-Depth Layers
+    (🎯 Scenario-Centric)
+      Parliamentary Data Manipulation
+      MEP Personal Data Abuse
+      Electoral Disinformation
+      Supply Chain Compromise
+      MCP Protocol Injection
+    (⚖️ Risk-Centric)
+      Quantitative Risk Matrix
+      Business Impact Analysis
+      Likelihood Assessment
+      Residual Risk Tracking
+```
+
+### **Strategy Integration Summary**
+
+| Strategy | EP MCP Server Implementation | Key Sections |
+|----------|------------------------------|-------------|
+| **🎖️ Attacker-Centric** | MITRE ATT&CK mapping (13 techniques), Kill Chain disruption, 5 threat agent profiles | [ATT&CK Mapping](#️-mitre-attck-mapping), [Kill Chain](#-kill-chain-disruption-analysis), [Threat Agents](#-threat-agent-classification) |
+| **🏗️ Asset-Centric** | 6 critical assets, Crown Jewel analysis, protection strategies | [Crown Jewels](#-critical-assets--crown-jewel-analysis) |
+| **🏛️ Architecture-Centric** | STRIDE per 6 components (36 threat cells), trust boundary sequence diagram | [Architecture STRIDE](#️-architecture-centric-stride-analysis) |
+| **🎯 Scenario-Centric** | 5 EP-specific attack scenarios with attack chains, detection, and response | [Scenarios](#-scenario-centric-threat-modeling-ep-specific) |
+| **⚖️ Risk-Centric** | Quantitative risk matrix, priority risk ranking, residual risk assessment | [Risk Assessment](#-quantitative-risk-assessment) |
 
 ---
 
@@ -470,6 +517,54 @@ To visualize this threat landscape comprehensively, the European Parliament MCP 
 **🔗 Online Visualization:** Use [MITRE ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/) to load the layer JSON for interactive exploration.
 
 **Recommendation:** Review this mapping **quarterly** and after major architecture changes to ensure continued alignment with evolving threat intelligence.
+
+---
+
+## 🔗 Kill Chain Disruption Analysis
+
+This section maps the **Cyber Kill Chain** phases to the EP MCP Server's defensive controls and detection capabilities, as required by [Hack23 AB Threat Modeling Policy §4.1](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md). Each phase identifies how an attacker progresses and where our controls disrupt the chain.
+
+### **Kill Chain Phase → Defensive Control → Detection Mapping**
+
+| Kill Chain Phase | Attack Activity (EP MCP Context) | Defensive Controls | Detection Mechanisms | Disruption Effectiveness |
+|-----------------|----------------------------------|-------------------|---------------------|--------------------------|
+| **1️⃣ Reconnaissance** | Attacker probes MCP tool schemas, EP API endpoints, npm package metadata, GitHub repo structure | • Public data only (no sensitive info to discover)<br/>• Generic error messages (I-1 mitigation)<br/>• No version info in runtime errors | • GitHub traffic analytics<br/>• npm download pattern monitoring<br/>• Unusual MCP tool enumeration logging | 🟡 **Medium** — Public project limits reconnaissance value |
+| **2️⃣ Weaponization** | Attacker crafts malicious npm package, prepares prototype pollution payload, or creates typosquatting package | • SLSA Level 3 provenance verification<br/>• Package-lock.json integrity<br/>• No private dependencies | • Dependabot new vulnerability alerts<br/>• npm audit CI/CD gate<br/>• OpenSSF Scorecard monitoring | 🟢 **High** — Supply chain controls are comprehensive |
+| **3️⃣ Delivery** | Attacker publishes compromised dependency, sends phishing to maintainer, or submits malicious PR | • npm 2FA required for publishing<br/>• Branch protection rules<br/>• CODEOWNERS enforcement<br/>• GPG commit signing | • GitHub security alerts<br/>• PR review requirements<br/>• npm provenance verification<br/>• Snyk continuous monitoring | 🟢 **High** — Multi-layer delivery prevention |
+| **4️⃣ Exploitation** | Attacker exploits Zod validation bypass, prototype pollution, or MCP parameter injection | • Zod schema validation on all inputs (E-1)<br/>• TypeScript strict mode (E-2)<br/>• No shell execution (E-4)<br/>• Safe JSON parsing | • Zod validation error logging<br/>• TypeScript type check failures<br/>• Runtime exception monitoring<br/>• stderr audit logs | 🟢 **High** — Defense-in-depth input validation |
+| **5️⃣ Installation** | Attacker attempts persistence via modified cache entries, altered build artifacts, or backdoored dependency | • Stateless MCP server (no persistence)<br/>• Immutable cache entries<br/>• SLSA build attestations<br/>• Process isolation (stdio) | • SLSA provenance signature mismatch<br/>• Build artifact hash verification<br/>• npm package content diff | 🟢 **High** — Stateless architecture prevents installation |
+| **6️⃣ Command & Control** | Attacker uses compromised MCP server to exfiltrate data or inject false responses to AI assistants | • stdio transport isolation (no network)<br/>• No outbound connections from MCP server<br/>• Rate limiting on all tool calls | • Audit logging of all tool invocations<br/>• Response size anomaly detection<br/>• Data flow monitoring | 🟢 **High** — stdio isolation prevents C2 channels |
+| **7️⃣ Actions on Objectives** | Attacker manipulates parliamentary data, harvests MEP data, or disrupts service availability | • EP API as source of truth (integrity)<br/>• Response validation via Zod<br/>• Rate limiting prevents bulk harvesting<br/>• GDPR-aware data minimization | • Data integrity checks against EP API<br/>• Bulk access pattern detection<br/>• Rate limit violation alerts<br/>• OpenSSF Scorecard degradation | 🟡 **Medium** — Continuous monitoring required |
+
+### **Kill Chain Disruption Visualization**
+
+```mermaid
+graph LR
+    R[1️⃣ Recon] -->|Public project| W[2️⃣ Weaponize]
+    W -->|Supply chain| D[3️⃣ Deliver]
+    D -->|Malicious code| E[4️⃣ Exploit]
+    E -->|Code execution| I[5️⃣ Install]
+    I -->|Persistence| C[6️⃣ C2]
+    C -->|Control| A[7️⃣ Actions]
+
+    R -.->|🛡️ Generic errors| RD[Disrupted]
+    W -.->|🛡️ SLSA + Dependabot| WD[Disrupted]
+    D -.->|🛡️ 2FA + Branch protection| DD[Disrupted]
+    E -.->|🛡️ Zod + TypeScript strict| ED[Disrupted]
+    I -.->|🛡️ Stateless architecture| ID[Disrupted]
+    C -.->|🛡️ stdio isolation| CD[Disrupted]
+    A -.->|🛡️ EP API integrity| AD[Monitored]
+
+    style RD fill:#ffa726
+    style WD fill:#4CAF50
+    style DD fill:#4CAF50
+    style ED fill:#4CAF50
+    style ID fill:#4CAF50
+    style CD fill:#4CAF50
+    style AD fill:#ffa726
+```
+
+**Key Insight:** The EP MCP Server's **stateless stdio architecture** provides inherent disruption at Kill Chain phases 5 (Installation) and 6 (C2), while **SLSA Level 3 + Dependabot** provide strong disruption at phases 2-3. The primary residual risk is at phase 7 (Actions on Objectives) where continuous monitoring is essential.
 
 ---
 
@@ -897,6 +992,37 @@ graph LR
 Threat modeling is not a one-time activity but a **continuous process** that evolves with the system, threat landscape, and organizational maturity. This section defines the validation lifecycle for the European Parliament MCP Server threat model.
 
 ### **Threat Modeling Workshop Process**
+
+Following [Hack23 AB Workshop Framework](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md), the EP MCP Server employs a structured **7-phase workshop process**:
+
+```mermaid
+graph LR
+    PRE[🔍 PRE<br/>Preparation] --> ENUM[📋 ENUM<br/>Enumeration]
+    ENUM --> THREATS[⚠️ THREATS<br/>Identification]
+    THREATS --> MAP[🗺️ MAP<br/>ATT&CK Mapping]
+    MAP --> PLAN[📝 PLAN<br/>Mitigation]
+    PLAN --> VALIDATE[✅ VALIDATE<br/>Verification]
+    VALIDATE --> MONITOR[📊 MONITOR<br/>Continuous]
+    MONITOR -.->|Next Cycle| PRE
+
+    style PRE fill:#4CAF50
+    style ENUM fill:#2196F3
+    style THREATS fill:#FF9800
+    style MAP fill:#9C27B0
+    style PLAN fill:#F44336
+    style VALIDATE fill:#00BCD4
+    style MONITOR fill:#795548
+```
+
+| Phase | Activities | EP MCP Server Focus | Output |
+|-------|-----------|--------------------|---------| 
+| **🔍 PRE** | Gather architecture docs, review previous findings, update scope | Review SECURITY_ARCHITECTURE.md, npm audit, Dependabot alerts | Updated scope definition, pre-read materials |
+| **📋 ENUM** | Enumerate assets, trust boundaries, data flows | Map MCP tools, EP API endpoints, cache layer, stdio transport | Asset inventory, data flow diagrams |
+| **⚠️ THREATS** | Apply STRIDE per component, identify new threats | Analyze 6 components × 6 STRIDE categories | Updated STRIDE threat tables |
+| **🗺️ MAP** | Map threats to MITRE ATT&CK, ENISA TL 2024, Kill Chain | Update 13 ATT&CK technique mappings, kill chain disruption table | ATT&CK coverage heat map, kill chain analysis |
+| **📝 PLAN** | Design mitigations, assign owners, set deadlines | Prioritize controls for supply chain, input validation, data integrity | Mitigation action items with owners |
+| **✅ VALIDATE** | Test controls, verify SLSA attestations, review OpenSSF score | Run security tests, verify rate limiting, check SBOM | Validation report, control effectiveness metrics |
+| **📊 MONITOR** | Track KPIs, review threat intelligence, schedule next cycle | Monitor OpenSSF Scorecard, Dependabot, npm audit, audit logs | KPI dashboard, next review date |
 
 **🗓️ Cadence:**
 - **Monthly:** Quick threat landscape review (30 minutes)
@@ -1710,6 +1836,7 @@ graph TB
 |----------|-------------|------|
 | 🛡️ Security Architecture | Current security design and controls | [SECURITY_ARCHITECTURE.md](SECURITY_ARCHITECTURE.md) |
 | 🚀 Future Security Architecture | Planned security enhancements | [FUTURE_SECURITY_ARCHITECTURE.md](FUTURE_SECURITY_ARCHITECTURE.md) |
+| 🔮 Future Threat Model | Threat analysis for planned architecture evolution | [FUTURE_THREAT_MODEL.md](FUTURE_THREAT_MODEL.md) |
 | 🔄 Business Continuity Plan | Recovery objectives and procedures | [BCPPlan.md](BCPPlan.md) |
 | 🛡️ CRA Assessment | EU Cyber Resilience Act conformity | [CRA-ASSESSMENT.md](CRA-ASSESSMENT.md) |
 | 🏛️ Architecture | System architecture overview | [ARCHITECTURE.md](ARCHITECTURE.md) |
