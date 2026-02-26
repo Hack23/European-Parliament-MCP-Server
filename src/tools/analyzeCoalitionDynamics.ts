@@ -54,6 +54,8 @@ interface CoalitionDynamicsAnalysis {
     oppositionStrength: number;
   };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -249,6 +251,8 @@ export async function handleAnalyzeCoalitionDynamics(
       stressIndicators,
       computedAttributes: buildCoalitionComputedAttrs(fragMetrics, sortedPairs),
       confidenceLevel: 'LOW',
+      dataFreshness: 'Real-time EP API data — political group composition from current MEP records',
+      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'CIA Coalition Analysis — group composition from real EP Open Data MEP records. '
         + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
         + 'cohesion and stress metrics report zero and should be supplemented with vote-result data. '

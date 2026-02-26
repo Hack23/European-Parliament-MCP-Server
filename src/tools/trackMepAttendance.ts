@@ -87,6 +87,8 @@ interface AttendanceAnalysis {
     absenteeismRisk: string;
   };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -190,6 +192,8 @@ async function buildSingleMepAnalysis(
       absenteeismRisk: record.category === 'LOW' ? 'HIGH' : 'LOW'
     },
     confidenceLevel: 'HIGH',
+    dataFreshness: 'Real-time EP API data — MEP voting statistics from current EP records',
+    sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
     methodology: 'MEP attendance analysis using EP Open Data voting statistics. '
       + 'Data source: European Parliament Open Data Portal.'
   };
@@ -286,6 +290,8 @@ async function buildGroupAnalysis(
       absenteeismRisk: computeAbsenteeismRisk(low, totalMEPs)
     },
     confidenceLevel: computeConfidence(dataCoverage),
+    dataFreshness: 'Real-time EP API data — MEP group attendance statistics from EP Open Data',
+    sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
     methodology: 'Group attendance analysis using EP Open Data voting statistics. '
       + 'Individual attendance rates derived from plenary vote participation. '
       + 'Data source: European Parliament Open Data Portal.'

@@ -73,6 +73,8 @@ interface PoliticalLandscape {
     overallEngagement: string;
   };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -253,6 +255,8 @@ async function buildLandscape(
       overallEngagement: computeEngagement(0)
     },
     confidenceLevel: totalMEPs > 50 ? 'MEDIUM' : 'LOW',
+    dataFreshness: 'Real-time EP API data — MEP records and plenary sessions from EP Open Data',
+    sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
     methodology: 'Political landscape analysis using real EP Open Data: MEP records, '
       + 'group composition mapping, bloc classification, coalition threshold calculation, '
       + 'fragmentation indexing, and plenary session counts (fetched page count, lower bound). '

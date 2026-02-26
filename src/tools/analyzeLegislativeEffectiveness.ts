@@ -50,6 +50,8 @@ interface LegislativeEffectivenessAnalysis {
   };
   benchmarks: { avgReportsPerMep: number; avgAmendmentsPerMep: number; avgSuccessRate: number };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -218,6 +220,8 @@ export async function handleAnalyzeLegislativeEffectiveness(
       },
       benchmarks: { avgReportsPerMep: 3.2, avgAmendmentsPerMep: 12.5, avgSuccessRate: 38.0 },
       confidenceLevel: classifyConfidence(subjectData.totalVotes),
+      dataFreshness: 'Real-time EP API data — MEP and committee information from EP Open Data',
+      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'Multi-factor legislative effectiveness scoring with peer benchmarking'
     };
 

@@ -40,6 +40,12 @@ import { handleTrackMepAttendance, trackMepAttendanceToolMetadata } from '../too
 import { handleAnalyzeCountryDelegation, analyzeCountryDelegationToolMetadata } from '../tools/analyzeCountryDelegation.js';
 import { handleGeneratePoliticalLandscape, generatePoliticalLandscapeToolMetadata } from '../tools/generatePoliticalLandscape.js';
 
+// ── Phase 6 – Advanced OSINT Intelligence Tools ───────────────────
+import { handleNetworkAnalysis, networkAnalysisToolMetadata } from '../tools/networkAnalysis.js';
+import { handleSentimentTracker, sentimentTrackerToolMetadata } from '../tools/sentimentTracker.js';
+import { handleEarlyWarningSystem, earlyWarningSystemToolMetadata } from '../tools/earlyWarningSystem.js';
+import { handleComparativeIntelligence, comparativeIntelligenceToolMetadata } from '../tools/comparativeIntelligence.js';
+
 // ── Phase 4 – New EP API v2 endpoint tools ────────────────────────
 import { handleGetCurrentMEPs, getCurrentMEPsToolMetadata } from '../tools/getCurrentMEPs.js';
 import { handleGetSpeeches, getSpeechesToolMetadata } from '../tools/getSpeeches.js';
@@ -111,6 +117,11 @@ export function getToolMetadataArray(): ToolMetadata[] {
     // Phase 3 OSINT Intelligence Tools
     withCategory(analyzeCountryDelegationToolMetadata, 'osint'),
     withCategory(generatePoliticalLandscapeToolMetadata, 'osint'),
+    // Phase 6 – Advanced OSINT Intelligence Tools
+    withCategory(networkAnalysisToolMetadata, 'osint'),
+    withCategory(sentimentTrackerToolMetadata, 'osint'),
+    withCategory(earlyWarningSystemToolMetadata, 'osint'),
+    withCategory(comparativeIntelligenceToolMetadata, 'osint'),
     // Phase 4 – New EP API v2 endpoint tools
     withCategory(getCurrentMEPsToolMetadata, 'phase4'),
     withCategory(getSpeechesToolMetadata, 'phase4'),
@@ -164,6 +175,11 @@ const toolHandlers: Record<string, ToolHandler> = {
   // Phase 3 OSINT Intelligence Tools
   'analyze_country_delegation': handleAnalyzeCountryDelegation,
   'generate_political_landscape': handleGeneratePoliticalLandscape,
+  // Phase 6 – Advanced OSINT Intelligence Tools
+  'network_analysis': handleNetworkAnalysis,
+  'sentiment_tracker': handleSentimentTracker,
+  'early_warning_system': handleEarlyWarningSystem,
+  'comparative_intelligence': handleComparativeIntelligence,
   // Phase 4 – New EP API v2 endpoint tools
   'get_current_meps': handleGetCurrentMEPs,
   'get_speeches': handleGetSpeeches,

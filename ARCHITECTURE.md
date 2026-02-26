@@ -193,7 +193,7 @@ C4Component
 | `get_committee_info` | `getCommitteeInfo` | Committee details |
 | `get_parliamentary_questions` | `getParliamentaryQuestions` | Written/oral questions |
 
-#### OSINT Intelligence Tools (10)
+#### OSINT Intelligence Tools (10 + 4 Advanced)
 
 | Tool | Function | Description |
 |------|----------|-------------|
@@ -207,6 +207,25 @@ C4Component
 | `track_mep_attendance` | `trackMepAttendance` | MEP attendance patterns & trends |
 | `analyze_country_delegation` | `analyzeCountryDelegation` | Country delegation voting & composition |
 | `generate_political_landscape` | `generatePoliticalLandscape` | Parliament-wide political landscape |
+
+#### Advanced OSINT Intelligence Tools (4 — v1.0)
+
+The following four tools extend the OSINT capability with network analysis, sentiment tracking, early-warning signals, and comparative intelligence. Each tool returns `confidenceLevel`, `dataFreshness`, `sourceAttribution`, and `methodology` fields for full analytical transparency.
+
+| Tool | Function | Description |
+|------|----------|-------------|
+| `network_analysis` | `networkAnalysis` | MEP relationship network mapping via committee co-membership. Computes centrality scores, cluster assignments, bridging MEPs, and network density metrics. Identifies informal power structures and cross-party collaboration pathways. |
+| `sentiment_tracker` | `sentimentTracker` | Track political group sentiment shifts based on voting cohesion proxies. Returns per-group sentiment scores (−1 to +1), polarization index, consensus/divisive topics, and significant sentiment shifts. |
+| `early_warning_system` | `earlyWarningSystem` | Detect emerging political shifts, coalition fracture signals, and parliamentary stability risks. Generates severity-tiered warnings (CRITICAL/HIGH/MEDIUM/LOW), stability score (0–100), and trend indicators. Configurable sensitivity and focus area. |
+| `comparative_intelligence` | `comparativeIntelligence` | Cross-reference 2–10 MEPs across voting, committee, legislative, and attendance dimensions. Returns ranked profiles, cosine-similarity correlation matrix, z-score outlier detection, and natural cluster analysis. |
+
+**Design Principles for Advanced Tools:**
+- All outputs include `dataAvailable: boolean` — tools degrade gracefully when EP API data is limited
+- `confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW'` reflects data completeness at execution time
+- `dataFreshness` and `sourceAttribution` provide full data provenance for OSINT analysis
+- `methodology` documents the analytical approach for reproducibility and audit
+- Input validation via Zod schemas with strict typing throughout
+
 
 #### EP Data Access Tools (8)
 

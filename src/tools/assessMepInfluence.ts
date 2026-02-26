@@ -60,6 +60,8 @@ interface MepInfluenceAssessment {
   };
   votingDataAvailable: boolean;
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -297,6 +299,8 @@ export async function handleAssessMepInfluence(
       },
       confidenceLevel: getConfidenceLevel(stats.totalVotes),
       votingDataAvailable: stats.totalVotes > 0,
+      dataFreshness: 'Real-time EP API data — MEP voting statistics and committee memberships',
+      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'CIA Political Scorecards - 5-dimension weighted scoring model using real EP Open Data. '
         + 'Parliamentary questions fetched from /parliamentary-questions endpoint. '
         + 'Data source: European Parliament Open Data Portal.'

@@ -65,6 +65,8 @@ interface CommitteeActivityAnalysis {
     policyImpactRating: string;
   };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -182,6 +184,8 @@ async function buildAnalysis(
       policyImpactRating: computePolicyImpactRating(reportsAdopted, successRate)
     },
     confidenceLevel: hasRealData ? 'MEDIUM' : 'LOW',
+    dataFreshness: 'Real-time EP API data — committee documents and procedures from EP Open Data',
+    sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
     methodology: 'Committee activity analysis using real data from EP Open Data Portal. '
       + 'Committee membership from /corporate-bodies endpoint, documents from /committee-documents, '
       + 'procedures from /procedures, adopted texts from /adopted-texts. '
