@@ -266,7 +266,36 @@ async function buildDelegationAnalysis(
 }
 
 /**
- * Analyze country delegation tool handler
+ * Handles the analyze_country_delegation MCP tool request.
+ *
+ * Analyses an EU member state's MEP delegation in the European Parliament, covering
+ * political group distribution, aggregate voting behaviour, committee presence, and a
+ * national cohesion score. Reveals national interest patterns that can cut across
+ * political group lines, supporting targeted government-affairs advocacy.
+ *
+ * @param args - Raw tool arguments, validated against {@link AnalyzeCountryDelegationSchema}
+ * @returns MCP tool result containing a {@link CountryDelegationAnalysis} object with
+ *   delegation breakdown, computed attributes, confidence level, and methodology note
+ * @throws {ZodError} If `args` fails schema validation (e.g., missing required `country`, non-uppercase code)
+ * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * const result = await handleAnalyzeCountryDelegation({
+ *   country: 'SE',
+ *   dateFrom: '2024-01-01',
+ *   dateTo: '2024-12-31'
+ * });
+ * // Returns political group distribution, voting behaviour, and cohesion score for Sweden's MEPs
+ * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Country code is validated against a strict regex to prevent injection.
+ *   Personal data in responses is minimised per GDPR Article 5(1)(c).
+ *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link analyzeCountryDelegationToolMetadata} for MCP schema registration
+ * @see {@link handleAnalyzeCommitteeActivity} for per-committee workload analysis
  */
 export async function handleAnalyzeCountryDelegation(
   args: unknown

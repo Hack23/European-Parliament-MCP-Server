@@ -23,10 +23,34 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get procedures tool handler.
+ * Handles the get_procedures MCP tool request.
  *
- * @param args - Tool arguments
- * @returns MCP tool result with procedure data
+ * Retrieves European Parliament legislative procedures enabling end-to-end legislative
+ * tracking, outcome prediction, and timeline analysis. Supports both a single-procedure
+ * lookup by `processId` and a paginated list optionally filtered by year.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetProceduresSchema}
+ * @returns MCP tool result containing procedure data (single procedure or paginated list)
+ * @throws {ZodError} If `args` fails schema validation (e.g., invalid field types or formats)
+ * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * // Single procedure lookup
+ * const single = await handleGetProcedures({ processId: '2023/0132(COD)' });
+ * // Returns the legislative procedure for the Artificial Intelligence Act
+ *
+ * // List procedures from 2024
+ * const list = await handleGetProcedures({ year: 2024, limit: 50, offset: 0 });
+ * // Returns up to 50 legislative procedures initiated in 2024
+ * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Personal data in responses is minimised per GDPR Article 5(1)(c).
+ *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getProceduresToolMetadata} for MCP schema registration
+ * @see {@link handleGetProcedureEvents} for retrieving events linked to a specific procedure
  */
 export async function handleGetProcedures(
   args: unknown
