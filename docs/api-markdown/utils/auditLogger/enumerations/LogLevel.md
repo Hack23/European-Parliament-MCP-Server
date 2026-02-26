@@ -6,7 +6,7 @@
 
 # Enumeration: LogLevel
 
-Defined in: [utils/auditLogger.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L29)
+Defined in: [utils/auditLogger.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/auditLogger.ts#L29)
 
 Typed log levels for structured audit events.
 
@@ -23,7 +23,7 @@ Typed log levels for structured audit events.
 
 > **DEBUG**: `"DEBUG"`
 
-Defined in: [utils/auditLogger.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L30)
+Defined in: [utils/auditLogger.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/auditLogger.ts#L30)
 
 ***
 
@@ -31,7 +31,7 @@ Defined in: [utils/auditLogger.ts:30](https://github.com/Hack23/European-Parliam
 
 > **ERROR**: `"ERROR"`
 
-Defined in: [utils/auditLogger.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L33)
+Defined in: [utils/auditLogger.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/auditLogger.ts#L33)
 
 ***
 
@@ -39,7 +39,7 @@ Defined in: [utils/auditLogger.ts:33](https://github.com/Hack23/European-Parliam
 
 > **INFO**: `"INFO"`
 
-Defined in: [utils/auditLogger.ts:31](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L31)
+Defined in: [utils/auditLogger.ts:31](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/auditLogger.ts#L31)
 
 ***
 
@@ -47,4 +47,4 @@ Defined in: [utils/auditLogger.ts:31](https://github.com/Hack23/European-Parliam
 
 > **WARN**: `"WARN"`
 
-Defined in: [utils/auditLogger.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L32)
+Defined in: [utils/auditLogger.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/auditLogger.ts#L32)

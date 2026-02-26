@@ -8,7 +8,7 @@
 
 > `const` **getEventsToolMetadata**: `object`
 
-Defined in: [tools/getEvents.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/getEvents.ts#L54)
+Defined in: [tools/getEvents.ts:77](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/getEvents.ts#L77)
 
 Tool metadata for get_events
 

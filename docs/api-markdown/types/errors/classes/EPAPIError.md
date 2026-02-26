@@ -6,7 +6,7 @@
 
 # Class: EPAPIError
 
-Defined in: [types/errors.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/errors.ts#L134)
+Defined in: [types/errors.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/errors.ts#L134)
 
 EP API error for European Parliament API failures
 
@@ -37,7 +37,7 @@ if (!response.ok) {
 
 > **new EPAPIError**(`message`, `statusCode`, `details?`): `EPAPIError`
 
-Defined in: [types/errors.ts:142](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/errors.ts#L142)
+Defined in: [types/errors.ts:142](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/errors.ts#L142)
 
 Create a new EP API error
 
@@ -75,7 +75,7 @@ Optional details about the failure
 
 > `readonly` **code**: `string`
 
-Defined in: [types/errors.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/errors.ts#L44)
+Defined in: [types/errors.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/errors.ts#L44)
 
 Machine-readable error code (e.g., 'VALIDATION_ERROR')
 
@@ -89,7 +89,7 @@ Machine-readable error code (e.g., 'VALIDATION_ERROR')
 
 > `readonly` **statusCode**: `number` = `500`
 
-Defined in: [types/errors.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/errors.ts#L45)
+Defined in: [types/errors.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/errors.ts#L45)
 
 HTTP status code (default: 500)
 
@@ -103,7 +103,7 @@ HTTP status code (default: 500)
 
 > `readonly` `optional` **details**: `unknown`
 
-Defined in: [types/errors.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/errors.ts#L46)
+Defined in: [types/errors.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/errors.ts#L46)
 
 Optional additional error details for debugging
 

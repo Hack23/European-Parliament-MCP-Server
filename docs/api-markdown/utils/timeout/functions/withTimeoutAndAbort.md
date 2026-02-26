@@ -8,7 +8,7 @@
 
 > **withTimeoutAndAbort**\<`T`\>(`fn`, `timeoutMs`, `errorMessage?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [utils/timeout.ts:149](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/timeout.ts#L149)
+Defined in: [utils/timeout.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/timeout.ts#L156)
 
 Wraps a promise with a timeout and optional AbortSignal support.
 
@@ -50,6 +50,10 @@ Custom error message (optional)
 
 Promise that resolves/rejects with the operation result or timeout
 
+## Throws
+
+If the operation exceeds `timeoutMs`
+
 ## Example
 
 ```typescript
@@ -60,3 +64,13 @@ await withTimeoutAndAbort(
   'API request timed out'
 );
 ```
+
+## Security
+
+Aborts the underlying operation via `AbortController` when the
+  timeout fires, preventing dangling fetch connections and resource leaks.
+  Per ISMS Policy SC-002, all external network calls must be cancellable.
+
+## Since
+
+0.8.0

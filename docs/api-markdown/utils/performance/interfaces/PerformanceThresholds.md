@@ -6,7 +6,7 @@
 
 # Interface: PerformanceThresholds
 
-Defined in: [utils/performance.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/performance.ts#L50)
+Defined in: [utils/performance.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L50)
 
 Warning thresholds for performance alerting.
 
@@ -19,7 +19,7 @@ review in dashboards or log-based alerting rules.
 
 > **p95WarningMs**: `number`
 
-Defined in: [utils/performance.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/performance.ts#L52)
+Defined in: [utils/performance.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L52)
 
 Warn when p95 exceeds this value (milliseconds)
 
@@ -29,7 +29,7 @@ Warn when p95 exceeds this value (milliseconds)
 
 > **p99WarningMs**: `number`
 
-Defined in: [utils/performance.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/performance.ts#L54)
+Defined in: [utils/performance.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L54)
 
 Warn when p99 exceeds this value (milliseconds)
 
@@ -39,6 +39,6 @@ Warn when p99 exceeds this value (milliseconds)
 
 > `optional` **avgWarningMs**: `number`
 
-Defined in: [utils/performance.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/performance.ts#L56)
+Defined in: [utils/performance.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L56)
 
 Warn when average exceeds this value (milliseconds)

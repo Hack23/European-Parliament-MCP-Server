@@ -8,7 +8,7 @@
 
 > **mapDocumentType**(`rawType`): [`DocumentType`](../../../../types/ep/document/type-aliases/DocumentType.md)
 
-Defined in: [clients/ep/jsonLdHelpers.ts:216](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/clients/ep/jsonLdHelpers.ts#L216)
+Defined in: [clients/ep/jsonLdHelpers.ts:216](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/clients/ep/jsonLdHelpers.ts#L216)
 
 Maps a raw work-type string to a valid DocumentType.
 

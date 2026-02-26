@@ -8,6 +8,6 @@
 
 > `const` **GetMeetingDecisionsSchema**: `ZodObject`\<\{ `limit`: `ZodDefault`\<`ZodNumber`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; `sittingId`: `ZodString`; \}, `$strip`\>
 
-Defined in: [schemas/ep/activities.ts:145](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/schemas/ep/activities.ts#L145)
+Defined in: [schemas/ep/activities.ts:145](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/schemas/ep/activities.ts#L145)
 
 Get meeting decisions input schema

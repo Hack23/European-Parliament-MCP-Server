@@ -8,7 +8,7 @@
 
 > **handleDataUnavailable**(`toolName`, `message`): [`ToolResult`](../../types/interfaces/ToolResult.md)
 
-Defined in: [tools/shared/errorHandler.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/shared/errorHandler.ts#L33)
+Defined in: [tools/shared/errorHandler.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/shared/errorHandler.ts#L33)
 
 Build a structured data-unavailable response for tools that cannot
 compute meaningful results due to missing upstream data.

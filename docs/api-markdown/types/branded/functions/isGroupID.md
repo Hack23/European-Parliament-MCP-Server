@@ -8,7 +8,7 @@
 
 > **isGroupID**(`value`): `value is GroupID`
 
-Defined in: [types/branded.ts:190](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/branded.ts#L190)
+Defined in: [types/branded.ts:190](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/branded.ts#L190)
 
 Type guard to check if a string is a valid Political Group ID
 

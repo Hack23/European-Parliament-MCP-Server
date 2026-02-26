@@ -8,7 +8,7 @@
 
 > **withPerformanceTracking**\<`T`\>(`monitor`, `operation`, `fn`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [utils/performance.ts:295](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/performance.ts#L295)
+Defined in: [utils/performance.ts:326](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L326)
 
 Execute an async function and track its performance
 
@@ -29,25 +29,29 @@ Return type of the function
 
 [`PerformanceMonitor`](../classes/PerformanceMonitor.md)
 
-Performance monitor to record duration
+Performance monitor to record the duration in
 
 ### operation
 
 `string`
 
-Operation name for tracking
+Operation name for tracking (e.g., `'fetch_meps'`)
 
 ### fn
 
 () => [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Async function to execute
+Async function to execute and measure
 
 ## Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
 Promise that resolves with the function result
+
+## Throws
+
+Re-throws any error thrown by `fn` after recording the duration
 
 ## Example
 
@@ -62,3 +66,7 @@ const result = await withPerformanceTracking(
   }
 );
 ```
+
+## Since
+
+0.8.0

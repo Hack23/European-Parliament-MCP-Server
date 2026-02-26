@@ -6,7 +6,7 @@
 
 # Interface: AdoptedText
 
-Defined in: [types/ep/activities.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/ep/activities.ts#L143)
+Defined in: [types/ep/activities.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L143)
 
 European Parliament Adopted Text.
 
@@ -41,7 +41,7 @@ https://data.europarl.europa.eu/api/v2/adopted-texts
 
 > **dateAdopted**: `string`
 
-Defined in: [types/ep/activities.ts:153](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/ep/activities.ts#L153)
+Defined in: [types/ep/activities.ts:153](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L153)
 
 Date of adoption.
 
@@ -57,7 +57,7 @@ Date of adoption.
 
 > **id**: `string`
 
-Defined in: [types/ep/activities.ts:145](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/ep/activities.ts#L145)
+Defined in: [types/ep/activities.ts:145](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L145)
 
 Unique document identifier.
 
@@ -73,7 +73,7 @@ Unique document identifier.
 
 > **procedureReference**: `string`
 
-Defined in: [types/ep/activities.ts:155](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/ep/activities.ts#L155)
+Defined in: [types/ep/activities.ts:155](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L155)
 
 Related legislative procedure reference.
 
@@ -89,7 +89,7 @@ Related legislative procedure reference.
 
 > **reference**: `string`
 
-Defined in: [types/ep/activities.ts:149](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/ep/activities.ts#L149)
+Defined in: [types/ep/activities.ts:149](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L149)
 
 Document reference number.
 
@@ -105,7 +105,7 @@ Document reference number.
 
 > **subjectMatter**: `string`
 
-Defined in: [types/ep/activities.ts:157](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/ep/activities.ts#L157)
+Defined in: [types/ep/activities.ts:157](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L157)
 
 Subject matter or policy area.
 
@@ -121,7 +121,7 @@ Subject matter or policy area.
 
 > **title**: `string`
 
-Defined in: [types/ep/activities.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/ep/activities.ts#L147)
+Defined in: [types/ep/activities.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L147)
 
 Title of the adopted text.
 
@@ -137,7 +137,7 @@ Title of the adopted text.
 
 > **type**: `string`
 
-Defined in: [types/ep/activities.ts:151](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/ep/activities.ts#L151)
+Defined in: [types/ep/activities.ts:151](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L151)
 
 Type of adopted text.
 

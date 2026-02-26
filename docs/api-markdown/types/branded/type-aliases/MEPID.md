@@ -8,7 +8,7 @@
 
 > **MEPID** = [`Brand`](Brand.md)\<`string`, `"MEPID"`\>
 
-Defined in: [types/branded.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/branded.ts#L45)
+Defined in: [types/branded.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/branded.ts#L45)
 
 MEP ID - unique identifier for Members of European Parliament
 

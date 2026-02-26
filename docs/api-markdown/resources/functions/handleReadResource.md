@@ -8,7 +8,7 @@
 
 > **handleReadResource**(`uri`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ResourceReadResult`](../interfaces/ResourceReadResult.md)\>
 
-Defined in: [resources/index.ts:489](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/resources/index.ts#L489)
+Defined in: [resources/index.ts:489](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/resources/index.ts#L489)
 
 Handle ReadResource request
 

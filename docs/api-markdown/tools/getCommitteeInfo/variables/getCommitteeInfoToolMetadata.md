@@ -8,7 +8,7 @@
 
 > `const` **getCommitteeInfoToolMetadata**: `object`
 
-Defined in: [tools/getCommitteeInfo.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/getCommitteeInfo.ts#L79)
+Defined in: [tools/getCommitteeInfo.ts:96](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/getCommitteeInfo.ts#L96)
 
 Tool metadata for MCP registration
 
