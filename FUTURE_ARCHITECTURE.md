@@ -5,763 +5,287 @@
 <h1 align="center">🚀 European Parliament MCP Server — Future Architecture</h1>
 
 <p align="center">
-  <strong>🏗️ Serverless AWS Intelligence Platform</strong><br>
-  <em>🕵️ OSINT-Grade Parliamentary Intelligence • ☁️ Serverless AWS-Only • 📈 Advanced Aggregate Analytics</em>
+  <strong>Architectural Evolution Roadmap — v1.1, v1.2, v2.0</strong><br>
+  <em>Planned capabilities, migration paths, and next-generation architecture design</em>
 </p>
 
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/Owner-CEO-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-3.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--23-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Owner-Hack23-0A66C2?style=for-the-badge" alt="Owner"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--26-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Strategy-Serverless_AWS-FF9900?style=for-the-badge&logo=amazonaws" alt="AWS Serverless"/></a>
 </p>
 
-**📋 Document Owner:** CEO | **📄 Version:** 3.0 | **📅 Last Updated:** 2026-02-23 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-23  
-**🏷️ Classification:** Public (Open Source MCP Server)  
-**☁️ Infrastructure Strategy:** Serverless AWS-Only
+**📋 Document Owner:** Hack23 | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-26 (UTC)
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-26
+**🏷️ Classification:** Public (Open Source MCP Server)
+**✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.14.2), NIST CSF 2.0 (ID.AM, PR.DS), CIS Controls v8.1 (2.1, 16.1)
 
 ---
 
 ## 📑 Table of Contents
 
-- [Executive Summary](#-executive-summary)
-- [Serverless AWS Strategy](#️-serverless-aws-strategy)
-- [Current Architecture Baseline](#-current-architecture-baseline)
-- [Phase 1: OSINT Intelligence Tools](#️-phase-1-osint-intelligence-tools)
-- [Phase 2: Serverless AWS Intelligence Platform](#️-phase-2-serverless-aws-intelligence-platform)
-- [Phase 3: Enterprise Intelligence Operations](#-phase-3-enterprise-intelligence-operations)
-- [Advanced Aggregate Intelligence Tools](#-advanced-aggregate-intelligence-tools)
-- [Serverless Architecture Diagram](#️-serverless-architecture-diagram)
-- [Future MCP Protocol Enhancements](#-future-mcp-protocol-enhancements)
-- [Security Architecture Evolution](#️-security-architecture-evolution)
-- [🔮 Visionary Roadmap: 2027–2037](#-visionary-roadmap-20272037)
-- [Policy Alignment](#-policy-alignment)
-- [Related Documents](#-related-documents)
+1. [Security Documentation Map](#security-documentation-map)
+2. [Roadmap Overview](#roadmap-overview)
+3. [v1.1 — Performance and Reliability](#v11--performance-and-reliability)
+4. [v1.2 — HTTP Transport and Streaming](#v12--http-transport-and-streaming)
+5. [v2.0 — Enterprise Platform](#v20--enterprise-platform)
+6. [Future C4 Context Diagram](#future-c4-context-diagram)
+7. [Future Container Architecture](#future-container-architecture)
+8. [Migration Path](#migration-path)
+9. [Technology Evolution](#technology-evolution)
 
 ---
 
-## 🎯 Executive Summary
+## 🗺️ Security Documentation Map
 
-This document outlines the architectural evolution of the European Parliament MCP Server from a local 20-tool MCP server into a **serverless AWS-powered parliamentary intelligence platform** — inspired by [Hack23 Citizen Intelligence Agency (CIA)](https://github.com/Hack23/cia) OSINT methodologies.
+| Document | Current | Future | Description |
+|----------|---------|--------|-------------|
+| **Architecture** | [ARCHITECTURE.md](./ARCHITECTURE.md) | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) | C4 model, containers, components, ADRs |
+| **Security Architecture** | [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) | Security controls, threat model |
+| **Data Model** | [DATA_MODEL.md](./DATA_MODEL.md) | [FUTURE_DATA_MODEL.md](./FUTURE_DATA_MODEL.md) | Entity relationships, branded types |
+| **Flowchart** | [FLOWCHART.md](./FLOWCHART.md) | [FUTURE_FLOWCHART.md](./FUTURE_FLOWCHART.md) | Business process flows |
+| **State Diagram** | [STATEDIAGRAM.md](./STATEDIAGRAM.md) | [FUTURE_STATEDIAGRAM.md](./FUTURE_STATEDIAGRAM.md) | System state transitions |
+| **Mind Map** | [MINDMAP.md](./MINDMAP.md) | [FUTURE_MINDMAP.md](./FUTURE_MINDMAP.md) | System concepts and relationships |
+| **SWOT Analysis** | [SWOT.md](./SWOT.md) | [FUTURE_SWOT.md](./FUTURE_SWOT.md) | Strategic positioning |
 
-The future architecture embraces **advanced aggregate analytics** for political intelligence, combining European Parliament open data with structured analytic techniques (ACH, SWOT, network analysis) to provide AI assistants with **OSINT-grade parliamentary intelligence capabilities**.
+---
 
-**All future infrastructure is serverless AWS-only** — leveraging Lambda, API Gateway, DynamoDB, S3, CloudFront, and Step Functions — ensuring zero-server-management, pay-per-use economics, and enterprise-grade scalability.
-
-> **🤖 AI Evolution Context:** This roadmap assumes progression from **Anthropic Opus 4.6** (2026) through successive AI model generations, with **minor platform updates every ~2.3 months** and **major version upgrades annually** through 2037. Architecture evolution accounts for potential disruption from competitor LLMs, new model paradigms, and the eventual emergence of AGI.
-
-### **📊 Evolution Timeline**
+## 🗓️ Roadmap Overview
 
 ```mermaid
-timeline
-    title Serverless AWS Intelligence Platform Roadmap
-    section Phase 1-3 — OSINT Intelligence Tools ✅
-        Q1 2026 : 10 OSINT tools implemented
-                : MEP influence, coalition, anomalies
-                : Committee activity, attendance
-                : Country delegation, landscape
-    section Phase 1.5 — Extended Intelligence
-        Q3 2026 : Network mapping tool
-                : Political risk assessments
-                : Intelligence briefings
-                : Policy position tracking
-    section Phase 2 — Serverless AWS Platform
-        Q1 2027 : AWS Lambda MCP handlers
-                : DynamoDB persistent cache
-                : API Gateway HTTP transport
-                : CloudFront edge delivery
-    section Phase 3 — Enterprise Intelligence
-        Q3 2027 : Multi-parliament OSINT
-                : Cognito authentication
-                : Step Functions orchestration
-                : Real-time intelligence feeds
+flowchart LR
+    subgraph v10["v1.0 - Current (2026-02)"]
+        T1["39 tools\n9 resources\n7 prompts"]
+        T2["stdio transport"]
+        T3["LRU cache\n500 entries, 15-min"]
+        T4["4-layer security"]
+    end
+
+    subgraph v11["v1.1 - Q2 2026"]
+        U1["Persistent cache\n(Redis optional)"]
+        U2["Enhanced metrics\n(OpenTelemetry)"]
+        U3["Retry strategies\nimproved"]
+        U4["More tool coverage"]
+    end
+
+    subgraph v12["v1.2 - Q3 2026"]
+        V1["HTTP transport\n(SSE streaming)"]
+        V2["WebSocket support"]
+        V3["GraphQL endpoint"]
+        V4["Docker packaging"]
+    end
+
+    subgraph v20["v2.0 - Q4 2026 / Q1 2027"]
+        W1["OAuth 2.0 auth"]
+        W2["RBAC per tool"]
+        W3["Multi-instance\nhorizontal scale"]
+        W4["EU institution\ndata federation"]
+    end
+
+    v10 --> v11
+    v11 --> v12
+    v12 --> v20
 ```
 
 ---
 
-## ☁️ Serverless AWS Strategy
+## 🔧 v1.1 — Performance and Reliability
 
-### **🎯 Design Principles**
+**Target:** Q2 2026
 
-All future architecture follows a **serverless AWS-only** strategy:
+### New Capabilities
 
-| Principle | Implementation | Rationale |
-|----------|---------------|-----------|
-| **Zero Server Management** | AWS Lambda, Fargate | No EC2 instances to patch/manage |
-| **Pay-Per-Use** | Lambda invocation billing | Cost-effective for variable workloads |
-| **Auto-Scaling** | Lambda concurrency, DynamoDB on-demand | Handles traffic spikes automatically |
-| **Edge Delivery** | CloudFront, Lambda@Edge | Global low-latency access |
-| **Managed Security** | IAM, Cognito, KMS, WAF | AWS-managed security controls |
-| **Infrastructure as Code** | CDK / CloudFormation | Reproducible, auditable deployments |
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Optional Redis Cache** | Persistent cache backend for cross-restart warm cache | High |
+| **OpenTelemetry Integration** | Structured observability with traces, metrics, logs | High |
+| **Improved Retry Logic** | Configurable retry strategies per endpoint type | Medium |
+| **Circuit Breaker** | Prevent cascade failures when EP API degrades | Medium |
+| **Tool Coverage +5** | 5 additional tools for emerging EP API endpoints | Medium |
+| **Cache Warmup** | Pre-load frequently accessed data on startup | Low |
 
-### **☁️ AWS Services Map**
+### v1.1 Architecture Changes
 
 ```mermaid
-graph TB
-    subgraph "🌐 Edge Layer"
-        CF[CloudFront CDN]
-        WAF[AWS WAF]
-        R53[Route 53 DNS]
-    end
-    subgraph "🔌 API Layer"
-        APIGW[API Gateway<br>HTTP/WebSocket]
-        COGNITO[Cognito<br>Authentication]
-    end
-    subgraph "⚡ Compute Layer"
-        LAMBDA[Lambda Functions<br>MCP Tool Handlers]
-        STEP[Step Functions<br>Intelligence Workflows]
-    end
-    subgraph "💾 Data Layer"
-        DDB[DynamoDB<br>Cache & Analytics]
-        S3[S3<br>Report Storage & SBOM]
-        ES[OpenSearch Serverless<br>Full-Text Search]
-    end
-    subgraph "📊 Intelligence Layer"
-        EVENTBRIDGE[EventBridge<br>Scheduled Analysis]
-        SQS[SQS<br>Async Processing]
-        SNS[SNS<br>Intelligence Alerts]
-    end
-    subgraph "🛡️ Security Layer"
-        KMS[KMS<br>Encryption Keys]
-        IAM[IAM<br>Least Privilege]
-        CT[CloudTrail<br>Audit Logging]
-        GD[GuardDuty<br>Threat Detection]
+flowchart TD
+    subgraph v11New["v1.1 New Components"]
+        REDIS["Optional Redis Cache\n(configurable via env)"]
+        OTEL["OpenTelemetry Exporter\n(traces + metrics + logs)"]
+        CB["Circuit Breaker\n(per EP API endpoint)"]
+        RETRY["Retry Manager\n(configurable strategies)"]
     end
 
-    R53 --> CF --> WAF --> APIGW
-    APIGW --> COGNITO --> LAMBDA
-    LAMBDA --> DDB & S3 & ES
-    LAMBDA --> STEP
-    STEP --> LAMBDA
-    EVENTBRIDGE --> LAMBDA
-    LAMBDA --> SQS --> LAMBDA
-    LAMBDA --> SNS
-    KMS --> DDB & S3
-    CT --> S3
-    GD --> SNS
+    CACHE["Existing LRU Cache"] -->|"write-through"| REDIS
+    REDIS -->|"warm on startup"| CACHE
+    METRICS["MetricsService"] -->|"export"| OTEL
+    FETCH["EP API Clients"] --> CB
+    CB -->|"open state"| RETRY
+    RETRY --> FETCH
 ```
 
-### **💵 Cost Model**
-
-| Component | Free Tier | Est. Monthly Cost (Production) |
-|-----------|-----------|-------------------------------|
-| Lambda | 1M requests/month | $0 - $5 |
-| API Gateway | 1M calls/month | $0 - $3.50 |
-| DynamoDB | 25 GB + 25 WCU/RCU | $0 - $10 |
-| S3 | 5 GB storage | $0 - $1 |
-| CloudFront | 1 TB/month transfer | $0 - $5 |
-| Cognito | 50K MAU | $0 |
-| **Total** | | **$0 - $25/month** |
-
 ---
 
-## 📊 Current Architecture Baseline
+## 🌐 v1.2 — HTTP Transport and Streaming
 
-The current architecture is documented in [ARCHITECTURE.md](ARCHITECTURE.md).
+**Target:** Q3 2026
 
-**Current Capabilities (39 MCP Tools):**
+### New Capabilities
 
-#### Core Data Tools (7)
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **HTTP/SSE Transport** | MCP over HTTP with Server-Sent Events for streaming | Critical |
+| **WebSocket Transport** | Real-time bidirectional MCP communication | High |
+| **GraphQL API** | Optional GraphQL interface for complex queries | Medium |
+| **Docker Container** | Official Docker image with multi-arch support | High |
+| **Kubernetes Helm Chart** | Enterprise deployment via Helm | Medium |
+| **Health Endpoint** | HTTP `/health` endpoint for load balancer integration | High |
 
-| # | Tool | Type | Purpose |
-|---|------|------|---------|
-| 1 | `get_meps` | Data Retrieval | MEP listing with filtering |
-| 2 | `get_mep_details` | Data Retrieval | Individual MEP details |
-| 3 | `get_plenary_sessions` | Data Retrieval | Plenary session listing |
-| 4 | `get_voting_records` | Data Retrieval | Vote records with filtering |
-| 5 | `search_documents` | Search | Document search |
-| 6 | `get_committee_info` | Data Retrieval | Committee information |
-| 7 | `get_parliamentary_questions` | Data Retrieval | Parliamentary questions |
-
-#### Advanced Analysis Tools (3)
-
-| # | Tool | Type | Purpose |
-|---|------|------|---------|
-| 8 | `analyze_voting_patterns` | Analytics | Voting pattern analysis |
-| 9 | `track_legislation` | Tracking | Legislative procedure tracking |
-| 10 | `generate_report` | Reporting | Multi-source report generation |
-
-#### OSINT Intelligence Tools (10) — Phase 1-3 Complete ✅
-
-| # | Tool | Type | Purpose |
-|---|------|------|---------|
-| 11 | `assess_mep_influence` | 🕵️ Intelligence Scorecard | 5-dimension MEP influence scoring |
-| 12 | `analyze_coalition_dynamics` | 🤝 Coalition Analysis | Cohesion, stress, defection detection |
-| 13 | `detect_voting_anomalies` | ⚠️ Anomaly Detection | Party defection & pattern detection |
-| 14 | `compare_political_groups` | ⚖️ Comparative Analysis | Cross-group comparison metrics |
-| 15 | `analyze_legislative_effectiveness` | 📈 Performance Analysis | MEP/committee legislative scoring |
-| 16 | `monitor_legislative_pipeline` | 🔄 Pipeline Monitoring | Pipeline status & bottleneck detection |
-| 17 | `analyze_committee_activity` | 🏢 Committee Analysis | Committee workload & effectiveness |
-| 18 | `track_mep_attendance` | 📊 Attendance Tracking | MEP attendance & engagement metrics |
-| 19 | `analyze_country_delegation` | 🌍 Delegation Analysis | National delegation performance |
-| 20 | `generate_political_landscape` | 🗺️ Political Landscape | Political landscape overview |
-
-**Current Infrastructure:** Local Node.js process, stdio transport, in-memory LRU cache.
-
----
-
-## 🕵️ Phase 1: OSINT Intelligence Tools — ✅ COMPLETE
-
-**Timeline:** Completed | **Priority:** Critical | **Infrastructure:** Local + Lambda-ready
-
-Phase 1 OSINT intelligence tools have been **successfully implemented** as part of the current 20-tool MCP server, inspired by [Hack23 CIA Intelligence Operative](https://github.com/Hack23/cia/blob/master/.github/agents/intelligence-operative.md) OSINT methodologies.
-
-### **🔍 Implemented OSINT Intelligence MCP Tools**
-
-| # | Tool | Category | Phase | Status |
-|---|------|----------|-------|--------|
-| 11 | `assess_mep_influence` | 🕵️ Intelligence Scorecard | Phase 1 | ✅ Implemented |
-| 12 | `analyze_coalition_dynamics` | 🤝 Coalition Analysis | Phase 1 | ✅ Implemented |
-| 13 | `detect_voting_anomalies` | ⚠️ Anomaly Detection | Phase 1 | ✅ Implemented |
-| 14 | `compare_political_groups` | ⚖️ Comparative Analysis | Phase 1 | ✅ Implemented |
-| 15 | `analyze_legislative_effectiveness` | 📈 Performance Analysis | Phase 1 | ✅ Implemented |
-| 16 | `monitor_legislative_pipeline` | 🔄 Pipeline Monitoring | Phase 1 | ✅ Implemented |
-| 17 | `analyze_committee_activity` | 🏢 Committee Analysis | Phase 2 | ✅ Implemented |
-| 18 | `track_mep_attendance` | 📊 Attendance Tracking | Phase 2 | ✅ Implemented |
-| 19 | `analyze_country_delegation` | 🌍 Delegation Analysis | Phase 3 | ✅ Implemented |
-| 20 | `generate_political_landscape` | 🗺️ Political Landscape | Phase 3 | ✅ Implemented |
-
-### **🔮 Phase 1.5: Future OSINT Tools (Planned)**
-
-| # | Tool | Category | Purpose | CIA Methodology |
-|---|------|----------|---------|----------------|
-| 21 | `map_political_network` | 🌐 Network Analysis | Build MEP relationship graph from co-voting patterns, shared committee memberships, co-authored questions | Network Analysis |
-| 22 | `generate_political_risk_assessment` | 🎯 Risk Assessment | Assess political risk indicators — legislative gridlock, coalition fragmentation, procedural delays | Risk Assessments |
-| 23 | `track_policy_positions` | 📋 Policy Tracking | Track party/MEP positions across policy domains using voting history on tagged legislation | Policy Tracking |
-| 24 | `generate_intelligence_briefing` | 📊 Intelligence Product | Produce structured intelligence briefing combining multiple data sources with confidence levels | Estimative Intelligence |
-
-### **📊 Intelligence Scorecard Architecture**
+### v1.2 Transport Architecture
 
 ```mermaid
-graph TB
-    subgraph "📥 Data Collection (OSINT)"
-        EP_API[🏛️ EP Open Data API]
-        VOTES[🗳️ Voting Records]
-        DOCS[📄 Legislative Documents]
-        QUESTIONS[❓ Parliamentary Questions]
-        COMMITTEES[🏢 Committee Activities]
+flowchart TD
+    subgraph Transports["v1.2 Transport Layer"]
+        STDIO["stdio Transport\n(existing, preserved)"]
+        HTTP["HTTP/SSE Transport\n(new: Express + SSE)"]
+        WS["WebSocket Transport\n(new: ws library)"]
     end
 
-    subgraph "🔄 Intelligence Processing"
-        AGG[📊 Aggregation Engine]
-        SCORE[🎯 Scoring Algorithms]
-        NET[🌐 Network Analysis]
-        ANOMALY[⚠️ Anomaly Detection]
-        TREND[📈 Trend Analysis]
+    subgraph Clients["MCP Clients"]
+        LOCAL["Claude Desktop\n(stdio)"]
+        WEB["Web Browser\n(SSE)"]
+        ENT["Enterprise Client\n(WebSocket)"]
     end
 
-    subgraph "🕵️ Intelligence Products"
-        SCORECARD[📋 MEP Scorecards]
-        COALITION[🤝 Coalition Reports]
-        RISK[🎯 Risk Assessments]
-        BRIEFING[📊 Intelligence Briefings]
-        NETWORK[🌐 Network Maps]
+    subgraph Core["Core MCP Handler (unchanged)"]
+        HANDLER["MCP Request Handler\n39 tools, 9 resources, 7 prompts"]
     end
 
-    EP_API --> AGG
-    VOTES & DOCS & QUESTIONS & COMMITTEES --> AGG
-    AGG --> SCORE & NET & ANOMALY & TREND
-    SCORE --> SCORECARD
-    NET --> COALITION & NETWORK
-    ANOMALY --> RISK
-    TREND --> BRIEFING
-```
-
-### **🎯 MEP Influence Scoring Model**
-
-Inspired by CIA Political Scorecards methodology:
-
-| Dimension | Weight | Metrics | Source |
-|-----------|--------|---------|--------|
-| **🗳️ Voting Activity** | 25% | Attendance rate, participation in roll-calls | `get_voting_records` |
-| **📝 Legislative Output** | 25% | Reports authored, amendments tabled, opinions drafted | `search_documents` |
-| **🏢 Committee Engagement** | 20% | Committee memberships, chair/vice-chair roles, rapporteurships | `get_committee_info` |
-| **❓ Parliamentary Oversight** | 15% | Questions filed, follow-up rate, topic diversity | `get_parliamentary_questions` |
-| **🤝 Coalition Building** | 15% | Cross-party co-voting, co-authored initiatives, bridging score | Network analysis |
-
-### **🤝 Coalition Dynamics Detection**
-
-Using CIA Coalition Analysis methodology:
-
-```
-Coalition Cohesion Score = Σ(shared_votes) / Σ(total_votes) per group pair
-Stress Indicator = Δ(cohesion_score) over rolling 90-day window
-Alliance Signal = cohesion_score > 0.7 for non-allied groups
-Defection Rate = party_line_breaks / total_roll_calls per MEP
+    LOCAL --> STDIO
+    WEB --> HTTP
+    ENT --> WS
+    STDIO --> HANDLER
+    HTTP --> HANDLER
+    WS --> HANDLER
 ```
 
 ---
 
-## ☁️ Phase 2: Serverless AWS Intelligence Platform
+## 🏢 v2.0 — Enterprise Platform
 
-**Timeline:** Q1 2027 | **Priority:** High | **Infrastructure:** AWS Serverless
+**Target:** Q4 2026 / Q1 2027
 
-### **⚡ AWS Lambda MCP Handlers**
+### New Capabilities
 
-Each MCP tool becomes an independent Lambda function:
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **OAuth 2.0** | User authentication with OAuth 2.0 / OIDC | Critical |
+| **Fine-grained RBAC** | Per-tool, per-dataset access control | Critical |
+| **Multi-instance Scaling** | Horizontal scaling with shared Redis cache | High |
+| **EU Data Federation** | EUR-Lex, Council, Eurostat data integration | High |
+| **Webhook Notifications** | Subscribe to EP data change events | Medium |
+| **GraphQL Subscriptions** | Real-time data updates via GraphQL | Medium |
+| **Tenant Isolation** | Multi-tenant deployment for SaaS | Low |
+| **Audit Trail Export** | Compliance export (CSV, JSON, SIEM integration) | High |
 
-| Lambda Function | Runtime | Memory | Timeout | Trigger |
-|----------------|---------|--------|---------|---------|
-| `mcp-get-meps` | Node.js 24.x | 256 MB | 30s | API Gateway |
-| `mcp-analyze-coalition` | Node.js 24.x | 512 MB | 60s | API Gateway |
-| `mcp-intelligence-briefing` | Node.js 24.x | 1024 MB | 120s | API Gateway / Step Functions |
-| `mcp-network-analysis` | Node.js 24.x | 512 MB | 60s | API Gateway |
-| `mcp-scheduled-aggregation` | Node.js 24.x | 1024 MB | 300s | EventBridge (hourly) |
-| `mcp-risk-assessment` | Node.js 24.x | 512 MB | 60s | API Gateway |
-
-### **💾 DynamoDB Data Architecture**
-
-| Table | Partition Key | Sort Key | Purpose |
-|-------|--------------|----------|---------|
-| `ep-cache` | `endpoint#params_hash` | `timestamp` | API response cache (TTL) |
-| `ep-mep-scores` | `mep_id` | `score_date` | Pre-computed MEP influence scores |
-| `ep-coalition-metrics` | `group_pair` | `period` | Coalition cohesion time series |
-| `ep-intelligence-reports` | `report_type` | `report_date` | Generated intelligence products |
-| `ep-voting-anomalies` | `mep_id` | `detected_date` | Anomaly detection results |
-| `ep-network-graph` | `mep_id` | `connection_mep_id` | Political network edges |
-
-### **🔄 Step Functions Intelligence Workflows**
+### v2.0 Context Diagram
 
 ```mermaid
-graph TB
-    subgraph "🕵️ Intelligence Briefing Workflow"
-        START([📋 Trigger]) --> PARALLEL{Fan-Out}
-        PARALLEL --> L1[Lambda: Fetch MEPs]
-        PARALLEL --> L2[Lambda: Fetch Votes]
-        PARALLEL --> L3[Lambda: Fetch Documents]
-        PARALLEL --> L4[Lambda: Fetch Questions]
-        L1 & L2 & L3 & L4 --> MERGE[Lambda: Merge Data]
-        MERGE --> SCORE2[Lambda: Compute Scores]
-        SCORE2 --> DETECT[Lambda: Detect Anomalies]
-        DETECT --> ASSESS[Lambda: Risk Assessment]
-        ASSESS --> BRIEF[Lambda: Generate Briefing]
-        BRIEF --> STORE[DynamoDB: Store Report]
-        STORE --> NOTIFY[SNS: Alert Subscribers]
-        NOTIFY --> END([✅ Complete])
-    end
-```
-
-### **📡 API Gateway MCP Transport**
-
-```
-                          ┌─────────────────────────────────────────────┐
-                          │         AWS Serverless MCP Platform         │
-                          │                                             │
-  ┌──────────┐    HTTPS   │  ┌──────────┐  ┌────────┐  ┌───────────┐  │
-  │ AI Client├────────────┤──┤CloudFront ├──┤  WAF   ├──┤API Gateway│  │
-  │ (Claude) │            │  └──────────┘  └────────┘  └─────┬─────┘  │
-  └──────────┘            │                                   │        │
-                          │                            ┌──────┴──────┐ │
-                          │                            │   Cognito   │ │
-                          │                            │   Auth      │ │
-                          │                            └──────┬──────┘ │
-                          │                                   │        │
-                          │  ┌────────────────────────────────┤        │
-                          │  │  Lambda Functions              │        │
-                          │  │  ┌──────┐ ┌──────┐ ┌────────┐ │        │
-                          │  │  │ Tool │ │ Tool │ │ Tool   │ │        │
-                          │  │  │  #1  │ │  #2  │ │ #3-#20 │ │        │
-                          │  │  └──┬───┘ └──┬───┘ └───┬────┘ │        │
-                          │  └─────┤────────┤─────────┤──────┘        │
-                          │        │        │         │                │
-                          │  ┌─────┴────────┴─────────┴──────┐        │
-                          │  │       DynamoDB / S3 / ES       │        │
-                          │  └────────────────────────────────┘        │
-                          └─────────────────────────────────────────────┘
-```
-
----
-
-## 🏗️ Phase 3: Enterprise Intelligence Operations
-
-**Timeline:** Q3 2027 | **Priority:** Medium | **Infrastructure:** Full AWS Serverless
-
-### **🌍 Multi-Parliament OSINT**
-
-| Parliament | Data Source | Lambda Adapter | Intelligence Products |
-|-----------|------------|---------------|----------------------|
-| 🇪🇺 European Parliament | data.europarl.europa.eu | `ep-adapter` | ✅ Full suite |
-| 🇸🇪 Swedish Riksdag | data.riksdagen.se | `riksdag-adapter` | Voting, MEP scorecards |
-| 🇬🇧 UK Parliament | api.parliament.uk | `uk-adapter` | Voting, questions |
-| 🇩🇪 German Bundestag | bundestag.de/services | `bundestag-adapter` | Voting, documents |
-
-Each parliament adapter is a **separate Lambda layer**, enabling:
-- **Cross-parliament voting analysis** — Compare how different parliaments vote on similar topics
-- **Pan-European network mapping** — Detect cross-border political alliances
-- **Comparative legislative effectiveness** — Benchmark parliamentary performance
-
-### **🔒 Cognito Authentication**
-
-| Feature | Implementation |
-|---------|---------------|
-| User pools | Cognito User Pool with MFA |
-| API keys | Cognito App Client credentials |
-| RBAC | Cognito Groups → IAM policies |
-| Rate limits | API Gateway usage plans per client |
-| Audit | CloudTrail + CloudWatch Logs |
-
-### **📊 Real-Time Intelligence Feeds**
-
-| Feed | Trigger | Delivery | Content |
-|------|---------|----------|---------|
-| 🗳️ Vote Alert | New roll-call vote published | SNS → WebSocket | Vote result + anomaly flags |
-| 📝 Document Alert | New legislative document | EventBridge → Lambda → SNS | Document summary + impact |
-| ⚠️ Risk Alert | Risk score threshold exceeded | CloudWatch Alarm → SNS | Risk assessment summary |
-| 📊 Daily Briefing | EventBridge (06:00 UTC) | Step Functions → S3 → SNS | Full intelligence briefing |
-
----
-
-## 🔍 Advanced Aggregate Intelligence Tools
-
-### **🕵️ Intelligence Product Catalog**
-
-Inspired by [Hack23 CIA Intelligence Operative](https://github.com/Hack23/cia/blob/master/.github/agents/intelligence-operative.md) analytical frameworks:
-
-#### **📋 MEP Intelligence Scorecards**
-
-Comprehensive MEP assessment combining multiple data dimensions:
-
-```
-┌──────────────────────────────────────────────────┐
-│  🕵️ MEP Intelligence Scorecard                   │
-│  ═══════════════════════════════════════════════  │
-│  MEP: [Name] | Country: [CC] | Group: [EPG]     │
-│                                                  │
-│  📊 Overall Influence Score: 7.8/10              │
-│  ├─ 🗳️ Voting Activity:     8.5/10 ████████░░  │
-│  ├─ 📝 Legislative Output:  7.2/10 ███████░░░  │
-│  ├─ 🏢 Committee Engagement: 8.0/10 ████████░░  │
-│  ├─ ❓ Oversight Activity:  6.5/10 ██████░░░░  │
-│  └─ 🤝 Coalition Building:  8.1/10 ████████░░  │
-│                                                  │
-│  ⚠️ Anomalies: 2 party defections (last 90d)    │
-│  🎯 Risk Level: LOW                             │
-│  📈 Trend: ↑ Rising (+0.3 from last quarter)    │
-│  🔗 Network: 47 strong connections, 3 clusters  │
-└──────────────────────────────────────────────────┘
-```
-
-#### **🤝 Coalition Analysis Products**
-
-| Product | Inputs | Output | Frequency |
-|---------|--------|--------|-----------|
-| Cohesion Matrix | All roll-call votes | Group×Group cohesion scores | Weekly |
-| Alliance Detection | 90-day voting window | Cross-party alliance signals | Daily |
-| Stress Indicators | Cohesion time series | Coalition fragmentation warnings | Daily |
-| Defection Report | Individual MEP votes | Party line break analysis | Per session |
-
-#### **🌐 Political Network Analysis**
-
-Using CIA Network Analysis methodologies:
-
-| Metric | Description | Intelligence Value |
-|--------|-------------|-------------------|
-| **Degree Centrality** | Number of co-voting connections | Identifies most-connected MEPs |
-| **Betweenness Centrality** | Bridge between political groups | Identifies consensus-builders |
-| **Clustering Coefficient** | Tight-knit voting blocs | Identifies factional structures |
-| **PageRank** | Recursive influence propagation | Identifies true power brokers |
-| **Community Detection** | Voting cluster identification | Reveals hidden alliances |
-
-#### **🎯 Political Risk Assessment Framework**
-
-Using CIA Risk Assessment methodologies:
-
-| Risk Dimension | Indicators | Data Sources | Weight |
-|---------------|------------|-------------|--------|
-| **Legislative Gridlock** | Bill passage rate, procedure duration, amendment volume | `track_legislation`, `search_documents` | 25% |
-| **Coalition Fragmentation** | Cohesion decline, defection rate, abstention spikes | `analyze_coalition_dynamics` | 25% |
-| **Policy Instability** | Position reversals, committee conflicts, question hostility | `track_policy_positions` | 20% |
-| **Procedural Anomalies** | Urgent procedures, rule suspensions, session irregularities | `get_plenary_sessions` | 15% |
-| **External Pressure** | Debate intensity on crisis topics, emergency resolutions | `search_documents` | 15% |
-
----
-
-## ☁️ Serverless Architecture Diagram
-
-```mermaid
-graph TB
-    subgraph "🌐 Clients"
-        CLAUDE[🤖 Claude Desktop]
-        GPT[🤖 ChatGPT]
-        CUSTOM[🔧 Custom AI Clients]
-        ANALYST[🕵️ Intelligence Analysts]
+flowchart TD
+    subgraph Users["Users and Systems"]
+        ANALYST["Political Analyst"]
+        JOURNALIST["Journalist"]
+        NGO["NGO System"]
+        ENTERPRISE["Enterprise Platform"]
     end
 
-    subgraph "☁️ AWS Serverless Platform"
-        subgraph "Edge"
-            R53[Route 53] --> CF[CloudFront]
-            CF --> WAF2[WAF v2]
-        end
-
-        subgraph "API"
-            WAF2 --> APIGW2[API Gateway v2<br>HTTP + WebSocket]
-            APIGW2 --> COG[Cognito<br>Authorizer]
-        end
-
-        subgraph "Compute (Lambda)"
-            COG --> FN_DATA[📊 Data Tools<br>get_meps, get_votes...]
-            COG --> FN_INTEL[🕵️ Intel Tools<br>assess_influence,<br>coalition_dynamics...]
-            COG --> FN_REPORT[📋 Report Tools<br>generate_briefing,<br>risk_assessment...]
-        end
-
-        subgraph "Orchestration"
-            EB[EventBridge<br>Scheduled Analysis] --> SF[Step Functions<br>Intel Workflows]
-            SF --> FN_INTEL
-            SF --> FN_REPORT
-        end
-
-        subgraph "Storage"
-            FN_DATA --> DDB2[DynamoDB<br>Cache + Scores]
-            FN_INTEL --> DDB2
-            FN_REPORT --> S3_2[S3<br>Reports + SBOM]
-            FN_DATA --> ES2[OpenSearch Serverless<br>Document Search]
-        end
-
-        subgraph "Monitoring"
-            CW[CloudWatch<br>Metrics + Alarms]
-            CT2[CloudTrail<br>Audit]
-            GD2[GuardDuty<br>Threats]
-            SH[Security Hub<br>Posture]
-        end
+    subgraph AuthLayer["v2.0 Auth Layer"]
+        OAUTH["OAuth 2.0 Provider\n(Keycloak / Auth0)"]
+        RBAC["RBAC Engine\n(per-tool permissions)"]
     end
 
-    subgraph "External"
-        EP2[🏛️ EP Open Data API]
-        RIKSDAG[🇸🇪 Riksdag API]
-        UKPARL[🇬🇧 UK Parliament API]
+    subgraph EPMCPv2["EP MCP Server v2.0"]
+        GATEWAY["API Gateway"]
+        TOOLS["39+ Tools"]
+        CACHE["Distributed Cache\n(Redis Cluster)"]
+        AUDIT["Enhanced Audit\n(SIEM integration)"]
     end
 
-    CLAUDE & GPT & CUSTOM & ANALYST --> R53
-    FN_DATA --> EP2
-    FN_DATA --> RIKSDAG & UKPARL
+    subgraph DataSources["EU Data Sources"]
+        EPA["EP Open Data API v2"]
+        EURLEX["EUR-Lex API"]
+        COUNCIL["Council API"]
+        EUROSTAT["Eurostat API"]
+    end
+
+    ANALYST -->|"MCP stdio"| EPMCPv2
+    JOURNALIST -->|"HTTP/SSE"| GATEWAY
+    NGO -->|"WebSocket"| GATEWAY
+    ENTERPRISE -->|"OAuth token"| OAUTH
+    OAUTH --> RBAC
+    RBAC --> GATEWAY
+    GATEWAY --> TOOLS
+    TOOLS --> CACHE
+    TOOLS --> EPA
+    TOOLS --> EURLEX
+    TOOLS --> COUNCIL
+    TOOLS --> EUROSTAT
+    TOOLS --> AUDIT
 ```
 
 ---
 
-## 🔌 Future MCP Protocol Enhancements
+## 🔄 Migration Path
 
-| Feature | Description | AWS Implementation | Priority |
-|---------|-------------|-------------------|----------|
-| **Streamable HTTP Transport** | Remote MCP over HTTPS | API Gateway + Lambda | 🔴 Critical |
-| **Streaming Responses** | Progressive data delivery | API Gateway WebSocket | 🟠 High |
-| **Batch Operations** | Multi-tool single request | Step Functions parallel | 🟠 High |
-| **Resource Subscriptions** | Real-time data change alerts | EventBridge + SNS | 🟡 Medium |
-| **Server-Sent Events** | Push notifications | API Gateway WebSocket | 🟡 Medium |
+### v1.0 → v1.1 (Non-Breaking)
 
----
+All v1.0 configurations remain valid. New features are opt-in via environment variables:
 
-## 🛡️ Security Architecture Evolution
-
-Security roadmap is detailed in [FUTURE_SECURITY_ARCHITECTURE.md](FUTURE_SECURITY_ARCHITECTURE.md).
-
-### **☁️ AWS Security Controls**
-
-| Control | AWS Service | ISMS Alignment |
-|---------|-------------|---------------|
-| Authentication | Cognito (MFA, OIDC) | [Access_Control_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) |
-| Authorization | IAM policies, Cognito Groups | [Access_Control_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) |
-| Encryption at rest | KMS (DynamoDB, S3) | [Cryptography_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Cryptography_Policy.md) |
-| Encryption in transit | TLS 1.3 (CloudFront, API GW) | [Cryptography_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Cryptography_Policy.md) |
-| Audit logging | CloudTrail → S3 | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
-| Threat detection | GuardDuty | [Incident_Response_Plan.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md) |
-| Security posture | Security Hub | [Vulnerability_Management.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) |
-| Web protection | WAF v2 (OWASP ruleset) | [Network_Security_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Network_Security_Policy.md) |
-| DDoS protection | Shield Standard | [Network_Security_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Network_Security_Policy.md) |
-
----
-
-## 🔮 Visionary Roadmap: 2027–2037
-
-> **AI-Driven Architecture Evolution** — From cloud-native MCP server to autonomous parliamentary intelligence platform, evolving alongside AI model generations from Anthropic Opus 4.6 through future AGI.
-
-### 📅 Version Release Strategy
-
-| Year | Major Version | AI Model Context | Architecture Milestone |
-|------|--------------|------------------|----------------------|
-| **2026** | v1.0 | Anthropic Opus 4.6 | Foundation: 39 tools, serverless AWS, OSINT intelligence |
-| **2027** | v2.0 | Opus 5.x / Competitors | Cloud Intelligence Platform with multi-region deployment |
-| **2028** | v3.0 | Next-gen multimodal LLMs | Multi-Parliament Federation (EU + national parliaments) |
-| **2029** | v4.0 | Specialized political AI models | AI-Native Analysis with autonomous tool orchestration |
-| **2030** | v5.0 | Near-AGI reasoning systems | Knowledge Graph Era with semantic parliamentary web |
-| **2031** | v6.0 | Early AGI capabilities | Autonomous Intelligence with self-improving pipelines |
-| **2032** | v7.0 | AGI-assisted development | Predictive Governance platform with legislative forecasting |
-| **2033** | v8.0 | AGI co-development | Global Democracy Platform spanning 50+ parliaments |
-| **2034** | v9.0 | Mature AGI integration | AGI-Ready Systems with human-AI governance collaboration |
-| **2035** | v10.0 | Post-AGI optimization | Decentralized Intelligence with edge-sovereign deployment |
-| **2036** | v11.0 | AGI-native platforms | Universal Governance API — standard for all democracies |
-| **2037** | v12.0 | Superintelligent assistants | Transcendent Democracy Tools — real-time citizen engagement |
-
-> **Minor updates every ~2.3 months** deliver incremental improvements, security patches, and new tool capabilities between major releases.
-
-### 🏗️ Architecture Evolution Phases
-
-#### Phase 4: Multi-Parliament Federation (2028–2029)
-
-```mermaid
-graph TB
-    subgraph "Federated Parliament Gateway"
-        FG[Federation Gateway]
-        EP[EU Parliament API]
-        NP1[National Parliament 1]
-        NP2[National Parliament 2]
-        NPN[National Parliament N]
-    end
-    subgraph "Unified Intelligence Layer"
-        KG[Knowledge Graph Engine]
-        CPA[Cross-Parliament Analytics]
-        NLP[Multilingual NLP Pipeline]
-    end
-    subgraph "AI Orchestration"
-        AO[Autonomous Tool Orchestration]
-        ML[ML Model Registry]
-        RT[Real-time Stream Processing]
-    end
-    FG --> EP & NP1 & NP2 & NPN
-    EP & NP1 & NP2 & NPN --> KG
-    KG --> CPA & NLP
-    CPA & NLP --> AO
-    AO --> ML & RT
+```bash
+# v1.1 optional features (all off by default for backward compat)
+EP_MCP_REDIS_URL=redis://localhost:6379  # Optional Redis cache
+EP_MCP_OTEL_ENDPOINT=http://jaeger:4317  # Optional OpenTelemetry
+EP_MCP_CIRCUIT_BREAKER=true              # Optional circuit breaker
 ```
 
-- **Federated data mesh** connecting EU Parliament with national parliament APIs (Bundestag, Riksdag, Assemblée nationale, etc.)
-- **Multilingual NLP pipeline** for cross-language legislative analysis (24 EU languages)
-- **Unified knowledge graph** mapping relationships across parliamentary systems
-- **50+ MCP tools** with cross-parliament query capabilities
+### v1.1 → v1.2 (Additive)
 
-#### Phase 5: AI-Native Intelligence Platform (2030–2031)
+New transport options added. stdio remains default and unchanged:
 
-- **Autonomous agent orchestration** — AI models self-select and chain tools without human prompt engineering
-- **Self-healing infrastructure** — architecture auto-scales, auto-patches, and auto-optimizes based on usage patterns
-- **Predictive caching** — ML models predict data access patterns and pre-fetch parliamentary data
-- **Real-time legislative streaming** — event-driven architecture with sub-second update propagation
-- **100+ MCP tools** with emergent capability composition
-
-#### Phase 6: Predictive Governance Platform (2032–2033)
-
-- **Legislative outcome prediction** — ML models trained on historical voting data predict vote outcomes with >90% accuracy
-- **Policy impact simulation** — digital twin of parliamentary systems for "what-if" scenario modeling
-- **Cross-democracy correlation** — identify policy transfer patterns across 50+ global parliaments
-- **Natural language governance queries** — AGI-powered conversational interface for complex political analysis
-- **200+ MCP tools** with autonomous discovery and composition
-
-#### Phase 7: Universal Democracy API (2034–2037)
-
-- **Standardized governance protocol** — open protocol for democratic data access adopted by international organizations
-- **Citizen engagement layer** — real-time democratic participation tools powered by AGI assistants
-- **Decentralized trust framework** — cryptographically verified legislative records with zero-knowledge proofs
-- **Sovereign deployment** — edge-native architecture allowing each parliament to run sovereign instances
-- **AGI-collaborative governance** — human-AI partnership in legislative drafting and impact assessment
-
-### 🤖 AI Model Evolution Impact
-
-```mermaid
-timeline
-    title AI & Platform Co-Evolution
-    2026 : Anthropic Opus 4.6
-         : v1.0 Foundation
-         : 39 MCP tools
-    2027 : Opus 5.x / Competitors
-         : v2.0 Cloud Intelligence
-         : Multi-region AWS
-    2028 : Next-gen Multimodal
-         : v3.0 Parliament Federation
-         : Knowledge Graphs
-    2029 : Specialized Political AI
-         : v4.0 AI-Native Analysis
-         : Autonomous Orchestration
-    2030 : Near-AGI Systems
-         : v5.0 Semantic Web
-         : 100+ Tools
-    2031 : Early AGI
-         : v6.0 Self-Improving
-         : Autonomous Pipelines
-    2032 : AGI-Assisted Dev
-         : v7.0 Predictive Gov
-         : Legislative Forecasting
-    2033 : AGI Co-Development
-         : v8.0 Global Platform
-         : 50+ Parliaments
-    2034-2037 : Mature/Post-AGI
-             : v9-12 Universal API
-             : Transcendent Democracy
+```bash
+# v1.2 optional transport (stdio remains default)
+EP_MCP_HTTP_PORT=3000        # Enable HTTP/SSE transport
+EP_MCP_WS_PORT=3001          # Enable WebSocket transport
+EP_MCP_GRAPHQL_PORT=3002     # Enable GraphQL endpoint
 ```
 
-### 🏛️ Competitive & Disruption Considerations
+### v1.2 → v2.0 (Breaking for Enterprise)
 
-| Disruption Scenario | Architectural Response | Timeline |
-|---------------------|----------------------|----------|
-| **Competitor MCP servers** emerge (UK Parliament, Congress.gov) | Federate rather than compete — become the interoperability layer | 2027–2028 |
-| **New LLM paradigm** replaces transformer architecture | Protocol-agnostic tool layer; MCP abstraction shields from model changes | 2028–2030 |
-| **Open-source AGI** makes proprietary AI obsolete | Architecture already open-source; pivot to governance-as-a-service | 2030–2033 |
-| **Regulation** restricts AI in governance contexts | Compliance-first design; EU AI Act alignment already embedded | 2027–2029 |
-| **Quantum computing** breaks current cryptography | Post-quantum migration path via AWS crypto agility | 2030–2035 |
+v2.0 introduces mandatory authentication for non-local deployments:
 
----
+```bash
+# v2.0 auth configuration (required for HTTP/WS transport)
+EP_MCP_AUTH_ISSUER=https://auth.example.com
+EP_MCP_AUTH_AUDIENCE=ep-mcp-server
+EP_MCP_AUTH_REQUIRED=true
+```
 
-## 🔗 Policy Alignment
-
-| ISMS Policy | Relevance | Link |
-|-------------|-----------|------|
-| 🔒 Secure Development | Architecture security, IaC requirements | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
-| 🌐 Network Security | AWS VPC, WAF, CloudFront security | [Network_Security_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Network_Security_Policy.md) |
-| 🔑 Access Control | Cognito, IAM least privilege | [Access_Control_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) |
-| 🔐 Cryptography | KMS, TLS 1.3, encryption standards | [Cryptography_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Cryptography_Policy.md) |
-| 🏷️ Classification | Data handling in DynamoDB/S3 | [CLASSIFICATION.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md) |
-| 🔄 Backup & Recovery | S3 versioning, DynamoDB PITR | [Backup_Recovery_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Backup_Recovery_Policy.md) |
-| 🚨 Incident Response | GuardDuty, CloudWatch alarms | [Incident_Response_Plan.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md) |
-
-### **AWS Well-Architected Alignment**
-
-| Pillar | Implementation |
-|--------|---------------|
-| **Security** | Cognito, IAM, KMS, WAF, GuardDuty, Security Hub |
-| **Reliability** | Lambda auto-scaling, DynamoDB on-demand, multi-AZ |
-| **Performance** | CloudFront edge, Lambda provisioned concurrency |
-| **Cost Optimization** | Pay-per-use Lambda, DynamoDB on-demand, free tier |
-| **Operational Excellence** | CloudWatch, X-Ray, CDK IaC |
-| **Sustainability** | Serverless = no idle resources |
+stdio transport remains unauthenticated for local development.
 
 ---
 
-## 📚 Related Documents
+## 🛠️ Technology Evolution
 
-### **Current State Documentation**
-
-| Document | Link |
-|----------|------|
-| 🏛️ Architecture | [ARCHITECTURE.md](ARCHITECTURE.md) |
-| 📊 Data Model | [DATA_MODEL.md](DATA_MODEL.md) |
-| 🔄 Flowchart | [FLOWCHART.md](FLOWCHART.md) |
-| 📈 State Diagram | [STATEDIAGRAM.md](STATEDIAGRAM.md) |
-| 🧠 Mindmap | [MINDMAP.md](MINDMAP.md) |
-| 💼 SWOT | [SWOT.md](SWOT.md) |
-| ⚙️ Workflows | [WORKFLOWS.md](WORKFLOWS.md) |
-| 🛡️ Security Architecture | [SECURITY_ARCHITECTURE.md](SECURITY_ARCHITECTURE.md) |
-
-### **Future State Documentation**
-
-| Document | Link |
-|----------|------|
-| 📊 Future Data Model | [FUTURE_DATA_MODEL.md](FUTURE_DATA_MODEL.md) |
-| 🔄 Future Flowchart | [FUTURE_FLOWCHART.md](FUTURE_FLOWCHART.md) |
-| 📈 Future State Diagram | [FUTURE_STATEDIAGRAM.md](FUTURE_STATEDIAGRAM.md) |
-| 🧠 Future Mindmap | [FUTURE_MINDMAP.md](FUTURE_MINDMAP.md) |
-| 💼 Future SWOT | [FUTURE_SWOT.md](FUTURE_SWOT.md) |
-| 🚀 Future Security Architecture | [FUTURE_SECURITY_ARCHITECTURE.md](FUTURE_SECURITY_ARCHITECTURE.md) |
-| ⚙️ Future Workflows | [FUTURE_WORKFLOWS.md](FUTURE_WORKFLOWS.md) |
-
-### **Hack23 Reference Implementations**
-
-| Project | Intelligence Methodology | Link |
-|---------|------------------------|------|
-| 🕵️ Citizen Intelligence Agency | Political OSINT, scorecards, network analysis | [github.com/Hack23/cia](https://github.com/Hack23/cia) |
-| 🛡️ CIA Compliance Manager | Compliance automation, security analytics | [github.com/Hack23/cia-compliance-manager](https://github.com/Hack23/cia-compliance-manager) |
+| Component | v1.0 | v1.1 | v1.2 | v2.0 |
+|-----------|------|------|------|------|
+| Cache | LRU in-memory | LRU + optional Redis | LRU + Redis | Redis Cluster |
+| Transport | stdio only | stdio | stdio + HTTP + WS | All + GraphQL |
+| Auth | None | None | None | OAuth 2.0 + RBAC |
+| Observability | Console | OpenTelemetry | OpenTelemetry | SIEM integration |
+| Deployment | npm / npx | npm + Docker | Docker + K8s Helm | Multi-tenant SaaS |
+| Data Sources | EP API v2 | EP API v2 | EP API v2 | EP + EUR-Lex + Council |
+| Tools | 39 | 44 | 50 | 60+ |
 
 ---
 
-<p align="center">
-  <em>This architecture roadmap is maintained as part of the <a href="https://github.com/Hack23/ISMS-PUBLIC">Hack23 AB ISMS</a> framework.</em><br>
-  <em>Licensed under <a href="LICENSE.md">Apache-2.0</a> • ☁️ Serverless AWS-Only Strategy</em>
-</p>
+*This document defines the planned evolution. Actual delivery timelines depend on community contributions and EP API developments. See [ARCHITECTURE.md](./ARCHITECTURE.md) for the current implemented architecture.*
