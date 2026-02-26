@@ -70,7 +70,7 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ### 🎯 Key Features
 
-- 🔌 **Full MCP Implementation**: 39 tools (7 core + 3 advanced + 10 OSINT + 19 EP API v2), 9 Resources, and 7 Prompts
+- 🔌 **Full MCP Implementation**: 39 tools (7 MEP + 7 plenary & meeting + 2 committee + 7 document + 3 legislative + 3 advanced analysis + 10 OSINT intelligence), 9 Resources, and 7 Prompts
 - 🏛️ **Complete EP API v2 Coverage**: All European Parliament Open Data API endpoints covered
 - 🕵️ **OSINT Intelligence**: MEP influence scoring, coalition analysis, anomaly detection
 - 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance
@@ -452,19 +452,60 @@ npm run docs:build    # Full documentation build (HTML + MD + coverage + test re
 
 ## 🔌 MCP Tools (39 Total)
 
-### Quick Reference — Core Data Tools (7)
+All tools are organized below by functional area. Each tool includes input validation via Zod schemas, caching, and rate limiting.
+
+### 👤 MEP Tools (7)
 
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
 | [`get_meps`](./API_USAGE_GUIDE.md#tool-get_meps) | List MEPs with filters | country, group, committee, limit | `GET /meps` |
 | [`get_mep_details`](./API_USAGE_GUIDE.md#tool-get_mep_details) | Detailed MEP information | id (required) | `GET /meps/{id}` |
+| [`get_current_meps`](./API_USAGE_GUIDE.md#tool-get_current_meps) | Currently active MEPs with active mandates | limit, offset | `GET /meps/show-current` |
+| [`get_incoming_meps`](./API_USAGE_GUIDE.md#tool-get_incoming_meps) | Newly arriving MEPs for current term | limit, offset | `GET /meps/show-incoming` |
+| [`get_outgoing_meps`](./API_USAGE_GUIDE.md#tool-get_outgoing_meps) | Departing MEPs for current term | limit, offset | `GET /meps/show-outgoing` |
+| [`get_homonym_meps`](./API_USAGE_GUIDE.md#tool-get_homonym_meps) | MEPs with identical names (disambiguation) | limit, offset | `GET /meps/show-homonyms` |
+| [`get_mep_declarations`](./API_USAGE_GUIDE.md#tool-get_mep_declarations) | MEP financial interest declarations | docId, year, limit | `GET /meps-declarations`, `GET /meps-declarations/{id}` |
+
+### 🏛️ Plenary & Meeting Tools (7)
+
+| Tool | Description | Key Parameters | EP API Endpoint |
+|------|-------------|----------------|-----------------|
 | [`get_plenary_sessions`](./API_USAGE_GUIDE.md#tool-get_plenary_sessions) | List plenary sessions/meetings, or single by eventId | dateFrom, dateTo, eventId, limit | `GET /meetings`, `GET /meetings/{id}` |
 | [`get_voting_records`](./API_USAGE_GUIDE.md#tool-get_voting_records) | Retrieve voting records | mepId, sessionId, topic, dateFrom | `GET /meetings/{id}/vote-results` |
-| [`search_documents`](./API_USAGE_GUIDE.md#tool-search_documents) | Search documents or get single by docId | keyword, docId, documentType, dateFrom | `GET /documents`, `GET /documents/{id}` |
+| [`get_speeches`](./API_USAGE_GUIDE.md#tool-get_speeches) | Plenary speeches and debate contributions | speechId, dateFrom, dateTo, limit | `GET /speeches`, `GET /speeches/{id}` |
+| [`get_events`](./API_USAGE_GUIDE.md#tool-get_events) | EP events (hearings, conferences, seminars) | eventId, dateFrom, dateTo, limit | `GET /events`, `GET /events/{id}` |
+| [`get_meeting_activities`](./API_USAGE_GUIDE.md#tool-get_meeting_activities) | Activities linked to a plenary sitting | sittingId (required), limit | `GET /meetings/{id}/activities` |
+| [`get_meeting_decisions`](./API_USAGE_GUIDE.md#tool-get_meeting_decisions) | Decisions made in a plenary sitting | sittingId (required), limit | `GET /meetings/{id}/decisions` |
+| [`get_meeting_foreseen_activities`](./API_USAGE_GUIDE.md#tool-get_meeting_foreseen_activities) | Planned agenda items for upcoming meetings | sittingId (required), limit | `GET /meetings/{id}/foreseen-activities` |
+
+### 🏢 Committee Tools (2)
+
+| Tool | Description | Key Parameters | EP API Endpoint |
+|------|-------------|----------------|-----------------|
 | [`get_committee_info`](./API_USAGE_GUIDE.md#tool-get_committee_info) | Committee/corporate body info, or all current bodies | id, abbreviation, showCurrent | `GET /corporate-bodies`, `GET /corporate-bodies/show-current` |
+| [`get_committee_documents`](./API_USAGE_GUIDE.md#tool-get_committee_documents) | Committee documents and drafts | docId, year, limit | `GET /committee-documents`, `GET /committee-documents/{id}` |
+
+### 📄 Document Tools (7)
+
+| Tool | Description | Key Parameters | EP API Endpoint |
+|------|-------------|----------------|-----------------|
+| [`search_documents`](./API_USAGE_GUIDE.md#tool-search_documents) | Search documents or get single by docId | keyword, docId, documentType, dateFrom | `GET /documents`, `GET /documents/{id}` |
+| [`get_adopted_texts`](./API_USAGE_GUIDE.md#tool-get_adopted_texts) | Adopted legislative texts and resolutions | docId, year, limit | `GET /adopted-texts`, `GET /adopted-texts/{id}` |
+| [`get_plenary_documents`](./API_USAGE_GUIDE.md#tool-get_plenary_documents) | Plenary legislative documents | docId, year, limit | `GET /plenary-documents`, `GET /plenary-documents/{id}` |
+| [`get_plenary_session_documents`](./API_USAGE_GUIDE.md#tool-get_plenary_session_documents) | Session agendas, minutes, voting lists | docId, limit | `GET /plenary-session-documents`, `GET /plenary-session-documents/{id}` |
+| [`get_plenary_session_document_items`](./API_USAGE_GUIDE.md#tool-get_plenary_session_document_items) | Individual items within session documents | limit, offset | `GET /plenary-session-documents-items` |
+| [`get_external_documents`](./API_USAGE_GUIDE.md#tool-get_external_documents) | Non-EP documents (Council, Commission) | docId, year, limit | `GET /external-documents`, `GET /external-documents/{id}` |
 | [`get_parliamentary_questions`](./API_USAGE_GUIDE.md#tool-get_parliamentary_questions) | Parliamentary Q&A, or single by docId | type, author, topic, docId | `GET /parliamentary-questions`, `GET /parliamentary-questions/{id}` |
 
-### Advanced Analysis Tools (3)
+### ⚖️ Legislative Procedure Tools (3)
+
+| Tool | Description | Key Parameters | EP API Endpoint |
+|------|-------------|----------------|-----------------|
+| [`get_procedures`](./API_USAGE_GUIDE.md#tool-get_procedures) | Legislative procedures, or single by processId | processId, year, limit | `GET /procedures`, `GET /procedures/{id}` |
+| [`get_procedure_events`](./API_USAGE_GUIDE.md#tool-get_procedure_events) | Timeline events for a legislative procedure | processId (required), limit | `GET /procedures/{id}/events` |
+| [`get_controlled_vocabularies`](./API_USAGE_GUIDE.md#tool-get_controlled_vocabularies) | Standardized classification terms | vocId, limit | `GET /controlled-vocabularies`, `GET /controlled-vocabularies/{id}` |
+
+### 📊 Advanced Analysis Tools (3)
 
 | Tool | Description | Key Parameters | Output |
 |------|-------------|----------------|--------|
@@ -486,35 +527,6 @@ npm run docs:build    # Full documentation build (HTML + MD + coverage + test re
 | [`track_mep_attendance`](./API_USAGE_GUIDE.md#tool-track_mep_attendance) | MEP attendance patterns & trends | mepId, country, groupId, dateFrom, dateTo, limit | Attendance report |
 | [`analyze_country_delegation`](./API_USAGE_GUIDE.md#tool-analyze_country_delegation) | Country delegation voting & composition | country (required), dateFrom, dateTo | Delegation analysis |
 | [`generate_political_landscape`](./API_USAGE_GUIDE.md#tool-generate_political_landscape) | Parliament-wide political landscape | dateFrom, dateTo | Landscape overview |
-
-### 🏛️ EP API v2 Data Tools (10)
-
-| Tool | Description | Key Parameters | EP API Endpoint |
-|------|-------------|----------------|-----------------|
-| `get_current_meps` | All currently active MEPs | limit, offset | `GET /meps/show-current` |
-| `get_incoming_meps` | Incoming MEPs for current term | limit, offset | `GET /meps/show-incoming` |
-| `get_outgoing_meps` | Outgoing MEPs for current term | limit, offset | `GET /meps/show-outgoing` |
-| `get_homonym_meps` | Homonym MEPs for current term | limit, offset | `GET /meps/show-homonyms` |
-| `get_speeches` | Plenary speeches, or single by speechId | speechId, year, limit | `GET /speeches`, `GET /speeches/{id}` |
-| `get_procedures` | Legislative procedures, or single by processId | processId, year, limit | `GET /procedures`, `GET /procedures/{id}` |
-| `get_events` | EP events, or single by eventId | eventId, year, limit | `GET /events`, `GET /events/{id}` |
-| `get_meeting_activities` | Activities linked to a meeting | sittingId (required), limit | `GET /meetings/{id}/activities` |
-| `get_meeting_decisions` | Decisions in a meeting | sittingId (required), limit | `GET /meetings/{id}/decisions` |
-| `get_meeting_foreseen_activities` | Foreseen activities for a meeting | sittingId (required), limit | `GET /meetings/{id}/foreseen-activities` |
-
-### 📄 EP API v2 Document Tools (9)
-
-| Tool | Description | Key Parameters | EP API Endpoint |
-|------|-------------|----------------|-----------------|
-| `get_adopted_texts` | Adopted texts, or single by docId | docId, year, limit | `GET /adopted-texts`, `GET /adopted-texts/{id}` |
-| `get_mep_declarations` | MEP declarations, or single by docId | docId, year, limit | `GET /meps-declarations`, `GET /meps-declarations/{id}` |
-| `get_plenary_documents` | Plenary documents, or single by docId | docId, year, limit | `GET /plenary-documents`, `GET /plenary-documents/{id}` |
-| `get_committee_documents` | Committee documents, or single by docId | docId, year, limit | `GET /committee-documents`, `GET /committee-documents/{id}` |
-| `get_plenary_session_documents` | Plenary session documents, or single by docId | docId, year, limit | `GET /plenary-session-documents`, `GET /plenary-session-documents/{id}` |
-| `get_plenary_session_document_items` | Plenary session document items | limit, offset | `GET /plenary-session-documents-items` |
-| `get_external_documents` | External documents, or single by docId | docId, limit | `GET /external-documents`, `GET /external-documents/{id}` |
-| `get_controlled_vocabularies` | Controlled vocabularies, or single by vocId | vocId, limit | `GET /controlled-vocabularies`, `GET /controlled-vocabularies/{id}` |
-| `get_procedure_events` | Events linked to a procedure | processId (required), limit | `GET /procedures/{id}/events` |
 
 📖 **[Complete TypeDoc API documentation →](https://hack23.github.io/European-Parliament-MCP-Server/api/)** · **[Markdown API docs →](https://hack23.github.io/European-Parliament-MCP-Server/api-markdown/)**
 

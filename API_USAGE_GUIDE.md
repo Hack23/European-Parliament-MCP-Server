@@ -7,7 +7,7 @@
 <h1 align="center">European Parliament MCP Server - API Usage Guide</h1>
 
 <p align="center">
-  <strong>Comprehensive guide to using all 20 MCP tools</strong><br>
+  <strong>Comprehensive guide to using all 39 MCP tools</strong><br>
   <em>Real-world examples, best practices, and query patterns</em>
 </p>
 
@@ -39,6 +39,26 @@
   - [track_mep_attendance](#tool-track_mep_attendance)
   - [analyze_country_delegation](#tool-analyze_country_delegation)
   - [generate_political_landscape](#tool-generate_political_landscape)
+- [EP API v2 Endpoint Tools](#ep-api-v2-endpoint-tools)
+  - [get_current_meps](#tool-get_current_meps)
+  - [get_incoming_meps](#tool-get_incoming_meps)
+  - [get_outgoing_meps](#tool-get_outgoing_meps)
+  - [get_homonym_meps](#tool-get_homonym_meps)
+  - [get_speeches](#tool-get_speeches)
+  - [get_procedures](#tool-get_procedures)
+  - [get_procedure_events](#tool-get_procedure_events)
+  - [get_adopted_texts](#tool-get_adopted_texts)
+  - [get_events](#tool-get_events)
+  - [get_meeting_activities](#tool-get_meeting_activities)
+  - [get_meeting_decisions](#tool-get_meeting_decisions)
+  - [get_meeting_foreseen_activities](#tool-get_meeting_foreseen_activities)
+  - [get_mep_declarations](#tool-get_mep_declarations)
+  - [get_plenary_documents](#tool-get_plenary_documents)
+  - [get_committee_documents](#tool-get_committee_documents)
+  - [get_plenary_session_documents](#tool-get_plenary_session_documents)
+  - [get_plenary_session_document_items](#tool-get_plenary_session_document_items)
+  - [get_controlled_vocabularies](#tool-get_controlled_vocabularies)
+  - [get_external_documents](#tool-get_external_documents)
 - [MCP Prompts](#mcp-prompts)
 - [MCP Resources](#mcp-resources)
 - [Common Use Cases](#common-use-cases)
@@ -49,7 +69,7 @@
 
 ## 🎯 Overview
 
-The European Parliament MCP Server provides 20 specialized tools for accessing parliamentary data through the Model Context Protocol — including 7 core data tools, 3 advanced analysis tools, and 10 OSINT intelligence tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
+The European Parliament MCP Server provides 39 specialized tools for accessing parliamentary data through the Model Context Protocol — including 7 MEP tools, 7 plenary & meeting tools, 2 committee tools, 7 document tools, 3 legislative procedure tools, 3 advanced analysis tools, and 10 OSINT intelligence tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
 
 ### Key Features
 
@@ -67,15 +87,61 @@ Currently, the server does **not require authentication** for tool access. Futur
 
 ## 🔍 Quick Reference
 
+### 👤 MEP Tools
+
 | Tool | Purpose | Key Parameters | Response Type |
 |------|---------|----------------|---------------|
-| `get_meps` | List MEPs | country, group, committee | Paginated list |
+| `get_meps` | List MEPs with filters | country, group, committee | Paginated list |
 | `get_mep_details` | MEP details | id | Single object |
-| `get_plenary_sessions` | List sessions | dateFrom, dateTo | Paginated list |
-| `get_voting_records` | Voting data | mepId, dateFrom | Paginated list |
-| `search_documents` | Find documents | keywords, docType | Paginated list |
+| `get_current_meps` | Currently active MEPs | limit, offset | Paginated list |
+| `get_incoming_meps` | Newly arriving MEPs | limit, offset | Paginated list |
+| `get_outgoing_meps` | Departing MEPs | limit, offset | Paginated list |
+| `get_homonym_meps` | MEPs with identical names | limit, offset | Paginated list |
+| `get_mep_declarations` | MEP financial declarations | docId, year | Paginated list |
+
+### 🏛️ Plenary & Meeting Tools
+
+| Tool | Purpose | Key Parameters | Response Type |
+|------|---------|----------------|---------------|
+| `get_plenary_sessions` | List plenary sessions | dateFrom, dateTo, eventId | Paginated list |
+| `get_voting_records` | Voting data | mepId, sessionId | Paginated list |
+| `get_speeches` | Plenary speeches | speechId, dateFrom, dateTo | Paginated list |
+| `get_events` | EP events | eventId, dateFrom, dateTo | Paginated list |
+| `get_meeting_activities` | Meeting activities | sittingId (required) | Paginated list |
+| `get_meeting_decisions` | Meeting decisions | sittingId (required) | Paginated list |
+| `get_meeting_foreseen_activities` | Planned agenda items | sittingId (required) | Paginated list |
+
+### 🏢 Committee Tools
+
+| Tool | Purpose | Key Parameters | Response Type |
+|------|---------|----------------|---------------|
 | `get_committee_info` | Committee data | id, abbreviation | Single object |
+| `get_committee_documents` | Committee documents | docId, year | Paginated list |
+
+### 📄 Document Tools
+
+| Tool | Purpose | Key Parameters | Response Type |
+|------|---------|----------------|---------------|
+| `search_documents` | Find documents | keyword, docType | Paginated list |
+| `get_adopted_texts` | Adopted texts | docId, year | Paginated list |
+| `get_plenary_documents` | Plenary documents | docId, year | Paginated list |
+| `get_plenary_session_documents` | Session documents | docId | Paginated list |
+| `get_plenary_session_document_items` | Session document items | limit, offset | Paginated list |
+| `get_external_documents` | External documents | docId, year | Paginated list |
 | `get_parliamentary_questions` | Q&A data | author, dateFrom | Paginated list |
+
+### ⚖️ Legislative Procedure Tools
+
+| Tool | Purpose | Key Parameters | Response Type |
+|------|---------|----------------|---------------|
+| `get_procedures` | Legislative procedures | processId, year | Paginated list |
+| `get_procedure_events` | Procedure timeline events | processId (required) | Paginated list |
+| `get_controlled_vocabularies` | Classification terms | vocId | Paginated list |
+
+### 📊 Advanced Analysis Tools
+
+| Tool | Purpose | Key Parameters | Response Type |
+|------|---------|----------------|---------------|
 | `analyze_voting_patterns` | Voting analysis | mepId, dateFrom | Analysis object |
 | `track_legislation` | Track procedure | procedureId | Procedure object |
 | `generate_report` | Create reports | reportType, subjectId | Report object |
@@ -1086,6 +1152,536 @@ Generate a current political landscape overview including group sizes, coalition
 
 ---
 
+## 🏛️ EP API v2 Endpoint Tools
+
+These tools provide direct access to all European Parliament Open Data API v2 endpoints.
+
+### Tool: get_current_meps
+
+**Description**: Get currently active Members of European Parliament (today's date). Returns only MEPs with active mandates.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Show me all currently active MEPs
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_current_meps', { limit: 50 });
+```
+
+---
+
+### Tool: get_incoming_meps
+
+**Description**: Get incoming Members of European Parliament for the current parliamentary term. Returns MEPs who are newly joining.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+List the newly arriving MEPs for the current parliamentary term
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_incoming_meps', { limit: 20 });
+```
+
+---
+
+### Tool: get_outgoing_meps
+
+**Description**: Get outgoing Members of European Parliament for the current parliamentary term. Returns MEPs who are leaving parliament.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+Which MEPs are leaving the European Parliament this term?
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_outgoing_meps', { limit: 20 });
+```
+
+---
+
+### Tool: get_homonym_meps
+
+**Description**: Get homonym Members of European Parliament (MEPs with identical names) for the current parliamentary term. Useful for name disambiguation.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+Are there any MEPs with identical names in the current parliament?
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_homonym_meps', { limit: 50 });
+```
+
+---
+
+### Tool: get_speeches
+
+**Description**: Get European Parliament plenary speeches and debate contributions. Supports single speech lookup by speechId or list with date range filtering.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| speechId | string | No | - | Specific speech ID for single lookup |
+| dateFrom | string | No | - | Start date filter (YYYY-MM-DD) |
+| dateTo | string | No | - | End date filter (YYYY-MM-DD) |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Get plenary speeches from January 2024
+```
+
+**MCP Client - TypeScript:**
+```typescript
+// List speeches in a date range
+const result = await client.callTool('get_speeches', {
+  dateFrom: '2024-01-01',
+  dateTo: '2024-01-31',
+  limit: 20
+});
+
+// Get a specific speech
+const speech = await client.callTool('get_speeches', {
+  speechId: 'SPEECH-12345'
+});
+```
+
+---
+
+### Tool: get_procedures
+
+**Description**: Get European Parliament legislative procedures. Supports single procedure lookup by processId or list with year filter.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| processId | string | No | - | Specific procedure ID (YYYY-NNNN format) for single lookup |
+| year | number | No | - | Filter by year |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Show me legislative procedures from 2024
+```
+
+**MCP Client - TypeScript:**
+```typescript
+// List procedures by year
+const result = await client.callTool('get_procedures', { year: 2024, limit: 20 });
+
+// Get a specific procedure
+const procedure = await client.callTool('get_procedures', {
+  processId: '2024-0006'
+});
+```
+
+---
+
+### Tool: get_procedure_events
+
+**Description**: Get events linked to a specific EP legislative procedure (hearings, debates, votes). Returns the timeline of events for a procedure.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| processId | string | Yes | - | Procedure ID (YYYY-NNNN format) |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+Show me the timeline of events for procedure 2024-0006
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_procedure_events', {
+  processId: '2024-0006',
+  limit: 50
+});
+```
+
+---
+
+### Tool: get_adopted_texts
+
+**Description**: Get European Parliament adopted texts including legislative resolutions, positions, and non-legislative resolutions. Supports single document lookup by docId or list with year filter.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| docId | string | No | - | Specific document ID for single lookup |
+| year | number | No | - | Filter by year |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Get adopted texts from 2024
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_adopted_texts', { year: 2024, limit: 20 });
+```
+
+---
+
+### Tool: get_events
+
+**Description**: Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or list with date range filtering.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| eventId | string | No | - | Specific event ID for single lookup |
+| dateFrom | string | No | - | Start date filter (YYYY-MM-DD) |
+| dateTo | string | No | - | End date filter (YYYY-MM-DD) |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+Show me European Parliament events scheduled for March 2024
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_events', {
+  dateFrom: '2024-03-01',
+  dateTo: '2024-03-31',
+  limit: 20
+});
+```
+
+---
+
+### Tool: get_meeting_activities
+
+**Description**: Get activities linked to a specific EP plenary sitting (debates, votes, presentations). Requires a sitting ID.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| sittingId | string | Yes | - | Plenary sitting ID |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+What activities took place during plenary sitting MTG-PL-2024-01-15?
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_meeting_activities', {
+  sittingId: 'MTG-PL-2024-01-15',
+  limit: 50
+});
+```
+
+---
+
+### Tool: get_meeting_decisions
+
+**Description**: Get decisions made in a specific EP plenary sitting. Returns adopted decisions and voting outcomes. Requires a sitting ID.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| sittingId | string | Yes | - | Plenary sitting ID |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+What decisions were made in plenary sitting MTG-PL-2024-01-15?
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_meeting_decisions', {
+  sittingId: 'MTG-PL-2024-01-15',
+  limit: 50
+});
+```
+
+---
+
+### Tool: get_meeting_foreseen_activities
+
+**Description**: Get foreseen (planned) activities for a specific EP meeting/plenary sitting. Returns scheduled agenda items.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| sittingId | string | Yes | - | Plenary sitting ID |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+What is planned for the upcoming plenary sitting MTG-PL-2024-03-11?
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_meeting_foreseen_activities', {
+  sittingId: 'MTG-PL-2024-03-11',
+  limit: 50
+});
+```
+
+---
+
+### Tool: get_mep_declarations
+
+**Description**: Get MEP declarations of financial interests filed under the Rules of Procedure. Supports single declaration lookup by docId or list with year filter. GDPR: Access is audit-logged.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| docId | string | No | - | Specific declaration document ID for single lookup |
+| year | number | No | - | Filter by year |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Get MEP financial declarations from 2024
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_mep_declarations', { year: 2024, limit: 20 });
+```
+
+---
+
+### Tool: get_plenary_documents
+
+**Description**: Get European Parliament plenary documents. Supports single document lookup by docId or list with year filter.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| docId | string | No | - | Specific document ID for single lookup |
+| year | number | No | - | Filter by year |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+List plenary documents from 2024
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_plenary_documents', { year: 2024, limit: 20 });
+```
+
+---
+
+### Tool: get_committee_documents
+
+**Description**: Get European Parliament committee documents. Supports single document lookup by docId or list with year filter.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| docId | string | No | - | Specific document ID for single lookup |
+| year | number | No | - | Filter by year |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+Get committee documents from 2024
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_committee_documents', { year: 2024, limit: 20 });
+```
+
+---
+
+### Tool: get_plenary_session_documents
+
+**Description**: Get European Parliament plenary session documents (agendas, minutes, voting lists). Supports single document lookup by docId.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| docId | string | No | - | Specific document ID for single lookup |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+Get plenary session documents including agendas and minutes
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_plenary_session_documents', { limit: 20 });
+```
+
+---
+
+### Tool: get_plenary_session_document_items
+
+**Description**: Get European Parliament plenary session document items. Returns individual items within plenary session documents.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+Get individual items from plenary session documents
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_plenary_session_document_items', {
+  limit: 50,
+  offset: 0
+});
+```
+
+---
+
+### Tool: get_controlled_vocabularies
+
+**Description**: Get European Parliament controlled vocabularies (standardized classification terms). Supports single vocabulary lookup by vocId.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| vocId | string | No | - | Specific vocabulary ID for single lookup |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+Get the controlled vocabularies used by the European Parliament
+```
+
+**MCP Client - TypeScript:**
+```typescript
+// List all vocabularies
+const result = await client.callTool('get_controlled_vocabularies', { limit: 50 });
+
+// Get a specific vocabulary
+const vocab = await client.callTool('get_controlled_vocabularies', {
+  vocId: 'COMMITTEE_TYPE'
+});
+```
+
+---
+
+### Tool: get_external_documents
+
+**Description**: Get external documents (non-EP documents such as Council positions, Commission proposals) from the European Parliament data portal. Supports single document lookup by docId.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| docId | string | No | - | Specific document ID for single lookup |
+| year | number | No | - | Filter by year |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+```
+Get external documents like Council positions and Commission proposals from 2024
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_external_documents', { year: 2024, limit: 20 });
+```
+
+---
+
 ## 📝 MCP Prompts
 
 Pre-built intelligence analysis prompt templates for common parliamentary research workflows. For the exact argument schemas, refer to the prompt definitions in `src/prompts/index.ts`.
@@ -1098,6 +1694,7 @@ Pre-built intelligence analysis prompt templates for common parliamentary resear
 | `political_group_comparison` | Multi-dimensional comparison of political groups | groups? |
 | `committee_activity_report` | Committee workload, engagement, and document production report | committeeId (required) |
 | `voting_pattern_analysis` | Voting pattern trend detection and anomaly identification | topic?, mepId? |
+| `country_delegation_analysis` | Country delegation composition, voting cohesion, and cross-party dynamics | country (required), period? |
 
 ### Example: Using MCP Prompts
 
@@ -1121,6 +1718,9 @@ Direct data access via European Parliament resource URIs using the `ep://` schem
 | `ep://plenary-sessions` | Recent plenary session listing |
 | `ep://votes/{sessionId}` | Voting records for a specific session |
 | `ep://political-groups` | Political group listing with seat counts |
+| `ep://procedures/{procedureId}` | Legislative procedure details (YYYY-NNNN format) |
+| `ep://plenary/{plenaryId}` | Specific plenary session details |
+| `ep://documents/{documentId}` | Legislative document details |
 
 ### Example: Reading MCP Resources
 
@@ -1129,6 +1729,9 @@ Direct data access via European Parliament resource URIs using the `ep://` schem
 const meps = await client.readResource('ep://meps');
 const mepDetails = await client.readResource('ep://meps/MEP-124810');
 const committee = await client.readResource('ep://committees/ENVI');
+const procedure = await client.readResource('ep://procedures/2024-0006');
+const document = await client.readResource('ep://documents/DOC-12345');
+const plenary = await client.readResource('ep://plenary/PL-2024-01');
 ```
 
 ---
@@ -1587,7 +2190,7 @@ The European Parliament MCP Server is the **most feature-rich political MCP serv
 
 | Country | Server | Key Capabilities |
 |---------|--------|-----------------|
-| 🇪🇺 **EU** | [**European Parliament MCP**](https://github.com/Hack23/European-Parliament-MCP-Server) | **20 tools** — MEP profiling, coalition analysis, anomaly detection, political landscape |
+| 🇪🇺 **EU** | [**European Parliament MCP**](https://github.com/Hack23/European-Parliament-MCP-Server) | **39 tools** — MEP profiling, coalition analysis, anomaly detection, political landscape |
 | 🇺🇸 **USA** | [Congress.gov API MCP](https://github.com/bsmi021/mcp-congress_gov_server) | Bills, members, votes, committees |
 | 🇬🇧 **UK** | [Parliament MCP](https://github.com/i-dot-ai/parliament-mcp) | Hansard, members, debates, divisions |
 | 🇸🇪 **Sweden** | [Riksdag & Regering MCP](https://github.com/isakskogstad/Riksdag-Regering-MCP) | Parliament & government data |
