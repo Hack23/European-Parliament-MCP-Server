@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.1**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.2**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **CommitteeSchema**: `ZodObject`\<\{ `abbreviation`: `ZodString`; `chair`: `ZodOptional`\<`ZodString`\>; `id`: `ZodString`; `meetingSchedule`: `ZodOptional`\<`ZodArray`\<`ZodString`\>\>; `members`: `ZodArray`\<`ZodString`\>; `name`: `ZodString`; `responsibilities`: `ZodOptional`\<`ZodArray`\<`ZodString`\>\>; `viceChairs`: `ZodOptional`\<`ZodArray`\<`ZodString`\>\>; \}, `$strip`\>
 
-Defined in: [schemas/ep/committee.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/schemas/ep/committee.ts#L32)
+Defined in: [schemas/ep/committee.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/schemas/ep/committee.ts#L32)
 
 Committee output schema

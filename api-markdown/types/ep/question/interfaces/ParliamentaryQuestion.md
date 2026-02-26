@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.1**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.2**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: ParliamentaryQuestion
 
-Defined in: [types/ep/question.ts:80](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/types/ep/question.ts#L80)
+Defined in: [types/ep/question.ts:80](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/question.ts#L80)
 
 Parliamentary question to EU institutions.
 
@@ -84,7 +84,7 @@ const priorityQuestion: ParliamentaryQuestion = {
 
 > **author**: `string`
 
-Defined in: [types/ep/question.ts:140](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/types/ep/question.ts#L140)
+Defined in: [types/ep/question.ts:140](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/question.ts#L140)
 
 Question author MEP ID.
 
@@ -111,7 +111,7 @@ MEP for author details
 
 > **date**: `string`
 
-Defined in: [types/ep/question.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/types/ep/question.ts#L156)
+Defined in: [types/ep/question.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/question.ts#L156)
 
 Question submission date.
 
@@ -139,7 +139,7 @@ questions.
 
 > **id**: `string`
 
-Defined in: [types/ep/question.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/types/ep/question.ts#L99)
+Defined in: [types/ep/question.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/question.ts#L99)
 
 Unique question identifier.
 
@@ -174,7 +174,7 @@ Prefix indicates question type.
 
 > **questionText**: `string`
 
-Defined in: [types/ep/question.ts:194](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/types/ep/question.ts#L194)
+Defined in: [types/ep/question.ts:194](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/question.ts#L194)
 
 Full question text.
 
@@ -209,7 +209,7 @@ attacks, within EU competence, etc.).
 
 > **status**: `"PENDING"` \| `"ANSWERED"`
 
-Defined in: [types/ep/question.ts:247](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/types/ep/question.ts#L247)
+Defined in: [types/ep/question.ts:247](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/question.ts#L247)
 
 Question status.
 
@@ -238,7 +238,7 @@ Questions remain "PENDING" until institution provides answer.
 
 > **topic**: `string`
 
-Defined in: [types/ep/question.ts:171](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/types/ep/question.ts#L171)
+Defined in: [types/ep/question.ts:171](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/question.ts#L171)
 
 Question topic/subject matter.
 
@@ -268,7 +268,7 @@ Used for categorization and searching. Typically 50-150 characters.
 
 > **type**: `"WRITTEN"` \| `"ORAL"`
 
-Defined in: [types/ep/question.ts:124](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/types/ep/question.ts#L124)
+Defined in: [types/ep/question.ts:124](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/question.ts#L124)
 
 Question type.
 
@@ -305,7 +305,7 @@ Oral questions receive verbal answers in plenary session.
 
 > `optional` **answerDate**: `string`
 
-Defined in: [types/ep/question.ts:230](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/types/ep/question.ts#L230)
+Defined in: [types/ep/question.ts:230](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/question.ts#L230)
 
 Answer publication date.
 
@@ -337,7 +337,7 @@ For priority questions, target is 3 weeks from submission.
 
 > `optional` **answerText**: `string`
 
-Defined in: [types/ep/question.ts:210](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/types/ep/question.ts#L210)
+Defined in: [types/ep/question.ts:210](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/question.ts#L210)
 
 Answer text from institution.
 

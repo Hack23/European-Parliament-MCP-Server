@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.1**](../../README.md)
+[**European Parliament MCP Server API v0.8.2**](../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **CommitteeActivityArgsSchema**: `ZodObject`\<\{ `committeeId`: `ZodString`; \}, `$strip`\>
 
-Defined in: [prompts/index.ts:149](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/prompts/index.ts#L149)
+Defined in: [prompts/index.ts:149](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/prompts/index.ts#L149)
 
 Typed Zod schema for committee activity report prompt arguments.

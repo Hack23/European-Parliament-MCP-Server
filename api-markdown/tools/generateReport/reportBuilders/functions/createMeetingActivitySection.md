@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.1**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.2**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **createMeetingActivitySection**(`meetingsCount`): [`ReportSection`](../../types/interfaces/ReportSection.md)
 
-Defined in: [tools/generateReport/reportBuilders.ts:62](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/tools/generateReport/reportBuilders.ts#L62)
+Defined in: [tools/generateReport/reportBuilders.ts:62](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/generateReport/reportBuilders.ts#L62)
 
 Create meeting activity section with real data
 Cyclomatic complexity: 1
