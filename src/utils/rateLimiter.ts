@@ -237,8 +237,8 @@ export class RateLimiter {
    * @example
    * ```typescript
    * const status = rateLimiter.getStatus();
-   * console.log(`${status.utilizationPercent}% utilised`);
-   * // e.g. "45% utilised"
+   * console.log(`${status.utilizationPercent}% utilized`);
+   * // e.g. "45% utilized"
    * ```
    *
    * @since 0.8.0
