@@ -104,7 +104,7 @@ Currently, the server does **not require authentication** for tool access. Futur
 | Tool | Purpose | Key Parameters | Response Type |
 |------|---------|----------------|---------------|
 | `get_plenary_sessions` | List plenary sessions | dateFrom, dateTo, eventId | Paginated list |
-| `get_voting_records` | Voting data | mepId, sessionId | Paginated list |
+| `get_voting_records` | Aggregate voting data | sessionId, topic, dateFrom | Paginated list |
 | `get_speeches` | Plenary speeches | speechId, dateFrom, dateTo | Paginated list |
 | `get_events` | EP events | eventId, dateFrom, dateTo | Paginated list |
 | `get_meeting_activities` | Meeting activities | sittingId (required) | Paginated list |
@@ -122,7 +122,7 @@ Currently, the server does **not require authentication** for tool access. Futur
 
 | Tool | Purpose | Key Parameters | Response Type |
 |------|---------|----------------|---------------|
-| `search_documents` | Find documents | keyword, docType | Paginated list |
+| `search_documents` | Find documents | keyword, documentType | Paginated list |
 | `get_adopted_texts` | Adopted texts | docId, year | Paginated list |
 | `get_plenary_documents` | Plenary documents | docId, year | Paginated list |
 | `get_plenary_session_documents` | Session documents | docId | Paginated list |
@@ -1731,7 +1731,7 @@ const mepDetails = await client.readResource('ep://meps/MEP-124810');
 const committee = await client.readResource('ep://committees/ENVI');
 const procedure = await client.readResource('ep://procedures/2024-0006');
 const document = await client.readResource('ep://documents/DOC-12345');
-const plenary = await client.readResource('ep://plenary/PL-2024-01');
+const plenary = await client.readResource('ep://plenary/MTG-PL-2024-01-15');
 ```
 
 ---

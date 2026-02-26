@@ -471,7 +471,7 @@ All tools are organized below by functional area. Each tool includes input valid
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
 | [`get_plenary_sessions`](./API_USAGE_GUIDE.md#tool-get_plenary_sessions) | List plenary sessions/meetings, or single by eventId | dateFrom, dateTo, eventId, limit | `GET /meetings`, `GET /meetings/{id}` |
-| [`get_voting_records`](./API_USAGE_GUIDE.md#tool-get_voting_records) | Retrieve voting records | mepId, sessionId, topic, dateFrom | `GET /meetings/{id}/vote-results` |
+| [`get_voting_records`](./API_USAGE_GUIDE.md#tool-get_voting_records) | Retrieve aggregate voting records (no per‑MEP positions) | sessionId, topic, dateFrom | `GET /meetings/{id}/vote-results` |
 | [`get_speeches`](./API_USAGE_GUIDE.md#tool-get_speeches) | Plenary speeches and debate contributions | speechId, dateFrom, dateTo, limit | `GET /speeches`, `GET /speeches/{id}` |
 | [`get_events`](./API_USAGE_GUIDE.md#tool-get_events) | EP events (hearings, conferences, seminars) | eventId, dateFrom, dateTo, limit | `GET /events`, `GET /events/{id}` |
 | [`get_meeting_activities`](./API_USAGE_GUIDE.md#tool-get_meeting_activities) | Activities linked to a plenary sitting | sittingId (required), limit | `GET /meetings/{id}/activities` |
