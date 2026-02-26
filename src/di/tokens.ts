@@ -26,6 +26,8 @@
  * property value is inferred as `symbol` (not widened to `object`).
  * For type-level uniqueness, each `Symbol(...)` is a distinct runtime value;
  * `DIToken` is the union of all token values for generic container utilities.
+ *
+ * @since 0.8.0
  */
 export const TOKENS = {
   /**
@@ -62,5 +64,7 @@ export const TOKENS = {
 /**
  * Union type of all registered DI token values.
  * Useful for writing type-safe generic container utilities.
+ *
+ * @since 0.8.0
  */
 export type DIToken = (typeof TOKENS)[keyof typeof TOKENS];

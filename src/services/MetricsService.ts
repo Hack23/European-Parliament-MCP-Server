@@ -75,12 +75,24 @@ export class MetricsService {
   }
 
   /**
-   * Increment a counter metric
-   * Cyclomatic complexity: 2
-   * 
-   * @param name - Metric name
-   * @param value - Increment value (default: 1)
-   * @param labels - Optional labels for metric dimensions
+   * Increments a counter metric by the given value.
+   *
+   * Creates the counter at zero if it does not exist yet, then adds `value`.
+   * Counters are monotonically increasing — use {@link setGauge} for
+   * values that can decrease.
+   *
+   * @param name - Metric name (use a {@link MetricName} enum value for type safety)
+   * @param value - Amount to add to the counter (default: `1`)
+   * @param labels - Optional key/value label dimensions (e.g., `{ endpoint: '/meps' }`)
+   * @throws {TypeError} If `name` is not a string
+   *
+   * @example
+   * ```typescript
+   * metricsService.incrementCounter(MetricName.EP_API_CALL_COUNT);
+   * metricsService.incrementCounter(MetricName.EP_API_CALL_COUNT, 1, { endpoint: '/meps' });
+   * ```
+   *
+   * @since 0.8.0
    */
   incrementCounter(name: MetricKey, value = 1, labels?: Record<string, string>): void {
     const key = this.buildKey(name, labels);
@@ -96,12 +108,23 @@ export class MetricsService {
   }
 
   /**
-   * Set a gauge metric value
-   * Cyclomatic complexity: 1
-   * 
-   * @param name - Metric name
-   * @param value - Gauge value
-   * @param labels - Optional labels for metric dimensions
+   * Sets a gauge metric to an absolute value.
+   *
+   * Unlike counters, gauges can be set to any value including decreasing
+   * values (e.g., current queue depth, active connection count).
+   *
+   * @param name - Metric name (use a {@link MetricName} enum value for type safety)
+   * @param value - Absolute gauge value to record
+   * @param labels - Optional key/value label dimensions
+   * @throws {TypeError} If `name` is not a string
+   *
+   * @example
+   * ```typescript
+   * metricsService.setGauge('active_connections', 5);
+   * metricsService.setGauge('queue_depth', 12, { queue: 'ep_api' });
+   * ```
+   *
+   * @since 0.8.0
    */
   setGauge(name: MetricKey, value: number, labels?: Record<string, string>): void {
     const key = this.buildKey(name, labels);
@@ -114,12 +137,25 @@ export class MetricsService {
   }
 
   /**
-   * Record a histogram observation
-   * Cyclomatic complexity: 3
-   * 
-   * @param name - Metric name
-   * @param value - Observed value
-   * @param labels - Optional labels for metric dimensions
+   * Records a single observation into a histogram metric.
+   *
+   * Uses reservoir sampling to keep sample count bounded at
+   * `maxHistogramSamples`. Use {@link getHistogramSummary} to retrieve
+   * computed percentiles.
+   *
+   * @param name - Metric name (use a {@link MetricName} enum value for type safety)
+   * @param value - Observed value (e.g., response time in milliseconds)
+   * @param labels - Optional key/value label dimensions
+   * @throws {TypeError} If `name` is not a string
+   *
+   * @example
+   * ```typescript
+   * const start = Date.now();
+   * await fetchFromEPAPI('/meps');
+   * metricsService.observeHistogram('ep_api_latency_ms', Date.now() - start);
+   * ```
+   *
+   * @since 0.8.0
    */
   observeHistogram(name: MetricKey, value: number, labels?: Record<string, string>): void {
     const key = this.buildKey(name, labels);
@@ -154,12 +190,24 @@ export class MetricsService {
   }
 
   /**
-   * Get current metric value
-   * Cyclomatic complexity: 3
-   * 
-   * @param name - Metric name
-   * @param labels - Optional labels
-   * @returns Current metric value or undefined
+   * Returns the current scalar value of a counter or gauge metric.
+   *
+   * Returns `undefined` for histogram metrics (use {@link getHistogramSummary}
+   * instead) and for metrics that have not been recorded yet.
+   *
+   * @param name - Metric name to query
+   * @param labels - Optional label dimensions to scope the lookup
+   * @returns Current numeric value, or `undefined` if not found / is a histogram
+   *
+   * @example
+   * ```typescript
+   * const errors = metricsService.getMetric(MetricName.EP_API_ERROR_COUNT) ?? 0;
+   * if (errors > 10) {
+   *   console.warn('High EP API error rate');
+   * }
+   * ```
+   *
+   * @since 0.8.0
    */
   getMetric(name: MetricKey, labels?: Record<string, string>): number | undefined {
     const key = this.buildKey(name, labels);
@@ -169,12 +217,26 @@ export class MetricsService {
   }
 
   /**
-   * Get histogram summary
-   * Cyclomatic complexity: 3
-   * 
-   * @param name - Metric name
-   * @param labels - Optional labels
-   * @returns Histogram summary with percentiles
+   * Returns a statistical summary of a histogram metric.
+   *
+   * Computes count, sum, average, and p50 / p95 / p99 percentiles from
+   * the stored samples. Returns `undefined` if the metric does not exist,
+   * is not a histogram, or has no samples yet.
+   *
+   * @param name - Histogram metric name to summarise
+   * @param labels - Optional label dimensions to scope the lookup
+   * @returns Summary object with `count`, `sum`, `avg`, `p50`, `p95`, `p99`,
+   *   or `undefined` if no histogram data exists
+   *
+   * @example
+   * ```typescript
+   * const summary = metricsService.getHistogramSummary('ep_api_latency_ms');
+   * if (summary) {
+   *   console.log(`p95 latency: ${summary.p95}ms`);
+   * }
+   * ```
+   *
+   * @since 0.8.0
    */
   getHistogramSummary(name: MetricKey, labels?: Record<string, string>): {
     count: number;
@@ -202,8 +264,19 @@ export class MetricsService {
   }
 
   /**
-   * Clear all metrics
-   * Cyclomatic complexity: 1
+   * Clears all recorded metrics from memory.
+   *
+   * Intended for use in **tests** to ensure metric isolation between cases.
+   * Calling this in production will silently discard all instrumentation data.
+   *
+   * @example
+   * ```typescript
+   * afterEach(() => {
+   *   metricsService.clear();
+   * });
+   * ```
+   *
+   * @since 0.8.0
    */
   clear(): void {
     this.metrics.clear();

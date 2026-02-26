@@ -90,9 +90,19 @@ export class PerformanceMonitor {
   private readonly maxSamples: number;
   
   /**
-   * Create a new performance monitor
-   * 
-   * @param maxSamples - Maximum number of samples to retain per operation (default: 1000)
+   * Creates a new performance monitor.
+   *
+   * @param maxSamples - Maximum number of duration samples to retain per
+   *   operation name. Older samples are evicted when the limit is reached
+   *   (sliding window). Default: `1000`.
+   * @throws {RangeError} If `maxSamples` is not a positive finite integer
+   *
+   * @example
+   * ```typescript
+   * const monitor = new PerformanceMonitor(500);
+   * ```
+   *
+   * @since 0.8.0
    */
   constructor(maxSamples = 1000) {
     if (!Number.isFinite(maxSamples) || !Number.isInteger(maxSamples) || maxSamples <= 0) {
@@ -102,17 +112,24 @@ export class PerformanceMonitor {
   }
   
   /**
-   * Record an operation duration
-   * 
-   * @param operation - Operation name/identifier
-   * @param durationMs - Duration in milliseconds
-   * 
+   * Records a duration sample for the named operation.
+   *
+   * When the number of stored samples reaches `maxSamples`, the oldest
+   * entries are evicted in bulk (sliding window). Use {@link getStats} to
+   * retrieve aggregated statistics after recording samples.
+   *
+   * @param operation - Unique operation name / identifier (e.g., `'ep_api_call'`)
+   * @param durationMs - Observed duration in milliseconds (should be ≥ 0)
+   * @throws {TypeError} If `operation` is not a string
+   *
    * @example
    * ```typescript
    * const start = performance.now();
    * await doWork();
    * monitor.recordDuration('work', performance.now() - start);
    * ```
+   *
+   * @since 0.8.0
    */
   recordDuration(operation: string, durationMs: number): void {
     let durations = this.metrics.get(operation);
@@ -134,14 +151,16 @@ export class PerformanceMonitor {
   }
   
   /**
-   * Get performance statistics for an operation
-   * 
-   * Calculates percentiles and averages from recorded durations.
-   * Returns null if no measurements exist for the operation.
-   * 
-   * @param operation - Operation name/identifier
-   * @returns Performance statistics or null if no data
-   * 
+   * Returns aggregated performance statistics for a named operation.
+   *
+   * Calculates percentiles (p50 / p95 / p99), average, min, and max from
+   * the stored duration samples. Returns `null` when no samples have been
+   * recorded for the operation yet.
+   *
+   * @param operation - Operation name / identifier to query
+   * @returns {@link PerformanceStats} object, or `null` if no data exists
+   * @throws {TypeError} If `operation` is not a string
+   *
    * @example
    * ```typescript
    * const stats = monitor.getStats('api_call');
@@ -149,6 +168,8 @@ export class PerformanceMonitor {
    *   console.warn('API calls are slow (p95 > 1s)');
    * }
    * ```
+   *
+   * @since 0.8.0
    */
   getStats(operation: string): PerformanceStats | null {
     const durations = this.metrics.get(operation);
@@ -218,28 +239,31 @@ export class PerformanceMonitor {
   }
   
   /**
-   * Get all operation names being tracked
-   * 
-   * @returns Array of operation names
-   * 
+   * Returns all operation names currently being tracked.
+   *
+   * @returns Array of operation name strings, in insertion order
+   *
    * @example
    * ```typescript
    * const operations = monitor.getOperations();
    * operations.forEach(op => {
    *   const stats = monitor.getStats(op);
-   *   console.log(`${op}: ${stats?.p95}ms`);
+   *   console.log(`${op}: p95=${stats?.p95}ms`);
    * });
    * ```
+   *
+   * @since 0.8.0
    */
   getOperations(): string[] {
     return Array.from(this.metrics.keys());
   }
   
   /**
-   * Clear all recorded metrics
-   * 
-   * Useful for testing or when starting a new monitoring period.
-   * 
+   * Clears all recorded duration samples for every tracked operation.
+   *
+   * Useful for resetting state between test cases or at the start of a new
+   * monitoring window.
+   *
    * @example
    * ```typescript
    * // Reset metrics after each test
@@ -247,20 +271,24 @@ export class PerformanceMonitor {
    *   monitor.clear();
    * });
    * ```
+   *
+   * @since 0.8.0
    */
   clear(): void {
     this.metrics.clear();
   }
   
   /**
-   * Clear metrics for a specific operation
-   * 
-   * @param operation - Operation name to clear
-   * 
+   * Clears recorded duration samples for a single operation.
+   *
+   * @param operation - Operation name whose samples should be discarded
+   *
    * @example
    * ```typescript
    * monitor.clearOperation('api_call');
    * ```
+   *
+   * @since 0.8.0
    */
   clearOperation(operation: string): void {
     this.metrics.delete(operation);
@@ -274,15 +302,16 @@ export class PerformanceMonitor {
  * provided performance monitor.
  * 
  * @template T - Return type of the function
- * @param monitor - Performance monitor to record duration
- * @param operation - Operation name for tracking
- * @param fn - Async function to execute
+ * @param monitor - Performance monitor to record the duration in
+ * @param operation - Operation name for tracking (e.g., `'fetch_meps'`)
+ * @param fn - Async function to execute and measure
  * @returns Promise that resolves with the function result
- * 
+ * @throws Re-throws any error thrown by `fn` after recording the duration
+ *
  * @example
  * ```typescript
  * const monitor = new PerformanceMonitor();
- * 
+ *
  * const result = await withPerformanceTracking(
  *   monitor,
  *   'fetch_meps',
@@ -291,6 +320,8 @@ export class PerformanceMonitor {
  *   }
  * );
  * ```
+ *
+ * @since 0.8.0
  */
 export async function withPerformanceTracking<T>(
   monitor: PerformanceMonitor,
