@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_RATE\_LIMIT\_INTERVAL**: `"minute"`
 
-Defined in: [clients/ep/baseClient.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/clients/ep/baseClient.ts#L41)
+Defined in: [clients/ep/baseClient.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/clients/ep/baseClient.ts#L41)
 
 Default rate limit interval unit

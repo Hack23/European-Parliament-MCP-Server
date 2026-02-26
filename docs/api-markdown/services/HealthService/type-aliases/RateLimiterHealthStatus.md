@@ -8,7 +8,7 @@
 
 > **RateLimiterHealthStatus** = [`RateLimiterStatus`](../../../utils/rateLimiter/interfaces/RateLimiterStatus.md)
 
-Defined in: [services/HealthService.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L42)
+Defined in: [services/HealthService.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/services/HealthService.ts#L42)
 
 Rate-limiter status snapshot for health reporting.
 Type alias of [RateLimiterStatus](../../../utils/rateLimiter/interfaces/RateLimiterStatus.md) to prevent the two from drifting.

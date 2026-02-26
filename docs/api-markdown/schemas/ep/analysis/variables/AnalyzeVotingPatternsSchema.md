@@ -8,6 +8,6 @@
 
 > `const` **AnalyzeVotingPatternsSchema**: `ZodObject`\<\{ `compareWithGroup`: `ZodDefault`\<`ZodBoolean`\>; `dateFrom`: `ZodOptional`\<`ZodString`\>; `dateTo`: `ZodOptional`\<`ZodString`\>; `mepId`: `ZodString`; \}, `$strip`\>
 
-Defined in: [schemas/ep/analysis.ts:13](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/schemas/ep/analysis.ts#L13)
+Defined in: [schemas/ep/analysis.ts:13](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/schemas/ep/analysis.ts#L13)
 
 Analyze voting patterns input schema

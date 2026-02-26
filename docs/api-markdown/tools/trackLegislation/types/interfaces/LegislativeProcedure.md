@@ -6,7 +6,7 @@
 
 # Interface: LegislativeProcedure
 
-Defined in: [tools/trackLegislation/types.ts:10](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L10)
+Defined in: [tools/trackLegislation/types.ts:10](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L10)
 
 Legislative procedure tracking result
 
@@ -16,7 +16,7 @@ Legislative procedure tracking result
 
 > **amendments**: [`AmendmentStats`](AmendmentStats.md)
 
-Defined in: [tools/trackLegislation/types.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L26)
+Defined in: [tools/trackLegislation/types.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L26)
 
 Amendment statistics
 
@@ -26,7 +26,7 @@ Amendment statistics
 
 > **committees**: [`CommitteeAssignment`](CommitteeAssignment.md)[]
 
-Defined in: [tools/trackLegislation/types.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L24)
+Defined in: [tools/trackLegislation/types.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L24)
 
 Committee assignments
 
@@ -36,7 +36,7 @@ Committee assignments
 
 > **confidenceLevel**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L34)
+Defined in: [tools/trackLegislation/types.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L34)
 
 Data quality indicator
 
@@ -46,7 +46,7 @@ Data quality indicator
 
 > **currentStage**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:20](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L20)
+Defined in: [tools/trackLegislation/types.ts:20](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L20)
 
 Current stage description
 
@@ -56,7 +56,7 @@ Current stage description
 
 > **documents**: [`DocumentReference`](DocumentReference.md)[]
 
-Defined in: [tools/trackLegislation/types.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L30)
+Defined in: [tools/trackLegislation/types.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L30)
 
 Associated documents
 
@@ -66,7 +66,7 @@ Associated documents
 
 > **methodology**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L36)
+Defined in: [tools/trackLegislation/types.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L36)
 
 Methodology and data source description
 
@@ -76,7 +76,7 @@ Methodology and data source description
 
 > **procedureId**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:12](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L12)
+Defined in: [tools/trackLegislation/types.ts:12](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L12)
 
 Procedure identifier from EP API
 
@@ -86,7 +86,7 @@ Procedure identifier from EP API
 
 > **status**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L18)
+Defined in: [tools/trackLegislation/types.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L18)
 
 Current status
 
@@ -96,7 +96,7 @@ Current status
 
 > **timeline**: [`TimelineEvent`](TimelineEvent.md)[]
 
-Defined in: [tools/trackLegislation/types.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L22)
+Defined in: [tools/trackLegislation/types.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L22)
 
 Timeline of key events
 
@@ -106,7 +106,7 @@ Timeline of key events
 
 > **title**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:14](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L14)
+Defined in: [tools/trackLegislation/types.ts:14](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L14)
 
 Procedure title from EP API
 
@@ -116,7 +116,7 @@ Procedure title from EP API
 
 > **type**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:16](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L16)
+Defined in: [tools/trackLegislation/types.ts:16](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L16)
 
 Procedure type (e.g., COD, NLE)
 
@@ -126,7 +126,7 @@ Procedure type (e.g., COD, NLE)
 
 > **voting**: [`VotingRecord`](VotingRecord.md)[]
 
-Defined in: [tools/trackLegislation/types.ts:28](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L28)
+Defined in: [tools/trackLegislation/types.ts:28](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L28)
 
 Voting records
 
@@ -136,6 +136,6 @@ Voting records
 
 > `optional` **nextSteps**: `string`[]
 
-Defined in: [tools/trackLegislation/types.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/trackLegislation/types.ts#L32)
+Defined in: [tools/trackLegislation/types.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/trackLegislation/types.ts#L32)
 
 Predicted next steps

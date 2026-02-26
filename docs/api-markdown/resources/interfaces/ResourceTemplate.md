@@ -6,7 +6,7 @@
 
 # Interface: ResourceTemplate
 
-Defined in: [resources/index.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/resources/index.ts#L24)
+Defined in: [resources/index.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/resources/index.ts#L24)
 
 Resource template metadata for MCP listing
 
@@ -16,7 +16,7 @@ Resource template metadata for MCP listing
 
 > **description**: `string`
 
-Defined in: [resources/index.ts:27](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/resources/index.ts#L27)
+Defined in: [resources/index.ts:27](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/resources/index.ts#L27)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [resources/index.ts:27](https://github.com/Hack23/European-Parliamen
 
 > **mimeType**: `string`
 
-Defined in: [resources/index.ts:28](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/resources/index.ts#L28)
+Defined in: [resources/index.ts:28](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/resources/index.ts#L28)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [resources/index.ts:28](https://github.com/Hack23/European-Parliamen
 
 > **name**: `string`
 
-Defined in: [resources/index.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/resources/index.ts#L26)
+Defined in: [resources/index.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/resources/index.ts#L26)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [resources/index.ts:26](https://github.com/Hack23/European-Parliamen
 
 > **uriTemplate**: `string`
 
-Defined in: [resources/index.ts:25](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/resources/index.ts#L25)
+Defined in: [resources/index.ts:25](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/resources/index.ts#L25)

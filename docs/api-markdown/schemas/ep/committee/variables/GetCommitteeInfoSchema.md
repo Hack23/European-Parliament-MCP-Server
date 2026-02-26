@@ -8,6 +8,6 @@
 
 > `const` **GetCommitteeInfoSchema**: `ZodObject`\<\{ `abbreviation`: `ZodOptional`\<`ZodString`\>; `id`: `ZodOptional`\<`ZodString`\>; `showCurrent`: `ZodOptional`\<`ZodDefault`\<`ZodBoolean`\>\>; \}, `$strip`\>
 
-Defined in: [schemas/ep/committee.ts:12](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/schemas/ep/committee.ts#L12)
+Defined in: [schemas/ep/committee.ts:12](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/schemas/ep/committee.ts#L12)
 
 Get committee info input schema

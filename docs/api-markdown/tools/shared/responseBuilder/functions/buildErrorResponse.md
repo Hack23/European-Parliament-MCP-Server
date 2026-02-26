@@ -8,7 +8,7 @@
 
 > **buildErrorResponse**(`error`, `toolName`): [`ToolResult`](../../types/interfaces/ToolResult.md)
 
-Defined in: [tools/shared/responseBuilder.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/shared/responseBuilder.ts#L29)
+Defined in: [tools/shared/responseBuilder.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/shared/responseBuilder.ts#L29)
 
 Build an error response from an error value or message string.
 Never exposes raw stack traces to MCP clients.

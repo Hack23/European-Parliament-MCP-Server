@@ -8,7 +8,7 @@
 
 > **handleAnalyzeCommitteeActivity**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
 
-Defined in: [tools/analyzeCommitteeActivity.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/analyzeCommitteeActivity.ts#L197)
+Defined in: [tools/analyzeCommitteeActivity.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/analyzeCommitteeActivity.ts#L197)
 
 Analyze committee activity tool handler
 

@@ -6,7 +6,7 @@
 
 # Interface: AuditLogEntry
 
-Defined in: [utils/auditLogger.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L67)
+Defined in: [utils/auditLogger.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L67)
 
 Audit log entry structure, part of the public audit logging API.
 Represents a single audited operation and its contextual metadata.
@@ -17,7 +17,7 @@ Represents a single audited operation and its contextual metadata.
 
 > **action**: `string`
 
-Defined in: [utils/auditLogger.ts:76](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L76)
+Defined in: [utils/auditLogger.ts:76](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L76)
 
 Action performed (e.g., 'get_meps', 'get_mep_details')
 
@@ -27,7 +27,7 @@ Action performed (e.g., 'get_meps', 'get_mep_details')
 
 > **timestamp**: [`Date`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)
 
-Defined in: [utils/auditLogger.ts:71](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L71)
+Defined in: [utils/auditLogger.ts:71](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L71)
 
 Timestamp of the event
 
@@ -37,7 +37,7 @@ Timestamp of the event
 
 > `optional` **clientId**: `string`
 
-Defined in: [utils/auditLogger.ts:105](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L105)
+Defined in: [utils/auditLogger.ts:105](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L105)
 
 Client identifier
 
@@ -47,7 +47,7 @@ Client identifier
 
 > `optional` **duration**: `number`
 
-Defined in: [utils/auditLogger.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L95)
+Defined in: [utils/auditLogger.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L95)
 
 Duration of the operation in milliseconds
 
@@ -57,7 +57,7 @@ Duration of the operation in milliseconds
 
 > `optional` **ipAddress**: `string`
 
-Defined in: [utils/auditLogger.ts:110](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L110)
+Defined in: [utils/auditLogger.ts:110](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L110)
 
 IP address (for security monitoring)
 
@@ -67,7 +67,7 @@ IP address (for security monitoring)
 
 > `optional` **params**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
-Defined in: [utils/auditLogger.ts:81](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L81)
+Defined in: [utils/auditLogger.ts:81](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L81)
 
 Parameters used in the action
 
@@ -77,7 +77,7 @@ Parameters used in the action
 
 > `optional` **result**: `object`
 
-Defined in: [utils/auditLogger.ts:86](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L86)
+Defined in: [utils/auditLogger.ts:86](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L86)
 
 Result metadata (e.g., count of records returned)
 
@@ -99,6 +99,6 @@ Result metadata (e.g., count of records returned)
 
 > `optional` **userId**: `string`
 
-Defined in: [utils/auditLogger.ts:100](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L100)
+Defined in: [utils/auditLogger.ts:100](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/utils/auditLogger.ts#L100)
 
 User identifier (if authenticated)

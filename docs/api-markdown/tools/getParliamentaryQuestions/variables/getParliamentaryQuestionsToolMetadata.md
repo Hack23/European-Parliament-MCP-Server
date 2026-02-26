@@ -8,7 +8,7 @@
 
 > `const` **getParliamentaryQuestionsToolMetadata**: `object`
 
-Defined in: [tools/getParliamentaryQuestions.ts:90](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/getParliamentaryQuestions.ts#L90)
+Defined in: [tools/getParliamentaryQuestions.ts:90](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/getParliamentaryQuestions.ts#L90)
 
 Tool metadata for MCP registration
 

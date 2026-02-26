@@ -8,7 +8,7 @@
 
 > **createCommitteeSection**(`committeesLength`, `mep`): [`ReportSection`](../../types/interfaces/ReportSection.md)
 
-Defined in: [tools/generateReport/reportBuilders.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/generateReport/reportBuilders.ts#L34)
+Defined in: [tools/generateReport/reportBuilders.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/tools/generateReport/reportBuilders.ts#L34)
 
 Create committee involvement section
 Cyclomatic complexity: 1

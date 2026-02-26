@@ -8,7 +8,7 @@
 
 > **CommitteeID** = [`Brand`](Brand.md)\<`string`, `"CommitteeID"`\>
 
-Defined in: [types/branded.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/branded.ts#L73)
+Defined in: [types/branded.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/types/branded.ts#L73)
 
 Committee ID
 

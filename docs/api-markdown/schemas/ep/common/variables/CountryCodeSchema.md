@@ -8,6 +8,6 @@
 
 > `const` **CountryCodeSchema**: `ZodString`
 
-Defined in: [schemas/ep/common.ts:12](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/schemas/ep/common.ts#L12)
+Defined in: [schemas/ep/common.ts:12](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/schemas/ep/common.ts#L12)
 
 ISO 3166-1 alpha-2 country code validation

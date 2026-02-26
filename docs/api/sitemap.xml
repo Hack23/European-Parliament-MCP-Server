@@ -2,1706 +2,1706 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/index.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/hierarchy.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/clients_ep.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/clients_ep_baseClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/clients_ep_baseClient.APIError.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/clients_ep_baseClient.BaseEPClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/clients_ep_baseClient.DEFAULT_CACHE_TTL_MS.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/clients_ep_baseClient.DEFAULT_EP_API_BASE_URL.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/clients_ep_baseClient.DEFAULT_MAX_CACHE_SIZE.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/clients_ep_baseClient.DEFAULT_MAX_RETRIES.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/clients_ep_baseClient.DEFAULT_RATE_LIMIT_INTERVAL.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/clients_ep_baseClient.DEFAULT_RATE_LIMIT_TOKENS.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/clients_ep_baseClient.DEFAULT_REQUEST_TIMEOUT_MS.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/clients_ep_baseClient.DEFAULT_RETRY_ENABLED.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/clients_ep_committeeClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/clients_ep_committeeClient.CommitteeClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/clients_ep_documentClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/clients_ep_documentClient.DocumentClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/clients_ep_jsonLdHelpers.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.determineVoteOutcome.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.extractActivityDate.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.extractAuthorId.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.extractDateValue.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.extractDocumentRefs.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.extractField.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.extractLocation.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.extractMemberIds.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.extractMultilingualText.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.extractTextFromLangArray.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.extractVoteCount.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.firstDefined.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.mapDocumentStatus.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.mapDocumentType.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.mapQuestionType.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_jsonLdHelpers.toSafeString.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/clients_ep_legislativeClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/clients_ep_legislativeClient.LegislativeClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/clients_ep_mepClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/clients_ep_mepClient.MEPClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/clients_ep_plenaryClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/clients_ep_plenaryClient.PlenaryClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/clients_ep_questionClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/clients_ep_questionClient.QuestionClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/clients_ep_transformers.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_transformers.transformAdoptedText.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_transformers.transformCorporateBody.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_transformers.transformDocument.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_transformers.transformEvent.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_transformers.transformMeetingActivity.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_transformers.transformMEP.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_transformers.transformMEPDeclaration.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_transformers.transformMEPDetails.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_transformers.transformParliamentaryQuestion.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_transformers.transformPlenarySession.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_transformers.transformProcedure.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_transformers.transformSpeech.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/clients_ep_transformers.transformVoteResult.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/clients_ep_vocabularyClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/clients_ep_vocabularyClient.VocabularyClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/clients_ep_votingClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/clients_ep_votingClient.VotingClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/clients_europeanParliamentClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/clients_europeanParliamentClient.EuropeanParliamentClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/clients_europeanParliamentClient.epClient.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/di_container.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/di_container.createDefaultContainer.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/di_container.DIContainer.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/di_tokens.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/di_tokens.DIToken.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/di_tokens.TOKENS.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/europeanParliament.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/index.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/index.SERVER_VERSION.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/prompts.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/prompts.getPromptMetadataArray.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/prompts.handleGetPrompt.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/prompts.PromptMessage.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/prompts.PromptMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/prompts.PromptResult.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/prompts.CoalitionAnalysisArgsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/prompts.CommitteeActivityArgsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/prompts.CountryDelegationArgsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/prompts.LegislativeTrackingArgsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/prompts.MepBriefingArgsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/prompts.PoliticalGroupComparisonArgsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/prompts.VotingPatternArgsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/resources.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/resources.getResourceTemplateArray.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/resources.handleReadResource.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/resources.parseResourceUri.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/resources.ResourceContent.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/resources.ResourceReadResult.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/resources.ResourceTemplate.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/schemas_ep.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/schemas_ep_activities.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_activities.GetAdoptedTextsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_activities.GetControlledVocabulariesSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_activities.GetEventsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_activities.GetMeetingActivitiesSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_activities.GetMeetingDecisionsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_activities.GetMeetingForeseenActivitiesSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_activities.GetMEPDeclarationsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_activities.GetProcedureEventsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_activities.GetProceduresSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_activities.GetSpeechesSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/schemas_ep_analysis.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_analysis.AnalyzeCoalitionDynamicsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_analysis.AnalyzeLegislativeEffectivenessSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_analysis.AnalyzeVotingPatternsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_analysis.AssessMepInfluenceSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_analysis.ComparePoliticalGroupsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_analysis.DetectVotingAnomaliesSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_analysis.GenerateReportSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_analysis.MonitorLegislativePipelineSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_analysis.TrackLegislationSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/schemas_ep_committee.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_committee.CommitteeSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_committee.GetCommitteeInfoSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/schemas_ep_common.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/schemas_ep_common.PaginatedResponseSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_common.CountryCodeSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_common.DateStringSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/schemas_ep_document.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_document.GetCommitteeDocumentsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_document.GetExternalDocumentsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_document.GetPlenaryDocumentsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_document.GetPlenarySessionDocumentItemsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_document.GetPlenarySessionDocumentsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_document.LegislativeDocumentSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_document.SearchDocumentsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/schemas_ep_mep.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_mep.GetCurrentMEPsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_mep.GetHomonymMEPsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_mep.GetIncomingMEPsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_mep.GetMEPDetailsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_mep.GetMEPsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_mep.GetOutgoingMEPsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_mep.MEPDetailsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_mep.MEPSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/schemas_ep_plenary.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_plenary.GetPlenarySessionsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_plenary.GetVotingRecordsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_plenary.PlenarySessionSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_plenary.VotingRecordSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/schemas_ep_question.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_question.GetParliamentaryQuestionsSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/schemas_ep_question.ParliamentaryQuestionSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/schemas_europeanParliament.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/server_cli.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/server_cli.parseCLIArgs.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/server_cli.showHealth.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/server_cli.showHelp.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/server_cli.showVersion.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/server_toolRegistry.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/server_toolRegistry.dispatchToolCall.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/server_toolRegistry.getToolMetadataArray.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/server_types.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/server_types.CLIOptions.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/server_types.ToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/server_types.ToolResult.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/server_types.ToolCategory.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/server_types.ToolHandler.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/services_HealthService.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/services_HealthService.HealthService.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/services_HealthService.CacheHealthStatus.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/services_HealthService.HealthStatus.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/services_HealthService.HealthStatusLevel.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/services_HealthService.RateLimiterHealthStatus.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/services_MetricsService.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/services_MetricsService.MetricsService.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/services_MetricsService.MetricKey.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/enums/services_MetricsService.MetricName.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_analyzeCoalitionDynamics.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_analyzeCoalitionDynamics.handleAnalyzeCoalitionDynamics.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_analyzeCoalitionDynamics.analyzeCoalitionDynamicsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_analyzeCommitteeActivity.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_analyzeCommitteeActivity.handleAnalyzeCommitteeActivity.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_analyzeCommitteeActivity.AnalyzeCommitteeActivitySchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_analyzeCommitteeActivity.analyzeCommitteeActivityToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_analyzeCountryDelegation.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_analyzeCountryDelegation.handleAnalyzeCountryDelegation.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_analyzeCountryDelegation.AnalyzeCountryDelegationSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_analyzeCountryDelegation.analyzeCountryDelegationToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_analyzeLegislativeEffectiveness.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_analyzeLegislativeEffectiveness.handleAnalyzeLegislativeEffectiveness.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_analyzeLegislativeEffectiveness.analyzeLegislativeEffectivenessToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_analyzeVotingPatterns.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_analyzeVotingPatterns.handleAnalyzeVotingPatterns.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_analyzeVotingPatterns.analyzeVotingPatternsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_assessMepInfluence.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_assessMepInfluence.handleAssessMepInfluence.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_assessMepInfluence.assessMepInfluenceToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_comparePoliticalGroups.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_comparePoliticalGroups.handleComparePoliticalGroups.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_comparePoliticalGroups.comparePoliticalGroupsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_detectVotingAnomalies.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_detectVotingAnomalies.handleDetectVotingAnomalies.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_detectVotingAnomalies.detectVotingAnomaliesToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_generatePoliticalLandscape.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generatePoliticalLandscape.handleGeneratePoliticalLandscape.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_generatePoliticalLandscape.GeneratePoliticalLandscapeSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_generatePoliticalLandscape.generatePoliticalLandscapeToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_generateReport.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport.handleGenerateReport.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_generateReport.generateReportToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_generateReport-1.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_generateReport_reportBuilders.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportBuilders.createAdoptionRatesSection.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportBuilders.createCommitteeSection.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportBuilders.createCompletedProceduresSection.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportBuilders.createLegislativeOutputSection.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportBuilders.createMeetingActivitySection.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportBuilders.createMemberParticipationSection.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportBuilders.createNewProposalsSection.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportBuilders.createOngoingProceduresSection.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportBuilders.createOverallVotingSection.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportBuilders.createParliamentaryQuestionsSection.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportBuilders.createPoliticalGroupSection.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportBuilders.createVotingSection.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_generateReport_reportGenerators.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportGenerators.generateCommitteePerformanceReport.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportGenerators.generateLegislationProgressReport.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportGenerators.generateMEPActivityReport.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_generateReport_reportGenerators.generateVotingStatisticsReport.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_generateReport_types.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/tools_generateReport_types.Report.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/tools_generateReport_types.ReportSection.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/tools_generateReport_types.ReportType.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getAdoptedTexts.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getAdoptedTexts.handleGetAdoptedTexts.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getAdoptedTexts.getAdoptedTextsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getCommitteeDocuments.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getCommitteeDocuments.handleGetCommitteeDocuments.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getCommitteeDocuments.getCommitteeDocumentsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getCommitteeInfo.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getCommitteeInfo.handleGetCommitteeInfo.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getCommitteeInfo.getCommitteeInfoToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getControlledVocabularies.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getControlledVocabularies.handleGetControlledVocabularies.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getControlledVocabularies.getControlledVocabulariesToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getCurrentMEPs.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getCurrentMEPs.handleGetCurrentMEPs.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getCurrentMEPs.getCurrentMEPsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getEvents.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getEvents.handleGetEvents.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getEvents.getEventsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getExternalDocuments.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getExternalDocuments.handleGetExternalDocuments.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getExternalDocuments.getExternalDocumentsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getHomonymMEPs.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getHomonymMEPs.handleGetHomonymMEPs.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getHomonymMEPs.getHomonymMEPsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getIncomingMEPs.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getIncomingMEPs.handleGetIncomingMEPs.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getIncomingMEPs.getIncomingMEPsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getMeetingActivities.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getMeetingActivities.handleGetMeetingActivities.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getMeetingActivities.getMeetingActivitiesToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getMeetingDecisions.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getMeetingDecisions.handleGetMeetingDecisions.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getMeetingDecisions.getMeetingDecisionsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getMeetingForeseenActivities.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getMeetingForeseenActivities.handleGetMeetingForeseenActivities.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getMeetingForeseenActivities.getMeetingForeseenActivitiesToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getMEPDeclarations.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getMEPDeclarations.handleGetMEPDeclarations.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getMEPDeclarations.getMEPDeclarationsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getMEPDetails.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getMEPDetails.handleGetMEPDetails.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getMEPDetails.getMEPDetailsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getMEPs.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getMEPs.handleGetMEPs.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getMEPs.getMEPsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getOutgoingMEPs.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getOutgoingMEPs.handleGetOutgoingMEPs.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getOutgoingMEPs.getOutgoingMEPsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getParliamentaryQuestions.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getParliamentaryQuestions.handleGetParliamentaryQuestions.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getParliamentaryQuestions.getParliamentaryQuestionsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getPlenaryDocuments.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getPlenaryDocuments.handleGetPlenaryDocuments.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getPlenaryDocuments.getPlenaryDocumentsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getPlenarySessionDocumentItems.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getPlenarySessionDocumentItems.handleGetPlenarySessionDocumentItems.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getPlenarySessionDocumentItems.getPlenarySessionDocumentItemsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getPlenarySessionDocuments.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getPlenarySessionDocuments.handleGetPlenarySessionDocuments.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getPlenarySessionDocuments.getPlenarySessionDocumentsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getPlenarySessions.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getPlenarySessions.handleGetPlenarySessions.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getPlenarySessions.getPlenarySessionsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getProcedureEvents.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getProcedureEvents.handleGetProcedureEvents.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getProcedureEvents.getProcedureEventsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getProcedures.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getProcedures.handleGetProcedures.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getProcedures.getProceduresToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getSpeeches.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getSpeeches.handleGetSpeeches.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getSpeeches.getSpeechesToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_getVotingRecords.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_getVotingRecords.handleGetVotingRecords.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_getVotingRecords.getVotingRecordsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_monitorLegislativePipeline.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_monitorLegislativePipeline.handleMonitorLegislativePipeline.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_monitorLegislativePipeline.monitorLegislativePipelineToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_searchDocuments.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_searchDocuments.handleSearchDocuments.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_searchDocuments.searchDocumentsToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_shared_errorHandler.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_shared_errorHandler.handleDataUnavailable.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_shared_errorHandler.handleToolError.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_shared_responseBuilder.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_shared_responseBuilder.buildErrorResponse.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_shared_responseBuilder.buildToolResponse.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_shared_types.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/tools_shared_types.ToolResult.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_trackLegislation.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_trackLegislation.handleTrackLegislation.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_trackLegislation.toProcessId.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_trackLegislation.trackLegislationToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_trackLegislation-1.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_trackLegislation_procedureTracker.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_trackLegislation_procedureTracker.buildLegislativeTracking.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_trackLegislation_types.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/tools_trackLegislation_types.AmendmentStats.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/tools_trackLegislation_types.CommitteeAssignment.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/tools_trackLegislation_types.DocumentReference.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/tools_trackLegislation_types.LegislativeProcedure.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/tools_trackLegislation_types.TimelineEvent.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/tools_trackLegislation_types.VotingRecord.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/tools_trackMepAttendance.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/tools_trackMepAttendance.handleTrackMepAttendance.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_trackMepAttendance.TrackMepAttendanceSchema.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/tools_trackMepAttendance.trackMepAttendanceToolMetadata.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/types.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/types_branded.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_branded.createCommitteeID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_branded.createDocumentID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_branded.createGroupID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_branded.createMEPID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_branded.createSessionID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_branded.isCommitteeID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_branded.isDocumentID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_branded.isGroupID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_branded.isMEPID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_branded.isSessionID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/types_branded.Brand.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/types_branded.CommitteeID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/types_branded.DocumentID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/types_branded.GroupID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/types_branded.MEPID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/types_branded.SessionID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/types_ep_activities.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_activities.AdoptedText.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_activities.EPEvent.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_activities.MeetingActivity.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_activities.MEPDeclaration.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_activities.Procedure.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_activities.Speech.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/types_ep_branded.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_ep_branded.createProcedureID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_ep_branded.createSittingID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_ep_branded.createSpeechID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_ep_branded.createVocabularyID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_ep_branded.isProcedureID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_ep_branded.isSittingID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_ep_branded.isSpeechID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_ep_branded.isVocabularyID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/types_ep_branded.ProcedureID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/types_ep_branded.SittingID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/types_ep_branded.SpeechID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/types_ep_branded.VocabularyID.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/types_ep_committee.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_committee.Committee.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/types_ep_common.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_common.PaginatedResponse.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/types_ep_document.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_document.LegislativeDocument.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/types_ep_document.DocumentStatus.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/types_ep_document.DocumentType.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/types_ep_mep.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_mep.MEP.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_mep.MEPDetails.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_mep.VotingStatistics.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/types_ep_plenary.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_plenary.PlenarySession.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_plenary.VotingRecord.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/types_ep_question.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/types_ep_question.ParliamentaryQuestion.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/types_errors.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_errors.formatMCPError.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/types_errors.isMCPServerError.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/types_errors.EPAPIError.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/types_errors.GDPRComplianceError.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/types_errors.MCPServerError.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/types_errors.RateLimitError.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/types_errors.ValidationError.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/utils_auditLogger.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/utils_auditLogger.AuditLogger.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/utils_auditLogger.AuditEvent.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/utils_auditLogger.AuditLogEntry.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/enums/utils_auditLogger.LogLevel.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/utils_auditLogger.auditLogger.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/utils_performance.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/utils_performance.withPerformanceTracking.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/utils_performance.PerformanceMonitor.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/utils_performance.PerformanceStats.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/utils_performance.PerformanceThresholds.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/utils_performance.DEFAULT_PERFORMANCE_THRESHOLDS.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/utils_performance.performanceMonitor.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/utils_rateLimiter.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/utils_rateLimiter.createStandardRateLimiter.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/utils_rateLimiter.RateLimiter.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/utils_rateLimiter.RateLimiterStatus.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/types/utils_rateLimiter.RateLimiterConfig.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/modules/utils_timeout.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/utils_timeout.isTimeoutError.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/utils_timeout.withRetry.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/utils_timeout.withTimeout.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/utils_timeout.withTimeoutAndAbort.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/functions/utils_timeout.withTimeoutConfig.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/classes/utils_timeout.TimeoutError.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/interfaces/utils_timeout.TimeoutConfig.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 	<url>
 		<loc>https://hack23.github.io/European-Parliament-MCP-Server/api/variables/utils_timeout.DEFAULT_TIMEOUTS.html</loc>
-		<lastmod>2026-02-26T12:12:23.831Z</lastmod>
+		<lastmod>2026-02-26T18:05:43.955Z</lastmod>
 	</url>
 </urlset>

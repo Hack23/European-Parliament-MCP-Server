@@ -8,7 +8,7 @@
 
 > **extractTextFromLangArray**(`items`): `string`
 
-Defined in: [clients/ep/jsonLdHelpers.ts:112](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/clients/ep/jsonLdHelpers.ts#L112)
+Defined in: [clients/ep/jsonLdHelpers.ts:112](https://github.com/Hack23/European-Parliament-MCP-Server/blob/67dbd67a8f5629591a17b9785bfa0977f7023afb/src/clients/ep/jsonLdHelpers.ts#L112)
 
 Extracts preferred-language text from an array of language-tagged objects.
 Prefers English (`en`) or multilingual (`mul`).
