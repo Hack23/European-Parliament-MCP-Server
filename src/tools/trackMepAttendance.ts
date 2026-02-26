@@ -293,7 +293,36 @@ async function buildGroupAnalysis(
 }
 
 /**
- * Track MEP attendance tool handler
+ * Handles the track_mep_attendance MCP tool request.
+ *
+ * Tracks plenary attendance and participation rates for individual MEPs or groups
+ * of MEPs filtered by country or political group. Derives attendance metrics from
+ * plenary vote participation records and computes an overall attendance rating and
+ * trend for each MEP.
+ *
+ * @param args - Raw tool arguments, validated against {@link TrackMepAttendanceSchema}
+ * @returns MCP tool result containing individual MEP attendance rates, overall summary
+ *   statistics, attendance trend classification, and computed participation scores
+ * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * const result = await handleTrackMepAttendance({
+ *   mepId: '124810',
+ *   dateFrom: '2024-01-01',
+ *   dateTo: '2024-12-31'
+ * });
+ * // Returns attendance analysis with participation rate, trend,
+ * // and session-level breakdown for the specified MEP
+ * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Personal data in responses is minimised per GDPR Article 5(1)(c).
+ *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link trackMepAttendanceToolMetadata} for MCP schema registration
+ * @see {@link handleAssessMepInfluence} for comprehensive MEP influence and activity scoring
  */
 export async function handleTrackMepAttendance(
   args: unknown

@@ -45,21 +45,37 @@ const reportGenerators: Record<
 };
 
 /**
- * Generate report tool handler
- * Cyclomatic complexity: 3
- * 
- * @param args - Tool arguments
- * @returns MCP tool result with generated report
- * 
+ * Handles the generate_report MCP tool request.
+ *
+ * Generates structured analytical intelligence reports on European Parliament data.
+ * Supports four report types: MEP activity scorecards, committee performance
+ * assessments, voting statistics summaries, and legislation progress reports.
+ * Delegates to a type-keyed generator map for O(1) dispatch.
+ *
+ * @param args - Raw tool arguments, validated against {@link GenerateReportSchema}
+ * @returns MCP tool result containing a structured report with summary, sections,
+ *   statistics, and recommendations appropriate to the requested report type
+ * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ *
  * @example
- * ```json
- * {
- *   "reportType": "MEP_ACTIVITY",
- *   "subjectId": "MEP-124810",
- *   "dateFrom": "2024-01-01",
- *   "dateTo": "2024-12-31"
- * }
+ * ```typescript
+ * const result = await handleGenerateReport({
+ *   reportType: 'MEP_ACTIVITY',
+ *   subjectId: 'MEP-124810',
+ *   dateFrom: '2024-01-01',
+ *   dateTo: '2024-12-31'
+ * });
+ * // Returns MEP activity scorecard with voting discipline, attendance,
+ * // committee contributions, and performance recommendations
  * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Personal data in responses is minimised per GDPR Article 5(1)(c).
+ *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link generateReportToolMetadata} for MCP schema registration
+ * @see {@link handleTrackLegislation} for per-procedure legislative progress tracking
  */
 export async function handleGenerateReport(
   args: unknown
