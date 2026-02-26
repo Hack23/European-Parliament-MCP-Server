@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.0**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.1**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleToolError**(`error`, `toolName`): [`ToolResult`](../../types/interfaces/ToolResult.md)
 
-Defined in: [tools/shared/errorHandler.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/tools/shared/errorHandler.ts#L18)
+Defined in: [tools/shared/errorHandler.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/tools/shared/errorHandler.ts#L18)
 
 Handle a caught tool error, returning a safe MCP error response.
 Never exposes raw stack traces to MCP clients.

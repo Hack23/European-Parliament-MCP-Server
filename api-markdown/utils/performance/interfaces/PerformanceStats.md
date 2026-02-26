@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.0**](../../../README.md)
+[**European Parliament MCP Server API v0.8.1**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: PerformanceStats
 
-Defined in: [utils/performance.ts:27](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/performance.ts#L27)
+Defined in: [utils/performance.ts:27](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/performance.ts#L27)
 
 Performance metric statistics
 
@@ -16,7 +16,7 @@ Performance metric statistics
 
 > **avg**: `number`
 
-Defined in: [utils/performance.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/performance.ts#L35)
+Defined in: [utils/performance.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/performance.ts#L35)
 
 Average duration in milliseconds
 
@@ -26,7 +26,7 @@ Average duration in milliseconds
 
 > **count**: `number`
 
-Defined in: [utils/performance.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/performance.ts#L41)
+Defined in: [utils/performance.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/performance.ts#L41)
 
 Total number of measurements
 
@@ -36,7 +36,7 @@ Total number of measurements
 
 > **max**: `number`
 
-Defined in: [utils/performance.ts:39](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/performance.ts#L39)
+Defined in: [utils/performance.ts:39](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/performance.ts#L39)
 
 Maximum duration in milliseconds
 
@@ -46,7 +46,7 @@ Maximum duration in milliseconds
 
 > **min**: `number`
 
-Defined in: [utils/performance.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/performance.ts#L37)
+Defined in: [utils/performance.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/performance.ts#L37)
 
 Minimum duration in milliseconds
 
@@ -56,7 +56,7 @@ Minimum duration in milliseconds
 
 > **p50**: `number`
 
-Defined in: [utils/performance.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/performance.ts#L29)
+Defined in: [utils/performance.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/performance.ts#L29)
 
 Median (50th percentile) duration in milliseconds
 
@@ -66,7 +66,7 @@ Median (50th percentile) duration in milliseconds
 
 > **p95**: `number`
 
-Defined in: [utils/performance.ts:31](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/performance.ts#L31)
+Defined in: [utils/performance.ts:31](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/performance.ts#L31)
 
 95th percentile duration in milliseconds
 
@@ -76,6 +76,6 @@ Defined in: [utils/performance.ts:31](https://github.com/Hack23/European-Parliam
 
 > **p99**: `number`
 
-Defined in: [utils/performance.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/utils/performance.ts#L33)
+Defined in: [utils/performance.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/utils/performance.ts#L33)
 
 99th percentile duration in milliseconds

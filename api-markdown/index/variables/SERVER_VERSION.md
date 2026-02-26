@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.0**](../../README.md)
+[**European Parliament MCP Server API v0.8.1**](../../README.md)
 
 ***
 
@@ -8,4 +8,4 @@
 
 > `const` **SERVER\_VERSION**: `string` = `packageJson.version`
 
-Defined in: [index.ts:83](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/index.ts#L83)
+Defined in: [index.ts:83](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/index.ts#L83)

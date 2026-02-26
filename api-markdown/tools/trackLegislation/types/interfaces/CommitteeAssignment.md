@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.0**](../../../../README.md)
+[**European Parliament MCP Server API v0.8.1**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: CommitteeAssignment
 
-Defined in: [tools/trackLegislation/types.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/tools/trackLegislation/types.ts#L52)
+Defined in: [tools/trackLegislation/types.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/tools/trackLegislation/types.ts#L52)
 
 Committee assignment
 
@@ -16,7 +16,7 @@ Committee assignment
 
 > **abbreviation**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/tools/trackLegislation/types.ts#L53)
+Defined in: [tools/trackLegislation/types.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/tools/trackLegislation/types.ts#L53)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [tools/trackLegislation/types.ts:53](https://github.com/Hack23/Europ
 
 > **role**: `"OPINION"` \| `"LEAD"`
 
-Defined in: [tools/trackLegislation/types.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/tools/trackLegislation/types.ts#L54)
+Defined in: [tools/trackLegislation/types.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/tools/trackLegislation/types.ts#L54)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [tools/trackLegislation/types.ts:54](https://github.com/Hack23/Europ
 
 > `optional` **rapporteur**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/tools/trackLegislation/types.ts#L55)
+Defined in: [tools/trackLegislation/types.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/tools/trackLegislation/types.ts#L55)

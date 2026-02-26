@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.0**](../../../README.md)
+[**European Parliament MCP Server API v0.8.1**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **createDocumentID**(`value`): [`DocumentID`](../type-aliases/DocumentID.md)
 
-Defined in: [types/branded.ts:279](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/types/branded.ts#L279)
+Defined in: [types/branded.ts:279](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/types/branded.ts#L279)
 
 Factory function to create a validated Document ID
 

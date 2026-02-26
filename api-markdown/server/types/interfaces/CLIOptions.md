@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.0**](../../../README.md)
+[**European Parliament MCP Server API v0.8.1**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: CLIOptions
 
-Defined in: [server/types.ts:71](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/server/types.ts#L71)
+Defined in: [server/types.ts:71](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/server/types.ts#L71)
 
 Parsed command-line options for the MCP server binary.
 
@@ -19,7 +19,7 @@ provided on the command line.
 
 > `optional` **health**: `boolean`
 
-Defined in: [server/types.ts:77](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/server/types.ts#L77)
+Defined in: [server/types.ts:77](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/server/types.ts#L77)
 
 Show health-check / diagnostics JSON and exit
 
@@ -29,7 +29,7 @@ Show health-check / diagnostics JSON and exit
 
 > `optional` **help**: `boolean`
 
-Defined in: [server/types.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/server/types.ts#L73)
+Defined in: [server/types.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/server/types.ts#L73)
 
 Show usage / help text and exit
 
@@ -39,6 +39,6 @@ Show usage / help text and exit
 
 > `optional` **version**: `boolean`
 
-Defined in: [server/types.ts:75](https://github.com/Hack23/European-Parliament-MCP-Server/blob/3003b577f21d3734cd23b5505028a9329df22ad2/src/server/types.ts#L75)
+Defined in: [server/types.ts:75](https://github.com/Hack23/European-Parliament-MCP-Server/blob/2c9fab6611e5f06de66689cdad4e4fea6098930d/src/server/types.ts#L75)
 
 Show version string and exit
