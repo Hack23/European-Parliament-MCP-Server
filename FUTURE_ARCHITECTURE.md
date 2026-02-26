@@ -161,7 +161,7 @@ graph TB
 
 The current architecture is documented in [ARCHITECTURE.md](ARCHITECTURE.md).
 
-**Current Capabilities (20 MCP Tools):**
+**Current Capabilities (39 MCP Tools):**
 
 #### Core Data Tools (7)
 
@@ -580,7 +580,7 @@ Security roadmap is detailed in [FUTURE_SECURITY_ARCHITECTURE.md](FUTURE_SECURIT
 
 | Year | Major Version | AI Model Context | Architecture Milestone |
 |------|--------------|------------------|----------------------|
-| **2026** | v1.0 | Anthropic Opus 4.6 | Foundation: 20 tools, serverless AWS, OSINT intelligence |
+| **2026** | v1.0 | Anthropic Opus 4.6 | Foundation: 39 tools, serverless AWS, OSINT intelligence |
 | **2027** | v2.0 | Opus 5.x / Competitors | Cloud Intelligence Platform with multi-region deployment |
 | **2028** | v3.0 | Next-gen multimodal LLMs | Multi-Parliament Federation (EU + national parliaments) |
 | **2029** | v4.0 | Specialized political AI models | AI-Native Analysis with autonomous tool orchestration |
@@ -661,7 +661,7 @@ timeline
     title AI & Platform Co-Evolution
     2026 : Anthropic Opus 4.6
          : v1.0 Foundation
-         : 20 MCP tools
+         : 39 MCP tools
     2027 : Opus 5.x / Competitors
          : v2.0 Cloud Intelligence
          : Multi-region AWS

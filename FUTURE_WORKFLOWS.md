@@ -65,7 +65,7 @@ Current workflows are documented in [WORKFLOWS.md](WORKFLOWS.md) and [.github/WO
 | 10 | `setup-labels.yml` | Repository label management |
 | 11 | `copilot-setup-steps.yml` | Copilot agent environment |
 
-**Current Tool Count:** 20 MCP tools (7 core data + 3 advanced + 10 OSINT intelligence)
+**Current Tool Count:** 39 MCP tools (26 EP API data + 3 advanced analysis + 10 OSINT intelligence)
 
 ---
 
