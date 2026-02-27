@@ -211,6 +211,9 @@ export class PlenaryClient extends BaseEPClient {
     if (sittingId.trim() === '') {
       throw new APIError('Meeting sitting-id is required', 400);
     }
+    if (/[.\\?#]/.test(sittingId)) {
+      throw new APIError('Meeting sitting-id contains invalid characters', 400);
+    }
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
 
@@ -234,6 +237,9 @@ export class PlenaryClient extends BaseEPClient {
   ): Promise<PaginatedResponse<LegislativeDocument>> {
     if (sittingId.trim() === '') {
       throw new APIError('Meeting sitting-id is required', 400);
+    }
+    if (/[.\\?#]/.test(sittingId)) {
+      throw new APIError('Meeting sitting-id contains invalid characters', 400);
     }
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
