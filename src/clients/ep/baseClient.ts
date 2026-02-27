@@ -249,9 +249,7 @@ export class BaseEPClient {
         }
 
         // Guard against oversized responses to prevent memory exhaustion.
-        // Cast to allow for environments where headers may be unavailable.
-        const maybeHeaders = response.headers as (Headers | undefined);
-        const contentLength = maybeHeaders !== undefined ? maybeHeaders.get('content-length') : null;
+        const contentLength = response.headers?.get('content-length') ?? null;
         if (contentLength !== null) {
           const bytes = Number.parseInt(contentLength, 10);
           if (Number.isFinite(bytes) && bytes > DEFAULT_MAX_RESPONSE_BYTES) {
