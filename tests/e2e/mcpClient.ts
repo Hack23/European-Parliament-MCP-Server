@@ -123,7 +123,14 @@ export class MCPTestClient {
       arguments: args
     });
 
-    return response as { content: Array<{ type: string; text?: string }> };
+    const result = response as { content: Array<{ type: string; text?: string }>; isError?: boolean };
+
+    if (result.isError === true) {
+      const errorText = result.content[0]?.text ?? `Tool '${name}' returned an error`;
+      throw new Error(errorText);
+    }
+
+    return result;
   }
 
   /**

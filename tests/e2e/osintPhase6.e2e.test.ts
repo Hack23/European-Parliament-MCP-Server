@@ -67,7 +67,6 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
         'network_analysis nodes/edges'
       );
       if (response === undefined) return;
-      if (response.isError === true) return;
 
       validateMCPResponse(response);
       const text = response.content[0]?.text ?? '{}';
@@ -82,7 +81,6 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
         'network_analysis centralMEPs'
       );
       if (response === undefined) return;
-      if (response.isError === true) return;
 
       validateMCPResponse(response);
       const text = response.content[0]?.text ?? '{}';
@@ -131,7 +129,6 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
         'sentiment_tracker timeframe'
       );
       if (response === undefined) return;
-      if (response.isError === true) return;
 
       validateMCPResponse(response);
       const text = response.content[0]?.text ?? '{}';
@@ -145,7 +142,6 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
         'sentiment_tracker polarization'
       );
       if (response === undefined) return;
-      if (response.isError === true) return;
 
       validateMCPResponse(response);
       const text = response.content[0]?.text ?? '{}';
@@ -193,7 +189,6 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
         'early_warning_system warnings'
       );
       if (response === undefined) return;
-      if (response.isError === true) return;
 
       validateMCPResponse(response);
       const text = response.content[0]?.text ?? '{}';
@@ -207,7 +202,6 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
         'early_warning_system trends'
       );
       if (response === undefined) return;
-      if (response.isError === true) return;
 
       validateMCPResponse(response);
       const text = response.content[0]?.text ?? '{}';
@@ -255,7 +249,6 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
         'comparative_intelligence profiles'
       );
       if (response === undefined) return;
-      if (response.isError === true) return;
 
       validateMCPResponse(response);
       const text = response.content[0]?.text ?? '{}';
@@ -272,7 +265,6 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
         'comparative_intelligence correlation'
       );
       if (response === undefined) return;
-      if (response.isError === true) return;
 
       validateMCPResponse(response);
       const text = response.content[0]?.text ?? '{}';
