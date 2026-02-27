@@ -1,5 +1,5 @@
 /**
- * Integration Tests: All 39 MCP Tools Coverage
+ * Integration Tests: All 45 MCP Tools Coverage
  * 
  * Validates that every registered MCP tool:
  * 1. Returns valid MCP-compliant response structure
@@ -57,6 +57,12 @@ import { handleGetMeetingActivities } from '../../../src/tools/getMeetingActivit
 import { handleGetMeetingDecisions } from '../../../src/tools/getMeetingDecisions.js';
 import { handleGetMEPDeclarations } from '../../../src/tools/getMEPDeclarations.js';
 
+// ── Phase 6 Advanced OSINT Tools ────────────────────────────────
+import { handleNetworkAnalysis } from '../../../src/tools/networkAnalysis.js';
+import { handleSentimentTracker } from '../../../src/tools/sentimentTracker.js';
+import { handleEarlyWarningSystem } from '../../../src/tools/earlyWarningSystem.js';
+import { handleComparativeIntelligence } from '../../../src/tools/comparativeIntelligence.js';
+
 // ── Phase 5 EP API v2 Tools ─────────────────────────────────────
 import { handleGetIncomingMEPs } from '../../../src/tools/getIncomingMEPs.js';
 import { handleGetOutgoingMEPs } from '../../../src/tools/getOutgoingMEPs.js';
@@ -90,7 +96,7 @@ function parseAndValidateNoMockData(result: { content: { type: string; text: str
   return parsed;
 }
 
-describeIntegration('All 39 MCP Tools Integration Coverage', () => {
+describeIntegration('All 45 MCP Tools Integration Coverage', () => {
   // Shared MEP ID resolved once for tests that need it
   let testMEPId: string;
   let testSessionId: string;
@@ -702,6 +708,62 @@ describeIntegration('All 39 MCP Tools Integration Coverage', () => {
       if (!result) return;
 
       parseAndValidateNoMockData(result);
+    }, 30000);
+  });
+
+  // ══════════════════════════════════════════════════════════════
+  // PHASE 6 ADVANCED OSINT TOOLS (4)
+  // ══════════════════════════════════════════════════════════════
+
+  describe('Phase 6 OSINT Tool: network_analysis', () => {
+    it('should return network analysis data', async () => {
+      const result = await retryOrSkip(
+        () => handleNetworkAnalysis({}),
+        'network_analysis'
+      );
+      if (!result) return;
+      const parsed = parseAndValidateNoMockData(result) as { networkNodes: unknown; networkEdges: unknown };
+      expect(parsed).toHaveProperty('networkNodes');
+      expect(parsed).toHaveProperty('networkEdges');
+    }, 30000);
+  });
+
+  describe('Phase 6 OSINT Tool: sentiment_tracker', () => {
+    it('should return sentiment tracking data', async () => {
+      const result = await retryOrSkip(
+        () => handleSentimentTracker({}),
+        'sentiment_tracker'
+      );
+      if (!result) return;
+      const parsed = parseAndValidateNoMockData(result) as { groupSentiments: unknown; polarizationIndex: unknown };
+      expect(parsed).toHaveProperty('groupSentiments');
+      expect(parsed).toHaveProperty('polarizationIndex');
+    }, 30000);
+  });
+
+  describe('Phase 6 OSINT Tool: early_warning_system', () => {
+    it('should return early warning data', async () => {
+      const result = await retryOrSkip(
+        () => handleEarlyWarningSystem({}),
+        'early_warning_system'
+      );
+      if (!result) return;
+      const parsed = parseAndValidateNoMockData(result) as { warnings: unknown; trendIndicators: unknown };
+      expect(parsed).toHaveProperty('warnings');
+      expect(parsed).toHaveProperty('trendIndicators');
+    }, 30000);
+  });
+
+  describe('Phase 6 OSINT Tool: comparative_intelligence', () => {
+    it('should return comparative intelligence data', async () => {
+      const result = await retryOrSkip(
+        () => handleComparativeIntelligence({ mepIds: [197047, 197048] }),
+        'comparative_intelligence'
+      );
+      if (!result) return;
+      const parsed = parseAndValidateNoMockData(result) as { profiles: unknown; correlationMatrix: unknown };
+      expect(parsed).toHaveProperty('profiles');
+      expect(parsed).toHaveProperty('correlationMatrix');
     }, 30000);
   });
 });
