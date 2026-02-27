@@ -227,6 +227,55 @@ function buildCoalitionComputedAttrs(
 
 /**
  * Analyze coalition dynamics tool handler
+ *
+ * Detects voting coalitions, measures political group cohesion, and identifies
+ * cross-party alliances using CIA Coalition Analysis methodology. Fetches real
+ * MEP membership counts from the EP Open Data API; pairwise cohesion is derived
+ * from group-size ratios (per-MEP voting statistics are not available from the
+ * EP API `/meps/{id}` endpoint).
+ *
+ * **Analysis outputs:**
+ * - Group cohesion metrics (member count, stress indicator, fragmentation risk)
+ * - Pairwise coalition strength for each group combination
+ * - Dominant coalition identification
+ * - Stress indicators for groups with high internal tension
+ * - Parliament-wide fragmentation index (Herfindahl–Hirschman)
+ * - Effective number of parties (ENP)
+ *
+ * > **Note:** Confidence level is always `LOW` because per-MEP voting statistics
+ * > are unavailable from the current EP API. Cohesion/defection metrics report
+ * > zero and should be supplemented with vote-result data when available.
+ *
+ * @param args - Tool arguments matching AnalyzeCoalitionDynamicsSchema
+ * @param args.groupIds - Political group identifiers to analyze (optional; defaults to all 8 groups)
+ * @param args.dateFrom - Analysis start date in YYYY-MM-DD format (optional)
+ * @param args.dateTo - Analysis end date in YYYY-MM-DD format (optional)
+ * @param args.minimumCohesion - Minimum cohesion threshold for alliance detection, 0–1 (default 0.5)
+ * @returns MCP ToolResult containing `CoalitionDynamicsAnalysis` object as JSON
+ * @throws {Error} When the EP API request fails or group data cannot be fetched
+ * @throws {ZodError} When input fails schema validation (invalid group IDs, date format)
+ *
+ * @example
+ * ```typescript
+ * // Analyze all political groups with default settings
+ * const result = await handleAnalyzeCoalitionDynamics({});
+ * const analysis = JSON.parse(result.content[0].text);
+ * console.log(`Fragmentation index: ${analysis.computedAttributes.parliamentaryFragmentation}`);
+ * ```
+ *
+ * @example
+ * ```typescript
+ * // Analyze specific groups with higher alliance threshold
+ * const result = await handleAnalyzeCoalitionDynamics({
+ *   groupIds: ["EPP", "S&D", "Renew"],
+ *   minimumCohesion: 0.6,
+ *   dateFrom: "2024-01-01",
+ *   dateTo: "2024-12-31"
+ * });
+ * ```
+ *
+ * @security Input validated by Zod. Errors sanitized (no stack traces exposed).
+ * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 export async function handleAnalyzeCoalitionDynamics(
   args: unknown

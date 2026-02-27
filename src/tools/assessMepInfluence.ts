@@ -231,6 +231,50 @@ function getConfidenceLevel(totalVotes: number): string {
 
 /**
  * Assess MEP influence tool handler
+ *
+ * Computes a composite influence scorecard for a single MEP using a
+ * 5-dimension weighted model aligned with CIA Political Scorecards methodology.
+ * Fetches live MEP profile and parliamentary questions from the EP Open Data API
+ * to populate the scoring dimensions.
+ *
+ * **Dimensions (weighted):**
+ * - Voting Activity (25%) — attendance rate + participation volume
+ * - Legislative Output (25%) — rapporteurships + committee leadership roles
+ * - Committee Engagement (20%) — membership breadth + leadership positions
+ * - Parliamentary Oversight (15%) — parliamentary questions filed
+ * - Coalition Building (15%) — cross-party voting rate + engagement rate
+ *
+ * @param args - Tool arguments matching AssessMepInfluenceSchema
+ * @param args.mepId - MEP identifier (required)
+ * @param args.dateFrom - Analysis start date in YYYY-MM-DD format (optional)
+ * @param args.dateTo - Analysis end date in YYYY-MM-DD format (optional)
+ * @param args.includeDetails - When true, includes per-dimension metric breakdown (optional)
+ * @returns MCP ToolResult containing the `MepInfluenceAssessment` object as JSON
+ * @throws {Error} When MEP is not found or the EP API request fails
+ * @throws {ZodError} When input fails schema validation (missing mepId, invalid date format)
+ *
+ * @example
+ * ```typescript
+ * // Basic influence assessment
+ * const result = await handleAssessMepInfluence({ mepId: "197558" });
+ * const assessment = JSON.parse(result.content[0].text);
+ * console.log(`${assessment.mepName}: ${assessment.rank} (${assessment.overallScore}/100)`);
+ * ```
+ *
+ * @example
+ * ```typescript
+ * // Detailed assessment with dimension breakdown
+ * const result = await handleAssessMepInfluence({
+ *   mepId: "197558",
+ *   dateFrom: "2024-01-01",
+ *   dateTo: "2024-12-31",
+ *   includeDetails: true
+ * });
+ * ```
+ *
+ * @security Input validated by Zod. Errors sanitized (no stack traces exposed).
+ * Personal data (MEP profiles) access logged per GDPR Article 30.
+ * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 export async function handleAssessMepInfluence(
   args: unknown
