@@ -54,6 +54,8 @@ export {
   ComparePoliticalGroupsSchema,
   AnalyzeLegislativeEffectivenessSchema,
   MonitorLegislativePipelineSchema,
+  OsintStandardOutputSchema,
+  CorrelateIntelligenceSchema,
 
   // Activity schemas
   GetSpeechesSchema,
