@@ -2,732 +2,290 @@
   <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
 </p>
 
-<h1 align="center">🔄 European Parliament MCP Server — Future Flowchart</h1>
+<h1 align="center">🔄 European Parliament MCP Server — Future Flowcharts</h1>
 
 <p align="center">
-  <strong>🏗️ Improved Process Workflows</strong><br>
-  <em>📈 Optimized Data Processing and Request Handling Flows</em>
+  <strong>Planned Workflow Improvements, Real-Time Pipelines, and Streaming Execution</strong><br>
+  <em>Future process flow documentation for EP MCP Server evolution</em>
 </p>
 
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/Owner-CEO-0A66C2?style=for-the-badge" alt="Owner"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Owner-Hack23-0A66C2?style=for-the-badge" alt="Owner"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Version-2.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--23-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--26-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** CEO | **📄 Version:** 2.0 | **📅 Last Updated:** 2026-02-23 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-23  
+**📋 Document Owner:** Hack23 | **📄 Version:** 2.0 | **📅 Last Updated:** 2026-02-26 (UTC)
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-26
 **🏷️ Classification:** Public (Open Source MCP Server)
+**✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.14.2), NIST CSF 2.0 (ID.AM, PR.DS), CIS Controls v8.1 (2.1, 16.1)
 
 ---
 
 ## 📑 Table of Contents
 
-- [Executive Summary](#-executive-summary)
-- [Current Workflow Baseline](#-current-workflow-baseline)
-- [Enhanced Request Processing](#-enhanced-request-processing-flow)
-- [Data Pipeline Enhancement](#-data-pipeline-enhancement)
-- [Tool Orchestration Flows](#-tool-orchestration-flows)
-- [Security Flow Enhancements](#️-security-flow-enhancements)
-- [CI/CD Pipeline Evolution](#-cicd-pipeline-evolution)
-- [🔮 Visionary Roadmap: 2027–2037](#-visionary-roadmap-20272037)
-- [Policy Alignment](#-policy-alignment)
-- [Related Documents](#-related-documents)
+1. [Security Documentation Map](#security-documentation-map)
+2. [Real-Time Data Pipeline Flow (v1.2)](#real-time-data-pipeline-flow-v12)
+3. [Streaming Tool Execution Flow (v1.2)](#streaming-tool-execution-flow-v12)
+4. [Enhanced Caching Strategy (v1.1)](#enhanced-caching-strategy-v11)
+5. [Webhook Notification Flow (v2.0)](#webhook-notification-flow-v20)
+6. [Circuit Breaker Flow (v1.1)](#circuit-breaker-flow-v11)
+7. [OAuth Authentication Flow (v2.0)](#oauth-authentication-flow-v20)
 
 ---
 
-## 🎯 Executive Summary
+## 🗺️ Security Documentation Map
 
-This document outlines future process workflow improvements for the European Parliament MCP Server, including enhanced request processing, data pipelines, tool orchestration, and CI/CD evolution. **All future infrastructure follows a serverless AWS-only strategy** — see [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md).
-
-> **🤖 AI Evolution Context:** Workflow evolution assumes progression from **Anthropic Opus 4.6** (2026) through future AI generations, with **minor updates every ~2.3 months** and **major version upgrades annually** through 2037. Process flows must accommodate increasingly autonomous AI-driven orchestration, from human-prompted tool chains to fully autonomous agent workflows.
-
----
-
-## 📊 Current Workflow Baseline
-
-Current workflows are documented in [FLOWCHART.md](FLOWCHART.md).
-
-**Current Flow:** AI Client → MCP Transport → Tool Handler → EP API → Response
+| Document | Current | Future | Description |
+|----------|---------|--------|-------------|
+| **Architecture** | [ARCHITECTURE.md](./ARCHITECTURE.md) | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) | C4 model, containers, components, ADRs |
+| **Security Architecture** | [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) | Security controls, threat model |
+| **Data Model** | [DATA_MODEL.md](./DATA_MODEL.md) | [FUTURE_DATA_MODEL.md](./FUTURE_DATA_MODEL.md) | Entity relationships, branded types |
+| **Flowchart** | [FLOWCHART.md](./FLOWCHART.md) | [FUTURE_FLOWCHART.md](./FUTURE_FLOWCHART.md) | Business process flows |
+| **State Diagram** | [STATEDIAGRAM.md](./STATEDIAGRAM.md) | [FUTURE_STATEDIAGRAM.md](./FUTURE_STATEDIAGRAM.md) | System state transitions |
+| **Mind Map** | [MINDMAP.md](./MINDMAP.md) | [FUTURE_MINDMAP.md](./FUTURE_MINDMAP.md) | System concepts and relationships |
+| **SWOT Analysis** | [SWOT.md](./SWOT.md) | [FUTURE_SWOT.md](./FUTURE_SWOT.md) | Strategic positioning |
 
 ---
 
-## 🔄 Enhanced Request Processing Flow
+## 📡 Real-Time Data Pipeline Flow (v1.2)
+
+Planned flow for detecting and propagating EP data changes to subscribed clients:
 
 ```mermaid
-flowchart TB
-    START([🔌 MCP Request]) --> VALIDATE{✅ Validate Input}
-    VALIDATE -->|Invalid| ERROR[❌ Error Response]
-    VALIDATE -->|Valid| AUTH{🔒 Authenticate}
-    AUTH -->|Unauthorized| DENY[🚫 Access Denied]
-    AUTH -->|Authorized| RATE{⏱️ Rate Limit Check}
-    RATE -->|Exceeded| THROTTLE[⏳ Throttled Response]
-    RATE -->|OK| CACHE{📦 Cache Check}
-    CACHE -->|Hit| CACHED[✅ Cached Response]
-    CACHE -->|Miss| CIRCUIT{🔄 Circuit Breaker}
-    CIRCUIT -->|Open| FALLBACK[⚠️ Fallback Response]
-    CIRCUIT -->|Closed| FETCH[🌐 Fetch from EP API]
-    FETCH --> TRANSFORM[🔄 Transform Response]
-    TRANSFORM --> STORE[💾 Update Cache]
-    STORE --> STREAM[📡 Stream Response]
-    STREAM --> AUDIT[📋 Audit Log]
-    AUDIT --> END([✅ Complete])
+flowchart TD
+    subgraph Polling["EP API Polling Layer (v1.2)"]
+        SCHED["Scheduler\n(configurable interval: 5-60 min)"]
+        FETCH["Fetch latest data\nfrom EP API v2"]
+        DIFF["Diff engine\n(compare with cached version)"]
+        DETECT{"Changes detected?"}
+    end
+
+    subgraph Events["Event Processing Layer"]
+        CREATE["Create EPDataEvent\n(typed, versioned)"]
+        VALIDATE["Zod event validation"]
+        STORE["Event store\n(Redis Streams)"]
+    end
+
+    subgraph Distribution["Distribution Layer"]
+        FANOUT["Event fanout router"]
+        SSE["SSE endpoint\n/events stream"]
+        WS["WebSocket\n/ws endpoint"]
+        CACHE_UPDATE["Update LRU cache\n(invalidate stale entries)"]
+    end
+
+    subgraph Subscribers["Subscribers"]
+        MCP_CLIENT["MCP Client\n(via SSE/WS)"]
+        WEBHOOK["Registered webhook\n(HTTP POST)"]
+    end
+
+    SCHED --> FETCH
+    FETCH --> DIFF
+    DIFF --> DETECT
+    DETECT -->|"No changes"| SCHED
+    DETECT -->|"Changes found"| CREATE
+    CREATE --> VALIDATE
+    VALIDATE --> STORE
+    STORE --> FANOUT
+    FANOUT --> SSE
+    FANOUT --> WS
+    FANOUT --> CACHE_UPDATE
+    SSE --> MCP_CLIENT
+    WS --> MCP_CLIENT
+    STORE --> WEBHOOK
 ```
-
-### **🆕 New Processing Features**
-
-| Feature | Current | Future | Benefit |
-|---------|---------|--------|---------|
-| Input validation | Zod schemas | Zod + custom validators | Richer validation |
-| Authentication | None (stdio) | OAuth 2.0 / API keys | Multi-user support |
-| Rate limiting | Basic | Sliding window + quotas | Fair usage |
-| Caching | In-memory LRU | Multi-tier (memory + disk) | Persistence |
-| Circuit breaker | None | Per-endpoint breakers | Fault tolerance |
-| Response delivery | Full payload | Streaming + pagination | Lower memory |
-| Audit logging | stderr | Structured JSON audit trail | Compliance |
 
 ---
 
-## 📦 Data Pipeline Enhancement
+## 🌊 Streaming Tool Execution Flow (v1.2)
+
+MCP supports streaming responses for long-running tools. v1.2 plans streaming for report generation and multi-step OSINT analysis:
 
 ```mermaid
-flowchart LR
-    subgraph "📥 Ingestion"
-        API[EP API] --> FETCH2[Fetcher]
-        FETCH2 --> VALIDATE2[Validator]
-        VALIDATE2 --> TRANSFORM2[Transformer]
-    end
-    subgraph "💾 Storage"
-        TRANSFORM2 --> CACHE2[Memory Cache]
-        TRANSFORM2 --> DISK[Disk Cache]
-        TRANSFORM2 --> INDEX[Search Index]
-    end
-    subgraph "📤 Delivery"
-        CACHE2 --> STREAM2[Streamer]
-        DISK --> STREAM2
-        INDEX --> SEARCH[Search Engine]
-        STREAM2 --> CLIENT[MCP Client]
-        SEARCH --> CLIENT
-    end
+flowchart TD
+    TOOL_CALL["MCP tool_call\n(streaming: true)"] --> VALIDATE["Zod validation\n(input schema)"]
+    VALIDATE -->|"Valid"| STREAM_START["Emit: stream_start\n(metadata: tool, estimated_chunks)"]
+    
+    STREAM_START --> PHASE1["Phase 1: Fetch core data\nget_meps, get_procedures"]
+    PHASE1 --> EMIT1["Emit chunk 1\n(core data partial result)"]
+    
+    EMIT1 --> PHASE2["Phase 2: Enrichment\nget_voting_records, get_speeches"]
+    PHASE2 --> EMIT2["Emit chunk 2\n(enriched data)"]
+    
+    EMIT2 --> PHASE3["Phase 3: Analysis\napply OSINT algorithms"]
+    PHASE3 --> EMIT3["Emit chunk 3\n(analysis results)"]
+    
+    EMIT3 --> PHASE4["Phase 4: Report generation\nformat output"]
+    PHASE4 --> EMIT4["Emit chunk 4\n(formatted report)"]
+    
+    EMIT4 --> STREAM_END["Emit: stream_end\n(total_chunks, duration_ms)"]
+
+    PHASE1 -->|"Error"| STREAM_ERROR["Emit: stream_error\n(error type, partial data)"]
+    PHASE2 -->|"Error"| STREAM_ERROR
+    STREAM_ERROR --> STREAM_END
 ```
 
-### **📊 Pipeline Improvements (Serverless AWS)**
+### Tools That Will Support Streaming (v1.2)
 
-| Stage | Enhancement | AWS Service | Impact |
-|-------|-------------|-------------|--------|
-| **Ingestion** | Parallel fetching, batch requests | Lambda + SQS | 3-5x throughput |
-| **Validation** | Schema versioning, migration support | Lambda | Forward compatibility |
-| **Storage** | Multi-tier caching, TTL management | DynamoDB + S3 | Reduced API calls |
-| **Delivery** | Streaming, compression, pagination | API Gateway + CloudFront | Lower latency |
-| **Monitoring** | Pipeline metrics, health checks | CloudWatch + X-Ray | Observability |
-
-> **☁️ AWS Strategy:** All pipeline stages run on serverless AWS — Lambda for compute, DynamoDB for cache, S3 for archives, CloudWatch for monitoring. See [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md).
+| Tool | Streaming Use Case |
+|------|--------------------|
+| `generate_report` | Multi-section report generation |
+| `analyze_voting_patterns` | Progressive pattern analysis |
+| `generate_political_landscape` | Multi-dimensional landscape analysis |
+| `track_legislation` | Multi-procedure timeline tracking |
+| `assess_mep_influence` | Multi-metric influence calculation |
 
 ---
 
-## 🔍 Tool Orchestration Flows
+## 💾 Enhanced Caching Strategy (v1.1)
+
+Two-tier caching with optional Redis persistence:
 
 ```mermaid
-flowchart TB
-    subgraph "🔍 Multi-Tool Workflow"
-        REQ([📋 Complex Request]) --> PLAN[🧠 Query Planner]
-        PLAN --> PARALLEL{Parallelizable?}
-        PARALLEL -->|Yes| PAR1[Tool A] & PAR2[Tool B] & PAR3[Tool C]
-        PARALLEL -->|No| SEQ1[Tool A] --> SEQ2[Tool B] --> SEQ3[Tool C]
-        PAR1 & PAR2 & PAR3 --> MERGE[🔄 Merge Results]
-        SEQ3 --> MERGE
-        MERGE --> ENRICH[📊 Enrich & Format]
-        ENRICH --> RESP([✅ Response])
-    end
+flowchart TD
+    REQUEST["Tool request\n(cache key computed)"] --> L1{"L1: LRU Cache\n(in-memory, 500 entries)"}
+    
+    L1 -->|"Hit"| L1_RETURN["Return L1 data\nLatency: ~1ms"]
+    L1 -->|"Miss"| L2{"L2: Redis Cache\n(optional, persistent)"}
+    
+    L2 -->|"Hit (fresh)"| L2_RETURN["Return L2 data\nPromote to L1\nLatency: ~5ms"]
+    L2 -->|"Hit (stale)"| REVALIDATE["Background revalidation\nReturn stale while revalidating"]
+    L2 -->|"Miss"| FETCH["Fetch from EP API\nLatency: ~200ms"]
+    
+    FETCH --> STORE_L1["Store in L1 LRU cache\n(15-min TTL)"]
+    STORE_L1 --> STORE_L2["Store in Redis\n(60-min TTL, longer persistence)"]
+    STORE_L2 --> RETURN["Return fresh data"]
+    
+    L2_RETURN --> L1_WRITE["Write to L1 cache\n(remaining TTL from Redis)"]
+    L1_WRITE --> RETURN
+    
+    REVALIDATE -->|"Background"| FETCH
+    REVALIDATE -->|"Immediate"| STALE_RETURN["Return stale data\n(stale-while-revalidate)"]
+    
+    L1_RETURN --> METRICS["Update cache metrics\n(hit/miss counters, tier)"]
+    RETURN --> METRICS
+    STALE_RETURN --> METRICS
 ```
 
-### **🔌 Orchestration Patterns**
+### Cache TTL Strategy (v1.1)
 
-| Pattern | Description | Use Case |
-|---------|-------------|----------|
-| **Fan-out** | Parallel independent tool calls | MEP data + voting + committees |
-| **Pipeline** | Sequential dependent calls | Legislation tracking with amendments |
-| **Scatter-gather** | Parallel calls with aggregation | Cross-parliament comparison |
-| **Saga** | Long-running multi-step workflows | Comprehensive report generation |
+| Data Type | L1 TTL (LRU) | L2 TTL (Redis) | Rationale |
+|-----------|-------------|----------------|-----------|
+| MEP details | 15 min | 60 min | Changes infrequently |
+| Vote records | 30 min | 2 hours | Historical, immutable after adoption |
+| Plenary sessions | 10 min | 30 min | Schedules can change |
+| Procedures | 15 min | 60 min | Stage changes daily max |
+| Documents | 60 min | 6 hours | Published docs don't change |
+| Vocabularies | 120 min | 24 hours | Very stable taxonomy data |
 
 ---
 
-## 🛡️ Security Flow Enhancements
+## 🔔 Webhook Notification Flow (v2.0)
+
+Clients can register webhooks to receive notifications when EP data changes:
 
 ```mermaid
-flowchart TB
-    subgraph "🔒 Authentication Flow"
-        CLIENT2[MCP Client] --> TOKEN{Has Token?}
-        TOKEN -->|No| AUTH2[🔑 Authenticate]
-        AUTH2 --> ISSUE[📜 Issue Token]
-        ISSUE --> CLIENT2
-        TOKEN -->|Yes| VERIFY[✅ Verify Token]
-        VERIFY -->|Invalid| AUTH2
-        VERIFY -->|Valid| RBAC{🛡️ RBAC Check}
-        RBAC -->|Denied| DENY2[🚫 Forbidden]
-        RBAC -->|Allowed| PROCESS[⚙️ Process Request]
-        PROCESS --> LOG[📋 Audit Log]
+flowchart TD
+    subgraph Registration["Webhook Registration (v2.0)"]
+        REG_REQ["POST /webhooks\n(url, events[], secret)"]
+        REG_VAL["Validate webhook URL\n(ping test)"]
+        REG_STORE["Store webhook config\n(id, url, events, secret, active)"]
+        REG_RESP["Return webhook ID"]
     end
+
+    subgraph Delivery["Webhook Delivery"]
+        EVENT_TRIGGER["EP data change event\n(EPDataEvent)"]
+        MATCH["Match event type\nto registered webhooks"]
+        SIGN["HMAC-SHA256 signature\n(X-EP-MCP-Signature header)"]
+        DELIVER["HTTP POST to webhook URL\n(payload: EPDataEvent JSON)"]
+        CHECK{"HTTP 200 response?"}
+        SUCCESS["Mark delivery success\nLog in audit trail"]
+        RETRY_Q["Add to retry queue\n(max 3 retries)"]
+        RETRY["Retry with backoff\n(1min, 5min, 15min)"]
+        FAIL["Mark delivery failed\nAlert webhook owner"]
+    end
+
+    REG_REQ --> REG_VAL
+    REG_VAL --> REG_STORE
+    REG_STORE --> REG_RESP
+
+    EVENT_TRIGGER --> MATCH
+    MATCH --> SIGN
+    SIGN --> DELIVER
+    DELIVER --> CHECK
+    CHECK -->|"Yes"| SUCCESS
+    CHECK -->|"No"| RETRY_Q
+    RETRY_Q --> RETRY
+    RETRY -->|"Success"| SUCCESS
+    RETRY -->|"All failed"| FAIL
 ```
 
 ---
 
-## 📈 CI/CD Pipeline Evolution
+## ⚡ Circuit Breaker Flow (v1.1)
+
+Prevents cascade failures when the EP API is degraded:
 
 ```mermaid
-flowchart LR
-    subgraph "🔄 Future CI/CD"
-        PUSH[📝 Push] --> LINT[ESLint]
-        LINT --> TYPE[TypeCheck]
-        TYPE --> UNIT[Unit Tests]
-        UNIT --> SAST[CodeQL SAST]
-        SAST --> SCA[Dependency Scan]
-        SCA --> BUILD[Build]
-        BUILD --> E2E[E2E Tests]
-        E2E --> PERF[Performance Tests]
-        PERF --> SBOM[Generate SBOM]
-        SBOM --> ATTEST[SLSA Attestation]
-        ATTEST --> PUBLISH[npm Publish]
-        PUBLISH --> VERIFY[Post-Deploy Verify]
-    end
+flowchart TD
+    REQUEST["API request\n(tool handler)"] --> CB_STATE{"Circuit breaker\nstate?"}
+    
+    CB_STATE -->|"CLOSED (normal)"| ATTEMPT["Attempt EP API call"]
+    CB_STATE -->|"OPEN (tripped)"| FAST_FAIL["Fast fail response\n(no API call made)"]
+    CB_STATE -->|"HALF-OPEN (testing)"| PROBE["Single probe request\n(test EP API health)"]
+
+    ATTEMPT -->|"Success"| RESET["Reset failure counter\nRemain CLOSED"]
+    ATTEMPT -->|"Failure"| INCREMENT["Increment failure counter\n(threshold: 5 failures in 60s)"]
+    INCREMENT --> THRESHOLD{"Threshold\nreached?"}
+    THRESHOLD -->|"No"| CONTINUE["Return error to caller"]
+    THRESHOLD -->|"Yes"| TRIP["TRIP circuit\n(OPEN state)\nTimeout: 30s"]
+    
+    FAST_FAIL --> CACHED{"Cached data\navailable?"}
+    CACHED -->|"Yes"| RETURN_CACHE["Return stale cached data\nwith staleness warning"]
+    CACHED -->|"No"| RETURN_ERROR["Return circuit open error\n(with retry-after)"]
+
+    PROBE -->|"Success"| CLOSE["Close circuit\n(CLOSED state)"]
+    PROBE -->|"Failure"| REOPEN["Remain OPEN\n(reset timeout)"]
+
+    TRIP --> WAIT["Wait 30 seconds"]
+    WAIT --> HALF_OPEN["Enter HALF-OPEN state"]
+    HALF_OPEN --> PROBE
 ```
 
 ---
 
-## ⚡ Serverless Lambda Orchestration Flow
+## 🔑 OAuth Authentication Flow (v2.0)
 
-### **Lambda Function Architecture**
+For HTTP transport mode with OAuth 2.0:
 
 ```mermaid
-flowchart TB
-    subgraph "🌐 API Gateway"
-        APIGW[REST API / HTTP API]
-    end
+flowchart TD
+    HTTP_REQ["HTTP MCP request\n(Authorization: Bearer token)"] --> EXTRACT["Extract Bearer token"]
+    EXTRACT --> TOKEN_PRESENT{"Token present?"}
     
-    subgraph "⚡ Lambda Orchestration Layer"
-        ROUTER[🎯 Router Lambda]
-        AUTH[🔐 Auth Lambda]
-        RATE[⏱️ Rate Limiter Lambda]
-    end
+    TOKEN_PRESENT -->|"No"| ANON_CHECK{"Anonymous\naccess allowed?"}
+    ANON_CHECK -->|"Yes (local dev)"| PROCEED_ANON["Proceed as anonymous\n(reader role)"]
+    ANON_CHECK -->|"No (production)"| REJECT_401["Return 401 Unauthorized\nWWW-Authenticate: Bearer"]
     
-    subgraph "🔧 Tool Handler Lambdas"
-        MEP[👤 MEP Handler]
-        VOTE[🗳️ Vote Handler]
-        DOC[📄 Document Handler]
-        QUERY[🔍 Query Handler]
-        REPORT[📊 Report Generator]
-    end
+    TOKEN_PRESENT -->|"Yes"| CACHE_CHECK{"Token in\nvalidation cache?"}
+    CACHE_CHECK -->|"Yes (fresh)"| CLAIMS["Use cached claims\n(avoid JWKS call)"]
+    CACHE_CHECK -->|"No"| JWKS["Fetch JWKS from\nOAuth provider"]
+    JWKS --> VERIFY["Verify JWT signature\nCheck expiry and audience"]
+    VERIFY -->|"Invalid"| REJECT_401_SIG["Return 401\n(invalid signature)"]
+    VERIFY -->|"Valid"| STORE_CACHE["Cache validated claims\n(5-min TTL)"]
+    STORE_CACHE --> CLAIMS
     
-    subgraph "💾 Data Layer"
-        DDB[(DynamoDB)]
-        S3[(S3)]
-        OPENSEARCH[(OpenSearch)]
-    end
+    CLAIMS --> RBAC["RBAC check\n(tool permissions)"]
+    RBAC -->|"Forbidden"| REJECT_403["Return 403 Forbidden"]
+    RBAC -->|"Allowed"| PROCEED["Proceed with tool execution\n(user context injected)"]
     
-    subgraph "📡 External APIs"
-        EP_API[European Parliament API]
-    end
-    
-    APIGW --> ROUTER
-    ROUTER --> AUTH
-    AUTH --> RATE
-    RATE -->|get_meps| MEP
-    RATE -->|get_voting_records| VOTE
-    RATE -->|search_documents| DOC
-    RATE -->|analyze_patterns| QUERY
-    RATE -->|generate_report| REPORT
-    
-    MEP --> DDB
-    VOTE --> DDB
-    DOC --> DDB
-    QUERY --> OPENSEARCH
-    REPORT --> S3
-    
-    MEP -->|Cache Miss| EP_API
-    VOTE -->|Cache Miss| EP_API
-    DOC -->|Cache Miss| EP_API
-    
-    EP_API -->|Fresh Data| MEP
-    EP_API -->|Fresh Data| VOTE
-    EP_API -->|Fresh Data| DOC
-```
-
-### **Lambda Execution Flow Details**
-
-| Lambda Function | Trigger | Memory | Timeout | Concurrency | Purpose |
-|----------------|---------|--------|---------|-------------|----------|
-| **Router Lambda** | API Gateway | 256 MB | 3s | 1000 | Route requests to tool handlers |
-| **Auth Lambda** | Authorizer | 128 MB | 2s | 100 | Validate JWT tokens, enforce RBAC |
-| **Rate Limiter Lambda** | Inline | 128 MB | 1s | 1000 | Token bucket algorithm, DynamoDB tracking |
-| **MEP Handler** | Router invoke | 512 MB | 10s | 500 | Process MEP data requests |
-| **Vote Handler** | Router invoke | 512 MB | 10s | 500 | Process voting record requests |
-| **Document Handler** | Router invoke | 512 MB | 15s | 300 | Process document search requests |
-| **Query Handler** | Router invoke | 1024 MB | 30s | 100 | Execute complex analytics queries |
-| **Report Generator** | Step Functions | 2048 MB | 300s | 10 | Generate comprehensive reports |
-
----
-
-## 🕵️ OSINT Intelligence Tool Invocation Flow
-
-Inspired by **[Hack23 CIA](https://github.com/Hack23/cia)** OSINT methodology, these intelligence tools provide actionable political insights:
-
-```mermaid
-flowchart TB
-    START([📋 Intelligence Request]) --> CLASSIFY{Request Type?}
-    
-    CLASSIFY -->|MEP Influence| INFLUENCE[🎯 assess_mep_influence]
-    CLASSIFY -->|Coalition Analysis| COALITION[🤝 analyze_coalition_dynamics]
-    CLASSIFY -->|Network Mapping| NETWORK[🌐 map_political_network]
-    CLASSIFY -->|Anomaly Detection| ANOMALY[⚠️ detect_voting_anomalies]
-    CLASSIFY -->|Risk Assessment| RISK[🎲 generate_political_risk_assessment]
-    
-    INFLUENCE --> FETCH_MEP[Fetch MEP Profile]
-    FETCH_MEP --> FETCH_VOTES[Fetch Voting History]
-    FETCH_VOTES --> FETCH_SPEECHES[Fetch Speech Records]
-    FETCH_SPEECHES --> CALC_INFLUENCE[Calculate Influence Score]
-    CALC_INFLUENCE --> GEN_SCORECARD[Generate MEP Scorecard]
-    
-    COALITION --> FETCH_GROUP[Fetch Group Membership]
-    FETCH_GROUP --> FETCH_GROUP_VOTES[Fetch Group Voting Patterns]
-    FETCH_GROUP_VOTES --> CALC_COHESION[Calculate Group Cohesion]
-    CALC_COHESION --> IDENTIFY_FACTIONS[Identify Factions]
-    IDENTIFY_FACTIONS --> GEN_COALITION_REPORT[Generate Coalition Report]
-    
-    NETWORK --> FETCH_ALL_MEPS[Fetch All MEPs]
-    FETCH_ALL_MEPS --> FETCH_RELATIONSHIPS[Analyze Co-voting Patterns]
-    FETCH_RELATIONSHIPS --> BUILD_GRAPH[Build Network Graph]
-    BUILD_GRAPH --> CALC_CENTRALITY[Calculate Centrality Metrics]
-    CALC_CENTRALITY --> GEN_NETWORK_MAP[Generate Network Visualization]
-    
-    ANOMALY --> FETCH_RECENT_VOTES[Fetch Recent Votes]
-    FETCH_RECENT_VOTES --> BASELINE_PATTERN[Establish Baseline Pattern]
-    BASELINE_PATTERN --> DETECT_OUTLIERS[Detect Statistical Outliers]
-    DETECT_OUTLIERS --> FLAG_ANOMALIES[Flag Anomalies]
-    FLAG_ANOMALIES --> GEN_ANOMALY_REPORT[Generate Anomaly Alert]
-    
-    RISK --> FETCH_POLITICAL_DATA[Fetch Multi-Source Political Data]
-    FETCH_POLITICAL_DATA --> ANALYZE_STABILITY[Analyze Coalition Stability]
-    ANALYZE_STABILITY --> ASSESS_THREATS[Assess Policy Threats]
-    ASSESS_THREATS --> CALC_RISK_SCORE[Calculate Risk Score]
-    CALC_RISK_SCORE --> GEN_RISK_BRIEFING[Generate Risk Briefing]
-    
-    GEN_SCORECARD --> CACHE_RESULT[Cache in DynamoDB]
-    GEN_COALITION_REPORT --> CACHE_RESULT
-    GEN_NETWORK_MAP --> CACHE_RESULT
-    GEN_ANOMALY_REPORT --> CACHE_RESULT
-    GEN_RISK_BRIEFING --> CACHE_RESULT
-    
-    CACHE_RESULT --> AUDIT_LOG[CloudTrail Audit Log]
-    AUDIT_LOG --> RESPONSE([✅ Intelligence Product Delivered])
-```
-
-### **OSINT Intelligence Products**
-
-| Tool | Output | Use Case | Cache TTL |
-|------|--------|----------|----------|
-| **assess_mep_influence** | MEP Scorecard (JSON + PDF) | Identify key decision-makers, lobbying targets | 24 hours |
-| **analyze_coalition_dynamics** | Coalition Stability Report | Predict voting outcomes, alliance shifts | 12 hours |
-| **map_political_network** | Network Graph (GraphML + PNG) | Visualize power structures, hidden alliances | 48 hours |
-| **detect_voting_anomalies** | Anomaly Alert (JSON) | Monitor unusual voting behavior, party discipline breaks | 6 hours |
-| **generate_political_risk_assessment** | Risk Briefing (PDF) | Strategic planning, policy impact analysis | 24 hours |
-
----
-
-## 🔄 Error Handling and Retry Flow
-
-```mermaid
-flowchart TB
-    START([⚡ Lambda Invocation]) --> EXECUTE{Execute Request}
-    
-    EXECUTE -->|Success| LOG_SUCCESS[📝 Log Success Metric]
-    LOG_SUCCESS --> RETURN_SUCCESS([✅ Return 200 OK])
-    
-    EXECUTE -->|Transient Error| CLASSIFY_ERROR{Error Type?}
-    
-    CLASSIFY_ERROR -->|Timeout| RETRY_TIMEOUT[⏱️ Timeout Retry]
-    CLASSIFY_ERROR -->|Rate Limit| RETRY_RATE[🚦 Rate Limit Backoff]
-    CLASSIFY_ERROR -->|Network| RETRY_NETWORK[🌐 Network Retry]
-    CLASSIFY_ERROR -->|Throttle| RETRY_THROTTLE[⏳ Throttle Backoff]
-    
-    RETRY_TIMEOUT --> BACKOFF_CALC[📊 Calculate Exponential Backoff]
-    RETRY_RATE --> BACKOFF_CALC
-    RETRY_NETWORK --> BACKOFF_CALC
-    RETRY_THROTTLE --> BACKOFF_CALC
-    
-    BACKOFF_CALC --> WAIT{Retry Count?}
-    WAIT -->|< 3| SLEEP[⏱️ Sleep: 2^n * 100ms + jitter]
-    SLEEP --> EXECUTE
-    
-    WAIT -->|>= 3| MAX_RETRIES[❌ Max Retries Exceeded]
-    MAX_RETRIES --> FALLBACK{Fallback Available?}
-    
-    FALLBACK -->|Yes| SERVE_CACHED[📦 Serve Cached Data]
-    SERVE_CACHED --> RETURN_DEGRADED([⚠️ Return 200 OK - Degraded])
-    
-    FALLBACK -->|No| LOG_FAILURE[📝 Log Failure Metric]
-    LOG_FAILURE --> ALARM[🚨 Trigger CloudWatch Alarm]
-    ALARM --> RETURN_ERROR([❌ Return 503 Service Unavailable])
-    
-    EXECUTE -->|Permanent Error| CLASSIFY_PERMANENT{Permanent Error Type?}
-    CLASSIFY_PERMANENT -->|Validation| RETURN_400([❌ Return 400 Bad Request])
-    CLASSIFY_PERMANENT -->|Auth| RETURN_401([❌ Return 401 Unauthorized])
-    CLASSIFY_PERMANENT -->|Forbidden| RETURN_403([❌ Return 403 Forbidden])
-    CLASSIFY_PERMANENT -->|Not Found| RETURN_404([❌ Return 404 Not Found])
-    CLASSIFY_PERMANENT -->|Internal| LOG_FAILURE
-```
-
-### **Exponential Backoff Strategy**
-
-| Retry Attempt | Delay (before jitter) | Jitter Range | Max Delay | Cumulative Time |
-|--------------|------------------------|--------------|-----------|------------------|
-| 1 | 200ms | ±50ms | 200ms | 200ms |
-| 2 | 400ms | ±100ms | 400ms | 600ms |
-| 3 | 800ms | ±200ms | 800ms | 1400ms |
-| 4 (final) | - | - | - | Circuit breaker opens |
-
-**Formula:** `delay = min(base_delay * 2^(attempt-1) + random(0, jitter), max_delay)`
-
----
-
-## 🔄 Step Functions Workflow State Machine
-
-### **Comprehensive Report Generation Workflow**
-
-```mermaid
-stateDiagram-v2
-    [*] --> ValidateRequest: API Gateway Trigger
-    ValidateRequest --> FetchMEPData: Input Valid
-    ValidateRequest --> [*]: Invalid Input (400)
-    
-    FetchMEPData --> FetchVotingData: MEP Data Retrieved
-    FetchMEPData --> RetryMEP: Transient Error
-    RetryMEP --> FetchMEPData: Retry with Backoff
-    RetryMEP --> [*]: Max Retries Exceeded (503)
-    
-    FetchVotingData --> FetchDocuments: Voting Data Retrieved
-    FetchVotingData --> RetryVoting: Transient Error
-    RetryVoting --> FetchVotingData: Retry with Backoff
-    RetryVoting --> [*]: Max Retries Exceeded (503)
-    
-    FetchDocuments --> ParallelAnalysis: Documents Retrieved
-    
-    ParallelAnalysis --> AnalyzeVotingPatterns: Fork
-    ParallelAnalysis --> AnalyzeCoalitions: Fork
-    ParallelAnalysis --> GenerateNetworkGraph: Fork
-    
-    AnalyzeVotingPatterns --> WaitForAll: Analysis Complete
-    AnalyzeCoalitions --> WaitForAll: Analysis Complete
-    GenerateNetworkGraph --> WaitForAll: Graph Generated
-    
-    WaitForAll --> GeneratePDFReport: All Tasks Complete
-    GeneratePDFReport --> UploadToS3: PDF Created
-    UploadToS3 --> SendNotification: S3 Upload Complete
-    SendNotification --> [*]: Report Delivered
-    
-    note right of ParallelAnalysis
-        Step Functions Parallel State
-        Parallel execution of analytics
-        Lambda concurrency: 3x
-    end note
-    
-    note right of GeneratePDFReport
-        Lambda with Puppeteer
-        Memory: 2048 MB
-        Timeout: 300 seconds
-    end note
-```
-
-### **Step Functions State Machine Definition (Illustrative)**
-
-> **Note:** The following JSON illustrates the Step Functions pattern and is not exhaustive. Intermediate states (`FetchVotingData`, `FetchDocuments`) and branch task states (`AnalyzeVotingPatterns`, `AnalyzeCoalitions`, `GenerateNetworkGraph`) are omitted for brevity; a complete implementation would define all referenced states in the `States` object.
-
-```json
-{
-  "Comment": "Comprehensive Parliamentary Report Generation (illustrative excerpt)",
-  "StartAt": "ValidateRequest",
-  "States": {
-    "ValidateRequest": {
-      "Type": "Task",
-      "Resource": "arn:aws:lambda:REGION:ACCOUNT:function:ValidateReportRequest",
-      "Next": "FetchMEPData",
-      "Catch": [{
-        "ErrorEquals": ["ValidationException"],
-        "ResultPath": "$.error",
-        "Next": "ValidationFailed"
-      }]
-    },
-    "FetchMEPData": {
-      "Type": "Task",
-      "Resource": "arn:aws:lambda:REGION:ACCOUNT:function:FetchMEPData",
-      "Next": "FetchVotingData",
-      "Retry": [{
-        "ErrorEquals": ["TransientError"],
-        "IntervalSeconds": 2,
-        "MaxAttempts": 3,
-        "BackoffRate": 2.0
-      }]
-    },
-    "ParallelAnalysis": {
-      "Type": "Parallel",
-      "Branches": [
-        {"StartAt": "AnalyzeVotingPatterns", "States": {"AnalyzeVotingPatterns": {"Type": "Task", "Resource": "...", "End": true}}},
-        {"StartAt": "AnalyzeCoalitions", "States": {"AnalyzeCoalitions": {"Type": "Task", "Resource": "...", "End": true}}},
-        {"StartAt": "GenerateNetworkGraph", "States": {"GenerateNetworkGraph": {"Type": "Task", "Resource": "...", "End": true}}}
-      ],
-      "Next": "GeneratePDFReport"
-    },
-    "ValidationFailed": {
-      "Type": "Fail",
-      "Error": "ValidationException",
-      "Cause": "Input validation failed"
-    },
-    "GeneratePDFReport": {
-      "Type": "Task",
-      "Resource": "arn:aws:lambda:REGION:ACCOUNT:function:GeneratePDFReport",
-      "End": true
-    }
-  }
-}
+    PROCEED_ANON --> TOOL["Execute MCP tool"]
+    PROCEED --> TOOL
+    TOOL --> AUDIT["Audit log with user identity"]
+    AUDIT --> RESPONSE["Return MCP response"]
 ```
 
 ---
 
-## 📊 Implementation Phases
-
-### **Phase 1: Lambda Foundation** (Q3 2026)
-
-**Objectives:**
-- Migrate current stdio MCP server to Lambda + API Gateway
-- Implement router, auth, and rate limiter Lambdas
-- Deploy 5 core tool handler Lambdas
-
-**Success Metrics:**
-- ✅ All 20 current MCP tools migrated to Lambda handlers
-- ✅ API Gateway HTTP API deployed with custom domain
-- ✅ <100ms cold start time for router Lambda
-- ✅ <500ms warm invocation latency p95
-
-**KPIs:**
-- Lambda cold start p95: <100ms
-- Lambda warm latency p95: <500ms
-- API Gateway availability: 99.95%
-- Cost per 1M requests: <$5
-
----
-
-### **Phase 2: OSINT Intelligence Tools** (Q4 2026)
-
-**Objectives:**
-- Implement 5 new OSINT intelligence tools
-- Deploy Step Functions workflow for complex report generation
-- Add OpenSearch Serverless for semantic search
-
-**Success Metrics:**
-- ✅ All 5 OSINT tools (assess_mep_influence, analyze_coalition_dynamics, etc.) deployed
-- ✅ Step Functions workflow executes <120s for standard reports
-- ✅ OpenSearch index populated with parliamentary data
-- ✅ Intelligence products cached in S3 with CloudFront CDN
-
-**KPIs:**
-- OSINT tool response time p95: <3s
-- Step Functions success rate: >99%
-- OpenSearch query latency p95: <200ms
-- Report generation time: <120s
-
----
-
-### **Phase 3: Error Handling & Observability** (Q1 2027)
-
-**Objectives:**
-- Implement exponential backoff retry logic
-- Deploy CloudWatch dashboards and alarms
-- Add X-Ray distributed tracing
-- Implement circuit breaker pattern
-
-**Success Metrics:**
-- ✅ Exponential backoff reduces error rate by 80%
-- ✅ CloudWatch alarms trigger within 1 minute of incident
-- ✅ X-Ray traces cover 100% of requests
-- ✅ Circuit breaker prevents cascade failures
-
-**KPIs:**
-- Error rate: <0.5%
-- Mean time to detection (MTTD): <1 minute
-- Mean time to recovery (MTTR): <5 minutes
-- X-Ray trace coverage: 100%
-
----
-
-## ⚠️ Risk Assessment
-
-### **Lambda Orchestration Risks**
-
-| Risk | Severity | Probability | Impact | Mitigation |
-|------|----------|-------------|--------|------------|
-| **Lambda cold start latency** | 🟡 Medium | 🟠 Medium | Slow initial responses, poor UX | Provisioned concurrency for critical functions, <256MB functions |
-| **Step Functions timeout** | 🟠 High | 🟡 Low | Report generation failures | Increase timeout to 300s, implement checkpointing |
-| **API Gateway throttling** | 🟠 High | 🟡 Low | Request rejections during spikes | Set account limits to 10,000 RPS, implement client retry |
-| **Lambda concurrency limits** | 🟡 Medium | 🟠 Medium | Throttled invocations | Request limit increase to 1000 concurrent, use reserved concurrency |
-| **Cost overrun** | 🟡 Medium | 🟠 Medium | Budget exceeded | Set billing alarms, optimize Lambda memory/timeout |
-
-### **Risk Mitigation Strategies**
-
-| Risk | Mitigation Strategy | Owner | Timeline |
-|------|---------------------|-------|----------|
-| Cold start | Provisioned concurrency (10 instances) for router Lambda | DevOps | Phase 1 |
-| Step Functions timeout | Implement Task Token pattern for long-running jobs | Engineering | Phase 2 |
-| API Gateway throttle | Request AWS limit increase to 10K RPS | DevOps | Before Phase 1 |
-| Concurrency limits | Monitor CloudWatch metrics, set alarms at 80% usage | SRE | Phase 1 |
-| Cost overrun | Weekly cost review, optimize by downsizing over-provisioned functions | FinOps | Ongoing |
-
----
-
-## 🔗 ISO 27001 Controls Mapping
-
-| Control | Description | Implementation |
-|---------|-------------|----------------|
-| **A.12.1.1** | Documented operating procedures | Lambda execution flows documented in runbooks |
-| **A.12.1.2** | Change management | All Lambda deployments via CI/CD with approval gates |
-| **A.12.1.3** | Capacity management | CloudWatch alarms for Lambda concurrency and API Gateway RPS |
-| **A.14.2.1** | Secure development policy | All Lambda code follows Secure Development Policy |
-| **A.14.2.2** | System change control procedures | Blue/green deployments with Lambda aliases |
-| **A.14.2.8** | System security testing | Lambda integration tests with 80%+ coverage |
-| **A.17.1.1** | Planning information security continuity | Step Functions retry logic, exponential backoff |
-| **A.17.1.2** | Implementing information security continuity | Multi-AZ Lambda deployment, DynamoDB global tables |
-| **A.17.2.1** | Availability of information processing facilities | Lambda auto-scaling, API Gateway 99.95% SLA |
-
-### **NIST CSF 2.0 Mapping**
-
-| Function | Category | Implementation |
-|----------|----------|----------------|
-| **PR.IP-1** | Baseline configuration | Lambda runtime: Node.js 24, standardized IAM roles |
-| **PR.IP-2** | System development life cycle | CI/CD with CodePipeline, automated testing |
-| **PR.PT-1** | Audit/log records | CloudTrail captures all Lambda invocations |
-| **DE.AE-1** | Baseline network operations | CloudWatch metrics baseline for latency/errors |
-| **DE.AE-3** | Event data aggregated | CloudWatch Logs Insights aggregates Lambda logs |
-| **DE.CM-1** | Network monitored | API Gateway access logs, VPC Flow Logs |
-| **RS.RP-1** | Response plan executed | Exponential backoff, circuit breaker, fallback responses |
-
-### **CIS Controls v8.1 Mapping**
-
-| Control | Safeguard | Implementation |
-|---------|-----------|----------------|
-| **4.1** | Establish and maintain secure configuration | Lambda runtime configurations in IaC (CDK) |
-| **4.7** | Manage default accounts | IAM roles follow least privilege, no default credentials |
-| **8.2** | Collect audit logs | CloudTrail logs all API calls, 90-day retention |
-| **8.5** | Collect detailed audit logs | Lambda logs sent to CloudWatch Logs |
-| **11.1** | Establish data recovery processes | Lambda code in Git, infrastructure in CDK |
-| **12.2** | Establish and maintain network infrastructure | API Gateway in VPC, private integrations |
-| **17.1** | Perform incident response exercises | Quarterly DR drills with Lambda failover |
-
----
-
-## 🔮 Visionary Roadmap: 2027–2037
-
-> **Process Flow Evolution** — From human-prompted MCP tool chains to autonomous AI agent orchestration, evolving alongside AI model generations from Anthropic Opus 4.6 through future AGI.
-
-### 📅 Workflow Evolution Strategy
-
-| Year | Version | AI Context | Process Flow Milestone |
-|------|---------|-----------|----------------------|
-| **2026** | v1.0 | Anthropic Opus 4.6 | Sequential tool invocation with human prompting |
-| **2027** | v2.0 | Opus 5.x | Parallel tool orchestration with Step Functions |
-| **2028** | v3.0 | Next-gen multimodal | Cross-parliament data pipeline federation |
-| **2029** | v4.0 | Specialized political AI | AI-selected tool chains without human prompt engineering |
-| **2030** | v5.0 | Near-AGI reasoning | Self-optimizing workflows that learn from usage patterns |
-| **2031** | v6.0 | Early AGI | Autonomous agent workflows with goal-directed execution |
-| **2032** | v7.0 | AGI-assisted | Predictive workflow pre-computation for anticipated queries |
-| **2033** | v8.0 | AGI co-development | Cross-platform workflow federation across 50+ parliaments |
-| **2034** | v9.0 | Mature AGI | Human-AGI collaborative decision flows |
-| **2035** | v10.0 | Post-AGI | Intent-based workflows — describe goals, not steps |
-| **2036** | v11.0 | AGI-native | Self-healing process graphs with zero-downtime evolution |
-| **2037** | v12.0 | Superintelligent | Emergent workflows — AGI discovers novel analysis patterns |
-
-> **Minor updates every ~2.3 months** deliver pipeline optimizations, new flow patterns, and error handling improvements.
-
-### 🔄 Advanced Flow Architectures
-
-#### Phase 4: Autonomous Orchestration (2029–2030)
-
-```mermaid
-graph TB
-    subgraph "AI Agent Layer"
-        AG[AI Agent - Goal Interpreter]
-        TP[Tool Planner]
-        EX[Execution Engine]
-    end
-    subgraph "Tool Registry"
-        T1[100+ MCP Tools]
-        T2[Cross-Parliament Tools]
-        T3[Analytics Pipelines]
-    end
-    subgraph "Feedback Loop"
-        MON[Execution Monitor]
-        OPT[Self-Optimizer]
-        LRN[Learning Engine]
-    end
-    AG --> TP
-    TP --> EX
-    EX --> T1 & T2 & T3
-    T1 & T2 & T3 --> MON
-    MON --> OPT --> LRN --> TP
-```
-
-- **Goal-directed execution** — AI interprets high-level objectives and plans multi-step tool chains
-- **Dynamic replanning** — workflows adapt in real-time based on intermediate results
-- **Cross-parliament orchestration** — unified flows spanning EU and national parliament APIs
-- **Execution learning** — system remembers successful patterns and reuses them
-
-#### Phase 5: Predictive & Emergent Flows (2031–2034)
-
-- **Anticipatory processing** — predict likely queries and pre-compute results before users ask
-- **Emergent analysis patterns** — AGI discovers novel combinations of tools that humans hadn't designed
-- **Multi-agent collaboration** — multiple AGI agents coordinate on complex political analysis tasks
-- **Continuous intelligence streams** — event-driven flows that maintain always-current political dashboards
-
-#### Phase 6: Intent-Based Governance Flows (2035–2037)
-
-- **Natural language workflow definition** — describe desired analysis in plain language, AGI builds the flow
-- **Self-healing error recovery** — workflows autonomously diagnose and fix failures without human intervention
-- **Provenance-tracked results** — every output includes a verifiable chain of reasoning and data sources
-- **Democratic participation flows** — citizen engagement pipelines connecting public input to legislative analysis
-
-### 🏛️ Disruption Response Flows
-
-| Disruption Scenario | Flow Architecture Response |
-|---------------------|---------------------------|
-| **New MCP protocol versions** | Protocol adapter layer; flows remain stable across MCP versions |
-| **Competitor intelligence platforms** | Interoperability flows for cross-platform tool composition |
-| **Real-time legislative streaming** | Event-driven architecture replaces batch processing |
-| **AGI replaces prompt-based interaction** | Intent-based flow definition; backward-compatible with prompt flows |
-| **Quantum computing availability** | Quantum-accelerated analysis paths for complex simulations |
-
----
-
-## 🔗 Policy Alignment
-
-| ISMS Policy | Relevance | Link |
-|-------------|-----------|------|
-| 🔒 Secure Development | Pipeline security requirements | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
-| 🌐 Network Security | Transport and API security | [Network_Security_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Network_Security_Policy.md) |
-| 🔑 Access Control | Authentication flow patterns | [Access_Control_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) |
-| 🚨 Incident Response | Error handling and recovery | [Incident_Response_Plan.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md) |
-
----
-
-## 📚 Related Documents
-
-| Document | Description | Link |
-|----------|-------------|------|
-| 🔄 Flowchart (Current) | Current process workflows | [FLOWCHART.md](FLOWCHART.md) |
-| 🚀 Future Architecture | Architecture roadmap | [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md) |
-| ⚙️ Workflows | CI/CD documentation | [.github/WORKFLOWS.md](.github/WORKFLOWS.md) |
-| 🛡️ Security Architecture | Security controls | [SECURITY_ARCHITECTURE.md](SECURITY_ARCHITECTURE.md) |
-
----
-
-<p align="center">
-  <em>This future flowchart is maintained as part of the <a href="https://github.com/Hack23/ISMS-PUBLIC">Hack23 AB ISMS</a> framework.</em><br>
-  <em>Licensed under <a href="LICENSE.md">Apache-2.0</a></em>
-</p>
+*See [FLOWCHART.md](./FLOWCHART.md) for the current implemented workflows.*
