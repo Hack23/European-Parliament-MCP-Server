@@ -4472,6 +4472,44 @@ describe('EuropeanParliamentClient', () => {
       const result = await client.getMeetingPlenarySessionDocuments('MTG-PL-2024-001');
       expect(result.data).toHaveLength(1);
     });
+
+    it('should throw APIError when streamed body exceeds limit (no content-length)', async () => {
+      // Create a ReadableStream that yields chunks summing to > 10 MiB
+      const chunk = new Uint8Array(6 * 1024 * 1024); // 6 MiB
+      const body = new ReadableStream<Uint8Array>({
+        start(controller) {
+          controller.enqueue(chunk);
+          controller.enqueue(chunk); // total 12 MiB > 10 MiB
+          controller.close();
+        }
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(), // no content-length
+        body,
+      } as unknown as Response);
+
+      await expect(client.getMeetingPlenarySessionDocuments('MTG-1')).rejects.toThrow(APIError);
+    });
+
+    it('should parse streamed body when within limit (no content-length)', async () => {
+      const payload = createMockDocumentsResponse(1);
+      const encoded = new TextEncoder().encode(JSON.stringify(payload));
+      const body = new ReadableStream<Uint8Array>({
+        start(controller) {
+          controller.enqueue(encoded);
+          controller.close();
+        }
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(), // no content-length
+        body,
+      } as unknown as Response);
+
+      const result = await client.getMeetingPlenarySessionDocuments('MTG-PL-2024-001');
+      expect(result.data).toHaveLength(1);
+    });
   });
 
   describe('extractDocumentRefs edge cases', () => {

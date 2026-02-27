@@ -474,7 +474,7 @@ graph TB
 
     subgraph "MCP Server (src/)"
         direction TB
-        Tools[🔧 39 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …]
+        Tools[🔧 45 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …]
         Resources[📦 9 Resources<br/>ep://meps/{id}<br/>ep://procedures/{id} · …]
         Prompts[💬 7 Prompts<br/>mep_briefing<br/>coalition_analysis · …]
     end
@@ -510,7 +510,7 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 
 ---
 
-## 🔌 MCP Tools (39 Total)
+## 🔌 MCP Tools (45 Total)
 
 All tools are organized below by functional area. Each tool includes input validation via Zod schemas, caching, and rate limiting.
 
@@ -526,7 +526,7 @@ All tools are organized below by functional area. Each tool includes input valid
 | [`get_homonym_meps`](./API_USAGE_GUIDE.md#tool-get_homonym_meps) | MEPs with identical names (disambiguation) | limit, offset | `GET /meps/show-homonyms` |
 | [`get_mep_declarations`](./API_USAGE_GUIDE.md#tool-get_mep_declarations) | MEP financial interest declarations | docId, year, limit | `GET /meps-declarations`, `GET /meps-declarations/{id}` |
 
-### 🏛️ Plenary & Meeting Tools (7)
+### 🏛️ Plenary & Meeting Tools (9)
 
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
@@ -537,6 +537,8 @@ All tools are organized below by functional area. Each tool includes input valid
 | [`get_meeting_activities`](./API_USAGE_GUIDE.md#tool-get_meeting_activities) | Activities linked to a plenary sitting | sittingId (required), limit | `GET /meetings/{id}/activities` |
 | [`get_meeting_decisions`](./API_USAGE_GUIDE.md#tool-get_meeting_decisions) | Decisions made in a plenary sitting | sittingId (required), limit | `GET /meetings/{id}/decisions` |
 | [`get_meeting_foreseen_activities`](./API_USAGE_GUIDE.md#tool-get_meeting_foreseen_activities) | Planned agenda items for upcoming meetings | sittingId (required), limit | `GET /meetings/{id}/foreseen-activities` |
+| [`get_meeting_plenary_session_documents`](./API_USAGE_GUIDE.md#tool-get_meeting_plenary_session_documents) | Plenary session documents linked to a specific sitting | sittingId (required), limit, offset | `GET /meetings/{id}/plenary-session-documents` |
+| [`get_meeting_plenary_session_document_items`](./API_USAGE_GUIDE.md#tool-get_meeting_plenary_session_document_items) | Agenda item documents for a specific plenary sitting | sittingId (required), limit, offset | `GET /meetings/{id}/plenary-session-document-items` |
 
 ### 🏢 Committee Tools (2)
 
@@ -573,7 +575,7 @@ All tools are organized below by functional area. Each tool includes input valid
 | [`track_legislation`](./API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
 | [`generate_report`](./API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
 
-### 🕵️ OSINT Intelligence Tools (10)
+### 🕵️ OSINT Intelligence Tools (14)
 
 | Tool | Description | Key Parameters | Output |
 |------|-------------|----------------|--------|
@@ -587,6 +589,10 @@ All tools are organized below by functional area. Each tool includes input valid
 | [`track_mep_attendance`](./API_USAGE_GUIDE.md#tool-track_mep_attendance) | MEP attendance patterns & trends | mepId, country, groupId, dateFrom, dateTo, limit | Attendance report |
 | [`analyze_country_delegation`](./API_USAGE_GUIDE.md#tool-analyze_country_delegation) | Country delegation voting & composition | country (required), dateFrom, dateTo | Delegation analysis |
 | [`generate_political_landscape`](./API_USAGE_GUIDE.md#tool-generate_political_landscape) | Parliament-wide political landscape | dateFrom, dateTo | Landscape overview |
+| [`network_analysis`](./API_USAGE_GUIDE.md#tool-network_analysis) | MEP relationship network via committee co-membership | mepId, analysisType, depth | Network map with centrality scores |
+| [`sentiment_tracker`](./API_USAGE_GUIDE.md#tool-sentiment_tracker) | Political group institutional-positioning scores | groupId, timeframe | Positioning scores & polarization index |
+| [`early_warning_system`](./API_USAGE_GUIDE.md#tool-early_warning_system) | Detect emerging political shifts & coalition fractures | sensitivity, focusArea | Warnings with severity levels & stability score |
+| [`comparative_intelligence`](./API_USAGE_GUIDE.md#tool-comparative_intelligence) | Cross-reference 2–10 MEP activities across dimensions | mepIds (required), dimensions | Ranked profiles, correlation matrix, cluster analysis |
 
 📖 **[Complete TypeDoc API documentation →](https://hack23.github.io/European-Parliament-MCP-Server/api/)** · **[Markdown API docs →](https://hack23.github.io/European-Parliament-MCP-Server/api-markdown/)**
 
@@ -667,7 +673,7 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 
 | Country | Server | Data Source | Coverage |
 |---------|--------|-------------|----------|
-| 🇪🇺 **European Union** | [**European Parliament MCP Server**](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions — **20 OSINT tools** |
+| 🇪🇺 **European Union** | [**European Parliament MCP Server**](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions — **45 tools** (14 OSINT) |
 | 🇺🇸 **United States** | [Congress.gov API MCP Server](https://github.com/bsmi021/mcp-congress_gov_server) | congress.gov | Bills, members, votes, committees (TypeScript, v3 API) |
 | 🇺🇸 **United States** | [CongressMCP](https://github.com/amurshak/congressMCP) | congress.gov | Real-time Congress data — bills, votes, members |
 | 🇺🇸 **United States** | [Congress.gov MCP](https://github.com/AshwinSundar/congress_gov_mcp) | congress.gov | Unofficial Congress.gov API access |
@@ -747,7 +753,7 @@ All [European Parliament Open Data API v2](https://data.europarl.europa.eu/en/de
 | **MEP Documents** | `/meps-declarations`, `/meps-declarations/{id}` | `get_mep_declarations` |
 | **Corporate Bodies** | `/corporate-bodies`, `/corporate-bodies/{id}`, `/corporate-bodies/show-current` | `get_committee_info` |
 | **Events** | `/events`, `/events/{id}` | `get_events` |
-| **Meetings** | `/meetings`, `/meetings/{id}`, `/meetings/{id}/activities`, `/meetings/{id}/decisions`, `/meetings/{id}/foreseen-activities`, `/meetings/{id}/vote-results` | `get_plenary_sessions`, `get_meeting_activities`, `get_meeting_decisions`, `get_meeting_foreseen_activities`, `get_voting_records` |
+| **Meetings** | `/meetings`, `/meetings/{id}`, `/meetings/{id}/activities`, `/meetings/{id}/decisions`, `/meetings/{id}/foreseen-activities`, `/meetings/{id}/vote-results`, `/meetings/{id}/plenary-session-documents`, `/meetings/{id}/plenary-session-document-items` | `get_plenary_sessions`, `get_meeting_activities`, `get_meeting_decisions`, `get_meeting_foreseen_activities`, `get_voting_records`, `get_meeting_plenary_session_documents`, `get_meeting_plenary_session_document_items` |
 | **Speeches** | `/speeches`, `/speeches/{id}` | `get_speeches` |
 | **Procedures** | `/procedures`, `/procedures/{id}`, `/procedures/{id}/events` | `get_procedures`, `get_procedure_events` |
 | **Documents** | `/documents`, `/documents/{id}`, `/adopted-texts`, `/adopted-texts/{id}`, `/committee-documents`, `/committee-documents/{id}`, `/plenary-documents`, `/plenary-documents/{id}`, `/plenary-session-documents`, `/plenary-session-documents/{id}`, `/plenary-session-documents-items` | `search_documents`, `get_adopted_texts`, `get_committee_documents`, `get_plenary_documents`, `get_plenary_session_documents`, `get_plenary_session_document_items` |

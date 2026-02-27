@@ -227,6 +227,53 @@ export class BaseEPClient {
   }
 
   /**
+   * Reads the response body as a stream, enforcing the response size cap.
+   * Used as a fallback when the `content-length` header is absent (e.g. chunked
+   * transfer encoding). Accumulates all chunks and parses the result as JSON.
+   * @private
+   */
+  private async readStreamedBody<T>(response: Response): Promise<T> {
+    const reader = (response.body as ReadableStream<Uint8Array> | null)?.getReader();
+    if (!reader) {
+      return response.json() as Promise<T>;
+    }
+
+    const chunks: Uint8Array[] = [];
+    let totalBytes = 0;
+    let readerReleased = false;
+    try {
+      for (;;) {
+        const result = await reader.read();
+        if (result.done) break;
+        const { value } = result;
+        totalBytes += value.byteLength;
+        if (totalBytes > DEFAULT_MAX_RESPONSE_BYTES) {
+          reader.releaseLock();
+          readerReleased = true;
+          await (response.body as ReadableStream<Uint8Array> | null)?.cancel();
+          throw new APIError(
+            `EP API response too large: exceeds limit of ${String(DEFAULT_MAX_RESPONSE_BYTES)} bytes`,
+            413
+          );
+        }
+        chunks.push(value);
+      }
+    } finally {
+      if (!readerReleased) {
+        reader.releaseLock();
+      }
+    }
+
+    const combined = new Uint8Array(totalBytes);
+    let offset = 0;
+    for (const chunk of chunks) {
+      combined.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    return JSON.parse(new TextDecoder().decode(combined)) as T;
+  }
+
+  /**
    * Executes the HTTP fetch with timeout/abort support and response size guard.
    * @private
    */
@@ -261,9 +308,13 @@ export class BaseEPClient {
               413
             );
           }
+          return response.json() as Promise<T>;
         }
 
-        return response.json() as Promise<T>;
+        // No content-length header (chunked encoding) — stream the body and
+        // enforce the cap incrementally so oversized responses are aborted
+        // before they are fully buffered in memory.
+        return this.readStreamedBody<T>(response);
       },
       this.timeoutMs,
       `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`
