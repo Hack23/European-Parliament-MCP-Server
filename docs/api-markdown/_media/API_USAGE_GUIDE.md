@@ -69,7 +69,7 @@
 
 ## 🎯 Overview
 
-The European Parliament MCP Server provides 46 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 7 core tools, 3 advanced tools, 15 OSINT intelligence tools, 8 Phase 4 tools, and 13 Phase 5 tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
+The European Parliament MCP Server provides 46 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 7 core tools, 3 advanced tools, 15 OSINT intelligence tools, 8 Phase 4 tools, and 13 Phase 5 tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
 
 ### Key Features
 
