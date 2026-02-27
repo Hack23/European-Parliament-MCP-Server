@@ -18,6 +18,7 @@
 
 import { GetVotingRecordsSchema, VotingRecordSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get voting records tool handler
@@ -36,7 +37,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetVotingRecords(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   // Validate input
   const params = GetVotingRecordsSchema.parse(args);
   
