@@ -298,19 +298,19 @@ describe('Performance Benchmarks', () => {
 
   describe('Phase 6 OSINT Concurrent Invocation', () => {
     it('should handle concurrent Phase 6 tool invocations efficiently', async () => {
-      const requests = [
-        handleNetworkAnalysis({}),
-        handleSentimentTracker({}),
-        handleEarlyWarningSystem({}),
-        handleComparativeIntelligence({ mepIds: [1, 2] }),
-        handleNetworkAnalysis({ analysisType: 'committee' }),
-        handleSentimentTracker({ timeframe: 'last_month' }),
-        handleEarlyWarningSystem({ sensitivity: 'high' }),
-        handleComparativeIntelligence({ mepIds: [3, 4] })
+      const requestThunks = [
+        () => handleNetworkAnalysis({}),
+        () => handleSentimentTracker({}),
+        () => handleEarlyWarningSystem({}),
+        () => handleComparativeIntelligence({ mepIds: [1, 2] }),
+        () => handleNetworkAnalysis({ analysisType: 'committee' }),
+        () => handleSentimentTracker({ timeframe: 'last_month' }),
+        () => handleEarlyWarningSystem({ sensitivity: 'high' }),
+        () => handleComparativeIntelligence({ mepIds: [3, 4] })
       ];
 
       const [results, duration] = await measureTime(async () => {
-        return Promise.all(requests);
+        return Promise.all(requestThunks.map(fn => fn()));
       });
 
       expect(results).toHaveLength(8);

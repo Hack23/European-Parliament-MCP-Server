@@ -15,7 +15,6 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { shouldRunIntegrationTests } from '../setup.js';
 import { validateMCPStructure } from '../helpers/responseValidator.js';
 import { handleNetworkAnalysis } from '../../../src/tools/networkAnalysis.js';
 import { handleSentimentTracker } from '../../../src/tools/sentimentTracker.js';
@@ -47,10 +46,6 @@ vi.mock('../../../src/clients/europeanParliamentClient.js', async (importOrigina
 // Import the mocked module so we can set return values
 import * as epClientModule from '../../../src/clients/europeanParliamentClient.js';
 
-// ── Test guard ───────────────────────────────────────────────────────────────
-
-const describeIntegration = shouldRunIntegrationTests() ? describe : describe.skip;
-
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 /** Parse the JSON payload from an MCP tool result */
@@ -61,10 +56,9 @@ function parseToolResult(result: { content: { type: string; text: string }[] }):
 
 // ── Tests ────────────────────────────────────────────────────────────────────
 
-describeIntegration('Phase 6 OSINT Integration Tests', () => {
-  beforeEach(async () => {
-    // Respect rate limits between tests
-    await new Promise(resolve => setTimeout(resolve, 2000));
+// These tests use vi.mock and make no real HTTP calls, so they run unconditionally.
+describe('Phase 6 OSINT Integration Tests', () => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     // Default mock implementations for all tools
