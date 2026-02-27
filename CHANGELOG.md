@@ -25,7 +25,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [1.0.0] — 2025-Q3 (Planned)
+## [1.0.0] — (Planned)
 
 ### Added
 - **39 MCP Tools** — complete European Parliament API v2 coverage:

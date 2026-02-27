@@ -446,7 +446,7 @@ npm run docs:build    # Full documentation build (HTML + MD + coverage + test re
 
 - [**API Usage Guide**](./API_USAGE_GUIDE.md) - Complete tool documentation with examples
 - [**Architecture Diagrams**](./ARCHITECTURE_DIAGRAMS.md) - C4 model diagrams and data flows
-- [**Troubleshooting Guide**](./TROUBLESHOOTING.md) - Common issues and solutions
+- [**Troubleshooting Guide**](#troubleshooting) - Common issues and solutions
 - [**Developer Guide**](./DEVELOPER_GUIDE.md) - Development workflow and contributing
 - [**Deployment Guide**](./DEPLOYMENT_GUIDE.md) - Claude Desktop, VS Code, Docker setup
 - [**Performance Guide**](./PERFORMANCE_GUIDE.md) - Optimization strategies
@@ -878,7 +878,7 @@ European-Parliament-MCP-Server/
 #### 📦 Deployment & Operations
 
 - **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Production deployment instructions
-- **[Troubleshooting Guide](./TROUBLESHOOTING.md)** - Common issues and solutions
+- **[Troubleshooting Guide](#troubleshooting)** - Common issues and solutions
 - **[NPM Publishing Guide](./NPM_PUBLISHING.md)** - Package publishing workflow
 
 ### Testing
@@ -1019,7 +1019,7 @@ cat tsconfig.json
 
 - 📋 [Open an Issue](https://github.com/Hack23/European-Parliament-MCP-Server/issues)
 - 💬 [Start a Discussion](https://github.com/Hack23/European-Parliament-MCP-Server/discussions)
-- 📖 [Full Troubleshooting Guide](./TROUBLESHOOTING.md)
+- 📖 [Full Troubleshooting Guide](#troubleshooting)
 - 🤖 [Ask DeepWiki](https://deepwiki.com/Hack23/European-Parliament-MCP-Server)
 
 ---
