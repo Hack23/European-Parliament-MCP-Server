@@ -31,11 +31,6 @@ export const SentimentTrackerSchema = z.object({
     .optional()
     .default('last_quarter')
     .describe('Informational-only time window label; current implementation always uses latest available MEP composition data, not historical time-series'),
-  topic: z.string()
-    .min(1)
-    .max(200)
-    .optional()
-    .describe('Optional policy topic keyword to filter analysis')
 });
 
 export type SentimentTrackerParams = z.infer<typeof SentimentTrackerSchema>;
@@ -60,7 +55,6 @@ interface SentimentShift {
 
 interface SentimentTrackerResult {
   timeframe: string;
-  topic?: string;
   groupSentiments: GroupSentiment[];
   polarizationIndex: number;
   consensusTopics: string[];
@@ -146,8 +140,8 @@ function buildSentimentShifts(sentiments: GroupSentiment[]): SentimentShift[] {
         magnitude: Math.round(magnitude * 100) / 100,
         direction: g.sentimentScore > 0 ? 'POSITIVE' : 'NEGATIVE',
         estimatedCause: g.sentimentScore > 0
-          ? 'Cohesive voting bloc — strong internal alignment detected'
-          : 'Fragmented voting signals — internal tensions or opposition stance'
+          ? 'Large seat share indicates strong institutional position on tracked topics'
+          : 'Smaller seat share indicates weaker institutional position or limited leverage on tracked topics'
       });
     }
   }
@@ -180,11 +174,8 @@ function buildEmptySentimentResult(params: SentimentTrackerParams): SentimentTra
     confidenceLevel: 'LOW',
     dataFreshness: 'No data available from EP API',
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-    methodology: 'Sentiment derived from voting cohesion proxies — no MEP data available.'
+    methodology: 'Sentiment derived from seat-share proxies — no MEP data available.'
   };
-  if (params.topic !== undefined) {
-    result.topic = params.topic;
-  }
   return result;
 }
 
@@ -210,17 +201,18 @@ async function buildGroupSentiment(groupId: string, totalMEPs: number): Promise<
   }
 }
 
-function buildTopicsAndShifts(polarizationIndex: number, validSentiments: GroupSentiment[]): {
+function buildTopicsAndShifts(validSentiments: GroupSentiment[]): {
   consensusTopics: string[];
   divisiveTopics: string[];
   sentimentShifts: SentimentShift[];
 } {
-  const consensusTopics = polarizationIndex < 0.3
-    ? ['EU budget', 'Climate policy', 'Digital single market']
-    : ['EU enlargement'];
-  const divisiveTopics = polarizationIndex > 0.3
-    ? ['Migration policy', 'Rule of law', 'Defence spending']
-    : ['Agricultural subsidies'];
+  // Topic-level analysis is not currently implemented.
+  // To avoid misleading intelligence output, we do not infer or fabricate
+  // consensus/divisive policy areas from the available EP data.
+  // These arrays are intentionally empty until a data-backed topic model
+  // (e.g. based on votes, committee work, or speech analysis) is available.
+  const consensusTopics: string[] = [];
+  const divisiveTopics: string[] = [];
   return { consensusTopics, divisiveTopics, sentimentShifts: buildSentimentShifts(validSentiments) };
 }
 
@@ -264,7 +256,7 @@ export async function sentimentTracker(params: SentimentTrackerParams): Promise<
       ? Math.round((sentimentScores.reduce((s, v) => s + v, 0) / sentimentScores.length) * 100) / 100
       : 0;
 
-    const { consensusTopics, divisiveTopics, sentimentShifts } = buildTopicsAndShifts(polarizationIndex, validSentiments);
+    const { consensusTopics, divisiveTopics, sentimentShifts } = buildTopicsAndShifts(validSentiments);
 
     const result: SentimentTrackerResult = {
       timeframe: params.timeframe,
@@ -287,10 +279,6 @@ export async function sentimentTracker(params: SentimentTrackerParams): Promise<
         + 'scores are proxy estimates based on group size distributions. '
         + 'Data source: https://data.europarl.europa.eu/api/v2/meps'
     };
-
-    if (params.topic !== undefined) {
-      result.topic = params.topic;
-    }
 
     return buildToolResponse(result);
   } catch (error) {
@@ -319,12 +307,6 @@ export const sentimentTrackerToolMetadata = {
         description: 'Informational-only time window label (scores always use latest group composition data)',
         default: 'last_quarter'
       },
-      topic: {
-        type: 'string',
-        description: 'Optional policy topic keyword to filter analysis',
-        minLength: 1,
-        maxLength: 200
-      }
     }
   }
 };

@@ -88,11 +88,6 @@ describe('sentiment_tracker Tool', () => {
       expect(result).toHaveProperty('content');
     });
 
-    it('should accept topic param', async () => {
-      const result = await handleSentimentTracker({ topic: 'climate change' });
-      expect(result).toHaveProperty('content');
-    });
-
     it('should reject invalid timeframe', async () => {
       await expect(handleSentimentTracker({ timeframe: 'last_decade' })).rejects.toThrow();
     });
@@ -170,11 +165,6 @@ describe('sentiment_tracker Tool', () => {
       expect(data.sourceAttribution).toBe('European Parliament Open Data Portal - data.europarl.europa.eu');
     });
 
-    it('should include topic when provided', async () => {
-      const result = await handleSentimentTracker({ topic: 'migration' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}') as { topic?: string };
-      expect(data.topic).toBe('migration');
-    });
   });
 
   describe('dataAvailable: false scenario', () => {

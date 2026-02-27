@@ -159,7 +159,7 @@ function buildCoalitionWarnings(groupSizes: GroupSize[], thresholds: Sensitivity
   return warnings;
 }
 
-function buildAttendanceWarnings(groupSizes: GroupSize[], thresholds: SensitivityThresholds, focusArea: string): Warning[] {
+function buildAttendanceWarnings(groupSizes: GroupSize[], focusArea: string): Warning[] {
   if (focusArea !== 'attendance' && focusArea !== 'all') return [];
 
   const smallGroups = groupSizes.filter(g => g.memberCount <= 5);
@@ -170,7 +170,7 @@ function buildAttendanceWarnings(groupSizes: GroupSize[], thresholds: Sensitivit
     severity: 'LOW',
     description: `${String(smallGroups.length)} political group(s) with ≤5 members may struggle to maintain quorum`,
     affectedEntities: smallGroups.map(g => g.groupId),
-    recommendedAction: `Groups below the ${String(thresholds.attendance)}% minimum attendance threshold require monitoring — quorum participation at risk`
+    recommendedAction: 'Monitor small group participation rates to ensure quorum requirements are met'
   }];
 }
 
@@ -316,7 +316,7 @@ export async function earlyWarningSystem(params: EarlyWarningSystemParams): Prom
 
     const warnings: Warning[] = [
       ...buildCoalitionWarnings(groupSizes, thresholds, focusArea),
-      ...buildAttendanceWarnings(groupSizes, thresholds, focusArea)
+      ...buildAttendanceWarnings(groupSizes, focusArea)
     ];
 
     const criticalWarnings = warnings.filter(w => w.severity === 'CRITICAL').length;
