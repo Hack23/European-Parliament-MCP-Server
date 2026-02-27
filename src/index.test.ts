@@ -1,10 +1,32 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
 import {
   SERVER_NAME,
   SERVER_VERSION,
   getToolMetadataArray,
-  sanitizeUrl
+  sanitizeUrl,
+  EuropeanParliamentMCPServer,
 } from './index.js';
+
+// ── MCP SDK mocks (hoisted so they apply before any imports) ─────────────────
+const mockSetRequestHandler = vi.hoisted(() => vi.fn());
+const mockConnect = vi.hoisted(() => vi.fn());
+
+vi.mock('@modelcontextprotocol/sdk/server/index.js', () => ({
+  // Use a regular function so it can be invoked with `new`
+  // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+  Server: vi.fn(function (this: { setRequestHandler: typeof mockSetRequestHandler; connect: typeof mockConnect }) {
+    this.setRequestHandler = mockSetRequestHandler;
+    this.connect = mockConnect;
+  }),
+}));
+
+vi.mock('@modelcontextprotocol/sdk/server/stdio.js', () => ({
+  // Use a named regular function (not arrow) so it can be invoked with `new`.
+  // The mock body is intentionally empty — the transport object itself is passed
+  // to `server.connect()` (which is also mocked), so no real transport behaviour
+  // is needed in unit tests.
+  StdioServerTransport: vi.fn(function StdioServerTransportMock(this: object) {}),
+}));
 
 /**
  * Tests for European Parliament MCP Server index module
@@ -250,5 +272,135 @@ describe('Error Handling', () => {
     expect(() => {
       throw new Error('test error');
     }).toThrow('test error');
+  });
+});
+
+describe('EuropeanParliamentMCPServer', () => {
+  let server: EuropeanParliamentMCPServer;
+  // Handlers captured once from the constructor; stored before any beforeEach runs.
+  // Using `unknown[]` parameter type because each of the 6 registered handlers has
+  // a distinct signature — tests below cast to the required shape before calling.
+  let capturedHandlers: Array<(...args: unknown[]) => unknown>;
+
+  beforeAll(() => {
+    mockConnect.mockResolvedValue(undefined);
+    // Construct server — registers all 6 handlers synchronously
+    server = new EuropeanParliamentMCPServer();
+    // Persist handler callbacks before any beforeEach clearAllMocks call
+    capturedHandlers = (mockSetRequestHandler.mock.calls as unknown[][]).map(
+      (call) => call[1] as (...args: unknown[]) => unknown
+    );
+  });
+
+  beforeEach(() => {
+    mockConnect.mockReset();
+    mockConnect.mockResolvedValue(undefined);
+  });
+
+  it('should instantiate without throwing', () => {
+    expect(server).toBeDefined();
+  });
+
+  it('should register exactly 6 request handlers during construction', () => {
+    expect(capturedHandlers).toHaveLength(6);
+  });
+
+  describe('ListTools handler', () => {
+    it('should return all tools', async () => {
+      const handler = capturedHandlers[0] as () => Promise<{ tools: unknown[] }>;
+      const result = await handler();
+      expect(result).toHaveProperty('tools');
+      expect(Array.isArray(result.tools)).toBe(true);
+      expect(result.tools.length).toBe(45);
+    });
+  });
+
+  describe('CallTool handler', () => {
+    it('should re-throw Error for unknown tool', async () => {
+      const handler = capturedHandlers[1] as (
+        req: { params: { name: string; arguments: unknown } }
+      ) => Promise<unknown>;
+      await expect(
+        handler({ params: { name: 'nonexistent_tool', arguments: {} } })
+      ).rejects.toThrow('Unknown tool: nonexistent_tool');
+    });
+
+    it('should re-throw Error instances unchanged', async () => {
+      const handler = capturedHandlers[1] as (
+        req: { params: { name: string; arguments: unknown } }
+      ) => Promise<unknown>;
+      await expect(
+        handler({ params: { name: 'unknown', arguments: {} } })
+      ).rejects.toBeInstanceOf(Error);
+    });
+  });
+
+  describe('ListPrompts handler', () => {
+    it('should return available prompts', async () => {
+      const handler = capturedHandlers[2] as () => Promise<{ prompts: unknown[] }>;
+      const result = await handler();
+      expect(result).toHaveProperty('prompts');
+      expect(Array.isArray(result.prompts)).toBe(true);
+      expect(result.prompts.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('GetPrompt handler', () => {
+    it('should return prompt result for a valid prompt with no required args', () => {
+      const handler = capturedHandlers[3] as (
+        req: { params: { name: string; arguments?: Record<string, string> } }
+      ) => Promise<unknown>;
+      const result = handler({ params: { name: 'coalition_analysis', arguments: {} } });
+      expect(result).toBeDefined();
+    });
+
+    it('should re-throw Error for unknown prompt name', () => {
+      const handler = capturedHandlers[3] as (
+        req: { params: { name: string; arguments?: Record<string, string> } }
+      ) => Promise<unknown>;
+      expect(() => handler({ params: { name: 'nonexistent_prompt', arguments: {} } })).toThrow('Unknown prompt');
+    });
+
+    it('should produce an Error instance for bad prompt names', () => {
+      const handler = capturedHandlers[3] as (
+        req: { params: { name: string; arguments?: Record<string, string> } }
+      ) => Promise<unknown>;
+      expect(() => handler({ params: { name: 'bad_prompt', arguments: {} } })).toThrow(Error);
+    });
+  });
+
+  describe('ListResourceTemplates handler', () => {
+    it('should return available resource templates', async () => {
+      const handler = capturedHandlers[4] as () => Promise<{ resourceTemplates: unknown[] }>;
+      const result = await handler();
+      expect(result).toHaveProperty('resourceTemplates');
+      expect(Array.isArray(result.resourceTemplates)).toBe(true);
+      expect(result.resourceTemplates.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('ReadResource handler', () => {
+    it('should re-throw Error for unrecognised resource URI', async () => {
+      const handler = capturedHandlers[5] as (
+        req: { params: { uri: string } }
+      ) => Promise<unknown>;
+      await expect(
+        handler({ params: { uri: 'ep://unknown/resource' } })
+      ).rejects.toThrow();
+    });
+  });
+
+  describe('start()', () => {
+    it('should connect the transport and resolve successfully', async () => {
+      const freshServer = new EuropeanParliamentMCPServer();
+      await expect(freshServer.start()).resolves.toBeUndefined();
+      expect(mockConnect).toHaveBeenCalledTimes(1);
+    });
+
+    it('should re-throw transport connection errors', async () => {
+      const freshServer = new EuropeanParliamentMCPServer();
+      mockConnect.mockRejectedValue(new Error('transport connection failed'));
+      await expect(freshServer.start()).rejects.toThrow('transport connection failed');
+    });
   });
 });
