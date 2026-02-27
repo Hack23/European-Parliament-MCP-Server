@@ -26,6 +26,7 @@
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege), AU-002 (Audit Logging)
  */
 
+import { randomUUID } from 'node:crypto';
 import { CorrelateIntelligenceSchema } from '../schemas/europeanParliament.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult, OsintStandardOutput } from './shared/types.js';
@@ -539,7 +540,7 @@ export async function handleCorrelateIntelligence(
   const resolvedGroups = groups ?? DEFAULT_COALITION_GROUPS;
   const influenceThreshold = INFLUENCE_THRESHOLDS[sensitivityLevel];
   const analysisTime = new Date().toISOString();
-  const correlationId = `CORR-${crypto.randomUUID().replace(/-/g, '').toUpperCase().slice(0, 12)}`;
+  const correlationId = `CORR-${randomUUID().replace(/-/g, '').toUpperCase().slice(0, 12)}`;
 
   // Scenario 1: Per-MEP influence × anomaly correlation
   const influenceAnomalyCorrelations: InfluenceAnomalyCorrelation[] = [];
