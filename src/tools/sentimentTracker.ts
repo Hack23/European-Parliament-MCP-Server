@@ -26,7 +26,7 @@ export const SentimentTrackerSchema = z.object({
   timeframe: z.enum(['last_month', 'last_quarter', 'last_year'])
     .optional()
     .default('last_quarter')
-    .describe('Time window for sentiment analysis'),
+    .describe('Informational-only time window label; current implementation always uses latest available MEP composition data, not historical time-series'),
   topic: z.string()
     .min(1)
     .max(200)
@@ -186,6 +186,9 @@ function buildEmptySentimentResult(params: SentimentTrackerParams): SentimentTra
 
 async function buildGroupSentiment(groupId: string, totalMEPs: number): Promise<GroupSentiment> {
   try {
+    // NOTE: getMEPs is paginated; we fetch only the first page (limit:100).
+    // Member counts for large groups may be underestimated when hasMore is true.
+    // Seat-share scores are therefore sample-based proxies, not exact values.
     const result = await epClient.getMEPs({ group: groupId, limit: 100 });
     const memberCount = result.data.length;
     const seatShare = totalMEPs > 0 ? memberCount / totalMEPs : 0;
@@ -235,6 +238,9 @@ function buildSentimentComputedAttrs(
 
 export async function sentimentTracker(params: SentimentTrackerParams): Promise<ToolResult> {
   try {
+    // NOTE: getMEPs is paginated; limit:100 returns only the first page.
+    // totalMEPs may be underestimated when hasMore is true. Seat-share
+    // scores are therefore sample-based proxies, not exact values.
     const allMepsResult = await epClient.getMEPs({ limit: 100 });
     const totalMEPs = allMepsResult.data.length;
 
@@ -286,14 +292,14 @@ export async function sentimentTracker(params: SentimentTrackerParams): Promise<
   } catch (error) {
     return buildErrorResponse(
       error instanceof Error ? error : new Error(String(error)),
-      'sentimentTracker'
+      'sentiment_tracker'
     );
   }
 }
 
 export const sentimentTrackerToolMetadata = {
   name: 'sentiment_tracker',
-  description: 'Track political group sentiment shifts based on voting cohesion patterns. Computes sentiment scores (-1 to +1), polarization index, and identifies consensus and divisive topics. Detects significant sentiment shifts and overall parliament mood.',
+  description: 'Track political group institutional-positioning scores based on seat-share proxy (not direct voting cohesion data, which is unavailable from the EP API). Computes scores (-1 to +1), polarization index, and identifies consensus and divisive topics. NOTE: timeframe parameter is informational-only; scores always reflect current group composition.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -306,7 +312,7 @@ export const sentimentTrackerToolMetadata = {
       timeframe: {
         type: 'string',
         enum: ['last_month', 'last_quarter', 'last_year'],
-        description: 'Time window for sentiment analysis',
+        description: 'Informational-only time window label (scores always use latest group composition data)',
         default: 'last_quarter'
       },
       topic: {

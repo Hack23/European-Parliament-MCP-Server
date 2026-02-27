@@ -28,14 +28,14 @@ export const NetworkAnalysisSchema = z.object({
   analysisType: z.enum(['committee', 'voting', 'combined'])
     .optional()
     .default('combined')
-    .describe('Type of relationship signal to use for network edges'),
+    .describe('Preferred analysis mode. Currently edges are always committee co-membership; this value is echoed back (reserved for future voting-similarity edges).'),
   depth: z.number()
     .int()
     .min(1)
     .max(3)
     .optional()
     .default(2)
-    .describe('Network traversal depth (1=direct connections, 2=2nd-degree, 3=3rd-degree)')
+    .describe('Requested network traversal depth. Currently the implementation does not perform traversal-by-depth; this value is echoed back (reserved for future use).')
 });
 
 export type NetworkAnalysisParams = z.infer<typeof NetworkAnalysisSchema>;
@@ -309,14 +309,14 @@ export async function networkAnalysis(params: NetworkAnalysisParams): Promise<To
   } catch (error) {
     return buildErrorResponse(
       error instanceof Error ? error : new Error(String(error)),
-      'networkAnalysis'
+      'network_analysis'
     );
   }
 }
 
 export const networkAnalysisToolMetadata = {
   name: 'network_analysis',
-  description: 'MEP relationship network mapping using committee co-membership and voting similarity. Computes centrality scores, cluster assignments, bridging MEPs, and network density metrics. Identifies informal power structures and cross-party collaboration pathways.',
+  description: 'MEP relationship network mapping using committee co-membership. Computes centrality scores, cluster assignments, bridging MEPs, and network density metrics. Identifies informal power structures and cross-party collaboration pathways. NOTE: edges are derived from shared committee membership only; voting-similarity edges are reserved for a future version.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -327,12 +327,12 @@ export const networkAnalysisToolMetadata = {
       analysisType: {
         type: 'string',
         enum: ['committee', 'voting', 'combined'],
-        description: 'Type of relationship signal to use for network edges',
+        description: 'Preferred analysis mode (currently edges are always committee co-membership; reserved for future use)',
         default: 'combined'
       },
       depth: {
         type: 'number',
-        description: 'Network traversal depth (1-3, default 2)',
+        description: 'Network traversal depth (1-3, default 2; reserved for future traversal-by-depth support)',
         minimum: 1,
         maximum: 3,
         default: 2

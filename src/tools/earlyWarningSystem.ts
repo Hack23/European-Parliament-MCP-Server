@@ -22,7 +22,7 @@ export const EarlyWarningSystemSchema = z.object({
     .optional()
     .default('medium')
     .describe('Detection sensitivity — higher = more warnings surfaced'),
-  focusArea: z.enum(['coalitions', 'attendance', 'voting', 'all'])
+  focusArea: z.enum(['coalitions', 'attendance', 'all'])
     .optional()
     .default('all')
     .describe('Area of political activity to monitor')
@@ -60,7 +60,7 @@ interface EarlyWarningResult {
     criticalWarnings: number;
     highWarnings: number;
     totalWarnings: number;
-    overallStabilityTrend: 'IMPROVING' | 'STABLE' | 'DETERIORATING';
+    overallStabilityTrend: 'STABLE' | 'DETERIORATING';
     keyRiskFactor: string;
   };
   dataAvailable: boolean;
@@ -146,7 +146,7 @@ function buildCoalitionWarnings(groupSizes: GroupSize[], thresholds: Sensitivity
   const fragWarning = buildFragmentationWarning(groupSizes, thresholds.fragmentation);
   if (fragWarning !== undefined) warnings.push(fragWarning);
 
-  if (imbalanceRatio > thresholds.sizeImbalance * 10) {
+  if (imbalanceRatio > thresholds.sizeImbalance) {
     const domWarning = buildDominanceWarning(groupSizes, imbalanceRatio);
     if (domWarning !== undefined) warnings.push(domWarning);
   }
@@ -249,7 +249,7 @@ function buildTrendIndicators(groupSizes: GroupSize[], totalMembers: number): Tr
   ];
 }
 
-function classifyStabilityTrend(stabilityScore: number): 'IMPROVING' | 'STABLE' | 'DETERIORATING' {
+function classifyStabilityTrend(stabilityScore: number): 'STABLE' | 'DETERIORATING' {
   if (stabilityScore >= 50) return 'STABLE';
   return 'DETERIORATING';
 }
@@ -289,6 +289,9 @@ function resolveKeyRiskFactor(warnings: Warning[]): string {
 
 export async function earlyWarningSystem(params: EarlyWarningSystemParams): Promise<ToolResult> {
   try {
+    // NOTE: getMEPs is paginated; limit:100 returns only the first page.
+    // Group-size distributions may be underestimated when hasMore is true.
+    // Warnings are sample-based; confidence is adjusted accordingly.
     const mepResult = await epClient.getMEPs({ limit: 100 });
     const assessmentTime = new Date().toISOString();
 
@@ -354,7 +357,7 @@ export async function earlyWarningSystem(params: EarlyWarningSystemParams): Prom
   } catch (error) {
     return buildErrorResponse(
       error instanceof Error ? error : new Error(String(error)),
-      'earlyWarningSystem'
+      'early_warning_system'
     );
   }
 }
@@ -373,7 +376,7 @@ export const earlyWarningSystemToolMetadata = {
       },
       focusArea: {
         type: 'string',
-        enum: ['coalitions', 'attendance', 'voting', 'all'],
+        enum: ['coalitions', 'attendance', 'all'],
         description: 'Area of political activity to monitor',
         default: 'all'
       }

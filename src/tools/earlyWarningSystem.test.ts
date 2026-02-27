@@ -65,7 +65,7 @@ describe('early_warning_system Tool', () => {
     it('should accept all valid combinations', async () => {
       const combos = [
         { sensitivity: 'low' as const, focusArea: 'attendance' as const },
-        { sensitivity: 'medium' as const, focusArea: 'voting' as const },
+        { sensitivity: 'medium' as const, focusArea: 'coalitions' as const },
         { sensitivity: 'high' as const, focusArea: 'all' as const }
       ];
       for (const combo of combos) {

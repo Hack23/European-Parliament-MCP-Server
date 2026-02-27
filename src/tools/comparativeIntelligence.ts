@@ -122,6 +122,7 @@ function computeLegislativeScore(mep: MEPApiData): number {
 }
 
 function computeAttendanceScore(mep: MEPApiData): number {
+  // attendanceRate is already in the 0-100 range; use it directly without scaling
   return Math.round((mep.votingStatistics?.attendanceRate ?? 0) * 100) / 100;
 }
 
@@ -406,7 +407,7 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
   } catch (error) {
     return buildErrorResponse(
       error instanceof Error ? error : new Error(String(error)),
-      'comparativeIntelligence'
+      'comparative_intelligence'
     );
   }
 }
