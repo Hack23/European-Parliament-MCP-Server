@@ -19,6 +19,7 @@
 import { TrackLegislationSchema } from '../../schemas/europeanParliament.js';
 import { epClient } from '../../clients/europeanParliamentClient.js';
 import { buildLegislativeTracking } from './procedureTracker.js';
+import type { ToolResult } from '../shared/types.js';
 
 /**
  * Convert a user-supplied procedure reference to the EP API process-id format.
@@ -70,7 +71,7 @@ export function toProcessId(ref: string): string {
  */
 export async function handleTrackLegislation(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = TrackLegislationSchema.parse(args);
   const processId = toProcessId(params.procedureId);
   

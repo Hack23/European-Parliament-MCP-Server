@@ -25,6 +25,7 @@ import {
   generateLegislationProgressReport
 } from './reportGenerators.js';
 import type { Report, ReportType } from './types.js';
+import type { ToolResult } from '../shared/types.js';
 
 /**
  * Report parameters type inferred from schema
@@ -63,7 +64,7 @@ const reportGenerators: Record<
  */
 export async function handleGenerateReport(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   // Validate input
   const params = GenerateReportSchema.parse(args);
   
