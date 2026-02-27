@@ -58,12 +58,23 @@ export async function handleGetVotingRecords(
     // Validate output
     const outputSchema = PaginatedResponseSchema(VotingRecordSchema);
     const validated = outputSchema.parse(result);
+
+    // Note: `_warning` is a meta-field added after Zod validation and is
+    // intentionally not part of the Zod output schema.
+    const responsePayload = {
+      ...validated,
+      _warning:
+        params['mepId'] !== undefined
+          ? 'The mepId parameter is not supported by the EP API and has no effect on results. ' +
+            'The EP votes endpoint only returns aggregate vote counts, not per-MEP positions.'
+          : undefined
+    };
     
     // Return MCP-compliant response
     return {
       content: [{
         type: 'text',
-        text: JSON.stringify(validated, null, 2)
+        text: JSON.stringify(responsePayload, null, 2)
       }]
     };
   } catch (error) {
