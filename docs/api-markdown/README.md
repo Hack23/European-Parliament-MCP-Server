@@ -74,7 +74,7 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ### 🎯 Key Features
 
-- 🔌 **Full MCP Implementation**: 45 tools (7 MEP + 7 plenary & meeting + 2 committee + 7 document + 3 legislative + 3 advanced analysis + 10 OSINT intelligence), 9 Resources, and 7 Prompts
+- 🔌 **Full MCP Implementation**: 45 tools (7 MEP + 7 plenary & meeting + 2 committee + 7 document + 3 legislative + 3 advanced analysis + 14 OSINT intelligence), 9 Resources, and 7 Prompts
 - 🏛️ **Complete EP API v2 Coverage**: All European Parliament Open Data API endpoints covered
 - 🕵️ **OSINT Intelligence**: MEP influence scoring, coalition analysis, anomaly detection
 - 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance

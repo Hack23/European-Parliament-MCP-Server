@@ -60,7 +60,7 @@
 
 ## 🎯 Executive Summary
 
-The **European Parliament MCP Server** (v0.7.1) is a TypeScript/Node.js [Model Context Protocol](https://spec.modelcontextprotocol.io/) server that provides AI assistants with structured, type-safe access to European Parliament open data. It exposes **45 MCP tools** (7 core data access + 3 advanced analysis + 10 OSINT intelligence + 8 EP API v2 data access + 11 EP API v2 complete coverage), **6 resource templates**, and **6 prompt templates** — all backed by a centralized EP API client with LRU caching, Zod input validation, rate limiting, and GDPR-compliant audit logging. All tools return real data from the EP API with no mock or placeholder data.
+The **European Parliament MCP Server** (v0.7.1) is a TypeScript/Node.js [Model Context Protocol](https://spec.modelcontextprotocol.io/) server that provides AI assistants with structured, type-safe access to European Parliament open data. It exposes **45 MCP tools** (7 core data access + 3 advanced analysis + 14 OSINT intelligence + 8 EP API v2 data access + 11 EP API v2 complete coverage), **6 resource templates**, and **6 prompt templates** — all backed by a centralized EP API client with LRU caching, Zod input validation, rate limiting, and GDPR-compliant audit logging. All tools return real data from the EP API with no mock or placeholder data.
 
 ### Key Capabilities
 
@@ -113,7 +113,7 @@ C4Container
 
     System_Boundary(mcpBoundary, "European Parliament MCP Server") {
         Container(protocolHandler, "MCP Protocol Handler", "TypeScript, @modelcontextprotocol/sdk", "Handles MCP JSON-RPC over stdio transport; routes tool calls, resource reads, prompt requests")
-        Container(toolEngine, "Tool Engine", "TypeScript, Zod", "45 MCP tools: 7 MEP + 7 plenary/meeting + 2 committee + 7 document + 3 legislative + 3 advanced + 10 OSINT; input validation, business logic, response formatting")
+        Container(toolEngine, "Tool Engine", "TypeScript, Zod", "45 MCP tools: 7 MEP + 7 plenary/meeting + 2 committee + 7 document + 3 legislative + 3 advanced + 14 OSINT (6 Phase 1 + 2 Phase 2 + 2 Phase 3 + 4 Phase 6); input validation, business logic, response formatting")
         Container(resourceHandler, "Resource Handler", "TypeScript", "9 URI-based resource templates providing read access to parliamentary entities (ep:// scheme)")
         Container(promptHandler, "Prompt Handler", "TypeScript", "7 prompt templates for structured analysis: briefings, coalition analysis, legislative tracking")
         Container(epClient, "EP API Client", "TypeScript, undici, lru-cache", "Centralized HTTP client with LRU cache (500 entries, 15-min TTL), rate limiting, error handling")

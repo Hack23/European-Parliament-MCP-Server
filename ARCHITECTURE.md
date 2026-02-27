@@ -61,7 +61,7 @@ The **European Parliament MCP Server** (v1.0) is a TypeScript/Node.js applicatio
 
 | Capability | Details |
 |------------|---------|
-| **MCP Tools** | 45 tools across 8 categories |
+| **MCP Tools** | 45 tools in 5 TypeScript code categories (`core`, `advanced`, `osint`, `phase4`, `phase5`) |
 | **MCP Resources** | 9 URI-addressable resources |
 | **MCP Prompts** | 7 intelligence-analysis prompts |
 | **Data Source** | EP Open Data Portal API v2 |

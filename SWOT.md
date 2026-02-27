@@ -79,10 +79,10 @@ quadrantChart
 ## 💪 Strengths
 
 ### S1: Comprehensive EP Data Coverage (45 Tools)
-The most complete MCP server for European Parliament data, covering all major EP datasets through 45 specialized tools across 8 categories. No other publicly available MCP server provides comparable EP data breadth.
+The most complete MCP server for European Parliament data, covering all major EP datasets through 45 specialized tools organized into 5 TypeScript categories (`core`, `advanced`, `osint`, `phase4`, `phase5`). No other publicly available MCP server provides comparable EP data breadth.
 
 - **Core data**: MEPs, procedures, votes, committees, documents, questions
-- **OSINT capabilities**: 13 tools for intelligence analysis (Phases 1-3)
+- **OSINT capabilities**: 14 tools for intelligence analysis (Phases 1–3 and Phase 6)
 - **EP API v2 coverage**: 19 tools using latest EP API endpoints (Phases 4-5)
 
 ### S2: Security-First Architecture
