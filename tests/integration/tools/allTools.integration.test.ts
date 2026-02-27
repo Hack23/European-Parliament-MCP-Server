@@ -57,6 +57,12 @@ import { handleGetMeetingActivities } from '../../../src/tools/getMeetingActivit
 import { handleGetMeetingDecisions } from '../../../src/tools/getMeetingDecisions.js';
 import { handleGetMEPDeclarations } from '../../../src/tools/getMEPDeclarations.js';
 
+// ── Phase 6 Advanced OSINT Tools ────────────────────────────────
+import { handleNetworkAnalysis } from '../../../src/tools/networkAnalysis.js';
+import { handleSentimentTracker } from '../../../src/tools/sentimentTracker.js';
+import { handleEarlyWarningSystem } from '../../../src/tools/earlyWarningSystem.js';
+import { handleComparativeIntelligence } from '../../../src/tools/comparativeIntelligence.js';
+
 // ── Phase 5 EP API v2 Tools ─────────────────────────────────────
 import { handleGetIncomingMEPs } from '../../../src/tools/getIncomingMEPs.js';
 import { handleGetOutgoingMEPs } from '../../../src/tools/getOutgoingMEPs.js';
@@ -702,6 +708,70 @@ describeIntegration('All 39 MCP Tools Integration Coverage', () => {
       if (!result) return;
 
       parseAndValidateNoMockData(result);
+    }, 30000);
+  });
+
+  // ══════════════════════════════════════════════════════════════
+  // PHASE 6 ADVANCED OSINT TOOLS (4)
+  // ══════════════════════════════════════════════════════════════
+
+  describe('Phase 6 OSINT Tool: network_analysis', () => {
+    it('should return network analysis data', async () => {
+      const result = await retryOrSkip(
+        () => handleNetworkAnalysis({}),
+        'network_analysis'
+      );
+      if (!result) return;
+      validateMCPStructure(result);
+      const text = result.content[0]?.text ?? '{}';
+      const data = JSON.parse(text) as Record<string, unknown>;
+      expect(data).toHaveProperty('networkNodes');
+      expect(data).toHaveProperty('networkEdges');
+    }, 30000);
+  });
+
+  describe('Phase 6 OSINT Tool: sentiment_tracker', () => {
+    it('should return sentiment tracking data', async () => {
+      const result = await retryOrSkip(
+        () => handleSentimentTracker({}),
+        'sentiment_tracker'
+      );
+      if (!result) return;
+      validateMCPStructure(result);
+      const text = result.content[0]?.text ?? '{}';
+      const data = JSON.parse(text) as Record<string, unknown>;
+      expect(data).toHaveProperty('groupSentiments');
+      expect(data).toHaveProperty('polarizationIndex');
+    }, 30000);
+  });
+
+  describe('Phase 6 OSINT Tool: early_warning_system', () => {
+    it('should return early warning data', async () => {
+      const result = await retryOrSkip(
+        () => handleEarlyWarningSystem({}),
+        'early_warning_system'
+      );
+      if (!result) return;
+      validateMCPStructure(result);
+      const text = result.content[0]?.text ?? '{}';
+      const data = JSON.parse(text) as Record<string, unknown>;
+      expect(data).toHaveProperty('warnings');
+      expect(data).toHaveProperty('trendIndicators');
+    }, 30000);
+  });
+
+  describe('Phase 6 OSINT Tool: comparative_intelligence', () => {
+    it('should return comparative intelligence data', async () => {
+      const result = await retryOrSkip(
+        () => handleComparativeIntelligence({ mepIds: [197047, 197048] }),
+        'comparative_intelligence'
+      );
+      if (!result) return;
+      validateMCPStructure(result);
+      const text = result.content[0]?.text ?? '{}';
+      const data = JSON.parse(text) as Record<string, unknown>;
+      expect(data).toHaveProperty('profiles');
+      expect(data).toHaveProperty('correlationMatrix');
     }, 30000);
   });
 });

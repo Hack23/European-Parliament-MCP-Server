@@ -12,6 +12,10 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetMEPs } from '../../src/tools/getMEPs.js';
 import { handleGetMEPDetails } from '../../src/tools/getMEPDetails.js';
 import { handleSearchDocuments } from '../../src/tools/searchDocuments.js';
+import { handleNetworkAnalysis } from '../../src/tools/networkAnalysis.js';
+import { handleSentimentTracker } from '../../src/tools/sentimentTracker.js';
+import { handleEarlyWarningSystem } from '../../src/tools/earlyWarningSystem.js';
+import { handleComparativeIntelligence } from '../../src/tools/comparativeIntelligence.js';
 import { measureTime } from '../helpers/testUtils.js';
 
 // Detect CI environment and set adaptive thresholds
@@ -238,5 +242,82 @@ describe('Performance Benchmarks', () => {
       expect(avg).toBeLessThan(maxAllowed);
       console.log(`Average: ${avg.toFixed(2)}ms (baseline: ${baseline}ms, max: ${maxAllowed.toFixed(0)}ms)`);
     }, 30000);
+  });
+
+  // ── Phase 6 Advanced OSINT Benchmarks ──────────────────────────────────────
+
+  describe('Phase 6 OSINT Response Time Benchmarks', () => {
+    it('should respond to network_analysis in <CACHED_THRESHOLD_MS (cached)', async () => {
+      // Warm up
+      await handleNetworkAnalysis({});
+
+      const [, duration] = await measureTime(async () => {
+        return handleNetworkAnalysis({});
+      });
+
+      expect(duration).toBeLessThan(CACHED_THRESHOLD_MS);
+      console.log(`network_analysis cached: ${duration.toFixed(2)}ms (threshold: ${CACHED_THRESHOLD_MS}ms)`);
+    }, 30000);
+
+    it('should respond to sentiment_tracker in <CACHED_THRESHOLD_MS (cached)', async () => {
+      // Warm up
+      await handleSentimentTracker({});
+
+      const [, duration] = await measureTime(async () => {
+        return handleSentimentTracker({});
+      });
+
+      expect(duration).toBeLessThan(CACHED_THRESHOLD_MS);
+      console.log(`sentiment_tracker cached: ${duration.toFixed(2)}ms (threshold: ${CACHED_THRESHOLD_MS}ms)`);
+    }, 30000);
+
+    it('should respond to early_warning_system in <CACHED_THRESHOLD_MS (cached)', async () => {
+      // Warm up
+      await handleEarlyWarningSystem({});
+
+      const [, duration] = await measureTime(async () => {
+        return handleEarlyWarningSystem({});
+      });
+
+      expect(duration).toBeLessThan(CACHED_THRESHOLD_MS);
+      console.log(`early_warning_system cached: ${duration.toFixed(2)}ms (threshold: ${CACHED_THRESHOLD_MS}ms)`);
+    }, 30000);
+
+    it('should respond to comparative_intelligence in <CACHED_THRESHOLD_MS (cached)', async () => {
+      // Warm up
+      await handleComparativeIntelligence({ mepIds: [1, 2] });
+
+      const [, duration] = await measureTime(async () => {
+        return handleComparativeIntelligence({ mepIds: [1, 2] });
+      });
+
+      expect(duration).toBeLessThan(CACHED_THRESHOLD_MS);
+      console.log(`comparative_intelligence cached: ${duration.toFixed(2)}ms (threshold: ${CACHED_THRESHOLD_MS}ms)`);
+    }, 30000);
+  });
+
+  describe('Phase 6 OSINT Concurrent Invocation', () => {
+    it('should handle concurrent Phase 6 tool invocations efficiently', async () => {
+      const requests = [
+        handleNetworkAnalysis({}),
+        handleSentimentTracker({}),
+        handleEarlyWarningSystem({}),
+        handleComparativeIntelligence({ mepIds: [1, 2] }),
+        handleNetworkAnalysis({ analysisType: 'committee' }),
+        handleSentimentTracker({ timeframe: 'last_month' }),
+        handleEarlyWarningSystem({ sensitivity: 'high' }),
+        handleComparativeIntelligence({ mepIds: [3, 4] })
+      ];
+
+      const [results, duration] = await measureTime(async () => {
+        return Promise.all(requests);
+      });
+
+      expect(results).toHaveLength(8);
+      expect(duration).toBeLessThan(CONCURRENT_THRESHOLD_MS);
+      console.log(
+        `8 concurrent Phase 6 requests: ${duration.toFixed(2)}ms (threshold: ${CONCURRENT_THRESHOLD_MS}ms)`
+      );
+    }, 35000);
   });
 });
