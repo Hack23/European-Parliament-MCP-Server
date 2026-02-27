@@ -327,15 +327,19 @@ describe('showHealth', () => {
 
   it('health configuration apiUrl uses default EP API URL when env var not set', () => {
     const savedEnv = process.env['EP_API_URL'];
-    delete process.env['EP_API_URL'];
+    try {
+      delete process.env['EP_API_URL'];
 
-    showHealth();
-    const health = JSON.parse(String(consoleSpy.mock.calls[0]?.[0])) as Record<string, unknown>;
-    const config = health['configuration'] as Record<string, unknown>;
-    expect(String(config['apiUrl'])).toContain('europarl.europa.eu');
-
-    if (savedEnv !== undefined) {
-      process.env['EP_API_URL'] = savedEnv;
+      showHealth();
+      const health = JSON.parse(String(consoleSpy.mock.calls[0]?.[0])) as Record<string, unknown>;
+      const config = health['configuration'] as Record<string, unknown>;
+      expect(String(config['apiUrl'])).toContain('europarl.europa.eu');
+    } finally {
+      if (savedEnv === undefined) {
+        delete process.env['EP_API_URL'];
+      } else {
+        process.env['EP_API_URL'] = savedEnv;
+      }
     }
   });
 
@@ -361,16 +365,17 @@ describe('showHealth', () => {
   it('respects EP_RATE_LIMIT env variable', () => {
     const savedEnv = process.env['EP_RATE_LIMIT'];
     process.env['EP_RATE_LIMIT'] = '30';
-
-    showHealth();
-    const health = JSON.parse(String(consoleSpy.mock.calls[0]?.[0])) as Record<string, unknown>;
-    const config = health['configuration'] as Record<string, unknown>;
-    expect(config['rateLimit']).toBe('30');
-
-    if (savedEnv !== undefined) {
-      process.env['EP_RATE_LIMIT'] = savedEnv;
-    } else {
-      delete process.env['EP_RATE_LIMIT'];
+    try {
+      showHealth();
+      const health = JSON.parse(String(consoleSpy.mock.calls[0]?.[0])) as Record<string, unknown>;
+      const config = health['configuration'] as Record<string, unknown>;
+      expect(config['rateLimit']).toBe('30');
+    } finally {
+      if (savedEnv !== undefined) {
+        process.env['EP_RATE_LIMIT'] = savedEnv;
+      } else {
+        delete process.env['EP_RATE_LIMIT'];
+      }
     }
   });
 });

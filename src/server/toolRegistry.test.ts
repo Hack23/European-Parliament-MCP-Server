@@ -285,7 +285,7 @@ describe('dispatchToolCall', () => {
     const mockedHandler = vi.mocked(handleGetMEPs);
     mockedHandler.mockClear();
 
-    const args = { political_group: 'EPP', limit: 10 };
+    const args = { group: 'EPP', limit: 10 };
     await dispatchToolCall('get_meps', args);
 
     expect(mockedHandler).toHaveBeenCalledWith(args);
@@ -313,7 +313,7 @@ describe('dispatchToolCall', () => {
     // each category appears in the metadata array (dispatch routing for all tools
     // is covered by the unknown-tool-error test + the get_meps dispatch tests above).
     const metadataNames = getToolMetadataArray().map((t) => t.name);
-    expect(metadataNames).toHaveLength(45);
+    expect(metadataNames).toHaveLength(getToolMetadataArray().length);
     // One representative per category
     expect(metadataNames).toContain('get_meps');              // core
     expect(metadataNames).toContain('analyze_voting_patterns'); // advanced
