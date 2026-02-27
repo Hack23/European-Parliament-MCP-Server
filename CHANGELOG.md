@@ -147,7 +147,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Extended resource URIs: `ep://procedures/{id}`, `ep://plenary/{id}`,
   `ep://documents/{id}`
 - Vitest 4 test runner with `@vitest/coverage-v8` provider
-- 1 130+ unit tests across all 45 tool files
+- 1,130+ unit tests across all MCP tool files
 - 23 E2E tests via `MCPTestClient` stdio harness
 - `knip` dead-code detection in CI
 - `license-compliance` automated license gating

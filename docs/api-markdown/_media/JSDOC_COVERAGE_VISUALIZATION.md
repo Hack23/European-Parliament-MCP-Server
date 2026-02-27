@@ -1,13 +1,13 @@
 # JSDoc Coverage Visualization
 
 **European Parliament MCP Server**  
-**Analysis Date:** 2025-01-15
+**Analysis Date:** 2026-02-27
 
 ---
 
-## 🚀 Recent Improvements (v0.8.0)
+## 🚀 JSDoc Coverage (v1.0)
 
-The following JSDoc improvements were applied across the codebase in v0.8.0:
+The following JSDoc coverage applies to the current v1.0 codebase:
 
 | Scope | Files Improved | Tags Added |
 |-------|---------------|------------|
@@ -16,7 +16,7 @@ The following JSDoc improvements were applied across the codebase in v0.8.0:
 
 **Before → After summary:**
 
-| Metric | Before (v0.7.x) | After (v0.8.0) | Delta |
+| Metric | Before (v0.7.x) | After (v1.0) | Delta |
 |--------|-----------------|----------------|-------|
 | Overall Score | 33% | **65%** | +32 pp |
 | Excellent files (5/5) | 4 (11%) | **21 (60%)** | +17 files |

@@ -83,7 +83,7 @@ The most complete MCP server for European Parliament data, covering all major EP
 
 - **Core data**: MEPs, procedures, votes, committees, documents, questions
 - **OSINT capabilities**: 14 tools for intelligence analysis (Phases 1–3 and Phase 6)
-- **EP API v2 coverage**: 19 tools using latest EP API endpoints (Phases 4-5)
+- **EP API v2 coverage**: 21 tools using latest EP API endpoints (Phases 4-5)
 
 ### S2: Security-First Architecture
 Implements a 4-layer defense-in-depth security model aligned with ISMS standards:

@@ -64,7 +64,7 @@
 
 ## 🎯 Data Model Overview
 
-The **European Parliament MCP Server** (v0.6.2) is a **stateless, read-only** [Model Context Protocol](https://spec.modelcontextprotocol.io/) server. It has **no local database** — all parliamentary data is fetched on demand from the [European Parliament Open Data Portal API v2](https://data.europarl.europa.eu/api/v2/) in JSON-LD format, transformed into strongly-typed TypeScript interfaces, and returned as structured MCP content blocks.
+The **European Parliament MCP Server** (v1.0) is a **stateless, read-only** [Model Context Protocol](https://spec.modelcontextprotocol.io/) server. It has **no local database** — all parliamentary data is fetched on demand from the [European Parliament Open Data Portal API v2](https://data.europarl.europa.eu/api/v2/) in JSON-LD format, transformed into strongly-typed TypeScript interfaces, and returned as structured MCP content blocks.
 
 ### Key Data Architecture Characteristics
 

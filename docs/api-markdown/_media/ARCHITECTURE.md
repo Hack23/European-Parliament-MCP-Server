@@ -60,7 +60,7 @@
 
 ## 🎯 Executive Summary
 
-The **European Parliament MCP Server** (v0.7.1) is a TypeScript/Node.js [Model Context Protocol](https://spec.modelcontextprotocol.io/) server that provides AI assistants with structured, type-safe access to European Parliament open data. It exposes **45 MCP tools** (7 core data access + 3 advanced analysis + 14 OSINT intelligence + 8 EP API v2 data access + 13 EP API v2 complete coverage), **9 resource templates**, and **7 prompt templates** — all backed by a centralized EP API client with LRU caching, Zod input validation, rate limiting, and GDPR-compliant audit logging. All tools return real data from the EP API with no mock or placeholder data.
+The **European Parliament MCP Server** (v1.0) is a TypeScript/Node.js [Model Context Protocol](https://spec.modelcontextprotocol.io/) server that provides AI assistants with structured, type-safe access to European Parliament open data. It exposes **45 MCP tools** (7 core data access + 3 advanced analysis + 14 OSINT intelligence + 8 EP API v2 data access + 13 EP API v2 complete coverage), **9 resource templates**, and **7 prompt templates** — all backed by a centralized EP API client with LRU caching, Zod input validation, rate limiting, and GDPR-compliant audit logging. All tools return real data from the EP API with no mock or placeholder data.
 
 ### Key Capabilities
 
@@ -80,7 +80,7 @@ The system context shows the European Parliament MCP Server and its external act
 
 ```mermaid
 C4Context
-    title European Parliament MCP Server — System Context (v0.7.1)
+    title European Parliament MCP Server — System Context (v1.0)
 
     Person(aiClient, "AI/LLM Client", "Claude Desktop, Copilot, or any MCP-compatible AI assistant consuming parliamentary data")
     Person(developer, "Developer", "Integrates MCP server into applications, configures tools and resources")
@@ -107,7 +107,7 @@ The container diagram shows the major runtime components inside the MCP server.
 
 ```mermaid
 C4Container
-    title European Parliament MCP Server — Container Diagram (v0.7.1)
+    title European Parliament MCP Server — Container Diagram (v1.0)
 
     Person(aiClient, "AI/LLM Client", "MCP-compatible assistant")
 
