@@ -17,6 +17,7 @@
 
 import { GetPlenarySessionsSchema, PlenarySessionSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Get plenary sessions tool handler
@@ -35,7 +36,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetPlenarySessions(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   // Validate input
   const params = GetPlenarySessionsSchema.parse(args);
   

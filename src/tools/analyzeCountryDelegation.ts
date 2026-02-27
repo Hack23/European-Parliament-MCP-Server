@@ -18,6 +18,7 @@
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import type { MEPDetails } from '../types/europeanParliament.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Schema for analyze_country_delegation tool input
@@ -274,7 +275,7 @@ async function buildDelegationAnalysis(
  */
 export async function handleAnalyzeCountryDelegation(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = AnalyzeCountryDelegationSchema.parse(args);
 
   const now = new Date();
