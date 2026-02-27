@@ -14,6 +14,7 @@
 import { MonitorLegislativePipelineSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import type { Procedure } from '../types/europeanParliament.js';
+import type { ToolResult } from './shared/types.js';
 
 /** Computed attributes for a single pipeline item */
 interface PipelineItemComputedAttrs {
@@ -243,7 +244,7 @@ function computeHealthMetrics(pipeline: PipelineItem[], summary: ReturnType<type
  */
 export async function handleMonitorLegislativePipeline(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = MonitorLegislativePipelineSchema.parse(args);
 
   try {

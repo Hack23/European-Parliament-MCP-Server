@@ -16,6 +16,7 @@
 
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Schema for analyze_committee_activity tool input
@@ -196,7 +197,7 @@ async function buildAnalysis(
  */
 export async function handleAnalyzeCommitteeActivity(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = AnalyzeCommitteeActivitySchema.parse(args);
 
   const now = new Date();
