@@ -6,19 +6,19 @@ All releases of European Parliament MCP Server include cryptographic attestation
 
 ## Current Attestation Status
 
-**As of 2026-02-26 — v1.0 Release**
+**As of 2026-02-26 — pre-v1.0 status (package version 0.8.2)**
 
 | Security Control | Status | Details |
 |-----------------|--------|---------|
 | npm audit vulnerabilities | ✅ 0 | No known vulnerabilities in dependency tree |
 | SLSA Level 3 | ✅ Achieved | Cryptographic provenance on all releases |
 | License compliance | ✅ Passing | All MIT/ISC/Apache-2.0 (permissive) |
-| Test suite | ✅ 1197 tests passing | Across 52 test files |
+| Test suite | ✅ 1197 tests passing | Across 400 test suites (per docs/test-results/results.json) |
 | SAST (CodeQL) | ✅ Enabled | Automated scanning on every PR and push |
 | Secret scanning | ✅ Enabled | GitHub native secret detection |
 | Dependabot | ✅ Enabled | Automated dependency update PRs |
 | Sigstore signing | ✅ Enabled | npm package and GitHub release artifacts |
-| SHA-pinned actions | ✅ Enforced | All GitHub Actions pinned to commit SHA |
+| SHA-pinned actions | ✅ Enforced | All critical GitHub Actions pinned to commit SHA (SLSA actions use vetted version tags) |
 
 ### Dependency Vulnerability Status (2026-02-26)
 
@@ -29,7 +29,7 @@ All releases of European Parliament MCP Server include cryptographic attestation
 | undici | 7.22.0 | 0 | ✅ Clean |
 | zod | 4.3.6 | 0 | ✅ Clean |
 
-> **Note:** High-severity vulnerabilities in `rollup` (GHSA-gcx4-mw62-g8wm, GHSA-x7hr-w5r3-c9qr) and `minimatch` (GHSA-f8q6-p94x-37v3) were remediated prior to the v1.0 release by updating transitive dependencies.
+> **Note:** High-severity vulnerabilities in `rollup` (GHSA-mw96-cpmx-2vgc) and `minimatch` (GHSA-3ppc-4f35-3m26) were remediated prior to the v1.0 release by updating transitive dependencies.
 
 ## SLSA Level 3 Compliance
 

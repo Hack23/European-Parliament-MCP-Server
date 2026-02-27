@@ -86,8 +86,18 @@ gh attestation verify sbom.spdx.json \
 
 ### Generate Locally
 ```bash
-# Install Syft
-curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+# Install Syft (pinned version with checksum verification)
+SYFT_VERSION="v1.20.0"
+OS="$(uname | tr '[:upper:]' '[:lower:]')"
+ARCH="amd64"
+
+curl -sSfL "https://github.com/anchore/syft/releases/download/${SYFT_VERSION}/syft_${SYFT_VERSION}_${OS}_${ARCH}.tar.gz" -o syft.tar.gz
+curl -sSfL "https://github.com/anchore/syft/releases/download/${SYFT_VERSION}/syft_${SYFT_VERSION}_checksums.txt" -o syft_checksums.txt
+
+grep "syft_${SYFT_VERSION}_${OS}_${ARCH}.tar.gz" syft_checksums.txt | sha256sum -c -
+
+sudo tar -xzf syft.tar.gz -C /usr/local/bin syft
+rm syft.tar.gz syft_checksums.txt
 
 # Generate SBOM from local checkout
 syft dir:. -o spdx-json=sbom.spdx.json
@@ -112,7 +122,7 @@ The SBOM includes:
 | SLSA Level 3 | ✅ Achieved | Cryptographic provenance on all releases |
 | Sigstore signatures | ✅ Enabled | npm package and GitHub release artifacts |
 | Dependabot | ✅ Enabled | Automated dependency update PRs |
-| SHA-pinned CI actions | ✅ Enforced | All GitHub Actions pinned to commit SHA |
+| SHA-pinned CI actions | ✅ Enforced | GitHub Actions pinned to commit SHA wherever supported; documented exception for SLSA provenance reusable workflow referenced by version tag (`v2.1.0`). |
 
 ## Tools Used
 
