@@ -19,6 +19,7 @@
 
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Schema for generate_political_landscape tool input
@@ -266,7 +267,7 @@ async function buildLandscape(
  */
 export async function handleGeneratePoliticalLandscape(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GeneratePoliticalLandscapeSchema.parse(args);
 
   const now = new Date();
