@@ -106,11 +106,33 @@ export class RateLimiter {
   }
 
   /**
-   * Remove tokens from the bucket
-   * 
-   * @param count - Number of tokens to remove
-   * @returns Promise that resolves when tokens are available
-   * @throws Error if rate limit exceeded
+   * Attempts to consume `count` tokens from the bucket.
+   *
+   * Refills the bucket based on elapsed time before checking availability.
+   * If sufficient tokens are available they are consumed immediately and the
+   * returned promise resolves. If not, a {@link Error} is thrown describing
+   * how long to wait before retrying.
+   *
+   * @param count - Number of tokens to consume (must be ≥ 1)
+   * @returns Promise that resolves when the tokens have been consumed
+   * @throws {Error} If there are not enough tokens in the bucket, with a
+   *   message indicating the retry-after duration in seconds
+   *
+   * @example
+   * ```typescript
+   * try {
+   *   await rateLimiter.removeTokens(1);
+   *   const data = await fetchFromEPAPI('/meps');
+   * } catch (err) {
+   *   if (err instanceof Error) {
+   *     console.warn('Rate limited:', err.message);
+   *   }
+   * }
+   * ```
+   *
+   * @security Prevents abusive high-frequency requests to the EP API.
+   *   Per ISMS Policy AC-003, rate limiting is a mandatory access control.
+   * @since 0.8.0
    */
   async removeTokens(count: number): Promise<void> {
     this.refill();
@@ -133,10 +155,24 @@ export class RateLimiter {
   }
 
   /**
-   * Try to remove tokens without throwing error
-   * 
-   * @param count - Number of tokens to remove
-   * @returns true if tokens were removed, false if not enough tokens
+   * Attempts to consume `count` tokens without throwing on failure.
+   *
+   * Non-throwing alternative to {@link removeTokens}. Useful in hot paths
+   * where callers want to branch on availability rather than catch errors.
+   *
+   * @param count - Number of tokens to consume (must be ≥ 1)
+   * @returns `true` if tokens were successfully consumed, `false` if the
+   *   bucket did not have enough tokens (bucket is left unchanged)
+   *
+   * @example
+   * ```typescript
+   * if (!rateLimiter.tryRemoveTokens(1)) {
+   *   return { error: 'Rate limit exceeded. Please try again later.' };
+   * }
+   * const data = await fetchFromEPAPI('/meps');
+   * ```
+   *
+   * @since 0.8.0
    */
   tryRemoveTokens(count: number): boolean {
     this.refill();
@@ -150,7 +186,20 @@ export class RateLimiter {
   }
 
   /**
-   * Get current available tokens
+   * Returns the number of tokens currently available in the bucket.
+   *
+   * Triggers a refill calculation based on elapsed time before returning
+   * the value, so the result reflects the current real-time availability.
+   *
+   * @returns Current token count (may be fractional; floor before display)
+   *
+   * @example
+   * ```typescript
+   * const tokens = rateLimiter.getAvailableTokens();
+   * console.log(`${tokens} / ${rateLimiter.getMaxTokens()} tokens available`);
+   * ```
+   *
+   * @since 0.8.0
    */
   getAvailableTokens(): number {
     this.refill();
@@ -158,16 +207,41 @@ export class RateLimiter {
   }
 
   /**
-   * Get the maximum token capacity of this bucket.
+   * Returns the maximum token capacity of this bucket.
+   *
+   * Equal to the `tokensPerInterval` value passed at construction time.
+   * Does **not** trigger a refill calculation.
+   *
+   * @returns Maximum number of tokens the bucket can hold
+   *
+   * @example
+   * ```typescript
+   * const max = rateLimiter.getMaxTokens(); // e.g. 100
+   * ```
+   *
+   * @since 0.8.0
    */
   getMaxTokens(): number {
     return this.tokensPerInterval;
   }
 
   /**
-   * Get a typed status snapshot for health checks and monitoring.
+   * Returns a typed status snapshot for health checks and monitoring.
    *
-   * @returns Current {@link RateLimiterStatus} snapshot
+   * Triggers a refill calculation so the snapshot reflects real-time bucket
+   * state. Useful for `/health` endpoints and Prometheus exporters.
+   *
+   * @returns Current {@link RateLimiterStatus} snapshot with `availableTokens`,
+   *   `maxTokens`, and `utilizationPercent` (0–100)
+   *
+   * @example
+   * ```typescript
+   * const status = rateLimiter.getStatus();
+   * console.log(`${status.utilizationPercent}% utilized`);
+   * // e.g. "45% utilized"
+   * ```
+   *
+   * @since 0.8.0
    */
   getStatus(): RateLimiterStatus {
     this.refill();
@@ -183,7 +257,19 @@ export class RateLimiter {
   }
 
   /**
-   * Reset the rate limiter to full capacity
+   * Resets the bucket to full capacity and clears the refill timer.
+   *
+   * Useful in tests or after a planned maintenance window where queued
+   * demand should not be penalised by an already-depleted bucket.
+   *
+   * @example
+   * ```typescript
+   * afterEach(() => {
+   *   rateLimiter.reset();
+   * });
+   * ```
+   *
+   * @since 0.8.0
    */
   reset(): void {
     this.tokens = this.tokensPerInterval;
@@ -192,7 +278,24 @@ export class RateLimiter {
 }
 
 /**
- * Create a rate limiter with standard configuration for EP API
+ * Creates a {@link RateLimiter} pre-configured for EP API usage.
+ *
+ * Default configuration: **100 tokens per minute** — aligned with the
+ * European Parliament Open Data Portal's recommended fair-use policy.
+ *
+ * @returns A new {@link RateLimiter} instance with standard EP API settings
+ *
+ * @example
+ * ```typescript
+ * const rateLimiter = createStandardRateLimiter();
+ * await rateLimiter.removeTokens(1);
+ * const data = await fetchFromEPAPI('/meps');
+ * ```
+ *
+ * @security Ensures sustainable OSINT collection rates from the EP API and
+ *   prevents service disruption. Per ISMS Policy AC-003, rate limiting is a
+ *   mandatory access control for external API calls.
+ * @since 0.8.0
  */
 export function createStandardRateLimiter(): RateLimiter {
   return new RateLimiter({

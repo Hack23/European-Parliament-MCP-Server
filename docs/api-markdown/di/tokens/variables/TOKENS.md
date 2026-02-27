@@ -8,7 +8,7 @@
 
 > `const` **TOKENS**: `object`
 
-Defined in: [di/tokens.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/di/tokens.ts#L30)
+Defined in: [di/tokens.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/di/tokens.ts#L32)
 
 Centralised DI token registry.
 
@@ -53,3 +53,7 @@ Performance metrics collection service
 
 Token-bucket rate limiter for EP API calls
 (`RateLimiter` from `utils/rateLimiter`)
+
+## Since
+
+0.8.0

@@ -22,10 +22,35 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get controlled vocabularies tool handler.
+ * Handles the get_controlled_vocabularies MCP tool request.
  *
- * @param args - Tool arguments
- * @returns MCP tool result with vocabulary data
+ * Retrieves European Parliament controlled vocabularies—standardised classification terms
+ * used across EP datasets. Supports both a paginated list view and a single-vocabulary
+ * lookup when `vocId` is provided. These vocabularies are essential for accurate query
+ * construction and data interpretation across other EP API tools.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetControlledVocabulariesSchema}
+ * @returns MCP tool result containing vocabulary data (single vocabulary or paginated list)
+ * @throws - If `args` fails schema validation (e.g., invalid field types or formats)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * // Single vocabulary lookup
+ * const single = await handleGetControlledVocabularies({ vocId: 'activities-type' });
+ * // Returns the controlled vocabulary for activity types
+ *
+ * // List all vocabularies
+ * const list = await handleGetControlledVocabularies({ limit: 50, offset: 0 });
+ * // Returns up to 50 controlled vocabulary entries
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getControlledVocabulariesToolMetadata} for MCP schema registration
+ * @see {@link handleSearchDocuments} for tools that consume vocabulary terms as filter values
  */
 export async function handleGetControlledVocabularies(
   args: unknown

@@ -120,9 +120,28 @@ export class AuditLogger {
   private logs: AuditLogEntry[] = [];
   
   /**
-   * Log an audit event
-   * 
-   * @param entry - Audit log entry
+   * Logs an audit event to the in-memory store and stderr.
+   *
+   * Appends a timestamped {@link AuditLogEntry} to the internal log buffer and
+   * emits a single structured JSON line to `stderr` (stdout is reserved for the
+   * MCP protocol wire format).
+   *
+   * @param entry - Audit log entry without a timestamp (generated automatically)
+   * @throws {TypeError} If `entry.action` is not a string
+   *
+   * @example
+   * ```typescript
+   * auditLogger.log({
+   *   action: 'get_meps',
+   *   params: { country: 'DE' },
+   *   result: { success: true, count: 42 },
+   *   duration: 120
+   * });
+   * ```
+   *
+   * @security Writes to stderr only (not stdout, which is reserved for MCP protocol).
+   *   Per ISMS Policy AU-002, all MCP tool calls must be audit-logged.
+   * @since 0.8.0
    */
   log(entry: Omit<AuditLogEntry, 'timestamp'>): void {
     const fullEntry: AuditLogEntry = {
@@ -152,6 +171,32 @@ export class AuditLogger {
    * @param success   - Whether the tool call completed without error
    * @param duration  - Optional wall-clock duration in milliseconds
    * @param error     - Optional error message if the call failed
+   * @throws {TypeError} If `toolName` is not a string
+   *
+   * @example
+   * ```typescript
+   * auditLogger.logToolCall(
+   *   'get_mep_details',
+   *   { mepId: 12345 },
+   *   true,
+   *   95,
+   * );
+   *
+   * // On failure:
+   * auditLogger.logToolCall(
+   *   'get_plenary_sessions',
+   *   { term: 10 },
+   *   false,
+   *   200,
+   *   'EP API returned 503'
+   * );
+   * ```
+   *
+   * @security Parameter values are nested under a `tool` key to prevent
+   *   user-controlled keys from colliding with reserved audit-schema fields.
+   *   Callers must sanitise PII before passing `params`.
+   *   Per ISMS Policy AU-002, all MCP tool calls must be audit-logged.
+   * @since 0.8.0
    */
   logToolCall(
     toolName: string,
@@ -176,12 +221,33 @@ export class AuditLogger {
   }
 
   /**
-   * Log a successful data access
-   * 
-   * @param action - Action name
-   * @param params - Action parameters
-   * @param count - Number of records accessed
-   * @param duration - Optional operation duration in milliseconds
+   * Logs a successful data-access event (e.g., a query returning records).
+   *
+   * Convenience wrapper around {@link log} that constructs a success result
+   * with a record count. Suitable for GDPR Article 30 processing-activity
+   * records where the data subject count is relevant.
+   *
+   * @param action - Action name (e.g., `'get_meps'`, `'get_committee_meetings'`)
+   * @param params - Sanitised query parameters used for the data access
+   * @param count - Number of records returned / accessed
+   * @param duration - Optional wall-clock duration in milliseconds
+   * @throws {TypeError} If `action` is not a string or `count` is not a number
+   *
+   * @example
+   * ```typescript
+   * auditLogger.logDataAccess(
+   *   'get_meps',
+   *   { country: 'SE', group: 'EPP' },
+   *   7,
+   *   85
+   * );
+   * ```
+   *
+   * @security Params must be sanitised by the caller before passing to this
+   *   method—no PII stripping is performed internally.
+   *   Per ISMS Policy AU-002 / GDPR Article 30, data-access events must be
+   *   logged with subject counts for processing-activity records.
+   * @since 0.8.0
    */
   logDataAccess(
     action: string,
@@ -201,12 +267,33 @@ export class AuditLogger {
   }
   
   /**
-   * Log a failed operation
-   * 
-   * @param action - Action name
-   * @param params - Action parameters
-   * @param error - Error message
-   * @param duration - Optional operation duration in milliseconds
+   * Logs a failed operation as an audit error event.
+   *
+   * Convenience wrapper around {@link log} that constructs a failure result.
+   * Use this whenever an MCP tool or EP API call throws or returns an error
+   * so the failure is captured in the audit trail.
+   *
+   * @param action - Action name (e.g., `'get_mep_details'`, `'get_plenary_sessions'`)
+   * @param params - Sanitised parameters that were supplied to the failed operation
+   * @param error - Human-readable error message (must not contain secrets or PII)
+   * @param duration - Optional wall-clock duration in milliseconds before failure
+   * @throws {TypeError} If `action` or `error` is not a string
+   *
+   * @example
+   * ```typescript
+   * auditLogger.logError(
+   *   'get_mep_details',
+   *   { mepId: 99999 },
+   *   'MEP not found',
+   *   30
+   * );
+   * ```
+   *
+   * @security Error messages must not include secrets, tokens, or raw stack
+   *   traces. Sanitise before passing to avoid leaking internal details to
+   *   log sinks accessible by ops teams.
+   *   Per ISMS Policy AU-002, failed operations must be audit-logged.
+   * @since 0.8.0
    */
   logError(
     action: string,
@@ -226,14 +313,51 @@ export class AuditLogger {
   }
   
   /**
-   * Get audit logs (for testing/debugging)
+   * Returns a snapshot copy of all in-memory audit log entries.
+   *
+   * Intended primarily for **testing and debugging**. In production, audit
+   * records are emitted to `stderr` in real time; this method allows test
+   * suites to assert on logged events without parsing stderr output.
+   *
+   * @returns Shallow copy of the internal log buffer as an array of
+   *   {@link AuditLogEntry} objects, ordered oldest-first. Mutating the
+   *   returned array does not affect the internal buffer.
+   *
+   * @example
+   * ```typescript
+   * auditLogger.logDataAccess('get_meps', {}, 5);
+   * const logs = auditLogger.getLogs();
+   * expect(logs).toHaveLength(1);
+   * expect(logs[0]?.action).toBe('get_meps');
+   * ```
+   *
+   * @security The returned entries may contain sanitised parameters that were
+   *   passed by callers. Treat the output as sensitive and do not expose it
+   *   through public API endpoints.
+   * @since 0.8.0
    */
   getLogs(): AuditLogEntry[] {
     return [...this.logs];
   }
   
   /**
-   * Clear audit logs (for testing only)
+   * Clears all in-memory audit log entries.
+   *
+   * **For testing only.** Calling this in production will silently discard
+   * audit records that have not yet been flushed to a persistent sink,
+   * violating ISMS Policy AU-002.
+   *
+   * @example
+   * ```typescript
+   * afterEach(() => {
+   *   auditLogger.clear();
+   * });
+   * ```
+   *
+   * @security Must NOT be called in production code. Clearing audit logs
+   *   without an authorised retention policy violates GDPR Article 30 and
+   *   ISMS Policy AU-002 (Audit Logging and Monitoring).
+   * @since 0.8.0
    */
   clear(): void {
     this.logs = [];

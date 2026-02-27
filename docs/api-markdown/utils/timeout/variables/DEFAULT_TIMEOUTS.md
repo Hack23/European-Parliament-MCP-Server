@@ -8,7 +8,7 @@
 
 > `const` **DEFAULT\_TIMEOUTS**: `object`
 
-Defined in: [utils/timeout.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/timeout.ts#L32)
+Defined in: [utils/timeout.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L32)
 
 Default timeout configurations for common operation types.
 These are compile-time constants; override by passing a custom [TimeoutConfig](../interfaces/TimeoutConfig.md)

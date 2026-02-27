@@ -8,7 +8,7 @@
 
 > **parseResourceUri**(`uri`): `object`
 
-Defined in: [resources/index.ts:226](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/resources/index.ts#L226)
+Defined in: [resources/index.ts:226](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/resources/index.ts#L226)
 
 Parse a resource URI and extract template parameters
 

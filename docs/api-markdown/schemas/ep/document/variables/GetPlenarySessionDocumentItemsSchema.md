@@ -8,6 +8,6 @@
 
 > `const` **GetPlenarySessionDocumentItemsSchema**: `ZodObject`\<\{ `limit`: `ZodDefault`\<`ZodNumber`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; \}, `$strip`\>
 
-Defined in: [schemas/ep/document.ts:161](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/schemas/ep/document.ts#L161)
+Defined in: [schemas/ep/document.ts:161](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/document.ts#L161)
 
 Get plenary session document items input schema

@@ -22,10 +22,33 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get committee documents tool handler.
+ * Handles the get_committee_documents MCP tool request.
  *
- * @param args - Tool arguments
- * @returns MCP tool result with committee document data
+ * Retrieves European Parliament committee documents, supporting single document
+ * lookup by docId or a paginated list optionally filtered by year.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetCommitteeDocumentsSchema}
+ * @returns MCP tool result containing either a single committee document or a paginated list of documents
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * // Single document lookup
+ * const result = await handleGetCommitteeDocuments({ docId: 'A9-0001/2024' });
+ * // Returns the full record for the specified committee document
+ *
+ * // List documents filtered by year
+ * const list = await handleGetCommitteeDocuments({ year: 2024, limit: 25 });
+ * // Returns up to 25 committee documents from 2024
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getCommitteeDocumentsToolMetadata} for MCP schema registration
+ * @see {@link handleGetCommitteeInfo} for retrieving committee membership and structure
  */
 export async function handleGetCommitteeDocuments(
   args: unknown

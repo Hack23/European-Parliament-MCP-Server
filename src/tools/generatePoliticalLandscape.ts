@@ -267,7 +267,35 @@ async function buildLandscape(
 }
 
 /**
- * Generate political landscape tool handler
+ * Handles the generate_political_landscape MCP tool request.
+ *
+ * Generates a comprehensive snapshot of the current European Parliament political
+ * landscape including group seat shares, bloc analysis (progressive vs. conservative),
+ * coalition viability, and power-balance metrics. Provides single-call situational
+ * awareness for strategic intelligence briefings.
+ *
+ * @param args - Raw tool arguments, validated against {@link GeneratePoliticalLandscapeSchema}
+ * @returns MCP tool result containing group seat distributions, power dynamics,
+ *   activity metrics, fragmentation index, majority type, and political balance score
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * const result = await handleGeneratePoliticalLandscape({
+ *   dateFrom: '2024-01-01',
+ *   dateTo: '2024-12-31'
+ * });
+ * // Returns full landscape with group sizes, bloc analysis,
+ * // fragmentation index, and majority-type classification
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link generatePoliticalLandscapeToolMetadata} for MCP schema registration
+ * @see {@link handleComparePoliticalGroups} for detailed per-group dimension comparison
  */
 export async function handleGeneratePoliticalLandscape(
   args: unknown

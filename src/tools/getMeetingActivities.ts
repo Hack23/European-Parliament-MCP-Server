@@ -18,10 +18,28 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get meeting activities tool handler.
+ * Handles the get_meeting_activities MCP tool request.
  *
- * @param args - Tool arguments
- * @returns MCP tool result with meeting activity data
+ * Retrieves activities linked to a specific European Parliament plenary sitting,
+ * such as debates, votes, and presentations. Requires a sitting identifier.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetMeetingActivitiesSchema}
+ * @returns MCP tool result containing a paginated list of activities for the specified plenary sitting
+ * @throws - If `args` fails schema validation (e.g., missing required `sittingId` or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * const result = await handleGetMeetingActivities({ sittingId: 'PV-9-2024-01-15', limit: 50 });
+ * // Returns up to 50 activities from the specified plenary sitting
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getMeetingActivitiesToolMetadata} for MCP schema registration
+ * @see {@link handleGetMeetingDecisions} for retrieving decisions from the same sitting
  */
 export async function handleGetMeetingActivities(
   args: unknown

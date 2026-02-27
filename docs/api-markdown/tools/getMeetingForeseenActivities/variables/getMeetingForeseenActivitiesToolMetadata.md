@@ -8,7 +8,7 @@
 
 > `const` **getMeetingForeseenActivitiesToolMetadata**: `object`
 
-Defined in: [tools/getMeetingForeseenActivities.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/getMeetingForeseenActivities.ts#L42)
+Defined in: [tools/getMeetingForeseenActivities.ts:64](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMeetingForeseenActivities.ts#L64)
 
 Tool metadata for get_meeting_foreseen_activities
 

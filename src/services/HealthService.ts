@@ -94,6 +94,24 @@ export interface HealthStatus {
 export class HealthService {
   private readonly startTime: number;
 
+  /**
+   * Creates a new {@link HealthService} instance.
+   *
+   * @param rateLimiter - Rate limiter whose token availability is checked as
+   *   part of the degraded-state heuristic
+   * @param metricsService - Metrics service providing EP API call and error
+   *   counters used to infer reachability
+   *
+   * @example
+   * ```typescript
+   * const healthService = new HealthService(
+   *   createStandardRateLimiter(),
+   *   new MetricsService()
+   * );
+   * ```
+   *
+   * @since 0.8.0
+   */
   constructor(
     private readonly rateLimiter: RateLimiter,
     private readonly metricsService: MetricsService
@@ -102,13 +120,30 @@ export class HealthService {
   }
 
   /**
-   * Produce a health status snapshot.
+   * Produces a health status snapshot.
    *
    * Checks:
    * 1. Rate-limiter token availability (degraded if < 10 %)
    * 2. EP API error counter (unhealthy if recent errors > 0 with no successes)
    *
-   * @returns Structured {@link HealthStatus} object
+   * The check is **synchronous-safe** — it never makes network calls.
+   * Reachability is inferred from cached metric counters.
+   *
+   * @returns Structured {@link HealthStatus} object with `status`,
+   *   `epApiReachable`, `cache`, `rateLimiter`, `timestamp`, and `uptimeMs`
+   * @throws {Error} If the underlying metrics or rate-limiter service throws
+   *   unexpectedly (should not occur under normal operating conditions)
+   *
+   * @example
+   * ```typescript
+   * const healthService = new HealthService(rateLimiter, metricsService);
+   * const status = healthService.checkHealth();
+   * if (status.status !== 'healthy') {
+   *   console.warn('Server degraded:', status);
+   * }
+   * ```
+   *
+   * @since 0.8.0
    */
   checkHealth(): HealthStatus {
     const rateLimiterStatus = this.buildRateLimiterStatus();

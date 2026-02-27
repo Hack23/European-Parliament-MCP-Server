@@ -8,7 +8,7 @@
 
 > **transformMEPDeclaration**(`apiData`): [`MEPDeclaration`](../../../../types/ep/activities/interfaces/MEPDeclaration.md)
 
-Defined in: [clients/ep/transformers.ts:351](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/clients/ep/transformers.ts#L351)
+Defined in: [clients/ep/transformers.ts:351](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L351)
 
 Transforms EP API MEP declaration data to internal [MEPDeclaration](../../../../types/ep/activities/interfaces/MEPDeclaration.md) format.
 

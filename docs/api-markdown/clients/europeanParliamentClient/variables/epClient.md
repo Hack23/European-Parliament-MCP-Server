@@ -8,7 +8,7 @@
 
 > `const` **epClient**: [`EuropeanParliamentClient`](../classes/EuropeanParliamentClient.md)
 
-Defined in: [clients/europeanParliamentClient.ts:745](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/clients/europeanParliamentClient.ts#L745)
+Defined in: [clients/europeanParliamentClient.ts:745](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L745)
 
 Singleton instance of European Parliament API client for global use.
 

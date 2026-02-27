@@ -8,6 +8,6 @@
 
 > `const` **GetMeetingForeseenActivitiesSchema**: `ZodObject`\<\{ `limit`: `ZodDefault`\<`ZodNumber`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; `sittingId`: `ZodString`; \}, `$strip`\>
 
-Defined in: [schemas/ep/activities.ts:216](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/schemas/ep/activities.ts#L216)
+Defined in: [schemas/ep/activities.ts:216](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/activities.ts#L216)
 
 Get meeting foreseen activities input schema

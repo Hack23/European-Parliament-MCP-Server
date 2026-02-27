@@ -23,10 +23,34 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get external documents tool handler.
+ * Handles the get_external_documents MCP tool request.
  *
- * @param args - Tool arguments
- * @returns MCP tool result with external document data
+ * Retrieves external documents (non-EP documents such as Council positions and Commission
+ * proposals) from the European Parliament data portal. Supports both a paginated list view
+ * and a single-document lookup when `docId` is provided.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetExternalDocumentsSchema}
+ * @returns MCP tool result containing external document data (single document or paginated list)
+ * @throws - If `args` fails schema validation (e.g., invalid field types or formats)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * // Single document lookup
+ * const single = await handleGetExternalDocuments({ docId: 'COM-2024-123' });
+ * // Returns the external document with ID COM-2024-123
+ *
+ * // List documents filtered by year
+ * const list = await handleGetExternalDocuments({ year: 2024, limit: 30, offset: 0 });
+ * // Returns up to 30 external documents from 2024
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getExternalDocumentsToolMetadata} for MCP schema registration
+ * @see {@link handleSearchDocuments} for full-text search across EP legislative documents
  */
 export async function handleGetExternalDocuments(
   args: unknown
