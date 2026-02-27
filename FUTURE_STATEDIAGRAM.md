@@ -2,726 +2,347 @@
   <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
 </p>
 
-<h1 align="center">📈 European Parliament MCP Server — Future State Diagram</h1>
+<h1 align="center">📈 European Parliament MCP Server — Future State Diagrams</h1>
 
 <p align="center">
-  <strong>🏗️ Advanced State Management</strong><br>
-  <em>📈 System State Transitions and Lifecycle Evolution</em>
+  <strong>Planned State Management: Streaming, OAuth Sessions, Enhanced Cache, Real-Time Subscriptions</strong><br>
+  <em>Future state machine documentation for EP MCP Server evolution</em>
 </p>
 
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/Owner-CEO-0A66C2?style=for-the-badge" alt="Owner"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Owner-Hack23-0A66C2?style=for-the-badge" alt="Owner"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Version-2.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--23-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--26-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** CEO | **📄 Version:** 2.0 | **📅 Last Updated:** 2026-02-23 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-23  
+**📋 Document Owner:** Hack23 | **📄 Version:** 2.0 | **📅 Last Updated:** 2026-02-26 (UTC)
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-26
 **🏷️ Classification:** Public (Open Source MCP Server)
+**✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.14.2), NIST CSF 2.0 (ID.AM, PR.DS), CIS Controls v8.1 (2.1, 16.1)
 
 ---
 
 ## 📑 Table of Contents
 
-- [Executive Summary](#-executive-summary)
-- [Current State Baseline](#-current-state-baseline)
-- [Enhanced MCP Connection Lifecycle](#-enhanced-mcp-connection-lifecycle)
-- [Cache State Machine](#-cache-state-machine)
-- [Request Processing States](#-request-processing-states)
-- [API Circuit Breaker States](#-api-circuit-breaker-states)
-- [Security Session Lifecycle](#️-security-session-lifecycle)
-- [🔮 Visionary Roadmap: 2027–2037](#-visionary-roadmap-20272037)
-- [Policy Alignment](#-policy-alignment)
-- [Related Documents](#-related-documents)
+1. [Security Documentation Map](#security-documentation-map)
+2. [Streaming Response States (v1.2)](#streaming-response-states-v12)
+3. [Real-Time Subscription States (v1.2)](#real-time-subscription-states-v12)
+4. [Enhanced Cache State Machine (v1.1)](#enhanced-cache-state-machine-v11)
+5. [OAuth Session States (v2.0)](#oauth-session-states-v20)
+6. [Circuit Breaker States (v1.1)](#circuit-breaker-states-v11)
+7. [Webhook Delivery States (v2.0)](#webhook-delivery-states-v20)
 
 ---
 
-## 🎯 Executive Summary
+## 🗺️ Security Documentation Map
 
-This document outlines future state management improvements for the European Parliament MCP Server, including enhanced connection lifecycle, multi-tier caching, circuit breaker patterns, and security session management. **All future infrastructure runs on serverless AWS** (Lambda, DynamoDB, API Gateway, Cognito) — see [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md).
-
-> **🤖 AI Evolution Context:** State management evolution assumes progression from **Anthropic Opus 4.6** (2026) through future AI generations, with **minor updates every ~2.3 months** and **major version upgrades annually** through 2037. State machines must evolve from reactive patterns to self-healing, predictive, and eventually autonomous governance systems.
+| Document | Current | Future | Description |
+|----------|---------|--------|-------------|
+| **Architecture** | [ARCHITECTURE.md](./ARCHITECTURE.md) | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) | C4 model, containers, components, ADRs |
+| **Security Architecture** | [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) | [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) | Security controls, threat model |
+| **Data Model** | [DATA_MODEL.md](./DATA_MODEL.md) | [FUTURE_DATA_MODEL.md](./FUTURE_DATA_MODEL.md) | Entity relationships, branded types |
+| **Flowchart** | [FLOWCHART.md](./FLOWCHART.md) | [FUTURE_FLOWCHART.md](./FUTURE_FLOWCHART.md) | Business process flows |
+| **State Diagram** | [STATEDIAGRAM.md](./STATEDIAGRAM.md) | [FUTURE_STATEDIAGRAM.md](./FUTURE_STATEDIAGRAM.md) | System state transitions |
+| **Mind Map** | [MINDMAP.md](./MINDMAP.md) | [FUTURE_MINDMAP.md](./FUTURE_MINDMAP.md) | System concepts and relationships |
+| **SWOT Analysis** | [SWOT.md](./SWOT.md) | [FUTURE_SWOT.md](./FUTURE_SWOT.md) | Strategic positioning |
 
 ---
 
-## 📊 Current State Baseline
+## 🌊 Streaming Response States (v1.2)
 
-Current state diagrams are documented in [STATEDIAGRAM.md](STATEDIAGRAM.md).
-
----
-
-## 🔄 Enhanced MCP Connection Lifecycle
+MCP streaming support for long-running tool operations:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Initializing: Server Start
-    Initializing --> Ready: Configuration Loaded
-    Initializing --> Failed: Config Error
+    [*] --> StreamRequested : tool_call with streaming=true
 
-    Ready --> Authenticating: Client Connects
-    Authenticating --> Authenticated: Valid Credentials
-    Authenticating --> Rejected: Invalid Credentials
-    Rejected --> Ready: Retry Available
+    StreamRequested --> StreamValidating : Input validation starts
+    StreamValidating --> StreamRejected : Validation fails
+    StreamValidating --> StreamInitializing : Validation passes
 
-    Authenticated --> Active: Session Established
-    Active --> Processing: Tool Request
-    Processing --> Active: Response Sent
-    Active --> RateLimited: Quota Exceeded
-    RateLimited --> Active: Cooldown Complete
-    Active --> Idle: No Activity (timeout)
-    Idle --> Active: New Request
-    Idle --> Disconnecting: Timeout
+    StreamRejected --> [*] : Error response sent
 
-    Active --> Disconnecting: Client Disconnect
-    Disconnecting --> Ready: Cleanup Complete
-    Active --> GracefulShutdown: Server Shutdown
-    GracefulShutdown --> [*]: All Requests Complete
+    StreamInitializing --> StreamHeaderSent : stream_start event emitted
+    StreamHeaderSent --> ChunkPhase1 : Phase 1 processing starts
 
-    Failed --> [*]: Unrecoverable Error
+    ChunkPhase1 --> Chunk1Emitted : Phase 1 data ready
+    Chunk1Emitted --> ChunkPhase2 : Phase 2 processing starts
+
+    ChunkPhase2 --> Chunk2Emitted : Phase 2 data ready
+    Chunk2Emitted --> ChunkPhase3 : Phase 3 processing starts
+
+    ChunkPhase3 --> Chunk3Emitted : Phase 3 data ready
+    Chunk3Emitted --> ChunkPhase4 : Phase 4 processing starts
+
+    ChunkPhase4 --> Chunk4Emitted : Final chunk ready
+    Chunk4Emitted --> StreamCompleted : stream_end event emitted
+
+    ChunkPhase1 --> StreamError : Phase error
+    ChunkPhase2 --> StreamError : Phase error
+    ChunkPhase3 --> StreamError : Phase error
+    ChunkPhase4 --> StreamError : Phase error
+
+    StreamError --> StreamCompleted : stream_error + stream_end emitted
+    StreamCompleted --> [*]
+
+    note right of StreamHeaderSent
+        Emits immediately to client.
+        Informs client to expect
+        multiple chunks.
+        Contains: tool, estimated_chunks
+    end note
+
+    note right of StreamError
+        Partial results may be
+        delivered before error.
+        Client receives what was
+        computed successfully.
+    end note
 ```
 
 ---
 
-## 📦 Cache State Machine
+## 📡 Real-Time Subscription States (v1.2)
+
+Client subscription lifecycle for EP data change notifications:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Empty: Initialize
+    [*] --> SubscriptionRequested : subscribe() called with event types
 
-    Empty --> Populating: Cache Miss
-    Populating --> Fresh: Data Fetched
-    Populating --> Error: Fetch Failed
-    Error --> Empty: Reset
+    SubscriptionRequested --> Authenticating : Auth check (v2.0+)
+    Authenticating --> AuthFailed : Invalid credentials
+    AuthFailed --> [*] : Subscription rejected
 
-    Fresh --> Serving: Read Request
-    Serving --> Fresh: Response Sent
-    Fresh --> Stale: TTL Expired
+    Authenticating --> ValidatingEvents : Auth passed
+    SubscriptionRequested --> ValidatingEvents : (no auth in v1.2 local mode)
 
-    Stale --> Refreshing: Background Refresh
-    Stale --> Serving: Serve Stale (fallback)
-    Refreshing --> Fresh: Refresh Success
-    Refreshing --> Stale: Refresh Failed
+    ValidatingEvents --> InvalidEvents : Unknown event types requested
+    InvalidEvents --> [*] : Subscription rejected (list valid types)
 
-    Fresh --> Evicted: Memory Pressure
-    Stale --> Evicted: Memory Pressure
-    Evicted --> Empty: Eviction Complete
+    ValidatingEvents --> Active : Subscription created (ID assigned)
 
-    Fresh --> Invalidated: Manual Invalidation
-    Invalidated --> Empty: Clear Complete
+    Active --> Receiving : EP data change event arrives
+    Receiving --> Active : Event delivered to client
+
+    Active --> Paused : Client sends pause signal
+    Paused --> Active : Client sends resume signal
+
+    Active --> Closing : Client calls unsubscribe()
+    Paused --> Closing : Client calls unsubscribe()
+    Active --> Closing : Server shutdown detected
+    Active --> Closing : Auth token expired (v2.0)
+
+    Closing --> Closed : Cleanup complete (remove from registry)
+    Closed --> [*]
+
+    note right of Active
+        Subscription ID returned.
+        Client receives events via:
+        - SSE (v1.2)
+        - WebSocket (v1.2)
+        - GraphQL subscription (v2.0)
+    end note
+
+    note right of Paused
+        Events buffered (max 1000).
+        Delivered on resume.
+        Buffer overflow: oldest dropped.
+    end note
 ```
 
 ---
 
-## ⚙️ Request Processing States
+## 💾 Enhanced Cache State Machine (v1.1)
+
+Two-tier cache (LRU + Redis) state management:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Received: MCP Request
+    [*] --> L1Empty : Server starts (L1 empty)
+    [*] --> L2Check : Redis configured
 
-    Received --> Validating: Parse Input
-    Validating --> Validated: Schema Valid
-    Validating --> Rejected2: Schema Invalid
-    Rejected2 --> [*]: Error Response
+    L2Check --> L2Warmup : Redis available
+    L2Check --> L1Empty : Redis unavailable (fallback to L1 only)
 
-    Validated --> Authorized: Auth Check Pass
-    Validated --> Forbidden: Auth Check Fail
-    Forbidden --> [*]: 403 Response
+    L2Warmup --> L1Warmed : Frequently accessed keys pre-loaded to L1
 
-    Authorized --> Queued: Rate Limit OK
-    Authorized --> Throttled: Rate Limit Hit
-    Throttled --> [*]: 429 Response
+    L1Empty --> L1Miss : Cache lookup (no entry)
+    L1Warmed --> L1Hit : Cache lookup (entry found, fresh)
+    L1Warmed --> L1Stale : Cache lookup (entry found, TTL expired)
+    L1Warmed --> L1Miss : Cache lookup (entry not in L1)
 
-    Queued --> CacheCheck: Dequeued
-    CacheCheck --> CacheHit: Data in Cache
-    CacheHit --> Responding: Format Response
-    CacheCheck --> Fetching: Cache Miss
+    L1Miss --> L2Hit : L2 Redis lookup success
+    L1Miss --> BothMiss : L2 Redis miss
 
-    Fetching --> Transforming: API Response OK
-    Fetching --> CircuitOpen: API Error
-    CircuitOpen --> Fallback: Use Fallback
-    Fallback --> Responding: Degraded Response
+    L2Hit --> L1Populated : Write to L1 (promote from L2)
+    L1Populated --> L1Hit : Next lookup served from L1
 
-    Transforming --> Caching: Data Transformed
-    Caching --> Responding: Cache Updated
-    Responding --> Streaming: Large Response
-    Responding --> Complete: Small Response
-    Streaming --> Complete: Stream Finished
-    Complete --> [*]: Response Sent
+    BothMiss --> Fetching : Fetch from EP API
+    Fetching --> L1Written : Write to L1 (15-min TTL)
+    L1Written --> L2Written : Write to L2 (60-min TTL)
+    L2Written --> L1Hit : Data available
+
+    L1Stale --> BackgroundRefresh : Stale-while-revalidate (v1.1)
+    BackgroundRefresh --> L1Hit : Background fetch updates L1
+    L1Stale --> L1Stale : Stale value returned while refreshing
+
+    L1Hit --> [*] : Data returned (~1ms)
+    L2Hit --> [*] : Data returned (~5ms)
+
+    note right of L2Warmup
+        On startup, Redis keys
+        with remaining TTL are
+        pre-loaded to L1 cache.
+        Reduces EP API calls
+        after restart.
+    end note
 ```
 
 ---
 
-## 🔄 API Circuit Breaker States
+## 🔑 OAuth Session States (v2.0)
+
+User session lifecycle for HTTP transport with OAuth 2.0:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Closed: Normal Operation
+    [*] --> Anonymous : HTTP request without token
 
-    Closed --> Closed: Success
-    Closed --> Open: Failure Threshold Reached
+    Anonymous --> Authenticating : Bearer token presented
+    Authenticating --> TokenInvalid : JWT signature invalid
+    Authenticating --> TokenExpired : JWT expiry check fails
+    Authenticating --> TokenValid : JWT valid, claims extracted
 
-    Open --> Open: Reject Requests (fast fail)
-    Open --> HalfOpen: Timeout Elapsed
+    TokenInvalid --> [*] : 401 response
+    TokenExpired --> RefreshFlow : Refresh token available
+    TokenExpired --> [*] : 401 response (no refresh token)
 
-    HalfOpen --> Closed: Probe Success
-    HalfOpen --> Open: Probe Failed
+    RefreshFlow --> Refreshing : POST to token endpoint
+    Refreshing --> TokenValid : New access token received
+    Refreshing --> RefreshFailed : Refresh token expired/invalid
+    RefreshFailed --> [*] : 401 - re-authentication required
+
+    TokenValid --> RBACCheck : Check tool permissions
+    RBACCheck --> Authorized : Role has tool permission
+    RBACCheck --> Forbidden : Role lacks permission
+
+    Forbidden --> [*] : 403 response
+
+    Authorized --> Active : Session established
+    Active --> Active : Subsequent requests (token cached 5 min)
+    Active --> TokenExpired : Token TTL reached
+    Active --> SessionRevoked : Admin revokes session
+    Active --> SessionEnded : User logs out / timeout
+
+    SessionRevoked --> [*] : 401 response
+    SessionEnded --> [*]
+
+    note right of Active
+        Token validation results
+        cached for 5 minutes.
+        Avoids JWKS call on
+        every request.
+    end note
+
+    note right of Anonymous
+        In v2.0, anonymous access
+        allowed only for localhost
+        or with specific config.
+        Production requires auth.
+    end note
+```
+
+---
+
+## ⚡ Circuit Breaker States (v1.1)
+
+EP API circuit breaker state machine:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Closed : Initialized (normal operation)
+
+    Closed --> Closed : Request succeeds
+    Closed --> RecordingFailure : Request fails
+
+    RecordingFailure --> Closed : Failure count below threshold (5)
+    RecordingFailure --> Open : Failure threshold reached
+
+    Open --> Open : Requests fast-fail (no API call)
+    Open --> HalfOpen : Timeout elapsed (30 seconds)
+
+    HalfOpen --> Closed : Probe request succeeds (circuit reset)
+    HalfOpen --> Open : Probe request fails (extend open period)
 
     note right of Closed
-        All requests pass through
-        Failures counted
-        Threshold: 5 failures in 60s
+        Normal operating state.
+        All API calls pass through.
+        Failure counter tracked.
+        Reset on success.
     end note
 
     note right of Open
-        All requests fast-fail
-        Timer: 30 seconds
-        Returns cached/fallback data
+        EP API assumed unreachable.
+        All requests fast-fail.
+        Cached data returned if available.
+        Otherwise: circuit open error.
     end note
 
     note right of HalfOpen
-        Single probe request allowed
-        Success resets circuit
-        Failure reopens circuit
+        Single probe allowed.
+        Tests if EP API recovered.
+        Success: fully close circuit.
+        Failure: reopen for 30s.
     end note
 ```
 
 ---
 
-## 🛡️ Security Session Lifecycle
+## 🔔 Webhook Delivery States (v2.0)
+
+Individual webhook delivery attempt state machine:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Anonymous: Connection Opened
+    [*] --> Pending : Event detected, webhook matched
 
-    Anonymous --> Authenticating2: Credentials Provided
-    Authenticating2 --> SessionActive: Auth Success
-    Authenticating2 --> Anonymous: Auth Failed (retry)
-    Authenticating2 --> Locked: Too Many Failures
+    Pending --> Signing : Create HMAC signature
+    Signing --> Sending : HTTP POST initiated
 
-    SessionActive --> SessionActive: Request Processed
-    SessionActive --> TokenRefresh: Token Expiring
-    TokenRefresh --> SessionActive: Refresh Success
-    TokenRefresh --> Anonymous: Refresh Failed
+    Sending --> Delivered : HTTP 200 received
+    Sending --> TemporaryFailure : HTTP 4xx/5xx received
+    Sending --> NetworkFailure : Connection timeout/error
 
-    SessionActive --> SessionExpired: Inactivity Timeout
-    SessionExpired --> Anonymous: Session Cleared
-    SessionActive --> Terminated: Explicit Logout
-    Terminated --> Anonymous: Cleanup Complete
+    Delivered --> [*] : Success logged in audit trail
 
-    Locked --> Anonymous: Lockout Expired (15min)
-    Locked --> [*]: Admin Unlock
+    TemporaryFailure --> WaitingRetry1 : Schedule retry 1 (after 1 min)
+    NetworkFailure --> WaitingRetry1 : Schedule retry 1 (after 1 min)
 
-    note right of SessionActive
-        Valid token
-        RBAC enforced
-        Audit logging active
+    WaitingRetry1 --> Retry1 : Retry 1 attempt
+    Retry1 --> Delivered : HTTP 200 received
+    Retry1 --> WaitingRetry2 : Still failing (after 5 min)
+
+    WaitingRetry2 --> Retry2 : Retry 2 attempt
+    Retry2 --> Delivered : HTTP 200 received
+    Retry2 --> WaitingRetry3 : Still failing (after 15 min)
+
+    WaitingRetry3 --> Retry3 : Final retry attempt
+    Retry3 --> Delivered : HTTP 200 received
+    Retry3 --> PermanentFailure : All retries exhausted
+
+    PermanentFailure --> [*] : Alert webhook owner, disable webhook
+
+    note right of PermanentFailure
+        After 3 retries (total 4 attempts),
+        webhook marked as failed.
+        Owner notified via email/notification.
+        Webhook auto-disabled after
+        5 consecutive permanent failures.
     end note
 ```
 
 ---
 
-## ⚡ Lambda Function Execution Lifecycle
-
-```mermaid
-stateDiagram-v2
-    [*] --> Cold: First Invocation
-    Cold --> Initializing: Download Code
-    Initializing --> InitRuntime: Extract Package
-    InitRuntime --> InitHandler: Load Dependencies
-    InitHandler --> Warm: Handler Ready
-    
-    Warm --> Executing: Event Trigger
-    Executing --> Processing: Run Handler Code
-    Processing --> DynamoDBCall: Query Cache
-    DynamoDBCall --> CacheHit: Data Found
-    DynamoDBCall --> CacheMiss: Data Not Found
-    
-    CacheMiss --> APICall: Call EP API
-    APICall --> APISuccess: Data Retrieved
-    APICall --> APIError: Request Failed
-    APIError --> Retry: Transient Error
-    Retry --> APICall: Exponential Backoff
-    APIError --> Fallback: Permanent Error
-    Fallback --> Processing: Serve Stale Data
-    
-    APISuccess --> UpdateCache: Store in DynamoDB
-    UpdateCache --> Processing: Continue
-    CacheHit --> Processing: Continue
-    Processing --> Response: Format Output
-    Response --> Warm: Execution Complete
-    
-    Warm --> Frozen: No Activity (5 min)
-    Frozen --> Warm: New Invocation
-    Frozen --> Terminated: No Activity (15 min)
-    Terminated --> [*]: Container Destroyed
-    
-    note right of Cold
-        Cold Start: 100-500ms
-        Rare: <1% of invocations
-        Optimized: Small packages
-    end note
-    
-    note right of Warm
-        Warm Invocation: 5-50ms
-        Common: >99% of invocations
-        Reuses container
-    end note
-    
-    note right of Frozen
-        Container paused
-        Memory snapshot preserved
-        Quick resume: 10-20ms
-    end note
-```
-
-### **Lambda Lifecycle Metrics**
-
-| State | Duration | Frequency | Cost Impact |
-|-------|----------|-----------|-------------|
-| **Cold Start** | 100-500ms | <1% invocations | Billed for full duration |
-| **Warm Invocation** | 5-50ms | >99% invocations | Billed for execution only |
-| **Frozen** | N/A | After 5 min idle | No cost |
-| **Terminated** | N/A | After 15 min idle | No cost |
-
-**Optimization Strategy:**
-- **Provisioned Concurrency:** 10 instances for router Lambda (eliminates cold starts)
-- **Package Size:** <10 MB (faster cold starts)
-- **Runtime:** Node.js 24 (faster initialization than Python)
-- **Lazy Loading:** Import modules only when needed
-
----
-
-## 🗄️ Distributed DynamoDB Cache State Machine
-
-```mermaid
-stateDiagram-v2
-    [*] --> Empty: Table Created
-    Empty --> Writing: First Write
-    Writing --> Fresh: TTL Set
-    
-    Fresh --> Serving: Read Request
-    Serving --> Fresh: Data Returned
-    Fresh --> Stale: TTL Expired
-    
-    Stale --> BackgroundRefresh: Lambda EventBridge Trigger
-    BackgroundRefresh --> Refreshing: Fetch Fresh Data
-    Refreshing --> RefreshSuccess: API Call Success
-    Refreshing --> RefreshFailed: API Call Failed
-    
-    RefreshSuccess --> Fresh: Update Item + Reset TTL
-    RefreshFailed --> Stale: Keep Old Data
-    RefreshFailed --> RetryRefresh: Scheduled Retry
-    RetryRefresh --> Refreshing: Exponential Backoff
-    
-    Stale --> ServingStale: Read Request (Fallback)
-    ServingStale --> Stale: Return Warning Header
-    
-    Fresh --> Invalidated: Manual Invalidation
-    Stale --> Invalidated: Manual Invalidation
-    Invalidated --> Deleting: Delete Item
-    Deleting --> Empty: Item Removed
-    
-    Fresh --> AutoExpired: TTL Reached
-    Stale --> AutoExpired: TTL Reached
-    AutoExpired --> [*]: DynamoDB Auto-Delete
-    
-    note right of Fresh
-        TTL: 1-24 hours (entity-dependent)
-        MEPs: 24h
-        Votes: 12h
-        Sessions: 6h
-    end note
-    
-    note right of BackgroundRefresh
-        EventBridge Rule: Every 1 hour
-        Lambda: Scan for expiring items
-        Proactive refresh strategy
-    end note
-    
-    note right of ServingStale
-        X-Cache-Status: STALE
-        Degraded mode
-        Better than error
-    end note
-```
-
-### **Cache TTL Strategy**
-
-| Entity Type | TTL | Refresh Frequency | Rationale |
-|------------|-----|-------------------|----------|
-| **MEP Profile** | 24 hours | Daily at 2 AM UTC | MEP data changes infrequently |
-| **Voting Record** | 12 hours | Twice daily | Vote outcomes finalized quickly |
-| **Plenary Session** | 6 hours | Every 6 hours | Session details update during day |
-| **Document** | 24 hours | Daily at 3 AM UTC | Documents rarely change after publication |
-| **Committee Info** | 48 hours | Twice weekly | Committee composition stable |
-
----
-
-## 🔄 Enhanced Circuit Breaker with Metrics
-
-```mermaid
-stateDiagram-v2
-    [*] --> Closed: Initialize
-    
-    Closed --> Closed: Success (Reset Counter)
-    Closed --> HalfOpen: Failure Threshold (5 in 60s)
-    
-    HalfOpen --> Closed: Probe Success
-    HalfOpen --> Open: Probe Failed
-    
-    Open --> Open: Fast Fail (Return Cached)
-    Open --> HalfOpen: Timeout (30s)
-    
-    Closed --> MetricsTracking: On Every Request
-    HalfOpen --> MetricsTracking: On Probe
-    Open --> MetricsTracking: On Fast Fail
-    
-    MetricsTracking --> CloudWatch: Publish Metrics
-    CloudWatch --> Alarm: Threshold Breach
-    Alarm --> SNS: Notify Ops Team
-    SNS --> PagerDuty: Page On-Call
-    
-    note right of Closed
-        Normal operation
-        All requests pass through
-        Success rate: Track per endpoint
-    end note
-    
-    note right of HalfOpen
-        Single probe request
-        5-second window
-        Auto-retry mechanism
-    end note
-    
-    note right of Open
-        All requests rejected
-        Serve cached/fallback
-        30-second timeout
-    end note
-    
-    note right of MetricsTracking
-        CloudWatch Metrics:
-        - circuit.state (0=Closed, 1=HalfOpen, 2=Open)
-        - circuit.failures (count)
-        - circuit.successes (count)
-        - circuit.fallbacks (count)
-    end note
-```
-
-### **Circuit Breaker Configuration**
-
-| Parameter | Value | Purpose |
-|-----------|-------|----------|
-| **Failure Threshold** | 5 failures in 60s | Open circuit after sustained errors |
-| **Success Threshold** | 1 success | Close circuit after successful probe |
-| **Timeout** | 30 seconds | Time before attempting probe |
-| **Probe Interval** | 5 seconds | Frequency of probe attempts in HalfOpen |
-| **Fallback Strategy** | Serve cached data + warning header | Graceful degradation |
-
-**Per-Endpoint Circuit Breakers:**
-- `/meps` endpoint: Independent circuit breaker
-- `/votes` endpoint: Independent circuit breaker
-- `/documents` endpoint: Independent circuit breaker
-
-**Rationale:** Isolate failures to specific EP API endpoints, prevent cascade failures
-
----
-
-## 🔄 Step Functions Workflow Execution States
-
-```mermaid
-stateDiagram-v2
-    [*] --> Queued: API Gateway Trigger
-    Queued --> Running: Execution Started
-    
-    Running --> TaskState: Invoke Lambda
-    TaskState --> TaskRunning: Lambda Executing
-    TaskRunning --> TaskSuccess: Lambda Success
-    TaskRunning --> TaskFailed: Lambda Error
-    
-    TaskFailed --> RetryState: Transient Error
-    RetryState --> WaitingRetry: Exponential Backoff
-    WaitingRetry --> TaskState: Retry Attempt
-    
-    TaskFailed --> CatchState: Permanent Error
-    CatchState --> ErrorHandler: Invoke Error Lambda
-    ErrorHandler --> Failed: Execution Failed
-    
-    TaskSuccess --> ChoiceState: Evaluate Condition
-    ChoiceState --> ParallelState: Multi-Branch Execution
-    ChoiceState --> TaskState: Sequential Execution
-    
-    ParallelState --> Branch1: Fork
-    ParallelState --> Branch2: Fork
-    ParallelState --> Branch3: Fork
-    Branch1 --> WaitParallel: Branch Complete
-    Branch2 --> WaitParallel: Branch Complete
-    Branch3 --> WaitParallel: Branch Complete
-    WaitParallel --> TaskState: All Branches Complete
-    
-    TaskSuccess --> Succeeded: Final State
-    Succeeded --> [*]: Execution Complete
-    
-    Running --> TimedOut: Execution Timeout (300s)
-    TimedOut --> Failed: Max Duration Exceeded
-    Failed --> [*]: Execution Aborted
-    
-    note right of RetryState
-        Max Attempts: 3
-        Backoff Rate: 2.0
-        Interval: 2s, 4s, 8s
-    end note
-    
-    note right of ParallelState
-        Concurrent Lambda invocations
-        Max branches: 40
-        All branches must succeed
-    end note
-    
-    note right of TimedOut
-        Max execution: 300s (5 min)
-        Timeout buffer for long reports
-        CloudWatch alarm triggered
-    end note
-```
-
-### **Step Functions Execution Metrics**
-
-| Metric | Target | Alert Threshold |
-|--------|--------|------------------|
-| **Success Rate** | >99% | <95% |
-| **Execution Duration** | <120s | >240s |
-| **Timeout Rate** | <0.1% | >1% |
-| **Retry Rate** | <5% | >15% |
-| **Cost per Execution** | <$0.05 | >$0.10 |
-
----
-
-## 📊 Implementation Phases
-
-### **Phase 1: Lambda Lifecycle Optimization** (Q3 2026)
-
-**Objectives:**
-- Implement provisioned concurrency for router Lambda
-- Optimize cold start times to <100ms
-- Deploy SnapStart for instant warm starts
-
-**Success Metrics:**
-- ✅ Cold start p95: <100ms (down from 500ms)
-- ✅ Warm invocation p95: <50ms
-- ✅ Provisioned concurrency: 10 instances for router
-- ✅ Cold start rate: <1% of invocations
-
-**KPIs:**
-- Cold start latency p95: <100ms
-- Warm latency p95: <50ms
-- Cost increase: <10% (provisioned concurrency)
-- User-perceived latency: <200ms p95
-
----
-
-### **Phase 2: DynamoDB Cache State Machine** (Q4 2026)
-
-**Objectives:**
-- Implement TTL-based cache expiration
-- Deploy background refresh with EventBridge
-- Add stale-while-revalidate pattern
-
-**Success Metrics:**
-- ✅ All entities have appropriate TTL values
-- ✅ Background refresh Lambda deployed
-- ✅ Stale data served with warning header
-- ✅ Cache hit rate: >80%
-
-**KPIs:**
-- Cache hit rate: >80%
-- Stale data served rate: <5%
-- Background refresh success rate: >95%
-- DynamoDB read cost reduction: 60%
-
----
-
-### **Phase 3: Circuit Breaker & Step Functions** (Q1 2027)
-
-**Objectives:**
-- Deploy per-endpoint circuit breakers
-- Implement Step Functions for complex workflows
-- Add CloudWatch metrics and alarms
-- Deploy PagerDuty integration
-
-**Success Metrics:**
-- ✅ Circuit breakers prevent cascade failures
-- ✅ Step Functions execute reports in <120s
-- ✅ CloudWatch alarms trigger within 1 minute
-- ✅ PagerDuty incidents auto-created for P1 alerts
-
-**KPIs:**
-- Circuit breaker effectiveness: 90% failure isolation
-- Step Functions success rate: >99%
-- Mean time to detection (MTTD): <1 minute
-- Mean time to recovery (MTTR): <5 minutes
-
----
-
-## ⚠️ Risk Assessment
-
-### **State Management Risks**
-
-| Risk | Severity | Probability | Impact | Mitigation |
-|------|----------|-------------|--------|------------|
-| **DynamoDB throttling** | 🟠 High | 🟡 Low | Cache unavailable, increased EP API calls | DynamoDB on-demand mode, auto-scaling |
-| **Lambda timeout** | 🟡 Medium | 🟠 Medium | Incomplete processing, poor UX | Increase timeout to 30s, optimize code |
-| **Circuit breaker false positive** | 🟡 Medium | 🟡 Low | Unnecessary fast-fails, reduced availability | Tune threshold to 5 failures in 60s |
-| **Step Functions cost overrun** | 🟡 Medium | 🟠 Medium | Budget exceeded | Limit to 100 executions/hour, monitor CloudWatch |
-| **Stale cache served too long** | 🟢 Low | 🟠 Medium | Outdated data, user confusion | Warning header, TTL monitoring |
-
-### **Risk Mitigation Timeline**
-
-| Risk | Mitigation Action | Owner | Deadline |
-|------|-------------------|-------|----------|
-| DynamoDB throttling | Enable on-demand mode, set CloudWatch alarms | DevOps | Before Phase 2 |
-| Lambda timeout | Optimize handler code, increase timeout to 30s | Engineering | Phase 1 |
-| Circuit breaker tuning | Load test with realistic failure scenarios | SRE | Phase 3 |
-| Cost overrun | Set Step Functions execution quota, billing alarms | FinOps | Before Phase 3 |
-| Stale cache | Implement background refresh, monitor TTL expiry | Engineering | Phase 2 |
-
----
-
-## 🔗 ISO 27001 Controls Mapping
-
-| Control | Description | Implementation |
-|---------|-------------|----------------|
-| **A.12.4.1** | Event logging | CloudTrail logs all Lambda state changes, DynamoDB operations |
-| **A.12.4.2** | Protection of log information | CloudWatch Logs encrypted with KMS, 90-day retention |
-| **A.12.4.3** | Administrator and operator logs | IAM CloudTrail logs capture all administrative actions |
-| **A.12.4.4** | Clock synchronization | Lambda uses NTP-synchronized AWS clocks |
-| **A.17.2.1** | Availability of information processing facilities | Multi-AZ DynamoDB, Lambda auto-scaling |
-| **A.14.1.2** | Securing application services on public networks | API Gateway with WAF, TLS 1.3 |
-| **A.14.1.3** | Protecting application services transactions | Circuit breaker prevents cascade failures |
-
-### **NIST CSF 2.0 Mapping**
-
-| Function | Category | Implementation |
-|----------|----------|----------------|
-| **PR.PT-1** | Audit/log records determined | All state transitions logged to CloudWatch |
-| **PR.PT-3** | Access to systems managed | IAM policies enforce least privilege for Lambda execution roles |
-| **DE.AE-2** | Detected events analyzed | CloudWatch Insights queries analyze Lambda errors |
-| **DE.AE-4** | Impact of events determined | Circuit breaker metrics track failure impact |
-| **DE.CM-7** | Monitoring for unauthorized activity | GuardDuty monitors for anomalous Lambda behavior |
-| **RS.AN-1** | Notifications from detection systems investigated | PagerDuty integration for P1 incidents |
-| **RS.MI-2** | Incidents contained | Circuit breaker isolates failing endpoints |
-
-### **CIS Controls v8.1 Mapping**
-
-| Control | Safeguard | Implementation |
-|---------|-----------|----------------|
-| **8.2** | Collect audit logs | CloudTrail logs all API calls, 90-day retention |
-| **8.3** | Ensure adequate audit log storage | CloudWatch Logs with automatic retention policies |
-| **8.5** | Collect detailed audit logs | Lambda execution logs include request ID, duration, errors |
-| **8.11** | Conduct audit log reviews | CloudWatch Insights scheduled queries for anomaly detection |
-| **12.1** | Ensure network infrastructure is up-to-date | Lambda runtime auto-updates, managed by AWS |
-| **13.6** | Collect network traffic flow logs | VPC Flow Logs for Lambda in VPC |
-| **17.7** | Conduct routine incident response exercises | Quarterly failure injection testing (chaos engineering) |
-
----
-
-## 🔮 Visionary Roadmap: 2027–2037
-
-> **State Machine Evolution** — From reactive circuit breakers to self-healing autonomous systems, evolving alongside AI model generations from Anthropic Opus 4.6 through future AGI.
-
-### 📅 State Management Version Strategy
-
-| Year | Version | AI Context | State Management Milestone |
-|------|---------|-----------|---------------------------|
-| **2026** | v1.0 | Anthropic Opus 4.6 | Foundation: MCP connection lifecycle, cache state machine, circuit breaker |
-| **2027** | v2.0 | Opus 5.x | Distributed state: DynamoDB-backed state machines with Step Functions |
-| **2028** | v3.0 | Next-gen multimodal | Federated state: cross-parliament session coordination |
-| **2029** | v4.0 | Specialized political AI | Predictive state: ML-driven state transitions anticipating failures |
-| **2030** | v5.0 | Near-AGI reasoning | Self-healing state: autonomous recovery without human intervention |
-| **2031** | v6.0 | Early AGI | Cognitive state: AI-aware lifecycle management |
-| **2032** | v7.0 | AGI-assisted | Emergent state: system discovers optimal state patterns |
-| **2033** | v8.0 | AGI co-development | Global state mesh: coordinated state across 50+ parliament instances |
-| **2034** | v9.0 | Mature AGI | Intent-based state: define desired outcomes, not transition rules |
-| **2035** | v10.0 | Post-AGI | Zero-downtime evolution: live state machine migration without service interruption |
-| **2036** | v11.0 | AGI-native | Self-describing state: machines generate own monitoring and alerts |
-| **2037** | v12.0 | Superintelligent | Transcendent state: continuous optimization beyond human-designed patterns |
-
-> **Minor updates every ~2.3 months** deliver state machine refinements, new circuit breaker patterns, and resilience improvements.
-
-### 📊 Advanced State Architectures
-
-#### Phase 4: Predictive State Management (2029–2030)
-
-```mermaid
-stateDiagram-v2
-    [*] --> Monitoring
-    Monitoring --> PredictingFailure: ML anomaly detected
-    PredictingFailure --> PreemptiveScaling: High failure probability
-    PredictingFailure --> Monitoring: False alarm
-    PreemptiveScaling --> Healthy: Resources scaled
-    Monitoring --> SelfHealing: Actual failure
-    SelfHealing --> Diagnosing: Auto-diagnose
-    Diagnosing --> AutoRemediate: Fix identified
-    Diagnosing --> EscalateToAGI: Complex failure
-    AutoRemediate --> Healthy: Fixed
-    EscalateToAGI --> Healthy: AGI resolved
-    Healthy --> Monitoring: Continue
-```
-
-- **Predictive failure detection** — ML models analyze system metrics to predict failures before they occur
-- **Preemptive scaling** — automatically provision resources when load spikes are anticipated
-- **Self-diagnosing systems** — state machines that identify root causes without human analysis
-- **AGI escalation path** — complex failures escalated to AGI systems for novel resolution
-
-#### Phase 5: Cognitive State Systems (2031–2033)
-
-- **Self-optimizing state machines** — continuously refine transition rules based on operational data
-- **Cross-system state coordination** — synchronized state across federated parliament instances
-- **Natural language state queries** — ask "why did the system fail?" and get AI-generated explanations
-- **Temporal state analysis** — understand state patterns across time for capacity planning
-
-#### Phase 6: Autonomous Governance States (2034–2037)
-
-- **Intent-based state definition** — describe desired system behavior, AGI generates state machines
-- **Self-evolving resilience** — systems autonomously develop new recovery strategies
-- **Quantum-aware state management** — leverage quantum computing for complex state optimization
-- **Provenance-tracked transitions** — every state change cryptographically recorded for audit
-
-### 🔄 Disruption Scenarios
-
-| Disruption | State Management Response |
-|-----------|--------------------------|
-| **Serverless platform changes** | Abstract state layer; portable across cloud providers |
-| **New distributed consensus protocols** | Modular consensus layer; swap algorithms without state loss |
-| **AGI eliminates need for circuit breakers** | Maintain fail-safe patterns; AGI augments, not replaces |
-| **Real-time requirements** (<1ms) | Edge-deployed state machines with local decision authority |
-
----
-
-## 🔗 Policy Alignment
-
-| ISMS Policy | Relevance | Link |
-|-------------|-----------|------|
-| 🔒 Secure Development | State management security | [Secure_Development_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
-| 🔑 Access Control | Session lifecycle patterns | [Access_Control_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) |
-| 🌐 Network Security | Connection state security | [Network_Security_Policy.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Network_Security_Policy.md) |
-| 🚨 Incident Response | Error state handling | [Incident_Response_Plan.md](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md) |
-
----
-
-## 📚 Related Documents
-
-| Document | Description | Link |
-|----------|-------------|------|
-| 📈 State Diagram (Current) | Current state transitions | [STATEDIAGRAM.md](STATEDIAGRAM.md) |
-| 🚀 Future Architecture | Architecture roadmap | [FUTURE_ARCHITECTURE.md](FUTURE_ARCHITECTURE.md) |
-| 🔄 Future Flowchart | Process workflows | [FUTURE_FLOWCHART.md](FUTURE_FLOWCHART.md) |
-| 🛡️ Future Security Architecture | Security roadmap | [FUTURE_SECURITY_ARCHITECTURE.md](FUTURE_SECURITY_ARCHITECTURE.md) |
-
----
-
-<p align="center">
-  <em>This future state diagram is maintained as part of the <a href="https://github.com/Hack23/ISMS-PUBLIC">Hack23 AB ISMS</a> framework.</em><br>
-  <em>Licensed under <a href="LICENSE.md">Apache-2.0</a></em>
-</p>
+*See [STATEDIAGRAM.md](./STATEDIAGRAM.md) for the current implemented state machines.*
