@@ -186,6 +186,13 @@ flowchart TD
             GPL["generate_political_landscape"]
         end
 
+        subgraph Phase6["Phase 6 Advanced OSINT (4)"]
+            NA["network_analysis"]
+            ST["sentiment_tracker"]
+            EWS["early_warning_system"]
+            CI["comparative_intelligence"]
+        end
+
         subgraph Phase4["Phase 4 EP API v2 (8)"]
             GCM["get_current_meps"]
             GSP["get_speeches"]
@@ -197,7 +204,7 @@ flowchart TD
             GMPD["get_mep_declarations"]
         end
 
-        subgraph Phase5["Phase 5 Complete Coverage (11)"]
+        subgraph Phase5["Phase 5 Complete Coverage (13)"]
             GIM["get_incoming_meps"]
             GOM["get_outgoing_meps"]
             GHM["get_homonym_meps"]
@@ -209,6 +216,8 @@ flowchart TD
             GED["get_external_documents"]
             GMFA["get_meeting_foreseen_activities"]
             GPE["get_procedure_events"]
+            GMPSD["get_meeting_plenary_session_documents"]
+            GMPSDI["get_meeting_plenary_session_document_items"]
         end
     end
 
@@ -233,6 +242,7 @@ flowchart TD
     OSINT1 --> ZV
     OSINT2 --> ZV
     OSINT3 --> ZV
+    Phase6 --> ZV
     Phase4 --> ZV
     Phase5 --> ZV
 
@@ -356,8 +366,9 @@ The following four tools extend the OSINT capability with network analysis, sent
 | **OSINT Phase 1** | 6 | assess_mep_influence, analyze_coalition_dynamics, detect_voting_anomalies, compare_political_groups, analyze_legislative_effectiveness, monitor_legislative_pipeline |
 | **OSINT Phase 2** | 2 | analyze_committee_activity, track_mep_attendance |
 | **OSINT Phase 3** | 2 | analyze_country_delegation, generate_political_landscape |
+| **Phase 6 Advanced OSINT** | 4 | network_analysis, sentiment_tracker, early_warning_system, comparative_intelligence |
 | **Phase 4 EP API v2** | 8 | get_current_meps, get_speeches, get_procedures, get_adopted_texts, get_events, get_meeting_activities, get_meeting_decisions, get_mep_declarations |
-| **Phase 5 Complete Coverage** | 11 | get_incoming_meps, get_outgoing_meps, get_homonym_meps, get_plenary_documents, get_committee_documents, get_plenary_session_documents, get_plenary_session_document_items, get_controlled_vocabularies, get_external_documents, get_meeting_foreseen_activities, get_procedure_events |
+| **Phase 5 Complete Coverage** | 13 | get_incoming_meps, get_outgoing_meps, get_homonym_meps, get_plenary_documents, get_committee_documents, get_plenary_session_documents, get_plenary_session_document_items, get_controlled_vocabularies, get_external_documents, get_meeting_foreseen_activities, get_procedure_events, get_meeting_plenary_session_documents, get_meeting_plenary_session_document_items |
 
 ### Resources (9 total)
 

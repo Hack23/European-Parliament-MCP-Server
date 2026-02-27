@@ -172,6 +172,7 @@ graph TB
 
 1. **MCP Protocol Handler**: Implements Model Context Protocol for client communication
 2. **Tool Registry**: 45 registered MCP tools for parliamentary data access (26 EP API data tools + 3 advanced analysis + 14 OSINT intelligence + 2 additional)
+2. **Tool Registry**: 45 registered MCP tools (28 EP API data tools + 3 advanced analysis + 14 OSINT intelligence)
 3. **Resource Handlers**: MCP resource endpoints for structured data
 4. **EP API Client**: HTTP client for European Parliament API integration
 5. **Cache Layer**: LRU cache with 15-minute TTL for performance
@@ -209,6 +210,12 @@ graph TB
             T8[analyze_voting_patterns.ts]
             T9[track_legislation.ts]
             T10[generate_report.ts]
+            subgraph "Phase 6 Advanced OSINT (4)"
+                T11[network_analysis.ts]
+                T12[sentiment_tracker.ts]
+                T13[early_warning_system.ts]
+                T14[comparative_intelligence.ts]
+            end
         end
         
         subgraph "Data Access [src/clients/]"
