@@ -17,18 +17,18 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Cursor IDE MCP configuration example
 
 ### Changed
-- Updated `docs/TESTING_GUIDE.md` to reflect 39 tools and Vitest 4 patterns
+- Updated `docs/TESTING_GUIDE.md` to reflect 45 tools and Vitest 4 patterns
 - Expanded `CONTRIBUTING.md` with DI container guidance and security checklists
 
 ### Fixed
-- Corrected tool count references throughout documentation (39 tools)
+- Corrected tool count references throughout documentation (45 tools)
 
 ---
 
 ## [1.0.0] — (Planned)
 
 ### Added
-- **39 MCP Tools** — complete European Parliament API v2 coverage:
+- **45 MCP Tools** — complete European Parliament API v2 coverage:
   - 7 MEP tools (`get_meps`, `get_mep_details`, `get_current_meps`, `get_incoming_meps`,
     `get_outgoing_meps`, `get_homonym_meps`, `get_mep_declarations`)
   - 7 Plenary & Meeting tools (`get_plenary_sessions`, `get_voting_records`, `get_speeches`,
@@ -120,7 +120,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Extended resource URIs: `ep://procedures/{id}`, `ep://plenary/{id}`,
   `ep://documents/{id}`
 - Vitest 4 test runner with `@vitest/coverage-v8` provider
-- 1 130+ unit tests across all 39 tool files
+- 1 130+ unit tests across all 45 tool files
 - 23 E2E tests via `MCPTestClient` stdio harness
 - `knip` dead-code detection in CI
 - `license-compliance` automated license gating

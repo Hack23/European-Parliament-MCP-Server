@@ -76,7 +76,7 @@ The **European Parliament MCP Server** (v0.6.2) is a **stateless, read-only** [M
 | **Domain Types** | 12 core interfaces (+ 5 supporting types) |
 | **Branded IDs** | 5 compile-time-safe identifier types (MEPID, SessionID, CommitteeID, DocumentID, GroupID) |
 | **Analytical Types** | 12 computed output interfaces (OSINT intelligence products) |
-| **Validation** | Zod schemas for all 39 tool inputs; runtime type guards for branded IDs |
+| **Validation** | Zod schemas for all 45 tool inputs; runtime type guards for branded IDs |
 | **Pagination** | Offset-based `PaginatedResponse<T>` wrapper |
 | **GDPR** | Personal data fields tagged `@gdpr`; audit logging for access; 15-min cache TTL |
 
@@ -854,7 +854,7 @@ flowchart LR
     subgraph "European Parliament MCP Server"
         direction TB
         ZOD[Zod Input<br/>Validation]
-        TOOLS[39 MCP Tools]
+        TOOLS[45 MCP Tools]
         CACHE[LRU Cache<br/>500 entries<br/>15 min TTL]
         TRANSFORM[JSON-LD<br/>Transformer]
         AUDIT[GDPR<br/>Audit Log]
