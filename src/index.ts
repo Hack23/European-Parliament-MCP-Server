@@ -117,7 +117,7 @@ const CORE_TOOL_COUNT = 7;
  * @see https://data.europarl.europa.eu/ - EP Open Data Portal
  * @see https://github.com/Hack23/ISMS-PUBLIC - ISMS compliance policies
  */
-class EuropeanParliamentMCPServer {
+export class EuropeanParliamentMCPServer {
   // Using Server for now until McpServer is available in the SDK version
   // eslint-disable-next-line @typescript-eslint/no-deprecated
   private readonly server: Server;
