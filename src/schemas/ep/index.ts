@@ -64,4 +64,6 @@ export {
   GetControlledVocabulariesSchema,
   GetMeetingForeseenActivitiesSchema,
   GetProcedureEventsSchema,
+  GetMeetingPlenarySessionDocumentsSchema,
+  GetMeetingPlenarySessionDocumentItemsSchema,
 } from './activities.js';

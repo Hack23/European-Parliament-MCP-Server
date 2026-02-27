@@ -66,4 +66,6 @@ export {
   GetControlledVocabulariesSchema,
   GetMeetingForeseenActivitiesSchema,
   GetProcedureEventsSchema,
+  GetMeetingPlenarySessionDocumentsSchema,
+  GetMeetingPlenarySessionDocumentItemsSchema,
 } from './ep/index.js';
