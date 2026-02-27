@@ -13,6 +13,15 @@
  * visibility into shifting power balances between political groups—enabling
  * predictive political intelligence on emerging dominance and fragmentation.
  *
+ * **Business Perspective:** Supports B2G/B2B/B2C customers—including policy
+ * consultancies, financial analysts, and corporate affairs teams—who need a
+ * rapid read on political group strength to inform lobbying strategy, risk
+ * assessments, and investment decisions related to EU regulatory outcomes.
+ *
+ * **Marketing Perspective:** Appeals to journalists, academic researchers,
+ * and civic-tech developers as a concise, data-backed institutional barometer
+ * that contextualises group seat share within broader EU political dynamics.
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 

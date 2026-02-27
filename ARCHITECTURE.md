@@ -243,7 +243,7 @@ flowchart TD
 
 ## 📡 MCP Protocol Surface
 
-### Tools (39 total)
+### Tools (43 total)
 
 #### Core Data Access Tools (7)
 

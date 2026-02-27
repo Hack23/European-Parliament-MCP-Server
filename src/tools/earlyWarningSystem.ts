@@ -9,6 +9,15 @@
  * they manifest as major political disruptions—enabling proactive positioning
  * and risk mitigation for EU affairs practitioners.
  *
+ * **Business Perspective:** Critical for B2G/B2B clients—including policy
+ * risk consultancies, lobbying firms, and institutional investors—who need
+ * advance notice of coalition fractures or fragmentation shifts that could
+ * alter the legislative majority and affect regulatory outcomes.
+ *
+ * **Marketing Perspective:** Showcases real-time political intelligence
+ * capabilities to journalists, think-tank researchers, and civic-tech
+ * developers who monitor EU governance and democratic accountability.
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 

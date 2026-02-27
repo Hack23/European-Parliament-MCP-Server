@@ -9,6 +9,15 @@
  * outlier detection, and natural clustering of MEPs—essential for
  * identifying coalition partners, influence leaders, and behavioral outliers.
  *
+ * **Business Perspective:** Valuable for B2G/B2B/B2C clients—including
+ * government affairs teams, lobbying firms, and strategic consultancies—
+ * who need objective, data-driven MEP benchmarking for stakeholder
+ * prioritisation, engagement planning, and political risk scoring.
+ *
+ * **Marketing Perspective:** Compelling showcase for journalists, academic
+ * researchers, and civic-tech developers who want side-by-side MEP
+ * comparisons and cluster analysis without building custom analytics pipelines.
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 

@@ -9,6 +9,15 @@
  * structures, coalition-building pathways, and cross-party collaboration
  * patterns that are invisible from individual MEP profiles alone.
  *
+ * **Business Perspective:** Enables B2G/B2B clients—including lobbying firms,
+ * think-tanks, and government affairs teams—to map key influencers, identify
+ * cross-party brokers, and prioritise stakeholder outreach based on network
+ * centrality rather than title or party affiliation alone.
+ *
+ * **Marketing Perspective:** Demonstrates EP data depth to journalists,
+ * researchers, and civic-tech developers by surfacing hidden collaboration
+ * networks that no single MEP profile can reveal on its own.
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
