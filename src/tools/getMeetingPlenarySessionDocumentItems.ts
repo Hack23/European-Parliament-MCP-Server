@@ -7,6 +7,14 @@
  * items within a plenary session, enabling detailed agenda item tracking and
  * legislative analysis.
  *
+ * **Business Perspective:** Allows policy teams and compliance officers to
+ * enumerate every agenda document item for a plenary sitting, supporting
+ * structured review workflows and audit trails.
+ *
+ * **Marketing Perspective:** Showcases fine-grained EP document access to
+ * developers and researchers who need individual agenda-item level data beyond
+ * top-level session documents.
+ *
  * **EP API Endpoint:** `GET /meetings/{sitting-id}/plenary-session-document-items`
  *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)

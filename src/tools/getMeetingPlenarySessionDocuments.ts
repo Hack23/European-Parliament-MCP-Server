@@ -7,6 +7,14 @@
  * associated with a specific plenary meeting, enabling comprehensive document
  * review and legislative tracking.
  *
+ * **Business Perspective:** Enables stakeholders and lobbyists to retrieve
+ * official session documents ahead of plenary votes for briefing preparation
+ * and compliance monitoring.
+ *
+ * **Marketing Perspective:** Demonstrates direct access to official EP plenary
+ * documents, appealing to legal professionals, journalists, and civic tech
+ * developers who need reliable legislative source material.
+ *
  * **EP API Endpoint:** `GET /meetings/{sitting-id}/plenary-session-documents`
  *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
