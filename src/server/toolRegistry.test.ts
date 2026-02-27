@@ -25,11 +25,11 @@ vi.mock('../tools/getMEPs.js', async (importOriginal) => {
 // ── getToolMetadataArray ───────────────────────────────────────────
 
 describe('getToolMetadataArray', () => {
-  // Cache once to avoid constructing a fresh 45-element array per test.
+  // Cache once to avoid constructing a fresh 46-element array per test.
   const tools = getToolMetadataArray();
 
-  it('returns exactly 45 tools', () => {
-    expect(tools).toHaveLength(45);
+  it('returns exactly 46 tools', () => {
+    expect(tools).toHaveLength(46);
   });
 
   it('all tools have a non-empty name', () => {
@@ -88,9 +88,9 @@ describe('getToolMetadataArray', () => {
     expect(advanced).toHaveLength(3);
   });
 
-  it('has exactly 14 osint tools', () => {
+  it('has exactly 15 osint tools', () => {
     const osint = tools.filter((t) => t.category === 'osint');
-    expect(osint).toHaveLength(14);
+    expect(osint).toHaveLength(15);
   });
 
   it('has exactly 8 phase4 tools', () => {
@@ -103,13 +103,13 @@ describe('getToolMetadataArray', () => {
     expect(phase5).toHaveLength(13);
   });
 
-  it('category counts sum to 45', () => {
+  it('category counts sum to 46', () => {
     const counts = { core: 0, advanced: 0, osint: 0, phase4: 0, phase5: 0 };
     for (const tool of tools) {
       counts[tool.category]++;
     }
     const total = Object.values(counts).reduce((a, b) => a + b, 0);
-    expect(total).toBe(45);
+    expect(total).toBe(46);
   });
 
   // ── Core tool names ────────────────────────────────────────────

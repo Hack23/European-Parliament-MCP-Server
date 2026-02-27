@@ -53,9 +53,9 @@ describe('Server Constants', () => {
 });
 
 describe('getToolMetadataArray', () => {
-  it('should return 45 tools', () => {
+  it('should return 46 tools', () => {
     const tools = getToolMetadataArray();
-    expect(tools).toHaveLength(45);
+    expect(tools).toHaveLength(46);
   });
 
   it('should have unique non-empty tool names', () => {
@@ -230,12 +230,12 @@ describe('sanitizeUrl', () => {
 });
 
 describe('MCP Protocol Implementation', () => {
-  it('should have tool registration for all 45 tools', () => {
+  it('should have tool registration for all 46 tools', () => {
     const tools = getToolMetadataArray();
-    expect(tools.length).toBe(45);
+    expect(tools.length).toBe(46);
   });
 
-  it('should have exactly 7 core + 3 advanced + 14 OSINT + 8 Phase 4 + 13 Phase 5 tools', () => {
+  it('should have exactly 7 core + 3 advanced + 15 OSINT + 8 Phase 4 + 13 Phase 5 tools', () => {
     const tools = getToolMetadataArray();
     const coreToolNames = ['get_meps', 'get_mep_details', 'get_plenary_sessions',
       'get_voting_records', 'search_documents', 'get_committee_info', 'get_parliamentary_questions'];
@@ -245,7 +245,8 @@ describe('MCP Protocol Implementation', () => {
       'compare_political_groups', 'analyze_legislative_effectiveness', 'monitor_legislative_pipeline',
       'analyze_committee_activity', 'track_mep_attendance',
       'analyze_country_delegation', 'generate_political_landscape',
-      'network_analysis', 'sentiment_tracker', 'early_warning_system', 'comparative_intelligence'
+      'network_analysis', 'sentiment_tracker', 'early_warning_system', 'comparative_intelligence',
+      'correlate_intelligence'
     ];
     const phase4ToolNames = [
       'get_current_meps', 'get_speeches', 'get_procedures', 'get_adopted_texts',
@@ -263,7 +264,7 @@ describe('MCP Protocol Implementation', () => {
     for (const name of [...coreToolNames, ...advancedToolNames, ...osintToolNames, ...phase4ToolNames, ...phase5ToolNames]) {
       expect(names).toContain(name);
     }
-    expect(coreToolNames.length + advancedToolNames.length + osintToolNames.length + phase4ToolNames.length + phase5ToolNames.length).toBe(45);
+    expect(coreToolNames.length + advancedToolNames.length + osintToolNames.length + phase4ToolNames.length + phase5ToolNames.length).toBe(46);
   });
 });
 
@@ -311,7 +312,7 @@ describe('EuropeanParliamentMCPServer', () => {
       const result = await handler();
       expect(result).toHaveProperty('tools');
       expect(Array.isArray(result.tools)).toBe(true);
-      expect(result.tools.length).toBe(45);
+      expect(result.tools.length).toBe(46);
     });
   });
 

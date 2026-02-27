@@ -45,6 +45,7 @@ import { handleNetworkAnalysis, networkAnalysisToolMetadata } from '../tools/net
 import { handleSentimentTracker, sentimentTrackerToolMetadata } from '../tools/sentimentTracker.js';
 import { handleEarlyWarningSystem, earlyWarningSystemToolMetadata } from '../tools/earlyWarningSystem.js';
 import { handleComparativeIntelligence, comparativeIntelligenceToolMetadata } from '../tools/comparativeIntelligence.js';
+import { handleCorrelateIntelligence, correlateIntelligenceToolMetadata } from '../tools/correlateIntelligence.js';
 
 // ── Phase 4 – New EP API v2 endpoint tools ────────────────────────
 import { handleGetCurrentMEPs, getCurrentMEPsToolMetadata } from '../tools/getCurrentMEPs.js';
@@ -124,6 +125,7 @@ export function getToolMetadataArray(): ToolMetadata[] {
     withCategory(sentimentTrackerToolMetadata, 'osint'),
     withCategory(earlyWarningSystemToolMetadata, 'osint'),
     withCategory(comparativeIntelligenceToolMetadata, 'osint'),
+    withCategory(correlateIntelligenceToolMetadata, 'osint'),
     // Phase 4 – New EP API v2 endpoint tools
     withCategory(getCurrentMEPsToolMetadata, 'phase4'),
     withCategory(getSpeechesToolMetadata, 'phase4'),
@@ -184,6 +186,7 @@ const toolHandlers: Record<string, ToolHandler> = {
   'sentiment_tracker': handleSentimentTracker,
   'early_warning_system': handleEarlyWarningSystem,
   'comparative_intelligence': handleComparativeIntelligence,
+  'correlate_intelligence': handleCorrelateIntelligence,
   // Phase 4 – New EP API v2 endpoint tools
   'get_current_meps': handleGetCurrentMEPs,
   'get_speeches': handleGetSpeeches,

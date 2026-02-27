@@ -53,6 +53,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
     `get_meeting_foreseen_activities`, `get_procedure_events`,
     `get_meeting_plenary_session_documents`,
     `get_meeting_plenary_session_document_items`)
+- **46 MCP Tools** — complete European Parliament API v2 coverage:
   - 7 MEP tools (`get_meps`, `get_mep_details`, `get_current_meps`, `get_incoming_meps`,
     `get_outgoing_meps`, `get_homonym_meps`, `get_mep_declarations`)
   - 9 Plenary & Meeting tools (`get_plenary_sessions`, `get_voting_records`, `get_speeches`,
@@ -67,13 +68,27 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
     `get_controlled_vocabularies`)
   - 3 Advanced Analysis tools (`analyze_voting_patterns`, `track_legislation`,
     `generate_report`)
-  - 14 OSINT Intelligence tools (`assess_mep_influence`, `analyze_coalition_dynamics`,
+  - 15 OSINT Intelligence tools (`assess_mep_influence`, `analyze_coalition_dynamics`,
     `detect_voting_anomalies`, `compare_political_groups`,
     `analyze_legislative_effectiveness`, `monitor_legislative_pipeline`,
     `analyze_committee_activity`, `track_mep_attendance`,
     `analyze_country_delegation`, `generate_political_landscape`,
     `network_analysis`, `sentiment_tracker`, `early_warning_system`,
-    `comparative_intelligence`)
+    `comparative_intelligence`, `correlate_intelligence`)
+- **`correlate_intelligence`** — cross-tool OSINT intelligence correlation engine
+  that orchestrates `assess_mep_influence`, `detect_voting_anomalies`,
+  `early_warning_system`, `analyze_coalition_dynamics`, and optionally
+  `network_analysis` + `comparative_intelligence` to surface three alert types:
+  `ELEVATED_ATTENTION` (high-influence MEP with anomalies), `COALITION_FRACTURE`
+  (converging fracture signals), `COMPREHENSIVE_PROFILE` (high network centrality +
+  cross-committee activity). Configurable sensitivity (HIGH/MEDIUM/LOW).
+- **`OsintStandardOutput` interface** (`src/tools/shared/types.ts`) — shared TypeScript
+  interface formalizing `confidenceLevel`, `methodology`, `dataFreshness`, and
+  `sourceAttribution` fields with JSDoc confidence level criteria
+- **`OsintStandardOutputSchema`** Zod schema for runtime validation of standard OSINT
+  output fields (`src/schemas/ep/analysis.ts`)
+- **`CorrelateIntelligenceSchema`** Zod schema validating `mepIds` (1–5),
+  `groups`, `sensitivityLevel`, and `includeNetworkAnalysis` inputs
 - **9 MCP Resources** with `ep://` URI scheme:
   `ep://meps`, `ep://meps/{mepId}`, `ep://committees/{committeeId}`,
   `ep://plenary-sessions`, `ep://votes/{sessionId}`, `ep://political-groups`,

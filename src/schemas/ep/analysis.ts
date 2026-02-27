@@ -161,3 +161,53 @@ export const MonitorLegislativePipelineSchema = z.object({
     .default(20)
     .describe('Maximum results to return')
 });
+
+/**
+ * Standard OSINT output fields Zod schema.
+ *
+ * Validates the common output fields present on every OSINT intelligence tool
+ * response: confidenceLevel, methodology, dataFreshness, and sourceAttribution.
+ *
+ * **Confidence Level Criteria:**
+ * - `HIGH`   — Full EP API data (voting statistics, complete membership)
+ * - `MEDIUM` — Partial EP API data; results are indicative
+ * - `LOW`    — Insufficient data; treat output with caution
+ */
+export const OsintStandardOutputSchema = z.object({
+  confidenceLevel: z.enum(['HIGH', 'MEDIUM', 'LOW'])
+    .describe('Confidence level based on data availability and quality'),
+  methodology: z.string()
+    .describe('Methodology used for intelligence analysis'),
+  dataFreshness: z.string()
+    .describe('Data freshness indicator or description of data currency'),
+  sourceAttribution: z.string()
+    .describe('Attribution to European Parliament Open Data Portal data sources'),
+});
+
+/**
+ * Cross-tool intelligence correlation input schema.
+ *
+ * Accepts 1-5 MEP identifiers for per-MEP correlations (influence × anomaly,
+ * network × committee) and optional political group identifiers for
+ * coalition-level analysis (early warning × coalition dynamics).
+ */
+export const CorrelateIntelligenceSchema = z.object({
+  mepIds: z.array(
+    z.string().min(1).max(100).describe('MEP identifier')
+  )
+    .min(1)
+    .max(5)
+    .describe('MEP identifiers to cross-correlate (1–5 MEPs)'),
+  groups: z.array(
+    z.string().min(1).max(50).describe('Political group identifier')
+  )
+    .max(8)
+    .optional()
+    .describe('Political groups for coalition fracture analysis (omit to use all major groups)'),
+  sensitivityLevel: z.enum(['HIGH', 'MEDIUM', 'LOW'])
+    .default('MEDIUM')
+    .describe('Alert sensitivity — HIGH surfaces more signals, LOW reduces noise'),
+  includeNetworkAnalysis: z.boolean()
+    .default(false)
+    .describe('Run network centrality analysis (increases response time)'),
+});
