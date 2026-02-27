@@ -22,6 +22,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 - Corrected tool count references throughout documentation (39 tools)
+- Remediated high-severity ReDoS vulnerabilities in `minimatch` (GHSA-7r86-cg39-jmmj, GHSA-23c5-xmqv-rm74) by updating transitive dependency from 10.2.2 → 10.2.4 via `npm audit fix`
 
 ---
 

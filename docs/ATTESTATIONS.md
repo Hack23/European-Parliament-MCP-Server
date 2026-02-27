@@ -6,7 +6,7 @@ All releases of European Parliament MCP Server include cryptographic attestation
 
 ## Current Attestation Status
 
-**As of 2026-02-26 — pre-v1.0 status (package version 0.8.2)**
+**As of 2026-02-27 — pre-v1.0 status (package version 0.8.2)**
 
 | Security Control | Status | Details |
 |-----------------|--------|---------|
@@ -20,7 +20,7 @@ All releases of European Parliament MCP Server include cryptographic attestation
 | Sigstore signing | ✅ Enabled | npm package and GitHub release artifacts |
 | SHA-pinned actions | ✅ Enforced | All critical GitHub Actions pinned to commit SHA (SLSA actions use vetted version tags) |
 
-### Dependency Vulnerability Status (2026-02-26)
+### Dependency Vulnerability Status (2026-02-27)
 
 | Package | Version | Vulnerabilities | Status |
 |---------|---------|----------------|--------|
@@ -29,7 +29,7 @@ All releases of European Parliament MCP Server include cryptographic attestation
 | undici | 7.22.0 | 0 | ✅ Clean |
 | zod | 4.3.6 | 0 | ✅ Clean |
 
-> **Note:** High-severity vulnerabilities in `rollup` (GHSA-mw96-cpmx-2vgc) and `minimatch` (GHSA-3ppc-4f35-3m26) were remediated prior to the v1.0 release by updating transitive dependencies.
+> **Note:** High-severity vulnerabilities in `rollup` (GHSA-mw96-cpmx-2vgc), `minimatch` (GHSA-3ppc-4f35-3m26), and `minimatch` ReDoS (GHSA-7r86-cg39-jmmj, GHSA-23c5-xmqv-rm74) were remediated prior to the v1.0 release by updating transitive dependencies.
 
 ## SLSA Level 3 Compliance
 
