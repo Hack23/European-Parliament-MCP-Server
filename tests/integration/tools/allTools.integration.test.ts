@@ -722,11 +722,9 @@ describeIntegration('All 45 MCP Tools Integration Coverage', () => {
         'network_analysis'
       );
       if (!result) return;
-      validateMCPStructure(result);
-      const text = result.content[0]?.text ?? '{}';
-      const data = JSON.parse(text) as Record<string, unknown>;
-      expect(data).toHaveProperty('networkNodes');
-      expect(data).toHaveProperty('networkEdges');
+      const parsed = parseAndValidateNoMockData(result) as { networkNodes: unknown; networkEdges: unknown };
+      expect(parsed).toHaveProperty('networkNodes');
+      expect(parsed).toHaveProperty('networkEdges');
     }, 30000);
   });
 
@@ -737,11 +735,9 @@ describeIntegration('All 45 MCP Tools Integration Coverage', () => {
         'sentiment_tracker'
       );
       if (!result) return;
-      validateMCPStructure(result);
-      const text = result.content[0]?.text ?? '{}';
-      const data = JSON.parse(text) as Record<string, unknown>;
-      expect(data).toHaveProperty('groupSentiments');
-      expect(data).toHaveProperty('polarizationIndex');
+      const parsed = parseAndValidateNoMockData(result) as { groupSentiments: unknown; polarizationIndex: unknown };
+      expect(parsed).toHaveProperty('groupSentiments');
+      expect(parsed).toHaveProperty('polarizationIndex');
     }, 30000);
   });
 
@@ -752,11 +748,9 @@ describeIntegration('All 45 MCP Tools Integration Coverage', () => {
         'early_warning_system'
       );
       if (!result) return;
-      validateMCPStructure(result);
-      const text = result.content[0]?.text ?? '{}';
-      const data = JSON.parse(text) as Record<string, unknown>;
-      expect(data).toHaveProperty('warnings');
-      expect(data).toHaveProperty('trendIndicators');
+      const parsed = parseAndValidateNoMockData(result) as { warnings: unknown; trendIndicators: unknown };
+      expect(parsed).toHaveProperty('warnings');
+      expect(parsed).toHaveProperty('trendIndicators');
     }, 30000);
   });
 
@@ -767,11 +761,9 @@ describeIntegration('All 45 MCP Tools Integration Coverage', () => {
         'comparative_intelligence'
       );
       if (!result) return;
-      validateMCPStructure(result);
-      const text = result.content[0]?.text ?? '{}';
-      const data = JSON.parse(text) as Record<string, unknown>;
-      expect(data).toHaveProperty('profiles');
-      expect(data).toHaveProperty('correlationMatrix');
+      const parsed = parseAndValidateNoMockData(result) as { profiles: unknown; correlationMatrix: unknown };
+      expect(parsed).toHaveProperty('profiles');
+      expect(parsed).toHaveProperty('correlationMatrix');
     }, 30000);
   });
 });
