@@ -13,7 +13,7 @@ All releases of European Parliament MCP Server include cryptographic attestation
 | npm audit vulnerabilities | ✅ 0 | No known vulnerabilities in dependency tree |
 | SLSA Level 3 | ✅ Achieved | Cryptographic provenance on all releases |
 | License compliance | ✅ Passing | All MIT/ISC/Apache-2.0 (permissive) |
-| Test suite | ✅ 1197 tests passing | Across 400 test suites (per docs/test-results/results.json) |
+| Test suite | ✅ Passing | See docs/test-results/results.json for up-to-date test metrics |
 | SAST (CodeQL) | ✅ Enabled | Automated scanning on every PR and push |
 | Secret scanning | ✅ Enabled | GitHub native secret detection |
 | Dependabot | ✅ Enabled | Automated dependency update PRs |

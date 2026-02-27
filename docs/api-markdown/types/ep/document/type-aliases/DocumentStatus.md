@@ -8,7 +8,7 @@
 
 > **DocumentStatus** = `"DRAFT"` \| `"SUBMITTED"` \| `"IN_COMMITTEE"` \| `"PLENARY"` \| `"ADOPTED"` \| `"REJECTED"`
 
-Defined in: [types/ep/document.ts:437](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/document.ts#L437)
+Defined in: [types/ep/document.ts:437](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L437)
 
 Legislative document status in the parliamentary process.
 

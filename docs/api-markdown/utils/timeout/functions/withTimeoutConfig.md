@@ -8,7 +8,7 @@
 
 > **withTimeoutConfig**\<`T`\>(`promise`, `config`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [utils/timeout.ts:357](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/timeout.ts#L357)
+Defined in: [utils/timeout.ts:370](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L370)
 
 Execute a promise with timeout settings from a [TimeoutConfig](../interfaces/TimeoutConfig.md).
 
@@ -47,9 +47,17 @@ Promise resolving with the result or rejecting with TimeoutError
 
 If the operation exceeds `config.timeoutMs`
 
+## Throws
+
+If `config.timeoutMs` is not positive
+
 ## Example
 
 ```typescript
 const config: TimeoutConfig = { timeoutMs: 5000, operationName: 'fetchMEPs' };
 const result = await withTimeoutConfig(fetchMEPs(), config);
 ```
+
+## Since
+
+0.8.0

@@ -8,7 +8,7 @@
 
 > **parseCLIArgs**(`argv`): [`CLIOptions`](../../types/interfaces/CLIOptions.md)
 
-Defined in: [server/cli.ts:161](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/server/cli.ts#L161)
+Defined in: [server/cli.ts:161](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L161)
 
 Parse an array of CLI argument strings into a typed [CLIOptions](../../types/interfaces/CLIOptions.md) object.
 

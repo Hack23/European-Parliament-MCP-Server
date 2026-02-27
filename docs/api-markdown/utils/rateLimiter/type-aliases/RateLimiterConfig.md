@@ -8,7 +8,7 @@
 
 > **RateLimiterConfig** = `RateLimiterOptions`
 
-Defined in: [utils/rateLimiter.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/rateLimiter.ts#L58)
+Defined in: [utils/rateLimiter.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L58)
 
 Public typed configuration for [RateLimiter](../classes/RateLimiter.md).
 

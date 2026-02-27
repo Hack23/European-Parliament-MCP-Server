@@ -6,7 +6,7 @@
 
 # Interface: ResourceContent
 
-Defined in: [resources/index.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/resources/index.ts#L34)
+Defined in: [resources/index.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/resources/index.ts#L34)
 
 Resource content result
 
@@ -16,7 +16,7 @@ Resource content result
 
 > **mimeType**: `string`
 
-Defined in: [resources/index.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/resources/index.ts#L36)
+Defined in: [resources/index.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/resources/index.ts#L36)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [resources/index.ts:36](https://github.com/Hack23/European-Parliamen
 
 > **text**: `string`
 
-Defined in: [resources/index.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/resources/index.ts#L37)
+Defined in: [resources/index.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/resources/index.ts#L37)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [resources/index.ts:37](https://github.com/Hack23/European-Parliamen
 
 > **uri**: `string`
 
-Defined in: [resources/index.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/resources/index.ts#L35)
+Defined in: [resources/index.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/resources/index.ts#L35)

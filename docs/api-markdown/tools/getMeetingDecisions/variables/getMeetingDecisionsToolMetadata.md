@@ -8,7 +8,7 @@
 
 > `const` **getMeetingDecisionsToolMetadata**: `object`
 
-Defined in: [tools/getMeetingDecisions.ts:40](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/getMeetingDecisions.ts#L40)
+Defined in: [tools/getMeetingDecisions.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMeetingDecisions.ts#L58)
 
 Tool metadata for get_meeting_decisions
 

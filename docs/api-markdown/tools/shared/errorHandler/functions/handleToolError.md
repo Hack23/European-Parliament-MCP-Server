@@ -8,7 +8,7 @@
 
 > **handleToolError**(`error`, `toolName`): [`ToolResult`](../../types/interfaces/ToolResult.md)
 
-Defined in: [tools/shared/errorHandler.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/shared/errorHandler.ts#L18)
+Defined in: [tools/shared/errorHandler.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errorHandler.ts#L18)
 
 Handle a caught tool error, returning a safe MCP error response.
 Never exposes raw stack traces to MCP clients.

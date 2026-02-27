@@ -8,7 +8,7 @@
 
 > `const` **generatePoliticalLandscapeToolMetadata**: `object`
 
-Defined in: [tools/generatePoliticalLandscape.ts:295](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/generatePoliticalLandscape.ts#L295)
+Defined in: [tools/generatePoliticalLandscape.ts:324](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generatePoliticalLandscape.ts#L324)
 
 Tool metadata for MCP listing
 

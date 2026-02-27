@@ -6,9 +6,9 @@
 
 # Type Alias: ToolHandler()
 
-> **ToolHandler** = (`args`) => [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../interfaces/ToolResult.md)\>
+> **ToolHandler** = (`args`) => [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../../tools/shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [server/types.ts:27](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/server/types.ts#L27)
+Defined in: [server/types.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L26)
 
 Typed handler function for an MCP tool call.
 
@@ -22,6 +22,6 @@ Raw (unvalidated) tool arguments from the MCP request
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../interfaces/ToolResult.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../../tools/shared/types/interfaces/ToolResult.md)\>
 
 Promise resolving to the tool execution result

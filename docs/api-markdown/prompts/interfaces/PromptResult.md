@@ -6,7 +6,7 @@
 
 # Interface: PromptResult
 
-Defined in: [prompts/index.ts:47](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/prompts/index.ts#L47)
+Defined in: [prompts/index.ts:47](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L47)
 
 Prompt result
 
@@ -20,7 +20,7 @@ Prompt result
 
 > **description**: `string`
 
-Defined in: [prompts/index.ts:48](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/prompts/index.ts#L48)
+Defined in: [prompts/index.ts:48](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L48)
 
 ***
 
@@ -28,4 +28,4 @@ Defined in: [prompts/index.ts:48](https://github.com/Hack23/European-Parliament-
 
 > **messages**: [`PromptMessage`](PromptMessage.md)[]
 
-Defined in: [prompts/index.ts:49](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/prompts/index.ts#L49)
+Defined in: [prompts/index.ts:49](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L49)

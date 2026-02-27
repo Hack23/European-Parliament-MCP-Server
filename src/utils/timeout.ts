@@ -78,7 +78,7 @@ export class TimeoutError extends Error {
  * @returns Promise that resolves with the result or rejects with TimeoutError
  * 
  * @throws {TimeoutError} If operation exceeds timeout
- * 
+ *
  * @example
  * ```typescript
  * const result = await withTimeout(
@@ -87,11 +87,12 @@ export class TimeoutError extends Error {
  *   'API request timed out'
  * );
  * ```
- * 
+ *
  * @security
  * - Prevents resource exhaustion from hanging operations
  * - Ensures responsive API behavior
  * - Timeout values should be tuned per operation
+ * @since 0.8.0
  */
 export async function withTimeout<T>(
   promise: Promise<T>,
@@ -135,7 +136,8 @@ export async function withTimeout<T>(
  * @param timeoutMs - Timeout in milliseconds
  * @param errorMessage - Custom error message (optional)
  * @returns Promise that resolves/rejects with the operation result or timeout
- * 
+ * @throws {TimeoutError} If the operation exceeds `timeoutMs`
+ *
  * @example
  * ```typescript
  * // With AbortSignal support (for fetch, etc.)
@@ -145,6 +147,11 @@ export async function withTimeout<T>(
  *   'API request timed out'
  * );
  * ```
+ *
+ * @security Aborts the underlying operation via `AbortController` when the
+ *   timeout fires, preventing dangling fetch connections and resource leaks.
+ *   Per ISMS Policy SC-002, all external network calls must be cancellable.
+ * @since 0.8.0
  */
 export async function withTimeoutAndAbort<T>(
   fn: (signal: AbortSignal) => Promise<T>,
@@ -227,7 +234,7 @@ function validateRetryOptions(
  * 
  * @throws {TimeoutError} If any attempt exceeds timeout
  * @throws {Error} If all retries are exhausted
- * 
+ *
  * @example
  * ```typescript
  * // Retry up to 3 times (4 total attempts) on 5xx errors only with timeout
@@ -240,7 +247,7 @@ function validateRetryOptions(
  *     shouldRetry: (error) => error.statusCode >= 500
  *   }
  * );
- * 
+ *
  * // Retry without additional timeout (fn handles timeout internally)
  * const data2 = await withRetry(
  *   () => withTimeoutAndAbort(signal => fetch(url, { signal }), 5000),
@@ -251,11 +258,12 @@ function validateRetryOptions(
  *   }
  * );
  * ```
- * 
+ *
  * @security
  * - Prevents retry storms with exponential backoff
  * - Respects timeout limits per attempt (when provided)
  * - Configurable retry conditions for security
+ * @since 0.8.0
  */
 export async function withRetry<T>(
   fn: () => Promise<T>,
@@ -330,6 +338,8 @@ export async function withRetry<T>(
  *   }
  * }
  * ```
+ *
+ * @since 0.8.0
  */
 export function isTimeoutError(error: unknown): error is TimeoutError {
   return error instanceof TimeoutError;
@@ -347,12 +357,15 @@ export function isTimeoutError(error: unknown): error is TimeoutError {
  * @returns Promise resolving with the result or rejecting with TimeoutError
  *
  * @throws {TimeoutError} If the operation exceeds `config.timeoutMs`
+ * @throws {Error} If `config.timeoutMs` is not positive
  *
  * @example
  * ```typescript
  * const config: TimeoutConfig = { timeoutMs: 5000, operationName: 'fetchMEPs' };
  * const result = await withTimeoutConfig(fetchMEPs(), config);
  * ```
+ *
+ * @since 0.8.0
  */
 export async function withTimeoutConfig<T>(
   promise: Promise<T>,

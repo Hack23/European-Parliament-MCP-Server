@@ -8,7 +8,7 @@
 
 > `const` **getCurrentMEPsToolMetadata**: `object`
 
-Defined in: [tools/getCurrentMEPs.ts:40](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/getCurrentMEPs.ts#L40)
+Defined in: [tools/getCurrentMEPs.ts:60](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCurrentMEPs.ts#L60)
 
 Tool metadata for get_current_meps
 

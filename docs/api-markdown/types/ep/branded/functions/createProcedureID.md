@@ -8,7 +8,7 @@
 
 > **createProcedureID**(`value`): [`ProcedureID`](../type-aliases/ProcedureID.md)
 
-Defined in: [types/ep/branded.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/branded.ts#L143)
+Defined in: [types/ep/branded.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L143)
 
 Factory: validates and creates a ProcedureID.
 

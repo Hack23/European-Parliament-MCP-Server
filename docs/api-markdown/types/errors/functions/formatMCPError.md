@@ -8,7 +8,7 @@
 
 > **formatMCPError**(`error`): `object`
 
-Defined in: [types/errors.ts:232](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/errors.ts#L232)
+Defined in: [types/errors.ts:232](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/errors.ts#L232)
 
 Error formatter for MCP responses
 

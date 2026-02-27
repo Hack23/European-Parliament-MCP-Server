@@ -8,6 +8,6 @@
 
 > `const` **auditLogger**: [`AuditLogger`](../classes/AuditLogger.md)
 
-Defined in: [utils/auditLogger.ts:246](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/auditLogger.ts#L246)
+Defined in: [utils/auditLogger.ts:370](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L370)
 
 Global audit logger instance

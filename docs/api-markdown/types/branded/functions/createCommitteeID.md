@@ -8,7 +8,7 @@
 
 > **createCommitteeID**(`value`): [`CommitteeID`](../type-aliases/CommitteeID.md)
 
-Defined in: [types/branded.ts:257](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/branded.ts#L257)
+Defined in: [types/branded.ts:257](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L257)
 
 Factory function to create a validated Committee ID
 

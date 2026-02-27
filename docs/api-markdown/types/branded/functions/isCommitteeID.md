@@ -8,7 +8,7 @@
 
 > **isCommitteeID**(`value`): `value is CommitteeID`
 
-Defined in: [types/branded.ts:154](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/branded.ts#L154)
+Defined in: [types/branded.ts:154](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L154)
 
 Type guard to check if a string is a valid Committee ID
 

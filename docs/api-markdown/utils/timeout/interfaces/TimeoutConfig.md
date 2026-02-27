@@ -6,7 +6,7 @@
 
 # Interface: TimeoutConfig
 
-Defined in: [utils/timeout.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/timeout.ts#L18)
+Defined in: [utils/timeout.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L18)
 
 Typed configuration for timeout operations.
 
@@ -19,7 +19,7 @@ stored, passed, and validated without scattered magic numbers.
 
 > **timeoutMs**: `number`
 
-Defined in: [utils/timeout.ts:20](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/timeout.ts#L20)
+Defined in: [utils/timeout.ts:20](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L20)
 
 Timeout duration in milliseconds (must be > 0)
 
@@ -29,7 +29,7 @@ Timeout duration in milliseconds (must be > 0)
 
 > `optional` **errorMessage**: `string`
 
-Defined in: [utils/timeout.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/timeout.ts#L24)
+Defined in: [utils/timeout.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L24)
 
 Custom error message override for timeout errors
 
@@ -39,6 +39,6 @@ Custom error message override for timeout errors
 
 > `optional` **operationName**: `string`
 
-Defined in: [utils/timeout.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/timeout.ts#L22)
+Defined in: [utils/timeout.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L22)
 
 Optional human-readable label for the timed operation

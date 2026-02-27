@@ -23,10 +23,33 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get speeches tool handler.
+ * Handles the get_speeches MCP tool request.
  *
- * @param args - Tool arguments
- * @returns MCP tool result with speech data
+ * Retrieves European Parliament plenary speeches and debate contributions.
+ * Supports single speech lookup by speechId or a filtered list by date range.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetSpeechesSchema}
+ * @returns MCP tool result containing either a single speech record or a paginated list of speeches
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * // Single speech lookup
+ * const result = await handleGetSpeeches({ speechId: 'SPEECH-2024-001' });
+ * // Returns the full record for the specified speech
+ *
+ * // List speeches with date filter
+ * const list = await handleGetSpeeches({ dateFrom: '2024-01-01', dateTo: '2024-03-31', limit: 50 });
+ * // Returns up to 50 speeches from Q1 2024
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getSpeechesToolMetadata} for MCP schema registration
+ * @see {@link handleGetMeetingActivities} for retrieving broader meeting-level activities
  */
 export async function handleGetSpeeches(
   args: unknown

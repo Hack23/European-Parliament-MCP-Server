@@ -55,6 +55,11 @@ interface VotingPatternAnalysis {
  * Compute group alignment metrics from voting statistics.
  * Alignment rate is derived from the ratio of 'for' votes to total decisive
  * votes, approximating how often the MEP votes with the majority position.
+ *
+ * @param politicalGroup - The MEP's registered political group identifier
+ * @param stats - Voting statistics containing `totalVotes`, `votesFor`, and `votesAgainst`
+ * @returns Object with `politicalGroup`, `alignmentRate` (0–100), and `divergentVotes` count
+ * @since 0.8.0
  */
 function computeGroupAlignment(
   politicalGroup: string,
@@ -72,6 +77,10 @@ function computeGroupAlignment(
  * Compute cross-party voting metrics from voting statistics.
  * Cross-party rate approximated from 'against' vote ratio—higher against
  * rates suggest more independent voting that may cross party lines.
+ *
+ * @param stats - Voting statistics containing `totalVotes`, `votesFor`, and `votesAgainst`
+ * @returns Object with `withOtherGroups` (count of against-votes used as proxy) and `rate` (0–100)
+ * @since 0.8.0
  */
 function computeCrossPartyVoting(
   stats: { totalVotes: number; votesFor: number; votesAgainst: number }
@@ -84,7 +93,11 @@ function computeCrossPartyVoting(
 }
 
 /**
- * Compute confidence level based on available voting data
+ * Compute confidence level based on available voting data.
+ *
+ * @param totalVotes - Total number of recorded votes for the MEP
+ * @returns `'HIGH'` (>500 votes), `'MEDIUM'` (>100 votes), or `'LOW'` (≤100 votes)
+ * @since 0.8.0
  */
 function computeConfidence(totalVotes: number): string {
   if (totalVotes > 500) return 'HIGH';
@@ -93,20 +106,37 @@ function computeConfidence(totalVotes: number): string {
 }
 
 /**
- * Analyze voting patterns tool handler
- * 
- * @param args - Tool arguments
- * @returns MCP tool result with voting pattern analysis
- * 
+ * Handles the analyze_voting_patterns MCP tool request.
+ *
+ * Analyses an MEP's voting behaviour over an optional date range, computing group
+ * alignment rate, cross-party voting frequency, attendance rate, and a data-quality
+ * confidence level. When `compareWithGroup` is `true`, group alignment metrics are
+ * included in the result.
+ *
+ * @param args - Raw tool arguments, validated against {@link AnalyzeVotingPatternsSchema}
+ * @returns MCP tool result containing a {@link VotingPatternAnalysis} object, or a
+ *   `dataAvailable: false` notice when voting statistics are unavailable from the EP API
+ * @throws - If `args` fails schema validation (e.g., missing required `mepId`, bad date format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
  * @example
- * ```json
- * {
- *   "mepId": "MEP-124810",
- *   "dateFrom": "2024-01-01",
- *   "dateTo": "2024-12-31",
- *   "compareWithGroup": true
- * }
+ * ```typescript
+ * const result = await handleAnalyzeVotingPatterns({
+ *   mepId: 'MEP-124810',
+ *   dateFrom: '2024-01-01',
+ *   dateTo: '2024-12-31',
+ *   compareWithGroup: true
+ * });
+ * // Returns voting statistics, group alignment, and confidence level for MEP-124810
  * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Personal data (MEP name, voting records) is minimised per GDPR Article 5(1)(c).
+ *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ *   Internal errors are wrapped before propagation to avoid leaking API details.
+ * @since 0.8.0
+ * @see {@link analyzeVotingPatternsToolMetadata} for MCP schema registration
+ * @see {@link handleAnalyzeLegislativeEffectiveness} for broader legislative effectiveness scoring
  */
 export async function handleAnalyzeVotingPatterns(
   args: unknown

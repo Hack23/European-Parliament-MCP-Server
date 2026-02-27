@@ -8,7 +8,7 @@
 
 > `const` **detectVotingAnomaliesToolMetadata**: `object`
 
-Defined in: [tools/detectVotingAnomalies.ts:333](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/detectVotingAnomalies.ts#L333)
+Defined in: [tools/detectVotingAnomalies.ts:363](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/detectVotingAnomalies.ts#L363)
 
 Tool metadata for MCP registration
 

@@ -8,7 +8,7 @@
 
 > `const` **performanceMonitor**: [`PerformanceMonitor`](../classes/PerformanceMonitor.md)
 
-Defined in: [utils/performance.ts:327](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L327)
+Defined in: [utils/performance.ts:358](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L358)
 
 Global performance monitor instance
 

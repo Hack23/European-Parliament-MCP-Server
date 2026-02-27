@@ -21,18 +21,39 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get MEPs tool handler
- * 
- * Retrieves MEP data with filtering, validation, and GDPR-compliant response formatting.
- * 
+ * Handles the get_meps MCP tool request.
+ *
+ * Retrieves Members of European Parliament with optional filtering by country, political
+ * group, committee, and active status. Results are paginated and GDPR-compliant.
+ *
  * **Intelligence Use Cases:** Filter by country for national delegation analysis, by group for
  * cohesion studies, by committee for policy domain expertise mapping.
- * 
+ *
  * **Business Use Cases:** Power stakeholder mapping products, political risk dashboards,
  * and MEP engagement tracking for corporate affairs teams.
- * 
+ *
  * **Marketing Use Cases:** Demo-ready endpoint for showcasing EP data access to potential
  * API consumers, journalists, and civic tech developers.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetMEPsSchema}
+ * @returns MCP tool result containing a paginated list of MEP records with name, country,
+ *   political group, committee memberships, and contact information
+ * @throws - If `args` fails schema validation (e.g., country code not 2 uppercase
+ *   letters, limit out of range 1–100)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * const result = await handleGetMEPs({ country: 'SE', limit: 10 });
+ * // Returns up to 10 Swedish MEPs with group and committee details
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getMEPsToolMetadata} for MCP schema registration
+ * @see {@link handleGetMEPDetails} for retrieving full details of a single MEP
  * 
  * @param args - Tool arguments matching GetMEPsSchema (country, group, committee, active, limit, offset)
  * @returns MCP ToolResult containing paginated MEP list as JSON text content
