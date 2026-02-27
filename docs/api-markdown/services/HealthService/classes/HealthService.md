@@ -6,7 +6,7 @@
 
 # Class: HealthService
 
-Defined in: [services/HealthService.ts:94](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L94)
+Defined in: [services/HealthService.ts:94](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L94)
 
 Health Check Service
 
@@ -31,7 +31,9 @@ console.log(status.status); // 'healthy' | 'degraded' | 'unhealthy'
 
 > **new HealthService**(`rateLimiter`, `metricsService`): `HealthService`
 
-Defined in: [services/HealthService.ts:97](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L97)
+Defined in: [services/HealthService.ts:115](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L115)
+
+Creates a new HealthService instance.
 
 #### Parameters
 
@@ -39,13 +41,32 @@ Defined in: [services/HealthService.ts:97](https://github.com/Hack23/European-Pa
 
 [`RateLimiter`](../../../utils/rateLimiter/classes/RateLimiter.md)
 
+Rate limiter whose token availability is checked as
+  part of the degraded-state heuristic
+
 ##### metricsService
 
 [`MetricsService`](../../MetricsService/classes/MetricsService.md)
 
+Metrics service providing EP API call and error
+  counters used to infer reachability
+
 #### Returns
 
 `HealthService`
+
+#### Example
+
+```typescript
+const healthService = new HealthService(
+  createStandardRateLimiter(),
+  new MetricsService()
+);
+```
+
+#### Since
+
+0.8.0
 
 ## Properties
 
@@ -53,7 +74,10 @@ Defined in: [services/HealthService.ts:97](https://github.com/Hack23/European-Pa
 
 > `private` `readonly` **metricsService**: [`MetricsService`](../../MetricsService/classes/MetricsService.md)
 
-Defined in: [services/HealthService.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L99)
+Defined in: [services/HealthService.ts:117](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L117)
+
+Metrics service providing EP API call and error
+  counters used to infer reachability
 
 ***
 
@@ -61,7 +85,10 @@ Defined in: [services/HealthService.ts:99](https://github.com/Hack23/European-Pa
 
 > `private` `readonly` **rateLimiter**: [`RateLimiter`](../../../utils/rateLimiter/classes/RateLimiter.md)
 
-Defined in: [services/HealthService.ts:98](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L98)
+Defined in: [services/HealthService.ts:116](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L116)
+
+Rate limiter whose token availability is checked as
+  part of the degraded-state heuristic
 
 ***
 
@@ -69,7 +96,7 @@ Defined in: [services/HealthService.ts:98](https://github.com/Hack23/European-Pa
 
 > `private` `readonly` **startTime**: `number`
 
-Defined in: [services/HealthService.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L95)
+Defined in: [services/HealthService.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L95)
 
 ## Methods
 
@@ -77,7 +104,7 @@ Defined in: [services/HealthService.ts:95](https://github.com/Hack23/European-Pa
 
 > `private` **buildCacheStatus**(): [`CacheHealthStatus`](../interfaces/CacheHealthStatus.md)
 
-Defined in: [services/HealthService.ts:164](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L164)
+Defined in: [services/HealthService.ts:199](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L199)
 
 Build a descriptive cache status object.
 Cyclomatic complexity: 2
@@ -92,7 +119,7 @@ Cyclomatic complexity: 2
 
 > `private` **buildRateLimiterStatus**(): [`RateLimiterStatus`](../../../utils/rateLimiter/interfaces/RateLimiterStatus.md)
 
-Defined in: [services/HealthService.ts:135](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L135)
+Defined in: [services/HealthService.ts:170](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L170)
 
 Build rate-limiter snapshot by delegating to RateLimiter.getStatus().
 Cyclomatic complexity: 1
@@ -107,19 +134,42 @@ Cyclomatic complexity: 1
 
 > **checkHealth**(): [`HealthStatus`](../interfaces/HealthStatus.md)
 
-Defined in: [services/HealthService.ts:113](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L113)
+Defined in: [services/HealthService.ts:148](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L148)
 
-Produce a health status snapshot.
+Produces a health status snapshot.
 
 Checks:
 1. Rate-limiter token availability (degraded if < 10 %)
 2. EP API error counter (unhealthy if recent errors > 0 with no successes)
 
+The check is **synchronous-safe** — it never makes network calls.
+Reachability is inferred from cached metric counters.
+
 #### Returns
 
 [`HealthStatus`](../interfaces/HealthStatus.md)
 
-Structured [HealthStatus](../interfaces/HealthStatus.md) object
+Structured [HealthStatus](../interfaces/HealthStatus.md) object with `status`,
+  `epApiReachable`, `cache`, `rateLimiter`, `timestamp`, and `uptimeMs`
+
+#### Throws
+
+If the underlying metrics or rate-limiter service throws
+  unexpectedly (should not occur under normal operating conditions)
+
+#### Example
+
+```typescript
+const healthService = new HealthService(rateLimiter, metricsService);
+const status = healthService.checkHealth();
+if (status.status !== 'healthy') {
+  console.warn('Server degraded:', status);
+}
+```
+
+#### Since
+
+0.8.0
 
 ***
 
@@ -127,7 +177,7 @@ Structured [HealthStatus](../interfaces/HealthStatus.md) object
 
 > `private` **deriveOverallStatus**(`rateLimiter`, `epApiReachable`): [`HealthStatusLevel`](../type-aliases/HealthStatusLevel.md)
 
-Defined in: [services/HealthService.ts:181](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L181)
+Defined in: [services/HealthService.ts:216](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L216)
 
 Derive the overall health verdict from sub-system checks.
 Cyclomatic complexity: 3
@@ -152,7 +202,7 @@ Cyclomatic complexity: 3
 
 > `private` **isEpApiReachable**(): `boolean` \| `null`
 
-Defined in: [services/HealthService.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L147)
+Defined in: [services/HealthService.ts:182](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L182)
 
 Determine EP API reachability from recorded metrics.
 Cyclomatic complexity: 2

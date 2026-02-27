@@ -8,7 +8,7 @@
 
 > **extractMemberIds**(`memberships`): `string`[]
 
-Defined in: [clients/ep/jsonLdHelpers.ts:153](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/clients/ep/jsonLdHelpers.ts#L153)
+Defined in: [clients/ep/jsonLdHelpers.ts:153](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L153)
 
 Extracts member IDs from EP API membership data.
 

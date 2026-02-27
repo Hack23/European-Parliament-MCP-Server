@@ -8,7 +8,7 @@
 
 > **mapQuestionType**(`workType`): `"WRITTEN"` \| `"ORAL"`
 
-Defined in: [clients/ep/jsonLdHelpers.ts:294](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/clients/ep/jsonLdHelpers.ts#L294)
+Defined in: [clients/ep/jsonLdHelpers.ts:294](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L294)
 
 Maps raw question type string to normalized question type.
 

@@ -8,7 +8,7 @@
 
 > **withTimeout**\<`T`\>(`promise`, `timeoutMs`, `errorMessage?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [utils/timeout.ts:96](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/timeout.ts#L96)
+Defined in: [utils/timeout.ts:97](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L97)
 
 Execute a promise with a timeout
 
@@ -68,3 +68,7 @@ const result = await withTimeout(
 - Prevents resource exhaustion from hanging operations
 - Ensures responsive API behavior
 - Timeout values should be tuned per operation
+
+## Since
+
+0.8.0

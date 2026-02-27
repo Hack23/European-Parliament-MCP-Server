@@ -60,5 +60,6 @@
   },
   "searchInComments": true,
   "cleanOutputDir": true,
-  "hostedBaseUrl": "https://hack23.github.io/European-Parliament-MCP-Server/api/"
+  "hostedBaseUrl": "https://hack23.github.io/European-Parliament-MCP-Server/api/",
+  "gitRevision": "main"
 }

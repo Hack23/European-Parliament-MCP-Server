@@ -20,10 +20,31 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get outgoing MEPs tool handler.
+ * Handles the get_outgoing_meps MCP tool request.
  *
- * @param args - Tool arguments
- * @returns MCP tool result with outgoing MEP data
+ * Retrieves Members of European Parliament who are departing parliament during the current
+ * parliamentary term. Useful for monitoring political transitions, succession analysis, and
+ * identifying final-engagement opportunities with outgoing stakeholders.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetOutgoingMEPsSchema}
+ * @returns MCP tool result containing a paginated list of outgoing MEP records for the
+ *   current parliamentary term
+ * @throws - If `args` fails schema validation (e.g., limit out of range 1–100)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * const result = await handleGetOutgoingMEPs({ limit: 20, offset: 0 });
+ * // Returns up to 20 MEPs who are leaving the current parliamentary term
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getOutgoingMEPsToolMetadata} for MCP schema registration
+ * @see {@link handleGetCurrentMEPs} for all currently active MEPs
+ * @see {@link handleGetIncomingMEPs} for MEPs who are newly joining parliament
  */
 export async function handleGetOutgoingMEPs(
   args: unknown

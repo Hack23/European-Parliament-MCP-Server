@@ -17,23 +17,41 @@
 
 import { GetCommitteeInfoSchema, CommitteeSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
- * Get committee info tool handler
- * 
- * @param args - Tool arguments
- * @returns MCP tool result with committee data
- * 
+ * Handles the get_committee_info MCP tool request.
+ *
+ * Retrieves European Parliament committee (corporate body) information including
+ * composition, chair, vice-chairs, members, meeting schedules, and policy areas.
+ * Supports lookup by committee ID, abbreviation, or listing all current active bodies.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetCommitteeInfoSchema}
+ * @returns MCP tool result containing committee details or a list of current active corporate bodies
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
  * @example
- * ```json
- * {
- *   "abbreviation": "ENVI"
- * }
+ * ```typescript
+ * // Lookup by abbreviation
+ * const result = await handleGetCommitteeInfo({ abbreviation: 'ENVI' });
+ * // Returns detailed info for the Environment Committee
+ *
+ * // List all current active bodies
+ * const all = await handleGetCommitteeInfo({ showCurrent: true });
+ * // Returns all currently active EP corporate bodies
  * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getCommitteeInfoToolMetadata} for MCP schema registration
+ * @see {@link handleGetCommitteeDocuments} for retrieving documents produced by committees
  */
 export async function handleGetCommitteeInfo(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   // Validate input
   const params = GetCommitteeInfoSchema.parse(args);
   

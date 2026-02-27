@@ -39,6 +39,8 @@ interface VotingAnomalyAnalysis {
     riskLevel: string;
   };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -259,7 +261,37 @@ function resolveConfidence(isSingleMep: boolean, scope: string, anomalyCount: nu
 }
 
 /**
- * Detect voting anomalies tool handler
+ * Handles the detect_voting_anomalies MCP tool request.
+ *
+ * Detects statistically unusual voting patterns for individual MEPs or entire
+ * political groups, including cross-party defections, unusual abstention clusters,
+ * and discipline breakdowns. Returns anomaly records graded by severity with a
+ * group stability score and defection trend assessment.
+ *
+ * @param args - Raw tool arguments, validated against {@link DetectVotingAnomaliesSchema}
+ * @returns MCP tool result containing detected anomalies with severity ratings,
+ *   summary statistics, anomaly rate, severity index, and risk level classification
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * const result = await handleDetectVotingAnomalies({
+ *   mepId: '124810',
+ *   sensitivityThreshold: 0.7,
+ *   dateFrom: '2024-01-01',
+ *   dateTo: '2024-12-31'
+ * });
+ * // Returns anomaly list with severity ratings (HIGH/MEDIUM/LOW),
+ * // anomaly rate, severity index, and group stability score
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link detectVotingAnomaliesToolMetadata} for MCP schema registration
+ * @see {@link handleAnalyzeCoalitionDynamics} for coalition-level cohesion and stress analysis
  */
 export async function handleDetectVotingAnomalies(
   args: unknown
@@ -291,6 +323,8 @@ export async function handleDetectVotingAnomalies(
         },
         dataAvailable: false,
         confidenceLevel: 'LOW',
+        dataFreshness: 'EP API data — voting statistics unavailable for this MEP',
+        sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
         methodology: 'The EP API /meps/{id} endpoint does not return voting statistics. '
           + 'Anomaly detection requires voting data which is unavailable for this MEP. '
           + 'Data source: European Parliament Open Data Portal.'
@@ -313,6 +347,8 @@ export async function handleDetectVotingAnomalies(
         riskLevel: classifyRiskLevel(highSeverity)
       },
       confidenceLevel: confidence,
+      dataFreshness: 'Real-time EP API data — voting statistics from MEP records',
+      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'Heuristic statistical analysis using aggregated voting statistics and MEP metadata '
         + 'from /meps/{id} on the European Parliament Open Data API. Vote-level records are not fetched; '
         + 'many voting statistic fields may be zero or unavailable from the EP API. Group-level analysis '

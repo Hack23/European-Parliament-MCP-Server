@@ -8,7 +8,7 @@
 
 > `const` **analyzeLegislativeEffectivenessToolMetadata**: `object`
 
-Defined in: [tools/analyzeLegislativeEffectiveness.ts:234](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/analyzeLegislativeEffectiveness.ts#L234)
+Defined in: [tools/analyzeLegislativeEffectiveness.ts:274](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeLegislativeEffectiveness.ts#L274)
 
 Tool metadata for MCP registration
 

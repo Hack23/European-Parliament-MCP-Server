@@ -8,7 +8,7 @@
 
 > `const` **analyzeCoalitionDynamicsToolMetadata**: `object`
 
-Defined in: [tools/analyzeCoalitionDynamics.ts:269](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/analyzeCoalitionDynamics.ts#L269)
+Defined in: [tools/analyzeCoalitionDynamics.ts:299](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCoalitionDynamics.ts#L299)
 
 Tool metadata for MCP registration
 

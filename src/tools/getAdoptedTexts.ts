@@ -24,10 +24,34 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
- * Get adopted texts tool handler.
+ * Handles the get_adopted_texts MCP tool request.
  *
- * @param args - Tool arguments
- * @returns MCP tool result with adopted text data
+ * Retrieves European Parliament adopted texts, including legislative resolutions,
+ * first-reading positions, and non-legislative resolutions. Supports single document
+ * lookup by docId or a paginated list optionally filtered by year.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetAdoptedTextsSchema}
+ * @returns MCP tool result containing either a single adopted text or a paginated list of adopted texts
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * // Single adopted text lookup
+ * const result = await handleGetAdoptedTexts({ docId: 'P9-TA(2024)0001' });
+ * // Returns the full record for the specified adopted text
+ *
+ * // List adopted texts from 2024
+ * const list = await handleGetAdoptedTexts({ year: 2024, limit: 50 });
+ * // Returns up to 50 adopted texts from 2024
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getAdoptedTextsToolMetadata} for MCP schema registration
+ * @see {@link handleGetPlenarySessionDocumentItems} for retrieving in-session document items
  */
 export async function handleGetAdoptedTexts(
   args: unknown

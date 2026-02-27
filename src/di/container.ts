@@ -51,7 +51,7 @@ export class DIContainer {
    * @param token - Service identifier token
    * @param factory - Factory function to create service instances
    * @param lifetime - Service lifetime ('singleton' or 'transient')
-   * 
+   *
    * @example
    * ```typescript
    * const ReportServiceToken = Symbol('ReportService');
@@ -61,6 +61,8 @@ export class DIContainer {
    *   'singleton'
    * );
    * ```
+   *
+   * @since 0.8.0
    */
   register<T>(
     token: symbol,
@@ -76,12 +78,14 @@ export class DIContainer {
    * 
    * @param token - Service identifier token
    * @returns Resolved service instance
-   * @throws Error if service is not registered
-   * 
+   * @throws {Error} If service is not registered
+   *
    * @example
    * ```typescript
    * const reportService = container.resolve(ReportServiceToken);
    * ```
+   *
+   * @since 0.8.0
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   resolve<T>(token: symbol): T {
@@ -112,17 +116,27 @@ export class DIContainer {
    * Cyclomatic complexity: 1
    * 
    * @param token - Service identifier token
-   * @returns True if service is registered
+   * @returns `true` if the token is registered, `false` otherwise
+   *
+   * @since 0.8.0
    */
   has(token: symbol): boolean {
     return this.services.has(token);
   }
 
   /**
-   * Clear all registered services and cached instances
-   * Cyclomatic complexity: 1
-   * 
-   * Useful for testing and cleanup
+   * Clear all registered services and cached instances.
+   *
+   * Useful for testing and cleanup between test suites.
+   *
+   * @example
+   * ```typescript
+   * afterEach(() => {
+   *   container.clear();
+   * });
+   * ```
+   *
+   * @since 0.8.0
    */
   clear(): void {
     this.services.clear();
@@ -139,12 +153,16 @@ export class DIContainer {
  * - `TOKENS.AuditLogger`   → {@link AuditLogger} (global singleton)
  * - `TOKENS.HealthService` → {@link HealthService}
  *
+ * @returns A fully configured {@link DIContainer} with all standard services registered
+ *
  * @example
  * ```typescript
  * const container = createDefaultContainer();
  * const health = container.resolve<HealthService>(TOKENS.HealthService);
  * console.log(health.checkHealth());
  * ```
+ *
+ * @since 0.8.0
  */
 export function createDefaultContainer(): DIContainer {
   const container = new DIContainer();

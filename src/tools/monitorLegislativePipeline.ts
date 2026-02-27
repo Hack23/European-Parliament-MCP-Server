@@ -14,6 +14,7 @@
 import { MonitorLegislativePipelineSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import type { Procedure } from '../types/europeanParliament.js';
+import type { ToolResult } from './shared/types.js';
 
 /** Computed attributes for a single pipeline item */
 interface PipelineItemComputedAttrs {
@@ -67,6 +68,8 @@ interface LegislativePipelineAnalysis {
     legislativeMomentum: string;
   };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -234,16 +237,44 @@ function computeHealthMetrics(pipeline: PipelineItem[], summary: ReturnType<type
 }
 
 /**
- * Monitor legislative pipeline tool handler.
- * 
- * Fetches real procedures from the EP API and computes pipeline
- * health metrics. All procedure data comes from the API—computed
- * attributes (health score, velocity, bottleneck risk) are derived
- * from real dates and stages.
+ * Handles the monitor_legislative_pipeline MCP tool request.
+ *
+ * Monitors the European Parliament's active legislative pipeline by fetching real
+ * procedures from the EP API and computing health metrics including bottleneck
+ * detection, stalled-procedure rate, throughput rate, and legislative momentum.
+ * All procedure data (title, type, stage, status, dates, committee) is sourced
+ * directly from the EP API; computed attributes are derived from real dates and stages.
+ *
+ * @param args - Raw tool arguments, validated against {@link MonitorLegislativePipelineSchema}
+ * @returns MCP tool result containing pipeline items with stage and status,
+ *   summary counts (active/stalled/completed), detected bottlenecks, pipeline health
+ *   score, throughput rate, bottleneck index, and legislative momentum classification
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * const result = await handleMonitorLegislativePipeline({
+ *   status: 'ACTIVE',
+ *   committee: 'ENVI',
+ *   dateFrom: '2024-01-01',
+ *   dateTo: '2024-12-31',
+ *   limit: 20
+ * });
+ * // Returns pipeline health score, stalled/active/completed counts,
+ * // bottleneck list, and legislative momentum assessment
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link monitorLegislativePipelineToolMetadata} for MCP schema registration
+ * @see {@link handleTrackLegislation} for individual procedure stage and timeline tracking
  */
 export async function handleMonitorLegislativePipeline(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = MonitorLegislativePipelineSchema.parse(args);
 
   try {
@@ -290,6 +321,8 @@ export async function handleMonitorLegislativePipeline(
         legislativeMomentum: classifyMomentum(health.healthScore),
       },
       confidenceLevel: pipeline.length >= 10 ? 'MEDIUM' : 'LOW',
+      dataFreshness: 'Real-time EP API data — procedures from EP Open Data /procedures endpoint',
+      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'Real-time pipeline analysis using EP API /procedures endpoint. '
         + 'All procedure data (title, type, stage, status, dates, committee) sourced from '
         + 'European Parliament open data. Computed attributes (health score, velocity, '

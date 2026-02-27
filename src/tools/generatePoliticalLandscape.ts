@@ -19,6 +19,7 @@
 
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Schema for generate_political_landscape tool input
@@ -73,6 +74,8 @@ interface PoliticalLandscape {
     overallEngagement: string;
   };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -253,6 +256,8 @@ async function buildLandscape(
       overallEngagement: computeEngagement(0)
     },
     confidenceLevel: totalMEPs > 50 ? 'MEDIUM' : 'LOW',
+    dataFreshness: 'Real-time EP API data — MEP records and plenary sessions from EP Open Data',
+    sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
     methodology: 'Political landscape analysis using real EP Open Data: MEP records, '
       + 'group composition mapping, bloc classification, coalition threshold calculation, '
       + 'fragmentation indexing, and plenary session counts (fetched page count, lower bound). '
@@ -262,11 +267,39 @@ async function buildLandscape(
 }
 
 /**
- * Generate political landscape tool handler
+ * Handles the generate_political_landscape MCP tool request.
+ *
+ * Generates a comprehensive snapshot of the current European Parliament political
+ * landscape including group seat shares, bloc analysis (progressive vs. conservative),
+ * coalition viability, and power-balance metrics. Provides single-call situational
+ * awareness for strategic intelligence briefings.
+ *
+ * @param args - Raw tool arguments, validated against {@link GeneratePoliticalLandscapeSchema}
+ * @returns MCP tool result containing group seat distributions, power dynamics,
+ *   activity metrics, fragmentation index, majority type, and political balance score
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * const result = await handleGeneratePoliticalLandscape({
+ *   dateFrom: '2024-01-01',
+ *   dateTo: '2024-12-31'
+ * });
+ * // Returns full landscape with group sizes, bloc analysis,
+ * // fragmentation index, and majority-type classification
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link generatePoliticalLandscapeToolMetadata} for MCP schema registration
+ * @see {@link handleComparePoliticalGroups} for detailed per-group dimension comparison
  */
 export async function handleGeneratePoliticalLandscape(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = GeneratePoliticalLandscapeSchema.parse(args);
 
   const now = new Date();

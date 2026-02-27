@@ -354,6 +354,12 @@ Re-exports [ToolMetadata](../server/types/interfaces/ToolMetadata.md)
 
 ***
 
+### ToolResult
+
+Re-exports [ToolResult](../tools/shared/types/interfaces/ToolResult.md)
+
+***
+
 ### ValidationError
 
 Re-exports [ValidationError](../types/errors/classes/ValidationError.md)

@@ -17,25 +17,49 @@
 
 import { GetPlenarySessionsSchema, PlenarySessionSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
- * Get plenary sessions tool handler
- * 
- * @param args - Tool arguments
- * @returns MCP tool result with plenary session data
- * 
+ * Handles the get_plenary_sessions MCP tool request.
+ *
+ * Retrieves European Parliament plenary sessions with optional filtering by date range and
+ * location. Supports single-session lookup by event ID. Critical for legislative monitoring,
+ * session activity tracking, debate analysis, and identifying legislative priorities.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetPlenarySessionsSchema}
+ * @returns MCP tool result containing either a single plenary session record (when `eventId`
+ *   is provided) or a paginated list of sessions with date, location, agenda items, voting
+ *   records, and attendance statistics
+ * @throws - If `args` fails schema validation (e.g., date not in YYYY-MM-DD format,
+ *   limit out of range 1–100)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
  * @example
- * ```json
- * {
- *   "dateFrom": "2024-01-01",
- *   "dateTo": "2024-12-31",
- *   "limit": 20
- * }
+ * ```typescript
+ * // List sessions in a date range
+ * const result = await handleGetPlenarySessions({
+ *   dateFrom: '2024-01-01',
+ *   dateTo: '2024-12-31',
+ *   limit: 20
+ * });
+ * // Returns up to 20 plenary sessions held in 2024
+ *
+ * // Fetch a single session by event ID
+ * const single = await handleGetPlenarySessions({ eventId: 'MTG-2024-01-15' });
+ * // Returns agenda, voting records, and attendance for the specified session
  * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getPlenarySessionsToolMetadata} for MCP schema registration
+ * @see {@link handleGetPlenaryDocuments} for legislative documents associated with sessions
+ * @see {@link handleGetPlenarySessionDocuments} for session-specific agendas and minutes
  */
 export async function handleGetPlenarySessions(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   // Validate input
   const params = GetPlenarySessionsSchema.parse(args);
   

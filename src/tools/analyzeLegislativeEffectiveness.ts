@@ -50,6 +50,8 @@ interface LegislativeEffectivenessAnalysis {
   };
   benchmarks: { avgReportsPerMep: number; avgAmendmentsPerMep: number; avgSuccessRate: number };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -174,7 +176,47 @@ async function fetchCommitteeSubjectData(subjectId: string): Promise<{
 }
 
 /**
- * Analyze legislative effectiveness tool handler
+ * Handles the analyze_legislative_effectiveness MCP tool request.
+ *
+ * Scores the legislative effectiveness of an MEP or committee by computing productivity
+ * (reports authored, amendments tabled), quality (amendment success rate, attendance),
+ * and impact (voting influence, rapporteurships, committee coverage) sub-scores, then
+ * aggregates them into an overall effectiveness rating with peer-benchmarking data.
+ *
+ * @param args - Raw tool arguments, validated against {@link AnalyzeLegislativeEffectivenessSchema}
+ * @returns MCP tool result containing a {@link LegislativeEffectivenessAnalysis} object with
+ *   metrics, scores, computed attributes (percentile, output per month), benchmarks,
+ *   confidence level, and methodology note
+ * @throws - If `args` fails schema validation (e.g., missing required `subjectType`
+ *   or `subjectId`, invalid `subjectType` value)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * // Analyse a specific MEP
+ * const mepResult = await handleAnalyzeLegislativeEffectiveness({
+ *   subjectType: 'MEP',
+ *   subjectId: 'MEP-124810',
+ *   dateFrom: '2024-01-01',
+ *   dateTo: '2024-12-31'
+ * });
+ * // Returns productivity/quality/impact scores and effectiveness rank for MEP-124810
+ *
+ * // Analyse a committee
+ * const committeeResult = await handleAnalyzeLegislativeEffectiveness({
+ *   subjectType: 'COMMITTEE',
+ *   subjectId: 'ENVI'
+ * });
+ * // Returns legislative effectiveness scores for the ENVI committee
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ *   Internal errors are wrapped before propagation to avoid leaking API details.
+ * @since 0.8.0
+ * @see {@link analyzeLegislativeEffectivenessToolMetadata} for MCP schema registration
+ * @see {@link handleAnalyzeVotingPatterns} for detailed per-vote behaviour analysis
  */
 export async function handleAnalyzeLegislativeEffectiveness(
   args: unknown
@@ -218,6 +260,8 @@ export async function handleAnalyzeLegislativeEffectiveness(
       },
       benchmarks: { avgReportsPerMep: 3.2, avgAmendmentsPerMep: 12.5, avgSuccessRate: 38.0 },
       confidenceLevel: classifyConfidence(subjectData.totalVotes),
+      dataFreshness: 'Real-time EP API data — MEP and committee information from EP Open Data',
+      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'Multi-factor legislative effectiveness scoring with peer benchmarking'
     };
 

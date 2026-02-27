@@ -8,7 +8,7 @@
 
 > **createVocabularyID**(`value`): [`VocabularyID`](../type-aliases/VocabularyID.md)
 
-Defined in: [types/ep/branded.ts:167](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/branded.ts#L167)
+Defined in: [types/ep/branded.ts:167](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L167)
 
 Factory: validates and creates a VocabularyID.
 

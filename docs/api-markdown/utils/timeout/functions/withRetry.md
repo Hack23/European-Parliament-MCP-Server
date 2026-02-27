@@ -8,7 +8,7 @@
 
 > **withRetry**\<`T`\>(`fn`, `options`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [utils/timeout.ts:260](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/timeout.ts#L260)
+Defined in: [utils/timeout.ts:268](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L268)
 
 Execute a function with retry logic and timeout
 
@@ -115,3 +115,7 @@ const data2 = await withRetry(
 - Prevents retry storms with exponential backoff
 - Respects timeout limits per attempt (when provided)
 - Configurable retry conditions for security
+
+## Since
+
+0.8.0

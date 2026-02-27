@@ -6,7 +6,7 @@
 
 # Interface: PromptMessage
 
-Defined in: [prompts/index.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/prompts/index.ts#L36)
+Defined in: [prompts/index.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L36)
 
 Prompt message content
 
@@ -16,7 +16,7 @@ Prompt message content
 
 > **content**: `object`
 
-Defined in: [prompts/index.ts:38](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/prompts/index.ts#L38)
+Defined in: [prompts/index.ts:38](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L38)
 
 #### text
 
@@ -32,4 +32,4 @@ Defined in: [prompts/index.ts:38](https://github.com/Hack23/European-Parliament-
 
 > **role**: `"user"` \| `"assistant"`
 
-Defined in: [prompts/index.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/prompts/index.ts#L37)
+Defined in: [prompts/index.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L37)

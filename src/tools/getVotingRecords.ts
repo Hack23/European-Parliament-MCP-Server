@@ -18,25 +18,40 @@
 
 import { GetVotingRecordsSchema, VotingRecordSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
- * Get voting records tool handler
- * 
- * @param args - Tool arguments
- * @returns MCP tool result with voting record data
- * 
+ * Handles the get_voting_records MCP tool request.
+ *
+ * Retrieves voting records from European Parliament plenary sessions, supporting
+ * filtering by session, MEP, topic, and date range. Returns vote tallies
+ * (for/against/abstain), final results, and optionally individual MEP votes.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetVotingRecordsSchema}
+ * @returns MCP tool result containing a paginated list of voting records with vote counts and results
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
  * @example
- * ```json
- * {
- *   "sessionId": "PLENARY-2024-01",
- *   "topic": "Climate Change",
- *   "limit": 20
- * }
+ * ```typescript
+ * const result = await handleGetVotingRecords({
+ *   sessionId: 'PLENARY-2024-01',
+ *   topic: 'Climate Change',
+ *   limit: 20
+ * });
+ * // Returns voting records for the January 2024 plenary session on climate topics
  * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getVotingRecordsToolMetadata} for MCP schema registration
+ * @see [handleGetMeetingDecisions](../../getMeetingDecisions/functions/handleGetMeetingDecisions.md) for retrieving decisions linked to a specific sitting
  */
 export async function handleGetVotingRecords(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   // Validate input
   const params = GetVotingRecordsSchema.parse(args);
   
@@ -57,12 +72,23 @@ export async function handleGetVotingRecords(
     // Validate output
     const outputSchema = PaginatedResponseSchema(VotingRecordSchema);
     const validated = outputSchema.parse(result);
+
+    // Note: `_warning` is a meta-field added after Zod validation and is
+    // intentionally not part of the Zod output schema.
+    const responsePayload = {
+      ...validated,
+      _warning:
+        params['mepId'] !== undefined
+          ? 'The mepId parameter is not supported by the EP API and has no effect on results. ' +
+            'The EP votes endpoint only returns aggregate vote counts, not per-MEP positions.'
+          : undefined
+    };
     
     // Return MCP-compliant response
     return {
       content: [{
         type: 'text',
-        text: JSON.stringify(validated, null, 2)
+        text: JSON.stringify(responsePayload, null, 2)
       }]
     };
   } catch (error) {

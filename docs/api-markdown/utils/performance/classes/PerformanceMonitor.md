@@ -6,7 +6,7 @@
 
 # Class: PerformanceMonitor
 
-Defined in: [utils/performance.ts:88](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L88)
+Defined in: [utils/performance.ts:88](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L88)
 
 Performance monitor for tracking operation metrics
 
@@ -33,9 +33,9 @@ console.log(`p95: ${stats.p95}ms`);
 
 > **new PerformanceMonitor**(`maxSamples?`): `PerformanceMonitor`
 
-Defined in: [utils/performance.ts:97](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L97)
+Defined in: [utils/performance.ts:107](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L107)
 
-Create a new performance monitor
+Creates a new performance monitor.
 
 #### Parameters
 
@@ -43,11 +43,27 @@ Create a new performance monitor
 
 `number` = `1000`
 
-Maximum number of samples to retain per operation (default: 1000)
+Maximum number of duration samples to retain per
+  operation name. Older samples are evicted when the limit is reached
+  (sliding window). Default: `1000`.
 
 #### Returns
 
 `PerformanceMonitor`
+
+#### Throws
+
+If `maxSamples` is not a positive finite integer
+
+#### Example
+
+```typescript
+const monitor = new PerformanceMonitor(500);
+```
+
+#### Since
+
+0.8.0
 
 ## Properties
 
@@ -55,7 +71,7 @@ Maximum number of samples to retain per operation (default: 1000)
 
 > `private` `readonly` **maxSamples**: `number`
 
-Defined in: [utils/performance.ts:90](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L90)
+Defined in: [utils/performance.ts:90](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L90)
 
 ***
 
@@ -63,7 +79,7 @@ Defined in: [utils/performance.ts:90](https://github.com/Hack23/European-Parliam
 
 > `private` `readonly` **metrics**: [`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, `number`[]\>
 
-Defined in: [utils/performance.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L89)
+Defined in: [utils/performance.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L89)
 
 ## Methods
 
@@ -71,11 +87,12 @@ Defined in: [utils/performance.ts:89](https://github.com/Hack23/European-Parliam
 
 > **clear**(): `void`
 
-Defined in: [utils/performance.ts:251](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L251)
+Defined in: [utils/performance.ts:277](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L277)
 
-Clear all recorded metrics
+Clears all recorded duration samples for every tracked operation.
 
-Useful for testing or when starting a new monitoring period.
+Useful for resetting state between test cases or at the start of a new
+monitoring window.
 
 #### Returns
 
@@ -90,15 +107,19 @@ afterEach(() => {
 });
 ```
 
+#### Since
+
+0.8.0
+
 ***
 
 ### clearOperation()
 
 > **clearOperation**(`operation`): `void`
 
-Defined in: [utils/performance.ts:265](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L265)
+Defined in: [utils/performance.ts:293](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L293)
 
-Clear metrics for a specific operation
+Clears recorded duration samples for a single operation.
 
 #### Parameters
 
@@ -106,7 +127,7 @@ Clear metrics for a specific operation
 
 `string`
 
-Operation name to clear
+Operation name whose samples should be discarded
 
 #### Returns
 
@@ -118,21 +139,25 @@ Operation name to clear
 monitor.clearOperation('api_call');
 ```
 
+#### Since
+
+0.8.0
+
 ***
 
 ### getOperations()
 
 > **getOperations**(): `string`[]
 
-Defined in: [utils/performance.ts:234](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L234)
+Defined in: [utils/performance.ts:257](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L257)
 
-Get all operation names being tracked
+Returns all operation names currently being tracked.
 
 #### Returns
 
 `string`[]
 
-Array of operation names
+Array of operation name strings, in insertion order
 
 #### Example
 
@@ -140,9 +165,13 @@ Array of operation names
 const operations = monitor.getOperations();
 operations.forEach(op => {
   const stats = monitor.getStats(op);
-  console.log(`${op}: ${stats?.p95}ms`);
+  console.log(`${op}: p95=${stats?.p95}ms`);
 });
 ```
+
+#### Since
+
+0.8.0
 
 ***
 
@@ -150,12 +179,13 @@ operations.forEach(op => {
 
 > **getStats**(`operation`): [`PerformanceStats`](../interfaces/PerformanceStats.md) \| `null`
 
-Defined in: [utils/performance.ts:153](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L153)
+Defined in: [utils/performance.ts:174](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L174)
 
-Get performance statistics for an operation
+Returns aggregated performance statistics for a named operation.
 
-Calculates percentiles and averages from recorded durations.
-Returns null if no measurements exist for the operation.
+Calculates percentiles (p50 / p95 / p99), average, min, and max from
+the stored duration samples. Returns `null` when no samples have been
+recorded for the operation yet.
 
 #### Parameters
 
@@ -163,13 +193,17 @@ Returns null if no measurements exist for the operation.
 
 `string`
 
-Operation name/identifier
+Operation name / identifier to query
 
 #### Returns
 
 [`PerformanceStats`](../interfaces/PerformanceStats.md) \| `null`
 
-Performance statistics or null if no data
+[PerformanceStats](../interfaces/PerformanceStats.md) object, or `null` if no data exists
+
+#### Throws
+
+If `operation` is not a string
 
 #### Example
 
@@ -180,15 +214,23 @@ if (stats && stats.p95 > 1000) {
 }
 ```
 
+#### Since
+
+0.8.0
+
 ***
 
 ### recordDuration()
 
 > **recordDuration**(`operation`, `durationMs`): `void`
 
-Defined in: [utils/performance.ts:117](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/performance.ts#L117)
+Defined in: [utils/performance.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L134)
 
-Record an operation duration
+Records a duration sample for the named operation.
+
+When the number of stored samples reaches `maxSamples`, the oldest
+entries are evicted in bulk (sliding window). Use [getStats](#getstats) to
+retrieve aggregated statistics after recording samples.
 
 #### Parameters
 
@@ -196,17 +238,21 @@ Record an operation duration
 
 `string`
 
-Operation name/identifier
+Unique operation name / identifier (e.g., `'ep_api_call'`)
 
 ##### durationMs
 
 `number`
 
-Duration in milliseconds
+Observed duration in milliseconds (should be ≥ 0)
 
 #### Returns
 
 `void`
+
+#### Throws
+
+If `operation` is not a string
 
 #### Example
 
@@ -215,3 +261,7 @@ const start = performance.now();
 await doWork();
 monitor.recordDuration('work', performance.now() - start);
 ```
+
+#### Since
+
+0.8.0

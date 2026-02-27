@@ -8,7 +8,7 @@
 
 > **handleGetPrompt**(`name`, `args?`): [`PromptResult`](../interfaces/PromptResult.md)
 
-Defined in: [prompts/index.ts:504](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/prompts/index.ts#L504)
+Defined in: [prompts/index.ts:504](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L504)
 
 Handle GetPrompt request
 

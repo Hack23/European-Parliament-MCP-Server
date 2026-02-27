@@ -50,6 +50,8 @@ interface PoliticalGroupComparison {
     competitiveIndex: number;
   };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -142,7 +144,37 @@ function topByDimension(groups: GroupComparisonMetrics[], dim: DimensionName): s
 }
 
 /**
- * Compare political groups tool handler
+ * Handles the compare_political_groups MCP tool request.
+ *
+ * Compares European Parliament political groups across configurable dimensions
+ * including voting discipline, activity level, legislative output, attendance,
+ * and internal cohesion. Produces ranked comparisons and an overall performance
+ * score for each group.
+ *
+ * @param args - Raw tool arguments, validated against {@link ComparePoliticalGroupsSchema}
+ * @returns MCP tool result containing per-group dimension scores, rankings,
+ *   seat-share distribution, and a computed parliamentary balance index
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * const result = await handleComparePoliticalGroups({
+ *   groupIds: ['EPP', 'S&D', 'Renew', 'Greens/EFA'],
+ *   dimensions: ['voting_discipline', 'activity_level', 'cohesion'],
+ *   dateFrom: '2024-01-01',
+ *   dateTo: '2024-12-31'
+ * });
+ * // Returns ranked group comparison with per-dimension scores
+ * // and overall performance leaderboard
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link comparePoliticalGroupsToolMetadata} for MCP schema registration
+ * @see {@link handleAnalyzeCoalitionDynamics} for pairwise coalition cohesion analysis
  */
 export async function handleComparePoliticalGroups(
   args: unknown
@@ -185,6 +217,8 @@ export async function handleComparePoliticalGroups(
         competitiveIndex
       },
       confidenceLevel: 'LOW',
+      dataFreshness: 'Real-time EP API data — political group composition from current MEP records',
+      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'Multi-dimensional comparative analysis using real EP Open Data MEP records. '
         + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
         + 'voting discipline, activity level, attendance, and cohesion dimensions report zero. '

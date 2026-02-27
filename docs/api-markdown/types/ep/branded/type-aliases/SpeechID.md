@@ -8,7 +8,7 @@
 
 > **SpeechID** = [`Brand`](../../../branded/type-aliases/Brand.md)\<`string`, `"SpeechID"`\>
 
-Defined in: [types/ep/branded.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/branded.ts#L65)
+Defined in: [types/ep/branded.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L65)
 
 Speech ID – identifies a plenary speech record.
 

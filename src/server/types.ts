@@ -11,12 +11,11 @@
 
 /**
  * Standard MCP tool execution result.
- * Each content item is a text block returned to the MCP client.
+ * Re-exported from the canonical definition in tools/shared/types.ts
+ * which enforces the MCP protocol's `type: 'text'` literal constraint.
  */
-export interface ToolResult {
-  content: { type: string; text: string }[];
-  isError?: boolean;
-}
+import type { ToolResult } from '../tools/shared/types.js';
+export type { ToolResult };
 
 /**
  * Typed handler function for an MCP tool call.

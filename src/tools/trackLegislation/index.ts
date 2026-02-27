@@ -19,6 +19,7 @@
 import { TrackLegislationSchema } from '../../schemas/europeanParliament.js';
 import { epClient } from '../../clients/europeanParliamentClient.js';
 import { buildLegislativeTracking } from './procedureTracker.js';
+import type { ToolResult } from '../shared/types.js';
 
 /**
  * Convert a user-supplied procedure reference to the EP API process-id format.
@@ -49,28 +50,38 @@ export function toProcessId(ref: string): string {
 }
 
 /**
- * Track legislation tool handler
- * 
- * Fetches real procedure data from the EP API `/procedures` endpoint
- * and returns structured legislative tracking information derived
- * entirely from the API response.
- * 
- * Accepts both EP API process-id format (`2024-0006`) and human-readable
- * reference format (`2024/0006(COD)`).
- * 
- * @param args - Tool arguments
- * @returns MCP tool result with legislative procedure tracking data
- * 
+ * Handles the track_legislation MCP tool request.
+ *
+ * Tracks a specific European Parliament legislative procedure through its full
+ * lifecycle — from initial proposal through committee review, plenary vote,
+ * trilogue, and final adoption. Accepts both EP API process-id format
+ * (`2024-0006`) and human-readable reference format (`2024/0006(COD)`).
+ *
+ * @param args - Raw tool arguments, validated against {@link TrackLegislationSchema}
+ * @returns MCP tool result containing the procedure's current stage, timeline,
+ *   committee assignments, voting records, and next-step projections
+ * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ *
  * @example
- * ```json
- * {
- *   "procedureId": "2024/0006(COD)"
- * }
+ * ```typescript
+ * const result = await handleTrackLegislation({
+ *   procedureId: '2024/0006(COD)'
+ * });
+ * // Returns legislative tracking with current stage, timeline milestones,
+ * // committee assignments, and estimated adoption timeline
  * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Personal data in responses is minimised per GDPR Article 5(1)(c).
+ *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link trackLegislationToolMetadata} for MCP schema registration
+ * @see {@link handleMonitorLegislativePipeline} for pipeline-wide health and bottleneck analysis
  */
 export async function handleTrackLegislation(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = TrackLegislationSchema.parse(args);
   const processId = toProcessId(params.procedureId);
   

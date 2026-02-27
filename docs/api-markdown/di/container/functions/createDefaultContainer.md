@@ -8,7 +8,7 @@
 
 > **createDefaultContainer**(): [`DIContainer`](../classes/DIContainer.md)
 
-Defined in: [di/container.ts:149](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/di/container.ts#L149)
+Defined in: [di/container.ts:167](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/di/container.ts#L167)
 
 Create a pre-configured DI container with the standard MCP server services
 registered as singletons.
@@ -23,6 +23,8 @@ Registered services:
 
 [`DIContainer`](../classes/DIContainer.md)
 
+A fully configured [DIContainer](../classes/DIContainer.md) with all standard services registered
+
 ## Example
 
 ```typescript
@@ -30,3 +32,7 @@ const container = createDefaultContainer();
 const health = container.resolve<HealthService>(TOKENS.HealthService);
 console.log(health.checkHealth());
 ```
+
+## Since
+
+0.8.0

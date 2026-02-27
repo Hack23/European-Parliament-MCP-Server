@@ -60,6 +60,8 @@ interface MepInfluenceAssessment {
   };
   votingDataAvailable: boolean;
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -230,7 +232,81 @@ function getConfidenceLevel(totalVotes: number): string {
 }
 
 /**
+ * Handles the assess_mep_influence MCP tool request.
+ *
+ * Assesses an MEP's influence within the European Parliament by evaluating their
+ * voting activity, parliamentary questions, committee leadership roles, and
+ * seniority. Produces a multi-dimensional influence score with network centrality
+ * and impact rank computations.
+ *
+ * @param args - Raw tool arguments, validated against {@link AssessMepInfluenceSchema}
+ * @returns MCP tool result containing the MEP's influence scores, voting statistics,
+ *   committee roles, question count, seniority metrics, and computed influence rank
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
+ * @example
+ * ```typescript
+ * const result = await handleAssessMepInfluence({
+ *   mepId: '124810',
+ *   includeVoting: true,
+ *   includeCommittees: true
+ * });
+ * // Returns influence assessment with overall score, voting discipline,
+ * // committee leadership, and seniority breakdown
+ * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link assessMepInfluenceToolMetadata} for MCP schema registration
+ * @see {@link handleTrackMepAttendance} for MEP attendance and participation tracking
  * Assess MEP influence tool handler
+ *
+ * Computes a composite influence scorecard for a single MEP using a
+ * 5-dimension weighted model aligned with CIA Political Scorecards methodology.
+ * Fetches live MEP profile and parliamentary questions from the EP Open Data API
+ * to populate the scoring dimensions.
+ *
+ * **Dimensions (weighted):**
+ * - Voting Activity (25%) — attendance rate + participation volume
+ * - Legislative Output (25%) — rapporteurships + committee leadership roles
+ * - Committee Engagement (20%) — membership breadth + leadership positions
+ * - Parliamentary Oversight (15%) — parliamentary questions filed
+ * - Coalition Building (15%) — cross-party voting rate + engagement rate
+ *
+ * @param args - Tool arguments matching AssessMepInfluenceSchema
+ * @param args.mepId - MEP identifier (required)
+ * @param args.dateFrom - Analysis start date in YYYY-MM-DD format (optional)
+ * @param args.dateTo - Analysis end date in YYYY-MM-DD format (optional)
+ * @param args.includeDetails - When true, includes per-dimension metric breakdown (optional)
+ * @returns MCP ToolResult containing the `MepInfluenceAssessment` object as JSON
+ * @throws {Error} When MEP is not found or the EP API request fails
+ * @throws {ZodError} When input fails schema validation (missing mepId, invalid date format)
+ *
+ * @example
+ * ```typescript
+ * // Basic influence assessment
+ * const result = await handleAssessMepInfluence({ mepId: "197558" });
+ * const assessment = JSON.parse(result.content[0].text);
+ * console.log(`${assessment.mepName}: ${assessment.rank} (${assessment.overallScore}/100)`);
+ * ```
+ *
+ * @example
+ * ```typescript
+ * // Detailed assessment with dimension breakdown
+ * const result = await handleAssessMepInfluence({
+ *   mepId: "197558",
+ *   dateFrom: "2024-01-01",
+ *   dateTo: "2024-12-31",
+ *   includeDetails: true
+ * });
+ * ```
+ *
+ * @security Input validated by Zod. Errors sanitized (no stack traces exposed).
+ * Personal data (MEP profiles) access logged per GDPR Article 30.
+ * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 export async function handleAssessMepInfluence(
   args: unknown
@@ -297,6 +373,8 @@ export async function handleAssessMepInfluence(
       },
       confidenceLevel: getConfidenceLevel(stats.totalVotes),
       votingDataAvailable: stats.totalVotes > 0,
+      dataFreshness: 'Real-time EP API data — MEP voting statistics and committee memberships',
+      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'CIA Political Scorecards - 5-dimension weighted scoring model using real EP Open Data. '
         + 'Parliamentary questions fetched from /parliamentary-questions endpoint. '
         + 'Data source: European Parliament Open Data Portal.'

@@ -8,7 +8,7 @@
 
 > **createDocumentID**(`value`): [`DocumentID`](../type-aliases/DocumentID.md)
 
-Defined in: [types/branded.ts:279](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/branded.ts#L279)
+Defined in: [types/branded.ts:279](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L279)
 
 Factory function to create a validated Document ID
 

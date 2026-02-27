@@ -8,7 +8,7 @@
 
 > **extractAuthorId**(`authorField`): `string`
 
-Defined in: [clients/ep/jsonLdHelpers.ts:174](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/clients/ep/jsonLdHelpers.ts#L174)
+Defined in: [clients/ep/jsonLdHelpers.ts:174](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L174)
 
 Extracts author ID from EP API author field.
 

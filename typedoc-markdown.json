@@ -51,5 +51,6 @@
   "searchInComments": true,
   "cleanOutputDir": true,
   "hidePageHeader": false,
-  "hideBreadcrumbs": false
+  "hideBreadcrumbs": false,
+  "gitRevision": "main"
 }
