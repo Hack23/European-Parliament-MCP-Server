@@ -25,42 +25,45 @@ vi.mock('../tools/getMEPs.js', async (importOriginal) => {
 // ── getToolMetadataArray ───────────────────────────────────────────
 
 describe('getToolMetadataArray', () => {
+  // Cache once to avoid constructing a fresh 45-element array per test.
+  const tools = getToolMetadataArray();
+
   it('returns exactly 45 tools', () => {
-    expect(getToolMetadataArray()).toHaveLength(45);
+    expect(tools).toHaveLength(45);
   });
 
   it('all tools have a non-empty name', () => {
-    for (const tool of getToolMetadataArray()) {
+    for (const tool of tools) {
       expect(tool.name.length).toBeGreaterThan(0);
     }
   });
 
   it('all tool names are unique', () => {
-    const names = getToolMetadataArray().map((t) => t.name);
+    const names = tools.map((t) => t.name);
     expect(new Set(names).size).toBe(names.length);
   });
 
   it('all tool names use snake_case convention', () => {
-    for (const tool of getToolMetadataArray()) {
+    for (const tool of tools) {
       expect(tool.name).toMatch(/^[a-z][a-z0-9_]*$/);
     }
   });
 
   it('all tools have a non-empty description', () => {
-    for (const tool of getToolMetadataArray()) {
+    for (const tool of tools) {
       expect(tool.description.length).toBeGreaterThan(10);
     }
   });
 
   it('all tools have an inputSchema with type=object', () => {
-    for (const tool of getToolMetadataArray()) {
+    for (const tool of tools) {
       const schema = tool.inputSchema as Record<string, unknown>;
       expect(schema['type']).toBe('object');
     }
   });
 
   it('all tools have properties defined in inputSchema', () => {
-    for (const tool of getToolMetadataArray()) {
+    for (const tool of tools) {
       const schema = tool.inputSchema as Record<string, unknown>;
       expect(schema).toHaveProperty('properties');
     }
@@ -68,7 +71,7 @@ describe('getToolMetadataArray', () => {
 
   it('all tools have a valid category', () => {
     const validCategories = new Set(['core', 'advanced', 'osint', 'phase4', 'phase5']);
-    for (const tool of getToolMetadataArray()) {
+    for (const tool of tools) {
       expect(validCategories.has(tool.category)).toBe(true);
     }
   });
@@ -76,32 +79,31 @@ describe('getToolMetadataArray', () => {
   // ── Category distribution ──────────────────────────────────────
 
   it('has exactly 7 core tools', () => {
-    const coreTools = getToolMetadataArray().filter((t) => t.category === 'core');
+    const coreTools = tools.filter((t) => t.category === 'core');
     expect(coreTools).toHaveLength(7);
   });
 
   it('has exactly 3 advanced tools', () => {
-    const advanced = getToolMetadataArray().filter((t) => t.category === 'advanced');
+    const advanced = tools.filter((t) => t.category === 'advanced');
     expect(advanced).toHaveLength(3);
   });
 
   it('has exactly 14 osint tools', () => {
-    const osint = getToolMetadataArray().filter((t) => t.category === 'osint');
+    const osint = tools.filter((t) => t.category === 'osint');
     expect(osint).toHaveLength(14);
   });
 
   it('has exactly 8 phase4 tools', () => {
-    const phase4 = getToolMetadataArray().filter((t) => t.category === 'phase4');
+    const phase4 = tools.filter((t) => t.category === 'phase4');
     expect(phase4).toHaveLength(8);
   });
 
   it('has exactly 13 phase5 tools', () => {
-    const phase5 = getToolMetadataArray().filter((t) => t.category === 'phase5');
+    const phase5 = tools.filter((t) => t.category === 'phase5');
     expect(phase5).toHaveLength(13);
   });
 
   it('category counts sum to 45', () => {
-    const tools = getToolMetadataArray();
     const counts = { core: 0, advanced: 0, osint: 0, phase4: 0, phase5: 0 };
     for (const tool of tools) {
       counts[tool.category]++;
@@ -113,7 +115,7 @@ describe('getToolMetadataArray', () => {
   // ── Core tool names ────────────────────────────────────────────
 
   it('includes all 7 core tool names', () => {
-    const names = getToolMetadataArray().map((t) => t.name);
+    const names = tools.map((t) => t.name);
     const coreNames = [
       'get_meps',
       'get_mep_details',
@@ -129,7 +131,6 @@ describe('getToolMetadataArray', () => {
   });
 
   it('places core tools first in the array', () => {
-    const tools = getToolMetadataArray();
     const coreNames = [
       'get_meps',
       'get_mep_details',
@@ -147,7 +148,7 @@ describe('getToolMetadataArray', () => {
   // ── Advanced tool names ────────────────────────────────────────
 
   it('includes all 3 advanced tool names', () => {
-    const names = getToolMetadataArray().map((t) => t.name);
+    const names = tools.map((t) => t.name);
     expect(names).toContain('analyze_voting_patterns');
     expect(names).toContain('track_legislation');
     expect(names).toContain('generate_report');
@@ -156,7 +157,7 @@ describe('getToolMetadataArray', () => {
   // ── OSINT tool names ───────────────────────────────────────────
 
   it('includes all 14 osint tool names', () => {
-    const names = getToolMetadataArray().map((t) => t.name);
+    const names = tools.map((t) => t.name);
     const osintNames = [
       'assess_mep_influence',
       'analyze_coalition_dynamics',
@@ -181,7 +182,7 @@ describe('getToolMetadataArray', () => {
   // ── Phase 4 tool names ─────────────────────────────────────────
 
   it('includes all 8 phase4 tool names', () => {
-    const names = getToolMetadataArray().map((t) => t.name);
+    const names = tools.map((t) => t.name);
     const phase4Names = [
       'get_current_meps',
       'get_speeches',
@@ -200,7 +201,7 @@ describe('getToolMetadataArray', () => {
   // ── Phase 5 tool names ─────────────────────────────────────────
 
   it('includes all 13 phase5 tool names', () => {
-    const names = getToolMetadataArray().map((t) => t.name);
+    const names = tools.map((t) => t.name);
     const phase5Names = [
       'get_incoming_meps',
       'get_outgoing_meps',
@@ -229,23 +230,20 @@ describe('getToolMetadataArray', () => {
     expect(first).not.toBe(second);
   });
 
-  it('each tool object has exactly the expected shape keys', () => {
-    for (const tool of getToolMetadataArray()) {
-      expect(tool).toHaveProperty('name');
-      expect(tool).toHaveProperty('description');
-      expect(tool).toHaveProperty('inputSchema');
-      expect(tool).toHaveProperty('category');
+  it('each tool object has the required keys (name, description, inputSchema, category)', () => {
+    for (const tool of tools) {
+      // expected array is alphabetically sorted to match Object.keys().sort()
+      expect(Object.keys(tool).sort()).toEqual(['category', 'description', 'inputSchema', 'name']);
     }
   });
 
   it('first tool is get_meps with core category', () => {
-    const first = getToolMetadataArray()[0] as ToolMetadata;
+    const first = tools[0] as ToolMetadata;
     expect(first.name).toBe('get_meps');
     expect(first.category).toBe('core');
   });
 
   it('last tool is get_meeting_plenary_session_document_items with phase5 category', () => {
-    const tools = getToolMetadataArray();
     const last = tools[tools.length - 1] as ToolMetadata;
     expect(last.name).toBe('get_meeting_plenary_session_document_items');
     expect(last.category).toBe('phase5');

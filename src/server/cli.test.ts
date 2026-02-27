@@ -13,6 +13,7 @@ import {
   parseCLIArgs,
 } from './cli.js';
 import { SERVER_NAME, SERVER_VERSION } from '../index.js';
+import { getToolMetadataArray } from './toolRegistry.js';
 
 // ── sanitizeUrl ────────────────────────────────────────────────────
 
@@ -117,17 +118,15 @@ describe('showHelp', () => {
     expect(output).toContain(SERVER_VERSION);
   });
 
-  it('output contains tool count', () => {
+  it('output Tools: line contains total and core counts from registry', () => {
     showHelp();
     const output = String(consoleSpy.mock.calls[0]?.[0]);
-    // Should contain "45" (total tool count)
-    expect(output).toContain('45');
-  });
-
-  it('output contains core tool count of 7', () => {
-    showHelp();
-    const output = String(consoleSpy.mock.calls[0]?.[0]);
-    expect(output).toContain('7');
+    const allTools = getToolMetadataArray();
+    const totalCount = allTools.length;
+    const coreCount = allTools.filter((t) => t.category === 'core').length;
+    const advancedCount = totalCount - coreCount;
+    // Match the exact "Tools: N (C core + A advanced)" line from cli.ts
+    expect(output).toContain(`${String(totalCount)} (${String(coreCount)} core + ${String(advancedCount)} advanced)`);
   });
 
   it('output contains USAGE section', () => {
@@ -280,9 +279,14 @@ describe('showHealth', () => {
     expect(tools).toHaveProperty('total');
     expect(tools).toHaveProperty('core');
     expect(tools).toHaveProperty('advanced');
-    expect(tools['total']).toBe(45);
-    expect(tools['core']).toBe(7);
-    expect(tools['advanced']).toBe(38);
+
+    const allTools = getToolMetadataArray();
+    const expectedTotal = allTools.length;
+    const expectedCore = allTools.filter((t) => t.category === 'core').length;
+    const expectedAdvanced = expectedTotal - expectedCore;
+    expect(tools['total']).toBe(expectedTotal);
+    expect(tools['core']).toBe(expectedCore);
+    expect(tools['advanced']).toBe(expectedAdvanced);
   });
 
   it('health JSON contains prompts object', () => {
