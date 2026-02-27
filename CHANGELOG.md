@@ -30,7 +30,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 - **46 MCP Tools** — complete European Parliament API v2 coverage:
-- **45 MCP Tools** — complete European Parliament API v2 coverage:
   - 7 MEP tools (`get_meps`, `get_mep_details`, `get_current_meps`, `get_incoming_meps`,
     `get_outgoing_meps`, `get_homonym_meps`, `get_mep_declarations`)
   - 9 Plenary & Meeting tools (`get_plenary_sessions`, `get_voting_records`, `get_speeches`,
@@ -46,7 +45,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - 3 Advanced Analysis tools (`analyze_voting_patterns`, `track_legislation`,
     `generate_report`)
   - 15 OSINT Intelligence tools (`assess_mep_influence`, `analyze_coalition_dynamics`,
-  - 14 OSINT Intelligence tools (`assess_mep_influence`, `analyze_coalition_dynamics`,
     `detect_voting_anomalies`, `compare_political_groups`,
     `analyze_legislative_effectiveness`, `monitor_legislative_pipeline`,
     `analyze_committee_activity`, `track_mep_attendance`,
@@ -67,7 +65,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   output fields (`src/schemas/ep/analysis.ts`)
 - **`CorrelateIntelligenceSchema`** Zod schema validating `mepIds` (1–5),
   `groups`, `sensitivityLevel`, and `includeNetworkAnalysis` inputs
-    `comparative_intelligence`)
 - **9 MCP Resources** with `ep://` URI scheme:
   `ep://meps`, `ep://meps/{mepId}`, `ep://committees/{committeeId}`,
   `ep://plenary-sessions`, `ep://votes/{sessionId}`, `ep://political-groups`,
