@@ -44,7 +44,7 @@ describe('Full Workflow E2E Tests', () => {
   }, 10000);
 
   describe('Complete Tool Coverage', () => {
-    it('should verify all 39 MCP tools are registered', async () => {
+    it('should verify all 45 MCP tools are registered', async () => {
       const tools = await client.listTools();
       const toolNames = tools.map(t => t.name);
 
@@ -78,6 +78,12 @@ describe('Full Workflow E2E Tests', () => {
       expect(toolNames).toContain('analyze_country_delegation');
       expect(toolNames).toContain('generate_political_landscape');
 
+      // Phase 6 Advanced OSINT tools (4)
+      expect(toolNames).toContain('network_analysis');
+      expect(toolNames).toContain('sentiment_tracker');
+      expect(toolNames).toContain('early_warning_system');
+      expect(toolNames).toContain('comparative_intelligence');
+
       // EP API v2 extended tools (19)
       expect(toolNames).toContain('get_current_meps');
       expect(toolNames).toContain('get_speeches');
@@ -99,7 +105,7 @@ describe('Full Workflow E2E Tests', () => {
       expect(toolNames).toContain('get_procedure_events');
       expect(toolNames).toContain('get_procedures');
 
-      expect(toolNames.length).toBeGreaterThanOrEqual(39);
+      expect(toolNames.length).toBeGreaterThanOrEqual(45);
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute get_meps tool', async () => {
