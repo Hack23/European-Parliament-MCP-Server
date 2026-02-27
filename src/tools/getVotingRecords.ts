@@ -59,16 +59,16 @@ export async function handleGetVotingRecords(
     const outputSchema = PaginatedResponseSchema(VotingRecordSchema);
     const validated = outputSchema.parse(result);
 
-    // Build final response, optionally including a deprecation warning.
-    // The _warning field is appended to the validated payload when mepId is
-    // provided so callers receive accurate information about EP API limitations.
-    type ValidatedPayload = typeof validated & { _warning?: string };
-    const responsePayload: ValidatedPayload = { ...validated };
-    if (params['mepId'] !== undefined) {
-      responsePayload['_warning'] =
-        'The mepId parameter is not supported by the EP API and has no effect on results. ' +
-        'The EP votes endpoint only returns aggregate vote counts, not per-MEP positions.';
-    }
+    // Note: `_warning` is a meta-field added after Zod validation and is
+    // intentionally not part of the Zod output schema.
+    const responsePayload = {
+      ...validated,
+      _warning:
+        params['mepId'] !== undefined
+          ? 'The mepId parameter is not supported by the EP API and has no effect on results. ' +
+            'The EP votes endpoint only returns aggregate vote counts, not per-MEP positions.'
+          : undefined
+    };
     
     // Return MCP-compliant response
     return {

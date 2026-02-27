@@ -164,7 +164,10 @@ describe('get_voting_records Tool', () => {
       const text = result.content[0]?.text ?? '{}';
       const data = JSON.parse(text) as Record<string, unknown>;
       const warning = data['_warning'] as string;
-      expect(warning).toMatch(/EP API|aggregate|no effect/i);
+      const lowerWarning = warning.toLowerCase();
+      expect(lowerWarning).toContain('ep api');
+      expect(lowerWarning).toContain('aggregate');
+      expect(lowerWarning).toContain('no effect');
     });
   });
 

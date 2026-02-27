@@ -72,7 +72,7 @@ describe('transformMEP', () => {
 
   it('uses @id when identifier is missing', () => {
     const mep = transformMEP({ '@id': 'person/999', label: 'ID MEP' });
-    expect(mep.id).toContain('999');
+    expect(mep.id).toBe('person/999');
   });
 
   it('omits email when not provided', () => {
