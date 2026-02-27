@@ -156,6 +156,7 @@ describe('EuropeanParliamentClient', () => {
       // Mock successful API response
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(10)
       } as Response);
 
@@ -173,6 +174,7 @@ describe('EuropeanParliamentClient', () => {
     it('should respect country filter', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
       } as Response);
 
@@ -188,6 +190,7 @@ describe('EuropeanParliamentClient', () => {
     it('should respect limit parameter', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(25)
       } as Response);
 
@@ -209,6 +212,7 @@ describe('EuropeanParliamentClient', () => {
     it('should use cache for repeated requests', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
       } as Response);
 
@@ -228,6 +232,7 @@ describe('EuropeanParliamentClient', () => {
       // Mock successful API response for MEP details
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             id: 'person/124810',
@@ -259,6 +264,7 @@ describe('EuropeanParliamentClient', () => {
       // Mock successful API response
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             id: 'person/124810',
@@ -285,6 +291,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated session data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMeetingsResponse(10)
       } as Response);
 
@@ -298,6 +305,7 @@ describe('EuropeanParliamentClient', () => {
     it('should include session details', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMeetingsResponse(1)
       } as Response);
 
@@ -315,6 +323,7 @@ describe('EuropeanParliamentClient', () => {
     it('should transform location correctly', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMeetingsResponse(1)
       } as Response);
 
@@ -328,6 +337,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated voting records with sessionId', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockVoteResultsResponse()
       });
 
@@ -340,6 +350,7 @@ describe('EuropeanParliamentClient', () => {
     it('should include vote counts', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockVoteResultsResponse()
       });
 
@@ -358,11 +369,13 @@ describe('EuropeanParliamentClient', () => {
       // First call: meetings list
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMeetingsResponse(1)
       });
       // Second call: vote results for that meeting
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockVoteResultsResponse()
       });
 
@@ -374,6 +387,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle pagination with offset', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockVoteResultsResponse(10)
       });
 
@@ -426,6 +440,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -478,6 +493,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -493,6 +509,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle empty vote results', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [],
           '@context': []
@@ -509,6 +526,7 @@ describe('EuropeanParliamentClient', () => {
     it('should calculate hasMore correctly', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockVoteResultsResponse(10)
       });
 
@@ -525,10 +543,12 @@ describe('EuropeanParliamentClient', () => {
     it('should use dateFrom year for meetings query when no sessionId', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMeetingsResponse(1)
       });
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockVoteResultsResponse()
       });
 
@@ -544,6 +564,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle meetings with no vote results gracefully', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMeetingsResponse(2)
       });
       // First meeting has no votes (throws error)
@@ -551,6 +572,7 @@ describe('EuropeanParliamentClient', () => {
       // Second meeting has votes
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockVoteResultsResponse()
       });
 
@@ -565,6 +587,7 @@ describe('EuropeanParliamentClient', () => {
     it('should search documents by keyword', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse()
       });
 
@@ -580,6 +603,7 @@ describe('EuropeanParliamentClient', () => {
     it('should include document metadata', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse()
       });
 
@@ -600,6 +624,7 @@ describe('EuropeanParliamentClient', () => {
     it('should map document types correctly', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse()
       });
 
@@ -642,6 +667,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -684,6 +710,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -700,6 +727,7 @@ describe('EuropeanParliamentClient', () => {
     it('should map document type to EP API work-type', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse()
       });
 
@@ -723,6 +751,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle AMENDMENT document type mapping', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse()
       });
 
@@ -738,6 +767,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle RESOLUTION document type mapping', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse()
       });
 
@@ -753,6 +783,7 @@ describe('EuropeanParliamentClient', () => {
     it('should include year parameter when dateFrom provided', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse()
       });
 
@@ -768,6 +799,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle empty search results', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [],
           '@context': []
@@ -787,6 +819,7 @@ describe('EuropeanParliamentClient', () => {
     it('should apply pagination correctly', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(10)
       });
 
@@ -820,6 +853,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -836,6 +870,7 @@ describe('EuropeanParliamentClient', () => {
     it('should detect hasMore based on result count', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(20)
       });
 
@@ -852,6 +887,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return committee details', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
       });
 
@@ -866,6 +902,7 @@ describe('EuropeanParliamentClient', () => {
     it('should include committee composition', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
       });
 
@@ -885,6 +922,7 @@ describe('EuropeanParliamentClient', () => {
       // Second call: list all committees
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
       });
 
@@ -897,6 +935,7 @@ describe('EuropeanParliamentClient', () => {
     it('should use id parameter for direct lookup', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
       });
 
@@ -912,6 +951,7 @@ describe('EuropeanParliamentClient', () => {
     it('should use abbreviation parameter for direct lookup', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
       });
 
@@ -934,6 +974,7 @@ describe('EuropeanParliamentClient', () => {
       // List search returns empty
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [],
           '@context': []
@@ -948,6 +989,7 @@ describe('EuropeanParliamentClient', () => {
     it('should extract member IDs from hasMembership', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
       });
 
@@ -959,6 +1001,7 @@ describe('EuropeanParliamentClient', () => {
     it('should set chair as first member', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
       });
 
@@ -973,6 +1016,7 @@ describe('EuropeanParliamentClient', () => {
     it('should set vice chairs as second and third members', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
       });
 
@@ -984,6 +1028,7 @@ describe('EuropeanParliamentClient', () => {
     it('should extract responsibilities from classification', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
       });
 
@@ -1002,6 +1047,7 @@ describe('EuropeanParliamentClient', () => {
       // List search succeeds
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
       });
 
@@ -1047,6 +1093,7 @@ describe('EuropeanParliamentClient', () => {
       // List search succeeds
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockListResponse
       });
 
@@ -1071,6 +1118,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -1095,6 +1143,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -1108,6 +1157,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated questions', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockQuestionsResponse()
       });
 
@@ -1120,6 +1170,7 @@ describe('EuropeanParliamentClient', () => {
     it('should include question details', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockQuestionsResponse()
       });
 
@@ -1138,6 +1189,7 @@ describe('EuropeanParliamentClient', () => {
     it('should filter by question type', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockQuestionsResponse()
       });
 
@@ -1148,6 +1200,7 @@ describe('EuropeanParliamentClient', () => {
     it('should detect answered status from was_realized_by', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockQuestionsResponse()
       });
 
@@ -1174,6 +1227,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -1198,6 +1252,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -1233,6 +1288,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -1272,6 +1328,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -1311,6 +1368,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -1350,6 +1408,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -1378,6 +1437,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -1391,6 +1451,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle empty results', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [],
           '@context': []
@@ -1407,6 +1468,7 @@ describe('EuropeanParliamentClient', () => {
     it('should apply pagination correctly', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockQuestionsResponse(10)
       });
 
@@ -1422,6 +1484,7 @@ describe('EuropeanParliamentClient', () => {
     it('should send QUESTION_WRITTEN work-type for WRITTEN filter', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockQuestionsResponse()
       });
 
@@ -1436,6 +1499,7 @@ describe('EuropeanParliamentClient', () => {
     it('should send QUESTION_ORAL work-type for ORAL filter', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockQuestionsResponse()
       });
 
@@ -1450,6 +1514,7 @@ describe('EuropeanParliamentClient', () => {
     it('should include year parameter when dateFrom provided', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockQuestionsResponse()
       });
 
@@ -1476,6 +1541,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -1499,6 +1565,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -1510,6 +1577,7 @@ describe('EuropeanParliamentClient', () => {
     it('should detect hasMore based on result count', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockQuestionsResponse(50)
       });
 
@@ -1534,6 +1602,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -1558,6 +1627,7 @@ describe('EuropeanParliamentClient', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => mockResponse
       });
 
@@ -1572,6 +1642,7 @@ describe('EuropeanParliamentClient', () => {
       // Mock API response
       mockFetch.mockResolvedValue({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
       } as Response);
 
@@ -1598,6 +1669,7 @@ describe('EuropeanParliamentClient', () => {
       // Mock API response
       mockFetch.mockResolvedValue({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
       } as Response);
 
@@ -1642,6 +1714,7 @@ describe('EuropeanParliamentClient', () => {
           } as Response)
           .mockResolvedValueOnce({
             ok: true,
+            headers: new Headers(),
             json: async () => createMockMEPsResponse(1)
           } as Response);
 
@@ -1690,6 +1763,7 @@ describe('EuropeanParliamentClient', () => {
       // Mock response with minimal fields
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             // Only minimal fields
@@ -1707,6 +1781,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle MEP with no identifier', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             label: 'Test MEP',
@@ -1725,6 +1800,7 @@ describe('EuropeanParliamentClient', () => {
     it('should construct name from givenName and familyName when label missing', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: '123',
@@ -1742,6 +1818,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle plenary session with missing activity date', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             activity_id: 'session-1',
@@ -1760,6 +1837,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle plenary session with null activity date', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             activity_id: 'session-1',
@@ -1779,6 +1857,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle location with unknown locality', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             activity_id: 'session-1',
@@ -1796,6 +1875,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle MEP details with missing birth date', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: '123',
@@ -1815,6 +1895,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle MEP details with null organization in membership', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: '123',
@@ -1838,6 +1919,7 @@ describe('EuropeanParliamentClient', () => {
     it('should normalize MEP ID by stripping MEP- prefix', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: '124810',
@@ -1864,6 +1946,7 @@ describe('EuropeanParliamentClient', () => {
     it('should normalize MEP ID by extracting from person/ format', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: '124810',
@@ -2003,6 +2086,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated current MEP data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(5)
       } as Response);
 
@@ -2020,6 +2104,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(1)
       } as Response);
 
@@ -2045,6 +2130,7 @@ describe('EuropeanParliamentClient', () => {
     it('should apply default limit and offset', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
       } as Response);
 
@@ -2059,6 +2145,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated incoming MEP data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(3)
       } as Response);
 
@@ -2073,6 +2160,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(1)
       } as Response);
 
@@ -2099,6 +2187,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated outgoing MEP data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(4)
       } as Response);
 
@@ -2112,6 +2201,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(1)
       } as Response);
 
@@ -2139,6 +2229,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated speech data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockSpeechesResponse(3)
       } as Response);
 
@@ -2155,6 +2246,7 @@ describe('EuropeanParliamentClient', () => {
     it('should include speech fields', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockSpeechesResponse(1)
       } as Response);
 
@@ -2174,6 +2266,7 @@ describe('EuropeanParliamentClient', () => {
     it('should pass date-from and date-to parameters', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockSpeechesResponse(1)
       } as Response);
 
@@ -2188,6 +2281,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle empty results', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [],
           '@context': []
@@ -2214,6 +2308,7 @@ describe('EuropeanParliamentClient', () => {
     it('should detect hasMore when result count equals limit', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockSpeechesResponse(10)
       } as Response);
 
@@ -2227,6 +2322,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated procedure data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockProceduresResponse(3)
       } as Response);
 
@@ -2241,6 +2337,7 @@ describe('EuropeanParliamentClient', () => {
     it('should include procedure fields', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockProceduresResponse(1)
       } as Response);
 
@@ -2259,6 +2356,7 @@ describe('EuropeanParliamentClient', () => {
     it('should pass year parameter', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockProceduresResponse(1)
       } as Response);
 
@@ -2284,6 +2382,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle empty results', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [],
           '@context': []
@@ -2299,6 +2398,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return a single procedure', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           identifier: '2024/0001(COD)',
           title_dcterms: [{ '@language': 'en', '@value': 'AI Act' }],
@@ -2329,6 +2429,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           identifier: 'PROC-1',
           title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
@@ -2348,6 +2449,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated adopted text data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockAdoptedTextsResponse(3)
       } as Response);
 
@@ -2362,6 +2464,7 @@ describe('EuropeanParliamentClient', () => {
     it('should include adopted text fields', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockAdoptedTextsResponse(1)
       } as Response);
 
@@ -2378,6 +2481,7 @@ describe('EuropeanParliamentClient', () => {
     it('should pass year parameter', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockAdoptedTextsResponse(1)
       } as Response);
 
@@ -2405,6 +2509,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated event data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockEventsResponse(3)
       } as Response);
 
@@ -2419,6 +2524,7 @@ describe('EuropeanParliamentClient', () => {
     it('should include event fields', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockEventsResponse(1)
       } as Response);
 
@@ -2437,6 +2543,7 @@ describe('EuropeanParliamentClient', () => {
     it('should pass date range parameters', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockEventsResponse(1)
       } as Response);
 
@@ -2462,6 +2569,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle empty results', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [],
           '@context': []
@@ -2478,6 +2586,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated meeting activity data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMeetingActivitiesResponse(3)
       } as Response);
 
@@ -2492,6 +2601,7 @@ describe('EuropeanParliamentClient', () => {
     it('should include activity fields', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMeetingActivitiesResponse(1)
       } as Response);
 
@@ -2517,6 +2627,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMeetingActivitiesResponse(1)
       } as Response);
 
@@ -2543,6 +2654,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated meeting decision data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(3)
       } as Response);
 
@@ -2564,6 +2676,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -2591,6 +2704,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated declaration data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDeclarationsResponse(3)
       } as Response);
 
@@ -2605,6 +2719,7 @@ describe('EuropeanParliamentClient', () => {
     it('should include declaration fields', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDeclarationsResponse(1)
       } as Response);
 
@@ -2622,6 +2737,7 @@ describe('EuropeanParliamentClient', () => {
     it('should pass year parameter', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDeclarationsResponse(1)
       } as Response);
 
@@ -2647,6 +2763,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle empty results', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [],
           '@context': []
@@ -2662,6 +2779,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated plenary document data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(3)
       } as Response);
 
@@ -2674,6 +2792,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -2688,6 +2807,7 @@ describe('EuropeanParliamentClient', () => {
     it('should pass year parameter', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -2715,6 +2835,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated committee document data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(3)
       } as Response);
 
@@ -2727,6 +2848,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -2741,6 +2863,7 @@ describe('EuropeanParliamentClient', () => {
     it('should pass year parameter', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -2768,6 +2891,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated plenary session document data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(3)
       } as Response);
 
@@ -2780,6 +2904,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -2807,6 +2932,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated vocabulary data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [
             { id: 'vocab-1', label: 'Vocabulary 1' },
@@ -2826,6 +2952,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [],
           '@context': []
@@ -2854,6 +2981,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return raw items without transformation', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{ customField: 'value', anotherField: 42 }],
           '@context': []
@@ -2871,6 +2999,7 @@ describe('EuropeanParliamentClient', () => {
     it('should transform speech data with all fields', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: 'SP-001',
@@ -2898,6 +3027,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle speech with missing optional fields', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: 'SP-002'
@@ -2920,6 +3050,7 @@ describe('EuropeanParliamentClient', () => {
     it('should use firstDefined to pick title from multiple candidates', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: 'PROC-1',
@@ -2941,6 +3072,7 @@ describe('EuropeanParliamentClient', () => {
     it('should extract document refs from had_document array', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: 'PROC-2',
@@ -2960,6 +3092,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle had_document as objects', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: 'PROC-3',
@@ -2980,6 +3113,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle had_document as single string', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: 'PROC-4',
@@ -2998,6 +3132,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle null/undefined had_document', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: 'PROC-5'
@@ -3017,6 +3152,7 @@ describe('EuropeanParliamentClient', () => {
     it('should transform adopted text with all fields', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             work_id: 'TA-9-2024-0001',
@@ -3044,6 +3180,7 @@ describe('EuropeanParliamentClient', () => {
     it('should transform event with all fields', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: 'EVT-1',
@@ -3075,6 +3212,7 @@ describe('EuropeanParliamentClient', () => {
     it('should transform meeting activity with order field', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: 'ACT-1',
@@ -3099,6 +3237,7 @@ describe('EuropeanParliamentClient', () => {
     it('should default order to 0 when not a number', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: 'ACT-2'
@@ -3119,6 +3258,7 @@ describe('EuropeanParliamentClient', () => {
     it('should transform declaration with all fields', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             work_id: 'DFI-001',
@@ -3147,6 +3287,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle declaration with missing optional fields', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             work_id: 'DFI-002'
@@ -3172,6 +3313,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated homonym MEP data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(3)
       } as Response);
 
@@ -3189,6 +3331,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(1)
       } as Response);
 
@@ -3203,6 +3346,7 @@ describe('EuropeanParliamentClient', () => {
     it('should apply default limit and offset', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
       } as Response);
 
@@ -3228,6 +3372,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated corporate bodies', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
       } as Response);
 
@@ -3243,6 +3388,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
       } as Response);
 
@@ -3257,6 +3403,7 @@ describe('EuropeanParliamentClient', () => {
     it('should apply default limit and offset', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
       } as Response);
 
@@ -3282,6 +3429,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return a single event', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'evt-1',
           identifier: 'EVT-2024-001',
@@ -3312,6 +3460,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'evt-1',
           identifier: 'EVT-2024-001',
@@ -3332,6 +3481,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return a single meeting', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'eli/dl/event/MTG-PL-2024-01-15',
           type: 'Activity',
@@ -3357,6 +3507,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'eli/dl/event/MTG-PL-2024-01-15',
           type: 'Activity',
@@ -3377,6 +3528,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated foreseen activities', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMeetingActivitiesResponse(2)
       } as Response);
 
@@ -3399,6 +3551,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMeetingActivitiesResponse(1)
       } as Response);
 
@@ -3413,6 +3566,7 @@ describe('EuropeanParliamentClient', () => {
     it('should apply default limit and offset', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockMeetingActivitiesResponse(1)
       } as Response);
 
@@ -3427,6 +3581,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return a single speech', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'speech-1',
           identifier: 'SPEECH-1',
@@ -3459,6 +3614,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'speech-1',
           identifier: 'SPEECH-1',
@@ -3479,6 +3635,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated procedure events', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockEventsResponse(2)
       } as Response);
 
@@ -3501,6 +3658,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockEventsResponse(1)
       } as Response);
 
@@ -3515,6 +3673,7 @@ describe('EuropeanParliamentClient', () => {
     it('should apply default limit and offset', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockEventsResponse(1)
       } as Response);
 
@@ -3529,6 +3688,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return a single adopted text', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'at-1',
           work_id: 'TA-9-2024-0001',
@@ -3558,6 +3718,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'at-1',
           work_id: 'TA-9-2024-0001',
@@ -3578,6 +3739,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return a single document', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'doc-1',
           work_id: 'A-9-2024-0001',
@@ -3605,6 +3767,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'doc-1',
           work_id: 'A-9-2024-0001',
@@ -3625,6 +3788,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return a single committee document', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'cdoc-1',
           work_id: 'CM-9-2024-0001',
@@ -3652,6 +3816,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'cdoc-1',
           work_id: 'CM-9-2024-0001',
@@ -3672,6 +3837,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return a single parliamentary question', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'q-1',
           work_id: 'E-9-2024-000001',
@@ -3701,6 +3867,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'q-1',
           work_id: 'E-9-2024-000001',
@@ -3721,6 +3888,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return a single plenary document', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'pdoc-1',
           work_id: 'PV-9-2024-0001',
@@ -3748,6 +3916,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'pdoc-1',
           work_id: 'PV-9-2024-0001',
@@ -3768,6 +3937,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return a single plenary session document', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'psdoc-1',
           work_id: 'PS-9-2024-0001',
@@ -3795,6 +3965,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'psdoc-1',
           work_id: 'PS-9-2024-0001',
@@ -3815,6 +3986,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated document items', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(3)
       } as Response);
 
@@ -3831,6 +4003,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -3845,6 +4018,7 @@ describe('EuropeanParliamentClient', () => {
     it('should apply default limit and offset', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -3870,6 +4044,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated external documents', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(2)
       } as Response);
 
@@ -3886,6 +4061,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -3900,6 +4076,7 @@ describe('EuropeanParliamentClient', () => {
     it('should pass year parameter', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -3914,6 +4091,7 @@ describe('EuropeanParliamentClient', () => {
     it('should apply default limit and offset', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -3939,6 +4117,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return a single external document', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'edoc-1',
           work_id: 'EXT-2024-0001',
@@ -3966,6 +4145,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'edoc-1',
           work_id: 'EXT-2024-0001',
@@ -3986,6 +4166,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return a vocabulary entry', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'voc-1',
           label: 'Test Vocabulary',
@@ -4011,6 +4192,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'voc-1',
           label: 'Test'
@@ -4030,6 +4212,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return a single MEP declaration', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'decl-1',
           work_id: 'DFI-9-2024-000001',
@@ -4060,6 +4243,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           id: 'decl-1',
           work_id: 'DFI-9-2024-000001',
@@ -4081,6 +4265,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated plenary session documents for a meeting', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(3)
       } as Response);
 
@@ -4103,6 +4288,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -4117,6 +4303,7 @@ describe('EuropeanParliamentClient', () => {
     it('should apply default limit and offset', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -4142,6 +4329,7 @@ describe('EuropeanParliamentClient', () => {
     it('should return paginated plenary session document items for a meeting', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(2)
       } as Response);
 
@@ -4164,6 +4352,7 @@ describe('EuropeanParliamentClient', () => {
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -4178,6 +4367,7 @@ describe('EuropeanParliamentClient', () => {
     it('should apply default limit and offset', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
@@ -4212,6 +4402,7 @@ describe('EuropeanParliamentClient', () => {
           } as Response)
           .mockResolvedValueOnce({
             ok: true,
+            headers: new Headers(),
             json: async () => createMockDocumentsResponse(1)
           } as Response);
 
@@ -4273,6 +4464,7 @@ describe('EuropeanParliamentClient', () => {
     it('should handle empty array in had_document', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: 'PROC-EMPTY-DOCS',
@@ -4289,6 +4481,7 @@ describe('EuropeanParliamentClient', () => {
     it('should filter out empty strings from document refs', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
+        headers: new Headers(),
         json: async () => ({
           data: [{
             identifier: 'PROC-FILTER',

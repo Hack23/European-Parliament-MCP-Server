@@ -249,7 +249,7 @@ export class BaseEPClient {
         }
 
         // Guard against oversized responses to prevent memory exhaustion.
-        const contentLength = response.headers?.get('content-length') ?? null;
+        const contentLength = response.headers.get('content-length');
         if (contentLength !== null) {
           const bytes = Number.parseInt(contentLength, 10);
           if (Number.isFinite(bytes) && bytes > DEFAULT_MAX_RESPONSE_BYTES) {
