@@ -61,7 +61,7 @@ The **European Parliament MCP Server** (v1.0) is a TypeScript/Node.js applicatio
 
 | Capability | Details |
 |------------|---------|
-| **MCP Tools** | 39 tools across 7 categories |
+| **MCP Tools** | 45 tools across 8 categories |
 | **MCP Resources** | 9 URI-addressable resources |
 | **MCP Prompts** | 7 intelligence-analysis prompts |
 | **Data Source** | EP Open Data Portal API v2 |
@@ -80,7 +80,7 @@ C4Context
     Person(aiUser, "AI User / Developer", "Uses AI assistants to query EP data")
     Person(analyst, "Political Analyst", "Performs legislative intelligence analysis")
 
-    System(mcpServer, "EP MCP Server", "MCP server exposing 39 tools, 9 resources, 7 prompts for EP parliamentary data")
+    System(mcpServer, "EP MCP Server", "MCP server exposing 45 tools, 9 resources, 7 prompts for EP parliamentary data")
 
     System_Ext(claudeDesktop, "Claude Desktop / Cursor / Copilot", "MCP-compatible AI client")
     System_Ext(epApi, "EP Open Data Portal API v2", "Official European Parliament open data API at data.europarl.europa.eu/api/v2/")
@@ -108,7 +108,7 @@ flowchart TD
     subgraph EPMCPServer["EP MCP Server — Node.js Process"]
         direction TB
         MH["MCP Handler\n(stdio transport)"]
-        TR["Tool Router\n(39 tools dispatched)"]
+        TR["Tool Router\n(45 tools dispatched)"]
         RE["Resource Engine\n(9 URI resources)"]
         PR["Prompt Registry\n(7 prompts)"]
         DI["DI Container\n(singletons)"]
@@ -186,6 +186,13 @@ flowchart TD
             GPL["generate_political_landscape"]
         end
 
+        subgraph Phase6["Phase 6 Advanced OSINT (4)"]
+            NA["network_analysis"]
+            ST["sentiment_tracker"]
+            EWS["early_warning_system"]
+            CI["comparative_intelligence"]
+        end
+
         subgraph Phase4["Phase 4 EP API v2 (8)"]
             GCM["get_current_meps"]
             GSP["get_speeches"]
@@ -197,7 +204,7 @@ flowchart TD
             GMPD["get_mep_declarations"]
         end
 
-        subgraph Phase5["Phase 5 Complete Coverage (11)"]
+        subgraph Phase5["Phase 5 Complete Coverage (13)"]
             GIM["get_incoming_meps"]
             GOM["get_outgoing_meps"]
             GHM["get_homonym_meps"]
@@ -209,6 +216,8 @@ flowchart TD
             GED["get_external_documents"]
             GMFA["get_meeting_foreseen_activities"]
             GPE["get_procedure_events"]
+            GMPSD["get_meeting_plenary_session_documents"]
+            GMPSDI["get_meeting_plenary_session_document_items"]
         end
     end
 
@@ -233,6 +242,7 @@ flowchart TD
     OSINT1 --> ZV
     OSINT2 --> ZV
     OSINT3 --> ZV
+    Phase6 --> ZV
     Phase4 --> ZV
     Phase5 --> ZV
 
@@ -243,7 +253,7 @@ flowchart TD
 
 ## 📡 MCP Protocol Surface
 
-### Tools (43 total)
+### Tools (45 total)
 
 #### Core Data Access Tools (7)
 
@@ -356,8 +366,9 @@ The following four tools extend the OSINT capability with network analysis, sent
 | **OSINT Phase 1** | 6 | assess_mep_influence, analyze_coalition_dynamics, detect_voting_anomalies, compare_political_groups, analyze_legislative_effectiveness, monitor_legislative_pipeline |
 | **OSINT Phase 2** | 2 | analyze_committee_activity, track_mep_attendance |
 | **OSINT Phase 3** | 2 | analyze_country_delegation, generate_political_landscape |
+| **Phase 6 Advanced OSINT** | 4 | network_analysis, sentiment_tracker, early_warning_system, comparative_intelligence |
 | **Phase 4 EP API v2** | 8 | get_current_meps, get_speeches, get_procedures, get_adopted_texts, get_events, get_meeting_activities, get_meeting_decisions, get_mep_declarations |
-| **Phase 5 Complete Coverage** | 11 | get_incoming_meps, get_outgoing_meps, get_homonym_meps, get_plenary_documents, get_committee_documents, get_plenary_session_documents, get_plenary_session_document_items, get_controlled_vocabularies, get_external_documents, get_meeting_foreseen_activities, get_procedure_events |
+| **Phase 5 Complete Coverage** | 13 | get_incoming_meps, get_outgoing_meps, get_homonym_meps, get_plenary_documents, get_committee_documents, get_plenary_session_documents, get_plenary_session_document_items, get_controlled_vocabularies, get_external_documents, get_meeting_foreseen_activities, get_procedure_events, get_meeting_plenary_session_documents, get_meeting_plenary_session_document_items |
 
 ### Resources (9 total)
 
@@ -445,7 +456,7 @@ flowchart TD
 
 **Status:** Accepted | **Date:** 2026-02-26
 
-**Context:** Multiple services (RateLimiter, MetricsService, AuditLogger, HealthService) need to be shared across the 39 tool handlers. Using ad-hoc singleton globals creates tight coupling and reduces testability.
+**Context:** Multiple services (RateLimiter, MetricsService, AuditLogger, HealthService) need to be shared across the 45 tool handlers. Using ad-hoc singleton globals creates tight coupling and reduces testability.
 
 **Decision:** Implement a lightweight DI container that manages singleton lifecycle for all shared services. Services are registered once at startup and injected into tool handlers via constructor injection.
 
@@ -547,7 +558,7 @@ See [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) for full details.
 
 | Control | Standard | Clause | Implementation |
 |---------|----------|--------|----------------|
-| Asset Management | ISO 27001 | A.8.1 | All 39 tools documented as information assets |
+| Asset Management | ISO 27001 | A.8.1 | All 45 tools documented as information assets |
 | Secure Development | ISO 27001 | A.14.2 | TypeScript strict mode, Zod validation, ESLint |
 | Access Control | ISO 27001 | A.9.1 | MCP stdio transport, no network exposure |
 | Audit Logging | ISO 27001 | A.12.4 | AuditLogger singleton, all invocations logged |
