@@ -118,7 +118,7 @@ The SBOM includes:
 | Control | Status | Details |
 |---------|--------|---------|
 | npm audit | ✅ 0 vulnerabilities | Last checked 2026-02-27 |
-| License compliance | ✅ Passing | All MIT/ISC/Apache-2.0 |
+| License compliance | ✅ Passing | All dependencies comply with the license allowlist |
 | SLSA Level 3 | ✅ Achieved | Cryptographic provenance on all releases |
 | Sigstore signatures | ✅ Enabled | npm package and GitHub release artifacts |
 | Dependabot | ✅ Enabled | Automated dependency update PRs |

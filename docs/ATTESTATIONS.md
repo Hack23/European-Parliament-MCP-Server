@@ -29,7 +29,7 @@ All releases of European Parliament MCP Server include cryptographic attestation
 | undici | 7.22.0 | 0 | ✅ Clean |
 | zod | 4.3.6 | 0 | ✅ Clean |
 
-> **Note:** High-severity vulnerabilities in `rollup` (GHSA-mw96-cpmx-2vgc), `minimatch` (GHSA-3ppc-4f35-3m26), and `minimatch` ReDoS (GHSA-7r86-cg39-jmmj, GHSA-23c5-xmqv-rm74) were remediated prior to the v1.0 release by updating transitive dependencies.
+> **Note:** High-severity vulnerabilities in `rollup` (GHSA-mw96-cpmx-2vgc) and `minimatch` (GHSA-3ppc-4f35-3m26, GHSA-7r86-cg39-jmmj, GHSA-23c5-xmqv-rm74) were remediated prior to the v1.0 release by updating transitive dependencies.
 
 ## SLSA Level 3 Compliance
 
