@@ -19,7 +19,7 @@
  * manual intelligence synthesis and reducing missed signals.
  *
  * **Marketing Perspective:** Demonstrates the advanced OSINT capability of
- * combining 14 intelligence tools into actionable assessments for policy
+ * combining multiple intelligence tools into actionable assessments for policy
  * professionals, researchers, and advocacy organisations tracking EU
  * legislative dynamics.
  *
