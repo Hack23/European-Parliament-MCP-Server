@@ -7,7 +7,7 @@
 <h1 align="center">European Parliament MCP Server - API Usage Guide</h1>
 
 <p align="center">
-  <strong>Comprehensive guide to using all 45 MCP tools</strong><br>
+  <strong>Comprehensive guide to using all 46 MCP tools</strong><br>
   <em>Real-world examples, best practices, and query patterns</em>
 </p>
 
@@ -69,7 +69,7 @@
 
 ## 🎯 Overview
 
-The European Parliament MCP Server provides 45 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 7 core tools, 3 advanced tools, 14 OSINT intelligence tools, 8 Phase 4 tools, and 13 Phase 5 tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
+The European Parliament MCP Server provides 46 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 7 core tools, 3 advanced tools, 15 OSINT intelligence tools, 8 Phase 4 tools, and 13 Phase 5 tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
 
 ### Key Features
 
@@ -2190,7 +2190,7 @@ The European Parliament MCP Server is the **most feature-rich political MCP serv
 
 | Country | Server | Key Capabilities |
 |---------|--------|-----------------|
-| 🇪🇺 **EU** | [**European Parliament MCP**](https://github.com/Hack23/European-Parliament-MCP-Server) | **45 tools** — MEP profiling, coalition analysis, anomaly detection, political landscape |
+| 🇪🇺 **EU** | [**European Parliament MCP**](https://github.com/Hack23/European-Parliament-MCP-Server) | **46 tools** — MEP profiling, coalition analysis, anomaly detection, political landscape |
 | 🇺🇸 **USA** | [Congress.gov API MCP](https://github.com/bsmi021/mcp-congress_gov_server) | Bills, members, votes, committees |
 | 🇬🇧 **UK** | [Parliament MCP](https://github.com/i-dot-ai/parliament-mcp) | Hansard, members, debates, divisions |
 | 🇸🇪 **Sweden** | [Riksdag & Regering MCP](https://github.com/isakskogstad/Riksdag-Regering-MCP) | Parliament & government data |

@@ -474,7 +474,7 @@ graph TB
 
     subgraph "MCP Server (src/)"
         direction TB
-        Tools[🔧 45 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …]
+        Tools[🔧 46 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …]
         Resources[📦 9 Resources<br/>ep://meps/{id}<br/>ep://procedures/{id} · …]
         Prompts[💬 7 Prompts<br/>mep_briefing<br/>coalition_analysis · …]
     end
@@ -909,7 +909,7 @@ npm run test:coverage
 npm run test:watch
 ```
 
-**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, all 45 MCP tools are tested against the real European Parliament API endpoints. All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](INTEGRATION_TESTING.md) for the complete guide.
+**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, all 46 MCP tools are tested against the real European Parliament API endpoints. All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](INTEGRATION_TESTING.md) for the complete guide.
 
 ### Code Quality
 

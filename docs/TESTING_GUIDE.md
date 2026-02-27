@@ -317,7 +317,7 @@ EP_SAVE_FIXTURES=false        # Set to 'true' to capture API responses as fixtur
 
 ### Features Tested
 
-- ✅ Real API data fetching for all 45 tools
+- ✅ Real API data fetching for all 46 tools
 - ✅ Caching behavior and hit-rate effectiveness
 - ✅ Rate limiting compliance (no 429 responses)
 - ✅ Error handling (network errors, invalid parameters)
@@ -375,7 +375,7 @@ await client.disconnect();
 ### Features Tested
 
 - ✅ MCP protocol compliance (tool listing, call, error)
-- ✅ All 45 MCP tools respond without crashing
+- ✅ All 46 MCP tools respond without crashing
 - ✅ Tool input validation rejects malformed arguments
 - ✅ All 9 MCP resources are readable
 - ✅ All 7 MCP prompts return structured messages

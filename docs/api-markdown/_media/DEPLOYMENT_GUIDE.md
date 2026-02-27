@@ -97,7 +97,7 @@ npm run build
 1. Open Claude Desktop
 2. Start a new conversation
 3. Type: "What European Parliament tools are available?"
-4. Claude should list the 45 MCP tools
+4. Claude should list the 46 MCP tools
 
 ### Troubleshooting
 

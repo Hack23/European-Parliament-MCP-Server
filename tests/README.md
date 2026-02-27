@@ -48,7 +48,7 @@ Tests integration with the European Parliament API:
 ### E2E Tests (`tests/e2e/`)
 
 Tests complete user workflows via MCP client:
-- All 45 MCP tools (`fullWorkflow.e2e.test.ts`)
+- All 46 MCP tools (`fullWorkflow.e2e.test.ts`)
 - MEP query workflows (`mepQueries.e2e.test.ts`)
 - Prompts and resource templates (`promptsAndResources.e2e.test.ts`)
 - MCP protocol compliance

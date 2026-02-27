@@ -74,7 +74,7 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ### 🎯 Key Features
 
-- 🔌 **Full MCP Implementation**: 45 tools (7 MEP + 7 plenary & meeting + 2 committee + 7 document + 3 legislative + 3 advanced analysis + 14 OSINT intelligence), 9 Resources, and 7 Prompts
+- 🔌 **Full MCP Implementation**: 46 tools (7 MEP + 7 plenary & meeting + 2 committee + 7 document + 3 legislative + 3 advanced analysis + 15 OSINT intelligence), 9 Resources, and 7 Prompts
 - 🏛️ **Complete EP API v2 Coverage**: All European Parliament Open Data API endpoints covered
 - 🕵️ **OSINT Intelligence**: MEP influence scoring, coalition analysis, anomaly detection
 - 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance
@@ -667,9 +667,9 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 | Attendance tracking | ✅ Trend detection + engagement scoring | ❌ | ❌ | ❌ |
 | GDPR compliance | ✅ Privacy-first design | N/A | N/A | ✅ |
 | MCP prompts & resources | ✅ 7 prompts + 9 resources | ❌ | ❌ | ❌ |
-| Total tool count | **45 tools** | ~5 tools | ~5 tools | ~4 tools |
+| Total tool count | **46 tools** | ~5 tools | ~5 tools | ~4 tools |
 
-> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **45 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, and political landscape generation. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
+> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **46 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, and political landscape generation. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
 
 ---
 
@@ -841,7 +841,7 @@ npm run test:coverage
 npm run test:watch
 ```
 
-**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, all 45 MCP tools are tested against the real European Parliament API endpoints. All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](_media/INTEGRATION_TESTING.md) for the complete guide.
+**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, all 46 MCP tools are tested against the real European Parliament API endpoints. All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](_media/INTEGRATION_TESTING.md) for the complete guide.
 
 ### Code Quality
 

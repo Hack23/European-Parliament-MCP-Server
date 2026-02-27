@@ -11,7 +11,7 @@ The following JSDoc coverage applies to the current v1.0 codebase:
 
 | Scope | Files Improved | Tags Added |
 |-------|---------------|------------|
-| Tool handler files (`src/tools/*.ts`) | 45 files | `@param`, `@returns`, `@throws {ZodError}`, `@throws {Error}`, `@example`, `@security`, `@since`, `@see` |
+| Tool handler files (`src/tools/*.ts`) | 46 files | `@param`, `@returns`, `@throws {ZodError}`, `@throws {Error}`, `@example`, `@security`, `@since`, `@see` |
 | Utility & service files (`utils/`, `services/`, `clients/`, `di/`) | 8 files | `@throws`, `@example`, `@security` added to all public methods |
 
 **Before → After summary:**
@@ -136,7 +136,7 @@ Priority 2: Security & Validation — ✅ DONE
 
 Priority 3: Tools & Advanced Features — ✅ DONE
 ┌─────────────────────────────────────────────────┐
-│ src/tools/*.ts (45 handler files)    ✅ COMPLETE     │
+│ src/tools/*.ts (46 handler files)    ✅ COMPLETE     │
 │   └─ All handlers                ✅ @throws present │
 │   └─ All handlers                ✅ @security present│
 │                                                  │

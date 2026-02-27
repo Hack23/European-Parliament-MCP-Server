@@ -61,7 +61,7 @@ The **European Parliament MCP Server** (v1.0) is a TypeScript/Node.js applicatio
 
 | Capability | Details |
 |------------|---------|
-| **MCP Tools** | 45 tools in 5 TypeScript code categories (`core`, `advanced`, `osint`, `phase4`, `phase5`) |
+| **MCP Tools** | 46 tools in 5 TypeScript code categories (`core`, `advanced`, `osint`, `phase4`, `phase5`) |
 | **MCP Resources** | 9 URI-addressable resources |
 | **MCP Prompts** | 7 intelligence-analysis prompts |
 | **Data Source** | EP Open Data Portal API v2 |
@@ -80,7 +80,7 @@ C4Context
     Person(aiUser, "AI User / Developer", "Uses AI assistants to query EP data")
     Person(analyst, "Political Analyst", "Performs legislative intelligence analysis")
 
-    System(mcpServer, "EP MCP Server", "MCP server exposing 45 tools, 9 resources, 7 prompts for EP parliamentary data")
+    System(mcpServer, "EP MCP Server", "MCP server exposing 46 tools, 9 resources, 7 prompts for EP parliamentary data")
 
     System_Ext(claudeDesktop, "Claude Desktop / Cursor / Copilot", "MCP-compatible AI client")
     System_Ext(epApi, "EP Open Data Portal API v2", "Official European Parliament open data API at data.europarl.europa.eu/api/v2/")
@@ -108,7 +108,7 @@ flowchart TD
     subgraph EPMCPServer["EP MCP Server — Node.js Process"]
         direction TB
         MH["MCP Handler\n(stdio transport)"]
-        TR["Tool Router\n(45 tools dispatched)"]
+        TR["Tool Router\n(46 tools dispatched)"]
         RE["Resource Engine\n(9 URI resources)"]
         PR["Prompt Registry\n(7 prompts)"]
         DI["DI Container\n(singletons)"]
@@ -456,7 +456,7 @@ flowchart TD
 
 **Status:** Accepted | **Date:** 2026-02-26
 
-**Context:** Multiple services (RateLimiter, MetricsService, AuditLogger, HealthService) need to be shared across the 45 tool handlers. Using ad-hoc singleton globals creates tight coupling and reduces testability.
+**Context:** Multiple services (RateLimiter, MetricsService, AuditLogger, HealthService) need to be shared across the 46 tool handlers. Using ad-hoc singleton globals creates tight coupling and reduces testability.
 
 **Decision:** Implement a lightweight DI container that manages singleton lifecycle for all shared services. Services are registered once at startup and injected into tool handlers via constructor injection.
 
@@ -558,7 +558,7 @@ See [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) for full details.
 
 | Control | Standard | Clause | Implementation |
 |---------|----------|--------|----------------|
-| Asset Management | ISO 27001 | A.8.1 | All 45 tools documented as information assets |
+| Asset Management | ISO 27001 | A.8.1 | All 46 tools documented as information assets |
 | Secure Development | ISO 27001 | A.14.2 | TypeScript strict mode, Zod validation, ESLint |
 | Access Control | ISO 27001 | A.9.1 | MCP stdio transport, no network exposure |
 | Audit Logging | ISO 27001 | A.12.4 | AuditLogger singleton, all invocations logged |

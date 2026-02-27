@@ -17,11 +17,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Cursor IDE MCP configuration example
 
 ### Changed
-- Updated `docs/TESTING_GUIDE.md` to reflect 45 tools and Vitest 4 patterns
+- Updated `docs/TESTING_GUIDE.md` to reflect 46 tools and Vitest 4 patterns
 - Expanded `CONTRIBUTING.md` with DI container guidance and security checklists
 
 ### Fixed
-- Corrected tool count references throughout documentation (45 tools)
+- Corrected tool count references throughout documentation (46 tools)
 - Remediated high-severity ReDoS vulnerabilities in `minimatch` (GHSA-7r86-cg39-jmmj, GHSA-23c5-xmqv-rm74) by updating transitive dependency from 10.2.2 → 10.2.4 via `npm audit fix`
 
 ---
@@ -29,30 +29,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [1.0.0] — (Planned)
 
 ### Added
-- **45 MCP Tools** — complete European Parliament API v2 coverage:
-  - 7 Core tools (`get_meps`, `get_mep_details`, `get_plenary_sessions`,
-    `get_voting_records`, `search_documents`, `get_committee_info`,
-    `get_parliamentary_questions`)
-  - 3 Advanced Analysis tools (`analyze_voting_patterns`, `track_legislation`,
-    `generate_report`)
-  - 14 OSINT Intelligence tools:
-    - Phase 1 (6): `assess_mep_influence`, `analyze_coalition_dynamics`,
-      `detect_voting_anomalies`, `compare_political_groups`,
-      `analyze_legislative_effectiveness`, `monitor_legislative_pipeline`
-    - Phase 2 (2): `analyze_committee_activity`, `track_mep_attendance`
-    - Phase 3 (2): `analyze_country_delegation`, `generate_political_landscape`
-    - Phase 6 (4): `network_analysis`, `sentiment_tracker`,
-      `early_warning_system`, `comparative_intelligence`
-  - 8 Phase 4 EP API v2 tools (`get_current_meps`, `get_speeches`,
-    `get_procedures`, `get_adopted_texts`, `get_events`,
-    `get_meeting_activities`, `get_meeting_decisions`, `get_mep_declarations`)
-  - 13 Phase 5 EP API v2 tools (`get_incoming_meps`, `get_outgoing_meps`,
-    `get_homonym_meps`, `get_plenary_documents`, `get_committee_documents`,
-    `get_plenary_session_documents`, `get_plenary_session_document_items`,
-    `get_controlled_vocabularies`, `get_external_documents`,
-    `get_meeting_foreseen_activities`, `get_procedure_events`,
-    `get_meeting_plenary_session_documents`,
-    `get_meeting_plenary_session_document_items`)
 - **46 MCP Tools** — complete European Parliament API v2 coverage:
   - 7 MEP tools (`get_meps`, `get_mep_details`, `get_current_meps`, `get_incoming_meps`,
     `get_outgoing_meps`, `get_homonym_meps`, `get_mep_declarations`)
