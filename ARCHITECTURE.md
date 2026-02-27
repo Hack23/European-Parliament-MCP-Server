@@ -243,8 +243,112 @@ flowchart TD
 
 ## 📡 MCP Protocol Surface
 
-### Tools (39 total)
+### Tools (43 total)
 
+#### Core Data Access Tools (7)
+
+| Tool | Function | Description |
+|------|----------|-------------|
+| `get_meps` | `getMEPs` | List MEPs with country/group filters |
+| `get_mep_details` | `getMEPDetails` | Detailed MEP profile by ID |
+| `get_plenary_sessions` | `getPlenarySessions` | Plenary session listings |
+| `get_voting_records` | `getVotingRecords` | Session voting records |
+| `search_documents` | `searchDocuments` | Legislative document search |
+| `get_committee_info` | `getCommitteeInfo` | Committee details |
+| `get_parliamentary_questions` | `getParliamentaryQuestions` | Written/oral questions |
+
+#### OSINT Intelligence Tools (10 + 4 Advanced)
+
+| Tool | Function | Description |
+|------|----------|-------------|
+| `assess_mep_influence` | `assessMepInfluence` | 5-dimension influence scoring model |
+| `analyze_coalition_dynamics` | `analyzeCoalitionDynamics` | Coalition cohesion & stress analysis |
+| `detect_voting_anomalies` | `detectVotingAnomalies` | Party defection & anomaly detection |
+| `compare_political_groups` | `comparePoliticalGroups` | Cross-group comparative analysis |
+| `analyze_legislative_effectiveness` | `analyzeLegislativeEffectiveness` | MEP/committee legislative scoring |
+| `monitor_legislative_pipeline` | `monitorLegislativePipeline` | Pipeline status & bottleneck detection |
+| `analyze_committee_activity` | `analyzeCommitteeActivity` | Committee workload & engagement |
+| `track_mep_attendance` | `trackMepAttendance` | MEP attendance patterns & trends |
+| `analyze_country_delegation` | `analyzeCountryDelegation` | Country delegation voting & composition |
+| `generate_political_landscape` | `generatePoliticalLandscape` | Parliament-wide political landscape |
+
+#### Advanced OSINT Intelligence Tools (4 — v1.0)
+
+The following four tools extend the OSINT capability with network analysis, sentiment tracking, early-warning signals, and comparative intelligence. Each tool returns `confidenceLevel`, `dataFreshness`, `sourceAttribution`, and `methodology` fields for full analytical transparency.
+
+| Tool | Function | Description |
+|------|----------|-------------|
+| `network_analysis` | `networkAnalysis` | MEP relationship network mapping via committee co-membership. Computes centrality scores, cluster assignments, bridging MEPs, and network density metrics. Identifies informal power structures and cross-party collaboration pathways. |
+| `sentiment_tracker` | `sentimentTracker` | Track political group institutional positioning based on seat-share proxy. Returns per-group positioning scores (−1 to +1), polarization index, consensus/divisive topics, and significant positioning shifts. |
+| `early_warning_system` | `earlyWarningSystem` | Detect emerging political shifts, coalition fracture signals, and parliamentary stability risks. Generates severity-tiered warnings (CRITICAL/HIGH/MEDIUM/LOW), stability score (0–100), and trend indicators. Configurable sensitivity and focus area. |
+| `comparative_intelligence` | `comparativeIntelligence` | Cross-reference 2–10 MEPs across voting, committee, legislative, and attendance dimensions. Returns ranked profiles, cosine-similarity correlation matrix, z-score outlier detection, and natural cluster analysis. |
+
+**Design Principles for Advanced Tools:**
+- All outputs include `dataAvailable: boolean` — tools degrade gracefully when EP API data is limited
+- `confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW'` reflects data completeness at execution time
+- `dataFreshness` and `sourceAttribution` provide full data provenance for OSINT analysis
+- `methodology` documents the analytical approach for reproducibility and audit
+- Input validation via Zod schemas with strict typing throughout
+
+
+#### EP Data Access Tools (8)
+
+| Tool | Function | Description |
+|------|----------|-------------|
+| `get_current_meps` | `getCurrentMEPs` | Currently serving MEPs |
+| `get_speeches` | `getSpeeches` | Plenary speeches |
+| `get_procedures` | `getProcedures` | Legislative procedures |
+| `get_adopted_texts` | `getAdoptedTexts` | Adopted legislative texts |
+| `get_events` | `getEvents` | Parliamentary events |
+| `get_meeting_activities` | `getMeetingActivities` | Meeting activity records |
+| `get_meeting_decisions` | `getMeetingDecisions` | Meeting decision outcomes |
+| `get_mep_declarations` | `getMEPDeclarations` | MEP financial declarations |
+
+#### EP Complete Coverage Tools (11)
+
+| Tool | Function | Description |
+|------|----------|-------------|
+| `get_incoming_meps` | `getIncomingMEPs` | Incoming MEPs (new members) |
+| `get_outgoing_meps` | `getOutgoingMEPs` | Outgoing MEPs (departing members) |
+| `get_homonym_meps` | `getHomonymMEPs` | MEPs with duplicate names |
+| `get_plenary_documents` | `getPlenaryDocuments` | Plenary-specific documents |
+| `get_committee_documents` | `getCommitteeDocuments` | Committee-specific documents |
+| `get_plenary_session_documents` | `getPlenarySessionDocuments` | Session-specific documents |
+| `get_plenary_session_document_items` | `getPlenarySessionDocumentItems` | Document items within sessions |
+| `get_controlled_vocabularies` | `getControlledVocabularies` | EP controlled vocabulary terms |
+| `get_external_documents` | `getExternalDocuments` | External reference documents |
+| `get_meeting_foreseen_activities` | `getMeetingForeseenActivities` | Planned meeting activities |
+| `get_procedure_events` | `getProcedureEvents` | Events linked to a procedure |
+
+#### Advanced Analysis Tools (3)
+
+| Tool | Function | Description |
+|------|----------|-------------|
+| `analyze_voting_patterns` | `analyzeVotingPatterns` | Multi-session voting analysis |
+| `track_legislation` | `trackLegislation` | End-to-end legislative tracking (real EP API data) |
+| `generate_report` | `generateReport` | Structured analysis report generation |
+
+### Resources (6 templates)
+
+| URI Template | Name | Description |
+|-------------|------|-------------|
+| `ep://meps` | MEP List | All Members of European Parliament |
+| `ep://meps/{mepId}` | MEP Profile | Individual MEP details |
+| `ep://committees/{committeeId}` | Committee Information | Committee details and membership |
+| `ep://plenary-sessions` | Plenary Sessions | Session listings and schedules |
+| `ep://votes/{sessionId}` | Voting Record | Session voting results |
+| `ep://political-groups` | Political Groups | Party group listings |
+
+### Prompts (6 templates)
+
+| Prompt Name | Description | Key Arguments |
+|-------------|-------------|---------------|
+| `mep_briefing` | MEP intelligence briefing | `mepId` |
+| `coalition_analysis` | Coalition dynamics analysis | `partyGroup` |
+| `legislative_tracking` | Legislative pipeline tracking | `procedureId` |
+| `political_group_comparison` | Political group comparison | `groups` |
+| `committee_activity_report` | Committee activity analysis | `committeeId` |
+| `voting_pattern_analysis` | Voting pattern detection | `mepId`, `sessionId` |
 | Category | Count | Tools |
 |----------|-------|-------|
 | **Core** | 7 | get_meps, get_mep_details, get_plenary_sessions, get_voting_records, search_documents, get_committee_info, get_parliamentary_questions |

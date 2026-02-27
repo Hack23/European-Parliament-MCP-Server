@@ -74,6 +74,8 @@ interface CountryDelegationAnalysis {
     engagementLevel: string;
   };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -260,6 +262,8 @@ async function buildDelegationAnalysis(
       engagementLevel: computeEngagement(avgAttendance)
     },
     confidenceLevel: computeDataConfidence(dataCoverage),
+    dataFreshness: 'Real-time EP API data — country delegation composition from current MEP records',
+    sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
     methodology: 'Country delegation analysis using EP Open Data: political group distribution, '
       + 'voting behavior aggregation, committee representation mapping, and national cohesion scoring. '
       + 'Data source: European Parliament Open Data Portal.'

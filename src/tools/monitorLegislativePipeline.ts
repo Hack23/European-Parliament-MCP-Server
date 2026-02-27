@@ -68,6 +68,8 @@ interface LegislativePipelineAnalysis {
     legislativeMomentum: string;
   };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -291,6 +293,8 @@ export async function handleMonitorLegislativePipeline(
         legislativeMomentum: classifyMomentum(health.healthScore),
       },
       confidenceLevel: pipeline.length >= 10 ? 'MEDIUM' : 'LOW',
+      dataFreshness: 'Real-time EP API data — procedures from EP Open Data /procedures endpoint',
+      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'Real-time pipeline analysis using EP API /procedures endpoint. '
         + 'All procedure data (title, type, stage, status, dates, committee) sourced from '
         + 'European Parliament open data. Computed attributes (health score, velocity, '

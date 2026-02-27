@@ -50,6 +50,8 @@ interface PoliticalGroupComparison {
     competitiveIndex: number;
   };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -185,6 +187,8 @@ export async function handleComparePoliticalGroups(
         competitiveIndex
       },
       confidenceLevel: 'LOW',
+      dataFreshness: 'Real-time EP API data — political group composition from current MEP records',
+      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'Multi-dimensional comparative analysis using real EP Open Data MEP records. '
         + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
         + 'voting discipline, activity level, attendance, and cohesion dimensions report zero. '
