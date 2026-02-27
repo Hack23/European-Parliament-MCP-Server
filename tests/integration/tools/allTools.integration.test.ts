@@ -1,5 +1,5 @@
 /**
- * Integration Tests: All 39 MCP Tools Coverage
+ * Integration Tests: All 45 MCP Tools Coverage
  * 
  * Validates that every registered MCP tool:
  * 1. Returns valid MCP-compliant response structure
@@ -96,7 +96,7 @@ function parseAndValidateNoMockData(result: { content: { type: string; text: str
   return parsed;
 }
 
-describeIntegration('All 39 MCP Tools Integration Coverage', () => {
+describeIntegration('All 45 MCP Tools Integration Coverage', () => {
   // Shared MEP ID resolved once for tests that need it
   let testMEPId: string;
   let testSessionId: string;
