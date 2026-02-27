@@ -21,6 +21,7 @@
 
 import { SearchDocumentsSchema, LegislativeDocumentSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Handles the search_documents MCP tool request.
@@ -61,7 +62,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleSearchDocuments(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   // Validate input
   const params = SearchDocumentsSchema.parse(args);
   

@@ -18,6 +18,7 @@
 
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Schema for track_mep_attendance tool input
@@ -326,7 +327,7 @@ async function buildGroupAnalysis(
  */
 export async function handleTrackMepAttendance(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   const params = TrackMepAttendanceSchema.parse(args);
 
   const now = new Date();

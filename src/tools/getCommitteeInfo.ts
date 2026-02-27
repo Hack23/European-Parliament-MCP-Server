@@ -17,6 +17,7 @@
 
 import { GetCommitteeInfoSchema, CommitteeSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Handles the get_committee_info MCP tool request.
@@ -50,7 +51,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetCommitteeInfo(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   // Validate input
   const params = GetCommitteeInfoSchema.parse(args);
   

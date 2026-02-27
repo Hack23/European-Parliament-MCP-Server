@@ -18,6 +18,7 @@
 
 import { GetMEPDetailsSchema, MEPDetailsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Handles the get_mep_details MCP tool request.
@@ -47,7 +48,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetMEPDetails(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   // Validate input
   const params = GetMEPDetailsSchema.parse(args);
   

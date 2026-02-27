@@ -17,6 +17,7 @@
 
 import { GetParliamentaryQuestionsSchema, ParliamentaryQuestionSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 
 /**
  * Handles the get_parliamentary_questions MCP tool request.
@@ -55,7 +56,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
  */
 export async function handleGetParliamentaryQuestions(
   args: unknown
-): Promise<{ content: { type: string; text: string }[] }> {
+): Promise<ToolResult> {
   // Validate input
   const params = GetParliamentaryQuestionsSchema.parse(args);
   
