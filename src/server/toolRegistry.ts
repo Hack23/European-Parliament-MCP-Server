@@ -68,6 +68,8 @@ import { handleGetControlledVocabularies, getControlledVocabulariesToolMetadata 
 import { handleGetExternalDocuments, getExternalDocumentsToolMetadata } from '../tools/getExternalDocuments.js';
 import { handleGetMeetingForeseenActivities, getMeetingForeseenActivitiesToolMetadata } from '../tools/getMeetingForeseenActivities.js';
 import { handleGetProcedureEvents, getProcedureEventsToolMetadata } from '../tools/getProcedureEvents.js';
+import { handleGetMeetingPlenarySessionDocuments, getMeetingPlenarySessionDocumentsToolMetadata } from '../tools/getMeetingPlenarySessionDocuments.js';
+import { handleGetMeetingPlenarySessionDocumentItems, getMeetingPlenarySessionDocumentItemsToolMetadata } from '../tools/getMeetingPlenarySessionDocumentItems.js';
 
 // ── Type imports ──────────────────────────────────────────────────
 import type { ToolHandler, ToolCategory, ToolResult, ToolMetadata } from './types.js';
@@ -143,6 +145,8 @@ export function getToolMetadataArray(): ToolMetadata[] {
     withCategory(getExternalDocumentsToolMetadata, 'phase5'),
     withCategory(getMeetingForeseenActivitiesToolMetadata, 'phase5'),
     withCategory(getProcedureEventsToolMetadata, 'phase5'),
+    withCategory(getMeetingPlenarySessionDocumentsToolMetadata, 'phase5'),
+    withCategory(getMeetingPlenarySessionDocumentItemsToolMetadata, 'phase5'),
   ];
 }
 
@@ -201,6 +205,8 @@ const toolHandlers: Record<string, ToolHandler> = {
   'get_external_documents': handleGetExternalDocuments,
   'get_meeting_foreseen_activities': handleGetMeetingForeseenActivities,
   'get_procedure_events': handleGetProcedureEvents,
+  'get_meeting_plenary_session_documents': handleGetMeetingPlenarySessionDocuments,
+  'get_meeting_plenary_session_document_items': handleGetMeetingPlenarySessionDocumentItems,
 };
 
 /**

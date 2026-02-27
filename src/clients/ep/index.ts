@@ -29,6 +29,7 @@ export {
   DEFAULT_MAX_CACHE_SIZE,
   DEFAULT_RATE_LIMIT_TOKENS,
   DEFAULT_RATE_LIMIT_INTERVAL,
+  DEFAULT_MAX_RESPONSE_BYTES,
 } from './baseClient.js';
 export type {
   EPClientConfig,

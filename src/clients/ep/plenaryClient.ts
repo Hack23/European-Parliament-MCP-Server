@@ -139,6 +139,9 @@ export class PlenaryClient extends BaseEPClient {
     if (sittingId.trim() === '') {
       throw new APIError('Meeting sitting-id is required', 400);
     }
+    if (/[.\\?#]/.test(sittingId)) {
+      throw new APIError('Meeting sitting-id contains invalid characters', 400);
+    }
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
 
@@ -162,6 +165,9 @@ export class PlenaryClient extends BaseEPClient {
   ): Promise<PaginatedResponse<LegislativeDocument>> {
     if (sittingId.trim() === '') {
       throw new APIError('Meeting sitting-id is required', 400);
+    }
+    if (/[.\\?#]/.test(sittingId)) {
+      throw new APIError('Meeting sitting-id contains invalid characters', 400);
     }
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -187,6 +193,9 @@ export class PlenaryClient extends BaseEPClient {
     if (sittingId.trim() === '') {
       throw new APIError('Meeting sitting-id is required', 400);
     }
+    if (/[.\\?#]/.test(sittingId)) {
+      throw new APIError('Meeting sitting-id contains invalid characters', 400);
+    }
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
 
@@ -198,6 +207,60 @@ export class PlenaryClient extends BaseEPClient {
     const items = Array.isArray(response.data) ? response.data : [];
     const activities = items.map((item) => this.transformMeetingActivity(item));
     return { data: activities, total: activities.length + offset, limit, offset, hasMore: activities.length === limit };
+  }
+
+  /**
+   * Returns plenary session documents for a specific meeting.
+   * **EP API Endpoint:** `GET /meetings/{sitting-id}/plenary-session-documents`
+   */
+  async getMeetingPlenarySessionDocuments(
+    sittingId: string,
+    params: { limit?: number; offset?: number } = {}
+  ): Promise<PaginatedResponse<LegislativeDocument>> {
+    if (sittingId.trim() === '') {
+      throw new APIError('Meeting sitting-id is required', 400);
+    }
+    if (/[.\\?#]/.test(sittingId)) {
+      throw new APIError('Meeting sitting-id contains invalid characters', 400);
+    }
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>(
+      `meetings/${sittingId}/plenary-session-documents`,
+      { format: 'application/ld+json', offset, limit }
+    );
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const docs = items.map((item) => this.transformDocument(item));
+    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
+  }
+
+  /**
+   * Returns plenary session document items for a specific meeting.
+   * **EP API Endpoint:** `GET /meetings/{sitting-id}/plenary-session-document-items`
+   */
+  async getMeetingPlenarySessionDocumentItems(
+    sittingId: string,
+    params: { limit?: number; offset?: number } = {}
+  ): Promise<PaginatedResponse<LegislativeDocument>> {
+    if (sittingId.trim() === '') {
+      throw new APIError('Meeting sitting-id is required', 400);
+    }
+    if (/[.\\?#]/.test(sittingId)) {
+      throw new APIError('Meeting sitting-id contains invalid characters', 400);
+    }
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>(
+      `meetings/${sittingId}/plenary-session-document-items`,
+      { format: 'application/ld+json', offset, limit }
+    );
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const docs = items.map((item) => this.transformDocument(item));
+    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
   }
 
   /**
