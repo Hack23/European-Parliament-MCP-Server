@@ -52,6 +52,8 @@ export {
   ComparePoliticalGroupsSchema,
   AnalyzeLegislativeEffectivenessSchema,
   MonitorLegislativePipelineSchema,
+  OsintStandardOutputSchema,
+  CorrelateIntelligenceSchema,
 } from './analysis.js';
 export {
   GetSpeechesSchema,
