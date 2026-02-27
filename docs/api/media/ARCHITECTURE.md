@@ -60,15 +60,15 @@
 
 ## 🎯 Executive Summary
 
-The **European Parliament MCP Server** (v0.7.1) is a TypeScript/Node.js [Model Context Protocol](https://spec.modelcontextprotocol.io/) server that provides AI assistants with structured, type-safe access to European Parliament open data. It exposes **45 MCP tools** (7 core data access + 3 advanced analysis + 14 OSINT intelligence + 8 EP API v2 data access + 11 EP API v2 complete coverage), **6 resource templates**, and **6 prompt templates** — all backed by a centralized EP API client with LRU caching, Zod input validation, rate limiting, and GDPR-compliant audit logging. All tools return real data from the EP API with no mock or placeholder data.
+The **European Parliament MCP Server** (v0.7.1) is a TypeScript/Node.js [Model Context Protocol](https://spec.modelcontextprotocol.io/) server that provides AI assistants with structured, type-safe access to European Parliament open data. It exposes **45 MCP tools** (7 core data access + 3 advanced analysis + 14 OSINT intelligence + 8 EP API v2 data access + 13 EP API v2 complete coverage), **9 resource templates**, and **7 prompt templates** — all backed by a centralized EP API client with LRU caching, Zod input validation, rate limiting, and GDPR-compliant audit logging. All tools return real data from the EP API with no mock or placeholder data.
 
 ### Key Capabilities
 
 | Capability | Count | Description |
 |------------|-------|-------------|
 | 🔧 **MCP Tools** | 45 | Core data access + OSINT intelligence + complete EP API v2 coverage |
-| 📄 **MCP Resources** | 6 | URI-based read access to parliamentary entities |
-| 💬 **MCP Prompts** | 6 | Pre-configured analysis templates for AI assistants |
+| 📄 **MCP Resources** | 9 | URI-based read access to parliamentary entities |
+| 💬 **MCP Prompts** | 7 | Pre-configured analysis templates for AI assistants |
 | 🏛️ **EP API Endpoints** | 22+ | MEPs, plenary sessions, committees, votes, documents, speeches, procedures, adopted texts, events |
 | 🔒 **Security Controls** | 4 layers | Zod validation, rate limiting, audit logging, GDPR compliance |
 

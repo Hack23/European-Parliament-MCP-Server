@@ -667,7 +667,7 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 | Attendance tracking | ✅ Trend detection + engagement scoring | ❌ | ❌ | ❌ |
 | GDPR compliance | ✅ Privacy-first design | N/A | N/A | ✅ |
 | MCP prompts & resources | ✅ 7 prompts + 9 resources | ❌ | ❌ | ❌ |
-| OSINT tool count | **45 tools** | ~5 tools | ~5 tools | ~4 tools |
+| Total tool count | **45 tools** | ~5 tools | ~5 tools | ~4 tools |
 
 > 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **45 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, and political landscape generation. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
 

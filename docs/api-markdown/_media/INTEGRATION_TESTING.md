@@ -44,28 +44,36 @@ This guide explains how to run integration tests for the European Parliament MCP
 19. **analyze_country_delegation** - Country delegation voting & composition analysis
 20. **generate_political_landscape** - Parliament-wide political landscape overview
 
-**EP Data Access Tools — Phase 4** (8 — real EP API v2):
-21. **get_current_meps** - Currently serving MEPs
-22. **get_speeches** - Plenary speeches
-23. **get_procedures** - Legislative procedures
-24. **get_adopted_texts** - Adopted legislative texts
-25. **get_events** - Parliamentary events
-26. **get_meeting_activities** - Meeting activity records
-27. **get_meeting_decisions** - Meeting decision outcomes
-28. **get_mep_declarations** - MEP financial declarations
+**OSINT Intelligence Tools — Phase 6** (4 — real EP API data):
+21. **network_analysis** - MEP network and relationship analysis
+22. **sentiment_tracker** - Political group sentiment tracking
+23. **early_warning_system** - Political risk early warning detection
+24. **comparative_intelligence** - Multi-MEP comparative intelligence analysis
 
-**EP Complete Coverage Tools — Phase 5** (11 — real EP API v2):
-29. **get_incoming_meps** - Incoming MEPs (new members)
-30. **get_outgoing_meps** - Outgoing MEPs (departing members)
-31. **get_homonym_meps** - MEPs with duplicate names
-32. **get_plenary_documents** - Plenary-specific documents
-33. **get_committee_documents** - Committee-specific documents
-34. **get_plenary_session_documents** - Session-specific documents
-35. **get_plenary_session_document_items** - Document items within sessions
-36. **get_controlled_vocabularies** - EP controlled vocabulary terms
-37. **get_external_documents** - External reference documents
-38. **get_meeting_foreseen_activities** - Planned meeting activities
-39. **get_procedure_events** - Events linked to a procedure
+**EP Data Access Tools — Phase 4** (8 — real EP API v2):
+25. **get_current_meps** - Currently serving MEPs
+26. **get_speeches** - Plenary speeches
+27. **get_procedures** - Legislative procedures
+28. **get_adopted_texts** - Adopted legislative texts
+29. **get_events** - Parliamentary events
+30. **get_meeting_activities** - Meeting activity records
+31. **get_meeting_decisions** - Meeting decision outcomes
+32. **get_mep_declarations** - MEP financial declarations
+
+**EP Complete Coverage Tools — Phase 5** (13 — real EP API v2):
+33. **get_incoming_meps** - Incoming MEPs (new members)
+34. **get_outgoing_meps** - Outgoing MEPs (departing members)
+35. **get_homonym_meps** - MEPs with duplicate names
+36. **get_plenary_documents** - Plenary-specific documents
+37. **get_committee_documents** - Committee-specific documents
+38. **get_plenary_session_documents** - Session-specific documents
+39. **get_plenary_session_document_items** - Document items within sessions
+40. **get_controlled_vocabularies** - EP controlled vocabulary terms
+41. **get_external_documents** - External reference documents
+42. **get_meeting_foreseen_activities** - Planned meeting activities
+43. **get_procedure_events** - Events linked to a procedure
+44. **get_meeting_plenary_session_documents** - Plenary session meeting documents
+45. **get_meeting_plenary_session_document_items** - Plenary session meeting document items
 
 > **No Mock Data**: All 45 tools are validated to return real data from the EP API. The integration test suite (`allTools.integration.test.ts`) explicitly checks that no tool returns `confidenceLevel: 'NONE'` or `PLACEHOLDER DATA` markers.
 
