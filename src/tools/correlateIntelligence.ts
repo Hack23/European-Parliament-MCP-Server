@@ -652,13 +652,19 @@ export async function handleCorrelateIntelligence(
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
   };
 
-  // Validate the standard OSINT output fields (throws ZodError if schema is violated)
-  OsintStandardOutputSchema.parse({
-    confidenceLevel: report.confidenceLevel,
-    methodology: report.methodology,
-    dataFreshness: report.dataFreshness,
-    sourceAttribution: report.sourceAttribution,
-  });
+  // Validate the standard OSINT output fields before returning
+  try {
+    OsintStandardOutputSchema.parse({
+      confidenceLevel: report.confidenceLevel,
+      methodology: report.methodology,
+      dataFreshness: report.dataFreshness,
+      sourceAttribution: report.sourceAttribution,
+    });
+  } catch (validationError) {
+    throw new Error(
+      `Report failed OSINT standard output schema validation: ${(validationError as Error).message}`,
+    );
+  }
 
   return buildToolResponse(report);
 }
