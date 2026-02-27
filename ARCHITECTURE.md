@@ -215,7 +215,7 @@ The following four tools extend the OSINT capability with network analysis, sent
 | Tool | Function | Description |
 |------|----------|-------------|
 | `network_analysis` | `networkAnalysis` | MEP relationship network mapping via committee co-membership. Computes centrality scores, cluster assignments, bridging MEPs, and network density metrics. Identifies informal power structures and cross-party collaboration pathways. |
-| `sentiment_tracker` | `sentimentTracker` | Track political group sentiment shifts based on voting cohesion proxies. Returns per-group sentiment scores (−1 to +1), polarization index, consensus/divisive topics, and significant sentiment shifts. |
+| `sentiment_tracker` | `sentimentTracker` | Track political group institutional positioning based on seat-share proxy. Returns per-group positioning scores (−1 to +1), polarization index, consensus/divisive topics, and significant positioning shifts. |
 | `early_warning_system` | `earlyWarningSystem` | Detect emerging political shifts, coalition fracture signals, and parliamentary stability risks. Generates severity-tiered warnings (CRITICAL/HIGH/MEDIUM/LOW), stability score (0–100), and trend indicators. Configurable sensitivity and focus area. |
 | `comparative_intelligence` | `comparativeIntelligence` | Cross-reference 2–10 MEPs across voting, committee, legislative, and attendance dimensions. Returns ranked profiles, cosine-similarity correlation matrix, z-score outlier detection, and natural cluster analysis. |
 

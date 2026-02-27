@@ -1,9 +1,9 @@
 /**
  * MCP Tool: network_analysis
  *
- * MEP relationship network mapping using committee co-membership and
- * voting similarity analysis. Computes centrality scores, cluster
- * assignments, and bridging MEPs that connect different political clusters.
+ * MEP relationship network mapping using committee co-membership.
+ * Computes centrality scores, cluster assignments, and bridging MEPs
+ * that connect different political clusters.
  *
  * **Intelligence Perspective:** Network analysis reveals informal power
  * structures, coalition-building pathways, and cross-party collaboration

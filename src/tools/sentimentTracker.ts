@@ -1,13 +1,17 @@
 /**
  * MCP Tool: sentiment_tracker
  *
- * Track political group sentiment shifts over time based on voting
- * cohesion patterns. High cohesion signals positive group sentiment;
- * voting defections signal negative sentiment drift.
+ * Track political group institutional positioning and inferred sentiment
+ * using current seat-share distribution as a proxy indicator. Larger, stable
+ * seat shares are interpreted as positive institutional sentiment, while
+ * marginal or declining seat shares suggest negative sentiment or weaker
+ * positioning. This tool does not analyse individual roll-call votes or
+ * voting defections because direct voting-cohesion data is not exposed by
+ * the EP API.
  *
- * **Intelligence Perspective:** Sentiment tracking provides early visibility
- * into intra-group tensions, emerging splits, and alignment shifts—enabling
- * predictive political intelligence.
+ * **Intelligence Perspective:** Seat-share positioning provides early
+ * visibility into shifting power balances between political groups—enabling
+ * predictive political intelligence on emerging dominance and fragmentation.
  *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
