@@ -39,7 +39,7 @@ export const DEFAULT_MAX_CACHE_SIZE = 500;
 export const DEFAULT_RATE_LIMIT_TOKENS = 100;
 /** Default rate limit interval unit */
 export const DEFAULT_RATE_LIMIT_INTERVAL = 'minute' as const;
-/** Maximum allowed response body size in bytes (10 MB) to prevent memory exhaustion */
+/** Maximum allowed response body size in bytes (10 MiB, 10×1024×1024) to prevent memory exhaustion */
 export const DEFAULT_MAX_RESPONSE_BYTES = 10_485_760;
 
 // ─── Exported error class ─────────────────────────────────────────────────────
@@ -255,6 +255,9 @@ export class BaseEPClient {
         if (contentLength !== null) {
           const bytes = Number.parseInt(contentLength, 10);
           if (Number.isFinite(bytes) && bytes > DEFAULT_MAX_RESPONSE_BYTES) {
+            // Cancel/drain the body before throwing so the underlying TCP
+            // connection can be returned to the pool and reused.
+            await response.body?.cancel();
             throw new APIError(
               `EP API response too large: ${String(bytes)} bytes exceeds limit of ${String(DEFAULT_MAX_RESPONSE_BYTES)} bytes`,
               413

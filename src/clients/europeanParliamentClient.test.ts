@@ -4201,25 +4201,33 @@ describe('EuropeanParliamentClient', () => {
 
   describe('429 Rate Limit Retry Logic', () => {
     it('should retry on 429 Too Many Requests', async () => {
-      // First attempt returns 429, second succeeds
-      mockFetch
-        .mockResolvedValueOnce({
-          ok: false,
-          status: 429,
-          statusText: 'Too Many Requests'
-        } as Response)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => createMockDocumentsResponse(1)
-        } as Response);
+      vi.useFakeTimers();
+      try {
+        // First attempt returns 429, second succeeds
+        mockFetch
+          .mockResolvedValueOnce({
+            ok: false,
+            status: 429,
+            statusText: 'Too Many Requests'
+          } as Response)
+          .mockResolvedValueOnce({
+            ok: true,
+            json: async () => createMockDocumentsResponse(1)
+          } as Response);
 
-      // Use a client with retry enabled and minimal delay
-      const retryClient = new EuropeanParliamentClient({ enableRetry: true, maxRetries: 1 });
-      retryClient.clearCache();
+        // Use a client with retry enabled; fake timers avoid real backoff delay
+        const retryClient = new EuropeanParliamentClient({ enableRetry: true, maxRetries: 1 });
+        retryClient.clearCache();
 
-      const result = await retryClient.getMeetingPlenarySessionDocuments('MTG-PL-2024-001');
-      expect(result.data).toHaveLength(1);
-      expect(mockFetch).toHaveBeenCalledTimes(2);
+        const requestPromise = retryClient.getMeetingPlenarySessionDocuments('MTG-PL-2024-001');
+        await vi.runAllTimersAsync();
+
+        const result = await requestPromise;
+        expect(result.data).toHaveLength(1);
+        expect(mockFetch).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should not retry on 400 Bad Request', async () => {
