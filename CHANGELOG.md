@@ -29,12 +29,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [1.0.0] — (Planned)
 
 ### Added
-- **39 MCP Tools** — complete European Parliament API v2 coverage:
+- **45 MCP Tools** — complete European Parliament API v2 coverage:
   - 7 MEP tools (`get_meps`, `get_mep_details`, `get_current_meps`, `get_incoming_meps`,
     `get_outgoing_meps`, `get_homonym_meps`, `get_mep_declarations`)
-  - 7 Plenary & Meeting tools (`get_plenary_sessions`, `get_voting_records`, `get_speeches`,
+  - 9 Plenary & Meeting tools (`get_plenary_sessions`, `get_voting_records`, `get_speeches`,
     `get_events`, `get_meeting_activities`, `get_meeting_decisions`,
-    `get_meeting_foreseen_activities`)
+    `get_meeting_foreseen_activities`, `get_meeting_plenary_session_documents`,
+    `get_meeting_plenary_session_document_items`)
   - 2 Committee tools (`get_committee_info`, `get_committee_documents`)
   - 7 Document tools (`search_documents`, `get_adopted_texts`, `get_plenary_documents`,
     `get_plenary_session_documents`, `get_plenary_session_document_items`,
@@ -43,11 +44,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
     `get_controlled_vocabularies`)
   - 3 Advanced Analysis tools (`analyze_voting_patterns`, `track_legislation`,
     `generate_report`)
-  - 10 OSINT Intelligence tools (`assess_mep_influence`, `analyze_coalition_dynamics`,
+  - 14 OSINT Intelligence tools (`assess_mep_influence`, `analyze_coalition_dynamics`,
     `detect_voting_anomalies`, `compare_political_groups`,
     `analyze_legislative_effectiveness`, `monitor_legislative_pipeline`,
     `analyze_committee_activity`, `track_mep_attendance`,
-    `analyze_country_delegation`, `generate_political_landscape`)
+    `analyze_country_delegation`, `generate_political_landscape`,
+    `network_analysis`, `sentiment_tracker`, `early_warning_system`,
+    `comparative_intelligence`)
 - **9 MCP Resources** with `ep://` URI scheme:
   `ep://meps`, `ep://meps/{mepId}`, `ep://committees/{committeeId}`,
   `ep://plenary-sessions`, `ep://votes/{sessionId}`, `ep://political-groups`,
