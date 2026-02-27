@@ -34,16 +34,28 @@ import type { ToolResult } from './shared/types.js';
  * **Marketing Use Cases:** Demo-ready endpoint for showcasing EP data access to potential
  * API consumers, journalists, and civic tech developers.
  * 
- * @param args - Tool arguments
- * @returns MCP tool result with MEP data
+ * @param args - Tool arguments matching GetMEPsSchema (country, group, committee, active, limit, offset)
+ * @returns MCP ToolResult containing paginated MEP list as JSON text content
+ * @throws {Error} When the EP API request fails or returns an unexpected error
+ * @throws {ZodError} When input fails schema validation (invalid country code, out-of-range limit, etc.)
  * 
  * @example
- * ```json
- * {
- *   "country": "SE",
- *   "limit": 10
- * }
+ * ```typescript
+ * // Get Swedish MEPs
+ * const result = await handleGetMEPs({ country: "SE", limit: 10 });
+ * const data = JSON.parse(result.content[0].text);
+ * console.log(`Found ${data.total} Swedish MEPs`);
  * ```
+ * 
+ * @example
+ * ```typescript
+ * // Get active EPP group members
+ * const result = await handleGetMEPs({ group: "EPP", active: true, limit: 50 });
+ * ```
+ * 
+ * @security Input validated by Zod schema before any API call. Errors are sanitized
+ * to avoid exposing internal implementation details. Personal data access is
+ * audit-logged per GDPR Article 30. ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 export async function handleGetMEPs(
   args: unknown

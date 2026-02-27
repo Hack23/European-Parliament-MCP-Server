@@ -391,6 +391,22 @@ Configure in `.vscode/mcp.json`:
 }
 ```
 
+#### Cursor IDE Configuration
+
+Add to `~/.cursor/mcp.json` (or project-level `.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "european-parliament": {
+      "command": "npx",
+      "args": ["european-parliament-mcp-server"],
+      "env": {}
+    }
+  }
+}
+```
+
 ---
 
 ## 📚 Documentation
@@ -430,7 +446,7 @@ npm run docs:build    # Full documentation build (HTML + MD + coverage + test re
 
 - [**API Usage Guide**](./API_USAGE_GUIDE.md) - Complete tool documentation with examples
 - [**Architecture Diagrams**](./ARCHITECTURE_DIAGRAMS.md) - C4 model diagrams and data flows
-- [**Troubleshooting Guide**](./TROUBLESHOOTING.md) - Common issues and solutions
+- [**Troubleshooting Guide**](#troubleshooting) - Common issues and solutions
 - [**Developer Guide**](./DEVELOPER_GUIDE.md) - Development workflow and contributing
 - [**Deployment Guide**](./DEPLOYMENT_GUIDE.md) - Claude Desktop, VS Code, Docker setup
 - [**Performance Guide**](./PERFORMANCE_GUIDE.md) - Optimization strategies
@@ -447,6 +463,50 @@ npm run docs:build    # Full documentation build (HTML + MD + coverage + test re
 - [**.github/copilot-instructions.md**](./.github/copilot-instructions.md) - Development guidelines for GitHub Copilot
 - [**.github/agents/README.md**](./.github/agents/README.md) - Custom GitHub Copilot agents
 - [**.github/skills/README.md**](./.github/skills/README.md) - Reusable skill patterns
+
+---
+
+## 🏗️ Architecture Overview
+
+```mermaid
+graph TB
+    Client[MCP Client<br/>Claude / VS Code / Cursor] -->|MCP Protocol stdio| Server[EP MCP Server<br/>TypeScript/Node.js]
+
+    subgraph "MCP Server (src/)"
+        direction TB
+        Tools[🔧 39 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …]
+        Resources[📦 9 Resources<br/>ep://meps/{id}<br/>ep://procedures/{id} · …]
+        Prompts[💬 7 Prompts<br/>mep_briefing<br/>coalition_analysis · …]
+    end
+
+    Server --> Tools
+    Server --> Resources
+    Server --> Prompts
+
+    subgraph "Infrastructure"
+        Cache[LRU Cache<br/>500 entries · 15 min TTL]
+        RateLimiter[Rate Limiter<br/>100 req / 15 min]
+        AuditLog[Audit Logger<br/>GDPR Article 30]
+    end
+
+    Tools --> EPClient[EuropeanParliamentClient<br/>Facade → 8 sub-clients]
+    Resources --> EPClient
+    EPClient --> Cache
+    EPClient --> RateLimiter
+    EPClient --> AuditLog
+    EPClient -->|HTTPS/TLS 1.3| EPAPI[European Parliament<br/>Open Data API v2<br/>data.europarl.europa.eu]
+
+    style Server fill:#4CAF50,stroke:#2E7D32,color:#fff
+    style EPClient fill:#2196F3,stroke:#1565C0,color:#fff
+    style EPAPI fill:#9C27B0,stroke:#6A1B9A,color:#fff
+    style Cache fill:#FF9800,stroke:#E65100,color:#fff
+    style RateLimiter fill:#F44336,stroke:#B71C1C,color:#fff
+    style AuditLog fill:#607D8B,stroke:#37474F,color:#fff
+```
+
+**Data flow:** MCP client sends a tool call → server validates input (Zod) → EP client
+checks cache → on miss, fetches from EP API (rate-limited) → response cached and returned
+as structured JSON. All personal data access is audit-logged per GDPR Article 30.
 
 ---
 
@@ -818,7 +878,7 @@ European-Parliament-MCP-Server/
 #### 📦 Deployment & Operations
 
 - **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Production deployment instructions
-- **[Troubleshooting Guide](./TROUBLESHOOTING.md)** - Common issues and solutions
+- **[Troubleshooting Guide](#troubleshooting)** - Common issues and solutions
 - **[NPM Publishing Guide](./NPM_PUBLISHING.md)** - Package publishing workflow
 
 ### Testing
@@ -863,6 +923,104 @@ npm audit
 # License compliance
 npm run test:licenses
 ```
+
+---
+
+## 🛠️ Troubleshooting
+
+### API Rate Limits
+
+**Symptom:** Requests return `429 Too Many Requests` or slow down unexpectedly.
+
+The European Parliament Open Data API enforces rate limits. The MCP server
+automatically applies a token-bucket rate limiter (100 requests per 15 minutes).
+
+**Solutions:**
+```bash
+# Reduce concurrency — don't call multiple tools in parallel bursts
+# Use the built-in cache — repeated identical requests are served from LRU cache
+# Add a delay between bulk operations:
+# e.g., call get_meps, wait 1 s, then call get_mep_details
+
+# Check current cache stats (if using programmatic access):
+const stats = epClient.getCacheStats();
+console.log(`Cache hit rate: ${stats.hitRate}%`);
+```
+
+### Connectivity Issues
+
+**Symptom:** `ECONNREFUSED`, `ETIMEDOUT`, or `Network error` from tools.
+
+**Solutions:**
+1. Verify EP API reachability: `curl https://data.europarl.europa.eu/api/v2/meps?limit=1`
+2. Check firewall / proxy settings — the server connects outbound to `data.europarl.europa.eu:443`
+3. Enable retry (default: on) — the client retries transient failures with exponential backoff
+4. Review API status at https://data.europarl.europa.eu/en/developer-corner
+
+### Installation Problems
+
+**Symptom:** `npm install` fails, or `node dist/index.js` throws import errors.
+
+**Solutions:**
+```bash
+# Ensure Node.js 24+ is installed
+node --version   # Must be >= 24.0.0
+
+# Clear npm cache and reinstall
+npm cache clean --force
+rm -rf node_modules package-lock.json
+npm install
+
+# Rebuild TypeScript output
+npm run build
+
+# Verify the package starts correctly
+node dist/index.js --version
+```
+
+**Symptom:** MCP client shows "server not found" or no tools listed.
+
+**Solutions:**
+- Confirm the `command` path in your MCP client config points to the correct binary
+- For `npx`: ensure `european-parliament-mcp-server` is in your npm registry
+- For `node`: use the absolute path to `dist/index.js`
+- Check MCP client logs — most clients (Claude Desktop, VS Code) log connection errors
+
+### Integration Test Failures
+
+**Symptom:** Integration tests fail with `EP_INTEGRATION_TESTS must be set`.
+
+Integration tests are disabled by default to respect API rate limits.
+
+```bash
+# Enable integration tests explicitly:
+EP_INTEGRATION_TESTS=true npm run test:integration
+
+# Capture fresh fixtures for offline testing:
+EP_INTEGRATION_TESTS=true EP_SAVE_FIXTURES=true npm run test:integration
+```
+
+### TypeScript / Build Errors
+
+**Symptom:** `tsc` reports type errors after pulling latest changes.
+
+```bash
+# Regenerate all types
+npm run type-check
+
+# Check for mismatched Node types
+npm install  # updates @types/node
+
+# Ensure tsconfig is correct
+cat tsconfig.json
+```
+
+### Getting Help
+
+- 📋 [Open an Issue](https://github.com/Hack23/European-Parliament-MCP-Server/issues)
+- 💬 [Start a Discussion](https://github.com/Hack23/European-Parliament-MCP-Server/discussions)
+- 📖 [Full Troubleshooting Guide](#troubleshooting)
+- 🤖 [Ask DeepWiki](https://deepwiki.com/Hack23/European-Parliament-MCP-Server)
 
 ---
 
