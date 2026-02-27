@@ -27,7 +27,7 @@
  */
 
 import { randomUUID } from 'node:crypto';
-import { CorrelateIntelligenceSchema } from '../schemas/europeanParliament.js';
+import { CorrelateIntelligenceSchema, OsintStandardOutputSchema } from '../schemas/europeanParliament.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult, OsintStandardOutput } from './shared/types.js';
 
@@ -651,6 +651,14 @@ export async function handleCorrelateIntelligence(
     dataFreshness: `Real-time EP API data — correlated at ${analysisTime}`,
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
   };
+
+  // Validate the standard OSINT output fields (throws ZodError if schema is violated)
+  OsintStandardOutputSchema.parse({
+    confidenceLevel: report.confidenceLevel,
+    methodology: report.methodology,
+    dataFreshness: report.dataFreshness,
+    sourceAttribution: report.sourceAttribution,
+  });
 
   return buildToolResponse(report);
 }
