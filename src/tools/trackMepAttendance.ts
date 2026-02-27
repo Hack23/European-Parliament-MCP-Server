@@ -323,7 +323,7 @@ async function buildGroupAnalysis(
  * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link trackMepAttendanceToolMetadata} for MCP schema registration
- * @see handleAssessMepInfluence for comprehensive MEP influence and activity scoring
+ * @see [handleAssessMepInfluence](../../assessMepInfluence/functions/handleAssessMepInfluence.md) for comprehensive MEP influence and activity scoring
  */
 export async function handleTrackMepAttendance(
   args: unknown

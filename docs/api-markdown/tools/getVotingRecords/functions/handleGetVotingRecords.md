@@ -59,4 +59,4 @@ const result = await handleGetVotingRecords({
 ## See
 
  - [getVotingRecordsToolMetadata](../variables/getVotingRecordsToolMetadata.md) for MCP schema registration
- - handleGetMeetingDecisions for retrieving decisions linked to a specific sitting
+ - [handleGetMeetingDecisions](../../getMeetingDecisions/functions/handleGetMeetingDecisions.md) for retrieving decisions linked to a specific sitting

@@ -27,7 +27,7 @@
 
 | Metric | Status | Value |
 |--------|--------|-------|
-| 🧪 Test Suite | ✅ Passing | 1197 tests across 400 suites (docs/test-results/results.json) |
+| 🧪 Test Suite | ✅ Passing | 1396 tests across 54 test files (docs/test-results/results.json) |
 | 🔒 npm audit | ✅ Clean | 0 vulnerabilities |
 | 📜 License compliance | ✅ Passing | All MIT/ISC/Apache-2.0 |
 | 🏛️ SLSA Level 3 | ✅ Achieved | Cryptographic provenance on all releases |

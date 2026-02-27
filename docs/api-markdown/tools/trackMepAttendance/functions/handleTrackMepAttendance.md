@@ -62,4 +62,4 @@ const result = await handleTrackMepAttendance({
 ## See
 
  - [trackMepAttendanceToolMetadata](../variables/trackMepAttendanceToolMetadata.md) for MCP schema registration
- - handleAssessMepInfluence for comprehensive MEP influence and activity scoring
+ - [handleAssessMepInfluence](../../assessMepInfluence/functions/handleAssessMepInfluence.md) for comprehensive MEP influence and activity scoring

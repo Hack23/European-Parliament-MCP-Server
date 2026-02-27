@@ -47,7 +47,7 @@ import type { ToolResult } from './shared/types.js';
  * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link getVotingRecordsToolMetadata} for MCP schema registration
- * @see {@link handleGetMeetingDecisions} for retrieving decisions linked to a specific sitting
+ * @see [handleGetMeetingDecisions](../../getMeetingDecisions/functions/handleGetMeetingDecisions.md) for retrieving decisions linked to a specific sitting
  */
 export async function handleGetVotingRecords(
   args: unknown
