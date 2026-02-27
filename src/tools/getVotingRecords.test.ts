@@ -123,6 +123,54 @@ describe('get_voting_records Tool', () => {
     });
   });
 
+  describe('mepId Deprecation Warning', () => {
+    it('should include _warning field when mepId is provided', async () => {
+      const result = await handleGetVotingRecords({ mepId: 'MEP-124810' });
+      const text = result.content[0]?.text ?? '{}';
+      const data = JSON.parse(text) as Record<string, unknown>;
+      expect(data).toHaveProperty('_warning');
+      expect(typeof data['_warning']).toBe('string');
+      const warning = data['_warning'] as string;
+      expect(warning).toContain('mepId');
+      expect(warning.length).toBeGreaterThan(0);
+    });
+
+    it('should NOT include _warning field when mepId is not provided', async () => {
+      const result = await handleGetVotingRecords({ topic: 'Climate' });
+      const text = result.content[0]?.text ?? '{}';
+      const data = JSON.parse(text) as Record<string, unknown>;
+      expect(data).not.toHaveProperty('_warning');
+    });
+
+    it('should NOT include _warning field for empty request', async () => {
+      const result = await handleGetVotingRecords({});
+      const text = result.content[0]?.text ?? '{}';
+      const data = JSON.parse(text) as Record<string, unknown>;
+      expect(data).not.toHaveProperty('_warning');
+    });
+
+    it('should still return valid voting data alongside the warning', async () => {
+      const result = await handleGetVotingRecords({ mepId: 'MEP-99999' });
+      const text = result.content[0]?.text ?? '{}';
+      const data = JSON.parse(text) as Record<string, unknown>;
+      expect(data).toHaveProperty('data');
+      expect(data).toHaveProperty('total');
+      expect(data).toHaveProperty('hasMore');
+      expect(data).toHaveProperty('_warning');
+    });
+
+    it('warning message should explain EP API limitation', async () => {
+      const result = await handleGetVotingRecords({ mepId: 'MEP-11111' });
+      const text = result.content[0]?.text ?? '{}';
+      const data = JSON.parse(text) as Record<string, unknown>;
+      const warning = data['_warning'] as string;
+      const lowerWarning = warning.toLowerCase();
+      expect(lowerWarning).toContain('ep api');
+      expect(lowerWarning).toContain('aggregate');
+      expect(lowerWarning).toContain('no effect');
+    });
+  });
+
   describe('Error Handling', () => {
     it('should provide clean error messages', async () => {
       try {
