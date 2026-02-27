@@ -39,6 +39,8 @@ interface VotingAnomalyAnalysis {
     riskLevel: string;
   };
   confidenceLevel: string;
+  dataFreshness: string;
+  sourceAttribution: string;
   methodology: string;
 }
 
@@ -291,6 +293,8 @@ export async function handleDetectVotingAnomalies(
         },
         dataAvailable: false,
         confidenceLevel: 'LOW',
+        dataFreshness: 'EP API data — voting statistics unavailable for this MEP',
+        sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
         methodology: 'The EP API /meps/{id} endpoint does not return voting statistics. '
           + 'Anomaly detection requires voting data which is unavailable for this MEP. '
           + 'Data source: European Parliament Open Data Portal.'
@@ -313,6 +317,8 @@ export async function handleDetectVotingAnomalies(
         riskLevel: classifyRiskLevel(highSeverity)
       },
       confidenceLevel: confidence,
+      dataFreshness: 'Real-time EP API data — voting statistics from MEP records',
+      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'Heuristic statistical analysis using aggregated voting statistics and MEP metadata '
         + 'from /meps/{id} on the European Parliament Open Data API. Vote-level records are not fetched; '
         + 'many voting statistic fields may be zero or unavailable from the EP API. Group-level analysis '

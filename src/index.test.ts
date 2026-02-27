@@ -34,6 +34,9 @@ describe('getToolMetadataArray', () => {
   it('should return 41 tools', () => {
     const tools = getToolMetadataArray();
     expect(tools).toHaveLength(41);
+  it('should return 43 tools', () => {
+    const tools = getToolMetadataArray();
+    expect(tools).toHaveLength(43);
   });
 
   it('should have unique non-empty tool names', () => {
@@ -214,6 +217,12 @@ describe('MCP Protocol Implementation', () => {
   });
 
   it('should have exactly 7 core + 3 advanced + 10 OSINT + 8 Phase 4 + 13 Phase 5 tools', () => {
+  it('should have tool registration for all 43 tools', () => {
+    const tools = getToolMetadataArray();
+    expect(tools.length).toBe(43);
+  });
+
+  it('should have exactly 7 core + 3 advanced + 10 OSINT + 4 advanced OSINT + 8 Phase 4 + 11 Phase 5 tools', () => {
     const tools = getToolMetadataArray();
     const coreToolNames = ['get_meps', 'get_mep_details', 'get_plenary_sessions',
       'get_voting_records', 'search_documents', 'get_committee_info', 'get_parliamentary_questions'];
@@ -223,6 +232,9 @@ describe('MCP Protocol Implementation', () => {
       'compare_political_groups', 'analyze_legislative_effectiveness', 'monitor_legislative_pipeline',
       'analyze_committee_activity', 'track_mep_attendance',
       'analyze_country_delegation', 'generate_political_landscape'
+    ];
+    const advancedOsintToolNames = [
+      'network_analysis', 'sentiment_tracker', 'early_warning_system', 'comparative_intelligence'
     ];
     const phase4ToolNames = [
       'get_current_meps', 'get_speeches', 'get_procedures', 'get_adopted_texts',
@@ -237,10 +249,11 @@ describe('MCP Protocol Implementation', () => {
     ];
 
     const names = tools.map(t => t.name);
-    for (const name of [...coreToolNames, ...advancedToolNames, ...osintToolNames, ...phase4ToolNames, ...phase5ToolNames]) {
+    for (const name of [...coreToolNames, ...advancedToolNames, ...osintToolNames, ...advancedOsintToolNames, ...phase4ToolNames, ...phase5ToolNames]) {
       expect(names).toContain(name);
     }
     expect(coreToolNames.length + advancedToolNames.length + osintToolNames.length + phase4ToolNames.length + phase5ToolNames.length).toBe(41);
+    expect(coreToolNames.length + advancedToolNames.length + osintToolNames.length + advancedOsintToolNames.length + phase4ToolNames.length + phase5ToolNames.length).toBe(43);
   });
 });
 
