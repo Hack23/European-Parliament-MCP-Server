@@ -50,7 +50,7 @@ export { getToolMetadataArray } from './server/toolRegistry.js';
 /** Re-export CLI utilities */
 export { sanitizeUrl } from './server/cli.js';
 /** Re-export server types */
-export type { ToolHandler, ToolMetadata, ToolCategory, CLIOptions } from './server/types.js';
+export type { ToolHandler, ToolMetadata, ToolCategory, CLIOptions, ToolResult } from './server/types.js';
 /** Re-export DI token registry */
 export type { DIToken } from './di/tokens.js';
 /** Re-export DI container and default factory for consumers */
