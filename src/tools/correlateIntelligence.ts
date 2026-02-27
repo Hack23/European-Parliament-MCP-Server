@@ -73,6 +73,7 @@ interface CoalitionResult {
 interface NetworkResult {
   centralMEPs: { mepId: string; mepName: string; centralityScore: number }[];
   bridgingMEPs: { mepId: string; mepName: string }[];
+  networkNodes?: { mepId: string; centralityScore: number }[];
   confidenceLevel: string;
 }
 
@@ -170,8 +171,21 @@ const DEFAULT_COALITION_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'I
 // ---------------------------------------------------------------------------
 
 function parseToolResult(result: ToolResult): unknown {
-  const text = result.content[0]?.text ?? '{}';
-  return JSON.parse(text);
+  const text = result.content[0]?.text;
+  if (result.isError === true) {
+    const message =
+      typeof text === 'string' && text.trim().length > 0
+        ? `Dependent tool returned an error result: ${text}`
+        : 'Dependent tool returned an error result with no message';
+    throw new Error(message);
+  }
+  try {
+    return JSON.parse(text ?? '{}');
+  } catch (error) {
+    throw new Error(
+      `Failed to parse dependent tool result as JSON: ${(error as Error).message}`
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -218,16 +232,18 @@ async function correlateInfluenceAnomaly(
 ): Promise<{
   correlation: InfluenceAnomalyCorrelation | null;
   alert: CorrelationAlert | null;
+  toolConfidenceLevels: string[];
 }> {
   const influenceData = await fetchInfluenceData(mepId);
-  if (influenceData === null) return { correlation: null, alert: null };
+  if (influenceData === null) return { correlation: null, alert: null, toolConfidenceLevels: [] };
 
   const anomalyData = await fetchAnomalyData(mepId);
+  const toolConfidenceLevels = [influenceData.confidenceLevel, anomalyData.confidenceLevel];
 
   const isHighInfluence = influenceData.overallScore >= influenceThreshold;
   const hasAnomalies = anomalyData.summary.totalAnomalies > 0;
 
-  if (!isHighInfluence && !hasAnomalies) return { correlation: null, alert: null };
+  if (!isHighInfluence && !hasAnomalies) return { correlation: null, alert: null, toolConfidenceLevels };
 
   const significance = getCorrelationSignificance(isHighInfluence, hasAnomalies, anomalyData.summary.highSeverity);
 
@@ -258,7 +274,7 @@ async function correlateInfluenceAnomaly(
     };
   }
 
-  return { correlation, alert };
+  return { correlation, alert, toolConfidenceLevels };
 }
 
 // ---------------------------------------------------------------------------
@@ -292,6 +308,7 @@ async function correlateCoalitionFracture(
 ): Promise<{
   correlation: CoalitionFractureCorrelation | null;
   alert: CorrelationAlert | null;
+  toolConfidenceLevels: string[];
 }> {
   const ewsSensitivity = mapSensitivityToEws(sensitivityLevel);
 
@@ -302,15 +319,17 @@ async function correlateCoalitionFracture(
     const er = await handleEarlyWarningSystem({ sensitivity: ewsSensitivity, focusArea: 'coalitions' });
     ewsData = parseToolResult(er) as EarlyWarningResult;
   } catch {
-    return { correlation: null, alert: null };
+    return { correlation: null, alert: null, toolConfidenceLevels: [] };
   }
 
   try {
     const cr = await handleAnalyzeCoalitionDynamics({ groupIds: groups });
     coalitionData = parseToolResult(cr) as CoalitionResult;
   } catch {
-    return { correlation: null, alert: null };
+    return { correlation: null, alert: null, toolConfidenceLevels: [] };
   }
+
+  const toolConfidenceLevels = [ewsData.confidenceLevel, coalitionData.confidenceLevel];
 
   const coalitionWarnings = ewsData.warnings.filter(isCoalitionWarning);
 
@@ -325,7 +344,7 @@ async function correlateCoalitionFracture(
   const hasFractureSignals = coalitionWarnings.length > 0 || highStressIndicators.length > 0;
   const hasDecliningCohesion = decliningGroups.length > 0;
 
-  if (!hasFractureSignals && !hasDecliningCohesion) return { correlation: null, alert: null };
+  if (!hasFractureSignals && !hasDecliningCohesion) return { correlation: null, alert: null, toolConfidenceLevels };
 
   const fractureRisk = getFractureRisk(
     ewsData.computedAttributes.criticalWarnings,
@@ -342,14 +361,16 @@ async function correlateCoalitionFracture(
   };
 
   let alert: CorrelationAlert | null = null;
-  if (hasFractureSignals && hasDecliningCohesion) {
+  if (hasFractureSignals) {
     alert = {
       alertType: 'COALITION_FRACTURE',
       severity: fractureRisk,
-      groups: decliningGroups,
+      groups: decliningGroups.length > 0 ? decliningGroups : groups,
       evidence: [
         `Early Warning System: ${String(coalitionWarnings.length)} coalition warning(s) at ${ewsData.riskLevel} risk level`,
-        `Coalition Dynamics: ${String(decliningGroups.length)} group(s) showing declining cohesion (${decliningGroups.join(', ')})`,
+        hasDecliningCohesion
+          ? `Coalition Dynamics: ${String(decliningGroups.length)} group(s) showing declining cohesion (${decliningGroups.join(', ')})`
+          : `Coalition Dynamics: no declining cohesion detected (EP API per-group voting data limited)`,
         `Stability score: ${String(ewsData.stabilityScore)}/100 — key risk: ${ewsData.computedAttributes.keyRiskFactor}`,
       ],
       recommendation:
@@ -357,7 +378,7 @@ async function correlateCoalitionFracture(
     };
   }
 
-  return { correlation, alert };
+  return { correlation, alert, toolConfidenceLevels };
 }
 
 // ---------------------------------------------------------------------------
@@ -374,11 +395,65 @@ function getProfileSignificance(
   return 'LOW';
 }
 
+/**
+ * Builds a {@link NetworkProfileCorrelation} record and optional
+ * {@link CorrelationAlert} for a single MEP profile.
+ *
+ * Centrality is looked up first from the full `networkNodes` map (all MEPs in
+ * the network), falling back to the truncated `centralMEPs` top-10 list so
+ * that MEPs outside the top-10 are not silently scored as 0.
+ */
+function buildProfileAndAlert(
+  profile: ComparativeResult['profiles'][number],
+  networkNodesMap: Map<string, number>,
+  centralMEPs: NetworkResult['centralMEPs'],
+  bridgingIds: Set<string>
+): { correlation: NetworkProfileCorrelation; alert: CorrelationAlert | null } {
+  const centralityScore =
+    networkNodesMap.get(profile.mepId) ??
+    centralMEPs.find(c => c.mepId === profile.mepId)?.centralityScore ??
+    0;
+  const committeeScore = profile.scores['committee'] ?? 0;
+  const isHighCentrality = centralityScore > 0.5;
+  const isHighCommitteeActivity = committeeScore > 60;
+  const isBridging = bridgingIds.has(profile.mepId);
+  const significance = getProfileSignificance(isHighCentrality, isHighCommitteeActivity, isBridging);
+
+  const correlation: NetworkProfileCorrelation = {
+    mepId: profile.mepId,
+    mepName: profile.name,
+    centralityScore,
+    committeeActivityScore: committeeScore,
+    isBridgingMep: isBridging,
+    profileSignificance: significance,
+  };
+
+  const alert: CorrelationAlert | null =
+    significance === 'HIGH'
+      ? {
+          alertType: 'COMPREHENSIVE_PROFILE',
+          severity: 'HIGH',
+          mepId: profile.mepId,
+          mepName: profile.name,
+          evidence: [
+            `Network centrality score: ${String(centralityScore)} (> 0.5 threshold)`,
+            `Committee activity score: ${String(committeeScore)}/100 (cross-committee active)`,
+            `Bridging MEP: ${String(isBridging)} — connects multiple political clusters`,
+          ],
+          recommendation:
+            'Generate a comprehensive intelligence profile. High network centrality combined with cross-committee activity indicates a key informal power broker warranting deeper analysis.',
+        }
+      : null;
+
+  return { correlation, alert };
+}
+
 async function correlateNetworkProfiles(
   mepIds: string[]
 ): Promise<{
   correlations: NetworkProfileCorrelation[];
   alerts: CorrelationAlert[];
+  toolConfidenceLevels: string[];
 }> {
   const numericIds = mepIds.map(id => parseInt(id, 10)).filter(n => !isNaN(n));
 
@@ -387,61 +462,33 @@ async function correlateNetworkProfiles(
     const nr = await handleNetworkAnalysis({});
     networkData = parseToolResult(nr) as NetworkResult;
   } catch {
-    return { correlations: [], alerts: [] };
+    return { correlations: [], alerts: [], toolConfidenceLevels: [] };
   }
 
-  if (numericIds.length < 2) return { correlations: [], alerts: [] };
+  if (numericIds.length < 2) return { correlations: [], alerts: [], toolConfidenceLevels: [] };
 
   let comparativeData: ComparativeResult;
   try {
     const cr = await handleComparativeIntelligence({ mepIds: numericIds });
     comparativeData = parseToolResult(cr) as ComparativeResult;
   } catch {
-    return { correlations: [], alerts: [] };
+    return { correlations: [], alerts: [], toolConfidenceLevels: [] };
   }
 
+  const toolConfidenceLevels = [networkData.confidenceLevel, comparativeData.confidenceLevel];
+
+  const networkNodesMap = new Map<string, number>(
+    (networkData.networkNodes ?? []).map(n => [n.mepId, n.centralityScore])
+  );
   const bridgingIds = new Set(networkData.bridgingMEPs.map(b => b.mepId));
-  const correlations: NetworkProfileCorrelation[] = [];
-  const alerts: CorrelationAlert[] = [];
 
-  for (const profile of comparativeData.profiles) {
-    const centralMep = networkData.centralMEPs.find(c => c.mepId === profile.mepId);
-    const centralityScore = centralMep?.centralityScore ?? 0;
-    const committeeScore = profile.scores['committee'] ?? 0;
+  const profileResults = comparativeData.profiles.map(
+    profile => buildProfileAndAlert(profile, networkNodesMap, networkData.centralMEPs, bridgingIds)
+  );
+  const correlations = profileResults.map(r => r.correlation);
+  const alerts = profileResults.flatMap(r => (r.alert !== null ? [r.alert] : []));
 
-    const isHighCentrality = centralityScore > 0.5;
-    const isHighCommitteeActivity = committeeScore > 60;
-    const isBridging = bridgingIds.has(profile.mepId);
-
-    const significance = getProfileSignificance(isHighCentrality, isHighCommitteeActivity, isBridging);
-
-    correlations.push({
-      mepId: profile.mepId,
-      mepName: profile.name,
-      centralityScore,
-      committeeActivityScore: committeeScore,
-      isBridgingMep: isBridging,
-      profileSignificance: significance,
-    });
-
-    if (significance === 'HIGH') {
-      alerts.push({
-        alertType: 'COMPREHENSIVE_PROFILE',
-        severity: 'HIGH',
-        mepId: profile.mepId,
-        mepName: profile.name,
-        evidence: [
-          `Network centrality score: ${String(centralityScore)} (> 0.5 threshold)`,
-          `Committee activity score: ${String(committeeScore)}/100 (cross-committee active)`,
-          `Bridging MEP: ${String(isBridging)} — connects multiple political clusters`,
-        ],
-        recommendation:
-          'Generate a comprehensive intelligence profile. High network centrality combined with cross-committee activity indicates a key informal power broker warranting deeper analysis.',
-      });
-    }
-  }
-
-  return { correlations, alerts };
+  return { correlations, alerts, toolConfidenceLevels };
 }
 
 // ---------------------------------------------------------------------------
@@ -523,8 +570,8 @@ function buildMethodology(influenceThreshold: number, sensitivityLevel: string, 
  * ```
  *
  * @security Input validated by Zod. Cross-tool access to MEP personal data
- *   is minimised per GDPR Article 5(1)(c). All correlation requests are
- *   audit-logged per ISMS Policy AU-002.
+ *   is minimised per GDPR Article 5(1)(c). EP data-access operations are
+ *   logged through the underlying EP API client per ISMS Policy AU-002.
  * @since 1.0.0
  * @see {@link correlateIntelligenceToolMetadata} for MCP schema registration
  * @see {@link handleAssessMepInfluence} for the influence dimension
@@ -542,25 +589,29 @@ export async function handleCorrelateIntelligence(
   const analysisTime = new Date().toISOString();
   const correlationId = `CORR-${randomUUID().replace(/-/g, '').toUpperCase().slice(0, 12)}`;
 
-  // Scenario 1: Per-MEP influence × anomaly correlation
+  // Scenario 1: Per-MEP influence × anomaly correlation (parallelised)
+  const influenceAnomalyResults = await Promise.all(
+    mepIds.map((mepId) => correlateInfluenceAnomaly(mepId, influenceThreshold)),
+  );
   const influenceAnomalyCorrelations: InfluenceAnomalyCorrelation[] = [];
   const influenceAnomalyAlerts: CorrelationAlert[] = [];
+  const influenceToolConfidenceLevels: string[] = [];
 
-  for (const mepId of mepIds) {
-    const { correlation, alert } = await correlateInfluenceAnomaly(mepId, influenceThreshold);
+  for (const { correlation, alert, toolConfidenceLevels } of influenceAnomalyResults) {
     if (correlation !== null) influenceAnomalyCorrelations.push(correlation);
     if (alert !== null) influenceAnomalyAlerts.push(alert);
+    influenceToolConfidenceLevels.push(...toolConfidenceLevels);
   }
 
   // Scenario 2: Coalition fracture
-  const { correlation: coalitionCorrelation, alert: coalitionAlert } =
+  const { correlation: coalitionCorrelation, alert: coalitionAlert, toolConfidenceLevels: coalitionConfidenceLevels } =
     await correlateCoalitionFracture(resolvedGroups, sensitivityLevel);
 
   // Scenario 3: Network × comparative profiles
-  const { correlations: networkCorrelations, alerts: networkAlerts } =
+  const { correlations: networkCorrelations, alerts: networkAlerts, toolConfidenceLevels: networkConfidenceLevels } =
     includeNetworkAnalysis
       ? await correlateNetworkProfiles(mepIds)
-      : { correlations: [], alerts: [] };
+      : { correlations: [], alerts: [], toolConfidenceLevels: [] };
 
   const allAlerts: CorrelationAlert[] = [
     ...influenceAnomalyAlerts,
@@ -574,8 +625,9 @@ export async function handleCorrelateIntelligence(
     networkCorrelations.length;
 
   const confidenceLevels: string[] = [
-    ...influenceAnomalyCorrelations.map(c => c.correlationSignificance),
-    ...(coalitionCorrelation !== null ? [coalitionCorrelation.fractureRisk] : []),
+    ...influenceToolConfidenceLevels,
+    ...coalitionConfidenceLevels,
+    ...networkConfidenceLevels,
   ];
 
   const report: CorrelatedIntelligenceReport = {

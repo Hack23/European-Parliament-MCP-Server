@@ -16,7 +16,7 @@ export interface ToolResult {
  * Standard OSINT output fields required on every intelligence tool response.
  *
  * Ensures consistent methodology transparency, confidence communication, and
- * data provenance across all 14 OSINT intelligence tools.
+ * data provenance across all OSINT intelligence tools.
  *
  * **Confidence Level Criteria:**
  * - `HIGH`   — Real EP API data with full voting statistics available (totalVotes > 50 or complete membership data)

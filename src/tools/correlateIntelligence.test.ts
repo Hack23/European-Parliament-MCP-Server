@@ -531,7 +531,7 @@ describe('correlate_intelligence Tool', () => {
       expect(['HIGH', 'MEDIUM', 'LOW']).toContain(report.confidenceLevel);
     });
 
-    it('should return LOW confidence when no correlations found', async () => {
+    it('should return MEDIUM confidence when all tools fail', async () => {
       vi.mocked(handleAssessMepInfluence).mockRejectedValue(new Error('fail'));
       vi.mocked(handleDetectVotingAnomalies).mockRejectedValue(new Error('fail'));
       vi.mocked(handleEarlyWarningSystem).mockRejectedValue(new Error('fail'));

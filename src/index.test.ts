@@ -312,7 +312,7 @@ describe('EuropeanParliamentMCPServer', () => {
       const result = await handler();
       expect(result).toHaveProperty('tools');
       expect(Array.isArray(result.tools)).toBe(true);
-      expect(result.tools.length).toBe(45);
+      expect(result.tools.length).toBe(46);
     });
   });
 
