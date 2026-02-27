@@ -4285,6 +4285,13 @@ describe('EuropeanParliamentClient', () => {
       await expect(client.getMeetingPlenarySessionDocuments('   ')).rejects.toThrow('Meeting sitting-id is required');
     });
 
+    it('should throw for sittingId with path traversal characters', async () => {
+      await expect(client.getMeetingPlenarySessionDocuments('../evil')).rejects.toThrow('invalid characters');
+      await expect(client.getMeetingPlenarySessionDocuments('test?query')).rejects.toThrow('invalid characters');
+      await expect(client.getMeetingPlenarySessionDocuments('id#frag')).rejects.toThrow('invalid characters');
+      await expect(client.getMeetingPlenarySessionDocuments('id\\path')).rejects.toThrow('invalid characters');
+    });
+
     it('should call the correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -4347,6 +4354,13 @@ describe('EuropeanParliamentClient', () => {
 
     it('should throw for whitespace-only sittingId', async () => {
       await expect(client.getMeetingPlenarySessionDocumentItems('   ')).rejects.toThrow('Meeting sitting-id is required');
+    });
+
+    it('should throw for sittingId with path traversal characters', async () => {
+      await expect(client.getMeetingPlenarySessionDocumentItems('../evil')).rejects.toThrow('invalid characters');
+      await expect(client.getMeetingPlenarySessionDocumentItems('test?query')).rejects.toThrow('invalid characters');
+      await expect(client.getMeetingPlenarySessionDocumentItems('id#frag')).rejects.toThrow('invalid characters');
+      await expect(client.getMeetingPlenarySessionDocumentItems('id\\path')).rejects.toThrow('invalid characters');
     });
 
     it('should call the correct endpoint', async () => {
