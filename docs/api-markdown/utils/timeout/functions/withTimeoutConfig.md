@@ -8,7 +8,7 @@
 
 > **withTimeoutConfig**\<`T`\>(`promise`, `config`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [utils/timeout.ts:370](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/timeout.ts#L370)
+Defined in: [utils/timeout.ts:370](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L370)
 
 Execute a promise with timeout settings from a [TimeoutConfig](../interfaces/TimeoutConfig.md).
 

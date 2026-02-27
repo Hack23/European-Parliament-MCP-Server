@@ -6,9 +6,9 @@
 
 # Function: handleAnalyzeCountryDelegation()
 
-> **handleAnalyzeCountryDelegation**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+> **handleAnalyzeCountryDelegation**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/analyzeCountryDelegation.ts:300](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/analyzeCountryDelegation.ts#L300)
+Defined in: [tools/analyzeCountryDelegation.ts:301](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCountryDelegation.ts#L301)
 
 Handles the analyze_country_delegation MCP tool request.
 
@@ -27,18 +27,15 @@ Raw tool arguments, validated against [AnalyzeCountryDelegationSchema](../variab
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing a CountryDelegationAnalysis object with
   delegation breakdown, computed attributes, confidence level, and methodology note
 
 ## Throws
 
-If `args` fails schema validation (e.g., missing required `country`, non-uppercase code)
-
-## Throws
-
-If the European Parliament API is unreachable or returns an error response
+- If `args` fails schema validation (e.g., missing required `country`, non-uppercase code)
+- If the European Parliament API is unreachable or returns an error response
 
 ## Example
 

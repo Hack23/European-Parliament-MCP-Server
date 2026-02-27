@@ -8,7 +8,7 @@
 
 > **ToolCategory** = `"core"` \| `"advanced"` \| `"osint"` \| `"phase4"` \| `"phase5"`
 
-Defined in: [server/types.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/server/types.ts#L42)
+Defined in: [server/types.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L41)
 
 Logical grouping for tools in the registry.
 

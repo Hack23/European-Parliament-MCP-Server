@@ -6,7 +6,7 @@
 
 # Class: MetricsService
 
-Defined in: [services/MetricsService.ts:69](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L69)
+Defined in: [services/MetricsService.ts:69](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L69)
 
 Performance Metrics Service
 Cyclomatic complexity: 8
@@ -17,7 +17,7 @@ Cyclomatic complexity: 8
 
 > **new MetricsService**(`maxHistogramSamples?`): `MetricsService`
 
-Defined in: [services/MetricsService.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L73)
+Defined in: [services/MetricsService.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L73)
 
 #### Parameters
 
@@ -35,7 +35,7 @@ Defined in: [services/MetricsService.ts:73](https://github.com/Hack23/European-P
 
 > `private` `readonly` **maxHistogramSamples**: `number`
 
-Defined in: [services/MetricsService.ts:71](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L71)
+Defined in: [services/MetricsService.ts:71](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L71)
 
 ***
 
@@ -43,7 +43,7 @@ Defined in: [services/MetricsService.ts:71](https://github.com/Hack23/European-P
 
 > `private` `readonly` **metrics**: [`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, `MetricValue`\>
 
-Defined in: [services/MetricsService.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L70)
+Defined in: [services/MetricsService.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L70)
 
 ## Methods
 
@@ -51,7 +51,7 @@ Defined in: [services/MetricsService.ts:70](https://github.com/Hack23/European-P
 
 > `private` **buildKey**(`name`, `labels?`): `string`
 
-Defined in: [services/MetricsService.ts:289](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L289)
+Defined in: [services/MetricsService.ts:289](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L289)
 
 Build metric key from name and labels
 Cyclomatic complexity: 2
@@ -76,7 +76,7 @@ Cyclomatic complexity: 2
 
 > **clear**(): `void`
 
-Defined in: [services/MetricsService.ts:281](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L281)
+Defined in: [services/MetricsService.ts:281](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L281)
 
 Clears all recorded metrics from memory.
 
@@ -105,7 +105,7 @@ afterEach(() => {
 
 > **getHistogramSummary**(`name`, `labels?`): \{ `avg`: `number`; `count`: `number`; `p50`: `number`; `p95`: `number`; `p99`: `number`; `sum`: `number`; \} \| `undefined`
 
-Defined in: [services/MetricsService.ts:241](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L241)
+Defined in: [services/MetricsService.ts:241](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L241)
 
 Returns a statistical summary of a histogram metric.
 
@@ -153,7 +153,7 @@ if (summary) {
 
 > **getMetric**(`name`, `labels?`): `number` \| `undefined`
 
-Defined in: [services/MetricsService.ts:212](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L212)
+Defined in: [services/MetricsService.ts:212](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L212)
 
 Returns the current scalar value of a counter or gauge metric.
 
@@ -199,7 +199,7 @@ if (errors > 10) {
 
 > **incrementCounter**(`name`, `value?`, `labels?`): `void`
 
-Defined in: [services/MetricsService.ts:97](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L97)
+Defined in: [services/MetricsService.ts:97](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L97)
 
 Increments a counter metric by the given value.
 
@@ -252,7 +252,7 @@ metricsService.incrementCounter(MetricName.EP_API_CALL_COUNT, 1, { endpoint: '/m
 
 > **observeHistogram**(`name`, `value`, `labels?`): `void`
 
-Defined in: [services/MetricsService.ts:160](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L160)
+Defined in: [services/MetricsService.ts:160](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L160)
 
 Records a single observation into a histogram metric.
 
@@ -306,7 +306,7 @@ metricsService.observeHistogram('ep_api_latency_ms', Date.now() - start);
 
 > `private` **partition**(`arr`, `left`, `right`, `pivotIndex`): `number`
 
-Defined in: [services/MetricsService.ts:366](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L366)
+Defined in: [services/MetricsService.ts:366](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L366)
 
 Partition helper for quickselect (Lomuto-style)
 Cyclomatic complexity: 4
@@ -349,7 +349,7 @@ New pivot index
 
 > `private` **percentileFromUnsorted**(`values`, `percentile`): `number`
 
-Defined in: [services/MetricsService.ts:308](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L308)
+Defined in: [services/MetricsService.ts:308](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L308)
 
 Compute a percentile value from an unsorted array using quickselect
 Cyclomatic complexity: 3
@@ -380,7 +380,7 @@ Percentile value
 
 > `private` **selectKth**(`arr`, `k`): `number`
 
-Defined in: [services/MetricsService.ts:330](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L330)
+Defined in: [services/MetricsService.ts:330](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L330)
 
 Select the k-th smallest element using quickselect
 Cyclomatic complexity: 5
@@ -411,7 +411,7 @@ The k-th smallest element
 
 > **setGauge**(`name`, `value`, `labels?`): `void`
 
-Defined in: [services/MetricsService.ts:129](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L129)
+Defined in: [services/MetricsService.ts:129](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L129)
 
 Sets a gauge metric to an absolute value.
 

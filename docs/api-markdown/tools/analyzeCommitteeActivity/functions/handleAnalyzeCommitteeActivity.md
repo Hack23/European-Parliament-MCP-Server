@@ -6,9 +6,9 @@
 
 # Function: handleAnalyzeCommitteeActivity()
 
-> **handleAnalyzeCommitteeActivity**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+> **handleAnalyzeCommitteeActivity**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/analyzeCommitteeActivity.ts:225](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/analyzeCommitteeActivity.ts#L225)
+Defined in: [tools/analyzeCommitteeActivity.ts:226](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCommitteeActivity.ts#L226)
 
 Handles the analyze_committee_activity MCP tool request.
 
@@ -27,18 +27,15 @@ Raw tool arguments, validated against [AnalyzeCommitteeActivitySchema](../variab
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing a CommitteeActivityAnalysis object with
   metrics, computed attributes, confidence level, and methodology note
 
 ## Throws
 
-If `args` fails schema validation (e.g., missing required `committeeId`)
-
-## Throws
-
-If the European Parliament API is unreachable or returns an error response
+- If `args` fails schema validation (e.g., missing required `committeeId`)
+- If the European Parliament API is unreachable or returns an error response
 
 ## Example
 
@@ -53,9 +50,9 @@ const result = await handleAnalyzeCommitteeActivity({
 
 ## Security
 
-Input is validated with Zod before any API call.
-  Personal data in responses is minimised per GDPR Article 5(1)(c).
-  All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+- Input is validated with Zod before any API call.
+- Personal data in responses is minimised per GDPR Article 5(1)(c).
+- All requests are rate-limited and audit-logged per ISMS Policy AU-002.
 
 ## Since
 

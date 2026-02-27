@@ -8,7 +8,7 @@
 
 > `const` **getCommitteeDocumentsToolMetadata**: `object`
 
-Defined in: [tools/getCommitteeDocuments.ts:75](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/getCommitteeDocuments.ts#L75)
+Defined in: [tools/getCommitteeDocuments.ts:75](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCommitteeDocuments.ts#L75)
 
 Tool metadata for get_committee_documents
 

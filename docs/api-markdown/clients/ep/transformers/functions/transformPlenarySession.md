@@ -8,7 +8,7 @@
 
 > **transformPlenarySession**(`apiData`): [`PlenarySession`](../../../../types/ep/plenary/interfaces/PlenarySession.md)
 
-Defined in: [clients/ep/transformers.ts:138](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/clients/ep/transformers.ts#L138)
+Defined in: [clients/ep/transformers.ts:138](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L138)
 
 Transforms EP API plenary session data to internal [PlenarySession](../../../../types/ep/plenary/interfaces/PlenarySession.md) format.
 

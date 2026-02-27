@@ -6,7 +6,7 @@
 
 # Interface: MeetingActivity
 
-Defined in: [types/ep/activities.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L223)
+Defined in: [types/ep/activities.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L223)
 
 Meeting activity linked to an EP plenary sitting.
 
@@ -38,7 +38,7 @@ https://data.europarl.europa.eu/api/v2/meetings/{sitting-id}/activities
 
 > **date**: `string`
 
-Defined in: [types/ep/activities.ts:231](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L231)
+Defined in: [types/ep/activities.ts:231](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L231)
 
 Activity date.
 
@@ -54,7 +54,7 @@ Activity date.
 
 > **id**: `string`
 
-Defined in: [types/ep/activities.ts:225](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L225)
+Defined in: [types/ep/activities.ts:225](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L225)
 
 Unique activity identifier.
 
@@ -70,7 +70,7 @@ Unique activity identifier.
 
 > **order**: `number`
 
-Defined in: [types/ep/activities.ts:233](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L233)
+Defined in: [types/ep/activities.ts:233](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L233)
 
 Activity order within the sitting.
 
@@ -86,7 +86,7 @@ Activity order within the sitting.
 
 > **reference**: `string`
 
-Defined in: [types/ep/activities.ts:235](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L235)
+Defined in: [types/ep/activities.ts:235](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L235)
 
 Reference to related document or procedure.
 
@@ -102,7 +102,7 @@ Reference to related document or procedure.
 
 > **responsibleBody**: `string`
 
-Defined in: [types/ep/activities.ts:237](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L237)
+Defined in: [types/ep/activities.ts:237](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L237)
 
 Responsible body or committee.
 
@@ -118,7 +118,7 @@ Responsible body or committee.
 
 > **title**: `string`
 
-Defined in: [types/ep/activities.ts:227](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L227)
+Defined in: [types/ep/activities.ts:227](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L227)
 
 Activity title or description.
 
@@ -134,7 +134,7 @@ Activity title or description.
 
 > **type**: `string`
 
-Defined in: [types/ep/activities.ts:229](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/activities.ts#L229)
+Defined in: [types/ep/activities.ts:229](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L229)
 
 Type of activity.
 

@@ -8,7 +8,7 @@
 
 > **handleGetMeetingForeseenActivities**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getMeetingForeseenActivities.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/getMeetingForeseenActivities.ts#L50)
+Defined in: [tools/getMeetingForeseenActivities.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMeetingForeseenActivities.ts#L50)
 
 Handles the get_meeting_foreseen_activities MCP tool request.
 
@@ -31,11 +31,8 @@ MCP tool result containing foreseen activity records for the requested sitting
 
 ## Throws
 
-If `args` fails schema validation (e.g., missing required `sittingId` field)
-
-## Throws
-
-If the European Parliament API is unreachable or returns an error response
+- If `args` fails schema validation (e.g., missing required `sittingId` field)
+- If the European Parliament API is unreachable or returns an error response
 
 ## Example
 
@@ -50,9 +47,9 @@ const result = await handleGetMeetingForeseenActivities({
 
 ## Security
 
-Input is validated with Zod before any API call.
-  Personal data in responses is minimised per GDPR Article 5(1)(c).
-  All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+- Input is validated with Zod before any API call.
+- Personal data in responses is minimised per GDPR Article 5(1)(c).
+- All requests are rate-limited and audit-logged per ISMS Policy AU-002.
 
 ## Since
 

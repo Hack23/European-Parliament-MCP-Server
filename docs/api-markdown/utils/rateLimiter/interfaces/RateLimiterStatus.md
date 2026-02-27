@@ -6,7 +6,7 @@
 
 # Interface: RateLimiterStatus
 
-Defined in: [utils/rateLimiter.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/rateLimiter.ts#L22)
+Defined in: [utils/rateLimiter.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L22)
 
 Rate-limiter status snapshot (used by health checks and monitoring).
 
@@ -16,7 +16,7 @@ Rate-limiter status snapshot (used by health checks and monitoring).
 
 > **availableTokens**: `number`
 
-Defined in: [utils/rateLimiter.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/rateLimiter.ts#L24)
+Defined in: [utils/rateLimiter.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L24)
 
 Number of tokens currently available in the bucket
 
@@ -26,7 +26,7 @@ Number of tokens currently available in the bucket
 
 > **maxTokens**: `number`
 
-Defined in: [utils/rateLimiter.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/rateLimiter.ts#L26)
+Defined in: [utils/rateLimiter.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L26)
 
 Maximum capacity of the token bucket
 
@@ -36,6 +36,6 @@ Maximum capacity of the token bucket
 
 > **utilizationPercent**: `number`
 
-Defined in: [utils/rateLimiter.ts:28](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/rateLimiter.ts#L28)
+Defined in: [utils/rateLimiter.ts:28](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L28)
 
 Percentage of the bucket currently consumed (0–100)

@@ -6,9 +6,9 @@
 
 # Function: handleGetMEPDetails()
 
-> **handleGetMEPDetails**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+> **handleGetMEPDetails**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getMEPDetails.ts:48](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/getMEPDetails.ts#L48)
+Defined in: [tools/getMEPDetails.ts:49](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPDetails.ts#L49)
 
 Handles the get_mep_details MCP tool request.
 
@@ -26,18 +26,15 @@ Raw tool arguments, validated against [GetMEPDetailsSchema](../../../schemas/ep/
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing detailed MEP profile data including biography,
   contact information, committee roles, voting record, and activity statistics
 
 ## Throws
 
-If `args` fails schema validation (e.g., missing or empty `id` field)
-
-## Throws
-
-If the European Parliament API is unreachable or returns an error response
+- If `args` fails schema validation (e.g., missing or empty `id` field)
+- If the European Parliament API is unreachable or returns an error response
 
 ## Example
 

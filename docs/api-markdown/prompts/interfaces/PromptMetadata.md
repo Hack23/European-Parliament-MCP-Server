@@ -6,7 +6,7 @@
 
 # Interface: PromptMetadata
 
-Defined in: [prompts/index.ts:23](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/prompts/index.ts#L23)
+Defined in: [prompts/index.ts:23](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L23)
 
 Prompt metadata for MCP listing
 
@@ -16,7 +16,7 @@ Prompt metadata for MCP listing
 
 > **description**: `string`
 
-Defined in: [prompts/index.ts:25](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/prompts/index.ts#L25)
+Defined in: [prompts/index.ts:25](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L25)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [prompts/index.ts:25](https://github.com/Hack23/European-Parliament-
 
 > **name**: `string`
 
-Defined in: [prompts/index.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/prompts/index.ts#L24)
+Defined in: [prompts/index.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L24)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [prompts/index.ts:24](https://github.com/Hack23/European-Parliament-
 
 > `optional` **arguments**: `object`[]
 
-Defined in: [prompts/index.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/prompts/index.ts#L26)
+Defined in: [prompts/index.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L26)
 
 #### description
 

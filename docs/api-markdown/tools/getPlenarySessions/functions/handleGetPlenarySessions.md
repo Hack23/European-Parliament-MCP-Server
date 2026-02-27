@@ -6,9 +6,9 @@
 
 # Function: handleGetPlenarySessions()
 
-> **handleGetPlenarySessions**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+> **handleGetPlenarySessions**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getPlenarySessions.ts:59](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/getPlenarySessions.ts#L59)
+Defined in: [tools/getPlenarySessions.ts:60](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenarySessions.ts#L60)
 
 Handles the get_plenary_sessions MCP tool request.
 
@@ -26,7 +26,7 @@ Raw tool arguments, validated against [GetPlenarySessionsSchema](../../../schema
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing either a single plenary session record (when `eventId`
   is provided) or a paginated list of sessions with date, location, agenda items, voting
@@ -34,12 +34,9 @@ MCP tool result containing either a single plenary session record (when `eventId
 
 ## Throws
 
-If `args` fails schema validation (e.g., date not in YYYY-MM-DD format,
+- If `args` fails schema validation (e.g., date not in YYYY-MM-DD format,
   limit out of range 1–100)
-
-## Throws
-
-If the European Parliament API is unreachable or returns an error response
+- If the European Parliament API is unreachable or returns an error response
 
 ## Example
 
@@ -59,9 +56,9 @@ const single = await handleGetPlenarySessions({ eventId: 'MTG-2024-01-15' });
 
 ## Security
 
-Input is validated with Zod before any API call.
-  Personal data in responses is minimised per GDPR Article 5(1)(c).
-  All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+- Input is validated with Zod before any API call.
+- Personal data in responses is minimised per GDPR Article 5(1)(c).
+- All requests are rate-limited and audit-logged per ISMS Policy AU-002.
 
 ## Since
 

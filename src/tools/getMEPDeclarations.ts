@@ -34,9 +34,9 @@ import type { ToolResult } from './shared/types.js';
  * @param args - Raw tool arguments, validated against {@link GetMEPDeclarationsSchema}
  * @returns MCP tool result containing either a single MEP financial declaration document
  *   or a paginated list of declarations, optionally filtered by filing year
- * @throws {ZodError} If `args` fails schema validation (e.g., invalid year or limit
+ * @throws - If `args` fails schema validation (e.g., invalid year or limit
  *   out of range 1–100)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -49,8 +49,8 @@ import type { ToolResult } from './shared/types.js';
  * // Returns the full declaration document
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Access to financial declarations (personal data) is audit-logged per GDPR Art. 6(1)(e)
+ * @security - Input is validated with Zod before any API call.
+ * - Access to financial declarations (personal data) is audit-logged per GDPR Art. 6(1)(e)
  *   and ISMS Policy AU-002. Data minimisation applied per GDPR Article 5(1)(c).
  * @since 0.8.0
  * @see {@link getMEPDeclarationsToolMetadata} for MCP schema registration

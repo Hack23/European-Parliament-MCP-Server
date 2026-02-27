@@ -6,9 +6,9 @@
 
 # Function: handleMonitorLegislativePipeline()
 
-> **handleMonitorLegislativePipeline**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+> **handleMonitorLegislativePipeline**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/monitorLegislativePipeline.ts:272](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/monitorLegislativePipeline.ts#L272)
+Defined in: [tools/monitorLegislativePipeline.ts:273](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/monitorLegislativePipeline.ts#L273)
 
 Handles the monitor_legislative_pipeline MCP tool request.
 
@@ -28,7 +28,7 @@ Raw tool arguments, validated against [MonitorLegislativePipelineSchema](../../.
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing pipeline items with stage and status,
   summary counts (active/stalled/completed), detected bottlenecks, pipeline health
@@ -36,11 +36,8 @@ MCP tool result containing pipeline items with stage and status,
 
 ## Throws
 
-If `args` fails schema validation (e.g., missing required fields or invalid format)
-
-## Throws
-
-If the European Parliament API is unreachable or returns an error response
+- If `args` fails schema validation (e.g., missing required fields or invalid format)
+- If the European Parliament API is unreachable or returns an error response
 
 ## Example
 
@@ -58,9 +55,9 @@ const result = await handleMonitorLegislativePipeline({
 
 ## Security
 
-Input is validated with Zod before any API call.
-  Personal data in responses is minimised per GDPR Article 5(1)(c).
-  All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+- Input is validated with Zod before any API call.
+- Personal data in responses is minimised per GDPR Article 5(1)(c).
+- All requests are rate-limited and audit-logged per ISMS Policy AU-002.
 
 ## Since
 

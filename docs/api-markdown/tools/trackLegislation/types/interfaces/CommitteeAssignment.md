@@ -6,7 +6,7 @@
 
 # Interface: CommitteeAssignment
 
-Defined in: [tools/trackLegislation/types.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/trackLegislation/types.ts#L52)
+Defined in: [tools/trackLegislation/types.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L52)
 
 Committee assignment
 
@@ -16,7 +16,7 @@ Committee assignment
 
 > **abbreviation**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/trackLegislation/types.ts#L53)
+Defined in: [tools/trackLegislation/types.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L53)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [tools/trackLegislation/types.ts:53](https://github.com/Hack23/Europ
 
 > **role**: `"OPINION"` \| `"LEAD"`
 
-Defined in: [tools/trackLegislation/types.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/trackLegislation/types.ts#L54)
+Defined in: [tools/trackLegislation/types.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L54)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [tools/trackLegislation/types.ts:54](https://github.com/Hack23/Europ
 
 > `optional` **rapporteur**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/trackLegislation/types.ts#L55)
+Defined in: [tools/trackLegislation/types.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L55)

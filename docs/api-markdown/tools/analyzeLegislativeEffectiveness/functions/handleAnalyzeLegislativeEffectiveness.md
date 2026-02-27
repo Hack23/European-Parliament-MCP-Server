@@ -8,7 +8,7 @@
 
 > **handleAnalyzeLegislativeEffectiveness**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/analyzeLegislativeEffectiveness.ts:219](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/analyzeLegislativeEffectiveness.ts#L219)
+Defined in: [tools/analyzeLegislativeEffectiveness.ts:219](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeLegislativeEffectiveness.ts#L219)
 
 Handles the analyze_legislative_effectiveness MCP tool request.
 
@@ -35,12 +35,9 @@ MCP tool result containing a LegislativeEffectivenessAnalysis object with
 
 ## Throws
 
-If `args` fails schema validation (e.g., missing required `subjectType`
+- If `args` fails schema validation (e.g., missing required `subjectType`
   or `subjectId`, invalid `subjectType` value)
-
-## Throws
-
-If the European Parliament API is unreachable or returns an error response
+- If the European Parliament API is unreachable or returns an error response
 
 ## Example
 
@@ -64,9 +61,9 @@ const committeeResult = await handleAnalyzeLegislativeEffectiveness({
 
 ## Security
 
-Input is validated with Zod before any API call.
-  Personal data in responses is minimised per GDPR Article 5(1)(c).
-  All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+- Input is validated with Zod before any API call.
+- Personal data in responses is minimised per GDPR Article 5(1)(c).
+- All requests are rate-limited and audit-logged per ISMS Policy AU-002.
   Internal errors are wrapped before propagation to avoid leaking API details.
 
 ## Since

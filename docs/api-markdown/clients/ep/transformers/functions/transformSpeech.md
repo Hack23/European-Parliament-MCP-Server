@@ -8,7 +8,7 @@
 
 > **transformSpeech**(`apiData`): [`Speech`](../../../../types/ep/activities/interfaces/Speech.md)
 
-Defined in: [clients/ep/transformers.ts:261](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/clients/ep/transformers.ts#L261)
+Defined in: [clients/ep/transformers.ts:261](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L261)
 
 Transforms EP API speech data to internal [Speech](../../../../types/ep/activities/interfaces/Speech.md) format.
 

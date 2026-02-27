@@ -8,7 +8,7 @@
 
 > **showVersion**(): `void`
 
-Defined in: [server/cli.ts:86](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/server/cli.ts#L86)
+Defined in: [server/cli.ts:86](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L86)
 
 Display version information.
 

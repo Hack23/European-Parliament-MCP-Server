@@ -8,7 +8,7 @@
 
 > **handleGetProcedureEvents**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getProcedureEvents.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/getProcedureEvents.ts#L52)
+Defined in: [tools/getProcedureEvents.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProcedureEvents.ts#L52)
 
 Handles the get_procedure_events MCP tool request.
 
@@ -32,11 +32,8 @@ MCP tool result containing the ordered list of events for the specified procedur
 
 ## Throws
 
-If `args` fails schema validation (e.g., missing required `processId`)
-
-## Throws
-
-If the European Parliament API is unreachable or returns an error response
+- If `args` fails schema validation (e.g., missing required `processId`)
+- If the European Parliament API is unreachable or returns an error response
 
 ## Example
 
@@ -51,9 +48,9 @@ const result = await handleGetProcedureEvents({
 
 ## Security
 
-Input is validated with Zod before any API call.
-  Personal data in responses is minimised per GDPR Article 5(1)(c).
-  All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+- Input is validated with Zod before any API call.
+- Personal data in responses is minimised per GDPR Article 5(1)(c).
+- All requests are rate-limited and audit-logged per ISMS Policy AU-002.
 
 ## Since
 

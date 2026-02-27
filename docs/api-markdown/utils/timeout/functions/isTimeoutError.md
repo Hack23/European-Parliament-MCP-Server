@@ -8,7 +8,7 @@
 
 > **isTimeoutError**(`error`): `error is TimeoutError`
 
-Defined in: [utils/timeout.ts:344](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/timeout.ts#L344)
+Defined in: [utils/timeout.ts:344](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L344)
 
 Type guard to check if an error is a TimeoutError
 

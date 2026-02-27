@@ -8,7 +8,7 @@
 
 > **SittingID** = [`Brand`](../../../branded/type-aliases/Brand.md)\<`string`, `"SittingID"`\>
 
-Defined in: [types/ep/branded.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/branded.ts#L87)
+Defined in: [types/ep/branded.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L87)
 
 Meeting/Sitting ID – identifies a plenary sitting.
 

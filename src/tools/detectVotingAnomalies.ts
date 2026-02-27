@@ -269,8 +269,8 @@ function resolveConfidence(isSingleMep: boolean, scope: string, anomalyCount: nu
  * @param args - Raw tool arguments, validated against {@link DetectVotingAnomaliesSchema}
  * @returns MCP tool result containing detected anomalies with severity ratings,
  *   summary statistics, anomaly rate, severity index, and risk level classification
- * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -284,9 +284,9 @@ function resolveConfidence(isSingleMep: boolean, scope: string, anomalyCount: nu
  * // anomaly rate, severity index, and group stability score
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Personal data in responses is minimised per GDPR Article 5(1)(c).
- *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link detectVotingAnomaliesToolMetadata} for MCP schema registration
  * @see {@link handleAnalyzeCoalitionDynamics} for coalition-level cohesion and stress analysis

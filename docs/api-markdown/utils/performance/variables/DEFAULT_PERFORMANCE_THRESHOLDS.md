@@ -8,7 +8,7 @@
 
 > `const` **DEFAULT\_PERFORMANCE\_THRESHOLDS**: [`PerformanceThresholds`](../interfaces/PerformanceThresholds.md)
 
-Defined in: [utils/performance.ts:63](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L63)
+Defined in: [utils/performance.ts:63](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L63)
 
 Default performance thresholds aligned with the ISMS PE-001 standard
 (target: p95 < 200 ms for cached operations).

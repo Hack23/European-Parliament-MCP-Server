@@ -8,7 +8,7 @@
 
 > **isMEPID**(`value`): `value is MEPID`
 
-Defined in: [types/branded.ts:118](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/branded.ts#L118)
+Defined in: [types/branded.ts:118](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L118)
 
 Type guard to check if a string is a valid MEP ID
 

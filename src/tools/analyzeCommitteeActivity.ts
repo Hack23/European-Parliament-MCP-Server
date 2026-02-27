@@ -203,8 +203,8 @@ async function buildAnalysis(
  * @param args - Raw tool arguments, validated against {@link AnalyzeCommitteeActivitySchema}
  * @returns MCP tool result containing a {@link CommitteeActivityAnalysis} object with
  *   metrics, computed attributes, confidence level, and methodology note
- * @throws {ZodError} If `args` fails schema validation (e.g., missing required `committeeId`)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., missing required `committeeId`)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -216,9 +216,9 @@ async function buildAnalysis(
  * // Returns workload, engagement, and legislative output for the ENVI committee in 2024
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Personal data in responses is minimised per GDPR Article 5(1)(c).
- *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link analyzeCommitteeActivityToolMetadata} for MCP schema registration
  * @see {@link handleAnalyzeCountryDelegation} for delegation-level analysis across committees

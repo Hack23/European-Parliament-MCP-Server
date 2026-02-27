@@ -236,8 +236,8 @@ function buildCoalitionComputedAttrs(
  * @param args - Raw tool arguments, validated against {@link AnalyzeCoalitionDynamicsSchema}
  * @returns MCP tool result containing coalition pair cohesion scores, group cohesion
  *   metrics, dominant coalition, stress indicators, and computed fragmentation attributes
- * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -251,9 +251,9 @@ function buildCoalitionComputedAttrs(
  * // and parliamentary fragmentation index
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Personal data in responses is minimised per GDPR Article 5(1)(c).
- *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link analyzeCoalitionDynamicsToolMetadata} for MCP schema registration
  * @see {@link handleComparePoliticalGroups} for per-group dimension comparison

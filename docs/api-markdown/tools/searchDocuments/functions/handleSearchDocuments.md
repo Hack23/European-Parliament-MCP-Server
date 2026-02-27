@@ -6,9 +6,9 @@
 
 # Function: handleSearchDocuments()
 
-> **handleSearchDocuments**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+> **handleSearchDocuments**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/searchDocuments.ts:62](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/searchDocuments.ts#L62)
+Defined in: [tools/searchDocuments.ts:63](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/searchDocuments.ts#L63)
 
 Handles the search_documents MCP tool request.
 
@@ -27,17 +27,14 @@ Raw tool arguments, validated against [SearchDocumentsSchema](../../../schemas/e
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing matching legislative documents or a single document
 
 ## Throws
 
-If `args` fails schema validation (e.g., keyword exceeds 200 chars, bad date format)
-
-## Throws
-
-If the European Parliament API is unreachable or returns an error response
+- If `args` fails schema validation (e.g., keyword exceeds 200 chars, bad date format)
+- If the European Parliament API is unreachable or returns an error response
 
 ## Example
 

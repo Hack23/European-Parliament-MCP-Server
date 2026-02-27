@@ -29,8 +29,8 @@ import type { ToolResult } from './shared/types.js';
  *
  * @param args - Raw tool arguments, validated against {@link GetProcedureEventsSchema}
  * @returns MCP tool result containing the ordered list of events for the specified procedure
- * @throws {ZodError} If `args` fails schema validation (e.g., missing required `processId`)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., missing required `processId`)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -42,9 +42,9 @@ import type { ToolResult } from './shared/types.js';
  * // Returns committee hearings, plenary debates, and votes for procedure 2023/0132(COD)
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Personal data in responses is minimised per GDPR Article 5(1)(c).
- *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link getProcedureEventsToolMetadata} for MCP schema registration
  * @see {@link handleGetProcedures} for retrieving the parent procedure record

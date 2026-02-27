@@ -31,8 +31,8 @@ import type { ToolResult } from './shared/types.js';
  * @param args - Raw tool arguments, validated against {@link GetPlenaryDocumentsSchema}
  * @returns MCP tool result containing either a single plenary document (when `docId` is
  *   provided) or a paginated list of documents, optionally filtered by year
- * @throws {ZodError} If `args` fails schema validation (e.g., limit out of range 1–100)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., limit out of range 1–100)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -45,9 +45,9 @@ import type { ToolResult } from './shared/types.js';
  * // Returns the full plenary document record
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Personal data in responses is minimised per GDPR Article 5(1)(c).
- *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link getPlenaryDocumentsToolMetadata} for MCP schema registration
  * @see {@link handleGetPlenarySessions} for the sessions associated with these documents

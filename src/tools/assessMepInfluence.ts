@@ -240,8 +240,8 @@ function getConfidenceLevel(totalVotes: number): string {
  * @param args - Raw tool arguments, validated against {@link AssessMepInfluenceSchema}
  * @returns MCP tool result containing the MEP's influence scores, voting statistics,
  *   committee roles, question count, seniority metrics, and computed influence rank
- * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -254,9 +254,9 @@ function getConfidenceLevel(totalVotes: number): string {
  * // committee leadership, and seniority breakdown
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Personal data in responses is minimised per GDPR Article 5(1)(c).
- *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link assessMepInfluenceToolMetadata} for MCP schema registration
  * @see {@link handleTrackMepAttendance} for MEP attendance and participation tracking

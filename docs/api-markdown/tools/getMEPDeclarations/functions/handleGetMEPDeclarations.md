@@ -8,7 +8,7 @@
 
 > **handleGetMEPDeclarations**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getMEPDeclarations.ts:59](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/getMEPDeclarations.ts#L59)
+Defined in: [tools/getMEPDeclarations.ts:59](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPDeclarations.ts#L59)
 
 Handles the get_mep_declarations MCP tool request.
 
@@ -34,12 +34,9 @@ MCP tool result containing either a single MEP financial declaration document
 
 ## Throws
 
-If `args` fails schema validation (e.g., invalid year or limit
+- If `args` fails schema validation (e.g., invalid year or limit
   out of range 1–100)
-
-## Throws
-
-If the European Parliament API is unreachable or returns an error response
+- If the European Parliament API is unreachable or returns an error response
 
 ## Example
 
@@ -55,8 +52,8 @@ const single = await handleGetMEPDeclarations({ docId: 'DECL-2024-001' });
 
 ## Security
 
-Input is validated with Zod before any API call.
-  Access to financial declarations (personal data) is audit-logged per GDPR Art. 6(1)(e)
+- Input is validated with Zod before any API call.
+- Access to financial declarations (personal data) is audit-logged per GDPR Art. 6(1)(e)
   and ISMS Policy AU-002. Data minimisation applied per GDPR Article 5(1)(c).
 
 ## Since

@@ -6,7 +6,7 @@
 
 # Class: AuditLogger
 
-Defined in: [utils/auditLogger.ts:119](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/auditLogger.ts#L119)
+Defined in: [utils/auditLogger.ts:119](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L119)
 
 Audit logger implementation
 
@@ -29,7 +29,7 @@ such as CloudWatch Logs, Elasticsearch, or a dedicated audit log service.
 
 > `private` **logs**: [`AuditLogEntry`](../interfaces/AuditLogEntry.md)[] = `[]`
 
-Defined in: [utils/auditLogger.ts:120](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/auditLogger.ts#L120)
+Defined in: [utils/auditLogger.ts:120](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L120)
 
 ## Methods
 
@@ -37,7 +37,7 @@ Defined in: [utils/auditLogger.ts:120](https://github.com/Hack23/European-Parlia
 
 > **clear**(): `void`
 
-Defined in: [utils/auditLogger.ts:362](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/auditLogger.ts#L362)
+Defined in: [utils/auditLogger.ts:362](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L362)
 
 Clears all in-memory audit log entries.
 
@@ -73,7 +73,7 @@ Must NOT be called in production code. Clearing audit logs
 
 > **getLogs**(): [`AuditLogEntry`](../interfaces/AuditLogEntry.md)[]
 
-Defined in: [utils/auditLogger.ts:339](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/auditLogger.ts#L339)
+Defined in: [utils/auditLogger.ts:339](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L339)
 
 Returns a snapshot copy of all in-memory audit log entries.
 
@@ -114,7 +114,7 @@ The returned entries may contain sanitised parameters that were
 
 > **log**(`entry`): `void`
 
-Defined in: [utils/auditLogger.ts:146](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/auditLogger.ts#L146)
+Defined in: [utils/auditLogger.ts:146](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L146)
 
 Logs an audit event to the in-memory store and stderr.
 
@@ -164,7 +164,7 @@ Writes to stderr only (not stdout, which is reserved for MCP protocol).
 
 > **logDataAccess**(`action`, `params`, `count`, `duration?`): `void`
 
-Defined in: [utils/auditLogger.ts:252](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/auditLogger.ts#L252)
+Defined in: [utils/auditLogger.ts:252](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L252)
 
 Logs a successful data-access event (e.g., a query returning records).
 
@@ -234,7 +234,7 @@ Params must be sanitised by the caller before passing to this
 
 > **logError**(`action`, `params`, `error`, `duration?`): `void`
 
-Defined in: [utils/auditLogger.ts:298](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/auditLogger.ts#L298)
+Defined in: [utils/auditLogger.ts:298](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L298)
 
 Logs a failed operation as an audit error event.
 
@@ -304,7 +304,7 @@ Error messages must not include secrets, tokens, or raw stack
 
 > **logToolCall**(`toolName`, `params`, `success`, `duration?`, `error?`): `void`
 
-Defined in: [utils/auditLogger.ts:201](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/auditLogger.ts#L201)
+Defined in: [utils/auditLogger.ts:201](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L201)
 
 Log an MCP tool call as an audit record.
 

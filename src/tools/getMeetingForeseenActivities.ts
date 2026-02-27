@@ -27,8 +27,8 @@ import type { ToolResult } from './shared/types.js';
  *
  * @param args - Raw tool arguments, validated against {@link GetMeetingForeseenActivitiesSchema}
  * @returns MCP tool result containing foreseen activity records for the requested sitting
- * @throws {ZodError} If `args` fails schema validation (e.g., missing required `sittingId` field)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., missing required `sittingId` field)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -40,9 +40,9 @@ import type { ToolResult } from './shared/types.js';
  * // Returns planned agenda items for plenary sitting PV-9-2024-04-22
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Personal data in responses is minimised per GDPR Article 5(1)(c).
- *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link getMeetingForeseenActivitiesToolMetadata} for MCP schema registration
  * @see {@link handleGetMeetings} for retrieving the parent meeting records

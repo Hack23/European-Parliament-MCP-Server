@@ -116,8 +116,8 @@ function computeConfidence(totalVotes: number): string {
  * @param args - Raw tool arguments, validated against {@link AnalyzeVotingPatternsSchema}
  * @returns MCP tool result containing a {@link VotingPatternAnalysis} object, or a
  *   `dataAvailable: false` notice when voting statistics are unavailable from the EP API
- * @throws {ZodError} If `args` fails schema validation (e.g., missing required `mepId`, bad date format)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., missing required `mepId`, bad date format)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript

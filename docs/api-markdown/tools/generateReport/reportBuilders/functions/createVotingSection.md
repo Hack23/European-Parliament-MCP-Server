@@ -8,7 +8,7 @@
 
 > **createVotingSection**(`totalVotes`, `mep`): [`ReportSection`](../../types/interfaces/ReportSection.md)
 
-Defined in: [tools/generateReport/reportBuilders.ts:14](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/generateReport/reportBuilders.ts#L14)
+Defined in: [tools/generateReport/reportBuilders.ts:14](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/reportBuilders.ts#L14)
 
 Create voting activity section
 Cyclomatic complexity: 2

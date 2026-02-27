@@ -8,7 +8,7 @@
 
 > **buildToolResponse**(`data`): [`ToolResult`](../../types/interfaces/ToolResult.md)
 
-Defined in: [tools/shared/responseBuilder.ts:15](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/shared/responseBuilder.ts#L15)
+Defined in: [tools/shared/responseBuilder.ts:15](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/responseBuilder.ts#L15)
 
 Build a standard success response wrapping data as formatted JSON text.
 

@@ -8,7 +8,7 @@
 
 > `const` **comparePoliticalGroupsToolMetadata**: `object`
 
-Defined in: [tools/comparePoliticalGroups.ts:235](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/comparePoliticalGroups.ts#L235)
+Defined in: [tools/comparePoliticalGroups.ts:235](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparePoliticalGroups.ts#L235)
 
 Tool metadata for MCP registration
 

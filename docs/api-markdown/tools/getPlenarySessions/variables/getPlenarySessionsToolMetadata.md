@@ -8,7 +8,7 @@
 
 > `const` **getPlenarySessionsToolMetadata**: `object`
 
-Defined in: [tools/getPlenarySessions.ts:109](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/getPlenarySessions.ts#L109)
+Defined in: [tools/getPlenarySessions.ts:110](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenarySessions.ts#L110)
 
 Tool metadata for MCP registration
 

@@ -8,7 +8,7 @@
 
 > `const` **generateReportToolMetadata**: `object`
 
-Defined in: [tools/generateReport/index.ts:108](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/generateReport/index.ts#L108)
+Defined in: [tools/generateReport/index.ts:109](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/index.ts#L109)
 
 Tool metadata for MCP registration
 

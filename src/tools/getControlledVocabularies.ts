@@ -31,8 +31,8 @@ import type { ToolResult } from './shared/types.js';
  *
  * @param args - Raw tool arguments, validated against {@link GetControlledVocabulariesSchema}
  * @returns MCP tool result containing vocabulary data (single vocabulary or paginated list)
- * @throws {ZodError} If `args` fails schema validation (e.g., invalid field types or formats)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., invalid field types or formats)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -45,9 +45,9 @@ import type { ToolResult } from './shared/types.js';
  * // Returns up to 50 controlled vocabulary entries
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Personal data in responses is minimised per GDPR Article 5(1)(c).
- *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link getControlledVocabulariesToolMetadata} for MCP schema registration
  * @see {@link handleSearchDocuments} for tools that consume vocabulary terms as filter values

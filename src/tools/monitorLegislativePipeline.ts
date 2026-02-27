@@ -247,8 +247,8 @@ function computeHealthMetrics(pipeline: PipelineItem[], summary: ReturnType<type
  * @returns MCP tool result containing pipeline items with stage and status,
  *   summary counts (active/stalled/completed), detected bottlenecks, pipeline health
  *   score, throughput rate, bottleneck index, and legislative momentum classification
- * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -263,9 +263,9 @@ function computeHealthMetrics(pipeline: PipelineItem[], summary: ReturnType<type
  * // bottleneck list, and legislative momentum assessment
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Personal data in responses is minimised per GDPR Article 5(1)(c).
- *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link monitorLegislativePipelineToolMetadata} for MCP schema registration
  * @see {@link handleTrackLegislation} for individual procedure stage and timeline tracking

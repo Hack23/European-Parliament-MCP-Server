@@ -8,7 +8,7 @@
 
 > **ProcedureID** = [`Brand`](../../../branded/type-aliases/Brand.md)\<`string`, `"ProcedureID"`\>
 
-Defined in: [types/ep/branded.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/branded.ts#L53)
+Defined in: [types/ep/branded.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L53)
 
 Procedure ID – identifies a legislative procedure by its EP API **process-id**.
 

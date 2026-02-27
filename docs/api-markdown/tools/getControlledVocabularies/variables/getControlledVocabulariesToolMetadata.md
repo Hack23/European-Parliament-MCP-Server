@@ -8,7 +8,7 @@
 
 > `const` **getControlledVocabulariesToolMetadata**: `object`
 
-Defined in: [tools/getControlledVocabularies.ts:74](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/getControlledVocabularies.ts#L74)
+Defined in: [tools/getControlledVocabularies.ts:74](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getControlledVocabularies.ts#L74)
 
 Tool metadata for get_controlled_vocabularies
 

@@ -304,8 +304,8 @@ async function buildGroupAnalysis(
  * @param args - Raw tool arguments, validated against {@link TrackMepAttendanceSchema}
  * @returns MCP tool result containing individual MEP attendance rates, overall summary
  *   statistics, attendance trend classification, and computed participation scores
- * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -318,12 +318,12 @@ async function buildGroupAnalysis(
  * // and session-level breakdown for the specified MEP
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Personal data in responses is minimised per GDPR Article 5(1)(c).
- *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link trackMepAttendanceToolMetadata} for MCP schema registration
- * @see {@link handleAssessMepInfluence} for comprehensive MEP influence and activity scoring
+ * @see handleAssessMepInfluence for comprehensive MEP influence and activity scoring
  */
 export async function handleTrackMepAttendance(
   args: unknown

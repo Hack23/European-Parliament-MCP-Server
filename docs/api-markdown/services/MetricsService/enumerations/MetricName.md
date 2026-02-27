@@ -6,7 +6,7 @@
 
 # Enumeration: MetricName
 
-Defined in: [services/MetricsService.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L30)
+Defined in: [services/MetricsService.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L30)
 
 Typed metric name constants for MCP server and EP API instrumentation.
 
@@ -26,7 +26,7 @@ metricsService.incrementCounter(MetricName.EP_CACHE_HIT_COUNT, 1);
 
 > **EP\_API\_CALL\_COUNT**: `"ep_api_call_count"`
 
-Defined in: [services/MetricsService.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L32)
+Defined in: [services/MetricsService.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L32)
 
 Total EP API calls (label: `endpoint`)
 
@@ -36,7 +36,7 @@ Total EP API calls (label: `endpoint`)
 
 > **EP\_API\_ERROR\_COUNT**: `"ep_api_error_count"`
 
-Defined in: [services/MetricsService.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L34)
+Defined in: [services/MetricsService.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L34)
 
 Failed EP API calls
 
@@ -46,7 +46,7 @@ Failed EP API calls
 
 > **EP\_CACHE\_HIT\_COUNT**: `"ep_cache_hit_count"`
 
-Defined in: [services/MetricsService.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L36)
+Defined in: [services/MetricsService.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L36)
 
 Cache hits for EP API responses
 
@@ -56,6 +56,6 @@ Cache hits for EP API responses
 
 > **EP\_CACHE\_MISS\_COUNT**: `"ep_cache_miss_count"`
 
-Defined in: [services/MetricsService.ts:38](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/services/MetricsService.ts#L38)
+Defined in: [services/MetricsService.ts:38](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L38)
 
 Cache misses for EP API responses

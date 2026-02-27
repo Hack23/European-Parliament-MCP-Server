@@ -30,8 +30,8 @@ import type { ToolResult } from './shared/types.js';
  * @param args - Raw tool arguments, validated against {@link GetMEPDetailsSchema}
  * @returns MCP tool result containing detailed MEP profile data including biography,
  *   contact information, committee roles, voting record, and activity statistics
- * @throws {ZodError} If `args` fails schema validation (e.g., missing or empty `id` field)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., missing or empty `id` field)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript

@@ -8,7 +8,7 @@
 
 > **toProcessId**(`ref`): `string`
 
-Defined in: [tools/trackLegislation/index.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/trackLegislation/index.ts#L37)
+Defined in: [tools/trackLegislation/index.ts:38](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/index.ts#L38)
 
 Convert a user-supplied procedure reference to the EP API process-id format.
 

@@ -185,9 +185,9 @@ async function fetchCommitteeSubjectData(subjectId: string): Promise<{
  * @returns MCP tool result containing a {@link LegislativeEffectivenessAnalysis} object with
  *   metrics, scores, computed attributes (percentile, output per month), benchmarks,
  *   confidence level, and methodology note
- * @throws {ZodError} If `args` fails schema validation (e.g., missing required `subjectType`
+ * @throws - If `args` fails schema validation (e.g., missing required `subjectType`
  *   or `subjectId`, invalid `subjectType` value)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -208,9 +208,9 @@ async function fetchCommitteeSubjectData(subjectId: string): Promise<{
  * // Returns legislative effectiveness scores for the ENVI committee
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Personal data in responses is minimised per GDPR Article 5(1)(c).
- *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  *   Internal errors are wrapped before propagation to avoid leaking API details.
  * @since 0.8.0
  * @see {@link analyzeLegislativeEffectivenessToolMetadata} for MCP schema registration

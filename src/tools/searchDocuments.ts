@@ -33,8 +33,8 @@ import type { ToolResult } from './shared/types.js';
  *
  * @param args - Raw tool arguments, validated against {@link SearchDocumentsSchema}
  * @returns MCP tool result containing matching legislative documents or a single document
- * @throws {ZodError} If `args` fails schema validation (e.g., keyword exceeds 200 chars, bad date format)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., keyword exceeds 200 chars, bad date format)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript

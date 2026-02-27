@@ -6,7 +6,7 @@
 
 # Class: PerformanceMonitor
 
-Defined in: [utils/performance.ts:88](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L88)
+Defined in: [utils/performance.ts:88](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L88)
 
 Performance monitor for tracking operation metrics
 
@@ -33,7 +33,7 @@ console.log(`p95: ${stats.p95}ms`);
 
 > **new PerformanceMonitor**(`maxSamples?`): `PerformanceMonitor`
 
-Defined in: [utils/performance.ts:107](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L107)
+Defined in: [utils/performance.ts:107](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L107)
 
 Creates a new performance monitor.
 
@@ -71,7 +71,7 @@ const monitor = new PerformanceMonitor(500);
 
 > `private` `readonly` **maxSamples**: `number`
 
-Defined in: [utils/performance.ts:90](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L90)
+Defined in: [utils/performance.ts:90](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L90)
 
 ***
 
@@ -79,7 +79,7 @@ Defined in: [utils/performance.ts:90](https://github.com/Hack23/European-Parliam
 
 > `private` `readonly` **metrics**: [`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, `number`[]\>
 
-Defined in: [utils/performance.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L89)
+Defined in: [utils/performance.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L89)
 
 ## Methods
 
@@ -87,7 +87,7 @@ Defined in: [utils/performance.ts:89](https://github.com/Hack23/European-Parliam
 
 > **clear**(): `void`
 
-Defined in: [utils/performance.ts:277](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L277)
+Defined in: [utils/performance.ts:277](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L277)
 
 Clears all recorded duration samples for every tracked operation.
 
@@ -117,7 +117,7 @@ afterEach(() => {
 
 > **clearOperation**(`operation`): `void`
 
-Defined in: [utils/performance.ts:293](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L293)
+Defined in: [utils/performance.ts:293](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L293)
 
 Clears recorded duration samples for a single operation.
 
@@ -149,7 +149,7 @@ monitor.clearOperation('api_call');
 
 > **getOperations**(): `string`[]
 
-Defined in: [utils/performance.ts:257](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L257)
+Defined in: [utils/performance.ts:257](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L257)
 
 Returns all operation names currently being tracked.
 
@@ -179,7 +179,7 @@ operations.forEach(op => {
 
 > **getStats**(`operation`): [`PerformanceStats`](../interfaces/PerformanceStats.md) \| `null`
 
-Defined in: [utils/performance.ts:174](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L174)
+Defined in: [utils/performance.ts:174](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L174)
 
 Returns aggregated performance statistics for a named operation.
 
@@ -224,7 +224,7 @@ if (stats && stats.p95 > 1000) {
 
 > **recordDuration**(`operation`, `durationMs`): `void`
 
-Defined in: [utils/performance.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L134)
+Defined in: [utils/performance.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L134)
 
 Records a duration sample for the named operation.
 

@@ -6,7 +6,7 @@
 
 # Interface: LegislativeDocument
 
-Defined in: [types/ep/document.ts:62](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/document.ts#L62)
+Defined in: [types/ep/document.ts:62](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L62)
 
 European Parliament legislative document.
 
@@ -67,7 +67,7 @@ const proposal: LegislativeDocument = {
 
 > **authors**: `string`[]
 
-Defined in: [types/ep/document.ts:151](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/document.ts#L151)
+Defined in: [types/ep/document.ts:151](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L151)
 
 Document authors.
 
@@ -103,7 +103,7 @@ MEP for MEP author details
 
 > **date**: `string`
 
-Defined in: [types/ep/document.ts:132](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/document.ts#L132)
+Defined in: [types/ep/document.ts:132](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L132)
 
 Document publication date.
 
@@ -131,7 +131,7 @@ by the committee.
 
 > **id**: `string`
 
-Defined in: [types/ep/document.ts:83](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/document.ts#L83)
+Defined in: [types/ep/document.ts:83](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L83)
 
 Unique document identifier.
 
@@ -171,7 +171,7 @@ Format varies by document type and series.
 
 > **status**: [`DocumentStatus`](../type-aliases/DocumentStatus.md)
 
-Defined in: [types/ep/document.ts:185](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/document.ts#L185)
+Defined in: [types/ep/document.ts:185](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L185)
 
 Document status in legislative process.
 
@@ -205,7 +205,7 @@ type and legislative procedure.
 
 > **title**: `string`
 
-Defined in: [types/ep/document.ts:116](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/document.ts#L116)
+Defined in: [types/ep/document.ts:116](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L116)
 
 Document title.
 
@@ -237,7 +237,7 @@ committee abbreviation. Other languages available through EP API.
 
 > **type**: [`DocumentType`](../type-aliases/DocumentType.md)
 
-Defined in: [types/ep/document.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/document.ts#L99)
+Defined in: [types/ep/document.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L99)
 
 Document type classification.
 
@@ -270,7 +270,7 @@ Determines workflow, voting requirements, and legal effect.
 
 > `optional` **committee**: `string`
 
-Defined in: [types/ep/document.ts:168](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/document.ts#L168)
+Defined in: [types/ep/document.ts:168](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L168)
 
 Responsible committee.
 
@@ -301,7 +301,7 @@ Committee for committee details
 
 > `optional` **pdfUrl**: `string`
 
-Defined in: [types/ep/document.ts:201](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/document.ts#L201)
+Defined in: [types/ep/document.ts:201](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L201)
 
 PDF document URL.
 
@@ -329,7 +329,7 @@ repository (doceo).
 
 > `optional` **summary**: `string`
 
-Defined in: [types/ep/document.ts:233](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/document.ts#L233)
+Defined in: [types/ep/document.ts:233](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L233)
 
 Document summary or abstract.
 
@@ -357,7 +357,7 @@ recommendation. For resolutions, includes main demands.
 
 > `optional` **xmlUrl**: `string`
 
-Defined in: [types/ep/document.ts:217](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/ep/document.ts#L217)
+Defined in: [types/ep/document.ts:217](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L217)
 
 XML document URL.
 

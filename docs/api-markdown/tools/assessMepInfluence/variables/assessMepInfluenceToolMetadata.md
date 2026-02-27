@@ -8,7 +8,7 @@
 
 > `const` **assessMepInfluenceToolMetadata**: `object`
 
-Defined in: [tools/assessMepInfluence.ts:344](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/assessMepInfluence.ts#L344)
+Defined in: [tools/assessMepInfluence.ts:344](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/assessMepInfluence.ts#L344)
 
 Tool metadata for MCP registration
 

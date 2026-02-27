@@ -8,7 +8,7 @@
 
 > **handleAnalyzeVotingPatterns**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/analyzeVotingPatterns.ts:141](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/analyzeVotingPatterns.ts#L141)
+Defined in: [tools/analyzeVotingPatterns.ts:141](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeVotingPatterns.ts#L141)
 
 Handles the analyze_voting_patterns MCP tool request.
 
@@ -34,11 +34,8 @@ MCP tool result containing a VotingPatternAnalysis object, or a
 
 ## Throws
 
-If `args` fails schema validation (e.g., missing required `mepId`, bad date format)
-
-## Throws
-
-If the European Parliament API is unreachable or returns an error response
+- If `args` fails schema validation (e.g., missing required `mepId`, bad date format)
+- If the European Parliament API is unreachable or returns an error response
 
 ## Example
 

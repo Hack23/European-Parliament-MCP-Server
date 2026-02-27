@@ -8,7 +8,7 @@
 
 > `const` **monitorLegislativePipelineToolMetadata**: `object`
 
-Defined in: [tools/monitorLegislativePipeline.ts:338](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/monitorLegislativePipeline.ts#L338)
+Defined in: [tools/monitorLegislativePipeline.ts:339](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/monitorLegislativePipeline.ts#L339)
 
 Tool metadata for MCP registration
 

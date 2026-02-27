@@ -8,7 +8,7 @@
 
 > `const` **getProcedureEventsToolMetadata**: `object`
 
-Defined in: [tools/getProcedureEvents.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/getProcedureEvents.ts#L66)
+Defined in: [tools/getProcedureEvents.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProcedureEvents.ts#L66)
 
 Tool metadata for get_procedure_events
 

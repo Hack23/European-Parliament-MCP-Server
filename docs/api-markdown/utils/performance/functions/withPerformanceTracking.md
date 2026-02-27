@@ -8,7 +8,7 @@
 
 > **withPerformanceTracking**\<`T`\>(`monitor`, `operation`, `fn`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [utils/performance.ts:326](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/utils/performance.ts#L326)
+Defined in: [utils/performance.ts:326](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L326)
 
 Execute an async function and track its performance
 

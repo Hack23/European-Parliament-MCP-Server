@@ -8,7 +8,7 @@
 
 > **handleGetPlenaryDocuments**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getPlenaryDocuments.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/getPlenaryDocuments.ts#L56)
+Defined in: [tools/getPlenaryDocuments.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenaryDocuments.ts#L56)
 
 Handles the get_plenary_documents MCP tool request.
 
@@ -33,11 +33,8 @@ MCP tool result containing either a single plenary document (when `docId` is
 
 ## Throws
 
-If `args` fails schema validation (e.g., limit out of range 1–100)
-
-## Throws
-
-If the European Parliament API is unreachable or returns an error response
+- If `args` fails schema validation (e.g., limit out of range 1–100)
+- If the European Parliament API is unreachable or returns an error response
 
 ## Example
 
@@ -53,9 +50,9 @@ const single = await handleGetPlenaryDocuments({ docId: 'DOC-2024-001' });
 
 ## Security
 
-Input is validated with Zod before any API call.
-  Personal data in responses is minimised per GDPR Article 5(1)(c).
-  All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+- Input is validated with Zod before any API call.
+- Personal data in responses is minimised per GDPR Article 5(1)(c).
+- All requests are rate-limited and audit-logged per ISMS Policy AU-002.
 
 ## Since
 

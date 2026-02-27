@@ -277,8 +277,8 @@ async function buildDelegationAnalysis(
  * @param args - Raw tool arguments, validated against {@link AnalyzeCountryDelegationSchema}
  * @returns MCP tool result containing a {@link CountryDelegationAnalysis} object with
  *   delegation breakdown, computed attributes, confidence level, and methodology note
- * @throws {ZodError} If `args` fails schema validation (e.g., missing required `country`, non-uppercase code)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., missing required `country`, non-uppercase code)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript

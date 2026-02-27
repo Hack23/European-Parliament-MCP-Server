@@ -152,8 +152,8 @@ function topByDimension(groups: GroupComparisonMetrics[], dim: DimensionName): s
  * @param args - Raw tool arguments, validated against {@link ComparePoliticalGroupsSchema}
  * @returns MCP tool result containing per-group dimension scores, rankings,
  *   seat-share distribution, and a computed parliamentary balance index
- * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -167,9 +167,9 @@ function topByDimension(groups: GroupComparisonMetrics[], dim: DimensionName): s
  * // and overall performance leaderboard
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Personal data in responses is minimised per GDPR Article 5(1)(c).
- *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link comparePoliticalGroupsToolMetadata} for MCP schema registration
  * @see {@link handleAnalyzeCoalitionDynamics} for pairwise coalition cohesion analysis

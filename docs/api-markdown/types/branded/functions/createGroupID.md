@@ -8,7 +8,7 @@
 
 > **createGroupID**(`value`): [`GroupID`](../type-aliases/GroupID.md)
 
-Defined in: [types/branded.ts:301](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/types/branded.ts#L301)
+Defined in: [types/branded.ts:301](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L301)
 
 Factory function to create a validated Political Group ID
 

@@ -6,9 +6,9 @@
 
 # Function: handleGetParliamentaryQuestions()
 
-> **handleGetParliamentaryQuestions**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+> **handleGetParliamentaryQuestions**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getParliamentaryQuestions.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/ac50c2f3a6764473ca3046e882b8c154984c496f/src/tools/getParliamentaryQuestions.ts#L56)
+Defined in: [tools/getParliamentaryQuestions.ts:57](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getParliamentaryQuestions.ts#L57)
 
 Handles the get_parliamentary_questions MCP tool request.
 
@@ -26,17 +26,14 @@ Raw tool arguments, validated against [GetParliamentaryQuestionsSchema](../../..
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing either a single question record or a paginated list of parliamentary questions
 
 ## Throws
 
-If `args` fails schema validation (e.g., missing required fields or invalid format)
-
-## Throws
-
-If the European Parliament API is unreachable or returns an error response
+- If `args` fails schema validation (e.g., missing required fields or invalid format)
+- If the European Parliament API is unreachable or returns an error response
 
 ## Example
 
@@ -57,9 +54,9 @@ const single = await handleGetParliamentaryQuestions({ docId: 'E-000001/2024' })
 
 ## Security
 
-Input is validated with Zod before any API call.
-  Personal data in responses is minimised per GDPR Article 5(1)(c).
-  All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+- Input is validated with Zod before any API call.
+- Personal data in responses is minimised per GDPR Article 5(1)(c).
+- All requests are rate-limited and audit-logged per ISMS Policy AU-002.
 
 ## Since
 

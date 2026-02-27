@@ -25,8 +25,8 @@ import type { ToolResult } from './shared/types.js';
  *
  * @param args - Raw tool arguments, validated against {@link GetMeetingActivitiesSchema}
  * @returns MCP tool result containing a paginated list of activities for the specified plenary sitting
- * @throws {ZodError} If `args` fails schema validation (e.g., missing required `sittingId` or invalid format)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws - If `args` fails schema validation (e.g., missing required `sittingId` or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -34,9 +34,9 @@ import type { ToolResult } from './shared/types.js';
  * // Returns up to 50 activities from the specified plenary sitting
  * ```
  *
- * @security Input is validated with Zod before any API call.
- *   Personal data in responses is minimised per GDPR Article 5(1)(c).
- *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
  * @since 0.8.0
  * @see {@link getMeetingActivitiesToolMetadata} for MCP schema registration
  * @see {@link handleGetMeetingDecisions} for retrieving decisions from the same sitting
