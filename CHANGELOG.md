@@ -29,24 +29,29 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 - **45 MCP Tools** — complete European Parliament API v2 coverage:
-  - 7 MEP tools (`get_meps`, `get_mep_details`, `get_current_meps`, `get_incoming_meps`,
-    `get_outgoing_meps`, `get_homonym_meps`, `get_mep_declarations`)
-  - 7 Plenary & Meeting tools (`get_plenary_sessions`, `get_voting_records`, `get_speeches`,
-    `get_events`, `get_meeting_activities`, `get_meeting_decisions`,
-    `get_meeting_foreseen_activities`)
-  - 2 Committee tools (`get_committee_info`, `get_committee_documents`)
-  - 7 Document tools (`search_documents`, `get_adopted_texts`, `get_plenary_documents`,
-    `get_plenary_session_documents`, `get_plenary_session_document_items`,
-    `get_external_documents`, `get_parliamentary_questions`)
-  - 3 Legislative Procedure tools (`get_procedures`, `get_procedure_events`,
-    `get_controlled_vocabularies`)
+  - 7 Core tools (`get_meps`, `get_mep_details`, `get_plenary_sessions`,
+    `get_voting_records`, `search_documents`, `get_committee_info`,
+    `get_parliamentary_questions`)
   - 3 Advanced Analysis tools (`analyze_voting_patterns`, `track_legislation`,
     `generate_report`)
-  - 10 OSINT Intelligence tools (`assess_mep_influence`, `analyze_coalition_dynamics`,
-    `detect_voting_anomalies`, `compare_political_groups`,
-    `analyze_legislative_effectiveness`, `monitor_legislative_pipeline`,
-    `analyze_committee_activity`, `track_mep_attendance`,
-    `analyze_country_delegation`, `generate_political_landscape`)
+  - 14 OSINT Intelligence tools:
+    - Phase 1 (6): `assess_mep_influence`, `analyze_coalition_dynamics`,
+      `detect_voting_anomalies`, `compare_political_groups`,
+      `analyze_legislative_effectiveness`, `monitor_legislative_pipeline`
+    - Phase 2 (2): `analyze_committee_activity`, `track_mep_attendance`
+    - Phase 3 (2): `analyze_country_delegation`, `generate_political_landscape`
+    - Phase 6 (4): `network_analysis`, `sentiment_tracker`,
+      `early_warning_system`, `comparative_intelligence`
+  - 8 Phase 4 EP API v2 tools (`get_current_meps`, `get_speeches`,
+    `get_procedures`, `get_adopted_texts`, `get_events`,
+    `get_meeting_activities`, `get_meeting_decisions`, `get_mep_declarations`)
+  - 13 Phase 5 EP API v2 tools (`get_incoming_meps`, `get_outgoing_meps`,
+    `get_homonym_meps`, `get_plenary_documents`, `get_committee_documents`,
+    `get_plenary_session_documents`, `get_plenary_session_document_items`,
+    `get_controlled_vocabularies`, `get_external_documents`,
+    `get_meeting_foreseen_activities`, `get_procedure_events`,
+    `get_meeting_plenary_session_documents`,
+    `get_meeting_plenary_session_document_items`)
 - **9 MCP Resources** with `ep://` URI scheme:
   `ep://meps`, `ep://meps/{mepId}`, `ep://committees/{committeeId}`,
   `ep://plenary-sessions`, `ep://votes/{sessionId}`, `ep://political-groups`,
