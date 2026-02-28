@@ -247,7 +247,7 @@ graph TB
         end
         
         subgraph "Application Layer"
-            TOOLS[MCP Tools<br/>39 Handlers]
+            TOOLS[MCP Tools<br/>46 Handlers]
             CLIENT[EP API Client<br/>HTTP Client]
         end
         
@@ -2860,7 +2860,7 @@ graph TB
         end
         
         subgraph "Processing Layer"
-            P1[Business Logic<br/>39 Tools]
+            P1[Business Logic<br/>46 Tools]
             P2[API Client<br/>HTTP Client]
             P3[Cache Layer<br/>LRU 15min TTL]
         end
@@ -3251,7 +3251,7 @@ graph TB
    - Per-client quotas and monitoring
 
 2. **Application Layer**
-   - Input validation with Zod schemas (all 39 tools)
+   - Input validation with Zod schemas (all 46 tools)
    - Output validation ensures structure integrity
    - No user-controlled file paths or URLs
 

@@ -1,22 +1,22 @@
 # JSDoc Coverage Visualization
 
 **European Parliament MCP Server**  
-**Analysis Date:** 2025-01-15
+**Analysis Date:** 2026-02-27
 
 ---
 
-## 🚀 Recent Improvements (v0.8.0)
+## 🚀 JSDoc Coverage (v1.0)
 
-The following JSDoc improvements were applied across the codebase in v0.8.0:
+The following JSDoc coverage applies to the current v1.0 codebase:
 
 | Scope | Files Improved | Tags Added |
 |-------|---------------|------------|
-| Tool handler files (top-level `tools/*.ts`) | 39 files | `@param`, `@returns`, `@throws {ZodError}`, `@throws {Error}`, `@example`, `@security`, `@since`, `@see` |
+| Tool handler files (`src/tools/*.ts`) | 46 files | `@param`, `@returns`, `@throws {ZodError}`, `@throws {Error}`, `@example`, `@security`, `@since`, `@see` |
 | Utility & service files (`utils/`, `services/`, `clients/`, `di/`) | 8 files | `@throws`, `@example`, `@security` added to all public methods |
 
 **Before → After summary:**
 
-| Metric | Before (v0.7.x) | After (v0.8.0) | Delta |
+| Metric | Before (v0.7.x) | After (v1.0) | Delta |
 |--------|-----------------|----------------|-------|
 | Overall Score | 33% | **65%** | +32 pp |
 | Excellent files (5/5) | 4 (11%) | **21 (60%)** | +17 files |
@@ -136,7 +136,7 @@ Priority 2: Security & Validation — ✅ DONE
 
 Priority 3: Tools & Advanced Features — ✅ DONE
 ┌─────────────────────────────────────────────────┐
-│ tools/*.ts (39 handler files)    ✅ COMPLETE     │
+│ src/tools/*.ts (46 handler files)    ✅ COMPLETE     │
 │   └─ All handlers                ✅ @throws present │
 │   └─ All handlers                ✅ @security present│
 │                                                  │

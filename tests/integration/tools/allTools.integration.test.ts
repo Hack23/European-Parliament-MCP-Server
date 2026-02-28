@@ -1,5 +1,5 @@
 /**
- * Integration Tests: All 45 MCP Tools Coverage
+ * Integration Tests: All 46 MCP Tools Coverage
  * 
  * Validates that every registered MCP tool:
  * 1. Returns valid MCP-compliant response structure
@@ -62,6 +62,7 @@ import { handleNetworkAnalysis } from '../../../src/tools/networkAnalysis.js';
 import { handleSentimentTracker } from '../../../src/tools/sentimentTracker.js';
 import { handleEarlyWarningSystem } from '../../../src/tools/earlyWarningSystem.js';
 import { handleComparativeIntelligence } from '../../../src/tools/comparativeIntelligence.js';
+import { handleCorrelateIntelligence } from '../../../src/tools/correlateIntelligence.js';
 
 // ── Phase 5 EP API v2 Tools ─────────────────────────────────────
 import { handleGetIncomingMEPs } from '../../../src/tools/getIncomingMEPs.js';
@@ -75,6 +76,8 @@ import { handleGetControlledVocabularies } from '../../../src/tools/getControlle
 import { handleGetExternalDocuments } from '../../../src/tools/getExternalDocuments.js';
 import { handleGetMeetingForeseenActivities } from '../../../src/tools/getMeetingForeseenActivities.js';
 import { handleGetProcedureEvents } from '../../../src/tools/getProcedureEvents.js';
+import { handleGetMeetingPlenarySessionDocuments } from '../../../src/tools/getMeetingPlenarySessionDocuments.js';
+import { handleGetMeetingPlenarySessionDocumentItems } from '../../../src/tools/getMeetingPlenarySessionDocumentItems.js';
 
 const describeIntegration = shouldRunIntegrationTests() ? describe : describe.skip;
 
@@ -96,7 +99,7 @@ function parseAndValidateNoMockData(result: { content: { type: string; text: str
   return parsed;
 }
 
-describeIntegration('All 45 MCP Tools Integration Coverage', () => {
+describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   // Shared MEP ID resolved once for tests that need it
   let testMEPId: string;
   let testSessionId: string;
@@ -764,6 +767,59 @@ describeIntegration('All 45 MCP Tools Integration Coverage', () => {
       const parsed = parseAndValidateNoMockData(result) as { profiles: unknown; correlationMatrix: unknown };
       expect(parsed).toHaveProperty('profiles');
       expect(parsed).toHaveProperty('correlationMatrix');
+    }, 30000);
+  });
+
+  describe('OSINT Correlation Tool: correlate_intelligence', () => {
+    it('should return correlation analysis data', async () => {
+      const result = await retryOrSkip(
+        () => handleCorrelateIntelligence({ mepIds: ['197047', '197048'] }),
+        'correlate_intelligence'
+      );
+      if (!result) return;
+      const parsed = parseAndValidateNoMockData(result) as { alerts: unknown; summary: unknown };
+      expect(parsed).toHaveProperty('alerts');
+      expect(parsed).toHaveProperty('summary');
+    }, 60000);
+  });
+
+  describe('Phase 5 Tool: get_meeting_plenary_session_documents', () => {
+    it('should return meeting plenary session documents', async () => {
+      if (!testSessionId) {
+        const sessions = await retryOrSkip(() => handleGetPlenarySessions({ limit: 1 }), 'setup');
+        if (!sessions) return;
+        const data = JSON.parse(sessions.content[0]?.text ?? '{}') as { data: { id: string }[] };
+        testSessionId = data.data[0]?.id ?? '';
+      }
+      if (!testSessionId) return;
+
+      const result = await retryOrSkip(
+        () => handleGetMeetingPlenarySessionDocuments({ sittingId: testSessionId, limit: 5 }),
+        'get_meeting_plenary_session_documents'
+      );
+      if (!result) return;
+      const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
+      expect(parsed).toHaveProperty('data');
+    }, 30000);
+  });
+
+  describe('Phase 5 Tool: get_meeting_plenary_session_document_items', () => {
+    it('should return meeting plenary session document items', async () => {
+      if (!testSessionId) {
+        const sessions = await retryOrSkip(() => handleGetPlenarySessions({ limit: 1 }), 'setup');
+        if (!sessions) return;
+        const data = JSON.parse(sessions.content[0]?.text ?? '{}') as { data: { id: string }[] };
+        testSessionId = data.data[0]?.id ?? '';
+      }
+      if (!testSessionId) return;
+
+      const result = await retryOrSkip(
+        () => handleGetMeetingPlenarySessionDocumentItems({ sittingId: testSessionId, limit: 5 }),
+        'get_meeting_plenary_session_document_items'
+      );
+      if (!result) return;
+      const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
+      expect(parsed).toHaveProperty('data');
     }, 30000);
   });
 });

@@ -56,7 +56,7 @@
 ```mermaid
 flowchart LR
     subgraph v10["v1.0 - Current (2026-02)"]
-        T1["39 tools\n9 resources\n7 prompts"]
+        T1["46 tools\n9 resources\n7 prompts"]
         T2["stdio transport"]
         T3["LRU cache\n500 entries, 15-min"]
         T4["4-layer security"]
@@ -158,7 +158,7 @@ flowchart TD
     end
 
     subgraph Core["Core MCP Handler (unchanged)"]
-        HANDLER["MCP Request Handler\n39 tools, 9 resources, 7 prompts"]
+        HANDLER["MCP Request Handler\n46 tools, 9 resources, 7 prompts"]
     end
 
     LOCAL --> STDIO
@@ -206,7 +206,7 @@ flowchart TD
 
     subgraph EPMCPv2["EP MCP Server v2.0"]
         GATEWAY["API Gateway"]
-        TOOLS["39+ Tools"]
+        TOOLS["46+ Tools"]
         CACHE["Distributed Cache\n(Redis Cluster)"]
         AUDIT["Enhanced Audit\n(SIEM integration)"]
     end
@@ -284,7 +284,7 @@ stdio transport remains unauthenticated for local development.
 | Observability | Console | OpenTelemetry | OpenTelemetry | SIEM integration |
 | Deployment | npm / npx | npm + Docker | Docker + K8s Helm | Multi-tenant SaaS |
 | Data Sources | EP API v2 | EP API v2 | EP API v2 | EP + EUR-Lex + Council |
-| Tools | 39 | 44 | 50 | 60+ |
+| Tools | 46 | 50 | 55 | 60+ |
 
 ---
 

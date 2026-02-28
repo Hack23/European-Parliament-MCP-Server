@@ -81,7 +81,7 @@ quadrantChart
 
 ### FS1: EU Data Federation Platform (v2.0)
 Expanding beyond EP data to create a unified EU institutions data platform integrating:
-- European Parliament (39+ tools)
+- European Parliament (46+ tools)
 - EUR-Lex legislation database
 - Council of the EU proceedings
 - European Commission proposals
@@ -130,7 +130,7 @@ Multi-tenant architecture introduces risks of cross-tenant data leakage if not i
 **Action:** Dedicated security audit for multi-tenant implementation before public release.
 
 ### FW3: EP API Version Migration Risk
-The transition from EP API v2 to a hypothetical v3 would require updating all 39+ tool implementations simultaneously.
+The transition from EP API v2 to a hypothetical v3 would require updating all 46+ tool implementations simultaneously.
 
 **Action:** Build an EP API abstraction layer that decouples tool implementations from specific API versions.
 
@@ -279,7 +279,7 @@ Open source project sustainability requires ongoing maintenance. Without commerc
 
 ## 🏆 v2.0 Positioning Statement
 
-> **The European Parliament MCP Server v2.0 will be the definitive AI-native intelligence platform for European democratic data.** Expanding from 39 tools to 60+ with AI-powered analysis, federating data from EP, EUR-Lex, and the Council of the EU, and delivering enterprise-grade OAuth 2.0 security with fine-grained RBAC, v2.0 transforms from a data access server into a comprehensive European parliamentary intelligence platform. With ISO 27001 readiness, SLSA Level 3 provenance, and full GDPR compliance documentation, it will be the trusted infrastructure for institutional, journalistic, and research use cases requiring the highest standards of democratic data intelligence.
+> **The European Parliament MCP Server v2.0 will be the definitive AI-native intelligence platform for European democratic data.** Expanding from 46 tools to 60+ with AI-powered analysis, federating data from EP, EUR-Lex, and the Council of the EU, and delivering enterprise-grade OAuth 2.0 security with fine-grained RBAC, v2.0 transforms from a data access server into a comprehensive European parliamentary intelligence platform. With ISO 27001 readiness, SLSA Level 3 provenance, and full GDPR compliance documentation, it will be the trusted infrastructure for institutional, journalistic, and research use cases requiring the highest standards of democratic data intelligence.
 
 **Target Market Expansion (v2.0):**
 - v1.0 audience: Developers and AI-powered researchers

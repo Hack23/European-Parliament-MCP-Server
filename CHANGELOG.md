@@ -17,11 +17,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Cursor IDE MCP configuration example
 
 ### Changed
-- Updated `docs/TESTING_GUIDE.md` to reflect 45 tools and Vitest 4 patterns
+- Updated `docs/TESTING_GUIDE.md` to reflect 46 tools and Vitest 4 patterns
 - Expanded `CONTRIBUTING.md` with DI container guidance and security checklists
 
 ### Fixed
-- Corrected tool count references throughout documentation (45 tools)
+- Corrected tool count references throughout documentation (46 tools)
 - Remediated high-severity ReDoS vulnerabilities in `minimatch` (GHSA-7r86-cg39-jmmj, GHSA-23c5-xmqv-rm74) by updating transitive dependency from 10.2.2 → 10.2.4 via `npm audit fix`
 
 ---
@@ -138,7 +138,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Extended resource URIs: `ep://procedures/{id}`, `ep://plenary/{id}`,
   `ep://documents/{id}`
 - Vitest 4 test runner with `@vitest/coverage-v8` provider
-- 1 130+ unit tests across all 39 tool files
+- 1,130+ unit tests across all MCP tool files
 - 23 E2E tests via `MCPTestClient` stdio harness
 - `knip` dead-code detection in CI
 - `license-compliance` automated license gating
