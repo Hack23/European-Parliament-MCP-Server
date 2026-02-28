@@ -8,7 +8,7 @@
 
 > **createStandardRateLimiter**(): [`RateLimiter`](../classes/RateLimiter.md)
 
-Defined in: [utils/rateLimiter.ts:300](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L300)
+Defined in: [utils/rateLimiter.ts:366](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L366)
 
 Creates a [RateLimiter](../classes/RateLimiter.md) pre-configured for EP API usage.
 
@@ -25,8 +25,10 @@ A new [RateLimiter](../classes/RateLimiter.md) instance with standard EP API set
 
 ```typescript
 const rateLimiter = createStandardRateLimiter();
-await rateLimiter.removeTokens(1);
-const data = await fetchFromEPAPI('/meps');
+const result = await rateLimiter.removeTokens(1);
+if (result.allowed) {
+  const data = await fetchFromEPAPI('/meps');
+}
 ```
 
 ## Security

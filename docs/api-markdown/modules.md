@@ -91,6 +91,7 @@
 - [tools/searchDocuments](tools/searchDocuments/README.md)
 - [tools/sentimentTracker](tools/sentimentTracker/README.md)
 - [tools/shared/errorHandler](tools/shared/errorHandler/README.md)
+- [tools/shared/paramBuilder](tools/shared/paramBuilder/README.md)
 - [tools/shared/responseBuilder](tools/shared/responseBuilder/README.md)
 - [tools/shared/types](tools/shared/types/README.md)
 - [tools/trackLegislation](tools/trackLegislation/README.md)

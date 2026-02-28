@@ -2,10 +2,14 @@
  * Tests for Rate Limiter utility
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { RateLimiter, createStandardRateLimiter } from './rateLimiter.js';
 
 describe('RateLimiter', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   describe('Token Bucket Algorithm', () => {
     it('should allow requests within rate limit', async () => {
       const limiter = new RateLimiter({
@@ -22,90 +26,94 @@ describe('RateLimiter', () => {
 
     it('should return allowed:false when rate limit exceeded and timeout is 0', async () => {
       vi.useFakeTimers();
+      try {
+        const limiter = new RateLimiter({
+          tokensPerInterval: 5,
+          interval: 'second'
+        });
 
-      const limiter = new RateLimiter({
-        tokensPerInterval: 5,
-        interval: 'second'
-      });
+        // Use up all tokens (fake timers freeze Date.now(), preventing accidental refills)
+        for (let i = 0; i < 5; i++) {
+          await limiter.removeTokens(1);
+        }
 
-      // Use up all tokens (fake timers freeze Date.now(), preventing accidental refills)
-      for (let i = 0; i < 5; i++) {
-        await limiter.removeTokens(1);
+        // Next request with zero timeout should return immediately with allowed:false
+        const result = await limiter.removeTokens(1, { timeoutMs: 0 });
+        expect(result.allowed).toBe(false);
+        expect(result.retryAfterMs).toBeGreaterThan(0);
+        expect(result.remainingTokens).toBe(0);
+      } finally {
+        vi.useRealTimers();
       }
-
-      // Next request with zero timeout should return immediately with allowed:false
-      const result = await limiter.removeTokens(1, { timeoutMs: 0 });
-      expect(result.allowed).toBe(false);
-      expect(result.retryAfterMs).toBeGreaterThan(0);
-      expect(result.remainingTokens).toBe(0);
-
-      vi.useRealTimers();
     });
 
     it('should refill tokens over time', async () => {
       vi.useFakeTimers();
-      
-      const limiter = new RateLimiter({
-        tokensPerInterval: 10,
-        interval: 'second',
-        initialTokens: 5
-      });
+      try {
+        const limiter = new RateLimiter({
+          tokensPerInterval: 10,
+          interval: 'second',
+          initialTokens: 5
+        });
 
-      // Use 5 tokens
-      await limiter.removeTokens(5);
-      expect(limiter.getAvailableTokens()).toBe(0);
+        // Use 5 tokens
+        await limiter.removeTokens(5);
+        expect(limiter.getAvailableTokens()).toBe(0);
 
-      // Advance time by 500ms (half the interval)
-      vi.advanceTimersByTime(500);
+        // Advance time by 500ms (half the interval)
+        vi.advanceTimersByTime(500);
 
-      // Should have refilled 5 tokens
-      expect(limiter.getAvailableTokens()).toBe(5);
-
-      vi.useRealTimers();
+        // Should have refilled 5 tokens
+        expect(limiter.getAvailableTokens()).toBe(5);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should not exceed maximum tokens', () => {
       vi.useFakeTimers();
-      
-      const limiter = new RateLimiter({
-        tokensPerInterval: 10,
-        interval: 'second'
-      });
+      try {
+        const limiter = new RateLimiter({
+          tokensPerInterval: 10,
+          interval: 'second'
+        });
 
-      // Wait for 2 intervals
-      vi.advanceTimersByTime(2000);
+        // Wait for 2 intervals
+        vi.advanceTimersByTime(2000);
 
-      // Should still have max 10 tokens, not 20
-      expect(limiter.getAvailableTokens()).toBe(10);
-
-      vi.useRealTimers();
+        // Should still have max 10 tokens, not 20
+        expect(limiter.getAvailableTokens()).toBe(10);
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 
   describe('async waiting', () => {
     it('should wait for token refill and return allowed:true', async () => {
       vi.useFakeTimers();
+      try {
+        const limiter = new RateLimiter({
+          tokensPerInterval: 10,
+          interval: 'second'
+        });
 
-      const limiter = new RateLimiter({
-        tokensPerInterval: 10,
-        interval: 'second'
-      });
+        // Exhaust all tokens synchronously
+        limiter.tryRemoveTokens(10);
+        expect(limiter.getAvailableTokens()).toBe(0);
 
-      // Exhaust all tokens synchronously
-      limiter.tryRemoveTokens(10);
-      expect(limiter.getAvailableTokens()).toBe(0);
+        // Start async wait with generous timeout
+        const promise = limiter.removeTokens(1, { timeoutMs: 5000 });
 
-      // Start async wait with generous timeout
-      const promise = limiter.removeTokens(1, { timeoutMs: 5000 });
+        // Advance fake time past the refill point (≥100 ms for 1 token at 10/second)
+        await vi.advanceTimersByTimeAsync(200);
 
-      // Advance fake time past the refill point (≥100 ms for 1 token at 10/second)
-      await vi.advanceTimersByTimeAsync(200);
-
-      const result = await promise;
-      expect(result.allowed).toBe(true);
-      expect(result.remainingTokens).toBeGreaterThanOrEqual(0);
-
-      vi.useRealTimers();
+        const result = await promise;
+        expect(result.allowed).toBe(true);
+        expect(result.remainingTokens).toBeGreaterThanOrEqual(0);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should return allowed:false when wait exceeds timeout', async () => {
@@ -221,50 +229,68 @@ describe('RateLimiter', () => {
   describe('tryRemoveTokens', () => {
     it('should return true when tokens available', () => {
       vi.useFakeTimers();
-      
-      const limiter = new RateLimiter({
-        tokensPerInterval: 10,
-        interval: 'second'
-      });
+      try {
+        const limiter = new RateLimiter({
+          tokensPerInterval: 10,
+          interval: 'second'
+        });
 
-      expect(limiter.tryRemoveTokens(5)).toBe(true);
-      expect(limiter.getAvailableTokens()).toBe(5);
-      
-      vi.useRealTimers();
+        expect(limiter.tryRemoveTokens(5)).toBe(true);
+        expect(limiter.getAvailableTokens()).toBe(5);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should return false when tokens not available', () => {
       vi.useFakeTimers();
-      
-      const limiter = new RateLimiter({
-        tokensPerInterval: 5,
-        interval: 'second'
-      });
+      try {
+        const limiter = new RateLimiter({
+          tokensPerInterval: 5,
+          interval: 'second'
+        });
 
-      limiter.tryRemoveTokens(5);
-      expect(limiter.tryRemoveTokens(1)).toBe(false);
-      expect(limiter.getAvailableTokens()).toBe(0);
-      
-      vi.useRealTimers();
+        limiter.tryRemoveTokens(5);
+        expect(limiter.tryRemoveTokens(1)).toBe(false);
+        expect(limiter.getAvailableTokens()).toBe(0);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should throw when count is 0', () => {
+      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second' });
+      expect(() => limiter.tryRemoveTokens(0)).toThrow(/count must be a finite integer >= 1/);
+    });
+
+    it('should throw when count is negative', () => {
+      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second' });
+      expect(() => limiter.tryRemoveTokens(-1)).toThrow(/count must be a finite integer >= 1/);
+    });
+
+    it('should throw when count exceeds bucket capacity', () => {
+      const limiter = new RateLimiter({ tokensPerInterval: 5, interval: 'second' });
+      expect(() => limiter.tryRemoveTokens(6)).toThrow(/exceeds bucket capacity/);
     });
   });
 
   describe('reset', () => {
     it('should reset tokens to full capacity', () => {
       vi.useFakeTimers();
-      
-      const limiter = new RateLimiter({
-        tokensPerInterval: 10,
-        interval: 'second'
-      });
+      try {
+        const limiter = new RateLimiter({
+          tokensPerInterval: 10,
+          interval: 'second'
+        });
 
-      limiter.tryRemoveTokens(8);
-      expect(limiter.getAvailableTokens()).toBe(2);
+        limiter.tryRemoveTokens(8);
+        expect(limiter.getAvailableTokens()).toBe(2);
 
-      limiter.reset();
-      expect(limiter.getAvailableTokens()).toBe(10);
-      
-      vi.useRealTimers();
+        limiter.reset();
+        expect(limiter.getAvailableTokens()).toBe(10);
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 
@@ -320,33 +346,42 @@ describe('RateLimiter', () => {
 
     it('should reflect consumed tokens in utilization', () => {
       vi.useFakeTimers();
-      const limiter = new RateLimiter({ tokensPerInterval: 100, interval: 'minute' });
-      limiter.tryRemoveTokens(50);
-      const status = limiter.getStatus();
-      expect(status.availableTokens).toBe(50);
-      expect(status.utilizationPercent).toBe(50);
-      vi.useRealTimers();
+      try {
+        const limiter = new RateLimiter({ tokensPerInterval: 100, interval: 'minute' });
+        limiter.tryRemoveTokens(50);
+        const status = limiter.getStatus();
+        expect(status.availableTokens).toBe(50);
+        expect(status.utilizationPercent).toBe(50);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should floor availableTokens and round utilizationPercent', () => {
       vi.useFakeTimers();
-      const limiter = new RateLimiter({ tokensPerInterval: 3, interval: 'minute' });
-      limiter.tryRemoveTokens(1);
-      const status = limiter.getStatus();
-      // 2 of 3 available → utilization = round((1/3)*100) = 33
-      expect(status.utilizationPercent).toBe(33);
-      expect(Number.isInteger(status.availableTokens)).toBe(true);
-      vi.useRealTimers();
+      try {
+        const limiter = new RateLimiter({ tokensPerInterval: 3, interval: 'minute' });
+        limiter.tryRemoveTokens(1);
+        const status = limiter.getStatus();
+        // 2 of 3 available → utilization = round((1/3)*100) = 33
+        expect(status.utilizationPercent).toBe(33);
+        expect(Number.isInteger(status.availableTokens)).toBe(true);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should handle empty bucket (utilization 100%)', () => {
       vi.useFakeTimers();
-      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second' });
-      limiter.tryRemoveTokens(10);
-      const status = limiter.getStatus();
-      expect(status.availableTokens).toBe(0);
-      expect(status.utilizationPercent).toBe(100);
-      vi.useRealTimers();
+      try {
+        const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second' });
+        limiter.tryRemoveTokens(10);
+        const status = limiter.getStatus();
+        expect(status.availableTokens).toBe(0);
+        expect(status.utilizationPercent).toBe(100);
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 });

@@ -231,6 +231,14 @@ export class RateLimiter {
    * @since 0.8.0
    */
   tryRemoveTokens(count: number): boolean {
+    if (!Number.isFinite(count) || count < 1 || !Number.isInteger(count)) {
+      throw new Error(`tryRemoveTokens: count must be a finite integer >= 1, got ${String(count)}`);
+    }
+    if (count > this.tokensPerInterval) {
+      throw new Error(
+        `tryRemoveTokens: count (${String(count)}) exceeds bucket capacity (${String(this.tokensPerInterval)})`
+      );
+    }
     this.refill();
     
     if (this.tokens >= count) {

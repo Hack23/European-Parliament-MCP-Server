@@ -8,7 +8,7 @@
 
 > `const` **getMEPsToolMetadata**: `object`
 
-Defined in: [tools/getMEPs.ts:115](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPs.ts#L115)
+Defined in: [tools/getMEPs.ts:118](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPs.ts#L118)
 
 Tool metadata for MCP registration
 

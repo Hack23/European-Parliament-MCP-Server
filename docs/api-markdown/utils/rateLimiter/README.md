@@ -17,6 +17,7 @@
 ## Type Aliases
 
 - [RateLimiterConfig](type-aliases/RateLimiterConfig.md)
+- [RateLimitResult](type-aliases/RateLimitResult.md)
 
 ## Functions
 

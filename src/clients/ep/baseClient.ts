@@ -374,7 +374,8 @@ export class BaseEPClient {
     if (!rlResult.allowed) {
       throw new APIError(
         `Rate limit exceeded. Retry after ${String(rlResult.retryAfterMs)}ms`,
-        429
+        429,
+        { retryAfterMs: rlResult.retryAfterMs, remainingTokens: rlResult.remainingTokens }
       );
     }
 
