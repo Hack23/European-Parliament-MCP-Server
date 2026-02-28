@@ -5,6 +5,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetHomonymMEPs, getHomonymMEPsToolMetadata } from './getHomonymMEPs.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
+import { setupToolTest } from '../../tests/helpers/mockFactory.js';
+import { expectValidMCPResponse, expectValidPaginatedMCPResponse } from '../../tests/helpers/assertions.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
@@ -13,10 +15,11 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
   }
 }));
 
+// Registers beforeEach(vi.clearAllMocks) for all tests in this file
+setupToolTest();
+
 describe('get_homonym_meps Tool', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-
     // Setup default mock implementation
     vi.mocked(epClientModule.epClient.getHomonymMEPs).mockResolvedValue({
       data: [
@@ -74,34 +77,21 @@ describe('get_homonym_meps Tool', () => {
   describe('Response Format', () => {
     it('should return MCP-compliant response structure', async () => {
       const result = await handleGetHomonymMEPs({});
-
-      expect(result).toHaveProperty('content');
-      expect(Array.isArray(result.content)).toBe(true);
-      expect(result.content).toHaveLength(1);
-      expect(result.content[0]).toHaveProperty('type', 'text');
-      expect(result.content[0]).toHaveProperty('text');
+      expectValidMCPResponse(result);
     });
 
-    it('should return valid JSON in text field', async () => {
+    it('should include mock MEP data with id and politicalGroup in payload', async () => {
       const result = await handleGetHomonymMEPs({});
-      const text = result.content[0]?.text;
-
-      expect(() => {
-        const parsed: unknown = JSON.parse(text ?? '');
-        return parsed;
-      }).not.toThrow();
+      const parsed = expectValidPaginatedMCPResponse(result);
+      const first = parsed.data[0] as Record<string, unknown> | undefined;
+      expect(first).toBeDefined();
+      expect(first?.['id']).toBe('person/1');
+      expect(first?.['politicalGroup']).toBe('S&D');
     });
 
     it('should return paginated response structure', async () => {
       const result = await handleGetHomonymMEPs({});
-      const text = result.content[0]?.text ?? '{}';
-      const data: unknown = JSON.parse(text);
-
-      expect(data).toHaveProperty('data');
-      expect(data).toHaveProperty('total');
-      expect(data).toHaveProperty('limit');
-      expect(data).toHaveProperty('offset');
-      expect(data).toHaveProperty('hasMore');
+      expectValidPaginatedMCPResponse(result);
     });
   });
 
