@@ -134,10 +134,17 @@ export interface AuditEvent {
  *
  * @example With file sink and 30-day retention
  * ```typescript
+ * const requiredAuthToken = process.env['AUDIT_TOKEN'];
+ * if (!requiredAuthToken) {
+ *   throw new Error(
+ *     'AUDIT_TOKEN environment variable must be set for audit log access control',
+ *   );
+ * }
+ *
  * const logger = new AuditLogger({
  *   sinks: [new FileAuditSink({ filePath: '/var/log/ep-mcp-audit.ndjson' })],
  *   retentionMs: 30 * 24 * 60 * 60 * 1000,
- *   requiredAuthToken: process.env['AUDIT_TOKEN'],
+ *   requiredAuthToken,
  * });
  * ```
  *

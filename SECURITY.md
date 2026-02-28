@@ -274,13 +274,19 @@ ISMS Policy AU-002 (Audit Logging and Monitoring) — all MCP tool invocations a
 ```typescript
 import { AuditLogger, FileAuditSink } from 'european-parliament-mcp-server';
 
+const requiredAuthToken = process.env['AUDIT_READ_TOKEN'];
+
+if (!requiredAuthToken) {
+  throw new Error('AUDIT_READ_TOKEN environment variable must be set to enable secure audit log access.');
+}
+
 const logger = new AuditLogger({
   // Persist to file with automatic log rotation at 50 MiB
   sinks: [new FileAuditSink({ filePath: '/var/log/ep-mcp-audit.ndjson', maxSizeBytes: 50 * 1024 * 1024 })],
   // Enforce 90-day data retention (GDPR Art. 5(1)(e))
   retentionMs: 90 * 24 * 60 * 60 * 1000,
   // Require an auth token to read or erase audit logs
-  requiredAuthToken: process.env['AUDIT_READ_TOKEN'],
+  requiredAuthToken,
   // Extend the default set of redacted keys
   sensitiveKeys: ['name', 'email', 'fullName', 'address', 'mepPrivateEmail'],
 });

@@ -204,7 +204,7 @@ export class RetentionPolicy {
    */
   enforce(entries: AuditLogEntry[]): AuditLogEntry[] {
     const cutoff = Date.now() - this.maxAgeMs;
-    return entries.filter((e): boolean => e.timestamp.getTime() > cutoff);
+    return entries.filter((e): boolean => e.timestamp.getTime() >= cutoff);
   }
 
   /**
