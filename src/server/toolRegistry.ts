@@ -57,6 +57,9 @@ import { handleGetMeetingActivities, getMeetingActivitiesToolMetadata } from '..
 import { handleGetMeetingDecisions, getMeetingDecisionsToolMetadata } from '../tools/getMeetingDecisions.js';
 import { handleGetMEPDeclarations, getMEPDeclarationsToolMetadata } from '../tools/getMEPDeclarations.js';
 
+// ── Precomputed analytics tools ────────────────────────────────────
+import { handleGetAllGeneratedStats, getAllGeneratedStatsToolMetadata } from '../tools/getAllGeneratedStats.js';
+
 // ── Phase 5 – Complete EP API v2 coverage tools ───────────────────
 import { handleGetIncomingMEPs, getIncomingMEPsToolMetadata } from '../tools/getIncomingMEPs.js';
 import { handleGetOutgoingMEPs, getOutgoingMEPsToolMetadata } from '../tools/getOutgoingMEPs.js';
@@ -149,6 +152,8 @@ export function getToolMetadataArray(): ToolMetadata[] {
     withCategory(getProcedureEventsToolMetadata, 'phase5'),
     withCategory(getMeetingPlenarySessionDocumentsToolMetadata, 'phase5'),
     withCategory(getMeetingPlenarySessionDocumentItemsToolMetadata, 'phase5'),
+    // Precomputed analytics
+    withCategory(getAllGeneratedStatsToolMetadata, 'phase5'),
   ];
 }
 
@@ -210,6 +215,8 @@ const toolHandlers: Record<string, ToolHandler> = {
   'get_procedure_events': handleGetProcedureEvents,
   'get_meeting_plenary_session_documents': handleGetMeetingPlenarySessionDocuments,
   'get_meeting_plenary_session_document_items': handleGetMeetingPlenarySessionDocumentItems,
+  // Precomputed analytics
+  'get_all_generated_stats': handleGetAllGeneratedStats,
 };
 
 /**
