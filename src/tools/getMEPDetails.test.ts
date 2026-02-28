@@ -139,5 +139,22 @@ describe('get_mep_details Tool', () => {
 
       spy.mockRestore();
     });
+
+    it('should use "Unknown error" when thrown value is not an Error instance', async () => {
+      const spy = vi.spyOn(epClientModule.epClient, 'getMEPDetails')
+        .mockRejectedValueOnce({ code: 500 });
+
+      try {
+        await handleGetMEPDetails({ id: 'MEP-124810' });
+        expect.fail('Should have thrown error');
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        const err = error as Error;
+        expect(err.message).toContain('Failed to retrieve MEP details');
+        expect(err.message).toContain('Unknown error');
+      }
+
+      spy.mockRestore();
+    });
   });
 });

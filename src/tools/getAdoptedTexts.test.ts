@@ -11,7 +11,8 @@ import { expectValidMCPResponse, expectValidPaginatedMCPResponse } from '../../t
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getAdoptedTexts: vi.fn()
+    getAdoptedTexts: vi.fn(),
+    getAdoptedTextById: vi.fn()
   }
 }));
 
@@ -154,6 +155,25 @@ describe('get_adopted_texts Tool', () => {
       expect(props).toHaveProperty('year');
       expect(props).toHaveProperty('limit');
       expect(props).toHaveProperty('offset');
+    });
+  });
+
+  describe('docId lookup branch', () => {
+    it('should call getAdoptedTextById when docId is provided', async () => {
+      const mockText = {
+        id: 'TA-9-2024-0001',
+        title: 'AI Act',
+        date: '2024-03-13',
+        type: 'TA',
+        procedure: 'COD/2021/0106',
+        documentReference: 'P9_TA(2024)0138'
+      };
+      vi.mocked(epClientModule.epClient.getAdoptedTextById).mockResolvedValue(mockText);
+
+      const result = await handleGetAdoptedTexts({ docId: 'TA-9-2024-0001' });
+      expect(result.content[0].type).toBe('text');
+      const parsed = JSON.parse(result.content[0].text) as { id: string };
+      expect(parsed.id).toBe('TA-9-2024-0001');
     });
   });
 });

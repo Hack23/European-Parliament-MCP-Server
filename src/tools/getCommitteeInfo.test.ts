@@ -9,7 +9,8 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getCommitteeInfo: vi.fn()
+    getCommitteeInfo: vi.fn(),
+    getCurrentCorporateBodies: vi.fn()
   }
 }));
 
@@ -133,6 +134,21 @@ describe('get_committee_info Tool', () => {
       }
 
       spy.mockRestore();
+    });
+  });
+
+  describe('showCurrent branch', () => {
+    it('should call getCurrentCorporateBodies when showCurrent is true', async () => {
+      const mockBodies = [
+        { id: 'ENVI', name: 'Committee on Environment', abbreviation: 'ENVI', members: [], type: 'committee', active: true },
+        { id: 'ITRE', name: 'Committee on Industry', abbreviation: 'ITRE', members: [], type: 'committee', active: true }
+      ];
+      vi.mocked(epClientModule.epClient.getCurrentCorporateBodies).mockResolvedValue(mockBodies);
+
+      const result = await handleGetCommitteeInfo({ showCurrent: true });
+      expect(result.content[0].type).toBe('text');
+      const parsed = JSON.parse(result.content[0].text) as unknown[];
+      expect(Array.isArray(parsed)).toBe(true);
     });
   });
 });
