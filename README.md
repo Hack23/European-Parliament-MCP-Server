@@ -70,7 +70,7 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ### 🎯 Key Features
 
-- 🔌 **Full MCP Implementation**: 46 tools (7 core + 3 advanced analysis + 15 OSINT intelligence + 8 Phase 4 + 13 Phase 5), 9 Resources, and 7 Prompts
+- 🔌 **Full MCP Implementation**: 47 tools (7 core + 3 advanced analysis + 15 OSINT intelligence + 8 Phase 4 + 14 Phase 5), 9 Resources, and 7 Prompts
 - 🏛️ **Complete EP API v2 Coverage**: All European Parliament Open Data API endpoints covered
 - 🕵️ **OSINT Intelligence**: MEP influence scoring, coalition analysis, anomaly detection
 - 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance
@@ -567,13 +567,14 @@ All tools are organized below by functional area. Each tool includes input valid
 | [`get_procedure_events`](./API_USAGE_GUIDE.md#tool-get_procedure_events) | Timeline events for a legislative procedure | processId (required), limit | `GET /procedures/{id}/events` |
 | [`get_controlled_vocabularies`](./API_USAGE_GUIDE.md#tool-get_controlled_vocabularies) | Standardized classification terms | vocId, limit | `GET /controlled-vocabularies`, `GET /controlled-vocabularies/{id}` |
 
-### 📊 Advanced Analysis Tools (3)
+### 📊 Advanced Analysis Tools (4)
 
 | Tool | Description | Key Parameters | Output |
 |------|-------------|----------------|--------|
 | [`analyze_voting_patterns`](./API_USAGE_GUIDE.md#tool-analyze_voting_patterns) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
 | [`track_legislation`](./API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
 | [`generate_report`](./API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
+| [`get_all_generated_stats`](./API_USAGE_GUIDE.md#tool-get_all_generated_stats) | Precomputed EP activity statistics (2004-2025) with rankings, predictions, and political landscape | yearFrom, yearTo, category, includePredictions | Statistics object |
 
 ### 🕵️ OSINT Intelligence Tools (14)
 
@@ -673,7 +674,7 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 
 | Country | Server | Data Source | Coverage |
 |---------|--------|-------------|----------|
-| 🇪🇺 **European Union** | [**European Parliament MCP Server**](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions — **46 tools** (15 OSINT) |
+| 🇪🇺 **European Union** | [**European Parliament MCP Server**](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions — **47 tools** (15 OSINT) |
 | 🇺🇸 **United States** | [Congress.gov API MCP Server](https://github.com/bsmi021/mcp-congress_gov_server) | congress.gov | Bills, members, votes, committees (TypeScript, v3 API) |
 | 🇺🇸 **United States** | [CongressMCP](https://github.com/amurshak/congressMCP) | congress.gov | Real-time Congress data — bills, votes, members |
 | 🇺🇸 **United States** | [Congress.gov MCP](https://github.com/AshwinSundar/congress_gov_mcp) | congress.gov | Unofficial Congress.gov API access |
@@ -735,9 +736,9 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 | Attendance tracking | ✅ Trend detection + engagement scoring | ❌ | ❌ | ❌ |
 | GDPR compliance | ✅ Privacy-first design | N/A | N/A | ✅ |
 | MCP prompts & resources | ✅ 7 prompts + 9 resources | ❌ | ❌ | ❌ |
-| Tool count | **46 tools** | ~5 tools | ~5 tools | ~4 tools |
+| Tool count | **47 tools** | ~5 tools | ~5 tools | ~4 tools |
 
-> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **46 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, cross-tool intelligence correlation, and political landscape generation. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
+> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **47 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, cross-tool intelligence correlation, political landscape generation, and precomputed longitudinal statistics. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
 
 ---
 
@@ -909,7 +910,7 @@ npm run test:coverage
 npm run test:watch
 ```
 
-**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, all 46 MCP tools are tested against the real European Parliament API endpoints. All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](INTEGRATION_TESTING.md) for the complete guide.
+**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, all 47 MCP tools are tested against the real European Parliament API endpoints. All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](INTEGRATION_TESTING.md) for the complete guide.
 
 ### Code Quality
 
@@ -1079,7 +1080,7 @@ For detailed workflow documentation, see [.github/WORKFLOWS.md](./.github/WORKFL
 
 > **📰 News is dead. Long live intelligence.**
 >
-> While the world's newsrooms race to replace journalists with GPT-powered headline factories — churning out *"10 Things the EU Did Today"* listicles at the speed of hallucination — we took a different path. Instead of automating the news *ticker*, we built a **political intelligence platform** that actually *understands* what the European Parliament does. Disrupted news generation produces noise; **deep political intelligence** produces signal. Any chatbot can summarize a press release. It takes **46 MCP tools**, **15 OSINT analyzers**, and a **5-dimension influence model** to tell you *which MEP quietly brokered the amendment that changed the directive that reshaped an industry* — three months before the newspapers notice.
+> While the world's newsrooms race to replace journalists with GPT-powered headline factories — churning out *"10 Things the EU Did Today"* listicles at the speed of hallucination — we took a different path. Instead of automating the news *ticker*, we built a **political intelligence platform** that actually *understands* what the European Parliament does. Disrupted news generation produces noise; **deep political intelligence** produces signal. Any chatbot can summarize a press release. It takes **47 MCP tools**, **15 OSINT analyzers**, and a **5-dimension influence model** to tell you *which MEP quietly brokered the amendment that changed the directive that reshaped an industry* — three months before the newspapers notice.
 >
 > **This is not a news bot. This is parliamentary intelligence infrastructure.**
 
@@ -1134,13 +1135,13 @@ graph TB
         W11["🤖 copilot-setup-steps"]
     end
 
-    subgraph TOOLS["🔌 46 MCP Tools"]
+    subgraph TOOLS["🔌 47 MCP Tools"]
         style TOOLS fill:#172554,stroke:#3B82F6,color:#DBEAFE
         T1["🏛️ 7 Core EP Tools"]
         T2["📊 3 Advanced Analysis"]
         T3["🕵️ 15 OSINT Intelligence"]
         T4["⚡ 8 Phase 4 Tools"]
-        T5["🚀 13 Phase 5 Tools"]
+        T5["🚀 14 Phase 5 Tools"]
     end
 
     AGENTS --> SKILLS
@@ -1151,7 +1152,7 @@ graph TB
 
 ### 📅 Future Advanced Roadmap: 2026–2037
 
-> From **46 MCP tools** today to a **transformative democratic intelligence platform** serving all 195 parliamentary systems — powered by the relentless march of AI model generations.
+> From **47 MCP tools** today to a **transformative democratic intelligence platform** serving all 195 parliamentary systems — powered by the relentless march of AI model generations.
 
 #### Phase 5: Advanced Intelligence (2026–2027)
 
