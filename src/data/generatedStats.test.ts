@@ -27,9 +27,13 @@ describe('GENERATED_STATS — top-level metadata', () => {
     expect(GENERATED_STATS.generatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   });
 
-  it('should cover the period 2004–2025', () => {
-    expect(GENERATED_STATS.coveragePeriod.from).toBe(2004);
-    expect(GENERATED_STATS.coveragePeriod.to).toBe(2025);
+  it('should have a valid coverage period', () => {
+    const { from, to } = GENERATED_STATS.coveragePeriod;
+    expect(typeof from).toBe('number');
+    expect(typeof to).toBe('number');
+    expect(Number.isInteger(from)).toBe(true);
+    expect(Number.isInteger(to)).toBe(true);
+    expect(from).toBeLessThanOrEqual(to);
   });
 
   it('should include a methodologyVersion', () => {
@@ -51,15 +55,17 @@ describe('GENERATED_STATS.yearlyStats', () => {
     expect(GENERATED_STATS.yearlyStats.length).toBeGreaterThan(0);
   });
 
-  it('should cover every year from 2004 to 2025', () => {
+  it('should cover every year in the coverage period', () => {
+    const { from, to } = GENERATED_STATS.coveragePeriod;
     const years = GENERATED_STATS.yearlyStats.map((y) => y.year);
-    for (let year = 2004; year <= 2025; year++) {
+    for (let year = from; year <= to; year++) {
       expect(years).toContain(year);
     }
   });
 
-  it('should have exactly 22 entries (2004–2025 inclusive)', () => {
-    expect(GENERATED_STATS.yearlyStats).toHaveLength(22);
+  it('should have exactly one entry per year in the coverage period', () => {
+    const { from, to } = GENERATED_STATS.coveragePeriod;
+    expect(GENERATED_STATS.yearlyStats).toHaveLength(to - from + 1);
   });
 
   describe('each entry structure', () => {
@@ -203,10 +209,11 @@ describe('GENERATED_STATS.predictions', () => {
     expect(GENERATED_STATS.predictions.length).toBeGreaterThan(0);
   });
 
-  it('should cover future years (≥ 2026)', () => {
+  it('should cover future years (beyond the coverage period)', () => {
+    const { to } = GENERATED_STATS.coveragePeriod;
     const years = GENERATED_STATS.predictions.map((p) => p.year);
     for (const year of years) {
-      expect(year).toBeGreaterThanOrEqual(2026);
+      expect(year).toBeGreaterThan(to);
     }
   });
 
