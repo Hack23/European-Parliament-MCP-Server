@@ -57,6 +57,9 @@ export const GetAllGeneratedStatsSchema = z
         'committee_meetings',
         'parliamentary_questions',
         'resolutions',
+        'speeches',
+        'adopted_texts',
+        'political_groups',
       ])
       .optional()
       .default('all')
@@ -97,6 +100,8 @@ const CATEGORY_LABEL_MAP: Record<string, string> = {
   committee_meetings: 'Committee Meetings',
   parliamentary_questions: 'Parliamentary Questions',
   resolutions: 'Resolutions',
+  speeches: 'Speeches',
+  adopted_texts: 'Adopted Texts',
 };
 
 function filterRankings(
@@ -185,9 +190,10 @@ export const getAllGeneratedStatsToolMetadata = {
   name: 'get_all_generated_stats',
   description:
     'Retrieve precomputed European Parliament activity statistics (2004-2025) with monthly breakdowns, ' +
-    'category rankings, percentile scores, statistical analysis, analytical commentary, and trend-based ' +
-    'predictions for 2026-2030. Data covers parliamentary terms EP6-EP10 including plenary sessions, ' +
-    'legislative acts, roll-call votes, committee meetings, parliamentary questions, and resolutions. ' +
+    'category rankings, percentile scores, statistical analysis, political landscape history (group composition, ' +
+    'fragmentation index, coalition dynamics), analytical commentary, and trend-based predictions for 2026-2030. ' +
+    'Data covers parliamentary terms EP6-EP10 including plenary sessions, legislative acts, roll-call votes, ' +
+    'committee meetings, parliamentary questions, resolutions, speeches, and adopted texts. ' +
     'Static data refreshed weekly by agentic workflow — no live API calls.',
   inputSchema: {
     type: 'object' as const,
@@ -214,6 +220,9 @@ export const getAllGeneratedStatsToolMetadata = {
           'committee_meetings',
           'parliamentary_questions',
           'resolutions',
+          'speeches',
+          'adopted_texts',
+          'political_groups',
         ],
         description: 'Activity category to focus on (default: all)',
         default: 'all',

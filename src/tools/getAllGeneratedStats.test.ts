@@ -127,7 +127,68 @@ describe('getAllGeneratedStats', () => {
     expect(year.committeeMeetings).toBeGreaterThan(0);
     expect(year.parliamentaryQuestions).toBeGreaterThan(0);
     expect(year.resolutions).toBeGreaterThan(0);
+    expect(year.speeches).toBeGreaterThan(0);
+    expect(year.adoptedTexts).toBeGreaterThan(0);
     expect(year.commentary).toBeDefined();
+  });
+
+  it('each yearly stat includes political landscape data', () => {
+    const result = getAllGeneratedStats({
+      category: 'all',
+      includePredictions: false,
+      includeMonthlyBreakdown: false,
+      includeRankings: false,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    const year = data.yearlyStats[0];
+    expect(year.politicalLandscape).toBeDefined();
+    expect(year.politicalLandscape.groups).toBeDefined();
+    expect(year.politicalLandscape.groups.length).toBeGreaterThan(0);
+    expect(year.politicalLandscape.totalGroups).toBeGreaterThan(0);
+    expect(year.politicalLandscape.largestGroup).toBeDefined();
+    expect(year.politicalLandscape.largestGroupSeatShare).toBeGreaterThan(0);
+    expect(year.politicalLandscape.fragmentationIndex).toBeGreaterThan(0);
+    expect(typeof year.politicalLandscape.grandCoalitionPossible).toBe('boolean');
+    expect(year.politicalLandscape.politicalBalance).toBeDefined();
+
+    // Verify political group snapshot structure
+    const group = year.politicalLandscape.groups[0];
+    expect(group.name).toBeDefined();
+    expect(group.seats).toBeGreaterThan(0);
+    expect(group.seatShare).toBeGreaterThan(0);
+  });
+
+  it('tracks fragmentation increase from EP6 to EP10', () => {
+    const result = getAllGeneratedStats({
+      category: 'all',
+      includePredictions: false,
+      includeMonthlyBreakdown: false,
+      includeRankings: false,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    const year2004 = data.yearlyStats[0].politicalLandscape;
+    const year2025 = data.yearlyStats[21].politicalLandscape;
+    // Fragmentation has increased over time
+    expect(year2025.fragmentationIndex).toBeGreaterThan(year2004.fragmentationIndex);
+    // Grand coalition was possible in EP6 but not in EP10
+    expect(year2004.grandCoalitionPossible).toBe(true);
+    expect(year2025.grandCoalitionPossible).toBe(false);
+  });
+
+  it('filters by political_groups category', () => {
+    const result = getAllGeneratedStats({
+      yearFrom: 2020,
+      yearTo: 2020,
+      category: 'political_groups',
+      includePredictions: false,
+      includeMonthlyBreakdown: false,
+      includeRankings: true,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.yearlyStats).toHaveLength(1);
+    expect(data.yearlyStats[0].politicalLandscape).toBeDefined();
+    // political_groups has no numeric ranking so should be empty
+    expect(data.categoryRankings).toBeUndefined();
   });
 
   it('includes predictions when requested with year range covering prediction years', () => {
@@ -197,7 +258,7 @@ describe('getAllGeneratedStats', () => {
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     expect(data.categoryRankings).toBeDefined();
-    expect(data.categoryRankings.length).toBe(6);
+    expect(data.categoryRankings.length).toBe(8);
 
     const ranking = data.categoryRankings[0];
     expect(ranking.category).toBeDefined();

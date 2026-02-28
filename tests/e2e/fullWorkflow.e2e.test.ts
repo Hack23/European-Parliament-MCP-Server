@@ -112,7 +112,10 @@ describe('Full Workflow E2E Tests', () => {
       expect(toolNames).toContain('get_meeting_plenary_session_documents');
       expect(toolNames).toContain('get_meeting_plenary_session_document_items');
 
-      expect(toolNames.length).toBe(46);
+      // Precomputed analytics (1)
+      expect(toolNames).toContain('get_all_generated_stats');
+
+      expect(toolNames.length).toBe(47);
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute get_meps tool', async () => {
