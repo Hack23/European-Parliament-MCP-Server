@@ -21,7 +21,7 @@ export interface MonthlyActivity {
   plenarySessions: number;
   legislativeActsAdopted: number;
   rollCallVotes: number;
-  committeesMeetings: number;
+  committeeMeetings: number;
   parliamentaryQuestions: number;
   resolutions: number;
 }
@@ -115,13 +115,13 @@ const MONTHLY_WEIGHTS = [
   0.10, // Dec
 ];
 
-function distributeMonthly(annual: YearlyStats): MonthlyActivity[] {
+function distributeMonthly(annual: Omit<YearlyStats, 'monthlyActivity'>): MonthlyActivity[] {
   return MONTHLY_WEIGHTS.map((w, i) => ({
     month: i + 1,
     plenarySessions: Math.round(annual.plenarySessions * w),
     legislativeActsAdopted: Math.round(annual.legislativeActsAdopted * w),
     rollCallVotes: Math.round(annual.rollCallVotes * w),
-    committeesMeetings: Math.round(annual.committeeMeetings * w),
+    committeeMeetings: Math.round(annual.committeeMeetings * w),
     parliamentaryQuestions: Math.round(annual.parliamentaryQuestions * w),
     resolutions: Math.round(annual.resolutions * w),
   }));
@@ -160,7 +160,7 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity'>[] = [
 function buildYearlyStats(): YearlyStats[] {
   return RAW_YEARLY.map((y) => ({
     ...y,
-    monthlyActivity: distributeMonthly(y as YearlyStats),
+    monthlyActivity: distributeMonthly(y),
   }));
 }
 

@@ -56,6 +56,21 @@ describe('GetAllGeneratedStatsSchema', () => {
       GetAllGeneratedStatsSchema.parse({ category: 'invalid_cat' })
     ).toThrow();
   });
+
+  it('rejects yearFrom greater than yearTo', () => {
+    expect(() =>
+      GetAllGeneratedStatsSchema.parse({ yearFrom: 2020, yearTo: 2015 })
+    ).toThrow('yearFrom must be less than or equal to yearTo');
+  });
+
+  it('accepts yearFrom equal to yearTo', () => {
+    const result = GetAllGeneratedStatsSchema.parse({
+      yearFrom: 2020,
+      yearTo: 2020,
+    });
+    expect(result.yearFrom).toBe(2020);
+    expect(result.yearTo).toBe(2020);
+  });
 });
 
 // ── Response Structure ──────────────────────────────────────────────
@@ -115,8 +130,10 @@ describe('getAllGeneratedStats', () => {
     expect(year.commentary).toBeDefined();
   });
 
-  it('includes predictions when requested', () => {
+  it('includes predictions when requested with year range covering prediction years', () => {
     const result = getAllGeneratedStats({
+      yearFrom: 2004,
+      yearTo: 2030,
       category: 'all',
       includePredictions: true,
       includeMonthlyBreakdown: false,
@@ -140,6 +157,35 @@ describe('getAllGeneratedStats', () => {
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     expect(data.predictions).toBeUndefined();
+  });
+
+  it('excludes predictions when yearTo is before prediction years even if includePredictions is true', () => {
+    const result = getAllGeneratedStats({
+      yearFrom: 2019,
+      yearTo: 2024,
+      category: 'all',
+      includePredictions: true,
+      includeMonthlyBreakdown: false,
+      includeRankings: false,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.predictions).toBeUndefined();
+  });
+
+  it('includes only predictions within the requested year range', () => {
+    const result = getAllGeneratedStats({
+      yearFrom: 2020,
+      yearTo: 2027,
+      category: 'all',
+      includePredictions: true,
+      includeMonthlyBreakdown: false,
+      includeRankings: false,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.predictions).toBeDefined();
+    expect(data.predictions.length).toBe(2);
+    expect(data.predictions[0].year).toBe(2026);
+    expect(data.predictions[1].year).toBe(2027);
   });
 
   it('includes category rankings with percentiles', () => {

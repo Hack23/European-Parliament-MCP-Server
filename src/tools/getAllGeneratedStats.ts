@@ -32,50 +32,61 @@ import { GENERATED_STATS } from '../data/generatedStats.js';
 import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
-export const GetAllGeneratedStatsSchema = z.object({
-  yearFrom: z
-    .number()
-    .int()
-    .min(2004)
-    .max(2030)
-    .optional()
-    .describe('Start year for filtering (default: earliest available, 2004)'),
-  yearTo: z
-    .number()
-    .int()
-    .min(2004)
-    .max(2030)
-    .optional()
-    .describe('End year for filtering (default: latest available, 2025)'),
-  category: z
-    .enum([
-      'all',
-      'plenary_sessions',
-      'legislative_acts',
-      'roll_call_votes',
-      'committee_meetings',
-      'parliamentary_questions',
-      'resolutions',
-    ])
-    .optional()
-    .default('all')
-    .describe('Activity category to focus on (default: all)'),
-  includePredictions: z
-    .boolean()
-    .optional()
-    .default(true)
-    .describe('Include trend-based predictions for 2026-2030 (default: true)'),
-  includeMonthlyBreakdown: z
-    .boolean()
-    .optional()
-    .default(false)
-    .describe('Include month-by-month activity data (default: false for compact output)'),
-  includeRankings: z
-    .boolean()
-    .optional()
-    .default(true)
-    .describe('Include percentile rankings and statistical analysis (default: true)'),
-});
+export const GetAllGeneratedStatsSchema = z
+  .object({
+    yearFrom: z
+      .number()
+      .int()
+      .min(2004)
+      .max(2030)
+      .optional()
+      .describe('Start year for filtering (default: earliest available, 2004)'),
+    yearTo: z
+      .number()
+      .int()
+      .min(2004)
+      .max(2030)
+      .optional()
+      .describe('End year for filtering (default: latest available, 2025)'),
+    category: z
+      .enum([
+        'all',
+        'plenary_sessions',
+        'legislative_acts',
+        'roll_call_votes',
+        'committee_meetings',
+        'parliamentary_questions',
+        'resolutions',
+      ])
+      .optional()
+      .default('all')
+      .describe('Activity category to focus on (default: all)'),
+    includePredictions: z
+      .boolean()
+      .optional()
+      .default(true)
+      .describe('Include trend-based predictions for 2026-2030 (default: true)'),
+    includeMonthlyBreakdown: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe('Include month-by-month activity data (default: false for compact output)'),
+    includeRankings: z
+      .boolean()
+      .optional()
+      .default(true)
+      .describe('Include percentile rankings and statistical analysis (default: true)'),
+  })
+  .refine(
+    (data) =>
+      data.yearFrom === undefined ||
+      data.yearTo === undefined ||
+      data.yearFrom <= data.yearTo,
+    {
+      message: 'yearFrom must be less than or equal to yearTo',
+      path: ['yearFrom'],
+    },
+  );
 
 export type GetAllGeneratedStatsParams = z.infer<typeof GetAllGeneratedStatsSchema>;
 
@@ -124,16 +135,17 @@ export function getAllGeneratedStats(
         if (params.includeMonthlyBreakdown) return y;
         // Omit monthly breakdown for compact output
         const { monthlyActivity: _monthly, ...rest } = y;
+        void _monthly;
         return rest;
       });
 
     // Filter rankings by category if specified
     const filteredRankings = filterRankings(params, yearFrom, yearTo);
 
-    // Include predictions only if requested and year range extends beyond 2025
+    // Include predictions only if requested, filtered to the requested year range
     const filteredPredictions =
-      params.includePredictions && yearTo >= 2025
-        ? GENERATED_STATS.predictions
+      params.includePredictions
+        ? GENERATED_STATS.predictions.filter((p) => p.year >= yearFrom && p.year <= yearTo)
         : [];
 
     const result = {
