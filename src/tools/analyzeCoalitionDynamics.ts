@@ -15,14 +15,17 @@ import { AnalyzeCoalitionDynamicsSchema } from '../schemas/europeanParliament.js
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
+import type { DataAvailability, MetricResult } from '../types/index.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 
 interface CoalitionPairAnalysis {
   groupA: string;
   groupB: string;
   cohesionScore: number;
-  sharedVotes: number;
-  totalVotes: number;
+  /** null — vote-level data not available from EP API; not a real vote count */
+  sharedVotes: number | null;
+  /** null — vote-level data not available from EP API; not a real vote count */
+  totalVotes: number | null;
   allianceSignal: boolean;
   trend: string;
 }
@@ -30,15 +33,21 @@ interface CoalitionPairAnalysis {
 interface GroupCohesionMetrics {
   groupId: string;
   memberCount: number;
-  internalCohesion: number;
-  defectionRate: number;
-  avgAttendance: number;
-  stressIndicator: number;
+  /** null when EP API does not provide per-MEP voting statistics */
+  internalCohesion: number | null;
+  /** null when EP API does not provide per-MEP voting statistics */
+  defectionRate: number | null;
+  /** null when EP API does not provide per-MEP voting statistics */
+  avgAttendance: number | null;
+  /** Voting-derived stress indicator; null when EP API does not provide voting statistics */
+  stressIndicator: MetricResult;
+  /** Explicit marker indicating whether voting-derived metrics are available */
+  dataAvailability: DataAvailability;
   computedAttributes: {
-    disciplineScore: number;
-    fragmentationRisk: number;
+    disciplineScore: number | null;
+    fragmentationRisk: number | null;
     unityTrend: string;
-    activeParticipationRate: number;
+    activeParticipationRate: number | null;
   };
 }
 
@@ -46,12 +55,13 @@ interface CoalitionDynamicsAnalysis {
   period: { from: string; to: string };
   groupMetrics: GroupCohesionMetrics[];
   coalitionPairs: CoalitionPairAnalysis[];
-  dominantCoalition: { groups: string[]; combinedStrength: number; cohesion: number };
+  dominantCoalition: { groups: string[]; combinedStrength: number | null; cohesion: number };
   stressIndicators: { indicator: string; severity: string; affectedGroups: string[] }[];
   computedAttributes: {
     parliamentaryFragmentation: number;
     effectiveNumberOfParties: number;
-    grandCoalitionViability: number;
+    /** null when cohesion data is UNAVAILABLE */
+    grandCoalitionViability: number | null;
     oppositionStrength: number;
   };
   confidenceLevel: string;
@@ -89,8 +99,8 @@ function computePairCohesion(
     ? Math.min(groupAMembers, groupBMembers) / Math.max(1, Math.max(groupAMembers, groupBMembers))
     : 0;
   const cohesionScore = Math.round(balance * 100) / 100;
-  const sharedVotes = 0; // Not available from EP API without vote-level analysis
-  const totalVotes = 0;
+  const sharedVotes = null; // Not available from EP API without vote-level analysis
+  const totalVotes = null;
 
   return {
     groupA, groupB, cohesionScore, sharedVotes, totalVotes,
@@ -102,8 +112,10 @@ function computePairCohesion(
 /**
  * Build group metrics from fetched MEP data.
  * Note: The EP API /meps/{id} endpoint does not provide per-MEP voting
- * statistics, so cohesion metrics are derived from group composition only.
- * Voting-related fields report zero with LOW confidence.
+ * statistics, so internalCohesion, defectionRate, and avgAttendance are
+ * explicitly unavailable (null with dataAvailability 'UNAVAILABLE').
+ * memberCount is a sample count capped at the API page limit (50); for
+ * groups with more than 50 members the actual seat count will be higher.
  */
 async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionMetrics[]> {
   const metrics: GroupCohesionMetrics[] = [];
@@ -111,21 +123,28 @@ async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionM
     const mepsResult = await epClient.getMEPs({ group: groupId, limit: 50 });
 
     // Per-MEP voting statistics are not available from the EP API,
-    // so cohesion/defection/attendance are reported as zero.
+    // so cohesion/defection/attendance are reported as null with UNAVAILABLE marker.
+    // memberCount is capped at 50 (single API page) and may undercount large groups.
     const memberCount = mepsResult.data.length;
 
     metrics.push({
       groupId,
       memberCount,
-      internalCohesion: 0,
-      defectionRate: 0,
-      avgAttendance: 0,
-      stressIndicator: 0,
+      internalCohesion: null,
+      defectionRate: null,
+      avgAttendance: null,
+      stressIndicator: {
+        value: null,
+        availability: 'UNAVAILABLE',
+        confidence: 'LOW',
+        reason: 'Per-MEP voting statistics not available from EP API'
+      },
+      dataAvailability: 'UNAVAILABLE',
       computedAttributes: {
-        disciplineScore: 0,
-        fragmentationRisk: 0,
+        disciplineScore: null,
+        fragmentationRisk: null,
         unityTrend: 'UNKNOWN',
-        activeParticipationRate: 0
+        activeParticipationRate: null
       }
     });
   }
@@ -165,13 +184,18 @@ function classifyStressSeverity(stress: number): string {
  * Compute stress indicators from group metrics
  */
 function computeStressIndicators(groupMetrics: GroupCohesionMetrics[]): { indicator: string; severity: string; affectedGroups: string[] }[] {
-  return groupMetrics
-    .filter(g => g.stressIndicator > 0.5)
-    .map(g => ({
-      indicator: `High defection rate in ${g.groupId}`,
-      severity: classifyStressSeverity(g.stressIndicator),
-      affectedGroups: [g.groupId]
-    }));
+  const results: { indicator: string; severity: string; affectedGroups: string[] }[] = [];
+  for (const g of groupMetrics) {
+    const stress = g.stressIndicator.value;
+    if (stress !== null && stress > 0.5) {
+      results.push({
+        indicator: `High defection rate in ${g.groupId}`,
+        severity: classifyStressSeverity(stress),
+        affectedGroups: [g.groupId]
+      });
+    }
+  }
+  return results;
 }
 
 /**
@@ -179,16 +203,19 @@ function computeStressIndicators(groupMetrics: GroupCohesionMetrics[]): { indica
  */
 function computeFragmentationMetrics(groupMetrics: GroupCohesionMetrics[]): {
   effectiveParties: number;
-  grandCoalitionViability: number;
+  grandCoalitionViability: number | null;
 } {
   const totalMembers = groupMetrics.reduce((sum, g) => sum + g.memberCount, 0);
   const seatShares = groupMetrics.map(g => totalMembers > 0 ? g.memberCount / totalMembers : 0);
   const herfindahl = seatShares.reduce((sum, s) => sum + s * s, 0);
   const effectiveParties = herfindahl > 0 ? 1 / herfindahl : 1;
 
-  const eppCohesion = groupMetrics.find(g => g.groupId === 'EPP')?.internalCohesion ?? 0;
-  const sdCohesion = groupMetrics.find(g => g.groupId === 'S&D')?.internalCohesion ?? 0;
-  const grandCoalitionViability = Math.round((eppCohesion + sdCohesion) / 2 * 100) / 100;
+  const eppCohesion = groupMetrics.find(g => g.groupId === 'EPP')?.internalCohesion ?? null;
+  const sdCohesion = groupMetrics.find(g => g.groupId === 'S&D')?.internalCohesion ?? null;
+  // Return null when cohesion data is unavailable to avoid misleading computed score
+  const grandCoalitionViability = (eppCohesion !== null && sdCohesion !== null)
+    ? Math.round((eppCohesion + sdCohesion) / 2 * 100) / 100
+    : null;
 
   return { effectiveParties, grandCoalitionViability };
 }
@@ -198,12 +225,12 @@ function computeFragmentationMetrics(groupMetrics: GroupCohesionMetrics[]): {
  */
 function buildDominantCoalition(sortedPairs: CoalitionPairAnalysis[]): {
   groups: string[];
-  combinedStrength: number;
+  combinedStrength: number | null;
   cohesion: number;
 } {
   const topPair = sortedPairs[0];
   if (topPair === undefined) {
-    return { groups: [], combinedStrength: 0, cohesion: 0 };
+    return { groups: [], combinedStrength: null, cohesion: 0 };
   }
   return {
     groups: [topPair.groupA, topPair.groupB],
@@ -216,7 +243,7 @@ function buildDominantCoalition(sortedPairs: CoalitionPairAnalysis[]): {
  * Build computed attributes from fragmentation metrics
  */
 function buildCoalitionComputedAttrs(
-  fragMetrics: { effectiveParties: number; grandCoalitionViability: number },
+  fragMetrics: { effectiveParties: number; grandCoalitionViability: number | null },
   sortedPairs: CoalitionPairAnalysis[]
 ): CoalitionDynamicsAnalysis['computedAttributes'] {
   const topCohesion = sortedPairs[0]?.cohesionScore ?? 0;
@@ -276,9 +303,10 @@ function buildCoalitionComputedAttrs(
  * - Parliament-wide fragmentation index (Herfindahl–Hirschman)
  * - Effective number of parties (ENP)
  *
- * > **Note:** Confidence level is always `LOW` because per-MEP voting statistics
- * > are unavailable from the current EP API. Cohesion/defection metrics report
- * > zero and should be supplemented with vote-result data when available.
+ * > **Note:** Confidence level is `LOW` because per-MEP voting statistics
+ * > are unavailable from the current EP API. Cohesion/defection/attendance
+ * > metrics are null with `dataAvailability: 'UNAVAILABLE'` and should be
+ * > supplemented with vote-result data when available.
  *
  * @param args - Tool arguments matching AnalyzeCoalitionDynamicsSchema
  * @param args.groupIds - Political group identifiers to analyze (optional; defaults to all 8 groups)
@@ -336,8 +364,9 @@ export async function handleAnalyzeCoalitionDynamics(
       sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'CIA Coalition Analysis — group composition from real EP Open Data MEP records. '
         + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
-        + 'cohesion and stress metrics report zero and should be supplemented with vote-result data. '
-        + 'Coalition pair cohesion derived from group size ratios. '
+        + 'each group metric has dataAvailability: UNAVAILABLE with null cohesion/defection/attendance. '
+        + 'Coalition pair cohesion is currently derived from group size ratios only; '
+        + 'coalitionPairs.sharedVotes and coalitionPairs.totalVotes are null (not computed from vote-level data). '
         + 'Data source: European Parliament Open Data Portal.'
     };
 
