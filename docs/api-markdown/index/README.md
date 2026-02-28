@@ -120,6 +120,12 @@ Re-exports [createVocabularyID](../types/ep/branded/functions/createVocabularyID
 
 ***
 
+### DataAvailability
+
+Re-exports [DataAvailability](../types/type-aliases/DataAvailability.md)
+
+***
+
 ### DEFAULT\_PERFORMANCE\_THRESHOLDS
 
 Re-exports [DEFAULT_PERFORMANCE_THRESHOLDS](../utils/performance/variables/DEFAULT_PERFORMANCE_THRESHOLDS.md)
@@ -273,6 +279,12 @@ Re-exports [MetricKey](../services/MetricsService/type-aliases/MetricKey.md)
 ### MetricName
 
 Re-exports [MetricName](../services/MetricsService/enumerations/MetricName.md)
+
+***
+
+### MetricResult
+
+Re-exports [MetricResult](../types/interfaces/MetricResult.md)
 
 ***
 

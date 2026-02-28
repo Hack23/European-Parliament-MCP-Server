@@ -22,3 +22,7 @@
 ## Variables
 
 - [auditLogger](variables/auditLogger.md)
+
+## Functions
+
+- [toErrorMessage](functions/toErrorMessage.md)

@@ -6,7 +6,7 @@
 
 # Interface: CorrelatedIntelligenceReport
 
-Defined in: [tools/correlateIntelligence.ts:132](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L132)
+Defined in: [tools/correlateIntelligence.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L134)
 
 Full correlated intelligence report
 
@@ -20,7 +20,7 @@ Full correlated intelligence report
 
 > **alerts**: [`CorrelationAlert`](CorrelationAlert.md)[]
 
-Defined in: [tools/correlateIntelligence.ts:141](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L141)
+Defined in: [tools/correlateIntelligence.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L143)
 
 ***
 
@@ -28,7 +28,7 @@ Defined in: [tools/correlateIntelligence.ts:141](https://github.com/Hack23/Europ
 
 > **analysisTime**: `string`
 
-Defined in: [tools/correlateIntelligence.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L134)
+Defined in: [tools/correlateIntelligence.ts:136](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L136)
 
 ***
 
@@ -53,7 +53,7 @@ Confidence level of this analysis based on data availability and quality.
 
 > **correlationId**: `string`
 
-Defined in: [tools/correlateIntelligence.ts:133](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L133)
+Defined in: [tools/correlateIntelligence.ts:135](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L135)
 
 ***
 
@@ -61,7 +61,7 @@ Defined in: [tools/correlateIntelligence.ts:133](https://github.com/Hack23/Europ
 
 > **correlations**: `object`
 
-Defined in: [tools/correlateIntelligence.ts:142](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L142)
+Defined in: [tools/correlateIntelligence.ts:144](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L144)
 
 #### coalitionFracture
 
@@ -74,6 +74,16 @@ Defined in: [tools/correlateIntelligence.ts:142](https://github.com/Hack23/Europ
 #### networkProfiles
 
 > **networkProfiles**: [`NetworkProfileCorrelation`](NetworkProfileCorrelation.md)[]
+
+***
+
+### dataAvailability
+
+> **dataAvailability**: [`DataAvailability`](../../../types/type-aliases/DataAvailability.md)
+
+Defined in: [tools/correlateIntelligence.ts:158](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L158)
+
+Explicit marker indicating whether correlation data was available from dependent tools
 
 ***
 
@@ -111,7 +121,7 @@ including data sources, scoring models, and any limitations.
 
 > **scope**: `object`
 
-Defined in: [tools/correlateIntelligence.ts:135](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L135)
+Defined in: [tools/correlateIntelligence.ts:137](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L137)
 
 #### groups
 
@@ -150,7 +160,7 @@ data sources used in this analysis.
 
 > **summary**: `object`
 
-Defined in: [tools/correlateIntelligence.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L147)
+Defined in: [tools/correlateIntelligence.ts:149](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L149)
 
 #### correlationsFound
 

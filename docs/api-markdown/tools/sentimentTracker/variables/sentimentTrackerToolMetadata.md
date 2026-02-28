@@ -8,7 +8,7 @@
 
 > `const` **sentimentTrackerToolMetadata**: `object`
 
-Defined in: [tools/sentimentTracker.ts:301](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L301)
+Defined in: [tools/sentimentTracker.ts:303](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L303)
 
 ## Type Declaration
 

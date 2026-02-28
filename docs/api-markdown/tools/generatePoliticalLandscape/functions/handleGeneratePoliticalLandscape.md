@@ -8,7 +8,7 @@
 
 > **handleGeneratePoliticalLandscape**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/generatePoliticalLandscape.ts:300](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generatePoliticalLandscape.ts#L300)
+Defined in: [tools/generatePoliticalLandscape.ts:302](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generatePoliticalLandscape.ts#L302)
 
 Handles the generate_political_landscape MCP tool request.
 

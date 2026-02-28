@@ -198,7 +198,7 @@ Fetches vote results from recent meetings when no sessionId is given.
 
 > `private` **filterVotingRecords**(`records`, `params`): [`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)[]
 
-Defined in: [clients/ep/votingClient.ts:118](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L118)
+Defined in: [clients/ep/votingClient.ts:119](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L119)
 
 Applies client-side filters to voting records.
 
@@ -310,7 +310,7 @@ Returns cache statistics for monitoring and debugging.
 
 > **getSpeechById**(`speechId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>
 
-Defined in: [clients/ep/votingClient.ts:234](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L234)
+Defined in: [clients/ep/votingClient.ts:235](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L235)
 
 Returns a single speech by ID.
 **EP API Endpoint:** `GET /speeches/{speech-id}`
@@ -331,7 +331,7 @@ Returns a single speech by ID.
 
 > **getSpeeches**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>\>
 
-Defined in: [clients/ep/votingClient.ts:207](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L207)
+Defined in: [clients/ep/votingClient.ts:208](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L208)
 
 Returns plenary speeches.
 **EP API Endpoint:** `GET /speeches`
@@ -366,7 +366,7 @@ Returns plenary speeches.
 
 > **getVotingRecords**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)\>\>
 
-Defined in: [clients/ep/votingClient.ts:151](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L151)
+Defined in: [clients/ep/votingClient.ts:152](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L152)
 
 Retrieves voting records with filtering by session, topic, and date.
 

@@ -246,7 +246,7 @@ Returns cache statistics for monitoring and debugging.
 
 > **getCommitteeInfo**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
-Defined in: [clients/ep/committeeClient.ts:111](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L111)
+Defined in: [clients/ep/committeeClient.ts:115](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L115)
 
 Retrieves committee (corporate body) information by ID or abbreviation.
 
@@ -282,7 +282,7 @@ Audit logged per GDPR Article 30
 
 > **getCurrentCorporateBodies**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
 
-Defined in: [clients/ep/committeeClient.ts:135](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L135)
+Defined in: [clients/ep/committeeClient.ts:139](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L139)
 
 Returns the list of all current EP Corporate Bodies for today's date.
 **EP API Endpoint:** `GET /corporate-bodies/show-current`
@@ -333,7 +333,7 @@ If committee not found
 
 > `private` **searchCommitteeInList**(`searchTerm`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
 
-Defined in: [clients/ep/committeeClient.ts:84](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L84)
+Defined in: [clients/ep/committeeClient.ts:88](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L88)
 
 Searches the corporate-bodies list for a matching committee.
 

@@ -8,7 +8,7 @@
 
 > `const` **analyzeCommitteeActivityToolMetadata**: `object`
 
-Defined in: [tools/analyzeCommitteeActivity.ts:262](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCommitteeActivity.ts#L262)
+Defined in: [tools/analyzeCommitteeActivity.ts:264](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCommitteeActivity.ts#L264)
 
 Tool metadata for MCP listing
 
