@@ -10,8 +10,9 @@
  * - Standard OSINT output fields (methodology, dataFreshness, sourceAttribution)
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { handleCorrelateIntelligence } from './correlateIntelligence.js';
+import { auditLogger } from '../utils/auditLogger.js';
 
 // ---------------------------------------------------------------------------
 // Mock dependent tool handlers
@@ -159,6 +160,11 @@ describe('correlate_intelligence Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setupDefaultMocks();
+    auditLogger.clear();
+  });
+
+  afterEach(() => {
+    auditLogger.clear();
   });
 
   // ---- Schema validation ---------------------------------------------------
@@ -381,6 +387,13 @@ describe('correlate_intelligence Tool', () => {
       // Should not throw; just skip that MEP
       const result = await handleCorrelateIntelligence({ mepIds: ['123'] });
       expect(result.content).toHaveLength(1);
+
+      // AU-002: error must be logged to audit trail
+      const errorLogs = auditLogger.getLogs().filter(
+        e => e.action === 'correlate_intelligence.fetch_influence_data' && e.result.success === false
+      );
+      expect(errorLogs).toHaveLength(1);
+      expect(errorLogs[0]?.result.error).toBe('API timeout');
     });
   });
 
@@ -442,6 +455,13 @@ describe('correlate_intelligence Tool', () => {
       };
 
       expect(report.correlations.coalitionFracture).toBeNull();
+
+      // AU-002: error must be logged to audit trail
+      const errorLogs = auditLogger.getLogs().filter(
+        e => e.action === 'correlate_intelligence.fetch_early_warning_data' && e.result.success === false
+      );
+      expect(errorLogs).toHaveLength(1);
+      expect(errorLogs[0]?.result.error).toBe('API error');
     });
   });
 
@@ -516,6 +536,13 @@ describe('correlate_intelligence Tool', () => {
       };
 
       expect(report.correlations.networkProfiles).toHaveLength(0);
+
+      // AU-002: error must be logged to audit trail
+      const errorLogs = auditLogger.getLogs().filter(
+        e => e.action === 'correlate_intelligence.fetch_network_data' && e.result.success === false
+      );
+      expect(errorLogs).toHaveLength(1);
+      expect(errorLogs[0]?.result.error).toBe('Network error');
     });
   });
 

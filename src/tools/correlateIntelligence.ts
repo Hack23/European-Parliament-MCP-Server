@@ -30,7 +30,7 @@ import { randomUUID } from 'node:crypto';
 import { CorrelateIntelligenceSchema, OsintStandardOutputSchema } from '../schemas/europeanParliament.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult, OsintStandardOutput } from './shared/types.js';
-import { auditLogger } from '../utils/auditLogger.js';
+import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 
 import { handleAssessMepInfluence } from './assessMepInfluence.js';
 import { handleDetectVotingAnomalies } from './detectVotingAnomalies.js';
@@ -214,7 +214,7 @@ async function fetchInfluenceData(mepId: string): Promise<InfluenceResult | null
     const ir = await handleAssessMepInfluence({ mepId });
     return parseToolResult(ir) as InfluenceResult;
   } catch (error: unknown) {
-    auditLogger.logError('correlateIntelligence.fetchInfluenceData', { mepId }, String(error));
+    auditLogger.logError('correlate_intelligence.fetch_influence_data', { mepId }, toErrorMessage(error));
     return null;
   }
 }
@@ -224,7 +224,7 @@ async function fetchAnomalyData(mepId: string): Promise<AnomalyResult> {
     const ar = await handleDetectVotingAnomalies({ mepId });
     return parseToolResult(ar) as AnomalyResult;
   } catch (error: unknown) {
-    auditLogger.logError('correlateIntelligence.fetchAnomalyData', { mepId }, String(error));
+    auditLogger.logError('correlate_intelligence.fetch_anomaly_data', { mepId }, toErrorMessage(error));
     return { anomalies: [], summary: { totalAnomalies: 0, highSeverity: 0 }, confidenceLevel: 'LOW' };
   }
 }
@@ -322,7 +322,7 @@ async function correlateCoalitionFracture(
     const er = await handleEarlyWarningSystem({ sensitivity: ewsSensitivity, focusArea: 'coalitions' });
     ewsData = parseToolResult(er) as EarlyWarningResult;
   } catch (error: unknown) {
-    auditLogger.logError('correlateIntelligence.fetchEarlyWarningData', { sensitivity: ewsSensitivity }, String(error));
+    auditLogger.logError('correlate_intelligence.fetch_early_warning_data', { sensitivity: ewsSensitivity }, toErrorMessage(error));
     return { correlation: null, alert: null, toolConfidenceLevels: [] };
   }
 
@@ -330,7 +330,7 @@ async function correlateCoalitionFracture(
     const cr = await handleAnalyzeCoalitionDynamics({ groupIds: groups });
     coalitionData = parseToolResult(cr) as CoalitionResult;
   } catch (error: unknown) {
-    auditLogger.logError('correlateIntelligence.fetchCoalitionData', { groups }, String(error));
+    auditLogger.logError('correlate_intelligence.fetch_coalition_data', { groups }, toErrorMessage(error));
     return { correlation: null, alert: null, toolConfidenceLevels: [] };
   }
 
@@ -467,7 +467,7 @@ async function correlateNetworkProfiles(
     const nr = await handleNetworkAnalysis({});
     networkData = parseToolResult(nr) as NetworkResult;
   } catch (error: unknown) {
-    auditLogger.logError('correlateIntelligence.fetchNetworkData', {}, String(error));
+    auditLogger.logError('correlate_intelligence.fetch_network_data', {}, toErrorMessage(error));
     return { correlations: [], alerts: [], toolConfidenceLevels: [] };
   }
 
@@ -478,7 +478,7 @@ async function correlateNetworkProfiles(
     const cr = await handleComparativeIntelligence({ mepIds: numericIds });
     comparativeData = parseToolResult(cr) as ComparativeResult;
   } catch (error: unknown) {
-    auditLogger.logError('correlateIntelligence.fetchComparativeData', { mepIds: numericIds }, String(error));
+    auditLogger.logError('correlate_intelligence.fetch_comparative_data', { mepIds: numericIds }, toErrorMessage(error));
     return { correlations: [], alerts: [], toolConfidenceLevels: [] };
   }
 

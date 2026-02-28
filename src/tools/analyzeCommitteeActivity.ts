@@ -16,6 +16,7 @@
 
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -105,11 +106,12 @@ function computePolicyImpactRating(reportsAdopted: number, successRate: number):
  * Safely fetch a count from the EP API using data.length (actual items returned),
  * not total (which is a lower-bound estimate capped by page size).
  */
-async function safeCount(fetcher: () => Promise<{ data: unknown[] }>): Promise<number> {
+async function safeCount(operation: string, fetcher: () => Promise<{ data: unknown[] }>): Promise<number> {
   try {
     const result = await fetcher();
     return result.data.length;
-  } catch {
+  } catch (error: unknown) {
+    auditLogger.logError('analyze_committee_activity.safe_count', { operation }, toErrorMessage(error));
     return 0;
   }
 }
@@ -124,9 +126,9 @@ async function fetchCommitteeData(dateFrom: string): Promise<{
 }> {
   const year = parseInt(dateFrom.substring(0, 4), 10);
   const [documentsProduced, activeLegFiles, reportsAdopted] = await Promise.all([
-    safeCount(() => epClient.getCommitteeDocuments({ year, limit: 100 })),
-    safeCount(() => epClient.getProcedures({ year, limit: 100 })),
-    safeCount(() => epClient.getAdoptedTexts({ year, limit: 100 }))
+    safeCount('getCommitteeDocuments', () => epClient.getCommitteeDocuments({ year, limit: 100 })),
+    safeCount('getProcedures', () => epClient.getProcedures({ year, limit: 100 })),
+    safeCount('getAdoptedTexts', () => epClient.getAdoptedTexts({ year, limit: 100 }))
   ]);
   return { documentsProduced, activeLegFiles, reportsAdopted };
 }
