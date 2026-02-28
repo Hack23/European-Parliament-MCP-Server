@@ -150,7 +150,7 @@ export class RateLimiter {
    * immediately with `allowed: false` and a `retryAfterMs` hint.
    *
    * @param count - Number of tokens to consume (must be a finite integer ≥ 1 and ≤ `tokensPerInterval`); throws for invalid values
-   * @param options.timeoutMs - Maximum time to wait in milliseconds (default 5000)
+   * @param options.timeoutMs - Maximum time to wait in milliseconds (default 5000); non-finite or negative values are coerced to `0`, meaning the call never blocks and returns `allowed: false` immediately if tokens are unavailable
    * @returns Promise resolving to a {@link RateLimitResult}. `allowed` is `true`
    *   when tokens were consumed, `false` when the timeout was reached.
    *

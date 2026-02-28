@@ -8,7 +8,7 @@
 
 > `const` **correlateIntelligenceToolMetadata**: `object`
 
-Defined in: [tools/correlateIntelligence.ts:714](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L714)
+Defined in: [tools/correlateIntelligence.ts:897](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L897)
 
 MCP tool metadata for `correlate_intelligence` registration.
 

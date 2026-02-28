@@ -196,7 +196,7 @@ Number of tokens to consume (must be a finite integer ≥ 1 and ≤ `tokensPerIn
 
 `number`
 
-Maximum time to wait in milliseconds (default 5000)
+Maximum time to wait in milliseconds (default 5000); non-finite or negative values are coerced to `0`, meaning the call never blocks and returns `allowed: false` immediately if tokens are unavailable
 
 #### Returns
 

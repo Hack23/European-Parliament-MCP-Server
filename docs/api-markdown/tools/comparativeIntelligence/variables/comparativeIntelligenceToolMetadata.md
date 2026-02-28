@@ -8,7 +8,7 @@
 
 > `const` **comparativeIntelligenceToolMetadata**: `object`
 
-Defined in: [tools/comparativeIntelligence.ts:432](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L432)
+Defined in: [tools/comparativeIntelligence.ts:684](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L684)
 
 ## Type Declaration
 
