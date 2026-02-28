@@ -37,6 +37,8 @@ import { realpathSync } from 'fs';
 // ── Extracted modules ─────────────────────────────────────────────
 import { getToolMetadataArray, dispatchToolCall } from './server/toolRegistry.js';
 import { showHelp, showVersion, showHealth, parseCLIArgs } from './server/cli.js';
+import { ToolError } from './tools/shared/errors.js';
+import { handleToolError } from './tools/shared/errorHandler.js';
 import { SERVER_NAME, SERVER_VERSION } from './config.js';
 // MCP Prompts
 import { getPromptMetadataArray, handleGetPrompt } from './prompts/index.js';
@@ -166,6 +168,13 @@ export class EuropeanParliamentMCPServer {
       try {
         return await this.dispatchToolCall(name, args);
       } catch (error) {
+        // Convert ToolError to an in-band MCP error response (isError: true)
+        // so MCP clients receive a well-formed ToolResult instead of an RPC error.
+        if (error instanceof ToolError) {
+          // Log ToolError so tool failures are visible in server logs (consistent with non-ToolError path)
+          console.error(`[ERROR] Tool ${error.toolName} failed:`, error);
+          return handleToolError(error, error.toolName);
+        }
         // Log error to stderr (stdout is used for MCP protocol)
         console.error(`[ERROR] Tool ${name} failed:`, error);
         

@@ -4,6 +4,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { handleToolError, handleDataUnavailable } from './errorHandler.js';
+import { ToolError } from './errors.js';
 
 describe('handleToolError', () => {
   it('should return isError: true for Error instances', () => {
@@ -35,6 +36,35 @@ describe('handleToolError', () => {
     const text = result.content[0]?.text ?? '';
     expect(text).not.toContain('at ');
     expect(text).not.toContain('.test.ts');
+  });
+
+  it('should handle ToolError and use toolName from the error', () => {
+    const err = new ToolError({ toolName: 'specific_tool', operation: 'op', message: 'failed' });
+    const result = handleToolError(err, 'fallback_tool');
+    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    expect(parsed.toolName).toBe('specific_tool');
+  });
+
+  it('should return isError: true for ToolError', () => {
+    const err = new ToolError({ toolName: 'tool', operation: 'op', message: 'failed' });
+    const result = handleToolError(err, 'tool');
+    expect(result.isError).toBe(true);
+  });
+
+  it('should include formatted ToolError message in error field', () => {
+    const err = new ToolError({ toolName: 'specific_tool', operation: 'fetchData', message: 'connection refused' });
+    const result = handleToolError(err, 'fallback_tool');
+    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    expect(parsed.error).toBe('[specific_tool] fetchData: connection refused');
+  });
+
+  it('should include retryable field for ToolError', () => {
+    const retryableErr = new ToolError({ toolName: 'tool', operation: 'op', message: 'msg', isRetryable: true });
+    const nonRetryableErr = new ToolError({ toolName: 'tool', operation: 'op', message: 'msg', isRetryable: false });
+    const retryableResult = JSON.parse(handleToolError(retryableErr, 'tool').content[0]?.text ?? '');
+    const nonRetryableResult = JSON.parse(handleToolError(nonRetryableErr, 'tool').content[0]?.text ?? '');
+    expect(retryableResult.retryable).toBe(true);
+    expect(nonRetryableResult.retryable).toBe(false);
   });
 });
 
