@@ -262,6 +262,20 @@ describe('FileAuditSink', () => {
     mockRename.mockResolvedValue(undefined);
   });
 
+  it('should throw when constructed with a relative filePath', () => {
+    expect(() => new FileAuditSink({ filePath: 'relative/path/audit.log' }))
+      .toThrow('filePath must be an absolute path');
+  });
+
+  it('should throw when constructed with a bare filename', () => {
+    expect(() => new FileAuditSink({ filePath: 'audit.log' }))
+      .toThrow('filePath must be an absolute path');
+  });
+
+  it('should not throw when constructed with an absolute filePath', () => {
+    expect(() => new FileAuditSink({ filePath: '/tmp/audit.log' })).not.toThrow();
+  });
+
   it('should append NDJSON entry to the file', async () => {
     const enoent = Object.assign(new Error('ENOENT'), { code: 'ENOENT' });
     mockStat.mockRejectedValue(enoent);

@@ -351,7 +351,7 @@ export class AuditLogger {
    */
   clear(authorization?: AuthToken): void {
     this.checkAuthorization(authorization);
-    this.memorySink.clear('');
+    this.memorySink.clear(authorization);
   }
 
   // --------------------------------------------------------------------------
@@ -383,7 +383,7 @@ export class AuditLogger {
     // Rebuild the in-memory buffer with only non-expired entries.
     // This correctly handles users who have both fresh and expired entries —
     // their fresh entries are preserved while only expired ones are dropped.
-    this.memorySink.clear('');
+    this.memorySink.clear(undefined);
     for (const entry of fresh) {
       this.memorySink.write(entry);
     }

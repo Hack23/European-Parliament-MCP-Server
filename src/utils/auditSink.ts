@@ -16,6 +16,7 @@
  * @since 0.9.0
  */
 
+import { isAbsolute } from 'node:path';
 import { appendFile, rename, stat } from 'node:fs/promises';
 
 // ---------------------------------------------------------------------------
@@ -103,10 +104,12 @@ export interface AuditSink {
    */
   query?(filter: AuditFilter): AuditLogEntry[];
   /**
-   * Clear all entries, optionally gated by an authorization token.
+   * Clear all entries.
    * Implemented by in-memory sinks; write-only sinks omit this.
+   * The `authorization` parameter may be provided by callers; validation is
+   * the responsibility of the calling context (typically {@link AuditLogger}).
    */
-  clear?(authorization: AuthToken): void;
+  clear?(authorization?: AuthToken): void;
 }
 
 // ---------------------------------------------------------------------------
@@ -241,8 +244,12 @@ export class MemoryAuditSink implements AuditSink {
     return this.entries.filter((e): boolean => this.matchesFilter(e, filter));
   }
 
-  /** Clears the internal buffer (the `authorization` param is accepted but unused). */
-  clear(_authorization: AuthToken): void {
+  /**
+   * Clears the internal buffer.
+   * The `authorization` param is accepted but unused — access control is
+   * enforced by `AuditLogger`.
+   */
+  clear(_authorization?: AuthToken): void {
     this.entries = [];
   }
 
@@ -323,6 +330,11 @@ export class FileAuditSink implements AuditSink {
   private writeQueue: Promise<void> = Promise.resolve();
 
   constructor(options: FileAuditSinkOptions) {
+    if (!isAbsolute(options.filePath)) {
+      throw new Error(
+        `FileAuditSink: filePath must be an absolute path; received "${options.filePath}"`
+      );
+    }
     this.filePath = options.filePath;
     this.maxSizeBytes = options.maxSizeBytes ?? 10 * 1024 * 1024;
   }
