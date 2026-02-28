@@ -16,6 +16,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "type-check": "tsc --noEmit",
+    "type-check:helpers": "tsc --noEmit --project tsconfig.tests.json",
     "test": "vitest",
     "test:unit": "vitest run src",
     "test:integration": "vitest run tests/integration",
