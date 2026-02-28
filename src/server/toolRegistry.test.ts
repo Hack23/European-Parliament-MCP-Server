@@ -28,8 +28,8 @@ describe('getToolMetadataArray', () => {
   // Cache once to avoid constructing a fresh 46-element array per test.
   const tools = getToolMetadataArray();
 
-  it('returns exactly 46 tools', () => {
-    expect(tools).toHaveLength(46);
+  it('returns exactly 47 tools', () => {
+    expect(tools).toHaveLength(47);
   });
 
   it('all tools have a non-empty name', () => {
@@ -98,18 +98,18 @@ describe('getToolMetadataArray', () => {
     expect(phase4).toHaveLength(8);
   });
 
-  it('has exactly 13 phase5 tools', () => {
+  it('has exactly 14 phase5 tools', () => {
     const phase5 = tools.filter((t) => t.category === 'phase5');
-    expect(phase5).toHaveLength(13);
+    expect(phase5).toHaveLength(14);
   });
 
-  it('category counts sum to 46', () => {
+  it('category counts sum to 47', () => {
     const counts = { core: 0, advanced: 0, osint: 0, phase4: 0, phase5: 0 };
     for (const tool of tools) {
       counts[tool.category]++;
     }
     const total = Object.values(counts).reduce((a, b) => a + b, 0);
-    expect(total).toBe(46);
+    expect(total).toBe(47);
   });
 
   // ── Core tool names ────────────────────────────────────────────
@@ -200,7 +200,7 @@ describe('getToolMetadataArray', () => {
 
   // ── Phase 5 tool names ─────────────────────────────────────────
 
-  it('includes all 13 phase5 tool names', () => {
+  it('includes all 14 phase5 tool names', () => {
     const names = tools.map((t) => t.name);
     const phase5Names = [
       'get_incoming_meps',
@@ -216,6 +216,7 @@ describe('getToolMetadataArray', () => {
       'get_procedure_events',
       'get_meeting_plenary_session_documents',
       'get_meeting_plenary_session_document_items',
+      'get_all_generated_stats',
     ];
     for (const name of phase5Names) {
       expect(names).toContain(name);
@@ -243,9 +244,9 @@ describe('getToolMetadataArray', () => {
     expect(first.category).toBe('core');
   });
 
-  it('last tool is get_meeting_plenary_session_document_items with phase5 category', () => {
+  it('last tool is get_all_generated_stats with phase5 category', () => {
     const last = tools[tools.length - 1] as ToolMetadata;
-    expect(last.name).toBe('get_meeting_plenary_session_document_items');
+    expect(last.name).toBe('get_all_generated_stats');
     expect(last.category).toBe('phase5');
   });
 });

@@ -56,7 +56,7 @@
 ```mermaid
 flowchart LR
     subgraph v10["v1.0 - Current (2026-02)"]
-        T1["46 tools\n9 resources\n7 prompts"]
+        T1["47 tools\n9 resources\n7 prompts"]
         T2["stdio transport"]
         T3["LRU cache\n500 entries, 15-min"]
         T4["4-layer security"]
@@ -158,7 +158,7 @@ flowchart TD
     end
 
     subgraph Core["Core MCP Handler (unchanged)"]
-        HANDLER["MCP Request Handler\n46 tools, 9 resources, 7 prompts"]
+        HANDLER["MCP Request Handler\n47 tools, 9 resources, 7 prompts"]
     end
 
     LOCAL --> STDIO

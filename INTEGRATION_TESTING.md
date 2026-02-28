@@ -2,7 +2,7 @@
 
 ## 📋 Overview
 
-This guide explains how to run integration tests for the European Parliament MCP Server. Integration tests validate that all 46 MCP tools work correctly against the real European Parliament Open Data API. **All tools return real data — no mock or placeholder data is used.**
+This guide explains how to run integration tests for the European Parliament MCP Server. Integration tests validate that all 47 MCP tools work correctly against the real European Parliament Open Data API. **All tools return real data — no mock or placeholder data is used.**
 
 **ISMS Policy**: [Hack23 Secure Development Policy - Testing](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#testing)
 
@@ -76,7 +76,7 @@ This guide explains how to run integration tests for the European Parliament MCP
 45. **get_meeting_plenary_session_documents** - Plenary session meeting documents
 46. **get_meeting_plenary_session_document_items** - Plenary session meeting document items
 
-> **No Mock Data**: All 46 tools are validated to return real data from the EP API. The integration test suite (`allTools.integration.test.ts`) explicitly checks that no tool returns `confidenceLevel: 'NONE'` or `PLACEHOLDER DATA` markers.
+> **No Mock Data**: All 47 tools are validated to return real data from the EP API. The integration test suite (`allTools.integration.test.ts`) explicitly checks that no tool returns `confidenceLevel: 'NONE'` or `PLACEHOLDER DATA` markers.
 
 ### Test Categories
 
@@ -144,7 +144,7 @@ tests/
 │   │   ├── responseValidator.ts        # Response validation utilities
 │   │   └── fixtureManager.ts          # Fixture capture utilities
 │   └── tools/
-│       ├── allTools.integration.test.ts         # All 46 tools coverage
+│       ├── allTools.integration.test.ts         # All 47 tools coverage
 │       ├── getMEPs.integration.test.ts
 │       ├── getMEPDetails.integration.test.ts
 │       ├── getPlenarySessions.integration.test.ts

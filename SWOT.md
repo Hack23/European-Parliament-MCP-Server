@@ -79,7 +79,7 @@ quadrantChart
 ## 💪 Strengths
 
 ### S1: Comprehensive EP Data Coverage (46 Tools)
-The most complete MCP server for European Parliament data, covering all major EP datasets through 46 specialized tools organized into 5 TypeScript categories (`core`, `advanced`, `osint`, `phase4`, `phase5`). No other publicly available MCP server provides comparable EP data breadth.
+The most complete MCP server for European Parliament data, covering all major EP datasets through 47 specialized tools organized into 5 TypeScript categories (`core`, `advanced`, `osint`, `phase4`, `phase5`). No other publicly available MCP server provides comparable EP data breadth.
 
 - **Core data**: MEPs, procedures, votes, committees, documents, questions
 - **OSINT capabilities**: 15 tools for intelligence analysis (Phases 1–3, Phase 6, and correlate_intelligence)
@@ -112,7 +112,7 @@ MIT licensed, public GitHub repository, full SBOM via npm, OpenSSF best practice
 ## ⚠️ Weaknesses
 
 ### W1: Single Data Source Dependency
-All 46 tools depend exclusively on the EP Open Data Portal API v2. Any EP API outage, structural change, or rate limit reduction directly impacts all server capabilities.
+All 47 tools depend exclusively on the EP Open Data Portal API v2. Any EP API outage, structural change, or rate limit reduction directly impacts all server capabilities.
 
 **Mitigation in progress:** Cache layer absorbs short outages. Health monitoring provides early warning.
 
@@ -212,7 +212,7 @@ If the European Parliament restructures its data portal or migrates to a new API
 
 ## 🏆 v1.0 Positioning Statement
 
-> **The European Parliament MCP Server v1.0 is the most comprehensive, security-conscious, and production-ready MCP server for accessing European Parliament open data.** With 46 tools spanning basic data access to advanced OSINT analysis, a 4-layer security architecture, full ISMS compliance documentation, and TypeScript strict-mode implementation with branded types, it sets the standard for parliamentary data integration in AI-augmented research workflows.
+> **The European Parliament MCP Server v1.0 is the most comprehensive, security-conscious, and production-ready MCP server for accessing European Parliament open data.** With 47 tools spanning basic data access to advanced OSINT analysis, a 4-layer security architecture, full ISMS compliance documentation, and TypeScript strict-mode implementation with branded types, it sets the standard for parliamentary data integration in AI-augmented research workflows.
 
 **Target Users:**
 - Political researchers and analysts using AI assistants

@@ -251,7 +251,7 @@ graph LR
 | **Probability** | 🟡 Medium (external service, no SLA guarantee) |
 | **Impact** | 🟡 Medium (MCP tools return errors instead of data) |
 | **Detection** | Automated health checks; HTTP error responses from EP API |
-| **Affected Tools** | All 46 MCP tools (`get_meps`, `get_plenary_sessions`, `assess_mep_influence`, `analyze_country_delegation`, etc.) |
+| **Affected Tools** | All 47 MCP tools (`get_meps`, `get_plenary_sessions`, `assess_mep_influence`, `analyze_country_delegation`, etc.) |
 
 **🛡️ Graceful Degradation Strategy:**
 
@@ -356,7 +356,7 @@ graph LR
 | 3 | 🛡️ Confirm graceful degradation is active — MCP tools return informative errors | Maintainer | 5 min |
 | 4 | 📢 If extended outage (> 1 hour): create GitHub Issue with status update | Maintainer | 5 min |
 | 5 | ⏳ Monitor EP API for recovery at 30-minute intervals | Maintainer | Ongoing |
-| 6 | ✅ Once recovered: verify all 46 MCP tools return valid data | Maintainer | 10 min |
+| 6 | ✅ Once recovered: verify all 47 MCP tools return valid data | Maintainer | 10 min |
 | 7 | 📝 Close GitHub Issue with resolution summary | Maintainer | 5 min |
 
 **⏱️ Total Estimated Time:** 30 minutes (active work) + monitoring
@@ -408,7 +408,7 @@ graph LR
 |------|--------------|
 | **npm Recovery Drill** | Successfully publish a test package from local machine within 30 minutes |
 | **CI/CD Recovery Drill** | Successfully build, test, and lint the project locally without GitHub Actions |
-| **EP API Degradation Test** | All 46 MCP tools return structured error responses when EP API is mocked as unavailable |
+| **EP API Degradation Test** | All 47 MCP tools return structured error responses when EP API is mocked as unavailable |
 | **Dependency Vulnerability Drill** | Successfully patch a simulated vulnerable dependency and release within 2 hours |
 
 ### 📝 Maintenance Activities
