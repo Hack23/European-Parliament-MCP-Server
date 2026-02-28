@@ -1663,6 +1663,35 @@ describe('EuropeanParliamentClient', () => {
       expect(stats).toHaveProperty('size');
       expect(stats).toHaveProperty('maxSize');
       expect(stats).toHaveProperty('hitRate');
+      expect(stats).toHaveProperty('hits');
+      expect(stats).toHaveProperty('misses');
+    });
+
+    it('should track cache hits and misses accurately', async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockMEPsResponse(2)
+      } as Response);
+
+      // Initial state: no hits or misses
+      let stats = client.getCacheStats();
+      expect(stats.hits).toBe(0);
+      expect(stats.misses).toBe(0);
+      expect(stats.hitRate).toBe(0);
+
+      // First call: cache miss
+      await client.getMEPs({ limit: 10 });
+      stats = client.getCacheStats();
+      expect(stats.misses).toBe(1);
+      expect(stats.hits).toBe(0);
+
+      // Second call with same params: cache hit
+      await client.getMEPs({ limit: 10 });
+      stats = client.getCacheStats();
+      expect(stats.hits).toBe(1);
+      expect(stats.misses).toBe(1);
+      expect(stats.hitRate).toBeCloseTo(0.5);
     });
 
     it('should clear cache', async () => {
@@ -4545,6 +4574,183 @@ describe('EuropeanParliamentClient', () => {
 
       const result = await client.getProcedures({ limit: 1 });
       expect(result.data[0].documents).toEqual(['doc-1', 'doc-2']);
+    });
+  });
+
+  describe('URL Validation', () => {
+    it('should accept a valid HTTPS EP API URL', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://data.europarl.europa.eu/api/v2/')).not.toThrow();
+    });
+
+    it('should reject an HTTP URL', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('http://data.europarl.europa.eu/api/v2/')).toThrow(
+        'EP_API_URL must use HTTPS protocol'
+      );
+    });
+
+    it('should reject a URL pointing to localhost', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://localhost/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to localhost. (trailing-dot FQDN)', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://localhost./api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to 127.0.0.1', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://127.0.0.1/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to 127.0.0.2 (full 127.0.0.0/8 loopback range)', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://127.0.0.2/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to 127.1.2.3 (full 127.0.0.0/8 loopback range)', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://127.1.2.3/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to a 169.254.x.x link-local address', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://169.254.0.1/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to a 10.x.x.x RFC-1918 address', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://10.0.0.1/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to a 192.168.x.x RFC-1918 address', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://192.168.1.1/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a malformed URL', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('not-a-url')).toThrow('EP_API_URL is not a valid URL');
+    });
+
+    it('should reject a URL pointing to a 172.16-31.x.x RFC-1918 address', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://172.16.0.1/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+      expect(() => validateApiUrl('https://172.31.255.255/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to 0.0.0.0', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://0.0.0.0/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to IPv6 loopback [::1]', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[::1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to an IPv6 link-local address (fe80::)', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[fe80::1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to an IPv6 unique-local address (fd00::)', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[fd00::1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to an IPv6-mapped IPv4 loopback (::ffff:127.x.x.x)', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[::ffff:127.0.0.1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to an IPv6-mapped RFC-1918 10.x.x.x address', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[::ffff:10.0.0.1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to an IPv6-mapped RFC-1918 192.168.x.x address', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[::ffff:192.168.1.1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to an IPv6-mapped RFC-1918 172.16-31.x.x address', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[::ffff:172.16.0.1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to an IPv6-mapped link-local 169.254.x.x address', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[::ffff:169.254.0.1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+  });
+
+  describe('Exponential Backoff', () => {
+    it('should apply exponential backoff with jitter on retries', async () => {
+      vi.useFakeTimers();
+      try {
+        // Two 500 failures then success
+        mockFetch
+          .mockResolvedValueOnce({ ok: false, status: 500, statusText: 'Internal Server Error' } as Response)
+          .mockResolvedValueOnce({ ok: false, status: 500, statusText: 'Internal Server Error' } as Response)
+          .mockResolvedValueOnce({
+            ok: true,
+            headers: new Headers(),
+            json: async () => createMockMEPsResponse(1)
+          } as Response);
+
+        const retryClient = new EuropeanParliamentClient({ enableRetry: true, maxRetries: 2 });
+        retryClient.clearCache();
+
+        const requestPromise = retryClient.getMEPs({ limit: 5 });
+        await vi.runAllTimersAsync();
+        const result = await requestPromise;
+
+        expect(result.data).toHaveLength(1);
+        expect(mockFetch).toHaveBeenCalledTimes(3);
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 });

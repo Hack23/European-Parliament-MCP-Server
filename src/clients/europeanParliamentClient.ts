@@ -54,6 +54,8 @@ export {
   DEFAULT_REQUEST_TIMEOUT_MS,
   DEFAULT_RETRY_ENABLED,
   DEFAULT_MAX_RETRIES,
+  DEFAULT_RETRY_BASE_DELAY_MS,
+  DEFAULT_RETRY_MAX_DELAY_MS,
   DEFAULT_CACHE_TTL_MS,
   DEFAULT_MAX_CACHE_SIZE,
   DEFAULT_RATE_LIMIT_TOKENS,
@@ -71,9 +73,12 @@ import {
   DEFAULT_MAX_CACHE_SIZE,
   DEFAULT_RATE_LIMIT_TOKENS,
   DEFAULT_RATE_LIMIT_INTERVAL,
+  DEFAULT_MAX_RESPONSE_BYTES,
+  validateApiUrl,
   type EPClientConfig,
   type EPSharedResources,
 } from './ep/baseClient.js';
+export { validateApiUrl };
 
 import {
   MEPClient,
@@ -158,37 +163,7 @@ export class EuropeanParliamentClient {
    * @param config - Optional client configuration
    */
   constructor(config: EPClientConfig = {}) {
-    // Build the shared cache
-    const sharedCache = new LRUCache<string, Record<string, unknown>>({
-      max: config.maxCacheSize ?? DEFAULT_MAX_CACHE_SIZE,
-      ttl: config.cacheTTL ?? DEFAULT_CACHE_TTL_MS,
-      allowStale: false,
-      updateAgeOnGet: true,
-    });
-
-    // Build the shared rate-limiter
-    const sharedRateLimiter =
-      config.rateLimiter ??
-      new RateLimiter({
-        tokensPerInterval: DEFAULT_RATE_LIMIT_TOKENS,
-        interval: DEFAULT_RATE_LIMIT_INTERVAL,
-      });
-
-    const baseURL = config.baseURL ?? DEFAULT_EP_API_BASE_URL;
-    const timeoutMs = config.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
-    const enableRetry = config.enableRetry ?? DEFAULT_RETRY_ENABLED;
-    const maxRetries = config.maxRetries ?? DEFAULT_MAX_RETRIES;
-
-    // Shared resources passed to every sub-client
-    const shared: EPSharedResources = {
-      cache: sharedCache,
-      rateLimiter: sharedRateLimiter,
-      baseURL,
-      timeoutMs,
-      enableRetry,
-      maxRetries,
-    };
-
+    const shared = EuropeanParliamentClient.buildShared(config);
     this.mepClient = new MEPClient({}, shared);
     this.plenaryClient = new PlenaryClient({}, shared);
     this.votingClient = new VotingClient({}, shared);
@@ -197,6 +172,44 @@ export class EuropeanParliamentClient {
     this.legislativeClient = new LegislativeClient({}, shared);
     this.questionClient = new QuestionClient({}, shared);
     this.vocabularyClient = new VocabularyClient({}, shared);
+  }
+
+  /**
+   * Builds the shared resources object that is passed to all sub-clients.
+   * Extracted to keep the constructor complexity within ESLint limits.
+   *
+   * @param config - Client configuration options
+   * @returns Shared resources for all EP sub-clients
+   * @private
+   */
+  private static buildShared(config: EPClientConfig): EPSharedResources {
+    const sharedCache = new LRUCache<string, Record<string, unknown>>({
+      max: config.maxCacheSize ?? DEFAULT_MAX_CACHE_SIZE,
+      ttl: config.cacheTTL ?? DEFAULT_CACHE_TTL_MS,
+      allowStale: false,
+      updateAgeOnGet: true,
+    });
+    const sharedRateLimiter =
+      config.rateLimiter ??
+      new RateLimiter({
+        tokensPerInterval: DEFAULT_RATE_LIMIT_TOKENS,
+        interval: DEFAULT_RATE_LIMIT_INTERVAL,
+      });
+    const rawBaseURL = config.baseURL ?? DEFAULT_EP_API_BASE_URL;
+    // Validate baseURL to prevent SSRF (same rules as EP_API_URL env var)
+    validateApiUrl(rawBaseURL, 'config.baseURL');
+    // Ensure baseURL always ends with '/' so relative endpoints resolve correctly
+    const baseURL = rawBaseURL.endsWith('/') ? rawBaseURL : `${rawBaseURL}/`;
+    return {
+      cache: sharedCache,
+      rateLimiter: sharedRateLimiter,
+      baseURL,
+      timeoutMs: config.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS,
+      enableRetry: config.enableRetry ?? DEFAULT_RETRY_ENABLED,
+      maxRetries: config.maxRetries ?? DEFAULT_MAX_RETRIES,
+      maxResponseBytes: config.maxResponseBytes ?? DEFAULT_MAX_RESPONSE_BYTES,
+      cacheCounters: { hits: 0, misses: 0 },
+    };
   }
 
   // ─── Cache management ────────────────────────────────────────────────────
@@ -219,10 +232,10 @@ export class EuropeanParliamentClient {
   /**
    * Returns cache statistics for monitoring and debugging.
    *
-   * @returns `{ size, maxSize, hitRate }`
+   * @returns `{ size, maxSize, hitRate, hits, misses }`
    * @public
    */
-  getCacheStats(): { size: number; maxSize: number; hitRate: number } {
+  getCacheStats(): { size: number; maxSize: number; hitRate: number; hits: number; misses: number } {
     return this.mepClient.getCacheStats();
   }
 
@@ -771,7 +784,8 @@ export const epClient = new EuropeanParliamentClient({
     if (typeof raw === 'string') {
       const trimmed = raw.trim();
       if (trimmed.length > 0) {
-        return trimmed.endsWith('/') ? trimmed : `${trimmed}/`;
+        const withSlash = trimmed.endsWith('/') ? trimmed : `${trimmed}/`;
+        return validateApiUrl(withSlash);
       }
     }
     return DEFAULT_EP_API_BASE_URL;
