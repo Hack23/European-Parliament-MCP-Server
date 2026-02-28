@@ -27,6 +27,7 @@
 
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
@@ -205,7 +206,8 @@ async function buildGroupSentiment(groupId: string, totalMEPs: number): Promise<
       memberCount,
       cohesionProxy: Math.round((0.5 + sentimentScore * 0.3) * 100) / 100
     };
-  } catch {
+  } catch (error: unknown) {
+    auditLogger.logError('sentiment_tracker.build_group_sentiment', { groupId }, toErrorMessage(error));
     return { groupId, sentimentScore: 0, trend: 'STABLE', volatility: 0, memberCount: 0, cohesionProxy: 0 };
   }
 }

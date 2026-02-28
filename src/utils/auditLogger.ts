@@ -413,3 +413,16 @@ export class AuditLogger {
  * with the desired {@link AuditLoggerOptions}.
  */
 export const auditLogger = new AuditLogger();
+
+/**
+ * Extract a safe, human-readable error message from an unknown caught value.
+ * Returns `error.message` for Error instances; `'Unknown error'` otherwise.
+ * Avoids `String(error)` which can produce `"[object Object]"` for non-Error
+ * throws and may expose custom `toString()` output unexpectedly.
+ *
+ * @param error - Caught error value (unknown type from catch clause)
+ * @returns Human-readable error message safe for audit logging
+ */
+export function toErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'Unknown error';
+}
