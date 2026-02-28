@@ -25,14 +25,20 @@ import { performanceMonitor } from '../../utils/performance.js';
 // ─── Package version (used in User-Agent header) ──────────────────────────────
 
 const PKG_VERSION = ((): string => {
+  const fallbackVersion = '1.0.0';
   try {
-    const pkg = JSON.parse(
-      readFileSync(new URL('../../../package.json', import.meta.url), 'utf-8')
-    ) as { version: string };
-    return pkg.version;
+    const pkgRaw = readFileSync(new URL('../../../package.json', import.meta.url), 'utf-8');
+    const pkg = JSON.parse(pkgRaw) as unknown;
+    if (pkg !== null && typeof pkg === 'object' && 'version' in pkg) {
+      const version = (pkg as { version: unknown }).version;
+      if (typeof version === 'string' && version.trim().length > 0) {
+        return version;
+      }
+    }
   } catch {
-    return '1.0.0';
+    // Ignore and fall back to default version
   }
+  return fallbackVersion;
 })();
 
 // ─── Default configuration constants ─────────────────────────────────────────

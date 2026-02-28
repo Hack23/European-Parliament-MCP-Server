@@ -131,7 +131,7 @@ export function validateApiUrl(url: string): string {
   try {
     parsed = new URL(url);
   } catch {
-    throw new Error(`EP_API_URL is not a valid URL: ${url}`);
+    throw new Error('EP_API_URL is not a valid URL');
   }
   if (parsed.protocol !== 'https:') {
     throw new Error('EP_API_URL must use HTTPS protocol');
@@ -220,40 +220,7 @@ export class EuropeanParliamentClient {
    * @param config - Optional client configuration
    */
   constructor(config: EPClientConfig = {}) {
-    // Build the shared cache
-    const sharedCache = new LRUCache<string, Record<string, unknown>>({
-      max: config.maxCacheSize ?? DEFAULT_MAX_CACHE_SIZE,
-      ttl: config.cacheTTL ?? DEFAULT_CACHE_TTL_MS,
-      allowStale: false,
-      updateAgeOnGet: true,
-    });
-
-    // Build the shared rate-limiter
-    const sharedRateLimiter =
-      config.rateLimiter ??
-      new RateLimiter({
-        tokensPerInterval: DEFAULT_RATE_LIMIT_TOKENS,
-        interval: DEFAULT_RATE_LIMIT_INTERVAL,
-      });
-
-    const baseURL = config.baseURL ?? DEFAULT_EP_API_BASE_URL;
-    const timeoutMs = config.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
-    const enableRetry = config.enableRetry ?? DEFAULT_RETRY_ENABLED;
-    const maxRetries = config.maxRetries ?? DEFAULT_MAX_RETRIES;
-    const maxResponseBytes = config.maxResponseBytes ?? DEFAULT_MAX_RESPONSE_BYTES;
-
-    // Shared resources passed to every sub-client
-    const shared: EPSharedResources = {
-      cache: sharedCache,
-      rateLimiter: sharedRateLimiter,
-      baseURL,
-      timeoutMs,
-      enableRetry,
-      maxRetries,
-      maxResponseBytes,
-      cacheCounters: { hits: 0, misses: 0 },
-    };
-
+    const shared = EuropeanParliamentClient.buildShared(config);
     this.mepClient = new MEPClient({}, shared);
     this.plenaryClient = new PlenaryClient({}, shared);
     this.votingClient = new VotingClient({}, shared);
@@ -262,6 +229,42 @@ export class EuropeanParliamentClient {
     this.legislativeClient = new LegislativeClient({}, shared);
     this.questionClient = new QuestionClient({}, shared);
     this.vocabularyClient = new VocabularyClient({}, shared);
+  }
+
+  /**
+   * Builds the shared resources object that is passed to all sub-clients.
+   * Extracted to keep the constructor complexity within ESLint limits.
+   *
+   * @param config - Client configuration options
+   * @returns Shared resources for all EP sub-clients
+   * @private
+   */
+  private static buildShared(config: EPClientConfig): EPSharedResources {
+    const sharedCache = new LRUCache<string, Record<string, unknown>>({
+      max: config.maxCacheSize ?? DEFAULT_MAX_CACHE_SIZE,
+      ttl: config.cacheTTL ?? DEFAULT_CACHE_TTL_MS,
+      allowStale: false,
+      updateAgeOnGet: true,
+    });
+    const sharedRateLimiter =
+      config.rateLimiter ??
+      new RateLimiter({
+        tokensPerInterval: DEFAULT_RATE_LIMIT_TOKENS,
+        interval: DEFAULT_RATE_LIMIT_INTERVAL,
+      });
+    const rawBaseURL = config.baseURL ?? DEFAULT_EP_API_BASE_URL;
+    // Ensure baseURL always ends with '/' so relative endpoints resolve correctly
+    const baseURL = rawBaseURL.endsWith('/') ? rawBaseURL : `${rawBaseURL}/`;
+    return {
+      cache: sharedCache,
+      rateLimiter: sharedRateLimiter,
+      baseURL,
+      timeoutMs: config.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS,
+      enableRetry: config.enableRetry ?? DEFAULT_RETRY_ENABLED,
+      maxRetries: config.maxRetries ?? DEFAULT_MAX_RETRIES,
+      maxResponseBytes: config.maxResponseBytes ?? DEFAULT_MAX_RESPONSE_BYTES,
+      cacheCounters: { hits: 0, misses: 0 },
+    };
   }
 
   // ─── Cache management ────────────────────────────────────────────────────
