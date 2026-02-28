@@ -101,8 +101,9 @@ export class VotingClient extends BaseEPClient {
           this.transformVoteResult(item, meetingId)
         );
         records.push(...transformed);
-      } catch {
-        // Some meetings may not have vote results – continue silently
+      } catch (error: unknown) {
+        // Some meetings may not have vote results – continue with degraded result
+        auditLogger.logError('votingClient.getVotingRecords', { meetingId }, String(error));
       }
 
       if (records.length >= recordLimit) break;
