@@ -20,6 +20,7 @@ import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../../utils/rateLimiter.js';
 import { withRetry, withTimeoutAndAbort, TimeoutError } from '../../utils/timeout.js';
 import { performanceMonitor } from '../../utils/performance.js';
+import { USER_AGENT } from '../../config.js';
 
 // ─── Default configuration constants ─────────────────────────────────────────
 
@@ -283,7 +284,7 @@ export class BaseEPClient {
         const response = await fetch(url.toString(), {
           headers: {
             Accept: 'application/ld+json',
-            'User-Agent': 'European-Parliament-MCP-Server/1.0',
+            'User-Agent': USER_AGENT,
           },
           signal,
         });

@@ -8,7 +8,7 @@
  * @module server/cli
  */
 
-import { SERVER_NAME, SERVER_VERSION } from '../index.js';
+import { SERVER_NAME, SERVER_VERSION, DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API_URL } from '../config.js';
 import { getToolMetadataArray } from './toolRegistry.js';
 import { getPromptMetadataArray } from '../prompts/index.js';
 import { getResourceTemplateArray } from '../resources/index.js';
@@ -19,9 +19,6 @@ import type { CLIOptions } from './types.js';
 
 /** Re-export CLIOptions for consumers */
 export type { CLIOptions };
-
-/** Number of core tools (non-advanced analysis tools) */
-const CORE_TOOL_COUNT = 7;
 
 /**
  * Sanitize URL to remove credentials.
@@ -50,7 +47,8 @@ export function sanitizeUrl(urlString: string): string {
  */
 export function showHelp(): void {
   const tools = getToolMetadataArray();
-  const advancedToolCount = tools.length - CORE_TOOL_COUNT;
+  const coreToolCount = tools.filter(t => t.category === 'core').length;
+  const advancedToolCount = tools.length - coreToolCount;
 
   // eslint-disable-next-line no-console
   console.log(`
@@ -67,14 +65,14 @@ OPTIONS:
   --health    Show health check / diagnostics
 
 CAPABILITIES:
-  Tools:     ${String(tools.length)} (${String(CORE_TOOL_COUNT)} core + ${String(advancedToolCount)} advanced)
+  Tools:     ${String(tools.length)} (${String(coreToolCount)} core + ${String(advancedToolCount)} advanced)
   Protocol:  Model Context Protocol (MCP) via stdio
 
 ENVIRONMENT VARIABLES:
   EP_API_URL              Override EP API base URL
   EP_REQUEST_TIMEOUT_MS   Override request timeout (default: 10000ms)
   EP_CACHE_TTL            Cache TTL in ms (default: 900000)
-  EP_RATE_LIMIT           Rate limit requests/min (default: 60)
+  EP_RATE_LIMIT           Rate limit requests/min (default: ${String(DEFAULT_RATE_LIMIT_PER_MINUTE)})
 
 For more information: https://github.com/Hack23/European-Parliament-MCP-Server
   `.trim());
@@ -96,12 +94,13 @@ export function showVersion(): void {
  */
 export function showHealth(): void {
   const tools = getToolMetadataArray();
-  const advancedToolCount = tools.length - CORE_TOOL_COUNT;
+  const coreToolCount = tools.filter(t => t.category === 'core').length;
+  const advancedToolCount = tools.length - coreToolCount;
   const prompts = getPromptMetadataArray();
   const resourceTemplates = getResourceTemplateArray();
 
-  const rateLimitEnv = parseInt(process.env['EP_RATE_LIMIT'] ?? '100', 10);
-  const tokensPerInterval = Number.isFinite(rateLimitEnv) && rateLimitEnv > 0 ? rateLimitEnv : 100;
+  const rateLimitEnv = parseInt(process.env['EP_RATE_LIMIT'] ?? String(DEFAULT_RATE_LIMIT_PER_MINUTE), 10);
+  const tokensPerInterval = Number.isFinite(rateLimitEnv) && rateLimitEnv > 0 ? rateLimitEnv : DEFAULT_RATE_LIMIT_PER_MINUTE;
   const rateLimiter = new RateLimiter({ tokensPerInterval, interval: 'minute' });
   const metricsService = new MetricsService();
   const healthService = new HealthService(rateLimiter, metricsService);
@@ -114,7 +113,7 @@ export function showHealth(): void {
     capabilities: ['tools', 'resources', 'prompts'],
     tools: {
       total: tools.length,
-      core: CORE_TOOL_COUNT,
+      core: coreToolCount,
       advanced: advancedToolCount,
     },
     prompts: {
@@ -133,9 +132,9 @@ export function showHealth(): void {
       arch: process.arch,
     },
     configuration: {
-      apiUrl: sanitizeUrl(process.env['EP_API_URL'] ?? 'https://data.europarl.europa.eu/api/v2/'),
+      apiUrl: sanitizeUrl(process.env['EP_API_URL'] ?? DEFAULT_API_URL),
       cacheTTL: process.env['EP_CACHE_TTL'] ?? '900000',
-      rateLimit: process.env['EP_RATE_LIMIT'] ?? '60',
+      rateLimit: process.env['EP_RATE_LIMIT'] ?? String(DEFAULT_RATE_LIMIT_PER_MINUTE),
     },
   };
 
