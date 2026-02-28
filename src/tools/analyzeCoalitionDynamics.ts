@@ -242,13 +242,21 @@ function classifyStressSeverity(stress: number): string {
 /**
  * Derives stress indicator records from group metrics.
  *
- * Only groups with `stressIndicator > 0.5` (moderate-to-high internal tension)
- * are included. Each record contains a human-readable indicator description,
- * a severity classification from {@link classifyStressSeverity}, and the list
- * of affected groups.
+ * Conceptually, this emits records only for groups where
+ * `stressIndicator.value > 0.5` (moderate-to-high internal tension). Each
+ * record contains a human-readable indicator description, a severity
+ * classification from {@link classifyStressSeverity}, and the list of
+ * affected groups.
+ *
+ * **Current data limitation:** The upstream {@link buildGroupMetrics} implementation
+ * sets `stressIndicator.value` to `null` (UNAVAILABLE due to missing EP
+ * vote-level statistics). As a result, the `stress !== null && stress > 0.5`
+ * guard in this function is never satisfied and it will currently return an
+ * empty array until real stress values are populated.
  *
  * @param groupMetrics - Array of group cohesion metric objects
- * @returns Array of stress indicator records for groups exceeding the 0.5 threshold
+ * @returns Array of stress indicator records for groups exceeding the 0.5 threshold;
+ *   currently always empty due to `stressIndicator.value` being `null` (EP API limitation)
  */
 function computeStressIndicators(groupMetrics: GroupCohesionMetrics[]): { indicator: string; severity: string; affectedGroups: string[] }[] {
   const results: { indicator: string; severity: string; affectedGroups: string[] }[] = [];
