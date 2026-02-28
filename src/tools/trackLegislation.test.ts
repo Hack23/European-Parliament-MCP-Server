@@ -36,11 +36,8 @@ describe('track_legislation Tool', () => {
       });
 
       expect(result.content[0].type).toBe('text');
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('procedureId' in parsed).toBe(true);
-      }
+      const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
+      expect(parsed).toHaveProperty('procedureId');
     });
   });
 
@@ -61,8 +58,8 @@ describe('track_legislation Tool', () => {
         procedureId: '2024/0001(COD)'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
+      const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
+      expect(typeof parsed).toBe('object');
     });
 
     it('should include procedure ID derived from API', async () => {
@@ -70,12 +67,8 @@ describe('track_legislation Tool', () => {
         procedureId: '2024/0001(COD)'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('procedureId' in parsed).toBe(true);
-        expect('procedureId' in parsed && parsed.procedureId).toBe('2024/0001(COD)');
-      }
+      const parsed = JSON.parse(result.content[0].text) as { procedureId: string };
+      expect(parsed.procedureId).toBe('2024/0001(COD)');
     });
 
     it('should include title from API data', async () => {
@@ -200,16 +193,14 @@ describe('track_legislation Tool', () => {
     });
 
     it('should have input schema', () => {
-      expect(trackLegislationToolMetadata.inputSchema).toBeDefined();
       expect(trackLegislationToolMetadata.inputSchema.type).toBe('object');
       expect(trackLegislationToolMetadata.inputSchema.required).toContain('procedureId');
     });
 
     it('should define procedureId constraints', () => {
       const schema = trackLegislationToolMetadata.inputSchema;
-      expect(schema.properties?.procedureId).toBeDefined();
       const procedureId = schema.properties?.procedureId;
-      expect(typeof procedureId === 'object' && procedureId !== null).toBe(true);
+      expect(procedureId).toEqual(expect.any(Object));
     });
   });
 
@@ -232,6 +223,50 @@ describe('track_legislation Tool', () => {
 
     it('should handle non-standard format via fallback', () => {
       expect(toProcessId('proc/2024/extra')).toBe('proc-2024-extra');
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('should handle API returning minimal procedure data', async () => {
+      vi.mocked(epClientModule.epClient.getProcedureById).mockResolvedValue({
+        id: '2020/0001(COD)',
+        title: 'Minimal Procedure',
+        reference: '2020/0001(COD)',
+        type: 'COD',
+        status: 'Closed',
+        dateInitiated: '2020-01-01',
+        dateLastActivity: '2020-06-01',
+        documents: [],
+      });
+
+      const result = await handleTrackLegislation({ procedureId: '2020/0001(COD)' });
+      const parsed = JSON.parse(result.content[0].text) as {
+        procedureId: string;
+        documents: unknown[];
+        timeline: unknown[];
+      };
+      expect(parsed.procedureId).toBe('2020/0001(COD)');
+      expect(Array.isArray(parsed.documents)).toBe(true);
+      expect(parsed.documents).toHaveLength(0);
+      expect(Array.isArray(parsed.timeline)).toBe(true);
+    });
+
+    it('should handle network timeout error', async () => {
+      vi.mocked(epClientModule.epClient.getProcedureById).mockRejectedValue(
+        new Error('Request timeout')
+      );
+
+      await expect(handleTrackLegislation({ procedureId: '2024/0001(COD)' }))
+        .rejects.toThrow('Failed to track legislation');
+    });
+
+    it('should handle 404 not-found error from API', async () => {
+      vi.mocked(epClientModule.epClient.getProcedureById).mockRejectedValue(
+        new Error('Procedure not found: 404')
+      );
+
+      await expect(handleTrackLegislation({ procedureId: '9999/9999(COD)' }))
+        .rejects.toThrow('Failed to track legislation');
     });
   });
 });

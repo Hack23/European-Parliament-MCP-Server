@@ -199,4 +199,103 @@ describe('get_voting_records Tool', () => {
       spy.mockRestore();
     });
   });
+
+  describe('Edge Cases', () => {
+    it('should handle empty API response gracefully', async () => {
+      vi.mocked(epClientModule.epClient.getVotingRecords).mockResolvedValue({
+        data: [],
+        total: 0,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetVotingRecords({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        data: unknown[];
+        total: number;
+        hasMore: boolean;
+      };
+      expect(data.data).toEqual([]);
+      expect(data.total).toBe(0);
+      expect(data.hasMore).toBe(false);
+    });
+
+    it('should handle minimum limit of 1', async () => {
+      vi.mocked(epClientModule.epClient.getVotingRecords).mockResolvedValue({
+        data: [],
+        total: 0,
+        limit: 1,
+        offset: 0,
+        hasMore: false,
+      });
+      const result = await handleGetVotingRecords({ limit: 1 });
+      expect(result).toHaveProperty('content');
+    });
+
+    it('should handle maximum limit of 100', async () => {
+      vi.mocked(epClientModule.epClient.getVotingRecords).mockResolvedValue({
+        data: [],
+        total: 0,
+        limit: 100,
+        offset: 0,
+        hasMore: false,
+      });
+      const result = await handleGetVotingRecords({ limit: 100 });
+      expect(result).toHaveProperty('content');
+    });
+
+    it('should handle large offset (pagination boundary)', async () => {
+      vi.mocked(epClientModule.epClient.getVotingRecords).mockResolvedValue({
+        data: [],
+        total: 500,
+        limit: 50,
+        offset: 999999,
+        hasMore: false,
+      });
+
+      const result = await handleGetVotingRecords({ offset: 999999 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { offset: number };
+      expect(data.offset).toBe(999999);
+    });
+
+    it('should handle special characters in topic search', async () => {
+      vi.mocked(epClientModule.epClient.getVotingRecords).mockResolvedValue({
+        data: [],
+        total: 0,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+      const result = await handleGetVotingRecords({ topic: 'Climate & Energy Policy' });
+      expect(result).toHaveProperty('content');
+    });
+
+    it('should handle network timeout error', async () => {
+      vi.mocked(epClientModule.epClient.getVotingRecords).mockRejectedValue(
+        new Error('Request timeout after 30000ms')
+      );
+
+      await expect(handleGetVotingRecords({}))
+        .rejects.toThrow('Failed to retrieve voting records');
+    });
+
+    it('should handle rate limit error (429)', async () => {
+      vi.mocked(epClientModule.epClient.getVotingRecords).mockRejectedValue(
+        Object.assign(new Error('Too Many Requests'), { status: 429 })
+      );
+
+      await expect(handleGetVotingRecords({}))
+        .rejects.toThrow('Failed to retrieve voting records');
+    });
+
+    it('should handle server error (500)', async () => {
+      vi.mocked(epClientModule.epClient.getVotingRecords).mockRejectedValue(
+        Object.assign(new Error('Internal Server Error'), { status: 500 })
+      );
+
+      await expect(handleGetVotingRecords({}))
+        .rejects.toThrow('Failed to retrieve voting records');
+    });
+  });
 });
