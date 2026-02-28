@@ -176,7 +176,14 @@ export function getAllGeneratedStats(
       ...(filteredPredictions.length > 0 && {
         predictions: filteredPredictions,
       }),
-      analysisSummary: GENERATED_STATS.analysisSummary,
+      analysisSummary: {
+        ...GENERATED_STATS.analysisSummary,
+        coverageNote:
+          yearFrom > GENERATED_STATS.coveragePeriod.from ||
+          yearTo < GENERATED_STATS.coveragePeriod.to
+            ? `This summary reflects the full ${String(GENERATED_STATS.coveragePeriod.from)}-${String(GENERATED_STATS.coveragePeriod.to)} dataset; filtered results cover ${String(yearFrom)}-${String(yearTo)} only.`
+            : `Covers the complete ${String(GENERATED_STATS.coveragePeriod.from)}-${String(GENERATED_STATS.coveragePeriod.to)} dataset.`,
+      },
       confidenceLevel: 'HIGH' as const,
       methodology:
         'Precomputed statistics from European Parliament Open Data Portal. ' +

@@ -450,6 +450,31 @@ describe('getAllGeneratedStats', () => {
     expect(summary.keyFindings.length).toBeGreaterThan(0);
   });
 
+  it('analysisSummary includes coverageNote for full dataset', () => {
+    const result = getAllGeneratedStats({
+      category: 'all',
+      includePredictions: false,
+      includeMonthlyBreakdown: false,
+      includeRankings: false,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.analysisSummary.coverageNote).toContain('complete');
+  });
+
+  it('analysisSummary coverageNote clarifies when year filter narrows range', () => {
+    const result = getAllGeneratedStats({
+      yearFrom: 2015,
+      yearTo: 2020,
+      category: 'all',
+      includePredictions: false,
+      includeMonthlyBreakdown: false,
+      includeRankings: false,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.analysisSummary.coverageNote).toContain('full');
+    expect(data.analysisSummary.coverageNote).toContain('2015-2020');
+  });
+
   it('has HIGH confidence level', () => {
     const result = getAllGeneratedStats({
       category: 'all',
