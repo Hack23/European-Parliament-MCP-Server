@@ -6,7 +6,7 @@
  * @module clients/ep/votingClient
  */
 
-import { auditLogger } from '../../utils/auditLogger.js';
+import { auditLogger, toErrorMessage } from '../../utils/auditLogger.js';
 import type {
   VotingRecord,
   Speech,
@@ -101,8 +101,9 @@ export class VotingClient extends BaseEPClient {
           this.transformVoteResult(item, meetingId)
         );
         records.push(...transformed);
-      } catch {
-        // Some meetings may not have vote results – continue silently
+      } catch (error: unknown) {
+        // Some meetings may not have vote results – continue with degraded result
+        auditLogger.logError('get_voting_records', { meetingId }, toErrorMessage(error));
       }
 
       if (records.length >= recordLimit) break;
