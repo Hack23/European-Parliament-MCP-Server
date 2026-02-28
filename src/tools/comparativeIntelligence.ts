@@ -167,7 +167,7 @@ function computeCommitteeScore(mep: MEPApiData): number {
 /**
  * Computes a normalized legislative output score (0–100) for an MEP.
  *
- * Combines two equally-weighted signals, capped at 100:
+ * Uses a capped, point-based additive score (max 100):
  * - **Rapporteurships** — 15 points each (6+ → 90 pts from this factor alone).
  * - **Committee memberships** — 10 points each (broader presence amplifies legislative reach).
  *
