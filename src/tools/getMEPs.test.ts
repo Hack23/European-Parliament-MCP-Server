@@ -237,4 +237,134 @@ describe('get_meps Tool', () => {
       }
     });
   });
+
+  describe('Edge Cases', () => {
+    it('should handle empty API response gracefully', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [],
+        total: 0,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetMEPs({ limit: 10 });
+      expect(vi.mocked(epClientModule.epClient.getMEPs)).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 10 })
+      );
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        data: unknown[];
+        total: number;
+        hasMore: boolean;
+      };
+      expect(data.data).toEqual([]);
+      expect(data.total).toBe(0);
+      expect(data.hasMore).toBe(false);
+    });
+
+    it('should handle maximum offset (large pagination)', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [],
+        total: 100,
+        limit: 50,
+        offset: 999999,
+        hasMore: false,
+      });
+
+      const result = await handleGetMEPs({ offset: 999999 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        data: unknown[];
+        offset: number;
+      };
+      expect(data.data).toEqual([]);
+      expect(data.offset).toBe(999999);
+    });
+
+    it('should handle minimum limit of 1', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [{ id: 'MEP-1', name: 'Test', country: 'DE', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' }],
+        total: 1,
+        limit: 1,
+        offset: 0,
+        hasMore: true,
+      });
+
+      await handleGetMEPs({ limit: 1 });
+      expect(epClientModule.epClient.getMEPs).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 1 })
+      );
+    });
+
+    it('should handle maximum limit of 100', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [],
+        total: 0,
+        limit: 100,
+        offset: 0,
+        hasMore: false,
+      });
+
+      await handleGetMEPs({ limit: 100 });
+      expect(epClientModule.epClient.getMEPs).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 100 })
+      );
+    });
+
+    it('should handle group name with special characters (S&D)', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [{ id: 'MEP-2', name: 'Test MEP', country: 'DE', politicalGroup: 'S&D', committees: [], active: true, termStart: '2019-07-02' }],
+        total: 1,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetMEPs({ group: 'S&D' });
+      expect(vi.mocked(epClientModule.epClient.getMEPs)).toHaveBeenCalledWith(
+        expect.objectContaining({ group: 'S&D' })
+      );
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        data: { politicalGroup: string }[];
+      };
+      expect(data.data[0]?.politicalGroup).toBe('S&D');
+    });
+
+    it('should handle rate limiting error (429)', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue(
+        Object.assign(new Error('Too Many Requests'), { status: 429 })
+      );
+
+      await expect(handleGetMEPs({ limit: 10 }))
+        .rejects.toThrow('Failed to retrieve MEPs');
+    });
+
+    it('should handle network timeout error', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue(
+        new Error('Request timeout after 30000ms')
+      );
+
+      await expect(handleGetMEPs({ limit: 10 }))
+        .rejects.toThrow('Failed to retrieve MEPs');
+    });
+
+    it('should reject limit of -1', async () => {
+      await expect(handleGetMEPs({ limit: -1 })).rejects.toThrow();
+    });
+
+    it('should handle active=false to include inactive MEPs', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+        data: [{ id: 'MEP-99', name: 'Former MEP', country: 'FR', politicalGroup: 'ECR', committees: [], active: false, termStart: '2014-07-01' }],
+        total: 1,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetMEPs({ active: false });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        data: { active: boolean }[];
+      };
+      expect(data.data[0]?.active).toBe(false);
+    });
+  });
 });
