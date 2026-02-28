@@ -183,6 +183,12 @@ export class AuditLogger {
       ...(sanitized !== undefined ? { params: sanitized } : {}),
       timestamp: new Date(),
     };
+    // Prune expired entries before writing to prevent unbounded memory growth
+    // and ensure PII is not retained past the configured retention window
+    // (GDPR Art. 5(1)(e) — Storage limitation principle).
+    if (this.retentionPolicy !== undefined) {
+      this.pruneExpiredEntries(this.retentionPolicy);
+    }
     this.memorySink.write(fullEntry);
     this.writeSinks(fullEntry);
   }
@@ -328,9 +334,11 @@ export class AuditLogger {
    * **For testing only.** Clearing audit logs in production violates ISMS
    * Policy AU-002 and GDPR Article 30.
    *
+   * @param authorization - Authorization token (required when configured)
    * @since 0.8.0
    */
-  clear(): void {
+  clear(authorization?: string): void {
+    this.checkAuthorization(authorization);
     this.memorySink.clear('');
   }
 
@@ -346,6 +354,30 @@ export class AuditLogger {
       throw new Error(
         'Unauthorized: missing or invalid authorization token'
       );
+    }
+  }
+
+  private pruneExpiredEntries(policy: RetentionPolicy): void {
+    const all = this.memorySink.query({});
+    const expired = all.filter((e): boolean => policy.isExpired(e));
+    for (const entry of expired) {
+      // Erase by userId when available; fall back to action-based pruning.
+      if (entry.userId !== undefined) {
+        this.memorySink.eraseByUser(entry.userId);
+      }
+    }
+    // Re-filter: if entries without a userId are expired, replace the full buffer.
+    const stillExpired = this.memorySink
+      .query({})
+      .some((e): boolean => policy.isExpired(e));
+    if (stillExpired) {
+      const fresh = this.memorySink.query({}).filter(
+        (e): boolean => !policy.isExpired(e)
+      );
+      this.memorySink.clear('');
+      for (const e of fresh) {
+        this.memorySink.write(e);
+      }
     }
   }
 

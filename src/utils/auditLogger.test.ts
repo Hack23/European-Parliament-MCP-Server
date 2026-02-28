@@ -260,7 +260,8 @@ describe('FileAuditSink', () => {
   });
 
   it('should append NDJSON entry to the file', () => {
-    mockStat.mockImplementation(() => { throw new Error('ENOENT'); });
+    const enoent = Object.assign(new Error('ENOENT'), { code: 'ENOENT' });
+    mockStat.mockImplementation(() => { throw enoent; });
     const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
     const entry = makeEntry({ action: 'write_test' });
     sink.write(entry);
@@ -272,7 +273,8 @@ describe('FileAuditSink', () => {
   });
 
   it('should append a newline after the JSON entry', () => {
-    mockStat.mockImplementation(() => { throw new Error('ENOENT'); });
+    const enoent = Object.assign(new Error('ENOENT'), { code: 'ENOENT' });
+    mockStat.mockImplementation(() => { throw enoent; });
     const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
     sink.write(makeEntry());
     const callArg = mockAppend.mock.calls[0]?.[1];
@@ -317,6 +319,37 @@ describe('FileAuditSink', () => {
     sink.write(makeEntry());
     const newName = mockRename.mock.calls[0]?.[1] as string;
     expect(newName).toMatch(/^\/var\/log\/ep\.log\.\d+\.bak$/);
+  });
+
+  it('should not rotate when statSync throws ENOENT (file not yet created)', () => {
+    const enoent = Object.assign(new Error('no such file'), { code: 'ENOENT' });
+    mockStat.mockImplementation(() => { throw enoent; });
+    const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
+    sink.write(makeEntry());
+    expect(mockRename).not.toHaveBeenCalled();
+    expect(mockAppend).toHaveBeenCalled();
+  });
+
+  it('should rethrow non-ENOENT errors from statSync', () => {
+    const permError = Object.assign(new Error('Permission denied'), { code: 'EACCES' });
+    mockStat.mockImplementation(() => { throw permError; });
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
+    expect(() => sink.write(makeEntry())).toThrow('Permission denied');
+    consoleSpy.mockRestore();
+  });
+
+  it('should log to stderr and rethrow non-ENOENT rotation errors', () => {
+    const busyError = Object.assign(new Error('EBUSY'), { code: 'EBUSY' });
+    mockStat.mockImplementation(() => { throw busyError; });
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
+    expect(() => sink.write(makeEntry())).toThrow();
+    expect(consoleSpy).toHaveBeenCalledWith(
+      '[FileAuditSink] Failed to rotate audit log file:',
+      busyError
+    );
+    consoleSpy.mockRestore();
   });
 });
 
@@ -473,6 +506,30 @@ describe('AuditLogger', () => {
 
       logger.clear();
       expect(logger.getLogs()).toHaveLength(0);
+    });
+
+    it('should allow clear() without auth when no token is configured', () => {
+      logger.log({ action: 'x', params: {} });
+      expect(() => logger.clear()).not.toThrow();
+      expect(logger.getLogs()).toHaveLength(0);
+    });
+
+    it('should throw on clear() with wrong token when auth is configured', () => {
+      const secured = new AuditLogger({ requiredAuthToken: 'tok' });
+      secured.log({ action: 'x', params: {} });
+      expect(() => secured.clear('bad')).toThrow('Unauthorized');
+    });
+
+    it('should allow clear() with correct token', () => {
+      const secured = new AuditLogger({ requiredAuthToken: 'tok' });
+      secured.log({ action: 'x', params: {} });
+      expect(() => secured.clear('tok')).not.toThrow();
+      expect(secured.getLogs('tok')).toHaveLength(0);
+    });
+
+    it('should throw on clear() with no token when auth is required', () => {
+      const secured = new AuditLogger({ requiredAuthToken: 'tok' });
+      expect(() => secured.clear()).toThrow('Unauthorized');
     });
   });
 
@@ -665,7 +722,68 @@ describe('AuditLogger', () => {
       expect(logger2.queryLogs({ action: 'recent' })).toHaveLength(0);
       vi.useRealTimers();
     });
+
+    it('should prune expired entries from memory on log() to prevent unbounded growth', () => {
+      vi.useFakeTimers();
+      const logger2 = new AuditLogger({ retentionMs: 1000 });
+      logger2.log({ action: 'old1', params: {} });
+      logger2.log({ action: 'old2', params: {} });
+      // Advance past retention window
+      vi.advanceTimersByTime(2000);
+      // Writing a new entry should trigger pruning of old entries
+      logger2.log({ action: 'fresh', params: {} });
+      // getLogs should return only the fresh entry (no retention filter needed,
+      // since pruning already removed them from the buffer)
+      const logs = logger2.getLogs();
+      expect(logs.every((e) => e.action === 'fresh')).toBe(true);
+      vi.useRealTimers();
+    });
+
+    it('should prune expired anonymous entries (no userId) from memory on log()', () => {
+      vi.useFakeTimers();
+      const logger2 = new AuditLogger({ retentionMs: 500 });
+      // Log entries without userId
+      logger2.log({ action: 'anon1', params: {} });
+      logger2.log({ action: 'anon2', params: {} });
+      vi.advanceTimersByTime(1000);
+      // New write should trigger pruning of the anonymous expired entries
+      logger2.log({ action: 'new', params: {} });
+      const logs = logger2.getLogs();
+      expect(logs).toHaveLength(1);
+      expect(logs[0]?.action).toBe('new');
+      vi.useRealTimers();
+    });
+
+    it('should not prune entries when no retention policy is configured', () => {
+      logger.log({ action: 'keep1', params: {} });
+      logger.log({ action: 'keep2', params: {} });
+      logger.log({ action: 'keep3', params: {} });
+      expect(logger.getLogs()).toHaveLength(3);
+    });
   });
+
+    it('should use eraseByUser for entries with userId and buffer-replace when anonymous expired entries remain', () => {
+      vi.useFakeTimers();
+      const logger2 = new AuditLogger({ retentionMs: 1000 });
+      // T=0: Log entries that will expire
+      logger2.log({ action: 'old-user', params: {}, userId: 'user-a' });
+      logger2.log({ action: 'old-anon', params: {} });
+      // T=800: Log a fresh anonymous entry (not yet expired at T=1200)
+      vi.advanceTimersByTime(800);
+      logger2.log({ action: 'fresh-anon', params: {} });
+      // T=1200: old-user and old-anon are expired (1200ms > 1000ms retention),
+      // but fresh-anon is still fresh (400ms old). Trigger pruning via a new write.
+      // Buffer before pruning: [old-user(T=0), old-anon(T=0), fresh-anon(T=800)]
+      // eraseByUser('user-a') removes old-user → [old-anon(T=0), fresh-anon(T=800)]
+      // stillExpired=true (old-anon) → fresh=[fresh-anon] → clear + write(fresh-anon) [line 379]
+      vi.advanceTimersByTime(400);
+      logger2.log({ action: 'trigger', params: {} });
+      const logs = logger2.getLogs();
+      expect(logs.some((e) => e.action === 'old-user')).toBe(false);
+      expect(logs.some((e) => e.action === 'old-anon')).toBe(false);
+      expect(logs.some((e) => e.action === 'fresh-anon')).toBe(true);
+      vi.useRealTimers();
+    });
 
   // ============================================================================
   // NEW: Access control on getLogs()

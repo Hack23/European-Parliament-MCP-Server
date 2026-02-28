@@ -335,8 +335,16 @@ export class FileAuditSink implements AuditSink {
           `${this.filePath}.${String(Date.now())}.bak`
         );
       }
-    } catch {
-      // File does not exist yet — no rotation needed.
+    } catch (error: unknown) {
+      const err = error as NodeJS.ErrnoException;
+      if (err.code === 'ENOENT') {
+        // File does not exist yet — no rotation needed.
+        return;
+      }
+      // Surface unexpected errors (permissions, EBUSY, disk errors, etc.)
+      // so rotation failures are observable rather than silently swallowed.
+      console.error('[FileAuditSink] Failed to rotate audit log file:', err);
+      throw err;
     }
   }
 }
