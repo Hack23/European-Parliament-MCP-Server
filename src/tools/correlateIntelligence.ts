@@ -30,6 +30,7 @@ import { randomUUID } from 'node:crypto';
 import { CorrelateIntelligenceSchema, OsintStandardOutputSchema } from '../schemas/europeanParliament.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult, OsintStandardOutput } from './shared/types.js';
+import type { DataAvailability } from '../types/index.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 
 import { handleAssessMepInfluence } from './assessMepInfluence.js';
@@ -66,7 +67,7 @@ interface EarlyWarningResult {
 }
 
 interface CoalitionResult {
-  groupMetrics: { groupId: string; stressIndicator: number; computedAttributes: { unityTrend: string } }[];
+  groupMetrics: { groupId: string; stressIndicator: { value: number | null; availability: string; confidence: string }; computedAttributes: { unityTrend: string } }[];
   stressIndicators: { indicator: string; severity: string; affectedGroups: string[] }[];
   confidenceLevel: string;
 }
@@ -153,6 +154,8 @@ export interface CorrelatedIntelligenceReport extends OsintStandardOutput {
     lowAlerts: number;
     correlationsFound: number;
   };
+  /** Explicit marker indicating whether correlation data was available from dependent tools */
+  dataAvailability: DataAvailability;
 }
 
 // ---------------------------------------------------------------------------
@@ -339,7 +342,7 @@ async function correlateCoalitionFracture(
   const coalitionWarnings = ewsData.warnings.filter(isCoalitionWarning);
 
   const decliningGroups = coalitionData.groupMetrics
-    .filter(gm => gm.computedAttributes.unityTrend === 'WEAKENING' || gm.stressIndicator > 0.5)
+    .filter(gm => gm.computedAttributes.unityTrend === 'WEAKENING' || (gm.stressIndicator.value !== null && gm.stressIndicator.value > 0.5))
     .map(gm => gm.groupId);
 
   const highStressIndicators = coalitionData.stressIndicators.filter(
@@ -503,9 +506,28 @@ async function correlateNetworkProfiles(
 // ---------------------------------------------------------------------------
 
 function aggregateConfidence(levels: string[]): 'HIGH' | 'MEDIUM' | 'LOW' {
-  if (levels.includes('HIGH') && !levels.includes('LOW')) return 'HIGH';
-  if (levels.every(l => l === 'LOW')) return 'LOW';
+  // Treat 'NONE' (from unavailable-data tools) as 'LOW' for aggregation
+  const normalized = levels.map(l => (l === 'NONE' ? 'LOW' : l));
+  if (normalized.includes('HIGH') && !normalized.includes('LOW')) return 'HIGH';
+  if (normalized.every(l => l === 'LOW')) return 'LOW';
   return 'MEDIUM';
+}
+
+/**
+ * Derive an explicit DataAvailability marker from correlation results.
+ * - `'AVAILABLE'`   — at least one correlation was produced from a successful tool response.
+ * - `'UNAVAILABLE'` — all dependent tool calls failed; no confidence levels were collected,
+ *                     meaning there is no data whatsoever to base correlations on.
+ * - `'PARTIAL'`     — dependent tools responded (confidence levels collected) but the
+ *                     responses contained no actionable correlation signals.
+ */
+function computeDataAvailability(
+  correlationsFound: number,
+  confidenceLevels: string[]
+): DataAvailability {
+  if (correlationsFound > 0) return 'AVAILABLE';
+  if (confidenceLevels.length === 0) return 'UNAVAILABLE';
+  return 'PARTIAL';
 }
 
 // ---------------------------------------------------------------------------
@@ -653,7 +675,8 @@ export async function handleCorrelateIntelligence(
       networkProfiles: networkCorrelations,
     },
     summary: buildAlertSummary(allAlerts, correlationsFound),
-    confidenceLevel: aggregateConfidence(confidenceLevels.length > 0 ? confidenceLevels : ['MEDIUM']),
+    confidenceLevel: aggregateConfidence(confidenceLevels.length > 0 ? confidenceLevels : ['LOW']),
+    dataAvailability: computeDataAvailability(correlationsFound, confidenceLevels),
     methodology: buildMethodology(influenceThreshold, sensitivityLevel, includeNetworkAnalysis),
     dataFreshness: `Real-time EP API data — correlated at ${analysisTime}`,
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
