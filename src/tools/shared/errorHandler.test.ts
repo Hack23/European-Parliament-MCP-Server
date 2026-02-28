@@ -50,6 +50,22 @@ describe('handleToolError', () => {
     const result = handleToolError(err, 'tool');
     expect(result.isError).toBe(true);
   });
+
+  it('should include formatted ToolError message in error field', () => {
+    const err = new ToolError({ toolName: 'specific_tool', operation: 'fetchData', message: 'connection refused' });
+    const result = handleToolError(err, 'fallback_tool');
+    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    expect(parsed.error).toBe('[specific_tool] fetchData: connection refused');
+  });
+
+  it('should include retryable field for ToolError', () => {
+    const retryableErr = new ToolError({ toolName: 'tool', operation: 'op', message: 'msg', isRetryable: true });
+    const nonRetryableErr = new ToolError({ toolName: 'tool', operation: 'op', message: 'msg', isRetryable: false });
+    const retryableResult = JSON.parse(handleToolError(retryableErr, 'tool').content[0]?.text ?? '');
+    const nonRetryableResult = JSON.parse(handleToolError(nonRetryableErr, 'tool').content[0]?.text ?? '');
+    expect(retryableResult.retryable).toBe(true);
+    expect(nonRetryableResult.retryable).toBe(false);
+  });
 });
 
 describe('handleDataUnavailable', () => {

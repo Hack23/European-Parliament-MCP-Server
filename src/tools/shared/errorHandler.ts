@@ -12,9 +12,9 @@ import { ToolError } from './errors.js';
  * Handle a caught tool error, returning a safe MCP error response.
  * Never exposes raw stack traces to MCP clients.
  *
- * If the error is a {@link ToolError}, its own `toolName` is used for the
- * response so the originating tool is correctly identified even when the
- * error crosses handler boundaries.
+ * If the error is a {@link ToolError}, its own `toolName` and `isRetryable` are
+ * used so the originating tool and retryability are correctly surfaced to callers
+ * even when the error crosses handler boundaries.
  *
  * @param error - Caught error value
  * @param toolName - Fallback tool name when error carries no tool identity
@@ -22,7 +22,13 @@ import { ToolError } from './errors.js';
  */
 export function handleToolError(error: unknown, toolName: string): ToolResult {
   if (error instanceof ToolError) {
-    return buildErrorResponse(error, error.toolName);
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify({ error: error.message, toolName: error.toolName, retryable: error.isRetryable }, null, 2)
+      }],
+      isError: true
+    };
   }
   if (error instanceof Error) {
     return buildErrorResponse(error, toolName);

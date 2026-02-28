@@ -665,7 +665,7 @@ export async function handleCorrelateIntelligence(
     throw new ToolError({
       toolName: 'correlate_intelligence',
       operation: 'validateOsintOutput',
-      message: `Report failed OSINT standard output schema validation: ${(validationError as Error).message}`,
+      message: 'Report failed OSINT standard output schema validation',
       isRetryable: false,
       cause: validationError,
     });
