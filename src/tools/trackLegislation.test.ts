@@ -59,7 +59,8 @@ describe('track_legislation Tool', () => {
       });
 
       const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
-      expect(typeof parsed).toBe('object');
+      expect(parsed).not.toBeNull();
+      expect(Array.isArray(parsed)).toBe(false);
     });
 
     it('should include procedure ID derived from API', async () => {

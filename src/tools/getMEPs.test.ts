@@ -300,8 +300,10 @@ describe('get_meps Tool', () => {
         hasMore: true,
       });
 
-      const result = await handleGetMEPs({ limit: 1 });
-      expect(result).toHaveProperty('content');
+      await handleGetMEPs({ limit: 1 });
+      expect(epClientModule.epClient.getMEPs).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 1 })
+      );
     });
 
     it('should handle maximum limit of 100', async () => {
@@ -313,8 +315,10 @@ describe('get_meps Tool', () => {
         hasMore: false,
       });
 
-      const result = await handleGetMEPs({ limit: 100 });
-      expect(result).toHaveProperty('content');
+      await handleGetMEPs({ limit: 100 });
+      expect(epClientModule.epClient.getMEPs).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 100 })
+      );
     });
 
     it('should handle group name with special characters (S&D)', async () => {

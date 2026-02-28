@@ -252,8 +252,11 @@ describe('get_parliamentary_questions Tool', () => {
     });
 
     it('should have input schema', () => {
+      const properties = getParliamentaryQuestionsToolMetadata.inputSchema.properties;
       expect(getParliamentaryQuestionsToolMetadata.inputSchema.type).toBe('object');
-      expect(typeof getParliamentaryQuestionsToolMetadata.inputSchema.properties).toBe('object');
+      expect(properties).not.toBeNull();
+      expect(typeof properties).toBe('object');
+      expect(Object.keys(properties ?? {}).length).toBeGreaterThan(0);
     });
   });
 
@@ -286,8 +289,10 @@ describe('get_parliamentary_questions Tool', () => {
         offset: 0,
         hasMore: false,
       });
-      const result = await handleGetParliamentaryQuestions({ limit: 1 });
-      expect(result).toHaveProperty('content');
+      await handleGetParliamentaryQuestions({ limit: 1 });
+      expect(epClient.getParliamentaryQuestions).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 1 })
+      );
     });
 
     it('should handle maximum limit of 100', async () => {
@@ -298,8 +303,10 @@ describe('get_parliamentary_questions Tool', () => {
         offset: 0,
         hasMore: false,
       });
-      const result = await handleGetParliamentaryQuestions({ limit: 100 });
-      expect(result).toHaveProperty('content');
+      await handleGetParliamentaryQuestions({ limit: 100 });
+      expect(epClient.getParliamentaryQuestions).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 100 })
+      );
     });
 
     it('should handle large offset (pagination boundary)', async () => {

@@ -91,7 +91,13 @@ describe('getAllGeneratedStats', () => {
     expect(data.coveragePeriod).toEqual({ from: 2004, to: 2025 });
     expect(data.requestedPeriod).toEqual(expect.objectContaining({ from: 2004, to: 2025 }));
     expect(Array.isArray(data.yearlyStats)).toBe(true);
-    expect(typeof data.analysisSummary).toBe('object');
+    expect(data.analysisSummary).not.toBeNull();
+    expect(data.analysisSummary).toEqual(
+      expect.objectContaining({
+        overallTrend: expect.any(String),
+        keyFindings: expect.any(Array),
+      }),
+    );
     expect(data.methodology).toContain('Precomputed statistics');
     expect(data.sourceAttribution).toContain('europarl');
   });

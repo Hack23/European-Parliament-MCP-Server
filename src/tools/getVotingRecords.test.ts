@@ -229,8 +229,10 @@ describe('get_voting_records Tool', () => {
         offset: 0,
         hasMore: false,
       });
-      const result = await handleGetVotingRecords({ limit: 1 });
-      expect(result).toHaveProperty('content');
+      await handleGetVotingRecords({ limit: 1 });
+      expect(epClientModule.epClient.getVotingRecords).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 1 })
+      );
     });
 
     it('should handle maximum limit of 100', async () => {
@@ -241,8 +243,10 @@ describe('get_voting_records Tool', () => {
         offset: 0,
         hasMore: false,
       });
-      const result = await handleGetVotingRecords({ limit: 100 });
-      expect(result).toHaveProperty('content');
+      await handleGetVotingRecords({ limit: 100 });
+      expect(epClientModule.epClient.getVotingRecords).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 100 })
+      );
     });
 
     it('should handle large offset (pagination boundary)', async () => {
