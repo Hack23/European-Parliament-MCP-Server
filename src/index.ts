@@ -171,6 +171,8 @@ export class EuropeanParliamentMCPServer {
         // Convert ToolError to an in-band MCP error response (isError: true)
         // so MCP clients receive a well-formed ToolResult instead of an RPC error.
         if (error instanceof ToolError) {
+          // Log ToolError so tool failures are visible in server logs (consistent with non-ToolError path)
+          console.error(`[ERROR] Tool ${error.toolName} failed:`, error);
           return handleToolError(error, error.toolName);
         }
         // Log error to stderr (stdout is used for MCP protocol)
