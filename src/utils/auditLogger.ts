@@ -371,7 +371,9 @@ export class AuditLogger {
 
   private pruneExpiredEntries(policy: RetentionPolicy): void {
     const all = this.memorySink.query({});
-    const fresh = all.filter((e): boolean => !policy.isExpired(e));
+    // Use policy.enforce() so that a single cutoff timestamp is computed once
+    // rather than calling Date.now() for every entry via isExpired().
+    const fresh = policy.enforce(all);
 
     // If nothing expired, avoid unnecessary buffer rebuild.
     if (fresh.length === all.length) {
@@ -393,7 +395,7 @@ export class AuditLogger {
         const result = sink.write(entry);
         const thenable = result as
           | { then?: (onFulfilled?: unknown, onRejected?: (reason: unknown) => void) => unknown }
-          | void;
+          | undefined;
         if (thenable && typeof thenable.then === 'function') {
           // Fire-and-forget async sinks; surface errors to stderr so they are
           // observable without blocking the calling code path.
