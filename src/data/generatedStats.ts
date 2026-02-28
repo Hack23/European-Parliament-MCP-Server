@@ -217,17 +217,23 @@ const POLITICAL_LANDSCAPE: Record<number, PoliticalLandscapeData> = {
   2025: { groups: [{ name: 'EPP', seats: 188, seatShare: 26.1 }, { name: 'S&D', seats: 136, seatShare: 18.9 }, { name: 'PfE', seats: 86, seatShare: 11.9 }, { name: 'ECR', seats: 78, seatShare: 10.8 }, { name: 'RE', seats: 77, seatShare: 10.7 }, { name: 'Greens/EFA', seats: 53, seatShare: 7.4 }, { name: 'GUE/NGL', seats: 46, seatShare: 6.4 }, { name: 'ESN', seats: 25, seatShare: 3.5 }, { name: 'NI', seats: 31, seatShare: 4.3 }], totalGroups: 8, largestGroup: 'EPP', largestGroupSeatShare: 26.1, fragmentationIndex: 6.14, grandCoalitionPossible: false, politicalBalance: 'EP10 settled: EPP seeking flexible majorities with ECR on defence/migration; Green Deal pace slowing; defence spending consensus building' },
 };
 
+const DEFAULT_POLITICAL_LANDSCAPE: PoliticalLandscapeData = {
+  groups: [],
+  totalGroups: 0,
+  largestGroup: 'Unknown',
+  largestGroupSeatShare: 0,
+  fragmentationIndex: 0,
+  grandCoalitionPossible: false,
+  politicalBalance: 'Data unavailable',
+};
+
 // ── Build complete stats ──────────────────────────────────────────
 
 function buildYearlyStats(): YearlyStats[] {
   return RAW_YEARLY.map((y) => ({
     ...y,
     monthlyActivity: distributeMonthly(y),
-    politicalLandscape: POLITICAL_LANDSCAPE[y.year] ?? {
-      groups: [], totalGroups: 0, largestGroup: 'Unknown',
-      largestGroupSeatShare: 0, fragmentationIndex: 0,
-      grandCoalitionPossible: false, politicalBalance: 'Data unavailable',
-    },
+    politicalLandscape: POLITICAL_LANDSCAPE[y.year] ?? DEFAULT_POLITICAL_LANDSCAPE,
   }));
 }
 

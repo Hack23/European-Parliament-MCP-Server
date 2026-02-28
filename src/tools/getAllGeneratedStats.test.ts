@@ -166,8 +166,8 @@ describe('getAllGeneratedStats', () => {
       includeRankings: false,
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
-    const year2004 = data.yearlyStats[0].politicalLandscape;
-    const year2025 = data.yearlyStats[21].politicalLandscape;
+    const year2004 = data.yearlyStats.find((y: Record<string, unknown>) => y.year === 2004)?.politicalLandscape;
+    const year2025 = data.yearlyStats.find((y: Record<string, unknown>) => y.year === 2025)?.politicalLandscape;
     // Fragmentation has increased over time
     expect(year2025.fragmentationIndex).toBeGreaterThan(year2004.fragmentationIndex);
     // Grand coalition was possible in EP6 but not in EP10
