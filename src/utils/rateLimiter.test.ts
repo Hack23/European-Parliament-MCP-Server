@@ -159,6 +159,60 @@ describe('RateLimiter', () => {
     });
   });
 
+  describe('concurrent callers', () => {
+    it('should serialise concurrent waiters so each gets exactly one token without over-consuming', async () => {
+      vi.useFakeTimers();
+      try {
+        // 1 token per second starting empty – each refill cycle satisfies exactly one waiter
+        const limiter = new RateLimiter({ tokensPerInterval: 1, interval: 'second', initialTokens: 0 });
+
+        let r1: Awaited<ReturnType<typeof limiter.removeTokens>> | undefined;
+        let r2: Awaited<ReturnType<typeof limiter.removeTokens>> | undefined;
+
+        const p1 = limiter.removeTokens(1, { timeoutMs: 3000 });
+        const p2 = limiter.removeTokens(1, { timeoutMs: 3000 });
+        void p1.then(r => { r1 = r; });
+        void p2.then(r => { r2 = r; });
+
+        // After ~1.1 s the first token refills; only p1 (the earlier waiter) should be resolved
+        await vi.advanceTimersByTimeAsync(1100);
+        expect(r1?.allowed).toBe(true);  // p1 consumed the first token
+        expect(r2).toBeUndefined();       // p2 is still waiting for the next refill
+
+        // After another ~1.1 s the second token refills; p2 should now succeed
+        await vi.advanceTimersByTimeAsync(1100);
+        const [result1, result2] = await Promise.all([p1, p2]);
+        expect(result1.allowed).toBe(true);
+        expect(result2.allowed).toBe(true);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should deny the second concurrent caller when its timeout expires before the next refill', async () => {
+      vi.useFakeTimers();
+      try {
+        // 1 token per second starting empty
+        const limiter = new RateLimiter({ tokensPerInterval: 1, interval: 'second', initialTokens: 0 });
+
+        // p1 has generous timeout; p2 only has 1.5 s.
+        // After p1 takes the first token at ~1.1 s, p2 needs another ~1 s but only
+        // has ~0.4 s left in its budget → must return allowed:false immediately.
+        const p1 = limiter.removeTokens(1, { timeoutMs: 3000 });
+        const p2 = limiter.removeTokens(1, { timeoutMs: 1500 });
+
+        // Advance 1.1 s – p1 gets the token; p2 detects insufficient remaining time and returns denied
+        await vi.advanceTimersByTimeAsync(1100);
+        const [r1, r2] = await Promise.all([p1, p2]);
+        expect(r1.allowed).toBe(true);
+        expect(r2.allowed).toBe(false);
+        expect(r2.retryAfterMs).toBeGreaterThan(0);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+  });
+
   describe('removeTokens input validation', () => {
     it('should throw when count is 0', async () => {
       const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second' });
