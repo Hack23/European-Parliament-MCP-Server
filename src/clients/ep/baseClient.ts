@@ -373,7 +373,7 @@ export class BaseEPClient {
     const rlResult = await this.rateLimiter.removeTokens(1);
     if (!rlResult.allowed) {
       throw new APIError(
-        `Rate limit exceeded. Retry after ${String(rlResult.retryAfterMs ?? 0)}ms`,
+        `Rate limit exceeded. Retry after ${String(rlResult.retryAfterMs)}ms`,
         429
       );
     }

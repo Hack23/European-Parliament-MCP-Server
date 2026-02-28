@@ -30,15 +30,14 @@ export interface RateLimiterStatus {
 
 /**
  * Result returned by {@link RateLimiter.removeTokens}.
+ *
+ * Discriminated union: when `allowed` is `true`, tokens were consumed.
+ * When `allowed` is `false`, the wait would have exceeded the timeout and
+ * `retryAfterMs` is always present with a positive value.
  */
-export interface RateLimitResult {
-  /** Whether the tokens were successfully consumed */
-  allowed: boolean;
-  /** Milliseconds to wait before retrying (only present when `allowed` is `false`) */
-  retryAfterMs?: number;
-  /** Number of tokens remaining after this operation (floored integer) */
-  remainingTokens: number;
-}
+export type RateLimitResult =
+  | { allowed: true; remainingTokens: number }
+  | { allowed: false; retryAfterMs: number; remainingTokens: number };
 
 /**
  * Rate limiter configuration options
@@ -163,8 +162,9 @@ export class RateLimiter {
 
       const tokensNeeded = count - this.tokens;
       const waitMs = Math.ceil((tokensNeeded / this.tokensPerInterval) * this.intervalMs);
+      const remainingMs = deadline - Date.now();
 
-      if (Date.now() + waitMs > deadline) {
+      if (waitMs > remainingMs) {
         return {
           allowed: false,
           retryAfterMs: waitMs,
