@@ -207,10 +207,10 @@ function validateRetryOptions(
   if (timeoutMs !== undefined && timeoutMs <= 0) {
     throw new Error('timeoutMs must be positive');
   }
-  if (retryDelayMs <= 0) {
+  if (!Number.isFinite(retryDelayMs) || retryDelayMs <= 0) {
     throw new Error('retryDelayMs must be positive');
   }
-  if (maxDelayMs <= 0) {
+  if (!Number.isFinite(maxDelayMs) || maxDelayMs <= 0) {
     throw new Error('maxDelayMs must be positive');
   }
 }

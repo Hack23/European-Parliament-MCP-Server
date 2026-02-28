@@ -16,40 +16,14 @@
  */
 
 import { fetch } from 'undici';
-import { readFileSync } from 'node:fs';
 import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../../utils/rateLimiter.js';
 import { withRetry, withTimeoutAndAbort, TimeoutError } from '../../utils/timeout.js';
 import { performanceMonitor } from '../../utils/performance.js';
-import { DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API_URL } from '../../config.js';
+import { DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API_URL, USER_AGENT } from '../../config.js';
 
 // ─── Package version (used in User-Agent header) ──────────────────────────────
 
-const PKG_VERSION = ((): string => {
-  const fallbackVersion = '1.0.0';
-  // Try multiple candidate locations so this works from both src/ and dist/ trees.
-  // When running from TypeScript source (src/clients/ep/baseClient.ts):
-  //   ../../../package.json → repo root package.json ✓
-  // When running from compiled output (dist/clients/ep/baseClient.js):
-  //   ../../../package.json → dist/package.json ✗  (nonexistent)
-  //   ../../../../package.json → repo root package.json ✓
-  const candidatePaths = ['../../../package.json', '../../../../package.json'];
-  for (const relativePath of candidatePaths) {
-    try {
-      const pkgRaw = readFileSync(new URL(relativePath, import.meta.url), 'utf-8');
-      const pkg = JSON.parse(pkgRaw) as unknown;
-      if (pkg !== null && typeof pkg === 'object' && 'version' in pkg) {
-        const version = (pkg as { version: unknown }).version;
-        if (typeof version === 'string' && version.trim().length > 0) {
-          return version;
-        }
-      }
-    } catch {
-      // Ignore and try the next candidate path
-    }
-  }
-  return fallbackVersion;
-})();
 
 // ─── URL Validation (SSRF prevention) ────────────────────────────────────────
 
@@ -113,15 +87,16 @@ export function validateApiUrl(url: string, label = 'EP_API_URL'): string {
   if (parsed.protocol !== 'https:') {
     throw new Error(`${label} must use HTTPS protocol`);
   }
-  // In Node.js, the WHATWG URL API returns IPv6 hostnames with surrounding
-  // brackets in .hostname (e.g. "[::1]"). Strip them before pattern matching
-  // so both IPv4 and IPv6 pattern checks are applied to the raw address string.
+  // In the Node.js WHATWG URL API, .hostname includes the surrounding brackets
+  // for IPv6 addresses (e.g. new URL('https://[::1]/').hostname === '[::1]').
+  // Strip them before pattern matching so both IPv4 and IPv6 patterns are
+  // applied to the bare address string without brackets.
   const rawHost = parsed.hostname;
   const host = rawHost.startsWith('[') && rawHost.endsWith(']')
     ? rawHost.slice(1, -1)
     : rawHost;
   if (isBlockedHost(host)) {
-    throw new Error(`${label} must not point to internal or loopback addresses: ${host}`);
+    throw new Error(`${label} must not point to internal or loopback addresses`);
   }
   return url;
 }
@@ -436,7 +411,7 @@ export class BaseEPClient {
         const response = await fetch(url.toString(), {
           headers: {
             Accept: 'application/ld+json',
-            'User-Agent': `European-Parliament-MCP-Server/${PKG_VERSION}`,
+            'User-Agent': USER_AGENT,
           },
           signal,
         });

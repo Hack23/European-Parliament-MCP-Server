@@ -535,6 +535,20 @@ describe('withRetry', () => {
       maxDelayMs: -500
     })).rejects.toThrow('maxDelayMs must be positive');
   });
+
+  it('should throw error for NaN retryDelayMs or maxDelayMs', async () => {
+    const fn = vi.fn();
+
+    await expect(withRetry(fn, {
+      maxRetries: 2,
+      retryDelayMs: Number.NaN
+    })).rejects.toThrow('retryDelayMs must be positive');
+
+    await expect(withRetry(fn, {
+      maxRetries: 2,
+      maxDelayMs: Number.NaN
+    })).rejects.toThrow('maxDelayMs must be positive');
+  });
 });
 
 describe('isTimeoutError', () => {
