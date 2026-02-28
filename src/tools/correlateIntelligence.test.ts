@@ -286,7 +286,7 @@ describe('correlate_intelligence Tool', () => {
       };
 
       const elevatedAlert = report.alerts.find(a => a.alertType === 'ELEVATED_ATTENTION');
-      expect(elevatedAlert).toBeDefined();
+      expect(elevatedAlert).not.toBeUndefined();
       expect(elevatedAlert?.mepId).toBe('123');
       expect(report.summary.totalAlerts).toBeGreaterThan(0);
 
@@ -337,7 +337,7 @@ describe('correlate_intelligence Tool', () => {
       const report = JSON.parse(result.content[0]!.text) as { alerts: { alertType: string }[] };
 
       const alert = report.alerts.find(a => a.alertType === 'ELEVATED_ATTENTION');
-      expect(alert).toBeDefined();
+      expect(alert).not.toBeUndefined();
     });
 
     it('should use higher threshold for LOW sensitivity', async () => {
@@ -401,7 +401,7 @@ describe('correlate_intelligence Tool', () => {
       };
 
       const fractureAlert = report.alerts.find(a => a.alertType === 'COALITION_FRACTURE');
-      expect(fractureAlert).toBeDefined();
+      expect(fractureAlert).not.toBeUndefined();
       expect(report.correlations.coalitionFracture).not.toBeNull();
       expect(report.correlations.coalitionFracture?.fractureRisk).toBe('MEDIUM');
     });
@@ -486,7 +486,7 @@ describe('correlate_intelligence Tool', () => {
       };
 
       const profileAlert = report.alerts.find(a => a.alertType === 'COMPREHENSIVE_PROFILE');
-      expect(profileAlert).toBeDefined();
+      expect(profileAlert).not.toBeUndefined();
       expect(profileAlert?.mepId).toBe('123'); // Alice: centrality 0.9, committee 75, bridging=true
       expect(profileAlert?.severity).toBe('HIGH');
     });
