@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { AuditLogger, auditLogger as globalAuditLogger } from './auditLogger.js';
+import { AuditLogger, auditLogger as globalAuditLogger, toErrorMessage } from './auditLogger.js';
 import {
   DEFAULT_SENSITIVE_KEYS,
   FileAuditSink,
@@ -975,5 +975,23 @@ describe('AuditLogger', () => {
       expect(() => secured.eraseByUser('u1', 'tok')).not.toThrow();
       expect(secured.getLogs('tok')).toHaveLength(0);
     });
+  });
+});
+
+// ============================================================================
+// toErrorMessage helper
+// ============================================================================
+
+describe('toErrorMessage', () => {
+  it('should return the error message for Error instances', () => {
+    expect(toErrorMessage(new Error('something went wrong'))).toBe('something went wrong');
+  });
+
+  it('should return "Unknown error" for non-Error values', () => {
+    expect(toErrorMessage('string throw')).toBe('Unknown error');
+    expect(toErrorMessage(42)).toBe('Unknown error');
+    expect(toErrorMessage(null)).toBe('Unknown error');
+    expect(toErrorMessage(undefined)).toBe('Unknown error');
+    expect(toErrorMessage({ message: 'fake' })).toBe('Unknown error');
   });
 });

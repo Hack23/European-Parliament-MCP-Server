@@ -114,17 +114,20 @@ export interface AuditEvent {
  * (e.g. `FileAuditSink`, `StructuredJsonSink`).
  *
  * ## Parameter sanitisation
- * All `params` objects are automatically sanitised before storage; keys
- * matching `sensitiveKeys` (default: `DEFAULT_SENSITIVE_KEYS`) are replaced
- * by `'[REDACTED]'` to prevent PII leakage into audit trails.
+ * All `params` objects are passed through `sanitizeParams()` before storage.
+ * Only **top-level** keys matching `sensitiveKeys` (default:
+ * `DEFAULT_SENSITIVE_KEYS`) are replaced by `'[REDACTED]'` to prevent PII
+ * leakage into audit trails. Nested objects/arrays are **not** recursively
+ * sanitised; callers must avoid placing PII in nested structures or
+ * pre-sanitise such data before logging.
  *
  * ## Data retention
  * When `retentionMs` is set, `getLogs()` automatically filters out entries
  * older than the configured maximum age (GDPR Article 5(1)(e)).
  *
  * ## Access control
- * When `requiredAuthToken` is set, `getLogs()` and `eraseByUser()` throw if
- * the caller does not supply the correct token.
+ * When `requiredAuthToken` is set, `getLogs()`, `queryLogs()`, `clear()`, and
+ * `eraseByUser()` throw if the caller does not supply the correct token.
  *
  * @example Basic usage (backward-compatible)
  * ```typescript
@@ -204,7 +207,8 @@ export class AuditLogger {
    * Log an MCP tool call as an audit record.
    *
    * The tool's `params` are sanitised before being wrapped in the entry so
-   * that PII nested inside tool parameters is redacted.
+   * that PII in top-level tool parameter keys is redacted. Nested objects are
+   * not recursively sanitised.
    *
    * @param toolName  - Name of the MCP tool that was invoked
    * @param params    - Tool input parameters (sanitised automatically)

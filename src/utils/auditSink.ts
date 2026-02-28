@@ -125,7 +125,8 @@ export interface AuditLoggerOptions {
   /** Maximum age of log entries in milliseconds (data retention enforcement) */
   retentionMs?: number;
   /**
-   * Authorization token required to call `getLogs()` / `eraseByUser()`.
+   * Authorization token required to call `getLogs()`, `queryLogs()`,
+   * `clear()`, and `eraseByUser()`.
    * When absent, those methods are unrestricted (suitable for testing).
    */
   requiredAuthToken?: AuthToken;
