@@ -1,4 +1,4 @@
-**European Parliament MCP Server API v0.9.1**
+**European Parliament MCP Server API v0.9.2**
 
 ***
 
@@ -1070,6 +1070,263 @@ We follow [Semantic Versioning](https://semver.org/) and use automated release m
 - Full changelog link
 
 For detailed workflow documentation, see [.github/WORKFLOWS.md](_media/WORKFLOWS.md).
+
+---
+
+## 🤖 AI-Disrupted Intelligence & Future Roadmap
+
+> **📰 News is dead. Long live intelligence.**
+>
+> While the world's newsrooms race to replace journalists with GPT-powered headline factories — churning out *"10 Things the EU Did Today"* listicles at the speed of hallucination — we took a different path. Instead of automating the news *ticker*, we built a **political intelligence platform** that actually *understands* what the European Parliament does. Disrupted news generation produces noise; **deep political intelligence** produces signal. Any chatbot can summarize a press release. It takes **46 MCP tools**, **15 OSINT analyzers**, and a **5-dimension influence model** to tell you *which MEP quietly brokered the amendment that changed the directive that reshaped an industry* — three months before the newspapers notice.
+>
+> **This is not a news bot. This is parliamentary intelligence infrastructure.**
+
+### 🏗️ Agentic Architecture Overview
+
+This repository is powered by a comprehensive AI-augmented development ecosystem — **14 specialized Copilot agents**, **41 reusable skills**, and **11 CI/CD workflows** — working in concert to maintain, analyze, and evolve the most advanced political MCP server in existence.
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366F1', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4F46E5', 'lineColor': '#94A3B8', 'secondaryColor': '#F59E0B', 'tertiaryColor': '#10B981', 'background': '#0F172A', 'mainBkg': '#1E293B', 'nodeBorder': '#475569'}}}%%
+graph TB
+    subgraph AGENTS["🤖 14 Copilot Agents"]
+        style AGENTS fill:#1E1B4B,stroke:#6366F1,color:#E0E7FF
+        A1["🎯 product-task-agent"]
+        A2["📝 documentation-writer"]
+        A3["🔧 frontend-specialist"]
+        A4["🔌 api-integration-engineer"]
+        A5["⚙️ mcp-developer"]
+        A6["🛡️ security-specialist"]
+        A7["🧪 test-engineer"]
+        A8["🕵️ intelligence-operative"]
+        A9["🏛️ european-parliament-specialist"]
+        A10["📊 performance-optimizer"]
+        A11["📋 isms-compliance-auditor"]
+        A12["💼 business-development-specialist"]
+        A13["📣 marketing-specialist"]
+        A14["🧩 zod-schema-architect"]
+    end
+
+    subgraph SKILLS["🎯 41 Reusable Skills"]
+        style SKILLS fill:#1C1917,stroke:#F59E0B,color:#FEF3C7
+        S1["🔧 10 Core Dev Skills"]
+        S2["🛡️ 6 Security Skills"]
+        S3["⚙️ 4 DevOps Skills"]
+        S4["🔍 10 Intel & OSINT Skills"]
+        S5["💼 2 Business Skills"]
+        S6["🤖 3 AI & MCP Gateway Skills"]
+        S7["📋 6 ISMS Compliance Skills"]
+    end
+
+    subgraph WORKFLOWS["⚙️ 11 CI/CD Workflows"]
+        style WORKFLOWS fill:#022C22,stroke:#10B981,color:#D1FAE5
+        W1["🧪 test-and-report"]
+        W2["🔍 codeql"]
+        W3["📦 release"]
+        W4["🌐 integration-tests"]
+        W5["📋 sbom-generation"]
+        W6["🔒 slsa-provenance"]
+        W7["📊 scorecard"]
+        W8["🔎 dependency-review"]
+        W9["🏷️ labeler"]
+        W10["⚙️ setup-labels"]
+        W11["🤖 copilot-setup-steps"]
+    end
+
+    subgraph TOOLS["🔌 46 MCP Tools"]
+        style TOOLS fill:#172554,stroke:#3B82F6,color:#DBEAFE
+        T1["🏛️ 7 Core EP Tools"]
+        T2["📊 3 Advanced Analysis"]
+        T3["🕵️ 15 OSINT Intelligence"]
+        T4["⚡ 8 Phase 4 Tools"]
+        T5["🚀 13 Phase 5 Tools"]
+    end
+
+    AGENTS --> SKILLS
+    AGENTS --> TOOLS
+    SKILLS --> WORKFLOWS
+    WORKFLOWS --> TOOLS
+```
+
+### 📅 Future Advanced Roadmap: 2026–2037
+
+> From **46 MCP tools** today to a **transformative democratic intelligence platform** serving all 195 parliamentary systems — powered by the relentless march of AI model generations.
+
+#### Phase 5: Advanced Intelligence (2026–2027)
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366F1', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4F46E5', 'lineColor': '#94A3B8', 'secondaryColor': '#22D3EE', 'tertiaryColor': '#10B981'}}}%%
+timeline
+    title 2026–2027 · Advanced Intelligence Era
+    section Q1–Q2 2026
+        Agentic News Generation : Opus 4.6–4.7
+        : AI-generated parliamentary briefings
+        : Automated committee intelligence reports
+        : Real-time vote analysis summaries
+    section Q3–Q4 2026
+        Deep Analysis Pipelines : Opus 4.8–4.9
+        : Cross-institutional correlation engine
+        : MEP behavioral prediction models
+        : Legislative outcome forecasting
+    section Q1–Q2 2027
+        Predictive Analytics : Opus 5.0–5.1
+        : Coalition formation prediction
+        : Amendment survival probability
+        : Policy impact pre-assessment
+    section Q3–Q4 2027
+        Multi-source Intelligence : Opus 5.2–5.3
+        : EUR-Lex deep integration
+        : Council position analysis
+        : Commission proposal tracking
+```
+
+#### Phase 6: AGI Era & Transformative Democracy (2034–2037)
+
+> *Scenario: AGI or near-AGI systems become available through Amazon Bedrock or successor platforms*
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#A855F7', 'primaryTextColor': '#fff', 'lineColor': '#C084FC', 'secondaryColor': '#F59E0B', 'tertiaryColor': '#EC4899'}}}%%
+mindmap
+  root((🌐 AGI Era\n2034–2037))
+    🤖 AGI-Enhanced Intelligence
+      Autonomous real-time analysis
+        All 195 parliamentary systems
+        Every legislative session globally
+        Sub-second pattern detection
+      Universal language support
+        All UN official languages
+        Regional dialects & legal terminology
+        Real-time translation & summarization
+    📊 Predictive Governance
+      Policy impact prediction
+        Before legislation is proposed
+        Economic modeling integration
+        Social impact forecasting
+      Democratic health monitoring
+        Voter engagement indices
+        Institutional resilience scores
+        Democratic backsliding alerts
+    ⚖️ Ethical AI Governance
+      Human oversight maintained
+        Regardless of AI capability level
+        Escalation protocols for critical decisions
+        Transparency reports on AI judgments
+      Bias detection & correction
+        Multi-cultural fairness auditing
+        Political neutrality verification
+        Algorithmic accountability logs
+    🛡️ Democratic Safeguards
+      Anti-weaponization architecture
+        Platform prevents manipulation
+        Disinformation detection layer
+        Foreign influence monitoring
+      Sovereignty protection
+        EU data sovereignty enforced
+        Quantum-resistant encryption
+        Air-gapped government deployments
+```
+
+#### 🧬 AI Model Evolution Strategy
+
+> **Assumptions:** Anthropic Opus minor updates every ~2.3 months through 2037 (or until successor paradigm). Major version upgrades annually. Competitors (OpenAI, Google, Meta, EU sovereign AI) evaluated at each major release. Architecture must accommodate potential paradigm shifts (quantum AI, neuromorphic computing).
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366F1', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4F46E5', 'lineColor': '#94A3B8', 'secondaryColor': '#F59E0B', 'tertiaryColor': '#10B981'}}}%%
+gantt
+    title AI Model Evolution & Platform Capability Growth
+    dateFormat YYYY
+    axisFormat %Y
+    todayMarker off
+
+    section AI Models
+    Opus 4.6–4.9        :a1, 2026, 2027
+    Opus 5.x             :a2, 2027, 2028
+    Opus 6.x Multimodal  :a3, 2028, 2029
+    Opus 7.x Autonomous  :a4, 2029, 2030
+    Opus 8.x Near-Expert :a5, 2030, 2031
+    Opus 9–10.x Pre-AGI  :a6, 2031, 2034
+    AGI / Post-AGI       :a7, 2034, 2037
+
+    section Platform Phases
+    Phase 5 Advanced Intel     :p5, 2026, 2028
+    Phase 5b Predictive        :p5b, 2028, 2030
+    Phase 5c Autonomous        :p5c, 2030, 2031
+    Phase 6 Pre-AGI Global     :p6a, 2031, 2034
+    Phase 6 AGI Transformative :p6b, 2034, 2037
+```
+
+#### 📊 Workflow Count & Capability Projection
+
+> **Baseline:** 11 GitHub Actions workflows today. Projected growth includes AI-generated workflows, scheduled intelligence pipelines, multi-environment deployment chains, and automated OSINT processing — see [FUTURE_WORKFLOWS.md](_media/FUTURE_WORKFLOWS.md) for detailed expansion plans.
+
+| Year | Total Workflows | AI Model | Key Capability | Tools |
+|:----:|:---------------:|:--------:|:---------------|:-----:|
+| **2026** | 44–50 | Opus 4.6–4.9 | 🤖 Agentic news generation, AI-authored briefings | 46→55 |
+| **2027** | 50–55 | Opus 5.x | 📈 Predictive analytics, coalition forecasting | 55→65 |
+| **2028** | 55–65 | Opus 6.x | 🎥 Multi-modal content, video/speech analysis | 65→80 |
+| **2029** | 65–75 | Opus 7.x | ⚡ Autonomous pipeline, self-optimizing CI/CD | 80→90 |
+| **2030** | 75–85 | Opus 8.x | 🧠 Near-expert analysis, domain specialist AI | 90→100 |
+| **2031–2033** | 85–100 | Opus 9–10.x / Pre-AGI | 🌍 Global coverage, all EU national parliaments | 100→120 |
+| **2034–2037** | 100–120+ | AGI / Post-AGI | 🌐 Transformative platform, 195 parliaments | 120→200+ |
+
+#### 🔮 Strategic Considerations
+
+| Pillar | Description | Safeguard |
+|:------:|:------------|:----------|
+| 🤖 **Autonomous Analysis** | AGI-powered real-time political intelligence across all 195 parliamentary systems | Human analyst review for high-stakes assessments |
+| 🌐 **Universal Language** | Every UN language supported natively with legal terminology precision | Multi-cultural fairness auditing at every release |
+| 📊 **Predictive Governance** | Policy impact prediction *before* legislation is proposed | Confidence intervals and uncertainty quantification mandatory |
+| ⚖️ **Ethical AI Governance** | Human oversight maintained regardless of AI capability level | ISMS-aligned escalation protocols, transparency reports |
+| 🛡️ **Democratic Safeguards** | Platform architecture prevents weaponization or manipulation | Quarterly red-team exercises, sovereignty-first data policies |
+
+#### 🗺️ Extended Roadmap Visualization
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366F1', 'primaryTextColor': '#fff', 'lineColor': '#94A3B8'}}}%%
+graph LR
+    subgraph Y2026["2026"]
+        style Y2026 fill:#1E40AF,stroke:#3B82F6,color:#DBEAFE
+        Y26["🤖 Opus 4.6–4.9\n44–50 workflows\nAgentic news gen"]
+    end
+    subgraph Y2027["2027"]
+        style Y2027 fill:#1E3A8A,stroke:#3B82F6,color:#DBEAFE
+        Y27["📈 Opus 5.x\n50–55 workflows\nPredictive analytics"]
+    end
+    subgraph Y2028["2028"]
+        style Y2028 fill:#312E81,stroke:#6366F1,color:#E0E7FF
+        Y28["🎥 Opus 6.x\n55–65 workflows\nMulti-modal content"]
+    end
+    subgraph Y2029["2029"]
+        style Y2029 fill:#4C1D95,stroke:#8B5CF6,color:#EDE9FE
+        Y29["⚡ Opus 7.x\n65–75 workflows\nAutonomous pipeline"]
+    end
+    subgraph Y2030["2030"]
+        style Y2030 fill:#581C87,stroke:#A855F7,color:#F3E8FF
+        Y30["🧠 Opus 8.x\n75–85 workflows\nNear-expert analysis"]
+    end
+    subgraph Y2031_33["2031–33"]
+        style Y2031_33 fill:#701A75,stroke:#D946EF,color:#FAE8FF
+        Y31["🌍 Pre-AGI\n85–100 workflows\nGlobal coverage"]
+    end
+    subgraph Y2034_37["2034–37"]
+        style Y2034_37 fill:#831843,stroke:#EC4899,color:#FCE7F3
+        Y34["🌐 AGI Era\n100–120+ workflows\nTransformative platform"]
+    end
+
+    Y26 --> Y27 --> Y28 --> Y29 --> Y30 --> Y31 --> Y34
+```
+
+### 📚 Future Architecture Documents
+
+For deep dives into specific evolution tracks, see:
+
+| Document | Focus | Link |
+|:---------|:------|:-----|
+| 🧠 **Future Mind Map** | Capability expansion vision, AI analysis, OSINT evolution | [FUTURE_MINDMAP.md](_media/FUTURE_MINDMAP.md) |
+| ⚙️ **Future Workflows** | CI/CD evolution, AI-augmented pipelines, 2027–2037 roadmap | [FUTURE_WORKFLOWS.md](_media/FUTURE_WORKFLOWS.md) |
+| 🏛️ **Future Architecture** | Platform architecture evolution, AWS deployment, federation | [FUTURE_ARCHITECTURE.md](_media/FUTURE_ARCHITECTURE.md) |
+| 🛡️ **Future Security** | Security maturity roadmap, quantum-ready encryption | [FUTURE_SECURITY_ARCHITECTURE.md](_media/FUTURE_SECURITY_ARCHITECTURE.md) |
+| 📊 **Future Data Model** | Enhanced data structures, graph databases, temporal models | [FUTURE_DATA_MODEL.md](_media/FUTURE_DATA_MODEL.md) |
+| 💼 **Future SWOT** | Strategic positioning, competitive analysis, market evolution | [FUTURE_SWOT.md](_media/FUTURE_SWOT.md) |
 
 ---
 
