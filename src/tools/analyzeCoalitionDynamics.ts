@@ -287,7 +287,7 @@ function computeStressIndicators(groupMetrics: GroupCohesionMetrics[]): { indica
  * reliable viability score can be computed).
  *
  * @param groupMetrics - Array of group metrics with `memberCount` and `internalCohesion`
- * @returns Object with `effectiveParties` (ENP) and `grandCoalitionViability` (0–1)
+ * @returns Object with `effectiveParties` (ENP) and `grandCoalitionViability` (0–1 or `null` when unavailable)
  */
 function computeFragmentationMetrics(groupMetrics: GroupCohesionMetrics[]): {
   effectiveParties: number;
