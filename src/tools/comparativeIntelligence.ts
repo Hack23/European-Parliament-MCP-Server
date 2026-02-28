@@ -656,11 +656,11 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
         + 'Voting score: participation volume (50%) + for-vote rate (50%). '
         + 'Committee score: membership breadth (60%) + leadership roles (40%). '
         + 'Legislative score: rapporteurships (15 pts each) + committee count (10 pts each). '
-        + 'Attendance score: direct from EP API attendance rate. '
+        + 'Attendance score: placeholder only — EP /meps/{id} does not expose attendance data; value is 0 until real data is available. '
         + 'Similarity: cosine similarity between score vectors. '
         + 'Outliers: z-score ≥ 1.5 standard deviations from group mean. '
         + 'Clusters: grouped by political group + performance tier. '
-        + 'NOTE: Voting statistics availability varies by MEP. '
+        + 'NOTE: Voting and attendance statistics are not available from the current EP API; all related scores are placeholder zeros. '
         + 'Data source: https://data.europarl.europa.eu/api/v2/meps'
     };
 

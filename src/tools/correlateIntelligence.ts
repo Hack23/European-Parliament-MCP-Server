@@ -184,7 +184,9 @@ const DEFAULT_COALITION_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'I
  * @throws {Error} If the result content is present but cannot be parsed as JSON
  *
  * @security Content is parsed as JSON only — no `eval`/`Function` usage.
- *   Raw tool output is never forwarded to clients directly.
+ *   Note: when a dependent tool sets `isError: true`, the raw `text` payload is
+ *   embedded in the thrown error message. Callers should ensure error messages
+ *   are sanitised before surfacing them to end users.
  */
 function parseToolResult(result: ToolResult): unknown {
   const text = result.content[0]?.text;
