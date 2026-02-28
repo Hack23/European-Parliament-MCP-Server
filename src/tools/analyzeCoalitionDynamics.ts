@@ -15,6 +15,7 @@ import { AnalyzeCoalitionDynamicsSchema } from '../schemas/europeanParliament.js
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
+import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 
 interface CoalitionPairAnalysis {
   groupA: string;
@@ -439,6 +440,7 @@ export async function handleAnalyzeCoalitionDynamics(
     return buildToolResponse(analysis);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    auditLogger.logError('analyze_coalition_dynamics', params as Record<string, unknown>, toErrorMessage(error));
     throw new Error(`Failed to analyze coalition dynamics: ${errorMessage}`);
   }
 }

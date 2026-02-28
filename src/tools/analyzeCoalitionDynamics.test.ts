@@ -5,6 +5,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleAnalyzeCoalitionDynamics } from './analyzeCoalitionDynamics.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
+import { auditLogger } from '../utils/auditLogger.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
@@ -16,6 +17,7 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
 describe('analyze_coalition_dynamics Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    auditLogger.clear();
 
     vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
       data: [
@@ -139,6 +141,19 @@ describe('analyze_coalition_dynamics Tool', () => {
 
       await expect(handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] }))
         .rejects.toThrow('Failed to analyze coalition dynamics');
+    });
+
+    it('should log an audit error entry when the EP API rejects', async () => {
+      vi.mocked(epClientModule.epClient.getMEPs)
+        .mockRejectedValueOnce(new Error('API Error'));
+
+      await expect(handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] })).rejects.toThrow();
+
+      const errorLogs = auditLogger.getLogs().filter(
+        e => e.action === 'analyze_coalition_dynamics' && e.result.success === false
+      );
+      expect(errorLogs).toHaveLength(1);
+      expect(errorLogs[0]?.result.error).toBe('API Error');
     });
   });
 

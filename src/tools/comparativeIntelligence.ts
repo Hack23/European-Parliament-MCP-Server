@@ -25,6 +25,7 @@ import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
+import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 
 export const ComparativeIntelligenceSchema = z.object({
   mepIds: z.array(z.number().positive())
@@ -666,6 +667,7 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
 
     return buildToolResponse(result);
   } catch (error) {
+    auditLogger.logError('comparative_intelligence', params as Record<string, unknown>, toErrorMessage(error));
     return buildErrorResponse(
       error instanceof Error ? error : new Error(String(error)),
       'comparative_intelligence'
