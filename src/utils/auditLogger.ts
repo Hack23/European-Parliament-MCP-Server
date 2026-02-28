@@ -164,11 +164,24 @@ export class AuditLogger {
     this.memorySink = new MemoryAuditSink();
     this.extraSinks = options?.sinks ?? [new StderrAuditSink()];
     this.sensitiveKeys = options?.sensitiveKeys ?? DEFAULT_SENSITIVE_KEYS;
-    this.retentionPolicy =
-      options?.retentionMs !== undefined
-        ? new RetentionPolicy(options.retentionMs)
-        : undefined;
+    this.retentionPolicy = AuditLogger.buildRetentionPolicy(options?.retentionMs);
     this.requiredAuthToken = options?.requiredAuthToken;
+  }
+
+  private static buildRetentionPolicy(retentionMs: number | undefined): RetentionPolicy | undefined {
+    if (retentionMs === undefined) {
+      return undefined;
+    }
+    if (
+      typeof retentionMs !== 'number' ||
+      !Number.isFinite(retentionMs) ||
+      retentionMs <= 0
+    ) {
+      throw new Error(
+        `Invalid retentionMs: ${String(retentionMs)}. retentionMs must be a finite positive number of milliseconds.`,
+      );
+    }
+    return new RetentionPolicy(retentionMs);
   }
 
   /**

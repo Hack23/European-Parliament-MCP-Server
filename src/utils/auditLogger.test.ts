@@ -894,6 +894,40 @@ describe('AuditLogger', () => {
   });
 
   // ============================================================================
+  // Constructor validation
+  // ============================================================================
+
+  describe('Constructor validation', () => {
+    it('should throw when retentionMs is 0', () => {
+      expect(() => new AuditLogger({ retentionMs: 0 })).toThrow(
+        'Invalid retentionMs: 0. retentionMs must be a finite positive number of milliseconds.',
+      );
+    });
+
+    it('should throw when retentionMs is negative', () => {
+      expect(() => new AuditLogger({ retentionMs: -1 })).toThrow(
+        'Invalid retentionMs: -1. retentionMs must be a finite positive number of milliseconds.',
+      );
+    });
+
+    it('should throw when retentionMs is Infinity', () => {
+      expect(() => new AuditLogger({ retentionMs: Infinity })).toThrow(
+        'Invalid retentionMs: Infinity. retentionMs must be a finite positive number of milliseconds.',
+      );
+    });
+
+    it('should throw when retentionMs is NaN', () => {
+      expect(() => new AuditLogger({ retentionMs: NaN })).toThrow(
+        'Invalid retentionMs: NaN. retentionMs must be a finite positive number of milliseconds.',
+      );
+    });
+
+    it('should accept a valid positive finite retentionMs', () => {
+      expect(() => new AuditLogger({ retentionMs: 60_000 })).not.toThrow();
+    });
+  });
+
+  // ============================================================================
   // NEW: Access control on getLogs()
   // ============================================================================
 
