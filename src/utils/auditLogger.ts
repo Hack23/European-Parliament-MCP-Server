@@ -359,31 +359,32 @@ export class AuditLogger {
 
   private pruneExpiredEntries(policy: RetentionPolicy): void {
     const all = this.memorySink.query({});
-    const expired = all.filter((e): boolean => policy.isExpired(e));
-    for (const entry of expired) {
-      // Erase by userId when available; fall back to action-based pruning.
-      if (entry.userId !== undefined) {
-        this.memorySink.eraseByUser(entry.userId);
-      }
+    const fresh = all.filter((e): boolean => !policy.isExpired(e));
+
+    // If nothing expired, avoid unnecessary buffer rebuild.
+    if (fresh.length === all.length) {
+      return;
     }
-    // Re-filter: if entries without a userId are expired, replace the full buffer.
-    const stillExpired = this.memorySink
-      .query({})
-      .some((e): boolean => policy.isExpired(e));
-    if (stillExpired) {
-      const fresh = this.memorySink.query({}).filter(
-        (e): boolean => !policy.isExpired(e)
-      );
-      this.memorySink.clear('');
-      for (const e of fresh) {
-        this.memorySink.write(e);
-      }
+
+    // Rebuild the in-memory buffer with only non-expired entries.
+    // This correctly handles users who have both fresh and expired entries —
+    // their fresh entries are preserved while only expired ones are dropped.
+    this.memorySink.clear('');
+    for (const entry of fresh) {
+      this.memorySink.write(entry);
     }
   }
 
   private writeSinks(entry: AuditLogEntry): void {
     for (const sink of this.extraSinks) {
-      sink.write(entry);
+      const result = sink.write(entry);
+      if (result instanceof Promise) {
+        // Fire-and-forget async sinks; surface errors to stderr so they are
+        // observable without blocking the calling code path.
+        void result.catch((err: unknown) => {
+          console.error('[AuditLogger] Async sink write failed:', err);
+        });
+      }
     }
   }
 }

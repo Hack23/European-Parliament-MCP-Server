@@ -14,9 +14,9 @@ import {
   sanitizeParams,
 } from './auditSink.js';
 import type { AuditLogEntry, AuditSink } from './auditSink.js';
-import { appendFileSync, renameSync, statSync } from 'node:fs';
+import { appendFile, rename, stat } from 'node:fs/promises';
 
-vi.mock('node:fs');
+vi.mock('node:fs/promises');
 
 // ============================================================================
 // Helpers
@@ -251,20 +251,23 @@ describe('StderrAuditSink', () => {
 // ============================================================================
 
 describe('FileAuditSink', () => {
-  const mockAppend = vi.mocked(appendFileSync);
-  const mockStat = vi.mocked(statSync);
-  const mockRename = vi.mocked(renameSync);
+  const mockAppend = vi.mocked(appendFile);
+  const mockStat = vi.mocked(stat);
+  const mockRename = vi.mocked(rename);
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default: appendFile and rename succeed
+    mockAppend.mockResolvedValue(undefined);
+    mockRename.mockResolvedValue(undefined);
   });
 
-  it('should append NDJSON entry to the file', () => {
+  it('should append NDJSON entry to the file', async () => {
     const enoent = Object.assign(new Error('ENOENT'), { code: 'ENOENT' });
-    mockStat.mockImplementation(() => { throw enoent; });
+    mockStat.mockRejectedValue(enoent);
     const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
     const entry = makeEntry({ action: 'write_test' });
-    sink.write(entry);
+    await sink.write(entry);
     expect(mockAppend).toHaveBeenCalledWith(
       '/tmp/audit.log',
       expect.stringContaining('"write_test"'),
@@ -272,79 +275,79 @@ describe('FileAuditSink', () => {
     );
   });
 
-  it('should append a newline after the JSON entry', () => {
+  it('should append a newline after the JSON entry', async () => {
     const enoent = Object.assign(new Error('ENOENT'), { code: 'ENOENT' });
-    mockStat.mockImplementation(() => { throw enoent; });
+    mockStat.mockRejectedValue(enoent);
     const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
-    sink.write(makeEntry());
+    await sink.write(makeEntry());
     const callArg = mockAppend.mock.calls[0]?.[1];
     expect(typeof callArg).toBe('string');
     expect((callArg as string).endsWith('\n')).toBe(true);
   });
 
-  it('should rotate the log file when it exceeds maxSizeBytes', () => {
-    mockStat.mockReturnValue({ size: 15 * 1024 * 1024 } as ReturnType<typeof statSync>);
+  it('should rotate the log file when it exceeds maxSizeBytes', async () => {
+    mockStat.mockResolvedValue({ size: 15 * 1024 * 1024 } as Awaited<ReturnType<typeof stat>>);
     const sink = new FileAuditSink({ filePath: '/tmp/audit.log', maxSizeBytes: 10 * 1024 * 1024 });
-    sink.write(makeEntry());
+    await sink.write(makeEntry());
     expect(mockRename).toHaveBeenCalledWith('/tmp/audit.log', expect.stringContaining('/tmp/audit.log.'));
     expect(mockAppend).toHaveBeenCalled();
   });
 
-  it('should not rotate when file is below maxSizeBytes', () => {
-    mockStat.mockReturnValue({ size: 100 } as ReturnType<typeof statSync>);
+  it('should not rotate when file is below maxSizeBytes', async () => {
+    mockStat.mockResolvedValue({ size: 100 } as Awaited<ReturnType<typeof stat>>);
     const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
-    sink.write(makeEntry());
+    await sink.write(makeEntry());
     expect(mockRename).not.toHaveBeenCalled();
     expect(mockAppend).toHaveBeenCalled();
   });
 
-  it('should use 10 MiB as the default maxSizeBytes', () => {
-    mockStat.mockReturnValue({ size: 10 * 1024 * 1024 } as ReturnType<typeof statSync>);
+  it('should use 10 MiB as the default maxSizeBytes', async () => {
+    mockStat.mockResolvedValue({ size: 10 * 1024 * 1024 } as Awaited<ReturnType<typeof stat>>);
     const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
-    sink.write(makeEntry());
+    await sink.write(makeEntry());
     // size === maxSizeBytes triggers rotation
     expect(mockRename).toHaveBeenCalled();
   });
 
-  it('should use a custom maxSizeBytes', () => {
-    mockStat.mockReturnValue({ size: 200 } as ReturnType<typeof statSync>);
+  it('should use a custom maxSizeBytes', async () => {
+    mockStat.mockResolvedValue({ size: 200 } as Awaited<ReturnType<typeof stat>>);
     const sink = new FileAuditSink({ filePath: '/tmp/audit.log', maxSizeBytes: 100 });
-    sink.write(makeEntry());
+    await sink.write(makeEntry());
     expect(mockRename).toHaveBeenCalled();
   });
 
-  it('should include a timestamp in the rotated filename', () => {
-    mockStat.mockReturnValue({ size: 20 * 1024 * 1024 } as ReturnType<typeof statSync>);
+  it('should include a timestamp in the rotated filename', async () => {
+    mockStat.mockResolvedValue({ size: 20 * 1024 * 1024 } as Awaited<ReturnType<typeof stat>>);
     const sink = new FileAuditSink({ filePath: '/var/log/ep.log' });
-    sink.write(makeEntry());
+    await sink.write(makeEntry());
     const newName = mockRename.mock.calls[0]?.[1] as string;
     expect(newName).toMatch(/^\/var\/log\/ep\.log\.\d+\.bak$/);
   });
 
-  it('should not rotate when statSync throws ENOENT (file not yet created)', () => {
+  it('should not rotate when stat rejects with ENOENT (file not yet created)', async () => {
     const enoent = Object.assign(new Error('no such file'), { code: 'ENOENT' });
-    mockStat.mockImplementation(() => { throw enoent; });
+    mockStat.mockRejectedValue(enoent);
     const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
-    sink.write(makeEntry());
+    await sink.write(makeEntry());
     expect(mockRename).not.toHaveBeenCalled();
     expect(mockAppend).toHaveBeenCalled();
   });
 
-  it('should rethrow non-ENOENT errors from statSync', () => {
+  it('should rethrow non-ENOENT errors from stat', async () => {
     const permError = Object.assign(new Error('Permission denied'), { code: 'EACCES' });
-    mockStat.mockImplementation(() => { throw permError; });
+    mockStat.mockRejectedValue(permError);
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
-    expect(() => sink.write(makeEntry())).toThrow('Permission denied');
+    await expect(sink.write(makeEntry())).rejects.toThrow('Permission denied');
     consoleSpy.mockRestore();
   });
 
-  it('should log to stderr and rethrow non-ENOENT rotation errors', () => {
+  it('should log to stderr and rethrow non-ENOENT rotation errors', async () => {
     const busyError = Object.assign(new Error('EBUSY'), { code: 'EBUSY' });
-    mockStat.mockImplementation(() => { throw busyError; });
+    mockStat.mockRejectedValue(busyError);
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
-    expect(() => sink.write(makeEntry())).toThrow();
+    await expect(sink.write(makeEntry())).rejects.toThrow();
     expect(consoleSpy).toHaveBeenCalledWith(
       '[FileAuditSink] Failed to rotate audit log file:',
       busyError
@@ -681,6 +684,35 @@ describe('AuditLogger', () => {
       expect(sink1.write).toHaveBeenCalledTimes(1);
       expect(sink2.write).toHaveBeenCalledTimes(1);
     });
+
+    it('should support async sinks (Promise<void>) via fire-and-forget', async () => {
+      let resolveWrite!: () => void;
+      const writePromise = new Promise<void>((res) => { resolveWrite = res; });
+      const asyncSink: AuditSink = { write: vi.fn<AuditSink['write']>().mockReturnValue(writePromise) };
+      const logger2 = new AuditLogger({ sinks: [asyncSink] });
+      // log() should return synchronously even though the sink is async
+      logger2.log({ action: 'async_sink', params: {} });
+      expect(asyncSink.write).toHaveBeenCalledTimes(1);
+      // Resolve the promise and verify no unhandled rejection
+      resolveWrite();
+      await writePromise;
+    });
+
+    it('should surface async sink errors to stderr without throwing', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const asyncSink: AuditSink = {
+        write: vi.fn<AuditSink['write']>().mockRejectedValue(new Error('disk full')),
+      };
+      const logger2 = new AuditLogger({ sinks: [asyncSink] });
+      logger2.log({ action: 'fail_sink', params: {} });
+      // Allow microtask queue to drain so the .catch() fires
+      await Promise.resolve();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[AuditLogger] Async sink write failed:',
+        expect.objectContaining({ message: 'disk full' })
+      );
+      consoleSpy.mockRestore();
+    });
   });
 
   // ============================================================================
@@ -760,30 +792,42 @@ describe('AuditLogger', () => {
       logger.log({ action: 'keep3', params: {} });
       expect(logger.getLogs()).toHaveLength(3);
     });
-  });
 
-    it('should use eraseByUser for entries with userId and buffer-replace when anonymous expired entries remain', () => {
+    it('should retain fresh entries for a user who also has expired entries', () => {
+      // Tests the critical correctness: pruning must NOT use eraseByUser() which
+      // would delete ALL entries for a user, including non-expired ones.
       vi.useFakeTimers();
       const logger2 = new AuditLogger({ retentionMs: 1000 });
-      // T=0: Log entries that will expire
-      logger2.log({ action: 'old-user', params: {}, userId: 'user-a' });
-      logger2.log({ action: 'old-anon', params: {} });
-      // T=800: Log a fresh anonymous entry (not yet expired at T=1200)
+      // T=0: expired entry for user-a
+      logger2.log({ action: 'old-entry', params: {}, userId: 'user-a' });
+      // T=800: fresh entry for user-a (will be 200ms old when pruning runs at T=1200)
       vi.advanceTimersByTime(800);
-      logger2.log({ action: 'fresh-anon', params: {} });
-      // T=1200: old-user and old-anon are expired (1200ms > 1000ms retention),
-      // but fresh-anon is still fresh (400ms old). Trigger pruning via a new write.
-      // Buffer before pruning: [old-user(T=0), old-anon(T=0), fresh-anon(T=800)]
-      // eraseByUser('user-a') removes old-user → [old-anon(T=0), fresh-anon(T=800)]
-      // stillExpired=true (old-anon) → fresh=[fresh-anon] → clear + write(fresh-anon) [line 379]
+      logger2.log({ action: 'fresh-entry', params: {}, userId: 'user-a' });
+      // T=1200: old-entry expired (1200ms > 1000ms), fresh-entry still valid (400ms old)
       vi.advanceTimersByTime(400);
-      logger2.log({ action: 'trigger', params: {} });
+      logger2.log({ action: 'trigger', params: {} }); // triggers pruning
       const logs = logger2.getLogs();
-      expect(logs.some((e) => e.action === 'old-user')).toBe(false);
-      expect(logs.some((e) => e.action === 'old-anon')).toBe(false);
-      expect(logs.some((e) => e.action === 'fresh-anon')).toBe(true);
+      // old-entry (expired) must be gone
+      expect(logs.some((e) => e.action === 'old-entry')).toBe(false);
+      // fresh-entry (not expired) must be retained
+      expect(logs.some((e) => e.action === 'fresh-entry')).toBe(true);
       vi.useRealTimers();
     });
+
+    it('should prune only by timestamp, not by userId', () => {
+      vi.useFakeTimers();
+      const logger2 = new AuditLogger({ retentionMs: 1000 });
+      logger2.log({ action: 'user-old', params: {}, userId: 'alice' });
+      logger2.log({ action: 'user-fresh', params: {}, userId: 'alice' });
+      vi.advanceTimersByTime(500); // both entries are 500ms old (not yet expired)
+      logger2.log({ action: 'trigger', params: {} });
+      const logs = logger2.getLogs();
+      // Neither alice entry should be pruned - neither is expired
+      expect(logs.some((e) => e.action === 'user-old')).toBe(true);
+      expect(logs.some((e) => e.action === 'user-fresh')).toBe(true);
+      vi.useRealTimers();
+    });
+  });
 
   // ============================================================================
   // NEW: Access control on getLogs()

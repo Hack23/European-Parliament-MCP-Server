@@ -16,7 +16,7 @@
  * @since 0.9.0
  */
 
-import { appendFileSync, renameSync, statSync } from 'node:fs';
+import { appendFile, rename, stat } from 'node:fs/promises';
 
 // ---------------------------------------------------------------------------
 // Core data model
@@ -96,7 +96,7 @@ export type AuthToken = string;
  */
 export interface AuditSink {
   /** Write a single audit entry to the sink */
-  write(entry: AuditLogEntry): void;
+  write(entry: AuditLogEntry): void | Promise<void>;
   /**
    * Query entries matching a filter.
    * Implemented by in-memory sinks; write-only sinks omit this.
@@ -321,16 +321,16 @@ export class FileAuditSink implements AuditSink {
     this.maxSizeBytes = options.maxSizeBytes ?? 10 * 1024 * 1024;
   }
 
-  write(entry: AuditLogEntry): void {
-    this.rotateIfNeeded();
-    appendFileSync(this.filePath, `${JSON.stringify(entry)}\n`, 'utf8');
+  async write(entry: AuditLogEntry): Promise<void> {
+    await this.rotateIfNeeded();
+    await appendFile(this.filePath, `${JSON.stringify(entry)}\n`, 'utf8');
   }
 
-  private rotateIfNeeded(): void {
+  private async rotateIfNeeded(): Promise<void> {
     try {
-      const stats = statSync(this.filePath);
+      const stats = await stat(this.filePath);
       if (stats.size >= this.maxSizeBytes) {
-        renameSync(
+        await rename(
           this.filePath,
           `${this.filePath}.${String(Date.now())}.bak`
         );
