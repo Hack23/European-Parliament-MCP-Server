@@ -17,6 +17,7 @@
 
 import { GetCommitteeInfoSchema, CommitteeSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildApiParams } from './shared/paramBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -68,9 +69,10 @@ export async function handleGetCommitteeInfo(
     }
 
     // Fetch committee info from EP API (only pass defined properties)
-    const apiParams: Record<string, string> = {};
-    if (params['id'] !== undefined) apiParams['id'] = params['id'];
-    if (params['abbreviation'] !== undefined) apiParams['abbreviation'] = params['abbreviation'];
+    const apiParams = buildApiParams(params, [
+      { from: 'id', to: 'id' },
+      { from: 'abbreviation', to: 'abbreviation' },
+    ]);
     
     const result = await epClient.getCommitteeInfo(apiParams as Parameters<typeof epClient.getCommitteeInfo>[0]);
     
