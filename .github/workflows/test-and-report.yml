@@ -85,6 +85,10 @@ jobs:
       - name: Type check
         run: npm run type-check
 
+      # TypeScript type checking for test helpers (mockFactory.ts, assertions.ts)
+      - name: Type check test helpers
+        run: npm run type-check:helpers
+
       # Run linter
       - name: Lint
         run: npm run lint

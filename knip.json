@@ -3,7 +3,9 @@
   "entry": [
     "tests/**/*.test.ts",
     "tests/e2e/mcpClient.ts",
-    "tests/helpers/testUtils.ts"
+    "tests/helpers/testUtils.ts",
+    "tests/helpers/mockFactory.ts",
+    "tests/helpers/assertions.ts"
   ],
   "project": [
     "src/**/*.ts",
