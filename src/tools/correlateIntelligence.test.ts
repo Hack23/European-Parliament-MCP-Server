@@ -103,8 +103,8 @@ const EWS_STABLE_RESULT = makeToolResult({
 
 const COALITION_FRACTURE_RESULT = makeToolResult({
   groupMetrics: [
-    { groupId: 'EPP', stressIndicator: 0.8, computedAttributes: { unityTrend: 'WEAKENING' } },
-    { groupId: 'S&D', stressIndicator: 0.2, computedAttributes: { unityTrend: 'STABLE' } },
+    { groupId: 'EPP', stressIndicator: { value: 0.8, availability: 'AVAILABLE', confidence: 'HIGH' }, computedAttributes: { unityTrend: 'WEAKENING' } },
+    { groupId: 'S&D', stressIndicator: { value: 0.2, availability: 'AVAILABLE', confidence: 'HIGH' }, computedAttributes: { unityTrend: 'STABLE' } },
   ],
   stressIndicators: [
     { indicator: 'HIGH_FRAGMENTATION', severity: 'HIGH', affectedGroups: ['EPP'] },
@@ -114,8 +114,8 @@ const COALITION_FRACTURE_RESULT = makeToolResult({
 
 const COALITION_STABLE_RESULT = makeToolResult({
   groupMetrics: [
-    { groupId: 'EPP', stressIndicator: 0.1, computedAttributes: { unityTrend: 'STABLE' } },
-    { groupId: 'S&D', stressIndicator: 0.2, computedAttributes: { unityTrend: 'STABLE' } },
+    { groupId: 'EPP', stressIndicator: { value: 0.1, availability: 'AVAILABLE', confidence: 'HIGH' }, computedAttributes: { unityTrend: 'STABLE' } },
+    { groupId: 'S&D', stressIndicator: { value: 0.2, availability: 'AVAILABLE', confidence: 'HIGH' }, computedAttributes: { unityTrend: 'STABLE' } },
   ],
   stressIndicators: [],
   confidenceLevel: 'HIGH',
@@ -558,7 +558,7 @@ describe('correlate_intelligence Tool', () => {
       expect(['HIGH', 'MEDIUM', 'LOW']).toContain(report.confidenceLevel);
     });
 
-    it('should return MEDIUM confidence when all tools fail', async () => {
+    it('should return LOW confidence when all tools fail', async () => {
       vi.mocked(handleAssessMepInfluence).mockRejectedValue(new Error('fail'));
       vi.mocked(handleDetectVotingAnomalies).mockRejectedValue(new Error('fail'));
       vi.mocked(handleEarlyWarningSystem).mockRejectedValue(new Error('fail'));
@@ -566,8 +566,46 @@ describe('correlate_intelligence Tool', () => {
 
       const result = await handleCorrelateIntelligence({ mepIds: ['123'] });
       const report = JSON.parse(result.content[0]!.text) as { confidenceLevel: string };
-      // Falls back to MEDIUM (empty levels default)
-      expect(report.confidenceLevel).toBe('MEDIUM');
+      // Falls back to LOW (empty levels default) — not MEDIUM, since no data at all
+      expect(report.confidenceLevel).toBe('LOW');
+    });
+  });
+
+  // ---- Data availability markers ------------------------------------------
+
+  describe('Data Availability Markers', () => {
+    it('should return UNAVAILABLE when all dependent tools fail', async () => {
+      vi.mocked(handleAssessMepInfluence).mockRejectedValue(new Error('fail'));
+      vi.mocked(handleDetectVotingAnomalies).mockRejectedValue(new Error('fail'));
+      vi.mocked(handleEarlyWarningSystem).mockRejectedValue(new Error('fail'));
+      vi.mocked(handleAnalyzeCoalitionDynamics).mockRejectedValue(new Error('fail'));
+
+      const result = await handleCorrelateIntelligence({ mepIds: ['123'] });
+      const report = JSON.parse(result.content[0]!.text) as { dataAvailability: string };
+      expect(report.dataAvailability).toBe('UNAVAILABLE');
+    });
+
+    it('should return PARTIAL when tools succeed but produce no correlations', async () => {
+      // Low influence score → no ELEVATED_ATTENTION alert; no anomalies → no correlation
+      vi.mocked(handleAssessMepInfluence).mockResolvedValue(LOW_INFLUENCE_RESULT);
+      vi.mocked(handleDetectVotingAnomalies).mockResolvedValue(NO_ANOMALIES_RESULT);
+
+      const result = await handleCorrelateIntelligence({ mepIds: ['456'] });
+      const report = JSON.parse(result.content[0]!.text) as {
+        dataAvailability: string;
+        correlations: { influenceAnomaly: unknown[] };
+      };
+      expect(report.correlations.influenceAnomaly).toHaveLength(0);
+      expect(report.dataAvailability).toBe('PARTIAL');
+    });
+
+    it('should return AVAILABLE when correlations are found', async () => {
+      vi.mocked(handleAssessMepInfluence).mockResolvedValue(HIGH_INFLUENCE_RESULT);
+      vi.mocked(handleDetectVotingAnomalies).mockResolvedValue(ANOMALIES_RESULT);
+
+      const result = await handleCorrelateIntelligence({ mepIds: ['123'] });
+      const report = JSON.parse(result.content[0]!.text) as { dataAvailability: string };
+      expect(report.dataAvailability).toBe('AVAILABLE');
     });
   });
 
