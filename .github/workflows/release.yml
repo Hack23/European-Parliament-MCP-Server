@@ -242,7 +242,7 @@ jobs:
 
       - name: Generate SBOM attestation
         id: attestsbom
-        uses: actions/attest-sbom@07e74fc4e78d1aad915e867f9a094073a9f71527 # v4.0.0
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
         with:
           subject-path: european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.zip
           sbom-path: european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.spdx.json
@@ -302,6 +302,7 @@ jobs:
           name: European Parliament MCP Server ${{ needs.prepare.outputs.version }}
           publish: false
           prerelease: ${{ needs.prepare.outputs.is_prerelease }}
+          disable-autolabeler: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
