@@ -258,15 +258,17 @@ describe('GENERATED_STATS.analysisSummary', () => {
   });
 
   it('should have a valid peakActivityYear', () => {
+    const { from, to } = GENERATED_STATS.coveragePeriod;
     expect(typeof summary.peakActivityYear).toBe('number');
-    expect(summary.peakActivityYear).toBeGreaterThanOrEqual(2004);
-    expect(summary.peakActivityYear).toBeLessThanOrEqual(2025);
+    expect(summary.peakActivityYear).toBeGreaterThanOrEqual(from);
+    expect(summary.peakActivityYear).toBeLessThanOrEqual(to);
   });
 
   it('should have a valid lowestActivityYear', () => {
+    const { from, to } = GENERATED_STATS.coveragePeriod;
     expect(typeof summary.lowestActivityYear).toBe('number');
-    expect(summary.lowestActivityYear).toBeGreaterThanOrEqual(2004);
-    expect(summary.lowestActivityYear).toBeLessThanOrEqual(2025);
+    expect(summary.lowestActivityYear).toBeGreaterThanOrEqual(from);
+    expect(summary.lowestActivityYear).toBeLessThanOrEqual(to);
   });
 
   it('peakActivityYear should have higher acts than lowestActivityYear', () => {
@@ -315,10 +317,11 @@ describe('GENERATED_STATS data integrity', () => {
   });
 
   it('topYear should have highest total for that category', () => {
+    const { from, to } = GENERATED_STATS.coveragePeriod;
     for (const ranking of GENERATED_STATS.categoryRankings) {
       expect(typeof ranking.topYear).toBe('number');
-      expect(ranking.topYear).toBeGreaterThanOrEqual(2004);
-      expect(ranking.topYear).toBeLessThanOrEqual(2025);
+      expect(ranking.topYear).toBeGreaterThanOrEqual(from);
+      expect(ranking.topYear).toBeLessThanOrEqual(to);
     }
   });
 });
