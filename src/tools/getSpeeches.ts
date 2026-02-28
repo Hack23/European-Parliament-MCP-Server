@@ -20,6 +20,7 @@
 import { GetSpeechesSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { buildApiParams } from './shared/paramBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -61,12 +62,14 @@ export async function handleGetSpeeches(
     return buildToolResponse(result);
   }
 
-  const apiParams: Record<string, unknown> = {
+  const apiParams = {
     limit: params.limit,
-    offset: params.offset
+    offset: params.offset,
+    ...buildApiParams(params, [
+      { from: 'dateFrom', to: 'dateFrom' },
+      { from: 'dateTo', to: 'dateTo' },
+    ]),
   };
-  if (params.dateFrom !== undefined) apiParams['dateFrom'] = params.dateFrom;
-  if (params.dateTo !== undefined) apiParams['dateTo'] = params.dateTo;
 
   const result = await epClient.getSpeeches(apiParams as Parameters<typeof epClient.getSpeeches>[0]);
 
