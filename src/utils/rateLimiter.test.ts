@@ -15,11 +15,12 @@ describe('RateLimiter', () => {
 
       // Should allow 10 requests
       for (let i = 0; i < 10; i++) {
-        await expect(limiter.removeTokens(1)).resolves.toBeUndefined();
+        const result = await limiter.removeTokens(1);
+        expect(result.allowed).toBe(true);
       }
     });
 
-    it('should throw error when rate limit exceeded', async () => {
+    it('should return allowed:false when rate limit exceeded and timeout is 0', async () => {
       const limiter = new RateLimiter({
         tokensPerInterval: 5,
         interval: 'second'
@@ -30,8 +31,11 @@ describe('RateLimiter', () => {
         await limiter.removeTokens(1);
       }
 
-      // Next request should fail
-      await expect(limiter.removeTokens(1)).rejects.toThrow(/Rate limit exceeded/);
+      // Next request with zero timeout should return immediately with allowed:false
+      const result = await limiter.removeTokens(1, { timeoutMs: 0 });
+      expect(result.allowed).toBe(false);
+      expect(result.retryAfterMs).toBeGreaterThan(0);
+      expect(result.remainingTokens).toBe(0);
     });
 
     it('should refill tokens over time', async () => {
@@ -71,6 +75,70 @@ describe('RateLimiter', () => {
       expect(limiter.getAvailableTokens()).toBe(10);
 
       vi.useRealTimers();
+    });
+  });
+
+  describe('async waiting', () => {
+    it('should wait for token refill and return allowed:true', async () => {
+      vi.useFakeTimers();
+
+      const limiter = new RateLimiter({
+        tokensPerInterval: 10,
+        interval: 'second'
+      });
+
+      // Exhaust all tokens synchronously
+      limiter.tryRemoveTokens(10);
+      expect(limiter.getAvailableTokens()).toBe(0);
+
+      // Start async wait with generous timeout
+      const promise = limiter.removeTokens(1, { timeoutMs: 5000 });
+
+      // Advance fake time past the refill point (≥100 ms for 1 token at 10/second)
+      await vi.advanceTimersByTimeAsync(200);
+
+      const result = await promise;
+      expect(result.allowed).toBe(true);
+      expect(result.remainingTokens).toBeGreaterThanOrEqual(0);
+
+      vi.useRealTimers();
+    });
+
+    it('should return allowed:false when wait exceeds timeout', async () => {
+      const limiter = new RateLimiter({
+        tokensPerInterval: 1,
+        interval: 'minute',   // 60 s refill – very slow
+        initialTokens: 0
+      });
+
+      // Timeout of 100 ms, but refill needs 60 000 ms → immediate false
+      const result = await limiter.removeTokens(1, { timeoutMs: 100 });
+      expect(result.allowed).toBe(false);
+      expect(result.retryAfterMs).toBeGreaterThan(100);
+    });
+
+    it('should include retryAfterMs in result when not allowed', async () => {
+      const limiter = new RateLimiter({
+        tokensPerInterval: 10,
+        interval: 'second',
+        initialTokens: 0
+      });
+
+      const result = await limiter.removeTokens(1, { timeoutMs: 0 });
+      expect(result.allowed).toBe(false);
+      expect(typeof result.retryAfterMs).toBe('number');
+      expect(result.retryAfterMs).toBeGreaterThan(0);
+    });
+
+    it('should return correct remainingTokens after consuming', async () => {
+      const limiter = new RateLimiter({
+        tokensPerInterval: 10,
+        interval: 'second'
+      });
+
+      const result = await limiter.removeTokens(3);
+      expect(result.allowed).toBe(true);
+      expect(result.remainingTokens).toBe(7);
     });
   });
 

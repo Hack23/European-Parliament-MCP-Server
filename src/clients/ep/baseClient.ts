@@ -369,8 +369,14 @@ export class BaseEPClient {
     endpoint: string,
     params?: Record<string, unknown>
   ): Promise<T> {
-    // Consume one rate-limit token (blocks until available)
-    await this.rateLimiter.removeTokens(1);
+    // Consume one rate-limit token; waits asynchronously up to 5 s before giving up
+    const rlResult = await this.rateLimiter.removeTokens(1);
+    if (!rlResult.allowed) {
+      throw new APIError(
+        `Rate limit exceeded. Retry after ${String(rlResult.retryAfterMs ?? 0)}ms`,
+        429
+      );
+    }
 
     const cacheKey = this.getCacheKey(endpoint, params);
 

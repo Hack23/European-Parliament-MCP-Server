@@ -29,6 +29,18 @@ export interface RateLimiterStatus {
 }
 
 /**
+ * Result returned by {@link RateLimiter.removeTokens}.
+ */
+export interface RateLimitResult {
+  /** Whether the tokens were successfully consumed */
+  allowed: boolean;
+  /** Milliseconds to wait before retrying (only present when `allowed` is `false`) */
+  retryAfterMs?: number;
+  /** Number of tokens remaining after this operation (floored integer) */
+  remainingTokens: number;
+}
+
+/**
  * Rate limiter configuration options
  */
 interface RateLimiterOptions {
@@ -106,27 +118,27 @@ export class RateLimiter {
   }
 
   /**
-   * Attempts to consume `count` tokens from the bucket.
+   * Attempts to consume `count` tokens from the bucket, waiting asynchronously
+   * until tokens are available or the timeout expires.
    *
-   * Refills the bucket based on elapsed time before checking availability.
-   * If sufficient tokens are available they are consumed immediately and the
-   * returned promise resolves. If not, a {@link Error} is thrown describing
-   * how long to wait before retrying.
+   * Refills the bucket based on elapsed time before each check. If sufficient
+   * tokens are available they are consumed immediately. Otherwise the method
+   * sleeps until the bucket has enough tokens and retries. If the required wait
+   * would exceed `options.timeoutMs` (default **5000 ms**) the call returns
+   * immediately with `allowed: false` and a `retryAfterMs` hint.
    *
    * @param count - Number of tokens to consume (must be ≥ 1)
-   * @returns Promise that resolves when the tokens have been consumed
-   * @throws {Error} If there are not enough tokens in the bucket, with a
-   *   message indicating the retry-after duration in seconds
+   * @param options.timeoutMs - Maximum time to wait in milliseconds (default 5000)
+   * @returns Promise resolving to a {@link RateLimitResult}. `allowed` is `true`
+   *   when tokens were consumed, `false` when the timeout was reached.
    *
    * @example
    * ```typescript
-   * try {
-   *   await rateLimiter.removeTokens(1);
+   * const result = await rateLimiter.removeTokens(1);
+   * if (!result.allowed) {
+   *   console.warn(`Rate limited – retry after ${result.retryAfterMs}ms`);
+   * } else {
    *   const data = await fetchFromEPAPI('/meps');
-   * } catch (err) {
-   *   if (err instanceof Error) {
-   *     console.warn('Rate limited:', err.message);
-   *   }
    * }
    * ```
    *
@@ -134,24 +146,34 @@ export class RateLimiter {
    *   Per ISMS Policy AC-003, rate limiting is a mandatory access control.
    * @since 0.8.0
    */
-  async removeTokens(count: number): Promise<void> {
-    this.refill();
-    
-    if (this.tokens >= count) {
-      this.tokens -= count;
-      return Promise.resolve();
+  async removeTokens(
+    count: number,
+    options?: { timeoutMs?: number }
+  ): Promise<RateLimitResult> {
+    const timeoutMs = options?.timeoutMs ?? 5000;
+    const deadline = Date.now() + timeoutMs;
+
+    for (;;) {
+      this.refill();
+
+      if (this.tokens >= count) {
+        this.tokens -= count;
+        return { allowed: true, remainingTokens: Math.floor(this.tokens) };
+      }
+
+      const tokensNeeded = count - this.tokens;
+      const waitMs = Math.ceil((tokensNeeded / this.tokensPerInterval) * this.intervalMs);
+
+      if (Date.now() + waitMs > deadline) {
+        return {
+          allowed: false,
+          retryAfterMs: waitMs,
+          remainingTokens: Math.floor(this.tokens),
+        };
+      }
+
+      await new Promise<void>(resolve => setTimeout(resolve, waitMs));
     }
-    
-    // Calculate wait time
-    const tokensNeeded = count - this.tokens;
-    const waitMs = (tokensNeeded / this.tokensPerInterval) * this.intervalMs;
-    
-    // For now, throw error instead of waiting
-    // In production, you might want to implement waiting or backoff
-    throw new Error(
-      `Rate limit exceeded. Available tokens: ${String(this.tokens)}, required: ${String(count)}. ` +
-      `Retry after ${String(Math.ceil(waitMs / 1000))} seconds.`
-    );
   }
 
   /**
@@ -288,8 +310,10 @@ export class RateLimiter {
  * @example
  * ```typescript
  * const rateLimiter = createStandardRateLimiter();
- * await rateLimiter.removeTokens(1);
- * const data = await fetchFromEPAPI('/meps');
+ * const result = await rateLimiter.removeTokens(1);
+ * if (result.allowed) {
+ *   const data = await fetchFromEPAPI('/meps');
+ * }
  * ```
  *
  * @security Ensures sustainable OSINT collection rates from the EP API and
