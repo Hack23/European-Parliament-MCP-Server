@@ -4,6 +4,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { handleToolError, handleDataUnavailable } from './errorHandler.js';
+import { ToolError } from './errors.js';
 
 describe('handleToolError', () => {
   it('should return isError: true for Error instances', () => {
@@ -35,6 +36,19 @@ describe('handleToolError', () => {
     const text = result.content[0]?.text ?? '';
     expect(text).not.toContain('at ');
     expect(text).not.toContain('.test.ts');
+  });
+
+  it('should handle ToolError and use toolName from the error', () => {
+    const err = new ToolError({ toolName: 'specific_tool', operation: 'op', message: 'failed' });
+    const result = handleToolError(err, 'fallback_tool');
+    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    expect(parsed.toolName).toBe('specific_tool');
+  });
+
+  it('should return isError: true for ToolError', () => {
+    const err = new ToolError({ toolName: 'tool', operation: 'op', message: 'failed' });
+    const result = handleToolError(err, 'tool');
+    expect(result.isError).toBe(true);
   });
 });
 

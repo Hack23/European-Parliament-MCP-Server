@@ -20,6 +20,7 @@ import { AnalyzeVotingPatternsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
+import { ToolError } from './shared/errors.js';
 
 /**
  * Voting pattern analysis result
@@ -189,9 +190,13 @@ export async function handleAnalyzeVotingPatterns(
     
     return buildToolResponse(analysis);
   } catch (error) {
-    // Handle errors without exposing internal details
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to analyze voting patterns: ${errorMessage}`);
+    throw new ToolError({
+      toolName: 'analyze_voting_patterns',
+      operation: 'fetchVotingData',
+      message: 'Failed to retrieve voting records for analysis',
+      isRetryable: true,
+      cause: error,
+    });
   }
 }
 
