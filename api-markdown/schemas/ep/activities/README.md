@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -19,6 +19,8 @@ meeting activities/decisions, declarations, and vocabularies.
 - [GetMeetingActivitiesSchema](variables/GetMeetingActivitiesSchema.md)
 - [GetMeetingDecisionsSchema](variables/GetMeetingDecisionsSchema.md)
 - [GetMeetingForeseenActivitiesSchema](variables/GetMeetingForeseenActivitiesSchema.md)
+- [GetMeetingPlenarySessionDocumentItemsSchema](variables/GetMeetingPlenarySessionDocumentItemsSchema.md)
+- [GetMeetingPlenarySessionDocumentsSchema](variables/GetMeetingPlenarySessionDocumentsSchema.md)
 - [GetMEPDeclarationsSchema](variables/GetMEPDeclarationsSchema.md)
 - [GetProcedureEventsSchema](variables/GetProcedureEventsSchema.md)
 - [GetProceduresSchema](variables/GetProceduresSchema.md)

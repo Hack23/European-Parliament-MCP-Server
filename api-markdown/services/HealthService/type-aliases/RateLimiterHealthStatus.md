@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **RateLimiterHealthStatus** = [`RateLimiterStatus`](../../../utils/rateLimiter/interfaces/RateLimiterStatus.md)
 
-Defined in: [services/HealthService.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/services/HealthService.ts#L42)
+Defined in: [services/HealthService.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L42)
 
 Rate-limiter status snapshot for health reporting.
 Type alias of [RateLimiterStatus](../../../utils/rateLimiter/interfaces/RateLimiterStatus.md) to prevent the two from drifting.

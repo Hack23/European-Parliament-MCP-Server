@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../README.md)
 
 ***
 
@@ -49,6 +49,12 @@ Re-exports [CommitteeSchema](../ep/committee/variables/CommitteeSchema.md)
 ### ComparePoliticalGroupsSchema
 
 Re-exports [ComparePoliticalGroupsSchema](../ep/analysis/variables/ComparePoliticalGroupsSchema.md)
+
+***
+
+### CorrelateIntelligenceSchema
+
+Re-exports [CorrelateIntelligenceSchema](../ep/analysis/variables/CorrelateIntelligenceSchema.md)
 
 ***
 
@@ -133,6 +139,18 @@ Re-exports [GetMeetingDecisionsSchema](../ep/activities/variables/GetMeetingDeci
 ### GetMeetingForeseenActivitiesSchema
 
 Re-exports [GetMeetingForeseenActivitiesSchema](../ep/activities/variables/GetMeetingForeseenActivitiesSchema.md)
+
+***
+
+### GetMeetingPlenarySessionDocumentItemsSchema
+
+Re-exports [GetMeetingPlenarySessionDocumentItemsSchema](../ep/activities/variables/GetMeetingPlenarySessionDocumentItemsSchema.md)
+
+***
+
+### GetMeetingPlenarySessionDocumentsSchema
+
+Re-exports [GetMeetingPlenarySessionDocumentsSchema](../ep/activities/variables/GetMeetingPlenarySessionDocumentsSchema.md)
 
 ***
 
@@ -235,6 +253,12 @@ Re-exports [MEPSchema](../ep/mep/variables/MEPSchema.md)
 ### MonitorLegislativePipelineSchema
 
 Re-exports [MonitorLegislativePipelineSchema](../ep/analysis/variables/MonitorLegislativePipelineSchema.md)
+
+***
+
+### OsintStandardOutputSchema
+
+Re-exports [OsintStandardOutputSchema](../ep/analysis/variables/OsintStandardOutputSchema.md)
 
 ***
 

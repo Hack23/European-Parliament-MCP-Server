@@ -4,6 +4,33 @@
 
 All releases of European Parliament MCP Server include cryptographic attestations and SLSA Level 3 provenance, providing verifiable proof of build integrity and supply chain security.
 
+## Current Attestation Status
+
+**As of 2026-02-27 — pre-v1.0 status (package version 0.8.2)**
+
+| Security Control | Status | Details |
+|-----------------|--------|---------|
+| npm audit vulnerabilities | ✅ 0 | No known vulnerabilities in dependency tree |
+| SLSA Level 3 | ✅ Achieved | Cryptographic provenance on all releases |
+| License compliance | ✅ Passing | All dependencies comply with the license allowlist |
+| Test suite | ✅ Passing | See docs/test-results/results.json for up-to-date test metrics |
+| SAST (CodeQL) | ✅ Enabled | Automated scanning on every PR and push |
+| Secret scanning | ✅ Enabled | GitHub native secret detection |
+| Dependabot | ✅ Enabled | Automated dependency update PRs |
+| Sigstore signing | ✅ Enabled | npm package and GitHub release artifacts |
+| SHA-pinned actions | ✅ Enforced | All critical GitHub Actions pinned to commit SHA (SLSA actions use vetted version tags) |
+
+### Dependency Vulnerability Status (2026-02-27)
+
+| Package | Version | Vulnerabilities | Status |
+|---------|---------|----------------|--------|
+| @modelcontextprotocol/sdk | 1.27.1 | 0 | ✅ Clean |
+| lru-cache | 11.2.6 | 0 | ✅ Clean |
+| undici | 7.22.0 | 0 | ✅ Clean |
+| zod | 4.3.6 | 0 | ✅ Clean |
+
+> **Note:** High-severity vulnerabilities in `rollup` (GHSA-mw96-cpmx-2vgc) and `minimatch` (GHSA-3ppc-4f35-3m26, GHSA-7r86-cg39-jmmj, GHSA-23c5-xmqv-rm74) were remediated prior to the v1.0 release by updating transitive dependencies.
+
 ## SLSA Level 3 Compliance
 
 This project achieves SLSA Level 3 by meeting the following requirements:

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: ResourceReadResult
 
-Defined in: [resources/index.ts:43](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/resources/index.ts#L43)
+Defined in: [resources/index.ts:43](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/resources/index.ts#L43)
 
 Resource read result
 
@@ -20,4 +20,4 @@ Resource read result
 
 > **contents**: [`ResourceContent`](ResourceContent.md)[]
 
-Defined in: [resources/index.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/resources/index.ts#L44)
+Defined in: [resources/index.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/resources/index.ts#L44)

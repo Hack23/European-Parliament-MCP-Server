@@ -1,4 +1,4 @@
-**European Parliament MCP Server API v0.8.2**
+**European Parliament MCP Server API v0.9.0**
 
 ***
 
@@ -74,7 +74,7 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ### 🎯 Key Features
 
-- 🔌 **Full MCP Implementation**: 39 tools (7 MEP + 7 plenary & meeting + 2 committee + 7 document + 3 legislative + 3 advanced analysis + 10 OSINT intelligence), 9 Resources, and 7 Prompts
+- 🔌 **Full MCP Implementation**: 46 tools (7 core + 3 advanced analysis + 15 OSINT intelligence + 8 Phase 4 + 13 Phase 5), 9 Resources, and 7 Prompts
 - 🏛️ **Complete EP API v2 Coverage**: All European Parliament Open Data API endpoints covered
 - 🕵️ **OSINT Intelligence**: MEP influence scoring, coalition analysis, anomaly detection
 - 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance
@@ -389,6 +389,22 @@ Configure in `.vscode/mcp.json`:
 }
 ```
 
+#### Cursor IDE Configuration
+
+Add to `~/.cursor/mcp.json` (or project-level `.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "european-parliament": {
+      "command": "npx",
+      "args": ["european-parliament-mcp-server"],
+      "env": {}
+    }
+  }
+}
+```
+
 ---
 
 ## 📚 Documentation
@@ -428,7 +444,7 @@ npm run docs:build    # Full documentation build (HTML + MD + coverage + test re
 
 - [**API Usage Guide**](_media/API_USAGE_GUIDE.md) - Complete tool documentation with examples
 - [**Architecture Diagrams**](_media/ARCHITECTURE_DIAGRAMS.md) - C4 model diagrams and data flows
-- [**Troubleshooting Guide**](./TROUBLESHOOTING.md) - Common issues and solutions
+- [**Troubleshooting Guide**](#troubleshooting) - Common issues and solutions
 - [**Developer Guide**](_media/DEVELOPER_GUIDE.md) - Development workflow and contributing
 - [**Deployment Guide**](_media/DEPLOYMENT_GUIDE.md) - Claude Desktop, VS Code, Docker setup
 - [**Performance Guide**](_media/PERFORMANCE_GUIDE.md) - Optimization strategies
@@ -448,7 +464,51 @@ npm run docs:build    # Full documentation build (HTML + MD + coverage + test re
 
 ---
 
-## 🔌 MCP Tools (39 Total)
+## 🏗️ Architecture Overview
+
+```mermaid
+graph TB
+    Client[MCP Client<br/>Claude / VS Code / Cursor] -->|MCP Protocol stdio| Server[EP MCP Server<br/>TypeScript/Node.js]
+
+    subgraph "MCP Server (src/)"
+        direction TB
+        Tools[🔧 46 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …]
+        Resources[📦 9 Resources<br/>ep://meps/{id}<br/>ep://procedures/{id} · …]
+        Prompts[💬 7 Prompts<br/>mep_briefing<br/>coalition_analysis · …]
+    end
+
+    Server --> Tools
+    Server --> Resources
+    Server --> Prompts
+
+    subgraph "Infrastructure"
+        Cache[LRU Cache<br/>500 entries · 15 min TTL]
+        RateLimiter[Rate Limiter<br/>100 req / 15 min]
+        AuditLog[Audit Logger<br/>GDPR Article 30]
+    end
+
+    Tools --> EPClient[EuropeanParliamentClient<br/>Facade → 8 sub-clients]
+    Resources --> EPClient
+    EPClient --> Cache
+    EPClient --> RateLimiter
+    EPClient --> AuditLog
+    EPClient -->|HTTPS/TLS 1.3| EPAPI[European Parliament<br/>Open Data API v2<br/>data.europarl.europa.eu]
+
+    style Server fill:#4CAF50,stroke:#2E7D32,color:#fff
+    style EPClient fill:#2196F3,stroke:#1565C0,color:#fff
+    style EPAPI fill:#9C27B0,stroke:#6A1B9A,color:#fff
+    style Cache fill:#FF9800,stroke:#E65100,color:#fff
+    style RateLimiter fill:#F44336,stroke:#B71C1C,color:#fff
+    style AuditLog fill:#607D8B,stroke:#37474F,color:#fff
+```
+
+**Data flow:** MCP client sends a tool call → server validates input (Zod) → EP client
+checks cache → on miss, fetches from EP API (rate-limited) → response cached and returned
+as structured JSON. All personal data access is audit-logged per GDPR Article 30.
+
+---
+
+## 🔌 MCP Tools (46 Total)
 
 All tools are organized below by functional area. Each tool includes input validation via Zod schemas, caching, and rate limiting.
 
@@ -464,7 +524,7 @@ All tools are organized below by functional area. Each tool includes input valid
 | [`get_homonym_meps`](_media/API_USAGE_GUIDE.md#tool-get_homonym_meps) | MEPs with identical names (disambiguation) | limit, offset | `GET /meps/show-homonyms` |
 | [`get_mep_declarations`](_media/API_USAGE_GUIDE.md#tool-get_mep_declarations) | MEP financial interest declarations | docId, year, limit | `GET /meps-declarations`, `GET /meps-declarations/{id}` |
 
-### 🏛️ Plenary & Meeting Tools (7)
+### 🏛️ Plenary & Meeting Tools (9)
 
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
@@ -475,6 +535,8 @@ All tools are organized below by functional area. Each tool includes input valid
 | [`get_meeting_activities`](_media/API_USAGE_GUIDE.md#tool-get_meeting_activities) | Activities linked to a plenary sitting | sittingId (required), limit | `GET /meetings/{id}/activities` |
 | [`get_meeting_decisions`](_media/API_USAGE_GUIDE.md#tool-get_meeting_decisions) | Decisions made in a plenary sitting | sittingId (required), limit | `GET /meetings/{id}/decisions` |
 | [`get_meeting_foreseen_activities`](_media/API_USAGE_GUIDE.md#tool-get_meeting_foreseen_activities) | Planned agenda items for upcoming meetings | sittingId (required), limit | `GET /meetings/{id}/foreseen-activities` |
+| [`get_meeting_plenary_session_documents`](_media/API_USAGE_GUIDE.md#tool-get_meeting_plenary_session_documents) | Plenary session documents linked to a specific sitting | sittingId (required), limit, offset | `GET /meetings/{id}/plenary-session-documents` |
+| [`get_meeting_plenary_session_document_items`](_media/API_USAGE_GUIDE.md#tool-get_meeting_plenary_session_document_items) | Agenda item documents for a specific plenary sitting | sittingId (required), limit, offset | `GET /meetings/{id}/plenary-session-document-items` |
 
 ### 🏢 Committee Tools (2)
 
@@ -511,7 +573,7 @@ All tools are organized below by functional area. Each tool includes input valid
 | [`track_legislation`](_media/API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
 | [`generate_report`](_media/API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
 
-### 🕵️ OSINT Intelligence Tools (10)
+### 🕵️ OSINT Intelligence Tools (14)
 
 | Tool | Description | Key Parameters | Output |
 |------|-------------|----------------|--------|
@@ -525,6 +587,10 @@ All tools are organized below by functional area. Each tool includes input valid
 | [`track_mep_attendance`](_media/API_USAGE_GUIDE.md#tool-track_mep_attendance) | MEP attendance patterns & trends | mepId, country, groupId, dateFrom, dateTo, limit | Attendance report |
 | [`analyze_country_delegation`](_media/API_USAGE_GUIDE.md#tool-analyze_country_delegation) | Country delegation voting & composition | country (required), dateFrom, dateTo | Delegation analysis |
 | [`generate_political_landscape`](_media/API_USAGE_GUIDE.md#tool-generate_political_landscape) | Parliament-wide political landscape | dateFrom, dateTo | Landscape overview |
+| [`network_analysis`](_media/API_USAGE_GUIDE.md#tool-network_analysis) | MEP relationship network via committee co-membership | mepId, analysisType, depth | Network map with centrality scores |
+| [`sentiment_tracker`](_media/API_USAGE_GUIDE.md#tool-sentiment_tracker) | Political group institutional-positioning scores | groupId, timeframe | Positioning scores & polarization index |
+| [`early_warning_system`](_media/API_USAGE_GUIDE.md#tool-early_warning_system) | Detect emerging political shifts & coalition fractures | sensitivity, focusArea | Warnings with severity levels & stability score |
+| [`comparative_intelligence`](_media/API_USAGE_GUIDE.md#tool-comparative_intelligence) | Cross-reference 2–10 MEP activities across dimensions | mepIds (required), dimensions | Ranked profiles, correlation matrix, cluster analysis |
 
 📖 **[Complete TypeDoc API documentation →](https://hack23.github.io/European-Parliament-MCP-Server/api/)** · **[Markdown API docs →](https://hack23.github.io/European-Parliament-MCP-Server/api-markdown/)**
 
@@ -605,7 +671,7 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 
 | Country | Server | Data Source | Coverage |
 |---------|--------|-------------|----------|
-| 🇪🇺 **European Union** | [**European Parliament MCP Server**](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions — **20 OSINT tools** |
+| 🇪🇺 **European Union** | [**European Parliament MCP Server**](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions — **46 tools** (15 OSINT) |
 | 🇺🇸 **United States** | [Congress.gov API MCP Server](https://github.com/bsmi021/mcp-congress_gov_server) | congress.gov | Bills, members, votes, committees (TypeScript, v3 API) |
 | 🇺🇸 **United States** | [CongressMCP](https://github.com/amurshak/congressMCP) | congress.gov | Real-time Congress data — bills, votes, members |
 | 🇺🇸 **United States** | [Congress.gov MCP](https://github.com/AshwinSundar/congress_gov_mcp) | congress.gov | Unofficial Congress.gov API access |
@@ -667,9 +733,9 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 | Attendance tracking | ✅ Trend detection + engagement scoring | ❌ | ❌ | ❌ |
 | GDPR compliance | ✅ Privacy-first design | N/A | N/A | ✅ |
 | MCP prompts & resources | ✅ 7 prompts + 9 resources | ❌ | ❌ | ❌ |
-| OSINT tool count | **39 tools** | ~5 tools | ~5 tools | ~4 tools |
+| Tool count | **46 tools** | ~5 tools | ~5 tools | ~4 tools |
 
-> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **39 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, and political landscape generation. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
+> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **46 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, cross-tool intelligence correlation, and political landscape generation. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
 
 ---
 
@@ -685,7 +751,7 @@ All [European Parliament Open Data API v2](https://data.europarl.europa.eu/en/de
 | **MEP Documents** | `/meps-declarations`, `/meps-declarations/{id}` | `get_mep_declarations` |
 | **Corporate Bodies** | `/corporate-bodies`, `/corporate-bodies/{id}`, `/corporate-bodies/show-current` | `get_committee_info` |
 | **Events** | `/events`, `/events/{id}` | `get_events` |
-| **Meetings** | `/meetings`, `/meetings/{id}`, `/meetings/{id}/activities`, `/meetings/{id}/decisions`, `/meetings/{id}/foreseen-activities`, `/meetings/{id}/vote-results` | `get_plenary_sessions`, `get_meeting_activities`, `get_meeting_decisions`, `get_meeting_foreseen_activities`, `get_voting_records` |
+| **Meetings** | `/meetings`, `/meetings/{id}`, `/meetings/{id}/activities`, `/meetings/{id}/decisions`, `/meetings/{id}/foreseen-activities`, `/meetings/{id}/vote-results`, `/meetings/{id}/plenary-session-documents`, `/meetings/{id}/plenary-session-document-items` | `get_plenary_sessions`, `get_meeting_activities`, `get_meeting_decisions`, `get_meeting_foreseen_activities`, `get_voting_records`, `get_meeting_plenary_session_documents`, `get_meeting_plenary_session_document_items` |
 | **Speeches** | `/speeches`, `/speeches/{id}` | `get_speeches` |
 | **Procedures** | `/procedures`, `/procedures/{id}`, `/procedures/{id}/events` | `get_procedures`, `get_procedure_events` |
 | **Documents** | `/documents`, `/documents/{id}`, `/adopted-texts`, `/adopted-texts/{id}`, `/committee-documents`, `/committee-documents/{id}`, `/plenary-documents`, `/plenary-documents/{id}`, `/plenary-session-documents`, `/plenary-session-documents/{id}`, `/plenary-session-documents-items` | `search_documents`, `get_adopted_texts`, `get_committee_documents`, `get_plenary_documents`, `get_plenary_session_documents`, `get_plenary_session_document_items` |
@@ -816,7 +882,7 @@ European-Parliament-MCP-Server/
 #### 📦 Deployment & Operations
 
 - **[Deployment Guide](_media/DEPLOYMENT_GUIDE.md)** - Production deployment instructions
-- **[Troubleshooting Guide](./TROUBLESHOOTING.md)** - Common issues and solutions
+- **[Troubleshooting Guide](#troubleshooting)** - Common issues and solutions
 - **[NPM Publishing Guide](./NPM_PUBLISHING.md)** - Package publishing workflow
 
 ### Testing
@@ -841,7 +907,7 @@ npm run test:coverage
 npm run test:watch
 ```
 
-**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, all 39 MCP tools are tested against the real European Parliament API endpoints. All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](_media/INTEGRATION_TESTING.md) for the complete guide.
+**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, all 46 MCP tools are tested against the real European Parliament API endpoints. All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](_media/INTEGRATION_TESTING.md) for the complete guide.
 
 ### Code Quality
 
@@ -861,6 +927,104 @@ npm audit
 # License compliance
 npm run test:licenses
 ```
+
+---
+
+## 🛠️ Troubleshooting
+
+### API Rate Limits
+
+**Symptom:** Requests return `429 Too Many Requests` or slow down unexpectedly.
+
+The European Parliament Open Data API enforces rate limits. The MCP server
+automatically applies a token-bucket rate limiter (100 requests per 15 minutes).
+
+**Solutions:**
+```bash
+# Reduce concurrency — don't call multiple tools in parallel bursts
+# Use the built-in cache — repeated identical requests are served from LRU cache
+# Add a delay between bulk operations:
+# e.g., call get_meps, wait 1 s, then call get_mep_details
+
+# Check current cache stats (if using programmatic access):
+const stats = epClient.getCacheStats();
+console.log(`Cache hit rate: ${stats.hitRate}%`);
+```
+
+### Connectivity Issues
+
+**Symptom:** `ECONNREFUSED`, `ETIMEDOUT`, or `Network error` from tools.
+
+**Solutions:**
+1. Verify EP API reachability: `curl https://data.europarl.europa.eu/api/v2/meps?limit=1`
+2. Check firewall / proxy settings — the server connects outbound to `data.europarl.europa.eu:443`
+3. Enable retry (default: on) — the client retries transient failures with exponential backoff
+4. Review API status at https://data.europarl.europa.eu/en/developer-corner
+
+### Installation Problems
+
+**Symptom:** `npm install` fails, or `node dist/index.js` throws import errors.
+
+**Solutions:**
+```bash
+# Ensure Node.js 24+ is installed
+node --version   # Must be >= 24.0.0
+
+# Clear npm cache and reinstall
+npm cache clean --force
+rm -rf node_modules package-lock.json
+npm install
+
+# Rebuild TypeScript output
+npm run build
+
+# Verify the package starts correctly
+node dist/index.js --version
+```
+
+**Symptom:** MCP client shows "server not found" or no tools listed.
+
+**Solutions:**
+- Confirm the `command` path in your MCP client config points to the correct binary
+- For `npx`: ensure `european-parliament-mcp-server` is in your npm registry
+- For `node`: use the absolute path to `dist/index.js`
+- Check MCP client logs — most clients (Claude Desktop, VS Code) log connection errors
+
+### Integration Test Failures
+
+**Symptom:** Integration tests fail with `EP_INTEGRATION_TESTS must be set`.
+
+Integration tests are disabled by default to respect API rate limits.
+
+```bash
+# Enable integration tests explicitly:
+EP_INTEGRATION_TESTS=true npm run test:integration
+
+# Capture fresh fixtures for offline testing:
+EP_INTEGRATION_TESTS=true EP_SAVE_FIXTURES=true npm run test:integration
+```
+
+### TypeScript / Build Errors
+
+**Symptom:** `tsc` reports type errors after pulling latest changes.
+
+```bash
+# Regenerate all types
+npm run type-check
+
+# Check for mismatched Node types
+npm install  # updates @types/node
+
+# Ensure tsconfig is correct
+cat tsconfig.json
+```
+
+### Getting Help
+
+- 📋 [Open an Issue](https://github.com/Hack23/European-Parliament-MCP-Server/issues)
+- 💬 [Start a Discussion](https://github.com/Hack23/European-Parliament-MCP-Server/discussions)
+- 📖 [Full Troubleshooting Guide](#troubleshooting)
+- 🤖 [Ask DeepWiki](https://deepwiki.com/Hack23/European-Parliament-MCP-Server)
 
 ---
 

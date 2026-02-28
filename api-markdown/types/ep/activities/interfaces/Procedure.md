@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: Procedure
 
-Defined in: [types/ep/activities.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L87)
+Defined in: [types/ep/activities.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L87)
 
 European Parliament Legislative Procedure.
 
@@ -39,7 +39,7 @@ https://data.europarl.europa.eu/api/v2/procedures
 
 > **dateInitiated**: `string`
 
-Defined in: [types/ep/activities.ts:103](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L103)
+Defined in: [types/ep/activities.ts:103](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L103)
 
 Date the procedure was initiated.
 
@@ -55,7 +55,7 @@ Date the procedure was initiated.
 
 > **dateLastActivity**: `string`
 
-Defined in: [types/ep/activities.ts:105](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L105)
+Defined in: [types/ep/activities.ts:105](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L105)
 
 Date of latest activity.
 
@@ -71,7 +71,7 @@ Date of latest activity.
 
 > **documents**: `string`[]
 
-Defined in: [types/ep/activities.ts:115](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L115)
+Defined in: [types/ep/activities.ts:115](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L115)
 
 Associated documents.
 
@@ -81,7 +81,7 @@ Associated documents.
 
 > **id**: `string`
 
-Defined in: [types/ep/activities.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L89)
+Defined in: [types/ep/activities.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L89)
 
 Unique procedure identifier.
 
@@ -97,7 +97,7 @@ Unique procedure identifier.
 
 > **rapporteur**: `string`
 
-Defined in: [types/ep/activities.ts:113](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L113)
+Defined in: [types/ep/activities.ts:113](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L113)
 
 Rapporteur name (if assigned).
 
@@ -117,7 +117,7 @@ Personal data - MEP name requires audit logging per ISMS AU-002
 
 > **reference**: `string`
 
-Defined in: [types/ep/activities.ts:93](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L93)
+Defined in: [types/ep/activities.ts:93](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L93)
 
 Procedure reference number.
 
@@ -133,7 +133,7 @@ Procedure reference number.
 
 > **responsibleCommittee**: `string`
 
-Defined in: [types/ep/activities.ts:107](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L107)
+Defined in: [types/ep/activities.ts:107](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L107)
 
 Responsible committee.
 
@@ -149,7 +149,7 @@ Responsible committee.
 
 > **stage**: `string`
 
-Defined in: [types/ep/activities.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L99)
+Defined in: [types/ep/activities.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L99)
 
 Current stage of the procedure.
 
@@ -165,7 +165,7 @@ Current stage of the procedure.
 
 > **status**: `string`
 
-Defined in: [types/ep/activities.ts:101](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L101)
+Defined in: [types/ep/activities.ts:101](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L101)
 
 Current status.
 
@@ -181,7 +181,7 @@ Current status.
 
 > **subjectMatter**: `string`
 
-Defined in: [types/ep/activities.ts:97](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L97)
+Defined in: [types/ep/activities.ts:97](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L97)
 
 Subject matter or policy domain.
 
@@ -197,7 +197,7 @@ Subject matter or policy domain.
 
 > **title**: `string`
 
-Defined in: [types/ep/activities.ts:91](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L91)
+Defined in: [types/ep/activities.ts:91](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L91)
 
 Procedure title.
 
@@ -213,7 +213,7 @@ Procedure title.
 
 > **type**: `string`
 
-Defined in: [types/ep/activities.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L95)
+Defined in: [types/ep/activities.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L95)
 
 Type of legislative procedure.
 

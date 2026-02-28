@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **isGroupID**(`value`): `value is GroupID`
 
-Defined in: [types/branded.ts:190](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/branded.ts#L190)
+Defined in: [types/branded.ts:190](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L190)
 
 Type guard to check if a string is a valid Political Group ID
 

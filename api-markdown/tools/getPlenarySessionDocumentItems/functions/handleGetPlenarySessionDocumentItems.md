@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,9 +8,12 @@
 
 > **handleGetPlenarySessionDocumentItems**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getPlenarySessionDocumentItems.ts:28](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/getPlenarySessionDocumentItems.ts#L28)
+Defined in: [tools/getPlenarySessionDocumentItems.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenarySessionDocumentItems.ts#L46)
 
-Get plenary session document items tool handler.
+Handles the get_plenary_session_document_items MCP tool request.
+
+Retrieves individual items within European Parliament plenary session documents,
+enabling granular access to specific agenda or document entries within a session.
 
 ## Parameters
 
@@ -18,10 +21,37 @@ Get plenary session document items tool handler.
 
 `unknown`
 
-Tool arguments
+Raw tool arguments, validated against [GetPlenarySessionDocumentItemsSchema](../../../schemas/ep/document/variables/GetPlenarySessionDocumentItemsSchema.md)
 
 ## Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-MCP tool result with plenary session document items
+MCP tool result containing a paginated list of plenary session document items
+
+## Throws
+
+- If `args` fails schema validation (e.g., missing required fields or invalid format)
+- If the European Parliament API is unreachable or returns an error response
+
+## Example
+
+```typescript
+const result = await handleGetPlenarySessionDocumentItems({ limit: 20, offset: 0 });
+// Returns up to 20 plenary session document items from the EP Open Data Portal
+```
+
+## Security
+
+- Input is validated with Zod before any API call.
+- Personal data in responses is minimised per GDPR Article 5(1)(c).
+- All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+
+## Since
+
+0.8.0
+
+## See
+
+ - [getPlenarySessionDocumentItemsToolMetadata](../variables/getPlenarySessionDocumentItemsToolMetadata.md) for MCP schema registration
+ - handleGetAdoptedTexts for retrieving finalized plenary documents

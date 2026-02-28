@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../README.md)
 
 ***
 
@@ -55,6 +55,12 @@ Re-exports [DEFAULT_EP_API_BASE_URL](baseClient/variables/DEFAULT_EP_API_BASE_UR
 ### DEFAULT\_MAX\_CACHE\_SIZE
 
 Re-exports [DEFAULT_MAX_CACHE_SIZE](baseClient/variables/DEFAULT_MAX_CACHE_SIZE.md)
+
+***
+
+### DEFAULT\_MAX\_RESPONSE\_BYTES
+
+Re-exports [DEFAULT_MAX_RESPONSE_BYTES](baseClient/variables/DEFAULT_MAX_RESPONSE_BYTES.md)
 
 ***
 

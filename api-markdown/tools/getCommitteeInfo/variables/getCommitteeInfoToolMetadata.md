@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getCommitteeInfoToolMetadata**: `object`
 
-Defined in: [tools/getCommitteeInfo.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/getCommitteeInfo.ts#L79)
+Defined in: [tools/getCommitteeInfo.ts:97](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCommitteeInfo.ts#L97)
 
 Tool metadata for MCP registration
 

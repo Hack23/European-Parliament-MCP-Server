@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,11 @@
 
 > **DIToken** = *typeof* [`TOKENS`](../variables/TOKENS.md)\[keyof *typeof* [`TOKENS`](../variables/TOKENS.md)\]
 
-Defined in: [di/tokens.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/di/tokens.ts#L66)
+Defined in: [di/tokens.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/di/tokens.ts#L70)
 
 Union type of all registered DI token values.
 Useful for writing type-safe generic container utilities.
+
+## Since
+
+0.8.0

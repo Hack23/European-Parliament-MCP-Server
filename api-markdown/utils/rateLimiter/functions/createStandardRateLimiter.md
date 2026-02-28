@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,10 +8,33 @@
 
 > **createStandardRateLimiter**(): [`RateLimiter`](../classes/RateLimiter.md)
 
-Defined in: [utils/rateLimiter.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/rateLimiter.ts#L197)
+Defined in: [utils/rateLimiter.ts:300](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L300)
 
-Create a rate limiter with standard configuration for EP API
+Creates a [RateLimiter](../classes/RateLimiter.md) pre-configured for EP API usage.
+
+Default configuration: **100 tokens per minute** — aligned with the
+European Parliament Open Data Portal's recommended fair-use policy.
 
 ## Returns
 
 [`RateLimiter`](../classes/RateLimiter.md)
+
+A new [RateLimiter](../classes/RateLimiter.md) instance with standard EP API settings
+
+## Example
+
+```typescript
+const rateLimiter = createStandardRateLimiter();
+await rateLimiter.removeTokens(1);
+const data = await fetchFromEPAPI('/meps');
+```
+
+## Security
+
+Ensures sustainable OSINT collection rates from the EP API and
+  prevents service disruption. Per ISMS Policy AC-003, rate limiting is a
+  mandatory access control for external API calls.
+
+## Since
+
+0.8.0

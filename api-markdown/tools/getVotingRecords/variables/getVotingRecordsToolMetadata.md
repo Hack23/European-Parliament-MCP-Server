@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getVotingRecordsToolMetadata**: `object`
 
-Defined in: [tools/getVotingRecords.ts:78](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/getVotingRecords.ts#L78)
+Defined in: [tools/getVotingRecords.ts:104](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getVotingRecords.ts#L104)
 
 Tool metadata for MCP registration
 

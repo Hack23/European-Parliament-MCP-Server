@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../README.md)
 
 ***
 
@@ -15,9 +15,14 @@ and tool registry modules.
 
 - [CLIOptions](interfaces/CLIOptions.md)
 - [ToolMetadata](interfaces/ToolMetadata.md)
-- [ToolResult](interfaces/ToolResult.md)
 
 ## Type Aliases
 
 - [ToolCategory](type-aliases/ToolCategory.md)
 - [ToolHandler](type-aliases/ToolHandler.md)
+
+## References
+
+### ToolResult
+
+Re-exports [ToolResult](../../tools/shared/types/interfaces/ToolResult.md)

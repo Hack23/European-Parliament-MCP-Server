@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getParliamentaryQuestionsToolMetadata**: `object`
 
-Defined in: [tools/getParliamentaryQuestions.ts:90](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/tools/getParliamentaryQuestions.ts#L90)
+Defined in: [tools/getParliamentaryQuestions.ts:110](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getParliamentaryQuestions.ts#L110)
 
 Tool metadata for MCP registration
 

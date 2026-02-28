@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **withTimeoutAndAbort**\<`T`\>(`fn`, `timeoutMs`, `errorMessage?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [utils/timeout.ts:149](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/utils/timeout.ts#L149)
+Defined in: [utils/timeout.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L156)
 
 Wraps a promise with a timeout and optional AbortSignal support.
 
@@ -50,6 +50,10 @@ Custom error message (optional)
 
 Promise that resolves/rejects with the operation result or timeout
 
+## Throws
+
+If the operation exceeds `timeoutMs`
+
 ## Example
 
 ```typescript
@@ -60,3 +64,13 @@ await withTimeoutAndAbort(
   'API request timed out'
 );
 ```
+
+## Security
+
+Aborts the underlying operation via `AbortController` when the
+  timeout fires, preventing dangling fetch connections and resource leaks.
+  Per ISMS Policy SC-002, all external network calls must be cancellable.
+
+## Since
+
+0.8.0

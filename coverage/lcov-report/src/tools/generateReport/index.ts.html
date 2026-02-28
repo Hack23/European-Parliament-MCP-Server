@@ -185,7 +185,24 @@
 <a name='L120'></a><a href='#L120'>120</a>
 <a name='L121'></a><a href='#L121'>121</a>
 <a name='L122'></a><a href='#L122'>122</a>
-<a name='L123'></a><a href='#L123'>123</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -224,7 +241,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -276,7 +310,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -334,6 +368,7 @@ import {
   generateLegislationProgressReport
 } from './reportGenerators.js';
 import type { Report, ReportType } from './types.js';
+import type { ToolResult } from '../shared/types.js';
 &nbsp;
 /**
  * Report parameters type inferred from schema
@@ -354,25 +389,41 @@ const reportGenerators: Record&lt;
 };
 &nbsp;
 /**
- * Generate report tool handler
- * Cyclomatic complexity: 3
- * 
- * @param args - Tool arguments
- * @returns MCP tool result with generated report
- * 
+ * Handles the generate_report MCP tool request.
+ *
+ * Generates structured analytical intelligence reports on European Parliament data.
+ * Supports four report types: MEP activity scorecards, committee performance
+ * assessments, voting statistics summaries, and legislation progress reports.
+ * Delegates to a type-keyed generator map for O(1) dispatch.
+ *
+ * @param args - Raw tool arguments, validated against {@link GenerateReportSchema}
+ * @returns MCP tool result containing a structured report with summary, sections,
+ *   statistics, and recommendations appropriate to the requested report type
+ * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ *
  * @example
- * ```json
- * {
- *   "reportType": "MEP_ACTIVITY",
- *   "subjectId": "MEP-124810",
- *   "dateFrom": "2024-01-01",
- *   "dateTo": "2024-12-31"
- * }
+ * ```typescript
+ * const result = await handleGenerateReport({
+ *   reportType: 'MEP_ACTIVITY',
+ *   subjectId: 'MEP-124810',
+ *   dateFrom: '2024-01-01',
+ *   dateTo: '2024-12-31'
+ * });
+ * // Returns MEP activity scorecard with voting discipline, attendance,
+ * // committee contributions, and performance recommendations
  * ```
+ *
+ * @security Input is validated with Zod before any API call.
+ *   Personal data in responses is minimised per GDPR Article 5(1)(c).
+ *   All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link generateReportToolMetadata} for MCP schema registration
+ * @see {@link handleTrackLegislation} for per-procedure legislative progress tracking
  */
 export async function handleGenerateReport(
   args: unknown
-): Promise&lt;{ content: { type: string; text: string }[] }&gt; {
+): Promise&lt;ToolResult&gt; {
   // Validate input
   const params = GenerateReportSchema.parse(args);
   
@@ -436,7 +487,7 @@ export const generateReportToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-26T12:12:44.150Z
+                at 2026-02-28T02:06:37.833Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

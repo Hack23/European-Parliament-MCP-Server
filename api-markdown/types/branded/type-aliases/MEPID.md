@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **MEPID** = [`Brand`](Brand.md)\<`string`, `"MEPID"`\>
 
-Defined in: [types/branded.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/branded.ts#L45)
+Defined in: [types/branded.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L45)
 
 MEP ID - unique identifier for Members of European Parliament
 

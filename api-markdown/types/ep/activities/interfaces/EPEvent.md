@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: EPEvent
 
-Defined in: [types/ep/activities.ts:182](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L182)
+Defined in: [types/ep/activities.ts:182](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L182)
 
 European Parliament Event.
 
@@ -38,7 +38,7 @@ https://data.europarl.europa.eu/api/v2/events
 
 > **date**: `string`
 
-Defined in: [types/ep/activities.ts:188](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L188)
+Defined in: [types/ep/activities.ts:188](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L188)
 
 Event date in ISO 8601 format.
 
@@ -54,7 +54,7 @@ Event date in ISO 8601 format.
 
 > **endDate**: `string`
 
-Defined in: [types/ep/activities.ts:190](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L190)
+Defined in: [types/ep/activities.ts:190](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L190)
 
 Event end date (if multi-day).
 
@@ -70,7 +70,7 @@ Event end date (if multi-day).
 
 > **id**: `string`
 
-Defined in: [types/ep/activities.ts:184](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L184)
+Defined in: [types/ep/activities.ts:184](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L184)
 
 Unique event identifier.
 
@@ -86,7 +86,7 @@ Unique event identifier.
 
 > **location**: `string`
 
-Defined in: [types/ep/activities.ts:194](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L194)
+Defined in: [types/ep/activities.ts:194](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L194)
 
 Event location.
 
@@ -102,7 +102,7 @@ Event location.
 
 > **organizer**: `string`
 
-Defined in: [types/ep/activities.ts:196](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L196)
+Defined in: [types/ep/activities.ts:196](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L196)
 
 Organizing body.
 
@@ -118,7 +118,7 @@ Organizing body.
 
 > **status**: `string`
 
-Defined in: [types/ep/activities.ts:198](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L198)
+Defined in: [types/ep/activities.ts:198](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L198)
 
 Event status.
 
@@ -134,7 +134,7 @@ Event status.
 
 > **title**: `string`
 
-Defined in: [types/ep/activities.ts:186](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L186)
+Defined in: [types/ep/activities.ts:186](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L186)
 
 Event title.
 
@@ -150,7 +150,7 @@ Event title.
 
 > **type**: `string`
 
-Defined in: [types/ep/activities.ts:192](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/activities.ts#L192)
+Defined in: [types/ep/activities.ts:192](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/activities.ts#L192)
 
 Event type classification.
 

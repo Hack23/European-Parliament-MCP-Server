@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **ProcedureID** = [`Brand`](../../../branded/type-aliases/Brand.md)\<`string`, `"ProcedureID"`\>
 
-Defined in: [types/ep/branded.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/types/ep/branded.ts#L53)
+Defined in: [types/ep/branded.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L53)
 
 Procedure ID – identifies a legislative procedure by its EP API **process-id**.
 

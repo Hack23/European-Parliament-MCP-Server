@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleReadResource**(`uri`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ResourceReadResult`](../interfaces/ResourceReadResult.md)\>
 
-Defined in: [resources/index.ts:489](https://github.com/Hack23/European-Parliament-MCP-Server/blob/006b62840b740489118388cc87b431ee92a42c24/src/resources/index.ts#L489)
+Defined in: [resources/index.ts:489](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/resources/index.ts#L489)
 
 Handle ReadResource request
 
