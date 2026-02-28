@@ -6,7 +6,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetMEPs } from './getMEPs.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 import { setupToolTest } from '../../tests/helpers/mockFactory.js';
-import { expectValidMCPResponse, expectValidPaginatedMCPResponse } from '../../tests/helpers/assertions.js';
+import { expectValidMCPResponse, expectValidPaginatedMCPResponse, expectToolError } from '../../tests/helpers/assertions.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
@@ -138,8 +138,7 @@ describe('get_meps Tool', () => {
 
   describe('Error Handling', () => {
     it('should handle invalid input gracefully', async () => {
-      await expect(handleGetMEPs({ country: 123 }))
-        .rejects.toThrow();
+      await expectToolError(() => handleGetMEPs({ country: 123 }));
     });
 
     it('should provide clean error messages', async () => {

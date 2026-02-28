@@ -1,12 +1,13 @@
 /**
  * Centralized Mock Factory for Tool Tests
  *
- * Provides a type-safe `createMockEPClient()` factory with sensible defaults
+ * Provides a type-safe `createStubEPClient()` factory with sensible defaults
  * for all EP client methods, and a `setupToolTest()` convenience helper that
  * registers a `beforeEach(() => vi.clearAllMocks())` in the calling test suite.
  *
- * The factory return type is `Mocked<EuropeanParliamentClient>`, ensuring that
- * mock method names and signatures stay aligned with production code at compile time.
+ * The factory return type is `Mocked<EPClientPublicAPI>` (the public API of
+ * `EuropeanParliamentClient`), ensuring that mock method names and signatures
+ * stay aligned with production code at compile time.
  *
  * ## Usage
  *
@@ -36,10 +37,10 @@
  *
  * ```typescript
  * import { vi } from 'vitest';
- * import { createMockEPClient, setupToolTest } from '../../tests/helpers/mockFactory.js';
+ * import { createStubEPClient, setupToolTest } from '../../tests/helpers/mockFactory.js';
  * import * as epClientModule from '../clients/europeanParliamentClient.js';
  *
- * const client = createMockEPClient();
+ * const client = createStubEPClient();
  *
  * vi.mock('../clients/europeanParliamentClient.js', () => ({ epClient: client }));
  *
@@ -59,14 +60,15 @@ import { vi, beforeEach, type Mocked } from 'vitest';
 import type { EuropeanParliamentClient } from '../../src/clients/europeanParliamentClient.js';
 
 /**
- * Structural type containing only the public API of `EuropeanParliamentClient`.
+ * Structural type containing only the public instance API of `EuropeanParliamentClient`.
  *
- * Using `Pick<EuropeanParliamentClient, keyof EuropeanParliamentClient>` strips
- * private members and the constructor from the class type, producing a plain
- * interface-like type that a plain object literal CAN satisfy. This enables
- * structural type checking in `createMockEPClient` without the double
- * `as unknown as ...` escape hatch, while still coupling the mock to the real
- * client's public surface.
+ * `keyof EuropeanParliamentClient` resolves to the public instance property/method
+ * names of the class, so `Pick<EuropeanParliamentClient, keyof EuropeanParliamentClient>`
+ * is equivalent to extracting only the public instance surface. Because constructors
+ * are not part of the instance type, a plain object literal CAN satisfy this type,
+ * which lets us use `satisfies EPClientPublicAPI` on the mock base and catch any
+ * drift in method names or signatures at compile time — without the `as unknown as`
+ * escape hatch.
  */
 type EPClientPublicAPI = Pick<EuropeanParliamentClient, keyof EuropeanParliamentClient>;
 
@@ -116,7 +118,7 @@ const EMPTY_DOCUMENT = {
  * @param overrides - Partial overrides for specific mock methods.
  * @returns A `Mocked<EPClientPublicAPI>` instance.
  */
-export function createMockEPClient(
+export function createStubEPClient(
   overrides?: Partial<Mocked<EPClientPublicAPI>>
 ): Mocked<EPClientPublicAPI> {
   const base = {
@@ -262,9 +264,6 @@ export function createMockEPClient(
   return { ...base, ...overrides } as Mocked<EPClientPublicAPI>;
 }
 
-/** Type of the mock EP client returned by {@link createMockEPClient}. */
-export type MockEPClient = Mocked<EPClientPublicAPI>;
-
 /**
  * Convenience helper for tool test suites.
  *
@@ -273,12 +272,12 @@ export type MockEPClient = Mocked<EPClientPublicAPI>;
  *
  * Note: `vi.mock()` itself must still be declared at the top of each test file
  * because Vitest hoists `vi.mock()` calls to before any imports. This function
- * only manages test lifecycle hooks; use `createMockEPClient()` separately to
+ * only manages test lifecycle hooks; use `createStubEPClient()` separately to
  * build a typed mock and pass it directly in your `vi.mock()` factory.
  *
  * @example
  * ```typescript
- * vi.mock('../clients/europeanParliamentClient.js', () => ({ epClient: { getMEPs: vi.fn() } }));
+ * vi.mock('../clients/europeanParliamentClient.js', () => ({ epClient: createStubEPClient() }));
  *
  * setupToolTest(); // registers beforeEach(vi.clearAllMocks)
  * ```

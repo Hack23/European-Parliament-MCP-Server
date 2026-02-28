@@ -49,19 +49,23 @@ interface PaginatedResponse<T = unknown> {
 
 /**
  * Asserts that `response` is a valid MCP tool response and returns the parsed
- * JSON payload from the first text content item.
+ * JSON value from the first text content item.
  *
  * Checks:
  * - `response.content` is a non-empty array
  * - `response.content[0].type === 'text'`
  * - `response.content[0].text` is valid JSON
- * - The parsed value is an object
+ *
+ * The return type is `unknown` — the JSON payload may be any valid JSON value
+ * (object, array, string, number, `null`). Callers can narrow the type as
+ * needed, or use {@link expectValidPaginatedMCPResponse} when an object with
+ * `data`/`total`/`limit`/`offset`/`hasMore` is expected.
  *
  * @param response - The raw value returned by a tool handler.
- * @returns The parsed JSON object from the text content.
+ * @returns The parsed JSON value from the text content.
  * @throws If any structural expectation fails.
  */
-export function expectValidMCPResponse(response: unknown): Record<string, unknown> {
+export function expectValidMCPResponse(response: unknown): unknown {
   expect(response).toHaveProperty('content');
   const r = response as MCPToolResponse;
   expect(Array.isArray(r.content)).toBe(true);
@@ -70,9 +74,7 @@ export function expectValidMCPResponse(response: unknown): Record<string, unknow
   expect(typeof r.content[0]?.text).toBe('string');
 
   const parsed: unknown = JSON.parse(r.content[0]!.text!);
-  expect(typeof parsed).toBe('object');
-  expect(parsed).not.toBeNull();
-  return parsed as Record<string, unknown>;
+  return parsed;
 }
 
 /**
@@ -92,7 +94,10 @@ export function expectValidMCPResponse(response: unknown): Record<string, unknow
 export function expectValidPaginatedMCPResponse(
   response: unknown
 ): PaginatedResponse {
-  const parsed = expectValidMCPResponse(response);
+  const rawParsed = expectValidMCPResponse(response);
+  expect(typeof rawParsed).toBe('object');
+  expect(rawParsed).not.toBeNull();
+  const parsed = rawParsed as Record<string, unknown>;
 
   expect(parsed).toHaveProperty('data');
   expect(Array.isArray(parsed['data'])).toBe(true);
