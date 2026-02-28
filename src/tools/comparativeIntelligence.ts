@@ -23,9 +23,10 @@
 
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
-import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
-import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
+import { ToolError } from './shared/errors.js';
+import { handleToolError } from './shared/errorHandler.js';
 
 export const ComparativeIntelligenceSchema = z.object({
   mepIds: z.array(z.number().positive())
@@ -415,11 +416,16 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
 
     return buildToolResponse(result);
   } catch (error) {
-    auditLogger.logError('comparative_intelligence', params as Record<string, unknown>, toErrorMessage(error));
-    return buildErrorResponse(
-      error instanceof Error ? error : new Error(String(error)),
-      'comparative_intelligence'
-    );
+    const toolError = error instanceof ToolError
+      ? error
+      : new ToolError({
+          toolName: 'comparative_intelligence',
+          operation: 'fetchMEPProfiles',
+          message: 'Failed to retrieve MEP profiles for comparison',
+          isRetryable: true,
+          cause: error,
+        });
+    return handleToolError(toolError, 'comparative_intelligence');
   }
 }
 

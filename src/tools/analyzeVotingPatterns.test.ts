@@ -260,7 +260,7 @@ describe('analyze_voting_patterns Tool', () => {
 
       await expect(
         handleAnalyzeVotingPatterns({ mepId: 'MEP-124810' })
-      ).rejects.toThrow('Failed to analyze voting patterns');
+      ).rejects.toThrow('[analyze_voting_patterns] fetchVotingData: Failed to retrieve voting records for analysis');
     });
 
     it('should handle non-existent MEP', async () => {
@@ -270,7 +270,7 @@ describe('analyze_voting_patterns Tool', () => {
 
       await expect(
         handleAnalyzeVotingPatterns({ mepId: 'MEP-INVALID' })
-      ).rejects.toThrow('Failed to analyze voting patterns');
+      ).rejects.toThrow('[analyze_voting_patterns] fetchVotingData: Failed to retrieve voting records for analysis');
     });
   });
 

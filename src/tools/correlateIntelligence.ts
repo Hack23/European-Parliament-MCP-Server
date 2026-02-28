@@ -39,6 +39,7 @@ import { handleEarlyWarningSystem } from './earlyWarningSystem.js';
 import { handleAnalyzeCoalitionDynamics } from './analyzeCoalitionDynamics.js';
 import { handleNetworkAnalysis } from './networkAnalysis.js';
 import { handleComparativeIntelligence } from './comparativeIntelligence.js';
+import { ToolError } from './shared/errors.js';
 
 // ---------------------------------------------------------------------------
 // Internal parsed-result interfaces (subset of each tool's output)
@@ -691,9 +692,13 @@ export async function handleCorrelateIntelligence(
       sourceAttribution: report.sourceAttribution,
     });
   } catch (validationError) {
-    throw new Error(
-      `Report failed OSINT standard output schema validation: ${(validationError as Error).message}`,
-    );
+    throw new ToolError({
+      toolName: 'correlate_intelligence',
+      operation: 'validateOsintOutput',
+      message: 'Report failed OSINT standard output schema validation',
+      isRetryable: false,
+      cause: validationError,
+    });
   }
 
   return buildToolResponse(report);
