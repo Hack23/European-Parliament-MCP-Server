@@ -272,6 +272,9 @@ describe('get_voting_records Tool', () => {
         hasMore: false,
       });
       const result = await handleGetVotingRecords({ topic: 'Climate & Energy Policy' });
+      expect(vi.mocked(epClientModule.epClient.getVotingRecords)).toHaveBeenCalledWith(
+        expect.objectContaining({ topic: 'Climate & Energy Policy' })
+      );
       expect(result).toHaveProperty('content');
     });
 

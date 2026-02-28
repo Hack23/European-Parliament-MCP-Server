@@ -263,6 +263,9 @@ describe('get_meps Tool', () => {
       });
 
       const result = await handleGetMEPs({ limit: 10 });
+      expect(vi.mocked(epClientModule.epClient.getMEPs)).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 10 })
+      );
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         data: unknown[];
         total: number;
@@ -331,6 +334,9 @@ describe('get_meps Tool', () => {
       });
 
       const result = await handleGetMEPs({ group: 'S&D' });
+      expect(vi.mocked(epClientModule.epClient.getMEPs)).toHaveBeenCalledWith(
+        expect.objectContaining({ group: 'S&D' })
+      );
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         data: { politicalGroup: string }[];
       };
