@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { DIContainer } from './container.js';
+import { DIContainer, createDefaultContainer, TOKENS } from './container.js';
+import { MetricsService } from '../services/MetricsService.js';
+import { HealthService } from '../services/HealthService.js';
 
 describe('DIContainer', () => {
   let container: DIContainer;
@@ -152,5 +154,65 @@ describe('DIContainer', () => {
       expect(instance2.id).toBe(2);
       expect(callCount).toBe(2);
     });
+  });
+});
+
+describe('createDefaultContainer', () => {
+  it('should create a container with all standard services registered', () => {
+    const container = createDefaultContainer();
+
+    expect(container.has(TOKENS.RateLimiter)).toBe(true);
+    expect(container.has(TOKENS.MetricsService)).toBe(true);
+    expect(container.has(TOKENS.AuditLogger)).toBe(true);
+    expect(container.has(TOKENS.HealthService)).toBe(true);
+  });
+
+  it('should not have EPClient registered by default', () => {
+    const container = createDefaultContainer();
+    expect(container.has(TOKENS.EPClient)).toBe(false);
+  });
+
+  it('should resolve MetricsService as a MetricsService instance', () => {
+    const container = createDefaultContainer();
+    const metrics = container.resolve<MetricsService>(TOKENS.MetricsService);
+    expect(metrics).toBeInstanceOf(MetricsService);
+  });
+
+  it('should resolve AuditLogger', () => {
+    const container = createDefaultContainer();
+    const logger = container.resolve(TOKENS.AuditLogger);
+    expect(logger).toBeDefined();
+  });
+
+  it('should resolve RateLimiter', () => {
+    const container = createDefaultContainer();
+    const rateLimiter = container.resolve(TOKENS.RateLimiter);
+    expect(rateLimiter).toBeDefined();
+  });
+
+  it('should resolve HealthService as a HealthService instance', () => {
+    const container = createDefaultContainer();
+    const health = container.resolve<HealthService>(TOKENS.HealthService);
+    expect(health).toBeInstanceOf(HealthService);
+  });
+
+  it('should return the same singleton instance on repeated resolution', () => {
+    const container = createDefaultContainer();
+    const metrics1 = container.resolve<MetricsService>(TOKENS.MetricsService);
+    const metrics2 = container.resolve<MetricsService>(TOKENS.MetricsService);
+    expect(metrics1).toBe(metrics2);
+  });
+
+  it('HealthService should have working checkHealth method', () => {
+    const container = createDefaultContainer();
+    const health = container.resolve<HealthService>(TOKENS.HealthService);
+    const result = health.checkHealth();
+    expect(result).toBeDefined();
+    expect(typeof result.status).toBe('string');
+  });
+
+  it('should return a DIContainer instance', () => {
+    const container = createDefaultContainer();
+    expect(container).toBeInstanceOf(DIContainer);
   });
 });

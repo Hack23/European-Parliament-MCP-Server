@@ -274,6 +274,52 @@ describe('analyze_voting_patterns Tool', () => {
     });
   });
 
+  describe('Confidence level branches (MEDIUM / LOW)', () => {
+    it('should return MEDIUM confidence for totalVotes between 101 and 500', async () => {
+      vi.mocked(epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-124810',
+        name: 'John Doe',
+        country: 'SE',
+        politicalGroup: 'EPP',
+        active: true,
+        committees: [],
+        votingStatistics: {
+          totalVotes: 200,
+          votesFor: 140,
+          votesAgainst: 40,
+          abstentions: 20,
+          attendanceRate: 80.0
+        }
+      });
+
+      const result = await handleAnalyzeVotingPatterns({ mepId: 'MEP-124810' });
+      const parsed = JSON.parse(result.content[0].text) as { confidenceLevel: string };
+      expect(parsed.confidenceLevel).toBe('MEDIUM');
+    });
+
+    it('should return LOW confidence (via computeConfidence) for totalVotes ≤ 100', async () => {
+      vi.mocked(epClient.getMEPDetails).mockResolvedValue({
+        id: 'MEP-124810',
+        name: 'John Doe',
+        country: 'SE',
+        politicalGroup: 'EPP',
+        active: true,
+        committees: [],
+        votingStatistics: {
+          totalVotes: 50,
+          votesFor: 30,
+          votesAgainst: 15,
+          abstentions: 5,
+          attendanceRate: 60.0
+        }
+      });
+
+      const result = await handleAnalyzeVotingPatterns({ mepId: 'MEP-124810' });
+      const parsed = JSON.parse(result.content[0].text) as { confidenceLevel: string };
+      expect(parsed.confidenceLevel).toBe('LOW');
+    });
+  });
+
   describe('Tool Metadata', () => {
     it('should have correct tool name', () => {
       expect(analyzeVotingPatternsToolMetadata.name).toBe('analyze_voting_patterns');

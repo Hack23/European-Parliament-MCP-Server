@@ -5,7 +5,8 @@ import { epClient } from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getParliamentaryQuestions: vi.fn()
+    getParliamentaryQuestions: vi.fn(),
+    getParliamentaryQuestionById: vi.fn()
   }
 }));
 
@@ -414,6 +415,55 @@ describe('get_parliamentary_questions Tool', () => {
       expect(data.data[0]?.type).toBe('ORAL');
       expect(data.data[0]?.status).toBe('PENDING');
       expect(data.total).toBe(1);
+    });
+  });
+
+  describe('docId lookup branch', () => {
+    it('should call getParliamentaryQuestionById when docId is provided', async () => {
+      const mockQuestion = {
+        id: 'E-001/2024',
+        title: 'Question on AI',
+        date: '2024-01-15',
+        author: 'MEP-124810',
+        type: 'E',
+        answer: 'Answer text'
+      };
+      vi.mocked(epClient.getParliamentaryQuestionById).mockResolvedValue(mockQuestion);
+
+      const result = await handleGetParliamentaryQuestions({ docId: 'E-001/2024' });
+      expect(result.content[0].type).toBe('text');
+      const parsed = JSON.parse(result.content[0].text) as { id: string };
+      expect(parsed.id).toBe('E-001/2024');
+    });
+  });
+
+  describe('Optional filter params branches', () => {
+    const mockQuestions = {
+      data: [{
+        id: 'Q-001', type: 'WRITTEN', author: 'MEP-124810',
+        topic: 'Climate Policy', status: 'ANSWERED',
+        questionText: 'Question?', date: '2024-01-15'
+      }],
+      total: 1, limit: 50, offset: 0, hasMore: false
+    };
+
+    it('should pass author parameter to API', async () => {
+      vi.mocked(epClient.getParliamentaryQuestions).mockResolvedValue(mockQuestions);
+      await handleGetParliamentaryQuestions({ author: 'MEP-124810' });
+      const callArgs = vi.mocked(epClient.getParliamentaryQuestions).mock.calls[0]?.[0];
+      expect(callArgs).toMatchObject({ author: 'MEP-124810' });
+    });
+
+    it('should pass topic parameter to API', async () => {
+      vi.mocked(epClient.getParliamentaryQuestions).mockResolvedValue(mockQuestions);
+      await handleGetParliamentaryQuestions({ topic: 'Climate' });
+      const callArgs = vi.mocked(epClient.getParliamentaryQuestions).mock.calls[0]?.[0];
+      expect(callArgs).toMatchObject({ topic: 'Climate' });
+    });
+
+    it('should use "Unknown error" when thrown value is not an Error instance', async () => {
+      vi.mocked(epClient.getParliamentaryQuestions).mockRejectedValueOnce({ code: 500 });
+      await expect(handleGetParliamentaryQuestions({})).rejects.toThrow('Unknown error');
     });
   });
 });
