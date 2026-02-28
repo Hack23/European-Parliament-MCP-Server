@@ -22,9 +22,6 @@ import { withRetry, withTimeoutAndAbort, TimeoutError } from '../../utils/timeou
 import { performanceMonitor } from '../../utils/performance.js';
 import { DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API_URL, USER_AGENT } from '../../config.js';
 
-// ─── Package version (used in User-Agent header) ──────────────────────────────
-
-
 // ─── URL Validation (SSRF prevention) ────────────────────────────────────────
 
 /** Exact hostnames that must never be used as API endpoints. */
@@ -91,7 +88,9 @@ export function validateApiUrl(url: string, label = 'EP_API_URL'): string {
   // for IPv6 addresses (e.g. new URL('https://[::1]/').hostname === '[::1]').
   // Strip them before pattern matching so both IPv4 and IPv6 patterns are
   // applied to the bare address string without brackets.
-  const rawHost = parsed.hostname;
+  // Also strip a single trailing dot so the FQDN form "localhost." is treated
+  // identically to "localhost" (both resolve to loopback).
+  const rawHost = parsed.hostname.replace(/\.$/, '');
   const host = rawHost.startsWith('[') && rawHost.endsWith(']')
     ? rawHost.slice(1, -1)
     : rawHost;

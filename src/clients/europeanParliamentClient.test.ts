@@ -4597,6 +4597,13 @@ describe('EuropeanParliamentClient', () => {
       );
     });
 
+    it('should reject a URL pointing to localhost. (trailing-dot FQDN)', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://localhost./api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
     it('should reject a URL pointing to 127.0.0.1', async () => {
       const { validateApiUrl } = await import('./europeanParliamentClient.js');
       expect(() => validateApiUrl('https://127.0.0.1/api/')).toThrow(
