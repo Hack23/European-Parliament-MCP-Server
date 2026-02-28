@@ -78,8 +78,19 @@ export class RateLimiter {
   private lastRefill: number;
 
   constructor(options: RateLimiterOptions) {
+    if (!Number.isFinite(options.tokensPerInterval) || options.tokensPerInterval <= 0) {
+      throw new Error(
+        `RateLimiter: tokensPerInterval must be a finite positive number, got ${String(options.tokensPerInterval)}`
+      );
+    }
     this.tokensPerInterval = options.tokensPerInterval;
-    this.tokens = options.initialTokens ?? options.tokensPerInterval;
+    const initialTokens = options.initialTokens ?? options.tokensPerInterval;
+    if (!Number.isFinite(initialTokens) || initialTokens < 0) {
+      throw new Error(
+        `RateLimiter: initialTokens must be a finite non-negative number, got ${String(initialTokens)}`
+      );
+    }
+    this.tokens = initialTokens;
     this.lastRefill = Date.now();
     
     // Convert interval to milliseconds
@@ -168,7 +179,8 @@ export class RateLimiter {
     }
 
     // Validate timeoutMs: coerce invalid (NaN/Infinity/negative) to 0 so the
-    // call never blocks and always returns allowed:false immediately
+    // call never blocks and either succeeds immediately if enough tokens are
+    // available or returns allowed:false immediately if not
     const rawTimeoutMs = options?.timeoutMs;
     const timeoutMs = RateLimiter.resolveTimeout(rawTimeoutMs);
 

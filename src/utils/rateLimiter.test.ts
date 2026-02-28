@@ -21,12 +21,14 @@ describe('RateLimiter', () => {
     });
 
     it('should return allowed:false when rate limit exceeded and timeout is 0', async () => {
+      vi.useFakeTimers();
+
       const limiter = new RateLimiter({
         tokensPerInterval: 5,
         interval: 'second'
       });
 
-      // Use up all tokens
+      // Use up all tokens (fake timers freeze Date.now(), preventing accidental refills)
       for (let i = 0; i < 5; i++) {
         await limiter.removeTokens(1);
       }
@@ -36,6 +38,8 @@ describe('RateLimiter', () => {
       expect(result.allowed).toBe(false);
       expect(result.retryAfterMs).toBeGreaterThan(0);
       expect(result.remainingTokens).toBe(0);
+
+      vi.useRealTimers();
     });
 
     it('should refill tokens over time', async () => {
@@ -179,6 +183,38 @@ describe('RateLimiter', () => {
       const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
       const result = await limiter.removeTokens(1, { timeoutMs: -100 });
       expect(result.allowed).toBe(false);
+    });
+  });
+
+  describe('constructor validation', () => {
+    it('should throw when tokensPerInterval is 0', () => {
+      expect(() => new RateLimiter({ tokensPerInterval: 0, interval: 'second' }))
+        .toThrow(/tokensPerInterval must be a finite positive number/);
+    });
+
+    it('should throw when tokensPerInterval is negative', () => {
+      expect(() => new RateLimiter({ tokensPerInterval: -5, interval: 'second' }))
+        .toThrow(/tokensPerInterval must be a finite positive number/);
+    });
+
+    it('should throw when tokensPerInterval is NaN', () => {
+      expect(() => new RateLimiter({ tokensPerInterval: NaN, interval: 'second' }))
+        .toThrow(/tokensPerInterval must be a finite positive number/);
+    });
+
+    it('should throw when initialTokens is negative', () => {
+      expect(() => new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: -1 }))
+        .toThrow(/initialTokens must be a finite non-negative number/);
+    });
+
+    it('should throw when initialTokens is NaN', () => {
+      expect(() => new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: NaN }))
+        .toThrow(/initialTokens must be a finite non-negative number/);
+    });
+
+    it('should allow initialTokens of 0', () => {
+      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
+      expect(limiter.getAvailableTokens()).toBe(0);
     });
   });
 
