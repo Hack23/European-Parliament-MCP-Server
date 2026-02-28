@@ -293,7 +293,7 @@ describe('BaseEPClient.get() caching', () => {
     const payload = { data: [{ id: 'mep/1' }], '@context': [] };
     mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
 
-    const result = await client.testGet<typeof payload>('/meps');
+    const result = await client.testGet<typeof payload>('meps');
     expect(result.data).toHaveLength(1);
     expect(result.data[0].id).toBe('mep/1');
     expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -317,8 +317,8 @@ describe('BaseEPClient.get() caching', () => {
       .mockResolvedValueOnce(makeSuccessResponse(payload1))
       .mockResolvedValueOnce(makeSuccessResponse(payload2));
 
-    const r1 = await client.testGet<typeof payload1>('/meps');
-    const r2 = await client.testGet<typeof payload2>('/plenary-sessions');
+    const r1 = await client.testGet<typeof payload1>('meps');
+    const r2 = await client.testGet<typeof payload2>('plenary-sessions');
 
     expect(r1.data[0].id).toBe('mep/1');
     expect(r2.data[0].id).toBe('session/1');
@@ -332,8 +332,8 @@ describe('BaseEPClient.get() caching', () => {
       .mockResolvedValueOnce(makeSuccessResponse(payload1))
       .mockResolvedValueOnce(makeSuccessResponse(payload2));
 
-    const r1 = await client.testGet<typeof payload1>('/meps', { country: 'DE' });
-    const r2 = await client.testGet<typeof payload2>('/meps', { country: 'FR' });
+    const r1 = await client.testGet<typeof payload1>('meps', { country: 'DE' });
+    const r2 = await client.testGet<typeof payload2>('meps', { country: 'FR' });
 
     expect(r1.data[0].id).toBe('mep/DE');
     expect(r2.data[0].id).toBe('mep/FR');
