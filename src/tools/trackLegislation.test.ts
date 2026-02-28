@@ -200,8 +200,13 @@ describe('track_legislation Tool', () => {
 
     it('should define procedureId constraints', () => {
       const schema = trackLegislationToolMetadata.inputSchema;
-      const procedureId = schema.properties?.procedureId;
-      expect(procedureId).toEqual(expect.any(Object));
+      const procedureId = schema.properties?.procedureId as Record<string, unknown> | undefined;
+      expect(procedureId).not.toBeNull();
+      expect(typeof procedureId).toBe('object');
+      expect(Array.isArray(procedureId)).toBe(false);
+      expect(procedureId).toHaveProperty('type', 'string');
+      expect(typeof (procedureId as { minLength?: unknown }).minLength).toBe('number');
+      expect(typeof (procedureId as { maxLength?: unknown }).maxLength).toBe('number');
     });
   });
 

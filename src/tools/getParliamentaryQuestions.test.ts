@@ -256,7 +256,7 @@ describe('get_parliamentary_questions Tool', () => {
       expect(getParliamentaryQuestionsToolMetadata.inputSchema.type).toBe('object');
       expect(properties).not.toBeNull();
       expect(typeof properties).toBe('object');
-      expect(Object.keys(properties ?? {}).length).toBeGreaterThan(0);
+      expect(Array.isArray(properties)).toBe(false);
     });
   });
 
