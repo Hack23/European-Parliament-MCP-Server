@@ -80,9 +80,13 @@ describe('get_homonym_meps Tool', () => {
       expectValidMCPResponse(result);
     });
 
-    it('should return valid JSON in text field', async () => {
+    it('should include mock MEP data with id and politicalGroup in payload', async () => {
       const result = await handleGetHomonymMEPs({});
-      expectValidMCPResponse(result);
+      const parsed = expectValidPaginatedMCPResponse(result);
+      const first = parsed.data[0] as Record<string, unknown> | undefined;
+      expect(first).toBeDefined();
+      expect(first?.['id']).toBe('person/1');
+      expect(first?.['politicalGroup']).toBe('S&D');
     });
 
     it('should return paginated response structure', async () => {

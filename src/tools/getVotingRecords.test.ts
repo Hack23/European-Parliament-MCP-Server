@@ -98,9 +98,14 @@ describe('get_voting_records Tool', () => {
       expectValidMCPResponse(result);
     });
 
-    it('should return valid JSON in text field', async () => {
+    it('should include mock vote data with id, topic and result in payload', async () => {
       const result = await handleGetVotingRecords({});
-      expectValidMCPResponse(result);
+      const parsed = expectValidPaginatedMCPResponse(result);
+      const first = parsed.data[0] as Record<string, unknown> | undefined;
+      expect(first).toBeDefined();
+      expect(first?.['id']).toBe('VOTE-2024-001');
+      expect(first?.['topic']).toBe('Resolution on climate change');
+      expect(first?.['result']).toBe('ADOPTED');
     });
 
     it('should return paginated response structure', async () => {

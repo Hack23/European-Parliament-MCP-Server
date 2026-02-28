@@ -84,9 +84,13 @@ describe('get_adopted_texts Tool', () => {
       expectValidMCPResponse(result);
     });
 
-    it('should return valid JSON in text field', async () => {
+    it('should include mock adopted text with id and title in payload', async () => {
       const result = await handleGetAdoptedTexts({});
-      expectValidMCPResponse(result);
+      const parsed = expectValidPaginatedMCPResponse(result);
+      const first = parsed.data[0] as Record<string, unknown> | undefined;
+      expect(first).toBeDefined();
+      expect(first?.['id']).toBe('TA-9-2024-0001');
+      expect(first?.['title']).toBe('European Artificial Intelligence Act');
     });
 
     it('should return paginated response with adopted text data', async () => {

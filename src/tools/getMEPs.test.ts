@@ -101,9 +101,13 @@ describe('get_meps Tool', () => {
       expectValidMCPResponse(result);
     });
 
-    it('should return valid JSON in text field', async () => {
+    it('should include mock MEP data with id and country in payload', async () => {
       const result = await handleGetMEPs({ limit: 10 });
-      expectValidMCPResponse(result);
+      const parsed = expectValidPaginatedMCPResponse(result);
+      const first = parsed.data[0] as Record<string, unknown> | undefined;
+      expect(first).toBeDefined();
+      expect(first?.['id']).toBe('MEP-1');
+      expect(first?.['country']).toBe('SE');
     });
 
     it('should return paginated response structure', async () => {

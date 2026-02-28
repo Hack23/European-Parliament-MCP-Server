@@ -58,6 +58,18 @@
 import { vi, beforeEach, type Mocked } from 'vitest';
 import type { EuropeanParliamentClient } from '../../src/clients/europeanParliamentClient.js';
 
+/**
+ * Structural type containing only the public API of `EuropeanParliamentClient`.
+ *
+ * Using `Pick<EuropeanParliamentClient, keyof EuropeanParliamentClient>` strips
+ * private members and the constructor from the class type, producing a plain
+ * interface-like type that a plain object literal CAN satisfy. This enables
+ * structural type checking in `createMockEPClient` without the double
+ * `as unknown as ...` escape hatch, while still coupling the mock to the real
+ * client's public surface.
+ */
+type EPClientPublicAPI = Pick<EuropeanParliamentClient, keyof EuropeanParliamentClient>;
+
 /** Default empty paginated response used across all list endpoints. */
 const DEFAULT_PAGINATED = { data: [], total: 0, limit: 50, offset: 0, hasMore: false };
 
@@ -89,9 +101,12 @@ const EMPTY_DOCUMENT = {
 /**
  * Creates a fully typed mock of `epClient` with sensible default return values.
  *
- * The return type is `Mocked<EuropeanParliamentClient>`, which keeps method names
- * and signatures coupled to production code — TypeScript will flag any method that
- * no longer exists on the real client. Every list endpoint defaults to an empty
+ * The factory return type is `Mocked<EPClientPublicAPI>` (where
+ * `EPClientPublicAPI = Pick<EuropeanParliamentClient, keyof EuropeanParliamentClient>`),
+ * which keeps method names and signatures coupled to production code — TypeScript
+ * will flag any method that no longer exists on the real client. Using `Pick`
+ * instead of the class directly strips private members and avoids the need for
+ * an `as unknown as ...` escape hatch. Every list endpoint defaults to an empty
  * paginated response; every single-item endpoint returns a minimal valid object
  * matching the real return type (never `null`).
  *
@@ -99,12 +114,12 @@ const EMPTY_DOCUMENT = {
  * `.mockRejectedValue()`.
  *
  * @param overrides - Partial overrides for specific mock methods.
- * @returns A `Mocked<EuropeanParliamentClient>` instance.
+ * @returns A `Mocked<EPClientPublicAPI>` instance.
  */
 export function createMockEPClient(
-  overrides?: Partial<Mocked<EuropeanParliamentClient>>
-): Mocked<EuropeanParliamentClient> {
-  return {
+  overrides?: Partial<Mocked<EPClientPublicAPI>>
+): Mocked<EPClientPublicAPI> {
+  const base = {
     // ── MEP ──────────────────────────────────────────────────────────────
     getMEPs: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getMEPDetails: vi.fn().mockResolvedValue(EMPTY_MEP),
@@ -234,17 +249,21 @@ export function createMockEPClient(
     // ── Cache Control ────────────────────────────────────────────────────
     clearCache: vi.fn(),
     getCacheStats: vi.fn().mockReturnValue({ size: 0, maxSize: 0, hitRate: 0 }),
+    // `satisfies EPClientPublicAPI` validates that every key in this object
+    // literal is a real public method on EuropeanParliamentClient with a
+    // compatible function signature. If the production API gains or removes
+    // a method, TypeScript surfaces the mismatch here at compile time.
+    // `...overrides` is applied after to allow per-test customisation.
+  } satisfies EPClientPublicAPI;
 
-    ...overrides,
-  // `Mocked<T>` is defined as `{...} & T`, which intersects with the class
-  // including its private members. A plain object literal can never structurally
-  // satisfy this intersection, so the `unknown` intermediate is necessary and
-  // idiomatic for vitest class mocks.
-  } as unknown as Mocked<EuropeanParliamentClient>;
+  // Single cast — safe because `base` satisfies the structural shape of
+  // `EPClientPublicAPI` (all public methods present), and `Mocked<EPClientPublicAPI>`
+  // only requires the structural public surface (no private members).
+  return { ...base, ...overrides } as Mocked<EPClientPublicAPI>;
 }
 
 /** Type of the mock EP client returned by {@link createMockEPClient}. */
-export type MockEPClient = Mocked<EuropeanParliamentClient>;
+export type MockEPClient = Mocked<EPClientPublicAPI>;
 
 /**
  * Convenience helper for tool test suites.

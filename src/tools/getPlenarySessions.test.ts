@@ -96,9 +96,14 @@ describe('get_plenary_sessions Tool', () => {
       expectValidMCPResponse(result);
     });
 
-    it('should return valid JSON in text field', async () => {
+    it('should include mock session data with id, date and location in payload', async () => {
       const result = await handleGetPlenarySessions({});
-      expectValidMCPResponse(result);
+      const parsed = expectValidPaginatedMCPResponse(result);
+      const first = parsed.data[0] as Record<string, unknown> | undefined;
+      expect(first).toBeDefined();
+      expect(first?.['id']).toBe('PLENARY-2024-01');
+      expect(first?.['date']).toBe('2024-01-15');
+      expect(first?.['location']).toBe('Strasbourg');
     });
 
     it('should return paginated response structure', async () => {
