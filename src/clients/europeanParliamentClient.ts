@@ -92,12 +92,13 @@ import {
 // ─── URL Validation ───────────────────────────────────────────────────────────
 
 /** Exact hostnames that must never be used as API endpoints. */
-const BLOCKED_HOSTS_EXACT = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1']);
+const BLOCKED_HOSTS_EXACT = new Set(['localhost', '0.0.0.0', '::1']);
 
 /** Patterns matching private / link-local / loopback address prefixes. */
 const BLOCKED_HOST_PATTERNS = [
   /^fe[89ab][0-9a-f]:/i,         // IPv6 link-local   fe80::/10
   /^f[cd][0-9a-f]{2}:/i,         // IPv6 unique-local fc00::/7
+  /^127\./,                       // IPv4 loopback     127.0.0.0/8
   /^169\.254\./,                  // IPv4 link-local   169.254.0.0/16
   /^10\./,                        // RFC-1918          10.0.0.0/8
   /^172\.(1[6-9]|2\d|3[01])\./,  // RFC-1918          172.16.0.0/12

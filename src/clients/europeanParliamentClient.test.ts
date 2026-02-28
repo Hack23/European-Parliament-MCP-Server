@@ -4604,6 +4604,20 @@ describe('EuropeanParliamentClient', () => {
       );
     });
 
+    it('should reject a URL pointing to 127.0.0.2 (full 127.0.0.0/8 loopback range)', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://127.0.0.2/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to 127.1.2.3 (full 127.0.0.0/8 loopback range)', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://127.1.2.3/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
     it('should reject a URL pointing to a 169.254.x.x link-local address', async () => {
       const { validateApiUrl } = await import('./europeanParliamentClient.js');
       expect(() => validateApiUrl('https://169.254.0.1/api/')).toThrow(
