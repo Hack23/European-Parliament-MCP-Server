@@ -510,9 +510,38 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 
 ---
 
-## 🔌 MCP Tools (46 Total)
+## 🔌 MCP Tools (47 Total)
 
-All tools are organized below by functional area. Each tool includes input validation via Zod schemas, caching, and rate limiting.
+**47 tools** organized by capability — OSINT intelligence first, then analytical, data access, and reference tools. Every tool includes Zod input validation, caching, and rate limiting.
+
+### 🕵️ OSINT Intelligence Tools (15)
+
+| Tool | Description | Key Parameters | Output |
+|------|-------------|----------------|--------|
+| [`correlate_intelligence`](./API_USAGE_GUIDE.md#tool-correlate_intelligence) | Cross-tool OSINT correlation engine — fuses influence, anomaly, coalition, and network signals into unified intelligence alerts | toolOutputs, correlationMode | Correlated alerts with severity & confidence |
+| [`assess_mep_influence`](./API_USAGE_GUIDE.md#tool-assess_mep_influence) | MEP influence scoring (5-dimension model) | mepId (required), dateFrom, dateTo | Influence scorecard |
+| [`detect_voting_anomalies`](./API_USAGE_GUIDE.md#tool-detect_voting_anomalies) | Party defection & anomaly detection | mepId, politicalGroup, dateFrom | Anomaly report |
+| [`analyze_coalition_dynamics`](./API_USAGE_GUIDE.md#tool-analyze_coalition_dynamics) | Coalition cohesion & stress analysis | politicalGroups, dateFrom, dateTo | Coalition metrics |
+| [`early_warning_system`](./API_USAGE_GUIDE.md#tool-early_warning_system) | Detect emerging political shifts & coalition fractures | sensitivity, focusArea | Warnings with severity levels & stability score |
+| [`comparative_intelligence`](./API_USAGE_GUIDE.md#tool-comparative_intelligence) | Cross-reference 2–10 MEP activities across dimensions | mepIds (required), dimensions | Ranked profiles, correlation matrix, cluster analysis |
+| [`network_analysis`](./API_USAGE_GUIDE.md#tool-network_analysis) | MEP relationship network via committee co-membership | mepId, analysisType, depth | Network map with centrality scores |
+| [`sentiment_tracker`](./API_USAGE_GUIDE.md#tool-sentiment_tracker) | Political group institutional-positioning scores | groupId, timeframe | Positioning scores & polarization index |
+| [`generate_political_landscape`](./API_USAGE_GUIDE.md#tool-generate_political_landscape) | Parliament-wide political landscape | dateFrom, dateTo | Landscape overview |
+| [`compare_political_groups`](./API_USAGE_GUIDE.md#tool-compare_political_groups) | Cross-group comparative analysis | groups (required), metrics, dateFrom | Comparison matrix |
+| [`analyze_legislative_effectiveness`](./API_USAGE_GUIDE.md#tool-analyze_legislative_effectiveness) | MEP/committee legislative scoring | subjectId (required), subjectType, dateFrom | Effectiveness score |
+| [`monitor_legislative_pipeline`](./API_USAGE_GUIDE.md#tool-monitor_legislative_pipeline) | Pipeline status & bottleneck detection | committeeId, status, dateFrom | Pipeline status |
+| [`analyze_committee_activity`](./API_USAGE_GUIDE.md#tool-analyze_committee_activity) | Committee workload & engagement analysis | committeeId (required), dateFrom, dateTo | Activity report |
+| [`track_mep_attendance`](./API_USAGE_GUIDE.md#tool-track_mep_attendance) | MEP attendance patterns & trends | mepId, country, groupId, dateFrom, dateTo, limit | Attendance report |
+| [`analyze_country_delegation`](./API_USAGE_GUIDE.md#tool-analyze_country_delegation) | Country delegation voting & composition | country (required), dateFrom, dateTo | Delegation analysis |
+
+### 📊 Advanced Analysis Tools (4)
+
+| Tool | Description | Key Parameters | Output |
+|------|-------------|----------------|--------|
+| [`get_all_generated_stats`](./API_USAGE_GUIDE.md#tool-get_all_generated_stats) | Precomputed EP activity statistics (2004-2025) with rankings, predictions, and political landscape | yearFrom, yearTo, category, includePredictions | Statistics object |
+| [`analyze_voting_patterns`](./API_USAGE_GUIDE.md#tool-analyze_voting_patterns) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
+| [`track_legislation`](./API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
+| [`generate_report`](./API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
 
 ### 👤 MEP Tools (7)
 
@@ -566,34 +595,6 @@ All tools are organized below by functional area. Each tool includes input valid
 | [`get_procedures`](./API_USAGE_GUIDE.md#tool-get_procedures) | Legislative procedures, or single by processId | processId, year, limit | `GET /procedures`, `GET /procedures/{id}` |
 | [`get_procedure_events`](./API_USAGE_GUIDE.md#tool-get_procedure_events) | Timeline events for a legislative procedure | processId (required), limit | `GET /procedures/{id}/events` |
 | [`get_controlled_vocabularies`](./API_USAGE_GUIDE.md#tool-get_controlled_vocabularies) | Standardized classification terms | vocId, limit | `GET /controlled-vocabularies`, `GET /controlled-vocabularies/{id}` |
-
-### 📊 Advanced Analysis Tools (4)
-
-| Tool | Description | Key Parameters | Output |
-|------|-------------|----------------|--------|
-| [`analyze_voting_patterns`](./API_USAGE_GUIDE.md#tool-analyze_voting_patterns) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
-| [`track_legislation`](./API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
-| [`generate_report`](./API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
-| [`get_all_generated_stats`](./API_USAGE_GUIDE.md#tool-get_all_generated_stats) | Precomputed EP activity statistics (2004-2025) with rankings, predictions, and political landscape | yearFrom, yearTo, category, includePredictions | Statistics object |
-
-### 🕵️ OSINT Intelligence Tools (14)
-
-| Tool | Description | Key Parameters | Output |
-|------|-------------|----------------|--------|
-| [`assess_mep_influence`](./API_USAGE_GUIDE.md#tool-assess_mep_influence) | MEP influence scoring (5-dimension model) | mepId (required), dateFrom, dateTo | Influence scorecard |
-| [`analyze_coalition_dynamics`](./API_USAGE_GUIDE.md#tool-analyze_coalition_dynamics) | Coalition cohesion & stress analysis | politicalGroups, dateFrom, dateTo | Coalition metrics |
-| [`detect_voting_anomalies`](./API_USAGE_GUIDE.md#tool-detect_voting_anomalies) | Party defection & anomaly detection | mepId, politicalGroup, dateFrom | Anomaly report |
-| [`compare_political_groups`](./API_USAGE_GUIDE.md#tool-compare_political_groups) | Cross-group comparative analysis | groups (required), metrics, dateFrom | Comparison matrix |
-| [`analyze_legislative_effectiveness`](./API_USAGE_GUIDE.md#tool-analyze_legislative_effectiveness) | MEP/committee legislative scoring | subjectId (required), subjectType, dateFrom | Effectiveness score |
-| [`monitor_legislative_pipeline`](./API_USAGE_GUIDE.md#tool-monitor_legislative_pipeline) | Pipeline status & bottleneck detection | committeeId, status, dateFrom | Pipeline status |
-| [`analyze_committee_activity`](./API_USAGE_GUIDE.md#tool-analyze_committee_activity) | Committee workload & engagement analysis | committeeId (required), dateFrom, dateTo | Activity report |
-| [`track_mep_attendance`](./API_USAGE_GUIDE.md#tool-track_mep_attendance) | MEP attendance patterns & trends | mepId, country, groupId, dateFrom, dateTo, limit | Attendance report |
-| [`analyze_country_delegation`](./API_USAGE_GUIDE.md#tool-analyze_country_delegation) | Country delegation voting & composition | country (required), dateFrom, dateTo | Delegation analysis |
-| [`generate_political_landscape`](./API_USAGE_GUIDE.md#tool-generate_political_landscape) | Parliament-wide political landscape | dateFrom, dateTo | Landscape overview |
-| [`network_analysis`](./API_USAGE_GUIDE.md#tool-network_analysis) | MEP relationship network via committee co-membership | mepId, analysisType, depth | Network map with centrality scores |
-| [`sentiment_tracker`](./API_USAGE_GUIDE.md#tool-sentiment_tracker) | Political group institutional-positioning scores | groupId, timeframe | Positioning scores & polarization index |
-| [`early_warning_system`](./API_USAGE_GUIDE.md#tool-early_warning_system) | Detect emerging political shifts & coalition fractures | sensitivity, focusArea | Warnings with severity levels & stability score |
-| [`comparative_intelligence`](./API_USAGE_GUIDE.md#tool-comparative_intelligence) | Cross-reference 2–10 MEP activities across dimensions | mepIds (required), dimensions | Ranked profiles, correlation matrix, cluster analysis |
 
 📖 **[Complete TypeDoc API documentation →](https://hack23.github.io/European-Parliament-MCP-Server/api/)** · **[Markdown API docs →](https://hack23.github.io/European-Parliament-MCP-Server/api-markdown/)**
 
@@ -1137,11 +1138,11 @@ graph TB
 
     subgraph TOOLS["🔌 47 MCP Tools"]
         style TOOLS fill:#172554,stroke:#3B82F6,color:#DBEAFE
-        T1["🏛️ 7 Core EP Tools"]
-        T2["📊 3 Advanced Analysis"]
-        T3["🕵️ 15 OSINT Intelligence"]
-        T4["⚡ 8 Phase 4 Tools"]
-        T5["🚀 14 Phase 5 Tools"]
+        T1["🕵️ 15 OSINT Intelligence"]
+        T2["📊 4 Advanced Analysis"]
+        T3["👤 7 MEP Data"]
+        T4["🏛️ 9 Plenary & Meeting"]
+        T5["📄 12 Document, Committee & Legislative"]
     end
 
     AGENTS --> SKILLS
