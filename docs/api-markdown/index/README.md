@@ -18,9 +18,33 @@ Re-exports [AuditEvent](../utils/auditLogger/interfaces/AuditEvent.md)
 
 ***
 
+### AuditFilter
+
+Re-exports [AuditFilter](../utils/auditSink/interfaces/AuditFilter.md)
+
+***
+
 ### AuditLogEntry
 
-Re-exports [AuditLogEntry](../utils/auditLogger/interfaces/AuditLogEntry.md)
+Re-exports [AuditLogEntry](../utils/auditSink/interfaces/AuditLogEntry.md)
+
+***
+
+### AuditLoggerOptions
+
+Re-exports [AuditLoggerOptions](../utils/auditSink/interfaces/AuditLoggerOptions.md)
+
+***
+
+### AuditSink
+
+Re-exports [AuditSink](../utils/auditSink/interfaces/AuditSink.md)
+
+***
+
+### AuthToken
+
+Re-exports [AuthToken](../utils/auditSink/type-aliases/AuthToken.md)
 
 ***
 
@@ -132,6 +156,12 @@ Re-exports [DEFAULT_PERFORMANCE_THRESHOLDS](../utils/performance/variables/DEFAU
 
 ***
 
+### DEFAULT\_SENSITIVE\_KEYS
+
+Re-exports [DEFAULT_SENSITIVE_KEYS](../utils/auditSink/variables/DEFAULT_SENSITIVE_KEYS.md)
+
+***
+
 ### DEFAULT\_TIMEOUTS
 
 Re-exports [DEFAULT_TIMEOUTS](../utils/timeout/variables/DEFAULT_TIMEOUTS.md)
@@ -153,6 +183,18 @@ Re-exports [DocumentID](../types/branded/type-aliases/DocumentID.md)
 ### EPAPIError
 
 Re-exports [EPAPIError](../types/errors/classes/EPAPIError.md)
+
+***
+
+### FileAuditSink
+
+Re-exports [FileAuditSink](../utils/auditSink/classes/FileAuditSink.md)
+
+***
+
+### FileAuditSinkOptions
+
+Re-exports [FileAuditSinkOptions](../utils/auditSink/interfaces/FileAuditSinkOptions.md)
 
 ***
 
@@ -258,6 +300,12 @@ Re-exports [MCPServerError](../types/errors/classes/MCPServerError.md)
 
 ***
 
+### MemoryAuditSink
+
+Re-exports [MemoryAuditSink](../utils/auditSink/classes/MemoryAuditSink.md)
+
+***
+
 ### MepBriefingArgsSchema
 
 Re-exports [MepBriefingArgsSchema](../prompts/variables/MepBriefingArgsSchema.md)
@@ -324,6 +372,18 @@ Re-exports [RateLimiterStatus](../utils/rateLimiter/interfaces/RateLimiterStatus
 
 ***
 
+### RetentionPolicy
+
+Re-exports [RetentionPolicy](../utils/auditSink/classes/RetentionPolicy.md)
+
+***
+
+### sanitizeParams
+
+Re-exports [sanitizeParams](../utils/auditSink/functions/sanitizeParams.md)
+
+***
+
 ### SessionID
 
 Re-exports [SessionID](../types/branded/type-aliases/SessionID.md)
@@ -339,6 +399,18 @@ Re-exports [SittingID](../types/ep/branded/type-aliases/SittingID.md)
 ### SpeechID
 
 Re-exports [SpeechID](../types/ep/branded/type-aliases/SpeechID.md)
+
+***
+
+### StderrAuditSink
+
+Re-exports [StderrAuditSink](../utils/auditSink/classes/StderrAuditSink.md)
+
+***
+
+### StructuredJsonSink
+
+Re-exports [StructuredJsonSink](../utils/auditSink/classes/StructuredJsonSink.md)
 
 ***
 

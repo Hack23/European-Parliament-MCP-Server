@@ -34,6 +34,10 @@ export interface RateLimiterStatus {
  * Discriminated union: when `allowed` is `true`, tokens were consumed.
  * When `allowed` is `false`, the wait would have exceeded the timeout and
  * `retryAfterMs` is always present with a positive value.
+ *
+ * **Note:** `remainingTokens` is always a non-negative integer
+ * (`Math.floor` of the internal fractional bucket state). This differs from
+ * {@link RateLimiter.getAvailableTokens}, which may return a fractional value.
  */
 export type RateLimitResult =
   | { allowed: true; remainingTokens: number }
@@ -153,6 +157,9 @@ export class RateLimiter {
    * @param options.timeoutMs - Maximum time to wait in milliseconds (default 5000); non-finite or negative values are coerced to `0`, meaning the call never blocks and returns `allowed: false` immediately if tokens are unavailable
    * @returns Promise resolving to a {@link RateLimitResult}. `allowed` is `true`
    *   when tokens were consumed, `false` when the timeout was reached.
+   *   `remainingTokens` is always a non-negative integer (`Math.floor` of the
+   *   internal fractional bucket state); it may differ from
+   *   {@link RateLimiter.getAvailableTokens} which returns the raw fractional value.
    *
    * @example
    * ```typescript

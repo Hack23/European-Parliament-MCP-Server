@@ -113,6 +113,7 @@
 - [types/ep/question](types/ep/question/README.md)
 - [types/errors](types/errors/README.md)
 - [utils/auditLogger](utils/auditLogger/README.md)
+- [utils/auditSink](utils/auditSink/README.md)
 - [utils/performance](utils/performance/README.md)
 - [utils/rateLimiter](utils/rateLimiter/README.md)
 - [utils/timeout](utils/timeout/README.md)
