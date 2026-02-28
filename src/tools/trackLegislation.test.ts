@@ -174,12 +174,12 @@ describe('track_legislation Tool', () => {
   });
 
   describe('Error Handling', () => {
-    it('should wrap API errors', async () => {
+    it('should wrap API errors as ToolError', async () => {
       vi.mocked(epClientModule.epClient.getProcedureById)
         .mockRejectedValueOnce(new Error('API Error'));
 
       await expect(handleTrackLegislation({ procedureId: '2024/0001(COD)' }))
-        .rejects.toThrow('Failed to track legislation');
+        .rejects.toThrow('[track_legislation] fetchProcedure: Failed to retrieve legislative procedure data');
     });
   });
 
@@ -263,7 +263,7 @@ describe('track_legislation Tool', () => {
       );
 
       await expect(handleTrackLegislation({ procedureId: '2024/0001(COD)' }))
-        .rejects.toThrow('Failed to track legislation');
+        .rejects.toThrow('[track_legislation] fetchProcedure: Failed to retrieve legislative procedure data');
     });
 
     it('should handle 404 not-found error from API', async () => {
@@ -272,7 +272,7 @@ describe('track_legislation Tool', () => {
       );
 
       await expect(handleTrackLegislation({ procedureId: '9999/9999(COD)' }))
-        .rejects.toThrow('Failed to track legislation');
+        .rejects.toThrow('[track_legislation] fetchProcedure: Failed to retrieve legislative procedure data');
     });
   });
 });

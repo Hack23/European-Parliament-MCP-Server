@@ -20,6 +20,7 @@ import { TrackLegislationSchema } from '../../schemas/europeanParliament.js';
 import { epClient } from '../../clients/europeanParliamentClient.js';
 import { buildLegislativeTracking } from './procedureTracker.js';
 import type { ToolResult } from '../shared/types.js';
+import { ToolError } from '../shared/errors.js';
 
 /**
  * Convert a user-supplied procedure reference to the EP API process-id format.
@@ -96,8 +97,13 @@ export async function handleTrackLegislation(
       }]
     };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to track legislation: ${errorMessage}`);
+    throw new ToolError({
+      toolName: 'track_legislation',
+      operation: 'fetchProcedure',
+      message: 'Failed to retrieve legislative procedure data',
+      isRetryable: true,
+      cause: error,
+    });
   }
 }
 
