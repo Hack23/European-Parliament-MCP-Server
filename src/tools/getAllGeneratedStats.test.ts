@@ -61,8 +61,8 @@ describe('GetAllGeneratedStatsSchema', () => {
 // ── Response Structure ──────────────────────────────────────────────
 
 describe('getAllGeneratedStats', () => {
-  it('returns a valid ToolResult with JSON content', async () => {
-    const result = await getAllGeneratedStats({
+  it('returns a valid ToolResult with JSON content', () => {
+    const result = getAllGeneratedStats({
       category: 'all',
       includePredictions: true,
       includeMonthlyBreakdown: false,
@@ -81,8 +81,8 @@ describe('getAllGeneratedStats', () => {
     expect(data.sourceAttribution).toContain('europarl');
   });
 
-  it('returns yearly stats covering 2004-2025 (22 years)', async () => {
-    const result = await getAllGeneratedStats({
+  it('returns yearly stats covering 2004-2025 (22 years)', () => {
+    const result = getAllGeneratedStats({
       category: 'all',
       includePredictions: false,
       includeMonthlyBreakdown: false,
@@ -94,8 +94,8 @@ describe('getAllGeneratedStats', () => {
     expect(data.yearlyStats[21].year).toBe(2025);
   });
 
-  it('each yearly stat has required fields', async () => {
-    const result = await getAllGeneratedStats({
+  it('each yearly stat has required fields', () => {
+    const result = getAllGeneratedStats({
       category: 'all',
       includePredictions: false,
       includeMonthlyBreakdown: false,
@@ -115,8 +115,8 @@ describe('getAllGeneratedStats', () => {
     expect(year.commentary).toBeDefined();
   });
 
-  it('includes predictions when requested', async () => {
-    const result = await getAllGeneratedStats({
+  it('includes predictions when requested', () => {
+    const result = getAllGeneratedStats({
       category: 'all',
       includePredictions: true,
       includeMonthlyBreakdown: false,
@@ -131,8 +131,8 @@ describe('getAllGeneratedStats', () => {
     expect(data.predictions[0].methodology).toBeDefined();
   });
 
-  it('excludes predictions when not requested', async () => {
-    const result = await getAllGeneratedStats({
+  it('excludes predictions when not requested', () => {
+    const result = getAllGeneratedStats({
       category: 'all',
       includePredictions: false,
       includeMonthlyBreakdown: false,
@@ -142,8 +142,8 @@ describe('getAllGeneratedStats', () => {
     expect(data.predictions).toBeUndefined();
   });
 
-  it('includes category rankings with percentiles', async () => {
-    const result = await getAllGeneratedStats({
+  it('includes category rankings with percentiles', () => {
+    const result = getAllGeneratedStats({
       category: 'all',
       includePredictions: false,
       includeMonthlyBreakdown: false,
@@ -170,8 +170,8 @@ describe('getAllGeneratedStats', () => {
     expect(entry.totalActivityScore).toBeGreaterThan(0);
   });
 
-  it('filters rankings by specific category', async () => {
-    const result = await getAllGeneratedStats({
+  it('filters rankings by specific category', () => {
+    const result = getAllGeneratedStats({
       category: 'legislative_acts',
       includePredictions: false,
       includeMonthlyBreakdown: false,
@@ -182,8 +182,8 @@ describe('getAllGeneratedStats', () => {
     expect(data.categoryRankings[0].category).toBe('Legislative Acts Adopted');
   });
 
-  it('includes monthly breakdown when requested', async () => {
-    const result = await getAllGeneratedStats({
+  it('includes monthly breakdown when requested', () => {
+    const result = getAllGeneratedStats({
       yearFrom: 2023,
       yearTo: 2023,
       category: 'all',
@@ -201,8 +201,8 @@ describe('getAllGeneratedStats', () => {
     expect(aug.plenarySessions).toBeLessThan(oct.plenarySessions);
   });
 
-  it('excludes monthly breakdown by default', async () => {
-    const result = await getAllGeneratedStats({
+  it('excludes monthly breakdown by default', () => {
+    const result = getAllGeneratedStats({
       yearFrom: 2023,
       yearTo: 2023,
       category: 'all',
@@ -214,8 +214,8 @@ describe('getAllGeneratedStats', () => {
     expect(data.yearlyStats[0].monthlyActivity).toBeUndefined();
   });
 
-  it('filters by year range', async () => {
-    const result = await getAllGeneratedStats({
+  it('filters by year range', () => {
+    const result = getAllGeneratedStats({
       yearFrom: 2015,
       yearTo: 2018,
       category: 'all',
@@ -230,8 +230,8 @@ describe('getAllGeneratedStats', () => {
     expect(data.totalYearsReturned).toBe(4);
   });
 
-  it('analysis summary has required fields', async () => {
-    const result = await getAllGeneratedStats({
+  it('analysis summary has required fields', () => {
+    const result = getAllGeneratedStats({
       category: 'all',
       includePredictions: false,
       includeMonthlyBreakdown: false,
@@ -248,8 +248,8 @@ describe('getAllGeneratedStats', () => {
     expect(summary.keyFindings.length).toBeGreaterThan(0);
   });
 
-  it('has HIGH confidence level', async () => {
-    const result = await getAllGeneratedStats({
+  it('has HIGH confidence level', () => {
+    const result = getAllGeneratedStats({
       category: 'all',
       includePredictions: false,
       includeMonthlyBreakdown: false,
