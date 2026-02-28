@@ -163,6 +163,7 @@ export async function handleAnalyzeVotingPatterns(
         mepId: params.mepId,
         mepName: mep.name,
         dataAvailable: false,
+        dataAvailability: 'UNAVAILABLE',
         confidenceLevel: 'LOW',
         message: 'Voting statistics not available from EP API for this endpoint (/meps/{id}). '
           + 'Use getVotingRecords tool to retrieve actual voting data.'

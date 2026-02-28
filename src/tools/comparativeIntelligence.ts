@@ -82,8 +82,8 @@ interface ComparativeIntelligenceResult {
   outlierMEPs: { mepId: string; name: string; outlierDimension: Dimension; outlierScore: number; zScore: number }[];
   clusterAnalysis: MepCluster[];
   computedAttributes: {
-    mostSimilarPair: { mepA: string; mepB: string; similarity: number };
-    mostDifferentPair: { mepA: string; mepB: string; similarity: number };
+    mostSimilarPair: { mepA: string; mepB: string; similarity: number | null };
+    mostDifferentPair: { mepA: string; mepB: string; similarity: number | null };
     topOverallPerformer: string;
     lowestOverallPerformer: string;
     dimensionWithHighestVariance: Dimension;
@@ -255,8 +255,8 @@ function buildEmptyResult(profiles: MepProfile[], dimensions: Dimension[]): Comp
     outlierMEPs: [],
     clusterAnalysis: [],
     computedAttributes: {
-      mostSimilarPair: { mepA: 'N/A', mepB: 'N/A', similarity: 0 },
-      mostDifferentPair: { mepA: 'N/A', mepB: 'N/A', similarity: 0 },
+      mostSimilarPair: { mepA: 'N/A', mepB: 'N/A', similarity: null },
+      mostDifferentPair: { mepA: 'N/A', mepB: 'N/A', similarity: null },
       topOverallPerformer: 'N/A',
       lowestOverallPerformer: 'N/A',
       dimensionWithHighestVariance: dimensions[0] ?? 'voting'
@@ -355,10 +355,10 @@ function buildComputedAttributes(
   const lastPair = sortedCorr[sortedCorr.length - 1];
   const mostSimilarPair = firstPair !== undefined
     ? { mepA: firstPair.mepA, mepB: firstPair.mepB, similarity: firstPair.similarityScore }
-    : { mepA: 'N/A', mepB: 'N/A', similarity: 0 };
+    : { mepA: 'N/A', mepB: 'N/A', similarity: null };
   const mostDifferentPair = lastPair !== undefined
     ? { mepA: lastPair.mepA, mepB: lastPair.mepB, similarity: lastPair.similarityScore }
-    : { mepA: 'N/A', mepB: 'N/A', similarity: 0 };
+    : { mepA: 'N/A', mepB: 'N/A', similarity: null };
   const sortedByOverall = [...profiles].sort((a, b) => b.overallScore - a.overallScore);
   return {
     mostSimilarPair,
