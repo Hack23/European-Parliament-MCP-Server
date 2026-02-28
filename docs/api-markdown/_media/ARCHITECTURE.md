@@ -66,7 +66,7 @@ The **European Parliament MCP Server** (v1.0) is a TypeScript/Node.js [Model Con
 
 | Capability | Count | Description |
 |------------|-------|-------------|
-| 🔧 **MCP Tools** | 45 | Core data access + OSINT intelligence + complete EP API v2 coverage |
+| 🔧 **MCP Tools** | 46 | Core data access + OSINT intelligence + complete EP API v2 coverage |
 | 📄 **MCP Resources** | 9 | URI-based read access to parliamentary entities |
 | 💬 **MCP Prompts** | 7 | Pre-configured analysis templates for AI assistants |
 | 🏛️ **EP API Endpoints** | 22+ | MEPs, plenary sessions, committees, votes, documents, speeches, procedures, adopted texts, events |
@@ -179,7 +179,7 @@ C4Component
 
 ## 🔌 MCP Protocol Surface
 
-### Tools (45 total)
+### Tools (46 total)
 
 #### Core Data Access Tools (7)
 

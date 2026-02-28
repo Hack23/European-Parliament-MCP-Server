@@ -359,9 +359,9 @@ await client.connect();
 // Call a tool
 const response = await client.callTool('get_meps', { limit: 10 });
 
-// List available tools (should return 45)
+// List available tools (should return 46)
 const tools = await client.listTools();
-expect(tools.length).toBe(45);
+expect(tools.length).toBe(46);
 
 // Read a resource
 const resource = await client.readResource('ep://meps');

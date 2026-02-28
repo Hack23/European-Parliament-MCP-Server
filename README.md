@@ -510,7 +510,7 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 
 ---
 
-## 🔌 MCP Tools (45 Total)
+## 🔌 MCP Tools (46 Total)
 
 All tools are organized below by functional area. Each tool includes input validation via Zod schemas, caching, and rate limiting.
 

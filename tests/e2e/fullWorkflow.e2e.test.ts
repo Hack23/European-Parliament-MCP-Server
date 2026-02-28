@@ -44,7 +44,7 @@ describe('Full Workflow E2E Tests', () => {
   }, 10000);
 
   describe('Complete Tool Coverage', () => {
-    it('should verify all 45 MCP tools are registered', async () => {
+    it('should verify all 46 MCP tools are registered', async () => {
       const tools = await client.listTools();
       const toolNames = tools.map(t => t.name);
 
@@ -105,7 +105,7 @@ describe('Full Workflow E2E Tests', () => {
       expect(toolNames).toContain('get_procedure_events');
       expect(toolNames).toContain('get_procedures');
 
-      expect(toolNames.length).toBeGreaterThanOrEqual(45);
+      expect(toolNames.length).toBeGreaterThanOrEqual(46);
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute get_meps tool', async () => {

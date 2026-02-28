@@ -206,7 +206,7 @@ flowchart TD
 
     subgraph EPMCPv2["EP MCP Server v2.0"]
         GATEWAY["API Gateway"]
-        TOOLS["45+ Tools"]
+        TOOLS["46+ Tools"]
         CACHE["Distributed Cache\n(Redis Cluster)"]
         AUDIT["Enhanced Audit\n(SIEM integration)"]
     end
@@ -284,7 +284,7 @@ stdio transport remains unauthenticated for local development.
 | Observability | Console | OpenTelemetry | OpenTelemetry | SIEM integration |
 | Deployment | npm / npx | npm + Docker | Docker + K8s Helm | Multi-tenant SaaS |
 | Data Sources | EP API v2 | EP API v2 | EP API v2 | EP + EUR-Lex + Council |
-| Tools | 45 | 50 | 55 | 60+ |
+| Tools | 46 | 50 | 55 | 60+ |
 
 ---
 

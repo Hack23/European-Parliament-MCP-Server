@@ -448,7 +448,7 @@ npm run docs:build    # Full documentation build (HTML + MD + coverage + test re
 
 ---
 
-## 🔌 MCP Tools (45 Total)
+## 🔌 MCP Tools (46 Total)
 
 All tools are organized below by functional area. Each tool includes input validation via Zod schemas, caching, and rate limiting.
 

@@ -163,7 +163,7 @@ Cmd+Shift+P (macOS) or Ctrl+Shift+P (Windows/Linux)
 
 1. Open Command Palette
 2. Search for "MCP: List Tools"
-3. Should show 45 European Parliament tools
+3. Should show 46 European Parliament tools
 
 ---
 

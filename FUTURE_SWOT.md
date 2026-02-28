@@ -81,7 +81,7 @@ quadrantChart
 
 ### FS1: EU Data Federation Platform (v2.0)
 Expanding beyond EP data to create a unified EU institutions data platform integrating:
-- European Parliament (45+ tools)
+- European Parliament (46+ tools)
 - EUR-Lex legislation database
 - Council of the EU proceedings
 - European Commission proposals
@@ -130,7 +130,7 @@ Multi-tenant architecture introduces risks of cross-tenant data leakage if not i
 **Action:** Dedicated security audit for multi-tenant implementation before public release.
 
 ### FW3: EP API Version Migration Risk
-The transition from EP API v2 to a hypothetical v3 would require updating all 45+ tool implementations simultaneously.
+The transition from EP API v2 to a hypothetical v3 would require updating all 46+ tool implementations simultaneously.
 
 **Action:** Build an EP API abstraction layer that decouples tool implementations from specific API versions.
 

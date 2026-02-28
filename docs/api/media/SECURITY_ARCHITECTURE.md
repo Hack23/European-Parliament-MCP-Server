@@ -247,7 +247,7 @@ graph TB
         end
         
         subgraph "Application Layer"
-            TOOLS[MCP Tools<br/>45 Handlers]
+            TOOLS[MCP Tools<br/>46 Handlers]
             CLIENT[EP API Client<br/>HTTP Client]
         end
         
