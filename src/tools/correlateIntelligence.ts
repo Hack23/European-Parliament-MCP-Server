@@ -173,13 +173,15 @@ const DEFAULT_COALITION_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'I
 /**
  * Safely parses the JSON payload from a {@link ToolResult} returned by a dependent tool.
  *
- * Throws descriptive errors rather than silently returning `null` so that
- * callers can distinguish between tool errors and malformed output.
+ * Throws descriptive errors for explicit tool errors (`isError: true`) and for
+ * unparseable JSON. When `result.content[0]?.text` is missing or `undefined`,
+ * the implementation falls back to parsing `'{}'` (an empty object), so callers
+ * will receive an empty object rather than an error for missing content.
  *
  * @param result - MCP tool result from a dependent tool call
- * @returns Parsed JSON value (type assertion required by the caller)
+ * @returns Parsed JSON value — an empty object `{}` if content is absent
  * @throws {Error} If the result's `isError` flag is `true`
- * @throws {Error} If the result content cannot be parsed as JSON
+ * @throws {Error} If the result content is present but cannot be parsed as JSON
  *
  * @security Content is parsed as JSON only — no `eval`/`Function` usage.
  *   Raw tool output is never forwarded to clients directly.
@@ -267,12 +269,14 @@ async function fetchInfluenceData(mepId: string): Promise<InfluenceResult | null
 /**
  * Fetches voting anomaly data for a single MEP.
  *
- * Returns a zero-anomaly default when the call fails, enabling the
- * correlation pipeline to continue without surfacing false-negative
- * alerts caused by transient API failures.
+ * On tool or network failure, returns a zero-anomaly fallback with
+ * `confidenceLevel: 'LOW'` to keep the correlation pipeline running and
+ * avoid hard failures. This graceful degradation prioritizes pipeline
+ * continuity over strict detection guarantees and may under-report
+ * anomalies if failures are interpreted as "no anomalies" by callers.
  *
  * @param mepId - MEP identifier string
- * @returns Parsed {@link AnomalyResult}, or a zeroed result on failure
+ * @returns Parsed {@link AnomalyResult}, or a zeroed result with LOW confidence on failure
  */
 async function fetchAnomalyData(mepId: string): Promise<AnomalyResult> {
   try {
@@ -512,7 +516,7 @@ async function correlateCoalitionFracture(
  * high committee activity, *and* bridging status. This reduces false positives
  * compared to triggering on any single signal alone.
  *
- * @param isHighCentrality - Whether the MEP's network centrality score exceeds 0.5
+ * @param isHighCentrality - Whether the MEP is classified as high centrality by the network analysis
  * @param isHighCommitteeActivity - Whether the MEP's committee activity score exceeds 60
  * @param isBridging - Whether the MEP appears in the network's bridging MEP list
  * @returns Profile significance level
@@ -644,9 +648,9 @@ async function correlateNetworkProfiles(
 /**
  * Derives the aggregate confidence level from across all tool results in the pipeline.
  *
- * - **`'HIGH'`** — all levels are `'HIGH'` and no `'LOW'` is present
+ * - **`'HIGH'`** — at least one level is `'HIGH'` and no level is `'LOW'`
  * - **`'LOW'`** — every level is `'LOW'` (no useful high/medium signal)
- * - **`'MEDIUM'`** — any other mixed combination
+ * - **`'MEDIUM'`** — any other combination (mixed or all `'MEDIUM'`)
  *
  * @param levels - Array of confidence-level strings from individual tool results
  * @returns Aggregated confidence level

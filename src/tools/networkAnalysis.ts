@@ -186,7 +186,7 @@ const SHARED_COMMITTEE_STRENGTH_FACTOR = 0.3;
  * sharing ≥ 4 committees (4 × 0.3 = 1.2, capped to 1.0) reaches maximum strength.
  *
  * Time complexity: O(n²) over the MEP list — acceptable for the EP dataset
- * size (≤ 750 MEPs fetched in practice).
+ * size (≤ 50 MEPs fetched in practice by the current tool configuration).
  *
  * @param meps - Array of MEP records each containing a `committees` list
  * @returns Object containing the `edges` array and a `degreeMap` mapping each MEP

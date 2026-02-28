@@ -116,8 +116,9 @@ interface MEPApiData {
  * - **Participation** (50%) — capped linear scale: `min(100, totalVotes / 1500 × 100)`.
  *   Threshold 1500 is the approximate maximum votes cast in a full EP term, so an
  *   MEP attending every vote scores 100.
- * - **Loyalty** (50%) — proportion of recorded votes cast *for* (`votesFor / totalVotes`).
- *   Approximates cohesion with the majority/party-line position.
+ * - **For-vote ratio** (50%) — proportion of recorded votes cast *for* (`votesFor / totalVotes`).
+ *   This is a simple yes-vote share and does **not** compare against party, group, or
+ *   plenary majorities; it should not be interpreted as a formal party-line cohesion index.
  *
  * Returns `0` when no voting statistics are available to avoid misleading scores.
  *
@@ -130,8 +131,8 @@ function computeVotingScore(mep: MEPApiData): number {
   const stats = mep.votingStatistics;
   if (stats === undefined || stats.totalVotes === 0) return 0;
   const participationScore = Math.min(100, (stats.totalVotes / 1500) * 100);
-  const loyaltyScore = (stats.votesFor / stats.totalVotes) * 100;
-  return Math.round((participationScore * 0.5 + loyaltyScore * 0.5) * 100) / 100;
+  const forVoteRatioScore = (stats.votesFor / stats.totalVotes) * 100;
+  return Math.round((participationScore * 0.5 + forVoteRatioScore * 0.5) * 100) / 100;
 }
 
 /**
