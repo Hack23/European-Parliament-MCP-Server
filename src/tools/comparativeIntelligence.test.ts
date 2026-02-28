@@ -257,13 +257,16 @@ describe('comparative_intelligence Tool', () => {
   });
 
   describe('Error Handling', () => {
-    it('should throw ToolError on unexpected exception', async () => {
+    it('should return in-band error response on unexpected exception', async () => {
       vi.mocked(epClientModule.epClient.getMEPDetails).mockImplementation(() => {
         throw new Error('Unexpected failure');
       });
 
-      await expect(handleComparativeIntelligence({ mepIds: [1, 2] }))
-        .rejects.toThrow('[comparative_intelligence] fetchMEPProfiles: Failed to retrieve MEP profiles for comparison');
+      const result = await handleComparativeIntelligence({ mepIds: [1, 2] });
+      expect(result.isError).toBe(true);
+      const parsed = JSON.parse(result.content[0]?.text ?? '');
+      expect(parsed.toolName).toBe('comparative_intelligence');
+      expect(parsed.error).toContain('[comparative_intelligence] fetchMEPProfiles');
     });
   });
 });
