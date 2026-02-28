@@ -73,7 +73,15 @@ interface CoalitionDynamicsAnalysis {
 const POLITICAL_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID', 'The Left', 'NI'];
 
 /**
- * Classify cohesion trend
+ * Classifies a coalition cohesion score as a qualitative trend string.
+ *
+ * Thresholds:
+ * - **`STRENGTHENING`** — score > 0.6: cohesion is above the stability baseline
+ * - **`STABLE`** — score in (0.4, 0.6]: cohesion is in a neutral range
+ * - **`WEAKENING`** — score ≤ 0.4: cohesion is below the stability baseline
+ *
+ * @param score - Cohesion score in the range `[0, 1]`
+ * @returns Trend classification string
  */
 function classifyCohesionTrend(score: number): string {
   if (score > 0.6) return 'STRENGTHENING';
@@ -82,9 +90,26 @@ function classifyCohesionTrend(score: number): string {
 }
 
 /**
- * Compute coalition pair cohesion from real member counts
- * Note: Real pairwise voting data requires individual vote-level analysis
- * which is not available from the EP API. Cohesion is derived from group sizes.
+ * Computes a pairwise coalition cohesion record for two political groups.
+ *
+ * **Limitation:** The EP API `/meps/{id}` endpoint does not expose per-vote
+ * statistics, so true pairwise voting cohesion cannot be calculated directly.
+ * Instead, cohesion is **approximated from group size balance**: smaller groups
+ * aligned with a larger group tend to behave more homogeneously, so a balanced
+ * size ratio proxies coalition alignment potential.
+ *
+ * Formula: `cohesion = min(sizeA, sizeB) / max(sizeA, sizeB)` (range 0–1).
+ * `sharedVotes` and `totalVotes` are set to `null` to reflect data limitations.
+ *
+ * @param groupA - Political group identifier for the first group
+ * @param groupB - Political group identifier for the second group
+ * @param groupAMembers - Sample-based member count estimate (lower bound) for `groupA` derived from EP API data
+ * @param groupBMembers - Sample-based member count estimate (lower bound) for `groupB` derived from EP API data
+ * @param minimumCohesion - Threshold above which `allianceSignal` is set to `true`
+ * @returns {@link CoalitionPairAnalysis} record where `cohesionScore` is an
+ *   approximation based on group-size balance (not actual voting behavior — see
+ *   **Limitation** note above), `sharedVotes` and `totalVotes` are `null`
+ *   (vote-level data is unavailable from the current EP API)
  */
 function computePairCohesion(
   groupA: string,
@@ -110,12 +135,30 @@ function computePairCohesion(
 }
 
 /**
- * Build group metrics from fetched MEP data.
- * Note: The EP API /meps/{id} endpoint does not provide per-MEP voting
- * statistics, so internalCohesion, defectionRate, and avgAttendance are
- * explicitly unavailable (null with dataAvailability 'UNAVAILABLE').
- * memberCount is a sample count capped at the API page limit (50); for
- * groups with more than 50 members the actual seat count will be higher.
+ * Fetches sampled MEP membership counts for each target political group from the EP API
+ * and builds {@link GroupCohesionMetrics} records.
+ *
+ * **Note (data scope):** This function queries the EP `/meps` endpoint with a capped
+ * `limit` of 50 MEPs per group (first page only). As a result, the derived
+ * `memberCount` for a group is a **sample-based lower bound**: larger groups with
+ * more than 50 MEPs will be undercounted. Callers MUST NOT treat `memberCount` as
+ * an authoritative total; it is intended for relative, coarse sizing only.
+ *
+ * **Note (voting data):** The EP API `/meps` endpoint only returns group membership
+ * information, not per-MEP voting statistics. As a result, `internalCohesion`,
+ * `defectionRate`, and `avgAttendance` are set to `null`, `dataAvailability` and
+ * `stressIndicator.availability` are set to `'UNAVAILABLE'`, and `unityTrend` is
+ * `'UNKNOWN'`. Callers should treat these fields as "not available" and supplement
+ * these results with vote-result data when available.
+ *
+ * @param targetGroups - Political group identifiers to query (e.g., `['EPP', 'S&D']`)
+ * @returns Promise resolving to an array of group cohesion metric objects, one per group,
+ *   where `memberCount` values are based on a capped first page of results (max 50 MEPs)
+ * @throws {Error} If any EP API call for a group fails
+ *
+ * @security EP API calls are limited to 50 MEPs per group per ISMS Policy AC-003
+ *   (least privilege — request only the data needed for analysis). This limit also means
+ *   that reported group sizes are approximate lower bounds, not full enumerations.
  */
 async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionMetrics[]> {
   const metrics: GroupCohesionMetrics[] = [];
@@ -152,7 +195,16 @@ async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionM
 }
 
 /**
- * Build pairwise coalition pairs using real group member counts
+ * Builds all pairwise coalition pair analyses for the target groups.
+ *
+ * Iterates over the upper-triangle of group combinations (O(n²)) and calls
+ * {@link computePairCohesion} for each pair using the sample-based `memberCount`
+ * estimates from `groupMetrics` (see {@link buildGroupMetrics} for data scope limits).
+ *
+ * @param targetGroups - Ordered list of political group identifiers
+ * @param minimumCohesion - Cohesion threshold for `allianceSignal` detection
+ * @param groupMetrics - Pre-fetched group metrics containing sampled `memberCount` per group
+ * @returns Array of {@link CoalitionPairAnalysis} records for every group combination
  */
 function buildCoalitionPairs(
   targetGroups: string[],
@@ -173,7 +225,14 @@ function buildCoalitionPairs(
 }
 
 /**
- * Classify stress severity
+ * Maps a numeric stress indicator to a qualitative severity string.
+ *
+ * Threshold: stress > 0.7 → `'HIGH'`; otherwise → `'MODERATE'`.
+ * A `'LOW'` tier is not emitted here because only groups with
+ * `stressIndicator > 0.5` reach this function (see {@link computeStressIndicators}).
+ *
+ * @param stress - Stress indicator value in `[0, 1]`
+ * @returns Severity classification: `'HIGH'` or `'MODERATE'`
  */
 function classifyStressSeverity(stress: number): string {
   if (stress > 0.7) return 'HIGH';
@@ -181,7 +240,23 @@ function classifyStressSeverity(stress: number): string {
 }
 
 /**
- * Compute stress indicators from group metrics
+ * Derives stress indicator records from group metrics.
+ *
+ * Conceptually, this emits records only for groups where
+ * `stressIndicator.value > 0.5` (moderate-to-high internal tension). Each
+ * record contains a human-readable indicator description, a severity
+ * classification from {@link classifyStressSeverity}, and the list of
+ * affected groups.
+ *
+ * **Current data limitation:** The upstream {@link buildGroupMetrics} implementation
+ * sets `stressIndicator.value` to `null` (UNAVAILABLE due to missing EP
+ * vote-level statistics). As a result, the `stress !== null && stress > 0.5`
+ * guard in this function is never satisfied and it will currently return an
+ * empty array until real stress values are populated.
+ *
+ * @param groupMetrics - Array of group cohesion metric objects
+ * @returns Array of stress indicator records for groups exceeding the 0.5 threshold;
+ *   currently always empty due to `stressIndicator.value` being `null` (EP API limitation)
  */
 function computeStressIndicators(groupMetrics: GroupCohesionMetrics[]): { indicator: string; severity: string; affectedGroups: string[] }[] {
   const results: { indicator: string; severity: string; affectedGroups: string[] }[] = [];
@@ -199,7 +274,20 @@ function computeStressIndicators(groupMetrics: GroupCohesionMetrics[]): { indica
 }
 
 /**
- * Compute parliamentary fragmentation metrics
+ * Computes parliamentary fragmentation metrics using the Herfindahl–Hirschman Index (HHI).
+ *
+ * **Effective Number of Parties (ENP):** `1 / Σ(seatShare²)` — a standard political
+ * science measure of party-system fragmentation. Higher values indicate a more
+ * fragmented parliament.
+ *
+ * **Grand coalition viability:** Approximated as the mean of EPP and S&D internal
+ * cohesion scores, since a grand coalition between the two largest groups is the
+ * canonical EP majority formation scenario. A value of `null` reflects the current
+ * data limitation (voting statistics unavailable from the EP API and thus no
+ * reliable viability score can be computed).
+ *
+ * @param groupMetrics - Array of group metrics with `memberCount` and `internalCohesion`
+ * @returns Object with `effectiveParties` (ENP) and `grandCoalitionViability` (0–1 or `null` when unavailable)
  */
 function computeFragmentationMetrics(groupMetrics: GroupCohesionMetrics[]): {
   effectiveParties: number;
@@ -221,7 +309,15 @@ function computeFragmentationMetrics(groupMetrics: GroupCohesionMetrics[]): {
 }
 
 /**
- * Build dominant coalition from sorted pairs
+ * Identifies the dominant coalition from the sorted pair list.
+ *
+ * The dominant coalition is the top-ranked pair by cohesion score. Its
+ * `combinedStrength` is set to `sharedVotes`, which is currently `null`
+ * when vote-level data is unavailable due to EP API limitations — see
+ * {@link computePairCohesion}.
+ *
+ * @param sortedPairs - Coalition pairs sorted descending by cohesion score
+ * @returns Dominant coalition record, or an empty record if the list is empty
  */
 function buildDominantCoalition(sortedPairs: CoalitionPairAnalysis[]): {
   groups: string[];
@@ -240,7 +336,18 @@ function buildDominantCoalition(sortedPairs: CoalitionPairAnalysis[]): {
 }
 
 /**
- * Build computed attributes from fragmentation metrics
+ * Derives the `computedAttributes` block for the coalition dynamics analysis.
+ *
+ * - **`parliamentaryFragmentation`** and **`effectiveNumberOfParties`** both echo the
+ *   ENP value (two fields for different consumer use cases).
+ * - **`grandCoalitionViability`** reflects EPP + S&D cohesion mean (see
+ *   {@link computeFragmentationMetrics}).
+ * - **`oppositionStrength`** is approximated as `1 − topCohesion`, where
+ *   lower top-pair cohesion implies a stronger opposition bloc.
+ *
+ * @param fragMetrics - Fragmentation metrics from {@link computeFragmentationMetrics}
+ * @param sortedPairs - Coalition pairs sorted descending by cohesion score
+ * @returns Computed attributes object for the coalition dynamics result
  */
 function buildCoalitionComputedAttrs(
   fragMetrics: { effectiveParties: number; grandCoalitionViability: number | null },
