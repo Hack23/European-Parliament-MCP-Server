@@ -66,7 +66,7 @@ interface EarlyWarningResult {
 }
 
 interface CoalitionResult {
-  groupMetrics: { groupId: string; stressIndicator: number; computedAttributes: { unityTrend: string } }[];
+  groupMetrics: { groupId: string; stressIndicator: { value: number | null; availability: string; confidence: string }; computedAttributes: { unityTrend: string } }[];
   stressIndicators: { indicator: string; severity: string; affectedGroups: string[] }[];
   confidenceLevel: string;
 }
@@ -337,7 +337,7 @@ async function correlateCoalitionFracture(
   const coalitionWarnings = ewsData.warnings.filter(isCoalitionWarning);
 
   const decliningGroups = coalitionData.groupMetrics
-    .filter(gm => gm.computedAttributes.unityTrend === 'WEAKENING' || gm.stressIndicator > 0.5)
+    .filter(gm => gm.computedAttributes.unityTrend === 'WEAKENING' || (gm.stressIndicator.value !== null && gm.stressIndicator.value > 0.5))
     .map(gm => gm.groupId);
 
   const highStressIndicators = coalitionData.stressIndicators.filter(

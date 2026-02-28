@@ -102,8 +102,8 @@ const EWS_STABLE_RESULT = makeToolResult({
 
 const COALITION_FRACTURE_RESULT = makeToolResult({
   groupMetrics: [
-    { groupId: 'EPP', stressIndicator: 0.8, computedAttributes: { unityTrend: 'WEAKENING' } },
-    { groupId: 'S&D', stressIndicator: 0.2, computedAttributes: { unityTrend: 'STABLE' } },
+    { groupId: 'EPP', stressIndicator: { value: 0.8, availability: 'AVAILABLE', confidence: 'HIGH' }, computedAttributes: { unityTrend: 'WEAKENING' } },
+    { groupId: 'S&D', stressIndicator: { value: 0.2, availability: 'AVAILABLE', confidence: 'HIGH' }, computedAttributes: { unityTrend: 'STABLE' } },
   ],
   stressIndicators: [
     { indicator: 'HIGH_FRAGMENTATION', severity: 'HIGH', affectedGroups: ['EPP'] },
@@ -113,8 +113,8 @@ const COALITION_FRACTURE_RESULT = makeToolResult({
 
 const COALITION_STABLE_RESULT = makeToolResult({
   groupMetrics: [
-    { groupId: 'EPP', stressIndicator: 0.1, computedAttributes: { unityTrend: 'STABLE' } },
-    { groupId: 'S&D', stressIndicator: 0.2, computedAttributes: { unityTrend: 'STABLE' } },
+    { groupId: 'EPP', stressIndicator: { value: 0.1, availability: 'AVAILABLE', confidence: 'HIGH' }, computedAttributes: { unityTrend: 'STABLE' } },
+    { groupId: 'S&D', stressIndicator: { value: 0.2, availability: 'AVAILABLE', confidence: 'HIGH' }, computedAttributes: { unityTrend: 'STABLE' } },
   ],
   stressIndicators: [],
   confidenceLevel: 'HIGH',
