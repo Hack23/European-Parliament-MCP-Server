@@ -253,9 +253,168 @@ describe('get_parliamentary_questions Tool', () => {
     });
 
     it('should have input schema', () => {
-      expect(getParliamentaryQuestionsToolMetadata.inputSchema).toBeDefined();
+      const properties = getParliamentaryQuestionsToolMetadata.inputSchema.properties;
       expect(getParliamentaryQuestionsToolMetadata.inputSchema.type).toBe('object');
-      expect(getParliamentaryQuestionsToolMetadata.inputSchema.properties).toBeDefined();
+      expect(properties).not.toBeNull();
+      expect(typeof properties).toBe('object');
+      expect(Array.isArray(properties)).toBe(false);
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('should handle empty API response gracefully', async () => {
+      vi.mocked(epClient.getParliamentaryQuestions).mockResolvedValue({
+        data: [],
+        total: 0,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetParliamentaryQuestions({});
+      const data = JSON.parse(result.content[0].text) as {
+        data: unknown[];
+        total: number;
+        hasMore: boolean;
+      };
+      expect(data.data).toEqual([]);
+      expect(data.total).toBe(0);
+      expect(data.hasMore).toBe(false);
+    });
+
+    it('should handle minimum limit of 1', async () => {
+      vi.mocked(epClient.getParliamentaryQuestions).mockResolvedValue({
+        data: [],
+        total: 0,
+        limit: 1,
+        offset: 0,
+        hasMore: false,
+      });
+      await handleGetParliamentaryQuestions({ limit: 1 });
+      expect(epClient.getParliamentaryQuestions).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 1 })
+      );
+    });
+
+    it('should handle maximum limit of 100', async () => {
+      vi.mocked(epClient.getParliamentaryQuestions).mockResolvedValue({
+        data: [],
+        total: 0,
+        limit: 100,
+        offset: 0,
+        hasMore: false,
+      });
+      await handleGetParliamentaryQuestions({ limit: 100 });
+      expect(epClient.getParliamentaryQuestions).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 100 })
+      );
+    });
+
+    it('should handle large offset (pagination boundary)', async () => {
+      vi.mocked(epClient.getParliamentaryQuestions).mockResolvedValue({
+        data: [],
+        total: 100,
+        limit: 50,
+        offset: 999999,
+        hasMore: false,
+      });
+
+      const result = await handleGetParliamentaryQuestions({ offset: 999999 });
+      const data = JSON.parse(result.content[0].text) as { offset: number };
+      expect(data.offset).toBe(999999);
+    });
+
+    it('should reject limit of 0', async () => {
+      await expect(
+        handleGetParliamentaryQuestions({ limit: 0 })
+      ).rejects.toThrow();
+    });
+
+    it('should reject limit above maximum', async () => {
+      await expect(
+        handleGetParliamentaryQuestions({ limit: 101 })
+      ).rejects.toThrow();
+    });
+
+    it('should reject negative offset', async () => {
+      await expect(
+        handleGetParliamentaryQuestions({ offset: -1 })
+      ).rejects.toThrow();
+    });
+
+    it('should handle network timeout error', async () => {
+      vi.mocked(epClient.getParliamentaryQuestions).mockRejectedValue(
+        new Error('Request timeout after 30000ms')
+      );
+
+      await expect(handleGetParliamentaryQuestions({}))
+        .rejects.toThrow('Failed to retrieve parliamentary questions');
+    });
+
+    it('should handle rate limit error (429)', async () => {
+      vi.mocked(epClient.getParliamentaryQuestions).mockRejectedValue(
+        Object.assign(new Error('Too Many Requests'), { status: 429 })
+      );
+
+      await expect(handleGetParliamentaryQuestions({}))
+        .rejects.toThrow('Failed to retrieve parliamentary questions');
+    });
+
+    it('should handle question with special characters in topic', async () => {
+      vi.mocked(epClient.getParliamentaryQuestions).mockResolvedValue({
+        data: [
+          {
+            id: 'Q-SPEC-001',
+            type: 'WRITTEN',
+            author: 'MEP-124810',
+            topic: 'EU/US Trade & Energy Policy',
+            status: 'ANSWERED',
+            questionText: 'What is the EU\'s position on trade?',
+            date: '2024-01-15',
+          },
+        ],
+        total: 1,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetParliamentaryQuestions({});
+      const data = JSON.parse(result.content[0].text) as {
+        data: { topic: string }[];
+      };
+      expect(data.data[0]?.topic).toBe('EU/US Trade & Energy Policy');
+    });
+
+    it('should return response with correct structure including data and total', async () => {
+      vi.mocked(epClient.getParliamentaryQuestions).mockResolvedValue({
+        data: [
+          {
+            id: 'Q-002',
+            type: 'ORAL',
+            author: 'MEP-999',
+            topic: 'Budget',
+            status: 'PENDING',
+            questionText: 'How is the budget allocated?',
+            date: '2024-03-10',
+          },
+        ],
+        total: 1,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetParliamentaryQuestions({});
+      const data = JSON.parse(result.content[0].text) as {
+        data: { id: string; type: string; status: string }[];
+        total: number;
+      };
+      expect(data.data).toHaveLength(1);
+      expect(data.data[0]?.id).toBe('Q-002');
+      expect(data.data[0]?.type).toBe('ORAL');
+      expect(data.data[0]?.status).toBe('PENDING');
+      expect(data.total).toBe(1);
     });
   });
 
@@ -308,3 +467,4 @@ describe('get_parliamentary_questions Tool', () => {
     });
   });
 });
+

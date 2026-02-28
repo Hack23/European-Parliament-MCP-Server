@@ -83,19 +83,22 @@ describe('getAllGeneratedStats', () => {
       includeMonthlyBreakdown: false,
       includeRankings: true,
     });
-    expect(result.content).toBeDefined();
     expect(result.content).toHaveLength(1);
     expect(result.content[0]?.type).toBe('text');
 
     const data = JSON.parse(result.content[0]?.text ?? '{}');
-    expect(data.generatedAt).toBeDefined();
-    expect(data.coveragePeriod).toBeDefined();
-    expect(data.coveragePeriod.from).toBe(2004);
-    expect(data.coveragePeriod.to).toBe(2025);
-    expect(data.requestedPeriod).toBeDefined();
-    expect(data.yearlyStats).toBeDefined();
-    expect(data.analysisSummary).toBeDefined();
-    expect(data.methodology).toBeDefined();
+    expect(data.generatedAt).toMatch(/^\d{4}-\d{2}-\d{2}/);
+    expect(data.coveragePeriod).toEqual({ from: 2004, to: 2025 });
+    expect(data.requestedPeriod).toEqual(expect.objectContaining({ from: 2004, to: 2025 }));
+    expect(Array.isArray(data.yearlyStats)).toBe(true);
+    expect(data.analysisSummary).not.toBeNull();
+    expect(data.analysisSummary).toEqual(
+      expect.objectContaining({
+        overallTrend: expect.any(String),
+        keyFindings: expect.any(Array),
+      }),
+    );
+    expect(data.methodology).toContain('Precomputed statistics');
     expect(data.sourceAttribution).toContain('europarl');
   });
 
@@ -121,8 +124,8 @@ describe('getAllGeneratedStats', () => {
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     const year = data.yearlyStats[0];
-    expect(year.year).toBeDefined();
-    expect(year.parliamentaryTerm).toBeDefined();
+    expect(typeof year.year).toBe('number');
+    expect(typeof year.parliamentaryTerm).toBe('string');
     expect(year.mepCount).toBeGreaterThan(0);
     expect(year.plenarySessions).toBeGreaterThan(0);
     expect(year.legislativeActsAdopted).toBeGreaterThan(0);
@@ -137,7 +140,8 @@ describe('getAllGeneratedStats', () => {
     expect(year.documents).toBeGreaterThan(0);
     expect(year.mepTurnover).toBeGreaterThan(0);
     expect(year.declarations).toBeGreaterThan(0);
-    expect(year.commentary).toBeDefined();
+    expect(typeof year.commentary).toBe('string');
+    expect(year.commentary.length).toBeGreaterThan(0);
   });
 
   it('each yearly stat includes political landscape data', () => {
@@ -149,19 +153,24 @@ describe('getAllGeneratedStats', () => {
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     const year = data.yearlyStats[0];
-    expect(year.politicalLandscape).toBeDefined();
-    expect(year.politicalLandscape.groups).toBeDefined();
+    expect(year.politicalLandscape).toEqual(expect.objectContaining({
+      groups: expect.any(Array),
+      totalGroups: expect.any(Number),
+      largestGroup: expect.any(String),
+      fragmentationIndex: expect.any(Number),
+      politicalBalance: expect.any(String),
+    }));
     expect(year.politicalLandscape.groups.length).toBeGreaterThan(0);
     expect(year.politicalLandscape.totalGroups).toBeGreaterThan(0);
-    expect(year.politicalLandscape.largestGroup).toBeDefined();
+
     expect(year.politicalLandscape.largestGroupSeatShare).toBeGreaterThan(0);
     expect(year.politicalLandscape.fragmentationIndex).toBeGreaterThan(0);
     expect(typeof year.politicalLandscape.grandCoalitionPossible).toBe('boolean');
-    expect(year.politicalLandscape.politicalBalance).toBeDefined();
 
     // Verify political group snapshot structure
     const group = year.politicalLandscape.groups[0];
-    expect(group.name).toBeDefined();
+    expect(typeof group.name).toBe('string');
+    expect(group.name.length).toBeGreaterThan(0);
     expect(group.seats).toBeGreaterThan(0);
     expect(group.seatShare).toBeGreaterThan(0);
   });
@@ -194,7 +203,10 @@ describe('getAllGeneratedStats', () => {
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     expect(data.yearlyStats).toHaveLength(1);
-    expect(data.yearlyStats[0].politicalLandscape).toBeDefined();
+    expect(data.yearlyStats[0].politicalLandscape).toEqual(expect.objectContaining({
+      groups: expect.any(Array),
+      totalGroups: expect.any(Number),
+    }));
     // political_groups has no numeric ranking so should be empty
     expect(data.categoryRankings).toBeUndefined();
   });
@@ -269,12 +281,11 @@ describe('getAllGeneratedStats', () => {
       includeRankings: false,
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
-    expect(data.predictions).toBeDefined();
     expect(data.predictions.length).toBe(5);
     expect(data.predictions[0].year).toBe(2026);
     expect(data.predictions[4].year).toBe(2030);
-    expect(data.predictions[0].confidenceInterval).toBeDefined();
-    expect(data.predictions[0].methodology).toBeDefined();
+    expect(data.predictions[0].confidenceInterval).toMatch(/^±\d+%$/);
+    expect(data.predictions[0].methodology).toContain('Average-based extrapolation');
   });
 
   it('excludes predictions when not requested', () => {
@@ -311,7 +322,6 @@ describe('getAllGeneratedStats', () => {
       includeRankings: false,
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
-    expect(data.predictions).toBeDefined();
     expect(data.predictions.length).toBe(2);
     expect(data.predictions[0].year).toBe(2026);
     expect(data.predictions[1].year).toBe(2027);
@@ -325,17 +335,17 @@ describe('getAllGeneratedStats', () => {
       includeRankings: true,
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
-    expect(data.categoryRankings).toBeDefined();
     expect(data.categoryRankings.length).toBe(13);
 
     const ranking = data.categoryRankings[0];
-    expect(ranking.category).toBeDefined();
+    expect(typeof ranking.category).toBe('string');
+    expect(ranking.category.length).toBeGreaterThan(0);
     expect(ranking.mean).toBeGreaterThan(0);
     expect(ranking.stdDev).toBeGreaterThan(0);
     expect(ranking.median).toBeGreaterThan(0);
     expect(ranking.topYear).toBeGreaterThanOrEqual(2004);
     expect(ranking.bottomYear).toBeGreaterThanOrEqual(2004);
-    expect(ranking.rankings).toBeDefined();
+    expect(Array.isArray(ranking.rankings)).toBe(true);
     expect(ranking.rankings.length).toBe(22);
 
     // Check individual ranking entry
@@ -392,7 +402,7 @@ describe('getAllGeneratedStats', () => {
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     expect(data.yearlyStats).toHaveLength(1);
-    expect(data.yearlyStats[0].monthlyActivity).toBeDefined();
+    expect(Array.isArray(data.yearlyStats[0].monthlyActivity)).toBe(true);
     expect(data.yearlyStats[0].monthlyActivity).toHaveLength(12);
     // August should be lowest (recess)
     const aug = data.yearlyStats[0].monthlyActivity[7];
@@ -471,12 +481,13 @@ describe('getAllGeneratedStats', () => {
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     const summary = data.analysisSummary;
-    expect(summary.overallTrend).toBeDefined();
+    expect(typeof summary.overallTrend).toBe('string');
+    expect(summary.overallTrend.length).toBeGreaterThan(0);
     expect(summary.peakActivityYear).toBeGreaterThanOrEqual(2004);
     expect(summary.lowestActivityYear).toBeGreaterThanOrEqual(2004);
     expect(summary.averageAnnualLegislativeOutput).toBeGreaterThan(0);
-    expect(summary.legislativeProductivityTrend).toBeDefined();
-    expect(summary.keyFindings).toBeDefined();
+    expect(typeof summary.legislativeProductivityTrend).toBe('string');
+    expect(Array.isArray(summary.keyFindings)).toBe(true);
     expect(summary.keyFindings.length).toBeGreaterThan(0);
   });
 
@@ -522,7 +533,7 @@ describe('getAllGeneratedStats', () => {
 describe('handleGetAllGeneratedStats', () => {
   it('handles empty args (all defaults)', async () => {
     const result = await handleGetAllGeneratedStats({});
-    expect(result.content).toBeDefined();
+    expect(result.content).toHaveLength(1);
     expect(result.isError).toBeUndefined();
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     expect(data.yearlyStats.length).toBe(22);
@@ -542,5 +553,53 @@ describe('handleGetAllGeneratedStats', () => {
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     expect(data.categoryRankings).toHaveLength(1);
     expect(data.categoryRankings[0].category).toBe('Plenary Sessions');
+  });
+
+  it('returns single year when yearFrom equals yearTo (boundary)', async () => {
+    const result = await handleGetAllGeneratedStats({
+      yearFrom: 2010,
+      yearTo: 2010,
+      includeRankings: false,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.yearlyStats).toHaveLength(1);
+    expect(data.yearlyStats[0].year).toBe(2010);
+    expect(data.requestedPeriod).toEqual({ from: 2010, to: 2010 });
+  });
+
+  it('returns single year for minimum boundary (2004)', async () => {
+    const result = await handleGetAllGeneratedStats({
+      yearFrom: 2004,
+      yearTo: 2004,
+      includeRankings: false,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.yearlyStats).toHaveLength(1);
+    expect(data.yearlyStats[0].year).toBe(2004);
+  });
+
+  it('returns single year for maximum boundary (2025)', async () => {
+    const result = await handleGetAllGeneratedStats({
+      yearFrom: 2025,
+      yearTo: 2025,
+      includeRankings: false,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.yearlyStats).toHaveLength(1);
+    expect(data.yearlyStats[0].year).toBe(2025);
+  });
+
+  it('prediction methodology contains Average-based extrapolation for each prediction', async () => {
+    const result = await handleGetAllGeneratedStats({
+      yearFrom: 2004,
+      yearTo: 2030,
+      includePredictions: true,
+      includeRankings: false,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    for (const pred of data.predictions as { methodology: string; confidenceInterval: string }[]) {
+      expect(pred.methodology).toContain('Average-based extrapolation');
+      expect(pred.confidenceInterval).toMatch(/^±\d+%$/);
+    }
   });
 });
