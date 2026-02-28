@@ -21,7 +21,7 @@ import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../../utils/rateLimiter.js';
 import { withRetry, withTimeoutAndAbort, TimeoutError } from '../../utils/timeout.js';
 import { performanceMonitor } from '../../utils/performance.js';
-import { USER_AGENT, DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API_URL } from '../../config.js';
+import { DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API_URL } from '../../config.js';
 
 // ─── Package version (used in User-Agent header) ──────────────────────────────
 
@@ -50,6 +50,81 @@ const PKG_VERSION = ((): string => {
   }
   return fallbackVersion;
 })();
+
+// ─── URL Validation (SSRF prevention) ────────────────────────────────────────
+
+/** Exact hostnames that must never be used as API endpoints. */
+const BLOCKED_HOSTS_EXACT = new Set(['localhost', '0.0.0.0', '::1']);
+
+/**
+ * Patterns matching private / link-local / loopback / IPv6-mapped-IPv4 address
+ * prefixes. All patterns are tested against the bracket-stripped hostname.
+ *
+ * IPv6-mapped IPv4 patterns use the normalised hex form that the WHATWG URL
+ * parser emits (e.g. `::ffff:127.0.0.1` → `::ffff:7f00:1`).
+ */
+const BLOCKED_HOST_PATTERNS = [
+  /^fe[89ab][0-9a-f]:/i,         // IPv6 link-local           fe80::/10
+  /^f[cd][0-9a-f]{2}:/i,         // IPv6 unique-local         fc00::/7
+  /^::ffff:7f/i,                  // IPv6-mapped 127.x.x.x     loopback
+  /^::ffff:a[0-9a-f]{2}:/i,       // IPv6-mapped 10.x.x.x      RFC-1918
+  /^::ffff:ac1[0-9a-f]:/i,        // IPv6-mapped 172.16-31.x.x RFC-1918
+  /^::ffff:c0a8:/i,               // IPv6-mapped 192.168.x.x   RFC-1918
+  /^::ffff:a9fe:/i,               // IPv6-mapped 169.254.x.x   link-local
+  /^127\./,                       // IPv4 loopback             127.0.0.0/8
+  /^169\.254\./,                  // IPv4 link-local           169.254.0.0/16
+  /^10\./,                        // RFC-1918                  10.0.0.0/8
+  /^172\.(1[6-9]|2\d|3[01])\./,  // RFC-1918                  172.16.0.0/12
+  /^192\.168\./,                  // RFC-1918                  192.168.0.0/16
+];
+
+/**
+ * Returns true when `host` is a loopback, link-local, or RFC-1918 address that
+ * MUST NOT be used as an API endpoint (SSRF prevention).
+ * @private
+ */
+function isBlockedHost(host: string): boolean {
+  return BLOCKED_HOSTS_EXACT.has(host) || BLOCKED_HOST_PATTERNS.some(p => p.test(host));
+}
+
+/**
+ * Validates an EP API base URL to prevent SSRF via environment variable or
+ * constructor argument poisoning.
+ *
+ * Enforces HTTPS-only and blocks requests to localhost, loopback addresses
+ * (127.0.0.0/8), and known internal IP ranges (link-local 169.254.x.x,
+ * RFC-1918 10.x.x.x / 172.16-31.x.x / 192.168.x.x, and their IPv6-mapped
+ * IPv4 equivalents), as well as IPv6 loopback/link-local/unique-local ranges.
+ *
+ * @param url   - The URL string to validate
+ * @param label - Label used in error messages (defaults to `'EP_API_URL'`)
+ * @returns The validated URL string (unchanged)
+ * @throws {Error} If the URL uses a non-HTTPS scheme or targets an internal host
+ *
+ * @security SSRF Prevention – ISMS Policy: SC-002, NE-001
+ */
+export function validateApiUrl(url: string, label = 'EP_API_URL'): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error(`${label} is not a valid URL`);
+  }
+  if (parsed.protocol !== 'https:') {
+    throw new Error(`${label} must use HTTPS protocol`);
+  }
+  // In Node.js, the WHATWG URL API returns IPv6 hostnames with surrounding
+  // brackets in .hostname (e.g. "[::1]"). Strip them before pattern matching
+  // so both IPv4 and IPv6 pattern checks are applied to the raw address string.
+  const rawHost = parsed.hostname;
+  const host = rawHost.startsWith('[') && rawHost.endsWith(']')
+    ? rawHost.slice(1, -1)
+    : rawHost;
+  if (isBlockedHost(host)) {
+    throw new Error(`${label} must not point to internal or loopback addresses: ${host}`);
+  }
+  return url;
+}
 
 // ─── Default configuration constants ─────────────────────────────────────────
 
@@ -195,6 +270,8 @@ export class BaseEPClient {
     maxResponseBytes: number;
   } {
     const rawBaseURL = config.baseURL ?? DEFAULT_EP_API_BASE_URL;
+    // Validate baseURL to prevent SSRF when sub-clients are instantiated directly
+    validateApiUrl(rawBaseURL, 'config.baseURL');
     // Ensure baseURL always ends with '/' so that relative endpoints resolve correctly
     // e.g. new URL('meps', 'https://host/api/v2') would drop 'v2' without the trailing slash
     const baseURL = rawBaseURL.endsWith('/') ? rawBaseURL : `${rawBaseURL}/`;

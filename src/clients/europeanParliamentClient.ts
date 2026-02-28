@@ -74,9 +74,11 @@ import {
   DEFAULT_RATE_LIMIT_TOKENS,
   DEFAULT_RATE_LIMIT_INTERVAL,
   DEFAULT_MAX_RESPONSE_BYTES,
+  validateApiUrl,
   type EPClientConfig,
   type EPSharedResources,
 } from './ep/baseClient.js';
+export { validateApiUrl };
 
 import {
   MEPClient,
@@ -88,66 +90,6 @@ import {
   QuestionClient,
   VocabularyClient,
 } from './ep/index.js';
-
-// ─── URL Validation ───────────────────────────────────────────────────────────
-
-/** Exact hostnames that must never be used as API endpoints. */
-const BLOCKED_HOSTS_EXACT = new Set(['localhost', '0.0.0.0', '::1']);
-
-/** Patterns matching private / link-local / loopback address prefixes. */
-const BLOCKED_HOST_PATTERNS = [
-  /^fe[89ab][0-9a-f]:/i,         // IPv6 link-local   fe80::/10
-  /^f[cd][0-9a-f]{2}:/i,         // IPv6 unique-local fc00::/7
-  /^127\./,                       // IPv4 loopback     127.0.0.0/8
-  /^169\.254\./,                  // IPv4 link-local   169.254.0.0/16
-  /^10\./,                        // RFC-1918          10.0.0.0/8
-  /^172\.(1[6-9]|2\d|3[01])\./,  // RFC-1918          172.16.0.0/12
-  /^192\.168\./,                  // RFC-1918          192.168.0.0/16
-];
-
-/**
- * Returns true when `host` is a loopback, link-local, or RFC-1918 address that
- * MUST NOT be used as an API endpoint (SSRF prevention).
- * @private
- */
-function isBlockedHost(host: string): boolean {
-  return BLOCKED_HOSTS_EXACT.has(host) || BLOCKED_HOST_PATTERNS.some(p => p.test(host));
-}
-
-/**
- * Validates the EP API base URL to prevent SSRF via environment variable poisoning.
- *
- * Enforces HTTPS-only and blocks requests to localhost and known internal
- * IP ranges (link-local 169.254.x.x, RFC-1918 10.x.x.x / 172.16-31.x.x /
- * 192.168.x.x, IPv6 loopback/link-local/unique-local).
- *
- * @param url - The URL string to validate
- * @returns The validated URL string (unchanged)
- * @throws {Error} If the URL uses a non-HTTPS scheme or targets an internal host
- *
- * @security SSRF Prevention – ISMS Policy: SC-002, NE-001
- */
-export function validateApiUrl(url: string): string {
-  let parsed: URL;
-  try {
-    parsed = new URL(url);
-  } catch {
-    throw new Error('EP_API_URL is not a valid URL');
-  }
-  if (parsed.protocol !== 'https:') {
-    throw new Error('EP_API_URL must use HTTPS protocol');
-  }
-  // The WHATWG URL parser wraps IPv6 addresses in brackets (e.g. "[::1]").
-  // Strip brackets before pattern matching so IPv4 and IPv6 checks are uniform.
-  const rawHost = parsed.hostname;
-  const host = rawHost.startsWith('[') && rawHost.endsWith(']')
-    ? rawHost.slice(1, -1)
-    : rawHost;
-  if (isBlockedHost(host)) {
-    throw new Error(`EP_API_URL must not point to internal or loopback addresses: ${host}`);
-  }
-  return url;
-}
 
 // ─── Facade ───────────────────────────────────────────────────────────────────
 
@@ -255,7 +197,7 @@ export class EuropeanParliamentClient {
       });
     const rawBaseURL = config.baseURL ?? DEFAULT_EP_API_BASE_URL;
     // Validate baseURL to prevent SSRF (same rules as EP_API_URL env var)
-    validateApiUrl(rawBaseURL);
+    validateApiUrl(rawBaseURL, 'config.baseURL');
     // Ensure baseURL always ends with '/' so relative endpoints resolve correctly
     const baseURL = rawBaseURL.endsWith('/') ? rawBaseURL : `${rawBaseURL}/`;
     return {

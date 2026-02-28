@@ -4681,6 +4681,41 @@ describe('EuropeanParliamentClient', () => {
         'EP_API_URL must not point to internal or loopback addresses'
       );
     });
+
+    it('should reject a URL pointing to an IPv6-mapped IPv4 loopback (::ffff:127.x.x.x)', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[::ffff:127.0.0.1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to an IPv6-mapped RFC-1918 10.x.x.x address', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[::ffff:10.0.0.1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to an IPv6-mapped RFC-1918 192.168.x.x address', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[::ffff:192.168.1.1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to an IPv6-mapped RFC-1918 172.16-31.x.x address', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[::ffff:172.16.0.1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to an IPv6-mapped link-local 169.254.x.x address', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[::ffff:169.254.0.1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
   });
 
   describe('Exponential Backoff', () => {
