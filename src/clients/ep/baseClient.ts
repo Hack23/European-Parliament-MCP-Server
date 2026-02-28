@@ -21,6 +21,7 @@ import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../../utils/rateLimiter.js';
 import { withRetry, withTimeoutAndAbort, TimeoutError } from '../../utils/timeout.js';
 import { performanceMonitor } from '../../utils/performance.js';
+import { USER_AGENT, DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API_URL } from '../../config.js';
 
 // ─── Package version (used in User-Agent header) ──────────────────────────────
 
@@ -52,8 +53,8 @@ const PKG_VERSION = ((): string => {
 
 // ─── Default configuration constants ─────────────────────────────────────────
 
-/** Default base URL for European Parliament Open Data Portal API v2 */
-export const DEFAULT_EP_API_BASE_URL = 'https://data.europarl.europa.eu/api/v2/';
+/** Default base URL for European Parliament Open Data Portal API v2 — derived from centralized config */
+export const DEFAULT_EP_API_BASE_URL = DEFAULT_API_URL;
 /** Default HTTP request timeout in milliseconds (10 seconds) */
 export const DEFAULT_REQUEST_TIMEOUT_MS = 10_000;
 /** Whether automatic retry on transient failures is enabled by default */
@@ -68,8 +69,8 @@ export const DEFAULT_RETRY_MAX_DELAY_MS = 30_000;
 export const DEFAULT_CACHE_TTL_MS = 900_000;
 /** Default maximum number of entries in the LRU response cache */
 export const DEFAULT_MAX_CACHE_SIZE = 500;
-/** Default rate limit token bucket size (requests per interval) */
-export const DEFAULT_RATE_LIMIT_TOKENS = 100;
+/** Default rate limit token bucket size (requests per interval) — derived from centralized config */
+export const DEFAULT_RATE_LIMIT_TOKENS = DEFAULT_RATE_LIMIT_PER_MINUTE;
 /** Default rate limit interval unit */
 export const DEFAULT_RATE_LIMIT_INTERVAL = 'minute' as const;
 /** Maximum allowed response body size in bytes (10 MiB, 10×1024×1024) to prevent memory exhaustion */
