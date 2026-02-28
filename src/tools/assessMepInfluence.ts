@@ -13,6 +13,7 @@
 
 import { AssessMepInfluenceSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
@@ -328,7 +329,8 @@ export async function handleAssessMepInfluence(
         limit: 100
       });
       questionCount = questions.data.length;
-    } catch {
+    } catch (error: unknown) {
+      auditLogger.logError('assess_mep_influence.fetch_questions', { mepId: params.mepId }, toErrorMessage(error));
       // Questions may not be available — report zero
     }
 

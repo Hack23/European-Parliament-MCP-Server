@@ -7,6 +7,7 @@
 import type { z } from 'zod';
 import type { GenerateReportSchema } from '../../schemas/europeanParliament.js';
 import { epClient } from '../../clients/europeanParliamentClient.js';
+import { auditLogger, toErrorMessage } from '../../utils/auditLogger.js';
 import type { MEPDetails } from '../../types/europeanParliament.js';
 import type { Report } from './types.js';
 import {
@@ -53,7 +54,8 @@ async function fetchQuestionCount(subjectId: string | undefined): Promise<number
   try {
     const questions = await epClient.getParliamentaryQuestions({ author: subjectId, limit: 100 });
     return questions.data.length;
-  } catch {
+  } catch (error: unknown) {
+    auditLogger.logError('generate_report.fetch_question_count', { subjectId }, toErrorMessage(error));
     return null;
   }
 }
@@ -63,7 +65,8 @@ async function fetchDocumentCount(year: number): Promise<number | null> {
   try {
     const docs = await epClient.getCommitteeDocuments({ year, limit: 100 });
     return docs.data.length;
-  } catch {
+  } catch (error: unknown) {
+    auditLogger.logError('generate_report.fetch_document_count', { year }, toErrorMessage(error));
     return null;
   }
 }
@@ -73,7 +76,8 @@ async function fetchAdoptedTextCount(year: number): Promise<number | null> {
   try {
     const adopted = await epClient.getAdoptedTexts({ year, limit: 100 });
     return adopted.data.length;
-  } catch {
+  } catch (error: unknown) {
+    auditLogger.logError('generate_report.fetch_adopted_text_count', { year }, toErrorMessage(error));
     return null;
   }
 }
@@ -83,7 +87,8 @@ async function fetchSessionCount(dateFrom: string, dateTo: string): Promise<numb
   try {
     const sessions = await epClient.getPlenarySessions({ dateFrom, dateTo, limit: 100 });
     return sessions.data.length;
-  } catch {
+  } catch (error: unknown) {
+    auditLogger.logError('generate_report.fetch_session_count', { dateFrom, dateTo }, toErrorMessage(error));
     return null;
   }
 }
@@ -93,7 +98,8 @@ async function fetchProcedureCount(year: number): Promise<number | null> {
   try {
     const procedures = await epClient.getProcedures({ year, limit: 100 });
     return procedures.data.length;
-  } catch {
+  } catch (error: unknown) {
+    auditLogger.logError('generate_report.fetch_procedure_count', { year }, toErrorMessage(error));
     return null;
   }
 }
