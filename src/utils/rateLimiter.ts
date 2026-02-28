@@ -99,6 +99,13 @@ export class RateLimiter {
     }
   }
 
+  /** Coerce an optional timeoutMs value to a safe finite number >= 0. */
+  private static resolveTimeout(rawTimeoutMs: number | undefined): number {
+    if (rawTimeoutMs === undefined) return 5000;
+    if (Number.isFinite(rawTimeoutMs) && rawTimeoutMs >= 0) return rawTimeoutMs;
+    return 0;
+  }
+
   /**
    * Refill tokens based on elapsed time
    */
@@ -149,7 +156,22 @@ export class RateLimiter {
     count: number,
     options?: { timeoutMs?: number }
   ): Promise<RateLimitResult> {
-    const timeoutMs = options?.timeoutMs ?? 5000;
+    // Validate count: must be a finite integer >= 1
+    if (!Number.isFinite(count) || count < 1 || !Number.isInteger(count)) {
+      throw new Error(`removeTokens: count must be a finite integer >= 1, got ${String(count)}`);
+    }
+    // A count larger than the bucket capacity can never be satisfied
+    if (count > this.tokensPerInterval) {
+      throw new Error(
+        `removeTokens: count (${String(count)}) exceeds bucket capacity (${String(this.tokensPerInterval)})`
+      );
+    }
+
+    // Validate timeoutMs: coerce invalid (NaN/Infinity/negative) to 0 so the
+    // call never blocks and always returns allowed:false immediately
+    const rawTimeoutMs = options?.timeoutMs;
+    const timeoutMs = RateLimiter.resolveTimeout(rawTimeoutMs);
+
     const deadline = Date.now() + timeoutMs;
 
     for (;;) {

@@ -142,6 +142,46 @@ describe('RateLimiter', () => {
     });
   });
 
+  describe('removeTokens input validation', () => {
+    it('should throw when count is 0', async () => {
+      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second' });
+      await expect(limiter.removeTokens(0)).rejects.toThrow(/count must be a finite integer >= 1/);
+    });
+
+    it('should throw when count is negative', async () => {
+      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second' });
+      await expect(limiter.removeTokens(-1)).rejects.toThrow(/count must be a finite integer >= 1/);
+    });
+
+    it('should throw when count is non-integer', async () => {
+      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second' });
+      await expect(limiter.removeTokens(1.5)).rejects.toThrow(/count must be a finite integer >= 1/);
+    });
+
+    it('should throw when count exceeds bucket capacity', async () => {
+      const limiter = new RateLimiter({ tokensPerInterval: 5, interval: 'second' });
+      await expect(limiter.removeTokens(6)).rejects.toThrow(/exceeds bucket capacity/);
+    });
+
+    it('should treat NaN timeoutMs as 0 and return allowed:false immediately', async () => {
+      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
+      const result = await limiter.removeTokens(1, { timeoutMs: NaN });
+      expect(result.allowed).toBe(false);
+    });
+
+    it('should treat Infinity timeoutMs as 0 and return allowed:false immediately', async () => {
+      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
+      const result = await limiter.removeTokens(1, { timeoutMs: Infinity });
+      expect(result.allowed).toBe(false);
+    });
+
+    it('should treat negative timeoutMs as 0 and return allowed:false immediately', async () => {
+      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
+      const result = await limiter.removeTokens(1, { timeoutMs: -100 });
+      expect(result.allowed).toBe(false);
+    });
+  });
+
   describe('tryRemoveTokens', () => {
     it('should return true when tokens available', () => {
       vi.useFakeTimers();
