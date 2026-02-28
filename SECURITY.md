@@ -232,7 +232,7 @@ This MCP server implements comprehensive security measures aligned with our **[S
 
 - **🗑️ Right to Erasure** - Support for data deletion requests
   - Policy: [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md)
-  - Process: Documented procedures for data subject requests
+  - Process: `AuditLogger.eraseByUser(userId, authToken)` removes all in-memory entries for a data subject (GDPR Art. 17). Entries flushed to durable sinks must be erased separately via those sinks.
 
 - **🔒 Data Protection by Design** - Privacy-enhancing technologies
   - Policy: [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md)
@@ -242,6 +242,59 @@ This MCP server implements comprehensive security measures aligned with our **[S
   - Data Protection Impact Assessment (DPIA) for high-risk processing
   - Records of processing activities (ROPA)
   - Data breach notification procedures
+
+### 📝 Audit Logging (`src/utils/auditLogger.ts` + `src/utils/auditSink.ts`)
+
+ISMS Policy AU-002 (Audit Logging and Monitoring) — all MCP tool invocations and EP API data-access events are recorded in a structured, GDPR-compliant audit trail.
+
+#### Architecture
+
+| Component | Description |
+|-----------|-------------|
+| `AuditLogger` | Central logger; writes to an always-on `MemoryAuditSink` plus zero or more extra sinks |
+| `MemoryAuditSink` | In-process buffer; supports `query(filter)` and `eraseByUser(userId)` |
+| `StderrAuditSink` | Default extra sink; emits `[AUDIT] <json>` to stderr (MCP-compatible) |
+| `FileAuditSink` | Appends NDJSON to a file; rotates when the file reaches `maxSizeBytes` |
+| `StructuredJsonSink` | Passes serialised JSON to a caller-supplied writer (CloudWatch, Elastic, …) |
+| `RetentionPolicy` | Filters entries older than `maxAgeMs` on every `getLogs()` / `queryLogs()` call |
+
+#### Security Controls
+
+| Control | Mechanism |
+|---------|-----------|
+| **PII Protection** | `sanitizeParams()` redacts top-level keys in `DEFAULT_SENSITIVE_KEYS` (`name`, `email`, `fullName`, `address`, `firstName`, `lastName`, `phone`) before any entry is stored |
+| **Access Control** | `requiredAuthToken` constructor option gates `getLogs()`, `queryLogs()`, `eraseByUser()`, and `clear()` behind an authorization token; unauthorized calls throw immediately |
+| **Data Retention** | `retentionMs` constructor option enforces a configurable maximum age; expired entries are excluded from all query results |
+| **Right to Erasure** | `eraseByUser(userId, authToken)` removes all in-memory entries for a given data subject (GDPR Art. 17) |
+| **Append-only sinks** | `FileAuditSink` appends using async `fs.appendFile` (append-only writes); `MemoryAuditSink.clear()` is publicly exposed but is intended to be used via `AuditLogger.clear()`, which enforces authorization via `checkAuthorization` |
+| **No stdout pollution** | All sinks write to stderr or external systems; stdout is reserved for the MCP protocol |
+
+#### Configuration Example
+
+```typescript
+import { AuditLogger, FileAuditSink } from 'european-parliament-mcp-server';
+
+const requiredAuthToken = process.env['AUDIT_READ_TOKEN'];
+
+if (!requiredAuthToken) {
+  throw new Error('AUDIT_READ_TOKEN environment variable must be set to enable secure audit log access.');
+}
+
+const logger = new AuditLogger({
+  // Persist to file with automatic log rotation at 50 MiB
+  sinks: [new FileAuditSink({ filePath: '/var/log/ep-mcp-audit.ndjson', maxSizeBytes: 50 * 1024 * 1024 })],
+  // Enforce 90-day data retention (GDPR Art. 5(1)(e))
+  retentionMs: 90 * 24 * 60 * 60 * 1000,
+  // Require an auth token to read or erase audit logs
+  requiredAuthToken,
+  // Extend the default set of redacted keys
+  sensitiveKeys: ['name', 'email', 'fullName', 'address', 'mepPrivateEmail'],
+});
+```
+
+#### Test Coverage
+
+The audit logging subsystem is security-critical and maintains **100% statement, branch, function, and line coverage** (`src/utils/auditLogger.ts` and `src/utils/auditSink.ts`).
 
 ---
 
