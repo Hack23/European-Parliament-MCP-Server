@@ -1258,6 +1258,8 @@ gantt
 
 #### 📊 Workflow Count & Capability Projection
 
+> **Baseline:** 11 GitHub Actions workflows today. Projected growth includes AI-generated workflows, scheduled intelligence pipelines, multi-environment deployment chains, and automated OSINT processing — see [FUTURE_WORKFLOWS.md](./FUTURE_WORKFLOWS.md) for detailed expansion plans.
+
 | Year | Total Workflows | AI Model | Key Capability | Tools |
 |:----:|:---------------:|:--------:|:---------------|:-----:|
 | **2026** | 44–50 | Opus 4.6–4.9 | 🤖 Agentic news generation, AI-authored briefings | 46→55 |
