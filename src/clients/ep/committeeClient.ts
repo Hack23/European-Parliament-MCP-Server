@@ -72,8 +72,11 @@ export class CommitteeClient extends BaseEPClient {
         return this.transformCorporateBody(response.data[0] ?? {});
       }
     } catch (error: unknown) {
-      auditLogger.logError('get_committee_info.fetch_direct', { bodyId }, toErrorMessage(error));
-      // Body not found by direct lookup
+      // A 404 from the direct lookup is an expected miss; don't log it as an error.
+      if (!(error instanceof APIError && error.statusCode === 404)) {
+        auditLogger.logError('get_committee_info.fetch_direct', { bodyId }, toErrorMessage(error));
+      }
+      // Body not found by direct lookup or unexpected failure already logged
     }
     return null;
   }

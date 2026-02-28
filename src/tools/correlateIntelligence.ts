@@ -467,7 +467,7 @@ async function correlateNetworkProfiles(
     const nr = await handleNetworkAnalysis({});
     networkData = parseToolResult(nr) as NetworkResult;
   } catch (error: unknown) {
-    auditLogger.logError('correlate_intelligence.fetch_network_data', {}, toErrorMessage(error));
+    auditLogger.logError('correlate_intelligence.fetch_network_data', { mepIds: numericIds, mepIdCount: numericIds.length }, toErrorMessage(error));
     return { correlations: [], alerts: [], toolConfidenceLevels: [] };
   }
 
