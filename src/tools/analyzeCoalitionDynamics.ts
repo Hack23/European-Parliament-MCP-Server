@@ -92,8 +92,8 @@ function classifyCohesionTrend(score: number): string {
  *
  * @param groupA - Political group identifier for the first group
  * @param groupB - Political group identifier for the second group
- * @param groupAMembers - Member count of `groupA` from real EP API data
- * @param groupBMembers - Member count of `groupB` from real EP API data
+ * @param groupAMembers - Sample-based member count estimate (lower bound) for `groupA` derived from EP API data
+ * @param groupBMembers - Sample-based member count estimate (lower bound) for `groupB` derived from EP API data
  * @param minimumCohesion - Threshold above which `allianceSignal` is set to `true`
  * @returns {@link CoalitionPairAnalysis} record where `cohesionScore` is an
  *   approximation based on group-size balance (not actual voting behavior — see
@@ -177,12 +177,12 @@ async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionM
  * Builds all pairwise coalition pair analyses for the target groups.
  *
  * Iterates over the upper-triangle of group combinations (O(n²)) and calls
- * {@link computePairCohesion} for each pair using real member counts from
- * `groupMetrics`.
+ * {@link computePairCohesion} for each pair using the sample-based `memberCount`
+ * estimates from `groupMetrics` (see {@link buildGroupMetrics} for data scope limits).
  *
  * @param targetGroups - Ordered list of political group identifiers
  * @param minimumCohesion - Cohesion threshold for `allianceSignal` detection
- * @param groupMetrics - Pre-fetched group metrics containing `memberCount` per group
+ * @param groupMetrics - Pre-fetched group metrics containing sampled `memberCount` per group
  * @returns Array of {@link CoalitionPairAnalysis} records for every group combination
  */
 function buildCoalitionPairs(
