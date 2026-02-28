@@ -275,14 +275,14 @@ export class EuropeanParliamentMCPServer {
 
     const tools = getToolMetadataArray();
     const coreToolCount = tools.filter(t => t.category === 'core').length;
-    const advancedToolCount = tools.length - coreToolCount;
+    const nonCoreToolCount = tools.length - coreToolCount;
     const prompts = getPromptMetadataArray();
     const resourceTemplates = getResourceTemplateArray();
 
     // Log to stderr (stdout is used for MCP protocol)
     console.error(`${SERVER_NAME} v${SERVER_VERSION} started`);
     console.error('Server ready to handle requests');
-    console.error(`Available tools: ${String(tools.length)} (${String(coreToolCount)} core + ${String(advancedToolCount)} advanced analysis)`);
+    console.error(`Available tools: ${String(tools.length)} (${String(coreToolCount)} core + ${String(nonCoreToolCount)} additional)`);
     console.error(`Available prompts: ${String(prompts.length)}`);
     console.error(`Available resource templates: ${String(resourceTemplates.length)}`);
   }

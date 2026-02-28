@@ -48,7 +48,7 @@ export function sanitizeUrl(urlString: string): string {
 export function showHelp(): void {
   const tools = getToolMetadataArray();
   const coreToolCount = tools.filter(t => t.category === 'core').length;
-  const advancedToolCount = tools.length - coreToolCount;
+  const nonCoreToolCount = tools.length - coreToolCount;
 
   // eslint-disable-next-line no-console
   console.log(`
@@ -65,7 +65,7 @@ OPTIONS:
   --health    Show health check / diagnostics
 
 CAPABILITIES:
-  Tools:     ${String(tools.length)} (${String(coreToolCount)} core + ${String(advancedToolCount)} advanced)
+  Tools:     ${String(tools.length)} (${String(coreToolCount)} core + ${String(nonCoreToolCount)} additional)
   Protocol:  Model Context Protocol (MCP) via stdio
 
 ENVIRONMENT VARIABLES:
@@ -95,7 +95,7 @@ export function showVersion(): void {
 export function showHealth(): void {
   const tools = getToolMetadataArray();
   const coreToolCount = tools.filter(t => t.category === 'core').length;
-  const advancedToolCount = tools.length - coreToolCount;
+  const nonCoreToolCount = tools.length - coreToolCount;
   const prompts = getPromptMetadataArray();
   const resourceTemplates = getResourceTemplateArray();
 
@@ -114,7 +114,7 @@ export function showHealth(): void {
     tools: {
       total: tools.length,
       core: coreToolCount,
-      advanced: advancedToolCount,
+      nonCore: nonCoreToolCount,
     },
     prompts: {
       total: prompts.length,
