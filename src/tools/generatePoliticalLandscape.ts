@@ -19,6 +19,7 @@
 
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -228,7 +229,8 @@ async function buildLandscape(
       limit: 100
     });
     recentSessionCount = sessions.data.length;
-  } catch {
+  } catch (error: unknown) {
+    auditLogger.logError('generate_political_landscape.fetch_sessions', { dateFrom, dateTo }, toErrorMessage(error));
     // API may not return sessions for this date range — report zero
   }
 

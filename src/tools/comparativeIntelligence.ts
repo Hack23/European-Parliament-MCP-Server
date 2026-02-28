@@ -27,6 +27,7 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 import { ToolError } from './shared/errors.js';
 import { handleToolError } from './shared/errorHandler.js';
+import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 
 export const ComparativeIntelligenceSchema = z.object({
   mepIds: z.array(z.number().positive())
@@ -426,6 +427,11 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
           cause: error,
         });
     return handleToolError(toolError, 'comparative_intelligence');
+    auditLogger.logError('comparative_intelligence', params as Record<string, unknown>, toErrorMessage(error));
+    return buildErrorResponse(
+      error instanceof Error ? error : new Error(String(error)),
+      'comparative_intelligence'
+    );
   }
 }
 
