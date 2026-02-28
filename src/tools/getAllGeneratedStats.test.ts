@@ -354,6 +354,30 @@ describe('getAllGeneratedStats', () => {
     expect(data.categoryRankings[0].category).toBe('Legislative Acts Adopted');
   });
 
+  it('recomputes ranking summary stats for filtered year range', () => {
+    const result = getAllGeneratedStats({
+      yearFrom: 2020,
+      yearTo: 2023,
+      category: 'plenary_sessions',
+      includePredictions: false,
+      includeMonthlyBreakdown: false,
+      includeRankings: true,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.categoryRankings).toHaveLength(1);
+    const ranking = data.categoryRankings[0];
+    // Should only contain 4 years
+    expect(ranking.rankings).toHaveLength(4);
+    // topYear and bottomYear must be within the filtered range
+    expect(ranking.topYear).toBeGreaterThanOrEqual(2020);
+    expect(ranking.topYear).toBeLessThanOrEqual(2023);
+    expect(ranking.bottomYear).toBeGreaterThanOrEqual(2020);
+    expect(ranking.bottomYear).toBeLessThanOrEqual(2023);
+    // Re-ranked: rank 1 should exist
+    expect(ranking.rankings[0].rank).toBe(1);
+    expect(ranking.rankings[0].percentile).toBe(100);
+  });
+
   it('includes monthly breakdown when requested', () => {
     const result = getAllGeneratedStats({
       yearFrom: 2023,

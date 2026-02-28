@@ -114,6 +114,64 @@ const CATEGORY_LABEL_MAP: Record<string, string> = {
   declarations: 'Declarations',
 };
 
+type RankingEntry = typeof GENERATED_STATS.categoryRankings[number];
+
+function computeStats(values: number[]): { mean: number; stdDev: number; median: number } {
+  const n = values.length;
+  const mean = values.reduce((s, v) => s + v, 0) / n;
+  const variance =
+    n > 1 ? values.reduce((s, v) => s + (v - mean) ** 2, 0) / n : 0;
+  const stdDev = Math.round(Math.sqrt(variance) * 100) / 100;
+
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  const median =
+    sorted.length % 2 === 0
+      ? ((sorted[mid - 1] ?? 0) + (sorted[mid] ?? 0)) / 2
+      : sorted[mid] ?? 0;
+
+  return { mean: Math.round(mean * 100) / 100, stdDev, median };
+}
+
+function recomputeRankingSummary(
+  r: RankingEntry,
+  yearFrom: number,
+  yearTo: number,
+): RankingEntry {
+  const filtered = r.rankings.filter(
+    (ry) => ry.year >= yearFrom && ry.year <= yearTo,
+  );
+
+  if (filtered.length === 0) {
+    return { ...r, rankings: [], mean: 0, stdDev: 0, median: 0, topYear: 0, bottomYear: 0 };
+  }
+
+  const values = filtered.map((e) => e.totalActivityScore);
+  const n = values.length;
+  const stats = computeStats(values);
+
+  const reSorted = [...filtered].sort(
+    (a, b) => b.totalActivityScore - a.totalActivityScore,
+  );
+
+  const reRanked = reSorted.map((entry, idx) => ({
+    ...entry,
+    rank: idx + 1,
+    percentile:
+      n === 1
+        ? 100
+        : Math.round(((n - idx - 1) / (n - 1)) * 10000) / 100,
+  }));
+
+  return {
+    ...r,
+    rankings: reRanked,
+    ...stats,
+    topYear: reSorted[0]?.year ?? 0,
+    bottomYear: reSorted[n - 1]?.year ?? 0,
+  };
+}
+
 function filterRankings(
   params: GetAllGeneratedStatsParams,
   yearFrom: number,
@@ -121,19 +179,17 @@ function filterRankings(
 ): typeof GENERATED_STATS.categoryRankings {
   if (!params.includeRankings) return [];
 
-  const filterByYear = (r: typeof GENERATED_STATS.categoryRankings[number]): typeof GENERATED_STATS.categoryRankings[number] => ({
-    ...r,
-    rankings: r.rankings.filter((ry) => ry.year >= yearFrom && ry.year <= yearTo),
-  });
+  const recompute = (r: RankingEntry): RankingEntry =>
+    recomputeRankingSummary(r, yearFrom, yearTo);
 
   if (params.category === 'all') {
-    return GENERATED_STATS.categoryRankings.map(filterByYear);
+    return GENERATED_STATS.categoryRankings.map(recompute);
   }
 
   const label = CATEGORY_LABEL_MAP[params.category];
   return GENERATED_STATS.categoryRankings
     .filter((r) => r.category === label)
-    .map(filterByYear);
+    .map(recompute);
 }
 
 export function getAllGeneratedStats(
@@ -181,8 +237,8 @@ export function getAllGeneratedStats(
         coverageNote:
           yearFrom > GENERATED_STATS.coveragePeriod.from ||
           yearTo < GENERATED_STATS.coveragePeriod.to
-            ? `This summary reflects the full ${GENERATED_STATS.coveragePeriod.from}-${GENERATED_STATS.coveragePeriod.to} dataset; filtered results cover ${yearFrom}-${yearTo} only.`
-            : `Covers the complete ${GENERATED_STATS.coveragePeriod.from}-${GENERATED_STATS.coveragePeriod.to} dataset.`,
+            ? `This summary reflects the full ${String(GENERATED_STATS.coveragePeriod.from)}-${String(GENERATED_STATS.coveragePeriod.to)} dataset; filtered results cover ${String(yearFrom)}-${String(yearTo)} only.`
+            : `Covers the complete ${String(GENERATED_STATS.coveragePeriod.from)}-${String(GENERATED_STATS.coveragePeriod.to)} dataset.`,
       },
       confidenceLevel: 'HIGH' as const,
       methodology:
