@@ -377,13 +377,18 @@ export class AuditLogger {
 
   private writeSinks(entry: AuditLogEntry): void {
     for (const sink of this.extraSinks) {
-      const result = sink.write(entry);
-      if (result instanceof Promise) {
-        // Fire-and-forget async sinks; surface errors to stderr so they are
-        // observable without blocking the calling code path.
-        void result.catch((err: unknown) => {
-          console.error('[AuditLogger] Async sink write failed:', err);
-        });
+      try {
+        const result = sink.write(entry);
+        if (result instanceof Promise) {
+          // Fire-and-forget async sinks; surface errors to stderr so they are
+          // observable without blocking the calling code path.
+          void result.catch((err: unknown) => {
+            console.error('[AuditLogger] Async sink write failed:', err);
+          });
+        }
+      } catch (err: unknown) {
+        // Ensure synchronous sink failures do not break the caller.
+        console.error('[AuditLogger] Sync sink write failed:', err);
       }
     }
   }

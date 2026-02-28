@@ -746,6 +746,23 @@ describe('AuditLogger', () => {
       );
       consoleSpy.mockRestore();
     });
+
+    it('should surface synchronous sink errors to stderr without throwing', () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const syncThrowingSink: AuditSink = {
+        write: vi.fn<AuditSink['write']>().mockImplementation((): void => {
+          throw new Error('sync write failure');
+        }),
+      };
+      const logger2 = new AuditLogger({ sinks: [syncThrowingSink] });
+      // log() must not throw even when the sink throws synchronously
+      expect(() => logger2.log({ action: 'sync_fail', params: {} })).not.toThrow();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[AuditLogger] Sync sink write failed:',
+        expect.objectContaining({ message: 'sync write failure' })
+      );
+      consoleSpy.mockRestore();
+    });
   });
 
   // ============================================================================
