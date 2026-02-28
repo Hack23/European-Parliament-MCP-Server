@@ -20,12 +20,12 @@ import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../../utils/rateLimiter.js';
 import { withRetry, withTimeoutAndAbort, TimeoutError } from '../../utils/timeout.js';
 import { performanceMonitor } from '../../utils/performance.js';
-import { USER_AGENT, DEFAULT_RATE_LIMIT_PER_MINUTE } from '../../config.js';
+import { USER_AGENT, DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API_URL } from '../../config.js';
 
 // ─── Default configuration constants ─────────────────────────────────────────
 
-/** Default base URL for European Parliament Open Data Portal API v2 */
-export const DEFAULT_EP_API_BASE_URL = 'https://data.europarl.europa.eu/api/v2/';
+/** Default base URL for European Parliament Open Data Portal API v2 — derived from centralized config */
+export const DEFAULT_EP_API_BASE_URL = DEFAULT_API_URL;
 /** Default HTTP request timeout in milliseconds (10 seconds) */
 export const DEFAULT_REQUEST_TIMEOUT_MS = 10_000;
 /** Whether automatic retry on transient failures is enabled by default */
