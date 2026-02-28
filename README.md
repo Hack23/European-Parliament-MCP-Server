@@ -1103,7 +1103,7 @@ graph TB
         A9["🏛️ eu-parliament-specialist"]
         A10["📊 performance-optimizer"]
         A11["📋 isms-compliance-auditor"]
-        A12["💼 business-development"]
+        A12["💼 business-development-specialist"]
         A13["📣 marketing-specialist"]
         A14["🧩 zod-schema-architect"]
     end
@@ -1149,7 +1149,7 @@ graph TB
     WORKFLOWS --> TOOLS
 ```
 
-### 📅 Future Advance Roadmap: 2026–2037
+### 📅 Future Advanced Roadmap: 2026–2037
 
 > From **46 MCP tools** today to a **transformative democratic intelligence platform** serving all 195 parliamentary systems — powered by the relentless march of AI model generations.
 
@@ -1305,12 +1305,12 @@ graph LR
         style 2030 fill:#581C87,stroke:#A855F7,color:#F3E8FF
         Y30["🧠 Opus 8.x\n75–85 workflows\nNear-expert analysis"]
     end
-    subgraph "2031–33"
-        style 2031–33 fill:#701A75,stroke:#D946EF,color:#FAE8FF
+    subgraph Y2031_33["2031–33"]
+        style Y2031_33 fill:#701A75,stroke:#D946EF,color:#FAE8FF
         Y31["🌍 Pre-AGI\n85–100 workflows\nGlobal coverage"]
     end
-    subgraph "2034–37"
-        style 2034–37 fill:#831843,stroke:#EC4899,color:#FCE7F3
+    subgraph Y2034_37["2034–37"]
+        style Y2034_37 fill:#831843,stroke:#EC4899,color:#FCE7F3
         Y34["🌐 AGI Era\n100–120+ workflows\nTransformative platform"]
     end
 
