@@ -20,7 +20,6 @@ import { AnalyzeVotingPatternsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
-
 /**
  * Voting pattern analysis result
  */
@@ -162,6 +161,7 @@ export async function handleAnalyzeVotingPatterns(
         mepId: params.mepId,
         mepName: mep.name,
         dataAvailable: false,
+        dataAvailability: 'UNAVAILABLE',
         confidenceLevel: 'LOW',
         message: 'Voting statistics not available from EP API for this endpoint (/meps/{id}). '
           + 'Use getVotingRecords tool to retrieve actual voting data.'
