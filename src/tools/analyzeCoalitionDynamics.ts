@@ -111,8 +111,10 @@ function computePairCohesion(
 /**
  * Build group metrics from fetched MEP data.
  * Note: The EP API /meps/{id} endpoint does not provide per-MEP voting
- * statistics, so cohesion metrics are derived from group composition only.
- * Voting-related fields report null with UNAVAILABLE dataAvailability.
+ * statistics, so internalCohesion, defectionRate, and avgAttendance are
+ * explicitly unavailable (null with dataAvailability 'UNAVAILABLE').
+ * memberCount is a sample count capped at the API page limit (50); for
+ * groups with more than 50 members the actual seat count will be higher.
  */
 async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionMetrics[]> {
   const metrics: GroupCohesionMetrics[] = [];
@@ -121,6 +123,7 @@ async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionM
 
     // Per-MEP voting statistics are not available from the EP API,
     // so cohesion/defection/attendance are reported as null with UNAVAILABLE marker.
+    // memberCount is capped at 50 (single API page) and may undercount large groups.
     const memberCount = mepsResult.data.length;
 
     metrics.push({
