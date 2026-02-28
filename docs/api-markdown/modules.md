@@ -1,8 +1,8 @@
-[**European Parliament MCP Server API v0.8.2**](README.md)
+[**European Parliament MCP Server API v0.9.0**](README.md)
 
 ***
 
-# European Parliament MCP Server API v0.8.2
+# European Parliament MCP Server API v0.9.0
 
 ## Modules
 
@@ -46,8 +46,11 @@
 - [tools/analyzeLegislativeEffectiveness](tools/analyzeLegislativeEffectiveness/README.md)
 - [tools/analyzeVotingPatterns](tools/analyzeVotingPatterns/README.md)
 - [tools/assessMepInfluence](tools/assessMepInfluence/README.md)
+- [tools/comparativeIntelligence](tools/comparativeIntelligence/README.md)
 - [tools/comparePoliticalGroups](tools/comparePoliticalGroups/README.md)
+- [tools/correlateIntelligence](tools/correlateIntelligence/README.md)
 - [tools/detectVotingAnomalies](tools/detectVotingAnomalies/README.md)
+- [tools/earlyWarningSystem](tools/earlyWarningSystem/README.md)
 - [tools/generatePoliticalLandscape](tools/generatePoliticalLandscape/README.md)
 - [tools/generateReport](tools/generateReport/README.md)
 - [tools/generateReport](tools/generateReport/README-1.md)
@@ -66,6 +69,8 @@
 - [tools/getMeetingActivities](tools/getMeetingActivities/README.md)
 - [tools/getMeetingDecisions](tools/getMeetingDecisions/README.md)
 - [tools/getMeetingForeseenActivities](tools/getMeetingForeseenActivities/README.md)
+- [tools/getMeetingPlenarySessionDocumentItems](tools/getMeetingPlenarySessionDocumentItems/README.md)
+- [tools/getMeetingPlenarySessionDocuments](tools/getMeetingPlenarySessionDocuments/README.md)
 - [tools/getMEPDeclarations](tools/getMEPDeclarations/README.md)
 - [tools/getMEPDetails](tools/getMEPDetails/README.md)
 - [tools/getMEPs](tools/getMEPs/README.md)
@@ -80,7 +85,9 @@
 - [tools/getSpeeches](tools/getSpeeches/README.md)
 - [tools/getVotingRecords](tools/getVotingRecords/README.md)
 - [tools/monitorLegislativePipeline](tools/monitorLegislativePipeline/README.md)
+- [tools/networkAnalysis](tools/networkAnalysis/README.md)
 - [tools/searchDocuments](tools/searchDocuments/README.md)
+- [tools/sentimentTracker](tools/sentimentTracker/README.md)
 - [tools/shared/errorHandler](tools/shared/errorHandler/README.md)
 - [tools/shared/responseBuilder](tools/shared/responseBuilder/README.md)
 - [tools/shared/types](tools/shared/types/README.md)

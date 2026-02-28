@@ -5,11 +5,11 @@
 | Field | Value |
 |-------|-------|
 | **Version** | 1.0 |
-| **Created** | 2026-02-26 |
+| **Created** | 2026-02-27 |
 | **Creator** | Hack23 AB / Syft (automated via GitHub Actions) |
 | **Format** | SPDX 2.3+ (primary), CycloneDX JSON (secondary) |
 | **Scope** | All runtime and development dependencies |
-| **Vulnerability Status** | ✅ 0 vulnerabilities (npm audit 2026-02-26) |
+| **Vulnerability Status** | ✅ 0 vulnerabilities (npm audit 2026-02-27) |
 
 ## Overview
 
@@ -28,7 +28,7 @@ This repository generates and publishes Software Bill of Materials (SBOM) in SPD
 
 | Package | Version | License | Description |
 |---------|---------|---------|-------------|
-| `@types/node` | 25.3.1 | MIT | TypeScript definitions for Node.js |
+| `@types/node` | 25.3.2 | MIT | TypeScript definitions for Node.js |
 | `@typescript-eslint/eslint-plugin` | 8.56.1 | MIT | TypeScript ESLint plugin |
 | `@typescript-eslint/parser` | 8.56.1 | MIT | TypeScript parser for ESLint |
 | `@vitest/coverage-v8` | 4.0.18 | MIT | V8 coverage provider for Vitest |
@@ -117,8 +117,8 @@ The SBOM includes:
 
 | Control | Status | Details |
 |---------|--------|---------|
-| npm audit | ✅ 0 vulnerabilities | Last checked 2026-02-26 |
-| License compliance | ✅ Passing | All MIT/ISC/Apache-2.0 |
+| npm audit | ✅ 0 vulnerabilities | Last checked 2026-02-27 |
+| License compliance | ✅ Passing | All dependencies comply with the license allowlist |
 | SLSA Level 3 | ✅ Achieved | Cryptographic provenance on all releases |
 | Sigstore signatures | ✅ Enabled | npm package and GitHub release artifacts |
 | Dependabot | ✅ Enabled | Automated dependency update PRs |

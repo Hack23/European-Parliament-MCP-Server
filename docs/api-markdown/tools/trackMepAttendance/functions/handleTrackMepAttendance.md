@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleTrackMepAttendance**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/trackMepAttendance.ts:328](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackMepAttendance.ts#L328)
+Defined in: [tools/trackMepAttendance.ts:334](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackMepAttendance.ts#L334)
 
 Handles the track_mep_attendance MCP tool request.
 

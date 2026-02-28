@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleComparePoliticalGroups**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/comparePoliticalGroups.ts:177](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparePoliticalGroups.ts#L177)
+Defined in: [tools/comparePoliticalGroups.ts:179](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparePoliticalGroups.ts#L179)
 
 Handles the compare_political_groups MCP tool request.
 

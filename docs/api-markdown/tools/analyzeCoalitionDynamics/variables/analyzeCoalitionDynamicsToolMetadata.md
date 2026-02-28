@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **analyzeCoalitionDynamicsToolMetadata**: `object`
 
-Defined in: [tools/analyzeCoalitionDynamics.ts:299](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCoalitionDynamics.ts#L299)
+Defined in: [tools/analyzeCoalitionDynamics.ts:353](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCoalitionDynamics.ts#L353)
 
 Tool metadata for MCP registration
 

@@ -210,7 +210,47 @@
 <a name='L145'></a><a href='#L145'>145</a>
 <a name='L146'></a><a href='#L146'>146</a>
 <a name='L147'></a><a href='#L147'>147</a>
-<a name='L148'></a><a href='#L148'>148</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -299,7 +339,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -376,26 +416,46 @@
 &nbsp;
 import { GetParliamentaryQuestionsSchema, ParliamentaryQuestionSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import type { ToolResult } from './shared/types.js';
 &nbsp;
 /**
- * Get parliamentary questions tool handler
- * 
- * @param args - Tool arguments
- * @returns MCP tool result with parliamentary question data
- * 
+ * Handles the get_parliamentary_questions MCP tool request.
+ *
+ * Retrieves European Parliament questions (written and oral) submitted by MEPs,
+ * with optional single-question lookup by docId or list filtering by type, author,
+ * topic, status, and date range.
+ *
+ * @param args - Raw tool arguments, validated against {@link GetParliamentaryQuestionsSchema}
+ * @returns MCP tool result containing either a single question record or a paginated list of parliamentary questions
+ * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
+ * - If the European Parliament API is unreachable or returns an error response
+ *
  * @example
- * ```json
- * {
- *   "type": "WRITTEN",
- *   "status": "ANSWERED",
- *   "topic": "climate policy",
- *   "limit": 20
- * }
+ * ```typescript
+ * // List answered written questions on climate policy
+ * const result = await handleGetParliamentaryQuestions({
+ *   type: 'WRITTEN',
+ *   status: 'ANSWERED',
+ *   topic: 'climate policy',
+ *   limit: 20
+ * });
+ * // Returns up to 20 answered written questions matching the topic
+ *
+ * // Single question lookup
+ * const single = await handleGetParliamentaryQuestions({ docId: 'E-000001/2024' });
+ * // Returns the full record for the specified question
  * ```
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @since 0.8.0
+ * @see {@link getParliamentaryQuestionsToolMetadata} for MCP schema registration
+ * @see {@link handleGetVotingRecords} for retrieving plenary voting data
  */
 export async function handleGetParliamentaryQuestions(
   args: unknown
-): Promise&lt;{ content: { type: string; text: string }[] }&gt; {
+): Promise&lt;ToolResult&gt; {
   // Validate input
   const params = GetParliamentaryQuestionsSchema.parse(args);
   
@@ -511,7 +571,7 @@ export const getParliamentaryQuestionsToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-26T12:12:44.085Z
+                at 2026-02-28T02:06:37.753Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

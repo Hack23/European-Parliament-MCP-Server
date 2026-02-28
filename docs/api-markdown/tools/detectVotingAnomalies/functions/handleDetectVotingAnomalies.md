@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleDetectVotingAnomalies**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/detectVotingAnomalies.ts:294](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/detectVotingAnomalies.ts#L294)
+Defined in: [tools/detectVotingAnomalies.ts:296](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/detectVotingAnomalies.ts#L296)
 
 Handles the detect_voting_anomalies MCP tool request.
 

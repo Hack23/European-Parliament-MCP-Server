@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetMEPs**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getMEPs.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPs.ts#L58)
+Defined in: [tools/getMEPs.ts:81](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPs.ts#L81)
 
 Handles the get_meps MCP tool request.
 
@@ -45,11 +45,23 @@ MCP tool result containing a paginated list of MEP records with name, country,
   letters, limit out of range 1–100)
 - If the European Parliament API is unreachable or returns an error response
 
-## Example
+## Examples
 
 ```typescript
 const result = await handleGetMEPs({ country: 'SE', limit: 10 });
 // Returns up to 10 Swedish MEPs with group and committee details
+```
+
+```typescript
+// Get Swedish MEPs
+const result = await handleGetMEPs({ country: "SE", limit: 10 });
+const data = JSON.parse(result.content[0].text);
+console.log(`Found ${data.total} Swedish MEPs`);
+```
+
+```typescript
+// Get active EPP group members
+const result = await handleGetMEPs({ group: "EPP", active: true, limit: 50 });
 ```
 
 ## Security
@@ -66,3 +78,17 @@ const result = await handleGetMEPs({ country: 'SE', limit: 10 });
 
  - [getMEPsToolMetadata](../variables/getMEPsToolMetadata.md) for MCP schema registration
  - handleGetMEPDetails for retrieving full details of a single MEP
+
+## Throws
+
+When the EP API request fails or returns an unexpected error
+
+## Throws
+
+When input fails schema validation (invalid country code, out-of-range limit, etc.)
+
+## Security
+
+Input validated by Zod schema before any API call. Errors are sanitized
+to avoid exposing internal implementation details. Personal data access is
+audit-logged per GDPR Article 30. ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)

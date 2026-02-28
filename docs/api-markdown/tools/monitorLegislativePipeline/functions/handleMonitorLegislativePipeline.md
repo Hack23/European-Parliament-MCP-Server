@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleMonitorLegislativePipeline**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/monitorLegislativePipeline.ts:273](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/monitorLegislativePipeline.ts#L273)
+Defined in: [tools/monitorLegislativePipeline.ts:275](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/monitorLegislativePipeline.ts#L275)
 
 Handles the monitor_legislative_pipeline MCP tool request.
 

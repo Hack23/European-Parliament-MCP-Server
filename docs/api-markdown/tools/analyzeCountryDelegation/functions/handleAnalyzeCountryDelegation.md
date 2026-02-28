@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v0.8.2**](../../../README.md)
+[**European Parliament MCP Server API v0.9.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleAnalyzeCountryDelegation**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/analyzeCountryDelegation.ts:301](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCountryDelegation.ts#L301)
+Defined in: [tools/analyzeCountryDelegation.ts:305](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCountryDelegation.ts#L305)
 
 Handles the analyze_country_delegation MCP tool request.
 

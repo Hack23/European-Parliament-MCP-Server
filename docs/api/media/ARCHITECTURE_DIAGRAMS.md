@@ -209,6 +209,12 @@ graph TB
             T8[analyze_voting_patterns.ts]
             T9[track_legislation.ts]
             T10[generate_report.ts]
+            subgraph "Phase 6 Advanced OSINT (4)"
+                T11[network_analysis.ts]
+                T12[sentiment_tracker.ts]
+                T13[early_warning_system.ts]
+                T14[comparative_intelligence.ts]
+            end
         end
         
         subgraph "Data Access [src/clients/]"
