@@ -2,7 +2,7 @@
  * Tests for analyze_coalition_dynamics MCP tool
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleAnalyzeCoalitionDynamics } from './analyzeCoalitionDynamics.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 import { auditLogger } from '../utils/auditLogger.js';
