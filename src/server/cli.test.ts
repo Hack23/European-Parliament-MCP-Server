@@ -124,9 +124,9 @@ describe('showHelp', () => {
     const allTools = getToolMetadataArray();
     const totalCount = allTools.length;
     const coreCount = allTools.filter((t) => t.category === 'core').length;
-    const advancedCount = totalCount - coreCount;
-    // Match the exact "Tools: N (C core + A advanced)" line from cli.ts
-    expect(output).toContain(`${String(totalCount)} (${String(coreCount)} core + ${String(advancedCount)} advanced)`);
+    const nonCoreCount = totalCount - coreCount;
+    // Match the exact "Tools: N (C core + A additional)" line from cli.ts
+    expect(output).toContain(`${String(totalCount)} (${String(coreCount)} core + ${String(nonCoreCount)} additional)`);
   });
 
   it('output contains USAGE section', () => {
@@ -271,22 +271,22 @@ describe('showHealth', () => {
     expect(caps).toContain('prompts');
   });
 
-  it('health JSON contains tools object with total, core, advanced', () => {
+  it('health JSON contains tools object with total, core, nonCore', () => {
     showHealth();
     const health = JSON.parse(String(consoleSpy.mock.calls[0]?.[0])) as Record<string, unknown>;
     expect(health).toHaveProperty('tools');
     const tools = health['tools'] as Record<string, unknown>;
     expect(tools).toHaveProperty('total');
     expect(tools).toHaveProperty('core');
-    expect(tools).toHaveProperty('advanced');
+    expect(tools).toHaveProperty('nonCore');
 
     const allTools = getToolMetadataArray();
     const expectedTotal = allTools.length;
     const expectedCore = allTools.filter((t) => t.category === 'core').length;
-    const expectedAdvanced = expectedTotal - expectedCore;
+    const expectedNonCore = expectedTotal - expectedCore;
     expect(tools['total']).toBe(expectedTotal);
     expect(tools['core']).toBe(expectedCore);
-    expect(tools['advanced']).toBe(expectedAdvanced);
+    expect(tools['nonCore']).toBe(expectedNonCore);
   });
 
   it('health JSON contains prompts object', () => {
