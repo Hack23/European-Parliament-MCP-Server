@@ -108,6 +108,24 @@ interface MEPApiData {
   };
 };
 
+/**
+ * Computes a normalized voting score (0–100) for an MEP based on
+ * participation volume and for-vote ratio.
+ *
+ * Scoring formula (equal weights):
+ * - **Participation** (50%) — capped linear scale: `min(100, totalVotes / 1500 × 100)`.
+ *   Threshold 1500 is the approximate maximum votes cast in a full EP term, so an
+ *   MEP attending every vote scores 100.
+ * - **Loyalty** (50%) — proportion of recorded votes cast *for* (`votesFor / totalVotes`).
+ *   Approximates cohesion with the majority/party-line position.
+ *
+ * Returns `0` when no voting statistics are available to avoid misleading scores.
+ *
+ * @param mep - MEP API data record containing optional `votingStatistics`
+ * @returns Normalized score in the range `[0, 100]`, rounded to 2 decimal places
+ *
+ * @security Handles missing `votingStatistics` gracefully; never divides by zero
+ */
 function computeVotingScore(mep: MEPApiData): number {
   const stats = mep.votingStatistics;
   if (stats === undefined || stats.totalVotes === 0) return 0;
@@ -116,6 +134,17 @@ function computeVotingScore(mep: MEPApiData): number {
   return Math.round((participationScore * 0.5 + loyaltyScore * 0.5) * 100) / 100;
 }
 
+/**
+ * Computes a normalized committee engagement score (0–100) for an MEP.
+ *
+ * Scoring formula:
+ * - **Membership breadth** (60%) — `min(100, committeeCount × 20)`. Five committees → 100.
+ * - **Leadership roles** (40%) — `min(100, leadershipRoles × 25)`. Four chair/vice-chair
+ *   roles → 100. Roles are detected by the keywords `'chair'` or `'vice'`.
+ *
+ * @param mep - MEP API data record containing `committees` and optional `roles`
+ * @returns Normalized score in the range `[0, 100]`, rounded to 2 decimal places
+ */
 function computeCommitteeScore(mep: MEPApiData): number {
   const membershipScore = Math.min(100, mep.committees.length * 20);
   const roles = mep.roles ?? [];
@@ -124,17 +153,53 @@ function computeCommitteeScore(mep: MEPApiData): number {
   return Math.round((membershipScore * 0.6 + leadershipScore * 0.4) * 100) / 100;
 }
 
+/**
+ * Computes a normalized legislative output score (0–100) for an MEP.
+ *
+ * Combines two equally-weighted signals, capped at 100:
+ * - **Rapporteurships** — 15 points each (6+ → 90 pts from this factor alone).
+ * - **Committee memberships** — 10 points each (broader presence amplifies legislative reach).
+ *
+ * Rapporteurships are detected by the `'rapporteur'` keyword in the MEP's roles list.
+ *
+ * @param mep - MEP API data record containing `committees` and optional `roles`
+ * @returns Normalized score in the range `[0, 100]`, rounded to 2 decimal places
+ */
 function computeLegislativeScore(mep: MEPApiData): number {
   const roles = mep.roles ?? [];
   const rapporteurships = roles.filter(r => r.toLowerCase().includes('rapporteur')).length;
   return Math.round(Math.min(100, rapporteurships * 15 + mep.committees.length * 10) * 100) / 100;
 }
 
+/**
+ * Computes the attendance score for an MEP.
+ *
+ * The EP API returns `attendanceRate` already on a 0–100 scale, so this function
+ * applies rounding only—no additional scaling is performed.
+ *
+ * Returns `0` when `votingStatistics` is absent.
+ *
+ * @param mep - MEP API data record containing optional `votingStatistics`
+ * @returns Attendance rate in the range `[0, 100]`, rounded to 2 decimal places
+ */
 function computeAttendanceScore(mep: MEPApiData): number {
   // attendanceRate is already in the 0-100 range; use it directly without scaling
   return Math.round((mep.votingStatistics?.attendanceRate ?? 0) * 100) / 100;
 }
 
+/**
+ * Computes per-dimension scores for an MEP and returns them as a partial record.
+ *
+ * Delegates each dimension to the corresponding scoring function:
+ * - `'voting'` → {@link computeVotingScore}
+ * - `'committee'` → {@link computeCommitteeScore}
+ * - `'legislative'` → {@link computeLegislativeScore}
+ * - `'attendance'` → {@link computeAttendanceScore}
+ *
+ * @param mep - MEP API data record to score
+ * @param dimensions - Ordered list of dimensions to evaluate
+ * @returns Partial record mapping each requested dimension to its score (0–100)
+ */
 function computeDimensionScores(mep: MEPApiData, dimensions: Dimension[]): Partial<Record<Dimension, number>> {
   const scores: Partial<Record<Dimension, number>> = {};
   for (const dim of dimensions) {
@@ -146,12 +211,37 @@ function computeDimensionScores(mep: MEPApiData, dimensions: Dimension[]): Parti
   return scores;
 }
 
+/**
+ * Computes the unweighted mean of all defined dimension scores.
+ *
+ * Undefined scores (e.g., a dimension that was not requested) are filtered out
+ * before averaging to avoid artificially penalising MEPs for missing dimensions.
+ *
+ * @param scores - Partial dimension score record from {@link computeDimensionScores}
+ * @returns Mean score in `[0, 100]` rounded to 2 decimal places, or `0` if empty
+ */
 function computeOverallScore(scores: Partial<Record<Dimension, number>>): number {
   const values = (Object.values(scores) as (number | undefined)[]).filter((v): v is number => v !== undefined);
   if (values.length === 0) return 0;
   return Math.round((values.reduce((s, v) => s + v, 0) / values.length) * 100) / 100;
 }
 
+/**
+ * Assigns a human-readable performance-tier cluster label to an MEP.
+ *
+ * Labels follow the pattern `<tier>_<sanitised_group>` so downstream consumers
+ * can group MEPs by both performance and political affiliation:
+ * - **`high_performer_*`** — overall score ≥ 60
+ * - **`moderate_performer_*`** — overall score in [30, 60)
+ * - **`low_data_profile`** — score < 30 or insufficient data
+ *
+ * The political group name is lower-cased and non-letter characters are replaced
+ * with underscores before embedding in the label.
+ *
+ * @param overallScore - MEP's computed overall score (0–100)
+ * @param politicalGroup - Raw political group string (e.g., `'EPP'`, `'S&D'`)
+ * @returns Cluster label string suitable for display and grouping
+ */
 function assignClusterLabel(overallScore: number, politicalGroup: string): string {
   const safeGroup = politicalGroup.toLowerCase().replace(/[^a-z]/g, '_');
   if (overallScore >= 60) return `high_performer_${safeGroup}`;
@@ -159,6 +249,21 @@ function assignClusterLabel(overallScore: number, politicalGroup: string): strin
   return 'low_data_profile';
 }
 
+/**
+ * Computes cosine similarity between two MEP dimension-score vectors.
+ *
+ * Cosine similarity measures the angle between two vectors independent of
+ * magnitude — two MEPs with proportionally identical scores across all
+ * dimensions produce a similarity of 1.0 regardless of absolute score levels.
+ *
+ * Dimensions present in `scoresA` but absent from `scoresB` are treated as 0
+ * for `scoresB`. Dimensions absent from `scoresA` are ignored entirely.
+ *
+ * @param scoresA - Dimension scores for MEP A
+ * @param scoresB - Dimension scores for MEP B
+ * @returns Cosine similarity in `[0, 1]` rounded to 2 decimal places,
+ *   or `0` if either vector is all-zero or empty
+ */
 function computeSimilarity(scoresA: Partial<Record<Dimension, number>>, scoresB: Partial<Record<Dimension, number>>): number {
   const dims = Object.keys(scoresA) as Dimension[];
   if (dims.length === 0) return 0;
@@ -177,6 +282,27 @@ function computeSimilarity(scoresA: Partial<Record<Dimension, number>>, scoresB:
   return Math.round((dotProduct / denominator) * 100) / 100;
 }
 
+/**
+ * Identifies statistical outliers across all MEP profiles and dimensions.
+ *
+ * Uses **z-score outlier detection**: for each dimension, computes the population
+ * mean and standard deviation across all profiles, then flags any MEP whose score
+ * deviates by |z| ≥ 1.5 from the mean.
+ *
+ * **Threshold rationale:** A z-score threshold of 1.5 captures approximately the
+ * top and bottom 13% of a normal distribution in each tail — a balanced sensitivity
+ * that surfaces meaningful outliers without flagging too many borderline cases.
+ * Stricter thresholds (2.0+) would miss genuine policy outliers in small groups.
+ *
+ * Results are sorted by |z-score| descending and capped at the top 5 outlier entries
+ * to keep the response concise.
+ *
+ * @param profiles - Array of computed MEP profiles (must contain at least 2 entries
+ *   for meaningful statistics)
+ * @param dimensions - Dimensions to evaluate for outliers
+ * @returns Array of up to 5 outlier records, each containing the MEP identity,
+ *   outlier dimension, raw score, and rounded z-score
+ */
 function detectOutliers(profiles: MepProfile[], dimensions: Dimension[]): ComparativeIntelligenceResult['outlierMEPs'] {
   const outliers: ComparativeIntelligenceResult['outlierMEPs'] = [];
   for (const dim of dimensions) {
@@ -195,6 +321,17 @@ function detectOutliers(profiles: MepProfile[], dimensions: Dimension[]): Compar
   return outliers.sort((a, b) => Math.abs(b.zScore) - Math.abs(a.zScore)).slice(0, 5);
 }
 
+/**
+ * Returns the dimension with the highest average score across all cluster members.
+ *
+ * Used to characterise a cluster by its strongest dimension — e.g., a cluster
+ * dominated by committee chairs would surface `'committee'` as its characteristic.
+ *
+ * @param dimAvgs - Map of dimension → average score for the cluster
+ * @param dimensions - Full ordered list of dimensions (provides a safe fallback)
+ * @returns Dimension key with the highest average score, or the first dimension
+ *   if all averages are ≤ 0
+ */
 function findBestDimension(dimAvgs: Partial<Record<Dimension, number>>, dimensions: Dimension[]): Dimension {
   let best: Dimension = dimensions[0] ?? 'voting';
   let bestAvg = -1;
@@ -205,6 +342,24 @@ function findBestDimension(dimAvgs: Partial<Record<Dimension, number>>, dimensio
   return best;
 }
 
+/**
+ * Groups MEP profiles into clusters based on their pre-assigned `clusterLabel` and
+ * computes per-cluster statistics.
+ *
+ * Cluster assignment uses a two-factor scheme: performance tier (`high/moderate/low`)
+ * combined with political group affiliation (from {@link assignClusterLabel}). For each
+ * cluster the function calculates:
+ * - Per-dimension average scores
+ * - Overall average score across all dimensions
+ * - The characteristic dimension (highest average, via {@link findBestDimension})
+ *
+ * This approach is deterministic and requires no random seed, making it reproducible
+ * across runs with the same input.
+ *
+ * @param profiles - Array of scored MEP profiles (each must have a `clusterLabel`)
+ * @param dimensions - Dimensions to aggregate within each cluster
+ * @returns Array of {@link MepCluster} objects, one per distinct cluster label
+ */
 function buildClusterAnalysis(profiles: MepProfile[], dimensions: Dimension[]): MepCluster[] {
   const clusterMap = new Map<string, { members: string[]; dimScores: Partial<Record<Dimension, number[]>> }>();
 
@@ -243,6 +398,18 @@ function buildClusterAnalysis(profiles: MepProfile[], dimensions: Dimension[]): 
   });
 }
 
+/**
+ * Builds a zero-value {@link ComparativeIntelligenceResult} for cases where
+ * fewer than 2 valid MEP profiles could be constructed.
+ *
+ * All analytical fields (rankings, correlations, outliers, clusters) are empty.
+ * `dataAvailable` is set to `false` and `confidenceLevel` to `'LOW'` to signal
+ * that no meaningful comparison could be performed.
+ *
+ * @param profiles - Partial list of profiles that were successfully built (may be empty)
+ * @param dimensions - Dimensions originally requested by the caller
+ * @returns A safe empty result that can be returned directly to the MCP client
+ */
 function buildEmptyResult(profiles: MepProfile[], dimensions: Dimension[]): ComparativeIntelligenceResult {
   return {
     mepCount: profiles.length,
@@ -267,6 +434,16 @@ function buildEmptyResult(profiles: MepProfile[], dimensions: Dimension[]): Comp
   };
 }
 
+/**
+ * Creates a zero-score placeholder profile for an MEP whose API call failed.
+ *
+ * Placeholder profiles allow the comparison to continue with the MEPs that
+ * were successfully retrieved, while still accounting for the requested ID in
+ * the output (so consumers can see which MEPs produced no data).
+ *
+ * @param mepId - Numeric MEP ID that failed to resolve
+ * @returns Placeholder {@link MepProfile} with zeroed scores and `'low_data_profile'` label
+ */
 function buildPlaceholderProfile(mepId: number): MepProfile {
   return {
     mepId: String(mepId),
@@ -279,6 +456,17 @@ function buildPlaceholderProfile(mepId: number): MepProfile {
   };
 }
 
+/**
+ * Produces per-dimension ranked lists of all MEPs in descending score order.
+ *
+ * Each {@link DimensionRanking} entry contains an ordered array where `rank: 1`
+ * is the highest scorer. Ties are resolved by the underlying sort algorithm
+ * (stable in V8/Node.js ≥ 11).
+ *
+ * @param profiles - Scored MEP profiles to rank
+ * @param dimensions - Dimensions for which rankings should be produced
+ * @returns Array of ranking objects, one per dimension
+ */
 function buildRankings(profiles: MepProfile[], dimensions: Dimension[]): DimensionRanking[] {
   return dimensions.map(dim => ({
     dimension: dim,
@@ -288,6 +476,16 @@ function buildRankings(profiles: MepProfile[], dimensions: Dimension[]): Dimensi
   }));
 }
 
+/**
+ * Computes pairwise cosine-similarity scores for all unique MEP pairs.
+ *
+ * Only the upper triangle of the similarity matrix is computed (i < j) to
+ * avoid duplicating symmetric entries. The result is an unordered list of
+ * {@link PairScore} objects, one per unique pair.
+ *
+ * @param profiles - Scored MEP profiles; order determines pair enumeration
+ * @returns Array of pairwise similarity records (length = n*(n-1)/2)
+ */
 function buildCorrelationMatrix(profiles: MepProfile[]): PairScore[] {
   const matrix: PairScore[] = [];
   for (let i = 0; i < profiles.length; i++) {
@@ -301,6 +499,17 @@ function buildCorrelationMatrix(profiles: MepProfile[]): PairScore[] {
   return matrix;
 }
 
+/**
+ * Identifies the dimension with the highest score variance across all profiles.
+ *
+ * High variance in a dimension indicates strong differentiation among the MEPs
+ * being compared — useful for surfacing which axis is most discriminating.
+ *
+ * @param profiles - Scored MEP profiles
+ * @param dimensions - Dimensions to evaluate; must contain at least one entry
+ * @returns Dimension key with the greatest population variance, or the first
+ *   dimension if all variances are equal (or zero)
+ */
 function findHighestVarianceDim(profiles: MepProfile[], dimensions: Dimension[]): Dimension {
   let best: Dimension = dimensions[0] ?? 'voting';
   let bestVariance = -1;
@@ -313,6 +522,19 @@ function findHighestVarianceDim(profiles: MepProfile[], dimensions: Dimension[])
   return best;
 }
 
+/**
+ * Converts an array of settled `getMEPDetails` promises into scored MEP profiles.
+ *
+ * For each fulfilled result, dimension scores and an overall score are computed
+ * and a cluster label is assigned. For each rejected result (API error, unknown MEP),
+ * a zero-score placeholder profile is inserted to preserve the requested ID in the
+ * output.
+ *
+ * @param detailsResults - Settled promise results from `Promise.allSettled`
+ * @param mepIds - Original MEP IDs in the same order as `detailsResults`
+ * @param dimensions - Dimensions to score for each successfully resolved MEP
+ * @returns Array of {@link MepProfile} objects in the same order as `mepIds`
+ */
 function buildProfilesFromResults(
   detailsResults: PromiseSettledResult<unknown>[],
   mepIds: number[],
@@ -343,6 +565,22 @@ function buildProfilesFromResults(
   return profiles;
 }
 
+/**
+ * Derives the `computedAttributes` block of the comparative intelligence result.
+ *
+ * Identifies:
+ * - **Most similar pair** — highest-scoring entry in the sorted correlation matrix
+ * - **Most different pair** — lowest-scoring entry in the sorted correlation matrix
+ * - **Top/lowest overall performers** — sorted by `overallScore` descending
+ * - **Dimension with highest variance** — via {@link findHighestVarianceDim}
+ *
+ * Defaults to `'N/A'` / 0 for any field that cannot be derived from an empty matrix.
+ *
+ * @param profiles - Scored MEP profiles
+ * @param correlationMatrix - Pre-computed pairwise similarity scores
+ * @param dimensions - Dimensions available for variance calculation
+ * @returns Derived summary attributes for the comparison result
+ */
 function buildComputedAttributes(
   profiles: MepProfile[],
   correlationMatrix: PairScore[],

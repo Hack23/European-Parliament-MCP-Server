@@ -106,6 +106,20 @@ interface NetworkAnalysisResult {
   methodology: string;
 }
 
+/**
+ * Assigns a political-bloc cluster label to an MEP based on their political group.
+ *
+ * Three blocs are recognized:
+ * - **`pro_eu_bloc`** — EPP, S&D, Renew, Greens/EFA
+ * - **`eurosceptic_bloc`** — ECR, ID, ESN
+ * - **`independent_bloc`** — all other groups (NI, The Left, etc.)
+ *
+ * This classification supports downstream bridging-MEP detection, where a
+ * node connecting two different blocs is identified as a cross-bloc broker.
+ *
+ * @param politicalGroup - Raw political group string from the EP API
+ * @returns Cluster label string
+ */
 function assignClusterLabel(politicalGroup: string): string {
   const proEU = ['EPP', 'S&D', 'Renew', 'Greens/EFA'];
   const eurosceptic = ['ECR', 'ID', 'ESN'];
@@ -114,12 +128,40 @@ function assignClusterLabel(politicalGroup: string): string {
   return 'independent_bloc';
 }
 
+/**
+ * Computes the network density of an undirected graph.
+ *
+ * Density is the ratio of actual edges to the maximum possible edges in a
+ * complete graph: `actual / (n × (n-1) / 2)`.
+ *
+ * A density near 0 indicates a sparse network (few shared committees);
+ * a density near 1 indicates near-complete interconnection.
+ *
+ * @param edgeCount - Number of edges (shared-committee pairs) in the network
+ * @param nodeCount - Number of nodes (MEPs) in the network
+ * @returns Density value in `[0, 1]` rounded to 4 decimal places, or `0` for fewer than 2 nodes
+ */
 function computeNetworkDensity(edgeCount: number, nodeCount: number): number {
   if (nodeCount < 2) return 0;
   const maxEdges = (nodeCount * (nodeCount - 1)) / 2;
   return maxEdges > 0 ? Math.round((edgeCount / maxEdges) * 10000) / 10000 : 0;
 }
 
+/**
+ * Classifies a network by its structural density and size.
+ *
+ * Thresholds:
+ * - **`DENSE`** — density > 0.3 (more than 30 % of possible edges present)
+ * - **`MODERATE`** — density in (0.1, 0.3]
+ * - **`SPARSE`** — density ≤ 0.1 or fewer than 5 nodes
+ *
+ * Networks with fewer than 5 nodes are always classified as `SPARSE` because
+ * small samples cannot reliably distinguish density tiers.
+ *
+ * @param density - Network density value from {@link computeNetworkDensity}
+ * @param nodeCount - Number of MEP nodes in the network
+ * @returns Classification string: `'DENSE'`, `'MODERATE'`, or `'SPARSE'`
+ */
 function classifyNetworkType(density: number, nodeCount: number): string {
   if (nodeCount < 5) return 'SPARSE';
   if (density > 0.3) return 'DENSE';
@@ -135,6 +177,21 @@ function classifyNetworkType(density: number, nodeCount: number): string {
  */
 const SHARED_COMMITTEE_STRENGTH_FACTOR = 0.3;
 
+/**
+ * Builds the edge list and per-node degree map for the MEP network.
+ *
+ * An edge is created between any two MEPs who share at least one committee
+ * membership. The edge's `relationshipStrength` is capped at 1.0 using a factor
+ * of {@link SHARED_COMMITTEE_STRENGTH_FACTOR} (0.3) per shared committee:
+ * sharing ≥ 4 committees (4 × 0.3 = 1.2, capped to 1.0) reaches maximum strength.
+ *
+ * Time complexity: O(n²) over the MEP list — acceptable for the EP dataset
+ * size (≤ 750 MEPs fetched in practice).
+ *
+ * @param meps - Array of MEP records each containing a `committees` list
+ * @returns Object containing the `edges` array and a `degreeMap` mapping each MEP
+ *   ID to the count of edges incident on it
+ */
 function buildEdges(meps: MEPRecord[]): { edges: NetworkEdge[]; degreeMap: Map<string, number> } {
   const edges: NetworkEdge[] = [];
   const degreeMap = new Map<string, number>();
@@ -163,6 +220,21 @@ function buildEdges(meps: MEPRecord[]): { edges: NetworkEdge[]; degreeMap: Map<s
   return { edges, degreeMap };
 }
 
+/**
+ * Converts MEP records into scored {@link NetworkNode} objects.
+ *
+ * For each MEP the centrality score is computed as a weighted combination of:
+ * - **Degree** (0.6 weight) — number of edges incident on the node
+ * - **Shared committee sum** (0.4 weight) — total number of shared committees
+ *   across all incident edges (reflects collaboration depth beyond mere co-membership)
+ *
+ * The cluster label is assigned via {@link assignClusterLabel} based on political group.
+ *
+ * @param meps - MEP records to convert into nodes
+ * @param edges - Edge list (used to sum shared committees per MEP)
+ * @param degreeMap - Pre-computed degree for each MEP ID
+ * @returns Array of {@link NetworkNode} objects in the same order as `meps`
+ */
 function buildNodes(meps: MEPRecord[], edges: NetworkEdge[], degreeMap: Map<string, number>): NetworkNode[] {
   return meps.map(mep => {
     const degree = degreeMap.get(mep.id) ?? 0;
@@ -182,6 +254,20 @@ function buildNodes(meps: MEPRecord[], edges: NetworkEdge[], degreeMap: Map<stri
   });
 }
 
+/**
+ * Identifies MEPs that act as bridges between different political-bloc clusters.
+ *
+ * A bridging MEP is one who has at least one edge to a node in a different cluster.
+ * The bridging score is `connectedClusterCount × centralityScore`, so high-centrality
+ * MEPs that span multiple blocs rank highest.
+ *
+ * Results are sorted by bridging score descending and capped at the top 10 to keep
+ * the response payload concise.
+ *
+ * @param nodes - All network nodes with assigned cluster labels and centrality scores
+ * @param edges - Full edge list for the network
+ * @returns Array of up to 10 {@link BridgingMep} records sorted by bridging score descending
+ */
 function findBridgingMEPs(nodes: NetworkNode[], edges: NetworkEdge[]): BridgingMep[] {
   const bridges: BridgingMep[] = [];
 
@@ -213,6 +299,16 @@ function findBridgingMEPs(nodes: NetworkNode[], edges: NetworkEdge[]): BridgingM
   return bridges.sort((a, b) => b.bridgingScore - a.bridgingScore).slice(0, 10);
 }
 
+/**
+ * Constructs a zeroed {@link NetworkAnalysisResult} when the EP API returns no MEP data.
+ *
+ * All collections are empty arrays, numeric metrics are 0, and `dataAvailable` is
+ * set to `false` with `confidenceLevel: 'LOW'` to clearly signal that no network
+ * could be constructed.
+ *
+ * @param params - Original tool parameters (echoed into `analysisType` and `depth`)
+ * @returns Safe empty result suitable for direct MCP client return
+ */
 function buildEmptyResult(params: NetworkAnalysisParams): NetworkAnalysisResult {
   return {
     analysisType: params.analysisType,
@@ -239,6 +335,18 @@ function buildEmptyResult(params: NetworkAnalysisParams): NetworkAnalysisResult 
   };
 }
 
+/**
+ * Filters the full MEP list to only those who share at least one committee with
+ * the focus MEP (ego network).
+ *
+ * If the focus MEP cannot be found in the list, the entire unfiltered list is
+ * returned so the analysis degrades gracefully to a full network.
+ *
+ * @param meps - Full list of MEP records from the EP API
+ * @param mepId - Numeric ID of the focus MEP for the ego-network
+ * @returns Filtered list containing the focus MEP plus all committee neighbours,
+ *   or the original `meps` array if the focus MEP is not found
+ */
 function filterMepsForEgoNetwork(meps: MEPRecord[], mepId: number): MEPRecord[] {
   const focusMep = meps.find(m => m.id === String(mepId));
   if (focusMep === undefined) return meps;
@@ -246,6 +354,19 @@ function filterMepsForEgoNetwork(meps: MEPRecord[], mepId: number): MEPRecord[] 
   return meps.filter(m => m.id === focusMep.id || m.committees.some(c => focusCommittees.has(c)));
 }
 
+/**
+ * Derives aggregate network statistics from the computed nodes and edges.
+ *
+ * Returns four metrics used to populate the top-level result fields:
+ * - `clusterCount` — number of distinct political-bloc cluster labels
+ * - `isolatedMEPs` — number of nodes with degree 0 (no shared committee peers)
+ * - `networkDensity` — ratio of actual to maximum possible edges
+ * - `avgDegree` — mean degree across all nodes
+ *
+ * @param nodes - Array of scored network nodes
+ * @param edges - Array of network edges
+ * @returns Object containing `clusterCount`, `isolatedMEPs`, `networkDensity`, and `avgDegree`
+ */
 function computeNetworkMetrics(nodes: NetworkNode[], edges: NetworkEdge[]): {
   clusterCount: number; isolatedMEPs: number; networkDensity: number; avgDegree: number;
 } {
