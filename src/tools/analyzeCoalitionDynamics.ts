@@ -99,7 +99,7 @@ function classifyCohesionTrend(score: number): string {
  * size ratio proxies coalition alignment potential.
  *
  * Formula: `cohesion = min(sizeA, sizeB) / max(sizeA, sizeB)` (range 0–1).
- * `sharedVotes` and `totalVotes` are reported as 0 to reflect data limitations.
+ * `sharedVotes` and `totalVotes` are set to `null` to reflect data limitations.
  *
  * @param groupA - Political group identifier for the first group
  * @param groupB - Political group identifier for the second group
@@ -108,7 +108,8 @@ function classifyCohesionTrend(score: number): string {
  * @param minimumCohesion - Threshold above which `allianceSignal` is set to `true`
  * @returns {@link CoalitionPairAnalysis} record where `cohesionScore` is an
  *   approximation based on group-size balance (not actual voting behavior — see
- *   **Limitation** note above), `sharedVotes` and `totalVotes` are always 0
+ *   **Limitation** note above), `sharedVotes` and `totalVotes` are `null`
+ *   (vote-level data is unavailable from the current EP API)
  */
 function computePairCohesion(
   groupA: string,
@@ -144,9 +145,11 @@ function computePairCohesion(
  * an authoritative total; it is intended for relative, coarse sizing only.
  *
  * **Note (voting data):** The EP API `/meps` endpoint only returns group membership
- * information, not per-MEP voting statistics. Cohesion, defection rate, and attendance
- * fields are therefore reported as `0` with `unityTrend: 'UNKNOWN'`. Callers should
- * supplement these results with vote-result data when available.
+ * information, not per-MEP voting statistics. As a result, `internalCohesion`,
+ * `defectionRate`, and `avgAttendance` are set to `null`, `dataAvailability` and
+ * `stressIndicator.availability` are set to `'UNAVAILABLE'`, and `unityTrend` is
+ * `'UNKNOWN'`. Callers should treat these fields as "not available" and supplement
+ * these results with vote-result data when available.
  *
  * @param targetGroups - Political group identifiers to query (e.g., `['EPP', 'S&D']`)
  * @returns Promise resolving to an array of group cohesion metric objects, one per group,
@@ -271,8 +274,9 @@ function computeStressIndicators(groupMetrics: GroupCohesionMetrics[]): { indica
  *
  * **Grand coalition viability:** Approximated as the mean of EPP and S&D internal
  * cohesion scores, since a grand coalition between the two largest groups is the
- * canonical EP majority formation scenario. A value of 0 reflects the current
- * data limitation (voting statistics unavailable from EP API).
+ * canonical EP majority formation scenario. A value of `null` reflects the current
+ * data limitation (voting statistics unavailable from the EP API and thus no
+ * reliable viability score can be computed).
  *
  * @param groupMetrics - Array of group metrics with `memberCount` and `internalCohesion`
  * @returns Object with `effectiveParties` (ENP) and `grandCoalitionViability` (0–1)
@@ -300,8 +304,9 @@ function computeFragmentationMetrics(groupMetrics: GroupCohesionMetrics[]): {
  * Identifies the dominant coalition from the sorted pair list.
  *
  * The dominant coalition is the top-ranked pair by cohesion score. Its
- * `combinedStrength` is set to `sharedVotes` (currently 0 due to EP API
- * limitations — see {@link computePairCohesion}).
+ * `combinedStrength` is set to `sharedVotes`, which is currently `null`
+ * when vote-level data is unavailable due to EP API limitations — see
+ * {@link computePairCohesion}.
  *
  * @param sortedPairs - Coalition pairs sorted descending by cohesion score
  * @returns Dominant coalition record, or an empty record if the list is empty
