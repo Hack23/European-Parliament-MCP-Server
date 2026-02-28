@@ -1,8 +1,8 @@
-[**European Parliament MCP Server API v0.9.2**](README.md)
+[**European Parliament MCP Server API v1.0.0**](README.md)
 
 ***
 
-# European Parliament MCP Server API v0.9.2
+# European Parliament MCP Server API v1.0.0
 
 ## Modules
 
@@ -19,6 +19,7 @@
 - [clients/ep/vocabularyClient](clients/ep/vocabularyClient/README.md)
 - [clients/ep/votingClient](clients/ep/votingClient/README.md)
 - [clients/europeanParliamentClient](clients/europeanParliamentClient/README.md)
+- [data/generatedStats](data/generatedStats/README.md)
 - [di/container](di/container/README.md)
 - [di/tokens](di/tokens/README.md)
 - [europeanParliament](europeanParliament/README.md)
@@ -58,6 +59,7 @@
 - [tools/generateReport/reportGenerators](tools/generateReport/reportGenerators/README.md)
 - [tools/generateReport/types](tools/generateReport/types/README.md)
 - [tools/getAdoptedTexts](tools/getAdoptedTexts/README.md)
+- [tools/getAllGeneratedStats](tools/getAllGeneratedStats/README.md)
 - [tools/getCommitteeDocuments](tools/getCommitteeDocuments/README.md)
 - [tools/getCommitteeInfo](tools/getCommitteeInfo/README.md)
 - [tools/getControlledVocabularies](tools/getControlledVocabularies/README.md)

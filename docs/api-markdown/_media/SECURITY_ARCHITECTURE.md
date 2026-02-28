@@ -320,7 +320,7 @@ The `HealthService` singleton monitors:
 | Control | Standard | Clause | Implementation |
 |---------|----------|--------|----------------|
 | Information Security Policies | ISO 27001 | A.5.1 | SECURITY.md, SECURITY_ARCHITECTURE.md |
-| Asset Management | ISO 27001 | A.8.1 | 46 tools + 9 resources inventoried |
+| Asset Management | ISO 27001 | A.8.1 | 47 tools + 9 resources inventoried |
 | Access Control | ISO 27001 | A.9.1 | stdio isolation, no network exposure |
 | Cryptography | ISO 27001 | A.10.1 | TLS 1.2+ for all EP API calls |
 | Secure Development | ISO 27001 | A.14.2 | TypeScript strict, Zod validation, ESLint |

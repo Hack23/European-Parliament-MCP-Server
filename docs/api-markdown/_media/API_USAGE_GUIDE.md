@@ -7,7 +7,7 @@
 <h1 align="center">European Parliament MCP Server - API Usage Guide</h1>
 
 <p align="center">
-  <strong>Comprehensive guide to using all 46 MCP tools</strong><br>
+  <strong>Comprehensive guide to using all 47 MCP tools</strong><br>
   <em>Real-world examples, best practices, and query patterns</em>
 </p>
 
@@ -69,7 +69,7 @@
 
 ## 🎯 Overview
 
-The European Parliament MCP Server provides 46 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 7 core tools, 3 advanced tools, 15 OSINT intelligence tools, 8 Phase 4 tools, and 13 Phase 5 tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
+The European Parliament MCP Server provides 47 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 7 core tools, 3 advanced tools, 15 OSINT intelligence tools, 8 Phase 4 tools, and 14 Phase 5 tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
 
 ### Key Features
 
@@ -145,6 +145,7 @@ Currently, the server does **not require authentication** for tool access. Futur
 | `analyze_voting_patterns` | Voting analysis | mepId, dateFrom | Analysis object |
 | `track_legislation` | Track procedure | procedureId | Procedure object |
 | `generate_report` | Create reports | reportType, subjectId | Report object |
+| `get_all_generated_stats` | Precomputed EP stats (2004-2025) | yearFrom, yearTo, category | Statistics object |
 
 ### 🕵️ OSINT Intelligence Tools
 
@@ -1682,6 +1683,73 @@ const result = await client.callTool('get_external_documents', { year: 2024, lim
 
 ---
 
+### Tool: get_all_generated_stats
+
+**Description**: Retrieve precomputed European Parliament activity statistics covering parliamentary terms EP6–EP10 (2004–2025), including monthly activity breakdowns, category rankings with percentiles, statistical analysis, political landscape history (group composition, fragmentation index, coalition dynamics), analytical commentary, and average-based predictions for 2026–2030. Static data refreshed weekly by agentic workflow — no live API calls.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| yearFrom | number | No | 2004 | Start year for filtering (2004–2030) |
+| yearTo | number | No | 2025 | End year for filtering (2004–2030) |
+| category | string | No | all | Activity category: `all`, `plenary_sessions`, `legislative_acts`, `roll_call_votes`, `committee_meetings`, `parliamentary_questions`, `resolutions`, `speeches`, `adopted_texts`, `political_groups`, `procedures`, `events`, `documents`, `mep_turnover`, `declarations` |
+| includePredictions | boolean | No | true | Include trend-based predictions for 2026–2030 |
+| includeMonthlyBreakdown | boolean | No | false | Include month-by-month activity data |
+| includeRankings | boolean | No | true | Include percentile rankings and statistical analysis |
+
+#### Example Usage
+
+```
+Get European Parliament activity statistics for 2019-2023 with predictions
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_all_generated_stats', {
+  yearFrom: 2019,
+  yearTo: 2023,
+  category: 'all',
+  includePredictions: true,
+  includeRankings: true
+});
+```
+
+#### Response Structure
+
+The response includes:
+
+| Field | Description |
+|-------|-------------|
+| `coveragePeriod` | Underlying dataset range (always `{ from: 2004, to: 2025 }`) |
+| `requestedPeriod` | User-supplied year filter (`{ from: yearFrom, to: yearTo }`) |
+| `yearlyStats` | Annual statistics per year with 13 activity metrics and political landscape |
+| `categoryRankings` | Per-category percentile rankings recomputed for the filtered range |
+| `predictions` | Average-based extrapolations for 2026–2030 with term-cycle adjustments |
+| `analysisSummary` | Trend analysis, peak/lowest years, key findings, coverage note |
+| `methodology` | Description of the statistical approach and data sources |
+
+#### Category Filter Options
+
+| Category | Description | Corresponding Tools |
+|----------|-------------|---------------------|
+| `plenary_sessions` | Plenary sessions held | `get_plenary_sessions` |
+| `legislative_acts` | Legislative acts adopted | `get_adopted_texts` |
+| `roll_call_votes` | Roll-call votes conducted | `get_voting_records` |
+| `committee_meetings` | Committee meetings | `get_committee_info` |
+| `parliamentary_questions` | Questions tabled | `get_parliamentary_questions` |
+| `resolutions` | Resolutions adopted | `get_adopted_texts` |
+| `speeches` | Speeches delivered | `get_speeches` |
+| `adopted_texts` | Adopted texts | `get_adopted_texts` |
+| `political_groups` | Political group composition | `compare_political_groups` |
+| `procedures` | Legislative procedures | `get_procedures` |
+| `events` | Parliamentary events | `get_events` |
+| `documents` | Documents produced | `search_documents` |
+| `mep_turnover` | MEP arrivals/departures | `get_incoming_meps`, `get_outgoing_meps` |
+| `declarations` | MEP declarations | `get_mep_declarations` |
+
+---
+
 ## 📝 MCP Prompts
 
 Pre-built intelligence analysis prompt templates for common parliamentary research workflows. For the exact argument schemas, refer to the prompt definitions in `src/prompts/index.ts`.
@@ -2190,7 +2258,7 @@ The European Parliament MCP Server is the **most feature-rich political MCP serv
 
 | Country | Server | Key Capabilities |
 |---------|--------|-----------------|
-| 🇪🇺 **EU** | [**European Parliament MCP**](https://github.com/Hack23/European-Parliament-MCP-Server) | **46 tools** — MEP profiling, coalition analysis, anomaly detection, political landscape |
+| 🇪🇺 **EU** | [**European Parliament MCP**](https://github.com/Hack23/European-Parliament-MCP-Server) | **47 tools** — MEP profiling, coalition analysis, anomaly detection, political landscape, longitudinal statistics |
 | 🇺🇸 **USA** | [Congress.gov API MCP](https://github.com/bsmi021/mcp-congress_gov_server) | Bills, members, votes, committees |
 | 🇬🇧 **UK** | [Parliament MCP](https://github.com/i-dot-ai/parliament-mcp) | Hansard, members, debates, divisions |
 | 🇸🇪 **Sweden** | [Riksdag & Regering MCP](https://github.com/isakskogstad/Riksdag-Regering-MCP) | Parliament & government data |
