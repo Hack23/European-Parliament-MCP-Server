@@ -18,6 +18,7 @@
 import { GetMEPsSchema, MEPSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { buildApiParams } from './shared/paramBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -86,14 +87,16 @@ export async function handleGetMEPs(
   
   try {
     // Fetch MEPs from EP API (only pass defined properties)
-    const apiParams: Record<string, unknown> = {
+    const apiParams = {
       active: params.active,
       limit: params.limit,
-      offset: params.offset
+      offset: params.offset,
+      ...buildApiParams(params, [
+        { from: 'country', to: 'country' },
+        { from: 'group', to: 'group' },
+        { from: 'committee', to: 'committee' },
+      ]),
     };
-    if (params['country'] !== undefined) apiParams['country'] = params['country'];
-    if (params['group'] !== undefined) apiParams['group'] = params['group'];
-    if (params['committee'] !== undefined) apiParams['committee'] = params['committee'];
     
     const result = await epClient.getMEPs(apiParams as Parameters<typeof epClient.getMEPs>[0]);
     

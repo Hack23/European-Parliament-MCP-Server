@@ -21,6 +21,7 @@
 
 import { SearchDocumentsSchema, LegislativeDocumentSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildApiParams } from './shared/paramBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -79,15 +80,17 @@ export async function handleSearchDocuments(
     }
 
     // Search documents via EP API (only pass defined properties)
-    const apiParams: Record<string, unknown> = {
+    const apiParams = {
       keyword: params.keyword ?? '',
       limit: params.limit,
-      offset: params.offset
+      offset: params.offset,
+      ...buildApiParams(params, [
+        { from: 'documentType', to: 'documentType' },
+        { from: 'dateFrom', to: 'dateFrom' },
+        { from: 'dateTo', to: 'dateTo' },
+        { from: 'committee', to: 'committee' },
+      ]),
     };
-    if (params['documentType'] !== undefined) apiParams['documentType'] = params['documentType'];
-    if (params['dateFrom'] !== undefined) apiParams['dateFrom'] = params['dateFrom'];
-    if (params['dateTo'] !== undefined) apiParams['dateTo'] = params['dateTo'];
-    if (params['committee'] !== undefined) apiParams['committee'] = params['committee'];
     
     const result = await epClient.searchDocuments(apiParams as Parameters<typeof epClient.searchDocuments>[0]);
     

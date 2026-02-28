@@ -17,6 +17,7 @@
 
 import { GetParliamentaryQuestionsSchema, ParliamentaryQuestionSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildApiParams } from './shared/paramBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -73,16 +74,18 @@ export async function handleGetParliamentaryQuestions(
     }
 
     // Fetch parliamentary questions from EP API (only pass defined properties)
-    const apiParams: Record<string, unknown> = {
+    const apiParams = {
       limit: params.limit,
-      offset: params.offset
+      offset: params.offset,
+      ...buildApiParams(params, [
+        { from: 'type', to: 'type' },
+        { from: 'author', to: 'author' },
+        { from: 'topic', to: 'topic' },
+        { from: 'status', to: 'status' },
+        { from: 'dateFrom', to: 'dateFrom' },
+        { from: 'dateTo', to: 'dateTo' },
+      ]),
     };
-    if (params['type'] !== undefined) apiParams['type'] = params['type'];
-    if (params['author'] !== undefined) apiParams['author'] = params['author'];
-    if (params['topic'] !== undefined) apiParams['topic'] = params['topic'];
-    if (params['status'] !== undefined) apiParams['status'] = params['status'];
-    if (params['dateFrom'] !== undefined) apiParams['dateFrom'] = params['dateFrom'];
-    if (params['dateTo'] !== undefined) apiParams['dateTo'] = params['dateTo'];
     
     const result = await epClient.getParliamentaryQuestions(apiParams as Parameters<typeof epClient.getParliamentaryQuestions>[0]);
     

@@ -20,6 +20,7 @@
 import { GetProceduresSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { buildApiParams } from './shared/paramBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -62,11 +63,13 @@ export async function handleGetProcedures(
     return buildToolResponse(result);
   }
 
-  const apiParams: Record<string, unknown> = {
+  const apiParams = {
     limit: params.limit,
-    offset: params.offset
+    offset: params.offset,
+    ...buildApiParams(params, [
+      { from: 'year', to: 'year' },
+    ]),
   };
-  if (params.year !== undefined) apiParams['year'] = params.year;
 
   const result = await epClient.getProcedures(apiParams as Parameters<typeof epClient.getProcedures>[0]);
 
