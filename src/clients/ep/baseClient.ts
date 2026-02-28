@@ -26,17 +26,26 @@ import { performanceMonitor } from '../../utils/performance.js';
 
 const PKG_VERSION = ((): string => {
   const fallbackVersion = '1.0.0';
-  try {
-    const pkgRaw = readFileSync(new URL('../../../package.json', import.meta.url), 'utf-8');
-    const pkg = JSON.parse(pkgRaw) as unknown;
-    if (pkg !== null && typeof pkg === 'object' && 'version' in pkg) {
-      const version = (pkg as { version: unknown }).version;
-      if (typeof version === 'string' && version.trim().length > 0) {
-        return version;
+  // Try multiple candidate locations so this works from both src/ and dist/ trees.
+  // When running from TypeScript source (src/clients/ep/baseClient.ts):
+  //   ../../../package.json → repo root package.json ✓
+  // When running from compiled output (dist/clients/ep/baseClient.js):
+  //   ../../../package.json → dist/package.json ✗  (nonexistent)
+  //   ../../../../package.json → repo root package.json ✓
+  const candidatePaths = ['../../../package.json', '../../../../package.json'];
+  for (const relativePath of candidatePaths) {
+    try {
+      const pkgRaw = readFileSync(new URL(relativePath, import.meta.url), 'utf-8');
+      const pkg = JSON.parse(pkgRaw) as unknown;
+      if (pkg !== null && typeof pkg === 'object' && 'version' in pkg) {
+        const version = (pkg as { version: unknown }).version;
+        if (typeof version === 'string' && version.trim().length > 0) {
+          return version;
+        }
       }
+    } catch {
+      // Ignore and try the next candidate path
     }
-  } catch {
-    // Ignore and fall back to default version
   }
   return fallbackVersion;
 })();

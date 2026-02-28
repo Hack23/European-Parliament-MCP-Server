@@ -254,6 +254,8 @@ export class EuropeanParliamentClient {
         interval: DEFAULT_RATE_LIMIT_INTERVAL,
       });
     const rawBaseURL = config.baseURL ?? DEFAULT_EP_API_BASE_URL;
+    // Validate baseURL to prevent SSRF (same rules as EP_API_URL env var)
+    validateApiUrl(rawBaseURL);
     // Ensure baseURL always ends with '/' so relative endpoints resolve correctly
     const baseURL = rawBaseURL.endsWith('/') ? rawBaseURL : `${rawBaseURL}/`;
     return {
