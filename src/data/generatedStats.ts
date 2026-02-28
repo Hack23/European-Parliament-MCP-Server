@@ -40,9 +40,19 @@ export interface PoliticalGroupSnapshot {
 }
 
 export interface PoliticalLandscapeData {
-  /** Political groups in the parliament for this year */
+  /**
+   * Political groups in the parliament for this year.
+   *
+   * This array includes all recognised political groups and may also
+   * contain an `NI` (non-attached members) entry when applicable.
+   * The `NI` entry represents MEPs not attached to any political group
+   * and is not counted in `totalGroups`.
+   */
   groups: PoliticalGroupSnapshot[];
-  /** Total number of political groups */
+  /**
+   * Total number of recognised political groups (excluding non-attached
+   * members, i.e. the `NI` entry in `groups` when present).
+   */
   totalGroups: number;
   /** Largest group name */
   largestGroup: string;
@@ -166,22 +176,71 @@ const MONTHLY_WEIGHTS = [
   0.10, // Dec
 ];
 
+/**
+ * Distribute an annual total across 12 months using MONTHLY_WEIGHTS,
+ * ensuring that the resulting monthly integers sum exactly to the total.
+ */
+function distributeMetric(total: number): number[] {
+  if (total <= 0) {
+    return MONTHLY_WEIGHTS.map(() => 0);
+  }
+
+  const raw: number[] = MONTHLY_WEIGHTS.map((w) => total * w);
+  const base: number[] = raw.map((value) => Math.floor(value));
+  const baseSum = base.reduce((acc, value) => acc + value, 0);
+  const remainder = total - baseSum;
+
+  if (remainder > 0) {
+    const indices = raw
+      .map((value, index) => ({ index, frac: value - (base[index] ?? 0) }))
+      .sort((a, b) => b.frac - a.frac)
+      .map((item) => item.index);
+
+    for (let i = 0; i < remainder && i < indices.length; i++) {
+      const idx = indices[i];
+      if (idx !== undefined && base[idx] !== undefined) {
+        base[idx] += 1;
+      }
+    }
+  }
+
+  return base;
+}
+
 function distributeMonthly(annual: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape'>): MonthlyActivity[] {
-  return MONTHLY_WEIGHTS.map((w, i) => ({
+  const metrics: Record<string, number[]> = {
+    plenarySessions: distributeMetric(annual.plenarySessions),
+    legislativeActsAdopted: distributeMetric(annual.legislativeActsAdopted),
+    rollCallVotes: distributeMetric(annual.rollCallVotes),
+    committeeMeetings: distributeMetric(annual.committeeMeetings),
+    parliamentaryQuestions: distributeMetric(annual.parliamentaryQuestions),
+    resolutions: distributeMetric(annual.resolutions),
+    speeches: distributeMetric(annual.speeches),
+    adoptedTexts: distributeMetric(annual.adoptedTexts),
+    procedures: distributeMetric(annual.procedures),
+    events: distributeMetric(annual.events),
+    documents: distributeMetric(annual.documents),
+    mepTurnover: distributeMetric(annual.mepTurnover),
+    declarations: distributeMetric(annual.declarations),
+  };
+
+  const at = (key: string, i: number): number => metrics[key]?.[i] ?? 0;
+
+  return MONTHLY_WEIGHTS.map((_, i) => ({
     month: i + 1,
-    plenarySessions: Math.round(annual.plenarySessions * w),
-    legislativeActsAdopted: Math.round(annual.legislativeActsAdopted * w),
-    rollCallVotes: Math.round(annual.rollCallVotes * w),
-    committeeMeetings: Math.round(annual.committeeMeetings * w),
-    parliamentaryQuestions: Math.round(annual.parliamentaryQuestions * w),
-    resolutions: Math.round(annual.resolutions * w),
-    speeches: Math.round(annual.speeches * w),
-    adoptedTexts: Math.round(annual.adoptedTexts * w),
-    procedures: Math.round(annual.procedures * w),
-    events: Math.round(annual.events * w),
-    documents: Math.round(annual.documents * w),
-    mepTurnover: Math.round(annual.mepTurnover * w),
-    declarations: Math.round(annual.declarations * w),
+    plenarySessions: at('plenarySessions', i),
+    legislativeActsAdopted: at('legislativeActsAdopted', i),
+    rollCallVotes: at('rollCallVotes', i),
+    committeeMeetings: at('committeeMeetings', i),
+    parliamentaryQuestions: at('parliamentaryQuestions', i),
+    resolutions: at('resolutions', i),
+    speeches: at('speeches', i),
+    adoptedTexts: at('adoptedTexts', i),
+    procedures: at('procedures', i),
+    events: at('events', i),
+    documents: at('documents', i),
+    mepTurnover: at('mepTurnover', i),
+    declarations: at('declarations', i),
   }));
 }
 
@@ -318,10 +377,13 @@ function computeRankings(yearly: YearlyStats[]): CategoryRanking[] {
 }
 
 // ── Predictions (2026–2030) ───────────────────────────────────────
-// Simple linear-trend extrapolation from the last 5 complete non-transition years.
+// Simple linear-trend extrapolation from the last 5 years (2021-2025),
+// including the 2024 transition year and 2025 ramp-up year for a
+// representative mix of recent parliamentary activity levels.
 
 function buildPredictions(): PredictionYear[] {
-  // Use representative non-transition years for trend calculation
+  // Use last 5 years (2021-2025) for trend calculation; includes transition
+  // and ramp-up years to capture realistic average activity levels
   const trendYears = RAW_YEARLY.filter((y) =>
     [2021, 2022, 2023, 2024, 2025].includes(y.year)
   );

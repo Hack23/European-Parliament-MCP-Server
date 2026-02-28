@@ -373,6 +373,36 @@ describe('getAllGeneratedStats', () => {
     expect(aug.plenarySessions).toBeLessThan(oct.plenarySessions);
   });
 
+  it('monthly breakdown sums match annual totals', () => {
+    const result = getAllGeneratedStats({
+      yearFrom: 2023,
+      yearTo: 2023,
+      category: 'all',
+      includePredictions: false,
+      includeMonthlyBreakdown: true,
+      includeRankings: false,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    const year = data.yearlyStats[0];
+    const monthly: Record<string, unknown>[] = year.monthlyActivity;
+    const sum = (key: string): number =>
+      monthly.reduce((acc: number, m: Record<string, unknown>) => acc + (m[key] as number), 0);
+
+    expect(sum('plenarySessions')).toBe(year.plenarySessions);
+    expect(sum('legislativeActsAdopted')).toBe(year.legislativeActsAdopted);
+    expect(sum('rollCallVotes')).toBe(year.rollCallVotes);
+    expect(sum('committeeMeetings')).toBe(year.committeeMeetings);
+    expect(sum('parliamentaryQuestions')).toBe(year.parliamentaryQuestions);
+    expect(sum('resolutions')).toBe(year.resolutions);
+    expect(sum('speeches')).toBe(year.speeches);
+    expect(sum('adoptedTexts')).toBe(year.adoptedTexts);
+    expect(sum('procedures')).toBe(year.procedures);
+    expect(sum('events')).toBe(year.events);
+    expect(sum('documents')).toBe(year.documents);
+    expect(sum('mepTurnover')).toBe(year.mepTurnover);
+    expect(sum('declarations')).toBe(year.declarations);
+  });
+
   it('excludes monthly breakdown by default', () => {
     const result = getAllGeneratedStats({
       yearFrom: 2023,
