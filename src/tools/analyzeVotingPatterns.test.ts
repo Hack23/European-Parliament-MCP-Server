@@ -67,16 +67,11 @@ describe('analyze_voting_patterns Tool', () => {
         dateTo: '2024-12-31'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null && 'period' in parsed) {
-        const period = parsed.period;
-        expect(typeof period === 'object' && period !== null).toBe(true);
-        if (typeof period === 'object' && period !== null) {
-          expect(period).toHaveProperty('from', '2024-01-01');
-          expect(period).toHaveProperty('to', '2024-12-31');
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as {
+        period: { from: string; to: string };
+      };
+      expect(parsed.period).toHaveProperty('from', '2024-01-01');
+      expect(parsed.period).toHaveProperty('to', '2024-12-31');
     });
 
     it('should accept compareWithGroup parameter', async () => {
@@ -104,23 +99,12 @@ describe('analyze_voting_patterns Tool', () => {
         compareWithGroup: true
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('groupAlignment' in parsed).toBe(true);
-        if ('groupAlignment' in parsed) {
-          const ga = parsed.groupAlignment;
-          expect(typeof ga === 'object' && ga !== null).toBe(true);
-          if (typeof ga === 'object' && ga !== null) {
-            // Alignment should be derived from real voting data, not hardcoded 87.5
-            expect('alignmentRate' in ga).toBe(true);
-            expect('divergentVotes' in ga).toBe(true);
-            if ('divergentVotes' in ga) {
-              expect(ga.divergentVotes).toBe(200); // equals votesAgainst from mock
-            }
-          }
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as {
+        groupAlignment: { alignmentRate: number; divergentVotes: number };
+      };
+      expect(parsed.groupAlignment).toHaveProperty('alignmentRate');
+      expect(parsed.groupAlignment).toHaveProperty('divergentVotes');
+      expect(parsed.groupAlignment.divergentVotes).toBe(200);
     });
 
     it('should reject missing MEP ID', async () => {
@@ -184,20 +168,11 @@ describe('analyze_voting_patterns Tool', () => {
       vi.mocked(epClient.getMEPDetails).mockResolvedValue(mockMEP);
 
       const result = await handleAnalyzeVotingPatterns({ mepId: 'MEP-124810' });
-      const parsed: unknown = JSON.parse(result.content[0].text);
-
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('statistics' in parsed).toBe(true);
-        if ('statistics' in parsed) {
-          const stats = parsed.statistics;
-          expect(typeof stats === 'object' && stats !== null).toBe(true);
-          if (typeof stats === 'object' && stats !== null) {
-            expect('totalVotes' in stats).toBe(true);
-            expect('attendanceRate' in stats).toBe(true);
-          }
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as {
+        statistics: { totalVotes: number; attendanceRate: number };
+      };
+      expect(parsed.statistics).toHaveProperty('totalVotes');
+      expect(parsed.statistics).toHaveProperty('attendanceRate');
     });
 
     it('should include cross-party voting derived from real data', async () => {
@@ -221,24 +196,12 @@ describe('analyze_voting_patterns Tool', () => {
       vi.mocked(epClient.getMEPDetails).mockResolvedValue(mockMEP);
 
       const result = await handleAnalyzeVotingPatterns({ mepId: 'MEP-124810' });
-      const parsed: unknown = JSON.parse(result.content[0].text);
-
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('crossPartyVoting' in parsed).toBe(true);
-        if ('crossPartyVoting' in parsed) {
-          const cpv = parsed.crossPartyVoting;
-          expect(typeof cpv === 'object' && cpv !== null).toBe(true);
-          if (typeof cpv === 'object' && cpv !== null) {
-            expect('withOtherGroups' in cpv).toBe(true);
-            expect('rate' in cpv).toBe(true);
-            // Should be derived from actual voting data, not hardcoded
-            if ('withOtherGroups' in cpv) {
-              expect(cpv.withOtherGroups).toBe(200); // equals votesAgainst
-            }
-          }
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as {
+        crossPartyVoting: { withOtherGroups: number; rate: number };
+      };
+      expect(parsed.crossPartyVoting).toHaveProperty('withOtherGroups');
+      expect(parsed.crossPartyVoting).toHaveProperty('rate');
+      expect(parsed.crossPartyVoting.withOtherGroups).toBe(200);
     });
 
     it('should include confidence level and methodology', async () => {
@@ -260,22 +223,13 @@ describe('analyze_voting_patterns Tool', () => {
       vi.mocked(epClient.getMEPDetails).mockResolvedValue(mockMEP);
 
       const result = await handleAnalyzeVotingPatterns({ mepId: 'MEP-124810' });
-      const parsed: unknown = JSON.parse(result.content[0].text);
-
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        expect('confidenceLevel' in parsed).toBe(true);
-        expect('methodology' in parsed).toBe(true);
-        if ('confidenceLevel' in parsed) {
-          expect(parsed.confidenceLevel).toBe('HIGH');
-        }
-        if ('methodology' in parsed) {
-          expect(typeof parsed.methodology === 'string').toBe(true);
-          if (typeof parsed.methodology === 'string') {
-            expect(parsed.methodology).toContain('European Parliament');
-          }
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as {
+        confidenceLevel: string;
+        methodology: string;
+      };
+      expect(parsed.confidenceLevel).toBe('HIGH');
+      expect(typeof parsed.methodology).toBe('string');
+      expect(parsed.methodology).toContain('European Parliament');
     });
 
     it('should handle MEP without voting statistics', async () => {
@@ -290,20 +244,13 @@ describe('analyze_voting_patterns Tool', () => {
       vi.mocked(epClient.getMEPDetails).mockResolvedValue(mockMEP);
 
       const result = await handleAnalyzeVotingPatterns({ mepId: 'MEP-124810' });
-      const parsed: unknown = JSON.parse(result.content[0].text);
-
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null) {
-        // EP API /meps/{id} never returns voting stats — expect dataAvailable: false
-        expect('dataAvailable' in parsed).toBe(true);
-        if ('dataAvailable' in parsed) {
-          expect(parsed.dataAvailable).toBe(false);
-        }
-        expect('confidenceLevel' in parsed).toBe(true);
-        if ('confidenceLevel' in parsed) {
-          expect(parsed.confidenceLevel).toBe('LOW');
-        }
-      }
+      const parsed = JSON.parse(result.content[0].text) as {
+        dataAvailable: boolean;
+        confidenceLevel: string;
+      };
+      // EP API /meps/{id} never returns voting stats — expect dataAvailable: false
+      expect(parsed.dataAvailable).toBe(false);
+      expect(parsed.confidenceLevel).toBe('LOW');
     });
   });
 
@@ -338,7 +285,6 @@ describe('analyze_voting_patterns Tool', () => {
     });
 
     it('should have input schema', () => {
-      expect(analyzeVotingPatternsToolMetadata.inputSchema).toBeDefined();
       expect(analyzeVotingPatternsToolMetadata.inputSchema.type).toBe('object');
       expect(analyzeVotingPatternsToolMetadata.inputSchema.required).toContain('mepId');
     });
