@@ -90,6 +90,9 @@ describe('getAllGeneratedStats', () => {
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     expect(data.generatedAt).toBeDefined();
     expect(data.coveragePeriod).toBeDefined();
+    expect(data.coveragePeriod.from).toBe(2004);
+    expect(data.coveragePeriod.to).toBe(2025);
+    expect(data.requestedPeriod).toBeDefined();
     expect(data.yearlyStats).toBeDefined();
     expect(data.analysisSummary).toBeDefined();
     expect(data.methodology).toBeDefined();
@@ -454,6 +457,9 @@ describe('getAllGeneratedStats', () => {
     expect(data.yearlyStats[0].year).toBe(2015);
     expect(data.yearlyStats[3].year).toBe(2018);
     expect(data.totalYearsReturned).toBe(4);
+    // coveragePeriod is always full dataset; requestedPeriod reflects the filter
+    expect(data.coveragePeriod).toEqual({ from: 2004, to: 2025 });
+    expect(data.requestedPeriod).toEqual({ from: 2015, to: 2018 });
   });
 
   it('analysis summary has required fields', () => {

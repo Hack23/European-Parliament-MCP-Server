@@ -98,7 +98,7 @@ export const GetAllGeneratedStatsSchema = z
 
 export type GetAllGeneratedStatsParams = z.infer<typeof GetAllGeneratedStatsSchema>;
 
-const CATEGORY_LABEL_MAP: Record<string, string> = {
+const CATEGORY_LABEL_MAP: Partial<Record<string, string>> = {
   plenary_sessions: 'Plenary Sessions',
   legislative_acts: 'Legislative Acts Adopted',
   roll_call_votes: 'Roll-Call Votes',
@@ -112,6 +112,7 @@ const CATEGORY_LABEL_MAP: Record<string, string> = {
   documents: 'Documents',
   mep_turnover: 'MEP Turnover',
   declarations: 'Declarations',
+  // political_groups intentionally omitted — it has no numeric ranking
 };
 
 type RankingEntry = typeof GENERATED_STATS.categoryRankings[number];
@@ -186,7 +187,11 @@ function filterRankings(
     return GENERATED_STATS.categoryRankings.map(recompute);
   }
 
+  // political_groups has no numeric ranking category
+  if (params.category === 'political_groups') return [];
+
   const label = CATEGORY_LABEL_MAP[params.category];
+  if (label === undefined) return [];
   return GENERATED_STATS.categoryRankings
     .filter((r) => r.category === label)
     .map(recompute);
@@ -221,7 +226,8 @@ export function getAllGeneratedStats(
 
     const result = {
       generatedAt: GENERATED_STATS.generatedAt,
-      coveragePeriod: { from: yearFrom, to: yearTo },
+      coveragePeriod: GENERATED_STATS.coveragePeriod,
+      requestedPeriod: { from: yearFrom, to: yearTo },
       methodologyVersion: GENERATED_STATS.methodologyVersion,
       dataSource: GENERATED_STATS.dataSource,
       totalYearsReturned: filteredYearly.length,
@@ -244,7 +250,7 @@ export function getAllGeneratedStats(
       methodology:
         'Precomputed statistics from European Parliament Open Data Portal. ' +
         'Rankings use ordinal ranking with percentile scores. ' +
-        'Predictions use linear-trend extrapolation with parliamentary term cycle adjustments. ' +
+        'Predictions use average-based extrapolation from 2021-2025 with parliamentary term cycle adjustments. ' +
         'Data refreshed weekly by agentic workflow.',
       sourceAttribution:
         'European Parliament Open Data Portal — data.europarl.europa.eu',

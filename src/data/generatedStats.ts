@@ -377,9 +377,11 @@ function computeRankings(yearly: YearlyStats[]): CategoryRanking[] {
 }
 
 // ── Predictions (2026–2030) ───────────────────────────────────────
-// Simple linear-trend extrapolation from the last 5 years (2021-2025),
+// Average-based extrapolation from the last 5 years (2021-2025),
 // including the 2024 transition year and 2025 ramp-up year for a
 // representative mix of recent parliamentary activity levels.
+// Each prediction year applies a parliamentary term cycle factor
+// to the 2021-2025 average (not a linear regression/slope).
 
 function buildPredictions(): PredictionYear[] {
   // Use last 5 years (2021-2025) for trend calculation; includes transition
@@ -430,7 +432,7 @@ function buildPredictions(): PredictionYear[] {
     predictedMepTurnover: Math.round(avgMepTurnover * factor),
     predictedDeclarations: Math.round(avgDeclarations * factor),
     confidenceInterval: conf,
-    methodology: `Linear-trend extrapolation from 2021-2025 averages with parliamentary term cycle adjustment (factor: ${String(factor)}). ${note}`,
+    methodology: `Average-based extrapolation from 2021-2025 with parliamentary term cycle adjustment (factor: ${String(factor)}). ${note}`,
   }));
 }
 
