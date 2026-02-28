@@ -165,7 +165,11 @@ describe('GENERATED_STATS.categoryRankings', () => {
   });
 
   describe('each ranking entry structure', () => {
-    const sample: CategoryRanking = GENERATED_STATS.categoryRankings[0];
+    let sample: CategoryRanking;
+    beforeAll(() => {
+      expect(GENERATED_STATS.categoryRankings.length).toBeGreaterThan(0);
+      sample = GENERATED_STATS.categoryRankings[0]!;
+    });
 
     it('should have a category string', () => {
       expect(typeof sample.category).toBe('string');
@@ -199,9 +203,7 @@ describe('GENERATED_STATS.categoryRankings', () => {
 
   it('should include a Plenary Sessions category', () => {
     const categories = GENERATED_STATS.categoryRankings.map((r) => r.category);
-    expect(categories.length).toBeGreaterThan(0);
-    // At least one category should be a non-empty string
-    expect(categories[0].length).toBeGreaterThan(0);
+    expect(categories).toContain('Plenary Sessions');
   });
 });
 
@@ -222,7 +224,11 @@ describe('GENERATED_STATS.predictions', () => {
   });
 
   describe('each prediction entry structure', () => {
-    const sample: PredictionYear = GENERATED_STATS.predictions[0];
+    let sample: PredictionYear;
+    beforeAll(() => {
+      expect(GENERATED_STATS.predictions.length).toBeGreaterThan(0);
+      sample = GENERATED_STATS.predictions[0]!;
+    });
 
     it('should have a numeric year', () => {
       expect(typeof sample.year).toBe('number');
