@@ -30,6 +30,7 @@ import { randomUUID } from 'node:crypto';
 import { CorrelateIntelligenceSchema, OsintStandardOutputSchema } from '../schemas/europeanParliament.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult, OsintStandardOutput } from './shared/types.js';
+import type { DataAvailability } from '../types/index.js';
 
 import { handleAssessMepInfluence } from './assessMepInfluence.js';
 import { handleDetectVotingAnomalies } from './detectVotingAnomalies.js';
@@ -152,6 +153,8 @@ export interface CorrelatedIntelligenceReport extends OsintStandardOutput {
     lowAlerts: number;
     correlationsFound: number;
   };
+  /** Explicit marker indicating whether correlation data was available from dependent tools */
+  dataAvailability: DataAvailability;
 }
 
 // ---------------------------------------------------------------------------
@@ -501,6 +504,23 @@ function aggregateConfidence(levels: string[]): 'HIGH' | 'MEDIUM' | 'LOW' {
   return 'MEDIUM';
 }
 
+/**
+ * Derive an explicit DataAvailability marker from correlation results.
+ * - `'AVAILABLE'`   — at least one correlation was produced from a successful tool response.
+ * - `'UNAVAILABLE'` — all dependent tool calls failed; no confidence levels were collected,
+ *                     meaning there is no data whatsoever to base correlations on.
+ * - `'PARTIAL'`     — dependent tools responded (confidence levels collected) but the
+ *                     responses contained no actionable correlation signals.
+ */
+function computeDataAvailability(
+  correlationsFound: number,
+  confidenceLevels: string[]
+): DataAvailability {
+  if (correlationsFound > 0) return 'AVAILABLE';
+  if (confidenceLevels.length === 0) return 'UNAVAILABLE';
+  return 'PARTIAL';
+}
+
 // ---------------------------------------------------------------------------
 // Main handler
 // ---------------------------------------------------------------------------
@@ -647,6 +667,7 @@ export async function handleCorrelateIntelligence(
     },
     summary: buildAlertSummary(allAlerts, correlationsFound),
     confidenceLevel: aggregateConfidence(confidenceLevels.length > 0 ? confidenceLevels : ['MEDIUM']),
+    dataAvailability: computeDataAvailability(correlationsFound, confidenceLevels),
     methodology: buildMethodology(influenceThreshold, sensitivityLevel, includeNetworkAnalysis),
     dataFreshness: `Real-time EP API data — correlated at ${analysisTime}`,
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',

@@ -15,6 +15,7 @@ import { AnalyzeCoalitionDynamicsSchema } from '../schemas/europeanParliament.js
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
+import type { DataAvailability } from '../types/index.js';
 
 interface CoalitionPairAnalysis {
   groupA: string;
@@ -29,15 +30,20 @@ interface CoalitionPairAnalysis {
 interface GroupCohesionMetrics {
   groupId: string;
   memberCount: number;
-  internalCohesion: number;
-  defectionRate: number;
-  avgAttendance: number;
+  /** null when EP API does not provide per-MEP voting statistics */
+  internalCohesion: number | null;
+  /** null when EP API does not provide per-MEP voting statistics */
+  defectionRate: number | null;
+  /** null when EP API does not provide per-MEP voting statistics */
+  avgAttendance: number | null;
   stressIndicator: number;
+  /** Explicit marker indicating whether voting-derived metrics are available */
+  dataAvailability: DataAvailability;
   computedAttributes: {
-    disciplineScore: number;
-    fragmentationRisk: number;
+    disciplineScore: number | null;
+    fragmentationRisk: number | null;
     unityTrend: string;
-    activeParticipationRate: number;
+    activeParticipationRate: number | null;
   };
 }
 
@@ -102,7 +108,7 @@ function computePairCohesion(
  * Build group metrics from fetched MEP data.
  * Note: The EP API /meps/{id} endpoint does not provide per-MEP voting
  * statistics, so cohesion metrics are derived from group composition only.
- * Voting-related fields report zero with LOW confidence.
+ * Voting-related fields report null with UNAVAILABLE dataAvailability.
  */
 async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionMetrics[]> {
   const metrics: GroupCohesionMetrics[] = [];
@@ -110,21 +116,22 @@ async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionM
     const mepsResult = await epClient.getMEPs({ group: groupId, limit: 50 });
 
     // Per-MEP voting statistics are not available from the EP API,
-    // so cohesion/defection/attendance are reported as zero.
+    // so cohesion/defection/attendance are reported as null with UNAVAILABLE marker.
     const memberCount = mepsResult.data.length;
 
     metrics.push({
       groupId,
       memberCount,
-      internalCohesion: 0,
-      defectionRate: 0,
-      avgAttendance: 0,
+      internalCohesion: null,
+      defectionRate: null,
+      avgAttendance: null,
       stressIndicator: 0,
+      dataAvailability: 'UNAVAILABLE',
       computedAttributes: {
-        disciplineScore: 0,
-        fragmentationRisk: 0,
+        disciplineScore: null,
+        fragmentationRisk: null,
         unityTrend: 'UNKNOWN',
-        activeParticipationRate: 0
+        activeParticipationRate: null
       }
     });
   }
@@ -275,9 +282,10 @@ function buildCoalitionComputedAttrs(
  * - Parliament-wide fragmentation index (Herfindahl–Hirschman)
  * - Effective number of parties (ENP)
  *
- * > **Note:** Confidence level is always `LOW` because per-MEP voting statistics
- * > are unavailable from the current EP API. Cohesion/defection metrics report
- * > zero and should be supplemented with vote-result data when available.
+ * > **Note:** Confidence level is `NONE` because per-MEP voting statistics
+ * > are unavailable from the current EP API. Cohesion/defection/attendance
+ * > metrics are null with `dataAvailability: 'UNAVAILABLE'` and should be
+ * > supplemented with vote-result data when available.
  *
  * @param args - Tool arguments matching AnalyzeCoalitionDynamicsSchema
  * @param args.groupIds - Political group identifiers to analyze (optional; defaults to all 8 groups)
@@ -330,12 +338,12 @@ export async function handleAnalyzeCoalitionDynamics(
       dominantCoalition: buildDominantCoalition(sortedPairs),
       stressIndicators,
       computedAttributes: buildCoalitionComputedAttrs(fragMetrics, sortedPairs),
-      confidenceLevel: 'LOW',
+      confidenceLevel: 'NONE',
       dataFreshness: 'Real-time EP API data — political group composition from current MEP records',
       sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'CIA Coalition Analysis — group composition from real EP Open Data MEP records. '
         + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
-        + 'cohesion and stress metrics report zero and should be supplemented with vote-result data. '
+        + 'each group metric has dataAvailability: UNAVAILABLE with null cohesion/defection/attendance. '
         + 'Coalition pair cohesion derived from group size ratios. '
         + 'Data source: European Parliament Open Data Portal.'
     };
