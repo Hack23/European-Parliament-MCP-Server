@@ -9,7 +9,8 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getEvents: vi.fn()
+    getEvents: vi.fn(),
+    getEventById: vi.fn()
   }
 }));
 
@@ -167,6 +168,24 @@ describe('get_events Tool', () => {
       expect(props).toHaveProperty('dateTo');
       expect(props).toHaveProperty('limit');
       expect(props).toHaveProperty('offset');
+    });
+  });
+
+  describe('eventId lookup branch', () => {
+    it('should call getEventById when eventId is provided', async () => {
+      const mockEvent = {
+        id: 'EVT-2024-001',
+        title: 'Plenary Session',
+        date: '2024-03-13',
+        type: 'PLENARY',
+        location: 'Strasbourg'
+      };
+      vi.mocked(epClientModule.epClient.getEventById).mockResolvedValue(mockEvent);
+
+      const result = await handleGetEvents({ eventId: 'EVT-2024-001' });
+      expect(result.content[0].type).toBe('text');
+      const parsed = JSON.parse(result.content[0].text) as { id: string };
+      expect(parsed.id).toBe('EVT-2024-001');
     });
   });
 });

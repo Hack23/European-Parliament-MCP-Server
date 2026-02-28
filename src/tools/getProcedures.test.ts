@@ -9,7 +9,8 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getProcedures: vi.fn()
+    getProcedures: vi.fn(),
+    getProcedureById: vi.fn()
   }
 }));
 
@@ -169,6 +170,31 @@ describe('get_procedures Tool', () => {
       expect(props).toHaveProperty('year');
       expect(props).toHaveProperty('limit');
       expect(props).toHaveProperty('offset');
+    });
+  });
+
+  describe('processId lookup branch', () => {
+    it('should call getProcedureById when processId is provided', async () => {
+      const mockProcedure = {
+        id: 'COD/2024/0001',
+        title: 'AI Act',
+        reference: '2024/0001(COD)',
+        type: 'COD',
+        subjectMatter: 'Internal Market',
+        stage: 'First reading',
+        status: 'Ongoing',
+        dateInitiated: '2024-01-15',
+        dateLastActivity: '2024-06-20',
+        responsibleCommittee: 'IMCO',
+        rapporteur: 'Test MEP',
+        documents: []
+      };
+      vi.mocked(epClientModule.epClient.getProcedureById).mockResolvedValue(mockProcedure);
+
+      const result = await handleGetProcedures({ processId: 'COD/2024/0001' });
+      expect(result.content[0].type).toBe('text');
+      const parsed = JSON.parse(result.content[0].text) as { id: string };
+      expect(parsed.id).toBe('COD/2024/0001');
     });
   });
 });

@@ -9,7 +9,8 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getPlenarySessions: vi.fn()
+    getPlenarySessions: vi.fn(),
+    getMeetingById: vi.fn()
   }
 }));
 
@@ -169,6 +170,24 @@ describe('get_plenary_sessions Tool', () => {
       if (typeof data === 'object' && data !== null && 'offset' in data) {
         expect(data.offset).toBe(0); // Default offset
       }
+    });
+  });
+
+  describe('eventId lookup branch', () => {
+    it('should call getMeetingById when eventId is provided', async () => {
+      const mockMeeting = {
+        id: 'MTG-2024-001',
+        title: 'Plenary Session March 2024',
+        date: '2024-03-11',
+        location: 'Strasbourg',
+        type: 'PLENARY'
+      };
+      vi.mocked(epClientModule.epClient.getMeetingById).mockResolvedValue(mockMeeting);
+
+      const result = await handleGetPlenarySessions({ eventId: 'MTG-2024-001' });
+      expect(result.content[0].type).toBe('text');
+      const parsed = JSON.parse(result.content[0].text) as { id: string };
+      expect(parsed.id).toBe('MTG-2024-001');
     });
   });
 });

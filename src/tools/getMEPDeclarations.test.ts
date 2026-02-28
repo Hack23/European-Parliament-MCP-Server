@@ -9,7 +9,8 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPDeclarations: vi.fn()
+    getMEPDeclarations: vi.fn(),
+    getMEPDeclarationById: vi.fn()
   }
 }));
 
@@ -168,6 +169,25 @@ describe('get_mep_declarations Tool', () => {
 
     it('should mention GDPR in description', () => {
       expect(getMEPDeclarationsToolMetadata.description).toContain('GDPR');
+    });
+  });
+
+  describe('docId lookup branch', () => {
+    it('should call getMEPDeclarationById when docId is provided', async () => {
+      const mockDeclaration = {
+        id: 'dec/2024/001',
+        title: 'Declaration of financial interests',
+        date: '2024-01-15',
+        mepId: 'MEP-124810',
+        type: 'financial',
+        content: 'Declaration content'
+      };
+      vi.mocked(epClientModule.epClient.getMEPDeclarationById).mockResolvedValue(mockDeclaration);
+
+      const result = await handleGetMEPDeclarations({ docId: 'dec/2024/001' });
+      expect(result.content[0].type).toBe('text');
+      const parsed = JSON.parse(result.content[0].text) as { id: string };
+      expect(parsed.id).toBe('dec/2024/001');
     });
   });
 });
