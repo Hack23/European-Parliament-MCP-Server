@@ -65,6 +65,23 @@ export { DEFAULT_TIMEOUTS } from './utils/timeout.js';
 export type { TimeoutConfig } from './utils/timeout.js';
 export type { RateLimiterConfig, RateLimiterStatus } from './utils/rateLimiter.js';
 export type { AuditEvent, AuditLogEntry, LogLevel } from './utils/auditLogger.js';
+/** Re-export audit sink public API for consumer-configurable pluggable sinks */
+export type {
+  AuditFilter,
+  AuditLoggerOptions,
+  AuditSink,
+  AuthToken,
+  FileAuditSinkOptions,
+} from './utils/auditLogger.js';
+export {
+  DEFAULT_SENSITIVE_KEYS,
+  FileAuditSink,
+  MemoryAuditSink,
+  RetentionPolicy,
+  sanitizeParams,
+  StderrAuditSink,
+  StructuredJsonSink,
+} from './utils/auditLogger.js';
 /** Re-export prompt argument schemas for integration tests and client validation */
 export {
   MepBriefingArgsSchema,

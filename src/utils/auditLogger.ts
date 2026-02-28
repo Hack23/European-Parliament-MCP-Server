@@ -1,20 +1,59 @@
 /**
- * Audit Logger for GDPR compliance and security monitoring
- * 
+ * Audit Logger for GDPR compliance and security monitoring.
+ *
  * **Intelligence Perspective:** Audit trails enable accountability analysis and
  * access pattern intelligence—essential for data governance in political data systems.
- * 
+ *
  * **Business Perspective:** GDPR audit compliance is a prerequisite for enterprise
  * customers and EU institutional partnerships requiring demonstrable data governance.
- * 
+ *
  * **Marketing Perspective:** GDPR-compliant audit logging is a trust signal for
  * EU-focused customers and differentiates against non-compliant alternatives.
- * 
- * ISMS Policy: AU-002 (Audit Logging and Monitoring), GDPR Article 30
- * 
+ *
+ * ISMS Policy: AU-002 (Audit Logging and Monitoring), GDPR Articles 5, 17, 30
+ *
  * Logs all access to personal data (MEP information) for audit trails
  * and regulatory compliance.
+ *
+ * @module utils/auditLogger
+ * @since 0.8.0
  */
+
+import type {
+  AuditFilter,
+  AuditLogEntry,
+  AuditLoggerOptions,
+  AuditSink,
+  AuthToken,
+} from './auditSink.js';
+import {
+  DEFAULT_SENSITIVE_KEYS,
+  MemoryAuditSink,
+  RetentionPolicy,
+  sanitizeParams,
+  StderrAuditSink,
+} from './auditSink.js';
+
+// Re-export the shared data model for backward compatibility.
+export type { AuditLogEntry } from './auditSink.js';
+
+// Re-export the pluggable-sink public API so consumers only need one import.
+export type {
+  AuditFilter,
+  AuditLoggerOptions,
+  AuditSink,
+  AuthToken,
+} from './auditSink.js';
+export {
+  DEFAULT_SENSITIVE_KEYS,
+  FileAuditSink,
+  MemoryAuditSink,
+  RetentionPolicy,
+  sanitizeParams,
+  StderrAuditSink,
+  StructuredJsonSink,
+} from './auditSink.js';
+export type { FileAuditSinkOptions } from './auditSink.js';
 
 /**
  * Typed log levels for structured audit events.
@@ -60,142 +99,105 @@ export interface AuditEvent {
   duration?: number;
 }
 
-/**
- * Audit log entry structure, part of the public audit logging API.
- * Represents a single audited operation and its contextual metadata.
- */
-export interface AuditLogEntry {
-  /**
-   * Timestamp of the event
-   */
-  timestamp: Date;
-  
-  /**
-   * Action performed (e.g., 'get_meps', 'get_mep_details')
-   */
-  action: string;
-  
-  /**
-   * Parameters used in the action
-   */
-  params?: Record<string, unknown>;
-  
-  /**
-   * Result metadata (e.g., count of records returned)
-   */
-  result?: {
-    count?: number;
-    success: boolean;
-    error?: string;
-  };
-  
-  /**
-   * Duration of the operation in milliseconds
-   */
-  duration?: number;
-  
-  /**
-   * User identifier (if authenticated)
-   */
-  userId?: string;
-  
-  /**
-   * Client identifier
-   */
-  clientId?: string;
-  
-  /**
-   * IP address (for security monitoring)
-   */
-  ipAddress?: string;
-}
+// ---------------------------------------------------------------------------
+// AuditLogger
+// ---------------------------------------------------------------------------
 
 /**
- * Audit logger implementation
- * 
- * In production, this should write to a secure, append-only log storage
- * such as CloudWatch Logs, Elasticsearch, or a dedicated audit log service.
+ * GDPR-compliant audit logger with pluggable sinks, parameter sanitisation,
+ * data retention enforcement, and access-controlled log retrieval.
+ *
+ * ## Pluggable sinks
+ * By default the logger writes to an in-memory buffer (queryable via
+ * `getLogs()`) and to `stderr` (MCP-compatible).  Pass a `sinks` option to
+ * replace the default stderr sink with your own destinations
+ * (e.g. `FileAuditSink`, `StructuredJsonSink`).
+ *
+ * ## Parameter sanitisation
+ * All `params` objects are automatically sanitised before storage; keys
+ * matching `sensitiveKeys` (default: `DEFAULT_SENSITIVE_KEYS`) are replaced
+ * by `'[REDACTED]'` to prevent PII leakage into audit trails.
+ *
+ * ## Data retention
+ * When `retentionMs` is set, `getLogs()` automatically filters out entries
+ * older than the configured maximum age (GDPR Article 5(1)(e)).
+ *
+ * ## Access control
+ * When `requiredAuthToken` is set, `getLogs()` and `eraseByUser()` throw if
+ * the caller does not supply the correct token.
+ *
+ * @example Basic usage (backward-compatible)
+ * ```typescript
+ * auditLogger.logDataAccess('get_meps', { country: 'SE' }, 5, 85);
+ * const entries = auditLogger.getLogs();
+ * ```
+ *
+ * @example With file sink and 30-day retention
+ * ```typescript
+ * const logger = new AuditLogger({
+ *   sinks: [new FileAuditSink({ filePath: '/var/log/ep-mcp-audit.ndjson' })],
+ *   retentionMs: 30 * 24 * 60 * 60 * 1000,
+ *   requiredAuthToken: process.env['AUDIT_TOKEN'],
+ * });
+ * ```
+ *
+ * @since 0.8.0
  */
 export class AuditLogger {
-  private logs: AuditLogEntry[] = [];
-  
+  private readonly memorySink: MemoryAuditSink;
+  private readonly extraSinks: readonly AuditSink[];
+  private readonly sensitiveKeys: readonly string[];
+  private readonly retentionPolicy: RetentionPolicy | undefined;
+  private readonly requiredAuthToken: AuthToken | undefined;
+
+  constructor(options?: AuditLoggerOptions) {
+    this.memorySink = new MemoryAuditSink();
+    this.extraSinks = options?.sinks ?? [new StderrAuditSink()];
+    this.sensitiveKeys = options?.sensitiveKeys ?? DEFAULT_SENSITIVE_KEYS;
+    this.retentionPolicy =
+      options?.retentionMs !== undefined
+        ? new RetentionPolicy(options.retentionMs)
+        : undefined;
+    this.requiredAuthToken = options?.requiredAuthToken;
+  }
+
   /**
-   * Logs an audit event to the in-memory store and stderr.
+   * Logs an audit event to the in-memory store and all configured sinks.
    *
-   * Appends a timestamped {@link AuditLogEntry} to the internal log buffer and
-   * emits a single structured JSON line to `stderr` (stdout is reserved for the
-   * MCP protocol wire format).
+   * Parameter values matching `sensitiveKeys` are automatically replaced by
+   * `'[REDACTED]'` before storage.
    *
    * @param entry - Audit log entry without a timestamp (generated automatically)
-   * @throws {TypeError} If `entry.action` is not a string
    *
-   * @example
-   * ```typescript
-   * auditLogger.log({
-   *   action: 'get_meps',
-   *   params: { country: 'DE' },
-   *   result: { success: true, count: 42 },
-   *   duration: 120
-   * });
-   * ```
-   *
-   * @security Writes to stderr only (not stdout, which is reserved for MCP protocol).
+   * @security Writes to sinks only (not stdout, which is reserved for MCP).
    *   Per ISMS Policy AU-002, all MCP tool calls must be audit-logged.
    * @since 0.8.0
    */
   log(entry: Omit<AuditLogEntry, 'timestamp'>): void {
+    const sanitized =
+      entry.params !== undefined
+        ? sanitizeParams(entry.params, this.sensitiveKeys)
+        : undefined;
     const fullEntry: AuditLogEntry = {
       ...entry,
-      timestamp: new Date()
+      ...(sanitized !== undefined ? { params: sanitized } : {}),
+      timestamp: new Date(),
     };
-    
-    this.logs.push(fullEntry);
-    
-    // Log to stderr for MCP server (stdout is used for protocol)
-    console.error('[AUDIT]', JSON.stringify(fullEntry));
+    this.memorySink.write(fullEntry);
+    this.writeSinks(fullEntry);
   }
-  
+
   /**
    * Log an MCP tool call as an audit record.
    *
-   * Persists an {@link AuditLogEntry} via {@link log} (which emits a single
-   * `[AUDIT]` record to stderr).  Tool-call data is nested under
-   * `{ tool: { name, params } }` to prevent user-controlled parameter keys
-   * from colliding with reserved log-schema fields.  Suitable for GDPR
-   * Article 30 processing-activity records.
+   * The tool's `params` are sanitised before being wrapped in the entry so
+   * that PII nested inside tool parameters is redacted.
    *
    * @param toolName  - Name of the MCP tool that was invoked
-   * @param params    - Tool input parameters. **Callers are responsible for
-   *                    sanitising sensitive values before passing them here.**
-   *                    This method does not perform any sanitisation.
+   * @param params    - Tool input parameters (sanitised automatically)
    * @param success   - Whether the tool call completed without error
    * @param duration  - Optional wall-clock duration in milliseconds
    * @param error     - Optional error message if the call failed
-   * @throws {TypeError} If `toolName` is not a string
-   *
-   * @example
-   * ```typescript
-   * auditLogger.logToolCall(
-   *   'get_mep_details',
-   *   { mepId: 12345 },
-   *   true,
-   *   95,
-   * );
-   *
-   * // On failure:
-   * auditLogger.logToolCall(
-   *   'get_plenary_sessions',
-   *   { term: 10 },
-   *   false,
-   *   200,
-   *   'EP API returned 503'
-   * );
-   * ```
-   *
-   * @security Parameter values are nested under a `tool` key to prevent
-   *   user-controlled keys from colliding with reserved audit-schema fields.
-   *   Callers must sanitise PII before passing `params`.
-   *   Per ISMS Policy AU-002, all MCP tool calls must be audit-logged.
    * @since 0.8.0
    */
   logToolCall(
@@ -205,13 +207,14 @@ export class AuditLogger {
     duration?: number,
     error?: string
   ): void {
-    // Persist via the existing internal log path so getLogs() captures it.
-    // Tool-call data is nested under the 'tool' key to prevent user-controlled
-    // param keys from colliding with reserved log schema fields.
-    // this.log() already emits the structured entry to stderr via console.error.
+    // Sanitize inner tool params before wrapping so that PII nested inside
+    // tool parameters is redacted.  The outer log() call will also sanitize
+    // the top-level params object, but the 'tool' key is not in sensitiveKeys,
+    // so the already-sanitized inner params pass through unchanged.
+    const sanitizedToolParams = sanitizeParams(params, this.sensitiveKeys);
     this.log({
       action: 'tool_call',
-      params: { tool: { name: toolName, params } },
+      params: { tool: { name: toolName, params: sanitizedToolParams } },
       result: {
         success,
         ...(error !== undefined && { error }),
@@ -221,32 +224,12 @@ export class AuditLogger {
   }
 
   /**
-   * Logs a successful data-access event (e.g., a query returning records).
+   * Logs a successful data-access event (e.g. a query returning records).
    *
-   * Convenience wrapper around {@link log} that constructs a success result
-   * with a record count. Suitable for GDPR Article 30 processing-activity
-   * records where the data subject count is relevant.
-   *
-   * @param action - Action name (e.g., `'get_meps'`, `'get_committee_meetings'`)
-   * @param params - Sanitised query parameters used for the data access
-   * @param count - Number of records returned / accessed
+   * @param action   - Action name (e.g. `'get_meps'`, `'get_committee_meetings'`)
+   * @param params   - Query parameters (sanitised automatically)
+   * @param count    - Number of records returned
    * @param duration - Optional wall-clock duration in milliseconds
-   * @throws {TypeError} If `action` is not a string or `count` is not a number
-   *
-   * @example
-   * ```typescript
-   * auditLogger.logDataAccess(
-   *   'get_meps',
-   *   { country: 'SE', group: 'EPP' },
-   *   7,
-   *   85
-   * );
-   * ```
-   *
-   * @security Params must be sanitised by the caller before passing to this
-   *   method—no PII stripping is performed internally.
-   *   Per ISMS Policy AU-002 / GDPR Article 30, data-access events must be
-   *   logged with subject counts for processing-activity records.
    * @since 0.8.0
    */
   logDataAccess(
@@ -258,41 +241,18 @@ export class AuditLogger {
     this.log({
       action,
       params,
-      result: {
-        count,
-        success: true
-      },
-      ...(duration !== undefined && { duration })
+      result: { count, success: true },
+      ...(duration !== undefined && { duration }),
     });
   }
-  
+
   /**
    * Logs a failed operation as an audit error event.
    *
-   * Convenience wrapper around {@link log} that constructs a failure result.
-   * Use this whenever an MCP tool or EP API call throws or returns an error
-   * so the failure is captured in the audit trail.
-   *
-   * @param action - Action name (e.g., `'get_mep_details'`, `'get_plenary_sessions'`)
-   * @param params - Sanitised parameters that were supplied to the failed operation
-   * @param error - Human-readable error message (must not contain secrets or PII)
-   * @param duration - Optional wall-clock duration in milliseconds before failure
-   * @throws {TypeError} If `action` or `error` is not a string
-   *
-   * @example
-   * ```typescript
-   * auditLogger.logError(
-   *   'get_mep_details',
-   *   { mepId: 99999 },
-   *   'MEP not found',
-   *   30
-   * );
-   * ```
-   *
-   * @security Error messages must not include secrets, tokens, or raw stack
-   *   traces. Sanitise before passing to avoid leaking internal details to
-   *   log sinks accessible by ops teams.
-   *   Per ISMS Policy AU-002, failed operations must be audit-logged.
+   * @param action   - Action name
+   * @param params   - Parameters supplied to the failed operation (sanitised)
+   * @param error    - Human-readable error message (must not contain secrets)
+   * @param duration - Optional wall-clock duration in milliseconds
    * @since 0.8.0
    */
   logError(
@@ -304,67 +264,107 @@ export class AuditLogger {
     this.log({
       action,
       params,
-      result: {
-        success: false,
-        error
-      },
-      ...(duration !== undefined && { duration })
+      result: { success: false, error },
+      ...(duration !== undefined && { duration }),
     });
   }
-  
+
   /**
-   * Returns a snapshot copy of all in-memory audit log entries.
+   * Returns a snapshot of all in-memory audit log entries, optionally filtered
+   * by the configured data-retention policy.
    *
-   * Intended primarily for **testing and debugging**. In production, audit
-   * records are emitted to `stderr` in real time; this method allows test
-   * suites to assert on logged events without parsing stderr output.
+   * When `requiredAuthToken` was set in the constructor, `authorization` must
+   * match; otherwise an `Error` is thrown.
    *
-   * @returns Shallow copy of the internal log buffer as an array of
-   *   {@link AuditLogEntry} objects, ordered oldest-first. Mutating the
-   *   returned array does not affect the internal buffer.
+   * @param authorization - Authorization token (required when configured)
+   * @returns Entries ordered oldest-first, filtered by retention policy
    *
-   * @example
-   * ```typescript
-   * auditLogger.logDataAccess('get_meps', {}, 5);
-   * const logs = auditLogger.getLogs();
-   * expect(logs).toHaveLength(1);
-   * expect(logs[0]?.action).toBe('get_meps');
-   * ```
-   *
-   * @security The returned entries may contain sanitised parameters that were
-   *   passed by callers. Treat the output as sensitive and do not expose it
-   *   through public API endpoints.
+   * @security When `requiredAuthToken` is configured, this method is access-
+   *   controlled. Do not expose the returned entries through public APIs.
    * @since 0.8.0
    */
-  getLogs(): AuditLogEntry[] {
-    return [...this.logs];
+  getLogs(authorization?: string): AuditLogEntry[] {
+    this.checkAuthorization(authorization);
+    const entries = this.memorySink.query({});
+    return this.retentionPolicy !== undefined
+      ? this.retentionPolicy.enforce(entries)
+      : entries;
   }
-  
+
+  /**
+   * Queries the in-memory log using a filter.
+   *
+   * @param filter - Field-based filter to apply
+   * @param authorization - Authorization token (required when configured)
+   * @since 0.9.0
+   */
+  queryLogs(filter: AuditFilter, authorization?: string): AuditLogEntry[] {
+    this.checkAuthorization(authorization);
+    const entries = this.memorySink.query(filter);
+    return this.retentionPolicy !== undefined
+      ? this.retentionPolicy.enforce(entries)
+      : entries;
+  }
+
+  /**
+   * Removes all audit entries associated with `userId` from in-memory storage.
+   *
+   * **GDPR Article 17 — Right to Erasure.**  Only removes entries from the
+   * in-memory `MemoryAuditSink`; entries already flushed to persistent sinks
+   * (files, SIEM, etc.) must be erased separately via those sinks.
+   *
+   * @param userId       - The user whose entries should be erased
+   * @param authorization - Authorization token (required when configured)
+   * @since 0.9.0
+   */
+  eraseByUser(userId: string, authorization?: string): void {
+    this.checkAuthorization(authorization);
+    this.memorySink.eraseByUser(userId);
+  }
+
   /**
    * Clears all in-memory audit log entries.
    *
-   * **For testing only.** Calling this in production will silently discard
-   * audit records that have not yet been flushed to a persistent sink,
-   * violating ISMS Policy AU-002.
+   * **For testing only.** Clearing audit logs in production violates ISMS
+   * Policy AU-002 and GDPR Article 30.
    *
-   * @example
-   * ```typescript
-   * afterEach(() => {
-   *   auditLogger.clear();
-   * });
-   * ```
-   *
-   * @security Must NOT be called in production code. Clearing audit logs
-   *   without an authorised retention policy violates GDPR Article 30 and
-   *   ISMS Policy AU-002 (Audit Logging and Monitoring).
    * @since 0.8.0
    */
   clear(): void {
-    this.logs = [];
+    this.memorySink.clear('');
+  }
+
+  // --------------------------------------------------------------------------
+  // Private helpers
+  // --------------------------------------------------------------------------
+
+  private checkAuthorization(authorization?: string): void {
+    if (
+      this.requiredAuthToken !== undefined &&
+      authorization !== this.requiredAuthToken
+    ) {
+      throw new Error(
+        'Unauthorized: missing or invalid authorization token'
+      );
+    }
+  }
+
+  private writeSinks(entry: AuditLogEntry): void {
+    for (const sink of this.extraSinks) {
+      sink.write(entry);
+    }
   }
 }
 
+// ---------------------------------------------------------------------------
+// Global singleton
+// ---------------------------------------------------------------------------
+
 /**
- * Global audit logger instance
+ * Global audit logger instance.
+ *
+ * Uses default options: in-memory buffer + stderr output, no access control,
+ * no retention policy.  Override by creating a new `AuditLogger` instance
+ * with the desired {@link AuditLoggerOptions}.
  */
 export const auditLogger = new AuditLogger();
