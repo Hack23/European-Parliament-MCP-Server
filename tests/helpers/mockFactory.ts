@@ -7,7 +7,8 @@
  *
  * The factory return type is `Mocked<EPClientPublicAPI>` (the public API of
  * `EuropeanParliamentClient`), ensuring that mock method names and signatures
- * stay aligned with production code at compile time.
+ * stay aligned with production code at compile time. Type-checking is enforced
+ * in CI via `npm run type-check:helpers` (uses `tsconfig.tests.json`).
  *
  * ## Usage
  *
