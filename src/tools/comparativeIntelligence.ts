@@ -120,12 +120,21 @@ interface MEPApiData {
  *   This is a simple yes-vote share and does **not** compare against party, group, or
  *   plenary majorities; it should not be interpreted as a formal party-line cohesion index.
  *
- * Returns `0` when no voting statistics are available to avoid misleading scores.
+ * Current data limitation:
+ * - `epClient.getMEPDetails()` populates `votingStatistics` with placeholder values
+ *   (all zeros) because the `/meps/{id}` endpoint does not expose real voting statistics.
+ * - Consequently, `stats.totalVotes` will typically be `0`, and this function will
+ *   return `0` for most MEPs. Consumers MUST NOT treat this score as a meaningful
+ *   voting metric until real EP voting data is integrated into the client/tooling.
+ *
+ * Returns `0` when no voting statistics are available, or when placeholder statistics
+ * with `totalVotes === 0` are supplied, to avoid misleading scores.
  *
  * @param mep - MEP API data record containing optional `votingStatistics`
- * @returns Normalized score in the range `[0, 100]`, rounded to 2 decimal places
+ * @returns Normalized score in the range `[0, 100]`, rounded to 2 decimal places;
+ *   typically `0` due to EP API data limitations
  *
- * @security Handles missing `votingStatistics` gracefully; never divides by zero
+ * @security Handles missing or zeroed `votingStatistics` gracefully; never divides by zero
  */
 function computeVotingScore(mep: MEPApiData): number {
   const stats = mep.votingStatistics;
@@ -173,15 +182,19 @@ function computeLegislativeScore(mep: MEPApiData): number {
 }
 
 /**
- * Computes the attendance score for an MEP.
+ * Computes the attendance score for an MEP using `votingStatistics.attendanceRate` when available.
  *
- * The EP API returns `attendanceRate` already on a 0–100 scale, so this function
- * applies rounding only—no additional scaling is performed.
+ * The `attendanceRate` field is expected on a 0–100 scale, so this function applies
+ * rounding only—no additional scaling is performed.
  *
- * Returns `0` when `votingStatistics` is absent.
+ * When `votingStatistics` or `attendanceRate` is absent, this function returns `0`.
+ * Because the current `/meps/{id}` EP endpoint does not expose attendance or voting
+ * statistics, callers should interpret a value of `0` as "attendance data currently
+ * unavailable" rather than a measured attendance rate.
  *
  * @param mep - MEP API data record containing optional `votingStatistics`
- * @returns Attendance rate in the range `[0, 100]`, rounded to 2 decimal places
+ * @returns Numeric attendance score in the range `[0, 100]`; `0` typically indicates
+ *   that attendance data is not available from the underlying EP API
  */
 function computeAttendanceScore(mep: MEPApiData): number {
   // attendanceRate is already in the 0-100 range; use it directly without scaling
