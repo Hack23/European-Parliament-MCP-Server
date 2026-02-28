@@ -17,6 +17,7 @@
 
 import { GetPlenarySessionsSchema, PlenarySessionSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildApiParams } from './shared/paramBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -76,13 +77,15 @@ export async function handleGetPlenarySessions(
     }
 
     // Fetch plenary sessions from EP API (only pass defined properties)
-    const apiParams: Record<string, unknown> = {
+    const apiParams = {
       limit: params.limit,
-      offset: params.offset
+      offset: params.offset,
+      ...buildApiParams(params, [
+        { from: 'dateFrom', to: 'dateFrom' },
+        { from: 'dateTo', to: 'dateTo' },
+        { from: 'location', to: 'location' },
+      ]),
     };
-    if (params['dateFrom'] !== undefined) apiParams['dateFrom'] = params['dateFrom'];
-    if (params['dateTo'] !== undefined) apiParams['dateTo'] = params['dateTo'];
-    if (params['location'] !== undefined) apiParams['location'] = params['location'];
     
     const result = await epClient.getPlenarySessions(apiParams as Parameters<typeof epClient.getPlenarySessions>[0]);
     
