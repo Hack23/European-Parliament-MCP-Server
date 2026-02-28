@@ -21,8 +21,10 @@ interface CoalitionPairAnalysis {
   groupA: string;
   groupB: string;
   cohesionScore: number;
-  sharedVotes: number;
-  totalVotes: number;
+  /** null — vote-level data not available from EP API; not a real vote count */
+  sharedVotes: number | null;
+  /** null — vote-level data not available from EP API; not a real vote count */
+  totalVotes: number | null;
   allianceSignal: boolean;
   trend: string;
 }
@@ -51,12 +53,13 @@ interface CoalitionDynamicsAnalysis {
   period: { from: string; to: string };
   groupMetrics: GroupCohesionMetrics[];
   coalitionPairs: CoalitionPairAnalysis[];
-  dominantCoalition: { groups: string[]; combinedStrength: number; cohesion: number };
+  dominantCoalition: { groups: string[]; combinedStrength: number | null; cohesion: number };
   stressIndicators: { indicator: string; severity: string; affectedGroups: string[] }[];
   computedAttributes: {
     parliamentaryFragmentation: number;
     effectiveNumberOfParties: number;
-    grandCoalitionViability: number;
+    /** null when cohesion data is UNAVAILABLE */
+    grandCoalitionViability: number | null;
     oppositionStrength: number;
   };
   confidenceLevel: string;
@@ -94,8 +97,8 @@ function computePairCohesion(
     ? Math.min(groupAMembers, groupBMembers) / Math.max(1, Math.max(groupAMembers, groupBMembers))
     : 0;
   const cohesionScore = Math.round(balance * 100) / 100;
-  const sharedVotes = 0; // Not available from EP API without vote-level analysis
-  const totalVotes = 0;
+  const sharedVotes = null; // Not available from EP API without vote-level analysis
+  const totalVotes = null;
 
   return {
     groupA, groupB, cohesionScore, sharedVotes, totalVotes,
@@ -185,16 +188,19 @@ function computeStressIndicators(groupMetrics: GroupCohesionMetrics[]): { indica
  */
 function computeFragmentationMetrics(groupMetrics: GroupCohesionMetrics[]): {
   effectiveParties: number;
-  grandCoalitionViability: number;
+  grandCoalitionViability: number | null;
 } {
   const totalMembers = groupMetrics.reduce((sum, g) => sum + g.memberCount, 0);
   const seatShares = groupMetrics.map(g => totalMembers > 0 ? g.memberCount / totalMembers : 0);
   const herfindahl = seatShares.reduce((sum, s) => sum + s * s, 0);
   const effectiveParties = herfindahl > 0 ? 1 / herfindahl : 1;
 
-  const eppCohesion = groupMetrics.find(g => g.groupId === 'EPP')?.internalCohesion ?? 0;
-  const sdCohesion = groupMetrics.find(g => g.groupId === 'S&D')?.internalCohesion ?? 0;
-  const grandCoalitionViability = Math.round((eppCohesion + sdCohesion) / 2 * 100) / 100;
+  const eppCohesion = groupMetrics.find(g => g.groupId === 'EPP')?.internalCohesion ?? null;
+  const sdCohesion = groupMetrics.find(g => g.groupId === 'S&D')?.internalCohesion ?? null;
+  // Return null when cohesion data is unavailable to avoid misleading computed score
+  const grandCoalitionViability = (eppCohesion !== null && sdCohesion !== null)
+    ? Math.round((eppCohesion + sdCohesion) / 2 * 100) / 100
+    : null;
 
   return { effectiveParties, grandCoalitionViability };
 }
@@ -204,12 +210,12 @@ function computeFragmentationMetrics(groupMetrics: GroupCohesionMetrics[]): {
  */
 function buildDominantCoalition(sortedPairs: CoalitionPairAnalysis[]): {
   groups: string[];
-  combinedStrength: number;
+  combinedStrength: number | null;
   cohesion: number;
 } {
   const topPair = sortedPairs[0];
   if (topPair === undefined) {
-    return { groups: [], combinedStrength: 0, cohesion: 0 };
+    return { groups: [], combinedStrength: null, cohesion: 0 };
   }
   return {
     groups: [topPair.groupA, topPair.groupB],
@@ -222,7 +228,7 @@ function buildDominantCoalition(sortedPairs: CoalitionPairAnalysis[]): {
  * Build computed attributes from fragmentation metrics
  */
 function buildCoalitionComputedAttrs(
-  fragMetrics: { effectiveParties: number; grandCoalitionViability: number },
+  fragMetrics: { effectiveParties: number; grandCoalitionViability: number | null },
   sortedPairs: CoalitionPairAnalysis[]
 ): CoalitionDynamicsAnalysis['computedAttributes'] {
   const topCohesion = sortedPairs[0]?.cohesionScore ?? 0;
@@ -282,7 +288,7 @@ function buildCoalitionComputedAttrs(
  * - Parliament-wide fragmentation index (Herfindahl–Hirschman)
  * - Effective number of parties (ENP)
  *
- * > **Note:** Confidence level is `NONE` because per-MEP voting statistics
+ * > **Note:** Confidence level is `LOW` because per-MEP voting statistics
  * > are unavailable from the current EP API. Cohesion/defection/attendance
  * > metrics are null with `dataAvailability: 'UNAVAILABLE'` and should be
  * > supplemented with vote-result data when available.
@@ -344,7 +350,8 @@ export async function handleAnalyzeCoalitionDynamics(
       methodology: 'CIA Coalition Analysis — group composition from real EP Open Data MEP records. '
         + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
         + 'each group metric has dataAvailability: UNAVAILABLE with null cohesion/defection/attendance. '
-        + 'Coalition pair cohesion derived from group size ratios. '
+        + 'Coalition pair cohesion is currently derived from group size ratios only; '
+        + 'coalitionPairs.sharedVotes and coalitionPairs.totalVotes are null (not computed from vote-level data). '
         + 'Data source: European Parliament Open Data Portal.'
     };
 
