@@ -25,7 +25,7 @@ export const DEFAULT_TEST_TIMEOUT_MS =
  * Check if an error is caused by rate limiting or network issues
  */
 function isRateLimitOrNetworkError(error: unknown): boolean {
-  const msg = error instanceof Error ? error.message : String(error);
+  const msg = (error instanceof Error ? error.message : String(error)).toLowerCase();
   return msg.includes('fetch failed')
     || msg.includes('timed out')
     || msg.includes('rate limit')

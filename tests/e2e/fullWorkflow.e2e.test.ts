@@ -84,6 +84,9 @@ describe('Full Workflow E2E Tests', () => {
       expect(toolNames).toContain('early_warning_system');
       expect(toolNames).toContain('comparative_intelligence');
 
+      // Phase 6 OSINT Correlation tool (1)
+      expect(toolNames).toContain('correlate_intelligence');
+
       // EP API v2 extended tools (19)
       expect(toolNames).toContain('get_current_meps');
       expect(toolNames).toContain('get_speeches');
@@ -105,7 +108,11 @@ describe('Full Workflow E2E Tests', () => {
       expect(toolNames).toContain('get_procedure_events');
       expect(toolNames).toContain('get_procedures');
 
-      expect(toolNames.length).toBeGreaterThanOrEqual(46);
+      // Phase 5 additional EP API v2 tools (2)
+      expect(toolNames).toContain('get_meeting_plenary_session_documents');
+      expect(toolNames).toContain('get_meeting_plenary_session_document_items');
+
+      expect(toolNames.length).toBe(46);
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute get_meps tool', async () => {

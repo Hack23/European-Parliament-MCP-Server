@@ -126,8 +126,15 @@ export class MCPTestClient {
     const result = response as { content: Array<{ type: string; text?: string }>; isError?: boolean };
 
     if (result.isError === true) {
-      const errorText = result.content[0]?.text ?? `Tool '${name}' returned an error`;
-      throw new Error(errorText);
+      const rawText = result.content[0]?.text ?? `Tool '${name}' returned an error`;
+      let errorMessage: string;
+      try {
+        const parsed = JSON.parse(rawText) as { error?: string };
+        errorMessage = parsed.error ?? rawText;
+      } catch {
+        errorMessage = rawText;
+      }
+      throw new Error(errorMessage);
     }
 
     return result;
