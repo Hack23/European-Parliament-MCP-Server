@@ -1100,7 +1100,7 @@ graph TB
         A6["🛡️ security-specialist"]
         A7["🧪 test-engineer"]
         A8["🕵️ intelligence-operative"]
-        A9["🏛️ eu-parliament-specialist"]
+        A9["🏛️ european-parliament-specialist"]
         A10["📊 performance-optimizer"]
         A11["📋 isms-compliance-auditor"]
         A12["💼 business-development-specialist"]
@@ -1285,24 +1285,24 @@ gantt
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366F1', 'primaryTextColor': '#fff', 'lineColor': '#94A3B8'}}}%%
 graph LR
-    subgraph "2026"
-        style 2026 fill:#1E40AF,stroke:#3B82F6,color:#DBEAFE
+    subgraph Y2026["2026"]
+        style Y2026 fill:#1E40AF,stroke:#3B82F6,color:#DBEAFE
         Y26["🤖 Opus 4.6–4.9\n44–50 workflows\nAgentic news gen"]
     end
-    subgraph "2027"
-        style 2027 fill:#1E3A8A,stroke:#3B82F6,color:#DBEAFE
+    subgraph Y2027["2027"]
+        style Y2027 fill:#1E3A8A,stroke:#3B82F6,color:#DBEAFE
         Y27["📈 Opus 5.x\n50–55 workflows\nPredictive analytics"]
     end
-    subgraph "2028"
-        style 2028 fill:#312E81,stroke:#6366F1,color:#E0E7FF
+    subgraph Y2028["2028"]
+        style Y2028 fill:#312E81,stroke:#6366F1,color:#E0E7FF
         Y28["🎥 Opus 6.x\n55–65 workflows\nMulti-modal content"]
     end
-    subgraph "2029"
-        style 2029 fill:#4C1D95,stroke:#8B5CF6,color:#EDE9FE
+    subgraph Y2029["2029"]
+        style Y2029 fill:#4C1D95,stroke:#8B5CF6,color:#EDE9FE
         Y29["⚡ Opus 7.x\n65–75 workflows\nAutonomous pipeline"]
     end
-    subgraph "2030"
-        style 2030 fill:#581C87,stroke:#A855F7,color:#F3E8FF
+    subgraph Y2030["2030"]
+        style Y2030 fill:#581C87,stroke:#A855F7,color:#F3E8FF
         Y30["🧠 Opus 8.x\n75–85 workflows\nNear-expert analysis"]
     end
     subgraph Y2031_33["2031–33"]
