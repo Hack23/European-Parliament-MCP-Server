@@ -5,6 +5,9 @@
  * for all EP client methods, and a `setupToolTest()` convenience helper that
  * registers a `beforeEach(() => vi.clearAllMocks())` in the calling test suite.
  *
+ * The factory return type is `Mocked<EuropeanParliamentClient>`, ensuring that
+ * mock method names and signatures stay aligned with production code at compile time.
+ *
  * ## Usage
  *
  * Tool test files must still call `vi.mock()` at module level (Vitest hoists it).
@@ -52,60 +55,123 @@
  * ISMS Policy: SC-002 (Secure Testing), DP-001 (GDPR Compliance)
  */
 
-import { vi, beforeEach } from 'vitest';
+import { vi, beforeEach, type Mocked } from 'vitest';
+import type { EuropeanParliamentClient } from '../../src/clients/europeanParliamentClient.js';
 
 /** Default empty paginated response used across all list endpoints. */
 const DEFAULT_PAGINATED = { data: [], total: 0, limit: 50, offset: 0, hasMore: false };
 
 /**
+ * Minimal valid `MEP`-shaped object used as the default return value for
+ * single-MEP endpoints (`getMEPDetails`, etc.).
+ * Placeholder values make mock data easy to identify during debugging.
+ */
+const EMPTY_MEP = {
+  id: 'mock-mep-id',
+  name: 'Mock MEP Name',
+  country: 'XX',
+  politicalGroup: 'MOCK-GROUP',
+  committees: [] as string[],
+  active: false,
+  termStart: '2024-01-01',
+};
+
+/** Minimal valid `LegislativeDocument`-shaped object. */
+const EMPTY_DOCUMENT = {
+  id: 'mock-doc-id',
+  type: 'REPORT' as const,
+  title: 'Mock Document Title',
+  date: '2024-01-01',
+  authors: [] as string[],
+  status: 'DRAFT' as const,
+};
+
+/**
  * Creates a fully typed mock of `epClient` with sensible default return values.
  *
- * Every method returns `mockResolvedValue` with an empty-but-valid response by
- * default. Override specific methods per-test with `.mockResolvedValue()` or
+ * The return type is `Mocked<EuropeanParliamentClient>`, which keeps method names
+ * and signatures coupled to production code — TypeScript will flag any method that
+ * no longer exists on the real client. Every list endpoint defaults to an empty
+ * paginated response; every single-item endpoint returns a minimal valid object
+ * matching the real return type (never `null`).
+ *
+ * Override specific methods per-test with `.mockResolvedValue()` or
  * `.mockRejectedValue()`.
  *
  * @param overrides - Partial overrides for specific mock methods.
- * @returns A typed mock object mirroring the `EuropeanParliamentClient` public API.
+ * @returns A `Mocked<EuropeanParliamentClient>` instance.
  */
 export function createMockEPClient(
-  overrides?: Partial<ReturnType<typeof buildDefaultMockClient>>
-): ReturnType<typeof buildDefaultMockClient> {
-  return { ...buildDefaultMockClient(), ...overrides };
-}
-
-/** @internal */
-function buildDefaultMockClient() {
+  overrides?: Partial<Mocked<EuropeanParliamentClient>>
+): Mocked<EuropeanParliamentClient> {
   return {
     // ── MEP ──────────────────────────────────────────────────────────────
     getMEPs: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
-    getMEPDetails: vi.fn().mockResolvedValue(null),
+    getMEPDetails: vi.fn().mockResolvedValue(EMPTY_MEP),
     getCurrentMEPs: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getIncomingMEPs: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getOutgoingMEPs: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getHomonymMEPs: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getMEPDeclarations: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
-    getMEPDeclarationById: vi.fn().mockResolvedValue(null),
+    getMEPDeclarationById: vi.fn().mockResolvedValue({
+      id: 'mock-decl-id',
+      title: 'Mock Declaration Title',
+      mepId: 'mock-mep-id',
+      mepName: 'Mock MEP Name',
+      type: 'FINANCIAL_INTEREST',
+      dateFiled: '2024-01-01',
+      status: 'PUBLISHED',
+    }),
 
     // ── Plenary / Meetings ───────────────────────────────────────────────
     getPlenarySessions: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
-    getMeetingById: vi.fn().mockResolvedValue(null),
+    getMeetingById: vi.fn().mockResolvedValue({
+      id: 'mock-meeting-id',
+      date: '2024-01-15',
+      location: 'Strasbourg',
+      agendaItems: [] as string[],
+    }),
     getMeetingActivities: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getMeetingDecisions: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getMeetingForeseenActivities: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getMeetingPlenarySessionDocuments: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getMeetingPlenarySessionDocumentItems: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getEvents: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
-    getEventById: vi.fn().mockResolvedValue(null),
+    getEventById: vi.fn().mockResolvedValue({
+      id: 'mock-event-id',
+      title: 'Mock Event Title',
+      date: '2024-01-15',
+      endDate: '2024-01-15',
+      type: 'COMMITTEE_HEARING',
+      location: 'Brussels',
+      organizer: 'MOCK-COMMITTEE',
+      status: 'CONFIRMED',
+    }),
 
     // ── Voting ───────────────────────────────────────────────────────────
     getVotingRecords: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
 
     // ── Speeches ─────────────────────────────────────────────────────────
     getSpeeches: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
-    getSpeechById: vi.fn().mockResolvedValue(null),
+    getSpeechById: vi.fn().mockResolvedValue({
+      id: 'mock-speech-id',
+      title: 'Mock Speech Title',
+      speakerId: 'mock-mep-id',
+      speakerName: 'Mock MEP Name',
+      date: '2024-01-15',
+      type: 'DEBATE_SPEECH',
+      language: 'en',
+      text: 'Mock speech text content.',
+      sessionReference: 'mock-session-id',
+    }),
 
     // ── Committees ───────────────────────────────────────────────────────
-    getCommitteeInfo: vi.fn().mockResolvedValue(null),
+    getCommitteeInfo: vi.fn().mockResolvedValue({
+      id: 'mock-committee-id',
+      name: 'Mock Committee Name',
+      abbreviation: 'MOCK',
+      members: [] as string[],
+    }),
     getCurrentCorporateBodies: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
 
     // ── Documents ────────────────────────────────────────────────────────
@@ -115,35 +181,70 @@ function buildDefaultMockClient() {
     getPlenarySessionDocuments: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getPlenarySessionDocumentItems: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getExternalDocuments: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
-    getDocumentById: vi.fn().mockResolvedValue(null),
-    getPlenaryDocumentById: vi.fn().mockResolvedValue(null),
-    getPlenarySessionDocumentById: vi.fn().mockResolvedValue(null),
-    getCommitteeDocumentById: vi.fn().mockResolvedValue(null),
-    getExternalDocumentById: vi.fn().mockResolvedValue(null),
+    getDocumentById: vi.fn().mockResolvedValue(EMPTY_DOCUMENT),
+    getPlenaryDocumentById: vi.fn().mockResolvedValue(EMPTY_DOCUMENT),
+    getPlenarySessionDocumentById: vi.fn().mockResolvedValue(EMPTY_DOCUMENT),
+    getCommitteeDocumentById: vi.fn().mockResolvedValue(EMPTY_DOCUMENT),
+    getExternalDocumentById: vi.fn().mockResolvedValue(EMPTY_DOCUMENT),
 
     // ── Legislative Procedures ───────────────────────────────────────────
     getProcedures: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
-    getProcedureById: vi.fn().mockResolvedValue(null),
+    getProcedureById: vi.fn().mockResolvedValue({
+      id: 'mock-procedure-id',
+      title: 'Mock Procedure Title',
+      reference: '2024/0001(COD)',
+      type: 'COD',
+      subjectMatter: 'Internal Market',
+      stage: 'First reading',
+      status: 'Ongoing',
+      dateInitiated: '2024-01-01',
+      dateLastActivity: '2024-06-01',
+      responsibleCommittee: 'MOCK',
+      rapporteur: 'Mock MEP Name',
+      documents: [] as string[],
+    }),
     getProcedureEvents: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getAdoptedTexts: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
-    getAdoptedTextById: vi.fn().mockResolvedValue(null),
+    getAdoptedTextById: vi.fn().mockResolvedValue({
+      id: 'mock-adopted-text-id',
+      title: 'Mock Adopted Text Title',
+      reference: 'P9-TA(2024)0001',
+      type: 'LEGISLATIVE_RESOLUTION',
+      dateAdopted: '2024-01-15',
+      procedureReference: '2024/0001(COD)',
+      subjectMatter: 'Internal Market',
+    }),
 
     // ── Parliamentary Questions ──────────────────────────────────────────
     getParliamentaryQuestions: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
-    getParliamentaryQuestionById: vi.fn().mockResolvedValue(null),
+    getParliamentaryQuestionById: vi.fn().mockResolvedValue({
+      id: 'mock-question-id',
+      type: 'WRITTEN' as const,
+      author: 'mock-mep-id',
+      date: '2024-01-15',
+      topic: 'Mock Question Topic',
+      questionText: 'Mock question text.',
+      status: 'PENDING' as const,
+    }),
 
     // ── Controlled Vocabularies ──────────────────────────────────────────
     getControlledVocabularies: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
-    getControlledVocabularyById: vi.fn().mockResolvedValue(null),
+    getControlledVocabularyById: vi.fn().mockResolvedValue({}),
 
     // ── Cache Control ────────────────────────────────────────────────────
-    clearCache: vi.fn().mockResolvedValue(undefined),
-    getCacheStats: vi.fn().mockReturnValue({ size: 0, hitRate: 0 }),
-  };
+    clearCache: vi.fn(),
+    getCacheStats: vi.fn().mockReturnValue({ size: 0, maxSize: 0, hitRate: 0 }),
+
+    ...overrides,
+  // `Mocked<T>` is defined as `{...} & T`, which intersects with the class
+  // including its private members. A plain object literal can never structurally
+  // satisfy this intersection, so the `unknown` intermediate is necessary and
+  // idiomatic for vitest class mocks.
+  } as unknown as Mocked<EuropeanParliamentClient>;
 }
 
 /** Type of the mock EP client returned by {@link createMockEPClient}. */
-export type MockEPClient = ReturnType<typeof createMockEPClient>;
+export type MockEPClient = Mocked<EuropeanParliamentClient>;
 
 /**
  * Convenience helper for tool test suites.
