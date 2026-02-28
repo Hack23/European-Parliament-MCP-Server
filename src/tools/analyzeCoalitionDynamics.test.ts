@@ -145,19 +145,19 @@ describe('analyze_coalition_dynamics Tool', () => {
   describe('Branch Coverage - Unity and Cohesion Classification', () => {
     it('should report UNKNOWN unity trend since voting stats are unavailable from EP API', async () => {
       // Arrange: EP API /meps/{id} does not provide voting stats
-      // so cohesion/stress metrics are null → UNKNOWN, confidence=NONE
+      // so cohesion/stress metrics are null → UNKNOWN, confidence=LOW
       const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         groupMetrics: { stressIndicator: number; dataAvailability: string; computedAttributes: { unityTrend: string } }[];
         confidenceLevel: string;
       };
 
-      // Assert: Without voting data, stress=0, dataAvailability=UNAVAILABLE, confidence=NONE
+      // Assert: Without voting data, stress=0, dataAvailability=UNAVAILABLE, confidence=LOW
       const group = data.groupMetrics[0];
       expect(group?.computedAttributes.unityTrend).toBe('UNKNOWN');
       expect(group?.stressIndicator).toBe(0);
       expect(group?.dataAvailability).toBe('UNAVAILABLE');
-      expect(data.confidenceLevel).toBe('NONE');
+      expect(data.confidenceLevel).toBe('LOW');
     });
 
     it('should classify cohesion trend as WEAKENING when groups have unequal sizes', async () => {

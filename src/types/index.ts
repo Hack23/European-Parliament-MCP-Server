@@ -94,7 +94,9 @@ export type DataAvailability = 'AVAILABLE' | 'PARTIAL' | 'ESTIMATED' | 'UNAVAILA
  * data availability alongside the computed value.
  *
  * When `availability` is `'UNAVAILABLE'`, `value` is always `null` and
- * `confidence` is always `'NONE'`.
+ * `confidence` should typically be `'LOW'` or `'NONE'` to signal that no
+ * meaningful confidence can be assigned. The exact value depends on whether
+ * the containing tool's OSINT output schema supports `'NONE'`.
  *
  * @template T - The type of the metric value (defaults to `number`).
  */

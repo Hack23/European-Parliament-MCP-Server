@@ -338,7 +338,7 @@ export async function handleAnalyzeCoalitionDynamics(
       dominantCoalition: buildDominantCoalition(sortedPairs),
       stressIndicators,
       computedAttributes: buildCoalitionComputedAttrs(fragMetrics, sortedPairs),
-      confidenceLevel: 'NONE',
+      confidenceLevel: 'LOW',
       dataFreshness: 'Real-time EP API data — political group composition from current MEP records',
       sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'CIA Coalition Analysis — group composition from real EP Open Data MEP records. '

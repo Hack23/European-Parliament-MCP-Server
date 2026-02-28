@@ -499,8 +499,10 @@ async function correlateNetworkProfiles(
 // ---------------------------------------------------------------------------
 
 function aggregateConfidence(levels: string[]): 'HIGH' | 'MEDIUM' | 'LOW' {
-  if (levels.includes('HIGH') && !levels.includes('LOW')) return 'HIGH';
-  if (levels.every(l => l === 'LOW')) return 'LOW';
+  // Treat 'NONE' (from unavailable-data tools) as 'LOW' for aggregation
+  const normalized = levels.map(l => (l === 'NONE' ? 'LOW' : l));
+  if (normalized.includes('HIGH') && !normalized.includes('LOW')) return 'HIGH';
+  if (normalized.every(l => l === 'LOW')) return 'LOW';
   return 'MEDIUM';
 }
 
@@ -666,7 +668,7 @@ export async function handleCorrelateIntelligence(
       networkProfiles: networkCorrelations,
     },
     summary: buildAlertSummary(allAlerts, correlationsFound),
-    confidenceLevel: aggregateConfidence(confidenceLevels.length > 0 ? confidenceLevels : ['MEDIUM']),
+    confidenceLevel: aggregateConfidence(confidenceLevels.length > 0 ? confidenceLevels : ['LOW']),
     dataAvailability: computeDataAvailability(correlationsFound, confidenceLevels),
     methodology: buildMethodology(influenceThreshold, sensitivityLevel, includeNetworkAnalysis),
     dataFreshness: `Real-time EP API data — correlated at ${analysisTime}`,
