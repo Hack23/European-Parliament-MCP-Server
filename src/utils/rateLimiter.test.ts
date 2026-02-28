@@ -217,17 +217,22 @@ describe('RateLimiter', () => {
   describe('constructor validation', () => {
     it('should throw when tokensPerInterval is 0', () => {
       expect(() => new RateLimiter({ tokensPerInterval: 0, interval: 'second' }))
-        .toThrow(/tokensPerInterval must be a finite positive number/);
+        .toThrow(/tokensPerInterval must be a finite integer >= 1/);
     });
 
     it('should throw when tokensPerInterval is negative', () => {
       expect(() => new RateLimiter({ tokensPerInterval: -5, interval: 'second' }))
-        .toThrow(/tokensPerInterval must be a finite positive number/);
+        .toThrow(/tokensPerInterval must be a finite integer >= 1/);
     });
 
     it('should throw when tokensPerInterval is NaN', () => {
       expect(() => new RateLimiter({ tokensPerInterval: NaN, interval: 'second' }))
-        .toThrow(/tokensPerInterval must be a finite positive number/);
+        .toThrow(/tokensPerInterval must be a finite integer >= 1/);
+    });
+
+    it('should throw when tokensPerInterval is a fractional number', () => {
+      expect(() => new RateLimiter({ tokensPerInterval: 0.5, interval: 'second' }))
+        .toThrow(/tokensPerInterval must be a finite integer >= 1/);
     });
 
     it('should throw when initialTokens is negative', () => {

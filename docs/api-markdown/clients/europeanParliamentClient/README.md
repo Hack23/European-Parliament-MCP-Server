@@ -101,6 +101,24 @@ Re-exports [DEFAULT_REQUEST_TIMEOUT_MS](../ep/baseClient/variables/DEFAULT_REQUE
 
 ***
 
+### DEFAULT\_RETRY\_BASE\_DELAY\_MS
+
+Re-exports [DEFAULT_RETRY_BASE_DELAY_MS](../ep/baseClient/variables/DEFAULT_RETRY_BASE_DELAY_MS.md)
+
+***
+
 ### DEFAULT\_RETRY\_ENABLED
 
 Re-exports [DEFAULT_RETRY_ENABLED](../ep/baseClient/variables/DEFAULT_RETRY_ENABLED.md)
+
+***
+
+### DEFAULT\_RETRY\_MAX\_DELAY\_MS
+
+Re-exports [DEFAULT_RETRY_MAX_DELAY_MS](../ep/baseClient/variables/DEFAULT_RETRY_MAX_DELAY_MS.md)
+
+***
+
+### validateApiUrl
+
+Re-exports [validateApiUrl](../ep/baseClient/functions/validateApiUrl.md)

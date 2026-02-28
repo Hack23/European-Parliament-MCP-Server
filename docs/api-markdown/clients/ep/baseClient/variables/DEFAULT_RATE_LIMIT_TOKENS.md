@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_RATE\_LIMIT\_TOKENS**: `100` = `DEFAULT_RATE_LIMIT_PER_MINUTE`
 
-Defined in: [clients/ep/baseClient.ts:40](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L40)
+Defined in: [clients/ep/baseClient.ts:122](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L122)
 
 Default rate limit token bucket size (requests per interval) — derived from centralized config

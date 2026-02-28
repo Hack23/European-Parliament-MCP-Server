@@ -8,7 +8,7 @@
 
 > **withRetry**\<`T`\>(`fn`, `options`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [utils/timeout.ts:268](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L268)
+Defined in: [utils/timeout.ts:274](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L274)
 
 Execute a function with retry logic and timeout
 
@@ -46,6 +46,12 @@ Retry and timeout configuration
 `number`
 
 Maximum number of retry attempts after the initial call
+
+#### maxDelayMs?
+
+`number`
+
+Maximum delay cap in milliseconds (default: 30000); prevents unbounded backoff growth
 
 #### retryDelayMs?
 

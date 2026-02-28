@@ -298,6 +298,12 @@ Re-exports [transformVoteResult](transformers/functions/transformVoteResult.md)
 
 ***
 
+### validateApiUrl
+
+Re-exports [validateApiUrl](baseClient/functions/validateApiUrl.md)
+
+***
+
 ### VocabularyClient
 
 Re-exports [VocabularyClient](vocabularyClient/classes/VocabularyClient.md)

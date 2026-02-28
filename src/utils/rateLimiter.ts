@@ -44,7 +44,7 @@ export type RateLimitResult =
  */
 interface RateLimiterOptions {
   /**
-   * Maximum number of tokens in the bucket
+   * Maximum number of tokens in the bucket (must be a finite integer >= 1)
    */
   tokensPerInterval: number;
   
@@ -78,9 +78,9 @@ export class RateLimiter {
   private lastRefill: number;
 
   constructor(options: RateLimiterOptions) {
-    if (!Number.isFinite(options.tokensPerInterval) || options.tokensPerInterval <= 0) {
+    if (!Number.isInteger(options.tokensPerInterval) || options.tokensPerInterval < 1) {
       throw new Error(
-        `RateLimiter: tokensPerInterval must be a finite positive number, got ${String(options.tokensPerInterval)}`
+        `RateLimiter: tokensPerInterval must be a finite integer >= 1, got ${String(options.tokensPerInterval)}`
       );
     }
     this.tokensPerInterval = options.tokensPerInterval;
