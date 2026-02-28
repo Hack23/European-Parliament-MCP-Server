@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_REQUEST\_TIMEOUT\_MS**: `10000` = `10_000`
 
-Defined in: [clients/ep/baseClient.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L29)
+Defined in: [clients/ep/baseClient.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L30)
 
 Default HTTP request timeout in milliseconds (10 seconds)

@@ -90,6 +90,11 @@ export class RateLimiter {
         `RateLimiter: initialTokens must be a finite non-negative number, got ${String(initialTokens)}`
       );
     }
+    if (initialTokens > this.tokensPerInterval) {
+      throw new Error(
+        `RateLimiter: initialTokens (${String(initialTokens)}) must not exceed tokensPerInterval (${String(this.tokensPerInterval)})`
+      );
+    }
     this.tokens = initialTokens;
     this.lastRefill = Date.now();
     

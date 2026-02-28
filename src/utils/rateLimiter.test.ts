@@ -224,6 +224,11 @@ describe('RateLimiter', () => {
       const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
       expect(limiter.getAvailableTokens()).toBe(0);
     });
+
+    it('should throw when initialTokens exceeds tokensPerInterval', () => {
+      expect(() => new RateLimiter({ tokensPerInterval: 5, interval: 'second', initialTokens: 6 }))
+        .toThrow(/initialTokens.*must not exceed tokensPerInterval/);
+    });
   });
 
   describe('tryRemoveTokens', () => {

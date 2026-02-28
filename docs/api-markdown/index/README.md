@@ -10,10 +10,6 @@
 
 - [EuropeanParliamentMCPServer](classes/EuropeanParliamentMCPServer.md)
 
-## Variables
-
-- [SERVER\_VERSION](variables/SERVER_VERSION.md)
-
 ## References
 
 ### AuditEvent

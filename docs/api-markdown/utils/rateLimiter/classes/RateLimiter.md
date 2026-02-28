@@ -66,7 +66,7 @@ Defined in: [utils/rateLimiter.ts:76](https://github.com/Hack23/European-Parliam
 
 > **getAvailableTokens**(): `number`
 
-Defined in: [utils/rateLimiter.ts:268](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L268)
+Defined in: [utils/rateLimiter.ts:273](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L273)
 
 Returns the number of tokens currently available in the bucket.
 
@@ -96,7 +96,7 @@ console.log(`${tokens} / ${rateLimiter.getMaxTokens()} tokens available`);
 
 > **getMaxTokens**(): `number`
 
-Defined in: [utils/rateLimiter.ts:288](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L288)
+Defined in: [utils/rateLimiter.ts:293](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L293)
 
 Returns the maximum token capacity of this bucket.
 
@@ -125,7 +125,7 @@ const max = rateLimiter.getMaxTokens(); // e.g. 100
 
 > **getStatus**(): [`RateLimiterStatus`](../interfaces/RateLimiterStatus.md)
 
-Defined in: [utils/rateLimiter.ts:310](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L310)
+Defined in: [utils/rateLimiter.ts:315](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L315)
 
 Returns a typed status snapshot for health checks and monitoring.
 
@@ -157,7 +157,7 @@ console.log(`${status.utilizationPercent}% utilized`);
 
 > `private` **refill**(): `void`
 
-Defined in: [utils/rateLimiter.ts:123](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L123)
+Defined in: [utils/rateLimiter.ts:128](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L128)
 
 Refill tokens based on elapsed time
 
@@ -171,7 +171,7 @@ Refill tokens based on elapsed time
 
 > **removeTokens**(`count`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`RateLimitResult`](../type-aliases/RateLimitResult.md)\>
 
-Defined in: [utils/rateLimiter.ts:166](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L166)
+Defined in: [utils/rateLimiter.ts:171](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L171)
 
 Attempts to consume `count` tokens from the bucket, waiting asynchronously
 until tokens are available or the timeout expires.
@@ -231,7 +231,7 @@ Prevents abusive high-frequency requests to the EP API.
 
 > **reset**(): `void`
 
-Defined in: [utils/rateLimiter.ts:338](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L338)
+Defined in: [utils/rateLimiter.ts:343](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L343)
 
 Resets the bucket to full capacity and clears the refill timer.
 
@@ -260,7 +260,7 @@ afterEach(() => {
 
 > **tryRemoveTokens**(`count`): `boolean`
 
-Defined in: [utils/rateLimiter.ts:233](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L233)
+Defined in: [utils/rateLimiter.ts:238](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L238)
 
 Attempts to consume `count` tokens without throwing on failure.
 
@@ -301,7 +301,7 @@ const data = await fetchFromEPAPI('/meps');
 
 > `private` `static` **resolveTimeout**(`rawTimeoutMs`): `number`
 
-Defined in: [utils/rateLimiter.ts:114](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L114)
+Defined in: [utils/rateLimiter.ts:119](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L119)
 
 Coerce an optional timeoutMs value to a safe finite number >= 0.
 

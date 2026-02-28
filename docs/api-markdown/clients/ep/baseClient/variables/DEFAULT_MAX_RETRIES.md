@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_MAX\_RETRIES**: `2` = `2`
 
-Defined in: [clients/ep/baseClient.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L33)
+Defined in: [clients/ep/baseClient.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L34)
 
 Default maximum number of retry attempts for failed requests

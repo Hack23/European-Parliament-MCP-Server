@@ -19,6 +19,7 @@
 - [clients/ep/vocabularyClient](clients/ep/vocabularyClient/README.md)
 - [clients/ep/votingClient](clients/ep/votingClient/README.md)
 - [clients/europeanParliamentClient](clients/europeanParliamentClient/README.md)
+- [config](config/README.md)
 - [data/generatedStats](data/generatedStats/README.md)
 - [di/container](di/container/README.md)
 - [di/tokens](di/tokens/README.md)
