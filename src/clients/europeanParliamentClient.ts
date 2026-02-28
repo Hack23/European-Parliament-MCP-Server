@@ -54,6 +54,8 @@ export {
   DEFAULT_REQUEST_TIMEOUT_MS,
   DEFAULT_RETRY_ENABLED,
   DEFAULT_MAX_RETRIES,
+  DEFAULT_RETRY_BASE_DELAY_MS,
+  DEFAULT_RETRY_MAX_DELAY_MS,
   DEFAULT_CACHE_TTL_MS,
   DEFAULT_MAX_CACHE_SIZE,
   DEFAULT_RATE_LIMIT_TOKENS,
@@ -71,6 +73,7 @@ import {
   DEFAULT_MAX_CACHE_SIZE,
   DEFAULT_RATE_LIMIT_TOKENS,
   DEFAULT_RATE_LIMIT_INTERVAL,
+  DEFAULT_MAX_RESPONSE_BYTES,
   type EPClientConfig,
   type EPSharedResources,
 } from './ep/baseClient.js';
@@ -85,6 +88,46 @@ import {
   QuestionClient,
   VocabularyClient,
 } from './ep/index.js';
+
+// ─── URL Validation ───────────────────────────────────────────────────────────
+
+/**
+ * Validates the EP API base URL to prevent SSRF via environment variable poisoning.
+ *
+ * Enforces HTTPS-only and blocks requests to localhost and known internal
+ * IP ranges (link-local 169.254.x.x, RFC-1918 10.x.x.x, 172.16-31.x.x,
+ * 192.168.x.x).
+ *
+ * @param url - The URL string to validate
+ * @returns The validated URL string (unchanged)
+ * @throws {Error} If the URL uses a non-HTTPS scheme or targets an internal host
+ *
+ * @security SSRF Prevention – ISMS Policy: SC-002, NE-001
+ */
+export function validateApiUrl(url: string): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error(`EP_API_URL is not a valid URL: ${url}`);
+  }
+  if (parsed.protocol !== 'https:') {
+    throw new Error('EP_API_URL must use HTTPS protocol');
+  }
+  const host = parsed.hostname;
+  if (
+    host === 'localhost' ||
+    host === '127.0.0.1' ||
+    host === '::1' ||
+    host.startsWith('169.254.') ||
+    host.startsWith('10.') ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
+    host.startsWith('192.168.')
+  ) {
+    throw new Error(`EP_API_URL must not point to internal or loopback addresses: ${host}`);
+  }
+  return url;
+}
 
 // ─── Facade ───────────────────────────────────────────────────────────────────
 
@@ -178,6 +221,7 @@ export class EuropeanParliamentClient {
     const timeoutMs = config.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
     const enableRetry = config.enableRetry ?? DEFAULT_RETRY_ENABLED;
     const maxRetries = config.maxRetries ?? DEFAULT_MAX_RETRIES;
+    const maxResponseBytes = config.maxResponseBytes ?? DEFAULT_MAX_RESPONSE_BYTES;
 
     // Shared resources passed to every sub-client
     const shared: EPSharedResources = {
@@ -187,6 +231,8 @@ export class EuropeanParliamentClient {
       timeoutMs,
       enableRetry,
       maxRetries,
+      maxResponseBytes,
+      cacheCounters: { hits: 0, misses: 0 },
     };
 
     this.mepClient = new MEPClient({}, shared);
@@ -219,10 +265,10 @@ export class EuropeanParliamentClient {
   /**
    * Returns cache statistics for monitoring and debugging.
    *
-   * @returns `{ size, maxSize, hitRate }`
+   * @returns `{ size, maxSize, hitRate, hits, misses }`
    * @public
    */
-  getCacheStats(): { size: number; maxSize: number; hitRate: number } {
+  getCacheStats(): { size: number; maxSize: number; hitRate: number; hits: number; misses: number } {
     return this.mepClient.getCacheStats();
   }
 
@@ -771,7 +817,8 @@ export const epClient = new EuropeanParliamentClient({
     if (typeof raw === 'string') {
       const trimmed = raw.trim();
       if (trimmed.length > 0) {
-        return trimmed.endsWith('/') ? trimmed : `${trimmed}/`;
+        const withSlash = trimmed.endsWith('/') ? trimmed : `${trimmed}/`;
+        return validateApiUrl(withSlash);
       }
     }
     return DEFAULT_EP_API_BASE_URL;

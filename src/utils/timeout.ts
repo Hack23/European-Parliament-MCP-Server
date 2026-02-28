@@ -192,12 +192,14 @@ export async function withTimeoutAndAbort<T>(
  * @param maxRetries - Maximum retry count
  * @param timeoutMs - Timeout duration  
  * @param retryDelayMs - Retry delay duration
+ * @param maxDelayMs - Maximum delay cap
  * @throws {Error} If any option is invalid
  */
 function validateRetryOptions(
   maxRetries: number,
   timeoutMs: number | undefined,
-  retryDelayMs: number
+  retryDelayMs: number,
+  maxDelayMs: number
 ): void {
   if (maxRetries < 0) {
     throw new Error('maxRetries must be non-negative');
@@ -207,6 +209,9 @@ function validateRetryOptions(
   }
   if (retryDelayMs <= 0) {
     throw new Error('retryDelayMs must be positive');
+  }
+  if (maxDelayMs <= 0) {
+    throw new Error('maxDelayMs must be positive');
   }
 }
 
@@ -228,6 +233,7 @@ function validateRetryOptions(
  * @param options.maxRetries - Maximum number of retry attempts after the initial call
  * @param options.timeoutMs - Optional per-attempt timeout in milliseconds (omit if fn handles timeout internally)
  * @param options.retryDelayMs - Base delay between retry attempts in milliseconds (default: 1000)
+ * @param options.maxDelayMs - Maximum delay cap in milliseconds (default: 30000); prevents unbounded backoff growth
  * @param options.timeoutErrorMessage - Custom error message for timeout errors
  * @param options.shouldRetry - Predicate that decides if a failed attempt should be retried (default: retry all non-timeout errors)
  * @returns Promise that resolves with the result
@@ -271,6 +277,7 @@ export async function withRetry<T>(
     maxRetries: number;
     timeoutMs?: number;
     retryDelayMs?: number;
+    maxDelayMs?: number;
     timeoutErrorMessage?: string;
     shouldRetry?: (error: unknown) => boolean;
   }
@@ -279,12 +286,13 @@ export async function withRetry<T>(
     maxRetries,
     timeoutMs,
     retryDelayMs = 1000,
+    maxDelayMs = 30_000,
     timeoutErrorMessage,
     shouldRetry = (): boolean => true
   } = options;
   
   // Input validation
-  validateRetryOptions(maxRetries, timeoutMs, retryDelayMs);
+  validateRetryOptions(maxRetries, timeoutMs, retryDelayMs, maxDelayMs);
   
   let lastError: unknown;
   
@@ -311,9 +319,10 @@ export async function withRetry<T>(
       
       // Don't wait after the last attempt
       if (attempt < maxRetries) {
-        // Exponential backoff: delay * 2^attempt
-        const delay = retryDelayMs * Math.pow(2, attempt);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        // Exponential backoff with jitter and max cap to prevent thundering herd
+        const baseDelay = Math.min(retryDelayMs * Math.pow(2, attempt), maxDelayMs);
+        const jitter = baseDelay * 0.1 * Math.random();
+        await new Promise(resolve => setTimeout(resolve, baseDelay + jitter));
       }
     }
   }

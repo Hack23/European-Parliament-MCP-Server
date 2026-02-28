@@ -16,10 +16,24 @@
  */
 
 import { fetch } from 'undici';
+import { readFileSync } from 'node:fs';
 import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../../utils/rateLimiter.js';
 import { withRetry, withTimeoutAndAbort, TimeoutError } from '../../utils/timeout.js';
 import { performanceMonitor } from '../../utils/performance.js';
+
+// ─── Package version (used in User-Agent header) ──────────────────────────────
+
+const PKG_VERSION = ((): string => {
+  try {
+    const pkg = JSON.parse(
+      readFileSync(new URL('../../../package.json', import.meta.url), 'utf-8')
+    ) as { version: string };
+    return pkg.version;
+  } catch {
+    return '1.0.0';
+  }
+})();
 
 // ─── Default configuration constants ─────────────────────────────────────────
 
@@ -31,6 +45,10 @@ export const DEFAULT_REQUEST_TIMEOUT_MS = 10_000;
 export const DEFAULT_RETRY_ENABLED = true;
 /** Default maximum number of retry attempts for failed requests */
 export const DEFAULT_MAX_RETRIES = 2;
+/** Default base retry delay in milliseconds (exponential backoff starting point) */
+export const DEFAULT_RETRY_BASE_DELAY_MS = 1_000;
+/** Default maximum retry delay in milliseconds (caps exponential backoff growth) */
+export const DEFAULT_RETRY_MAX_DELAY_MS = 30_000;
 /** Default cache time-to-live in milliseconds (15 minutes) */
 export const DEFAULT_CACHE_TTL_MS = 900_000;
 /** Default maximum number of entries in the LRU response cache */
@@ -95,6 +113,8 @@ export interface EPClientConfig {
   enableRetry?: boolean;
   /** Maximum number of retry attempts. @default 2 */
   maxRetries?: number;
+  /** Maximum allowed response body size in bytes. @default 10485760 (10 MiB) */
+  maxResponseBytes?: number;
 }
 
 /**
@@ -109,6 +129,9 @@ export interface EPSharedResources {
   timeoutMs: number;
   enableRetry: boolean;
   maxRetries: number;
+  maxResponseBytes: number;
+  /** Shared cache hit/miss counters so all sub-clients contribute to aggregate stats. */
+  cacheCounters: { hits: number; misses: number };
 }
 
 // ─── Base client ──────────────────────────────────────────────────────────────
@@ -135,6 +158,42 @@ export class BaseEPClient {
   protected readonly enableRetry: boolean;
   /** Maximum number of retry attempts. */
   protected readonly maxRetries: number;
+  /** Maximum allowed response body size in bytes. */
+  protected readonly maxResponseBytes: number;
+  /** Shared cache hit/miss counters (shared via EPSharedResources when used as sub-client). */
+  private readonly cacheCounters: { hits: number; misses: number };
+
+  /**
+   * Resolves all EPClientConfig options to their final values with defaults applied.
+   * Extracted to keep constructor complexity within limits.
+   * @private
+   */
+  private static resolveConfig(config: EPClientConfig): {
+    baseURL: string;
+    cacheTTL: number;
+    maxCacheSize: number;
+    rateLimiter: RateLimiter;
+    timeoutMs: number;
+    enableRetry: boolean;
+    maxRetries: number;
+    maxResponseBytes: number;
+  } {
+    return {
+      baseURL: config.baseURL ?? DEFAULT_EP_API_BASE_URL,
+      cacheTTL: config.cacheTTL ?? DEFAULT_CACHE_TTL_MS,
+      maxCacheSize: config.maxCacheSize ?? DEFAULT_MAX_CACHE_SIZE,
+      rateLimiter:
+        config.rateLimiter ??
+        new RateLimiter({
+          tokensPerInterval: DEFAULT_RATE_LIMIT_TOKENS,
+          interval: DEFAULT_RATE_LIMIT_INTERVAL,
+        }),
+      timeoutMs: config.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS,
+      enableRetry: config.enableRetry ?? DEFAULT_RETRY_ENABLED,
+      maxRetries: config.maxRetries ?? DEFAULT_MAX_RETRIES,
+      maxResponseBytes: config.maxResponseBytes ?? DEFAULT_MAX_RESPONSE_BYTES,
+    };
+  }
 
   /**
    * Creates a BaseEPClient.
@@ -154,26 +213,23 @@ export class BaseEPClient {
       this.timeoutMs = shared.timeoutMs;
       this.enableRetry = shared.enableRetry;
       this.maxRetries = shared.maxRetries;
+      this.maxResponseBytes = shared.maxResponseBytes;
+      this.cacheCounters = shared.cacheCounters;
     } else {
-      this.baseURL = config.baseURL ?? DEFAULT_EP_API_BASE_URL;
-
+      const cfg = BaseEPClient.resolveConfig(config);
+      this.baseURL = cfg.baseURL;
       this.cache = new LRUCache<string, Record<string, unknown>>({
-        max: config.maxCacheSize ?? DEFAULT_MAX_CACHE_SIZE,
-        ttl: config.cacheTTL ?? DEFAULT_CACHE_TTL_MS,
+        max: cfg.maxCacheSize,
+        ttl: cfg.cacheTTL,
         allowStale: false,
         updateAgeOnGet: true,
       });
-
-      this.rateLimiter =
-        config.rateLimiter ??
-        new RateLimiter({
-          tokensPerInterval: DEFAULT_RATE_LIMIT_TOKENS,
-          interval: DEFAULT_RATE_LIMIT_INTERVAL,
-        });
-
-      this.timeoutMs = config.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
-      this.enableRetry = config.enableRetry ?? DEFAULT_RETRY_ENABLED;
-      this.maxRetries = config.maxRetries ?? DEFAULT_MAX_RETRIES;
+      this.rateLimiter = cfg.rateLimiter;
+      this.timeoutMs = cfg.timeoutMs;
+      this.enableRetry = cfg.enableRetry;
+      this.maxRetries = cfg.maxRetries;
+      this.maxResponseBytes = cfg.maxResponseBytes;
+      this.cacheCounters = { hits: 0, misses: 0 };
     }
   }
 
@@ -247,12 +303,12 @@ export class BaseEPClient {
         if (result.done) break;
         const { value } = result;
         totalBytes += value.byteLength;
-        if (totalBytes > DEFAULT_MAX_RESPONSE_BYTES) {
+        if (totalBytes > this.maxResponseBytes) {
           reader.releaseLock();
           readerReleased = true;
           await (response.body as ReadableStream<Uint8Array> | null)?.cancel();
           throw new APIError(
-            `EP API response too large: exceeds limit of ${String(DEFAULT_MAX_RESPONSE_BYTES)} bytes`,
+            `EP API response too large: exceeds limit of ${String(this.maxResponseBytes)} bytes`,
             413
           );
         }
@@ -283,7 +339,7 @@ export class BaseEPClient {
         const response = await fetch(url.toString(), {
           headers: {
             Accept: 'application/ld+json',
-            'User-Agent': 'European-Parliament-MCP-Server/1.0',
+            'User-Agent': `European-Parliament-MCP-Server/${PKG_VERSION}`,
           },
           signal,
         });
@@ -299,12 +355,12 @@ export class BaseEPClient {
         const contentLength = response.headers.get('content-length');
         if (contentLength !== null) {
           const bytes = Number.parseInt(contentLength, 10);
-          if (Number.isFinite(bytes) && bytes > DEFAULT_MAX_RESPONSE_BYTES) {
+          if (Number.isFinite(bytes) && bytes > this.maxResponseBytes) {
             // Cancel/drain the body before throwing so the underlying TCP
             // connection can be returned to the pool and reused.
             await response.body?.cancel();
             throw new APIError(
-              `EP API response too large: ${String(bytes)} bytes exceeds limit of ${String(DEFAULT_MAX_RESPONSE_BYTES)} bytes`,
+              `EP API response too large: ${String(bytes)} bytes exceeds limit of ${String(this.maxResponseBytes)} bytes`,
               413
             );
           }
@@ -330,7 +386,8 @@ export class BaseEPClient {
       () => this.fetchWithTimeout<T>(url, endpoint),
       {
         maxRetries: this.enableRetry ? this.maxRetries : 0,
-        retryDelayMs: 1000,
+        retryDelayMs: DEFAULT_RETRY_BASE_DELAY_MS,
+        maxDelayMs: DEFAULT_RETRY_MAX_DELAY_MS,
         shouldRetry: (error) => this.shouldRetryRequest(error),
       }
     );
@@ -378,9 +435,11 @@ export class BaseEPClient {
     const cacheStart = performance.now();
     const cached = this.cache.get(cacheKey);
     if (cached !== undefined) {
+      this.cacheCounters.hits++;
       performanceMonitor.recordDuration('ep_api_cache_hit', performance.now() - cacheStart);
       return cached as T;
     }
+    this.cacheCounters.misses++;
 
     const url = this.buildRequestUrl(endpoint, params);
     const requestStart = performance.now();
@@ -422,14 +481,18 @@ export class BaseEPClient {
 
   /**
    * Returns cache statistics for monitoring and debugging.
-   * @returns `{ size, maxSize, hitRate }`
+   * @returns `{ size, maxSize, hitRate, hits, misses }`
    * @public
    */
-  getCacheStats(): { size: number; maxSize: number; hitRate: number } {
+  getCacheStats(): { size: number; maxSize: number; hitRate: number; hits: number; misses: number } {
+    const { hits, misses } = this.cacheCounters;
+    const total = hits + misses;
     return {
       size: this.cache.size,
       maxSize: this.cache.max,
-      hitRate: 0,
+      hitRate: total > 0 ? hits / total : 0,
+      hits,
+      misses,
     };
   }
 }
