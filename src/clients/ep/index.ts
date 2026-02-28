@@ -21,6 +21,7 @@
 export {
   BaseEPClient,
   APIError,
+  validateApiUrl,
   DEFAULT_EP_API_BASE_URL,
   DEFAULT_REQUEST_TIMEOUT_MS,
   DEFAULT_RETRY_ENABLED,
