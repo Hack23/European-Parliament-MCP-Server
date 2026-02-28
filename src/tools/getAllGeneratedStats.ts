@@ -60,6 +60,11 @@ export const GetAllGeneratedStatsSchema = z
         'speeches',
         'adopted_texts',
         'political_groups',
+        'procedures',
+        'events',
+        'documents',
+        'mep_turnover',
+        'declarations',
       ])
       .optional()
       .default('all')
@@ -102,6 +107,11 @@ const CATEGORY_LABEL_MAP: Record<string, string> = {
   resolutions: 'Resolutions',
   speeches: 'Speeches',
   adopted_texts: 'Adopted Texts',
+  procedures: 'Procedures',
+  events: 'Events',
+  documents: 'Documents',
+  mep_turnover: 'MEP Turnover',
+  declarations: 'Declarations',
 };
 
 function filterRankings(
@@ -193,7 +203,8 @@ export const getAllGeneratedStatsToolMetadata = {
     'category rankings, percentile scores, statistical analysis, political landscape history (group composition, ' +
     'fragmentation index, coalition dynamics), analytical commentary, and trend-based predictions for 2026-2030. ' +
     'Data covers parliamentary terms EP6-EP10 including plenary sessions, legislative acts, roll-call votes, ' +
-    'committee meetings, parliamentary questions, resolutions, speeches, and adopted texts. ' +
+    'committee meetings, parliamentary questions, resolutions, speeches, adopted texts, procedures, events, ' +
+    'documents, MEP turnover, and declarations. ' +
     'Static data refreshed weekly by agentic workflow — no live API calls.',
   inputSchema: {
     type: 'object' as const,
@@ -223,6 +234,11 @@ export const getAllGeneratedStatsToolMetadata = {
           'speeches',
           'adopted_texts',
           'political_groups',
+          'procedures',
+          'events',
+          'documents',
+          'mep_turnover',
+          'declarations',
         ],
         description: 'Activity category to focus on (default: all)',
         default: 'all',

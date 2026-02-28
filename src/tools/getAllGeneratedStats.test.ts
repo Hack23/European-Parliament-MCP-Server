@@ -129,6 +129,11 @@ describe('getAllGeneratedStats', () => {
     expect(year.resolutions).toBeGreaterThan(0);
     expect(year.speeches).toBeGreaterThan(0);
     expect(year.adoptedTexts).toBeGreaterThan(0);
+    expect(year.procedures).toBeGreaterThan(0);
+    expect(year.events).toBeGreaterThan(0);
+    expect(year.documents).toBeGreaterThan(0);
+    expect(year.mepTurnover).toBeGreaterThan(0);
+    expect(year.declarations).toBeGreaterThan(0);
     expect(year.commentary).toBeDefined();
   });
 
@@ -189,6 +194,66 @@ describe('getAllGeneratedStats', () => {
     expect(data.yearlyStats[0].politicalLandscape).toBeDefined();
     // political_groups has no numeric ranking so should be empty
     expect(data.categoryRankings).toBeUndefined();
+  });
+
+  it('filters by procedures category', () => {
+    const result = getAllGeneratedStats({
+      category: 'procedures',
+      includePredictions: false,
+      includeMonthlyBreakdown: false,
+      includeRankings: true,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.categoryRankings).toHaveLength(1);
+    expect(data.categoryRankings[0].category).toBe('Procedures');
+  });
+
+  it('filters by events category', () => {
+    const result = getAllGeneratedStats({
+      category: 'events',
+      includePredictions: false,
+      includeMonthlyBreakdown: false,
+      includeRankings: true,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.categoryRankings).toHaveLength(1);
+    expect(data.categoryRankings[0].category).toBe('Events');
+  });
+
+  it('filters by documents category', () => {
+    const result = getAllGeneratedStats({
+      category: 'documents',
+      includePredictions: false,
+      includeMonthlyBreakdown: false,
+      includeRankings: true,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.categoryRankings).toHaveLength(1);
+    expect(data.categoryRankings[0].category).toBe('Documents');
+  });
+
+  it('filters by mep_turnover category', () => {
+    const result = getAllGeneratedStats({
+      category: 'mep_turnover',
+      includePredictions: false,
+      includeMonthlyBreakdown: false,
+      includeRankings: true,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.categoryRankings).toHaveLength(1);
+    expect(data.categoryRankings[0].category).toBe('MEP Turnover');
+  });
+
+  it('filters by declarations category', () => {
+    const result = getAllGeneratedStats({
+      category: 'declarations',
+      includePredictions: false,
+      includeMonthlyBreakdown: false,
+      includeRankings: true,
+    });
+    const data = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(data.categoryRankings).toHaveLength(1);
+    expect(data.categoryRankings[0].category).toBe('Declarations');
   });
 
   it('includes predictions when requested with year range covering prediction years', () => {
@@ -258,7 +323,7 @@ describe('getAllGeneratedStats', () => {
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     expect(data.categoryRankings).toBeDefined();
-    expect(data.categoryRankings.length).toBe(8);
+    expect(data.categoryRankings.length).toBe(13);
 
     const ranking = data.categoryRankings[0];
     expect(ranking.category).toBeDefined();

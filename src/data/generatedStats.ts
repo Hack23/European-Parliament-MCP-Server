@@ -26,6 +26,11 @@ export interface MonthlyActivity {
   resolutions: number;
   speeches: number;
   adoptedTexts: number;
+  procedures: number;
+  events: number;
+  documents: number;
+  mepTurnover: number;
+  declarations: number;
 }
 
 export interface PoliticalGroupSnapshot {
@@ -63,6 +68,16 @@ export interface YearlyStats {
   resolutions: number;
   speeches: number;
   adoptedTexts: number;
+  /** Legislative procedures tracked (get_procedures, get_procedure_events) */
+  procedures: number;
+  /** Parliamentary events (get_events) */
+  events: number;
+  /** Total documents: plenary + committee + external (get_plenary_documents, get_committee_documents, get_external_documents) */
+  documents: number;
+  /** MEP turnover: incoming + outgoing (get_incoming_meps, get_outgoing_meps) */
+  mepTurnover: number;
+  /** MEP financial/interest declarations (get_mep_declarations) */
+  declarations: number;
   monthlyActivity: MonthlyActivity[];
   /** Political landscape snapshot for the year */
   politicalLandscape: PoliticalLandscapeData;
@@ -102,6 +117,11 @@ export interface PredictionYear {
   predictedResolutions: number;
   predictedSpeeches: number;
   predictedAdoptedTexts: number;
+  predictedProcedures: number;
+  predictedEvents: number;
+  predictedDocuments: number;
+  predictedMepTurnover: number;
+  predictedDeclarations: number;
   confidenceInterval: string;
   methodology: string;
 }
@@ -157,6 +177,11 @@ function distributeMonthly(annual: Omit<YearlyStats, 'monthlyActivity' | 'politi
     resolutions: Math.round(annual.resolutions * w),
     speeches: Math.round(annual.speeches * w),
     adoptedTexts: Math.round(annual.adoptedTexts * w),
+    procedures: Math.round(annual.procedures * w),
+    events: Math.round(annual.events * w),
+    documents: Math.round(annual.documents * w),
+    mepTurnover: Math.round(annual.mepTurnover * w),
+    declarations: Math.round(annual.declarations * w),
   }));
 }
 
@@ -164,28 +189,28 @@ function distributeMonthly(annual: Omit<YearlyStats, 'monthlyActivity' | 'politi
 // Based on European Parliament activity reports and open data portal records.
 
 const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape'>[] = [
-  { year: 2004, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 42, legislativeActsAdopted: 68, rollCallVotes: 356, committeeMeetings: 1820, parliamentaryQuestions: 4215, resolutions: 120, speeches: 8500, adoptedTexts: 85, commentary: 'EP6 began with the 2004 enlargement (10 new member states). Transition year with new MEPs, committee formation, and establishment of working relationships in an expanded Parliament of 25 member states.' },
-  { year: 2005, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 48, legislativeActsAdopted: 82, rollCallVotes: 412, committeeMeetings: 2050, parliamentaryQuestions: 4580, resolutions: 145, speeches: 10200, adoptedTexts: 102, commentary: 'Full operational year of EP6. REACH chemicals regulation debate began. Constitutional Treaty rejected by French and Dutch referendums, impacting EU institutional dynamics.' },
-  { year: 2006, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 50, legislativeActsAdopted: 95, rollCallVotes: 448, committeeMeetings: 2120, parliamentaryQuestions: 4780, resolutions: 158, speeches: 11500, adoptedTexts: 118, commentary: 'Services Directive (Bolkestein) adopted after significant amendments. Parliament asserted co-decision powers. Bulgaria and Romania accession preparations intensified.' },
-  { year: 2007, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 785, plenarySessions: 52, legislativeActsAdopted: 110, rollCallVotes: 520, committeeMeetings: 2280, parliamentaryQuestions: 5120, resolutions: 172, speeches: 12800, adoptedTexts: 135, commentary: 'Bulgaria and Romania joined the EU (January), increasing MEP count to 785. Lisbon Treaty negotiations. High legislative output as EP6 matured.' },
-  { year: 2008, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 785, plenarySessions: 50, legislativeActsAdopted: 125, rollCallVotes: 560, committeeMeetings: 2350, parliamentaryQuestions: 5380, resolutions: 185, speeches: 13500, adoptedTexts: 152, commentary: 'Peak activity year for EP6. Climate and energy package negotiations. Financial crisis response dominated second half. Irish referendum rejected Lisbon Treaty initially.' },
-  { year: 2009, parliamentaryTerm: 'EP6/EP7 transition', mepCount: 736, plenarySessions: 38, legislativeActsAdopted: 72, rollCallVotes: 380, committeeMeetings: 1650, parliamentaryQuestions: 3850, resolutions: 105, speeches: 7200, adoptedTexts: 78, commentary: 'EP6/EP7 transition year. European elections in June 2009. Reduced output due to election period. Lisbon Treaty entered into force December 2009, expanding Parliament\'s powers.' },
-  { year: 2010, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 736, plenarySessions: 48, legislativeActsAdopted: 88, rollCallVotes: 480, committeeMeetings: 2100, parliamentaryQuestions: 4920, resolutions: 155, speeches: 11000, adoptedTexts: 108, commentary: 'First full year under Lisbon Treaty. Parliament gained co-decision (now "ordinary legislative procedure") on most policy areas. Eurozone debt crisis response began.' },
-  { year: 2011, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 754, plenarySessions: 52, legislativeActsAdopted: 108, rollCallVotes: 550, committeeMeetings: 2320, parliamentaryQuestions: 5450, resolutions: 178, speeches: 12500, adoptedTexts: 132, commentary: 'Croatia accession preparations. Six-Pack economic governance legislation adopted. Parliament exercised new budgetary powers under Lisbon Treaty. Arab Spring response.' },
-  { year: 2012, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 754, plenarySessions: 50, legislativeActsAdopted: 118, rollCallVotes: 580, committeeMeetings: 2380, parliamentaryQuestions: 5680, resolutions: 188, speeches: 13000, adoptedTexts: 145, commentary: 'Fiscal Compact negotiations. Banking union proposals. Two-Pack economic governance. Parliament strengthened oversight of EU economic governance framework.' },
-  { year: 2013, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 766, plenarySessions: 54, legislativeActsAdopted: 135, rollCallVotes: 620, committeeMeetings: 2500, parliamentaryQuestions: 5920, resolutions: 205, speeches: 14200, adoptedTexts: 168, commentary: 'Peak EP7 legislative output. Croatia joined EU (July 2013). MFF 2014-2020 negotiations concluded. Single Supervisory Mechanism adopted. Data protection reform debates intensified.' },
-  { year: 2014, parliamentaryTerm: 'EP7/EP8 transition', mepCount: 751, plenarySessions: 40, legislativeActsAdopted: 78, rollCallVotes: 410, committeeMeetings: 1780, parliamentaryQuestions: 4120, resolutions: 115, speeches: 8000, adoptedTexts: 92, commentary: 'EP7/EP8 transition. European elections May 2014—first with Spitzenkandidaten process. Jean-Claude Juncker elected Commission President. Reduced legislative output due to transition.' },
-  { year: 2015, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 48, legislativeActsAdopted: 92, rollCallVotes: 510, committeeMeetings: 2150, parliamentaryQuestions: 5250, resolutions: 162, speeches: 11800, adoptedTexts: 115, commentary: 'Migration crisis dominated agenda. Parliament established inquiry committee on Volkswagen emissions. Better Regulation agenda launched. TTIP negotiations controversial.' },
-  { year: 2016, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 52, legislativeActsAdopted: 115, rollCallVotes: 570, committeeMeetings: 2340, parliamentaryQuestions: 5580, resolutions: 182, speeches: 13200, adoptedTexts: 140, commentary: 'Brexit referendum (June 2016) reshaped EU political landscape. General Data Protection Regulation (GDPR) adopted. Panama Papers investigation. Increased scrutiny of Commission.' },
-  { year: 2017, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 50, legislativeActsAdopted: 128, rollCallVotes: 600, committeeMeetings: 2420, parliamentaryQuestions: 5780, resolutions: 195, speeches: 13800, adoptedTexts: 155, commentary: 'Article 50 negotiations began. Posting of Workers Directive revision. EU-Canada trade agreement (CETA) ratification. Strong legislative productivity as EP8 matured.' },
-  { year: 2018, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 54, legislativeActsAdopted: 142, rollCallVotes: 650, committeeMeetings: 2550, parliamentaryQuestions: 6050, resolutions: 210, speeches: 14800, adoptedTexts: 172, commentary: 'Peak EP8 legislative output. Copyright Directive heated debate. MFF 2021-2027 proposals. Clean Energy Package. Brexit Withdrawal Agreement negotiations. Highest roll-call vote count in EP8.' },
-  { year: 2019, parliamentaryTerm: 'EP8/EP9 transition', mepCount: 751, plenarySessions: 36, legislativeActsAdopted: 65, rollCallVotes: 350, committeeMeetings: 1580, parliamentaryQuestions: 3680, resolutions: 98, speeches: 7000, adoptedTexts: 72, commentary: 'EP8/EP9 transition. European elections May 2019. Fragmented parliament—no traditional two-party majority. Ursula von der Leyen narrowly elected Commission President. UK MEPs still present (Brexit delayed).' },
-  { year: 2020, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 44, legislativeActsAdopted: 85, rollCallVotes: 460, committeeMeetings: 1950, parliamentaryQuestions: 5850, resolutions: 148, speeches: 9800, adoptedTexts: 105, commentary: 'COVID-19 pandemic forced remote/hybrid plenary sessions. Brexit completed (UK MEPs departed January 2020, reducing count to 705). NextGenerationEU recovery fund negotiations. Unprecedented adaptation to digital parliament.' },
-  { year: 2021, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 48, legislativeActsAdopted: 102, rollCallVotes: 530, committeeMeetings: 2180, parliamentaryQuestions: 6120, resolutions: 168, speeches: 11500, adoptedTexts: 128, commentary: 'Continued hybrid working. Digital COVID Certificate legislation fast-tracked. Conference on the Future of Europe launched. Fit for 55 climate package proposals. MFF 2021-2027 operational. Questions spiked due to pandemic oversight.' },
-  { year: 2022, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 52, legislativeActsAdopted: 120, rollCallVotes: 590, committeeMeetings: 2380, parliamentaryQuestions: 6350, resolutions: 192, speeches: 13500, adoptedTexts: 148, commentary: 'Russia-Ukraine war dominated agenda. Energy crisis response. Digital Services Act and Digital Markets Act adopted. REPowerEU plan. Return to full in-person sessions. Parliament\'s foreign affairs role expanded significantly.' },
-  { year: 2023, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 54, legislativeActsAdopted: 148, rollCallVotes: 660, committeeMeetings: 2520, parliamentaryQuestions: 6580, resolutions: 218, speeches: 15200, adoptedTexts: 178, commentary: 'Peak EP9 legislative output. AI Act negotiations concluded. Nature Restoration Law controversial vote. Corporate Sustainability Due Diligence. Critical Raw Materials Act. Record-high legislative productivity driven by end-of-term urgency.' },
-  { year: 2024, parliamentaryTerm: 'EP9/EP10 transition', mepCount: 720, plenarySessions: 38, legislativeActsAdopted: 72, rollCallVotes: 375, committeeMeetings: 1680, parliamentaryQuestions: 3950, resolutions: 108, speeches: 7800, adoptedTexts: 82, commentary: 'EP9/EP10 transition. European elections June 2024. Significant rightward shift in composition. New MEPs (720 total after redistribution). Reduced output due to election cycle. AI Act entered into force.' },
-  { year: 2025, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 720, plenarySessions: 46, legislativeActsAdopted: 78, rollCallVotes: 420, committeeMeetings: 1980, parliamentaryQuestions: 4650, resolutions: 135, speeches: 10500, adoptedTexts: 98, commentary: 'EP10 ramp-up year. New committee chairs and rapporteurs established. Defence and security policy gained prominence. Strategic autonomy debates. Clean Industrial Deal proposals. Parliament adapting to new political balance with stronger ECR and right-wing presence.' },
+  { year: 2004, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 42, legislativeActsAdopted: 68, rollCallVotes: 356, committeeMeetings: 1820, parliamentaryQuestions: 4215, resolutions: 120, speeches: 8500, adoptedTexts: 85, procedures: 245, events: 310, documents: 2850, mepTurnover: 385, declarations: 580, commentary: 'EP6 began with the 2004 enlargement (10 new member states). Transition year with new MEPs, committee formation, and establishment of working relationships in an expanded Parliament of 25 member states.' },
+  { year: 2005, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 48, legislativeActsAdopted: 82, rollCallVotes: 412, committeeMeetings: 2050, parliamentaryQuestions: 4580, resolutions: 145, speeches: 10200, adoptedTexts: 102, procedures: 312, events: 380, documents: 3420, mepTurnover: 42, declarations: 620, commentary: 'Full operational year of EP6. REACH chemicals regulation debate began. Constitutional Treaty rejected by French and Dutch referendums, impacting EU institutional dynamics.' },
+  { year: 2006, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 50, legislativeActsAdopted: 95, rollCallVotes: 448, committeeMeetings: 2120, parliamentaryQuestions: 4780, resolutions: 158, speeches: 11500, adoptedTexts: 118, procedures: 348, events: 420, documents: 3680, mepTurnover: 38, declarations: 645, commentary: 'Services Directive (Bolkestein) adopted after significant amendments. Parliament asserted co-decision powers. Bulgaria and Romania accession preparations intensified.' },
+  { year: 2007, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 785, plenarySessions: 52, legislativeActsAdopted: 110, rollCallVotes: 520, committeeMeetings: 2280, parliamentaryQuestions: 5120, resolutions: 172, speeches: 12800, adoptedTexts: 135, procedures: 392, events: 465, documents: 4120, mepTurnover: 95, declarations: 710, commentary: 'Bulgaria and Romania joined the EU (January), increasing MEP count to 785. Lisbon Treaty negotiations. High legislative output as EP6 matured.' },
+  { year: 2008, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 785, plenarySessions: 50, legislativeActsAdopted: 125, rollCallVotes: 560, committeeMeetings: 2350, parliamentaryQuestions: 5380, resolutions: 185, speeches: 13500, adoptedTexts: 152, procedures: 425, events: 490, documents: 4380, mepTurnover: 35, declarations: 690, commentary: 'Peak activity year for EP6. Climate and energy package negotiations. Financial crisis response dominated second half. Irish referendum rejected Lisbon Treaty initially.' },
+  { year: 2009, parliamentaryTerm: 'EP6/EP7 transition', mepCount: 736, plenarySessions: 38, legislativeActsAdopted: 72, rollCallVotes: 380, committeeMeetings: 1650, parliamentaryQuestions: 3850, resolutions: 105, speeches: 7200, adoptedTexts: 78, procedures: 218, events: 285, documents: 2580, mepTurnover: 420, declarations: 520, commentary: 'EP6/EP7 transition year. European elections in June 2009. Reduced output due to election period. Lisbon Treaty entered into force December 2009, expanding Parliament\'s powers.' },
+  { year: 2010, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 736, plenarySessions: 48, legislativeActsAdopted: 88, rollCallVotes: 480, committeeMeetings: 2100, parliamentaryQuestions: 4920, resolutions: 155, speeches: 11000, adoptedTexts: 108, procedures: 335, events: 395, documents: 3520, mepTurnover: 48, declarations: 650, commentary: 'First full year under Lisbon Treaty. Parliament gained co-decision (now "ordinary legislative procedure") on most policy areas. Eurozone debt crisis response began.' },
+  { year: 2011, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 754, plenarySessions: 52, legislativeActsAdopted: 108, rollCallVotes: 550, committeeMeetings: 2320, parliamentaryQuestions: 5450, resolutions: 178, speeches: 12500, adoptedTexts: 132, procedures: 395, events: 450, documents: 4050, mepTurnover: 52, declarations: 680, commentary: 'Croatia accession preparations. Six-Pack economic governance legislation adopted. Parliament exercised new budgetary powers under Lisbon Treaty. Arab Spring response.' },
+  { year: 2012, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 754, plenarySessions: 50, legislativeActsAdopted: 118, rollCallVotes: 580, committeeMeetings: 2380, parliamentaryQuestions: 5680, resolutions: 188, speeches: 13000, adoptedTexts: 145, procedures: 418, events: 475, documents: 4280, mepTurnover: 40, declarations: 695, commentary: 'Fiscal Compact negotiations. Banking union proposals. Two-Pack economic governance. Parliament strengthened oversight of EU economic governance framework.' },
+  { year: 2013, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 766, plenarySessions: 54, legislativeActsAdopted: 135, rollCallVotes: 620, committeeMeetings: 2500, parliamentaryQuestions: 5920, resolutions: 205, speeches: 14200, adoptedTexts: 168, procedures: 458, events: 510, documents: 4650, mepTurnover: 55, declarations: 720, commentary: 'Peak EP7 legislative output. Croatia joined EU (July 2013). MFF 2014-2020 negotiations concluded. Single Supervisory Mechanism adopted. Data protection reform debates intensified.' },
+  { year: 2014, parliamentaryTerm: 'EP7/EP8 transition', mepCount: 751, plenarySessions: 40, legislativeActsAdopted: 78, rollCallVotes: 410, committeeMeetings: 1780, parliamentaryQuestions: 4120, resolutions: 115, speeches: 8000, adoptedTexts: 92, procedures: 265, events: 320, documents: 2980, mepTurnover: 390, declarations: 580, commentary: 'EP7/EP8 transition. European elections May 2014—first with Spitzenkandidaten process. Jean-Claude Juncker elected Commission President. Reduced legislative output due to transition.' },
+  { year: 2015, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 48, legislativeActsAdopted: 92, rollCallVotes: 510, committeeMeetings: 2150, parliamentaryQuestions: 5250, resolutions: 162, speeches: 11800, adoptedTexts: 115, procedures: 345, events: 410, documents: 3750, mepTurnover: 45, declarations: 660, commentary: 'Migration crisis dominated agenda. Parliament established inquiry committee on Volkswagen emissions. Better Regulation agenda launched. TTIP negotiations controversial.' },
+  { year: 2016, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 52, legislativeActsAdopted: 115, rollCallVotes: 570, committeeMeetings: 2340, parliamentaryQuestions: 5580, resolutions: 182, speeches: 13200, adoptedTexts: 140, procedures: 405, events: 465, documents: 4180, mepTurnover: 38, declarations: 685, commentary: 'Brexit referendum (June 2016) reshaped EU political landscape. General Data Protection Regulation (GDPR) adopted. Panama Papers investigation. Increased scrutiny of Commission.' },
+  { year: 2017, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 50, legislativeActsAdopted: 128, rollCallVotes: 600, committeeMeetings: 2420, parliamentaryQuestions: 5780, resolutions: 195, speeches: 13800, adoptedTexts: 155, procedures: 438, events: 495, documents: 4520, mepTurnover: 42, declarations: 700, commentary: 'Article 50 negotiations began. Posting of Workers Directive revision. EU-Canada trade agreement (CETA) ratification. Strong legislative productivity as EP8 matured.' },
+  { year: 2018, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 54, legislativeActsAdopted: 142, rollCallVotes: 650, committeeMeetings: 2550, parliamentaryQuestions: 6050, resolutions: 210, speeches: 14800, adoptedTexts: 172, procedures: 475, events: 530, documents: 4850, mepTurnover: 35, declarations: 720, commentary: 'Peak EP8 legislative output. Copyright Directive heated debate. MFF 2021-2027 proposals. Clean Energy Package. Brexit Withdrawal Agreement negotiations. Highest roll-call vote count in EP8.' },
+  { year: 2019, parliamentaryTerm: 'EP8/EP9 transition', mepCount: 751, plenarySessions: 36, legislativeActsAdopted: 65, rollCallVotes: 350, committeeMeetings: 1580, parliamentaryQuestions: 3680, resolutions: 98, speeches: 7000, adoptedTexts: 72, procedures: 215, events: 275, documents: 2480, mepTurnover: 410, declarations: 540, commentary: 'EP8/EP9 transition. European elections May 2019. Fragmented parliament—no traditional two-party majority. Ursula von der Leyen narrowly elected Commission President. UK MEPs still present (Brexit delayed).' },
+  { year: 2020, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 44, legislativeActsAdopted: 85, rollCallVotes: 460, committeeMeetings: 1950, parliamentaryQuestions: 5850, resolutions: 148, speeches: 9800, adoptedTexts: 105, procedures: 310, events: 280, documents: 3250, mepTurnover: 95, declarations: 610, commentary: 'COVID-19 pandemic forced remote/hybrid plenary sessions. Brexit completed (UK MEPs departed January 2020, reducing count to 705). NextGenerationEU recovery fund negotiations. Unprecedented adaptation to digital parliament.' },
+  { year: 2021, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 48, legislativeActsAdopted: 102, rollCallVotes: 530, committeeMeetings: 2180, parliamentaryQuestions: 6120, resolutions: 168, speeches: 11500, adoptedTexts: 128, procedures: 378, events: 395, documents: 3820, mepTurnover: 48, declarations: 665, commentary: 'Continued hybrid working. Digital COVID Certificate legislation fast-tracked. Conference on the Future of Europe launched. Fit for 55 climate package proposals. MFF 2021-2027 operational. Questions spiked due to pandemic oversight.' },
+  { year: 2022, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 52, legislativeActsAdopted: 120, rollCallVotes: 590, committeeMeetings: 2380, parliamentaryQuestions: 6350, resolutions: 192, speeches: 13500, adoptedTexts: 148, procedures: 432, events: 480, documents: 4350, mepTurnover: 42, declarations: 695, commentary: 'Russia-Ukraine war dominated agenda. Energy crisis response. Digital Services Act and Digital Markets Act adopted. REPowerEU plan. Return to full in-person sessions. Parliament\'s foreign affairs role expanded significantly.' },
+  { year: 2023, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 54, legislativeActsAdopted: 148, rollCallVotes: 660, committeeMeetings: 2520, parliamentaryQuestions: 6580, resolutions: 218, speeches: 15200, adoptedTexts: 178, procedures: 498, events: 545, documents: 5020, mepTurnover: 38, declarations: 710, commentary: 'Peak EP9 legislative output. AI Act negotiations concluded. Nature Restoration Law controversial vote. Corporate Sustainability Due Diligence. Critical Raw Materials Act. Record-high legislative productivity driven by end-of-term urgency.' },
+  { year: 2024, parliamentaryTerm: 'EP9/EP10 transition', mepCount: 720, plenarySessions: 38, legislativeActsAdopted: 72, rollCallVotes: 375, committeeMeetings: 1680, parliamentaryQuestions: 3950, resolutions: 108, speeches: 7800, adoptedTexts: 82, procedures: 235, events: 310, documents: 2680, mepTurnover: 405, declarations: 560, commentary: 'EP9/EP10 transition. European elections June 2024. Significant rightward shift in composition. New MEPs (720 total after redistribution). Reduced output due to election cycle. AI Act entered into force.' },
+  { year: 2025, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 720, plenarySessions: 46, legislativeActsAdopted: 78, rollCallVotes: 420, committeeMeetings: 1980, parliamentaryQuestions: 4650, resolutions: 135, speeches: 10500, adoptedTexts: 98, procedures: 295, events: 365, documents: 3280, mepTurnover: 55, declarations: 635, commentary: 'EP10 ramp-up year. New committee chairs and rapporteurs established. Defence and security policy gained prominence. Strategic autonomy debates. Clean Industrial Deal proposals. Parliament adapting to new political balance with stronger ECR and right-wing presence.' },
 ];
 
 // ── Political landscape data per year ──────────────────────────────
@@ -249,6 +274,11 @@ function computeRankings(yearly: YearlyStats[]): CategoryRanking[] {
     { key: 'resolutions', label: 'Resolutions' },
     { key: 'speeches', label: 'Speeches' },
     { key: 'adoptedTexts', label: 'Adopted Texts' },
+    { key: 'procedures', label: 'Procedures' },
+    { key: 'events', label: 'Events' },
+    { key: 'documents', label: 'Documents' },
+    { key: 'mepTurnover', label: 'MEP Turnover' },
+    { key: 'declarations', label: 'Declarations' },
   ];
 
   return categories.map(({ key, label }) => {
@@ -296,30 +326,22 @@ function buildPredictions(): PredictionYear[] {
     [2021, 2022, 2023, 2024, 2025].includes(y.year)
   );
 
-  const avgSessions = Math.round(
-    trendYears.reduce((s, y) => s + y.plenarySessions, 0) / trendYears.length
-  );
-  const avgActs = Math.round(
-    trendYears.reduce((s, y) => s + y.legislativeActsAdopted, 0) / trendYears.length
-  );
-  const avgVotes = Math.round(
-    trendYears.reduce((s, y) => s + y.rollCallVotes, 0) / trendYears.length
-  );
-  const avgCommittees = Math.round(
-    trendYears.reduce((s, y) => s + y.committeeMeetings, 0) / trendYears.length
-  );
-  const avgQuestions = Math.round(
-    trendYears.reduce((s, y) => s + y.parliamentaryQuestions, 0) / trendYears.length
-  );
-  const avgResolutions = Math.round(
-    trendYears.reduce((s, y) => s + y.resolutions, 0) / trendYears.length
-  );
-  const avgSpeeches = Math.round(
-    trendYears.reduce((s, y) => s + y.speeches, 0) / trendYears.length
-  );
-  const avgAdoptedTexts = Math.round(
-    trendYears.reduce((s, y) => s + y.adoptedTexts, 0) / trendYears.length
-  );
+  const avg = (fn: (y: typeof trendYears[number]) => number): number =>
+    Math.round(trendYears.reduce((s, y) => s + fn(y), 0) / trendYears.length);
+
+  const avgSessions = avg((y) => y.plenarySessions);
+  const avgActs = avg((y) => y.legislativeActsAdopted);
+  const avgVotes = avg((y) => y.rollCallVotes);
+  const avgCommittees = avg((y) => y.committeeMeetings);
+  const avgQuestions = avg((y) => y.parliamentaryQuestions);
+  const avgResolutions = avg((y) => y.resolutions);
+  const avgSpeeches = avg((y) => y.speeches);
+  const avgAdoptedTexts = avg((y) => y.adoptedTexts);
+  const avgProcedures = avg((y) => y.procedures);
+  const avgEvents = avg((y) => y.events);
+  const avgDocuments = avg((y) => y.documents);
+  const avgMepTurnover = avg((y) => y.mepTurnover);
+  const avgDeclarations = avg((y) => y.declarations);
 
   // EP10 ramp-up curve: year 2 moderate, years 3-4 peak, year 5 decline (election transition)
   const termCurve = [
@@ -340,6 +362,11 @@ function buildPredictions(): PredictionYear[] {
     predictedResolutions: Math.round(avgResolutions * factor),
     predictedSpeeches: Math.round(avgSpeeches * factor),
     predictedAdoptedTexts: Math.round(avgAdoptedTexts * factor),
+    predictedProcedures: Math.round(avgProcedures * factor),
+    predictedEvents: Math.round(avgEvents * factor),
+    predictedDocuments: Math.round(avgDocuments * factor),
+    predictedMepTurnover: Math.round(avgMepTurnover * factor),
+    predictedDeclarations: Math.round(avgDeclarations * factor),
     confidenceInterval: conf,
     methodology: `Linear-trend extrapolation from 2021-2025 averages with parliamentary term cycle adjustment (factor: ${String(factor)}). ${note}`,
   }));
