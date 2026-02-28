@@ -6,7 +6,7 @@
  * deterministic (no network calls).
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import {
   GENERATED_STATS,
   type YearlyStats,
@@ -69,7 +69,11 @@ describe('GENERATED_STATS.yearlyStats', () => {
   });
 
   describe('each entry structure', () => {
-    const sample: YearlyStats = GENERATED_STATS.yearlyStats[0];
+    let sample: YearlyStats;
+    beforeAll(() => {
+      expect(GENERATED_STATS.yearlyStats.length).toBeGreaterThan(0);
+      sample = GENERATED_STATS.yearlyStats[0]!;
+    });
 
     it('should have a numeric year', () => {
       expect(typeof sample.year).toBe('number');

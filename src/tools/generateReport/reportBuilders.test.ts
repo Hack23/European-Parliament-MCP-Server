@@ -52,7 +52,7 @@ describe('createVotingSection', () => {
   });
 
   it('does not include data when mep has no votingStatistics', () => {
-    const mep = makeMEP({ votingStatistics: undefined });
+    const mep = makeMEP();
     const section = createVotingSection(100, mep);
     expect(section.data).toBeUndefined();
   });
