@@ -7,7 +7,7 @@
  * @module clients/ep/committeeClient
  */
 
-import { auditLogger } from '../../utils/auditLogger.js';
+import { auditLogger, toErrorMessage } from '../../utils/auditLogger.js';
 import type {
   Committee,
   PaginatedResponse,
@@ -71,7 +71,8 @@ export class CommitteeClient extends BaseEPClient {
       if (response.data.length > 0) {
         return this.transformCorporateBody(response.data[0] ?? {});
       }
-    } catch {
+    } catch (error: unknown) {
+      auditLogger.logError('get_committee_info.fetch_direct', { bodyId }, toErrorMessage(error));
       // Body not found by direct lookup
     }
     return null;
