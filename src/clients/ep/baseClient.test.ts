@@ -207,6 +207,8 @@ describe('BaseEPClient constructor — with shared resources', () => {
       timeoutMs: 7_500,
       enableRetry: false,
       maxRetries: 1,
+      maxResponseBytes: 5_242_880,
+      cacheCounters: { hits: 0, misses: 0 },
     };
 
     const client = new TestEPClient({}, shared);
