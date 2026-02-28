@@ -9,10 +9,11 @@
 
 /**
  * Builds an API parameter object by mapping tool-parameter keys to API parameter keys,
- * skipping any entries whose source value is `undefined` or `null`.
+ * including only entries whose source value is a primitive `string`, `number`, or `boolean`.
  *
- * Falsy-but-valid values (`''`, `0`, `false`) **are** preserved so that callers can
- * explicitly send them to the downstream API.
+ * Falsy-but-valid primitive values (`''`, `0`, `false`) **are** preserved so that callers can
+ * explicitly send them to the downstream API. All other value types (including `undefined`,
+ * `null`, objects, arrays, functions, symbols, etc.) are skipped and **not** forwarded.
  *
  * @param params  - The validated tool-parameter object (e.g. the output of a Zod parse).
  * @param mapping - A read-only array of `{ from, to }` pairs describing how each
