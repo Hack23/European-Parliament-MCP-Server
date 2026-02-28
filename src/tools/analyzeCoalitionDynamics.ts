@@ -15,7 +15,7 @@ import { AnalyzeCoalitionDynamicsSchema } from '../schemas/europeanParliament.js
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
-import type { DataAvailability } from '../types/index.js';
+import type { DataAvailability, MetricResult } from '../types/index.js';
 
 interface CoalitionPairAnalysis {
   groupA: string;
@@ -38,7 +38,8 @@ interface GroupCohesionMetrics {
   defectionRate: number | null;
   /** null when EP API does not provide per-MEP voting statistics */
   avgAttendance: number | null;
-  stressIndicator: number;
+  /** Voting-derived stress indicator; null when EP API does not provide voting statistics */
+  stressIndicator: MetricResult;
   /** Explicit marker indicating whether voting-derived metrics are available */
   dataAvailability: DataAvailability;
   computedAttributes: {
@@ -128,7 +129,12 @@ async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionM
       internalCohesion: null,
       defectionRate: null,
       avgAttendance: null,
-      stressIndicator: 0,
+      stressIndicator: {
+        value: null,
+        availability: 'UNAVAILABLE',
+        confidence: 'LOW',
+        reason: 'Per-MEP voting statistics not available from EP API'
+      },
       dataAvailability: 'UNAVAILABLE',
       computedAttributes: {
         disciplineScore: null,
@@ -174,13 +180,18 @@ function classifyStressSeverity(stress: number): string {
  * Compute stress indicators from group metrics
  */
 function computeStressIndicators(groupMetrics: GroupCohesionMetrics[]): { indicator: string; severity: string; affectedGroups: string[] }[] {
-  return groupMetrics
-    .filter(g => g.stressIndicator > 0.5)
-    .map(g => ({
-      indicator: `High defection rate in ${g.groupId}`,
-      severity: classifyStressSeverity(g.stressIndicator),
-      affectedGroups: [g.groupId]
-    }));
+  const results: { indicator: string; severity: string; affectedGroups: string[] }[] = [];
+  for (const g of groupMetrics) {
+    const stress = g.stressIndicator.value;
+    if (stress !== null && stress > 0.5) {
+      results.push({
+        indicator: `High defection rate in ${g.groupId}`,
+        severity: classifyStressSeverity(stress),
+        affectedGroups: [g.groupId]
+      });
+    }
+  }
+  return results;
 }
 
 /**

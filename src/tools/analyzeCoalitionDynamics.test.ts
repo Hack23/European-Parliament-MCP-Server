@@ -148,14 +148,15 @@ describe('analyze_coalition_dynamics Tool', () => {
       // so cohesion/stress metrics are null → UNKNOWN, confidence=LOW
       const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
-        groupMetrics: { stressIndicator: number; dataAvailability: string; computedAttributes: { unityTrend: string } }[];
+        groupMetrics: { stressIndicator: { value: null; availability: string; confidence: string }; dataAvailability: string; computedAttributes: { unityTrend: string } }[];
         confidenceLevel: string;
       };
 
-      // Assert: Without voting data, stress=0, dataAvailability=UNAVAILABLE, confidence=LOW
+      // Assert: Without voting data, stress=UNAVAILABLE null, dataAvailability=UNAVAILABLE, confidence=LOW
       const group = data.groupMetrics[0];
       expect(group?.computedAttributes.unityTrend).toBe('UNKNOWN');
-      expect(group?.stressIndicator).toBe(0);
+      expect(group?.stressIndicator.value).toBeNull();
+      expect(group?.stressIndicator.availability).toBe('UNAVAILABLE');
       expect(group?.dataAvailability).toBe('UNAVAILABLE');
       expect(data.confidenceLevel).toBe('LOW');
     });
