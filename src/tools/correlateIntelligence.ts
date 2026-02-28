@@ -175,6 +175,24 @@ const DEFAULT_COALITION_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'I
 // Helper: safely parse JSON from a ToolResult
 // ---------------------------------------------------------------------------
 
+/**
+ * Safely parses the JSON payload from a {@link ToolResult} returned by a dependent tool.
+ *
+ * Throws descriptive errors for explicit tool errors (`isError: true`) and for
+ * unparseable JSON. When `result.content[0]?.text` is missing or `undefined`,
+ * the implementation falls back to parsing `'{}'` (an empty object), so callers
+ * will receive an empty object rather than an error for missing content.
+ *
+ * @param result - MCP tool result from a dependent tool call
+ * @returns Parsed JSON value — an empty object `{}` if content is absent
+ * @throws {Error} If the result's `isError` flag is `true`
+ * @throws {Error} If the result content is present but cannot be parsed as JSON
+ *
+ * @security Content is parsed as JSON only — no `eval`/`Function` usage.
+ *   Note: when a dependent tool sets `isError: true`, the raw `text` payload is
+ *   embedded in the thrown error message. Callers should ensure error messages
+ *   are sanitised before surfacing them to end users.
+ */
 function parseToolResult(result: ToolResult): unknown {
   const text = result.content[0]?.text;
   if (result.isError === true) {
@@ -197,6 +215,19 @@ function parseToolResult(result: ToolResult): unknown {
 // Correlation scenario 1: Influence × Anomaly
 // ---------------------------------------------------------------------------
 
+/**
+ * Determines the significance level of an influence × anomaly correlation.
+ *
+ * Significance escalates when both high influence and anomalies are present:
+ * - **`HIGH`** — high-influence MEP with at least one high-severity anomaly
+ * - **`MEDIUM`** — high-influence MEP with anomalies (but none high-severity)
+ * - **`LOW`** — no meaningful combined signal
+ *
+ * @param isHighInfluence - Whether the MEP's influence score exceeds the threshold
+ * @param hasAnomalies - Whether any voting anomalies were detected
+ * @param highSeverityAnomalies - Count of high-severity anomalies
+ * @returns Correlation significance level
+ */
 function getCorrelationSignificance(
   isHighInfluence: boolean,
   hasAnomalies: boolean,
@@ -207,12 +238,32 @@ function getCorrelationSignificance(
   return 'LOW';
 }
 
+/**
+ * Determines the severity level for an `ELEVATED_ATTENTION` alert based on anomaly counts.
+ *
+ * - **`CRITICAL`** — more than one high-severity anomaly (pattern, not isolated)
+ * - **`HIGH`** — exactly one high-severity anomaly
+ * - **`MEDIUM`** — anomalies exist but none are high-severity
+ *
+ * @param highSeverity - Number of high-severity voting anomalies detected
+ * @returns Severity level (CRITICAL / HIGH / MEDIUM) for the ELEVATED_ATTENTION alert type
+ */
 function getAlertSeverityForAnomalies(highSeverity: number): 'CRITICAL' | 'HIGH' | 'MEDIUM' {
   if (highSeverity > 1) return 'CRITICAL';
   if (highSeverity > 0) return 'HIGH';
   return 'MEDIUM';
 }
 
+/**
+ * Fetches influence assessment data for a single MEP.
+ *
+ * Delegates to {@link handleAssessMepInfluence} and returns `null` on any
+ * failure (network error, unknown MEP, tool error) to allow the correlation
+ * pipeline to continue with remaining MEPs.
+ *
+ * @param mepId - MEP identifier string
+ * @returns Parsed {@link InfluenceResult} or `null` if the call fails
+ */
 async function fetchInfluenceData(mepId: string): Promise<InfluenceResult | null> {
   try {
     const ir = await handleAssessMepInfluence({ mepId });
@@ -223,6 +274,18 @@ async function fetchInfluenceData(mepId: string): Promise<InfluenceResult | null
   }
 }
 
+/**
+ * Fetches voting anomaly data for a single MEP.
+ *
+ * On tool or network failure, returns a zero-anomaly fallback with
+ * `confidenceLevel: 'LOW'` to keep the correlation pipeline running and
+ * avoid hard failures. This graceful degradation prioritizes pipeline
+ * continuity over strict detection guarantees and may under-report
+ * anomalies if failures are interpreted as "no anomalies" by callers.
+ *
+ * @param mepId - MEP identifier string
+ * @returns Parsed {@link AnomalyResult}, or a zeroed result with LOW confidence on failure
+ */
 async function fetchAnomalyData(mepId: string): Promise<AnomalyResult> {
   try {
     const ar = await handleDetectVotingAnomalies({ mepId });
@@ -233,6 +296,20 @@ async function fetchAnomalyData(mepId: string): Promise<AnomalyResult> {
   }
 }
 
+/**
+ * Executes **Correlation Scenario 1**: Influence × Anomaly for a single MEP.
+ *
+ * Fetches influence and anomaly data in sequence (anomaly call is skipped if
+ * influence fetch fails). An `ELEVATED_ATTENTION` alert is generated only when
+ * the MEP's influence score meets or exceeds `influenceThreshold` *and* voting
+ * anomalies are detected simultaneously — combining both risk signals into one
+ * actionable alert.
+ *
+ * @param mepId - MEP identifier to analyse
+ * @param influenceThreshold - Minimum influence score required to trigger the alert
+ * @returns Object containing the optional correlation record, optional alert, and
+ *   confidence-level strings from both underlying tools
+ */
 async function correlateInfluenceAnomaly(
   mepId: string,
   influenceThreshold: number
@@ -288,12 +365,35 @@ async function correlateInfluenceAnomaly(
 // Correlation scenario 2: Early Warning × Coalition Dynamics
 // ---------------------------------------------------------------------------
 
+/**
+ * Maps the caller-facing `sensitivityLevel` enum to the EWS tool's `sensitivity` parameter.
+ *
+ * The EWS tool uses lowercase strings (`'low'`, `'medium'`, `'high'`) while the
+ * correlate-intelligence schema uses uppercase. This function bridges the two conventions.
+ *
+ * @param sensitivityLevel - Caller-supplied sensitivity level
+ * @returns Equivalent lowercase EWS sensitivity string
+ */
 function mapSensitivityToEws(sensitivityLevel: 'HIGH' | 'MEDIUM' | 'LOW'): 'low' | 'medium' | 'high' {
   if (sensitivityLevel === 'HIGH') return 'high';
   if (sensitivityLevel === 'LOW') return 'low';
   return 'medium';
 }
 
+/**
+ * Classifies the fracture risk level based on warning signal counts and stress indicators.
+ *
+ * Escalation logic:
+ * - **`HIGH`** — critical EWS warnings present, or more than one high-stress indicator
+ *   (multiple converging risk signals)
+ * - **`MEDIUM`** — fracture signals exist but below the high-risk threshold
+ * - **`LOW`** — no meaningful fracture signals detected
+ *
+ * @param criticalWarnings - Count of CRITICAL-level EWS warnings
+ * @param highStressCount - Count of HIGH/CRITICAL coalition stress indicators
+ * @param hasFractureSignals - Whether any coalition or fragmentation warnings are present
+ * @returns Fracture risk classification
+ */
 function getFractureRisk(
   criticalWarnings: number,
   highStressCount: number,
@@ -304,11 +404,37 @@ function getFractureRisk(
   return 'LOW';
 }
 
+/**
+ * Predicate that identifies whether an EWS warning is coalition-related.
+ *
+ * A warning is considered coalition-related if its type contains `'COALITION'`
+ * or `'FRAGMENTATION'`, or if its severity is `'CRITICAL'` or `'HIGH'`
+ * (high-severity warnings of any type warrant coalition-fracture scrutiny).
+ *
+ * @param w - Warning object with `type` and `severity` string fields
+ * @returns `true` if the warning should be included in coalition fracture analysis
+ */
 function isCoalitionWarning(w: { type: string; severity: string }): boolean {
   return w.type.includes('COALITION') || w.type.includes('FRAGMENTATION') ||
     w.severity === 'CRITICAL' || w.severity === 'HIGH';
 }
 
+/**
+ * Executes **Correlation Scenario 2**: Early Warning × Coalition Dynamics.
+ *
+ * Fetches EWS warnings (filtered to `'coalitions'` focus area) and coalition
+ * dynamics data in sequence. A `COALITION_FRACTURE` alert is generated when
+ * at least one coalition-related warning is detected, combining EWS signals
+ * with declining-cohesion evidence from the coalition dynamics tool.
+ *
+ * Either tool failing causes the entire scenario to return an empty result
+ * (fail-safe: no false-positive coalition-fracture alerts from incomplete data).
+ *
+ * @param groups - Political group identifiers to include in the coalition analysis
+ * @param sensitivityLevel - Sensitivity level passed to the EWS tool
+ * @returns Object containing the optional fracture correlation, optional alert,
+ *   and confidence-level strings from both underlying tools
+ */
 async function correlateCoalitionFracture(
   groups: string[],
   sensitivityLevel: 'HIGH' | 'MEDIUM' | 'LOW'
@@ -394,6 +520,18 @@ async function correlateCoalitionFracture(
 // Correlation scenario 3: Network Centrality × Comparative Intelligence
 // ---------------------------------------------------------------------------
 
+/**
+ * Determines the profile significance level for Scenario 3 (Network × Profiles).
+ *
+ * Significance is high only when all three signals converge: high centrality,
+ * high committee activity, *and* bridging status. This reduces false positives
+ * compared to triggering on any single signal alone.
+ *
+ * @param isHighCentrality - Whether the MEP is classified as high centrality by the network analysis
+ * @param isHighCommitteeActivity - Whether the MEP's committee activity score exceeds 60
+ * @param isBridging - Whether the MEP appears in the network's bridging MEP list
+ * @returns Profile significance level
+ */
 function getProfileSignificance(
   isHighCentrality: boolean,
   isHighCommitteeActivity: boolean,
@@ -457,6 +595,20 @@ function buildProfileAndAlert(
   return { correlation, alert };
 }
 
+/**
+ * Executes **Correlation Scenario 3**: Network Centrality × Comparative Intelligence.
+ *
+ * Fetches global network analysis and comparative intelligence profiles for the given
+ * MEP IDs in sequence. For each MEP, centrality is looked up from the full
+ * `networkNodes` map before falling back to the truncated `centralMEPs` top-10 list,
+ * so MEPs outside the top-10 are not silently scored as 0.
+ *
+ * If fewer than 2 valid numeric MEP IDs are provided, or either tool call fails,
+ * an empty result is returned (fail-safe).
+ *
+ * @param mepIds - String MEP IDs; non-numeric values are filtered out
+ * @returns Object containing correlation records, alerts, and confidence-level strings
+ */
 async function correlateNetworkProfiles(
   mepIds: string[]
 ): Promise<{
@@ -506,6 +658,16 @@ async function correlateNetworkProfiles(
 // Confidence aggregation
 // ---------------------------------------------------------------------------
 
+/**
+ * Derives the aggregate confidence level from across all tool results in the pipeline.
+ *
+ * - **`'HIGH'`** — at least one level is `'HIGH'` and no level is `'LOW'`
+ * - **`'LOW'`** — every level is `'LOW'` (no useful high/medium signal)
+ * - **`'MEDIUM'`** — any other combination (mixed or all `'MEDIUM'`)
+ *
+ * @param levels - Array of confidence-level strings from individual tool results
+ * @returns Aggregated confidence level
+ */
 function aggregateConfidence(levels: string[]): 'HIGH' | 'MEDIUM' | 'LOW' {
   // Treat 'NONE' (from unavailable-data tools) as 'LOW' for aggregation
   const normalized = levels.map(l => (l === 'NONE' ? 'LOW' : l));
@@ -535,6 +697,16 @@ function computeDataAvailability(
 // Main handler
 // ---------------------------------------------------------------------------
 
+/**
+ * Builds the summary block of the {@link CorrelatedIntelligenceReport}.
+ *
+ * Counts alerts by severity and records the total number of cross-tool
+ * correlations that were detected (including those below alert threshold).
+ *
+ * @param allAlerts - Flat list of all generated correlation alerts
+ * @param correlationsFound - Total count of correlations detected across all scenarios
+ * @returns Report summary object
+ */
 function buildAlertSummary(allAlerts: CorrelationAlert[], correlationsFound: number): CorrelatedIntelligenceReport['summary'] {
   return {
     totalAlerts: allAlerts.length,
@@ -546,6 +718,17 @@ function buildAlertSummary(allAlerts: CorrelationAlert[], correlationsFound: num
   };
 }
 
+/**
+ * Builds the methodology description string for the correlation report.
+ *
+ * Describes the tools orchestrated and the numeric thresholds applied so that
+ * downstream consumers can reproduce or audit the analysis.
+ *
+ * @param influenceThreshold - Minimum influence score for Scenario 1 alerts
+ * @param sensitivityLevel - EWS sensitivity level used for Scenario 2 alerts
+ * @param includeNetworkAnalysis - Whether Scenario 3 (network × profiles) was enabled
+ * @returns Human-readable methodology string
+ */
 function buildMethodology(influenceThreshold: number, sensitivityLevel: string, includeNetworkAnalysis: boolean): string {
   const networkTools = includeNetworkAnalysis ? ', network_analysis, comparative_intelligence' : '';
   return `Cross-tool OSINT correlation engine — orchestrates assess_mep_influence, detect_voting_anomalies, early_warning_system, analyze_coalition_dynamics${networkTools}. Correlation thresholds: influence ≥ ${String(influenceThreshold)} (sensitivity: ${sensitivityLevel}). Data source: European Parliament Open Data Portal (data.europarl.europa.eu).`;
