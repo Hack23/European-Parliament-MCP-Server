@@ -290,8 +290,8 @@ function computeSimilarity(scoresA: Partial<Record<Dimension, number>>, scoresB:
  * mean and standard deviation across all profiles, then flags any MEP whose score
  * deviates by |z| ≥ 1.5 from the mean.
  *
- * **Threshold rationale:** A z-score threshold of 1.5 captures approximately the
- * top and bottom 13% of a normal distribution in each tail — a balanced sensitivity
+ * **Threshold rationale:** A z-score threshold of 1.5 captures approximately 6.7%
+ * of a normal distribution in each tail (~13.4% two-sided) — a balanced sensitivity
  * that surfaces meaningful outliers without flagging too many borderline cases.
  * Stricter thresholds (2.0+) would miss genuine policy outliers in small groups.
  *
@@ -314,7 +314,7 @@ function detectOutliers(profiles: MepProfile[], dimensions: Dimension[]): Compar
     for (const profile of profiles) {
       const score = profile.scores[dim] ?? 0;
       const zScore = stdDev > 0 ? (score - mean) / stdDev : 0;
-      if (Math.abs(zScore) >= 1.5) { // z ≥ 1.5σ: captures ~13% of observations in each tail; balanced outlier sensitivity
+      if (Math.abs(zScore) >= 1.5) { // z ≥ 1.5σ: captures ~6.7% in each tail (~13.4% combined); balanced outlier sensitivity
         outliers.push({ mepId: profile.mepId, name: profile.name, outlierDimension: dim, outlierScore: score, zScore: Math.round(zScore * 100) / 100 });
       }
     }
