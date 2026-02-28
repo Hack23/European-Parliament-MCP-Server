@@ -27,6 +27,8 @@ export class ToolError extends Error {
     this.toolName = options.toolName;
     this.operation = options.operation;
     this.isRetryable = options.isRetryable ?? false;
-    this.cause = options.cause instanceof Error ? options.cause : undefined;
+    if (options.cause instanceof Error) {
+      this.cause = options.cause;
+    }
   }
 }
