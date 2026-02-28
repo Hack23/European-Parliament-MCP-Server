@@ -20,7 +20,7 @@ import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../../utils/rateLimiter.js';
 import { withRetry, withTimeoutAndAbort, TimeoutError } from '../../utils/timeout.js';
 import { performanceMonitor } from '../../utils/performance.js';
-import { USER_AGENT } from '../../config.js';
+import { USER_AGENT, DEFAULT_RATE_LIMIT_PER_MINUTE } from '../../config.js';
 
 // ─── Default configuration constants ─────────────────────────────────────────
 
@@ -36,8 +36,8 @@ export const DEFAULT_MAX_RETRIES = 2;
 export const DEFAULT_CACHE_TTL_MS = 900_000;
 /** Default maximum number of entries in the LRU response cache */
 export const DEFAULT_MAX_CACHE_SIZE = 500;
-/** Default rate limit token bucket size (requests per interval) */
-export const DEFAULT_RATE_LIMIT_TOKENS = 100;
+/** Default rate limit token bucket size (requests per interval) — derived from centralized config */
+export const DEFAULT_RATE_LIMIT_TOKENS = DEFAULT_RATE_LIMIT_PER_MINUTE;
 /** Default rate limit interval unit */
 export const DEFAULT_RATE_LIMIT_INTERVAL = 'minute' as const;
 /** Maximum allowed response body size in bytes (10 MiB, 10×1024×1024) to prevent memory exhaustion */

@@ -28,7 +28,8 @@ describe('config', () => {
   });
 
   it('SERVER_VERSION is a valid semver string', () => {
-    expect(SERVER_VERSION).toMatch(/^\d+\.\d+\.\d+/);
+    // Full SemVer: MAJOR.MINOR.PATCH with optional pre-release and build metadata
+    expect(SERVER_VERSION).toMatch(/^\d+\.\d+\.\d+(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$/);
   });
 
   it('USER_AGENT includes the actual SERVER_VERSION', () => {

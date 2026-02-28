@@ -28,8 +28,9 @@ export const USER_AGENT = `European-Parliament-MCP-Server/${pkg.version}`;
 
 /**
  * Default rate limit applied to EP API requests (requests per minute).
- * Used by both the base HTTP client and the CLI health/help output so that
- * the displayed default always matches the enforced default.
+ * Consumed by `baseClient.ts` (`DEFAULT_RATE_LIMIT_TOKENS`) and by the CLI
+ * health/help output so that the displayed default always matches the
+ * enforced default.
  */
 export const DEFAULT_RATE_LIMIT_PER_MINUTE = 100;
 
