@@ -289,7 +289,7 @@ export class AuditLogger {
    *   controlled. Do not expose the returned entries through public APIs.
    * @since 0.8.0
    */
-  getLogs(authorization?: string): AuditLogEntry[] {
+  getLogs(authorization?: AuthToken): AuditLogEntry[] {
     this.checkAuthorization(authorization);
     const entries = this.memorySink.query({});
     return this.retentionPolicy !== undefined
@@ -304,7 +304,7 @@ export class AuditLogger {
    * @param authorization - Authorization token (required when configured)
    * @since 0.9.0
    */
-  queryLogs(filter: AuditFilter, authorization?: string): AuditLogEntry[] {
+  queryLogs(filter: AuditFilter, authorization?: AuthToken): AuditLogEntry[] {
     this.checkAuthorization(authorization);
     const entries = this.memorySink.query(filter);
     return this.retentionPolicy !== undefined
@@ -323,7 +323,7 @@ export class AuditLogger {
    * @param authorization - Authorization token (required when configured)
    * @since 0.9.0
    */
-  eraseByUser(userId: string, authorization?: string): void {
+  eraseByUser(userId: string, authorization?: AuthToken): void {
     this.checkAuthorization(authorization);
     this.memorySink.eraseByUser(userId);
   }
@@ -337,7 +337,7 @@ export class AuditLogger {
    * @param authorization - Authorization token (required when configured)
    * @since 0.8.0
    */
-  clear(authorization?: string): void {
+  clear(authorization?: AuthToken): void {
     this.checkAuthorization(authorization);
     this.memorySink.clear('');
   }
@@ -346,7 +346,7 @@ export class AuditLogger {
   // Private helpers
   // --------------------------------------------------------------------------
 
-  private checkAuthorization(authorization?: string): void {
+  private checkAuthorization(authorization?: AuthToken): void {
     if (
       this.requiredAuthToken !== undefined &&
       authorization !== this.requiredAuthToken

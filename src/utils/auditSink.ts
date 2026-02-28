@@ -315,15 +315,33 @@ export interface FileAuditSinkOptions {
 export class FileAuditSink implements AuditSink {
   private readonly filePath: string;
   private readonly maxSizeBytes: number;
+  /**
+   * Serialises concurrent write calls so that stat + rename + appendFile
+   * sequences never interleave across parallel `log()` invocations.
+   */
+  private writeQueue: Promise<void> = Promise.resolve();
 
   constructor(options: FileAuditSinkOptions) {
     this.filePath = options.filePath;
     this.maxSizeBytes = options.maxSizeBytes ?? 10 * 1024 * 1024;
   }
 
-  async write(entry: AuditLogEntry): Promise<void> {
-    await this.rotateIfNeeded();
-    await appendFile(this.filePath, `${JSON.stringify(entry)}\n`, 'utf8');
+  write(entry: AuditLogEntry): Promise<void> {
+    // Chain each write onto the tail of the previous one so concurrent callers
+    // are serialised — preventing interleaved stat/rename/append sequences.
+    // Swap `writeQueue` to a promise that always resolves (never rejects) so
+    // the next enqueued write is not blocked after a prior write failure.
+    const next = this.writeQueue.then(async (): Promise<void> => {
+      await this.rotateIfNeeded();
+      await appendFile(this.filePath, `${JSON.stringify(entry)}\n`, 'utf8');
+    });
+    // Always keep `writeQueue` as a resolved promise for the next caller;
+    // propagate the actual error only through the returned `next` promise.
+    this.writeQueue = next.then(
+      (): void => { /* success — queue stays resolved */ },
+      (): void => { /* failure — reset queue to resolved so next write proceeds */ }
+    );
+    return next;
   }
 
   private async rotateIfNeeded(): Promise<void> {

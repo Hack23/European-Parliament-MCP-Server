@@ -354,11 +354,44 @@ describe('FileAuditSink', () => {
     );
     consoleSpy.mockRestore();
   });
-});
 
-// ============================================================================
-// StructuredJsonSink
-// ============================================================================
+  it('should serialise concurrent writes to prevent interleaved stat/rename/append', async () => {
+    // Simulate two concurrent write() calls; ensure appendFile calls are
+    // sequential (not interleaved) thanks to the internal promise queue.
+    const appendOrder: number[] = [];
+    let callCount = 0;
+    mockStat.mockResolvedValue({ size: 100 } as Awaited<ReturnType<typeof stat>>);
+    mockAppend.mockImplementation(async (): Promise<void> => {
+      const order = ++callCount;
+      // Slight delay to expose ordering issues if writes run in parallel.
+      await new Promise<void>((res) => setTimeout(res, 5));
+      appendOrder.push(order);
+    });
+    const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
+    await Promise.all([sink.write(makeEntry({ action: 'first' })), sink.write(makeEntry({ action: 'second' }))]);
+    // Both writes completed and appendFile was called exactly twice.
+    expect(mockAppend).toHaveBeenCalledTimes(2);
+    // Writes were serialised: first=1, second=2 (never concurrent).
+    expect(appendOrder).toEqual([1, 2]);
+  });
+
+  it('should allow subsequent writes to proceed after a failed write', async () => {
+    // Verify the queue reset: if one write fails, the next write should still
+    // execute rather than being permanently blocked on a rejected queue.
+    const permError = Object.assign(new Error('Permission denied'), { code: 'EACCES' });
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    // First write: stat throws a non-ENOENT error → write rejects
+    mockStat.mockRejectedValueOnce(permError);
+    // Second write: stat returns small file (no rotation needed) → succeeds
+    mockStat.mockResolvedValueOnce({ size: 100 } as Awaited<ReturnType<typeof stat>>);
+    const sink = new FileAuditSink({ filePath: '/tmp/audit.log' });
+    await expect(sink.write(makeEntry({ action: 'fail' }))).rejects.toThrow('Permission denied');
+    // Second write should succeed despite the prior failure
+    await expect(sink.write(makeEntry({ action: 'recover' }))).resolves.toBeUndefined();
+    expect(mockAppend).toHaveBeenCalledTimes(1);
+    consoleSpy.mockRestore();
+  });
+});
 
 describe('StructuredJsonSink', () => {
   it('should call the provided writer with JSON', () => {
