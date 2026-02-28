@@ -31,9 +31,8 @@ function makeMEP(overrides: Partial<MEPDetails> = {}): MEPDetails {
     country: 'SE',
     politicalGroup: 'EPP',
     active: true,
-    dateOfBirth: '1970-01-01',
-    email: 'test@europarl.europa.eu',
     committees: ['ENVI'],
+    termStart: '2019-07-02',
     ...overrides,
   };
 }

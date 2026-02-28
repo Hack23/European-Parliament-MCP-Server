@@ -257,7 +257,7 @@ describe('clearCache', () => {
     mockFetch.mockResolvedValue(makeSuccessResponse(payload));
 
     // Populate cache via a request
-    await client.testGet('/meps');
+    await client.testGet('meps');
     expect(client.getCacheStats().size).toBe(1);
 
     client.clearCache();
@@ -268,11 +268,11 @@ describe('clearCache', () => {
     const payload = { data: [{ id: 'MEP-2' }], '@context': [] };
     mockFetch.mockResolvedValue(makeSuccessResponse(payload));
 
-    await client.testGet('/meps');
+    await client.testGet('meps');
     client.clearCache();
 
     mockFetch.mockResolvedValue(makeSuccessResponse(payload));
-    await client.testGet('/meps');
+    await client.testGet('meps');
     // fetch called twice: once before clear, once after
     expect(mockFetch).toHaveBeenCalledTimes(2);
   });
@@ -303,8 +303,8 @@ describe('BaseEPClient.get() caching', () => {
     const payload = { data: [{ id: 'mep/2' }], '@context': [] };
     mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
 
-    await client.testGet('/meps');
-    await client.testGet('/meps');
+    await client.testGet('meps');
+    await client.testGet('meps');
 
     // fetch should only be called once (cache hit on second call)
     expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -356,7 +356,7 @@ describe('BaseEPClient.get() URL parameter handling', () => {
     const payload = { data: [], '@context': [] };
     mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
 
-    await client.testGet('/meps', { country: 'DE', term: '10' });
+    await client.testGet('meps', { country: 'DE', term: '10' });
 
     const calledUrl = (mockFetch.mock.calls[0] as [string, ...unknown[]])[0];
     expect(calledUrl).toContain('country=DE');
@@ -367,7 +367,7 @@ describe('BaseEPClient.get() URL parameter handling', () => {
     const payload = { data: [], '@context': [] };
     mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
 
-    await client.testGet('/meps', { limit: 50 });
+    await client.testGet('meps', { limit: 50 });
 
     const calledUrl = (mockFetch.mock.calls[0] as [string, ...unknown[]])[0];
     expect(calledUrl).toContain('limit=50');
@@ -377,7 +377,7 @@ describe('BaseEPClient.get() URL parameter handling', () => {
     const payload = { data: [], '@context': [] };
     mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
 
-    await client.testGet('/meps', { active: true });
+    await client.testGet('meps', { active: true });
 
     const calledUrl = (mockFetch.mock.calls[0] as [string, ...unknown[]])[0];
     expect(calledUrl).toContain('active=true');
@@ -388,7 +388,7 @@ describe('BaseEPClient.get() URL parameter handling', () => {
     mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
 
     // Object value triggers the JSON.stringify branch
-    await client.testGet('/meps', { filter: { political_group: 'EPP' } });
+    await client.testGet('meps', { filter: { political_group: 'EPP' } });
 
     const calledUrl = (mockFetch.mock.calls[0] as [string, ...unknown[]])[0];
     expect(calledUrl).toContain('filter=');
@@ -400,7 +400,7 @@ describe('BaseEPClient.get() URL parameter handling', () => {
     mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
 
     // Array value also triggers the JSON.stringify branch
-    await client.testGet('/meps', { ids: ['1', '2', '3'] });
+    await client.testGet('meps', { ids: ['1', '2', '3'] });
 
     const calledUrl = (mockFetch.mock.calls[0] as [string, ...unknown[]])[0];
     expect(calledUrl).toContain('ids=');
@@ -410,7 +410,7 @@ describe('BaseEPClient.get() URL parameter handling', () => {
     const payload = { data: [], '@context': [] };
     mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
 
-    await client.testGet('/meps', { country: null, limit: 50 });
+    await client.testGet('meps', { country: null, limit: 50 });
 
     const calledUrl = (mockFetch.mock.calls[0] as [string, ...unknown[]])[0];
     expect(calledUrl).not.toContain('country=');
@@ -421,7 +421,7 @@ describe('BaseEPClient.get() URL parameter handling', () => {
     const payload = { data: [], '@context': [] };
     mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
 
-    await client.testGet('/meps', { country: undefined, limit: 25 });
+    await client.testGet('meps', { country: undefined, limit: 25 });
 
     const calledUrl = (mockFetch.mock.calls[0] as [string, ...unknown[]])[0];
     expect(calledUrl).not.toContain('country=');
@@ -432,10 +432,10 @@ describe('BaseEPClient.get() URL parameter handling', () => {
     const payload = { data: [], '@context': [] };
     mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
 
-    await client.testGet('/meps');
+    await client.testGet('meps');
 
     const calledUrl = (mockFetch.mock.calls[0] as [string, ...unknown[]])[0];
-    expect(calledUrl).toContain('/meps');
+    expect(calledUrl).toContain('/api/v2/meps');
     expect(calledUrl).not.toContain('?');
   });
 });
@@ -459,7 +459,7 @@ describe('BaseEPClient.get() error handling', () => {
       headers: new Headers(),
     } as unknown as Response);
 
-    await expect(client.testGet('/meps/9999')).rejects.toBeInstanceOf(APIError);
+    await expect(client.testGet('meps/9999')).rejects.toBeInstanceOf(APIError);
   });
 
   it('should throw APIError on 500 response', async () => {
@@ -470,7 +470,7 @@ describe('BaseEPClient.get() error handling', () => {
       headers: new Headers(),
     } as unknown as Response);
 
-    await expect(client.testGet('/meps')).rejects.toBeInstanceOf(APIError);
+    await expect(client.testGet('meps')).rejects.toBeInstanceOf(APIError);
   });
 
   it('should include HTTP status code in thrown APIError', async () => {
@@ -483,7 +483,7 @@ describe('BaseEPClient.get() error handling', () => {
 
     let thrownError: APIError | undefined;
     try {
-      await client.testGet('/meps');
+      await client.testGet('meps');
     } catch (err) {
       thrownError = err as APIError;
     }
@@ -498,13 +498,13 @@ describe('BaseEPClient.get() error handling', () => {
       body: { cancel: vi.fn().mockResolvedValue(undefined) },
     } as unknown as Response);
 
-    await expect(client.testGet('/meps')).rejects.toBeInstanceOf(APIError);
+    await expect(client.testGet('meps')).rejects.toBeInstanceOf(APIError);
   });
 
   it('should throw APIError when network call throws a non-API error', async () => {
     mockFetch.mockRejectedValueOnce(new TypeError('network error'));
 
-    await expect(client.testGet('/meps')).rejects.toBeInstanceOf(APIError);
+    await expect(client.testGet('meps')).rejects.toBeInstanceOf(APIError);
   });
 });
 
@@ -531,7 +531,7 @@ describe('BaseEPClient.get() retry behaviour', () => {
         } as unknown as Response)
         .mockResolvedValueOnce(makeSuccessResponse(payload));
 
-      const requestPromise = client.testGet('/meps');
+      const requestPromise = client.testGet('meps');
       await vi.runAllTimersAsync();
       const result = await requestPromise;
 
@@ -553,7 +553,7 @@ describe('BaseEPClient.get() retry behaviour', () => {
       headers: new Headers(),
     } as unknown as Response);
 
-    await expect(client.testGet('/meps/9999')).rejects.toBeInstanceOf(APIError);
+    await expect(client.testGet('meps/9999')).rejects.toBeInstanceOf(APIError);
     expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
@@ -568,7 +568,7 @@ describe('BaseEPClient.get() retry behaviour', () => {
       headers: new Headers(),
     } as unknown as Response);
 
-    await expect(client.testGet('/meps')).rejects.toBeInstanceOf(APIError);
+    await expect(client.testGet('meps')).rejects.toBeInstanceOf(APIError);
     expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 });

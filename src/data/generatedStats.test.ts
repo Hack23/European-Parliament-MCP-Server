@@ -9,7 +9,6 @@
 import { describe, it, expect } from 'vitest';
 import {
   GENERATED_STATS,
-  type GeneratedStatsData,
   type YearlyStats,
   type CategoryRanking,
   type PredictionYear,
