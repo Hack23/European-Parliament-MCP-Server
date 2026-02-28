@@ -32,11 +32,12 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { fileURLToPath } from 'url';
 import { resolve } from 'path';
-import { readFileSync, realpathSync } from 'fs';
+import { realpathSync } from 'fs';
 
 // ── Extracted modules ─────────────────────────────────────────────
 import { getToolMetadataArray, dispatchToolCall } from './server/toolRegistry.js';
 import { showHelp, showVersion, showHealth, parseCLIArgs } from './server/cli.js';
+import { SERVER_NAME, SERVER_VERSION } from './config.js';
 // MCP Prompts
 import { getPromptMetadataArray, handleGetPrompt } from './prompts/index.js';
 // MCP Resources
@@ -94,16 +95,7 @@ export {
 } from './prompts/index.js';
 
 /** @internal Server name constant */
-export const SERVER_NAME = 'european-parliament-mcp-server';
-/** @internal Server version loaded from package.json */
-const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf-8')) as { version: string };
-export const SERVER_VERSION: string = packageJson.version;
-
-/**
- * Number of core tools (non-advanced analysis tools)
- * Update this constant when adding/removing core tools in getToolMetadataArray()
- */
-const CORE_TOOL_COUNT = 7;
+export { SERVER_NAME, SERVER_VERSION } from './config.js';
 
 /**
  * Main MCP Server class for European Parliament data access
@@ -299,14 +291,15 @@ export class EuropeanParliamentMCPServer {
     }
 
     const tools = getToolMetadataArray();
-    const advancedToolCount = tools.length - CORE_TOOL_COUNT;
+    const coreToolCount = tools.filter(t => t.category === 'core').length;
+    const nonCoreToolCount = tools.length - coreToolCount;
     const prompts = getPromptMetadataArray();
     const resourceTemplates = getResourceTemplateArray();
 
     // Log to stderr (stdout is used for MCP protocol)
     console.error(`${SERVER_NAME} v${SERVER_VERSION} started`);
     console.error('Server ready to handle requests');
-    console.error(`Available tools: ${String(tools.length)} (${String(CORE_TOOL_COUNT)} core + ${String(advancedToolCount)} advanced analysis)`);
+    console.error(`Available tools: ${String(tools.length)} (${String(coreToolCount)} core + ${String(nonCoreToolCount)} additional)`);
     console.error(`Available prompts: ${String(prompts.length)}`);
     console.error(`Available resource templates: ${String(resourceTemplates.length)}`);
   }
