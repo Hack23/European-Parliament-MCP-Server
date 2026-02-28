@@ -263,7 +263,7 @@ ISMS Policy AU-002 (Audit Logging and Monitoring) — all MCP tool invocations a
 | Control | Mechanism |
 |---------|-----------|
 | **PII Protection** | `sanitizeParams()` redacts top-level keys in `DEFAULT_SENSITIVE_KEYS` (`name`, `email`, `fullName`, `address`, `firstName`, `lastName`, `phone`) before any entry is stored |
-| **Access Control** | `requiredAuthToken` constructor option gates `getLogs()`, `queryLogs()`, and `eraseByUser()` behind an authorization token; unauthorized calls throw immediately |
+| **Access Control** | `requiredAuthToken` constructor option gates `getLogs()`, `queryLogs()`, `eraseByUser()`, and `clear()` behind an authorization token; unauthorized calls throw immediately |
 | **Data Retention** | `retentionMs` constructor option enforces a configurable maximum age; expired entries are excluded from all query results |
 | **Right to Erasure** | `eraseByUser(userId, authToken)` removes all in-memory entries for a given data subject (GDPR Art. 17) |
 | **Append-only sinks** | `FileAuditSink` appends using async `fs.appendFile` (append-only writes); `MemoryAuditSink.clear()` is publicly exposed but is intended to be used via `AuditLogger.clear()`, which enforces authorization via `checkAuthorization` |

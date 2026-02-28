@@ -224,10 +224,11 @@ export class AuditLogger {
     duration?: number,
     error?: string
   ): void {
-    // Sanitize inner tool params before wrapping so that PII nested inside
-    // tool parameters is redacted.  The outer log() call will also sanitize
-    // the top-level params object, but the 'tool' key is not in sensitiveKeys,
-    // so the already-sanitized inner params pass through unchanged.
+    // Sanitize the tool params object before wrapping so that PII in
+    // top-level tool parameter keys is redacted. The outer log() call will
+    // also sanitize the top-level params object, but the 'tool' key is not in
+    // sensitiveKeys, so the already-sanitized inner params pass through
+    // unchanged.
     const sanitizedToolParams = sanitizeParams(params, this.sensitiveKeys);
     this.log({
       action: 'tool_call',
@@ -390,10 +391,13 @@ export class AuditLogger {
     for (const sink of this.extraSinks) {
       try {
         const result = sink.write(entry);
-        if (result instanceof Promise) {
+        const thenable = result as
+          | { then?: (onFulfilled?: unknown, onRejected?: (reason: unknown) => void) => unknown }
+          | void;
+        if (thenable && typeof thenable.then === 'function') {
           // Fire-and-forget async sinks; surface errors to stderr so they are
           // observable without blocking the calling code path.
-          void result.catch((err: unknown) => {
+          void thenable.then(undefined, (err: unknown) => {
             console.error('[AuditLogger] Async sink write failed:', err);
           });
         }
