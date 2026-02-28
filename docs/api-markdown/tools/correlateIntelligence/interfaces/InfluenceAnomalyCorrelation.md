@@ -6,7 +6,7 @@
 
 # Interface: InfluenceAnomalyCorrelation
 
-Defined in: [tools/correlateIntelligence.ts:104](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L104)
+Defined in: [tools/correlateIntelligence.ts:105](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L105)
 
 Detail record for an influence × anomaly correlation
 
@@ -16,7 +16,7 @@ Detail record for an influence × anomaly correlation
 
 > **anomalyCount**: `number`
 
-Defined in: [tools/correlateIntelligence.ts:109](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L109)
+Defined in: [tools/correlateIntelligence.ts:110](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L110)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [tools/correlateIntelligence.ts:109](https://github.com/Hack23/Europ
 
 > **correlationSignificance**: `"HIGH"` \| `"MEDIUM"` \| `"LOW"`
 
-Defined in: [tools/correlateIntelligence.ts:111](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L111)
+Defined in: [tools/correlateIntelligence.ts:112](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L112)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [tools/correlateIntelligence.ts:111](https://github.com/Hack23/Europ
 
 > **highSeverityAnomalies**: `number`
 
-Defined in: [tools/correlateIntelligence.ts:110](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L110)
+Defined in: [tools/correlateIntelligence.ts:111](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L111)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [tools/correlateIntelligence.ts:110](https://github.com/Hack23/Europ
 
 > **influenceRank**: `string`
 
-Defined in: [tools/correlateIntelligence.ts:108](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L108)
+Defined in: [tools/correlateIntelligence.ts:109](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L109)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [tools/correlateIntelligence.ts:108](https://github.com/Hack23/Europ
 
 > **influenceScore**: `number`
 
-Defined in: [tools/correlateIntelligence.ts:107](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L107)
+Defined in: [tools/correlateIntelligence.ts:108](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L108)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [tools/correlateIntelligence.ts:107](https://github.com/Hack23/Europ
 
 > **mepId**: `string`
 
-Defined in: [tools/correlateIntelligence.ts:105](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L105)
+Defined in: [tools/correlateIntelligence.ts:106](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L106)
 
 ***
 
@@ -64,4 +64,4 @@ Defined in: [tools/correlateIntelligence.ts:105](https://github.com/Hack23/Europ
 
 > **mepName**: `string`
 
-Defined in: [tools/correlateIntelligence.ts:106](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L106)
+Defined in: [tools/correlateIntelligence.ts:107](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L107)

@@ -8,7 +8,7 @@
 
 > **ComparativeIntelligenceParams** = `object`
 
-Defined in: [tools/comparativeIntelligence.ts:43](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L43)
+Defined in: [tools/comparativeIntelligence.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L44)
 
 ## Type Declaration
 

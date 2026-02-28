@@ -8,7 +8,7 @@
 
 > `const` **trackLegislationToolMetadata**: `object`
 
-Defined in: [tools/trackLegislation/index.ts:107](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/index.ts#L107)
+Defined in: [tools/trackLegislation/index.ts:113](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/index.ts#L113)
 
 Tool metadata for MCP registration
 

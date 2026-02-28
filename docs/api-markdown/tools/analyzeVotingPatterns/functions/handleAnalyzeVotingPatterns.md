@@ -8,7 +8,7 @@
 
 > **handleAnalyzeVotingPatterns**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/analyzeVotingPatterns.ts:140](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeVotingPatterns.ts#L140)
+Defined in: [tools/analyzeVotingPatterns.ts:142](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeVotingPatterns.ts#L142)
 
 Handles the analyze_voting_patterns MCP tool request.
 

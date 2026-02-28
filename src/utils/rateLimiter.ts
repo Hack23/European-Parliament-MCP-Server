@@ -149,8 +149,7 @@ export class RateLimiter {
    * would exceed `options.timeoutMs` (default **5000 ms**) the call returns
    * immediately with `allowed: false` and a `retryAfterMs` hint.
    *
-   * @param count - Number of tokens to consume (must be a finite integer ≥ 1
-   *   and ≤ `tokensPerInterval`); throws for invalid values
+   * @param count - Number of tokens to consume (must be a finite integer ≥ 1 and ≤ `tokensPerInterval`); throws for invalid values
    * @param options.timeoutMs - Maximum time to wait in milliseconds (default 5000)
    * @returns Promise resolving to a {@link RateLimitResult}. `allowed` is `true`
    *   when tokens were consumed, `false` when the timeout was reached.
@@ -227,8 +226,7 @@ export class RateLimiter {
    * `< 1`, or exceeding bucket capacity). It only avoids throwing when there are
    * insufficient tokens in the bucket at the time of the call.
    *
-   * @param count - Number of tokens to consume (must be a finite integer ≥ 1
-   *   and ≤ `tokensPerInterval`); throws for invalid values
+   * @param count - Number of tokens to consume (must be a finite integer ≥ 1 and ≤ `tokensPerInterval`); throws for invalid values
    * @returns `true` if tokens were successfully consumed, `false` if the
    *   bucket did not have enough tokens (bucket is left unchanged)
    *

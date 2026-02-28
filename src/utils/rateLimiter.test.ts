@@ -130,16 +130,21 @@ describe('RateLimiter', () => {
     });
 
     it('should include retryAfterMs in result when not allowed', async () => {
-      const limiter = new RateLimiter({
-        tokensPerInterval: 10,
-        interval: 'second',
-        initialTokens: 0
-      });
+      vi.useFakeTimers();
+      try {
+        const limiter = new RateLimiter({
+          tokensPerInterval: 10,
+          interval: 'second',
+          initialTokens: 0
+        });
 
-      const result = await limiter.removeTokens(1, { timeoutMs: 0 });
-      expect(result.allowed).toBe(false);
-      expect(typeof result.retryAfterMs).toBe('number');
-      expect(result.retryAfterMs).toBeGreaterThan(0);
+        const result = await limiter.removeTokens(1, { timeoutMs: 0 });
+        expect(result.allowed).toBe(false);
+        expect(typeof result.retryAfterMs).toBe('number');
+        expect(result.retryAfterMs).toBeGreaterThan(0);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should return correct remainingTokens after consuming', async () => {
@@ -176,21 +181,36 @@ describe('RateLimiter', () => {
     });
 
     it('should treat NaN timeoutMs as 0 and return allowed:false immediately', async () => {
-      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
-      const result = await limiter.removeTokens(1, { timeoutMs: NaN });
-      expect(result.allowed).toBe(false);
+      vi.useFakeTimers();
+      try {
+        const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
+        const result = await limiter.removeTokens(1, { timeoutMs: NaN });
+        expect(result.allowed).toBe(false);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should treat Infinity timeoutMs as 0 and return allowed:false immediately', async () => {
-      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
-      const result = await limiter.removeTokens(1, { timeoutMs: Infinity });
-      expect(result.allowed).toBe(false);
+      vi.useFakeTimers();
+      try {
+        const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
+        const result = await limiter.removeTokens(1, { timeoutMs: Infinity });
+        expect(result.allowed).toBe(false);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should treat negative timeoutMs as 0 and return allowed:false immediately', async () => {
-      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
-      const result = await limiter.removeTokens(1, { timeoutMs: -100 });
-      expect(result.allowed).toBe(false);
+      vi.useFakeTimers();
+      try {
+        const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
+        const result = await limiter.removeTokens(1, { timeoutMs: -100 });
+        expect(result.allowed).toBe(false);
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 
