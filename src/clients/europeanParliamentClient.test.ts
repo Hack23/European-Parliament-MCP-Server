@@ -4629,6 +4629,44 @@ describe('EuropeanParliamentClient', () => {
       const { validateApiUrl } = await import('./europeanParliamentClient.js');
       expect(() => validateApiUrl('not-a-url')).toThrow('EP_API_URL is not a valid URL');
     });
+
+    it('should reject a URL pointing to a 172.16-31.x.x RFC-1918 address', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://172.16.0.1/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+      expect(() => validateApiUrl('https://172.31.255.255/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to 0.0.0.0', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://0.0.0.0/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to IPv6 loopback [::1]', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[::1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to an IPv6 link-local address (fe80::)', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[fe80::1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
+
+    it('should reject a URL pointing to an IPv6 unique-local address (fd00::)', async () => {
+      const { validateApiUrl } = await import('./europeanParliamentClient.js');
+      expect(() => validateApiUrl('https://[fd00::1]/api/')).toThrow(
+        'EP_API_URL must not point to internal or loopback addresses'
+      );
+    });
   });
 
   describe('Exponential Backoff', () => {

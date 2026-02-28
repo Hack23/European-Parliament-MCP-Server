@@ -91,12 +91,34 @@ import {
 
 // ─── URL Validation ───────────────────────────────────────────────────────────
 
+/** Exact hostnames that must never be used as API endpoints. */
+const BLOCKED_HOSTS_EXACT = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1']);
+
+/** Patterns matching private / link-local / loopback address prefixes. */
+const BLOCKED_HOST_PATTERNS = [
+  /^fe[89ab][0-9a-f]:/i,         // IPv6 link-local   fe80::/10
+  /^f[cd][0-9a-f]{2}:/i,         // IPv6 unique-local fc00::/7
+  /^169\.254\./,                  // IPv4 link-local   169.254.0.0/16
+  /^10\./,                        // RFC-1918          10.0.0.0/8
+  /^172\.(1[6-9]|2\d|3[01])\./,  // RFC-1918          172.16.0.0/12
+  /^192\.168\./,                  // RFC-1918          192.168.0.0/16
+];
+
+/**
+ * Returns true when `host` is a loopback, link-local, or RFC-1918 address that
+ * MUST NOT be used as an API endpoint (SSRF prevention).
+ * @private
+ */
+function isBlockedHost(host: string): boolean {
+  return BLOCKED_HOSTS_EXACT.has(host) || BLOCKED_HOST_PATTERNS.some(p => p.test(host));
+}
+
 /**
  * Validates the EP API base URL to prevent SSRF via environment variable poisoning.
  *
  * Enforces HTTPS-only and blocks requests to localhost and known internal
- * IP ranges (link-local 169.254.x.x, RFC-1918 10.x.x.x, 172.16-31.x.x,
- * 192.168.x.x).
+ * IP ranges (link-local 169.254.x.x, RFC-1918 10.x.x.x / 172.16-31.x.x /
+ * 192.168.x.x, IPv6 loopback/link-local/unique-local).
  *
  * @param url - The URL string to validate
  * @returns The validated URL string (unchanged)
@@ -114,16 +136,13 @@ export function validateApiUrl(url: string): string {
   if (parsed.protocol !== 'https:') {
     throw new Error('EP_API_URL must use HTTPS protocol');
   }
-  const host = parsed.hostname;
-  if (
-    host === 'localhost' ||
-    host === '127.0.0.1' ||
-    host === '::1' ||
-    host.startsWith('169.254.') ||
-    host.startsWith('10.') ||
-    /^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
-    host.startsWith('192.168.')
-  ) {
+  // The WHATWG URL parser wraps IPv6 addresses in brackets (e.g. "[::1]").
+  // Strip brackets before pattern matching so IPv4 and IPv6 checks are uniform.
+  const rawHost = parsed.hostname;
+  const host = rawHost.startsWith('[') && rawHost.endsWith(']')
+    ? rawHost.slice(1, -1)
+    : rawHost;
+  if (isBlockedHost(host)) {
     throw new Error(`EP_API_URL must not point to internal or loopback addresses: ${host}`);
   }
   return url;

@@ -381,8 +381,8 @@ describe('withRetry', () => {
     expect(fn).toHaveBeenCalledTimes(1); // No retries for 4xx
   });
   
-  it('should use exponential backoff with jitter', async () => {
-    // Mock Math.random to return 0 so jitter is 0 and timing is deterministic
+  it('should use exponential backoff (deterministic, zero-jitter)', async () => {
+    // Mock Math.random to return 0 so jitter term is 0 and timer values are exact
     vi.spyOn(Math, 'random').mockReturnValue(0);
     try {
       const fn = vi.fn()
@@ -404,6 +404,65 @@ describe('withRetry', () => {
       await vi.advanceTimersByTimeAsync(200);
       expect(fn).toHaveBeenCalledTimes(3);
       
+      await expect(resultPromise).resolves.toBe('success');
+    } finally {
+      vi.restoreAllMocks();
+    }
+  });
+
+  it('should add jitter to retry delay', async () => {
+    // With Math.random() = 0.5, jitter = baseDelay * 0.1 * 0.5 = 5% of base
+    // For retryDelayMs=100: scheduled delay = 100 + 100*0.1*0.5 = 105ms
+    vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    try {
+      const fn = vi.fn()
+        .mockRejectedValueOnce(new Error('Fail'))
+        .mockResolvedValue('success');
+
+      const resultPromise = withRetry(fn, { maxRetries: 1, retryDelayMs: 100 });
+
+      // At 104ms the retry has NOT fired yet (needs 105ms)
+      await vi.advanceTimersByTimeAsync(104);
+      expect(fn).toHaveBeenCalledTimes(1);
+
+      // At 106ms (total) the retry fires: 105ms base+jitter has elapsed
+      await vi.advanceTimersByTimeAsync(2);
+      expect(fn).toHaveBeenCalledTimes(2);
+
+      await expect(resultPromise).resolves.toBe('success');
+    } finally {
+      vi.restoreAllMocks();
+    }
+  });
+
+  it('should cap retry delay at maxDelayMs', async () => {
+    // With jitter=0 and maxDelayMs=150, delays are capped at 150ms
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    try {
+      const fn = vi.fn()
+        .mockRejectedValueOnce(new Error('Fail 1'))
+        .mockRejectedValueOnce(new Error('Fail 2'))
+        .mockRejectedValueOnce(new Error('Fail 3'))
+        .mockResolvedValue('success');
+
+      const resultPromise = withRetry(fn, {
+        maxRetries: 3,
+        retryDelayMs: 100,
+        maxDelayMs: 150, // uncapped 2nd delay would be 200ms, 3rd = 400ms
+      });
+
+      // Attempt 0 → delay min(100*2^0, 150) = 100ms; fn was called once so far
+      await vi.advanceTimersByTimeAsync(100);
+      expect(fn).toHaveBeenCalledTimes(2);
+
+      // Attempt 1 → delay min(100*2^1, 150) = 150ms (capped from 200ms)
+      await vi.advanceTimersByTimeAsync(150);
+      expect(fn).toHaveBeenCalledTimes(3);
+
+      // Attempt 2 → delay min(100*2^2, 150) = 150ms (capped from 400ms)
+      await vi.advanceTimersByTimeAsync(150);
+      expect(fn).toHaveBeenCalledTimes(4);
+
       await expect(resultPromise).resolves.toBe('success');
     } finally {
       vi.restoreAllMocks();

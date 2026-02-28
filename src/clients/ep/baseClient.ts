@@ -178,8 +178,12 @@ export class BaseEPClient {
     maxRetries: number;
     maxResponseBytes: number;
   } {
+    const rawBaseURL = config.baseURL ?? DEFAULT_EP_API_BASE_URL;
+    // Ensure baseURL always ends with '/' so that relative endpoints resolve correctly
+    // e.g. new URL('meps', 'https://host/api/v2') would drop 'v2' without the trailing slash
+    const baseURL = rawBaseURL.endsWith('/') ? rawBaseURL : `${rawBaseURL}/`;
     return {
-      baseURL: config.baseURL ?? DEFAULT_EP_API_BASE_URL,
+      baseURL,
       cacheTTL: config.cacheTTL ?? DEFAULT_CACHE_TTL_MS,
       maxCacheSize: config.maxCacheSize ?? DEFAULT_MAX_CACHE_SIZE,
       rateLimiter:
