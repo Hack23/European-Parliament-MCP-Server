@@ -77,3 +77,38 @@ export {
   isMCPServerError,
   formatMCPError
 } from './errors.js';
+
+/**
+ * Data availability status for intelligence analysis metrics.
+ *
+ * - `AVAILABLE`   — Full data retrieved from EP API; metric is reliable.
+ * - `PARTIAL`     — Some data retrieved; metric may be incomplete.
+ * - `ESTIMATED`   — Metric derived from proxy/indirect data sources.
+ * - `UNAVAILABLE` — Required data not provided by the EP API endpoint;
+ *                   the associated metric value is `null`.
+ */
+export type DataAvailability = 'AVAILABLE' | 'PARTIAL' | 'ESTIMATED' | 'UNAVAILABLE';
+
+/**
+ * Wrapper for a single analysis metric that explicitly communicates
+ * data availability alongside the computed value.
+ *
+ * When `availability` is `'UNAVAILABLE'`, `value` is always `null` and
+ * `confidence` should typically be `'LOW'` or `'NONE'` to signal that no
+ * meaningful confidence can be assigned. The exact value depends on whether
+ * the containing tool's OSINT output schema supports `'NONE'`.
+ *
+ * @template T - The type of the metric value (defaults to `number`).
+ */
+export interface MetricResult<T = number> {
+  /** Computed metric value, or `null` when unavailable. */
+  value: T | null;
+  /** Availability status of the underlying EP API data. */
+  availability: DataAvailability;
+  /** Confidence in the computed value given the available data. */
+  confidence: 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
+  /** Human-readable data source description (optional). */
+  source?: string;
+  /** Explanation of why the data is unavailable or estimated (optional). */
+  reason?: string;
+}
