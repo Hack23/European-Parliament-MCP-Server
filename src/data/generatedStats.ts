@@ -16,26 +16,45 @@
 
 // ── Types ─────────────────────────────────────────────────────────
 
+/** Monthly breakdown of European Parliament activity for a single calendar month. */
 export interface MonthlyActivity {
+  /** Calendar month (1–12) */
   month: number;
+  /** Number of plenary sessions held */
   plenarySessions: number;
+  /** Legislative acts adopted */
   legislativeActsAdopted: number;
+  /** Roll-call votes conducted */
   rollCallVotes: number;
+  /** Committee meetings held */
   committeeMeetings: number;
+  /** Parliamentary questions tabled */
   parliamentaryQuestions: number;
+  /** Resolutions adopted */
   resolutions: number;
+  /** Speeches delivered in plenary */
   speeches: number;
+  /** Texts adopted (reports, opinions, etc.) */
   adoptedTexts: number;
+  /** Legislative procedures tracked */
   procedures: number;
+  /** Parliamentary events */
   events: number;
+  /** Documents produced (plenary + committee + external) */
   documents: number;
+  /** MEP turnover (incoming + outgoing) */
   mepTurnover: number;
+  /** MEP financial/interest declarations filed */
   declarations: number;
 }
 
+/** Snapshot of a single political group's representation in a given year. */
 export interface PoliticalGroupSnapshot {
+  /** Political group short name (e.g. 'EPP', 'S&D', 'NI') */
   name: string;
+  /** Number of seats held */
   seats: number;
+  /** Seat share as a percentage (0–100) */
   seatShare: number;
 }
 
@@ -66,17 +85,29 @@ export interface PoliticalLandscapeData {
   politicalBalance: string;
 }
 
+/** Aggregated annual statistics for a single calendar year of EP activity. */
 export interface YearlyStats {
+  /** Calendar year (e.g. 2004) */
   year: number;
+  /** Parliamentary term identifier (e.g. 'EP6', 'EP9/EP10 transition') */
   parliamentaryTerm: string;
+  /** Total number of MEPs in office */
   mepCount: number;
+  /** Number of plenary sessions held */
   plenarySessions: number;
+  /** Legislative acts adopted */
   legislativeActsAdopted: number;
+  /** Roll-call votes conducted */
   rollCallVotes: number;
+  /** Committee meetings held */
   committeeMeetings: number;
+  /** Parliamentary questions tabled */
   parliamentaryQuestions: number;
+  /** Resolutions adopted */
   resolutions: number;
+  /** Speeches delivered in plenary */
   speeches: number;
+  /** Texts adopted (reports, opinions, etc.) */
   adoptedTexts: number;
   /** Legislative procedures tracked (get_procedures, get_procedure_events) */
   procedures: number;
@@ -88,6 +119,7 @@ export interface YearlyStats {
   mepTurnover: number;
   /** MEP financial/interest declarations (get_mep_declarations) */
   declarations: number;
+  /** Month-by-month activity breakdown (12 entries, Jan–Dec) */
   monthlyActivity: MonthlyActivity[];
   /** Political landscape snapshot for the year */
   politicalLandscape: PoliticalLandscapeData;
@@ -95,17 +127,23 @@ export interface YearlyStats {
   commentary: string;
 }
 
+/** Ranked year entry within a category ranking. */
 export interface RankedYear {
+  /** Calendar year */
   year: number;
   /** Rank among all years (1 = highest activity) */
   rank: number;
   /** Percentile score (0–100) */
   percentile: number;
+  /** Sum of the metric value used for ranking */
   totalActivityScore: number;
 }
 
+/** Statistical ranking of years for a single activity category. */
 export interface CategoryRanking {
+  /** Human-readable category label (e.g. 'Plenary Sessions') */
   category: string;
+  /** Per-year ranking entries, sorted by descending activity score */
   rankings: RankedYear[];
   /** Mean value across all years */
   mean: number;
@@ -113,47 +151,83 @@ export interface CategoryRanking {
   stdDev: number;
   /** Median value */
   median: number;
+  /** Year with the highest activity score */
   topYear: number;
+  /** Year with the lowest activity score */
   bottomYear: number;
 }
 
+/**
+ * Predicted activity metrics for a future year.
+ *
+ * Values are computed using average-based extrapolation from the 2021–2025
+ * baseline, adjusted by parliamentary term cycle factors that model the
+ * typical ramp-up → peak → decline pattern within each five-year term.
+ */
 export interface PredictionYear {
+  /** Predicted calendar year (2026–2030) */
   year: number;
+  /** Predicted plenary sessions */
   predictedPlenarySessions: number;
+  /** Predicted legislative acts adopted */
   predictedLegislativeActs: number;
+  /** Predicted roll-call votes */
   predictedRollCallVotes: number;
+  /** Predicted committee meetings */
   predictedCommitteeMeetings: number;
+  /** Predicted parliamentary questions */
   predictedParliamentaryQuestions: number;
+  /** Predicted resolutions */
   predictedResolutions: number;
+  /** Predicted speeches */
   predictedSpeeches: number;
+  /** Predicted adopted texts */
   predictedAdoptedTexts: number;
+  /** Predicted procedures */
   predictedProcedures: number;
+  /** Predicted events */
   predictedEvents: number;
+  /** Predicted documents */
   predictedDocuments: number;
+  /** Predicted MEP turnover */
   predictedMepTurnover: number;
+  /** Predicted declarations */
   predictedDeclarations: number;
+  /** Confidence interval string (e.g. '±12%') */
   confidenceInterval: string;
+  /** Description of the prediction methodology for this year */
   methodology: string;
 }
 
+/** Top-level container for all precomputed European Parliament statistics. */
 export interface GeneratedStatsData {
   /** ISO 8601 timestamp of when stats were last generated */
   generatedAt: string;
-  /** Data coverage period */
+  /** Underlying dataset coverage period (always 2004–2025) */
   coveragePeriod: { from: number; to: number };
   /** Version of the stats generation methodology */
   methodologyVersion: string;
+  /** Attribution string for the data source */
   dataSource: string;
+  /** Annual statistics for each year in the coverage period */
   yearlyStats: YearlyStats[];
+  /** Per-category statistical rankings across years */
   categoryRankings: CategoryRanking[];
+  /** Predicted activity for future years (2026–2030) */
   predictions: PredictionYear[];
-  /** High-level analytical summary */
+  /** High-level analytical summary of trends and key findings */
   analysisSummary: {
+    /** Overall multi-year trend description */
     overallTrend: string;
+    /** Year with the highest total activity */
     peakActivityYear: number;
+    /** Year with the lowest total activity */
     lowestActivityYear: number;
+    /** Mean annual legislative output across all years */
     averageAnnualLegislativeOutput: number;
+    /** Long-term legislative productivity trend description */
     legislativeProductivityTrend: string;
+    /** Notable analytical findings */
     keyFindings: string[];
   };
 }

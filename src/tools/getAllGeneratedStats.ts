@@ -117,6 +117,10 @@ const CATEGORY_LABEL_MAP: Partial<Record<string, string>> = {
 
 type RankingEntry = typeof GENERATED_STATS.categoryRankings[number];
 
+/**
+ * Compute mean, standard deviation, and median from a numeric array.
+ * Used to recalculate ranking summary statistics for filtered year ranges.
+ */
 function computeStats(values: number[]): { mean: number; stdDev: number; median: number } {
   const n = values.length;
   const mean = values.reduce((s, v) => s + v, 0) / n;
@@ -134,6 +138,10 @@ function computeStats(values: number[]): { mean: number; stdDev: number; median:
   return { mean: Math.round(mean * 100) / 100, stdDev, median };
 }
 
+/**
+ * Recompute ranking summary fields (mean, stdDev, median, topYear, bottomYear)
+ * for a filtered year range. Re-sorts and re-ranks entries with fresh percentiles.
+ */
 function recomputeRankingSummary(
   r: RankingEntry,
   yearFrom: number,
@@ -173,6 +181,11 @@ function recomputeRankingSummary(
   };
 }
 
+/**
+ * Filter category rankings by the requested year range and optional category.
+ * Returns recomputed summary statistics for the filtered subset.
+ * `political_groups` has no numeric ranking and returns an empty array.
+ */
 function filterRankings(
   params: GetAllGeneratedStatsParams,
   yearFrom: number,
@@ -197,6 +210,13 @@ function filterRankings(
     .map(recompute);
 }
 
+/**
+ * Retrieve precomputed EP activity statistics with optional year/category filtering.
+ *
+ * The response always includes `coveragePeriod` (the full dataset range, 2004–2025)
+ * and `requestedPeriod` (the user-supplied year filter). The `analysisSummary` covers
+ * the full dataset with a `coverageNote` clarifying scope when filters narrow the range.
+ */
 export function getAllGeneratedStats(
   params: GetAllGeneratedStatsParams
 ): ToolResult {
