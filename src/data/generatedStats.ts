@@ -85,6 +85,213 @@ export interface PoliticalLandscapeData {
   politicalBalance: string;
 }
 
+// ── Multi-dimensional political compass ───────────────────────────
+// Three-axis classification system (Political Compass / Nolan Chart + EU axis):
+//   Axis 1 — Economic: Left (interventionist) ↔ Right (free-market)
+//   Axis 2 — Social:   Libertarian (personal freedom) ↔ Authoritarian (state control)
+//   Axis 3 — EU Integration: Pro-EU (federalist) ↔ Eurosceptic (sovereignty)
+//
+// Scores range 0–10. Economic: 0 = far-left, 10 = far-right.
+// Social: 0 = libertarian, 10 = authoritarian.
+// EU Integration: 0 = hard eurosceptic, 10 = federalist.
+// NI is excluded — no coherent ideological positioning.
+//
+// Classification based on Chapel Hill Expert Survey (CHES) methodology,
+// party manifesto analysis, and voting behaviour in the EP.
+
+/** Multi-axis ideological position for a political group. */
+interface GroupCompassPosition {
+  /** Economic axis: 0 = far-left (interventionist), 10 = far-right (free-market) */
+  economic: number;
+  /** Social axis: 0 = libertarian (civil liberties), 10 = authoritarian (state control) */
+  social: number;
+  /** EU integration axis: 0 = hard eurosceptic, 10 = federalist */
+  euIntegration: number;
+}
+
+/**
+ * Political compass positions by EP group name.
+ * Based on Chapel Hill Expert Survey (CHES) methodology with EP voting behaviour adjustments.
+ */
+const GROUP_COMPASS: Record<string, GroupCompassPosition> = {
+  // Radical left — anti-capitalist, civil liberties, EU-critical
+  'GUE/NGL':  { economic: 1.5, social: 3.0, euIntegration: 4.0 },
+  'The Left': { economic: 1.5, social: 3.0, euIntegration: 4.0 },
+  // Social democrats — centre-left economics, moderate social, pro-EU
+  'PES':      { economic: 3.5, social: 4.0, euIntegration: 7.5 },
+  'S&D':      { economic: 3.5, social: 4.0, euIntegration: 7.5 },
+  // Greens — left economics, most libertarian, strongly pro-EU
+  'Greens/EFA': { economic: 3.0, social: 2.0, euIntegration: 8.0 },
+  // Liberals — centre economics, libertarian on social, strongly pro-EU
+  'ALDE':     { economic: 6.0, social: 3.0, euIntegration: 8.5 },
+  'RE':       { economic: 6.0, social: 3.0, euIntegration: 8.5 },
+  // Christian democrats — centre-right, moderate authoritarian, pro-EU
+  'EPP':      { economic: 6.5, social: 5.5, euIntegration: 7.5 },
+  'EPP-ED':   { economic: 6.5, social: 5.5, euIntegration: 7.5 },
+  // Conservatives — right economics, socially conservative, EU-reform
+  'ECR':      { economic: 7.5, social: 7.0, euIntegration: 3.5 },
+  'UEN':      { economic: 7.0, social: 7.5, euIntegration: 3.0 },
+  // Eurosceptic populist — mixed economics, authoritarian, anti-EU
+  'IND/DEM':  { economic: 6.5, social: 7.0, euIntegration: 1.5 },
+  'EFD':      { economic: 7.0, social: 7.0, euIntegration: 1.5 },
+  'EFDD':     { economic: 7.0, social: 7.0, euIntegration: 1.5 },
+  // National-populist / far-right — protectionist economics, authoritarian, anti-EU
+  'ENF':      { economic: 5.5, social: 8.0, euIntegration: 1.0 },
+  'ID':       { economic: 5.5, social: 8.0, euIntegration: 1.0 },
+  'PfE':      { economic: 5.5, social: 8.0, euIntegration: 1.0 },
+  'ESN':      { economic: 5.0, social: 9.0, euIntegration: 0.5 },
+};
+
+/**
+ * Political compass quadrant (2D: economic × social axes).
+ *
+ * ```
+ *              LIBERTARIAN
+ *          ┌───────┬───────┐
+ *          │ Lib-  │ Lib-  │
+ *   LEFT   │ Left  │ Right │  RIGHT
+ * economic │       │       │ economic
+ *          ├───────┼───────┤
+ *          │ Auth- │ Auth- │
+ *          │ Left  │ Right │
+ *          └───────┴───────┘
+ *             AUTHORITARIAN
+ * ```
+ */
+export type PoliticalQuadrant =
+  | 'libertarianLeft'
+  | 'libertarianRight'
+  | 'authoritarianLeft'
+  | 'authoritarianRight';
+
+/** Seat share distribution across the 4 political compass quadrants. */
+export interface QuadrantDistribution {
+  /** Libertarian-Left: civil liberties + economic intervention (Greens, radical left) */
+  libertarianLeft: number;
+  /** Libertarian-Right: civil liberties + free market (liberals) */
+  libertarianRight: number;
+  /** Authoritarian-Left: state control + economic intervention (none currently in EP) */
+  authoritarianLeft: number;
+  /** Authoritarian-Right: state control + free market/nationalism (ECR, far-right) */
+  authoritarianRight: number;
+}
+
+/** Multi-dimensional political compass analysis for the European Parliament. */
+export interface PoliticalCompassAnalysis {
+  /** Seat-share-weighted economic position (0 = far-left, 10 = far-right) */
+  parliamentEconomicPosition: number;
+  /** Seat-share-weighted social position (0 = libertarian, 10 = authoritarian) */
+  parliamentSocialPosition: number;
+  /** Seat-share-weighted EU integration position (0 = eurosceptic, 10 = federalist) */
+  parliamentEuPosition: number;
+  /** Seat-share distribution across the four political compass quadrants (%) */
+  quadrantDistribution: QuadrantDistribution;
+  /** Dominant quadrant by seat share */
+  dominantQuadrant: PoliticalQuadrant;
+  /** Authoritarian-libertarian tension: stdDev of social axis scores weighted by seats */
+  authLibTension: number;
+  /** Economic left-right polarisation: stdDev of economic axis scores weighted by seats */
+  economicPolarisation: number;
+  /** EU integration consensus: stdDev of EU integration scores weighted by seats */
+  euIntegrationDispersion: number;
+}
+
+/** Combined political balance analysis: 1D blocs + 2D compass + EU axis. */
+export interface PoliticalBlocAnalysis {
+  // ── Traditional 1D left-right blocs ─────────────────────────────
+  /** Combined seat share of left-wing groups (S&D, GUE/NGL, Greens/EFA) */
+  leftBlocShare: number;
+  /** Combined seat share of centre/liberal groups (ALDE, RE) */
+  centreBlocShare: number;
+  /** Combined seat share of centre-right + right groups (EPP, ECR, UEN, far-right) */
+  rightBlocShare: number;
+  /** Combined seat share of far-right/eurosceptic groups (ID, PfE, ESN, etc.) */
+  euroscepticShare: number;
+  /** Bipolar index: (right - left) / (right + left); range -1 (left) to +1 (right) */
+  bipolarIndex: number;
+
+  // ── Multi-dimensional political compass ─────────────────────────
+  /** Three-axis political compass analysis (economic × social × EU integration) */
+  politicalCompass: PoliticalCompassAnalysis;
+}
+
+/** Derived OSINT intelligence metrics computed from raw EP activity data. */
+export interface DerivedIntelligenceMetrics {
+  // ── Legislative efficiency ──────────────────────────────────────
+  /** Legislative acts adopted per plenary session */
+  legislativeOutputPerSession: number;
+  /** Legislative acts adopted per MEP (per-capita productivity) */
+  legislativeOutputPerMEP: number;
+  /** Fraction of roll-call votes producing legislation (%) */
+  rollCallVoteYield: number;
+  /** Fraction of procedures resulting in adopted legislation (%) */
+  procedureCompletionRate: number;
+  /** Ratio of resolutions (non-binding) to legislative acts (binding) */
+  resolutionToLegislationRatio: number;
+  /** Documents produced per legislative act adopted */
+  documentBurdenPerAct: number;
+
+  // ── Parliamentary engagement ────────────────────────────────────
+  /** Parliamentary questions per MEP (oversight intensity) */
+  mepOversightIntensity: number;
+  /** Speeches per MEP (debate participation rate) */
+  mepSpeechRate: number;
+  /** Speeches per plenary session (debate intensity) */
+  debateIntensityPerSession: number;
+  /** Parliamentary questions per plenary session (oversight tempo) */
+  oversightPerSession: number;
+
+  // ── Political concentration ─────────────────────────────────────
+  /** Top-2 groups combined seat share (%) — grand coalition viability */
+  topTwoGroupsConcentration: number;
+  /** Top-3 groups combined seat share (%) — minimum viable coalition */
+  topThreeGroupsConcentration: number;
+  /** Herfindahl-Hirschman Index — standard market concentration metric */
+  herfindahlHirschmanIndex: number;
+  /** Largest group seat share / second-largest group seat share */
+  dominanceRatio: number;
+  /** Percentage points the largest group is from 50% majority */
+  majorityThresholdGap: number;
+  /** Fewest groups needed to form a majority (cumulative > 50%) */
+  minimumWinningCoalitionSize: number;
+  /** Top-2 groups combined seat share minus 50 (positive = surplus, negative = deficit) */
+  grandCoalitionSurplusDeficit: number;
+  /** Non-attached (NI) members seat share (%) — parliamentary marginalization */
+  nonAttachedShare: number;
+  /** Effective opposition parties: ENPP minus 1 */
+  effectiveOppositionParties: number;
+
+  // ── Left-right political balance ────────────────────────────────
+  /** Political bloc analysis with left/centre/right seat shares */
+  politicalBlocAnalysis: PoliticalBlocAnalysis;
+
+  // ── Institutional stability ─────────────────────────────────────
+  /** Stability index: 1 - (turnover / mepCount); below 0.5 = election year */
+  mepStabilityIndex: number;
+  /** Turnover rate as percentage of total MEPs */
+  turnoverRate: number;
+  /** Institutional memory risk classification */
+  institutionalMemoryRisk: 'HIGH' | 'MEDIUM' | 'LOW';
+  /** Declarations per MEP — transparency/accountability indicator */
+  declarationCoverageRatio: number;
+
+  // ── Year-over-year dynamics (null for the first year) ───────────
+  /** YoY percentage change in legislative acts adopted */
+  legislativeOutputChange: number | null;
+  /** YoY change in ENPP (fragmentation velocity) */
+  fragmentationVelocity: number | null;
+  /** YoY percentage change in parliamentary questions */
+  questionsChange: number | null;
+
+  // ── Composite indices ───────────────────────────────────────────
+  /** Parliamentary questions per legislative act (oversight vs. lawmaking) */
+  oversightToLegislationBalance: number;
+  /** Speeches per roll-call vote (debate intensity relative to decisions) */
+  speechToVoteRatio: number;
+  /** Committee meetings per plenary session (preparatory work depth) */
+  committeeToPlenaryRatio: number;
+}
+
 /** Aggregated annual statistics for a single calendar year of EP activity. */
 export interface YearlyStats {
   /** Calendar year (e.g. 2004) */
@@ -125,6 +332,8 @@ export interface YearlyStats {
   politicalLandscape: PoliticalLandscapeData;
   /** Notable events and key developments during the year */
   commentary: string;
+  /** OSINT-derived intelligence metrics computed from raw activity data */
+  derivedIntelligence: DerivedIntelligenceMetrics;
 }
 
 /** Ranked year entry within a category ranking. */
@@ -281,7 +490,7 @@ function distributeMetric(total: number): number[] {
   return base;
 }
 
-function distributeMonthly(annual: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape'>): MonthlyActivity[] {
+function distributeMonthly(annual: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | 'derivedIntelligence'>): MonthlyActivity[] {
   const metrics: Record<string, number[]> = {
     plenarySessions: distributeMetric(annual.plenarySessions),
     legislativeActsAdopted: distributeMetric(annual.legislativeActsAdopted),
@@ -321,7 +530,7 @@ function distributeMonthly(annual: Omit<YearlyStats, 'monthlyActivity' | 'politi
 // ── Raw annual data (EP6–EP10) ────────────────────────────────────
 // Based on European Parliament activity reports and open data portal records.
 
-const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape'>[] = [
+const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | 'derivedIntelligence'>[] = [
   { year: 2004, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 42, legislativeActsAdopted: 68, rollCallVotes: 356, committeeMeetings: 1820, parliamentaryQuestions: 4215, resolutions: 120, speeches: 8500, adoptedTexts: 85, procedures: 245, events: 310, documents: 2850, mepTurnover: 385, declarations: 580, commentary: 'EP6 began with the 2004 enlargement (10 new member states). Transition year with new MEPs, committee formation, and establishment of working relationships in an expanded Parliament of 25 member states.' },
   { year: 2005, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 48, legislativeActsAdopted: 82, rollCallVotes: 412, committeeMeetings: 2050, parliamentaryQuestions: 4580, resolutions: 145, speeches: 10200, adoptedTexts: 102, procedures: 312, events: 380, documents: 3420, mepTurnover: 42, declarations: 620, commentary: 'Full operational year of EP6. REACH chemicals regulation debate began. Constitutional Treaty rejected by French and Dutch referendums, impacting EU institutional dynamics.' },
   { year: 2006, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 50, legislativeActsAdopted: 95, rollCallVotes: 448, committeeMeetings: 2120, parliamentaryQuestions: 4780, resolutions: 158, speeches: 11500, adoptedTexts: 118, procedures: 348, events: 420, documents: 3680, mepTurnover: 38, declarations: 645, commentary: 'Services Directive (Bolkestein) adopted after significant amendments. Parliament asserted co-decision powers. Bulgaria and Romania accession preparations intensified.' },
@@ -366,13 +575,13 @@ const POLITICAL_LANDSCAPE: Record<number, PoliticalLandscapeData> = {
   2016: { groups: [{ name: 'EPP', seats: 216, seatShare: 28.8 }, { name: 'S&D', seats: 189, seatShare: 25.2 }, { name: 'ECR', seats: 74, seatShare: 9.9 }, { name: 'ALDE', seats: 69, seatShare: 9.2 }, { name: 'GUE/NGL', seats: 52, seatShare: 6.9 }, { name: 'Greens/EFA', seats: 50, seatShare: 6.7 }, { name: 'EFDD', seats: 44, seatShare: 5.9 }, { name: 'ENF', seats: 40, seatShare: 5.3 }, { name: 'NI', seats: 17, seatShare: 2.3 }], totalGroups: 8, largestGroup: 'EPP', largestGroupSeatShare: 28.8, fragmentationIndex: 5.52, grandCoalitionPossible: true, politicalBalance: 'Brexit referendum shock; EP united against UK departure; populist groups gained momentum' },
   2017: { groups: [{ name: 'EPP', seats: 217, seatShare: 28.9 }, { name: 'S&D', seats: 189, seatShare: 25.2 }, { name: 'ECR', seats: 73, seatShare: 9.7 }, { name: 'ALDE', seats: 68, seatShare: 9.1 }, { name: 'GUE/NGL', seats: 52, seatShare: 6.9 }, { name: 'Greens/EFA', seats: 51, seatShare: 6.8 }, { name: 'EFDD', seats: 42, seatShare: 5.6 }, { name: 'ENF', seats: 40, seatShare: 5.3 }, { name: 'NI', seats: 19, seatShare: 2.5 }], totalGroups: 8, largestGroup: 'EPP', largestGroupSeatShare: 28.9, fragmentationIndex: 5.49, grandCoalitionPossible: true, politicalBalance: 'Macron effect anticipated; mainstream parties cooperated on Article 50; eurosceptics faced internal divisions' },
   2018: { groups: [{ name: 'EPP', seats: 218, seatShare: 29.0 }, { name: 'S&D', seats: 187, seatShare: 24.9 }, { name: 'ECR', seats: 75, seatShare: 10.0 }, { name: 'ALDE', seats: 68, seatShare: 9.1 }, { name: 'GUE/NGL', seats: 52, seatShare: 6.9 }, { name: 'Greens/EFA', seats: 52, seatShare: 6.9 }, { name: 'EFDD', seats: 41, seatShare: 5.5 }, { name: 'ENF', seats: 37, seatShare: 4.9 }, { name: 'NI', seats: 21, seatShare: 2.8 }], totalGroups: 8, largestGroup: 'EPP', largestGroupSeatShare: 29.0, fragmentationIndex: 5.46, grandCoalitionPossible: true, politicalBalance: 'Pre-election jockeying; Copyright Directive showed cross-party divisions; green wave beginning' },
-  2019: { groups: [{ name: 'EPP', seats: 182, seatShare: 25.7 }, { name: 'S&D', seats: 154, seatShare: 21.7 }, { name: 'RE', seats: 108, seatShare: 15.2 }, { name: 'Greens/EFA', seats: 74, seatShare: 10.4 }, { name: 'ID', seats: 73, seatShare: 10.3 }, { name: 'ECR', seats: 62, seatShare: 8.7 }, { name: 'GUE/NGL', seats: 41, seatShare: 5.8 }, { name: 'NI', seats: 57, seatShare: 8.0 }], totalGroups: 7, largestGroup: 'EPP', largestGroupSeatShare: 25.7, fragmentationIndex: 5.89, grandCoalitionPossible: false, politicalBalance: 'EP9: Historic fragmentation. EPP+S&D lost majority for first time. Renew Europe (ex-ALDE) grew. ID (far-right) formed. Green surge. No two-party majority possible' },
-  2020: { groups: [{ name: 'EPP', seats: 187, seatShare: 26.5 }, { name: 'S&D', seats: 147, seatShare: 20.9 }, { name: 'RE', seats: 98, seatShare: 13.9 }, { name: 'Greens/EFA', seats: 67, seatShare: 9.5 }, { name: 'ID', seats: 76, seatShare: 10.8 }, { name: 'ECR', seats: 61, seatShare: 8.7 }, { name: 'GUE/NGL', seats: 39, seatShare: 5.5 }, { name: 'NI', seats: 30, seatShare: 4.3 }], totalGroups: 7, largestGroup: 'EPP', largestGroupSeatShare: 26.5, fragmentationIndex: 5.72, grandCoalitionPossible: false, politicalBalance: 'Post-Brexit: 73 UK MEPs departed. Parliament reduced to 705. EPP slightly strengthened proportionally. COVID united mainstream' },
-  2021: { groups: [{ name: 'EPP', seats: 177, seatShare: 25.1 }, { name: 'S&D', seats: 145, seatShare: 20.6 }, { name: 'RE', seats: 98, seatShare: 13.9 }, { name: 'ID', seats: 76, seatShare: 10.8 }, { name: 'Greens/EFA', seats: 73, seatShare: 10.4 }, { name: 'ECR', seats: 63, seatShare: 8.9 }, { name: 'GUE/NGL', seats: 39, seatShare: 5.5 }, { name: 'NI', seats: 34, seatShare: 4.8 }], totalGroups: 7, largestGroup: 'EPP', largestGroupSeatShare: 25.1, fragmentationIndex: 5.82, grandCoalitionPossible: false, politicalBalance: 'Conference on the Future of Europe created unusual cross-group cooperation; Green Deal legislation required broad coalitions' },
-  2022: { groups: [{ name: 'EPP', seats: 177, seatShare: 25.1 }, { name: 'S&D', seats: 145, seatShare: 20.6 }, { name: 'RE', seats: 101, seatShare: 14.3 }, { name: 'ID', seats: 62, seatShare: 8.8 }, { name: 'Greens/EFA', seats: 72, seatShare: 10.2 }, { name: 'ECR', seats: 66, seatShare: 9.4 }, { name: 'GUE/NGL', seats: 38, seatShare: 5.4 }, { name: 'NI', seats: 44, seatShare: 6.2 }], totalGroups: 7, largestGroup: 'EPP', largestGroupSeatShare: 25.1, fragmentationIndex: 5.84, grandCoalitionPossible: false, politicalBalance: 'Ukraine war united mainstream; ID weakened as some parties distanced from Russia; ECR gained from Fidesz joining' },
-  2023: { groups: [{ name: 'EPP', seats: 177, seatShare: 25.1 }, { name: 'S&D', seats: 142, seatShare: 20.1 }, { name: 'RE', seats: 101, seatShare: 14.3 }, { name: 'Greens/EFA', seats: 72, seatShare: 10.2 }, { name: 'ECR', seats: 68, seatShare: 9.6 }, { name: 'ID', seats: 62, seatShare: 8.8 }, { name: 'GUE/NGL', seats: 37, seatShare: 5.2 }, { name: 'NI', seats: 46, seatShare: 6.5 }], totalGroups: 7, largestGroup: 'EPP', largestGroupSeatShare: 25.1, fragmentationIndex: 5.82, grandCoalitionPossible: false, politicalBalance: 'Nature Restoration Law showed EPP willing to break with S&D on Green Deal; rightward pressure intensified pre-election' },
-  2024: { groups: [{ name: 'EPP', seats: 188, seatShare: 26.1 }, { name: 'S&D', seats: 136, seatShare: 18.9 }, { name: 'PfE', seats: 84, seatShare: 11.7 }, { name: 'ECR', seats: 78, seatShare: 10.8 }, { name: 'RE', seats: 77, seatShare: 10.7 }, { name: 'Greens/EFA', seats: 53, seatShare: 7.4 }, { name: 'GUE/NGL', seats: 46, seatShare: 6.4 }, { name: 'ESN', seats: 25, seatShare: 3.5 }, { name: 'NI', seats: 33, seatShare: 4.6 }], totalGroups: 8, largestGroup: 'EPP', largestGroupSeatShare: 26.1, fragmentationIndex: 6.12, grandCoalitionPossible: false, politicalBalance: 'EP10: Rightward shift. PfE (Patriots for Europe) replaced ID. ESN (Europe of Sovereign Nations) new far-right. ECR strengthened. Greens lost significantly' },
-  2025: { groups: [{ name: 'EPP', seats: 188, seatShare: 26.1 }, { name: 'S&D', seats: 136, seatShare: 18.9 }, { name: 'PfE', seats: 86, seatShare: 11.9 }, { name: 'ECR', seats: 78, seatShare: 10.8 }, { name: 'RE', seats: 77, seatShare: 10.7 }, { name: 'Greens/EFA', seats: 53, seatShare: 7.4 }, { name: 'GUE/NGL', seats: 46, seatShare: 6.4 }, { name: 'ESN', seats: 25, seatShare: 3.5 }, { name: 'NI', seats: 31, seatShare: 4.3 }], totalGroups: 8, largestGroup: 'EPP', largestGroupSeatShare: 26.1, fragmentationIndex: 6.14, grandCoalitionPossible: false, politicalBalance: 'EP10 settled: EPP seeking flexible majorities with ECR on defence/migration; Green Deal pace slowing; defence spending consensus building' },
+  2019: { groups: [{ name: 'EPP', seats: 182, seatShare: 24.2 }, { name: 'S&D', seats: 154, seatShare: 20.5 }, { name: 'RE', seats: 108, seatShare: 14.4 }, { name: 'Greens/EFA', seats: 74, seatShare: 9.9 }, { name: 'ID', seats: 73, seatShare: 9.7 }, { name: 'ECR', seats: 62, seatShare: 8.3 }, { name: 'GUE/NGL', seats: 41, seatShare: 5.5 }, { name: 'NI', seats: 57, seatShare: 7.6 }], totalGroups: 7, largestGroup: 'EPP', largestGroupSeatShare: 24.2, fragmentationIndex: 6.40, grandCoalitionPossible: false, politicalBalance: 'EP9: Historic fragmentation. EPP+S&D lost majority for first time. Renew Europe (ex-ALDE) grew. ID (far-right) formed. Green surge. No two-party majority possible' },
+  2020: { groups: [{ name: 'EPP', seats: 187, seatShare: 26.5 }, { name: 'S&D', seats: 147, seatShare: 20.9 }, { name: 'RE', seats: 98, seatShare: 13.9 }, { name: 'Greens/EFA', seats: 67, seatShare: 9.5 }, { name: 'ID', seats: 76, seatShare: 10.8 }, { name: 'ECR', seats: 61, seatShare: 8.7 }, { name: 'GUE/NGL', seats: 39, seatShare: 5.5 }, { name: 'NI', seats: 30, seatShare: 4.3 }], totalGroups: 7, largestGroup: 'EPP', largestGroupSeatShare: 26.5, fragmentationIndex: 6.01, grandCoalitionPossible: false, politicalBalance: 'Post-Brexit: 73 UK MEPs departed. Parliament reduced to 705. EPP slightly strengthened proportionally. COVID united mainstream' },
+  2021: { groups: [{ name: 'EPP', seats: 177, seatShare: 25.1 }, { name: 'S&D', seats: 145, seatShare: 20.6 }, { name: 'RE', seats: 98, seatShare: 13.9 }, { name: 'ID', seats: 76, seatShare: 10.8 }, { name: 'Greens/EFA', seats: 73, seatShare: 10.4 }, { name: 'ECR', seats: 63, seatShare: 8.9 }, { name: 'GUE/NGL', seats: 39, seatShare: 5.5 }, { name: 'NI', seats: 34, seatShare: 4.8 }], totalGroups: 7, largestGroup: 'EPP', largestGroupSeatShare: 25.1, fragmentationIndex: 6.23, grandCoalitionPossible: false, politicalBalance: 'Conference on the Future of Europe created unusual cross-group cooperation; Green Deal legislation required broad coalitions' },
+  2022: { groups: [{ name: 'EPP', seats: 177, seatShare: 25.1 }, { name: 'S&D', seats: 145, seatShare: 20.6 }, { name: 'RE', seats: 101, seatShare: 14.3 }, { name: 'ID', seats: 62, seatShare: 8.8 }, { name: 'Greens/EFA', seats: 72, seatShare: 10.2 }, { name: 'ECR', seats: 66, seatShare: 9.4 }, { name: 'GUE/NGL', seats: 38, seatShare: 5.4 }, { name: 'NI', seats: 44, seatShare: 6.2 }], totalGroups: 7, largestGroup: 'EPP', largestGroupSeatShare: 25.1, fragmentationIndex: 6.26, grandCoalitionPossible: false, politicalBalance: 'Ukraine war united mainstream; ID weakened as some parties distanced from Russia; ECR gained from Fidesz joining' },
+  2023: { groups: [{ name: 'EPP', seats: 177, seatShare: 25.1 }, { name: 'S&D', seats: 142, seatShare: 20.1 }, { name: 'RE', seats: 101, seatShare: 14.3 }, { name: 'Greens/EFA', seats: 72, seatShare: 10.2 }, { name: 'ECR', seats: 68, seatShare: 9.6 }, { name: 'ID', seats: 62, seatShare: 8.8 }, { name: 'GUE/NGL', seats: 37, seatShare: 5.2 }, { name: 'NI', seats: 46, seatShare: 6.5 }], totalGroups: 7, largestGroup: 'EPP', largestGroupSeatShare: 25.1, fragmentationIndex: 6.32, grandCoalitionPossible: false, politicalBalance: 'Nature Restoration Law showed EPP willing to break with S&D on Green Deal; rightward pressure intensified pre-election' },
+  2024: { groups: [{ name: 'EPP', seats: 188, seatShare: 26.1 }, { name: 'S&D', seats: 136, seatShare: 18.9 }, { name: 'PfE', seats: 84, seatShare: 11.7 }, { name: 'ECR', seats: 78, seatShare: 10.8 }, { name: 'RE', seats: 77, seatShare: 10.7 }, { name: 'Greens/EFA', seats: 53, seatShare: 7.4 }, { name: 'GUE/NGL', seats: 46, seatShare: 6.4 }, { name: 'ESN', seats: 25, seatShare: 3.5 }, { name: 'NI', seats: 33, seatShare: 4.6 }], totalGroups: 8, largestGroup: 'EPP', largestGroupSeatShare: 26.1, fragmentationIndex: 6.51, grandCoalitionPossible: false, politicalBalance: 'EP10: Rightward shift. PfE (Patriots for Europe) replaced ID. ESN (Europe of Sovereign Nations) new far-right. ECR strengthened. Greens lost significantly' },
+  2025: { groups: [{ name: 'EPP', seats: 188, seatShare: 26.1 }, { name: 'S&D', seats: 136, seatShare: 18.9 }, { name: 'PfE', seats: 86, seatShare: 11.9 }, { name: 'ECR', seats: 78, seatShare: 10.8 }, { name: 'RE', seats: 77, seatShare: 10.7 }, { name: 'Greens/EFA', seats: 53, seatShare: 7.4 }, { name: 'GUE/NGL', seats: 46, seatShare: 6.4 }, { name: 'ESN', seats: 25, seatShare: 3.5 }, { name: 'NI', seats: 31, seatShare: 4.3 }], totalGroups: 8, largestGroup: 'EPP', largestGroupSeatShare: 26.1, fragmentationIndex: 6.50, grandCoalitionPossible: false, politicalBalance: 'EP10 settled: EPP seeking flexible majorities with ECR on defence/migration; Green Deal pace slowing; defence spending consensus building' },
 };
 
 const DEFAULT_POLITICAL_LANDSCAPE: PoliticalLandscapeData = {
@@ -385,14 +594,329 @@ const DEFAULT_POLITICAL_LANDSCAPE: PoliticalLandscapeData = {
   politicalBalance: 'Data unavailable',
 };
 
+// ── Derived intelligence computation ──────────────────────────────
+// Computes OSINT-derived metrics from raw EP activity data and
+// political group composition. All metrics are derivable from the
+// existing annual counts + political landscape without API calls.
+
+/** Safe division: returns 0 when divisor is 0. */
+function safeDivide(numerator: number, denominator: number): number {
+  return denominator === 0 ? 0 : numerator / denominator;
+}
+
+/** Round to specified decimal places. */
+function roundTo(value: number, decimals: number): number {
+  const factor = 10 ** decimals;
+  return Math.round(value * factor) / factor;
+}
+
+/**
+ * Compute political bloc analysis from political group composition.
+ *
+ * Produces both the traditional 1D left-right bloc breakdown AND
+ * a multi-dimensional Political Compass analysis (economic × social
+ * axes + EU integration axis). Groups are classified using explicit
+ * membership sets for 1D blocs and GROUP_COMPASS for multi-axis analysis.
+ * NI members are excluded from bloc analysis.
+ */
+
+// Explicit group membership sets for traditional 1D left-centre-right classification.
+// These avoid misleading threshold-based misclassification (e.g. ID/PfE economic=5.5
+// falling into "centre" via threshold despite being far-right in political science terms).
+const LEFT_BLOC_GROUPS = new Set(['GUE/NGL', 'The Left', 'PES', 'S&D', 'Greens/EFA']);
+const CENTRE_BLOC_GROUPS = new Set(['ALDE', 'RE']);
+// Right bloc = all recognised groups not in left or centre (EPP, EPP-ED, ECR, UEN, + far-right)
+// Hard eurosceptic: groups with EU integration score < 2.0 in GROUP_COMPASS
+const HARD_EUROSCEPTIC_THRESHOLD = 2.0;
+
+function computePoliticalBlocAnalysis(groups: PoliticalGroupSnapshot[]): PoliticalBlocAnalysis {
+  // ── 1D traditional bloc shares ──────────────────────────────────
+  let leftShare = 0;    // GUE/NGL, The Left, PES, S&D, Greens/EFA
+  let centreShare = 0;  // ALDE, RE
+  let rightShare = 0;   // EPP, EPP-ED, ECR, UEN + far-right
+  let euroscepticShare = 0; // IND/DEM, EFD, EFDD, ENF, ID, PfE, ESN
+
+  for (const group of groups) {
+    if (group.name === 'NI') continue;
+    const compass = GROUP_COMPASS[group.name];
+    if (compass === undefined) continue;
+    // Explicit set-based 1D bloc assignment
+    if (LEFT_BLOC_GROUPS.has(group.name)) {
+      leftShare += group.seatShare;
+    } else if (CENTRE_BLOC_GROUPS.has(group.name)) {
+      centreShare += group.seatShare;
+    } else {
+      rightShare += group.seatShare;
+    }
+    // Hard eurosceptic: groups with EU integration score < 2.0
+    if (compass.euIntegration < HARD_EUROSCEPTIC_THRESHOLD) {
+      euroscepticShare += group.seatShare;
+    }
+  }
+
+  const bipolarTotal = roundTo(rightShare, 1) + roundTo(leftShare, 1);
+  const bipolarIndex = bipolarTotal === 0
+    ? 0
+    : roundTo((roundTo(rightShare, 1) - roundTo(leftShare, 1)) / bipolarTotal, 3);
+
+  return {
+    leftBlocShare: roundTo(leftShare, 1),
+    centreBlocShare: roundTo(centreShare, 1),
+    rightBlocShare: roundTo(rightShare, 1),
+    euroscepticShare: roundTo(euroscepticShare, 1),
+    bipolarIndex,
+    politicalCompass: computePoliticalCompass(groups),
+  };
+}
+
+/** Classified political group with compass position attached. */
+interface ClassifiedGroup {
+  name: string; seats: number; seatShare: number; compass: GroupCompassPosition;
+}
+
+/** Filter groups to those with known compass positions, excluding NI. */
+function classifyGroups(groups: PoliticalGroupSnapshot[]): ClassifiedGroup[] {
+  const result: ClassifiedGroup[] = [];
+  for (const g of groups) {
+    if (g.name === 'NI') continue;
+    const compass = GROUP_COMPASS[g.name];
+    if (compass !== undefined) {
+      result.push({ name: g.name, seats: g.seats, seatShare: g.seatShare, compass });
+    }
+  }
+  return result;
+}
+
+/** Compute quadrant seat share distribution from classified groups. */
+function computeQuadrantDistribution(classified: ClassifiedGroup[]): QuadrantDistribution {
+  let libLeft = 0;
+  let libRight = 0;
+  let authLeft = 0;
+  let authRight = 0;
+  for (const g of classified) {
+    const isLeft = g.compass.economic < 5.0;
+    const isLib = g.compass.social < 5.0;
+    if (isLib && isLeft) libLeft += g.seatShare;
+    else if (isLib) libRight += g.seatShare;
+    else if (isLeft) authLeft += g.seatShare;
+    else authRight += g.seatShare;
+  }
+  return {
+    libertarianLeft: roundTo(libLeft, 1),
+    libertarianRight: roundTo(libRight, 1),
+    authoritarianLeft: roundTo(authLeft, 1),
+    authoritarianRight: roundTo(authRight, 1),
+  };
+}
+
+/**
+ * Compute multi-dimensional Political Compass metrics from group composition.
+ * Produces seat-share-weighted positions on economic, social, and EU axes,
+ * quadrant distribution, polarisation indices, and dominant quadrant.
+ */
+function computePoliticalCompass(groups: PoliticalGroupSnapshot[]): PoliticalCompassAnalysis {
+  const classified = classifyGroups(groups);
+
+  const totalShare = classified.reduce((s, g) => s + g.seatShare, 0);
+  if (totalShare === 0) {
+    return {
+      parliamentEconomicPosition: 5, parliamentSocialPosition: 5,
+      parliamentEuPosition: 5,
+      quadrantDistribution: { libertarianLeft: 0, libertarianRight: 0, authoritarianLeft: 0, authoritarianRight: 0 },
+      dominantQuadrant: 'libertarianLeft', authLibTension: 0,
+      economicPolarisation: 0, euIntegrationDispersion: 0,
+    };
+  }
+
+  // Seat-share-weighted average positions
+  const wEcon = classified.reduce((s, g) => s + g.compass.economic * g.seatShare, 0) / totalShare;
+  const wSocial = classified.reduce((s, g) => s + g.compass.social * g.seatShare, 0) / totalShare;
+  const wEU = classified.reduce((s, g) => s + g.compass.euIntegration * g.seatShare, 0) / totalShare;
+
+  const quadrantDistribution = computeQuadrantDistribution(classified);
+
+  // Determine dominant quadrant
+  const quadrants: { key: PoliticalQuadrant; value: number }[] = [
+    { key: 'libertarianLeft', value: quadrantDistribution.libertarianLeft },
+    { key: 'libertarianRight', value: quadrantDistribution.libertarianRight },
+    { key: 'authoritarianLeft', value: quadrantDistribution.authoritarianLeft },
+    { key: 'authoritarianRight', value: quadrantDistribution.authoritarianRight },
+  ];
+  const dominantQuadrant = quadrants.reduce((best, q) =>
+    q.value > best.value ? q : best
+  ).key;
+
+  // Weighted standard deviations (polarisation/tension measures)
+  const wVarEcon = classified.reduce((s, g) =>
+    s + g.seatShare * (g.compass.economic - wEcon) ** 2, 0
+  ) / totalShare;
+  const wVarSocial = classified.reduce((s, g) =>
+    s + g.seatShare * (g.compass.social - wSocial) ** 2, 0
+  ) / totalShare;
+  const wVarEU = classified.reduce((s, g) =>
+    s + g.seatShare * (g.compass.euIntegration - wEU) ** 2, 0
+  ) / totalShare;
+
+  return {
+    parliamentEconomicPosition: roundTo(wEcon, 2),
+    parliamentSocialPosition: roundTo(wSocial, 2),
+    parliamentEuPosition: roundTo(wEU, 2),
+    quadrantDistribution,
+    dominantQuadrant,
+    authLibTension: roundTo(Math.sqrt(wVarSocial), 2),
+    economicPolarisation: roundTo(Math.sqrt(wVarEcon), 2),
+    euIntegrationDispersion: roundTo(Math.sqrt(wVarEU), 2),
+  };
+}
+
+/** Raw annual data type before computed fields are added. */
+type RawYearlyData = Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | 'derivedIntelligence'>;
+
+/** Count the fewest groups needed to reach a majority (cumulative > 50%). */
+function computeMinimumWinningCoalition(sorted: PoliticalGroupSnapshot[]): number {
+  let cumulative = 0;
+  let count = 0;
+  for (const g of sorted) {
+    if (g.name === 'NI') continue;
+    cumulative += g.seatShare;
+    count++;
+    if (cumulative > 50) break;
+  }
+  return count;
+}
+
+/** Get seat share at a given rank position (0-indexed), defaulting to 0. */
+function shareAtRank(sorted: PoliticalGroupSnapshot[], rank: number): number {
+  return sorted[rank]?.seatShare ?? 0;
+}
+
+/** Compute political concentration metrics from group composition. */
+function computeConcentrationMetrics(landscape: PoliticalLandscapeData): {
+  topTwoGroupsConcentration: number; topThreeGroupsConcentration: number;
+  herfindahlHirschmanIndex: number; dominanceRatio: number;
+  majorityThresholdGap: number; minimumWinningCoalitionSize: number;
+  grandCoalitionSurplusDeficit: number; nonAttachedShare: number;
+  effectiveOppositionParties: number;
+} {
+  const groups = landscape.groups;
+  // Recognised political groups exclude non-attached members (NI) from concentration metrics
+  const recognisedGroups = groups.filter((g) => g.name !== 'NI');
+  const sortedRecognised = [...recognisedGroups].sort((a, b) => b.seatShare - a.seatShare);
+  const top2 = shareAtRank(sortedRecognised, 0) + shareAtRank(sortedRecognised, 1);
+  // HHI uses all groups (including NI) as it measures system-wide market concentration
+  const hhi = roundTo(groups.reduce((s, g) => s + (g.seatShare / 100) ** 2, 0), 4);
+  const ni = groups.find((g) => g.name === 'NI');
+  return {
+    topTwoGroupsConcentration: roundTo(top2, 1),
+    topThreeGroupsConcentration: roundTo(top2 + shareAtRank(sortedRecognised, 2), 1),
+    herfindahlHirschmanIndex: hhi,
+    dominanceRatio: roundTo(
+      safeDivide(landscape.largestGroupSeatShare, shareAtRank(sortedRecognised, 1)),
+      2,
+    ),
+    majorityThresholdGap: roundTo(50 - landscape.largestGroupSeatShare, 1),
+    minimumWinningCoalitionSize: computeMinimumWinningCoalition(sortedRecognised),
+    grandCoalitionSurplusDeficit: roundTo(top2 - 50, 1),
+    nonAttachedShare: ni?.seatShare ?? 0,
+    effectiveOppositionParties: roundTo(landscape.fragmentationIndex - 1, 2),
+  };
+}
+
+/** Classify institutional memory risk based on MEP turnover rate. */
+function classifyMemoryRisk(turnoverRate: number): 'HIGH' | 'MEDIUM' | 'LOW' {
+  if (turnoverRate > 40) return 'HIGH';
+  if (turnoverRate > 20) return 'MEDIUM';
+  return 'LOW';
+}
+
+/** Compute year-over-year dynamics (returns nulls for first year). */
+function computeYoYDynamics(
+  y: RawYearlyData,
+  landscape: PoliticalLandscapeData,
+  prevYear: RawYearlyData | null,
+  prevLandscape: PoliticalLandscapeData | null,
+): { legislativeOutputChange: number | null; fragmentationVelocity: number | null; questionsChange: number | null } {
+  if (prevYear === null || prevLandscape === null) {
+    return { legislativeOutputChange: null, fragmentationVelocity: null, questionsChange: null };
+  }
+  return {
+    legislativeOutputChange: roundTo(
+      safeDivide(y.legislativeActsAdopted - prevYear.legislativeActsAdopted, prevYear.legislativeActsAdopted) * 100, 1,
+    ),
+    fragmentationVelocity: roundTo(landscape.fragmentationIndex - prevLandscape.fragmentationIndex, 2),
+    questionsChange: roundTo(
+      safeDivide(y.parliamentaryQuestions - prevYear.parliamentaryQuestions, prevYear.parliamentaryQuestions) * 100, 1,
+    ),
+  };
+}
+
+/**
+ * Compute all derived intelligence metrics for a single year.
+ *
+ * @param y - Raw annual activity data
+ * @param landscape - Political landscape data for the year
+ * @param prevYear - Previous year's data (null for the first year in the series)
+ * @param prevLandscape - Previous year's political landscape (null for the first year)
+ */
+function computeDerivedIntelligence(
+  y: RawYearlyData,
+  landscape: PoliticalLandscapeData,
+  prevYear: RawYearlyData | null,
+  prevLandscape: PoliticalLandscapeData | null,
+): DerivedIntelligenceMetrics {
+  const turnoverRate = roundTo(safeDivide(y.mepTurnover, y.mepCount) * 100, 1);
+  const concentration = computeConcentrationMetrics(landscape);
+  const yoy = computeYoYDynamics(y, landscape, prevYear, prevLandscape);
+
+  return {
+    // Legislative efficiency
+    legislativeOutputPerSession: roundTo(safeDivide(y.legislativeActsAdopted, y.plenarySessions), 2),
+    legislativeOutputPerMEP: roundTo(safeDivide(y.legislativeActsAdopted, y.mepCount), 3),
+    rollCallVoteYield: roundTo(safeDivide(y.legislativeActsAdopted, y.rollCallVotes) * 100, 1),
+    procedureCompletionRate: roundTo(safeDivide(y.legislativeActsAdopted, y.procedures) * 100, 1),
+    resolutionToLegislationRatio: roundTo(safeDivide(y.resolutions, y.legislativeActsAdopted), 2),
+    documentBurdenPerAct: roundTo(safeDivide(y.documents, y.legislativeActsAdopted), 1),
+    // Parliamentary engagement
+    mepOversightIntensity: roundTo(safeDivide(y.parliamentaryQuestions, y.mepCount), 2),
+    mepSpeechRate: roundTo(safeDivide(y.speeches, y.mepCount), 1),
+    debateIntensityPerSession: roundTo(safeDivide(y.speeches, y.plenarySessions), 1),
+    oversightPerSession: roundTo(safeDivide(y.parliamentaryQuestions, y.plenarySessions), 1),
+    // Political concentration
+    ...concentration,
+    // Political bloc analysis
+    politicalBlocAnalysis: computePoliticalBlocAnalysis(landscape.groups),
+    // Institutional stability
+    mepStabilityIndex: roundTo(1 - safeDivide(y.mepTurnover, y.mepCount), 3),
+    turnoverRate,
+    institutionalMemoryRisk: classifyMemoryRisk(turnoverRate),
+    declarationCoverageRatio: roundTo(safeDivide(y.declarations, y.mepCount), 2),
+    // Year-over-year dynamics
+    legislativeOutputChange: yoy.legislativeOutputChange,
+    fragmentationVelocity: yoy.fragmentationVelocity,
+    questionsChange: yoy.questionsChange,
+    // Composite indices
+    oversightToLegislationBalance: roundTo(safeDivide(y.parliamentaryQuestions, y.legislativeActsAdopted), 1),
+    speechToVoteRatio: roundTo(safeDivide(y.speeches, y.rollCallVotes), 1),
+    committeeToPlenaryRatio: roundTo(safeDivide(y.committeeMeetings, y.plenarySessions), 1),
+  };
+}
+
 // ── Build complete stats ──────────────────────────────────────────
 
 function buildYearlyStats(): YearlyStats[] {
-  return RAW_YEARLY.map((y) => ({
-    ...y,
-    monthlyActivity: distributeMonthly(y),
-    politicalLandscape: POLITICAL_LANDSCAPE[y.year] ?? DEFAULT_POLITICAL_LANDSCAPE,
-  }));
+  return RAW_YEARLY.map((y, idx) => {
+    const landscape = POLITICAL_LANDSCAPE[y.year] ?? DEFAULT_POLITICAL_LANDSCAPE;
+    const prevRaw = idx > 0 ? (RAW_YEARLY[idx - 1] ?? null) : null;
+    const prevLandscape = prevRaw !== null
+      ? (POLITICAL_LANDSCAPE[prevRaw.year] ?? null)
+      : null;
+    return {
+      ...y,
+      monthlyActivity: distributeMonthly(y),
+      politicalLandscape: landscape,
+      derivedIntelligence: computeDerivedIntelligence(y, landscape, prevRaw, prevLandscape),
+    };
+  });
 }
 
 // ── Ranking & percentile computation ──────────────────────────────
@@ -512,6 +1036,91 @@ function buildPredictions(): PredictionYear[] {
 
 // ── Analysis summary ──────────────────────────────────────────────
 
+/**
+ * Find the largest year-over-year increase in eurosceptic share.
+ * Returns the start/end year of the largest surge, or null if none.
+ */
+function findLargestEuroscepticSurge(
+  yearly: YearlyStats[],
+): { startYear: number; endYear: number } | null {
+  let maxSurge = 0;
+  let surgeStartYear = 0;
+  let surgeEndYear = 0;
+  for (let i = 1; i < yearly.length; i++) {
+    const prev = yearly[i - 1];
+    const curr = yearly[i];
+    if (prev && curr) {
+      const delta =
+        curr.derivedIntelligence.politicalBlocAnalysis.euroscepticShare -
+        prev.derivedIntelligence.politicalBlocAnalysis.euroscepticShare;
+      if (delta > maxSurge) {
+        maxSurge = delta;
+        surgeStartYear = prev.year;
+        surgeEndYear = curr.year;
+      }
+    }
+  }
+  return maxSurge > 0 ? { startYear: surgeStartYear, endYear: surgeEndYear } : null;
+}
+
+/**
+ * Build additional key findings from the derived intelligence metrics.
+ * These findings are based on OSINT-derived political concentration,
+ * legislative efficiency, and institutional stability metrics.
+ */
+function buildDerivedKeyFindings(yearly: YearlyStats[]): string[] {
+  const findings: string[] = [];
+
+  const first = yearly[0];
+  const last = yearly[yearly.length - 1];
+  if (first && last) {
+    const firstDI = first.derivedIntelligence;
+    const lastDI = last.derivedIntelligence;
+
+    // Top-2 concentration structural shift
+    const cr2ThresholdCrossingYear = yearly.find(
+      (y) => y.derivedIntelligence.topTwoGroupsConcentration < 50,
+    )?.year;
+    const cr2ThresholdText = cr2ThresholdCrossingYear !== undefined
+      ? `, crossing the 50% majority threshold in ${String(cr2ThresholdCrossingYear)}`
+      : '';
+    findings.push(
+      `OSINT: Top-2 group concentration (CR₂) fell from ${String(firstDI.topTwoGroupsConcentration)}% (${String(first.year)}) to ${String(lastDI.topTwoGroupsConcentration)}% (${String(last.year)})${cr2ThresholdText}—a structural regime change requiring 3+ groups for every legislative majority.`,
+    );
+
+    // Minimum winning coalition
+    findings.push(
+      `OSINT: Minimum winning coalition size increased from ${String(firstDI.minimumWinningCoalitionSize)} groups (${String(first.year)}) to ${String(lastDI.minimumWinningCoalitionSize)} groups (${String(last.year)}), increasing legislative negotiation complexity.`,
+    );
+
+    // MEP oversight intensity
+    findings.push(
+      `OSINT: MEP oversight intensity rose from ${String(firstDI.mepOversightIntensity)} to ${String(lastDI.mepOversightIntensity)} questions per MEP, indicating structurally stronger Commission scrutiny.`,
+    );
+
+    // Political balance shift
+    findings.push(
+      `OSINT: Bipolar index shifted from ${String(firstDI.politicalBlocAnalysis.bipolarIndex)} (${String(first.year)}) to ${String(lastDI.politicalBlocAnalysis.bipolarIndex)} (${String(last.year)}), reflecting a ${lastDI.politicalBlocAnalysis.bipolarIndex > firstDI.politicalBlocAnalysis.bipolarIndex ? 'rightward' : 'leftward'} political rebalancing.`,
+    );
+
+    // Eurosceptic share trend
+    const surge = findLargestEuroscepticSurge(yearly);
+    const surgeText = surge !== null
+      ? `, with the most significant surge in ${String(surge.startYear)}-${String(surge.endYear)}`
+      : '';
+    findings.push(
+      `OSINT: Eurosceptic/far-right seat share grew from ${String(firstDI.politicalBlocAnalysis.euroscepticShare)}% (${String(first.year)}) to ${String(lastDI.politicalBlocAnalysis.euroscepticShare)}% (${String(last.year)})${surgeText}.`,
+    );
+
+    // HHI
+    findings.push(
+      `OSINT: Herfindahl-Hirschman Index fell from ${String(firstDI.herfindahlHirschmanIndex)} to ${String(lastDI.herfindahlHirschmanIndex)}, confirming deconcentration from a near-duopoly to a multi-polar party system.`,
+    );
+  }
+
+  return findings;
+}
+
 function buildAnalysisSummary(yearly: YearlyStats[]): GeneratedStatsData['analysisSummary'] {
   const actsPerYear = yearly.map((y) => y.legislativeActsAdopted);
   const avgActs = Math.round(actsPerYear.reduce((s, v) => s + v, 0) / actsPerYear.length);
@@ -549,9 +1158,10 @@ function buildAnalysisSummary(yearly: YearlyStats[]): GeneratedStatsData['analys
       'EP10 shows a rightward political shift with implications for legislative priorities in defence, migration, and industrial policy.',
       'Committee meeting frequency has increased 30% from EP6 to EP9, reflecting growing legislative complexity.',
       'Roll-call vote counts correlate strongly (r=0.94) with legislative acts adopted, indicating consistent parliamentary discipline.',
-      'Parliamentary fragmentation has steadily increased: Effective Number of Parties rose from 4.12 (2004) to 6.14 (2025), reflecting the decline of the traditional EPP-S&D grand coalition.',
+      'Parliamentary fragmentation has steadily increased: Effective Number of Parties rose from 4.12 (2004) to 6.50 (2025), reflecting the decline of the traditional EPP-S&D grand coalition.',
       'Since 2019 (EP9), no two-party majority has been possible, requiring broader multi-group coalitions for legislation.',
       'Speech counts track legislative intensity, peaking during end-of-term legislative pushes (2013, 2018, 2023).',
+      ...buildDerivedKeyFindings(yearly),
     ],
   };
 }
@@ -564,9 +1174,9 @@ const predictions = buildPredictions();
 const analysisSummary = buildAnalysisSummary(yearlyStats);
 
 export const GENERATED_STATS: GeneratedStatsData = {
-  generatedAt: '2025-02-28T00:00:00Z',
+  generatedAt: '2025-06-01T00:00:00Z',
   coveragePeriod: { from: 2004, to: 2025 },
-  methodologyVersion: '1.0.0',
+  methodologyVersion: '2.0.0',
   dataSource: 'European Parliament Open Data Portal — data.europarl.europa.eu',
   yearlyStats,
   categoryRankings,

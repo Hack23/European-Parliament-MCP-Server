@@ -1,0 +1,69 @@
+# Refresh European Parliament Statistics
+#
+# Validates the static data in src/data/generatedStats.ts against the live
+# European Parliament Open Data Portal API. Runs weekly or on demand.
+#
+# ISMS Policy: AU-002 (Audit Logging), SC-002 (Input Validation)
+# Data source: European Parliament Open Data Portal — data.europarl.europa.eu
+
+name: Refresh EP Stats
+
+on:
+  schedule:
+    # Every Monday at 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      year:
+        description: 'Year to validate (leave empty for latest covered year, "all" for all years)'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate-stats:
+    name: Validate EP Statistics
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b # v2.15.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run stats validation
+        run: |
+          INPUT_YEAR="${STATS_YEAR}"
+          ARGS=""
+          if [ "${INPUT_YEAR}" = "all" ]; then
+            ARGS="--all"
+          elif [ -n "${INPUT_YEAR}" ]; then
+            if [[ "${INPUT_YEAR}" =~ ^[0-9]{4}$ ]]; then
+              ARGS="--year ${INPUT_YEAR}"
+            else
+              echo "Error: Invalid year input '${INPUT_YEAR}'. Must be 'all' or a 4-digit year (e.g. 2024)." >&2
+              exit 1
+            fi
+          fi
+          npx tsx scripts/generate-stats.ts $ARGS
+        env:
+          NODE_ENV: production
+          STATS_YEAR: ${{ github.event.inputs.year }}
+
+      - name: Run data integrity tests
+        run: npx vitest run src/data/generatedStats.test.ts --reporter=verbose
