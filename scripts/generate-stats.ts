@@ -651,29 +651,48 @@ const METRIC_TO_FIELD: Record<string, string> = {
 };
 
 /**
- * Update a single numeric field value in a RAW_YEARLY entry line.
- * Matches patterns like `fieldName: 123` and replaces the number.
+ * Minimum credibility threshold for API values.
+ *
+ * The EP Open Data API has incomplete historical data for certain
+ * endpoints (e.g. adopted-texts returns 1–2 items for years before 2014).
+ * When the API returns a value below this threshold AND the stored value
+ * is substantially higher, the API value is treated as unreliable and
+ * the stored value is preserved.
  */
-function replaceFieldInLine(line: string, field: string, newValue: number): string {
-  const pattern = new RegExp(`(${field}:\\s*)\\d+`);
-  return line.replace(pattern, `$1${String(newValue)}`);
+const MIN_CREDIBLE_VALUE = 10;
+
+/**
+ * Check whether an API value is credible enough to overwrite the stored value.
+ *
+ * Returns false when the API clearly returned incomplete data:
+ * - API value is below the credibility threshold, AND
+ * - stored value is much larger (> 5× the API value)
+ *
+ * This protects curated historical estimates from being overwritten by
+ * incomplete EP API data while still allowing genuine corrections.
+ */
+function isCredibleApiValue(apiValue: number, storedValue: number): boolean {
+  if (apiValue >= MIN_CREDIBLE_VALUE) return true;
+  // API returned a tiny value — only trust it if stored is also small
+  return storedValue <= apiValue * 5;
 }
 
 /**
  * Write API-verified values back into `src/data/generatedStats.ts`.
  *
  * For each year's validation results, updates the numeric fields in the
- * `RAW_YEARLY` array where the API returned a valid (non-null) count.
+ * `RAW_YEARLY` array where the API returned a valid, credible count.
  * Also updates the `generatedAt` timestamp.
  *
  * Only updates fields where:
  * - The API returned a valid value (not null/API_ERROR)
+ * - The API value passes the credibility check (not obviously incomplete)
  * - The field is in the set of API-verifiable fields
  */
 function updateStatsFile(
   yearValidations: YearValidation[],
   latestCoveredYear: number
-): { updatedFields: number; updatedFile: boolean } {
+): { updatedFields: number; skippedFields: number; updatedFile: boolean } {
   const statsFilePath = path.resolve(
     import.meta.dirname ?? path.dirname(new URL(import.meta.url).pathname),
     '../src/data/generatedStats.ts'
@@ -682,6 +701,7 @@ function updateStatsFile(
   let content = fs.readFileSync(statsFilePath, 'utf-8');
   const originalContent = content;
   let updatedFields = 0;
+  let skippedFields = 0;
 
   for (const yv of yearValidations) {
     for (const comparison of yv.comparisons) {
@@ -693,7 +713,7 @@ function updateStatsFile(
 
       // Only update latest-year-only fields for the latest year
       if (
-        (latest_year_field(field)) &&
+        (isLatestYearField(field)) &&
         yv.year !== latestCoveredYear
       ) {
         continue;
@@ -701,6 +721,15 @@ function updateStatsFile(
 
       // Only update if value actually changed
       if (comparison.apiValue === comparison.storedValue) continue;
+
+      // Credibility check: skip obviously incomplete API data
+      if (!isCredibleApiValue(comparison.apiValue, comparison.storedValue)) {
+        skippedFields++;
+        console.log(
+          `  ${DIM}⊘ Skipped ${String(yv.year)}.${field}: API=${String(comparison.apiValue)} looks incomplete (stored=${String(comparison.storedValue)})${RESET}`
+        );
+        continue;
+      }
 
       // Find the RAW_YEARLY line for this year and update the field.
       // Each entry starts with `  { year: YYYY,` on a single line.
@@ -728,16 +757,20 @@ function updateStatsFile(
       `generatedAt: '${now}'`
     );
     fs.writeFileSync(statsFilePath, content, 'utf-8');
-    console.log(`\n  ${GREEN}✓${RESET} Updated generatedStats.ts (${String(updatedFields)} field(s), generatedAt: ${now})`);
-    return { updatedFields, updatedFile: true };
+    console.log(`\n  ${GREEN}✓${RESET} Updated generatedStats.ts (${String(updatedFields)} field(s) updated, ${String(skippedFields)} skipped as unreliable, generatedAt: ${now})`);
+    return { updatedFields, skippedFields, updatedFile: true };
   }
 
-  console.log(`\n  ${DIM}No updates needed — stored values match API data.${RESET}`);
-  return { updatedFields: 0, updatedFile: false };
+  if (skippedFields > 0) {
+    console.log(`\n  ${DIM}No credible updates — ${String(skippedFields)} field(s) skipped as unreliable API data.${RESET}`);
+  } else {
+    console.log(`\n  ${DIM}No updates needed — stored values match API data.${RESET}`);
+  }
+  return { updatedFields: 0, skippedFields, updatedFile: false };
 }
 
 /** Check if a field is latest-year-only. */
-function latest_year_field(field: string): boolean {
+function isLatestYearField(field: string): boolean {
   return (LATEST_YEAR_FIELDS as readonly string[]).includes(field);
 }
 
