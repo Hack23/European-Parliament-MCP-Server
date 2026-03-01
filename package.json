@@ -30,6 +30,8 @@
     "clean": "rm -rf dist coverage builds",
     "verify-package": "npm run build && npx tsx scripts/verify-package.ts",
     "test-mcp": "npx tsx scripts/test-mcp-server.ts",
+    "generate:stats": "npx tsx scripts/generate-stats.ts",
+    "generate:stats:all": "npx tsx scripts/generate-stats.ts --all",
     "prepublishOnly": "npm run lint && npm run knip && npm run test:unit && npm run build",
     "prepack": "npm run build",
     "docs": "typedoc",

@@ -1,0 +1,62 @@
+# Refresh European Parliament Statistics
+#
+# Validates the static data in src/data/generatedStats.ts against the live
+# European Parliament Open Data Portal API. Runs weekly or on demand.
+#
+# ISMS Policy: AU-002 (Audit Logging), SC-002 (Input Validation)
+# Data source: European Parliament Open Data Portal — data.europarl.europa.eu
+
+name: Refresh EP Stats
+
+on:
+  schedule:
+    # Every Monday at 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      year:
+        description: 'Year to validate (leave empty for current year, "all" for all years)'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate-stats:
+    name: Validate EP Statistics
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run stats validation
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.year }}" = "all" ]; then
+            ARGS="--all"
+          elif [ -n "${{ github.event.inputs.year }}" ]; then
+            ARGS="--year ${{ github.event.inputs.year }}"
+          fi
+          npx tsx scripts/generate-stats.ts $ARGS
+        env:
+          NODE_ENV: production
+
+      - name: Run data integrity tests
+        run: npx vitest run src/data/generatedStats.test.ts --reporter=verbose

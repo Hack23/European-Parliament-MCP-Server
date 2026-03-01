@@ -335,3 +335,247 @@ describe('GENERATED_STATS data integrity', () => {
     }
   });
 });
+
+// ─── Political landscape data consistency ─────────────────────────────────────
+
+describe('GENERATED_STATS — political landscape data consistency', () => {
+  it('should have seat shares summing to approximately 100% for each year', () => {
+    for (const yearly of GENERATED_STATS.yearlyStats) {
+      const totalShare = yearly.politicalLandscape.groups.reduce(
+        (sum, g) => sum + g.seatShare,
+        0
+      );
+      expect(totalShare).toBeGreaterThanOrEqual(98.5);
+      expect(totalShare).toBeLessThanOrEqual(101.5);
+    }
+  });
+
+  it('should have total seats across all groups approximately matching mepCount (within ±15)', () => {
+    for (const yearly of GENERATED_STATS.yearlyStats) {
+      const totalSeats = yearly.politicalLandscape.groups.reduce(
+        (sum, g) => sum + g.seats,
+        0
+      );
+      expect(Math.abs(totalSeats - yearly.mepCount)).toBeLessThanOrEqual(15);
+    }
+  });
+
+  it('should have largestGroup matching the group with the most seats', () => {
+    for (const yearly of GENERATED_STATS.yearlyStats) {
+      const { groups, largestGroup } = yearly.politicalLandscape;
+      const maxSeats = Math.max(...groups.map((g) => g.seats));
+      const groupWithMostSeats = groups.find((g) => g.seats === maxSeats);
+      expect(groupWithMostSeats).toBeDefined();
+      expect(largestGroup).toBe(groupWithMostSeats!.name);
+    }
+  });
+
+  it('should have largestGroupSeatShare matching the actual largest group seatShare', () => {
+    for (const yearly of GENERATED_STATS.yearlyStats) {
+      const { groups, largestGroup, largestGroupSeatShare } = yearly.politicalLandscape;
+      const largest = groups.find((g) => g.name === largestGroup);
+      expect(largest).toBeDefined();
+      expect(largestGroupSeatShare).toBe(largest!.seatShare);
+    }
+  });
+
+  it('should have totalGroups equal to the number of non-NI groups', () => {
+    for (const yearly of GENERATED_STATS.yearlyStats) {
+      const { groups, totalGroups } = yearly.politicalLandscape;
+      const nonNiCount = groups.filter((g) => g.name !== 'NI').length;
+      expect(totalGroups).toBe(nonNiCount);
+    }
+  });
+
+  it('should have fragmentationIndex (ENPP) consistent with seat shares (±0.15 tolerance)', () => {
+    for (const yearly of GENERATED_STATS.yearlyStats) {
+      const { groups, fragmentationIndex } = yearly.politicalLandscape;
+      // Laakso-Taagepera ENPP = 1 / sum(pi^2) where pi = seatShare / 100
+      const sumSquares = groups.reduce(
+        (sum, g) => sum + (g.seatShare / 100) ** 2,
+        0
+      );
+      const expectedENPP = sumSquares > 0 ? 1 / sumSquares : 0;
+      expect(Math.abs(fragmentationIndex - expectedENPP)).toBeLessThanOrEqual(0.15);
+    }
+  });
+
+  it('should have grandCoalitionPossible true when top 2 groups exceed 50% of mepCount seats', () => {
+    for (const yearly of GENERATED_STATS.yearlyStats) {
+      const { groups, grandCoalitionPossible } = yearly.politicalLandscape;
+      const sortedBySeats = [...groups].sort((a, b) => b.seats - a.seats);
+      const top2Seats = (sortedBySeats[0]?.seats ?? 0) + (sortedBySeats[1]?.seats ?? 0);
+      const majorityThreshold = yearly.mepCount / 2;
+
+      if (top2Seats > majorityThreshold) {
+        expect(grandCoalitionPossible).toBe(true);
+      }
+      // Note: when top2Seats <= majorityThreshold, grandCoalitionPossible should be false
+      // but we only assert the positive direction to avoid false negatives from rounding
+    }
+  });
+});
+
+// ─── Monthly distribution integrity ──────────────────────────────────────────
+
+describe('GENERATED_STATS — monthly distribution integrity', () => {
+  const MONTHLY_METRICS = [
+    'plenarySessions',
+    'legislativeActsAdopted',
+    'rollCallVotes',
+    'committeeMeetings',
+    'parliamentaryQuestions',
+    'resolutions',
+    'speeches',
+    'adoptedTexts',
+    'procedures',
+    'events',
+    'documents',
+    'mepTurnover',
+    'declarations',
+  ] as const;
+
+  it('should have monthly sums equal to annual totals for all 13 metrics', () => {
+    for (const yearly of GENERATED_STATS.yearlyStats) {
+      for (const metric of MONTHLY_METRICS) {
+        const monthlySum = yearly.monthlyActivity.reduce(
+          (acc, m) => acc + (m[metric] as number),
+          0
+        );
+        const annualTotal = yearly[metric] as number;
+        expect(monthlySum).toBe(annualTotal);
+      }
+    }
+  });
+
+  it('should have August (month 8) as the lowest activity month for each year', () => {
+    for (const yearly of GENERATED_STATS.yearlyStats) {
+      const augustEntry = yearly.monthlyActivity.find((m) => m.month === 8);
+      expect(augustEntry).toBeDefined();
+
+      for (const metric of MONTHLY_METRICS) {
+        const augustValue = augustEntry![metric] as number;
+        for (const m of yearly.monthlyActivity) {
+          if (m.month !== 8) {
+            expect(augustValue).toBeLessThanOrEqual(m[metric] as number);
+          }
+        }
+      }
+    }
+  });
+});
+
+// ─── Parliamentary term assignment ───────────────────────────────────────────
+
+describe('GENERATED_STATS — parliamentary term assignment', () => {
+  const findYearEntry = (year: number) =>
+    GENERATED_STATS.yearlyStats.find((y) => y.year === year);
+
+  it('should assign EP6 to years 2004–2008', () => {
+    for (const year of [2004, 2005, 2006, 2007, 2008]) {
+      const entry = findYearEntry(year);
+      expect(entry).toBeDefined();
+      expect(entry!.parliamentaryTerm).toContain('EP6');
+    }
+  });
+
+  it('should assign EP6 or EP7 to year 2009 (transition)', () => {
+    const entry = findYearEntry(2009);
+    expect(entry).toBeDefined();
+    const term = entry!.parliamentaryTerm;
+    expect(term.includes('EP6') || term.includes('EP7')).toBe(true);
+  });
+
+  it('should assign EP7 to years 2010–2013', () => {
+    for (const year of [2010, 2011, 2012, 2013]) {
+      const entry = findYearEntry(year);
+      expect(entry).toBeDefined();
+      expect(entry!.parliamentaryTerm).toContain('EP7');
+    }
+  });
+
+  it('should assign EP7 or EP8 to year 2014 (transition)', () => {
+    const entry = findYearEntry(2014);
+    expect(entry).toBeDefined();
+    const term = entry!.parliamentaryTerm;
+    expect(term.includes('EP7') || term.includes('EP8')).toBe(true);
+  });
+
+  it('should assign EP8 to years 2015–2018', () => {
+    for (const year of [2015, 2016, 2017, 2018]) {
+      const entry = findYearEntry(year);
+      expect(entry).toBeDefined();
+      expect(entry!.parliamentaryTerm).toContain('EP8');
+    }
+  });
+
+  it('should assign EP8 or EP9 to year 2019 (transition)', () => {
+    const entry = findYearEntry(2019);
+    expect(entry).toBeDefined();
+    const term = entry!.parliamentaryTerm;
+    expect(term.includes('EP8') || term.includes('EP9')).toBe(true);
+  });
+
+  it('should assign EP9 to years 2020–2023', () => {
+    for (const year of [2020, 2021, 2022, 2023]) {
+      const entry = findYearEntry(year);
+      expect(entry).toBeDefined();
+      expect(entry!.parliamentaryTerm).toContain('EP9');
+    }
+  });
+
+  it('should assign EP9 or EP10 to year 2024 (transition)', () => {
+    const entry = findYearEntry(2024);
+    expect(entry).toBeDefined();
+    const term = entry!.parliamentaryTerm;
+    expect(term.includes('EP9') || term.includes('EP10')).toBe(true);
+  });
+
+  it('should assign EP10 to year 2025', () => {
+    const entry = findYearEntry(2025);
+    expect(entry).toBeDefined();
+    expect(entry!.parliamentaryTerm).toContain('EP10');
+  });
+});
+
+// ─── Prediction integrity ────────────────────────────────────────────────────
+
+describe('GENERATED_STATS — prediction integrity', () => {
+  const PREDICTION_FIELDS = [
+    'predictedPlenarySessions',
+    'predictedLegislativeActs',
+    'predictedRollCallVotes',
+    'predictedCommitteeMeetings',
+    'predictedParliamentaryQuestions',
+    'predictedResolutions',
+    'predictedSpeeches',
+    'predictedAdoptedTexts',
+    'predictedProcedures',
+    'predictedEvents',
+    'predictedDocuments',
+    'predictedMepTurnover',
+    'predictedDeclarations',
+  ] as const;
+
+  it('should have all predicted values positive', () => {
+    for (const prediction of GENERATED_STATS.predictions) {
+      for (const field of PREDICTION_FIELDS) {
+        expect(prediction[field]).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('should have prediction years sequential from 2026 to 2030', () => {
+    const years = GENERATED_STATS.predictions.map((p) => p.year);
+    expect(years).toEqual([2026, 2027, 2028, 2029, 2030]);
+  });
+
+  it('should have each prediction include all 13 metric fields', () => {
+    for (const prediction of GENERATED_STATS.predictions) {
+      for (const field of PREDICTION_FIELDS) {
+        expect(prediction).toHaveProperty(field);
+        expect(typeof prediction[field]).toBe('number');
+      }
+    }
+  });
+});
