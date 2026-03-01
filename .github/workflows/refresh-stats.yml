@@ -4,6 +4,10 @@
 # European Parliament Open Data Portal API using pagination-based counting.
 # The EP API does not provide a totalItems header, so all records are iterated
 # to obtain accurate counts (limit: 1000 per page, the API's server-side cap).
+#
+# When validation passes, API-verified values are written back into
+# generatedStats.ts and committed automatically.
+#
 # Runs weekly or on demand.
 #
 # ISMS Policy: AU-002 (Audit Logging), SC-002 (Input Validation)
@@ -24,7 +28,7 @@ on:
         type: string
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   validate-stats:
@@ -49,15 +53,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run stats validation
+      - name: Run stats validation and update
         run: |
           INPUT_YEAR="${STATS_YEAR}"
-          ARGS=""
+          ARGS="--update"
           if [ "${INPUT_YEAR}" = "all" ]; then
-            ARGS="--all"
+            ARGS="--all --update"
           elif [ -n "${INPUT_YEAR}" ]; then
             if [[ "${INPUT_YEAR}" =~ ^[0-9]{4}$ ]]; then
-              ARGS="--year ${INPUT_YEAR}"
+              ARGS="--year ${INPUT_YEAR} --update"
             else
               echo "Error: Invalid year input '${INPUT_YEAR}'. Must be 'all' or a 4-digit year (e.g. 2024)." >&2
               exit 1
@@ -70,3 +74,16 @@ jobs:
 
       - name: Run data integrity tests
         run: npx vitest run src/data/generatedStats.test.ts --reporter=verbose
+
+      - name: Commit updated stats
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/generatedStats.ts
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: refresh EP stats from live API data [skip ci]"
+            git push
+            echo "Updated stats committed and pushed."
+          fi
