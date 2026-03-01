@@ -350,7 +350,27 @@ export class BaseEPClient {
       const code = error.statusCode ?? 500;
       return code === 429 || code >= 500;
     }
+    // JSON parse errors (SyntaxError) indicate an invalid response body;
+    // retrying the same request will yield the same unparseable response.
+    if (error instanceof SyntaxError) return false;
     return true;
+  }
+
+  /**
+   * Parses a byte buffer as JSON, returning an empty JSON-LD shape on failure.
+   * The EP API sometimes returns non-empty bodies that are not valid JSON
+   * (e.g. truncated responses for older years or out-of-range offsets).
+   * @private
+   */
+  private static safeParseJsonLd(bytes: Uint8Array): Record<string, unknown> {
+    if (bytes.byteLength === 0) {
+      return { data: [], '@context': [] };
+    }
+    try {
+      return JSON.parse(new TextDecoder().decode(bytes)) as Record<string, unknown>;
+    } catch {
+      return { data: [], '@context': [] };
+    }
   }
 
   /**
@@ -397,12 +417,7 @@ export class BaseEPClient {
       combined.set(chunk, offset);
       offset += chunk.byteLength;
     }
-    // Empty body (chunked encoding with no data) — return a minimal JSON-LD
-    // shape so callers get an empty `data` array instead of a JSON parse error.
-    if (totalBytes === 0) {
-      return { data: [], '@context': [] } as unknown as T;
-    }
-    return JSON.parse(new TextDecoder().decode(combined)) as T;
+    return BaseEPClient.safeParseJsonLd(combined) as T;
   }
 
   /**
@@ -448,7 +463,14 @@ export class BaseEPClient {
               413
             );
           }
-          return response.json() as Promise<T>;
+          try {
+            return await (response.json() as Promise<T>);
+          } catch {
+            // The EP API sometimes returns a body that is not valid JSON
+            // (e.g. truncated or empty content for older years).  Treat
+            // unparseable responses the same as empty bodies.
+            return { data: [], '@context': [] } as unknown as T;
+          }
         }
 
         // No content-length header (chunked encoding) — stream the body and

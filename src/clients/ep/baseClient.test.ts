@@ -508,6 +508,36 @@ describe('BaseEPClient.get() error handling', () => {
 
     await expect(client.testGet('meps')).rejects.toBeInstanceOf(APIError);
   });
+
+  it('should return empty data when response.json() throws (invalid JSON with content-length)', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-length': '42' }),
+      json: async () => { throw new SyntaxError('Unexpected end of JSON input'); },
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
+    expect(result).toEqual({ data: [], '@context': [] });
+  });
+
+  it('should return empty data when streamed body contains invalid JSON', async () => {
+    const invalidChunk = new TextEncoder().encode('not valid json{');
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(invalidChunk);
+        controller.close();
+      },
+    });
+
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers(), // no content-length → triggers readStreamedBody
+      body: stream,
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
+    expect(result).toEqual({ data: [], '@context': [] });
+  });
 });
 
 // ─── get() — retry behaviour ─────────────────────────────────────────────────
@@ -571,6 +601,24 @@ describe('BaseEPClient.get() retry behaviour', () => {
     } as unknown as Response);
 
     await expect(client.testGet('meps')).rejects.toBeInstanceOf(APIError);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not retry on SyntaxError from invalid JSON response', async () => {
+    const client = new TestEPClient({ enableRetry: true, maxRetries: 2 });
+    client.clearCache();
+
+    // JSON parse failures are handled gracefully inside fetchWithTimeout,
+    // returning empty data without retrying.
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-length': '5' }),
+      json: async () => { throw new SyntaxError('Unexpected end of JSON input'); },
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[] }>('adopted-texts');
+    expect(result).toEqual({ data: [], '@context': [] });
+    // Should NOT have retried — only 1 fetch call
     expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 });
