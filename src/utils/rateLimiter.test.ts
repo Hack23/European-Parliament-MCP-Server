@@ -189,6 +189,27 @@ describe('RateLimiter', () => {
       }
     });
 
+    it('should enforce hard deadline after sleep even when tokens become available', async () => {
+      vi.useFakeTimers();
+      try {
+        // 10 tokens/second, empty bucket.
+        // count=1 → waitMs = ceil((1/10)*1000) = 100 ms.
+        // timeoutMs set equal to waitMs so the deadline is reached exactly when
+        // the sleep fires; old code would consume the refilled token and return
+        // allowed:true, new hard-deadline guard must return allowed:false.
+        const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
+        const resultPromise = limiter.removeTokens(1, { timeoutMs: 100 });
+
+        // Advance exactly 100 ms – the sleep fires and the deadline is also reached
+        await vi.advanceTimersByTimeAsync(100);
+
+        const result = await resultPromise;
+        expect(result.allowed).toBe(false);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
     it('should deny the second concurrent caller when its timeout expires before the next refill', async () => {
       vi.useFakeTimers();
       try {

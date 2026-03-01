@@ -151,7 +151,9 @@ export class RateLimiter {
    * tokens are available they are consumed immediately. Otherwise the method
    * sleeps until the bucket has enough tokens and retries. If the required wait
    * would exceed `options.timeoutMs` (default **5000 ms**) the call returns
-   * immediately with `allowed: false` and a `retryAfterMs` hint.
+   * immediately with `allowed: false` and a `retryAfterMs` hint. The timeout
+   * is enforced as a hard deadline: even if a sleep fires slightly late due to
+   * event-loop delay, tokens are never consumed after the deadline has elapsed.
    *
    * @param count - Number of tokens to consume (must be a finite integer ≥ 1 and ≤ `tokensPerInterval`); throws for invalid values
    * @param options.timeoutMs - Maximum time to wait in milliseconds (default 5000); non-finite or negative values are coerced to `0`, meaning the call never blocks and returns `allowed: false` immediately if tokens are unavailable
@@ -219,6 +221,20 @@ export class RateLimiter {
       }
 
       await new Promise<void>(resolve => setTimeout(resolve, waitMs));
+
+      // Hard deadline guard: if the timer fired late (event-loop delay) and the
+      // deadline has already elapsed, reject without consuming tokens.
+      if (Date.now() >= deadline) {
+        this.refill();
+        const deficit = count - this.tokens;
+        return {
+          allowed: false,
+          retryAfterMs: deficit > 0
+            ? Math.ceil((deficit / this.tokensPerInterval) * this.intervalMs)
+            : 0,
+          remainingTokens: Math.floor(this.tokens),
+        };
+      }
     }
   }
 
