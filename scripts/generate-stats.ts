@@ -91,7 +91,7 @@ interface ValidationSummary {
 /** Parse command-line arguments. */
 function parseArgs(): { years: number[] } {
   const args = process.argv.slice(2);
-  const currentYear = new Date().getFullYear();
+  const latestCoveredYear = GENERATED_STATS.coveragePeriod.to;
 
   // --help
   if (args.includes('--help') || args.includes('-h')) {
@@ -99,8 +99,8 @@ function parseArgs(): { years: number[] } {
 Usage: npx tsx scripts/generate-stats.ts [options]
 
 Options:
-  --year <YYYY>   Validate a specific year (default: current year)
-  --all           Validate all years in the dataset (2004–${String(currentYear)})
+  --year <YYYY>   Validate a specific year (default: latest covered year ${String(latestCoveredYear)})
+  --all           Validate all years in the dataset (2004–${String(latestCoveredYear)})
   --help, -h      Show this help message
 
 Examples:
@@ -126,15 +126,15 @@ Examples:
       process.exit(1);
     }
     const year = Number.parseInt(yearStr, 10);
-    if (year < 2004 || year > currentYear) {
-      console.error(`Error: Year must be between 2004 and ${String(currentYear)}`);
+    if (year < 2004 || year > latestCoveredYear) {
+      console.error(`Error: Year must be between 2004 and ${String(latestCoveredYear)}`);
       process.exit(1);
     }
     return { years: [year] };
   }
 
-  // Default: current year
-  return { years: [currentYear] };
+  // Default: latest covered year in the dataset
+  return { years: [latestCoveredYear] };
 }
 
 // ── Console formatting helpers ────────────────────────────────────
@@ -290,42 +290,62 @@ async function validateYearAgainstAPI(
   }
 
   // MEP counts (not year-filtered — reflects current state)
-  const currentYear = new Date().getFullYear();
-  if (year === currentYear) {
-    const mepMetrics: Array<{
-      label: string;
-      storedKey: keyof YearlyStats;
-      fetch: () => Promise<{ total: number }>;
-    }> = [
-      {
-        label: 'Current MEPs',
-        storedKey: 'mepCount',
-        fetch: () => client.getCurrentMEPs({ limit: 1 }),
-      },
-      {
-        label: 'Incoming MEPs',
-        storedKey: 'mepTurnover',  // incoming is part of turnover
-        fetch: () => client.getIncomingMEPs({ limit: 1 }),
-      },
-      {
-        label: 'Outgoing MEPs',
-        storedKey: 'mepTurnover',  // outgoing is part of turnover
-        fetch: () => client.getOutgoingMEPs({ limit: 1 }),
-      },
-    ];
-
-    for (const metric of mepMetrics) {
-      const { total, error } = await fetchTotal(metric.label, metric.fetch);
-      const storedValue = yearStats[metric.storedKey] as number;
-      const { status, diffPercent } = compareValues(storedValue, total);
+  const latestCoveredYear = GENERATED_STATS.coveragePeriod.to;
+  if (year === latestCoveredYear) {
+    // Current MEPs vs stored mepCount
+    const { total: currentTotal, error: currentError } = await fetchTotal(
+      'Current MEPs',
+      () => client.getCurrentMEPs({ limit: 1 }),
+    );
+    {
+      const storedValue = yearStats.mepCount as number;
+      const { status, diffPercent } = compareValues(storedValue, currentTotal);
 
       comparisons.push({
-        metric: metric.label,
+        metric: 'Current MEPs',
         storedValue,
-        apiValue: total,
+        apiValue: currentTotal,
         status,
         diffPercent,
-        note: error,
+        note: currentError,
+      });
+    }
+
+    // Turnover = incoming + outgoing
+    const { total: incomingTotal, error: incomingError } = await fetchTotal(
+      'Incoming MEPs',
+      () => client.getIncomingMEPs({ limit: 1 }),
+    );
+    const { total: outgoingTotal, error: outgoingError } = await fetchTotal(
+      'Outgoing MEPs',
+      () => client.getOutgoingMEPs({ limit: 1 }),
+    );
+
+    const turnoverApiValue =
+      incomingTotal != null && outgoingTotal != null
+        ? incomingTotal + outgoingTotal
+        : null;
+
+    const turnoverNoteParts: string[] = [];
+    if (incomingError) {
+      turnoverNoteParts.push(`Incoming: ${incomingError}`);
+    }
+    if (outgoingError) {
+      turnoverNoteParts.push(`Outgoing: ${outgoingError}`);
+    }
+    const turnoverNote = turnoverNoteParts.length > 0 ? turnoverNoteParts.join(' | ') : undefined;
+
+    {
+      const storedValue = yearStats.mepTurnover as number;
+      const { status, diffPercent } = compareValues(storedValue, turnoverApiValue);
+
+      comparisons.push({
+        metric: 'MEP Turnover (incoming + outgoing)',
+        storedValue,
+        apiValue: turnoverApiValue,
+        status,
+        diffPercent,
+        note: turnoverNote,
       });
     }
   }

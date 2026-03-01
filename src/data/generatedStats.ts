@@ -1020,6 +1020,33 @@ function buildPredictions(): PredictionYear[] {
 // ── Analysis summary ──────────────────────────────────────────────
 
 /**
+ * Find the largest year-over-year increase in eurosceptic share.
+ * Returns the start/end year of the largest surge, or null if none.
+ */
+function findLargestEuroscepticSurge(
+  yearly: YearlyStats[],
+): { startYear: number; endYear: number } | null {
+  let maxSurge = 0;
+  let surgeStartYear = 0;
+  let surgeEndYear = 0;
+  for (let i = 1; i < yearly.length; i++) {
+    const prev = yearly[i - 1];
+    const curr = yearly[i];
+    if (prev && curr) {
+      const delta =
+        curr.derivedIntelligence.politicalBlocAnalysis.euroscepticShare -
+        prev.derivedIntelligence.politicalBlocAnalysis.euroscepticShare;
+      if (delta > maxSurge) {
+        maxSurge = delta;
+        surgeStartYear = prev.year;
+        surgeEndYear = curr.year;
+      }
+    }
+  }
+  return maxSurge > 0 ? { startYear: surgeStartYear, endYear: surgeEndYear } : null;
+}
+
+/**
  * Build additional key findings from the derived intelligence metrics.
  * These findings are based on OSINT-derived political concentration,
  * legislative efficiency, and institutional stability metrics.
@@ -1034,8 +1061,14 @@ function buildDerivedKeyFindings(yearly: YearlyStats[]): string[] {
     const lastDI = last.derivedIntelligence;
 
     // Top-2 concentration structural shift
+    const cr2ThresholdCrossingYear = yearly.find(
+      (y) => y.derivedIntelligence.topTwoGroupsConcentration < 50,
+    )?.year;
+    const cr2ThresholdText = cr2ThresholdCrossingYear !== undefined
+      ? `, crossing the 50% majority threshold in ${String(cr2ThresholdCrossingYear)}`
+      : '';
     findings.push(
-      `OSINT: Top-2 group concentration (CR₂) fell from ${String(firstDI.topTwoGroupsConcentration)}% (${String(first.year)}) to ${String(lastDI.topTwoGroupsConcentration)}% (${String(last.year)}), crossing the 50% majority threshold in 2019—a structural regime change requiring 3+ groups for every legislative majority.`,
+      `OSINT: Top-2 group concentration (CR₂) fell from ${String(firstDI.topTwoGroupsConcentration)}% (${String(first.year)}) to ${String(lastDI.topTwoGroupsConcentration)}% (${String(last.year)})${cr2ThresholdText}—a structural regime change requiring 3+ groups for every legislative majority.`,
     );
 
     // Minimum winning coalition
@@ -1054,8 +1087,12 @@ function buildDerivedKeyFindings(yearly: YearlyStats[]): string[] {
     );
 
     // Eurosceptic share trend
+    const surge = findLargestEuroscepticSurge(yearly);
+    const surgeText = surge !== null
+      ? `, with the most significant surge in ${String(surge.startYear)}-${String(surge.endYear)}`
+      : '';
     findings.push(
-      `OSINT: Eurosceptic/far-right seat share grew from ${String(firstDI.politicalBlocAnalysis.euroscepticShare)}% (${String(first.year)}) to ${String(lastDI.politicalBlocAnalysis.euroscepticShare)}% (${String(last.year)}), with the most significant surge in 2024-2025 (PfE, ESN formation).`,
+      `OSINT: Eurosceptic/far-right seat share grew from ${String(firstDI.politicalBlocAnalysis.euroscepticShare)}% (${String(first.year)}) to ${String(lastDI.politicalBlocAnalysis.euroscepticShare)}% (${String(last.year)})${surgeText}.`,
     );
 
     // HHI
