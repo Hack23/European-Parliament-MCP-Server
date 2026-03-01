@@ -48,15 +48,17 @@ jobs:
 
       - name: Run stats validation
         run: |
+          INPUT_YEAR="${STATS_YEAR}"
           ARGS=""
-          if [ "${{ github.event.inputs.year }}" = "all" ]; then
+          if [ "${INPUT_YEAR}" = "all" ]; then
             ARGS="--all"
-          elif [ -n "${{ github.event.inputs.year }}" ]; then
-            ARGS="--year ${{ github.event.inputs.year }}"
+          elif [ -n "${INPUT_YEAR}" ] && [[ "${INPUT_YEAR}" =~ ^[0-9]{4}$ ]]; then
+            ARGS="--year ${INPUT_YEAR}"
           fi
           npx tsx scripts/generate-stats.ts $ARGS
         env:
           NODE_ENV: production
+          STATS_YEAR: ${{ github.event.inputs.year }}
 
       - name: Run data integrity tests
         run: npx vitest run src/data/generatedStats.test.ts --reporter=verbose

@@ -350,6 +350,17 @@ describe('GENERATED_STATS — political landscape data consistency', () => {
     }
   });
 
+  it('should have individual seatShare values consistent with seats/total calculation (±0.5%)', () => {
+    for (const yearly of GENERATED_STATS.yearlyStats) {
+      const { groups } = yearly.politicalLandscape;
+      const totalSeats = groups.reduce((sum, g) => sum + g.seats, 0);
+      for (const g of groups) {
+        const computedShare = Math.round((g.seats / totalSeats) * 1000) / 10;
+        expect(Math.abs(computedShare - g.seatShare)).toBeLessThanOrEqual(0.5);
+      }
+    }
+  });
+
   it('should have total seats across all groups approximately matching mepCount (within ±15)', () => {
     for (const yearly of GENERATED_STATS.yearlyStats) {
       const totalSeats = yearly.politicalLandscape.groups.reduce(
@@ -379,6 +390,9 @@ describe('GENERATED_STATS — political landscape data consistency', () => {
     }
   });
 
+  // NI (Non-Inscrits/Non-attached) members are MEPs not affiliated with any
+  // formal political group. They are listed in `groups` for completeness but
+  // are excluded from `totalGroups`, which counts only recognised groups.
   it('should have totalGroups equal to the number of non-NI groups', () => {
     for (const yearly of GENERATED_STATS.yearlyStats) {
       const { groups, totalGroups } = yearly.politicalLandscape;

@@ -249,18 +249,17 @@ async function validateYearAgainstAPI(
     },
     {
       label: 'Plenary Documents',
-      storedKey: 'documents',  // Note: documents is the combined total; plenary is a subset
-      fetch: () => client.getPlenaryDocuments({ year, limit: 1 }),
-    },
-    {
-      label: 'Committee Documents',
-      storedKey: 'committeeMeetings',  // Closest metric; committee docs vs meetings
-      fetch: () => client.getCommitteeDocuments({ year, limit: 1 }),
-    },
-    {
-      label: 'External Documents',
-      storedKey: 'events',  // External docs are tracked alongside events
-      fetch: () => client.getExternalDocuments({ year, limit: 1 }),
+      storedKey: 'documents',
+      fetch: async () => {
+        // Sum plenary + committee + external documents for total document count
+        const [plenary, committee, external] = await Promise.all([
+          fetchTotal('Plenary Docs', () => client.getPlenaryDocuments({ year, limit: 1 })),
+          fetchTotal('Committee Docs', () => client.getCommitteeDocuments({ year, limit: 1 })),
+          fetchTotal('External Docs', () => client.getExternalDocuments({ year, limit: 1 })),
+        ]);
+        const total = (plenary.total ?? 0) + (committee.total ?? 0) + (external.total ?? 0);
+        return { total };
+      },
     },
     {
       label: 'Parliamentary Questions',
@@ -405,11 +404,13 @@ function validatePoliticalLandscape(yearStats: YearlyStats): LandscapeValidation
     }
   }
 
-  // 7. Total seats should be roughly the mepCount
+  // 7. Total seats should be roughly the mepCount.
+  // Tolerance accounts for transitional periods and vacant seats.
+  const MAX_SEAT_DISCREPANCY = 10;
   const totalSeats = groups.reduce((sum, g) => sum + g.seats, 0);
-  if (Math.abs(totalSeats - yearStats.mepCount) > 10) {
+  if (Math.abs(totalSeats - yearStats.mepCount) > MAX_SEAT_DISCREPANCY) {
     issues.push(
-      `Total seats across groups (${String(totalSeats)}) differs from mepCount (${String(yearStats.mepCount)}) by more than 10`
+      `Total seats across groups (${String(totalSeats)}) differs from mepCount (${String(yearStats.mepCount)}) by more than ${String(MAX_SEAT_DISCREPANCY)}`
     );
   }
 
