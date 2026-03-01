@@ -33,7 +33,8 @@ export interface RateLimiterStatus {
  *
  * Discriminated union: when `allowed` is `true`, tokens were consumed.
  * When `allowed` is `false`, the wait would have exceeded the timeout and
- * `retryAfterMs` is always present with a positive value.
+ * `retryAfterMs` is always present with a value ≥ 1 (milliseconds until the
+ * bucket is expected to have enough tokens; treat `1` as "retry immediately").
  *
  * **Note:** `remainingTokens` is always a non-negative integer
  * (`Math.floor` of the internal fractional bucket state). This differs from
@@ -224,14 +225,12 @@ export class RateLimiter {
 
       // Hard deadline guard: if the timer fired late (event-loop delay) and the
       // deadline has already elapsed, reject without consuming tokens.
+      // retryAfterMs is always >= 1 so callers always receive a positive retry hint.
       if (Date.now() >= deadline) {
         this.refill();
-        const deficit = count - this.tokens;
         return {
           allowed: false,
-          retryAfterMs: deficit > 0
-            ? Math.ceil((deficit / this.tokensPerInterval) * this.intervalMs)
-            : 0,
+          retryAfterMs: Math.max(1, Math.ceil(((count - this.tokens) / this.tokensPerInterval) * this.intervalMs)),
           remainingTokens: Math.floor(this.tokens),
         };
       }

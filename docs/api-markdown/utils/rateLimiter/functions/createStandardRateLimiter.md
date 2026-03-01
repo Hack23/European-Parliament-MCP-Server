@@ -8,7 +8,7 @@
 
 > **createStandardRateLimiter**(): [`RateLimiter`](../classes/RateLimiter.md)
 
-Defined in: [utils/rateLimiter.ts:399](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L399)
+Defined in: [utils/rateLimiter.ts:398](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L398)
 
 Creates a [RateLimiter](../classes/RateLimiter.md) pre-configured for EP API usage.
 
