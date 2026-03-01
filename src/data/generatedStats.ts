@@ -788,17 +788,22 @@ function computeConcentrationMetrics(landscape: PoliticalLandscapeData): {
   effectiveOppositionParties: number;
 } {
   const groups = landscape.groups;
-  const sorted = [...groups].sort((a, b) => b.seatShare - a.seatShare);
-  const top2 = shareAtRank(sorted, 0) + shareAtRank(sorted, 1);
+  // Recognised political groups exclude non-attached members (NI) from concentration metrics
+  const recognisedGroups = groups.filter((g) => g.name !== 'NI');
+  const sortedRecognised = [...recognisedGroups].sort((a, b) => b.seatShare - a.seatShare);
+  const top2 = shareAtRank(sortedRecognised, 0) + shareAtRank(sortedRecognised, 1);
   const hhi = roundTo(groups.reduce((s, g) => s + (g.seatShare / 100) ** 2, 0), 4);
   const ni = groups.find((g) => g.name === 'NI');
   return {
     topTwoGroupsConcentration: roundTo(top2, 1),
-    topThreeGroupsConcentration: roundTo(top2 + shareAtRank(sorted, 2), 1),
+    topThreeGroupsConcentration: roundTo(top2 + shareAtRank(sortedRecognised, 2), 1),
     herfindahlHirschmanIndex: hhi,
-    dominanceRatio: roundTo(safeDivide(landscape.largestGroupSeatShare, shareAtRank(sorted, 1)), 2),
+    dominanceRatio: roundTo(
+      safeDivide(landscape.largestGroupSeatShare, shareAtRank(sortedRecognised, 1)),
+      2,
+    ),
     majorityThresholdGap: roundTo(50 - landscape.largestGroupSeatShare, 1),
-    minimumWinningCoalitionSize: computeMinimumWinningCoalition(sorted),
+    minimumWinningCoalitionSize: computeMinimumWinningCoalition(sortedRecognised),
     grandCoalitionSurplusDeficit: roundTo(top2 - 50, 1),
     nonAttachedShare: ni?.seatShare ?? 0,
     effectiveOppositionParties: roundTo(landscape.fragmentationIndex - 1, 2),

@@ -675,11 +675,11 @@ describe('GENERATED_STATS — derived intelligence metrics', () => {
   });
 
   describe('political concentration', () => {
-    it('topTwoGroupsConcentration should be sum of two largest group shares', () => {
+    it('topTwoGroupsConcentration should be sum of two largest recognised group shares (excluding NI)', () => {
       for (const y of allYears) {
-        const sorted = [...y.politicalLandscape.groups].sort(
-          (a, b) => b.seatShare - a.seatShare,
-        );
+        const sorted = [...y.politicalLandscape.groups]
+          .filter((g) => g.name !== 'NI')
+          .sort((a, b) => b.seatShare - a.seatShare);
         const expected = (sorted[0]?.seatShare ?? 0) + (sorted[1]?.seatShare ?? 0);
         expect(y.derivedIntelligence.topTwoGroupsConcentration).toBeCloseTo(expected, 0);
       }

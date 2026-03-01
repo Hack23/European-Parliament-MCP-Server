@@ -2,21 +2,30 @@
 /**
  * European Parliament Stats Validator & Comparison Tool
  *
- * Validates the static data in `src/data/generatedStats.ts` against live
- * counts from the European Parliament Open Data Portal API. Fetches totals
- * for each metric using `limit: 1` requests (minimal bandwidth) and compares
- * them against the stored RAW_YEARLY values.
+ * Validates the static data in `src/data/generatedStats.ts` via two methods:
+ *
+ * 1. **Political landscape consistency** — internal validation of group seat
+ *    shares, fragmentation indices, and structural invariants. These checks
+ *    are deterministic and drive the exit code.
+ *
+ * 2. **API spot-check** (advisory) — fetches `limit: 1` probes against the
+ *    European Parliament Open Data Portal API to detect gross data staleness.
+ *    Because the EP client's `PaginatedResponse.total` is computed as
+ *    `items.length + offset` (not a server-side count), these API comparisons
+ *    are informational only and do not affect the exit code. A `hasMore: true`
+ *    response confirms at least 1 item exists; discrepancies should be
+ *    investigated manually rather than treated as hard failures.
  *
  * **Usage:**
  * ```bash
- * npx tsx scripts/generate-stats.ts              # validate current year
+ * npx tsx scripts/generate-stats.ts              # validate latest covered year
  * npx tsx scripts/generate-stats.ts --year 2024  # validate specific year
- * npx tsx scripts/generate-stats.ts --all        # validate all years (2004–current)
+ * npx tsx scripts/generate-stats.ts --all        # validate all years (2004–latest)
  * ```
  *
  * **Exit codes:**
- * - 0: Success (may include warnings)
- * - 1: Validation errors or unrecoverable failures
+ * - 0: Success (may include advisory API warnings)
+ * - 1: Political landscape consistency errors
  *
  * **ISMS Compliance:**
  * - SC-002: Input validation on CLI arguments
@@ -177,7 +186,14 @@ function padRight(str: string, len: number): string {
 // ── API fetching ──────────────────────────────────────────────────
 
 /**
- * Fetch a single metric total from the EP API.
+ * Fetch a single metric probe from the EP API.
+ *
+ * Uses `limit: 1` to minimise bandwidth. Because the EP client computes
+ * `PaginatedResponse.total` as `items.length + offset` (not a server-side
+ * count), the returned total is only an existence check (0 or 1), not a
+ * real record count. Comparisons against stored yearly totals are therefore
+ * advisory.
+ *
  * Returns the total count or null on failure.
  */
 async function fetchTotal(
@@ -219,8 +235,14 @@ function compareValues(stored: number, api: number | null): { status: Comparison
 // ── Year validation (API comparison) ──────────────────────────────
 
 /**
- * Fetch live counts from the EP API for a given year and compare
+ * Fetch live probes from the EP API for a given year and compare
  * them against the stored RAW_YEARLY data.
+ *
+ * **Advisory:** Because the EP client's `total` is `items.length + offset`
+ * (not a real server-side count), `limit: 1` requests return `total = 1`
+ * for any non-empty result set. Comparisons are therefore informational
+ * spot-checks—a response > 0 confirms data still exists in the API, but
+ * exact-match assertions are not meaningful.
  */
 async function validateYearAgainstAPI(
   client: EuropeanParliamentClient,
@@ -518,12 +540,12 @@ function printSummary(
   // Build recommendations
   if (summary.discrepancies > 0) {
     summary.recommendations.push(
-      `${String(summary.discrepancies)} metric(s) have significant discrepancies (>10%). Consider updating generatedStats.ts with fresh API data.`
+      `${String(summary.discrepancies)} API spot-check(s) show discrepancies (advisory only — EP client total is page-based, not a real count). Investigate manually if needed.`
     );
   }
   if (summary.close > 0) {
     summary.recommendations.push(
-      `${String(summary.close)} metric(s) are close but not exact (within 10%). Minor refresh may improve accuracy.`
+      `${String(summary.close)} API spot-check(s) are close but not exact (within 10%). Advisory only.`
     );
   }
   if (summary.apiErrors > 0) {
@@ -617,8 +639,9 @@ async function main(): Promise<void> {
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   console.log(`${DIM}Completed in ${elapsed}s${RESET}\n`);
 
-  // Exit code: 1 if discrepancies or landscape issues found, 0 otherwise
-  if (summary.discrepancies > 0 || summary.landscapeIssues > 0) {
+  // Exit code: 1 only for landscape consistency errors (deterministic)
+  // API discrepancies are advisory (EP client total is items.length + offset, not a real count)
+  if (summary.landscapeIssues > 0) {
     process.exit(1);
   }
   process.exit(0);
