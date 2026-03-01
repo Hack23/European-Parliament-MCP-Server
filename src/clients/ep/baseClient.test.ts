@@ -508,6 +508,93 @@ describe('BaseEPClient.get() error handling', () => {
 
     await expect(client.testGet('meps')).rejects.toBeInstanceOf(APIError);
   });
+
+  it('should return empty data when response body is empty (with content-length)', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-length': '42' }),
+      text: async () => '',
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
+    expect(result).toEqual({ data: [], '@context': [] });
+  });
+
+  it('should return empty data when response body is whitespace-only (with content-length)', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-length': '5' }),
+      text: async () => '\n  \t',
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
+    expect(result).toEqual({ data: [], '@context': [] });
+  });
+
+  it('should fall back to readStreamedBody when content-length is non-finite', async () => {
+    const payload = { data: [{ id: 'doc/1' }], '@context': [] };
+    const encoded = new TextEncoder().encode(JSON.stringify(payload));
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(encoded);
+        controller.close();
+      },
+    });
+
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-length': 'garbage' }),
+      body: stream,
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
+    expect(result).toEqual(payload);
+  });
+
+  it('should throw on non-empty invalid JSON body (with content-length)', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-length': '42' }),
+      text: async () => 'not valid json{',
+    } as unknown as Response);
+
+    await expect(client.testGet('adopted-texts')).rejects.toBeInstanceOf(APIError);
+  });
+
+  it('should return empty data when streamed body is empty (zero bytes)', async () => {
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.close();
+      },
+    });
+
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers(), // no content-length → triggers readStreamedBody
+      body: stream,
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
+    expect(result).toEqual({ data: [], '@context': [] });
+  });
+
+  it('should throw when streamed body contains non-empty invalid JSON', async () => {
+    const invalidChunk = new TextEncoder().encode('not valid json{');
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(invalidChunk);
+        controller.close();
+      },
+    });
+
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers(), // no content-length → triggers readStreamedBody
+      body: stream,
+    } as unknown as Response);
+
+    await expect(client.testGet('adopted-texts')).rejects.toBeInstanceOf(APIError);
+  });
 });
 
 // ─── get() — retry behaviour ─────────────────────────────────────────────────
@@ -571,6 +658,25 @@ describe('BaseEPClient.get() retry behaviour', () => {
     } as unknown as Response);
 
     await expect(client.testGet('meps')).rejects.toBeInstanceOf(APIError);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not retry on SyntaxError that reaches retry predicate', async () => {
+    const client = new TestEPClient({ enableRetry: true, maxRetries: 2 });
+    client.clearCache();
+
+    // When response.body is null, readStreamedBody falls back to response.json().
+    // A SyntaxError thrown there is NOT caught inside fetchWithTimeout (no
+    // content-length header → streamed path), so it reaches shouldRetryRequest().
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers(), // no content-length → triggers readStreamedBody
+      body: null,             // null body → readStreamedBody falls back to response.json()
+      json: async () => { throw new SyntaxError('Unexpected end of JSON input'); },
+    } as unknown as Response);
+
+    // SyntaxError should NOT be retried — surfaces as APIError after 1 fetch
+    await expect(client.testGet('adopted-texts')).rejects.toBeInstanceOf(APIError);
     expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 });

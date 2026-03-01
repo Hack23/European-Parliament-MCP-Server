@@ -350,7 +350,25 @@ export class BaseEPClient {
       const code = error.statusCode ?? 500;
       return code === 429 || code >= 500;
     }
+    // JSON parse errors (SyntaxError) indicate an invalid response body;
+    // retrying the same request will yield the same unparseable response.
+    if (error instanceof SyntaxError) return false;
     return true;
+  }
+
+  /**
+   * Parses a byte buffer as JSON-LD.  Returns an empty JSON-LD shape for
+   * zero-byte bodies (the EP API sends these for out-of-range offsets).
+   * Non-empty bodies must contain valid JSON; any `SyntaxError` is allowed
+   * to propagate so callers (including single-entity endpoints) fail fast
+   * instead of receiving a misleading empty-list shape.
+   * @private
+   */
+  private static parseJsonLdBytes(bytes: Uint8Array): JSONLDResponse {
+    if (bytes.byteLength === 0) {
+      return { data: [], '@context': [] };
+    }
+    return JSON.parse(new TextDecoder().decode(bytes)) as JSONLDResponse;
   }
 
   /**
@@ -397,12 +415,29 @@ export class BaseEPClient {
       combined.set(chunk, offset);
       offset += chunk.byteLength;
     }
-    // Empty body (chunked encoding with no data) — return a minimal JSON-LD
-    // shape so callers get an empty `data` array instead of a JSON parse error.
-    if (totalBytes === 0) {
+    return BaseEPClient.parseJsonLdBytes(combined) as T;
+  }
+
+  /**
+   * Treats a truly empty body as an empty JSON-LD shape; invalid JSON for
+   * non-empty bodies is surfaced as an error.
+   * @private
+   */
+  private static async parseResponseJson<T>(response: Response): Promise<T> {
+    // Use text + JSON.parse instead of response.json() so we can distinguish
+    // between an actually empty body and malformed JSON content.
+    const raw = await response.text();
+
+    // Empty or whitespace-only body — mirror the behaviour used for
+    // `content-length: 0` responses and return a minimal JSON-LD shape so
+    // callers see an empty `data` array instead of a parse error.
+    if (raw.length === 0 || /^\s*$/.test(raw)) {
       return { data: [], '@context': [] } as unknown as T;
     }
-    return JSON.parse(new TextDecoder().decode(combined)) as T;
+
+    // Non-empty body must be valid JSON; let any SyntaxError propagate so
+    // callers are aware of malformed API responses.
+    return JSON.parse(raw) as T;
   }
 
   /**
@@ -431,24 +466,29 @@ export class BaseEPClient {
         const contentLength = response.headers.get('content-length');
         if (contentLength !== null) {
           const bytes = Number.parseInt(contentLength, 10);
-          // Empty body (content-length: 0) — the EP API returns this for
-          // out-of-range offsets or when no data exists.  Return a minimal
-          // JSON-LD shape so callers get an empty `data` array instead of a
-          // JSON parse error.
-          if (Number.isFinite(bytes) && bytes === 0) {
-            await response.body?.cancel();
-            return { data: [], '@context': [] } as unknown as T;
+          // Non-finite / negative values (e.g. garbled header) are treated as
+          // "no content-length" and fall through to readStreamedBody() which
+          // enforces the byte cap incrementally.
+          if (Number.isFinite(bytes) && bytes >= 0) {
+            // Empty body (content-length: 0) — the EP API returns this for
+            // out-of-range offsets or when no data exists.  Return a minimal
+            // JSON-LD shape so callers get an empty `data` array instead of a
+            // JSON parse error.
+            if (bytes === 0) {
+              await response.body?.cancel();
+              return { data: [], '@context': [] } as unknown as T;
+            }
+            if (bytes > this.maxResponseBytes) {
+              // Cancel/drain the body before throwing so the underlying TCP
+              // connection can be returned to the pool and reused.
+              await response.body?.cancel();
+              throw new APIError(
+                `EP API response too large: ${String(bytes)} bytes exceeds limit of ${String(this.maxResponseBytes)} bytes`,
+                413
+              );
+            }
+            return BaseEPClient.parseResponseJson<T>(response);
           }
-          if (Number.isFinite(bytes) && bytes > this.maxResponseBytes) {
-            // Cancel/drain the body before throwing so the underlying TCP
-            // connection can be returned to the pool and reused.
-            await response.body?.cancel();
-            throw new APIError(
-              `EP API response too large: ${String(bytes)} bytes exceeds limit of ${String(this.maxResponseBytes)} bytes`,
-              413
-            );
-          }
-          return response.json() as Promise<T>;
         }
 
         // No content-length header (chunked encoding) — stream the body and

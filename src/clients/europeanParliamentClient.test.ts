@@ -4492,10 +4492,11 @@ describe('EuropeanParliamentClient', () => {
     });
 
     it('should succeed when content-length is within limit', async () => {
+      const payload = createMockDocumentsResponse(1);
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers({ 'content-length': String(1024) }), // 1 KB
-        json: async () => createMockDocumentsResponse(1)
+        text: async () => JSON.stringify(payload),
       } as unknown as Response);
 
       const result = await client.getMeetingPlenarySessionDocuments('MTG-PL-2024-001');
