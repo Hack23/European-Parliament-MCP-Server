@@ -431,7 +431,7 @@ export class BaseEPClient {
     // Empty or whitespace-only body — mirror the behaviour used for
     // `content-length: 0` responses and return a minimal JSON-LD shape so
     // callers see an empty `data` array instead of a parse error.
-    if (raw.trim().length === 0) {
+    if (raw.length === 0 || /^\s*$/.test(raw)) {
       return { data: [], '@context': [] } as unknown as T;
     }
 
