@@ -792,6 +792,7 @@ function computeConcentrationMetrics(landscape: PoliticalLandscapeData): {
   const recognisedGroups = groups.filter((g) => g.name !== 'NI');
   const sortedRecognised = [...recognisedGroups].sort((a, b) => b.seatShare - a.seatShare);
   const top2 = shareAtRank(sortedRecognised, 0) + shareAtRank(sortedRecognised, 1);
+  // HHI uses all groups (including NI) as it measures system-wide market concentration
   const hhi = roundTo(groups.reduce((s, g) => s + (g.seatShare / 100) ** 2, 0), 4);
   const ni = groups.find((g) => g.name === 'NI');
   return {

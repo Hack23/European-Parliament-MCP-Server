@@ -540,7 +540,7 @@ function printSummary(
   // Build recommendations
   if (summary.discrepancies > 0) {
     summary.recommendations.push(
-      `${String(summary.discrepancies)} API spot-check(s) show discrepancies (advisory only — EP client total is page-based, not a real count). Investigate manually if needed.`
+      `${String(summary.discrepancies)} API spot-check(s) show discrepancies (advisory only — EP client returns total = items.length + offset, which equals 1 for limit:1 requests regardless of actual record count). Investigate manually if needed.`
     );
   }
   if (summary.close > 0) {
