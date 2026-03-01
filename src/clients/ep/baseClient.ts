@@ -466,24 +466,29 @@ export class BaseEPClient {
         const contentLength = response.headers.get('content-length');
         if (contentLength !== null) {
           const bytes = Number.parseInt(contentLength, 10);
-          // Empty body (content-length: 0) — the EP API returns this for
-          // out-of-range offsets or when no data exists.  Return a minimal
-          // JSON-LD shape so callers get an empty `data` array instead of a
-          // JSON parse error.
-          if (Number.isFinite(bytes) && bytes === 0) {
-            await response.body?.cancel();
-            return { data: [], '@context': [] } as unknown as T;
+          // Non-finite / negative values (e.g. garbled header) are treated as
+          // "no content-length" and fall through to readStreamedBody() which
+          // enforces the byte cap incrementally.
+          if (Number.isFinite(bytes) && bytes >= 0) {
+            // Empty body (content-length: 0) — the EP API returns this for
+            // out-of-range offsets or when no data exists.  Return a minimal
+            // JSON-LD shape so callers get an empty `data` array instead of a
+            // JSON parse error.
+            if (bytes === 0) {
+              await response.body?.cancel();
+              return { data: [], '@context': [] } as unknown as T;
+            }
+            if (bytes > this.maxResponseBytes) {
+              // Cancel/drain the body before throwing so the underlying TCP
+              // connection can be returned to the pool and reused.
+              await response.body?.cancel();
+              throw new APIError(
+                `EP API response too large: ${String(bytes)} bytes exceeds limit of ${String(this.maxResponseBytes)} bytes`,
+                413
+              );
+            }
+            return BaseEPClient.parseResponseJson<T>(response);
           }
-          if (Number.isFinite(bytes) && bytes > this.maxResponseBytes) {
-            // Cancel/drain the body before throwing so the underlying TCP
-            // connection can be returned to the pool and reused.
-            await response.body?.cancel();
-            throw new APIError(
-              `EP API response too large: ${String(bytes)} bytes exceeds limit of ${String(this.maxResponseBytes)} bytes`,
-              413
-            );
-          }
-          return BaseEPClient.parseResponseJson<T>(response);
         }
 
         // No content-length header (chunked encoding) — stream the body and

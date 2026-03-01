@@ -520,6 +520,37 @@ describe('BaseEPClient.get() error handling', () => {
     expect(result).toEqual({ data: [], '@context': [] });
   });
 
+  it('should return empty data when response body is whitespace-only (with content-length)', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-length': '5' }),
+      text: async () => '\n  \t',
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
+    expect(result).toEqual({ data: [], '@context': [] });
+  });
+
+  it('should fall back to readStreamedBody when content-length is non-finite', async () => {
+    const payload = { data: [{ id: 'doc/1' }], '@context': [] };
+    const encoded = new TextEncoder().encode(JSON.stringify(payload));
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(encoded);
+        controller.close();
+      },
+    });
+
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-length': 'garbage' }),
+      body: stream,
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
+    expect(result).toEqual(payload);
+  });
+
   it('should throw on non-empty invalid JSON body (with content-length)', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
