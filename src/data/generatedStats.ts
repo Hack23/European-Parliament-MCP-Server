@@ -615,12 +615,23 @@ function roundTo(value: number, decimals: number): number {
  *
  * Produces both the traditional 1D left-right bloc breakdown AND
  * a multi-dimensional Political Compass analysis (economic × social
- * axes + EU integration axis). Groups are classified using
- * GROUP_COMPASS positions. NI members are excluded from analysis.
+ * axes + EU integration axis). Groups are classified using explicit
+ * membership sets for 1D blocs and GROUP_COMPASS for multi-axis analysis.
+ * NI members are excluded from bloc analysis.
  */
+
+// Explicit group membership sets for traditional 1D left-centre-right classification.
+// These avoid misleading threshold-based misclassification (e.g. ID/PfE economic=5.5
+// falling into "centre" via threshold despite being far-right in political science terms).
+const LEFT_BLOC_GROUPS = new Set(['GUE/NGL', 'The Left', 'PES', 'S&D', 'Greens/EFA']);
+const CENTRE_BLOC_GROUPS = new Set(['ALDE', 'RE']);
+// Right bloc = all recognised groups not in left or centre (EPP, EPP-ED, ECR, UEN, + far-right)
+// Hard eurosceptic: groups with EU integration score < 2.0 in GROUP_COMPASS
+const HARD_EUROSCEPTIC_THRESHOLD = 2.0;
+
 function computePoliticalBlocAnalysis(groups: PoliticalGroupSnapshot[]): PoliticalBlocAnalysis {
   // ── 1D traditional bloc shares ──────────────────────────────────
-  let leftShare = 0;    // GUE/NGL, The Left + S&D, Greens/EFA
+  let leftShare = 0;    // GUE/NGL, The Left, PES, S&D, Greens/EFA
   let centreShare = 0;  // ALDE, RE
   let rightShare = 0;   // EPP, EPP-ED, ECR, UEN + far-right
   let euroscepticShare = 0; // IND/DEM, EFD, EFDD, ENF, ID, PfE, ESN
@@ -629,16 +640,16 @@ function computePoliticalBlocAnalysis(groups: PoliticalGroupSnapshot[]): Politic
     if (group.name === 'NI') continue;
     const compass = GROUP_COMPASS[group.name];
     if (compass === undefined) continue;
-    // Economic < 4 → left; 4–6 → centre; > 6 → right
-    if (compass.economic < 4.0) {
+    // Explicit set-based 1D bloc assignment
+    if (LEFT_BLOC_GROUPS.has(group.name)) {
       leftShare += group.seatShare;
-    } else if (compass.economic <= 6.0) {
+    } else if (CENTRE_BLOC_GROUPS.has(group.name)) {
       centreShare += group.seatShare;
     } else {
       rightShare += group.seatShare;
     }
     // Hard eurosceptic: groups with EU integration score < 2.0
-    if (compass.euIntegration < 2.0) {
+    if (compass.euIntegration < HARD_EUROSCEPTIC_THRESHOLD) {
       euroscepticShare += group.seatShare;
     }
   }
@@ -1163,9 +1174,9 @@ const predictions = buildPredictions();
 const analysisSummary = buildAnalysisSummary(yearlyStats);
 
 export const GENERATED_STATS: GeneratedStatsData = {
-  generatedAt: '2025-02-28T00:00:00Z',
+  generatedAt: '2025-06-01T00:00:00Z',
   coveragePeriod: { from: 2004, to: 2025 },
-  methodologyVersion: '1.0.0',
+  methodologyVersion: '2.0.0',
   dataSource: 'European Parliament Open Data Portal — data.europarl.europa.eu',
   yearlyStats,
   categoryRankings,

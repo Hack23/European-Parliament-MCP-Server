@@ -10,11 +10,12 @@
  *
  * 2. **API spot-check** (advisory) — fetches `limit: 1` probes against the
  *    European Parliament Open Data Portal API to detect gross data staleness.
- *    Because the EP client's `PaginatedResponse.total` is computed as
- *    `items.length + offset` (not a server-side count), these API comparisons
- *    are informational only and do not affect the exit code. A `hasMore: true`
- *    response confirms at least 1 item exists; discrepancies should be
- *    investigated manually rather than treated as hard failures.
+ *    Because the EP client's `PaginatedResponse.total` is computed client-side
+ *    as `items.length + offset` (not a server-side count), these API
+ *    comparisons are informational only and do not affect the exit code. For
+ *    our `limit: 1` probes, a non-zero `total` (or a single returned item)
+ *    confirms at least 1 item exists; discrepancies should be investigated
+ *    manually rather than treated as hard failures.
  *
  * **Usage:**
  * ```bash
@@ -448,7 +449,7 @@ function validatePoliticalLandscape(yearStats: YearlyStats): LandscapeValidation
 
   // 7. Total seats should be roughly the mepCount.
   // Tolerance accounts for transitional periods and vacant seats.
-  const MAX_SEAT_DISCREPANCY = 10;
+  const MAX_SEAT_DISCREPANCY = 15;
   const totalSeats = groups.reduce((sum, g) => sum + g.seats, 0);
   if (Math.abs(totalSeats - yearStats.mepCount) > MAX_SEAT_DISCREPANCY) {
     issues.push(

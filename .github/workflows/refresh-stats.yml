@@ -52,8 +52,13 @@ jobs:
           ARGS=""
           if [ "${INPUT_YEAR}" = "all" ]; then
             ARGS="--all"
-          elif [ -n "${INPUT_YEAR}" ] && [[ "${INPUT_YEAR}" =~ ^[0-9]{4}$ ]]; then
-            ARGS="--year ${INPUT_YEAR}"
+          elif [ -n "${INPUT_YEAR}" ]; then
+            if [[ "${INPUT_YEAR}" =~ ^[0-9]{4}$ ]]; then
+              ARGS="--year ${INPUT_YEAR}"
+            else
+              echo "Error: Invalid year input '${INPUT_YEAR}'. Must be 'all' or a 4-digit year (e.g. 2024)." >&2
+              exit 1
+            fi
           fi
           npx tsx scripts/generate-stats.ts $ARGS
         env:
