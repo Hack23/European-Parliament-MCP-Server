@@ -37,6 +37,14 @@ key for developer advocacy and attracting TypeScript-savvy contributors and cust
  - branded - Branded type definitions
  - errors - Custom error classes
 
+## Interfaces
+
+- [MetricResult](interfaces/MetricResult.md)
+
+## Type Aliases
+
+- [DataAvailability](type-aliases/DataAvailability.md)
+
 ## References
 
 ### Brand

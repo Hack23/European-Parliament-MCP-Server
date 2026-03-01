@@ -8,7 +8,7 @@
 
 > **handleAnalyzeCoalitionDynamics**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/analyzeCoalitionDynamics.ts:313](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCoalitionDynamics.ts#L313)
+Defined in: [tools/analyzeCoalitionDynamics.ts:449](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCoalitionDynamics.ts#L449)
 
 Handles the analyze_coalition_dynamics MCP tool request.
 
@@ -97,9 +97,10 @@ EP API `/meps/{id}` endpoint).
 - Parliament-wide fragmentation index (Herfindahl–Hirschman)
 - Effective number of parties (ENP)
 
-> **Note:** Confidence level is always `LOW` because per-MEP voting statistics
-> are unavailable from the current EP API. Cohesion/defection metrics report
-> zero and should be supplemented with vote-result data when available.
+> **Note:** Confidence level is `LOW` because per-MEP voting statistics
+> are unavailable from the current EP API. Cohesion/defection/attendance
+> metrics are null with `dataAvailability: 'UNAVAILABLE'` and should be
+> supplemented with vote-result data when available.
 
 ## Throws
 

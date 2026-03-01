@@ -6,8 +6,8 @@
 
 # Variable: DEFAULT\_EP\_API\_BASE\_URL
 
-> `const` **DEFAULT\_EP\_API\_BASE\_URL**: `"https://data.europarl.europa.eu/api/v2/"` = `'https://data.europarl.europa.eu/api/v2/'`
+> `const` **DEFAULT\_EP\_API\_BASE\_URL**: `"https://data.europarl.europa.eu/api/v2/"` = `DEFAULT_API_URL`
 
-Defined in: [clients/ep/baseClient.ts:27](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L27)
+Defined in: [clients/ep/baseClient.ts:106](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L106)
 
-Default base URL for European Parliament Open Data Portal API v2
+Default base URL for European Parliament Open Data Portal API v2 — derived from centralized config

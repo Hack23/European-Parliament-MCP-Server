@@ -6,18 +6,72 @@
 
 # Class: AuditLogger
 
-Defined in: [utils/auditLogger.ts:119](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L119)
+Defined in: [utils/auditLogger.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L156)
 
-Audit logger implementation
+GDPR-compliant audit logger with pluggable sinks, parameter sanitisation,
+data retention enforcement, and access-controlled log retrieval.
 
-In production, this should write to a secure, append-only log storage
-such as CloudWatch Logs, Elasticsearch, or a dedicated audit log service.
+## Pluggable sinks
+By default the logger writes to an in-memory buffer (queryable via
+`getLogs()`) and to `stderr` (MCP-compatible).  Pass a `sinks` option to
+replace the default stderr sink with your own destinations
+(e.g. `FileAuditSink`, `StructuredJsonSink`).
+
+## Parameter sanitisation
+All `params` objects are passed through `sanitizeParams()` before storage.
+Only **top-level** keys matching `sensitiveKeys` (default:
+`DEFAULT_SENSITIVE_KEYS`) are replaced by `'[REDACTED]'` to prevent PII
+leakage into audit trails. Nested objects/arrays are **not** recursively
+sanitised; callers must avoid placing PII in nested structures or
+pre-sanitise such data before logging.
+
+## Data retention
+When `retentionMs` is set, `getLogs()` automatically filters out entries
+older than the configured maximum age (GDPR Article 5(1)(e)).
+
+## Access control
+When `requiredAuthToken` is set, `getLogs()`, `queryLogs()`, `clear()`, and
+`eraseByUser()` throw if the caller does not supply the correct token.
+
+## Examples
+
+```typescript
+auditLogger.logDataAccess('get_meps', { country: 'SE' }, 5, 85);
+const entries = auditLogger.getLogs();
+```
+
+```typescript
+const requiredAuthToken = process.env['AUDIT_TOKEN'];
+if (!requiredAuthToken) {
+  throw new Error(
+    'AUDIT_TOKEN environment variable must be set for audit log access control',
+  );
+}
+
+const logger = new AuditLogger({
+  sinks: [new FileAuditSink({ filePath: '/var/log/ep-mcp-audit.ndjson' })],
+  retentionMs: 30 * 24 * 60 * 60 * 1000,
+  requiredAuthToken,
+});
+```
+
+## Since
+
+0.8.0
 
 ## Constructors
 
 ### Constructor
 
-> **new AuditLogger**(): `AuditLogger`
+> **new AuditLogger**(`options?`): `AuditLogger`
+
+Defined in: [utils/auditLogger.ts:163](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L163)
+
+#### Parameters
+
+##### options?
+
+[`AuditLoggerOptions`](../../auditSink/interfaces/AuditLoggerOptions.md)
 
 #### Returns
 
@@ -25,43 +79,86 @@ such as CloudWatch Logs, Elasticsearch, or a dedicated audit log service.
 
 ## Properties
 
-### logs
+### extraSinks
 
-> `private` **logs**: [`AuditLogEntry`](../interfaces/AuditLogEntry.md)[] = `[]`
+> `private` `readonly` **extraSinks**: readonly [`AuditSink`](../../auditSink/interfaces/AuditSink.md)[]
 
-Defined in: [utils/auditLogger.ts:120](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L120)
+Defined in: [utils/auditLogger.ts:158](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L158)
+
+***
+
+### memorySink
+
+> `private` `readonly` **memorySink**: [`MemoryAuditSink`](../../auditSink/classes/MemoryAuditSink.md)
+
+Defined in: [utils/auditLogger.ts:157](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L157)
+
+***
+
+### requiredAuthToken
+
+> `private` `readonly` **requiredAuthToken**: `string` \| `undefined`
+
+Defined in: [utils/auditLogger.ts:161](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L161)
+
+***
+
+### retentionPolicy
+
+> `private` `readonly` **retentionPolicy**: [`RetentionPolicy`](../../auditSink/classes/RetentionPolicy.md) \| `undefined`
+
+Defined in: [utils/auditLogger.ts:160](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L160)
+
+***
+
+### sensitiveKeys
+
+> `private` `readonly` **sensitiveKeys**: readonly `string`[]
+
+Defined in: [utils/auditLogger.ts:159](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L159)
 
 ## Methods
 
-### clear()
+### checkAuthorization()
 
-> **clear**(): `void`
+> `private` **checkAuthorization**(`authorization?`): `void`
 
-Defined in: [utils/auditLogger.ts:362](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L362)
+Defined in: [utils/auditLogger.ts:374](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L374)
 
-Clears all in-memory audit log entries.
+#### Parameters
 
-**For testing only.** Calling this in production will silently discard
-audit records that have not yet been flushed to a persistent sink,
-violating ISMS Policy AU-002.
+##### authorization?
+
+`string`
 
 #### Returns
 
 `void`
 
-#### Example
+***
 
-```typescript
-afterEach(() => {
-  auditLogger.clear();
-});
-```
+### clear()
 
-#### Security
+> **clear**(`authorization?`): `void`
 
-Must NOT be called in production code. Clearing audit logs
-  without an authorised retention policy violates GDPR Article 30 and
-  ISMS Policy AU-002 (Audit Logging and Monitoring).
+Defined in: [utils/auditLogger.ts:365](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L365)
+
+Clears all in-memory audit log entries.
+
+**For testing only.** Clearing audit logs in production violates ISMS
+Policy AU-002 and GDPR Article 30.
+
+#### Parameters
+
+##### authorization?
+
+`string`
+
+Authorization token (required when configured)
+
+#### Returns
+
+`void`
 
 #### Since
 
@@ -69,40 +166,72 @@ Must NOT be called in production code. Clearing audit logs
 
 ***
 
-### getLogs()
+### eraseByUser()
 
-> **getLogs**(): [`AuditLogEntry`](../interfaces/AuditLogEntry.md)[]
+> **eraseByUser**(`userId`, `authorization?`): `void`
 
-Defined in: [utils/auditLogger.ts:339](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L339)
+Defined in: [utils/auditLogger.ts:351](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L351)
 
-Returns a snapshot copy of all in-memory audit log entries.
+Removes all audit entries associated with `userId` from in-memory storage.
 
-Intended primarily for **testing and debugging**. In production, audit
-records are emitted to `stderr` in real time; this method allows test
-suites to assert on logged events without parsing stderr output.
+**GDPR Article 17 — Right to Erasure.**  Only removes entries from the
+in-memory `MemoryAuditSink`; entries already flushed to persistent sinks
+(files, SIEM, etc.) must be erased separately via those sinks.
+
+#### Parameters
+
+##### userId
+
+`string`
+
+The user whose entries should be erased
+
+##### authorization?
+
+`string`
+
+Authorization token (required when configured)
 
 #### Returns
 
-[`AuditLogEntry`](../interfaces/AuditLogEntry.md)[]
+`void`
 
-Shallow copy of the internal log buffer as an array of
-  [AuditLogEntry](../interfaces/AuditLogEntry.md) objects, ordered oldest-first. Mutating the
-  returned array does not affect the internal buffer.
+#### Since
 
-#### Example
+0.9.0
 
-```typescript
-auditLogger.logDataAccess('get_meps', {}, 5);
-const logs = auditLogger.getLogs();
-expect(logs).toHaveLength(1);
-expect(logs[0]?.action).toBe('get_meps');
-```
+***
+
+### getLogs()
+
+> **getLogs**(`authorization?`): [`AuditLogEntry`](../../auditSink/interfaces/AuditLogEntry.md)[]
+
+Defined in: [utils/auditLogger.ts:317](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L317)
+
+Returns a snapshot of all in-memory audit log entries, optionally filtered
+by the configured data-retention policy.
+
+When `requiredAuthToken` was set in the constructor, `authorization` must
+match; otherwise an `Error` is thrown.
+
+#### Parameters
+
+##### authorization?
+
+`string`
+
+Authorization token (required when configured)
+
+#### Returns
+
+[`AuditLogEntry`](../../auditSink/interfaces/AuditLogEntry.md)[]
+
+Entries ordered oldest-first, filtered by retention policy
 
 #### Security
 
-The returned entries may contain sanitised parameters that were
-  passed by callers. Treat the output as sensitive and do not expose it
-  through public API endpoints.
+When `requiredAuthToken` is configured, this method is access-
+  controlled. Do not expose the returned entries through public APIs.
 
 #### Since
 
@@ -114,19 +243,18 @@ The returned entries may contain sanitised parameters that were
 
 > **log**(`entry`): `void`
 
-Defined in: [utils/auditLogger.ts:146](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L146)
+Defined in: [utils/auditLogger.ts:199](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L199)
 
-Logs an audit event to the in-memory store and stderr.
+Logs an audit event to the in-memory store and all configured sinks.
 
-Appends a timestamped [AuditLogEntry](../interfaces/AuditLogEntry.md) to the internal log buffer and
-emits a single structured JSON line to `stderr` (stdout is reserved for the
-MCP protocol wire format).
+Parameter values matching `sensitiveKeys` are automatically replaced by
+`'[REDACTED]'` before storage.
 
 #### Parameters
 
 ##### entry
 
-[`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys)\<[`AuditLogEntry`](../interfaces/AuditLogEntry.md), `"timestamp"`\>
+[`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys)\<[`AuditLogEntry`](../../auditSink/interfaces/AuditLogEntry.md), `"timestamp"`\>
 
 Audit log entry without a timestamp (generated automatically)
 
@@ -134,24 +262,9 @@ Audit log entry without a timestamp (generated automatically)
 
 `void`
 
-#### Throws
-
-If `entry.action` is not a string
-
-#### Example
-
-```typescript
-auditLogger.log({
-  action: 'get_meps',
-  params: { country: 'DE' },
-  result: { success: true, count: 42 },
-  duration: 120
-});
-```
-
 #### Security
 
-Writes to stderr only (not stdout, which is reserved for MCP protocol).
+Writes to sinks only (not stdout, which is reserved for MCP).
   Per ISMS Policy AU-002, all MCP tool calls must be audit-logged.
 
 #### Since
@@ -164,13 +277,9 @@ Writes to stderr only (not stdout, which is reserved for MCP protocol).
 
 > **logDataAccess**(`action`, `params`, `count`, `duration?`): `void`
 
-Defined in: [utils/auditLogger.ts:252](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L252)
+Defined in: [utils/auditLogger.ts:266](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L266)
 
-Logs a successful data-access event (e.g., a query returning records).
-
-Convenience wrapper around [log](#log) that constructs a success result
-with a record count. Suitable for GDPR Article 30 processing-activity
-records where the data subject count is relevant.
+Logs a successful data-access event (e.g. a query returning records).
 
 #### Parameters
 
@@ -178,19 +287,19 @@ records where the data subject count is relevant.
 
 `string`
 
-Action name (e.g., `'get_meps'`, `'get_committee_meetings'`)
+Action name (e.g. `'get_meps'`, `'get_committee_meetings'`)
 
 ##### params
 
 [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
-Sanitised query parameters used for the data access
+Query parameters (sanitised automatically)
 
 ##### count
 
 `number`
 
-Number of records returned / accessed
+Number of records returned
 
 ##### duration?
 
@@ -202,28 +311,6 @@ Optional wall-clock duration in milliseconds
 
 `void`
 
-#### Throws
-
-If `action` is not a string or `count` is not a number
-
-#### Example
-
-```typescript
-auditLogger.logDataAccess(
-  'get_meps',
-  { country: 'SE', group: 'EPP' },
-  7,
-  85
-);
-```
-
-#### Security
-
-Params must be sanitised by the caller before passing to this
-  method—no PII stripping is performed internally.
-  Per ISMS Policy AU-002 / GDPR Article 30, data-access events must be
-  logged with subject counts for processing-activity records.
-
 #### Since
 
 0.8.0
@@ -234,13 +321,9 @@ Params must be sanitised by the caller before passing to this
 
 > **logError**(`action`, `params`, `error`, `duration?`): `void`
 
-Defined in: [utils/auditLogger.ts:298](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L298)
+Defined in: [utils/auditLogger.ts:289](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L289)
 
 Logs a failed operation as an audit error event.
-
-Convenience wrapper around [log](#log) that constructs a failure result.
-Use this whenever an MCP tool or EP API call throws or returns an error
-so the failure is captured in the audit trail.
 
 #### Parameters
 
@@ -248,51 +331,29 @@ so the failure is captured in the audit trail.
 
 `string`
 
-Action name (e.g., `'get_mep_details'`, `'get_plenary_sessions'`)
+Action name
 
 ##### params
 
 [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
-Sanitised parameters that were supplied to the failed operation
+Parameters supplied to the failed operation (sanitised)
 
 ##### error
 
 `string`
 
-Human-readable error message (must not contain secrets or PII)
+Human-readable error message (must not contain secrets)
 
 ##### duration?
 
 `number`
 
-Optional wall-clock duration in milliseconds before failure
+Optional wall-clock duration in milliseconds
 
 #### Returns
 
 `void`
-
-#### Throws
-
-If `action` or `error` is not a string
-
-#### Example
-
-```typescript
-auditLogger.logError(
-  'get_mep_details',
-  { mepId: 99999 },
-  'MEP not found',
-  30
-);
-```
-
-#### Security
-
-Error messages must not include secrets, tokens, or raw stack
-  traces. Sanitise before passing to avoid leaking internal details to
-  log sinks accessible by ops teams.
-  Per ISMS Policy AU-002, failed operations must be audit-logged.
 
 #### Since
 
@@ -304,15 +365,13 @@ Error messages must not include secrets, tokens, or raw stack
 
 > **logToolCall**(`toolName`, `params`, `success`, `duration?`, `error?`): `void`
 
-Defined in: [utils/auditLogger.ts:201](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L201)
+Defined in: [utils/auditLogger.ts:233](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L233)
 
 Log an MCP tool call as an audit record.
 
-Persists an [AuditLogEntry](../interfaces/AuditLogEntry.md) via [log](#log) (which emits a single
-`[AUDIT]` record to stderr).  Tool-call data is nested under
-`{ tool: { name, params } }` to prevent user-controlled parameter keys
-from colliding with reserved log-schema fields.  Suitable for GDPR
-Article 30 processing-activity records.
+The tool's `params` are sanitised before being wrapped in the entry so
+that PII in top-level tool parameter keys is redacted. Nested objects are
+not recursively sanitised.
 
 #### Parameters
 
@@ -326,9 +385,7 @@ Name of the MCP tool that was invoked
 
 [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
-Tool input parameters. **Callers are responsible for
-                   sanitising sensitive values before passing them here.**
-                   This method does not perform any sanitisation.
+Tool input parameters (sanitised automatically)
 
 ##### success
 
@@ -352,37 +409,92 @@ Optional error message if the call failed
 
 `void`
 
-#### Throws
-
-If `toolName` is not a string
-
-#### Example
-
-```typescript
-auditLogger.logToolCall(
-  'get_mep_details',
-  { mepId: 12345 },
-  true,
-  95,
-);
-
-// On failure:
-auditLogger.logToolCall(
-  'get_plenary_sessions',
-  { term: 10 },
-  false,
-  200,
-  'EP API returned 503'
-);
-```
-
-#### Security
-
-Parameter values are nested under a `tool` key to prevent
-  user-controlled keys from colliding with reserved audit-schema fields.
-  Callers must sanitise PII before passing `params`.
-  Per ISMS Policy AU-002, all MCP tool calls must be audit-logged.
-
 #### Since
 
 0.8.0
+
+***
+
+### pruneExpiredEntries()
+
+> `private` **pruneExpiredEntries**(`policy`): `void`
+
+Defined in: [utils/auditLogger.ts:385](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L385)
+
+#### Parameters
+
+##### policy
+
+[`RetentionPolicy`](../../auditSink/classes/RetentionPolicy.md)
+
+#### Returns
+
+`void`
+
+***
+
+### queryLogs()
+
+> **queryLogs**(`filter`, `authorization?`): [`AuditLogEntry`](../../auditSink/interfaces/AuditLogEntry.md)[]
+
+Defined in: [utils/auditLogger.ts:332](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L332)
+
+Queries the in-memory log using a filter.
+
+#### Parameters
+
+##### filter
+
+[`AuditFilter`](../../auditSink/interfaces/AuditFilter.md)
+
+Field-based filter to apply
+
+##### authorization?
+
+`string`
+
+Authorization token (required when configured)
+
+#### Returns
+
+[`AuditLogEntry`](../../auditSink/interfaces/AuditLogEntry.md)[]
+
+#### Since
+
+0.9.0
+
+***
+
+### writeSinks()
+
+> `private` **writeSinks**(`entry`): `void`
+
+Defined in: [utils/auditLogger.ts:405](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L405)
+
+#### Parameters
+
+##### entry
+
+[`AuditLogEntry`](../../auditSink/interfaces/AuditLogEntry.md)
+
+#### Returns
+
+`void`
+
+***
+
+### buildRetentionPolicy()
+
+> `private` `static` **buildRetentionPolicy**(`retentionMs`): [`RetentionPolicy`](../../auditSink/classes/RetentionPolicy.md) \| `undefined`
+
+Defined in: [utils/auditLogger.ts:171](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L171)
+
+#### Parameters
+
+##### retentionMs
+
+`number` | `undefined`
+
+#### Returns
+
+[`RetentionPolicy`](../../auditSink/classes/RetentionPolicy.md) \| `undefined`

@@ -8,7 +8,7 @@
 
 > `const` **networkAnalysisToolMetadata**: `object`
 
-Defined in: [tools/networkAnalysis.ts:326](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/networkAnalysis.ts#L326)
+Defined in: [tools/networkAnalysis.ts:447](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/networkAnalysis.ts#L447)
 
 ## Type Declaration
 

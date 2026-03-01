@@ -29,11 +29,27 @@ export interface RateLimiterStatus {
 }
 
 /**
+ * Result returned by {@link RateLimiter.removeTokens}.
+ *
+ * Discriminated union: when `allowed` is `true`, tokens were consumed.
+ * When `allowed` is `false`, the wait would have exceeded the timeout and
+ * `retryAfterMs` is always present with a value ≥ 1 (milliseconds until the
+ * bucket is expected to have enough tokens; treat `1` as "retry immediately").
+ *
+ * **Note:** `remainingTokens` is always a non-negative integer
+ * (`Math.floor` of the internal fractional bucket state). This differs from
+ * {@link RateLimiter.getAvailableTokens}, which may return a fractional value.
+ */
+export type RateLimitResult =
+  | { allowed: true; remainingTokens: number }
+  | { allowed: false; retryAfterMs: number; remainingTokens: number };
+
+/**
  * Rate limiter configuration options
  */
 interface RateLimiterOptions {
   /**
-   * Maximum number of tokens in the bucket
+   * Maximum number of tokens in the bucket (must be a finite integer >= 1)
    */
   tokensPerInterval: number;
   
@@ -67,8 +83,24 @@ export class RateLimiter {
   private lastRefill: number;
 
   constructor(options: RateLimiterOptions) {
+    if (!Number.isInteger(options.tokensPerInterval) || options.tokensPerInterval < 1) {
+      throw new Error(
+        `RateLimiter: tokensPerInterval must be a finite integer >= 1, got ${String(options.tokensPerInterval)}`
+      );
+    }
     this.tokensPerInterval = options.tokensPerInterval;
-    this.tokens = options.initialTokens ?? options.tokensPerInterval;
+    const initialTokens = options.initialTokens ?? options.tokensPerInterval;
+    if (!Number.isFinite(initialTokens) || initialTokens < 0) {
+      throw new Error(
+        `RateLimiter: initialTokens must be a finite non-negative number, got ${String(initialTokens)}`
+      );
+    }
+    if (initialTokens > this.tokensPerInterval) {
+      throw new Error(
+        `RateLimiter: initialTokens (${String(initialTokens)}) must not exceed tokensPerInterval (${String(this.tokensPerInterval)})`
+      );
+    }
+    this.tokens = initialTokens;
     this.lastRefill = Date.now();
     
     // Convert interval to milliseconds
@@ -86,6 +118,13 @@ export class RateLimiter {
         const exhaustive: never = options.interval;
         throw new Error(`Invalid interval: ${String(exhaustive)}`);
     }
+  }
+
+  /** Coerce an optional timeoutMs value to a safe finite number >= 0. */
+  private static resolveTimeout(rawTimeoutMs: number | undefined): number {
+    if (rawTimeoutMs === undefined) return 5000;
+    if (Number.isFinite(rawTimeoutMs) && rawTimeoutMs >= 0) return rawTimeoutMs;
+    return 0;
   }
 
   /**
@@ -106,27 +145,32 @@ export class RateLimiter {
   }
 
   /**
-   * Attempts to consume `count` tokens from the bucket.
+   * Attempts to consume `count` tokens from the bucket, waiting asynchronously
+   * until tokens are available or the timeout expires.
    *
-   * Refills the bucket based on elapsed time before checking availability.
-   * If sufficient tokens are available they are consumed immediately and the
-   * returned promise resolves. If not, a {@link Error} is thrown describing
-   * how long to wait before retrying.
+   * Refills the bucket based on elapsed time before each check. If sufficient
+   * tokens are available they are consumed immediately. Otherwise the method
+   * sleeps until the bucket has enough tokens and retries. If the required wait
+   * would exceed `options.timeoutMs` (default **5000 ms**) the call returns
+   * immediately with `allowed: false` and a `retryAfterMs` hint. The timeout
+   * is enforced as a hard deadline: even if a sleep fires slightly late due to
+   * event-loop delay, tokens are never consumed after the deadline has elapsed.
    *
-   * @param count - Number of tokens to consume (must be ≥ 1)
-   * @returns Promise that resolves when the tokens have been consumed
-   * @throws {Error} If there are not enough tokens in the bucket, with a
-   *   message indicating the retry-after duration in seconds
+   * @param count - Number of tokens to consume (must be a finite integer ≥ 1 and ≤ `tokensPerInterval`); throws for invalid values
+   * @param options.timeoutMs - Maximum time to wait in milliseconds (default 5000); non-finite or negative values are coerced to `0`, meaning the call never blocks and returns `allowed: false` immediately if tokens are unavailable
+   * @returns Promise resolving to a {@link RateLimitResult}. `allowed` is `true`
+   *   when tokens were consumed, `false` when the timeout was reached.
+   *   `remainingTokens` is always a non-negative integer (`Math.floor` of the
+   *   internal fractional bucket state); it may differ from
+   *   {@link RateLimiter.getAvailableTokens} which returns the raw fractional value.
    *
    * @example
    * ```typescript
-   * try {
-   *   await rateLimiter.removeTokens(1);
+   * const result = await rateLimiter.removeTokens(1);
+   * if (!result.allowed) {
+   *   console.warn(`Rate limited – retry after ${result.retryAfterMs}ms`);
+   * } else {
    *   const data = await fetchFromEPAPI('/meps');
-   * } catch (err) {
-   *   if (err instanceof Error) {
-   *     console.warn('Rate limited:', err.message);
-   *   }
    * }
    * ```
    *
@@ -134,33 +178,77 @@ export class RateLimiter {
    *   Per ISMS Policy AC-003, rate limiting is a mandatory access control.
    * @since 0.8.0
    */
-  async removeTokens(count: number): Promise<void> {
-    this.refill();
-    
-    if (this.tokens >= count) {
-      this.tokens -= count;
-      return Promise.resolve();
+  async removeTokens(
+    count: number,
+    options?: { timeoutMs?: number }
+  ): Promise<RateLimitResult> {
+    // Validate count: must be a finite integer >= 1
+    if (!Number.isFinite(count) || count < 1 || !Number.isInteger(count)) {
+      throw new Error(`removeTokens: count must be a finite integer >= 1, got ${String(count)}`);
     }
-    
-    // Calculate wait time
-    const tokensNeeded = count - this.tokens;
-    const waitMs = (tokensNeeded / this.tokensPerInterval) * this.intervalMs;
-    
-    // For now, throw error instead of waiting
-    // In production, you might want to implement waiting or backoff
-    throw new Error(
-      `Rate limit exceeded. Available tokens: ${String(this.tokens)}, required: ${String(count)}. ` +
-      `Retry after ${String(Math.ceil(waitMs / 1000))} seconds.`
-    );
+    // A count larger than the bucket capacity can never be satisfied
+    if (count > this.tokensPerInterval) {
+      throw new Error(
+        `removeTokens: count (${String(count)}) exceeds bucket capacity (${String(this.tokensPerInterval)})`
+      );
+    }
+
+    // Validate timeoutMs: coerce invalid (NaN/Infinity/negative) to 0 so the
+    // call never blocks and either succeeds immediately if enough tokens are
+    // available or returns allowed:false immediately if not
+    const rawTimeoutMs = options?.timeoutMs;
+    const timeoutMs = RateLimiter.resolveTimeout(rawTimeoutMs);
+
+    const deadline = Date.now() + timeoutMs;
+
+    for (;;) {
+      this.refill();
+
+      if (this.tokens >= count) {
+        this.tokens -= count;
+        return { allowed: true, remainingTokens: Math.floor(this.tokens) };
+      }
+
+      const tokensNeeded = count - this.tokens;
+      const waitMs = Math.ceil((tokensNeeded / this.tokensPerInterval) * this.intervalMs);
+      const remainingMs = deadline - Date.now();
+
+      if (waitMs > remainingMs) {
+        return {
+          allowed: false,
+          retryAfterMs: waitMs,
+          remainingTokens: Math.floor(this.tokens),
+        };
+      }
+
+      await new Promise<void>(resolve => setTimeout(resolve, waitMs));
+
+      // Hard deadline guard: if the timer fired late (event-loop delay) and the
+      // deadline has already elapsed, reject without consuming tokens.
+      // retryAfterMs is always >= 1 so callers always receive a positive retry hint.
+      if (Date.now() >= deadline) {
+        this.refill();
+        return {
+          allowed: false,
+          retryAfterMs: Math.max(1, Math.ceil(((count - this.tokens) / this.tokensPerInterval) * this.intervalMs)),
+          remainingTokens: Math.floor(this.tokens),
+        };
+      }
+    }
   }
 
   /**
    * Attempts to consume `count` tokens without throwing on failure.
    *
-   * Non-throwing alternative to {@link removeTokens}. Useful in hot paths
-   * where callers want to branch on availability rather than catch errors.
+   * Synchronous alternative to {@link removeTokens} that returns `false`
+   * instead of waiting when the bucket lacks tokens. Useful in hot paths
+   * where callers want to branch on availability rather than await a refill.
    *
-   * @param count - Number of tokens to consume (must be ≥ 1)
+   * **Note:** This method still throws for invalid `count` arguments (non-integer,
+   * `< 1`, or exceeding bucket capacity). It only avoids throwing when there are
+   * insufficient tokens in the bucket at the time of the call.
+   *
+   * @param count - Number of tokens to consume (must be a finite integer ≥ 1 and ≤ `tokensPerInterval`); throws for invalid values
    * @returns `true` if tokens were successfully consumed, `false` if the
    *   bucket did not have enough tokens (bucket is left unchanged)
    *
@@ -175,6 +263,14 @@ export class RateLimiter {
    * @since 0.8.0
    */
   tryRemoveTokens(count: number): boolean {
+    if (!Number.isFinite(count) || count < 1 || !Number.isInteger(count)) {
+      throw new Error(`tryRemoveTokens: count must be a finite integer >= 1, got ${String(count)}`);
+    }
+    if (count > this.tokensPerInterval) {
+      throw new Error(
+        `tryRemoveTokens: count (${String(count)}) exceeds bucket capacity (${String(this.tokensPerInterval)})`
+      );
+    }
     this.refill();
     
     if (this.tokens >= count) {
@@ -288,8 +384,10 @@ export class RateLimiter {
  * @example
  * ```typescript
  * const rateLimiter = createStandardRateLimiter();
- * await rateLimiter.removeTokens(1);
- * const data = await fetchFromEPAPI('/meps');
+ * const result = await rateLimiter.removeTokens(1);
+ * if (result.allowed) {
+ *   const data = await fetchFromEPAPI('/meps');
+ * }
  * ```
  *
  * @security Ensures sustainable OSINT collection rates from the EP API and

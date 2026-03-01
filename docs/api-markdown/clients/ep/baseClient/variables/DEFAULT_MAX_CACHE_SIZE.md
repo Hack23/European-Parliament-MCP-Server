@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_MAX\_CACHE\_SIZE**: `500` = `500`
 
-Defined in: [clients/ep/baseClient.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L37)
+Defined in: [clients/ep/baseClient.ts:120](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L120)
 
 Default maximum number of entries in the LRU response cache

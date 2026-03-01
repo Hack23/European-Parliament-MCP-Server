@@ -8,4 +8,4 @@
 
 > `const` **ComparativeIntelligenceSchema**: `ZodObject`\<[`ComparativeIntelligenceParams`](../type-aliases/ComparativeIntelligenceParams.md)\>
 
-Defined in: [tools/comparativeIntelligence.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L29)
+Defined in: [tools/comparativeIntelligence.ts:31](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L31)

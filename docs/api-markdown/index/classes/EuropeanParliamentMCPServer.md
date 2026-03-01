@@ -6,7 +6,7 @@
 
 # Class: EuropeanParliamentMCPServer
 
-Defined in: [index.ts:120](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L120)
+Defined in: [index.ts:131](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L131)
 
 Main MCP Server class for European Parliament data access
 
@@ -45,7 +45,7 @@ await server.start();
 
 > **new EuropeanParliamentMCPServer**(): `EuropeanParliamentMCPServer`
 
-Defined in: [index.ts:125](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L125)
+Defined in: [index.ts:136](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L136)
 
 #### Returns
 
@@ -57,7 +57,7 @@ Defined in: [index.ts:125](https://github.com/Hack23/European-Parliament-MCP-Ser
 
 > `private` `readonly` **server**: `Server`
 
-Defined in: [index.ts:123](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L123)
+Defined in: [index.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L134)
 
 ## Methods
 
@@ -65,7 +65,7 @@ Defined in: [index.ts:123](https://github.com/Hack23/European-Parliament-MCP-Ser
 
 > **start**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
-Defined in: [index.ts:274](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L274)
+Defined in: [index.ts:292](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L292)
 
 Start the MCP server
 

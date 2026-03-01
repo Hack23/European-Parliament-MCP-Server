@@ -8,6 +8,10 @@
 
 > `const` **auditLogger**: [`AuditLogger`](../classes/AuditLogger.md)
 
-Defined in: [utils/auditLogger.ts:370](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L370)
+Defined in: [utils/auditLogger.ts:438](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L438)
 
-Global audit logger instance
+Global audit logger instance.
+
+Uses default options: in-memory buffer + stderr output, no access control,
+no retention policy.  Override by creating a new `AuditLogger` instance
+with the desired [AuditLoggerOptions](../../auditSink/interfaces/AuditLoggerOptions.md).

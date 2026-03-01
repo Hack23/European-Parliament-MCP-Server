@@ -8,7 +8,7 @@
 
 > `const` **getProceduresToolMetadata**: `object`
 
-Defined in: [tools/getProcedures.ts:77](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProcedures.ts#L77)
+Defined in: [tools/getProcedures.ts:80](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProcedures.ts#L80)
 
 Tool metadata for get_procedures
 

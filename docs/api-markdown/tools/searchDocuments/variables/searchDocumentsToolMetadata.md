@@ -8,7 +8,7 @@
 
 > `const` **searchDocumentsToolMetadata**: `object`
 
-Defined in: [tools/searchDocuments.ts:115](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/searchDocuments.ts#L115)
+Defined in: [tools/searchDocuments.ts:118](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/searchDocuments.ts#L118)
 
 Tool metadata for MCP registration
 

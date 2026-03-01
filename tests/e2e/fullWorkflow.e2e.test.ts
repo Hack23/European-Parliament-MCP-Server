@@ -299,7 +299,7 @@ describe('Full Workflow E2E Tests', () => {
 
       // All steps completed successfully
       expect(true).toBe(true);
-    }, E2E_TEST_TIMEOUT_MS);
+    }, E2E_WORKFLOW_TIMEOUT_MS);
   });
 
   describe('Workflow: Track Legislation', () => {
