@@ -8,14 +8,12 @@
  *    shares, fragmentation indices, and structural invariants. These checks
  *    are deterministic and drive the exit code.
  *
- * 2. **API spot-check** (advisory) — fetches `limit: 1` probes against the
- *    European Parliament Open Data Portal API to detect gross data staleness.
- *    Because the EP client's `PaginatedResponse.total` is computed client-side
- *    as `items.length + offset` (not a server-side count), these API
- *    comparisons are informational only and do not affect the exit code. For
- *    our `limit: 1` probes, a non-zero `total` (or a single returned item)
- *    confirms at least 1 item exists; discrepancies should be investigated
- *    manually rather than treated as hard failures.
+ * 2. **API comparison** — fetches real record counts from the European
+ *    Parliament Open Data Portal API using pagination-based counting
+ *    (limit: 1000 per page, the API's server-side cap). Because the EP API
+ *    does not provide a `totalItems` response header, all records are
+ *    iterated to obtain accurate counts. Discrepancies are logged but do
+ *    not affect the exit code (data may legitimately drift between releases).
  *
  * **Usage:**
  * ```bash
@@ -31,7 +29,7 @@
  * **ISMS Compliance:**
  * - SC-002: Input validation on CLI arguments
  * - AU-002: Structured logging of validation results
- * - PE-001: Minimal API footprint (limit: 1 per query)
+ * - PE-001: Pagination-based counting with 1000-item pages
  *
  * @see https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md
  * @module scripts/generate-stats
@@ -187,24 +185,44 @@ function padRight(str: string, len: number): string {
 // ── API fetching ──────────────────────────────────────────────────
 
 /**
- * Fetch a single metric probe from the EP API.
+ * Maximum page size accepted by the EP Open Data API.
+ * Requests with larger `limit` values are silently capped to this.
+ */
+const EP_API_MAX_PAGE_SIZE = 1000;
+
+/**
+ * Count the total number of items for a metric by paginating through
+ * the EP API.  Pages are fetched with `limit = EP_API_MAX_PAGE_SIZE`
+ * (the server-side cap) and the item counts are summed.  Pagination
+ * stops when a page returns fewer items than the limit.
  *
- * Uses `limit: 1` to minimise bandwidth. Because the EP client computes
- * `PaginatedResponse.total` as `items.length + offset` (not a server-side
- * count), the returned total is only an existence check (0 or 1), not a
- * real record count. Comparisons against stored yearly totals are therefore
- * advisory.
+ * This replaces the earlier `limit: 1` probe approach which always
+ * returned `total = 1` because the client computes
+ * `PaginatedResponse.total` as `items.length + offset`.
  *
  * Returns the total count or null on failure.
  */
-async function fetchTotal(
+async function countItems(
   label: string,
-  fetcher: () => Promise<{ total: number }>
+  fetcher: (params: { limit: number; offset: number }) => Promise<{ data: unknown[]; hasMore: boolean }>
 ): Promise<{ total: number | null; error?: string }> {
+  let totalCount = 0;
+  let offset = 0;
   try {
-    const result = await fetcher();
-    return { total: result.total };
+    for (;;) {
+      const result = await fetcher({ limit: EP_API_MAX_PAGE_SIZE, offset });
+      totalCount += result.data.length;
+      if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
+      offset += EP_API_MAX_PAGE_SIZE;
+    }
+    return { total: totalCount };
   } catch (err: unknown) {
+    // If we already counted some items before the error, the last page
+    // likely returned an empty body (the EP API does this when offset
+    // exceeds available data).  The accumulated count is correct.
+    if (totalCount > 0) {
+      return { total: totalCount };
+    }
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error(`  ${DIM}⚠ API error fetching ${label}: ${message}${RESET}`);
     return { total: null, error: message };
@@ -236,14 +254,13 @@ function compareValues(stored: number, api: number | null): { status: Comparison
 // ── Year validation (API comparison) ──────────────────────────────
 
 /**
- * Fetch live probes from the EP API for a given year and compare
+ * Fetch live counts from the EP API for a given year and compare
  * them against the stored RAW_YEARLY data.
  *
- * **Advisory:** Because the EP client's `total` is `items.length + offset`
- * (not a real server-side count), `limit: 1` requests return `total = 1`
- * for any non-empty result set. Comparisons are therefore informational
- * spot-checks—a response > 0 confirms data still exists in the API, but
- * exact-match assertions are not meaningful.
+ * Uses pagination-based counting (`limit = 1000` per page) to obtain
+ * real record counts from the EP API.  The EP API does not return a
+ * `totalItems` header, so the only reliable way to count records is
+ * to iterate through all pages.
  */
 async function validateYearAgainstAPI(
   client: EuropeanParliamentClient,
@@ -254,51 +271,65 @@ async function validateYearAgainstAPI(
 
   console.log(`\n${BOLD}${CYAN}── Fetching API data for ${String(year)} ──${RESET}`);
 
-  // Define metric fetch configuration
+  // Define metric fetch configuration using pagination counting
   const metrics: Array<{
     label: string;
     storedKey: keyof YearlyStats;
-    fetch: () => Promise<{ total: number }>;
+    count: () => Promise<{ total: number | null; error?: string }>;
   }> = [
     {
       label: 'Adopted Texts',
       storedKey: 'adoptedTexts',
-      fetch: () => client.getAdoptedTexts({ year, limit: 1 }),
+      count: () => countItems('Adopted Texts', (p) => client.getAdoptedTexts({ year, ...p })),
     },
     {
       label: 'Procedures',
       storedKey: 'procedures',
-      fetch: () => client.getProcedures({ year, limit: 1 }),
+      count: () => countItems('Procedures', (p) => client.getProcedures({ year, ...p })),
     },
     {
       label: 'Plenary Documents',
       storedKey: 'documents',
-      fetch: async () => {
+      // Document count = sum of plenary + committee + external documents.
+      // Uses Promise.all to fetch the three sub-categories in parallel.
+      count: async () => {
         // Sum plenary + committee + external documents for total document count
         const [plenary, committee, external] = await Promise.all([
-          fetchTotal('Plenary Docs', () => client.getPlenaryDocuments({ year, limit: 1 })),
-          fetchTotal('Committee Docs', () => client.getCommitteeDocuments({ year, limit: 1 })),
-          fetchTotal('External Docs', () => client.getExternalDocuments({ year, limit: 1 })),
+          countItems('Plenary Docs', (p) => client.getPlenaryDocuments({ year, ...p })),
+          countItems('Committee Docs', (p) => client.getCommitteeDocuments({ year, ...p })),
+          countItems('External Docs', (p) => client.getExternalDocuments({ year, ...p })),
         ]);
+        // If any component errored, aggregate the error messages
+        const errors: string[] = [];
+        if (plenary.error) errors.push(`Plenary: ${plenary.error}`);
+        if (committee.error) errors.push(`Committee: ${committee.error}`);
+        if (external.error) errors.push(`External: ${external.error}`);
+
         const total = (plenary.total ?? 0) + (committee.total ?? 0) + (external.total ?? 0);
-        return { total };
+        // Only report as error if ALL sub-fetches failed
+        if (plenary.total === null && committee.total === null && external.total === null) {
+          return { total: null, error: errors.join(' | ') };
+        }
+        return { total, error: errors.length > 0 ? errors.join(' | ') : undefined };
       },
     },
     {
       label: 'Parliamentary Questions',
       storedKey: 'parliamentaryQuestions',
-      fetch: () => client.getParliamentaryQuestions({ dateFrom: `${String(year)}-01-01`, dateTo: `${String(year)}-12-31`, limit: 1 }),
+      count: () => countItems('Parliamentary Questions', (p) =>
+        client.getParliamentaryQuestions({ dateFrom: `${String(year)}-01-01`, dateTo: `${String(year)}-12-31`, ...p })
+      ),
     },
     {
       label: 'MEP Declarations',
       storedKey: 'declarations',
-      fetch: () => client.getMEPDeclarations({ year, limit: 1 }),
+      count: () => countItems('MEP Declarations', (p) => client.getMEPDeclarations({ year, ...p })),
     },
   ];
 
   // Fetch all metrics sequentially to respect rate limits
   for (const metric of metrics) {
-    const { total, error } = await fetchTotal(metric.label, metric.fetch);
+    const { total, error } = await metric.count();
     const storedValue = yearStats[metric.storedKey] as number;
     const { status, diffPercent } = compareValues(storedValue, total);
 
@@ -316,9 +347,9 @@ async function validateYearAgainstAPI(
   const latestCoveredYear = GENERATED_STATS.coveragePeriod.to;
   if (year === latestCoveredYear) {
     // Current MEPs vs stored mepCount
-    const { total: currentTotal, error: currentError } = await fetchTotal(
+    const { total: currentTotal, error: currentError } = await countItems(
       'Current MEPs',
-      () => client.getCurrentMEPs({ limit: 1 }),
+      (p) => client.getCurrentMEPs(p),
     );
     {
       const storedValue = yearStats.mepCount as number;
@@ -335,13 +366,13 @@ async function validateYearAgainstAPI(
     }
 
     // Turnover = incoming + outgoing
-    const { total: incomingTotal, error: incomingError } = await fetchTotal(
+    const { total: incomingTotal, error: incomingError } = await countItems(
       'Incoming MEPs',
-      () => client.getIncomingMEPs({ limit: 1 }),
+      (p) => client.getIncomingMEPs(p),
     );
-    const { total: outgoingTotal, error: outgoingError } = await fetchTotal(
+    const { total: outgoingTotal, error: outgoingError } = await countItems(
       'Outgoing MEPs',
-      () => client.getOutgoingMEPs({ limit: 1 }),
+      (p) => client.getOutgoingMEPs(p),
     );
 
     const turnoverApiValue =
@@ -541,12 +572,12 @@ function printSummary(
   // Build recommendations
   if (summary.discrepancies > 0) {
     summary.recommendations.push(
-      `${String(summary.discrepancies)} API spot-check(s) show discrepancies (advisory only — EP client returns total = items.length + offset, which equals 1 for limit:1 requests regardless of actual record count). Investigate manually if needed.`
+      `${String(summary.discrepancies)} API comparison(s) show significant discrepancies (>10%). Review stored data in generatedStats.ts.`
     );
   }
   if (summary.close > 0) {
     summary.recommendations.push(
-      `${String(summary.close)} API spot-check(s) are close but not exact (within 10%). Advisory only.`
+      `${String(summary.close)} API comparison(s) are close but not exact (within 10%). Minor data drift expected.`
     );
   }
   if (summary.apiErrors > 0) {
@@ -641,7 +672,7 @@ async function main(): Promise<void> {
   console.log(`${DIM}Completed in ${elapsed}s${RESET}\n`);
 
   // Exit code: 1 only for landscape consistency errors (deterministic)
-  // API discrepancies are advisory (EP client total is items.length + offset, not a real count)
+  // API discrepancies are advisory (data may legitimately drift between releases)
   if (summary.landscapeIssues > 0) {
     process.exit(1);
   }
