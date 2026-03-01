@@ -593,3 +593,339 @@ describe('GENERATED_STATS — prediction integrity', () => {
     }
   });
 });
+
+// ─── Derived intelligence metrics ─────────────────────────────────────────────
+
+describe('GENERATED_STATS — derived intelligence metrics', () => {
+  let allYears: YearlyStats[];
+  beforeAll(() => {
+    allYears = GENERATED_STATS.yearlyStats;
+  });
+
+  it('every year should have a derivedIntelligence object', () => {
+    for (const y of allYears) {
+      expect(y.derivedIntelligence).toBeDefined();
+    }
+  });
+
+  describe('legislative efficiency', () => {
+    it('legislativeOutputPerSession should be acts / sessions', () => {
+      for (const y of allYears) {
+        const di = y.derivedIntelligence;
+        const expected = y.plenarySessions === 0
+          ? 0
+          : Math.round((y.legislativeActsAdopted / y.plenarySessions) * 100) / 100;
+        expect(di.legislativeOutputPerSession).toBeCloseTo(expected, 1);
+      }
+    });
+
+    it('legislativeOutputPerMEP should be acts / mepCount', () => {
+      for (const y of allYears) {
+        const di = y.derivedIntelligence;
+        const expected = y.mepCount === 0
+          ? 0
+          : Math.round((y.legislativeActsAdopted / y.mepCount) * 1000) / 1000;
+        expect(di.legislativeOutputPerMEP).toBeCloseTo(expected, 2);
+      }
+    });
+
+    it('rollCallVoteYield should be between 0 and 100', () => {
+      for (const y of allYears) {
+        expect(y.derivedIntelligence.rollCallVoteYield).toBeGreaterThanOrEqual(0);
+        expect(y.derivedIntelligence.rollCallVoteYield).toBeLessThanOrEqual(100);
+      }
+    });
+
+    it('procedureCompletionRate should be between 0 and 100', () => {
+      for (const y of allYears) {
+        expect(y.derivedIntelligence.procedureCompletionRate).toBeGreaterThanOrEqual(0);
+        expect(y.derivedIntelligence.procedureCompletionRate).toBeLessThanOrEqual(100);
+      }
+    });
+
+    it('documentBurdenPerAct should be positive', () => {
+      for (const y of allYears) {
+        expect(y.derivedIntelligence.documentBurdenPerAct).toBeGreaterThan(0);
+      }
+    });
+  });
+
+  describe('parliamentary engagement', () => {
+    it('mepOversightIntensity should be questions / mepCount', () => {
+      for (const y of allYears) {
+        const expected = y.mepCount === 0
+          ? 0
+          : Math.round((y.parliamentaryQuestions / y.mepCount) * 100) / 100;
+        expect(y.derivedIntelligence.mepOversightIntensity).toBeCloseTo(expected, 1);
+      }
+    });
+
+    it('mepSpeechRate should be positive', () => {
+      for (const y of allYears) {
+        expect(y.derivedIntelligence.mepSpeechRate).toBeGreaterThan(0);
+      }
+    });
+
+    it('debateIntensityPerSession should be speeches / sessions', () => {
+      for (const y of allYears) {
+        const di = y.derivedIntelligence;
+        expect(di.debateIntensityPerSession).toBeGreaterThan(0);
+      }
+    });
+  });
+
+  describe('political concentration', () => {
+    it('topTwoGroupsConcentration should be sum of two largest group shares', () => {
+      for (const y of allYears) {
+        const sorted = [...y.politicalLandscape.groups].sort(
+          (a, b) => b.seatShare - a.seatShare,
+        );
+        const expected = (sorted[0]?.seatShare ?? 0) + (sorted[1]?.seatShare ?? 0);
+        expect(y.derivedIntelligence.topTwoGroupsConcentration).toBeCloseTo(expected, 0);
+      }
+    });
+
+    it('CR2 should be below 50 from 2019 onward (no grand coalition majority)', () => {
+      const post2019 = allYears.filter((y) => y.year >= 2019);
+      for (const y of post2019) {
+        expect(y.derivedIntelligence.topTwoGroupsConcentration).toBeLessThan(50);
+      }
+    });
+
+    it('HHI should be between 0 and 1', () => {
+      for (const y of allYears) {
+        expect(y.derivedIntelligence.herfindahlHirschmanIndex).toBeGreaterThan(0);
+        expect(y.derivedIntelligence.herfindahlHirschmanIndex).toBeLessThan(1);
+      }
+    });
+
+    it('minimumWinningCoalitionSize should be at least 2 for all years', () => {
+      for (const y of allYears) {
+        expect(y.derivedIntelligence.minimumWinningCoalitionSize).toBeGreaterThanOrEqual(2);
+      }
+    });
+
+    it('MWC should be 3+ from 2019 onward', () => {
+      const post2019 = allYears.filter((y) => y.year >= 2019);
+      for (const y of post2019) {
+        expect(y.derivedIntelligence.minimumWinningCoalitionSize).toBeGreaterThanOrEqual(3);
+      }
+    });
+
+    it('grandCoalitionSurplusDeficit should match CR2 - 50', () => {
+      for (const y of allYears) {
+        const di = y.derivedIntelligence;
+        expect(di.grandCoalitionSurplusDeficit).toBeCloseTo(
+          di.topTwoGroupsConcentration - 50,
+          0,
+        );
+      }
+    });
+
+    it('dominanceRatio should be >= 1 (largest group is always dominant)', () => {
+      for (const y of allYears) {
+        expect(y.derivedIntelligence.dominanceRatio).toBeGreaterThanOrEqual(1);
+      }
+    });
+  });
+
+  describe('political compass (multi-dimensional)', () => {
+    it('every year should have politicalCompass within politicalBlocAnalysis', () => {
+      for (const y of allYears) {
+        const compass = y.derivedIntelligence.politicalBlocAnalysis.politicalCompass;
+        expect(compass).toBeDefined();
+        expect(compass.parliamentEconomicPosition).toBeGreaterThan(0);
+        expect(compass.parliamentEconomicPosition).toBeLessThan(10);
+        expect(compass.parliamentSocialPosition).toBeGreaterThan(0);
+        expect(compass.parliamentSocialPosition).toBeLessThan(10);
+        expect(compass.parliamentEuPosition).toBeGreaterThan(0);
+        expect(compass.parliamentEuPosition).toBeLessThan(10);
+      }
+    });
+
+    it('quadrant distribution should sum to approximately 100% (minus NI)', () => {
+      for (const y of allYears) {
+        const qd = y.derivedIntelligence.politicalBlocAnalysis.politicalCompass.quadrantDistribution;
+        const total = qd.libertarianLeft + qd.libertarianRight + qd.authoritarianLeft + qd.authoritarianRight;
+        // Should be close to 100 minus NI share
+        const niShare = y.derivedIntelligence.nonAttachedShare;
+        expect(total).toBeCloseTo(100 - niShare, 0);
+      }
+    });
+
+    it('dominantQuadrant should be a valid quadrant', () => {
+      const validQuadrants = ['libertarianLeft', 'libertarianRight', 'authoritarianLeft', 'authoritarianRight'];
+      for (const y of allYears) {
+        expect(validQuadrants).toContain(
+          y.derivedIntelligence.politicalBlocAnalysis.politicalCompass.dominantQuadrant,
+        );
+      }
+    });
+
+    it('economicPolarisation should be positive', () => {
+      for (const y of allYears) {
+        expect(
+          y.derivedIntelligence.politicalBlocAnalysis.politicalCompass.economicPolarisation,
+        ).toBeGreaterThan(0);
+      }
+    });
+
+    it('authLibTension should be positive', () => {
+      for (const y of allYears) {
+        expect(
+          y.derivedIntelligence.politicalBlocAnalysis.politicalCompass.authLibTension,
+        ).toBeGreaterThan(0);
+      }
+    });
+
+    it('EP10 (2024-2025) should show higher authoritarian-right share than EP6 (2004)', () => {
+      const ep6Start = allYears.find((y) => y.year === 2004);
+      const ep10 = allYears.find((y) => y.year === 2025);
+      expect(ep6Start).toBeDefined();
+      expect(ep10).toBeDefined();
+      const ep6AuthRight = ep6Start!.derivedIntelligence.politicalBlocAnalysis.politicalCompass.quadrantDistribution.authoritarianRight;
+      const ep10AuthRight = ep10!.derivedIntelligence.politicalBlocAnalysis.politicalCompass.quadrantDistribution.authoritarianRight;
+      expect(ep10AuthRight).toBeGreaterThan(ep6AuthRight);
+    });
+  });
+
+  describe('traditional bloc shares', () => {
+    it('left + centre + right shares should not exceed 100', () => {
+      for (const y of allYears) {
+        const bloc = y.derivedIntelligence.politicalBlocAnalysis;
+        // Note: shares won't sum to 100 exactly due to NI exclusion
+        expect(bloc.leftBlocShare + bloc.centreBlocShare + bloc.rightBlocShare).toBeLessThanOrEqual(100);
+      }
+    });
+
+    it('bipolarIndex should be between -1 and 1', () => {
+      for (const y of allYears) {
+        expect(y.derivedIntelligence.politicalBlocAnalysis.bipolarIndex).toBeGreaterThanOrEqual(-1);
+        expect(y.derivedIntelligence.politicalBlocAnalysis.bipolarIndex).toBeLessThanOrEqual(1);
+      }
+    });
+
+    it('euroscepticShare should be higher in EP10 than EP6', () => {
+      const ep6 = allYears.find((y) => y.year === 2004);
+      const ep10 = allYears.find((y) => y.year === 2025);
+      expect(ep6).toBeDefined();
+      expect(ep10).toBeDefined();
+      expect(ep10!.derivedIntelligence.politicalBlocAnalysis.euroscepticShare)
+        .toBeGreaterThan(ep6!.derivedIntelligence.politicalBlocAnalysis.euroscepticShare);
+    });
+  });
+
+  describe('institutional stability', () => {
+    it('mepStabilityIndex should be between 0 and 1', () => {
+      for (const y of allYears) {
+        expect(y.derivedIntelligence.mepStabilityIndex).toBeGreaterThanOrEqual(0);
+        expect(y.derivedIntelligence.mepStabilityIndex).toBeLessThanOrEqual(1);
+      }
+    });
+
+    it('election years should have HIGH institutional memory risk', () => {
+      const electionYears = allYears.filter((y) =>
+        [2004, 2009, 2014, 2019, 2024].includes(y.year),
+      );
+      for (const y of electionYears) {
+        expect(y.derivedIntelligence.institutionalMemoryRisk).toBe('HIGH');
+      }
+    });
+
+    it('non-election years should have LOW institutional memory risk', () => {
+      const nonElection = allYears.filter(
+        (y) => ![2004, 2007, 2009, 2014, 2019, 2020, 2024].includes(y.year),
+      );
+      for (const y of nonElection) {
+        expect(y.derivedIntelligence.institutionalMemoryRisk).toBe('LOW');
+      }
+    });
+
+    it('turnoverRate + (1 - stabilityIndex)*100 should be consistent', () => {
+      for (const y of allYears) {
+        const di = y.derivedIntelligence;
+        expect(di.turnoverRate).toBeCloseTo((1 - di.mepStabilityIndex) * 100, 0);
+      }
+    });
+  });
+
+  describe('year-over-year dynamics', () => {
+    it('first year (2004) should have null YoY values', () => {
+      const first = allYears[0]!;
+      expect(first.derivedIntelligence.legislativeOutputChange).toBeNull();
+      expect(first.derivedIntelligence.fragmentationVelocity).toBeNull();
+      expect(first.derivedIntelligence.questionsChange).toBeNull();
+    });
+
+    it('all subsequent years should have non-null YoY values', () => {
+      for (const y of allYears.slice(1)) {
+        expect(y.derivedIntelligence.legislativeOutputChange).not.toBeNull();
+        expect(y.derivedIntelligence.fragmentationVelocity).not.toBeNull();
+        expect(y.derivedIntelligence.questionsChange).not.toBeNull();
+      }
+    });
+
+    it('election years should show negative legislative output change', () => {
+      const transitions = allYears.filter((y) =>
+        [2009, 2014, 2019, 2024].includes(y.year),
+      );
+      for (const y of transitions) {
+        expect(y.derivedIntelligence.legislativeOutputChange).not.toBeNull();
+        expect(y.derivedIntelligence.legislativeOutputChange!).toBeLessThan(0);
+      }
+    });
+  });
+
+  describe('composite indices', () => {
+    it('oversightToLegislationBalance should be questions/acts', () => {
+      for (const y of allYears) {
+        const expected = y.legislativeActsAdopted === 0
+          ? 0
+          : Math.round((y.parliamentaryQuestions / y.legislativeActsAdopted) * 10) / 10;
+        expect(y.derivedIntelligence.oversightToLegislationBalance).toBeCloseTo(expected, 0);
+      }
+    });
+
+    it('speechToVoteRatio should be positive', () => {
+      for (const y of allYears) {
+        expect(y.derivedIntelligence.speechToVoteRatio).toBeGreaterThan(0);
+      }
+    });
+
+    it('committeeToPlenaryRatio should be positive', () => {
+      for (const y of allYears) {
+        expect(y.derivedIntelligence.committeeToPlenaryRatio).toBeGreaterThan(0);
+      }
+    });
+  });
+});
+
+// ─── OSINT key findings in analysis summary ───────────────────────────────────
+
+describe('GENERATED_STATS — OSINT key findings', () => {
+  it('analysisSummary should include OSINT-derived findings', () => {
+    const findings = GENERATED_STATS.analysisSummary.keyFindings;
+    const osintFindings = findings.filter((f) => f.startsWith('OSINT:'));
+    expect(osintFindings.length).toBeGreaterThanOrEqual(6);
+  });
+
+  it('should mention CR₂ structural regime change', () => {
+    const findings = GENERATED_STATS.analysisSummary.keyFindings;
+    expect(findings.some((f) => f.includes('CR₂'))).toBe(true);
+  });
+
+  it('should mention minimum winning coalition', () => {
+    const findings = GENERATED_STATS.analysisSummary.keyFindings;
+    expect(findings.some((f) => f.includes('Minimum winning coalition'))).toBe(true);
+  });
+
+  it('should mention bipolar index shift', () => {
+    const findings = GENERATED_STATS.analysisSummary.keyFindings;
+    expect(findings.some((f) => f.includes('Bipolar index'))).toBe(true);
+  });
+
+  it('should mention HHI deconcentration', () => {
+    const findings = GENERATED_STATS.analysisSummary.keyFindings;
+    expect(findings.some((f) => f.includes('Herfindahl-Hirschman'))).toBe(true);
+  });
+});
