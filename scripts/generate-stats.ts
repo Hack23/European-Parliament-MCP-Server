@@ -217,8 +217,9 @@ async function countItems(
     }
     return { total: totalCount };
   } catch (err: unknown) {
-    // If we already counted some items before the error (e.g. last page
-    // returns an empty body), return what we have so far.
+    // If we already counted some items before the error, the last page
+    // likely returned an empty body (the EP API does this when offset
+    // exceeds available data).  The accumulated count is correct.
     if (totalCount > 0) {
       return { total: totalCount };
     }
@@ -289,6 +290,8 @@ async function validateYearAgainstAPI(
     {
       label: 'Plenary Documents',
       storedKey: 'documents',
+      // Document count = sum of plenary + committee + external documents.
+      // Uses Promise.all to fetch the three sub-categories in parallel.
       count: async () => {
         // Sum plenary + committee + external documents for total document count
         const [plenary, committee, external] = await Promise.all([
