@@ -362,12 +362,12 @@ export class BaseEPClient {
    * (e.g. truncated responses for older years or out-of-range offsets).
    * @private
    */
-  private static safeParseJsonLd(bytes: Uint8Array): Record<string, unknown> {
+  private static safeParseJsonLd(bytes: Uint8Array): JSONLDResponse {
     if (bytes.byteLength === 0) {
       return { data: [], '@context': [] };
     }
     try {
-      return JSON.parse(new TextDecoder().decode(bytes)) as Record<string, unknown>;
+      return JSON.parse(new TextDecoder().decode(bytes)) as JSONLDResponse;
     } catch {
       return { data: [], '@context': [] };
     }
