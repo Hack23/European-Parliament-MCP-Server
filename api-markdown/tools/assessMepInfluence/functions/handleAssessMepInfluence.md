@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.0**](../../../README.md)
+[**European Parliament MCP Server API v1.0.1**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleAssessMepInfluence**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/assessMepInfluence.ts:311](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/assessMepInfluence.ts#L311)
+Defined in: [tools/assessMepInfluence.ts:312](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/assessMepInfluence.ts#L312)
 
 Handles the assess_mep_influence MCP tool request.
 

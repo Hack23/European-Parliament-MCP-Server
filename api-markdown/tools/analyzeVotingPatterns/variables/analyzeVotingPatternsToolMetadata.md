@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.0**](../../../README.md)
+[**European Parliament MCP Server API v1.0.1**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **analyzeVotingPatternsToolMetadata**: `object`
 
-Defined in: [tools/analyzeVotingPatterns.ts:201](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeVotingPatterns.ts#L201)
+Defined in: [tools/analyzeVotingPatterns.ts:207](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeVotingPatterns.ts#L207)
 
 Tool metadata for MCP registration
 

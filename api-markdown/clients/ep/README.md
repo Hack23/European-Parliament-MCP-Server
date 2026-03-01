@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.0**](../../README.md)
+[**European Parliament MCP Server API v1.0.1**](../../README.md)
 
 ***
 
@@ -295,6 +295,12 @@ Re-exports [transformSpeech](transformers/functions/transformSpeech.md)
 ### transformVoteResult
 
 Re-exports [transformVoteResult](transformers/functions/transformVoteResult.md)
+
+***
+
+### validateApiUrl
+
+Re-exports [validateApiUrl](baseClient/functions/validateApiUrl.md)
 
 ***
 

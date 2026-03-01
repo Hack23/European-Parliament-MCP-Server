@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.0**](../../../README.md)
+[**European Parliament MCP Server API v1.0.1**](../../../README.md)
 
 ***
 
@@ -8,4 +8,4 @@
 
 > `const` **SentimentTrackerSchema**: `ZodObject`\<[`SentimentTrackerParams`](../type-aliases/SentimentTrackerParams.md)\>
 
-Defined in: [tools/sentimentTracker.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L33)
+Defined in: [tools/sentimentTracker.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L34)

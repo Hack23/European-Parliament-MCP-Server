@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.0**](../../../README.md)
+[**European Parliament MCP Server API v1.0.1**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetSpeeches**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getSpeeches.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getSpeeches.ts#L54)
+Defined in: [tools/getSpeeches.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getSpeeches.ts#L55)
 
 Handles the get_speeches MCP tool request.
 

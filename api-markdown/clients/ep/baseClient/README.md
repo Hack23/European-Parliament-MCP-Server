@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.0**](../../../README.md)
+[**European Parliament MCP Server API v1.0.1**](../../../README.md)
 
 ***
 
@@ -39,4 +39,10 @@ https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md
 - [DEFAULT\_RATE\_LIMIT\_INTERVAL](variables/DEFAULT_RATE_LIMIT_INTERVAL.md)
 - [DEFAULT\_RATE\_LIMIT\_TOKENS](variables/DEFAULT_RATE_LIMIT_TOKENS.md)
 - [DEFAULT\_REQUEST\_TIMEOUT\_MS](variables/DEFAULT_REQUEST_TIMEOUT_MS.md)
+- [DEFAULT\_RETRY\_BASE\_DELAY\_MS](variables/DEFAULT_RETRY_BASE_DELAY_MS.md)
 - [DEFAULT\_RETRY\_ENABLED](variables/DEFAULT_RETRY_ENABLED.md)
+- [DEFAULT\_RETRY\_MAX\_DELAY\_MS](variables/DEFAULT_RETRY_MAX_DELAY_MS.md)
+
+## Functions
+
+- [validateApiUrl](functions/validateApiUrl.md)

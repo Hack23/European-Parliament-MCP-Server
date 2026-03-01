@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.0**](../../../README.md)
+[**European Parliament MCP Server API v1.0.1**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **showHealth**(): `void`
 
-Defined in: [server/cli.ts:97](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L97)
+Defined in: [server/cli.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L95)
 
 Display health check / diagnostics.
 

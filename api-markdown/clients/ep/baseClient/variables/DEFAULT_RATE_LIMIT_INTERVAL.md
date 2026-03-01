@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.0**](../../../../README.md)
+[**European Parliament MCP Server API v1.0.1**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_RATE\_LIMIT\_INTERVAL**: `"minute"`
 
-Defined in: [clients/ep/baseClient.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L41)
+Defined in: [clients/ep/baseClient.ts:124](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L124)
 
 Default rate limit interval unit

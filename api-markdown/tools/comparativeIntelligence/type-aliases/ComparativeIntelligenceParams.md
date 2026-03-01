@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.0**](../../../README.md)
+[**European Parliament MCP Server API v1.0.1**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **ComparativeIntelligenceParams** = `object`
 
-Defined in: [tools/comparativeIntelligence.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L42)
+Defined in: [tools/comparativeIntelligence.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L44)
 
 ## Type Declaration
 

@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.5% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>14/16</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>6/8</span>
+                <span class='fraction'>3/4</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85.71% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>12/14</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
@@ -185,7 +185,9 @@
 <a name='L120'></a><a href='#L120'>120</a>
 <a name='L121'></a><a href='#L121'>121</a>
 <a name='L122'></a><a href='#L122'>122</a>
-<a name='L123'></a><a href='#L123'>123</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -240,13 +242,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -256,8 +259,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -326,6 +330,7 @@
 &nbsp;
 import { GetCommitteeInfoSchema, CommitteeSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildApiParams } from './shared/paramBuilder.js';
 import type { ToolResult } from './shared/types.js';
 &nbsp;
 /**
@@ -366,9 +371,9 @@ export async function handleGetCommitteeInfo(
   
   try {
     // Return current active bodies if showCurrent is true
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (params.showCurrent === true) {
-      const result = <span class="cstat-no" title="statement not covered" >await epClient.getCurrentCorporateBodies();</span>
-<span class="cstat-no" title="statement not covered" >      return {</span>
+    if (params.showCurrent === true) {
+      const result = await epClient.getCurrentCorporateBodies();
+      return {
         content: [{
           type: 'text',
           text: JSON.stringify(result, null, 2)
@@ -377,9 +382,10 @@ export async function handleGetCommitteeInfo(
     }
 &nbsp;
     // Fetch committee info from EP API (only pass defined properties)
-    const apiParams: Record&lt;string, string&gt; = {};
-    if (params['id'] !== undefined) apiParams['id'] = params['id'];
-    if (params['abbreviation'] !== undefined) apiParams['abbreviation'] = params['abbreviation'];
+    const apiParams = buildApiParams(params, [
+      { from: 'id', to: 'id' },
+      { from: 'abbreviation', to: 'abbreviation' },
+    ]);
     
     const result = await epClient.getCommitteeInfo(apiParams as Parameters&lt;typeof epClient.getCommitteeInfo&gt;[0]);
     
@@ -436,7 +442,7 @@ export const getCommitteeInfoToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-28T09:01:16.278Z
+                at 2026-03-01T01:25:52.425Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

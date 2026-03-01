@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.0**](../../../../README.md)
+[**European Parliament MCP Server API v1.0.1**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_RETRY\_ENABLED**: `true` = `true`
 
-Defined in: [clients/ep/baseClient.ts:31](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L31)
+Defined in: [clients/ep/baseClient.ts:110](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L110)
 
 Whether automatic retry on transient failures is enabled by default

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.0**](../../../README.md)
+[**European Parliament MCP Server API v1.0.1**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: CoalitionFractureCorrelation
 
-Defined in: [tools/correlateIntelligence.ts:113](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L113)
+Defined in: [tools/correlateIntelligence.ts:116](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L116)
 
 Detail record for a coalition fracture correlation
 
@@ -16,7 +16,7 @@ Detail record for a coalition fracture correlation
 
 > **affectedGroups**: `string`[]
 
-Defined in: [tools/correlateIntelligence.ts:114](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L114)
+Defined in: [tools/correlateIntelligence.ts:117](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L117)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [tools/correlateIntelligence.ts:114](https://github.com/Hack23/Europ
 
 > **decliningCohesionGroups**: `string`[]
 
-Defined in: [tools/correlateIntelligence.ts:116](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L116)
+Defined in: [tools/correlateIntelligence.ts:119](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L119)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [tools/correlateIntelligence.ts:116](https://github.com/Hack23/Europ
 
 > **fractureRisk**: `"HIGH"` \| `"MEDIUM"` \| `"LOW"`
 
-Defined in: [tools/correlateIntelligence.ts:117](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L117)
+Defined in: [tools/correlateIntelligence.ts:120](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L120)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [tools/correlateIntelligence.ts:117](https://github.com/Hack23/Europ
 
 > **stabilityScore**: `number`
 
-Defined in: [tools/correlateIntelligence.ts:118](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L118)
+Defined in: [tools/correlateIntelligence.ts:121](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L121)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: [tools/correlateIntelligence.ts:118](https://github.com/Hack23/Europ
 
 > **warningSignals**: `string`[]
 
-Defined in: [tools/correlateIntelligence.ts:115](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L115)
+Defined in: [tools/correlateIntelligence.ts:118](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L118)

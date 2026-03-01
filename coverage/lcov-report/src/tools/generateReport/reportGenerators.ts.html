@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.75% </span>
+                <span class="strong">88.88% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>43/49</span>
+                <span class='fraction'>48/54</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.58% </span>
+                <span class="strong">90.56% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>43/48</span>
+                <span class='fraction'>48/53</span>
             </div>
         
             
@@ -322,7 +322,14 @@
 <a name='L257'></a><a href='#L257'>257</a>
 <a name='L258'></a><a href='#L258'>258</a>
 <a name='L259'></a><a href='#L259'>259</a>
-<a name='L260'></a><a href='#L260'>260</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L260'></a><a href='#L260'>260</a>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a>
+<a name='L266'></a><a href='#L266'>266</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -379,6 +386,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -388,6 +396,7 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -399,6 +408,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -409,6 +419,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -418,6 +429,7 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -590,6 +602,7 @@
 import type { z } from 'zod';
 import type { GenerateReportSchema } from '../../schemas/europeanParliament.js';
 import { epClient } from '../../clients/europeanParliamentClient.js';
+import { auditLogger, toErrorMessage } from '../../utils/auditLogger.js';
 import type { MEPDetails } from '../../types/europeanParliament.js';
 import type { Report } from './types.js';
 import {
@@ -636,7 +649,8 @@ async function fetchQuestionCount(subjectId: string | undefined): Promise&lt;num
   try {
     const questions = await epClient.getParliamentaryQuestions({ author: subjectId, limit: 100 });
 <span class="cstat-no" title="statement not covered" >    return questions.data.length;</span>
-  } catch {
+  } catch (error: unknown) {
+    auditLogger.logError('generate_report.fetch_question_count', { subjectId }, toErrorMessage(error));
     return null;
   }
 }
@@ -646,7 +660,8 @@ async function fetchDocumentCount(year: number): Promise&lt;number | null&gt; {
   try {
     const docs = await epClient.getCommitteeDocuments({ year, limit: 100 });
 <span class="cstat-no" title="statement not covered" >    return docs.data.length;</span>
-  } catch {
+  } catch (error: unknown) {
+    auditLogger.logError('generate_report.fetch_document_count', { year }, toErrorMessage(error));
     return null;
   }
 }
@@ -656,7 +671,8 @@ async function fetchAdoptedTextCount(year: number): Promise&lt;number | null&gt;
   try {
     const adopted = await epClient.getAdoptedTexts({ year, limit: 100 });
 <span class="cstat-no" title="statement not covered" >    return adopted.data.length;</span>
-  } catch {
+  } catch (error: unknown) {
+    auditLogger.logError('generate_report.fetch_adopted_text_count', { year }, toErrorMessage(error));
     return null;
   }
 }
@@ -666,7 +682,8 @@ async function fetchSessionCount(dateFrom: string, dateTo: string): Promise&lt;n
   try {
     const sessions = await epClient.getPlenarySessions({ dateFrom, dateTo, limit: 100 });
 <span class="cstat-no" title="statement not covered" >    return sessions.data.length;</span>
-  } catch {
+  } catch (error: unknown) {
+    auditLogger.logError('generate_report.fetch_session_count', { dateFrom, dateTo }, toErrorMessage(error));
     return null;
   }
 }
@@ -676,7 +693,8 @@ async function fetchProcedureCount(year: number): Promise&lt;number | null&gt; {
   try {
     const procedures = await epClient.getProcedures({ year, limit: 100 });
 <span class="cstat-no" title="statement not covered" >    return procedures.data.length;</span>
-  } catch {
+  } catch (error: unknown) {
+    auditLogger.logError('generate_report.fetch_procedure_count', { year }, toErrorMessage(error));
     return null;
   }
 }
@@ -847,7 +865,7 @@ export async function generateLegislationProgressReport(
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-28T09:01:16.357Z
+                at 2026-03-01T01:25:52.504Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
