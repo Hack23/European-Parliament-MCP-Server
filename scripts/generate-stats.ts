@@ -630,7 +630,6 @@ async function main(): Promise<void> {
   console.log(`  Methodology:      v${GENERATED_STATS.methodologyVersion}`);
   console.log(`  Years to check:   ${years.join(', ')}`);
 
-  // Create client with conservative timeout for validation
   // Create client with generous timeouts and response size limits for CLI validation.
   // The EP API can return up to ~20 MiB for adopted-texts with limit=1000.
   const client = new EuropeanParliamentClient({
