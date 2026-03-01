@@ -662,29 +662,38 @@ describe('BaseEPClient.get() retry behaviour', () => {
   });
 
   it('should retry on SyntaxError with "Unexpected end of JSON input" (truncated response)', async () => {
-    const client = new TestEPClient({ enableRetry: true, maxRetries: 2 });
-    client.clearCache();
+    vi.useFakeTimers();
+    try {
+      const client = new TestEPClient({ enableRetry: true, maxRetries: 2 });
+      client.clearCache();
 
-    // When response.body is null, readStreamedBody falls back to response.json().
-    // A SyntaxError thrown there is NOT caught inside fetchWithTimeout (no
-    // content-length header → streamed path), so it reaches shouldRetryRequest().
-    // "Unexpected end of JSON input" indicates a truncated response (transient),
-    // so it IS retried.
-    const makeTruncatedResponse = () => ({
-      ok: true,
-      headers: new Headers(), // no content-length → triggers readStreamedBody
-      body: null,             // null body → readStreamedBody falls back to response.json()
-      json: async () => { throw new SyntaxError('Unexpected end of JSON input'); },
-    } as unknown as Response);
+      // When response.body is null, readStreamedBody falls back to response.json().
+      // A SyntaxError thrown there is NOT caught inside fetchWithTimeout (no
+      // content-length header → streamed path), so it reaches shouldRetryRequest().
+      // "Unexpected end of JSON input" indicates a truncated response (transient),
+      // so it IS retried.
+      const makeTruncatedResponse = () => ({
+        ok: true,
+        headers: new Headers(), // no content-length → triggers readStreamedBody
+        body: null,             // null body → readStreamedBody falls back to response.json()
+        json: async () => { throw new SyntaxError('Unexpected end of JSON input'); },
+      } as unknown as Response);
 
-    mockFetch
-      .mockResolvedValueOnce(makeTruncatedResponse())
-      .mockResolvedValueOnce(makeTruncatedResponse())
-      .mockResolvedValueOnce(makeTruncatedResponse());
+      mockFetch
+        .mockResolvedValueOnce(makeTruncatedResponse())
+        .mockResolvedValueOnce(makeTruncatedResponse())
+        .mockResolvedValueOnce(makeTruncatedResponse());
 
-    // Truncated JSON should be retried (maxRetries: 2 → 3 total attempts)
-    await expect(client.testGet('adopted-texts')).rejects.toBeInstanceOf(APIError);
-    expect(mockFetch).toHaveBeenCalledTimes(3);
+      // Truncated JSON should be retried (maxRetries: 2 → 3 total attempts).
+      // Capture the promise, advance fake timers, then assert the rejection.
+      const requestPromise = client.testGet('adopted-texts').catch((e: unknown) => e);
+      await vi.runAllTimersAsync();
+      const error = await requestPromise;
+      expect(error).toBeInstanceOf(APIError);
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('should not retry on SyntaxError with other messages', async () => {

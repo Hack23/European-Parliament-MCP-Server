@@ -42,6 +42,7 @@
 
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { EuropeanParliamentClient } from '../src/clients/europeanParliamentClient.js';
 import { GENERATED_STATS } from '../src/data/generatedStats.js';
 import type { YearlyStats, PoliticalGroupSnapshot, PoliticalLandscapeData } from '../src/data/generatedStats.js';
@@ -723,7 +724,7 @@ function updateStatsFile(
   latestCoveredYear: number
 ): { updatedFields: number; skippedFields: number; updatedFile: boolean } {
   const statsFilePath = path.resolve(
-    import.meta.dirname ?? path.dirname(new URL(import.meta.url).pathname),
+    import.meta.dirname ?? path.dirname(fileURLToPath(import.meta.url)),
     '../src/data/generatedStats.ts'
   );
 
@@ -739,6 +740,9 @@ function updateStatsFile(
 
       const field = METRIC_TO_FIELD[comparison.metric];
       if (!field) continue;
+
+      // Only update fields that are API-verifiable
+      if (!isUpdatableField(field) && !isLatestYearField(field)) continue;
 
       // Only update latest-year-only fields for the latest year
       if (
@@ -801,6 +805,11 @@ function updateStatsFile(
 /** Check if a field is latest-year-only. */
 function isLatestYearField(field: string): boolean {
   return (LATEST_YEAR_FIELDS as readonly string[]).includes(field);
+}
+
+/** Check if a field is in the set of API-verifiable updatable fields. */
+function isUpdatableField(field: string): boolean {
+  return (UPDATABLE_FIELDS as readonly string[]).includes(field);
 }
 
 // ── Main ──────────────────────────────────────────────────────────
