@@ -350,9 +350,13 @@ export class BaseEPClient {
       const code = error.statusCode ?? 500;
       return code === 429 || code >= 500;
     }
-    // JSON parse errors (SyntaxError) indicate an invalid response body;
-    // retrying the same request will yield the same unparseable response.
-    if (error instanceof SyntaxError) return false;
+    // JSON parse errors (SyntaxError) are generally not retried, but
+    // "Unexpected end of JSON input" indicates a truncated response body
+    // (e.g. the EP API's own server-side timeout cut the stream short).
+    // These are transient and often succeed on retry.
+    if (error instanceof SyntaxError) {
+      return error.message.includes('Unexpected end of JSON input');
+    }
     return true;
   }
 
