@@ -397,6 +397,11 @@ export class BaseEPClient {
       combined.set(chunk, offset);
       offset += chunk.byteLength;
     }
+    // Empty body (chunked encoding with no data) — return a minimal JSON-LD
+    // shape so callers get an empty `data` array instead of a JSON parse error.
+    if (totalBytes === 0) {
+      return { data: [], '@context': [] } as unknown as T;
+    }
     return JSON.parse(new TextDecoder().decode(combined)) as T;
   }
 
@@ -426,6 +431,14 @@ export class BaseEPClient {
         const contentLength = response.headers.get('content-length');
         if (contentLength !== null) {
           const bytes = Number.parseInt(contentLength, 10);
+          // Empty body (content-length: 0) — the EP API returns this for
+          // out-of-range offsets or when no data exists.  Return a minimal
+          // JSON-LD shape so callers get an empty `data` array instead of a
+          // JSON parse error.
+          if (Number.isFinite(bytes) && bytes === 0) {
+            await response.body?.cancel();
+            return { data: [], '@context': [] } as unknown as T;
+          }
           if (Number.isFinite(bytes) && bytes > this.maxResponseBytes) {
             // Cancel/drain the body before throwing so the underlying TCP
             // connection can be returned to the pool and reused.

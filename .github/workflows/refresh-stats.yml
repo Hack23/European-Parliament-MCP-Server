@@ -1,7 +1,10 @@
 # Refresh European Parliament Statistics
 #
 # Validates the static data in src/data/generatedStats.ts against the live
-# European Parliament Open Data Portal API. Runs weekly or on demand.
+# European Parliament Open Data Portal API using pagination-based counting.
+# The EP API does not provide a totalItems header, so all records are iterated
+# to obtain accurate counts (limit: 1000 per page, the API's server-side cap).
+# Runs weekly or on demand.
 #
 # ISMS Policy: AU-002 (Audit Logging), SC-002 (Input Validation)
 # Data source: European Parliament Open Data Portal — data.europarl.europa.eu
@@ -27,7 +30,7 @@ jobs:
   validate-stats:
     name: Validate EP Statistics
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b # v2.15.0
