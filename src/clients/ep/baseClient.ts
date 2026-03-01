@@ -421,6 +421,27 @@ export class BaseEPClient {
   }
 
   /**
+   * Parses the response body as JSON when a `content-length` header is present.
+   * Falls back to an empty JSON-LD shape for `SyntaxError` (invalid/truncated
+   * JSON); all other errors are rethrown.
+   * @private
+   */
+  private static async parseResponseJson<T>(response: Response): Promise<T> {
+    try {
+      return await (response.json() as Promise<T>);
+    } catch (error) {
+      // The EP API sometimes returns a body that is not valid JSON
+      // (e.g. truncated or empty content for older years).  Treat
+      // unparseable responses the same as empty bodies, but only for
+      // JSON parse errors; rethrow other failures so they surface.
+      if (error instanceof SyntaxError) {
+        return { data: [], '@context': [] } as unknown as T;
+      }
+      throw error;
+    }
+  }
+
+  /**
    * Executes the HTTP fetch with timeout/abort support and response size guard.
    * @private
    */
@@ -463,14 +484,7 @@ export class BaseEPClient {
               413
             );
           }
-          try {
-            return await (response.json() as Promise<T>);
-          } catch {
-            // The EP API sometimes returns a body that is not valid JSON
-            // (e.g. truncated or empty content for older years).  Treat
-            // unparseable responses the same as empty bodies.
-            return { data: [], '@context': [] } as unknown as T;
-          }
+          return BaseEPClient.parseResponseJson<T>(response);
         }
 
         // No content-length header (chunked encoding) — stream the body and
