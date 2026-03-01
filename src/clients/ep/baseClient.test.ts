@@ -509,28 +509,45 @@ describe('BaseEPClient.get() error handling', () => {
     await expect(client.testGet('meps')).rejects.toBeInstanceOf(APIError);
   });
 
-  it('should return empty data when response.json() throws SyntaxError (invalid JSON with content-length)', async () => {
+  it('should return empty data when response body is empty (with content-length)', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       headers: new Headers({ 'content-length': '42' }),
-      json: async () => { throw new SyntaxError('Unexpected end of JSON input'); },
+      text: async () => '',
     } as unknown as Response);
 
     const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
     expect(result).toEqual({ data: [], '@context': [] });
   });
 
-  it('should rethrow non-SyntaxError from response.json() (with content-length)', async () => {
+  it('should throw on non-empty invalid JSON body (with content-length)', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       headers: new Headers({ 'content-length': '42' }),
-      json: async () => { throw new TypeError('body stream already read'); },
+      text: async () => 'not valid json{',
     } as unknown as Response);
 
     await expect(client.testGet('adopted-texts')).rejects.toBeInstanceOf(APIError);
   });
 
-  it('should return empty data when streamed body contains invalid JSON', async () => {
+  it('should return empty data when streamed body is empty (zero bytes)', async () => {
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.close();
+      },
+    });
+
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers(), // no content-length → triggers readStreamedBody
+      body: stream,
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
+    expect(result).toEqual({ data: [], '@context': [] });
+  });
+
+  it('should throw when streamed body contains non-empty invalid JSON', async () => {
     const invalidChunk = new TextEncoder().encode('not valid json{');
     const stream = new ReadableStream<Uint8Array>({
       start(controller) {
@@ -545,8 +562,7 @@ describe('BaseEPClient.get() error handling', () => {
       body: stream,
     } as unknown as Response);
 
-    const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
-    expect(result).toEqual({ data: [], '@context': [] });
+    await expect(client.testGet('adopted-texts')).rejects.toBeInstanceOf(APIError);
   });
 });
 

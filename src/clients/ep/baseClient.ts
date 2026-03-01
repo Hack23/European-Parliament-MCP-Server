@@ -357,20 +357,18 @@ export class BaseEPClient {
   }
 
   /**
-   * Parses a byte buffer as JSON, returning an empty JSON-LD shape on failure.
-   * The EP API sometimes returns non-empty bodies that are not valid JSON
-   * (e.g. truncated responses for older years or out-of-range offsets).
+   * Parses a byte buffer as JSON-LD.  Returns an empty JSON-LD shape for
+   * zero-byte bodies (the EP API sends these for out-of-range offsets).
+   * Non-empty bodies must contain valid JSON; any `SyntaxError` is allowed
+   * to propagate so callers (including single-entity endpoints) fail fast
+   * instead of receiving a misleading empty-list shape.
    * @private
    */
-  private static safeParseJsonLd(bytes: Uint8Array): JSONLDResponse {
+  private static parseJsonLdBytes(bytes: Uint8Array): JSONLDResponse {
     if (bytes.byteLength === 0) {
       return { data: [], '@context': [] };
     }
-    try {
-      return JSON.parse(new TextDecoder().decode(bytes)) as JSONLDResponse;
-    } catch {
-      return { data: [], '@context': [] };
-    }
+    return JSON.parse(new TextDecoder().decode(bytes)) as JSONLDResponse;
   }
 
   /**
@@ -417,28 +415,29 @@ export class BaseEPClient {
       combined.set(chunk, offset);
       offset += chunk.byteLength;
     }
-    return BaseEPClient.safeParseJsonLd(combined) as T;
+    return BaseEPClient.parseJsonLdBytes(combined) as T;
   }
 
   /**
-   * Parses the response body as JSON when a `content-length` header is present.
-   * Falls back to an empty JSON-LD shape for `SyntaxError` (invalid/truncated
-   * JSON); all other errors are rethrown.
+   * Treats a truly empty body as an empty JSON-LD shape; invalid JSON for
+   * non-empty bodies is surfaced as an error.
    * @private
    */
   private static async parseResponseJson<T>(response: Response): Promise<T> {
-    try {
-      return await (response.json() as Promise<T>);
-    } catch (error) {
-      // The EP API sometimes returns a body that is not valid JSON
-      // (e.g. truncated or empty content for older years).  Treat
-      // unparseable responses the same as empty bodies, but only for
-      // JSON parse errors; rethrow other failures so they surface.
-      if (error instanceof SyntaxError) {
-        return { data: [], '@context': [] } as unknown as T;
-      }
-      throw error;
+    // Use text + JSON.parse instead of response.json() so we can distinguish
+    // between an actually empty body and malformed JSON content.
+    const raw = await response.text();
+
+    // Empty or whitespace-only body — mirror the behaviour used for
+    // `content-length: 0` responses and return a minimal JSON-LD shape so
+    // callers see an empty `data` array instead of a parse error.
+    if (raw.trim().length === 0) {
+      return { data: [], '@context': [] } as unknown as T;
     }
+
+    // Non-empty body must be valid JSON; let any SyntaxError propagate so
+    // callers are aware of malformed API responses.
+    return JSON.parse(raw) as T;
   }
 
   /**
