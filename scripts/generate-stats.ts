@@ -279,6 +279,8 @@ async function validateYearAgainstAPI(
 ): Promise<YearValidation> {
   const year = yearStats.year;
   const comparisons: MetricComparison[] = [];
+  const dateFrom = `${String(year)}-01-01`;
+  const dateTo = `${String(year)}-12-31`;
 
   console.log(`\n${BOLD}${CYAN}── Fetching API data for ${String(year)} ──${RESET}`);
 
@@ -328,13 +330,34 @@ async function validateYearAgainstAPI(
       label: 'Parliamentary Questions',
       storedKey: 'parliamentaryQuestions',
       count: () => countItems('Parliamentary Questions', (p) =>
-        client.getParliamentaryQuestions({ dateFrom: `${String(year)}-01-01`, dateTo: `${String(year)}-12-31`, ...p })
+        client.getParliamentaryQuestions({ dateFrom, dateTo, ...p })
       ),
     },
     {
       label: 'MEP Declarations',
       storedKey: 'declarations',
       count: () => countItems('MEP Declarations', (p) => client.getMEPDeclarations({ year, ...p })),
+    },
+    {
+      label: 'Plenary Sessions',
+      storedKey: 'plenarySessions',
+      count: () => countItems('Plenary Sessions', (p) =>
+        client.getPlenarySessions({ dateFrom, dateTo, ...p })
+      ),
+    },
+    {
+      label: 'Speeches',
+      storedKey: 'speeches',
+      count: () => countItems('Speeches', (p) =>
+        client.getSpeeches({ dateFrom, dateTo, ...p })
+      ),
+    },
+    {
+      label: 'Events',
+      storedKey: 'events',
+      count: () => countItems('Events', (p) =>
+        client.getEvents({ dateFrom, dateTo, ...p })
+      ),
     },
   ];
 
@@ -634,6 +657,9 @@ const UPDATABLE_FIELDS = [
   'documents',
   'parliamentaryQuestions',
   'declarations',
+  'plenarySessions',
+  'speeches',
+  'events',
 ] as const;
 
 /** Fields updated only for the latest covered year. */
@@ -646,6 +672,9 @@ const METRIC_TO_FIELD: Record<string, string> = {
   'Plenary Documents': 'documents',
   'Parliamentary Questions': 'parliamentaryQuestions',
   'MEP Declarations': 'declarations',
+  'Plenary Sessions': 'plenarySessions',
+  'Speeches': 'speeches',
+  'Events': 'events',
   'Current MEPs': 'mepCount',
   'MEP Turnover (incoming + outgoing)': 'mepTurnover',
 };
