@@ -86,7 +86,7 @@ export interface PoliticalLandscapeData {
 }
 
 // ── Multi-dimensional political compass ───────────────────────────
-// Two-axis classification system (Political Compass / Nolan Chart):
+// Three-axis classification system (Political Compass / Nolan Chart + EU axis):
 //   Axis 1 — Economic: Left (interventionist) ↔ Right (free-market)
 //   Axis 2 — Social:   Libertarian (personal freedom) ↔ Authoritarian (state control)
 //   Axis 3 — EU Integration: Pro-EU (federalist) ↔ Eurosceptic (sovereignty)
@@ -211,7 +211,7 @@ export interface PoliticalBlocAnalysis {
   bipolarIndex: number;
 
   // ── Multi-dimensional political compass ─────────────────────────
-  /** Two-axis political compass analysis (economic × social) + EU integration */
+  /** Three-axis political compass analysis (economic × social × EU integration) */
   politicalCompass: PoliticalCompassAnalysis;
 }
 
@@ -658,16 +658,53 @@ function computePoliticalBlocAnalysis(groups: PoliticalGroupSnapshot[]): Politic
   };
 }
 
+/** Classified political group with compass position attached. */
+interface ClassifiedGroup {
+  name: string; seats: number; seatShare: number; compass: GroupCompassPosition;
+}
+
+/** Filter groups to those with known compass positions, excluding NI. */
+function classifyGroups(groups: PoliticalGroupSnapshot[]): ClassifiedGroup[] {
+  const result: ClassifiedGroup[] = [];
+  for (const g of groups) {
+    if (g.name === 'NI') continue;
+    const compass = GROUP_COMPASS[g.name];
+    if (compass !== undefined) {
+      result.push({ name: g.name, seats: g.seats, seatShare: g.seatShare, compass });
+    }
+  }
+  return result;
+}
+
+/** Compute quadrant seat share distribution from classified groups. */
+function computeQuadrantDistribution(classified: ClassifiedGroup[]): QuadrantDistribution {
+  let libLeft = 0;
+  let libRight = 0;
+  let authLeft = 0;
+  let authRight = 0;
+  for (const g of classified) {
+    const isLeft = g.compass.economic < 5.0;
+    const isLib = g.compass.social < 5.0;
+    if (isLib && isLeft) libLeft += g.seatShare;
+    else if (isLib) libRight += g.seatShare;
+    else if (isLeft) authLeft += g.seatShare;
+    else authRight += g.seatShare;
+  }
+  return {
+    libertarianLeft: roundTo(libLeft, 1),
+    libertarianRight: roundTo(libRight, 1),
+    authoritarianLeft: roundTo(authLeft, 1),
+    authoritarianRight: roundTo(authRight, 1),
+  };
+}
+
 /**
  * Compute multi-dimensional Political Compass metrics from group composition.
  * Produces seat-share-weighted positions on economic, social, and EU axes,
  * quadrant distribution, polarisation indices, and dominant quadrant.
  */
 function computePoliticalCompass(groups: PoliticalGroupSnapshot[]): PoliticalCompassAnalysis {
-  // Filter to groups with known compass positions (exclude NI)
-  const classified = groups
-    .filter((g) => g.name !== 'NI' && GROUP_COMPASS[g.name] !== undefined)
-    .map((g) => ({ ...g, compass: GROUP_COMPASS[g.name]! })); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+  const classified = classifyGroups(groups);
 
   const totalShare = classified.reduce((s, g) => s + g.seatShare, 0);
   if (totalShare === 0) {
@@ -685,33 +722,14 @@ function computePoliticalCompass(groups: PoliticalGroupSnapshot[]): PoliticalCom
   const wSocial = classified.reduce((s, g) => s + g.compass.social * g.seatShare, 0) / totalShare;
   const wEU = classified.reduce((s, g) => s + g.compass.euIntegration * g.seatShare, 0) / totalShare;
 
-  // Quadrant distribution (economic midpoint = 5.0, social midpoint = 5.0)
-  let libLeft = 0;
-  let libRight = 0;
-  let authLeft = 0;
-  let authRight = 0;
-  for (const g of classified) {
-    const isLeft = g.compass.economic < 5.0;
-    const isLib = g.compass.social < 5.0;
-    if (isLib && isLeft) libLeft += g.seatShare;
-    else if (isLib && !isLeft) libRight += g.seatShare;
-    else if (!isLib && isLeft) authLeft += g.seatShare;
-    else authRight += g.seatShare;
-  }
-
-  const quadrantDistribution: QuadrantDistribution = {
-    libertarianLeft: roundTo(libLeft, 1),
-    libertarianRight: roundTo(libRight, 1),
-    authoritarianLeft: roundTo(authLeft, 1),
-    authoritarianRight: roundTo(authRight, 1),
-  };
+  const quadrantDistribution = computeQuadrantDistribution(classified);
 
   // Determine dominant quadrant
   const quadrants: { key: PoliticalQuadrant; value: number }[] = [
-    { key: 'libertarianLeft', value: libLeft },
-    { key: 'libertarianRight', value: libRight },
-    { key: 'authoritarianLeft', value: authLeft },
-    { key: 'authoritarianRight', value: authRight },
+    { key: 'libertarianLeft', value: quadrantDistribution.libertarianLeft },
+    { key: 'libertarianRight', value: quadrantDistribution.libertarianRight },
+    { key: 'authoritarianLeft', value: quadrantDistribution.authoritarianLeft },
+    { key: 'authoritarianRight', value: quadrantDistribution.authoritarianRight },
   ];
   const dominantQuadrant = quadrants.reduce((best, q) =>
     q.value > best.value ? q : best
