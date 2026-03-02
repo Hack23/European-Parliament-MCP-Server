@@ -38,7 +38,7 @@ export type ToolHandler = (args: unknown) => Promise<ToolResult>;
  * | `phase4`   | EP API v2 endpoint tools added in phase 4 |
  * | `phase5`   | Complete EP API v2 coverage added in phase 5 |
  */
-export type ToolCategory = 'core' | 'advanced' | 'osint' | 'phase4' | 'phase5';
+export type ToolCategory = 'core' | 'advanced' | 'osint' | 'phase4' | 'phase5' | 'feed';
 
 // ── Tool metadata ─────────────────────────────────────────────────
 

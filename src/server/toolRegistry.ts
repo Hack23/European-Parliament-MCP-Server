@@ -75,6 +75,22 @@ import { handleGetProcedureEvents, getProcedureEventsToolMetadata } from '../too
 import { handleGetMeetingPlenarySessionDocuments, getMeetingPlenarySessionDocumentsToolMetadata } from '../tools/getMeetingPlenarySessionDocuments.js';
 import { handleGetMeetingPlenarySessionDocumentItems, getMeetingPlenarySessionDocumentItemsToolMetadata } from '../tools/getMeetingPlenarySessionDocumentItems.js';
 
+// ── Phase 6 – Feed endpoint tools ─────────────────────────────────────────
+import { handleGetMEPsFeed, getMEPsFeedToolMetadata } from '../tools/getMEPsFeed.js';
+import { handleGetEventsFeed, getEventsFeedToolMetadata } from '../tools/getEventsFeed.js';
+import { handleGetProceduresFeed, getProceduresFeedToolMetadata } from '../tools/getProceduresFeed.js';
+import { handleGetAdoptedTextsFeed, getAdoptedTextsFeedToolMetadata } from '../tools/getAdoptedTextsFeed.js';
+import { handleGetMEPDeclarationsFeed, getMEPDeclarationsFeedToolMetadata } from '../tools/getMEPDeclarationsFeed.js';
+import { handleGetDocumentsFeed, getDocumentsFeedToolMetadata } from '../tools/getDocumentsFeed.js';
+import { handleGetPlenaryDocumentsFeed, getPlenaryDocumentsFeedToolMetadata } from '../tools/getPlenaryDocumentsFeed.js';
+import { handleGetCommitteeDocumentsFeed, getCommitteeDocumentsFeedToolMetadata } from '../tools/getCommitteeDocumentsFeed.js';
+import { handleGetPlenarySessionDocumentsFeed, getPlenarySessionDocumentsFeedToolMetadata } from '../tools/getPlenarySessionDocumentsFeed.js';
+import { handleGetExternalDocumentsFeed, getExternalDocumentsFeedToolMetadata } from '../tools/getExternalDocumentsFeed.js';
+import { handleGetParliamentaryQuestionsFeed, getParliamentaryQuestionsFeedToolMetadata } from '../tools/getParliamentaryQuestionsFeed.js';
+import { handleGetCorporateBodiesFeed, getCorporateBodiesFeedToolMetadata } from '../tools/getCorporateBodiesFeed.js';
+import { handleGetControlledVocabulariesFeed, getControlledVocabulariesFeedToolMetadata } from '../tools/getControlledVocabulariesFeed.js';
+import { handleGetProcedureEventById, getProcedureEventByIdToolMetadata } from '../tools/getProcedureEventById.js';
+
 // ── Type imports ──────────────────────────────────────────────────
 import type { ToolHandler, ToolCategory, ToolResult, ToolMetadata } from './types.js';
 
@@ -154,6 +170,21 @@ export function getToolMetadataArray(): ToolMetadata[] {
     withCategory(getMeetingPlenarySessionDocumentItemsToolMetadata, 'phase5'),
     // Precomputed analytics
     withCategory(getAllGeneratedStatsToolMetadata, 'phase5'),
+    // Feed endpoint tools – recently updated data from EP change feeds
+    withCategory(getMEPsFeedToolMetadata, 'feed'),
+    withCategory(getEventsFeedToolMetadata, 'feed'),
+    withCategory(getProceduresFeedToolMetadata, 'feed'),
+    withCategory(getAdoptedTextsFeedToolMetadata, 'feed'),
+    withCategory(getMEPDeclarationsFeedToolMetadata, 'feed'),
+    withCategory(getDocumentsFeedToolMetadata, 'feed'),
+    withCategory(getPlenaryDocumentsFeedToolMetadata, 'feed'),
+    withCategory(getCommitteeDocumentsFeedToolMetadata, 'feed'),
+    withCategory(getPlenarySessionDocumentsFeedToolMetadata, 'feed'),
+    withCategory(getExternalDocumentsFeedToolMetadata, 'feed'),
+    withCategory(getParliamentaryQuestionsFeedToolMetadata, 'feed'),
+    withCategory(getCorporateBodiesFeedToolMetadata, 'feed'),
+    withCategory(getControlledVocabulariesFeedToolMetadata, 'feed'),
+    withCategory(getProcedureEventByIdToolMetadata, 'feed'),
   ];
 }
 
@@ -217,6 +248,21 @@ const toolHandlers: Record<string, ToolHandler> = {
   'get_meeting_plenary_session_document_items': handleGetMeetingPlenarySessionDocumentItems,
   // Precomputed analytics
   'get_all_generated_stats': handleGetAllGeneratedStats,
+  // Feed endpoint tools
+  'get_meps_feed': handleGetMEPsFeed,
+  'get_events_feed': handleGetEventsFeed,
+  'get_procedures_feed': handleGetProceduresFeed,
+  'get_adopted_texts_feed': handleGetAdoptedTextsFeed,
+  'get_mep_declarations_feed': handleGetMEPDeclarationsFeed,
+  'get_documents_feed': handleGetDocumentsFeed,
+  'get_plenary_documents_feed': handleGetPlenaryDocumentsFeed,
+  'get_committee_documents_feed': handleGetCommitteeDocumentsFeed,
+  'get_plenary_session_documents_feed': handleGetPlenarySessionDocumentsFeed,
+  'get_external_documents_feed': handleGetExternalDocumentsFeed,
+  'get_parliamentary_questions_feed': handleGetParliamentaryQuestionsFeed,
+  'get_corporate_bodies_feed': handleGetCorporateBodiesFeed,
+  'get_controlled_vocabularies_feed': handleGetControlledVocabulariesFeed,
+  'get_procedure_event_by_id': handleGetProcedureEventById,
 };
 
 /**

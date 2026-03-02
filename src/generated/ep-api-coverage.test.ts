@@ -102,6 +102,24 @@ const COVERED_ENDPOINTS: Record<string, { client: string; method: string; specPa
   // ── Controlled Vocabularies ──────────────────────────────────────────────
   '/controlled-vocabularies':              getMeta('VocabularyClient', 'getControlledVocabularies', '/controlled-vocabularies'),
   '/controlled-vocabularies/{voc-id}':     getMeta('VocabularyClient', 'getControlledVocabularyById', '/controlled-vocabularies/{voc-id}'),
+
+  // ── Feed endpoints (JSON-LD via format parameter) ─────────────────────
+  '/meps/feed':                       getMeta('MEPClient', 'getMEPsFeed', '/meps/feed'),
+  '/meps-declarations/feed':          getMeta('MEPClient', 'getMEPDeclarationsFeed', '/meps-declarations/feed'),
+  '/corporate-bodies/feed':           getMeta('CommitteeClient', 'getCorporateBodiesFeed', '/corporate-bodies/feed'),
+  '/events/feed':                     getMeta('PlenaryClient', 'getEventsFeed', '/events/feed'),
+  '/procedures/feed':                 getMeta('LegislativeClient', 'getProceduresFeed', '/procedures/feed'),
+  '/adopted-texts/feed':              getMeta('LegislativeClient', 'getAdoptedTextsFeed', '/adopted-texts/feed'),
+  '/documents/feed':                  getMeta('DocumentClient', 'getDocumentsFeed', '/documents/feed'),
+  '/plenary-documents/feed':          getMeta('DocumentClient', 'getPlenaryDocumentsFeed', '/plenary-documents/feed'),
+  '/committee-documents/feed':        getMeta('DocumentClient', 'getCommitteeDocumentsFeed', '/committee-documents/feed'),
+  '/plenary-session-documents/feed':  getMeta('DocumentClient', 'getPlenarySessionDocumentsFeed', '/plenary-session-documents/feed'),
+  '/external-documents/feed':         getMeta('DocumentClient', 'getExternalDocumentsFeed', '/external-documents/feed'),
+  '/parliamentary-questions/feed':    getMeta('QuestionClient', 'getParliamentaryQuestionsFeed', '/parliamentary-questions/feed'),
+  '/controlled-vocabularies/feed':    getMeta('VocabularyClient', 'getControlledVocabulariesFeed', '/controlled-vocabularies/feed'),
+
+  // ── Optional – procedure event by ID ──────────────────────────────────
+  '/procedures/{process-id}/events/{event-id}': getMeta('LegislativeClient', 'getProcedureEventById', '/procedures/{process-id}/events/{event-id}'),
 };
 
 /**
@@ -110,26 +128,12 @@ const COVERED_ENDPOINTS: Record<string, { client: string; method: string; specPa
  * the MCP tool layer.
  */
 const FEED_ENDPOINTS: SpecPath[] = [
-  '/meps/feed',
-  '/corporate-bodies/feed',
-  '/events/feed',
-  '/procedures/feed',
-  '/documents/feed',
-  '/plenary-documents/feed',
-  '/parliamentary-questions/feed',
-  '/plenary-session-documents/feed',
-  '/adopted-texts/feed',
-  '/committee-documents/feed',
-  '/meps-declarations/feed',
-  '/external-documents/feed',
-  '/controlled-vocabularies/feed',
 ];
 
 /**
  * Spec endpoints with niche use cases — tracked but not required.
  */
 const OPTIONAL_ENDPOINTS: SpecPath[] = [
-  '/procedures/{process-id}/events/{event-id}',
 ];
 
 function getMeta(client: string, method: string, specPath: SpecPath): { client: string; method: string; specPath: SpecPath } {
@@ -151,10 +155,10 @@ describe('EP API v2 — OpenAPI Spec Coverage', () => {
 
     // These counts match the EP API v2 OpenAPI spec as of 2026-03.
     // Update when the spec is regenerated (npm run generate:api-types).
-    expect(Object.keys(COVERED_ENDPOINTS).length).toBe(41);
-    expect(FEED_ENDPOINTS.length).toBe(13);
-    expect(OPTIONAL_ENDPOINTS.length).toBe(1);
-    // 41 + 13 + 1 = 55 total spec endpoints
+    expect(Object.keys(COVERED_ENDPOINTS).length).toBe(55);
+    expect(FEED_ENDPOINTS.length).toBe(0);
+    expect(OPTIONAL_ENDPOINTS.length).toBe(0);
+    // 55 + 0 + 0 = 55 total spec endpoints — 100% coverage
     expect(allAccountedFor.size).toBe(
       Object.keys(COVERED_ENDPOINTS).length + FEED_ENDPOINTS.length + OPTIONAL_ENDPOINTS.length
     );
@@ -184,10 +188,9 @@ describe('EP API v2 — OpenAPI Spec Coverage', () => {
     }
   });
 
-  it('feed endpoints should all end with /feed', () => {
-    for (const path of FEED_ENDPOINTS) {
-      expect(path.endsWith('/feed'), `${path} is not a feed`).toBe(true);
-    }
+  it('all feed endpoints should now be covered', () => {
+    const feedCovered = Object.keys(COVERED_ENDPOINTS).filter(p => p.endsWith('/feed'));
+    expect(feedCovered.length).toBe(13);
   });
 
   describe('Client distribution', () => {
@@ -201,14 +204,14 @@ describe('EP API v2 — OpenAPI Spec Coverage', () => {
     });
 
     it.each([
-      ['MEPClient', 8],
-      ['PlenaryClient', 7],
+      ['MEPClient', 10],
+      ['PlenaryClient', 8],
       ['VotingClient', 3],
-      ['LegislativeClient', 5],
-      ['DocumentClient', 11],
-      ['QuestionClient', 2],
-      ['CommitteeClient', 3],
-      ['VocabularyClient', 2],
+      ['LegislativeClient', 8],
+      ['DocumentClient', 16],
+      ['QuestionClient', 3],
+      ['CommitteeClient', 4],
+      ['VocabularyClient', 3],
     ])('%s should cover %i endpoints', (client, expected) => {
       expect(clientCounts.get(client) ?? 0).toBe(expected);
     });
