@@ -169,6 +169,24 @@ const CYAN = '\x1b[36m';
 const DIM = '\x1b[2m';
 const RESET = '\x1b[0m';
 
+/** Format elapsed seconds as human-readable duration. */
+function formatElapsed(ms: number): string {
+  const secs = ms / 1000;
+  if (secs < 60) return `${secs.toFixed(1)}s`;
+  const mins = Math.floor(secs / 60);
+  const remainSecs = (secs % 60).toFixed(0);
+  return `${String(mins)}m${remainSecs}s`;
+}
+
+/** Global start time for elapsed tracking. */
+const GLOBAL_START = Date.now();
+
+/** Print a progress message with elapsed time. */
+function progress(message: string): void {
+  const elapsed = formatElapsed(Date.now() - GLOBAL_START);
+  console.log(`  ${DIM}[${elapsed}]${RESET} ${message}`);
+}
+
 function statusIcon(status: ComparisonStatus): string {
   switch (status) {
     case 'MATCH':
@@ -222,19 +240,27 @@ async function countItems(
 ): Promise<{ total: number | null; error?: string }> {
   let totalCount = 0;
   let offset = 0;
+  let pageNum = 0;
+  const fetchStart = Date.now();
   try {
     for (;;) {
+      pageNum++;
       const result = await fetcher({ limit: EP_API_MAX_PAGE_SIZE, offset });
       totalCount += result.data.length;
+      if (pageNum === 1 || pageNum % 3 === 0 || !result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) {
+        progress(`📊 ${label}: page ${String(pageNum)}, ${String(totalCount)} items so far (${formatElapsed(Date.now() - fetchStart)})`);
+      }
       if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
       offset += EP_API_MAX_PAGE_SIZE;
     }
+    progress(`✅ ${label}: ${String(totalCount)} items total (${formatElapsed(Date.now() - fetchStart)})`);
     return { total: totalCount };
   } catch (err: unknown) {
     // If we already counted some items before the error, the last page
     // likely returned an empty body (the EP API does this when offset
     // exceeds available data).  The accumulated count is correct.
     if (totalCount > 0) {
+      progress(`⚠️  ${label}: ${String(totalCount)} items (partial, error on page ${String(pageNum)})`);
       return { total: totalCount };
     }
     const message = err instanceof Error ? err.message : 'Unknown error';
@@ -293,10 +319,15 @@ async function countItemsGroupedByMonth(
   let totalCount = 0;
   let undated = 0;
   let offset = 0;
+  let pageNum = 0;
   const yearStr = String(year);
+  const fetchStart = Date.now();
+
+  progress(`🔍 ${label} (${yearStr}): starting monthly bucketing...`);
 
   try {
     for (;;) {
+      pageNum++;
       const result = await fetcher({ limit: EP_API_MAX_PAGE_SIZE, offset });
       for (const item of result.data) {
         const dateStr = extractRecordDate(item);
@@ -310,6 +341,8 @@ async function countItemsGroupedByMonth(
           monthlyCounts[monthIdx]++;
         }
       }
+      // Show progress every page
+      progress(`📊 ${label}: page ${String(pageNum)}, ${String(totalCount)} matched ${yearStr}, ${String(undated)} outside (${formatElapsed(Date.now() - fetchStart)})`);
       if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
       offset += EP_API_MAX_PAGE_SIZE;
     }
@@ -321,6 +354,7 @@ async function countItemsGroupedByMonth(
       .join(' ');
     const undatedNote = undated > 0 ? ` (${String(undated)} outside ${yearStr})` : '';
     console.log(`    ${DIM}📅 ${monthSummary} = ${String(totalCount)}${undatedNote}${RESET}`);
+    progress(`✅ ${label}: ${String(totalCount)} items in ${yearStr} (${formatElapsed(Date.now() - fetchStart)})`);
 
     return { total: totalCount, monthlyCounts };
   } catch (err: unknown) {
@@ -329,10 +363,76 @@ async function countItemsGroupedByMonth(
     if (totalCount > 0) {
       // Preserve partial counts for diagnostics, but surface the error so callers
       // don't treat this as a fully successful count (e.g. when running --update).
+      progress(`⚠️  ${label}: ${String(totalCount)} items (partial, error on page ${String(pageNum)})`);
       return { total: totalCount, monthlyCounts, error: message };
     }
     return { total: null, monthlyCounts, error: message };
   }
+}
+
+/**
+ * Count items month-by-month using server-side date range filtering.
+ *
+ * For endpoints that properly support `dateFrom`/`dateTo` parameters
+ * (e.g. Parliamentary Questions), this fetches each month separately.
+ * This provides real monthly breakdown and shows progress throughout
+ * the fetch, avoiding long silent periods.
+ */
+async function countItemsByMonthRange(
+  label: string,
+  year: number,
+  fetcher: (params: { dateFrom: string; dateTo: string; limit: number; offset: number }) => Promise<{ data: unknown[]; hasMore: boolean }>
+): Promise<{ total: number | null; monthlyCounts: number[]; error?: string }> {
+  const monthlyCounts: number[] = new Array<number>(12).fill(0);
+  let totalCount = 0;
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const fetchStart = Date.now();
+  const errors: string[] = [];
+
+  progress(`🔍 ${label} (${String(year)}): fetching month by month...`);
+
+  for (let month = 0; month < 12; month++) {
+    const monthNum = String(month + 1).padStart(2, '0');
+    const dateFrom = `${String(year)}-${monthNum}-01`;
+    // Calculate last day of month
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    const dateTo = `${String(year)}-${monthNum}-${String(lastDay).padStart(2, '0')}`;
+    let monthCount = 0;
+    let offset = 0;
+    let pageNum = 0;
+
+    try {
+      for (;;) {
+        pageNum++;
+        const result = await fetcher({ dateFrom, dateTo, limit: EP_API_MAX_PAGE_SIZE, offset });
+        monthCount += result.data.length;
+        if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
+        offset += EP_API_MAX_PAGE_SIZE;
+      }
+    } catch (err: unknown) {
+      if (monthCount === 0) {
+        const message = err instanceof Error ? err.message : 'Unknown error';
+        errors.push(`${monthNames[month] ?? ''}: ${message}`);
+      }
+      // Keep partial count for this month
+    }
+
+    monthlyCounts[month] = monthCount;
+    totalCount += monthCount;
+    progress(`📊 ${label}: ${monthNames[month] ?? ''}=${String(monthCount)} (total: ${String(totalCount)}, ${formatElapsed(Date.now() - fetchStart)})`);
+  }
+
+  // Log monthly summary
+  const monthSummary = monthlyCounts
+    .map((c, i) => `${monthNames[i] ?? ''}:${String(c)}`)
+    .join(' ');
+  console.log(`    ${DIM}📅 ${monthSummary} = ${String(totalCount)}${RESET}`);
+  progress(`✅ ${label}: ${String(totalCount)} items in ${String(year)} (${formatElapsed(Date.now() - fetchStart)})`);
+
+  if (errors.length > 0) {
+    return { total: totalCount > 0 ? totalCount : null, monthlyCounts, error: errors.join(' | ') };
+  }
+  return { total: totalCount, monthlyCounts };
 }
 
 /**
@@ -386,8 +486,7 @@ async function validateYearAgainstAPI(
   // Records from these endpoints have dates extractable from their
   // `date` field or ID.  We fetch all items and bucket client-side.
   //
-  // NOTE: Parliamentary Questions have NO date info in the date
-  // field or ID — they use simple counting instead (see yearlyMetrics).
+  // Parliamentary Questions use server-side dateFrom/dateTo per month.
   const monthlyMetrics: Array<{
     label: string;
     storedKey: keyof YearlyStats;
@@ -415,26 +514,25 @@ async function validateYearAgainstAPI(
         client.getEvents({ year, ...p })
       ),
     },
+    {
+      label: 'Parliamentary Questions',
+      storedKey: 'parliamentaryQuestions',
+      // Questions support dateFrom/dateTo — fetch month by month for
+      // real monthly data and better progress visibility.
+      count: () => countItemsByMonthRange('Parliamentary Questions', year, (p) =>
+        client.getParliamentaryQuestions(p)
+      ),
+    },
   ];
 
   // ── Metrics using simple pagination counting ───────────────────
   // These endpoints don't have easily extractable dates per record,
   // or the data volume makes full-item fetching impractical.
-  const dateFrom = `${String(year)}-01-01`;
-  const dateTo = `${String(year)}-12-31`;
   const yearlyMetrics: Array<{
     label: string;
     storedKey: keyof YearlyStats;
     count: () => Promise<{ total: number | null; error?: string }>;
   }> = [
-    {
-      label: 'Parliamentary Questions',
-      storedKey: 'parliamentaryQuestions',
-      // Questions have no month info in date or ID fields
-      count: () => countItems('Parliamentary Questions', (p) =>
-        client.getParliamentaryQuestions({ dateFrom, dateTo, ...p })
-      ),
-    },
     {
       label: 'Adopted Texts',
       storedKey: 'adoptedTexts',
@@ -449,7 +547,9 @@ async function validateYearAgainstAPI(
       label: 'Plenary Documents',
       storedKey: 'documents',
       // Document count = sum of plenary + committee + external documents.
+      // Fetched in parallel for better performance.
       count: async () => {
+        progress('🔍 Plenary Documents: fetching plenary + committee + external in parallel...');
         const [plenary, committee, external] = await Promise.all([
           countItems('Plenary Docs', (p) => client.getPlenaryDocuments({ year, ...p })),
           countItems('Committee Docs', (p) => client.getCommitteeDocuments({ year, ...p })),
@@ -464,6 +564,7 @@ async function validateYearAgainstAPI(
         if (plenary.total === null && committee.total === null && external.total === null) {
           return { total: null, error: errors.join(' | ') };
         }
+        progress(`✅ Plenary Documents: ${String(plenary.total ?? 0)} plenary + ${String(committee.total ?? 0)} committee + ${String(external.total ?? 0)} external = ${String(total)}`);
         return { total, error: errors.length > 0 ? errors.join(' | ') : undefined };
       },
     },
@@ -475,7 +576,11 @@ async function validateYearAgainstAPI(
   ];
 
   // Fetch monthly-batched metrics sequentially to respect rate limits
+  const totalMetrics = monthlyMetrics.length + yearlyMetrics.length;
+  let metricIdx = 0;
   for (const metric of monthlyMetrics) {
+    metricIdx++;
+    console.log(`\n  ${BOLD}[${String(metricIdx)}/${String(totalMetrics)}] ${metric.label}${RESET}`);
     const { total, monthlyCounts, error } = await metric.count();
     const storedValue = yearStats[metric.storedKey] as number;
     const { status, diffPercent } = compareValues(storedValue, total);
@@ -493,6 +598,8 @@ async function validateYearAgainstAPI(
 
   // Fetch yearly metrics sequentially
   for (const metric of yearlyMetrics) {
+    metricIdx++;
+    console.log(`\n  ${BOLD}[${String(metricIdx)}/${String(totalMetrics)}] ${metric.label}${RESET}`);
     const { total, error } = await metric.count();
     const storedValue = yearStats[metric.storedKey] as number;
     const { status, diffPercent } = compareValues(storedValue, total);
@@ -510,6 +617,7 @@ async function validateYearAgainstAPI(
   // MEP counts (not year-filtered — reflects current state)
   const latestCoveredYear = GENERATED_STATS.coveragePeriod.to;
   if (year === latestCoveredYear) {
+    console.log(`\n  ${BOLD}MEP Counts (latest year only)${RESET}`);
     // Current MEPs vs stored mepCount
     const { total: currentTotal, error: currentError } = await countItems(
       'Current MEPs',
@@ -1057,7 +1165,6 @@ function isUpdatableField(field: string): boolean {
 
 async function main(): Promise<void> {
   const { years, update } = parseArgs();
-  const startTime = Date.now();
 
   console.log(`${BOLD}${CYAN}╔══════════════════════════════════════════════════════════════╗${RESET}`);
   console.log(`${BOLD}${CYAN}║  European Parliament Stats Validator                        ║${RESET}`);
@@ -1130,8 +1237,8 @@ async function main(): Promise<void> {
     );
   }
 
-  const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-  console.log(`${DIM}Completed in ${elapsed}s${RESET}\n`);
+  const elapsed = formatElapsed(Date.now() - GLOBAL_START);
+  console.log(`${DIM}Completed in ${elapsed}${RESET}\n`);
 
   // Exit code: 1 only for landscape consistency errors (deterministic)
   // API discrepancies are advisory (data may legitimately drift between releases)
