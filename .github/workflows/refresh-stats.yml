@@ -22,7 +22,7 @@ on:
   workflow_dispatch:
     inputs:
       year:
-        description: 'Year to validate (leave empty for latest covered year, "all" for all years)'
+        description: 'Year to validate (leave empty or "all" for all years, or a 4-digit year e.g. 2024)'
         required: false
         default: ''
         type: string
