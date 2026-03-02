@@ -244,61 +244,93 @@ async function countItems(
 }
 
 /**
- * Count items by month for a given year by making 12 monthly API calls.
+ * Extract a YYYY-MM-DD date string from either the `date` field or the `id`.
  *
- * This approach avoids timeouts caused by large yearly result sets by
- * splitting the year into individual month queries.  Each monthly query
- * handles a much smaller data volume and is less likely to time out.
+ * Some EP API endpoints return empty `date` fields in their transformed
+ * records, but embed dates in the record ID:
+ * - Plenary sessions: `MTG-PL-2025-01-20`
+ * - Events: `eli/dl/event/1972-0003-ANPRO-1972-11-06`
+ * - Speeches: `eli/dl/event/MTG-PL-2023-10-17-OTH-20390000`
  *
- * For endpoints that support `dateFrom`/`dateTo` parameters, this
- * provides real monthly counts instead of synthetic distributions.
- *
- * Returns per-month counts (12 elements, Jan=0..Dec=11) and the total.
+ * This regex extracts the first YYYY-MM-DD pattern found in the id.
  */
-async function countItemsByMonth(
-  label: string,
-  year: number,
-  fetcher: (params: { dateFrom: string; dateTo: string; limit: number; offset: number }) => Promise<{ data: unknown[]; hasMore: boolean }>
-): Promise<{ total: number | null; monthlyCounts: number[]; error?: string }> {
-  const monthlyCounts: number[] = new Array<number>(12).fill(0);
-  const errors: string[] = [];
+const DATE_PATTERN = /\b(\d{4})-(\d{2})-(\d{2})\b/;
 
-  // Fetch each month sequentially to respect rate limits
-  for (let month = 0; month < 12; month++) {
-    const monthNum = month + 1;
-    const dateFrom = `${String(year)}-${String(monthNum).padStart(2, '0')}-01`;
-    // Last day of month
-    const lastDay = new Date(year, monthNum, 0).getDate();
-    const dateTo = `${String(year)}-${String(monthNum).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
-
-    const monthLabel = `${label} (${String(year)}-${String(monthNum).padStart(2, '0')})`;
-    const result = await countItems(monthLabel, (p) =>
-      fetcher({ dateFrom, dateTo, ...p })
-    );
-
-    if (result.total !== null) {
-      monthlyCounts[month] = result.total;
-    } else {
-      errors.push(`Month ${String(monthNum)}: ${result.error ?? 'unknown'}`);
+function extractRecordDate(item: { id?: string; date?: string }): string | null {
+  // Prefer the explicit date field if it looks like a date
+  if (item.date && DATE_PATTERN.test(item.date)) {
+    return item.date.substring(0, 10);
+  }
+  // Fall back to extracting a date from the id field
+  if (item.id) {
+    const match = DATE_PATTERN.exec(item.id);
+    if (match) {
+      return `${match[1]}-${match[2]}-${match[3]}`;
     }
   }
+  return null;
+}
 
-  const total = monthlyCounts.reduce((sum, c) => sum + c, 0);
-  const error = errors.length > 0 ? errors.join(' | ') : undefined;
+/**
+ * Count items by month for a given year using client-side date bucketing.
+ *
+ * The EP API ignores `dateFrom`/`dateTo` params on most endpoints,
+ * returning all records for the given `year` regardless of date range.
+ * This function fetches ALL items, extracts dates from each record
+ * (from the `date` field or by parsing the `id`), and buckets items
+ * into months client-side.
+ *
+ * Returns per-month counts (12 elements, Jan=0..Dec=11) and the total.
+ * Items whose date doesn't match the target year are excluded from
+ * both the total and monthly counts.
+ */
+async function countItemsGroupedByMonth(
+  label: string,
+  year: number,
+  fetcher: (params: { limit: number; offset: number }) => Promise<{ data: Array<{ id?: string; date?: string }>; hasMore: boolean }>
+): Promise<{ total: number | null; monthlyCounts: number[]; error?: string }> {
+  const monthlyCounts: number[] = new Array<number>(12).fill(0);
+  let totalCount = 0;
+  let undated = 0;
+  let offset = 0;
+  const yearStr = String(year);
 
-  // Log monthly summary
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const monthSummary = monthlyCounts
-    .map((c, i) => `${monthNames[i] ?? ''}:${String(c)}`)
-    .join(' ');
-  console.log(`    ${DIM}Monthly: ${monthSummary} = ${String(total)}${RESET}`);
+  try {
+    for (;;) {
+      const result = await fetcher({ limit: EP_API_MAX_PAGE_SIZE, offset });
+      for (const item of result.data) {
+        const dateStr = extractRecordDate(item);
+        if (!dateStr || !dateStr.startsWith(yearStr)) {
+          undated++;
+          continue; // skip items without a parseable date in the target year
+        }
+        totalCount++;
+        const monthIdx = Number.parseInt(dateStr.substring(5, 7), 10) - 1;
+        if (monthIdx >= 0 && monthIdx < 12) {
+          monthlyCounts[monthIdx]++;
+        }
+      }
+      if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
+      offset += EP_API_MAX_PAGE_SIZE;
+    }
 
-  // If all months errored, report as failure
-  if (errors.length === 12) {
-    return { total: null, monthlyCounts, error };
+    // Log monthly summary
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthSummary = monthlyCounts
+      .map((c, i) => `${monthNames[i] ?? ''}:${String(c)}`)
+      .join(' ');
+    const undatedNote = undated > 0 ? ` (${String(undated)} outside ${yearStr})` : '';
+    console.log(`    ${DIM}📅 ${monthSummary} = ${String(totalCount)}${undatedNote}${RESET}`);
+
+    return { total: totalCount, monthlyCounts };
+  } catch (err: unknown) {
+    if (totalCount > 0) {
+      return { total: totalCount, monthlyCounts };
+    }
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error(`  ${DIM}⚠ API error fetching ${label}: ${message}${RESET}`);
+    return { total: null, monthlyCounts, error: message };
   }
-
-  return { total, monthlyCounts, error };
 }
 
 /**
@@ -329,10 +361,12 @@ function compareValues(stored: number, api: number | null): { status: Comparison
  * Fetch live counts from the EP API for a given year and compare
  * them against the stored RAW_YEARLY data.
  *
- * Uses monthly batching for endpoints that support date-range
- * filtering (`dateFrom`/`dateTo`) to avoid timeouts on large datasets
- * and to obtain real monthly counts.  Endpoints that only support
- * the `year` parameter still use full-year pagination.
+ * Uses client-side date bucketing for endpoints whose records have
+ * a `date` field — fetches all items for the year once, then groups
+ * them by month.  This gives real monthly counts without relying on
+ * server-side date-range filtering (which the EP API ignores).
+ *
+ * Endpoints without usable date fields use simple pagination counting.
  *
  * The EP API does not return a `totalItems` header, so the only
  * reliable way to count records is to iterate through all pages.
@@ -344,54 +378,61 @@ async function validateYearAgainstAPI(
   const year = yearStats.year;
   const comparisons: MetricComparison[] = [];
 
-  console.log(`\n${BOLD}${CYAN}── Fetching API data for ${String(year)} (monthly batching) ──${RESET}`);
+  console.log(`\n${BOLD}${CYAN}── Fetching API data for ${String(year)} (with monthly bucketing) ──${RESET}`);
 
-  // ── Metrics using monthly batching (dateFrom/dateTo support) ───
-  // These endpoints support date-range filtering, so we split the year
-  // into 12 monthly queries for better performance and real monthly data.
+  // ── Metrics with date bucketing ────────────────────────────────
+  // Records from these endpoints have dates extractable from their
+  // `date` field or ID.  We fetch all items and bucket client-side.
+  //
+  // NOTE: Parliamentary Questions have NO date info in the date
+  // field or ID — they use simple counting instead (see yearlyMetrics).
   const monthlyMetrics: Array<{
     label: string;
     storedKey: keyof YearlyStats;
     count: () => Promise<{ total: number | null; monthlyCounts: number[]; error?: string }>;
   }> = [
     {
-      label: 'Parliamentary Questions',
-      storedKey: 'parliamentaryQuestions',
-      count: () => countItemsByMonth('Parliamentary Questions', year, (p) =>
-        client.getParliamentaryQuestions(p)
-      ),
-    },
-    {
       label: 'Plenary Sessions',
       storedKey: 'plenarySessions',
-      count: () => countItemsByMonth('Plenary Sessions', year, (p) =>
-        client.getPlenarySessions(p)
+      // Session IDs contain dates: MTG-PL-2025-01-20
+      count: () => countItemsGroupedByMonth('Plenary Sessions', year, (p) =>
+        client.getPlenarySessions({ year, ...p })
       ),
     },
     {
       label: 'Speeches',
       storedKey: 'speeches',
-      count: () => countItemsByMonth('Speeches', year, (p) =>
-        client.getSpeeches(p)
+      count: () => countItemsGroupedByMonth('Speeches', year, (p) =>
+        client.getSpeeches({ year, ...p })
       ),
     },
     {
       label: 'Events',
       storedKey: 'events',
-      count: () => countItemsByMonth('Events', year, (p) =>
-        client.getEvents(p)
+      count: () => countItemsGroupedByMonth('Events', year, (p) =>
+        client.getEvents({ year, ...p })
       ),
     },
   ];
 
-  // ── Metrics using full-year pagination (year-only endpoints) ───
-  // These endpoints only accept a `year` parameter. We use a smaller
-  // page size to reduce per-request payload and timeout risk.
+  // ── Metrics using simple pagination counting ───────────────────
+  // These endpoints don't have easily extractable dates per record,
+  // or the data volume makes full-item fetching impractical.
+  const dateFrom = `${String(year)}-01-01`;
+  const dateTo = `${String(year)}-12-31`;
   const yearlyMetrics: Array<{
     label: string;
     storedKey: keyof YearlyStats;
     count: () => Promise<{ total: number | null; error?: string }>;
   }> = [
+    {
+      label: 'Parliamentary Questions',
+      storedKey: 'parliamentaryQuestions',
+      // Questions have no month info in date or ID fields
+      count: () => countItems('Parliamentary Questions', (p) =>
+        client.getParliamentaryQuestions({ dateFrom, dateTo, ...p })
+      ),
+    },
     {
       label: 'Adopted Texts',
       storedKey: 'adoptedTexts',

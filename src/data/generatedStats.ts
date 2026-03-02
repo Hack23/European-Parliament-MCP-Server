@@ -506,7 +506,7 @@ function distributeMonthly(annual: Omit<YearlyStats, 'monthlyActivity' | 'politi
     legislativeActsAdopted: distributeMetric(annual.legislativeActsAdopted),
     rollCallVotes: distributeMetric(annual.rollCallVotes),
     committeeMeetings: distributeMetric(annual.committeeMeetings),
-    parliamentaryQuestions: getMonthly('parliamentaryQuestions', annual.parliamentaryQuestions),
+    parliamentaryQuestions: distributeMetric(annual.parliamentaryQuestions),
     resolutions: distributeMetric(annual.resolutions),
     speeches: getMonthly('speeches', annual.speeches),
     adoptedTexts: distributeMetric(annual.adoptedTexts),
@@ -566,18 +566,18 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | '
 ];
 
 // ── Real monthly data from EP API ─────────────────────────────────
-// Actual monthly counts from the EP API for endpoints that support
-// date-range filtering (dateFrom/dateTo). These override the synthetic
-// distribution from MONTHLY_WEIGHTS when available.
+// Actual monthly counts from the EP API extracted via client-side
+// date bucketing (dates parsed from record IDs and date fields).
+// These override the synthetic distribution from MONTHLY_WEIGHTS.
 //
-// Metrics with real monthly data:
-// - parliamentaryQuestions: EP API supports dateFrom/dateTo filtering
-// - plenarySessions: EP API supports dateFrom/dateTo filtering
-// - speeches: EP API supports dateFrom/dateTo filtering
-// - events: EP API supports dateFrom/dateTo filtering
+// Metrics with real monthly data (dates extractable from IDs/fields):
+// - plenarySessions: date from session ID (MTG-PL-YYYY-MM-DD)
+// - speeches: date field populated by EP API
+// - events: date from event ID (contains YYYY-MM-DD)
 //
-// Other metrics (adoptedTexts, procedures, documents, declarations)
-// only support year-level filtering and use synthetic distribution.
+// Metrics without monthly data (no date in ID or field):
+// - parliamentaryQuestions, adoptedTexts, procedures, documents,
+//   declarations — use synthetic distribution via MONTHLY_WEIGHTS.
 //
 // Updated by: npx tsx scripts/generate-stats.ts --update
 const RAW_MONTHLY_DATA: Record<number, Record<string, number[]>> = {
