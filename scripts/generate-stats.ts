@@ -66,6 +66,8 @@ interface MetricComparison {
   diffPercent: number | null;
   /** Optional note (e.g. error message on failure) */
   note?: string;
+  /** Per-month counts (12 elements, Jan=0..Dec=11) when available */
+  monthlyCounts?: number[];
 }
 
 /** Results for a single year's validation. */
@@ -242,6 +244,98 @@ async function countItems(
 }
 
 /**
+ * Extract a YYYY-MM-DD date string from either the `date` field or the `id`.
+ *
+ * Some EP API endpoints return empty `date` fields in their transformed
+ * records, but embed dates in the record ID:
+ * - Plenary sessions: `MTG-PL-2025-01-20`
+ * - Events: `eli/dl/event/1972-0003-ANPRO-1972-11-06`
+ * - Speeches: `eli/dl/event/MTG-PL-2023-10-17-OTH-20390000`
+ *
+ * This regex extracts the first YYYY-MM-DD pattern found in the id.
+ */
+const DATE_PATTERN = /\b(\d{4})-(\d{2})-(\d{2})\b/;
+
+function extractRecordDate(item: { id?: string; date?: string }): string | null {
+  // Prefer the explicit date field if it looks like a date
+  if (item.date && DATE_PATTERN.test(item.date)) {
+    return item.date.substring(0, 10);
+  }
+  // Fall back to extracting a date from the id field
+  if (item.id) {
+    const match = DATE_PATTERN.exec(item.id);
+    if (match) {
+      return `${match[1]}-${match[2]}-${match[3]}`;
+    }
+  }
+  return null;
+}
+
+/**
+ * Count items by month for a given year using client-side date bucketing.
+ *
+ * The EP API ignores `dateFrom`/`dateTo` params on most endpoints,
+ * returning all records for the given `year` regardless of date range.
+ * This function fetches ALL items, extracts dates from each record
+ * (from the `date` field or by parsing the `id`), and buckets items
+ * into months client-side.
+ *
+ * Returns per-month counts (12 elements, Jan=0..Dec=11) and the total.
+ * Items whose date doesn't match the target year are excluded from
+ * both the total and monthly counts.
+ */
+async function countItemsGroupedByMonth(
+  label: string,
+  year: number,
+  fetcher: (params: { limit: number; offset: number }) => Promise<{ data: Array<{ id?: string; date?: string }>; hasMore: boolean }>
+): Promise<{ total: number | null; monthlyCounts: number[]; error?: string }> {
+  const monthlyCounts: number[] = new Array<number>(12).fill(0);
+  let totalCount = 0;
+  let undated = 0;
+  let offset = 0;
+  const yearStr = String(year);
+
+  try {
+    for (;;) {
+      const result = await fetcher({ limit: EP_API_MAX_PAGE_SIZE, offset });
+      for (const item of result.data) {
+        const dateStr = extractRecordDate(item);
+        if (!dateStr || !dateStr.startsWith(yearStr)) {
+          undated++;
+          continue; // skip items without a parseable date in the target year
+        }
+        totalCount++;
+        const monthIdx = Number.parseInt(dateStr.substring(5, 7), 10) - 1;
+        if (monthIdx >= 0 && monthIdx < 12) {
+          monthlyCounts[monthIdx]++;
+        }
+      }
+      if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
+      offset += EP_API_MAX_PAGE_SIZE;
+    }
+
+    // Log monthly summary
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthSummary = monthlyCounts
+      .map((c, i) => `${monthNames[i] ?? ''}:${String(c)}`)
+      .join(' ');
+    const undatedNote = undated > 0 ? ` (${String(undated)} outside ${yearStr})` : '';
+    console.log(`    ${DIM}📅 ${monthSummary} = ${String(totalCount)}${undatedNote}${RESET}`);
+
+    return { total: totalCount, monthlyCounts };
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error(`  ${DIM}⚠ API error fetching ${label}: ${message}${RESET}`);
+    if (totalCount > 0) {
+      // Preserve partial counts for diagnostics, but surface the error so callers
+      // don't treat this as a fully successful count (e.g. when running --update).
+      return { total: totalCount, monthlyCounts, error: message };
+    }
+    return { total: null, monthlyCounts, error: message };
+  }
+}
+
+/**
  * Determine comparison status between stored and API values.
  * - MATCH: values are identical
  * - CLOSE: within 10% tolerance
@@ -269,10 +363,15 @@ function compareValues(stored: number, api: number | null): { status: Comparison
  * Fetch live counts from the EP API for a given year and compare
  * them against the stored RAW_YEARLY data.
  *
- * Uses pagination-based counting (`limit = 1000` per page) to obtain
- * real record counts from the EP API.  The EP API does not return a
- * `totalItems` header, so the only reliable way to count records is
- * to iterate through all pages.
+ * Uses client-side date bucketing for endpoints whose records have
+ * a `date` field — fetches all items for the year once, then groups
+ * them by month.  This gives real monthly counts without relying on
+ * server-side date-range filtering (which the EP API ignores).
+ *
+ * Endpoints without usable date fields use simple pagination counting.
+ *
+ * The EP API does not return a `totalItems` header, so the only
+ * reliable way to count records is to iterate through all pages.
  */
 async function validateYearAgainstAPI(
   client: EuropeanParliamentClient,
@@ -280,17 +379,62 @@ async function validateYearAgainstAPI(
 ): Promise<YearValidation> {
   const year = yearStats.year;
   const comparisons: MetricComparison[] = [];
+
+  console.log(`\n${BOLD}${CYAN}── Fetching API data for ${String(year)} (with monthly bucketing) ──${RESET}`);
+
+  // ── Metrics with date bucketing ────────────────────────────────
+  // Records from these endpoints have dates extractable from their
+  // `date` field or ID.  We fetch all items and bucket client-side.
+  //
+  // NOTE: Parliamentary Questions have NO date info in the date
+  // field or ID — they use simple counting instead (see yearlyMetrics).
+  const monthlyMetrics: Array<{
+    label: string;
+    storedKey: keyof YearlyStats;
+    count: () => Promise<{ total: number | null; monthlyCounts: number[]; error?: string }>;
+  }> = [
+    {
+      label: 'Plenary Sessions',
+      storedKey: 'plenarySessions',
+      // Session IDs contain dates: MTG-PL-2025-01-20
+      count: () => countItemsGroupedByMonth('Plenary Sessions', year, (p) =>
+        client.getPlenarySessions({ year, ...p })
+      ),
+    },
+    {
+      label: 'Speeches',
+      storedKey: 'speeches',
+      count: () => countItemsGroupedByMonth('Speeches', year, (p) =>
+        client.getSpeeches({ year, ...p })
+      ),
+    },
+    {
+      label: 'Events',
+      storedKey: 'events',
+      count: () => countItemsGroupedByMonth('Events', year, (p) =>
+        client.getEvents({ year, ...p })
+      ),
+    },
+  ];
+
+  // ── Metrics using simple pagination counting ───────────────────
+  // These endpoints don't have easily extractable dates per record,
+  // or the data volume makes full-item fetching impractical.
   const dateFrom = `${String(year)}-01-01`;
   const dateTo = `${String(year)}-12-31`;
-
-  console.log(`\n${BOLD}${CYAN}── Fetching API data for ${String(year)} ──${RESET}`);
-
-  // Define metric fetch configuration using pagination counting
-  const metrics: Array<{
+  const yearlyMetrics: Array<{
     label: string;
     storedKey: keyof YearlyStats;
     count: () => Promise<{ total: number | null; error?: string }>;
   }> = [
+    {
+      label: 'Parliamentary Questions',
+      storedKey: 'parliamentaryQuestions',
+      // Questions have no month info in date or ID fields
+      count: () => countItems('Parliamentary Questions', (p) =>
+        client.getParliamentaryQuestions({ dateFrom, dateTo, ...p })
+      ),
+    },
     {
       label: 'Adopted Texts',
       storedKey: 'adoptedTexts',
@@ -305,22 +449,18 @@ async function validateYearAgainstAPI(
       label: 'Plenary Documents',
       storedKey: 'documents',
       // Document count = sum of plenary + committee + external documents.
-      // Uses Promise.all to fetch the three sub-categories in parallel.
       count: async () => {
-        // Sum plenary + committee + external documents for total document count
         const [plenary, committee, external] = await Promise.all([
           countItems('Plenary Docs', (p) => client.getPlenaryDocuments({ year, ...p })),
           countItems('Committee Docs', (p) => client.getCommitteeDocuments({ year, ...p })),
           countItems('External Docs', (p) => client.getExternalDocuments({ year, ...p })),
         ]);
-        // If any component errored, aggregate the error messages
         const errors: string[] = [];
         if (plenary.error) errors.push(`Plenary: ${plenary.error}`);
         if (committee.error) errors.push(`Committee: ${committee.error}`);
         if (external.error) errors.push(`External: ${external.error}`);
 
         const total = (plenary.total ?? 0) + (committee.total ?? 0) + (external.total ?? 0);
-        // Only report as error if ALL sub-fetches failed
         if (plenary.total === null && committee.total === null && external.total === null) {
           return { total: null, error: errors.join(' | ') };
         }
@@ -328,42 +468,31 @@ async function validateYearAgainstAPI(
       },
     },
     {
-      label: 'Parliamentary Questions',
-      storedKey: 'parliamentaryQuestions',
-      count: () => countItems('Parliamentary Questions', (p) =>
-        client.getParliamentaryQuestions({ dateFrom, dateTo, ...p })
-      ),
-    },
-    {
       label: 'MEP Declarations',
       storedKey: 'declarations',
       count: () => countItems('MEP Declarations', (p) => client.getMEPDeclarations({ year, ...p })),
     },
-    {
-      label: 'Plenary Sessions',
-      storedKey: 'plenarySessions',
-      count: () => countItems('Plenary Sessions', (p) =>
-        client.getPlenarySessions({ year, ...p })
-      ),
-    },
-    {
-      label: 'Speeches',
-      storedKey: 'speeches',
-      count: () => countItems('Speeches', (p) =>
-        client.getSpeeches({ year, ...p })
-      ),
-    },
-    {
-      label: 'Events',
-      storedKey: 'events',
-      count: () => countItems('Events', (p) =>
-        client.getEvents({ year, ...p })
-      ),
-    },
   ];
 
-  // Fetch all metrics sequentially to respect rate limits
-  for (const metric of metrics) {
+  // Fetch monthly-batched metrics sequentially to respect rate limits
+  for (const metric of monthlyMetrics) {
+    const { total, monthlyCounts, error } = await metric.count();
+    const storedValue = yearStats[metric.storedKey] as number;
+    const { status, diffPercent } = compareValues(storedValue, total);
+
+    comparisons.push({
+      metric: metric.label,
+      storedValue,
+      apiValue: total,
+      status,
+      diffPercent,
+      note: error,
+      monthlyCounts,
+    });
+  }
+
+  // Fetch yearly metrics sequentially
+  for (const metric of yearlyMetrics) {
     const { total, error } = await metric.count();
     const storedValue = yearStats[metric.storedKey] as number;
     const { status, diffPercent } = compareValues(storedValue, total);
@@ -537,6 +666,8 @@ function printYearComparison(validation: YearValidation): void {
   );
   console.log('─'.repeat(80));
 
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
   for (const c of validation.comparisons) {
     const storedStr = String(c.storedValue);
     const apiStr = c.apiValue !== null ? String(c.apiValue) : 'N/A';
@@ -548,6 +679,13 @@ function printYearComparison(validation: YearValidation): void {
     );
     if (c.note) {
       console.log(`    ${DIM}↳ ${c.note}${RESET}`);
+    }
+    // Print monthly breakdown if available
+    if (c.monthlyCounts) {
+      const monthDetail = c.monthlyCounts
+        .map((count, i) => `${monthNames[i] ?? ''}:${String(count).padStart(4)}`)
+        .join(' ');
+      console.log(`    ${DIM}📅 ${monthDetail}${RESET}`);
     }
   }
 }
@@ -712,7 +850,8 @@ function isCredibleApiValue(apiValue: number, storedValue: number): boolean {
  *
  * For each year's validation results, updates the numeric fields in the
  * `RAW_YEARLY` array where the API returned a valid, credible count.
- * Also updates the `generatedAt` timestamp.
+ * Also updates the `generatedAt` timestamp and writes real monthly
+ * data into `RAW_MONTHLY_DATA` when available from monthly-batched fetches.
  *
  * Only updates fields where:
  * - The API returned a valid value (not null/API_ERROR)
@@ -733,6 +872,9 @@ function updateStatsFile(
   let updatedFields = 0;
   let skippedFields = 0;
 
+  // Collect monthly data per year for RAW_MONTHLY_DATA update
+  const monthlyUpdates: Record<number, Record<string, number[]>> = {};
+
   for (const yv of yearValidations) {
     for (const comparison of yv.comparisons) {
       if (comparison.apiValue === null) continue; // skip API errors
@@ -745,6 +887,17 @@ function updateStatsFile(
           `  ${DIM}⊘ Skipped ${String(yv.year)}.${comparison.metric}: partial fetch (${comparison.note})${RESET}`
         );
         continue;
+      }
+
+      // Collect monthly data only for successful fetches (no note/error)
+      if (comparison.monthlyCounts && comparison.apiValue !== null) {
+        const mField = METRIC_TO_FIELD[comparison.metric];
+        if (mField && isUpdatableField(mField)) {
+          if (!monthlyUpdates[yv.year]) {
+            monthlyUpdates[yv.year] = {};
+          }
+          monthlyUpdates[yv.year][mField] = comparison.monthlyCounts;
+        }
       }
 
       const field = METRIC_TO_FIELD[comparison.metric];
@@ -791,6 +944,16 @@ function updateStatsFile(
     }
   }
 
+  // Update RAW_MONTHLY_DATA entries with real monthly counts
+  const monthlyEntryCount = updateMonthlyData(monthlyUpdates, content);
+  if (monthlyEntryCount.newContent !== content) {
+    content = monthlyEntryCount.newContent;
+    updatedFields += monthlyEntryCount.count;
+    console.log(
+      `  ${GREEN}↻${RESET} Updated RAW_MONTHLY_DATA: ${String(monthlyEntryCount.count)} monthly metric(s)`
+    );
+  }
+
   // Update generatedAt timestamp if any fields changed
   if (content !== originalContent) {
     const now = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
@@ -809,6 +972,75 @@ function updateStatsFile(
     console.log(`\n  ${DIM}No updates needed — stored values match API data.${RESET}`);
   }
   return { updatedFields: 0, skippedFields, updatedFile: false };
+}
+
+/**
+ * Update RAW_MONTHLY_DATA entries in the stats file content.
+ *
+ * Replaces or inserts per-year entries in the RAW_MONTHLY_DATA map.
+ * Each year's entry contains metric names mapped to 12-element arrays.
+ */
+function updateMonthlyData(
+  monthlyUpdates: Record<number, Record<string, number[]>>,
+  content: string
+): { newContent: string; count: number } {
+  let newContent = content;
+  let count = 0;
+
+  // Find the RAW_MONTHLY_DATA block boundaries so regex replacements
+  // only operate within this block and don't accidentally match
+  // year-keyed entries in other sections (e.g. POLITICAL_LANDSCAPE).
+  const blockStart = newContent.indexOf('const RAW_MONTHLY_DATA');
+  const blockOpenBrace = blockStart >= 0 ? newContent.indexOf('{', blockStart) : -1;
+  if (blockStart < 0 || blockOpenBrace < 0) return { newContent, count };
+
+  // Find the matching closing brace by counting brace depth
+  let depth = 0;
+  let blockEnd = -1;
+  for (let i = blockOpenBrace; i < newContent.length; i++) {
+    if (newContent[i] === '{') depth++;
+    else if (newContent[i] === '}') {
+      depth--;
+      if (depth === 0) {
+        blockEnd = i + 1; // include the '}'
+        break;
+      }
+    }
+  }
+  if (blockEnd < 0) return { newContent, count };
+
+  // Extract the RAW_MONTHLY_DATA block for targeted editing
+  let block = newContent.substring(blockOpenBrace, blockEnd);
+
+  for (const [yearStr, metrics] of Object.entries(monthlyUpdates)) {
+    const year = Number(yearStr);
+    if (Object.keys(metrics).length === 0) continue;
+
+    // Build the year entry string
+    const lines: string[] = [];
+    for (const [field, counts] of Object.entries(metrics)) {
+      lines.push(`    ${field}: [${counts.join(', ')}]`);
+      count++;
+    }
+    const yearEntry = `  ${String(year)}: {\n${lines.join(',\n')},\n  }`;
+
+    // Check if this year already exists within the block
+    const existingYearPattern = new RegExp(
+      `  ${String(year)}:\\s*\\{[^}]*\\}`,
+      's'
+    );
+    if (existingYearPattern.test(block)) {
+      block = block.replace(existingYearPattern, yearEntry);
+    } else {
+      // Insert new year entry before the closing brace of the block
+      const lastBrace = block.lastIndexOf('}');
+      block = block.substring(0, lastBrace) + yearEntry + ',\n' + block.substring(lastBrace);
+    }
+  }
+
+  // Reassemble the file with the updated block
+  newContent = newContent.substring(0, blockOpenBrace) + block + newContent.substring(blockEnd);
+  return { newContent, count };
 }
 
 /** Check if a field is latest-year-only. */
@@ -841,8 +1073,9 @@ async function main(): Promise<void> {
   }
   // Create client with generous timeouts and response size limits for CLI validation.
   // The EP API can return up to ~20 MiB for adopted-texts with limit=1000.
+  // Monthly batching reduces per-request data volume significantly.
   const client = new EuropeanParliamentClient({
-    timeoutMs: 60_000,
+    timeoutMs: 120_000,
     maxResponseBytes: 50 * 1024 * 1024, // 50 MiB — CLI tool, not a server
   });
 

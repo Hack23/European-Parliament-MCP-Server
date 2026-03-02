@@ -491,17 +491,27 @@ function distributeMetric(total: number): number[] {
 }
 
 function distributeMonthly(annual: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | 'derivedIntelligence'>): MonthlyActivity[] {
+  // Check if real monthly data is available for this year
+  const realMonthly = RAW_MONTHLY_DATA[annual.year];
+
+  /** Return real monthly data for a metric if available, otherwise use synthetic distribution. */
+  const getMonthly = (key: string, total: number): number[] => {
+    const real = realMonthly?.[key];
+    if (real?.length === 12) return real;
+    return distributeMetric(total);
+  };
+
   const metrics: Record<string, number[]> = {
-    plenarySessions: distributeMetric(annual.plenarySessions),
+    plenarySessions: getMonthly('plenarySessions', annual.plenarySessions),
     legislativeActsAdopted: distributeMetric(annual.legislativeActsAdopted),
     rollCallVotes: distributeMetric(annual.rollCallVotes),
     committeeMeetings: distributeMetric(annual.committeeMeetings),
     parliamentaryQuestions: distributeMetric(annual.parliamentaryQuestions),
     resolutions: distributeMetric(annual.resolutions),
-    speeches: distributeMetric(annual.speeches),
+    speeches: getMonthly('speeches', annual.speeches),
     adoptedTexts: distributeMetric(annual.adoptedTexts),
     procedures: distributeMetric(annual.procedures),
-    events: distributeMetric(annual.events),
+    events: getMonthly('events', annual.events),
     documents: distributeMetric(annual.documents),
     mepTurnover: distributeMetric(annual.mepTurnover),
     declarations: distributeMetric(annual.declarations),
@@ -554,6 +564,24 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | '
   { year: 2024, parliamentaryTerm: 'EP9/EP10 transition', mepCount: 720, plenarySessions: 38, legislativeActsAdopted: 72, rollCallVotes: 375, committeeMeetings: 1680, parliamentaryQuestions: 3950, resolutions: 108, speeches: 7800, adoptedTexts: 82, procedures: 235, events: 310, documents: 2680, mepTurnover: 405, declarations: 560, commentary: 'EP9/EP10 transition. European elections June 2024. Significant rightward shift in composition. New MEPs (720 total after redistribution). Reduced output due to election cycle. AI Act entered into force.' },
   { year: 2025, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 717, plenarySessions: 53, legislativeActsAdopted: 78, rollCallVotes: 420, committeeMeetings: 1980, parliamentaryQuestions: 4941, resolutions: 135, speeches: 10000, adoptedTexts: 347, procedures: 923, events: 53996, documents: 3513, mepTurnover: 36, declarations: 635, commentary: 'EP10 ramp-up year. New committee chairs and rapporteurs established. Defence and security policy gained prominence. Strategic autonomy debates. Clean Industrial Deal proposals. Parliament adapting to new political balance with stronger ECR and right-wing presence.' },
 ];
+
+// ── Real monthly data from EP API ─────────────────────────────────
+// Actual monthly counts from the EP API extracted via client-side
+// date bucketing (dates parsed from record IDs and date fields).
+// These override the synthetic distribution from MONTHLY_WEIGHTS.
+//
+// Metrics with real monthly data (dates extractable from IDs/fields):
+// - plenarySessions: date from session ID (MTG-PL-YYYY-MM-DD)
+// - speeches: date field populated by EP API
+// - events: date from event ID (contains YYYY-MM-DD)
+//
+// Metrics without monthly data (no date in ID or field):
+// - parliamentaryQuestions, adoptedTexts, procedures, documents,
+//   declarations — use synthetic distribution via MONTHLY_WEIGHTS.
+//
+// Updated by: npx tsx scripts/generate-stats.ts --update
+const RAW_MONTHLY_DATA: Record<number, Record<string, number[]>> = {
+};
 
 // ── Political landscape data per year ──────────────────────────────
 // Historical political group composition of the European Parliament.
