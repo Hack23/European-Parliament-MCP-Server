@@ -24,7 +24,7 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetCorporateBodiesFeed(args: unknown): Promise<ToolResult> {
   const params = GetCorporateBodiesFeedSchema.parse(args);
   const apiParams: Record<string, unknown> = {};
-  if (params.timeframe !== undefined) apiParams['timeframe'] = params.timeframe;
+  apiParams['timeframe'] = params.timeframe;
   if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
   const result = await epClient.getCorporateBodiesFeed(apiParams as Parameters<typeof epClient.getCorporateBodiesFeed>[0]);
   return buildToolResponse(result);

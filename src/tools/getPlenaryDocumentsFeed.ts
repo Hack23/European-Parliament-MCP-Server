@@ -24,7 +24,7 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetPlenaryDocumentsFeed(args: unknown): Promise<ToolResult> {
   const params = GetPlenaryDocumentsFeedSchema.parse(args);
   const apiParams: Record<string, unknown> = {};
-  if (params.timeframe !== undefined) apiParams['timeframe'] = params.timeframe;
+  apiParams['timeframe'] = params.timeframe;
   if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
   const result = await epClient.getPlenaryDocumentsFeed(apiParams as Parameters<typeof epClient.getPlenaryDocumentsFeed>[0]);
   return buildToolResponse(result);

@@ -24,7 +24,7 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetEventsFeed(args: unknown): Promise<ToolResult> {
   const params = GetEventsFeedSchema.parse(args);
   const apiParams: Record<string, unknown> = {};
-  if (params.timeframe !== undefined) apiParams['timeframe'] = params.timeframe;
+  apiParams['timeframe'] = params.timeframe;
   if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
   if (params.activityType !== undefined) apiParams['activityType'] = params.activityType;
   const result = await epClient.getEventsFeed(apiParams as Parameters<typeof epClient.getEventsFeed>[0]);

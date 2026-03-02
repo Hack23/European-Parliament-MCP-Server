@@ -28,8 +28,8 @@ describe('getToolMetadataArray', () => {
   // Cache once to avoid constructing a fresh 46-element array per test.
   const tools = getToolMetadataArray();
 
-  it('returns exactly 47 tools', () => {
-    expect(tools).toHaveLength(47);
+  it('returns exactly 61 tools', () => {
+    expect(tools).toHaveLength(61);
   });
 
   it('all tools have a non-empty name', () => {
@@ -70,7 +70,7 @@ describe('getToolMetadataArray', () => {
   });
 
   it('all tools have a valid category', () => {
-    const validCategories = new Set(['core', 'advanced', 'osint', 'phase4', 'phase5']);
+    const validCategories = new Set(['core', 'advanced', 'osint', 'phase4', 'phase5', 'feed']);
     for (const tool of tools) {
       expect(validCategories.has(tool.category)).toBe(true);
     }
@@ -103,13 +103,18 @@ describe('getToolMetadataArray', () => {
     expect(phase5).toHaveLength(14);
   });
 
-  it('category counts sum to 47', () => {
-    const counts = { core: 0, advanced: 0, osint: 0, phase4: 0, phase5: 0 };
+  it('has exactly 14 feed tools', () => {
+    const feed = tools.filter((t) => t.category === 'feed');
+    expect(feed).toHaveLength(14);
+  });
+
+  it('category counts sum to 61', () => {
+    const counts: Record<string, number> = { core: 0, advanced: 0, osint: 0, phase4: 0, phase5: 0, feed: 0 };
     for (const tool of tools) {
       counts[tool.category]++;
     }
     const total = Object.values(counts).reduce((a, b) => a + b, 0);
-    expect(total).toBe(47);
+    expect(total).toBe(61);
   });
 
   // ── Core tool names ────────────────────────────────────────────
@@ -244,10 +249,10 @@ describe('getToolMetadataArray', () => {
     expect(first.category).toBe('core');
   });
 
-  it('last tool is get_all_generated_stats with phase5 category', () => {
+  it('last tool is get_procedure_event_by_id with feed category', () => {
     const last = tools[tools.length - 1] as ToolMetadata;
-    expect(last.name).toBe('get_all_generated_stats');
-    expect(last.category).toBe('phase5');
+    expect(last.name).toBe('get_procedure_event_by_id');
+    expect(last.category).toBe('feed');
   });
 });
 

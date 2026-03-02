@@ -24,7 +24,7 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetExternalDocumentsFeed(args: unknown): Promise<ToolResult> {
   const params = GetExternalDocumentsFeedSchema.parse(args);
   const apiParams: Record<string, unknown> = {};
-  if (params.timeframe !== undefined) apiParams['timeframe'] = params.timeframe;
+  apiParams['timeframe'] = params.timeframe;
   if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
   if (params.workType !== undefined) apiParams['workType'] = params.workType;
   const result = await epClient.getExternalDocumentsFeed(apiParams as Parameters<typeof epClient.getExternalDocumentsFeed>[0]);

@@ -24,7 +24,7 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetCommitteeDocumentsFeed(args: unknown): Promise<ToolResult> {
   const params = GetCommitteeDocumentsFeedSchema.parse(args);
   const apiParams: Record<string, unknown> = {};
-  if (params.timeframe !== undefined) apiParams['timeframe'] = params.timeframe;
+  apiParams['timeframe'] = params.timeframe;
   if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
   const result = await epClient.getCommitteeDocumentsFeed(apiParams as Parameters<typeof epClient.getCommitteeDocumentsFeed>[0]);
   return buildToolResponse(result);

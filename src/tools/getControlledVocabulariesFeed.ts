@@ -24,7 +24,7 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetControlledVocabulariesFeed(args: unknown): Promise<ToolResult> {
   const params = GetControlledVocabulariesFeedSchema.parse(args);
   const apiParams: Record<string, unknown> = {};
-  if (params.timeframe !== undefined) apiParams['timeframe'] = params.timeframe;
+  apiParams['timeframe'] = params.timeframe;
   if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
   const result = await epClient.getControlledVocabulariesFeed(apiParams as Parameters<typeof epClient.getControlledVocabulariesFeed>[0]);
   return buildToolResponse(result);

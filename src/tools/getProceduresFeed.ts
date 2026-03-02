@@ -24,7 +24,7 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult> {
   const params = GetProceduresFeedSchema.parse(args);
   const apiParams: Record<string, unknown> = {};
-  if (params.timeframe !== undefined) apiParams['timeframe'] = params.timeframe;
+  apiParams['timeframe'] = params.timeframe;
   if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
   if (params.processType !== undefined) apiParams['processType'] = params.processType;
   const result = await epClient.getProceduresFeed(apiParams as Parameters<typeof epClient.getProceduresFeed>[0]);

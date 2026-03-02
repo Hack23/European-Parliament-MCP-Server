@@ -24,7 +24,7 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetParliamentaryQuestionsFeed(args: unknown): Promise<ToolResult> {
   const params = GetParliamentaryQuestionsFeedSchema.parse(args);
   const apiParams: Record<string, unknown> = {};
-  if (params.timeframe !== undefined) apiParams['timeframe'] = params.timeframe;
+  apiParams['timeframe'] = params.timeframe;
   if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
   const result = await epClient.getParliamentaryQuestionsFeed(apiParams as Parameters<typeof epClient.getParliamentaryQuestionsFeed>[0]);
   return buildToolResponse(result);
