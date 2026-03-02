@@ -249,6 +249,22 @@ export function createStubEPClient(
     getControlledVocabularies: vi.fn().mockResolvedValue(DEFAULT_PAGINATED),
     getControlledVocabularyById: vi.fn().mockResolvedValue({}),
 
+    // ── Feed Endpoints ─────────────────────────────────────────────────
+    getMEPsFeed: vi.fn().mockResolvedValue({}),
+    getMEPDeclarationsFeed: vi.fn().mockResolvedValue({}),
+    getEventsFeed: vi.fn().mockResolvedValue({}),
+    getCorporateBodiesFeed: vi.fn().mockResolvedValue({}),
+    getDocumentsFeed: vi.fn().mockResolvedValue({}),
+    getPlenaryDocumentsFeed: vi.fn().mockResolvedValue({}),
+    getCommitteeDocumentsFeed: vi.fn().mockResolvedValue({}),
+    getPlenarySessionDocumentsFeed: vi.fn().mockResolvedValue({}),
+    getExternalDocumentsFeed: vi.fn().mockResolvedValue({}),
+    getProceduresFeed: vi.fn().mockResolvedValue({}),
+    getAdoptedTextsFeed: vi.fn().mockResolvedValue({}),
+    getParliamentaryQuestionsFeed: vi.fn().mockResolvedValue({}),
+    getControlledVocabulariesFeed: vi.fn().mockResolvedValue({}),
+    getProcedureEventById: vi.fn().mockResolvedValue({}),
+
     // ── Cache Control ────────────────────────────────────────────────────
     clearCache: vi.fn(),
     getCacheStats: vi.fn().mockReturnValue({ size: 0, maxSize: 0, hitRate: 0 }),
