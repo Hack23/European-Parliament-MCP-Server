@@ -553,7 +553,7 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | '
   { year: 2013, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 766, plenarySessions: 54, legislativeActsAdopted: 135, rollCallVotes: 620, committeeMeetings: 2500, parliamentaryQuestions: 5920, resolutions: 205, speeches: 14200, adoptedTexts: 168, procedures: 458, events: 510, documents: 4650, mepTurnover: 55, declarations: 720, commentary: 'Peak EP7 legislative output. Croatia joined EU (July 2013). MFF 2014-2020 negotiations concluded. Single Supervisory Mechanism adopted. Data protection reform debates intensified.' },
   { year: 2014, parliamentaryTerm: 'EP7/EP8 transition', mepCount: 751, plenarySessions: 40, legislativeActsAdopted: 78, rollCallVotes: 410, committeeMeetings: 1780, parliamentaryQuestions: 4120, resolutions: 115, speeches: 8000, adoptedTexts: 92, procedures: 265, events: 320, documents: 2980, mepTurnover: 390, declarations: 580, commentary: 'EP7/EP8 transition. European elections May 2014—first with Spitzenkandidaten process. Jean-Claude Juncker elected Commission President. Reduced legislative output due to transition.' },
   { year: 2015, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 48, legislativeActsAdopted: 92, rollCallVotes: 510, committeeMeetings: 2150, parliamentaryQuestions: 5250, resolutions: 162, speeches: 11800, adoptedTexts: 115, procedures: 345, events: 410, documents: 3750, mepTurnover: 45, declarations: 660, commentary: 'Migration crisis dominated agenda. Parliament established inquiry committee on Volkswagen emissions. Better Regulation agenda launched. TTIP negotiations controversial.' },
-  { year: 2016, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 52, legislativeActsAdopted: 115, rollCallVotes: 570, committeeMeetings: 2340, parliamentaryQuestions: 5580, resolutions: 182, speeches: 13200, adoptedTexts: 140, procedures: 405, events: 465, documents: 4180, mepTurnover: 38, declarations: 685, commentary: 'Brexit referendum (June 2016) reshaped EU political landscape. General Data Protection Regulation (GDPR) adopted. Panama Papers investigation. Increased scrutiny of Commission.' },
+  { year: 2016, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 59, legislativeActsAdopted: 115, rollCallVotes: 570, committeeMeetings: 2340, parliamentaryQuestions: 5580, resolutions: 182, speeches: 13200, adoptedTexts: 513, procedures: 982, events: 1736, documents: 4665, mepTurnover: 38, declarations: 685, commentary: 'Brexit referendum (June 2016) reshaped EU political landscape. General Data Protection Regulation (GDPR) adopted. Panama Papers investigation. Increased scrutiny of Commission.' },
   { year: 2017, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 58, legislativeActsAdopted: 128, rollCallVotes: 600, committeeMeetings: 2420, parliamentaryQuestions: 5780, resolutions: 195, speeches: 13800, adoptedTexts: 503, procedures: 898, events: 1812, documents: 3962, mepTurnover: 42, declarations: 700, commentary: 'Article 50 negotiations began. Posting of Workers Directive revision. EU-Canada trade agreement (CETA) ratification. Strong legislative productivity as EP8 matured.' },
   { year: 2018, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 54, legislativeActsAdopted: 142, rollCallVotes: 650, committeeMeetings: 2550, parliamentaryQuestions: 6050, resolutions: 210, speeches: 14800, adoptedTexts: 367, procedures: 940, events: 1729, documents: 3927, mepTurnover: 35, declarations: 720, commentary: 'Peak EP8 legislative output. Copyright Directive heated debate. MFF 2021-2027 proposals. Clean Energy Package. Brexit Withdrawal Agreement negotiations. Highest roll-call vote count in EP8.' },
   { year: 2019, parliamentaryTerm: 'EP8/EP9 transition', mepCount: 751, plenarySessions: 52, legislativeActsAdopted: 65, rollCallVotes: 350, committeeMeetings: 1580, parliamentaryQuestions: 3680, resolutions: 98, speeches: 7000, adoptedTexts: 551, procedures: 749, events: 3103, documents: 3512, mepTurnover: 410, declarations: 540, commentary: 'EP8/EP9 transition. European elections May 2019. Fragmented parliament—no traditional two-party majority. Ursula von der Leyen narrowly elected Commission President. UK MEPs still present (Brexit delayed).' },
@@ -622,6 +622,11 @@ const RAW_MONTHLY_DATA: Record<number, Record<string, number[]>> = {
   2017: {
     plenarySessions: [4, 6, 6, 6, 5, 5, 4, 0, 4, 8, 6, 4],
     events: [89, 150, 148, 178, 120, 131, 128, 0, 352, 214, 169, 133],
+    parliamentaryQuestions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  },
+  2016: {
+    plenarySessions: [4, 6, 4, 6, 6, 7, 4, 0, 4, 8, 5, 5],
+    events: [112, 126, 91, 230, 135, 169, 101, 0, 231, 261, 140, 140],
     parliamentaryQuestions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   },
 };
@@ -1245,7 +1250,7 @@ const predictions = buildPredictions();
 const analysisSummary = buildAnalysisSummary(yearlyStats);
 
 export const GENERATED_STATS: GeneratedStatsData = {
-  generatedAt: '2026-03-02T19:56:38Z',
+  generatedAt: '2026-03-02T20:26:58Z',
   coveragePeriod: { from: 2004, to: 2025 },
   methodologyVersion: '2.0.0',
   dataSource: 'European Parliament Open Data Portal — data.europarl.europa.eu',
