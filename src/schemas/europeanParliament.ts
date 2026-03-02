@@ -70,4 +70,21 @@ export {
   GetProcedureEventsSchema,
   GetMeetingPlenarySessionDocumentsSchema,
   GetMeetingPlenarySessionDocumentItemsSchema,
+
+  // Feed schemas
+  FeedTimeframeSchema,
+  GetMEPsFeedSchema,
+  GetCorporateBodiesFeedSchema,
+  GetCommitteeDocumentsFeedSchema,
+  GetControlledVocabulariesFeedSchema,
+  GetDocumentsFeedSchema,
+  GetPlenaryDocumentsFeedSchema,
+  GetParliamentaryQuestionsFeedSchema,
+  GetPlenarySessionDocumentsFeedSchema,
+  GetEventsFeedSchema,
+  GetProceduresFeedSchema,
+  GetAdoptedTextsFeedSchema,
+  GetMEPDeclarationsFeedSchema,
+  GetExternalDocumentsFeedSchema,
+  GetProcedureEventByIdSchema,
 } from './ep/index.js';

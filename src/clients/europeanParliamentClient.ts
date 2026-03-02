@@ -827,6 +827,9 @@ export class EuropeanParliamentClient {
   /**
    * Returns a single event within a procedure by event ID.
    * **EP API Endpoint:** `GET /procedures/{process-id}/events/{event-id}`
+   *
+   * @param processId - Procedure process ID
+   * @param eventId - Event identifier within the procedure
    */
   async getProcedureEventById(processId: string, eventId: string): Promise<Record<string, unknown>> {
     return this.legislativeClient.getProcedureEventById(processId, eventId);

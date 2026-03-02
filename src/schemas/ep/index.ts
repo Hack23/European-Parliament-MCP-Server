@@ -69,3 +69,20 @@ export {
   GetMeetingPlenarySessionDocumentsSchema,
   GetMeetingPlenarySessionDocumentItemsSchema,
 } from './activities.js';
+export {
+  FeedTimeframeSchema,
+  GetMEPsFeedSchema,
+  GetCorporateBodiesFeedSchema,
+  GetCommitteeDocumentsFeedSchema,
+  GetControlledVocabulariesFeedSchema,
+  GetDocumentsFeedSchema,
+  GetPlenaryDocumentsFeedSchema,
+  GetParliamentaryQuestionsFeedSchema,
+  GetPlenarySessionDocumentsFeedSchema,
+  GetEventsFeedSchema,
+  GetProceduresFeedSchema,
+  GetAdoptedTextsFeedSchema,
+  GetMEPDeclarationsFeedSchema,
+  GetExternalDocumentsFeedSchema,
+  GetProcedureEventByIdSchema,
+} from './feed.js';

@@ -195,8 +195,17 @@ export class LegislativeClient extends BaseEPClient {
   /**
    * Returns a single event within a procedure by event ID.
    * **EP API Endpoint:** `GET /procedures/{process-id}/events/{event-id}`
+   *
+   * @param processId - Procedure process ID
+   * @param eventId - Event identifier within the procedure
    */
   async getProcedureEventById(processId: string, eventId: string): Promise<Record<string, unknown>> {
+    if (processId.trim() === '') {
+      throw new APIError('Procedure process-id is required', 400);
+    }
+    if (eventId.trim() === '') {
+      throw new APIError('Event ID is required', 400);
+    }
     return this.get<Record<string, unknown>>(`procedures/${processId}/events/${eventId}`);
   }
 
