@@ -324,11 +324,13 @@ async function countItemsGroupedByMonth(
 
     return { total: totalCount, monthlyCounts };
   } catch (err: unknown) {
-    if (totalCount > 0) {
-      return { total: totalCount, monthlyCounts };
-    }
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error(`  ${DIM}⚠ API error fetching ${label}: ${message}${RESET}`);
+    if (totalCount > 0) {
+      // Preserve partial counts for diagnostics, but surface the error so callers
+      // don't treat this as a fully successful count (e.g. when running --update).
+      return { total: totalCount, monthlyCounts, error: message };
+    }
     return { total: null, monthlyCounts, error: message };
   }
 }
@@ -878,17 +880,6 @@ function updateStatsFile(
       if (comparison.apiValue === null) continue; // skip API errors
       if (comparison.status === 'API_ERROR') continue;
 
-      // Collect monthly data even for partial fetches (monthly data is per-metric)
-      if (comparison.monthlyCounts) {
-        const field = METRIC_TO_FIELD[comparison.metric];
-        if (field && isUpdatableField(field)) {
-          if (!monthlyUpdates[yv.year]) {
-            monthlyUpdates[yv.year] = {};
-          }
-          monthlyUpdates[yv.year][field] = comparison.monthlyCounts;
-        }
-      }
-
       // Skip partial/errored fetches — note indicates incomplete data
       if (comparison.note) {
         skippedFields++;
@@ -896,6 +887,17 @@ function updateStatsFile(
           `  ${DIM}⊘ Skipped ${String(yv.year)}.${comparison.metric}: partial fetch (${comparison.note})${RESET}`
         );
         continue;
+      }
+
+      // Collect monthly data only for successful fetches (no note/error)
+      if (comparison.monthlyCounts && comparison.apiValue !== null) {
+        const mField = METRIC_TO_FIELD[comparison.metric];
+        if (mField && isUpdatableField(mField)) {
+          if (!monthlyUpdates[yv.year]) {
+            monthlyUpdates[yv.year] = {};
+          }
+          monthlyUpdates[yv.year][mField] = comparison.monthlyCounts;
+        }
       }
 
       const field = METRIC_TO_FIELD[comparison.metric];
@@ -985,6 +987,31 @@ function updateMonthlyData(
   let newContent = content;
   let count = 0;
 
+  // Find the RAW_MONTHLY_DATA block boundaries so regex replacements
+  // only operate within this block and don't accidentally match
+  // year-keyed entries in other sections (e.g. POLITICAL_LANDSCAPE).
+  const blockStart = newContent.indexOf('const RAW_MONTHLY_DATA');
+  const blockOpenBrace = blockStart >= 0 ? newContent.indexOf('{', blockStart) : -1;
+  if (blockStart < 0 || blockOpenBrace < 0) return { newContent, count };
+
+  // Find the matching closing brace by counting brace depth
+  let depth = 0;
+  let blockEnd = -1;
+  for (let i = blockOpenBrace; i < newContent.length; i++) {
+    if (newContent[i] === '{') depth++;
+    else if (newContent[i] === '}') {
+      depth--;
+      if (depth === 0) {
+        blockEnd = i + 1; // include the '}'
+        break;
+      }
+    }
+  }
+  if (blockEnd < 0) return { newContent, count };
+
+  // Extract the RAW_MONTHLY_DATA block for targeted editing
+  let block = newContent.substring(blockOpenBrace, blockEnd);
+
   for (const [yearStr, metrics] of Object.entries(monthlyUpdates)) {
     const year = Number(yearStr);
     if (Object.keys(metrics).length === 0) continue;
@@ -997,27 +1024,22 @@ function updateMonthlyData(
     }
     const yearEntry = `  ${String(year)}: {\n${lines.join(',\n')},\n  }`;
 
-    // Check if this year already exists in RAW_MONTHLY_DATA
+    // Check if this year already exists within the block
     const existingYearPattern = new RegExp(
-      `(  ${String(year)}:\\s*\\{)[^}]*(\\})`,
+      `  ${String(year)}:\\s*\\{[^}]*\\}`,
       's'
     );
-    if (existingYearPattern.test(newContent)) {
-      // Replace existing year entry
-      newContent = newContent.replace(
-        existingYearPattern,
-        yearEntry
-      );
+    if (existingYearPattern.test(block)) {
+      block = block.replace(existingYearPattern, yearEntry);
     } else {
-      // Insert new year entry before the closing brace of RAW_MONTHLY_DATA
-      const closingPattern = /^(const RAW_MONTHLY_DATA[^{]*\{[\s\S]*?)(^\};)/m;
-      newContent = newContent.replace(
-        closingPattern,
-        `$1${yearEntry},\n$2`
-      );
+      // Insert new year entry before the closing brace of the block
+      const lastBrace = block.lastIndexOf('}');
+      block = block.substring(0, lastBrace) + yearEntry + ',\n' + block.substring(lastBrace);
     }
   }
 
+  // Reassemble the file with the updated block
+  newContent = newContent.substring(0, blockOpenBrace) + block + newContent.substring(blockEnd);
   return { newContent, count };
 }
 

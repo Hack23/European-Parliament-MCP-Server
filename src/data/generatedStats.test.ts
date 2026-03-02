@@ -469,6 +469,7 @@ describe('GENERATED_STATS — monthly distribution integrity', () => {
     'legislativeActsAdopted',
     'rollCallVotes',
     'committeeMeetings',
+    'parliamentaryQuestions',
     'resolutions',
     'adoptedTexts',
     'procedures',
