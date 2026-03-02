@@ -557,7 +557,7 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | '
   { year: 2017, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 50, legislativeActsAdopted: 128, rollCallVotes: 600, committeeMeetings: 2420, parliamentaryQuestions: 5780, resolutions: 195, speeches: 13800, adoptedTexts: 155, procedures: 438, events: 495, documents: 4520, mepTurnover: 42, declarations: 700, commentary: 'Article 50 negotiations began. Posting of Workers Directive revision. EU-Canada trade agreement (CETA) ratification. Strong legislative productivity as EP8 matured.' },
   { year: 2018, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 54, legislativeActsAdopted: 142, rollCallVotes: 650, committeeMeetings: 2550, parliamentaryQuestions: 6050, resolutions: 210, speeches: 14800, adoptedTexts: 172, procedures: 475, events: 530, documents: 4850, mepTurnover: 35, declarations: 720, commentary: 'Peak EP8 legislative output. Copyright Directive heated debate. MFF 2021-2027 proposals. Clean Energy Package. Brexit Withdrawal Agreement negotiations. Highest roll-call vote count in EP8.' },
   { year: 2019, parliamentaryTerm: 'EP8/EP9 transition', mepCount: 751, plenarySessions: 36, legislativeActsAdopted: 65, rollCallVotes: 350, committeeMeetings: 1580, parliamentaryQuestions: 3680, resolutions: 98, speeches: 7000, adoptedTexts: 72, procedures: 215, events: 275, documents: 2480, mepTurnover: 410, declarations: 540, commentary: 'EP8/EP9 transition. European elections May 2019. Fragmented parliament—no traditional two-party majority. Ursula von der Leyen narrowly elected Commission President. UK MEPs still present (Brexit delayed).' },
-  { year: 2020, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 44, legislativeActsAdopted: 85, rollCallVotes: 460, committeeMeetings: 1950, parliamentaryQuestions: 5850, resolutions: 148, speeches: 9800, adoptedTexts: 105, procedures: 310, events: 280, documents: 3250, mepTurnover: 95, declarations: 610, commentary: 'COVID-19 pandemic forced remote/hybrid plenary sessions. Brexit completed (UK MEPs departed January 2020, reducing count to 705). NextGenerationEU recovery fund negotiations. Unprecedented adaptation to digital parliament.' },
+  { year: 2020, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 51, legislativeActsAdopted: 85, rollCallVotes: 460, committeeMeetings: 1950, parliamentaryQuestions: 5850, resolutions: 148, speeches: 9800, adoptedTexts: 105, procedures: 794, events: 3636, documents: 3250, mepTurnover: 95, declarations: 610, commentary: 'COVID-19 pandemic forced remote/hybrid plenary sessions. Brexit completed (UK MEPs departed January 2020, reducing count to 705). NextGenerationEU recovery fund negotiations. Unprecedented adaptation to digital parliament.' },
   { year: 2021, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 55, legislativeActsAdopted: 102, rollCallVotes: 530, committeeMeetings: 2180, parliamentaryQuestions: 6120, resolutions: 168, speeches: 11500, adoptedTexts: 517, procedures: 905, events: 4837, documents: 3820, mepTurnover: 48, declarations: 665, commentary: 'Continued hybrid working. Digital COVID Certificate legislation fast-tracked. Conference on the Future of Europe launched. Fit for 55 climate package proposals. MFF 2021-2027 operational. Questions spiked due to pandemic oversight.' },
   { year: 2022, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 58, legislativeActsAdopted: 120, rollCallVotes: 590, committeeMeetings: 2380, parliamentaryQuestions: 6350, resolutions: 192, speeches: 13500, adoptedTexts: 453, procedures: 843, events: 1097, documents: 4350, mepTurnover: 42, declarations: 695, commentary: 'Russia-Ukraine war dominated agenda. Energy crisis response. Digital Services Act and Digital Markets Act adopted. REPowerEU plan. Return to full in-person sessions. Parliament\'s foreign affairs role expanded significantly.' },
   { year: 2023, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 58, legislativeActsAdopted: 148, rollCallVotes: 660, committeeMeetings: 2520, parliamentaryQuestions: 6580, resolutions: 218, speeches: 15200, adoptedTexts: 487, procedures: 903, events: 1676, documents: 5020, mepTurnover: 38, declarations: 343, commentary: 'Peak EP9 legislative output. AI Act negotiations concluded. Nature Restoration Law controversial vote. Corporate Sustainability Due Diligence. Critical Raw Materials Act. Record-high legislative productivity driven by end-of-term urgency.' },
@@ -602,6 +602,11 @@ const RAW_MONTHLY_DATA: Record<number, Record<string, number[]>> = {
   2021: {
     plenarySessions: [4, 4, 6, 4, 5, 6, 4, 0, 4, 8, 6, 4],
     events: [243, 281, 832, 836, 262, 350, 1282, 1, 459, 91, 98, 102],
+    parliamentaryQuestions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  },
+  2020: {
+    plenarySessions: [6, 4, 3, 2, 4, 3, 4, 0, 4, 9, 7, 5],
+    events: [424, 164, 132, 150, 422, 295, 285, 5, 546, 536, 331, 346],
     parliamentaryQuestions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   },
 };
@@ -1225,7 +1230,7 @@ const predictions = buildPredictions();
 const analysisSummary = buildAnalysisSummary(yearlyStats);
 
 export const GENERATED_STATS: GeneratedStatsData = {
-  generatedAt: '2026-03-02T17:30:56Z',
+  generatedAt: '2026-03-02T17:52:24Z',
   coveragePeriod: { from: 2004, to: 2025 },
   methodologyVersion: '2.0.0',
   dataSource: 'European Parliament Open Data Portal — data.europarl.europa.eu',
