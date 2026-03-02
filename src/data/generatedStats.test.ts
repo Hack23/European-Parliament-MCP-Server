@@ -462,17 +462,42 @@ describe('GENERATED_STATS — monthly distribution integrity', () => {
     }
   });
 
-  it('should have August (month 8) as the lowest activity month for each year', () => {
+  // Metrics that use synthetic distribution (not available via monthly API batching)
+  // always have August as the lowest month due to parliamentary recess weights.
+  // Metrics with real monthly data from the EP API may not follow this pattern.
+  const SYNTHETIC_ONLY_METRICS = [
+    'legislativeActsAdopted',
+    'rollCallVotes',
+    'committeeMeetings',
+    'resolutions',
+    'adoptedTexts',
+    'procedures',
+    'documents',
+    'mepTurnover',
+    'declarations',
+  ] as const;
+
+  it('should have August (month 8) as the lowest activity month for synthetic metrics', () => {
     for (const yearly of GENERATED_STATS.yearlyStats) {
       const augustEntry = yearly.monthlyActivity.find((m) => m.month === 8);
       expect(augustEntry).toBeDefined();
 
-      for (const metric of MONTHLY_METRICS) {
+      for (const metric of SYNTHETIC_ONLY_METRICS) {
         const augustValue = augustEntry![metric] as number;
         for (const m of yearly.monthlyActivity) {
           if (m.month !== 8) {
             expect(augustValue).toBeLessThanOrEqual(m[metric] as number);
           }
+        }
+      }
+    }
+  });
+
+  it('should have non-negative values for all monthly metrics', () => {
+    for (const yearly of GENERATED_STATS.yearlyStats) {
+      for (const monthly of yearly.monthlyActivity) {
+        for (const metric of MONTHLY_METRICS) {
+          expect(monthly[metric] as number).toBeGreaterThanOrEqual(0);
         }
       }
     }

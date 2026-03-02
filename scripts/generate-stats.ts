@@ -66,6 +66,8 @@ interface MetricComparison {
   diffPercent: number | null;
   /** Optional note (e.g. error message on failure) */
   note?: string;
+  /** Per-month counts (12 elements, Jan=0..Dec=11) when available */
+  monthlyCounts?: number[];
 }
 
 /** Results for a single year's validation. */
@@ -242,6 +244,64 @@ async function countItems(
 }
 
 /**
+ * Count items by month for a given year by making 12 monthly API calls.
+ *
+ * This approach avoids timeouts caused by large yearly result sets by
+ * splitting the year into individual month queries.  Each monthly query
+ * handles a much smaller data volume and is less likely to time out.
+ *
+ * For endpoints that support `dateFrom`/`dateTo` parameters, this
+ * provides real monthly counts instead of synthetic distributions.
+ *
+ * Returns per-month counts (12 elements, Jan=0..Dec=11) and the total.
+ */
+async function countItemsByMonth(
+  label: string,
+  year: number,
+  fetcher: (params: { dateFrom: string; dateTo: string; limit: number; offset: number }) => Promise<{ data: unknown[]; hasMore: boolean }>
+): Promise<{ total: number | null; monthlyCounts: number[]; error?: string }> {
+  const monthlyCounts: number[] = new Array<number>(12).fill(0);
+  const errors: string[] = [];
+
+  // Fetch each month sequentially to respect rate limits
+  for (let month = 0; month < 12; month++) {
+    const monthNum = month + 1;
+    const dateFrom = `${String(year)}-${String(monthNum).padStart(2, '0')}-01`;
+    // Last day of month
+    const lastDay = new Date(year, monthNum, 0).getDate();
+    const dateTo = `${String(year)}-${String(monthNum).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+
+    const monthLabel = `${label} (${String(year)}-${String(monthNum).padStart(2, '0')})`;
+    const result = await countItems(monthLabel, (p) =>
+      fetcher({ dateFrom, dateTo, ...p })
+    );
+
+    if (result.total !== null) {
+      monthlyCounts[month] = result.total;
+    } else {
+      errors.push(`Month ${String(monthNum)}: ${result.error ?? 'unknown'}`);
+    }
+  }
+
+  const total = monthlyCounts.reduce((sum, c) => sum + c, 0);
+  const error = errors.length > 0 ? errors.join(' | ') : undefined;
+
+  // Log monthly summary
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const monthSummary = monthlyCounts
+    .map((c, i) => `${monthNames[i] ?? ''}:${String(c)}`)
+    .join(' ');
+  console.log(`    ${DIM}Monthly: ${monthSummary} = ${String(total)}${RESET}`);
+
+  // If all months errored, report as failure
+  if (errors.length === 12) {
+    return { total: null, monthlyCounts, error };
+  }
+
+  return { total, monthlyCounts, error };
+}
+
+/**
  * Determine comparison status between stored and API values.
  * - MATCH: values are identical
  * - CLOSE: within 10% tolerance
@@ -269,10 +329,13 @@ function compareValues(stored: number, api: number | null): { status: Comparison
  * Fetch live counts from the EP API for a given year and compare
  * them against the stored RAW_YEARLY data.
  *
- * Uses pagination-based counting (`limit = 1000` per page) to obtain
- * real record counts from the EP API.  The EP API does not return a
- * `totalItems` header, so the only reliable way to count records is
- * to iterate through all pages.
+ * Uses monthly batching for endpoints that support date-range
+ * filtering (`dateFrom`/`dateTo`) to avoid timeouts on large datasets
+ * and to obtain real monthly counts.  Endpoints that only support
+ * the `year` parameter still use full-year pagination.
+ *
+ * The EP API does not return a `totalItems` header, so the only
+ * reliable way to count records is to iterate through all pages.
  */
 async function validateYearAgainstAPI(
   client: EuropeanParliamentClient,
@@ -280,13 +343,51 @@ async function validateYearAgainstAPI(
 ): Promise<YearValidation> {
   const year = yearStats.year;
   const comparisons: MetricComparison[] = [];
-  const dateFrom = `${String(year)}-01-01`;
-  const dateTo = `${String(year)}-12-31`;
 
-  console.log(`\n${BOLD}${CYAN}── Fetching API data for ${String(year)} ──${RESET}`);
+  console.log(`\n${BOLD}${CYAN}── Fetching API data for ${String(year)} (monthly batching) ──${RESET}`);
 
-  // Define metric fetch configuration using pagination counting
-  const metrics: Array<{
+  // ── Metrics using monthly batching (dateFrom/dateTo support) ───
+  // These endpoints support date-range filtering, so we split the year
+  // into 12 monthly queries for better performance and real monthly data.
+  const monthlyMetrics: Array<{
+    label: string;
+    storedKey: keyof YearlyStats;
+    count: () => Promise<{ total: number | null; monthlyCounts: number[]; error?: string }>;
+  }> = [
+    {
+      label: 'Parliamentary Questions',
+      storedKey: 'parliamentaryQuestions',
+      count: () => countItemsByMonth('Parliamentary Questions', year, (p) =>
+        client.getParliamentaryQuestions(p)
+      ),
+    },
+    {
+      label: 'Plenary Sessions',
+      storedKey: 'plenarySessions',
+      count: () => countItemsByMonth('Plenary Sessions', year, (p) =>
+        client.getPlenarySessions(p)
+      ),
+    },
+    {
+      label: 'Speeches',
+      storedKey: 'speeches',
+      count: () => countItemsByMonth('Speeches', year, (p) =>
+        client.getSpeeches(p)
+      ),
+    },
+    {
+      label: 'Events',
+      storedKey: 'events',
+      count: () => countItemsByMonth('Events', year, (p) =>
+        client.getEvents(p)
+      ),
+    },
+  ];
+
+  // ── Metrics using full-year pagination (year-only endpoints) ───
+  // These endpoints only accept a `year` parameter. We use a smaller
+  // page size to reduce per-request payload and timeout risk.
+  const yearlyMetrics: Array<{
     label: string;
     storedKey: keyof YearlyStats;
     count: () => Promise<{ total: number | null; error?: string }>;
@@ -305,22 +406,18 @@ async function validateYearAgainstAPI(
       label: 'Plenary Documents',
       storedKey: 'documents',
       // Document count = sum of plenary + committee + external documents.
-      // Uses Promise.all to fetch the three sub-categories in parallel.
       count: async () => {
-        // Sum plenary + committee + external documents for total document count
         const [plenary, committee, external] = await Promise.all([
           countItems('Plenary Docs', (p) => client.getPlenaryDocuments({ year, ...p })),
           countItems('Committee Docs', (p) => client.getCommitteeDocuments({ year, ...p })),
           countItems('External Docs', (p) => client.getExternalDocuments({ year, ...p })),
         ]);
-        // If any component errored, aggregate the error messages
         const errors: string[] = [];
         if (plenary.error) errors.push(`Plenary: ${plenary.error}`);
         if (committee.error) errors.push(`Committee: ${committee.error}`);
         if (external.error) errors.push(`External: ${external.error}`);
 
         const total = (plenary.total ?? 0) + (committee.total ?? 0) + (external.total ?? 0);
-        // Only report as error if ALL sub-fetches failed
         if (plenary.total === null && committee.total === null && external.total === null) {
           return { total: null, error: errors.join(' | ') };
         }
@@ -328,42 +425,31 @@ async function validateYearAgainstAPI(
       },
     },
     {
-      label: 'Parliamentary Questions',
-      storedKey: 'parliamentaryQuestions',
-      count: () => countItems('Parliamentary Questions', (p) =>
-        client.getParliamentaryQuestions({ dateFrom, dateTo, ...p })
-      ),
-    },
-    {
       label: 'MEP Declarations',
       storedKey: 'declarations',
       count: () => countItems('MEP Declarations', (p) => client.getMEPDeclarations({ year, ...p })),
     },
-    {
-      label: 'Plenary Sessions',
-      storedKey: 'plenarySessions',
-      count: () => countItems('Plenary Sessions', (p) =>
-        client.getPlenarySessions({ year, ...p })
-      ),
-    },
-    {
-      label: 'Speeches',
-      storedKey: 'speeches',
-      count: () => countItems('Speeches', (p) =>
-        client.getSpeeches({ year, ...p })
-      ),
-    },
-    {
-      label: 'Events',
-      storedKey: 'events',
-      count: () => countItems('Events', (p) =>
-        client.getEvents({ year, ...p })
-      ),
-    },
   ];
 
-  // Fetch all metrics sequentially to respect rate limits
-  for (const metric of metrics) {
+  // Fetch monthly-batched metrics sequentially to respect rate limits
+  for (const metric of monthlyMetrics) {
+    const { total, monthlyCounts, error } = await metric.count();
+    const storedValue = yearStats[metric.storedKey] as number;
+    const { status, diffPercent } = compareValues(storedValue, total);
+
+    comparisons.push({
+      metric: metric.label,
+      storedValue,
+      apiValue: total,
+      status,
+      diffPercent,
+      note: error,
+      monthlyCounts,
+    });
+  }
+
+  // Fetch yearly metrics sequentially
+  for (const metric of yearlyMetrics) {
     const { total, error } = await metric.count();
     const storedValue = yearStats[metric.storedKey] as number;
     const { status, diffPercent } = compareValues(storedValue, total);
@@ -537,6 +623,8 @@ function printYearComparison(validation: YearValidation): void {
   );
   console.log('─'.repeat(80));
 
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
   for (const c of validation.comparisons) {
     const storedStr = String(c.storedValue);
     const apiStr = c.apiValue !== null ? String(c.apiValue) : 'N/A';
@@ -548,6 +636,13 @@ function printYearComparison(validation: YearValidation): void {
     );
     if (c.note) {
       console.log(`    ${DIM}↳ ${c.note}${RESET}`);
+    }
+    // Print monthly breakdown if available
+    if (c.monthlyCounts) {
+      const monthDetail = c.monthlyCounts
+        .map((count, i) => `${monthNames[i] ?? ''}:${String(count).padStart(4)}`)
+        .join(' ');
+      console.log(`    ${DIM}📅 ${monthDetail}${RESET}`);
     }
   }
 }
@@ -712,7 +807,8 @@ function isCredibleApiValue(apiValue: number, storedValue: number): boolean {
  *
  * For each year's validation results, updates the numeric fields in the
  * `RAW_YEARLY` array where the API returned a valid, credible count.
- * Also updates the `generatedAt` timestamp.
+ * Also updates the `generatedAt` timestamp and writes real monthly
+ * data into `RAW_MONTHLY_DATA` when available from monthly-batched fetches.
  *
  * Only updates fields where:
  * - The API returned a valid value (not null/API_ERROR)
@@ -733,10 +829,24 @@ function updateStatsFile(
   let updatedFields = 0;
   let skippedFields = 0;
 
+  // Collect monthly data per year for RAW_MONTHLY_DATA update
+  const monthlyUpdates: Record<number, Record<string, number[]>> = {};
+
   for (const yv of yearValidations) {
     for (const comparison of yv.comparisons) {
       if (comparison.apiValue === null) continue; // skip API errors
       if (comparison.status === 'API_ERROR') continue;
+
+      // Collect monthly data even for partial fetches (monthly data is per-metric)
+      if (comparison.monthlyCounts) {
+        const field = METRIC_TO_FIELD[comparison.metric];
+        if (field && isUpdatableField(field)) {
+          if (!monthlyUpdates[yv.year]) {
+            monthlyUpdates[yv.year] = {};
+          }
+          monthlyUpdates[yv.year][field] = comparison.monthlyCounts;
+        }
+      }
 
       // Skip partial/errored fetches — note indicates incomplete data
       if (comparison.note) {
@@ -791,6 +901,16 @@ function updateStatsFile(
     }
   }
 
+  // Update RAW_MONTHLY_DATA entries with real monthly counts
+  const monthlyEntryCount = updateMonthlyData(monthlyUpdates, content);
+  if (monthlyEntryCount.newContent !== content) {
+    content = monthlyEntryCount.newContent;
+    updatedFields += monthlyEntryCount.count;
+    console.log(
+      `  ${GREEN}↻${RESET} Updated RAW_MONTHLY_DATA: ${String(monthlyEntryCount.count)} monthly metric(s)`
+    );
+  }
+
   // Update generatedAt timestamp if any fields changed
   if (content !== originalContent) {
     const now = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
@@ -809,6 +929,55 @@ function updateStatsFile(
     console.log(`\n  ${DIM}No updates needed — stored values match API data.${RESET}`);
   }
   return { updatedFields: 0, skippedFields, updatedFile: false };
+}
+
+/**
+ * Update RAW_MONTHLY_DATA entries in the stats file content.
+ *
+ * Replaces or inserts per-year entries in the RAW_MONTHLY_DATA map.
+ * Each year's entry contains metric names mapped to 12-element arrays.
+ */
+function updateMonthlyData(
+  monthlyUpdates: Record<number, Record<string, number[]>>,
+  content: string
+): { newContent: string; count: number } {
+  let newContent = content;
+  let count = 0;
+
+  for (const [yearStr, metrics] of Object.entries(monthlyUpdates)) {
+    const year = Number(yearStr);
+    if (Object.keys(metrics).length === 0) continue;
+
+    // Build the year entry string
+    const lines: string[] = [];
+    for (const [field, counts] of Object.entries(metrics)) {
+      lines.push(`    ${field}: [${counts.join(', ')}]`);
+      count++;
+    }
+    const yearEntry = `  ${String(year)}: {\n${lines.join(',\n')},\n  }`;
+
+    // Check if this year already exists in RAW_MONTHLY_DATA
+    const existingYearPattern = new RegExp(
+      `(  ${String(year)}:\\s*\\{)[^}]*(\\})`,
+      's'
+    );
+    if (existingYearPattern.test(newContent)) {
+      // Replace existing year entry
+      newContent = newContent.replace(
+        existingYearPattern,
+        yearEntry
+      );
+    } else {
+      // Insert new year entry before the closing brace of RAW_MONTHLY_DATA
+      const closingPattern = /^(const RAW_MONTHLY_DATA[^{]*\{[\s\S]*?)(^\};)/m;
+      newContent = newContent.replace(
+        closingPattern,
+        `$1${yearEntry},\n$2`
+      );
+    }
+  }
+
+  return { newContent, count };
 }
 
 /** Check if a field is latest-year-only. */
@@ -841,8 +1010,9 @@ async function main(): Promise<void> {
   }
   // Create client with generous timeouts and response size limits for CLI validation.
   // The EP API can return up to ~20 MiB for adopted-texts with limit=1000.
+  // Monthly batching reduces per-request data volume significantly.
   const client = new EuropeanParliamentClient({
-    timeoutMs: 60_000,
+    timeoutMs: 120_000,
     maxResponseBytes: 50 * 1024 * 1024, // 50 MiB — CLI tool, not a server
   });
 
