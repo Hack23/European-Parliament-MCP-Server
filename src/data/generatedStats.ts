@@ -555,7 +555,7 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | '
   { year: 2015, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 48, legislativeActsAdopted: 92, rollCallVotes: 510, committeeMeetings: 2150, parliamentaryQuestions: 5250, resolutions: 162, speeches: 11800, adoptedTexts: 115, procedures: 345, events: 410, documents: 3750, mepTurnover: 45, declarations: 660, commentary: 'Migration crisis dominated agenda. Parliament established inquiry committee on Volkswagen emissions. Better Regulation agenda launched. TTIP negotiations controversial.' },
   { year: 2016, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 52, legislativeActsAdopted: 115, rollCallVotes: 570, committeeMeetings: 2340, parliamentaryQuestions: 5580, resolutions: 182, speeches: 13200, adoptedTexts: 140, procedures: 405, events: 465, documents: 4180, mepTurnover: 38, declarations: 685, commentary: 'Brexit referendum (June 2016) reshaped EU political landscape. General Data Protection Regulation (GDPR) adopted. Panama Papers investigation. Increased scrutiny of Commission.' },
   { year: 2017, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 50, legislativeActsAdopted: 128, rollCallVotes: 600, committeeMeetings: 2420, parliamentaryQuestions: 5780, resolutions: 195, speeches: 13800, adoptedTexts: 155, procedures: 438, events: 495, documents: 4520, mepTurnover: 42, declarations: 700, commentary: 'Article 50 negotiations began. Posting of Workers Directive revision. EU-Canada trade agreement (CETA) ratification. Strong legislative productivity as EP8 matured.' },
-  { year: 2018, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 54, legislativeActsAdopted: 142, rollCallVotes: 650, committeeMeetings: 2550, parliamentaryQuestions: 6050, resolutions: 210, speeches: 14800, adoptedTexts: 172, procedures: 475, events: 530, documents: 4850, mepTurnover: 35, declarations: 720, commentary: 'Peak EP8 legislative output. Copyright Directive heated debate. MFF 2021-2027 proposals. Clean Energy Package. Brexit Withdrawal Agreement negotiations. Highest roll-call vote count in EP8.' },
+  { year: 2018, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 54, legislativeActsAdopted: 142, rollCallVotes: 650, committeeMeetings: 2550, parliamentaryQuestions: 6050, resolutions: 210, speeches: 14800, adoptedTexts: 367, procedures: 940, events: 1729, documents: 3927, mepTurnover: 35, declarations: 720, commentary: 'Peak EP8 legislative output. Copyright Directive heated debate. MFF 2021-2027 proposals. Clean Energy Package. Brexit Withdrawal Agreement negotiations. Highest roll-call vote count in EP8.' },
   { year: 2019, parliamentaryTerm: 'EP8/EP9 transition', mepCount: 751, plenarySessions: 52, legislativeActsAdopted: 65, rollCallVotes: 350, committeeMeetings: 1580, parliamentaryQuestions: 3680, resolutions: 98, speeches: 7000, adoptedTexts: 551, procedures: 749, events: 3103, documents: 3512, mepTurnover: 410, declarations: 540, commentary: 'EP8/EP9 transition. European elections May 2019. Fragmented parliament—no traditional two-party majority. Ursula von der Leyen narrowly elected Commission President. UK MEPs still present (Brexit delayed).' },
   { year: 2020, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 51, legislativeActsAdopted: 85, rollCallVotes: 460, committeeMeetings: 1950, parliamentaryQuestions: 5850, resolutions: 148, speeches: 9800, adoptedTexts: 105, procedures: 794, events: 3636, documents: 3250, mepTurnover: 95, declarations: 610, commentary: 'COVID-19 pandemic forced remote/hybrid plenary sessions. Brexit completed (UK MEPs departed January 2020, reducing count to 705). NextGenerationEU recovery fund negotiations. Unprecedented adaptation to digital parliament.' },
   { year: 2021, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 55, legislativeActsAdopted: 102, rollCallVotes: 530, committeeMeetings: 2180, parliamentaryQuestions: 6120, resolutions: 168, speeches: 11500, adoptedTexts: 517, procedures: 905, events: 4837, documents: 3820, mepTurnover: 48, declarations: 665, commentary: 'Continued hybrid working. Digital COVID Certificate legislation fast-tracked. Conference on the Future of Europe launched. Fit for 55 climate package proposals. MFF 2021-2027 operational. Questions spiked due to pandemic oversight.' },
@@ -612,6 +612,11 @@ const RAW_MONTHLY_DATA: Record<number, Record<string, number[]>> = {
   2019: {
     plenarySessions: [6, 4, 8, 6, 0, 0, 7, 0, 4, 6, 6, 5],
     events: [179, 116, 505, 196, 37, 64, 250, 0, 295, 901, 278, 282],
+    parliamentaryQuestions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  },
+  2018: {
+    plenarySessions: [4, 5, 5, 4, 6, 4, 4, 0, 4, 8, 6, 4],
+    events: [106, 101, 119, 178, 160, 166, 173, 9, 198, 236, 165, 118],
     parliamentaryQuestions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   },
 };
@@ -1235,7 +1240,7 @@ const predictions = buildPredictions();
 const analysisSummary = buildAnalysisSummary(yearlyStats);
 
 export const GENERATED_STATS: GeneratedStatsData = {
-  generatedAt: '2026-03-02T18:16:56Z',
+  generatedAt: '2026-03-02T18:37:53Z',
   coveragePeriod: { from: 2004, to: 2025 },
   methodologyVersion: '2.0.0',
   dataSource: 'European Parliament Open Data Portal — data.europarl.europa.eu',
