@@ -323,6 +323,23 @@ export class PlenaryClient extends BaseEPClient {
   }
 
   /**
+   * Retrieves recently updated events via the feed endpoint.
+   * **EP API Endpoint:** `GET /events/feed`
+   */
+  async getEventsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+    activityType?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('events/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+      ...(params.activityType !== undefined ? { 'activity-type': params.activityType } : {}),
+    });
+  }
+
+  /**
    * Returns a single EP event by ID.
    * **EP API Endpoint:** `GET /events/{event-id}`
    */

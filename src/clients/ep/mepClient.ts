@@ -284,6 +284,36 @@ export class MEPClient extends BaseEPClient {
   }
 
   /**
+   * Retrieves recently updated MEPs via the feed endpoint.
+   * **EP API Endpoint:** `GET /meps/feed`
+   */
+  async getMEPsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('meps/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+    });
+  }
+
+  /**
+   * Retrieves recently updated MEP declarations via the feed endpoint.
+   * **EP API Endpoint:** `GET /meps-declarations/feed`
+   */
+  async getMEPDeclarationsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('meps-declarations/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+    });
+  }
+
+  /**
    * Returns a single MEP declaration by document ID.
    * **EP API Endpoint:** `GET /meps-declarations/{doc-id}`
    * @gdpr Declarations contain personal financial data – access is audit-logged

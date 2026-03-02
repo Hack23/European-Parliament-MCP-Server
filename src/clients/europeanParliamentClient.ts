@@ -77,6 +77,7 @@ import {
   validateApiUrl,
   type EPClientConfig,
   type EPSharedResources,
+  type JSONLDResponse,
 } from './ep/baseClient.js';
 export { validateApiUrl };
 
@@ -343,6 +344,28 @@ export class EuropeanParliamentClient {
     return this.mepClient.getMEPDeclarationById(docId);
   }
 
+  /**
+   * Retrieves recently updated MEPs via the feed endpoint.
+   * **EP API Endpoint:** `GET /meps/feed`
+   */
+  async getMEPsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.mepClient.getMEPsFeed(params);
+  }
+
+  /**
+   * Retrieves recently updated MEP declarations via the feed endpoint.
+   * **EP API Endpoint:** `GET /meps-declarations/feed`
+   */
+  async getMEPDeclarationsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.mepClient.getMEPDeclarationsFeed(params);
+  }
+
   // ─── Plenary / meeting endpoints ─────────────────────────────────────────
 
   /**
@@ -449,6 +472,18 @@ export class EuropeanParliamentClient {
     return this.plenaryClient.getEventById(eventId);
   }
 
+  /**
+   * Retrieves recently updated events via the feed endpoint.
+   * **EP API Endpoint:** `GET /events/feed`
+   */
+  async getEventsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+    activityType?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.plenaryClient.getEventsFeed(params);
+  }
+
   // ─── Voting / speech endpoints ────────────────────────────────────────────
 
   /**
@@ -524,6 +559,17 @@ export class EuropeanParliamentClient {
     offset?: number;
   } = {}): Promise<PaginatedResponse<Committee>> {
     return this.committeeClient.getCurrentCorporateBodies(params);
+  }
+
+  /**
+   * Retrieves recently updated corporate bodies via the feed endpoint.
+   * **EP API Endpoint:** `GET /corporate-bodies/feed`
+   */
+  async getCorporateBodiesFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.committeeClient.getCorporateBodiesFeed(params);
   }
 
   // ─── Document endpoints ───────────────────────────────────────────────────
@@ -647,6 +693,61 @@ export class EuropeanParliamentClient {
     return this.documentClient.getExternalDocumentById(docId);
   }
 
+  /**
+   * Retrieves recently updated documents via the feed endpoint.
+   * **EP API Endpoint:** `GET /documents/feed`
+   */
+  async getDocumentsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.documentClient.getDocumentsFeed(params);
+  }
+
+  /**
+   * Retrieves recently updated plenary documents via the feed endpoint.
+   * **EP API Endpoint:** `GET /plenary-documents/feed`
+   */
+  async getPlenaryDocumentsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.documentClient.getPlenaryDocumentsFeed(params);
+  }
+
+  /**
+   * Retrieves recently updated committee documents via the feed endpoint.
+   * **EP API Endpoint:** `GET /committee-documents/feed`
+   */
+  async getCommitteeDocumentsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.documentClient.getCommitteeDocumentsFeed(params);
+  }
+
+  /**
+   * Retrieves recently updated plenary session documents via the feed endpoint.
+   * **EP API Endpoint:** `GET /plenary-session-documents/feed`
+   */
+  async getPlenarySessionDocumentsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.documentClient.getPlenarySessionDocumentsFeed(params);
+  }
+
+  /**
+   * Retrieves recently updated external documents via the feed endpoint.
+   * **EP API Endpoint:** `GET /external-documents/feed`
+   */
+  async getExternalDocumentsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.documentClient.getExternalDocumentsFeed(params);
+  }
+
   // ─── Legislative endpoints ────────────────────────────────────────────────
 
   /**
@@ -701,6 +802,36 @@ export class EuropeanParliamentClient {
     return this.legislativeClient.getAdoptedTextById(docId);
   }
 
+  /**
+   * Retrieves recently updated procedures via the feed endpoint.
+   * **EP API Endpoint:** `GET /procedures/feed`
+   */
+  async getProceduresFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.legislativeClient.getProceduresFeed(params);
+  }
+
+  /**
+   * Retrieves recently updated adopted texts via the feed endpoint.
+   * **EP API Endpoint:** `GET /adopted-texts/feed`
+   */
+  async getAdoptedTextsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.legislativeClient.getAdoptedTextsFeed(params);
+  }
+
+  /**
+   * Returns a single event within a procedure by event ID.
+   * **EP API Endpoint:** `GET /procedures/{process-id}/events/{event-id}`
+   */
+  async getProcedureEventById(processId: string, eventId: string): Promise<Record<string, unknown>> {
+    return this.legislativeClient.getProcedureEventById(processId, eventId);
+  }
+
   // ─── Parliamentary question endpoints ────────────────────────────────────
 
   /**
@@ -735,6 +866,17 @@ export class EuropeanParliamentClient {
     return this.questionClient.getParliamentaryQuestionById(docId);
   }
 
+  /**
+   * Retrieves recently updated parliamentary questions via the feed endpoint.
+   * **EP API Endpoint:** `GET /parliamentary-questions/feed`
+   */
+  async getParliamentaryQuestionsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.questionClient.getParliamentaryQuestionsFeed(params);
+  }
+
   // ─── Vocabulary endpoints ─────────────────────────────────────────────────
 
   /**
@@ -756,6 +898,17 @@ export class EuropeanParliamentClient {
     vocId: string
   ): Promise<Record<string, unknown>> {
     return this.vocabularyClient.getControlledVocabularyById(vocId);
+  }
+
+  /**
+   * Retrieves recently updated controlled vocabularies via the feed endpoint.
+   * **EP API Endpoint:** `GET /controlled-vocabularies/feed`
+   */
+  async getControlledVocabulariesFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.vocabularyClient.getControlledVocabulariesFeed(params);
   }
 }
 

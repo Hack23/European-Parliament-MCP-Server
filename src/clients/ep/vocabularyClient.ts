@@ -55,6 +55,21 @@ export class VocabularyClient extends BaseEPClient {
   }
 
   /**
+   * Retrieves recently updated controlled vocabularies via the feed endpoint.
+   * **EP API Endpoint:** `GET /controlled-vocabularies/feed`
+   */
+  async getControlledVocabulariesFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('controlled-vocabularies/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+    });
+  }
+
+  /**
    * Returns a single EP Controlled Vocabulary by ID.
    * **EP API Endpoint:** `GET /controlled-vocabularies/{voc-id}`
    *

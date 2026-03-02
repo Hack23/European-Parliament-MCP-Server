@@ -163,6 +163,44 @@ export class LegislativeClient extends BaseEPClient {
   }
 
   /**
+   * Retrieves recently updated procedures via the feed endpoint.
+   * **EP API Endpoint:** `GET /procedures/feed`
+   */
+  async getProceduresFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('procedures/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+    });
+  }
+
+  /**
+   * Retrieves recently updated adopted texts via the feed endpoint.
+   * **EP API Endpoint:** `GET /adopted-texts/feed`
+   */
+  async getAdoptedTextsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('adopted-texts/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+    });
+  }
+
+  /**
+   * Returns a single event within a procedure by event ID.
+   * **EP API Endpoint:** `GET /procedures/{process-id}/events/{event-id}`
+   */
+  async getProcedureEventById(processId: string, eventId: string): Promise<Record<string, unknown>> {
+    return this.get<Record<string, unknown>>(`procedures/${processId}/events/${eventId}`);
+  }
+
+  /**
    * Returns a single adopted text by document ID.
    * **EP API Endpoint:** `GET /adopted-texts/{doc-id}`
    */

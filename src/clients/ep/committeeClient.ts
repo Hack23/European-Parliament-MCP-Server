@@ -133,6 +133,21 @@ export class CommitteeClient extends BaseEPClient {
   }
 
   /**
+   * Retrieves recently updated corporate bodies via the feed endpoint.
+   * **EP API Endpoint:** `GET /corporate-bodies/feed`
+   */
+  async getCorporateBodiesFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('corporate-bodies/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+    });
+  }
+
+  /**
    * Returns the list of all current EP Corporate Bodies for today's date.
    * **EP API Endpoint:** `GET /corporate-bodies/show-current`
    */
