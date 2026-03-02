@@ -738,6 +738,15 @@ function updateStatsFile(
       if (comparison.apiValue === null) continue; // skip API errors
       if (comparison.status === 'API_ERROR') continue;
 
+      // Skip partial/errored fetches — note indicates incomplete data
+      if (comparison.note) {
+        skippedFields++;
+        console.log(
+          `  ${DIM}⊘ Skipped ${String(yv.year)}.${comparison.metric}: partial fetch (${comparison.note})${RESET}`
+        );
+        continue;
+      }
+
       const field = METRIC_TO_FIELD[comparison.metric];
       if (!field) continue;
 
