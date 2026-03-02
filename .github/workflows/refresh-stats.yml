@@ -1,10 +1,14 @@
 # Refresh European Parliament Statistics
 #
-# Validates the static data in src/data/generatedStats.ts against the live
-# European Parliament Open Data Portal API using pagination-based counting.
+# Fetches live counts from the EP Open Data Portal API, updates the static
+# data in src/data/generatedStats.ts, validates both raw data AND computed
+# stats (derived intelligence, rankings, predictions, monthly distributions),
+# and commits the result when all checks pass.
+#
 # The EP API does not provide a totalItems header, so all records are iterated
 # to obtain accurate counts (limit: 1000 per page, the API's server-side cap).
-# Runs weekly or on demand.
+#
+# Runs weekly (all years) or on demand (specific year).
 #
 # ISMS Policy: AU-002 (Audit Logging), SC-002 (Input Validation)
 # Data source: European Parliament Open Data Portal — data.europarl.europa.eu
@@ -18,19 +22,19 @@ on:
   workflow_dispatch:
     inputs:
       year:
-        description: 'Year to validate (leave empty for latest covered year, "all" for all years)'
+        description: 'Year to validate (leave empty or "all" for all years, or a 4-digit year e.g. 2024)'
         required: false
         default: ''
         type: string
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  validate-stats:
-    name: Validate EP Statistics
+  refresh-stats:
+    name: Update & Validate EP Statistics
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b # v2.15.0
@@ -49,24 +53,41 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run stats validation
+      - name: Fetch API data and update stats
         run: |
           INPUT_YEAR="${STATS_YEAR}"
-          ARGS=""
-          if [ "${INPUT_YEAR}" = "all" ]; then
-            ARGS="--all"
-          elif [ -n "${INPUT_YEAR}" ]; then
-            if [[ "${INPUT_YEAR}" =~ ^[0-9]{4}$ ]]; then
-              ARGS="--year ${INPUT_YEAR}"
-            else
-              echo "Error: Invalid year input '${INPUT_YEAR}'. Must be 'all' or a 4-digit year (e.g. 2024)." >&2
-              exit 1
-            fi
+          # Default: scheduled runs update all years; manual can pick one
+          if [ -z "${INPUT_YEAR}" ]; then
+            ARGS="--all --update"
+          elif [ "${INPUT_YEAR}" = "all" ]; then
+            ARGS="--all --update"
+          elif [[ "${INPUT_YEAR}" =~ ^[0-9]{4}$ ]]; then
+            ARGS="--year ${INPUT_YEAR} --update"
+          else
+            echo "Error: Invalid year input '${INPUT_YEAR}'. Must be 'all' or a 4-digit year (e.g. 2024)." >&2
+            exit 1
           fi
+          echo "Running: npx tsx scripts/generate-stats.ts $ARGS"
           npx tsx scripts/generate-stats.ts $ARGS
         env:
           NODE_ENV: production
           STATS_YEAR: ${{ github.event.inputs.year }}
 
-      - name: Run data integrity tests
+      - name: Validate data integrity and computed stats
         run: npx vitest run src/data/generatedStats.test.ts --reporter=verbose
+
+      - name: Type-check updated stats
+        run: npx tsc --noEmit
+
+      - name: Commit updated stats
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/generatedStats.ts
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: refresh EP stats from live API data [skip ci]"
+            git push
+            echo "Updated stats committed and pushed."
+          fi

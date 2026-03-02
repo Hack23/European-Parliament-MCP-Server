@@ -15,11 +15,16 @@
  *    iterated to obtain accurate counts. Discrepancies are logged but do
  *    not affect the exit code (data may legitimately drift between releases).
  *
+ * When invoked with `--update`, the script writes API-verified values back
+ * into `src/data/generatedStats.ts` and updates the `generatedAt` timestamp.
+ * Only fields where the API returned a valid count are updated.
+ *
  * **Usage:**
  * ```bash
  * npx tsx scripts/generate-stats.ts              # validate latest covered year
  * npx tsx scripts/generate-stats.ts --year 2024  # validate specific year
  * npx tsx scripts/generate-stats.ts --all        # validate all years (2004–latest)
+ * npx tsx scripts/generate-stats.ts --update     # validate and update stored stats
  * ```
  *
  * **Exit codes:**
@@ -35,6 +40,9 @@
  * @module scripts/generate-stats
  */
 
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { EuropeanParliamentClient } from '../src/clients/europeanParliamentClient.js';
 import { GENERATED_STATS } from '../src/data/generatedStats.js';
 import type { YearlyStats, PoliticalGroupSnapshot, PoliticalLandscapeData } from '../src/data/generatedStats.js';
@@ -97,9 +105,10 @@ interface ValidationSummary {
 // ── CLI argument parsing ──────────────────────────────────────────
 
 /** Parse command-line arguments. */
-function parseArgs(): { years: number[] } {
+function parseArgs(): { years: number[]; update: boolean } {
   const args = process.argv.slice(2);
   const latestCoveredYear = GENERATED_STATS.coveragePeriod.to;
+  const update = args.includes('--update');
 
   // --help
   if (args.includes('--help') || args.includes('-h')) {
@@ -109,12 +118,15 @@ Usage: npx tsx scripts/generate-stats.ts [options]
 Options:
   --year <YYYY>   Validate a specific year (default: latest covered year ${String(latestCoveredYear)})
   --all           Validate all years in the dataset (2004–${String(latestCoveredYear)})
+  --update        Write API-verified values back into generatedStats.ts
   --help, -h      Show this help message
 
 Examples:
   npx tsx scripts/generate-stats.ts
   npx tsx scripts/generate-stats.ts --year 2024
   npx tsx scripts/generate-stats.ts --all
+  npx tsx scripts/generate-stats.ts --update
+  npx tsx scripts/generate-stats.ts --all --update
 `);
     process.exit(0);
   }
@@ -122,7 +134,7 @@ Examples:
   // --all
   if (args.includes('--all')) {
     const allYears = GENERATED_STATS.yearlyStats.map((y) => y.year);
-    return { years: allYears };
+    return { years: allYears, update };
   }
 
   // --year <YYYY>
@@ -138,11 +150,11 @@ Examples:
       console.error(`Error: Year must be between 2004 and ${String(latestCoveredYear)}`);
       process.exit(1);
     }
-    return { years: [year] };
+    return { years: [year], update };
   }
 
   // Default: latest covered year in the dataset
-  return { years: [latestCoveredYear] };
+  return { years: [latestCoveredYear], update };
 }
 
 // ── Console formatting helpers ────────────────────────────────────
@@ -268,6 +280,8 @@ async function validateYearAgainstAPI(
 ): Promise<YearValidation> {
   const year = yearStats.year;
   const comparisons: MetricComparison[] = [];
+  const dateFrom = `${String(year)}-01-01`;
+  const dateTo = `${String(year)}-12-31`;
 
   console.log(`\n${BOLD}${CYAN}── Fetching API data for ${String(year)} ──${RESET}`);
 
@@ -317,13 +331,34 @@ async function validateYearAgainstAPI(
       label: 'Parliamentary Questions',
       storedKey: 'parliamentaryQuestions',
       count: () => countItems('Parliamentary Questions', (p) =>
-        client.getParliamentaryQuestions({ dateFrom: `${String(year)}-01-01`, dateTo: `${String(year)}-12-31`, ...p })
+        client.getParliamentaryQuestions({ dateFrom, dateTo, ...p })
       ),
     },
     {
       label: 'MEP Declarations',
       storedKey: 'declarations',
       count: () => countItems('MEP Declarations', (p) => client.getMEPDeclarations({ year, ...p })),
+    },
+    {
+      label: 'Plenary Sessions',
+      storedKey: 'plenarySessions',
+      count: () => countItems('Plenary Sessions', (p) =>
+        client.getPlenarySessions({ dateFrom, dateTo, ...p })
+      ),
+    },
+    {
+      label: 'Speeches',
+      storedKey: 'speeches',
+      count: () => countItems('Speeches', (p) =>
+        client.getSpeeches({ dateFrom, dateTo, ...p })
+      ),
+    },
+    {
+      label: 'Events',
+      storedKey: 'events',
+      count: () => countItems('Events', (p) =>
+        client.getEvents({ dateFrom, dateTo, ...p })
+      ),
     },
   ];
 
@@ -614,10 +649,182 @@ function printSummary(
   return summary;
 }
 
+// ── File update logic ─────────────────────────────────────────────
+
+/** Fields in RAW_YEARLY that can be verified and updated from the API. */
+const UPDATABLE_FIELDS = [
+  'adoptedTexts',
+  'procedures',
+  'documents',
+  'parliamentaryQuestions',
+  'declarations',
+  'plenarySessions',
+  'speeches',
+  'events',
+] as const;
+
+/** Fields updated only for the latest covered year. */
+const LATEST_YEAR_FIELDS = ['mepCount', 'mepTurnover'] as const;
+
+/** Map metric labels to RAW_YEARLY field names. */
+const METRIC_TO_FIELD: Record<string, string> = {
+  'Adopted Texts': 'adoptedTexts',
+  'Procedures': 'procedures',
+  'Plenary Documents': 'documents',
+  'Parliamentary Questions': 'parliamentaryQuestions',
+  'MEP Declarations': 'declarations',
+  'Plenary Sessions': 'plenarySessions',
+  'Speeches': 'speeches',
+  'Events': 'events',
+  'Current MEPs': 'mepCount',
+  'MEP Turnover (incoming + outgoing)': 'mepTurnover',
+};
+
+/**
+ * Minimum credibility threshold for API values.
+ *
+ * The EP Open Data API has incomplete historical data for certain
+ * endpoints (e.g. adopted-texts returns 1–2 items for years before 2014).
+ * When the API returns a value below this threshold AND the stored value
+ * is substantially higher, the API value is treated as unreliable and
+ * the stored value is preserved.
+ */
+const MIN_CREDIBLE_VALUE = 10;
+
+/**
+ * Check whether an API value is credible enough to overwrite the stored value.
+ *
+ * Returns false when the API clearly returned incomplete data:
+ * - API value is below the credibility threshold, AND
+ * - stored value is much larger (> 5× the API value)
+ *
+ * This protects curated historical estimates from being overwritten by
+ * incomplete EP API data while still allowing genuine corrections.
+ */
+function isCredibleApiValue(apiValue: number, storedValue: number): boolean {
+  if (apiValue >= MIN_CREDIBLE_VALUE) return true;
+  // API returned a tiny value — only trust it if stored is also small
+  return storedValue <= apiValue * 5;
+}
+
+/**
+ * Write API-verified values back into `src/data/generatedStats.ts`.
+ *
+ * For each year's validation results, updates the numeric fields in the
+ * `RAW_YEARLY` array where the API returned a valid, credible count.
+ * Also updates the `generatedAt` timestamp.
+ *
+ * Only updates fields where:
+ * - The API returned a valid value (not null/API_ERROR)
+ * - The API value passes the credibility check (not obviously incomplete)
+ * - The field is in the set of API-verifiable fields
+ */
+function updateStatsFile(
+  yearValidations: YearValidation[],
+  latestCoveredYear: number
+): { updatedFields: number; skippedFields: number; updatedFile: boolean } {
+  const statsFilePath = path.resolve(
+    import.meta.dirname ?? path.dirname(fileURLToPath(import.meta.url)),
+    '../src/data/generatedStats.ts'
+  );
+
+  let content = fs.readFileSync(statsFilePath, 'utf-8');
+  const originalContent = content;
+  let updatedFields = 0;
+  let skippedFields = 0;
+
+  for (const yv of yearValidations) {
+    for (const comparison of yv.comparisons) {
+      if (comparison.apiValue === null) continue; // skip API errors
+      if (comparison.status === 'API_ERROR') continue;
+
+      // Skip partial/errored fetches — note indicates incomplete data
+      if (comparison.note) {
+        skippedFields++;
+        console.log(
+          `  ${DIM}⊘ Skipped ${String(yv.year)}.${comparison.metric}: partial fetch (${comparison.note})${RESET}`
+        );
+        continue;
+      }
+
+      const field = METRIC_TO_FIELD[comparison.metric];
+      if (!field) continue;
+
+      // Only update fields that are API-verifiable
+      if (!isUpdatableField(field) && !isLatestYearField(field)) continue;
+
+      // Only update latest-year-only fields for the latest year
+      if (
+        (isLatestYearField(field)) &&
+        yv.year !== latestCoveredYear
+      ) {
+        continue;
+      }
+
+      // Only update if value actually changed
+      if (comparison.apiValue === comparison.storedValue) continue;
+
+      // Credibility check: skip obviously incomplete API data
+      if (!isCredibleApiValue(comparison.apiValue, comparison.storedValue)) {
+        skippedFields++;
+        console.log(
+          `  ${DIM}⊘ Skipped ${String(yv.year)}.${field}: API=${String(comparison.apiValue)} looks incomplete (stored=${String(comparison.storedValue)})${RESET}`
+        );
+        continue;
+      }
+
+      // Find the RAW_YEARLY line for this year and update the field.
+      // Each entry starts with `  { year: YYYY,` on a single line.
+      const yearPattern = new RegExp(
+        `^(\\s*\\{\\s*year:\\s*${String(yv.year)},.*?)${field}:\\s*\\d+(.*$)`,
+        'm'
+      );
+      const replacement = `$1${field}: ${String(comparison.apiValue)}$2`;
+      const newContent = content.replace(yearPattern, replacement);
+      if (newContent !== content) {
+        content = newContent;
+        updatedFields++;
+        console.log(
+          `  ${GREEN}↻${RESET} Updated ${String(yv.year)}.${field}: ${String(comparison.storedValue)} → ${String(comparison.apiValue)}`
+        );
+      }
+    }
+  }
+
+  // Update generatedAt timestamp if any fields changed
+  if (content !== originalContent) {
+    const now = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+    content = content.replace(
+      /generatedAt:\s*'[^']+'/,
+      `generatedAt: '${now}'`
+    );
+    fs.writeFileSync(statsFilePath, content, 'utf-8');
+    console.log(`\n  ${GREEN}✓${RESET} Updated generatedStats.ts (${String(updatedFields)} field(s) updated, ${String(skippedFields)} skipped as unreliable, generatedAt: ${now})`);
+    return { updatedFields, skippedFields, updatedFile: true };
+  }
+
+  if (skippedFields > 0) {
+    console.log(`\n  ${DIM}No credible updates — ${String(skippedFields)} field(s) skipped as unreliable API data.${RESET}`);
+  } else {
+    console.log(`\n  ${DIM}No updates needed — stored values match API data.${RESET}`);
+  }
+  return { updatedFields: 0, skippedFields, updatedFile: false };
+}
+
+/** Check if a field is latest-year-only. */
+function isLatestYearField(field: string): boolean {
+  return (LATEST_YEAR_FIELDS as readonly string[]).includes(field);
+}
+
+/** Check if a field is in the set of API-verifiable updatable fields. */
+function isUpdatableField(field: string): boolean {
+  return (UPDATABLE_FIELDS as readonly string[]).includes(field);
+}
+
 // ── Main ──────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-  const { years } = parseArgs();
+  const { years, update } = parseArgs();
   const startTime = Date.now();
 
   console.log(`${BOLD}${CYAN}╔══════════════════════════════════════════════════════════════╗${RESET}`);
@@ -629,10 +836,14 @@ async function main(): Promise<void> {
   console.log(`  Generated at:     ${GENERATED_STATS.generatedAt}`);
   console.log(`  Methodology:      v${GENERATED_STATS.methodologyVersion}`);
   console.log(`  Years to check:   ${years.join(', ')}`);
-
-  // Create client with conservative timeout for validation
+  if (update) {
+    console.log(`  ${BOLD}${YELLOW}Mode:               UPDATE (will write back API-verified values)${RESET}`);
+  }
+  // Create client with generous timeouts and response size limits for CLI validation.
+  // The EP API can return up to ~20 MiB for adopted-texts with limit=1000.
   const client = new EuropeanParliamentClient({
-    timeoutMs: 30_000,
+    timeoutMs: 60_000,
+    maxResponseBytes: 50 * 1024 * 1024, // 50 MiB — CLI tool, not a server
   });
 
   const yearValidations: YearValidation[] = [];
@@ -667,6 +878,24 @@ async function main(): Promise<void> {
 
   // Print summary
   const summary = printSummary(yearValidations, landscapeValidations);
+
+  // Update generatedStats.ts if --update was specified and landscape checks passed
+  if (update && summary.landscapeIssues === 0) {
+    console.log(`\n${BOLD}${CYAN}── Updating generatedStats.ts ──${RESET}`);
+    const { updatedFields } = updateStatsFile(
+      yearValidations,
+      GENERATED_STATS.coveragePeriod.to
+    );
+    if (updatedFields > 0) {
+      summary.recommendations.push(
+        `Updated ${String(updatedFields)} field(s) in generatedStats.ts from API data.`
+      );
+    }
+  } else if (update && summary.landscapeIssues > 0) {
+    console.log(
+      `\n${YELLOW}⚠ Skipping file update — ${String(summary.landscapeIssues)} political landscape issue(s) must be resolved first.${RESET}`
+    );
+  }
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   console.log(`${DIM}Completed in ${elapsed}s${RESET}\n`);
