@@ -348,12 +348,13 @@ export class EuropeanParliamentClient {
   /**
    * Retrieves plenary sessions with date and location filtering.
    *
-   * @param params - dateFrom, dateTo, location, limit, offset
+   * @param params - year, dateFrom, dateTo, location, limit, offset
    * @returns Paginated plenary session list
    * @performance Cached: <100ms P50, <200ms P95. Uncached: <2s P99
    * @see https://data.europarl.europa.eu/api/v2/meetings
    */
   async getPlenarySessions(params: {
+    year?: number;
     dateFrom?: string;
     dateTo?: string;
     location?: string;
@@ -431,6 +432,7 @@ export class EuropeanParliamentClient {
    * **EP API Endpoint:** `GET /events`
    */
   async getEvents(params: {
+    year?: number;
     dateFrom?: string;
     dateTo?: string;
     limit?: number;
@@ -478,6 +480,7 @@ export class EuropeanParliamentClient {
    * **EP API Endpoint:** `GET /speeches`
    */
   async getSpeeches(params: {
+    year?: number;
     dateFrom?: string;
     dateTo?: string;
     limit?: number;

@@ -16,6 +16,12 @@ export const GetPlenarySessionsSchema = z.object({
     .max(200)
     .optional()
     .describe('Meeting event ID for single meeting lookup'),
+  year: z.number()
+    .int()
+    .min(1900)
+    .max(2100)
+    .optional()
+    .describe('Filter by calendar year (recommended for annual counts)'),
   dateFrom: DateStringSchema.optional(),
   dateTo: DateStringSchema.optional(),
   location: z.string()

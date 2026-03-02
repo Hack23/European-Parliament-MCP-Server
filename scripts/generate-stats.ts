@@ -343,21 +343,21 @@ async function validateYearAgainstAPI(
       label: 'Plenary Sessions',
       storedKey: 'plenarySessions',
       count: () => countItems('Plenary Sessions', (p) =>
-        client.getPlenarySessions({ dateFrom, dateTo, ...p })
+        client.getPlenarySessions({ year, ...p })
       ),
     },
     {
       label: 'Speeches',
       storedKey: 'speeches',
       count: () => countItems('Speeches', (p) =>
-        client.getSpeeches({ dateFrom, dateTo, ...p })
+        client.getSpeeches({ year, ...p })
       ),
     },
     {
       label: 'Events',
       storedKey: 'events',
       count: () => countItems('Events', (p) =>
-        client.getEvents({ dateFrom, dateTo, ...p })
+        client.getEvents({ year, ...p })
       ),
     },
   ];

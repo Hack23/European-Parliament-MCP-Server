@@ -223,9 +223,9 @@ async function buildLandscape(
   // capped by the page size at offset 0
   let recentSessionCount = 0;
   try {
+    const year = parseInt(dateFrom.substring(0, 4), 10);
     const sessions = await epClient.getPlenarySessions({
-      dateFrom,
-      dateTo,
+      year,
       limit: 100
     });
     recentSessionCount = sessions.data.length;
