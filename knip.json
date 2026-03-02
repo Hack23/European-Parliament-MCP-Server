@@ -18,7 +18,8 @@
   ],
   "ignoreBinaries": [],
   "ignore": [
-    "tests/fixtures/**"
+    "tests/fixtures/**",
+    "src/generated/**"
   ],
   "ignoreExportsUsedInFile": true
 }
