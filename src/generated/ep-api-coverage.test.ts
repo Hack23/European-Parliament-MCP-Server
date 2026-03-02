@@ -11,7 +11,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import type { paths } from '../generated/ep-api-types.js';
+import type { paths } from './ep-api-types.js';
 
 // ── Spec paths derived at type level ───────────────────────────────────────
 // All path keys the spec defines:
@@ -139,9 +139,6 @@ function getMeta(client: string, method: string, specPath: SpecPath): { client: 
 // ── Tests ──────────────────────────────────────────────────────────────────
 
 describe('EP API v2 — OpenAPI Spec Coverage', () => {
-  // Read the raw spec for runtime checks
-  const specPaths = Object.keys({} as paths) as SpecPath[];
-
   // At compile time the SpecPath type already enforces that every key in
   // COVERED_ENDPOINTS, FEED_ENDPOINTS, and OPTIONAL_ENDPOINTS is a valid
   // OpenAPI path.  The runtime tests below validate counts and structure.
@@ -152,14 +149,15 @@ describe('EP API v2 — OpenAPI Spec Coverage', () => {
     const optionalPaths = new Set(OPTIONAL_ENDPOINTS as string[]);
     const allAccountedFor = new Set([...coveredPaths, ...feedPaths, ...optionalPaths]);
 
-    // Total spec endpoints = 55  (as of 2026-03)
-    // Covered = 41 core data endpoints
-    // Feed = 13 (Atom/XML change notifications)
-    // Optional = 1 (procedure event by ID)
+    // These counts match the EP API v2 OpenAPI spec as of 2026-03.
+    // Update when the spec is regenerated (npm run generate:api-types).
     expect(Object.keys(COVERED_ENDPOINTS).length).toBe(41);
     expect(FEED_ENDPOINTS.length).toBe(13);
     expect(OPTIONAL_ENDPOINTS.length).toBe(1);
-    expect(allAccountedFor.size).toBe(55);
+    // 41 + 13 + 1 = 55 total spec endpoints
+    expect(allAccountedFor.size).toBe(
+      Object.keys(COVERED_ENDPOINTS).length + FEED_ENDPOINTS.length + OPTIONAL_ENDPOINTS.length
+    );
   });
 
   it('should have a client + method for every covered endpoint', () => {
@@ -217,7 +215,7 @@ describe('EP API v2 — OpenAPI Spec Coverage', () => {
   });
 
   describe('Generated types structure', () => {
-    it('should export a paths interface with 55 endpoints', () => {
+    it('should export a paths interface covering all endpoints', () => {
       // This is validated at the type level — if the spec changes, the
       // SpecPath references in COVERED_ENDPOINTS / FEED_ENDPOINTS will
       // cause a compile error.
@@ -226,12 +224,17 @@ describe('EP API v2 — OpenAPI Spec Coverage', () => {
         ...FEED_ENDPOINTS,
         ...OPTIONAL_ENDPOINTS,
       ];
-      expect(allPaths.length).toBe(55);
+      expect(allPaths.length).toBe(
+        Object.keys(COVERED_ENDPOINTS).length + FEED_ENDPOINTS.length + OPTIONAL_ENDPOINTS.length
+      );
     });
 
-    it('openapi-typescript types file should exist and export paths', () => {
-      // This import would fail at build time if the file doesn't exist
-      expect(specPaths).toBeDefined();
+    it('openapi-typescript types file should be importable', () => {
+      // Compile-time validation: the paths type is imported at the top
+      // of this file.  If the generated types are missing or malformed,
+      // this file will fail to compile.
+      const _typeCheck: SpecPath = '/meps';
+      expect(_typeCheck).toBe('/meps');
     });
   });
 });
