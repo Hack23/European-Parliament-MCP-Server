@@ -33,6 +33,7 @@
 </table>
 
 [![ISMS](https://img.shields.io/badge/Hack23-ISMS-blue)](https://github.com/Hack23/ISMS-PUBLIC)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12067/badge)](https://www.bestpractices.dev/projects/12067)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Hack23/European-Parliament-MCP-Server)
 
 ## 📊 Quality Metrics & Documentation
