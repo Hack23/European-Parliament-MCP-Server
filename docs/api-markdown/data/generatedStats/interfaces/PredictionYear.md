@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: PredictionYear
 
-Defined in: [data/generatedStats.ts:167](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L167)
+Defined in: [data/generatedStats.ts:376](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L376)
 
 Predicted activity metrics for a future year.
 
@@ -20,7 +20,7 @@ typical ramp-up → peak → decline pattern within each five-year term.
 
 > **confidenceInterval**: `string`
 
-Defined in: [data/generatedStats.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L197)
+Defined in: [data/generatedStats.ts:406](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L406)
 
 Confidence interval string (e.g. '±12%')
 
@@ -30,7 +30,7 @@ Confidence interval string (e.g. '±12%')
 
 > **methodology**: `string`
 
-Defined in: [data/generatedStats.ts:199](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L199)
+Defined in: [data/generatedStats.ts:408](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L408)
 
 Description of the prediction methodology for this year
 
@@ -40,7 +40,7 @@ Description of the prediction methodology for this year
 
 > **predictedAdoptedTexts**: `number`
 
-Defined in: [data/generatedStats.ts:185](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L185)
+Defined in: [data/generatedStats.ts:394](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L394)
 
 Predicted adopted texts
 
@@ -50,7 +50,7 @@ Predicted adopted texts
 
 > **predictedCommitteeMeetings**: `number`
 
-Defined in: [data/generatedStats.ts:177](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L177)
+Defined in: [data/generatedStats.ts:386](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L386)
 
 Predicted committee meetings
 
@@ -60,7 +60,7 @@ Predicted committee meetings
 
 > **predictedDeclarations**: `number`
 
-Defined in: [data/generatedStats.ts:195](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L195)
+Defined in: [data/generatedStats.ts:404](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L404)
 
 Predicted declarations
 
@@ -70,7 +70,7 @@ Predicted declarations
 
 > **predictedDocuments**: `number`
 
-Defined in: [data/generatedStats.ts:191](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L191)
+Defined in: [data/generatedStats.ts:400](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L400)
 
 Predicted documents
 
@@ -80,7 +80,7 @@ Predicted documents
 
 > **predictedEvents**: `number`
 
-Defined in: [data/generatedStats.ts:189](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L189)
+Defined in: [data/generatedStats.ts:398](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L398)
 
 Predicted events
 
@@ -90,7 +90,7 @@ Predicted events
 
 > **predictedLegislativeActs**: `number`
 
-Defined in: [data/generatedStats.ts:173](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L173)
+Defined in: [data/generatedStats.ts:382](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L382)
 
 Predicted legislative acts adopted
 
@@ -100,7 +100,7 @@ Predicted legislative acts adopted
 
 > **predictedMepTurnover**: `number`
 
-Defined in: [data/generatedStats.ts:193](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L193)
+Defined in: [data/generatedStats.ts:402](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L402)
 
 Predicted MEP turnover
 
@@ -110,7 +110,7 @@ Predicted MEP turnover
 
 > **predictedParliamentaryQuestions**: `number`
 
-Defined in: [data/generatedStats.ts:179](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L179)
+Defined in: [data/generatedStats.ts:388](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L388)
 
 Predicted parliamentary questions
 
@@ -120,7 +120,7 @@ Predicted parliamentary questions
 
 > **predictedPlenarySessions**: `number`
 
-Defined in: [data/generatedStats.ts:171](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L171)
+Defined in: [data/generatedStats.ts:380](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L380)
 
 Predicted plenary sessions
 
@@ -130,7 +130,7 @@ Predicted plenary sessions
 
 > **predictedProcedures**: `number`
 
-Defined in: [data/generatedStats.ts:187](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L187)
+Defined in: [data/generatedStats.ts:396](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L396)
 
 Predicted procedures
 
@@ -140,7 +140,7 @@ Predicted procedures
 
 > **predictedResolutions**: `number`
 
-Defined in: [data/generatedStats.ts:181](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L181)
+Defined in: [data/generatedStats.ts:390](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L390)
 
 Predicted resolutions
 
@@ -150,7 +150,7 @@ Predicted resolutions
 
 > **predictedRollCallVotes**: `number`
 
-Defined in: [data/generatedStats.ts:175](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L175)
+Defined in: [data/generatedStats.ts:384](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L384)
 
 Predicted roll-call votes
 
@@ -160,7 +160,7 @@ Predicted roll-call votes
 
 > **predictedSpeeches**: `number`
 
-Defined in: [data/generatedStats.ts:183](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L183)
+Defined in: [data/generatedStats.ts:392](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L392)
 
 Predicted speeches
 
@@ -170,6 +170,6 @@ Predicted speeches
 
 > **year**: `number`
 
-Defined in: [data/generatedStats.ts:169](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L169)
+Defined in: [data/generatedStats.ts:378](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L378)
 
 Predicted calendar year (2026–2030)

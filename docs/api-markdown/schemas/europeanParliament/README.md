@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../README.md)
 
 ***
 
@@ -64,15 +64,33 @@ Re-exports [DetectVotingAnomaliesSchema](../ep/analysis/variables/DetectVotingAn
 
 ***
 
+### FeedTimeframeSchema
+
+Re-exports [FeedTimeframeSchema](../ep/feed/variables/FeedTimeframeSchema.md)
+
+***
+
 ### GenerateReportSchema
 
 Re-exports [GenerateReportSchema](../ep/analysis/variables/GenerateReportSchema.md)
 
 ***
 
+### GetAdoptedTextsFeedSchema
+
+Re-exports [GetAdoptedTextsFeedSchema](../ep/feed/variables/GetAdoptedTextsFeedSchema.md)
+
+***
+
 ### GetAdoptedTextsSchema
 
 Re-exports [GetAdoptedTextsSchema](../ep/activities/variables/GetAdoptedTextsSchema.md)
+
+***
+
+### GetCommitteeDocumentsFeedSchema
+
+Re-exports [GetCommitteeDocumentsFeedSchema](../ep/feed/variables/GetCommitteeDocumentsFeedSchema.md)
 
 ***
 
@@ -88,9 +106,21 @@ Re-exports [GetCommitteeInfoSchema](../ep/committee/variables/GetCommitteeInfoSc
 
 ***
 
+### GetControlledVocabulariesFeedSchema
+
+Re-exports [GetControlledVocabulariesFeedSchema](../ep/feed/variables/GetControlledVocabulariesFeedSchema.md)
+
+***
+
 ### GetControlledVocabulariesSchema
 
 Re-exports [GetControlledVocabulariesSchema](../ep/activities/variables/GetControlledVocabulariesSchema.md)
+
+***
+
+### GetCorporateBodiesFeedSchema
+
+Re-exports [GetCorporateBodiesFeedSchema](../ep/feed/variables/GetCorporateBodiesFeedSchema.md)
 
 ***
 
@@ -100,9 +130,27 @@ Re-exports [GetCurrentMEPsSchema](../ep/mep/variables/GetCurrentMEPsSchema.md)
 
 ***
 
+### GetDocumentsFeedSchema
+
+Re-exports [GetDocumentsFeedSchema](../ep/feed/variables/GetDocumentsFeedSchema.md)
+
+***
+
+### GetEventsFeedSchema
+
+Re-exports [GetEventsFeedSchema](../ep/feed/variables/GetEventsFeedSchema.md)
+
+***
+
 ### GetEventsSchema
 
 Re-exports [GetEventsSchema](../ep/activities/variables/GetEventsSchema.md)
+
+***
+
+### GetExternalDocumentsFeedSchema
+
+Re-exports [GetExternalDocumentsFeedSchema](../ep/feed/variables/GetExternalDocumentsFeedSchema.md)
 
 ***
 
@@ -154,6 +202,12 @@ Re-exports [GetMeetingPlenarySessionDocumentsSchema](../ep/activities/variables/
 
 ***
 
+### GetMEPDeclarationsFeedSchema
+
+Re-exports [GetMEPDeclarationsFeedSchema](../ep/feed/variables/GetMEPDeclarationsFeedSchema.md)
+
+***
+
 ### GetMEPDeclarationsSchema
 
 Re-exports [GetMEPDeclarationsSchema](../ep/activities/variables/GetMEPDeclarationsSchema.md)
@@ -163,6 +217,12 @@ Re-exports [GetMEPDeclarationsSchema](../ep/activities/variables/GetMEPDeclarati
 ### GetMEPDetailsSchema
 
 Re-exports [GetMEPDetailsSchema](../ep/mep/variables/GetMEPDetailsSchema.md)
+
+***
+
+### GetMEPsFeedSchema
+
+Re-exports [GetMEPsFeedSchema](../ep/feed/variables/GetMEPsFeedSchema.md)
 
 ***
 
@@ -178,9 +238,21 @@ Re-exports [GetOutgoingMEPsSchema](../ep/mep/variables/GetOutgoingMEPsSchema.md)
 
 ***
 
+### GetParliamentaryQuestionsFeedSchema
+
+Re-exports [GetParliamentaryQuestionsFeedSchema](../ep/feed/variables/GetParliamentaryQuestionsFeedSchema.md)
+
+***
+
 ### GetParliamentaryQuestionsSchema
 
 Re-exports [GetParliamentaryQuestionsSchema](../ep/question/variables/GetParliamentaryQuestionsSchema.md)
+
+***
+
+### GetPlenaryDocumentsFeedSchema
+
+Re-exports [GetPlenaryDocumentsFeedSchema](../ep/feed/variables/GetPlenaryDocumentsFeedSchema.md)
 
 ***
 
@@ -196,6 +268,12 @@ Re-exports [GetPlenarySessionDocumentItemsSchema](../ep/document/variables/GetPl
 
 ***
 
+### GetPlenarySessionDocumentsFeedSchema
+
+Re-exports [GetPlenarySessionDocumentsFeedSchema](../ep/feed/variables/GetPlenarySessionDocumentsFeedSchema.md)
+
+***
+
 ### GetPlenarySessionDocumentsSchema
 
 Re-exports [GetPlenarySessionDocumentsSchema](../ep/document/variables/GetPlenarySessionDocumentsSchema.md)
@@ -208,9 +286,21 @@ Re-exports [GetPlenarySessionsSchema](../ep/plenary/variables/GetPlenarySessions
 
 ***
 
+### GetProcedureEventByIdSchema
+
+Re-exports [GetProcedureEventByIdSchema](../ep/feed/variables/GetProcedureEventByIdSchema.md)
+
+***
+
 ### GetProcedureEventsSchema
 
 Re-exports [GetProcedureEventsSchema](../ep/activities/variables/GetProcedureEventsSchema.md)
+
+***
+
+### GetProceduresFeedSchema
+
+Re-exports [GetProceduresFeedSchema](../ep/feed/variables/GetProceduresFeedSchema.md)
 
 ***
 

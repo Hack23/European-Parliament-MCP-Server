@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../README.md)
 
 ***
 
@@ -21,13 +21,21 @@ Data source: European Parliament Open Data Portal — data.europarl.europa.eu
 ## Interfaces
 
 - [CategoryRanking](interfaces/CategoryRanking.md)
+- [DerivedIntelligenceMetrics](interfaces/DerivedIntelligenceMetrics.md)
 - [GeneratedStatsData](interfaces/GeneratedStatsData.md)
 - [MonthlyActivity](interfaces/MonthlyActivity.md)
+- [PoliticalBlocAnalysis](interfaces/PoliticalBlocAnalysis.md)
+- [PoliticalCompassAnalysis](interfaces/PoliticalCompassAnalysis.md)
 - [PoliticalGroupSnapshot](interfaces/PoliticalGroupSnapshot.md)
 - [PoliticalLandscapeData](interfaces/PoliticalLandscapeData.md)
 - [PredictionYear](interfaces/PredictionYear.md)
+- [QuadrantDistribution](interfaces/QuadrantDistribution.md)
 - [RankedYear](interfaces/RankedYear.md)
 - [YearlyStats](interfaces/YearlyStats.md)
+
+## Type Aliases
+
+- [PoliticalQuadrant](type-aliases/PoliticalQuadrant.md)
 
 ## Variables
 

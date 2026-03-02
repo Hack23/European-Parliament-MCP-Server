@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../README.md)
 
 ***
 
@@ -80,15 +80,33 @@ Re-exports [DetectVotingAnomaliesSchema](analysis/variables/DetectVotingAnomalie
 
 ***
 
+### FeedTimeframeSchema
+
+Re-exports [FeedTimeframeSchema](feed/variables/FeedTimeframeSchema.md)
+
+***
+
 ### GenerateReportSchema
 
 Re-exports [GenerateReportSchema](analysis/variables/GenerateReportSchema.md)
 
 ***
 
+### GetAdoptedTextsFeedSchema
+
+Re-exports [GetAdoptedTextsFeedSchema](feed/variables/GetAdoptedTextsFeedSchema.md)
+
+***
+
 ### GetAdoptedTextsSchema
 
 Re-exports [GetAdoptedTextsSchema](activities/variables/GetAdoptedTextsSchema.md)
+
+***
+
+### GetCommitteeDocumentsFeedSchema
+
+Re-exports [GetCommitteeDocumentsFeedSchema](feed/variables/GetCommitteeDocumentsFeedSchema.md)
 
 ***
 
@@ -104,9 +122,21 @@ Re-exports [GetCommitteeInfoSchema](committee/variables/GetCommitteeInfoSchema.m
 
 ***
 
+### GetControlledVocabulariesFeedSchema
+
+Re-exports [GetControlledVocabulariesFeedSchema](feed/variables/GetControlledVocabulariesFeedSchema.md)
+
+***
+
 ### GetControlledVocabulariesSchema
 
 Re-exports [GetControlledVocabulariesSchema](activities/variables/GetControlledVocabulariesSchema.md)
+
+***
+
+### GetCorporateBodiesFeedSchema
+
+Re-exports [GetCorporateBodiesFeedSchema](feed/variables/GetCorporateBodiesFeedSchema.md)
 
 ***
 
@@ -116,9 +146,27 @@ Re-exports [GetCurrentMEPsSchema](mep/variables/GetCurrentMEPsSchema.md)
 
 ***
 
+### GetDocumentsFeedSchema
+
+Re-exports [GetDocumentsFeedSchema](feed/variables/GetDocumentsFeedSchema.md)
+
+***
+
+### GetEventsFeedSchema
+
+Re-exports [GetEventsFeedSchema](feed/variables/GetEventsFeedSchema.md)
+
+***
+
 ### GetEventsSchema
 
 Re-exports [GetEventsSchema](activities/variables/GetEventsSchema.md)
+
+***
+
+### GetExternalDocumentsFeedSchema
+
+Re-exports [GetExternalDocumentsFeedSchema](feed/variables/GetExternalDocumentsFeedSchema.md)
 
 ***
 
@@ -170,6 +218,12 @@ Re-exports [GetMeetingPlenarySessionDocumentsSchema](activities/variables/GetMee
 
 ***
 
+### GetMEPDeclarationsFeedSchema
+
+Re-exports [GetMEPDeclarationsFeedSchema](feed/variables/GetMEPDeclarationsFeedSchema.md)
+
+***
+
 ### GetMEPDeclarationsSchema
 
 Re-exports [GetMEPDeclarationsSchema](activities/variables/GetMEPDeclarationsSchema.md)
@@ -179,6 +233,12 @@ Re-exports [GetMEPDeclarationsSchema](activities/variables/GetMEPDeclarationsSch
 ### GetMEPDetailsSchema
 
 Re-exports [GetMEPDetailsSchema](mep/variables/GetMEPDetailsSchema.md)
+
+***
+
+### GetMEPsFeedSchema
+
+Re-exports [GetMEPsFeedSchema](feed/variables/GetMEPsFeedSchema.md)
 
 ***
 
@@ -194,9 +254,21 @@ Re-exports [GetOutgoingMEPsSchema](mep/variables/GetOutgoingMEPsSchema.md)
 
 ***
 
+### GetParliamentaryQuestionsFeedSchema
+
+Re-exports [GetParliamentaryQuestionsFeedSchema](feed/variables/GetParliamentaryQuestionsFeedSchema.md)
+
+***
+
 ### GetParliamentaryQuestionsSchema
 
 Re-exports [GetParliamentaryQuestionsSchema](question/variables/GetParliamentaryQuestionsSchema.md)
+
+***
+
+### GetPlenaryDocumentsFeedSchema
+
+Re-exports [GetPlenaryDocumentsFeedSchema](feed/variables/GetPlenaryDocumentsFeedSchema.md)
 
 ***
 
@@ -212,6 +284,12 @@ Re-exports [GetPlenarySessionDocumentItemsSchema](document/variables/GetPlenaryS
 
 ***
 
+### GetPlenarySessionDocumentsFeedSchema
+
+Re-exports [GetPlenarySessionDocumentsFeedSchema](feed/variables/GetPlenarySessionDocumentsFeedSchema.md)
+
+***
+
 ### GetPlenarySessionDocumentsSchema
 
 Re-exports [GetPlenarySessionDocumentsSchema](document/variables/GetPlenarySessionDocumentsSchema.md)
@@ -224,9 +302,21 @@ Re-exports [GetPlenarySessionsSchema](plenary/variables/GetPlenarySessionsSchema
 
 ***
 
+### GetProcedureEventByIdSchema
+
+Re-exports [GetProcedureEventByIdSchema](feed/variables/GetProcedureEventByIdSchema.md)
+
+***
+
 ### GetProcedureEventsSchema
 
 Re-exports [GetProcedureEventsSchema](activities/variables/GetProcedureEventsSchema.md)
+
+***
+
+### GetProceduresFeedSchema
+
+Re-exports [GetProceduresFeedSchema](feed/variables/GetProceduresFeedSchema.md)
 
 ***
 

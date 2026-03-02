@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: GeneratedStatsData
 
-Defined in: [data/generatedStats.ts:203](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L203)
+Defined in: [data/generatedStats.ts:412](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L412)
 
 Top-level container for all precomputed European Parliament statistics.
 
@@ -16,7 +16,7 @@ Top-level container for all precomputed European Parliament statistics.
 
 > **analysisSummary**: `object`
 
-Defined in: [data/generatedStats.ts:219](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L219)
+Defined in: [data/generatedStats.ts:428](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L428)
 
 High-level analytical summary of trends and key findings
 
@@ -62,7 +62,7 @@ Year with the highest total activity
 
 > **categoryRankings**: [`CategoryRanking`](CategoryRanking.md)[]
 
-Defined in: [data/generatedStats.ts:215](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L215)
+Defined in: [data/generatedStats.ts:424](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L424)
 
 Per-category statistical rankings across years
 
@@ -72,7 +72,7 @@ Per-category statistical rankings across years
 
 > **coveragePeriod**: `object`
 
-Defined in: [data/generatedStats.ts:207](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L207)
+Defined in: [data/generatedStats.ts:416](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L416)
 
 Underlying dataset coverage period (always 2004–2025)
 
@@ -90,7 +90,7 @@ Underlying dataset coverage period (always 2004–2025)
 
 > **dataSource**: `string`
 
-Defined in: [data/generatedStats.ts:211](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L211)
+Defined in: [data/generatedStats.ts:420](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L420)
 
 Attribution string for the data source
 
@@ -100,7 +100,7 @@ Attribution string for the data source
 
 > **generatedAt**: `string`
 
-Defined in: [data/generatedStats.ts:205](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L205)
+Defined in: [data/generatedStats.ts:414](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L414)
 
 ISO 8601 timestamp of when stats were last generated
 
@@ -110,7 +110,7 @@ ISO 8601 timestamp of when stats were last generated
 
 > **methodologyVersion**: `string`
 
-Defined in: [data/generatedStats.ts:209](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L209)
+Defined in: [data/generatedStats.ts:418](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L418)
 
 Version of the stats generation methodology
 
@@ -120,7 +120,7 @@ Version of the stats generation methodology
 
 > **predictions**: [`PredictionYear`](PredictionYear.md)[]
 
-Defined in: [data/generatedStats.ts:217](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L217)
+Defined in: [data/generatedStats.ts:426](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L426)
 
 Predicted activity for future years (2026–2030)
 
@@ -130,6 +130,6 @@ Predicted activity for future years (2026–2030)
 
 > **yearlyStats**: [`YearlyStats`](YearlyStats.md)[]
 
-Defined in: [data/generatedStats.ts:213](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L213)
+Defined in: [data/generatedStats.ts:422](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L422)
 
 Annual statistics for each year in the coverage period

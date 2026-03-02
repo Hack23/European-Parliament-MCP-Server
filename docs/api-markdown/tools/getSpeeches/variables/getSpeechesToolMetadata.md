@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getSpeechesToolMetadata**: `object`
 
-Defined in: [tools/getSpeeches.ts:80](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getSpeeches.ts#L80)
+Defined in: [tools/getSpeeches.ts:81](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getSpeeches.ts#L81)
 
 Tool metadata for get_speeches
 
@@ -16,7 +16,7 @@ Tool metadata for get_speeches
 
 ### description
 
-> **description**: `string` = `'Get European Parliament plenary speeches and debate contributions. Supports single speech lookup by speechId or list with date range filtering. Data source: European Parliament Open Data Portal.'`
+> **description**: `string` = `'Get European Parliament plenary speeches and debate contributions. Supports single speech lookup by speechId or list with year or date range filtering. Data source: European Parliament Open Data Portal.'`
 
 ### inputSchema
 
@@ -93,6 +93,26 @@ Tool metadata for get_speeches
 #### inputSchema.properties.speechId.type
 
 > **type**: `string` = `'string'`
+
+#### inputSchema.properties.year
+
+> **year**: `object`
+
+#### inputSchema.properties.year.description
+
+> **description**: `string` = `'Filter by calendar year (recommended for annual counts)'`
+
+#### inputSchema.properties.year.maximum
+
+> **maximum**: `number` = `2100`
+
+#### inputSchema.properties.year.minimum
+
+> **minimum**: `number` = `1900`
+
+#### inputSchema.properties.year.type
+
+> **type**: `string` = `'number'`
 
 #### inputSchema.type
 

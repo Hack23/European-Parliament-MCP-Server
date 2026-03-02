@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../README.md)
 
 ***
 
@@ -6,9 +6,9 @@
 
 # Type Alias: ToolCategory
 
-> **ToolCategory** = `"core"` \| `"advanced"` \| `"osint"` \| `"phase4"` \| `"phase5"`
+> **ToolCategory** = `"core"` \| `"advanced"` \| `"osint"` \| `"phase4"` \| `"phase5"` \| `"feed"`
 
-Defined in: [server/types.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L41)
+Defined in: [server/types.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L42)
 
 Logical grouping for tools in the registry.
 
@@ -19,3 +19,4 @@ Logical grouping for tools in the registry.
 | `osint`    | Open-source intelligence analysis tools (influence, coalitions) |
 | `phase4`   | EP API v2 endpoint tools added in phase 4 |
 | `phase5`   | Complete EP API v2 coverage added in phase 5 |
+| `feed`     | EP API v2 change-feed endpoints for monitoring recently updated data |

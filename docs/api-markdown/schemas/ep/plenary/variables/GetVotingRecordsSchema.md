@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **GetVotingRecordsSchema**: `ZodObject`\<\{ `dateFrom`: `ZodOptional`\<`ZodString`\>; `dateTo`: `ZodOptional`\<`ZodString`\>; `limit`: `ZodDefault`\<`ZodNumber`\>; `mepId`: `ZodOptional`\<`ZodString`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; `sessionId`: `ZodOptional`\<`ZodString`\>; `topic`: `ZodOptional`\<`ZodString`\>; \}, `$strip`\>
 
-Defined in: [schemas/ep/plenary.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/plenary.ts#L55)
+Defined in: [schemas/ep/plenary.ts:61](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/plenary.ts#L61)
 
 Get voting records input schema
