@@ -169,13 +169,21 @@ const CYAN = '\x1b[36m';
 const DIM = '\x1b[2m';
 const RESET = '\x1b[0m';
 
-/** Format elapsed seconds as human-readable duration. */
+/**
+ * Format elapsed milliseconds as a human-readable duration.
+ *
+ * @param ms - Elapsed time in milliseconds.
+ */
 function formatElapsed(ms: number): string {
   const secs = ms / 1000;
-  if (secs < 60) return `${secs.toFixed(1)}s`;
-  const mins = Math.floor(secs / 60);
-  const remainSecs = (secs % 60).toFixed(0);
-  return `${String(mins)}m${remainSecs}s`;
+  if (secs < 60) {
+    return `${secs.toFixed(1)}s`;
+  }
+  const totalSeconds = Math.floor(ms / 1000);
+  const mins = Math.floor(totalSeconds / 60);
+  const remainSecs = totalSeconds % 60;
+  const paddedSecs = String(remainSecs).padStart(2, '0');
+  return `${String(mins)}m${paddedSecs}s`;
 }
 
 /** Global start time for elapsed tracking. */
@@ -371,71 +379,6 @@ async function countItemsGroupedByMonth(
 }
 
 /**
- * Count items month-by-month using server-side date range filtering.
- *
- * For endpoints that properly support `dateFrom`/`dateTo` parameters
- * (e.g. Parliamentary Questions), this fetches each month separately.
- * This provides real monthly breakdown and shows progress throughout
- * the fetch, avoiding long silent periods.
- */
-async function countItemsByMonthRange(
-  label: string,
-  year: number,
-  fetcher: (params: { dateFrom: string; dateTo: string; limit: number; offset: number }) => Promise<{ data: unknown[]; hasMore: boolean }>
-): Promise<{ total: number | null; monthlyCounts: number[]; error?: string }> {
-  const monthlyCounts: number[] = new Array<number>(12).fill(0);
-  let totalCount = 0;
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const fetchStart = Date.now();
-  const errors: string[] = [];
-
-  progress(`🔍 ${label} (${String(year)}): fetching month by month...`);
-
-  for (let month = 0; month < 12; month++) {
-    const monthNum = String(month + 1).padStart(2, '0');
-    const dateFrom = `${String(year)}-${monthNum}-01`;
-    // Calculate last day of month
-    const lastDay = new Date(year, month + 1, 0).getDate();
-    const dateTo = `${String(year)}-${monthNum}-${String(lastDay).padStart(2, '0')}`;
-    let monthCount = 0;
-    let offset = 0;
-    let pageNum = 0;
-
-    try {
-      for (;;) {
-        pageNum++;
-        const result = await fetcher({ dateFrom, dateTo, limit: EP_API_MAX_PAGE_SIZE, offset });
-        monthCount += result.data.length;
-        if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
-        offset += EP_API_MAX_PAGE_SIZE;
-      }
-    } catch (err: unknown) {
-      if (monthCount === 0) {
-        const message = err instanceof Error ? err.message : 'Unknown error';
-        errors.push(`${monthNames[month] ?? ''}: ${message}`);
-      }
-      // Keep partial count for this month
-    }
-
-    monthlyCounts[month] = monthCount;
-    totalCount += monthCount;
-    progress(`📊 ${label}: ${monthNames[month] ?? ''}=${String(monthCount)} (total: ${String(totalCount)}, ${formatElapsed(Date.now() - fetchStart)})`);
-  }
-
-  // Log monthly summary
-  const monthSummary = monthlyCounts
-    .map((c, i) => `${monthNames[i] ?? ''}:${String(c)}`)
-    .join(' ');
-  console.log(`    ${DIM}📅 ${monthSummary} = ${String(totalCount)}${RESET}`);
-  progress(`✅ ${label}: ${String(totalCount)} items in ${String(year)} (${formatElapsed(Date.now() - fetchStart)})`);
-
-  if (errors.length > 0) {
-    return { total: totalCount > 0 ? totalCount : null, monthlyCounts, error: errors.join(' | ') };
-  }
-  return { total: totalCount, monthlyCounts };
-}
-
-/**
  * Determine comparison status between stored and API values.
  * - MATCH: values are identical
  * - CLOSE: within 10% tolerance
@@ -517,10 +460,11 @@ async function validateYearAgainstAPI(
     {
       label: 'Parliamentary Questions',
       storedKey: 'parliamentaryQuestions',
-      // Questions support dateFrom/dateTo — fetch month by month for
-      // real monthly data and better progress visibility.
-      count: () => countItemsByMonthRange('Parliamentary Questions', year, (p) =>
-        client.getParliamentaryQuestions(p)
+      // Fetch once per year and bucket client-side by question date to
+      // avoid relying on server-side dateFrom/dateTo filtering (the client
+      // only forwards `year` derived from dateFrom, not actual date bounds).
+      count: () => countItemsGroupedByMonth('Parliamentary Questions', year, (p) =>
+        client.getParliamentaryQuestions({ dateFrom: `${String(year)}-01-01`, dateTo: `${String(year)}-12-31`, ...p })
       ),
     },
   ];
