@@ -19,6 +19,12 @@ export const GetSpeechesSchema = z.object({
     .max(200)
     .optional()
     .describe('Speech ID for single speech lookup'),
+  year: z.number()
+    .int()
+    .min(1900)
+    .max(2100)
+    .optional()
+    .describe('Filter by calendar year (recommended for annual counts)'),
   dateFrom: DateStringSchema.optional()
     .describe('Start date filter (YYYY-MM-DD)'),
   dateTo: DateStringSchema.optional()
@@ -101,6 +107,12 @@ export const GetEventsSchema = z.object({
     .max(200)
     .optional()
     .describe('Event ID for single event lookup'),
+  year: z.number()
+    .int()
+    .min(1900)
+    .max(2100)
+    .optional()
+    .describe('Filter by calendar year (recommended for annual counts)'),
   dateFrom: DateStringSchema.optional()
     .describe('Start date filter (YYYY-MM-DD)'),
   dateTo: DateStringSchema.optional()

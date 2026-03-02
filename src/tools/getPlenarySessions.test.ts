@@ -55,6 +55,14 @@ describe('get_plenary_sessions Tool', () => {
       expect(result).toHaveProperty('content');
     });
 
+    it('should accept valid year parameter', async () => {
+      const result = await handleGetPlenarySessions({ year: 2024 });
+      expect(result).toHaveProperty('content');
+      expect(epClientModule.epClient.getPlenarySessions).toHaveBeenCalledWith(
+        expect.objectContaining({ year: 2024 })
+      );
+    });
+
     it('should reject invalid date format', async () => {
       await expect(handleGetPlenarySessions({ dateFrom: '01/01/2024' }))
         .rejects.toThrow();

@@ -81,6 +81,7 @@ export async function handleGetPlenarySessions(
       limit: params.limit,
       offset: params.offset,
       ...buildApiParams(params, [
+        { from: 'year', to: 'year' },
         { from: 'dateFrom', to: 'dateFrom' },
         { from: 'dateTo', to: 'dateTo' },
         { from: 'location', to: 'location' },
@@ -112,13 +113,19 @@ export async function handleGetPlenarySessions(
  */
 export const getPlenarySessionsToolMetadata = {
   name: 'get_plenary_sessions',
-  description: 'Retrieve European Parliament plenary sessions/meetings. Supports single meeting lookup by eventId or list with date and location filters. Returns session details including date, location, agenda items, voting records, and attendance statistics.',
+  description: 'Retrieve European Parliament plenary sessions/meetings. Supports single meeting lookup by eventId or list with year, date, and location filters. Returns session details including date, location, agenda items, voting records, and attendance statistics.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       eventId: {
         type: 'string',
         description: 'Meeting event ID for single meeting lookup'
+      },
+      year: {
+        type: 'number',
+        description: 'Filter by calendar year (recommended for annual counts)',
+        minimum: 1900,
+        maximum: 2100
       },
       dateFrom: {
         type: 'string',

@@ -54,6 +54,14 @@ describe('get_speeches Tool', () => {
       expect(result).toHaveProperty('content');
     });
 
+    it('should accept valid year parameter', async () => {
+      const result = await handleGetSpeeches({ year: 2024 });
+      expect(result).toHaveProperty('content');
+      expect(epClientModule.epClient.getSpeeches).toHaveBeenCalledWith(
+        expect.objectContaining({ year: 2024 })
+      );
+    });
+
     it('should accept valid limit and offset', async () => {
       const result = await handleGetSpeeches({ limit: 25, offset: 10 });
       expect(result).toHaveProperty('content');

@@ -85,7 +85,8 @@ async function fetchAdoptedTextCount(year: number): Promise<number | null> {
 /** Fetch plenary session count for a date range (null if unavailable) */
 async function fetchSessionCount(dateFrom: string, dateTo: string): Promise<number | null> {
   try {
-    const sessions = await epClient.getPlenarySessions({ dateFrom, dateTo, limit: 100 });
+    const year = parseInt(dateFrom.substring(0, 4), 10);
+    const sessions = await epClient.getPlenarySessions({ year, limit: 100 });
     return sessions.data.length;
   } catch (error: unknown) {
     auditLogger.logError('generate_report.fetch_session_count', { dateFrom, dateTo }, toErrorMessage(error));

@@ -204,8 +204,11 @@ export class VotingClient extends BaseEPClient {
   /**
    * Returns plenary speeches.
    * **EP API Endpoint:** `GET /speeches`
+   *
+   * The EP API supports filtering by `year` (recommended for annual counts).
    */
   async getSpeeches(params: {
+    year?: number;
     dateFrom?: string;
     dateTo?: string;
     limit?: number;
@@ -219,6 +222,7 @@ export class VotingClient extends BaseEPClient {
       offset,
       limit,
     };
+    if (params.year !== undefined) apiParams['year'] = params.year;
     if (params.dateFrom !== undefined) apiParams['date-from'] = params.dateFrom;
     if (params.dateTo !== undefined) apiParams['date-to'] = params.dateTo;
 

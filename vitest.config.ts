@@ -14,7 +14,8 @@ export default defineConfig({
         '**/*.spec.ts',
         '**/*.config.ts',
         '**/types/**',
-        'tests/**'
+        'tests/**',
+        'src/generated/**'
       ],
       // Updated thresholds to enforce 80%+ coverage
       // Security-critical files have 95%+ coverage (tools: 97.2%, utils: 95.45%, schemas: 100%)

@@ -153,6 +153,21 @@ export class QuestionClient extends BaseEPClient {
   }
 
   /**
+   * Retrieves recently updated parliamentary questions via the feed endpoint.
+   * **EP API Endpoint:** `GET /parliamentary-questions/feed`
+   */
+  async getParliamentaryQuestionsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('parliamentary-questions/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+    });
+  }
+
+  /**
    * Returns a single parliamentary question by document ID.
    * **EP API Endpoint:** `GET /parliamentary-questions/{doc-id}`
    */

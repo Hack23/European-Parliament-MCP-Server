@@ -286,6 +286,83 @@ export class DocumentClient extends BaseEPClient {
   }
 
   /**
+   * Retrieves recently updated documents via the feed endpoint.
+   * **EP API Endpoint:** `GET /documents/feed`
+   */
+  async getDocumentsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('documents/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+    });
+  }
+
+  /**
+   * Retrieves recently updated plenary documents via the feed endpoint.
+   * **EP API Endpoint:** `GET /plenary-documents/feed`
+   */
+  async getPlenaryDocumentsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('plenary-documents/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+    });
+  }
+
+  /**
+   * Retrieves recently updated committee documents via the feed endpoint.
+   * **EP API Endpoint:** `GET /committee-documents/feed`
+   */
+  async getCommitteeDocumentsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('committee-documents/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+    });
+  }
+
+  /**
+   * Retrieves recently updated plenary session documents via the feed endpoint.
+   * **EP API Endpoint:** `GET /plenary-session-documents/feed`
+   */
+  async getPlenarySessionDocumentsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('plenary-session-documents/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+    });
+  }
+
+  /**
+   * Retrieves recently updated external documents via the feed endpoint.
+   * **EP API Endpoint:** `GET /external-documents/feed`
+   */
+  async getExternalDocumentsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+    workType?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('external-documents/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+      ...(params.workType !== undefined ? { 'work-type': params.workType } : {}),
+    });
+  }
+
+  /**
    * Returns a single document by ID.
    * **EP API Endpoint:** `GET /documents/{doc-id}`
    */

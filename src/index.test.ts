@@ -53,9 +53,9 @@ describe('Server Constants', () => {
 });
 
 describe('getToolMetadataArray', () => {
-  it('should return 47 tools', () => {
+  it('should return 61 tools', () => {
     const tools = getToolMetadataArray();
-    expect(tools).toHaveLength(47);
+    expect(tools).toHaveLength(61);
   });
 
   it('should have unique non-empty tool names', () => {
@@ -230,12 +230,12 @@ describe('sanitizeUrl', () => {
 });
 
 describe('MCP Protocol Implementation', () => {
-  it('should have tool registration for all 47 tools', () => {
+  it('should have tool registration for all 61 tools', () => {
     const tools = getToolMetadataArray();
-    expect(tools.length).toBe(47);
+    expect(tools.length).toBe(61);
   });
 
-  it('should have exactly 7 core + 3 advanced + 15 OSINT + 8 Phase 4 + 14 Phase 5 tools', () => {
+  it('should have exactly 7 core + 3 advanced + 15 OSINT + 8 Phase 4 + 14 Phase 5 + 14 feed tools', () => {
     const tools = getToolMetadataArray();
     const coreToolNames = ['get_meps', 'get_mep_details', 'get_plenary_sessions',
       'get_voting_records', 'search_documents', 'get_committee_info', 'get_parliamentary_questions'];
@@ -260,12 +260,20 @@ describe('MCP Protocol Implementation', () => {
       'get_meeting_plenary_session_documents', 'get_meeting_plenary_session_document_items',
       'get_all_generated_stats'
     ];
+    const feedToolNames = [
+      'get_meps_feed', 'get_events_feed', 'get_procedures_feed', 'get_adopted_texts_feed',
+      'get_mep_declarations_feed', 'get_documents_feed', 'get_plenary_documents_feed',
+      'get_committee_documents_feed', 'get_plenary_session_documents_feed',
+      'get_external_documents_feed', 'get_parliamentary_questions_feed',
+      'get_corporate_bodies_feed', 'get_controlled_vocabularies_feed',
+      'get_procedure_event_by_id'
+    ];
 
     const names = tools.map(t => t.name);
-    for (const name of [...coreToolNames, ...advancedToolNames, ...osintToolNames, ...phase4ToolNames, ...phase5ToolNames]) {
+    for (const name of [...coreToolNames, ...advancedToolNames, ...osintToolNames, ...phase4ToolNames, ...phase5ToolNames, ...feedToolNames]) {
       expect(names).toContain(name);
     }
-    expect(coreToolNames.length + advancedToolNames.length + osintToolNames.length + phase4ToolNames.length + phase5ToolNames.length).toBe(47);
+    expect(coreToolNames.length + advancedToolNames.length + osintToolNames.length + phase4ToolNames.length + phase5ToolNames.length + feedToolNames.length).toBe(61);
   });
 });
 
@@ -313,7 +321,7 @@ describe('EuropeanParliamentMCPServer', () => {
       const result = await handler();
       expect(result).toHaveProperty('tools');
       expect(Array.isArray(result.tools)).toBe(true);
-      expect(result.tools.length).toBe(47);
+      expect(result.tools.length).toBe(61);
     });
   });
 

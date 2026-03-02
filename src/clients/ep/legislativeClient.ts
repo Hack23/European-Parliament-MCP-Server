@@ -163,6 +163,60 @@ export class LegislativeClient extends BaseEPClient {
   }
 
   /**
+   * Retrieves recently updated procedures via the feed endpoint.
+   * **EP API Endpoint:** `GET /procedures/feed`
+   */
+  async getProceduresFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+    processType?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('procedures/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+      ...(params.processType !== undefined ? { 'process-type': params.processType } : {}),
+    });
+  }
+
+  /**
+   * Retrieves recently updated adopted texts via the feed endpoint.
+   * **EP API Endpoint:** `GET /adopted-texts/feed`
+   */
+  async getAdoptedTextsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+    workType?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('adopted-texts/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+      ...(params.workType !== undefined ? { 'work-type': params.workType } : {}),
+    });
+  }
+
+  /**
+   * Returns a single event within a procedure by event ID.
+   * **EP API Endpoint:** `GET /procedures/{process-id}/events/{event-id}`
+   *
+   * @param processId - Procedure process ID
+   * @param eventId - Event identifier within the procedure
+   */
+  async getProcedureEventById(processId: string, eventId: string): Promise<Record<string, unknown>> {
+    if (processId.trim() === '') {
+      throw new APIError('Procedure process-id is required', 400);
+    }
+    if (eventId.trim() === '') {
+      throw new APIError('Event ID is required', 400);
+    }
+    return this.get<Record<string, unknown>>(
+      `procedures/${processId}/events/${eventId}`,
+      { format: 'application/ld+json' }
+    );
+  }
+
+  /**
    * Returns a single adopted text by document ID.
    * **EP API Endpoint:** `GET /adopted-texts/{doc-id}`
    */

@@ -64,17 +64,25 @@ export class PlenaryClient extends BaseEPClient {
 
   /**
    * Maps internal params to EP API query parameters for meetings.
+   *
+   * The EP API `/meetings` endpoint supports `year` for filtering by
+   * calendar year.  The `date-from` / `date-to` parameters are also
+   * forwarded when present (useful for sub-year ranges).
    * @private
    */
   private buildMeetingsAPIParams(params: {
+    year?: number;
     dateFrom?: string;
     dateTo?: string;
     limit?: number;
     offset?: number;
   }): Record<string, unknown> {
-    const apiParams: Record<string, unknown> = {};
+    const apiParams: Record<string, unknown> = {
+      format: 'application/ld+json',
+    };
     if (params.limit !== undefined) apiParams['limit'] = params.limit;
     if (params.offset !== undefined) apiParams['offset'] = params.offset;
+    if (params.year !== undefined) apiParams['year'] = params.year;
     if (params.dateFrom !== undefined) apiParams['date-from'] = params.dateFrom;
     if (params.dateTo !== undefined) apiParams['date-to'] = params.dateTo;
     return apiParams;
@@ -83,14 +91,19 @@ export class PlenaryClient extends BaseEPClient {
   // ─── Public methods ───────────────────────────────────────────────────────
 
   /**
-   * Retrieves plenary sessions with date and location filtering.
+   * Retrieves plenary sessions with year/date and location filtering.
    *
    * **EP API Endpoint:** `GET /meetings`
    *
-   * @param params - dateFrom, dateTo, location, limit, offset
+   * The EP API supports filtering by `year` (recommended for annual counts).
+   * `dateFrom` / `dateTo` are also forwarded but may be ignored by the API
+   * for certain endpoints.
+   *
+   * @param params - year, dateFrom, dateTo, location, limit, offset
    * @returns Paginated plenary session list
    */
   async getPlenarySessions(params: {
+    year?: number;
     dateFrom?: string;
     dateTo?: string;
     location?: string;
@@ -281,8 +294,11 @@ export class PlenaryClient extends BaseEPClient {
   /**
    * Returns EP events (hearings, conferences, etc.).
    * **EP API Endpoint:** `GET /events`
+   *
+   * The EP API supports filtering by `year` (recommended for annual counts).
    */
   async getEvents(params: {
+    year?: number;
     dateFrom?: string;
     dateTo?: string;
     limit?: number;
@@ -296,6 +312,7 @@ export class PlenaryClient extends BaseEPClient {
       offset,
       limit,
     };
+    if (params.year !== undefined) apiParams['year'] = params.year;
     if (params.dateFrom !== undefined) apiParams['date-from'] = params.dateFrom;
     if (params.dateTo !== undefined) apiParams['date-to'] = params.dateTo;
 
@@ -303,6 +320,23 @@ export class PlenaryClient extends BaseEPClient {
     const items = Array.isArray(response.data) ? response.data : [];
     const events = items.map((item) => this.transformEvent(item));
     return { data: events, total: events.length + offset, limit, offset, hasMore: events.length === limit };
+  }
+
+  /**
+   * Retrieves recently updated events via the feed endpoint.
+   * **EP API Endpoint:** `GET /events/feed`
+   */
+  async getEventsFeed(params: {
+    timeframe?: string;
+    startDate?: string;
+    activityType?: string;
+  } = {}): Promise<JSONLDResponse> {
+    return this.get<JSONLDResponse>('events/feed', {
+      format: 'application/ld+json',
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
+      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+      ...(params.activityType !== undefined ? { 'activity-type': params.activityType } : {}),
+    });
   }
 
   /**
