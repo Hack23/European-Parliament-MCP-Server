@@ -560,7 +560,7 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | '
   { year: 2020, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 44, legislativeActsAdopted: 85, rollCallVotes: 460, committeeMeetings: 1950, parliamentaryQuestions: 5850, resolutions: 148, speeches: 9800, adoptedTexts: 105, procedures: 310, events: 280, documents: 3250, mepTurnover: 95, declarations: 610, commentary: 'COVID-19 pandemic forced remote/hybrid plenary sessions. Brexit completed (UK MEPs departed January 2020, reducing count to 705). NextGenerationEU recovery fund negotiations. Unprecedented adaptation to digital parliament.' },
   { year: 2021, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 48, legislativeActsAdopted: 102, rollCallVotes: 530, committeeMeetings: 2180, parliamentaryQuestions: 6120, resolutions: 168, speeches: 11500, adoptedTexts: 128, procedures: 378, events: 395, documents: 3820, mepTurnover: 48, declarations: 665, commentary: 'Continued hybrid working. Digital COVID Certificate legislation fast-tracked. Conference on the Future of Europe launched. Fit for 55 climate package proposals. MFF 2021-2027 operational. Questions spiked due to pandemic oversight.' },
   { year: 2022, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 52, legislativeActsAdopted: 120, rollCallVotes: 590, committeeMeetings: 2380, parliamentaryQuestions: 6350, resolutions: 192, speeches: 13500, adoptedTexts: 148, procedures: 432, events: 480, documents: 4350, mepTurnover: 42, declarations: 695, commentary: 'Russia-Ukraine war dominated agenda. Energy crisis response. Digital Services Act and Digital Markets Act adopted. REPowerEU plan. Return to full in-person sessions. Parliament\'s foreign affairs role expanded significantly.' },
-  { year: 2023, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 54, legislativeActsAdopted: 148, rollCallVotes: 660, committeeMeetings: 2520, parliamentaryQuestions: 6580, resolutions: 218, speeches: 15200, adoptedTexts: 178, procedures: 498, events: 545, documents: 5020, mepTurnover: 38, declarations: 710, commentary: 'Peak EP9 legislative output. AI Act negotiations concluded. Nature Restoration Law controversial vote. Corporate Sustainability Due Diligence. Critical Raw Materials Act. Record-high legislative productivity driven by end-of-term urgency.' },
+  { year: 2023, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 58, legislativeActsAdopted: 148, rollCallVotes: 660, committeeMeetings: 2520, parliamentaryQuestions: 6580, resolutions: 218, speeches: 15200, adoptedTexts: 487, procedures: 903, events: 1676, documents: 5020, mepTurnover: 38, declarations: 343, commentary: 'Peak EP9 legislative output. AI Act negotiations concluded. Nature Restoration Law controversial vote. Corporate Sustainability Due Diligence. Critical Raw Materials Act. Record-high legislative productivity driven by end-of-term urgency.' },
   { year: 2024, parliamentaryTerm: 'EP9/EP10 transition', mepCount: 720, plenarySessions: 50, legislativeActsAdopted: 72, rollCallVotes: 375, committeeMeetings: 1680, parliamentaryQuestions: 3950, resolutions: 108, speeches: 7800, adoptedTexts: 459, procedures: 676, events: 310, documents: 2680, mepTurnover: 405, declarations: 560, commentary: 'EP9/EP10 transition. European elections June 2024. Significant rightward shift in composition. New MEPs (720 total after redistribution). Reduced output due to election cycle. AI Act entered into force.' },
   { year: 2025, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 717, plenarySessions: 53, legislativeActsAdopted: 78, rollCallVotes: 420, committeeMeetings: 1980, parliamentaryQuestions: 4941, resolutions: 135, speeches: 10000, adoptedTexts: 347, procedures: 923, events: 2657, documents: 3516, mepTurnover: 36, declarations: 3000, commentary: 'EP10 ramp-up year. New committee chairs and rapporteurs established. Defence and security policy gained prominence. Strategic autonomy debates. Clean Industrial Deal proposals. Parliament adapting to new political balance with stronger ECR and right-wing presence.' },
 ];
@@ -587,6 +587,11 @@ const RAW_MONTHLY_DATA: Record<number, Record<string, number[]>> = {
   },
   2024: {
     plenarySessions: [5, 8, 4, 6, 0, 0, 4, 0, 4, 8, 7, 4],
+    parliamentaryQuestions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  },
+  2023: {
+    plenarySessions: [5, 7, 6, 4, 5, 5, 4, 0, 4, 8, 6, 4],
+    events: [74, 79, 106, 91, 125, 133, 166, 14, 257, 219, 245, 167],
     parliamentaryQuestions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   },
 };
@@ -1210,7 +1215,7 @@ const predictions = buildPredictions();
 const analysisSummary = buildAnalysisSummary(yearlyStats);
 
 export const GENERATED_STATS: GeneratedStatsData = {
-  generatedAt: '2026-03-02T15:33:25Z',
+  generatedAt: '2026-03-02T15:57:21Z',
   coveragePeriod: { from: 2004, to: 2025 },
   methodologyVersion: '2.0.0',
   dataSource: 'European Parliament Open Data Portal — data.europarl.europa.eu',
