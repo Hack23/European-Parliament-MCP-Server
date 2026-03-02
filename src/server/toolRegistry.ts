@@ -184,7 +184,7 @@ export function getToolMetadataArray(): ToolMetadata[] {
     withCategory(getParliamentaryQuestionsFeedToolMetadata, 'feed'),
     withCategory(getCorporateBodiesFeedToolMetadata, 'feed'),
     withCategory(getControlledVocabulariesFeedToolMetadata, 'feed'),
-    withCategory(getProcedureEventByIdToolMetadata, 'feed'),
+    withCategory(getProcedureEventByIdToolMetadata, 'phase5'),
   ];
 }
 

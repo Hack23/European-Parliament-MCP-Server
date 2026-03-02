@@ -169,11 +169,13 @@ export class LegislativeClient extends BaseEPClient {
   async getProceduresFeed(params: {
     timeframe?: string;
     startDate?: string;
+    processType?: string;
   } = {}): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('procedures/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+      ...(params.processType !== undefined ? { 'process-type': params.processType } : {}),
     });
   }
 
@@ -184,11 +186,13 @@ export class LegislativeClient extends BaseEPClient {
   async getAdoptedTextsFeed(params: {
     timeframe?: string;
     startDate?: string;
+    workType?: string;
   } = {}): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('adopted-texts/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+      ...(params.workType !== undefined ? { 'work-type': params.workType } : {}),
     });
   }
 
@@ -206,7 +210,10 @@ export class LegislativeClient extends BaseEPClient {
     if (eventId.trim() === '') {
       throw new APIError('Event ID is required', 400);
     }
-    return this.get<Record<string, unknown>>(`procedures/${processId}/events/${eventId}`);
+    return this.get<Record<string, unknown>>(
+      `procedures/${processId}/events/${eventId}`,
+      { format: 'application/ld+json' }
+    );
   }
 
   /**

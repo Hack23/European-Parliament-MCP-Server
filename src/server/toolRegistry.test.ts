@@ -25,7 +25,7 @@ vi.mock('../tools/getMEPs.js', async (importOriginal) => {
 // ── getToolMetadataArray ───────────────────────────────────────────
 
 describe('getToolMetadataArray', () => {
-  // Cache once to avoid constructing a fresh 46-element array per test.
+  // Cache once to avoid constructing a fresh 61-element array per test.
   const tools = getToolMetadataArray();
 
   it('returns exactly 61 tools', () => {
@@ -98,14 +98,14 @@ describe('getToolMetadataArray', () => {
     expect(phase4).toHaveLength(8);
   });
 
-  it('has exactly 14 phase5 tools', () => {
+  it('has exactly 15 phase5 tools', () => {
     const phase5 = tools.filter((t) => t.category === 'phase5');
-    expect(phase5).toHaveLength(14);
+    expect(phase5).toHaveLength(15);
   });
 
-  it('has exactly 14 feed tools', () => {
+  it('has exactly 13 feed tools', () => {
     const feed = tools.filter((t) => t.category === 'feed');
-    expect(feed).toHaveLength(14);
+    expect(feed).toHaveLength(13);
   });
 
   it('category counts sum to 61', () => {
@@ -249,10 +249,10 @@ describe('getToolMetadataArray', () => {
     expect(first.category).toBe('core');
   });
 
-  it('last tool is get_procedure_event_by_id with feed category', () => {
+  it('last tool is get_procedure_event_by_id with phase5 category', () => {
     const last = tools[tools.length - 1] as ToolMetadata;
     expect(last.name).toBe('get_procedure_event_by_id');
-    expect(last.category).toBe('feed');
+    expect(last.category).toBe('phase5');
   });
 });
 

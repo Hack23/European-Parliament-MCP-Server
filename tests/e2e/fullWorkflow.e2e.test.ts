@@ -115,7 +115,7 @@ describe('Full Workflow E2E Tests', () => {
       // Precomputed analytics (1)
       expect(toolNames).toContain('get_all_generated_stats');
 
-      expect(toolNames.length).toBe(47);
+      expect(toolNames.length).toBe(61);
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute get_meps tool', async () => {

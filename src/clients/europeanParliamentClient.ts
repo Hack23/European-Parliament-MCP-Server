@@ -362,6 +362,7 @@ export class EuropeanParliamentClient {
   async getMEPDeclarationsFeed(params: {
     timeframe?: string;
     startDate?: string;
+    workType?: string;
   } = {}): Promise<JSONLDResponse> {
     return this.mepClient.getMEPDeclarationsFeed(params);
   }
@@ -744,6 +745,7 @@ export class EuropeanParliamentClient {
   async getExternalDocumentsFeed(params: {
     timeframe?: string;
     startDate?: string;
+    workType?: string;
   } = {}): Promise<JSONLDResponse> {
     return this.documentClient.getExternalDocumentsFeed(params);
   }
@@ -809,6 +811,7 @@ export class EuropeanParliamentClient {
   async getProceduresFeed(params: {
     timeframe?: string;
     startDate?: string;
+    processType?: string;
   } = {}): Promise<JSONLDResponse> {
     return this.legislativeClient.getProceduresFeed(params);
   }
@@ -820,6 +823,7 @@ export class EuropeanParliamentClient {
   async getAdoptedTextsFeed(params: {
     timeframe?: string;
     startDate?: string;
+    workType?: string;
   } = {}): Promise<JSONLDResponse> {
     return this.legislativeClient.getAdoptedTextsFeed(params);
   }

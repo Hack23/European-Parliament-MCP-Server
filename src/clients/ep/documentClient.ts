@@ -352,11 +352,13 @@ export class DocumentClient extends BaseEPClient {
   async getExternalDocumentsFeed(params: {
     timeframe?: string;
     startDate?: string;
+    workType?: string;
   } = {}): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('external-documents/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+      ...(params.workType !== undefined ? { 'work-type': params.workType } : {}),
     });
   }
 

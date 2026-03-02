@@ -27,71 +27,76 @@ export const FeedTimeframeSchema = z
 /**
  * Base feed parameters shared by all feed endpoints.
  */
-const baseFeedParams = {
-  timeframe: FeedTimeframeSchema,
-  startDate: DateStringSchema.optional()
-    .describe('Start date (YYYY-MM-DD) — required when timeframe is "custom"'),
-};
+const BaseFeedParamsSchema = z
+  .object({
+    timeframe: FeedTimeframeSchema,
+    startDate: DateStringSchema.optional()
+      .describe('Start date (YYYY-MM-DD) — required when timeframe is "custom"'),
+  })
+  .superRefine((data, ctx) => {
+    if (data.timeframe === 'custom' && (data.startDate === undefined || data.startDate === '')) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['startDate'],
+        message: 'startDate is required when timeframe is "custom"',
+      });
+    }
+  });
 
 // ── Group A – timeframe only ──────────────────────────────────────────────
 
 /** GET /meps/feed */
-export const GetMEPsFeedSchema = z.object({ ...baseFeedParams });
+export const GetMEPsFeedSchema = BaseFeedParamsSchema;
 
 /** GET /corporate-bodies/feed */
-export const GetCorporateBodiesFeedSchema = z.object({ ...baseFeedParams });
+export const GetCorporateBodiesFeedSchema = BaseFeedParamsSchema;
 
 /** GET /committee-documents/feed */
-export const GetCommitteeDocumentsFeedSchema = z.object({ ...baseFeedParams });
+export const GetCommitteeDocumentsFeedSchema = BaseFeedParamsSchema;
 
 /** GET /controlled-vocabularies/feed */
-export const GetControlledVocabulariesFeedSchema = z.object({ ...baseFeedParams });
+export const GetControlledVocabulariesFeedSchema = BaseFeedParamsSchema;
 
 /** GET /documents/feed */
-export const GetDocumentsFeedSchema = z.object({ ...baseFeedParams });
+export const GetDocumentsFeedSchema = BaseFeedParamsSchema;
 
 /** GET /plenary-documents/feed */
-export const GetPlenaryDocumentsFeedSchema = z.object({ ...baseFeedParams });
+export const GetPlenaryDocumentsFeedSchema = BaseFeedParamsSchema;
 
 /** GET /parliamentary-questions/feed */
-export const GetParliamentaryQuestionsFeedSchema = z.object({ ...baseFeedParams });
+export const GetParliamentaryQuestionsFeedSchema = BaseFeedParamsSchema;
 
 /** GET /plenary-session-documents/feed */
-export const GetPlenarySessionDocumentsFeedSchema = z.object({ ...baseFeedParams });
+export const GetPlenarySessionDocumentsFeedSchema = BaseFeedParamsSchema;
 
 // ── Group B – timeframe + type filter ─────────────────────────────────────
 
 /** GET /events/feed */
-export const GetEventsFeedSchema = z.object({
-  ...baseFeedParams,
+export const GetEventsFeedSchema = BaseFeedParamsSchema.extend({
   activityType: z.string().max(200).optional()
     .describe('Activity type filter'),
 });
 
 /** GET /procedures/feed */
-export const GetProceduresFeedSchema = z.object({
-  ...baseFeedParams,
+export const GetProceduresFeedSchema = BaseFeedParamsSchema.extend({
   processType: z.string().max(200).optional()
     .describe('Process type filter'),
 });
 
 /** GET /adopted-texts/feed */
-export const GetAdoptedTextsFeedSchema = z.object({
-  ...baseFeedParams,
+export const GetAdoptedTextsFeedSchema = BaseFeedParamsSchema.extend({
   workType: z.string().max(200).optional()
     .describe('Work type filter'),
 });
 
 /** GET /meps-declarations/feed */
-export const GetMEPDeclarationsFeedSchema = z.object({
-  ...baseFeedParams,
+export const GetMEPDeclarationsFeedSchema = BaseFeedParamsSchema.extend({
   workType: z.string().max(200).optional()
     .describe('Work type filter'),
 });
 
 /** GET /external-documents/feed */
-export const GetExternalDocumentsFeedSchema = z.object({
-  ...baseFeedParams,
+export const GetExternalDocumentsFeedSchema = BaseFeedParamsSchema.extend({
   workType: z.string().max(200).optional()
     .describe('Work type filter'),
 });

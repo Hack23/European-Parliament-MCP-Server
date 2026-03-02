@@ -37,6 +37,7 @@ export type ToolHandler = (args: unknown) => Promise<ToolResult>;
  * | `osint`    | Open-source intelligence analysis tools (influence, coalitions) |
  * | `phase4`   | EP API v2 endpoint tools added in phase 4 |
  * | `phase5`   | Complete EP API v2 coverage added in phase 5 |
+ * | `feed`     | EP API v2 change-feed endpoints for monitoring recently updated data |
  */
 export type ToolCategory = 'core' | 'advanced' | 'osint' | 'phase4' | 'phase5' | 'feed';
 

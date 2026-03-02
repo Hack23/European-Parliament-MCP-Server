@@ -305,11 +305,13 @@ export class MEPClient extends BaseEPClient {
   async getMEPDeclarationsFeed(params: {
     timeframe?: string;
     startDate?: string;
+    workType?: string;
   } = {}): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('meps-declarations/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
+      ...(params.workType !== undefined ? { 'work-type': params.workType } : {}),
     });
   }
 
