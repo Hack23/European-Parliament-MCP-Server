@@ -562,7 +562,7 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | '
   { year: 2022, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 52, legislativeActsAdopted: 120, rollCallVotes: 590, committeeMeetings: 2380, parliamentaryQuestions: 6350, resolutions: 192, speeches: 13500, adoptedTexts: 148, procedures: 432, events: 480, documents: 4350, mepTurnover: 42, declarations: 695, commentary: 'Russia-Ukraine war dominated agenda. Energy crisis response. Digital Services Act and Digital Markets Act adopted. REPowerEU plan. Return to full in-person sessions. Parliament\'s foreign affairs role expanded significantly.' },
   { year: 2023, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 54, legislativeActsAdopted: 148, rollCallVotes: 660, committeeMeetings: 2520, parliamentaryQuestions: 6580, resolutions: 218, speeches: 15200, adoptedTexts: 178, procedures: 498, events: 545, documents: 5020, mepTurnover: 38, declarations: 710, commentary: 'Peak EP9 legislative output. AI Act negotiations concluded. Nature Restoration Law controversial vote. Corporate Sustainability Due Diligence. Critical Raw Materials Act. Record-high legislative productivity driven by end-of-term urgency.' },
   { year: 2024, parliamentaryTerm: 'EP9/EP10 transition', mepCount: 720, plenarySessions: 38, legislativeActsAdopted: 72, rollCallVotes: 375, committeeMeetings: 1680, parliamentaryQuestions: 3950, resolutions: 108, speeches: 7800, adoptedTexts: 82, procedures: 235, events: 310, documents: 2680, mepTurnover: 405, declarations: 560, commentary: 'EP9/EP10 transition. European elections June 2024. Significant rightward shift in composition. New MEPs (720 total after redistribution). Reduced output due to election cycle. AI Act entered into force.' },
-  { year: 2025, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 717, plenarySessions: 46, legislativeActsAdopted: 78, rollCallVotes: 420, committeeMeetings: 1980, parliamentaryQuestions: 4941, resolutions: 135, speeches: 10500, adoptedTexts: 347, procedures: 923, events: 365, documents: 3510, mepTurnover: 36, declarations: 635, commentary: 'EP10 ramp-up year. New committee chairs and rapporteurs established. Defence and security policy gained prominence. Strategic autonomy debates. Clean Industrial Deal proposals. Parliament adapting to new political balance with stronger ECR and right-wing presence.' },
+  { year: 2025, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 717, plenarySessions: 53, legislativeActsAdopted: 78, rollCallVotes: 420, committeeMeetings: 1980, parliamentaryQuestions: 4941, resolutions: 135, speeches: 10000, adoptedTexts: 347, procedures: 923, events: 53996, documents: 3513, mepTurnover: 36, declarations: 635, commentary: 'EP10 ramp-up year. New committee chairs and rapporteurs established. Defence and security policy gained prominence. Strategic autonomy debates. Clean Industrial Deal proposals. Parliament adapting to new political balance with stronger ECR and right-wing presence.' },
 ];
 
 // ── Real monthly data from EP API ─────────────────────────────────
@@ -1202,7 +1202,7 @@ const predictions = buildPredictions();
 const analysisSummary = buildAnalysisSummary(yearlyStats);
 
 export const GENERATED_STATS: GeneratedStatsData = {
-  generatedAt: '2026-03-01T21:07:53Z',
+  generatedAt: '2026-03-02T11:27:25Z',
   coveragePeriod: { from: 2004, to: 2025 },
   methodologyVersion: '2.0.0',
   dataSource: 'European Parliament Open Data Portal — data.europarl.europa.eu',
