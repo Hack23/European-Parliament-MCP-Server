@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../../README.md)
 
 ***
 
@@ -144,7 +144,7 @@ Request timeout in milliseconds.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:556](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L556)
+Defined in: [clients/ep/baseClient.ts:613](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L613)
 
 Clears all entries from the LRU cache.
 
@@ -246,7 +246,7 @@ Applies client-side filters to voting records.
 
 > `protected` **get**\<`T`\>(`endpoint`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:496](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L496)
+Defined in: [clients/ep/baseClient.ts:553](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L553)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -292,7 +292,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:565](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L565)
+Defined in: [clients/ep/baseClient.ts:622](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L622)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -332,7 +332,7 @@ Returns cache statistics for monitoring and debugging.
 
 > **getSpeechById**(`speechId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>
 
-Defined in: [clients/ep/votingClient.ts:235](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L235)
+Defined in: [clients/ep/votingClient.ts:239](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L239)
 
 Returns a single speech by ID.
 **EP API Endpoint:** `GET /speeches/{speech-id}`
@@ -353,10 +353,12 @@ Returns a single speech by ID.
 
 > **getSpeeches**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>\>
 
-Defined in: [clients/ep/votingClient.ts:208](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L208)
+Defined in: [clients/ep/votingClient.ts:210](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L210)
 
 Returns plenary speeches.
 **EP API Endpoint:** `GET /speeches`
+
+The EP API supports filtering by `year` (recommended for annual counts).
 
 #### Parameters
 
@@ -375,6 +377,10 @@ Returns plenary speeches.
 `number`
 
 ###### offset?
+
+`number`
+
+###### year?
 
 `number`
 

@@ -7,7 +7,7 @@
 <h1 align="center">European Parliament MCP Server - API Usage Guide</h1>
 
 <p align="center">
-  <strong>Comprehensive guide to using all 47 MCP tools</strong><br>
+  <strong>Comprehensive guide to using all 61 MCP tools</strong><br>
   <em>Real-world examples, best practices, and query patterns</em>
 </p>
 
@@ -39,6 +39,11 @@
   - [track_mep_attendance](#tool-track_mep_attendance)
   - [analyze_country_delegation](#tool-analyze_country_delegation)
   - [generate_political_landscape](#tool-generate_political_landscape)
+  - [network_analysis](#tool-network_analysis)
+  - [sentiment_tracker](#tool-sentiment_tracker)
+  - [early_warning_system](#tool-early_warning_system)
+  - [comparative_intelligence](#tool-comparative_intelligence)
+  - [correlate_intelligence](#tool-correlate_intelligence)
 - [EP API v2 Endpoint Tools](#ep-api-v2-endpoint-tools)
   - [get_current_meps](#tool-get_current_meps)
   - [get_incoming_meps](#tool-get_incoming_meps)
@@ -52,6 +57,8 @@
   - [get_meeting_activities](#tool-get_meeting_activities)
   - [get_meeting_decisions](#tool-get_meeting_decisions)
   - [get_meeting_foreseen_activities](#tool-get_meeting_foreseen_activities)
+  - [get_meeting_plenary_session_documents](#tool-get_meeting_plenary_session_documents)
+  - [get_meeting_plenary_session_document_items](#tool-get_meeting_plenary_session_document_items)
   - [get_mep_declarations](#tool-get_mep_declarations)
   - [get_plenary_documents](#tool-get_plenary_documents)
   - [get_committee_documents](#tool-get_committee_documents)
@@ -59,6 +66,21 @@
   - [get_plenary_session_document_items](#tool-get_plenary_session_document_items)
   - [get_controlled_vocabularies](#tool-get_controlled_vocabularies)
   - [get_external_documents](#tool-get_external_documents)
+  - [get_procedure_event_by_id](#tool-get_procedure_event_by_id)
+- [EP API v2 Feed Endpoint Tools](#ep-api-v2-feed-endpoint-tools)
+  - [get_meps_feed](#tool-get_meps_feed)
+  - [get_events_feed](#tool-get_events_feed)
+  - [get_procedures_feed](#tool-get_procedures_feed)
+  - [get_adopted_texts_feed](#tool-get_adopted_texts_feed)
+  - [get_mep_declarations_feed](#tool-get_mep_declarations_feed)
+  - [get_documents_feed](#tool-get_documents_feed)
+  - [get_plenary_documents_feed](#tool-get_plenary_documents_feed)
+  - [get_committee_documents_feed](#tool-get_committee_documents_feed)
+  - [get_plenary_session_documents_feed](#tool-get_plenary_session_documents_feed)
+  - [get_external_documents_feed](#tool-get_external_documents_feed)
+  - [get_parliamentary_questions_feed](#tool-get_parliamentary_questions_feed)
+  - [get_corporate_bodies_feed](#tool-get_corporate_bodies_feed)
+  - [get_controlled_vocabularies_feed](#tool-get_controlled_vocabularies_feed)
 - [MCP Prompts](#mcp-prompts)
 - [MCP Resources](#mcp-resources)
 - [Common Use Cases](#common-use-cases)
@@ -69,7 +91,7 @@
 
 ## 🎯 Overview
 
-The European Parliament MCP Server provides 47 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 7 core tools, 3 advanced tools, 15 OSINT intelligence tools, 8 Phase 4 tools, and 14 Phase 5 tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
+The European Parliament MCP Server provides 61 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 7 core tools, 3 advanced tools, 15 OSINT intelligence tools, 1 statistics tool, 21 EP API v2 endpoint tools, 1 procedure event detail tool, and 13 EP API v2 feed tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
 
 ### Key Features
 
@@ -110,6 +132,8 @@ Currently, the server does **not require authentication** for tool access. Futur
 | `get_meeting_activities` | Meeting activities | sittingId (required) | Paginated list |
 | `get_meeting_decisions` | Meeting decisions | sittingId (required) | Paginated list |
 | `get_meeting_foreseen_activities` | Planned agenda items | sittingId (required) | Paginated list |
+| `get_meeting_plenary_session_documents` | Meeting session documents | sittingId (required) | Paginated list |
+| `get_meeting_plenary_session_document_items` | Meeting session doc items | sittingId (required) | Paginated list |
 
 ### 🏢 Committee Tools
 
@@ -136,6 +160,7 @@ Currently, the server does **not require authentication** for tool access. Futur
 |------|---------|----------------|---------------|
 | `get_procedures` | Legislative procedures | processId, year | Paginated list |
 | `get_procedure_events` | Procedure timeline events | processId (required) | Paginated list |
+| `get_procedure_event_by_id` | Single procedure event | processId, eventId (both required) | Single object |
 | `get_controlled_vocabularies` | Classification terms | vocId | Paginated list |
 
 ### 📊 Advanced Analysis Tools
@@ -145,7 +170,7 @@ Currently, the server does **not require authentication** for tool access. Futur
 | `analyze_voting_patterns` | Voting analysis | mepId, dateFrom | Analysis object |
 | `track_legislation` | Track procedure | procedureId | Procedure object |
 | `generate_report` | Create reports | reportType, subjectId | Report object |
-| `get_all_generated_stats` | Precomputed EP stats (2004-2025) | yearFrom, yearTo, category | Statistics object |
+| `get_all_generated_stats` | Precomputed EP stats (2004-2025) + [30 OSINT metrics](./EP_POLITICAL_LANDSCAPE.md) | yearFrom, yearTo, category | Statistics object |
 
 ### 🕵️ OSINT Intelligence Tools
 
@@ -161,6 +186,29 @@ Currently, the server does **not require authentication** for tool access. Futur
 | `track_mep_attendance` | MEP attendance patterns | mepId, country, groupId, limit | Attendance report |
 | `analyze_country_delegation` | Country delegation analysis | country (required) | Delegation analysis |
 | `generate_political_landscape` | Parliament-wide landscape | dateFrom, dateTo | Landscape overview |
+| `network_analysis` | MEP relationship network mapping | mepId, analysisType, depth | Network metrics |
+| `sentiment_tracker` | Political group positioning scores | groupId, timeframe | Sentiment report |
+| `early_warning_system` | Detect emerging political shifts | sensitivity, focusArea | Warning alerts |
+| `comparative_intelligence` | Cross-reference MEP activities | mepIds (required), dimensions | Comparison matrix |
+| `correlate_intelligence` | Cross-tool OSINT correlation | mepIds, groups, correlationMode | Intelligence alerts |
+
+### 📡 Feed Tools
+
+| Tool | Purpose | Key Parameters | Response Type |
+|------|---------|----------------|---------------|
+| `get_meps_feed` | Recently updated MEPs | timeframe, startDate | Feed list |
+| `get_events_feed` | Recently updated events | timeframe, activityType | Feed list |
+| `get_procedures_feed` | Recently updated procedures | timeframe, processType | Feed list |
+| `get_adopted_texts_feed` | Recently updated adopted texts | timeframe, workType | Feed list |
+| `get_mep_declarations_feed` | Recently updated MEP declarations | timeframe, workType | Feed list |
+| `get_documents_feed` | Recently updated documents | timeframe, startDate | Feed list |
+| `get_plenary_documents_feed` | Recently updated plenary documents | timeframe, startDate | Feed list |
+| `get_committee_documents_feed` | Recently updated committee documents | timeframe, startDate | Feed list |
+| `get_plenary_session_documents_feed` | Recently updated plenary session docs | timeframe, startDate | Feed list |
+| `get_external_documents_feed` | Recently updated external documents | timeframe, workType | Feed list |
+| `get_parliamentary_questions_feed` | Recently updated questions | timeframe, startDate | Feed list |
+| `get_corporate_bodies_feed` | Recently updated corporate bodies | timeframe, startDate | Feed list |
+| `get_controlled_vocabularies_feed` | Recently updated vocabularies | timeframe, startDate | Feed list |
 
 ---
 
@@ -1153,6 +1201,211 @@ Generate a current political landscape overview including group sizes, coalition
 
 ---
 
+### Tool: network_analysis
+
+**Description**: MEP relationship network mapping using committee co-membership. Computes centrality scores, cluster assignments, bridging MEPs, and network density metrics. Identifies informal power structures and cross-party collaboration pathways.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| mepId | number | No | - | Focus on ego network for a specific MEP |
+| analysisType | string | No | combined | Analysis type: `committee`, `voting`, or `combined` |
+| depth | number | No | 2 | Network depth (1-3 hops from focal node) |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Map the relationship network for MEP 124810 using committee co-membership data
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('network_analysis', {
+  mepId: 124810,
+  analysisType: 'committee',
+  depth: 2
+});
+```
+
+**Example Response** (abbreviated):
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{\"networkMetrics\":{\"density\":0.34,\"avgCentrality\":0.45,\"clusters\":5},\"centralNodes\":[{\"mepId\":124810,\"centralityScore\":0.82,\"clusterAssignment\":1,\"bridgingScore\":0.67}],\"crossPartyEdges\":42}"
+  }]
+}
+```
+
+> **EP API Endpoints**: `/meps`, `/corporate-bodies`
+
+---
+
+### Tool: sentiment_tracker
+
+**Description**: Track political group institutional-positioning scores based on seat-share proxy. Computes scores (-1 to +1), polarization index, and identifies consensus and divisive topics.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| groupId | string | No | - | Political group identifier (e.g., "EPP", "S&D"). Omit for all groups |
+| timeframe | string | No | last_quarter | Time window: `last_month`, `last_quarter`, or `last_year` |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Track the institutional positioning sentiment for the EPP group over the last quarter
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('sentiment_tracker', {
+  groupId: 'EPP',
+  timeframe: 'last_quarter'
+});
+```
+
+**Example Response** (abbreviated):
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{\"groupScores\":[{\"groupId\":\"EPP\",\"positioningScore\":0.72,\"trend\":\"stable\"}],\"polarizationIndex\":0.38,\"consensusTopics\":[\"defense\",\"trade\"],\"divisiveTopics\":[\"migration\",\"climate\"]}"
+  }]
+}
+```
+
+> **EP API Endpoints**: `/corporate-bodies`
+
+---
+
+### Tool: early_warning_system
+
+**Description**: Detect emerging political shifts, coalition fracture signals, and unusual patterns. Generates warnings with severity levels (CRITICAL/HIGH/MEDIUM/LOW), computes stability score (0-100).
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| sensitivity | string | No | medium | Detection sensitivity: `low`, `medium`, or `high` |
+| focusArea | string | No | all | Focus area: `coalitions`, `attendance`, or `all` |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Run the early warning system with high sensitivity focused on coalition dynamics
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('early_warning_system', {
+  sensitivity: 'high',
+  focusArea: 'coalitions'
+});
+```
+
+**Example Response** (abbreviated):
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{\"stabilityScore\":72,\"warnings\":[{\"severity\":\"HIGH\",\"type\":\"coalition_fracture\",\"description\":\"Unusual voting divergence detected in EPP-Renew bloc\",\"confidence\":0.85}],\"overallAssessment\":\"Moderate instability signals detected\"}"
+  }]
+}
+```
+
+> **EP API Endpoints**: `/meps`, `/meetings`
+
+---
+
+### Tool: comparative_intelligence
+
+**Description**: Cross-reference 2-10 MEP activities across voting, committee, legislative, and attendance dimensions. Returns ranked profiles, correlation matrix, outlier detection, and cluster analysis.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| mepIds | array of numbers | Yes | - | List of 2-10 MEP identifiers to compare |
+| dimensions | array of strings | No | all | Dimensions to compare: `voting`, `committee`, `legislative`, `attendance` |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Compare MEPs 124810, 124811, and 124812 across voting and committee dimensions
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('comparative_intelligence', {
+  mepIds: [124810, 124811, 124812],
+  dimensions: ['voting', 'committee']
+});
+```
+
+**Example Response** (abbreviated):
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{\"rankedProfiles\":[{\"mepId\":124810,\"overallScore\":0.87,\"rank\":1}],\"correlationMatrix\":[[1.0,0.65,0.42],[0.65,1.0,0.71],[0.42,0.71,1.0]],\"outliers\":[],\"clusters\":[{\"members\":[124811,124812],\"label\":\"high-committee-engagement\"}]}"
+  }]
+}
+```
+
+> **EP API Endpoints**: `/meps`, `/meetings`
+
+---
+
+### Tool: correlate_intelligence
+
+**Description**: Cross-tool OSINT intelligence correlation engine. Combines outputs from assess_mep_influence + detect_voting_anomalies, early_warning_system + analyze_coalition_dynamics, and optionally network_analysis + comparative_intelligence. Returns consolidated intelligence alerts with evidence chains.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| mepIds | array of strings | No | - | Target MEP identifiers (1-5 items) |
+| groups | array of strings | No | - | Target political group identifiers (1-10 items) |
+| correlationMode | string | No | broad | Correlation mode: `targeted` (specific MEPs/groups), `broad` (general scan), or `comprehensive` (full cross-reference) |
+
+At least one of `mepIds` or `groups` should be provided for `targeted` mode. In `broad` and `comprehensive` modes, parameters are optional.
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Run comprehensive intelligence correlation across EPP and S&D groups
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('correlate_intelligence', {
+  groups: ['EPP', 'S&D'],
+  correlationMode: 'comprehensive'
+});
+```
+
+**Example Response** (abbreviated):
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{\"alerts\":[{\"severity\":\"HIGH\",\"type\":\"cross_tool_correlation\",\"sources\":[\"early_warning_system\",\"analyze_coalition_dynamics\"],\"finding\":\"Coalition stress between EPP and S&D on migration policy\",\"evidenceChain\":[\"Voting divergence: 34%\",\"Attendance drop in joint committee sessions\"],\"confidence\":0.78}],\"summary\":{\"totalAlerts\":3,\"criticalCount\":0,\"highCount\":1}}"
+  }]
+}
+```
+
+> **EP API Endpoints**: Multiple (orchestrates other tools)
+
+---
+
 ## 🏛️ EP API v2 Endpoint Tools
 
 These tools provide direct access to all European Parliament Open Data API v2 endpoints.
@@ -1495,6 +1748,64 @@ const result = await client.callTool('get_meeting_foreseen_activities', {
 
 ---
 
+### Tool: get_meeting_plenary_session_documents
+
+**Description**: Get plenary session documents for a specific EP meeting/plenary sitting. Returns session documents associated with the meeting. Data source: European Parliament Open Data Portal.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| sittingId | string | Yes | - | Meeting / sitting identifier |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Get plenary session documents for sitting MTG-PL-2024-03-11
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_meeting_plenary_session_documents', {
+  sittingId: 'MTG-PL-2024-03-11',
+  limit: 50
+});
+```
+
+---
+
+### Tool: get_meeting_plenary_session_document_items
+
+**Description**: Get plenary session document items for a specific EP meeting/plenary sitting. Returns individual agenda item documents for the meeting. Data source: European Parliament Open Data Portal.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| sittingId | string | Yes | - | Meeting / sitting identifier |
+| limit | number | No | 50 | Maximum results (1-100) |
+| offset | number | No | 0 | Pagination offset |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Get individual agenda item documents for plenary sitting MTG-PL-2024-03-11
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_meeting_plenary_session_document_items', {
+  sittingId: 'MTG-PL-2024-03-11',
+  limit: 50
+});
+```
+
+---
+
 ### Tool: get_mep_declarations
 
 **Description**: Get MEP declarations of financial interests filed under the Rules of Procedure. Supports single declaration lookup by docId or list with year filter. GDPR: Access is audit-logged.
@@ -1683,9 +1994,49 @@ const result = await client.callTool('get_external_documents', { year: 2024, lim
 
 ---
 
+### Tool: get_procedure_event_by_id
+
+**Description**: Get a specific event linked to a legislative procedure. Returns a single event for the specified procedure and event identifiers.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| processId | string | Yes | - | Legislative procedure identifier (e.g., "2024-0006") |
+| eventId | string | Yes | - | Event identifier within the procedure |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Get event EVT-001 from legislative procedure 2024-0006
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_procedure_event_by_id', {
+  processId: '2024-0006',
+  eventId: 'EVT-001'
+});
+```
+
+**Example Response** (abbreviated):
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{\"event\":{\"eventId\":\"EVT-001\",\"processId\":\"2024-0006\",\"type\":\"COMMITTEE_VOTE\",\"date\":\"2024-03-15\",\"title\":\"Committee vote on amendments\",\"outcome\":\"ADOPTED\",\"details\":{\"votesFor\":42,\"votesAgainst\":12,\"abstentions\":3}}}"
+  }]
+}
+```
+
+---
+
 ### Tool: get_all_generated_stats
 
-**Description**: Retrieve precomputed European Parliament activity statistics covering parliamentary terms EP6–EP10 (2004–2025), including monthly activity breakdowns, category rankings with percentiles, statistical analysis, political landscape history (group composition, fragmentation index, coalition dynamics), analytical commentary, and average-based predictions for 2026–2030. Static data refreshed weekly by agentic workflow — no live API calls.
+**Description**: Retrieve precomputed European Parliament activity statistics covering parliamentary terms EP6–EP10 (2004–2025), including monthly activity breakdowns, category rankings with percentiles, statistical analysis, political landscape history (group composition, fragmentation index, coalition dynamics), 30 OSINT-derived intelligence metrics (legislative efficiency, engagement indices, political concentration, 3-axis political compass, institutional stability, year-over-year dynamics), analytical commentary, and average-based predictions for 2026–2030. Static data refreshed weekly by agentic workflow — no live API calls.
+
+> 📊 **Visual Dashboard**: See **[EP Political Landscape](./EP_POLITICAL_LANDSCAPE.md)** for comprehensive Mermaid chart visualizations of all statistics, political compass analysis, coalition scenarios, and derived intelligence metrics.
 
 #### Parameters
 
@@ -1723,10 +2074,12 @@ The response includes:
 |-------|-------------|
 | `coveragePeriod` | Underlying dataset range (always `{ from: 2004, to: 2025 }`) |
 | `requestedPeriod` | User-supplied year filter (`{ from: yearFrom, to: yearTo }`) |
-| `yearlyStats` | Annual statistics per year with 13 activity metrics and political landscape |
+| `yearlyStats` | Annual statistics per year with 13 activity metrics, political landscape, and derived intelligence |
+| `yearlyStats[].derivedIntelligence` | 30 OSINT metrics: legislative efficiency, engagement, concentration, [3-axis political compass](./EP_POLITICAL_LANDSCAPE.md#-political-compass--3-axis-analysis), stability, YoY dynamics |
+| `yearlyStats[].politicalLandscape` | Group composition, fragmentation index, coalition dynamics, [quadrant distribution](./EP_POLITICAL_LANDSCAPE.md#-quadrant-distribution--the-political-square) |
 | `categoryRankings` | Per-category percentile rankings recomputed for the filtered range |
 | `predictions` | Average-based extrapolations for 2026–2030 with term-cycle adjustments |
-| `analysisSummary` | Trend analysis, peak/lowest years, key findings, coverage note |
+| `analysisSummary` | Trend analysis, peak/lowest years, OSINT key findings, coverage note |
 | `methodology` | Description of the statistical approach and data sources |
 
 #### Category Filter Options
@@ -1747,6 +2100,377 @@ The response includes:
 | `documents` | Documents produced | `search_documents` |
 | `mep_turnover` | MEP arrivals/departures | `get_incoming_meps`, `get_outgoing_meps` |
 | `declarations` | MEP declarations | `get_mep_declarations` |
+
+---
+
+## 📡 EP API v2 Feed Endpoint Tools
+
+These tools provide access to European Parliament Open Data API v2 feed endpoints. Feed endpoints return recently updated records within a specified timeframe, enabling change-tracking and incremental data synchronization workflows.
+
+### Common Feed Parameters
+
+All feed tools share these common parameters:
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date in YYYY-MM-DD format. **Required** when timeframe is `custom` |
+
+---
+
+### Tool: get_meps_feed
+
+**Description**: Get recently updated MEPs from the European Parliament feed endpoint. Returns MEP records that have been modified within the specified timeframe.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Show me MEPs updated in the last week
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_meps_feed', {
+  timeframe: 'one-week'
+});
+```
+
+---
+
+### Tool: get_events_feed
+
+**Description**: Get recently updated events from the European Parliament feed endpoint. Returns event records that have been modified within the specified timeframe.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+| activityType | string | No | - | Filter by activity type |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Show me EP events updated today
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_events_feed', {
+  timeframe: 'today'
+});
+```
+
+---
+
+### Tool: get_procedures_feed
+
+**Description**: Get recently updated legislative procedures from the European Parliament feed endpoint. Returns procedure records that have been modified within the specified timeframe.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+| processType | string | No | - | Filter by procedure/process type |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+What legislative procedures were updated this month?
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_procedures_feed', {
+  timeframe: 'one-month'
+});
+```
+
+---
+
+### Tool: get_adopted_texts_feed
+
+**Description**: Get recently updated adopted texts from the European Parliament feed endpoint. Returns adopted text records that have been modified within the specified timeframe.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+| workType | string | No | - | Filter by work type |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Show me adopted texts updated in the past week
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_adopted_texts_feed', {
+  timeframe: 'one-week'
+});
+```
+
+---
+
+### Tool: get_mep_declarations_feed
+
+**Description**: Get recently updated MEP declarations from the European Parliament feed endpoint. Returns MEP declaration records that have been modified within the specified timeframe.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+| workType | string | No | - | Filter by work type |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Show me MEP declarations updated this month
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_mep_declarations_feed', {
+  timeframe: 'one-month'
+});
+```
+
+---
+
+### Tool: get_documents_feed
+
+**Description**: Get recently updated documents from the European Parliament feed endpoint. Returns document records that have been modified within the specified timeframe.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+What documents were updated in the last day?
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_documents_feed', {
+  timeframe: 'one-day'
+});
+```
+
+---
+
+### Tool: get_plenary_documents_feed
+
+**Description**: Get recently updated plenary documents from the European Parliament feed endpoint. Returns plenary document records that have been modified within the specified timeframe.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Show me plenary documents updated this week
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_plenary_documents_feed', {
+  timeframe: 'one-week'
+});
+```
+
+---
+
+### Tool: get_committee_documents_feed
+
+**Description**: Get recently updated committee documents from the European Parliament feed endpoint. Returns committee document records that have been modified within the specified timeframe.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Get committee documents updated in the past week
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_committee_documents_feed', {
+  timeframe: 'one-week'
+});
+```
+
+---
+
+### Tool: get_plenary_session_documents_feed
+
+**Description**: Get recently updated plenary session documents from the European Parliament feed endpoint. Returns plenary session document records that have been modified within the specified timeframe.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Show plenary session documents updated today
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_plenary_session_documents_feed', {
+  timeframe: 'today'
+});
+```
+
+---
+
+### Tool: get_external_documents_feed
+
+**Description**: Get recently updated external documents from the European Parliament feed endpoint. Returns external document records (Council positions, Commission proposals) that have been modified within the specified timeframe.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+| workType | string | No | - | Filter by work type |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Show me external documents updated in the last month
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_external_documents_feed', {
+  timeframe: 'one-month'
+});
+```
+
+---
+
+### Tool: get_parliamentary_questions_feed
+
+**Description**: Get recently updated parliamentary questions from the European Parliament feed endpoint. Returns parliamentary question records that have been modified within the specified timeframe.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+What parliamentary questions were updated this week?
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_parliamentary_questions_feed', {
+  timeframe: 'one-week'
+});
+```
+
+---
+
+### Tool: get_corporate_bodies_feed
+
+**Description**: Get recently updated corporate bodies (committees, delegations, inter-parliamentary delegations) from the European Parliament feed endpoint. Returns corporate body records that have been modified within the specified timeframe.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Show me corporate bodies updated in the last month
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_corporate_bodies_feed', {
+  timeframe: 'one-month'
+});
+```
+
+---
+
+### Tool: get_controlled_vocabularies_feed
+
+**Description**: Get recently updated controlled vocabularies from the European Parliament feed endpoint. Returns controlled vocabulary records that have been modified within the specified timeframe.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
+| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+Have any controlled vocabularies been updated recently?
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_controlled_vocabularies_feed', {
+  timeframe: 'one-week'
+});
+```
 
 ---
 

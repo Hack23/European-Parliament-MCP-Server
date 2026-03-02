@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../../README.md)
 
 ***
 
@@ -144,7 +144,7 @@ Request timeout in milliseconds.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:556](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L556)
+Defined in: [clients/ep/baseClient.ts:613](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L613)
 
 Clears all entries from the LRU cache.
 
@@ -162,7 +162,7 @@ Clears all entries from the LRU cache.
 
 > `protected` **get**\<`T`\>(`endpoint`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:496](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L496)
+Defined in: [clients/ep/baseClient.ts:553](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L553)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -208,7 +208,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:565](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L565)
+Defined in: [clients/ep/baseClient.ts:622](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L622)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -275,11 +275,38 @@ Raw API response with vocabulary items
 
 ***
 
+### getControlledVocabulariesFeed()
+
+> **getControlledVocabulariesFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+
+Defined in: [clients/ep/vocabularyClient.ts:61](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/vocabularyClient.ts#L61)
+
+Retrieves recently updated controlled vocabularies via the feed endpoint.
+**EP API Endpoint:** `GET /controlled-vocabularies/feed`
+
+#### Parameters
+
+##### params?
+
+###### startDate?
+
+`string`
+
+###### timeframe?
+
+`string`
+
+#### Returns
+
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+
+***
+
 ### getControlledVocabularyById()
 
 > **getControlledVocabularyById**(`vocId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>
 
-Defined in: [clients/ep/vocabularyClient.ts:64](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/vocabularyClient.ts#L64)
+Defined in: [clients/ep/vocabularyClient.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/vocabularyClient.ts#L79)
 
 Returns a single EP Controlled Vocabulary by ID.
 **EP API Endpoint:** `GET /controlled-vocabularies/{voc-id}`

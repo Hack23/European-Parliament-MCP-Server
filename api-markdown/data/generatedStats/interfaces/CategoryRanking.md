@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: CategoryRanking
 
-Defined in: [data/generatedStats.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L143)
+Defined in: [data/generatedStats.ts:352](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L352)
 
 Statistical ranking of years for a single activity category.
 
@@ -16,7 +16,7 @@ Statistical ranking of years for a single activity category.
 
 > **bottomYear**: `number`
 
-Defined in: [data/generatedStats.ts:157](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L157)
+Defined in: [data/generatedStats.ts:366](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L366)
 
 Year with the lowest activity score
 
@@ -26,7 +26,7 @@ Year with the lowest activity score
 
 > **category**: `string`
 
-Defined in: [data/generatedStats.ts:145](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L145)
+Defined in: [data/generatedStats.ts:354](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L354)
 
 Human-readable category label (e.g. 'Plenary Sessions')
 
@@ -36,7 +36,7 @@ Human-readable category label (e.g. 'Plenary Sessions')
 
 > **mean**: `number`
 
-Defined in: [data/generatedStats.ts:149](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L149)
+Defined in: [data/generatedStats.ts:358](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L358)
 
 Mean value across all years
 
@@ -46,7 +46,7 @@ Mean value across all years
 
 > **median**: `number`
 
-Defined in: [data/generatedStats.ts:153](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L153)
+Defined in: [data/generatedStats.ts:362](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L362)
 
 Median value
 
@@ -56,7 +56,7 @@ Median value
 
 > **rankings**: [`RankedYear`](RankedYear.md)[]
 
-Defined in: [data/generatedStats.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L147)
+Defined in: [data/generatedStats.ts:356](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L356)
 
 Per-year ranking entries, sorted by descending activity score
 
@@ -66,7 +66,7 @@ Per-year ranking entries, sorted by descending activity score
 
 > **stdDev**: `number`
 
-Defined in: [data/generatedStats.ts:151](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L151)
+Defined in: [data/generatedStats.ts:360](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L360)
 
 Standard deviation
 
@@ -76,6 +76,6 @@ Standard deviation
 
 > **topYear**: `number`
 
-Defined in: [data/generatedStats.ts:155](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L155)
+Defined in: [data/generatedStats.ts:364](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L364)
 
 Year with the highest activity score

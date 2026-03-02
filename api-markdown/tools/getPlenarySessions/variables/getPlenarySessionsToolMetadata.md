@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getPlenarySessionsToolMetadata**: `object`
 
-Defined in: [tools/getPlenarySessions.ts:113](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenarySessions.ts#L113)
+Defined in: [tools/getPlenarySessions.ts:114](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenarySessions.ts#L114)
 
 Tool metadata for MCP registration
 
@@ -16,7 +16,7 @@ Tool metadata for MCP registration
 
 ### description
 
-> **description**: `string` = `'Retrieve European Parliament plenary sessions/meetings. Supports single meeting lookup by eventId or list with date and location filters. Returns session details including date, location, agenda items, voting records, and attendance statistics.'`
+> **description**: `string` = `'Retrieve European Parliament plenary sessions/meetings. Supports single meeting lookup by eventId or list with year, date, and location filters. Returns session details including date, location, agenda items, voting records, and attendance statistics.'`
 
 ### inputSchema
 
@@ -131,6 +131,26 @@ Tool metadata for MCP registration
 > **minimum**: `number` = `0`
 
 #### inputSchema.properties.offset.type
+
+> **type**: `string` = `'number'`
+
+#### inputSchema.properties.year
+
+> **year**: `object`
+
+#### inputSchema.properties.year.description
+
+> **description**: `string` = `'Filter by calendar year (recommended for annual counts)'`
+
+#### inputSchema.properties.year.maximum
+
+> **maximum**: `number` = `2100`
+
+#### inputSchema.properties.year.minimum
+
+> **minimum**: `number` = `1900`
+
+#### inputSchema.properties.year.type
 
 > **type**: `string` = `'number'`
 

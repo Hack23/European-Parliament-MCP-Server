@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../../README.md)
 
 ***
 
@@ -178,7 +178,7 @@ Builds EP API parameters for parliamentary question search.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:556](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L556)
+Defined in: [clients/ep/baseClient.ts:613](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L613)
 
 Clears all entries from the LRU cache.
 
@@ -234,7 +234,7 @@ Applies client-side filters to parliamentary questions.
 
 > `protected` **get**\<`T`\>(`endpoint`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:496](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L496)
+Defined in: [clients/ep/baseClient.ts:553](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L553)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -280,7 +280,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:565](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L565)
+Defined in: [clients/ep/baseClient.ts:622](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L622)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -320,7 +320,7 @@ Returns cache statistics for monitoring and debugging.
 
 > **getParliamentaryQuestionById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ParliamentaryQuestion`](../../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>
 
-Defined in: [clients/ep/questionClient.ts:159](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L159)
+Defined in: [clients/ep/questionClient.ts:174](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L174)
 
 Returns a single parliamentary question by document ID.
 **EP API Endpoint:** `GET /parliamentary-questions/{doc-id}`
@@ -394,6 +394,33 @@ Paginated parliamentary questions list
 #### Security
 
 Audit logged per GDPR Article 30
+
+***
+
+### getParliamentaryQuestionsFeed()
+
+> **getParliamentaryQuestionsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+
+Defined in: [clients/ep/questionClient.ts:159](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L159)
+
+Retrieves recently updated parliamentary questions via the feed endpoint.
+**EP API Endpoint:** `GET /parliamentary-questions/feed`
+
+#### Parameters
+
+##### params?
+
+###### startDate?
+
+`string`
+
+###### timeframe?
+
+`string`
+
+#### Returns
+
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
 ***
 

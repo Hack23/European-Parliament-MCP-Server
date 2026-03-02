@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Variable: GetSpeechesSchema
 
-> `const` **GetSpeechesSchema**: `ZodObject`\<\{ `dateFrom`: `ZodOptional`\<`ZodString`\>; `dateTo`: `ZodOptional`\<`ZodString`\>; `limit`: `ZodDefault`\<`ZodNumber`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; `speechId`: `ZodOptional`\<`ZodString`\>; \}, `$strip`\>
+> `const` **GetSpeechesSchema**: `ZodObject`\<\{ `dateFrom`: `ZodOptional`\<`ZodString`\>; `dateTo`: `ZodOptional`\<`ZodString`\>; `limit`: `ZodDefault`\<`ZodNumber`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; `speechId`: `ZodOptional`\<`ZodString`\>; `year`: `ZodOptional`\<`ZodNumber`\>; \}, `$strip`\>
 
 Defined in: [schemas/ep/activities.ts:16](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/activities.ts#L16)
 

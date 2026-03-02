@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../../README.md)
 
 ***
 
@@ -144,7 +144,7 @@ Request timeout in milliseconds.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:556](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L556)
+Defined in: [clients/ep/baseClient.ts:613](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L613)
 
 Clears all entries from the LRU cache.
 
@@ -182,7 +182,7 @@ Attempts a direct corporate-body lookup by ID.
 
 > `protected` **get**\<`T`\>(`endpoint`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:496](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L496)
+Defined in: [clients/ep/baseClient.ts:553](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L553)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -228,7 +228,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:565](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L565)
+Defined in: [clients/ep/baseClient.ts:622](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L622)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -300,11 +300,38 @@ Audit logged per GDPR Article 30
 
 ***
 
+### getCorporateBodiesFeed()
+
+> **getCorporateBodiesFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+
+Defined in: [clients/ep/committeeClient.ts:139](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L139)
+
+Retrieves recently updated corporate bodies via the feed endpoint.
+**EP API Endpoint:** `GET /corporate-bodies/feed`
+
+#### Parameters
+
+##### params?
+
+###### startDate?
+
+`string`
+
+###### timeframe?
+
+`string`
+
+#### Returns
+
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+
+***
+
 ### getCurrentCorporateBodies()
 
 > **getCurrentCorporateBodies**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
 
-Defined in: [clients/ep/committeeClient.ts:139](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L139)
+Defined in: [clients/ep/committeeClient.ts:154](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L154)
 
 Returns the list of all current EP Corporate Bodies for today's date.
 **EP API Endpoint:** `GET /corporate-bodies/show-current`

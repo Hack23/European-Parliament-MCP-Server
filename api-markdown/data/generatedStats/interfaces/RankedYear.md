@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: RankedYear
 
-Defined in: [data/generatedStats.ts:131](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L131)
+Defined in: [data/generatedStats.ts:340](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L340)
 
 Ranked year entry within a category ranking.
 
@@ -16,7 +16,7 @@ Ranked year entry within a category ranking.
 
 > **percentile**: `number`
 
-Defined in: [data/generatedStats.ts:137](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L137)
+Defined in: [data/generatedStats.ts:346](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L346)
 
 Percentile score (0–100)
 
@@ -26,7 +26,7 @@ Percentile score (0–100)
 
 > **rank**: `number`
 
-Defined in: [data/generatedStats.ts:135](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L135)
+Defined in: [data/generatedStats.ts:344](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L344)
 
 Rank among all years (1 = highest activity)
 
@@ -36,7 +36,7 @@ Rank among all years (1 = highest activity)
 
 > **totalActivityScore**: `number`
 
-Defined in: [data/generatedStats.ts:139](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L139)
+Defined in: [data/generatedStats.ts:348](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L348)
 
 Sum of the metric value used for ranking
 
@@ -46,6 +46,6 @@ Sum of the metric value used for ranking
 
 > **year**: `number`
 
-Defined in: [data/generatedStats.ts:133](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L133)
+Defined in: [data/generatedStats.ts:342](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L342)
 
 Calendar year

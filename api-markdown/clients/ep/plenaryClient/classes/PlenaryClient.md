@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../../README.md)
 
 ***
 
@@ -144,9 +144,13 @@ Request timeout in milliseconds.
 
 > `private` **buildMeetingsAPIParams**(`params`): [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
-Defined in: [clients/ep/plenaryClient.ts:69](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L69)
+Defined in: [clients/ep/plenaryClient.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L73)
 
 Maps internal params to EP API query parameters for meetings.
+
+The EP API `/meetings` endpoint supports `year` for filtering by
+calendar year.  The `date-from` / `date-to` parameters are also
+forwarded when present (useful for sub-year ranges).
 
 #### Parameters
 
@@ -168,6 +172,10 @@ Maps internal params to EP API query parameters for meetings.
 
 `number`
 
+###### year?
+
+`number`
+
 #### Returns
 
 [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
@@ -178,7 +186,7 @@ Maps internal params to EP API query parameters for meetings.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:556](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L556)
+Defined in: [clients/ep/baseClient.ts:613](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L613)
 
 Clears all entries from the LRU cache.
 
@@ -196,7 +204,7 @@ Clears all entries from the LRU cache.
 
 > `protected` **get**\<`T`\>(`endpoint`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:496](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L496)
+Defined in: [clients/ep/baseClient.ts:553](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L553)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -242,7 +250,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:565](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L565)
+Defined in: [clients/ep/baseClient.ts:622](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L622)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -282,7 +290,7 @@ Returns cache statistics for monitoring and debugging.
 
 > **getEventById**(`eventId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>
 
-Defined in: [clients/ep/plenaryClient.ts:312](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L312)
+Defined in: [clients/ep/plenaryClient.ts:346](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L346)
 
 Returns a single EP event by ID.
 **EP API Endpoint:** `GET /events/{event-id}`
@@ -303,10 +311,12 @@ Returns a single EP event by ID.
 
 > **getEvents**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>\>
 
-Defined in: [clients/ep/plenaryClient.ts:285](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L285)
+Defined in: [clients/ep/plenaryClient.ts:300](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L300)
 
 Returns EP events (hearings, conferences, etc.).
 **EP API Endpoint:** `GET /events`
+
+The EP API supports filtering by `year` (recommended for annual counts).
 
 #### Parameters
 
@@ -328,9 +338,44 @@ Returns EP events (hearings, conferences, etc.).
 
 `number`
 
+###### year?
+
+`number`
+
 #### Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>\>
+
+***
+
+### getEventsFeed()
+
+> **getEventsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+
+Defined in: [clients/ep/plenaryClient.ts:329](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L329)
+
+Retrieves recently updated events via the feed endpoint.
+**EP API Endpoint:** `GET /events/feed`
+
+#### Parameters
+
+##### params?
+
+###### activityType?
+
+`string`
+
+###### startDate?
+
+`string`
+
+###### timeframe?
+
+`string`
+
+#### Returns
+
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
 ***
 
@@ -338,7 +383,7 @@ Returns EP events (hearings, conferences, etc.).
 
 > **getMeetingActivities**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
-Defined in: [clients/ep/plenaryClient.ts:135](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L135)
+Defined in: [clients/ep/plenaryClient.ts:148](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L148)
 
 Returns activities linked to a specific meeting (plenary sitting).
 **EP API Endpoint:** `GET /meetings/{sitting-id}/activities`
@@ -369,7 +414,7 @@ Returns activities linked to a specific meeting (plenary sitting).
 
 > **getMeetingById**(`eventId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PlenarySession`](../../../../types/ep/plenary/interfaces/PlenarySession.md)\>
 
-Defined in: [clients/ep/plenaryClient.ts:270](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L270)
+Defined in: [clients/ep/plenaryClient.ts:283](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L283)
 
 Returns a single EP meeting by ID.
 **EP API Endpoint:** `GET /meetings/{event-id}`
@@ -390,7 +435,7 @@ Returns a single EP meeting by ID.
 
 > **getMeetingDecisions**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/ep/plenaryClient.ts:162](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L162)
+Defined in: [clients/ep/plenaryClient.ts:175](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L175)
 
 Returns decisions made in a specific meeting (plenary sitting).
 **EP API Endpoint:** `GET /meetings/{sitting-id}/decisions`
@@ -421,7 +466,7 @@ Returns decisions made in a specific meeting (plenary sitting).
 
 > **getMeetingForeseenActivities**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
-Defined in: [clients/ep/plenaryClient.ts:189](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L189)
+Defined in: [clients/ep/plenaryClient.ts:202](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L202)
 
 Returns foreseen activities linked to a specific meeting.
 **EP API Endpoint:** `GET /meetings/{sitting-id}/foreseen-activities`
@@ -452,7 +497,7 @@ Returns foreseen activities linked to a specific meeting.
 
 > **getMeetingPlenarySessionDocumentItems**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/ep/plenaryClient.ts:243](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L243)
+Defined in: [clients/ep/plenaryClient.ts:256](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L256)
 
 Returns plenary session document items for a specific meeting.
 **EP API Endpoint:** `GET /meetings/{sitting-id}/plenary-session-document-items`
@@ -483,7 +528,7 @@ Returns plenary session document items for a specific meeting.
 
 > **getMeetingPlenarySessionDocuments**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/ep/plenaryClient.ts:216](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L216)
+Defined in: [clients/ep/plenaryClient.ts:229](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L229)
 
 Returns plenary session documents for a specific meeting.
 **EP API Endpoint:** `GET /meetings/{sitting-id}/plenary-session-documents`
@@ -514,17 +559,21 @@ Returns plenary session documents for a specific meeting.
 
 > **getPlenarySessions**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`PlenarySession`](../../../../types/ep/plenary/interfaces/PlenarySession.md)\>\>
 
-Defined in: [clients/ep/plenaryClient.ts:93](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L93)
+Defined in: [clients/ep/plenaryClient.ts:105](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L105)
 
-Retrieves plenary sessions with date and location filtering.
+Retrieves plenary sessions with year/date and location filtering.
 
 **EP API Endpoint:** `GET /meetings`
+
+The EP API supports filtering by `year` (recommended for annual counts).
+`dateFrom` / `dateTo` are also forwarded but may be ignored by the API
+for certain endpoints.
 
 #### Parameters
 
 ##### params
 
-dateFrom, dateTo, location, limit, offset
+year, dateFrom, dateTo, location, limit, offset
 
 ###### dateFrom?
 
@@ -543,6 +592,10 @@ dateFrom, dateTo, location, limit, offset
 `string`
 
 ###### offset?
+
+`number`
+
+###### year?
 
 `number`
 

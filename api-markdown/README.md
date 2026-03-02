@@ -1,4 +1,4 @@
-**European Parliament MCP Server API v1.0.1**
+**European Parliament MCP Server API v1.1.0**
 
 ***
 
@@ -37,6 +37,7 @@
 </table>
 
 [![ISMS](https://img.shields.io/badge/Hack23-ISMS-blue)](https://github.com/Hack23/ISMS-PUBLIC)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12067/badge)](https://www.bestpractices.dev/projects/12067)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Hack23/European-Parliament-MCP-Server)
 
 ## 📊 Quality Metrics & Documentation
@@ -74,7 +75,7 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ### 🎯 Key Features
 
-- 🔌 **Full MCP Implementation**: 47 tools (7 core + 3 advanced analysis + 15 OSINT intelligence + 8 Phase 4 + 14 Phase 5), 9 Resources, and 7 Prompts
+- 🔌 **Full MCP Implementation**: 61 tools (7 core + 3 advanced + 15 OSINT + 8 Phase 4 + 15 Phase 5 + 13 feed), 9 Resources, and 7 Prompts
 - 🏛️ **Complete EP API v2 Coverage**: All European Parliament Open Data API endpoints covered
 - 🕵️ **OSINT Intelligence**: MEP influence scoring, coalition analysis, anomaly detection
 - 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance
@@ -508,9 +509,9 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 
 ---
 
-## 🔌 MCP Tools (47 Total)
+## 🔌 MCP Tools (61 Total)
 
-**47 tools** organized by capability — OSINT intelligence first, then analytical, data access, and reference tools. Every tool includes Zod input validation, caching, and rate limiting.
+**61 tools** organized by capability — OSINT intelligence first, then analytical, data access, feed endpoints, and reference tools. Every tool includes Zod input validation, caching, and rate limiting.
 
 ### 🕵️ OSINT Intelligence Tools (15)
 
@@ -536,7 +537,7 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 
 | Tool | Description | Key Parameters | Output |
 |------|-------------|----------------|--------|
-| [`get_all_generated_stats`](_media/API_USAGE_GUIDE.md#tool-get_all_generated_stats) | Precomputed EP activity statistics (2004-2025) with rankings, predictions, and political landscape | yearFrom, yearTo, category, includePredictions | Statistics object |
+| [`get_all_generated_stats`](_media/API_USAGE_GUIDE.md#tool-get_all_generated_stats) | Precomputed EP activity statistics (2004-2025) with rankings, predictions, political landscape, and [30 OSINT-derived intelligence metrics](_media/EP_POLITICAL_LANDSCAPE.md) including 3-axis political compass | yearFrom, yearTo, category, includePredictions | Statistics object |
 | [`analyze_voting_patterns`](_media/API_USAGE_GUIDE.md#tool-analyze_voting_patterns) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
 | [`track_legislation`](_media/API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
 | [`generate_report`](_media/API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
@@ -586,13 +587,34 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 | [`get_external_documents`](_media/API_USAGE_GUIDE.md#tool-get_external_documents) | Non-EP documents (Council, Commission) | docId, year, limit | `GET /external-documents`, `GET /external-documents/{id}` |
 | [`get_parliamentary_questions`](_media/API_USAGE_GUIDE.md#tool-get_parliamentary_questions) | Parliamentary Q&A, or single by docId | type, author, topic, docId | `GET /parliamentary-questions`, `GET /parliamentary-questions/{id}` |
 
-### ⚖️ Legislative Procedure Tools (3)
+### ⚖️ Legislative Procedure Tools (4)
 
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
 | [`get_procedures`](_media/API_USAGE_GUIDE.md#tool-get_procedures) | Legislative procedures, or single by processId | processId, year, limit | `GET /procedures`, `GET /procedures/{id}` |
 | [`get_procedure_events`](_media/API_USAGE_GUIDE.md#tool-get_procedure_events) | Timeline events for a legislative procedure | processId (required), limit | `GET /procedures/{id}/events` |
+| [`get_procedure_event_by_id`](_media/API_USAGE_GUIDE.md#tool-get_procedure_event_by_id) | Specific event linked to a legislative procedure | processId (required), eventId (required) | `GET /procedures/{id}/events/{event-id}` |
 | [`get_controlled_vocabularies`](_media/API_USAGE_GUIDE.md#tool-get_controlled_vocabularies) | Standardized classification terms | vocId, limit | `GET /controlled-vocabularies`, `GET /controlled-vocabularies/{id}` |
+
+### 📡 Feed Tools (13)
+
+Real-time change feeds for monitoring recently updated data across all EP API categories. Each feed supports configurable timeframes (today, one-day, one-week, one-month, custom).
+
+| Tool | Description | Key Parameters | EP API Endpoint |
+|------|-------------|----------------|-----------------|
+| [`get_meps_feed`](_media/API_USAGE_GUIDE.md#tool-get_meps_feed) | Recently updated MEPs | timeframe, startDate | `GET /meps/feed` |
+| [`get_events_feed`](_media/API_USAGE_GUIDE.md#tool-get_events_feed) | Recently updated events | timeframe, startDate, activityType | `GET /events/feed` |
+| [`get_procedures_feed`](_media/API_USAGE_GUIDE.md#tool-get_procedures_feed) | Recently updated procedures | timeframe, startDate, processType | `GET /procedures/feed` |
+| [`get_adopted_texts_feed`](_media/API_USAGE_GUIDE.md#tool-get_adopted_texts_feed) | Recently updated adopted texts | timeframe, startDate, workType | `GET /adopted-texts/feed` |
+| [`get_mep_declarations_feed`](_media/API_USAGE_GUIDE.md#tool-get_mep_declarations_feed) | Recently updated MEP declarations | timeframe, startDate, workType | `GET /meps-declarations/feed` |
+| [`get_documents_feed`](_media/API_USAGE_GUIDE.md#tool-get_documents_feed) | Recently updated documents | timeframe, startDate | `GET /documents/feed` |
+| [`get_plenary_documents_feed`](_media/API_USAGE_GUIDE.md#tool-get_plenary_documents_feed) | Recently updated plenary documents | timeframe, startDate | `GET /plenary-documents/feed` |
+| [`get_committee_documents_feed`](_media/API_USAGE_GUIDE.md#tool-get_committee_documents_feed) | Recently updated committee documents | timeframe, startDate | `GET /committee-documents/feed` |
+| [`get_plenary_session_documents_feed`](_media/API_USAGE_GUIDE.md#tool-get_plenary_session_documents_feed) | Recently updated plenary session documents | timeframe, startDate | `GET /plenary-session-documents/feed` |
+| [`get_external_documents_feed`](_media/API_USAGE_GUIDE.md#tool-get_external_documents_feed) | Recently updated external documents | timeframe, startDate, workType | `GET /external-documents/feed` |
+| [`get_parliamentary_questions_feed`](_media/API_USAGE_GUIDE.md#tool-get_parliamentary_questions_feed) | Recently updated parliamentary questions | timeframe, startDate | `GET /parliamentary-questions/feed` |
+| [`get_corporate_bodies_feed`](_media/API_USAGE_GUIDE.md#tool-get_corporate_bodies_feed) | Recently updated corporate bodies | timeframe, startDate | `GET /corporate-bodies/feed` |
+| [`get_controlled_vocabularies_feed`](_media/API_USAGE_GUIDE.md#tool-get_controlled_vocabularies_feed) | Recently updated controlled vocabularies | timeframe, startDate | `GET /controlled-vocabularies/feed` |
 
 📖 **[Complete TypeDoc API documentation →](https://hack23.github.io/European-Parliament-MCP-Server/api/)** · **[Markdown API docs →](https://hack23.github.io/European-Parliament-MCP-Server/api-markdown/)**
 
@@ -745,7 +767,7 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 
 ### Complete EP API v2 Coverage
 
-All [European Parliament Open Data API v2](https://data.europarl.europa.eu/en/developer-corner/opendata-api) endpoint categories are fully covered:
+All 55 [European Parliament Open Data API v2](https://data.europarl.europa.eu/en/developer-corner/opendata-api) endpoints are fully covered — 41 core data endpoints, 13 feed endpoints, and 1 optional endpoint (`/procedures/{id}/events/{event-id}`):
 
 | Category | Endpoints | MCP Tools |
 |----------|-----------|-----------|
@@ -755,11 +777,12 @@ All [European Parliament Open Data API v2](https://data.europarl.europa.eu/en/de
 | **Events** | `/events`, `/events/{id}` | `get_events` |
 | **Meetings** | `/meetings`, `/meetings/{id}`, `/meetings/{id}/activities`, `/meetings/{id}/decisions`, `/meetings/{id}/foreseen-activities`, `/meetings/{id}/vote-results`, `/meetings/{id}/plenary-session-documents`, `/meetings/{id}/plenary-session-document-items` | `get_plenary_sessions`, `get_meeting_activities`, `get_meeting_decisions`, `get_meeting_foreseen_activities`, `get_voting_records`, `get_meeting_plenary_session_documents`, `get_meeting_plenary_session_document_items` |
 | **Speeches** | `/speeches`, `/speeches/{id}` | `get_speeches` |
-| **Procedures** | `/procedures`, `/procedures/{id}`, `/procedures/{id}/events` | `get_procedures`, `get_procedure_events` |
+| **Procedures** | `/procedures`, `/procedures/{id}`, `/procedures/{id}/events`, `/procedures/{id}/events/{event-id}` | `get_procedures`, `get_procedure_events`, `get_procedure_event_by_id` |
 | **Documents** | `/documents`, `/documents/{id}`, `/adopted-texts`, `/adopted-texts/{id}`, `/committee-documents`, `/committee-documents/{id}`, `/plenary-documents`, `/plenary-documents/{id}`, `/plenary-session-documents`, `/plenary-session-documents/{id}`, `/plenary-session-documents-items` | `search_documents`, `get_adopted_texts`, `get_committee_documents`, `get_plenary_documents`, `get_plenary_session_documents`, `get_plenary_session_document_items` |
 | **Questions** | `/parliamentary-questions`, `/parliamentary-questions/{id}` | `get_parliamentary_questions` |
 | **External Documents** | `/external-documents`, `/external-documents/{id}` | `get_external_documents` |
 | **Vocabularies** | `/controlled-vocabularies`, `/controlled-vocabularies/{id}` | `get_controlled_vocabularies` |
+| **Feed Endpoints** | `/meps/feed`, `/events/feed`, `/procedures/feed`, `/adopted-texts/feed`, `/meps-declarations/feed`, `/documents/feed`, `/plenary-documents/feed`, `/committee-documents/feed`, `/plenary-session-documents/feed`, `/external-documents/feed`, `/parliamentary-questions/feed`, `/corporate-bodies/feed`, `/controlled-vocabularies/feed` | `get_meps_feed`, `get_events_feed`, `get_procedures_feed`, `get_adopted_texts_feed`, `get_mep_declarations_feed`, `get_documents_feed`, `get_plenary_documents_feed`, `get_committee_documents_feed`, `get_plenary_session_documents_feed`, `get_external_documents_feed`, `get_parliamentary_questions_feed`, `get_corporate_bodies_feed`, `get_controlled_vocabularies_feed` |
 
 ### Data Source
 
@@ -867,6 +890,7 @@ European-Parliament-MCP-Server/
 - **[Architecture Documentation](_media/ARCHITECTURE.md)** - System architecture and design patterns
 - **[Data Model](_media/DATA_MODEL.md)** - Data structures and type definitions
 - **[API Usage Guide](_media/API_USAGE_GUIDE.md)** - Guide for using the MCP server API
+- **[EP Political Landscape](_media/EP_POLITICAL_LANDSCAPE.md)** - 📊 Comprehensive Mermaid visualization of all EP statistics, political compass, coalition dynamics, and OSINT intelligence metrics
 
 #### 🧪 Testing & Quality
 
@@ -1323,6 +1347,7 @@ For deep dives into specific evolution tracks, see:
 
 | Document | Focus | Link |
 |:---------|:------|:-----|
+| 📊 **EP Political Landscape** | OSINT intelligence dashboard — seat composition, fragmentation, political compass, coalition dynamics, derived metrics | [EP_POLITICAL_LANDSCAPE.md](_media/EP_POLITICAL_LANDSCAPE.md) |
 | 🧠 **Future Mind Map** | Capability expansion vision, AI analysis, OSINT evolution | [FUTURE_MINDMAP.md](_media/FUTURE_MINDMAP.md) |
 | ⚙️ **Future Workflows** | CI/CD evolution, AI-augmented pipelines, 2027–2037 roadmap | [FUTURE_WORKFLOWS.md](_media/FUTURE_WORKFLOWS.md) |
 | 🏛️ **Future Architecture** | Platform architecture evolution, AWS deployment, federation | [FUTURE_ARCHITECTURE.md](_media/FUTURE_ARCHITECTURE.md) |

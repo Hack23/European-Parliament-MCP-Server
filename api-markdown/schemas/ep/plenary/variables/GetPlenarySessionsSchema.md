@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.0.1**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Variable: GetPlenarySessionsSchema
 
-> `const` **GetPlenarySessionsSchema**: `ZodObject`\<\{ `dateFrom`: `ZodOptional`\<`ZodString`\>; `dateTo`: `ZodOptional`\<`ZodString`\>; `eventId`: `ZodOptional`\<`ZodString`\>; `limit`: `ZodDefault`\<`ZodNumber`\>; `location`: `ZodOptional`\<`ZodString`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; \}, `$strip`\>
+> `const` **GetPlenarySessionsSchema**: `ZodObject`\<\{ `dateFrom`: `ZodOptional`\<`ZodString`\>; `dateTo`: `ZodOptional`\<`ZodString`\>; `eventId`: `ZodOptional`\<`ZodString`\>; `limit`: `ZodDefault`\<`ZodNumber`\>; `location`: `ZodOptional`\<`ZodString`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; `year`: `ZodOptional`\<`ZodNumber`\>; \}, `$strip`\>
 
 Defined in: [schemas/ep/plenary.ts:13](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/plenary.ts#L13)
 
