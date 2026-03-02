@@ -331,6 +331,21 @@ describe('EuropeanParliamentClient', () => {
 
       expect(result.data[0]?.location).toBe('Strasbourg');
     });
+
+    it('should pass year parameter', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockMeetingsResponse(1)
+      } as Response);
+
+      await client.getPlenarySessions({ year: 2024, limit: 10 });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('year=2024'),
+        expect.any(Object)
+      );
+    });
   });
 
   describe('getVotingRecords', () => {
@@ -2307,6 +2322,21 @@ describe('EuropeanParliamentClient', () => {
       );
     });
 
+    it('should pass year parameter', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockSpeechesResponse(1)
+      } as Response);
+
+      await client.getSpeeches({ year: 2024 });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('year=2024'),
+        expect.any(Object)
+      );
+    });
+
     it('should handle empty results', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -2580,6 +2610,21 @@ describe('EuropeanParliamentClient', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('date-from=2024-06-01'),
+        expect.any(Object)
+      );
+    });
+
+    it('should pass year parameter', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockEventsResponse(1)
+      } as Response);
+
+      await client.getEvents({ year: 2024 });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('year=2024'),
         expect.any(Object)
       );
     });

@@ -54,6 +54,14 @@ describe('get_events Tool', () => {
       expect(result).toHaveProperty('content');
     });
 
+    it('should accept valid year parameter', async () => {
+      const result = await handleGetEvents({ year: 2024 });
+      expect(result).toHaveProperty('content');
+      expect(epClientModule.epClient.getEvents).toHaveBeenCalledWith(
+        expect.objectContaining({ year: 2024 })
+      );
+    });
+
     it('should accept valid limit and offset', async () => {
       const result = await handleGetEvents({ limit: 25, offset: 10 });
       expect(result).toHaveProperty('content');
