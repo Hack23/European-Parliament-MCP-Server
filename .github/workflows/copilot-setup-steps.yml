@@ -117,13 +117,28 @@ jobs:
           echo ""
           echo "=== Node.js MCP Servers ==="
           echo "Checking mcp-server-filesystem..."
-          which mcp-server-filesystem && echo "✅ mcp-server-filesystem found" || echo "❌ mcp-server-filesystem NOT found"
+          if command -v mcp-server-filesystem >/dev/null 2>&1; then
+            echo "✅ mcp-server-filesystem found"
+          else
+            echo "❌ mcp-server-filesystem NOT found"
+            exit 1
+          fi
           
           echo "Checking mcp-server-memory..."
-          which mcp-server-memory && echo "✅ mcp-server-memory found" || echo "❌ mcp-server-memory NOT found"
+          if command -v mcp-server-memory >/dev/null 2>&1; then
+            echo "✅ mcp-server-memory found"
+          else
+            echo "❌ mcp-server-memory NOT found"
+            exit 1
+          fi
           
           echo "Checking mcp-server-sequential-thinking..."
-          which mcp-server-sequential-thinking && echo "✅ mcp-server-sequential-thinking found" || echo "❌ mcp-server-sequential-thinking NOT found"
+          if command -v mcp-server-sequential-thinking >/dev/null 2>&1; then
+            echo "✅ mcp-server-sequential-thinking found"
+          else
+            echo "❌ mcp-server-sequential-thinking NOT found"
+            exit 1
+          fi
           
           echo "Checking playwright-mcp..."
           if command -v playwright-mcp >/dev/null 2>&1; then
