@@ -792,7 +792,7 @@ describe('transformers with real EP API JSON-LD format', () => {
     expect(speech.speakerId).toBe('person/197537');
     expect(speech.speakerName).toBe('Test Speaker');
     expect(speech.date).toBe('2023-10-17');
-    expect(speech.sessionReference).toContain('eli/dl/event/MTG-PL-2023-10-17-PVCRE-ITM-2');
+    expect(speech.sessionReference).toBe('eli/dl/event/MTG-PL-2023-10-17-PVCRE-ITM-2');
   });
 
   it('transformAdoptedText: extracts date from document_date and subject from isAboutSubjectMatter', () => {

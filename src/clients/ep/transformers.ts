@@ -104,9 +104,10 @@ export function transformMEPDetails(apiData: Record<string, unknown>): MEPDetail
 
   // EP API returns citizenship as URI (e.g. http://.../country/ITA)
   // Extract the country code from the URI if country is still the full URI
-  if (baseMEP.country.startsWith('http')) {
-    const parts = baseMEP.country.split('/');
-    baseMEP.country = parts[parts.length - 1] ?? baseMEP.country;
+  let country = baseMEP.country;
+  if (country.startsWith('http')) {
+    const parts = country.split('/');
+    country = parts[parts.length - 1] ?? country;
   }
 
   const bday = toSafeString(apiData['bday']);
@@ -124,6 +125,7 @@ export function transformMEPDetails(apiData: Record<string, unknown>): MEPDetail
 
   return {
     ...baseMEP,
+    country,
     committees: committees.length > 0 ? committees : baseMEP.committees,
     biography: `Born: ${bday !== '' ? bday : 'Unknown'}`,
     // EP API /meps/{id} endpoint does not return voting statistics;
@@ -156,7 +158,7 @@ export function transformPlenarySession(apiData: Record<string, unknown>): Plena
 
   // EP API provides consists_of (agenda item refs) and documented_by/recorded_in (document refs)
   const agendaItems = Array.isArray(apiData['consists_of'])
-    ? (apiData['consists_of'] as unknown[]).map(item => toSafeString(item)).filter(s => s !== '')
+    ? (apiData['consists_of'] as string[]).map(item => toSafeString(item)).filter(s => s !== '')
     : [];
   const docRefs = extractDocumentRefs(
     apiData['documented_by_a_realization_of'] ?? apiData['recorded_in_a_realization_of']
