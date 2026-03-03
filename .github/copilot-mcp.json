@@ -11,10 +11,8 @@
     },
     "european-parliament": {
       "type": "local",
-      "command": "node",
-      "args": [
-        "/home/runner/work/European-Parliament-MCP-Server/European-Parliament-MCP-Server/dist/index.js"
-      ],
+      "command": "european-parliament-mcp-server",
+      "args": [],
       "tools": ["*"]
     },
     "filesystem": {

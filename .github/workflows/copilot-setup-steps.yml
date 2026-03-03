@@ -70,12 +70,25 @@ jobs:
         run: |
           npm ci
 
-      # Build the European Parliament MCP Server so it's available as a local MCP server
+      # Build the European Parliament MCP Server and link globally so it's available as a local MCP server
       - name: Build European Parliament MCP Server
         run: |
           echo "🔨 Building European Parliament MCP Server..."
           npm run build
-          echo "✅ MCP Server built successfully at dist/index.js"
+          npm link
+          echo "✅ MCP Server built and linked as 'european-parliament-mcp-server'"
+
+      # Cache global npm packages for MCP servers (restore before installs to avoid stale overwrites)
+      - name: Cache global npm packages
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: |
+            /usr/local/lib/node_modules
+            /usr/local/bin/mcp-server-*
+            /usr/local/bin/playwright-mcp
+          key: ${{ runner.os }}-mcp-servers-v6-${{ hashFiles('.github/copilot-mcp.json') }}
+          restore-keys: |
+            ${{ runner.os }}-mcp-servers-v6-
 
       # Pre-install MCP server packages globally
       - name: Install MCP server packages globally
@@ -87,23 +100,10 @@ jobs:
           npm install -g @modelcontextprotocol/server-memory
           npm install -g @modelcontextprotocol/server-sequential-thinking
           
-          # Pre-cache @playwright/mcp for faster startup
+          # Install @playwright/mcp for browser automation
           npm install -g @playwright/mcp
                     
           echo "✅ Node.js MCP server packages installed globally"
-
-      # Cache global npm packages for MCP servers
-      - name: Cache global npm packages
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
-        with:
-          path: |
-            ~/.npm
-            /usr/local/lib/node_modules
-            /usr/local/bin/mcp-server-*
-            /usr/local/bin/playwright-mcp
-          key: ${{ runner.os }}-mcp-servers-v5-${{ hashFiles('.github/copilot-mcp.json') }}
-          restore-keys: |
-            ${{ runner.os }}-mcp-servers-v5-
 
       # Verify all MCP server installations
       - name: Verify MCP server installations
@@ -111,13 +111,8 @@ jobs:
           echo "🔍 Verifying MCP server installations..."
           
           echo "=== European Parliament MCP Server ==="
-          if [ -f "dist/index.js" ]; then
-            echo "✅ European Parliament MCP Server built at dist/index.js"
-            node dist/index.js --version || echo "ℹ️ Server available (stdio mode)"
-          else
-            echo "❌ European Parliament MCP Server NOT built"
-            exit 1
-          fi
+          european-parliament-mcp-server --version
+          echo "✅ european-parliament-mcp-server verified"
           
           echo ""
           echo "=== Node.js MCP Servers ==="
