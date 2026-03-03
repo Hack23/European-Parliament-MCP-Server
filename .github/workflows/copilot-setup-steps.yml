@@ -70,15 +70,7 @@ jobs:
         run: |
           npm ci
 
-      # Build the European Parliament MCP Server and link globally so it's available as a local MCP server
-      - name: Build European Parliament MCP Server
-        run: |
-          echo "🔨 Building European Parliament MCP Server..."
-          npm run build
-          npm link
-          echo "✅ MCP Server built and linked as 'european-parliament-mcp-server'"
-
-      # Cache global npm packages for MCP servers (restore before installs to avoid stale overwrites)
+      # Cache global npm packages for MCP servers (restore before build/link/installs so fresh outputs overwrite stale cache)
       - name: Cache global npm packages
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
@@ -89,6 +81,14 @@ jobs:
           key: ${{ runner.os }}-mcp-servers-v6-${{ hashFiles('.github/copilot-mcp.json') }}
           restore-keys: |
             ${{ runner.os }}-mcp-servers-v6-
+
+      # Build the European Parliament MCP Server and link globally so it's available as a local MCP server
+      - name: Build European Parliament MCP Server
+        run: |
+          echo "🔨 Building European Parliament MCP Server..."
+          npm run build
+          npm link
+          echo "✅ MCP Server built and linked as 'european-parliament-mcp-server'"
 
       # Pre-install MCP server packages globally
       - name: Install MCP server packages globally
