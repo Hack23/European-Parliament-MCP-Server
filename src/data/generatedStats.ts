@@ -548,7 +548,7 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | '
   { year: 2008, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 785, plenarySessions: 50, legislativeActsAdopted: 125, rollCallVotes: 560, committeeMeetings: 2350, parliamentaryQuestions: 5380, resolutions: 185, speeches: 13500, adoptedTexts: 152, procedures: 425, events: 490, documents: 4380, mepTurnover: 35, declarations: 690, commentary: 'Peak activity year for EP6. Climate and energy package negotiations. Financial crisis response dominated second half. Irish referendum rejected Lisbon Treaty initially.' },
   { year: 2009, parliamentaryTerm: 'EP6/EP7 transition', mepCount: 736, plenarySessions: 38, legislativeActsAdopted: 72, rollCallVotes: 380, committeeMeetings: 1650, parliamentaryQuestions: 3850, resolutions: 105, speeches: 7200, adoptedTexts: 78, procedures: 218, events: 285, documents: 2580, mepTurnover: 420, declarations: 520, commentary: 'EP6/EP7 transition year. European elections in June 2009. Reduced output due to election period. Lisbon Treaty entered into force December 2009, expanding Parliament\'s powers.' },
   { year: 2010, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 736, plenarySessions: 48, legislativeActsAdopted: 88, rollCallVotes: 480, committeeMeetings: 2100, parliamentaryQuestions: 4920, resolutions: 155, speeches: 11000, adoptedTexts: 108, procedures: 335, events: 395, documents: 3520, mepTurnover: 48, declarations: 650, commentary: 'First full year under Lisbon Treaty. Parliament gained co-decision (now "ordinary legislative procedure") on most policy areas. Eurozone debt crisis response began.' },
-  { year: 2011, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 754, plenarySessions: 52, legislativeActsAdopted: 108, rollCallVotes: 550, committeeMeetings: 2320, parliamentaryQuestions: 5450, resolutions: 178, speeches: 12500, adoptedTexts: 132, procedures: 395, events: 450, documents: 4050, mepTurnover: 52, declarations: 680, commentary: 'Croatia accession preparations. Six-Pack economic governance legislation adopted. Parliament exercised new budgetary powers under Lisbon Treaty. Arab Spring response.' },
+  { year: 2011, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 754, plenarySessions: 52, legislativeActsAdopted: 108, rollCallVotes: 550, committeeMeetings: 2320, parliamentaryQuestions: 5450, resolutions: 178, speeches: 12500, adoptedTexts: 132, procedures: 957, events: 1550, documents: 3351, mepTurnover: 52, declarations: 680, commentary: 'Croatia accession preparations. Six-Pack economic governance legislation adopted. Parliament exercised new budgetary powers under Lisbon Treaty. Arab Spring response.' },
   { year: 2012, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 754, plenarySessions: 50, legislativeActsAdopted: 118, rollCallVotes: 580, committeeMeetings: 2380, parliamentaryQuestions: 5680, resolutions: 188, speeches: 13000, adoptedTexts: 145, procedures: 816, events: 1417, documents: 3308, mepTurnover: 40, declarations: 695, commentary: 'Fiscal Compact negotiations. Banking union proposals. Two-Pack economic governance. Parliament strengthened oversight of EU economic governance framework.' },
   { year: 2013, parliamentaryTerm: 'EP7 (2009-2014)', mepCount: 766, plenarySessions: 54, legislativeActsAdopted: 135, rollCallVotes: 620, committeeMeetings: 2500, parliamentaryQuestions: 5920, resolutions: 205, speeches: 14200, adoptedTexts: 168, procedures: 946, events: 1682, documents: 3428, mepTurnover: 55, declarations: 720, commentary: 'Peak EP7 legislative output. Croatia joined EU (July 2013). MFF 2014-2020 negotiations concluded. Single Supervisory Mechanism adopted. Data protection reform debates intensified.' },
   { year: 2014, parliamentaryTerm: 'EP7/EP8 transition', mepCount: 751, plenarySessions: 47, legislativeActsAdopted: 78, rollCallVotes: 410, committeeMeetings: 1780, parliamentaryQuestions: 4120, resolutions: 115, speeches: 8000, adoptedTexts: 115, procedures: 838, events: 1901, documents: 3784, mepTurnover: 390, declarations: 580, commentary: 'EP7/EP8 transition. European elections May 2014—first with Spitzenkandidaten process. Jean-Claude Juncker elected Commission President. Reduced legislative output due to transition.' },
@@ -644,6 +644,9 @@ const RAW_MONTHLY_DATA: Record<number, Record<string, number[]>> = {
   },
   2012: {
     events: [89, 111, 156, 68, 139, 77, 102, 5, 206, 207, 138, 119],
+  },
+  2011: {
+    events: [72, 103, 110, 76, 144, 131, 101, 2, 266, 181, 173, 191],
   },
 };
 
@@ -1266,7 +1269,7 @@ const predictions = buildPredictions();
 const analysisSummary = buildAnalysisSummary(yearlyStats);
 
 export const GENERATED_STATS: GeneratedStatsData = {
-  generatedAt: '2026-03-03T13:24:33Z',
+  generatedAt: '2026-03-03T14:23:07Z',
   coveragePeriod: { from: 2004, to: 2025 },
   methodologyVersion: '2.0.0',
   dataSource: 'European Parliament Open Data Portal — data.europarl.europa.eu',
