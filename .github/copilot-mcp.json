@@ -9,6 +9,12 @@
       },
       "tools": ["*"]
     },
+    "european-parliament": {
+      "type": "local",
+      "command": "european-parliament-mcp-server",
+      "args": [],
+      "tools": ["*"]
+    },
     "filesystem": {
       "type": "local",
       "command": "mcp-server-filesystem",
@@ -26,6 +32,12 @@
     "sequential-thinking": {
       "type": "local",
       "command": "mcp-server-sequential-thinking",
+      "args": [],
+      "tools": ["*"]
+    },
+    "playwright": {
+      "type": "local",
+      "command": "playwright-mcp",
       "args": [],
       "tools": ["*"]
     }
