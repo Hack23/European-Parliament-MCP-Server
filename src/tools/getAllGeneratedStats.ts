@@ -270,7 +270,7 @@ export function getAllGeneratedStats(
       methodology:
         'Precomputed statistics from European Parliament Open Data Portal. ' +
         'Rankings use ordinal ranking with percentile scores. ' +
-        'Predictions use average-based extrapolation from 2022-2026 with parliamentary term cycle adjustments. ' +
+        'Predictions use average-based extrapolation from 2021-2025 actuals with parliamentary term cycle adjustments. ' +
         'Data refreshed weekly by agentic workflow.',
       sourceAttribution:
         'European Parliament Open Data Portal — data.europarl.europa.eu',

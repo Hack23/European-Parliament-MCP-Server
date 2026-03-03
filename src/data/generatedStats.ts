@@ -563,7 +563,7 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | '
   { year: 2023, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 58, legislativeActsAdopted: 148, rollCallVotes: 660, committeeMeetings: 2520, parliamentaryQuestions: 6580, resolutions: 218, speeches: 15200, adoptedTexts: 487, procedures: 903, events: 1676, documents: 5020, mepTurnover: 38, declarations: 343, commentary: 'Peak EP9 legislative output. AI Act negotiations concluded. Nature Restoration Law controversial vote. Corporate Sustainability Due Diligence. Critical Raw Materials Act. Record-high legislative productivity driven by end-of-term urgency.' },
   { year: 2024, parliamentaryTerm: 'EP9/EP10 transition', mepCount: 720, plenarySessions: 50, legislativeActsAdopted: 72, rollCallVotes: 375, committeeMeetings: 1680, parliamentaryQuestions: 3950, resolutions: 108, speeches: 7800, adoptedTexts: 459, procedures: 676, events: 310, documents: 2680, mepTurnover: 405, declarations: 560, commentary: 'EP9/EP10 transition. European elections June 2024. Significant rightward shift in composition. New MEPs (720 total after redistribution). Reduced output due to election cycle. AI Act entered into force.' },
   { year: 2025, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 717, plenarySessions: 53, legislativeActsAdopted: 78, rollCallVotes: 420, committeeMeetings: 1980, parliamentaryQuestions: 4941, resolutions: 135, speeches: 10000, adoptedTexts: 347, procedures: 923, events: 2657, documents: 3516, mepTurnover: 36, declarations: 3000, commentary: 'EP10 ramp-up year. New committee chairs and rapporteurs established. Defence and security policy gained prominence. Strategic autonomy debates. Clean Industrial Deal proposals. Parliament adapting to new political balance with stronger ECR and right-wing presence.' },
-  { year: 2026, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 717, plenarySessions: 54, legislativeActsAdopted: 114, rollCallVotes: 567, committeeMeetings: 2363, parliamentaryQuestions: 6147, resolutions: 180, speeches: 12760, adoptedTexts: 498, procedures: 935, events: 2327, documents: 4265, mepTurnover: 40, declarations: 1158, commentary: 'PARTIAL YEAR — data through Q1 2026. Plenary session count (54) reflects full-year EP calendar; all other activity totals are projected full-year estimates based on EP10 term cycle (factor 1.10× of 2022-2026 average). Political landscape validated from EP API (717 current MEPs). Actual Q1 activity: 10 plenary sittings completed (Jan-Feb), adopted texts and procedures accumulating. Defence spending, Clean Industrial Deal, and AI Act implementation dominating legislative agenda.' },
+  { year: 2026, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 717, plenarySessions: 54, legislativeActsAdopted: 114, rollCallVotes: 567, committeeMeetings: 2363, parliamentaryQuestions: 6147, resolutions: 180, speeches: 12760, adoptedTexts: 498, procedures: 935, events: 2327, documents: 4265, mepTurnover: 40, declarations: 1158, commentary: 'PARTIAL YEAR — data through Q1 2026. Plenary session count (54) reflects full-year EP calendar; all other activity totals are projected full-year estimates based on 2021-2025 historical average with EP10 year-2 cycle adjustment. Political landscape validated from EP API (717 current MEPs). Actual Q1 activity: 10 plenary sittings completed (Jan-Feb), adopted texts and procedures accumulating. Defence spending, Clean Industrial Deal, and AI Act implementation dominating legislative agenda.' },
 ];
 
 // ── Real monthly data from EP API ─────────────────────────────────
@@ -1102,13 +1102,13 @@ function computeRankings(yearly: YearlyStats[]): CategoryRanking[] {
 // including the 2024 transition year and 2025 ramp-up year for a
 // representative mix of recent parliamentary activity levels.
 // Each prediction year applies a parliamentary term cycle factor
-// to the 2022-2026 average (not a linear regression/slope).
+// to the 2021-2025 average (not a linear regression/slope).
 
 function buildPredictions(): PredictionYear[] {
-  // Use last 5 years (2022-2026) for trend calculation; includes transition
-  // and ramp-up years to capture realistic average activity levels
+  // Use last 5 years (2021-2025) for trend calculation; all complete actual data
+  // years covering both EP9 end-of-term push and EP10 transition
   const trendYears = RAW_YEARLY.filter((y) =>
-    [2022, 2023, 2024, 2025, 2026].includes(y.year)
+    [2021, 2022, 2023, 2024, 2025].includes(y.year)
   );
 
   const avg = (fn: (y: typeof trendYears[number]) => number): number =>
