@@ -126,7 +126,12 @@ jobs:
           which mcp-server-sequential-thinking && echo "✅ mcp-server-sequential-thinking found" || echo "❌ mcp-server-sequential-thinking NOT found"
           
           echo "Checking playwright-mcp..."
-          which playwright-mcp && echo "✅ playwright-mcp found" || echo "❌ playwright-mcp NOT found"
+          if command -v playwright-mcp >/dev/null 2>&1; then
+            echo "✅ playwright-mcp found"
+          else
+            echo "❌ playwright-mcp NOT found"
+            exit 1
+          fi
                               
           echo ""
           echo "=== HTTP MCP Servers ==="
