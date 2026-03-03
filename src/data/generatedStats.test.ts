@@ -361,13 +361,13 @@ describe('GENERATED_STATS — political landscape data consistency', () => {
     }
   });
 
-  it('should have total seats across all groups approximately matching mepCount (within ±15)', () => {
+  it('should have total seats across all groups exactly matching mepCount', () => {
     for (const yearly of GENERATED_STATS.yearlyStats) {
       const totalSeats = yearly.politicalLandscape.groups.reduce(
         (sum, g) => sum + g.seats,
         0
       );
-      expect(Math.abs(totalSeats - yearly.mepCount)).toBeLessThanOrEqual(15);
+      expect(totalSeats).toBe(yearly.mepCount);
     }
   });
 
@@ -398,6 +398,17 @@ describe('GENERATED_STATS — political landscape data consistency', () => {
       const { groups, totalGroups } = yearly.politicalLandscape;
       const nonNiCount = groups.filter((g) => g.name !== 'NI').length;
       expect(totalGroups).toBe(nonNiCount);
+    }
+  });
+
+  // The European Parliament always has non-affiliated (NI) MEPs. Every year
+  // must include an NI entry in groups so seat totals are complete.
+  it('should always include NI (Non-Inscrits) group in every year', () => {
+    for (const yearly of GENERATED_STATS.yearlyStats) {
+      const ni = yearly.politicalLandscape.groups.find((g) => g.name === 'NI');
+      expect(ni).toBeDefined();
+      expect(ni!.seats).toBeGreaterThan(0);
+      expect(ni!.seatShare).toBeGreaterThan(0);
     }
   });
 
