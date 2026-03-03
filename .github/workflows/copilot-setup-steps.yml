@@ -7,9 +7,11 @@ on:
   push:
     paths:
       - .github/workflows/copilot-setup-steps.yml
+      - .github/copilot-mcp.json
   pull_request:
     paths:
       - .github/workflows/copilot-setup-steps.yml
+      - .github/copilot-mcp.json
 
 env:
   GITHUB_TOKEN: ${{ secrets.COPILOT_MCP_GITHUB_PERSONAL_ACCESS_TOKEN }}
@@ -68,6 +70,13 @@ jobs:
         run: |
           npm ci
 
+      # Build the European Parliament MCP Server so it's available as a local MCP server
+      - name: Build European Parliament MCP Server
+        run: |
+          echo "🔨 Building European Parliament MCP Server..."
+          npm run build
+          echo "✅ MCP Server built successfully at dist/index.js"
+
       # Pre-install MCP server packages globally
       - name: Install MCP server packages globally
         run: |
@@ -91,15 +100,26 @@ jobs:
             ~/.npm
             /usr/local/lib/node_modules
             /usr/local/bin/mcp-server-*
-          key: ${{ runner.os }}-mcp-servers-v4-${{ hashFiles('.github/copilot-mcp.json') }}
+            /usr/local/bin/playwright-mcp
+          key: ${{ runner.os }}-mcp-servers-v5-${{ hashFiles('.github/copilot-mcp.json') }}
           restore-keys: |
-            ${{ runner.os }}-mcp-servers-v4-
+            ${{ runner.os }}-mcp-servers-v5-
 
       # Verify all MCP server installations
       - name: Verify MCP server installations
         run: |
           echo "🔍 Verifying MCP server installations..."
           
+          echo "=== European Parliament MCP Server ==="
+          if [ -f "dist/index.js" ]; then
+            echo "✅ European Parliament MCP Server built at dist/index.js"
+            node dist/index.js --version || echo "ℹ️ Server available (stdio mode)"
+          else
+            echo "❌ European Parliament MCP Server NOT built"
+            exit 1
+          fi
+          
+          echo ""
           echo "=== Node.js MCP Servers ==="
           echo "Checking mcp-server-filesystem..."
           which mcp-server-filesystem && echo "✅ mcp-server-filesystem found" || echo "❌ mcp-server-filesystem NOT found"
@@ -110,8 +130,8 @@ jobs:
           echo "Checking mcp-server-sequential-thinking..."
           which mcp-server-sequential-thinking && echo "✅ mcp-server-sequential-thinking found" || echo "❌ mcp-server-sequential-thinking NOT found"
           
-          echo "Checking @playwright/mcp..."
-          which mcp-server-playwright 2>/dev/null && echo "✅ mcp-server-playwright found" || echo "ℹ️ @playwright/mcp available via npx"
+          echo "Checking playwright-mcp..."
+          which playwright-mcp && echo "✅ playwright-mcp found" || echo "❌ playwright-mcp NOT found"
                               
           echo ""
           echo "=== HTTP MCP Servers ==="
