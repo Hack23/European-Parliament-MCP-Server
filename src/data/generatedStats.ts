@@ -1,5 +1,5 @@
 /**
- * Precomputed European Parliament activity statistics (2004–2025).
+ * Precomputed European Parliament activity statistics (2004–2026).
  *
  * This module contains static, pre-generated summary statistics for
  * European Parliament activity aggregated by year and month. Data
@@ -374,7 +374,7 @@ export interface CategoryRanking {
  * typical ramp-up → peak → decline pattern within each five-year term.
  */
 export interface PredictionYear {
-  /** Predicted calendar year (2026–2030) */
+  /** Predicted calendar year (2027–2031) */
   year: number;
   /** Predicted plenary sessions */
   predictedPlenarySessions: number;
@@ -412,7 +412,7 @@ export interface PredictionYear {
 export interface GeneratedStatsData {
   /** ISO 8601 timestamp of when stats were last generated */
   generatedAt: string;
-  /** Underlying dataset coverage period (always 2004–2025) */
+  /** Underlying dataset coverage period (always 2004–2026) */
   coveragePeriod: { from: number; to: number };
   /** Version of the stats generation methodology */
   methodologyVersion: string;
@@ -422,7 +422,7 @@ export interface GeneratedStatsData {
   yearlyStats: YearlyStats[];
   /** Per-category statistical rankings across years */
   categoryRankings: CategoryRanking[];
-  /** Predicted activity for future years (2026–2030) */
+  /** Predicted activity for future years (2027–2031) */
   predictions: PredictionYear[];
   /** High-level analytical summary of trends and key findings */
   analysisSummary: {
@@ -1097,7 +1097,7 @@ function computeRankings(yearly: YearlyStats[]): CategoryRanking[] {
   });
 }
 
-// ── Predictions (2026–2030) ───────────────────────────────────────
+// ── Predictions (2027–2031) ───────────────────────────────────────
 // Average-based extrapolation from the last 5 years (2021-2025),
 // including the 2024 transition year and 2025 ramp-up year for a
 // representative mix of recent parliamentary activity levels.
