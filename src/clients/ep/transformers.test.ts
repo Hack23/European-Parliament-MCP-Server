@@ -727,4 +727,138 @@ describe('transformMEPDeclaration', () => {
     expect(decl.mepId).toBe('');
     expect(decl.mepName).toBe('');
   });
+
+  it('extracts mepId from workHadParticipation array (real EP API format)', () => {
+    const apiData = {
+      work_id: 'DECL-004',
+      workHadParticipation: [{
+        id: 'eli/dl/participation/DECL-004-AUTHOR',
+        type: 'Participation',
+        had_participant_person: 'person/840',
+        participant_label: 'Charles GOERENS',
+      }],
+      document_date: '2024-12-02',
+    };
+    const decl = transformMEPDeclaration(apiData);
+    expect(decl.mepId).toBe('person/840');
+    expect(decl.dateFiled).toBe('2024-12-02');
+  });
+});
+
+// ─── Real EP API format tests ──────────────────────────────────
+
+describe('transformers with real EP API JSON-LD format', () => {
+  it('transformPlenarySession: extracts date, attendance, agenda from real meeting data', () => {
+    const apiData = {
+      activity_id: 'MTG-PL-2024-01-15',
+      activity_date: '2024-01-15',
+      activity_start_date: '2024-01-15T01:00:00+01:00',
+      activity_end_date: '2024-01-15T23:00:00+01:00',
+      hasLocality: 'http://publications.europa.eu/resource/authority/place/FRA_SXB',
+      number_of_attendees: 581,
+      consists_of: ['eli/dl/event/MTG-PL-2024-01-15-PVCRE-ITM-14', 'eli/dl/event/MTG-PL-2024-01-15-PVCRE-ITM-22'],
+      documented_by_a_realization_of: ['eli/dl/doc/OJQ-9-2024-01-15'],
+      had_participant_person: ['person/99283', 'person/88882'],
+      type: 'Activity',
+    };
+    const session = transformPlenarySession(apiData);
+    expect(session.id).toBe('MTG-PL-2024-01-15');
+    expect(session.date).toBe('2024-01-15');
+    expect(session.location).toBe('Strasbourg');
+    expect(session.attendanceCount).toBe(581);
+    expect(session.agendaItems).toHaveLength(2);
+    expect(session.documents).toHaveLength(1);
+  });
+
+  it('transformSpeech: extracts speaker from nested had_participation (real EP API format)', () => {
+    const apiData = {
+      activity_date: '2023-10-17',
+      activity_id: 'MTG-PL-2023-10-17-OTH-20390000',
+      activity_label: { en: 'Effectiveness of EU sanctions against Russia (debate)' },
+      had_activity_type: 'def/ep-activities/PLENARY_DEBATE_SPEECH',
+      had_participation: {
+        id: 'eli/dl/participation/MTG-PL-2023-10-17-OTH-20390000_197537',
+        type: 'Participation',
+        had_participant_person: 'person/197537',
+        participant_label: 'Test Speaker',
+      },
+      id: 'eli/dl/event/MTG-PL-2023-10-17-OTH-20390000',
+      inverse_consists_of: ['eli/dl/event/MTG-PL-2023-10-17-PVCRE-ITM-2'],
+      type: 'Activity',
+    };
+    const speech = transformSpeech(apiData);
+    expect(speech.id).toBe('MTG-PL-2023-10-17-OTH-20390000');
+    expect(speech.title).toBe('Effectiveness of EU sanctions against Russia (debate)');
+    expect(speech.speakerId).toBe('person/197537');
+    expect(speech.speakerName).toBe('Test Speaker');
+    expect(speech.date).toBe('2023-10-17');
+    expect(speech.sessionReference).toContain('eli/dl/event/MTG-PL-2023-10-17-PVCRE-ITM-2');
+  });
+
+  it('transformAdoptedText: extracts date from document_date and subject from isAboutSubjectMatter', () => {
+    const apiData = {
+      id: 'eli/dl/doc/TA-9-2024-04-25-ANN01',
+      identifier: 'TA-9-2024-04-25-ANN01',
+      title_dcterms: { en: 'EP Budget Draft 2025' },
+      document_date: '2024-04-25',
+      work_type: 'def/ep-document-types/BUDGET_EP_DRAFT',
+      isAboutSubjectMatter: 'Budget and financial management',
+      type: 'Work',
+    };
+    const text = transformAdoptedText(apiData);
+    expect(text.dateAdopted).toBe('2024-04-25');
+    expect(text.subjectMatter).toBe('Budget and financial management');
+    expect(text.title).toBe('EP Budget Draft 2025');
+  });
+
+  it('transformEvent: extracts id from activity_id (real EP API format)', () => {
+    const apiData = {
+      activity_id: '1972-0003-ANPRO-1972-11-06',
+      had_activity_type: 'def/ep-activities/REFERRAL',
+      id: 'eli/dl/event/1972-0003-ANPRO-1972-11-06',
+      type: 'Activity',
+    };
+    const event = transformEvent(apiData);
+    expect(event.id).toBe('1972-0003-ANPRO-1972-11-06');
+    expect(event.type).toBe('def/ep-activities/REFERRAL');
+  });
+
+  it('transformMEPDetails: extracts country code from citizenship URI', () => {
+    const apiData = {
+      identifier: '124810',
+      label: 'Barbara SPINELLI',
+      citizenship: 'http://publications.europa.eu/resource/authority/country/ITA',
+      bday: '1946-05-31',
+      hasMembership: [],
+    };
+    const details = transformMEPDetails(apiData);
+    expect(details.country).toBe('ITA');
+    expect(details.biography).toContain('1946-05-31');
+  });
+
+  it('transformVoteResult: extracts date from activity_date plain string', () => {
+    const apiData = {
+      activity_id: 'VOTE-REAL-001',
+      activity_date: '2024-01-15',
+      activity_label: { en: 'Resolution on climate change' },
+      number_of_votes_favor: 450,
+      number_of_votes_against: 150,
+      number_of_votes_abstention: 50,
+    };
+    const vote = transformVoteResult(apiData, 'SESSION-REAL');
+    expect(vote.date).toBe('2024-01-15');
+    expect(vote.topic).toBe('Resolution on climate change');
+  });
+
+  it('transformDocument: extracts date from document_date field', () => {
+    const apiData = {
+      id: 'eli/dl/doc/A-9-2024-0001',
+      identifier: 'A-9-2024-0001',
+      document_date: '2024-06-15',
+      title_dcterms: { en: 'Test Report' },
+      work_type: 'REPORT_PLENARY',
+    };
+    const doc = transformDocument(apiData);
+    expect(doc.date).toBe('2024-06-15');
+  });
 });
