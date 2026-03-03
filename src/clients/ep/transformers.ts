@@ -74,9 +74,10 @@ export function transformMEP(apiData: Record<string, unknown>): MEP {
   const mepId = resolveMEPId(apiData);
   const name = resolveMEPName(apiData);
 
-  // Note: /meps endpoint doesn't return country/politicalGroup — defaults to 'Unknown'
-  const country = toSafeString(firstDefined(apiData, 'country', 'citizenship', 'nationality')) || 'Unknown';
-  const politicalGroup = toSafeString(firstDefined(apiData, 'politicalGroup', 'political_group')) || 'Unknown';
+  // EP API returns `api:country-of-representation` and `api:political-group`
+  // in JSON-LD responses; also check legacy/alternative field names.
+  const country = toSafeString(firstDefined(apiData, 'api:country-of-representation', 'country', 'citizenship', 'nationality')) || 'Unknown';
+  const politicalGroup = toSafeString(firstDefined(apiData, 'api:political-group', 'politicalGroup', 'political_group')) || 'Unknown';
 
   const emailValue = toSafeString(apiData['email']);
   const termEndValue = toSafeString(firstDefined(apiData, 'termEnd', 'term_end'));

@@ -109,6 +109,35 @@ describe('transformMEP', () => {
     const mep = transformMEP({ identifier: 'person/456' });
     expect(mep.id).toBe('person/456');
   });
+
+  it('extracts country from api:country-of-representation field', () => {
+    const mep = transformMEP({ identifier: '10', label: 'Test', 'api:country-of-representation': 'DE' });
+    expect(mep.country).toBe('DE');
+  });
+
+  it('extracts political group from api:political-group field', () => {
+    const mep = transformMEP({ identifier: '11', label: 'Test', 'api:political-group': 'S&D' });
+    expect(mep.politicalGroup).toBe('S&D');
+  });
+
+  it('transforms a real EP API JSON-LD MEP record', () => {
+    const apiData = {
+      id: 'person/1294',
+      type: 'Person',
+      identifier: '1294',
+      label: 'Elio DI RUPO',
+      familyName: 'Di Rupo',
+      givenName: 'Elio',
+      sortLabel: 'DIRUPO',
+      'api:country-of-representation': 'BE',
+      'api:political-group': 'S&D',
+    };
+    const mep = transformMEP(apiData);
+    expect(mep.id).toBe('person/1294');
+    expect(mep.name).toBe('Elio DI RUPO');
+    expect(mep.country).toBe('BE');
+    expect(mep.politicalGroup).toBe('S&D');
+  });
 });
 
 // ─── transformMEPDetails ────────────────────────────────────────
