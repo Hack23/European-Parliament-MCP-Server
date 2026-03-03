@@ -543,7 +543,7 @@ function distributeMonthly(annual: Omit<YearlyStats, 'monthlyActivity' | 'politi
 const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | 'derivedIntelligence'>[] = [
   { year: 2004, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 42, legislativeActsAdopted: 68, rollCallVotes: 356, committeeMeetings: 1820, parliamentaryQuestions: 4215, resolutions: 120, speeches: 8500, adoptedTexts: 85, procedures: 245, events: 310, documents: 2850, mepTurnover: 385, declarations: 580, commentary: 'EP6 began with the 2004 enlargement (10 new member states). Transition year with new MEPs, committee formation, and establishment of working relationships in an expanded Parliament of 25 member states.' },
   { year: 2005, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 48, legislativeActsAdopted: 82, rollCallVotes: 412, committeeMeetings: 2050, parliamentaryQuestions: 4580, resolutions: 145, speeches: 10200, adoptedTexts: 102, procedures: 312, events: 380, documents: 3420, mepTurnover: 42, declarations: 620, commentary: 'Full operational year of EP6. REACH chemicals regulation debate began. Constitutional Treaty rejected by French and Dutch referendums, impacting EU institutional dynamics.' },
-  { year: 2006, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 50, legislativeActsAdopted: 95, rollCallVotes: 448, committeeMeetings: 2120, parliamentaryQuestions: 4780, resolutions: 158, speeches: 11500, adoptedTexts: 118, procedures: 348, events: 420, documents: 3680, mepTurnover: 38, declarations: 645, commentary: 'Services Directive (Bolkestein) adopted after significant amendments. Parliament asserted co-decision powers. Bulgaria and Romania accession preparations intensified.' },
+  { year: 2006, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 50, legislativeActsAdopted: 95, rollCallVotes: 448, committeeMeetings: 2120, parliamentaryQuestions: 4780, resolutions: 158, speeches: 11500, adoptedTexts: 118, procedures: 634, events: 1599, documents: 3373, mepTurnover: 38, declarations: 645, commentary: 'Services Directive (Bolkestein) adopted after significant amendments. Parliament asserted co-decision powers. Bulgaria and Romania accession preparations intensified.' },
   { year: 2007, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 785, plenarySessions: 52, legislativeActsAdopted: 110, rollCallVotes: 520, committeeMeetings: 2280, parliamentaryQuestions: 5120, resolutions: 172, speeches: 12800, adoptedTexts: 135, procedures: 646, events: 1410, documents: 3404, mepTurnover: 95, declarations: 710, commentary: 'Bulgaria and Romania joined the EU (January), increasing MEP count to 785. Lisbon Treaty negotiations. High legislative output as EP6 matured.' },
   { year: 2008, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 785, plenarySessions: 50, legislativeActsAdopted: 125, rollCallVotes: 560, committeeMeetings: 2350, parliamentaryQuestions: 5380, resolutions: 185, speeches: 13500, adoptedTexts: 152, procedures: 671, events: 1600, documents: 3417, mepTurnover: 35, declarations: 690, commentary: 'Peak activity year for EP6. Climate and energy package negotiations. Financial crisis response dominated second half. Irish referendum rejected Lisbon Treaty initially.' },
   { year: 2009, parliamentaryTerm: 'EP6/EP7 transition', mepCount: 736, plenarySessions: 38, legislativeActsAdopted: 72, rollCallVotes: 380, committeeMeetings: 1650, parliamentaryQuestions: 3850, resolutions: 105, speeches: 7200, adoptedTexts: 78, procedures: 647, events: 1558, documents: 3325, mepTurnover: 420, declarations: 520, commentary: 'EP6/EP7 transition year. European elections in June 2009. Reduced output due to election period. Lisbon Treaty entered into force December 2009, expanding Parliament\'s powers.' },
@@ -661,6 +661,9 @@ const RAW_MONTHLY_DATA: Record<number, Record<string, number[]>> = {
   },
   2007: {
     events: [78, 80, 88, 112, 83, 188, 125, 10, 192, 158, 156, 140],
+  },
+  2006: {
+    events: [109, 119, 106, 130, 101, 127, 121, 14, 195, 131, 177, 269],
   },
 };
 
@@ -1283,7 +1286,7 @@ const predictions = buildPredictions();
 const analysisSummary = buildAnalysisSummary(yearlyStats);
 
 export const GENERATED_STATS: GeneratedStatsData = {
-  generatedAt: '2026-03-03T20:14:45Z',
+  generatedAt: '2026-03-03T20:52:39Z',
   coveragePeriod: { from: 2004, to: 2025 },
   methodologyVersion: '2.0.0',
   dataSource: 'European Parliament Open Data Portal — data.europarl.europa.eu',
