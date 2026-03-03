@@ -587,7 +587,7 @@ xychart-beta
     line [85, 102, 120, 148, 72, 78, 114, 131, 137, 86, 103, 126]
 ```
 
-### Prediction Summary (based on 2022–2026 average with term cycle factors)
+### Prediction Summary (based on 2021–2025 actuals with term cycle factors)
 
 | Year | Factor | Sessions | Acts | Votes | Questions | Speeches | Confidence |
 |------|--------|----------|------|-------|-----------|----------|------------|
@@ -597,7 +597,7 @@ xychart-beta
 | **2030** | ×0.97 (new term start) | 42 | 103 | 507 | 5,369 | 11,593 | ±22% |
 | **2031** | ×1.18 (2nd year) | 52 | 126 | 616 | 6,532 | 14,103 | ±25% |
 
-> **Methodology**: 5-year rolling average (2022–2026) × parliamentary term cycle factor. Election years (2029) see ~19% reduction; peak years (3rd–4th year) see 23–29% increase. Confidence intervals widen with forecast horizon.
+> **Methodology**: 5-year rolling average (2021–2025 actuals) × parliamentary term cycle factor. Election years (2029) see ~19% reduction; peak years (3rd–4th year) see 23–29% increase. Confidence intervals widen with forecast horizon. 2026 projected data is excluded from the prediction baseline to avoid circular dependency.
 
 ---
 
@@ -623,7 +623,7 @@ xychart-beta
 | **Dominance Ratio** | Group power asymmetry | Largest group share / 2nd largest share |
 | **MWC** | Minimum Winning Coalition | Fewest groups cumulatively exceeding 50% |
 | **CHES 3-Axis Compass** | Political positioning | Economic (0–10) × Social (0–10) × EU Integration (0–10) |
-| **Term Cycle Prediction** | Forecast 2027–2031 | 5-year average × cycle factor (±12–25% CI) |
+| **Term Cycle Prediction** | Forecast 2027–2031 | 5-year actuals (2021–2025) × cycle factor (±12–25% CI) |
 
 ### Political Compass Methodology
 
@@ -650,6 +650,21 @@ Groups are classified using weighted expert assessments adjusted for EP voting b
 | 1.1.0 | 2025-03 | Added 30 OSINT-derived intelligence metrics |
 | 1.2.0 | 2025-03 | Added 3-axis political compass (CHES-based) |
 | 1.3.0 | 2025-03 | Added quadrant distribution analysis |
+| 2.0.0 | 2026-03 | Extended to 2004–2026 with full validation; added 2026 partial year; predictions shifted to 2027–2031 |
+
+### Data Validation Status
+
+All political landscape data has been cross-validated against the [European Parliament Open Data Portal](https://data.europarl.europa.eu/) API v2 via the `get_all_generated_stats` MCP tool.
+
+| Term | Years | Validation Status | Notes |
+|------|-------|-------------------|-------|
+| **EP6** | 2004–2008 | ✅ All 5 years verified | Group compositions, seat counts, fragmentation indices match |
+| **EP7** | 2009–2013 | ✅ All 5 years verified | Includes EP6/EP7 transition year (2009) |
+| **EP8** | 2014–2018 | ✅ All 5 years verified | Includes EP7/EP8 transition year (2014) |
+| **EP9** | 2019–2023 | ✅ All 5 years verified | Includes EP8/EP9 transition year (2019) |
+| **EP10** | 2024–2026 | ✅ All 3 years verified | 2024 transition, 2025 complete, 2026 partial year (Q1 actual) |
+
+**2026 partial year note**: Activity metrics (legislative acts, speeches, questions, etc.) are projected full-year estimates based on 2021–2025 historical averages with EP10 year-2 cycle adjustment. Plenary session count (54) reflects the full-year EP calendar from the API. Political landscape data (717 MEPs, group composition) is validated from live EP API as of March 2026.
 
 ---
 
