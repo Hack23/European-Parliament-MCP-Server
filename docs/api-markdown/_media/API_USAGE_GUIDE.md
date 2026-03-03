@@ -170,7 +170,7 @@ Currently, the server does **not require authentication** for tool access. Futur
 | `analyze_voting_patterns` | Voting analysis | mepId, dateFrom | Analysis object |
 | `track_legislation` | Track procedure | procedureId | Procedure object |
 | `generate_report` | Create reports | reportType, subjectId | Report object |
-| `get_all_generated_stats` | Precomputed EP stats (2004-2025) + [30 OSINT metrics](./EP_POLITICAL_LANDSCAPE.md) | yearFrom, yearTo, category | Statistics object |
+| `get_all_generated_stats` | Precomputed EP stats (2004-2026) + [30 OSINT metrics](./EP_POLITICAL_LANDSCAPE.md) | yearFrom, yearTo, category | Statistics object |
 
 ### 🕵️ OSINT Intelligence Tools
 
@@ -2034,7 +2034,7 @@ const result = await client.callTool('get_procedure_event_by_id', {
 
 ### Tool: get_all_generated_stats
 
-**Description**: Retrieve precomputed European Parliament activity statistics covering parliamentary terms EP6–EP10 (2004–2025), including monthly activity breakdowns, category rankings with percentiles, statistical analysis, political landscape history (group composition, fragmentation index, coalition dynamics), 30 OSINT-derived intelligence metrics (legislative efficiency, engagement indices, political concentration, 3-axis political compass, institutional stability, year-over-year dynamics), analytical commentary, and average-based predictions for 2026–2030. Static data refreshed weekly by agentic workflow — no live API calls.
+**Description**: Retrieve precomputed European Parliament activity statistics covering parliamentary terms EP6–EP10 (2004–2026), including monthly activity breakdowns, category rankings with percentiles, statistical analysis, political landscape history (group composition, fragmentation index, coalition dynamics), 30 OSINT-derived intelligence metrics (legislative efficiency, engagement indices, political concentration, 3-axis political compass, institutional stability, year-over-year dynamics), analytical commentary, and average-based predictions for 2027–2031. Static data refreshed weekly by agentic workflow — no live API calls.
 
 > 📊 **Visual Dashboard**: See **[EP Political Landscape](./EP_POLITICAL_LANDSCAPE.md)** for comprehensive Mermaid chart visualizations of all statistics, political compass analysis, coalition scenarios, and derived intelligence metrics.
 
@@ -2045,7 +2045,7 @@ const result = await client.callTool('get_procedure_event_by_id', {
 | yearFrom | number | No | 2004 | Start year for filtering (2004–2030) |
 | yearTo | number | No | 2025 | End year for filtering (2004–2030) |
 | category | string | No | all | Activity category: `all`, `plenary_sessions`, `legislative_acts`, `roll_call_votes`, `committee_meetings`, `parliamentary_questions`, `resolutions`, `speeches`, `adopted_texts`, `political_groups`, `procedures`, `events`, `documents`, `mep_turnover`, `declarations` |
-| includePredictions | boolean | No | true | Include trend-based predictions for 2026–2030 |
+| includePredictions | boolean | No | true | Include trend-based predictions for 2027–2031 |
 | includeMonthlyBreakdown | boolean | No | false | Include month-by-month activity data |
 | includeRankings | boolean | No | true | Include percentile rankings and statistical analysis |
 
@@ -2072,13 +2072,13 @@ The response includes:
 
 | Field | Description |
 |-------|-------------|
-| `coveragePeriod` | Underlying dataset range (always `{ from: 2004, to: 2025 }`) |
+| `coveragePeriod` | Underlying dataset range (always `{ from: 2004, to: 2026 }`) |
 | `requestedPeriod` | User-supplied year filter (`{ from: yearFrom, to: yearTo }`) |
 | `yearlyStats` | Annual statistics per year with 13 activity metrics, political landscape, and derived intelligence |
 | `yearlyStats[].derivedIntelligence` | 30 OSINT metrics: legislative efficiency, engagement, concentration, [3-axis political compass](./EP_POLITICAL_LANDSCAPE.md#-political-compass--3-axis-analysis), stability, YoY dynamics |
 | `yearlyStats[].politicalLandscape` | Group composition, fragmentation index, coalition dynamics, [quadrant distribution](./EP_POLITICAL_LANDSCAPE.md#-quadrant-distribution--the-political-square) |
 | `categoryRankings` | Per-category percentile rankings recomputed for the filtered range |
-| `predictions` | Average-based extrapolations for 2026–2030 with term-cycle adjustments |
+| `predictions` | Average-based extrapolations for 2027–2031 with term-cycle adjustments |
 | `analysisSummary` | Trend analysis, peak/lowest years, OSINT key findings, coverage note |
 | `methodology` | Description of the statistical approach and data sources |
 

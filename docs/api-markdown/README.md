@@ -537,7 +537,7 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 
 | Tool | Description | Key Parameters | Output |
 |------|-------------|----------------|--------|
-| [`get_all_generated_stats`](_media/API_USAGE_GUIDE.md#tool-get_all_generated_stats) | Precomputed EP activity statistics (2004-2025) with rankings, predictions, political landscape, and [30 OSINT-derived intelligence metrics](_media/EP_POLITICAL_LANDSCAPE.md) including 3-axis political compass | yearFrom, yearTo, category, includePredictions | Statistics object |
+| [`get_all_generated_stats`](_media/API_USAGE_GUIDE.md#tool-get_all_generated_stats) | Precomputed EP activity statistics (2004-2026) with rankings, predictions, political landscape, and [30 OSINT-derived intelligence metrics](_media/EP_POLITICAL_LANDSCAPE.md) including 3-axis political compass | yearFrom, yearTo, category, includePredictions | Statistics object |
 | [`analyze_voting_patterns`](_media/API_USAGE_GUIDE.md#tool-analyze_voting_patterns) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
 | [`track_legislation`](_media/API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
 | [`generate_report`](_media/API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
