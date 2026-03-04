@@ -37,7 +37,6 @@ import { realpathSync } from 'fs';
 // ── Extracted modules ─────────────────────────────────────────────
 import { getToolMetadataArray, dispatchToolCall } from './server/toolRegistry.js';
 import { showHelp, showVersion, showHealth, parseCLIArgs } from './server/cli.js';
-import { ToolError } from './tools/shared/errors.js';
 import { handleToolError } from './tools/shared/errorHandler.js';
 import { SERVER_NAME, SERVER_VERSION } from './config.js';
 // MCP Prompts
@@ -185,21 +184,12 @@ export class EuropeanParliamentMCPServer {
       try {
         return await this.dispatchToolCall(name, args);
       } catch (error) {
-        // Convert ToolError to an in-band MCP error response (isError: true)
-        // so MCP clients receive a well-formed ToolResult instead of an RPC error.
-        if (error instanceof ToolError) {
-          // Log ToolError so tool failures are visible in server logs (consistent with non-ToolError path)
-          console.error(`[ERROR] Tool ${error.toolName} failed:`, error);
-          return handleToolError(error, error.toolName);
-        }
-        // Log error to stderr (stdout is used for MCP protocol)
+        // MCP best practice: Convert ALL tool errors to in-band MCP error responses
+        // with isError: true, so clients (including LLMs) receive a well-formed
+        // ToolResult with a readable error message instead of an opaque JSON-RPC
+        // protocol error that may cause disconnects or prevent retry logic.
         console.error(`[ERROR] Tool ${name} failed:`, error);
-        
-        // Re-throw with clean error message
-        if (error instanceof Error) {
-          throw error;
-        }
-        throw new Error(`Tool execution failed: ${String(error)}`);
+        return handleToolError(error, name);
       }
     });
 

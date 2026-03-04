@@ -326,22 +326,21 @@ describe('EuropeanParliamentMCPServer', () => {
   });
 
   describe('CallTool handler', () => {
-    it('should re-throw Error for unknown tool', async () => {
+    it('should return in-band MCP error for unknown tool', async () => {
       const handler = capturedHandlers[1] as (
         req: { params: { name: string; arguments: unknown } }
-      ) => Promise<unknown>;
-      await expect(
-        handler({ params: { name: 'nonexistent_tool', arguments: {} } })
-      ).rejects.toThrow('Unknown tool: nonexistent_tool');
+      ) => Promise<{ content: { type: string; text: string }[]; isError?: boolean }>;
+      const result = await handler({ params: { name: 'nonexistent_tool', arguments: {} } });
+      expect(result.isError).toBe(true);
+      expect(result.content[0]?.text).toContain('nonexistent_tool');
     });
 
-    it('should re-throw Error instances unchanged', async () => {
+    it('should return isError true instead of throwing', async () => {
       const handler = capturedHandlers[1] as (
         req: { params: { name: string; arguments: unknown } }
-      ) => Promise<unknown>;
-      await expect(
-        handler({ params: { name: 'unknown', arguments: {} } })
-      ).rejects.toBeInstanceOf(Error);
+      ) => Promise<{ content: { type: string; text: string }[]; isError?: boolean }>;
+      const result = await handler({ params: { name: 'unknown', arguments: {} } });
+      expect(result.isError).toBe(true);
     });
   });
 
