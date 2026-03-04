@@ -176,12 +176,12 @@ Currently, the server does **not require authentication** for tool access. Futur
 
 | Tool | Purpose | Key Parameters | Response Type |
 |------|---------|----------------|---------------|
-| `assess_mep_influence` | MEP influence scoring | mepId | Influence scorecard |
-| `analyze_coalition_dynamics` | Coalition cohesion analysis | politicalGroups, dateFrom | Coalition metrics |
-| `detect_voting_anomalies` | Anomaly detection | mepId, politicalGroup | Anomaly report |
-| `compare_political_groups` | Cross-group comparison | groups, metrics | Comparison matrix |
-| `analyze_legislative_effectiveness` | Legislative scoring | subjectId, subjectType | Effectiveness score |
-| `monitor_legislative_pipeline` | Pipeline monitoring | committeeId, status | Pipeline status |
+| `assess_mep_influence` | MEP influence scoring | mepId (required), includeDetails | Influence scorecard |
+| `analyze_coalition_dynamics` | Coalition cohesion analysis | groupIds, dateFrom, minimumCohesion | Coalition metrics |
+| `detect_voting_anomalies` | Anomaly detection | mepId, groupId, sensitivityThreshold | Anomaly report |
+| `compare_political_groups` | Cross-group comparison | groupIds (required), dimensions | Comparison matrix |
+| `analyze_legislative_effectiveness` | Legislative scoring | subjectType (required), subjectId (required) | Effectiveness score |
+| `monitor_legislative_pipeline` | Pipeline monitoring | committee, status, limit | Pipeline status |
 | `analyze_committee_activity` | Committee workload & engagement | committeeId (required) | Activity report |
 | `track_mep_attendance` | MEP attendance patterns | mepId, country, groupId, limit | Attendance report |
 | `analyze_country_delegation` | Country delegation analysis | country (required) | Delegation analysis |
@@ -190,7 +190,7 @@ Currently, the server does **not require authentication** for tool access. Futur
 | `sentiment_tracker` | Political group positioning scores | groupId, timeframe | Sentiment report |
 | `early_warning_system` | Detect emerging political shifts | sensitivity, focusArea | Warning alerts |
 | `comparative_intelligence` | Cross-reference MEP activities | mepIds (required), dimensions | Comparison matrix |
-| `correlate_intelligence` | Cross-tool OSINT correlation | mepIds, groups, correlationMode | Intelligence alerts |
+| `correlate_intelligence` | Cross-tool OSINT correlation | mepIds (required), groups, sensitivityLevel | Intelligence alerts |
 
 ### 📡 Feed Tools
 
@@ -999,11 +999,12 @@ const votingStats = await client.callTool('generate_report', {
 
 #### Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| mepId | string | Yes | MEP identifier |
-| dateFrom | string | No | Start date (ISO 8601) |
-| dateTo | string | No | End date (ISO 8601) |
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| mepId | string | Yes | - | MEP identifier |
+| dateFrom | string | No | - | Start date (YYYY-MM-DD) |
+| dateTo | string | No | - | End date (YYYY-MM-DD) |
+| includeDetails | boolean | No | false | Include detailed breakdown per dimension |
 
 #### Example Usage
 
@@ -1019,11 +1020,12 @@ Assess the influence of MEP with ID "124810" over the past year
 
 #### Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| politicalGroups | string[] | No | Political groups to analyze |
-| dateFrom | string | No | Start date (ISO 8601) |
-| dateTo | string | No | End date (ISO 8601) |
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| groupIds | string[] | No | - | Political group identifiers to analyze (omit for all groups, 1-10 items) |
+| dateFrom | string | No | - | Analysis start date (YYYY-MM-DD) |
+| dateTo | string | No | - | Analysis end date (YYYY-MM-DD) |
+| minimumCohesion | number | No | 0.5 | Minimum cohesion threshold for alliance detection (0-1) |
 
 #### Example Usage
 
@@ -1039,12 +1041,15 @@ Analyze coalition dynamics between EPP and S&D over the last 6 months
 
 #### Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| mepId | string | No | Specific MEP to analyze |
-| politicalGroup | string | No | Political group to analyze |
-| dateFrom | string | No | Start date (ISO 8601) |
-| dateTo | string | No | End date (ISO 8601) |
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| mepId | string | No | - | MEP identifier (omit for broad analysis) |
+| groupId | string | No | - | Political group to analyze |
+| dateFrom | string | No | - | Analysis start date (YYYY-MM-DD) |
+| dateTo | string | No | - | Analysis end date (YYYY-MM-DD) |
+| sensitivityThreshold | number | No | 0.3 | Anomaly sensitivity (0-1, lower = more anomalies detected) |
+
+Note: Cannot specify both `mepId` and `groupId` — use one or neither.
 
 #### Example Usage
 
@@ -1060,12 +1065,12 @@ Detect voting anomalies in the EPP group over the past 3 months
 
 #### Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| groups | string[] | Yes | Political groups to compare |
-| metrics | string[] | No | Specific metrics to compare |
-| dateFrom | string | No | Start date (ISO 8601) |
-| dateTo | string | No | End date (ISO 8601) |
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| groupIds | string[] | Yes | - | Political group identifiers to compare (minimum 2, maximum 10) |
+| dateFrom | string | No | - | Analysis start date (YYYY-MM-DD) |
+| dateTo | string | No | - | Analysis end date (YYYY-MM-DD) |
+| dimensions | string[] | No | all | Comparison dimensions: `voting_discipline`, `activity_level`, `legislative_output`, `attendance`, `cohesion` |
 
 #### Example Usage
 
@@ -1083,10 +1088,10 @@ Compare EPP, S&D, and Renew Europe on voting cohesion and legislative output
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| subjectId | string | Yes | MEP or committee identifier |
-| subjectType | string | No | "mep" or "committee" |
-| dateFrom | string | No | Start date (ISO 8601) |
-| dateTo | string | No | End date (ISO 8601) |
+| subjectType | string | Yes | Subject type: `MEP` or `COMMITTEE` |
+| subjectId | string | Yes | Subject identifier (MEP ID or committee abbreviation) |
+| dateFrom | string | No | Start date (YYYY-MM-DD) |
+| dateTo | string | No | End date (YYYY-MM-DD) |
 
 #### Example Usage
 
@@ -1102,12 +1107,13 @@ Analyze the legislative effectiveness of the ENVI committee
 
 #### Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| committeeId | string | No | Filter by committee |
-| status | string | No | Filter by procedure status |
-| dateFrom | string | No | Start date (ISO 8601) |
-| dateTo | string | No | End date (ISO 8601) |
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| committee | string | No | - | Filter by committee |
+| status | string | No | ACTIVE | Pipeline status filter: `ALL`, `ACTIVE`, `STALLED`, `COMPLETED` |
+| dateFrom | string | No | - | Analysis start date (YYYY-MM-DD) |
+| dateTo | string | No | - | Analysis end date (YYYY-MM-DD) |
+| limit | number | No | 20 | Maximum results to return (1-100) |
 
 #### Example Usage
 
@@ -1365,30 +1371,31 @@ const result = await client.callTool('comparative_intelligence', {
 
 ### Tool: correlate_intelligence
 
-**Description**: Cross-tool OSINT intelligence correlation engine. Combines outputs from assess_mep_influence + detect_voting_anomalies, early_warning_system + analyze_coalition_dynamics, and optionally network_analysis + comparative_intelligence. Returns consolidated intelligence alerts with evidence chains.
+**Description**: Cross-tool OSINT intelligence correlation engine. Combines outputs from assess_mep_influence + detect_voting_anomalies (ELEVATED_ATTENTION alerts), early_warning_system + analyze_coalition_dynamics (COALITION_FRACTURE alerts), and optionally network_analysis + comparative_intelligence (COMPREHENSIVE_PROFILE alerts). Returns consolidated intelligence alerts with evidence chains and recommendations.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| mepIds | array of strings | No | - | Target MEP identifiers (1-5 items) |
-| groups | array of strings | No | - | Target political group identifiers (1-10 items) |
-| correlationMode | string | No | broad | Correlation mode: `targeted` (specific MEPs/groups), `broad` (general scan), or `comprehensive` (full cross-reference) |
-
-At least one of `mepIds` or `groups` should be provided for `targeted` mode. In `broad` and `comprehensive` modes, parameters are optional.
+| mepIds | array of strings | Yes | - | MEP identifiers to cross-correlate (1-5 items) |
+| groups | array of strings | No | - | Political groups for coalition fracture analysis (max 8, omit to use all major groups) |
+| sensitivityLevel | string | No | MEDIUM | Alert sensitivity: `HIGH`, `MEDIUM`, or `LOW` — HIGH surfaces more signals, LOW reduces noise |
+| includeNetworkAnalysis | boolean | No | false | Run network centrality analysis (increases response time) |
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-Run comprehensive intelligence correlation across EPP and S&D groups
+Run intelligence correlation for MEPs 124810 and 124811 with high sensitivity
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
 const result = await client.callTool('correlate_intelligence', {
+  mepIds: ['124810', '124811'],
   groups: ['EPP', 'S&D'],
-  correlationMode: 'comprehensive'
+  sensitivityLevel: 'HIGH',
+  includeNetworkAnalysis: true
 });
 ```
 
@@ -2565,8 +2572,8 @@ const report = await client.callTool('generate_report', {
 ```typescript
 // Step 1: Search for climate-related documents
 const documents = await client.callTool('search_documents', {
-  keywords: 'climate change renewable',
-  docType: 'PROPOSAL',
+  keyword: 'climate change renewable',
+  documentType: 'REPORT',
   dateFrom: '2024-01-01',
   limit: 50
 });
