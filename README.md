@@ -539,7 +539,7 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 
 | Tool | Description | Key Parameters | Output |
 |------|-------------|----------------|--------|
-| [`get_all_generated_stats`](./API_USAGE_GUIDE.md#tool-get_all_generated_stats) | Precomputed EP activity statistics (2004-2025) with rankings, predictions, political landscape, and [30 OSINT-derived intelligence metrics](./EP_POLITICAL_LANDSCAPE.md) including 3-axis political compass | yearFrom, yearTo, category, includePredictions | Statistics object |
+| [`get_all_generated_stats`](./API_USAGE_GUIDE.md#tool-get_all_generated_stats) | Precomputed EP activity statistics (2004-2026) with rankings, predictions, political landscape, and [30 OSINT-derived intelligence metrics](./EP_POLITICAL_LANDSCAPE.md) including 3-axis political compass | yearFrom, yearTo, category, includePredictions | Statistics object |
 | [`analyze_voting_patterns`](./API_USAGE_GUIDE.md#tool-analyze_voting_patterns) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
 | [`track_legislation`](./API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
 | [`generate_report`](./API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
@@ -892,7 +892,7 @@ European-Parliament-MCP-Server/
 - **[Architecture Documentation](./ARCHITECTURE.md)** - System architecture and design patterns
 - **[Data Model](./DATA_MODEL.md)** - Data structures and type definitions
 - **[API Usage Guide](./API_USAGE_GUIDE.md)** - Guide for using the MCP server API
-- **[EP Political Landscape](./EP_POLITICAL_LANDSCAPE.md)** - 📊 Comprehensive Mermaid visualization of all EP statistics, political compass, coalition dynamics, and OSINT intelligence metrics
+- **[EP Political Landscape](./EP_POLITICAL_LANDSCAPE.md)** - 📊 Comprehensive Mermaid visualization of all EP statistics (2004–2026), political compass, coalition dynamics, and OSINT intelligence metrics — all years validated against EP API v2
 
 #### 🧪 Testing & Quality
 
@@ -1349,7 +1349,7 @@ For deep dives into specific evolution tracks, see:
 
 | Document | Focus | Link |
 |:---------|:------|:-----|
-| 📊 **EP Political Landscape** | OSINT intelligence dashboard — seat composition, fragmentation, political compass, coalition dynamics, derived metrics | [EP_POLITICAL_LANDSCAPE.md](./EP_POLITICAL_LANDSCAPE.md) |
+| 📊 **EP Political Landscape** | OSINT intelligence dashboard (2004–2026) — seat composition, fragmentation, political compass, coalition dynamics, derived metrics; all years validated against EP API v2 | [EP_POLITICAL_LANDSCAPE.md](./EP_POLITICAL_LANDSCAPE.md) |
 | 🧠 **Future Mind Map** | Capability expansion vision, AI analysis, OSINT evolution | [FUTURE_MINDMAP.md](./FUTURE_MINDMAP.md) |
 | ⚙️ **Future Workflows** | CI/CD evolution, AI-augmented pipelines, 2027–2037 roadmap | [FUTURE_WORKFLOWS.md](./FUTURE_WORKFLOWS.md) |
 | 🏛️ **Future Architecture** | Platform architecture evolution, AWS deployment, federation | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) |

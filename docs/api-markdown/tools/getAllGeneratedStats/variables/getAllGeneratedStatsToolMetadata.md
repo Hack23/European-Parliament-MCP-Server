@@ -70,7 +70,7 @@ Defined in: [tools/getAllGeneratedStats.ts:288](https://github.com/Hack23/Europe
 
 #### inputSchema.properties.includePredictions.description
 
-> **description**: `string` = `'Include trend-based predictions for 2026-2030 (default: true)'`
+> **description**: `string` = `'Include trend-based predictions for 2027-2031 (default: true)'`
 
 #### inputSchema.properties.includePredictions.type
 

@@ -88,8 +88,8 @@ describe('getAllGeneratedStats', () => {
 
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     expect(data.generatedAt).toMatch(/^\d{4}-\d{2}-\d{2}/);
-    expect(data.coveragePeriod).toEqual({ from: 2004, to: 2025 });
-    expect(data.requestedPeriod).toEqual(expect.objectContaining({ from: 2004, to: 2025 }));
+    expect(data.coveragePeriod).toEqual({ from: 2004, to: 2026 });
+    expect(data.requestedPeriod).toEqual(expect.objectContaining({ from: 2004, to: 2026 }));
     expect(Array.isArray(data.yearlyStats)).toBe(true);
     expect(data.analysisSummary).not.toBeNull();
     expect(data.analysisSummary).toEqual(
@@ -102,7 +102,7 @@ describe('getAllGeneratedStats', () => {
     expect(data.sourceAttribution).toContain('europarl');
   });
 
-  it('returns yearly stats covering 2004-2025 (22 years)', () => {
+  it('returns yearly stats covering 2004-2026 (23 years)', () => {
     const result = getAllGeneratedStats({
       category: 'all',
       includePredictions: false,
@@ -110,9 +110,9 @@ describe('getAllGeneratedStats', () => {
       includeRankings: false,
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
-    expect(data.yearlyStats).toHaveLength(22);
+    expect(data.yearlyStats).toHaveLength(23);
     expect(data.yearlyStats[0].year).toBe(2004);
-    expect(data.yearlyStats[21].year).toBe(2025);
+    expect(data.yearlyStats[22].year).toBe(2026);
   });
 
   it('each yearly stat has required fields', () => {
@@ -184,12 +184,12 @@ describe('getAllGeneratedStats', () => {
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     const year2004 = data.yearlyStats.find((y: Record<string, unknown>) => y.year === 2004)?.politicalLandscape;
-    const year2025 = data.yearlyStats.find((y: Record<string, unknown>) => y.year === 2025)?.politicalLandscape;
+    const year2026 = data.yearlyStats.find((y: Record<string, unknown>) => y.year === 2026)?.politicalLandscape;
     // Fragmentation has increased over time
-    expect(year2025.fragmentationIndex).toBeGreaterThan(year2004.fragmentationIndex);
+    expect(year2026.fragmentationIndex).toBeGreaterThan(year2004.fragmentationIndex);
     // Grand coalition was possible in EP6 but not in EP10
     expect(year2004.grandCoalitionPossible).toBe(true);
-    expect(year2025.grandCoalitionPossible).toBe(false);
+    expect(year2026.grandCoalitionPossible).toBe(false);
   });
 
   it('filters by political_groups category', () => {
@@ -282,8 +282,8 @@ describe('getAllGeneratedStats', () => {
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
     expect(data.predictions.length).toBe(5);
-    expect(data.predictions[0].year).toBe(2026);
-    expect(data.predictions[4].year).toBe(2030);
+    expect(data.predictions[0].year).toBe(2027);
+    expect(data.predictions[4].year).toBe(2031);
     expect(data.predictions[0].confidenceInterval).toMatch(/^±\d+%$/);
     expect(data.predictions[0].methodology).toContain('Average-based extrapolation');
   });
@@ -299,7 +299,7 @@ describe('getAllGeneratedStats', () => {
     expect(data.predictions).toBeUndefined();
   });
 
-  it('excludes predictions when yearTo is before prediction years even if includePredictions is true', () => {
+  it('includes all predictions when includePredictions is true regardless of yearTo', () => {
     const result = getAllGeneratedStats({
       yearFrom: 2019,
       yearTo: 2024,
@@ -309,22 +309,24 @@ describe('getAllGeneratedStats', () => {
       includeRankings: false,
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
-    expect(data.predictions).toBeUndefined();
+    expect(data.predictions.length).toBe(5);
+    expect(data.predictions[0].year).toBe(2027);
+    expect(data.predictions[4].year).toBe(2031);
   });
 
-  it('includes only predictions within the requested year range', () => {
+  it('includes all predictions when yearTo does not cover full prediction range', () => {
     const result = getAllGeneratedStats({
       yearFrom: 2020,
-      yearTo: 2027,
+      yearTo: 2028,
       category: 'all',
       includePredictions: true,
       includeMonthlyBreakdown: false,
       includeRankings: false,
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
-    expect(data.predictions.length).toBe(2);
-    expect(data.predictions[0].year).toBe(2026);
-    expect(data.predictions[1].year).toBe(2027);
+    expect(data.predictions.length).toBe(5);
+    expect(data.predictions[0].year).toBe(2027);
+    expect(data.predictions[4].year).toBe(2031);
   });
 
   it('includes category rankings with percentiles', () => {
@@ -346,7 +348,7 @@ describe('getAllGeneratedStats', () => {
     expect(ranking.topYear).toBeGreaterThanOrEqual(2004);
     expect(ranking.bottomYear).toBeGreaterThanOrEqual(2004);
     expect(Array.isArray(ranking.rankings)).toBe(true);
-    expect(ranking.rankings.length).toBe(22);
+    expect(ranking.rankings.length).toBe(23);
 
     // Check individual ranking entry
     const entry = ranking.rankings[0];
@@ -468,7 +470,7 @@ describe('getAllGeneratedStats', () => {
     expect(data.yearlyStats[3].year).toBe(2018);
     expect(data.totalYearsReturned).toBe(4);
     // coveragePeriod is always full dataset; requestedPeriod reflects the filter
-    expect(data.coveragePeriod).toEqual({ from: 2004, to: 2025 });
+    expect(data.coveragePeriod).toEqual({ from: 2004, to: 2026 });
     expect(data.requestedPeriod).toEqual({ from: 2015, to: 2018 });
   });
 
@@ -536,7 +538,7 @@ describe('handleGetAllGeneratedStats', () => {
     expect(result.content).toHaveLength(1);
     expect(result.isError).toBeUndefined();
     const data = JSON.parse(result.content[0]?.text ?? '{}');
-    expect(data.yearlyStats.length).toBe(22);
+    expect(data.yearlyStats.length).toBe(23);
   });
 
   it('rejects invalid args with Zod error', async () => {

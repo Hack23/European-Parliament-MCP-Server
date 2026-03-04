@@ -2,9 +2,9 @@
  * MCP Tool: get_all_generated_stats
  *
  * Returns precomputed European Parliament activity statistics covering
- * parliamentary terms EP6–EP10 (2004–2025), including monthly activity
+ * parliamentary terms EP6–EP10 (2004–2026), including monthly activity
  * breakdowns, category rankings with percentiles, analytical commentary,
- * and trend-based predictions for 2026–2030.
+ * and trend-based predictions for 2027–2031.
  *
  * The underlying data is static and designed to be refreshed weekly by
  * an agentic workflow. No live EP API calls are made by this tool.
@@ -38,16 +38,16 @@ export const GetAllGeneratedStatsSchema = z
       .number()
       .int()
       .min(2004)
-      .max(2030)
+      .max(2031)
       .optional()
       .describe('Start year for filtering (default: earliest available, 2004)'),
     yearTo: z
       .number()
       .int()
       .min(2004)
-      .max(2030)
+      .max(2031)
       .optional()
-      .describe('End year for filtering (default: latest available, 2025)'),
+      .describe('End year for filtering (default: latest available, 2026)'),
     category: z
       .enum([
         'all',
@@ -73,7 +73,7 @@ export const GetAllGeneratedStatsSchema = z
       .boolean()
       .optional()
       .default(true)
-      .describe('Include trend-based predictions for 2026-2030 (default: true)'),
+      .describe('Include trend-based predictions for 2027-2031 (default: true)'),
     includeMonthlyBreakdown: z
       .boolean()
       .optional()
@@ -213,7 +213,7 @@ function filterRankings(
 /**
  * Retrieve precomputed EP activity statistics with optional year/category filtering.
  *
- * The response always includes `coveragePeriod` (the full dataset range, 2004–2025)
+ * The response always includes `coveragePeriod` (the full dataset range, 2004–2026)
  * and `requestedPeriod` (the user-supplied year filter). The `analysisSummary` covers
  * the full dataset with a `coverageNote` clarifying scope when filters narrow the range.
  */
@@ -238,11 +238,11 @@ export function getAllGeneratedStats(
     // Filter rankings by category if specified
     const filteredRankings = filterRankings(params, yearFrom, yearTo);
 
-    // Include predictions only if requested, filtered to the requested year range
-    const filteredPredictions =
-      params.includePredictions
-        ? GENERATED_STATS.predictions.filter((p) => p.year >= yearFrom && p.year <= yearTo)
-        : [];
+    // Include predictions only if requested — predictions are always returned in full
+    // since they cover future years (2027–2031) beyond the historical yearTo default (2026)
+    const filteredPredictions = params.includePredictions
+      ? GENERATED_STATS.predictions
+      : [];
 
     const result = {
       generatedAt: GENERATED_STATS.generatedAt,
@@ -270,7 +270,7 @@ export function getAllGeneratedStats(
       methodology:
         'Precomputed statistics from European Parliament Open Data Portal. ' +
         'Rankings use ordinal ranking with percentile scores. ' +
-        'Predictions use average-based extrapolation from 2021-2025 with parliamentary term cycle adjustments. ' +
+        'Predictions use average-based extrapolation from 2021-2025 actuals with parliamentary term cycle adjustments. ' +
         'Data refreshed weekly by agentic workflow.',
       sourceAttribution:
         'European Parliament Open Data Portal — data.europarl.europa.eu',
@@ -288,9 +288,9 @@ export function getAllGeneratedStats(
 export const getAllGeneratedStatsToolMetadata = {
   name: 'get_all_generated_stats',
   description:
-    'Retrieve precomputed European Parliament activity statistics (2004-2025) with monthly breakdowns, ' +
+    'Retrieve precomputed European Parliament activity statistics (2004-2026) with monthly breakdowns, ' +
     'category rankings, percentile scores, statistical analysis, political landscape history (group composition, ' +
-    'fragmentation index, coalition dynamics), analytical commentary, and trend-based predictions for 2026-2030. ' +
+    'fragmentation index, coalition dynamics), analytical commentary, and trend-based predictions for 2027-2031. ' +
     'Data covers parliamentary terms EP6-EP10 including plenary sessions, legislative acts, roll-call votes, ' +
     'committee meetings, parliamentary questions, resolutions, speeches, adopted texts, procedures, events, ' +
     'documents, MEP turnover, and declarations. ' +
@@ -302,13 +302,13 @@ export const getAllGeneratedStatsToolMetadata = {
         type: 'number',
         description: 'Start year for filtering (default: 2004)',
         minimum: 2004,
-        maximum: 2030,
+        maximum: 2031,
       },
       yearTo: {
         type: 'number',
-        description: 'End year for filtering (default: 2025)',
+        description: 'End year for filtering (default: 2026)',
         minimum: 2004,
-        maximum: 2030,
+        maximum: 2031,
       },
       category: {
         type: 'string',
@@ -334,7 +334,7 @@ export const getAllGeneratedStatsToolMetadata = {
       },
       includePredictions: {
         type: 'boolean',
-        description: 'Include trend-based predictions for 2026-2030 (default: true)',
+        description: 'Include trend-based predictions for 2027-2031 (default: true)',
         default: true,
       },
       includeMonthlyBreakdown: {

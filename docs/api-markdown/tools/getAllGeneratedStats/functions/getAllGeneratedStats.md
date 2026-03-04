@@ -12,7 +12,7 @@ Defined in: [tools/getAllGeneratedStats.ts:220](https://github.com/Hack23/Europe
 
 Retrieve precomputed EP activity statistics with optional year/category filtering.
 
-The response always includes `coveragePeriod` (the full dataset range, 2004–2025)
+The response always includes `coveragePeriod` (the full dataset range, 2004–2026)
 and `requestedPeriod` (the user-supplied year filter). The `analysisSummary` covers
 the full dataset with a `coverageNote` clarifying scope when filters narrow the range.
 

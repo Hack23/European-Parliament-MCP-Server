@@ -6,7 +6,7 @@
 
 # data/generatedStats
 
-Precomputed European Parliament activity statistics (2004–2025).
+Precomputed European Parliament activity statistics (2004–2026).
 
 This module contains static, pre-generated summary statistics for
 European Parliament activity aggregated by year and month. Data

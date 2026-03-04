@@ -1,5 +1,5 @@
 /**
- * Precomputed European Parliament activity statistics (2004–2025).
+ * Precomputed European Parliament activity statistics (2004–2026).
  *
  * This module contains static, pre-generated summary statistics for
  * European Parliament activity aggregated by year and month. Data
@@ -374,7 +374,7 @@ export interface CategoryRanking {
  * typical ramp-up → peak → decline pattern within each five-year term.
  */
 export interface PredictionYear {
-  /** Predicted calendar year (2026–2030) */
+  /** Predicted calendar year (2027–2031) */
   year: number;
   /** Predicted plenary sessions */
   predictedPlenarySessions: number;
@@ -412,7 +412,7 @@ export interface PredictionYear {
 export interface GeneratedStatsData {
   /** ISO 8601 timestamp of when stats were last generated */
   generatedAt: string;
-  /** Underlying dataset coverage period (always 2004–2025) */
+  /** Underlying dataset coverage period (always 2004–2026) */
   coveragePeriod: { from: number; to: number };
   /** Version of the stats generation methodology */
   methodologyVersion: string;
@@ -422,7 +422,7 @@ export interface GeneratedStatsData {
   yearlyStats: YearlyStats[];
   /** Per-category statistical rankings across years */
   categoryRankings: CategoryRanking[];
-  /** Predicted activity for future years (2026–2030) */
+  /** Predicted activity for future years (2027–2031) */
   predictions: PredictionYear[];
   /** High-level analytical summary of trends and key findings */
   analysisSummary: {
@@ -557,12 +557,13 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | '
   { year: 2017, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 58, legislativeActsAdopted: 128, rollCallVotes: 600, committeeMeetings: 2420, parliamentaryQuestions: 5780, resolutions: 195, speeches: 13800, adoptedTexts: 503, procedures: 898, events: 1812, documents: 3962, mepTurnover: 42, declarations: 700, commentary: 'Article 50 negotiations began. Posting of Workers Directive revision. EU-Canada trade agreement (CETA) ratification. Strong legislative productivity as EP8 matured.' },
   { year: 2018, parliamentaryTerm: 'EP8 (2014-2019)', mepCount: 751, plenarySessions: 54, legislativeActsAdopted: 142, rollCallVotes: 650, committeeMeetings: 2550, parliamentaryQuestions: 6050, resolutions: 210, speeches: 14800, adoptedTexts: 367, procedures: 940, events: 1729, documents: 3927, mepTurnover: 35, declarations: 720, commentary: 'Peak EP8 legislative output. Copyright Directive heated debate. MFF 2021-2027 proposals. Clean Energy Package. Brexit Withdrawal Agreement negotiations. Highest roll-call vote count in EP8.' },
   { year: 2019, parliamentaryTerm: 'EP8/EP9 transition', mepCount: 751, plenarySessions: 52, legislativeActsAdopted: 65, rollCallVotes: 350, committeeMeetings: 1580, parliamentaryQuestions: 3680, resolutions: 98, speeches: 7000, adoptedTexts: 551, procedures: 749, events: 3103, documents: 3512, mepTurnover: 410, declarations: 540, commentary: 'EP8/EP9 transition. European elections May 2019. Fragmented parliament—no traditional two-party majority. Ursula von der Leyen narrowly elected Commission President. UK MEPs still present (Brexit delayed).' },
-  { year: 2020, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 51, legislativeActsAdopted: 85, rollCallVotes: 460, committeeMeetings: 1950, parliamentaryQuestions: 5850, resolutions: 148, speeches: 9800, adoptedTexts: 105, procedures: 794, events: 3636, documents: 3250, mepTurnover: 95, declarations: 610, commentary: 'COVID-19 pandemic forced remote/hybrid plenary sessions. Brexit completed (UK MEPs departed January 2020, reducing count to 705). NextGenerationEU recovery fund negotiations. Unprecedented adaptation to digital parliament.' },
+  { year: 2020, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 51, legislativeActsAdopted: 85, rollCallVotes: 460, committeeMeetings: 1950, parliamentaryQuestions: 5850, resolutions: 148, speeches: 9800, adoptedTexts: 390, procedures: 794, events: 3636, documents: 3250, mepTurnover: 95, declarations: 610, commentary: 'COVID-19 pandemic forced remote/hybrid plenary sessions. Brexit completed (UK MEPs departed January 2020, reducing count to 705). NextGenerationEU recovery fund negotiations. Unprecedented adaptation to digital parliament.' },
   { year: 2021, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 55, legislativeActsAdopted: 102, rollCallVotes: 530, committeeMeetings: 2180, parliamentaryQuestions: 6120, resolutions: 168, speeches: 11500, adoptedTexts: 517, procedures: 905, events: 4837, documents: 3820, mepTurnover: 48, declarations: 665, commentary: 'Continued hybrid working. Digital COVID Certificate legislation fast-tracked. Conference on the Future of Europe launched. Fit for 55 climate package proposals. MFF 2021-2027 operational. Questions spiked due to pandemic oversight.' },
   { year: 2022, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 58, legislativeActsAdopted: 120, rollCallVotes: 590, committeeMeetings: 2380, parliamentaryQuestions: 6350, resolutions: 192, speeches: 13500, adoptedTexts: 453, procedures: 843, events: 1097, documents: 4350, mepTurnover: 42, declarations: 695, commentary: 'Russia-Ukraine war dominated agenda. Energy crisis response. Digital Services Act and Digital Markets Act adopted. REPowerEU plan. Return to full in-person sessions. Parliament\'s foreign affairs role expanded significantly.' },
   { year: 2023, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 58, legislativeActsAdopted: 148, rollCallVotes: 660, committeeMeetings: 2520, parliamentaryQuestions: 6580, resolutions: 218, speeches: 15200, adoptedTexts: 487, procedures: 903, events: 1676, documents: 5020, mepTurnover: 38, declarations: 343, commentary: 'Peak EP9 legislative output. AI Act negotiations concluded. Nature Restoration Law controversial vote. Corporate Sustainability Due Diligence. Critical Raw Materials Act. Record-high legislative productivity driven by end-of-term urgency.' },
   { year: 2024, parliamentaryTerm: 'EP9/EP10 transition', mepCount: 720, plenarySessions: 50, legislativeActsAdopted: 72, rollCallVotes: 375, committeeMeetings: 1680, parliamentaryQuestions: 3950, resolutions: 108, speeches: 7800, adoptedTexts: 459, procedures: 676, events: 310, documents: 2680, mepTurnover: 405, declarations: 560, commentary: 'EP9/EP10 transition. European elections June 2024. Significant rightward shift in composition. New MEPs (720 total after redistribution). Reduced output due to election cycle. AI Act entered into force.' },
-  { year: 2025, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 717, plenarySessions: 53, legislativeActsAdopted: 78, rollCallVotes: 420, committeeMeetings: 1980, parliamentaryQuestions: 4941, resolutions: 135, speeches: 10000, adoptedTexts: 347, procedures: 923, events: 2657, documents: 3516, mepTurnover: 36, declarations: 3000, commentary: 'EP10 ramp-up year. New committee chairs and rapporteurs established. Defence and security policy gained prominence. Strategic autonomy debates. Clean Industrial Deal proposals. Parliament adapting to new political balance with stronger ECR and right-wing presence.' },
+  { year: 2025, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 720, plenarySessions: 53, legislativeActsAdopted: 78, rollCallVotes: 420, committeeMeetings: 1980, parliamentaryQuestions: 4941, resolutions: 135, speeches: 10000, adoptedTexts: 347, procedures: 923, events: 2657, documents: 3516, mepTurnover: 36, declarations: 3000, commentary: 'EP10 ramp-up year (720 MEPs from 27 EU countries). New committee chairs and rapporteurs established. Defence and security policy gained prominence. Strategic autonomy debates. Clean Industrial Deal proposals. Parliament adapting to new political balance with stronger ECR and right-wing presence.' },
+  { year: 2026, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 720, plenarySessions: 54, legislativeActsAdopted: 114, rollCallVotes: 567, committeeMeetings: 2363, parliamentaryQuestions: 6147, resolutions: 180, speeches: 12760, adoptedTexts: 498, procedures: 935, events: 2327, documents: 4265, mepTurnover: 40, declarations: 1158, commentary: 'PARTIAL YEAR — data through Q1 2026. EP10 has 720 MEPs from 27 EU countries. Plenary session count (54) reflects full-year EP calendar; all other activity totals are projected full-year estimates based on 2021-2025 historical average with EP10 year-2 cycle adjustment. Actual Q1 activity: 10 plenary sittings completed (Jan-Feb), adopted texts and procedures accumulating. Defence spending, Clean Industrial Deal, and AI Act implementation dominating legislative agenda.' },
 ];
 
 // ── Real monthly data from EP API ─────────────────────────────────
@@ -581,6 +582,9 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | '
 //
 // Updated by: npx tsx scripts/generate-stats.ts --update
 const RAW_MONTHLY_DATA: Record<number, Record<string, number[]>> = {
+  2026: {
+    plenarySessions: [5, 5, 6, 4, 4, 4, 4, 0, 4, 8, 6, 4],
+  },
   2025: {
     plenarySessions: [5, 4, 5, 3, 6, 4, 4, 0, 4, 8, 6, 4],
     events: [119, 158, 300, 261, 203, 236, 201, 5, 234, 364, 346, 230],
@@ -699,7 +703,8 @@ const POLITICAL_LANDSCAPE: Record<number, PoliticalLandscapeData> = {
   2022: { groups: [{ name: 'EPP', seats: 177, seatShare: 25.1 }, { name: 'S&D', seats: 145, seatShare: 20.6 }, { name: 'RE', seats: 101, seatShare: 14.3 }, { name: 'ID', seats: 62, seatShare: 8.8 }, { name: 'Greens/EFA', seats: 72, seatShare: 10.2 }, { name: 'ECR', seats: 66, seatShare: 9.4 }, { name: 'GUE/NGL', seats: 38, seatShare: 5.4 }, { name: 'NI', seats: 44, seatShare: 6.2 }], totalGroups: 7, largestGroup: 'EPP', largestGroupSeatShare: 25.1, fragmentationIndex: 6.26, grandCoalitionPossible: false, politicalBalance: 'Ukraine war united mainstream; ID weakened as some parties distanced from Russia; ECR gained from Fidesz joining' },
   2023: { groups: [{ name: 'EPP', seats: 177, seatShare: 25.1 }, { name: 'S&D', seats: 142, seatShare: 20.1 }, { name: 'RE', seats: 101, seatShare: 14.3 }, { name: 'Greens/EFA', seats: 72, seatShare: 10.2 }, { name: 'ECR', seats: 68, seatShare: 9.6 }, { name: 'ID', seats: 62, seatShare: 8.8 }, { name: 'GUE/NGL', seats: 37, seatShare: 5.2 }, { name: 'NI', seats: 46, seatShare: 6.5 }], totalGroups: 7, largestGroup: 'EPP', largestGroupSeatShare: 25.1, fragmentationIndex: 6.32, grandCoalitionPossible: false, politicalBalance: 'Nature Restoration Law showed EPP willing to break with S&D on Green Deal; rightward pressure intensified pre-election' },
   2024: { groups: [{ name: 'EPP', seats: 188, seatShare: 26.1 }, { name: 'S&D', seats: 136, seatShare: 18.9 }, { name: 'PfE', seats: 84, seatShare: 11.7 }, { name: 'ECR', seats: 78, seatShare: 10.8 }, { name: 'RE', seats: 77, seatShare: 10.7 }, { name: 'Greens/EFA', seats: 53, seatShare: 7.4 }, { name: 'GUE/NGL', seats: 46, seatShare: 6.4 }, { name: 'ESN', seats: 25, seatShare: 3.5 }, { name: 'NI', seats: 33, seatShare: 4.6 }], totalGroups: 8, largestGroup: 'EPP', largestGroupSeatShare: 26.1, fragmentationIndex: 6.51, grandCoalitionPossible: false, politicalBalance: 'EP10: Rightward shift. PfE (Patriots for Europe) replaced ID. ESN (Europe of Sovereign Nations) new far-right. ECR strengthened. Greens lost significantly' },
-  2025: { groups: [{ name: 'EPP', seats: 188, seatShare: 26.1 }, { name: 'S&D', seats: 136, seatShare: 18.9 }, { name: 'PfE', seats: 86, seatShare: 11.9 }, { name: 'ECR', seats: 78, seatShare: 10.8 }, { name: 'RE', seats: 77, seatShare: 10.7 }, { name: 'Greens/EFA', seats: 53, seatShare: 7.4 }, { name: 'GUE/NGL', seats: 46, seatShare: 6.4 }, { name: 'ESN', seats: 25, seatShare: 3.5 }, { name: 'NI', seats: 31, seatShare: 4.3 }], totalGroups: 8, largestGroup: 'EPP', largestGroupSeatShare: 26.1, fragmentationIndex: 6.50, grandCoalitionPossible: false, politicalBalance: 'EP10 settled: EPP seeking flexible majorities with ECR on defence/migration; Green Deal pace slowing; defence spending consensus building' },
+  2025: { groups: [{ name: 'EPP', seats: 185, seatShare: 25.7 }, { name: 'S&D', seats: 135, seatShare: 18.8 }, { name: 'PfE', seats: 84, seatShare: 11.7 }, { name: 'ECR', seats: 79, seatShare: 11.0 }, { name: 'RE', seats: 76, seatShare: 10.6 }, { name: 'Greens/EFA', seats: 53, seatShare: 7.4 }, { name: 'GUE/NGL', seats: 46, seatShare: 6.4 }, { name: 'ESN', seats: 28, seatShare: 3.9 }, { name: 'NI', seats: 34, seatShare: 4.7 }], totalGroups: 8, largestGroup: 'EPP', largestGroupSeatShare: 25.7, fragmentationIndex: 6.59, grandCoalitionPossible: false, politicalBalance: 'EP10 settled: 720 MEPs from 27 EU countries. EPP seeking flexible majorities with ECR on defence/migration; Green Deal pace slowing; defence spending consensus building' },
+  2026: { groups: [{ name: 'EPP', seats: 185, seatShare: 25.7 }, { name: 'S&D', seats: 135, seatShare: 18.8 }, { name: 'PfE', seats: 84, seatShare: 11.7 }, { name: 'ECR', seats: 79, seatShare: 11.0 }, { name: 'RE', seats: 76, seatShare: 10.6 }, { name: 'Greens/EFA', seats: 53, seatShare: 7.4 }, { name: 'GUE/NGL', seats: 46, seatShare: 6.4 }, { name: 'ESN', seats: 28, seatShare: 3.9 }, { name: 'NI', seats: 34, seatShare: 4.7 }], totalGroups: 8, largestGroup: 'EPP', largestGroupSeatShare: 25.7, fragmentationIndex: 6.59, grandCoalitionPossible: false, politicalBalance: 'EP10 year 2: 720 MEPs from 27 EU countries. EPP-led flexible majorities on defence and competitiveness. ECR consolidating as third force. Clean Industrial Deal and European Defence Industrial Strategy key legislative priorities' },
 };
 
 const DEFAULT_POLITICAL_LANDSCAPE: PoliticalLandscapeData = {
@@ -1092,7 +1097,7 @@ function computeRankings(yearly: YearlyStats[]): CategoryRanking[] {
   });
 }
 
-// ── Predictions (2026–2030) ───────────────────────────────────────
+// ── Predictions (2027–2031) ───────────────────────────────────────
 // Average-based extrapolation from the last 5 years (2021-2025),
 // including the 2024 transition year and 2025 ramp-up year for a
 // representative mix of recent parliamentary activity levels.
@@ -1100,8 +1105,8 @@ function computeRankings(yearly: YearlyStats[]): CategoryRanking[] {
 // to the 2021-2025 average (not a linear regression/slope).
 
 function buildPredictions(): PredictionYear[] {
-  // Use last 5 years (2021-2025) for trend calculation; includes transition
-  // and ramp-up years to capture realistic average activity levels
+  // Use last 5 years (2021-2025) for trend calculation; all complete actual data
+  // years covering both EP9 end-of-term push and EP10 transition
   const trendYears = RAW_YEARLY.filter((y) =>
     [2021, 2022, 2023, 2024, 2025].includes(y.year)
   );
@@ -1123,13 +1128,13 @@ function buildPredictions(): PredictionYear[] {
   const avgMepTurnover = avg((y) => y.mepTurnover);
   const avgDeclarations = avg((y) => y.declarations);
 
-  // EP10 ramp-up curve: year 2 moderate, years 3-4 peak, year 5 decline (election transition)
+  // EP10 ramp-up curve: years 3-4 peak, year 5 decline (election transition)
   const termCurve = [
-    { year: 2026, factor: 1.10, conf: '±12%', note: 'EP10 year 2 — ramp-up, committees fully operational' },
-    { year: 2027, factor: 1.20, conf: '±15%', note: 'EP10 year 3 — peak legislative productivity expected' },
-    { year: 2028, factor: 1.25, conf: '±18%', note: 'EP10 year 4 — highest output before end-of-term push' },
-    { year: 2029, factor: 0.80, conf: '±22%', note: 'EP10 year 5 — election transition, reduced output' },
-    { year: 2030, factor: 0.95, conf: '±25%', note: 'EP11 year 1 — new term establishment phase' },
+    { year: 2027, factor: 1.15, conf: '±12%', note: 'EP10 year 3 — peak legislative productivity expected' },
+    { year: 2028, factor: 1.20, conf: '±15%', note: 'EP10 year 4 — highest output before end-of-term push' },
+    { year: 2029, factor: 0.75, conf: '±18%', note: 'EP10 year 5 — election transition, reduced output' },
+    { year: 2030, factor: 0.90, conf: '±22%', note: 'EP11 year 1 — new term establishment phase' },
+    { year: 2031, factor: 1.10, conf: '±25%', note: 'EP11 year 2 — ramp-up, committees fully operational' },
   ];
 
   return termCurve.map(({ year, factor, conf, note }) => ({
@@ -1262,7 +1267,7 @@ function buildAnalysisSummary(yearly: YearlyStats[]): GeneratedStatsData['analys
   }
 
   return {
-    overallTrend: `Legislative productivity shows a ${trend.toLowerCase()} trend over the 2004-2025 period. Each parliamentary term follows a characteristic bell curve with peak activity in years 3-4 and reduced output in election transition years.`,
+    overallTrend: `Legislative productivity shows a ${trend.toLowerCase()} trend over the 2004-2026 period. Each parliamentary term follows a characteristic bell curve with peak activity in years 3-4 and reduced output in election transition years.`,
     peakActivityYear: peakYear.year,
     lowestActivityYear: lowestYear.year,
     averageAnnualLegislativeOutput: avgActs,
@@ -1276,7 +1281,7 @@ function buildAnalysisSummary(yearly: YearlyStats[]): GeneratedStatsData['analys
       'EP10 shows a rightward political shift with implications for legislative priorities in defence, migration, and industrial policy.',
       'Committee meeting frequency has increased 30% from EP6 to EP9, reflecting growing legislative complexity.',
       'Roll-call vote counts correlate strongly (r=0.94) with legislative acts adopted, indicating consistent parliamentary discipline.',
-      'Parliamentary fragmentation has steadily increased: Effective Number of Parties rose from 4.12 (2004) to 6.50 (2025), reflecting the decline of the traditional EPP-S&D grand coalition.',
+      'Parliamentary fragmentation has steadily increased: Effective Number of Parties rose from 4.12 (2004) to 6.59 (2026), reflecting the decline of the traditional EPP-S&D grand coalition.',
       'Since 2019 (EP9), no two-party majority has been possible, requiring broader multi-group coalitions for legislation.',
       'Speech counts track legislative intensity, peaking during end-of-term legislative pushes (2013, 2018, 2023).',
       ...buildDerivedKeyFindings(yearly),
@@ -1292,8 +1297,8 @@ const predictions = buildPredictions();
 const analysisSummary = buildAnalysisSummary(yearlyStats);
 
 export const GENERATED_STATS: GeneratedStatsData = {
-  generatedAt: '2026-03-03T22:02:53Z',
-  coveragePeriod: { from: 2004, to: 2025 },
+  generatedAt: '2026-03-03T22:49:33Z',
+  coveragePeriod: { from: 2004, to: 2026 },
   methodologyVersion: '2.0.0',
   dataSource: 'European Parliament Open Data Portal — data.europarl.europa.eu',
   yearlyStats,

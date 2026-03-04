@@ -74,9 +74,10 @@ export function transformMEP(apiData: Record<string, unknown>): MEP {
   const mepId = resolveMEPId(apiData);
   const name = resolveMEPName(apiData);
 
-  // Note: /meps endpoint doesn't return country/politicalGroup — defaults to 'Unknown'
-  const country = toSafeString(firstDefined(apiData, 'country', 'citizenship', 'nationality')) || 'Unknown';
-  const politicalGroup = toSafeString(firstDefined(apiData, 'politicalGroup', 'political_group')) || 'Unknown';
+  // EP API returns `api:country-of-representation` and `api:political-group`
+  // in JSON-LD responses; also check legacy/alternative field names.
+  const country = toSafeString(firstDefined(apiData, 'api:country-of-representation', 'country', 'citizenship', 'nationality')) || 'Unknown';
+  const politicalGroup = toSafeString(firstDefined(apiData, 'api:political-group', 'politicalGroup', 'political_group')) || 'Unknown';
 
   const emailValue = toSafeString(apiData['email']);
   const termEndValue = toSafeString(firstDefined(apiData, 'termEnd', 'term_end'));
@@ -101,6 +102,14 @@ export function transformMEP(apiData: Record<string, unknown>): MEP {
 export function transformMEPDetails(apiData: Record<string, unknown>): MEPDetails {
   const baseMEP = transformMEP(apiData);
 
+  // EP API returns citizenship as URI (e.g. http://.../country/ITA)
+  // Extract the country code from the URI if country is still the full URI
+  let country = baseMEP.country;
+  if (country.startsWith('http')) {
+    const parts = country.split('/');
+    country = parts[parts.length - 1] ?? country;
+  }
+
   const bday = toSafeString(apiData['bday']);
   const memberships = apiData['hasMembership'];
   const committees: string[] = [];
@@ -116,6 +125,7 @@ export function transformMEPDetails(apiData: Record<string, unknown>): MEPDetail
 
   return {
     ...baseMEP,
+    country,
     committees: committees.length > 0 ? committees : baseMEP.committees,
     biography: `Born: ${bday !== '' ? bday : 'Unknown'}`,
     // EP API /meps/{id} endpoint does not return voting statistics;
@@ -137,18 +147,36 @@ export function transformMEPDetails(apiData: Record<string, unknown>): MEPDetail
  */
 export function transformPlenarySession(apiData: Record<string, unknown>): PlenarySession {
   const id = toSafeString(apiData['activity_id']) || toSafeString(apiData['id']) || '';
-  const dateValue = extractActivityDate(apiData['eli-dl:activity_date']);
+  // EP API returns activity_date as plain string; fall back to eli-dl: prefixed variant
+  const dateValue = resolveActivityDate(apiData);
   const localityUrl = toSafeString(apiData['hasLocality']);
   const location = extractLocation(localityUrl);
+
+  // EP API provides number_of_attendees for plenary sessions
+  const rawAttendance = apiData['number_of_attendees'];
+  const attendanceCount = typeof rawAttendance === 'number' ? rawAttendance : 0;
+
+  // EP API provides consists_of (agenda item refs) and documented_by/recorded_in (document refs)
+  const agendaItems = Array.isArray(apiData['consists_of'])
+    ? (apiData['consists_of'] as string[]).map(item => toSafeString(item)).filter(s => s !== '')
+    : [];
+  const docRefs = extractDocumentRefs(
+    apiData['documented_by_a_realization_of'] ?? apiData['recorded_in_a_realization_of']
+  );
 
   return {
     id,
     date: dateValue,
     location,
-    agendaItems: [],
-    attendanceCount: 0,
-    documents: [],
+    agendaItems,
+    attendanceCount,
+    documents: docRefs,
   };
+}
+
+/** Extract activity date from EP API, checking plain string first, then eli-dl: prefixed format. */
+function resolveActivityDate(apiData: Record<string, unknown>): string {
+  return extractDateValue(apiData['activity_date']) || extractActivityDate(apiData['eli-dl:activity_date']);
 }
 
 /**
@@ -156,8 +184,8 @@ export function transformPlenarySession(apiData: Record<string, unknown>): Plena
  */
 export function transformVoteResult(apiData: Record<string, unknown>, sessionId: string): VotingRecord {
   const id = toSafeString(apiData['activity_id']) || toSafeString(apiData['id']) || '';
-  const date = extractActivityDate(apiData['eli-dl:activity_date']);
-  const topic = toSafeString(apiData['label']) || toSafeString(apiData['notation']) || 'Unknown';
+  const date = resolveActivityDate(apiData);
+  const topic = extractMultilingualText(apiData['activity_label'] ?? apiData['label'] ?? apiData['notation']) || 'Unknown';
 
   const votesFor = extractVoteCount(apiData['had_voter_favor'] ?? apiData['number_of_votes_favor']);
   const votesAgainst = extractVoteCount(apiData['had_voter_against'] ?? apiData['number_of_votes_against']);
@@ -204,7 +232,7 @@ export function transformDocument(apiData: Record<string, unknown>): Legislative
   const id = extractField(apiData, ['work_id', 'id', 'identifier']);
   const title = extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']);
   const mappedType = mapDocumentType(extractField(apiData, ['work_type', 'ep-document-types', 'type']));
-  const date = extractDateValue(apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']);
+  const date = extractDateValue(apiData['document_date'] ?? apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']);
   const committeeValue = extractField(apiData, ['was_attributed_to', 'committee']);
   const mappedStatus = mapDocumentStatus(extractField(apiData, ['resource_legal_in-force', 'status']));
 
@@ -232,7 +260,7 @@ export function transformParliamentaryQuestion(apiData: Record<string, unknown>)
   const id = extractField(apiData, ['work_id', 'id', 'identifier']);
   const questionType = mapQuestionType(extractField(apiData, ['work_type', 'ep-document-types']));
   const author = extractAuthorId(firstDefined(apiData, 'was_created_by', 'created_by', 'author'));
-  const date = extractDateValue(firstDefined(apiData, 'work_date_document', 'date_document', 'date'));
+  const date = extractDateValue(firstDefined(apiData, 'document_date', 'work_date_document', 'date_document', 'date'));
   const topic = extractMultilingualText(firstDefined(apiData, 'title_dcterms', 'label', 'title'));
   const hasAnswer = apiData['was_realized_by'] != null;
   const topicText = topic !== '' ? topic : `Question ${id}`;
@@ -256,19 +284,61 @@ export function transformParliamentaryQuestion(apiData: Record<string, unknown>)
 // ─── Activity transformers ──────────────────────────────────────
 
 /**
+ * Extracts speaker ID and name from EP API participation data.
+ * EP API nests speaker info inside `had_participation` object.
+ */
+function extractSpeakerInfo(apiData: Record<string, unknown>): { speakerId: string; speakerName: string } {
+  const participation = apiData['had_participation'];
+  let speakerId = '';
+  let speakerName = '';
+  if (typeof participation === 'object' && participation !== null && !Array.isArray(participation)) {
+    const partObj = participation as Record<string, unknown>;
+    speakerId = extractAuthorId(partObj['had_participant_person']);
+    speakerName = extractMultilingualText(partObj['participant_label'] ?? '');
+  }
+  if (speakerId === '') speakerId = extractAuthorId(apiData['had_participant_person'] ?? apiData['was_attributed_to']);
+  if (speakerName === '') speakerName = extractMultilingualText(apiData['participant_label'] ?? '');
+  return { speakerId, speakerName };
+}
+
+/**
+ * Extracts author MEP ID and name from EP API declaration data.
+ * EP API uses `workHadParticipation` array for declaration authors.
+ */
+function extractDeclarationAuthor(apiData: Record<string, unknown>): { mepId: string; mepName: string } {
+  let mepId = extractAuthorId(apiData['was_attributed_to'] ?? apiData['author']);
+  let mepName = extractMultilingualText(apiData['author_label'] ?? '');
+  if (mepId === '' && Array.isArray(apiData['workHadParticipation'])) {
+    const parts = apiData['workHadParticipation'] as Record<string, unknown>[];
+    if (parts.length > 0) {
+      const first = parts[0];
+      if (first !== undefined) {
+        mepId = extractAuthorId(first['had_participant_person'] ?? first['id']);
+        mepName = extractMultilingualText(first['participant_label'] ?? '');
+      }
+    }
+  }
+  return { mepId, mepName };
+}
+
+/**
  * Transforms EP API speech data to internal {@link Speech} format.
  */
 export function transformSpeech(apiData: Record<string, unknown>): Speech {
+  const { speakerId, speakerName } = extractSpeakerInfo(apiData);
+
   return {
-    id: extractField(apiData, ['identifier', 'id']),
-    title: extractMultilingualText(apiData['had_activity_type'] ?? apiData['label'] ?? apiData['title']),
-    speakerId: extractAuthorId(apiData['had_participant_person'] ?? apiData['was_attributed_to']),
-    speakerName: extractMultilingualText(apiData['participant_label'] ?? apiData['label']),
+    id: extractField(apiData, ['activity_id', 'identifier', 'id']),
+    // EP API uses activity_label for speech title text
+    title: extractMultilingualText(apiData['activity_label'] ?? apiData['had_activity_type'] ?? apiData['label'] ?? apiData['title']),
+    speakerId,
+    speakerName,
     date: extractDateValue(apiData['activity_date'] ?? apiData['date']),
     type: extractField(apiData, ['had_activity_type', 'type']),
     language: extractField(apiData, ['language', 'was_created_in_language']),
     text: extractMultilingualText(apiData['text'] ?? apiData['content'] ?? ''),
-    sessionReference: extractField(apiData, ['was_part_of', 'is_part_of', 'event']),
+    // EP API uses inverse_consists_of (array) for session reference
+    sessionReference: extractAuthorId(apiData['inverse_consists_of'] ?? apiData['was_part_of'] ?? apiData['is_part_of'] ?? apiData['event']),
   };
 }
 
@@ -305,9 +375,11 @@ export function transformAdoptedText(apiData: Record<string, unknown>): AdoptedT
     title: extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']),
     reference: extractField(apiData, ['work_id', 'identifier']),
     type: extractField(apiData, ['work_type', 'type']),
-    dateAdopted: extractDateValue(apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']),
-    procedureReference: extractField(apiData, ['based_on_a_concept_procedure', 'procedure']),
-    subjectMatter: extractMultilingualText(apiData['subject_matter'] ?? apiData['subject'] ?? ''),
+    // EP API returns document_date; also check legacy field names
+    dateAdopted: extractDateValue(apiData['document_date'] ?? apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']),
+    procedureReference: extractField(apiData, ['based_on_a_concept_procedure', 'inverse_decided_on_a_realization_of', 'procedure']),
+    // EP API uses isAboutSubjectMatter for subject classification
+    subjectMatter: extractMultilingualText(apiData['isAboutSubjectMatter'] ?? apiData['subject_matter'] ?? apiData['subject'] ?? ''),
   };
 }
 
@@ -316,12 +388,14 @@ export function transformAdoptedText(apiData: Record<string, unknown>): AdoptedT
  */
 export function transformEvent(apiData: Record<string, unknown>): EPEvent {
   return {
-    id: extractField(apiData, ['identifier', 'id']),
-    title: extractMultilingualText(apiData['label'] ?? apiData['title'] ?? ''),
-    date: extractDateValue(apiData['activity_start_date'] ?? apiData['date'] ?? apiData['activity_date']),
+    // EP API uses activity_id for events
+    id: extractField(apiData, ['activity_id', 'identifier', 'id']),
+    // EP API may use activity_label instead of label for event titles
+    title: extractMultilingualText(apiData['activity_label'] ?? apiData['label'] ?? apiData['title'] ?? ''),
+    date: extractDateValue(apiData['activity_start_date'] ?? apiData['activity_date'] ?? apiData['date']),
     endDate: extractDateValue(apiData['activity_end_date'] ?? ''),
     type: extractField(apiData, ['had_activity_type', 'type']),
-    location: extractField(apiData, ['had_locality', 'location']),
+    location: extractField(apiData, ['had_locality', 'hasLocality', 'location']),
     organizer: extractField(apiData, ['was_organized_by', 'organizer']),
     status: extractField(apiData, ['activity_status', 'status']),
   };
@@ -349,13 +423,15 @@ export function transformMeetingActivity(apiData: Record<string, unknown>): Meet
  * Transforms EP API MEP declaration data to internal {@link MEPDeclaration} format.
  */
 export function transformMEPDeclaration(apiData: Record<string, unknown>): MEPDeclaration {
+  const { mepId, mepName } = extractDeclarationAuthor(apiData);
   return {
     id: extractField(apiData, ['work_id', 'identifier', 'id']),
     title: extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']),
-    mepId: extractAuthorId(apiData['was_attributed_to'] ?? apiData['author']),
-    mepName: extractMultilingualText(apiData['author_label'] ?? ''),
+    mepId,
+    mepName,
     type: extractField(apiData, ['work_type', 'type']),
-    dateFiled: extractDateValue(apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']),
+    // EP API returns document_date; also check legacy field names
+    dateFiled: extractDateValue(apiData['document_date'] ?? apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']),
     status: extractField(apiData, ['resource_legal_in-force', 'status']),
   };
 }

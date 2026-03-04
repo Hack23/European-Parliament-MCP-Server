@@ -361,13 +361,13 @@ describe('GENERATED_STATS — political landscape data consistency', () => {
     }
   });
 
-  it('should have total seats across all groups approximately matching mepCount (within ±15)', () => {
+  it('should have total seats across all groups exactly matching mepCount', () => {
     for (const yearly of GENERATED_STATS.yearlyStats) {
       const totalSeats = yearly.politicalLandscape.groups.reduce(
         (sum, g) => sum + g.seats,
         0
       );
-      expect(Math.abs(totalSeats - yearly.mepCount)).toBeLessThanOrEqual(15);
+      expect(totalSeats).toBe(yearly.mepCount);
     }
   });
 
@@ -398,6 +398,17 @@ describe('GENERATED_STATS — political landscape data consistency', () => {
       const { groups, totalGroups } = yearly.politicalLandscape;
       const nonNiCount = groups.filter((g) => g.name !== 'NI').length;
       expect(totalGroups).toBe(nonNiCount);
+    }
+  });
+
+  // The European Parliament always has non-affiliated (NI) MEPs. Every year
+  // must include an NI entry in groups so seat totals are complete.
+  it('should always include NI (Non-Inscrits) group in every year', () => {
+    for (const yearly of GENERATED_STATS.yearlyStats) {
+      const ni = yearly.politicalLandscape.groups.find((g) => g.name === 'NI');
+      expect(ni).toBeDefined();
+      expect(ni!.seats).toBeGreaterThan(0);
+      expect(ni!.seatShare).toBeGreaterThan(0);
     }
   });
 
@@ -571,10 +582,12 @@ describe('GENERATED_STATS — parliamentary term assignment', () => {
     expect(term.includes('EP9') || term.includes('EP10')).toBe(true);
   });
 
-  it('should assign EP10 to year 2025', () => {
-    const entry = findYearEntry(2025);
-    expect(entry).toBeDefined();
-    expect(entry!.parliamentaryTerm).toContain('EP10');
+  it('should assign EP10 to years 2025–2026', () => {
+    for (const year of [2025, 2026]) {
+      const entry = findYearEntry(year);
+      expect(entry).toBeDefined();
+      expect(entry!.parliamentaryTerm).toContain('EP10');
+    }
   });
 });
 
@@ -605,9 +618,9 @@ describe('GENERATED_STATS — prediction integrity', () => {
     }
   });
 
-  it('should have prediction years sequential from 2026 to 2030', () => {
+  it('should have prediction years sequential from 2027 to 2031', () => {
     const years = GENERATED_STATS.predictions.map((p) => p.year);
-    expect(years).toEqual([2026, 2027, 2028, 2029, 2030]);
+    expect(years).toEqual([2027, 2028, 2029, 2030, 2031]);
   });
 
   it('should have each prediction include all 13 metric fields', () => {
@@ -804,9 +817,9 @@ describe('GENERATED_STATS — derived intelligence metrics', () => {
       }
     });
 
-    it('EP10 (2024-2025) should show higher authoritarian-right share than EP6 (2004)', () => {
+    it('EP10 (2024-2026) should show higher authoritarian-right share than EP6 (2004)', () => {
       const ep6Start = allYears.find((y) => y.year === 2004);
-      const ep10 = allYears.find((y) => y.year === 2025);
+      const ep10 = allYears.find((y) => y.year === 2026);
       expect(ep6Start).toBeDefined();
       expect(ep10).toBeDefined();
       const ep6AuthRight = ep6Start!.derivedIntelligence.politicalBlocAnalysis.politicalCompass.quadrantDistribution.authoritarianRight;
@@ -833,7 +846,7 @@ describe('GENERATED_STATS — derived intelligence metrics', () => {
 
     it('euroscepticShare should be higher in EP10 than EP6', () => {
       const ep6 = allYears.find((y) => y.year === 2004);
-      const ep10 = allYears.find((y) => y.year === 2025);
+      const ep10 = allYears.find((y) => y.year === 2026);
       expect(ep6).toBeDefined();
       expect(ep10).toBeDefined();
       expect(ep10!.derivedIntelligence.politicalBlocAnalysis.euroscepticShare)
