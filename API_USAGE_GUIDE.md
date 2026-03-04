@@ -551,7 +551,7 @@ const result = await client.callTool('get_voting_records', {
         }
       ],
       \"total\": 45,
-      \"limit\": 50,
+      \"limit\": 20,
       \"offset\": 0
     }"
   }]
