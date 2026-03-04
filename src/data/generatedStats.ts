@@ -1281,7 +1281,7 @@ function buildAnalysisSummary(yearly: YearlyStats[]): GeneratedStatsData['analys
       'EP10 shows a rightward political shift with implications for legislative priorities in defence, migration, and industrial policy.',
       'Committee meeting frequency has increased 30% from EP6 to EP9, reflecting growing legislative complexity.',
       'Roll-call vote counts correlate strongly (r=0.94) with legislative acts adopted, indicating consistent parliamentary discipline.',
-      'Parliamentary fragmentation has steadily increased: Effective Number of Parties rose from 4.12 (2004) to 6.57 (2026), reflecting the decline of the traditional EPP-S&D grand coalition.',
+      'Parliamentary fragmentation has steadily increased: Effective Number of Parties rose from 4.12 (2004) to 6.59 (2026), reflecting the decline of the traditional EPP-S&D grand coalition.',
       'Since 2019 (EP9), no two-party majority has been possible, requiring broader multi-group coalitions for legislation.',
       'Speech counts track legislative intensity, peaking during end-of-term legislative pushes (2013, 2018, 2023).',
       ...buildDerivedKeyFindings(yearly),

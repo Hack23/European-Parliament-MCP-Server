@@ -238,11 +238,11 @@ export function getAllGeneratedStats(
     // Filter rankings by category if specified
     const filteredRankings = filterRankings(params, yearFrom, yearTo);
 
-    // Include predictions only if requested, filtered to the requested year range
-    const filteredPredictions =
-      params.includePredictions
-        ? GENERATED_STATS.predictions.filter((p) => p.year >= yearFrom && p.year <= yearTo)
-        : [];
+    // Include predictions only if requested — predictions are always returned in full
+    // since they cover future years (2027–2031) beyond the historical yearTo default (2026)
+    const filteredPredictions = params.includePredictions
+      ? GENERATED_STATS.predictions
+      : [];
 
     const result = {
       generatedAt: GENERATED_STATS.generatedAt,

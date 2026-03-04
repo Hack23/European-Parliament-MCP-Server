@@ -591,13 +591,13 @@ xychart-beta
 
 | Year | Factor | Sessions | Acts | Votes | Questions | Speeches | Confidence |
 |------|--------|----------|------|-------|-----------|----------|------------|
-| **2027** | ×1.23 (3rd year) | 54 | 131 | 643 | 6,809 | 14,701 | ±12% |
-| **2028** | ×1.29 (peak year) | 56 | 137 | 674 | 7,141 | 15,418 | ±15% |
-| **2029** | ×0.81 (election year) | 35 | 86 | 423 | 4,484 | 9,681 | ±18% |
-| **2030** | ×0.97 (new term start) | 42 | 103 | 507 | 5,369 | 11,593 | ±22% |
-| **2031** | ×1.18 (2nd year) | 52 | 126 | 616 | 6,532 | 14,103 | ±25% |
+| **2027** | ×1.15 (3rd year) | 63 | 120 | 592 | 6,426 | 13,340 | ±12% |
+| **2028** | ×1.20 (peak year) | 66 | 125 | 618 | 6,706 | 13,920 | ±15% |
+| **2029** | ×0.75 (election year) | 41 | 78 | 386 | 4,191 | 8,700 | ±18% |
+| **2030** | ×0.90 (new term start) | 50 | 94 | 464 | 5,029 | 10,440 | ±22% |
+| **2031** | ×1.10 (2nd year) | 61 | 114 | 567 | 6,147 | 12,760 | ±25% |
 
-> **Methodology**: 5-year rolling average (2021–2025 actuals) × parliamentary term cycle factor. Election years (2029) see ~19% reduction; peak years (3rd–4th year) see 23–29% increase. Confidence intervals widen with forecast horizon. 2026 projected data is excluded from the prediction baseline to avoid circular dependency.
+> **Methodology**: 5-year rolling average (2021–2025 actuals) × parliamentary term cycle factor. Election years (2029) see ~25% reduction (factor 0.75); peak years (3rd–4th year) see 15–20% increase (factors 1.15–1.20). Confidence intervals widen with forecast horizon. 2026 projected data is excluded from the prediction baseline to avoid circular dependency.
 
 ---
 

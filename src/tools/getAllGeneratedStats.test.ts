@@ -281,9 +281,9 @@ describe('getAllGeneratedStats', () => {
       includeRankings: false,
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
-    expect(data.predictions.length).toBe(4);
+    expect(data.predictions.length).toBe(5);
     expect(data.predictions[0].year).toBe(2027);
-    expect(data.predictions[3].year).toBe(2030);
+    expect(data.predictions[4].year).toBe(2031);
     expect(data.predictions[0].confidenceInterval).toMatch(/^±\d+%$/);
     expect(data.predictions[0].methodology).toContain('Average-based extrapolation');
   });
@@ -299,7 +299,7 @@ describe('getAllGeneratedStats', () => {
     expect(data.predictions).toBeUndefined();
   });
 
-  it('excludes predictions when yearTo is before prediction years even if includePredictions is true', () => {
+  it('includes all predictions when includePredictions is true regardless of yearTo', () => {
     const result = getAllGeneratedStats({
       yearFrom: 2019,
       yearTo: 2024,
@@ -309,10 +309,12 @@ describe('getAllGeneratedStats', () => {
       includeRankings: false,
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
-    expect(data.predictions).toBeUndefined();
+    expect(data.predictions.length).toBe(5);
+    expect(data.predictions[0].year).toBe(2027);
+    expect(data.predictions[4].year).toBe(2031);
   });
 
-  it('includes only predictions within the requested year range', () => {
+  it('includes all predictions when yearTo does not cover full prediction range', () => {
     const result = getAllGeneratedStats({
       yearFrom: 2020,
       yearTo: 2028,
@@ -322,9 +324,9 @@ describe('getAllGeneratedStats', () => {
       includeRankings: false,
     });
     const data = JSON.parse(result.content[0]?.text ?? '{}');
-    expect(data.predictions.length).toBe(2);
+    expect(data.predictions.length).toBe(5);
     expect(data.predictions[0].year).toBe(2027);
-    expect(data.predictions[1].year).toBe(2028);
+    expect(data.predictions[4].year).toBe(2031);
   });
 
   it('includes category rankings with percentiles', () => {
