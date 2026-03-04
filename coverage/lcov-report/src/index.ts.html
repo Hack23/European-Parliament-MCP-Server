@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">63.63% </span>
+                <span class="strong">65.27% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>49/77</span>
+                <span class='fraction'>47/72</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">38.88% </span>
+                <span class="strong">35.71% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>7/18</span>
+                <span class='fraction'>5/14</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">65.75% </span>
+                <span class="strong">67.64% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>48/73</span>
+                <span class='fraction'>46/68</span>
             </div>
         
             
@@ -416,18 +416,7 @@
 <a name='L351'></a><a href='#L351'>351</a>
 <a name='L352'></a><a href='#L352'>352</a>
 <a name='L353'></a><a href='#L353'>353</a>
-<a name='L354'></a><a href='#L354'>354</a>
-<a name='L355'></a><a href='#L355'>355</a>
-<a name='L356'></a><a href='#L356'>356</a>
-<a name='L357'></a><a href='#L357'>357</a>
-<a name='L358'></a><a href='#L358'>358</a>
-<a name='L359'></a><a href='#L359'>359</a>
-<a name='L360'></a><a href='#L360'>360</a>
-<a name='L361'></a><a href='#L361'>361</a>
-<a name='L362'></a><a href='#L362'>362</a>
-<a name='L363'></a><a href='#L363'>363</a>
-<a name='L364'></a><a href='#L364'>364</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L354'></a><a href='#L354'>354</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -615,19 +604,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -828,7 +808,6 @@ import { realpathSync } from 'fs';
 // ── Extracted modules ─────────────────────────────────────────────
 import { getToolMetadataArray, dispatchToolCall } from './server/toolRegistry.js';
 import { showHelp, showVersion, showHealth, parseCLIArgs } from './server/cli.js';
-import { ToolError } from './tools/shared/errors.js';
 import { handleToolError } from './tools/shared/errorHandler.js';
 import { SERVER_NAME, SERVER_VERSION } from './config.js';
 // MCP Prompts
@@ -976,21 +955,12 @@ export class EuropeanParliamentMCPServer {
       try {
         return await this.dispatchToolCall(name, args);
       } catch (error) {
-        // Convert ToolError to an in-band MCP error response (isError: true)
-        // so MCP clients receive a well-formed ToolResult instead of an RPC error.
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (error instanceof ToolError) {
-          // Log ToolError so tool failures are visible in server logs (consistent with non-ToolError path)
-<span class="cstat-no" title="statement not covered" >          console.error(`[ERROR] Tool ${error.toolName} failed:`, error);</span>
-<span class="cstat-no" title="statement not covered" >          return handleToolError(error, error.toolName);</span>
-        }
-        // Log error to stderr (stdout is used for MCP protocol)
+        // MCP best practice: Convert ALL tool errors to in-band MCP error responses
+        // with isError: true, so clients (including LLMs) receive a well-formed
+        // ToolResult with a readable error message instead of an opaque JSON-RPC
+        // protocol error that may cause disconnects or prevent retry logic.
         console.error(`[ERROR] Tool ${name} failed:`, error);
-        
-        // Re-throw with clean error message
-        <span class="missing-if-branch" title="else path not taken" >E</span>if (error instanceof Error) {
-          throw error;
-        }
-<span class="cstat-no" title="statement not covered" >        throw new Error(`Tool execution failed: ${String(error)}`);</span>
+        return handleToolError(error, name);
       }
     });
 &nbsp;
@@ -1159,7 +1129,7 @@ const isMainModule =
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-04T01:35:47.279Z
+                at 2026-03-04T12:45:35.892Z
             </div>
         <script src="../prettify.js"></script>
         <script>
