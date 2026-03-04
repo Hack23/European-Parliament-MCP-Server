@@ -530,7 +530,7 @@ const result = await client.callTool('get_voting_records', {
 | limit | number | No | 20 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
 
-> **Note:** Provide `docId` for single document lookup, or `keyword` for search. At least one should be provided.
+> **Note:** Provide `docId` for single document lookup, or `keyword` for search. At least one is recommended for targeted results. If neither is provided, the tool runs a search with default parameters, which may return a broad set of documents.
 
 #### Response Format
 
@@ -580,7 +580,7 @@ const result = await client.callTool('search_documents', {
 | Error | Cause | Solution |
 |-------|-------|----------|
 | `ValidationError: keyword` | Invalid characters | Use only alphanumeric, spaces, hyphens, underscores |
-| `ValidationError: keyword required` | Missing keyword | Provide a search term or use docId for direct lookup |
+| `SearchError: missing search parameters` | Neither keyword nor docId provided | Provide a search term or use docId for direct lookup |
 
 #### Use Cases
 
