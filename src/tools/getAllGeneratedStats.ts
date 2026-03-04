@@ -38,14 +38,14 @@ export const GetAllGeneratedStatsSchema = z
       .number()
       .int()
       .min(2004)
-      .max(2030)
+      .max(2031)
       .optional()
       .describe('Start year for filtering (default: earliest available, 2004)'),
     yearTo: z
       .number()
       .int()
       .min(2004)
-      .max(2030)
+      .max(2031)
       .optional()
       .describe('End year for filtering (default: latest available, 2026)'),
     category: z
@@ -302,13 +302,13 @@ export const getAllGeneratedStatsToolMetadata = {
         type: 'number',
         description: 'Start year for filtering (default: 2004)',
         minimum: 2004,
-        maximum: 2030,
+        maximum: 2031,
       },
       yearTo: {
         type: 'number',
         description: 'End year for filtering (default: 2026)',
         minimum: 2004,
-        maximum: 2030,
+        maximum: 2031,
       },
       category: {
         type: 'string',

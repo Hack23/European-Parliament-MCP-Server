@@ -2042,8 +2042,8 @@ const result = await client.callTool('get_procedure_event_by_id', {
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| yearFrom | number | No | 2004 | Start year for filtering (2004–2030) |
-| yearTo | number | No | 2025 | End year for filtering (2004–2030) |
+| yearFrom | number | No | 2004 | Start year for filtering (2004–2031) |
+| yearTo | number | No | 2026 | End year for filtering (2004–2031) |
 | category | string | No | all | Activity category: `all`, `plenary_sessions`, `legislative_acts`, `roll_call_votes`, `committee_meetings`, `parliamentary_questions`, `resolutions`, `speeches`, `adopted_texts`, `political_groups`, `procedures`, `events`, `documents`, `mep_turnover`, `declarations` |
 | includePredictions | boolean | No | true | Include trend-based predictions for 2027–2031 |
 | includeMonthlyBreakdown | boolean | No | false | Include month-by-month activity data |
