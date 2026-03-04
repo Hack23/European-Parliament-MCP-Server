@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.0**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.1**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **transformAdoptedText**(`apiData`): [`AdoptedText`](../../../../types/ep/activities/interfaces/AdoptedText.md)
 
-Defined in: [clients/ep/transformers.ts:302](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L302)
+Defined in: [clients/ep/transformers.ts:372](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L372)
 
 Transforms EP API adopted text data to internal [AdoptedText](../../../../types/ep/activities/interfaces/AdoptedText.md) format.
 

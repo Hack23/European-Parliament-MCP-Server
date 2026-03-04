@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.0**](../../README.md)
+[**European Parliament MCP Server API v1.1.1**](../../README.md)
 
 ***
 
@@ -9,9 +9,9 @@
 MCP Tool: get_all_generated_stats
 
 Returns precomputed European Parliament activity statistics covering
-parliamentary terms EP6–EP10 (2004–2025), including monthly activity
+parliamentary terms EP6–EP10 (2004–2026), including monthly activity
 breakdowns, category rankings with percentiles, analytical commentary,
-and trend-based predictions for 2026–2030.
+and trend-based predictions for 2027–2031.
 
 The underlying data is static and designed to be refreshed weekly by
 an agentic workflow. No live EP API calls are made by this tool.

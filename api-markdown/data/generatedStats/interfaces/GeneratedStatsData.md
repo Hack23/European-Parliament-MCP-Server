@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.0**](../../../README.md)
+[**European Parliament MCP Server API v1.1.1**](../../../README.md)
 
 ***
 
@@ -74,7 +74,7 @@ Per-category statistical rankings across years
 
 Defined in: [data/generatedStats.ts:416](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L416)
 
-Underlying dataset coverage period (always 2004–2025)
+Underlying dataset coverage period (always 2004–2026)
 
 #### from
 
@@ -122,7 +122,7 @@ Version of the stats generation methodology
 
 Defined in: [data/generatedStats.ts:426](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L426)
 
-Predicted activity for future years (2026–2030)
+Predicted activity for future years (2027–2031)
 
 ***
 

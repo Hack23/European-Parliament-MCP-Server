@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.0**](../../../README.md)
+[**European Parliament MCP Server API v1.1.1**](../../../README.md)
 
 ***
 
@@ -172,4 +172,4 @@ Predicted speeches
 
 Defined in: [data/generatedStats.ts:378](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L378)
 
-Predicted calendar year (2026–2030)
+Predicted calendar year (2027–2031)

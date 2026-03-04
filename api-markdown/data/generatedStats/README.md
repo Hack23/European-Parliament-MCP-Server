@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.0**](../../README.md)
+[**European Parliament MCP Server API v1.1.1**](../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # data/generatedStats
 
-Precomputed European Parliament activity statistics (2004–2025).
+Precomputed European Parliament activity statistics (2004–2026).
 
 This module contains static, pre-generated summary statistics for
 European Parliament activity aggregated by year and month. Data
