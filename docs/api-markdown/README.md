@@ -1,4 +1,4 @@
-**European Parliament MCP Server API v1.1.0**
+**European Parliament MCP Server API v1.1.1**
 
 ***
 
@@ -890,7 +890,7 @@ European-Parliament-MCP-Server/
 - **[Architecture Documentation](_media/ARCHITECTURE.md)** - System architecture and design patterns
 - **[Data Model](_media/DATA_MODEL.md)** - Data structures and type definitions
 - **[API Usage Guide](_media/API_USAGE_GUIDE.md)** - Guide for using the MCP server API
-- **[EP Political Landscape](_media/EP_POLITICAL_LANDSCAPE.md)** - 📊 Comprehensive Mermaid visualization of all EP statistics, political compass, coalition dynamics, and OSINT intelligence metrics
+- **[EP Political Landscape](_media/EP_POLITICAL_LANDSCAPE.md)** - 📊 Comprehensive Mermaid visualization of all EP statistics (2004–2026), political compass, coalition dynamics, and OSINT intelligence metrics — all years validated against EP API v2
 
 #### 🧪 Testing & Quality
 
@@ -1347,7 +1347,7 @@ For deep dives into specific evolution tracks, see:
 
 | Document | Focus | Link |
 |:---------|:------|:-----|
-| 📊 **EP Political Landscape** | OSINT intelligence dashboard — seat composition, fragmentation, political compass, coalition dynamics, derived metrics | [EP_POLITICAL_LANDSCAPE.md](_media/EP_POLITICAL_LANDSCAPE.md) |
+| 📊 **EP Political Landscape** | OSINT intelligence dashboard (2004–2026) — seat composition, fragmentation, political compass, coalition dynamics, derived metrics; all years validated against EP API v2 | [EP_POLITICAL_LANDSCAPE.md](_media/EP_POLITICAL_LANDSCAPE.md) |
 | 🧠 **Future Mind Map** | Capability expansion vision, AI analysis, OSINT evolution | [FUTURE_MINDMAP.md](_media/FUTURE_MINDMAP.md) |
 | ⚙️ **Future Workflows** | CI/CD evolution, AI-augmented pipelines, 2027–2037 roadmap | [FUTURE_WORKFLOWS.md](_media/FUTURE_WORKFLOWS.md) |
 | 🏛️ **Future Architecture** | Platform architecture evolution, AWS deployment, federation | [FUTURE_ARCHITECTURE.md](_media/FUTURE_ARCHITECTURE.md) |

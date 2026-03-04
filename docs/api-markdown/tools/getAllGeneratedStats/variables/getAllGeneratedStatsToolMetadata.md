@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.0**](../../../README.md)
+[**European Parliament MCP Server API v1.1.1**](../../../README.md)
 
 ***
 
@@ -102,7 +102,7 @@ Defined in: [tools/getAllGeneratedStats.ts:288](https://github.com/Hack23/Europe
 
 #### inputSchema.properties.yearFrom.maximum
 
-> **maximum**: `number` = `2030`
+> **maximum**: `number` = `2031`
 
 #### inputSchema.properties.yearFrom.minimum
 
@@ -118,11 +118,11 @@ Defined in: [tools/getAllGeneratedStats.ts:288](https://github.com/Hack23/Europe
 
 #### inputSchema.properties.yearTo.description
 
-> **description**: `string` = `'End year for filtering (default: 2025)'`
+> **description**: `string` = `'End year for filtering (default: 2026)'`
 
 #### inputSchema.properties.yearTo.maximum
 
-> **maximum**: `number` = `2030`
+> **maximum**: `number` = `2031`
 
 #### inputSchema.properties.yearTo.minimum
 

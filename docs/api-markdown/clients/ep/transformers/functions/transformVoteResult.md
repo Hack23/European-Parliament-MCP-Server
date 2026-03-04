@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.0**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.1**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **transformVoteResult**(`apiData`, `sessionId`): [`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)
 
-Defined in: [clients/ep/transformers.ts:157](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L157)
+Defined in: [clients/ep/transformers.ts:185](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L185)
 
 Transforms EP API vote result data to internal [VotingRecord](../../../../types/ep/plenary/interfaces/VotingRecord.md) format.
 

@@ -73,7 +73,7 @@ xychart-beta
     title "EPP Seat Share % (2004–2026)"
     x-axis [2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
     y-axis "Seat Share %" 20 --> 40
-    line [36.6, 36.6, 36.1, 36.7, 36.7, 36.0, 36.0, 35.9, 35.8, 35.9, 29.4, 28.9, 28.8, 28.9, 29.0, 24.2, 26.5, 25.1, 25.1, 25.1, 26.1, 26.1, 25.8]
+    line [36.6, 36.6, 36.1, 36.7, 36.7, 36.0, 36.0, 35.9, 35.8, 35.9, 29.4, 28.9, 28.8, 28.9, 29.0, 24.2, 26.5, 25.1, 25.1, 25.1, 26.1, 25.7, 25.7]
 ```
 
 ```mermaid
@@ -114,7 +114,7 @@ xychart-beta
 | **EP7** | 2009–2014 | 736→766 | 7 | EPP | 36.0% | ✅ Yes | 4.48–4.53 |
 | **EP8** | 2014–2019 | 751 | 8 | EPP | 29.0% | ✅ Yes | 5.28–5.52 |
 | **EP9** | 2019–2024 | 705–751 | 7 | EPP | 24.2% | ❌ No | 6.01–6.40 |
-| **EP10** | 2024–2029 | 720 | 8 | EPP | 26.1% | ❌ No | 6.50–6.59 |
+| **EP10** | 2024–2029 | 720 | 8 | EPP | 26.1% | ❌ No | 6.51–6.59 |
 
 ---
 
@@ -206,7 +206,7 @@ xychart-beta
     title "Effective Number of Parties — ENP (2004–2026)"
     x-axis [2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
     y-axis "ENP (Laakso-Taagepera)" 3.5 --> 7
-    line [4.12, 4.12, 4.22, 4.18, 4.18, 4.48, 4.48, 4.52, 4.53, 4.51, 5.28, 5.48, 5.52, 5.49, 5.46, 6.40, 6.01, 6.23, 6.26, 6.32, 6.51, 6.50, 6.59]
+    line [4.12, 4.12, 4.22, 4.18, 4.18, 4.48, 4.48, 4.52, 4.53, 4.51, 5.28, 5.48, 5.52, 5.49, 5.46, 6.40, 6.01, 6.23, 6.26, 6.32, 6.51, 6.59, 6.59]
 ```
 
 > **Regime shift in 2019**: ENP jumped from 5.46 to 6.40 — the EP transitioned from a two-party-dominated to a multi-party system. Grand coalitions (EPP+S&D > 50%) became structurally impossible.
@@ -320,10 +320,10 @@ xychart-beta
 ```mermaid
 pie title Quadrant Distribution — EP10 (2025)
     "Libertarian-Left (Greens, S&D, GUE/NGL)" : 32.6
-    "Libertarian-Right (RE/ALDE)" : 10.7
+    "Libertarian-Right (RE/ALDE)" : 10.6
     "Authoritarian-Left" : 0
-    "Authoritarian-Right (EPP, ECR, PfE, ESN)" : 52.4
-    "Non-Attached" : 4.3
+    "Authoritarian-Right (EPP, ECR, PfE, ESN)" : 52.3
+    "Non-Attached" : 4.7
 ```
 
 ### Quadrant Evolution Across Terms
@@ -552,22 +552,22 @@ xychart-beta
 
 | Metric | Value | Description |
 |--------|-------|-------------|
-| **CR₂** (Top-2 Concentration) | 45.0% | EPP + S&D combined share |
-| **CR₃** (Top-3 Concentration) | 56.9% | EPP + S&D + PfE combined share |
-| **HHI** (Herfindahl-Hirschman) | 0.153 | Market concentration index (lower = more fragmented) |
-| **Dominance Ratio** | 1.38 | Largest/second-largest group ratio |
-| **Majority Gap** | 23.9 pp | Points largest group is from 50% |
+| **CR₂** (Top-2 Concentration) | 44.5% | EPP + S&D combined share |
+| **CR₃** (Top-3 Concentration) | 56.2% | EPP + S&D + PfE combined share |
+| **HHI** (Herfindahl-Hirschman) | 0.152 | Market concentration index (lower = more fragmented) |
+| **Dominance Ratio** | 1.37 | Largest/second-largest group ratio |
+| **Majority Gap** | 24.3 pp | Points largest group is from 50% |
 | **MWC Size** | 3 groups | Minimum groups for majority |
-| **Non-Attached** | 4.3% | Politically unaffiliated MEPs |
-| **Effective Opposition** | 5.50 | ENP minus 1 — effective opposition parties |
+| **Non-Attached** | 4.7% | Politically unaffiliated MEPs |
+| **Effective Opposition** | 5.59 | ENP minus 1 — effective opposition parties |
 
 ### Composite Intelligence Indices (2025)
 
 | Index | Value | Interpretation |
 |-------|-------|----------------|
-| **Oversight-to-Legislation Balance** | 59.6 | Questions per legislative act — higher = more scrutiny |
-| **Speech-to-Vote Ratio** | 25.0 | Speeches per roll-call vote — deliberation depth |
-| **Committee-to-Plenary Ratio** | 43.0 | Committee meetings per plenary session — preparatory work intensity |
+| **Oversight-to-Legislation Balance** | 63.3 | Questions per legislative act — higher = more scrutiny |
+| **Speech-to-Vote Ratio** | 23.8 | Speeches per roll-call vote — deliberation depth |
+| **Committee-to-Plenary Ratio** | 37.4 | Committee meetings per plenary session — preparatory work intensity |
 
 ---
 
@@ -664,7 +664,7 @@ All political landscape data has been cross-validated against the [European Parl
 | **EP9** | 2019–2023 | ✅ All 5 years verified | Includes EP8/EP9 transition year (2019) |
 | **EP10** | 2024–2026 | ✅ All 3 years verified | 2024 transition, 2025 complete, 2026 partial year (Q1 actual) |
 
-**2026 partial year note**: Activity metrics (legislative acts, speeches, questions, etc.) are projected full-year estimates based on 2021–2025 historical averages with EP10 year-2 cycle adjustment. Plenary session count (54) reflects the full-year EP calendar from the API. Political landscape data (720 MEPs statutory total; live API snapshots may show slightly fewer due to temporary vacancies, group composition) is validated from live EP API as of March 2026.
+**2026 partial year note**: Activity metrics (legislative acts, speeches, questions, etc.) are projected full-year estimates based on 2021–2025 historical averages with EP10 year-2 cycle adjustment. Plenary session count (54) reflects the full-year EP calendar from the API. EP10 has 720 MEPs from 27 EU countries; 3 seats may be temporarily vacant at any time as replacements are being seated.
 
 ---
 
