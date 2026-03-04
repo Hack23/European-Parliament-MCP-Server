@@ -320,10 +320,10 @@ xychart-beta
 ```mermaid
 pie title Quadrant Distribution — EP10 (2025)
     "Libertarian-Left (Greens, S&D, GUE/NGL)" : 32.6
-    "Libertarian-Right (RE/ALDE)" : 10.7
+    "Libertarian-Right (RE/ALDE)" : 10.6
     "Authoritarian-Left" : 0
-    "Authoritarian-Right (EPP, ECR, PfE, ESN)" : 52.4
-    "Non-Attached" : 4.3
+    "Authoritarian-Right (EPP, ECR, PfE, ESN)" : 52.3
+    "Non-Attached" : 4.7
 ```
 
 ### Quadrant Evolution Across Terms
@@ -552,22 +552,22 @@ xychart-beta
 
 | Metric | Value | Description |
 |--------|-------|-------------|
-| **CR₂** (Top-2 Concentration) | 45.0% | EPP + S&D combined share |
-| **CR₃** (Top-3 Concentration) | 56.9% | EPP + S&D + PfE combined share |
-| **HHI** (Herfindahl-Hirschman) | 0.153 | Market concentration index (lower = more fragmented) |
-| **Dominance Ratio** | 1.38 | Largest/second-largest group ratio |
-| **Majority Gap** | 23.9 pp | Points largest group is from 50% |
+| **CR₂** (Top-2 Concentration) | 44.5% | EPP + S&D combined share |
+| **CR₃** (Top-3 Concentration) | 56.2% | EPP + S&D + PfE combined share |
+| **HHI** (Herfindahl-Hirschman) | 0.152 | Market concentration index (lower = more fragmented) |
+| **Dominance Ratio** | 1.37 | Largest/second-largest group ratio |
+| **Majority Gap** | 24.3 pp | Points largest group is from 50% |
 | **MWC Size** | 3 groups | Minimum groups for majority |
-| **Non-Attached** | 4.3% | Politically unaffiliated MEPs |
-| **Effective Opposition** | 5.50 | ENP minus 1 — effective opposition parties |
+| **Non-Attached** | 4.7% | Politically unaffiliated MEPs |
+| **Effective Opposition** | 5.59 | ENP minus 1 — effective opposition parties |
 
 ### Composite Intelligence Indices (2025)
 
 | Index | Value | Interpretation |
 |-------|-------|----------------|
-| **Oversight-to-Legislation Balance** | 59.6 | Questions per legislative act — higher = more scrutiny |
-| **Speech-to-Vote Ratio** | 25.0 | Speeches per roll-call vote — deliberation depth |
-| **Committee-to-Plenary Ratio** | 43.0 | Committee meetings per plenary session — preparatory work intensity |
+| **Oversight-to-Legislation Balance** | 63.3 | Questions per legislative act — higher = more scrutiny |
+| **Speech-to-Vote Ratio** | 23.8 | Speeches per roll-call vote — deliberation depth |
+| **Committee-to-Plenary Ratio** | 37.4 | Committee meetings per plenary session — preparatory work intensity |
 
 ---
 
