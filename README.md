@@ -648,9 +648,9 @@ Real-time change feeds for monitoring recently updated data across all EP API ca
 ```
 1. Score MEP influence: assess_mep_influence → {mepId: "MEP-123"}
 2. Detect anomalies: detect_voting_anomalies → {mepId: "MEP-123"}
-3. Analyze coalitions: analyze_coalition_dynamics → {politicalGroups: ["EPP", "S&D"]}
-4. Compare groups: compare_political_groups → {groups: ["EPP", "S&D", "Renew"]}
-5. Pipeline status: monitor_legislative_pipeline → {committeeId: "ENVI"}
+3. Analyze coalitions: analyze_coalition_dynamics → {groupIds: ["EPP", "S&D"]}
+4. Compare groups: compare_political_groups → {groupIds: ["EPP", "S&D", "Renew"]}
+5. Pipeline status: monitor_legislative_pipeline → {committee: "ENVI"}
 6. Country delegation: analyze_country_delegation → {country: "SE"}
 7. Political landscape: generate_political_landscape → {}
 ```

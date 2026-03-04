@@ -521,13 +521,16 @@ const result = await client.callTool('get_voting_records', {
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| keywords | string | Yes | - | Search keywords (alphanumeric, spaces, hyphens) |
-| docType | string | No | - | Document type (REPORT, AMENDMENT, PROPOSAL, etc.) |
+| docId | string | No | - | Document ID for single document lookup (bypasses keyword search) |
+| keyword | string | No | - | Search keyword or phrase (alphanumeric, spaces, hyphens, underscores) |
+| documentType | string | No | - | Document type: `REPORT`, `RESOLUTION`, `DECISION`, `DIRECTIVE`, `REGULATION`, `OPINION`, `AMENDMENT` |
 | dateFrom | string | No | - | Start date (YYYY-MM-DD) |
 | dateTo | string | No | - | End date (YYYY-MM-DD) |
-| author | string | No | - | Filter by author/rapporteur |
-| limit | number | No | 50 | Maximum results (1-100) |
+| committee | string | No | - | Committee identifier |
+| limit | number | No | 20 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
+
+> **Note:** Provide `docId` for single document lookup, or `keyword` for search. At least one should be provided.
 
 #### Response Format
 
@@ -565,8 +568,8 @@ Search for documents about renewable energy from the ENVI committee
 **TypeScript:**
 ```typescript
 const result = await client.callTool('search_documents', {
-  keywords: 'renewable energy',
-  docType: 'REPORT',
+  keyword: 'renewable energy',
+  documentType: 'REPORT',
   dateFrom: '2024-01-01',
   limit: 25
 });
@@ -576,8 +579,8 @@ const result = await client.callTool('search_documents', {
 
 | Error | Cause | Solution |
 |-------|-------|----------|
-| `ValidationError: keywords` | Invalid characters | Use only alphanumeric, spaces, hyphens |
-| `ValidationError: keywords required` | Missing keywords | Provide search terms |
+| `ValidationError: keyword` | Invalid characters | Use only alphanumeric, spaces, hyphens, underscores |
+| `ValidationError: keyword required` | Missing keyword | Provide a search term or use docId for direct lookup |
 
 #### Use Cases
 
@@ -1049,7 +1052,7 @@ Analyze coalition dynamics between EPP and S&D over the last 6 months
 | dateTo | string | No | - | Analysis end date (YYYY-MM-DD) |
 | sensitivityThreshold | number | No | 0.3 | Anomaly sensitivity (0-1, lower = more anomalies detected) |
 
-Note: Cannot specify both `mepId` and `groupId` — use one or neither.
+> ⚠️ **Note:** Cannot specify both `mepId` and `groupId` — use one or neither.
 
 #### Example Usage
 
@@ -1377,7 +1380,7 @@ const result = await client.callTool('comparative_intelligence', {
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| mepIds | array of strings | Yes | - | MEP identifiers to cross-correlate (1-5 items) |
+| mepIds | array of strings | Yes | - | MEP identifiers to cross-correlate (minimum 1, maximum 5) |
 | groups | array of strings | No | - | Political groups for coalition fracture analysis (max 8, omit to use all major groups) |
 | sensitivityLevel | string | No | MEDIUM | Alert sensitivity: `HIGH`, `MEDIUM`, or `LOW` — HIGH surfaces more signals, LOW reduces noise |
 | includeNetworkAnalysis | boolean | No | false | Run network centrality analysis (increases response time) |
