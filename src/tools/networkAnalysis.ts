@@ -381,7 +381,7 @@ function computeNetworkMetrics(nodes: NetworkNode[], edges: NetworkEdge[]): {
 
 export async function networkAnalysis(params: NetworkAnalysisParams): Promise<ToolResult> {
   try {
-    const mepResult = await epClient.getMEPs({ limit: 50 });
+    const mepResult = await epClient.getCurrentMEPs({ limit: 50 });
 
     if (mepResult.data.length === 0) {
       return buildToolResponse(buildEmptyResult(params));

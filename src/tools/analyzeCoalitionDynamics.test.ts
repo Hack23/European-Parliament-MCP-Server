@@ -4,14 +4,12 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleAnalyzeCoalitionDynamics } from './analyzeCoalitionDynamics.js';
-import * as epClientModule from '../clients/europeanParliamentClient.js';
+import * as mepFetcherModule from '../utils/mepFetcher.js';
 import { auditLogger } from '../utils/auditLogger.js';
 
-// Mock the EP client
-vi.mock('../clients/europeanParliamentClient.js', () => ({
-  epClient: {
-    getMEPs: vi.fn()
-  }
+// Mock the MEP fetcher utility
+vi.mock('../utils/mepFetcher.js', () => ({
+  fetchAllCurrentMEPs: vi.fn()
 }));
 
 describe('analyze_coalition_dynamics Tool', () => {
@@ -19,32 +17,26 @@ describe('analyze_coalition_dynamics Tool', () => {
     vi.clearAllMocks();
     auditLogger.clear();
 
-    vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
-      data: [
-        {
-          id: 'MEP-1',
-          name: 'Test MEP One',
-          country: 'SE',
-          politicalGroup: 'EPP',
-          committees: ['AGRI'],
-          active: true,
-          termStart: '2019-07-02'
-        },
-        {
-          id: 'MEP-2',
-          name: 'Test MEP Two',
-          country: 'DE',
-          politicalGroup: 'EPP',
-          committees: ['ENVI'],
-          active: true,
-          termStart: '2019-07-02'
-        }
-      ],
-      total: 2,
-      limit: 50,
-      offset: 0,
-      hasMore: false
-    });
+    vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue([
+      {
+        id: 'MEP-1',
+        name: 'Test MEP One',
+        country: 'SE',
+        politicalGroup: 'EPP',
+        committees: ['AGRI'],
+        active: true,
+        termStart: '2019-07-02'
+      },
+      {
+        id: 'MEP-2',
+        name: 'Test MEP Two',
+        country: 'DE',
+        politicalGroup: 'EPP',
+        committees: ['ENVI'],
+        active: true,
+        termStart: '2019-07-02'
+      }
+    ]);
   });
 
   describe('Input Validation', () => {
@@ -136,7 +128,7 @@ describe('analyze_coalition_dynamics Tool', () => {
 
   describe('Error Handling', () => {
     it('should wrap API errors', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs)
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs)
         .mockRejectedValueOnce(new Error('API Error'));
 
       await expect(handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] }))
@@ -144,7 +136,7 @@ describe('analyze_coalition_dynamics Tool', () => {
     });
 
     it('should log an audit error entry when the EP API rejects', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs)
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs)
         .mockRejectedValueOnce(new Error('API Error'));
 
       await expect(handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] })).rejects.toThrow();
@@ -178,21 +170,14 @@ describe('analyze_coalition_dynamics Tool', () => {
 
     it('should classify cohesion trend as WEAKENING when groups have unequal sizes', async () => {
       // Arrange: Two groups with very different member counts
-      vi.mocked(epClientModule.epClient.getMEPs)
-        .mockResolvedValueOnce({
-          data: Array.from({ length: 10 }, (_, i) => ({
-            id: `MEP-A${i}`, name: `MEP A${i}`, country: 'DE', politicalGroup: 'BigGroup',
-            committees: [], active: true as const, termStart: '2019-07-02'
-          })),
-          total: 10, limit: 50, offset: 0, hasMore: false
-        })
-        .mockResolvedValueOnce({
-          data: [
-            { id: 'MEP-B1', name: 'MEP B1', country: 'FR', politicalGroup: 'SmallGroup',
-              committees: [], active: true as const, termStart: '2019-07-02' }
-          ],
-          total: 1, limit: 50, offset: 0, hasMore: false
-        });
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue([
+        ...Array.from({ length: 10 }, (_, i) => ({
+          id: `MEP-A${i}`, name: `MEP A${i}`, country: 'DE', politicalGroup: 'BigGroup',
+          committees: [] as string[], active: true as const, termStart: '2019-07-02'
+        })),
+        { id: 'MEP-B1', name: 'MEP B1', country: 'FR', politicalGroup: 'SmallGroup',
+          committees: [] as string[], active: true as const, termStart: '2019-07-02' }
+      ]);
 
       // Act
       const result = await handleAnalyzeCoalitionDynamics({

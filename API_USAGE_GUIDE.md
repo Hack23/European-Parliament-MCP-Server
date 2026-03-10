@@ -218,6 +218,8 @@ Currently, the server does **not require authentication** for tool access. Futur
 
 **Description**: Retrieve Members of the European Parliament with optional filters for country, political group, committee membership, and active status.
 
+> ⚠️ **EP API Note:** The `get_meps` tool uses the EP API `/meps` endpoint which supports server-side filtering but does **not** return `country` or `politicalGroup` in responses. Results will show `country: "Unknown"` and `politicalGroup: "Unknown"`. For country and political group data, use `get_current_meps` instead. All OSINT intelligence tools automatically use `get_current_meps` for accurate MEP metadata.
+
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
@@ -1422,7 +1424,9 @@ These tools provide direct access to all European Parliament Open Data API v2 en
 
 ### Tool: get_current_meps
 
-**Description**: Get currently active Members of European Parliament (today's date). Returns only MEPs with active mandates.
+**Description**: Get currently active Members of European Parliament (today's date). Returns only MEPs with active mandates. Unlike `get_meps`, this tool uses the EP API `/meps/show-current` endpoint which returns accurate `country` and `politicalGroup` data in responses.
+
+> ✅ **Recommended** for use when you need MEP country or political group information. All OSINT intelligence tools use this endpoint internally.
 
 #### Parameters
 

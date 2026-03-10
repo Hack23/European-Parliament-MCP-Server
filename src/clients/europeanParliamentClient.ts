@@ -280,9 +280,16 @@ export class EuropeanParliamentClient {
 
   /**
    * Returns all currently active MEPs for today's date.
+   *
+   * Unlike `getMEPs()`, this uses `GET /meps/show-current` which returns
+   * `api:country-of-representation` and `api:political-group` in responses.
+   * Optional `country` and `group` filters are applied client-side after fetch.
+   *
    * **EP API Endpoint:** `GET /meps/show-current`
    */
   async getCurrentMEPs(params: {
+    country?: string;
+    group?: string;
     limit?: number;
     offset?: number;
   } = {}): Promise<PaginatedResponse<MEP>> {

@@ -550,7 +550,7 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 |------|-------------|----------------|-----------------|
 | [`get_meps`](./API_USAGE_GUIDE.md#tool-get_meps) | List MEPs with filters | country, group, committee, limit | `GET /meps` |
 | [`get_mep_details`](./API_USAGE_GUIDE.md#tool-get_mep_details) | Detailed MEP information | id (required) | `GET /meps/{id}` |
-| [`get_current_meps`](./API_USAGE_GUIDE.md#tool-get_current_meps) | Currently active MEPs with active mandates | limit, offset | `GET /meps/show-current` |
+| [`get_current_meps`](./API_USAGE_GUIDE.md#tool-get_current_meps) | Currently active MEPs with country & political group | limit, offset | `GET /meps/show-current` |
 | [`get_incoming_meps`](./API_USAGE_GUIDE.md#tool-get_incoming_meps) | Newly arriving MEPs for current term | limit, offset | `GET /meps/show-incoming` |
 | [`get_outgoing_meps`](./API_USAGE_GUIDE.md#tool-get_outgoing_meps) | Departing MEPs for current term | limit, offset | `GET /meps/show-outgoing` |
 | [`get_homonym_meps`](./API_USAGE_GUIDE.md#tool-get_homonym_meps) | MEPs with identical names (disambiguation) | limit, offset | `GET /meps/show-homonyms` |

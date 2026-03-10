@@ -223,7 +223,7 @@ async function detectGroupAnomalies(
     groupFilter.group = groupId;
   }
   const scope = groupId !== undefined ? `Group: ${groupId}` : 'All MEPs';
-  const mepsResult = await epClient.getMEPs({ ...groupFilter, limit: 50 });
+  const mepsResult = await epClient.getCurrentMEPs({ ...groupFilter, limit: 50 });
   // Per-MEP voting statistics are not available from the EP API /meps/{id}
   // endpoint, so we cannot detect group-wide anomalies from individual stats.
   return { scope, anomalies: [], mepCount: mepsResult.data.length };

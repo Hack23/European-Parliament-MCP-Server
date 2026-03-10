@@ -26,10 +26,9 @@
  */
 
 import { z } from 'zod';
-import { epClient } from '../clients/europeanParliamentClient.js';
-import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
+import { fetchAllCurrentMEPs } from '../utils/mepFetcher.js';
 
 export const SentimentTrackerSchema = z.object({
   groupId: z.string()
@@ -189,27 +188,17 @@ function buildEmptySentimentResult(params: SentimentTrackerParams): SentimentTra
   return result;
 }
 
-async function buildGroupSentiment(groupId: string, totalMEPs: number): Promise<GroupSentiment> {
-  try {
-    // NOTE: getMEPs is paginated; we fetch only the first page (limit:100).
-    // Member counts for large groups may be underestimated when hasMore is true.
-    // Seat-share scores are therefore sample-based proxies, not exact values.
-    const result = await epClient.getMEPs({ group: groupId, limit: 100 });
-    const memberCount = result.data.length;
-    const seatShare = totalMEPs > 0 ? memberCount / totalMEPs : 0;
-    const sentimentScore = deriveSentimentScore(memberCount, totalMEPs);
-    return {
-      groupId,
-      sentimentScore: Math.round(sentimentScore * 100) / 100,
-      trend: deriveTrend(seatShare),
-      volatility: 0.12,
-      memberCount,
-      cohesionProxy: Math.round((0.5 + sentimentScore * 0.3) * 100) / 100
-    };
-  } catch (error: unknown) {
-    auditLogger.logError('sentiment_tracker.build_group_sentiment', { groupId }, toErrorMessage(error));
-    return { groupId, sentimentScore: 0, trend: 'STABLE', volatility: 0, memberCount: 0, cohesionProxy: 0 };
-  }
+function buildGroupSentiment(groupId: string, memberCount: number, totalMEPs: number): GroupSentiment {
+  const seatShare = totalMEPs > 0 ? memberCount / totalMEPs : 0;
+  const sentimentScore = deriveSentimentScore(memberCount, totalMEPs);
+  return {
+    groupId,
+    sentimentScore: Math.round(sentimentScore * 100) / 100,
+    trend: deriveTrend(seatShare),
+    volatility: 0.12,
+    memberCount,
+    cohesionProxy: Math.round((0.5 + sentimentScore * 0.3) * 100) / 100
+  };
 }
 
 function buildTopicsAndShifts(validSentiments: GroupSentiment[]): {
@@ -245,19 +234,26 @@ function buildSentimentComputedAttrs(
 
 export async function sentimentTracker(params: SentimentTrackerParams): Promise<ToolResult> {
   try {
-    // NOTE: getMEPs is paginated; limit:100 returns only the first page.
-    // totalMEPs may be underestimated when hasMore is true. Seat-share
-    // scores are therefore sample-based proxies, not exact values.
-    const allMepsResult = await epClient.getMEPs({ limit: 100 });
-    const totalMEPs = allMepsResult.data.length;
+    // Fetch all current MEPs once via paginated batches, then aggregate
+    // per-group counts in-memory. This avoids per-group API calls that each
+    // trigger a full multi-page fetch when client-side filtering is used.
+    const allMeps = await fetchAllCurrentMEPs();
+    const totalMEPs = allMeps.length;
 
     if (totalMEPs === 0) {
       return buildToolResponse(buildEmptySentimentResult(params));
     }
 
+    // Count MEPs per group in-memory (one fetch, no per-group API calls)
+    const groupCounts = new Map<string, number>();
+    for (const mep of allMeps) {
+      const g = mep.politicalGroup;
+      groupCounts.set(g, (groupCounts.get(g) ?? 0) + 1);
+    }
+
     const targetGroups = params.groupId !== undefined ? [params.groupId] : KNOWN_POLITICAL_GROUPS;
-    const groupSentiments = await Promise.all(
-      targetGroups.map(gId => buildGroupSentiment(gId, totalMEPs))
+    const groupSentiments = targetGroups.map(
+      gId => buildGroupSentiment(gId, groupCounts.get(gId) ?? 0, totalMEPs)
     );
     const validSentiments = groupSentiments.filter(g => g.memberCount > 0);
 

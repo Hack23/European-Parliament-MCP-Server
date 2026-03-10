@@ -36,7 +36,7 @@ vi.mock('../../../src/clients/europeanParliamentClient.js', async (importOrigina
   return {
     ...actual,
     epClient: {
-      getMEPs: vi.fn(),
+      getCurrentMEPs: vi.fn(),
       getMEPDetails: vi.fn(),
       getVotingRecords: vi.fn()
     }
@@ -62,7 +62,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
     vi.clearAllMocks();
 
     // Default mock implementations for all tools
-    vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue(osintPhase6PaginatedMEPs);
+    vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue(osintPhase6PaginatedMEPs);
 
     vi.mocked(epClientModule.epClient.getMEPDetails).mockImplementation((id: string) => {
       const detail = osintPhase6MEPDetails.find(m => m.id === id)
@@ -140,7 +140,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
     }, 30000);
 
     it('should return empty result gracefully when EP client returns no MEPs', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [],
         total: 0,
         limit: 50,
@@ -154,7 +154,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
     }, 30000);
 
     it('should handle EP client errors gracefully', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue(
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue(
         new Error('Simulated EP API error')
       );
 
@@ -218,7 +218,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
     }, 30000);
 
     it('should return empty result gracefully when EP client returns no MEPs', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [],
         total: 0,
         limit: 50,
@@ -232,7 +232,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
     }, 30000);
 
     it('should handle EP client errors gracefully', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue(
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue(
         new Error('Simulated EP API error')
       );
 
@@ -303,7 +303,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
     }, 30000);
 
     it('should return empty result gracefully when EP client returns no MEPs', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [],
         total: 0,
         limit: 50,
@@ -317,7 +317,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
     }, 30000);
 
     it('should handle EP client errors gracefully', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue(
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue(
         new Error('Simulated EP API error')
       );
 

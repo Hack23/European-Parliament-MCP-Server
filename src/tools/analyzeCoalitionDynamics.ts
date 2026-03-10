@@ -12,11 +12,11 @@
  */
 
 import { AnalyzeCoalitionDynamicsSchema } from '../schemas/europeanParliament.js';
-import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 import type { DataAvailability, MetricResult } from '../types/index.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
+import { fetchAllCurrentMEPs } from '../utils/mepFetcher.js';
 
 interface CoalitionPairAnalysis {
   groupA: string;
@@ -135,40 +135,34 @@ function computePairCohesion(
 }
 
 /**
- * Fetches sampled MEP membership counts for each target political group from the EP API
- * and builds {@link GroupCohesionMetrics} records.
+ * Fetches all current MEPs once and computes per-group membership counts in-memory.
  *
- * **Note (data scope):** This function queries the EP `/meps` endpoint with a capped
- * `limit` of 50 MEPs per group (first page only). As a result, the derived
- * `memberCount` for a group is a **sample-based lower bound**: larger groups with
- * more than 50 MEPs will be undercounted. Callers MUST NOT treat `memberCount` as
- * an authoritative total; it is intended for relative, coarse sizing only.
+ * **Note (data source):** Uses `getCurrentMEPs()` to paginate through `/meps/show-current`
+ * in batches of 100, then counts per group locally. This avoids per-group API calls that
+ * each trigger a full multi-page fetch when client-side filtering is used.
  *
- * **Note (voting data):** The EP API `/meps` endpoint only returns group membership
- * information, not per-MEP voting statistics. As a result, `internalCohesion`,
- * `defectionRate`, and `avgAttendance` are set to `null`, `dataAvailability` and
- * `stressIndicator.availability` are set to `'UNAVAILABLE'`, and `unityTrend` is
- * `'UNKNOWN'`. Callers should treat these fields as "not available" and supplement
- * these results with vote-result data when available.
+ * **Note (voting data):** The EP API does not provide per-MEP voting statistics.
+ * As a result, `internalCohesion`, `defectionRate`, and `avgAttendance` are set to
+ * `null`, `dataAvailability` and `stressIndicator.availability` are set to
+ * `'UNAVAILABLE'`, and `unityTrend` is `'UNKNOWN'`. Callers should treat these
+ * fields as "not available" and supplement with vote-result data when available.
  *
  * @param targetGroups - Political group identifiers to query (e.g., `['EPP', 'S&D']`)
- * @returns Promise resolving to an array of group cohesion metric objects, one per group,
- *   where `memberCount` values are based on a capped first page of results (max 50 MEPs)
- * @throws {Error} If any EP API call for a group fails
- *
- * @security EP API calls are limited to 50 MEPs per group per ISMS Policy AC-003
- *   (least privilege — request only the data needed for analysis). This limit also means
- *   that reported group sizes are approximate lower bounds, not full enumerations.
+ * @returns Promise resolving to an array of group cohesion metric objects, one per group
+ * @throws {Error} If the EP API call fails
  */
 async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionMetrics[]> {
+  // Fetch all current MEPs once, then count per group in-memory
+  const allMeps = await fetchAllCurrentMEPs();
+  const groupCounts = new Map<string, number>();
+  for (const mep of allMeps) {
+    const g = mep.politicalGroup;
+    groupCounts.set(g, (groupCounts.get(g) ?? 0) + 1);
+  }
+
   const metrics: GroupCohesionMetrics[] = [];
   for (const groupId of targetGroups) {
-    const mepsResult = await epClient.getMEPs({ group: groupId, limit: 50 });
-
-    // Per-MEP voting statistics are not available from the EP API,
-    // so cohesion/defection/attendance are reported as null with UNAVAILABLE marker.
-    // memberCount is capped at 50 (single API page) and may undercount large groups.
-    const memberCount = mepsResult.data.length;
+    const memberCount = groupCounts.get(groupId) ?? 0;
 
     metrics.push({
       groupId,

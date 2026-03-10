@@ -205,7 +205,7 @@ async function buildLandscape(
   dateFrom: string,
   dateTo: string
 ): Promise<PoliticalLandscape> {
-  const mepResult = await epClient.getMEPs({ limit: 100 });
+  const mepResult = await epClient.getCurrentMEPs({ limit: 100 });
   const meps = Array.isArray(mepResult.data) ? mepResult.data : [];
 
   const { groups, countriesRepresented, totalMEPs } = aggregateByGroup(

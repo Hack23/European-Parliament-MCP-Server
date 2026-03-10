@@ -4,13 +4,11 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleSentimentTracker } from './sentimentTracker.js';
-import * as epClientModule from '../clients/europeanParliamentClient.js';
+import * as mepFetcherModule from '../utils/mepFetcher.js';
 
-// Mock the EP client
-vi.mock('../clients/europeanParliamentClient.js', () => ({
-  epClient: {
-    getMEPs: vi.fn()
-  }
+// Mock the MEP fetcher utility
+vi.mock('../utils/mepFetcher.js', () => ({
+  fetchAllCurrentMEPs: vi.fn()
 }));
 
 const makeMEPList = (count: number, group: string) =>
@@ -28,48 +26,20 @@ describe('sentiment_tracker Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Default: return a large mixed parliament
-    vi.mocked(epClientModule.epClient.getMEPs).mockImplementation(async (params?: Record<string, unknown>) => {
-      const group = params?.group as string | undefined;
+    // Build a full parliament for in-memory grouping.
+    // The tool calls fetchAllCurrentMEPs() once to get all MEPs.
+    const allMeps = [
+      ...makeMEPList(180, 'EPP'),
+      ...makeMEPList(136, 'S&D'),
+      ...makeMEPList(77, 'Renew'),
+      ...makeMEPList(53, 'Greens/EFA'),
+      ...makeMEPList(78, 'ECR'),
+      ...makeMEPList(49, 'ID'),
+      ...makeMEPList(37, 'GUE/NGL'),
+      ...makeMEPList(44, 'NI')
+    ];
 
-      if (group === 'EPP') {
-        return { data: makeMEPList(180, 'EPP'), total: 180, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'S&D') {
-        return { data: makeMEPList(136, 'S&D'), total: 136, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'Renew') {
-        return { data: makeMEPList(77, 'Renew'), total: 77, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'Greens/EFA') {
-        return { data: makeMEPList(53, 'Greens/EFA'), total: 53, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'ECR') {
-        return { data: makeMEPList(78, 'ECR'), total: 78, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'ID') {
-        return { data: makeMEPList(49, 'ID'), total: 49, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'GUE/NGL') {
-        return { data: makeMEPList(37, 'GUE/NGL'), total: 37, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'NI') {
-        return { data: makeMEPList(44, 'NI'), total: 44, limit: 100, offset: 0, hasMore: false };
-      }
-
-      // Default all-MEPs query
-      return {
-        data: [
-          ...makeMEPList(100, 'EPP'),
-          ...makeMEPList(80, 'S&D'),
-          ...makeMEPList(50, 'Renew')
-        ],
-        total: 230,
-        limit: 100,
-        offset: 0,
-        hasMore: false
-      };
-    });
+    vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue(allMeps);
   });
 
   describe('Input Validation', () => {
@@ -169,13 +139,7 @@ describe('sentiment_tracker Tool', () => {
 
   describe('dataAvailable: false scenario', () => {
     it('should return dataAvailable false when no MEPs returned', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
-        data: [],
-        total: 0,
-        limit: 100,
-        offset: 0,
-        hasMore: false
-      });
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue([]);
 
       const result = await handleSentimentTracker({});
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
@@ -190,14 +154,14 @@ describe('sentiment_tracker Tool', () => {
 
   describe('Error Handling', () => {
     it('should return error response on API failure', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue(new Error('API Error'));
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockRejectedValue(new Error('API Error'));
 
       const result = await handleSentimentTracker({});
       expect(result.isError).toBe(true);
     });
 
     it('should handle non-Error exceptions', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue('string error');
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockRejectedValue('string error');
 
       const result = await handleSentimentTracker({});
       expect(result.isError).toBe(true);
@@ -206,9 +170,7 @@ describe('sentiment_tracker Tool', () => {
 
   describe('Single Group Analysis', () => {
     it('should return only one group sentiment when groupId specified', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs)
-        .mockResolvedValueOnce({ data: makeMEPList(100, 'EPP'), total: 100, limit: 100, offset: 0, hasMore: false }) // all MEPs call
-        .mockResolvedValueOnce({ data: makeMEPList(100, 'EPP'), total: 100, limit: 100, offset: 0, hasMore: false }); // group-specific call
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue(makeMEPList(100, 'EPP'));
 
       const result = await handleSentimentTracker({ groupId: 'EPP' });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {

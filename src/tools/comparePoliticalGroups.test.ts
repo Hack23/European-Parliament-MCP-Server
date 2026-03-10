@@ -9,7 +9,7 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPs: vi.fn()
+    getCurrentMEPs: vi.fn()
   }
 }));
 
@@ -17,7 +17,7 @@ describe('compare_political_groups Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+    vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
       data: [
         {
           id: 'MEP-1',
@@ -161,7 +161,7 @@ describe('compare_political_groups Tool', () => {
 
   describe('Error Handling', () => {
     it('should wrap API errors', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs)
+      vi.mocked(epClientModule.epClient.getCurrentMEPs)
         .mockRejectedValueOnce(new Error('API Error'));
 
       await expect(handleComparePoliticalGroups({ groupIds: ['EPP', 'S&D'] }))
@@ -172,7 +172,7 @@ describe('compare_political_groups Tool', () => {
   describe('Branch Coverage - Computation Edge Cases', () => {
     it('should handle empty MEP data with zero values', async () => {
       // Arrange: No MEPs returned → all metrics should be zero
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [],
         total: 0, limit: 100, offset: 0, hasMore: false
       });
@@ -215,7 +215,7 @@ describe('compare_political_groups Tool', () => {
 
     it('should handle non-Error exceptions with Unknown error message', async () => {
       // Arrange: Reject with a non-Error value to cover instanceof Error false branch
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue('string error');
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue('string error');
 
       // Act & Assert
       await expect(handleComparePoliticalGroups({ groupIds: ['EPP', 'S&D'] }))

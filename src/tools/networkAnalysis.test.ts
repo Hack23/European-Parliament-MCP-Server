@@ -9,7 +9,7 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPs: vi.fn(),
+    getCurrentMEPs: vi.fn(),
     getMEPDetails: vi.fn()
   }
 }));
@@ -26,7 +26,7 @@ describe('network_analysis Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+    vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
       data: mockMEPs,
       total: mockMEPs.length,
       limit: 50,
@@ -144,7 +144,7 @@ describe('network_analysis Tool', () => {
 
   describe('dataAvailable: false scenario', () => {
     it('should return dataAvailable false when no MEPs returned', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [],
         total: 0,
         limit: 50,
@@ -167,7 +167,7 @@ describe('network_analysis Tool', () => {
 
   describe('Error Handling', () => {
     it('should return error response on API failure', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue(new Error('API Error'));
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue(new Error('API Error'));
 
       const result = await handleNetworkAnalysis({});
       expect(result.isError).toBe(true);
@@ -176,7 +176,7 @@ describe('network_analysis Tool', () => {
     });
 
     it('should handle non-Error exceptions', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue('string error');
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue('string error');
 
       const result = await handleNetworkAnalysis({});
       expect(result.isError).toBe(true);

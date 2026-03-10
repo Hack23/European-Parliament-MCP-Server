@@ -861,4 +861,132 @@ describe('transformers with real EP API JSON-LD format', () => {
     const doc = transformDocument(apiData);
     expect(doc.date).toBe('2024-06-15');
   });
+
+  it('transformSpeech: extracts speakerId from had_participation with array had_participant_person (real EP API)', () => {
+    const apiData = {
+      activity_date: '2023-10-17',
+      activity_id: 'MTG-PL-2023-10-17-OTH-20390000',
+      activity_label: { en: 'Effectiveness of the EU sanctions on Russia (debate)' },
+      had_activity_type: 'def/ep-activities/PLENARY_DEBATE_SPEECH',
+      had_participation: {
+        id: 'eli/dl/participation/MTG-PL-2023-10-17-OTH-20390000_197537',
+        type: 'Participation',
+        had_participant_person: ['person/197537'],
+        participation_role: 'def/ep-roles/SPEAKER',
+      },
+      inverse_consists_of: ['eli/dl/event/MTG-PL-2023-10-17-PVCRE-ITM-2'],
+    };
+    const speech = transformSpeech(apiData);
+    expect(speech.speakerId).toBe('person/197537');
+    expect(speech.date).toBe('2023-10-17');
+    expect(speech.title).toBe('Effectiveness of the EU sanctions on Russia (debate)');
+    expect(speech.sessionReference).toBe('eli/dl/event/MTG-PL-2023-10-17-PVCRE-ITM-2');
+  });
+
+  it('transformAdoptedText: extracts subjectMatter codes from isAboutSubjectMatter URI array (real EP API)', () => {
+    const apiData = {
+      identifier: 'TA-10-2025-0004',
+      document_date: '2025-01-23',
+      isAboutSubjectMatter: [
+        'http://publications.europa.eu/resource/authority/subject-matter/DDLH',
+        'http://publications.europa.eu/resource/authority/subject-matter/PESC',
+      ],
+      title_dcterms: { en: 'Systematic repression of human rights in Iran' },
+      work_type: 'def/ep-document-types/TEXT_ADOPTED',
+    };
+    const text = transformAdoptedText(apiData);
+    expect(text.subjectMatter).toBe('DDLH, PESC');
+    expect(text.title).toBe('Systematic repression of human rights in Iran');
+    expect(text.dateAdopted).toBe('2025-01-23');
+  });
+
+  it('transformAdoptedText: extracts procedureReference from inverse_decided_on_a_realization_of array (real EP API)', () => {
+    const apiData = {
+      identifier: 'TA-10-2025-0004',
+      document_date: '2025-01-23',
+      title_dcterms: { en: 'Test title' },
+      work_type: 'def/ep-document-types/TEXT_ADOPTED',
+      inverse_decided_on_a_realization_of: ['eli/dl/event/2025-2511-DEC-DCPL-2025-01-23'],
+    };
+    const text = transformAdoptedText(apiData);
+    expect(text.procedureReference).toBe('eli/dl/event/2025-2511-DEC-DCPL-2025-01-23');
+  });
+
+  it('transformProcedure: handles minimal real EP API list format', () => {
+    const apiData = {
+      id: 'eli/dl/proc/2025-0009',
+      type: 'Process',
+      process_id: '2025-0009',
+      process_type: 'def/ep-procedure-types/NLE',
+      label: '2025/0009(NLE)',
+    };
+    const proc = transformProcedure(apiData);
+    expect(proc.title).toBe('2025/0009(NLE)');
+    expect(proc.type).toBe('def/ep-procedure-types/NLE');
+    expect(proc.reference).toBe('2025-0009');
+  });
+
+  it('transformParliamentaryQuestion: handles minimal real EP API list format', () => {
+    const apiData = {
+      id: 'eli/dl/doc/E-10-2025-000001',
+      type: 'Work',
+      work_type: 'def/ep-document-types/QUESTION_WRITTEN',
+      identifier: 'E-10-2025-000001',
+    };
+    const q = transformParliamentaryQuestion(apiData);
+    // extractField(['work_id', 'id', 'identifier']) checks work_id first, then id (full URI path)
+    expect(q.id).toBe('eli/dl/doc/E-10-2025-000001');
+    expect(q.type).toBe('WRITTEN');
+    expect(q.author).toBe('Unknown');
+    expect(q.status).toBe('PENDING');
+  });
+
+  it('transformMEP: handles real EP API show-incoming format (no api: prefixed fields)', () => {
+    const apiData = {
+      id: 'person/40224',
+      type: 'Person',
+      identifier: '40224',
+      label: 'Andi CRISTEA',
+      familyName: 'Cristea',
+      givenName: 'Andi',
+      sortLabel: 'CRISTEA',
+    };
+    const mep = transformMEP(apiData);
+    expect(mep.id).toBe('person/40224');
+    expect(mep.name).toBe('Andi CRISTEA');
+    expect(mep.country).toBe('Unknown');
+    expect(mep.politicalGroup).toBe('Unknown');
+    expect(mep.active).toBe(false);
+  });
+
+  it('transformMEPDeclaration: handles real EP API list format with document_date', () => {
+    const apiData = {
+      id: 'eli/dl/doc/DCI-197627-2025-09-26-495297',
+      type: 'Work',
+      document_date: '2025-09-26',
+      work_type: 'def/ep-document-types/MEMBER_DECLARATION_INTEREST_CONFLICT',
+    };
+    const d = transformMEPDeclaration(apiData);
+    expect(d.dateFiled).toBe('2025-09-26');
+    expect(d.type).toBe('def/ep-document-types/MEMBER_DECLARATION_INTEREST_CONFLICT');
+  });
+
+  it('transformPlenarySession: counts attendance from had_participant_person array (real EP API)', () => {
+    const apiData = {
+      activity_id: 'MTG-PL-2025-01-20',
+      activity_date: '2025-01-20',
+      hasLocality: 'http://publications.europa.eu/resource/authority/place/FRA_SXB',
+      consists_of: ['eli/dl/event/item-1', 'eli/dl/event/item-2'],
+      documented_by_a_realization_of: ['eli/dl/doc/OJQ-10-2025-01-20'],
+      had_participant_person: Array.from({ length: 604 }, (_, i) => `person/${i}`),
+      number_of_attendees: 604,
+    };
+    const session = transformPlenarySession(apiData);
+    expect(session.id).toBe('MTG-PL-2025-01-20');
+    expect(session.date).toBe('2025-01-20');
+    expect(session.location).toBe('Strasbourg');
+    expect(session.attendanceCount).toBe(604);
+    expect(session.agendaItems).toHaveLength(2);
+    expect(session.documents).toHaveLength(1);
+  });
 });
