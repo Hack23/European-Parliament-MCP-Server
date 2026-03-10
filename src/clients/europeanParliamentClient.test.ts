@@ -2218,9 +2218,82 @@ describe('EuropeanParliamentClient', () => {
       expect(result.limit).toBe(50);
       expect(result.offset).toBe(0);
     });
-  });
 
-  describe('getIncomingMEPs', () => {
+    it('should filter by country client-side', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockMEPsResponse(10)
+      } as Response);
+
+      const result = await client.getCurrentMEPs({ country: 'DE', limit: 50 });
+
+      // DE is at index 0 in MOCK_COUNTRIES, so items 0, 10, 20... match
+      expect(result.data.length).toBeGreaterThan(0);
+      for (const mep of result.data) {
+        expect(mep.country).toBe('DE');
+      }
+    });
+
+    it('should filter by group client-side', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockMEPsResponse(10)
+      } as Response);
+
+      const result = await client.getCurrentMEPs({ group: 'EPP', limit: 50 });
+
+      expect(result.data.length).toBeGreaterThan(0);
+      for (const mep of result.data) {
+        expect(mep.politicalGroup.toLowerCase()).toContain('epp');
+      }
+    });
+
+    it('should filter by both country and group client-side', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockMEPsResponse(10)
+      } as Response);
+
+      const result = await client.getCurrentMEPs({ country: 'DE', group: 'EPP', limit: 50 });
+
+      for (const mep of result.data) {
+        expect(mep.country).toBe('DE');
+        expect(mep.politicalGroup.toLowerCase()).toContain('epp');
+      }
+    });
+
+    it('should fetch all MEPs when filtering to ensure enough results', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockMEPsResponse(5)
+      } as Response);
+
+      await client.getCurrentMEPs({ country: 'DE', limit: 50 });
+
+      // When filtering, should request limit=800 to get all MEPs
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringMatching(/limit=800/),
+        expect.any(Object)
+      );
+    });
+
+    it('should return correct total count when filtering', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockMEPsResponse(10)
+      } as Response);
+
+      const result = await client.getCurrentMEPs({ country: 'DE', limit: 50 });
+
+      // total should reflect the number of filtered MEPs, not total fetched
+      expect(result.total).toBe(result.data.length);
+    });
+  });  describe('getIncomingMEPs', () => {
     it('should return paginated incoming MEP data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
