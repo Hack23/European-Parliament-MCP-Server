@@ -57,6 +57,8 @@ export function extractField(data: Record<string, unknown>, fields: string[]): s
     const value = data[field];
     if (value !== undefined && value !== null) {
       if (Array.isArray(value) && value.length > 0) {
+        // EP API JSON-LD often wraps single values in arrays;
+        // extract the first element as the representative value
         return toSafeString(value[0]);
       }
       return toSafeString(value);

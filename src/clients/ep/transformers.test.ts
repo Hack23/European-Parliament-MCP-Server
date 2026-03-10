@@ -934,7 +934,7 @@ describe('transformers with real EP API JSON-LD format', () => {
       identifier: 'E-10-2025-000001',
     };
     const q = transformParliamentaryQuestion(apiData);
-    // extractField(['work_id', 'id', 'identifier']) picks 'id' first (full URI path)
+    // extractField(['work_id', 'id', 'identifier']) checks work_id first, then id (full URI path)
     expect(q.id).toBe('eli/dl/doc/E-10-2025-000001');
     expect(q.type).toBe('WRITTEN');
     expect(q.author).toBe('Unknown');
