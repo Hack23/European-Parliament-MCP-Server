@@ -16,6 +16,7 @@ import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 import type { DataAvailability, MetricResult } from '../types/index.js';
+import type { MEP } from '../types/europeanParliament.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 
 interface CoalitionPairAnalysis {
@@ -134,14 +135,27 @@ function computePairCohesion(
   };
 }
 
+/** Fetch all current MEPs by paginating until no more pages remain. */
+async function fetchAllCurrentMEPs(): Promise<MEP[]> {
+  const batchSize = 100;
+  const allMeps: MEP[] = [];
+  let offset = 0;
+  let hasMore = true;
+  while (hasMore) {
+    const page = await epClient.getCurrentMEPs({ limit: batchSize, offset });
+    allMeps.push(...page.data);
+    hasMore = page.hasMore;
+    offset += batchSize;
+  }
+  return allMeps;
+}
+
 /**
- * Fetches sampled MEP membership counts for each target political group from the EP API
- * and builds {@link GroupCohesionMetrics} records.
+ * Fetches all current MEPs once and computes per-group membership counts in-memory.
  *
- * **Note (data source):** This function calls `getCurrentMEPs()` per group, which
- * queries the EP `/meps/show-current` endpoint. When a `group` filter is provided,
- * client-side filtering fetches all current MEPs internally and `result.total`
- * reflects the full filtered group size.
+ * **Note (data source):** Uses `getCurrentMEPs()` to paginate through `/meps/show-current`
+ * in batches of 100, then counts per group locally. This avoids per-group API calls that
+ * each trigger a full multi-page fetch when client-side filtering is used.
  *
  * **Note (voting data):** The EP API does not provide per-MEP voting statistics.
  * As a result, `internalCohesion`, `defectionRate`, and `avgAttendance` are set to
@@ -151,17 +165,20 @@ function computePairCohesion(
  *
  * @param targetGroups - Political group identifiers to query (e.g., `['EPP', 'S&D']`)
  * @returns Promise resolving to an array of group cohesion metric objects, one per group
- * @throws {Error} If any EP API call for a group fails
+ * @throws {Error} If the EP API call fails
  */
 async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionMetrics[]> {
+  // Fetch all current MEPs once, then count per group in-memory
+  const allMeps = await fetchAllCurrentMEPs();
+  const groupCounts = new Map<string, number>();
+  for (const mep of allMeps) {
+    const g = mep.politicalGroup;
+    groupCounts.set(g, (groupCounts.get(g) ?? 0) + 1);
+  }
+
   const metrics: GroupCohesionMetrics[] = [];
   for (const groupId of targetGroups) {
-    const mepsResult = await epClient.getCurrentMEPs({ group: groupId, limit: 50 });
-
-    // Per-MEP voting statistics are not available from the EP API,
-    // so cohesion/defection/attendance are reported as null with UNAVAILABLE marker.
-    // result.total reflects the full filtered group size from client-side filtering.
-    const memberCount = mepsResult.total;
+    const memberCount = groupCounts.get(groupId) ?? 0;
 
     metrics.push({
       groupId,

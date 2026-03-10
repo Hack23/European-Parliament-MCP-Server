@@ -27,9 +27,9 @@
 
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
-import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
+import type { MEP } from '../types/europeanParliament.js';
 
 export const SentimentTrackerSchema = z.object({
   groupId: z.string()
@@ -189,27 +189,17 @@ function buildEmptySentimentResult(params: SentimentTrackerParams): SentimentTra
   return result;
 }
 
-async function buildGroupSentiment(groupId: string, totalMEPs: number): Promise<GroupSentiment> {
-  try {
-    // NOTE: getCurrentMEPs uses /meps/show-current which returns country and
-    // politicalGroup fields. When group filter is provided, client-side filtering
-    // fetches all MEPs internally; result.total reflects the full filtered count.
-    const result = await epClient.getCurrentMEPs({ group: groupId, limit: 100 });
-    const memberCount = result.total;
-    const seatShare = totalMEPs > 0 ? memberCount / totalMEPs : 0;
-    const sentimentScore = deriveSentimentScore(memberCount, totalMEPs);
-    return {
-      groupId,
-      sentimentScore: Math.round(sentimentScore * 100) / 100,
-      trend: deriveTrend(seatShare),
-      volatility: 0.12,
-      memberCount,
-      cohesionProxy: Math.round((0.5 + sentimentScore * 0.3) * 100) / 100
-    };
-  } catch (error: unknown) {
-    auditLogger.logError('sentiment_tracker.build_group_sentiment', { groupId }, toErrorMessage(error));
-    return { groupId, sentimentScore: 0, trend: 'STABLE', volatility: 0, memberCount: 0, cohesionProxy: 0 };
-  }
+function buildGroupSentiment(groupId: string, memberCount: number, totalMEPs: number): GroupSentiment {
+  const seatShare = totalMEPs > 0 ? memberCount / totalMEPs : 0;
+  const sentimentScore = deriveSentimentScore(memberCount, totalMEPs);
+  return {
+    groupId,
+    sentimentScore: Math.round(sentimentScore * 100) / 100,
+    trend: deriveTrend(seatShare),
+    volatility: 0.12,
+    memberCount,
+    cohesionProxy: Math.round((0.5 + sentimentScore * 0.3) * 100) / 100
+  };
 }
 
 function buildTopicsAndShifts(validSentiments: GroupSentiment[]): {
@@ -243,20 +233,43 @@ function buildSentimentComputedAttrs(
   };
 }
 
+/** Fetch all current MEPs by paginating until no more pages remain. */
+async function fetchAllCurrentMEPsForTool(): Promise<MEP[]> {
+  const batchSize = 100;
+  const allMeps: MEP[] = [];
+  let offset = 0;
+  let hasMore = true;
+  while (hasMore) {
+    const page = await epClient.getCurrentMEPs({ limit: batchSize, offset });
+    allMeps.push(...page.data);
+    hasMore = page.hasMore;
+    offset += batchSize;
+  }
+  return allMeps;
+}
+
 export async function sentimentTracker(params: SentimentTrackerParams): Promise<ToolResult> {
   try {
-    // getCurrentMEPs uses /meps/show-current which returns country and
-    // politicalGroup fields. result.total reflects the full count of current MEPs.
-    const allMepsResult = await epClient.getCurrentMEPs({ limit: 100 });
-    const totalMEPs = allMepsResult.total;
+    // Fetch all current MEPs once via paginated batches, then aggregate
+    // per-group counts in-memory. This avoids per-group API calls that each
+    // trigger a full multi-page fetch when client-side filtering is used.
+    const allMeps = await fetchAllCurrentMEPsForTool();
+    const totalMEPs = allMeps.length;
 
     if (totalMEPs === 0) {
       return buildToolResponse(buildEmptySentimentResult(params));
     }
 
+    // Count MEPs per group in-memory (one fetch, no per-group API calls)
+    const groupCounts = new Map<string, number>();
+    for (const mep of allMeps) {
+      const g = mep.politicalGroup;
+      groupCounts.set(g, (groupCounts.get(g) ?? 0) + 1);
+    }
+
     const targetGroups = params.groupId !== undefined ? [params.groupId] : KNOWN_POLITICAL_GROUPS;
-    const groupSentiments = await Promise.all(
-      targetGroups.map(gId => buildGroupSentiment(gId, totalMEPs))
+    const groupSentiments = targetGroups.map(
+      gId => buildGroupSentiment(gId, groupCounts.get(gId) ?? 0, totalMEPs)
     );
     const validSentiments = groupSentiments.filter(g => g.memberCount > 0);
 

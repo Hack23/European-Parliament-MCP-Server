@@ -28,46 +28,29 @@ describe('sentiment_tracker Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Default: return a large mixed parliament
+    // Build a full parliament for in-memory grouping.
+    // The tool fetches all MEPs by paginating (limit:100, offset:0,100,...).
+    const allMeps = [
+      ...makeMEPList(180, 'EPP'),
+      ...makeMEPList(136, 'S&D'),
+      ...makeMEPList(77, 'Renew'),
+      ...makeMEPList(53, 'Greens/EFA'),
+      ...makeMEPList(78, 'ECR'),
+      ...makeMEPList(49, 'ID'),
+      ...makeMEPList(37, 'GUE/NGL'),
+      ...makeMEPList(44, 'NI')
+    ];
+
     vi.mocked(epClientModule.epClient.getCurrentMEPs).mockImplementation(async (params?: Record<string, unknown>) => {
-      const group = params?.group as string | undefined;
-
-      if (group === 'EPP') {
-        return { data: makeMEPList(180, 'EPP'), total: 180, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'S&D') {
-        return { data: makeMEPList(136, 'S&D'), total: 136, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'Renew') {
-        return { data: makeMEPList(77, 'Renew'), total: 77, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'Greens/EFA') {
-        return { data: makeMEPList(53, 'Greens/EFA'), total: 53, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'ECR') {
-        return { data: makeMEPList(78, 'ECR'), total: 78, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'ID') {
-        return { data: makeMEPList(49, 'ID'), total: 49, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'GUE/NGL') {
-        return { data: makeMEPList(37, 'GUE/NGL'), total: 37, limit: 100, offset: 0, hasMore: false };
-      }
-      if (group === 'NI') {
-        return { data: makeMEPList(44, 'NI'), total: 44, limit: 100, offset: 0, hasMore: false };
-      }
-
-      // Default all-MEPs query
+      const limit = (params?.limit as number | undefined) ?? 100;
+      const offset = (params?.offset as number | undefined) ?? 0;
+      const page = allMeps.slice(offset, offset + limit);
       return {
-        data: [
-          ...makeMEPList(100, 'EPP'),
-          ...makeMEPList(80, 'S&D'),
-          ...makeMEPList(50, 'Renew')
-        ],
-        total: 230,
-        limit: 100,
-        offset: 0,
-        hasMore: false
+        data: page,
+        total: offset + page.length,
+        limit,
+        offset,
+        hasMore: offset + page.length < allMeps.length
       };
     });
   });
