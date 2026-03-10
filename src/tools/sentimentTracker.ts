@@ -26,10 +26,9 @@
  */
 
 import { z } from 'zod';
-import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
-import type { MEP } from '../types/europeanParliament.js';
+import { fetchAllCurrentMEPs } from '../utils/mepFetcher.js';
 
 export const SentimentTrackerSchema = z.object({
   groupId: z.string()
@@ -233,27 +232,12 @@ function buildSentimentComputedAttrs(
   };
 }
 
-/** Fetch all current MEPs by paginating until no more pages remain. */
-async function fetchAllCurrentMEPsForTool(): Promise<MEP[]> {
-  const batchSize = 100;
-  const allMeps: MEP[] = [];
-  let offset = 0;
-  let hasMore = true;
-  while (hasMore) {
-    const page = await epClient.getCurrentMEPs({ limit: batchSize, offset });
-    allMeps.push(...page.data);
-    hasMore = page.hasMore;
-    offset += batchSize;
-  }
-  return allMeps;
-}
-
 export async function sentimentTracker(params: SentimentTrackerParams): Promise<ToolResult> {
   try {
     // Fetch all current MEPs once via paginated batches, then aggregate
     // per-group counts in-memory. This avoids per-group API calls that each
     // trigger a full multi-page fetch when client-side filtering is used.
-    const allMeps = await fetchAllCurrentMEPsForTool();
+    const allMeps = await fetchAllCurrentMEPs();
     const totalMEPs = allMeps.length;
 
     if (totalMEPs === 0) {

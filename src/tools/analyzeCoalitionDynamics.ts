@@ -12,12 +12,11 @@
  */
 
 import { AnalyzeCoalitionDynamicsSchema } from '../schemas/europeanParliament.js';
-import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 import type { DataAvailability, MetricResult } from '../types/index.js';
-import type { MEP } from '../types/europeanParliament.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
+import { fetchAllCurrentMEPs } from '../utils/mepFetcher.js';
 
 interface CoalitionPairAnalysis {
   groupA: string;
@@ -133,21 +132,6 @@ function computePairCohesion(
     allianceSignal: cohesionScore > minimumCohesion,
     trend: classifyCohesionTrend(cohesionScore)
   };
-}
-
-/** Fetch all current MEPs by paginating until no more pages remain. */
-async function fetchAllCurrentMEPs(): Promise<MEP[]> {
-  const batchSize = 100;
-  const allMeps: MEP[] = [];
-  let offset = 0;
-  let hasMore = true;
-  while (hasMore) {
-    const page = await epClient.getCurrentMEPs({ limit: batchSize, offset });
-    allMeps.push(...page.data);
-    hasMore = page.hasMore;
-    offset += batchSize;
-  }
-  return allMeps;
 }
 
 /**
