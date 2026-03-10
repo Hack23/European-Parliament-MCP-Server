@@ -185,7 +185,10 @@ export class MEPClient extends BaseEPClient {
     });
 
     const items = Array.isArray(response.data) ? response.data : [];
-    const meps = items.map((item) => this.transformMEP(item));
+    // show-current endpoint only returns MEPs with active mandates,
+    // so mark every returned MEP as active even when the API response
+    // omits the explicit `active` flag.
+    const meps = items.map((item) => ({ ...this.transformMEP(item), active: true }));
     return { data: meps, total: meps.length + offset, limit, offset, hasMore: meps.length === limit };
   }
 

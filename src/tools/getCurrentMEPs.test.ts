@@ -103,6 +103,17 @@ describe('get_current_meps Tool', () => {
       expect(data).toHaveProperty('offset');
       expect(data).toHaveProperty('hasMore');
     });
+
+    it('should return MEPs with active status and country/politicalGroup', async () => {
+      const result = await handleGetCurrentMEPs({});
+      const text = result.content[0]?.text ?? '{}';
+      const parsed = JSON.parse(text) as { data: Array<{ active: boolean; country: string; politicalGroup: string }> };
+
+      expect(parsed.data).toHaveLength(1);
+      expect(parsed.data[0]?.active).toBe(true);
+      expect(parsed.data[0]?.country).toBe('DE');
+      expect(parsed.data[0]?.politicalGroup).toBe('S&D');
+    });
   });
 
   describe('Error Handling', () => {

@@ -22,7 +22,11 @@ describe('EuropeanParliamentClient', () => {
     vi.clearAllMocks();
   });
 
-  // Helper to create mock API responses
+  // Country codes used in mock data (matches real EP API format)
+  const MOCK_COUNTRIES = ['DE', 'FR', 'IT', 'ES', 'PL', 'NL', 'BE', 'SE', 'AT', 'PT'];
+  const MOCK_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID', 'The Left', 'NI'];
+
+  // Helper to create mock API responses matching real EP API JSON-LD format
   const createMockMEPsResponse = (count: number = 2) => ({
     data: Array.from({ length: count }, (_, i) => ({
       id: `person/${i + 1}`,
@@ -31,7 +35,9 @@ describe('EuropeanParliamentClient', () => {
       label: `Test MEP ${i + 1}`,
       familyName: `LastName${i + 1}`,
       givenName: `FirstName${i + 1}`,
-      sortLabel: `LASTNAME${i + 1}`
+      sortLabel: `LASTNAME${i + 1}`,
+      'api:country-of-representation': MOCK_COUNTRIES[i % MOCK_COUNTRIES.length],
+      'api:political-group': MOCK_GROUPS[i % MOCK_GROUPS.length],
     })),
     '@context': [
       {
@@ -2143,6 +2149,35 @@ describe('EuropeanParliamentClient', () => {
       expect(result).toHaveProperty('hasMore');
       expect(Array.isArray(result.data)).toBe(true);
       expect(result.data).toHaveLength(5);
+    });
+
+    it('should mark all returned MEPs as active', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockMEPsResponse(3)
+      } as Response);
+
+      const result = await client.getCurrentMEPs({ limit: 10 });
+
+      for (const mep of result.data) {
+        expect(mep.active).toBe(true);
+      }
+    });
+
+    it('should extract country and politicalGroup from api: prefixed fields', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockMEPsResponse(2)
+      } as Response);
+
+      const result = await client.getCurrentMEPs({ limit: 10 });
+
+      expect(result.data[0]?.country).toBe('DE');
+      expect(result.data[0]?.politicalGroup).toBe('EPP');
+      expect(result.data[1]?.country).toBe('FR');
+      expect(result.data[1]?.politicalGroup).toBe('S&D');
     });
 
     it('should call the correct endpoint', async () => {
