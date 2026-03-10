@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.5**](../../../README.md)
+[**European Parliament MCP Server API v1.1.6**](../../../README.md)
 
 ***
 
@@ -175,7 +175,7 @@ const freshData = await client.getMEPs({ country: 'SE' });
 
 > **getAdoptedTextById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`AdoptedText`](../../../types/ep/activities/interfaces/AdoptedText.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:803](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L803)
+Defined in: [clients/europeanParliamentClient.ts:810](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L810)
 
 Returns a single adopted text by document ID.
 **EP API Endpoint:** `GET /adopted-texts/{doc-id}`
@@ -196,7 +196,7 @@ Returns a single adopted text by document ID.
 
 > **getAdoptedTexts**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`AdoptedText`](../../../types/ep/activities/interfaces/AdoptedText.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:791](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L791)
+Defined in: [clients/europeanParliamentClient.ts:798](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L798)
 
 Returns adopted texts.
 **EP API Endpoint:** `GET /adopted-texts`
@@ -227,7 +227,7 @@ Returns adopted texts.
 
 > **getAdoptedTextsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:823](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L823)
+Defined in: [clients/europeanParliamentClient.ts:830](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L830)
 
 Retrieves recently updated adopted texts via the feed endpoint.
 **EP API Endpoint:** `GET /adopted-texts/feed`
@@ -294,7 +294,7 @@ Returns cache statistics for monitoring and debugging.
 
 > **getCommitteeDocumentById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:685](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L685)
+Defined in: [clients/europeanParliamentClient.ts:692](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L692)
 
 Returns a single committee document by ID.
 **EP API Endpoint:** `GET /committee-documents/{doc-id}`
@@ -315,7 +315,7 @@ Returns a single committee document by ID.
 
 > **getCommitteeDocuments**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:615](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L615)
+Defined in: [clients/europeanParliamentClient.ts:622](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L622)
 
 Returns committee documents.
 **EP API Endpoint:** `GET /committee-documents`
@@ -346,7 +346,7 @@ Returns committee documents.
 
 > **getCommitteeDocumentsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:723](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L723)
+Defined in: [clients/europeanParliamentClient.ts:730](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L730)
 
 Retrieves recently updated committee documents via the feed endpoint.
 **EP API Endpoint:** `GET /committee-documents/feed`
@@ -373,7 +373,7 @@ Retrieves recently updated committee documents via the feed endpoint.
 
 > **getCommitteeInfo**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:547](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L547)
+Defined in: [clients/europeanParliamentClient.ts:554](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L554)
 
 Retrieves committee (corporate body) information by ID or abbreviation.
 
@@ -415,7 +415,7 @@ https://data.europarl.europa.eu/api/v2/corporate-bodies
 
 > **getControlledVocabularies**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:893](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L893)
+Defined in: [clients/europeanParliamentClient.ts:900](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L900)
 
 Returns EP controlled vocabularies.
 **EP API Endpoint:** `GET /controlled-vocabularies`
@@ -442,7 +442,7 @@ Returns EP controlled vocabularies.
 
 > **getControlledVocabulariesFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:914](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L914)
+Defined in: [clients/europeanParliamentClient.ts:921](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L921)
 
 Retrieves recently updated controlled vocabularies via the feed endpoint.
 **EP API Endpoint:** `GET /controlled-vocabularies/feed`
@@ -469,7 +469,7 @@ Retrieves recently updated controlled vocabularies via the feed endpoint.
 
 > **getControlledVocabularyById**(`vocId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:904](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L904)
+Defined in: [clients/europeanParliamentClient.ts:911](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L911)
 
 Returns a single EP Controlled Vocabulary by ID.
 **EP API Endpoint:** `GET /controlled-vocabularies/{voc-id}`
@@ -490,7 +490,7 @@ Returns a single EP Controlled Vocabulary by ID.
 
 > **getCorporateBodiesFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:569](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L569)
+Defined in: [clients/europeanParliamentClient.ts:576](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L576)
 
 Retrieves recently updated corporate bodies via the feed endpoint.
 **EP API Endpoint:** `GET /corporate-bodies/feed`
@@ -517,7 +517,7 @@ Retrieves recently updated corporate bodies via the feed endpoint.
 
 > **getCurrentCorporateBodies**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:558](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L558)
+Defined in: [clients/europeanParliamentClient.ts:565](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L565)
 
 Returns the list of all current EP Corporate Bodies for today's date.
 **EP API Endpoint:** `GET /corporate-bodies/show-current`
@@ -544,14 +544,27 @@ Returns the list of all current EP Corporate Bodies for today's date.
 
 > **getCurrentMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:285](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L285)
+Defined in: [clients/europeanParliamentClient.ts:290](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L290)
 
 Returns all currently active MEPs for today's date.
+
+Unlike `getMEPs()`, this uses `GET /meps/show-current` which returns
+`api:country-of-representation` and `api:political-group` in responses.
+Optional `country` and `group` filters are applied client-side after fetch.
+
 **EP API Endpoint:** `GET /meps/show-current`
 
 #### Parameters
 
 ##### params?
+
+###### country?
+
+`string`
+
+###### group?
+
+`string`
 
 ###### limit?
 
@@ -571,7 +584,7 @@ Returns all currently active MEPs for today's date.
 
 > **getDocumentById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:661](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L661)
+Defined in: [clients/europeanParliamentClient.ts:668](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L668)
 
 Returns a single document by ID.
 **EP API Endpoint:** `GET /documents/{doc-id}`
@@ -592,7 +605,7 @@ Returns a single document by ID.
 
 > **getDocumentsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:701](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L701)
+Defined in: [clients/europeanParliamentClient.ts:708](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L708)
 
 Retrieves recently updated documents via the feed endpoint.
 **EP API Endpoint:** `GET /documents/feed`
@@ -619,7 +632,7 @@ Retrieves recently updated documents via the feed endpoint.
 
 > **getEventById**(`eventId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:472](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L472)
+Defined in: [clients/europeanParliamentClient.ts:479](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L479)
 
 Returns a single EP event by ID.
 **EP API Endpoint:** `GET /events/{event-id}`
@@ -640,7 +653,7 @@ Returns a single EP event by ID.
 
 > **getEvents**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:458](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L458)
+Defined in: [clients/europeanParliamentClient.ts:465](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L465)
 
 Returns EP events (hearings, conferences, etc.).
 **EP API Endpoint:** `GET /events`
@@ -679,7 +692,7 @@ Returns EP events (hearings, conferences, etc.).
 
 > **getEventsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:480](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L480)
+Defined in: [clients/europeanParliamentClient.ts:487](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L487)
 
 Retrieves recently updated events via the feed endpoint.
 **EP API Endpoint:** `GET /events/feed`
@@ -710,7 +723,7 @@ Retrieves recently updated events via the feed endpoint.
 
 > **getExternalDocumentById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:693](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L693)
+Defined in: [clients/europeanParliamentClient.ts:700](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L700)
 
 Returns a single external document by ID.
 **EP API Endpoint:** `GET /external-documents/{doc-id}`
@@ -731,7 +744,7 @@ Returns a single external document by ID.
 
 > **getExternalDocuments**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:649](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L649)
+Defined in: [clients/europeanParliamentClient.ts:656](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L656)
 
 Returns all External Documents.
 **EP API Endpoint:** `GET /external-documents`
@@ -762,7 +775,7 @@ Returns all External Documents.
 
 > **getExternalDocumentsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:745](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L745)
+Defined in: [clients/europeanParliamentClient.ts:752](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L752)
 
 Retrieves recently updated external documents via the feed endpoint.
 **EP API Endpoint:** `GET /external-documents/feed`
@@ -793,7 +806,7 @@ Retrieves recently updated external documents via the feed endpoint.
 
 > **getHomonymMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:318](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L318)
+Defined in: [clients/europeanParliamentClient.ts:325](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L325)
 
 Returns homonym MEPs for the current parliamentary term.
 **EP API Endpoint:** `GET /meps/show-homonyms`
@@ -820,7 +833,7 @@ Returns homonym MEPs for the current parliamentary term.
 
 > **getIncomingMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:296](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L296)
+Defined in: [clients/europeanParliamentClient.ts:303](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L303)
 
 Returns all incoming MEPs for the current parliamentary term.
 **EP API Endpoint:** `GET /meps/show-incoming`
@@ -847,7 +860,7 @@ Returns all incoming MEPs for the current parliamentary term.
 
 > **getMeetingActivities**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:395](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L395)
+Defined in: [clients/europeanParliamentClient.ts:402](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L402)
 
 Returns activities linked to a specific meeting (plenary sitting).
 **EP API Endpoint:** `GET /meetings/{sitting-id}/activities`
@@ -878,7 +891,7 @@ Returns activities linked to a specific meeting (plenary sitting).
 
 > **getMeetingById**(`eventId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PlenarySession`](../../../types/ep/plenary/interfaces/PlenarySession.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:450](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L450)
+Defined in: [clients/europeanParliamentClient.ts:457](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L457)
 
 Returns a single EP meeting by ID.
 **EP API Endpoint:** `GET /meetings/{event-id}`
@@ -899,7 +912,7 @@ Returns a single EP meeting by ID.
 
 > **getMeetingDecisions**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:406](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L406)
+Defined in: [clients/europeanParliamentClient.ts:413](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L413)
 
 Returns decisions made in a specific meeting (plenary sitting).
 **EP API Endpoint:** `GET /meetings/{sitting-id}/decisions`
@@ -930,7 +943,7 @@ Returns decisions made in a specific meeting (plenary sitting).
 
 > **getMeetingForeseenActivities**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:417](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L417)
+Defined in: [clients/europeanParliamentClient.ts:424](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L424)
 
 Returns foreseen activities linked to a specific meeting.
 **EP API Endpoint:** `GET /meetings/{sitting-id}/foreseen-activities`
@@ -961,7 +974,7 @@ Returns foreseen activities linked to a specific meeting.
 
 > **getMeetingPlenarySessionDocumentItems**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:439](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L439)
+Defined in: [clients/europeanParliamentClient.ts:446](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L446)
 
 Returns plenary session document items for a specific meeting.
 **EP API Endpoint:** `GET /meetings/{sitting-id}/plenary-session-document-items`
@@ -992,7 +1005,7 @@ Returns plenary session document items for a specific meeting.
 
 > **getMeetingPlenarySessionDocuments**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:428](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L428)
+Defined in: [clients/europeanParliamentClient.ts:435](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L435)
 
 Returns plenary session documents for a specific meeting.
 **EP API Endpoint:** `GET /meetings/{sitting-id}/plenary-session-documents`
@@ -1023,7 +1036,7 @@ Returns plenary session documents for a specific meeting.
 
 > **getMEPDeclarationById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`MEPDeclaration`](../../../types/ep/activities/interfaces/MEPDeclaration.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:343](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L343)
+Defined in: [clients/europeanParliamentClient.ts:350](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L350)
 
 Returns a single MEP declaration by document ID.
 **EP API Endpoint:** `GET /meps-declarations/{doc-id}`
@@ -1048,7 +1061,7 @@ Declarations contain personal financial data – access is audit-logged
 
 > **getMEPDeclarations**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEPDeclaration`](../../../types/ep/activities/interfaces/MEPDeclaration.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:330](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L330)
+Defined in: [clients/europeanParliamentClient.ts:337](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L337)
 
 Returns MEP declarations of financial interests.
 **EP API Endpoint:** `GET /meps-declarations`
@@ -1083,7 +1096,7 @@ Declarations contain personal financial data – access is audit-logged
 
 > **getMEPDeclarationsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:362](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L362)
+Defined in: [clients/europeanParliamentClient.ts:369](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L369)
 
 Retrieves recently updated MEP declarations via the feed endpoint.
 **EP API Endpoint:** `GET /meps-declarations/feed`
@@ -1211,7 +1224,7 @@ https://data.europarl.europa.eu/api/v2/meps
 
 > **getMEPsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:351](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L351)
+Defined in: [clients/europeanParliamentClient.ts:358](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L358)
 
 Retrieves recently updated MEPs via the feed endpoint.
 **EP API Endpoint:** `GET /meps/feed`
@@ -1238,7 +1251,7 @@ Retrieves recently updated MEPs via the feed endpoint.
 
 > **getOutgoingMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:307](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L307)
+Defined in: [clients/europeanParliamentClient.ts:314](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L314)
 
 Returns all outgoing MEPs for the current parliamentary term.
 **EP API Endpoint:** `GET /meps/show-outgoing`
@@ -1265,7 +1278,7 @@ Returns all outgoing MEPs for the current parliamentary term.
 
 > **getParliamentaryQuestionById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ParliamentaryQuestion`](../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:870](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L870)
+Defined in: [clients/europeanParliamentClient.ts:877](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L877)
 
 Returns a single parliamentary question by document ID.
 **EP API Endpoint:** `GET /parliamentary-questions/{doc-id}`
@@ -1286,7 +1299,7 @@ Returns a single parliamentary question by document ID.
 
 > **getParliamentaryQuestions**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`ParliamentaryQuestion`](../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:853](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L853)
+Defined in: [clients/europeanParliamentClient.ts:860](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L860)
 
 Retrieves parliamentary questions with filtering by type, author, and status.
 
@@ -1352,7 +1365,7 @@ https://data.europarl.europa.eu/api/v2/parliamentary-questions
 
 > **getParliamentaryQuestionsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:880](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L880)
+Defined in: [clients/europeanParliamentClient.ts:887](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L887)
 
 Retrieves recently updated parliamentary questions via the feed endpoint.
 **EP API Endpoint:** `GET /parliamentary-questions/feed`
@@ -1379,7 +1392,7 @@ Retrieves recently updated parliamentary questions via the feed endpoint.
 
 > **getPlenaryDocumentById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:669](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L669)
+Defined in: [clients/europeanParliamentClient.ts:676](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L676)
 
 Returns a single plenary document by ID.
 **EP API Endpoint:** `GET /plenary-documents/{doc-id}`
@@ -1400,7 +1413,7 @@ Returns a single plenary document by ID.
 
 > **getPlenaryDocuments**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:603](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L603)
+Defined in: [clients/europeanParliamentClient.ts:610](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L610)
 
 Returns plenary documents.
 **EP API Endpoint:** `GET /plenary-documents`
@@ -1431,7 +1444,7 @@ Returns plenary documents.
 
 > **getPlenaryDocumentsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:712](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L712)
+Defined in: [clients/europeanParliamentClient.ts:719](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L719)
 
 Retrieves recently updated plenary documents via the feed endpoint.
 **EP API Endpoint:** `GET /plenary-documents/feed`
@@ -1458,7 +1471,7 @@ Retrieves recently updated plenary documents via the feed endpoint.
 
 > **getPlenarySessionDocumentById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:677](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L677)
+Defined in: [clients/europeanParliamentClient.ts:684](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L684)
 
 Returns a single plenary session document by ID.
 **EP API Endpoint:** `GET /plenary-session-documents/{doc-id}`
@@ -1479,7 +1492,7 @@ Returns a single plenary session document by ID.
 
 > **getPlenarySessionDocumentItems**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:638](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L638)
+Defined in: [clients/europeanParliamentClient.ts:645](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L645)
 
 Returns all Plenary Session Document Items.
 **EP API Endpoint:** `GET /plenary-session-documents-items`
@@ -1506,7 +1519,7 @@ Returns all Plenary Session Document Items.
 
 > **getPlenarySessionDocuments**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:627](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L627)
+Defined in: [clients/europeanParliamentClient.ts:634](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L634)
 
 Returns plenary session documents.
 **EP API Endpoint:** `GET /plenary-session-documents`
@@ -1533,7 +1546,7 @@ Returns plenary session documents.
 
 > **getPlenarySessionDocumentsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:734](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L734)
+Defined in: [clients/europeanParliamentClient.ts:741](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L741)
 
 Retrieves recently updated plenary session documents via the feed endpoint.
 **EP API Endpoint:** `GET /plenary-session-documents/feed`
@@ -1560,7 +1573,7 @@ Retrieves recently updated plenary session documents via the feed endpoint.
 
 > **getPlenarySessions**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`PlenarySession`](../../../types/ep/plenary/interfaces/PlenarySession.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:380](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L380)
+Defined in: [clients/europeanParliamentClient.ts:387](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L387)
 
 Retrieves plenary sessions with date and location filtering.
 
@@ -1614,7 +1627,7 @@ https://data.europarl.europa.eu/api/v2/meetings
 
 > **getProcedureById**(`processId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Procedure`](../../../types/ep/activities/interfaces/Procedure.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:772](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L772)
+Defined in: [clients/europeanParliamentClient.ts:779](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L779)
 
 Returns a single procedure by ID.
 **EP API Endpoint:** `GET /procedures/{process-id}`
@@ -1639,7 +1652,7 @@ When the procedure is not found (404)
 
 > **getProcedureEventById**(`processId`, `eventId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:838](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L838)
+Defined in: [clients/europeanParliamentClient.ts:845](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L845)
 
 Returns a single event within a procedure by event ID.
 **EP API Endpoint:** `GET /procedures/{process-id}/events/{event-id}`
@@ -1668,7 +1681,7 @@ Event identifier within the procedure
 
 > **getProcedureEvents**(`processId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:780](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L780)
+Defined in: [clients/europeanParliamentClient.ts:787](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L787)
 
 Returns events linked to a procedure.
 **EP API Endpoint:** `GET /procedures/{process-id}/events`
@@ -1699,7 +1712,7 @@ Returns events linked to a procedure.
 
 > **getProcedures**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Procedure`](../../../types/ep/activities/interfaces/Procedure.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:759](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L759)
+Defined in: [clients/europeanParliamentClient.ts:766](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L766)
 
 Returns legislative procedures.
 **EP API Endpoint:** `GET /procedures`
@@ -1730,7 +1743,7 @@ Returns legislative procedures.
 
 > **getProceduresFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:811](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L811)
+Defined in: [clients/europeanParliamentClient.ts:818](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L818)
 
 Retrieves recently updated procedures via the feed endpoint.
 **EP API Endpoint:** `GET /procedures/feed`
@@ -1761,7 +1774,7 @@ Retrieves recently updated procedures via the feed endpoint.
 
 > **getSpeechById**(`speechId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Speech`](../../../types/ep/activities/interfaces/Speech.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:532](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L532)
+Defined in: [clients/europeanParliamentClient.ts:539](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L539)
 
 Returns a single speech by ID.
 **EP API Endpoint:** `GET /speeches/{speech-id}`
@@ -1782,7 +1795,7 @@ Returns a single speech by ID.
 
 > **getSpeeches**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Speech`](../../../types/ep/activities/interfaces/Speech.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:518](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L518)
+Defined in: [clients/europeanParliamentClient.ts:525](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L525)
 
 Returns plenary speeches.
 **EP API Endpoint:** `GET /speeches`
@@ -1821,7 +1834,7 @@ Returns plenary speeches.
 
 > **getVotingRecords**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`VotingRecord`](../../../types/ep/plenary/interfaces/VotingRecord.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:501](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L501)
+Defined in: [clients/europeanParliamentClient.ts:508](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L508)
 
 Retrieves voting records with filtering by session, topic, and date.
 
@@ -1887,7 +1900,7 @@ https://data.europarl.europa.eu/api/v2/meetings/{sitting-id}/vote-results
 
 > **searchDocuments**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:587](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L587)
+Defined in: [clients/europeanParliamentClient.ts:594](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L594)
 
 Searches legislative documents by keyword, type, date, and committee.
 

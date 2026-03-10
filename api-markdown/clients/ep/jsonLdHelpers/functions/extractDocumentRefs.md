@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.5**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.6**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **extractDocumentRefs**(`docs`): `string`[]
 
-Defined in: [clients/ep/jsonLdHelpers.ts:192](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L192)
+Defined in: [clients/ep/jsonLdHelpers.ts:211](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L211)
 
 Extracts document reference strings from EP API document fields.
 

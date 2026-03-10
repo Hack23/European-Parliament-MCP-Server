@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.5**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.6**](../../../../README.md)
 
 ***
 
@@ -8,9 +8,13 @@
 
 > **extractField**(`data`, `fields`): `string`
 
-Defined in: [clients/ep/jsonLdHelpers.ts:51](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L51)
+Defined in: [clients/ep/jsonLdHelpers.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L55)
 
 Extracts a string value from the first matching field name.
+
+EP API JSON-LD responses sometimes return single-value fields as arrays
+(e.g. `inverse_decided_on_a_realization_of: ["eli/dl/event/..."]`).
+When the value is an array, the first element is used.
 
 ## Parameters
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.5**](../../../README.md)
+[**European Parliament MCP Server API v1.1.6**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **sentimentTrackerToolMetadata**: `object`
 
-Defined in: [tools/sentimentTracker.ts:303](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L303)
+Defined in: [tools/sentimentTracker.ts:299](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L299)
 
 ## Type Declaration
 
