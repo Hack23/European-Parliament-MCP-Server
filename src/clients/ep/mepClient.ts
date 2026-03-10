@@ -102,6 +102,16 @@ export class MEPClient extends BaseEPClient {
     return result;
   }
 
+  /** Build paginated result from filtered MEPs. */
+  private paginateFiltered(
+    meps: MEP[], limit: number, offset: number, filtered: boolean
+  ): PaginatedResponse<MEP> {
+    const total = filtered ? meps.length : meps.length + offset;
+    const paged = filtered ? meps.slice(offset, offset + limit) : meps;
+    const hasMore = filtered ? offset + paged.length < meps.length : paged.length === limit;
+    return { data: paged, total, limit, offset, hasMore };
+  }
+
   // ─── Public methods ───────────────────────────────────────────────────────
 
   /**
@@ -228,10 +238,7 @@ export class MEPClient extends BaseEPClient {
     const allMeps = items.map((item) => ({ ...this.transformMEP(item), active: true }));
     const filtered = this.filterMEPs(allMeps, params.country, params.group);
 
-    // Apply pagination to the filtered results
-    const total = needsFiltering ? filtered.length : filtered.length + offset;
-    const paged = needsFiltering ? filtered.slice(offset, offset + limit) : filtered;
-    return { data: paged, total, limit, offset, hasMore: paged.length === limit };
+    return this.paginateFiltered(filtered, limit, offset, needsFiltering);
   }
 
   /**

@@ -239,7 +239,7 @@ async function buildGroupAnalysis(
   dateFrom: string,
   dateTo: string
 ): Promise<AttendanceAnalysis> {
-  const mepParams: { country?: string; group?: string; limit?: number } = { limit: params.limit };
+  const mepParams: Parameters<typeof epClient.getCurrentMEPs>[0] = { limit: params.limit };
   if (params.country !== undefined) {
     mepParams.country = params.country;
   }
