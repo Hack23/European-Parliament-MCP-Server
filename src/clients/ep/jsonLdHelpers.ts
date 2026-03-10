@@ -44,6 +44,10 @@ export function firstDefined(data: Record<string, unknown>, ...keys: string[]): 
 /**
  * Extracts a string value from the first matching field name.
  *
+ * EP API JSON-LD responses sometimes return single-value fields as arrays
+ * (e.g. `inverse_decided_on_a_realization_of: ["eli/dl/event/..."]`).
+ * When the value is an array, the first element is used.
+ *
  * @param data - Record to search
  * @param fields - Field names to try in order
  * @returns String value from first matching field, or empty string
@@ -52,6 +56,9 @@ export function extractField(data: Record<string, unknown>, fields: string[]): s
   for (const field of fields) {
     const value = data[field];
     if (value !== undefined && value !== null) {
+      if (Array.isArray(value) && value.length > 0) {
+        return toSafeString(value[0]);
+      }
       return toSafeString(value);
     }
   }
@@ -106,12 +113,21 @@ export function extractActivityDate(activityDate: unknown): string {
  * Extracts preferred-language text from an array of language-tagged objects.
  * Prefers English (`en`) or multilingual (`mul`).
  *
- * @param items - Array of JSON-LD language-tagged objects
+ * EP API sometimes returns plain string arrays (e.g. URI references in
+ * `isAboutSubjectMatter`). When the array contains only plain strings,
+ * they are joined with `, `.
+ *
+ * @param items - Array of JSON-LD language-tagged objects or plain strings
  * @returns Text in preferred language, or first available
  */
 export function extractTextFromLangArray(items: unknown[]): string {
   let fallback = '';
+  const plainStrings: string[] = [];
   for (const item of items) {
+    if (typeof item === 'string') {
+      plainStrings.push(item);
+      continue;
+    }
     if (typeof item !== 'object' || item === null) continue;
     const obj = item as Record<string, unknown>;
     const lang = toSafeString(obj['@language']);
@@ -119,7 +135,8 @@ export function extractTextFromLangArray(items: unknown[]): string {
     if (lang === 'en' || lang === 'mul') return value;
     if (fallback === '') fallback = value;
   }
-  return fallback;
+  if (fallback !== '') return fallback;
+  return plainStrings.join(', ');
 }
 
 /**

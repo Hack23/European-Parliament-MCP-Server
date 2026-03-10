@@ -124,6 +124,18 @@ describe('extractField', () => {
   it('returns empty string for empty fields list', () => {
     expect(extractField({ a: 'v' }, [])).toBe('');
   });
+
+  it('extracts first element from array values (real EP API JSON-LD)', () => {
+    expect(extractField({ f: ['eli/dl/event/2025-2511-DEC'] }, ['f'])).toBe('eli/dl/event/2025-2511-DEC');
+  });
+
+  it('returns empty string for empty arrays', () => {
+    expect(extractField({ f: [] }, ['f'])).toBe('');
+  });
+
+  it('extracts empty string from array of non-string elements', () => {
+    expect(extractField({ a: [{}], b: 'fallback' }, ['a', 'b'])).toBe('');
+  });
 });
 
 // ─── extractDateValue ───────────────────────────────────────────
@@ -246,6 +258,29 @@ describe('extractTextFromLangArray', () => {
       { '@language': 'en', '@value': 'English' },
     ];
     expect(extractTextFromLangArray(items)).toBe('English');
+  });
+
+  it('handles plain string arrays from EP API (e.g. URI references)', () => {
+    const items = [
+      'http://publications.europa.eu/resource/authority/subject-matter/DDLH',
+      'http://publications.europa.eu/resource/authority/subject-matter/PESC',
+    ];
+    const result = extractTextFromLangArray(items);
+    expect(result).toContain('DDLH');
+    expect(result).toContain('PESC');
+  });
+
+  it('prefers language-tagged objects over plain strings', () => {
+    const items = [
+      'plain-fallback',
+      { '@language': 'en', '@value': 'Preferred' },
+    ];
+    expect(extractTextFromLangArray(items)).toBe('Preferred');
+  });
+
+  it('returns plain strings joined when no language-tagged objects', () => {
+    const items = ['value1', 'value2'];
+    expect(extractTextFromLangArray(items)).toBe('value1, value2');
   });
 });
 

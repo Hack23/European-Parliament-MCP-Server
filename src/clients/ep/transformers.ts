@@ -68,6 +68,24 @@ function extractMEPCommittees(apiData: Record<string, unknown>): string[] {
 }
 
 /**
+ * Extracts readable codes from an array of EP authority URIs.
+ * E.g. `["http://publications.europa.eu/resource/authority/subject-matter/DDLH"]` → `"DDLH"`.
+ */
+function extractUriCodes(field: unknown): string {
+  if (typeof field === 'string') return field;
+  if (!Array.isArray(field)) return '';
+  return field
+    .map(item => {
+      const s = toSafeString(item);
+      if (s === '') return '';
+      const lastSlash = s.lastIndexOf('/');
+      return lastSlash >= 0 ? s.substring(lastSlash + 1) : s;
+    })
+    .filter(s => s !== '')
+    .join(', ');
+}
+
+/**
  * Transforms EP API MEP data to internal {@link MEP} format.
  */
 export function transformMEP(apiData: Record<string, unknown>): MEP {
@@ -378,8 +396,8 @@ export function transformAdoptedText(apiData: Record<string, unknown>): AdoptedT
     // EP API returns document_date; also check legacy field names
     dateAdopted: extractDateValue(apiData['document_date'] ?? apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']),
     procedureReference: extractField(apiData, ['based_on_a_concept_procedure', 'inverse_decided_on_a_realization_of', 'procedure']),
-    // EP API uses isAboutSubjectMatter for subject classification
-    subjectMatter: extractMultilingualText(apiData['isAboutSubjectMatter'] ?? apiData['subject_matter'] ?? apiData['subject'] ?? ''),
+    // EP API uses isAboutSubjectMatter (URI array) for subject classification
+    subjectMatter: extractUriCodes(apiData['isAboutSubjectMatter']) || extractMultilingualText(apiData['subject_matter'] ?? apiData['subject'] ?? ''),
   };
 }
 
