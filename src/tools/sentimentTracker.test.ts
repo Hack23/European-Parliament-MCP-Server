@@ -9,7 +9,7 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPs: vi.fn()
+    getCurrentMEPs: vi.fn()
   }
 }));
 
@@ -29,7 +29,7 @@ describe('sentiment_tracker Tool', () => {
     vi.clearAllMocks();
 
     // Default: return a large mixed parliament
-    vi.mocked(epClientModule.epClient.getMEPs).mockImplementation(async (params?: Record<string, unknown>) => {
+    vi.mocked(epClientModule.epClient.getCurrentMEPs).mockImplementation(async (params?: Record<string, unknown>) => {
       const group = params?.group as string | undefined;
 
       if (group === 'EPP') {
@@ -169,7 +169,7 @@ describe('sentiment_tracker Tool', () => {
 
   describe('dataAvailable: false scenario', () => {
     it('should return dataAvailable false when no MEPs returned', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [],
         total: 0,
         limit: 100,
@@ -190,14 +190,14 @@ describe('sentiment_tracker Tool', () => {
 
   describe('Error Handling', () => {
     it('should return error response on API failure', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue(new Error('API Error'));
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue(new Error('API Error'));
 
       const result = await handleSentimentTracker({});
       expect(result.isError).toBe(true);
     });
 
     it('should handle non-Error exceptions', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue('string error');
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue('string error');
 
       const result = await handleSentimentTracker({});
       expect(result.isError).toBe(true);
@@ -206,7 +206,7 @@ describe('sentiment_tracker Tool', () => {
 
   describe('Single Group Analysis', () => {
     it('should return only one group sentiment when groupId specified', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs)
+      vi.mocked(epClientModule.epClient.getCurrentMEPs)
         .mockResolvedValueOnce({ data: makeMEPList(100, 'EPP'), total: 100, limit: 100, offset: 0, hasMore: false }) // all MEPs call
         .mockResolvedValueOnce({ data: makeMEPList(100, 'EPP'), total: 100, limit: 100, offset: 0, hasMore: false }); // group-specific call
 

@@ -10,7 +10,7 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
     getMEPDetails: vi.fn(),
-    getMEPs: vi.fn()
+    getCurrentMEPs: vi.fn()
   }
 }));
 
@@ -35,7 +35,7 @@ describe('detect_voting_anomalies Tool', () => {
       }
     });
 
-    vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+    vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
       data: [
         {
           id: 'MEP-1',

@@ -9,7 +9,7 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPs: vi.fn()
+    getCurrentMEPs: vi.fn()
   }
 }));
 
@@ -28,7 +28,7 @@ describe('early_warning_system Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+    vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
       data: [
         ...makeMEPList(180, 'EPP'),
         ...makeMEPList(136, 'S&D'),
@@ -172,7 +172,7 @@ describe('early_warning_system Tool', () => {
 
   describe('dataAvailable: false scenario', () => {
     it('should return dataAvailable false when no MEPs', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [],
         total: 0,
         limit: 100,
@@ -207,7 +207,7 @@ describe('early_warning_system Tool', () => {
     });
 
     it('should include quorum warnings for attendance focus', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [
           ...makeMEPList(100, 'EPP'),
           ...makeMEPList(3, 'SmallGroup') // very small group to trigger quorum warning
@@ -229,14 +229,14 @@ describe('early_warning_system Tool', () => {
 
   describe('Error Handling', () => {
     it('should return error response on API failure', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue(new Error('API Error'));
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue(new Error('API Error'));
 
       const result = await handleEarlyWarningSystem({});
       expect(result.isError).toBe(true);
     });
 
     it('should handle non-Error exceptions', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue({ code: 500 });
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue({ code: 500 });
 
       const result = await handleEarlyWarningSystem({});
       expect(result.isError).toBe(true);

@@ -9,7 +9,7 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPs: vi.fn(),
+    getCurrentMEPs: vi.fn(),
     getMEPDetails: vi.fn()
   }
 }));
@@ -35,7 +35,7 @@ describe('track_mep_attendance Tool', () => {
       }
     });
 
-    vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+    vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
       data: [
         {
           id: 'MEP-1',
@@ -323,7 +323,7 @@ describe('track_mep_attendance Tool', () => {
     });
 
     it('should compute HIGH absenteeism risk when many MEPs have LOW attendance', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: Array.from({ length: 5 }, (_, i) => ({
           id: `MEP-${i}`, name: `MEP ${i}`, country: 'IT', politicalGroup: 'S&D',
           committees: [], active: true, termStart: '2019-07-02'
@@ -343,7 +343,7 @@ describe('track_mep_attendance Tool', () => {
     });
 
     it('should handle empty MEP list', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [], total: 0, limit: 20, offset: 0, hasMore: false
       });
 

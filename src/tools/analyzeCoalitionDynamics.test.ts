@@ -10,7 +10,7 @@ import { auditLogger } from '../utils/auditLogger.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPs: vi.fn()
+    getCurrentMEPs: vi.fn()
   }
 }));
 
@@ -19,7 +19,7 @@ describe('analyze_coalition_dynamics Tool', () => {
     vi.clearAllMocks();
     auditLogger.clear();
 
-    vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+    vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
       data: [
         {
           id: 'MEP-1',
@@ -136,7 +136,7 @@ describe('analyze_coalition_dynamics Tool', () => {
 
   describe('Error Handling', () => {
     it('should wrap API errors', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs)
+      vi.mocked(epClientModule.epClient.getCurrentMEPs)
         .mockRejectedValueOnce(new Error('API Error'));
 
       await expect(handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] }))
@@ -144,7 +144,7 @@ describe('analyze_coalition_dynamics Tool', () => {
     });
 
     it('should log an audit error entry when the EP API rejects', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs)
+      vi.mocked(epClientModule.epClient.getCurrentMEPs)
         .mockRejectedValueOnce(new Error('API Error'));
 
       await expect(handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] })).rejects.toThrow();
@@ -178,7 +178,7 @@ describe('analyze_coalition_dynamics Tool', () => {
 
     it('should classify cohesion trend as WEAKENING when groups have unequal sizes', async () => {
       // Arrange: Two groups with very different member counts
-      vi.mocked(epClientModule.epClient.getMEPs)
+      vi.mocked(epClientModule.epClient.getCurrentMEPs)
         .mockResolvedValueOnce({
           data: Array.from({ length: 10 }, (_, i) => ({
             id: `MEP-A${i}`, name: `MEP A${i}`, country: 'DE', politicalGroup: 'BigGroup',

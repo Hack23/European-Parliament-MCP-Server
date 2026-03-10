@@ -9,7 +9,7 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPs: vi.fn(),
+    getCurrentMEPs: vi.fn(),
     getMEPDetails: vi.fn()
   }
 }));
@@ -18,7 +18,7 @@ describe('analyze_country_delegation Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+    vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
       data: [
         { id: 'MEP-1', name: 'MEP One', country: 'SE', politicalGroup: 'EPP', committees: ['ENVI'], active: true, termStart: '2019-07-02' },
         { id: 'MEP-2', name: 'MEP Two', country: 'SE', politicalGroup: 'S&D', committees: ['ITRE'], active: true, termStart: '2019-07-02' },
@@ -142,7 +142,7 @@ describe('analyze_country_delegation Tool', () => {
 
   describe('Error Handling', () => {
     it('should propagate API errors', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue(
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue(
         new Error('API Error')
       );
 
@@ -170,7 +170,7 @@ describe('analyze_country_delegation Tool', () => {
 
   describe('Edge Cases', () => {
     it('should handle empty MEP delegation', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [],
         total: 0,
         limit: 100,
@@ -203,7 +203,7 @@ describe('analyze_country_delegation Tool', () => {
     });
 
     it('should compute HIGH fragmentation for diverse delegation', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [
           { id: 'MEP-1', name: 'A', country: 'DE', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' },
           { id: 'MEP-2', name: 'B', country: 'DE', politicalGroup: 'S&D', committees: [], active: true, termStart: '2019-07-02' },
@@ -221,7 +221,7 @@ describe('analyze_country_delegation Tool', () => {
     });
 
     it('should compute LOW fragmentation for single-group delegation', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [
           { id: 'MEP-1', name: 'A', country: 'CY', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' },
           { id: 'MEP-2', name: 'B', country: 'CY', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' },
@@ -240,7 +240,7 @@ describe('analyze_country_delegation Tool', () => {
         id: `MEP-${i}`, name: `MEP ${i}`, country: 'DE', politicalGroup: 'EPP',
         committees: [], active: true, termStart: '2019-07-02'
       }));
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: largeDelegation, total: 96, limit: 100, offset: 0, hasMore: false
       });
       vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
@@ -270,7 +270,7 @@ describe('analyze_country_delegation Tool', () => {
     });
 
     it('should compute HIGH national cohesion when delegation is dominated by one group', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [
           { id: 'MEP-1', name: 'A', country: 'HU', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' },
           { id: 'MEP-2', name: 'B', country: 'HU', politicalGroup: 'EPP', committees: [], active: true, termStart: '2019-07-02' },

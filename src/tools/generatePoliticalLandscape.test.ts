@@ -9,7 +9,7 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPs: vi.fn(),
+    getCurrentMEPs: vi.fn(),
     getPlenarySessions: vi.fn()
   }
 }));
@@ -18,7 +18,7 @@ describe('generate_political_landscape Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+    vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
       data: [
         { id: 'MEP-1', name: 'MEP One', country: 'DE', politicalGroup: 'EPP', committees: ['ENVI'], active: true, termStart: '2019-07-02' },
         { id: 'MEP-2', name: 'MEP Two', country: 'FR', politicalGroup: 'S&D', committees: ['ITRE'], active: true, termStart: '2019-07-02' },
@@ -153,7 +153,7 @@ describe('generate_political_landscape Tool', () => {
 
   describe('Error Handling', () => {
     it('should propagate API errors', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue(
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue(
         new Error('API Error')
       );
 
@@ -162,7 +162,7 @@ describe('generate_political_landscape Tool', () => {
     });
 
     it('should handle empty MEP list', async () => {
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [],
         total: 0,
         limit: 100,
@@ -180,7 +180,7 @@ describe('generate_political_landscape Tool', () => {
     it('should classify political balance as CONSERVATIVE_LEANING when ratio < 0.77', async () => {
       // Arrange: Mostly conservative groups (ECR, ID) with few progressive (S&D)
       // progressive=1 (S&D), conservative=4 (ECR*2 + ID*2), ratio=1/4=0.25 → CONSERVATIVE_LEANING
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [
           { id: 'MEP-1', name: 'MEP One', country: 'PL', politicalGroup: 'ECR', committees: ['AFET'], active: true, termStart: '2019-07-02' },
           { id: 'MEP-2', name: 'MEP Two', country: 'IT', politicalGroup: 'ID', committees: ['LIBE'], active: true, termStart: '2019-07-02' },
@@ -206,7 +206,7 @@ describe('generate_political_landscape Tool', () => {
     it('should classify political balance as BALANCED when ratio between 0.77 and 1.3', async () => {
       // Arrange: Equal progressive and conservative representation
       // progressive=1 (S&D), conservative=1 (ECR), center=1 (EPP), ratio=1/1=1.0 → BALANCED
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: [
           { id: 'MEP-1', name: 'MEP One', country: 'FR', politicalGroup: 'S&D', committees: ['ENVI'], active: true, termStart: '2019-07-02' },
           { id: 'MEP-2', name: 'MEP Two', country: 'PL', politicalGroup: 'ECR', committees: ['AFET'], active: true, termStart: '2019-07-02' },
@@ -228,7 +228,7 @@ describe('generate_political_landscape Tool', () => {
     it('should classify engagement as LOW when attendance data is not available from EP API', async () => {
       // Arrange: 8 distinct groups — attendance not available from EP API
       const groups = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID', 'The Left', 'NI'];
-      vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
         data: groups.map((g, i) => ({
           id: `MEP-${i}`, name: `MEP ${i}`, country: 'DE',
           politicalGroup: g, committees: [], active: true as const, termStart: '2019-07-02'
