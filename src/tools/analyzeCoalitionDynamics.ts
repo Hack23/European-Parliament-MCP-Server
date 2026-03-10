@@ -138,27 +138,20 @@ function computePairCohesion(
  * Fetches sampled MEP membership counts for each target political group from the EP API
  * and builds {@link GroupCohesionMetrics} records.
  *
- * **Note (data scope):** This function queries the EP `/meps` endpoint with a capped
- * `limit` of 50 MEPs per group (first page only). As a result, the derived
- * `memberCount` for a group is a **sample-based lower bound**: larger groups with
- * more than 50 MEPs will be undercounted. Callers MUST NOT treat `memberCount` as
- * an authoritative total; it is intended for relative, coarse sizing only.
+ * **Note (data source):** This function calls `getCurrentMEPs()` per group, which
+ * queries the EP `/meps/show-current` endpoint. When a `group` filter is provided,
+ * client-side filtering fetches all current MEPs internally and `result.total`
+ * reflects the full filtered group size.
  *
- * **Note (voting data):** The EP API `/meps` endpoint only returns group membership
- * information, not per-MEP voting statistics. As a result, `internalCohesion`,
- * `defectionRate`, and `avgAttendance` are set to `null`, `dataAvailability` and
- * `stressIndicator.availability` are set to `'UNAVAILABLE'`, and `unityTrend` is
- * `'UNKNOWN'`. Callers should treat these fields as "not available" and supplement
- * these results with vote-result data when available.
+ * **Note (voting data):** The EP API does not provide per-MEP voting statistics.
+ * As a result, `internalCohesion`, `defectionRate`, and `avgAttendance` are set to
+ * `null`, `dataAvailability` and `stressIndicator.availability` are set to
+ * `'UNAVAILABLE'`, and `unityTrend` is `'UNKNOWN'`. Callers should treat these
+ * fields as "not available" and supplement with vote-result data when available.
  *
  * @param targetGroups - Political group identifiers to query (e.g., `['EPP', 'S&D']`)
- * @returns Promise resolving to an array of group cohesion metric objects, one per group,
- *   where `memberCount` values are based on a capped first page of results (max 50 MEPs)
+ * @returns Promise resolving to an array of group cohesion metric objects, one per group
  * @throws {Error} If any EP API call for a group fails
- *
- * @security EP API calls are limited to 50 MEPs per group per ISMS Policy AC-003
- *   (least privilege — request only the data needed for analysis). This limit also means
- *   that reported group sizes are approximate lower bounds, not full enumerations.
  */
 async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionMetrics[]> {
   const metrics: GroupCohesionMetrics[] = [];
@@ -167,8 +160,8 @@ async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionM
 
     // Per-MEP voting statistics are not available from the EP API,
     // so cohesion/defection/attendance are reported as null with UNAVAILABLE marker.
-    // memberCount is capped at 50 (single API page) and may undercount large groups.
-    const memberCount = mepsResult.data.length;
+    // result.total reflects the full filtered group size from client-side filtering.
+    const memberCount = mepsResult.total;
 
     metrics.push({
       groupId,

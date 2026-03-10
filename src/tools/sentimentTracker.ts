@@ -192,11 +192,10 @@ function buildEmptySentimentResult(params: SentimentTrackerParams): SentimentTra
 async function buildGroupSentiment(groupId: string, totalMEPs: number): Promise<GroupSentiment> {
   try {
     // NOTE: getCurrentMEPs uses /meps/show-current which returns country and
-    // politicalGroup fields. We fetch only the first page (limit:100).
-    // Member counts for large groups may be underestimated when hasMore is true.
-    // Seat-share scores are therefore sample-based proxies, not exact values.
+    // politicalGroup fields. When group filter is provided, client-side filtering
+    // fetches all MEPs internally; result.total reflects the full filtered count.
     const result = await epClient.getCurrentMEPs({ group: groupId, limit: 100 });
-    const memberCount = result.data.length;
+    const memberCount = result.total;
     const seatShare = totalMEPs > 0 ? memberCount / totalMEPs : 0;
     const sentimentScore = deriveSentimentScore(memberCount, totalMEPs);
     return {
@@ -246,12 +245,10 @@ function buildSentimentComputedAttrs(
 
 export async function sentimentTracker(params: SentimentTrackerParams): Promise<ToolResult> {
   try {
-    // NOTE: getCurrentMEPs uses /meps/show-current which returns country and
-    // politicalGroup fields. Paginated; limit:100 returns only the first page.
-    // totalMEPs may be underestimated when hasMore is true. Seat-share
-    // scores are therefore sample-based proxies, not exact values.
+    // getCurrentMEPs uses /meps/show-current which returns country and
+    // politicalGroup fields. result.total reflects the full count of current MEPs.
     const allMepsResult = await epClient.getCurrentMEPs({ limit: 100 });
-    const totalMEPs = allMepsResult.data.length;
+    const totalMEPs = allMepsResult.total;
 
     if (totalMEPs === 0) {
       return buildToolResponse(buildEmptySentimentResult(params));
