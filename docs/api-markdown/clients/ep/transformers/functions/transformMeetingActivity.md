@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.5**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.6**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **transformMeetingActivity**(`apiData`): [`MeetingActivity`](../../../../types/ep/activities/interfaces/MeetingActivity.md)
 
-Defined in: [clients/ep/transformers.ts:407](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L407)
+Defined in: [clients/ep/transformers.ts:430](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L430)
 
 Transforms EP API meeting activity data to internal [MeetingActivity](../../../../types/ep/activities/interfaces/MeetingActivity.md) format.
 

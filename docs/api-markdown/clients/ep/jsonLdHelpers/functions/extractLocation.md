@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.5**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.6**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **extractLocation**(`localityUrl`): `string`
 
-Defined in: [clients/ep/jsonLdHelpers.ts:241](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L241)
+Defined in: [clients/ep/jsonLdHelpers.ts:260](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L260)
 
 Extracts location string from EP API locality URL.
 

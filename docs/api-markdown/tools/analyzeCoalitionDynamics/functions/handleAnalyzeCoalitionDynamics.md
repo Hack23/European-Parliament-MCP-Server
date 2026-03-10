@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.5**](../../../README.md)
+[**European Parliament MCP Server API v1.1.6**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleAnalyzeCoalitionDynamics**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/analyzeCoalitionDynamics.ts:449](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCoalitionDynamics.ts#L449)
+Defined in: [tools/analyzeCoalitionDynamics.ts:443](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCoalitionDynamics.ts#L443)
 
 Handles the analyze_coalition_dynamics MCP tool request.
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.5**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.6**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **extractMultilingualText**(`field`): `string`
 
-Defined in: [clients/ep/jsonLdHelpers.ts:133](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L133)
+Defined in: [clients/ep/jsonLdHelpers.ts:152](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L152)
 
 Extracts a multilingual text value from an EP API JSON-LD field.
 

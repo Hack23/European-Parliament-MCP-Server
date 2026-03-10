@@ -1,8 +1,8 @@
-[**European Parliament MCP Server API v1.1.5**](README.md)
+[**European Parliament MCP Server API v1.1.6**](README.md)
 
 ***
 
-# European Parliament MCP Server API v1.1.5
+# European Parliament MCP Server API v1.1.6
 
 ## Modules
 
@@ -130,6 +130,7 @@
 - [types/errors](types/errors/README.md)
 - [utils/auditLogger](utils/auditLogger/README.md)
 - [utils/auditSink](utils/auditSink/README.md)
+- [utils/mepFetcher](utils/mepFetcher/README.md)
 - [utils/performance](utils/performance/README.md)
 - [utils/rateLimiter](utils/rateLimiter/README.md)
 - [utils/timeout](utils/timeout/README.md)

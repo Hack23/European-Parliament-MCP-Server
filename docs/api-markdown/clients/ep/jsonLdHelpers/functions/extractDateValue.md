@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.5**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.6**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **extractDateValue**(`dateField`): `string`
 
-Defined in: [clients/ep/jsonLdHelpers.ts:69](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L69)
+Defined in: [clients/ep/jsonLdHelpers.ts:78](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L78)
 
 Extracts an ISO 8601 date string from various EP API date formats.
 

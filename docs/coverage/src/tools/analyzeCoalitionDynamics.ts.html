@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.24% </span>
+                <span class="strong">92.3% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>69/74</span>
+                <span class='fraction'>72/78</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">65.9% </span>
+                <span class="strong">68.75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>29/44</span>
+                <span class='fraction'>33/48</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.08% </span>
+                <span class="strong">95.38% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>58/61</span>
+                <span class='fraction'>62/65</span>
             </div>
         
             
@@ -580,13 +580,7 @@
 <a name='L515'></a><a href='#L515'>515</a>
 <a name='L516'></a><a href='#L516'>516</a>
 <a name='L517'></a><a href='#L517'>517</a>
-<a name='L518'></a><a href='#L518'>518</a>
-<a name='L519'></a><a href='#L519'>519</a>
-<a name='L520'></a><a href='#L520'>520</a>
-<a name='L521'></a><a href='#L521'>521</a>
-<a name='L522'></a><a href='#L522'>522</a>
-<a name='L523'></a><a href='#L523'>523</a>
-<a name='L524'></a><a href='#L524'>524</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L518'></a><a href='#L518'>518</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -673,8 +667,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">35x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -716,14 +710,6 @@
 <span class="cline-any cline-yes">35x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">35x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -750,12 +736,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">26x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">29x</span>
+<span class="cline-any cline-yes">29x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">24x</span>
@@ -1123,11 +1111,11 @@
  */
 &nbsp;
 import { AnalyzeCoalitionDynamicsSchema } from '../schemas/europeanParliament.js';
-import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 import type { DataAvailability, MetricResult } from '../types/index.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
+import { fetchAllCurrentMEPs } from '../utils/mepFetcher.js';
 &nbsp;
 interface CoalitionPairAnalysis {
   groupA: string;
@@ -1195,7 +1183,7 @@ const POLITICAL_GROUPS = ['EPP', 'S&amp;D', 'Renew', 'Greens/EFA', 'ECR', 'ID', 
  * @returns Trend classification string
  */
 function classifyCohesionTrend(score: number): string {
-  if (score &gt; 0.6) return 'STRENGTHENING';
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (score &gt; 0.6) <span class="cstat-no" title="statement not covered" >return 'STRENGTHENING';</span>
   <span class="missing-if-branch" title="if path not taken" >I</span>if (score &gt; 0.4) <span class="cstat-no" title="statement not covered" >return 'STABLE';</span>
   return 'WEAKENING';
 }
@@ -1233,7 +1221,7 @@ function computePairCohesion(
   const totalMembers = groupAMembers + groupBMembers;
   const balance = totalMembers &gt; 0
     ? Math.min(groupAMembers, groupBMembers) / Math.max(1, Math.max(groupAMembers, groupBMembers))
-    : <span class="branch-1 cbranch-no" title="branch not covered" >0;</span>
+    : 0;
   const cohesionScore = Math.round(balance * 100) / 100;
   const sharedVotes = null; // Not available from EP API without vote-level analysis
   const totalVotes = null;
@@ -1246,40 +1234,34 @@ function computePairCohesion(
 }
 &nbsp;
 /**
- * Fetches sampled MEP membership counts for each target political group from the EP API
- * and builds {@link GroupCohesionMetrics} records.
+ * Fetches all current MEPs once and computes per-group membership counts in-memory.
  *
- * **Note (data scope):** This function queries the EP `/meps` endpoint with a capped
- * `limit` of 50 MEPs per group (first page only). As a result, the derived
- * `memberCount` for a group is a **sample-based lower bound**: larger groups with
- * more than 50 MEPs will be undercounted. Callers MUST NOT treat `memberCount` as
- * an authoritative total; it is intended for relative, coarse sizing only.
+ * **Note (data source):** Uses `getCurrentMEPs()` to paginate through `/meps/show-current`
+ * in batches of 100, then counts per group locally. This avoids per-group API calls that
+ * each trigger a full multi-page fetch when client-side filtering is used.
  *
- * **Note (voting data):** The EP API `/meps` endpoint only returns group membership
- * information, not per-MEP voting statistics. As a result, `internalCohesion`,
- * `defectionRate`, and `avgAttendance` are set to `null`, `dataAvailability` and
- * `stressIndicator.availability` are set to `'UNAVAILABLE'`, and `unityTrend` is
- * `'UNKNOWN'`. Callers should treat these fields as "not available" and supplement
- * these results with vote-result data when available.
+ * **Note (voting data):** The EP API does not provide per-MEP voting statistics.
+ * As a result, `internalCohesion`, `defectionRate`, and `avgAttendance` are set to
+ * `null`, `dataAvailability` and `stressIndicator.availability` are set to
+ * `'UNAVAILABLE'`, and `unityTrend` is `'UNKNOWN'`. Callers should treat these
+ * fields as "not available" and supplement with vote-result data when available.
  *
  * @param targetGroups - Political group identifiers to query (e.g., `['EPP', 'S&amp;D']`)
- * @returns Promise resolving to an array of group cohesion metric objects, one per group,
- *   where `memberCount` values are based on a capped first page of results (max 50 MEPs)
- * @throws {Error} If any EP API call for a group fails
- *
- * @security EP API calls are limited to 50 MEPs per group per ISMS Policy AC-003
- *   (least privilege — request only the data needed for analysis). This limit also means
- *   that reported group sizes are approximate lower bounds, not full enumerations.
+ * @returns Promise resolving to an array of group cohesion metric objects, one per group
+ * @throws {Error} If the EP API call fails
  */
 async function buildGroupMetrics(targetGroups: string[]): Promise&lt;GroupCohesionMetrics[]&gt; {
+  // Fetch all current MEPs once, then count per group in-memory
+  const allMeps = await fetchAllCurrentMEPs();
+  const groupCounts = new Map&lt;string, number&gt;();
+  for (const mep of allMeps) {
+    const g = mep.politicalGroup;
+    groupCounts.set(g, (groupCounts.get(g) ?? 0) + 1);
+  }
+&nbsp;
   const metrics: GroupCohesionMetrics[] = [];
   for (const groupId of targetGroups) {
-    const mepsResult = await epClient.getMEPs({ group: groupId, limit: 50 });
-&nbsp;
-    // Per-MEP voting statistics are not available from the EP API,
-    // so cohesion/defection/attendance are reported as null with UNAVAILABLE marker.
-    // memberCount is capped at 50 (single API page) and may undercount large groups.
-    const memberCount = mepsResult.data.length;
+    const memberCount = groupCounts.get(groupId) ?? 0;
 &nbsp;
     metrics.push({
       groupId,
@@ -1639,7 +1621,7 @@ export const analyzeCoalitionDynamicsToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-09T23:30:08.614Z
+                at 2026-03-10T16:03:18.097Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

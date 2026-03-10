@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.5**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.6**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **transformCorporateBody**(`apiData`): [`Committee`](../../../../types/ep/committee/interfaces/Committee.md)
 
-Defined in: [clients/ep/transformers.ts:205](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L205)
+Defined in: [clients/ep/transformers.ts:228](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L228)
 
 Transforms EP API corporate-body data to internal [Committee](../../../../types/ep/committee/interfaces/Committee.md) format.
 

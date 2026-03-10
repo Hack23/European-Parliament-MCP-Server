@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.5**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.6**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **transformMEPDetails**(`apiData`): [`MEPDetails`](../../../../types/ep/mep/interfaces/MEPDetails.md)
 
-Defined in: [clients/ep/transformers.ts:102](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L102)
+Defined in: [clients/ep/transformers.ts:125](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L125)
 
 Transforms EP API MEP details data to internal [MEPDetails](../../../../types/ep/mep/interfaces/MEPDetails.md) format.
 
