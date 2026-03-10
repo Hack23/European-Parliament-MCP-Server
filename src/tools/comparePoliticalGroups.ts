@@ -75,7 +75,7 @@ const DIMENSION_NAME_MAP: Record<string, DimensionName> = {
 async function buildGroupMetrics(groupIds: string[]): Promise<GroupComparisonMetrics[]> {
   const groups = await Promise.all(
     groupIds.map(async (groupId): Promise<GroupComparisonMetrics> => {
-      const mepsResult = await epClient.getMEPs({ group: groupId, limit: 100 });
+      const mepsResult = await epClient.getCurrentMEPs({ group: groupId, limit: 100 });
 
       // Per-MEP voting statistics are not available from the EP API,
       // so voting-related dimensions report zero.

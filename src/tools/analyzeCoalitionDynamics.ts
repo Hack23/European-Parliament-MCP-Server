@@ -163,7 +163,7 @@ function computePairCohesion(
 async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionMetrics[]> {
   const metrics: GroupCohesionMetrics[] = [];
   for (const groupId of targetGroups) {
-    const mepsResult = await epClient.getMEPs({ group: groupId, limit: 50 });
+    const mepsResult = await epClient.getCurrentMEPs({ group: groupId, limit: 50 });
 
     // Per-MEP voting statistics are not available from the EP API,
     // so cohesion/defection/attendance are reported as null with UNAVAILABLE marker.

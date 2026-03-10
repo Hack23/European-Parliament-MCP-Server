@@ -239,15 +239,15 @@ async function buildGroupAnalysis(
   dateFrom: string,
   dateTo: string
 ): Promise<AttendanceAnalysis> {
-  const mepParams: Record<string, unknown> = { limit: params.limit };
+  const mepParams: { country?: string; group?: string; limit?: number } = { limit: params.limit };
   if (params.country !== undefined) {
-    mepParams['country'] = params.country;
+    mepParams.country = params.country;
   }
   if (params.groupId !== undefined) {
-    mepParams['group'] = params.groupId;
+    mepParams.group = params.groupId;
   }
 
-  const mepResult = await epClient.getMEPs(mepParams);
+  const mepResult = await epClient.getCurrentMEPs(mepParams);
   const meps = Array.isArray(mepResult.data) ? mepResult.data : [];
 
   const details = await fetchMepDetailsBatched(

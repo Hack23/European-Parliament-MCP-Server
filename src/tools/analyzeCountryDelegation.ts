@@ -208,7 +208,7 @@ async function buildDelegationAnalysis(
   dateFrom: string,
   dateTo: string
 ): Promise<CountryDelegationAnalysis> {
-  const mepResult = await epClient.getMEPs({
+  const mepResult = await epClient.getCurrentMEPs({
     country,
     limit: 100
   });

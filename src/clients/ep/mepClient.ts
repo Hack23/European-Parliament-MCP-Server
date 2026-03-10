@@ -84,6 +84,24 @@ export class MEPClient extends BaseEPClient {
     return apiParams;
   }
 
+  /** Apply optional client-side country and group filters to an MEP array. */
+  private filterMEPs(
+    meps: MEP[],
+    country: string | undefined,
+    group: string | undefined,
+  ): MEP[] {
+    let result = meps;
+    if (country !== undefined) {
+      const upper = country.toUpperCase();
+      result = result.filter((m) => m.country.toUpperCase() === upper);
+    }
+    if (group !== undefined) {
+      const lower = group.toLowerCase();
+      result = result.filter((m) => m.politicalGroup.toLowerCase().includes(lower));
+    }
+    return result;
+  }
+
   // ─── Public methods ───────────────────────────────────────────────────────
 
   /**
@@ -169,27 +187,51 @@ export class MEPClient extends BaseEPClient {
 
   /**
    * Returns all currently active MEPs for today's date.
+   *
+   * Unlike `getMEPs()`, this uses `GET /meps/show-current` which returns
+   * `api:country-of-representation` and `api:political-group` in responses.
+   * Optional `country` and `group` filters are applied client-side after fetch.
+   *
    * **EP API Endpoint:** `GET /meps/show-current`
+   *
+   * @param params - Optional filters and pagination
+   * @param params.country - ISO 3166-1 alpha-2 country code for client-side filtering
+   * @param params.group - Political group identifier for client-side filtering
+   * @param params.limit - Maximum results to return (default 50)
+   * @param params.offset - Pagination offset (default 0)
    */
   async getCurrentMEPs(params: {
+    country?: string;
+    group?: string;
     limit?: number;
     offset?: number;
   } = {}): Promise<PaginatedResponse<MEP>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
+    const needsFiltering = params.country !== undefined || params.group !== undefined;
+
+    // When client-side filtering is needed, fetch a larger page to ensure
+    // enough results survive filtering. EP10 has ~720 MEPs total.
+    const fetchLimit = needsFiltering ? 800 : limit;
+    const fetchOffset = needsFiltering ? 0 : offset;
 
     const response = await this.get<JSONLDResponse>('meps/show-current', {
       format: 'application/ld+json',
-      offset,
-      limit,
+      offset: fetchOffset,
+      limit: fetchLimit,
     });
 
     const items = Array.isArray(response.data) ? response.data : [];
     // show-current endpoint only returns MEPs with active mandates,
     // so mark every returned MEP as active even when the API response
     // omits the explicit `active` flag.
-    const meps = items.map((item) => ({ ...this.transformMEP(item), active: true }));
-    return { data: meps, total: meps.length + offset, limit, offset, hasMore: meps.length === limit };
+    const allMeps = items.map((item) => ({ ...this.transformMEP(item), active: true }));
+    const filtered = this.filterMEPs(allMeps, params.country, params.group);
+
+    // Apply pagination to the filtered results
+    const total = needsFiltering ? filtered.length : filtered.length + offset;
+    const paged = needsFiltering ? filtered.slice(offset, offset + limit) : filtered;
+    return { data: paged, total, limit, offset, hasMore: paged.length === limit };
   }
 
   /**
