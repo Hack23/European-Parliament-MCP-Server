@@ -72,7 +72,12 @@ function extractMEPCommittees(apiData: Record<string, unknown>): string[] {
  * E.g. `["http://publications.europa.eu/resource/authority/subject-matter/DDLH"]` → `"DDLH"`.
  */
 function extractCodesFromUriArray(field: unknown): string {
-  if (typeof field === 'string') return field;
+  if (typeof field === 'string') {
+    const s = toSafeString(field);
+    if (s === '') return '';
+    const lastSlash = s.lastIndexOf('/');
+    return lastSlash >= 0 ? s.substring(lastSlash + 1) : s;
+  }
   if (!Array.isArray(field)) return '';
   return field
     .map(item => {

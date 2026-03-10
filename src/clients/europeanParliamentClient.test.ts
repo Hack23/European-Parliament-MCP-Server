@@ -2246,7 +2246,7 @@ describe('EuropeanParliamentClient', () => {
 
       expect(result.data.length).toBeGreaterThan(0);
       for (const mep of result.data) {
-        expect(mep.politicalGroup.toLowerCase()).toContain('epp');
+        expect(mep.politicalGroup).toBe('EPP');
       }
     });
 
@@ -2261,11 +2261,11 @@ describe('EuropeanParliamentClient', () => {
 
       for (const mep of result.data) {
         expect(mep.country).toBe('DE');
-        expect(mep.politicalGroup.toLowerCase()).toContain('epp');
+        expect(mep.politicalGroup).toBe('EPP');
       }
     });
 
-    it('should fetch all MEPs when filtering to ensure enough results', async () => {
+    it('should fetch all MEPs in batches when filtering', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -2274,9 +2274,9 @@ describe('EuropeanParliamentClient', () => {
 
       await client.getCurrentMEPs({ country: 'DE', limit: 50 });
 
-      // When filtering, should request limit=800 to get all MEPs
+      // When filtering, should request in batches of 100
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringMatching(/limit=800/),
+        expect.stringMatching(/limit=100/),
         expect.any(Object)
       );
     });
@@ -2293,7 +2293,9 @@ describe('EuropeanParliamentClient', () => {
       // total should reflect the number of filtered MEPs, not total fetched
       expect(result.total).toBe(result.data.length);
     });
-  });  describe('getIncomingMEPs', () => {
+  });
+
+  describe('getIncomingMEPs', () => {
     it('should return paginated incoming MEP data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
