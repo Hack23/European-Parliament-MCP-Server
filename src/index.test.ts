@@ -47,8 +47,8 @@ describe('Server Constants', () => {
   it('should have version matching package.json', async () => {
     const fs = await import('fs');
     const pkgPath = new URL('../package.json', import.meta.url).pathname;
-    const pkg = JSON.parse(await fs.promises.readFile(pkgPath, 'utf-8'));
-    expect(SERVER_VERSION).toBe(pkg.version);
+    const pkg = JSON.parse(await fs.promises.readFile(pkgPath, 'utf-8')) as Record<string, unknown>;
+    expect(SERVER_VERSION).toBe(pkg['version']);
   });
 });
 
