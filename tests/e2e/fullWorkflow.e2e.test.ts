@@ -216,14 +216,18 @@ describe('Full Workflow E2E Tests', () => {
 
       const mepId = String(meps[0]!.id);
 
-      const response = await client.callTool('analyze_voting_patterns', {
-        mepId,
-        dateFrom: '2024-01-01',
-        dateTo: '2024-12-31'
-      });
+      const response = await retryOrSkip(
+        () => client.callTool('analyze_voting_patterns', {
+          mepId,
+          dateFrom: '2024-01-01',
+          dateTo: '2024-12-31'
+        }),
+        'analyze_voting_patterns'
+      );
+      if (response === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(response);
       expect(response.content[0]?.type).toBe('text');
-    }, E2E_TEST_TIMEOUT_MS);
+    }, E2E_WORKFLOW_TIMEOUT_MS);
 
     it('should execute track_legislation tool', async () => {
       const response = await retryOrSkip(
