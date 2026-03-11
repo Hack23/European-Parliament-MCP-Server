@@ -29,10 +29,11 @@ import {
   transformEvent,
   transformMEPDeclaration,
 } from '../../src/clients/ep/transformers.js';
+import { USER_AGENT } from '../../src/config.js';
 
 // ─── Helpers ────────────────────────────────────────────────────
 
-const EP_BASE = process.env.EP_API_URL?.replace(/\/$/, '') || 'https://data.europarl.europa.eu/api/v2';
+const EP_BASE = process.env['EP_API_URL']?.replace(/\/$/, '') || 'https://data.europarl.europa.eu/api/v2';
 
 /** Timeout for individual EP API requests (ms). */
 const REQUEST_TIMEOUT_MS = 30_000;
@@ -47,7 +48,9 @@ interface JSONLDResponse {
 
 /**
  * Fetch a JSON-LD resource from the EP API with timeout.
- * Returns `undefined` on network/timeout errors so the test can skip gracefully.
+ * Returns `undefined` on transient errors (network/timeout/429/5xx) so
+ * the test can skip gracefully. Throws on unexpected 4xx responses so
+ * regressions are caught instead of silently skipped.
  */
 async function fetchEP(path: string): Promise<JSONLDResponse | undefined> {
   const url = `${EP_BASE}${path}${path.includes('?') ? '&' : '?'}format=application%2Fld%2Bjson`;
@@ -56,18 +59,35 @@ async function fetchEP(path: string): Promise<JSONLDResponse | undefined> {
 
   try {
     const res = await fetch(url, {
-      headers: { Accept: 'application/ld+json' },
+      headers: {
+        Accept: 'application/ld+json',
+        'User-Agent': USER_AGENT,
+      },
       signal: controller.signal,
     });
     if (!res.ok) {
-      console.warn(`[EP API] ${res.status} ${res.statusText} for ${path}`);
-      return undefined;
+      // Transient / rate-limit / server errors → skip
+      if (res.status === 429 || res.status >= 500) {
+        console.warn(`[EP API] ${res.status} ${res.statusText} for ${path} (transient — skipping)`);
+        return undefined;
+      }
+      // Unexpected client error → fail the test so regressions are visible
+      throw new Error(`[EP API] Unexpected ${res.status} ${res.statusText} for ${path}`);
     }
     return (await res.json()) as JSONLDResponse;
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.warn(`[EP API] Fetch failed for ${path}: ${msg}`);
-    return undefined;
+    // AbortError (timeout) and network errors → skip
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      console.warn(`[EP API] Request timed out for ${path}`);
+      return undefined;
+    }
+    if (err instanceof TypeError) {
+      // fetch() throws TypeError on network failure
+      console.warn(`[EP API] Network error for ${path}: ${err.message}`);
+      return undefined;
+    }
+    // Re-throw intentional assertion errors (e.g. unexpected 4xx)
+    throw err;
   } finally {
     clearTimeout(timer);
   }

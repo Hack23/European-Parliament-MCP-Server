@@ -14,8 +14,15 @@ import { EuropeanParliamentClient } from '../../src/clients/europeanParliamentCl
 import { RateLimiter } from '../../src/utils/rateLimiter.js';
 import { createMockEPClient } from '../helpers/mockEPClient.js';
 
-// Use EuropeanParliamentClient as the canonical type — the mock client
-// structurally satisfies this interface.
+/**
+ * The EP client used by integration tests.
+ * 
+ * When EP_USE_MOCK=true, this is a mock client whose methods structurally
+ * match the real client's signatures. The type assertion below is safe
+ * because `createMockEPClient()` implements the same method names and
+ * return shapes as `EuropeanParliamentClient`. If a mock method drifts,
+ * the integration tests will fail at runtime, catching the mismatch.
+ */
 let epClient: EuropeanParliamentClient;
 let rateLimiter: RateLimiter;
 
@@ -23,20 +30,22 @@ let rateLimiter: RateLimiter;
  * Whether the mock EP client is being used instead of the real one.
  * Set EP_USE_MOCK=true to use synthetic data for integration tests.
  */
-const isMockClient = process.env.EP_USE_MOCK === 'true';
+const isMockClient = process.env['EP_USE_MOCK'] === 'true';
 
 /**
  * Initialize test environment before all tests
  */
 beforeAll(async () => {
   if (isMockClient) {
-    // Use mock client with synthetic data — no real API calls
+    // Use mock client with synthetic data — no real API calls.
+    // The mock structurally matches EuropeanParliamentClient; the cast is
+    // intentional so downstream test code gets full type-checking.
     epClient = createMockEPClient() as unknown as EuropeanParliamentClient;
     rateLimiter = new RateLimiter({ tokensPerInterval: 1000, interval: 'minute' });
     console.log('[Integration Tests] Mock EP Client initialized (EP_USE_MOCK=true)');
   } else {
     // Use test environment variables or defaults (must include trailing slash)
-    const baseURL = process.env.EP_API_URL || 'https://data.europarl.europa.eu/api/v2/';
+    const baseURL = process.env['EP_API_URL'] || 'https://data.europarl.europa.eu/api/v2/';
 
     // Create rate limiter for testing (more permissive for faster tests)
     rateLimiter = new RateLimiter({
@@ -77,7 +86,7 @@ export { epClient, rateLimiter };
  * accidental real API calls and rate limit issues.
  */
 export function shouldRunIntegrationTests(): boolean {
-  return process.env.EP_INTEGRATION_TESTS === 'true';
+  return process.env['EP_INTEGRATION_TESTS'] === 'true';
 }
 
 /**
