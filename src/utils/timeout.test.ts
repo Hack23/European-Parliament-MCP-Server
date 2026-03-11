@@ -168,7 +168,7 @@ describe('withTimeoutAndAbort', () => {
   });
   
   it('should resolve if operation completes before timeout', async () => {
-    const operation = vi.fn(async (signal: AbortSignal) => {
+    const operation = vi.fn(async (_signal: AbortSignal) => {
       expect(signal.aborted).toBe(false);
       return 'success';
     });
@@ -183,7 +183,7 @@ describe('withTimeoutAndAbort', () => {
   
   it('should abort the signal when timeout fires', async () => {
     let signalAborted = false;
-    const operation = async (signal: AbortSignal) => {
+    const operation = async (_signal: AbortSignal) => {
       // Simulate long-running operation
       return new Promise<string>((resolve) => {
         setTimeout(() => resolve('late'), 2000);
@@ -206,7 +206,7 @@ describe('withTimeoutAndAbort', () => {
   
   it('should not abort signal when operation completes successfully', async () => {
     let signalAborted = false;
-    const operation = async (signal: AbortSignal) => {
+    const operation = async (_signal: AbortSignal) => {
       signal.addEventListener('abort', () => {
         signalAborted = true;
       });
@@ -220,7 +220,7 @@ describe('withTimeoutAndAbort', () => {
   });
   
   it('should use custom error message', async () => {
-    const operation = async (signal: AbortSignal) => {
+    const operation = async (_signal: AbortSignal) => {
       return new Promise<string>((resolve) => {
         setTimeout(() => resolve('late'), 2000);
       });
@@ -234,7 +234,7 @@ describe('withTimeoutAndAbort', () => {
   });
   
   it('should propagate operation errors', async () => {
-    const operation = async (signal: AbortSignal) => {
+    const operation = async (_signal: AbortSignal) => {
       throw new Error('Operation failed');
     };
     
@@ -246,7 +246,7 @@ describe('withTimeoutAndAbort', () => {
   it('should clear timeout when operation completes', async () => {
     const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
     
-    const operation = async (signal: AbortSignal) => 'success';
+    const operation = async (_signal: AbortSignal) => 'success';
     
     await withTimeoutAndAbort(operation, 1000);
     

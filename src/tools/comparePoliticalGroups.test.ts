@@ -92,7 +92,7 @@ describe('compare_political_groups Tool', () => {
       const result = await handleComparePoliticalGroups({
         groupIds: ['EPP', 'S&D']
       });
-      expect(() => JSON.parse(result.content[0]?.text ?? '{}')).not.toThrow();
+      expect(() => JSON.parse(result.content[0]?.text ?? '{}') as unknown).not.toThrow();
     });
 
     it('should include group comparison data', async () => {
