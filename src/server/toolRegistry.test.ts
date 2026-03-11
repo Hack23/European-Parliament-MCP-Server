@@ -310,7 +310,7 @@ describe('dispatchToolCall', () => {
     expect(result).toMatchObject({
       content: expect.arrayContaining([
         expect.objectContaining({ type: 'text' }),
-      ]),
+      ]) as unknown as unknown[],
     });
   });
 

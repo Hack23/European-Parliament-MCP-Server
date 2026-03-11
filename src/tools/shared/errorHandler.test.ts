@@ -14,19 +14,19 @@ describe('handleToolError', () => {
 
   it('should preserve Error message for Error instances', () => {
     const result = handleToolError(new Error('real message'), 'tool');
-    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.error).toBe('real message');
   });
 
   it('should return generic message for non-Error values', () => {
     const result = handleToolError(null, 'tool');
-    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.error).toBe('Unknown error occurred');
   });
 
   it('should include toolName in response', () => {
     const result = handleToolError(new Error('e'), 'my_tool');
-    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.toolName).toBe('my_tool');
   });
 
@@ -41,7 +41,7 @@ describe('handleToolError', () => {
   it('should handle ToolError and use toolName from the error', () => {
     const err = new ToolError({ toolName: 'specific_tool', operation: 'op', message: 'failed' });
     const result = handleToolError(err, 'fallback_tool');
-    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.toolName).toBe('specific_tool');
   });
 
@@ -54,15 +54,15 @@ describe('handleToolError', () => {
   it('should include formatted ToolError message in error field', () => {
     const err = new ToolError({ toolName: 'specific_tool', operation: 'fetchData', message: 'connection refused' });
     const result = handleToolError(err, 'fallback_tool');
-    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.error).toBe('[specific_tool] fetchData: connection refused');
   });
 
   it('should include retryable field for ToolError', () => {
     const retryableErr = new ToolError({ toolName: 'tool', operation: 'op', message: 'msg', isRetryable: true });
     const nonRetryableErr = new ToolError({ toolName: 'tool', operation: 'op', message: 'msg', isRetryable: false });
-    const retryableResult = JSON.parse(handleToolError(retryableErr, 'tool').content[0]?.text ?? '');
-    const nonRetryableResult = JSON.parse(handleToolError(nonRetryableErr, 'tool').content[0]?.text ?? '');
+    const retryableResult = JSON.parse(handleToolError(retryableErr, 'tool').content[0]?.text ?? '') as Record<string, unknown>;
+    const nonRetryableResult = JSON.parse(handleToolError(nonRetryableErr, 'tool').content[0]?.text ?? '') as Record<string, unknown>;
     expect(retryableResult.retryable).toBe(true);
     expect(nonRetryableResult.retryable).toBe(false);
   });
@@ -71,19 +71,19 @@ describe('handleToolError', () => {
 describe('handleDataUnavailable', () => {
   it('should set dataAvailable to false', () => {
     const result = handleDataUnavailable('tool', 'no data');
-    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.dataAvailable).toBe(false);
   });
 
   it('should set confidenceLevel to LOW', () => {
     const result = handleDataUnavailable('tool', 'no data');
-    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.confidenceLevel).toBe('LOW');
   });
 
   it('should include toolName and message', () => {
     const result = handleDataUnavailable('my_tool', 'EP API limitation');
-    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.toolName).toBe('my_tool');
     expect(parsed.message).toBe('EP API limitation');
   });
@@ -102,6 +102,6 @@ describe('handleDataUnavailable', () => {
 
   it('should produce valid JSON content', () => {
     const result = handleDataUnavailable('tool', 'msg');
-    expect(() => JSON.parse(result.content[0]?.text ?? '')).not.toThrow();
+    expect(() => JSON.parse(result.content[0]?.text ?? '') as unknown).not.toThrow();
   });
 });

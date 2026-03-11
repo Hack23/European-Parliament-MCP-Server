@@ -18,7 +18,6 @@ import {
   createRateLimitingMockFetch,
   createTimeoutMockFetch
 } from '../helpers/epApiMock.js';
-import { createMockEPClient } from '../helpers/mockEPClient.js';
 import { mepFixtures } from '../fixtures/mepFixtures.js';
 
 // Detect CI environment and set adaptive thresholds

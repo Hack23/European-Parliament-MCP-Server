@@ -101,7 +101,7 @@ describe('analyze_legislative_effectiveness Tool', () => {
         subjectType: 'MEP',
         subjectId: 'MEP-1'
       });
-      expect(() => JSON.parse(result.content[0]?.text ?? '{}')).not.toThrow();
+      expect(() => JSON.parse(result.content[0]?.text ?? '{}') as unknown).not.toThrow();
     });
 
     it('should include effectiveness metrics', async () => {

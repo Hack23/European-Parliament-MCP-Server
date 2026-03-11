@@ -78,7 +78,7 @@ describe('network_analysis Tool', () => {
 
     it('should return valid JSON', async () => {
       const result = await handleNetworkAnalysis({});
-      expect(() => JSON.parse(result.content[0]?.text ?? '{}')).not.toThrow();
+      expect(() => JSON.parse(result.content[0]?.text ?? '{}') as unknown).not.toThrow();
     });
 
     it('should include required top-level fields', async () => {

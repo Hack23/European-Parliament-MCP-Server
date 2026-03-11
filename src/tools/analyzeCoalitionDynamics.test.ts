@@ -80,7 +80,7 @@ describe('analyze_coalition_dynamics Tool', () => {
       const result = await handleAnalyzeCoalitionDynamics({
         groupIds: ['EPP', 'S&D']
       });
-      expect(() => JSON.parse(result.content[0]?.text ?? '{}')).not.toThrow();
+      expect(() => JSON.parse(result.content[0]?.text ?? '{}') as unknown).not.toThrow();
     });
 
     it('should include group metrics and coalition pairs', async () => {

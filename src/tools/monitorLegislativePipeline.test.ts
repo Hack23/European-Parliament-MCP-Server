@@ -114,7 +114,7 @@ describe('monitor_legislative_pipeline Tool', () => {
 
     it('should return valid JSON', async () => {
       const result = await handleMonitorLegislativePipeline({});
-      expect(() => JSON.parse(result.content[0]?.text ?? '{}')).not.toThrow();
+      expect(() => JSON.parse(result.content[0]?.text ?? '{}') as unknown).not.toThrow();
     });
 
     it('should include pipeline data', async () => {

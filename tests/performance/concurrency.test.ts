@@ -10,11 +10,11 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { measureTime } from '../helpers/testUtils.js';
-import { createMockEPClient, getMockEPClient, resetMockEPClient } from '../helpers/mockEPClient.js';
+import { getMockEPClient, resetMockEPClient } from '../helpers/mockEPClient.js';
 import { mepFixtures } from '../fixtures/mepFixtures.js';
 
 // Detect CI environment and set adaptive thresholds
-const isCI = process.env.CI === 'true';
+const isCI = process.env['CI'] === 'true';
 const CONCURRENT_THRESHOLD_MS = isCI ? 15000 : 5000;
 const PER_REQUEST_THRESHOLD_MS = isCI ? 500 : 200;
 
@@ -231,9 +231,9 @@ describe('Concurrent Request Handling', () => {
       ]);
 
       expect(results).toHaveLength(3);
-      results.forEach(r => {
-        expect(r.data).toBeDefined();
-        expect(Array.isArray(r.data)).toBe(true);
+      results.forEach((r: Record<string, unknown>) => {
+        expect(r['data']).toBeDefined();
+        expect(Array.isArray(r['data'])).toBe(true);
       });
 
       // Clean up

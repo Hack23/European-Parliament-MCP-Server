@@ -81,7 +81,7 @@ describe('analyze_committee_activity Tool', () => {
   describe('Response Format', () => {
     it('should return MCP-compliant response', async () => {
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data).toHaveProperty('committeeId', 'ENVI');
       expect(data).toHaveProperty('committeeName');
@@ -96,7 +96,7 @@ describe('analyze_committee_activity Tool', () => {
 
     it('should include workload metrics', async () => {
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.workload).toHaveProperty('activeLegislativeFiles');
       expect(data.workload).toHaveProperty('documentsProduced');
@@ -106,7 +106,7 @@ describe('analyze_committee_activity Tool', () => {
 
     it('should include computed attributes', async () => {
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.computedAttributes).toHaveProperty('workloadIntensity');
       expect(data.computedAttributes).toHaveProperty('productivityScore');
@@ -116,7 +116,7 @@ describe('analyze_committee_activity Tool', () => {
 
     it('should include EP attribution in methodology', async () => {
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.methodology).toContain('European Parliament');
     });
@@ -129,7 +129,7 @@ describe('analyze_committee_activity Tool', () => {
         total: 100, limit: 100, offset: 0, hasMore: true
       });
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data.workload.activeLegislativeFiles).toBe(100);
     });
 
@@ -139,7 +139,7 @@ describe('analyze_committee_activity Tool', () => {
         total: 80, limit: 100, offset: 0, hasMore: false
       });
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data.workload.documentsProduced).toBe(80);
     });
 
@@ -149,13 +149,13 @@ describe('analyze_committee_activity Tool', () => {
         total: 35, limit: 100, offset: 0, hasMore: false
       });
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data.legislativeOutput.reportsAdopted).toBe(35);
     });
 
     it('should set MEDIUM confidence when real data is available', async () => {
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data.confidenceLevel).toBe('MEDIUM');
     });
 
@@ -170,7 +170,7 @@ describe('analyze_committee_activity Tool', () => {
         data: [], total: 0, limit: 100, offset: 0, hasMore: false
       });
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data.confidenceLevel).toBe('LOW');
     });
 
@@ -179,7 +179,7 @@ describe('analyze_committee_activity Tool', () => {
       vi.mocked(epClientModule.epClient.getProcedures).mockRejectedValue(new Error('API Error'));
       vi.mocked(epClientModule.epClient.getAdoptedTexts).mockRejectedValue(new Error('API Error'));
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data.workload.activeLegislativeFiles).toBe(0);
       expect(data.workload.documentsProduced).toBe(0);
       expect(data.legislativeOutput.reportsAdopted).toBe(0);
@@ -197,7 +197,7 @@ describe('analyze_committee_activity Tool', () => {
         total: 30, limit: 100, offset: 0, hasMore: false
       });
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data.computedAttributes.workloadIntensity).toBe('HIGH');
     });
 
@@ -212,7 +212,7 @@ describe('analyze_committee_activity Tool', () => {
         data: [], total: 0, limit: 100, offset: 0, hasMore: false
       });
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'DROI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data.computedAttributes.workloadIntensity).toBe('LOW');
     });
   });
@@ -220,7 +220,7 @@ describe('analyze_committee_activity Tool', () => {
   describe('Engagement and Impact Computation', () => {
     it('should report LOW engagement when attendance is not available', async () => {
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data.computedAttributes.engagementLevel).toBe('LOW');
       expect(data.memberEngagement.averageAttendance).toBe(0);
     });
@@ -231,13 +231,13 @@ describe('analyze_committee_activity Tool', () => {
         members: []
       });
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'TEST' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data.memberEngagement.totalMembers).toBe(0);
     });
 
     it('should compute policy impact rating based on reports and success rate', async () => {
       const result = await handleAnalyzeCommitteeActivity({ committeeId: 'ENVI' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
       expect(['HIGH', 'MEDIUM', 'LOW']).toContain(data.computedAttributes.policyImpactRating);
     });
   });
