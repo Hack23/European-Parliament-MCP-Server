@@ -168,7 +168,7 @@ describe('withTimeoutAndAbort', () => {
   });
   
   it('should resolve if operation completes before timeout', async () => {
-    const operation = vi.fn(async (_signal: AbortSignal) => {
+    const operation = vi.fn(async (signal: AbortSignal) => {
       expect(signal.aborted).toBe(false);
       return 'success';
     });
@@ -183,7 +183,7 @@ describe('withTimeoutAndAbort', () => {
   
   it('should abort the signal when timeout fires', async () => {
     let signalAborted = false;
-    const operation = async (_signal: AbortSignal) => {
+    const operation = async (signal: AbortSignal) => {
       // Simulate long-running operation
       return new Promise<string>((resolve) => {
         setTimeout(() => resolve('late'), 2000);
@@ -206,7 +206,7 @@ describe('withTimeoutAndAbort', () => {
   
   it('should not abort signal when operation completes successfully', async () => {
     let signalAborted = false;
-    const operation = async (_signal: AbortSignal) => {
+    const operation = async (signal: AbortSignal) => {
       signal.addEventListener('abort', () => {
         signalAborted = true;
       });

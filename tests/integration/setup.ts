@@ -14,7 +14,9 @@ import { EuropeanParliamentClient } from '../../src/clients/europeanParliamentCl
 import { RateLimiter } from '../../src/utils/rateLimiter.js';
 import { createMockEPClient } from '../helpers/mockEPClient.js';
 
-let epClient: EuropeanParliamentClient | ReturnType<typeof createMockEPClient>;
+// Use EuropeanParliamentClient as the canonical type — the mock client
+// structurally satisfies this interface.
+let epClient: EuropeanParliamentClient;
 let rateLimiter: RateLimiter;
 
 /**
@@ -29,7 +31,7 @@ const isMockClient = process.env.EP_USE_MOCK === 'true';
 beforeAll(async () => {
   if (isMockClient) {
     // Use mock client with synthetic data — no real API calls
-    epClient = createMockEPClient();
+    epClient = createMockEPClient() as unknown as EuropeanParliamentClient;
     rateLimiter = new RateLimiter({ tokensPerInterval: 1000, interval: 'minute' });
     console.log('[Integration Tests] Mock EP Client initialized (EP_USE_MOCK=true)');
   } else {

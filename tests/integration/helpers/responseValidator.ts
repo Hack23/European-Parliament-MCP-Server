@@ -6,7 +6,6 @@
  * Validates MCP tool responses against schemas and expected structures
  */
 
-import { z } from 'zod';
 import { expect } from 'vitest';
 import type { PaginatedResponse } from '../../../src/types/europeanParliament.js';
 

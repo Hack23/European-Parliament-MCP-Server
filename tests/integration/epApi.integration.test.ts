@@ -10,6 +10,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
+import { EuropeanParliamentClient } from '../../src/clients/europeanParliamentClient.js';
 import { epClient, rateLimiter, shouldRunIntegrationTests, useMockClient } from './setup.js';
 import { retry, measureTime } from '../helpers/testUtils.js';
 

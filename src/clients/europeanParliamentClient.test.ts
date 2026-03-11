@@ -764,7 +764,7 @@ describe('EuropeanParliamentClient', () => {
         expect.objectContaining({
           headers: expect.objectContaining({
             'Accept': 'application/ld+json'
-          })
+          }) as unknown as Record<string, string>
         })
       );
     });
@@ -1988,7 +1988,7 @@ describe('EuropeanParliamentClient', () => {
         expect.objectContaining({
           headers: expect.objectContaining({
             Accept: 'application/ld+json'
-          })
+          }) as unknown as Record<string, string>
         })
       );
     });
@@ -2015,7 +2015,7 @@ describe('EuropeanParliamentClient', () => {
         expect.objectContaining({
           headers: expect.objectContaining({
             Accept: 'application/ld+json'
-          })
+          }) as unknown as Record<string, string>
         })
       );
     });

@@ -228,7 +228,7 @@ describe('MemoryAuditSink', () => {
 // ============================================================================
 
 describe('StderrAuditSink', () => {
-  let consoleSpy: ReturnType<typeof vi.spyOn>;
+  let consoleSpy: ReturnType<typeof vi.spyOn<typeof console, 'error'>>;
 
   beforeEach(() => {
     consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);

@@ -13,7 +13,6 @@ const mockConnect = vi.hoisted(() => vi.fn());
 
 vi.mock('@modelcontextprotocol/sdk/server/index.js', () => ({
   // Use a regular function so it can be invoked with `new`
-  // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
   Server: vi.fn(function (this: { setRequestHandler: typeof mockSetRequestHandler; connect: typeof mockConnect }) {
     this.setRequestHandler = mockSetRequestHandler;
     this.connect = mockConnect;

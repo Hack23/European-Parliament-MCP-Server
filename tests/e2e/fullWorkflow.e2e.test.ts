@@ -214,7 +214,7 @@ describe('Full Workflow E2E Tests', () => {
         return;
       }
 
-      const mepId = meps[0]!.id;
+      const mepId = String(meps[0]!.id);
 
       const response = await client.callTool('analyze_voting_patterns', {
         mepId,

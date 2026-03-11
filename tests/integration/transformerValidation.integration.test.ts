@@ -32,7 +32,7 @@ import {
 
 // ─── Helpers ────────────────────────────────────────────────────
 
-const EP_BASE = 'https://data.europarl.europa.eu/api/v2';
+const EP_BASE = process.env.EP_API_URL?.replace(/\/$/, '') || 'https://data.europarl.europa.eu/api/v2';
 
 /** Timeout for individual EP API requests (ms). */
 const REQUEST_TIMEOUT_MS = 30_000;
@@ -94,12 +94,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── MEP Transformer ─────────────────────────────────────────
 
   describe('transformMEP with /meps endpoint', () => {
-    it('should correctly map all MEP fields from real /meps data', async () => {
+    it('should correctly map all MEP fields from real /meps data', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/meps?offset=0&limit=3'),
         'transformMEP /meps'
       );
-      if (!record) return; // skip on network error
+      if (!record) { ctx.skip(); return; } // skip on network error
 
       const mep = transformMEP(record);
 
@@ -131,12 +131,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   });
 
   describe('transformMEP with /meps/show-current endpoint', () => {
-    it('should map country and politicalGroup from show-current', async () => {
+    it('should map country and politicalGroup from show-current', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/meps/show-current?offset=0&limit=3'),
         'transformMEP /meps/show-current'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const mep = transformMEP(record);
 
@@ -156,12 +156,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       expect(mep.politicalGroup.length).toBeGreaterThan(0);
     }, TEST_TIMEOUT_MS);
 
-    it('should correctly map all current MEP records', async () => {
+    it('should correctly map all current MEP records', async (ctx) => {
       const response = await retryOrSkip(
         () => fetchEP('/meps/show-current?offset=0&limit=10'),
         'transformMEP batch show-current'
       );
-      if (!response?.data) return;
+      if (!response?.data) { ctx.skip(); return; }
 
       const meps = response.data.map(d => transformMEP(d));
       expect(meps.length).toBeGreaterThan(0);
@@ -181,12 +181,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── MEP Details Transformer ──────────────────────────────────
 
   describe('transformMEPDetails with /meps/{id} endpoint', () => {
-    it('should correctly map MEP details from a real record', async () => {
+    it('should correctly map MEP details from a real record', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/meps/124936'),
         'transformMEPDetails'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const details = transformMEPDetails(record);
 
@@ -221,12 +221,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── Plenary Session Transformer ──────────────────────────────
 
   describe('transformPlenarySession with /meetings endpoint', () => {
-    it('should correctly map plenary session fields', async () => {
+    it('should correctly map plenary session fields', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/meetings?year=2025&offset=0&limit=3'),
         'transformPlenarySession'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const session = transformPlenarySession(record);
 
@@ -248,12 +248,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       expect(Array.isArray(session.documents)).toBe(true);
     }, TEST_TIMEOUT_MS);
 
-    it('should map multiple plenary sessions consistently', async () => {
+    it('should map multiple plenary sessions consistently', async (ctx) => {
       const response = await retryOrSkip(
         () => fetchEP('/meetings?year=2025&offset=0&limit=5'),
         'transformPlenarySession batch'
       );
-      if (!response?.data) return;
+      if (!response?.data) { ctx.skip(); return; }
 
       const sessions = response.data.map(d => transformPlenarySession(d));
       expect(sessions.length).toBeGreaterThan(0);
@@ -272,12 +272,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── Corporate Body (Committee) Transformer ───────────────────
 
   describe('transformCorporateBody with /corporate-bodies endpoint', () => {
-    it('should correctly map committee fields', async () => {
+    it('should correctly map committee fields', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/corporate-bodies?offset=0&limit=3'),
         'transformCorporateBody list'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const committee = transformCorporateBody(record);
 
@@ -296,12 +296,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       expect(Array.isArray(committee.responsibilities)).toBe(true);
     }, TEST_TIMEOUT_MS);
 
-    it('should map detailed committee with members', async () => {
+    it('should map detailed committee with members', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/corporate-bodies/1'),
         'transformCorporateBody detail'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const committee = transformCorporateBody(record);
 
@@ -318,12 +318,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── Document Transformer ─────────────────────────────────────
 
   describe('transformDocument with /documents endpoint', () => {
-    it('should correctly map document fields', async () => {
+    it('should correctly map document fields', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/documents?year=2025&offset=0&limit=3'),
         'transformDocument'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const doc = transformDocument(record);
 
@@ -354,12 +354,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── Parliamentary Question Transformer ───────────────────────
 
   describe('transformParliamentaryQuestion with /parliamentary-questions endpoint', () => {
-    it('should correctly map question fields', async () => {
+    it('should correctly map question fields', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/parliamentary-questions?year=2025&offset=0&limit=3'),
         'transformParliamentaryQuestion'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const question = transformParliamentaryQuestion(record);
 
@@ -393,12 +393,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── Speech Transformer ───────────────────────────────────────
 
   describe('transformSpeech with /speeches endpoint', () => {
-    it('should correctly map speech fields', async () => {
+    it('should correctly map speech fields', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/speeches?year=2025&offset=0&limit=3'),
         'transformSpeech'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const speech = transformSpeech(record);
 
@@ -423,12 +423,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       expect(typeof speech.sessionReference).toBe('string');
     }, TEST_TIMEOUT_MS);
 
-    it('should map multiple speeches consistently', async () => {
+    it('should map multiple speeches consistently', async (ctx) => {
       const response = await retryOrSkip(
         () => fetchEP('/speeches?year=2025&offset=0&limit=5'),
         'transformSpeech batch'
       );
-      if (!response?.data) return;
+      if (!response?.data) { ctx.skip(); return; }
 
       const speeches = response.data.map(d => transformSpeech(d));
       expect(speeches.length).toBeGreaterThan(0);
@@ -450,12 +450,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── Procedure Transformer ────────────────────────────────────
 
   describe('transformProcedure with /procedures endpoint', () => {
-    it('should correctly map procedure fields', async () => {
+    it('should correctly map procedure fields', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/procedures?year=2025&offset=0&limit=3'),
         'transformProcedure'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const procedure = transformProcedure(record);
 
@@ -483,12 +483,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── Adopted Text Transformer ─────────────────────────────────
 
   describe('transformAdoptedText with /adopted-texts endpoint', () => {
-    it('should correctly map adopted text fields', async () => {
+    it('should correctly map adopted text fields', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/adopted-texts?year=2025&offset=0&limit=3'),
         'transformAdoptedText'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const adopted = transformAdoptedText(record);
 
@@ -510,12 +510,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       expect(typeof adopted.subjectMatter).toBe('string');
     }, TEST_TIMEOUT_MS);
 
-    it('should map multiple adopted texts consistently', async () => {
+    it('should map multiple adopted texts consistently', async (ctx) => {
       const response = await retryOrSkip(
         () => fetchEP('/adopted-texts?year=2025&offset=0&limit=5'),
         'transformAdoptedText batch'
       );
-      if (!response?.data) return;
+      if (!response?.data) { ctx.skip(); return; }
 
       const texts = response.data.map(d => transformAdoptedText(d));
       expect(texts.length).toBeGreaterThan(0);
@@ -535,12 +535,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── Event Transformer ────────────────────────────────────────
 
   describe('transformEvent with /events endpoint', () => {
-    it('should correctly map event fields', async () => {
+    it('should correctly map event fields', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/events?year=2025&offset=0&limit=3'),
         'transformEvent'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const event = transformEvent(record);
 
@@ -564,12 +564,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── MEP Declaration Transformer ──────────────────────────────
 
   describe('transformMEPDeclaration with /meps-declarations endpoint', () => {
-    it('should correctly map declaration fields', async () => {
+    it('should correctly map declaration fields', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/meps-declarations?year=2025&offset=0&limit=3'),
         'transformMEPDeclaration'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const declaration = transformMEPDeclaration(record);
 
@@ -595,12 +595,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── MEP Incoming/Outgoing/Homonyms ───────────────────────────
 
   describe('transformMEP with /meps/show-incoming endpoint', () => {
-    it('should map incoming MEPs (basic fields only)', async () => {
+    it('should map incoming MEPs (basic fields only)', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/meps/show-incoming?offset=0&limit=3'),
         'transformMEP /meps/show-incoming'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const mep = transformMEP(record);
 
@@ -615,12 +615,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   });
 
   describe('transformMEP with /meps/show-outgoing endpoint', () => {
-    it('should map outgoing MEPs (basic fields only)', async () => {
+    it('should map outgoing MEPs (basic fields only)', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/meps/show-outgoing?offset=0&limit=3'),
         'transformMEP /meps/show-outgoing'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const mep = transformMEP(record);
 
@@ -634,12 +634,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   });
 
   describe('transformMEP with /meps/show-homonyms endpoint', () => {
-    it('should map homonym MEPs (basic fields only)', async () => {
+    it('should map homonym MEPs (basic fields only)', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/meps/show-homonyms?offset=0&limit=3'),
         'transformMEP /meps/show-homonyms'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const mep = transformMEP(record);
 
@@ -655,12 +655,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── Cross-Transformer Consistency ────────────────────────────
 
   describe('Cross-transformer consistency', () => {
-    it('transformMEP and transformMEPDetails should agree on shared fields', async () => {
+    it('transformMEP and transformMEPDetails should agree on shared fields', async (ctx) => {
       const record = await retryOrSkip(
         () => fetchFirstRecord('/meps/124936'),
         'cross-transformer MEP consistency'
       );
-      if (!record) return;
+      if (!record) { ctx.skip(); return; }
 
       const mep = transformMEP(record);
       const details = transformMEPDetails(record);
@@ -676,12 +676,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
   // ─── Type Safety Assertions ───────────────────────────────────
 
   describe('Type safety: no undefined required fields', () => {
-    it('MEP transformer should never produce undefined required fields', async () => {
+    it('MEP transformer should never produce undefined required fields', async (ctx) => {
       const response = await retryOrSkip(
         () => fetchEP('/meps/show-current?offset=0&limit=20'),
         'type safety MEP'
       );
-      if (!response?.data) return;
+      if (!response?.data) { ctx.skip(); return; }
 
       for (const raw of response.data) {
         const mep = transformMEP(raw);
@@ -706,12 +706,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       }
     }, TEST_TIMEOUT_MS);
 
-    it('Plenary session transformer should never produce undefined required fields', async () => {
+    it('Plenary session transformer should never produce undefined required fields', async (ctx) => {
       const response = await retryOrSkip(
         () => fetchEP('/meetings?year=2025&offset=0&limit=10'),
         'type safety PlenarySession'
       );
-      if (!response?.data) return;
+      if (!response?.data) { ctx.skip(); return; }
 
       for (const raw of response.data) {
         const session = transformPlenarySession(raw);
@@ -732,12 +732,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       }
     }, TEST_TIMEOUT_MS);
 
-    it('Document transformer should never produce undefined required fields', async () => {
+    it('Document transformer should never produce undefined required fields', async (ctx) => {
       const response = await retryOrSkip(
         () => fetchEP('/documents?year=2025&offset=0&limit=10'),
         'type safety Document'
       );
-      if (!response?.data) return;
+      if (!response?.data) { ctx.skip(); return; }
 
       for (const raw of response.data) {
         const doc = transformDocument(raw);
@@ -752,12 +752,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       }
     }, TEST_TIMEOUT_MS);
 
-    it('Procedure transformer should never produce undefined required fields', async () => {
+    it('Procedure transformer should never produce undefined required fields', async (ctx) => {
       const response = await retryOrSkip(
         () => fetchEP('/procedures?year=2025&offset=0&limit=10'),
         'type safety Procedure'
       );
-      if (!response?.data) return;
+      if (!response?.data) { ctx.skip(); return; }
 
       for (const raw of response.data) {
         const proc = transformProcedure(raw);
@@ -777,12 +777,12 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       }
     }, TEST_TIMEOUT_MS);
 
-    it('Adopted text transformer should never produce undefined required fields', async () => {
+    it('Adopted text transformer should never produce undefined required fields', async (ctx) => {
       const response = await retryOrSkip(
         () => fetchEP('/adopted-texts?year=2025&offset=0&limit=10'),
         'type safety AdoptedText'
       );
-      if (!response?.data) return;
+      if (!response?.data) { ctx.skip(); return; }
 
       for (const raw of response.data) {
         const text = transformAdoptedText(raw);
