@@ -106,7 +106,7 @@ async function fetchFirstRecord(path: string): Promise<Record<string, unknown> |
 
 /**
  * Dynamically fetch a valid MEP id from the listing endpoint.
- * Falls back to a well-known id if the listing request fails.
+ * Returns undefined if the listing request fails (test will skip).
  */
 async function fetchDynamicMEPId(): Promise<string | undefined> {
   const record = await fetchFirstRecord('/meps/show-current?offset=0&limit=1');
