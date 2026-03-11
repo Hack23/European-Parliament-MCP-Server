@@ -102,25 +102,26 @@ describe('track_mep_attendance Tool', () => {
   describe('Single MEP Response', () => {
     it('should return single MEP attendance data', async () => {
       const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data).toHaveProperty('scope');
       expect(data.scope).toContain('MEP-1');
       expect(data.records).toHaveLength(1);
-      expect(data.records[0]?.attendanceRate).toBe(78);
+      expect((data.records as Array<Record<string, unknown>>)[0]?.attendanceRate).toBe(78);
     });
 
     it('should include attendance classification', async () => {
       const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
+      const records = data.records as Array<Record<string, unknown>>;
 
-      expect(data.records[0]).toHaveProperty('category');
-      expect(data.records[0]).toHaveProperty('trend');
+      expect(records[0]).toHaveProperty('category');
+      expect(records[0]).toHaveProperty('trend');
     });
 
     it('should include computed attributes', async () => {
       const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.computedAttributes).toHaveProperty('overallEngagement');
       expect(data.computedAttributes).toHaveProperty('attendanceTrend');
@@ -131,7 +132,7 @@ describe('track_mep_attendance Tool', () => {
   describe('Group Response', () => {
     it('should return multiple MEP attendance records', async () => {
       const result = await handleTrackMepAttendance({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.records.length).toBeGreaterThan(0);
       expect(data.summary).toHaveProperty('totalMEPs');
@@ -140,7 +141,7 @@ describe('track_mep_attendance Tool', () => {
 
     it('should include summary statistics', async () => {
       const result = await handleTrackMepAttendance({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.summary).toHaveProperty('highAttendance');
       expect(data.summary).toHaveProperty('mediumAttendance');
@@ -149,12 +150,13 @@ describe('track_mep_attendance Tool', () => {
 
     it('should sort records by attendance rate descending', async () => {
       const result = await handleTrackMepAttendance({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
-      if (data.records.length > 1) {
-        for (let i = 1; i < data.records.length; i++) {
-          expect(data.records[i - 1].attendanceRate)
-            .toBeGreaterThanOrEqual(data.records[i].attendanceRate);
+      const records = data.records as Array<Record<string, unknown>>;
+      if (records.length > 1) {
+        for (let i = 1; i < records.length; i++) {
+          expect(records[i - 1]?.attendanceRate as number)
+            .toBeGreaterThanOrEqual(records[i]?.attendanceRate as number);
         }
       }
     });
@@ -163,7 +165,7 @@ describe('track_mep_attendance Tool', () => {
   describe('Response Format', () => {
     it('should include methodology and confidence', async () => {
       const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data).toHaveProperty('confidenceLevel');
       expect(data).toHaveProperty('methodology');
@@ -176,7 +178,7 @@ describe('track_mep_attendance Tool', () => {
         dateFrom: '2024-01-01',
         dateTo: '2024-06-30'
       });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.period.from).toBe('2024-01-01');
       expect(data.period.to).toBe('2024-06-30');
@@ -214,7 +216,7 @@ describe('track_mep_attendance Tool', () => {
         .mockRejectedValueOnce(new Error('MEP not found'));
 
       const result = await handleTrackMepAttendance({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       // Should still return results for the successful MEP
       expect(data.records.length).toBe(1);
@@ -230,10 +232,10 @@ describe('track_mep_attendance Tool', () => {
       });
 
       const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
-      expect(data.records[0]?.category).toBe('HIGH');
-      expect(data.records[0]?.trend).toBe('STABLE_HIGH');
+      expect((data.records as Array<Record<string, unknown>>)[0]?.category).toBe('HIGH');
+      expect((data.records as Array<Record<string, unknown>>)[0]?.trend).toBe('STABLE_HIGH');
     });
 
     it('should classify MODERATE attendance for rate 60-79', async () => {
@@ -244,9 +246,9 @@ describe('track_mep_attendance Tool', () => {
       });
 
       const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
-      expect(data.records[0]?.category).toBe('MODERATE');
+      expect((data.records as Array<Record<string, unknown>>)[0]?.category).toBe('MODERATE');
     });
 
     it('should classify LOW attendance for rate < 60', async () => {
@@ -257,10 +259,10 @@ describe('track_mep_attendance Tool', () => {
       });
 
       const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
-      expect(data.records[0]?.category).toBe('LOW');
-      expect(data.records[0]?.trend).toBe('CONCERNING');
+      expect((data.records as Array<Record<string, unknown>>)[0]?.category).toBe('LOW');
+      expect((data.records as Array<Record<string, unknown>>)[0]?.trend).toBe('CONCERNING');
       expect(data.computedAttributes.absenteeismRisk).toBe('HIGH');
     });
 
@@ -272,9 +274,9 @@ describe('track_mep_attendance Tool', () => {
       });
 
       const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
-      expect(data.records[0]?.trend).toBe('DECLINING');
+      expect((data.records as Array<Record<string, unknown>>)[0]?.trend).toBe('DECLINING');
     });
 
     it('should handle MEP without votingStatistics', async () => {
@@ -285,18 +287,18 @@ describe('track_mep_attendance Tool', () => {
       });
 
       const result = await handleTrackMepAttendance({ mepId: 'MEP-1' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
-      expect(data.records[0]?.trend).toBe('UNKNOWN');
-      expect(data.records[0]?.category).toBe('UNKNOWN');
-      expect(data.records[0]?.attendanceRate).toBe(0);
+      expect((data.records as Array<Record<string, unknown>>)[0]?.trend).toBe('UNKNOWN');
+      expect((data.records as Array<Record<string, unknown>>)[0]?.category).toBe('UNKNOWN');
+      expect((data.records as Array<Record<string, unknown>>)[0]?.attendanceRate).toBe(0);
     });
   });
 
   describe('Group Analysis Edge Cases', () => {
     it('should build scope with both country and groupId', async () => {
       const result = await handleTrackMepAttendance({ country: 'SE', groupId: 'EPP' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.scope).toContain('Country: SE');
       expect(data.scope).toContain('Group: EPP');
@@ -304,7 +306,7 @@ describe('track_mep_attendance Tool', () => {
 
     it('should default scope to "All MEPs" when no filters', async () => {
       const result = await handleTrackMepAttendance({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.scope).toBe('All MEPs');
     });
@@ -317,7 +319,7 @@ describe('track_mep_attendance Tool', () => {
       });
 
       const result = await handleTrackMepAttendance({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.computedAttributes.attendanceTrend).toBe('DECLINING');
     });
@@ -337,7 +339,7 @@ describe('track_mep_attendance Tool', () => {
       });
 
       const result = await handleTrackMepAttendance({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.computedAttributes.absenteeismRisk).toBe('HIGH');
     });
@@ -348,7 +350,7 @@ describe('track_mep_attendance Tool', () => {
       });
 
       const result = await handleTrackMepAttendance({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.summary.totalMEPs).toBe(0);
       expect(data.summary.averageAttendance).toBe(0);

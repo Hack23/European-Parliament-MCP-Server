@@ -128,7 +128,7 @@ describe('comparative_intelligence Tool', () => {
 
     it('should return valid JSON', async () => {
       const result = await handleComparativeIntelligence({ mepIds: [1, 2] });
-      expect(() => JSON.parse(result.content[0]?.text ?? '{}')).not.toThrow();
+      expect(() => JSON.parse(result.content[0]?.text ?? '{}') as unknown).not.toThrow();
     });
 
     it('should include required fields', async () => {
@@ -264,7 +264,7 @@ describe('comparative_intelligence Tool', () => {
 
       const result = await handleComparativeIntelligence({ mepIds: [1, 2] });
       expect(result.isError).toBe(true);
-      const parsed = JSON.parse(result.content[0]?.text ?? '');
+      const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
       expect(parsed.toolName).toBe('comparative_intelligence');
       expect(parsed.error).toContain('[comparative_intelligence] fetchMEPProfiles');
     });

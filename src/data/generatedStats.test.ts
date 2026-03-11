@@ -464,10 +464,10 @@ describe('GENERATED_STATS — monthly distribution integrity', () => {
     for (const yearly of GENERATED_STATS.yearlyStats) {
       for (const metric of MONTHLY_METRICS) {
         const monthlySum = yearly.monthlyActivity.reduce(
-          (acc, m) => acc + (m[metric] as number),
+          (acc, m) => acc + m[metric],
           0
         );
-        const annualTotal = yearly[metric] as number;
+        const annualTotal = yearly[metric];
         expect(monthlySum).toBe(annualTotal);
       }
     }
@@ -495,10 +495,10 @@ describe('GENERATED_STATS — monthly distribution integrity', () => {
       expect(augustEntry).toBeDefined();
 
       for (const metric of SYNTHETIC_ONLY_METRICS) {
-        const augustValue = augustEntry![metric] as number;
+        const augustValue = augustEntry![metric];
         for (const m of yearly.monthlyActivity) {
           if (m.month !== 8) {
-            expect(augustValue).toBeLessThanOrEqual(m[metric] as number);
+            expect(augustValue).toBeLessThanOrEqual(m[metric]);
           }
         }
       }
@@ -509,7 +509,7 @@ describe('GENERATED_STATS — monthly distribution integrity', () => {
     for (const yearly of GENERATED_STATS.yearlyStats) {
       for (const monthly of yearly.monthlyActivity) {
         for (const metric of MONTHLY_METRICS) {
-          expect(monthly[metric] as number).toBeGreaterThanOrEqual(0);
+          expect(monthly[metric]).toBeGreaterThanOrEqual(0);
         }
       }
     }

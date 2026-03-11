@@ -22,6 +22,13 @@ import type { MEP } from '../../src/types/europeanParliament.js';
  */
 const E2E_TEST_TIMEOUT_MS = 65000;
 
+/**
+ * Extended timeout for multi-step tests that make 2+ sequential EP API calls.
+ * EP_REQUEST_TIMEOUT_MS=60000 in CI means each call can take up to 60s.
+ * Two sequential calls can total 120s+, exceeding E2E_TEST_TIMEOUT_MS.
+ */
+const E2E_WORKFLOW_TIMEOUT_MS = E2E_TEST_TIMEOUT_MS * 3; // 195s
+
 describe('MEP Query E2E Tests', () => {
   let client: MCPTestClient;
 
@@ -133,7 +140,7 @@ describe('MEP Query E2E Tests', () => {
       const details = parseMCPResponse(detailsResponse.content);
       expect(typeof details).toBe('object');
       expect(details).not.toBeNull();
-    }, E2E_TEST_TIMEOUT_MS);
+    }, E2E_WORKFLOW_TIMEOUT_MS);
 
     it('should validate MEP ID format', async () => {
       await expect(async () => {

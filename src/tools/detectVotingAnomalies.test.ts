@@ -95,7 +95,7 @@ describe('detect_voting_anomalies Tool', () => {
 
     it('should return valid JSON', async () => {
       const result = await handleDetectVotingAnomalies({ mepId: 'MEP-1' });
-      expect(() => JSON.parse(result.content[0]?.text ?? '{}')).not.toThrow();
+      expect(() => JSON.parse(result.content[0]?.text ?? '{}') as unknown).not.toThrow();
     });
 
     it('should include anomaly summary', async () => {

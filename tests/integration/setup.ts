@@ -14,27 +14,40 @@ import { EuropeanParliamentClient } from '../../src/clients/europeanParliamentCl
 import { RateLimiter } from '../../src/utils/rateLimiter.js';
 import { createMockEPClient } from '../helpers/mockEPClient.js';
 
-let epClient: EuropeanParliamentClient | ReturnType<typeof createMockEPClient>;
+/**
+ * Minimal client surface used by integration tests.
+ *
+ * Picking only the methods actually called by test code keeps the
+ * mock surface narrow and gives callers fully-typed return values
+ * (avoiding `any` leaking from `vi.fn()`).
+ */
+type IntegrationEPClient = Pick<
+  EuropeanParliamentClient,
+  'getMEPs' | 'getMEPDetails' | 'getCurrentMEPs' | 'getVotingRecords' | 'clearCache'
+>;
+
+let epClient: IntegrationEPClient;
 let rateLimiter: RateLimiter;
 
 /**
  * Whether the mock EP client is being used instead of the real one.
  * Set EP_USE_MOCK=true to use synthetic data for integration tests.
  */
-const isMockClient = process.env.EP_USE_MOCK === 'true';
+const isMockClient = process.env['EP_USE_MOCK'] === 'true';
 
 /**
  * Initialize test environment before all tests
  */
 beforeAll(async () => {
   if (isMockClient) {
-    // Use mock client with synthetic data — no real API calls
-    epClient = createMockEPClient();
+    // Use mock client with synthetic data — no real API calls.
+    // Single-step cast: the mock structurally matches the picked methods.
+    epClient = createMockEPClient() as IntegrationEPClient;
     rateLimiter = new RateLimiter({ tokensPerInterval: 1000, interval: 'minute' });
     console.log('[Integration Tests] Mock EP Client initialized (EP_USE_MOCK=true)');
   } else {
-    // Use test environment variables or defaults (must include trailing slash)
-    const baseURL = process.env.EP_API_URL || 'https://data.europarl.europa.eu/api/v2/';
+    // Use test environment variables or defaults
+    const baseURL = process.env['EP_API_URL'] || 'https://data.europarl.europa.eu/api/v2/';
 
     // Create rate limiter for testing (more permissive for faster tests)
     rateLimiter = new RateLimiter({
@@ -75,7 +88,7 @@ export { epClient, rateLimiter };
  * accidental real API calls and rate limit issues.
  */
 export function shouldRunIntegrationTests(): boolean {
-  return process.env.EP_INTEGRATION_TESTS === 'true';
+  return process.env['EP_INTEGRATION_TESTS'] === 'true';
 }
 
 /**

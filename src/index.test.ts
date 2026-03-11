@@ -13,7 +13,6 @@ const mockConnect = vi.hoisted(() => vi.fn());
 
 vi.mock('@modelcontextprotocol/sdk/server/index.js', () => ({
   // Use a regular function so it can be invoked with `new`
-  // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
   Server: vi.fn(function (this: { setRequestHandler: typeof mockSetRequestHandler; connect: typeof mockConnect }) {
     this.setRequestHandler = mockSetRequestHandler;
     this.connect = mockConnect;
@@ -47,8 +46,8 @@ describe('Server Constants', () => {
   it('should have version matching package.json', async () => {
     const fs = await import('fs');
     const pkgPath = new URL('../package.json', import.meta.url).pathname;
-    const pkg = JSON.parse(await fs.promises.readFile(pkgPath, 'utf-8'));
-    expect(SERVER_VERSION).toBe(pkg.version);
+    const pkg = JSON.parse(await fs.promises.readFile(pkgPath, 'utf-8')) as Record<string, unknown>;
+    expect(SERVER_VERSION).toBe(pkg['version']);
   });
 });
 

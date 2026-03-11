@@ -88,7 +88,7 @@ describe('analyze_country_delegation Tool', () => {
   describe('Response Format', () => {
     it('should return MCP-compliant response', async () => {
       const result = await handleAnalyzeCountryDelegation({ country: 'SE' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data).toHaveProperty('country', 'SE');
       expect(data).toHaveProperty('period');
@@ -102,17 +102,19 @@ describe('analyze_country_delegation Tool', () => {
 
     it('should include delegation group distribution', async () => {
       const result = await handleAnalyzeCountryDelegation({ country: 'SE' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
-      expect(data.delegation).toHaveProperty('totalMEPs');
-      expect(data.delegation).toHaveProperty('groupDistribution');
-      expect(Array.isArray(data.delegation.groupDistribution)).toBe(true);
-      expect(data.delegation.groupDistribution.length).toBeGreaterThan(0);
+      const delegation = data.delegation as Record<string, unknown>;
+      expect(delegation).toHaveProperty('totalMEPs');
+      expect(delegation).toHaveProperty('groupDistribution');
+      const groupDist = delegation.groupDistribution as Array<Record<string, unknown>>;
+      expect(Array.isArray(groupDist)).toBe(true);
+      expect(groupDist.length).toBeGreaterThan(0);
     });
 
     it('should include computed attributes', async () => {
       const result = await handleAnalyzeCountryDelegation({ country: 'SE' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.computedAttributes).toHaveProperty('delegationInfluence');
       expect(data.computedAttributes).toHaveProperty('nationalCohesionLevel');
@@ -122,19 +124,20 @@ describe('analyze_country_delegation Tool', () => {
 
     it('should include EP attribution in methodology', async () => {
       const result = await handleAnalyzeCountryDelegation({ country: 'SE' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.methodology).toContain('European Parliament');
     });
 
     it('should sort group distribution by count descending', async () => {
       const result = await handleAnalyzeCountryDelegation({ country: 'SE' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
-      const dist = data.delegation.groupDistribution;
+      const delegation = data.delegation as Record<string, unknown>;
+      const dist = delegation.groupDistribution as Array<Record<string, unknown>>;
       if (dist.length > 1) {
         for (let i = 1; i < dist.length; i++) {
-          expect(dist[i - 1].count).toBeGreaterThanOrEqual(dist[i].count);
+          expect(dist[i - 1]?.count as number).toBeGreaterThanOrEqual(dist[i]?.count as number);
         }
       }
     });
@@ -161,7 +164,7 @@ describe('analyze_country_delegation Tool', () => {
         .mockRejectedValueOnce(new Error('Not found'));
 
       const result = await handleAnalyzeCountryDelegation({ country: 'SE' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       // Should still return valid analysis
       expect(data.delegation.totalMEPs).toBe(3);
@@ -179,7 +182,7 @@ describe('analyze_country_delegation Tool', () => {
       });
 
       const result = await handleAnalyzeCountryDelegation({ country: 'MT' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.delegation.totalMEPs).toBe(0);
       expect(data.delegation.groupDistribution).toEqual([]);
@@ -196,7 +199,7 @@ describe('analyze_country_delegation Tool', () => {
       });
 
       const result = await handleAnalyzeCountryDelegation({ country: 'SE' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.votingBehavior.averageAttendance).toBe(0);
       expect(data.confidenceLevel).toBe('LOW');
@@ -215,7 +218,7 @@ describe('analyze_country_delegation Tool', () => {
       });
 
       const result = await handleAnalyzeCountryDelegation({ country: 'DE' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.computedAttributes.groupFragmentation).toBe('HIGH');
     });
@@ -230,7 +233,7 @@ describe('analyze_country_delegation Tool', () => {
       });
 
       const result = await handleAnalyzeCountryDelegation({ country: 'CY' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.computedAttributes.groupFragmentation).toBe('LOW');
     });
@@ -251,7 +254,7 @@ describe('analyze_country_delegation Tool', () => {
       });
 
       const result = await handleAnalyzeCountryDelegation({ country: 'DE' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.computedAttributes.delegationInfluence).toBe('HIGH');
     });
@@ -264,7 +267,7 @@ describe('analyze_country_delegation Tool', () => {
       });
 
       const result = await handleAnalyzeCountryDelegation({ country: 'SE' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.confidenceLevel).toBe('HIGH');
     });
@@ -280,7 +283,7 @@ describe('analyze_country_delegation Tool', () => {
       });
 
       const result = await handleAnalyzeCountryDelegation({ country: 'HU' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.computedAttributes.nationalCohesionLevel).toBe('HIGH');
     });

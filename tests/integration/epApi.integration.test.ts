@@ -10,6 +10,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
+import { EuropeanParliamentClient } from '../../src/clients/europeanParliamentClient.js';
 import { epClient, rateLimiter, shouldRunIntegrationTests, useMockClient } from './setup.js';
 import { retry, measureTime } from '../helpers/testUtils.js';
 
@@ -140,7 +141,7 @@ describeIntegration('European Parliament API Integration', () => {
     
     it('should handle network errors with retry', async () => {
       // Test with invalid base URL to simulate network error
-      const badClient = new (epClient.constructor as typeof EuropeanParliamentClient)({
+      const badClient = new EuropeanParliamentClient({
         baseURL: 'https://invalid.example.com/api',
         cacheTTL: 0 // Disable cache
       });

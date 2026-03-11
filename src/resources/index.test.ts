@@ -189,7 +189,7 @@ describe('MCP Resources', () => {
       expect(result.contents[0]?.uri).toBe('ep://meps/124936');
       expect(result.contents[0]?.mimeType).toBe('application/json');
 
-      const data = JSON.parse(result.contents[0]?.text ?? '{}');
+      const data = JSON.parse(result.contents[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data._source).toBe('European Parliament Open Data Portal');
       expect(data._accessedAt).toBeDefined();
     });
@@ -227,7 +227,7 @@ describe('MCP Resources', () => {
 
       expect(result.contents).toHaveLength(1);
 
-      const data = JSON.parse(result.contents[0]?.text ?? '{}');
+      const data = JSON.parse(result.contents[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data).toHaveProperty('politicalGroups');
       expect(Array.isArray(data.politicalGroups)).toBe(true);
     });
@@ -250,7 +250,7 @@ describe('MCP Resources', () => {
       expect(result.contents).toHaveLength(1);
       expect(result.contents[0]?.uri).toBe('ep://procedures/2024-0006');
       expect(result.contents[0]?.mimeType).toBe('application/json');
-      const data = JSON.parse(result.contents[0]?.text ?? '{}');
+      const data = JSON.parse(result.contents[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data._source).toBe('European Parliament Open Data Portal');
       expect(data.id).toBe('2024-0006');
     });
@@ -260,7 +260,7 @@ describe('MCP Resources', () => {
 
       expect(result.contents).toHaveLength(1);
       expect(result.contents[0]?.uri).toBe('ep://plenary/session-1');
-      const data = JSON.parse(result.contents[0]?.text ?? '{}');
+      const data = JSON.parse(result.contents[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data.plenaryId).toBe('session-1');
       expect(data.session).toBeDefined();
       expect(data._source).toBe('European Parliament Open Data Portal');
@@ -271,7 +271,7 @@ describe('MCP Resources', () => {
 
       expect(result.contents).toHaveLength(1);
       expect(result.contents[0]?.uri).toBe('ep://documents/A-9-2024-0001');
-      const data = JSON.parse(result.contents[0]?.text ?? '{}');
+      const data = JSON.parse(result.contents[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data._source).toBe('European Parliament Open Data Portal');
       expect(data.id).toBe('A-9-2024-0001');
     });

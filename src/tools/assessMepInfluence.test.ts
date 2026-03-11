@@ -79,7 +79,7 @@ describe('assess_mep_influence Tool', () => {
     it('should return valid JSON', async () => {
       const result = await handleAssessMepInfluence({ mepId: 'MEP-1' });
       const text = result.content[0]?.text ?? '{}';
-      expect(() => JSON.parse(text)).not.toThrow();
+      expect(() => JSON.parse(text) as unknown).not.toThrow();
     });
 
     it('should include overall score and dimensions', async () => {

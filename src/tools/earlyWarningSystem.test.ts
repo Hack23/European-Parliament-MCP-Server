@@ -92,7 +92,7 @@ describe('early_warning_system Tool', () => {
 
     it('should return valid JSON', async () => {
       const result = await handleEarlyWarningSystem({});
-      expect(() => JSON.parse(result.content[0]?.text ?? '{}')).not.toThrow();
+      expect(() => JSON.parse(result.content[0]?.text ?? '{}') as unknown).not.toThrow();
     });
 
     it('should include required fields', async () => {

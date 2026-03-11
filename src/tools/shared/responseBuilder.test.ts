@@ -46,32 +46,32 @@ describe('buildErrorResponse', () => {
 
   it('should extract message from Error instance', () => {
     const result = buildErrorResponse(new Error('something went wrong'), 'my_tool');
-    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.error).toBe('something went wrong');
     expect(parsed.toolName).toBe('my_tool');
   });
 
   it('should handle string error input', () => {
     const result = buildErrorResponse('string error message', 'my_tool');
-    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.error).toBe('string error message');
   });
 
   it('should fall back to Unknown error for unknown types', () => {
     const result = buildErrorResponse(42, 'my_tool');
-    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.error).toBe('Unknown error occurred');
   });
 
   it('should include toolName in response', () => {
     const result = buildErrorResponse(new Error('e'), 'tool_name');
-    const parsed = JSON.parse(result.content[0]?.text ?? '');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.toolName).toBe('tool_name');
   });
 
   it('should produce valid JSON content', () => {
     const result = buildErrorResponse(new Error('test'), 'tool');
-    expect(() => JSON.parse(result.content[0]?.text ?? '')).not.toThrow();
+    expect(() => JSON.parse(result.content[0]?.text ?? '') as unknown).not.toThrow();
   });
 
   it('should pretty-print with 2-space indentation', () => {
