@@ -3,10 +3,11 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['**/dist/', 'node_modules/', 'coverage/', 'docs/', 'artifacts/', 'builds/', '*.config.ts', '*.config.js', '**/*.test.ts', '**/*.spec.ts', 'src/generated/']
+    ignores: ['**/dist/', 'node_modules/', 'coverage/', 'docs/', 'artifacts/', 'builds/', '*.config.ts', '*.config.js', 'src/generated/']
   },
   {
     files: ['src/**/*.ts'],
+    ignores: ['**/*.test.ts', '**/*.spec.ts'],
     extends: [
       ...tseslint.configs.strictTypeChecked,
       ...tseslint.configs.stylisticTypeChecked
@@ -76,11 +77,63 @@ export default tseslint.config(
     }
   },
   {
-    files: ['**/*.test.ts', '**/*.spec.ts'],
+    files: ['**/*.test.ts', '**/*.spec.ts', 'tests/**/*.ts'],
+    extends: [
+      ...tseslint.configs.recommendedTypeChecked
+    ],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.es2022
+      },
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      parserOptions: {
+        project: './tsconfig.eslint.json',
+        tsconfigRootDir: import.meta.dirname
+      }
+    },
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off'
+      // Enforce strict typing in test files — no `any` allowed
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unsafe-assignment': 'error',
+      '@typescript-eslint/no-unsafe-member-access': 'error',
+      '@typescript-eslint/no-unsafe-call': 'error',
+      '@typescript-eslint/no-unsafe-return': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_'
+      }],
+
+      // Disable dot-notation to allow bracket notation (noPropertyAccessFromIndexSignature)
+      '@typescript-eslint/dot-notation': 'off',
+
+      // Relaxed rules for test code (test helpers, large describe blocks, etc.)
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-misused-promises': 'error',
+      // Allow non-null assertions in tests (common pattern for asserting test values)
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      // Allow unbound methods in tests (common vitest/jest mock pattern)
+      '@typescript-eslint/unbound-method': 'off',
+      // Allow async without await in test mocks
+      '@typescript-eslint/require-await': 'off',
+      // Allow numbers in template literals (common in test output/logging)
+      '@typescript-eslint/restrict-template-expressions': ['error', {
+        allowNumber: true,
+        allowBoolean: true
+      }],
+      'max-lines-per-function': 'off',
+      'complexity': 'off',
+      'max-params': 'off',
+      'no-console': 'off',
+
+      // Security in tests
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+      'no-script-url': 'error'
     }
   }
 );

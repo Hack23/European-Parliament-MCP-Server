@@ -20,7 +20,6 @@ import {
   transformMEP,
   transformMEPDetails,
   transformPlenarySession,
-  transformVoteResult,
   transformCorporateBody,
   transformDocument,
   transformParliamentaryQuestion,
@@ -28,7 +27,6 @@ import {
   transformProcedure,
   transformAdoptedText,
   transformEvent,
-  transformMeetingActivity,
   transformMEPDeclaration,
 } from '../../src/clients/ep/transformers.js';
 

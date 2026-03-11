@@ -66,7 +66,7 @@ describe('generate_political_landscape Tool', () => {
   describe('Response Format', () => {
     it('should return MCP-compliant response', async () => {
       const result = await handleGeneratePoliticalLandscape({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data).toHaveProperty('period');
       expect(data).toHaveProperty('parliament');
@@ -80,7 +80,7 @@ describe('generate_political_landscape Tool', () => {
 
     it('should include parliament summary', async () => {
       const result = await handleGeneratePoliticalLandscape({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.parliament).toHaveProperty('totalMEPs');
       expect(data.parliament).toHaveProperty('politicalGroups');
@@ -90,7 +90,7 @@ describe('generate_political_landscape Tool', () => {
 
     it('should include sorted group list', async () => {
       const result = await handleGeneratePoliticalLandscape({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(Array.isArray(data.groups)).toBe(true);
       expect(data.groups.length).toBeGreaterThan(0);
@@ -104,7 +104,7 @@ describe('generate_political_landscape Tool', () => {
 
     it('should include power dynamics', async () => {
       const result = await handleGeneratePoliticalLandscape({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.powerDynamics).toHaveProperty('largestGroup');
       expect(data.powerDynamics).toHaveProperty('majorityThreshold');
@@ -115,7 +115,7 @@ describe('generate_political_landscape Tool', () => {
 
     it('should include computed attributes', async () => {
       const result = await handleGeneratePoliticalLandscape({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.computedAttributes).toHaveProperty('fragmentationIndex');
       expect(data.computedAttributes).toHaveProperty('majorityType');
@@ -125,7 +125,7 @@ describe('generate_political_landscape Tool', () => {
 
     it('should classify blocs correctly', async () => {
       const result = await handleGeneratePoliticalLandscape({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       // S&D and Greens/EFA are progressive, ECR is conservative
       expect(data.powerDynamics.progressiveBloc).toBeGreaterThan(0);
@@ -134,14 +134,14 @@ describe('generate_political_landscape Tool', () => {
 
     it('should include EP attribution in methodology', async () => {
       const result = await handleGeneratePoliticalLandscape({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       expect(data.methodology).toContain('European Parliament');
     });
 
     it('should include group seat share percentages', async () => {
       const result = await handleGeneratePoliticalLandscape({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       for (const group of data.groups) {
         expect(group).toHaveProperty('seatShare');
@@ -171,7 +171,7 @@ describe('generate_political_landscape Tool', () => {
       });
 
       const result = await handleGeneratePoliticalLandscape({});
-      const data = JSON.parse(result.content[0]?.text ?? '{}');
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
       expect(data.parliament.totalMEPs).toBe(0);
     });
   });
