@@ -15,15 +15,18 @@ import { RateLimiter } from '../../src/utils/rateLimiter.js';
 import { createMockEPClient } from '../helpers/mockEPClient.js';
 
 /**
- * The EP client used by integration tests.
- * 
- * When EP_USE_MOCK=true, this is a mock client whose methods structurally
- * match the real client's signatures. The type assertion below is safe
- * because `createMockEPClient()` implements the same method names and
- * return shapes as `EuropeanParliamentClient`. If a mock method drifts,
- * the integration tests will fail at runtime, catching the mismatch.
+ * Minimal client surface used by integration tests.
+ *
+ * Picking only the methods actually called by test code keeps the
+ * mock surface narrow and gives callers fully-typed return values
+ * (avoiding `any` leaking from `vi.fn()`).
  */
-let epClient: EuropeanParliamentClient;
+type IntegrationEPClient = Pick<
+  EuropeanParliamentClient,
+  'getMEPs' | 'getMEPDetails' | 'getCurrentMEPs' | 'getVotingRecords' | 'clearCache'
+>;
+
+let epClient: IntegrationEPClient;
 let rateLimiter: RateLimiter;
 
 /**
@@ -38,9 +41,8 @@ const isMockClient = process.env['EP_USE_MOCK'] === 'true';
 beforeAll(async () => {
   if (isMockClient) {
     // Use mock client with synthetic data — no real API calls.
-    // The mock structurally matches EuropeanParliamentClient; the cast is
-    // intentional so downstream test code gets full type-checking.
-    epClient = createMockEPClient() as unknown as EuropeanParliamentClient;
+    // Single-step cast: the mock structurally matches the picked methods.
+    epClient = createMockEPClient() as IntegrationEPClient;
     rateLimiter = new RateLimiter({ tokensPerInterval: 1000, interval: 'minute' });
     console.log('[Integration Tests] Mock EP Client initialized (EP_USE_MOCK=true)');
   } else {
