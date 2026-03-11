@@ -44,7 +44,7 @@ beforeAll(async () => {
     rateLimiter = new RateLimiter({ tokensPerInterval: 1000, interval: 'minute' });
     console.log('[Integration Tests] Mock EP Client initialized (EP_USE_MOCK=true)');
   } else {
-    // Use test environment variables or defaults (must include trailing slash)
+    // Use test environment variables or defaults
     const baseURL = process.env['EP_API_URL'] || 'https://data.europarl.europa.eu/api/v2/';
 
     // Create rate limiter for testing (more permissive for faster tests)
