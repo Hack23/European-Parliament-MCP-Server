@@ -4,6 +4,7 @@
  * Covers: sanitizeUrl, showHelp, showVersion, showHealth, parseCLIArgs
  */
 
+import type { MockInstance } from 'vitest';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   sanitizeUrl,
@@ -91,7 +92,7 @@ describe('sanitizeUrl', () => {
 // ── showHelp ───────────────────────────────────────────────────────
 
 describe('showHelp', () => {
-  let consoleSpy: ReturnType<typeof vi.spyOn>;
+  let consoleSpy: MockInstance;
 
   beforeEach(() => {
     consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -181,7 +182,7 @@ describe('showHelp', () => {
 // ── showVersion ────────────────────────────────────────────────────
 
 describe('showVersion', () => {
-  let consoleSpy: ReturnType<typeof vi.spyOn>;
+  let consoleSpy: MockInstance;
 
   beforeEach(() => {
     consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -218,7 +219,7 @@ describe('showVersion', () => {
 // ── showHealth ─────────────────────────────────────────────────────
 
 describe('showHealth', () => {
-  let consoleSpy: ReturnType<typeof vi.spyOn>;
+  let consoleSpy: MockInstance;
 
   beforeEach(() => {
     consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -236,7 +237,7 @@ describe('showHealth', () => {
   it('output is valid JSON', () => {
     showHealth();
     const output = String(consoleSpy.mock.calls[0]?.[0]);
-    expect(() => JSON.parse(output)).not.toThrow();
+    expect(() => JSON.parse(output) as unknown).not.toThrow();
   });
 
   it('health JSON contains name field', () => {
