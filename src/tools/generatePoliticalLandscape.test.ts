@@ -96,9 +96,10 @@ describe('generate_political_landscape Tool', () => {
       expect(data.groups.length).toBeGreaterThan(0);
 
       // Sorted by member count descending
-      for (let i = 1; i < data.groups.length; i++) {
-        expect(data.groups[i - 1].memberCount)
-          .toBeGreaterThanOrEqual(data.groups[i].memberCount);
+      const groups = data.groups as Array<Record<string, unknown>>;
+      for (let i = 1; i < groups.length; i++) {
+        expect(groups[i - 1]?.memberCount as number)
+          .toBeGreaterThanOrEqual(groups[i]?.memberCount as number);
       }
     });
 
@@ -128,8 +129,9 @@ describe('generate_political_landscape Tool', () => {
       const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
       // S&D and Greens/EFA are progressive, ECR is conservative
-      expect(data.powerDynamics.progressiveBloc).toBeGreaterThan(0);
-      expect(data.powerDynamics.conservativeBloc).toBeGreaterThan(0);
+      const powerDynamics = data.powerDynamics as Record<string, unknown>;
+      expect(powerDynamics.progressiveBloc as number).toBeGreaterThan(0);
+      expect(powerDynamics.conservativeBloc as number).toBeGreaterThan(0);
     });
 
     it('should include EP attribution in methodology', async () => {
@@ -143,10 +145,10 @@ describe('generate_political_landscape Tool', () => {
       const result = await handleGeneratePoliticalLandscape({});
       const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
 
-      for (const group of data.groups) {
+      for (const group of data.groups as Array<Record<string, unknown>>) {
         expect(group).toHaveProperty('seatShare');
-        expect(group.seatShare).toBeGreaterThan(0);
-        expect(group.seatShare).toBeLessThanOrEqual(100);
+        expect(group.seatShare as number).toBeGreaterThan(0);
+        expect(group.seatShare as number).toBeLessThanOrEqual(100);
       }
     });
   });
