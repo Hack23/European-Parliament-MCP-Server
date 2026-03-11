@@ -366,6 +366,6 @@ describe('Full Workflow E2E Tests', () => {
       validateMCPResponse(recoveryResponse);
 
       expect(true).toBe(true);
-    }, 30000);
+    }, E2E_WORKFLOW_TIMEOUT_MS);
   });
 });
