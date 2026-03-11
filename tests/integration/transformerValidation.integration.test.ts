@@ -76,13 +76,14 @@ async function fetchEP(path: string): Promise<JSONLDResponse | undefined> {
     }
     return (await res.json()) as JSONLDResponse;
   } catch (err: unknown) {
-    // AbortError (timeout) and network errors → skip
-    if (err instanceof DOMException && err.name === 'AbortError') {
+    // AbortError (timeout) → skip.
+    // Node.js may throw DOMException or a plain Error with name 'AbortError'.
+    if (err instanceof Error && err.name === 'AbortError') {
       console.warn(`[EP API] Request timed out for ${path}`);
       return undefined;
     }
+    // Node.js native fetch throws TypeError on network failure
     if (err instanceof TypeError) {
-      // fetch() throws TypeError on network failure
       console.warn(`[EP API] Network error for ${path}: ${err.message}`);
       return undefined;
     }
