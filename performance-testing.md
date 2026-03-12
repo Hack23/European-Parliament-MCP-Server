@@ -47,7 +47,7 @@ Performance validation ensures:
 - ✅ Optimal memory usage under sustained load (<256 MB)
 - ✅ Rate-limited EP API compliance:
   - Upstream EP API guidance: **100 requests / 15 minutes** (subject to EP documentation updates)
-  - MCP server default limiter: **100 requests per minute per IP** (configurable via `EP_RATE_LIMIT`)
+  - MCP server default limiter: **100 requests per minute per MCP server process / client instance** (no IP context; configurable via `EP_RATE_LIMIT`)
 - ✅ Throughput targets for concurrent MCP client sessions
 - ✅ Continuous performance monitoring and regression prevention
 - ✅ **ISO/IEC 27001:2022 (A.8.6)** compliance for capacity management
@@ -71,7 +71,7 @@ Performance validation ensures:
 | Metric | Target | Acceptable | Critical |
 |--------|--------|------------|----------|
 | **Cached throughput** | >10,000 req/s | >5,000 req/s | <1,000 req/s |
-| **API throughput** | >5 req/s | >2 req/s | <1 req/s |
+| **End-to-end MCP tool throughput (incl. cache; not upstream EP calls)** | >5 req/s | >2 req/s | <1 req/s |
 | **Concurrent MCP sessions** | 10+ | 5+ | <3 |
 
 ### 💾 Resource Usage Targets
