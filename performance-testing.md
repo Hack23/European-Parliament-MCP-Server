@@ -125,7 +125,7 @@ The project includes dedicated performance tests in `tests/performance/`:
 
 | Test File | Purpose | Key Metrics |
 |-----------|---------|-------------|
-| `apiLatency.test.ts` | EP API response time validation | P50, P95, P99 latency |
+| `apiLatency.test.ts` | Tool handler latency with mocked EP client | P50, P95, P99 latency |
 | `benchmarks.test.ts` | Throughput and processing benchmarks | Operations/second, memory |
 | `concurrency.test.ts` | Concurrent session handling | Parallel tool execution, resource contention |
 
@@ -151,7 +151,7 @@ npm run test:all
 
 ### 1. API Latency Testing
 
-Tests validate that EP API operations meet response time targets. The test suite uses `measureTime` utilities (see `tests/helpers/testUtils.ts`):
+Tests validate that MCP tool handlers processing EP data meet response time targets under mocked EP client conditions. The test suite uses `measureTime` utilities (see `tests/helpers/testUtils.ts`) and does not measure real network or upstream EP API latency:
 
 ```typescript
 // Illustrative example based on tests/performance/apiLatency.test.ts
@@ -164,11 +164,16 @@ const [result, duration] = await measureTime(() =>
 expect(duration).toBeLessThan(200);  // P95 < 200ms target
 ```
 
-**Key scenarios tested:**
-- Cold start: First request with empty cache
-- Warm cache: Repeated requests with LRU cache populated
-- Cache eviction: Behavior under cache pressure (500 entries max)
-- Rate limit: Compliance with 100 requests per minute default server limit
+**Key scenarios tested (current mocked performance tests):**
+- Tool handler latency for typical requests (e.g., `handleGetMEPs` with small limits)
+- Regression detection on response-time budgets using `measureTime`
+- Basic concurrency/throughput behavior at the handler level under mocked EP API responses
+
+**Planned additional scenarios (non-mocked integration/performance tests):**
+- Cold start: First request with empty cache and unprimed EP API client
+- Warm cache: Repeated requests with the real LRU cache populated
+- Cache eviction: Behavior under cache pressure (e.g., 500+ distinct keys)
+- Rate limiting: Compliance with the default server token-bucket limits (e.g., 100 requests/minute)
 
 ### 2. Throughput Benchmarks
 
