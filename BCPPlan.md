@@ -11,13 +11,13 @@
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-CEO-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--20-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.1-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--03--12-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Semi_Annual-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** CEO | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-20 (UTC)  
-**🔄 Review Cycle:** Semi-Annual | **⏰ Next Review:** 2026-08-20 | **✅ Status:** Production Ready
+**📋 Document Owner:** CEO | **📄 Version:** 1.1 | **📅 Last Updated:** 2026-03-12 (UTC)  
+**🔄 Review Cycle:** Semi-Annual | **⏰ Next Review:** 2026-09-12 | **✅ Status:** Production Ready
 
 ---
 
@@ -226,7 +226,7 @@ graph LR
 | **GitHub** (Source Code) | Source Control | 🟠 High | Distributed Git clones; contributors have full repository copies |
 | **GitHub Actions** (CI/CD) | Automation | 🟡 Medium | Manual build and publish fallback via local npm scripts |
 | **GitHub Pages** (Documentation) | Documentation | 🟢 Low | README in npm package; docs in source repository |
-| **Node.js Runtime** (≥ 24.x) | Runtime | 🟠 High | Pinned versions; current LTS line supported (24.x+) |
+| **Node.js Runtime** (≥ 24.x) | Runtime | 🟠 High | Pinned versions; current LTS line supported (24.x+). Starting with Node.js 27, new annual release model with every release becoming LTS (36-month support). See [End-of-Life-Strategy.md](End-of-Life-Strategy.md) |
 | **TypeScript Compiler** | Build Tool | 🟡 Medium | Version-locked in `package-lock.json`; offline build possible |
 | **Zod** (Validation) | Library | 🟠 High | Locked version; no external runtime dependency |
 | **MCP SDK** (`@modelcontextprotocol/sdk`) | Protocol | 🟠 High | Locked version; protocol is standardized |
@@ -459,6 +459,9 @@ This BCP aligns with the following [Hack23 AB ISMS policies](https://github.com/
 | **Threat Model** | STRIDE threat analysis and risk assessment | [THREAT_MODEL.md](./THREAT_MODEL.md) |
 | **Architecture** | C4 model system architecture documentation | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | **Security Policy** | Vulnerability disclosure and security practices | [SECURITY.md](./SECURITY.md) |
+| **Performance Testing** | Benchmarks and performance analysis | [performance-testing.md](./performance-testing.md) |
+| **End-of-Life Strategy** | Technology lifecycle and Node.js transition | [End-of-Life-Strategy.md](./End-of-Life-Strategy.md) |
+| **Financial Security Plan** | Cost analysis and security investment | [FinancialSecurityPlan.md](./FinancialSecurityPlan.md) |
 | **Deployment Guide** | Production deployment and operations | [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) |
 | **Troubleshooting** | Common issues and resolution steps | [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) |
 | **Contributing** | Development workflow and contribution guidelines | [CONTRIBUTING.md](./CONTRIBUTING.md) |
@@ -473,6 +476,7 @@ This BCP aligns with the following [Hack23 AB ISMS policies](https://github.com/
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2026-02-20 | CEO | Initial BCP document — business impact analysis, recovery objectives, disruption scenarios, recovery procedures, testing schedule, and ISMS policy alignment |
+| 1.1 | 2026-03-12 | CEO | Updated Node.js runtime dependency note to reference new annual release model (Node.js 27+); cross-referenced End-of-Life-Strategy.md |
 
 ---
 

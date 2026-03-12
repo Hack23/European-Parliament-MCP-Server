@@ -321,8 +321,14 @@ describe('RateLimiter', () => {
     });
 
     it('should allow initialTokens of 0', () => {
-      const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
-      expect(limiter.getAvailableTokens()).toBe(0);
+      vi.useFakeTimers();
+      try {
+        const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
+        // With fake timers, no real time passes so refill() adds 0 tokens
+        expect(limiter.getAvailableTokens()).toBe(0);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should throw when initialTokens exceeds tokensPerInterval', () => {

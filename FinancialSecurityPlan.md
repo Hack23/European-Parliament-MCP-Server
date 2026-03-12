@@ -236,6 +236,7 @@ graph LR
 | 🔄 Business Continuity Plan | Recovery objectives | [BCPPlan.md](BCPPlan.md) |
 | 🛡️ CRA Assessment | Regulatory compliance costs | [CRA-ASSESSMENT.md](CRA-ASSESSMENT.md) |
 | 📦 End-of-Life Strategy | Lifecycle management costs | [End-of-Life-Strategy.md](End-of-Life-Strategy.md) |
+| ⚡ Performance Testing | Benchmarks and analysis | [performance-testing.md](performance-testing.md) |
 | 🛡️ Security Architecture | Security control implementation | [SECURITY_ARCHITECTURE.md](SECURITY_ARCHITECTURE.md) |
 
 ---
