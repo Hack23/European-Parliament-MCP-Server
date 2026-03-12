@@ -25,15 +25,15 @@
 
 ## 📑 Table of Contents
 
-- [Purpose & Scope](#purpose--scope)
-- [Performance Standards & Targets](#performance-standards--targets)
-- [Performance Testing Framework](#performance-testing-framework)
-- [Testing Procedures](#testing-procedures)
-- [Performance Monitoring Infrastructure](#performance-monitoring-infrastructure)
-- [Regression Prevention](#regression-prevention)
-- [Node.js Runtime Performance](#nodejs-runtime-performance)
-- [Compliance & Standards Alignment](#compliance--standards-alignment)
-- [Related Documentation](#related-documentation)
+- [Purpose & Scope](#-purpose--scope)
+- [Performance Standards & Targets](#-performance-standards--targets)
+- [Performance Testing Framework](#-performance-testing-framework)
+- [Testing Procedures](#-testing-procedures)
+- [Performance Monitoring Infrastructure](#-performance-monitoring-infrastructure)
+- [Regression Prevention](#-regression-prevention)
+- [Node.js Runtime Performance](#-nodejs-runtime-performance)
+- [Compliance & Standards Alignment](#-compliance--standards-alignment)
+- [Related Documentation](#-related-documentation)
 
 ---
 
@@ -200,7 +200,7 @@ npx vitest run tests/performance/concurrency.test.ts
 
 **Concurrency scenarios:**
 - Multiple simultaneous MCP tool calls
-- Parallel EP API requests with shared rate limiter
+- Parallel MCP tool operations using mocked EuropeanParliamentClient (no external EP calls or rate limiting)
 - Cache contention under concurrent access
 - Memory stability during sustained parallel operations
 
