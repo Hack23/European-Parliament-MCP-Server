@@ -329,7 +329,7 @@ Migration (On LTS Promotion, October):
   Step 7: Run: npm test (full test suite — 2500+ unit tests)
   Step 8: Run: npm run lint (code quality check)
   Step 9: Run: npm run build (TypeScript compilation)
-  Step 10: Update documentation (README, DEVELOPER_GUIDE, End-of-Life-Strategy)
+  Step 10: Update documentation (README, DEVELOPER_GUIDE, End-of-Life-Strategy.md)
   Step 11: Publish new npm version
 
 Post-Migration Validation:
