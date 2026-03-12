@@ -459,6 +459,9 @@ This BCP aligns with the following [Hack23 AB ISMS policies](https://github.com/
 | **Threat Model** | STRIDE threat analysis and risk assessment | [THREAT_MODEL.md](./THREAT_MODEL.md) |
 | **Architecture** | C4 model system architecture documentation | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | **Security Policy** | Vulnerability disclosure and security practices | [SECURITY.md](./SECURITY.md) |
+| **Performance Testing** | Benchmarks and performance analysis | [performance-testing.md](./performance-testing.md) |
+| **End-of-Life Strategy** | Technology lifecycle and Node.js transition | [End-of-Life-Strategy.md](./End-of-Life-Strategy.md) |
+| **Financial Security Plan** | Cost analysis and security investment | [FinancialSecurityPlan.md](./FinancialSecurityPlan.md) |
 | **Deployment Guide** | Production deployment and operations | [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) |
 | **Troubleshooting** | Common issues and resolution steps | [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) |
 | **Contributing** | Development workflow and contribution guidelines | [CONTRIBUTING.md](./CONTRIBUTING.md) |

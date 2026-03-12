@@ -403,6 +403,7 @@ Step 6: Publish new version
 | 🎯 Threat Model | Risk assessment | [THREAT_MODEL.md](THREAT_MODEL.md) |
 | 🔄 Business Continuity Plan | Recovery procedures | [BCPPlan.md](BCPPlan.md) |
 | 💰 Financial Security Plan | Cost planning | [FinancialSecurityPlan.md](FinancialSecurityPlan.md) |
+| ⚡ Performance Testing | Benchmarks & analysis | [performance-testing.md](performance-testing.md) |
 | 🏛️ Architecture | System design | [ARCHITECTURE.md](ARCHITECTURE.md) |
 
 ---
