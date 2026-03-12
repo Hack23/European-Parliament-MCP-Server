@@ -222,7 +222,7 @@ Phase 3 — LTS Migration (Oct, on LTS promotion)
   8. Update engines field in package.json
   9. Update GitHub Actions workflow matrix
   10. Run: npm install (rebuild native modules if any)
-  11. Run: npm test && npm run lint (full validation)
+  11. Run: npm run test:all && npm run lint (full validation)
   12. Update documentation (README, DEVELOPER_GUIDE, this EOL Strategy)
   13. Publish new npm version
 ```

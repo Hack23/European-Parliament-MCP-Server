@@ -45,7 +45,9 @@ Performance validation ensures:
 - ✅ Sub-200ms API response times for cached operations
 - ✅ Efficient MCP tool execution across 61 registered tools
 - ✅ Optimal memory usage under sustained load (<256 MB)
-- ✅ Rate-limited EP API compliance (100 requests/15 min)
+- ✅ Rate-limited EP API compliance:
+  - Upstream EP API guidance: **100 requests / 15 minutes** (subject to EP documentation updates)
+  - MCP server default limiter: **100 requests per minute per IP** (configurable via `EP_RATE_LIMIT`)
 - ✅ Throughput targets for concurrent MCP client sessions
 - ✅ Continuous performance monitoring and regression prevention
 - ✅ **ISO/IEC 27001:2022 (A.8.6)** compliance for capacity management
@@ -139,7 +141,7 @@ npx vitest run tests/performance/apiLatency.test.ts
 # Run with verbose output
 npx vitest run tests/performance --reporter=verbose
 
-# Run full test suite (2500+ unit tests + performance)
+# Run full test suite (2500+ unit, integration, e2e + performance tests)
 npm run test:all
 ```
 
@@ -149,26 +151,24 @@ npm run test:all
 
 ### 1. API Latency Testing
 
-Tests validate that EP API operations meet response time targets:
+Tests validate that EP API operations meet response time targets. The test suite uses `measureTime` utilities (see `tests/helpers/testUtils.ts`):
 
 ```typescript
-import { PerformanceMonitor } from '../../src/utils/performance.js';
+// Illustrative example based on tests/performance/apiLatency.test.ts
+import { measureTime } from '../helpers/testUtils.js';
 
-const monitor = new PerformanceMonitor();
+const [result, duration] = await measureTime(() =>
+  handleGetMEPs({ limit: 10 })
+);
 
-// Record and validate operation latency
-monitor.recordDuration('ep_api_request', measuredLatency);
-const stats = monitor.getStats('ep_api_request');
-
-expect(stats?.p95).toBeLessThan(200);  // P95 < 200ms
-expect(stats?.p99).toBeLessThan(500);  // P99 < 500ms
+expect(duration).toBeLessThan(200);  // P95 < 200ms target
 ```
 
 **Key scenarios tested:**
 - Cold start: First request with empty cache
 - Warm cache: Repeated requests with LRU cache populated
 - Cache eviction: Behavior under cache pressure (500 entries max)
-- Rate limit: Compliance with 100 requests/15 minutes EP API limit
+- Rate limit: Compliance with 100 requests per minute default server limit
 
 ### 2. Throughput Benchmarks
 
@@ -224,7 +224,7 @@ NODE_OPTIONS="--max-old-space-size=512" npm run test:performance
 The server includes a built-in `PerformanceMonitor` class (`src/utils/performance.ts`) that provides:
 
 ```typescript
-import { performanceMonitor, withPerformanceTracking } from './utils/performance.js';
+import { performanceMonitor, withPerformanceTracking } from '../../utils/performance.js';
 
 // Track operation with automatic timing
 const result = await withPerformanceTracking(
@@ -245,7 +245,6 @@ const stats = performanceMonitor.getStats('fetch_meps');
 | `ep_api_request` | BaseEPClient | Successful API requests to EP data portal |
 | `ep_api_request_failed` | BaseEPClient | Failed API requests |
 | `ep_api_cache_hit` | BaseEPClient | LRU cache hits |
-| `tool_execution` | CallToolHandler | MCP tool execution time |
 
 ### Performance Thresholds
 
@@ -292,7 +291,7 @@ Before every npm release:
 - [ ] Cache hit rate ≥ 80% for repeated queries
 - [ ] No memory leaks detected over 1000+ operations
 - [ ] Concurrent session handling verified
-- [ ] Rate limiter compliance validated (100 req/15 min)
+- [ ] Rate limiter compliance validated (100 req/min)
 - [ ] Full test suite passes (`npm run test:all` — 2500+ tests)
 
 ---
