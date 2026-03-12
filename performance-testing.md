@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Hack23/European-Parliament-MCP-Server/actions"><img src="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/main.yml/badge.svg" alt="CI/CD"/></a>
+  <a href="https://github.com/Hack23/European-Parliament-MCP-Server/actions"><img src="https://github.com/Hack23/European-Parliament-MCP-Server/actions/workflows/test-and-report.yml/badge.svg" alt="CI/CD"/></a>
   <a href="https://scorecard.dev/viewer/?uri=github.com/Hack23/European-Parliament-MCP-Server"><img src="https://api.securityscorecards.dev/projects/github.com/Hack23/European-Parliament-MCP-Server/badge" alt="OpenSSF Scorecard"/></a>
   <a href="https://sonarcloud.io/summary/new_code?id=Hack23_European-Parliament-MCP-Server"><img src="https://sonarcloud.io/api/project_badges/measure?project=Hack23_European-Parliament-MCP-Server&metric=alert_status" alt="Quality Gate Status"/></a>
   <a href="https://www.npmjs.com/package/european-parliament-mcp-server"><img src="https://img.shields.io/npm/v/european-parliament-mcp-server" alt="npm version"/></a>
@@ -251,7 +251,7 @@ const stats = performanceMonitor.getStats('fetch_meps');
 
 ```typescript
 // Default thresholds from src/utils/performance.ts
-const DEFAULT_THRESHOLDS: PerformanceThresholds = {
+const DEFAULT_PERFORMANCE_THRESHOLDS: PerformanceThresholds = {
   p95WarningMs: 200,   // Warn when P95 > 200ms
   p99WarningMs: 500,   // Warn when P99 > 500ms
   avgWarningMs: 150,   // Warn when average > 150ms

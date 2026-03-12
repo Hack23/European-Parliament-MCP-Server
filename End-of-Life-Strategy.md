@@ -30,7 +30,7 @@
 - [Node.js Release Schedule Evolution](#-nodejs-release-schedule-evolution)
 - [Node.js Version Strategy](#-nodejs-version-strategy)
 - [Node.js Transition Roadmap](#-nodejs-transition-roadmap)
-- [Dependency EOL Monitoring](#️-dependency-eol-monitoring)
+- [Dependency EOL Monitoring](#-dependency-eol-monitoring)
 - [npm Package Lifecycle](#-npm-package-lifecycle)
 - [EOL Trigger Criteria](#-eol-trigger-criteria)
 - [Migration Procedures](#-migration-procedures)
