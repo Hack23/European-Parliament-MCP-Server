@@ -25,15 +25,15 @@
 
 ## 📑 Table of Contents
 
-- [Purpose & Scope](#-purpose--scope)
-- [Performance Standards & Targets](#-performance-standards--targets)
-- [Performance Testing Framework](#-performance-testing-framework)
-- [Testing Procedures](#-testing-procedures)
-- [Performance Monitoring Infrastructure](#-performance-monitoring-infrastructure)
-- [Regression Prevention](#-regression-prevention)
-- [Node.js Runtime Performance](#-nodejs-runtime-performance)
-- [Compliance & Standards Alignment](#-compliance--standards-alignment)
-- [Related Documentation](#-related-documentation)
+- [Purpose & Scope](#purpose--scope)
+- [Performance Standards & Targets](#performance-standards--targets)
+- [Performance Testing Framework](#performance-testing-framework)
+- [Testing Procedures](#testing-procedures)
+- [Performance Monitoring Infrastructure](#performance-monitoring-infrastructure)
+- [Regression Prevention](#regression-prevention)
+- [Node.js Runtime Performance](#nodejs-runtime-performance)
+- [Compliance & Standards Alignment](#compliance--standards-alignment)
+- [Related Documentation](#related-documentation)
 
 ---
 

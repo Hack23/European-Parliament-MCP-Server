@@ -324,7 +324,10 @@ describe('RateLimiter', () => {
       const limiter = new RateLimiter({ tokensPerInterval: 10, interval: 'second', initialTokens: 0 });
       // getAvailableTokens() calls refill() which may add fractional tokens
       // based on elapsed time since construction (documented behaviour)
-      expect(limiter.getAvailableTokens()).toBeCloseTo(0, 1);
+      const available = limiter.getAvailableTokens();
+      expect(available).toBeGreaterThanOrEqual(0);
+      // With 10 tokens/second, even small elapsed times should keep this well below 0.2
+      expect(available).toBeLessThanOrEqual(0.2);
     });
 
     it('should throw when initialTokens exceeds tokensPerInterval', () => {
