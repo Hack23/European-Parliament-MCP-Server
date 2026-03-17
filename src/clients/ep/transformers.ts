@@ -222,13 +222,41 @@ export function transformVoteResult(apiData: Record<string, unknown>, sessionId:
 
 // ─── Committee transformers ─────────────────────────────────────
 
+/** Resolve a full committee display name, preferring `prefLabel` over `label`. */
+function resolveCommitteeName(apiData: Record<string, unknown>): string {
+  return extractMultilingualText(
+    apiData['prefLabel'] ?? apiData['skos:prefLabel'] ?? apiData['altLabel'] ?? apiData['label']
+  );
+}
+
+/**
+ * Resolve the committee abbreviation code.
+ * In the real EP API, `label` is the short code (e.g. "ENVI"); `notation`
+ * may also carry it.  Falls back to the raw `id` field.
+ */
+function resolveCommitteeAbbreviation(apiData: Record<string, unknown>, id: string): string {
+  const fromNotation = extractField(apiData, ['notation', 'skos:notation']);
+  if (fromNotation !== '') return fromNotation;
+  const label = apiData['label'];
+  if (typeof label === 'string' && label !== '') return label;
+  return id;
+}
+
 /**
  * Transforms EP API corporate-body data to internal {@link Committee} format.
+ *
+ * The real EP API returns `label` as a short abbreviation (e.g. "ENVI") while
+ * `prefLabel` contains the full multilingual committee name.  We therefore
+ * prefer `prefLabel` → `altLabel` → `label` for the display name, and derive
+ * the abbreviation from `label` (always a short code in real responses) with
+ * `notation` as a higher-priority override when present.
+ *
+ * Cyclomatic complexity: 7
  */
 export function transformCorporateBody(apiData: Record<string, unknown>): Committee {
   const id = extractField(apiData, ['body_id', 'id', 'identifier']);
-  const name = extractMultilingualText(apiData['label'] ?? apiData['prefLabel'] ?? apiData['skos:prefLabel']);
-  const abbreviation = extractField(apiData, ['notation', 'skos:notation']) || id;
+  const name = resolveCommitteeName(apiData);
+  const abbreviation = resolveCommitteeAbbreviation(apiData, id);
   const effectiveId = id !== '' ? id : abbreviation;
 
   const members = extractMemberIds(apiData['hasMembership'] ?? apiData['org:hasMember']);

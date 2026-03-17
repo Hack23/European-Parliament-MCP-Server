@@ -395,6 +395,58 @@ describe('transformCorporateBody', () => {
     const committee = transformCorporateBody({ body_id: 'TEST' });
     expect(committee.responsibilities).toEqual([]);
   });
+
+  it('extracts full name from prefLabel and abbreviation from label (real EP API /corporate-bodies/ENVI format)', () => {
+    // Real EP API data shape from: GET /corporate-bodies/ENVI
+    const apiData = {
+      id: 'org/ENVI',
+      type: 'Organization',
+      identifier: 'ENVI',
+      source: 'EU_PARLIAMENT',
+      label: 'ENVI',
+      altLabel: { en: 'Environment, Climate and Food Safety', fr: 'Environnement, climat et sécurité alimentaire' },
+      prefLabel: { en: 'Committee on the Environment, Climate and Food Safety', fr: "Commission de l'environnement, du climat et de la sécurité alimentaire" },
+      hasCurrentVersion: 'org/7913',
+      classification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+      inverse_isVersionOf: ['org/102', 'org/1079', 'org/12'],
+    };
+    const committee = transformCorporateBody(apiData);
+    // Name must come from prefLabel (full multilingual name), NOT label (abbreviation)
+    expect(committee.name).toBe('Committee on the Environment, Climate and Food Safety');
+    // Abbreviation must be the short code from label, not the org/ prefixed id
+    expect(committee.abbreviation).toBe('ENVI');
+    expect(committee.id).toBe('org/ENVI');
+    expect(committee.responsibilities).toContain('COMMITTEE_PARLIAMENTARY_STANDING');
+  });
+
+  it('extracts abbreviation from label for list endpoint items (real EP API /corporate-bodies list format)', () => {
+    // Real EP API data shape from: GET /corporate-bodies?body-classification=COMMITTEE_PARLIAMENTARY_STANDING
+    const apiData = {
+      id: 'org/102',
+      type: 'Organization',
+      identifier: '102',
+      label: 'ENVI',
+      classification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+    };
+    const committee = transformCorporateBody(apiData);
+    // Abbreviation comes from string label when notation is absent
+    expect(committee.abbreviation).toBe('ENVI');
+    // Name falls back to label when prefLabel/altLabel are absent
+    expect(committee.name).toBe('ENVI');
+    expect(committee.id).toBe('org/102');
+  });
+
+  it('prefers altLabel over label for committee name when prefLabel is absent', () => {
+    const apiData = {
+      id: 'org/ITRE',
+      label: 'ITRE',
+      altLabel: { en: 'Industry, Research and Energy' },
+      classification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+    };
+    const committee = transformCorporateBody(apiData);
+    expect(committee.name).toBe('Industry, Research and Energy');
+    expect(committee.abbreviation).toBe('ITRE');
+  });
 });
 
 // ─── transformDocument ──────────────────────────────────────────
@@ -988,5 +1040,52 @@ describe('transformers with real EP API JSON-LD format', () => {
     expect(session.attendanceCount).toBe(604);
     expect(session.agendaItems).toHaveLength(2);
     expect(session.documents).toHaveLength(1);
+  });
+
+  it('transformCorporateBody: extracts full name and abbreviation from real EP API /corporate-bodies/ENVI response', () => {
+    // Exact data shape returned by: GET /corporate-bodies/ENVI?format=application/ld+json
+    const apiData = {
+      id: 'org/ENVI',
+      type: 'Organization',
+      identifier: 'ENVI',
+      source: 'EU_PARLIAMENT',
+      label: 'ENVI',
+      altLabel: {
+        en: 'Environment, Climate and Food Safety',
+        sv: 'Miljö, klimat och livsmedelssäkerhet',
+        fr: 'Environnement, climat et sécurité alimentaire',
+      },
+      prefLabel: {
+        en: 'Committee on the Environment, Climate and Food Safety',
+        sv: 'Utskottet för miljö, klimat och livsmedelssäkerhet',
+        fr: "Commission de l'environnement, du climat et de la sécurité alimentaire",
+      },
+      hasCurrentVersion: 'org/7913',
+      classification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+      inverse_isVersionOf: ['org/102', 'org/1079', 'org/12'],
+    };
+    const committee = transformCorporateBody(apiData);
+    // Verifies the fix: name must NOT be the abbreviation "ENVI"
+    expect(committee.name).toBe('Committee on the Environment, Climate and Food Safety');
+    expect(committee.name).not.toBe('ENVI');
+    expect(committee.abbreviation).toBe('ENVI');
+    expect(committee.id).toBe('org/ENVI');
+    expect(committee.responsibilities).toContain('COMMITTEE_PARLIAMENTARY_STANDING');
+  });
+
+  it('transformCorporateBody: handles minimal list-endpoint data without prefLabel (real EP API)', () => {
+    // Exact data shape from: GET /corporate-bodies?body-classification=COMMITTEE_PARLIAMENTARY_STANDING
+    const apiData = {
+      id: 'org/1',
+      type: 'Organization',
+      identifier: '1',
+      label: 'ECON',
+      classification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+    };
+    const committee = transformCorporateBody(apiData);
+    expect(committee.abbreviation).toBe('ECON');
+    expect(committee.id).toBe('org/1');
+    // Without prefLabel, name falls back to label
+    expect(committee.name).toBe('ECON');
   });
 });
