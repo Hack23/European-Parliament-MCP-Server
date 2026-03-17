@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.11**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.12**](../../../../README.md)
 
 ***
 
@@ -8,9 +8,17 @@
 
 > **transformCorporateBody**(`apiData`): [`Committee`](../../../../types/ep/committee/interfaces/Committee.md)
 
-Defined in: [clients/ep/transformers.ts:228](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L228)
+Defined in: [clients/ep/transformers.ts:269](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L269)
 
 Transforms EP API corporate-body data to internal [Committee](../../../../types/ep/committee/interfaces/Committee.md) format.
+
+The real EP API returns `label` as a short abbreviation (e.g. "ENVI") while
+`prefLabel` contains the full multilingual committee name.  We therefore
+prefer `prefLabel` → `altLabel` → `label` for the display name, and derive
+the abbreviation from `label` (always a short code in real responses) with
+`notation` as a higher-priority override when present.
+
+Cyclomatic complexity: 6
 
 ## Parameters
 
