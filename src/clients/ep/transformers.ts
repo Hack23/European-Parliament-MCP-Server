@@ -222,7 +222,11 @@ export function transformVoteResult(apiData: Record<string, unknown>, sessionId:
 
 // ─── Committee transformers ─────────────────────────────────────
 
-/** Resolve a full committee display name, preferring `prefLabel` over `label`. */
+/**
+ * Resolve a full committee display name.
+ * Fallback chain: `prefLabel` → `skos:prefLabel` → `altLabel` → `label`.
+ * @returns Multilingual text string, or empty string if no field found.
+ */
 function resolveCommitteeName(apiData: Record<string, unknown>): string {
   return extractMultilingualText(
     apiData['prefLabel'] ?? apiData['skos:prefLabel'] ?? apiData['altLabel'] ?? apiData['label']
@@ -251,7 +255,7 @@ function resolveCommitteeAbbreviation(apiData: Record<string, unknown>, id: stri
  * the abbreviation from `label` (always a short code in real responses) with
  * `notation` as a higher-priority override when present.
  *
- * Cyclomatic complexity: 7
+ * Cyclomatic complexity: 6
  */
 export function transformCorporateBody(apiData: Record<string, unknown>): Committee {
   const id = extractField(apiData, ['body_id', 'id', 'identifier']);
