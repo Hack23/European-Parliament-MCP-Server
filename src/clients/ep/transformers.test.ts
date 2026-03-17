@@ -447,6 +447,20 @@ describe('transformCorporateBody', () => {
     expect(committee.name).toBe('Industry, Research and Energy');
     expect(committee.abbreviation).toBe('ITRE');
   });
+
+  it('falls through to altLabel when prefLabel exists but has no supported language keys', () => {
+    const apiData = {
+      id: 'org/ENVI',
+      label: 'ENVI',
+      // extractMultilingualText object mode supports en/@value/mul only
+      prefLabel: { fr: "Commission de l'environnement" },
+      altLabel: { en: 'Environment, Climate and Food Safety' },
+      classification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+    };
+    const committee = transformCorporateBody(apiData);
+    expect(committee.name).toBe('Environment, Climate and Food Safety');
+    expect(committee.abbreviation).toBe('ENVI');
+  });
 });
 
 // ─── transformDocument ──────────────────────────────────────────

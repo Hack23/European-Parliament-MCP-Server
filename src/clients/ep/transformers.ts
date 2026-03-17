@@ -228,15 +228,24 @@ export function transformVoteResult(apiData: Record<string, unknown>, sessionId:
  * @returns Multilingual text string, or empty string if no field found.
  */
 function resolveCommitteeName(apiData: Record<string, unknown>): string {
-  return extractMultilingualText(
-    apiData['prefLabel'] ?? apiData['skos:prefLabel'] ?? apiData['altLabel'] ?? apiData['label']
-  );
+  const candidates: unknown[] = [
+    apiData['prefLabel'],
+    apiData['skos:prefLabel'],
+    apiData['altLabel'],
+    apiData['label'],
+  ];
+  for (const candidate of candidates) {
+    const text = extractMultilingualText(candidate);
+    if (text !== '') return text;
+  }
+  return '';
 }
 
 /**
  * Resolve the committee abbreviation code.
  * In the real EP API, `label` is the short code (e.g. "ENVI"); `notation`
- * may also carry it.  Falls back to the raw `id` field.
+ * may also carry it. Falls back to the already-extracted identifier value
+ * resolved from `body_id`/`id`/`identifier`.
  */
 function resolveCommitteeAbbreviation(apiData: Record<string, unknown>, id: string): string {
   const fromNotation = extractField(apiData, ['notation', 'skos:notation']);
