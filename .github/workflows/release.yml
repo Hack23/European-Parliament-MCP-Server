@@ -295,7 +295,7 @@ jobs:
 
       - name: Draft Release Notes
         id: release-drafter
-        uses: release-drafter/release-drafter@3a7fb5c85b80b1dda66e1ccb94009adbbd32fce3 # v7.0.0
+        uses: release-drafter/release-drafter@44a942e465867c7465b76aa808ddca6e0acae5da # v7.1.0
         with:
           version: ${{ needs.prepare.outputs.version }}
           tag: ${{ needs.prepare.outputs.version }}
