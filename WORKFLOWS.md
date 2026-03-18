@@ -156,7 +156,7 @@ flowchart TB
 
     subgraph "Stage 2: Build & Test"
         DEV --> TEST["🧪 Test & Report<br><code>test-and-report.yml</code>"]
-        TEST --> PREPARE["⚙️ Prepare<br>Node.js 24, npm ci"]
+        TEST --> PREPARE["⚙️ Prepare<br>Node.js 25, npm ci"]
         PREPARE --> BUILD_VAL["📦 Build Validation"]
         PREPARE --> UNIT["🧪 Unit Tests"]
         BUILD_VAL --> TYPE["tsc --noEmit"]
@@ -270,7 +270,7 @@ flowchart TB
 | **Workflow File** | `.github/workflows/test-and-report.yml` |
 | **Trigger** | Push to `main`, Pull requests to `main` |
 | **Duration** | ~3 min |
-| **Node.js Version** | 24.x |
+| **Node.js Version** | 25.x |
 | **Quality Gates** | 9 gates (see table below) |
 
 **Jobs:**
@@ -283,7 +283,7 @@ prepare → build-validation → unit-tests → report
 
 | Job | Steps | Artifacts |
 |-----|-------|-----------|
-| **prepare** | Setup Node.js 24, `npm ci`, cache dependencies | Cached `node_modules` |
+| **prepare** | Setup Node.js 25, `npm ci`, cache dependencies | Cached `node_modules` |
 | **build-validation** | `tsc --noEmit`, ESLint, Knip, `npm run build`, license check, SBOM quality | Build artifacts, SBOM report |
 | **unit-tests** | `npm run test:coverage`, coverage threshold check, Codecov upload | Coverage reports (lcov, JSON) |
 | **report** | Combine artifacts, generate test summary, PR comment | Combined test report |
@@ -348,7 +348,7 @@ prepare → build-validation → unit-tests → report
 | **Workflow File** | `.github/workflows/integration-tests.yml` |
 | **Trigger** | Push to `main`, PR to `main`, Daily (02:00 UTC), Manual |
 | **Duration** | ~5 min |
-| **Node.js Version** | 24.x |
+| **Node.js Version** | 25.x |
 | **Quality Gate** | All integration and E2E tests pass |
 
 **Environment Variables:**
@@ -394,7 +394,7 @@ prepare → build-validation → unit-tests → report
 | **Workflow File** | `.github/workflows/release.yml` |
 | **Trigger** | Push tags (`v*`), Manual dispatch |
 | **Duration** | ~8 min |
-| **Node.js Version** | 24.x |
+| **Node.js Version** | 25.x |
 | **Secrets** | `NPM_TOKEN` |
 | **Quality Gate** | Full test suite passes, attestations generated |
 
@@ -555,13 +555,13 @@ build → provenance → verify → publish-npm (release only)
 | **Workflow File** | `.github/workflows/copilot-setup-steps.yml` |
 | **Trigger** | `workflow_call` (reusable workflow) |
 | **Duration** | ~2 min |
-| **Node.js Version** | 24.x |
+| **Node.js Version** | 25.x |
 
 **Setup Steps:**
 
 1. Checkout repository with full history
 2. Cache APT packages and npm modules
-3. Setup Node.js 24.x with npm cache
+3. Setup Node.js 25.x with npm cache
 4. Install global MCP servers (`@modelcontextprotocol/server-filesystem`, `-memory`, `-sequential-thinking`, `@playwright/mcp`)
 5. Install project dependencies (`npm ci`)
 6. Verify all MCP server installations

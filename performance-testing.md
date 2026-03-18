@@ -303,12 +303,29 @@ Before every npm release:
 
 ## ☕ Node.js Runtime Performance
 
-### Current Runtime: Node.js 24 LTS
+### Current Runtime: Node.js 25 Current
 
-Performance characteristics on Node.js 24.x:
+Performance characteristics on Node.js 25.x:
 - V8 engine with optimized JIT compilation
 - Native ESM module support (no CommonJS overhead)
 - Stable event loop performance for async I/O
+
+### Node.js 26 Performance Evaluation Plan (URGENT — ≈ 2 Weeks)
+
+Node.js 26 releases ≈ April 22, 2026. Performance validation is part of the immediate upgrade procedure:
+
+| Phase | Timeline | Performance Action |
+|-------|----------|-------------------|
+| **Node.js 26 Release** | ≈ Apr 22, 2026 | Run full benchmark suite on Node.js 26 immediately |
+| **Day 0–2 Validation** | Apr 22–24, 2026 | Compare P95/P99 latency against Node.js 25 baseline; confirm no regression |
+| **Node.js 26 LTS** | Oct 2026 | Baseline update: Node.js 26 becomes the new performance reference |
+
+**Key areas to validate on Node.js 26:**
+- V8 engine changes impact on JSON-LD parsing performance
+- Event loop behavior under concurrent MCP sessions
+- Memory allocation patterns and GC pressure
+- TypeScript compilation speed (build time)
+- Module loading performance (ESM)
 
 ### Node.js 27 Performance Evaluation Plan
 
@@ -317,7 +334,7 @@ Per the [End-of-Life Strategy](End-of-Life-Strategy.md#-nodejs-release-schedule-
 | Phase | Timeline | Performance Action |
 |-------|----------|-------------------|
 | **Alpha 27 CI** | Oct 2026 – Mar 2027 | Add Node.js 27 alpha to CI; run performance benchmarks (non-blocking) |
-| **Current 27 Eval** | Apr 2027 – Oct 2027 | Compare P95/P99 latency against Node.js 24 baseline |
+| **Current 27 Eval** | Apr 2027 – Oct 2027 | Compare P95/P99 latency against Node.js 26 baseline |
 | **LTS 27 Migration** | Oct 2027 | Validate all performance targets met on Node.js 27 LTS |
 
 **Key areas to benchmark on Node.js 27:**

@@ -205,7 +205,7 @@ mindmap
 
 | Property | Value |
 |----------|-------|
-| **Runtime** | Node.js 24+ (LTS) |
+| **Runtime** | Node.js 25+ (Current) |
 | **Language** | TypeScript 5.x (strict mode) |
 | **Transport** | stdio (local process) |
 | **Data Source** | European Parliament Open Data API |

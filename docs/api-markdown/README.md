@@ -303,7 +303,7 @@ Hack23 builds **open-source intelligence platforms** that enable citizens, journ
 
 ### Prerequisites
 
-- Node.js 24.x or higher
+- Node.js 25.x or higher
 - npm 10.x or higher
 - Git
 
@@ -993,8 +993,8 @@ console.log(`Cache hit rate: ${stats.hitRate}%`);
 
 **Solutions:**
 ```bash
-# Ensure Node.js 24+ is installed
-node --version   # Must be >= 24.0.0
+# Ensure Node.js 25+ is installed
+node --version   # Must be >= 25.0.0
 
 # Clear npm cache and reinstall
 npm cache clean --force

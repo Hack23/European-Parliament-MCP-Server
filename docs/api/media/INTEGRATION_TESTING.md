@@ -97,7 +97,7 @@ Each tool includes comprehensive tests for:
 
 ### Prerequisites
 
-- Node.js 24.x or higher
+- Node.js 25.x or higher
 - npm 10.0.0 or higher
 - Network access to `https://data.europarl.europa.eu`
 
@@ -383,7 +383,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '25'
       - run: npm install
       - run: EP_INTEGRATION_TESTS=true npm run test:integration
 ```
