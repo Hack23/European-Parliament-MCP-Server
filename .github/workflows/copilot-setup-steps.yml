@@ -61,9 +61,9 @@ jobs:
         run: |
           npm ci
 
-      # Cache only the MCP server packages we install (not the entire global node_modules
-      # which includes system packages like parcel that cause tar permission errors)
-      - name: Cache global npm packages
+      # Cache only the scoped MCP server packages we install globally (not the entire
+      # global node_modules, which includes system packages that cause tar permission errors).
+      - name: Cache global MCP server packages
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: |
