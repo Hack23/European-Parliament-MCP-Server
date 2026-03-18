@@ -44,7 +44,7 @@
 
 | Software | Minimum Version | Recommended | Notes |
 |----------|----------------|-------------|-------|
-| **Node.js** | 24.0.0 | 24.13.0+ | ES Modules and modern features required |
+| **Node.js** | 25.0.0 | 25.x+ | ES Modules and modern features required |
 | **npm** | 10.0.0 | 10.8.0+ | For package management |
 | **Git** | 2.40+ | Latest | For development workflow |
 
@@ -107,7 +107,7 @@ npx european-parliament-mcp-server --help
     "templates": 6
   },
   "environment": {
-    "nodeVersion": "v24.13.0",
+    "nodeVersion": "v25.x.0",
     "platform": "linux",
     "arch": "x64"
   },
@@ -480,15 +480,15 @@ mcp-inspector node dist/index.js
 ### Linux (Ubuntu 22.04+)
 
 ```bash
-# Install Node.js 24
-curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
+# Install Node.js 25
+curl -fsSL https://deb.nodesource.com/setup_25.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Test installation
 npx european-parliament-mcp-server --health
 
 # Docker test
-docker run -it node:24-bookworm bash
+docker run -it node:25-bookworm bash
 npm install -g european-parliament-mcp-server
 european-parliament-mcp-server --health
 ```
@@ -498,8 +498,8 @@ european-parliament-mcp-server --health
 ### macOS (13+)
 
 ```bash
-# Install Node.js 24 via Homebrew
-brew install node@24
+# Install Node.js 25 via Homebrew
+brew install node@25
 
 # Test installation
 npx european-parliament-mcp-server --health
@@ -514,7 +514,7 @@ nano ~/Library/Application\ Support/Claude/claude_desktop_config.json
 ### Windows (10+)
 
 ```powershell
-# Install Node.js 24
+# Install Node.js 25
 # Download from: https://nodejs.org/
 
 # Test installation (PowerShell)
@@ -565,12 +565,12 @@ Error: The engine "node" is incompatible with this module
 # Check current version
 node --version
 
-# Required: Node.js 24+
-# Install Node.js 24 from: https://nodejs.org/
+# Required: Node.js 25+
+# Install Node.js 25 from: https://nodejs.org/
 
 # Or use nvm (Node Version Manager)
-nvm install 24
-nvm use 24
+nvm install 25
+nvm use 25
 ```
 
 ---

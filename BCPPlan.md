@@ -226,7 +226,7 @@ graph LR
 | **GitHub** (Source Code) | Source Control | 🟠 High | Distributed Git clones; contributors have full repository copies |
 | **GitHub Actions** (CI/CD) | Automation | 🟡 Medium | Manual build and publish fallback via local npm scripts |
 | **GitHub Pages** (Documentation) | Documentation | 🟢 Low | README in npm package; docs in source repository |
-| **Node.js Runtime** (≥ 24.x) | Runtime | 🟠 High | Pinned versions; current LTS line supported (24.x+). Starting with Node.js 27, new annual release model with every release becoming LTS (36-month support). See [End-of-Life-Strategy.md](End-of-Life-Strategy.md) |
+| **Node.js Runtime** (≥ 25.x) | Runtime | 🟠 High | Pinned versions; current supported line (25.x Current, upgrading to 26.x LTS in ≈ April 2026). Starting with Node.js 27, new annual release model with every release becoming LTS (36-month support). See [End-of-Life-Strategy.md](End-of-Life-Strategy.md) |
 | **TypeScript Compiler** | Build Tool | 🟡 Medium | Version-locked in `package-lock.json`; offline build possible |
 | **Zod** (Validation) | Library | 🟠 High | Locked version; no external runtime dependency |
 | **MCP SDK** (`@modelcontextprotocol/sdk`) | Protocol | 🟠 High | Locked version; protocol is standardized |
