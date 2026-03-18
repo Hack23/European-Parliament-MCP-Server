@@ -43,15 +43,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      # Cache APT packages for faster installs
-      - name: Cache APT packages
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
-        with:
-          path: /var/cache/apt/archives
-          key: ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/copilot-setup-steps.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-apt-
-
       # JavaScript/TypeScript setup
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
@@ -70,17 +61,19 @@ jobs:
         run: |
           npm ci
 
-      # Cache global npm packages for MCP servers (restore before build/link/installs so fresh outputs overwrite stale cache)
+      # Cache only the MCP server packages we install (not the entire global node_modules
+      # which includes system packages like parcel that cause tar permission errors)
       - name: Cache global npm packages
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: |
-            /usr/local/lib/node_modules
+            /usr/local/lib/node_modules/@modelcontextprotocol
+            /usr/local/lib/node_modules/@playwright
             /usr/local/bin/mcp-server-*
             /usr/local/bin/playwright-mcp
-          key: ${{ runner.os }}-mcp-servers-v6-${{ hashFiles('.github/copilot-mcp.json') }}
+          key: ${{ runner.os }}-mcp-servers-v7-${{ hashFiles('.github/copilot-mcp.json') }}
           restore-keys: |
-            ${{ runner.os }}-mcp-servers-v6-
+            ${{ runner.os }}-mcp-servers-v7-
 
       # Build the European Parliament MCP Server and link globally so it's available as a local MCP server
       - name: Build European Parliament MCP Server
