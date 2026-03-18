@@ -71,9 +71,9 @@ jobs:
             /usr/local/lib/node_modules/@playwright
             /usr/local/bin/mcp-server-*
             /usr/local/bin/playwright-mcp
-          key: ${{ runner.os }}-mcp-servers-v7-${{ hashFiles('.github/copilot-mcp.json') }}
+          key: ${{ runner.os }}-node25-mcp-servers-v7-${{ hashFiles('.github/copilot-mcp.json', '.github/workflows/copilot-setup-steps.yml') }}
           restore-keys: |
-            ${{ runner.os }}-mcp-servers-v7-
+            ${{ runner.os }}-node25-mcp-servers-v7-
 
       # Build the European Parliament MCP Server and link globally so it's available as a local MCP server
       - name: Build European Parliament MCP Server
