@@ -14,6 +14,7 @@ on:
       - .github/copilot-mcp.json
 
 env:
+  NODE_VERSION: "25"
   GITHUB_TOKEN: ${{ secrets.COPILOT_MCP_GITHUB_PERSONAL_ACCESS_TOKEN }}
   GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.COPILOT_MCP_GITHUB_PERSONAL_ACCESS_TOKEN }}
 
@@ -47,7 +48,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: "25"
+          node-version: ${{ env.NODE_VERSION }}
   
       - name: Cache dependencies
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
@@ -71,9 +72,9 @@ jobs:
             /usr/local/lib/node_modules/@playwright
             /usr/local/bin/mcp-server-*
             /usr/local/bin/playwright-mcp
-          key: ${{ runner.os }}-node25-mcp-servers-v7-${{ hashFiles('.github/copilot-mcp.json', '.github/workflows/copilot-setup-steps.yml') }}
+          key: ${{ runner.os }}-node${{ env.NODE_VERSION }}-mcp-servers-v7-${{ hashFiles('.github/copilot-mcp.json', '.github/workflows/copilot-setup-steps.yml') }}
           restore-keys: |
-            ${{ runner.os }}-node25-mcp-servers-v7-
+            ${{ runner.os }}-node${{ env.NODE_VERSION }}-mcp-servers-v7-
 
       # Build the European Parliament MCP Server and link globally so it's available as a local MCP server
       - name: Build European Parliament MCP Server
