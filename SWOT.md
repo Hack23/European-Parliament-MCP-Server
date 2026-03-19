@@ -6,18 +6,18 @@
 
 <p align="center">
   <strong>Strategic Positioning, Competitive Landscape, and Growth Opportunities</strong><br>
-  <em>Comprehensive SWOT analysis for the EP MCP Server v1.0</em>
+  <em>Comprehensive SWOT analysis for the EP MCP Server v1.1</em>
 </p>
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-Hack23-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--26-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.1-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--03--19-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** Hack23 | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-26 (UTC)
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-26
+**📋 Document Owner:** Hack23 | **📄 Version:** 1.1 | **📅 Last Updated:** 2026-03-19 (UTC)
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-06-19
 **🏷️ Classification:** Public (Open Source MCP Server)
 **✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.14.2), NIST CSF 2.0 (ID.AM, PR.DS), CIS Controls v8.1 (2.1, 16.1)
 
@@ -25,14 +25,14 @@
 
 ## 📑 Table of Contents
 
-1. [Security Documentation Map](#security-documentation-map)
-2. [SWOT Overview](#swot-overview)
-3. [Strengths](#strengths)
-4. [Weaknesses](#weaknesses)
-5. [Opportunities](#opportunities)
-6. [Threats](#threats)
-7. [Strategic Implications](#strategic-implications)
-8. [v1.0 Positioning Statement](#v10-positioning-statement)
+1. [Security Documentation Map](#-security-documentation-map)
+2. [SWOT Overview](#-swot-overview)
+3. [Strengths](#-strengths)
+4. [Weaknesses](#-weaknesses)
+5. [Opportunities](#-opportunities)
+6. [Threats](#-threats)
+7. [Strategic Implications](#-strategic-implications)
+8. [v1.1 Positioning Statement](#-v11-positioning-statement)
 
 ---
 
@@ -47,6 +47,8 @@
 | **State Diagram** | [STATEDIAGRAM.md](./STATEDIAGRAM.md) | [FUTURE_STATEDIAGRAM.md](./FUTURE_STATEDIAGRAM.md) | System state transitions |
 | **Mind Map** | [MINDMAP.md](./MINDMAP.md) | [FUTURE_MINDMAP.md](./FUTURE_MINDMAP.md) | System concepts and relationships |
 | **SWOT Analysis** | [SWOT.md](./SWOT.md) | [FUTURE_SWOT.md](./FUTURE_SWOT.md) | Strategic positioning |
+| **Threat Model** | [THREAT_MODEL.md](./THREAT_MODEL.md) | [FUTURE_THREAT_MODEL.md](./FUTURE_THREAT_MODEL.md) | STRIDE, MITRE ATT&CK, attack trees |
+| **CRA Assessment** | [CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md) | — | EU Cyber Resilience Act conformity |
 
 ---
 
@@ -54,14 +56,14 @@
 
 ```mermaid
 quadrantChart
-    title EP MCP Server v1.0 SWOT Quadrant
+    title EP MCP Server v1.1 SWOT Quadrant
     x-axis Low Impact --> High Impact
     y-axis External --> Internal
     quadrant-1
     quadrant-2
     quadrant-3
     quadrant-4
-    46 MCP Tools: [0.85, 0.9]
+    61 MCP Tools: [0.85, 0.9]
     ISMS Compliance: [0.75, 0.85]
     TypeScript Safety: [0.7, 0.8]
     Open Source: [0.8, 0.75]
@@ -78,8 +80,8 @@ quadrantChart
 
 ## 💪 Strengths
 
-### S1: Comprehensive EP Data Coverage (46 Tools)
-The most complete MCP server for European Parliament data, covering all major EP datasets through 47 specialized tools organized into 5 TypeScript categories (`core`, `advanced`, `osint`, `phase4`, `phase5`). No other publicly available MCP server provides comparable EP data breadth.
+### S1: Comprehensive EP Data Coverage (61 Tools)
+The most complete MCP server for European Parliament data, covering all major EP datasets through 61 specialized tools organized into 6 TypeScript categories (`core`, `advanced`, `osint`, `phase4`, `phase5`, `feed`). No other publicly available MCP server provides comparable EP data breadth.
 
 - **Core data**: MEPs, procedures, votes, committees, documents, questions
 - **OSINT capabilities**: 15 tools for intelligence analysis (Phases 1–3, Phase 6, and correlate_intelligence)
@@ -112,7 +114,7 @@ MIT licensed, public GitHub repository, full SBOM via npm, OpenSSF best practice
 ## ⚠️ Weaknesses
 
 ### W1: Single Data Source Dependency
-All 47 tools depend exclusively on the EP Open Data Portal API v2. Any EP API outage, structural change, or rate limit reduction directly impacts all server capabilities.
+All 61 tools depend exclusively on the EP Open Data Portal API v2. Any EP API outage, structural change, or rate limit reduction directly impacts all server capabilities.
 
 **Mitigation in progress:** Cache layer absorbs short outages. Health monitoring provides early warning.
 
@@ -122,7 +124,7 @@ Current implementation only supports MCP stdio transport. This limits deployment
 **Roadmap:** HTTP transport planned for v1.2 (see [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md)).
 
 ### W3: No Authentication Layer
-v1.0 relies on OS process isolation without explicit authentication. While appropriate for local MCP clients, this limits enterprise deployment scenarios requiring user-level access control.
+v1.1 relies on OS process isolation without explicit authentication. While appropriate for local MCP clients, this limits enterprise deployment scenarios requiring user-level access control.
 
 **Roadmap:** OAuth 2.0 integration planned for v2.0 (see [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md)).
 
@@ -210,9 +212,9 @@ If the European Parliament restructures its data portal or migrates to a new API
 
 ---
 
-## 🏆 v1.0 Positioning Statement
+## 🏆 v1.1 Positioning Statement
 
-> **The European Parliament MCP Server v1.0 is the most comprehensive, security-conscious, and production-ready MCP server for accessing European Parliament open data.** With 47 tools spanning basic data access to advanced OSINT analysis, a 4-layer security architecture, full ISMS compliance documentation, and TypeScript strict-mode implementation with branded types, it sets the standard for parliamentary data integration in AI-augmented research workflows.
+> **The European Parliament MCP Server v1.1 is the most comprehensive, security-conscious, and production-ready MCP server for accessing European Parliament open data.** With 61 tools spanning basic data access to advanced OSINT analysis, a 4-layer security architecture, full ISMS compliance documentation, and TypeScript strict-mode implementation with branded types, it sets the standard for parliamentary data integration in AI-augmented research workflows.
 
 **Target Users:**
 - Political researchers and analysts using AI assistants

@@ -2996,7 +2996,7 @@ The European Parliament MCP Server is the **most feature-rich political MCP serv
 
 | Country | Server | Key Capabilities |
 |---------|--------|-----------------|
-| 🇪🇺 **EU** | [**European Parliament MCP**](https://github.com/Hack23/European-Parliament-MCP-Server) | **47 tools** — MEP profiling, coalition analysis, anomaly detection, political landscape, longitudinal statistics |
+| 🇪🇺 **EU** | [**European Parliament MCP**](https://github.com/Hack23/European-Parliament-MCP-Server) | **61 tools** — MEP profiling, coalition analysis, anomaly detection, political landscape, longitudinal statistics |
 | 🇺🇸 **USA** | [Congress.gov API MCP](https://github.com/bsmi021/mcp-congress_gov_server) | Bills, members, votes, committees |
 | 🇬🇧 **UK** | [Parliament MCP](https://github.com/i-dot-ai/parliament-mcp) | Hansard, members, debates, divisions |
 | 🇸🇪 **Sweden** | [Riksdag & Regering MCP](https://github.com/isakskogstad/Riksdag-Regering-MCP) | Parliament & government data |
