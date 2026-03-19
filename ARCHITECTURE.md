@@ -11,14 +11,14 @@
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-Hack23-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--26-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.1-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--03--19-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
   <a href="https://www.bestpractices.dev/projects/12067"><img src="https://www.bestpractices.dev/projects/12067/badge" alt="OpenSSF Best Practices"/></a>
 </p>
 
-**📋 Document Owner:** Hack23 | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-26 (UTC)
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-26
+**📋 Document Owner:** Hack23 | **📄 Version:** 1.1 | **📅 Last Updated:** 2026-03-19 (UTC)
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-06-19
 **🏷️ Classification:** Public (Open Source MCP Server)
 **✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.14.2), NIST CSF 2.0 (ID.AM, PR.DS), CIS Controls v8.1 (2.1, 16.1)
 
@@ -62,7 +62,7 @@ The **European Parliament MCP Server** (v1.0) is a TypeScript/Node.js applicatio
 
 | Capability | Details |
 |------------|---------|
-| **MCP Tools** | 47 tools in 5 TypeScript code categories (`core`, `advanced`, `osint`, `phase4`, `phase5`) |
+| **MCP Tools** | 62 tools in 6 categories (`core`, `advanced`, `osint`, `phase4`, `phase5`, `feed`) |
 | **MCP Resources** | 9 URI-addressable resources |
 | **MCP Prompts** | 7 intelligence-analysis prompts |
 | **Data Source** | EP Open Data Portal API v2 |
@@ -81,7 +81,7 @@ C4Context
     Person(aiUser, "AI User / Developer", "Uses AI assistants to query EP data")
     Person(analyst, "Political Analyst", "Performs legislative intelligence analysis")
 
-    System(mcpServer, "EP MCP Server", "MCP server exposing 47 tools, 9 resources, 7 prompts for EP parliamentary data")
+    System(mcpServer, "EP MCP Server", "MCP server exposing 62 tools, 9 resources, 7 prompts for EP parliamentary data")
 
     System_Ext(claudeDesktop, "Claude Desktop / Cursor / Copilot", "MCP-compatible AI client")
     System_Ext(epApi, "EP Open Data Portal API v2", "Official European Parliament open data API at data.europarl.europa.eu/api/v2/")
@@ -109,7 +109,7 @@ flowchart TD
     subgraph EPMCPServer["EP MCP Server — Node.js Process"]
         direction TB
         MH["MCP Handler\n(stdio transport)"]
-        TR["Tool Router\n(47 tools dispatched)"]
+        TR["Tool Router\n(62 tools dispatched)"]
         RE["Resource Engine\n(9 URI resources)"]
         PR["Prompt Registry\n(7 prompts)"]
         DI["DI Container\n(singletons)"]
@@ -254,7 +254,7 @@ flowchart TD
 
 ## 📡 MCP Protocol Surface
 
-### Tools (46 total)
+### Tools (62 total)
 
 #### Core Data Access Tools (7)
 
@@ -268,7 +268,7 @@ flowchart TD
 | `get_committee_info` | `getCommitteeInfo` | Committee details |
 | `get_parliamentary_questions` | `getParliamentaryQuestions` | Written/oral questions |
 
-#### OSINT Intelligence Tools (10 + 4 Advanced)
+#### OSINT Intelligence Tools (10 + 5 Advanced)
 
 | Tool | Function | Description |
 |------|----------|-------------|
@@ -283,9 +283,9 @@ flowchart TD
 | `analyze_country_delegation` | `analyzeCountryDelegation` | Country delegation voting & composition |
 | `generate_political_landscape` | `generatePoliticalLandscape` | Parliament-wide political landscape |
 
-#### Advanced OSINT Intelligence Tools (4 — v1.0)
+#### Advanced OSINT Intelligence Tools (5 — v1.1)
 
-The following four tools extend the OSINT capability with network analysis, sentiment tracking, early-warning signals, and comparative intelligence. Each tool returns `confidenceLevel`, `dataFreshness`, `sourceAttribution`, and `methodology` fields for full analytical transparency.
+The following five tools extend the OSINT capability with network analysis, sentiment tracking, early-warning signals, comparative intelligence, and cross-source correlation. Each tool returns `confidenceLevel`, `dataFreshness`, `sourceAttribution`, and `methodology` fields for full analytical transparency.
 
 | Tool | Function | Description |
 |------|----------|-------------|
@@ -293,6 +293,7 @@ The following four tools extend the OSINT capability with network analysis, sent
 | `sentiment_tracker` | `sentimentTracker` | Track political group institutional positioning based on seat-share proxy. Returns per-group positioning scores (−1 to +1), polarization index, consensus/divisive topics, and significant positioning shifts. |
 | `early_warning_system` | `earlyWarningSystem` | Detect emerging political shifts, coalition fracture signals, and parliamentary stability risks. Generates severity-tiered warnings (CRITICAL/HIGH/MEDIUM/LOW), stability score (0–100), and trend indicators. Configurable sensitivity and focus area. |
 | `comparative_intelligence` | `comparativeIntelligence` | Cross-reference 2–10 MEPs across voting, committee, legislative, and attendance dimensions. Returns ranked profiles, cosine-similarity correlation matrix, z-score outlier detection, and natural cluster analysis. |
+| `correlate_intelligence` | `correlateIntelligence` | Cross-source intelligence correlation combining multiple data dimensions. Identifies patterns across voting, committee, and legislative activity for comprehensive analytical insights. |
 
 **Design Principles for Advanced Tools:**
 - All outputs include `dataAvailable: boolean` — tools degrade gracefully when EP API data is limited
@@ -315,7 +316,7 @@ The following four tools extend the OSINT capability with network analysis, sent
 | `get_meeting_decisions` | `getMeetingDecisions` | Meeting decision outcomes |
 | `get_mep_declarations` | `getMEPDeclarations` | MEP financial declarations |
 
-#### EP Complete Coverage Tools (11)
+#### EP Complete Coverage Tools (15)
 
 | Tool | Function | Description |
 |------|----------|-------------|
@@ -330,6 +331,10 @@ The following four tools extend the OSINT capability with network analysis, sent
 | `get_external_documents` | `getExternalDocuments` | External reference documents |
 | `get_meeting_foreseen_activities` | `getMeetingForeseenActivities` | Planned meeting activities |
 | `get_procedure_events` | `getProcedureEvents` | Events linked to a procedure |
+| `get_meeting_plenary_session_documents` | `getMeetingPlenarySessionDocuments` | Plenary session documents for a meeting |
+| `get_meeting_plenary_session_document_items` | `getMeetingPlenarySessionDocumentItems` | Plenary session document items for a meeting |
+| `get_procedure_event_by_id` | `getProcedureEventById` | Get a specific procedure event by ID |
+| `get_all_generated_stats` | `getAllGeneratedStats` | Precomputed parliamentary analytics |
 
 #### Advanced Analysis Tools (3)
 
@@ -339,27 +344,26 @@ The following four tools extend the OSINT capability with network analysis, sent
 | `track_legislation` | `trackLegislation` | End-to-end legislative tracking (real EP API data) |
 | `generate_report` | `generateReport` | Structured analysis report generation |
 
-### Resources (6 templates)
+#### Feed Endpoint Tools (14)
 
-| URI Template | Name | Description |
-|-------------|------|-------------|
-| `ep://meps` | MEP List | All Members of European Parliament |
-| `ep://meps/{mepId}` | MEP Profile | Individual MEP details |
-| `ep://committees/{committeeId}` | Committee Information | Committee details and membership |
-| `ep://plenary-sessions` | Plenary Sessions | Session listings and schedules |
-| `ep://votes/{sessionId}` | Voting Record | Session voting results |
-| `ep://political-groups` | Political Groups | Party group listings |
+| Tool | Function | Description |
+|------|----------|-------------|
+| `get_meps_feed` | `getMEPsFeed` | Atom feed of MEP updates |
+| `get_events_feed` | `getEventsFeed` | Atom feed of parliamentary events |
+| `get_procedures_feed` | `getProceduresFeed` | Atom feed of legislative procedures |
+| `get_adopted_texts_feed` | `getAdoptedTextsFeed` | Atom feed of adopted texts |
+| `get_mep_declarations_feed` | `getMEPDeclarationsFeed` | Atom feed of MEP declarations |
+| `get_documents_feed` | `getDocumentsFeed` | Atom feed of parliamentary documents |
+| `get_plenary_documents_feed` | `getPlenaryDocumentsFeed` | Atom feed of plenary documents |
+| `get_committee_documents_feed` | `getCommitteeDocumentsFeed` | Atom feed of committee documents |
+| `get_plenary_session_documents_feed` | `getPlenarySessionDocumentsFeed` | Atom feed of plenary session documents |
+| `get_external_documents_feed` | `getExternalDocumentsFeed` | Atom feed of external documents |
+| `get_parliamentary_questions_feed` | `getParliamentaryQuestionsFeed` | Atom feed of parliamentary questions |
+| `get_corporate_bodies_feed` | `getCorporateBodiesFeed` | Atom feed of corporate bodies |
+| `get_controlled_vocabularies_feed` | `getControlledVocabulariesFeed` | Atom feed of controlled vocabularies |
 
-### Prompts (6 templates)
+### Tool Category Summary
 
-| Prompt Name | Description | Key Arguments |
-|-------------|-------------|---------------|
-| `mep_briefing` | MEP intelligence briefing | `mepId` |
-| `coalition_analysis` | Coalition dynamics analysis | `partyGroup` |
-| `legislative_tracking` | Legislative pipeline tracking | `procedureId` |
-| `political_group_comparison` | Political group comparison | `groups` |
-| `committee_activity_report` | Committee activity analysis | `committeeId` |
-| `voting_pattern_analysis` | Voting pattern detection | `mepId`, `sessionId` |
 | Category | Count | Tools |
 |----------|-------|-------|
 | **Core** | 7 | get_meps, get_mep_details, get_plenary_sessions, get_voting_records, search_documents, get_committee_info, get_parliamentary_questions |
@@ -367,9 +371,11 @@ The following four tools extend the OSINT capability with network analysis, sent
 | **OSINT Phase 1** | 6 | assess_mep_influence, analyze_coalition_dynamics, detect_voting_anomalies, compare_political_groups, analyze_legislative_effectiveness, monitor_legislative_pipeline |
 | **OSINT Phase 2** | 2 | analyze_committee_activity, track_mep_attendance |
 | **OSINT Phase 3** | 2 | analyze_country_delegation, generate_political_landscape |
-| **Phase 6 Advanced OSINT** | 4 | network_analysis, sentiment_tracker, early_warning_system, comparative_intelligence |
+| **Advanced OSINT** | 5 | network_analysis, sentiment_tracker, early_warning_system, comparative_intelligence, correlate_intelligence |
 | **Phase 4 EP API v2** | 8 | get_current_meps, get_speeches, get_procedures, get_adopted_texts, get_events, get_meeting_activities, get_meeting_decisions, get_mep_declarations |
-| **Phase 5 Complete Coverage** | 13 | get_incoming_meps, get_outgoing_meps, get_homonym_meps, get_plenary_documents, get_committee_documents, get_plenary_session_documents, get_plenary_session_document_items, get_controlled_vocabularies, get_external_documents, get_meeting_foreseen_activities, get_procedure_events, get_meeting_plenary_session_documents, get_meeting_plenary_session_document_items |
+| **Phase 5 Complete Coverage** | 15 | get_incoming_meps, get_outgoing_meps, get_homonym_meps, get_plenary_documents, get_committee_documents, get_plenary_session_documents, get_plenary_session_document_items, get_controlled_vocabularies, get_external_documents, get_meeting_foreseen_activities, get_procedure_events, get_meeting_plenary_session_documents, get_meeting_plenary_session_document_items, get_procedure_event_by_id, get_all_generated_stats |
+| **Feed Endpoints** | 14 | get_meps_feed, get_events_feed, get_procedures_feed, get_adopted_texts_feed, get_mep_declarations_feed, get_documents_feed, get_plenary_documents_feed, get_committee_documents_feed, get_plenary_session_documents_feed, get_external_documents_feed, get_parliamentary_questions_feed, get_corporate_bodies_feed, get_controlled_vocabularies_feed |
+| **Total** | **62** | |
 
 ### Resources (9 total)
 
@@ -457,7 +463,7 @@ flowchart TD
 
 **Status:** Accepted | **Date:** 2026-02-26
 
-**Context:** Multiple services (RateLimiter, MetricsService, AuditLogger, HealthService) need to be shared across the 46 tool handlers. Using ad-hoc singleton globals creates tight coupling and reduces testability.
+**Context:** Multiple services (RateLimiter, MetricsService, AuditLogger, HealthService) need to be shared across the 62 tool handlers. Using ad-hoc singleton globals creates tight coupling and reduces testability.
 
 **Decision:** Implement a lightweight DI container that manages singleton lifecycle for all shared services. Services are registered once at startup and injected into tool handlers via constructor injection.
 
@@ -559,7 +565,7 @@ See [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) for full details.
 
 | Control | Standard | Clause | Implementation |
 |---------|----------|--------|----------------|
-| Asset Management | ISO 27001 | A.8.1 | All 47 tools documented as information assets |
+| Asset Management | ISO 27001 | A.8.1 | All 62 tools documented as information assets |
 | Secure Development | ISO 27001 | A.14.2 | TypeScript strict mode, Zod validation, ESLint |
 | Access Control | ISO 27001 | A.9.1 | MCP stdio transport, no network exposure |
 | Audit Logging | ISO 27001 | A.12.4 | AuditLogger singleton, all invocations logged |
