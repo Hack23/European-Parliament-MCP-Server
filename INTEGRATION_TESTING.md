@@ -2,7 +2,7 @@
 
 ## 📋 Overview
 
-This guide explains how to run integration tests for the European Parliament MCP Server. Integration tests validate 46 of the 61 MCP tools against the real European Parliament Open Data API; the remaining 15 tools (13 feed endpoints + 1 precomputed analytics + 1 procedure event lookup) are covered by unit tests. **All integration-tested tools return real data — no mock or placeholder data is used.**
+This guide explains how to run integration tests for the European Parliament MCP Server. The `allTools.integration.test.ts` suite validates 46 of the 61 MCP tools against the real European Parliament Open Data API. The remaining 15 tools — 13 feed endpoints, `get_all_generated_stats` (precomputed, no live API calls), and `get_procedure_event_by_id` — are validated through unit tests. **All integration-tested tools return real data — no mock or placeholder data is used.**
 
 **ISMS Policy**: [Hack23 Secure Development Policy - Testing](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#testing)
 
