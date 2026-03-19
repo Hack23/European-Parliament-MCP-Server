@@ -55,7 +55,7 @@
 mindmap
   root((EP MCP Server v1.1))
     MCP Protocol Surface
-      62 Tools
+      61 Tools
         Core 7
         Advanced Analysis 3
         OSINT Phase 1 6
@@ -225,7 +225,7 @@ mindmap
 
 ```mermaid
 mindmap
-  root((62 MCP Tools))
+  root((61 MCP Tools))
     Core Tools 7
       get_meps
         Filter by country
@@ -313,7 +313,7 @@ mindmap
   root((Security Architecture))
     4-Layer Defense
       Layer 1 Zod Validation
-        62 input schemas
+        61 input schemas
         Branded types
         Format enforcement
         Reject before business logic

@@ -166,7 +166,7 @@ flowchart TD
     BC --> LC["legislativeClient"]
     BC --> QC["questionClient"]
     BC --> VCC["vocabularyClient"]
-    MC --> TOOLS["Register 62 MCP Tools\n(bind to DI container)"]
+    MC --> TOOLS["Register 61 MCP Tools\n(bind to DI container)"]
     VC --> TOOLS
     CC --> TOOLS
     PC --> TOOLS

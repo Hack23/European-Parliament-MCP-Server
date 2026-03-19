@@ -475,7 +475,7 @@ graph TB
 
     subgraph "MCP Server (src/)"
         direction TB
-        Tools[🔧 62 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …]
+        Tools[🔧 61 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …]
         Resources[📦 9 Resources<br/>ep://meps/{id}<br/>ep://procedures/{id} · …]
         Prompts[💬 7 Prompts<br/>mep_briefing<br/>coalition_analysis · …]
     end
@@ -697,7 +697,7 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 
 | Country | Server | Data Source | Coverage |
 |---------|--------|-------------|----------|
-| 🇪🇺 **European Union** | [**European Parliament MCP Server**](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions — **62 tools** (15 OSINT) |
+| 🇪🇺 **European Union** | [**European Parliament MCP Server**](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions — **61 tools** (15 OSINT) |
 | 🇺🇸 **United States** | [Congress.gov API MCP Server](https://github.com/bsmi021/mcp-congress_gov_server) | congress.gov | Bills, members, votes, committees (TypeScript, v3 API) |
 | 🇺🇸 **United States** | [CongressMCP](https://github.com/amurshak/congressMCP) | congress.gov | Real-time Congress data — bills, votes, members |
 | 🇺🇸 **United States** | [Congress.gov MCP](https://github.com/AshwinSundar/congress_gov_mcp) | congress.gov | Unofficial Congress.gov API access |
@@ -759,9 +759,9 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 | Attendance tracking | ✅ Trend detection + engagement scoring | ❌ | ❌ | ❌ |
 | GDPR compliance | ✅ Privacy-first design | N/A | N/A | ✅ |
 | MCP prompts & resources | ✅ 7 prompts + 9 resources | ❌ | ❌ | ❌ |
-| Tool count | **62 tools** | ~5 tools | ~5 tools | ~4 tools |
+| Tool count | **61 tools** | ~5 tools | ~5 tools | ~4 tools |
 
-> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **62 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, cross-tool intelligence correlation, political landscape generation, and precomputed longitudinal statistics. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
+> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **61 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, cross-tool intelligence correlation, political landscape generation, and precomputed longitudinal statistics. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
 
 ---
 
@@ -935,7 +935,7 @@ npm run test:coverage
 npm run test:watch
 ```
 
-**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, all 62 MCP tools are tested against the real European Parliament API endpoints. All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](INTEGRATION_TESTING.md) for the complete guide.
+**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, all 61 MCP tools are tested against the real European Parliament API endpoints. All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](INTEGRATION_TESTING.md) for the complete guide.
 
 ### Code Quality
 
@@ -1105,7 +1105,7 @@ For detailed workflow documentation, see [.github/WORKFLOWS.md](./.github/WORKFL
 
 > **📰 News is dead. Long live intelligence.**
 >
-> While the world's newsrooms race to replace journalists with GPT-powered headline factories — churning out *"10 Things the EU Did Today"* listicles at the speed of hallucination — we took a different path. Instead of automating the news *ticker*, we built a **political intelligence platform** that actually *understands* what the European Parliament does. Disrupted news generation produces noise; **deep political intelligence** produces signal. Any chatbot can summarize a press release. It takes **62 MCP tools**, **15 OSINT analyzers**, and a **5-dimension influence model** to tell you *which MEP quietly brokered the amendment that changed the directive that reshaped an industry* — three months before the newspapers notice.
+> While the world's newsrooms race to replace journalists with GPT-powered headline factories — churning out *"10 Things the EU Did Today"* listicles at the speed of hallucination — we took a different path. Instead of automating the news *ticker*, we built a **political intelligence platform** that actually *understands* what the European Parliament does. Disrupted news generation produces noise; **deep political intelligence** produces signal. Any chatbot can summarize a press release. It takes **61 MCP tools**, **15 OSINT analyzers**, and a **5-dimension influence model** to tell you *which MEP quietly brokered the amendment that changed the directive that reshaped an industry* — three months before the newspapers notice.
 >
 > **This is not a news bot. This is parliamentary intelligence infrastructure.**
 
@@ -1160,7 +1160,7 @@ graph TB
         W11["🤖 copilot-setup-steps"]
     end
 
-    subgraph TOOLS["🔌 62 MCP Tools"]
+    subgraph TOOLS["🔌 61 MCP Tools"]
         style TOOLS fill:#172554,stroke:#3B82F6,color:#DBEAFE
         T1["🕵️ 15 OSINT Intelligence"]
         T2["📊 4 Advanced Analysis"]
@@ -1177,7 +1177,7 @@ graph TB
 
 ### 📅 Future Advanced Roadmap: 2026–2037
 
-> From **62 MCP tools** today to a **transformative democratic intelligence platform** serving all 195 parliamentary systems — powered by the relentless march of AI model generations.
+> From **61 MCP tools** today to a **transformative democratic intelligence platform** serving all 195 parliamentary systems — powered by the relentless march of AI model generations.
 
 #### Phase 5: Advanced Intelligence (2026–2027)
 

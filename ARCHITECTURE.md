@@ -63,7 +63,7 @@ The **European Parliament MCP Server** (v1.0) is a TypeScript/Node.js applicatio
 
 | Capability | Details |
 |------------|---------|
-| **MCP Tools** | 62 tools in 6 categories (`core`, `advanced`, `osint`, `phase4`, `phase5`, `feed`) |
+| **MCP Tools** | 61 tools in 6 categories (`core`, `advanced`, `osint`, `phase4`, `phase5`, `feed`) |
 | **MCP Resources** | 9 URI-addressable resources |
 | **MCP Prompts** | 7 intelligence-analysis prompts |
 | **Data Source** | EP Open Data Portal API v2 |
@@ -82,7 +82,7 @@ C4Context
     Person(aiUser, "AI User / Developer", "Uses AI assistants to query EP data")
     Person(analyst, "Political Analyst", "Performs legislative intelligence analysis")
 
-    System(mcpServer, "EP MCP Server", "MCP server exposing 62 tools, 9 resources, 7 prompts for EP parliamentary data")
+    System(mcpServer, "EP MCP Server", "MCP server exposing 61 tools, 9 resources, 7 prompts for EP parliamentary data")
 
     System_Ext(claudeDesktop, "Claude Desktop / Cursor / Copilot", "MCP-compatible AI client")
     System_Ext(epApi, "EP Open Data Portal API v2", "Official European Parliament open data API at data.europarl.europa.eu/api/v2/")
@@ -110,7 +110,7 @@ flowchart TD
     subgraph EPMCPServer["EP MCP Server — Node.js Process"]
         direction TB
         MH["MCP Handler\n(stdio transport)"]
-        TR["Tool Router\n(62 tools dispatched)"]
+        TR["Tool Router\n(61 tools dispatched)"]
         RE["Resource Engine\n(9 URI resources)"]
         PR["Prompt Registry\n(7 prompts)"]
         DI["DI Container\n(singletons)"]
@@ -188,11 +188,12 @@ flowchart TD
             GPL["generate_political_landscape"]
         end
 
-        subgraph Phase6["Phase 6 Advanced OSINT (4)"]
+        subgraph Phase6["Advanced OSINT (5)"]
             NA["network_analysis"]
             ST["sentiment_tracker"]
             EWS["early_warning_system"]
             CI["comparative_intelligence"]
+            CRI["correlate_intelligence"]
         end
 
         subgraph Phase4["Phase 4 EP API v2 (8)"]
@@ -206,7 +207,7 @@ flowchart TD
             GMPD["get_mep_declarations"]
         end
 
-        subgraph Phase5["Phase 5 Complete Coverage (13)"]
+        subgraph Phase5["Phase 5 Complete Coverage (15)"]
             GIM["get_incoming_meps"]
             GOM["get_outgoing_meps"]
             GHM["get_homonym_meps"]
@@ -220,6 +221,24 @@ flowchart TD
             GPE["get_procedure_events"]
             GMPSD["get_meeting_plenary_session_documents"]
             GMPSDI["get_meeting_plenary_session_document_items"]
+            GPEID["get_procedure_event_by_id"]
+            GAGS["get_all_generated_stats"]
+        end
+
+        subgraph FeedTools["Feed Endpoints (13)"]
+            GMFEED["get_meps_feed"]
+            GEFEED["get_events_feed"]
+            GPFEED["get_procedures_feed"]
+            GATFEED["get_adopted_texts_feed"]
+            GMDFEED["get_mep_declarations_feed"]
+            GDFEED["get_documents_feed"]
+            GPDFEED["get_plenary_documents_feed"]
+            GCDFEED["get_committee_documents_feed"]
+            GPSDFEED["get_plenary_session_documents_feed"]
+            GEDFEED["get_external_documents_feed"]
+            GPQFEED["get_parliamentary_questions_feed"]
+            GCBFEED["get_corporate_bodies_feed"]
+            GCVFEED["get_controlled_vocabularies_feed"]
         end
     end
 
@@ -247,6 +266,7 @@ flowchart TD
     Phase6 --> ZV
     Phase4 --> ZV
     Phase5 --> ZV
+    FeedTools --> ZV
 
     ZV --> Clients
 ```
@@ -255,7 +275,7 @@ flowchart TD
 
 ## 📡 MCP Protocol Surface
 
-### Tools (62 total)
+### Tools (61 total)
 
 #### Core Data Access Tools (7)
 
@@ -345,7 +365,7 @@ The following five tools extend the OSINT capability with network analysis, sent
 | `track_legislation` | `trackLegislation` | End-to-end legislative tracking (real EP API data) |
 | `generate_report` | `generateReport` | Structured analysis report generation |
 
-#### Feed Endpoint Tools (14)
+#### Feed Endpoint Tools (13)
 
 | Tool | Function | Description |
 |------|----------|-------------|
@@ -375,8 +395,8 @@ The following five tools extend the OSINT capability with network analysis, sent
 | **Advanced OSINT** | 5 | network_analysis, sentiment_tracker, early_warning_system, comparative_intelligence, correlate_intelligence |
 | **Phase 4 EP API v2** | 8 | get_current_meps, get_speeches, get_procedures, get_adopted_texts, get_events, get_meeting_activities, get_meeting_decisions, get_mep_declarations |
 | **Phase 5 Complete Coverage** | 15 | get_incoming_meps, get_outgoing_meps, get_homonym_meps, get_plenary_documents, get_committee_documents, get_plenary_session_documents, get_plenary_session_document_items, get_controlled_vocabularies, get_external_documents, get_meeting_foreseen_activities, get_procedure_events, get_meeting_plenary_session_documents, get_meeting_plenary_session_document_items, get_procedure_event_by_id, get_all_generated_stats |
-| **Feed Endpoints** | 14 | get_meps_feed, get_events_feed, get_procedures_feed, get_adopted_texts_feed, get_mep_declarations_feed, get_documents_feed, get_plenary_documents_feed, get_committee_documents_feed, get_plenary_session_documents_feed, get_external_documents_feed, get_parliamentary_questions_feed, get_corporate_bodies_feed, get_controlled_vocabularies_feed |
-| **Total** | **62** | |
+| **Feed Endpoints** | 13 | get_meps_feed, get_events_feed, get_procedures_feed, get_adopted_texts_feed, get_mep_declarations_feed, get_documents_feed, get_plenary_documents_feed, get_committee_documents_feed, get_plenary_session_documents_feed, get_external_documents_feed, get_parliamentary_questions_feed, get_corporate_bodies_feed, get_controlled_vocabularies_feed |
+| **Total** | **61** | |
 
 ### Resources (9 total)
 
@@ -464,7 +484,7 @@ flowchart TD
 
 **Status:** Accepted | **Date:** 2026-02-26
 
-**Context:** Multiple services (RateLimiter, MetricsService, AuditLogger, HealthService) need to be shared across the 62 tool handlers. Using ad-hoc singleton globals creates tight coupling and reduces testability.
+**Context:** Multiple services (RateLimiter, MetricsService, AuditLogger, HealthService) need to be shared across the 61 tool handlers. Using ad-hoc singleton globals creates tight coupling and reduces testability.
 
 **Decision:** Implement a lightweight DI container that manages singleton lifecycle for all shared services. Services are registered once at startup and injected into tool handlers via constructor injection.
 
@@ -566,7 +586,7 @@ See [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) for full details.
 
 | Control | Standard | Clause | Implementation |
 |---------|----------|--------|----------------|
-| Asset Management | ISO 27001 | A.8.1 | All 62 tools documented as information assets |
+| Asset Management | ISO 27001 | A.8.1 | All 61 tools documented as information assets |
 | Secure Development | ISO 27001 | A.14.2 | TypeScript strict mode, Zod validation, ESLint |
 | Access Control | ISO 27001 | A.9.1 | MCP stdio transport, no network exposure |
 | Audit Logging | ISO 27001 | A.12.4 | AuditLogger singleton, all invocations logged |
