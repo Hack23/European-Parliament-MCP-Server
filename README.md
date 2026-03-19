@@ -828,6 +828,19 @@ This project achieves **SLSA Level 3** compliance:
 
 See [**ATTESTATIONS.md**](docs/ATTESTATIONS.md) for verification instructions and security benefits.
 
+### 📋 Project Classification
+
+Per [Hack23 Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md):
+
+| Property | Value |
+|----------|-------|
+| **CRA Classification** | [![Standard](https://img.shields.io/badge/CRA-Standard-green?style=flat-square)](CRA-ASSESSMENT.md) Non-commercial Open Source Software |
+| **Confidentiality** | [![Public](https://img.shields.io/badge/C-Public-lightgrey?style=flat-square)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md) |
+| **Integrity** | [![Moderate](https://img.shields.io/badge/I-Moderate-yellow?style=flat-square)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md) |
+| **Availability** | [![Standard](https://img.shields.io/badge/A-Standard-lightgreen?style=flat-square)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md) |
+
+See [**CRA-ASSESSMENT.md**](CRA-ASSESSMENT.md) for the full EU Cyber Resilience Act conformity assessment.
+
 ---
 
 ## 🧪 Development

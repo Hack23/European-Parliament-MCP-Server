@@ -52,6 +52,7 @@
 | **Mind Map** | [MINDMAP.md](./MINDMAP.md) | [FUTURE_MINDMAP.md](./FUTURE_MINDMAP.md) | System concepts and relationships |
 | **SWOT Analysis** | [SWOT.md](./SWOT.md) | [FUTURE_SWOT.md](./FUTURE_SWOT.md) | Strategic positioning |
 | **Threat Model** | [THREAT_MODEL.md](./THREAT_MODEL.md) | [FUTURE_THREAT_MODEL.md](./FUTURE_THREAT_MODEL.md) | STRIDE, MITRE ATT&CK, attack trees |
+| **CRA Assessment** | [CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md) | — | EU Cyber Resilience Act conformity |
 
 ---
 
