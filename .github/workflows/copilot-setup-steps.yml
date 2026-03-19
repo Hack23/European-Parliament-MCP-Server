@@ -48,33 +48,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: "25"
   
-      - name: Cache dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       - name: Install packages 
         run: |
           npm ci
-
-      # Cache only the scoped MCP server packages we install globally (not the entire
-      # global node_modules, which includes system packages that cause tar permission errors).
-      - name: Cache global MCP server packages
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        with:
-          path: |
-            /usr/local/lib/node_modules/@modelcontextprotocol
-            /usr/local/lib/node_modules/@playwright
-            /usr/local/bin/mcp-server-*
-            /usr/local/bin/playwright-mcp
-          key: ${{ runner.os }}-node${{ env.NODE_VERSION }}-mcp-servers-v7-${{ hashFiles('.github/copilot-mcp.json', '.github/workflows/copilot-setup-steps.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-node${{ env.NODE_VERSION }}-mcp-servers-v7-
 
       # Build the European Parliament MCP Server and link globally so it's available as a local MCP server
       - name: Build European Parliament MCP Server
