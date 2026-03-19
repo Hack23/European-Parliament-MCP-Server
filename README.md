@@ -486,7 +486,7 @@ graph TB
 
     subgraph "Infrastructure"
         Cache[LRU Cache<br/>500 entries · 15 min TTL]
-        RateLimiter[Rate Limiter<br/>100 req / 15 min]
+        RateLimiter[Rate Limiter<br/>100 req/min]
         AuditLog[Audit Logger<br/>GDPR Article 30]
     end
 
@@ -810,7 +810,7 @@ This project aligns with [Hack23 AB's Information Security Management System (IS
 
 - 🔐 **Authentication**: API key + OAuth 2.0 (planned)
 - 🛡️ **Input Validation**: Zod schemas for all inputs
-- ⚡ **Rate Limiting**: 100 requests per 15 minutes per IP
+- ⚡ **Rate Limiting**: 100 requests per minute
 - 🔒 **Security Headers**: CSP, HSTS, X-Frame-Options, etc.
 - 📝 **Audit Logging**: All data access logged
 - 🔍 **Vulnerability Scanning**: CodeQL, Dependabot, OSSF Scorecard
@@ -948,7 +948,7 @@ npm run test:coverage
 npm run test:watch
 ```
 
-**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, all 61 MCP tools are tested against the real European Parliament API endpoints. All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](INTEGRATION_TESTING.md) for the complete guide.
+**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, the integration test suite validates 46 MCP tools against the real European Parliament API endpoints (see [**INTEGRATION_TESTING.md**](INTEGRATION_TESTING.md) for the complete 61-tool coverage guide). All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/min).
 
 ### Code Quality
 
@@ -978,7 +978,7 @@ npm run test:licenses
 **Symptom:** Requests return `429 Too Many Requests` or slow down unexpectedly.
 
 The European Parliament Open Data API enforces rate limits. The MCP server
-automatically applies a token-bucket rate limiter (100 requests per 15 minutes).
+automatically applies a token-bucket rate limiter (100 requests per minute).
 
 **Solutions:**
 ```bash

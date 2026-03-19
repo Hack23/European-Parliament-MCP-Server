@@ -25,13 +25,13 @@
 
 ## 📑 Table of Contents
 
-1. [Security Documentation Map](#security-documentation-map)
-2. [SWOT Overview](#swot-overview)
-3. [Strengths](#strengths)
-4. [Weaknesses](#weaknesses)
-5. [Opportunities](#opportunities)
-6. [Threats](#threats)
-7. [Strategic Implications](#strategic-implications)
+1. [Security Documentation Map](#-security-documentation-map)
+2. [SWOT Overview](#-swot-overview)
+3. [Strengths](#-strengths)
+4. [Weaknesses](#-weaknesses)
+5. [Opportunities](#-opportunities)
+6. [Threats](#-threats)
+7. [Strategic Implications](#-strategic-implications)
 8. [v1.1 Positioning Statement](#-v11-positioning-statement)
 
 ---

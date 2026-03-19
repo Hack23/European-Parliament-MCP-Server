@@ -61,7 +61,7 @@ This guide explains how to run integration tests for the European Parliament MCP
 32. **get_meeting_decisions** - Meeting decision outcomes
 33. **get_mep_declarations** - MEP financial declarations
 
-**EP Complete Coverage Tools — Phase 5** (13 — real EP API v2):
+**EP Complete Coverage Tools — Phase 5** (15 — real EP API v2):
 34. **get_incoming_meps** - Incoming MEPs (new members)
 35. **get_outgoing_meps** - Outgoing MEPs (departing members)
 36. **get_homonym_meps** - MEPs with duplicate names
@@ -75,8 +75,25 @@ This guide explains how to run integration tests for the European Parliament MCP
 44. **get_procedure_events** - Events linked to a procedure
 45. **get_meeting_plenary_session_documents** - Plenary session meeting documents
 46. **get_meeting_plenary_session_document_items** - Plenary session meeting document items
+47. **get_all_generated_stats** - Precomputed EP activity statistics (2004–2026)
+48. **get_procedure_event_by_id** - Single event for a specific procedure
 
-> **No Mock Data**: All 61 tools are validated to return real data from the EP API. The integration test suite (`allTools.integration.test.ts`) explicitly checks that no tool returns `confidenceLevel: 'NONE'` or `PLACEHOLDER DATA` markers.
+**EP Data Feed Tools** (13 — real EP API v2 feeds):
+49. **get_meps_feed** - Recently updated MEPs
+50. **get_events_feed** - Recently updated events
+51. **get_procedures_feed** - Recently updated procedures
+52. **get_adopted_texts_feed** - Recently updated adopted texts
+53. **get_mep_declarations_feed** - Recently updated MEP declarations
+54. **get_documents_feed** - Recently updated documents
+55. **get_plenary_documents_feed** - Recently updated plenary documents
+56. **get_committee_documents_feed** - Recently updated committee documents
+57. **get_plenary_session_documents_feed** - Recently updated plenary session documents
+58. **get_external_documents_feed** - Recently updated external documents
+59. **get_parliamentary_questions_feed** - Recently updated parliamentary questions
+60. **get_corporate_bodies_feed** - Recently updated corporate bodies
+61. **get_controlled_vocabularies_feed** - Recently updated controlled vocabularies
+
+> **No Mock Data**: All tools return real data from the EP API. The integration test suite (`allTools.integration.test.ts`) currently covers 46 of 61 tools (core, advanced, OSINT, phase 4, and phase 5 data tools). Feed tools and precomputed analytics tools are validated through unit tests. The suite explicitly checks that no tool returns `confidenceLevel: 'NONE'` or `PLACEHOLDER DATA` markers.
 
 ### Test Categories
 
