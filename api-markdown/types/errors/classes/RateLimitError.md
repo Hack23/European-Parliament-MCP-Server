@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -92,7 +92,7 @@ HTTP status code (default: 500)
 
 ### details?
 
-> `readonly` `optional` **details**: `unknown`
+> `readonly` `optional` **details?**: `unknown`
 
 Defined in: [types/errors.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/errors.ts#L46)
 
@@ -106,7 +106,7 @@ Optional additional error details for debugging
 
 ### retryAfter?
 
-> `readonly` `optional` **retryAfter**: `number`
+> `readonly` `optional` **retryAfter?**: `number`
 
 Defined in: [types/errors.ts:108](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/errors.ts#L108)
 

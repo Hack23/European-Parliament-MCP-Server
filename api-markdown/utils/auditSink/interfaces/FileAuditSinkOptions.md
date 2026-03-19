@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -24,7 +24,7 @@ Absolute path to the NDJSON log file
 
 ### maxSizeBytes?
 
-> `optional` **maxSizeBytes**: `number`
+> `optional` **maxSizeBytes?**: `number`
 
 Defined in: [utils/auditSink.ts:310](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L310)
 

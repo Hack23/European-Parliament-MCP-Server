@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -58,7 +58,7 @@ The timeout duration in milliseconds
 
 ### timeoutMs?
 
-> `readonly` `optional` **timeoutMs**: `number`
+> `readonly` `optional` **timeoutMs?**: `number`
 
 Defined in: [utils/timeout.ts:60](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L60)
 

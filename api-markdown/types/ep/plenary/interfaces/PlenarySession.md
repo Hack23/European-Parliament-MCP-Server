@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -182,7 +182,7 @@ additional sessions possible in Brussels.
 
 ### attendanceCount?
 
-> `optional` **attendanceCount**: `number`
+> `optional` **attendanceCount?**: `number`
 
 Defined in: [types/ep/plenary.ts:165](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/plenary.ts#L165)
 
@@ -211,7 +211,7 @@ and transparency reporting.
 
 ### documents?
 
-> `optional` **documents**: `string`[]
+> `optional` **documents?**: `string`[]
 
 Defined in: [types/ep/plenary.ts:186](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/plenary.ts#L186)
 
@@ -243,7 +243,7 @@ LegislativeDocument for document details
 
 ### votingRecords?
 
-> `optional` **votingRecords**: [`VotingRecord`](VotingRecord.md)[]
+> `optional` **votingRecords?**: [`VotingRecord`](VotingRecord.md)[]
 
 Defined in: [types/ep/plenary.ts:148](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/plenary.ts#L148)
 

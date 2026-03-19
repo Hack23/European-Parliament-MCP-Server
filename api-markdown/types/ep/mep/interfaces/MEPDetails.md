@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -334,7 +334,7 @@ For replacements, may be mid-term.
 
 ### address?
 
-> `optional` **address**: `string`
+> `optional` **address?**: `string`
 
 Defined in: [types/ep/mep.ts:289](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L289)
 
@@ -364,7 +364,7 @@ Personal data - requires audit logging per ISMS AU-002
 
 ### biography?
 
-> `optional` **biography**: `string`
+> `optional` **biography?**: `string`
 
 Defined in: [types/ep/mep.ts:257](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L257)
 
@@ -388,7 +388,7 @@ and political career highlights. Content may be in multiple languages.
 
 ### email?
 
-> `optional` **email**: `string`
+> `optional` **email?**: `string`
 
 Defined in: [types/ep/mep.ts:127](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L127)
 
@@ -419,7 +419,7 @@ Personal data - requires audit logging per ISMS AU-002
 
 ### facebook?
 
-> `optional` **facebook**: `string`
+> `optional` **facebook?**: `string`
 
 Defined in: [types/ep/mep.ts:334](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L334)
 
@@ -445,7 +445,7 @@ username (facebook.com/username) or numeric ID (facebook.com/12345).
 
 ### phone?
 
-> `optional` **phone**: `string`
+> `optional` **phone?**: `string`
 
 Defined in: [types/ep/mep.ts:273](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L273)
 
@@ -475,7 +475,7 @@ Personal data - requires audit logging per ISMS AU-002
 
 ### roles?
 
-> `optional` **roles**: `string`[]
+> `optional` **roles?**: `string`[]
 
 Defined in: [types/ep/mep.ts:368](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L368)
 
@@ -507,7 +507,7 @@ special assignments. Roles are current as of data fetch.
 
 ### termEnd?
 
-> `optional` **termEnd**: `string`
+> `optional` **termEnd?**: `string`
 
 Defined in: [types/ep/mep.ts:172](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L172)
 
@@ -539,7 +539,7 @@ completed their term, resigned, or were replaced.
 
 ### twitter?
 
-> `optional` **twitter**: `string`
+> `optional` **twitter?**: `string`
 
 Defined in: [types/ep/mep.ts:320](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L320)
 
@@ -567,7 +567,7 @@ availability.
 
 ### votingStatistics?
 
-> `optional` **votingStatistics**: [`VotingStatistics`](VotingStatistics.md)
+> `optional` **votingStatistics?**: [`VotingStatistics`](VotingStatistics.md)
 
 Defined in: [types/ep/mep.ts:348](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L348)
 
@@ -588,7 +588,7 @@ session roll-call votes.
 
 ### website?
 
-> `optional` **website**: `string`
+> `optional` **website?**: `string`
 
 Defined in: [types/ep/mep.ts:304](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L304)
 

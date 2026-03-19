@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -319,7 +319,7 @@ Coerce an optional timeoutMs value to a safe finite number >= 0.
 
 ##### rawTimeoutMs
 
-`number` | `undefined`
+`number` \| `undefined`
 
 #### Returns
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -268,7 +268,7 @@ Determines workflow, voting requirements, and legal effect.
 
 ### committee?
 
-> `optional` **committee**: `string`
+> `optional` **committee?**: `string`
 
 Defined in: [types/ep/document.ts:168](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L168)
 
@@ -299,7 +299,7 @@ Committee for committee details
 
 ### pdfUrl?
 
-> `optional` **pdfUrl**: `string`
+> `optional` **pdfUrl?**: `string`
 
 Defined in: [types/ep/document.ts:201](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L201)
 
@@ -327,7 +327,7 @@ repository (doceo).
 
 ### summary?
 
-> `optional` **summary**: `string`
+> `optional` **summary?**: `string`
 
 Defined in: [types/ep/document.ts:233](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L233)
 
@@ -355,7 +355,7 @@ recommendation. For resolutions, includes main demands.
 
 ### xmlUrl?
 
-> `optional` **xmlUrl**: `string`
+> `optional` **xmlUrl?**: `string`
 
 Defined in: [types/ep/document.ts:217](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/document.ts#L217)
 

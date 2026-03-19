@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -30,6 +30,6 @@ Defined in: [tools/trackLegislation/types.ts:54](https://github.com/Hack23/Europ
 
 ### rapporteur?
 
-> `optional` **rapporteur**: `string`
+> `optional` **rapporteur?**: `string`
 
 Defined in: [tools/trackLegislation/types.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L55)

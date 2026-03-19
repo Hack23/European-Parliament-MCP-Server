@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -303,7 +303,7 @@ Oral questions receive verbal answers in plenary session.
 
 ### answerDate?
 
-> `optional` **answerDate**: `string`
+> `optional` **answerDate?**: `string`
 
 Defined in: [types/ep/question.ts:230](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/question.ts#L230)
 
@@ -335,7 +335,7 @@ For priority questions, target is 3 weeks from submission.
 
 ### answerText?
 
-> `optional` **answerText**: `string`
+> `optional` **answerText?**: `string`
 
 Defined in: [types/ep/question.ts:210](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/question.ts#L210)
 

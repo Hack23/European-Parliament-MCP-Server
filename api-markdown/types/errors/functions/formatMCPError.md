@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -40,7 +40,7 @@ Formatted error object safe for client transmission
 
 ### details?
 
-> `optional` **details**: `unknown`
+> `optional` **details?**: `unknown`
 
 ## Example
 

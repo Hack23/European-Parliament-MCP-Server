@@ -12,12 +12,12 @@
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-Hack23-0A66C2?style=for-the-badge" alt="Owner"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Version-2.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--26-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--03--19-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** Hack23 | **📄 Version:** 2.0 | **📅 Last Updated:** 2026-02-26 (UTC)
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-26
+**📋 Document Owner:** Hack23 | **📄 Version:** 2.0 | **📅 Last Updated:** 2026-03-19 (UTC)
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-06-19
 **🏷️ Classification:** Public (Open Source MCP Server)
 **✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.14.2), NIST CSF 2.0 (ID.AM, PR.DS), CIS Controls v8.1 (2.1, 16.1)
 
@@ -81,7 +81,7 @@ quadrantChart
 
 ### FS1: EU Data Federation Platform (v2.0)
 Expanding beyond EP data to create a unified EU institutions data platform integrating:
-- European Parliament (46+ tools)
+- European Parliament (61 tools)
 - EUR-Lex legislation database
 - Council of the EU proceedings
 - European Commission proposals
@@ -130,7 +130,7 @@ Multi-tenant architecture introduces risks of cross-tenant data leakage if not i
 **Action:** Dedicated security audit for multi-tenant implementation before public release.
 
 ### FW3: EP API Version Migration Risk
-The transition from EP API v2 to a hypothetical v3 would require updating all 46+ tool implementations simultaneously.
+The transition from EP API v2 to a hypothetical v3 would require updating all 61 tool implementations simultaneously.
 
 **Action:** Build an EP API abstraction layer that decouples tool implementations from specific API versions.
 
@@ -279,7 +279,7 @@ Open source project sustainability requires ongoing maintenance. Without commerc
 
 ## 🏆 v2.0 Positioning Statement
 
-> **The European Parliament MCP Server v2.0 will be the definitive AI-native intelligence platform for European democratic data.** Expanding from 47 tools to 60+ with AI-powered analysis, federating data from EP, EUR-Lex, and the Council of the EU, and delivering enterprise-grade OAuth 2.0 security with fine-grained RBAC, v2.0 transforms from a data access server into a comprehensive European parliamentary intelligence platform. With ISO 27001 readiness, SLSA Level 3 provenance, and full GDPR compliance documentation, it will be the trusted infrastructure for institutional, journalistic, and research use cases requiring the highest standards of democratic data intelligence.
+> **The European Parliament MCP Server v2.0 will be the definitive AI-native intelligence platform for European democratic data.** Expanding from 61 tools to 80+ with AI-powered analysis, federating data from EP, EUR-Lex, and the Council of the EU, and delivering enterprise-grade OAuth 2.0 security with fine-grained RBAC, v2.0 transforms from a data access server into a comprehensive European parliamentary intelligence platform. With ISO 27001 readiness, SLSA Level 3 provenance, and full GDPR compliance documentation, it will be the trusted infrastructure for institutional, journalistic, and research use cases requiring the highest standards of democratic data intelligence.
 
 **Target Market Expansion (v2.0):**
 - v1.0 audience: Developers and AI-powered researchers

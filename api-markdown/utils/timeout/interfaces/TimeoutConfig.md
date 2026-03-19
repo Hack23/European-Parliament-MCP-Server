@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -27,7 +27,7 @@ Timeout duration in milliseconds (must be > 0)
 
 ### errorMessage?
 
-> `optional` **errorMessage**: `string`
+> `optional` **errorMessage?**: `string`
 
 Defined in: [utils/timeout.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L24)
 
@@ -37,7 +37,7 @@ Custom error message override for timeout errors
 
 ### operationName?
 
-> `optional` **operationName**: `string`
+> `optional` **operationName?**: `string`
 
 Defined in: [utils/timeout.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L22)
 

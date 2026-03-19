@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [utils/auditSink.ts:403](https://github.com/Hack23/European-Parliame
 
 ## Properties
 
-### writer()
+### writer
 
 > `private` `readonly` **writer**: (`json`) => `void`
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -30,6 +30,6 @@ Defined in: [tools/shared/types.ts:11](https://github.com/Hack23/European-Parlia
 
 ### isError?
 
-> `optional` **isError**: `boolean`
+> `optional` **isError?**: `boolean`
 
 Defined in: [tools/shared/types.ts:12](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/types.ts#L12)

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../README.md)
 
 ***
 
@@ -60,6 +60,68 @@ Defined in: [index.ts:135](https://github.com/Hack23/European-Parliament-MCP-Ser
 Defined in: [index.ts:133](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L133)
 
 ## Methods
+
+### dispatchToolCall()
+
+> `private` **dispatchToolCall**(`name`, `args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+
+Defined in: [index.ts:249](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L249)
+
+**`Internal`**
+
+Dispatch tool calls to appropriate handlers
+
+#### Parameters
+
+##### name
+
+`string`
+
+Tool name
+
+##### args
+
+`unknown`
+
+Tool arguments
+
+#### Returns
+
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+
+Tool execution result
+
+***
+
+### setupHandlers()
+
+> `private` **setupHandlers**(): `void`
+
+Defined in: [index.ts:172](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L172)
+
+**`Internal`**
+
+Set up MCP protocol handlers
+
+Registers handlers for:
+- Tool listing: Returns available tools with schemas
+- Tool execution: Routes tool calls to appropriate handlers
+
+**Security:**
+- All inputs validated before processing
+- Rate limiting applied per client
+- GDPR compliance enforced
+- Audit logging for all data access
+
+#### Returns
+
+`void`
+
+#### Throws
+
+If handler registration fails
+
+***
 
 ### start()
 

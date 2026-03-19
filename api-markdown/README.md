@@ -1,4 +1,4 @@
-**European Parliament MCP Server API v1.1.13**
+**European Parliament MCP Server API v1.1.14**
 
 ***
 
@@ -473,7 +473,7 @@ graph TB
 
     subgraph "MCP Server (src/)"
         direction TB
-        Tools[🔧 46 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …]
+        Tools[🔧 61 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …]
         Resources[📦 9 Resources<br/>ep://meps/{id}<br/>ep://procedures/{id} · …]
         Prompts[💬 7 Prompts<br/>mep_briefing<br/>coalition_analysis · …]
     end
@@ -484,7 +484,7 @@ graph TB
 
     subgraph "Infrastructure"
         Cache[LRU Cache<br/>500 entries · 15 min TTL]
-        RateLimiter[Rate Limiter<br/>100 req / 15 min]
+        RateLimiter[Rate Limiter<br/>100 req/min]
         AuditLog[Audit Logger<br/>GDPR Article 30]
     end
 
@@ -695,7 +695,7 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 
 | Country | Server | Data Source | Coverage |
 |---------|--------|-------------|----------|
-| 🇪🇺 **European Union** | [**European Parliament MCP Server**](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions — **47 tools** (15 OSINT) |
+| 🇪🇺 **European Union** | [**European Parliament MCP Server**](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions — **61 tools** (15 OSINT) |
 | 🇺🇸 **United States** | [Congress.gov API MCP Server](https://github.com/bsmi021/mcp-congress_gov_server) | congress.gov | Bills, members, votes, committees (TypeScript, v3 API) |
 | 🇺🇸 **United States** | [CongressMCP](https://github.com/amurshak/congressMCP) | congress.gov | Real-time Congress data — bills, votes, members |
 | 🇺🇸 **United States** | [Congress.gov MCP](https://github.com/AshwinSundar/congress_gov_mcp) | congress.gov | Unofficial Congress.gov API access |
@@ -757,9 +757,9 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 | Attendance tracking | ✅ Trend detection + engagement scoring | ❌ | ❌ | ❌ |
 | GDPR compliance | ✅ Privacy-first design | N/A | N/A | ✅ |
 | MCP prompts & resources | ✅ 7 prompts + 9 resources | ❌ | ❌ | ❌ |
-| Tool count | **47 tools** | ~5 tools | ~5 tools | ~4 tools |
+| Tool count | **61 tools** | ~5 tools | ~5 tools | ~4 tools |
 
-> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **47 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, cross-tool intelligence correlation, political landscape generation, and precomputed longitudinal statistics. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
+> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **61 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, cross-tool intelligence correlation, political landscape generation, and precomputed longitudinal statistics. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
 
 ---
 
@@ -808,7 +808,7 @@ This project aligns with [Hack23 AB's Information Security Management System (IS
 
 - 🔐 **Authentication**: API key + OAuth 2.0 (planned)
 - 🛡️ **Input Validation**: Zod schemas for all inputs
-- ⚡ **Rate Limiting**: 100 requests per 15 minutes per IP
+- ⚡ **Rate Limiting**: 100 requests per minute
 - 🔒 **Security Headers**: CSP, HSTS, X-Frame-Options, etc.
 - 📝 **Audit Logging**: All data access logged
 - 🔍 **Vulnerability Scanning**: CodeQL, Dependabot, OSSF Scorecard
@@ -825,6 +825,19 @@ This project achieves **SLSA Level 3** compliance:
 - ✅ **License Compliance** - Only MIT, Apache-2.0, BSD, ISC allowed
 
 See [**ATTESTATIONS.md**](_media/ATTESTATIONS.md) for verification instructions and security benefits.
+
+### 📋 Project Classification
+
+Per [Hack23 Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md):
+
+| Property | Value |
+|----------|-------|
+| **CRA Classification** | [![Standard](https://img.shields.io/badge/CRA-Standard-green?style=flat-square)](CRA-ASSESSMENT.md) Non-commercial Open Source Software |
+| **Confidentiality** | [![Public](https://img.shields.io/badge/C-Public-lightgrey?style=flat-square)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md) |
+| **Integrity** | [![Moderate](https://img.shields.io/badge/I-Moderate-yellow?style=flat-square)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md) |
+| **Availability** | [![Standard](https://img.shields.io/badge/A-Standard-lightgreen?style=flat-square)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md) |
+
+See [**CRA-ASSESSMENT.md**](_media/CRA-ASSESSMENT.md) for the full EU Cyber Resilience Act conformity assessment.
 
 ---
 
@@ -933,7 +946,7 @@ npm run test:coverage
 npm run test:watch
 ```
 
-**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, all 47 MCP tools are tested against the real European Parliament API endpoints. All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/15min). See [**INTEGRATION_TESTING.md**](_media/INTEGRATION_TESTING.md) for the complete guide.
+**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, the integration test suite validates 46 MCP tools against the real European Parliament API endpoints (see [**INTEGRATION_TESTING.md**](_media/INTEGRATION_TESTING.md) for the complete 61-tool coverage guide). All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/min).
 
 ### Code Quality
 
@@ -963,7 +976,7 @@ npm run test:licenses
 **Symptom:** Requests return `429 Too Many Requests` or slow down unexpectedly.
 
 The European Parliament Open Data API enforces rate limits. The MCP server
-automatically applies a token-bucket rate limiter (100 requests per 15 minutes).
+automatically applies a token-bucket rate limiter (100 requests per minute).
 
 **Solutions:**
 ```bash
@@ -1103,7 +1116,7 @@ For detailed workflow documentation, see [.github/WORKFLOWS.md](_media/WORKFLOWS
 
 > **📰 News is dead. Long live intelligence.**
 >
-> While the world's newsrooms race to replace journalists with GPT-powered headline factories — churning out *"10 Things the EU Did Today"* listicles at the speed of hallucination — we took a different path. Instead of automating the news *ticker*, we built a **political intelligence platform** that actually *understands* what the European Parliament does. Disrupted news generation produces noise; **deep political intelligence** produces signal. Any chatbot can summarize a press release. It takes **47 MCP tools**, **15 OSINT analyzers**, and a **5-dimension influence model** to tell you *which MEP quietly brokered the amendment that changed the directive that reshaped an industry* — three months before the newspapers notice.
+> While the world's newsrooms race to replace journalists with GPT-powered headline factories — churning out *"10 Things the EU Did Today"* listicles at the speed of hallucination — we took a different path. Instead of automating the news *ticker*, we built a **political intelligence platform** that actually *understands* what the European Parliament does. Disrupted news generation produces noise; **deep political intelligence** produces signal. Any chatbot can summarize a press release. It takes **61 MCP tools**, **15 OSINT analyzers**, and a **5-dimension influence model** to tell you *which MEP quietly brokered the amendment that changed the directive that reshaped an industry* — three months before the newspapers notice.
 >
 > **This is not a news bot. This is parliamentary intelligence infrastructure.**
 
@@ -1158,7 +1171,7 @@ graph TB
         W11["🤖 copilot-setup-steps"]
     end
 
-    subgraph TOOLS["🔌 47 MCP Tools"]
+    subgraph TOOLS["🔌 61 MCP Tools"]
         style TOOLS fill:#172554,stroke:#3B82F6,color:#DBEAFE
         T1["🕵️ 15 OSINT Intelligence"]
         T2["📊 4 Advanced Analysis"]
@@ -1175,7 +1188,7 @@ graph TB
 
 ### 📅 Future Advanced Roadmap: 2026–2037
 
-> From **47 MCP tools** today to a **transformative democratic intelligence platform** serving all 195 parliamentary systems — powered by the relentless march of AI model generations.
+> From **61 MCP tools** today to a **transformative democratic intelligence platform** serving all 195 parliamentary systems — powered by the relentless march of AI model generations.
 
 #### Phase 5: Advanced Intelligence (2026–2027)
 

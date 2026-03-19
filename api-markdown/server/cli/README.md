@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../README.md)
 
 ***
 
@@ -15,6 +15,7 @@ and exit the process.
 ## Functions
 
 - [parseCLIArgs](functions/parseCLIArgs.md)
+- [sanitizeUrl](functions/sanitizeUrl.md)
 - [showHealth](functions/showHealth.md)
 - [showHelp](functions/showHelp.md)
 - [showVersion](functions/showVersion.md)

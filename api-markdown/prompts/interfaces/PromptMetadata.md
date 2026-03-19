@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../README.md)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [prompts/index.ts:24](https://github.com/Hack23/European-Parliament-
 
 ### arguments?
 
-> `optional` **arguments**: `object`[]
+> `optional` **arguments?**: `object`[]
 
 Defined in: [prompts/index.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L26)
 

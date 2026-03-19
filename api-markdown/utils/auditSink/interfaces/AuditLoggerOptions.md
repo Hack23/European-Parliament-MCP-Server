@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -14,7 +14,7 @@ Constructor options for AuditLogger.
 
 ### requiredAuthToken?
 
-> `optional` **requiredAuthToken**: `string`
+> `optional` **requiredAuthToken?**: `string`
 
 Defined in: [utils/auditSink.ts:135](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L135)
 
@@ -26,7 +26,7 @@ When absent, those methods are unrestricted (suitable for testing).
 
 ### retentionMs?
 
-> `optional` **retentionMs**: `number`
+> `optional` **retentionMs?**: `number`
 
 Defined in: [utils/auditSink.ts:129](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L129)
 
@@ -36,7 +36,7 @@ Maximum age of log entries in milliseconds (data retention enforcement)
 
 ### sensitiveKeys?
 
-> `optional` **sensitiveKeys**: readonly `string`[]
+> `optional` **sensitiveKeys?**: readonly `string`[]
 
 Defined in: [utils/auditSink.ts:140](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L140)
 
@@ -47,7 +47,7 @@ Defaults to [DEFAULT\_SENSITIVE\_KEYS](../variables/DEFAULT_SENSITIVE_KEYS.md).
 
 ### sinks?
 
-> `optional` **sinks**: [`AuditSink`](AuditSink.md)[]
+> `optional` **sinks?**: [`AuditSink`](AuditSink.md)[]
 
 Defined in: [utils/auditSink.ts:127](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L127)
 

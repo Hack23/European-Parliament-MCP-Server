@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -24,4 +24,4 @@ Schema for network_analysis tool input
 
 ### mepId?
 
-> `optional` **mepId**: `number`
+> `optional` **mepId?**: `number`

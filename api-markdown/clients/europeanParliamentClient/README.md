@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../README.md)
 
 ***
 
@@ -116,6 +116,12 @@ Re-exports [DEFAULT_RETRY_ENABLED](../ep/baseClient/variables/DEFAULT_RETRY_ENAB
 ### DEFAULT\_RETRY\_MAX\_DELAY\_MS
 
 Re-exports [DEFAULT_RETRY_MAX_DELAY_MS](../ep/baseClient/variables/DEFAULT_RETRY_MAX_DELAY_MS.md)
+
+***
+
+### EPClientConfig
+
+Re-exports [EPClientConfig](../ep/baseClient/interfaces/EPClientConfig.md)
 
 ***
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -236,7 +236,7 @@ For replacements, may be mid-term.
 
 ### email?
 
-> `optional` **email**: `string`
+> `optional` **email?**: `string`
 
 Defined in: [types/ep/mep.ts:127](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L127)
 
@@ -263,7 +263,7 @@ Personal data - requires audit logging per ISMS AU-002
 
 ### termEnd?
 
-> `optional` **termEnd**: `string`
+> `optional` **termEnd?**: `string`
 
 Defined in: [types/ep/mep.ts:172](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L172)
 

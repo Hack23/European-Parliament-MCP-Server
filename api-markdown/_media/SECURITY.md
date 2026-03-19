@@ -393,6 +393,8 @@ All security practices are governed by our publicly available ISMS:
 - 🔑 [Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) - Authentication and authorization
 - 🔍 [Vulnerability Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) - Security vulnerability handling
 - 🏷️ [Classification Framework](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md) - CIA triad and impact levels
+- 🛡️ [CRA Conformity Assessment](CRA-ASSESSMENT.md) - EU Cyber Resilience Act compliance
+- 🛡️ [CRA Conformity Assessment Process](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CRA_Conformity_Assessment_Process.md) - CRA assessment template
 
 ---
 

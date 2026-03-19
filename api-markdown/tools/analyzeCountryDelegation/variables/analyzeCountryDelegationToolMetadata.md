@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -16,7 +16,7 @@ Tool metadata for MCP listing
 
 ### description
 
-> **description**: `string` = `'Analyze a country\'s MEP delegation in the European Parliament — political group distribution, voting behavior, committee presence, and national cohesion. Reveals national interest patterns that cut across party lines.'`
+> **description**: `string` = 'Analyze a country\'s MEP delegation in the European Parliament — political group distribution, voting behavior, committee presence, and national cohesion. Reveals national interest patterns that cut across party lines.'
 
 ### inputSchema
 

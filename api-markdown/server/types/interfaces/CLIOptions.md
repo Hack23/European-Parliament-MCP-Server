@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -17,7 +17,7 @@ provided on the command line.
 
 ### health?
 
-> `optional` **health**: `boolean`
+> `optional` **health?**: `boolean`
 
 Defined in: [server/types.ts:77](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L77)
 
@@ -27,7 +27,7 @@ Show health-check / diagnostics JSON and exit
 
 ### help?
 
-> `optional` **help**: `boolean`
+> `optional` **help?**: `boolean`
 
 Defined in: [server/types.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L73)
 
@@ -37,7 +37,7 @@ Show usage / help text and exit
 
 ### version?
 
-> `optional` **version**: `boolean`
+> `optional` **version?**: `boolean`
 
 Defined in: [server/types.ts:75](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L75)
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -662,7 +662,7 @@ Internal Server Error
 
 ##### internal-server-error.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 #### no-content
 
@@ -682,7 +682,7 @@ No content
 
 ##### no-content.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 #### not-acceptable
 
@@ -702,7 +702,7 @@ Not Acceptable
 
 ##### not-acceptable.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 #### not-found
 
@@ -722,7 +722,7 @@ Not Found
 
 ##### not-found.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 #### ok-atom-xml
 
@@ -784,7 +784,7 @@ Format: date-time
 
 ##### ok-atom-xml.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### ok-atom-xml.content.application/atom+xml.entry.category.label
 
@@ -802,11 +802,11 @@ Format: uri
 
 ##### ok-atom-xml.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### ok-atom-xml.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -852,7 +852,7 @@ Format: uri
 
 ##### ok-atom-xml.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### ok-atom-xml.content.application/atom+xml.subtitle.type
 
@@ -888,15 +888,15 @@ OK
 
 ##### ok-json-ld.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### ok-json-ld.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### ok-json-ld.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### ok-json-ld.headers
 
@@ -968,7 +968,7 @@ Format: date-time
 
 ##### atom-xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### atom-xml.entry.category.label
 
@@ -986,11 +986,11 @@ Format: uri
 
 ##### atom-xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### atom-xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -1036,7 +1036,7 @@ Format: uri
 
 ##### atom-xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### atom-xml.subtitle.type
 
@@ -1072,11 +1072,25 @@ Format: uri
 
 ContextElement
 
-##### Type Declaration
+##### Union Members
 
 `string`
 
+***
+
+###### Type Literal
+
 \{ `@base`: `string`; `data`: `string`; \}
+
+###### @base
+
+> **@base**: `string`
+
+Format: uri
+
+###### data
+
+> **data**: `string`
 
 #### daciSchema
 
@@ -1124,11 +1138,25 @@ Format: uri
 
 ContextElement
 
-###### Type Declaration
+###### Union Members
 
 `string`
 
+***
+
+###### Type Literal
+
 \{ `@base`: `string`; `data`: `string`; \}
+
+###### @base
+
+> **@base**: `string`
+
+Format: uri
+
+###### data
+
+> **data**: `string`
 
 ##### daciSchema.$defs.Expression
 
@@ -1236,14 +1264,14 @@ Format: iri-reference
 
 ##### daciSchema.$defs.ForeseenCapacity.capacityActivity?
 
-> `optional` **capacityActivity**: `string`
+> `optional` **capacityActivity?**: `string`
 
 capacity activity
 Format: iri-reference
 
 ##### daciSchema.$defs.ForeseenCapacity.capacityActivityLabel?
 
-> `optional` **capacityActivityLabel**: `string`
+> `optional` **capacityActivityLabel?**: `string`
 
 capacity activity label
 
@@ -1253,7 +1281,7 @@ Parliamentary Procedure Specification (free text)
 
 ##### daciSchema.$defs.ForeseenCapacity.capacityOrganization?
 
-> `optional` **capacityOrganization**: `string`
+> `optional` **capacityOrganization?**: `string`
 
 capacity organization
 Format: iri-reference
@@ -1430,14 +1458,14 @@ Format: iri-reference
 
 ##### daciSchema.$defs.Participation.inCapacityOf.capacityActivity?
 
-> `optional` **capacityActivity**: `string`
+> `optional` **capacityActivity?**: `string`
 
 capacity activity
 Format: iri-reference
 
 ##### daciSchema.$defs.Participation.inCapacityOf.capacityActivityLabel?
 
-> `optional` **capacityActivityLabel**: `string`
+> `optional` **capacityActivityLabel?**: `string`
 
 capacity activity label
 
@@ -1447,7 +1475,7 @@ Parliamentary Procedure Specification (free text)
 
 ##### daciSchema.$defs.Participation.inCapacityOf.capacityOrganization?
 
-> `optional` **capacityOrganization**: `string`
+> `optional` **capacityOrganization?**: `string`
 
 capacity organization
 Format: iri-reference
@@ -1599,7 +1627,7 @@ work had participation
 
 ##### daciSchema.$defs.Work-DCI.alternative\_dcterms?
 
-> `optional` **alternative\_dcterms**: `object`
+> `optional` **alternative\_dcterms?**: `object`
 
 alternative
 
@@ -1609,7 +1637,7 @@ alternative
 
 ##### daciSchema.$defs.Work-DCI.conflictDescription?
 
-> `optional` **conflictDescription**: `string`
+> `optional` **conflictDescription?**: `string`
 
 conflict description
 
@@ -1619,25 +1647,25 @@ Present only is absenceOfConflict is false.
 
 ##### daciSchema.$defs.Work-DCI.inverse\_previousVersion?
 
-> `optional` **inverse\_previousVersion**: `string`[]
+> `optional` **inverse\_previousVersion?**: `string`[]
 
 inverse previous version
 
 ##### daciSchema.$defs.Work-DCI.notation\_dossierId?
 
-> `optional` **notation\_dossierId**: `string`
+> `optional` **notation\_dossierId?**: `string`
 
 dossier identifier
 
 ##### daciSchema.$defs.Work-DCI.previousVersion?
 
-> `optional` **previousVersion**: `string`[]
+> `optional` **previousVersion?**: `string`[]
 
 previous version
 
 ##### daciSchema.$defs.Work-DCI.refers\_to?
 
-> `optional` **refers\_to**: `string`[]
+> `optional` **refers\_to?**: `string`[]
 
 refers to
 
@@ -1647,7 +1675,7 @@ refers to
 
 ##### daciSchema.meta?
 
-> `optional` **meta**: `object`
+> `optional` **meta?**: `object`
 
 ##### daciSchema.meta.total
 
@@ -1655,7 +1683,7 @@ refers to
 
 ##### daciSchema.searchResults?
 
-> `optional` **searchResults**: `object`
+> `optional` **searchResults?**: `object`
 
 ##### daciSchema.searchResults.hits
 
@@ -1767,14 +1795,14 @@ Format: iri-reference
 
 ##### ForeseenCapacity.capacityActivity?
 
-> `optional` **capacityActivity**: `string`
+> `optional` **capacityActivity?**: `string`
 
 capacity activity
 Format: iri-reference
 
 ##### ForeseenCapacity.capacityActivityLabel?
 
-> `optional` **capacityActivityLabel**: `string`
+> `optional` **capacityActivityLabel?**: `string`
 
 capacity activity label
 
@@ -1784,7 +1812,7 @@ Parliamentary Procedure Specification (free text)
 
 ##### ForeseenCapacity.capacityOrganization?
 
-> `optional` **capacityOrganization**: `string`
+> `optional` **capacityOrganization?**: `string`
 
 capacity organization
 Format: iri-reference
@@ -1809,15 +1837,15 @@ Hit
 
 ##### json-ld.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### json-ld.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### json-ld.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 #### lang-list
 
@@ -2013,14 +2041,14 @@ Format: iri-reference
 
 ##### Participation.inCapacityOf.capacityActivity?
 
-> `optional` **capacityActivity**: `string`
+> `optional` **capacityActivity?**: `string`
 
 capacity activity
 Format: iri-reference
 
 ##### Participation.inCapacityOf.capacityActivityLabel?
 
-> `optional` **capacityActivityLabel**: `string`
+> `optional` **capacityActivityLabel?**: `string`
 
 capacity activity label
 
@@ -2030,7 +2058,7 @@ Parliamentary Procedure Specification (free text)
 
 ##### Participation.inCapacityOf.capacityOrganization?
 
-> `optional` **capacityOrganization**: `string`
+> `optional` **capacityOrganization?**: `string`
 
 capacity organization
 Format: iri-reference
@@ -2119,11 +2147,25 @@ Format: uri
 
 ContextElement
 
-###### Type Declaration
+###### Union Members
 
 `string`
 
+***
+
+###### Type Literal
+
 \{ `@base`: `string`; `data`: `string`; \}
+
+###### @base
+
+> **@base**: `string`
+
+Format: uri
+
+###### data
+
+> **data**: `string`
 
 ##### schema.$defs.Expression
 
@@ -2231,14 +2273,14 @@ Format: iri-reference
 
 ##### schema.$defs.ForeseenCapacity.capacityActivity?
 
-> `optional` **capacityActivity**: `string`
+> `optional` **capacityActivity?**: `string`
 
 capacity activity
 Format: iri-reference
 
 ##### schema.$defs.ForeseenCapacity.capacityActivityLabel?
 
-> `optional` **capacityActivityLabel**: `string`
+> `optional` **capacityActivityLabel?**: `string`
 
 capacity activity label
 
@@ -2248,7 +2290,7 @@ Parliamentary Procedure Specification (free text)
 
 ##### schema.$defs.ForeseenCapacity.capacityOrganization?
 
-> `optional` **capacityOrganization**: `string`
+> `optional` **capacityOrganization?**: `string`
 
 capacity organization
 Format: iri-reference
@@ -2425,14 +2467,14 @@ Format: iri-reference
 
 ##### schema.$defs.Participation.inCapacityOf.capacityActivity?
 
-> `optional` **capacityActivity**: `string`
+> `optional` **capacityActivity?**: `string`
 
 capacity activity
 Format: iri-reference
 
 ##### schema.$defs.Participation.inCapacityOf.capacityActivityLabel?
 
-> `optional` **capacityActivityLabel**: `string`
+> `optional` **capacityActivityLabel?**: `string`
 
 capacity activity label
 
@@ -2442,7 +2484,7 @@ Parliamentary Procedure Specification (free text)
 
 ##### schema.$defs.Participation.inCapacityOf.capacityOrganization?
 
-> `optional` **capacityOrganization**: `string`
+> `optional` **capacityOrganization?**: `string`
 
 capacity organization
 Format: iri-reference
@@ -2594,7 +2636,7 @@ work had participation
 
 ##### schema.$defs.Work-DCI.alternative\_dcterms?
 
-> `optional` **alternative\_dcterms**: `object`
+> `optional` **alternative\_dcterms?**: `object`
 
 alternative
 
@@ -2604,7 +2646,7 @@ alternative
 
 ##### schema.$defs.Work-DCI.conflictDescription?
 
-> `optional` **conflictDescription**: `string`
+> `optional` **conflictDescription?**: `string`
 
 conflict description
 
@@ -2614,25 +2656,25 @@ Present only is absenceOfConflict is false.
 
 ##### schema.$defs.Work-DCI.inverse\_previousVersion?
 
-> `optional` **inverse\_previousVersion**: `string`[]
+> `optional` **inverse\_previousVersion?**: `string`[]
 
 inverse previous version
 
 ##### schema.$defs.Work-DCI.notation\_dossierId?
 
-> `optional` **notation\_dossierId**: `string`
+> `optional` **notation\_dossierId?**: `string`
 
 dossier identifier
 
 ##### schema.$defs.Work-DCI.previousVersion?
 
-> `optional` **previousVersion**: `string`[]
+> `optional` **previousVersion?**: `string`[]
 
 previous version
 
 ##### schema.$defs.Work-DCI.refers\_to?
 
-> `optional` **refers\_to**: `string`[]
+> `optional` **refers\_to?**: `string`[]
 
 refers to
 
@@ -2642,7 +2684,7 @@ refers to
 
 ##### schema.meta?
 
-> `optional` **meta**: `object`
+> `optional` **meta?**: `object`
 
 ##### schema.meta.total
 
@@ -2650,7 +2692,7 @@ refers to
 
 ##### schema.searchResults?
 
-> `optional` **searchResults**: `object`
+> `optional` **searchResults?**: `object`
 
 ##### schema.searchResults.hits
 
@@ -2775,7 +2817,7 @@ work had participation
 
 ##### Work-DCI.alternative\_dcterms?
 
-> `optional` **alternative\_dcterms**: `object`
+> `optional` **alternative\_dcterms?**: `object`
 
 alternative
 
@@ -2785,7 +2827,7 @@ alternative
 
 ##### Work-DCI.conflictDescription?
 
-> `optional` **conflictDescription**: `string`
+> `optional` **conflictDescription?**: `string`
 
 conflict description
 
@@ -2795,24 +2837,24 @@ Present only is absenceOfConflict is false.
 
 ##### Work-DCI.inverse\_previousVersion?
 
-> `optional` **inverse\_previousVersion**: `string`[]
+> `optional` **inverse\_previousVersion?**: `string`[]
 
 inverse previous version
 
 ##### Work-DCI.notation\_dossierId?
 
-> `optional` **notation\_dossierId**: `string`
+> `optional` **notation\_dossierId?**: `string`
 
 dossier identifier
 
 ##### Work-DCI.previousVersion?
 
-> `optional` **previousVersion**: `string`[]
+> `optional` **previousVersion?**: `string`[]
 
 previous version
 
 ##### Work-DCI.refers\_to?
 
-> `optional` **refers\_to**: `string`[]
+> `optional` **refers\_to?**: `string`[]
 
 refers to
