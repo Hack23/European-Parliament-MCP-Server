@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../README.md)
 
 ***
 
@@ -106,6 +106,18 @@ Re-exports [DocumentClient](documentClient/classes/DocumentClient.md)
 
 ***
 
+### EPClientConfig
+
+Re-exports [EPClientConfig](baseClient/interfaces/EPClientConfig.md)
+
+***
+
+### EPSharedResources
+
+Re-exports [EPSharedResources](baseClient/interfaces/EPSharedResources.md)
+
+***
+
 ### extractActivityDate
 
 Re-exports [extractActivityDate](jsonLdHelpers/functions/extractActivityDate.md)
@@ -169,6 +181,12 @@ Re-exports [extractVoteCount](jsonLdHelpers/functions/extractVoteCount.md)
 ### firstDefined
 
 Re-exports [firstDefined](jsonLdHelpers/functions/firstDefined.md)
+
+***
+
+### JSONLDResponse
+
+Re-exports [JSONLDResponse](baseClient/interfaces/JSONLDResponse.md)
 
 ***
 

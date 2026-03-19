@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -209,7 +209,7 @@ EP multilingual API.
 
 ### chair?
 
-> `optional` **chair**: `string`
+> `optional` **chair?**: `string`
 
 Defined in: [types/ep/committee.ts:165](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L165)
 
@@ -236,7 +236,7 @@ MEP for chair details
 
 ### meetingSchedule?
 
-> `optional` **meetingSchedule**: `string`[]
+> `optional` **meetingSchedule?**: `string`[]
 
 Defined in: [types/ep/committee.ts:201](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L201)
 
@@ -264,7 +264,7 @@ during parliamentary session weeks. Extraordinary meetings may be scheduled.
 
 ### responsibilities?
 
-> `optional` **responsibilities**: `string`[]
+> `optional` **responsibilities?**: `string`[]
 
 Defined in: [types/ep/committee.ts:226](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L226)
 
@@ -300,7 +300,7 @@ May include Treaty article references.
 
 ### viceChairs?
 
-> `optional` **viceChairs**: `string`[]
+> `optional` **viceChairs?**: `string`[]
 
 Defined in: [types/ep/committee.ts:182](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L182)
 

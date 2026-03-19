@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -35,15 +35,15 @@ The service returns the list of all EP Adopted Texts. ![adopted-texts schema](ht
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -63,15 +63,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.doc-id?
 
-> `optional` **doc-id**: `string`[]
+> `optional` **doc-id?**: `string`[]
 
 ###### Description
 
@@ -79,7 +79,7 @@ Document identifier
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -87,7 +87,7 @@ Response format
 
 ##### get.parameters.query.language?
 
-> `optional` **language**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> `optional` **language?**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ###### Description
 
@@ -95,7 +95,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -103,7 +103,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -111,7 +111,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.parliamentary-term?
 
-> `optional` **parliamentary-term**: (`0` \| `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8` \| `9` \| `10`)[]
+> `optional` **parliamentary-term?**: (`0` \| `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8` \| `9` \| `10`)[]
 
 ###### Description
 
@@ -119,7 +119,7 @@ Parliamentary Term from 0 to the current.
 
 ##### get.parameters.query.related-doc-id?
 
-> `optional` **related-doc-id**: `string`[]
+> `optional` **related-doc-id?**: `string`[]
 
 ###### Description
 
@@ -127,7 +127,7 @@ Related document identifier
 
 ##### get.parameters.query.related-process-id?
 
-> `optional` **related-process-id**: `string`[]
+> `optional` **related-process-id?**: `string`[]
 
 ###### Description
 
@@ -135,7 +135,7 @@ Related process identifier
 
 ##### get.parameters.query.related-process-type?
 
-> `optional` **related-process-type**: (`"ACI"` \| `"APP"` \| `"AVC"` \| `"BUD"` \| `"CNS"` \| `"COD"` \| `"DEC"` \| `"NLE"` \| `"SYN"` \| `"BUI"` \| `"COS"` \| `"DEA"` \| `"DCE"` \| `"IMM"` \| `"INI"` \| `"INL"` \| `"INS"` \| `"REG"` \| `"RPS"` \| `"RSO"` \| `"RSP"` \| `"GBD"`)[]
+> `optional` **related-process-type?**: (`"ACI"` \| `"APP"` \| `"AVC"` \| `"BUD"` \| `"CNS"` \| `"COD"` \| `"DEC"` \| `"NLE"` \| `"SYN"` \| `"BUI"` \| `"COS"` \| `"DEA"` \| `"DCE"` \| `"IMM"` \| `"INI"` \| `"INL"` \| `"INS"` \| `"REG"` \| `"RPS"` \| `"RSO"` \| `"RSP"` \| `"GBD"`)[]
 
 ###### Description
 
@@ -143,7 +143,7 @@ A type of the related process. Values are concepts of the EP Vocabulary [ep-proc
 
 ##### get.parameters.query.search-language?
 
-> `optional` **search-language**: (`"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
+> `optional` **search-language?**: (`"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
 
 ###### Description
 
@@ -151,7 +151,7 @@ Search language for free text search. If no language is selected, the default la
 
 ##### get.parameters.query.sitting-date?
 
-> `optional` **sitting-date**: `string`
+> `optional` **sitting-date?**: `string`
 
 ###### Description
 
@@ -159,7 +159,7 @@ Plenary sitting date (range start date). This parameter, together with `sitting-
 
 ##### get.parameters.query.sitting-date-end?
 
-> `optional` **sitting-date-end**: `string`
+> `optional` **sitting-date-end?**: `string`
 
 ###### Description
 
@@ -167,7 +167,7 @@ Plenary sitting date end (range end date). This parameter, together with `sittin
 
 ##### get.parameters.query.sort-by?
 
-> `optional` **sort-by**: `string`[]
+> `optional` **sort-by?**: `string`[]
 
 ###### Description
 
@@ -175,7 +175,7 @@ Sorting parameter. The avaliable sorting parameters are: `sitting-date`, `date`,
 
 ##### get.parameters.query.text?
 
-> `optional` **text**: `string`
+> `optional` **text?**: `string`
 
 ###### Description
 
@@ -183,7 +183,7 @@ A free text search in the content of the resource. For language-specific results
 
 ##### get.parameters.query.title?
 
-> `optional` **title**: `string`
+> `optional` **title?**: `string`
 
 ###### Description
 
@@ -191,7 +191,7 @@ A free text search in the title of the resource. For language-specific results, 
 
 ##### get.parameters.query.view?
 
-> `optional` **view**: (`"uri"` \| `"adopted-texts-dsd"`)[]
+> `optional` **view?**: (`"uri"` \| `"adopted-texts-dsd"`)[]
 
 ###### Description
 
@@ -199,7 +199,7 @@ Response view.
 
 ##### get.parameters.query.work-type?
 
-> `optional` **work-type**: (`"TEXT_ADOPTED"` \| `"BUDGET_EP_DRAFT"` \| `"AMENDMENT_BUDGET_EU_DRAFT"`)[]
+> `optional` **work-type?**: (`"TEXT_ADOPTED"` \| `"BUDGET_EP_DRAFT"` \| `"AMENDMENT_BUDGET_EU_DRAFT"`)[]
 
 ###### Description
 
@@ -207,7 +207,7 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.parameters.query.year?
 
-> `optional` **year**: `number`[]
+> `optional` **year?**: `number`[]
 
 ###### Description
 
@@ -235,15 +235,15 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -267,7 +267,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -283,7 +283,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -299,7 +299,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -315,11 +315,11 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -327,47 +327,47 @@ Year. The format of the values is **YYYY**.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -407,15 +407,15 @@ Document identifier
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -435,11 +435,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -447,7 +447,7 @@ Response format
 
 ##### get.parameters.query.language?
 
-> `optional` **language**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> `optional` **language?**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ###### Description
 
@@ -475,15 +475,15 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -507,7 +507,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -523,7 +523,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -539,11 +539,11 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -551,47 +551,47 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -617,15 +617,15 @@ The service returns a feed of EP Adopted texts (published or updated during the 
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -645,15 +645,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.start-date?
 
-> `optional` **start-date**: `string`
+> `optional` **start-date?**: `string`
 
 ###### Description
 
@@ -661,7 +661,7 @@ Start date. This parameter defines the start date of a timeframe. The format of 
 
 ##### get.parameters.query.timeframe?
 
-> `optional` **timeframe**: `"custom"` \| `"today"` \| `"one-day"` \| `"one-week"` \| `"one-month"`
+> `optional` **timeframe?**: `"custom"` \| `"today"` \| `"one-day"` \| `"one-week"` \| `"one-month"`
 
 ###### Description
 
@@ -669,7 +669,7 @@ The timeframe for the feed. To specify a custom timeframe, select `custom` from 
 
 ##### get.parameters.query.work-type?
 
-> `optional` **work-type**: (`"TEXT_ADOPTED"` \| `"BUDGET_EP_DRAFT"` \| `"AMENDMENT_BUDGET_EU_DRAFT"`)[]
+> `optional` **work-type?**: (`"TEXT_ADOPTED"` \| `"BUDGET_EP_DRAFT"` \| `"AMENDMENT_BUDGET_EU_DRAFT"`)[]
 
 ###### Description
 
@@ -735,7 +735,7 @@ Format: date-time
 
 ##### get.responses.200.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.category.label
 
@@ -753,11 +753,11 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -803,7 +803,7 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.subtitle.type
 
@@ -831,7 +831,7 @@ Format: uri
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -847,7 +847,7 @@ Format: uri
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -863,7 +863,7 @@ Format: uri
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -879,11 +879,11 @@ Format: uri
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -891,47 +891,47 @@ Format: uri
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -957,15 +957,15 @@ The service returns the list of all EP Committee Documents.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -985,15 +985,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.committee?
 
-> `optional` **committee**: `string`[]
+> `optional` **committee?**: `string`[]
 
 ###### Description
 
@@ -1001,7 +1001,7 @@ EP Committees.
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -1009,7 +1009,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -1017,7 +1017,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -1025,7 +1025,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.parliamentary-term?
 
-> `optional` **parliamentary-term**: (`0` \| `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8` \| `9` \| `10`)[]
+> `optional` **parliamentary-term?**: (`0` \| `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8` \| `9` \| `10`)[]
 
 ###### Description
 
@@ -1033,7 +1033,7 @@ Parliamentary Term from 0 to the current.
 
 ##### get.parameters.query.work-type?
 
-> `optional` **work-type**: (`"AGREEMENT_PROVISIONAL"` \| `"OPINION_PARLIAMENTARY_COMMITTEE_DRAFT"` \| `"OPINION_PARLIAMENTARY_COMMITTEE"` \| `"OPINION_LETTER_PARLIAMENTARY_COMMITTEE"` \| `"REPORT_PARLIAMENTARY_COMMITTEE_DRAFT"`)[]
+> `optional` **work-type?**: (`"AGREEMENT_PROVISIONAL"` \| `"OPINION_PARLIAMENTARY_COMMITTEE_DRAFT"` \| `"OPINION_PARLIAMENTARY_COMMITTEE"` \| `"OPINION_LETTER_PARLIAMENTARY_COMMITTEE"` \| `"REPORT_PARLIAMENTARY_COMMITTEE_DRAFT"`)[]
 
 ###### Description
 
@@ -1061,15 +1061,15 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -1093,7 +1093,7 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -1109,7 +1109,7 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -1125,7 +1125,7 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -1141,11 +1141,11 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -1153,47 +1153,47 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -1231,15 +1231,15 @@ Document identifier
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -1259,11 +1259,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -1291,15 +1291,15 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -1323,7 +1323,7 @@ Response format
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -1339,7 +1339,7 @@ Response format
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -1355,11 +1355,11 @@ Response format
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -1367,47 +1367,47 @@ Response format
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -1433,15 +1433,15 @@ The service returns a feed of EP Committee Document (published or updated in the
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -1461,11 +1461,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 ##### get.responses
 
@@ -1527,7 +1527,7 @@ Format: date-time
 
 ##### get.responses.200.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.category.label
 
@@ -1545,11 +1545,11 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -1595,7 +1595,7 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.subtitle.type
 
@@ -1623,7 +1623,7 @@ Format: uri
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -1639,7 +1639,7 @@ Format: uri
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -1655,7 +1655,7 @@ Format: uri
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -1671,11 +1671,11 @@ Format: uri
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -1683,47 +1683,47 @@ Format: uri
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -1749,15 +1749,15 @@ The service returns the list of all EP Controlled vocabularies.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -1777,15 +1777,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -1793,7 +1793,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -1801,7 +1801,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -1829,15 +1829,15 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -1861,7 +1861,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -1877,7 +1877,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -1893,7 +1893,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -1909,11 +1909,11 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -1921,47 +1921,47 @@ The number of items to skip before starting to collect the result set.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -1999,15 +1999,15 @@ Vocabulary identifier
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -2027,11 +2027,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -2059,15 +2059,15 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -2091,7 +2091,7 @@ Response format
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -2107,7 +2107,7 @@ Response format
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -2123,11 +2123,11 @@ Response format
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -2135,47 +2135,47 @@ Response format
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -2201,15 +2201,15 @@ The service returns a feed of Controlled Vocabularies (published or updated in t
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -2229,11 +2229,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 ##### get.responses
 
@@ -2295,7 +2295,7 @@ Format: date-time
 
 ##### get.responses.200.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.category.label
 
@@ -2313,11 +2313,11 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -2363,7 +2363,7 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.subtitle.type
 
@@ -2391,7 +2391,7 @@ Format: uri
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -2407,7 +2407,7 @@ Format: uri
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -2423,7 +2423,7 @@ Format: uri
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -2439,11 +2439,11 @@ Format: uri
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -2451,47 +2451,47 @@ Format: uri
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -2517,15 +2517,15 @@ The service returns a list of all the EP Corporate Bodies.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -2545,15 +2545,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.body-classification?
 
-> `optional` **body-classification**: (`"COMMITTEE_PARLIAMENTARY_STANDING"` \| `"COMMITTEE_PARLIAMENTARY_TEMPORARY"` \| `"COMMITTEE_PARLIAMENTARY_SPECIAL"` \| `"COMMITTEE_PARLIAMENTARY_SUB"` \| `"COMMITTEE_PARLIAMENTARY_JOINT"` \| `"EU_POLITICAL_GROUP"` \| `"DELEGATION_PARLIAMENTARY"` \| `"DELEGATION_PARLIAMENTARY_ASSEMBLY"` \| `"DELEGATION_JOINT_COMMITTEE"` \| `"NATIONAL_CHAMBER"` \| `"EU_INSTITUTION"` \| `"WORKING_GROUP"`)[]
+> `optional` **body-classification?**: (`"COMMITTEE_PARLIAMENTARY_STANDING"` \| `"COMMITTEE_PARLIAMENTARY_TEMPORARY"` \| `"COMMITTEE_PARLIAMENTARY_SPECIAL"` \| `"COMMITTEE_PARLIAMENTARY_SUB"` \| `"COMMITTEE_PARLIAMENTARY_JOINT"` \| `"EU_POLITICAL_GROUP"` \| `"DELEGATION_PARLIAMENTARY"` \| `"DELEGATION_PARLIAMENTARY_ASSEMBLY"` \| `"DELEGATION_JOINT_COMMITTEE"` \| `"NATIONAL_CHAMBER"` \| `"EU_INSTITUTION"` \| `"WORKING_GROUP"`)[]
 
 ###### Description
 
@@ -2561,7 +2561,7 @@ EP Corporate Body classification. Values are concepts of the EP Vocabulary [ep-e
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -2569,7 +2569,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -2577,7 +2577,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -2605,15 +2605,15 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -2637,7 +2637,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -2653,7 +2653,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -2669,7 +2669,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -2685,11 +2685,11 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -2697,47 +2697,47 @@ The number of items to skip before starting to collect the result set.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -2775,15 +2775,15 @@ Corporate Body identifier.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -2803,11 +2803,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -2815,7 +2815,7 @@ Response format
 
 ##### get.parameters.query.language?
 
-> `optional` **language**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> `optional` **language?**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ###### Description
 
@@ -2843,15 +2843,15 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -2875,7 +2875,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -2891,7 +2891,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -2907,11 +2907,11 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -2919,47 +2919,47 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -2985,15 +2985,15 @@ The service returns a feed of EP Corporate Body (published or updated in the las
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -3013,11 +3013,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 ##### get.responses
 
@@ -3079,7 +3079,7 @@ Format: date-time
 
 ##### get.responses.200.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.category.label
 
@@ -3097,11 +3097,11 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -3147,7 +3147,7 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.subtitle.type
 
@@ -3175,7 +3175,7 @@ Format: uri
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -3191,7 +3191,7 @@ Format: uri
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -3207,7 +3207,7 @@ Format: uri
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -3223,11 +3223,11 @@ Format: uri
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -3235,47 +3235,47 @@ Format: uri
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -3301,15 +3301,15 @@ The service returns the list of all current bodies for today's date.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -3329,15 +3329,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -3345,7 +3345,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -3353,7 +3353,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -3381,15 +3381,15 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -3413,7 +3413,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -3429,7 +3429,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -3445,7 +3445,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -3461,11 +3461,11 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -3473,47 +3473,47 @@ The number of items to skip before starting to collect the result set.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -3539,15 +3539,15 @@ The service returns the list of all EP Documents.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -3567,15 +3567,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -3583,7 +3583,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -3591,7 +3591,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -3599,7 +3599,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.work-type?
 
-> `optional` **work-type**: (`"QUESTION_TIME"` \| `"REPORT_PLENARY"` \| `"AMENDMENT_LIST"` \| `"RESOLUTION_MOTION"` \| `"TEXT_ADOPTED"` \| `"QUESTION_WRITTEN"` \| `"QUESTION_ORAL"` \| `"ANNEX"` \| `"CORRIGENDUM"` \| `"ERRATUM"` \| `"RESOLUTION_MOTION_JOINT"` \| `"AGENDA_PLENARY_WEEK"` \| `"AGENDA_PLENARY_DAY"` \| `"CRE_PLENARY"` \| `"MINUTES_PLENARY"` \| `"LIST_ATTEND_PLENARY"` \| `"VOTE_RESULTS_PLENARY"` \| `"VOTE_ROLLCALL_PLENARY"` \| `"INTERPELLATION_MAJOR"` \| `"INTERPELLATION_MINOR"` \| `"QUESTION_RESOLUTION_MOTION"` \| `"QUESTION_WRITTEN_PRIORITY"` \| `"QUESTION_WRITTEN_ANSWER"` \| `"INTERPELLATION_MINOR_WRITTEN_ANSWER"` \| `"AGREEMENT_PROVISIONAL"` \| `"OPINION_PARLIAMENTARY_COMMITTEE_DRAFT"` \| `"OPINION_PARLIAMENTARY_COMMITTEE"` \| `"OPINION_LETTER_PARLIAMENTARY_COMMITTEE"` \| `"REPORT_PARLIAMENTARY_COMMITTEE_DRAFT"` \| `"BUDGET_EP_DRAFT"` \| `"AMENDMENT_BUDGET_EU_DRAFT"`)[]
+> `optional` **work-type?**: (`"QUESTION_TIME"` \| `"REPORT_PLENARY"` \| `"AMENDMENT_LIST"` \| `"RESOLUTION_MOTION"` \| `"TEXT_ADOPTED"` \| `"QUESTION_WRITTEN"` \| `"QUESTION_ORAL"` \| `"ANNEX"` \| `"CORRIGENDUM"` \| `"ERRATUM"` \| `"RESOLUTION_MOTION_JOINT"` \| `"AGENDA_PLENARY_WEEK"` \| `"AGENDA_PLENARY_DAY"` \| `"CRE_PLENARY"` \| `"MINUTES_PLENARY"` \| `"LIST_ATTEND_PLENARY"` \| `"VOTE_RESULTS_PLENARY"` \| `"VOTE_ROLLCALL_PLENARY"` \| `"INTERPELLATION_MAJOR"` \| `"INTERPELLATION_MINOR"` \| `"QUESTION_RESOLUTION_MOTION"` \| `"QUESTION_WRITTEN_PRIORITY"` \| `"QUESTION_WRITTEN_ANSWER"` \| `"INTERPELLATION_MINOR_WRITTEN_ANSWER"` \| `"AGREEMENT_PROVISIONAL"` \| `"OPINION_PARLIAMENTARY_COMMITTEE_DRAFT"` \| `"OPINION_PARLIAMENTARY_COMMITTEE"` \| `"OPINION_LETTER_PARLIAMENTARY_COMMITTEE"` \| `"REPORT_PARLIAMENTARY_COMMITTEE_DRAFT"` \| `"BUDGET_EP_DRAFT"` \| `"AMENDMENT_BUDGET_EU_DRAFT"`)[]
 
 ###### Description
 
@@ -3627,15 +3627,15 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -3659,7 +3659,7 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -3675,7 +3675,7 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -3691,7 +3691,7 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -3707,11 +3707,11 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -3719,47 +3719,47 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -3797,15 +3797,15 @@ Document identifier
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -3825,11 +3825,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -3837,7 +3837,7 @@ Response format
 
 ##### get.parameters.query.language?
 
-> `optional` **language**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> `optional` **language?**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ###### Description
 
@@ -3865,15 +3865,15 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -3897,7 +3897,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -3913,7 +3913,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -3929,11 +3929,11 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -3941,47 +3941,47 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -4007,15 +4007,15 @@ The service returns a feed of EP Documents (published or updated in the last wee
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -4035,11 +4035,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 ##### get.responses
 
@@ -4101,7 +4101,7 @@ Format: date-time
 
 ##### get.responses.200.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.category.label
 
@@ -4119,11 +4119,11 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -4169,7 +4169,7 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.subtitle.type
 
@@ -4197,7 +4197,7 @@ Format: uri
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -4213,7 +4213,7 @@ Format: uri
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -4229,7 +4229,7 @@ Format: uri
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -4245,11 +4245,11 @@ Format: uri
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -4257,47 +4257,47 @@ Format: uri
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -4323,15 +4323,15 @@ The service returns the list of all EP Events.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -4351,15 +4351,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.activity-type?
 
-> `optional` **activity-type**: (`"COMMITTEE_APPROVE_PROVISIONAL_AGREEMENT"` \| `"TABLING_PLENARY"` \| `"PLENARY_REFER_COMMITTEE_INTERINSTITUTIONAL_NEGOTIATIONS"` \| `"PLENARY_REJECT_COMMITTEE_INTERINSTUTIONAL_NEGOTIATIONS"` \| `"PLENARY_ENDORSE_COMMITTEE_INTERINSTITUTIONAL_NEGOTIATIONS"` \| `"SIGNATURE"` \| `"PUBLICATION_OFFICIAL_JOURNAL"` \| `"PLENARY_AMEND"` \| `"PLENARY_DECISION"` \| `"PLENARY_AMEND_COUNCIL_POSITION"` \| `"PLENARY_APPROVE_COUNCIL_POSITION"` \| `"PLENARY_REJECT_COUNCIL_POSITION"` \| `"PLENARY_ADOPT_POSITION"` \| `"PLENARY_AMEND_PROPOSAL"` \| `"PLENARY_SITTING"` \| `"PLENARY_PART_SESSION"` \| `"MEETING_PART"` \| `"PLENARY_PART_SESSION_DOSSIER"` \| `"PLENARY_DEBATE"` \| `"PLENARY_VOTE"` \| `"PLENARY_VOTE_URGENCY"` \| `"PLENARY_ACTIVITY"` \| `"PLENARY_VOTE_RESULTS"` \| `"PLENARY_OUTCOME"` \| `"REQUEST_VOTE_ROLLCALL"` \| `"REQUEST_VOTE_SPLIT"` \| `"REQUEST_VOTE_SEPARATE"` \| `"PLENARY_DEBATE_WRITTEN_STATEMENT"` \| `"PLENARY_DEBATE_SPEECH"` \| `"PLENARY_VOTE_EXPLANATIONS"`)[]
+> `optional` **activity-type?**: (`"COMMITTEE_APPROVE_PROVISIONAL_AGREEMENT"` \| `"TABLING_PLENARY"` \| `"PLENARY_REFER_COMMITTEE_INTERINSTITUTIONAL_NEGOTIATIONS"` \| `"PLENARY_REJECT_COMMITTEE_INTERINSTUTIONAL_NEGOTIATIONS"` \| `"PLENARY_ENDORSE_COMMITTEE_INTERINSTITUTIONAL_NEGOTIATIONS"` \| `"SIGNATURE"` \| `"PUBLICATION_OFFICIAL_JOURNAL"` \| `"PLENARY_AMEND"` \| `"PLENARY_DECISION"` \| `"PLENARY_AMEND_COUNCIL_POSITION"` \| `"PLENARY_APPROVE_COUNCIL_POSITION"` \| `"PLENARY_REJECT_COUNCIL_POSITION"` \| `"PLENARY_ADOPT_POSITION"` \| `"PLENARY_AMEND_PROPOSAL"` \| `"PLENARY_SITTING"` \| `"PLENARY_PART_SESSION"` \| `"MEETING_PART"` \| `"PLENARY_PART_SESSION_DOSSIER"` \| `"PLENARY_DEBATE"` \| `"PLENARY_VOTE"` \| `"PLENARY_VOTE_URGENCY"` \| `"PLENARY_ACTIVITY"` \| `"PLENARY_VOTE_RESULTS"` \| `"PLENARY_OUTCOME"` \| `"REQUEST_VOTE_ROLLCALL"` \| `"REQUEST_VOTE_SPLIT"` \| `"REQUEST_VOTE_SEPARATE"` \| `"PLENARY_DEBATE_WRITTEN_STATEMENT"` \| `"PLENARY_DEBATE_SPEECH"` \| `"PLENARY_VOTE_EXPLANATIONS"`)[]
 
 ###### Description
 
@@ -4367,7 +4367,7 @@ A type of an Activity. Values are concepts of the EP Vocabulary [ep-activities](
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -4375,7 +4375,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -4383,7 +4383,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -4411,15 +4411,15 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -4443,7 +4443,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -4459,7 +4459,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -4475,7 +4475,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -4491,11 +4491,11 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -4503,47 +4503,47 @@ The number of items to skip before starting to collect the result set.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -4581,15 +4581,15 @@ Event identifier
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -4609,11 +4609,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -4621,7 +4621,7 @@ Response format
 
 ##### get.parameters.query.json-layout?
 
-> `optional` **json-layout**: `"framed-and-included"` \| `"framed"`
+> `optional` **json-layout?**: `"framed-and-included"` \| `"framed"`
 
 ###### Description
 
@@ -4649,15 +4649,15 @@ Define the layaout for Json+ld
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -4681,7 +4681,7 @@ Define the layaout for Json+ld
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -4697,7 +4697,7 @@ Define the layaout for Json+ld
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -4713,11 +4713,11 @@ Define the layaout for Json+ld
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -4725,47 +4725,47 @@ Define the layaout for Json+ld
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -4791,15 +4791,15 @@ The service returns a feed of EP Events (published or updated during the specifi
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -4819,15 +4819,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.activity-type?
 
-> `optional` **activity-type**: (`"COMMITTEE_APPROVE_PROVISIONAL_AGREEMENT"` \| `"TABLING_PLENARY"` \| `"PLENARY_REFER_COMMITTEE_INTERINSTITUTIONAL_NEGOTIATIONS"` \| `"PLENARY_REJECT_COMMITTEE_INTERINSTUTIONAL_NEGOTIATIONS"` \| `"PLENARY_ENDORSE_COMMITTEE_INTERINSTITUTIONAL_NEGOTIATIONS"` \| `"SIGNATURE"` \| `"PUBLICATION_OFFICIAL_JOURNAL"` \| `"PLENARY_AMEND"` \| `"PLENARY_DECISION"` \| `"PLENARY_AMEND_COUNCIL_POSITION"` \| `"PLENARY_APPROVE_COUNCIL_POSITION"` \| `"PLENARY_REJECT_COUNCIL_POSITION"` \| `"PLENARY_ADOPT_POSITION"` \| `"PLENARY_AMEND_PROPOSAL"` \| `"PLENARY_SITTING"` \| `"PLENARY_PART_SESSION"` \| `"MEETING_PART"` \| `"PLENARY_PART_SESSION_DOSSIER"` \| `"PLENARY_DEBATE"` \| `"PLENARY_VOTE"` \| `"PLENARY_VOTE_URGENCY"` \| `"PLENARY_ACTIVITY"` \| `"PLENARY_VOTE_RESULTS"` \| `"PLENARY_OUTCOME"` \| `"REQUEST_VOTE_ROLLCALL"` \| `"REQUEST_VOTE_SPLIT"` \| `"REQUEST_VOTE_SEPARATE"` \| `"PLENARY_DEBATE_WRITTEN_STATEMENT"` \| `"PLENARY_DEBATE_SPEECH"` \| `"PLENARY_VOTE_EXPLANATIONS"`)[]
+> `optional` **activity-type?**: (`"COMMITTEE_APPROVE_PROVISIONAL_AGREEMENT"` \| `"TABLING_PLENARY"` \| `"PLENARY_REFER_COMMITTEE_INTERINSTITUTIONAL_NEGOTIATIONS"` \| `"PLENARY_REJECT_COMMITTEE_INTERINSTUTIONAL_NEGOTIATIONS"` \| `"PLENARY_ENDORSE_COMMITTEE_INTERINSTITUTIONAL_NEGOTIATIONS"` \| `"SIGNATURE"` \| `"PUBLICATION_OFFICIAL_JOURNAL"` \| `"PLENARY_AMEND"` \| `"PLENARY_DECISION"` \| `"PLENARY_AMEND_COUNCIL_POSITION"` \| `"PLENARY_APPROVE_COUNCIL_POSITION"` \| `"PLENARY_REJECT_COUNCIL_POSITION"` \| `"PLENARY_ADOPT_POSITION"` \| `"PLENARY_AMEND_PROPOSAL"` \| `"PLENARY_SITTING"` \| `"PLENARY_PART_SESSION"` \| `"MEETING_PART"` \| `"PLENARY_PART_SESSION_DOSSIER"` \| `"PLENARY_DEBATE"` \| `"PLENARY_VOTE"` \| `"PLENARY_VOTE_URGENCY"` \| `"PLENARY_ACTIVITY"` \| `"PLENARY_VOTE_RESULTS"` \| `"PLENARY_OUTCOME"` \| `"REQUEST_VOTE_ROLLCALL"` \| `"REQUEST_VOTE_SPLIT"` \| `"REQUEST_VOTE_SEPARATE"` \| `"PLENARY_DEBATE_WRITTEN_STATEMENT"` \| `"PLENARY_DEBATE_SPEECH"` \| `"PLENARY_VOTE_EXPLANATIONS"`)[]
 
 ###### Description
 
@@ -4835,7 +4835,7 @@ A type of an Activity. Values are concepts of the EP Vocabulary [ep-activities](
 
 ##### get.parameters.query.start-date?
 
-> `optional` **start-date**: `string`
+> `optional` **start-date?**: `string`
 
 ###### Description
 
@@ -4843,7 +4843,7 @@ Start date. This parameter defines the start date of a timeframe. The format of 
 
 ##### get.parameters.query.timeframe?
 
-> `optional` **timeframe**: `"custom"` \| `"today"` \| `"one-day"` \| `"one-week"` \| `"one-month"`
+> `optional` **timeframe?**: `"custom"` \| `"today"` \| `"one-day"` \| `"one-week"` \| `"one-month"`
 
 ###### Description
 
@@ -4909,7 +4909,7 @@ Format: date-time
 
 ##### get.responses.200.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.category.label
 
@@ -4927,11 +4927,11 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -4977,7 +4977,7 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.subtitle.type
 
@@ -5005,7 +5005,7 @@ Format: uri
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -5021,7 +5021,7 @@ Format: uri
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -5037,7 +5037,7 @@ Format: uri
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -5053,11 +5053,11 @@ Format: uri
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -5065,47 +5065,47 @@ Format: uri
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -5132,15 +5132,15 @@ The service returns the list of all External Documents. ![external-documents](ht
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -5160,15 +5160,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -5176,7 +5176,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -5184,7 +5184,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -5192,7 +5192,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.work-type?
 
-> `optional` **work-type**: `"ACT_FOLLOWUP"`[]
+> `optional` **work-type?**: `"ACT_FOLLOWUP"`[]
 
 ###### Description
 
@@ -5220,15 +5220,15 @@ A type of a Work.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -5252,7 +5252,7 @@ A type of a Work.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -5268,7 +5268,7 @@ A type of a Work.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -5284,7 +5284,7 @@ A type of a Work.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -5300,11 +5300,11 @@ A type of a Work.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -5312,47 +5312,47 @@ A type of a Work.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -5391,15 +5391,15 @@ Document identifier
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -5419,11 +5419,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -5451,15 +5451,15 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -5483,7 +5483,7 @@ Response format
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -5499,7 +5499,7 @@ Response format
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -5515,11 +5515,11 @@ Response format
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -5527,47 +5527,47 @@ Response format
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -5593,15 +5593,15 @@ The service returns a feed of External Documents (published or updated during th
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -5621,15 +5621,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.start-date?
 
-> `optional` **start-date**: `string`
+> `optional` **start-date?**: `string`
 
 ###### Description
 
@@ -5637,7 +5637,7 @@ Start date. This parameter defines the start date of a timeframe. The format of 
 
 ##### get.parameters.query.timeframe?
 
-> `optional` **timeframe**: `"custom"` \| `"today"` \| `"one-day"` \| `"one-week"` \| `"one-month"`
+> `optional` **timeframe?**: `"custom"` \| `"today"` \| `"one-day"` \| `"one-week"` \| `"one-month"`
 
 ###### Description
 
@@ -5645,7 +5645,7 @@ The timeframe for the feed. To specify a custom timeframe, select `custom` from 
 
 ##### get.parameters.query.work-type?
 
-> `optional` **work-type**: `"ACT_FOLLOWUP"`[]
+> `optional` **work-type?**: `"ACT_FOLLOWUP"`[]
 
 ###### Description
 
@@ -5711,7 +5711,7 @@ Format: date-time
 
 ##### get.responses.200.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.category.label
 
@@ -5729,11 +5729,11 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -5779,7 +5779,7 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.subtitle.type
 
@@ -5807,7 +5807,7 @@ Format: uri
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -5823,7 +5823,7 @@ Format: uri
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -5839,7 +5839,7 @@ Format: uri
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -5855,11 +5855,11 @@ Format: uri
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -5867,47 +5867,47 @@ Format: uri
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -5933,15 +5933,15 @@ The service returns the list of all EP Meetings. ![meetings schema](https://euro
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -5961,15 +5961,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -5977,7 +5977,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -5985,7 +5985,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -5993,7 +5993,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.year?
 
-> `optional` **year**: `number`[]
+> `optional` **year?**: `number`[]
 
 ###### Description
 
@@ -6021,15 +6021,15 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -6053,7 +6053,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -6069,7 +6069,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -6085,7 +6085,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -6101,11 +6101,11 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -6113,47 +6113,47 @@ Year. The format of the values is **YYYY**.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -6191,15 +6191,15 @@ Event identifier. It refers to the ID of a Plenary session or a Plenary sitting 
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -6219,11 +6219,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -6231,7 +6231,7 @@ Response format
 
 ##### get.parameters.query.language?
 
-> `optional` **language**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> `optional` **language?**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ###### Description
 
@@ -6259,15 +6259,15 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -6291,7 +6291,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -6307,7 +6307,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -6323,11 +6323,11 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -6335,47 +6335,47 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -6413,15 +6413,15 @@ Sitting identifier. It refers to the ID of a Plenary sitting
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -6441,11 +6441,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -6453,7 +6453,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -6461,7 +6461,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -6489,15 +6489,15 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -6521,7 +6521,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -6537,7 +6537,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -6553,7 +6553,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -6569,11 +6569,11 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -6581,47 +6581,47 @@ The number of items to skip before starting to collect the result set.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -6659,15 +6659,15 @@ Sitting identifier. It refers to the ID of a Plenary sitting
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -6687,11 +6687,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.filter-output?
 
-> `optional` **filter-output**: `string`[]
+> `optional` **filter-output?**: `string`[]
 
 ###### Description
 
@@ -6699,7 +6699,7 @@ Content filter in the response
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"`
+> `optional` **format?**: `"application/ld+json"`
 
 ###### Description
 
@@ -6707,7 +6707,7 @@ Response format
 
 ##### get.parameters.query.json-layout?
 
-> `optional` **json-layout**: `"framed-and-included"` \| `"framed"`
+> `optional` **json-layout?**: `"framed-and-included"` \| `"framed"`
 
 ###### Description
 
@@ -6715,7 +6715,7 @@ Define the layaout for Json+ld
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -6723,7 +6723,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -6731,7 +6731,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.vote-method?
 
-> `optional` **vote-method**: `string`[]
+> `optional` **vote-method?**: `string`[]
 
 ###### Description
 
@@ -6759,15 +6759,15 @@ Method of vote
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -6791,7 +6791,7 @@ Method of vote
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -6807,7 +6807,7 @@ Method of vote
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -6823,7 +6823,7 @@ Method of vote
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -6839,11 +6839,11 @@ Method of vote
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -6851,47 +6851,47 @@ Method of vote
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -6929,15 +6929,15 @@ Sitting identifier. It refers to the ID of a Plenary sitting
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -6957,11 +6957,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -6969,7 +6969,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -6977,7 +6977,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -7005,15 +7005,15 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -7037,7 +7037,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -7053,7 +7053,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -7069,7 +7069,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -7085,11 +7085,11 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -7097,47 +7097,47 @@ The number of items to skip before starting to collect the result set.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -7175,15 +7175,15 @@ Sitting identifier. It refers to the ID of a Plenary sitting
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -7203,11 +7203,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"`
+> `optional` **format?**: `"application/ld+json"`
 
 ###### Description
 
@@ -7215,7 +7215,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -7223,7 +7223,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -7251,15 +7251,15 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -7283,7 +7283,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -7299,7 +7299,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -7315,7 +7315,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -7331,11 +7331,11 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -7343,47 +7343,47 @@ The number of items to skip before starting to collect the result set.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -7409,15 +7409,15 @@ The service returns data about the MEPs related to the European Parliament.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -7437,15 +7437,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.country-of-representation?
 
-> `optional` **country-of-representation**: (`"BE"` \| `"BG"` \| `"CZ"` \| `"DK"` \| `"DE"` \| `"EE"` \| `"IE"` \| `"EL"` \| `"ES"` \| `"FR"` \| `"HR"` \| `"IT"` \| `"CY"` \| `"LV"` \| `"LT"` \| `"LU"` \| `"HU"` \| `"MT"` \| `"NL"` \| `"AT"` \| `"PL"` \| `"PT"` \| `"RO"` \| `"SI"` \| `"SK"` \| `"FI"` \| `"SE"` \| `"UK"`)[]
+> `optional` **country-of-representation?**: (`"BE"` \| `"BG"` \| `"CZ"` \| `"DK"` \| `"DE"` \| `"EE"` \| `"IE"` \| `"EL"` \| `"ES"` \| `"FR"` \| `"HR"` \| `"IT"` \| `"CY"` \| `"LV"` \| `"LT"` \| `"LU"` \| `"HU"` \| `"MT"` \| `"NL"` \| `"AT"` \| `"PL"` \| `"PT"` \| `"RO"` \| `"SI"` \| `"SK"` \| `"FI"` \| `"SE"` \| `"UK"`)[]
 
 ###### Description
 
@@ -7453,7 +7453,7 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -7461,7 +7461,7 @@ Response format
 
 ##### get.parameters.query.gender?
 
-> `optional` **gender**: (`"FEMALE"` \| `"MALE"` \| `"NAP"` \| `"NKN"` \| `"NST"`)[]
+> `optional` **gender?**: (`"FEMALE"` \| `"MALE"` \| `"NAP"` \| `"NKN"` \| `"NST"`)[]
 
 ###### Description
 
@@ -7469,7 +7469,7 @@ Gender of the person. The non-exhaustive list of values includes concepts of the
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -7477,7 +7477,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -7485,7 +7485,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.parliamentary-term?
 
-> `optional` **parliamentary-term**: (`0` \| `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8` \| `9` \| `10`)[]
+> `optional` **parliamentary-term?**: (`0` \| `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8` \| `9` \| `10`)[]
 
 ###### Description
 
@@ -7493,7 +7493,7 @@ Parliamentary Term from 0 to the current.
 
 ##### get.parameters.query.political-group?
 
-> `optional` **political-group**: (`"ECR"` \| `"ID"` \| `"NI"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
+> `optional` **political-group?**: (`"ECR"` \| `"ID"` \| `"NI"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
 
 ###### Description
 
@@ -7521,15 +7521,15 @@ EP political groups.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -7553,7 +7553,7 @@ EP political groups.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -7569,7 +7569,7 @@ EP political groups.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -7585,7 +7585,7 @@ EP political groups.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -7601,11 +7601,11 @@ EP political groups.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -7613,47 +7613,47 @@ EP political groups.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -7679,15 +7679,15 @@ The service returns the list of all MEPS Declarations. ![DACI schema](https://eu
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -7707,15 +7707,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.body-id?
 
-> `optional` **body-id**: `string`[]
+> `optional` **body-id?**: `string`[]
 
 ###### Description
 
@@ -7723,7 +7723,7 @@ Corporate Body identifier.
 
 ##### get.parameters.query.capacity-role?
 
-> `optional` **capacity-role**: (`"PRESIDENT_VICE"` \| `"QUAESTOR"` \| `"RAPPORTEUR_SHADOW_OPINION"` \| `"MEMBER_NEGOTIATION_INTERINSTITUTIONAL"` \| `"CHAIR_DELEGATION"` \| `"CHAIR_VICE_DELEGATION"` \| `"MEMBER_DELEGATION_OFFICIAL"` \| `"CHAIR_COMMITTEE"` \| `"CHAIR_VICE_COMMITTEE"` \| `"RAPPORTEUR_SHADOW_REPORT"` \| `"RAPPORTEUR_OPINION"` \| `"RAPPORTEUR"`)[]
+> `optional` **capacity-role?**: (`"PRESIDENT_VICE"` \| `"QUAESTOR"` \| `"RAPPORTEUR_SHADOW_OPINION"` \| `"MEMBER_NEGOTIATION_INTERINSTITUTIONAL"` \| `"CHAIR_DELEGATION"` \| `"CHAIR_VICE_DELEGATION"` \| `"MEMBER_DELEGATION_OFFICIAL"` \| `"CHAIR_COMMITTEE"` \| `"CHAIR_VICE_COMMITTEE"` \| `"RAPPORTEUR_SHADOW_REPORT"` \| `"RAPPORTEUR_OPINION"` \| `"RAPPORTEUR"`)[]
 
 ###### Description
 
@@ -7731,7 +7731,7 @@ Capacity Role
 
 ##### get.parameters.query.doc-id?
 
-> `optional` **doc-id**: `string`[]
+> `optional` **doc-id?**: `string`[]
 
 ###### Description
 
@@ -7739,7 +7739,7 @@ Document identifier. For this type of document, the format of the values is as f
 
 ##### get.parameters.query.dossier-id?
 
-> `optional` **dossier-id**: `string`[]
+> `optional` **dossier-id?**: `string`[]
 
 ###### Description
 
@@ -7747,7 +7747,7 @@ A unique identifier for a Dossier.
 
 ##### get.parameters.query.filter-output?
 
-> `optional` **filter-output**: (`"current-version"` \| `"awareness-of-conflict"` \| `"no-awareness-of-conflict"`)[]
+> `optional` **filter-output?**: (`"current-version"` \| `"awareness-of-conflict"` \| `"no-awareness-of-conflict"`)[]
 
 ###### Description
 
@@ -7755,7 +7755,7 @@ Content filter in the response. This parameter allows the user to filter API res
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -7763,7 +7763,7 @@ Response format
 
 ##### get.parameters.query.language?
 
-> `optional` **language**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> `optional` **language?**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ###### Description
 
@@ -7771,7 +7771,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -7779,7 +7779,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -7787,7 +7787,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.parliamentary-term?
 
-> `optional` **parliamentary-term**: (`0` \| `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8` \| `9` \| `10`)[]
+> `optional` **parliamentary-term?**: (`0` \| `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8` \| `9` \| `10`)[]
 
 ###### Description
 
@@ -7795,7 +7795,7 @@ Parliamentary Term from 0 to the current.
 
 ##### get.parameters.query.person-id?
 
-> `optional` **person-id**: `number`[]
+> `optional` **person-id?**: `number`[]
 
 ###### Description
 
@@ -7803,7 +7803,7 @@ A unique identifier for a Person.
 
 ##### get.parameters.query.provider-id?
 
-> `optional` **provider-id**: `string`[]
+> `optional` **provider-id?**: `string`[]
 
 ###### Description
 
@@ -7811,7 +7811,7 @@ Provider identifier
 
 ##### get.parameters.query.related-process-id?
 
-> `optional` **related-process-id**: `string`[]
+> `optional` **related-process-id?**: `string`[]
 
 ###### Description
 
@@ -7819,7 +7819,7 @@ Related process identifier
 
 ##### get.parameters.query.related-process-type?
 
-> `optional` **related-process-type**: (`"ACI"` \| `"APP"` \| `"AVC"` \| `"BUD"` \| `"CNS"` \| `"COD"` \| `"DEC"` \| `"NLE"` \| `"SYN"` \| `"BUI"` \| `"COS"` \| `"DEA"` \| `"DCE"` \| `"IMM"` \| `"INI"` \| `"INL"` \| `"INS"` \| `"REG"` \| `"RPS"` \| `"RSO"` \| `"RSP"` \| `"GBD"`)[]
+> `optional` **related-process-type?**: (`"ACI"` \| `"APP"` \| `"AVC"` \| `"BUD"` \| `"CNS"` \| `"COD"` \| `"DEC"` \| `"NLE"` \| `"SYN"` \| `"BUI"` \| `"COS"` \| `"DEA"` \| `"DCE"` \| `"IMM"` \| `"INI"` \| `"INL"` \| `"INS"` \| `"REG"` \| `"RPS"` \| `"RSO"` \| `"RSP"` \| `"GBD"`)[]
 
 ###### Description
 
@@ -7827,7 +7827,7 @@ A type of the related process. Values are concepts of the EP Vocabulary [ep-proc
 
 ##### get.parameters.query.search-language?
 
-> `optional` **search-language**: (`"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
+> `optional` **search-language?**: (`"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
 
 ###### Description
 
@@ -7835,7 +7835,7 @@ Search language for free text search. If no language is selected, the default la
 
 ##### get.parameters.query.text?
 
-> `optional` **text**: `string`
+> `optional` **text?**: `string`
 
 ###### Description
 
@@ -7843,7 +7843,7 @@ A free text search in the content of the resource. For language-specific results
 
 ##### get.parameters.query.title?
 
-> `optional` **title**: `string`
+> `optional` **title?**: `string`
 
 ###### Description
 
@@ -7851,7 +7851,7 @@ A free text search in the title of the resource. For language-specific results, 
 
 ##### get.parameters.query.work-type?
 
-> `optional` **work-type**: `"MEMBER_DECLARATION_INTEREST_CONFLICT"`[]
+> `optional` **work-type?**: `"MEMBER_DECLARATION_INTEREST_CONFLICT"`[]
 
 ###### Description
 
@@ -7859,7 +7859,7 @@ A type of a Work.
 
 ##### get.parameters.query.year?
 
-> `optional` **year**: `number`[]
+> `optional` **year?**: `number`[]
 
 ###### Description
 
@@ -7927,11 +7927,25 @@ Format: uri
 
 ContextElement
 
-###### Type Declaration
+###### Union Members
 
 `string`
 
+***
+
+###### Type Literal
+
 \{ `@base`: `string`; `data`: `string`; \}
+
+###### @base
+
+> **@base**: `string`
+
+Format: uri
+
+###### data
+
+> **data**: `string`
 
 ##### get.responses.200.content.application/ld+json.$defs.Expression
 
@@ -8039,14 +8053,14 @@ Format: iri-reference
 
 ##### get.responses.200.content.application/ld+json.$defs.ForeseenCapacity.capacityActivity?
 
-> `optional` **capacityActivity**: `string`
+> `optional` **capacityActivity?**: `string`
 
 capacity activity
 Format: iri-reference
 
 ##### get.responses.200.content.application/ld+json.$defs.ForeseenCapacity.capacityActivityLabel?
 
-> `optional` **capacityActivityLabel**: `string`
+> `optional` **capacityActivityLabel?**: `string`
 
 capacity activity label
 
@@ -8056,7 +8070,7 @@ Parliamentary Procedure Specification (free text)
 
 ##### get.responses.200.content.application/ld+json.$defs.ForeseenCapacity.capacityOrganization?
 
-> `optional` **capacityOrganization**: `string`
+> `optional` **capacityOrganization?**: `string`
 
 capacity organization
 Format: iri-reference
@@ -8233,14 +8247,14 @@ Format: iri-reference
 
 ##### get.responses.200.content.application/ld+json.$defs.Participation.inCapacityOf.capacityActivity?
 
-> `optional` **capacityActivity**: `string`
+> `optional` **capacityActivity?**: `string`
 
 capacity activity
 Format: iri-reference
 
 ##### get.responses.200.content.application/ld+json.$defs.Participation.inCapacityOf.capacityActivityLabel?
 
-> `optional` **capacityActivityLabel**: `string`
+> `optional` **capacityActivityLabel?**: `string`
 
 capacity activity label
 
@@ -8250,7 +8264,7 @@ Parliamentary Procedure Specification (free text)
 
 ##### get.responses.200.content.application/ld+json.$defs.Participation.inCapacityOf.capacityOrganization?
 
-> `optional` **capacityOrganization**: `string`
+> `optional` **capacityOrganization?**: `string`
 
 capacity organization
 Format: iri-reference
@@ -8402,7 +8416,7 @@ work had participation
 
 ##### get.responses.200.content.application/ld+json.$defs.Work-DCI.alternative\_dcterms?
 
-> `optional` **alternative\_dcterms**: `object`
+> `optional` **alternative\_dcterms?**: `object`
 
 alternative
 
@@ -8412,7 +8426,7 @@ alternative
 
 ##### get.responses.200.content.application/ld+json.$defs.Work-DCI.conflictDescription?
 
-> `optional` **conflictDescription**: `string`
+> `optional` **conflictDescription?**: `string`
 
 conflict description
 
@@ -8422,25 +8436,25 @@ Present only is absenceOfConflict is false.
 
 ##### get.responses.200.content.application/ld+json.$defs.Work-DCI.inverse\_previousVersion?
 
-> `optional` **inverse\_previousVersion**: `string`[]
+> `optional` **inverse\_previousVersion?**: `string`[]
 
 inverse previous version
 
 ##### get.responses.200.content.application/ld+json.$defs.Work-DCI.notation\_dossierId?
 
-> `optional` **notation\_dossierId**: `string`
+> `optional` **notation\_dossierId?**: `string`
 
 dossier identifier
 
 ##### get.responses.200.content.application/ld+json.$defs.Work-DCI.previousVersion?
 
-> `optional` **previousVersion**: `string`[]
+> `optional` **previousVersion?**: `string`[]
 
 previous version
 
 ##### get.responses.200.content.application/ld+json.$defs.Work-DCI.refers\_to?
 
-> `optional` **refers\_to**: `string`[]
+> `optional` **refers\_to?**: `string`[]
 
 refers to
 
@@ -8450,7 +8464,7 @@ refers to
 
 ##### get.responses.200.content.application/ld+json.meta?
 
-> `optional` **meta**: `object`
+> `optional` **meta?**: `object`
 
 ##### get.responses.200.content.application/ld+json.meta.total
 
@@ -8458,7 +8472,7 @@ refers to
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: `object`
+> `optional` **searchResults?**: `object`
 
 ##### get.responses.200.content.application/ld+json.searchResults.hits
 
@@ -8486,7 +8500,7 @@ refers to
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -8502,7 +8516,7 @@ refers to
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -8518,7 +8532,7 @@ refers to
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -8534,11 +8548,11 @@ refers to
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -8546,47 +8560,47 @@ refers to
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -8626,15 +8640,15 @@ Document identifier
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -8654,11 +8668,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -8726,11 +8740,25 @@ Format: uri
 
 ContextElement
 
-###### Type Declaration
+###### Union Members
 
 `string`
 
+***
+
+###### Type Literal
+
 \{ `@base`: `string`; `data`: `string`; \}
+
+###### @base
+
+> **@base**: `string`
+
+Format: uri
+
+###### data
+
+> **data**: `string`
 
 ##### get.responses.200.content.application/ld+json.$defs.Expression
 
@@ -8838,14 +8866,14 @@ Format: iri-reference
 
 ##### get.responses.200.content.application/ld+json.$defs.ForeseenCapacity.capacityActivity?
 
-> `optional` **capacityActivity**: `string`
+> `optional` **capacityActivity?**: `string`
 
 capacity activity
 Format: iri-reference
 
 ##### get.responses.200.content.application/ld+json.$defs.ForeseenCapacity.capacityActivityLabel?
 
-> `optional` **capacityActivityLabel**: `string`
+> `optional` **capacityActivityLabel?**: `string`
 
 capacity activity label
 
@@ -8855,7 +8883,7 @@ Parliamentary Procedure Specification (free text)
 
 ##### get.responses.200.content.application/ld+json.$defs.ForeseenCapacity.capacityOrganization?
 
-> `optional` **capacityOrganization**: `string`
+> `optional` **capacityOrganization?**: `string`
 
 capacity organization
 Format: iri-reference
@@ -9032,14 +9060,14 @@ Format: iri-reference
 
 ##### get.responses.200.content.application/ld+json.$defs.Participation.inCapacityOf.capacityActivity?
 
-> `optional` **capacityActivity**: `string`
+> `optional` **capacityActivity?**: `string`
 
 capacity activity
 Format: iri-reference
 
 ##### get.responses.200.content.application/ld+json.$defs.Participation.inCapacityOf.capacityActivityLabel?
 
-> `optional` **capacityActivityLabel**: `string`
+> `optional` **capacityActivityLabel?**: `string`
 
 capacity activity label
 
@@ -9049,7 +9077,7 @@ Parliamentary Procedure Specification (free text)
 
 ##### get.responses.200.content.application/ld+json.$defs.Participation.inCapacityOf.capacityOrganization?
 
-> `optional` **capacityOrganization**: `string`
+> `optional` **capacityOrganization?**: `string`
 
 capacity organization
 Format: iri-reference
@@ -9201,7 +9229,7 @@ work had participation
 
 ##### get.responses.200.content.application/ld+json.$defs.Work-DCI.alternative\_dcterms?
 
-> `optional` **alternative\_dcterms**: `object`
+> `optional` **alternative\_dcterms?**: `object`
 
 alternative
 
@@ -9211,7 +9239,7 @@ alternative
 
 ##### get.responses.200.content.application/ld+json.$defs.Work-DCI.conflictDescription?
 
-> `optional` **conflictDescription**: `string`
+> `optional` **conflictDescription?**: `string`
 
 conflict description
 
@@ -9221,25 +9249,25 @@ Present only is absenceOfConflict is false.
 
 ##### get.responses.200.content.application/ld+json.$defs.Work-DCI.inverse\_previousVersion?
 
-> `optional` **inverse\_previousVersion**: `string`[]
+> `optional` **inverse\_previousVersion?**: `string`[]
 
 inverse previous version
 
 ##### get.responses.200.content.application/ld+json.$defs.Work-DCI.notation\_dossierId?
 
-> `optional` **notation\_dossierId**: `string`
+> `optional` **notation\_dossierId?**: `string`
 
 dossier identifier
 
 ##### get.responses.200.content.application/ld+json.$defs.Work-DCI.previousVersion?
 
-> `optional` **previousVersion**: `string`[]
+> `optional` **previousVersion?**: `string`[]
 
 previous version
 
 ##### get.responses.200.content.application/ld+json.$defs.Work-DCI.refers\_to?
 
-> `optional` **refers\_to**: `string`[]
+> `optional` **refers\_to?**: `string`[]
 
 refers to
 
@@ -9249,7 +9277,7 @@ refers to
 
 ##### get.responses.200.content.application/ld+json.meta?
 
-> `optional` **meta**: `object`
+> `optional` **meta?**: `object`
 
 ##### get.responses.200.content.application/ld+json.meta.total
 
@@ -9257,7 +9285,7 @@ refers to
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: `object`
+> `optional` **searchResults?**: `object`
 
 ##### get.responses.200.content.application/ld+json.searchResults.hits
 
@@ -9285,7 +9313,7 @@ refers to
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -9301,7 +9329,7 @@ refers to
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -9317,11 +9345,11 @@ refers to
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -9329,47 +9357,47 @@ refers to
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -9395,15 +9423,15 @@ The service returns a feed of MEPS Declaration (published or updated during the 
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -9423,15 +9451,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.start-date?
 
-> `optional` **start-date**: `string`
+> `optional` **start-date?**: `string`
 
 ###### Description
 
@@ -9439,7 +9467,7 @@ Start date. This parameter defines the start date of a timeframe. The format of 
 
 ##### get.parameters.query.timeframe?
 
-> `optional` **timeframe**: `"custom"` \| `"today"` \| `"one-day"` \| `"one-week"` \| `"one-month"`
+> `optional` **timeframe?**: `"custom"` \| `"today"` \| `"one-day"` \| `"one-week"` \| `"one-month"`
 
 ###### Description
 
@@ -9447,7 +9475,7 @@ The timeframe for the feed. To specify a custom timeframe, select `custom` from 
 
 ##### get.parameters.query.work-type?
 
-> `optional` **work-type**: `"MEMBER_DECLARATION_INTEREST_CONFLICT"`[]
+> `optional` **work-type?**: `"MEMBER_DECLARATION_INTEREST_CONFLICT"`[]
 
 ###### Description
 
@@ -9513,7 +9541,7 @@ Format: date-time
 
 ##### get.responses.200.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.category.label
 
@@ -9531,11 +9559,11 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -9581,7 +9609,7 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.subtitle.type
 
@@ -9609,7 +9637,7 @@ Format: uri
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -9625,7 +9653,7 @@ Format: uri
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -9641,7 +9669,7 @@ Format: uri
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -9657,11 +9685,11 @@ Format: uri
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -9669,47 +9697,47 @@ Format: uri
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -9747,15 +9775,15 @@ MEP identifier.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -9775,11 +9803,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -9807,15 +9835,15 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -9839,7 +9867,7 @@ Response format
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -9855,7 +9883,7 @@ Response format
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -9871,11 +9899,11 @@ Response format
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -9883,47 +9911,47 @@ Response format
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -9949,15 +9977,15 @@ The service returns a feed of MEPs (published or updated during the specified ti
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -9977,15 +10005,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.start-date?
 
-> `optional` **start-date**: `string`
+> `optional` **start-date?**: `string`
 
 ###### Description
 
@@ -9993,7 +10021,7 @@ Start date. This parameter defines the start date of a timeframe. The format of 
 
 ##### get.parameters.query.timeframe?
 
-> `optional` **timeframe**: `"custom"` \| `"today"` \| `"one-day"` \| `"one-week"` \| `"one-month"`
+> `optional` **timeframe?**: `"custom"` \| `"today"` \| `"one-day"` \| `"one-week"` \| `"one-month"`
 
 ###### Description
 
@@ -10059,7 +10087,7 @@ Format: date-time
 
 ##### get.responses.200.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.category.label
 
@@ -10077,11 +10105,11 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -10127,7 +10155,7 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.subtitle.type
 
@@ -10155,7 +10183,7 @@ Format: uri
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -10171,7 +10199,7 @@ Format: uri
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -10187,7 +10215,7 @@ Format: uri
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -10203,11 +10231,11 @@ Format: uri
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -10215,47 +10243,47 @@ Format: uri
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -10281,15 +10309,15 @@ The service returns the list of active MEPs for today's date.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -10309,15 +10337,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.country-of-representation?
 
-> `optional` **country-of-representation**: (`"BE"` \| `"BG"` \| `"CZ"` \| `"DK"` \| `"DE"` \| `"EE"` \| `"IE"` \| `"EL"` \| `"ES"` \| `"FR"` \| `"HR"` \| `"IT"` \| `"CY"` \| `"LV"` \| `"LT"` \| `"LU"` \| `"HU"` \| `"MT"` \| `"NL"` \| `"AT"` \| `"PL"` \| `"PT"` \| `"RO"` \| `"SI"` \| `"SK"` \| `"FI"` \| `"SE"` \| `"UK"`)[]
+> `optional` **country-of-representation?**: (`"BE"` \| `"BG"` \| `"CZ"` \| `"DK"` \| `"DE"` \| `"EE"` \| `"IE"` \| `"EL"` \| `"ES"` \| `"FR"` \| `"HR"` \| `"IT"` \| `"CY"` \| `"LV"` \| `"LT"` \| `"LU"` \| `"HU"` \| `"MT"` \| `"NL"` \| `"AT"` \| `"PL"` \| `"PT"` \| `"RO"` \| `"SI"` \| `"SK"` \| `"FI"` \| `"SE"` \| `"UK"`)[]
 
 ###### Description
 
@@ -10325,7 +10353,7 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -10333,7 +10361,7 @@ Response format
 
 ##### get.parameters.query.gender?
 
-> `optional` **gender**: (`"FEMALE"` \| `"MALE"` \| `"NAP"` \| `"NKN"` \| `"NST"`)[]
+> `optional` **gender?**: (`"FEMALE"` \| `"MALE"` \| `"NAP"` \| `"NKN"` \| `"NST"`)[]
 
 ###### Description
 
@@ -10341,7 +10369,7 @@ Gender of the person. The non-exhaustive list of values includes concepts of the
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -10349,7 +10377,7 @@ The number of items to return.
 
 ##### get.parameters.query.mandate-date?
 
-> `optional` **mandate-date**: `string`[]
+> `optional` **mandate-date?**: `string`[]
 
 ###### Description
 
@@ -10357,7 +10385,7 @@ This parameter lets you specify a date to retrieve the list of Members of the Eu
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -10365,7 +10393,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.political-group?
 
-> `optional` **political-group**: (`"ECR"` \| `"ID"` \| `"NI"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
+> `optional` **political-group?**: (`"ECR"` \| `"ID"` \| `"NI"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
 
 ###### Description
 
@@ -10393,15 +10421,15 @@ EP political groups.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -10425,7 +10453,7 @@ EP political groups.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -10441,7 +10469,7 @@ EP political groups.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -10457,7 +10485,7 @@ EP political groups.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -10473,11 +10501,11 @@ EP political groups.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -10485,47 +10513,47 @@ EP political groups.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -10551,15 +10579,15 @@ The service returns the list of homonyms MEPs for the current parliamentary term
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -10579,15 +10607,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -10595,7 +10623,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -10603,7 +10631,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -10611,7 +10639,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.parliamentary-term?
 
-> `optional` **parliamentary-term**: (`0` \| `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8` \| `9` \| `10`)[]
+> `optional` **parliamentary-term?**: (`0` \| `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8` \| `9` \| `10`)[]
 
 ###### Description
 
@@ -10639,15 +10667,15 @@ Parliamentary Term from 0 to the current.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -10671,7 +10699,7 @@ Parliamentary Term from 0 to the current.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -10687,7 +10715,7 @@ Parliamentary Term from 0 to the current.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -10703,7 +10731,7 @@ Parliamentary Term from 0 to the current.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -10719,11 +10747,11 @@ Parliamentary Term from 0 to the current.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -10731,47 +10759,47 @@ Parliamentary Term from 0 to the current.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -10797,15 +10825,15 @@ The service returns the list of incoming MEPs for the current parliamentary term
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -10825,15 +10853,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.country-of-representation?
 
-> `optional` **country-of-representation**: (`"BE"` \| `"BG"` \| `"CZ"` \| `"DK"` \| `"DE"` \| `"EE"` \| `"IE"` \| `"EL"` \| `"ES"` \| `"FR"` \| `"HR"` \| `"IT"` \| `"CY"` \| `"LV"` \| `"LT"` \| `"LU"` \| `"HU"` \| `"MT"` \| `"NL"` \| `"AT"` \| `"PL"` \| `"PT"` \| `"RO"` \| `"SI"` \| `"SK"` \| `"FI"` \| `"SE"` \| `"UK"`)[]
+> `optional` **country-of-representation?**: (`"BE"` \| `"BG"` \| `"CZ"` \| `"DK"` \| `"DE"` \| `"EE"` \| `"IE"` \| `"EL"` \| `"ES"` \| `"FR"` \| `"HR"` \| `"IT"` \| `"CY"` \| `"LV"` \| `"LT"` \| `"LU"` \| `"HU"` \| `"MT"` \| `"NL"` \| `"AT"` \| `"PL"` \| `"PT"` \| `"RO"` \| `"SI"` \| `"SK"` \| `"FI"` \| `"SE"` \| `"UK"`)[]
 
 ###### Description
 
@@ -10841,7 +10869,7 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -10849,7 +10877,7 @@ Response format
 
 ##### get.parameters.query.gender?
 
-> `optional` **gender**: (`"FEMALE"` \| `"MALE"` \| `"NAP"` \| `"NKN"` \| `"NST"`)[]
+> `optional` **gender?**: (`"FEMALE"` \| `"MALE"` \| `"NAP"` \| `"NKN"` \| `"NST"`)[]
 
 ###### Description
 
@@ -10857,7 +10885,7 @@ Gender of the person. The non-exhaustive list of values includes concepts of the
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -10865,7 +10893,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -10873,7 +10901,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.political-group?
 
-> `optional` **political-group**: (`"ECR"` \| `"ID"` \| `"NI"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
+> `optional` **political-group?**: (`"ECR"` \| `"ID"` \| `"NI"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
 
 ###### Description
 
@@ -10901,15 +10929,15 @@ EP political groups.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -10933,7 +10961,7 @@ EP political groups.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -10949,7 +10977,7 @@ EP political groups.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -10965,7 +10993,7 @@ EP political groups.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -10981,11 +11009,11 @@ EP political groups.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -10993,47 +11021,47 @@ EP political groups.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -11059,15 +11087,15 @@ The service returns the list of outgoing MEPs for the current parliamentary term
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -11087,15 +11115,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.country-of-representation?
 
-> `optional` **country-of-representation**: (`"BE"` \| `"BG"` \| `"CZ"` \| `"DK"` \| `"DE"` \| `"EE"` \| `"IE"` \| `"EL"` \| `"ES"` \| `"FR"` \| `"HR"` \| `"IT"` \| `"CY"` \| `"LV"` \| `"LT"` \| `"LU"` \| `"HU"` \| `"MT"` \| `"NL"` \| `"AT"` \| `"PL"` \| `"PT"` \| `"RO"` \| `"SI"` \| `"SK"` \| `"FI"` \| `"SE"` \| `"UK"`)[]
+> `optional` **country-of-representation?**: (`"BE"` \| `"BG"` \| `"CZ"` \| `"DK"` \| `"DE"` \| `"EE"` \| `"IE"` \| `"EL"` \| `"ES"` \| `"FR"` \| `"HR"` \| `"IT"` \| `"CY"` \| `"LV"` \| `"LT"` \| `"LU"` \| `"HU"` \| `"MT"` \| `"NL"` \| `"AT"` \| `"PL"` \| `"PT"` \| `"RO"` \| `"SI"` \| `"SK"` \| `"FI"` \| `"SE"` \| `"UK"`)[]
 
 ###### Description
 
@@ -11103,7 +11131,7 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -11111,7 +11139,7 @@ Response format
 
 ##### get.parameters.query.gender?
 
-> `optional` **gender**: (`"FEMALE"` \| `"MALE"` \| `"NAP"` \| `"NKN"` \| `"NST"`)[]
+> `optional` **gender?**: (`"FEMALE"` \| `"MALE"` \| `"NAP"` \| `"NKN"` \| `"NST"`)[]
 
 ###### Description
 
@@ -11119,7 +11147,7 @@ Gender of the person. The non-exhaustive list of values includes concepts of the
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -11127,7 +11155,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -11135,7 +11163,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.political-group?
 
-> `optional` **political-group**: (`"ECR"` \| `"ID"` \| `"NI"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
+> `optional` **political-group?**: (`"ECR"` \| `"ID"` \| `"NI"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
 
 ###### Description
 
@@ -11163,15 +11191,15 @@ EP political groups.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -11195,7 +11223,7 @@ EP political groups.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -11211,7 +11239,7 @@ EP political groups.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -11227,7 +11255,7 @@ EP political groups.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -11243,11 +11271,11 @@ EP political groups.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -11255,47 +11283,47 @@ EP political groups.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -11321,15 +11349,15 @@ The service returns the list of all EP Questions.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -11349,15 +11377,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -11365,7 +11393,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -11373,7 +11401,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -11381,7 +11409,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.work-type?
 
-> `optional` **work-type**: (`"QUESTION_TIME"` \| `"QUESTION_WRITTEN"` \| `"QUESTION_ORAL"` \| `"INTERPELLATION_MAJOR"` \| `"INTERPELLATION_MINOR"` \| `"QUESTION_WRITTEN_PRIORITY"`)[]
+> `optional` **work-type?**: (`"QUESTION_TIME"` \| `"QUESTION_WRITTEN"` \| `"QUESTION_ORAL"` \| `"INTERPELLATION_MAJOR"` \| `"INTERPELLATION_MINOR"` \| `"QUESTION_WRITTEN_PRIORITY"`)[]
 
 ###### Description
 
@@ -11389,7 +11417,7 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.parameters.query.year?
 
-> `optional` **year**: `number`[]
+> `optional` **year?**: `number`[]
 
 ###### Description
 
@@ -11417,15 +11445,15 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -11449,7 +11477,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -11465,7 +11493,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -11481,7 +11509,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -11497,11 +11525,11 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -11509,47 +11537,47 @@ Year. The format of the values is **YYYY**.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -11587,15 +11615,15 @@ Document identifier
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -11615,11 +11643,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -11627,7 +11655,7 @@ Response format
 
 ##### get.parameters.query.language?
 
-> `optional` **language**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> `optional` **language?**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ###### Description
 
@@ -11655,15 +11683,15 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -11687,7 +11715,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -11703,7 +11731,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -11719,11 +11747,11 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -11731,47 +11759,47 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -11797,15 +11825,15 @@ The service returns a feed of EP Questions Documents (published or updated in th
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -11825,11 +11853,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 ##### get.responses
 
@@ -11891,7 +11919,7 @@ Format: date-time
 
 ##### get.responses.200.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.category.label
 
@@ -11909,11 +11937,11 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -11959,7 +11987,7 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.subtitle.type
 
@@ -11987,7 +12015,7 @@ Format: uri
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -12003,7 +12031,7 @@ Format: uri
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -12019,7 +12047,7 @@ Format: uri
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -12035,11 +12063,11 @@ Format: uri
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -12047,47 +12075,47 @@ Format: uri
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -12113,15 +12141,15 @@ The service returns the list of all EP Plenary Documents.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -12141,15 +12169,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -12157,7 +12185,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -12165,7 +12193,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -12173,7 +12201,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.work-type?
 
-> `optional` **work-type**: (`"REPORT_PLENARY"` \| `"RESOLUTION_MOTION"` \| `"RESOLUTION_MOTION_JOINT"` \| `"QUESTION_RESOLUTION_MOTION"`)[]
+> `optional` **work-type?**: (`"REPORT_PLENARY"` \| `"RESOLUTION_MOTION"` \| `"RESOLUTION_MOTION_JOINT"` \| `"QUESTION_RESOLUTION_MOTION"`)[]
 
 ###### Description
 
@@ -12181,7 +12209,7 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.parameters.query.year?
 
-> `optional` **year**: `number`[]
+> `optional` **year?**: `number`[]
 
 ###### Description
 
@@ -12209,15 +12237,15 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -12241,7 +12269,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -12257,7 +12285,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -12273,7 +12301,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -12289,11 +12317,11 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -12301,47 +12329,47 @@ Year. The format of the values is **YYYY**.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -12379,15 +12407,15 @@ Document identifier
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -12407,11 +12435,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -12419,7 +12447,7 @@ Response format
 
 ##### get.parameters.query.language?
 
-> `optional` **language**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> `optional` **language?**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ###### Description
 
@@ -12447,15 +12475,15 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -12479,7 +12507,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -12495,7 +12523,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -12511,11 +12539,11 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -12523,47 +12551,47 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -12589,15 +12617,15 @@ The service returns a feed of EP Plenary Documents (published or updated in the 
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -12617,11 +12645,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 ##### get.responses
 
@@ -12683,7 +12711,7 @@ Format: date-time
 
 ##### get.responses.200.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.category.label
 
@@ -12701,11 +12729,11 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -12751,7 +12779,7 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.subtitle.type
 
@@ -12779,7 +12807,7 @@ Format: uri
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -12795,7 +12823,7 @@ Format: uri
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -12811,7 +12839,7 @@ Format: uri
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -12827,11 +12855,11 @@ Format: uri
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -12839,47 +12867,47 @@ Format: uri
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -12905,15 +12933,15 @@ The service returns the list of all EP Plenary Session documents.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -12933,15 +12961,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -12949,7 +12977,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -12957,7 +12985,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -12965,7 +12993,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.part-session-date?
 
-> `optional` **part-session-date**: `string`[]
+> `optional` **part-session-date?**: `string`[]
 
 ###### Description
 
@@ -12973,7 +13001,7 @@ Plenary Part-Session Date. This parameter refers to the date of the first day of
 
 ##### get.parameters.query.work-type?
 
-> `optional` **work-type**: (`"AGENDA_PLENARY_WEEK"` \| `"AGENDA_PLENARY_DAY"` \| `"CRE_PLENARY"` \| `"MINUTES_PLENARY"` \| `"LIST_ATTEND_PLENARY"` \| `"VOTE_RESULTS_PLENARY"` \| `"VOTE_ROLLCALL_PLENARY"`)[]
+> `optional` **work-type?**: (`"AGENDA_PLENARY_WEEK"` \| `"AGENDA_PLENARY_DAY"` \| `"CRE_PLENARY"` \| `"MINUTES_PLENARY"` \| `"LIST_ATTEND_PLENARY"` \| `"VOTE_RESULTS_PLENARY"` \| `"VOTE_ROLLCALL_PLENARY"`)[]
 
 ###### Description
 
@@ -13001,15 +13029,15 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -13033,7 +13061,7 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -13049,7 +13077,7 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -13065,7 +13093,7 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -13081,11 +13109,11 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -13093,47 +13121,47 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -13159,15 +13187,15 @@ The service returns the list of all Plenary Session Documents Items.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -13187,15 +13215,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.doc-id?
 
-> `optional` **doc-id**: `string`[]
+> `optional` **doc-id?**: `string`[]
 
 ###### Description
 
@@ -13203,7 +13231,7 @@ Document identifier
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -13211,7 +13239,7 @@ Response format
 
 ##### get.parameters.query.include-output?
 
-> `optional` **include-output**: `"xml_fragment"`[]
+> `optional` **include-output?**: `"xml_fragment"`[]
 
 ###### Description
 
@@ -13219,7 +13247,7 @@ Enrichment of the response content. `xml_fragment` parameter will include in the
 
 ##### get.parameters.query.language?
 
-> `optional` **language**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> `optional` **language?**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ###### Description
 
@@ -13227,7 +13255,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -13235,7 +13263,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -13243,7 +13271,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.parent-id?
 
-> `optional` **parent-id**: `string`
+> `optional` **parent-id?**: `string`
 
 ###### Description
 
@@ -13251,7 +13279,7 @@ Identifier of the parent entity that this item is part of. This parameter filter
 
 ##### get.parameters.query.parliamentary-term?
 
-> `optional` **parliamentary-term**: (`0` \| `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8` \| `9` \| `10`)[]
+> `optional` **parliamentary-term?**: (`0` \| `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8` \| `9` \| `10`)[]
 
 ###### Description
 
@@ -13259,7 +13287,7 @@ Parliamentary Term from 0 to the current.
 
 ##### get.parameters.query.related-activity-type?
 
-> `optional` **related-activity-type**: (`"PLENARY_DEBATE"` \| `"PLENARY_VOTE"` \| `"PLENARY_ACTIVITY"` \| `"PLENARY_VOTE_RESULTS"` \| `"PLENARY_OUTCOME"` \| `"PLENARY_DEBATE_WRITTEN_STATEMENT"` \| `"PLENARY_DEBATE_SPEECH"` \| `"PLENARY_VOTE_EXPLANATIONS"` \| `"PROCEEDING_ACTIVITY"`)[]
+> `optional` **related-activity-type?**: (`"PLENARY_DEBATE"` \| `"PLENARY_VOTE"` \| `"PLENARY_ACTIVITY"` \| `"PLENARY_VOTE_RESULTS"` \| `"PLENARY_OUTCOME"` \| `"PLENARY_DEBATE_WRITTEN_STATEMENT"` \| `"PLENARY_DEBATE_SPEECH"` \| `"PLENARY_VOTE_EXPLANATIONS"` \| `"PROCEEDING_ACTIVITY"`)[]
 
 ###### Description
 
@@ -13267,7 +13295,7 @@ A type of the related activity. Values are concepts of the EP Vocabulary [ep-eve
 
 ##### get.parameters.query.related-work-type?
 
-> `optional` **related-work-type**: (`"CRE_PLENARY"` \| `"MINUTES_PLENARY"` \| `"VOTE_RESULTS_PLENARY"` \| `"VOTE_ROLLCALL_PLENARY"`)[]
+> `optional` **related-work-type?**: (`"CRE_PLENARY"` \| `"MINUTES_PLENARY"` \| `"VOTE_RESULTS_PLENARY"` \| `"VOTE_ROLLCALL_PLENARY"`)[]
 
 ###### Description
 
@@ -13275,7 +13303,7 @@ A type of the related Work type. Values are concepts of the EP Vocabulary [ep-do
 
 ##### get.parameters.query.search-language?
 
-> `optional` **search-language**: (`"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
+> `optional` **search-language?**: (`"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
 
 ###### Description
 
@@ -13283,7 +13311,7 @@ Search language for free text search. If no language is selected, the default la
 
 ##### get.parameters.query.sitting-date?
 
-> `optional` **sitting-date**: `string`
+> `optional` **sitting-date?**: `string`
 
 ###### Description
 
@@ -13291,7 +13319,7 @@ Plenary sitting date (range start date). This parameter, together with `sitting-
 
 ##### get.parameters.query.sitting-date-end?
 
-> `optional` **sitting-date-end**: `string`
+> `optional` **sitting-date-end?**: `string`
 
 ###### Description
 
@@ -13299,7 +13327,7 @@ Plenary sitting date end (range end date). This parameter, together with `sittin
 
 ##### get.parameters.query.sort-by?
 
-> `optional` **sort-by**: `string`[]
+> `optional` **sort-by?**: `string`[]
 
 ###### Description
 
@@ -13307,7 +13335,7 @@ Sorting parameter. The avaliable sorting parameters are: `sitting-date`, `number
 
 ##### get.parameters.query.subdivision-type?
 
-> `optional` **subdivision-type**: (`"OTH"` \| `"ITM"`)[]
+> `optional` **subdivision-type?**: (`"OTH"` \| `"ITM"`)[]
 
 ###### Description
 
@@ -13315,7 +13343,7 @@ A type of a Work Subdivision. The non-exhaustive list of values includes concept
 
 ##### get.parameters.query.text?
 
-> `optional` **text**: `string`
+> `optional` **text?**: `string`
 
 ###### Description
 
@@ -13323,7 +13351,7 @@ A free text search in the content of the resource. For language-specific results
 
 ##### get.parameters.query.title?
 
-> `optional` **title**: `string`
+> `optional` **title?**: `string`
 
 ###### Description
 
@@ -13331,7 +13359,7 @@ A free text search in the title of the resource. For language-specific results, 
 
 ##### get.parameters.query.year?
 
-> `optional` **year**: `number`[]
+> `optional` **year?**: `number`[]
 
 ###### Description
 
@@ -13359,15 +13387,15 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -13391,7 +13419,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -13407,7 +13435,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -13423,7 +13451,7 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -13439,11 +13467,11 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -13451,47 +13479,47 @@ Year. The format of the values is **YYYY**.
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -13529,15 +13557,15 @@ Document identifier
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -13557,11 +13585,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -13569,7 +13597,7 @@ Response format
 
 ##### get.parameters.query.language?
 
-> `optional` **language**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> `optional` **language?**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ###### Description
 
@@ -13597,15 +13625,15 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -13629,7 +13657,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -13645,7 +13673,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -13661,11 +13689,11 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -13673,47 +13701,47 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -13739,15 +13767,15 @@ The service returns a feed of EP Plenary Session Documents (published or updated
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -13767,11 +13795,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 ##### get.responses
 
@@ -13833,7 +13861,7 @@ Format: date-time
 
 ##### get.responses.200.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.category.label
 
@@ -13851,11 +13879,11 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -13901,7 +13929,7 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.subtitle.type
 
@@ -13929,7 +13957,7 @@ Format: uri
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -13945,7 +13973,7 @@ Format: uri
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -13961,7 +13989,7 @@ Format: uri
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -13977,11 +14005,11 @@ Format: uri
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -13989,47 +14017,47 @@ Format: uri
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -14055,15 +14083,15 @@ The service returns The list of all EP Procedures.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -14083,15 +14111,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -14099,7 +14127,7 @@ Response format
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -14107,7 +14135,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -14115,7 +14143,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.process-type?
 
-> `optional` **process-type**: (`"ACI"` \| `"APP"` \| `"AVC"` \| `"BUD"` \| `"CNS"` \| `"COD"` \| `"DEC"` \| `"NLE"` \| `"SYN"` \| `"BUI"` \| `"COS"` \| `"DEA"` \| `"DCE"` \| `"IMM"` \| `"INI"` \| `"INL"` \| `"INS"` \| `"REG"` \| `"RPS"` \| `"RSO"` \| `"RSP"` \| `"GBD"`)[]
+> `optional` **process-type?**: (`"ACI"` \| `"APP"` \| `"AVC"` \| `"BUD"` \| `"CNS"` \| `"COD"` \| `"DEC"` \| `"NLE"` \| `"SYN"` \| `"BUI"` \| `"COS"` \| `"DEA"` \| `"DCE"` \| `"IMM"` \| `"INI"` \| `"INL"` \| `"INS"` \| `"REG"` \| `"RPS"` \| `"RSO"` \| `"RSP"` \| `"GBD"`)[]
 
 ###### Description
 
@@ -14143,15 +14171,15 @@ A type of a Process. Values are concepts of the EP Vocabulary [ep-procedure-type
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -14175,7 +14203,7 @@ A type of a Process. Values are concepts of the EP Vocabulary [ep-procedure-type
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -14191,7 +14219,7 @@ A type of a Process. Values are concepts of the EP Vocabulary [ep-procedure-type
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -14207,7 +14235,7 @@ A type of a Process. Values are concepts of the EP Vocabulary [ep-procedure-type
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -14223,11 +14251,11 @@ A type of a Process. Values are concepts of the EP Vocabulary [ep-procedure-type
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -14235,47 +14263,47 @@ A type of a Process. Values are concepts of the EP Vocabulary [ep-procedure-type
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -14313,15 +14341,15 @@ Process identifier
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -14341,11 +14369,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -14373,15 +14401,15 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -14405,7 +14433,7 @@ Response format
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -14421,7 +14449,7 @@ Response format
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -14437,11 +14465,11 @@ Response format
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -14449,47 +14477,47 @@ Response format
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -14527,15 +14555,15 @@ Process identifier
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -14555,11 +14583,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -14587,15 +14615,15 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -14619,7 +14647,7 @@ Response format
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -14635,7 +14663,7 @@ Response format
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -14651,7 +14679,7 @@ Response format
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -14667,11 +14695,11 @@ Response format
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -14679,47 +14707,47 @@ Response format
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -14765,15 +14793,15 @@ Process identifier
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -14793,11 +14821,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -14825,15 +14853,15 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -14857,7 +14885,7 @@ Response format
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -14873,7 +14901,7 @@ Response format
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -14889,11 +14917,11 @@ Response format
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -14901,47 +14929,47 @@ Response format
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -14967,15 +14995,15 @@ The service returns a feed of EP Procedures (published or updated during the spe
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -14995,15 +15023,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.process-type?
 
-> `optional` **process-type**: (`"ACI"` \| `"APP"` \| `"AVC"` \| `"BUD"` \| `"CNS"` \| `"COD"` \| `"DEC"` \| `"NLE"` \| `"SYN"` \| `"BUI"` \| `"COS"` \| `"DEA"` \| `"DCE"` \| `"IMM"` \| `"INI"` \| `"INL"` \| `"INS"` \| `"REG"` \| `"RPS"` \| `"RSO"` \| `"RSP"` \| `"GBD"`)[]
+> `optional` **process-type?**: (`"ACI"` \| `"APP"` \| `"AVC"` \| `"BUD"` \| `"CNS"` \| `"COD"` \| `"DEC"` \| `"NLE"` \| `"SYN"` \| `"BUI"` \| `"COS"` \| `"DEA"` \| `"DCE"` \| `"IMM"` \| `"INI"` \| `"INL"` \| `"INS"` \| `"REG"` \| `"RPS"` \| `"RSO"` \| `"RSP"` \| `"GBD"`)[]
 
 ###### Description
 
@@ -15011,7 +15039,7 @@ A type of a Process. Values are concepts of the EP Vocabulary [ep-procedure-type
 
 ##### get.parameters.query.start-date?
 
-> `optional` **start-date**: `string`
+> `optional` **start-date?**: `string`
 
 ###### Description
 
@@ -15019,7 +15047,7 @@ Start date. This parameter defines the start date of a timeframe. The format of 
 
 ##### get.parameters.query.timeframe?
 
-> `optional` **timeframe**: `"custom"` \| `"today"` \| `"one-day"` \| `"one-week"` \| `"one-month"`
+> `optional` **timeframe?**: `"custom"` \| `"today"` \| `"one-day"` \| `"one-week"` \| `"one-month"`
 
 ###### Description
 
@@ -15085,7 +15113,7 @@ Format: date-time
 
 ##### get.responses.200.content.application/atom+xml.entry.category?
 
-> `optional` **category**: `object`
+> `optional` **category?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.category.label
 
@@ -15103,11 +15131,11 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type?
 
-> `optional` **rdf:type**: `object`
+> `optional` **rdf:type?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.entry.rdf:type.rdf:resource?
 
-> `optional` **rdf:resource**: `string`
+> `optional` **rdf:resource?**: `string`
 
 Format: uri
 
@@ -15153,7 +15181,7 @@ Format: uri
 
 ##### get.responses.200.content.application/atom+xml.subtitle?
 
-> `optional` **subtitle**: `object`
+> `optional` **subtitle?**: `object`
 
 ##### get.responses.200.content.application/atom+xml.subtitle.type
 
@@ -15181,7 +15209,7 @@ Format: uri
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -15197,7 +15225,7 @@ Format: uri
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -15213,7 +15241,7 @@ Format: uri
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -15229,11 +15257,11 @@ Format: uri
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -15241,47 +15269,47 @@ Format: uri
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -15307,15 +15335,15 @@ The service returns a list of speeches or speech-related activities (proceeding 
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -15335,15 +15363,15 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.activity-type?
 
-> `optional` **activity-type**: (`"PLENARY_DEBATE_WRITTEN_STATEMENT"` \| `"PLENARY_DEBATE_SPEECH"` \| `"PROCEEDING_ACTIVITY"` \| `"MEETING_NAME_CHAIR"`)[]
+> `optional` **activity-type?**: (`"PLENARY_DEBATE_WRITTEN_STATEMENT"` \| `"PLENARY_DEBATE_SPEECH"` \| `"PROCEEDING_ACTIVITY"` \| `"MEETING_NAME_CHAIR"`)[]
 
 ###### Description
 
@@ -15351,7 +15379,7 @@ A type of an Activity. Values are concepts of the EP Vocabulary [ep-activities](
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -15359,7 +15387,7 @@ Response format
 
 ##### get.parameters.query.include-output?
 
-> `optional` **include-output**: (`"xml_fragment"` \| `"highlighted_text"`)[]
+> `optional` **include-output?**: (`"xml_fragment"` \| `"highlighted_text"`)[]
 
 ###### Description
 
@@ -15367,7 +15395,7 @@ Enrichment of the response content. `xml_fragment` parameter will include in the
 
 ##### get.parameters.query.language?
 
-> `optional` **language**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> `optional` **language?**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ###### Description
 
@@ -15375,7 +15403,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.parameters.query.limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 ###### Description
 
@@ -15383,7 +15411,7 @@ The number of items to return.
 
 ##### get.parameters.query.offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 ###### Description
 
@@ -15391,7 +15419,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.parliamentary-term?
 
-> `optional` **parliamentary-term**: (`9` \| `10`)[]
+> `optional` **parliamentary-term?**: (`9` \| `10`)[]
 
 ###### Description
 
@@ -15399,7 +15427,7 @@ Parliamentary Term limited to the 10th.
 
 ##### get.parameters.query.person-id?
 
-> `optional` **person-id**: `number`[]
+> `optional` **person-id?**: `number`[]
 
 ###### Description
 
@@ -15407,7 +15435,7 @@ A unique identifier for a Person.
 
 ##### get.parameters.query.search-language?
 
-> `optional` **search-language**: (`"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
+> `optional` **search-language?**: (`"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
 
 ###### Description
 
@@ -15415,7 +15443,7 @@ Search language for free text search. If no language is selected, the default la
 
 ##### get.parameters.query.sitting-date?
 
-> `optional` **sitting-date**: `string`
+> `optional` **sitting-date?**: `string`
 
 ###### Description
 
@@ -15423,7 +15451,7 @@ Plenary sitting date (range start date). This parameter, together with `sitting-
 
 ##### get.parameters.query.sitting-date-end?
 
-> `optional` **sitting-date-end**: `string`
+> `optional` **sitting-date-end?**: `string`
 
 ###### Description
 
@@ -15431,7 +15459,7 @@ Plenary sitting date end (range end date). This parameter, together with `sittin
 
 ##### get.parameters.query.sort-by?
 
-> `optional` **sort-by**: `string`[]
+> `optional` **sort-by?**: `string`[]
 
 ###### Description
 
@@ -15439,7 +15467,7 @@ Sorting parameter. The avaliable sorting parameters are: `sitting-date`, `number
 
 ##### get.parameters.query.text?
 
-> `optional` **text**: `string`
+> `optional` **text?**: `string`
 
 ###### Description
 
@@ -15447,7 +15475,7 @@ A free text search in the content of the resource. For language-specific results
 
 ##### get.parameters.query.title?
 
-> `optional` **title**: `string`
+> `optional` **title?**: `string`
 
 ###### Description
 
@@ -15455,7 +15483,7 @@ A free text search in the title of the resource. For language-specific results, 
 
 ##### get.parameters.query.video-end-time?
 
-> `optional` **video-end-time**: `string`
+> `optional` **video-end-time?**: `string`
 
 ###### Description
 
@@ -15463,7 +15491,7 @@ Video end time. (range end). This parameter refers to the video timestamp of a s
 
 ##### get.parameters.query.video-start-time?
 
-> `optional` **video-start-time**: `string`
+> `optional` **video-start-time?**: `string`
 
 ###### Description
 
@@ -15491,15 +15519,15 @@ Video start time. (range start). This parameter refers to the video timestamp of
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -15523,7 +15551,7 @@ Video start time. (range start). This parameter refers to the video timestamp of
 
 ##### get.responses.204.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.404
 
@@ -15539,7 +15567,7 @@ Video start time. (range start). This parameter refers to the video timestamp of
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -15555,7 +15583,7 @@ Video start time. (range start). This parameter refers to the video timestamp of
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -15571,11 +15599,11 @@ Video start time. (range start). This parameter refers to the video timestamp of
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -15583,47 +15611,47 @@ Video start time. (range start). This parameter refers to the video timestamp of
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`
 
 ***
 
@@ -15661,15 +15689,15 @@ Speech identifier.
 
 ##### get.parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### get.parameters.header?
 
-> `optional` **header**: `object`
+> `optional` **header?**: `object`
 
 ##### get.parameters.header.User-Agent?
 
-> `optional` **User-Agent**: `string`
+> `optional` **User-Agent?**: `string`
 
 ###### Description
 
@@ -15689,11 +15717,11 @@ A User-Agent header identifying the user, environment, and version. <br>
 
 ##### get.parameters.query?
 
-> `optional` **query**: `object`
+> `optional` **query?**: `object`
 
 ##### get.parameters.query.format?
 
-> `optional` **format**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
+> `optional` **format?**: `"application/ld+json"` \| `"application/rdf+xml"` \| `"text/turtle"`
 
 ###### Description
 
@@ -15701,7 +15729,7 @@ Response format
 
 ##### get.parameters.query.include-output?
 
-> `optional` **include-output**: (`"xml_fragment"` \| `"highlighted_text"`)[]
+> `optional` **include-output?**: (`"xml_fragment"` \| `"highlighted_text"`)[]
 
 ###### Description
 
@@ -15709,7 +15737,7 @@ Enrichment of the response content. `xml_fragment` parameter will include in the
 
 ##### get.parameters.query.language?
 
-> `optional` **language**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> `optional` **language?**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ###### Description
 
@@ -15717,7 +15745,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.parameters.query.search-language?
 
-> `optional` **search-language**: (`"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
+> `optional` **search-language?**: (`"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
 
 ###### Description
 
@@ -15725,7 +15753,7 @@ Search language for free text search. If no language is selected, the default la
 
 ##### get.parameters.query.text?
 
-> `optional` **text**: `string`
+> `optional` **text?**: `string`
 
 ###### Description
 
@@ -15753,15 +15781,15 @@ A free text search in the content of the resource. For language-specific results
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -15785,7 +15813,7 @@ A free text search in the content of the resource. For language-specific results
 
 ##### get.responses.404.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.406
 
@@ -15801,7 +15829,7 @@ A free text search in the content of the resource. For language-specific results
 
 ##### get.responses.406.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.responses.500
 
@@ -15817,11 +15845,11 @@ A free text search in the content of the resource. For language-specific results
 
 ##### get.responses.500.content?
 
-> `optional` **content**: `undefined`
+> `optional` **content?**: `undefined`
 
 ##### get.requestBody?
 
-> `optional` **requestBody**: `undefined`
+> `optional` **requestBody?**: `undefined`
 
 #### parameters
 
@@ -15829,44 +15857,44 @@ A free text search in the content of the resource. For language-specific results
 
 ##### parameters.cookie?
 
-> `optional` **cookie**: `undefined`
+> `optional` **cookie?**: `undefined`
 
 ##### parameters.header?
 
-> `optional` **header**: `undefined`
+> `optional` **header?**: `undefined`
 
 ##### parameters.path?
 
-> `optional` **path**: `undefined`
+> `optional` **path?**: `undefined`
 
 ##### parameters.query?
 
-> `optional` **query**: `undefined`
+> `optional` **query?**: `undefined`
 
 #### delete?
 
-> `optional` **delete**: `undefined`
+> `optional` **delete?**: `undefined`
 
 #### head?
 
-> `optional` **head**: `undefined`
+> `optional` **head?**: `undefined`
 
 #### options?
 
-> `optional` **options**: `undefined`
+> `optional` **options?**: `undefined`
 
 #### patch?
 
-> `optional` **patch**: `undefined`
+> `optional` **patch?**: `undefined`
 
 #### post?
 
-> `optional` **post**: `undefined`
+> `optional` **post?**: `undefined`
 
 #### put?
 
-> `optional` **put**: `undefined`
+> `optional` **put?**: `undefined`
 
 #### trace?
 
-> `optional` **trace**: `undefined`
+> `optional` **trace?**: `undefined`

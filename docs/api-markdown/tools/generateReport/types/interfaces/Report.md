@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -78,6 +78,6 @@ Defined in: [tools/generateReport/types.ts:18](https://github.com/Hack23/Europea
 
 ### recommendations?
 
-> `optional` **recommendations**: `string`[]
+> `optional` **recommendations?**: `string`[]
 
 Defined in: [tools/generateReport/types.ts:21](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/types.ts#L21)

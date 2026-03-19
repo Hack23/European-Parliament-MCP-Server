@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -26,11 +26,11 @@ Defined in: [clients/ep/committeeClient.ts:35](https://github.com/Hack23/Europea
 
 ##### config?
 
-`EPClientConfig` = `{}`
+[`EPClientConfig`](../../baseClient/interfaces/EPClientConfig.md) = `{}`
 
 ##### shared?
 
-`EPSharedResources`
+[`EPSharedResources`](../../baseClient/interfaces/EPSharedResources.md)
 
 #### Returns
 
@@ -302,7 +302,7 @@ Audit logged per GDPR Article 30
 
 ### getCorporateBodiesFeed()
 
-> **getCorporateBodiesFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getCorporateBodiesFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/ep/committeeClient.ts:139](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L139)
 
@@ -323,7 +323,7 @@ Retrieves recently updated corporate bodies via the feed endpoint.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
 ***
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [tools/correlateIntelligence.ts:96](https://github.com/Hack23/Europe
 
 ### groups?
 
-> `optional` **groups**: `string`[]
+> `optional` **groups?**: `string`[]
 
 Defined in: [tools/correlateIntelligence.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L99)
 
@@ -54,7 +54,7 @@ Defined in: [tools/correlateIntelligence.ts:99](https://github.com/Hack23/Europe
 
 ### mepId?
 
-> `optional` **mepId**: `string`
+> `optional` **mepId?**: `string`
 
 Defined in: [tools/correlateIntelligence.ts:97](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L97)
 
@@ -62,6 +62,6 @@ Defined in: [tools/correlateIntelligence.ts:97](https://github.com/Hack23/Europe
 
 ### mepName?
 
-> `optional` **mepName**: `string`
+> `optional` **mepName?**: `string`
 
 Defined in: [tools/correlateIntelligence.ts:98](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L98)

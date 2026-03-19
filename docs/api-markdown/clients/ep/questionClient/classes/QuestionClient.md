@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -26,11 +26,11 @@ Defined in: [clients/ep/questionClient.ts:35](https://github.com/Hack23/European
 
 ##### config?
 
-`EPClientConfig` = `{}`
+[`EPClientConfig`](../../baseClient/interfaces/EPClientConfig.md) = `{}`
 
 ##### shared?
 
-`EPSharedResources`
+[`EPSharedResources`](../../baseClient/interfaces/EPSharedResources.md)
 
 #### Returns
 
@@ -399,7 +399,7 @@ Audit logged per GDPR Article 30
 
 ### getParliamentaryQuestionsFeed()
 
-> **getParliamentaryQuestionsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getParliamentaryQuestionsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/ep/questionClient.ts:159](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L159)
 
@@ -420,7 +420,7 @@ Retrieves recently updated parliamentary questions via the feed endpoint.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
 ***
 

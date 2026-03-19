@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -26,11 +26,11 @@ Defined in: [clients/ep/plenaryClient.ts:41](https://github.com/Hack23/European-
 
 ##### config?
 
-`EPClientConfig` = `{}`
+[`EPClientConfig`](../../baseClient/interfaces/EPClientConfig.md) = `{}`
 
 ##### shared?
 
-`EPSharedResources`
+[`EPSharedResources`](../../baseClient/interfaces/EPSharedResources.md)
 
 #### Returns
 
@@ -350,7 +350,7 @@ The EP API supports filtering by `year` (recommended for annual counts).
 
 ### getEventsFeed()
 
-> **getEventsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getEventsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/ep/plenaryClient.ts:329](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L329)
 
@@ -375,7 +375,7 @@ Retrieves recently updated events via the feed endpoint.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`JSONLDResponse`\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
 ***
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -18,4 +18,4 @@ Defined in: [tools/sentimentTracker.ts:45](https://github.com/Hack23/European-Pa
 
 ### groupId?
 
-> `optional` **groupId**: `string`
+> `optional` **groupId?**: `string`

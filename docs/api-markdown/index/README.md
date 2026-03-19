@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../README.md)
+[**European Parliament MCP Server API v1.1.14**](../README.md)
 
 ***
 
@@ -381,6 +381,24 @@ Re-exports [RetentionPolicy](../utils/auditSink/classes/RetentionPolicy.md)
 ### sanitizeParams
 
 Re-exports [sanitizeParams](../utils/auditSink/functions/sanitizeParams.md)
+
+***
+
+### sanitizeUrl
+
+Re-exports [sanitizeUrl](../server/cli/functions/sanitizeUrl.md)
+
+***
+
+### SERVER\_NAME
+
+Re-exports [SERVER_NAME](../config/variables/SERVER_NAME.md)
+
+***
+
+### SERVER\_VERSION
+
+Re-exports [SERVER_VERSION](../config/variables/SERVER_VERSION.md)
 
 ***
 

@@ -1,10 +1,10 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
 [European Parliament MCP Server API](../../../modules.md) / [server/types](../README.md) / ToolHandler
 
-# Type Alias: ToolHandler()
+# Type Alias: ToolHandler
 
 > **ToolHandler** = (`args`) => [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../../tools/shared/types/interfaces/ToolResult.md)\>
 

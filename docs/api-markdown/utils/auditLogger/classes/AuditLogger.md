@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -493,7 +493,7 @@ Defined in: [utils/auditLogger.ts:171](https://github.com/Hack23/European-Parlia
 
 ##### retentionMs
 
-`number` | `undefined`
+`number` \| `undefined`
 
 #### Returns
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../README.md)
 
 ***
 
@@ -58,7 +58,7 @@ Computed metric value, or `null` when unavailable.
 
 ### reason?
 
-> `optional` **reason**: `string`
+> `optional` **reason?**: `string`
 
 Defined in: [types/index.ts:113](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/index.ts#L113)
 
@@ -68,7 +68,7 @@ Explanation of why the data is unavailable or estimated (optional).
 
 ### source?
 
-> `optional` **source**: `string`
+> `optional` **source?**: `string`
 
 Defined in: [types/index.ts:111](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/index.ts#L111)
 

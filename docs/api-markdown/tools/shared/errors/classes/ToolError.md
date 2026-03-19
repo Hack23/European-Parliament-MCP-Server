@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -84,7 +84,7 @@ Defined in: [tools/shared/errors.ts:13](https://github.com/Hack23/European-Parli
 
 ### cause?
 
-> `readonly` `optional` **cause**: [`Error`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error)
+> `readonly` `optional` **cause?**: [`Error`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error)
 
 Defined in: [tools/shared/errors.ts:16](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L16)
 

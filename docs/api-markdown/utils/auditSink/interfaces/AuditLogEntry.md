@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -36,7 +36,7 @@ Timestamp of the event
 
 ### clientId?
 
-> `optional` **clientId**: `string`
+> `optional` **clientId?**: `string`
 
 Defined in: [utils/auditSink.ts:49](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L49)
 
@@ -46,7 +46,7 @@ Client identifier
 
 ### duration?
 
-> `optional` **duration**: `number`
+> `optional` **duration?**: `number`
 
 Defined in: [utils/auditSink.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L45)
 
@@ -56,7 +56,7 @@ Wall-clock duration of the operation in milliseconds
 
 ### ipAddress?
 
-> `optional` **ipAddress**: `string`
+> `optional` **ipAddress?**: `string`
 
 Defined in: [utils/auditSink.ts:51](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L51)
 
@@ -66,7 +66,7 @@ IP address (for security monitoring)
 
 ### params?
 
-> `optional` **params**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+> `optional` **params?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Defined in: [utils/auditSink.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L37)
 
@@ -76,7 +76,7 @@ Sanitised parameters used in the action
 
 ### result?
 
-> `optional` **result**: `object`
+> `optional` **result?**: `object`
 
 Defined in: [utils/auditSink.ts:39](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L39)
 
@@ -88,17 +88,17 @@ Outcome metadata
 
 #### count?
 
-> `optional` **count**: `number`
+> `optional` **count?**: `number`
 
 #### error?
 
-> `optional` **error**: `string`
+> `optional` **error?**: `string`
 
 ***
 
 ### userId?
 
-> `optional` **userId**: `string`
+> `optional` **userId?**: `string`
 
 Defined in: [utils/auditSink.ts:47](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L47)
 

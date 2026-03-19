@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [clients/ep/baseClient.ts:140](https://github.com/Hack23/European-Pa
 
 ### details?
 
-> `optional` **details**: `unknown`
+> `optional` **details?**: `unknown`
 
 Defined in: [clients/ep/baseClient.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L143)
 
@@ -62,6 +62,6 @@ Defined in: [clients/ep/baseClient.ts:143](https://github.com/Hack23/European-Pa
 
 ### statusCode?
 
-> `optional` **statusCode**: `number`
+> `optional` **statusCode?**: `number`
 
 Defined in: [clients/ep/baseClient.ts:142](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L142)

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -30,8 +30,8 @@ Defined in: [tools/getAllGeneratedStats.ts:99](https://github.com/Hack23/Europea
 
 ### yearFrom?
 
-> `optional` **yearFrom**: `number`
+> `optional` **yearFrom?**: `number`
 
 ### yearTo?
 
-> `optional` **yearTo**: `number`
+> `optional` **yearTo?**: `number`

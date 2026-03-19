@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -28,6 +28,12 @@ https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md
 
 - [APIError](classes/APIError.md)
 - [BaseEPClient](classes/BaseEPClient.md)
+
+## Interfaces
+
+- [EPClientConfig](interfaces/EPClientConfig.md)
+- [EPSharedResources](interfaces/EPSharedResources.md)
+- [JSONLDResponse](interfaces/JSONLDResponse.md)
 
 ## Variables
 

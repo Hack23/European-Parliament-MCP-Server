@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -17,7 +17,7 @@ Cyclomatic complexity: 1
 
 ### completedCount
 
-`number` | `null`
+`number` \| `null`
 
 ## Returns
 

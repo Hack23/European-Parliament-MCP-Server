@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -14,7 +14,7 @@ Filter for querying audit log entries.
 
 ### action?
 
-> `optional` **action**: `string`
+> `optional` **action?**: `string`
 
 Defined in: [utils/auditSink.ts:63](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L63)
 
@@ -24,7 +24,7 @@ Restrict to a specific action name
 
 ### since?
 
-> `optional` **since**: [`Date`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)
+> `optional` **since?**: [`Date`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)
 
 Defined in: [utils/auditSink.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L65)
 
@@ -34,7 +34,7 @@ Include only entries on or after this date
 
 ### until?
 
-> `optional` **until**: [`Date`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)
+> `optional` **until?**: [`Date`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)
 
 Defined in: [utils/auditSink.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L67)
 
@@ -44,7 +44,7 @@ Include only entries on or before this date
 
 ### userId?
 
-> `optional` **userId**: `string`
+> `optional` **userId?**: `string`
 
 Defined in: [utils/auditSink.ts:69](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L69)
 

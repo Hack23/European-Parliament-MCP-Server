@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -47,7 +47,7 @@ ISO-8601 timestamp
 
 ### duration?
 
-> `optional` **duration**: `number`
+> `optional` **duration?**: `number`
 
 Defined in: [utils/auditLogger.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L99)
 
@@ -57,7 +57,7 @@ Wall-clock duration of the operation in milliseconds
 
 ### params?
 
-> `optional` **params**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+> `optional` **params?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Defined in: [utils/auditLogger.ts:91](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L91)
 
@@ -67,7 +67,7 @@ Sanitised tool input parameters
 
 ### result?
 
-> `optional` **result**: `object`
+> `optional` **result?**: `object`
 
 Defined in: [utils/auditLogger.ts:93](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L93)
 
@@ -79,17 +79,17 @@ Outcome metadata
 
 #### count?
 
-> `optional` **count**: `number`
+> `optional` **count?**: `number`
 
 #### error?
 
-> `optional` **error**: `string`
+> `optional` **error?**: `string`
 
 ***
 
 ### toolName?
 
-> `optional` **toolName**: `string`
+> `optional` **toolName?**: `string`
 
 Defined in: [utils/auditLogger.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L89)
 

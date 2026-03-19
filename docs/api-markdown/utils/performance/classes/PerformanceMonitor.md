@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -217,6 +217,40 @@ if (stats && stats.p95 > 1000) {
 #### Since
 
 0.8.0
+
+***
+
+### percentile()
+
+> `private` **percentile**(`sorted`, `p`): `number`
+
+Defined in: [utils/performance.ts:216](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L216)
+
+**`Internal`**
+
+Calculate percentile from sorted array
+
+Uses linear interpolation for more accurate percentile calculation
+
+#### Parameters
+
+##### sorted
+
+`number`[]
+
+Sorted array of numbers
+
+##### p
+
+`number`
+
+Percentile (0.0 to 1.0)
+
+#### Returns
+
+`number`
+
+Value at the specified percentile
 
 ***
 

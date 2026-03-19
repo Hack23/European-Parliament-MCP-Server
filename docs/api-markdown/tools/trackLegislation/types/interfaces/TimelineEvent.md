@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -38,6 +38,6 @@ Defined in: [tools/trackLegislation/types.ts:44](https://github.com/Hack23/Europ
 
 ### responsible?
 
-> `optional` **responsible**: `string`
+> `optional` **responsible?**: `string`
 
 Defined in: [tools/trackLegislation/types.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L46)

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -45,13 +45,13 @@ ensure all sub-clients share one cache and one rate-limiter.
 
 ##### config?
 
-`EPClientConfig` = `{}`
+[`EPClientConfig`](../interfaces/EPClientConfig.md) = `{}`
 
 Client configuration (used when `shared` is absent)
 
 ##### shared?
 
-`EPSharedResources`
+[`EPSharedResources`](../interfaces/EPSharedResources.md)
 
 Pre-built shared resources (passed by facade to sub-clients)
 
@@ -436,7 +436,7 @@ Converts a caught error to a typed [APIError](APIError.md).
 
 ### parseJsonLdBytes()
 
-> `private` `static` **parseJsonLdBytes**(`bytes`): `JSONLDResponse`
+> `private` `static` **parseJsonLdBytes**(`bytes`): [`JSONLDResponse`](../interfaces/JSONLDResponse.md)
 
 Defined in: [clients/ep/baseClient.ts:371](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L371)
 
@@ -454,7 +454,7 @@ instead of receiving a misleading empty-list shape.
 
 #### Returns
 
-`JSONLDResponse`
+[`JSONLDResponse`](../interfaces/JSONLDResponse.md)
 
 ***
 
@@ -498,7 +498,7 @@ Extracted to keep constructor complexity within limits.
 
 ##### config
 
-`EPClientConfig`
+[`EPClientConfig`](../interfaces/EPClientConfig.md)
 
 #### Returns
 

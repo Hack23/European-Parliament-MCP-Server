@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../README.md)
 
 ***
 
@@ -37,7 +37,7 @@ Warn when p99 exceeds this value (milliseconds)
 
 ### avgWarningMs?
 
-> `optional` **avgWarningMs**: `number`
+> `optional` **avgWarningMs?**: `number`
 
 Defined in: [utils/performance.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L56)
 

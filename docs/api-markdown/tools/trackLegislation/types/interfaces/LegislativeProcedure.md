@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.13**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.14**](../../../../README.md)
 
 ***
 
@@ -134,7 +134,7 @@ Voting records
 
 ### nextSteps?
 
-> `optional` **nextSteps**: `string`[]
+> `optional` **nextSteps?**: `string`[]
 
 Defined in: [tools/trackLegislation/types.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L32)
 
