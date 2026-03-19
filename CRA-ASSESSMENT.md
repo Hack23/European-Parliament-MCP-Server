@@ -27,12 +27,12 @@
 ## 📑 Table of Contents
 
 - [Purpose Statement](#-purpose-statement)
-- [Project Identification](#1️⃣-project-identification)
-- [CRA Scope & Classification](#2️⃣-cra-scope--classification)
-- [Technical Documentation](#3️⃣-technical-documentation)
-- [Risk Assessment](#4️⃣-risk-assessment)
-- [Essential Cybersecurity Requirements](#5️⃣-essential-cybersecurity-requirements)
-- [Conformity Assessment Evidence](#6️⃣-conformity-assessment-evidence)
+- [Project Identification](#-project-identification)
+- [CRA Scope & Classification](#-cra-scope--classification)
+- [Technical Documentation](#-technical-documentation)
+- [Risk Assessment](#-risk-assessment)
+- [Essential Cybersecurity Requirements](#-essential-cybersecurity-requirements)
+- [Conformity Assessment Evidence](#-conformity-assessment-evidence)
 - [Vulnerability Disclosure](#-vulnerability-disclosure)
 - [Reference Implementations](#-reference-implementations)
 - [Policy Alignment](#-policy-alignment)
@@ -241,7 +241,7 @@ Reference: [🛠️ Secure Development Policy](https://github.com/Hack23/ISMS-PU
 | 🧪 Control | 🎯 Requirement | ✅ Implementation | 📋 Evidence |
 |-------------|---------------|------------------|-------------|
 | 🧪 Unit Testing | ≥80% line coverage, ≥70% branch | ✅ 80%+ coverage, 1130+ tests | [Coverage Reports](https://hack23.github.io/European-Parliament-MCP-Server/coverage/) |
-| 🌐 E2E Testing | Critical user journeys validated | ✅ 23 E2E tests passing | [E2E Results](https://hack23.github.io/European-Parliament-MCP-Server/e2e-results/) |
+| 🌐 E2E Testing | Critical user journeys validated | ✅ 4 E2E suites / 71 tests passing | [E2E Results](https://hack23.github.io/European-Parliament-MCP-Server/e2e-results/) |
 | 🔍 SAST Scanning | Zero critical/high vulnerabilities | ✅ CodeQL on every PR | [CodeQL Workflow](https://github.com/Hack23/European-Parliament-MCP-Server/actions) |
 | 📦 SCA Scanning | Zero critical unresolved dependencies | ✅ Dependabot + npm audit | [Dependabot Config](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/.github/dependabot.yml) |
 | 🔒 Secret Scanning | Zero exposed secrets/credentials | ✅ GitHub secret scanning enabled | GitHub Security Settings |

@@ -2,7 +2,7 @@
 
 ## 📋 Overview
 
-This guide explains how to run integration tests for the European Parliament MCP Server. Integration tests validate that all 61 MCP tools work correctly against the real European Parliament Open Data API. **All tools return real data — no mock or placeholder data is used.**
+This guide explains how to run integration tests for the European Parliament MCP Server. Integration tests validate 46 of the 61 MCP tools against the real European Parliament Open Data API; the remaining 15 tools (13 feed endpoints + 1 precomputed analytics + 1 procedure event lookup) are covered by unit tests. **All integration-tested tools return real data — no mock or placeholder data is used.**
 
 **ISMS Policy**: [Hack23 Secure Development Policy - Testing](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#testing)
 
@@ -12,7 +12,7 @@ This guide explains how to run integration tests for the European Parliament MCP
 
 ## 🎯 Integration Test Coverage
 
-### All 61 MCP Tools Tested
+### 61 MCP Tools — Integration & Unit Test Coverage
 
 **Core Data Access Tools** (7 — real EP API):
 1. **get_meps** - MEP retrieval with filtering
@@ -61,7 +61,7 @@ This guide explains how to run integration tests for the European Parliament MCP
 32. **get_meeting_decisions** - Meeting decision outcomes
 33. **get_mep_declarations** - MEP financial declarations
 
-**EP Complete Coverage Tools — Phase 5** (15 — real EP API v2):
+**EP Complete Coverage Tools — Phase 5** (14 — real EP API v2):
 34. **get_incoming_meps** - Incoming MEPs (new members)
 35. **get_outgoing_meps** - Outgoing MEPs (departing members)
 36. **get_homonym_meps** - MEPs with duplicate names
@@ -75,8 +75,10 @@ This guide explains how to run integration tests for the European Parliament MCP
 44. **get_procedure_events** - Events linked to a procedure
 45. **get_meeting_plenary_session_documents** - Plenary session meeting documents
 46. **get_meeting_plenary_session_document_items** - Plenary session meeting document items
-47. **get_all_generated_stats** - Precomputed EP activity statistics (2004–2026)
-48. **get_procedure_event_by_id** - Single event for a specific procedure
+47. **get_procedure_event_by_id** - Single event for a specific procedure
+
+**Precomputed Analytics** (1 — static data, no live EP API calls):
+48. **get_all_generated_stats** - Precomputed EP activity statistics (2004–2026); returns static data refreshed weekly by agentic workflow
 
 **EP Data Feed Tools** (13 — real EP API v2 feeds):
 49. **get_meps_feed** - Recently updated MEPs
@@ -161,7 +163,7 @@ tests/
 │   │   ├── responseValidator.ts        # Response validation utilities
 │   │   └── fixtureManager.ts          # Fixture capture utilities
 │   └── tools/
-│       ├── allTools.integration.test.ts         # All 61 tools coverage
+│       ├── allTools.integration.test.ts         # 46 tools integration coverage
 │       ├── getMEPs.integration.test.ts
 │       ├── getMEPDetails.integration.test.ts
 │       ├── getPlenarySessions.integration.test.ts

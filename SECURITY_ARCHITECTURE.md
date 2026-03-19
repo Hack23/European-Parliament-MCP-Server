@@ -526,10 +526,9 @@ flowchart TD
 |--------------|--------|-----------|---------|
 | Rate limit | `EP_RATE_LIMIT` env var | Numeric > 0 | 100 req/min |
 | Cache size | Hardcoded | N/A | 500 entries |
-| Cache TTL | Hardcoded | N/A | 15 minutes |
-| EP API base URL | `EP_BASE_URL` env var | URL format | `https://data.europarl.europa.eu/api/v2` |
-| Request timeout | `EP_TIMEOUT` env var | Numeric > 0 | 30,000 ms |
-| Log level | `LOG_LEVEL` env var | Enum | `info` |
+| Cache TTL | `EP_CACHE_TTL` env var | Numeric (ms) | 900,000 ms (15 min) |
+| EP API base URL | `EP_API_URL` env var | URL format | `https://data.europarl.europa.eu/api/v2/` |
+| Request timeout | `EP_REQUEST_TIMEOUT_MS` env var | Numeric (ms) | 10,000 ms |
 
 ### Infrastructure as Code
 
