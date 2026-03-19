@@ -11,13 +11,13 @@
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-Hack23-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--26-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.1-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--03--19-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** Hack23 | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-26 (UTC)
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-26
+**📋 Document Owner:** Hack23 | **📄 Version:** 1.1 | **📅 Last Updated:** 2026-03-19 (UTC)
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-06-19
 **🏷️ Classification:** Public (Open Source MCP Server)
 **✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.14.2), NIST CSF 2.0 (ID.AM, PR.DS), CIS Controls v8.1 (2.1, 16.1)
 
@@ -52,9 +52,9 @@
 
 ```mermaid
 mindmap
-  root((EP MCP Server v1.0))
+  root((EP MCP Server v1.1))
     MCP Protocol Surface
-      46 Tools
+      62 Tools
         Core 7
         Advanced Analysis 3
         OSINT Phase 1 6
@@ -224,7 +224,7 @@ mindmap
 
 ```mermaid
 mindmap
-  root((46 MCP Tools))
+  root((62 MCP Tools))
     Core Tools 7
       get_meps
         Filter by country
@@ -312,7 +312,7 @@ mindmap
   root((Security Architecture))
     4-Layer Defense
       Layer 1 Zod Validation
-        46 input schemas
+        62 input schemas
         Branded types
         Format enforcement
         Reject before business logic

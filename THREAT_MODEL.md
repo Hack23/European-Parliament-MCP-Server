@@ -11,13 +11,13 @@
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-CEO-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--02--20-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.1-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--03--19-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** CEO | **📄 Version:** 1.0 | **📅 Last Updated:** 2026-02-20 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-05-20  
+**📋 Document Owner:** CEO | **📄 Version:** 1.1 | **📅 Last Updated:** 2026-03-19 (UTC)  
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-06-19  
 **🏷️ Classification:** Public (Open Source MCP Server)
 
 ---
@@ -1827,6 +1827,94 @@ graph TB
 | **ISO 27001:2022** | A.5.7, A.8.8, A.8.9, A.8.25, A.8.26, A.8.28 |
 | **NIST CSF 2.0** | ID.RA, PR.DS, PR.IP, DE.CM, RS.AN |
 | **CIS Controls v8.1** | 2.7, 7.1, 7.4, 16.1, 16.9 |
+
+---
+
+## 📋 CIA Triad and AAA Framework Application
+
+### CIA Triad Assessment
+
+| Principle | Application to EP MCP Server | Key Controls | Threat Categories |
+|-----------|------------------------------|--------------|-------------------|
+| **🔐 Confidentiality** | MEP personal data protected from unauthorized access; API responses contain only publicly available parliamentary data | GDPR data minimization, PII stripping in audit logs, no persistent storage | Information disclosure (I-1 through I-4) |
+| **🔒 Integrity** | Parliamentary data accuracy maintained from EP API source to MCP client response | TLS transport integrity, Zod schema validation, SLSA Level 3 provenance | Tampering (T-1 through T-4), Supply chain attacks |
+| **⚡ Availability** | Continuous access to EP parliamentary data within rate limits | Rate limiting (100 req/min), LRU cache (15-min TTL), graceful degradation | Denial of service (D-1 through D-3) |
+
+### AAA Framework Integration
+
+| Component | EP MCP Server Implementation | Scope |
+|-----------|------------------------------|-------|
+| **🔐 Authentication** | OS process isolation (stdio transport) — client identity is the spawning process | Process-level identity |
+| **📋 Authorization** | All 62 tools available to any authenticated client; no role-based restrictions in v1.1 | Flat access model |
+| **📊 Accounting** | AuditLogger tracks every tool invocation with timestamp, tool name, sanitized parameters, duration | Full audit trail |
+
+---
+
+## 📊 Threat Catalog
+
+### Threat Documentation Standard
+
+Each threat in this model follows the structured documentation format defined in [Hack23 Threat Modeling Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md):
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| **Threat ID** | Unique identifier (STRIDE category + sequence) | S-1, T-2, I-3 |
+| **Category** | STRIDE classification | Spoofing, Tampering, etc. |
+| **Description** | Detailed threat narrative | "Malicious MCP client sends crafted tool arguments" |
+| **Attack Vector** | MITRE ATT&CK technique mapping | T1059 (Command and Scripting) |
+| **Likelihood** | Probability assessment (Low/Medium/High) | Medium |
+| **Impact** | Business impact assessment (Low/Medium/High/Critical) | High |
+| **Risk Score** | Likelihood × Impact | Medium-High |
+| **Controls** | Existing mitigations | SC-001 (Zod validation) |
+| **Residual Risk** | Risk after controls | Low |
+| **Owner** | Responsible party | Development team |
+
+### Threat Count Summary
+
+| STRIDE Category | Total Threats | Critical | High | Medium | Low |
+|----------------|---------------|----------|------|--------|-----|
+| **Spoofing** | 2 | 0 | 0 | 1 | 1 |
+| **Tampering** | 4 | 0 | 1 | 2 | 1 |
+| **Repudiation** | 2 | 0 | 0 | 2 | 0 |
+| **Information Disclosure** | 4 | 0 | 1 | 2 | 1 |
+| **Denial of Service** | 3 | 0 | 1 | 1 | 1 |
+| **Elevation of Privilege** | 3 | 0 | 0 | 2 | 1 |
+| **Supply Chain** | 3 | 0 | 2 | 1 | 0 |
+| **Total** | **21** | **0** | **5** | **11** | **5** |
+
+---
+
+## 📈 AI Model Evolution — Threat Landscape Perspective
+
+### 🔴 Evolving AI-Enabled Threat Vectors
+
+As AI capabilities advance, the threat landscape for MCP servers evolves:
+
+| Timeline | AI Threat Vector | Impact on EP MCP Server | Mitigation Strategy |
+|----------|-----------------|------------------------|---------------------|
+| **2025–2026** | AI-generated social engineering targeting MCP tool arguments | Medium — crafted inputs designed to extract maximum data | Zod schema validation, rate limiting, data minimization |
+| **2026–2027** | AI-powered dependency poisoning (LLM-generated malware in npm) | High — sophisticated supply chain attacks | SLSA Level 3, Dependabot, lockfile pinning, minimal deps |
+| **2027–2028** | Autonomous AI agents attempting data exfiltration via MCP | Medium — automated abuse of MCP protocol | Rate limiting, anomaly detection, audit logging |
+| **2028–2030** | AI-assisted API manipulation (adversarial ML against data pipelines) | Medium — attempted manipulation of parliamentary data flows | Source validation (EP API only), integrity checks |
+| **2030+** | Quantum computing threats to TLS encryption | Low (current) — future risk to transport security | Monitor NIST post-quantum cryptography standards |
+
+### 🛡️ AI-Powered Defense Progression
+
+| Phase | Defense Capability | Implementation |
+|-------|-------------------|----------------|
+| **Current (v1.1)** | Static schema validation, rule-based rate limiting | Zod schemas, token bucket algorithm |
+| **Near-term (v1.2)** | Enhanced anomaly detection in request patterns | MetricsService pattern analysis |
+| **Medium-term (v2.0)** | AI-assisted threat detection for MCP protocol abuse | ML-based request classification |
+| **Long-term (v3.0+)** | Predictive security analytics, automated threat response | Self-learning security controls |
+
+### MCP Protocol-Specific AI Threats
+
+| Threat | Description | Current Control | Future Control |
+|--------|-------------|----------------|----------------|
+| **Prompt injection via tool args** | AI client generates tool arguments containing injection payloads | Zod schema validation (strict types) | Semantic input analysis |
+| **Data harvesting automation** | AI agent systematically extracts all available EP data | Rate limiting (100/min) | Usage pattern detection |
+| **Cross-tool correlation attacks** | AI combines outputs from multiple tools to infer sensitive information | Data minimization per tool | Cross-tool correlation monitoring |
+| **Model poisoning via cached data** | Compromised EP API responses cached and served to AI models | 15-min cache TTL, EP API as single source | Response integrity validation |
 
 ---
 
