@@ -80,9 +80,9 @@
     "npm": ">=10.0.0"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.27.1",
+    "@modelcontextprotocol/sdk": "^1.28.0",
     "lru-cache": "^11.2.7",
-    "undici": "^7.24.5",
+    "undici": "^7.24.6",
     "zod": "^4.3.6"
   },
   "devDependencies": {
