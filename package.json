@@ -93,7 +93,7 @@
     "@vitest/ui": "4.1.2",
     "eslint": "10.1.0",
     "globals": "17.4.0",
-    "knip": "6.0.6",
+    "knip": "6.1.0",
     "license-compliance": "3.0.1",
     "openapi-typescript": "7.13.0",
     "prettier": "3.8.1",
