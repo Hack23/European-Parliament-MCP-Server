@@ -157,7 +157,7 @@ flowchart TB
 
     subgraph "Stage 2: Build & Test"
         DEV --> TEST["🧪 Test & Report<br><code>test-and-report.yml</code>"]
-        TEST --> PREPARE["⚙️ Prepare<br>Node.js 25, npm ci"]
+        TEST --> PREPARE["⚙️ Prepare<br>Node.js 25, npm install"]
         PREPARE --> BUILD_VAL["📦 Build Validation"]
         PREPARE --> UNIT["🧪 Unit Tests"]
         BUILD_VAL --> TYPE["tsc --noEmit"]
