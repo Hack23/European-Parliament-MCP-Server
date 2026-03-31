@@ -382,7 +382,7 @@ mindmap
         V8 engine
         Event loop
         stdio transport
-      TypeScript 5.x
+      TypeScript 6.0.2
         Strict mode
         Branded types
         Discriminated unions

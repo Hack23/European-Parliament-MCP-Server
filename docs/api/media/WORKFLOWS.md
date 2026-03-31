@@ -17,14 +17,15 @@
 |----------|-------|
 | **Owner** | DevOps Team |
 | **Version** | 2.0 |
-| **Last Updated** | 2026-02-18 |
+| **Last Updated** | 2026-03-31 |
 | **Classification** | Internal |
 | **Review Cycle** | Quarterly |
+| **TypeScript Baseline** | 6.0.2 |
 | **Next Review** | 2026-05-18 |
 
 [![Owner](https://img.shields.io/badge/Owner-DevOps%20Team-blue?style=for-the-badge)](https://github.com/Hack23)
 [![Version](https://img.shields.io/badge/Version-2.0-green?style=for-the-badge)](https://github.com/Hack23/European-Parliament-MCP-Server)
-[![Updated](https://img.shields.io/badge/Updated-2026--02--18-orange?style=for-the-badge)](https://github.com/Hack23/European-Parliament-MCP-Server)
+[![Updated](https://img.shields.io/badge/Updated-2026--03--31-orange?style=for-the-badge)](https://github.com/Hack23/European-Parliament-MCP-Server)
 [![Review](https://img.shields.io/badge/Next%20Review-2026--05--18-red?style=for-the-badge)](https://github.com/Hack23/European-Parliament-MCP-Server)
 
 ---

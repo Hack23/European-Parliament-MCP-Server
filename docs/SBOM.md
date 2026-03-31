@@ -43,7 +43,7 @@ This repository generates and publishes Software Bill of Materials (SBOM) in SPD
 | `typedoc-plugin-markdown` | 4.10.0 | MIT | A plugin that enables TypeDoc to output documentation as Markdown |
 | `typedoc-plugin-mdn-links` | 5.1.1 | MIT | TypeDoc plugin to add links to MDN for built-in JS/TS types |
 | `typedoc-plugin-zod` | 1.4.3 | MIT | TypeDoc plugin for Zod schema documentation |
-| `typescript` | 5.9.3 | Apache-2.0 | TypeScript is a language for application-scale JavaScript |
+| `typescript` | 6.0.2 | Apache-2.0 | TypeScript is a language for application-scale JavaScript |
 | `typescript-eslint` | 8.56.1 | MIT | Tooling which enables you to use TypeScript with ESLint |
 | `vitest` | 4.0.18 | MIT | A Vite-native test framework |
 

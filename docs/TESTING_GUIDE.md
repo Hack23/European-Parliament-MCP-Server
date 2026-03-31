@@ -35,7 +35,7 @@ This project implements a comprehensive testing strategy across four layers:
 | [Vitest](https://vitest.dev/) | 4.x | Unit test runner with native ESM support |
 | `@vitest/coverage-v8` | 4.x | V8 native code coverage |
 | `@vitest/ui` | 4.x | Interactive browser test UI |
-| TypeScript | 5.x | Type-checked test files |
+| TypeScript | 6.0.2 | Type-checked test files |
 | `MCPTestClient` | internal | Stdio-based MCP E2E harness |
 
 ### Vitest Configuration

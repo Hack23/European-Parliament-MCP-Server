@@ -127,7 +127,7 @@ template: |
   ## 💻 Technology Stack
   - 🔌 **Model Context Protocol** - MCP SDK for AI integration
   - ⚡ **Node.js 25.x** - Latest JavaScript runtime
-  - 🔷 **TypeScript** - Strict typing with latest standards
+  - 🔷 **TypeScript 6.0.2** - Strict typing with latest standards
   - 🏛️ **European Parliament API** - Official open data access
   - 🔒 **Zod** - Runtime schema validation
   - 🌐 **Undici** - Fast HTTP/1.1 client
