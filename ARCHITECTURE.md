@@ -69,7 +69,7 @@ The **European Parliament MCP Server** (v1.0) is a TypeScript/Node.js applicatio
 | **MCP Prompts** | 7 intelligence-analysis prompts |
 | **Data Source** | EP Open Data Portal API v2 |
 | **Transport** | stdio (MCP standard) |
-| **Runtime** | Node.js 20+ / TypeScript 6.0.2 |
+| **Runtime** | Node.js 25+ / TypeScript 6.0.2 |
 | **Security** | 4-layer: Zod → Rate Limiting → Audit Logging → GDPR |
 
 ---
@@ -466,7 +466,7 @@ flowchart TD
 
 | Layer | Technology | Version | Purpose |
 |-------|-----------|---------|---------|
-| **Runtime** | Node.js | 20+ LTS | Server runtime |
+| **Runtime** | Node.js | 25+ | Server runtime |
 | **Language** | TypeScript | 6.0.2 | Type-safe implementation |
 | **MCP SDK** | @modelcontextprotocol/sdk | latest | MCP protocol implementation |
 | **Validation** | Zod | 3.x | Runtime schema validation and branded types |
