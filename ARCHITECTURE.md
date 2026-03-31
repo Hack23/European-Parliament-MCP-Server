@@ -469,10 +469,10 @@ flowchart TD
 | **Runtime** | Node.js | 25+ | Server runtime |
 | **Language** | TypeScript | 6.0.2 | Type-safe implementation |
 | **MCP SDK** | @modelcontextprotocol/sdk | latest | MCP protocol implementation |
-| **Validation** | Zod | 3.x | Runtime schema validation and branded types |
-| **Caching** | lru-cache | 10.x | LRU cache (500 entries, 15-min TTL) |
+| **Validation** | Zod | 4.3.6 | Runtime schema validation and branded types |
+| **Caching** | lru-cache | 11.2.7 | LRU cache (500 entries, 15-min TTL) |
 | **Testing** | Vitest | latest | Unit and integration testing |
-| **Linting** | ESLint | 9.x | Code quality enforcement |
+| **Linting** | ESLint | 10.1.0 | Code quality enforcement |
 | **Unused Detection** | Knip | latest | Dead code detection |
 | **Build** | tsc | 6.0.2 | TypeScript compilation |
 | **Package Manager** | npm | 10.x | Dependency management |

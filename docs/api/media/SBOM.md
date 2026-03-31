@@ -37,7 +37,6 @@ This repository generates and publishes Software Bill of Materials (SBOM) in SPD
 | `globals` | 17.4.0 | ISC | Global identifiers from different JavaScript environments |
 | `knip` | 6.1.1 | ISC | Find unused files, exports, and dependencies |
 | `license-compliance` | 3.0.1 | MIT | Verify license compliance of dependencies |
-| `openapi-typescript` | 7.13.0 | MIT | Generate TypeScript types from OpenAPI schemas |
 | `prettier` | 3.8.1 | MIT | Opinionated code formatter |
 | `tsx` | 4.21.0 | MIT | TypeScript Execute — Node.js enhanced with esbuild to run TypeScript & ESM files |
 | `typedoc` | 0.28.18 | Apache-2.0 | Documentation generator for TypeScript |
@@ -52,7 +51,7 @@ This repository generates and publishes Software Bill of Materials (SBOM) in SPD
 
 | License | Count | Packages |
 |---------|-------|---------|
-| MIT | 18 | @modelcontextprotocol/sdk, undici, zod, @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, @vitest/coverage-v8, @vitest/ui, eslint, license-compliance, openapi-typescript, prettier, tsx, typedoc-plugin-markdown, typedoc-plugin-mdn-links, typedoc-plugin-zod, typescript-eslint, vitest |
+| MIT | 17 | @modelcontextprotocol/sdk, undici, zod, @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, @vitest/coverage-v8, @vitest/ui, eslint, license-compliance, prettier, tsx, typedoc-plugin-markdown, typedoc-plugin-mdn-links, typedoc-plugin-zod, typescript-eslint, vitest |
 | ISC | 3 | lru-cache, globals, knip |
 | Apache-2.0 | 2 | typedoc, typescript |
 
