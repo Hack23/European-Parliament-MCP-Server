@@ -22,10 +22,12 @@ import { parsePaginatedMCPResponse, parseMCPResponse, validateMCPResponse, retry
 const E2E_TEST_TIMEOUT_MS = 65000;
 
 /**
- * Extended timeout for multi-step workflow tests that make 3+ sequential EP API calls.
+ * Extended timeout for multi-step workflow tests and complex analytical tools.
  * EP_REQUEST_TIMEOUT_MS=60000 in CI means each call can take up to 60s before timing out.
  * Three sequential successful-but-slow calls can individually take 20-25s each, totalling
  * 60-75s — exceeding E2E_TEST_TIMEOUT_MS.  Using 3× the single-call timeout to be safe.
+ * Also used for single-call tools (track_legislation, generate_report, analyze_voting_patterns)
+ * where EP API latency plus MCP protocol overhead can exceed E2E_TEST_TIMEOUT_MS.
  */
 const E2E_WORKFLOW_TIMEOUT_MS = E2E_TEST_TIMEOUT_MS * 3; // 195s
 
@@ -240,7 +242,7 @@ describe('Full Workflow E2E Tests', () => {
       validateMCPResponse(response);
       const data = parseMCPResponse(response.content); // Non-paginated response
       expect(typeof data).toBe('object');
-    }, E2E_TEST_TIMEOUT_MS);
+    }, E2E_WORKFLOW_TIMEOUT_MS);
 
     it('should execute generate_report tool', async () => {
       const response = await retryOrSkip(
@@ -252,7 +254,7 @@ describe('Full Workflow E2E Tests', () => {
       if (response === undefined) return; // Skipped due to rate limit/timeout
       validateMCPResponse(response);
       expect(response.content[0]?.type).toBe('text');
-    }, E2E_TEST_TIMEOUT_MS);
+    }, E2E_WORKFLOW_TIMEOUT_MS);
   });
 
   describe('Workflow: Research MEP Activity', () => {
