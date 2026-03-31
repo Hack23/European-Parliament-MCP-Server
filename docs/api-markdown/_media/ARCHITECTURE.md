@@ -466,15 +466,15 @@ flowchart TD
 
 | Layer | Technology | Version | Purpose |
 |-------|-----------|---------|---------|
-| **Runtime** | Node.js | 20+ LTS | Server runtime |
-| **Language** | TypeScript | 5.x | Type-safe implementation |
+| **Runtime** | Node.js | 25+ | Server runtime |
+| **Language** | TypeScript | 6.0.2 | Type-safe implementation |
 | **MCP SDK** | @modelcontextprotocol/sdk | latest | MCP protocol implementation |
 | **Validation** | Zod | 4.3.6 | Runtime schema validation and branded types |
 | **Caching** | lru-cache | 11.2.7 | LRU cache (500 entries, 15-min TTL) |
 | **Testing** | Vitest | latest | Unit and integration testing |
 | **Linting** | ESLint | 10.1.0 | Code quality enforcement |
 | **Unused Detection** | Knip | latest | Dead code detection |
-| **Build** | tsc | 5.x | TypeScript compilation |
+| **Build** | tsc | 6.0.2 | TypeScript compilation |
 | **Package Manager** | npm | 10.x | Dependency management |
 
 ---

@@ -15,7 +15,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.ts\"",
-    "generate:api-types": "npx openapi-typescript@7.13.0 docs/ep-openapi-spec.json -o src/generated/ep-api-types.ts",
+    "generate:api-types": "npm exec --yes openapi-typescript@7.13.0 -- docs/ep-openapi-spec.json -o src/generated/ep-api-types.ts",
     "type-check": "tsc --noEmit",
     "type-check:helpers": "tsc --noEmit --project tsconfig.tests.json",
     "test": "vitest",

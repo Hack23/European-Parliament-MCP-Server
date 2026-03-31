@@ -161,7 +161,7 @@ flowchart TB
         PREPARE --> BUILD_VAL["📦 Build Validation"]
         PREPARE --> UNIT["🧪 Unit Tests"]
         BUILD_VAL --> TYPE["tsc --noEmit"]
-        BUILD_VAL --> LINT["ESLint 9.x"]
+        BUILD_VAL --> LINT["ESLint 10.x"]
         BUILD_VAL --> KNIP["Knip"]
         BUILD_VAL --> SBOM_CHECK["SBOM Quality ≥7.0"]
         UNIT --> COV{"Coverage ≥80%?"}
@@ -630,7 +630,7 @@ graph LR
 | # | Gate | Tool | Threshold | Required | Workflow |
 |---|------|------|-----------|----------|----------|
 | 1 | TypeScript compilation | `tsc --noEmit` | 0 errors | ✅ Yes | `test-and-report.yml` |
-| 2 | Linting | ESLint 9.x | 0 errors, 0 warnings | ✅ Yes | `test-and-report.yml` |
+| 2 | Linting | ESLint 10.x | 0 errors, 0 warnings | ✅ Yes | `test-and-report.yml` |
 | 3 | Unused code detection | Knip | 0 unused exports | ✅ Yes | `test-and-report.yml` |
 | 4 | Unit tests | Vitest | All tests pass | ✅ Yes | `test-and-report.yml` |
 | 5 | Code coverage | Vitest coverage (v8) | ≥80% lines | ⚠️ Warning | `test-and-report.yml` |
