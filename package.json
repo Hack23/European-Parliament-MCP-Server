@@ -8,59 +8,59 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "import": "./dist/index.js"
     },
     "./config": {
       "types": "./dist/config.d.ts",
-      "default": "./dist/config.js"
+      "import": "./dist/config.js"
     },
     "./types/*": {
       "types": "./dist/types/*.d.ts",
-      "default": "./dist/types/*.js"
+      "import": "./dist/types/*.js"
     },
     "./schemas/*": {
       "types": "./dist/schemas/*.d.ts",
-      "default": "./dist/schemas/*.js"
+      "import": "./dist/schemas/*.js"
     },
     "./tools/*": {
       "types": "./dist/tools/*.d.ts",
-      "default": "./dist/tools/*.js"
+      "import": "./dist/tools/*.js"
     },
     "./clients/*": {
       "types": "./dist/clients/*.d.ts",
-      "default": "./dist/clients/*.js"
+      "import": "./dist/clients/*.js"
     },
     "./server/*": {
       "types": "./dist/server/*.d.ts",
-      "default": "./dist/server/*.js"
+      "import": "./dist/server/*.js"
     },
     "./services/*": {
       "types": "./dist/services/*.d.ts",
-      "default": "./dist/services/*.js"
+      "import": "./dist/services/*.js"
     },
     "./prompts/*": {
       "types": "./dist/prompts/*.d.ts",
-      "default": "./dist/prompts/*.js"
+      "import": "./dist/prompts/*.js"
     },
     "./resources/*": {
       "types": "./dist/resources/*.d.ts",
-      "default": "./dist/resources/*.js"
+      "import": "./dist/resources/*.js"
     },
     "./utils/*": {
       "types": "./dist/utils/*.d.ts",
-      "default": "./dist/utils/*.js"
+      "import": "./dist/utils/*.js"
     },
     "./di/*": {
       "types": "./dist/di/*.d.ts",
-      "default": "./dist/di/*.js"
+      "import": "./dist/di/*.js"
     },
     "./data/*": {
       "types": "./dist/data/*.d.ts",
-      "default": "./dist/data/*.js"
+      "import": "./dist/data/*.js"
     },
     "./generated/*": {
       "types": "./dist/generated/*.d.ts",
-      "default": "./dist/generated/*.js"
+      "import": "./dist/generated/*.js"
     }
   },
   "bin": {
