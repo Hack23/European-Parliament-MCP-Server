@@ -11,6 +11,22 @@
   "name": "European Parliament MCP Server API",
   "includeVersion": true,
   "readme": "README.md",
+  "projectDocuments": [
+    "ARCHITECTURE.md",
+    "SECURITY_ARCHITECTURE.md",
+    "SECURITY.md",
+    "SECURITY_HEADERS.md",
+    "DATA_MODEL.md",
+    "API_USAGE_GUIDE.md",
+    "DEVELOPER_GUIDE.md",
+    "DEPLOYMENT_GUIDE.md",
+    "CONTRIBUTING.md",
+    "CRA-ASSESSMENT.md",
+    "THREAT_MODEL.md",
+    "PERFORMANCE_GUIDE.md",
+    "INTEGRATION_TESTING.md",
+    "End-of-Life-Strategy.md"
+  ],
   "categorizeByGroup": true,
   "categoryOrder": [
     "MCP Tools - Core Data",

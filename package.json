@@ -70,10 +70,14 @@
   },
   "files": [
     "dist",
+    "src",
+    "scripts",
     "README.md",
     "LICENSE.md",
     "SECURITY.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "ARCHITECTURE.md",
+    "SECURITY_ARCHITECTURE.md"
   ],
   "engines": {
     "node": ">=25.0.0",
