@@ -1,0 +1,3941 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>THREAT_MODEL | European Parliament MCP Server API - v1.1.21</title><meta name="description" content="Documentation for European Parliament MCP Server API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">European Parliament MCP Server API - v1.1.21</a><div id="tsd-toolbar-links"><a href="https://hack23.github.io/European-Parliament-MCP-Server/">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md">API Usage Guide</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">THREAT_MODEL</a></li></ul></div><div class="tsd-panel tsd-typography"><p align="center">
+  <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
+</p>
+<h1 align="center">🎯 European Parliament MCP Server — Threat Model</h1>
+<p align="center">
+  <strong>🛡️ Proactive Security Through Structured Threat Analysis</strong><br>
+  <em>🔍 STRIDE • MITRE ATT&CK • MCP Protocol Security • Parliamentary Data Protection</em>
+</p>
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/Owner-CEO-0A66C2?style=for-the-badge" alt="Owner"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.1-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--03--19-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
+</p>
+<p><strong>📋 Document Owner:</strong> CEO | <strong>📄 Version:</strong> 1.1 | <strong>📅 Last Updated:</strong> 2026-03-19 (UTC)<br>
+<strong>🔄 Review Cycle:</strong> Quarterly | <strong>⏰ Next Review:</strong> 2026-06-19<br>
+<strong>🏷️ Classification:</strong> Public (Open Source MCP Server)</p>
+<hr>
+<h2 id="📑-table-of-contents" class="tsd-anchor-link">📑 Table of Contents<a href="#📑-table-of-contents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li><a href="#-isms-policy-alignment">ISMS Policy Alignment</a></li>
+<li><a href="#-security-documentation-map">Security Documentation Map</a></li>
+<li><a href="#-purpose--scope">Purpose &amp; Scope</a></li>
+<li><a href="#-multi-strategy-threat-modeling-integration">Multi-Strategy Threat Modeling Integration</a></li>
+<li><a href="#-system-classification--operating-profile">System Classification</a></li>
+<li><a href="#-critical-assets--crown-jewel-analysis">💎 Critical Assets &amp; Crown Jewel Analysis</a></li>
+<li><a href="#-stride-threat-analysis">STRIDE Threat Analysis</a></li>
+<li><a href="#%EF%B8%8F-mitre-attck-coverage-analysis">MITRE ATT&amp;CK Coverage Analysis</a></li>
+<li><a href="#%EF%B8%8F-architecture-centric-stride-analysis">🏗️ Architecture-Centric STRIDE Analysis</a></li>
+<li><a href="#%EF%B8%8F-mitre-attck-mapping">MITRE ATT&amp;CK Mapping</a></li>
+<li><a href="#-kill-chain-disruption-analysis">Kill Chain Disruption Analysis</a></li>
+<li><a href="#-threat-agent-classification">Threat Agent Classification</a></li>
+<li><a href="#-current-threat-landscape">Current Threat Landscape</a></li>
+<li><a href="#-scenario-centric-threat-modeling-ep-specific">Scenario-Centric Threat Modeling</a></li>
+<li><a href="#-continuous-validation--assessment">Continuous Validation &amp; Assessment</a></li>
+<li><a href="#-assessment-lifecycle">Assessment Lifecycle</a></li>
+<li><a href="#-security-maturity-framework">Security Maturity Framework</a></li>
+<li><a href="#-quantitative-risk-assessment">Quantitative Risk Assessment</a></li>
+<li><a href="#%EF%B8%8F-security-controls--mitigations">Security Controls &amp; Mitigations</a></li>
+<li><a href="#-attack-tree-analysis">Attack Tree Analysis</a></li>
+<li><a href="#-priority-threat-scenarios">🔴 Priority Threat Scenarios</a></li>
+<li><a href="#%EF%B8%8F-stride--control-mapping">🛡️ STRIDE → Control Mapping</a></li>
+<li><a href="#%EF%B8%8F-comprehensive-security-control-framework">🏛️ Comprehensive Security Control Framework</a></li>
+<li><a href="#-policy-alignment">Policy Alignment</a></li>
+<li><a href="#-related-documents">Related Documents</a></li>
+</ul>
+<hr>
+<h2 id="🔐-isms-policy-alignment" class="tsd-anchor-link">🔐 ISMS Policy Alignment<a href="#🔐-isms-policy-alignment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="related-isms-policies" class="tsd-anchor-link">Related ISMS Policies<a href="#related-isms-policies" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Relevance</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Open Source Policy</strong></td>
+<td>Security transparency, vulnerability disclosure</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md" target="_blank" class="external">View</a></td>
+</tr>
+<tr>
+<td><strong>Secure Development Policy</strong></td>
+<td>Secure coding practices, supply chain security</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md" target="_blank" class="external">View</a></td>
+</tr>
+<tr>
+<td><strong>Risk Management Policy</strong></td>
+<td>Threat assessment, risk mitigation</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Risk_Management_Policy.md" target="_blank" class="external">View</a></td>
+</tr>
+<tr>
+<td><strong>Privacy Policy</strong></td>
+<td>GDPR compliance, data protection</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md" target="_blank" class="external">View</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="security-control-implementation-status" class="tsd-anchor-link">Security Control Implementation Status<a href="#security-control-implementation-status" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Control Area</th>
+<th>Status</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Input Validation (Zod)</td>
+<td>✅ Implemented</td>
+<td>Mitigates E-1, D-4, E-3</td>
+</tr>
+<tr>
+<td>Rate Limiting</td>
+<td>✅ Implemented</td>
+<td>Mitigates D-1, D-2</td>
+</tr>
+<tr>
+<td>HTTPS/TLS</td>
+<td>✅ Implemented</td>
+<td>Default EP API base URL uses HTTPS; <code>EP_API_URL</code> must be configured with <code>https://</code> (Mitigates S-2, T-1)</td>
+</tr>
+<tr>
+<td>SLSA Level 3</td>
+<td>✅ Implemented</td>
+<td>Mitigates T-3, S-4</td>
+</tr>
+<tr>
+<td>Dependabot + npm audit</td>
+<td>✅ Implemented</td>
+<td>Mitigates T-2</td>
+</tr>
+<tr>
+<td>Error Sanitization</td>
+<td>⚠️ Partial</td>
+<td>Mitigates I-1, I-2</td>
+</tr>
+</tbody>
+</table>
+<h3 id="compliance-framework-mapping" class="tsd-anchor-link">Compliance Framework Mapping<a href="#compliance-framework-mapping" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Framework</th>
+<th>Controls</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ISO 27001:2022</strong></td>
+<td>A.5.1, A.8.2, A.8.8, A.8.25, A.14.2, A.18.1</td>
+<td>✅ Aligned</td>
+</tr>
+<tr>
+<td><strong>NIST CSF 2.0</strong></td>
+<td><a href="http://ID.AM" target="_blank" class="external">ID.AM</a>, ID.RA, PR.DS, PR.IP, <a href="http://DE.CM" target="_blank" class="external">DE.CM</a>, <a href="http://RS.AN" target="_blank" class="external">RS.AN</a></td>
+<td>✅ Aligned</td>
+</tr>
+<tr>
+<td><strong>CIS Controls v8.1</strong></td>
+<td>1.1, 2.7, 3.3, 6.2, 7.1, 16.7</td>
+<td>✅ Aligned</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>See also</strong>: <a href="#-policy-alignment">Policy Alignment</a> below for the complete threat-specific ISMS policy mapping (Threat Modeling, Vulnerability Management, Network Security, Access Control, Cryptography, and Incident Response policies).</p>
+</blockquote>
+<hr>
+<h2 id="🗺️-security-documentation-map" class="tsd-anchor-link">🗺️ Security Documentation Map<a href="#🗺️-security-documentation-map" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Type</th>
+<th>Description</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="SECURITY_ARCHITECTURE.html">SECURITY_ARCHITECTURE.md</a></td>
+<td>🛡️ Current</td>
+<td>Implemented security design and controls</td>
+<td>✅ Current</td>
+</tr>
+<tr>
+<td><a href="../media/FUTURE_SECURITY_ARCHITECTURE.md">FUTURE_SECURITY_ARCHITECTURE.md</a></td>
+<td>🚀 Future</td>
+<td>Security roadmap and planned enhancements</td>
+<td>✅ Current</td>
+</tr>
+<tr>
+<td><a href="">THREAT_MODEL.md</a></td>
+<td>🎯 Analysis</td>
+<td>STRIDE threat analysis and risk assessment</td>
+<td>✅ Current</td>
+</tr>
+<tr>
+<td><a href="../media/FUTURE_THREAT_MODEL.md">FUTURE_THREAT_MODEL.md</a></td>
+<td>🔮 Future</td>
+<td>Threat analysis for planned architecture evolution</td>
+<td>✅ Current</td>
+</tr>
+<tr>
+<td><a href="../media/BCPPlan.md">BCPPlan.md</a></td>
+<td>🔄 Continuity</td>
+<td>Business continuity and disaster recovery</td>
+<td>✅ Current</td>
+</tr>
+<tr>
+<td><a href="CRA-ASSESSMENT.html">CRA-ASSESSMENT.md</a></td>
+<td>📋 Compliance</td>
+<td>EU Cyber Resilience Act conformity assessment</td>
+<td>✅ Current</td>
+</tr>
+<tr>
+<td><a href="SECURITY.html">SECURITY.md</a></td>
+<td>📜 Policy</td>
+<td>Security policy and vulnerability disclosure</td>
+<td>✅ Current</td>
+</tr>
+<tr>
+<td><a href="SECURITY_HEADERS.html">SECURITY_HEADERS.md</a></td>
+<td>🔒 Technical</td>
+<td>API security headers implementation</td>
+<td>✅ Current</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🎯-purpose-scope" class="tsd-anchor-link">🎯 Purpose &amp; Scope<a href="#🎯-purpose-scope" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Establish a comprehensive threat model for the European Parliament MCP Server, a TypeScript/Node.js Model Context Protocol server providing AI assistants with structured access to European Parliament open datasets. This systematic threat analysis integrates multiple frameworks to ensure proactive security through structured analysis.</p>
+<h3 id="🌟-transparency-commitment" class="tsd-anchor-link"><strong>🌟 Transparency Commitment</strong><a href="#🌟-transparency-commitment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>This threat model demonstrates <strong>🛡️ cybersecurity consulting expertise</strong> through public documentation of advanced threat assessment methodologies, showcasing our <strong>🏆 competitive advantage</strong> via systematic risk management and <strong>🤝 customer trust</strong> through transparent security practices.</p>
+<p><em>— Based on Hack23 AB's commitment to security through transparency and excellence</em></p>
+<h3 id="📚-framework-integration" class="tsd-anchor-link"><strong>📚 Framework Integration</strong><a href="#📚-framework-integration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li><strong>🎭 STRIDE per architecture element:</strong> Systematic threat categorization</li>
+<li><strong>🎖️ MITRE ATT&amp;CK mapping:</strong> Advanced threat intelligence integration</li>
+<li><strong>🏗️ Asset-centric analysis:</strong> Critical resource protection focus</li>
+<li><strong>🎯 Scenario-centric modeling:</strong> Real-world attack simulation</li>
+<li><strong>⚖️ Risk-centric assessment:</strong> Business impact quantification</li>
+</ul>
+<h3 id="🔍-scope-definition" class="tsd-anchor-link"><strong>🔍 Scope Definition</strong><a href="#🔍-scope-definition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Included Systems:</strong></p>
+<ul>
+<li>🌐 TypeScript/Node.js MCP server application</li>
+<li>🔌 MCP protocol implementation (stdio transport)</li>
+<li>🏛️ European Parliament Open Data API integration</li>
+<li>📦 npm package distribution (<code>european-parliament-mcp-server</code>)</li>
+<li>🏭 CI/CD security pipeline (GitHub Actions, SLSA Level 3)</li>
+<li>📦 Dependency supply chain (npm ecosystem)</li>
+<li>✅ Input validation (Zod schemas)</li>
+</ul>
+<p><strong>Out of Scope:</strong></p>
+<ul>
+<li>European Parliament API infrastructure security</li>
+<li>End-user AI assistant security (Claude, ChatGPT, etc.)</li>
+<li>Third-party npm registry infrastructure</li>
+<li>End-user operating system and network security</li>
+</ul>
+<h3 id="🔗-policy-alignment" class="tsd-anchor-link"><strong>🔗 Policy Alignment</strong><a href="#🔗-policy-alignment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Integrated with <a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md" target="_blank" class="external">🎯 Hack23 AB Threat Modeling Policy</a> methodology and frameworks.</p>
+<hr>
+<h2 id="🎯-multi-strategy-threat-modeling-integration" class="tsd-anchor-link">🎯 Multi-Strategy Threat Modeling Integration<a href="#🎯-multi-strategy-threat-modeling-integration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>This threat model implements the <strong>five integrated threat modeling strategies</strong> mandated by <a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md" target="_blank" class="external">Hack23 AB Threat Modeling Policy §4</a>. Each strategy provides complementary perspectives to ensure comprehensive threat coverage for the European Parliament MCP Server.</p>
+<pre><code class="mermaid">mindmap
+  root((🎯 EP MCP Server<br/>Threat Modeling<br/>Strategies))
+    (🎖️ Attacker-Centric)
+      MITRE ATT&CK Mapping
+      Kill Chain Analysis
+      Threat Agent Classification
+      Attack Tree Analysis
+    (🏗️ Asset-Centric)
+      Crown Jewel Analysis
+      Critical Asset Inventory
+      Data Flow Threat Analysis
+      GDPR Data Classification
+    (🏛️ Architecture-Centric)
+      STRIDE per Component
+      Trust Boundary Analysis
+      Data Flow Diagrams
+      Defense-in-Depth Layers
+    (🎯 Scenario-Centric)
+      Parliamentary Data Manipulation
+      MEP Personal Data Abuse
+      Electoral Disinformation
+      Supply Chain Compromise
+      MCP Protocol Injection
+    (⚖️ Risk-Centric)
+      Quantitative Risk Matrix
+      Business Impact Analysis
+      Likelihood Assessment
+      Residual Risk Tracking
+</code><button type="button">Copy</button></pre>
+
+<h3 id="strategy-integration-summary" class="tsd-anchor-link"><strong>Strategy Integration Summary</strong><a href="#strategy-integration-summary" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>EP MCP Server Implementation</th>
+<th>Key Sections</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>🎖️ Attacker-Centric</strong></td>
+<td>MITRE ATT&amp;CK mapping (13 techniques), Kill Chain disruption, 5 threat agent profiles</td>
+<td><a href="#%EF%B8%8F-mitre-attck-mapping">ATT&amp;CK Mapping</a>, <a href="#-kill-chain-disruption-analysis">Kill Chain</a>, <a href="#-threat-agent-classification">Threat Agents</a></td>
+</tr>
+<tr>
+<td><strong>🏗️ Asset-Centric</strong></td>
+<td>6 critical assets, Crown Jewel analysis, protection strategies</td>
+<td><a href="#-critical-assets--crown-jewel-analysis">Crown Jewels</a></td>
+</tr>
+<tr>
+<td><strong>🏛️ Architecture-Centric</strong></td>
+<td>STRIDE per 6 components (36 threat cells), trust boundary sequence diagram</td>
+<td><a href="#%EF%B8%8F-architecture-centric-stride-analysis">Architecture STRIDE</a></td>
+</tr>
+<tr>
+<td><strong>🎯 Scenario-Centric</strong></td>
+<td>5 EP-specific attack scenarios with attack chains, detection, and response</td>
+<td><a href="#-scenario-centric-threat-modeling-ep-specific">Scenarios</a></td>
+</tr>
+<tr>
+<td><strong>⚖️ Risk-Centric</strong></td>
+<td>Quantitative risk matrix, priority risk ranking, residual risk assessment</td>
+<td><a href="#-quantitative-risk-assessment">Risk Assessment</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="📊-system-classification-operating-profile" class="tsd-anchor-link">📊 System Classification &amp; Operating Profile<a href="#📊-system-classification-operating-profile" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="🏷️-security-classification-matrix" class="tsd-anchor-link"><strong>🏷️ Security Classification Matrix</strong><a href="#🏷️-security-classification-matrix" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Level</th>
+<th>Rationale</th>
+<th>Business Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>🔐 Confidentiality</strong></td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md#confidentiality-levels" target="_blank" class="external"><img src="https://img.shields.io/badge/C-Public-lightgrey?style=flat-square" alt="Public"></a></td>
+<td>Open source server processing public EP data</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md" target="_blank" class="external"><img src="https://img.shields.io/badge/Value-Trust_Enhancement-darkgreen?style=flat-square" alt="Trust Enhancement"></a></td>
+</tr>
+<tr>
+<td><strong>🔒 Integrity</strong></td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md#integrity-levels" target="_blank" class="external"><img src="https://img.shields.io/badge/I-Moderate-yellow?style=flat-square" alt="Moderate"></a></td>
+<td>Parliamentary data accuracy critical for democratic transparency</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md" target="_blank" class="external"><img src="https://img.shields.io/badge/Value-Operational_Excellence-blue?style=flat-square" alt="Operational Excellence"></a></td>
+</tr>
+<tr>
+<td><strong>⚡ Availability</strong></td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md#availability-levels" target="_blank" class="external"><img src="https://img.shields.io/badge/A-Standard-lightgreen?style=flat-square" alt="Standard"></a></td>
+<td>MCP server tolerates brief outages; AI clients retry</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md" target="_blank" class="external"><img src="https://img.shields.io/badge/Value-Revenue_Protection-red?style=flat-square" alt="Revenue Protection"></a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="⚙️-operating-profile" class="tsd-anchor-link"><strong>⚙️ Operating Profile</strong><a href="#⚙️-operating-profile" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Runtime</strong></td>
+<td>Node.js 25+ (Current)</td>
+</tr>
+<tr>
+<td><strong>Language</strong></td>
+<td>TypeScript 6.0.2 (strict mode)</td>
+</tr>
+<tr>
+<td><strong>Transport</strong></td>
+<td>stdio (local process)</td>
+</tr>
+<tr>
+<td><strong>Data Source</strong></td>
+<td>European Parliament Open Data API</td>
+</tr>
+<tr>
+<td><strong>Distribution</strong></td>
+<td>npm registry</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>None (public data, local stdio)</td>
+</tr>
+<tr>
+<td><strong>Users</strong></td>
+<td>AI assistants (Claude, ChatGPT, etc.)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="💎-critical-assets-crown-jewel-analysis" class="tsd-anchor-link">💎 Critical Assets &amp; Crown Jewel Analysis<a href="#💎-critical-assets-crown-jewel-analysis" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="🎯-critical-asset-inventory" class="tsd-anchor-link"><strong>🎯 Critical Asset Inventory</strong><a href="#🎯-critical-asset-inventory" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Asset</th>
+<th>Description</th>
+<th>Classification</th>
+<th>Threat Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>EP Parliamentary Data Integrity</strong></td>
+<td>Accuracy and trustworthiness of MEP data, voting records, plenary documents</td>
+<td>🔒 Integrity: Moderate</td>
+<td>Compromised democratic transparency, misinformation propagation</td>
+</tr>
+<tr>
+<td><strong>Source Code &amp; Build Pipeline</strong></td>
+<td>TypeScript source, CI/CD workflows, GitHub Actions security</td>
+<td>🔐 Confidentiality: Public<br>🔒 Integrity: High</td>
+<td>Supply chain compromise, malicious code injection</td>
+</tr>
+<tr>
+<td><strong>Service Reputation &amp; Trust</strong></td>
+<td>OpenSSF Scorecard rating, npm package legitimacy, security posture</td>
+<td>⚡ Availability: Standard</td>
+<td>User trust erosion, adoption reduction</td>
+</tr>
+<tr>
+<td><strong>EP API Access &amp; Availability</strong></td>
+<td>Connection to European Parliament Open Data API</td>
+<td>⚡ Availability: Moderate</td>
+<td>Service disruption, rate limit exhaustion</td>
+</tr>
+<tr>
+<td><strong>npm Package Distribution</strong></td>
+<td>Package integrity, version control, download statistics</td>
+<td>🔒 Integrity: Moderate</td>
+<td>Malware distribution, user impact</td>
+</tr>
+<tr>
+<td><strong>Audit Trail &amp; Logging</strong></td>
+<td>Structured logs, security event records</td>
+<td>🔒 Integrity: Moderate</td>
+<td>Non-repudiation loss, incident investigation failure</td>
+</tr>
+</tbody>
+</table>
+<h3 id="💎-crown-jewel-analysis" class="tsd-anchor-link"><strong>💎 Crown Jewel Analysis</strong><a href="#💎-crown-jewel-analysis" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">mindmap
+  root((🏛️ EP MCP<br/>Crown Jewels))
+    🔒 EP Parliamentary<br/>Data Integrity
+      Voting Records
+      MEP Profiles
+      Plenary Documents
+      Committee Assignments
+      GDPR Personal Data
+    📦 Source Code &<br/>Build Pipeline
+      TypeScript Source
+      GitHub Actions
+      SLSA L3 Provenance
+      npm Publishing
+      Dependency Chain
+    🛡️ Service<br/>Reputation & Trust
+      OpenSSF Score 9.4+
+      Security Badges
+      npm Download Stats
+      Community Trust
+      Transparent Security
+    🌐 EP API Access &<br/>Availability
+      Rate Limit Quota
+      API Response Time
+      Connection Integrity
+      HTTPS/TLS Security
+      Failover Strategy
+</code><button type="button">Copy</button></pre>
+
+<h3 id="🛡️-crown-jewel-protection-strategies" class="tsd-anchor-link"><strong>🛡️ Crown Jewel Protection Strategies</strong><a href="#🛡️-crown-jewel-protection-strategies" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Crown Jewel</th>
+<th>Primary Threats</th>
+<th>Protection Controls</th>
+<th>Residual Risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>EP Parliamentary Data Integrity</strong></td>
+<td>T-1, T-2, S-2</td>
+<td>HTTPS/TLS, response validation, Zod schemas, cache TTL</td>
+<td>Low</td>
+</tr>
+<tr>
+<td><strong>Source Code &amp; Build Pipeline</strong></td>
+<td>T-2, T-3, S-4</td>
+<td>SLSA Level 3, branch protection, GPG signing, Dependabot</td>
+<td>Low-Medium</td>
+</tr>
+<tr>
+<td><strong>Service Reputation &amp; Trust</strong></td>
+<td>All categories</td>
+<td>OpenSSF Scorecard monitoring, security badges, transparent documentation</td>
+<td>Low</td>
+</tr>
+<tr>
+<td><strong>EP API Access &amp; Availability</strong></td>
+<td>D-1, D-2, S-2</td>
+<td>Rate limiting, retry logic, circuit breaker, HTTPS verification</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td><strong>npm Package Distribution</strong></td>
+<td>S-3, S-4, T-2</td>
+<td>Official package name ownership, npm 2FA, SBOM, npm provenance</td>
+<td>Low-Medium</td>
+</tr>
+<tr>
+<td><strong>Audit Trail &amp; Logging</strong></td>
+<td>R-1, R-2, R-3</td>
+<td>Structured stderr logging, immutable logs, timestamp integrity</td>
+<td>Low</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🎭-stride-threat-analysis" class="tsd-anchor-link">🎭 STRIDE Threat Analysis<a href="#🎭-stride-threat-analysis" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="s-spoofing" class="tsd-anchor-link"><strong>S — Spoofing</strong><a href="#s-spoofing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Threat</th>
+<th>Component</th>
+<th>Likelihood</th>
+<th>Impact</th>
+<th>Risk</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S-1</td>
+<td>Malicious MCP client impersonation</td>
+<td>MCP Transport</td>
+<td>Low</td>
+<td>Medium</td>
+<td>Low</td>
+<td>stdio transport limits to local process</td>
+</tr>
+<tr>
+<td>S-2</td>
+<td>EP API response spoofing (MITM)</td>
+<td>API Client</td>
+<td>Low</td>
+<td>High</td>
+<td>Medium</td>
+<td>HTTPS/TLS for all API communication</td>
+</tr>
+<tr>
+<td>S-3</td>
+<td>npm package name squatting</td>
+<td>Distribution</td>
+<td>Low</td>
+<td>High</td>
+<td>Medium</td>
+<td>Official package name, npm 2FA publishing</td>
+</tr>
+<tr>
+<td>S-4</td>
+<td>Supply chain package substitution</td>
+<td>Dependencies</td>
+<td>Medium</td>
+<td>High</td>
+<td>High</td>
+<td>SLSA Level 3 provenance, lockfile pinning</td>
+</tr>
+</tbody>
+</table>
+<h3 id="t-tampering" class="tsd-anchor-link"><strong>T — Tampering</strong><a href="#t-tampering" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Threat</th>
+<th>Component</th>
+<th>Likelihood</th>
+<th>Impact</th>
+<th>Risk</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T-1</td>
+<td>API response manipulation</td>
+<td>API Client</td>
+<td>Low</td>
+<td>High</td>
+<td>Medium</td>
+<td>HTTPS integrity, response validation</td>
+</tr>
+<tr>
+<td>T-2</td>
+<td>Dependency injection via compromised package</td>
+<td>Supply Chain</td>
+<td>Medium</td>
+<td>Critical</td>
+<td>High</td>
+<td>Dependabot, npm audit, SBOM tracking</td>
+</tr>
+<tr>
+<td>T-3</td>
+<td>Build artifact tampering</td>
+<td>CI/CD</td>
+<td>Low</td>
+<td>Critical</td>
+<td>Medium</td>
+<td>SLSA Level 3 attestations</td>
+</tr>
+<tr>
+<td>T-4</td>
+<td>Configuration manipulation</td>
+<td>Runtime</td>
+<td>Low</td>
+<td>Medium</td>
+<td>Low</td>
+<td>Environment variable validation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="r-repudiation" class="tsd-anchor-link"><strong>R — Repudiation</strong><a href="#r-repudiation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Threat</th>
+<th>Component</th>
+<th>Likelihood</th>
+<th>Impact</th>
+<th>Risk</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R-1</td>
+<td>Untracked tool invocations</td>
+<td>MCP Server</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>Structured audit logging (stderr)</td>
+</tr>
+<tr>
+<td>R-2</td>
+<td>Unsigned commits in source</td>
+<td>Source Code</td>
+<td>Low</td>
+<td>Medium</td>
+<td>Low</td>
+<td>GPG signing, branch protection</td>
+</tr>
+<tr>
+<td>R-3</td>
+<td>Unattributed data access</td>
+<td>API Client</td>
+<td>Low</td>
+<td>Low</td>
+<td>Low</td>
+<td>Request logging with timestamps</td>
+</tr>
+</tbody>
+</table>
+<h3 id="i-information-disclosure" class="tsd-anchor-link"><strong>I — Information Disclosure</strong><a href="#i-information-disclosure" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Threat</th>
+<th>Component</th>
+<th>Likelihood</th>
+<th>Impact</th>
+<th>Risk</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>I-1</td>
+<td>Verbose error messages exposing internals</td>
+<td>Error Handling</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>Sanitized error responses</td>
+</tr>
+<tr>
+<td>I-2</td>
+<td>Stack traces in production</td>
+<td>Runtime</td>
+<td>Medium</td>
+<td>Low</td>
+<td>Low</td>
+<td>Production error handling</td>
+</tr>
+<tr>
+<td>I-3</td>
+<td>API keys in logs</td>
+<td>Logging</td>
+<td>Low</td>
+<td>High</td>
+<td>Medium</td>
+<td>No API keys required (public API)</td>
+</tr>
+<tr>
+<td>I-4</td>
+<td>Sensitive data in cached responses</td>
+<td>Caching</td>
+<td>Low</td>
+<td>Low</td>
+<td>Low</td>
+<td>Public data only, TTL-based cache</td>
+</tr>
+</tbody>
+</table>
+<h3 id="d-denial-of-service" class="tsd-anchor-link"><strong>D — Denial of Service</strong><a href="#d-denial-of-service" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Threat</th>
+<th>Component</th>
+<th>Likelihood</th>
+<th>Impact</th>
+<th>Risk</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D-1</td>
+<td>EP API rate limit exhaustion</td>
+<td>API Client</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>Client-side rate limiting</td>
+</tr>
+<tr>
+<td>D-2</td>
+<td>Memory exhaustion via large responses</td>
+<td>Runtime</td>
+<td>Low</td>
+<td>High</td>
+<td>Medium</td>
+<td>Response size limits</td>
+</tr>
+<tr>
+<td>D-3</td>
+<td>Recursive/nested tool calls</td>
+<td>MCP Server</td>
+<td>Low</td>
+<td>Medium</td>
+<td>Low</td>
+<td>Call depth limits</td>
+</tr>
+<tr>
+<td>D-4</td>
+<td>ReDoS via crafted input</td>
+<td>Input Validation</td>
+<td>Low</td>
+<td>Medium</td>
+<td>Low</td>
+<td>Zod schema validation (no regex)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="e-elevation-of-privilege" class="tsd-anchor-link"><strong>E — Elevation of Privilege</strong><a href="#e-elevation-of-privilege" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Threat</th>
+<th>Component</th>
+<th>Likelihood</th>
+<th>Impact</th>
+<th>Risk</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-1</td>
+<td>MCP tool parameter injection</td>
+<td>Input Handling</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>Zod schema validation for all inputs</td>
+</tr>
+<tr>
+<td>E-2</td>
+<td>Prototype pollution via JSON parsing</td>
+<td>Runtime</td>
+<td>Low</td>
+<td>High</td>
+<td>Medium</td>
+<td>Safe JSON parsing, TypeScript strict</td>
+</tr>
+<tr>
+<td>E-3</td>
+<td>Path traversal in document search</td>
+<td>Tools</td>
+<td>Low</td>
+<td>Medium</td>
+<td>Low</td>
+<td>Input sanitization, no filesystem access</td>
+</tr>
+<tr>
+<td>E-4</td>
+<td>Command injection via tool parameters</td>
+<td>MCP Server</td>
+<td>Low</td>
+<td>Critical</td>
+<td>Medium</td>
+<td>No shell execution, parameterized APIs</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🎖️-mitre-attck-coverage-analysis" class="tsd-anchor-link">🎖️ MITRE ATT&amp;CK Coverage Analysis<a href="#🎖️-mitre-attck-coverage-analysis" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="attck-coverage-heat-map-by-tactic" class="tsd-anchor-link"><strong>ATT&amp;CK Coverage Heat Map by Tactic</strong><a href="#attck-coverage-heat-map-by-tactic" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>This heat map shows the relevance and coverage of MITRE ATT&amp;CK tactics for the European Parliament MCP Server context. Each tactic is assessed for applicability and current security posture.</p>
+<table>
+<thead>
+<tr>
+<th>Tactic</th>
+<th>Coverage Status</th>
+<th>Relevant Techniques</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>🎯 Initial Access</strong></td>
+<td>🟢 High Coverage</td>
+<td>T1190, T1195.002</td>
+<td>🔴 Critical</td>
+<td>Supply chain &amp; MCP protocol entry points</td>
+</tr>
+<tr>
+<td><strong>⚡ Execution</strong></td>
+<td>🟡 Medium Coverage</td>
+<td>T1059</td>
+<td>🟠 High</td>
+<td>Limited - no direct shell execution</td>
+</tr>
+<tr>
+<td><strong>🔄 Persistence</strong></td>
+<td>🟢 N/A (Not Applicable)</td>
+<td>—</td>
+<td>🟢 Low</td>
+<td>Stateless MCP server, no persistence</td>
+</tr>
+<tr>
+<td><strong>🔺 Privilege Escalation</strong></td>
+<td>🟡 Medium Coverage</td>
+<td>T1068</td>
+<td>🟠 Medium</td>
+<td>Prototype pollution, injection risks</td>
+</tr>
+<tr>
+<td><strong>🛡️ Defense Evasion</strong></td>
+<td>🟢 High Coverage</td>
+<td>T1027, T1562</td>
+<td>🟠 High</td>
+<td>Obfuscated dependencies, log suppression</td>
+</tr>
+<tr>
+<td><strong>🔑 Credential Access</strong></td>
+<td>🟢 N/A (Not Applicable)</td>
+<td>—</td>
+<td>🟢 Low</td>
+<td>No credentials stored/managed</td>
+</tr>
+<tr>
+<td><strong>🔍 Discovery</strong></td>
+<td>🟡 Medium Coverage</td>
+<td>T1592</td>
+<td>🟡 Medium</td>
+<td>Information disclosure via errors</td>
+</tr>
+<tr>
+<td><strong>↔️ Lateral Movement</strong></td>
+<td>🟢 N/A (Not Applicable)</td>
+<td>—</td>
+<td>🟢 Low</td>
+<td>Single-process stdio transport</td>
+</tr>
+<tr>
+<td><strong>📦 Collection</strong></td>
+<td>🟢 High Coverage</td>
+<td>T1530</td>
+<td>🟠 Medium</td>
+<td>Parliamentary data harvesting abuse</td>
+</tr>
+<tr>
+<td><strong>📡 Command &amp; Control</strong></td>
+<td>🟡 Medium Coverage</td>
+<td>T1071</td>
+<td>🟡 Medium</td>
+<td>MCP protocol as C2 channel</td>
+</tr>
+<tr>
+<td><strong>📤 Exfiltration</strong></td>
+<td>🟢 High Coverage</td>
+<td>T1041</td>
+<td>🟠 High</td>
+<td>Parliamentary data exfiltration</td>
+</tr>
+<tr>
+<td><strong>💥 Impact</strong></td>
+<td>🟢 High Coverage</td>
+<td>T1498, T1485</td>
+<td>🔴 Critical</td>
+<td>DoS via rate exhaustion, data manipulation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Coverage Legend:</strong></p>
+<ul>
+<li>🟢 <strong>High Coverage:</strong> Comprehensive mitigations implemented</li>
+<li>🟡 <strong>Medium Coverage:</strong> Partial mitigations, monitoring in place</li>
+<li>🔴 <strong>Low Coverage:</strong> Minimal mitigations, requires attention</li>
+<li>🟢 <strong>N/A:</strong> Tactic not applicable to this architecture</li>
+</ul>
+<h2 id="🏗️-architecture-centric-stride-analysis" class="tsd-anchor-link">🏗️ Architecture-Centric STRIDE Analysis<a href="#🏗️-architecture-centric-stride-analysis" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="🌊-data-flow-threat-surface" class="tsd-anchor-link"><strong>🌊 Data Flow Threat Surface</strong><a href="#🌊-data-flow-threat-surface" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">sequenceDiagram
+    participant AI as 🤖 AI Assistant<br/>(Claude/ChatGPT)
+    participant MCP as 🔌 MCP Server<br/>(stdio transport)
+    participant Cache as 💾 Cache Layer<br/>(LRU in-memory)
+    participant RL as ⏱️ Rate Limiter<br/>(Token bucket)
+    participant API as 🏛️ EP API<br/>(HTTPS)
+    participant Log as 📋 Audit Logger<br/>(stderr)
+
+    Note over AI,MCP: 🎭 S-1: MCP client spoofing<br/>🛡️ Mitigation: stdio isolation
+    AI->>MCP: Tool call request (JSON-RPC)
+    Note over MCP: 🎭 E-1: Parameter injection<br/>🛡️ Mitigation: Zod validation
+    
+    MCP->>Log: Log request (structured)
+    Note over Log: 🎭 R-1: Non-repudiation<br/>🛡️ Mitigation: Immutable stderr
+    
+    MCP->>Cache: Check cache
+    alt Cache Hit
+        Cache-->>MCP: Cached data
+        Note over Cache: 🎭 I-4: Stale data exposure<br/>🛡️ Mitigation: TTL expiration
+    else Cache Miss
+        MCP->>RL: Check rate limit
+        Note over RL: 🎭 D-1: Rate exhaustion<br/>🛡️ Mitigation: Token bucket
+        alt Rate OK
+            RL-->>MCP: Allow
+            Note over MCP,API: 🎭 S-2: MITM attack<br/>🛡️ Mitigation: HTTPS/TLS 1.3
+            MCP->>API: GET /meps (HTTPS)
+            Note over API: 🎭 T-1: Response tampering<br/>🛡️ Mitigation: TLS integrity
+            API-->>MCP: JSON response
+            MCP->>MCP: Validate response (Zod)
+            Note over MCP: 🎭 E-2: Prototype pollution<br/>🛡️ Mitigation: TypeScript strict
+            MCP->>Cache: Store response
+        else Rate Exceeded
+            RL-->>MCP: Deny
+            Note over MCP: 🎭 D-1: DoS protection<br/>✅ Request rejected
+        end
+    end
+    
+    Note over MCP: 🎭 I-1: Error info leak<br/>🛡️ Mitigation: Sanitized errors
+    MCP-->>AI: Tool response
+    MCP->>Log: Log response (structured)
+</code><button type="button">Copy</button></pre>
+
+<h3 id="🔍-stride-per-component-analysis" class="tsd-anchor-link"><strong>🔍 STRIDE per Component Analysis</strong><a href="#🔍-stride-per-component-analysis" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h4 id="component-1-mcp-server-core-tool-dispatcher-request-handler" class="tsd-anchor-link"><strong>Component 1: MCP Server Core (Tool Dispatcher &amp; Request Handler)</strong><a href="#component-1-mcp-server-core-tool-dispatcher-request-handler" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<table>
+<thead>
+<tr>
+<th>STRIDE</th>
+<th>Threat</th>
+<th>Attack Vector</th>
+<th>Mitigation</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>S</strong></td>
+<td>Client impersonation through stdio hijacking</td>
+<td>Malicious process capturing stdio streams</td>
+<td>stdio transport limits to parent process</td>
+<td>✅ Inherent</td>
+</tr>
+<tr>
+<td><strong>T</strong></td>
+<td>Tool invocation manipulation</td>
+<td>Modified JSON-RPC request parameters</td>
+<td>Zod schema validation on all inputs</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>R</strong></td>
+<td>Untracked tool calls</td>
+<td>Missing audit trail for debugging</td>
+<td>Structured stderr logging (JSON format)</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>I</strong></td>
+<td>Stack trace exposure in errors</td>
+<td>Production error messages revealing code structure</td>
+<td>Sanitized error responses to AI client</td>
+<td>⚠️ Partial</td>
+</tr>
+<tr>
+<td><strong>D</strong></td>
+<td>Recursive tool calls causing OOM</td>
+<td>AI assistant invoking tools in infinite loop</td>
+<td>Call depth tracking, memory monitoring</td>
+<td>⚠️ Future</td>
+</tr>
+<tr>
+<td><strong>E</strong></td>
+<td>JSON-RPC protocol exploitation</td>
+<td>Crafted JSON-RPC bypassing validation</td>
+<td>TypeScript strict mode, Zod schemas</td>
+<td>✅ Active</td>
+</tr>
+</tbody>
+</table>
+<h4 id="component-2-ep-api-client-http-client-response-parser" class="tsd-anchor-link"><strong>Component 2: EP API Client (HTTP Client &amp; Response Parser)</strong><a href="#component-2-ep-api-client-http-client-response-parser" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<table>
+<thead>
+<tr>
+<th>STRIDE</th>
+<th>Threat</th>
+<th>Attack Vector</th>
+<th>Mitigation</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>S</strong></td>
+<td>EP API response spoofing</td>
+<td>MITM attacker injecting false EP data</td>
+<td>HTTPS/TLS 1.3 with certificate validation</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>T</strong></td>
+<td>API response manipulation</td>
+<td>TLS downgrade or compromised proxy</td>
+<td>Strict TLS configuration, no HTTP fallback</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>R</strong></td>
+<td>Unlogged API requests</td>
+<td>Missing request/response audit trail</td>
+<td>Structured logging for all API interactions</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>I</strong></td>
+<td>API error details in client logs</td>
+<td>EP API returning sensitive error messages</td>
+<td>Sanitize EP API errors before logging</td>
+<td>⚠️ Partial</td>
+</tr>
+<tr>
+<td><strong>D</strong></td>
+<td>API rate limit exhaustion</td>
+<td>Excessive requests overwhelming EP API</td>
+<td>Client-side rate limiting (token bucket)</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>E</strong></td>
+<td>Malicious redirect exploitation</td>
+<td>EP API sending redirect to attacker domain</td>
+<td>No automatic redirects, validate URLs</td>
+<td>✅ Active</td>
+</tr>
+</tbody>
+</table>
+<h4 id="component-3-cache-layer-in-memory-lru-cache" class="tsd-anchor-link"><strong>Component 3: Cache Layer (In-Memory LRU Cache)</strong><a href="#component-3-cache-layer-in-memory-lru-cache" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<table>
+<thead>
+<tr>
+<th>STRIDE</th>
+<th>Threat</th>
+<th>Attack Vector</th>
+<th>Mitigation</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>S</strong></td>
+<td>Cache poisoning with fake data</td>
+<td>Attacker injecting malicious cache entries</td>
+<td>Cache only validated API responses</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>T</strong></td>
+<td>Cached data tampering</td>
+<td>Memory corruption or external modification</td>
+<td>Immutable cache entries, process isolation</td>
+<td>✅ Inherent</td>
+</tr>
+<tr>
+<td><strong>R</strong></td>
+<td>Cache operations not logged</td>
+<td>Missing visibility into cache hits/misses</td>
+<td>Cache statistics in audit logs</td>
+<td>⚠️ Future</td>
+</tr>
+<tr>
+<td><strong>I</strong></td>
+<td>Sensitive data in cache dumps</td>
+<td>Memory dumps exposing cached MEP data</td>
+<td>Public data only, no PII in cache keys</td>
+<td>✅ Inherent</td>
+</tr>
+<tr>
+<td><strong>D</strong></td>
+<td>Memory exhaustion via cache growth</td>
+<td>Unbounded cache causing OOM</td>
+<td>LRU eviction policy, max size limit</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>E</strong></td>
+<td>Cache timing attacks</td>
+<td>Inferring data presence via response time</td>
+<td>Constant-time cache lookups (not security critical)</td>
+<td>❌ Accepted</td>
+</tr>
+</tbody>
+</table>
+<h4 id="component-4-rate-limiter-token-bucket-algorithm" class="tsd-anchor-link"><strong>Component 4: Rate Limiter (Token Bucket Algorithm)</strong><a href="#component-4-rate-limiter-token-bucket-algorithm" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<table>
+<thead>
+<tr>
+<th>STRIDE</th>
+<th>Threat</th>
+<th>Attack Vector</th>
+<th>Mitigation</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>S</strong></td>
+<td>Rate limit bypass</td>
+<td>Attacker spoofing source to reset limits</td>
+<td>Process-level rate limiting (stdio isolation)</td>
+<td>✅ Inherent</td>
+</tr>
+<tr>
+<td><strong>T</strong></td>
+<td>Rate limit configuration tampering</td>
+<td>Modified rate limits allowing excess requests</td>
+<td>Immutable configuration, validated env vars</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>R</strong></td>
+<td>Rate limit violations unlogged</td>
+<td>Missing audit trail for throttling events</td>
+<td>Log all rate limit denials with timestamps</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>I</strong></td>
+<td>Rate limit details exposure</td>
+<td>Attacker learning rate limits via probing</td>
+<td>No rate limit details in error messages</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>D</strong></td>
+<td>Rate limiter resource exhaustion</td>
+<td>Token bucket state consuming excessive memory</td>
+<td>Fixed-size token bucket, constant memory</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>E</strong></td>
+<td>Race condition in rate checks</td>
+<td>Concurrent requests bypassing rate limits</td>
+<td>Atomic token bucket operations</td>
+<td>✅ Active</td>
+</tr>
+</tbody>
+</table>
+<h4 id="component-5-audit-logger-structured-stderr-logging" class="tsd-anchor-link"><strong>Component 5: Audit Logger (Structured stderr Logging)</strong><a href="#component-5-audit-logger-structured-stderr-logging" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<table>
+<thead>
+<tr>
+<th>STRIDE</th>
+<th>Threat</th>
+<th>Attack Vector</th>
+<th>Mitigation</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>S</strong></td>
+<td>Log injection attacks</td>
+<td>Attacker injecting fake log entries via user input</td>
+<td>Structured JSON logging, no string interpolation</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>T</strong></td>
+<td>Log tampering</td>
+<td>Attacker modifying stderr logs post-facto</td>
+<td>Immutable stderr stream, external log aggregation</td>
+<td>✅ Recommended</td>
+</tr>
+<tr>
+<td><strong>R</strong></td>
+<td>Log repudiation</td>
+<td>Attacker denying logged actions</td>
+<td>Timestamps (ISO 8601), request IDs, immutable stderr</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>I</strong></td>
+<td>Sensitive data in logs</td>
+<td>PII or credentials logged inadvertently</td>
+<td>Sanitize user input, no API keys (public API)</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>D</strong></td>
+<td>Log flooding DoS</td>
+<td>Excessive logging consuming disk/bandwidth</td>
+<td>Rate limit log output, log level filtering</td>
+<td>⚠️ Future</td>
+</tr>
+<tr>
+<td><strong>E</strong></td>
+<td>Log analysis exploitation</td>
+<td>Attacker using logs to map system internals</td>
+<td>Generic log messages, no internal implementation details</td>
+<td>⚠️ Partial</td>
+</tr>
+</tbody>
+</table>
+<h4 id="component-6-npm-package-distribution-packagejson-dist" class="tsd-anchor-link"><strong>Component 6: npm Package Distribution (package.json &amp; dist/)</strong><a href="#component-6-npm-package-distribution-packagejson-dist" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<table>
+<thead>
+<tr>
+<th>STRIDE</th>
+<th>Threat</th>
+<th>Attack Vector</th>
+<th>Mitigation</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>S</strong></td>
+<td>npm package name squatting</td>
+<td>Attacker publishing <code>european-parliament-server</code> (typo)</td>
+<td>Official <code>european-parliament-mcp-server</code> package name ownership, npm 2FA-protected publisher account</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>T</strong></td>
+<td>Build artifact injection</td>
+<td>Malicious code in <code>dist/</code> not matching source</td>
+<td>SLSA Level 3 provenance, reproducible builds</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>R</strong></td>
+<td>Unsigned package versions</td>
+<td>Unverifiable package authorship</td>
+<td>npm provenance attestations, 2FA publishing</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>I</strong></td>
+<td>Source code exposure (non-issue)</td>
+<td>Full source code visible in npm package</td>
+<td>Intentional: open source transparency</td>
+<td>✅ Accepted</td>
+</tr>
+<tr>
+<td><strong>D</strong></td>
+<td>npm registry DoS</td>
+<td>npm registry unavailable during installation</td>
+<td>Use npm mirrors, cache dependencies locally</td>
+<td>❌ External</td>
+</tr>
+<tr>
+<td><strong>E</strong></td>
+<td>Dependency confusion attack</td>
+<td>Internal package name colliding with public npm</td>
+<td>No private dependencies, unique public package names</td>
+<td>✅ Inherent</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🎖️-mitre-attck-mapping" class="tsd-anchor-link">🎖️ MITRE ATT&amp;CK Mapping<a href="#🎖️-mitre-attck-mapping" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<hr>
+<h3 id="attck-→-security-control-mitigation-mapping" class="tsd-anchor-link"><strong>ATT&amp;CK → Security Control Mitigation Mapping</strong><a href="#attck-→-security-control-mitigation-mapping" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Comprehensive mapping of MITRE ATT&amp;CK techniques to implemented security controls for the European Parliament MCP Server.</p>
+<table>
+<thead>
+<tr>
+<th>Technique ID</th>
+<th>Technique Name</th>
+<th>Security Control</th>
+<th>Implementation</th>
+<th>Effectiveness</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>T1195.002</strong></td>
+<td>Supply Chain Compromise: Software Supply Chain</td>
+<td>Dependabot + SLSA Level 3 + SBOM</td>
+<td>Automated vulnerability scanning, provenance attestations, CycloneDX SBOM generation</td>
+<td>🟢 High (95%)</td>
+</tr>
+<tr>
+<td><strong>T1059</strong></td>
+<td>Command and Scripting Interpreter</td>
+<td>No shell execution policy</td>
+<td>TypeScript/Node.js without child_process, strict input validation</td>
+<td>🟢 High (98%)</td>
+</tr>
+<tr>
+<td><strong>T1190</strong></td>
+<td>Exploit Public-Facing Application</td>
+<td>Zod schema validation + rate limiting</td>
+<td>Strict input validation for all MCP tool parameters, client-side rate limits</td>
+<td>🟢 High (90%)</td>
+</tr>
+<tr>
+<td><strong>T1557</strong></td>
+<td>Adversary-in-the-Middle</td>
+<td>HTTPS/TLS 1.3 for EP API</td>
+<td>Enforced TLS for all EP API requests, certificate validation</td>
+<td>🟢 High (95%)</td>
+</tr>
+<tr>
+<td><strong>T1498</strong></td>
+<td>Network Denial of Service</td>
+<td>Rate limiting + response size limits</td>
+<td>Client-side rate limiter, 10MB response cap, timeout controls</td>
+<td>🟡 Medium (75%)</td>
+</tr>
+<tr>
+<td><strong>T1027</strong></td>
+<td>Obfuscated Files or Information</td>
+<td>SLSA provenance + npm audit</td>
+<td>Build attestations, integrity verification, transparency logs</td>
+<td>🟢 High (85%)</td>
+</tr>
+<tr>
+<td><strong>T1071</strong></td>
+<td>Application Layer Protocol</td>
+<td>stdio transport isolation</td>
+<td>MCP protocol limited to stdio, no network exposure</td>
+<td>🟢 High (90%)</td>
+</tr>
+<tr>
+<td><strong>T1592</strong></td>
+<td>Gather Victim Host Information</td>
+<td>Error sanitization + structured logging</td>
+<td>Production error handlers, no stack traces to clients</td>
+<td>🟡 Medium (70%)</td>
+</tr>
+<tr>
+<td><strong>T1068</strong></td>
+<td>Exploitation for Privilege Escalation</td>
+<td>TypeScript strict mode + safe JSON parsing</td>
+<td>Prototype pollution prevention, type safety</td>
+<td>🟢 High (85%)</td>
+</tr>
+<tr>
+<td><strong>T1562</strong></td>
+<td>Impair Defenses</td>
+<td>Immutable logging + monitoring</td>
+<td>Audit logs via stderr, OpenSSF Scorecard monitoring</td>
+<td>🟢 High (80%)</td>
+</tr>
+<tr>
+<td><strong>T1530</strong></td>
+<td>Data from Cloud Storage Object</td>
+<td>Rate limiting + usage analytics</td>
+<td>Monitor bulk data requests, pattern-based anomaly detection</td>
+<td>🟡 Medium (65%)</td>
+</tr>
+<tr>
+<td><strong>T1041</strong></td>
+<td>Exfiltration Over C2 Channel</td>
+<td>stdio isolation + data flow monitoring</td>
+<td>No outbound network from MCP server, logging all tool invocations</td>
+<td>🟢 High (80%)</td>
+</tr>
+<tr>
+<td><strong>T1485</strong></td>
+<td>Data Destruction</td>
+<td>Integrity validation + EP API trust</td>
+<td>Response validation against expected schemas, EP API as source of truth</td>
+<td>🟡 Medium (70%)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Effectiveness Scale:</strong></p>
+<ul>
+<li>🟢 <strong>High (&gt;80%):</strong> Control effectively mitigates technique</li>
+<li>🟡 <strong>Medium (60-80%):</strong> Partial mitigation, residual risk remains</li>
+<li>🔴 <strong>Low (&lt;60%):</strong> Limited mitigation, requires enhancement</li>
+</ul>
+<hr>
+<h3 id="attck-navigator-visualization" class="tsd-anchor-link"><strong>ATT&amp;CK Navigator Visualization</strong><a href="#attck-navigator-visualization" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>To visualize this threat landscape comprehensively, the European Parliament MCP Server team maintains an <strong>ATT&amp;CK Navigator layer</strong> with:</p>
+<ul>
+<li><strong>Highlighted techniques:</strong> All 13 relevant techniques color-coded by coverage</li>
+<li><strong>Metadata annotations:</strong> Links to STRIDE threat IDs and security controls</li>
+<li><strong>Score-based heatmap:</strong> Effectiveness ratings (0-100) for each technique</li>
+<li><strong>Filter views:</strong> Supply Chain, MCP Protocol, API Layer, Runtime</li>
+</ul>
+<p><strong>📊 ATT&amp;CK Navigator Layer JSON:</strong> The layer JSON is a planned deliverable and will be added in a future release under a <code>docs/threat-model/</code> directory once the visualization is finalized; it is not yet available in this repository.</p>
+<p><strong>🔗 Online Visualization:</strong> Use <a href="https://mitre-attack.github.io/attack-navigator/" target="_blank" class="external">MITRE ATT&amp;CK Navigator</a> to load the layer JSON for interactive exploration.</p>
+<p><strong>Recommendation:</strong> Review this mapping <strong>quarterly</strong> and after major architecture changes to ensure continued alignment with evolving threat intelligence.</p>
+<hr>
+<h2 id="🔗-kill-chain-disruption-analysis" class="tsd-anchor-link">🔗 Kill Chain Disruption Analysis<a href="#🔗-kill-chain-disruption-analysis" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>This section maps the <strong>Cyber Kill Chain</strong> phases to the EP MCP Server's defensive controls and detection capabilities, as required by <a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md" target="_blank" class="external">Hack23 AB Threat Modeling Policy §4.1</a>. Each phase identifies how an attacker progresses and where our controls disrupt the chain.</p>
+<h3 id="kill-chain-phase-→-defensive-control-→-detection-mapping" class="tsd-anchor-link"><strong>Kill Chain Phase → Defensive Control → Detection Mapping</strong><a href="#kill-chain-phase-→-defensive-control-→-detection-mapping" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Kill Chain Phase</th>
+<th>Attack Activity (EP MCP Context)</th>
+<th>Defensive Controls</th>
+<th>Detection Mechanisms</th>
+<th>Disruption Effectiveness</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1️⃣ Reconnaissance</strong></td>
+<td>Attacker probes MCP tool schemas, EP API endpoints, npm package metadata, GitHub repo structure</td>
+<td>• Public data only (no sensitive info to discover)<br/>• Generic error messages (I-1 mitigation)<br/>• No version info in runtime errors</td>
+<td>• GitHub traffic analytics<br/>• npm download pattern monitoring<br/>• Unusual MCP tool enumeration logging</td>
+<td>🟡 <strong>Medium</strong> — Public project limits reconnaissance value</td>
+</tr>
+<tr>
+<td><strong>2️⃣ Weaponization</strong></td>
+<td>Attacker crafts malicious npm package, prepares prototype pollution payload, or creates typosquatting package</td>
+<td>• SLSA Level 3 provenance verification<br/>• Package-lock.json integrity<br/>• No private dependencies</td>
+<td>• Dependabot new vulnerability alerts<br/>• npm audit CI/CD gate<br/>• OpenSSF Scorecard monitoring</td>
+<td>🟢 <strong>High</strong> — Supply chain controls are comprehensive</td>
+</tr>
+<tr>
+<td><strong>3️⃣ Delivery</strong></td>
+<td>Attacker publishes compromised dependency, sends phishing to maintainer, or submits malicious PR</td>
+<td>• npm 2FA required for publishing<br/>• Branch protection rules<br/>• CODEOWNERS enforcement<br/>• GPG commit signing</td>
+<td>• GitHub security alerts<br/>• PR review requirements<br/>• npm provenance verification<br/>• Snyk continuous monitoring</td>
+<td>🟢 <strong>High</strong> — Multi-layer delivery prevention</td>
+</tr>
+<tr>
+<td><strong>4️⃣ Exploitation</strong></td>
+<td>Attacker exploits Zod validation bypass, prototype pollution, or MCP parameter injection</td>
+<td>• Zod schema validation on all inputs (E-1)<br/>• TypeScript strict mode (E-2)<br/>• No shell execution (E-4)<br/>• Safe JSON parsing</td>
+<td>• Zod validation error logging<br/>• TypeScript type check failures<br/>• Runtime exception monitoring<br/>• stderr audit logs</td>
+<td>🟢 <strong>High</strong> — Defense-in-depth input validation</td>
+</tr>
+<tr>
+<td><strong>5️⃣ Installation</strong></td>
+<td>Attacker attempts persistence via modified cache entries, altered build artifacts, or backdoored dependency</td>
+<td>• Stateless MCP server (no persistence)<br/>• Immutable cache entries<br/>• SLSA build attestations<br/>• Process isolation (stdio)</td>
+<td>• SLSA provenance signature mismatch<br/>• Build artifact hash verification<br/>• npm package content diff</td>
+<td>🟢 <strong>High</strong> — Stateless architecture prevents installation</td>
+</tr>
+<tr>
+<td><strong>6️⃣ Command &amp; Control</strong></td>
+<td>Attacker uses compromised MCP server to exfiltrate data or inject false responses to AI assistants</td>
+<td>• stdio transport isolation (no network)<br/>• No outbound connections from MCP server<br/>• Rate limiting on all tool calls</td>
+<td>• Audit logging of all tool invocations<br/>• Response size anomaly detection<br/>• Data flow monitoring</td>
+<td>🟢 <strong>High</strong> — stdio isolation prevents C2 channels</td>
+</tr>
+<tr>
+<td><strong>7️⃣ Actions on Objectives</strong></td>
+<td>Attacker manipulates parliamentary data, harvests MEP data, or disrupts service availability</td>
+<td>• EP API as source of truth (integrity)<br/>• Response validation via Zod<br/>• Rate limiting prevents bulk harvesting<br/>• GDPR-aware data minimization</td>
+<td>• Data integrity checks against EP API<br/>• Bulk access pattern detection<br/>• Rate limit violation alerts<br/>• OpenSSF Scorecard degradation</td>
+<td>🟡 <strong>Medium</strong> — Continuous monitoring required</td>
+</tr>
+</tbody>
+</table>
+<h3 id="kill-chain-disruption-visualization" class="tsd-anchor-link"><strong>Kill Chain Disruption Visualization</strong><a href="#kill-chain-disruption-visualization" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">graph LR
+    R[1️⃣ Recon] -->|Public project| W[2️⃣ Weaponize]
+    W -->|Supply chain| D[3️⃣ Deliver]
+    D -->|Malicious code| E[4️⃣ Exploit]
+    E -->|Code execution| I[5️⃣ Install]
+    I -->|Persistence| C[6️⃣ C2]
+    C -->|Control| A[7️⃣ Actions]
+
+    R -.->|🛡️ Generic errors| RD[Disrupted]
+    W -.->|🛡️ SLSA + Dependabot| WD[Disrupted]
+    D -.->|🛡️ 2FA + Branch protection| DD[Disrupted]
+    E -.->|🛡️ Zod + TypeScript strict| ED[Disrupted]
+    I -.->|🛡️ Stateless architecture| ID[Disrupted]
+    C -.->|🛡️ stdio isolation| CD[Disrupted]
+    A -.->|🛡️ EP API integrity| AD[Monitored]
+
+    style RD fill:#ffa726
+    style WD fill:#4CAF50
+    style DD fill:#4CAF50
+    style ED fill:#4CAF50
+    style ID fill:#4CAF50
+    style CD fill:#4CAF50
+    style AD fill:#ffa726
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Key Insight:</strong> The EP MCP Server's <strong>stateless stdio architecture</strong> provides inherent disruption at Kill Chain phases 5 (Installation) and 6 (C2), while <strong>SLSA Level 3 + Dependabot</strong> provide strong disruption at phases 2-3. The primary residual risk is at phase 7 (Actions on Objectives) where continuous monitoring is essential.</p>
+<hr>
+<h2 id="👥-threat-agent-classification" class="tsd-anchor-link">👥 Threat Agent Classification<a href="#👥-threat-agent-classification" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Understanding potential adversaries is critical for proportionate security investment. This section profiles threat actors relevant to the European Parliament MCP Server based on motivation, capability, and likely attack vectors.</p>
+<h3 id="nation-state-actors" class="tsd-anchor-link"><strong>Nation-State Actors</strong><a href="#nation-state-actors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Profile:</strong></p>
+<ul>
+<li><strong>🎯 Motivation:</strong> Intelligence gathering on European parliamentary activities, electoral interference, political influence operations</li>
+<li><strong>💪 Capability Level:</strong> 🔴 <strong>Advanced (Nation-State Resources)</strong>
+<ul>
+<li>Sophisticated supply chain attacks (e.g., SolarWinds-style compromise)</li>
+<li>Zero-day exploits in Node.js/TypeScript ecosystem</li>
+<li>Advanced persistent threats (APT) with long-term objectives</li>
+</ul>
+</li>
+<li><strong>🎭 Likely Tactics:</strong>
+<ul>
+<li>T1195.002: Supply chain compromise of npm dependencies</li>
+<li>T1557: MITM attacks on EP API communications</li>
+<li>T1530: Systematic harvesting of MEP voting patterns and committee data</li>
+</ul>
+</li>
+<li><strong>🔴 Priority:</strong> High — Due to potential for sophisticated, persistent attacks</li>
+<li><strong>🛡️ Mitigation Focus:</strong> SLSA Level 3 provenance, dependency integrity, EP API transport security</li>
+</ul>
+<hr>
+<h3 id="hacktivist-groups" class="tsd-anchor-link"><strong>Hacktivist Groups</strong><a href="#hacktivist-groups" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Profile:</strong></p>
+<ul>
+<li><strong>🎯 Motivation:</strong> Political activism, transparency advocacy, anti-establishment campaigns, public disclosure of parliamentary data</li>
+<li><strong>💪 Capability Level:</strong> 🟡 <strong>Intermediate (Skilled Individuals/Small Teams)</strong>
+<ul>
+<li>Script-based attacks, publicly available exploit tools</li>
+<li>Social engineering of developers and contributors</li>
+<li>Website defacement, data leaks for publicity</li>
+</ul>
+</li>
+<li><strong>🎭 Likely Tactics:</strong>
+<ul>
+<li>T1190: Exploit MCP tool parameter injection vulnerabilities</li>
+<li>T1498: DDoS via API rate exhaustion</li>
+<li>T1485: Data manipulation to spread disinformation</li>
+</ul>
+</li>
+<li><strong>🟠 Priority:</strong> Medium — Capable of opportunistic attacks but limited persistence</li>
+<li><strong>🛡️ Mitigation Focus:</strong> Input validation (Zod schemas), rate limiting, public vulnerability disclosure program</li>
+</ul>
+<hr>
+<h3 id="insider-threats-supply-chain" class="tsd-anchor-link"><strong>Insider Threats (Supply Chain)</strong><a href="#insider-threats-supply-chain" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Profile:</strong></p>
+<ul>
+<li><strong>🎯 Motivation:</strong> Compromised developer account, malicious open-source contributor, disgruntled maintainer</li>
+<li><strong>💪 Capability Level:</strong> 🟠 <strong>High (Trusted Access)</strong>
+<ul>
+<li>Direct commit access or pull request approval</li>
+<li>Knowledge of codebase internals and security controls</li>
+<li>Ability to introduce subtle vulnerabilities</li>
+</ul>
+</li>
+<li><strong>🎭 Likely Tactics:</strong>
+<ul>
+<li>T1195.002: Malicious dependency substitution or backdoor insertion</li>
+<li>T1027: Obfuscated malicious code in commits</li>
+<li>T1562: Disabling security controls (e.g., test bypasses)</li>
+</ul>
+</li>
+<li><strong>🔴 Priority:</strong> High — Trusted position enables high-impact attacks</li>
+<li><strong>🛡️ Mitigation Focus:</strong> Branch protection, mandatory code review, GPG commit signing, SLSA attestations</li>
+</ul>
+<hr>
+<h3 id="automated-threat-actors-botsscrapers" class="tsd-anchor-link"><strong>Automated Threat Actors (Bots/Scrapers)</strong><a href="#automated-threat-actors-botsscrapers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Profile:</strong></p>
+<ul>
+<li><strong>🎯 Motivation:</strong> Bulk data harvesting, API abuse for commercial purposes, training dataset collection for AI models</li>
+<li><strong>💪 Capability Level:</strong> 🟢 <strong>Low (Automated Scripts)</strong>
+<ul>
+<li>Mass automated requests via compromised MCP clients</li>
+<li>Simple evasion techniques (rotating IPs, user agents)</li>
+<li>No sophisticated exploit capability</li>
+</ul>
+</li>
+<li><strong>🎭 Likely Tactics:</strong>
+<ul>
+<li>T1498: API rate limit exhaustion via distributed requests</li>
+<li>T1530: Bulk collection of parliamentary datasets</li>
+<li>T1071: Abuse of MCP protocol for unauthorized access</li>
+</ul>
+</li>
+<li><strong>🟡 Priority:</strong> Medium — High volume but low sophistication</li>
+<li><strong>🛡️ Mitigation Focus:</strong> Client-side rate limiting, usage analytics, anomaly detection</li>
+</ul>
+<hr>
+<h3 id="competitorespionage-actors" class="tsd-anchor-link"><strong>Competitor/Espionage Actors</strong><a href="#competitorespionage-actors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Profile:</strong></p>
+<ul>
+<li><strong>🎯 Motivation:</strong> Commercial intelligence gathering, competitive advantage in political consulting, lobbying intelligence</li>
+<li><strong>💪 Capability Level:</strong> 🟡 <strong>Intermediate to High</strong>
+<ul>
+<li>Funded operations with technical capabilities</li>
+<li>Targeted attacks on specific MEP data or committee information</li>
+<li>Long-term systematic data collection</li>
+</ul>
+</li>
+<li><strong>🎭 Likely Tactics:</strong>
+<ul>
+<li>T1530: Systematic harvesting of EP voting records and attendance data</li>
+<li>T1592: Reconnaissance via error message analysis</li>
+<li>T1041: Exfiltration of aggregated parliamentary intelligence</li>
+</ul>
+</li>
+<li><strong>🟠 Priority:</strong> Medium — Targeted but not infrastructure-destructive</li>
+<li><strong>🛡️ Mitigation Focus:</strong> Audit logging, data access pattern monitoring, request attribution</li>
+</ul>
+<hr>
+<h3 id="threat-actor-priority-matrix" class="tsd-anchor-link"><strong>Threat Actor Priority Matrix</strong><a href="#threat-actor-priority-matrix" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">quadrantChart
+    title Threat Actor Assessment: Capability vs Motivation
+    x-axis Low Motivation --> High Motivation
+    y-axis Low Capability --> High Capability
+    quadrant-1 Critical Threats
+    quadrant-2 High-Risk Actors
+    quadrant-3 Opportunistic Threats
+    quadrant-4 Persistent Threats
+    Nation-State APT: [0.9, 0.95]
+    Insider Threat: [0.7, 0.85]
+    Hacktivist Groups: [0.8, 0.5]
+    Competitor Espionage: [0.65, 0.6]
+    Automated Bots: [0.4, 0.2]
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Action Items by Actor:</strong></p>
+<ul>
+<li><strong>Nation-State:</strong> Focus on supply chain integrity (SLSA Level 3, SBOM)</li>
+<li><strong>Hacktivist:</strong> Strengthen input validation and public-facing security</li>
+<li><strong>Insider Threat:</strong> Enforce code review, branch protection, audit trails</li>
+<li><strong>Automated Bots:</strong> Implement robust rate limiting and anomaly detection</li>
+<li><strong>Competitor:</strong> Monitor data access patterns, enhance logging</li>
+</ul>
+<hr>
+<h2 id="🌐-current-threat-landscape" class="tsd-anchor-link">🌐 Current Threat Landscape<a href="#🌐-current-threat-landscape" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The European Parliament MCP Server operates within a dynamic threat environment shaped by geopolitical tensions, evolving attack techniques, and the strategic importance of parliamentary data. This section integrates <strong>ENISA Threat Landscape 2024</strong> findings with EP-specific context.</p>
+<h3 id="enisa-threat-landscape-2024-top-threats-mapped-to-ep-mcp-server" class="tsd-anchor-link"><strong>ENISA Threat Landscape 2024 — Top Threats Mapped to EP MCP Server</strong><a href="#enisa-threat-landscape-2024-top-threats-mapped-to-ep-mcp-server" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>ENISA Threat</th>
+<th>Relevance to EP MCP Server</th>
+<th>Current Posture</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>🔒 Ransomware</strong></td>
+<td>Low direct risk (no data persistence), but <strong>supply chain ransomware</strong> targeting npm dependencies could encrypt developer workstations</td>
+<td>🟢 Mitigated via SLSA Level 3, no critical data storage</td>
+<td>🟡 Medium</td>
+</tr>
+<tr>
+<td><strong>🦠 Malware</strong></td>
+<td><strong>High risk:</strong> Malicious npm packages in dependency tree (e.g., typosquatting, compromised maintainer accounts)</td>
+<td>🟢 Mitigated via Dependabot, npm audit, OpenSSF Scorecard</td>
+<td>🔴 High</td>
+</tr>
+<tr>
+<td><strong>🎣 Social Engineering</strong></td>
+<td><strong>Developer phishing/account takeover</strong> to inject malicious code or publish compromised npm versions</td>
+<td>🟡 Partial mitigation via 2FA, GPG signing</td>
+<td>🔴 High</td>
+</tr>
+<tr>
+<td><strong>💾 Data Breaches</strong></td>
+<td><strong>Parliamentary data integrity breach:</strong> Manipulation of EP voting records, MEP personal data exposure (GDPR violation)</td>
+<td>🟡 Partial mitigation via HTTPS, response validation</td>
+<td>🟠 Medium-High</td>
+</tr>
+<tr>
+<td><strong>☁️ DDoS</strong></td>
+<td><strong>API exhaustion attacks</strong> targeting EP Open Data API via MCP server abuse</td>
+<td>🟢 Mitigated via client-side rate limiting</td>
+<td>🟡 Medium</td>
+</tr>
+<tr>
+<td><strong>📰 Disinformation</strong></td>
+<td><strong>Data manipulation via compromised MCP server:</strong> False parliamentary data fed to AI assistants, influencing political analysis</td>
+<td>🟡 Partial mitigation via integrity checks</td>
+<td>🔴 High</td>
+</tr>
+<tr>
+<td><strong>⛓️ Supply Chain Attacks</strong></td>
+<td><strong>Primary threat vector:</strong> Compromised npm packages, malicious CI/CD pipeline modifications, SLSA bypass attempts</td>
+<td>🟢 Strong mitigation via SLSA Level 3, SBOM, Dependabot</td>
+<td>🔴 Critical</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="eu-cyber-resilience-act-cra-context" class="tsd-anchor-link"><strong>EU Cyber Resilience Act (CRA) Context</strong><a href="#eu-cyber-resilience-act-cra-context" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The <strong>EU Cyber Resilience Act (Regulation (EU) 2024/2847)</strong> imposes mandatory cybersecurity requirements for products with digital elements. The EP MCP Server, as an open-source component with parliamentary data access, falls under CRA scope:</p>
+<ul>
+<li><strong>📋 Vulnerability Disclosure:</strong> Mandatory 24-hour reporting of actively exploited vulnerabilities to ENISA</li>
+<li><strong>📦 SBOM Requirements:</strong> CycloneDX SBOM generation already implemented</li>
+<li><strong>🔄 Security Updates:</strong> Commitment to timely patching (currently: critical &lt;7 days, high &lt;30 days)</li>
+<li><strong>🛡️ Default Security:</strong> Secure-by-default configuration (no hardcoded credentials, HTTPS enforcement)</li>
+</ul>
+<p><strong>CRA Compliance Status:</strong> ✅ <strong>Conforming</strong> — See <a href="CRA-ASSESSMENT.html">CRA-ASSESSMENT.md</a> for detailed analysis</p>
+<hr>
+<h3 id="parliamentary-data-threat-context" class="tsd-anchor-link"><strong>Parliamentary Data Threat Context</strong><a href="#parliamentary-data-threat-context" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The strategic value of European Parliament data creates unique threat scenarios:</p>
+<ol>
+<li>
+<p><strong>Electoral Interference (Nation-State):</strong></p>
+<ul>
+<li><strong>Threat:</strong> Manipulation of MEP voting records before elections to influence public perception</li>
+<li><strong>Attack Vector:</strong> Compromised MCP server returning altered roll-call vote data</li>
+<li><strong>Impact:</strong> Democratic integrity, electoral outcomes</li>
+<li><strong>Mitigation:</strong> EP API as single source of truth, response integrity validation</li>
+</ul>
+</li>
+<li>
+<p><strong>GDPR-Protected MEP Data (Privacy Activists/Competitors):</strong></p>
+<ul>
+<li><strong>Threat:</strong> Bulk harvesting of MEP personal contact data, office locations, parliamentary group affiliations</li>
+<li><strong>Attack Vector:</strong> Automated MCP tool invocations to systematically collect MEP biographical data</li>
+<li><strong>Impact:</strong> GDPR Article 6 violation, privacy breach, potential harassment campaigns</li>
+<li><strong>Mitigation:</strong> Rate limiting, usage pattern monitoring, public data scope limitation</li>
+</ul>
+</li>
+<li>
+<p><strong>Policy Intelligence (Lobbying/Espionage):</strong></p>
+<ul>
+<li><strong>Threat:</strong> Systematic collection of committee votes, amendments, and parliamentary questions for competitive intelligence</li>
+<li><strong>Attack Vector:</strong> Long-term MCP server abuse by competitor AI assistants</li>
+<li><strong>Impact:</strong> Unfair commercial advantage, policy prediction, lobbying strategy</li>
+<li><strong>Mitigation:</strong> Audit logging, anomaly detection, transparency about data sources</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="emerging-threat-vectors-2024-2025" class="tsd-anchor-link"><strong>Emerging Threat Vectors (2024-2025)</strong><a href="#emerging-threat-vectors-2024-2025" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Threat</th>
+<th>Description</th>
+<th>Likelihood</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AI-Powered Supply Chain Attacks</strong></td>
+<td>LLMs used to generate sophisticated obfuscated malware in npm packages</td>
+<td>🟡 Medium</td>
+<td>🔴 Critical</td>
+</tr>
+<tr>
+<td><strong>MCP Protocol Exploitation</strong></td>
+<td>Novel attacks targeting MCP stdio transport or tool parameter parsing</td>
+<td>🟡 Medium</td>
+<td>🟠 High</td>
+</tr>
+<tr>
+<td><strong>Dependency Confusion 2.0</strong></td>
+<td>Advanced typosquatting using AI-generated package names similar to <code>european-parliament-mcp-server</code></td>
+<td>🟡 Medium</td>
+<td>🟠 High</td>
+</tr>
+<tr>
+<td><strong>Deepfake Parliamentary Data</strong></td>
+<td>AI-generated false EP datasets indistinguishable from legitimate data</td>
+<td>🟢 Low</td>
+<td>🔴 Critical</td>
+</tr>
+<tr>
+<td><strong>Quantum-Resistant Cryptography Pressure</strong></td>
+<td>Future requirement to migrate TLS to post-quantum algorithms</td>
+<td>🟢 Low (2025+)</td>
+<td>🟠 Medium</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🎬-scenario-centric-threat-modeling-ep-specific" class="tsd-anchor-link">🎬 Scenario-Centric Threat Modeling (EP-Specific)<a href="#🎬-scenario-centric-threat-modeling-ep-specific" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>This section applies scenario-based threat modeling to European Parliament-specific attack chains, providing actionable detection and response strategies.</p>
+<hr>
+<h3 id="scenario-1-parliamentary-data-manipulation-attack" class="tsd-anchor-link"><strong>Scenario 1: Parliamentary Data Manipulation Attack</strong><a href="#scenario-1-parliamentary-data-manipulation-attack" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>🎯 Attack Objective:</strong> Manipulate voting record data returned by MCP server to influence AI-assisted political analysis</p>
+<p><strong>🎭 Threat Actor:</strong> Nation-state actor or hacktivist group</p>
+<p><strong>📊 Attack Chain:</strong></p>
+<pre><code class="mermaid">graph LR
+    A[1️⃣ Compromise npm dependency] --> B[2️⃣ Inject response manipulation code]
+    B --> C[3️⃣ MCP server returns altered vote data]
+    C --> D[4️⃣ AI assistant provides false analysis]
+    D --> E[5️⃣ Political decisions based on false data]
+    
+    style A fill:#ff6b6b
+    style B fill:#ff6b6b
+    style C fill:#ffa726
+    style D fill:#ffa726
+    style E fill:#ef5350
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Attack Steps:</strong></p>
+<ol>
+<li><strong>Initial Compromise:</strong> Attacker exploits vulnerability in transitive npm dependency (e.g., malicious <code>lodash</code> substitute)</li>
+<li><strong>Code Injection:</strong> Malicious code intercepts the <code>get_voting_records</code> MCP tool</li>
+<li><strong>Data Manipulation:</strong> Alters vote outcomes (e.g., changes &quot;Against&quot; to &quot;For&quot; for specific MEPs)</li>
+<li><strong>Propagation:</strong> AI assistant uses corrupted data to generate policy analysis</li>
+<li><strong>Impact:</strong> Political decisions, news articles, or research based on false parliamentary data</li>
+</ol>
+<p><strong>🔍 Detection Indicators:</strong></p>
+<ul>
+<li>✅ SLSA provenance verification failure</li>
+<li>✅ npm audit alerts on compromised dependency</li>
+<li>✅ Anomalous response size or schema validation errors</li>
+<li>✅ OpenSSF Scorecard supply chain score degradation</li>
+</ul>
+<p><strong>🛡️ Response Actions:</strong></p>
+<ol>
+<li><strong>Immediate:</strong> Quarantine affected npm package version</li>
+<li><strong>Containment:</strong> Revert to last known-good dependency lockfile</li>
+<li><strong>Investigation:</strong> Audit all tool invocations during compromise window</li>
+<li><strong>Recovery:</strong> Publish security advisory, coordinate with npm security team</li>
+<li><strong>Prevention:</strong> Enhance SBOM monitoring, implement runtime integrity checks</li>
+</ol>
+<p><strong>📉 Risk Score:</strong> 🔴 <strong>Critical (9.0/10)</strong> — High impact on democratic integrity</p>
+<hr>
+<h3 id="scenario-2-mep-personal-data-abuse-gdpr-violation" class="tsd-anchor-link"><strong>Scenario 2: MEP Personal Data Abuse (GDPR Violation)</strong><a href="#scenario-2-mep-personal-data-abuse-gdpr-violation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>🎯 Attack Objective:</strong> Unauthorized bulk harvesting of MEP contact and personal data for commercial or political purposes</p>
+<p><strong>🎭 Threat Actor:</strong> Competitor intelligence firm or automated bot network</p>
+<p><strong>📊 Attack Chain:</strong></p>
+<pre><code class="mermaid">graph LR
+    A[1️⃣ Automated MCP client] --> B[2️⃣ Systematic MEP data queries]
+    B --> C[3️⃣ Bulk export of GDPR-protected data]
+    C --> D[4️⃣ Commercial database sale]
+    D --> E[5️⃣ GDPR Article 6 violation]
+    
+    style A fill:#ffa726
+    style B fill:#ffa726
+    style C fill:#ff6b6b
+    style D fill:#ef5350
+    style E fill:#ef5350
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Attack Steps:</strong></p>
+<ol>
+<li><strong>Reconnaissance:</strong> Attacker identifies MCP tools <code>get_meps</code> and <code>get_mep_details</code> for biographical data (using <code>get_meps</code> to enumerate MEPs and <code>get_mep_details</code> to retrieve full profiles)</li>
+<li><strong>Automation:</strong> Script iterates through all 705 MEPs to harvest contact details, office locations, party affiliations</li>
+<li><strong>Exfiltration:</strong> Bulk collection of GDPR Article 9 special category data (political opinions)</li>
+<li><strong>Monetization:</strong> Sells MEP database to lobbying firms or political campaigns</li>
+<li><strong>Legal Impact:</strong> GDPR fine up to €20M or 4% of global turnover</li>
+</ol>
+<p><strong>🔍 Detection Indicators:</strong></p>
+<ul>
+<li>✅ Rate limiting threshold exceeded (&gt;100 requests/hour)</li>
+<li>✅ Sequential MEP ID enumeration pattern detected</li>
+<li>✅ Bulk data access from single IP/client</li>
+<li>✅ Unusual off-hours usage patterns</li>
+</ul>
+<p><strong>🛡️ Response Actions:</strong></p>
+<ol>
+<li><strong>Immediate:</strong> Throttle client rate limits to 10 requests/minute</li>
+<li><strong>Containment:</strong> Implement CAPTCHA-style challenge for bulk requests</li>
+<li><strong>Investigation:</strong> Audit logs to identify compromised client identity</li>
+<li><strong>Recovery:</strong> Notify EP data protection officer, potential GDPR Article 33 notification</li>
+<li><strong>Prevention:</strong> Implement data minimization (limit biographical data scope)</li>
+</ol>
+<p><strong>📉 Risk Score:</strong> 🟠 <strong>High (7.5/10)</strong> — GDPR violation with significant financial penalties</p>
+<hr>
+<h3 id="scenario-3-electoral-influence-via-ai-assisted-disinformation" class="tsd-anchor-link"><strong>Scenario 3: Electoral Influence via AI-Assisted Disinformation</strong><a href="#scenario-3-electoral-influence-via-ai-assisted-disinformation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>🎯 Attack Objective:</strong> Compromise MCP server to feed false parliamentary data to AI assistants used by journalists and researchers</p>
+<p><strong>🎭 Threat Actor:</strong> Nation-state APT targeting EU elections</p>
+<p><strong>📊 Attack Chain:</strong></p>
+<pre><code class="mermaid">graph LR
+    A[1️⃣ Supply chain compromise] --> B[2️⃣ Inject disinformation logic]
+    B --> C[3️⃣ AI assistants use false data]
+    C --> D[4️⃣ News articles published]
+    D --> E[5️⃣ Electoral influence achieved]
+    
+    style A fill:#ff6b6b
+    style B fill:#ff6b6b
+    style C fill:#ffa726
+    style D fill:#ef5350
+    style E fill:#ef5350
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Attack Steps:</strong></p>
+<ol>
+<li><strong>Pre-Election Timing:</strong> 3 months before EU parliamentary elections, attacker compromises MCP server</li>
+<li><strong>Targeted Manipulation:</strong> Alters voting records for specific MEPs in swing districts</li>
+<li><strong>AI Propagation:</strong> Journalists using AI assistants (Claude, ChatGPT) cite false data</li>
+<li><strong>Media Amplification:</strong> News articles report fabricated voting patterns</li>
+<li><strong>Electoral Impact:</strong> Public perception shift influences voting behavior</li>
+</ol>
+<p><strong>🔍 Detection Indicators:</strong></p>
+<ul>
+<li>✅ Discrepancy between EP official portal and MCP server responses</li>
+<li>✅ SLSA provenance verification failures</li>
+<li>✅ Community reports of data inconsistencies</li>
+<li>✅ Anomalous build artifacts in npm package</li>
+</ul>
+<p><strong>🛡️ Response Actions:</strong></p>
+<ol>
+<li><strong>Immediate:</strong> Emergency npm package deprecation + public security advisory</li>
+<li><strong>Containment:</strong> Direct users to EP official API as alternative</li>
+<li><strong>Investigation:</strong> Forensic analysis of compromised build pipeline</li>
+<li><strong>Recovery:</strong> Restore from verified clean state, republish with enhanced attestations</li>
+<li><strong>Prevention:</strong> Implement EP API response checksums, real-time integrity monitoring</li>
+</ol>
+<p><strong>📉 Risk Score:</strong> 🔴 <strong>Critical (9.5/10)</strong> — Democratic process integrity threat</p>
+<hr>
+<h3 id="scenario-4-supply-chain-compromise-of-npm-package" class="tsd-anchor-link"><strong>Scenario 4: Supply Chain Compromise of npm Package</strong><a href="#scenario-4-supply-chain-compromise-of-npm-package" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>🎯 Attack Objective:</strong> Publish malicious version of <code>european-parliament-mcp-server</code> to npm registry</p>
+<p><strong>🎭 Threat Actor:</strong> Insider threat (compromised maintainer account)</p>
+<p><strong>📊 Attack Chain:</strong></p>
+<pre><code class="mermaid">graph LR
+    A[1️⃣ Maintainer account phishing] --> B[2️⃣ 2FA bypass via session hijacking]
+    B --> C[3️⃣ Malicious npm publish]
+    C --> D[4️⃣ Automatic updates infect users]
+    D --> E[5️⃣ Widespread MCP server compromise]
+    
+    style A fill:#ffa726
+    style B fill:#ff6b6b
+    style C fill:#ef5350
+    style D fill:#ef5350
+    style E fill:#ef5350
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Attack Steps:</strong></p>
+<ol>
+<li><strong>Social Engineering:</strong> Attacker sends targeted phishing email to npm package maintainer</li>
+<li><strong>Account Takeover:</strong> Bypasses 2FA via browser session cookie theft</li>
+<li><strong>Malicious Publish:</strong> Publishes <code>european-parliament-mcp-server@3.1.4</code> with backdoor</li>
+<li><strong>Auto-Update:</strong> Users with <code>^3.1.0</code> in package.json automatically pull malicious version</li>
+<li><strong>Backdoor Activation:</strong> Malware exfiltrates API keys or injects false data</li>
+</ol>
+<p><strong>🔍 Detection Indicators:</strong></p>
+<ul>
+<li>✅ SLSA provenance signature mismatch</li>
+<li>✅ npm package version published without corresponding GitHub release</li>
+<li>✅ OpenSSF Scorecard token permissions alert</li>
+<li>✅ Community reports of unexpected behavior</li>
+</ul>
+<p><strong>🛡️ Response Actions:</strong></p>
+<ol>
+<li><strong>Immediate:</strong> npm unpublish malicious version (within 72-hour window)</li>
+<li><strong>Containment:</strong> Publish emergency patch version, notify users via GitHub Security Advisory</li>
+<li><strong>Investigation:</strong> Revoke compromised npm token, audit all recent publishes</li>
+<li><strong>Recovery:</strong> Reset maintainer credentials, enforce hardware 2FA</li>
+<li><strong>Prevention:</strong> Implement GitHub Actions OIDC publishing (no long-lived tokens)</li>
+</ol>
+<p><strong>📉 Risk Score:</strong> 🔴 <strong>Critical (9.0/10)</strong> — Supply chain attack with wide blast radius</p>
+<hr>
+<h3 id="scenario-5-mcp-protocol-injection-attack" class="tsd-anchor-link"><strong>Scenario 5: MCP Protocol Injection Attack</strong><a href="#scenario-5-mcp-protocol-injection-attack" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>🎯 Attack Objective:</strong> Exploit MCP tool parameter parsing to inject malicious JSON-RPC payloads</p>
+<p><strong>🎭 Threat Actor:</strong> Security researcher (white hat) or advanced persistent threat</p>
+<p><strong>📊 Attack Chain:</strong></p>
+<pre><code class="mermaid">graph LR
+    A[1️⃣ Craft malicious tool parameters] --> B[2️⃣ Exploit Zod schema weakness]
+    B --> C[3️⃣ Inject code execution payload]
+    C --> D[4️⃣ MCP server executes attacker code]
+    D --> E[5️⃣ AI assistant compromise]
+    
+    style A fill:#ffa726
+    style B fill:#ff6b6b
+    style C fill:#ef5350
+    style D fill:#ef5350
+    style E fill:#ef5350
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Attack Steps:</strong></p>
+<ol>
+<li><strong>Payload Crafting:</strong> Attacker analyzes Zod schemas for <code>searchDocuments</code> tool</li>
+<li><strong>Schema Bypass:</strong> Finds edge case where deeply nested JSON evades validation</li>
+<li><strong>Code Injection:</strong> Injects prototype pollution payload via <code>__proto__</code> in parameters</li>
+<li><strong>Execution:</strong> Exploits TypeScript <code>any</code> type in error handler to gain code execution</li>
+<li><strong>Persistence:</strong> Modifies AI assistant behavior to exfiltrate user prompts</li>
+</ol>
+<p><strong>🔍 Detection Indicators:</strong></p>
+<ul>
+<li>✅ Zod validation errors with unusual parameter structures</li>
+<li>✅ TypeScript strict mode violations (should not occur)</li>
+<li>✅ stderr logs show unexpected JSON parsing errors</li>
+<li>✅ Memory usage spikes during tool invocation</li>
+</ul>
+<p><strong>🛡️ Response Actions:</strong></p>
+<ol>
+<li><strong>Immediate:</strong> Kill MCP server process, isolate affected AI assistant instance</li>
+<li><strong>Containment:</strong> Deploy emergency patch to harden Zod schemas</li>
+<li><strong>Investigation:</strong> Analyze parameter payloads, identify injection vector</li>
+<li><strong>Recovery:</strong> Publish CVE, coordinate disclosure with MCP protocol maintainers</li>
+<li><strong>Prevention:</strong> Fuzz testing of all MCP tool schemas, add runtime schema enforcement</li>
+</ol>
+<p><strong>📉 Risk Score:</strong> 🟠 <strong>High (8.0/10)</strong> — Novel MCP protocol exploit with AI assistant compromise</p>
+<hr>
+<h2 id="🔄-continuous-validation-assessment" class="tsd-anchor-link">🔄 Continuous Validation &amp; Assessment<a href="#🔄-continuous-validation-assessment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Threat modeling is not a one-time activity but a <strong>continuous process</strong> that evolves with the system, threat landscape, and organizational maturity. This section defines the validation lifecycle for the European Parliament MCP Server threat model.</p>
+<h3 id="threat-modeling-workshop-process" class="tsd-anchor-link"><strong>Threat Modeling Workshop Process</strong><a href="#threat-modeling-workshop-process" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Following <a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md" target="_blank" class="external">Hack23 AB Workshop Framework</a>, the EP MCP Server employs a structured <strong>7-phase workshop process</strong>:</p>
+<pre><code class="mermaid">graph LR
+    PRE[🔍 PRE<br/>Preparation] --> ENUM[📋 ENUM<br/>Enumeration]
+    ENUM --> THREATS[⚠️ THREATS<br/>Identification]
+    THREATS --> MAP[🗺️ MAP<br/>ATT&CK Mapping]
+    MAP --> PLAN[📝 PLAN<br/>Mitigation]
+    PLAN --> VALIDATE[✅ VALIDATE<br/>Verification]
+    VALIDATE --> MONITOR[📊 MONITOR<br/>Continuous]
+    MONITOR -.->|Next Cycle| PRE
+
+    style PRE fill:#4CAF50
+    style ENUM fill:#2196F3
+    style THREATS fill:#FF9800
+    style MAP fill:#9C27B0
+    style PLAN fill:#F44336
+    style VALIDATE fill:#00BCD4
+    style MONITOR fill:#795548
+</code><button type="button">Copy</button></pre>
+
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Activities</th>
+<th>EP MCP Server Focus</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>🔍 PRE</strong></td>
+<td>Gather architecture docs, review previous findings, update scope</td>
+<td>Review SECURITY_ARCHITECTURE.md, npm audit, Dependabot alerts</td>
+<td>Updated scope definition, pre-read materials</td>
+</tr>
+<tr>
+<td><strong>📋 ENUM</strong></td>
+<td>Enumerate assets, trust boundaries, data flows</td>
+<td>Map MCP tools, EP API endpoints, cache layer, stdio transport</td>
+<td>Asset inventory, data flow diagrams</td>
+</tr>
+<tr>
+<td><strong>⚠️ THREATS</strong></td>
+<td>Apply STRIDE per component, identify new threats</td>
+<td>Analyze 6 components × 6 STRIDE categories</td>
+<td>Updated STRIDE threat tables</td>
+</tr>
+<tr>
+<td><strong>🗺️ MAP</strong></td>
+<td>Map threats to MITRE ATT&amp;CK, ENISA TL 2024, Kill Chain</td>
+<td>Update 13 ATT&amp;CK technique mappings, kill chain disruption table</td>
+<td>ATT&amp;CK coverage heat map, kill chain analysis</td>
+</tr>
+<tr>
+<td><strong>📝 PLAN</strong></td>
+<td>Design mitigations, assign owners, set deadlines</td>
+<td>Prioritize controls for supply chain, input validation, data integrity</td>
+<td>Mitigation action items with owners</td>
+</tr>
+<tr>
+<td><strong>✅ VALIDATE</strong></td>
+<td>Test controls, verify SLSA attestations, review OpenSSF score</td>
+<td>Run security tests, verify rate limiting, check SBOM</td>
+<td>Validation report, control effectiveness metrics</td>
+</tr>
+<tr>
+<td><strong>📊 MONITOR</strong></td>
+<td>Track KPIs, review threat intelligence, schedule next cycle</td>
+<td>Monitor OpenSSF Scorecard, Dependabot, npm audit, audit logs</td>
+<td>KPI dashboard, next review date</td>
+</tr>
+</tbody>
+</table>
+<p><strong>🗓️ Cadence:</strong></p>
+<ul>
+<li><strong>Monthly:</strong> Quick threat landscape review (30 minutes)</li>
+<li><strong>Quarterly:</strong> Full threat model workshop (2-3 hours)</li>
+<li><strong>Annually:</strong> Comprehensive threat model revision (full-day session)</li>
+</ul>
+<p><strong>👥 Workshop Participants:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Responsibility</th>
+<th>Mandatory?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Security Architect (CEO)</strong></td>
+<td>Workshop facilitator, threat prioritization</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td><strong>Lead Developer</strong></td>
+<td>Technical feasibility of mitigations</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td><strong>Product Owner</strong></td>
+<td>Business impact assessment</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td><strong>DevOps Engineer</strong></td>
+<td>CI/CD security controls</td>
+<td>🟡 Recommended</td>
+</tr>
+<tr>
+<td><strong>External Security Expert</strong></td>
+<td>Independent threat assessment</td>
+<td>🟢 Annually</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="ad-hoc-review-triggers" class="tsd-anchor-link"><strong>Ad-Hoc Review Triggers</strong><a href="#ad-hoc-review-triggers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The threat model must be reviewed <strong>immediately</strong> when any of the following events occur:</p>
+<table>
+<thead>
+<tr>
+<th>Trigger Event</th>
+<th>Review Scope</th>
+<th>Timeline</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>🚨 Security Incident</strong></td>
+<td>Full STRIDE re-analysis of affected component</td>
+<td>Within 48 hours</td>
+</tr>
+<tr>
+<td><strong>🆕 Major Feature Release</strong></td>
+<td>Threat analysis of new attack surface</td>
+<td>Before release</td>
+</tr>
+<tr>
+<td><strong>📊 Significant Threat Landscape Change</strong></td>
+<td>Update threat actor profiles, MITRE ATT&amp;CK mapping</td>
+<td>Within 1 week</td>
+</tr>
+<tr>
+<td><strong>🔧 Architecture Change</strong></td>
+<td>Re-assess STRIDE for modified components</td>
+<td>Before deployment</td>
+</tr>
+<tr>
+<td><strong>📜 New Regulatory Requirement</strong></td>
+<td>Compliance gap analysis (e.g., CRA update)</td>
+<td>Within 30 days</td>
+</tr>
+<tr>
+<td><strong>🔓 Zero-Day in Dependency</strong></td>
+<td>Risk assessment and mitigation strategy</td>
+<td>Within 24 hours</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="workshop-activities-checklist" class="tsd-anchor-link"><strong>Workshop Activities Checklist</strong><a href="#workshop-activities-checklist" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Quarterly Threat Modeling Workshop Agenda:</strong></p>
+<ul>
+<li>
+<p>[ ] <strong>Review Previous Action Items (15 min)</strong></p>
+<ul>
+<li>Status of mitigations from last workshop</li>
+<li>Effectiveness metrics for deployed controls</li>
+</ul>
+</li>
+<li>
+<p>[ ] <strong>Threat Landscape Update (30 min)</strong></p>
+<ul>
+<li>ENISA Threat Landscape review</li>
+<li>Recent vulnerabilities in Node.js/TypeScript ecosystem</li>
+<li>New MITRE ATT&amp;CK techniques</li>
+</ul>
+</li>
+<li>
+<p>[ ] <strong>STRIDE Re-Assessment (45 min)</strong></p>
+<ul>
+<li>Walk through each threat category</li>
+<li>Identify new threats since last review</li>
+<li>Re-assess likelihood and impact scores</li>
+</ul>
+</li>
+<li>
+<p>[ ] <strong>Attack Tree Review (30 min)</strong></p>
+<ul>
+<li>Update attack tree with new threat vectors</li>
+<li>Re-evaluate mitigation effectiveness</li>
+</ul>
+</li>
+<li>
+<p>[ ] <strong>Security Control Validation (30 min)</strong></p>
+<ul>
+<li>Test SLSA attestations, Dependabot alerts</li>
+<li>Review OpenSSF Scorecard metrics</li>
+<li>Verify rate limiting and input validation</li>
+</ul>
+</li>
+<li>
+<p>[ ] <strong>Risk Prioritization (20 min)</strong></p>
+<ul>
+<li>Update risk matrix based on new findings</li>
+<li>Assign action items with owners and deadlines</li>
+</ul>
+</li>
+<li>
+<p>[ ] <strong>Documentation Update (10 min)</strong></p>
+<ul>
+<li>Update this THREAT_MODEL.md</li>
+<li>Sync with SECURITY_ARCHITECTURE.md</li>
+</ul>
+</li>
+</ul>
+<p><strong>📝 Workshop Output:</strong> Updated threat model, prioritized action items, risk register</p>
+<hr>
+<h3 id="continuous-validation-cycle" class="tsd-anchor-link"><strong>Continuous Validation Cycle</strong><a href="#continuous-validation-cycle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">graph LR
+    A[🔍 Monitor Threat<br/>Landscape] --> B[📊 Identify New<br/>Threats]
+    B --> C[🎯 Assess Impact &<br/>Likelihood]
+    C --> D[🛡️ Design/Update<br/>Mitigations]
+    D --> E[✅ Implement<br/>Controls]
+    E --> F[📈 Measure<br/>Effectiveness]
+    F --> A
+    
+    style A fill:#4CAF50
+    style B fill:#2196F3
+    style C fill:#FF9800
+    style D fill:#9C27B0
+    style E fill:#F44336
+    style F fill:#00BCD4
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Key Performance Indicators (KPIs) for Threat Model Health:</strong></p>
+<table>
+<thead>
+<tr>
+<th>KPI</th>
+<th>Target</th>
+<th>Current</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenSSF Scorecard Score</td>
+<td>≥8.0/10</td>
+<td>9.2/10</td>
+<td>✅ Excellent</td>
+</tr>
+<tr>
+<td>High/Critical Vulnerabilities</td>
+<td>0</td>
+<td>0</td>
+<td>✅ Excellent</td>
+</tr>
+<tr>
+<td>SLSA Provenance Coverage</td>
+<td>100%</td>
+<td>100%</td>
+<td>✅ Excellent</td>
+</tr>
+<tr>
+<td>Threat Model Staleness</td>
+<td>&lt;90 days</td>
+<td>15 days</td>
+<td>✅ Current</td>
+</tr>
+<tr>
+<td>Security Control Test Coverage</td>
+<td>≥80%</td>
+<td>85%</td>
+<td>✅ Good</td>
+</tr>
+<tr>
+<td>Incident Response Drill Success</td>
+<td>100%</td>
+<td>N/A</td>
+<td>⚠️ Not tested</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Improvement Actions:</strong></p>
+<ol>
+<li>Schedule annual incident response tabletop exercise</li>
+<li>Implement automated threat intelligence feed integration</li>
+<li>Develop threat model dashboard for real-time monitoring</li>
+</ol>
+<hr>
+<h2 id="📅-assessment-lifecycle" class="tsd-anchor-link">📅 Assessment Lifecycle<a href="#📅-assessment-lifecycle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>This section defines the <strong>structured cadence</strong> for threat model reviews, ensuring systematic and timely updates aligned with the evolving threat landscape and project lifecycle.</p>
+<h3 id="scheduled-review-cadence" class="tsd-anchor-link"><strong>Scheduled Review Cadence</strong><a href="#scheduled-review-cadence" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Frequency</th>
+<th>Activity</th>
+<th>Owner</th>
+<th>Duration</th>
+<th>Deliverables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>📆 Monthly</strong></td>
+<td>Dependency vulnerability scan review</td>
+<td>Lead Developer</td>
+<td>30 min</td>
+<td>Updated dependency lockfile, npm audit report</td>
+</tr>
+<tr>
+<td><strong>📆 Quarterly</strong></td>
+<td>Full threat model review workshop</td>
+<td>Security Architect</td>
+<td>2-3 hours</td>
+<td>Updated THREAT_MODEL.md, risk register, action items</td>
+</tr>
+<tr>
+<td><strong>📆 Semi-Annually</strong></td>
+<td>MITRE ATT&amp;CK mapping update</td>
+<td>Security Architect</td>
+<td>1 hour</td>
+<td>Updated ATT&amp;CK Navigator layer, coverage gaps identified</td>
+</tr>
+<tr>
+<td><strong>📆 Annually</strong></td>
+<td>Complete threat model revision</td>
+<td>Security Architect + External Expert</td>
+<td>1 day</td>
+<td>Comprehensive threat model v2.0, new attack scenarios</td>
+</tr>
+<tr>
+<td><strong>🔴 Ad-Hoc</strong></td>
+<td>Triggered by events (see below)</td>
+<td>Security Architect</td>
+<td>Variable</td>
+<td>Incident-specific threat assessment</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="ad-hoc-review-triggers-detailed" class="tsd-anchor-link"><strong>Ad-Hoc Review Triggers (Detailed)</strong><a href="#ad-hoc-review-triggers-detailed" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Immediate Review Required (&lt;48 hours):</strong></p>
+<ul>
+<li>🚨 <strong>Security Incident:</strong> Active compromise or exploitation detected</li>
+<li>🔓 <strong>Zero-Day Vulnerability:</strong> Critical CVE in Node.js, npm, or direct dependencies</li>
+<li>📰 <strong>Public Disclosure:</strong> Security researcher publishes vulnerability in MCP protocol</li>
+</ul>
+<p><strong>Expedited Review (Within 1 Week):</strong></p>
+<ul>
+<li>🆕 <strong>Major Feature Release:</strong> New MCP tool added, API integration change</li>
+<li>📊 <strong>Threat Intelligence Alert:</strong> ENISA/CISA advisory relevant to Node.js/TypeScript ecosystem</li>
+<li>🏛️ <strong>EP API Breaking Change:</strong> European Parliament API schema or security model update</li>
+</ul>
+<p><strong>Scheduled Review (Within 30 Days):</strong></p>
+<ul>
+<li>📜 <strong>Regulatory Update:</strong> EU CRA amendment, GDPR guidance update</li>
+<li>🔧 <strong>Architecture Refactor:</strong> Migration to new framework, protocol upgrade</li>
+<li>🎖️ <strong>Compliance Audit Finding:</strong> ISO 27001 audit identifies threat modeling gap</li>
+</ul>
+<hr>
+<h3 id="review-process-workflow" class="tsd-anchor-link"><strong>Review Process Workflow</strong><a href="#review-process-workflow" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">graph TD
+    A[📅 Scheduled Review<br/>or Trigger Event] --> B{Review Type?}
+    B -->|Monthly| C[Dependency Scan<br/>Review]
+    B -->|Quarterly| D[Full Threat Model<br/>Workshop]
+    B -->|Annual| E[Comprehensive<br/>Revision]
+    B -->|Ad-Hoc| F[Incident-Specific<br/>Assessment]
+    
+    C --> G[Update Lockfile]
+    D --> H[Update STRIDE Tables]
+    E --> I[New Attack Scenarios]
+    F --> J[Incident Report]
+    
+    G --> K[Document Changes]
+    H --> K
+    I --> K
+    J --> K
+    
+    K --> L[Commit to GitHub]
+    L --> M[📢 Communicate Updates]
+    M --> N[✅ Review Complete]
+    
+    style A fill:#4CAF50
+    style B fill:#2196F3
+    style K fill:#FF9800
+    style N fill:#9C27B0
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h3 id="review-deliverables-by-type" class="tsd-anchor-link"><strong>Review Deliverables by Type</strong><a href="#review-deliverables-by-type" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Monthly Dependency Review:</strong></p>
+<ul>
+<li>✅ Updated <code>package-lock.json</code> with patched dependencies</li>
+<li>✅ npm audit report with 0 high/critical vulnerabilities</li>
+<li>✅ Dependabot PR merge/rejection justifications</li>
+<li>✅ Updated SBOM (CycloneDX) published to GitHub Releases</li>
+</ul>
+<p><strong>Quarterly Threat Model Workshop:</strong></p>
+<ul>
+<li>✅ Updated THREAT_MODEL.md with new threats</li>
+<li>✅ Risk matrix with re-assessed likelihood/impact scores</li>
+<li>✅ Action item register with assigned owners and deadlines</li>
+<li>✅ Security control effectiveness validation report</li>
+</ul>
+<p><strong>Annual Comprehensive Revision:</strong></p>
+<ul>
+<li>✅ Threat Model v2.0 with new attack scenarios</li>
+<li>✅ Updated MITRE ATT&amp;CK Navigator layer JSON</li>
+<li>✅ External security expert assessment report</li>
+<li>✅ Alignment with latest ENISA Threat Landscape</li>
+<li>✅ Security maturity level progression plan</li>
+</ul>
+<p><strong>Ad-Hoc Incident Assessment:</strong></p>
+<ul>
+<li>✅ Root cause analysis with STRIDE classification</li>
+<li>✅ Lessons learned document</li>
+<li>✅ Updated threat actor profiles (if new TTPs identified)</li>
+<li>✅ Enhanced mitigations roadmap</li>
+</ul>
+<hr>
+<h3 id="version-control-change-tracking" class="tsd-anchor-link"><strong>Version Control &amp; Change Tracking</strong><a href="#version-control-change-tracking" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>All threat model updates are tracked via <strong>Git commits</strong> with the following conventions:</p>
+<pre><code class="bash"><span class="hl-0"># Commit message format</span><br/><span class="hl-1">threat-model:</span><span class="hl-2"> [Review </span><span class="hl-3">Type]</span><span class="hl-2"> </span><span class="hl-3">-</span><span class="hl-2"> </span><span class="hl-3">Brief</span><span class="hl-2"> </span><span class="hl-3">description</span><br/><br/><span class="hl-0"># Examples</span><br/><span class="hl-1">git</span><span class="hl-2"> </span><span class="hl-3">commit</span><span class="hl-2"> </span><span class="hl-4">-m</span><span class="hl-2"> </span><span class="hl-3">&quot;threat-model: Quarterly Review Q1 2025 - Added MCP injection scenario&quot;</span><br/><span class="hl-1">git</span><span class="hl-2"> </span><span class="hl-3">commit</span><span class="hl-2"> </span><span class="hl-4">-m</span><span class="hl-2"> </span><span class="hl-3">&quot;threat-model: Ad-Hoc - CVE-2025-12345 in ws dependency assessment&quot;</span><br/><span class="hl-1">git</span><span class="hl-2"> </span><span class="hl-3">commit</span><span class="hl-2"> </span><span class="hl-4">-m</span><span class="hl-2"> </span><span class="hl-3">&quot;threat-model: Annual Revision - MITRE ATT&amp;CK coverage expansion&quot;</span>
+</code><button type="button">Copy</button></pre>
+
+<p><strong>📊 Threat Model Changelog:</strong> Maintained via Git commit history using the <code>threat-model:</code> commit-message convention described above.</p>
+<hr>
+<h2 id="🎯-security-maturity-framework" class="tsd-anchor-link">🎯 Security Maturity Framework<a href="#🎯-security-maturity-framework" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The European Parliament MCP Server's security posture is assessed using a <strong>5-level maturity model</strong> adapted from NIST Cybersecurity Framework and ISO 27001 maturity scales. This framework guides continuous improvement toward optimized security practices.</p>
+<h3 id="maturity-level-definitions" class="tsd-anchor-link"><strong>Maturity Level Definitions</strong><a href="#maturity-level-definitions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<hr>
+<h4 id="level-1-🔴-initial-ad-hoc-security-practices" class="tsd-anchor-link"><strong>Level 1: 🔴 Initial (Ad-Hoc Security Practices)</strong><a href="#level-1-🔴-initial-ad-hoc-security-practices" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>❌ No formal threat modeling process</li>
+<li>❌ Security controls implemented reactively after incidents</li>
+<li>❌ No security testing in CI/CD pipeline</li>
+<li>❌ Dependency vulnerabilities addressed sporadically</li>
+<li>❌ No security documentation or policies</li>
+</ul>
+<p><strong>Typical Indicators:</strong></p>
+<ul>
+<li>Multiple high/critical vulnerabilities in production</li>
+<li>No SBOM or supply chain visibility</li>
+<li>Manual security testing (if any)</li>
+<li>No incident response plan</li>
+</ul>
+<p><strong>Improvement Path:</strong> Establish basic security controls (SAST, dependency scanning)</p>
+<hr>
+<h4 id="level-2-🟡-developing-basic-controls-implemented" class="tsd-anchor-link"><strong>Level 2: 🟡 Developing (Basic Controls Implemented)</strong><a href="#level-2-🟡-developing-basic-controls-implemented" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Basic threat identification (STRIDE threats documented)</li>
+<li>✅ Essential security controls deployed (HTTPS, input validation)</li>
+<li>✅ Dependency scanning with Dependabot</li>
+<li>⚠️ Inconsistent security testing</li>
+<li>⚠️ No quantitative risk assessment</li>
+</ul>
+<p><strong>Typical Indicators:</strong></p>
+<ul>
+<li>Dependabot alerts reviewed weekly</li>
+<li>Some SAST tools integrated in CI/CD</li>
+<li><a href="http://SECURITY.md" target="_blank" class="external">SECURITY.md</a> and basic vulnerability disclosure process</li>
+<li>Reactive incident response</li>
+</ul>
+<p><strong>Improvement Path:</strong> Systematize threat modeling, implement SLSA Level 2</p>
+<hr>
+<h4 id="level-3-🟢-defined-systematic-threat-modeling" class="tsd-anchor-link"><strong>Level 3: 🟢 Defined (Systematic Threat Modeling)</strong><a href="#level-3-🟢-defined-systematic-threat-modeling" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Formal threat model with STRIDE per element</li>
+<li>✅ MITRE ATT&amp;CK mapping to threats</li>
+<li>✅ Quarterly threat model reviews</li>
+<li>✅ Comprehensive security testing (SAST, DAST, SCA)</li>
+<li>✅ SLSA Level 3 provenance</li>
+<li>✅ Security architecture documentation</li>
+</ul>
+<p><strong>Typical Indicators:</strong></p>
+<ul>
+<li>OpenSSF Scorecard ≥8.0/10</li>
+<li>THREAT_MODEL.md and SECURITY_ARCHITECTURE.md maintained</li>
+<li>Automated security gates in CI/CD</li>
+<li>Proactive vulnerability management with SLAs</li>
+</ul>
+<p><strong>Current Level:</strong> 🟢 <strong>The European Parliament MCP Server is at Level 3</strong></p>
+<p><strong>Improvement Path:</strong> Implement security metrics, threat intelligence integration</p>
+<hr>
+<h4 id="level-4-🔵-managed-metrics-driven-security" class="tsd-anchor-link"><strong>Level 4: 🔵 Managed (Metrics-Driven Security)</strong><a href="#level-4-🔵-managed-metrics-driven-security" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Quantitative risk assessment with business impact</li>
+<li>✅ Security metrics dashboard (MTTR, vulnerability density, control effectiveness)</li>
+<li>✅ Threat intelligence feeds integrated</li>
+<li>✅ Continuous security testing (shift-left + shift-right)</li>
+<li>✅ Automated incident response playbooks</li>
+<li>✅ Security budget aligned with risk</li>
+</ul>
+<p><strong>Typical Indicators:</strong></p>
+<ul>
+<li>Mean Time To Remediation (MTTR) tracked and improving</li>
+<li>Security KPIs reported to leadership quarterly</li>
+<li>Threat model updated automatically from threat intelligence</li>
+<li>Bug bounty program operational</li>
+</ul>
+<p><strong>Improvement Path:</strong> Predictive security analytics, AI-driven threat hunting</p>
+<hr>
+<h4 id="level-5-⭐-optimizing-continuous-improvement" class="tsd-anchor-link"><strong>Level 5: ⭐ Optimizing (Continuous Improvement)</strong><a href="#level-5-⭐-optimizing-continuous-improvement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Real-time threat model updates via automation</li>
+<li>✅ Predictive threat analytics using ML/AI</li>
+<li>✅ Self-healing security controls</li>
+<li>✅ Zero Trust Architecture fully implemented</li>
+<li>✅ Security innovation through R&amp;D</li>
+<li>✅ Industry-leading security posture</li>
+</ul>
+<p><strong>Typical Indicators:</strong></p>
+<ul>
+<li>OpenSSF Scorecard 10.0/10</li>
+<li>Autonomous security validation and remediation</li>
+<li>Published security research and threat intelligence</li>
+<li>Recognized as security exemplar in open-source community</li>
+</ul>
+<p><strong>Improvement Path:</strong> Maintain excellence, contribute to security standards</p>
+<hr>
+<h3 id="european-parliament-mcp-server-current-maturity-assessment" class="tsd-anchor-link"><strong>European Parliament MCP Server — Current Maturity Assessment</strong><a href="#european-parliament-mcp-server-current-maturity-assessment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>📊 Overall Maturity Level:</strong> 🟢 <strong>Level 3: Defined (Systematic Threat Modeling)</strong></p>
+<table>
+<thead>
+<tr>
+<th>Security Domain</th>
+<th>Current Level</th>
+<th>Target (2025)</th>
+<th>Gap Analysis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Threat Modeling</strong></td>
+<td>🟢 Level 3</td>
+<td>🔵 Level 4</td>
+<td>Implement threat intelligence integration</td>
+</tr>
+<tr>
+<td><strong>Supply Chain Security</strong></td>
+<td>🟢 Level 3</td>
+<td>🟢 Level 3</td>
+<td>Maintain SLSA Level 3, monitor npm ecosystem</td>
+</tr>
+<tr>
+<td><strong>Vulnerability Management</strong></td>
+<td>🟢 Level 3</td>
+<td>🔵 Level 4</td>
+<td>Add MTTR metrics, automate patching</td>
+</tr>
+<tr>
+<td><strong>Security Testing</strong></td>
+<td>🟢 Level 3</td>
+<td>🔵 Level 4</td>
+<td>Add DAST, penetration testing</td>
+</tr>
+<tr>
+<td><strong>Incident Response</strong></td>
+<td>🟡 Level 2</td>
+<td>🟢 Level 3</td>
+<td>Conduct tabletop exercises, automate runbooks</td>
+</tr>
+<tr>
+<td><strong>Security Monitoring</strong></td>
+<td>🟡 Level 2</td>
+<td>🟢 Level 3</td>
+<td>Implement security metrics dashboard</td>
+</tr>
+<tr>
+<td><strong>Documentation</strong></td>
+<td>🟢 Level 3</td>
+<td>🟢 Level 3</td>
+<td>Maintain current excellence</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="maturity-progression-roadmap-2025-2026" class="tsd-anchor-link"><strong>Maturity Progression Roadmap (2025-2026)</strong><a href="#maturity-progression-roadmap-2025-2026" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">gantt
+    title Security Maturity Roadmap
+    dateFormat YYYY-MM
+    section Threat Modeling
+    Threat Intelligence Integration   :2025-03, 3M
+    Automated MITRE ATT&CK Updates   :2025-06, 2M
+    section Vulnerability Management
+    MTTR Metrics Dashboard           :2025-02, 2M
+    Automated Patch Deployment       :2025-08, 3M
+    section Security Testing
+    DAST Integration (OWASP ZAP)     :2025-04, 2M
+    Annual Penetration Test          :2025-09, 1M
+    section Incident Response
+    Tabletop Exercise                :2025-05, 1M
+    Automated IR Playbooks           :2025-10, 3M
+    section Monitoring
+    Security Metrics Dashboard       :2025-03, 3M
+    Anomaly Detection System         :2025-11, 4M
+</code><button type="button">Copy</button></pre>
+
+<p><strong>🎯 2025 Target:</strong> Achieve <strong>Level 4 (Managed)</strong> maturity in Threat Modeling and Vulnerability Management domains.</p>
+<hr>
+<h3 id="maturity-assessment-criteria" class="tsd-anchor-link"><strong>Maturity Assessment Criteria</strong><a href="#maturity-assessment-criteria" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>To objectively measure progression, the following criteria are used for annual maturity assessments:</p>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Weight</th>
+<th>Level 3 Threshold</th>
+<th>Level 4 Threshold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenSSF Scorecard</td>
+<td>20%</td>
+<td>≥8.0/10</td>
+<td>≥9.0/10</td>
+</tr>
+<tr>
+<td>SLSA Level</td>
+<td>15%</td>
+<td>Level 3</td>
+<td>Level 3 + Enhanced Monitoring</td>
+</tr>
+<tr>
+<td>Threat Model Freshness</td>
+<td>10%</td>
+<td>&lt;90 days</td>
+<td>&lt;30 days (automated)</td>
+</tr>
+<tr>
+<td>Vulnerability MTTR</td>
+<td>15%</td>
+<td>Critical &lt;7d, High &lt;30d</td>
+<td>Critical &lt;24h, High &lt;7d</td>
+</tr>
+<tr>
+<td>Security Test Coverage</td>
+<td>15%</td>
+<td>≥80%</td>
+<td>≥90% with mutation testing</td>
+</tr>
+<tr>
+<td>Incident Response Readiness</td>
+<td>10%</td>
+<td>Plan documented</td>
+<td>Drills quarterly, automation</td>
+</tr>
+<tr>
+<td>Security Metrics</td>
+<td>10%</td>
+<td>Manual reporting</td>
+<td>Real-time dashboard</td>
+</tr>
+<tr>
+<td>Threat Intelligence</td>
+<td>5%</td>
+<td>Manual review</td>
+<td>Automated integration</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Assessment Method:</strong> Annual third-party security audit with maturity scorecard</p>
+<hr>
+<h2 id="📊-quantitative-risk-assessment" class="tsd-anchor-link">📊 Quantitative Risk Assessment<a href="#📊-quantitative-risk-assessment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="risk-matrix" class="tsd-anchor-link"><strong>Risk Matrix</strong><a href="#risk-matrix" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">quadrantChart
+    title Threat Risk Assessment Matrix
+    x-axis Low Likelihood --> High Likelihood
+    y-axis Low Impact --> High Impact
+    quadrant-1 Monitor
+    quadrant-2 Critical Priority
+    quadrant-3 Accept
+    quadrant-4 Mitigate
+    Supply Chain Attack: [0.5, 0.9]
+    API Rate Exhaustion: [0.6, 0.5]
+    Input Injection: [0.4, 0.6]
+    Error Info Leak: [0.5, 0.4]
+    Package Squatting: [0.3, 0.7]
+    Prototype Pollution: [0.2, 0.7]
+    MITM Attack: [0.2, 0.6]
+    Build Tampering: [0.2, 0.8]
+</code><button type="button">Copy</button></pre>
+
+<h3 id="top-priority-risks" class="tsd-anchor-link"><strong>Top Priority Risks</strong><a href="#top-priority-risks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Risk</th>
+<th>Current Status</th>
+<th>Action Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🔴 P1</td>
+<td>Supply chain compromise (T-2, S-4)</td>
+<td>✅ Mitigated</td>
+<td>Maintain Dependabot, SLSA attestations</td>
+</tr>
+<tr>
+<td>🟠 P2</td>
+<td>Input validation bypass (E-1)</td>
+<td>✅ Mitigated</td>
+<td>Zod schemas for all tool inputs</td>
+</tr>
+<tr>
+<td>🟡 P3</td>
+<td>API rate limit exhaustion (D-1)</td>
+<td>✅ Mitigated</td>
+<td>Client-side rate limiting implemented</td>
+</tr>
+<tr>
+<td>🟡 P4</td>
+<td>Error information disclosure (I-1)</td>
+<td>⚠️ Partial</td>
+<td>Improve error sanitization</td>
+</tr>
+<tr>
+<td>🟢 P5</td>
+<td>Build artifact tampering (T-3)</td>
+<td>✅ Mitigated</td>
+<td>SLSA Level 3 provenance</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🛡️-security-controls-mitigations" class="tsd-anchor-link">🛡️ Security Controls &amp; Mitigations<a href="#🛡️-security-controls-mitigations" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="control-architecture" class="tsd-anchor-link"><strong>Control Architecture</strong><a href="#control-architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">graph TB
+    subgraph "🔒 Defense in Depth"
+        subgraph "Layer 1: Input Validation"
+            ZOD[Zod Schema Validation]
+            PARAM[Parameter Sanitization]
+        end
+        subgraph "Layer 2: Rate Limiting"
+            RL[Request Rate Limiter]
+            QUOTA[API Quota Management]
+        end
+        subgraph "Layer 3: Transport Security"
+            HTTPS[HTTPS/TLS 1.3]
+            STDIO[stdio Isolation]
+        end
+        subgraph "Layer 4: Supply Chain"
+            SLSA[SLSA Level 3]
+            SBOM[CycloneDX SBOM]
+            DEP[Dependabot]
+        end
+        subgraph "Layer 5: Monitoring"
+            AUDIT[Audit Logging]
+            SCORE[OpenSSF Scorecard]
+        end
+    end
+
+    ZOD --> RL --> HTTPS --> SLSA --> AUDIT
+</code><button type="button">Copy</button></pre>
+
+<h3 id="security-controls-matrix" class="tsd-anchor-link"><strong>Security Controls Matrix</strong><a href="#security-controls-matrix" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Control</th>
+<th>Category</th>
+<th>Threats Mitigated</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zod input validation</td>
+<td>Preventive</td>
+<td>E-1, D-4, E-3</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td>Rate limiting</td>
+<td>Preventive</td>
+<td>D-1, D-2</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td>HTTPS/TLS for EP API</td>
+<td>Preventive</td>
+<td>S-2, T-1</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td>SLSA Level 3 provenance</td>
+<td>Detective</td>
+<td>T-3, S-4</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td>Dependabot alerts</td>
+<td>Detective</td>
+<td>T-2</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td>npm audit</td>
+<td>Detective</td>
+<td>T-2, S-4</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td>OpenSSF Scorecard</td>
+<td>Detective</td>
+<td>Multiple</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td>CycloneDX SBOM</td>
+<td>Transparency</td>
+<td>T-2</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td>TypeScript strict mode</td>
+<td>Preventive</td>
+<td>E-2, I-1</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td>Environment variable validation</td>
+<td>Preventive</td>
+<td>T-4</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td>Structured error handling</td>
+<td>Preventive</td>
+<td>I-1, I-2</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td>Branch protection</td>
+<td>Preventive</td>
+<td>R-2</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td>Code review requirements</td>
+<td>Detective</td>
+<td>Multiple</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td>Security headers</td>
+<td>Preventive</td>
+<td>Multiple</td>
+<td>✅ Active</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🌳-attack-tree-analysis" class="tsd-anchor-link">🌳 Attack Tree Analysis<a href="#🌳-attack-tree-analysis" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="attack-tree-1-supply-chain-compromise-detailed" class="tsd-anchor-link"><strong>Attack Tree 1: Supply Chain Compromise (Detailed)</strong><a href="#attack-tree-1-supply-chain-compromise-detailed" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">graph TD
+    ROOT["🎯 Compromise EP MCP<br/>via Supply Chain"]
+    
+    ROOT --> A["📦 Malicious Dependency<br/>Injection"]
+    ROOT --> B["🏭 Build Pipeline<br/>Compromise"]
+    ROOT --> C["📤 npm Package<br/>Substitution"]
+    ROOT --> D["🔧 Developer<br/>Environment Attack"]
+    
+    A --> A1["Compromised npm package"]
+    A --> A2["Typosquatting dependency"]
+    A --> A3["Dependency confusion"]
+    A1 --> A1a["Install backdoored package"]
+    A1 --> A1b["Exploit known CVE"]
+    A1a --> A1M["✅ Dependabot alerts"]
+    A1b --> A1M2["✅ npm audit + Snyk"]
+    A2 --> A2M["✅ package-lock.json pinning"]
+    A3 --> A3M["✅ No private scope overlap"]
+    
+    B --> B1["GitHub Actions compromise"]
+    B --> B2["Build artifact tampering"]
+    B --> B3["Stolen publish credentials"]
+    B1 --> B1a["Malicious workflow change"]
+    B1 --> B1b["Environment secret theft"]
+    B1a --> B1M["✅ Branch protection + CODEOWNERS"]
+    B1b --> B1M2["✅ OIDC token auth (no secrets)"]
+    B2 --> B2M["✅ SLSA Level 3 provenance"]
+    B3 --> B3M["✅ npm 2FA required"]
+    
+    C --> C1["Package name squatting"]
+    C --> C2["Account takeover"]
+    C --> C3["npm registry compromise"]
+    C1 --> C1M["✅ Official ownership of \"european-parliament-mcp-server\" package"]
+    C2 --> C2M["✅ npm 2FA + strong passwords"]
+    C3 --> C3M["❌ Out of scope (npm responsibility)"]
+    
+    D --> D1["Developer laptop malware"]
+    D --> D2["SSH/GPG key theft"]
+    D --> D3["Social engineering"]
+    D1 --> D1M["⚠️ Developer responsibility"]
+    D2 --> D2M["✅ GPG commit signing required"]
+    D3 --> D3M["⚠️ Security awareness training"]
+</code><button type="button">Copy</button></pre>
+
+<h3 id="attack-tree-2-unauthorized-data-manipulation-t-1-t-2" class="tsd-anchor-link"><strong>Attack Tree 2: Unauthorized Data Manipulation (T-1, T-2)</strong><a href="#attack-tree-2-unauthorized-data-manipulation-t-1-t-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">graph TD
+    ROOT2["🎯 Manipulate EP<br/>Parliamentary Data"]
+    
+    ROOT2 --> E["🌐 API Response<br/>Tampering"]
+    ROOT2 --> F["💾 Cache<br/>Poisoning"]
+    ROOT2 --> G["📦 Dependency<br/>Injection"]
+    ROOT2 --> H["🔧 Build Artifact<br/>Tampering"]
+    
+    E --> E1["MITM TLS interception"]
+    E --> E2["Compromised EP API"]
+    E --> E3["DNS hijacking"]
+    E1 --> E1a["TLS downgrade attack"]
+    E1 --> E1b["Rogue CA certificate"]
+    E1a --> E1M["✅ TLS 1.3 minimum, no fallback"]
+    E1b --> E1M2["✅ Certificate pinning (future)"]
+    E2 --> E2M["❌ Out of scope (EP infrastructure)"]
+    E3 --> E3M["⚠️ DNSSEC (ISP/user responsibility)"]
+    
+    F --> F1["Inject malicious response"]
+    F --> F2["Memory corruption"]
+    F --> F3["Race condition exploitation"]
+    F1 --> F1M["✅ Cache only validated responses"]
+    F2 --> F2M["✅ TypeScript + process isolation"]
+    F3 --> F3M["✅ Atomic cache operations"]
+    
+    G --> G1["Install backdoored package"]
+    G --> G2["Exploit known CVE"]
+    G --> G3["Prototype pollution"]
+    G1 --> G1M["✅ Dependabot + SLSA"]
+    G2 --> G2M["✅ npm audit + Snyk"]
+    G3 --> G3M["✅ TypeScript strict mode"]
+    
+    H --> H1["Modify dist/ artifacts"]
+    H --> H2["CI/CD pipeline injection"]
+    H --> H3["Release process bypass"]
+    H1 --> H1M["✅ SLSA Level 3 attestations"]
+    H2 --> H2M["✅ Branch protection + required checks"]
+    H3 --> H3M["✅ npm provenance + 2FA"]
+</code><button type="button">Copy</button></pre>
+
+<h3 id="attack-tree-3-service-disruption-dos-d-1-d-2-d-3" class="tsd-anchor-link"><strong>Attack Tree 3: Service Disruption / DoS (D-1, D-2, D-3)</strong><a href="#attack-tree-3-service-disruption-dos-d-1-d-2-d-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">graph TD
+    ROOT3["🎯 Disrupt EP MCP<br/>Service Availability"]
+    
+    ROOT3 --> I["⏱️ Rate Limit<br/>Exhaustion"]
+    ROOT3 --> J["💻 Resource<br/>Exhaustion"]
+    ROOT3 --> K["🌐 EP API<br/>Overload"]
+    ROOT3 --> L["📦 Supply Chain<br/>DoS"]
+    
+    I --> I1["AI client excessive requests"]
+    I --> I2["Bypass rate limiter"]
+    I --> I3["Distributed request flood"]
+    I1 --> I1M["✅ Token bucket rate limiting"]
+    I2 --> I2M["✅ Atomic rate limit checks"]
+    I3 --> I3M["⚠️ stdio isolation limits multi-client"]
+    
+    J --> J1["Memory exhaustion (large responses)"]
+    J --> J2["CPU exhaustion (regex DoS)"]
+    J --> J3["Cache memory overflow"]
+    J1 --> J1M["✅ Response size limits"]
+    J2 --> J2M["✅ Zod validation (no regex)"]
+    J3 --> J3M["✅ LRU cache with max size"]
+    
+    K --> K1["Excessive API requests"]
+    K --> K2["Concurrent request flood"]
+    K --> K3["Long-polling attacks"]
+    K1 --> K1M["✅ Client-side rate limiting"]
+    K2 --> K2M["✅ Concurrency limits (future)"]
+    K3 --> K3M["✅ HTTP timeout configuration"]
+    
+    L --> L1["npm registry unavailable"]
+    L --> L2["Compromised dependency unavailable"]
+    L --> L3["GitHub Actions outage"]
+    L1 --> L1M["⚠️ npm mirrors (user responsibility)"]
+    L2 --> L2M["✅ package-lock.json ensures reproducibility"]
+    L3 --> L3M["❌ Out of scope (GitHub SLA)"]
+</code><button type="button">Copy</button></pre>
+
+<h3 id="attack-tree-4-mcp-protocol-exploit-original-preserved" class="tsd-anchor-link"><strong>Attack Tree 4: MCP Protocol Exploit (Original - Preserved)</strong><a href="#attack-tree-4-mcp-protocol-exploit-original-preserved" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">graph TD
+    ROOT["🎯 Compromise MCP Server"]
+    ROOT --> A["📦 Supply Chain Attack"]
+    ROOT --> B["🔌 MCP Protocol Exploit"]
+    ROOT --> C["🌐 API Layer Attack"]
+    ROOT --> D["💻 Runtime Exploit"]
+
+    A --> A1["Malicious dependency"]
+    A --> A2["Build pipeline compromise"]
+    A --> A3["npm package substitution"]
+    A1 --> A1M["✅ Dependabot + npm audit"]
+    A2 --> A2M["✅ SLSA Level 3"]
+    A3 --> A3M["✅ Official package, 2FA"]
+
+    B --> B1["Parameter injection"]
+    B --> B2["Tool abuse"]
+    B --> B3["Resource exhaustion"]
+    B1 --> B1M["✅ Zod validation"]
+    B2 --> B2M["✅ Rate limiting"]
+    B3 --> B3M["✅ Memory limits"]
+
+    C --> C1["API MITM"]
+    C --> C2["Rate limit exhaustion"]
+    C --> C3["Response manipulation"]
+    C1 --> C1M["✅ HTTPS/TLS"]
+    C2 --> C2M["✅ Client rate limiting"]
+    C3 --> C3M["✅ Response validation"]
+
+    D --> D1["Prototype pollution"]
+    D --> D2["Memory exhaustion"]
+    D --> D3["Error info leakage"]
+    D1 --> D1M["✅ TypeScript strict"]
+    D2 --> D2M["✅ Response limits"]
+    D3 --> D3M["⚠️ Improve sanitization"]
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="🔴-priority-threat-scenarios" class="tsd-anchor-link">🔴 Priority Threat Scenarios<a href="#🔴-priority-threat-scenarios" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Detailed narrative scenarios prioritized by likelihood and business impact for the European Parliament MCP Server.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Scenario</th>
+<th>Actor</th>
+<th>Method</th>
+<th>Impact</th>
+<th>Current Controls</th>
+<th>Residual Risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td><strong>Supply Chain Compromise</strong></td>
+<td>🎭 Nation-State APT<br/>💰 Cybercriminal</td>
+<td>Backdoored npm dependency injected via compromised maintainer account → malicious code in <code>node_modules/</code> → data exfiltration or sabotage during MCP tool execution</td>
+<td><strong>Critical</strong>: Loss of service reputation, potential data manipulation, user trust erosion, OpenSSF Scorecard degradation</td>
+<td>✅ Dependabot alerts<br/>✅ npm audit + Snyk<br/>✅ SLSA Level 3<br/>✅ SBOM (CycloneDX)<br/>✅ package-lock.json pinning</td>
+<td><strong>Medium</strong><br/><em>(Continuous monitoring required)</em></td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td><strong>Parliamentary Data Manipulation</strong></td>
+<td>🏛️ Disinformation APT<br/>🎯 Political Actor</td>
+<td>MITM attack on EP API connection → inject false MEP voting records or manipulated plenary transcripts → AI assistant provides incorrect democratic transparency data → misinformation spread</td>
+<td><strong>High</strong>: Democratic process undermined, service credibility damaged, regulatory scrutiny (GDPR/NIS2)</td>
+<td>✅ HTTPS/TLS 1.3<br/>✅ Certificate validation<br/>✅ Response validation (Zod)<br/>⚠️ Certificate pinning (future)</td>
+<td><strong>Low-Medium</strong><br/><em>(TLS provides strong protection)</em></td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td><strong>MCP Protocol Abuse (AI Jailbreak)</strong></td>
+<td>🤖 Malicious AI User<br/>🔬 Security Researcher</td>
+<td>Crafted prompts causing AI assistant to invoke MCP tools with malicious parameters → bypass Zod validation via edge cases → unauthorized data access or service abuse</td>
+<td><strong>Medium</strong>: Data exposure, rate limit exhaustion, service disruption, reputational risk</td>
+<td>✅ Zod schema validation<br/>✅ TypeScript strict mode<br/>✅ No shell execution<br/>✅ Input sanitization</td>
+<td><strong>Low</strong><br/><em>(Defense-in-depth architecture)</em></td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td><strong>GDPR Personal Data Exposure</strong></td>
+<td>🔍 Privacy Researcher<br/>🎯 Regulatory Auditor</td>
+<td>Verbose error messages or debug logs expose MEP personal data (addresses, contact info, personal declarations) → GDPR Article 32 violation → regulatory fines and reputational damage</td>
+<td><strong>Medium</strong>: GDPR Article 32 security-of-processing fines (typically up to €10M or 2% of worldwide annual turnover under Article 83(4)(a); potential escalation to €20M or 4% under Article 83(5) if a reportable personal data breach under Articles 33/34 occurs), reputational damage, user trust loss, mandatory breach notification</td>
+<td>✅ Sanitized error handling<br/>⚠️ Production log review<br/>⚠️ PII detection in logs<br/>✅ Public data focus</td>
+<td><strong>Low-Medium</strong><br/><em>(Requires log sanitization review)</em></td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td><strong>EP API Denial of Service</strong></td>
+<td>💼 Competitive Adversary<br/>🎯 Disruptive Actor</td>
+<td>Automated script or compromised AI client floods EP MCP Server with requests → client-side rate limiter bypassed or overwhelmed → EP API rate limits exhausted → service unavailable for legitimate users</td>
+<td><strong>Medium</strong>: Service unavailability, user frustration, EP API access suspended, reputational damage</td>
+<td>✅ Token bucket rate limiter<br/>✅ Concurrency limits<br/>✅ Request logging<br/>⚠️ Adaptive rate limiting (future)</td>
+<td><strong>Low-Medium</strong><br/><em>(Rate limiting effective but not adaptive)</em></td>
+</tr>
+<tr>
+<td><strong>6</strong></td>
+<td><strong>Build Artifact Tampering</strong></td>
+<td>🏭 CI/CD Attacker<br/>🔓 Compromised GitHub Actions</td>
+<td>Attacker modifies GitHub Actions workflow or injects malicious code during build → tampered <code>dist/</code> artifacts published to npm → users install compromised package → backdoor execution</td>
+<td><strong>Critical</strong>: Widespread malware distribution, npm package removal, OpenSSF Scorecard failure, complete service compromise</td>
+<td>✅ SLSA Level 3 provenance<br/>✅ Branch protection<br/>✅ Required status checks<br/>✅ CODEOWNERS enforcement<br/>✅ npm 2FA</td>
+<td><strong>Low</strong><br/><em>(Strong supply chain security)</em></td>
+</tr>
+<tr>
+<td><strong>7</strong></td>
+<td><strong>Reputation Attack via Security Metrics</strong></td>
+<td>🎯 Competitive Adversary<br/>📉 FUD Campaign</td>
+<td>Attacker exploits minor vulnerability or submits CVE against EP MCP Server → OpenSSF Scorecard drops below 9.0 → negative publicity and user migration to competitors</td>
+<td><strong>Medium</strong>: Market share loss, user trust erosion, competitive disadvantage, reduced adoption rate</td>
+<td>✅ OpenSSF Scorecard 9.4+<br/>✅ Security badges (up-to-date)<br/>✅ Transparent security docs<br/>✅ Rapid vulnerability response</td>
+<td><strong>Low</strong><br/><em>(Strong security posture)</em></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🛡️-stride-→-control-mapping" class="tsd-anchor-link">🛡️ STRIDE → Control Mapping<a href="#🛡️-stride-→-control-mapping" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Comprehensive mapping of each STRIDE threat category to preventive, detective, and corrective security controls.</p>
+<table>
+<thead>
+<tr>
+<th>STRIDE Category</th>
+<th>Threat Definition</th>
+<th>Primary Controls</th>
+<th>Secondary Controls</th>
+<th>Detection Controls</th>
+<th>Monitoring &amp; Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>🎭 Spoofing (S)</strong></td>
+<td>Impersonating a legitimate entity</td>
+<td>• stdio transport isolation (S-1)<br/>• HTTPS/TLS 1.3 (S-2)<br/>• Official npm package name ownership (S-3)<br/>• npm 2FA (S-3)</td>
+<td>• Certificate validation<br/>• Package provenance<br/>• GitHub Actions OIDC</td>
+<td>• Audit logging (all requests)<br/>• npm download anomaly detection<br/>• TLS handshake monitoring</td>
+<td>• OpenSSF Scorecard<br/>• npm package monitoring<br/>• Security badge alerts</td>
+</tr>
+<tr>
+<td><strong>🔧 Tampering (T)</strong></td>
+<td>Unauthorized modification of data or code</td>
+<td>• HTTPS integrity checks (T-1)<br/>• SLSA Level 3 provenance (T-2, T-3)<br/>• Zod response validation (T-1)<br/>• Dependabot + npm audit (T-2)</td>
+<td>• Branch protection<br/>• GPG commit signing<br/>• Immutable cache entries<br/>• Environment variable validation</td>
+<td>• Dependabot alerts<br/>• npm audit (CI/CD)<br/>• SBOM vulnerability scanning<br/>• GitHub Advanced Security</td>
+<td>• Snyk monitoring<br/>• Supply chain security alerts<br/>• Build artifact verification</td>
+</tr>
+<tr>
+<td><strong>🚫 Repudiation (R)</strong></td>
+<td>Denying actions or events</td>
+<td>• Structured stderr logging (R-1)<br/>• ISO 8601 timestamps (R-1)<br/>• Immutable log streams (R-1)<br/>• GPG commit signing (R-2)</td>
+<td>• Request ID correlation<br/>• GitHub Actions audit logs<br/>• npm publish logs</td>
+<td>• Log aggregation (future)<br/>• Audit trail completeness checks<br/>• GitHub audit log API</td>
+<td>• Log retention policy<br/>• Incident response procedures<br/>• Forensic analysis capability</td>
+</tr>
+<tr>
+<td><strong>📢 Information Disclosure (I)</strong></td>
+<td>Exposure of confidential information</td>
+<td>• Sanitized error messages (I-1, I-2)<br/>• No API keys required (I-3)<br/>• Public data only (I-4)<br/>• TypeScript strict mode</td>
+<td>• Production error handling<br/>• Generic log messages<br/>• No PII in cache keys<br/>• Environment variable masking</td>
+<td>• Log content review<br/>• Error message monitoring<br/>• Stack trace detection</td>
+<td>• Privacy impact assessment<br/>• GDPR compliance monitoring<br/>• Security code review</td>
+</tr>
+<tr>
+<td><strong>🚨 Denial of Service (D)</strong></td>
+<td>Degrading or preventing service availability</td>
+<td>• Token bucket rate limiting (D-1)<br/>• Response size limits (D-2)<br/>• LRU cache max size (D-2)<br/>• Zod validation (no ReDoS) (D-4)</td>
+<td>• HTTP timeout configuration<br/>• Memory monitoring<br/>• Concurrency limits<br/>• Call depth tracking</td>
+<td>• Rate limit violation logs<br/>• Memory usage monitoring<br/>• API response time tracking</td>
+<td>• Incident response procedures<br/>• Failover strategy<br/>• EP API health monitoring</td>
+</tr>
+<tr>
+<td><strong>⚡ Elevation of Privilege (E)</strong></td>
+<td>Gaining unauthorized capabilities</td>
+<td>• Zod schema validation (E-1)<br/>• TypeScript strict mode (E-2)<br/>• No shell execution (E-4)<br/>• Input sanitization (E-3)</td>
+<td>• Parameterized API calls<br/>• Process isolation (stdio)<br/>• Safe JSON parsing<br/>• No filesystem access</td>
+<td>• Input validation failures<br/>• Unexpected tool invocations<br/>• Privilege escalation attempts</td>
+<td>• Security testing (SAST/DAST)<br/>• Penetration testing<br/>• Bug bounty program (future)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🏛️-comprehensive-security-control-framework" class="tsd-anchor-link">🏛️ Comprehensive Security Control Framework<a href="#🏛️-comprehensive-security-control-framework" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="🛡️-defense-in-depth-architecture" class="tsd-anchor-link"><strong>🛡️ Defense-in-Depth Architecture</strong><a href="#🛡️-defense-in-depth-architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">graph TB
+    subgraph "🏰 Layer 1: Perimeter Security"
+        L1A[🌐 HTTPS/TLS 1.3]
+        L1B[⏱️ Rate Limiting]
+        L1C[🔒 Certificate Validation]
+        L1D[🚫 No HTTP Fallback]
+    end
+    
+    subgraph "🏗️ Layer 2: Application Security"
+        L2A[✅ Zod Input Validation]
+        L2B[📝 TypeScript Strict Mode]
+        L2C[🛡️ Parameter Sanitization]
+        L2D[🚫 No Shell Execution]
+        L2E[🔍 Response Validation]
+    end
+    
+    subgraph "💾 Layer 3: Data Security"
+        L3A[✅ Public Data Only]
+        L3B[⏳ TTL-Based Caching]
+        L3C[🔒 Immutable Cache Entries]
+        L3D[🧹 Sanitized Error Messages]
+        L3E[📊 Structured Logging]
+    end
+    
+    subgraph "📦 Layer 4: Supply Chain Security"
+        L4A[🏅 SLSA Level 3]
+        L4B[🤖 Dependabot Alerts]
+        L4C[📋 SBOM CycloneDX]
+        L4D[🔐 npm 2FA Publishing]
+        L4E[🔒 package-lock.json]
+        L4F[🎯 npm Provenance]
+    end
+    
+    subgraph "🔍 Layer 5: Operational Security"
+        L5A[📊 OpenSSF Scorecard]
+        L5B[📋 Audit Logging stderr]
+        L5C[🎖️ Security Badges]
+        L5D[🔄 Automated Testing]
+        L5E[🛡️ CodeQL SAST]
+        L5F[🔍 Snyk Scanning]
+    end
+    
+    L1A --> L2A
+    L1B --> L2A
+    L2A --> L3A
+    L2B --> L3A
+    L3A --> L4A
+    L3E --> L4A
+    L4A --> L5A
+    L4B --> L5A
+    
+    style L1A fill:#ff6b6b
+    style L2A fill:#feca57
+    style L3A fill:#48dbfb
+    style L4A fill:#1dd1a1
+    style L5A fill:#9b59b6
+</code><button type="button">Copy</button></pre>
+
+<h3 id="🎯-control-effectiveness-matrix" class="tsd-anchor-link"><strong>🎯 Control Effectiveness Matrix</strong><a href="#🎯-control-effectiveness-matrix" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Control</th>
+<th>Type</th>
+<th>NIST CSF 2.0 Function</th>
+<th>Threats Addressed</th>
+<th>Effectiveness</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1: Perimeter</strong></td>
+<td>HTTPS/TLS 1.3</td>
+<td>Preventive</td>
+<td>PR.DS-2, PR.DS-5</td>
+<td>S-2, T-1, I-3</td>
+<td>⭐⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>1: Perimeter</strong></td>
+<td>Token bucket rate limiting</td>
+<td>Preventive</td>
+<td>PR.IP-12, DE.CM-1</td>
+<td>D-1, D-2, D-3</td>
+<td>⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>1: Perimeter</strong></td>
+<td>Certificate validation</td>
+<td>Detective</td>
+<td>PR.DS-2</td>
+<td>S-2, T-1</td>
+<td>⭐⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>2: Application</strong></td>
+<td>Zod schema validation</td>
+<td>Preventive</td>
+<td>PR.DS-1, PR.IP-1</td>
+<td>E-1, D-4, E-3</td>
+<td>⭐⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>2: Application</strong></td>
+<td>TypeScript strict mode</td>
+<td>Preventive</td>
+<td>PR.IP-1</td>
+<td>E-2, I-1</td>
+<td>⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>2: Application</strong></td>
+<td>No shell execution</td>
+<td>Preventive</td>
+<td>PR.AC-4, PR.IP-1</td>
+<td>E-4</td>
+<td>⭐⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>3: Data</strong></td>
+<td>Response validation</td>
+<td>Preventive</td>
+<td>PR.DS-1</td>
+<td>T-1, E-2</td>
+<td>⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>3: Data</strong></td>
+<td>TTL-based caching</td>
+<td>Preventive</td>
+<td>PR.DS-3</td>
+<td>I-4, T-1</td>
+<td>⭐⭐⭐ Medium</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>3: Data</strong></td>
+<td>Sanitized error messages</td>
+<td>Preventive</td>
+<td>PR.DS-5</td>
+<td>I-1, I-2</td>
+<td>⭐⭐⭐ Medium</td>
+<td>⚠️ Partial</td>
+</tr>
+<tr>
+<td><strong>3: Data</strong></td>
+<td>Structured logging (stderr)</td>
+<td>Detective</td>
+<td>DE.AE-3, DE.CM-1</td>
+<td>R-1, R-3</td>
+<td>⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>4: Supply Chain</strong></td>
+<td>SLSA Level 3 provenance</td>
+<td>Detective</td>
+<td>PR.DS-6, ID.SC-2</td>
+<td>T-2, T-3, S-4</td>
+<td>⭐⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>4: Supply Chain</strong></td>
+<td>Dependabot + npm audit</td>
+<td>Detective</td>
+<td>ID.RA-1, DE.CM-4</td>
+<td>T-2, S-4</td>
+<td>⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>4: Supply Chain</strong></td>
+<td>SBOM (CycloneDX)</td>
+<td>Transparency</td>
+<td>ID.AM-4, ID.SC-5</td>
+<td>T-2</td>
+<td>⭐⭐⭐ Medium</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>4: Supply Chain</strong></td>
+<td>npm 2FA publishing</td>
+<td>Preventive</td>
+<td>PR.AC-1</td>
+<td>S-3, T-2</td>
+<td>⭐⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>4: Supply Chain</strong></td>
+<td>package-lock.json pinning</td>
+<td>Preventive</td>
+<td>ID.SC-2</td>
+<td>T-2, S-4</td>
+<td>⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>5: Operations</strong></td>
+<td>OpenSSF Scorecard 9.4+</td>
+<td>Detective</td>
+<td>ID.IM-1, PR.IP-1</td>
+<td>All categories</td>
+<td>⭐⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>5: Operations</strong></td>
+<td>Audit logging (stderr)</td>
+<td>Detective</td>
+<td>DE.AE-3, RS.AN-1</td>
+<td>R-1, R-2, R-3</td>
+<td>⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>5: Operations</strong></td>
+<td>CodeQL SAST scanning</td>
+<td>Detective</td>
+<td>ID.RA-1, DE.CM-4</td>
+<td>E-1, E-2, E-4, I-1</td>
+<td>⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>5: Operations</strong></td>
+<td>Snyk vulnerability scanning</td>
+<td>Detective</td>
+<td>ID.RA-1, DE.CM-4</td>
+<td>T-2, S-4</td>
+<td>⭐⭐⭐⭐ High</td>
+<td>✅ Active</td>
+</tr>
+</tbody>
+</table>
+<h3 id="📊-nist-csf-20-function-mapping" class="tsd-anchor-link"><strong>📊 NIST CSF 2.0 Function Mapping</strong><a href="#📊-nist-csf-20-function-mapping" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Description</th>
+<th>EP MCP Server Controls</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>🔍 IDENTIFY (ID)</strong></td>
+<td>Understand risks to systems and assets</td>
+<td>• OpenSSF Scorecard monitoring<br/>• SBOM generation (CycloneDX)<br/>• Threat modeling (this document)<br/>• Security architecture documentation</td>
+</tr>
+<tr>
+<td><strong>🛡️ PROTECT (PR)</strong></td>
+<td>Implement safeguards for critical services</td>
+<td>• Zod input validation<br/>• HTTPS/TLS 1.3<br/>• TypeScript strict mode<br/>• Rate limiting<br/>• No shell execution<br/>• npm 2FA publishing</td>
+</tr>
+<tr>
+<td><strong>🔎 DETECT (DE)</strong></td>
+<td>Identify occurrence of cybersecurity events</td>
+<td>• Dependabot alerts<br/>• npm audit<br/>• CodeQL SAST<br/>• Snyk scanning<br/>• Audit logging (stderr)<br/>• OpenSSF Scorecard</td>
+</tr>
+<tr>
+<td><strong>🚨 RESPOND (RS)</strong></td>
+<td>Take action regarding detected incidents</td>
+<td>• Incident response procedures<br/>• Security advisory publication<br/>• Rapid patch deployment<br/>• Coordinated vulnerability disclosure</td>
+</tr>
+<tr>
+<td><strong>♻️ RECOVER (RC)</strong></td>
+<td>Restore capabilities or services</td>
+<td>• npm package rollback<br/>• Version pinning (package-lock.json)<br/>• GitHub release rollback<br/>• Incident post-mortem</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🔗-policy-alignment-1" class="tsd-anchor-link">🔗 Policy Alignment<a href="#🔗-policy-alignment-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>ISMS Policy</th>
+<th>Relevance</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🎯 Threat Modeling</td>
+<td>Primary methodology</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md" target="_blank" class="external">Threat_Modeling.md</a></td>
+</tr>
+<tr>
+<td>🔒 Secure Development</td>
+<td>Development security requirements</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md" target="_blank" class="external">Secure_Development_Policy.md</a></td>
+</tr>
+<tr>
+<td>🔍 Vulnerability Management</td>
+<td>Vulnerability handling SLAs</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md" target="_blank" class="external">Vulnerability_Management.md</a></td>
+</tr>
+<tr>
+<td>🌐 Network Security</td>
+<td>Transport security requirements</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Network_Security_Policy.md" target="_blank" class="external">Network_Security_Policy.md</a></td>
+</tr>
+<tr>
+<td>🔑 Access Control</td>
+<td>Authentication/authorization</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md" target="_blank" class="external">Access_Control_Policy.md</a></td>
+</tr>
+<tr>
+<td>🔐 Cryptography</td>
+<td>TLS and encryption standards</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Cryptography_Policy.md" target="_blank" class="external">Cryptography_Policy.md</a></td>
+</tr>
+<tr>
+<td>🚨 Incident Response</td>
+<td>Security incident procedures</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md" target="_blank" class="external">Incident_Response_Plan.md</a></td>
+</tr>
+<tr>
+<td>🏷️ Classification</td>
+<td>Data classification framework</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md" target="_blank" class="external">CLASSIFICATION.md</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="compliance-framework-mapping-1" class="tsd-anchor-link"><strong>Compliance Framework Mapping</strong><a href="#compliance-framework-mapping-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Framework</th>
+<th>Controls Addressed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ISO 27001:2022</strong></td>
+<td>A.5.7, A.8.8, A.8.9, A.8.25, A.8.26, A.8.28</td>
+</tr>
+<tr>
+<td><strong>NIST CSF 2.0</strong></td>
+<td>ID.RA, PR.DS, PR.IP, <a href="http://DE.CM" target="_blank" class="external">DE.CM</a>, <a href="http://RS.AN" target="_blank" class="external">RS.AN</a></td>
+</tr>
+<tr>
+<td><strong>CIS Controls v8.1</strong></td>
+<td>2.7, 7.1, 7.4, 16.1, 16.9</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="📋-cia-triad-and-aaa-framework-application" class="tsd-anchor-link">📋 CIA Triad and AAA Framework Application<a href="#📋-cia-triad-and-aaa-framework-application" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="cia-triad-assessment" class="tsd-anchor-link">CIA Triad Assessment<a href="#cia-triad-assessment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Principle</th>
+<th>Application to EP MCP Server</th>
+<th>Key Controls</th>
+<th>Threat Categories</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>🔐 Confidentiality</strong></td>
+<td>MEP personal data protected from unauthorized access; API responses contain only publicly available parliamentary data</td>
+<td>GDPR data minimization, PII stripping in audit logs, no persistent storage</td>
+<td>Information disclosure (I-1 through I-4)</td>
+</tr>
+<tr>
+<td><strong>🔒 Integrity</strong></td>
+<td>Parliamentary data accuracy maintained from EP API source to MCP client response</td>
+<td>TLS transport integrity, Zod schema validation, SLSA Level 3 provenance</td>
+<td>Tampering (T-1 through T-4), Supply chain attacks</td>
+</tr>
+<tr>
+<td><strong>⚡ Availability</strong></td>
+<td>Continuous access to EP parliamentary data within rate limits</td>
+<td>Rate limiting (100 req/min), LRU cache (15-min TTL), graceful degradation</td>
+<td>Denial of service (D-1 through D-3)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aaa-framework-integration" class="tsd-anchor-link">AAA Framework Integration<a href="#aaa-framework-integration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>EP MCP Server Implementation</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>🔐 Authentication</strong></td>
+<td>OS process isolation (stdio transport) — client identity is the spawning process</td>
+<td>Process-level identity</td>
+</tr>
+<tr>
+<td><strong>📋 Authorization</strong></td>
+<td>All 61 tools available to any authenticated client; no role-based restrictions in v1.1</td>
+<td>Flat access model</td>
+</tr>
+<tr>
+<td><strong>📊 Accounting</strong></td>
+<td>AuditLogger tracks every tool invocation with timestamp, tool name, sanitized parameters, duration</td>
+<td>Full audit trail</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="📊-threat-catalog" class="tsd-anchor-link">📊 Threat Catalog<a href="#📊-threat-catalog" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="threat-documentation-standard" class="tsd-anchor-link">Threat Documentation Standard<a href="#threat-documentation-standard" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Each threat in this model follows the structured documentation format defined in <a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md" target="_blank" class="external">Hack23 Threat Modeling Policy</a>:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Threat ID</strong></td>
+<td>Unique identifier (STRIDE category + sequence)</td>
+<td>S-1, T-2, I-3</td>
+</tr>
+<tr>
+<td><strong>Category</strong></td>
+<td>STRIDE classification</td>
+<td>Spoofing, Tampering, etc.</td>
+</tr>
+<tr>
+<td><strong>Description</strong></td>
+<td>Detailed threat narrative</td>
+<td>&quot;Malicious MCP client sends crafted tool arguments&quot;</td>
+</tr>
+<tr>
+<td><strong>Attack Vector</strong></td>
+<td>MITRE ATT&amp;CK technique mapping</td>
+<td>T1059 (Command and Scripting)</td>
+</tr>
+<tr>
+<td><strong>Likelihood</strong></td>
+<td>Probability assessment (Low/Medium/High)</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td><strong>Impact</strong></td>
+<td>Business impact assessment (Low/Medium/High/Critical)</td>
+<td>High</td>
+</tr>
+<tr>
+<td><strong>Risk Score</strong></td>
+<td>Likelihood × Impact</td>
+<td>Medium-High</td>
+</tr>
+<tr>
+<td><strong>Controls</strong></td>
+<td>Existing mitigations</td>
+<td>SC-001 (Zod validation)</td>
+</tr>
+<tr>
+<td><strong>Residual Risk</strong></td>
+<td>Risk after controls</td>
+<td>Low</td>
+</tr>
+<tr>
+<td><strong>Owner</strong></td>
+<td>Responsible party</td>
+<td>Development team</td>
+</tr>
+</tbody>
+</table>
+<h3 id="threat-count-summary" class="tsd-anchor-link">Threat Count Summary<a href="#threat-count-summary" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>STRIDE Category</th>
+<th>Total Threats</th>
+<th>Critical</th>
+<th>High</th>
+<th>Medium</th>
+<th>Low</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Spoofing</strong></td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td><strong>Tampering</strong></td>
+<td>4</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td><strong>Repudiation</strong></td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>Information Disclosure</strong></td>
+<td>4</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td><strong>Denial of Service</strong></td>
+<td>3</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td><strong>Elevation of Privilege</strong></td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td><strong>Supply Chain</strong></td>
+<td>3</td>
+<td>0</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>21</strong></td>
+<td><strong>0</strong></td>
+<td><strong>5</strong></td>
+<td><strong>11</strong></td>
+<td><strong>5</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="📈-ai-model-evolution-threat-landscape-perspective" class="tsd-anchor-link">📈 AI Model Evolution — Threat Landscape Perspective<a href="#📈-ai-model-evolution-threat-landscape-perspective" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="🔴-evolving-ai-enabled-threat-vectors" class="tsd-anchor-link">🔴 Evolving AI-Enabled Threat Vectors<a href="#🔴-evolving-ai-enabled-threat-vectors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>As AI capabilities advance, the threat landscape for MCP servers evolves:</p>
+<table>
+<thead>
+<tr>
+<th>Timeline</th>
+<th>AI Threat Vector</th>
+<th>Impact on EP MCP Server</th>
+<th>Mitigation Strategy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>2025–2026</strong></td>
+<td>AI-generated social engineering targeting MCP tool arguments</td>
+<td>Medium — crafted inputs designed to extract maximum data</td>
+<td>Zod schema validation, rate limiting, data minimization</td>
+</tr>
+<tr>
+<td><strong>2026–2027</strong></td>
+<td>AI-powered dependency poisoning (LLM-generated malware in npm)</td>
+<td>High — sophisticated supply chain attacks</td>
+<td>SLSA Level 3, Dependabot, lockfile pinning, minimal deps</td>
+</tr>
+<tr>
+<td><strong>2027–2028</strong></td>
+<td>Autonomous AI agents attempting data exfiltration via MCP</td>
+<td>Medium — automated abuse of MCP protocol</td>
+<td>Rate limiting, anomaly detection, audit logging</td>
+</tr>
+<tr>
+<td><strong>2028–2030</strong></td>
+<td>AI-assisted API manipulation (adversarial ML against data pipelines)</td>
+<td>Medium — attempted manipulation of parliamentary data flows</td>
+<td>Source validation (EP API only), integrity checks</td>
+</tr>
+<tr>
+<td><strong>2030+</strong></td>
+<td>Quantum computing threats to TLS encryption</td>
+<td>Low (current) — future risk to transport security</td>
+<td>Monitor NIST post-quantum cryptography standards</td>
+</tr>
+</tbody>
+</table>
+<h3 id="🛡️-ai-powered-defense-progression" class="tsd-anchor-link">🛡️ AI-Powered Defense Progression<a href="#🛡️-ai-powered-defense-progression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Defense Capability</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Current (v1.1)</strong></td>
+<td>Static schema validation, rule-based rate limiting</td>
+<td>Zod schemas, token bucket algorithm</td>
+</tr>
+<tr>
+<td><strong>Near-term (v1.2)</strong></td>
+<td>Enhanced anomaly detection in request patterns</td>
+<td>MetricsService pattern analysis</td>
+</tr>
+<tr>
+<td><strong>Medium-term (v2.0)</strong></td>
+<td>AI-assisted threat detection for MCP protocol abuse</td>
+<td>ML-based request classification</td>
+</tr>
+<tr>
+<td><strong>Long-term (v3.0+)</strong></td>
+<td>Predictive security analytics, automated threat response</td>
+<td>Self-learning security controls</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mcp-protocol-specific-ai-threats" class="tsd-anchor-link">MCP Protocol-Specific AI Threats<a href="#mcp-protocol-specific-ai-threats" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Threat</th>
+<th>Description</th>
+<th>Current Control</th>
+<th>Future Control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prompt injection via tool args</strong></td>
+<td>AI client generates tool arguments containing injection payloads</td>
+<td>Zod schema validation (strict types)</td>
+<td>Semantic input analysis</td>
+</tr>
+<tr>
+<td><strong>Data harvesting automation</strong></td>
+<td>AI agent systematically extracts all available EP data</td>
+<td>Rate limiting (100/min)</td>
+<td>Usage pattern detection</td>
+</tr>
+<tr>
+<td><strong>Cross-tool correlation attacks</strong></td>
+<td>AI combines outputs from multiple tools to infer sensitive information</td>
+<td>Data minimization per tool</td>
+<td>Cross-tool correlation monitoring</td>
+</tr>
+<tr>
+<td><strong>Model poisoning via cached data</strong></td>
+<td>Compromised EP API responses cached and served to AI models</td>
+<td>15-min cache TTL, EP API as single source</td>
+<td>Response integrity validation</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="📚-related-documents" class="tsd-anchor-link">📚 Related Documents<a href="#📚-related-documents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Description</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🛡️ Security Architecture</td>
+<td>Current security design and controls</td>
+<td><a href="SECURITY_ARCHITECTURE.html">SECURITY_ARCHITECTURE.md</a></td>
+</tr>
+<tr>
+<td>🚀 Future Security Architecture</td>
+<td>Planned security enhancements</td>
+<td><a href="../media/FUTURE_SECURITY_ARCHITECTURE.md">FUTURE_SECURITY_ARCHITECTURE.md</a></td>
+</tr>
+<tr>
+<td>🔮 Future Threat Model</td>
+<td>Threat analysis for planned architecture evolution</td>
+<td><a href="../media/FUTURE_THREAT_MODEL.md">FUTURE_THREAT_MODEL.md</a></td>
+</tr>
+<tr>
+<td>🔄 Business Continuity Plan</td>
+<td>Recovery objectives and procedures</td>
+<td><a href="../media/BCPPlan.md">BCPPlan.md</a></td>
+</tr>
+<tr>
+<td>🛡️ CRA Assessment</td>
+<td>EU Cyber Resilience Act conformity</td>
+<td><a href="CRA-ASSESSMENT.html">CRA-ASSESSMENT.md</a></td>
+</tr>
+<tr>
+<td>🏛️ Architecture</td>
+<td>System architecture overview</td>
+<td><a href="ARCHITECTURE.html">ARCHITECTURE.md</a></td>
+</tr>
+<tr>
+<td>📊 Data Model</td>
+<td>Data structures and relationships</td>
+<td><a href="DATA_MODEL.html">DATA_MODEL.md</a></td>
+</tr>
+<tr>
+<td>🔒 Security Policy</td>
+<td>Security reporting and disclosure</td>
+<td><a href="SECURITY.html">SECURITY.md</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p align="center">
+  <em>This threat model is maintained as part of the <a href="https://github.com/Hack23/ISMS-PUBLIC">Hack23 AB ISMS</a> framework.</em><br>
+  <em>Licensed under <a href="../media/LICENSE.md">Apache-2.0</a></em>
+</p></div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-alpha" name="alpha"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Alpha</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-beta" name="beta"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Beta</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#📑-table-of-contents"><span>📑 <wbr/>Table of <wbr/>Contents</span></a><a href="#🔐-isms-policy-alignment"><span>🔐 <wbr/>ISMS <wbr/>Policy <wbr/>Alignment</span></a><ul><li><a href="#related-isms-policies"><span>Related <wbr/>ISMS <wbr/>Policies</span></a></li><li><a href="#security-control-implementation-status"><span>Security <wbr/>Control <wbr/>Implementation <wbr/>Status</span></a></li><li><a href="#compliance-framework-mapping"><span>Compliance <wbr/>Framework <wbr/>Mapping</span></a></li></ul><a href="#🗺️-security-documentation-map"><span>🗺️ <wbr/>Security <wbr/>Documentation <wbr/>Map</span></a><a href="#🎯-purpose-scope"><span>🎯 <wbr/>Purpose &amp; <wbr/>Scope</span></a><ul><li><a href="#🌟-transparency-commitment"><span>🌟 <wbr/>Transparency <wbr/>Commitment</span></a></li><li><a href="#📚-framework-integration"><span>📚 <wbr/>Framework <wbr/>Integration</span></a></li><li><a href="#🔍-scope-definition"><span>🔍 <wbr/>Scope <wbr/>Definition</span></a></li><li><a href="#🔗-policy-alignment"><span>🔗 <wbr/>Policy <wbr/>Alignment</span></a></li></ul><a href="#🎯-multi-strategy-threat-modeling-integration"><span>🎯 <wbr/>Multi-<wbr/>Strategy <wbr/>Threat <wbr/>Modeling <wbr/>Integration</span></a><ul><li><a href="#strategy-integration-summary"><span>Strategy <wbr/>Integration <wbr/>Summary</span></a></li></ul><a href="#📊-system-classification-operating-profile"><span>📊 <wbr/>System <wbr/>Classification &amp; <wbr/>Operating <wbr/>Profile</span></a><ul><li><a href="#🏷️-security-classification-matrix"><span>🏷️ <wbr/>Security <wbr/>Classification <wbr/>Matrix</span></a></li><li><a href="#⚙️-operating-profile"><span>⚙️ <wbr/>Operating <wbr/>Profile</span></a></li></ul><a href="#💎-critical-assets-crown-jewel-analysis"><span>💎 <wbr/>Critical <wbr/>Assets &amp; <wbr/>Crown <wbr/>Jewel <wbr/>Analysis</span></a><ul><li><a href="#🎯-critical-asset-inventory"><span>🎯 <wbr/>Critical <wbr/>Asset <wbr/>Inventory</span></a></li><li><a href="#💎-crown-jewel-analysis"><span>💎 <wbr/>Crown <wbr/>Jewel <wbr/>Analysis</span></a></li><li><a href="#🛡️-crown-jewel-protection-strategies"><span>🛡️ <wbr/>Crown <wbr/>Jewel <wbr/>Protection <wbr/>Strategies</span></a></li></ul><a href="#🎭-stride-threat-analysis"><span>🎭 <wbr/>STRIDE <wbr/>Threat <wbr/>Analysis</span></a><ul><li><a href="#s-spoofing"><span>S — <wbr/>Spoofing</span></a></li><li><a href="#t-tampering"><span>T — <wbr/>Tampering</span></a></li><li><a href="#r-repudiation"><span>R — <wbr/>Repudiation</span></a></li><li><a href="#i-information-disclosure"><span>I — <wbr/>Information <wbr/>Disclosure</span></a></li><li><a href="#d-denial-of-service"><span>D — <wbr/>Denial of <wbr/>Service</span></a></li><li><a href="#e-elevation-of-privilege"><span>E — <wbr/>Elevation of <wbr/>Privilege</span></a></li></ul><a href="#🎖️-mitre-attck-coverage-analysis"><span>🎖️ <wbr/>MITRE <wbr/>ATT&amp;<wbr/>CK <wbr/>Coverage <wbr/>Analysis</span></a><ul><li><a href="#attck-coverage-heat-map-by-tactic"><span>ATT&amp;<wbr/>CK <wbr/>Coverage <wbr/>Heat <wbr/>Map by <wbr/>Tactic</span></a></li></ul><a href="#🏗️-architecture-centric-stride-analysis"><span>🏗️ <wbr/>Architecture-<wbr/>Centric <wbr/>STRIDE <wbr/>Analysis</span></a><ul><li><a href="#🌊-data-flow-threat-surface"><span>🌊 <wbr/>Data <wbr/>Flow <wbr/>Threat <wbr/>Surface</span></a></li><li><a href="#🔍-stride-per-component-analysis"><span>🔍 <wbr/>STRIDE per <wbr/>Component <wbr/>Analysis</span></a></li><li><ul><li><a href="#component-1-mcp-server-core-tool-dispatcher-request-handler"><span>Component 1: <wbr/>MCP <wbr/>Server <wbr/>Core (<wbr/>Tool <wbr/>Dispatcher &amp; <wbr/>Request <wbr/>Handler)</span></a></li><li><a href="#component-2-ep-api-client-http-client-response-parser"><span>Component 2: <wbr/>EP <wbr/>API <wbr/>Client (<wbr/>HTTP <wbr/>Client &amp; <wbr/>Response <wbr/>Parser)</span></a></li><li><a href="#component-3-cache-layer-in-memory-lru-cache"><span>Component 3: <wbr/>Cache <wbr/>Layer (<wbr/>In-<wbr/>Memory <wbr/>LRU <wbr/>Cache)</span></a></li><li><a href="#component-4-rate-limiter-token-bucket-algorithm"><span>Component 4: <wbr/>Rate <wbr/>Limiter (<wbr/>Token <wbr/>Bucket <wbr/>Algorithm)</span></a></li><li><a href="#component-5-audit-logger-structured-stderr-logging"><span>Component 5: <wbr/>Audit <wbr/>Logger (<wbr/>Structured stderr <wbr/>Logging)</span></a></li><li><a href="#component-6-npm-package-distribution-packagejson-dist"><span>Component 6: npm <wbr/>Package <wbr/>Distribution (package.json &amp; dist/)</span></a></li></ul></li></ul><a href="#🎖️-mitre-attck-mapping"><span>🎖️ <wbr/>MITRE <wbr/>ATT&amp;<wbr/>CK <wbr/>Mapping</span></a><ul><li><a href="#attck-→-security-control-mitigation-mapping"><span>ATT&amp;<wbr/>CK → <wbr/>Security <wbr/>Control <wbr/>Mitigation <wbr/>Mapping</span></a></li><li><a href="#attck-navigator-visualization"><span>ATT&amp;<wbr/>CK <wbr/>Navigator <wbr/>Visualization</span></a></li></ul><a href="#🔗-kill-chain-disruption-analysis"><span>🔗 <wbr/>Kill <wbr/>Chain <wbr/>Disruption <wbr/>Analysis</span></a><ul><li><a href="#kill-chain-phase-→-defensive-control-→-detection-mapping"><span>Kill <wbr/>Chain <wbr/>Phase → <wbr/>Defensive <wbr/>Control → <wbr/>Detection <wbr/>Mapping</span></a></li><li><a href="#kill-chain-disruption-visualization"><span>Kill <wbr/>Chain <wbr/>Disruption <wbr/>Visualization</span></a></li></ul><a href="#👥-threat-agent-classification"><span>👥 <wbr/>Threat <wbr/>Agent <wbr/>Classification</span></a><ul><li><a href="#nation-state-actors"><span>Nation-<wbr/>State <wbr/>Actors</span></a></li><li><a href="#hacktivist-groups"><span>Hacktivist <wbr/>Groups</span></a></li><li><a href="#insider-threats-supply-chain"><span>Insider <wbr/>Threats (<wbr/>Supply <wbr/>Chain)</span></a></li><li><a href="#automated-threat-actors-botsscrapers"><span>Automated <wbr/>Threat <wbr/>Actors (<wbr/>Bots/<wbr/>Scrapers)</span></a></li><li><a href="#competitorespionage-actors"><span>Competitor/<wbr/>Espionage <wbr/>Actors</span></a></li><li><a href="#threat-actor-priority-matrix"><span>Threat <wbr/>Actor <wbr/>Priority <wbr/>Matrix</span></a></li></ul><a href="#🌐-current-threat-landscape"><span>🌐 <wbr/>Current <wbr/>Threat <wbr/>Landscape</span></a><ul><li><a href="#enisa-threat-landscape-2024-top-threats-mapped-to-ep-mcp-server"><span>ENISA <wbr/>Threat <wbr/>Landscape 2024 — <wbr/>Top <wbr/>Threats <wbr/>Mapped to <wbr/>EP <wbr/>MCP <wbr/>Server</span></a></li><li><a href="#eu-cyber-resilience-act-cra-context"><span>EU <wbr/>Cyber <wbr/>Resilience <wbr/>Act (<wbr/>CRA) <wbr/>Context</span></a></li><li><a href="#parliamentary-data-threat-context"><span>Parliamentary <wbr/>Data <wbr/>Threat <wbr/>Context</span></a></li><li><a href="#emerging-threat-vectors-2024-2025"><span>Emerging <wbr/>Threat <wbr/>Vectors (2024-<wbr/>2025)</span></a></li></ul><a href="#🎬-scenario-centric-threat-modeling-ep-specific"><span>🎬 <wbr/>Scenario-<wbr/>Centric <wbr/>Threat <wbr/>Modeling (<wbr/>EP-<wbr/>Specific)</span></a><ul><li><a href="#scenario-1-parliamentary-data-manipulation-attack"><span>Scenario 1: <wbr/>Parliamentary <wbr/>Data <wbr/>Manipulation <wbr/>Attack</span></a></li><li><a href="#scenario-2-mep-personal-data-abuse-gdpr-violation"><span>Scenario 2: <wbr/>MEP <wbr/>Personal <wbr/>Data <wbr/>Abuse (<wbr/>GDPR <wbr/>Violation)</span></a></li><li><a href="#scenario-3-electoral-influence-via-ai-assisted-disinformation"><span>Scenario 3: <wbr/>Electoral <wbr/>Influence via <wbr/>AI-<wbr/>Assisted <wbr/>Disinformation</span></a></li><li><a href="#scenario-4-supply-chain-compromise-of-npm-package"><span>Scenario 4: <wbr/>Supply <wbr/>Chain <wbr/>Compromise of npm <wbr/>Package</span></a></li><li><a href="#scenario-5-mcp-protocol-injection-attack"><span>Scenario 5: <wbr/>MCP <wbr/>Protocol <wbr/>Injection <wbr/>Attack</span></a></li></ul><a href="#🔄-continuous-validation-assessment"><span>🔄 <wbr/>Continuous <wbr/>Validation &amp; <wbr/>Assessment</span></a><ul><li><a href="#threat-modeling-workshop-process"><span>Threat <wbr/>Modeling <wbr/>Workshop <wbr/>Process</span></a></li><li><a href="#ad-hoc-review-triggers"><span>Ad-<wbr/>Hoc <wbr/>Review <wbr/>Triggers</span></a></li><li><a href="#workshop-activities-checklist"><span>Workshop <wbr/>Activities <wbr/>Checklist</span></a></li><li><a href="#continuous-validation-cycle"><span>Continuous <wbr/>Validation <wbr/>Cycle</span></a></li></ul><a href="#📅-assessment-lifecycle"><span>📅 <wbr/>Assessment <wbr/>Lifecycle</span></a><ul><li><a href="#scheduled-review-cadence"><span>Scheduled <wbr/>Review <wbr/>Cadence</span></a></li><li><a href="#ad-hoc-review-triggers-detailed"><span>Ad-<wbr/>Hoc <wbr/>Review <wbr/>Triggers (<wbr/>Detailed)</span></a></li><li><a href="#review-process-workflow"><span>Review <wbr/>Process <wbr/>Workflow</span></a></li><li><a href="#review-deliverables-by-type"><span>Review <wbr/>Deliverables by <wbr/>Type</span></a></li><li><a href="#version-control-change-tracking"><span>Version <wbr/>Control &amp; <wbr/>Change <wbr/>Tracking</span></a></li></ul><a href="#🎯-security-maturity-framework"><span>🎯 <wbr/>Security <wbr/>Maturity <wbr/>Framework</span></a><ul><li><a href="#maturity-level-definitions"><span>Maturity <wbr/>Level <wbr/>Definitions</span></a></li><li><ul><li><a href="#level-1-🔴-initial-ad-hoc-security-practices"><span>Level 1: 🔴 <wbr/>Initial (<wbr/>Ad-<wbr/>Hoc <wbr/>Security <wbr/>Practices)</span></a></li><li><a href="#level-2-🟡-developing-basic-controls-implemented"><span>Level 2: 🟡 <wbr/>Developing (<wbr/>Basic <wbr/>Controls <wbr/>Implemented)</span></a></li><li><a href="#level-3-🟢-defined-systematic-threat-modeling"><span>Level 3: 🟢 <wbr/>Defined (<wbr/>Systematic <wbr/>Threat <wbr/>Modeling)</span></a></li><li><a href="#level-4-🔵-managed-metrics-driven-security"><span>Level 4: 🔵 <wbr/>Managed (<wbr/>Metrics-<wbr/>Driven <wbr/>Security)</span></a></li><li><a href="#level-5-⭐-optimizing-continuous-improvement"><span>Level 5: ⭐ <wbr/>Optimizing (<wbr/>Continuous <wbr/>Improvement)</span></a></li></ul></li><li><a href="#european-parliament-mcp-server-current-maturity-assessment"><span>European <wbr/>Parliament <wbr/>MCP <wbr/>Server — <wbr/>Current <wbr/>Maturity <wbr/>Assessment</span></a></li><li><a href="#maturity-progression-roadmap-2025-2026"><span>Maturity <wbr/>Progression <wbr/>Roadmap (2025-<wbr/>2026)</span></a></li><li><a href="#maturity-assessment-criteria"><span>Maturity <wbr/>Assessment <wbr/>Criteria</span></a></li></ul><a href="#📊-quantitative-risk-assessment"><span>📊 <wbr/>Quantitative <wbr/>Risk <wbr/>Assessment</span></a><ul><li><a href="#risk-matrix"><span>Risk <wbr/>Matrix</span></a></li><li><a href="#top-priority-risks"><span>Top <wbr/>Priority <wbr/>Risks</span></a></li></ul><a href="#🛡️-security-controls-mitigations"><span>🛡️ <wbr/>Security <wbr/>Controls &amp; <wbr/>Mitigations</span></a><ul><li><a href="#control-architecture"><span>Control <wbr/>Architecture</span></a></li><li><a href="#security-controls-matrix"><span>Security <wbr/>Controls <wbr/>Matrix</span></a></li></ul><a href="#🌳-attack-tree-analysis"><span>🌳 <wbr/>Attack <wbr/>Tree <wbr/>Analysis</span></a><ul><li><a href="#attack-tree-1-supply-chain-compromise-detailed"><span>Attack <wbr/>Tree 1: <wbr/>Supply <wbr/>Chain <wbr/>Compromise (<wbr/>Detailed)</span></a></li><li><a href="#attack-tree-2-unauthorized-data-manipulation-t-1-t-2"><span>Attack <wbr/>Tree 2: <wbr/>Unauthorized <wbr/>Data <wbr/>Manipulation (<wbr/>T-<wbr/>1, <wbr/>T-<wbr/>2)</span></a></li><li><a href="#attack-tree-3-service-disruption-dos-d-1-d-2-d-3"><span>Attack <wbr/>Tree 3: <wbr/>Service <wbr/>Disruption / <wbr/>Do<wbr/>S (<wbr/>D-<wbr/>1, <wbr/>D-<wbr/>2, <wbr/>D-<wbr/>3)</span></a></li><li><a href="#attack-tree-4-mcp-protocol-exploit-original-preserved"><span>Attack <wbr/>Tree 4: <wbr/>MCP <wbr/>Protocol <wbr/>Exploit (<wbr/>Original -<wbr/> <wbr/>Preserved)</span></a></li></ul><a href="#🔴-priority-threat-scenarios"><span>🔴 <wbr/>Priority <wbr/>Threat <wbr/>Scenarios</span></a><a href="#🛡️-stride-→-control-mapping"><span>🛡️ <wbr/>STRIDE → <wbr/>Control <wbr/>Mapping</span></a><a href="#🏛️-comprehensive-security-control-framework"><span>🏛️ <wbr/>Comprehensive <wbr/>Security <wbr/>Control <wbr/>Framework</span></a><ul><li><a href="#🛡️-defense-in-depth-architecture"><span>🛡️ <wbr/>Defense-<wbr/>in-<wbr/>Depth <wbr/>Architecture</span></a></li><li><a href="#🎯-control-effectiveness-matrix"><span>🎯 <wbr/>Control <wbr/>Effectiveness <wbr/>Matrix</span></a></li><li><a href="#📊-nist-csf-20-function-mapping"><span>📊 <wbr/>NIST <wbr/>CSF 2.0 <wbr/>Function <wbr/>Mapping</span></a></li></ul><a href="#🔗-policy-alignment-1"><span>🔗 <wbr/>Policy <wbr/>Alignment</span></a><ul><li><a href="#compliance-framework-mapping-1"><span>Compliance <wbr/>Framework <wbr/>Mapping</span></a></li></ul><a href="#📋-cia-triad-and-aaa-framework-application"><span>📋 <wbr/>CIA <wbr/>Triad and <wbr/>AAA <wbr/>Framework <wbr/>Application</span></a><ul><li><a href="#cia-triad-assessment"><span>CIA <wbr/>Triad <wbr/>Assessment</span></a></li><li><a href="#aaa-framework-integration"><span>AAA <wbr/>Framework <wbr/>Integration</span></a></li></ul><a href="#📊-threat-catalog"><span>📊 <wbr/>Threat <wbr/>Catalog</span></a><ul><li><a href="#threat-documentation-standard"><span>Threat <wbr/>Documentation <wbr/>Standard</span></a></li><li><a href="#threat-count-summary"><span>Threat <wbr/>Count <wbr/>Summary</span></a></li></ul><a href="#📈-ai-model-evolution-threat-landscape-perspective"><span>📈 <wbr/>AI <wbr/>Model <wbr/>Evolution — <wbr/>Threat <wbr/>Landscape <wbr/>Perspective</span></a><ul><li><a href="#🔴-evolving-ai-enabled-threat-vectors"><span>🔴 <wbr/>Evolving <wbr/>AI-<wbr/>Enabled <wbr/>Threat <wbr/>Vectors</span></a></li><li><a href="#🛡️-ai-powered-defense-progression"><span>🛡️ <wbr/>AI-<wbr/>Powered <wbr/>Defense <wbr/>Progression</span></a></li><li><a href="#mcp-protocol-specific-ai-threats"><span>MCP <wbr/>Protocol-<wbr/>Specific <wbr/>AI <wbr/>Threats</span></a></li></ul><a href="#📚-related-documents"><span>📚 <wbr/>Related <wbr/>Documents</span></a></div></details></div><div class="site-menu"><nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/ARCHITECTURE.md">Architecture</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DATA_MODEL.md">Data Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEVELOPER_GUIDE.md">Developer Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEPLOYMENT_GUIDE.md">Deployment Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/PERFORMANCE_GUIDE.md">Performance Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SWOT.md">SWOT Analysis</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/End-of-Life-Strategy.md">End-of-Life Strategy</a><a href="https://hack23.github.io/European-Parliament-MCP-Server/" class="tsd-nav-link">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server" class="tsd-nav-link">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md" class="tsd-nav-link">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC" class="tsd-nav-link">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md" class="tsd-nav-link">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md" class="tsd-nav-link">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md" class="tsd-nav-link">API Usage Guide</a></nav><nav class="tsd-navigation"><a href="../modules.html">European Parliament MCP Server API - v1.1.21</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

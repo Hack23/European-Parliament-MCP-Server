@@ -1,0 +1,1647 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>SECURITY_ARCHITECTURE | European Parliament MCP Server API - v1.1.21</title><meta name="description" content="Documentation for European Parliament MCP Server API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">European Parliament MCP Server API - v1.1.21</a><div id="tsd-toolbar-links"><a href="https://hack23.github.io/European-Parliament-MCP-Server/">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md">API Usage Guide</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">SECURITY_ARCHITECTURE</a></li></ul></div><div class="tsd-panel tsd-typography"><p align="center">
+  <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
+</p>
+<h1 align="center">🔒 European Parliament MCP Server — Security Architecture</h1>
+<p align="center">
+  <strong>Implemented Security Controls, Threat Model, and Compliance Mapping</strong><br>
+  <em>Defense-in-depth security design for parliamentary data access</em>
+</p>
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/Owner-Hack23-0A66C2?style=for-the-badge" alt="Owner"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.1-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--03--19-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
+  <a href="https://www.bestpractices.dev/projects/12067"><img src="https://www.bestpractices.dev/projects/12067/badge" alt="OpenSSF Best Practices"/></a>
+</p>
+<p><strong>📋 Document Owner:</strong> Hack23 | <strong>📄 Version:</strong> 1.1 | <strong>📅 Last Updated:</strong> 2026-03-19 (UTC)
+<strong>🔄 Review Cycle:</strong> Quarterly | <strong>⏰ Next Review:</strong> 2026-06-19
+<strong>🏷️ Classification:</strong> Public (Open Source MCP Server)
+<strong>✅ ISMS Compliance:</strong> ISO 27001 (A.5.1, A.8.1, A.14.2), NIST CSF 2.0 (<a href="http://ID.AM" target="_blank" class="external">ID.AM</a>, PR.DS), CIS Controls v8.1 (2.1, 16.1)</p>
+<hr>
+<h2 id="📑-table-of-contents" class="tsd-anchor-link">📑 Table of Contents<a href="#📑-table-of-contents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ol>
+<li><a href="#-security-documentation-map">Security Documentation Map</a></li>
+<li><a href="#-executive-summary">Executive Summary</a></li>
+<li><a href="#-4-layer-security-architecture">4-Layer Security Architecture</a></li>
+<li><a href="#-security-controls-inventory">Security Controls Inventory</a></li>
+<li><a href="#-threat-mitigation-mapping-stride">Threat Mitigation Mapping (STRIDE)</a></li>
+<li><a href="#-authentication-and-authorization">Authentication and Authorization</a></li>
+<li><a href="#-session-and-action-tracking">Session and Action Tracking</a></li>
+<li><a href="#-data-integrity-and-auditing">Data Integrity and Auditing</a></li>
+<li><a href="#-data-protection-and-gdpr">Data Protection and GDPR</a></li>
+<li><a href="#-network-security-and-perimeter-protection">Network Security and Perimeter Protection</a></li>
+<li><a href="#-vpc-endpoints-and-private-access">VPC Endpoints and Private Access</a></li>
+<li><a href="#-high-availability-and-resilience">High Availability and Resilience</a></li>
+<li><a href="#-threat-detection-and-investigation">Threat Detection and Investigation</a></li>
+<li><a href="#-vulnerability-management">Vulnerability Management</a></li>
+<li><a href="#-configuration-and-compliance-management">Configuration and Compliance Management</a></li>
+<li><a href="#-security-monitoring-and-analytics">Security Monitoring and Analytics</a></li>
+<li><a href="#-automated-security-operations">Automated Security Operations</a></li>
+<li><a href="#-application-security-controls">Application Security Controls</a></li>
+<li><a href="#-defense-in-depth-strategy">Defense-in-Depth Strategy</a></li>
+<li><a href="#-security-testing-requirements">Security Testing Requirements</a></li>
+<li><a href="#-compliance-framework-mapping">Compliance Framework Mapping</a></li>
+</ol>
+<hr>
+<h2 id="🗺️-security-documentation-map" class="tsd-anchor-link">🗺️ Security Documentation Map<a href="#🗺️-security-documentation-map" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Current</th>
+<th>Future</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Architecture</strong></td>
+<td><a href="ARCHITECTURE.html">ARCHITECTURE.md</a></td>
+<td><a href="../media/FUTURE_ARCHITECTURE.md">FUTURE_ARCHITECTURE.md</a></td>
+<td>C4 model, containers, components, ADRs</td>
+</tr>
+<tr>
+<td><strong>Security Architecture</strong></td>
+<td><a href="">SECURITY_ARCHITECTURE.md</a></td>
+<td><a href="../media/FUTURE_SECURITY_ARCHITECTURE.md">FUTURE_SECURITY_ARCHITECTURE.md</a></td>
+<td>Security controls, threat model</td>
+</tr>
+<tr>
+<td><strong>Data Model</strong></td>
+<td><a href="DATA_MODEL.html">DATA_MODEL.md</a></td>
+<td><a href="../media/FUTURE_DATA_MODEL.md">FUTURE_DATA_MODEL.md</a></td>
+<td>Entity relationships, branded types</td>
+</tr>
+<tr>
+<td><strong>Flowchart</strong></td>
+<td><a href="../media/FLOWCHART.md">FLOWCHART.md</a></td>
+<td><a href="../media/FUTURE_FLOWCHART.md">FUTURE_FLOWCHART.md</a></td>
+<td>Business process flows</td>
+</tr>
+<tr>
+<td><strong>State Diagram</strong></td>
+<td><a href="../media/STATEDIAGRAM.md">STATEDIAGRAM.md</a></td>
+<td><a href="../media/FUTURE_STATEDIAGRAM.md">FUTURE_STATEDIAGRAM.md</a></td>
+<td>System state transitions</td>
+</tr>
+<tr>
+<td><strong>Mind Map</strong></td>
+<td><a href="../media/MINDMAP.md">MINDMAP.md</a></td>
+<td><a href="../media/FUTURE_MINDMAP.md">FUTURE_MINDMAP.md</a></td>
+<td>System concepts and relationships</td>
+</tr>
+<tr>
+<td><strong>SWOT Analysis</strong></td>
+<td><a href="../media/SWOT.md">SWOT.md</a></td>
+<td><a href="../media/FUTURE_SWOT.md">FUTURE_SWOT.md</a></td>
+<td>Strategic positioning</td>
+</tr>
+<tr>
+<td><strong>Threat Model</strong></td>
+<td><a href="THREAT_MODEL.html">THREAT_MODEL.md</a></td>
+<td><a href="../media/FUTURE_THREAT_MODEL.md">FUTURE_THREAT_MODEL.md</a></td>
+<td>STRIDE, MITRE ATT&amp;CK, attack trees</td>
+</tr>
+<tr>
+<td><strong>CRA Assessment</strong></td>
+<td><a href="CRA-ASSESSMENT.html">CRA-ASSESSMENT.md</a></td>
+<td>—</td>
+<td>EU Cyber Resilience Act conformity</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🎯-executive-summary" class="tsd-anchor-link">🎯 Executive Summary<a href="#🎯-executive-summary" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The EP MCP Server implements a <strong>4-layer defense-in-depth security architecture</strong> aligned with OWASP best practices, ISO 27001, NIST CSF 2.0, and GDPR requirements. Since the server operates as an MCP stdio process (not a network-exposed server), the primary security concerns are:</p>
+<ol>
+<li><strong>Input validation</strong> — prevent malformed or malicious MCP tool arguments</li>
+<li><strong>API abuse prevention</strong> — protect EP Open Data Portal from overuse</li>
+<li><strong>Data privacy</strong> — GDPR-compliant handling of MEP personal data</li>
+<li><strong>Audit trail</strong> — full traceability of all data access</li>
+</ol>
+<p>The server does <strong>not</strong> handle authentication tokens, passwords, or payment data, significantly reducing the attack surface.</p>
+<hr>
+<h2 id="🛡️-4-layer-security-architecture" class="tsd-anchor-link">🛡️ 4-Layer Security Architecture<a href="#🛡️-4-layer-security-architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="mermaid">flowchart TD
+    MCP_IN["MCP Tool Invocation\n(args: unknown)"]
+
+    subgraph L1["Layer 1: Input Validation"]
+        ZOD["Zod Schema Validation\nStrict type checking, format enforcement"]
+        ZE["ZodError → MCP error response"]
+    end
+
+    subgraph L2["Layer 2: Rate Limiting"]
+        RL["Token Bucket Rate Limiter\n100 tokens/minute"]
+        RLE["Rate limit exceeded → 429 response"]
+    end
+
+    subgraph L3["Layer 3: Audit Logging"]
+        AL["Audit Logger\nTool name, params (PII-stripped), timestamp, user context"]
+    end
+
+    subgraph L4["Layer 4: GDPR Compliance"]
+        GDPR["Data Minimization\nPurpose Limitation\nStorage Limitation"]
+    end
+
+    EP_API["EP Open Data Portal API v2\n(HTTPS/TLS)"]
+    RESULT["Tool Result → MCP Client"]
+
+    MCP_IN --> ZOD
+    ZOD -->|"invalid"| ZE
+    ZOD -->|"valid"| RL
+    RL -->|"exceeded"| RLE
+    RL -->|"token available"| AL
+    AL --> GDPR
+    GDPR --> EP_API
+    EP_API --> RESULT
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="🔐-security-controls-inventory" class="tsd-anchor-link">🔐 Security Controls Inventory<a href="#🔐-security-controls-inventory" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Control ID</th>
+<th>Control Name</th>
+<th>Type</th>
+<th>Implementation</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SC-001</td>
+<td>Input Validation</td>
+<td>Preventive</td>
+<td>Zod schema per tool (61 schemas)</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>SC-002</td>
+<td>Rate Limiting</td>
+<td>Preventive</td>
+<td>Token bucket, 100 req/min</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>SC-003</td>
+<td>Audit Logging</td>
+<td>Detective</td>
+<td>AuditLogger singleton, all invocations</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>SC-004</td>
+<td>GDPR Data Minimization</td>
+<td>Preventive</td>
+<td>Field selection, no over-fetching</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>SC-005</td>
+<td>TLS in Transit</td>
+<td>Preventive</td>
+<td>HTTPS to EP API, Node TLS defaults</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>SC-006</td>
+<td>Dependency Scanning</td>
+<td>Detective</td>
+<td>Dependabot, npm audit</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>SC-007</td>
+<td>Static Analysis</td>
+<td>Preventive</td>
+<td>ESLint, TypeScript strict mode</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>SC-008</td>
+<td>Secret Detection</td>
+<td>Preventive</td>
+<td>No secrets in codebase; env vars only</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>SC-009</td>
+<td>Error Sanitization</td>
+<td>Preventive</td>
+<td>Internal errors not leaked to MCP clients</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>SC-010</td>
+<td>Health Monitoring</td>
+<td>Detective</td>
+<td>HealthService singleton</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>SC-011</td>
+<td>Metrics Collection</td>
+<td>Detective</td>
+<td>MetricsService, rate/error tracking</td>
+<td>✅ Implemented</td>
+</tr>
+<tr>
+<td>SC-012</td>
+<td>Branded Types</td>
+<td>Preventive</td>
+<td>Zod branded types for EP identifiers</td>
+<td>✅ Implemented</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="⚔️-threat-mitigation-mapping-stride" class="tsd-anchor-link">⚔️ Threat Mitigation Mapping (STRIDE)<a href="#⚔️-threat-mitigation-mapping-stride" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Threat Category</th>
+<th>Specific Threat</th>
+<th>Likelihood</th>
+<th>Impact</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Spoofing</strong></td>
+<td>Fake MCP client identity</td>
+<td>Low</td>
+<td>Low</td>
+<td>stdio transport — client is the spawning process</td>
+</tr>
+<tr>
+<td><strong>Tampering</strong></td>
+<td>Malicious tool arguments</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>SC-001: Zod validation rejects malformed input</td>
+</tr>
+<tr>
+<td><strong>Repudiation</strong></td>
+<td>Deny data access occurred</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>SC-003: Immutable audit log with timestamps</td>
+</tr>
+<tr>
+<td><strong>Information Disclosure</strong></td>
+<td>MEP PII over-exposure</td>
+<td>Medium</td>
+<td>High</td>
+<td>SC-004: Data minimization, GDPR controls</td>
+</tr>
+<tr>
+<td><strong>Information Disclosure</strong></td>
+<td>Internal error details leaked</td>
+<td>Low</td>
+<td>Medium</td>
+<td>SC-009: Error sanitization</td>
+</tr>
+<tr>
+<td><strong>Denial of Service</strong></td>
+<td>EP API flooding</td>
+<td>Medium</td>
+<td>High</td>
+<td>SC-002: Rate limiter blocks bursts</td>
+</tr>
+<tr>
+<td><strong>Denial of Service</strong></td>
+<td>Memory exhaustion via cache</td>
+<td>Low</td>
+<td>Medium</td>
+<td>LRU eviction (max 500 entries)</td>
+</tr>
+<tr>
+<td><strong>Elevation of Privilege</strong></td>
+<td>Unauthorized tool access</td>
+<td>Low</td>
+<td>Low</td>
+<td>No auth layer needed — local stdio process</td>
+</tr>
+<tr>
+<td><strong>Elevation of Privilege</strong></td>
+<td>Prototype pollution via input</td>
+<td>Low</td>
+<td>Medium</td>
+<td>SC-001: Zod validation with strict mode</td>
+</tr>
+<tr>
+<td><strong>Supply Chain</strong></td>
+<td>Malicious npm package</td>
+<td>Medium</td>
+<td>High</td>
+<td>SC-006: Dependabot, npm audit, lockfile</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🔑-authentication-and-authorization" class="tsd-anchor-link">🔑 Authentication and Authorization<a href="#🔑-authentication-and-authorization" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="current-model-v11" class="tsd-anchor-link">Current Model (v1.1)<a href="#current-model-v11" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The EP MCP Server operates as a <strong>local stdio process</strong> spawned by the MCP client (e.g., Claude Desktop). The security model relies on OS-level process isolation:</p>
+<ul>
+<li><strong>No network authentication</strong> — the server is not network-exposed</li>
+<li><strong>No user credentials</strong> — the server does not handle user tokens</li>
+<li><strong>Process isolation</strong> — only the spawning MCP client can communicate via stdio</li>
+<li><strong>EP API access</strong> — public open data, no authentication required by EP</li>
+</ul>
+<h3 id="trust-boundaries" class="tsd-anchor-link">Trust Boundaries<a href="#trust-boundaries" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">flowchart LR
+    subgraph TrustHigh["High Trust Zone"]
+        OS["Operating System"]
+        User["Local User Account"]
+    end
+
+    subgraph TrustMedium["Medium Trust Zone"]
+        MCP["MCP Client Process\n(Claude Desktop / Cursor)"]
+        Server["EP MCP Server Process"]
+    end
+
+    subgraph TrustLow["Low Trust Zone"]
+        Input["Tool Arguments\n(from AI-generated content)"]
+    end
+
+    subgraph External["Untrusted External"]
+        EPAPI["EP Open Data Portal\n(public internet)"]
+    end
+
+    OS --> MCP
+    MCP --> Server
+    Server --> Input
+    Input -->|"Zod validation"| Server
+    Server -->|"HTTPS"| EPAPI
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Key principle:</strong> Tool arguments are treated as <strong>untrusted input</strong> regardless of their origin, since AI models may generate unexpected parameter values.</p>
+<hr>
+<h2 id="📊-session-and-action-tracking" class="tsd-anchor-link">📊 Session and Action Tracking<a href="#📊-session-and-action-tracking" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>All user interactions with the MCP server are tracked through the integrated audit and metrics systems:</p>
+<h3 id="session-tracking-model" class="tsd-anchor-link">Session Tracking Model<a href="#session-tracking-model" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">flowchart LR
+    subgraph SessionContext["Session Context"]
+        STDIO["stdio Connection\n(1 session per process)"]
+        TC["Tool Call Counter"]
+        TS["Session Start Time"]
+    end
+
+    subgraph ActionTracking["Action Tracking"]
+        AL["AuditLogger\n(every tool invocation)"]
+        MS["MetricsService\n(aggregated counters)"]
+        HS["HealthService\n(process health)"]
+    end
+
+    STDIO --> AL
+    STDIO --> MS
+    AL --> TC
+    MS --> TS
+    HS --> TC
+</code><button type="button">Copy</button></pre>
+
+<h3 id="tracked-actions" class="tsd-anchor-link">Tracked Actions<a href="#tracked-actions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Action Type</th>
+<th>Tracked Fields</th>
+<th>Storage</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tool invocation</td>
+<td>Tool name, sanitized params, timestamp, duration</td>
+<td>stderr audit log</td>
+<td>Full traceability</td>
+</tr>
+<tr>
+<td>API request</td>
+<td>URL, status, duration, cache hit/miss</td>
+<td>MetricsService</td>
+<td>Performance monitoring</td>
+</tr>
+<tr>
+<td>Rate limit event</td>
+<td>Token count, refill status, rejection</td>
+<td>stderr audit log</td>
+<td>Abuse detection</td>
+</tr>
+<tr>
+<td>Error occurrence</td>
+<td>Error type (no stack trace), tool context</td>
+<td>stderr audit log</td>
+<td>Incident response</td>
+</tr>
+<tr>
+<td>Cache operation</td>
+<td>Key, hit/miss, eviction</td>
+<td>MetricsService</td>
+<td>Efficiency tracking</td>
+</tr>
+</tbody>
+</table>
+<h3 id="action-tracking-implementation" class="tsd-anchor-link">Action Tracking Implementation<a href="#action-tracking-implementation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li><strong>No persistent session storage</strong> — session state is in-memory only (process-scoped)</li>
+<li><strong>PII stripping</strong> — all logged parameters have personal data fields removed before logging</li>
+<li><strong>Structured logging</strong> — JSON format on stderr for machine-parseable audit trail</li>
+<li><strong>Per-tool metrics</strong> — invocation count, error count, average duration per tool</li>
+</ul>
+<hr>
+<h2 id="📜-data-integrity-and-auditing" class="tsd-anchor-link">📜 Data Integrity and Auditing<a href="#📜-data-integrity-and-auditing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="data-integrity-controls" class="tsd-anchor-link">Data Integrity Controls<a href="#data-integrity-controls" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Control</th>
+<th>Implementation</th>
+<th>Verification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Source integrity</strong></td>
+<td>All data sourced from official EP API over HTTPS/TLS</td>
+<td>TLS certificate validation</td>
+</tr>
+<tr>
+<td><strong>Transport integrity</strong></td>
+<td>HTTPS with TLS 1.2+ for all API calls</td>
+<td>Node.js default TLS verification</td>
+</tr>
+<tr>
+<td><strong>Cache integrity</strong></td>
+<td>In-memory LRU cache (no persistent storage) — no disk tampering risk</td>
+<td>Process isolation</td>
+</tr>
+<tr>
+<td><strong>Schema validation</strong></td>
+<td>Zod schemas validate all API responses before processing</td>
+<td>TypeScript strict mode + runtime validation</td>
+</tr>
+<tr>
+<td><strong>Audit immutability</strong></td>
+<td>Audit logs written to stderr (append-only within process)</td>
+<td>No log modification API exposed</td>
+</tr>
+<tr>
+<td><strong>Package integrity</strong></td>
+<td>npm lockfile with exact versions, SLSA Level 3 provenance</td>
+<td>Provenance attestations, Sigstore signing</td>
+</tr>
+</tbody>
+</table>
+<h3 id="audit-trail-architecture" class="tsd-anchor-link">Audit Trail Architecture<a href="#audit-trail-architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">flowchart TD
+    ToolCall["Tool Invocation"] --> AuditLog["AuditLogger.logToolCall()"]
+    AuditLog --> PIIStrip["PII Stripping\n(remove personal data fields)"]
+    PIIStrip --> Format["JSON Structured Format"]
+    Format --> Stderr["stderr Output\n(append-only)"]
+    Stderr --> External["External Log Collection\n(host-managed)"]
+</code><button type="button">Copy</button></pre>
+
+<h3 id="audit-log-fields" class="tsd-anchor-link">Audit Log Fields<a href="#audit-log-fields" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>timestamp</code></td>
+<td>ISO 8601</td>
+<td>Event occurrence time</td>
+</tr>
+<tr>
+<td><code>toolName</code></td>
+<td>string</td>
+<td>MCP tool identifier</td>
+</tr>
+<tr>
+<td><code>parameters</code></td>
+<td>object</td>
+<td>Sanitized input parameters (PII removed)</td>
+</tr>
+<tr>
+<td><code>resultStatus</code></td>
+<td>enum</td>
+<td><code>success</code>, <code>error</code>, <code>rate_limited</code></td>
+</tr>
+<tr>
+<td><code>durationMs</code></td>
+<td>number</td>
+<td>Execution duration</td>
+</tr>
+<tr>
+<td><code>errorType</code></td>
+<td>string?</td>
+<td>Error category (no stack traces)</td>
+</tr>
+<tr>
+<td><code>cacheHit</code></td>
+<td>boolean?</td>
+<td>Whether result came from cache</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🛡️-data-protection-and-gdpr" class="tsd-anchor-link">🛡️ Data Protection and GDPR<a href="#🛡️-data-protection-and-gdpr" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="personal-data-inventory" class="tsd-anchor-link">Personal Data Inventory<a href="#personal-data-inventory" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Data Category</th>
+<th>EP API Endpoint</th>
+<th>GDPR Basis</th>
+<th>Retention in Cache</th>
+<th>Minimization Applied</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MEP Names</td>
+<td><code>/meps/{id}</code></td>
+<td>Public role (Art. 6.1.e)</td>
+<td>15 min TTL</td>
+<td>Name, group only</td>
+</tr>
+<tr>
+<td>MEP Contact</td>
+<td><code>/meps/{id}</code></td>
+<td>Legitimate interest</td>
+<td>15 min TTL</td>
+<td>Official EP address only</td>
+</tr>
+<tr>
+<td>MEP Votes</td>
+<td><code>/votes</code></td>
+<td>Public interest</td>
+<td>15 min TTL</td>
+<td>Vote record, no commentary</td>
+</tr>
+<tr>
+<td>MEP Attendance</td>
+<td><code>/plenary-sessions</code></td>
+<td>Public interest</td>
+<td>15 min TTL</td>
+<td>Session data only</td>
+</tr>
+<tr>
+<td>MEP Declarations</td>
+<td><code>/meps/{id}/declarations</code></td>
+<td>Public role</td>
+<td>15 min TTL</td>
+<td>Official declarations only</td>
+</tr>
+</tbody>
+</table>
+<h3 id="gdpr-principles-implementation" class="tsd-anchor-link">GDPR Principles Implementation<a href="#gdpr-principles-implementation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Principle</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Lawfulness</strong></td>
+<td>Processing public parliamentary records per Art. 6.1.e (public interest)</td>
+</tr>
+<tr>
+<td><strong>Purpose Limitation</strong></td>
+<td>Data used solely for parliamentary intelligence queries</td>
+</tr>
+<tr>
+<td><strong>Data Minimization</strong></td>
+<td>Field selection queries — only request needed attributes</td>
+</tr>
+<tr>
+<td><strong>Accuracy</strong></td>
+<td>Data sourced directly from official EP API</td>
+</tr>
+<tr>
+<td><strong>Storage Limitation</strong></td>
+<td>LRU cache with 15-min TTL; no persistent storage</td>
+</tr>
+<tr>
+<td><strong>Integrity and Confidentiality</strong></td>
+<td>HTTPS transport, no local file system writes</td>
+</tr>
+<tr>
+<td><strong>Accountability</strong></td>
+<td>Audit logging of all data access requests</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🌐-network-security-and-perimeter-protection" class="tsd-anchor-link">🌐 Network Security and Perimeter Protection<a href="#🌐-network-security-and-perimeter-protection" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="outbound-connections" class="tsd-anchor-link">Outbound Connections<a href="#outbound-connections" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>Protocol</th>
+<th>Port</th>
+<th>TLS</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data.europarl.europa.eu</code></td>
+<td>HTTPS</td>
+<td>443</td>
+<td>TLS 1.2+</td>
+<td>EP Open Data Portal API v2</td>
+</tr>
+<tr>
+<td>EP Vocabulary endpoints</td>
+<td>HTTPS</td>
+<td>443</td>
+<td>TLS 1.2+</td>
+<td>AT4EU taxonomy lookups</td>
+</tr>
+</tbody>
+</table>
+<h3 id="security-headers-outbound-requests" class="tsd-anchor-link">Security Headers (Outbound Requests)<a href="#security-headers-outbound-requests" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="typescript"><span class="hl-0">// Applied to all EP API requests</span><br/><span class="hl-8">headers</span><span class="hl-2">: {</span><br/><span class="hl-2">  </span><span class="hl-3">&#39;Accept&#39;</span><span class="hl-2">: </span><span class="hl-3">&#39;application/json&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-3">&#39;User-Agent&#39;</span><span class="hl-2">: </span><span class="hl-3">&#39;European-Parliament-MCP-Server/1.1&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-3">&#39;Accept-Encoding&#39;</span><span class="hl-2">: </span><span class="hl-3">&#39;gzip, deflate, br&#39;</span><br/><span class="hl-2">}</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="no-inbound-network-exposure" class="tsd-anchor-link">No Inbound Network Exposure<a href="#no-inbound-network-exposure" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li>Server operates exclusively via <strong>stdio</strong> (no listening sockets)</li>
+<li>No HTTP server, no WebSocket server in current v1.1</li>
+<li>No ports bound, no firewall rules required</li>
+</ul>
+<hr>
+<h2 id="📊-audit-and-monitoring" class="tsd-anchor-link">📊 Audit and Monitoring<a href="#📊-audit-and-monitoring" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="audit-log-schema" class="tsd-anchor-link">Audit Log Schema<a href="#audit-log-schema" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="typescript"><span class="hl-4">interface</span><span class="hl-2"> </span><span class="hl-10">AuditLogEntry</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-7">timestamp</span><span class="hl-2">: </span><span class="hl-10">string</span><span class="hl-2">;        </span><span class="hl-0">// ISO 8601</span><br/><span class="hl-2">  </span><span class="hl-7">toolName</span><span class="hl-2">: </span><span class="hl-10">string</span><span class="hl-2">;         </span><span class="hl-0">// e.g., &quot;get_mep_details&quot;</span><br/><span class="hl-2">  </span><span class="hl-7">parameters</span><span class="hl-2">: </span><span class="hl-10">Record</span><span class="hl-2">&lt;</span><span class="hl-10">string</span><span class="hl-2">, </span><span class="hl-10">unknown</span><span class="hl-2">&gt;;  </span><span class="hl-0">// PII-stripped</span><br/><span class="hl-2">  </span><span class="hl-7">resultStatus</span><span class="hl-2">: </span><span class="hl-3">&#39;success&#39;</span><span class="hl-2"> | </span><span class="hl-3">&#39;error&#39;</span><span class="hl-2"> | </span><span class="hl-3">&#39;rate_limited&#39;</span><span class="hl-2">;</span><br/><span class="hl-2">  </span><span class="hl-7">durationMs</span><span class="hl-2">: </span><span class="hl-10">number</span><span class="hl-2">;</span><br/><span class="hl-2">  </span><span class="hl-7">errorType</span><span class="hl-2">?: </span><span class="hl-10">string</span><span class="hl-2">;       </span><span class="hl-0">// Error category (no stack traces)</span><br/><span class="hl-2">}</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="metrics-collected" class="tsd-anchor-link">Metrics Collected<a href="#metrics-collected" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tool.invocations.total</code></td>
+<td>Counter</td>
+<td>Usage tracking per tool</td>
+</tr>
+<tr>
+<td><code>tool.invocations.errors</code></td>
+<td>Counter</td>
+<td>Error rate monitoring</td>
+</tr>
+<tr>
+<td><code>cache.hits</code></td>
+<td>Counter</td>
+<td>Cache efficiency</td>
+</tr>
+<tr>
+<td><code>cache.misses</code></td>
+<td>Counter</td>
+<td>Cache efficiency</td>
+</tr>
+<tr>
+<td><code>ratelimit.tokens.used</code></td>
+<td>Gauge</td>
+<td>Rate limit consumption</td>
+</tr>
+<tr>
+<td><code>api.request.duration_ms</code></td>
+<td>Histogram</td>
+<td>EP API latency</td>
+</tr>
+<tr>
+<td><code>api.request.errors</code></td>
+<td>Counter</td>
+<td>EP API error rates</td>
+</tr>
+</tbody>
+</table>
+<h3 id="health-checks" class="tsd-anchor-link">Health Checks<a href="#health-checks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The <code>HealthService</code> singleton monitors:</p>
+<ul>
+<li>EP API reachability (periodic ping)</li>
+<li>Cache memory utilization</li>
+<li>Rate limiter token availability</li>
+<li>Error rate thresholds</li>
+</ul>
+<hr>
+<h2 id="🔌-vpc-endpoints-and-private-access" class="tsd-anchor-link">🔌 VPC Endpoints and Private Access<a href="#🔌-vpc-endpoints-and-private-access" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="current-architecture-stdio-based" class="tsd-anchor-link">Current Architecture (stdio-based)<a href="#current-architecture-stdio-based" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The EP MCP Server operates as a <strong>local process</strong> using stdio transport, which means:</p>
+<ul>
+<li><strong>No VPC deployment</strong> — the server runs on the local machine as a child process of the MCP client</li>
+<li><strong>No cloud networking</strong> — no VPC, subnets, or security groups required</li>
+<li><strong>Direct internet access</strong> — outbound HTTPS to EP API via the host's network stack</li>
+<li><strong>Process-level isolation</strong> — OS process boundaries provide access control</li>
+</ul>
+<h3 id="network-access-pattern" class="tsd-anchor-link">Network Access Pattern<a href="#network-access-pattern" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">flowchart LR
+    subgraph LocalMachine["Local Machine"]
+        MCPClient["MCP Client\n(Claude/Cursor)"]
+        MCPServer["EP MCP Server\n(child process)"]
+    end
+
+    subgraph Internet["Public Internet"]
+        EPAPI["EP Open Data Portal\n(data.europarl.europa.eu)"]
+    end
+
+    MCPClient -->|"stdio pipe"| MCPServer
+    MCPServer -->|"HTTPS/TLS 1.2+"| EPAPI
+</code><button type="button">Copy</button></pre>
+
+<h3 id="future-cloud-deployment-considerations" class="tsd-anchor-link">Future Cloud Deployment Considerations<a href="#future-cloud-deployment-considerations" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>When deployed as a hosted service (v2.0+), VPC architecture will include:</p>
+<ul>
+<li>Private subnets for MCP server instances</li>
+<li>NAT Gateway for outbound EP API access</li>
+<li>VPC endpoints for AWS services (CloudWatch, KMS)</li>
+<li>Security groups restricting inbound to MCP protocol only</li>
+</ul>
+<p>See <a href="../media/FUTURE_SECURITY_ARCHITECTURE.md">FUTURE_SECURITY_ARCHITECTURE.md</a> for planned VPC architecture.</p>
+<hr>
+<h2 id="🏗️-high-availability-and-resilience" class="tsd-anchor-link">🏗️ High Availability and Resilience<a href="#🏗️-high-availability-and-resilience" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="current-resilience-model" class="tsd-anchor-link">Current Resilience Model<a href="#current-resilience-model" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Implementation</th>
+<th>Recovery</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Process crash</strong></td>
+<td>MCP client auto-restarts server process</td>
+<td>Instant restart, cold cache</td>
+</tr>
+<tr>
+<td><strong>EP API unavailable</strong></td>
+<td>Graceful error responses to MCP client</td>
+<td>Cached data served if available</td>
+</tr>
+<tr>
+<td><strong>Rate limit exceeded</strong></td>
+<td>Token bucket rejects requests with clear error</td>
+<td>Auto-recovery after window reset</td>
+</tr>
+<tr>
+<td><strong>Memory exhaustion</strong></td>
+<td>LRU cache eviction (max 500 entries)</td>
+<td>Automatic eviction of oldest entries</td>
+</tr>
+<tr>
+<td><strong>Network timeout</strong></td>
+<td>Configurable timeout (default 30s) per request</td>
+<td>Retry with exponential backoff</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fault-tolerance-architecture" class="tsd-anchor-link">Fault Tolerance Architecture<a href="#fault-tolerance-architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">flowchart TD
+    subgraph Resilience["Resilience Controls"]
+        RC["Rate Limiter\n(100 req/min)"]
+        CA["LRU Cache\n(500 entries, 15-min TTL)"]
+        TO["Request Timeout\n(30s default)"]
+        EH["Error Handler\n(graceful degradation)"]
+    end
+
+    subgraph Recovery["Recovery Mechanisms"]
+        AR["Auto-restart\n(MCP client managed)"]
+        CE["Cache eviction\n(LRU policy)"]
+        TR["Token refill\n(1-minute window)"]
+    end
+
+    RC --> TR
+    CA --> CE
+    TO --> EH
+    EH --> AR
+</code><button type="button">Copy</button></pre>
+
+<h3 id="data-durability" class="tsd-anchor-link">Data Durability<a href="#data-durability" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li><strong>No persistent state</strong> — all state is in-memory (cache, metrics, rate limiter tokens)</li>
+<li><strong>Stateless design</strong> — server can be restarted at any time without data loss</li>
+<li><strong>Cache warm-up</strong> — first requests after restart may be slower (cold cache)</li>
+<li><strong>npm package integrity</strong> — SLSA Level 3 provenance ensures package authenticity</li>
+</ul>
+<hr>
+<h2 id="⚡-threat-detection-and-investigation" class="tsd-anchor-link">⚡ Threat Detection and Investigation<a href="#⚡-threat-detection-and-investigation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="detection-capabilities" class="tsd-anchor-link">Detection Capabilities<a href="#detection-capabilities" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Detection Method</th>
+<th>Implementation</th>
+<th>Threats Detected</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rate limit monitoring</strong></td>
+<td>Token bucket algorithm logs rejection events</td>
+<td>API abuse, DoS attempts</td>
+</tr>
+<tr>
+<td><strong>Error rate tracking</strong></td>
+<td>MetricsService tracks per-tool error rates</td>
+<td>Injection attempts, API anomalies</td>
+</tr>
+<tr>
+<td><strong>Input validation logging</strong></td>
+<td>Zod validation failures logged with sanitized input</td>
+<td>Malformed input, fuzzing attempts</td>
+</tr>
+<tr>
+<td><strong>Health check alerts</strong></td>
+<td>HealthService monitors EP API reachability</td>
+<td>Network issues, EP API outages</td>
+</tr>
+<tr>
+<td><strong>Dependency scanning</strong></td>
+<td>Dependabot + npm audit in CI/CD</td>
+<td>Supply chain vulnerabilities</td>
+</tr>
+<tr>
+<td><strong>Static analysis</strong></td>
+<td>CodeQL + ESLint in GitHub Actions</td>
+<td>Code-level security issues</td>
+</tr>
+</tbody>
+</table>
+<h3 id="investigation-workflow" class="tsd-anchor-link">Investigation Workflow<a href="#investigation-workflow" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">flowchart TD
+    Alert["Security Alert\n(error spike, validation failure)"] --> Triage["Triage\n(review audit logs)"]
+    Triage --> Analyze["Analyze\n(correlate metrics + logs)"]
+    Analyze --> Classify{"Classify"}
+    Classify -->|"False Positive"| Document["Document & Close"]
+    Classify -->|"True Positive"| Respond["Incident Response"]
+    Respond --> Contain["Contain\n(rate limit, block input)"]
+    Contain --> Remediate["Remediate\n(patch, update schema)"]
+    Remediate --> Verify["Verify Fix"]
+    Verify --> Document
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="🔍-vulnerability-management" class="tsd-anchor-link">🔍 Vulnerability Management<a href="#🔍-vulnerability-management" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="vulnerability-scanning-pipeline" class="tsd-anchor-link">Vulnerability Scanning Pipeline<a href="#vulnerability-scanning-pipeline" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Scanner</th>
+<th>Scope</th>
+<th>Frequency</th>
+<th>Integration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Dependabot</strong></td>
+<td>npm dependencies</td>
+<td>Continuous</td>
+<td>GitHub automatic PRs</td>
+</tr>
+<tr>
+<td><strong>npm audit</strong></td>
+<td>Direct + transitive deps</td>
+<td>Every CI run</td>
+<td>Build gate</td>
+</tr>
+<tr>
+<td><strong>CodeQL</strong></td>
+<td>Source code (TypeScript)</td>
+<td>Every PR + scheduled</td>
+<td>GitHub code scanning</td>
+</tr>
+<tr>
+<td><strong>ESLint security rules</strong></td>
+<td>Code patterns</td>
+<td>Every commit</td>
+<td>Pre-commit + CI</td>
+</tr>
+<tr>
+<td><strong>License compliance</strong></td>
+<td>Dependency licenses</td>
+<td>Every CI run</td>
+<td><code>test:licenses</code> script</td>
+</tr>
+<tr>
+<td><strong>SLSA provenance</strong></td>
+<td>Package supply chain</td>
+<td>Every release</td>
+<td>Sigstore attestation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="remediation-slas" class="tsd-anchor-link">Remediation SLAs<a href="#remediation-slas" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Severity</th>
+<th>CVSS Score</th>
+<th>Remediation Timeline</th>
+<th>Escalation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Critical</strong></td>
+<td>9.0–10.0</td>
+<td>24 hours</td>
+<td>Immediate patch release</td>
+</tr>
+<tr>
+<td><strong>High</strong></td>
+<td>7.0–8.9</td>
+<td>7 days</td>
+<td>Next patch release</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td>4.0–6.9</td>
+<td>30 days</td>
+<td>Next minor release</td>
+</tr>
+<tr>
+<td><strong>Low</strong></td>
+<td>0.1–3.9</td>
+<td>90 days</td>
+<td>Scheduled maintenance</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dependency-update-strategy" class="tsd-anchor-link">Dependency Update Strategy<a href="#dependency-update-strategy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li><strong>Automated PRs</strong> via Dependabot for all dependency updates</li>
+<li><strong>Lockfile pinning</strong> — exact versions in <code>package-lock.json</code></li>
+<li><strong>Minimal dependencies</strong> — only 4 runtime dependencies (SDK, LRU cache, undici, zod)</li>
+<li><strong>Provenance verification</strong> — SLSA Level 3 for published npm package</li>
+</ul>
+<hr>
+<h2 id="⚙️-configuration-and-compliance-management" class="tsd-anchor-link">⚙️ Configuration and Compliance Management<a href="#⚙️-configuration-and-compliance-management" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="configuration-management" class="tsd-anchor-link">Configuration Management<a href="#configuration-management" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Source</th>
+<th>Validation</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rate limit</td>
+<td><code>EP_RATE_LIMIT</code> env var</td>
+<td>Numeric &gt; 0</td>
+<td>100 req/min</td>
+</tr>
+<tr>
+<td>Cache size</td>
+<td>Hardcoded</td>
+<td>N/A</td>
+<td>500 entries</td>
+</tr>
+<tr>
+<td>Cache TTL</td>
+<td><code>EP_CACHE_TTL</code> env var</td>
+<td>Numeric (ms)</td>
+<td>900,000 ms (15 min)</td>
+</tr>
+<tr>
+<td>EP API base URL</td>
+<td><code>EP_API_URL</code> env var</td>
+<td>URL format</td>
+<td><code>https://data.europarl.europa.eu/api/v2/</code></td>
+</tr>
+<tr>
+<td>Request timeout</td>
+<td><code>EP_REQUEST_TIMEOUT_MS</code> env var</td>
+<td>Numeric (ms)</td>
+<td>10,000 ms</td>
+</tr>
+</tbody>
+</table>
+<h3 id="infrastructure-as-code" class="tsd-anchor-link">Infrastructure as Code<a href="#infrastructure-as-code" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li><strong>TypeScript strict mode</strong> — all configuration types are compile-time checked</li>
+<li><strong>Zod runtime validation</strong> — environment variables validated at startup</li>
+<li><strong>No secrets in code</strong> — all sensitive values via environment variables</li>
+<li><strong>Reproducible builds</strong> — <code>npm ci</code> with lockfile for deterministic installs</li>
+</ul>
+<h3 id="compliance-drift-detection" class="tsd-anchor-link">Compliance Drift Detection<a href="#compliance-drift-detection" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Tool</th>
+<th>Frequency</th>
+<th>Action on Drift</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dependency versions</td>
+<td>Dependabot</td>
+<td>Continuous</td>
+<td>Auto-PR</td>
+</tr>
+<tr>
+<td>Code quality</td>
+<td>ESLint + TypeScript</td>
+<td>Every commit</td>
+<td>Build failure</td>
+</tr>
+<tr>
+<td>Security findings</td>
+<td>CodeQL</td>
+<td>Every PR</td>
+<td>PR blocked</td>
+</tr>
+<tr>
+<td>License compliance</td>
+<td>license-compliance</td>
+<td>Every CI</td>
+<td>Build failure</td>
+</tr>
+<tr>
+<td>Unused code</td>
+<td>Knip</td>
+<td>Every CI</td>
+<td>Build warning</td>
+</tr>
+<tr>
+<td>Package integrity</td>
+<td>SLSA provenance</td>
+<td>Every release</td>
+<td>Release blocked</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="📈-security-monitoring-and-analytics" class="tsd-anchor-link">📈 Security Monitoring and Analytics<a href="#📈-security-monitoring-and-analytics" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="metrics-dashboard" class="tsd-anchor-link">Metrics Dashboard<a href="#metrics-dashboard" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Metric Category</th>
+<th>Metrics</th>
+<th>Collection Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tool usage</strong></td>
+<td>Invocations per tool, error rate per tool</td>
+<td>MetricsService counters</td>
+</tr>
+<tr>
+<td><strong>API performance</strong></td>
+<td>Request duration, response status codes</td>
+<td>MetricsService histograms</td>
+</tr>
+<tr>
+<td><strong>Rate limiting</strong></td>
+<td>Tokens used, rejections, peak usage</td>
+<td>Token bucket state</td>
+</tr>
+<tr>
+<td><strong>Cache efficiency</strong></td>
+<td>Hit rate, miss rate, eviction count</td>
+<td>LRU cache stats</td>
+</tr>
+<tr>
+<td><strong>Error analysis</strong></td>
+<td>Error types, error frequency, error trends</td>
+<td>AuditLogger + MetricsService</td>
+</tr>
+</tbody>
+</table>
+<h3 id="security-alerting-thresholds" class="tsd-anchor-link">Security Alerting Thresholds<a href="#security-alerting-thresholds" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Alert</th>
+<th>Threshold</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Error rate spike</td>
+<td>&gt; 10% of requests in 5-min window</td>
+<td>Log warning, investigate</td>
+</tr>
+<tr>
+<td>Rate limit saturation</td>
+<td>&gt; 90% token usage</td>
+<td>Log warning, potential abuse</td>
+</tr>
+<tr>
+<td>EP API connectivity loss</td>
+<td>3 consecutive failures</td>
+<td>Health check degraded</td>
+</tr>
+<tr>
+<td>Validation failure spike</td>
+<td>&gt; 5 failures in 1 minute</td>
+<td>Potential injection attempt</td>
+</tr>
+</tbody>
+</table>
+<h3 id="analytics-for-threat-intelligence" class="tsd-anchor-link">Analytics for Threat Intelligence<a href="#analytics-for-threat-intelligence" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li><strong>Tool usage patterns</strong> — detect anomalous tool call sequences</li>
+<li><strong>Parameter analysis</strong> — identify suspicious parameter patterns (logged after PII stripping)</li>
+<li><strong>Error correlation</strong> — correlate error spikes with external events</li>
+<li><strong>Rate limit patterns</strong> — identify API abuse patterns</li>
+</ul>
+<hr>
+<h2 id="🤖-automated-security-operations" class="tsd-anchor-link">🤖 Automated Security Operations<a href="#🤖-automated-security-operations" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="cicd-security-automation" class="tsd-anchor-link">CI/CD Security Automation<a href="#cicd-security-automation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">flowchart LR
+    subgraph CI["GitHub Actions CI/CD"]
+        Lint["ESLint\n+ TypeScript"]
+        Test["Vitest\n(2600+ tests)"]
+        Scan["CodeQL\n+ npm audit"]
+        License["License\nCompliance"]
+        Build["TypeScript\nBuild"]
+        Publish["npm Publish\n+ SLSA Provenance"]
+    end
+
+    Commit["Git Commit"] --> Lint --> Test --> Scan --> License --> Build --> Publish
+</code><button type="button">Copy</button></pre>
+
+<h3 id="automated-security-controls" class="tsd-anchor-link">Automated Security Controls<a href="#automated-security-controls" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Automation</th>
+<th>Trigger</th>
+<th>Action</th>
+<th>Outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Dependabot PRs</strong></td>
+<td>New vulnerability</td>
+<td>Auto-create update PR</td>
+<td>Dependency patched</td>
+</tr>
+<tr>
+<td><strong>CodeQL scanning</strong></td>
+<td>Every PR/push</td>
+<td>Static analysis</td>
+<td>Vulnerabilities flagged</td>
+</tr>
+<tr>
+<td><strong>npm audit</strong></td>
+<td>Every CI run</td>
+<td>Dependency audit</td>
+<td>Build gate enforced</td>
+</tr>
+<tr>
+<td><strong>License check</strong></td>
+<td>Every CI run</td>
+<td>License validation</td>
+<td>Non-compliant deps blocked</td>
+</tr>
+<tr>
+<td><strong>Knip</strong></td>
+<td>Every CI run</td>
+<td>Unused code detection</td>
+<td>Dead code flagged</td>
+</tr>
+<tr>
+<td><strong>SLSA provenance</strong></td>
+<td>npm publish</td>
+<td>Provenance attestation</td>
+<td>Supply chain verified</td>
+</tr>
+<tr>
+<td><strong>Branch protection</strong></td>
+<td>PR merge</td>
+<td>Required reviews + checks</td>
+<td>Quality gate enforced</td>
+</tr>
+</tbody>
+</table>
+<h3 id="self-healing-capabilities" class="tsd-anchor-link">Self-Healing Capabilities<a href="#self-healing-capabilities" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li><strong>Automatic cache eviction</strong> — LRU policy prevents memory exhaustion</li>
+<li><strong>Rate limit recovery</strong> — token bucket auto-refills after window expiry</li>
+<li><strong>Graceful degradation</strong> — tools return structured errors when EP API is unavailable</li>
+<li><strong>Process restart</strong> — MCP client automatically restarts crashed server processes</li>
+</ul>
+<hr>
+<h2 id="🛡️-application-security-controls" class="tsd-anchor-link">🛡️ Application Security Controls<a href="#🛡️-application-security-controls" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="input-validation-architecture" class="tsd-anchor-link">Input Validation Architecture<a href="#input-validation-architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">flowchart TD
+    Input["Raw MCP Input\n(unknown type)"] --> ZodParse["Zod Schema.parse()"]
+    ZodParse -->|"Valid"| TypeSafe["Type-Safe Parameters"]
+    ZodParse -->|"Invalid"| ZodError["ZodError\n(structured rejection)"]
+    TypeSafe --> BrandedTypes["Branded Type Enforcement\n(MEPId, ProcedureId, etc.)"]
+    BrandedTypes --> Handler["Tool Handler\n(type-safe execution)"]
+    ZodError --> ErrorResponse["MCP Error Response\n(no internal details)"]
+</code><button type="button">Copy</button></pre>
+
+<h3 id="validation-controls-per-layer" class="tsd-anchor-link">Validation Controls per Layer<a href="#validation-controls-per-layer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Control</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Input parsing</strong></td>
+<td>Zod schema validation</td>
+<td>Every tool has a dedicated schema</td>
+</tr>
+<tr>
+<td><strong>Type enforcement</strong></td>
+<td>Branded types via Zod</td>
+<td><code>MEPId</code>, <code>ProcedureId</code>, <code>SessionId</code> prevent type confusion</td>
+</tr>
+<tr>
+<td><strong>String sanitization</strong></td>
+<td>Max length limits, pattern matching</td>
+<td>Zod <code>.max()</code>, <code>.regex()</code> constraints</td>
+</tr>
+<tr>
+<td><strong>Numeric bounds</strong></td>
+<td>Range validation</td>
+<td><code>.min()</code>, <code>.max()</code>, <code>.int()</code> constraints</td>
+</tr>
+<tr>
+<td><strong>Enum restriction</strong></td>
+<td>Allowed value sets</td>
+<td><code>.enum()</code> for country codes, group names</td>
+</tr>
+<tr>
+<td><strong>Output encoding</strong></td>
+<td>JSON serialization</td>
+<td><code>JSON.stringify()</code> prevents injection in responses</td>
+</tr>
+</tbody>
+</table>
+<h3 id="error-handling-security" class="tsd-anchor-link">Error Handling Security<a href="#error-handling-security" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Error Type</th>
+<th>Response to Client</th>
+<th>Logged Internally</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zod validation error</td>
+<td>Structured field errors</td>
+<td>Full error details</td>
+</tr>
+<tr>
+<td>EP API error (4xx)</td>
+<td>Generic &quot;API error&quot; message</td>
+<td>Status code, URL, response body</td>
+</tr>
+<tr>
+<td>EP API error (5xx)</td>
+<td>Generic &quot;service unavailable&quot;</td>
+<td>Full error details</td>
+</tr>
+<tr>
+<td>Network timeout</td>
+<td>&quot;Request timeout&quot;</td>
+<td>URL, timeout duration</td>
+</tr>
+<tr>
+<td>Rate limit exceeded</td>
+<td>&quot;Rate limit exceeded&quot;</td>
+<td>Token state, request details</td>
+</tr>
+<tr>
+<td>Unexpected error</td>
+<td>&quot;Internal error&quot;</td>
+<td>Full stack trace (internal only)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🏆-defense-in-depth-strategy" class="tsd-anchor-link">🏆 Defense-in-Depth Strategy<a href="#🏆-defense-in-depth-strategy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="security-layer-architecture" class="tsd-anchor-link">Security Layer Architecture<a href="#security-layer-architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="mermaid">flowchart TD
+    subgraph Layer1["Layer 1: Process Isolation"]
+        OS["OS Process Boundaries"]
+        STDIO["stdio Transport\n(no network exposure)"]
+    end
+
+    subgraph Layer2["Layer 2: Input Validation"]
+        ZOD["Zod Schema Validation\n(61 tool schemas)"]
+        BT["Branded Types\n(type-safe identifiers)"]
+    end
+
+    subgraph Layer3["Layer 3: Rate Limiting & Caching"]
+        RL["Token Bucket Rate Limiter"]
+        LRU["LRU Cache\n(bounded memory)"]
+    end
+
+    subgraph Layer4["Layer 4: Transport Security"]
+        TLS["HTTPS/TLS 1.2+\n(to EP API)"]
+        CERT["Certificate Validation\n(Node.js defaults)"]
+    end
+
+    subgraph Layer5["Layer 5: Audit & Monitoring"]
+        AUDIT["Audit Logger\n(PII-stripped)"]
+        METRICS["MetricsService\n(performance + errors)"]
+        HEALTH["HealthService\n(availability)"]
+    end
+
+    subgraph Layer6["Layer 6: Supply Chain Security"]
+        SLSA["SLSA Level 3 Provenance"]
+        DEPS["Minimal Dependencies (4)"]
+        LOCK["Lockfile Pinning"]
+        SCAN["Dependabot + CodeQL"]
+    end
+
+    Layer1 --> Layer2 --> Layer3 --> Layer4 --> Layer5 --> Layer6
+</code><button type="button">Copy</button></pre>
+
+<h3 id="defense-in-depth-summary" class="tsd-anchor-link">Defense-in-Depth Summary<a href="#defense-in-depth-summary" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Controls</th>
+<th>Threats Mitigated</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Process Isolation</strong></td>
+<td>stdio transport, no network listener</td>
+<td>Remote access, network attacks</td>
+</tr>
+<tr>
+<td><strong>Input Validation</strong></td>
+<td>Zod schemas, branded types, strict TypeScript</td>
+<td>Injection, type confusion, malformed input</td>
+</tr>
+<tr>
+<td><strong>Rate Limiting</strong></td>
+<td>Token bucket (100/min), cache bounds (500)</td>
+<td>DoS, API abuse, memory exhaustion</td>
+</tr>
+<tr>
+<td><strong>Transport Security</strong></td>
+<td>HTTPS/TLS 1.2+, certificate validation</td>
+<td>MITM, data interception</td>
+</tr>
+<tr>
+<td><strong>Audit &amp; Monitoring</strong></td>
+<td>Structured logging, metrics, health checks</td>
+<td>Repudiation, undetected abuse</td>
+</tr>
+<tr>
+<td><strong>Supply Chain</strong></td>
+<td>SLSA L3, Dependabot, lockfile, minimal deps</td>
+<td>Dependency hijacking, package tampering</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🧪-security-testing-requirements" class="tsd-anchor-link">🧪 Security Testing Requirements<a href="#🧪-security-testing-requirements" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="coverage-requirements" class="tsd-anchor-link">Coverage Requirements<a href="#coverage-requirements" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Minimum Coverage</th>
+<th>Focus Areas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zod validators</td>
+<td>95%</td>
+<td>Edge cases, injection attempts</td>
+</tr>
+<tr>
+<td>Rate limiter</td>
+<td>90%</td>
+<td>Boundary conditions, token exhaustion</td>
+</tr>
+<tr>
+<td>Audit logger</td>
+<td>90%</td>
+<td>PII stripping, log format</td>
+</tr>
+<tr>
+<td>EP API clients</td>
+<td>80%</td>
+<td>Error handling, timeout behavior</td>
+</tr>
+<tr>
+<td>Tool handlers</td>
+<td>80%</td>
+<td>Happy path + error paths</td>
+</tr>
+</tbody>
+</table>
+<h3 id="security-test-categories" class="tsd-anchor-link">Security Test Categories<a href="#security-test-categories" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ol>
+<li>
+<p><strong>Input Validation Tests</strong></p>
+<ul>
+<li>Oversized strings (&gt; 10,000 chars)</li>
+<li>Special characters in identifiers</li>
+<li>Prototype pollution attempts: <code>{&quot;__proto__&quot;: {...}}</code></li>
+<li>Type confusion: passing objects where strings expected</li>
+<li>Boundary values: negative IDs, zero values, MAX_SAFE_INTEGER</li>
+</ul>
+</li>
+<li>
+<p><strong>Rate Limiting Tests</strong></p>
+<ul>
+<li>Burst requests (&gt; 100 in 60s window)</li>
+<li>Token recovery after window reset</li>
+<li>Concurrent request handling</li>
+</ul>
+</li>
+<li>
+<p><strong>Data Privacy Tests</strong></p>
+<ul>
+<li>Verify PII fields are stripped from audit logs</li>
+<li>Verify data minimization (no extra fields returned)</li>
+<li>Verify 15-min cache TTL enforcement</li>
+</ul>
+</li>
+<li>
+<p><strong>Error Handling Tests</strong></p>
+<ul>
+<li>EP API 429 (rate limited) — graceful handling</li>
+<li>EP API 500 — error message sanitization</li>
+<li>Network timeout — no credential leakage</li>
+<li>ZodError — structured error response</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="📋-compliance-framework-mapping" class="tsd-anchor-link">📋 Compliance Framework Mapping<a href="#📋-compliance-framework-mapping" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Control</th>
+<th>Standard</th>
+<th>Clause</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Information Security Policies</td>
+<td>ISO 27001</td>
+<td>A.5.1</td>
+<td><a href="http://SECURITY.md" target="_blank" class="external">SECURITY.md</a>, SECURITY_ARCHITECTURE.md, THREAT_MODEL.md</td>
+</tr>
+<tr>
+<td>Asset Management</td>
+<td>ISO 27001</td>
+<td>A.8.1</td>
+<td>61 tools + 9 resources inventoried</td>
+</tr>
+<tr>
+<td>Access Control</td>
+<td>ISO 27001</td>
+<td>A.9.1</td>
+<td>stdio isolation, no network exposure</td>
+</tr>
+<tr>
+<td>Cryptography</td>
+<td>ISO 27001</td>
+<td>A.10.1</td>
+<td>TLS 1.2+ for all EP API calls</td>
+</tr>
+<tr>
+<td>Secure Development</td>
+<td>ISO 27001</td>
+<td>A.14.2</td>
+<td>TypeScript strict, Zod validation, ESLint</td>
+</tr>
+<tr>
+<td>Vulnerability Management</td>
+<td>ISO 27001</td>
+<td>A.12.6</td>
+<td>Dependabot, npm audit, CodeQL</td>
+</tr>
+<tr>
+<td>Audit Logging</td>
+<td>ISO 27001</td>
+<td>A.12.4</td>
+<td>AuditLogger, all invocations logged</td>
+</tr>
+<tr>
+<td>Change Management</td>
+<td>ISO 27001</td>
+<td>A.12.1</td>
+<td>Git-based change tracking, PR reviews</td>
+</tr>
+<tr>
+<td>Privacy by Design</td>
+<td>GDPR</td>
+<td>Art. 25</td>
+<td>Data minimization, purpose limitation</td>
+</tr>
+<tr>
+<td>Data Protection</td>
+<td>GDPR</td>
+<td>Art. 32</td>
+<td>TLS transport, no persistent PII storage</td>
+</tr>
+<tr>
+<td>Identify: Assets</td>
+<td>NIST CSF 2.0</td>
+<td><a href="http://ID.AM" target="_blank" class="external">ID.AM</a></td>
+<td>Full tool and component inventory</td>
+</tr>
+<tr>
+<td>Protect: Data Security</td>
+<td>NIST CSF 2.0</td>
+<td>PR.DS</td>
+<td>TLS, cache TTL, data minimization</td>
+</tr>
+<tr>
+<td>Detect: Anomalies</td>
+<td>NIST CSF 2.0</td>
+<td><a href="http://DE.AE" target="_blank" class="external">DE.AE</a></td>
+<td>MetricsService, error rate monitoring</td>
+</tr>
+<tr>
+<td>Respond: Planning</td>
+<td>NIST CSF 2.0</td>
+<td>RS.RP</td>
+<td>Incident response via GitHub Security Advisories</td>
+</tr>
+<tr>
+<td>Recover: Planning</td>
+<td>NIST CSF 2.0</td>
+<td>RC.RP</td>
+<td>Stateless design enables instant recovery</td>
+</tr>
+<tr>
+<td>Software Inventory</td>
+<td>CIS Controls v8.1</td>
+<td>2.1</td>
+<td>package.json with locked versions, SBOM</td>
+</tr>
+<tr>
+<td>Secure Configuration</td>
+<td>CIS Controls v8.1</td>
+<td>4.1</td>
+<td>TypeScript strict, no dangerous defaults</td>
+</tr>
+<tr>
+<td>Audit Log Management</td>
+<td>CIS Controls v8.1</td>
+<td>8.2</td>
+<td>AuditLogger singleton</td>
+</tr>
+<tr>
+<td>Application Security</td>
+<td>CIS Controls v8.1</td>
+<td>16.1</td>
+<td>Zod validation, branded types, CodeQL</td>
+</tr>
+<tr>
+<td>Penetration Testing</td>
+<td>CIS Controls v8.1</td>
+<td>18.1</td>
+<td>Security test categories in CI</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><em>See <a href="../media/FUTURE_SECURITY_ARCHITECTURE.md">FUTURE_SECURITY_ARCHITECTURE.md</a> for the planned security evolution including OAuth 2.0, RBAC, and zero-trust architecture.</em></p>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-alpha" name="alpha"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Alpha</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-beta" name="beta"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Beta</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#📑-table-of-contents"><span>📑 <wbr/>Table of <wbr/>Contents</span></a><a href="#🗺️-security-documentation-map"><span>🗺️ <wbr/>Security <wbr/>Documentation <wbr/>Map</span></a><a href="#🎯-executive-summary"><span>🎯 <wbr/>Executive <wbr/>Summary</span></a><a href="#🛡️-4-layer-security-architecture"><span>🛡️ 4-<wbr/>Layer <wbr/>Security <wbr/>Architecture</span></a><a href="#🔐-security-controls-inventory"><span>🔐 <wbr/>Security <wbr/>Controls <wbr/>Inventory</span></a><a href="#⚔️-threat-mitigation-mapping-stride"><span>⚔️ <wbr/>Threat <wbr/>Mitigation <wbr/>Mapping (<wbr/>STRIDE)</span></a><a href="#🔑-authentication-and-authorization"><span>🔑 <wbr/>Authentication and <wbr/>Authorization</span></a><ul><li><a href="#current-model-v11"><span>Current <wbr/>Model (v1.1)</span></a></li><li><a href="#trust-boundaries"><span>Trust <wbr/>Boundaries</span></a></li></ul><a href="#📊-session-and-action-tracking"><span>📊 <wbr/>Session and <wbr/>Action <wbr/>Tracking</span></a><ul><li><a href="#session-tracking-model"><span>Session <wbr/>Tracking <wbr/>Model</span></a></li><li><a href="#tracked-actions"><span>Tracked <wbr/>Actions</span></a></li><li><a href="#action-tracking-implementation"><span>Action <wbr/>Tracking <wbr/>Implementation</span></a></li></ul><a href="#📜-data-integrity-and-auditing"><span>📜 <wbr/>Data <wbr/>Integrity and <wbr/>Auditing</span></a><ul><li><a href="#data-integrity-controls"><span>Data <wbr/>Integrity <wbr/>Controls</span></a></li><li><a href="#audit-trail-architecture"><span>Audit <wbr/>Trail <wbr/>Architecture</span></a></li><li><a href="#audit-log-fields"><span>Audit <wbr/>Log <wbr/>Fields</span></a></li></ul><a href="#🛡️-data-protection-and-gdpr"><span>🛡️ <wbr/>Data <wbr/>Protection and <wbr/>GDPR</span></a><ul><li><a href="#personal-data-inventory"><span>Personal <wbr/>Data <wbr/>Inventory</span></a></li><li><a href="#gdpr-principles-implementation"><span>GDPR <wbr/>Principles <wbr/>Implementation</span></a></li></ul><a href="#🌐-network-security-and-perimeter-protection"><span>🌐 <wbr/>Network <wbr/>Security and <wbr/>Perimeter <wbr/>Protection</span></a><ul><li><a href="#outbound-connections"><span>Outbound <wbr/>Connections</span></a></li><li><a href="#security-headers-outbound-requests"><span>Security <wbr/>Headers (<wbr/>Outbound <wbr/>Requests)</span></a></li><li><a href="#no-inbound-network-exposure"><span>No <wbr/>Inbound <wbr/>Network <wbr/>Exposure</span></a></li></ul><a href="#📊-audit-and-monitoring"><span>📊 <wbr/>Audit and <wbr/>Monitoring</span></a><ul><li><a href="#audit-log-schema"><span>Audit <wbr/>Log <wbr/>Schema</span></a></li><li><a href="#metrics-collected"><span>Metrics <wbr/>Collected</span></a></li><li><a href="#health-checks"><span>Health <wbr/>Checks</span></a></li></ul><a href="#🔌-vpc-endpoints-and-private-access"><span>🔌 <wbr/>VPC <wbr/>Endpoints and <wbr/>Private <wbr/>Access</span></a><ul><li><a href="#current-architecture-stdio-based"><span>Current <wbr/>Architecture (stdio-<wbr/>based)</span></a></li><li><a href="#network-access-pattern"><span>Network <wbr/>Access <wbr/>Pattern</span></a></li><li><a href="#future-cloud-deployment-considerations"><span>Future <wbr/>Cloud <wbr/>Deployment <wbr/>Considerations</span></a></li></ul><a href="#🏗️-high-availability-and-resilience"><span>🏗️ <wbr/>High <wbr/>Availability and <wbr/>Resilience</span></a><ul><li><a href="#current-resilience-model"><span>Current <wbr/>Resilience <wbr/>Model</span></a></li><li><a href="#fault-tolerance-architecture"><span>Fault <wbr/>Tolerance <wbr/>Architecture</span></a></li><li><a href="#data-durability"><span>Data <wbr/>Durability</span></a></li></ul><a href="#⚡-threat-detection-and-investigation"><span>⚡ <wbr/>Threat <wbr/>Detection and <wbr/>Investigation</span></a><ul><li><a href="#detection-capabilities"><span>Detection <wbr/>Capabilities</span></a></li><li><a href="#investigation-workflow"><span>Investigation <wbr/>Workflow</span></a></li></ul><a href="#🔍-vulnerability-management"><span>🔍 <wbr/>Vulnerability <wbr/>Management</span></a><ul><li><a href="#vulnerability-scanning-pipeline"><span>Vulnerability <wbr/>Scanning <wbr/>Pipeline</span></a></li><li><a href="#remediation-slas"><span>Remediation <wbr/>SL<wbr/>As</span></a></li><li><a href="#dependency-update-strategy"><span>Dependency <wbr/>Update <wbr/>Strategy</span></a></li></ul><a href="#⚙️-configuration-and-compliance-management"><span>⚙️ <wbr/>Configuration and <wbr/>Compliance <wbr/>Management</span></a><ul><li><a href="#configuration-management"><span>Configuration <wbr/>Management</span></a></li><li><a href="#infrastructure-as-code"><span>Infrastructure as <wbr/>Code</span></a></li><li><a href="#compliance-drift-detection"><span>Compliance <wbr/>Drift <wbr/>Detection</span></a></li></ul><a href="#📈-security-monitoring-and-analytics"><span>📈 <wbr/>Security <wbr/>Monitoring and <wbr/>Analytics</span></a><ul><li><a href="#metrics-dashboard"><span>Metrics <wbr/>Dashboard</span></a></li><li><a href="#security-alerting-thresholds"><span>Security <wbr/>Alerting <wbr/>Thresholds</span></a></li><li><a href="#analytics-for-threat-intelligence"><span>Analytics for <wbr/>Threat <wbr/>Intelligence</span></a></li></ul><a href="#🤖-automated-security-operations"><span>🤖 <wbr/>Automated <wbr/>Security <wbr/>Operations</span></a><ul><li><a href="#cicd-security-automation"><span>CI/<wbr/>CD <wbr/>Security <wbr/>Automation</span></a></li><li><a href="#automated-security-controls"><span>Automated <wbr/>Security <wbr/>Controls</span></a></li><li><a href="#self-healing-capabilities"><span>Self-<wbr/>Healing <wbr/>Capabilities</span></a></li></ul><a href="#🛡️-application-security-controls"><span>🛡️ <wbr/>Application <wbr/>Security <wbr/>Controls</span></a><ul><li><a href="#input-validation-architecture"><span>Input <wbr/>Validation <wbr/>Architecture</span></a></li><li><a href="#validation-controls-per-layer"><span>Validation <wbr/>Controls per <wbr/>Layer</span></a></li><li><a href="#error-handling-security"><span>Error <wbr/>Handling <wbr/>Security</span></a></li></ul><a href="#🏆-defense-in-depth-strategy"><span>🏆 <wbr/>Defense-<wbr/>in-<wbr/>Depth <wbr/>Strategy</span></a><ul><li><a href="#security-layer-architecture"><span>Security <wbr/>Layer <wbr/>Architecture</span></a></li><li><a href="#defense-in-depth-summary"><span>Defense-<wbr/>in-<wbr/>Depth <wbr/>Summary</span></a></li></ul><a href="#🧪-security-testing-requirements"><span>🧪 <wbr/>Security <wbr/>Testing <wbr/>Requirements</span></a><ul><li><a href="#coverage-requirements"><span>Coverage <wbr/>Requirements</span></a></li><li><a href="#security-test-categories"><span>Security <wbr/>Test <wbr/>Categories</span></a></li></ul><a href="#📋-compliance-framework-mapping"><span>📋 <wbr/>Compliance <wbr/>Framework <wbr/>Mapping</span></a></div></details></div><div class="site-menu"><nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/ARCHITECTURE.md">Architecture</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DATA_MODEL.md">Data Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEVELOPER_GUIDE.md">Developer Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEPLOYMENT_GUIDE.md">Deployment Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/PERFORMANCE_GUIDE.md">Performance Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SWOT.md">SWOT Analysis</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/End-of-Life-Strategy.md">End-of-Life Strategy</a><a href="https://hack23.github.io/European-Parliament-MCP-Server/" class="tsd-nav-link">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server" class="tsd-nav-link">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md" class="tsd-nav-link">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC" class="tsd-nav-link">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md" class="tsd-nav-link">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md" class="tsd-nav-link">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md" class="tsd-nav-link">API Usage Guide</a></nav><nav class="tsd-navigation"><a href="../modules.html">European Parliament MCP Server API - v1.1.21</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

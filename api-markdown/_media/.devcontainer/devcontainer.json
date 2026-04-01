@@ -1,0 +1,52 @@
+{
+  "name": "European Parliament MCP Server Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:25-trixie",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "installDirectlyFromGitHubRelease": true,
+      "version": "latest"
+    },
+    // Using a single feature for Node.js for simplicity
+    "ghcr.io/devcontainers/features/node:1": {
+      "nodeGypDependencies": true,
+      "version": "25" // Aligned with base image
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "ppa": true,
+      "version": "latest"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Core Development
+        "dbaeumer.vscode-eslint",
+
+        // GitHub extensions
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+
+        // TypeScript/Node support
+        "christian-kohler.npm-intellisense",
+        "ritwickdey.LiveServer",
+        "ecmel.vscode-html-css",
+
+        // Keep minimal formatting support
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+
+  "postCreateCommand": "npm install -g npm@latest typescript@latest eslint@latest && npm ci && gh extension install github/gh-aw",
+  "shutdownAction": "none",
+
+  // Forward necessary ports
+  "forwardPorts": [5173],
+  "portsAttributes": {
+    "5173": {
+      "label": "Dev Server",
+      "onAutoForward": "notify"
+    }
+  }
+}

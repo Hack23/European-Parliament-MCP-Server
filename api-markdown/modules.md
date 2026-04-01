@@ -1,8 +1,25 @@
-[**European Parliament MCP Server API v1.1.20**](README.md)
+[**European Parliament MCP Server API v1.1.21**](README.md)
 
 ***
 
-# European Parliament MCP Server API v1.1.20
+# European Parliament MCP Server API v1.1.21
+
+## Documents
+
+- [API\_USAGE\_GUIDE](documents/API_USAGE_GUIDE.md)
+- [ARCHITECTURE](documents/ARCHITECTURE.md)
+- [CONTRIBUTING](documents/CONTRIBUTING.md)
+- [CRA-ASSESSMENT](documents/CRA-ASSESSMENT.md)
+- [DATA\_MODEL](documents/DATA_MODEL.md)
+- [DEPLOYMENT\_GUIDE](documents/DEPLOYMENT_GUIDE.md)
+- [DEVELOPER\_GUIDE](documents/DEVELOPER_GUIDE.md)
+- [End-of-Life-Strategy](documents/End-of-Life-Strategy.md)
+- [INTEGRATION\_TESTING](documents/INTEGRATION_TESTING.md)
+- [PERFORMANCE\_GUIDE](documents/PERFORMANCE_GUIDE.md)
+- [SECURITY](documents/SECURITY.md)
+- [SECURITY\_ARCHITECTURE](documents/SECURITY_ARCHITECTURE.md)
+- [SECURITY\_HEADERS](documents/SECURITY_HEADERS.md)
+- [THREAT\_MODEL](documents/THREAT_MODEL.md)
 
 ## Modules
 

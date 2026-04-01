@@ -1,4 +1,4 @@
-**European Parliament MCP Server API v1.1.20**
+**European Parliament MCP Server API v1.1.21**
 
 ***
 
@@ -231,7 +231,7 @@ Hack23 builds **open-source intelligence platforms** that enable citizens, journ
 
 <p align="center">
   <!-- Security Architecture -->
-  <a href="_media/SECURITY_ARCHITECTURE.md">
+  <a href="documents/SECURITY_ARCHITECTURE.md">
     <img src="https://img.shields.io/badge/🛡️%20Security-Architecture-blue?style=flat-square" alt="Security Architecture">
   </a>
   
@@ -246,7 +246,7 @@ Hack23 builds **open-source intelligence platforms** that enable citizens, journ
   </a>
   
   <!-- Performance Guide -->
-  <a href="_media/PERFORMANCE_GUIDE.md">
+  <a href="documents/PERFORMANCE_GUIDE.md">
     <img src="https://img.shields.io/badge/⚡%20Performance-Guide-blue?style=flat-square" alt="Performance Guide">
   </a>
 </p>
@@ -443,21 +443,21 @@ npm run docs:build    # Full documentation build (HTML + MD + coverage + test re
 
 ### Core Documentation
 
-- [**API Usage Guide**](_media/API_USAGE_GUIDE.md) - Complete tool documentation with examples
+- [**API Usage Guide**](documents/API_USAGE_GUIDE.md) - Complete tool documentation with examples
 - [**Architecture Diagrams**](_media/ARCHITECTURE_DIAGRAMS.md) - C4 model diagrams and data flows
 - [**Troubleshooting Guide**](#troubleshooting) - Common issues and solutions
-- [**Developer Guide**](_media/DEVELOPER_GUIDE.md) - Development workflow and contributing
-- [**Deployment Guide**](_media/DEPLOYMENT_GUIDE.md) - Claude Desktop, VS Code, Docker setup
-- [**Performance Guide**](_media/PERFORMANCE_GUIDE.md) - Optimization strategies
+- [**Developer Guide**](documents/DEVELOPER_GUIDE.md) - Development workflow and contributing
+- [**Deployment Guide**](documents/DEPLOYMENT_GUIDE.md) - Claude Desktop, VS Code, Docker setup
+- [**Performance Guide**](documents/PERFORMANCE_GUIDE.md) - Optimization strategies
 - [**Documentation as Code Guide**](./DOCUMENTATION_AS_CODE.md) - How documentation is generated
 
 ### Additional Documentation
 
-- [**ARCHITECTURE.md**](_media/ARCHITECTURE.md) - Complete architecture and design documentation
-- [**SECURITY.md**](_media/SECURITY.md) - Security policy and vulnerability disclosure
-- [**SECURITY_HEADERS.md**](_media/SECURITY_HEADERS.md) - API security headers implementation
+- [**ARCHITECTURE.md**](documents/ARCHITECTURE.md) - Complete architecture and design documentation
+- [**SECURITY.md**](documents/SECURITY.md) - Security policy and vulnerability disclosure
+- [**SECURITY_HEADERS.md**](documents/SECURITY_HEADERS.md) - API security headers implementation
 - [**docs/SBOM.md**](_media/SBOM.md) - Software Bill of Materials documentation
-- [**CONTRIBUTING.md**](_media/CONTRIBUTING.md) - Contribution guidelines
+- [**CONTRIBUTING.md**](documents/CONTRIBUTING.md) - Contribution guidelines
 - [**CODE_OF_CONDUCT.md**](_media/CODE_OF_CONDUCT.md) - Community code of conduct
 - [**.github/copilot-instructions.md**](_media/copilot-instructions.md) - Development guidelines for GitHub Copilot
 - [**.github/agents/README.md**](_media/README.md) - Custom GitHub Copilot agents
@@ -517,84 +517,84 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 
 | Tool | Description | Key Parameters | Output |
 |------|-------------|----------------|--------|
-| [`correlate_intelligence`](_media/API_USAGE_GUIDE.md#tool-correlate_intelligence) | Cross-tool OSINT correlation engine — fuses influence, anomaly, coalition, and network signals into unified intelligence alerts | mepIds (required), groups, sensitivityLevel | Correlated alerts with severity & confidence |
-| [`assess_mep_influence`](_media/API_USAGE_GUIDE.md#tool-assess_mep_influence) | MEP influence scoring (5-dimension model) | mepId (required), dateFrom, dateTo, includeDetails | Influence scorecard |
-| [`detect_voting_anomalies`](_media/API_USAGE_GUIDE.md#tool-detect_voting_anomalies) | Party defection & anomaly detection | mepId, groupId, sensitivityThreshold | Anomaly report |
-| [`analyze_coalition_dynamics`](_media/API_USAGE_GUIDE.md#tool-analyze_coalition_dynamics) | Coalition cohesion & stress analysis | groupIds, dateFrom, minimumCohesion | Coalition metrics |
-| [`early_warning_system`](_media/API_USAGE_GUIDE.md#tool-early_warning_system) | Detect emerging political shifts & coalition fractures | sensitivity, focusArea | Warnings with severity levels & stability score |
-| [`comparative_intelligence`](_media/API_USAGE_GUIDE.md#tool-comparative_intelligence) | Cross-reference 2–10 MEP activities across dimensions | mepIds (required), dimensions | Ranked profiles, correlation matrix, cluster analysis |
-| [`network_analysis`](_media/API_USAGE_GUIDE.md#tool-network_analysis) | MEP relationship network via committee co-membership | mepId, analysisType, depth | Network map with centrality scores |
-| [`sentiment_tracker`](_media/API_USAGE_GUIDE.md#tool-sentiment_tracker) | Political group institutional-positioning scores | groupId, timeframe | Positioning scores & polarization index |
-| [`generate_political_landscape`](_media/API_USAGE_GUIDE.md#tool-generate_political_landscape) | Parliament-wide political landscape | dateFrom, dateTo | Landscape overview |
-| [`compare_political_groups`](_media/API_USAGE_GUIDE.md#tool-compare_political_groups) | Cross-group comparative analysis | groupIds (required), dimensions, dateFrom | Comparison matrix |
-| [`analyze_legislative_effectiveness`](_media/API_USAGE_GUIDE.md#tool-analyze_legislative_effectiveness) | MEP/committee legislative scoring | subjectType (required), subjectId (required), dateFrom | Effectiveness score |
-| [`monitor_legislative_pipeline`](_media/API_USAGE_GUIDE.md#tool-monitor_legislative_pipeline) | Pipeline status & bottleneck detection | committee, status, limit | Pipeline status |
-| [`analyze_committee_activity`](_media/API_USAGE_GUIDE.md#tool-analyze_committee_activity) | Committee workload & engagement analysis | committeeId (required), dateFrom, dateTo | Activity report |
-| [`track_mep_attendance`](_media/API_USAGE_GUIDE.md#tool-track_mep_attendance) | MEP attendance patterns & trends | mepId, country, groupId, dateFrom, dateTo, limit | Attendance report |
-| [`analyze_country_delegation`](_media/API_USAGE_GUIDE.md#tool-analyze_country_delegation) | Country delegation voting & composition | country (required), dateFrom, dateTo | Delegation analysis |
+| [`correlate_intelligence`](documents/API_USAGE_GUIDE.md) | Cross-tool OSINT correlation engine — fuses influence, anomaly, coalition, and network signals into unified intelligence alerts | mepIds (required), groups, sensitivityLevel | Correlated alerts with severity & confidence |
+| [`assess_mep_influence`](documents/API_USAGE_GUIDE.md) | MEP influence scoring (5-dimension model) | mepId (required), dateFrom, dateTo, includeDetails | Influence scorecard |
+| [`detect_voting_anomalies`](documents/API_USAGE_GUIDE.md) | Party defection & anomaly detection | mepId, groupId, sensitivityThreshold | Anomaly report |
+| [`analyze_coalition_dynamics`](documents/API_USAGE_GUIDE.md) | Coalition cohesion & stress analysis | groupIds, dateFrom, minimumCohesion | Coalition metrics |
+| [`early_warning_system`](documents/API_USAGE_GUIDE.md) | Detect emerging political shifts & coalition fractures | sensitivity, focusArea | Warnings with severity levels & stability score |
+| [`comparative_intelligence`](documents/API_USAGE_GUIDE.md) | Cross-reference 2–10 MEP activities across dimensions | mepIds (required), dimensions | Ranked profiles, correlation matrix, cluster analysis |
+| [`network_analysis`](documents/API_USAGE_GUIDE.md) | MEP relationship network via committee co-membership | mepId, analysisType, depth | Network map with centrality scores |
+| [`sentiment_tracker`](documents/API_USAGE_GUIDE.md) | Political group institutional-positioning scores | groupId, timeframe | Positioning scores & polarization index |
+| [`generate_political_landscape`](documents/API_USAGE_GUIDE.md) | Parliament-wide political landscape | dateFrom, dateTo | Landscape overview |
+| [`compare_political_groups`](documents/API_USAGE_GUIDE.md) | Cross-group comparative analysis | groupIds (required), dimensions, dateFrom | Comparison matrix |
+| [`analyze_legislative_effectiveness`](documents/API_USAGE_GUIDE.md) | MEP/committee legislative scoring | subjectType (required), subjectId (required), dateFrom | Effectiveness score |
+| [`monitor_legislative_pipeline`](documents/API_USAGE_GUIDE.md) | Pipeline status & bottleneck detection | committee, status, limit | Pipeline status |
+| [`analyze_committee_activity`](documents/API_USAGE_GUIDE.md) | Committee workload & engagement analysis | committeeId (required), dateFrom, dateTo | Activity report |
+| [`track_mep_attendance`](documents/API_USAGE_GUIDE.md) | MEP attendance patterns & trends | mepId, country, groupId, dateFrom, dateTo, limit | Attendance report |
+| [`analyze_country_delegation`](documents/API_USAGE_GUIDE.md) | Country delegation voting & composition | country (required), dateFrom, dateTo | Delegation analysis |
 
 ### 📊 Advanced Analysis Tools (4)
 
 | Tool | Description | Key Parameters | Output |
 |------|-------------|----------------|--------|
-| [`get_all_generated_stats`](_media/API_USAGE_GUIDE.md#tool-get_all_generated_stats) | Precomputed EP activity statistics (2004-2026) with rankings, predictions, political landscape, and [30 OSINT-derived intelligence metrics](_media/EP_POLITICAL_LANDSCAPE.md) including 3-axis political compass | yearFrom, yearTo, category, includePredictions | Statistics object |
-| [`analyze_voting_patterns`](_media/API_USAGE_GUIDE.md#tool-analyze_voting_patterns) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
-| [`track_legislation`](_media/API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
-| [`generate_report`](_media/API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
+| [`get_all_generated_stats`](documents/API_USAGE_GUIDE.md) | Precomputed EP activity statistics (2004-2026) with rankings, predictions, political landscape, and [30 OSINT-derived intelligence metrics](_media/EP_POLITICAL_LANDSCAPE.md) including 3-axis political compass | yearFrom, yearTo, category, includePredictions | Statistics object |
+| [`analyze_voting_patterns`](documents/API_USAGE_GUIDE.md) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
+| [`track_legislation`](documents/API_USAGE_GUIDE.md) | Track legislative procedure | procedureId (required) | Procedure object |
+| [`generate_report`](documents/API_USAGE_GUIDE.md) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
 
 ### 👤 MEP Tools (7)
 
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
-| [`get_meps`](_media/API_USAGE_GUIDE.md#tool-get_meps) | List MEPs with filters | country, group, committee, limit | `GET /meps` |
-| [`get_mep_details`](_media/API_USAGE_GUIDE.md#tool-get_mep_details) | Detailed MEP information | id (required) | `GET /meps/{id}` |
-| [`get_current_meps`](_media/API_USAGE_GUIDE.md#tool-get_current_meps) | Currently active MEPs with country & political group | limit, offset | `GET /meps/show-current` |
-| [`get_incoming_meps`](_media/API_USAGE_GUIDE.md#tool-get_incoming_meps) | Newly arriving MEPs for current term | limit, offset | `GET /meps/show-incoming` |
-| [`get_outgoing_meps`](_media/API_USAGE_GUIDE.md#tool-get_outgoing_meps) | Departing MEPs for current term | limit, offset | `GET /meps/show-outgoing` |
-| [`get_homonym_meps`](_media/API_USAGE_GUIDE.md#tool-get_homonym_meps) | MEPs with identical names (disambiguation) | limit, offset | `GET /meps/show-homonyms` |
-| [`get_mep_declarations`](_media/API_USAGE_GUIDE.md#tool-get_mep_declarations) | MEP financial interest declarations | docId, year, limit | `GET /meps-declarations`, `GET /meps-declarations/{id}` |
+| [`get_meps`](documents/API_USAGE_GUIDE.md) | List MEPs with filters | country, group, committee, limit | `GET /meps` |
+| [`get_mep_details`](documents/API_USAGE_GUIDE.md) | Detailed MEP information | id (required) | `GET /meps/{id}` |
+| [`get_current_meps`](documents/API_USAGE_GUIDE.md) | Currently active MEPs with country & political group | limit, offset | `GET /meps/show-current` |
+| [`get_incoming_meps`](documents/API_USAGE_GUIDE.md) | Newly arriving MEPs for current term | limit, offset | `GET /meps/show-incoming` |
+| [`get_outgoing_meps`](documents/API_USAGE_GUIDE.md) | Departing MEPs for current term | limit, offset | `GET /meps/show-outgoing` |
+| [`get_homonym_meps`](documents/API_USAGE_GUIDE.md) | MEPs with identical names (disambiguation) | limit, offset | `GET /meps/show-homonyms` |
+| [`get_mep_declarations`](documents/API_USAGE_GUIDE.md) | MEP financial interest declarations | docId, year, limit | `GET /meps-declarations`, `GET /meps-declarations/{id}` |
 
 ### 🏛️ Plenary & Meeting Tools (9)
 
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
-| [`get_plenary_sessions`](_media/API_USAGE_GUIDE.md#tool-get_plenary_sessions) | List plenary sessions/meetings, or single by eventId | dateFrom, dateTo, eventId, limit | `GET /meetings`, `GET /meetings/{id}` |
-| [`get_voting_records`](_media/API_USAGE_GUIDE.md#tool-get_voting_records) | Retrieve aggregate voting records (no per‑MEP positions) | sessionId, topic, dateFrom | `GET /meetings/{id}/vote-results` |
-| [`get_speeches`](_media/API_USAGE_GUIDE.md#tool-get_speeches) | Plenary speeches and debate contributions | speechId, dateFrom, dateTo, limit | `GET /speeches`, `GET /speeches/{id}` |
-| [`get_events`](_media/API_USAGE_GUIDE.md#tool-get_events) | EP events (hearings, conferences, seminars) | eventId, dateFrom, dateTo, limit | `GET /events`, `GET /events/{id}` |
-| [`get_meeting_activities`](_media/API_USAGE_GUIDE.md#tool-get_meeting_activities) | Activities linked to a plenary sitting | sittingId (required), limit | `GET /meetings/{id}/activities` |
-| [`get_meeting_decisions`](_media/API_USAGE_GUIDE.md#tool-get_meeting_decisions) | Decisions made in a plenary sitting | sittingId (required), limit | `GET /meetings/{id}/decisions` |
-| [`get_meeting_foreseen_activities`](_media/API_USAGE_GUIDE.md#tool-get_meeting_foreseen_activities) | Planned agenda items for upcoming meetings | sittingId (required), limit | `GET /meetings/{id}/foreseen-activities` |
-| [`get_meeting_plenary_session_documents`](_media/API_USAGE_GUIDE.md#tool-get_meeting_plenary_session_documents) | Plenary session documents linked to a specific sitting | sittingId (required), limit, offset | `GET /meetings/{id}/plenary-session-documents` |
-| [`get_meeting_plenary_session_document_items`](_media/API_USAGE_GUIDE.md#tool-get_meeting_plenary_session_document_items) | Agenda item documents for a specific plenary sitting | sittingId (required), limit, offset | `GET /meetings/{id}/plenary-session-document-items` |
+| [`get_plenary_sessions`](documents/API_USAGE_GUIDE.md) | List plenary sessions/meetings, or single by eventId | dateFrom, dateTo, eventId, limit | `GET /meetings`, `GET /meetings/{id}` |
+| [`get_voting_records`](documents/API_USAGE_GUIDE.md) | Retrieve aggregate voting records (no per‑MEP positions) | sessionId, topic, dateFrom | `GET /meetings/{id}/vote-results` |
+| [`get_speeches`](documents/API_USAGE_GUIDE.md) | Plenary speeches and debate contributions | speechId, dateFrom, dateTo, limit | `GET /speeches`, `GET /speeches/{id}` |
+| [`get_events`](documents/API_USAGE_GUIDE.md) | EP events (hearings, conferences, seminars) | eventId, dateFrom, dateTo, limit | `GET /events`, `GET /events/{id}` |
+| [`get_meeting_activities`](documents/API_USAGE_GUIDE.md) | Activities linked to a plenary sitting | sittingId (required), limit | `GET /meetings/{id}/activities` |
+| [`get_meeting_decisions`](documents/API_USAGE_GUIDE.md) | Decisions made in a plenary sitting | sittingId (required), limit | `GET /meetings/{id}/decisions` |
+| [`get_meeting_foreseen_activities`](documents/API_USAGE_GUIDE.md) | Planned agenda items for upcoming meetings | sittingId (required), limit | `GET /meetings/{id}/foreseen-activities` |
+| [`get_meeting_plenary_session_documents`](documents/API_USAGE_GUIDE.md) | Plenary session documents linked to a specific sitting | sittingId (required), limit, offset | `GET /meetings/{id}/plenary-session-documents` |
+| [`get_meeting_plenary_session_document_items`](documents/API_USAGE_GUIDE.md) | Agenda item documents for a specific plenary sitting | sittingId (required), limit, offset | `GET /meetings/{id}/plenary-session-document-items` |
 
 ### 🏢 Committee Tools (2)
 
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
-| [`get_committee_info`](_media/API_USAGE_GUIDE.md#tool-get_committee_info) | Committee/corporate body info, or all current bodies | id, abbreviation, showCurrent | `GET /corporate-bodies`, `GET /corporate-bodies/show-current` |
-| [`get_committee_documents`](_media/API_USAGE_GUIDE.md#tool-get_committee_documents) | Committee documents and drafts | docId, year, limit | `GET /committee-documents`, `GET /committee-documents/{id}` |
+| [`get_committee_info`](documents/API_USAGE_GUIDE.md) | Committee/corporate body info, or all current bodies | id, abbreviation, showCurrent | `GET /corporate-bodies`, `GET /corporate-bodies/show-current` |
+| [`get_committee_documents`](documents/API_USAGE_GUIDE.md) | Committee documents and drafts | docId, year, limit | `GET /committee-documents`, `GET /committee-documents/{id}` |
 
 ### 📄 Document Tools (7)
 
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
-| [`search_documents`](_media/API_USAGE_GUIDE.md#tool-search_documents) | Search documents or get single by docId | keyword, docId, documentType, dateFrom | `GET /documents`, `GET /documents/{id}` |
-| [`get_adopted_texts`](_media/API_USAGE_GUIDE.md#tool-get_adopted_texts) | Adopted legislative texts and resolutions | docId, year, limit | `GET /adopted-texts`, `GET /adopted-texts/{id}` |
-| [`get_plenary_documents`](_media/API_USAGE_GUIDE.md#tool-get_plenary_documents) | Plenary legislative documents | docId, year, limit | `GET /plenary-documents`, `GET /plenary-documents/{id}` |
-| [`get_plenary_session_documents`](_media/API_USAGE_GUIDE.md#tool-get_plenary_session_documents) | Session agendas, minutes, voting lists | docId, limit | `GET /plenary-session-documents`, `GET /plenary-session-documents/{id}` |
-| [`get_plenary_session_document_items`](_media/API_USAGE_GUIDE.md#tool-get_plenary_session_document_items) | Individual items within session documents | limit, offset | `GET /plenary-session-documents-items` |
-| [`get_external_documents`](_media/API_USAGE_GUIDE.md#tool-get_external_documents) | Non-EP documents (Council, Commission) | docId, year, limit | `GET /external-documents`, `GET /external-documents/{id}` |
-| [`get_parliamentary_questions`](_media/API_USAGE_GUIDE.md#tool-get_parliamentary_questions) | Parliamentary Q&A, or single by docId | type, author, topic, docId | `GET /parliamentary-questions`, `GET /parliamentary-questions/{id}` |
+| [`search_documents`](documents/API_USAGE_GUIDE.md) | Search documents or get single by docId | keyword, docId, documentType, dateFrom | `GET /documents`, `GET /documents/{id}` |
+| [`get_adopted_texts`](documents/API_USAGE_GUIDE.md) | Adopted legislative texts and resolutions | docId, year, limit | `GET /adopted-texts`, `GET /adopted-texts/{id}` |
+| [`get_plenary_documents`](documents/API_USAGE_GUIDE.md) | Plenary legislative documents | docId, year, limit | `GET /plenary-documents`, `GET /plenary-documents/{id}` |
+| [`get_plenary_session_documents`](documents/API_USAGE_GUIDE.md) | Session agendas, minutes, voting lists | docId, limit | `GET /plenary-session-documents`, `GET /plenary-session-documents/{id}` |
+| [`get_plenary_session_document_items`](documents/API_USAGE_GUIDE.md) | Individual items within session documents | limit, offset | `GET /plenary-session-documents-items` |
+| [`get_external_documents`](documents/API_USAGE_GUIDE.md) | Non-EP documents (Council, Commission) | docId, year, limit | `GET /external-documents`, `GET /external-documents/{id}` |
+| [`get_parliamentary_questions`](documents/API_USAGE_GUIDE.md) | Parliamentary Q&A, or single by docId | type, author, topic, docId | `GET /parliamentary-questions`, `GET /parliamentary-questions/{id}` |
 
 ### ⚖️ Legislative Procedure Tools (4)
 
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
-| [`get_procedures`](_media/API_USAGE_GUIDE.md#tool-get_procedures) | Legislative procedures, or single by processId | processId, year, limit | `GET /procedures`, `GET /procedures/{id}` |
-| [`get_procedure_events`](_media/API_USAGE_GUIDE.md#tool-get_procedure_events) | Timeline events for a legislative procedure | processId (required), limit | `GET /procedures/{id}/events` |
-| [`get_procedure_event_by_id`](_media/API_USAGE_GUIDE.md#tool-get_procedure_event_by_id) | Specific event linked to a legislative procedure | processId (required), eventId (required) | `GET /procedures/{id}/events/{event-id}` |
-| [`get_controlled_vocabularies`](_media/API_USAGE_GUIDE.md#tool-get_controlled_vocabularies) | Standardized classification terms | vocId, limit | `GET /controlled-vocabularies`, `GET /controlled-vocabularies/{id}` |
+| [`get_procedures`](documents/API_USAGE_GUIDE.md) | Legislative procedures, or single by processId | processId, year, limit | `GET /procedures`, `GET /procedures/{id}` |
+| [`get_procedure_events`](documents/API_USAGE_GUIDE.md) | Timeline events for a legislative procedure | processId (required), limit | `GET /procedures/{id}/events` |
+| [`get_procedure_event_by_id`](documents/API_USAGE_GUIDE.md) | Specific event linked to a legislative procedure | processId (required), eventId (required) | `GET /procedures/{id}/events/{event-id}` |
+| [`get_controlled_vocabularies`](documents/API_USAGE_GUIDE.md) | Standardized classification terms | vocId, limit | `GET /controlled-vocabularies`, `GET /controlled-vocabularies/{id}` |
 
 ### 📡 Feed Tools (13)
 
@@ -602,19 +602,19 @@ Real-time change feeds for monitoring recently updated data across all EP API ca
 
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
-| [`get_meps_feed`](_media/API_USAGE_GUIDE.md#tool-get_meps_feed) | Recently updated MEPs | timeframe, startDate | `GET /meps/feed` |
-| [`get_events_feed`](_media/API_USAGE_GUIDE.md#tool-get_events_feed) | Recently updated events | timeframe, startDate, activityType | `GET /events/feed` |
-| [`get_procedures_feed`](_media/API_USAGE_GUIDE.md#tool-get_procedures_feed) | Recently updated procedures | timeframe, startDate, processType | `GET /procedures/feed` |
-| [`get_adopted_texts_feed`](_media/API_USAGE_GUIDE.md#tool-get_adopted_texts_feed) | Recently updated adopted texts | timeframe, startDate, workType | `GET /adopted-texts/feed` |
-| [`get_mep_declarations_feed`](_media/API_USAGE_GUIDE.md#tool-get_mep_declarations_feed) | Recently updated MEP declarations | timeframe, startDate, workType | `GET /meps-declarations/feed` |
-| [`get_documents_feed`](_media/API_USAGE_GUIDE.md#tool-get_documents_feed) | Recently updated documents | timeframe, startDate | `GET /documents/feed` |
-| [`get_plenary_documents_feed`](_media/API_USAGE_GUIDE.md#tool-get_plenary_documents_feed) | Recently updated plenary documents | timeframe, startDate | `GET /plenary-documents/feed` |
-| [`get_committee_documents_feed`](_media/API_USAGE_GUIDE.md#tool-get_committee_documents_feed) | Recently updated committee documents | timeframe, startDate | `GET /committee-documents/feed` |
-| [`get_plenary_session_documents_feed`](_media/API_USAGE_GUIDE.md#tool-get_plenary_session_documents_feed) | Recently updated plenary session documents | timeframe, startDate | `GET /plenary-session-documents/feed` |
-| [`get_external_documents_feed`](_media/API_USAGE_GUIDE.md#tool-get_external_documents_feed) | Recently updated external documents | timeframe, startDate, workType | `GET /external-documents/feed` |
-| [`get_parliamentary_questions_feed`](_media/API_USAGE_GUIDE.md#tool-get_parliamentary_questions_feed) | Recently updated parliamentary questions | timeframe, startDate | `GET /parliamentary-questions/feed` |
-| [`get_corporate_bodies_feed`](_media/API_USAGE_GUIDE.md#tool-get_corporate_bodies_feed) | Recently updated corporate bodies | timeframe, startDate | `GET /corporate-bodies/feed` |
-| [`get_controlled_vocabularies_feed`](_media/API_USAGE_GUIDE.md#tool-get_controlled_vocabularies_feed) | Recently updated controlled vocabularies | timeframe, startDate | `GET /controlled-vocabularies/feed` |
+| [`get_meps_feed`](documents/API_USAGE_GUIDE.md) | Recently updated MEPs | timeframe, startDate | `GET /meps/feed` |
+| [`get_events_feed`](documents/API_USAGE_GUIDE.md) | Recently updated events | timeframe, startDate, activityType | `GET /events/feed` |
+| [`get_procedures_feed`](documents/API_USAGE_GUIDE.md) | Recently updated procedures | timeframe, startDate, processType | `GET /procedures/feed` |
+| [`get_adopted_texts_feed`](documents/API_USAGE_GUIDE.md) | Recently updated adopted texts | timeframe, startDate, workType | `GET /adopted-texts/feed` |
+| [`get_mep_declarations_feed`](documents/API_USAGE_GUIDE.md) | Recently updated MEP declarations | timeframe, startDate, workType | `GET /meps-declarations/feed` |
+| [`get_documents_feed`](documents/API_USAGE_GUIDE.md) | Recently updated documents | timeframe, startDate | `GET /documents/feed` |
+| [`get_plenary_documents_feed`](documents/API_USAGE_GUIDE.md) | Recently updated plenary documents | timeframe, startDate | `GET /plenary-documents/feed` |
+| [`get_committee_documents_feed`](documents/API_USAGE_GUIDE.md) | Recently updated committee documents | timeframe, startDate | `GET /committee-documents/feed` |
+| [`get_plenary_session_documents_feed`](documents/API_USAGE_GUIDE.md) | Recently updated plenary session documents | timeframe, startDate | `GET /plenary-session-documents/feed` |
+| [`get_external_documents_feed`](documents/API_USAGE_GUIDE.md) | Recently updated external documents | timeframe, startDate, workType | `GET /external-documents/feed` |
+| [`get_parliamentary_questions_feed`](documents/API_USAGE_GUIDE.md) | Recently updated parliamentary questions | timeframe, startDate | `GET /parliamentary-questions/feed` |
+| [`get_corporate_bodies_feed`](documents/API_USAGE_GUIDE.md) | Recently updated corporate bodies | timeframe, startDate | `GET /corporate-bodies/feed` |
+| [`get_controlled_vocabularies_feed`](documents/API_USAGE_GUIDE.md) | Recently updated controlled vocabularies | timeframe, startDate | `GET /controlled-vocabularies/feed` |
 
 📖 **[Complete TypeDoc API documentation →](https://hack23.github.io/European-Parliament-MCP-Server/api/)** · **[Markdown API docs →](https://hack23.github.io/European-Parliament-MCP-Server/api-markdown/)**
 
@@ -653,7 +653,7 @@ Real-time change feeds for monitoring recently updated data across all EP API ca
 7. Political landscape: generate_political_landscape → {}
 ```
 
-🎯 **[More use cases and examples →](_media/API_USAGE_GUIDE.md#common-use-cases)**
+🎯 **[More use cases and examples →](documents/API_USAGE_GUIDE.md)**
 
 ### 📝 MCP Prompts
 
@@ -837,7 +837,7 @@ Per [Hack23 Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/
 | **Integrity** | [![Moderate](https://img.shields.io/badge/I-Moderate-yellow?style=flat-square)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md) |
 | **Availability** | [![Standard](https://img.shields.io/badge/A-Standard-lightgreen?style=flat-square)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md) |
 
-See [**CRA-ASSESSMENT.md**](_media/CRA-ASSESSMENT.md) for the full EU Cyber Resilience Act conformity assessment.
+See [**CRA-ASSESSMENT.md**](documents/CRA-ASSESSMENT.md) for the full EU Cyber Resilience Act conformity assessment.
 
 ---
 
@@ -900,27 +900,27 @@ European-Parliament-MCP-Server/
 
 #### 🏗️ Architecture & Design
 
-- **[Architecture Documentation](_media/ARCHITECTURE.md)** - System architecture and design patterns
-- **[Data Model](_media/DATA_MODEL.md)** - Data structures and type definitions
-- **[API Usage Guide](_media/API_USAGE_GUIDE.md)** - Guide for using the MCP server API
+- **[Architecture Documentation](documents/ARCHITECTURE.md)** - System architecture and design patterns
+- **[Data Model](documents/DATA_MODEL.md)** - Data structures and type definitions
+- **[API Usage Guide](documents/API_USAGE_GUIDE.md)** - Guide for using the MCP server API
 - **[EP Political Landscape](_media/EP_POLITICAL_LANDSCAPE.md)** - 📊 Comprehensive Mermaid visualization of all EP statistics (2004–2026), political compass, coalition dynamics, and OSINT intelligence metrics — all years validated against EP API v2
 
 #### 🧪 Testing & Quality
 
 - **[Test Coverage Report](./TEST_COVERAGE_REPORT.md)** - Test coverage statistics and analysis
-- **[Developer Guide](_media/DEVELOPER_GUIDE.md)** - Development setup and guidelines
-- **[Performance Guide](_media/PERFORMANCE_GUIDE.md)** - Performance optimization strategies
+- **[Developer Guide](documents/DEVELOPER_GUIDE.md)** - Development setup and guidelines
+- **[Performance Guide](documents/PERFORMANCE_GUIDE.md)** - Performance optimization strategies
 
 #### 🔒 Security & Compliance
 
-- **[Security Policy](_media/SECURITY.md)** - Vulnerability reporting and security practices
-- **[Security Architecture](_media/SECURITY_ARCHITECTURE.md)** - Security controls and architecture
+- **[Security Policy](documents/SECURITY.md)** - Vulnerability reporting and security practices
+- **[Security Architecture](documents/SECURITY_ARCHITECTURE.md)** - Security controls and architecture
 - **[Secure Development Policy](./Secure_Development_Policy.md)** - Secure coding standards
 - **[Open Source Policy](./Open_Source_Policy.md)** - Open source compliance guidelines
 
 #### 📦 Deployment & Operations
 
-- **[Deployment Guide](_media/DEPLOYMENT_GUIDE.md)** - Production deployment instructions
+- **[Deployment Guide](documents/DEPLOYMENT_GUIDE.md)** - Production deployment instructions
 - **[Troubleshooting Guide](#troubleshooting)** - Common issues and solutions
 - **[NPM Publishing Guide](./NPM_PUBLISHING.md)** - Package publishing workflow
 
@@ -946,7 +946,7 @@ npm run test:coverage
 npm run test:watch
 ```
 
-**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, the integration test suite validates 46 MCP tools against the real European Parliament API endpoints (see [**INTEGRATION_TESTING.md**](_media/INTEGRATION_TESTING.md) for the complete 61-tool coverage guide). All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/min).
+**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, the integration test suite validates 46 MCP tools against the real European Parliament API endpoints (see [**INTEGRATION_TESTING.md**](documents/INTEGRATION_TESTING.md) for the complete 61-tool coverage guide). All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/min).
 
 ### Code Quality
 
@@ -1069,7 +1069,7 @@ cat tsconfig.json
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](_media/CONTRIBUTING.md) for details on:
+We welcome contributions! Please see [CONTRIBUTING.md](documents/CONTRIBUTING.md) for details on:
 
 - Code of conduct
 - Development process
@@ -1382,7 +1382,7 @@ This project is licensed under the **Apache License 2.0** - see [LICENSE.md](_me
 - [GitHub Repository](https://github.com/Hack23/European-Parliament-MCP-Server)
 - [Issue Tracker](https://github.com/Hack23/European-Parliament-MCP-Server/issues)
 - [Discussions](https://github.com/Hack23/European-Parliament-MCP-Server/discussions)
-- [Security Policy](_media/SECURITY.md)
+- [Security Policy](documents/SECURITY.md)
 
 ### Hack23 Ecosystem
 - [Hack23](https://hack23.com/) — AI-powered democratic transparency platform
