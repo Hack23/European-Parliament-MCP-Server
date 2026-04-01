@@ -23,9 +23,10 @@
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** DevOps Team | **📄 Version:** 0.6.2 | **📅 Last Updated:** 2025-06-20 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2025-09-20  
+**📋 Document Owner:** DevOps Team | **📄 Version:** 0.6.2 | **📅 Last Updated:** 2026-03-31 (UTC)  
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-06-20  
 **🏷️ Classification:** Public (Open Source MCP Server)  
+**🔷 TypeScript Baseline:** 6.0.2
 **✅ ISMS Compliance:** ISO 27001 (A.8.31, A.14.2, A.12.1), NIST CSF 2.0 (PR.DS-6, DE.CM-8), CIS Controls v8.1 (2.2, 4.1, 16.6)
 
 ---
@@ -127,17 +128,17 @@ graph LR
 
 | # | Workflow | File | Trigger | Node.js | Permissions | ISMS Evidence |
 |---|---------|------|---------|---------|-------------|---------------|
-| 1 | **Test and Report** | `test-and-report.yml` | Push, PR | 24.x | `read-all`, scoped per job | [Secure Dev Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
+| 1 | **Test and Report** | `test-and-report.yml` | Push, PR | 25.x + TS 6.0.2 | `read-all`, scoped per job | [Secure Dev Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
 | 2 | **CodeQL Analysis** | `codeql.yml` | Push, PR, Weekly | — | `security-events: write` | ISO 27001 A.14.2.8 |
-| 3 | **Build, Attest and Release** | `release.yml` | Tag (v\*), Manual | 24.x | `id-token: write`, `attestations: write` | SLSA Level 3 |
-| 4 | **Integration & E2E Tests** | `integration-tests.yml` | Push, PR, Daily, Manual | 24.x | `read-all` | Quality Assurance |
-| 5 | **SBOM Generation** | `sbom-generation.yml` | Release, Push, Manual | 24.x | `id-token: write`, `attestations: write` | CIS Controls 2.2 |
-| 6 | **SLSA Provenance** | `slsa-provenance.yml` | Tag (v\*), Release, Manual | 24.x | `id-token: write`, `attestations: write` | SLSA Level 3 |
+| 3 | **Build, Attest and Release** | `release.yml` | Tag (v\*), Manual | 25.x + TS 6.0.2 | `id-token: write`, `attestations: write` | SLSA Level 3 |
+| 4 | **Integration & E2E Tests** | `integration-tests.yml` | Push, PR, Daily, Manual | 25.x + TS 6.0.2 | `read-all` | Quality Assurance |
+| 5 | **SBOM Generation** | `sbom-generation.yml` | Release, Push, Manual | 25.x + TS 6.0.2 | `id-token: write`, `attestations: write` | CIS Controls 2.2 |
+| 6 | **SLSA Provenance** | `slsa-provenance.yml` | Tag (v\*), Release, Manual | 25.x | `id-token: write`, `attestations: write` | SLSA Level 3 |
 | 7 | **Scorecard** | `scorecard.yml` | Push, Weekly | — | `security-events: write`, `id-token: write` | [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
 | 8 | **Dependency Review** | `dependency-review.yml` | PR | — | `contents: read` | NIST CSF DE.CM-8 |
 | 9 | **PR Labeler** | `labeler.yml` | PR | — | `pull-requests: write` | Process Automation |
 | 10 | **Setup Labels** | `setup-labels.yml` | Manual | — | `issues: write` | Configuration Mgmt |
-| 11 | **Copilot Setup** | `copilot-setup-steps.yml` | `workflow_call` | 24.x | Scoped per caller | Dev Tooling |
+| 11 | **Copilot Setup** | `copilot-setup-steps.yml` | Push, PR, Manual | 25.x + TS 6.0.2 | Scoped per caller | Dev Tooling |
 
 ---
 
@@ -156,11 +157,11 @@ flowchart TB
 
     subgraph "Stage 2: Build & Test"
         DEV --> TEST["🧪 Test & Report<br><code>test-and-report.yml</code>"]
-        TEST --> PREPARE["⚙️ Prepare<br>Node.js 25, npm ci"]
+        TEST --> PREPARE["⚙️ Prepare<br>Node.js 25, npm install"]
         PREPARE --> BUILD_VAL["📦 Build Validation"]
         PREPARE --> UNIT["🧪 Unit Tests"]
         BUILD_VAL --> TYPE["tsc --noEmit"]
-        BUILD_VAL --> LINT["ESLint 9.x"]
+        BUILD_VAL --> LINT["ESLint 10.x"]
         BUILD_VAL --> KNIP["Knip"]
         BUILD_VAL --> SBOM_CHECK["SBOM Quality ≥7.0"]
         UNIT --> COV{"Coverage ≥80%?"}
@@ -284,7 +285,7 @@ prepare → build-validation → unit-tests → report
 | Job | Steps | Artifacts |
 |-----|-------|-----------|
 | **prepare** | Setup Node.js 25, `npm ci`, cache dependencies | Cached `node_modules` |
-| **build-validation** | `tsc --noEmit`, ESLint, Knip, `npm run build`, license check, SBOM quality | Build artifacts, SBOM report |
+| **build-validation** | `tsc --noEmit` (TypeScript 6.0.2), ESLint, Knip, `npm run build`, license check, SBOM quality | Build artifacts, SBOM report |
 | **unit-tests** | `npm run test:coverage`, coverage threshold check, Codecov upload | Coverage reports (lcov, JSON) |
 | **report** | Combine artifacts, generate test summary, PR comment | Combined test report |
 
@@ -629,7 +630,7 @@ graph LR
 | # | Gate | Tool | Threshold | Required | Workflow |
 |---|------|------|-----------|----------|----------|
 | 1 | TypeScript compilation | `tsc --noEmit` | 0 errors | ✅ Yes | `test-and-report.yml` |
-| 2 | Linting | ESLint 9.x | 0 errors, 0 warnings | ✅ Yes | `test-and-report.yml` |
+| 2 | Linting | ESLint 10.x | 0 errors, 0 warnings | ✅ Yes | `test-and-report.yml` |
 | 3 | Unused code detection | Knip | 0 unused exports | ✅ Yes | `test-and-report.yml` |
 | 4 | Unit tests | Vitest | All tests pass | ✅ Yes | `test-and-report.yml` |
 | 5 | Code coverage | Vitest coverage (v8) | ≥80% lines | ⚠️ Warning | `test-and-report.yml` |

@@ -65,7 +65,7 @@ This strategy aligns with [Hack23 AB's Vulnerability Management Policy](https://
 graph TB
     subgraph "🏗️ Core Runtime"
         NODE[Node.js 25.x Current]
-        TS[TypeScript 5.x]
+        TS[TypeScript 6.0.2]
     end
     subgraph "📦 Key Dependencies"
         MCP["@modelcontextprotocol/sdk"]
@@ -93,7 +93,7 @@ graph TB
 |-----------|----------------|----------|------------|---------------|
 | **Node.js** | >=25.0.0 (25.x Current) | **April 2026** 🔴 | 🔴 **Imminent** | **Upgrade to Node.js 26 immediately on release (≈ April 2026)** |
 | **Node.js 26** | Releasing April 2026 | April 2029 | 🟢 Low | Will be even-numbered LTS candidate; migrate within days of release |
-| **TypeScript** | 5.x | Active | 🟢 Low | Follow semver updates |
+| **TypeScript** | 6.0.2 | Active | 🟢 Low | Stay on 6.0.x until the next supported minor |
 | **MCP SDK** | Latest | Active | 🟡 Medium | Track protocol evolution |
 | **Zod** | ^4.3.6 (4.x) | Active | 🟢 Low | Follow semver updates |
 | **Vitest** | Latest | Active | 🟢 Low | Follow semver updates |
@@ -101,6 +101,7 @@ graph TB
 | **GitHub Actions** | Latest | Indefinite | 🟢 Low | Pin action versions |
 
 > ⚠️ **Node.js 25 is an odd-numbered Current release** (old release model). It has **no LTS phase** and reaches EOL when Node.js 26 releases in April 2026. Upgrade to Node.js 26 within days of its release.
+> ✅ **TypeScript 6.0.2 is now the active compiler baseline.** TypeScript 5.9.x is retained only as the previous stable line and is no longer part of the active toolchain.
 
 ### **📅 Key Dates**
 

@@ -10,6 +10,22 @@
   "name": "European Parliament MCP Server API",
   "includeVersion": true,
   "readme": "README.md",
+  "projectDocuments": [
+    "ARCHITECTURE.md",
+    "SECURITY_ARCHITECTURE.md",
+    "SECURITY.md",
+    "SECURITY_HEADERS.md",
+    "DATA_MODEL.md",
+    "API_USAGE_GUIDE.md",
+    "DEVELOPER_GUIDE.md",
+    "DEPLOYMENT_GUIDE.md",
+    "CONTRIBUTING.md",
+    "CRA-ASSESSMENT.md",
+    "THREAT_MODEL.md",
+    "PERFORMANCE_GUIDE.md",
+    "INTEGRATION_TESTING.md",
+    "End-of-Life-Strategy.md"
+  ],
   "categorizeByGroup": true,
   "categoryOrder": [
     "MCP Tools - Core Data",
@@ -89,6 +105,18 @@
     "Documentation Portal": "https://hack23.github.io/European-Parliament-MCP-Server/",
     "GitHub Repository": "https://github.com/Hack23/European-Parliament-MCP-Server",
     "Security Architecture": "https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md",
-    "ISMS Policies": "https://github.com/Hack23/ISMS-PUBLIC"
+    "ISMS Policies": "https://github.com/Hack23/ISMS-PUBLIC",
+    "CRA Assessment": "https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md",
+    "Threat Model": "https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md",
+    "API Usage Guide": "https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md"
+  },
+  "sidebarLinks": {
+    "Architecture": "https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/ARCHITECTURE.md",
+    "Data Model": "https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DATA_MODEL.md",
+    "Developer Guide": "https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEVELOPER_GUIDE.md",
+    "Deployment Guide": "https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEPLOYMENT_GUIDE.md",
+    "Performance Guide": "https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/PERFORMANCE_GUIDE.md",
+    "SWOT Analysis": "https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SWOT.md",
+    "End-of-Life Strategy": "https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/End-of-Life-Strategy.md"
   }
 }

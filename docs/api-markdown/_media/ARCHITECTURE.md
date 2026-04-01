@@ -69,7 +69,7 @@ The **European Parliament MCP Server** (v1.0) is a TypeScript/Node.js applicatio
 | **MCP Prompts** | 7 intelligence-analysis prompts |
 | **Data Source** | EP Open Data Portal API v2 |
 | **Transport** | stdio (MCP standard) |
-| **Runtime** | Node.js 20+ / TypeScript 5.x |
+| **Runtime** | Node.js 25+ / TypeScript 6.0.2 |
 | **Security** | 4-layer: Zod → Rate Limiting → Audit Logging → GDPR |
 
 ---
@@ -466,15 +466,15 @@ flowchart TD
 
 | Layer | Technology | Version | Purpose |
 |-------|-----------|---------|---------|
-| **Runtime** | Node.js | 20+ LTS | Server runtime |
-| **Language** | TypeScript | 5.x | Type-safe implementation |
+| **Runtime** | Node.js | 25+ | Server runtime |
+| **Language** | TypeScript | 6.0.2 | Type-safe implementation |
 | **MCP SDK** | @modelcontextprotocol/sdk | latest | MCP protocol implementation |
-| **Validation** | Zod | 3.x | Runtime schema validation and branded types |
-| **Caching** | lru-cache | 10.x | LRU cache (500 entries, 15-min TTL) |
+| **Validation** | Zod | 4.3.6 | Runtime schema validation and branded types |
+| **Caching** | lru-cache | 11.2.7 | LRU cache (500 entries, 15-min TTL) |
 | **Testing** | Vitest | latest | Unit and integration testing |
-| **Linting** | ESLint | 9.x | Code quality enforcement |
+| **Linting** | ESLint | 10.1.0 | Code quality enforcement |
 | **Unused Detection** | Knip | latest | Dead code detection |
-| **Build** | tsc | 5.x | TypeScript compilation |
+| **Build** | tsc | 6.0.2 | TypeScript compilation |
 | **Package Manager** | npm | 10.x | Dependency management |
 
 ---

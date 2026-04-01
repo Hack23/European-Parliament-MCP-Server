@@ -5,6 +5,64 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "import": "./dist/config.js"
+    },
+    "./types/*": {
+      "types": "./dist/types/*.d.ts",
+      "import": "./dist/types/*.js"
+    },
+    "./schemas/*": {
+      "types": "./dist/schemas/*.d.ts",
+      "import": "./dist/schemas/*.js"
+    },
+    "./tools/*": {
+      "types": "./dist/tools/*.d.ts",
+      "import": "./dist/tools/*.js"
+    },
+    "./clients/*": {
+      "types": "./dist/clients/*.d.ts",
+      "import": "./dist/clients/*.js"
+    },
+    "./server/*": {
+      "types": "./dist/server/*.d.ts",
+      "import": "./dist/server/*.js"
+    },
+    "./services/*": {
+      "types": "./dist/services/*.d.ts",
+      "import": "./dist/services/*.js"
+    },
+    "./prompts/*": {
+      "types": "./dist/prompts/*.d.ts",
+      "import": "./dist/prompts/*.js"
+    },
+    "./resources/*": {
+      "types": "./dist/resources/*.d.ts",
+      "import": "./dist/resources/*.js"
+    },
+    "./utils/*": {
+      "types": "./dist/utils/*.d.ts",
+      "import": "./dist/utils/*.js"
+    },
+    "./di/*": {
+      "types": "./dist/di/*.d.ts",
+      "import": "./dist/di/*.js"
+    },
+    "./data/*": {
+      "types": "./dist/data/*.d.ts",
+      "import": "./dist/data/*.js"
+    },
+    "./generated/*": {
+      "types": "./dist/generated/*.d.ts",
+      "import": "./dist/generated/*.js"
+    }
+  },
   "bin": {
     "european-parliament-mcp-server": "dist/index.js"
   },
@@ -15,7 +73,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.ts\"",
-    "generate:api-types": "openapi-typescript docs/ep-openapi-spec.json -o src/generated/ep-api-types.ts",
+    "generate:api-types": "npm exec --yes openapi-typescript@7.13.0 -- docs/ep-openapi-spec.json -o src/generated/ep-api-types.ts",
     "type-check": "tsc --noEmit",
     "type-check:helpers": "tsc --noEmit --project tsconfig.tests.json",
     "test": "vitest",
@@ -95,14 +153,13 @@
     "globals": "17.4.0",
     "knip": "6.1.1",
     "license-compliance": "3.0.1",
-    "openapi-typescript": "7.13.0",
     "prettier": "3.8.1",
     "tsx": "4.21.0",
     "typedoc": "0.28.18",
     "typedoc-plugin-markdown": "4.11.0",
     "typedoc-plugin-mdn-links": "5.1.1",
     "typedoc-plugin-zod": "1.4.3",
-    "typescript": "5.9.3",
+    "typescript": "6.0.2",
     "typescript-eslint": "8.58.0",
     "vitest": "4.1.2"
   }

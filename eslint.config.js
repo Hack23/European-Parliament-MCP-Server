@@ -15,9 +15,9 @@ export default tseslint.config(
     languageOptions: {
       globals: {
         ...globals.node,
-        ...globals.es2024
+        ...globals.es2025
       },
-      ecmaVersion: 2024,
+      ecmaVersion: 2025,
       sourceType: 'module',
       parserOptions: {
         project: './tsconfig.json',
@@ -84,9 +84,9 @@ export default tseslint.config(
     languageOptions: {
       globals: {
         ...globals.node,
-        ...globals.es2024
+        ...globals.es2025
       },
-      ecmaVersion: 2024,
+      ecmaVersion: 2025,
       sourceType: 'module',
       parserOptions: {
         project: './tsconfig.eslint.json',
