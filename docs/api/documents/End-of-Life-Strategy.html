@@ -1,0 +1,957 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>End-of-Life-Strategy | European Parliament MCP Server API - v1.1.21</title><meta name="description" content="Documentation for European Parliament MCP Server API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">European Parliament MCP Server API - v1.1.21</a><div id="tsd-toolbar-links"><a href="https://hack23.github.io/European-Parliament-MCP-Server/">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md">API Usage Guide</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">End-of-Life-Strategy</a></li></ul></div><div class="tsd-panel tsd-typography"><p align="center">
+  <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="192" height="192">
+</p>
+<h1 align="center">📦 European Parliament MCP Server — End-of-Life Strategy</h1>
+<p align="center">
+  <strong>🛡️ Proactive Technology Lifecycle Management for MCP Server</strong><br>
+  <em>📦 Current Stack Maintenance • 🔄 Node.js New Release Model • ⚡ Future-Ready Architecture</em>
+</p>
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/Owner-CEO-0A66C2?style=for-the-badge" alt="Owner"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-2.0-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--03--12-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Review-Annual-orange?style=for-the-badge" alt="Review Cycle"/></a>
+</p>
+<p><strong>📋 Document Owner:</strong> CEO | <strong>📄 Version:</strong> 3.0 | <strong>📅 Last Updated:</strong> 2026-03-18 (UTC)<br>
+<strong>🔄 Review Cycle:</strong> Annual | <strong>⏰ Next Review:</strong> 2027-03-18<br>
+<strong>🏷️ Classification:</strong> Public (Open Source MCP Server)</p>
+<hr>
+<h2 id="📑-table-of-contents" class="tsd-anchor-link">📑 Table of Contents<a href="#📑-table-of-contents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li><a href="#-eol-strategy-overview">EOL Strategy Overview</a></li>
+<li><a href="#-current-technology-stack-analysis">Current Technology Stack</a></li>
+<li><a href="#-technology-lifecycle-matrix">Technology Lifecycle Matrix</a></li>
+<li><a href="#-nodejs-release-schedule-evolution">Node.js Release Schedule Evolution</a></li>
+<li><a href="#-nodejs-version-strategy">Node.js Version Strategy</a></li>
+<li><a href="#-nodejs-transition-roadmap">Node.js Transition Roadmap</a></li>
+<li><a href="#-dependency-eol-monitoring">Dependency EOL Monitoring</a></li>
+<li><a href="#-npm-package-lifecycle">npm Package Lifecycle</a></li>
+<li><a href="#-eol-trigger-criteria">EOL Trigger Criteria</a></li>
+<li><a href="#-migration-procedures">Migration Procedures</a></li>
+<li><a href="#-archive--preservation">Archive &amp; Preservation</a></li>
+<li><a href="#-policy-alignment">Policy Alignment</a></li>
+<li><a href="#-related-documents">Related Documents</a></li>
+<li><a href="#-revision-history">Revision History</a></li>
+</ul>
+<hr>
+<h2 id="🎯-eol-strategy-overview" class="tsd-anchor-link">🎯 EOL Strategy Overview<a href="#🎯-eol-strategy-overview" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="📋-strategic-objective" class="tsd-anchor-link"><strong>📋 Strategic Objective</strong><a href="#📋-strategic-objective" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The European Parliament MCP Server will maintain its current technology stack, utilizing modern TypeScript/Node.js with the MCP SDK, following Hack23 AB's <strong>&quot;Living on the Edge&quot;</strong> philosophy — maintaining latest stable releases with comprehensive automated testing and security validation.</p>
+<p>This strategy aligns with <a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md" target="_blank" class="external">Hack23 AB's Vulnerability Management Policy</a>.</p>
+<h3 id="🏷️-business-impact-classification" class="tsd-anchor-link"><strong>🏷️ Business Impact Classification</strong><a href="#🏷️-business-impact-classification" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Level</th>
+<th>EOL Impact</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>🔐 Confidentiality</strong></td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md#confidentiality-levels" target="_blank" class="external"><img src="https://img.shields.io/badge/C-Public-lightgrey?style=flat-square" alt="Public"></a></td>
+<td>Low</td>
+<td>Open source, public data</td>
+</tr>
+<tr>
+<td><strong>🔒 Integrity</strong></td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md#integrity-levels" target="_blank" class="external"><img src="https://img.shields.io/badge/I-Moderate-yellow?style=flat-square" alt="Moderate"></a></td>
+<td>Medium</td>
+<td>Data accuracy matters</td>
+</tr>
+<tr>
+<td><strong>⚡ Availability</strong></td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md#availability-levels" target="_blank" class="external"><img src="https://img.shields.io/badge/A-Standard-lightgreen?style=flat-square" alt="Standard"></a></td>
+<td>Medium</td>
+<td>Tolerates maintenance windows</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="📦-current-technology-stack-analysis" class="tsd-anchor-link">📦 Current Technology Stack Analysis<a href="#📦-current-technology-stack-analysis" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="mermaid">graph TB
+    subgraph "🏗️ Core Runtime"
+        NODE[Node.js 25.x Current]
+        TS[TypeScript 6.0.2]
+    end
+    subgraph "📦 Key Dependencies"
+        MCP["@modelcontextprotocol/sdk"]
+        ZOD[Zod 4.x]
+    end
+    subgraph "🧪 Testing"
+        VIT[Vitest]
+    end
+    subgraph "🔧 Build & Distribution"
+        NPM[npm Registry]
+        GHA[GitHub Actions]
+        TSC[tsc Compiler]
+    end
+
+    NODE --> TS --> MCP & ZOD
+    TS --> TSC --> NPM
+    VIT --> GHA
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="🔄-technology-lifecycle-matrix" class="tsd-anchor-link">🔄 Technology Lifecycle Matrix<a href="#🔄-technology-lifecycle-matrix" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Current Version</th>
+<th>EOL Date</th>
+<th>Risk Level</th>
+<th>Migration Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Node.js</strong></td>
+<td>&gt;=25.0.0 (25.x Current)</td>
+<td><strong>April 2026</strong> 🔴</td>
+<td>🔴 <strong>Imminent</strong></td>
+<td><strong>Upgrade to Node.js 26 immediately on release (≈ April 2026)</strong></td>
+</tr>
+<tr>
+<td><strong>Node.js 26</strong></td>
+<td>Releasing April 2026</td>
+<td>April 2029</td>
+<td>🟢 Low</td>
+<td>Will be even-numbered LTS candidate; migrate within days of release</td>
+</tr>
+<tr>
+<td><strong>TypeScript</strong></td>
+<td>6.0.2</td>
+<td>Active</td>
+<td>🟢 Low</td>
+<td>Stay on 6.0.x until the next supported minor</td>
+</tr>
+<tr>
+<td><strong>MCP SDK</strong></td>
+<td>Latest</td>
+<td>Active</td>
+<td>🟡 Medium</td>
+<td>Track protocol evolution</td>
+</tr>
+<tr>
+<td><strong>Zod</strong></td>
+<td>^4.3.6 (4.x)</td>
+<td>Active</td>
+<td>🟢 Low</td>
+<td>Follow semver updates</td>
+</tr>
+<tr>
+<td><strong>Vitest</strong></td>
+<td>Latest</td>
+<td>Active</td>
+<td>🟢 Low</td>
+<td>Follow semver updates</td>
+</tr>
+<tr>
+<td><strong>npm</strong></td>
+<td>Registry</td>
+<td>Indefinite</td>
+<td>🟢 Low</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>GitHub Actions</strong></td>
+<td>Latest</td>
+<td>Indefinite</td>
+<td>🟢 Low</td>
+<td>Pin action versions</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ <strong>Node.js 25 is an odd-numbered Current release</strong> (old release model). It has <strong>no LTS phase</strong> and reaches EOL when Node.js 26 releases in April 2026. Upgrade to Node.js 26 within days of its release.
+✅ <strong>TypeScript 6.0.2 is now the active compiler baseline.</strong> TypeScript 5.9.x is retained only as the previous stable line and is no longer part of the active toolchain.</p>
+</blockquote>
+<h3 id="📅-key-dates" class="tsd-anchor-link"><strong>📅 Key Dates</strong><a href="#📅-key-dates" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Date</th>
+<th>Action Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Node.js 25 EOL</strong></td>
+<td><strong>≈ April 2026</strong> 🔴</td>
+<td><strong>Upgrade to Node.js 26 IMMEDIATELY on release</strong></td>
+</tr>
+<tr>
+<td><strong>Node.js 26 release</strong></td>
+<td><strong>≈ April 22, 2026</strong> 🔴</td>
+<td><strong>Upgrade all CI/CD and <code>engines</code> field — target: within 2 days of release</strong></td>
+</tr>
+<tr>
+<td>Node.js 26 LTS promotion</td>
+<td>October 2026</td>
+<td>Confirmed long-term support; 36-month runway confirmed</td>
+</tr>
+<tr>
+<td>Node.js 26 maintenance</td>
+<td>October 2028</td>
+<td>Security-only updates; begin evaluating Node.js 27</td>
+</tr>
+<tr>
+<td>Node.js 27 Alpha opens</td>
+<td>October 2026</td>
+<td>Begin CI testing on alpha channel (new release model)</td>
+</tr>
+<tr>
+<td>Node.js 27 Current release</td>
+<td>April 2027</td>
+<td>Stabilization; evaluate for production (new model: every release = LTS)</td>
+</tr>
+<tr>
+<td>Node.js 27 LTS promotion</td>
+<td>October 2027</td>
+<td>Begin production migration if Node.js 26 maintenance window is undesirable</td>
+</tr>
+<tr>
+<td>Node.js 26 EOL</td>
+<td>April 2029</td>
+<td>Must have migrated to Node.js 27+</td>
+</tr>
+<tr>
+<td>Node.js 28 Alpha opens</td>
+<td>October 2027</td>
+<td>Monitor for early testing</td>
+</tr>
+<tr>
+<td>Node.js 28 Current release</td>
+<td>April 2028</td>
+<td>Next annual release (new model)</td>
+</tr>
+<tr>
+<td>Node.js 27 EOL</td>
+<td>April 2030</td>
+<td>36 months total support</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note:</strong> Starting with Node.js 27, the release schedule changes to <strong>one major release per year</strong> with <strong>every release becoming LTS</strong>. See <a href="#-nodejs-release-schedule-evolution">Node.js Release Schedule Evolution</a> for details.</p>
+</blockquote>
+<hr>
+<h2 id="🔄-nodejs-release-schedule-evolution" class="tsd-anchor-link">🔄 Node.js Release Schedule Evolution<a href="#🔄-nodejs-release-schedule-evolution" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="📢-new-release-model-starting-nodejs-27x" class="tsd-anchor-link"><strong>📢 New Release Model (Starting Node.js 27.x)</strong><a href="#📢-new-release-model-starting-nodejs-27x" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>In March 2026, the Node.js project <a href="https://nodejs.org/en/blog/announcements/evolving-the-nodejs-release-schedule" target="_blank" class="external">announced a fundamental change</a> to its release schedule, effective from October 2026. This section documents the impact on the European Parliament MCP Server's lifecycle management.</p>
+<h4 id="🔀-old-model-vs-new-model" class="tsd-anchor-link"><strong>🔀 Old Model vs. New Model</strong><a href="#🔀-old-model-vs-new-model" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Old Model (≤ Node.js 26)</th>
+<th>New Model (≥ Node.js 27)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Major releases per year</strong></td>
+<td>2 (April + October)</td>
+<td>1 (April)</td>
+</tr>
+<tr>
+<td><strong>LTS eligibility</strong></td>
+<td>Even-numbered only</td>
+<td><strong>Every release</strong></td>
+</tr>
+<tr>
+<td><strong>Odd-numbered releases</strong></td>
+<td>Current only (no LTS)</td>
+<td>N/A — distinction removed</td>
+</tr>
+<tr>
+<td><strong>LTS promotion</strong></td>
+<td>October (even releases)</td>
+<td>October (all releases)</td>
+</tr>
+<tr>
+<td><strong>Total support lifetime</strong></td>
+<td>~30 months (LTS only)</td>
+<td><strong>36 months</strong> (Current + LTS)</td>
+</tr>
+<tr>
+<td><strong>Alpha channel</strong></td>
+<td>None</td>
+<td><strong>New:</strong> Oct–Mar, semver-major allowed</td>
+</tr>
+<tr>
+<td><strong>Version numbering</strong></td>
+<td>Sequential (24, 25, 26…)</td>
+<td>Calendar-year aligned (27 in 2027, 28 in 2028)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="📊-new-release-phases" class="tsd-anchor-link"><strong>📊 New Release Phases</strong><a href="#📊-new-release-phases" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Duration</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Alpha</strong></td>
+<td>6 months (Oct → Mar)</td>
+<td>Early testing, semver-major changes allowed</td>
+</tr>
+<tr>
+<td><strong>Current</strong></td>
+<td>6 months (Apr → Oct)</td>
+<td>Stabilization, no new breaking changes</td>
+</tr>
+<tr>
+<td><strong>LTS</strong></td>
+<td>30 months (Oct → EOL)</td>
+<td>Long-term support with security fixes</td>
+</tr>
+<tr>
+<td><strong>EOL</strong></td>
+<td>—</td>
+<td>No further support</td>
+</tr>
+<tr>
+<td><strong>Total support</strong></td>
+<td><strong>36 months</strong></td>
+<td>From first Current release to End of Life</td>
+</tr>
+</tbody>
+</table>
+<h4 id="📈-impact-on-this-project" class="tsd-anchor-link"><strong>📈 Impact on This Project</strong><a href="#📈-impact-on-this-project" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<table>
+<thead>
+<tr>
+<th>Impact Area</th>
+<th>Assessment</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Upgrade frequency</strong></td>
+<td>🟢 Positive</td>
+<td>One major upgrade/year instead of two evaluation cycles</td>
+</tr>
+<tr>
+<td><strong>LTS availability</strong></td>
+<td>🟢 Positive</td>
+<td>Every release becomes LTS — no more skipping odd versions</td>
+</tr>
+<tr>
+<td><strong>Alpha testing</strong></td>
+<td>🟡 Requires action</td>
+<td>Must integrate alpha channel into CI for early bug detection</td>
+</tr>
+<tr>
+<td><strong>Planning predictability</strong></td>
+<td>🟢 Positive</td>
+<td>Calendar-year versioning simplifies upgrade scheduling</td>
+</tr>
+<tr>
+<td><strong>Support window</strong></td>
+<td>🟢 Positive</td>
+<td>36-month total support provides longer runway</td>
+</tr>
+<tr>
+<td><strong>Library compatibility</strong></td>
+<td>🟡 Monitor</td>
+<td>Library authors encouraged to test on alpha early</td>
+</tr>
+</tbody>
+</table>
+<h4 id="🗓️-nodejs-release-timeline-visualization" class="tsd-anchor-link"><strong>🗓️ Node.js Release Timeline Visualization</strong><a href="#🗓️-nodejs-release-timeline-visualization" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<pre><code class="mermaid">gantt
+    title Node.js Release Lifecycle — Old vs. New Model
+    dateFormat YYYY-MM-DD
+    axisFormat %Y-%m
+
+    section Current (Node.js 25 — Odd/Current Only)
+    Node.js 25 Current         :active, n25c, 2025-10-28, 2026-04-22
+    Node.js 25 EOL             :crit, milestone, n25eol, 2026-04-22, 0d
+
+    section Legacy Model (Node.js 26 — Last Even/LTS)
+    Node.js 26 Current         :n26c, 2026-04-22, 2026-10-28
+    Node.js 26 LTS             :n26lts, 2026-10-28, 2029-04-30
+    Node.js 26 EOL             :crit, milestone, n26eol, 2029-04-30, 0d
+
+    section New Model (Node.js 27)
+    Node.js 27 Alpha           :n27a, 2026-10-01, 2027-03-31
+    Node.js 27 Current         :n27c, 2027-04-01, 2027-10-01
+    Node.js 27 LTS             :n27lts, 2027-10-01, 2030-04-01
+    Node.js 27 EOL             :crit, milestone, n27eol, 2030-04-01, 0d
+
+    section New Model (Node.js 28)
+    Node.js 28 Alpha           :n28a, 2027-10-01, 2028-03-31
+    Node.js 28 Current         :n28c, 2028-04-01, 2028-10-01
+    Node.js 28 LTS             :n28lts, 2028-10-01, 2031-04-01
+    Node.js 28 EOL             :crit, milestone, n28eol, 2031-04-01, 0d
+
+    section EP MCP Server Strategy
+    Production on Node.js 25   :active, ep25, 2025-10-28, 2026-04-22
+    URGENT: Upgrade to Node 26 :crit, ep26upgrade, 2026-04-22, 2026-04-24
+    Production on Node.js 26   :ep26, 2026-04-22, 2027-10-01
+    Alpha 27 CI Testing        :ep27alpha, 2026-10-01, 2027-04-01
+    Node.js 27 Evaluation      :ep27eval, 2027-04-01, 2027-10-01
+    Production on Node.js 27   :ep27prod, 2027-10-01, 2030-04-01
+    Alpha 28 CI Testing        :ep28alpha, 2027-10-01, 2028-04-01
+</code><button type="button">Copy</button></pre>
+
+<blockquote>
+<p><strong>Source:</strong> <a href="https://nodejs.org/en/blog/announcements/evolving-the-nodejs-release-schedule" target="_blank" class="external">Evolving the Node.js Release Schedule</a> — see also <a href="https://github.com/nodejs/Release/issues/1113" target="_blank" class="external">nodejs/Release#1113</a> for background discussion.</p>
+</blockquote>
+<hr>
+<h2 id="📋-nodejs-version-strategy" class="tsd-anchor-link">📋 Node.js Version Strategy<a href="#📋-nodejs-version-strategy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Following the <strong>&quot;Living on the Edge&quot;</strong> philosophy from <a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md" target="_blank" class="external">Vulnerability Management Policy</a>:</p>
+<ol>
+<li><strong>Track Latest Current:</strong> Run Node.js 25.x (Current) in production today; upgrade to Node.js 26 within <strong>2 days</strong> of its April 2026 release</li>
+<li><strong>Rapid Even-Number Adoption:</strong> Node.js 26 (even, LTS candidate) releases ≈ April 22, 2026 — upgrade immediately to avoid running an EOL Node.js 25 in production</li>
+<li><strong>Alpha CI Integration:</strong> Add Node.js alpha releases to CI matrix as soon as the alpha channel opens (per Node.js project guidance for library authors)</li>
+<li><strong>Early Testing:</strong> Begin production evaluation during the Current phase (April–October)</li>
+<li><strong>Rapid Adoption:</strong> Migrate to new LTS within 1 month of LTS promotion (October)</li>
+<li><strong>CI Matrix:</strong> Test against current, next Current/alpha, and previous LTS</li>
+<li><strong>Automated Alerts:</strong> Dependabot monitors for Node.js security updates</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>URGENT ACTION REQUIRED:</strong> Node.js 25 (odd-numbered, Current-only) reaches End-of-Life when Node.js 26 releases in <strong>≈ 2 weeks</strong> (April 2026). Upgrade plan is documented in the <a href="#-nodejs-25--26-transition-plan-urgent">Node.js 25 → 26 Transition Plan</a> below.</p>
+</blockquote>
+<h3 id="🔄-upgrade-process-updated-for-new-release-model" class="tsd-anchor-link"><strong>🔄 Upgrade Process (Updated for New Release Model)</strong><a href="#🔄-upgrade-process-updated-for-new-release-model" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code><span class="hl-7">Phase</span><span class="hl-2"> </span><span class="hl-6">1</span><span class="hl-2"> — </span><span class="hl-7">Alpha</span><span class="hl-2"> </span><span class="hl-1">Testing</span><span class="hl-2"> (</span><span class="hl-7">Oct</span><span class="hl-2">–</span><span class="hl-7">Mar</span><span class="hl-2">, </span><span class="hl-6">6</span><span class="hl-2"> </span><span class="hl-7">months</span><span class="hl-2"> </span><span class="hl-7">before</span><span class="hl-2"> </span><span class="hl-7">release</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-6">1.</span><span class="hl-2"> </span><span class="hl-7">Add</span><span class="hl-2"> </span><span class="hl-7">Node</span><span class="hl-2">.</span><span class="hl-7">js</span><span class="hl-2"> </span><span class="hl-7">alpha</span><span class="hl-2"> </span><span class="hl-7">to</span><span class="hl-2"> </span><span class="hl-9">CI</span><span class="hl-2"> </span><span class="hl-1">matrix</span><span class="hl-2"> (</span><span class="hl-7">non</span><span class="hl-2">-</span><span class="hl-7">blocking</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-6">2.</span><span class="hl-2"> </span><span class="hl-7">Report</span><span class="hl-2"> </span><span class="hl-7">upstream</span><span class="hl-2"> </span><span class="hl-7">bugs</span><span class="hl-2"> </span><span class="hl-7">found</span><span class="hl-2"> </span><span class="hl-7">during</span><span class="hl-2"> </span><span class="hl-7">testing</span><br/><span class="hl-2">  </span><span class="hl-6">3.</span><span class="hl-2"> </span><span class="hl-7">Track</span><span class="hl-2"> </span><span class="hl-7">dependency</span><span class="hl-2"> </span><span class="hl-7">compatibility</span><span class="hl-2"> </span><span class="hl-11">with</span><span class="hl-2"> </span><span class="hl-7">alpha</span><br/><br/><span class="hl-7">Phase</span><span class="hl-2"> </span><span class="hl-6">2</span><span class="hl-2"> — </span><span class="hl-7">Current</span><span class="hl-2"> </span><span class="hl-1">Evaluation</span><span class="hl-2"> (</span><span class="hl-7">Apr</span><span class="hl-2">–</span><span class="hl-7">Oct</span><span class="hl-2">, </span><span class="hl-7">pre</span><span class="hl-2">-</span><span class="hl-9">LTS</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-6">4.</span><span class="hl-2"> </span><span class="hl-7">Promote</span><span class="hl-2"> </span><span class="hl-7">alpha</span><span class="hl-2"> </span><span class="hl-9">CI</span><span class="hl-2"> </span><span class="hl-7">jobs</span><span class="hl-2"> </span><span class="hl-7">to</span><span class="hl-2"> </span><span class="hl-7">required</span><span class="hl-2"> </span><span class="hl-7">status</span><br/><span class="hl-2">  </span><span class="hl-6">5.</span><span class="hl-2"> </span><span class="hl-7">Run</span><span class="hl-2"> </span><span class="hl-7">full</span><span class="hl-2"> </span><span class="hl-7">test</span><span class="hl-2"> </span><span class="hl-1">suite</span><span class="hl-2"> (</span><span class="hl-7">unit</span><span class="hl-2"> + </span><span class="hl-9">E2E</span><span class="hl-2">) </span><span class="hl-7">on</span><span class="hl-2"> </span><span class="hl-7">Current</span><span class="hl-2"> </span><span class="hl-7">release</span><br/><span class="hl-2">  </span><span class="hl-6">6.</span><span class="hl-2"> </span><span class="hl-7">Benchmark</span><span class="hl-2"> </span><span class="hl-7">performance</span><span class="hl-2"> </span><span class="hl-7">against</span><span class="hl-2"> </span><span class="hl-7">current</span><span class="hl-2"> </span><span class="hl-9">LTS</span><br/><span class="hl-2">  </span><span class="hl-6">7.</span><span class="hl-2"> </span><span class="hl-7">Review</span><span class="hl-2"> </span><span class="hl-7">breaking</span><span class="hl-2"> </span><span class="hl-7">changes</span><span class="hl-2"> </span><span class="hl-7">and</span><span class="hl-2"> </span><span class="hl-7">update</span><span class="hl-2"> </span><span class="hl-7">code</span><span class="hl-2"> </span><span class="hl-11">as</span><span class="hl-2"> </span><span class="hl-10">needed</span><br/><br/><span class="hl-7">Phase</span><span class="hl-2"> </span><span class="hl-6">3</span><span class="hl-2"> — </span><span class="hl-9">LTS</span><span class="hl-2"> </span><span class="hl-1">Migration</span><span class="hl-2"> (</span><span class="hl-7">Oct</span><span class="hl-2">, </span><span class="hl-7">on</span><span class="hl-2"> </span><span class="hl-9">LTS</span><span class="hl-2"> </span><span class="hl-7">promotion</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-6">8.</span><span class="hl-2"> </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-7">engines</span><span class="hl-2"> </span><span class="hl-7">field</span><span class="hl-2"> </span><span class="hl-4">in</span><span class="hl-2"> </span><span class="hl-7">package</span><span class="hl-2">.</span><span class="hl-7">json</span><br/><span class="hl-2">  </span><span class="hl-6">9.</span><span class="hl-2"> </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-7">GitHub</span><span class="hl-2"> </span><span class="hl-7">Actions</span><span class="hl-2"> </span><span class="hl-7">workflow</span><span class="hl-2"> </span><span class="hl-7">matrix</span><br/><span class="hl-2">  </span><span class="hl-6">10.</span><span class="hl-2"> </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-1">install</span><span class="hl-2"> (</span><span class="hl-7">rebuild</span><span class="hl-2"> </span><span class="hl-7">native</span><span class="hl-2"> </span><span class="hl-7">modules</span><span class="hl-2"> </span><span class="hl-7">if</span><span class="hl-2"> </span><span class="hl-7">any</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-6">11.</span><span class="hl-2"> </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-7">run</span><span class="hl-2"> </span><span class="hl-8">test</span><span class="hl-2">:</span><span class="hl-7">all</span><span class="hl-2"> &amp;&amp; </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-7">run</span><span class="hl-2"> </span><span class="hl-1">lint</span><span class="hl-2"> (</span><span class="hl-7">full</span><span class="hl-2"> </span><span class="hl-7">validation</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-6">12.</span><span class="hl-2"> </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-1">documentation</span><span class="hl-2"> (</span><span class="hl-9">README</span><span class="hl-2">, </span><span class="hl-9">DEVELOPER_GUIDE</span><span class="hl-2">, </span><span class="hl-4">this</span><span class="hl-2"> </span><span class="hl-9">EOL</span><span class="hl-2"> </span><span class="hl-7">Strategy</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-6">13.</span><span class="hl-2"> </span><span class="hl-7">Publish</span><span class="hl-2"> </span><span class="hl-4">new</span><span class="hl-2"> </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-7">version</span>
+</code><button>Copy</button></pre>
+
+<hr>
+<h2 id="🗺️-nodejs-transition-roadmap" class="tsd-anchor-link">🗺️ Node.js Transition Roadmap<a href="#🗺️-nodejs-transition-roadmap" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="📋-nodejs-25-→-26-transition-plan-urgent" class="tsd-anchor-link"><strong>📋 Node.js 25 → 26 Transition Plan (URGENT)</strong><a href="#📋-nodejs-25-→-26-transition-plan-urgent" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<blockquote>
+<p>🔴 <strong>Node.js 25 EOL is imminent</strong> — it expires when Node.js 26 releases in ≈ 2 weeks. Execute this plan immediately upon Node.js 26 release.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Timeline</th>
+<th>Actions</th>
+<th>Risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Current Production</strong></td>
+<td>Now (March 2026)</td>
+<td>Node.js 25.x Current in production</td>
+<td>🔴 <strong>HIGH — EOL in ≈2 weeks</strong></td>
+</tr>
+<tr>
+<td><strong>Day 0: Node.js 26 Release</strong></td>
+<td>≈ April 22, 2026</td>
+<td>Update <code>package.json</code> engines, all CI/CD workflows, devcontainer</td>
+<td>🟡 Medium</td>
+</tr>
+<tr>
+<td><strong>Day 0–2: Validation</strong></td>
+<td>April 22–24, 2026</td>
+<td>Run full test suite, lint, build on Node.js 26; publish new npm version</td>
+<td>🟡 Medium</td>
+</tr>
+<tr>
+<td><strong>Day 2+: Production</strong></td>
+<td>April 24, 2026+</td>
+<td>Node.js 26 in production; Node.js 25 fully retired</td>
+<td>🟢 Low</td>
+</tr>
+<tr>
+<td><strong>Node.js 26 LTS</strong></td>
+<td>October 2026</td>
+<td>LTS promotion confirmed; 36-month runway from April 2026</td>
+<td>🟢 Low</td>
+</tr>
+</tbody>
+</table>
+<h4 id="📋-nodejs-26-upgrade-checklist-execute-on-release-day" class="tsd-anchor-link"><strong>📋 Node.js 26 Upgrade Checklist (Execute on Release Day)</strong><a href="#📋-nodejs-26-upgrade-checklist-execute-on-release-day" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<pre><code><span class="hl-7">Day</span><span class="hl-2"> </span><span class="hl-6">0</span><span class="hl-2"> — </span><span class="hl-1">Upgrade</span><span class="hl-2"> (</span><span class="hl-7">April</span><span class="hl-2"> </span><span class="hl-6">22</span><span class="hl-2">, </span><span class="hl-6">2026</span><span class="hl-2">, </span><span class="hl-7">release</span><span class="hl-2"> </span><span class="hl-7">day</span><span class="hl-2">):</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">1</span><span class="hl-2">:  </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-7">package</span><span class="hl-2">.</span><span class="hl-7">json</span><span class="hl-2"> </span><span class="hl-8">engines</span><span class="hl-2">: </span><span class="hl-3">&quot;node&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;&gt;=26.0.0&quot;</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">2</span><span class="hl-2">:  </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-7">all</span><span class="hl-2"> </span><span class="hl-7">GitHub</span><span class="hl-2"> </span><span class="hl-7">Actions</span><span class="hl-2"> </span><span class="hl-8">workflows</span><span class="hl-2">: </span><span class="hl-7">node</span><span class="hl-2">-</span><span class="hl-8">version</span><span class="hl-2">: </span><span class="hl-3">&quot;26&quot;</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">3</span><span class="hl-2">:  </span><span class="hl-7">Update</span><span class="hl-2"> .</span><span class="hl-7">devcontainer</span><span class="hl-2">/</span><span class="hl-7">devcontainer</span><span class="hl-2">.</span><span class="hl-7">json</span><span class="hl-2">: </span><span class="hl-7">node</span><span class="hl-2"> </span><span class="hl-7">version</span><span class="hl-2"> </span><span class="hl-6">26</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">4</span><span class="hl-2">:  </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-8">documentation</span><span class="hl-2">: </span><span class="hl-9">README</span><span class="hl-2">.</span><span class="hl-7">md</span><span class="hl-2">, </span><span class="hl-9">DEVELOPER_GUIDE</span><span class="hl-2">.</span><span class="hl-7">md</span><span class="hl-2">, </span><span class="hl-9">LOCAL_TESTING</span><span class="hl-2">.</span><span class="hl-7">md</span><span class="hl-2">, </span><span class="hl-7">etc</span><span class="hl-2">.</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">5</span><span class="hl-2">:  </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-7">End</span><span class="hl-2">-</span><span class="hl-4">of</span><span class="hl-2">-</span><span class="hl-7">Life</span><span class="hl-2">-</span><span class="hl-7">Strategy</span><span class="hl-2">.</span><span class="hl-7">md</span><span class="hl-2">: </span><span class="hl-7">Technology</span><span class="hl-2"> </span><span class="hl-7">Lifecycle</span><span class="hl-2"> </span><span class="hl-7">Matrix</span><span class="hl-2"> </span><span class="hl-7">and</span><span class="hl-2"> </span><span class="hl-7">roadmap</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">6</span><span class="hl-2">:  </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-9">WORKFLOWS</span><span class="hl-2">.</span><span class="hl-7">md</span><span class="hl-2">, </span><span class="hl-9">FUTURE_WORKFLOWS</span><span class="hl-2">.</span><span class="hl-7">md</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">7</span><span class="hl-2">:  </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-1">ci</span><span class="hl-2"> (</span><span class="hl-7">rebuild</span><span class="hl-2"> </span><span class="hl-7">any</span><span class="hl-2"> </span><span class="hl-7">native</span><span class="hl-2"> </span><span class="hl-7">modules</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">8</span><span class="hl-2">:  </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-1">test</span><span class="hl-2"> (</span><span class="hl-7">full</span><span class="hl-2"> </span><span class="hl-7">test</span><span class="hl-2"> </span><span class="hl-7">suite</span><span class="hl-2"> — </span><span class="hl-6">2600</span><span class="hl-2">+ </span><span class="hl-7">unit</span><span class="hl-2"> </span><span class="hl-7">tests</span><span class="hl-2"> </span><span class="hl-7">must</span><span class="hl-2"> </span><span class="hl-7">pass</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">9</span><span class="hl-2">:  </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-7">run</span><span class="hl-2"> </span><span class="hl-1">lint</span><span class="hl-2"> (</span><span class="hl-7">zero</span><span class="hl-2"> </span><span class="hl-7">warnings</span><span class="hl-2"> </span><span class="hl-7">required</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">10</span><span class="hl-2">: </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-7">run</span><span class="hl-2"> </span><span class="hl-1">build</span><span class="hl-2"> (</span><span class="hl-7">TypeScript</span><span class="hl-2"> </span><span class="hl-7">compilation</span><span class="hl-2"> </span><span class="hl-7">must</span><span class="hl-2"> </span><span class="hl-7">succeed</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">11</span><span class="hl-2">: </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-7">run</span><span class="hl-2"> </span><span class="hl-1">knip</span><span class="hl-2"> (</span><span class="hl-7">no</span><span class="hl-2"> </span><span class="hl-7">unused</span><span class="hl-2"> </span><span class="hl-10">exports</span><span class="hl-2">)</span><br/><br/><span class="hl-7">Day</span><span class="hl-2"> </span><span class="hl-6">1</span><span class="hl-2"> — </span><span class="hl-8">Publish</span><span class="hl-2">:</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">12</span><span class="hl-2">: </span><span class="hl-7">Publish</span><span class="hl-2"> </span><span class="hl-7">updated</span><span class="hl-2"> </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-11">package</span><span class="hl-2"> </span><span class="hl-11">with</span><span class="hl-2"> </span><span class="hl-7">Node</span><span class="hl-2">.</span><span class="hl-7">js</span><span class="hl-2"> </span><span class="hl-6">26</span><span class="hl-2"> </span><span class="hl-11">as</span><span class="hl-2"> </span><span class="hl-10">minimum</span><span class="hl-2"> </span><span class="hl-10">engine</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">13</span><span class="hl-2">: </span><span class="hl-7">Open</span><span class="hl-2"> </span><span class="hl-9">PR</span><span class="hl-2"> </span><span class="hl-11">with</span><span class="hl-2"> </span><span class="hl-7">all</span><span class="hl-2"> </span><span class="hl-7">version</span><span class="hl-2"> </span><span class="hl-7">bumps</span><span class="hl-2"> </span><span class="hl-7">and</span><span class="hl-2"> </span><span class="hl-7">documentation</span><span class="hl-2"> </span><span class="hl-7">updates</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">14</span><span class="hl-2">: </span><span class="hl-7">Merge</span><span class="hl-2"> </span><span class="hl-7">and</span><span class="hl-2"> </span><span class="hl-7">tag</span><span class="hl-2"> </span><span class="hl-4">new</span><span class="hl-2"> </span><span class="hl-7">release</span><br/><br/><span class="hl-7">Day</span><span class="hl-2"> </span><span class="hl-6">2</span><span class="hl-2"> — </span><span class="hl-8">Validation</span><span class="hl-2">:</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">15</span><span class="hl-2">: </span><span class="hl-7">Verify</span><span class="hl-2"> </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-11">package</span><span class="hl-2"> </span><span class="hl-7">installs</span><span class="hl-2"> </span><span class="hl-7">correctly</span><span class="hl-2"> </span><span class="hl-7">on</span><span class="hl-2"> </span><span class="hl-7">Node</span><span class="hl-2">.</span><span class="hl-7">js</span><span class="hl-2"> </span><span class="hl-6">26</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">16</span><span class="hl-2">: </span><span class="hl-7">Test</span><span class="hl-2"> </span><span class="hl-9">MCP</span><span class="hl-2"> </span><span class="hl-7">client</span><span class="hl-2"> </span><span class="hl-1">connectivity</span><span class="hl-2"> (</span><span class="hl-7">stdio</span><span class="hl-2"> </span><span class="hl-7">transport</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">17</span><span class="hl-2">: </span><span class="hl-7">Confirm</span><span class="hl-2"> </span><span class="hl-9">CI</span><span class="hl-2">/</span><span class="hl-9">CD</span><span class="hl-2"> </span><span class="hl-7">pipelines</span><span class="hl-2"> </span><span class="hl-7">green</span><span class="hl-2"> </span><span class="hl-7">on</span><span class="hl-2"> </span><span class="hl-7">Node</span><span class="hl-2">.</span><span class="hl-7">js</span><span class="hl-2"> </span><span class="hl-6">26</span>
+</code><button>Copy</button></pre>
+
+<h3 id="📋-nodejs-26-→-27-transition-plan" class="tsd-anchor-link"><strong>📋 Node.js 26 → 27 Transition Plan</strong><a href="#📋-nodejs-26-→-27-transition-plan" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Timeline</th>
+<th>Actions</th>
+<th>Risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Current Production</strong></td>
+<td>Apr 2026 – Oct 2027</td>
+<td>Node.js 26 LTS in production</td>
+<td>🟢 Low</td>
+</tr>
+<tr>
+<td><strong>Alpha 27 CI</strong></td>
+<td>Oct 2026 – Mar 2027</td>
+<td>Add <code>27.0.0-alpha.*</code> to CI matrix (non-blocking)</td>
+<td>🟢 Low</td>
+</tr>
+<tr>
+<td><strong>Current 27 Eval</strong></td>
+<td>Apr 2027 – Oct 2027</td>
+<td>Test on Node.js 27.x Current; fix compatibility issues</td>
+<td>🟡 Medium</td>
+</tr>
+<tr>
+<td><strong>LTS 27 Migration</strong></td>
+<td>Oct 2027</td>
+<td>Upgrade production to Node.js 27 LTS</td>
+<td>🟡 Medium</td>
+</tr>
+<tr>
+<td><strong>Node.js 26 Sunset</strong></td>
+<td>Apr 2029</td>
+<td>Node.js 26 reaches EOL; must be fully on 27+</td>
+<td>🟢 Low (if planned)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="🧪-nodejs-27-alpha-integration-strategy" class="tsd-anchor-link"><strong>🧪 Node.js 27 Alpha Integration Strategy</strong><a href="#🧪-nodejs-27-alpha-integration-strategy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Per the Node.js project's guidance, <strong>library authors should integrate Alpha releases into CI as early as possible</strong> to report bugs before they affect users. As an npm-published MCP server, this project will:</p>
+<ol>
+<li><strong>Add alpha CI job</strong> (non-blocking, <code>continue-on-error: true</code>) when Node.js 27 alpha opens in October 2026</li>
+<li><strong>Report regressions</strong> upstream to Node.js via GitHub issues</li>
+<li><strong>Track breaking V8 changes</strong> that may affect TypeScript compilation or runtime behavior</li>
+<li><strong>Monitor MCP SDK compatibility</strong> with the new Node.js version</li>
+<li><strong>Validate Zod runtime behavior</strong> under new V8 engine optimizations</li>
+</ol>
+<h3 id="📊-full-nodejs-roadmap-projections-20262031" class="tsd-anchor-link"><strong>📊 Full Node.js Roadmap Projections (2026–2031)</strong><a href="#📊-full-nodejs-roadmap-projections-20262031" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Year</th>
+<th>Node.js Version</th>
+<th>Release Date</th>
+<th>Phase</th>
+<th>Action for this Project</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>2026</strong></td>
+<td><strong>25.x</strong></td>
+<td>Oct 2025</td>
+<td>⚠️ Current (EOL Apr 2026)</td>
+<td><strong>CURRENT — upgrade to 26 ASAP</strong></td>
+</tr>
+<tr>
+<td><strong>2026</strong></td>
+<td><strong>26.x</strong></td>
+<td>≈ Apr 22, 2026</td>
+<td>Current → LTS (Oct 2026)</td>
+<td><strong>Upgrade within 2 days of release</strong></td>
+</tr>
+<tr>
+<td><strong>2026</strong></td>
+<td>27.x Alpha</td>
+<td>Oct 2026</td>
+<td>Alpha</td>
+<td>Add to CI matrix (non-blocking)</td>
+</tr>
+<tr>
+<td><strong>2027</strong></td>
+<td>27.x</td>
+<td>Apr 2027</td>
+<td>Current → LTS (Oct 2027)</td>
+<td>Evaluate; new release model (every version = LTS)</td>
+</tr>
+<tr>
+<td><strong>2027</strong></td>
+<td>28.x Alpha</td>
+<td>Oct 2027</td>
+<td>Alpha</td>
+<td>Add to CI matrix (non-blocking)</td>
+</tr>
+<tr>
+<td><strong>2028</strong></td>
+<td>28.x</td>
+<td>Apr 2028</td>
+<td>Current → LTS (Oct 2028)</td>
+<td>Evaluate for migration from 27.x</td>
+</tr>
+<tr>
+<td><strong>2029</strong></td>
+<td><strong>Node.js 26 EOL</strong></td>
+<td>Apr 2029</td>
+<td>—</td>
+<td>Must be fully on 27+ before this date</td>
+</tr>
+<tr>
+<td><strong>2029</strong></td>
+<td>29.x Alpha</td>
+<td>Oct 2028</td>
+<td>Alpha</td>
+<td>Add to CI matrix</td>
+</tr>
+<tr>
+<td><strong>2030</strong></td>
+<td><strong>Node.js 27 EOL</strong></td>
+<td>Apr 2030</td>
+<td>—</td>
+<td>Must be fully on 28+ before this date</td>
+</tr>
+<tr>
+<td><strong>2031</strong></td>
+<td><strong>Node.js 28 EOL</strong></td>
+<td>Apr 2031</td>
+<td>—</td>
+<td>Must be fully on 29+ before this date</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note:</strong> Starting with Node.js 27 (released April 2027), the release schedule changes to <strong>one major release per year</strong> with <strong>every release becoming LTS</strong>. See <a href="#-nodejs-release-schedule-evolution">Node.js Release Schedule Evolution</a> for details.</p>
+</blockquote>
+<hr>
+<h2 id="🛡️-dependency-eol-monitoring" class="tsd-anchor-link">🛡️ Dependency EOL Monitoring<a href="#🛡️-dependency-eol-monitoring" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="🤖-automated-monitoring" class="tsd-anchor-link"><strong>🤖 Automated Monitoring</strong><a href="#🤖-automated-monitoring" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Purpose</th>
+<th>Frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dependabot</td>
+<td>Dependency version updates</td>
+<td>Daily</td>
+</tr>
+<tr>
+<td>npm audit</td>
+<td>Vulnerability scanning</td>
+<td>Per CI/CD run</td>
+</tr>
+<tr>
+<td>OpenSSF Scorecard</td>
+<td>Project health monitoring</td>
+<td>Weekly</td>
+</tr>
+<tr>
+<td>GitHub Security Advisories</td>
+<td>CVE notifications</td>
+<td>Real-time</td>
+</tr>
+</tbody>
+</table>
+<h3 id="📋-manual-reviews" class="tsd-anchor-link"><strong>📋 Manual Reviews</strong><a href="#📋-manual-reviews" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Activity</th>
+<th>Frequency</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dependency audit</td>
+<td>Quarterly</td>
+<td>Development team</td>
+</tr>
+<tr>
+<td>Node.js roadmap review</td>
+<td>Semi-annual</td>
+<td>Tech lead</td>
+</tr>
+<tr>
+<td>MCP protocol evolution</td>
+<td>Quarterly</td>
+<td>Development team</td>
+</tr>
+<tr>
+<td>EP API changes</td>
+<td>Monthly</td>
+<td>Development team</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="📦-npm-package-lifecycle" class="tsd-anchor-link">📦 npm Package Lifecycle<a href="#📦-npm-package-lifecycle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="📋-version-strategy" class="tsd-anchor-link"><strong>📋 Version Strategy</strong><a href="#📋-version-strategy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Version Range</th>
+<th>Support Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Active Development</td>
+<td>Current major</td>
+<td>Full support</td>
+</tr>
+<tr>
+<td>Maintenance</td>
+<td>Previous major</td>
+<td>Security fixes only</td>
+</tr>
+<tr>
+<td>Deprecated</td>
+<td>Older versions</td>
+<td>No support, deprecation notice</td>
+</tr>
+<tr>
+<td>Archived</td>
+<td>N/A</td>
+<td>npm deprecation, GitHub archive</td>
+</tr>
+</tbody>
+</table>
+<h3 id="⚠️-deprecation-process" class="tsd-anchor-link"><strong>⚠️ Deprecation Process</strong><a href="#⚠️-deprecation-process" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ol>
+<li><strong>Notice Period:</strong> 6 months before EOL</li>
+<li><strong>npm Deprecation:</strong> <code>npm deprecate</code> with migration instructions</li>
+<li><strong>README Update:</strong> Clear deprecation banner</li>
+<li><strong>GitHub Archive:</strong> Repository archived with read-only access</li>
+<li><strong>Documentation:</strong> Preserved for reference</li>
+</ol>
+<hr>
+<h2 id="🚨-eol-trigger-criteria" class="tsd-anchor-link">🚨 EOL Trigger Criteria<a href="#🚨-eol-trigger-criteria" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The project reaches End-of-Life when any of the following occur:</p>
+<table>
+<thead>
+<tr>
+<th>Trigger</th>
+<th>Description</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🔌 MCP Protocol Obsolescence</td>
+<td>MCP protocol replaced by successor</td>
+<td>Architecture rewrite required</td>
+</tr>
+<tr>
+<td>🏛️ EP API Discontinued</td>
+<td>European Parliament data API shut down</td>
+<td>Core functionality lost</td>
+</tr>
+<tr>
+<td>📦 Node.js Platform EOL</td>
+<td>No supported Node.js LTS available</td>
+<td>Runtime unavailable</td>
+</tr>
+<tr>
+<td>🔒 Unresolvable Security Issue</td>
+<td>Critical vulnerability with no fix</td>
+<td>Security risk unacceptable</td>
+</tr>
+<tr>
+<td>👥 Maintainer Unavailability</td>
+<td>No active maintainers for &gt; 12 months</td>
+<td>No security updates</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🔧-migration-procedures" class="tsd-anchor-link">🔧 Migration Procedures<a href="#🔧-migration-procedures" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="nodejs-version-upgrade-current-model-nodejs-2526" class="tsd-anchor-link"><strong>Node.js Version Upgrade (Current Model — Node.js 25/26)</strong><a href="#nodejs-version-upgrade-current-model-nodejs-2526" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Node.js 25 is an <strong>odd-numbered Current-only release</strong> (old model). It has <strong>no LTS phase</strong> and expires when Node.js 26 releases. Upgrade procedure:</p>
+<pre><code><span class="hl-9">IMMEDIATE</span><span class="hl-2"> </span><span class="hl-7">Upgrade</span><span class="hl-2"> </span><span class="hl-7">to</span><span class="hl-2"> </span><span class="hl-7">Node</span><span class="hl-2">.</span><span class="hl-7">js</span><span class="hl-2"> </span><span class="hl-6">26</span><span class="hl-2"> (</span><span class="hl-7">upon</span><span class="hl-2"> </span><span class="hl-7">April</span><span class="hl-2"> </span><span class="hl-6">2026</span><span class="hl-2"> </span><span class="hl-7">release</span><span class="hl-2">):</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">1</span><span class="hl-2">: </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-7">package</span><span class="hl-2">.</span><span class="hl-7">json</span><span class="hl-2"> </span><span class="hl-8">engines</span><span class="hl-2">: </span><span class="hl-3">&quot;node&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;&gt;=26.0.0&quot;</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">2</span><span class="hl-2">: </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-7">GitHub</span><span class="hl-2"> </span><span class="hl-7">Actions</span><span class="hl-2"> </span><span class="hl-8">workflows</span><span class="hl-2">: </span><span class="hl-7">node</span><span class="hl-2">-</span><span class="hl-8">version</span><span class="hl-2">: </span><span class="hl-3">&quot;26&quot;</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">3</span><span class="hl-2">: </span><span class="hl-7">Update</span><span class="hl-2"> .</span><span class="hl-7">devcontainer</span><span class="hl-2">: </span><span class="hl-7">node</span><span class="hl-2"> </span><span class="hl-7">version</span><span class="hl-2"> </span><span class="hl-6">26</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">4</span><span class="hl-2">: </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-1">ci</span><span class="hl-2"> (</span><span class="hl-7">rebuild</span><span class="hl-2"> </span><span class="hl-7">native</span><span class="hl-2"> </span><span class="hl-7">modules</span><span class="hl-2"> </span><span class="hl-7">if</span><span class="hl-2"> </span><span class="hl-7">any</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">5</span><span class="hl-2">: </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-1">test</span><span class="hl-2"> (</span><span class="hl-7">full</span><span class="hl-2"> </span><span class="hl-7">test</span><span class="hl-2"> </span><span class="hl-7">suite</span><span class="hl-2"> — </span><span class="hl-6">2600</span><span class="hl-2">+ </span><span class="hl-7">unit</span><span class="hl-2"> </span><span class="hl-7">tests</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">6</span><span class="hl-2">: </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-7">run</span><span class="hl-2"> </span><span class="hl-1">lint</span><span class="hl-2"> (</span><span class="hl-7">code</span><span class="hl-2"> </span><span class="hl-7">quality</span><span class="hl-2"> </span><span class="hl-7">check</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">7</span><span class="hl-2">: </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-7">run</span><span class="hl-2"> </span><span class="hl-1">build</span><span class="hl-2"> (</span><span class="hl-7">TypeScript</span><span class="hl-2"> </span><span class="hl-7">compilation</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">8</span><span class="hl-2">: </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-7">all</span><span class="hl-2"> </span><span class="hl-1">documentation</span><span class="hl-2"> (</span><span class="hl-9">README</span><span class="hl-2">, </span><span class="hl-9">DEVELOPER_GUIDE</span><span class="hl-2">, </span><span class="hl-4">this</span><span class="hl-2"> </span><span class="hl-9">EOL</span><span class="hl-2"> </span><span class="hl-7">Strategy</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">9</span><span class="hl-2">: </span><span class="hl-7">Publish</span><span class="hl-2"> </span><span class="hl-4">new</span><span class="hl-2"> </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-7">version</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">10</span><span class="hl-2">: </span><span class="hl-7">Verify</span><span class="hl-2"> </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-11">package</span><span class="hl-2"> </span><span class="hl-7">installs</span><span class="hl-2"> </span><span class="hl-7">correctly</span><span class="hl-2"> </span><span class="hl-7">on</span><span class="hl-2"> </span><span class="hl-7">Node</span><span class="hl-2">.</span><span class="hl-7">js</span><span class="hl-2"> </span><span class="hl-6">26</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">11</span><span class="hl-2">: </span><span class="hl-7">Test</span><span class="hl-2"> </span><span class="hl-9">MCP</span><span class="hl-2"> </span><span class="hl-7">client</span><span class="hl-2"> </span><span class="hl-1">connectivity</span><span class="hl-2"> (</span><span class="hl-7">stdio</span><span class="hl-2"> </span><span class="hl-7">transport</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">12</span><span class="hl-2">: </span><span class="hl-7">Monitor</span><span class="hl-2"> </span><span class="hl-9">CI</span><span class="hl-2">/</span><span class="hl-9">CD</span><span class="hl-2"> </span><span class="hl-7">for</span><span class="hl-2"> </span><span class="hl-6">24</span><span class="hl-2"> </span><span class="hl-7">hours</span><span class="hl-2"> </span><span class="hl-7">before</span><span class="hl-2"> </span><span class="hl-7">closing</span><span class="hl-2"> </span><span class="hl-7">the</span><span class="hl-2"> </span><span class="hl-7">upgrade</span><span class="hl-2"> </span><span class="hl-9">PR</span>
+</code><button>Copy</button></pre>
+
+<h3 id="nodejs-version-upgrade-new-annual-release-model-nodejs-27" class="tsd-anchor-link"><strong>Node.js Version Upgrade (New Annual Release Model — Node.js 27+)</strong><a href="#nodejs-version-upgrade-new-annual-release-model-nodejs-27" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Starting with Node.js 27+, upgrades follow the new <strong>annual release cadence</strong> with a 6-month alpha → 6-month Current → 30-month LTS lifecycle:</p>
+<pre><code><span class="hl-7">Pre</span><span class="hl-2">-</span><span class="hl-1">Migration</span><span class="hl-2"> (</span><span class="hl-7">Alpha</span><span class="hl-2"> </span><span class="hl-7">Phase</span><span class="hl-2">, </span><span class="hl-7">Oct</span><span class="hl-2">–</span><span class="hl-7">Mar</span><span class="hl-2">):</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">1</span><span class="hl-2">: </span><span class="hl-7">Add</span><span class="hl-2"> </span><span class="hl-7">alpha</span><span class="hl-2"> </span><span class="hl-7">version</span><span class="hl-2"> </span><span class="hl-7">to</span><span class="hl-2"> </span><span class="hl-9">CI</span><span class="hl-2"> </span><span class="hl-7">matrix</span><span class="hl-2"> </span><span class="hl-11">as</span><span class="hl-2"> </span><span class="hl-10">non</span><span class="hl-2">-</span><span class="hl-7">blocking</span><span class="hl-2"> </span><span class="hl-7">job</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">2</span><span class="hl-2">: </span><span class="hl-7">Monitor</span><span class="hl-2"> </span><span class="hl-7">test</span><span class="hl-2"> </span><span class="hl-7">failures</span><span class="hl-2"> </span><span class="hl-7">and</span><span class="hl-2"> </span><span class="hl-7">file</span><span class="hl-2"> </span><span class="hl-7">upstream</span><span class="hl-2"> </span><span class="hl-7">issues</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">3</span><span class="hl-2">: </span><span class="hl-7">Track</span><span class="hl-2"> </span><span class="hl-7">dependency</span><span class="hl-2"> </span><span class="hl-7">compatibility</span><span class="hl-2"> </span><span class="hl-7">reports</span><br/><br/><span class="hl-1">Migration</span><span class="hl-2"> (</span><span class="hl-7">On</span><span class="hl-2"> </span><span class="hl-9">LTS</span><span class="hl-2"> </span><span class="hl-7">Promotion</span><span class="hl-2">, </span><span class="hl-7">October</span><span class="hl-2">):</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">4</span><span class="hl-2">: </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-7">package</span><span class="hl-2">.</span><span class="hl-7">json</span><span class="hl-2"> </span><span class="hl-7">engines</span><span class="hl-2"> </span><span class="hl-7">field</span><span class="hl-2"> </span><span class="hl-7">to</span><span class="hl-2"> </span><span class="hl-4">new</span><span class="hl-2"> </span><span class="hl-9">LTS</span><span class="hl-2"> </span><span class="hl-7">version</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">5</span><span class="hl-2">: </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-7">GitHub</span><span class="hl-2"> </span><span class="hl-7">Actions</span><span class="hl-2"> </span><span class="hl-1">workflow</span><span class="hl-2"> (</span><span class="hl-7">Node</span><span class="hl-2">.</span><span class="hl-7">js</span><span class="hl-2"> </span><span class="hl-7">version</span><span class="hl-2"> </span><span class="hl-7">matrix</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">6</span><span class="hl-2">: </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-1">install</span><span class="hl-2"> (</span><span class="hl-7">rebuild</span><span class="hl-2"> </span><span class="hl-7">native</span><span class="hl-2"> </span><span class="hl-7">modules</span><span class="hl-2"> </span><span class="hl-7">if</span><span class="hl-2"> </span><span class="hl-7">any</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">7</span><span class="hl-2">: </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-1">test</span><span class="hl-2"> (</span><span class="hl-7">full</span><span class="hl-2"> </span><span class="hl-7">test</span><span class="hl-2"> </span><span class="hl-7">suite</span><span class="hl-2"> — </span><span class="hl-6">2500</span><span class="hl-2">+ </span><span class="hl-7">unit</span><span class="hl-2"> </span><span class="hl-7">tests</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">8</span><span class="hl-2">: </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-7">run</span><span class="hl-2"> </span><span class="hl-1">lint</span><span class="hl-2"> (</span><span class="hl-7">code</span><span class="hl-2"> </span><span class="hl-7">quality</span><span class="hl-2"> </span><span class="hl-7">check</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">9</span><span class="hl-2">: </span><span class="hl-8">Run</span><span class="hl-2">: </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-7">run</span><span class="hl-2"> </span><span class="hl-1">build</span><span class="hl-2"> (</span><span class="hl-7">TypeScript</span><span class="hl-2"> </span><span class="hl-7">compilation</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">10</span><span class="hl-2">: </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-1">documentation</span><span class="hl-2"> (</span><span class="hl-9">README</span><span class="hl-2">, </span><span class="hl-9">DEVELOPER_GUIDE</span><span class="hl-2">, </span><span class="hl-7">End</span><span class="hl-2">-</span><span class="hl-4">of</span><span class="hl-2">-</span><span class="hl-7">Life</span><span class="hl-2">-</span><span class="hl-7">Strategy</span><span class="hl-2">.</span><span class="hl-7">md</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">11</span><span class="hl-2">: </span><span class="hl-7">Publish</span><span class="hl-2"> </span><span class="hl-4">new</span><span class="hl-2"> </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-7">version</span><br/><br/><span class="hl-7">Post</span><span class="hl-2">-</span><span class="hl-7">Migration</span><span class="hl-2"> </span><span class="hl-8">Validation</span><span class="hl-2">:</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">12</span><span class="hl-2">: </span><span class="hl-7">Verify</span><span class="hl-2"> </span><span class="hl-7">npm</span><span class="hl-2"> </span><span class="hl-11">package</span><span class="hl-2"> </span><span class="hl-7">installs</span><span class="hl-2"> </span><span class="hl-7">correctly</span><span class="hl-2"> </span><span class="hl-7">on</span><span class="hl-2"> </span><span class="hl-4">new</span><span class="hl-2"> </span><span class="hl-7">Node</span><span class="hl-2">.</span><span class="hl-7">js</span><span class="hl-2"> </span><span class="hl-7">version</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">13</span><span class="hl-2">: </span><span class="hl-7">Test</span><span class="hl-2"> </span><span class="hl-9">MCP</span><span class="hl-2"> </span><span class="hl-7">client</span><span class="hl-2"> </span><span class="hl-1">connectivity</span><span class="hl-2"> (</span><span class="hl-7">stdio</span><span class="hl-2"> </span><span class="hl-7">transport</span><span class="hl-2">)</span><br/><span class="hl-2">  </span><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">14</span><span class="hl-2">: </span><span class="hl-7">Monitor</span><span class="hl-2"> </span><span class="hl-7">production</span><span class="hl-2"> </span><span class="hl-7">for</span><span class="hl-2"> </span><span class="hl-6">1</span><span class="hl-2"> </span><span class="hl-7">week</span><span class="hl-2"> </span><span class="hl-7">before</span><span class="hl-2"> </span><span class="hl-7">removing</span><span class="hl-2"> </span><span class="hl-7">old</span><span class="hl-2"> </span><span class="hl-7">Node</span><span class="hl-2">.</span><span class="hl-7">js</span><span class="hl-2"> </span><span class="hl-7">from</span><span class="hl-2"> </span><span class="hl-9">CI</span>
+</code><button>Copy</button></pre>
+
+<h3 id="typescript-version-upgrade" class="tsd-anchor-link"><strong>TypeScript Version Upgrade</strong><a href="#typescript-version-upgrade" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">1</span><span class="hl-2">: </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-7">typescript</span><span class="hl-2"> </span><span class="hl-7">dependency</span><br/><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">2</span><span class="hl-2">: </span><span class="hl-7">Review</span><span class="hl-2"> </span><span class="hl-7">tsconfig</span><span class="hl-2">.</span><span class="hl-7">json</span><span class="hl-2"> </span><span class="hl-7">for</span><span class="hl-2"> </span><span class="hl-4">new</span><span class="hl-2"> </span><span class="hl-7">options</span><br/><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">3</span><span class="hl-2">: </span><span class="hl-7">Fix</span><span class="hl-2"> </span><span class="hl-7">any</span><span class="hl-2"> </span><span class="hl-4">new</span><span class="hl-2"> </span><span class="hl-7">type</span><span class="hl-2"> </span><span class="hl-7">errors</span><br/><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">4</span><span class="hl-2">: </span><span class="hl-7">Run</span><span class="hl-2"> </span><span class="hl-7">full</span><span class="hl-2"> </span><span class="hl-7">test</span><span class="hl-2"> </span><span class="hl-7">suite</span><br/><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">5</span><span class="hl-2">: </span><span class="hl-7">Publish</span><span class="hl-2"> </span><span class="hl-7">patch</span><span class="hl-2"> </span><span class="hl-7">release</span>
+</code><button>Copy</button></pre>
+
+<h3 id="mcp-sdk-upgrade" class="tsd-anchor-link"><strong>MCP SDK Upgrade</strong><a href="#mcp-sdk-upgrade" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">1</span><span class="hl-2">: </span><span class="hl-7">Review</span><span class="hl-2"> </span><span class="hl-9">MCP</span><span class="hl-2"> </span><span class="hl-9">SDK</span><span class="hl-2"> </span><span class="hl-7">changelog</span><span class="hl-2"> </span><span class="hl-7">for</span><span class="hl-2"> </span><span class="hl-7">breaking</span><span class="hl-2"> </span><span class="hl-7">changes</span><br/><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">2</span><span class="hl-2">: </span><span class="hl-7">Update</span><span class="hl-2"> @</span><span class="hl-7">modelcontextprotocol</span><span class="hl-2">/</span><span class="hl-7">sdk</span><span class="hl-2"> </span><span class="hl-7">dependency</span><br/><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">3</span><span class="hl-2">: </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-7">tool</span><span class="hl-2">/</span><span class="hl-7">resource</span><span class="hl-2"> </span><span class="hl-7">registrations</span><span class="hl-2"> </span><span class="hl-11">if</span><span class="hl-2"> </span><span class="hl-7">needed</span><br/><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">4</span><span class="hl-2">: </span><span class="hl-7">Run</span><span class="hl-2"> </span><span class="hl-9">E2E</span><span class="hl-2"> </span><span class="hl-7">tests</span><span class="hl-2"> </span><span class="hl-11">with</span><span class="hl-2"> </span><span class="hl-9">MCP</span><span class="hl-2"> </span><span class="hl-7">client</span><br/><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">5</span><span class="hl-2">: </span><span class="hl-7">Update</span><span class="hl-2"> </span><span class="hl-9">API</span><span class="hl-2"> </span><span class="hl-7">documentation</span><br/><span class="hl-7">Step</span><span class="hl-2"> </span><span class="hl-6">6</span><span class="hl-2">: </span><span class="hl-7">Publish</span><span class="hl-2"> </span><span class="hl-4">new</span><span class="hl-2"> </span><span class="hl-7">version</span>
+</code><button>Copy</button></pre>
+
+<hr>
+<h2 id="📊-archive-preservation" class="tsd-anchor-link">📊 Archive &amp; Preservation<a href="#📊-archive-preservation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="📦-archive-checklist" class="tsd-anchor-link"><strong>📦 Archive Checklist</strong><a href="#📦-archive-checklist" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Action</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>npm deprecation notice</td>
+<td><code>npm deprecate</code> with message</td>
+<td>On EOL</td>
+</tr>
+<tr>
+<td>GitHub repository archive</td>
+<td>Set repository to archived</td>
+<td>On EOL</td>
+</tr>
+<tr>
+<td>README deprecation banner</td>
+<td>Add clear deprecation notice</td>
+<td>On EOL</td>
+</tr>
+<tr>
+<td>Documentation preservation</td>
+<td>Docs remain accessible</td>
+<td>Permanent</td>
+</tr>
+<tr>
+<td>Release artifacts</td>
+<td>GitHub releases preserved</td>
+<td>Permanent</td>
+</tr>
+<tr>
+<td>SBOM records</td>
+<td>Final SBOM archived</td>
+<td>On EOL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="🔒-gdpr-compliance" class="tsd-anchor-link"><strong>🔒 GDPR Compliance</strong><a href="#🔒-gdpr-compliance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li>No personal data stored in the application</li>
+<li>EP data is publicly available parliamentary records</li>
+<li>No user accounts or tracking data to delete</li>
+<li>Repository archives comply with data retention policies</li>
+</ul>
+<hr>
+<h2 id="🔗-policy-alignment" class="tsd-anchor-link">🔗 Policy Alignment<a href="#🔗-policy-alignment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>ISMS Policy</th>
+<th>Relevance</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🔍 Vulnerability Management</td>
+<td>&quot;Living on the Edge&quot; philosophy</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md" target="_blank" class="external">Vulnerability_Management.md</a></td>
+</tr>
+<tr>
+<td>🔒 Secure Development</td>
+<td>Technology lifecycle requirements</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md" target="_blank" class="external">Secure_Development_Policy.md</a></td>
+</tr>
+<tr>
+<td>🔄 Backup &amp; Recovery</td>
+<td>Archive and preservation</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Backup_Recovery_Policy.md" target="_blank" class="external">Backup_Recovery_Policy.md</a></td>
+</tr>
+<tr>
+<td>🏷️ Classification</td>
+<td>Impact-driven lifecycle decisions</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/CLASSIFICATION.md" target="_blank" class="external">CLASSIFICATION.md</a></td>
+</tr>
+<tr>
+<td>🌐 Open Source Policy</td>
+<td>OSS governance and lifecycle</td>
+<td><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md" target="_blank" class="external">Open_Source_Policy.md</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="📚-related-documents" class="tsd-anchor-link">📚 Related Documents<a href="#📚-related-documents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Description</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🛡️ Security Architecture</td>
+<td>Current security controls</td>
+<td><a href="SECURITY_ARCHITECTURE.html">SECURITY_ARCHITECTURE.md</a></td>
+</tr>
+<tr>
+<td>🎯 Threat Model</td>
+<td>Risk assessment</td>
+<td><a href="THREAT_MODEL.html">THREAT_MODEL.md</a></td>
+</tr>
+<tr>
+<td>🔄 Business Continuity Plan</td>
+<td>Recovery procedures</td>
+<td><a href="../media/BCPPlan.md">BCPPlan.md</a></td>
+</tr>
+<tr>
+<td>💰 Financial Security Plan</td>
+<td>Cost planning</td>
+<td><a href="../media/FinancialSecurityPlan.md">FinancialSecurityPlan.md</a></td>
+</tr>
+<tr>
+<td>⚡ Performance Testing</td>
+<td>Benchmarks &amp; analysis</td>
+<td><a href="../media/performance-testing.md">performance-testing.md</a></td>
+</tr>
+<tr>
+<td>🏛️ Architecture</td>
+<td>System design</td>
+<td><a href="ARCHITECTURE.html">ARCHITECTURE.md</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="📝-revision-history" class="tsd-anchor-link">📝 Revision History<a href="#📝-revision-history" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Author</th>
+<th>Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>2026-02-20</td>
+<td>CEO</td>
+<td>Initial EOL strategy — technology stack analysis, lifecycle matrix, dependency monitoring, migration procedures</td>
+</tr>
+<tr>
+<td>2.0</td>
+<td>2026-03-12</td>
+<td>CEO</td>
+<td>Major update: Node.js new release schedule (one major/year, every release LTS, alpha channel); added transition roadmap, Gantt timeline, release model comparison; updated version strategy for alpha CI integration; aligned with <a href="https://github.com/nodejs/Release/issues/1113" target="_blank" class="external">nodejs/Release#1113</a></td>
+</tr>
+<tr>
+<td>3.0</td>
+<td>2026-03-18</td>
+<td>CEO</td>
+<td><strong>Node.js 25 migration:</strong> Updated current production runtime to Node.js 25.x (Current); added urgent Node.js 26 upgrade plan (≈ April 22, 2026 — 2-week target); expanded full Node.js roadmap projections 2026–2031; updated Technology Lifecycle Matrix with Node.js 25 EOL risk; added Node.js 25 → 26 transition checklist; updated Gantt chart with Node.js 25 EOL and Node.js 26 LTS timeline</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p align="center">
+  <em>This EOL strategy is maintained as part of the <a href="https://github.com/Hack23/ISMS-PUBLIC">Hack23 AB ISMS</a> framework.</em><br>
+  <em>Licensed under <a href="../media/LICENSE.md">Apache-2.0</a></em>
+</p></div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-alpha" name="alpha"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Alpha</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-beta" name="beta"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Beta</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#📑-table-of-contents"><span>📑 <wbr/>Table of <wbr/>Contents</span></a><a href="#🎯-eol-strategy-overview"><span>🎯 <wbr/>EOL <wbr/>Strategy <wbr/>Overview</span></a><ul><li><a href="#📋-strategic-objective"><span>📋 <wbr/>Strategic <wbr/>Objective</span></a></li><li><a href="#🏷️-business-impact-classification"><span>🏷️ <wbr/>Business <wbr/>Impact <wbr/>Classification</span></a></li></ul><a href="#📦-current-technology-stack-analysis"><span>📦 <wbr/>Current <wbr/>Technology <wbr/>Stack <wbr/>Analysis</span></a><a href="#🔄-technology-lifecycle-matrix"><span>🔄 <wbr/>Technology <wbr/>Lifecycle <wbr/>Matrix</span></a><ul><li><a href="#📅-key-dates"><span>📅 <wbr/>Key <wbr/>Dates</span></a></li></ul><a href="#🔄-nodejs-release-schedule-evolution"><span>🔄 <wbr/>Node.js <wbr/>Release <wbr/>Schedule <wbr/>Evolution</span></a><ul><li><a href="#📢-new-release-model-starting-nodejs-27x"><span>📢 <wbr/>New <wbr/>Release <wbr/>Model (<wbr/>Starting <wbr/>Node.js 27.x)</span></a></li><li><ul><li><a href="#🔀-old-model-vs-new-model"><span>🔀 <wbr/>Old <wbr/>Model vs. <wbr/>New <wbr/>Model</span></a></li><li><a href="#📊-new-release-phases"><span>📊 <wbr/>New <wbr/>Release <wbr/>Phases</span></a></li><li><a href="#📈-impact-on-this-project"><span>📈 <wbr/>Impact on <wbr/>This <wbr/>Project</span></a></li><li><a href="#🗓️-nodejs-release-timeline-visualization"><span>🗓️ <wbr/>Node.js <wbr/>Release <wbr/>Timeline <wbr/>Visualization</span></a></li></ul></li></ul><a href="#📋-nodejs-version-strategy"><span>📋 <wbr/>Node.js <wbr/>Version <wbr/>Strategy</span></a><ul><li><a href="#🔄-upgrade-process-updated-for-new-release-model"><span>🔄 <wbr/>Upgrade <wbr/>Process (<wbr/>Updated for <wbr/>New <wbr/>Release <wbr/>Model)</span></a></li></ul><a href="#🗺️-nodejs-transition-roadmap"><span>🗺️ <wbr/>Node.js <wbr/>Transition <wbr/>Roadmap</span></a><ul><li><a href="#📋-nodejs-25-→-26-transition-plan-urgent"><span>📋 <wbr/>Node.js 25 → 26 <wbr/>Transition <wbr/>Plan (<wbr/>URGENT)</span></a></li><li><ul><li><a href="#📋-nodejs-26-upgrade-checklist-execute-on-release-day"><span>📋 <wbr/>Node.js 26 <wbr/>Upgrade <wbr/>Checklist (<wbr/>Execute on <wbr/>Release <wbr/>Day)</span></a></li></ul></li><li><a href="#📋-nodejs-26-→-27-transition-plan"><span>📋 <wbr/>Node.js 26 → 27 <wbr/>Transition <wbr/>Plan</span></a></li><li><a href="#🧪-nodejs-27-alpha-integration-strategy"><span>🧪 <wbr/>Node.js 27 <wbr/>Alpha <wbr/>Integration <wbr/>Strategy</span></a></li><li><a href="#📊-full-nodejs-roadmap-projections-20262031"><span>📊 <wbr/>Full <wbr/>Node.js <wbr/>Roadmap <wbr/>Projections (2026–2031)</span></a></li></ul><a href="#🛡️-dependency-eol-monitoring"><span>🛡️ <wbr/>Dependency <wbr/>EOL <wbr/>Monitoring</span></a><ul><li><a href="#🤖-automated-monitoring"><span>🤖 <wbr/>Automated <wbr/>Monitoring</span></a></li><li><a href="#📋-manual-reviews"><span>📋 <wbr/>Manual <wbr/>Reviews</span></a></li></ul><a href="#📦-npm-package-lifecycle"><span>📦 npm <wbr/>Package <wbr/>Lifecycle</span></a><ul><li><a href="#📋-version-strategy"><span>📋 <wbr/>Version <wbr/>Strategy</span></a></li><li><a href="#⚠️-deprecation-process"><span>⚠️ <wbr/>Deprecation <wbr/>Process</span></a></li></ul><a href="#🚨-eol-trigger-criteria"><span>🚨 <wbr/>EOL <wbr/>Trigger <wbr/>Criteria</span></a><a href="#🔧-migration-procedures"><span>🔧 <wbr/>Migration <wbr/>Procedures</span></a><ul><li><a href="#nodejs-version-upgrade-current-model-nodejs-2526"><span>Node.js <wbr/>Version <wbr/>Upgrade (<wbr/>Current <wbr/>Model — <wbr/>Node.js 25/26)</span></a></li><li><a href="#nodejs-version-upgrade-new-annual-release-model-nodejs-27"><span>Node.js <wbr/>Version <wbr/>Upgrade (<wbr/>New <wbr/>Annual <wbr/>Release <wbr/>Model — <wbr/>Node.js 27+)</span></a></li><li><a href="#typescript-version-upgrade"><span>Type<wbr/>Script <wbr/>Version <wbr/>Upgrade</span></a></li><li><a href="#mcp-sdk-upgrade"><span>MCP <wbr/>SDK <wbr/>Upgrade</span></a></li></ul><a href="#📊-archive-preservation"><span>📊 <wbr/>Archive &amp; <wbr/>Preservation</span></a><ul><li><a href="#📦-archive-checklist"><span>📦 <wbr/>Archive <wbr/>Checklist</span></a></li><li><a href="#🔒-gdpr-compliance"><span>🔒 <wbr/>GDPR <wbr/>Compliance</span></a></li></ul><a href="#🔗-policy-alignment"><span>🔗 <wbr/>Policy <wbr/>Alignment</span></a><a href="#📚-related-documents"><span>📚 <wbr/>Related <wbr/>Documents</span></a><a href="#📝-revision-history"><span>📝 <wbr/>Revision <wbr/>History</span></a></div></details></div><div class="site-menu"><nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/ARCHITECTURE.md">Architecture</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DATA_MODEL.md">Data Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEVELOPER_GUIDE.md">Developer Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEPLOYMENT_GUIDE.md">Deployment Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/PERFORMANCE_GUIDE.md">Performance Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SWOT.md">SWOT Analysis</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/End-of-Life-Strategy.md">End-of-Life Strategy</a><a href="https://hack23.github.io/European-Parliament-MCP-Server/" class="tsd-nav-link">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server" class="tsd-nav-link">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md" class="tsd-nav-link">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC" class="tsd-nav-link">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md" class="tsd-nav-link">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md" class="tsd-nav-link">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md" class="tsd-nav-link">API Usage Guide</a></nav><nav class="tsd-navigation"><a href="../modules.html">European Parliament MCP Server API - v1.1.21</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

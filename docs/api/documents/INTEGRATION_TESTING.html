@@ -1,0 +1,401 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>INTEGRATION_TESTING | European Parliament MCP Server API - v1.1.21</title><meta name="description" content="Documentation for European Parliament MCP Server API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">European Parliament MCP Server API - v1.1.21</a><div id="tsd-toolbar-links"><a href="https://hack23.github.io/European-Parliament-MCP-Server/">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md">API Usage Guide</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">INTEGRATION_TESTING</a></li></ul></div><div class="tsd-panel tsd-typography"><h1 id="integration-testing-guide" class="tsd-anchor-link">Integration Testing Guide<a href="#integration-testing-guide" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<h2 id="📋-overview" class="tsd-anchor-link">📋 Overview<a href="#📋-overview" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>This guide explains how to run integration tests for the European Parliament MCP Server. The <code>allTools.integration.test.ts</code> suite validates 46 of the 61 MCP tools against the real European Parliament Open Data API. The remaining 15 tools — 13 feed endpoints, <code>get_all_generated_stats</code> (precomputed, no live API calls), and <code>get_procedure_event_by_id</code> — are validated through unit tests. <strong>All integration-tested tools return real data — no mock or placeholder data is used.</strong></p>
+<p><strong>ISMS Policy</strong>: <a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#testing" target="_blank" class="external">Hack23 Secure Development Policy - Testing</a></p>
+<p><strong>Compliance</strong>: ISO 27001 (AU-2), NIST CSF 2.0 (DE.CM-6), CIS Controls v8.1 (8.11)</p>
+<hr>
+<h2 id="🎯-integration-test-coverage" class="tsd-anchor-link">🎯 Integration Test Coverage<a href="#🎯-integration-test-coverage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="61-mcp-tools-integration--unit-test-coverage" class="tsd-anchor-link">61 MCP Tools — Integration &amp; Unit Test Coverage<a href="#61-mcp-tools-integration--unit-test-coverage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Core Data Access Tools</strong> (7 — real EP API):</p>
+<ol>
+<li><strong>get_meps</strong> - MEP retrieval with filtering</li>
+<li><strong>get_mep_details</strong> - Individual MEP information</li>
+<li><strong>get_plenary_sessions</strong> - Plenary session data</li>
+<li><strong>get_voting_records</strong> - Voting record access</li>
+<li><strong>search_documents</strong> - Document search</li>
+<li><strong>get_committee_info</strong> - Committee information</li>
+<li><strong>get_parliamentary_questions</strong> - Parliamentary questions</li>
+</ol>
+<p><strong>Advanced Analysis Tools</strong> (3 — real EP API data):
+8. <strong>analyze_voting_patterns</strong> - Voting pattern analysis
+9. <strong>track_legislation</strong> - Legislative procedure tracking (real EP API <code>/procedures</code>)
+10. <strong>generate_report</strong> - Report generation</p>
+<p><strong>OSINT Intelligence Tools — Phase 1</strong> (6 — real EP API data):
+11. <strong>assess_mep_influence</strong> - MEP influence scoring (5-dimension model)
+12. <strong>analyze_coalition_dynamics</strong> - Coalition cohesion &amp; stress analysis
+13. <strong>detect_voting_anomalies</strong> - Party defection &amp; anomaly detection
+14. <strong>compare_political_groups</strong> - Cross-group comparative analysis
+15. <strong>analyze_legislative_effectiveness</strong> - MEP/committee legislative scoring
+16. <strong>monitor_legislative_pipeline</strong> - Pipeline status (real EP API <code>/procedures</code>)</p>
+<p><strong>OSINT Intelligence Tools — Phase 2</strong> (2 — real EP API data):
+17. <strong>analyze_committee_activity</strong> - Committee workload &amp; engagement analysis
+18. <strong>track_mep_attendance</strong> - MEP attendance patterns &amp; trends</p>
+<p><strong>OSINT Intelligence Tools — Phase 3</strong> (2 — real EP API data):
+19. <strong>analyze_country_delegation</strong> - Country delegation voting &amp; composition analysis
+20. <strong>generate_political_landscape</strong> - Parliament-wide political landscape overview</p>
+<p><strong>OSINT Intelligence Tools — Phase 6</strong> (5 — real EP API data):
+21. <strong>network_analysis</strong> - MEP network and relationship analysis
+22. <strong>sentiment_tracker</strong> - Political group sentiment tracking
+23. <strong>early_warning_system</strong> - Political risk early warning detection
+24. <strong>comparative_intelligence</strong> - Multi-MEP comparative intelligence analysis
+25. <strong>correlate_intelligence</strong> - Multi-dimensional OSINT intelligence correlation analysis</p>
+<p><strong>EP Data Access Tools — Phase 4</strong> (8 — real EP API v2):
+26. <strong>get_current_meps</strong> - Currently serving MEPs
+27. <strong>get_speeches</strong> - Plenary speeches
+28. <strong>get_procedures</strong> - Legislative procedures
+29. <strong>get_adopted_texts</strong> - Adopted legislative texts
+30. <strong>get_events</strong> - Parliamentary events
+31. <strong>get_meeting_activities</strong> - Meeting activity records
+32. <strong>get_meeting_decisions</strong> - Meeting decision outcomes
+33. <strong>get_mep_declarations</strong> - MEP financial declarations</p>
+<p><strong>EP Complete Coverage Tools — Phase 5</strong> (14 — real EP API v2):
+34. <strong>get_incoming_meps</strong> - Incoming MEPs (new members)
+35. <strong>get_outgoing_meps</strong> - Outgoing MEPs (departing members)
+36. <strong>get_homonym_meps</strong> - MEPs with duplicate names
+37. <strong>get_plenary_documents</strong> - Plenary-specific documents
+38. <strong>get_committee_documents</strong> - Committee-specific documents
+39. <strong>get_plenary_session_documents</strong> - Session-specific documents
+40. <strong>get_plenary_session_document_items</strong> - Document items within sessions
+41. <strong>get_controlled_vocabularies</strong> - EP controlled vocabulary terms
+42. <strong>get_external_documents</strong> - External reference documents
+43. <strong>get_meeting_foreseen_activities</strong> - Planned meeting activities
+44. <strong>get_procedure_events</strong> - Events linked to a procedure
+45. <strong>get_meeting_plenary_session_documents</strong> - Plenary session meeting documents
+46. <strong>get_meeting_plenary_session_document_items</strong> - Plenary session meeting document items
+47. <strong>get_procedure_event_by_id</strong> - Single event for a specific procedure</p>
+<p><strong>Precomputed Analytics</strong> (1 — static data, no live EP API calls):
+48. <strong>get_all_generated_stats</strong> - Precomputed EP activity statistics (2004–2026); returns static data refreshed weekly by agentic workflow</p>
+<p><strong>EP Data Feed Tools</strong> (13 — real EP API v2 feeds):
+49. <strong>get_meps_feed</strong> - Recently updated MEPs
+50. <strong>get_events_feed</strong> - Recently updated events
+51. <strong>get_procedures_feed</strong> - Recently updated procedures
+52. <strong>get_adopted_texts_feed</strong> - Recently updated adopted texts
+53. <strong>get_mep_declarations_feed</strong> - Recently updated MEP declarations
+54. <strong>get_documents_feed</strong> - Recently updated documents
+55. <strong>get_plenary_documents_feed</strong> - Recently updated plenary documents
+56. <strong>get_committee_documents_feed</strong> - Recently updated committee documents
+57. <strong>get_plenary_session_documents_feed</strong> - Recently updated plenary session documents
+58. <strong>get_external_documents_feed</strong> - Recently updated external documents
+59. <strong>get_parliamentary_questions_feed</strong> - Recently updated parliamentary questions
+60. <strong>get_corporate_bodies_feed</strong> - Recently updated corporate bodies
+61. <strong>get_controlled_vocabularies_feed</strong> - Recently updated controlled vocabularies</p>
+<blockquote>
+<p><strong>No Mock Data</strong>: All tools return real data from the EP API. The integration test suite (<code>allTools.integration.test.ts</code>) currently covers 46 of 61 tools (core, advanced, OSINT, phase 4, and phase 5 data tools). Feed tools and precomputed analytics tools are validated through unit tests. The suite explicitly checks that no tool returns <code>confidenceLevel: 'NONE'</code> or <code>PLACEHOLDER DATA</code> markers.</p>
+</blockquote>
+<h3 id="test-categories" class="tsd-anchor-link">Test Categories<a href="#test-categories" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Each tool includes comprehensive tests for:</p>
+<ul>
+<li>✅ <strong>Basic Retrieval</strong> - Core functionality validation</li>
+<li>✅ <strong>Filtering</strong> - Query parameter validation</li>
+<li>✅ <strong>Pagination</strong> - Offset and limit handling</li>
+<li>✅ <strong>Error Handling</strong> - Invalid input rejection</li>
+<li>✅ <strong>Response Validation</strong> - Schema compliance</li>
+<li>✅ <strong>Performance</strong> - Response time validation (&lt;5s uncached, &lt;1s cached)</li>
+<li>✅ <strong>Data Consistency</strong> - Repeated request validation</li>
+<li>✅ <strong>GDPR Compliance</strong> - PII handling (where applicable)</li>
+</ul>
+<hr>
+<h2 id="🚀-quick-start" class="tsd-anchor-link">🚀 Quick Start<a href="#🚀-quick-start" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="prerequisites" class="tsd-anchor-link">Prerequisites<a href="#prerequisites" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li>Node.js 25.x or higher</li>
+<li>npm 10.0.0 or higher</li>
+<li>Network access to <code>https://data.europarl.europa.eu</code></li>
+</ul>
+<h3 id="running-integration-tests" class="tsd-anchor-link">Running Integration Tests<a href="#running-integration-tests" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Integration tests are <strong>disabled by default</strong> to avoid accidental real API calls and rate limit issues.</p>
+<pre><code class="bash"><span class="hl-0"># Enable and run all integration tests</span><br/><span class="hl-7">EP_INTEGRATION_TESTS</span><span class="hl-2">=</span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">test:integration</span><br/><br/><span class="hl-0"># Run specific tool tests</span><br/><span class="hl-7">EP_INTEGRATION_TESTS</span><span class="hl-2">=</span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">test:integration</span><span class="hl-2"> </span><span class="hl-4">--</span><span class="hl-2"> </span><span class="hl-3">getMEPs</span><br/><br/><span class="hl-0"># Run with fixture capture enabled</span><br/><span class="hl-7">EP_INTEGRATION_TESTS</span><span class="hl-2">=</span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-7">EP_SAVE_FIXTURES</span><span class="hl-2">=</span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">test:integration</span><br/><br/><span class="hl-0"># Run with verbose output</span><br/><span class="hl-7">EP_INTEGRATION_TESTS</span><span class="hl-2">=</span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">test:integration</span><span class="hl-2"> </span><span class="hl-4">--</span><span class="hl-2"> </span><span class="hl-4">--reporter=verbose</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="environment-variables" class="tsd-anchor-link">Environment Variables<a href="#environment-variables" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EP_INTEGRATION_TESTS</code></td>
+<td><code>false</code></td>
+<td>Enable integration tests (set to <code>true</code> to run)</td>
+</tr>
+<tr>
+<td><code>EP_SAVE_FIXTURES</code></td>
+<td><code>false</code></td>
+<td>Save real API responses as test fixtures</td>
+</tr>
+<tr>
+<td><code>EP_API_URL</code></td>
+<td><code>https://data.europarl.europa.eu/api/v2/</code></td>
+<td>European Parliament API base URL (must include trailing <code>/</code>)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Important</strong>: Always include a trailing <code>/</code> in <code>EP_API_URL</code>. The client builds URLs with <code>new URL(endpoint, baseURL)</code>, and omitting the trailing slash (for example using <code>/api/v2</code> instead of <code>/api/v2/</code>) can cause the <code>v2</code> path segment to be dropped when resolving endpoints.</p>
+</blockquote>
+<hr>
+<h2 id="📁-test-structure" class="tsd-anchor-link">📁 Test Structure<a href="#📁-test-structure" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="directory-layout" class="tsd-anchor-link">Directory Layout<a href="#directory-layout" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code><span class="hl-7">tests</span><span class="hl-2">/</span><br/><span class="hl-2">├── </span><span class="hl-7">integration</span><span class="hl-2">/</span><br/><span class="hl-2">│   ├── </span><span class="hl-7">setup</span><span class="hl-2">.</span><span class="hl-7">ts</span><span class="hl-2">                        # </span><span class="hl-7">Test</span><span class="hl-2"> </span><span class="hl-7">environment</span><span class="hl-2"> </span><span class="hl-7">configuration</span><br/><span class="hl-2">│   ├── </span><span class="hl-7">epApi</span><span class="hl-2">.</span><span class="hl-7">integration</span><span class="hl-2">.</span><span class="hl-7">test</span><span class="hl-2">.</span><span class="hl-7">ts</span><span class="hl-2">      # </span><span class="hl-9">API</span><span class="hl-2"> </span><span class="hl-7">client</span><span class="hl-2"> </span><span class="hl-7">integration</span><span class="hl-2"> </span><span class="hl-7">tests</span><br/><span class="hl-2">│   ├── </span><span class="hl-7">helpers</span><span class="hl-2">/</span><br/><span class="hl-2">│   │   ├── </span><span class="hl-7">responseValidator</span><span class="hl-2">.</span><span class="hl-7">ts</span><span class="hl-2">        # </span><span class="hl-7">Response</span><span class="hl-2"> </span><span class="hl-7">validation</span><span class="hl-2"> </span><span class="hl-7">utilities</span><br/><span class="hl-2">│   │   └── </span><span class="hl-7">fixtureManager</span><span class="hl-2">.</span><span class="hl-7">ts</span><span class="hl-2">          # </span><span class="hl-7">Fixture</span><span class="hl-2"> </span><span class="hl-7">capture</span><span class="hl-2"> </span><span class="hl-7">utilities</span><br/><span class="hl-2">│   └── </span><span class="hl-7">tools</span><span class="hl-2">/</span><br/><span class="hl-2">│       ├── </span><span class="hl-7">allTools</span><span class="hl-2">.</span><span class="hl-7">integration</span><span class="hl-2">.</span><span class="hl-7">test</span><span class="hl-2">.</span><span class="hl-7">ts</span><span class="hl-2">         # </span><span class="hl-6">46</span><span class="hl-2"> </span><span class="hl-7">tools</span><span class="hl-2"> </span><span class="hl-7">integration</span><span class="hl-2"> </span><span class="hl-7">coverage</span><br/><span class="hl-2">│       ├── </span><span class="hl-7">getMEPs</span><span class="hl-2">.</span><span class="hl-7">integration</span><span class="hl-2">.</span><span class="hl-7">test</span><span class="hl-2">.</span><span class="hl-7">ts</span><br/><span class="hl-2">│       ├── </span><span class="hl-7">getMEPDetails</span><span class="hl-2">.</span><span class="hl-7">integration</span><span class="hl-2">.</span><span class="hl-7">test</span><span class="hl-2">.</span><span class="hl-7">ts</span><br/><span class="hl-2">│       ├── </span><span class="hl-7">getPlenarySessions</span><span class="hl-2">.</span><span class="hl-7">integration</span><span class="hl-2">.</span><span class="hl-7">test</span><span class="hl-2">.</span><span class="hl-7">ts</span><br/><span class="hl-2">│       ├── </span><span class="hl-7">getVotingRecords</span><span class="hl-2">.</span><span class="hl-7">integration</span><span class="hl-2">.</span><span class="hl-7">test</span><span class="hl-2">.</span><span class="hl-7">ts</span><br/><span class="hl-2">│       ├── </span><span class="hl-7">searchDocuments</span><span class="hl-2">.</span><span class="hl-7">integration</span><span class="hl-2">.</span><span class="hl-7">test</span><span class="hl-2">.</span><span class="hl-7">ts</span><br/><span class="hl-2">│       ├── </span><span class="hl-7">getCommitteeInfo</span><span class="hl-2">.</span><span class="hl-7">integration</span><span class="hl-2">.</span><span class="hl-7">test</span><span class="hl-2">.</span><span class="hl-7">ts</span><br/><span class="hl-2">│       ├── </span><span class="hl-7">getParliamentaryQuestions</span><span class="hl-2">.</span><span class="hl-7">integration</span><span class="hl-2">.</span><span class="hl-7">test</span><span class="hl-2">.</span><span class="hl-7">ts</span><br/><span class="hl-2">│       ├── </span><span class="hl-7">analyzeVotingPatterns</span><span class="hl-2">.</span><span class="hl-7">integration</span><span class="hl-2">.</span><span class="hl-7">test</span><span class="hl-2">.</span><span class="hl-7">ts</span><br/><span class="hl-2">│       ├── </span><span class="hl-7">trackLegislation</span><span class="hl-2">.</span><span class="hl-7">integration</span><span class="hl-2">.</span><span class="hl-7">test</span><span class="hl-2">.</span><span class="hl-7">ts</span><br/><span class="hl-2">│       └── </span><span class="hl-7">generateReport</span><span class="hl-2">.</span><span class="hl-7">integration</span><span class="hl-2">.</span><span class="hl-7">test</span><span class="hl-2">.</span><span class="hl-7">ts</span><br/><span class="hl-2">└── </span><span class="hl-7">fixtures</span><span class="hl-2">/</span><br/><span class="hl-2">    └── </span><span class="hl-7">real</span><span class="hl-2">-</span><span class="hl-7">api</span><span class="hl-2">/                       # </span><span class="hl-7">Captured</span><span class="hl-2"> </span><span class="hl-7">real</span><span class="hl-2"> </span><span class="hl-9">API</span><span class="hl-2"> </span><span class="hl-7">responses</span><br/><span class="hl-2">        ├── </span><span class="hl-7">get_meps</span><span class="hl-2">/</span><br/><span class="hl-2">        ├── </span><span class="hl-7">get_mep_details</span><span class="hl-2">/</span><br/><span class="hl-2">        ├── </span><span class="hl-7">get_plenary_sessions</span><span class="hl-2">/</span><br/><span class="hl-2">        └── ...</span>
+</code><button>Copy</button></pre>
+
+<h3 id="test-helpers" class="tsd-anchor-link">Test Helpers<a href="#test-helpers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h4 id="response-validator-" class="tsd-anchor-link">Response Validator (<code>responseValidator.ts</code>)<a href="#response-validator-" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p>Validates MCP tool responses against expected schemas:</p>
+<pre><code class="typescript"><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">validatePaginatedResponse</span><span class="hl-2">, </span><span class="hl-7">validateMEPStructure</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;../helpers/responseValidator.js&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-4">const</span><span class="hl-2"> </span><span class="hl-9">response</span><span class="hl-2"> = </span><span class="hl-1">validatePaginatedResponse</span><span class="hl-2">(</span><span class="hl-7">result</span><span class="hl-2">);</span><br/><span class="hl-7">response</span><span class="hl-2">.</span><span class="hl-7">data</span><span class="hl-2">.</span><span class="hl-1">forEach</span><span class="hl-2">(</span><span class="hl-7">mep</span><span class="hl-2"> </span><span class="hl-4">=&gt;</span><span class="hl-2"> </span><span class="hl-1">validateMEPStructure</span><span class="hl-2">(</span><span class="hl-7">mep</span><span class="hl-2">));</span>
+</code><button type="button">Copy</button></pre>
+
+<h4 id="fixture-manager-" class="tsd-anchor-link">Fixture Manager (<code>fixtureManager.ts</code>)<a href="#fixture-manager-" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p>Captures real API responses for offline testing:</p>
+<pre><code class="typescript"><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">saveMCPResponseFixture</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;../helpers/fixtureManager.js&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-1">saveMCPResponseFixture</span><span class="hl-2">(</span><span class="hl-3">&#39;get_meps&#39;</span><span class="hl-2">, </span><span class="hl-3">&#39;swedish-meps&#39;</span><span class="hl-2">, </span><span class="hl-7">result</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="🔒-rate-limiting-best-practices" class="tsd-anchor-link">🔒 Rate Limiting &amp; Best Practices<a href="#🔒-rate-limiting-best-practices" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="european-parliament-api-limits" class="tsd-anchor-link">European Parliament API Limits<a href="#european-parliament-api-limits" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li><strong>Rate Limit</strong>: Approximately 100 requests per 15 minutes per endpoint</li>
+<li><strong>No Authentication Required</strong>: Public data access</li>
+<li><strong>Response Format</strong>: JSON-LD (primary), RDF/XML, Turtle</li>
+</ul>
+<h3 id="respecting-rate-limits" class="tsd-anchor-link">Respecting Rate Limits<a href="#respecting-rate-limits" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Integration tests implement several strategies to respect rate limits:</p>
+<ol>
+<li><strong>Sequential Execution</strong>: Tests run one at a time within each suite</li>
+<li><strong>Inter-Test Delays</strong>: 100ms wait between tests (provides breathing room, not strict rate limiting)</li>
+<li><strong>Retry Logic</strong>: Exponential backoff for transient failures (adds additional delays on errors)</li>
+<li><strong>Caching</strong>: Leverages LRU cache to minimize API calls</li>
+<li><strong>Test Execution Strategy</strong>: Run tests manually or on schedule (not on every commit) to avoid overwhelming the API</li>
+</ol>
+<p><strong>Note</strong>: The 100ms inter-test delay is a courtesy pause between tests, not a strict rate limiter. With 107 tests and retry logic, the effective request rate is much lower than the theoretical maximum. The EP API client includes its own rate limiting (100 tokens per minute) that provides the primary throttling mechanism. For production use, tests should be run individually or in small batches rather than the full suite at once.</p>
+<pre><code class="typescript"><span class="hl-1">beforeEach</span><span class="hl-2">(</span><span class="hl-4">async</span><span class="hl-2"> () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-0">// Wait between tests to respect rate limits</span><br/><span class="hl-2">  </span><span class="hl-11">await</span><span class="hl-2"> </span><span class="hl-4">new</span><span class="hl-2"> </span><span class="hl-10">Promise</span><span class="hl-2">(</span><span class="hl-7">resolve</span><span class="hl-2"> </span><span class="hl-4">=&gt;</span><span class="hl-2"> </span><span class="hl-1">setTimeout</span><span class="hl-2">(</span><span class="hl-7">resolve</span><span class="hl-2">, </span><span class="hl-6">100</span><span class="hl-2">));</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="best-practices" class="tsd-anchor-link">Best Practices<a href="#best-practices" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>✅ <strong>DO</strong>:</p>
+<ul>
+<li>Run integration tests during off-peak hours</li>
+<li>Use <code>EP_SAVE_FIXTURES=true</code> to capture responses for offline testing</li>
+<li>Test with small <code>limit</code> values (5-10) to minimize API load</li>
+<li>Review test output for rate limit warnings</li>
+</ul>
+<p>❌ <strong>DON'T</strong>:</p>
+<ul>
+<li>Run integration tests in CI/CD on every commit</li>
+<li>Execute concurrent integration test suites</li>
+<li>Use large pagination limits in tests</li>
+<li>Ignore rate limit errors</li>
+</ul>
+<hr>
+<h2 id="📦-fixture-capture" class="tsd-anchor-link">📦 Fixture Capture<a href="#📦-fixture-capture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="capturing-real-api-responses" class="tsd-anchor-link">Capturing Real API Responses<a href="#capturing-real-api-responses" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Fixtures allow offline testing without hitting the real API:</p>
+<pre><code class="bash"><span class="hl-0"># Enable fixture capture</span><br/><span class="hl-7">EP_INTEGRATION_TESTS</span><span class="hl-2">=</span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-7">EP_SAVE_FIXTURES</span><span class="hl-2">=</span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">test:integration</span>
+</code><button type="button">Copy</button></pre>
+
+<p>This saves real API responses to <code>tests/fixtures/real-api/</code> for:</p>
+<ul>
+<li>Offline development</li>
+<li>Consistent test data</li>
+<li>API response documentation</li>
+<li>Regression testing</li>
+</ul>
+<h3 id="fixture-structure" class="tsd-anchor-link">Fixture Structure<a href="#fixture-structure" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="json"><span class="hl-2">{</span><br/><span class="hl-2">  </span><span class="hl-5">&quot;data&quot;</span><span class="hl-2">: [</span><br/><span class="hl-2">    {</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;id&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;MEP-123&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;name&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;Example MEP&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;country&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;SE&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;politicalGroup&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;EPP&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;active&quot;</span><span class="hl-2">: </span><span class="hl-4">true</span><br/><span class="hl-2">    }</span><br/><span class="hl-2">  ],</span><br/><span class="hl-2">  </span><span class="hl-5">&quot;total&quot;</span><span class="hl-2">: </span><span class="hl-6">100</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-5">&quot;limit&quot;</span><span class="hl-2">: </span><span class="hl-6">10</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-5">&quot;offset&quot;</span><span class="hl-2">: </span><span class="hl-6">0</span><br/><span class="hl-2">}</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="🧪-test-examples" class="tsd-anchor-link">🧪 Test Examples<a href="#🧪-test-examples" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="basic-tool-test" class="tsd-anchor-link">Basic Tool Test<a href="#basic-tool-test" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="typescript"><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">describe</span><span class="hl-2">, </span><span class="hl-7">it</span><span class="hl-2">, </span><span class="hl-7">expect</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;vitest&#39;</span><span class="hl-2">;</span><br/><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">handleGetMEPs</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;../../../src/tools/getMEPs.js&#39;</span><span class="hl-2">;</span><br/><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">shouldRunIntegrationTests</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;../setup.js&#39;</span><span class="hl-2">;</span><br/><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">validatePaginatedResponse</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;../helpers/responseValidator.js&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-4">const</span><span class="hl-2"> </span><span class="hl-9">describeIntegration</span><span class="hl-2"> = </span><span class="hl-1">shouldRunIntegrationTests</span><span class="hl-2">() ? </span><span class="hl-7">describe</span><span class="hl-2"> : </span><span class="hl-7">describe</span><span class="hl-2">.</span><span class="hl-7">skip</span><span class="hl-2">;</span><br/><br/><span class="hl-1">describeIntegration</span><span class="hl-2">(</span><span class="hl-3">&#39;get_meps Integration Tests&#39;</span><span class="hl-2">, () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-1">it</span><span class="hl-2">(</span><span class="hl-3">&#39;should fetch Swedish MEPs from real API&#39;</span><span class="hl-2">, </span><span class="hl-4">async</span><span class="hl-2"> () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-4">const</span><span class="hl-2"> </span><span class="hl-9">result</span><span class="hl-2"> = </span><span class="hl-11">await</span><span class="hl-2"> </span><span class="hl-1">handleGetMEPs</span><span class="hl-2">({ </span><span class="hl-7">country:</span><span class="hl-2"> </span><span class="hl-3">&#39;SE&#39;</span><span class="hl-2">, </span><span class="hl-7">limit:</span><span class="hl-2"> </span><span class="hl-6">10</span><span class="hl-2"> });</span><br/><span class="hl-2">    </span><br/><span class="hl-2">    </span><span class="hl-4">const</span><span class="hl-2"> </span><span class="hl-9">response</span><span class="hl-2"> = </span><span class="hl-1">validatePaginatedResponse</span><span class="hl-2">(</span><span class="hl-7">result</span><span class="hl-2">);</span><br/><span class="hl-2">    </span><span class="hl-1">expect</span><span class="hl-2">(</span><span class="hl-7">response</span><span class="hl-2">.</span><span class="hl-7">data</span><span class="hl-2">).</span><span class="hl-1">toBeDefined</span><span class="hl-2">();</span><br/><span class="hl-2">    </span><span class="hl-1">expect</span><span class="hl-2">(</span><span class="hl-7">response</span><span class="hl-2">.</span><span class="hl-7">total</span><span class="hl-2">).</span><span class="hl-1">toBeGreaterThan</span><span class="hl-2">(</span><span class="hl-6">0</span><span class="hl-2">);</span><br/><span class="hl-2">  }, </span><span class="hl-6">30000</span><span class="hl-2">);</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="testing-with-retry-logic" class="tsd-anchor-link">Testing with Retry Logic<a href="#testing-with-retry-logic" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="typescript"><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">retry</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;../../helpers/testUtils.js&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-1">it</span><span class="hl-2">(</span><span class="hl-3">&#39;should handle transient failures&#39;</span><span class="hl-2">, </span><span class="hl-4">async</span><span class="hl-2"> () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-4">const</span><span class="hl-2"> </span><span class="hl-9">result</span><span class="hl-2"> = </span><span class="hl-11">await</span><span class="hl-2"> </span><span class="hl-1">retry</span><span class="hl-2">(</span><span class="hl-4">async</span><span class="hl-2"> () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-11">return</span><span class="hl-2"> </span><span class="hl-1">handleGetMEPs</span><span class="hl-2">({ </span><span class="hl-7">country:</span><span class="hl-2"> </span><span class="hl-3">&#39;DE&#39;</span><span class="hl-2">, </span><span class="hl-7">limit:</span><span class="hl-2"> </span><span class="hl-6">5</span><span class="hl-2"> });</span><br/><span class="hl-2">  }, </span><span class="hl-6">3</span><span class="hl-2">, </span><span class="hl-6">1000</span><span class="hl-2">); </span><span class="hl-0">// 3 retries, 1 second base delay</span><br/><span class="hl-2">  </span><br/><span class="hl-2">  </span><span class="hl-1">expect</span><span class="hl-2">(</span><span class="hl-7">result</span><span class="hl-2">).</span><span class="hl-1">toBeDefined</span><span class="hl-2">();</span><br/><span class="hl-2">}, </span><span class="hl-6">30000</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="performance-testing" class="tsd-anchor-link">Performance Testing<a href="#performance-testing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="typescript"><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">measureTime</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;../../helpers/testUtils.js&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-1">it</span><span class="hl-2">(</span><span class="hl-3">&#39;should complete within acceptable time&#39;</span><span class="hl-2">, </span><span class="hl-4">async</span><span class="hl-2"> () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-4">const</span><span class="hl-2"> [</span><span class="hl-9">result</span><span class="hl-2">, </span><span class="hl-9">duration</span><span class="hl-2">] = </span><span class="hl-11">await</span><span class="hl-2"> </span><span class="hl-1">measureTime</span><span class="hl-2">(</span><span class="hl-4">async</span><span class="hl-2"> () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-11">return</span><span class="hl-2"> </span><span class="hl-1">handleGetMEPs</span><span class="hl-2">({ </span><span class="hl-7">limit:</span><span class="hl-2"> </span><span class="hl-6">10</span><span class="hl-2"> });</span><br/><span class="hl-2">  });</span><br/><span class="hl-2">  </span><br/><span class="hl-2">  </span><span class="hl-1">expect</span><span class="hl-2">(</span><span class="hl-7">duration</span><span class="hl-2">).</span><span class="hl-1">toBeLessThan</span><span class="hl-2">(</span><span class="hl-6">5000</span><span class="hl-2">); </span><span class="hl-0">// 5 seconds</span><br/><span class="hl-2">  </span><span class="hl-7">console</span><span class="hl-2">.</span><span class="hl-1">log</span><span class="hl-2">(</span><span class="hl-3">`Request duration: </span><span class="hl-4">${</span><span class="hl-7">duration</span><span class="hl-12">.</span><span class="hl-1">toFixed</span><span class="hl-12">(</span><span class="hl-6">2</span><span class="hl-12">)</span><span class="hl-4">}</span><span class="hl-3">ms`</span><span class="hl-2">);</span><br/><span class="hl-2">}, </span><span class="hl-6">30000</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="🛡️-security-compliance" class="tsd-anchor-link">🛡️ Security &amp; Compliance<a href="#🛡️-security-compliance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="gdpr-compliance" class="tsd-anchor-link">GDPR Compliance<a href="#gdpr-compliance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Integration tests handle personally identifiable information (PII) appropriately:</p>
+<ul>
+<li>✅ <strong>Data Minimization</strong>: Tests use minimal <code>limit</code> values</li>
+<li>✅ <strong>Purpose Limitation</strong>: Data used only for testing</li>
+<li>✅ <strong>Storage Limitation</strong>: Fixtures contain no sensitive PII</li>
+<li>✅ <strong>Audit Logging</strong>: All API access is logged per AU-2</li>
+</ul>
+<h3 id="isms-requirements" class="tsd-anchor-link">ISMS Requirements<a href="#isms-requirements" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Tests comply with <a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md" target="_blank" class="external">Hack23 Secure Development Policy</a>:</p>
+<ul>
+<li><strong>SC-002</strong>: Input validation for all tool parameters</li>
+<li><strong>PE-001</strong>: Performance benchmarks (&lt;200ms cached, &lt;2s uncached)</li>
+<li><strong>AU-2</strong>: Audit logging for all data access</li>
+<li><strong>SI-10</strong>: Schema validation for all responses</li>
+</ul>
+<hr>
+<h2 id="📊-test-execution" class="tsd-anchor-link">📊 Test Execution<a href="#📊-test-execution" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="local-development" class="tsd-anchor-link">Local Development<a href="#local-development" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="bash"><span class="hl-0"># Run all integration tests</span><br/><span class="hl-7">EP_INTEGRATION_TESTS</span><span class="hl-2">=</span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">test:integration</span><br/><br/><span class="hl-0"># Run with coverage</span><br/><span class="hl-7">EP_INTEGRATION_TESTS</span><span class="hl-2">=</span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">test:integration</span><span class="hl-2"> </span><span class="hl-4">--</span><span class="hl-2"> </span><span class="hl-4">--coverage</span><br/><br/><span class="hl-0"># Run specific test file</span><br/><span class="hl-7">EP_INTEGRATION_TESTS</span><span class="hl-2">=</span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">test:integration</span><span class="hl-2"> </span><span class="hl-4">--</span><span class="hl-2"> </span><span class="hl-3">getMEPs.integration</span><br/><br/><span class="hl-0"># Run in watch mode (not recommended for integration tests)</span><br/><span class="hl-7">EP_INTEGRATION_TESTS</span><span class="hl-2">=</span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">test:integration</span><span class="hl-2"> </span><span class="hl-4">--</span><span class="hl-2"> </span><span class="hl-4">--watch</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="cicd-integration-optional" class="tsd-anchor-link">CI/CD Integration (Optional)<a href="#cicd-integration-optional" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Integration tests can be run on a schedule to avoid overwhelming the API:</p>
+<pre><code class="yaml"><span class="hl-0"># .github/workflows/integration-tests.yml (example)</span><br/><span class="hl-19">name</span><span class="hl-2">: </span><span class="hl-20">Integration Tests (Scheduled)</span><br/><br/><span class="hl-4">on</span><span class="hl-2">:</span><br/><span class="hl-2">  </span><span class="hl-19">schedule</span><span class="hl-2">:</span><br/><span class="hl-2">    - </span><span class="hl-19">cron</span><span class="hl-2">: </span><span class="hl-20">&#39;0 2 * * 1&#39;</span><span class="hl-2"> </span><span class="hl-0"># Weekly on Monday 2 AM UTC</span><br/><span class="hl-2">  </span><span class="hl-19">workflow_dispatch</span><span class="hl-2">: </span><span class="hl-0"># Manual trigger</span><br/><br/><span class="hl-19">jobs</span><span class="hl-2">:</span><br/><span class="hl-2">  </span><span class="hl-19">integration</span><span class="hl-2">:</span><br/><span class="hl-2">    </span><span class="hl-19">runs-on</span><span class="hl-2">: </span><span class="hl-20">ubuntu-latest</span><br/><span class="hl-2">    </span><span class="hl-19">steps</span><span class="hl-2">:</span><br/><span class="hl-2">      - </span><span class="hl-19">uses</span><span class="hl-2">: </span><span class="hl-20">actions/checkout@v4</span><br/><span class="hl-2">      - </span><span class="hl-19">uses</span><span class="hl-2">: </span><span class="hl-20">actions/setup-node@v4</span><br/><span class="hl-2">        </span><span class="hl-19">with</span><span class="hl-2">:</span><br/><span class="hl-2">          </span><span class="hl-19">node-version</span><span class="hl-2">: </span><span class="hl-20">&#39;25&#39;</span><br/><span class="hl-2">      - </span><span class="hl-19">run</span><span class="hl-2">: </span><span class="hl-20">npm install</span><br/><span class="hl-2">      - </span><span class="hl-19">run</span><span class="hl-2">: </span><span class="hl-20">EP_INTEGRATION_TESTS=true npm run test:integration</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="🔍-troubleshooting" class="tsd-anchor-link">🔍 Troubleshooting<a href="#🔍-troubleshooting" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="common-issues" class="tsd-anchor-link">Common Issues<a href="#common-issues" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h4 id="tests-skip-without-running" class="tsd-anchor-link">Tests Skip Without Running<a href="#tests-skip-without-running" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p><strong>Cause</strong>: <code>EP_INTEGRATION_TESTS</code> not set to <code>true</code></p>
+<p><strong>Solution</strong>:</p>
+<pre><code class="bash"><span class="hl-7">EP_INTEGRATION_TESTS</span><span class="hl-2">=</span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">test:integration</span>
+</code><button type="button">Copy</button></pre>
+
+<h4 id="rate-limit-errors" class="tsd-anchor-link">Rate Limit Errors<a href="#rate-limit-errors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p><strong>Cause</strong>: Too many requests to EP API</p>
+<p><strong>Solution</strong>:</p>
+<ul>
+<li>Wait 15 minutes before retrying</li>
+<li>Reduce concurrent test execution</li>
+<li>Use captured fixtures for development</li>
+</ul>
+<h4 id="network-timeouts" class="tsd-anchor-link">Network Timeouts<a href="#network-timeouts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p><strong>Cause</strong>: Slow network or API response</p>
+<p><strong>Solution</strong>:</p>
+<ul>
+<li>Increase test timeout: <code>it('test name', async () =&gt; { ... }, 60000)</code></li>
+<li>Check network connectivity</li>
+<li>Verify EP API status</li>
+</ul>
+<h4 id="schema-validation-failures" class="tsd-anchor-link">Schema Validation Failures<a href="#schema-validation-failures" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p><strong>Cause</strong>: API response structure changed</p>
+<p><strong>Solution</strong>:</p>
+<ul>
+<li>Review API response in test output</li>
+<li>Update schemas in <code>src/schemas/europeanParliament.ts</code></li>
+<li>Capture new fixtures with <code>EP_SAVE_FIXTURES=true</code></li>
+</ul>
+<h3 id="debug-mode" class="tsd-anchor-link">Debug Mode<a href="#debug-mode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Enable verbose logging for troubleshooting:</p>
+<pre><code class="bash"><span class="hl-7">DEBUG</span><span class="hl-2">=</span><span class="hl-3">*</span><span class="hl-2"> </span><span class="hl-7">EP_INTEGRATION_TESTS</span><span class="hl-2">=</span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">test:integration</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="📈-performance-benchmarks" class="tsd-anchor-link">📈 Performance Benchmarks<a href="#📈-performance-benchmarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="expected-response-times" class="tsd-anchor-link">Expected Response Times<a href="#expected-response-times" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Uncached</th>
+<th>Cached</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>get_meps</td>
+<td>&lt;2s</td>
+<td>&lt;1000ms</td>
+<td>Basic retrieval</td>
+</tr>
+<tr>
+<td>get_mep_details</td>
+<td>&lt;2s</td>
+<td>&lt;1000ms</td>
+<td>Individual MEP</td>
+</tr>
+<tr>
+<td>get_plenary_sessions</td>
+<td>&lt;2s</td>
+<td>&lt;1000ms</td>
+<td>Session data</td>
+</tr>
+<tr>
+<td>get_voting_records</td>
+<td>&lt;3s</td>
+<td>&lt;1000ms</td>
+<td>Large datasets</td>
+</tr>
+<tr>
+<td>search_documents</td>
+<td>&lt;3s</td>
+<td>&lt;1000ms</td>
+<td>Full-text search</td>
+</tr>
+<tr>
+<td>get_committee_info</td>
+<td>&lt;2s</td>
+<td>&lt;1000ms</td>
+<td>Committee data</td>
+</tr>
+<tr>
+<td>get_parliamentary_questions</td>
+<td>&lt;2s</td>
+<td>&lt;1000ms</td>
+<td>Question data</td>
+</tr>
+<tr>
+<td>analyze_voting_patterns</td>
+<td>&lt;5s</td>
+<td>&lt;1000ms</td>
+<td>Complex analysis</td>
+</tr>
+<tr>
+<td>track_legislation</td>
+<td>&lt;2s</td>
+<td>&lt;1000ms</td>
+<td>Procedure tracking</td>
+</tr>
+<tr>
+<td>generate_report</td>
+<td>&lt;5s</td>
+<td>&lt;1000ms</td>
+<td>Report generation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="performance-tests" class="tsd-anchor-link">Performance Tests<a href="#performance-tests" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Each integration test includes performance validation:</p>
+<pre><code class="typescript"><span class="hl-1">it</span><span class="hl-2">(</span><span class="hl-3">&#39;should complete within acceptable time&#39;</span><span class="hl-2">, </span><span class="hl-4">async</span><span class="hl-2"> () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-4">const</span><span class="hl-2"> [, </span><span class="hl-9">duration</span><span class="hl-2">] = </span><span class="hl-11">await</span><span class="hl-2"> </span><span class="hl-1">measureTime</span><span class="hl-2">(</span><span class="hl-4">async</span><span class="hl-2"> () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-11">return</span><span class="hl-2"> </span><span class="hl-1">handleGetMEPs</span><span class="hl-2">({ </span><span class="hl-7">limit:</span><span class="hl-2"> </span><span class="hl-6">10</span><span class="hl-2"> });</span><br/><span class="hl-2">  });</span><br/><span class="hl-2">  </span><br/><span class="hl-2">  </span><span class="hl-1">expect</span><span class="hl-2">(</span><span class="hl-7">duration</span><span class="hl-2">).</span><span class="hl-1">toBeLessThan</span><span class="hl-2">(</span><span class="hl-6">5000</span><span class="hl-2">);</span><br/><span class="hl-2">  </span><span class="hl-7">console</span><span class="hl-2">.</span><span class="hl-1">log</span><span class="hl-2">(</span><span class="hl-3">`Performance: </span><span class="hl-4">${</span><span class="hl-7">duration</span><span class="hl-12">.</span><span class="hl-1">toFixed</span><span class="hl-12">(</span><span class="hl-6">2</span><span class="hl-12">)</span><span class="hl-4">}</span><span class="hl-3">ms`</span><span class="hl-2">);</span><br/><span class="hl-2">}, </span><span class="hl-6">30000</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="🤝-contributing" class="tsd-anchor-link">🤝 Contributing<a href="#🤝-contributing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>When adding new integration tests:</p>
+<ol>
+<li>✅ Follow existing test structure and patterns</li>
+<li>✅ Include all test categories (retrieval, filtering, pagination, etc.)</li>
+<li>✅ Add fixture capture with descriptive names</li>
+<li>✅ Respect rate limits with delays and retries</li>
+<li>✅ Document any EP API quirks or limitations</li>
+<li>✅ Update this guide with new tools or patterns</li>
+</ol>
+<h3 id="test-template" class="tsd-anchor-link">Test Template<a href="#test-template" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="typescript"><span class="hl-0">/**</span><br/><span class="hl-0"> * Integration Tests: tool_name Tool</span><br/><span class="hl-0"> * </span><br/><span class="hl-0"> * ISMS Policy: SC-002 (Secure Testing), PE-001 (Performance Testing)</span><br/><span class="hl-0"> */</span><br/><br/><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">describe</span><span class="hl-2">, </span><span class="hl-7">it</span><span class="hl-2">, </span><span class="hl-7">expect</span><span class="hl-2">, </span><span class="hl-7">beforeEach</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;vitest&#39;</span><span class="hl-2">;</span><br/><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">handleToolName</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;../../../src/tools/toolName.js&#39;</span><span class="hl-2">;</span><br/><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">shouldRunIntegrationTests</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;../setup.js&#39;</span><span class="hl-2">;</span><br/><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">retry</span><span class="hl-2">, </span><span class="hl-7">measureTime</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;../../helpers/testUtils.js&#39;</span><span class="hl-2">;</span><br/><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">validatePaginatedResponse</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;../helpers/responseValidator.js&#39;</span><span class="hl-2">;</span><br/><span class="hl-11">import</span><span class="hl-2"> { </span><span class="hl-7">saveMCPResponseFixture</span><span class="hl-2"> } </span><span class="hl-11">from</span><span class="hl-2"> </span><span class="hl-3">&#39;../helpers/fixtureManager.js&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-4">const</span><span class="hl-2"> </span><span class="hl-9">describeIntegration</span><span class="hl-2"> = </span><span class="hl-1">shouldRunIntegrationTests</span><span class="hl-2">() ? </span><span class="hl-7">describe</span><span class="hl-2"> : </span><span class="hl-7">describe</span><span class="hl-2">.</span><span class="hl-7">skip</span><span class="hl-2">;</span><br/><br/><span class="hl-1">describeIntegration</span><span class="hl-2">(</span><span class="hl-3">&#39;tool_name Integration Tests&#39;</span><span class="hl-2">, () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-1">beforeEach</span><span class="hl-2">(</span><span class="hl-4">async</span><span class="hl-2"> () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-11">await</span><span class="hl-2"> </span><span class="hl-4">new</span><span class="hl-2"> </span><span class="hl-10">Promise</span><span class="hl-2">(</span><span class="hl-7">resolve</span><span class="hl-2"> </span><span class="hl-4">=&gt;</span><span class="hl-2"> </span><span class="hl-1">setTimeout</span><span class="hl-2">(</span><span class="hl-7">resolve</span><span class="hl-2">, </span><span class="hl-6">100</span><span class="hl-2">));</span><br/><span class="hl-2">  });</span><br/><br/><span class="hl-2">  </span><span class="hl-1">describe</span><span class="hl-2">(</span><span class="hl-3">&#39;Basic Retrieval&#39;</span><span class="hl-2">, () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">it</span><span class="hl-2">(</span><span class="hl-3">&#39;should fetch data from real API&#39;</span><span class="hl-2">, </span><span class="hl-4">async</span><span class="hl-2"> () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">      </span><span class="hl-4">const</span><span class="hl-2"> </span><span class="hl-9">result</span><span class="hl-2"> = </span><span class="hl-11">await</span><span class="hl-2"> </span><span class="hl-1">retry</span><span class="hl-2">(</span><span class="hl-4">async</span><span class="hl-2"> () </span><span class="hl-4">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">        </span><span class="hl-11">return</span><span class="hl-2"> </span><span class="hl-1">handleToolName</span><span class="hl-2">({ </span><span class="hl-7">limit:</span><span class="hl-2"> </span><span class="hl-6">10</span><span class="hl-2"> });</span><br/><span class="hl-2">      });</span><br/><br/><span class="hl-2">      </span><span class="hl-1">saveMCPResponseFixture</span><span class="hl-2">(</span><span class="hl-3">&#39;tool_name&#39;</span><span class="hl-2">, </span><span class="hl-3">&#39;basic-retrieval&#39;</span><span class="hl-2">, </span><span class="hl-7">result</span><span class="hl-2">);</span><br/><br/><span class="hl-2">      </span><span class="hl-4">const</span><span class="hl-2"> </span><span class="hl-9">response</span><span class="hl-2"> = </span><span class="hl-1">validatePaginatedResponse</span><span class="hl-2">(</span><span class="hl-7">result</span><span class="hl-2">);</span><br/><span class="hl-2">      </span><span class="hl-1">expect</span><span class="hl-2">(</span><span class="hl-7">response</span><span class="hl-2">.</span><span class="hl-7">data</span><span class="hl-2">).</span><span class="hl-1">toBeDefined</span><span class="hl-2">();</span><br/><span class="hl-2">    }, </span><span class="hl-6">30000</span><span class="hl-2">);</span><br/><span class="hl-2">  });</span><br/><br/><span class="hl-2">  </span><span class="hl-0">// Add more test categories...</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="📚-additional-resources" class="tsd-anchor-link">📚 Additional Resources<a href="#📚-additional-resources" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li><a href="https://data.europarl.europa.eu/en/home" target="_blank" class="external">European Parliament Open Data Portal</a></li>
+<li><a href="https://data.europarl.europa.eu/en/developer-corner" target="_blank" class="external">EP API Documentation</a></li>
+<li><a href="https://github.com/Hack23/ISMS-PUBLIC" target="_blank" class="external">Hack23 ISMS Policies</a></li>
+<li><a href="https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md" target="_blank" class="external">Hack23 Secure Development Policy</a></li>
+<li><a href="https://gdpr.eu/" target="_blank" class="external">GDPR Compliance Guide</a></li>
+<li><a href="https://vitest.dev/" target="_blank" class="external">Vitest Documentation</a></li>
+</ul>
+<hr>
+<h2 id="📝-summary" class="tsd-anchor-link">📝 Summary<a href="#📝-summary" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Integration tests validate that the European Parliament MCP Server correctly interfaces with the real EP Open Data API. By respecting rate limits, capturing fixtures, and following ISMS guidelines, these tests ensure production readiness while maintaining compliance with security and privacy requirements.</p>
+<p><strong>Remember</strong>: Integration tests should be run thoughtfully to avoid overwhelming the EP API. Use fixtures for development and reserve live API tests for validation and scheduled runs.</p>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-alpha" name="alpha"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Alpha</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-beta" name="beta"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Beta</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#integration-testing-guide"><span>Integration <wbr/>Testing <wbr/>Guide</span></a><ul><li><a href="#📋-overview"><span>📋 <wbr/>Overview</span></a></li><li><a href="#🎯-integration-test-coverage"><span>🎯 <wbr/>Integration <wbr/>Test <wbr/>Coverage</span></a></li><li><ul><li><a href="#61-mcp-tools-integration--unit-test-coverage"><span>61 <wbr/>MCP <wbr/>Tools — <wbr/>Integration &amp; <wbr/>Unit <wbr/>Test <wbr/>Coverage</span></a></li><li><a href="#test-categories"><span>Test <wbr/>Categories</span></a></li></ul></li><li><a href="#🚀-quick-start"><span>🚀 <wbr/>Quick <wbr/>Start</span></a></li><li><ul><li><a href="#prerequisites"><span>Prerequisites</span></a></li><li><a href="#running-integration-tests"><span>Running <wbr/>Integration <wbr/>Tests</span></a></li><li><a href="#environment-variables"><span>Environment <wbr/>Variables</span></a></li></ul></li><li><a href="#📁-test-structure"><span>📁 <wbr/>Test <wbr/>Structure</span></a></li><li><ul><li><a href="#directory-layout"><span>Directory <wbr/>Layout</span></a></li><li><a href="#test-helpers"><span>Test <wbr/>Helpers</span></a></li><li><ul><li><a href="#response-validator-"><span>Response <wbr/>Validator ()</span></a></li><li><a href="#fixture-manager-"><span>Fixture <wbr/>Manager ()</span></a></li></ul></li></ul></li><li><a href="#🔒-rate-limiting-best-practices"><span>🔒 <wbr/>Rate <wbr/>Limiting &amp; <wbr/>Best <wbr/>Practices</span></a></li><li><ul><li><a href="#european-parliament-api-limits"><span>European <wbr/>Parliament <wbr/>API <wbr/>Limits</span></a></li><li><a href="#respecting-rate-limits"><span>Respecting <wbr/>Rate <wbr/>Limits</span></a></li><li><a href="#best-practices"><span>Best <wbr/>Practices</span></a></li></ul></li><li><a href="#📦-fixture-capture"><span>📦 <wbr/>Fixture <wbr/>Capture</span></a></li><li><ul><li><a href="#capturing-real-api-responses"><span>Capturing <wbr/>Real <wbr/>API <wbr/>Responses</span></a></li><li><a href="#fixture-structure"><span>Fixture <wbr/>Structure</span></a></li></ul></li><li><a href="#🧪-test-examples"><span>🧪 <wbr/>Test <wbr/>Examples</span></a></li><li><ul><li><a href="#basic-tool-test"><span>Basic <wbr/>Tool <wbr/>Test</span></a></li><li><a href="#testing-with-retry-logic"><span>Testing with <wbr/>Retry <wbr/>Logic</span></a></li><li><a href="#performance-testing"><span>Performance <wbr/>Testing</span></a></li></ul></li><li><a href="#🛡️-security-compliance"><span>🛡️ <wbr/>Security &amp; <wbr/>Compliance</span></a></li><li><ul><li><a href="#gdpr-compliance"><span>GDPR <wbr/>Compliance</span></a></li><li><a href="#isms-requirements"><span>ISMS <wbr/>Requirements</span></a></li></ul></li><li><a href="#📊-test-execution"><span>📊 <wbr/>Test <wbr/>Execution</span></a></li><li><ul><li><a href="#local-development"><span>Local <wbr/>Development</span></a></li><li><a href="#cicd-integration-optional"><span>CI/<wbr/>CD <wbr/>Integration (<wbr/>Optional)</span></a></li></ul></li><li><a href="#🔍-troubleshooting"><span>🔍 <wbr/>Troubleshooting</span></a></li><li><ul><li><a href="#common-issues"><span>Common <wbr/>Issues</span></a></li><li><ul><li><a href="#tests-skip-without-running"><span>Tests <wbr/>Skip <wbr/>Without <wbr/>Running</span></a></li><li><a href="#rate-limit-errors"><span>Rate <wbr/>Limit <wbr/>Errors</span></a></li><li><a href="#network-timeouts"><span>Network <wbr/>Timeouts</span></a></li><li><a href="#schema-validation-failures"><span>Schema <wbr/>Validation <wbr/>Failures</span></a></li></ul></li><li><a href="#debug-mode"><span>Debug <wbr/>Mode</span></a></li></ul></li><li><a href="#📈-performance-benchmarks"><span>📈 <wbr/>Performance <wbr/>Benchmarks</span></a></li><li><ul><li><a href="#expected-response-times"><span>Expected <wbr/>Response <wbr/>Times</span></a></li><li><a href="#performance-tests"><span>Performance <wbr/>Tests</span></a></li></ul></li><li><a href="#🤝-contributing"><span>🤝 <wbr/>Contributing</span></a></li><li><ul><li><a href="#test-template"><span>Test <wbr/>Template</span></a></li></ul></li><li><a href="#📚-additional-resources"><span>📚 <wbr/>Additional <wbr/>Resources</span></a></li><li><a href="#📝-summary"><span>📝 <wbr/>Summary</span></a></li></ul></div></details></div><div class="site-menu"><nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/ARCHITECTURE.md">Architecture</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DATA_MODEL.md">Data Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEVELOPER_GUIDE.md">Developer Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEPLOYMENT_GUIDE.md">Deployment Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/PERFORMANCE_GUIDE.md">Performance Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SWOT.md">SWOT Analysis</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/End-of-Life-Strategy.md">End-of-Life Strategy</a><a href="https://hack23.github.io/European-Parliament-MCP-Server/" class="tsd-nav-link">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server" class="tsd-nav-link">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md" class="tsd-nav-link">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC" class="tsd-nav-link">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md" class="tsd-nav-link">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md" class="tsd-nav-link">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md" class="tsd-nav-link">API Usage Guide</a></nav><nav class="tsd-navigation"><a href="../modules.html">European Parliament MCP Server API - v1.1.21</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>DEPLOYMENT_GUIDE | European Parliament MCP Server API - v1.1.21</title><meta name="description" content="Documentation for European Parliament MCP Server API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">European Parliament MCP Server API - v1.1.21</a><div id="tsd-toolbar-links"><a href="https://hack23.github.io/European-Parliament-MCP-Server/">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md">API Usage Guide</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">DEPLOYMENT_GUIDE</a></li></ul></div><div class="tsd-panel tsd-typography"><h1 id="deployment-guide" class="tsd-anchor-link">Deployment Guide<a href="#deployment-guide" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p align="center">
+  <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="128" height="128">
+</p>
+<h1 align="center">European Parliament MCP Server - Deployment Guide</h1>
+<p align="center">
+  <strong>Complete deployment configurations for all MCP clients</strong><br>
+  <em>Claude Desktop, VS Code, Docker, and production deployments</em>
+</p>
+<hr>
+<h2 id="📋-table-of-contents" class="tsd-anchor-link">📋 Table of Contents<a href="#📋-table-of-contents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#claude-desktop-deployment">Claude Desktop Deployment</a></li>
+<li><a href="#vs-code-extension-deployment">VS Code Extension Deployment</a></li>
+<li><a href="#docker-deployment">Docker Deployment</a></li>
+<li><a href="#production-deployment">Production Deployment</a></li>
+<li><a href="#environment-variables">Environment Variables</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+<hr>
+<h2 id="✅-prerequisites" class="tsd-anchor-link">✅ Prerequisites<a href="#✅-prerequisites" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="required-software" class="tsd-anchor-link">Required Software<a href="#required-software" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li><strong>Node.js</strong>: v25.x or higher</li>
+<li><strong>npm</strong>: v10.x or higher</li>
+<li><strong>Git</strong>: Latest version</li>
+</ul>
+<h3 id="build-requirements" class="tsd-anchor-link">Build Requirements<a href="#build-requirements" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="bash"><span class="hl-0"># Clone repository</span><br/><span class="hl-1">git</span><span class="hl-2"> </span><span class="hl-3">clone</span><span class="hl-2"> </span><span class="hl-3">https://github.com/Hack23/European-Parliament-MCP-Server.git</span><br/><span class="hl-1">cd</span><span class="hl-2"> </span><span class="hl-3">European-Parliament-MCP-Server</span><br/><br/><span class="hl-0"># Install dependencies</span><br/><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">install</span><br/><br/><span class="hl-0"># Build project</span><br/><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">build</span><br/><br/><span class="hl-0"># Verify build</span><br/><span class="hl-1">test</span><span class="hl-2"> </span><span class="hl-4">-f</span><span class="hl-2"> </span><span class="hl-3">dist/index.js</span><span class="hl-2"> &amp;&amp; </span><span class="hl-1">echo</span><span class="hl-2"> </span><span class="hl-3">&quot;Build successful&quot;</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="🖥️-claude-desktop-deployment" class="tsd-anchor-link">🖥️ Claude Desktop Deployment<a href="#🖥️-claude-desktop-deployment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="1-build-the-server" class="tsd-anchor-link">1. Build the Server<a href="#1-build-the-server" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="bash"><span class="hl-1">cd</span><span class="hl-2"> </span><span class="hl-3">/path/to/European-Parliament-MCP-Server</span><br/><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">install</span><br/><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">build</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="2-configure-claude-desktop" class="tsd-anchor-link">2. Configure Claude Desktop<a href="#2-configure-claude-desktop" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Config Location</strong>:</p>
+<ul>
+<li><strong>macOS</strong>: <code>~/Library/Application Support/Claude/claude_desktop_config.json</code></li>
+<li><strong>Linux</strong>: <code>~/.config/claude/claude_desktop_config.json</code></li>
+<li><strong>Windows</strong>: <code>%APPDATA%\Claude\claude_desktop_config.json</code></li>
+</ul>
+<p><strong>Configuration</strong>:</p>
+<pre><code class="json"><span class="hl-2">{</span><br/><span class="hl-2">  </span><span class="hl-5">&quot;mcpServers&quot;</span><span class="hl-2">: {</span><br/><span class="hl-2">    </span><span class="hl-5">&quot;european-parliament&quot;</span><span class="hl-2">: {</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;command&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;node&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;args&quot;</span><span class="hl-2">: [</span><br/><span class="hl-2">        </span><span class="hl-3">&quot;/absolute/path/to/European-Parliament-MCP-Server/dist/index.js&quot;</span><br/><span class="hl-2">      ],</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;env&quot;</span><span class="hl-2">: {</span><br/><span class="hl-2">        </span><span class="hl-5">&quot;LOG_LEVEL&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;info&quot;</span><br/><span class="hl-2">      }</span><br/><span class="hl-2">    }</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">}</span>
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Important</strong>:</p>
+<ul>
+<li>Use <strong>absolute paths</strong> (not <code>~</code> or relative paths)</li>
+<li>Use forward slashes <code>/</code> even on Windows</li>
+<li>Restart Claude Desktop after configuration changes</li>
+</ul>
+<h3 id="3-verify-installation" class="tsd-anchor-link">3. Verify Installation<a href="#3-verify-installation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ol>
+<li>Open Claude Desktop</li>
+<li>Start a new conversation</li>
+<li>Type: &quot;What European Parliament tools are available?&quot;</li>
+<li>Claude should list the 61 MCP tools</li>
+</ol>
+<h3 id="troubleshooting" class="tsd-anchor-link">Troubleshooting<a href="#troubleshooting" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Tools not appearing</strong>:</p>
+<pre><code class="bash"><span class="hl-0"># Check file exists</span><br/><span class="hl-1">test</span><span class="hl-2"> </span><span class="hl-4">-f</span><span class="hl-2"> </span><span class="hl-3">/path/to/dist/index.js</span><span class="hl-2"> &amp;&amp; </span><span class="hl-1">echo</span><span class="hl-2"> </span><span class="hl-3">&quot;OK&quot;</span><span class="hl-2"> || </span><span class="hl-1">echo</span><span class="hl-2"> </span><span class="hl-3">&quot;Missing&quot;</span><br/><br/><span class="hl-0"># Check permissions</span><br/><span class="hl-1">ls</span><span class="hl-2"> </span><span class="hl-4">-la</span><span class="hl-2"> </span><span class="hl-3">/path/to/dist/index.js</span><br/><br/><span class="hl-0"># Check Claude logs (macOS)</span><br/><span class="hl-1">tail</span><span class="hl-2"> </span><span class="hl-4">-f</span><span class="hl-2"> </span><span class="hl-3">~/Library/Logs/Claude/main.log</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="📝-vs-code-extension-deployment" class="tsd-anchor-link">📝 VS Code Extension Deployment<a href="#📝-vs-code-extension-deployment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="1-install-mcp-extension" class="tsd-anchor-link">1. Install MCP Extension<a href="#1-install-mcp-extension" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="bash"><span class="hl-0"># Install from VS Code Marketplace</span><br/><span class="hl-1">code</span><span class="hl-2"> </span><span class="hl-4">--install-extension</span><span class="hl-2"> </span><span class="hl-3">mcp-extension</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="2-build-the-server" class="tsd-anchor-link">2. Build the Server<a href="#2-build-the-server" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="bash"><span class="hl-1">cd</span><span class="hl-2"> ${</span><span class="hl-7">workspaceFolder</span><span class="hl-2">}</span><span class="hl-3">/European-Parliament-MCP-Server</span><br/><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">install</span><br/><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">build</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="3-configure-vs-code" class="tsd-anchor-link">3. Configure VS Code<a href="#3-configure-vs-code" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Create <code>.vscode/mcp.json</code> in your workspace:</p>
+<pre><code class="json"><span class="hl-2">{</span><br/><span class="hl-2">  </span><span class="hl-5">&quot;servers&quot;</span><span class="hl-2">: {</span><br/><span class="hl-2">    </span><span class="hl-5">&quot;european-parliament&quot;</span><span class="hl-2">: {</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;type&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;stdio&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;command&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;node&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;args&quot;</span><span class="hl-2">: [</span><span class="hl-3">&quot;./dist/index.js&quot;</span><span class="hl-2">],</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;cwd&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;${workspaceFolder}/European-Parliament-MCP-Server&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;env&quot;</span><span class="hl-2">: {</span><br/><span class="hl-2">        </span><span class="hl-5">&quot;LOG_LEVEL&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;info&quot;</span><br/><span class="hl-2">      }</span><br/><span class="hl-2">    }</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">}</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="4-reload-vs-code" class="tsd-anchor-link">4. Reload VS Code<a href="#4-reload-vs-code" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code><span class="hl-7">Cmd</span><span class="hl-2">+</span><span class="hl-7">Shift</span><span class="hl-2">+</span><span class="hl-1">P</span><span class="hl-2"> (</span><span class="hl-7">macOS</span><span class="hl-2">) </span><span class="hl-7">or</span><span class="hl-2"> </span><span class="hl-7">Ctrl</span><span class="hl-2">+</span><span class="hl-7">Shift</span><span class="hl-2">+</span><span class="hl-1">P</span><span class="hl-2"> (</span><span class="hl-7">Windows</span><span class="hl-2">/</span><span class="hl-7">Linux</span><span class="hl-2">)</span><br/><span class="hl-2">&gt; </span><span class="hl-8">Developer</span><span class="hl-2">: </span><span class="hl-7">Reload</span><span class="hl-2"> </span><span class="hl-7">Window</span>
+</code><button>Copy</button></pre>
+
+<h3 id="5-verify-installation" class="tsd-anchor-link">5. Verify Installation<a href="#5-verify-installation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ol>
+<li>Open Command Palette</li>
+<li>Search for &quot;MCP: List Tools&quot;</li>
+<li>Should show 61 European Parliament tools</li>
+</ol>
+<hr>
+<h2 id="🐳-docker-deployment" class="tsd-anchor-link">🐳 Docker Deployment<a href="#🐳-docker-deployment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="1-create-dockerfile" class="tsd-anchor-link">1. Create Dockerfile<a href="#1-create-dockerfile" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="dockerfile">FROM node:22-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy built files
+COPY dist/ ./dist/
+
+# Expose WebSocket port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health')"
+
+# Run server
+CMD ["node", "dist/index.js", "--transport", "websocket", "--port", "3000"]
+</code><button type="button">Copy</button></pre>
+
+<h3 id="2-create-docker-composeyml" class="tsd-anchor-link">2. Create docker-compose.yml<a href="#2-create-docker-composeyml" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="yaml"><span class="hl-19">version</span><span class="hl-2">: </span><span class="hl-20">&#39;3.8&#39;</span><br/><br/><span class="hl-19">services</span><span class="hl-2">:</span><br/><span class="hl-2">  </span><span class="hl-19">ep-mcp-server</span><span class="hl-2">:</span><br/><span class="hl-2">    </span><span class="hl-19">build</span><span class="hl-2">: </span><span class="hl-6">.</span><br/><span class="hl-2">    </span><span class="hl-19">ports</span><span class="hl-2">:</span><br/><span class="hl-2">      - </span><span class="hl-3">&quot;3000:3000&quot;</span><br/><span class="hl-2">    </span><span class="hl-19">environment</span><span class="hl-2">:</span><br/><span class="hl-2">      - </span><span class="hl-20">NODE_ENV=production</span><br/><span class="hl-2">      - </span><span class="hl-20">LOG_LEVEL=info</span><br/><span class="hl-2">      - </span><span class="hl-20">CACHE_MAX_SIZE=500</span><br/><span class="hl-2">      - </span><span class="hl-20">CACHE_TTL=900000</span><br/><span class="hl-2">      - </span><span class="hl-20">RATE_LIMIT_REQUESTS=100</span><br/><span class="hl-2">      - </span><span class="hl-20">RATE_LIMIT_WINDOW=900000</span><br/><span class="hl-2">    </span><span class="hl-19">volumes</span><span class="hl-2">:</span><br/><span class="hl-2">      - </span><span class="hl-20">cache-data:/app/cache</span><br/><span class="hl-2">      - </span><span class="hl-20">logs:/app/logs</span><br/><span class="hl-2">    </span><span class="hl-19">restart</span><span class="hl-2">: </span><span class="hl-20">unless-stopped</span><br/><span class="hl-2">    </span><span class="hl-19">networks</span><span class="hl-2">:</span><br/><span class="hl-2">      - </span><span class="hl-20">mcp-network</span><br/><br/><span class="hl-19">volumes</span><span class="hl-2">:</span><br/><span class="hl-2">  </span><span class="hl-19">cache-data</span><span class="hl-2">:</span><br/><span class="hl-2">  </span><span class="hl-19">logs</span><span class="hl-2">:</span><br/><br/><span class="hl-19">networks</span><span class="hl-2">:</span><br/><span class="hl-2">  </span><span class="hl-19">mcp-network</span><span class="hl-2">:</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="3-build-and-run" class="tsd-anchor-link">3. Build and Run<a href="#3-build-and-run" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="bash"><span class="hl-0"># Build image</span><br/><span class="hl-1">docker-compose</span><span class="hl-2"> </span><span class="hl-3">build</span><br/><br/><span class="hl-0"># Start service</span><br/><span class="hl-1">docker-compose</span><span class="hl-2"> </span><span class="hl-3">up</span><span class="hl-2"> </span><span class="hl-4">-d</span><br/><br/><span class="hl-0"># Check logs</span><br/><span class="hl-1">docker-compose</span><span class="hl-2"> </span><span class="hl-3">logs</span><span class="hl-2"> </span><span class="hl-4">-f</span><br/><br/><span class="hl-0"># Check health</span><br/><span class="hl-1">curl</span><span class="hl-2"> </span><span class="hl-3">http://localhost:3000/health</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="4-connect-mcp-client" class="tsd-anchor-link">4. Connect MCP Client<a href="#4-connect-mcp-client" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="json"><span class="hl-2">{</span><br/><span class="hl-2">  </span><span class="hl-5">&quot;mcpServers&quot;</span><span class="hl-2">: {</span><br/><span class="hl-2">    </span><span class="hl-5">&quot;european-parliament&quot;</span><span class="hl-2">: {</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;type&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;websocket&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">      </span><span class="hl-5">&quot;url&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;ws://localhost:3000&quot;</span><br/><span class="hl-2">    }</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">}</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="🚀-production-deployment" class="tsd-anchor-link">🚀 Production Deployment<a href="#🚀-production-deployment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="architecture" class="tsd-anchor-link">Architecture<a href="#architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code><span class="hl-2">                                    ┌─────────────────┐</span><br/><span class="hl-2">                                    │  </span><span class="hl-7">Load</span><span class="hl-2"> </span><span class="hl-7">Balancer</span><span class="hl-2">  │</span><br/><span class="hl-2">                                    │    (</span><span class="hl-7">nginx</span><span class="hl-2">)      │</span><br/><span class="hl-2">                                    └────────┬────────┘</span><br/><span class="hl-2">                                             │</span><br/><span class="hl-2">                    ┌────────────────────────┼────────────────────────┐</span><br/><span class="hl-2">                    │                        │                        │</span><br/><span class="hl-2">              ┌─────▼─────┐           ┌─────▼─────┐           ┌─────▼─────┐</span><br/><span class="hl-2">              │ </span><span class="hl-9">MCP</span><span class="hl-2"> </span><span class="hl-7">Server</span><span class="hl-2">│           │ </span><span class="hl-9">MCP</span><span class="hl-2"> </span><span class="hl-7">Server</span><span class="hl-2">│           │ </span><span class="hl-9">MCP</span><span class="hl-2"> </span><span class="hl-7">Server</span><span class="hl-2">│</span><br/><span class="hl-2">              │ </span><span class="hl-7">Instance</span><span class="hl-2"> </span><span class="hl-6">1</span><span class="hl-2">│           │ </span><span class="hl-7">Instance</span><span class="hl-2"> </span><span class="hl-6">2</span><span class="hl-2">│           │ </span><span class="hl-7">Instance</span><span class="hl-2"> </span><span class="hl-6">3</span><span class="hl-2">│</span><br/><span class="hl-2">              └───────────┘           └───────────┘           └───────────┘</span><br/><span class="hl-2">                    │                        │                        │</span><br/><span class="hl-2">                    └────────────────────────┼────────────────────────┘</span><br/><span class="hl-2">                                             │</span><br/><span class="hl-2">                                    ┌────────▼────────┐</span><br/><span class="hl-2">                                    │  </span><span class="hl-7">Shared</span><span class="hl-2"> </span><span class="hl-7">Cache</span><span class="hl-2">   │</span><br/><span class="hl-2">                                    │    (</span><span class="hl-7">Redis</span><span class="hl-2">)      │</span><br/><span class="hl-2">                                    └─────────────────┘</span>
+</code><button>Copy</button></pre>
+
+<h3 id="1-nginx-load-balancer" class="tsd-anchor-link">1. Nginx Load Balancer<a href="#1-nginx-load-balancer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><code>/etc/nginx/sites-available/mcp-server</code>:</p>
+<pre><code class="nginx">upstream mcp_backend {
+    least_conn;
+    server 127.0.0.1:3001;
+    server 127.0.0.1:3002;
+    server 127.0.0.1:3003;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name mcp.yourdomain.com;
+
+    ssl_certificate /etc/letsencrypt/live/mcp.yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mcp.yourdomain.com/privkey.pem;
+
+    location / {
+        proxy_pass http://mcp_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # WebSocket timeouts
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+    }
+
+    # Health check endpoint
+    location /health {
+        access_log off;
+        proxy_pass http://mcp_backend;
+    }
+}
+</code><button type="button">Copy</button></pre>
+
+<h3 id="2-systemd-service" class="tsd-anchor-link">2. Systemd Service<a href="#2-systemd-service" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><code>/etc/systemd/system/ep-mcp-server@.service</code>:</p>
+<pre><code class="ini">[Unit]
+Description=European Parliament MCP Server (instance %i)
+After=network.target
+
+[Service]
+Type=simple
+User=mcp
+WorkingDirectory=/opt/european-parliament-mcp-server
+ExecStart=/usr/bin/node dist/index.js --transport websocket --port 300%i
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ep-mcp-server-%i
+
+# Environment
+Environment="NODE_ENV=production"
+Environment="LOG_LEVEL=info"
+Environment="PORT=300%i"
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/european-parliament-mcp-server/cache
+ReadWritePaths=/opt/european-parliament-mcp-server/logs
+
+# Resource limits
+LimitNOFILE=65536
+MemoryLimit=512M
+
+[Install]
+WantedBy=multi-user.target
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Enable and start services</strong>:</p>
+<pre><code class="bash"><span class="hl-0"># Enable 3 instances</span><br/><span class="hl-1">sudo</span><span class="hl-2"> </span><span class="hl-3">systemctl</span><span class="hl-2"> </span><span class="hl-3">enable</span><span class="hl-2"> </span><span class="hl-3">ep-mcp-server@{1..3}</span><br/><br/><span class="hl-0"># Start services</span><br/><span class="hl-1">sudo</span><span class="hl-2"> </span><span class="hl-3">systemctl</span><span class="hl-2"> </span><span class="hl-3">start</span><span class="hl-2"> </span><span class="hl-3">ep-mcp-server@{1..3}</span><br/><br/><span class="hl-0"># Check status</span><br/><span class="hl-1">sudo</span><span class="hl-2"> </span><span class="hl-3">systemctl</span><span class="hl-2"> </span><span class="hl-3">status</span><span class="hl-2"> </span><span class="hl-3">ep-mcp-server@</span><span class="hl-4">*</span><br/><br/><span class="hl-0"># View logs</span><br/><span class="hl-1">sudo</span><span class="hl-2"> </span><span class="hl-3">journalctl</span><span class="hl-2"> </span><span class="hl-4">-u</span><span class="hl-2"> </span><span class="hl-3">ep-mcp-server@</span><span class="hl-4">*</span><span class="hl-2"> </span><span class="hl-4">-f</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="3-monitoring" class="tsd-anchor-link">3. Monitoring<a href="#3-monitoring" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Prometheus metrics</strong> (if enabled):</p>
+<pre><code class="yaml"><span class="hl-0"># prometheus.yml</span><br/><span class="hl-19">scrape_configs</span><span class="hl-2">:</span><br/><span class="hl-2">  - </span><span class="hl-19">job_name</span><span class="hl-2">: </span><span class="hl-20">&#39;ep-mcp-server&#39;</span><br/><span class="hl-2">    </span><span class="hl-19">static_configs</span><span class="hl-2">:</span><br/><span class="hl-2">      - </span><span class="hl-19">targets</span><span class="hl-2">:</span><br/><span class="hl-2">          - </span><span class="hl-20">&#39;localhost:3001&#39;</span><br/><span class="hl-2">          - </span><span class="hl-20">&#39;localhost:3002&#39;</span><br/><span class="hl-2">          - </span><span class="hl-20">&#39;localhost:3003&#39;</span>
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Log aggregation with journald</strong>:</p>
+<pre><code class="bash"><span class="hl-0"># View all server logs</span><br/><span class="hl-1">sudo</span><span class="hl-2"> </span><span class="hl-3">journalctl</span><span class="hl-2"> </span><span class="hl-4">-u</span><span class="hl-2"> </span><span class="hl-3">&#39;ep-mcp-server@*&#39;</span><span class="hl-2"> </span><span class="hl-4">--since</span><span class="hl-2"> </span><span class="hl-3">&quot;1 hour ago&quot;</span><br/><br/><span class="hl-0"># Follow logs in real-time</span><br/><span class="hl-1">sudo</span><span class="hl-2"> </span><span class="hl-3">journalctl</span><span class="hl-2"> </span><span class="hl-4">-u</span><span class="hl-2"> </span><span class="hl-3">&#39;ep-mcp-server@*&#39;</span><span class="hl-2"> </span><span class="hl-4">-f</span><br/><br/><span class="hl-0"># Export logs</span><br/><span class="hl-1">sudo</span><span class="hl-2"> </span><span class="hl-3">journalctl</span><span class="hl-2"> </span><span class="hl-4">-u</span><span class="hl-2"> </span><span class="hl-3">&#39;ep-mcp-server@*&#39;</span><span class="hl-2"> </span><span class="hl-4">--since</span><span class="hl-2"> </span><span class="hl-3">&quot;24 hours ago&quot;</span><span class="hl-2"> &gt; </span><span class="hl-3">server.log</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="4-backup-and-recovery" class="tsd-anchor-link">4. Backup and Recovery<a href="#4-backup-and-recovery" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="bash"><span class="hl-0">#!/bin/bash</span><br/><span class="hl-0"># backup.sh - Backup cache and logs</span><br/><br/><span class="hl-7">DATE</span><span class="hl-2">=$(</span><span class="hl-1">date</span><span class="hl-2"> </span><span class="hl-3">+%Y%m%d_%H%M%S</span><span class="hl-2">)</span><br/><span class="hl-7">BACKUP_DIR</span><span class="hl-2">=</span><span class="hl-3">&quot;/backup/ep-mcp-server&quot;</span><br/><br/><span class="hl-0"># Create backup directory</span><br/><span class="hl-1">mkdir</span><span class="hl-2"> </span><span class="hl-4">-p</span><span class="hl-2"> </span><span class="hl-3">&quot;</span><span class="hl-7">$BACKUP_DIR</span><span class="hl-3">/</span><span class="hl-7">$DATE</span><span class="hl-3">&quot;</span><br/><br/><span class="hl-0"># Backup cache</span><br/><span class="hl-1">tar</span><span class="hl-2"> </span><span class="hl-4">-czf</span><span class="hl-2"> </span><span class="hl-3">&quot;</span><span class="hl-7">$BACKUP_DIR</span><span class="hl-3">/</span><span class="hl-7">$DATE</span><span class="hl-3">/cache.tar.gz&quot;</span><span class="hl-2"> </span><span class="hl-3">/opt/european-parliament-mcp-server/cache/</span><br/><br/><span class="hl-0"># Backup logs</span><br/><span class="hl-1">tar</span><span class="hl-2"> </span><span class="hl-4">-czf</span><span class="hl-2"> </span><span class="hl-3">&quot;</span><span class="hl-7">$BACKUP_DIR</span><span class="hl-3">/</span><span class="hl-7">$DATE</span><span class="hl-3">/logs.tar.gz&quot;</span><span class="hl-2"> </span><span class="hl-3">/opt/european-parliament-mcp-server/logs/</span><br/><br/><span class="hl-0"># Backup configuration</span><br/><span class="hl-1">cp</span><span class="hl-2"> </span><span class="hl-3">/etc/systemd/system/ep-mcp-server@.service</span><span class="hl-2"> </span><span class="hl-3">&quot;</span><span class="hl-7">$BACKUP_DIR</span><span class="hl-3">/</span><span class="hl-7">$DATE</span><span class="hl-3">/&quot;</span><br/><span class="hl-1">cp</span><span class="hl-2"> </span><span class="hl-3">/etc/nginx/sites-available/mcp-server</span><span class="hl-2"> </span><span class="hl-3">&quot;</span><span class="hl-7">$BACKUP_DIR</span><span class="hl-3">/</span><span class="hl-7">$DATE</span><span class="hl-3">/&quot;</span><br/><br/><span class="hl-0"># Keep only last 7 days</span><br/><span class="hl-1">find</span><span class="hl-2"> </span><span class="hl-3">&quot;</span><span class="hl-7">$BACKUP_DIR</span><span class="hl-3">&quot;</span><span class="hl-2"> </span><span class="hl-4">-type</span><span class="hl-2"> </span><span class="hl-3">d</span><span class="hl-2"> </span><span class="hl-4">-mtime</span><span class="hl-2"> </span><span class="hl-3">+7</span><span class="hl-2"> </span><span class="hl-4">-exec</span><span class="hl-2"> </span><span class="hl-3">rm</span><span class="hl-2"> </span><span class="hl-4">-rf</span><span class="hl-2"> </span><span class="hl-3">{}</span><span class="hl-2"> </span><span class="hl-3">+</span><br/><br/><span class="hl-1">echo</span><span class="hl-2"> </span><span class="hl-3">&quot;Backup completed: </span><span class="hl-7">$BACKUP_DIR</span><span class="hl-3">/</span><span class="hl-7">$DATE</span><span class="hl-3">&quot;</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="🔧-environment-variables" class="tsd-anchor-link">🔧 Environment Variables<a href="#🔧-environment-variables" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="available-variables" class="tsd-anchor-link">Available Variables<a href="#available-variables" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NODE_ENV</code></td>
+<td><code>development</code></td>
+<td>Environment mode (development/production)</td>
+</tr>
+<tr>
+<td><code>LOG_LEVEL</code></td>
+<td><code>info</code></td>
+<td>Logging level (debug/info/warn/error)</td>
+</tr>
+<tr>
+<td><code>PORT</code></td>
+<td><code>3000</code></td>
+<td>WebSocket server port</td>
+</tr>
+<tr>
+<td><code>CACHE_MAX_SIZE</code></td>
+<td><code>500</code></td>
+<td>Maximum cache entries</td>
+</tr>
+<tr>
+<td><code>CACHE_TTL</code></td>
+<td><code>900000</code></td>
+<td>Cache TTL in milliseconds (15 min)</td>
+</tr>
+<tr>
+<td><code>RATE_LIMIT_REQUESTS</code></td>
+<td><code>100</code></td>
+<td>Maximum requests per window</td>
+</tr>
+<tr>
+<td><code>RATE_LIMIT_WINDOW</code></td>
+<td><code>900000</code></td>
+<td>Rate limit window in ms (15 min)</td>
+</tr>
+<tr>
+<td><code>EP_API_BASE_URL</code></td>
+<td>(EP API)</td>
+<td>European Parliament API base URL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-configuration" class="tsd-anchor-link">Example Configuration<a href="#example-configuration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><strong>Development</strong>:</p>
+<pre><code class="bash"><span class="hl-4">export</span><span class="hl-2"> </span><span class="hl-7">NODE_ENV</span><span class="hl-2">=</span><span class="hl-7">development</span><br/><span class="hl-4">export</span><span class="hl-2"> </span><span class="hl-7">LOG_LEVEL</span><span class="hl-2">=</span><span class="hl-7">debug</span><br/><span class="hl-4">export</span><span class="hl-2"> </span><span class="hl-7">CACHE_TTL</span><span class="hl-2">=</span><span class="hl-6">60000</span><span class="hl-2">  </span><span class="hl-0"># 1 minute for testing</span>
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Production</strong>:</p>
+<pre><code class="bash"><span class="hl-4">export</span><span class="hl-2"> </span><span class="hl-7">NODE_ENV</span><span class="hl-2">=</span><span class="hl-7">production</span><br/><span class="hl-4">export</span><span class="hl-2"> </span><span class="hl-7">LOG_LEVEL</span><span class="hl-2">=</span><span class="hl-7">info</span><br/><span class="hl-4">export</span><span class="hl-2"> </span><span class="hl-7">CACHE_TTL</span><span class="hl-2">=</span><span class="hl-6">900000</span><span class="hl-2">  </span><span class="hl-0"># 15 minutes</span><br/><span class="hl-4">export</span><span class="hl-2"> </span><span class="hl-7">RATE_LIMIT_REQUESTS</span><span class="hl-2">=</span><span class="hl-6">100</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="🔍-troubleshooting" class="tsd-anchor-link">🔍 Troubleshooting<a href="#🔍-troubleshooting" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="server-wont-start" class="tsd-anchor-link">Server Won't Start<a href="#server-wont-start" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="bash"><span class="hl-0"># Check Node.js version</span><br/><span class="hl-1">node</span><span class="hl-2"> </span><span class="hl-4">--version</span><span class="hl-2">  </span><span class="hl-0"># Must be v25.x+</span><br/><br/><span class="hl-0"># Check if port is in use</span><br/><span class="hl-1">lsof</span><span class="hl-2"> </span><span class="hl-4">-i</span><span class="hl-2"> </span><span class="hl-3">:3000</span><br/><br/><span class="hl-0"># Check build</span><br/><span class="hl-1">test</span><span class="hl-2"> </span><span class="hl-4">-f</span><span class="hl-2"> </span><span class="hl-3">dist/index.js</span><span class="hl-2"> &amp;&amp; </span><span class="hl-1">echo</span><span class="hl-2"> </span><span class="hl-3">&quot;OK&quot;</span><span class="hl-2"> || </span><span class="hl-1">echo</span><span class="hl-2"> </span><span class="hl-3">&quot;Run npm run build&quot;</span><br/><br/><span class="hl-0"># Check dependencies</span><br/><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">list</span><span class="hl-2"> </span><span class="hl-4">--depth=0</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="high-memory-usage" class="tsd-anchor-link">High Memory Usage<a href="#high-memory-usage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="bash"><span class="hl-0"># Monitor memory</span><br/><span class="hl-1">watch</span><span class="hl-2"> </span><span class="hl-4">-n</span><span class="hl-2"> </span><span class="hl-6">1</span><span class="hl-2"> </span><span class="hl-3">&#39;ps aux | grep &quot;node.*index.js&quot;&#39;</span><br/><br/><span class="hl-0"># Reduce cache size</span><br/><span class="hl-4">export</span><span class="hl-2"> </span><span class="hl-7">CACHE_MAX_SIZE</span><span class="hl-2">=</span><span class="hl-6">100</span><br/><span class="hl-4">export</span><span class="hl-2"> </span><span class="hl-7">CACHE_TTL</span><span class="hl-2">=</span><span class="hl-6">300000</span><span class="hl-2">  </span><span class="hl-0"># 5 minutes</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="performance-issues" class="tsd-anchor-link">Performance Issues<a href="#performance-issues" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="bash"><span class="hl-0"># Enable debug logging</span><br/><span class="hl-4">export</span><span class="hl-2"> </span><span class="hl-7">LOG_LEVEL</span><span class="hl-2">=</span><span class="hl-7">debug</span><br/><br/><span class="hl-0"># Check EP API response time</span><br/><span class="hl-4">time</span><span class="hl-2"> curl -s https://data.europarl.europa.eu/api/v2/meps &gt; /dev/null</span><br/><br/><span class="hl-0"># Monitor with metrics</span><br/><span class="hl-1">curl</span><span class="hl-2"> </span><span class="hl-3">http://localhost:3000/metrics</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="📚-additional-resources" class="tsd-anchor-link">📚 Additional Resources<a href="#📚-additional-resources" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li><a href="API_USAGE_GUIDE.html">API Usage Guide</a></li>
+<li><a href="../media/ARCHITECTURE_DIAGRAMS.md">Architecture Diagrams</a></li>
+<li><a href="./TROUBLESHOOTING.md">Troubleshooting Guide</a></li>
+<li><a href="DEVELOPER_GUIDE.html">Developer Guide</a></li>
+<li><a href="PERFORMANCE_GUIDE.html">Performance Guide</a></li>
+</ul>
+<hr>
+<p align="center">
+  <strong>Built with ❤️ by <a href="https://hack23.com">Hack23 AB</a></strong><br>
+  <em>ISMS-compliant deployment demonstrating security excellence</em>
+</p></div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-alpha" name="alpha"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Alpha</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-beta" name="beta"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Beta</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#deployment-guide"><span>Deployment <wbr/>Guide</span></a><ul><li><a href="#📋-table-of-contents"><span>📋 <wbr/>Table of <wbr/>Contents</span></a></li><li><a href="#✅-prerequisites"><span>✅ <wbr/>Prerequisites</span></a></li><li><ul><li><a href="#required-software"><span>Required <wbr/>Software</span></a></li><li><a href="#build-requirements"><span>Build <wbr/>Requirements</span></a></li></ul></li><li><a href="#🖥️-claude-desktop-deployment"><span>🖥️ <wbr/>Claude <wbr/>Desktop <wbr/>Deployment</span></a></li><li><ul><li><a href="#1-build-the-server"><span>1. <wbr/>Build the <wbr/>Server</span></a></li><li><a href="#2-configure-claude-desktop"><span>2. <wbr/>Configure <wbr/>Claude <wbr/>Desktop</span></a></li><li><a href="#3-verify-installation"><span>3. <wbr/>Verify <wbr/>Installation</span></a></li><li><a href="#troubleshooting"><span>Troubleshooting</span></a></li></ul></li><li><a href="#📝-vs-code-extension-deployment"><span>📝 <wbr/>VS <wbr/>Code <wbr/>Extension <wbr/>Deployment</span></a></li><li><ul><li><a href="#1-install-mcp-extension"><span>1. <wbr/>Install <wbr/>MCP <wbr/>Extension</span></a></li><li><a href="#2-build-the-server"><span>2. <wbr/>Build the <wbr/>Server</span></a></li><li><a href="#3-configure-vs-code"><span>3. <wbr/>Configure <wbr/>VS <wbr/>Code</span></a></li><li><a href="#4-reload-vs-code"><span>4. <wbr/>Reload <wbr/>VS <wbr/>Code</span></a></li><li><a href="#5-verify-installation"><span>5. <wbr/>Verify <wbr/>Installation</span></a></li></ul></li><li><a href="#🐳-docker-deployment"><span>🐳 <wbr/>Docker <wbr/>Deployment</span></a></li><li><ul><li><a href="#1-create-dockerfile"><span>1. <wbr/>Create <wbr/>Dockerfile</span></a></li><li><a href="#2-create-docker-composeyml"><span>2. <wbr/>Create docker-<wbr/>compose.yml</span></a></li><li><a href="#3-build-and-run"><span>3. <wbr/>Build and <wbr/>Run</span></a></li><li><a href="#4-connect-mcp-client"><span>4. <wbr/>Connect <wbr/>MCP <wbr/>Client</span></a></li></ul></li><li><a href="#🚀-production-deployment"><span>🚀 <wbr/>Production <wbr/>Deployment</span></a></li><li><ul><li><a href="#architecture"><span>Architecture</span></a></li><li><a href="#1-nginx-load-balancer"><span>1. <wbr/>Nginx <wbr/>Load <wbr/>Balancer</span></a></li><li><a href="#2-systemd-service"><span>2. <wbr/>Systemd <wbr/>Service</span></a></li><li><a href="#3-monitoring"><span>3. <wbr/>Monitoring</span></a></li><li><a href="#4-backup-and-recovery"><span>4. <wbr/>Backup and <wbr/>Recovery</span></a></li></ul></li><li><a href="#🔧-environment-variables"><span>🔧 <wbr/>Environment <wbr/>Variables</span></a></li><li><ul><li><a href="#available-variables"><span>Available <wbr/>Variables</span></a></li><li><a href="#example-configuration"><span>Example <wbr/>Configuration</span></a></li></ul></li><li><a href="#🔍-troubleshooting"><span>🔍 <wbr/>Troubleshooting</span></a></li><li><ul><li><a href="#server-wont-start"><span>Server <wbr/>Won&#39;t <wbr/>Start</span></a></li><li><a href="#high-memory-usage"><span>High <wbr/>Memory <wbr/>Usage</span></a></li><li><a href="#performance-issues"><span>Performance <wbr/>Issues</span></a></li></ul></li><li><a href="#📚-additional-resources"><span>📚 <wbr/>Additional <wbr/>Resources</span></a></li></ul></div></details></div><div class="site-menu"><nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/ARCHITECTURE.md">Architecture</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DATA_MODEL.md">Data Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEVELOPER_GUIDE.md">Developer Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEPLOYMENT_GUIDE.md">Deployment Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/PERFORMANCE_GUIDE.md">Performance Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SWOT.md">SWOT Analysis</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/End-of-Life-Strategy.md">End-of-Life Strategy</a><a href="https://hack23.github.io/European-Parliament-MCP-Server/" class="tsd-nav-link">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server" class="tsd-nav-link">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md" class="tsd-nav-link">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC" class="tsd-nav-link">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md" class="tsd-nav-link">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md" class="tsd-nav-link">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md" class="tsd-nav-link">API Usage Guide</a></nav><nav class="tsd-navigation"><a href="../modules.html">European Parliament MCP Server API - v1.1.21</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

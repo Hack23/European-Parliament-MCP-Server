@@ -1,0 +1,155 @@
+name: Generate and Validate SBOM
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  generate-sbom:
+    name: Generate SBOM
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: "25"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Syft for SBOM generation
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Generate SBOM with Syft (SPDX format)
+        run: |
+          syft packages . \
+            --output spdx-json=sbom.spdx.json \
+            --output cyclonedx-json=sbom.cyclonedx.json
+
+      - name: Install SBOMQS for quality validation
+        run: |
+          go install github.com/interlynk-io/sbomqs@latest
+
+      - name: Validate SBOM quality
+        id: sbomqs
+        run: |
+          # Run SBOMQS and capture score
+          ~/go/bin/sbomqs score sbom.spdx.json --json > sbomqs-report.json
+          
+          # Extract score
+          SCORE=$(jq '.avg_score' sbomqs-report.json)
+          echo "SBOM Quality Score: $SCORE/10"
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+          
+          # Check minimum score requirement (7.0)
+          if (( $(echo "$SCORE < 7.0" | bc -l) )); then
+            echo "❌ SBOM quality score $SCORE is below required 7.0"
+            echo "📋 Quality report:"
+            jq '.checks' sbomqs-report.json
+            exit 1
+          fi
+          
+          echo "✅ SBOM quality score $SCORE meets requirement (≥7.0)"
+
+      - name: Generate SBOM quality badge
+        run: |
+          SCORE=${{ steps.sbomqs.outputs.score }}
+          # Generate badge JSON for shields.io
+          cat > sbom-quality-badge.json <<EOF
+          {
+            "schemaVersion": 1,
+            "label": "SBOM Quality",
+            "message": "${SCORE}/10",
+            "color": "$(if (( $(echo "$SCORE >= 8.0" | bc -l) )); then echo "brightgreen"; elif (( $(echo "$SCORE >= 7.0" | bc -l) )); then echo "green"; else echo "orange"; fi)"
+          }
+          EOF
+
+      - name: Upload SBOM artifacts
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v6.0.2
+        with:
+          name: sbom
+          path: |
+            sbom.spdx.json
+            sbom.cyclonedx.json
+            sbomqs-report.json
+            sbom-quality-badge.json
+
+      - name: Attach SBOM to Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.2.1
+        with:
+          files: |
+            sbom.spdx.json
+            sbom.cyclonedx.json
+            sbomqs-report.json
+
+      - name: Attest SBOM
+        if: github.event_name == 'release'
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
+        with:
+          subject-path: "sbom.spdx.json"
+          sbom-path: "sbom.spdx.json"
+
+  vulnerability-scan:
+    name: Vulnerability Scan
+    needs: generate-sbom
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
+
+      - name: Download SBOM
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: sbom
+
+      - name: Install Grype for vulnerability scanning
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Scan SBOM for vulnerabilities
+        run: |
+          grype sbom:sbom.spdx.json \
+            --output json \
+            --file vulnerability-report.json
+
+          # Check for critical vulnerabilities
+          CRITICAL=$(jq '[.matches[] | select(.vulnerability.severity == "Critical")] | length' vulnerability-report.json)
+          HIGH=$(jq '[.matches[] | select(.vulnerability.severity == "High")] | length' vulnerability-report.json)
+          
+          echo "🔍 Vulnerability Summary:"
+          echo "  Critical: $CRITICAL"
+          echo "  High: $HIGH"
+          
+          if [ "$CRITICAL" -gt 0 ]; then
+            echo "❌ Found $CRITICAL critical vulnerabilities"
+            jq '[.matches[] | select(.vulnerability.severity == "Critical")] | .[].vulnerability' vulnerability-report.json
+            exit 1
+          fi
+
+      - name: Upload vulnerability report
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v6.0.2
+        with:
+          name: vulnerability-report
+          path: vulnerability-report.json
