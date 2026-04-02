@@ -27,7 +27,7 @@ Create and maintain secure, efficient CI/CD pipelines using GitHub Actions for t
 | 3. Security Analysis | `codeql.yml` | Push, PR, Weekly | CodeQL SAST scanning |
 | 4. Integration Testing | `integration-tests.yml` | Push, PR, Daily | E2E tests against EP API |
 | 5. Release & Publish | `release.yml` | Tag `v*`, Manual | npm publish with attestation |
-| 6. Supply Chain | `sbom-generation.yml`, `slsa-provenance.yml` | Release | CycloneDX/SPDX SBOM, SLSA Level 3 |
+| 6. Supply Chain | `sbom-generation.yml`, `slsa-provenance.yml` | Push (main), Tag `v*`, Release publish, Manual | CycloneDX/SPDX SBOM, SLSA Level 3 |
 | 7. Continuous Monitoring | `scorecard.yml` | Push, Weekly | OpenSSF Scorecard |
 | 8. Repository Management | `setup-labels.yml`, `copilot-setup-steps.yml`, `refresh-stats.yml` | Manual, Push, Schedule | Labels, Copilot environment, Stats refresh |
 
@@ -49,14 +49,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: '25'
           cache: 'npm'
-      - uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
-        with:
-          egress-policy: audit
       - run: npm ci
       - run: npm run lint
       - run: npm run build
@@ -66,9 +66,9 @@ jobs:
 ## Security Best Practices (Enforced)
 
 - ✅ **Pin action versions with SHA hashes** — not tags (supply chain integrity)
-- ✅ **Use `npm ci`** — reproducible installs from lockfile
+- ✅ **Prefer `npm ci` in CI workflows** — reproducible installs from lockfile; some jobs may use `npm install` where needed
 - ✅ **Minimize GITHUB_TOKEN permissions** — per-job `permissions` blocks
-- ✅ **step-security/harden-runner** — egress auditing on all workflows
+- ✅ **step-security/harden-runner** — egress auditing on most workflows
 - ✅ **Dependency review** — block PRs introducing known vulnerabilities
 - ✅ **CodeQL weekly + on-push** — continuous SAST scanning
 - ✅ **SLSA Level 3 provenance** — verifiable build attestation

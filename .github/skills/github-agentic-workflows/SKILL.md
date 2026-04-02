@@ -231,7 +231,7 @@ const step2 = await assign_copilot_to_issue({
 
 MCP server configuration is defined in `.github/copilot-mcp.json`. Secret references (`${{ secrets.* }}`) are resolved by the Copilot runtime. See `.github/copilot-mcp.json` for the canonical configuration.
 
-**Supply chain note:** Pin `@modelcontextprotocol/server-github` to a specific version in production to prevent supply chain attacks when injecting privileged tokens.
+**Supply chain note:** This repo uses the GitHub MCP Insiders HTTP endpoint (`https://api.githubcopilot.com/mcp/insiders`) as configured in `.github/copilot-mcp.json`. For projects that invoke `@modelcontextprotocol/server-github` via `npx`, pin it to a specific version in production to reduce supply chain risk when injecting privileged tokens.
 
 ## OWASP Agentic Security
 
