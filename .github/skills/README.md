@@ -188,7 +188,7 @@ Document system architecture using C4 model abstraction levels. Covers:
 **Secure CI/CD with 12 GitHub Actions workflows — Node.js 25, TypeScript 6.0.2, SLSA Level 3**
 
 Create and maintain the 8-stage CI/CD pipeline for this MCP server. Covers:
-- 12 workflows: test-and-report, codeql, release, integration-tests, sbom, slsa, scorecard, refresh-stats
+- 12 workflows: test-and-report, codeql, release, integration-tests, sbom-generation, slsa-provenance, scorecard, refresh-stats, dependency-review, labeler, setup-labels, copilot-setup-steps
 - SHA-pinned actions, step-security/harden-runner egress auditing
 - npm publish with provenance attestation
 - Quality gates: 80%+ coverage, zero lint errors, 1130+ unit tests

@@ -33,8 +33,16 @@ export async function handleTool(args: z.infer<typeof Schema>) {
   return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
 }
 
-// Register in toolRegistry.ts
-registerTool("tool_name", Schema, handleTool).withCategory("core");
+// Export metadata object from tool module
+export const toolNameToolMetadata = {
+  name: "tool_name",
+  description: "Tool description",
+  inputSchema: zodToJsonSchema(Schema),
+  handler: handleTool
+};
+
+// Register in src/server/toolRegistry.ts:
+// withCategory(toolNameToolMetadata, 'core'),
 ```
 
 ## Tool Categories (61 total)

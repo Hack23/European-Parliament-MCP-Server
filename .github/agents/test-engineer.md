@@ -23,6 +23,12 @@ You are the Test Engineer for the European Parliament MCP Server.
 ## Test Pattern (MCP Tool)
 
 ```typescript
+// vi.mock() must be at module scope — Vitest hoists it before imports
+vi.mock('../clients/europeanParliamentClient.js', () => ({
+  epClient: { getMEPs: vi.fn() }
+}));
+import * as epClientModule from '../clients/europeanParliamentClient.js';
+
 describe('get_meps', () => {
   beforeEach(() => vi.clearAllMocks());
 
@@ -32,17 +38,13 @@ describe('get_meps', () => {
   });
 
   it('should return MCP response', async () => {
-    vi.mock('../clients/ep/baseClient', () => ({
-      fetchMEPs: vi.fn().mockResolvedValue([{ id: 'MEP-1' }])
-    }));
+    vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({ items: [{ id: 'MEP-1' }] });
     const result = await handleTool({ limit: 10 });
     expect(result.content[0].type).toBe('text');
   });
 
   it('should handle errors', async () => {
-    vi.mock('../clients/ep/baseClient', () => ({
-      fetchMEPs: vi.fn().mockRejectedValue(new Error('fail'))
-    }));
+    vi.mocked(epClientModule.epClient.getMEPs).mockRejectedValue(new Error('fail'));
     const result = await handleTool({ limit: 10 });
     expect(result.isError).toBe(true);
   });
