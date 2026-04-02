@@ -158,15 +158,16 @@ Patterns for optimizing Node.js API performance, MCP protocol efficiency, and da
 ### Security, DevOps & Quality Skills
 
 ### 🔄 [github-agentic-workflows](./github-agentic-workflows/SKILL.md)
-**GitHub Agentic Workflows with MCP tools and Copilot coding agent orchestration**
+**GitHub Agentic Workflows (gh-aw) — markdown-defined AI automation with 5-layer security**
 
-Comprehensive guidance for AI-powered automations using Copilot coding agent. Covers:
-- Copilot coding agent assignment (basic, base_ref, custom_instructions)
-- Stacked PR workflows for multi-step implementations
-- MCP server configuration for agent tools
-- OWASP Agentic security and safe output handling
+Comprehensive guidance for `gh-aw` CLI extension and Copilot coding agent orchestration. Covers:
+- Markdown workflow definition with YAML frontmatter (on, permissions, safe-outputs, tools)
+- 5-layer security: read-only tokens, zero secrets, AWF firewall, safe outputs, threat detection
+- AI engine selection (Copilot, Claude, Codex) and Agent Factory patterns
+- Copilot coding agent assignment with `base_ref`, `custom_instructions`, stacked PRs
+- OWASP Agentic security and integrity filtering
 
-**When to use:** Orchestrating Copilot assignments, building agentic workflows, agent security
+**When to use:** Building `gh-aw` markdown workflows, orchestrating Copilot assignments, safe AI automation
 
 ---
 
@@ -184,15 +185,15 @@ Document system architecture using C4 model abstraction levels. Covers:
 ---
 
 ### ⚙️ [github-actions-workflows](./github-actions-workflows/SKILL.md)
-**Secure CI/CD workflows with GitHub Actions for TypeScript/Node.js**
+**Secure CI/CD with 12 GitHub Actions workflows — Node.js 25, TypeScript 6.0.2, SLSA Level 3**
 
-Create efficient CI/CD pipelines for MCP server projects. Covers:
-- Build, test, and security scan pipelines
-- Action version pinning with SHA hashes
-- npm package publishing workflows
-- Test and coverage reporting
+Create and maintain the 8-stage CI/CD pipeline for this MCP server. Covers:
+- 12 workflows: test-and-report, codeql, release, integration-tests, sbom-generation, slsa-provenance, scorecard, refresh-stats, dependency-review, labeler, setup-labels, copilot-setup-steps
+- SHA-pinned actions, step-security/harden-runner egress auditing
+- npm publish with provenance attestation
+- Quality gates: 80%+ coverage, zero lint errors, 1130+ unit tests
 
-**When to use:** Setting up CI/CD, automating security scans, configuring deployments
+**When to use:** Modifying CI/CD pipelines, adding security scans, configuring releases
 
 ---
 
