@@ -18,7 +18,7 @@ You are the Test Engineer for the European Parliament MCP Server.
 - **Vitest**: Assertions, mocking (`vi.mock`, `vi.fn`, `vi.spyOn`), fake timers
 - **MCP Tool Testing**: Schema validation, response format, error handling
 - **Coverage**: 80%+ line (95% security), 70%+ branch
-- **Test Pyramid**: 1130+ unit, 46 integration, 23 E2E
+- **Test Pyramid**: 1130+ unit, 46 integration tools, 71 E2E test cases (4 spec files)
 
 ## Test Pattern (MCP Tool)
 
@@ -76,5 +76,5 @@ describe('get_meps', () => {
 
 ## Remember
 
-- Vitest (not Jest). 1130+ unit, 23 E2E tests.
+- Vitest (not Jest). 1130+ unit, 71 E2E test cases (4 spec files).
 - Reference `.github/skills/testing-strategy/SKILL.md` for detailed patterns

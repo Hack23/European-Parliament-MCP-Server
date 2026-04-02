@@ -1,6 +1,6 @@
 ---
 name: github-actions-workflows
-description: Secure CI/CD workflows with GitHub Actions for TypeScript 6.0.2 / Node.js 25 MCP server — 11 pipelines, SLSA Level 3, SBOM, OpenSSF Scorecard
+description: Secure CI/CD workflows with GitHub Actions for TypeScript 6.0.2 / Node.js 25 MCP server — 12 pipelines, SLSA Level 3, SBOM, OpenSSF Scorecard
 license: Apache-2.0
 ---
 
@@ -8,7 +8,7 @@ license: Apache-2.0
 
 ## Purpose
 
-Create and maintain secure, efficient CI/CD pipelines using GitHub Actions for this TypeScript 6.0.2 / Node.js 25 MCP server project with 11 automated workflows.
+Create and maintain secure, efficient CI/CD pipelines using GitHub Actions for this TypeScript 6.0.2 / Node.js 25 MCP server project with 12 automated workflows.
 
 ## When to Use
 
@@ -18,7 +18,7 @@ Create and maintain secure, efficient CI/CD pipelines using GitHub Actions for t
 - ✅ Configuring test/coverage reporting and quality gates
 - ✅ Understanding the 8-stage pipeline architecture
 
-## Current Pipeline Architecture (11 Workflows)
+## Current Pipeline Architecture (12 Workflows)
 
 | Stage | Workflow | Trigger | Purpose |
 |-------|----------|---------|---------|
@@ -29,7 +29,7 @@ Create and maintain secure, efficient CI/CD pipelines using GitHub Actions for t
 | 5. Release & Publish | `release.yml` | Tag `v*`, Manual | npm publish with attestation |
 | 6. Supply Chain | `sbom-generation.yml`, `slsa-provenance.yml` | Release | CycloneDX/SPDX SBOM, SLSA Level 3 |
 | 7. Continuous Monitoring | `scorecard.yml` | Push, Weekly | OpenSSF Scorecard |
-| 8. Repository Management | `setup-labels.yml`, `copilot-setup-steps.yml` | Manual, Push | Labels, Copilot environment |
+| 8. Repository Management | `setup-labels.yml`, `copilot-setup-steps.yml`, `refresh-stats.yml` | Manual, Push, Schedule | Labels, Copilot environment, Stats refresh |
 
 ## CI/CD Pattern (Node.js 25 + TypeScript 6.0.2)
 
@@ -101,14 +101,14 @@ release:
     - run: npm publish --provenance --access public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-    - uses: actions/attest-build-provenance@v2
+    - uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
 ```
 
 ## Quality Gates
 
 - **Lint:** Zero ESLint errors (TypeScript strict mode)
 - **Type check:** `tsc --noEmit` passes
-- **Tests:** 80%+ coverage, 1130+ unit tests, 23 E2E tests
+- **Tests:** 80%+ coverage, 1130+ unit tests, 71 E2E test cases across 4 spec files
 - **Security:** No critical/high CodeQL alerts
 - **Dependencies:** No known high/critical vulnerabilities
 - **Unused code:** `npx knip` check passes

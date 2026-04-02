@@ -12,7 +12,7 @@
 
 **European Parliament MCP Server** — Model Context Protocol server for European Parliament Open Data. TypeScript 6.0.2, Node.js 25, strict mode, Zod validation. ISMS-compliant (ISO 27001, NIST CSF 2.0, CIS Controls v8.1), GDPR-ready, SLSA Level 3.
 
-**Scale:** 61 MCP tools (7 core + 3 advanced + 15 OSINT + 8 phase 4 + 15 phase 5 + 13 feed) · 9 resources · 7 prompts · 1130+ unit tests · 23 E2E tests · 80%+ coverage · <200ms API responses.
+**Scale:** 61 MCP tools (7 core + 3 advanced + 15 OSINT + 8 phase 4 + 15 phase 5 + 13 feed) · 9 resources · 7 prompts · 1130+ unit tests · 71 E2E test cases · 80%+ coverage · <200ms API responses.
 
 **Data source:** European Parliament Open Data Portal API v2 (`https://data.europarl.europa.eu/api/v2/`).
 
@@ -103,7 +103,7 @@ export async function handleTool(args: z.infer<typeof Schema>) {
 
 api-integration-engineer, business-development-specialist, documentation-writer, european-parliament-specialist, frontend-specialist, intelligence-operative, isms-compliance-auditor, marketing-specialist, mcp-developer, performance-optimizer, product-task-agent, security-specialist, test-engineer, zod-schema-architect
 
-## CI/CD Pipeline (11 workflows)
+## CI/CD Pipeline (12 workflows)
 
 8-stage pipeline: Code Validation → Build & Test → Security Analysis → Integration Testing → Release & Publish → Supply Chain (SBOM/SLSA) → Continuous Monitoring (Scorecard) → Repository Management. See `WORKFLOWS.md` for details.
 
