@@ -51,7 +51,7 @@
   
   <!-- E2E Tests -->
   <a href="https://hack23.github.io/European-Parliament-MCP-Server/e2e-results/">
-    <img src="https://img.shields.io/badge/E2E%20Tests-23%20Passing-brightgreen?style=flat-square&logo=playwright" alt="E2E Test Results">
+    <img src="https://img.shields.io/badge/E2E%20Tests-71%20Passing-brightgreen?style=flat-square&logo=playwright" alt="E2E Test Results">
   </a>
   
   <!-- API Documentation -->
@@ -77,7 +77,7 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 - 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance
 - 🚀 **High Performance**: <200ms API responses, intelligent caching, rate limiting
 - 📊 **Type Safety**: TypeScript strict mode + Zod runtime validation
-- 🧪 **Well-Tested**: 80%+ code coverage, 1130+ unit tests, 23 E2E tests
+- 🧪 **Well-Tested**: 80%+ code coverage, 1130+ unit tests, 71 E2E test cases
 - 📚 **Complete Documentation**: Architecture, TypeDoc API (HTML + Markdown), security guidelines
 
 ---
