@@ -667,7 +667,7 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
     };
 
     return buildToolResponse(result);
-  } catch (error) {
+  } catch (error: unknown) {
     const toolError = error instanceof ToolError
       ? error
       : new ToolError({

@@ -82,6 +82,21 @@ describe('get_procedures_feed Tool', () => {
         expect.objectContaining({ processType: 'COD' })
       );
     });
+
+    it('should pass startDate to client with custom timeframe', async () => {
+      await handleGetProceduresFeed({ timeframe: 'custom', startDate: '2024-02-01' });
+
+      expect(epClientModule.epClient.getProceduresFeed).toHaveBeenCalledWith(
+        expect.objectContaining({ timeframe: 'custom', startDate: '2024-02-01' })
+      );
+    });
+
+    it('should not pass startDate when not provided', async () => {
+      await handleGetProceduresFeed({ timeframe: 'one-week' });
+
+      const callArgs = vi.mocked(epClientModule.epClient.getProceduresFeed).mock.calls[0]?.[0];
+      expect(callArgs).not.toHaveProperty('startDate');
+    });
   });
 
   describe('Error Handling', () => {

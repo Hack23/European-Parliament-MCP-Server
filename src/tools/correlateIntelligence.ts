@@ -204,9 +204,9 @@ function parseToolResult(result: ToolResult): unknown {
   }
   try {
     return JSON.parse(text ?? '{}');
-  } catch (error) {
+  } catch (error: unknown) {
     throw new Error(
-      `Failed to parse dependent tool result as JSON: ${(error as Error).message}`
+      `Failed to parse dependent tool result as JSON: ${toErrorMessage(error)}`
     );
   }
 }
@@ -874,7 +874,7 @@ export async function handleCorrelateIntelligence(
       dataFreshness: report.dataFreshness,
       sourceAttribution: report.sourceAttribution,
     });
-  } catch (validationError) {
+  } catch (validationError: unknown) {
     throw new ToolError({
       toolName: 'correlate_intelligence',
       operation: 'validateOsintOutput',

@@ -82,6 +82,21 @@ describe('get_events_feed Tool', () => {
         expect.objectContaining({ activityType: 'COMMITTEE' })
       );
     });
+
+    it('should pass startDate to client with custom timeframe', async () => {
+      await handleGetEventsFeed({ timeframe: 'custom', startDate: '2024-06-01' });
+
+      expect(epClientModule.epClient.getEventsFeed).toHaveBeenCalledWith(
+        expect.objectContaining({ timeframe: 'custom', startDate: '2024-06-01' })
+      );
+    });
+
+    it('should not pass startDate when not provided', async () => {
+      await handleGetEventsFeed({ timeframe: 'one-week' });
+
+      const callArgs = vi.mocked(epClientModule.epClient.getEventsFeed).mock.calls[0]?.[0];
+      expect(callArgs).not.toHaveProperty('startDate');
+    });
   });
 
   describe('Error Handling', () => {

@@ -288,7 +288,7 @@ export async function sentimentTracker(params: SentimentTrackerParams): Promise<
     };
 
     return buildToolResponse(result);
-  } catch (error) {
+  } catch (error: unknown) {
     return buildErrorResponse(
       error instanceof Error ? error : new Error(String(error)),
       'sentiment_tracker'

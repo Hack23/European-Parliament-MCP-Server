@@ -105,7 +105,7 @@ export async function handleSearchDocuments(
         text: JSON.stringify(validated, null, 2)
       }]
     };
-  } catch (error) {
+  } catch (error: unknown) {
     // Handle errors without exposing internal details
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to search documents: ${errorMessage}`);

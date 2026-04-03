@@ -122,7 +122,7 @@ export class CommitteeClient extends BaseEPClient {
       const committee = await this.resolveCommittee(searchTerm);
       auditLogger.logDataAccess(action, params, 1);
       return committee;
-    } catch (error) {
+    } catch (error: unknown) {
       auditLogger.logError(
         action,
         params,

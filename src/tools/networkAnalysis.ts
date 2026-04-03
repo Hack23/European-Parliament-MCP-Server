@@ -436,7 +436,7 @@ export async function networkAnalysis(params: NetworkAnalysisParams): Promise<To
     };
 
     return buildToolResponse(result);
-  } catch (error) {
+  } catch (error: unknown) {
     return buildErrorResponse(
       error instanceof Error ? error : new Error(String(error)),
       'network_analysis'

@@ -584,7 +584,7 @@ export class BaseEPClient {
       performanceMonitor.recordDuration('ep_api_request', performance.now() - requestStart);
       this.cache.set(cacheKey, data);
       return data;
-    } catch (error) {
+    } catch (error: unknown) {
       performanceMonitor.recordDuration('ep_api_request_failed', performance.now() - requestStart);
       throw this.toAPIError(error, endpoint);
     }

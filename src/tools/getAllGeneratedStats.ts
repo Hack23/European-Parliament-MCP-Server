@@ -277,7 +277,7 @@ export function getAllGeneratedStats(
     };
 
     return buildToolResponse(result);
-  } catch (error) {
+  } catch (error: unknown) {
     return buildErrorResponse(
       error instanceof Error ? error : new Error(String(error)),
       'get_all_generated_stats'

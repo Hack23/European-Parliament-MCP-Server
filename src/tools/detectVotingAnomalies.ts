@@ -357,7 +357,7 @@ export async function handleDetectVotingAnomalies(
     };
 
     return buildToolResponse(analysis);
-  } catch (error) {
+  } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to detect voting anomalies: ${errorMessage}`);
   }

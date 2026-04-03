@@ -171,7 +171,7 @@ export class MEPClient extends BaseEPClient {
 
       auditLogger.logDataAccess(action, params, result.data.length);
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       auditLogger.logError(
         action,
         params,
@@ -210,7 +210,7 @@ export class MEPClient extends BaseEPClient {
         return mepDetails;
       }
       throw new APIError(`MEP with ID ${id} not found`, 404);
-    } catch (error) {
+    } catch (error: unknown) {
       auditLogger.logError(
         action,
         params,
