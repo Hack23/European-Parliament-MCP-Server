@@ -82,6 +82,21 @@ describe('get_adopted_texts_feed Tool', () => {
         expect.objectContaining({ workType: 'RESOLUTION' })
       );
     });
+
+    it('should pass startDate to client with custom timeframe', async () => {
+      await handleGetAdoptedTextsFeed({ timeframe: 'custom', startDate: '2024-01-01' });
+
+      expect(epClientModule.epClient.getAdoptedTextsFeed).toHaveBeenCalledWith(
+        expect.objectContaining({ timeframe: 'custom', startDate: '2024-01-01' })
+      );
+    });
+
+    it('should not pass startDate when not provided', async () => {
+      await handleGetAdoptedTextsFeed({ timeframe: 'one-week' });
+
+      const callArgs = vi.mocked(epClientModule.epClient.getAdoptedTextsFeed).mock.calls[0]?.[0];
+      expect(callArgs).not.toHaveProperty('startDate');
+    });
   });
 
   describe('Error Handling', () => {

@@ -9,7 +9,8 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getSpeeches: vi.fn()
+    getSpeeches: vi.fn(),
+    getSpeechById: vi.fn()
   }
 }));
 
@@ -36,6 +37,18 @@ describe('get_speeches Tool', () => {
       limit: 50,
       offset: 0,
       hasMore: false
+    });
+
+    vi.mocked(epClientModule.epClient.getSpeechById).mockResolvedValue({
+      id: 'MTG-PL-2024-03-15-OTH-20390000',
+      title: 'Effectiveness of the EU sanctions on Russia (debate)',
+      speakerId: 'person/197537',
+      speakerName: '',
+      date: '2024-03-15',
+      type: 'def/ep-activities/PLENARY_DEBATE_SPEECH',
+      language: '',
+      text: '',
+      sessionReference: 'eli/dl/event/MTG-PL-2024-03-15-PVCRE-ITM-2'
     });
   });
 
@@ -132,6 +145,17 @@ describe('get_speeches Tool', () => {
   });
 
   describe('Client Invocation', () => {
+    it('should call getSpeechById when speechId is provided', async () => {
+      const result = await handleGetSpeeches({ speechId: 'MTG-PL-2024-03-15-OTH-20390000' });
+
+      expect(epClientModule.epClient.getSpeechById).toHaveBeenCalledWith('MTG-PL-2024-03-15-OTH-20390000');
+      expect(epClientModule.epClient.getSpeeches).not.toHaveBeenCalled();
+      expect(result).toHaveProperty('content');
+      const text = result.content[0]?.text ?? '{}';
+      const data = JSON.parse(text) as Record<string, unknown>;
+      expect(data).toHaveProperty('id', 'MTG-PL-2024-03-15-OTH-20390000');
+    });
+
     it('should pass date filters to client when provided', async () => {
       await handleGetSpeeches({ dateFrom: '2024-01-01', dateTo: '2024-06-30', limit: 10, offset: 5 });
 

@@ -1103,3 +1103,381 @@ describe('transformers with real EP API JSON-LD format', () => {
     expect(committee.name).toBe('ECON');
   });
 });
+
+// ─── Real EP API v2 Response Shape Tests ────────────────────────────────
+// These tests use exact response shapes from curl against the live EP API v2
+// to verify transformer correctness with real production data.
+
+describe('Real EP API v2 Response Shapes', () => {
+  describe('MEP list endpoint (/meps)', () => {
+    it('transforms real /meps list item (minimal shape)', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/meps?limit=1&format=application/ld+json'
+      const apiData = {
+        id: 'person/1',
+        type: 'Person',
+        identifier: '1',
+        label: 'Georg JARZEMBOWSKI',
+        familyName: 'Jarzembowski',
+        givenName: 'Georg',
+        sortLabel: 'JARZEMBOWSKI',
+      };
+      const mep = transformMEP(apiData);
+      expect(mep.id).toBe('person/1');
+      expect(mep.name).toBe('Georg JARZEMBOWSKI');
+      expect(mep.country).toBe('Unknown');
+      expect(mep.politicalGroup).toBe('Unknown');
+      expect(mep.active).toBe(false);
+    });
+
+    it('transforms real /meps list item with accented name', () => {
+      const apiData = {
+        id: 'person/2',
+        type: 'Person',
+        identifier: '2',
+        label: 'José María LAFUENTE LÓPEZ',
+        familyName: 'Lafuente López',
+        givenName: 'José María',
+        sortLabel: 'LAFUENTE LOPEZ',
+      };
+      const mep = transformMEP(apiData);
+      expect(mep.id).toBe('person/2');
+      expect(mep.name).toBe('José María LAFUENTE LÓPEZ');
+    });
+  });
+
+  describe('MEP show-current endpoint (/meps/show-current)', () => {
+    it('transforms real /meps/show-current item with country and group', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/meps/show-current?limit=1&format=application/ld+json'
+      const apiData = {
+        id: 'person/1294',
+        type: 'Person',
+        identifier: '1294',
+        label: 'Elio DI RUPO',
+        familyName: 'Di Rupo',
+        givenName: 'Elio',
+        sortLabel: 'DIRUPO',
+        'api:country-of-representation': 'BE',
+        'api:political-group': 'S&D',
+      };
+      const mep = transformMEP(apiData);
+      expect(mep.id).toBe('person/1294');
+      expect(mep.name).toBe('Elio DI RUPO');
+      expect(mep.country).toBe('BE');
+      expect(mep.politicalGroup).toBe('S&D');
+    });
+  });
+
+  describe('Meetings endpoint (/meetings)', () => {
+    it('transforms real /meetings plenary session', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/meetings?limit=1&year=2024&format=application/ld+json'
+      const apiData = {
+        id: 'eli/dl/event/MTG-PL-2024-01-15',
+        type: 'Activity',
+        activity_date: '2024-01-15',
+        activity_end_date: '2024-01-15T23:00:00+01:00',
+        activity_id: 'MTG-PL-2024-01-15',
+        activity_label: {
+          en: 'Monday, 15 January 2024',
+          fr: 'Lundi 15 janvier 2024',
+          de: 'Montag, 15. Januar 2024',
+        },
+        activity_start_date: '2024-01-15T01:00:00+01:00',
+        consists_of: [
+          'eli/dl/event/MTG-PL-2024-01-15-PVCRE-ITM-14',
+          'eli/dl/event/MTG-PL-2024-01-15-PVCRE-ITM-22',
+          'eli/dl/event/MTG-PL-2024-01-15-VOT-ITM-000003',
+        ],
+        documented_by_a_realization_of: ['eli/dl/doc/OJQ-9-2024-01-15'],
+        had_activity_type: 'def/ep-activities/PLENARY_SITTING',
+        number_of_attendees: 450,
+      };
+      const session = transformPlenarySession(apiData);
+      expect(session.id).toBe('MTG-PL-2024-01-15');
+      expect(session.date).toBe('2024-01-15');
+      expect(session.attendanceCount).toBe(450);
+      expect(session.agendaItems).toHaveLength(3);
+      expect(session.agendaItems[0]).toBe('eli/dl/event/MTG-PL-2024-01-15-PVCRE-ITM-14');
+      expect(session.documents).toHaveLength(1);
+      expect(session.documents?.[0]).toBe('eli/dl/doc/OJQ-9-2024-01-15');
+    });
+  });
+
+  describe('Procedures endpoint (/procedures)', () => {
+    it('transforms real /procedures list item', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/procedures?limit=1&year=2024&format=application/ld+json'
+      const apiData = {
+        id: 'eli/dl/proc/2024-0003',
+        type: 'Process',
+        process_id: '2024-0003',
+        process_type: 'def/ep-procedure-types/BUD',
+        label: '2024/0003(BUD)',
+      };
+      const procedure = transformProcedure(apiData);
+      // extractField picks process_id for both id and reference since it's the first scalar match
+      // from the ['identifier', 'id', 'process_id'] priority list; 'id' contains a slash URI
+      expect(procedure.id).toBeTruthy();
+      expect(procedure.title).toBe('2024/0003(BUD)');
+      expect(procedure.type).toBe('def/ep-procedure-types/BUD');
+    });
+
+    it('transforms COD procedure type', () => {
+      const apiData = {
+        id: 'eli/dl/proc/2024-0006',
+        type: 'Process',
+        process_id: '2024-0006',
+        process_type: 'def/ep-procedure-types/COD',
+        label: '2024/0006(COD)',
+      };
+      const procedure = transformProcedure(apiData);
+      expect(procedure.type).toBe('def/ep-procedure-types/COD');
+      expect(procedure.title).toBe('2024/0006(COD)');
+    });
+  });
+
+  describe('Speeches endpoint (/speeches)', () => {
+    it('transforms real /speeches debate speech', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/speeches?limit=1&year=2024&format=application/ld+json'
+      const apiData = {
+        id: 'eli/dl/event/MTG-PL-2023-10-17-OTH-20390000',
+        type: 'Activity',
+        activity_date: '2023-10-17',
+        activity_end_date: '2023-10-17T09:59:49+02:00',
+        activity_id: 'MTG-PL-2023-10-17-OTH-20390000',
+        activity_label: {
+          en: 'Effectiveness of the EU sanctions on Russia (debate)',
+          fr: 'Efficacité des sanctions de l\'UE à l\u2019encontre de la Russie (débat)',
+          de: 'Wirksamkeit der gegen Russland verhängten EU-Sanktionen (Aussprache)',
+        },
+        activity_start_date: '2023-10-17T09:58:49.056+02:00',
+        had_activity_type: 'def/ep-activities/PLENARY_DEBATE_SPEECH',
+        had_participation: {
+          id: 'eli/dl/participation/MTG-PL-2023-10-17-OTH-20390000_197537',
+          type: 'Participation',
+          had_participant_person: ['person/197537'],
+          participation_role: 'def/ep-roles/SPEAKER',
+        },
+        recorded_in_a_realization_of: [{
+          id: 'eli/dl/doc/CRE-9-2023-10-17-OTH-20390000',
+          type: 'WorkSubdivision',
+          is_part_of: 'eli/dl/doc/CRE-9-2023-10-17-ITM-002',
+          number: '2-039-0000',
+          type_subdivision: 'http://publications.europa.eu/resource/authority/subdivision/OTH',
+          identifier: 'CRE-9-2023-10-17-OTH-20390000',
+          notation_speechId: '20390000',
+          numbering: 36,
+          originalLanguage: ['http://publications.europa.eu/resource/authority/language/ENG'],
+        }],
+        inverse_consists_of: ['eli/dl/event/MTG-PL-2023-10-17-PVCRE-ITM-2'],
+      };
+      const speech = transformSpeech(apiData);
+      expect(speech.id).toBe('MTG-PL-2023-10-17-OTH-20390000');
+      expect(speech.title).toBe('Effectiveness of the EU sanctions on Russia (debate)');
+      expect(speech.speakerId).toBe('person/197537');
+      expect(speech.date).toBe('2023-10-17');
+      expect(speech.type).toBe('def/ep-activities/PLENARY_DEBATE_SPEECH');
+      expect(speech.sessionReference).toBe('eli/dl/event/MTG-PL-2023-10-17-PVCRE-ITM-2');
+    });
+  });
+
+  describe('Adopted Texts endpoint (/adopted-texts)', () => {
+    it('transforms real /adopted-texts item with nested expressions', () => {
+      // Simplified shape from: curl 'https://data.europarl.europa.eu/api/v2/adopted-texts?limit=1&year=2024&format=application/ld+json'
+      const apiData = {
+        id: 'eli/dl/doc/TA-9-2024-0104',
+        type: 'Work',
+        adopts: ['eli/dl/doc/A-9-2023-0389'],
+        parliamentary_term: 'org/ep-9',
+        document_date: '2024-02-28',
+        is_about: [
+          'http://eurovoc.europa.eu/c_427566b7',
+          'http://eurovoc.europa.eu/3450',
+          'http://eurovoc.europa.eu/5873',
+        ],
+        is_realized_by: [{
+          id: 'eli/dl/doc/TA-9-2024-0104/en',
+          type: 'Expression',
+          language: 'http://publications.europa.eu/resource/authority/language/ENG',
+          title: {
+            en: 'Implementation of the common foreign and security policy - annual report 2023',
+          },
+        }],
+        work_type: 'def/ep-document-types/TEXT_ADOPTED',
+        identifier: 'TA-9-2024-0104',
+      };
+      const text = transformAdoptedText(apiData);
+      expect(text.id).toBe('TA-9-2024-0104');
+      expect(text.reference).toBe('TA-9-2024-0104');
+      expect(text.type).toBe('def/ep-document-types/TEXT_ADOPTED');
+      expect(text.dateAdopted).toBe('2024-02-28');
+    });
+  });
+
+  describe('Parliamentary Questions endpoint (/parliamentary-questions)', () => {
+    it('transforms real /parliamentary-questions list item (minimal)', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/parliamentary-questions?limit=1&year=2024&format=application/ld+json'
+      const apiData = {
+        id: 'eli/dl/doc/E-10-2024-001357',
+        type: 'Work',
+        work_type: 'def/ep-document-types/QUESTION_WRITTEN',
+        identifier: 'E-10-2024-001357',
+      };
+      const question = transformParliamentaryQuestion(apiData);
+      // extractField prefers 'id' over 'identifier' in the field list
+      expect(question.id).toBe('eli/dl/doc/E-10-2024-001357');
+      expect(question.type).toBe('WRITTEN');
+    });
+  });
+
+  describe('Events endpoint (/events)', () => {
+    it('transforms real /events item', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/events?limit=1&year=2024&format=application/ld+json'
+      const apiData = {
+        id: 'eli/dl/event/1972-0003-ANPRO-1972-11-06',
+        type: 'Activity',
+        activity_id: '1972-0003-ANPRO-1972-11-06',
+        had_activity_type: 'def/ep-activities/REFERRAL',
+      };
+      const event = transformEvent(apiData);
+      expect(event.id).toBe('1972-0003-ANPRO-1972-11-06');
+      expect(event.type).toBe('def/ep-activities/REFERRAL');
+    });
+  });
+
+  describe('Corporate Bodies endpoint (/corporate-bodies/show-current)', () => {
+    it('transforms real /corporate-bodies/show-current item', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/corporate-bodies/show-current?limit=1&format=application/ld+json'
+      const apiData = {
+        id: 'org/3730',
+        type: 'Organization',
+        identifier: '3730',
+        label: 'STOA',
+      };
+      const committee = transformCorporateBody(apiData);
+      expect(committee.id).toBe('org/3730');
+      expect(committee.abbreviation).toBe('STOA');
+      expect(committee.name).toBe('STOA');
+    });
+
+    it('transforms corporate body with classification', () => {
+      const apiData = {
+        id: 'org/3901',
+        type: 'Organization',
+        identifier: '3901',
+        classification: 'def/ep-entities/NATIONAL_CHAMBER',
+      };
+      const committee = transformCorporateBody(apiData);
+      expect(committee.id).toBe('org/3901');
+      expect(committee.responsibilities).toContain('NATIONAL_CHAMBER');
+    });
+  });
+
+  describe('MEP Declarations endpoint (/meps-declarations)', () => {
+    it('transforms real /meps-declarations item with work_type', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/meps-declarations?limit=1&year=2024&format=application/ld+json'
+      const apiData = {
+        id: 'eli/dl/doc/DCI-28150-2024-12-03-420396',
+        type: 'Work',
+        parliamentary_term: 'org/ep-10',
+        document_date: '2024-12-03',
+        is_realized_by: [{
+          id: 'eli/dl/doc/DCI-28150-2024-12-03-420396/en',
+          type: 'Expression',
+          language: 'http://publications.europa.eu/resource/authority/language/ENG',
+          title: {
+            en: 'Declaration on awareness of conflicts of interest - Kinga GÁL - Shadow rapporteur for report - Committee on Foreign Affairs - 03-12-2024',
+          },
+        }],
+        work_type: 'def/ep-document-types/MEMBER_DECLARATION_INTEREST_CONFLICT',
+        identifier: 'DCI-28150-2024-12-03-420396',
+        publisher: 'org/EU_PARLIAMENT',
+        title_dcterms: {
+          en: 'Declaration on awareness of conflicts of interest - Kinga GÁL - Shadow rapporteur for report - Committee on Foreign Affairs - 03-12-2024',
+          fr: 'Déclaration de connaissance de conflits d\u2019intérêts - Kinga GÁL - Rapporteur fictif pour rapport - Commission des affaires étrangères - 03-12-2024',
+        },
+      };
+      const declaration = transformMEPDeclaration(apiData);
+      expect(declaration.id).toBe('DCI-28150-2024-12-03-420396');
+      expect(declaration.title).toContain('Declaration on awareness of conflicts of interest');
+      expect(declaration.type).toBe('def/ep-document-types/MEMBER_DECLARATION_INTEREST_CONFLICT');
+      expect(declaration.dateFiled).toBe('2024-12-03');
+    });
+  });
+
+  describe('Controlled Vocabularies endpoint (/controlled-vocabularies)', () => {
+    it('transforms vocabulary as document (minimal shape)', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/controlled-vocabularies?limit=1&format=application/ld+json'
+      const apiData = {
+        id: 'def/ep-document-types',
+        type: 'ConceptScheme',
+        versionInfo: '20260131_1',
+      };
+      // Controlled vocabularies go through transformDocument
+      const doc = transformDocument(apiData);
+      expect(doc.id).toBe('def/ep-document-types');
+    });
+  });
+
+  describe('Feed endpoint response shapes', () => {
+    it('transforms feed MEP item (same as /meps list item)', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/meps/feed?timeframe=one-week&format=application/ld+json'
+      const apiData = {
+        id: 'person/28150',
+        type: 'Person',
+        identifier: '28150',
+        label: 'Kinga GÁL',
+        familyName: 'Gál',
+        givenName: 'Kinga',
+        sortLabel: 'GAL',
+      };
+      const mep = transformMEP(apiData);
+      expect(mep.id).toBe('person/28150');
+      expect(mep.name).toBe('Kinga GÁL');
+    });
+
+    it('transforms feed adopted-text item (minimal shape)', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/adopted-texts/feed?timeframe=one-week&format=application/ld+json'
+      const apiData = {
+        id: 'eli/dl/doc/TA-10-2025-0279',
+        type: 'Work',
+        work_type: 'def/ep-document-types/TEXT_ADOPTED',
+        identifier: 'TA-10-2025-0279',
+        label: 'T10-0279/2025',
+      };
+      const text = transformAdoptedText(apiData);
+      expect(text.id).toBe('TA-10-2025-0279');
+      expect(text.title).toBe('T10-0279/2025');
+      expect(text.reference).toBe('TA-10-2025-0279');
+      expect(text.type).toBe('def/ep-document-types/TEXT_ADOPTED');
+    });
+
+    it('transforms feed declarations item (minimal shape)', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/meps-declarations/feed?timeframe=one-week&format=application/ld+json'
+      const apiData = {
+        id: 'eli/dl/doc/DCI-106936-2026-04-01-546295',
+        type: 'Work',
+        work_type: 'def/ep-document-types/MEMBER_DECLARATION_INTEREST_CONFLICT',
+        identifier: 'DCI-106936-2026-04-01-546295',
+        label: 'DCI-106936-2026-04-01-546295',
+      };
+      const declaration = transformMEPDeclaration(apiData);
+      expect(declaration.id).toBe('DCI-106936-2026-04-01-546295');
+      expect(declaration.type).toBe('def/ep-document-types/MEMBER_DECLARATION_INTEREST_CONFLICT');
+    });
+
+    it('transforms feed corporate-bodies item', () => {
+      // Exact shape from: curl 'https://data.europarl.europa.eu/api/v2/corporate-bodies/feed?timeframe=one-week&format=application/ld+json'
+      const apiData = {
+        id: 'org/7875',
+        type: 'Organization',
+        identifier: '7875',
+        label: 'CJ52',
+        classification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_JOINT',
+        linkedTo: ['org/6579', 'org/6572'],
+      };
+      const committee = transformCorporateBody(apiData);
+      expect(committee.id).toBe('org/7875');
+      expect(committee.abbreviation).toBe('CJ52');
+      expect(committee.responsibilities).toContain('COMMITTEE_PARLIAMENTARY_JOINT');
+    });
+  });
+});

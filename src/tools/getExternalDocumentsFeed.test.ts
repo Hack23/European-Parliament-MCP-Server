@@ -82,6 +82,21 @@ describe('get_external_documents_feed Tool', () => {
         expect.objectContaining({ workType: 'REPORT' })
       );
     });
+
+    it('should pass startDate to client with custom timeframe', async () => {
+      await handleGetExternalDocumentsFeed({ timeframe: 'custom', startDate: '2024-03-15' });
+
+      expect(epClientModule.epClient.getExternalDocumentsFeed).toHaveBeenCalledWith(
+        expect.objectContaining({ timeframe: 'custom', startDate: '2024-03-15' })
+      );
+    });
+
+    it('should not pass startDate when not provided', async () => {
+      await handleGetExternalDocumentsFeed({ timeframe: 'one-week' });
+
+      const callArgs = vi.mocked(epClientModule.epClient.getExternalDocumentsFeed).mock.calls[0]?.[0];
+      expect(callArgs).not.toHaveProperty('startDate');
+    });
   });
 
   describe('Error Handling', () => {
