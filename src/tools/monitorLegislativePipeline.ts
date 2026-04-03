@@ -331,7 +331,7 @@ export async function handleMonitorLegislativePipeline(
     };
 
     return { content: [{ type: 'text', text: JSON.stringify(analysis, null, 2) }] };
-  } catch (error) {
+  } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to monitor legislative pipeline: ${errorMessage}`);
   }

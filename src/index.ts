@@ -183,7 +183,7 @@ export class EuropeanParliamentMCPServer {
 
       try {
         return await this.dispatchToolCall(name, args);
-      } catch (error) {
+      } catch (error: unknown) {
         // MCP best practice: Convert ALL tool errors to in-band MCP error responses
         // with isError: true, so clients (including LLMs) receive a well-formed
         // ToolResult with a readable error message instead of an opaque JSON-RPC
@@ -206,7 +206,7 @@ export class EuropeanParliamentMCPServer {
 
       try {
         return Promise.resolve(handleGetPrompt(name, args));
-      } catch (error) {
+      } catch (error: unknown) {
         console.error(`[ERROR] Prompt ${name} failed:`, error);
         if (error instanceof Error) {
           throw error;
@@ -228,7 +228,7 @@ export class EuropeanParliamentMCPServer {
 
       try {
         return await handleReadResource(uri);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error(`[ERROR] Resource ${uri} failed:`, error);
         if (error instanceof Error) {
           throw error;

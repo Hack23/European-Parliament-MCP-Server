@@ -105,7 +105,7 @@ export async function handleGetMEPs(
     const validated = outputSchema.parse(result);
     
     return buildToolResponse(validated);
-  } catch (error) {
+  } catch (error: unknown) {
     // Handle errors without exposing internal details
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to retrieve MEPs: ${errorMessage}`);

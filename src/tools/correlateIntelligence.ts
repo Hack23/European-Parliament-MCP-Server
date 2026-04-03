@@ -204,7 +204,7 @@ function parseToolResult(result: ToolResult): unknown {
   }
   try {
     return JSON.parse(text ?? '{}');
-  } catch (error) {
+  } catch (error: unknown) {
     throw new Error(
       `Failed to parse dependent tool result as JSON: ${(error as Error).message}`
     );

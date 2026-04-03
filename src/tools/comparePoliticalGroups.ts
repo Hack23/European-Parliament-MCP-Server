@@ -227,7 +227,7 @@ export async function handleComparePoliticalGroups(
     };
 
     return buildToolResponse(comparison);
-  } catch (error) {
+  } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to compare political groups: ${errorMessage}`);
   }

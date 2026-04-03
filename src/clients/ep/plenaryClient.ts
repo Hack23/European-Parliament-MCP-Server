@@ -131,7 +131,7 @@ export class PlenaryClient extends BaseEPClient {
 
       auditLogger.logDataAccess(action, params, result.data.length);
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       auditLogger.logError(
         action,
         params,

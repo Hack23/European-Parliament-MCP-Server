@@ -94,7 +94,7 @@ export async function handleGetVotingRecords(
         text: JSON.stringify(responsePayload, null, 2)
       }]
     };
-  } catch (error) {
+  } catch (error: unknown) {
     // Handle errors without exposing internal details
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to retrieve voting records: ${errorMessage}`);

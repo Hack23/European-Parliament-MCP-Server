@@ -304,7 +304,7 @@ export async function withRetry<T>(
         ? await withTimeout(fn(), timeoutMs, timeoutErrorMessage)
         : await fn();
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       lastError = error;
       
       // Don't retry timeout errors

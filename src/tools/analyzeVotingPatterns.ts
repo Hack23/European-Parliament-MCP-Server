@@ -190,7 +190,7 @@ export async function handleAnalyzeVotingPatterns(
     };
     
     return buildToolResponse(analysis);
-  } catch (error) {
+  } catch (error: unknown) {
     throw new ToolError({
       toolName: 'analyze_voting_patterns',
       operation: 'fetchVotingData',

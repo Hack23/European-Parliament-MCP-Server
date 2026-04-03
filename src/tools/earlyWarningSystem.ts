@@ -364,7 +364,7 @@ export async function earlyWarningSystem(params: EarlyWarningSystemParams): Prom
     };
 
     return buildToolResponse(result);
-  } catch (error) {
+  } catch (error: unknown) {
     return buildErrorResponse(
       error instanceof Error ? error : new Error(String(error)),
       'early_warning_system'

@@ -266,7 +266,7 @@ export async function handleAnalyzeLegislativeEffectiveness(
     };
 
     return buildToolResponse(analysis);
-  } catch (error) {
+  } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to analyze legislative effectiveness: ${errorMessage}`);
   }

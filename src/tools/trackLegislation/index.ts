@@ -96,7 +96,7 @@ export async function handleTrackLegislation(
         text: JSON.stringify(tracking, null, 2)
       }]
     };
-  } catch (error) {
+  } catch (error: unknown) {
     throw new ToolError({
       toolName: 'track_legislation',
       operation: 'fetchProcedure',
