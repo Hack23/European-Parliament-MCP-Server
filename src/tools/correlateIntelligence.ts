@@ -874,7 +874,7 @@ export async function handleCorrelateIntelligence(
       dataFreshness: report.dataFreshness,
       sourceAttribution: report.sourceAttribution,
     });
-  } catch (validationError) {
+  } catch (validationError: unknown) {
     throw new ToolError({
       toolName: 'correlate_intelligence',
       operation: 'validateOsintOutput',

@@ -284,7 +284,7 @@ export class EuropeanParliamentMCPServer {
 
     try {
       await this.server.connect(transport);
-    } catch (connectError) {
+    } catch (connectError: unknown) {
       console.error('[FATAL] Failed to connect MCP transport:', connectError);
       throw connectError;
     }
