@@ -82,6 +82,21 @@ describe('get_mep_declarations_feed Tool', () => {
         expect.objectContaining({ workType: 'FINANCIAL' })
       );
     });
+
+    it('should pass startDate to client with custom timeframe', async () => {
+      await handleGetMEPDeclarationsFeed({ timeframe: 'custom', startDate: '2024-01-15' });
+
+      expect(epClientModule.epClient.getMEPDeclarationsFeed).toHaveBeenCalledWith(
+        expect.objectContaining({ timeframe: 'custom', startDate: '2024-01-15' })
+      );
+    });
+
+    it('should not pass startDate when not provided', async () => {
+      await handleGetMEPDeclarationsFeed({ timeframe: 'one-week' });
+
+      const callArgs = vi.mocked(epClientModule.epClient.getMEPDeclarationsFeed).mock.calls[0]?.[0];
+      expect(callArgs).not.toHaveProperty('startDate');
+    });
   });
 
   describe('Error Handling', () => {
