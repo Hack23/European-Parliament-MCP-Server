@@ -1,0 +1,372 @@
+{
+  "name": "european-parliament-mcp-server",
+  "display_name": "European Parliament MCP Server",
+  "description": "Model Context Protocol server providing AI assistants with structured access to European Parliament open data — MEPs, plenary sessions, committees, legislative documents, voting records, and parliamentary questions through 61 tools, 9 resources, and 7 prompts.",
+  "repository": "https://github.com/Hack23/European-Parliament-MCP-Server",
+  "homepage": "https://hack23.github.io/European-Parliament-MCP-Server/",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Hack23 AB",
+    "url": "https://hack23.com"
+  },
+  "is_official": true,
+  "packages": [
+    {
+      "registry_name": "npm",
+      "name": "european-parliament-mcp-server",
+      "version": "1.1.25"
+    }
+  ],
+  "remotes": [
+    {
+      "transport_type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "european-parliament-mcp-server"
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "name": "get_meps",
+      "description": "Retrieve Members of European Parliament with optional filters (country, political group, committee, active status). Returns paginated results with MEP details including name, country, political group, committees, and contact information."
+    },
+    {
+      "name": "get_mep_details",
+      "description": "Retrieve detailed information about a specific Member of European Parliament including biography, contact information, committee memberships, voting statistics, and parliamentary activities. Personal data access is logged for GDPR compliance."
+    },
+    {
+      "name": "get_plenary_sessions",
+      "description": "Retrieve European Parliament plenary sessions/meetings. Supports single meeting lookup by eventId or list with year, date, and location filters. Returns session details including date, location, agenda items, voting records, and attendance statistics."
+    },
+    {
+      "name": "get_voting_records",
+      "description": "Retrieve voting records from European Parliament plenary sessions. Filter by session, MEP, topic, or date range. Returns vote counts (for/against/abstain), final result, and optionally individual MEP votes."
+    },
+    {
+      "name": "search_documents",
+      "description": "Search European Parliament legislative documents by keyword, or retrieve a single document by docId. Filter by document type (REPORT, RESOLUTION, DECISION, DIRECTIVE, REGULATION, OPINION), date range, and committee. Returns document metadata including title, authors, status, and PDF/XML links."
+    },
+    {
+      "name": "get_committee_info",
+      "description": "Retrieve detailed information about EP corporate bodies/committees. Query by ID, abbreviation, or set showCurrent=true for all current active bodies. Returns composition, chair, vice-chairs, members, meeting schedules, and areas of responsibility."
+    },
+    {
+      "name": "get_parliamentary_questions",
+      "description": "Retrieve European Parliament questions (written and oral) submitted by MEPs, or a single question by docId. Filter by question type, author, topic, status (pending/answered), and date range. Returns question text, answers if available, and metadata."
+    },
+    {
+      "name": "analyze_voting_patterns",
+      "description": "Analyze MEP voting behavior including voting alignment with political group, cross-party voting patterns, attendance rates, and topic-based voting analysis. Returns comprehensive voting statistics and patterns over a specified time period."
+    },
+    {
+      "name": "track_legislation",
+      "description": "Track European Parliament legislative procedure progress including current status, timeline of stages, committee assignments, amendments, voting records, and next steps. Provides comprehensive overview of legislation journey from proposal to adoption."
+    },
+    {
+      "name": "generate_report",
+      "description": "Generate comprehensive analytical reports on European Parliament data. Supports MEP activity reports, committee performance reports, voting statistics, and legislation progress reports. Returns structured report with summary, sections, statistics, and recommendations."
+    },
+    {
+      "name": "assess_mep_influence",
+      "description": "Compute MEP influence score using a 5-dimension weighted model: Voting Activity (25%), Legislative Output (25%), Committee Engagement (20%), Parliamentary Oversight (15%), Coalition Building (15%). Returns overall score, rank, dimension breakdowns, and computed attributes including participation rate, loyalty score, diversity index, and leadership indicator."
+    },
+    {
+      "name": "analyze_coalition_dynamics",
+      "description": "Analyze political group coalition dynamics including cohesion rates, cross-party alliances, defection rates, and stress indicators. Computes parliamentary fragmentation index, effective number of parties, grand coalition viability, and opposition strength. Uses CIA Coalition Analysis methodology."
+    },
+    {
+      "name": "detect_voting_anomalies",
+      "description": "Detect unusual voting patterns including party defections, abstention spikes, and low attendance anomalies. Configurable sensitivity threshold with severity classification (HIGH/MEDIUM/LOW). Returns anomaly details, group stability score, defection trend, and risk level assessment."
+    },
+    {
+      "name": "compare_political_groups",
+      "description": "Compare political groups across multiple dimensions: voting discipline, activity level, legislative output, attendance, and cohesion. Returns rankings, computed performance scores, seat share, effectiveness per member, parliamentary balance index, and competitive index."
+    },
+    {
+      "name": "analyze_legislative_effectiveness",
+      "description": "Analyze legislative effectiveness of an MEP or committee. Computes productivity, quality, and impact scores from reports authored, amendments adopted, and voting participation. Returns effectiveness ranking, peer benchmarks, amendment success rate, output per month, and percentile comparison."
+    },
+    {
+      "name": "monitor_legislative_pipeline",
+      "description": "Monitor legislative pipeline status with bottleneck detection and timeline forecasting. Tracks procedures through stages (proposal → committee → plenary → trilogue → adoption). Returns pipeline health score, throughput rate, bottleneck index, stalled procedure rate, and legislative momentum assessment."
+    },
+    {
+      "name": "analyze_committee_activity",
+      "description": "Analyze European Parliament committee workload, meeting frequency, document production, legislative output, and member engagement. Provides intelligence on committee productivity and policy impact."
+    },
+    {
+      "name": "track_mep_attendance",
+      "description": "Track and analyze MEP attendance patterns across plenary sessions. Provides attendance rates, trends, and engagement categorization. Filter by individual MEP, country, or political group."
+    },
+    {
+      "name": "analyze_country_delegation",
+      "description": "Analyze a country's MEP delegation in the European Parliament — political group distribution, voting behavior, committee presence, and national cohesion. Reveals national interest patterns that cut across party lines."
+    },
+    {
+      "name": "generate_political_landscape",
+      "description": "Generate a comprehensive political landscape overview of the European Parliament — group sizes, seat shares, coalition dynamics, bloc analysis, and power balance. Single-call situational awareness for strategic intelligence."
+    },
+    {
+      "name": "network_analysis",
+      "description": "MEP relationship network mapping using committee co-membership. Computes centrality scores, cluster assignments, bridging MEPs, and network density metrics. Identifies informal power structures and cross-party collaboration pathways. NOTE: edges are derived from shared committee membership only; voting-similarity edges are reserved for a future version."
+    },
+    {
+      "name": "sentiment_tracker",
+      "description": "Track political group institutional-positioning scores based on seat-share proxy (not direct voting cohesion data, which is unavailable from the EP API). Computes scores (-1 to +1), polarization index, and identifies consensus and divisive topics. NOTE: timeframe parameter is informational-only; scores always reflect current group composition."
+    },
+    {
+      "name": "early_warning_system",
+      "description": "Detect emerging political shifts, coalition fracture signals, and unusual patterns. Generates warnings with severity levels (CRITICAL/HIGH/MEDIUM/LOW), computes stability score (0-100), trend indicators, and overall risk level. Configurable sensitivity and focus area."
+    },
+    {
+      "name": "comparative_intelligence",
+      "description": "Cross-reference 2-10 MEP activities across voting, committee, legislative, and attendance dimensions. Returns ranked profiles, correlation matrix, outlier detection, and cluster analysis for comprehensive comparative intelligence."
+    },
+    {
+      "name": "correlate_intelligence",
+      "description": "Cross-tool OSINT intelligence correlation engine. Combines outputs from assess_mep_influence + detect_voting_anomalies (ELEVATED_ATTENTION alerts), early_warning_system + analyze_coalition_dynamics (COALITION_FRACTURE alerts), and optionally network_analysis + comparative_intelligence (COMPREHENSIVE_PROFILE alerts). Returns consolidated intelligence alerts with evidence chains and recommendations."
+    },
+    {
+      "name": "get_current_meps",
+      "description": "Get currently active Members of European Parliament (today's date). Returns only MEPs with active mandates. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_speeches",
+      "description": "Get European Parliament plenary speeches and debate contributions. Supports single speech lookup by speechId or list with year or date range filtering. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_procedures",
+      "description": "Get European Parliament legislative procedures. Supports single procedure lookup by processId or list with year filter. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_adopted_texts",
+      "description": "Get European Parliament adopted texts including legislative resolutions, positions, and non-legislative resolutions. Supports single document lookup by docId or list with year filter. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_events",
+      "description": "Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or list with year or date range filtering. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_meeting_activities",
+      "description": "Get activities linked to a specific EP plenary sitting (debates, votes, presentations). Requires a sitting ID. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_meeting_decisions",
+      "description": "Get decisions made in a specific EP plenary sitting. Returns adopted decisions and voting outcomes. Requires a sitting ID. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_mep_declarations",
+      "description": "Get MEP declarations of financial interests filed under the Rules of Procedure. Supports single declaration lookup by docId or list with year filter. Data source: European Parliament Open Data Portal. GDPR: Access is audit-logged."
+    },
+    {
+      "name": "get_incoming_meps",
+      "description": "Get incoming Members of European Parliament for the current parliamentary term. Returns MEPs who are newly joining. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_outgoing_meps",
+      "description": "Get outgoing Members of European Parliament for the current parliamentary term. Returns MEPs who are leaving parliament. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_homonym_meps",
+      "description": "Get homonym Members of European Parliament (MEPs with identical names) for the current parliamentary term. Useful for name disambiguation. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_plenary_documents",
+      "description": "Get European Parliament plenary documents. Supports single document lookup by docId or list with year filter. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_committee_documents",
+      "description": "Get European Parliament committee documents. Supports single document lookup by docId or list with year filter. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_plenary_session_documents",
+      "description": "Get European Parliament plenary session documents (agendas, minutes, voting lists). Supports single document lookup by docId. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_plenary_session_document_items",
+      "description": "Get European Parliament plenary session document items. Returns individual items within plenary session documents. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_controlled_vocabularies",
+      "description": "Get European Parliament controlled vocabularies (standardized classification terms). Supports single vocabulary lookup by vocId. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_external_documents",
+      "description": "Get external documents (non-EP documents such as Council positions, Commission proposals) from the European Parliament data portal. Supports single document lookup by docId. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_meeting_foreseen_activities",
+      "description": "Get foreseen (planned) activities for a specific EP meeting/plenary sitting. Returns scheduled agenda items. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_procedure_events",
+      "description": "Get events linked to a specific EP legislative procedure (hearings, debates, votes). Returns the timeline of events for a procedure. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_meeting_plenary_session_documents",
+      "description": "Get plenary session documents for a specific EP meeting/plenary sitting. Returns session documents associated with the meeting. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_meeting_plenary_session_document_items",
+      "description": "Get plenary session document items for a specific EP meeting/plenary sitting. Returns individual agenda item documents for the meeting. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_all_generated_stats",
+      "description": "Retrieve precomputed European Parliament activity statistics (2004-2026) with monthly breakdowns, category rankings, percentile scores, statistical analysis, political landscape history (group composition, fragmentation index, coalition dynamics), analytical commentary, and trend-based predictions for 2027-2031. Data covers parliamentary terms EP6-EP10 including plenary sessions, legislative acts, roll-call votes, committee meetings, parliamentary questions, resolutions, speeches, adopted texts, procedures, events, documents, MEP turnover, and declarations. Static data refreshed weekly by agentic workflow — no live API calls."
+    },
+    {
+      "name": "get_meps_feed",
+      "description": "Get recently updated MEPs from the European Parliament feed. Returns MEPs published or updated during the specified timeframe. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_events_feed",
+      "description": "Get recently updated European Parliament events from the feed. Returns events published or updated during the specified timeframe. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_procedures_feed",
+      "description": "Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_adopted_texts_feed",
+      "description": "Get recently updated European Parliament adopted texts from the feed. Returns adopted texts published or updated during the specified timeframe. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_mep_declarations_feed",
+      "description": "Get recently updated MEP declarations from the feed. Returns declarations published or updated during the specified timeframe. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_documents_feed",
+      "description": "Get recently updated European Parliament documents from the feed. Returns documents published or updated during the specified timeframe. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_plenary_documents_feed",
+      "description": "Get recently updated plenary documents from the feed. Returns plenary documents published or updated during the specified timeframe. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_committee_documents_feed",
+      "description": "Get recently updated committee documents from the feed. Returns committee documents published or updated during the specified timeframe. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_plenary_session_documents_feed",
+      "description": "Get recently updated plenary session documents from the feed. Returns plenary session documents published or updated during the specified timeframe. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_external_documents_feed",
+      "description": "Get recently updated external documents (non-EP documents) from the feed. Returns external documents published or updated during the specified timeframe. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_parliamentary_questions_feed",
+      "description": "Get recently updated parliamentary questions from the feed. Returns parliamentary questions published or updated during the specified timeframe. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_corporate_bodies_feed",
+      "description": "Get recently updated corporate bodies (committees, delegations) from the feed. Returns corporate bodies published or updated during the specified timeframe. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_controlled_vocabularies_feed",
+      "description": "Get recently updated controlled vocabularies from the feed. Returns controlled vocabularies published or updated during the specified timeframe. Data source: European Parliament Open Data Portal."
+    },
+    {
+      "name": "get_procedure_event_by_id",
+      "description": "Get a specific event linked to a legislative procedure. Returns a single event for the specified procedure and event identifiers. Data source: European Parliament Open Data Portal."
+    }
+  ],
+  "resources": [
+    {
+      "uri_template": "ep://meps/{mepId}",
+      "name": "MEP Profile",
+      "description": "European Parliament Member profile including biographical info, committee memberships, political group, and contact details."
+    },
+    {
+      "uri_template": "ep://meps",
+      "name": "MEP List",
+      "description": "List of current Members of the European Parliament with basic profile information."
+    },
+    {
+      "uri_template": "ep://committees/{committeeId}",
+      "name": "Committee Information",
+      "description": "European Parliament committee details including membership, leadership, and responsibilities."
+    },
+    {
+      "uri_template": "ep://plenary-sessions",
+      "name": "Plenary Sessions",
+      "description": "Recent European Parliament plenary sessions with dates, locations, and agenda items."
+    },
+    {
+      "uri_template": "ep://votes/{sessionId}",
+      "name": "Voting Record",
+      "description": "Voting records for a specific plenary session including vote breakdowns and results."
+    },
+    {
+      "uri_template": "ep://political-groups",
+      "name": "Political Groups",
+      "description": "European Parliament political groups with membership counts and leadership."
+    },
+    {
+      "uri_template": "ep://procedures/{procedureId}",
+      "name": "Procedure Details",
+      "description": "Legislative procedure details by process ID (format: YYYY-NNNN)."
+    },
+    {
+      "uri_template": "ep://plenary/{plenaryId}",
+      "name": "Plenary Session Detail",
+      "description": "Specific plenary session details by session ID."
+    },
+    {
+      "uri_template": "ep://documents/{documentId}",
+      "name": "Legislative Document",
+      "description": "Legislative document details by document ID."
+    }
+  ],
+  "prompts": [
+    {
+      "name": "mep_briefing",
+      "description": "Generate a comprehensive MEP intelligence briefing covering voting record, committee roles, legislative activity, and influence assessment."
+    },
+    {
+      "name": "coalition_analysis",
+      "description": "Analyze coalition dynamics and voting blocs in the European Parliament, identifying cross-party alliances and emerging political alignments."
+    },
+    {
+      "name": "legislative_tracking",
+      "description": "Track and analyze the progress of legislative procedures through the European Parliament, including committee stages, amendments, and voting outcomes."
+    },
+    {
+      "name": "political_group_comparison",
+      "description": "Compare political groups across voting discipline, legislative output, attendance, and cohesion metrics."
+    },
+    {
+      "name": "committee_activity_report",
+      "description": "Generate an activity report for a European Parliament committee, covering meetings, documents produced, legislative opinions, and member engagement."
+    },
+    {
+      "name": "voting_pattern_analysis",
+      "description": "Analyze voting patterns to identify trends, anomalies, and cross-party alignments on specific policy topics."
+    },
+    {
+      "name": "country_delegation_analysis",
+      "description": "Analyse the MEP delegation from a specific EU member state, including voting cohesion, committee presence, legislative contribution, and cross-party dynamics."
+    }
+  ],
+  "categories": [
+    "government",
+    "open-data",
+    "politics",
+    "research",
+    "analysis"
+  ],
+  "tags": [
+    "european-parliament",
+    "eu",
+    "mep",
+    "legislative",
+    "voting",
+    "osint",
+    "political-intelligence",
+    "civic-tech",
+    "democracy",
+    "open-data"
+  ]
+}
