@@ -554,6 +554,20 @@ describe('BaseEPClient.get() error handling', () => {
     expect(result.data).toHaveLength(1);
   });
 
+  it('should accept response with case-insensitive JSON content-type', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({
+        'content-type': 'Application/JSON',
+        'content-length': '30',
+      }),
+      text: async () => JSON.stringify({ data: [], '@context': [] }),
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[] }>('meps');
+    expect(result.data).toEqual([]);
+  });
+
   it('should return empty data when response body is empty (with content-length)', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,

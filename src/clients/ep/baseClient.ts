@@ -447,11 +447,19 @@ export class BaseEPClient {
   /**
    * Validates the Content-Type header of an API response.
    * Throws if the response is not JSON (e.g. HTML error pages from reverse proxies).
+   * Cancels the response body before throwing to allow connection reuse.
    * @private
    */
   private static validateContentType(response: Response): void {
     const contentType = response.headers.get('content-type') ?? '';
-    if (contentType !== '' && !contentType.includes('json')) {
+    const mediaType = contentType.split(';', 1)[0]?.trim().toLowerCase() ?? '';
+    const isJsonContentType =
+      mediaType === '' ||
+      mediaType === 'application/json' ||
+      mediaType.endsWith('+json');
+
+    if (!isJsonContentType) {
+      void response.body?.cancel().catch(() => undefined);
       throw new APIError(
         `EP API returned unexpected content-type: ${contentType}`,
         502
