@@ -56,10 +56,25 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetVotingRecords(
   args: unknown
 ): Promise<ToolResult> {
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetVotingRecordsSchema.parse>;
   try {
-    // Validate input
-    const params = GetVotingRecordsSchema.parse(args);
+    params = GetVotingRecordsSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_voting_records',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
 
+  try {
     // Fetch voting records from EP API (only pass defined properties)
     const apiParams = {
       limit: params.limit,
@@ -95,8 +110,8 @@ export async function handleGetVotingRecords(
       const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_voting_records',
-        operation: 'validateInput',
-        message: `Invalid parameters: ${fieldErrors}`,
+        operation: 'validateOutput',
+        message: `Unexpected EP API response format: ${fieldErrors}`,
         isRetryable: false,
         cause: error,
       });

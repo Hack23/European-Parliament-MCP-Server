@@ -67,10 +67,25 @@ import type { ToolResult } from './shared/types.js';
 export async function handleSearchDocuments(
   args: unknown
 ): Promise<ToolResult> {
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof SearchDocumentsSchema.parse>;
   try {
-    // Validate input
-    const params = SearchDocumentsSchema.parse(args);
+    params = SearchDocumentsSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'search_documents',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
 
+  try {
     // Single document lookup by ID
     if (params.docId !== undefined) {
       const result = await epClient.getDocumentById(params.docId);
@@ -103,8 +118,8 @@ export async function handleSearchDocuments(
       const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'search_documents',
-        operation: 'validateInput',
-        message: `Invalid parameters: ${fieldErrors}`,
+        operation: 'validateOutput',
+        message: `Unexpected EP API response format: ${fieldErrors}`,
         isRetryable: false,
         cause: error,
       });

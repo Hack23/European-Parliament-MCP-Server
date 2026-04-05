@@ -52,10 +52,25 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetMEPDetails(
   args: unknown
 ): Promise<ToolResult> {
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetMEPDetailsSchema.parse>;
   try {
-    // Validate input
-    const params = GetMEPDetailsSchema.parse(args);
+    params = GetMEPDetailsSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_mep_details',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
 
+  try {
     // Fetch MEP details from EP API
     const result = await epClient.getMEPDetails(params.id);
     
@@ -68,8 +83,8 @@ export async function handleGetMEPDetails(
       const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_mep_details',
-        operation: 'validateInput',
-        message: `Invalid parameters: ${fieldErrors}`,
+        operation: 'validateOutput',
+        message: `Unexpected EP API response format: ${fieldErrors}`,
         isRetryable: false,
         cause: error,
       });

@@ -28,10 +28,10 @@ export function buildToolResponse(data: unknown): ToolResult {
  */
 export function buildErrorResponse(error: unknown, toolName: string): ToolResult {
   let message: string;
-  let errorType: string;
+  let errorType: 'Error' | 'ZodError' | 'string' | 'unknown';
   if (error instanceof Error) {
     message = error.message;
-    errorType = error.constructor.name;
+    errorType = error.name === 'ZodError' ? 'ZodError' : 'Error';
   } else if (typeof error === 'string') {
     message = error;
     errorType = 'string';

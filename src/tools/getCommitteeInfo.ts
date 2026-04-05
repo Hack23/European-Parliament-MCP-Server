@@ -56,10 +56,25 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetCommitteeInfo(
   args: unknown
 ): Promise<ToolResult> {
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetCommitteeInfoSchema.parse>;
   try {
-    // Validate input
-    const params = GetCommitteeInfoSchema.parse(args);
+    params = GetCommitteeInfoSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_committee_info',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
 
+  try {
     // Return current active bodies if showCurrent is true
     if (params.showCurrent === true) {
       const result = await epClient.getCurrentCorporateBodies();
@@ -83,8 +98,8 @@ export async function handleGetCommitteeInfo(
       const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_committee_info',
-        operation: 'validateInput',
-        message: `Invalid parameters: ${fieldErrors}`,
+        operation: 'validateOutput',
+        message: `Unexpected EP API response format: ${fieldErrors}`,
         isRetryable: false,
         cause: error,
       });
