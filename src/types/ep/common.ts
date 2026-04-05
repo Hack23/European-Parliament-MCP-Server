@@ -167,26 +167,28 @@ export interface PaginatedResponse<T> {
   data: T[];
 
   /**
-   * Total number of items matching the query (exact or lower-bound estimate).
+   * Total number of items matching the query (exact or heuristic estimate).
    * 
    * For **in-memory paginated** results (e.g. `getCurrentMEPs` with filters,
    * `getVotingRecords`), this is the **exact** count of all matching items.
    * 
    * For **server-paginated** results where the EP API does not return a total
-   * count header, this is a **lower-bound estimate**:
+   * count header, this is a **heuristic sentinel**:
    * - On the **last page** (`hasMore === false`): the value is exact
    *   (`offset + data.length`).
-   * - On **intermediate pages** (`hasMore === true`): the value is
-   *   `offset + data.length + 1`, indicating at least one more item exists.
+   * - On **earlier pages** (`hasMore === true`): the value is
+   *   `offset + data.length + 1`. This signals that more data may exist
+   *   but may **overestimate by 1** when the dataset size is an exact
+   *   multiple of `limit` (i.e., the last server page is exactly full).
    * 
-   * Consumers that need an exact total for "X of Y" UI or page-count
-   * calculations should iterate all pages (using `hasMore`) to determine
-   * the true dataset size.
+   * **Do not** use this value for exact "X of Y" UI or page-count
+   * calculations on server-paginated endpoints. Instead, iterate all
+   * pages (using `hasMore`) to determine the true dataset size.
    * 
    * **Min Value:** 0 (no matches)
    * 
    * @example 705 // Exact total from in-memory pagination
-   * @example 51  // Lower-bound estimate: offset=0, data.length=50, hasMore=true
+   * @example 51  // Heuristic: offset=0, data.length=50, hasMore=true (may overestimate by 1)
    * @example 23  // Exact on last page: offset=20, data.length=3, hasMore=false
    * @example 0   // No matches found
    */
@@ -231,15 +233,19 @@ export interface PaginatedResponse<T> {
   offset: number;
 
   /**
-   * Indicates if more items exist beyond current page.
+   * Indicates if more items may exist beyond the current page.
    * 
-   * Boolean flag for easy "load more" / "next page" logic. True if
-   * there are more items to fetch after the current page. False on
-   * last page or when all results fit on current page.
+   * Boolean flag for "load more" / "next page" logic. When `true`,
+   * another page may exist and the caller should fetch it. When `false`,
+   * the current page is definitively the last one.
    * 
-   * For server-paginated results, this is determined by strict equality:
-   * `data.length === limit` (a full page implies more data may exist).
-   * For in-memory paginated results: `(offset + data.length) < total`.
+   * For **server-paginated** results this is a heuristic based on page
+   * fullness: `data.length === limit`. A full page suggests more data
+   * may follow, but can be a **false positive** when the dataset size is
+   * an exact multiple of `limit`. Callers should paginate until `hasMore`
+   * is `false` or a subsequent page returns fewer than `limit` items.
+   * For **in-memory paginated** results: `(offset + data.length) < total`
+   * (always exact).
    * 
    * @example true  // More pages available
    * @example false // Last page or all results shown

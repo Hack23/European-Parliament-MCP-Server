@@ -153,8 +153,10 @@ export class DocumentClient extends BaseEPClient {
         // `documents.length` after client-side filtering. This means `hasMore` can
         // be true even when the filtered result set is empty. Callers should
         // continue paginating until `hasMore` is false, not stop on an empty
-        // filtered page. While `hasMore` is true, `total` is a lower-bound estimate
-        // based on the server page size, not the count of filtered matches.
+        // filtered page. While `hasMore` is true, `total` is only a heuristic
+        // sentinel derived from the server page size and may be off by 1 when the
+        // last server page is exactly full. Do not use it for exact page-count UI
+        // until a page has been observed with `hasMore === false`.
         total: currentOffset + pageSize + (hasMore ? 1 : 0),
         limit: requestedLimit,
         offset: currentOffset,
