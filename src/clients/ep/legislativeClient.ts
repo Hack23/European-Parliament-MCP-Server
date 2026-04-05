@@ -218,10 +218,19 @@ export class LegislativeClient extends BaseEPClient {
       { format: 'application/ld+json' }
     );
     // EP API wraps single-item responses in a `data` array
-    const item = Array.isArray(response.data) && response.data.length > 0
-      ? response.data[0] ?? {}
-      : (response as unknown as Record<string, unknown>);
-    return this.transformEvent(item);
+    if (Array.isArray(response.data)) {
+      if (response.data.length === 0) {
+        throw new APIError(
+          `Procedure event not found for process-id "${processId}" and event ID "${eventId}"`,
+          404
+        );
+      }
+      return this.transformEvent(response.data[0] ?? {});
+    }
+
+    // Fall back to transforming the raw response only when the response shape
+    // is not JSON-LD-wrapped.
+    return this.transformEvent(response as unknown as Record<string, unknown>);
   }
 
   /**

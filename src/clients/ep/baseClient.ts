@@ -448,6 +448,10 @@ export class BaseEPClient {
    * Validates the Content-Type header of an API response.
    * Throws if the response is not JSON (e.g. HTML error pages from reverse proxies).
    * Cancels the response body before throwing to allow connection reuse.
+   *
+   * A missing or empty Content-Type header is treated as acceptable because
+   * the EP API occasionally omits it on valid JSON responses, and rejecting
+   * those would cause false-negative failures.
    * @private
    */
   private static validateContentType(response: Response): void {
@@ -628,9 +632,9 @@ export class BaseEPClient {
     params?: Record<string, unknown>
   ): string {
     // Sort params keys to ensure deterministic cache keys regardless of
-    // property insertion order.  This prevents cache collisions where
-    // { a: 1, b: 2 } and { b: 2, a: 1 } would otherwise produce
-    // different keys. (ISMS A.8.11 — Data integrity)
+    // property insertion order. This prevents cache misses and duplicate
+    // cache entries where { a: 1, b: 2 } and { b: 2, a: 1 } would
+    // otherwise produce different keys. (ISMS A.8.11 — Data integrity)
     const sortedParams = params !== undefined
       ? Object.fromEntries(Object.entries(params).sort(([a], [b]) => a.localeCompare(b)))
       : undefined;
