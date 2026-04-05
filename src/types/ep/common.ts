@@ -249,13 +249,22 @@ export interface PaginatedResponse<T> {
    * another page may exist and the caller should fetch it. When `false`,
    * the current page is definitively the last one.
    * 
-   * For **server-paginated** results this is a heuristic based on page
-   * fullness: `data.length === limit`. A full page suggests more data
-   * may follow, but can be a **false positive** when the dataset size is
-   * an exact multiple of `limit`. Callers should paginate until `hasMore`
-   * is `false` or a subsequent page returns fewer than `limit` items.
-   * For **in-memory paginated** results: `(offset + data.length) < total`
-   * (always exact).
+   * For **server-paginated** results this is a heuristic based on the
+   * underlying server page fullness, not always on the filtered
+   * `data.length` returned to the caller:
+   * - For ordinary server-paginated endpoints, `hasMore` is typically
+   *   derived from server page fullness (effectively whether the server
+   *   returned `limit` items). A full page suggests more data may follow,
+   *   but can be a **false positive** when the dataset size is an exact
+   *   multiple of `limit`.
+   * - For **client-filtered server endpoints** (e.g. `searchDocuments`,
+   *   `getPlenarySessions`, `getParliamentaryQuestions`), `hasMore` is
+   *   derived from the **unfiltered server page size** before client-side
+   *   filtering. This means `hasMore` can be `true` even when the filtered
+   *   `data` array contains fewer than `limit` items or is empty.
+   * 
+   * Callers should paginate until `hasMore` is `false`. For **in-memory
+   * paginated** results, `hasMore` is exact: `(offset + data.length) < total`.
    * 
    * @example true  // More pages available
    * @example false // Last page or all results shown

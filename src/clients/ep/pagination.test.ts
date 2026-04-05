@@ -8,6 +8,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { EuropeanParliamentClient } from '../europeanParliamentClient.js';
+import type { JSONLDResponse } from './baseClient.js';
 
 vi.mock('undici', () => ({ fetch: vi.fn() }));
 
@@ -17,7 +18,7 @@ const mockFetch = fetch as ReturnType<typeof vi.fn>;
 // ─── helpers ────────────────────────────────────────────────────────────────
 
 /** Build a minimal JSON-LD envelope with `count` items. */
-function buildResponse(count: number, prefix = 'item') {
+function buildResponse(count: number, prefix = 'item'): JSONLDResponse {
   return {
     data: Array.from({ length: count }, (_, i) => ({
       id: `${prefix}/${i + 1}`,
@@ -37,7 +38,7 @@ function buildResponse(count: number, prefix = 'item') {
   };
 }
 
-function buildDocumentResponse(count: number) {
+function buildDocumentResponse(count: number): JSONLDResponse {
   return {
     data: Array.from({ length: count }, (_, i) => ({
       id: `doc-${i + 1}`,
@@ -53,7 +54,7 @@ function buildDocumentResponse(count: number) {
   };
 }
 
-function buildMeetingResponse(count: number) {
+function buildMeetingResponse(count: number): JSONLDResponse {
   return {
     data: Array.from({ length: count }, (_, i) => ({
       id: `eli/dl/event/MTG-PL-2024-01-${10 + i}`,
@@ -70,7 +71,7 @@ function buildMeetingResponse(count: number) {
   };
 }
 
-function buildQuestionResponse(count: number) {
+function buildQuestionResponse(count: number): JSONLDResponse {
   return {
     data: Array.from({ length: count }, (_, i) => ({
       id: `question-${i + 1}`,
@@ -87,7 +88,7 @@ function buildQuestionResponse(count: number) {
   };
 }
 
-function buildProcedureResponse(count: number) {
+function buildProcedureResponse(count: number): JSONLDResponse {
   return {
     data: Array.from({ length: count }, (_, i) => ({
       id: `procedure-${i + 1}`,
@@ -103,7 +104,7 @@ function buildProcedureResponse(count: number) {
   };
 }
 
-function mockOk(data: unknown) {
+function mockOk(data: unknown): void {
   mockFetch.mockResolvedValueOnce({
     ok: true,
     headers: new Headers(),
