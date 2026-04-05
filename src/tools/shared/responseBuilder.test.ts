@@ -3,6 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
+import { z } from 'zod';
 import { buildToolResponse, buildErrorResponse } from './responseBuilder.js';
 
 describe('buildToolResponse', () => {
@@ -50,6 +51,21 @@ describe('buildErrorResponse', () => {
     expect(parsed.error).toBe('something went wrong');
     expect(parsed.toolName).toBe('my_tool');
     expect(parsed.errorType).toBe('Error');
+  });
+
+  it('should classify ZodError as errorType ZodError', () => {
+    const schema = z.object({ name: z.string() });
+    let zodError: Error | undefined;
+    try {
+      schema.parse({ name: 42 });
+    } catch (e) {
+      zodError = e as Error;
+    }
+    expect(zodError).toBeDefined();
+    const result = buildErrorResponse(zodError!, 'zod_tool');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.errorType).toBe('ZodError');
+    expect(parsed.toolName).toBe('zod_tool');
   });
 
   it('should handle string error input', () => {

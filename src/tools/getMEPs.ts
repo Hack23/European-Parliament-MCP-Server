@@ -41,9 +41,12 @@ import type { ToolResult } from './shared/types.js';
  * @param args - Raw tool arguments, validated against {@link GetMEPsSchema}
  * @returns MCP tool result containing a paginated list of MEP records with name, country,
  *   political group, committee memberships, and contact information
- * @throws - If `args` fails schema validation (e.g., country code not 2 uppercase
- *   letters, limit out of range 1–100)
- * - If the European Parliament API is unreachable or returns an error response
+ * @throws {ToolError} With `operation: 'validateInput'` if `args` fails Zod schema validation
+ *   (e.g., country code not 2 uppercase letters, limit out of range 1–100)
+ * @throws {ToolError} With `operation: 'validateOutput'` if the EP API response does not match
+ *   the expected schema shape
+ * @throws {ToolError} With `operation: 'fetchData'` if the European Parliament API is
+ *   unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -51,35 +54,21 @@ import type { ToolResult } from './shared/types.js';
  * // Returns up to 10 Swedish MEPs with group and committee details
  * ```
  *
- * @security - Input is validated with Zod before any API call.
- * - Personal data in responses is minimised per GDPR Article 5(1)(c).
- * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
- * @since 0.8.0
- * @see {@link getMEPsToolMetadata} for MCP schema registration
- * @see {@link handleGetMEPDetails} for retrieving full details of a single MEP
- * 
- * @param args - Tool arguments matching GetMEPsSchema (country, group, committee, active, limit, offset)
- * @returns MCP ToolResult containing paginated MEP list as JSON text content
- * @throws {Error} When the EP API request fails or returns an unexpected error
- * @throws {ZodError} When input fails schema validation (invalid country code, out-of-range limit, etc.)
- * 
- * @example
- * ```typescript
- * // Get Swedish MEPs
- * const result = await handleGetMEPs({ country: "SE", limit: 10 });
- * const data = JSON.parse(result.content[0].text);
- * console.log(`Found ${data.total} Swedish MEPs`);
- * ```
- * 
  * @example
  * ```typescript
  * // Get active EPP group members
  * const result = await handleGetMEPs({ group: "EPP", active: true, limit: 50 });
  * ```
- * 
- * @security Input validated by Zod schema before any API call. Errors are sanitized
- * to avoid exposing internal implementation details. Personal data access is
- * audit-logged per GDPR Article 30. ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
+ *
+ * @security - Input is validated with Zod before any API call.
+ * - Errors are sanitized to avoid exposing internal implementation details.
+ * - Personal data in responses is minimised per GDPR Article 5(1)(c).
+ * - Personal data access is audit-logged per GDPR Article 30.
+ * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * - ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
+ * @since 0.8.0
+ * @see {@link getMEPsToolMetadata} for MCP schema registration
+ * @see {@link handleGetMEPDetails} for retrieving full details of a single MEP
  */
 export async function handleGetMEPs(
   args: unknown

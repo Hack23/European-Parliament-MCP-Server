@@ -15,7 +15,7 @@
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
-import { GetCommitteeInfoSchema, CommitteeSchema } from '../schemas/europeanParliament.js';
+import { GetCommitteeInfoSchema, CommitteeSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { buildApiParams } from './shared/paramBuilder.js';
@@ -78,7 +78,9 @@ export async function handleGetCommitteeInfo(
     // Return current active bodies if showCurrent is true
     if (params.showCurrent === true) {
       const result = await epClient.getCurrentCorporateBodies();
-      return buildToolResponse(result);
+      const outputSchema = PaginatedResponseSchema(CommitteeSchema);
+      const validated = outputSchema.parse(result);
+      return buildToolResponse(validated);
     }
 
     // Fetch committee info from EP API (only pass defined properties)

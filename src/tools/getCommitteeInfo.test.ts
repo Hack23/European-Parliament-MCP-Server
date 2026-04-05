@@ -139,16 +139,23 @@ describe('get_committee_info Tool', () => {
 
   describe('showCurrent branch', () => {
     it('should call getCurrentCorporateBodies when showCurrent is true', async () => {
-      const mockBodies = [
-        { id: 'ENVI', name: 'Committee on Environment', abbreviation: 'ENVI', members: [], type: 'committee', active: true },
-        { id: 'ITRE', name: 'Committee on Industry', abbreviation: 'ITRE', members: [], type: 'committee', active: true }
-      ];
+      const mockBodies = {
+        data: [
+          { id: 'ENVI', name: 'Committee on Environment', abbreviation: 'ENVI', members: [], responsibilities: [] },
+          { id: 'ITRE', name: 'Committee on Industry', abbreviation: 'ITRE', members: [], responsibilities: [] }
+        ],
+        total: 2,
+        limit: 50,
+        offset: 0,
+        hasMore: false
+      };
       vi.mocked(epClientModule.epClient.getCurrentCorporateBodies).mockResolvedValue(mockBodies);
 
       const result = await handleGetCommitteeInfo({ showCurrent: true });
       expect(result.content[0].type).toBe('text');
-      const parsed = JSON.parse(result.content[0].text) as unknown[];
-      expect(Array.isArray(parsed)).toBe(true);
+      const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
+      expect(parsed).toHaveProperty('data');
+      expect(Array.isArray(parsed.data)).toBe(true);
     });
   });
 });
