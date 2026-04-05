@@ -146,16 +146,21 @@ export class DocumentClient extends BaseEPClient {
       let documents = response.data.map((item) => this.transformDocument(item));
       documents = this.filterDocuments(documents, params);
 
+      const hasMore = pageSize === requestedLimit;
       const result: PaginatedResponse<LegislativeDocument> = {
         data: documents,
         // total/hasMore are derived from the unfiltered server page size, not from
-        // `documents.length` after client-side filtering.  This means `hasMore` can
-        // be true even when the filtered result set is empty — callers should
-        // continue paginating until `data` is empty or `hasMore` is false.
-        total: currentOffset + pageSize,
+        // `documents.length` after client-side filtering. This means `hasMore` can
+        // be true even when the filtered result set is empty. Callers should
+        // continue paginating until `hasMore` is false, not stop on an empty
+        // filtered page. While `hasMore` is true, `total` is only a heuristic
+        // sentinel derived from the server page size and may be off by 1 when the
+        // last server page is exactly full. Do not use it for exact page-count UI
+        // until a page has been observed with `hasMore === false`.
+        total: currentOffset + pageSize + (hasMore ? 1 : 0),
         limit: requestedLimit,
         offset: currentOffset,
-        hasMore: pageSize === requestedLimit,
+        hasMore,
       };
 
       auditLogger.logDataAccess(action, params, result.data.length);
@@ -191,7 +196,8 @@ export class DocumentClient extends BaseEPClient {
     const response = await this.get<JSONLDResponse>('plenary-documents', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];
     const docs = items.map((item) => this.transformDocument(item));
-    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
+    const hasMore = docs.length === limit;
+    return { data: docs, total: docs.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -215,7 +221,8 @@ export class DocumentClient extends BaseEPClient {
     const response = await this.get<JSONLDResponse>('committee-documents', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];
     const docs = items.map((item) => this.transformDocument(item));
-    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
+    const hasMore = docs.length === limit;
+    return { data: docs, total: docs.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -237,7 +244,8 @@ export class DocumentClient extends BaseEPClient {
 
     const items = Array.isArray(response.data) ? response.data : [];
     const docs = items.map((item) => this.transformDocument(item));
-    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
+    const hasMore = docs.length === limit;
+    return { data: docs, total: docs.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -258,7 +266,8 @@ export class DocumentClient extends BaseEPClient {
 
     const items = Array.isArray(response.data) ? response.data : [];
     const docs = items.map((item) => this.transformDocument(item));
-    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
+    const hasMore = docs.length === limit;
+    return { data: docs, total: docs.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -282,7 +291,8 @@ export class DocumentClient extends BaseEPClient {
     const response = await this.get<JSONLDResponse>('external-documents', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];
     const docs = items.map((item) => this.transformDocument(item));
-    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
+    const hasMore = docs.length === limit;
+    return { data: docs, total: docs.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**

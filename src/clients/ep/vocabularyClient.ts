@@ -51,7 +51,8 @@ export class VocabularyClient extends BaseEPClient {
     });
 
     const items = Array.isArray(response.data) ? response.data : [];
-    return { data: items, total: items.length + offset, limit, offset, hasMore: items.length === limit };
+    const hasMore = items.length === limit;
+    return { data: items, total: items.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**

@@ -112,21 +112,30 @@ export class PlenaryClient extends BaseEPClient {
   }): Promise<PaginatedResponse<PlenarySession>> {
     const action = 'get_plenary_sessions';
     try {
+      const limit = params.limit ?? 50;
+      const offset = params.offset ?? 0;
+
       const apiParams = this.buildMeetingsAPIParams(params);
+      // Always apply the resolved limit/offset so the server page size matches
+      // the pagination metadata we return.
+      apiParams['limit'] = limit;
+      apiParams['offset'] = offset;
+
       const response = await this.get<JSONLDResponse>('meetings', apiParams);
+      const pageSize = response.data.length;
       let sessions = response.data.map((item) => this.transformPlenarySession(item));
 
       if (params.location !== undefined && params.location !== '') {
         const locationLower = params.location.toLowerCase();
         sessions = sessions.filter((s) => s.location.toLowerCase().includes(locationLower));
       }
-
+      const hasMore = pageSize === limit;
       const result: PaginatedResponse<PlenarySession> = {
         data: sessions,
-        total: (params.offset ?? 0) + sessions.length,
-        limit: params.limit ?? 50,
-        offset: params.offset ?? 0,
-        hasMore: sessions.length >= (params.limit ?? 50),
+        total: offset + pageSize + (hasMore ? 1 : 0),
+        limit,
+        offset,
+        hasMore,
       };
 
       auditLogger.logDataAccess(action, params, result.data.length);
@@ -165,7 +174,8 @@ export class PlenaryClient extends BaseEPClient {
 
     const items = Array.isArray(response.data) ? response.data : [];
     const activities = items.map((item) => this.transformMeetingActivity(item));
-    return { data: activities, total: activities.length + offset, limit, offset, hasMore: activities.length === limit };
+    const hasMore = activities.length === limit;
+    return { data: activities, total: activities.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -192,7 +202,8 @@ export class PlenaryClient extends BaseEPClient {
 
     const items = Array.isArray(response.data) ? response.data : [];
     const decisions = items.map((item) => this.transformDocument(item));
-    return { data: decisions, total: decisions.length + offset, limit, offset, hasMore: decisions.length === limit };
+    const hasMore = decisions.length === limit;
+    return { data: decisions, total: decisions.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -219,7 +230,8 @@ export class PlenaryClient extends BaseEPClient {
 
     const items = Array.isArray(response.data) ? response.data : [];
     const activities = items.map((item) => this.transformMeetingActivity(item));
-    return { data: activities, total: activities.length + offset, limit, offset, hasMore: activities.length === limit };
+    const hasMore = activities.length === limit;
+    return { data: activities, total: activities.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -246,7 +258,8 @@ export class PlenaryClient extends BaseEPClient {
 
     const items = Array.isArray(response.data) ? response.data : [];
     const docs = items.map((item) => this.transformDocument(item));
-    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
+    const hasMore = docs.length === limit;
+    return { data: docs, total: docs.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -273,7 +286,8 @@ export class PlenaryClient extends BaseEPClient {
 
     const items = Array.isArray(response.data) ? response.data : [];
     const docs = items.map((item) => this.transformDocument(item));
-    return { data: docs, total: docs.length + offset, limit, offset, hasMore: docs.length === limit };
+    const hasMore = docs.length === limit;
+    return { data: docs, total: docs.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -319,7 +333,8 @@ export class PlenaryClient extends BaseEPClient {
     const response = await this.get<JSONLDResponse>('events', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];
     const events = items.map((item) => this.transformEvent(item));
-    return { data: events, total: events.length + offset, limit, offset, hasMore: events.length === limit };
+    const hasMore = events.length === limit;
+    return { data: events, total: events.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**

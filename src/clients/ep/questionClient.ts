@@ -121,23 +121,32 @@ export class QuestionClient extends BaseEPClient {
   }): Promise<PaginatedResponse<ParliamentaryQuestion>> {
     const action = 'get_parliamentary_questions';
     try {
+      const limit = params.limit ?? 50;
+      const offset = params.offset ?? 0;
+
       const apiParams = this.buildQuestionSearchParams(params);
+      // Always apply the resolved limit/offset so the server page size matches
+      // the pagination metadata we return.
+      apiParams['limit'] = limit;
+      apiParams['offset'] = offset;
+
       const response = await this.get<JSONLDResponse>(
         'parliamentary-questions',
         apiParams
       );
 
+      const pageSize = response.data.length;
       let questions = response.data.map((item) =>
         this.transformParliamentaryQuestion(item)
       );
       questions = this.filterQuestions(questions, params);
-
+      const hasMore = pageSize === limit;
       const result: PaginatedResponse<ParliamentaryQuestion> = {
         data: questions,
-        total: (params.offset ?? 0) + questions.length,
-        limit: params.limit ?? 50,
-        offset: params.offset ?? 0,
-        hasMore: questions.length >= (params.limit ?? 50),
+        total: offset + pageSize + (hasMore ? 1 : 0),
+        limit,
+        offset,
+        hasMore,
       };
 
       auditLogger.logDataAccess(action, params, result.data.length);
