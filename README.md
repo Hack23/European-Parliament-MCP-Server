@@ -39,6 +39,32 @@
 ## 📊 Quality Metrics & Documentation
 
 <p align="center">
+  <!-- MCP Registry -->
+  <a href="https://smithery.ai/server/european-parliament-mcp-server">
+    <img src="https://smithery.ai/badge/european-parliament-mcp-server" alt="Smithery MCP Registry">
+  </a>
+
+  <!-- npm version -->
+  <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
+    <img src="https://img.shields.io/npm/v/european-parliament-mcp-server.svg?style=flat-square&logo=npm" alt="npm version">
+  </a>
+
+  <!-- npm downloads -->
+  <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
+    <img src="https://img.shields.io/npm/dm/european-parliament-mcp-server.svg?style=flat-square&logo=npm" alt="npm downloads">
+  </a>
+
+  <!-- MCP Tools -->
+  <img src="https://img.shields.io/badge/MCP%20Tools-61-6366F1?style=flat-square&logo=typescript" alt="MCP Tools">
+
+  <!-- MCP Resources -->
+  <img src="https://img.shields.io/badge/MCP%20Resources-9-6366F1?style=flat-square" alt="MCP Resources">
+
+  <!-- MCP Prompts -->
+  <img src="https://img.shields.io/badge/MCP%20Prompts-7-6366F1?style=flat-square" alt="MCP Prompts">
+</p>
+
+<p align="center">
   <!-- Test Coverage -->
   <a href="https://hack23.github.io/European-Parliament-MCP-Server/coverage/">
     <img src="https://img.shields.io/badge/Test%20Coverage-80%25%2B-brightgreen?style=flat-square&logo=vitest" alt="Test Coverage">
@@ -303,11 +329,16 @@ Hack23 builds **open-source intelligence platforms** that enable citizens, journ
 
 ## 🚀 Quick Start
 
+### Run with npx (No Installation Required)
+
+```bash
+npx -y european-parliament-mcp-server
+```
+
 ### Prerequisites
 
 - Node.js 25.x or higher
 - npm 10.x or higher
-- Git
 
 ### Installation
 
@@ -385,8 +416,8 @@ Configure in `.vscode/mcp.json`:
   "servers": {
     "european-parliament": {
       "type": "stdio",
-      "command": "node",
-      "args": ["./dist/index.js"]
+      "command": "npx",
+      "args": ["-y", "european-parliament-mcp-server"]
     }
   }
 }
@@ -1401,6 +1432,10 @@ This project is licensed under the **Apache License 2.0** - see [LICENSE.md](./L
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
 - [MCP SDK](https://github.com/modelcontextprotocol/sdk)
 - [MCP Documentation](https://modelcontextprotocol.io/docs)
+
+### MCP Registries
+- [Smithery](https://smithery.ai/server/european-parliament-mcp-server) — MCP server registry listing
+- [npm Package](https://www.npmjs.com/package/european-parliament-mcp-server) — npm registry
 
 ### Political & Government MCP Servers
 - [Congress.gov API MCP Server](https://github.com/bsmi021/mcp-congress_gov_server) — US Congress data (TypeScript)

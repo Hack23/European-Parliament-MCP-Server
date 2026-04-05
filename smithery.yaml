@@ -1,0 +1,36 @@
+# Smithery configuration for European Parliament MCP Server
+# https://smithery.ai
+
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema for runtime configuration
+    type: object
+    properties:
+      EP_API_URL:
+        type: string
+        default: "https://data.europarl.europa.eu/api/v2"
+        description: "European Parliament API base URL"
+      EP_REQUEST_TIMEOUT_MS:
+        type: number
+        default: 10000
+        description: "API request timeout in milliseconds (default: 10000)"
+      EP_CACHE_TTL:
+        type: number
+        default: 900000
+        description: "Cache time-to-live in milliseconds (default: 900000 = 15 minutes)"
+      EP_RATE_LIMIT:
+        type: number
+        default: 100
+        description: "Maximum API requests per minute"
+  commandFunction: |-
+      (config) => ({
+        command: 'npx',
+        args: ['-y', 'european-parliament-mcp-server'],
+        env: {
+          EP_API_URL: config.EP_API_URL ?? 'https://data.europarl.europa.eu/api/v2',
+          ...(config.EP_REQUEST_TIMEOUT_MS != null && { EP_REQUEST_TIMEOUT_MS: String(config.EP_REQUEST_TIMEOUT_MS) }),
+          ...(config.EP_CACHE_TTL != null && { EP_CACHE_TTL: String(config.EP_CACHE_TTL) }),
+          ...(config.EP_RATE_LIMIT != null && { EP_RATE_LIMIT: String(config.EP_RATE_LIMIT) })
+        }
+      })
