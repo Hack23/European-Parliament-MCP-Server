@@ -175,7 +175,10 @@ export interface PaginatedResponse<T> {
    * For **server-paginated** results where the EP API does not return a total
    * count header, this is a **heuristic sentinel**:
    * - On the **last page** (`hasMore === false`): the value is exact
-   *   (`offset + data.length`).
+   *   (`offset + data.length`), **assuming `offset` is within the actual
+   *   result range**. If the caller requests an out-of-range `offset`
+   *   (beyond the dataset), the EP API returns an empty page and `total`
+   *   becomes `offset`, which may overestimate the real count.
    * - On **earlier pages** (`hasMore === true`): the value is
    *   `offset + data.length + 1`. This signals that more data may exist
    *   but may **overestimate by 1** when the dataset size is an exact
