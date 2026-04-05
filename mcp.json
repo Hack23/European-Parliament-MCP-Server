@@ -347,7 +347,7 @@
     },
     {
       "name": "country_delegation_analysis",
-      "description": "Analyse the MEP delegation from a specific EU member state, including voting cohesion, committee presence, legislative contribution, and cross-party dynamics."
+      "description": "Analyze the MEP delegation from a specific EU member state, including voting cohesion, committee presence, legislative contribution, and cross-party dynamics."
     }
   ],
   "categories": [

@@ -23,9 +23,7 @@ startCommand:
         type: number
         default: 100
         description: "Maximum API requests per minute"
-  commandFunction:
-    # Returns the command to start the MCP server
-    |-
+  commandFunction: |-
     (config) => ({
       command: 'npx',
       args: ['-y', 'european-parliament-mcp-server'],
