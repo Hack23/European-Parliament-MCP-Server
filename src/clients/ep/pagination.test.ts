@@ -4,8 +4,6 @@
  * Verifies that `total`, `hasMore`, `limit`, and `offset` are computed
  * consistently for server-paginated, client-filtered, and in-memory
  * paginated responses.
- *
- * @see https://github.com/Hack23/European-Parliament-MCP-Server/issues/XXX
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
