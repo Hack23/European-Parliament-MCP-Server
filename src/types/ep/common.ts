@@ -167,19 +167,27 @@ export interface PaginatedResponse<T> {
   data: T[];
 
   /**
-   * Total number of items matching the query.
+   * Total number of items matching the query (exact or lower-bound estimate).
    * 
-   * Total count of all items across all pages that match the current
-   * query/filter criteria. Used for calculating total pages and showing
-   * "X of Y results" displays. Count includes items on all pages, not
-   * just current page.
+   * For **in-memory paginated** results (e.g. `getCurrentMEPs` with filters,
+   * `getVotingRecords`), this is the **exact** count of all matching items.
    * 
-   * **Calculation:** `SELECT COUNT(*) FROM ... WHERE ...`
+   * For **server-paginated** results where the EP API does not return a total
+   * count header, this is a **lower-bound estimate**:
+   * - On the **last page** (`hasMore === false`): the value is exact
+   *   (`offset + data.length`).
+   * - On **intermediate pages** (`hasMore === true`): the value is
+   *   `offset + data.length + 1`, indicating at least one more item exists.
+   * 
+   * Consumers that need an exact total for "X of Y" UI or page-count
+   * calculations should iterate all pages (using `hasMore`) to determine
+   * the true dataset size.
+   * 
    * **Min Value:** 0 (no matches)
-   * **Performance:** Cached for efficiency
    * 
-   * @example 705 // Total MEPs in current term
-   * @example 143 // MEPs matching filter (e.g., country="DE")
+   * @example 705 // Exact total from in-memory pagination
+   * @example 51  // Lower-bound estimate: offset=0, data.length=50, hasMore=true
+   * @example 23  // Exact on last page: offset=20, data.length=3, hasMore=false
    * @example 0   // No matches found
    */
   total: number;
@@ -229,7 +237,9 @@ export interface PaginatedResponse<T> {
    * there are more items to fetch after the current page. False on
    * last page or when all results fit on current page.
    * 
-   * **Calculation:** `(offset + data.length) < total`
+   * For server-paginated results, this is determined by strict equality:
+   * `data.length === limit` (a full page implies more data may exist).
+   * For in-memory paginated results: `(offset + data.length) < total`.
    * 
    * @example true  // More pages available
    * @example false // Last page or all results shown
