@@ -14,7 +14,7 @@
  * blocks. Each block carries its MIME type and serialised payload.
  */
 export interface ToolResult {
-  content: Array<{ type: 'text'; text: string }>;
+  content: { type: 'text'; text: string }[];
   isError?: boolean;
 }
 
