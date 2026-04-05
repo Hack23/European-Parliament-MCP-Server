@@ -181,6 +181,13 @@ export interface PaginatedResponse<T> {
    *   but may **overestimate by 1** when the dataset size is an exact
    *   multiple of `limit` (i.e., the last server page is exactly full).
    * 
+   * For **client-filtered server endpoints** (e.g. `searchDocuments` with keyword,
+   * `getPlenarySessions` with location, `getParliamentaryQuestions` with author/topic),
+   * `total` and `hasMore` are derived from the **unfiltered server page size**, not
+   * from `data.length` after client-side filtering. This means `hasMore` can be `true`
+   * even when the filtered `data` array is empty, and `total` will not reflect the
+   * count of filtered matches.
+   * 
    * **Do not** use this value for exact "X of Y" UI or page-count
    * calculations on server-paginated endpoints. Instead, iterate all
    * pages (using `hasMore`) to determine the true dataset size.

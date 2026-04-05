@@ -112,7 +112,15 @@ export class PlenaryClient extends BaseEPClient {
   }): Promise<PaginatedResponse<PlenarySession>> {
     const action = 'get_plenary_sessions';
     try {
+      const limit = params.limit ?? 50;
+      const offset = params.offset ?? 0;
+
       const apiParams = this.buildMeetingsAPIParams(params);
+      // Always apply the resolved limit/offset so the server page size matches
+      // the pagination metadata we return.
+      apiParams['limit'] = limit;
+      apiParams['offset'] = offset;
+
       const response = await this.get<JSONLDResponse>('meetings', apiParams);
       const pageSize = response.data.length;
       let sessions = response.data.map((item) => this.transformPlenarySession(item));
@@ -121,9 +129,6 @@ export class PlenaryClient extends BaseEPClient {
         const locationLower = params.location.toLowerCase();
         sessions = sessions.filter((s) => s.location.toLowerCase().includes(locationLower));
       }
-
-      const limit = params.limit ?? 50;
-      const offset = params.offset ?? 0;
       const hasMore = pageSize === limit;
       const result: PaginatedResponse<PlenarySession> = {
         data: sessions,

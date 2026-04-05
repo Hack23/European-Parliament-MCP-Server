@@ -162,13 +162,17 @@ export class MEPClient extends BaseEPClient {
   }): Promise<PaginatedResponse<MEP>> {
     const action = 'get_meps';
     try {
+      const limit = params.limit ?? 50;
+      const offset = params.offset ?? 0;
+
       const apiParams = this.buildMEPParams(params);
+      // Always apply the resolved limit/offset so the server page size matches
+      // the pagination metadata we return.
+      apiParams['limit'] = limit;
+      apiParams['offset'] = offset;
 
       const response = await this.get<JSONLDResponse>('meps', apiParams);
       const meps = response.data.map((item) => this.transformMEP(item));
-
-      const limit = params.limit ?? 50;
-      const offset = params.offset ?? 0;
       const hasMore = meps.length === limit;
       const result: PaginatedResponse<MEP> = {
         data: meps,
