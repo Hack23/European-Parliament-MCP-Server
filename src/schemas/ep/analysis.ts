@@ -1,213 +1,198 @@
 /**
- * OSINT intelligence analysis tool Zod validation schemas.
+ * European Parliament Analysis Schemas
  *
- * @module schemas/ep/analysis
+ * Zod schemas for political analysis tools — coalition dynamics, voting anomalies,
+ * political group comparisons, legislative effectiveness, and OSINT standard output.
+ *
+ * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
 import { z } from 'zod';
-import { DateStringSchema } from './common.js';
 
 /**
- * Analyze voting patterns input schema
+ * Schema for MEP IDs array (2-10 items) used by comparative intelligence
  */
-export const AnalyzeVotingPatternsSchema = z.object({
-  mepId: z.string()
-    .min(1)
-    .max(100)
-    .describe('MEP identifier'),
-  dateFrom: DateStringSchema.optional(),
-  dateTo: DateStringSchema.optional(),
-  compareWithGroup: z.boolean()
-    .default(true)
-    .describe('Compare with political group average')
-});
+export const MepIdsSchema = z.array(
+  z.string().min(1, 'MEP ID must not be empty').max(100, 'MEP ID too long')
+).min(2, 'At least 2 MEP IDs required').max(10, 'At most 10 MEP IDs');
 
 /**
- * Track legislation input schema
- */
-export const TrackLegislationSchema = z.object({
-  procedureId: z.string()
-    .min(1)
-    .max(100)
-    .describe('Legislative procedure identifier')
-});
-
-/**
- * Generate report input schema
- */
-export const GenerateReportSchema = z.object({
-  reportType: z.enum(['MEP_ACTIVITY', 'COMMITTEE_PERFORMANCE', 'VOTING_STATISTICS', 'LEGISLATION_PROGRESS'])
-    .describe('Type of report to generate'),
-  subjectId: z.string()
-    .min(1)
-    .max(100)
-    .optional()
-    .describe('Subject identifier (MEP ID, Committee ID, etc.)'),
-  dateFrom: DateStringSchema.optional(),
-  dateTo: DateStringSchema.optional()
-});
-
-/**
- * Assess MEP influence input schema
- */
-export const AssessMepInfluenceSchema = z.object({
-  mepId: z.string()
-    .min(1)
-    .max(100)
-    .describe('MEP identifier'),
-  dateFrom: DateStringSchema.optional(),
-  dateTo: DateStringSchema.optional(),
-  includeDetails: z.boolean()
-    .default(false)
-    .describe('Include detailed breakdown per dimension')
-});
-
-/**
- * Analyze coalition dynamics input schema
+ * Schema for coalition dynamics analysis input
  */
 export const AnalyzeCoalitionDynamicsSchema = z.object({
-  groupIds: z.array(z.string().min(1).max(50))
-    .min(1)
-    .max(10)
-    .optional()
-    .describe('Political group identifiers to analyze (omit for all groups)'),
-  dateFrom: DateStringSchema.optional(),
-  dateTo: DateStringSchema.optional(),
-  minimumCohesion: z.number()
-    .min(0)
-    .max(1)
-    .default(0.5)
-    .describe('Minimum cohesion threshold for alliance detection')
+  groupIds: z.array(
+    z.string().min(1).max(50)
+  ).min(1).max(10).optional(),
+  dateFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
+  dateTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
+  minimumCohesion: z.number().min(0).max(1).default(0.5).optional()
 });
 
 /**
- * Detect voting anomalies input schema
+ * Schema for voting anomaly detection input
  */
 export const DetectVotingAnomaliesSchema = z.object({
-  mepId: z.string()
-    .min(1)
-    .max(100)
-    .optional()
-    .describe('MEP identifier (omit for all MEPs)'),
-  groupId: z.string()
-    .min(1)
-    .max(50)
-    .optional()
-    .describe('Political group to analyze'),
-  dateFrom: DateStringSchema.optional(),
-  dateTo: DateStringSchema.optional(),
-  sensitivityThreshold: z.number()
-    .min(0)
-    .max(1)
-    .default(0.3)
-    .describe('Anomaly sensitivity (lower = more anomalies detected)')
-}).refine(
-  data => !(data.mepId !== undefined && data.groupId !== undefined),
-  { message: 'Cannot specify both mepId and groupId — use one or neither' }
-);
+  mepId: z.string().min(1).max(100).optional(),
+  groupId: z.string().min(1).max(50).optional(),
+  dateFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
+  dateTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
+  sensitivityThreshold: z.number().min(0).max(1).default(0.3).optional()
+});
 
 /**
- * Compare political groups input schema
+ * Schema for political group comparison input
  */
 export const ComparePoliticalGroupsSchema = z.object({
-  groupIds: z.array(z.string().min(1).max(50))
-    .min(2)
-    .max(10)
-    .describe('Political group identifiers to compare'),
-  dateFrom: DateStringSchema.optional(),
-  dateTo: DateStringSchema.optional(),
-  dimensions: z.array(z.enum([
-    'voting_discipline',
-    'activity_level',
-    'legislative_output',
-    'attendance',
-    'cohesion'
-  ])).optional()
-    .describe('Comparison dimensions (omit for all)')
+  groupIds: z.array(
+    z.string().min(1).max(50)
+  ).min(2, 'At least 2 political groups required').max(10),
+  dimensions: z.array(
+    z.enum(['voting_discipline', 'activity_level', 'legislative_output', 'attendance', 'cohesion'])
+  ).optional(),
+  dateFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
+  dateTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional()
 });
 
 /**
- * Analyze legislative effectiveness input schema
+ * Schema for legislative effectiveness analysis input
  */
 export const AnalyzeLegislativeEffectivenessSchema = z.object({
-  subjectType: z.enum(['MEP', 'COMMITTEE'])
-    .describe('Subject type to analyze'),
-  subjectId: z.string()
-    .min(1)
-    .max(100)
-    .describe('Subject identifier (MEP ID or committee abbreviation)'),
-  dateFrom: DateStringSchema.optional(),
-  dateTo: DateStringSchema.optional()
+  subjectType: z.enum(['MEP', 'COMMITTEE']),
+  subjectId: z.string().min(1).max(100),
+  dateFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
+  dateTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional()
 });
 
 /**
- * Monitor legislative pipeline input schema
+ * Schema for legislative pipeline monitoring input
  */
 export const MonitorLegislativePipelineSchema = z.object({
-  committee: z.string()
-    .min(1)
-    .max(100)
-    .optional()
-    .describe('Filter by committee'),
-  status: z.enum(['ALL', 'ACTIVE', 'STALLED', 'COMPLETED'])
-    .default('ACTIVE')
-    .describe('Pipeline status filter'),
-  dateFrom: DateStringSchema.optional(),
-  dateTo: DateStringSchema.optional(),
-  limit: z.number()
-    .int()
-    .min(1)
-    .max(100)
-    .default(20)
-    .describe('Maximum results to return')
+  status: z.enum(['ALL', 'ACTIVE', 'STALLED', 'COMPLETED']).default('ACTIVE').optional(),
+  committee: z.string().min(1).max(100).optional(),
+  dateFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
+  dateTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
+  limit: z.number().int().min(1).max(100).default(20).optional()
 });
 
 /**
- * Standard OSINT output fields Zod schema.
+ * Schema for committee activity analysis input
+ */
+export const AnalyzeCommitteeActivitySchema = z.object({
+  committeeId: z.string().min(1).max(100),
+  dateFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
+  dateTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional()
+});
+
+/**
+ * Schema for MEP attendance tracking input
+ */
+export const TrackMepAttendanceSchema = z.object({
+  mepId: z.string().min(1).max(100).optional(),
+  country: z.string().length(2).optional(),
+  groupId: z.string().min(1).max(50).optional(),
+  dateFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
+  dateTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
+  limit: z.number().int().min(1).max(100).default(20).optional()
+});
+
+/**
+ * Schema for country delegation analysis input
+ */
+export const AnalyzeCountryDelegationSchema = z.object({
+  country: z.string().length(2, 'Country must be ISO 3166-1 alpha-2 code'),
+  dateFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
+  dateTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional()
+});
+
+/**
+ * Schema for political landscape generation input
+ */
+export const GeneratePoliticalLandscapeSchema = z.object({
+  dateFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
+  dateTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional()
+});
+
+/**
+ * Schema for network analysis input
+ */
+export const NetworkAnalysisSchema = z.object({
+  mepId: z.number().int().positive().optional(),
+  analysisType: z.enum(['committee', 'voting', 'combined']).default('combined').optional(),
+  depth: z.number().int().min(1).max(3).default(2).optional()
+});
+
+/**
+ * Schema for sentiment tracker input
+ */
+export const SentimentTrackerSchema = z.object({
+  groupId: z.string().min(1).max(50).optional(),
+  timeframe: z.enum(['last_month', 'last_quarter', 'last_year']).default('last_quarter').optional()
+});
+
+/**
+ * Schema for early warning system input
+ */
+export const EarlyWarningSystemSchema = z.object({
+  sensitivity: z.enum(['low', 'medium', 'high']).default('medium').optional(),
+  focusArea: z.enum(['coalitions', 'attendance', 'all']).default('all').optional()
+});
+
+/**
+ * Schema for comparative intelligence input
+ */
+export const ComparativeIntelligenceSchema = z.object({
+  mepIds: z.array(z.number().int().positive()).min(2).max(10),
+  dimensions: z.array(
+    z.enum(['voting', 'committee', 'legislative', 'attendance'])
+  ).default(['voting', 'committee', 'legislative', 'attendance']).optional()
+});
+
+/**
+ * Schema for intelligence correlation input
+ */
+export const CorrelateIntelligenceSchema = z.object({
+  mepIds: z.array(
+    z.string().min(1).max(100)
+  ).min(1, 'At least 1 MEP ID required').max(5, 'At most 5 MEP IDs'),
+  groups: z.array(
+    z.string().min(1).max(50)
+  ).max(8).optional(),
+  sensitivityLevel: z.enum(['HIGH', 'MEDIUM', 'LOW']).default('MEDIUM').optional(),
+  includeNetworkAnalysis: z.boolean().default(false).optional()
+});
+
+/**
+ * Schema for OSINT standard output validation
  *
- * Validates the common output fields present on every OSINT intelligence tool
- * response: confidenceLevel, methodology, dataFreshness, and sourceAttribution.
- *
- * **Confidence Level Criteria:**
- * - `HIGH`   — Full EP API data (voting statistics, complete membership)
- * - `MEDIUM` — Partial EP API data; results are indicative
- * - `LOW`    — Insufficient data; treat output with caution
+ * Every analysis tool output must include these fields per
+ * FUTURE_ARCHITECTURE.md specification.
  */
 export const OsintStandardOutputSchema = z.object({
-  confidenceLevel: z.enum(['HIGH', 'MEDIUM', 'LOW'])
-    .describe('Confidence level based on data availability and quality'),
+  confidenceLevel: z.string()
+    .describe('Analysis confidence level: HIGH, MEDIUM, or LOW'),
   methodology: z.string()
-    .describe('Methodology used for intelligence analysis'),
+    .describe('Description of the analytical methodology used'),
   dataFreshness: z.string()
     .describe('Data freshness indicator or description of data currency'),
   sourceAttribution: z.string()
     .describe('Attribution to European Parliament Open Data Portal data sources'),
+  dataQualityWarnings: z.array(z.string())
+    .describe('Warnings about data quality issues, unavailable metrics, or limitations'),
 });
 
 /**
- * Cross-tool intelligence correlation input schema.
- *
- * Accepts 1-5 MEP identifiers for per-MEP correlations (influence × anomaly,
- * network × committee) and optional political group identifiers for
- * coalition-level analysis (early warning × coalition dynamics).
+ * Schema for generated stats input
  */
-export const CorrelateIntelligenceSchema = z.object({
-  mepIds: z.array(
-    z.string().min(1).max(100).describe('MEP identifier')
-  )
-    .min(1)
-    .max(5)
-    .describe('MEP identifiers to cross-correlate (1–5 MEPs)'),
-  groups: z.array(
-    z.string().min(1).max(50).describe('Political group identifier')
-  )
-    .max(8)
-    .optional()
-    .describe('Political groups for coalition fracture analysis (omit to use all major groups)'),
-  sensitivityLevel: z.enum(['HIGH', 'MEDIUM', 'LOW'])
-    .default('MEDIUM')
-    .describe('Alert sensitivity — HIGH surfaces more signals, LOW reduces noise'),
-  includeNetworkAnalysis: z.boolean()
-    .default(false)
-    .describe('Run network centrality analysis (increases response time)'),
+export const GetAllGeneratedStatsSchema = z.object({
+  yearFrom: z.number().int().min(2004).max(2031).optional(),
+  yearTo: z.number().int().min(2004).max(2031).optional(),
+  category: z.enum([
+    'all', 'plenary_sessions', 'legislative_acts', 'roll_call_votes',
+    'committee_meetings', 'parliamentary_questions', 'resolutions',
+    'speeches', 'adopted_texts', 'political_groups', 'procedures',
+    'events', 'documents', 'mep_turnover', 'declarations'
+  ]).default('all').optional(),
+  includeMonthlyBreakdown: z.boolean().default(false).optional(),
+  includeRankings: z.boolean().default(true).optional(),
+  includePredictions: z.boolean().default(true).optional()
 });
