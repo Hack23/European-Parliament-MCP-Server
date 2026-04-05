@@ -78,7 +78,8 @@ export class LegislativeClient extends BaseEPClient {
     const response = await this.get<JSONLDResponse>('procedures', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];
     const procedures = items.map((item) => this.transformProcedure(item));
-    return { data: procedures, total: procedures.length + offset, limit, offset, hasMore: procedures.length === limit };
+    const hasMore = procedures.length === limit;
+    return { data: procedures, total: procedures.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -133,7 +134,8 @@ export class LegislativeClient extends BaseEPClient {
 
     const items = Array.isArray(response.data) ? response.data : [];
     const events = items.map((item) => this.transformEvent(item));
-    return { data: events, total: events.length + offset, limit, offset, hasMore: events.length === limit };
+    const hasMore = events.length === limit;
+    return { data: events, total: events.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -159,7 +161,8 @@ export class LegislativeClient extends BaseEPClient {
     const response = await this.get<JSONLDResponse>('adopted-texts', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];
     const texts = items.map((item) => this.transformAdoptedText(item));
-    return { data: texts, total: texts.length + offset, limit, offset, hasMore: texts.length === limit };
+    const hasMore = texts.length === limit;
+    return { data: texts, total: texts.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**

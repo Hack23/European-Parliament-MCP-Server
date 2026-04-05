@@ -131,10 +131,16 @@ export class MEPClient extends BaseEPClient {
   private paginateFiltered(
     meps: MEP[], limit: number, offset: number, filtered: boolean
   ): PaginatedResponse<MEP> {
-    const total = filtered ? meps.length : meps.length + offset;
-    const paged = filtered ? meps.slice(offset, offset + limit) : meps;
-    const hasMore = filtered ? offset + paged.length < meps.length : paged.length === limit;
-    return { data: paged, total, limit, offset, hasMore };
+    if (filtered) {
+      // In-memory pagination: we have the full filtered dataset, so total is exact.
+      const paged = meps.slice(offset, offset + limit);
+      const hasMore = offset + paged.length < meps.length;
+      return { data: paged, total: meps.length, limit, offset, hasMore };
+    }
+    // Server pagination: `meps` is a single server page.
+    const hasMore = meps.length === limit;
+    const total = offset + meps.length + (hasMore ? 1 : 0);
+    return { data: meps, total, limit, offset, hasMore };
   }
 
   // ─── Public methods ───────────────────────────────────────────────────────
@@ -161,12 +167,15 @@ export class MEPClient extends BaseEPClient {
       const response = await this.get<JSONLDResponse>('meps', apiParams);
       const meps = response.data.map((item) => this.transformMEP(item));
 
+      const limit = params.limit ?? 50;
+      const offset = params.offset ?? 0;
+      const hasMore = meps.length === limit;
       const result: PaginatedResponse<MEP> = {
         data: meps,
-        total: (params.offset ?? 0) + meps.length,
-        limit: params.limit ?? 50,
-        offset: params.offset ?? 0,
-        hasMore: meps.length >= (params.limit ?? 50),
+        total: offset + meps.length + (hasMore ? 1 : 0),
+        limit,
+        offset,
+        hasMore,
       };
 
       auditLogger.logDataAccess(action, params, result.data.length);
@@ -286,7 +295,8 @@ export class MEPClient extends BaseEPClient {
 
     const items = Array.isArray(response.data) ? response.data : [];
     const meps = items.map((item) => this.transformMEP(item));
-    return { data: meps, total: meps.length + offset, limit, offset, hasMore: meps.length === limit };
+    const hasMore = meps.length === limit;
+    return { data: meps, total: meps.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -308,7 +318,8 @@ export class MEPClient extends BaseEPClient {
 
     const items = Array.isArray(response.data) ? response.data : [];
     const meps = items.map((item) => this.transformMEP(item));
-    return { data: meps, total: meps.length + offset, limit, offset, hasMore: meps.length === limit };
+    const hasMore = meps.length === limit;
+    return { data: meps, total: meps.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -330,7 +341,8 @@ export class MEPClient extends BaseEPClient {
 
     const items = Array.isArray(response.data) ? response.data : [];
     const meps = items.map((item) => this.transformMEP(item));
-    return { data: meps, total: meps.length + offset, limit, offset, hasMore: meps.length === limit };
+    const hasMore = meps.length === limit;
+    return { data: meps, total: meps.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**
@@ -358,7 +370,8 @@ export class MEPClient extends BaseEPClient {
     const declarations = items.map((item) => this.transformMEPDeclaration(item));
 
     auditLogger.logDataAccess('getMEPDeclarations', apiParams, declarations.length);
-    return { data: declarations, total: declarations.length + offset, limit, offset, hasMore: declarations.length === limit };
+    const hasMore = declarations.length === limit;
+    return { data: declarations, total: declarations.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**

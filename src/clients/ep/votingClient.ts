@@ -229,7 +229,8 @@ export class VotingClient extends BaseEPClient {
     const response = await this.get<JSONLDResponse>('speeches', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];
     const speeches = items.map((item) => this.transformSpeech(item));
-    return { data: speeches, total: speeches.length + offset, limit, offset, hasMore: speeches.length === limit };
+    const hasMore = speeches.length === limit;
+    return { data: speeches, total: speeches.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 
   /**

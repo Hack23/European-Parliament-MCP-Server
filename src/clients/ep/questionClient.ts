@@ -127,17 +127,21 @@ export class QuestionClient extends BaseEPClient {
         apiParams
       );
 
+      const pageSize = response.data.length;
       let questions = response.data.map((item) =>
         this.transformParliamentaryQuestion(item)
       );
       questions = this.filterQuestions(questions, params);
 
+      const limit = params.limit ?? 50;
+      const offset = params.offset ?? 0;
+      const hasMore = pageSize === limit;
       const result: PaginatedResponse<ParliamentaryQuestion> = {
         data: questions,
-        total: (params.offset ?? 0) + questions.length,
-        limit: params.limit ?? 50,
-        offset: params.offset ?? 0,
-        hasMore: questions.length >= (params.limit ?? 50),
+        total: offset + pageSize + (hasMore ? 1 : 0),
+        limit,
+        offset,
+        hasMore,
       };
 
       auditLogger.logDataAccess(action, params, result.data.length);

@@ -165,6 +165,7 @@ export class CommitteeClient extends BaseEPClient {
 
     const items = Array.isArray(response.data) ? response.data : [];
     const bodies = items.map((item) => this.transformCorporateBody(item));
-    return { data: bodies, total: bodies.length + offset, limit, offset, hasMore: bodies.length === limit };
+    const hasMore = bodies.length === limit;
+    return { data: bodies, total: bodies.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
 }
