@@ -24,13 +24,13 @@ startCommand:
         default: 100
         description: "Maximum API requests per minute"
   commandFunction: |-
-    (config) => ({
-      command: 'npx',
-      args: ['-y', 'european-parliament-mcp-server'],
-      env: {
-        EP_API_URL: config.EP_API_URL ?? 'https://data.europarl.europa.eu/api/v2',
-        ...(config.EP_REQUEST_TIMEOUT_MS != null && { EP_REQUEST_TIMEOUT_MS: String(config.EP_REQUEST_TIMEOUT_MS) }),
-        ...(config.EP_CACHE_TTL != null && { EP_CACHE_TTL: String(config.EP_CACHE_TTL) }),
-        ...(config.EP_RATE_LIMIT != null && { EP_RATE_LIMIT: String(config.EP_RATE_LIMIT) })
-      }
-    })
+      (config) => ({
+        command: 'npx',
+        args: ['-y', 'european-parliament-mcp-server'],
+        env: {
+          EP_API_URL: config.EP_API_URL ?? 'https://data.europarl.europa.eu/api/v2',
+          ...(config.EP_REQUEST_TIMEOUT_MS != null && { EP_REQUEST_TIMEOUT_MS: String(config.EP_REQUEST_TIMEOUT_MS) }),
+          ...(config.EP_CACHE_TTL != null && { EP_CACHE_TTL: String(config.EP_CACHE_TTL) }),
+          ...(config.EP_RATE_LIMIT != null && { EP_RATE_LIMIT: String(config.EP_RATE_LIMIT) })
+        }
+      })
