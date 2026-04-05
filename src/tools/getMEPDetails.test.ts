@@ -140,7 +140,7 @@ describe('get_mep_details Tool', () => {
       spy.mockRestore();
     });
 
-    it('should use "Unknown error" when thrown value is not an Error instance', async () => {
+    it('should use ToolError when thrown value is not an Error instance', async () => {
       const spy = vi.spyOn(epClientModule.epClient, 'getMEPDetails')
         .mockRejectedValueOnce({ code: 500 });
 
@@ -151,7 +151,7 @@ describe('get_mep_details Tool', () => {
         expect(error).toBeInstanceOf(Error);
         const err = error as Error;
         expect(err.message).toContain('Failed to retrieve MEP details');
-        expect(err.message).toContain('Unknown error');
+        expect(err.name).toBe('ToolError');
       }
 
       spy.mockRestore();

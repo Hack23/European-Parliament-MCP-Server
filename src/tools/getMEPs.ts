@@ -19,6 +19,8 @@ import { GetMEPsSchema, MEPSchema, PaginatedResponseSchema } from '../schemas/eu
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { buildApiParams } from './shared/paramBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -82,10 +84,10 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetMEPs(
   args: unknown
 ): Promise<ToolResult> {
-  // Validate input
-  const params = GetMEPsSchema.parse(args);
-  
   try {
+    // Validate input
+    const params = GetMEPsSchema.parse(args);
+
     // Fetch MEPs from EP API (only pass defined properties)
     const apiParams = {
       active: params.active,
@@ -106,9 +108,23 @@ export async function handleGetMEPs(
     
     return buildToolResponse(validated);
   } catch (error: unknown) {
-    // Handle errors without exposing internal details
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to retrieve MEPs: ${errorMessage}`);
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_meps',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw new ToolError({
+      toolName: 'get_meps',
+      operation: 'fetchData',
+      message: 'Failed to retrieve MEPs',
+      isRetryable: true,
+      cause: error,
+    });
   }
 }
 

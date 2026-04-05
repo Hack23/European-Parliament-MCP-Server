@@ -28,15 +28,19 @@ export function buildToolResponse(data: unknown): ToolResult {
  */
 export function buildErrorResponse(error: unknown, toolName: string): ToolResult {
   let message: string;
+  let errorType: string;
   if (error instanceof Error) {
     message = error.message;
+    errorType = error.constructor.name;
   } else if (typeof error === 'string') {
     message = error;
+    errorType = 'string';
   } else {
     message = 'Unknown error occurred';
+    errorType = 'unknown';
   }
   return {
-    content: [{ type: 'text', text: JSON.stringify({ error: message, toolName }, null, 2) }],
+    content: [{ type: 'text', text: JSON.stringify({ error: message, toolName, errorType }, null, 2) }],
     isError: true
   };
 }

@@ -17,7 +17,10 @@
 
 import { GetCommitteeInfoSchema, CommitteeSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
 import { buildApiParams } from './shared/paramBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -53,19 +56,14 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetCommitteeInfo(
   args: unknown
 ): Promise<ToolResult> {
-  // Validate input
-  const params = GetCommitteeInfoSchema.parse(args);
-  
   try {
+    // Validate input
+    const params = GetCommitteeInfoSchema.parse(args);
+
     // Return current active bodies if showCurrent is true
     if (params.showCurrent === true) {
       const result = await epClient.getCurrentCorporateBodies();
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify(result, null, 2)
-        }]
-      };
+      return buildToolResponse(result);
     }
 
     // Fetch committee info from EP API (only pass defined properties)
@@ -79,17 +77,25 @@ export async function handleGetCommitteeInfo(
     // Validate output
     const validated = CommitteeSchema.parse(result);
     
-    // Return MCP-compliant response
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(validated, null, 2)
-      }]
-    };
+    return buildToolResponse(validated);
   } catch (error: unknown) {
-    // Handle errors without exposing internal details
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to retrieve committee information: ${errorMessage}`);
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_committee_info',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw new ToolError({
+      toolName: 'get_committee_info',
+      operation: 'fetchData',
+      message: 'Failed to retrieve committee information',
+      isRetryable: true,
+      cause: error,
+    });
   }
 }
 

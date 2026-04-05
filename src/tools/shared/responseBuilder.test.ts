@@ -49,18 +49,21 @@ describe('buildErrorResponse', () => {
     const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.error).toBe('something went wrong');
     expect(parsed.toolName).toBe('my_tool');
+    expect(parsed.errorType).toBe('Error');
   });
 
   it('should handle string error input', () => {
     const result = buildErrorResponse('string error message', 'my_tool');
     const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.error).toBe('string error message');
+    expect(parsed.errorType).toBe('string');
   });
 
   it('should fall back to Unknown error for unknown types', () => {
     const result = buildErrorResponse(42, 'my_tool');
     const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.error).toBe('Unknown error occurred');
+    expect(parsed.errorType).toBe('unknown');
   });
 
   it('should include toolName in response', () => {

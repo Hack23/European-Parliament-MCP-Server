@@ -18,7 +18,10 @@
 
 import { GetVotingRecordsSchema, VotingRecordSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
 import { buildApiParams } from './shared/paramBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -53,10 +56,10 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetVotingRecords(
   args: unknown
 ): Promise<ToolResult> {
-  // Validate input
-  const params = GetVotingRecordsSchema.parse(args);
-  
   try {
+    // Validate input
+    const params = GetVotingRecordsSchema.parse(args);
+
     // Fetch voting records from EP API (only pass defined properties)
     const apiParams = {
       limit: params.limit,
@@ -76,28 +79,35 @@ export async function handleGetVotingRecords(
     const outputSchema = PaginatedResponseSchema(VotingRecordSchema);
     const validated = outputSchema.parse(result);
 
-    // Note: `_warning` is a meta-field added after Zod validation and is
-    // intentionally not part of the Zod output schema.
+    // Add deprecation warning when mepId is provided (EP API limitation)
     const responsePayload = {
       ...validated,
       _warning:
-        params['mepId'] !== undefined
+        params.mepId !== undefined
           ? 'The mepId parameter is not supported by the EP API and has no effect on results. ' +
             'The EP votes endpoint only returns aggregate vote counts, not per-MEP positions.'
           : undefined
     };
     
-    // Return MCP-compliant response
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(responsePayload, null, 2)
-      }]
-    };
+    return buildToolResponse(responsePayload);
   } catch (error: unknown) {
-    // Handle errors without exposing internal details
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to retrieve voting records: ${errorMessage}`);
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_voting_records',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw new ToolError({
+      toolName: 'get_voting_records',
+      operation: 'fetchData',
+      message: 'Failed to retrieve voting records',
+      isRetryable: true,
+      cause: error,
+    });
   }
 }
 
