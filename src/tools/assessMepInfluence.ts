@@ -237,6 +237,20 @@ function getConfidenceLevel(totalVotes: number): string {
 }
 
 /**
+ * Collect data quality warnings based on available data
+ */
+function collectDataQualityWarnings(votingDataAvailable: boolean, questionCount: number): string[] {
+  const warnings: string[] = [];
+  if (!votingDataAvailable) {
+    warnings.push('Voting statistics unavailable from EP API — voting-based metrics (loyalty, participation, coalition building) set to zero');
+  }
+  if (questionCount === 0) {
+    warnings.push('Parliamentary questions data unavailable or MEP has no questions — oversight dimension reports zero');
+  }
+  return warnings;
+}
+
+/**
  * Handles the assess_mep_influence MCP tool request.
  *
  * Assesses an MEP's influence within the European Parliament by evaluating their
@@ -325,10 +339,6 @@ export async function handleAssessMepInfluence(
     };
 
     const votingDataAvailable = stats.totalVotes > 0;
-    const dataQualityWarnings: string[] = [];
-    if (!votingDataAvailable) {
-      dataQualityWarnings.push('Voting statistics unavailable from EP API — voting-based metrics (loyalty, participation, coalition building) set to zero');
-    }
 
     // Fetch real parliamentary questions for this MEP
     // Use data.length instead of total because total is a lower-bound estimate
@@ -343,9 +353,8 @@ export async function handleAssessMepInfluence(
       auditLogger.logError('assess_mep_influence.fetch_questions', { mepId: params.mepId }, toErrorMessage(error));
       // Questions may not be available — report zero
     }
-    if (questionCount === 0) {
-      dataQualityWarnings.push('Parliamentary questions data unavailable or MEP has no questions — oversight dimension reports zero');
-    }
+
+    const dataQualityWarnings = collectDataQualityWarnings(votingDataAvailable, questionCount);
 
     const votingDim = computeVotingActivityScore(stats);
     const legislativeDim = computeLegislativeOutputScore(mep.roles ?? [], mep.committees);
