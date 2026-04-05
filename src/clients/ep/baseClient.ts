@@ -445,6 +445,21 @@ export class BaseEPClient {
   }
 
   /**
+   * Validates the Content-Type header of an API response.
+   * Throws if the response is not JSON (e.g. HTML error pages from reverse proxies).
+   * @private
+   */
+  private static validateContentType(response: Response): void {
+    const contentType = response.headers.get('content-type') ?? '';
+    if (contentType !== '' && !contentType.includes('json')) {
+      throw new APIError(
+        `EP API returned unexpected content-type: ${contentType}`,
+        502
+      );
+    }
+  }
+
+  /**
    * Executes the HTTP fetch with timeout/abort support and response size guard.
    * @private
    */
@@ -465,6 +480,9 @@ export class BaseEPClient {
             response.status
           );
         }
+
+        // Validate content-type to reject non-JSON responses early.
+        BaseEPClient.validateContentType(response);
 
         // Guard against oversized responses to prevent memory exhaustion.
         const contentLength = response.headers.get('content-length');
@@ -601,7 +619,14 @@ export class BaseEPClient {
     endpoint: string,
     params?: Record<string, unknown>
   ): string {
-    return JSON.stringify({ endpoint, params });
+    // Sort params keys to ensure deterministic cache keys regardless of
+    // property insertion order.  This prevents cache collisions where
+    // { a: 1, b: 2 } and { b: 2, a: 1 } would otherwise produce
+    // different keys. (ISMS A.8.11 — Data integrity)
+    const sortedParams = params !== undefined
+      ? Object.fromEntries(Object.entries(params).sort(([a], [b]) => a.localeCompare(b)))
+      : undefined;
+    return JSON.stringify({ endpoint, params: sortedParams });
   }
 
   // ─── Public cache helpers ───────────────────────────────────────────────────

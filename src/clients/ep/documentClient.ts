@@ -64,6 +64,10 @@ export class DocumentClient extends BaseEPClient {
         AMENDMENT: 'AMENDMENT_LIST',
         RESOLUTION: 'RESOLUTION_MOTION',
         ADOPTED: 'TEXT_ADOPTED',
+        DECISION: 'DECISION',
+        DIRECTIVE: 'DIRECTIVE_PROPOSAL',
+        REGULATION: 'REGULATION',
+        OPINION: 'OPINION',
       };
       apiParams['work-type'] =
         typeMap[params.documentType.toUpperCase()] ?? params.documentType;

@@ -152,14 +152,8 @@ export function transformMEPDetails(apiData: Record<string, unknown>): MEPDetail
     committees: committees.length > 0 ? committees : baseMEP.committees,
     biography: `Born: ${bday !== '' ? bday : 'Unknown'}`,
     // EP API /meps/{id} endpoint does not return voting statistics;
-    // zeros indicate "no data available" rather than fabricated numbers
-    votingStatistics: {
-      totalVotes: 0,
-      votesFor: 0,
-      votesAgainst: 0,
-      abstentions: 0,
-      attendanceRate: 0,
-    },
+    // votingStatistics is intentionally left undefined (not set to zeros)
+    // so consumers can distinguish "no data" from "zero votes".
   };
 }
 
@@ -281,8 +275,9 @@ export function transformCorporateBody(apiData: Record<string, unknown>): Commit
     name: name !== '' ? name : `Committee ${abbreviation}`,
     abbreviation,
     members,
-    chair: members[0] ?? '',
-    viceChairs: members.slice(1, 3),
+    // EP API membership data does not reliably include role information;
+    // chair and viceChairs are left undefined rather than assuming the
+    // first members hold those positions.
     responsibilities,
   };
 }

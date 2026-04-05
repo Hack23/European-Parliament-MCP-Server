@@ -88,7 +88,7 @@ export class CommitteeClient extends BaseEPClient {
   private async searchCommitteeInList(searchTerm: string): Promise<Committee | null> {
     const listParams: Record<string, unknown> = {
       'body-classification': 'COMMITTEE_PARLIAMENTARY_STANDING',
-      limit: 50,
+      limit: 100,
     };
     const response = await this.get<JSONLDResponse>('corporate-bodies', listParams);
 

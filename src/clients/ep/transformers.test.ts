@@ -160,15 +160,9 @@ describe('transformMEPDetails', () => {
     expect(details.committees).toContain('ITRE');
   });
 
-  it('includes voting statistics with zeros', () => {
+  it('does not include votingStatistics (EP API does not provide them)', () => {
     const details = transformMEPDetails({ identifier: '101', label: 'MEP' });
-    expect(details.votingStatistics).toEqual({
-      totalVotes: 0,
-      votesFor: 0,
-      votesAgainst: 0,
-      abstentions: 0,
-      attendanceRate: 0,
-    });
+    expect(details.votingStatistics).toBeUndefined();
   });
 
   it('shows Unknown birthday when bday is absent', () => {
@@ -368,8 +362,9 @@ describe('transformCorporateBody', () => {
     expect(committee.name).toBe('Committee on the Environment');
     expect(committee.abbreviation).toBe('ENVI');
     expect(committee.members).toEqual(['person/1', 'person/2', 'person/3']);
-    expect(committee.chair).toBe('person/1');
-    expect(committee.viceChairs).toEqual(['person/2', 'person/3']);
+    // chair/viceChairs are not inferred from member order
+    expect(committee.chair).toBeUndefined();
+    expect(committee.viceChairs).toBeUndefined();
     expect(committee.responsibilities).toContain('PARLIAMENTARY_COMMITTEE');
   });
 
@@ -385,10 +380,10 @@ describe('transformCorporateBody', () => {
     expect(committee.name).toBe('Committee AFET');
   });
 
-  it('returns empty chair when members are absent', () => {
+  it('returns undefined chair when members are absent', () => {
     const committee = transformCorporateBody({ body_id: 'TEST', notation: 'TEST' });
-    expect(committee.chair).toBe('');
-    expect(committee.viceChairs).toEqual([]);
+    expect(committee.chair).toBeUndefined();
+    expect(committee.viceChairs).toBeUndefined();
   });
 
   it('returns empty responsibilities when classification is absent', () => {

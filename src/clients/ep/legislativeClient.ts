@@ -206,17 +206,22 @@ export class LegislativeClient extends BaseEPClient {
    * @param processId - Procedure process ID
    * @param eventId - Event identifier within the procedure
    */
-  async getProcedureEventById(processId: string, eventId: string): Promise<Record<string, unknown>> {
+  async getProcedureEventById(processId: string, eventId: string): Promise<EPEvent> {
     if (processId.trim() === '') {
       throw new APIError('Procedure process-id is required', 400);
     }
     if (eventId.trim() === '') {
       throw new APIError('Event ID is required', 400);
     }
-    return this.get<Record<string, unknown>>(
+    const response = await this.get<JSONLDResponse>(
       `procedures/${processId}/events/${eventId}`,
       { format: 'application/ld+json' }
     );
+    // EP API wraps single-item responses in a `data` array
+    const item = Array.isArray(response.data) && response.data.length > 0
+      ? response.data[0] ?? {}
+      : (response as unknown as Record<string, unknown>);
+    return this.transformEvent(item);
   }
 
   /**

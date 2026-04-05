@@ -18,8 +18,13 @@ describe('get_procedure_event_by_id Tool', () => {
 
     vi.mocked(epClientModule.epClient.getProcedureEventById).mockResolvedValue({
       id: 'evt-1',
+      title: 'Committee vote',
+      date: '2024-03-15',
+      endDate: '',
       type: 'Event',
-      processId: 'COD-2024-001'
+      location: 'Brussels',
+      organizer: 'ENVI',
+      status: 'CONFIRMED',
     });
   });
 
