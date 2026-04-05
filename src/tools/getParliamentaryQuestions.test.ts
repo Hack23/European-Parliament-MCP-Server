@@ -422,11 +422,13 @@ describe('get_parliamentary_questions Tool', () => {
     it('should call getParliamentaryQuestionById when docId is provided', async () => {
       const mockQuestion = {
         id: 'E-001/2024',
-        title: 'Question on AI',
-        date: '2024-01-15',
+        type: 'WRITTEN',
         author: 'MEP-124810',
-        type: 'E',
-        answer: 'Answer text'
+        date: '2024-01-15',
+        topic: 'Question on AI',
+        questionText: 'What is the Commission doing about AI?',
+        status: 'ANSWERED',
+        answerText: 'Answer text'
       };
       vi.mocked(epClient.getParliamentaryQuestionById).mockResolvedValue(mockQuestion);
 
@@ -461,9 +463,9 @@ describe('get_parliamentary_questions Tool', () => {
       expect(callArgs).toMatchObject({ topic: 'Climate' });
     });
 
-    it('should use "Unknown error" when thrown value is not an Error instance', async () => {
+    it('should use ToolError when thrown value is not an Error instance', async () => {
       vi.mocked(epClient.getParliamentaryQuestions).mockRejectedValueOnce({ code: 500 });
-      await expect(handleGetParliamentaryQuestions({})).rejects.toThrow('Unknown error');
+      await expect(handleGetParliamentaryQuestions({})).rejects.toThrow('Failed to retrieve parliamentary questions');
     });
   });
 });

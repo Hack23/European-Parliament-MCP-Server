@@ -176,10 +176,9 @@ describe('get_plenary_sessions Tool', () => {
     it('should call getMeetingById when eventId is provided', async () => {
       const mockMeeting = {
         id: 'MTG-2024-001',
-        title: 'Plenary Session March 2024',
         date: '2024-03-11',
         location: 'Strasbourg',
-        type: 'PLENARY'
+        agendaItems: ['Debate on climate policy']
       };
       vi.mocked(epClientModule.epClient.getMeetingById).mockResolvedValue(mockMeeting);
 

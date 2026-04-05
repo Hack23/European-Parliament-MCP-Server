@@ -17,7 +17,10 @@
 
 import { GetParliamentaryQuestionsSchema, ParliamentaryQuestionSchema, PaginatedResponseSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
 import { buildApiParams } from './shared/paramBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -58,19 +61,30 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetParliamentaryQuestions(
   args: unknown
 ): Promise<ToolResult> {
-  // Validate input
-  const params = GetParliamentaryQuestionsSchema.parse(args);
-  
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetParliamentaryQuestionsSchema.parse>;
+  try {
+    params = GetParliamentaryQuestionsSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_parliamentary_questions',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
+
   try {
     // Single question lookup by ID
     if (params.docId !== undefined) {
       const result = await epClient.getParliamentaryQuestionById(params.docId);
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify(result, null, 2)
-        }]
-      };
+      const validated = ParliamentaryQuestionSchema.parse(result);
+      return buildToolResponse(validated);
     }
 
     // Fetch parliamentary questions from EP API (only pass defined properties)
@@ -93,17 +107,25 @@ export async function handleGetParliamentaryQuestions(
     const outputSchema = PaginatedResponseSchema(ParliamentaryQuestionSchema);
     const validated = outputSchema.parse(result);
     
-    // Return MCP-compliant response
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(validated, null, 2)
-      }]
-    };
+    return buildToolResponse(validated);
   } catch (error: unknown) {
-    // Handle errors without exposing internal details
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to retrieve parliamentary questions: ${errorMessage}`);
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_parliamentary_questions',
+        operation: 'validateOutput',
+        message: `Unexpected EP API response format: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw new ToolError({
+      toolName: 'get_parliamentary_questions',
+      operation: 'fetchData',
+      message: 'Failed to retrieve parliamentary questions',
+      isRetryable: true,
+      cause: error,
+    });
   }
 }
 
