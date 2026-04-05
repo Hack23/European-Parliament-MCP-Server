@@ -1,9 +1,9 @@
 /**
- * Tests for pagination metadata correctness across all EP API clients.
+ * Tests for pagination metadata correctness across representative EP API client scenarios.
  *
  * Verifies that `total`, `hasMore`, `limit`, and `offset` are computed
  * consistently for server-paginated, client-filtered, and in-memory
- * paginated responses.
+ * paginated responses covered by this suite.
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -96,6 +96,57 @@ function buildProcedureResponse(count: number): JSONLDResponse {
       title_dcterms: [{ '@language': 'en', '@value': `Procedure ${i + 1}` }],
       work_date_document: '2024-01-15',
       label: `Procedure label ${i + 1}`,
+    })),
+    '@context': [
+      { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
+      'https://data.europarl.europa.eu/api/v2/context.jsonld',
+    ],
+  };
+}
+
+function buildSpeechResponse(count: number): JSONLDResponse {
+  return {
+    data: Array.from({ length: count }, (_, i) => ({
+      id: `speech-${i + 1}`,
+      identifier: `SPEECH-${i + 1}`,
+      label: `Speech on topic ${i + 1}`,
+      had_activity_type: 'DEBATE_SPEECH',
+      had_participant_person: `person/1000${i}`,
+      participant_label: `Speaker ${i + 1}`,
+      activity_date: { '@value': `2024-03-${String(10 + i)}T10:00:00Z`, type: 'xsd:dateTime' },
+      language: 'en',
+      text: `Speech content ${i + 1}`,
+      was_part_of: `event/MTG-PL-2024-03-${String(10 + i)}`,
+    })),
+    '@context': [
+      { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
+      'https://data.europarl.europa.eu/api/v2/context.jsonld',
+    ],
+  };
+}
+
+function buildCorporateBodyResponse(count: number): JSONLDResponse {
+  return {
+    data: Array.from({ length: count }, (_, i) => ({
+      id: `org/BODY-${i + 1}`,
+      body_id: `BODY-${i + 1}`,
+      label: [{ '@language': 'en', '@value': `Body ${i + 1}` }],
+      notation: `BODY${i + 1}`,
+      classification: 'COMMITTEE_PARLIAMENTARY_STANDING',
+      hasMembership: [],
+    })),
+    '@context': [
+      { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
+      'https://data.europarl.europa.eu/api/v2/context.jsonld',
+    ],
+  };
+}
+
+function buildVocabularyResponse(count: number): JSONLDResponse {
+  return {
+    data: Array.from({ length: count }, (_, i) => ({
+      id: `vocab-${i + 1}`,
+      label: `Vocabulary ${i + 1}`,
     })),
     '@context': [
       { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
@@ -314,6 +365,90 @@ describe('Pagination metadata correctness', () => {
       const result = await client.getProcedures({ limit: 50, offset: 100 });
       expect(result.hasMore).toBe(false);
       expect(result.total).toBe(110);
+    });
+  });
+
+  // ── getSpeeches ──────────────────────────────────────────────────────────
+
+  describe('getSpeeches', () => {
+    it('hasMore=true and total includes +1 when page is full', async () => {
+      mockOk(buildSpeechResponse(10));
+      const result = await client.getSpeeches({ limit: 10, offset: 0 });
+      expect(result.hasMore).toBe(true);
+      expect(result.total).toBe(11); // 0 + 10 + 1
+      expect(result.limit).toBe(10);
+      expect(result.offset).toBe(0);
+    });
+
+    it('hasMore=false and exact total when page is partial', async () => {
+      mockOk(buildSpeechResponse(3));
+      const result = await client.getSpeeches({ limit: 10, offset: 20 });
+      expect(result.hasMore).toBe(false);
+      expect(result.total).toBe(23); // 20 + 3 + 0
+    });
+
+    it('hasMore=false for empty results', async () => {
+      mockOk(buildSpeechResponse(0));
+      const result = await client.getSpeeches({ limit: 50, offset: 0 });
+      expect(result.hasMore).toBe(false);
+      expect(result.total).toBe(0);
+      expect(result.data).toHaveLength(0);
+    });
+  });
+
+  // ── getCurrentCorporateBodies ───────────────────────────────────────────
+
+  describe('getCurrentCorporateBodies', () => {
+    it('hasMore=true and total includes +1 when page is full', async () => {
+      mockOk(buildCorporateBodyResponse(10));
+      const result = await client.getCurrentCorporateBodies({ limit: 10, offset: 0 });
+      expect(result.hasMore).toBe(true);
+      expect(result.total).toBe(11); // 0 + 10 + 1
+      expect(result.limit).toBe(10);
+      expect(result.offset).toBe(0);
+    });
+
+    it('hasMore=false and exact total when page is partial', async () => {
+      mockOk(buildCorporateBodyResponse(5));
+      const result = await client.getCurrentCorporateBodies({ limit: 10, offset: 30 });
+      expect(result.hasMore).toBe(false);
+      expect(result.total).toBe(35); // 30 + 5 + 0
+    });
+
+    it('hasMore=false for empty results', async () => {
+      mockOk(buildCorporateBodyResponse(0));
+      const result = await client.getCurrentCorporateBodies({ limit: 50, offset: 0 });
+      expect(result.hasMore).toBe(false);
+      expect(result.total).toBe(0);
+      expect(result.data).toHaveLength(0);
+    });
+  });
+
+  // ── getControlledVocabularies ───────────────────────────────────────────
+
+  describe('getControlledVocabularies', () => {
+    it('hasMore=true and total includes +1 when page is full', async () => {
+      mockOk(buildVocabularyResponse(10));
+      const result = await client.getControlledVocabularies({ limit: 10, offset: 0 });
+      expect(result.hasMore).toBe(true);
+      expect(result.total).toBe(11); // 0 + 10 + 1
+      expect(result.limit).toBe(10);
+      expect(result.offset).toBe(0);
+    });
+
+    it('hasMore=false and exact total when page is partial', async () => {
+      mockOk(buildVocabularyResponse(7));
+      const result = await client.getControlledVocabularies({ limit: 10, offset: 40 });
+      expect(result.hasMore).toBe(false);
+      expect(result.total).toBe(47); // 40 + 7 + 0
+    });
+
+    it('hasMore=false for empty results', async () => {
+      mockOk(buildVocabularyResponse(0));
+      const result = await client.getControlledVocabularies({ limit: 50, offset: 0 });
+      expect(result.hasMore).toBe(false);
+      expect(result.total).toBe(0);
+      expect(result.data).toHaveLength(0);
     });
   });
 
