@@ -341,6 +341,19 @@ describe('BaseEPClient.get() caching', () => {
     expect(r2.data[0].id).toBe('mep/FR');
     expect(mockFetch).toHaveBeenCalledTimes(2);
   });
+
+  it('should produce same cache key regardless of param insertion order', async () => {
+    const payload = { data: [{ id: 'mep/1' }], '@context': [] };
+    mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
+
+    // First call with { a, b } order
+    await client.testGet('meps', { a: '1', b: '2' });
+    // Second call with { b, a } order — should be a cache hit
+    await client.testGet('meps', { b: '2', a: '1' });
+
+    // Only one fetch call means the second was served from cache
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
 });
 
 // ─── get() — query parameter serialisation ───────────────────────────────────
@@ -507,6 +520,52 @@ describe('BaseEPClient.get() error handling', () => {
     mockFetch.mockRejectedValueOnce(new TypeError('network error'));
 
     await expect(client.testGet('meps')).rejects.toBeInstanceOf(APIError);
+  });
+
+  it('should throw APIError when response content-type is not JSON', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-type': 'text/html; charset=utf-8' }),
+      json: async () => ({ data: [], '@context': [] }),
+    } as unknown as Response);
+
+    await expect(client.testGet('meps')).rejects.toThrow(/unexpected content-type/);
+  });
+
+  it('should accept response when content-type includes json', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({
+        'content-type': 'application/ld+json; charset=utf-8',
+        'content-length': '30',
+      }),
+      text: async () => JSON.stringify({ data: [], '@context': [] }),
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[] }>('meps');
+    expect(result.data).toEqual([]);
+  });
+
+  it('should accept response when content-type header is absent', async () => {
+    const payload = { data: [{ id: 'ok' }], '@context': [] };
+    mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
+
+    const result = await client.testGet<typeof payload>('meps');
+    expect(result.data).toHaveLength(1);
+  });
+
+  it('should accept response with case-insensitive JSON content-type', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({
+        'content-type': 'Application/JSON',
+        'content-length': '30',
+      }),
+      text: async () => JSON.stringify({ data: [], '@context': [] }),
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[] }>('meps');
+    expect(result.data).toEqual([]);
   });
 
   it('should return empty data when response body is empty (with content-length)', async () => {

@@ -263,10 +263,11 @@ describe('EuropeanParliamentClient', () => {
       expect(result).toHaveProperty('name');
       expect(result).toHaveProperty('country');
       expect(result).toHaveProperty('politicalGroup');
-      expect(result).toHaveProperty('votingStatistics');
+      // votingStatistics is intentionally undefined — EP API does not provide them
+      expect(result.votingStatistics).toBeUndefined();
     });
 
-    it('should include voting statistics', async () => {
+    it('should not include voting statistics (EP API does not provide them)', async () => {
       // Mock successful API response
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -286,10 +287,8 @@ describe('EuropeanParliamentClient', () => {
 
       const result = await client.getMEPDetails('MEP-124810');
 
-      expect(result.votingStatistics).toBeDefined();
-      expect(result.votingStatistics?.totalVotes).toBeGreaterThanOrEqual(0);
-      expect(result.votingStatistics?.attendanceRate).toBeGreaterThanOrEqual(0);
-      expect(result.votingStatistics?.attendanceRate).toBeLessThanOrEqual(100);
+      // EP API /meps/{id} does not expose voting statistics
+      expect(result.votingStatistics).toBeUndefined();
     });
   });
 
@@ -1019,7 +1018,7 @@ describe('EuropeanParliamentClient', () => {
       expect(result.members.length).toBeGreaterThan(0);
     });
 
-    it('should set chair as first member', async () => {
+    it('should not assume chair from member order', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -1028,13 +1027,11 @@ describe('EuropeanParliamentClient', () => {
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
-      expect(result.chair).toBeDefined();
-      if (result.members.length > 0) {
-        expect(result.chair).toBe(result.members[0]);
-      }
+      // chair/viceChairs are not inferred from member order
+      expect(result.chair).toBeUndefined();
     });
 
-    it('should set vice chairs as second and third members', async () => {
+    it('should not assume vice chairs from member order', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -1043,7 +1040,7 @@ describe('EuropeanParliamentClient', () => {
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
-      expect(Array.isArray(result.viceChairs)).toBe(true);
+      expect(result.viceChairs).toBeUndefined();
     });
 
     it('should extract responsibilities from classification', async () => {
@@ -1146,8 +1143,8 @@ describe('EuropeanParliamentClient', () => {
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
       expect(result.members).toEqual([]);
-      expect(result.chair).toBe('');
-      expect(result.viceChairs).toEqual([]);
+      expect(result.chair).toBeUndefined();
+      expect(result.viceChairs).toBeUndefined();
     });
 
     it('should handle missing label field', async () => {

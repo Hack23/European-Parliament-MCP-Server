@@ -233,10 +233,16 @@ export class EuropeanParliamentClient {
   /**
    * Returns cache statistics for monitoring and debugging.
    *
+   * All sub-clients share the same LRU cache and hit/miss counters
+   * (via {@link EPSharedResources}), so delegating to any single
+   * sub-client returns aggregate statistics across the entire facade.
+   *
    * @returns `{ size, maxSize, hitRate, hits, misses }`
    * @public
    */
   getCacheStats(): { size: number; maxSize: number; hitRate: number; hits: number; misses: number } {
+    // All sub-clients share the same cache and counters; delegation
+    // to mepClient returns aggregate stats for the entire facade.
     return this.mepClient.getCacheStats();
   }
 
@@ -842,7 +848,7 @@ export class EuropeanParliamentClient {
    * @param processId - Procedure process ID
    * @param eventId - Event identifier within the procedure
    */
-  async getProcedureEventById(processId: string, eventId: string): Promise<Record<string, unknown>> {
+  async getProcedureEventById(processId: string, eventId: string): Promise<EPEvent> {
     return this.legislativeClient.getProcedureEventById(processId, eventId);
   }
 
