@@ -73,7 +73,7 @@ interface CountryDelegationAnalysis {
     groupFragmentation: string;
     engagementLevel: string;
   };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
@@ -134,7 +134,7 @@ function computeInfluence(totalMEPs: number, leadershipRoles: number): string {
 /**
  * Compute confidence level from data coverage ratio
  */
-function computeDataConfidence(dataCoverage: number): string {
+function computeDataConfidence(dataCoverage: number): 'HIGH' | 'MEDIUM' | 'LOW' {
   if (dataCoverage > 0.8) return 'HIGH';
   if (dataCoverage > 0.4) return 'MEDIUM';
   return 'LOW';
@@ -273,7 +273,7 @@ async function buildDelegationAnalysis(
     dataQualityWarnings: [
       ...(dataCoverage < 1 ? [`Voting statistics available for ${String(Math.round(dataCoverage * 100))}% of delegation MEPs`] : []),
       'National cohesion includes +10 baseline offset (proxy for national-interest voting beyond group lines)',
-      ...(attendances.length === 0 ? ['No MEP voting statistics available — attendance and loyalty metrics are zero'] : []),
+      ...(attendances.length === 0 ? ['No MEP voting statistics available — attendance is unavailable and loyalty is a proxy-derived estimate based on group fragmentation'] : []),
     ],
   };
 }

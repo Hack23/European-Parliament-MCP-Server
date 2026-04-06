@@ -48,7 +48,7 @@ interface VotingPatternAnalysis {
     withOtherGroups: number;
     rate: number;
   };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   methodology: string;
 }
 
@@ -100,7 +100,7 @@ function computeCrossPartyVoting(
  * @returns `'HIGH'` (>500 votes), `'MEDIUM'` (>100 votes), or `'LOW'` (≤100 votes)
  * @since 0.8.0
  */
-function computeConfidence(totalVotes: number): string {
+function computeConfidence(totalVotes: number): 'HIGH' | 'MEDIUM' | 'LOW' {
   if (totalVotes > 500) return 'HIGH';
   if (totalVotes > 100) return 'MEDIUM';
   return 'LOW';

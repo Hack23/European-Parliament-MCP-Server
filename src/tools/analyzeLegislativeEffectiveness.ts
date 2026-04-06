@@ -49,7 +49,7 @@ interface LegislativeEffectivenessAnalysis {
     effectivenessRank: string;
   };
   benchmarks: { avgReportsPerMep: number; avgAmendmentsPerMep: number; avgSuccessRate: number };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
@@ -69,7 +69,7 @@ function classifyEffectivenessRank(score: number): string {
 /**
  * Classify confidence level
  */
-function classifyConfidence(totalVotes: number): string {
+function classifyConfidence(totalVotes: number): 'HIGH' | 'MEDIUM' | 'LOW' {
   if (totalVotes > 500) return 'HIGH';
   if (totalVotes > 100) return 'MEDIUM';
   return 'LOW';

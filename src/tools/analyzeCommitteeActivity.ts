@@ -66,7 +66,7 @@ interface CommitteeActivityAnalysis {
     engagementLevel: string;
     policyImpactRating: string;
   };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;

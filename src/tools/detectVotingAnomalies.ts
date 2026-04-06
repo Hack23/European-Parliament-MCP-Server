@@ -38,7 +38,7 @@ interface VotingAnomalyAnalysis {
     defectionTrend: string;
     riskLevel: string;
   };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
@@ -93,7 +93,7 @@ function classifyRiskLevel(highCount: number): string {
 /**
  * Determine confidence based on data volume, not anomaly count
  */
-function getDataVolumeConfidence(scope: string, isSingleMep: boolean): string {
+function getDataVolumeConfidence(scope: string, isSingleMep: boolean): 'HIGH' | 'MEDIUM' | 'LOW' {
   if (isSingleMep) return 'MEDIUM';
   if (scope === 'All MEPs') return 'HIGH';
   return 'MEDIUM';
@@ -257,7 +257,7 @@ function buildAnomalySummary(
  * Resolve confidence level: MEDIUM when a single MEP has detectable anomalies
  * (indicating voting data was available and yielded results); LOW otherwise.
  */
-function resolveConfidence(isSingleMep: boolean, scope: string, anomalyCount: number): string {
+function resolveConfidence(isSingleMep: boolean, scope: string, anomalyCount: number): 'HIGH' | 'MEDIUM' | 'LOW' {
   if (isSingleMep && anomalyCount > 0) {
     return getDataVolumeConfidence(scope, true);
   }

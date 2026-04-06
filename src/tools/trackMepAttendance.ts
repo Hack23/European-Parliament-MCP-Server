@@ -87,7 +87,7 @@ interface AttendanceAnalysis {
     attendanceTrend: string;
     absenteeismRisk: string;
   };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
@@ -193,10 +193,14 @@ async function buildSingleMepAnalysis(
       attendanceTrend: record.trend,
       absenteeismRisk: record.category === 'LOW' ? 'HIGH' : 'LOW'
     },
-    confidenceLevel: 'HIGH',
-    dataFreshness: 'Real-time EP API data — MEP voting statistics from current EP records',
+    confidenceLevel: record.totalSessions === 0 ? 'LOW' : 'HIGH',
+    dataFreshness: record.totalSessions === 0
+      ? 'Real-time EP API data — voting statistics not available from EP API for individual MEPs'
+      : 'Real-time EP API data — MEP voting statistics from current EP records',
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-    methodology: 'MEP attendance analysis using EP Open Data voting statistics. '
+    methodology: 'MEP attendance analysis using EP Open Data. '
+      + 'Note: EP API /meps/{id} does not include voting statistics; attendance metrics '
+      + 'are unavailable for individual MEP lookups. '
       + 'Data source: European Parliament Open Data Portal.',
     dataQualityWarnings: record.totalSessions === 0
       ? ['Voting statistics unavailable for this MEP — attendance metrics derived from zero sessions']
@@ -207,7 +211,7 @@ async function buildSingleMepAnalysis(
 /**
  * Compute confidence level from data coverage ratio
  */
-function computeConfidence(dataCoverage: number): string {
+function computeConfidence(dataCoverage: number): 'HIGH' | 'MEDIUM' | 'LOW' {
   if (dataCoverage > 0.8) return 'HIGH';
   if (dataCoverage > 0.4) return 'MEDIUM';
   return 'LOW';

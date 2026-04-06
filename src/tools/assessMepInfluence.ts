@@ -60,7 +60,7 @@ interface MepInfluenceAssessment {
     leadershipIndicator: number;
   };
   votingDataAvailable: boolean;
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
@@ -230,7 +230,7 @@ function buildDimensions(inputs: DimensionInputs, includeMetrics: boolean): Dime
 /**
  * Determine confidence level from vote count
  */
-function getConfidenceLevel(totalVotes: number): string {
+function getConfidenceLevel(totalVotes: number): 'HIGH' | 'MEDIUM' | 'LOW' {
   if (totalVotes > 500) return 'HIGH';
   if (totalVotes > 100) return 'MEDIUM';
   return 'LOW';

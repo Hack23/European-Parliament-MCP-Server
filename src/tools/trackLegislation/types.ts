@@ -31,7 +31,7 @@ export interface LegislativeProcedure {
   /** Predicted next steps */
   nextSteps?: string[];
   /** Data quality indicator */
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   /** Methodology and data source description */
   methodology: string;
 }

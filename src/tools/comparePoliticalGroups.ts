@@ -49,7 +49,7 @@ interface PoliticalGroupComparison {
     parliamentaryBalance: number;
     competitiveIndex: number;
   };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;

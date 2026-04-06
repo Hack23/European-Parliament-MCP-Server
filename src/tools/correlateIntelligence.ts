@@ -50,13 +50,13 @@ interface InfluenceResult {
   mepName: string;
   overallScore: number;
   rank: string;
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 }
 
 interface AnomalyResult {
   anomalies: { type: string; severity: string; mepId: string; mepName: string }[];
   summary: { totalAnomalies: number; highSeverity: number };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 }
 
 interface EarlyWarningResult {
@@ -64,26 +64,26 @@ interface EarlyWarningResult {
   riskLevel: string;
   stabilityScore: number;
   computedAttributes: { criticalWarnings: number; highWarnings: number; keyRiskFactor: string };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 }
 
 interface CoalitionResult {
   groupMetrics: { groupId: string; stressIndicator: { value: number | null; availability: string; confidence: string }; computedAttributes: { unityTrend: string } }[];
   stressIndicators: { indicator: string; severity: string; affectedGroups: string[] }[];
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 }
 
 interface NetworkResult {
   centralMEPs: { mepId: string; mepName: string; centralityScore: number }[];
   bridgingMEPs: { mepId: string; mepName: string }[];
   networkNodes?: { mepId: string; centralityScore: number }[];
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 }
 
 interface ComparativeResult {
   profiles: { mepId: string; name: string; scores: Record<string, number>; overallScore: number }[];
   outlierMEPs: { mepId: string; name: string; outlierDimension: string; zScore: number }[];
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 }
 
 // ---------------------------------------------------------------------------

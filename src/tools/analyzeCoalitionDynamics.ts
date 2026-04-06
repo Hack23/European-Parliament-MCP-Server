@@ -64,7 +64,7 @@ interface CoalitionDynamicsAnalysis {
     grandCoalitionViability: number | null;
     oppositionStrength: number;
   };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;

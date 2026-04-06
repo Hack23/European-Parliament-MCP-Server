@@ -74,7 +74,7 @@ interface PoliticalLandscape {
     politicalBalance: string;
     overallEngagement: string;
   };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
