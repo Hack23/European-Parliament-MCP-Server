@@ -138,8 +138,9 @@ function computePipelineMetrics(proc: Procedure): {
   const totalDays = daysBetween(initiated, lastAct);
   // Progress bounded to 5-90% for active procedures:
   // 5% floor: newly initiated procedures have at least entered the legislative cycle
-  // 90% ceiling: only completed procedures should report 100%
-  // Linear estimate: totalDays/10 approximates ~1000-day average EU legislative cycle
+  // 90% ceiling: only completed procedures should report 100%; active ones may still stall
+  // Linear estimate: totalDays/10 means 900 days ≈ 90% (the ceiling); this is a rough proxy
+  // since EU legislative procedures typically span 12-36 months (360-1080 days)
   const progressEstimate = isCompleted ? 100 : Math.min(90, Math.max(5, Math.round(totalDays / 10)));
   const velocityScore = isStalled ? 20 : Math.min(100, 100 - Math.min(80, daysInStage));
   const estimatedDays = isCompleted ? 0 : Math.max(30, daysInStage * 2);

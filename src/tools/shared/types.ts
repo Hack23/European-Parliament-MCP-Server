@@ -35,7 +35,7 @@ export interface OsintStandardOutput {
    * Confidence level of the analysis: HIGH, MEDIUM, or LOW.
    * Derived from the volume and quality of underlying data.
    */
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 
   /**
    * Description of the analytical methodology used to produce this output.
