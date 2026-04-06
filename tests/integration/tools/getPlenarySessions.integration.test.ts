@@ -45,7 +45,7 @@ describeIntegration('get_plenary_sessions Integration Tests', () => {
   });
 
   describe('Date Range Filtering', () => {
-    it('should filter sessions by start date', async () => {
+    it('should accept start date parameter and return valid session structure', async () => {
       const startDate = '2024-01-01';
       const result = await retry(async () => {
         return handleGetPlenarySessions({ 
@@ -91,7 +91,7 @@ describeIntegration('get_plenary_sessions Integration Tests', () => {
       });
     }, 30000);
 
-    it('should filter sessions by date range', async () => {
+    it('should accept date range parameters and return valid session structure', async () => {
       const startDate = '2024-01-01';
       const endDate = '2024-12-31';
       
