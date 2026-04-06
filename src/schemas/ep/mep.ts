@@ -57,8 +57,7 @@ export const MEPSchema = z.object({
   country: z.string(),
   politicalGroup: z.string(),
   committees: z.array(z.string()),
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
-  email: z.string().email('Invalid email format').optional(),
+  email: z.email({ message: 'Invalid email format' }).optional(),
   active: z.boolean(),
   termStart: z.string(),
   termEnd: z.string().optional()
@@ -83,8 +82,7 @@ export const MEPDetailsSchema = MEPSchema.extend({
   biography: z.string().optional(),
   phone: z.string().optional(),
   address: z.string().optional(),
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
-  website: z.string().url('Invalid URL format').optional(),
+  website: z.url({ message: 'Invalid URL format' }).optional(),
   twitter: z.string().optional(),
   facebook: z.string().optional(),
   votingStatistics: VotingStatisticsSchema.optional(),

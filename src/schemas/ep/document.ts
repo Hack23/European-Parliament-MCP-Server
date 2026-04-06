@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { DateStringSchema } from './common.js';
+import { DateStringSchema, refineDateRange, DATE_RANGE_ERROR } from './common.js';
 
 /**
  * Document type enum
@@ -31,7 +31,7 @@ export const SearchDocumentsSchema = z.object({
     .optional()
     .describe('Document ID for single document lookup (bypasses keyword search)'),
   keyword: z.string()
-    .min(1)
+    .min(2, 'Keyword must be at least 2 characters')
     .max(200)
     .regex(/^[a-zA-Z0-9\s\-_]+$/, 'Invalid characters in keyword')
     .optional()
@@ -57,7 +57,13 @@ export const SearchDocumentsSchema = z.object({
     .min(0)
     .default(0)
     .describe('Pagination offset')
-});
+}).refine(
+  data => data.docId !== undefined || data.keyword !== undefined,
+  { message: 'Either docId or keyword must be provided' }
+).refine(
+  refineDateRange,
+  { message: DATE_RANGE_ERROR }
+);
 
 /**
  * Legislative document output schema
@@ -70,10 +76,8 @@ export const LegislativeDocumentSchema = z.object({
   authors: z.array(z.string()),
   committee: z.string().optional(),
   status: z.enum(['DRAFT', 'SUBMITTED', 'IN_COMMITTEE', 'PLENARY', 'ADOPTED', 'REJECTED']),
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
-  pdfUrl: z.string().url('Invalid PDF URL format').optional(),
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
-  xmlUrl: z.string().url('Invalid XML URL format').optional(),
+  pdfUrl: z.url({ message: 'Invalid PDF URL format' }).optional(),
+  xmlUrl: z.url({ message: 'Invalid XML URL format' }).optional(),
   summary: z.string().optional()
 });
 

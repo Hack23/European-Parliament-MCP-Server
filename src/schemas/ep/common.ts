@@ -22,6 +22,48 @@ export const DateStringSchema = z.string()
   .describe('Date in YYYY-MM-DD format');
 
 /**
+ * MEP identifier validation.
+ * Accepts numeric IDs, "MEP-{number}", or "person/{number}" formats.
+ */
+export const MepIdSchema = z.string()
+  .min(1)
+  .max(100)
+  .regex(
+    /^(MEP-)?(\d+|person\/\d+)$/,
+    'MEP ID must be numeric, "MEP-{number}", or "person/{number}"'
+  )
+  .describe('MEP identifier');
+
+/**
+ * Session identifier validation.
+ * Accepts alphanumeric characters with hyphens and underscores.
+ */
+export const SessionIdSchema = z.string()
+  .min(1)
+  .max(100)
+  .regex(
+    /^[a-zA-Z0-9\-_]+$/,
+    'Session ID must be alphanumeric with hyphens and underscores'
+  )
+  .describe('Plenary session identifier');
+
+/**
+ * Cross-field date range refinement helper.
+ * Ensures dateFrom is before or equal to dateTo when both are provided.
+ */
+export function refineDateRange(
+  data: { dateFrom?: string | undefined; dateTo?: string | undefined }
+): boolean {
+  if (data.dateFrom !== undefined && data.dateTo !== undefined) {
+    return data.dateFrom <= data.dateTo;
+  }
+  return true;
+}
+
+/** Error message for invalid date ranges */
+export const DATE_RANGE_ERROR = 'dateFrom must be before or equal to dateTo';
+
+/**
  * Paginated response schema factory
  */
 export const PaginatedResponseSchema = <T extends z.ZodType>(

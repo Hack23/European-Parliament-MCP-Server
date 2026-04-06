@@ -24,7 +24,10 @@ export const GetCommitteeInfoSchema = z.object({
     .default(false)
     .optional()
     .describe('If true, returns only current active bodies')
-});
+}).refine(
+  data => data.showCurrent === true || data.id !== undefined || data.abbreviation !== undefined,
+  { message: 'Either showCurrent=true, id, or abbreviation is required' }
+);
 
 /**
  * Committee output schema
