@@ -294,7 +294,7 @@ async function handleMepList(): Promise<ResourceContent> {
  * @returns Resource content with committee details as JSON
  */
 async function handleCommitteeDetail(committeeId: string): Promise<ResourceContent> {
-  const validId = MepIdSchema.parse(committeeId);
+  const validId = ResourceIdSchema.parse(committeeId);
   const data = await epClient.getCommitteeInfo({ abbreviation: validId });
 
   return {
@@ -334,7 +334,7 @@ async function handlePlenarySessions(): Promise<ResourceContent> {
  * @returns Resource content with voting records as JSON
  */
 async function handleVotingRecord(sessionId: string): Promise<ResourceContent> {
-  const validId = MepIdSchema.parse(sessionId);
+  const validId = ResourceIdSchema.parse(sessionId);
   const data = await epClient.getVotingRecords({ sessionId: validId });
 
   return {

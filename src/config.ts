@@ -8,11 +8,12 @@
  * @module config
  */
 
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 
-const pkg = JSON.parse(
-  readFileSync(new URL('../package.json', import.meta.url), 'utf-8')
-) as { version: string };
+const pkgPath = new URL('../package.json', import.meta.url);
+const pkg: { version: string } = existsSync(pkgPath)
+  ? JSON.parse(readFileSync(pkgPath, 'utf-8')) as { version: string }
+  : { version: 'unknown' };
 
 /** Canonical server name used in MCP handshake and CLI output */
 export const SERVER_NAME = 'european-parliament-mcp-server';

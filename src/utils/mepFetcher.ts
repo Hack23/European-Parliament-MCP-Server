@@ -9,6 +9,7 @@
  */
 
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { auditLogger } from './auditLogger.js';
 import type { MEP } from '../types/europeanParliament.js';
 
 /** Fetch all current MEPs by paginating until no more pages remain. */
@@ -18,10 +19,16 @@ export async function fetchAllCurrentMEPs(): Promise<MEP[]> {
   let offset = 0;
   let hasMore = true;
   while (hasMore) {
-    const page = await epClient.getCurrentMEPs({ limit: batchSize, offset });
-    allMeps.push(...page.data);
-    hasMore = page.hasMore;
-    offset += batchSize;
+    try {
+      const page = await epClient.getCurrentMEPs({ limit: batchSize, offset });
+      allMeps.push(...page.data);
+      hasMore = page.hasMore;
+      offset += batchSize;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      auditLogger.logError('fetchAllCurrentMEPs', { offset, batchSize }, `Pagination failed at offset ${String(offset)}: ${message}`);
+      break; // Return partial results collected so far
+    }
   }
   return allMeps;
 }

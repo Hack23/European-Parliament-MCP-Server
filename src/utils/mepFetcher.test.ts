@@ -14,6 +14,12 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
   },
 }));
 
+vi.mock('./auditLogger.js', () => ({
+  auditLogger: {
+    logError: vi.fn(),
+  },
+}));
+
 describe('fetchAllCurrentMEPs', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -92,11 +98,53 @@ describe('fetchAllCurrentMEPs', () => {
     expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenCalledTimes(1);
   });
 
-  it('should propagate API errors', async () => {
+  it('should return empty array and log error on first page failure', async () => {
+    const { auditLogger } = await import('./auditLogger.js');
     vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValueOnce(
       new Error('Network timeout')
     );
 
-    await expect(fetchAllCurrentMEPs()).rejects.toThrow('Network timeout');
+    const result = await fetchAllCurrentMEPs();
+
+    expect(result).toHaveLength(0);
+    expect(auditLogger.logError).toHaveBeenCalledWith(
+      'fetchAllCurrentMEPs',
+      { offset: 0, batchSize: 100 },
+      expect.stringContaining('Pagination failed at offset 0')
+    );
+  });
+
+  it('should return partial results when API fails mid-pagination', async () => {
+    const { auditLogger } = await import('./auditLogger.js');
+    const mockMEP = (id: number) => ({
+      id: `person/${id}`,
+      name: `MEP ${id}`,
+      country: 'SE',
+      politicalGroup: 'Renew',
+      committees: [],
+      active: true,
+      termStart: '2024-07-16',
+    });
+
+    vi.mocked(epClientModule.epClient.getCurrentMEPs)
+      .mockResolvedValueOnce({
+        data: Array.from({ length: 100 }, (_, i) => mockMEP(i + 1)),
+        total: 250,
+        limit: 100,
+        offset: 0,
+        hasMore: true,
+      })
+      .mockRejectedValueOnce(new Error('Connection reset'));
+
+    const result = await fetchAllCurrentMEPs();
+
+    // Should return the 100 MEPs from the first successful page
+    expect(result).toHaveLength(100);
+    expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenCalledTimes(2);
+    expect(auditLogger.logError).toHaveBeenCalledWith(
+      'fetchAllCurrentMEPs',
+      { offset: 100, batchSize: 100 },
+      expect.stringContaining('Pagination failed at offset 100')
+    );
   });
 });

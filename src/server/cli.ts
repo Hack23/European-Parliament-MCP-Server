@@ -12,9 +12,8 @@ import { SERVER_NAME, SERVER_VERSION, DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API
 import { getToolMetadataArray } from './toolRegistry.js';
 import { getPromptMetadataArray } from '../prompts/index.js';
 import { getResourceTemplateArray } from '../resources/index.js';
-import { RateLimiter } from '../utils/rateLimiter.js';
-import { MetricsService } from '../services/MetricsService.js';
-import { HealthService } from '../services/HealthService.js';
+import { createDefaultContainer, TOKENS } from '../di/container.js';
+import type { HealthService } from '../services/HealthService.js';
 import type { CLIOptions } from './types.js';
 
 /** Re-export CLIOptions for consumers */
@@ -99,11 +98,8 @@ export function showHealth(): void {
   const prompts = getPromptMetadataArray();
   const resourceTemplates = getResourceTemplateArray();
 
-  const rateLimitEnv = parseInt(process.env['EP_RATE_LIMIT'] ?? String(DEFAULT_RATE_LIMIT_PER_MINUTE), 10);
-  const tokensPerInterval = Number.isFinite(rateLimitEnv) && rateLimitEnv > 0 ? rateLimitEnv : DEFAULT_RATE_LIMIT_PER_MINUTE;
-  const rateLimiter = new RateLimiter({ tokensPerInterval, interval: 'minute' });
-  const metricsService = new MetricsService();
-  const healthService = new HealthService(rateLimiter, metricsService);
+  const container = createDefaultContainer();
+  const healthService = container.resolve<HealthService>(TOKENS.HealthService);
   const dynamicHealth = healthService.checkHealth();
 
   const health = {
