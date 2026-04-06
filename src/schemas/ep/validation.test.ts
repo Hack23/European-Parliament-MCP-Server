@@ -239,6 +239,16 @@ describe('SearchDocumentsSchema refinement', () => {
     expect(result.success).toBe(false);
   });
 
+  it('should reject whitespace-only keyword', () => {
+    const result = SearchDocumentsSchema.safeParse({ keyword: '   ' });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject whitespace-only docId', () => {
+    const result = SearchDocumentsSchema.safeParse({ docId: '   ' });
+    expect(result.success).toBe(false);
+  });
+
   it('should accept two-character keyword', () => {
     const result = SearchDocumentsSchema.safeParse({ keyword: 'AI' });
     expect(result.success).toBe(true);

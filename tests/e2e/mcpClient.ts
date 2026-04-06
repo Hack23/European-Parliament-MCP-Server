@@ -108,6 +108,7 @@ export class MCPTestClient {
    * 
    * @param name - Tool name
    * @param args - Tool arguments
+   * @param timeoutMs - Maximum time in ms to wait for the tool call (default: 100000)
    * @returns Tool response
    */
   async callTool(
