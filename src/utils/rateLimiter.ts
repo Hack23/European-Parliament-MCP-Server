@@ -396,8 +396,11 @@ export class RateLimiter {
  * @since 0.8.0
  */
 export function createStandardRateLimiter(): RateLimiter {
+  const DEFAULT_TOKENS = 100;
+  const envValue = parseInt(process.env['EP_RATE_LIMIT'] ?? '', 10);
+  const tokensPerInterval = Number.isFinite(envValue) && envValue > 0 ? envValue : DEFAULT_TOKENS;
   return new RateLimiter({
-    tokensPerInterval: 100,
+    tokensPerInterval,
     interval: 'minute'
   });
 }

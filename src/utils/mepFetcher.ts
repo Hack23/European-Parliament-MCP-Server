@@ -12,7 +12,16 @@ import { epClient } from '../clients/europeanParliamentClient.js';
 import { auditLogger } from './auditLogger.js';
 import type { MEP } from '../types/europeanParliament.js';
 
-/** Fetch all current MEPs by paginating until no more pages remain. */
+/**
+ * Fetch all current MEPs by paginating until no more pages remain.
+ *
+ * If a page request fails mid-pagination, the error is logged via
+ * {@link auditLogger.logError} and the function returns the MEPs
+ * collected so far (partial results) instead of throwing.
+ *
+ * @returns All MEPs fetched before any failure, which may be a partial
+ *   result set if a pagination error occurred.
+ */
 export async function fetchAllCurrentMEPs(): Promise<MEP[]> {
   const batchSize = 100;
   const allMeps: MEP[] = [];

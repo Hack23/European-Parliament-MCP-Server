@@ -13,6 +13,7 @@ import { getToolMetadataArray } from './toolRegistry.js';
 import { getPromptMetadataArray } from '../prompts/index.js';
 import { getResourceTemplateArray } from '../resources/index.js';
 import { createDefaultContainer, TOKENS } from '../di/container.js';
+import type { DIContainer } from '../di/container.js';
 import type { HealthService } from '../services/HealthService.js';
 import type { CLIOptions } from './types.js';
 
@@ -90,16 +91,24 @@ export function showVersion(): void {
  *
  * Combines a static capability report with a dynamic health snapshot
  * produced by {@link HealthService}.
+ *
+ * When called without a `container`, a fresh {@link DIContainer} is created
+ * via {@link createDefaultContainer}. Metrics and rate-limiter state will
+ * reflect a new process baseline (useful for CLI `--health` diagnostics).
+ * Pass a live container to report actual runtime state from an active server.
+ *
+ * @param container - Optional DI container to resolve services from.
+ *   Defaults to a new container created by {@link createDefaultContainer}.
  */
-export function showHealth(): void {
+export function showHealth(container?: DIContainer): void {
   const tools = getToolMetadataArray();
   const coreToolCount = tools.filter(t => t.category === 'core').length;
   const nonCoreToolCount = tools.length - coreToolCount;
   const prompts = getPromptMetadataArray();
   const resourceTemplates = getResourceTemplateArray();
 
-  const container = createDefaultContainer();
-  const healthService = container.resolve<HealthService>(TOKENS.HealthService);
+  const resolvedContainer = container ?? createDefaultContainer();
+  const healthService = resolvedContainer.resolve<HealthService>(TOKENS.HealthService);
   const dynamicHealth = healthService.checkHealth();
 
   const health = {

@@ -437,6 +437,36 @@ describe('RateLimiter', () => {
       expect(limiter).toBeDefined();
       expect(limiter.getAvailableTokens()).toBe(100);
     });
+
+    it('should respect EP_RATE_LIMIT env variable', () => {
+      const saved = process.env['EP_RATE_LIMIT'];
+      process.env['EP_RATE_LIMIT'] = '50';
+      try {
+        const limiter = createStandardRateLimiter();
+        expect(limiter.getAvailableTokens()).toBe(50);
+      } finally {
+        if (saved !== undefined) {
+          process.env['EP_RATE_LIMIT'] = saved;
+        } else {
+          delete process.env['EP_RATE_LIMIT'];
+        }
+      }
+    });
+
+    it('should fall back to 100 for invalid EP_RATE_LIMIT', () => {
+      const saved = process.env['EP_RATE_LIMIT'];
+      process.env['EP_RATE_LIMIT'] = 'not-a-number';
+      try {
+        const limiter = createStandardRateLimiter();
+        expect(limiter.getAvailableTokens()).toBe(100);
+      } finally {
+        if (saved !== undefined) {
+          process.env['EP_RATE_LIMIT'] = saved;
+        } else {
+          delete process.env['EP_RATE_LIMIT'];
+        }
+      }
+    });
   });
 
   describe('getMaxTokens', () => {
