@@ -185,7 +185,7 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       // show-current endpoint MUST have country and politicalGroup
       expect(typeof mep.country).toBe('string');
       expect(mep.country).not.toBe('Unknown');
-      expect(mep.country).toMatch(/^[A-Z]{2}$/);
+      expect(mep.country).toMatch(/^[A-Z]{2,3}$/);
 
       expect(typeof mep.politicalGroup).toBe('string');
       expect(mep.politicalGroup).not.toBe('Unknown');

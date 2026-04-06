@@ -69,11 +69,11 @@ describeIntegration('generate_report Integration Tests', () => {
 
       // Validate report structure
       expect(report).toHaveProperty('reportType');
-      expect(report).toHaveProperty('title');
+      expect(report).toHaveProperty('subject');
       expect(report).toHaveProperty('period');
       expect(report).toHaveProperty('summary');
       expect((report as { reportType: string }).reportType).toBe('MEP_ACTIVITY');
-    }, 30000);
+    }, 60000);
   });
 
   describe('Committee Performance Report', () => {
@@ -194,17 +194,17 @@ describeIntegration('generate_report Integration Tests', () => {
 
       const report = JSON.parse(textContent.text) as unknown;
 
-      // Required fields
+      // Required fields (Report type uses 'subject', not 'title')
       expect(report).toHaveProperty('reportType');
-      expect(report).toHaveProperty('title');
+      expect(report).toHaveProperty('subject');
       expect(report).toHaveProperty('period');
       expect(report).toHaveProperty('summary');
       expect(report).toHaveProperty('generatedAt');
 
       // Type validation
       expect(typeof (report as { reportType: unknown }).reportType).toBe('string');
-      expect(typeof (report as { title: unknown }).title).toBe('string');
-    }, 30000);
+      expect(typeof (report as { subject: unknown }).subject).toBe('string');
+    }, 60000);
   });
 
   describe('Performance', () => {
@@ -217,9 +217,10 @@ describeIntegration('generate_report Integration Tests', () => {
         }));
       });
 
-      expect(duration).toBeLessThan(10000); // Allow more time for report generation
+      // Report generation fetches real data from multiple EP API endpoints
+      expect(duration).toBeLessThan(60000);
       console.log(`[Performance] generate_report: ${duration.toFixed(2)}ms`);
-    }, 40000);
+    }, 90000);
   });
 
   describe('Data Consistency', () => {

@@ -73,7 +73,7 @@ export function validateMEPStructure(mep: unknown): void {
   // EP API may return 'Unknown' for some MEPs without mapped country
   const country = (mep as { country: string }).country;
   if (country !== 'Unknown') {
-    expect(country).toMatch(/^[A-Z]{2}$/);
+    expect(country).toMatch(/^[A-Z]{2,3}$/);
   }
 }
 
@@ -133,10 +133,10 @@ export function validateCommitteeStructure(committee: unknown): void {
  */
 export function validateParliamentaryQuestionStructure(question: unknown): void {
   expect(question).toHaveProperty('id');
-  expect(question).toHaveProperty('title');
+  expect(question).toHaveProperty('topic');
   expect(question).toHaveProperty('type');
   
   expect(typeof (question as { id: unknown }).id).toBe('string');
-  expect(typeof (question as { title: unknown }).title).toBe('string');
+  expect(typeof (question as { topic: unknown }).topic).toBe('string');
   expect(typeof (question as { type: unknown }).type).toBe('string');
 }

@@ -174,12 +174,12 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
       response.data.forEach((question: unknown) => {
         // Required fields
         expect(question).toHaveProperty('id');
-        expect(question).toHaveProperty('title');
+        expect(question).toHaveProperty('topic');
         expect(question).toHaveProperty('type');
 
         // Type validation
         expect(typeof (question as { id: unknown }).id).toBe('string');
-        expect(typeof (question as { title: unknown }).title).toBe('string');
+        expect(typeof (question as { topic: unknown }).topic).toBe('string');
         expect(typeof (question as { type: unknown }).type).toBe('string');
       });
     }, 30000);

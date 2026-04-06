@@ -168,9 +168,9 @@ describeIntegration('European Parliament API Integration', () => {
         expect(mep.name).toBeDefined();
         expect(mep.country).toBeDefined();
         
-        // Country code format (EP API may return 'Unknown' for some MEPs)
+        // Country code format (EP API may return 'Unknown' or 3-letter codes for some MEPs)
         if (mep.country !== 'Unknown') {
-          expect(mep.country).toMatch(/^[A-Z]{2}$/);
+          expect(mep.country).toMatch(/^[A-Z]{2,3}$/);
         }
         
         // Optional fields should have correct types if present

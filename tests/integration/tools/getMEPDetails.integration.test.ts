@@ -173,10 +173,10 @@ describeIntegration('get_mep_details Integration Tests', () => {
       expect(typeof (mep as { name: unknown }).name).toBe('string');
       expect(typeof (mep as { country: unknown }).country).toBe('string');
 
-      // Country code format (EP API may return 'Unknown' for some MEPs)
+      // Country code format (EP API may return 'Unknown' or 3-letter codes for some MEPs)
       const country = (mep as { country: string }).country;
       if (country !== 'Unknown') {
-        expect(country).toMatch(/^[A-Z]{2}$/);
+        expect(country).toMatch(/^[A-Z]{2,3}$/);
       }
     }, 30000);
   });
