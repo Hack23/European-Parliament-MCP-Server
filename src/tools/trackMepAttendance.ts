@@ -177,6 +177,10 @@ async function buildSingleMepAnalysis(
   const mepData = await epClient.getMEPDetails(mepId);
   const record = buildAttendanceRecord(mepData);
 
+  // EP API /meps/{id} intentionally does not include votingStatistics —
+  // undefined signals data unavailability (distinct from "present but zero votes").
+  const hasVotingStats = mepData.votingStatistics !== undefined;
+
   return {
     period: { from: dateFrom, to: dateTo },
     scope: `MEP ${mepData.name} (${mepData.id})`,
@@ -193,18 +197,18 @@ async function buildSingleMepAnalysis(
       attendanceTrend: record.trend,
       absenteeismRisk: record.category === 'LOW' ? 'HIGH' : 'LOW'
     },
-    confidenceLevel: record.totalSessions === 0 ? 'LOW' : 'HIGH',
-    dataFreshness: record.totalSessions === 0
-      ? 'Real-time EP API data — voting statistics not available from EP API for individual MEPs'
-      : 'Real-time EP API data — MEP voting statistics from current EP records',
+    confidenceLevel: hasVotingStats ? 'HIGH' : 'LOW',
+    dataFreshness: hasVotingStats
+      ? 'Real-time EP API data — MEP voting statistics from current EP records'
+      : 'Real-time EP API data — voting statistics not available from EP API for individual MEPs',
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
     methodology: 'MEP attendance analysis using EP Open Data. '
       + 'Note: EP API /meps/{id} does not include voting statistics; attendance metrics '
       + 'are unavailable for individual MEP lookups. '
       + 'Data source: European Parliament Open Data Portal.',
-    dataQualityWarnings: record.totalSessions === 0
-      ? ['Voting statistics unavailable for this MEP — attendance metrics derived from zero sessions']
-      : [],
+    dataQualityWarnings: hasVotingStats
+      ? []
+      : ['Voting statistics unavailable for this MEP — attendance data not provided by EP API /meps/{id} endpoint'],
   };
 }
 

@@ -29,7 +29,7 @@
 import { randomUUID } from 'node:crypto';
 import { CorrelateIntelligenceSchema, OsintStandardOutputSchema } from '../schemas/europeanParliament.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
-import type { ToolResult, OsintStandardOutput } from './shared/types.js';
+import type { ToolResult, OsintStandardOutput, ConfidenceLevel } from './shared/types.js';
 import type { DataAvailability } from '../types/index.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 
@@ -316,7 +316,7 @@ async function correlateInfluenceAnomaly(
 ): Promise<{
   correlation: InfluenceAnomalyCorrelation | null;
   alert: CorrelationAlert | null;
-  toolConfidenceLevels: string[];
+  toolConfidenceLevels: ConfidenceLevel[];
 }> {
   const influenceData = await fetchInfluenceData(mepId);
   if (influenceData === null) return { correlation: null, alert: null, toolConfidenceLevels: [] };
@@ -441,7 +441,7 @@ async function correlateCoalitionFracture(
 ): Promise<{
   correlation: CoalitionFractureCorrelation | null;
   alert: CorrelationAlert | null;
-  toolConfidenceLevels: string[];
+  toolConfidenceLevels: ConfidenceLevel[];
 }> {
   const ewsSensitivity = mapSensitivityToEws(sensitivityLevel);
 
@@ -614,7 +614,7 @@ async function correlateNetworkProfiles(
 ): Promise<{
   correlations: NetworkProfileCorrelation[];
   alerts: CorrelationAlert[];
-  toolConfidenceLevels: string[];
+  toolConfidenceLevels: ConfidenceLevel[];
 }> {
   const numericIds = mepIds.map(id => parseInt(id, 10)).filter(n => !isNaN(n));
 
@@ -668,11 +668,9 @@ async function correlateNetworkProfiles(
  * @param levels - Array of confidence-level strings from individual tool results
  * @returns Aggregated confidence level
  */
-function aggregateConfidence(levels: string[]): 'HIGH' | 'MEDIUM' | 'LOW' {
-  // Treat 'NONE' (from unavailable-data tools) as 'LOW' for aggregation
-  const normalized = levels.map(l => (l === 'NONE' ? 'LOW' : l));
-  if (normalized.includes('HIGH') && !normalized.includes('LOW')) return 'HIGH';
-  if (normalized.every(l => l === 'LOW')) return 'LOW';
+function aggregateConfidence(levels: ConfidenceLevel[]): ConfidenceLevel {
+  if (levels.includes('HIGH') && !levels.includes('LOW')) return 'HIGH';
+  if (levels.every(l => l === 'LOW')) return 'LOW';
   return 'MEDIUM';
 }
 
@@ -686,7 +684,7 @@ function aggregateConfidence(levels: string[]): 'HIGH' | 'MEDIUM' | 'LOW' {
  */
 function computeDataAvailability(
   correlationsFound: number,
-  confidenceLevels: string[]
+  confidenceLevels: ConfidenceLevel[]
 ): DataAvailability {
   if (correlationsFound > 0) return 'AVAILABLE';
   if (confidenceLevels.length === 0) return 'UNAVAILABLE';
@@ -703,7 +701,7 @@ function computeDataAvailability(
  */
 function buildCorrelationWarnings(
   dataAvailability: DataAvailability,
-  confidenceLevels: string[],
+  confidenceLevels: ConfidenceLevel[],
   includeNetworkAnalysis: boolean
 ): string[] {
   const warnings: string[] = [];
@@ -841,7 +839,7 @@ export async function handleCorrelateIntelligence(
   );
   const influenceAnomalyCorrelations: InfluenceAnomalyCorrelation[] = [];
   const influenceAnomalyAlerts: CorrelationAlert[] = [];
-  const influenceToolConfidenceLevels: string[] = [];
+  const influenceToolConfidenceLevels: ConfidenceLevel[] = [];
 
   for (const { correlation, alert, toolConfidenceLevels } of influenceAnomalyResults) {
     if (correlation !== null) influenceAnomalyCorrelations.push(correlation);
@@ -870,7 +868,7 @@ export async function handleCorrelateIntelligence(
     (coalitionCorrelation !== null ? 1 : 0) +
     networkCorrelations.length;
 
-  const confidenceLevels: string[] = [
+  const confidenceLevels: ConfidenceLevel[] = [
     ...influenceToolConfidenceLevels,
     ...coalitionConfidenceLevels,
     ...networkConfidenceLevels,

@@ -30,12 +30,19 @@ export interface ToolResult {
  * - GDPR Article 5(1)(d) (Accuracy)
  * - FUTURE_ARCHITECTURE.md OSINT standard output specification
  */
+/**
+ * Valid confidence levels for OSINT analysis outputs.
+ * Reuse this alias in tool interfaces, helper functions, and parameter types
+ * to enforce compile-time validity and avoid weakening to `string`.
+ */
+export type ConfidenceLevel = 'HIGH' | 'MEDIUM' | 'LOW';
+
 export interface OsintStandardOutput {
   /**
    * Confidence level of the analysis: HIGH, MEDIUM, or LOW.
    * Derived from the volume and quality of underlying data.
    */
-  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
+  confidenceLevel: ConfidenceLevel;
 
   /**
    * Description of the analytical methodology used to produce this output.
