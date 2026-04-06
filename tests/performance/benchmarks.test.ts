@@ -64,7 +64,7 @@ describe('Performance Benchmarks', () => {
     }, 30000);
 
     it('should respond to get_mep_details in <CACHED_THRESHOLD_MS (cached)', async () => {
-      const mepId = 'mep-test-001';
+      const mepId = 'MEP-10001';
 
       // Warm up cache
       await handleGetMEPDetails({ id: mepId });

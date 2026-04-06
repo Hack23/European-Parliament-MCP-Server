@@ -5,15 +5,13 @@
  */
 
 import { z } from 'zod';
-import { DateStringSchema, refineDateRange, DATE_RANGE_ERROR } from './common.js';
+import { DateStringSchema, MepIdSchema, refineDateRange, DATE_RANGE_ERROR } from './common.js';
 
 /**
  * Analyze voting patterns input schema
  */
 export const AnalyzeVotingPatternsSchema = z.object({
-  mepId: z.string()
-    .min(1)
-    .max(100)
+  mepId: MepIdSchema
     .describe('MEP identifier'),
   dateFrom: DateStringSchema.optional(),
   dateTo: DateStringSchema.optional(),
@@ -57,9 +55,7 @@ export const GenerateReportSchema = z.object({
  * Assess MEP influence input schema
  */
 export const AssessMepInfluenceSchema = z.object({
-  mepId: z.string()
-    .min(1)
-    .max(100)
+  mepId: MepIdSchema
     .describe('MEP identifier'),
   dateFrom: DateStringSchema.optional(),
   dateTo: DateStringSchema.optional(),
@@ -96,9 +92,7 @@ export const AnalyzeCoalitionDynamicsSchema = z.object({
  * Detect voting anomalies input schema
  */
 export const DetectVotingAnomaliesSchema = z.object({
-  mepId: z.string()
-    .min(1)
-    .max(100)
+  mepId: MepIdSchema
     .optional()
     .describe('MEP identifier (omit for all MEPs)'),
   groupId: z.string()
@@ -219,7 +213,7 @@ export const OsintStandardOutputSchema = z.object({
  */
 export const CorrelateIntelligenceSchema = z.object({
   mepIds: z.array(
-    z.string().min(1).max(100).describe('MEP identifier')
+    MepIdSchema.describe('MEP identifier')
   )
     .min(1)
     .max(5)

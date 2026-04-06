@@ -197,7 +197,7 @@ describe('track_mep_attendance Tool', () => {
         new Error('MEP not found')
       );
 
-      await expect(handleTrackMepAttendance({ mepId: 'INVALID' }))
+      await expect(handleTrackMepAttendance({ mepId: '999999' }))
         .rejects.toThrow('MEP not found');
     });
 

@@ -12,7 +12,7 @@ import type { MEP, MEPDetails, VotingStatistics } from '../../src/types/european
 /** Synthetic MEP list fixture */
 export const mepFixtures: MEP[] = [
   {
-    id: 'mep-test-001',
+    id: 'MEP-10001',
     name: 'Anna Andersson',
     country: 'SE',
     politicalGroup: 'S&D',
@@ -21,7 +21,7 @@ export const mepFixtures: MEP[] = [
     termStart: '2024-07-16'
   },
   {
-    id: 'mep-test-002',
+    id: 'MEP-10002',
     name: 'Klaus Mueller',
     country: 'DE',
     politicalGroup: 'EPP',
@@ -30,7 +30,7 @@ export const mepFixtures: MEP[] = [
     termStart: '2024-07-16'
   },
   {
-    id: 'mep-test-003',
+    id: 'MEP-10003',
     name: 'Marie Dupont',
     country: 'FR',
     politicalGroup: 'Renew',
@@ -39,7 +39,7 @@ export const mepFixtures: MEP[] = [
     termStart: '2024-07-16'
   },
   {
-    id: 'mep-test-004',
+    id: 'MEP-10004',
     name: 'Luigi Rossi',
     country: 'IT',
     politicalGroup: 'ECR',
@@ -48,7 +48,7 @@ export const mepFixtures: MEP[] = [
     termStart: '2024-07-16'
   },
   {
-    id: 'mep-test-005',
+    id: 'MEP-10005',
     name: 'Sofia Papadopoulou',
     country: 'GR',
     politicalGroup: 'The Left',
@@ -62,7 +62,7 @@ export const mepFixtures: MEP[] = [
 /** Synthetic MEP details fixture */
 export const mepDetailsFixtures: MEPDetails[] = [
   {
-    id: 'mep-test-001',
+    id: 'MEP-10001',
     name: 'Anna Andersson',
     country: 'SE',
     politicalGroup: 'S&D',
@@ -74,8 +74,8 @@ export const mepDetailsFixtures: MEPDetails[] = [
     education: 'MSc Environmental Science, Uppsala University (synthetic)',
     professionalBackground: 'Environmental Consultant (synthetic)',
     contactEmail: 'anna.andersson.test@example.test',
-    websiteUrl: 'https://example.test/mep-test-001',
-    photoUrl: 'https://example.test/photos/mep-test-001.jpg',
+    websiteUrl: 'https://example.test/MEP-10001',
+    photoUrl: 'https://example.test/photos/MEP-10001.jpg',
     socialMedia: {},
     assistants: [],
     officeAddresses: [],
@@ -88,7 +88,7 @@ export const mepDetailsFixtures: MEPDetails[] = [
     }
   },
   {
-    id: 'mep-test-002',
+    id: 'MEP-10002',
     name: 'Klaus Mueller',
     country: 'DE',
     politicalGroup: 'EPP',
@@ -100,8 +100,8 @@ export const mepDetailsFixtures: MEPDetails[] = [
     education: 'PhD Economics, LMU Munich (synthetic)',
     professionalBackground: 'Banker (synthetic)',
     contactEmail: 'klaus.mueller.test@example.test',
-    websiteUrl: 'https://example.test/mep-test-002',
-    photoUrl: 'https://example.test/photos/mep-test-002.jpg',
+    websiteUrl: 'https://example.test/MEP-10002',
+    photoUrl: 'https://example.test/photos/MEP-10002.jpg',
     socialMedia: {},
     assistants: [],
     officeAddresses: [],

@@ -73,7 +73,7 @@ describe('EP API Endpoint Latency Benchmarks', () => {
 
     it(`get_mep_details should respond in <${LATENCY_THRESHOLD_MS}ms`, async () => {
       const [, duration] = await measureTime(() =>
-        handleGetMEPDetails({ id: 'mep-test-001' })
+        handleGetMEPDetails({ id: 'MEP-10001' })
       );
       expect(duration).toBeLessThan(LATENCY_THRESHOLD_MS);
       console.log(`  get_mep_details: ${duration.toFixed(2)}ms`);

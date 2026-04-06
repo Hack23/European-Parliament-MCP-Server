@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { CountryCodeSchema } from './common.js';
+import { CountryCodeSchema, MepIdSchema } from './common.js';
 
 /**
  * Get MEPs input schema
@@ -42,9 +42,7 @@ export const GetMEPsSchema = z.object({
  * Get MEP details input schema
  */
 export const GetMEPDetailsSchema = z.object({
-  id: z.string()
-    .min(1)
-    .max(100)
+  id: MepIdSchema
     .describe('MEP identifier')
 });
 

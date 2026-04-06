@@ -189,7 +189,7 @@ describe('detect_voting_anomalies Tool', () => {
       vi.mocked(epClientModule.epClient.getMEPDetails)
         .mockRejectedValueOnce(new Error('Not found'));
 
-      await expect(handleDetectVotingAnomalies({ mepId: 'INVALID' }))
+      await expect(handleDetectVotingAnomalies({ mepId: '999999' }))
         .rejects.toThrow('Failed to detect voting anomalies');
     });
   });

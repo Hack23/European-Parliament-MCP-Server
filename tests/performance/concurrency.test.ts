@@ -99,7 +99,7 @@ describe('Concurrent Request Handling', () => {
     it('should handle concurrent requests to different tools', async () => {
       const [results, duration] = await measureTime(() => Promise.all([
         handleGetMEPs({ limit: 5 }),
-        handleGetMEPDetails({ id: 'mep-test-001' }),
+        handleGetMEPDetails({ id: 'MEP-10001' }),
         handleGetPlenarySessions({ limit: 5 }),
         handleGetVotingRecords({ limit: 5 }),
         handleSearchDocuments({ keyword: 'climate', limit: 5 }),

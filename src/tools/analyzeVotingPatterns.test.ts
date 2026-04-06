@@ -269,7 +269,7 @@ describe('analyze_voting_patterns Tool', () => {
       );
 
       await expect(
-        handleAnalyzeVotingPatterns({ mepId: 'MEP-INVALID' })
+        handleAnalyzeVotingPatterns({ mepId: '999999' })
       ).rejects.toThrow('[analyze_voting_patterns] fetchVotingData: Failed to retrieve voting records for analysis');
     });
   });
