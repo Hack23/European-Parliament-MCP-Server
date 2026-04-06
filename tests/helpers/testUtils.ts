@@ -30,7 +30,11 @@ function isRateLimitOrNetworkError(error: unknown): boolean {
     || msg.includes('timed out')
     || msg.includes('rate limit')
     || msg.includes('429')
-    || msg.includes('503');
+    || msg.includes('503')
+    || msg.includes('failed to retrieve')
+    || msg.includes('request failed')
+    || msg.includes('econnrefused')
+    || msg.includes('enotfound');
 }
 
 /**

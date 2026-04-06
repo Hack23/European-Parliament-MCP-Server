@@ -112,16 +112,22 @@ export class MCPTestClient {
    */
   async callTool(
     name: string, 
-    args: Record<string, unknown> = {}
+    args: Record<string, unknown> = {},
+    timeoutMs = 100000
   ): Promise<{ content: Array<{ type: string; text?: string }> }> {
     if (!this.client || !this.connected) {
       throw new Error('Client not connected');
     }
 
-    const response = await this.client.callTool({
-      name,
-      arguments: args
-    });
+    const response = await Promise.race([
+      this.client.callTool({
+        name,
+        arguments: args
+      }),
+      new Promise<never>((_resolve, reject) => {
+        setTimeout(() => reject(new Error(`MCP callTool '${name}' timed out after ${timeoutMs}ms`)), timeoutMs);
+      })
+    ]);
 
     const result = response as { content: Array<{ type: string; text?: string }>; isError?: boolean };
 
