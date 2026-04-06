@@ -433,9 +433,19 @@ describe('RateLimiter', () => {
 
   describe('createStandardRateLimiter', () => {
     it('should create limiter with standard config', () => {
-      const limiter = createStandardRateLimiter();
-      expect(limiter).toBeDefined();
-      expect(limiter.getAvailableTokens()).toBe(100);
+      const saved = process.env['EP_RATE_LIMIT'];
+      delete process.env['EP_RATE_LIMIT'];
+      try {
+        const limiter = createStandardRateLimiter();
+        expect(limiter).toBeDefined();
+        expect(limiter.getAvailableTokens()).toBe(100);
+      } finally {
+        if (saved !== undefined) {
+          process.env['EP_RATE_LIMIT'] = saved;
+        } else {
+          delete process.env['EP_RATE_LIMIT'];
+        }
+      }
     });
 
     it('should respect EP_RATE_LIMIT env variable', () => {

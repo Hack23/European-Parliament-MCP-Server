@@ -239,7 +239,8 @@ export async function sentimentTracker(params: SentimentTrackerParams): Promise<
     // Fetch all current MEPs once via paginated batches, then aggregate
     // per-group counts in-memory. This avoids per-group API calls that each
     // trigger a full multi-page fetch when client-side filtering is used.
-    const allMeps = await fetchAllCurrentMEPs();
+    const fetchResult = await fetchAllCurrentMEPs();
+    const allMeps = fetchResult.meps;
     const totalMEPs = allMeps.length;
 
     if (totalMEPs === 0) {
@@ -290,6 +291,7 @@ export async function sentimentTracker(params: SentimentTrackerParams): Promise<
       dataQualityWarnings: [
         'Sentiment scores are seat-share proxies, not derived from voting cohesion or textual analysis',
         'Direct voting data unavailable from EP API — scores reflect institutional positioning by group size only',
+        ...(!fetchResult.complete ? [`MEP data is incomplete — pagination failed at offset ${String(fetchResult.failureOffset ?? 0)}; results based on partial data`] : []),
       ],
     };
 

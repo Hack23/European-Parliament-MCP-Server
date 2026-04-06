@@ -39,7 +39,7 @@ describe('sentiment_tracker Tool', () => {
       ...makeMEPList(44, 'NI')
     ];
 
-    vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue(allMeps);
+    vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: allMeps, complete: true });
   });
 
   describe('Input Validation', () => {
@@ -145,7 +145,7 @@ describe('sentiment_tracker Tool', () => {
 
   describe('dataAvailable: false scenario', () => {
     it('should return dataAvailable false when no MEPs returned', async () => {
-      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue([]);
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [], complete: true });
 
       const result = await handleSentimentTracker({});
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
@@ -176,7 +176,7 @@ describe('sentiment_tracker Tool', () => {
 
   describe('Single Group Analysis', () => {
     it('should return only one group sentiment when groupId specified', async () => {
-      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue(makeMEPList(100, 'EPP'));
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: makeMEPList(100, 'EPP'), complete: true });
 
       const result = await handleSentimentTracker({ groupId: 'EPP' });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {

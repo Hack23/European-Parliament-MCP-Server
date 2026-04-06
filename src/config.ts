@@ -11,9 +11,22 @@
 import { readFileSync, existsSync } from 'fs';
 
 const pkgPath = new URL('../package.json', import.meta.url);
-const pkg: { version: string } = existsSync(pkgPath)
-  ? JSON.parse(readFileSync(pkgPath, 'utf-8')) as { version: string }
-  : { version: 'unknown' };
+let pkg: { version: string } = { version: 'unknown' };
+try {
+  if (existsSync(pkgPath)) {
+    const parsed: unknown = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+    if (
+      typeof parsed === 'object' &&
+      parsed !== null &&
+      'version' in parsed &&
+      typeof (parsed as { version: unknown }).version === 'string'
+    ) {
+      pkg = parsed as { version: string };
+    }
+  }
+} catch {
+  // Fall back to { version: 'unknown' } on any read/parse error
+}
 
 /** Canonical server name used in MCP handshake and CLI output */
 export const SERVER_NAME = 'european-parliament-mcp-server';
