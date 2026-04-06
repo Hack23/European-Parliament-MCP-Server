@@ -82,13 +82,12 @@ export { epClient, rateLimiter };
 
 /**
  * Check if integration tests should run
- * 
- * Integration tests are disabled by default and only run when
- * explicitly enabled via EP_INTEGRATION_TESTS=true to avoid
- * accidental real API calls and rate limit issues.
+ *
+ * Integration tests always run to ensure release readiness on every PR.
+ * Rate limiting and network errors are handled gracefully via retryOrSkip.
  */
 export function shouldRunIntegrationTests(): boolean {
-  return process.env['EP_INTEGRATION_TESTS'] === 'true';
+  return true;
 }
 
 /**

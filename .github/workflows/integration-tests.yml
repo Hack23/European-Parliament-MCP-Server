@@ -9,11 +9,6 @@ on:
     # Run daily at 2 AM UTC
     - cron: '0 2 * * *'
   workflow_dispatch:
-    inputs:
-      run_integration_tests:
-        description: 'Run integration tests against real API'
-        required: false
-        default: 'false'
 
 # Set default permissions to read-only
 permissions: read-all
@@ -66,8 +61,7 @@ jobs:
         run: npm run test:integration
         env:
           EP_API_URL: ${{ secrets.EP_API_URL || 'https://data.europarl.europa.eu/api/v2' }}
-          # Enable integration tests for scheduled runs or manual workflow dispatch
-          EP_INTEGRATION_TESTS: ${{ (github.event_name == 'schedule' && 'true') || github.event.inputs.run_integration_tests || 'false' }}
+          EP_INTEGRATION_TESTS: 'true'
           NODE_ENV: test
 
       - name: Run E2E tests
