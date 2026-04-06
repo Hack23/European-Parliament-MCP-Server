@@ -467,6 +467,36 @@ describe('RateLimiter', () => {
         }
       }
     });
+
+    it('should fall back to 100 for zero EP_RATE_LIMIT', () => {
+      const saved = process.env['EP_RATE_LIMIT'];
+      process.env['EP_RATE_LIMIT'] = '0';
+      try {
+        const limiter = createStandardRateLimiter();
+        expect(limiter.getAvailableTokens()).toBe(100);
+      } finally {
+        if (saved !== undefined) {
+          process.env['EP_RATE_LIMIT'] = saved;
+        } else {
+          delete process.env['EP_RATE_LIMIT'];
+        }
+      }
+    });
+
+    it('should fall back to 100 for negative EP_RATE_LIMIT', () => {
+      const saved = process.env['EP_RATE_LIMIT'];
+      process.env['EP_RATE_LIMIT'] = '-5';
+      try {
+        const limiter = createStandardRateLimiter();
+        expect(limiter.getAvailableTokens()).toBe(100);
+      } finally {
+        if (saved !== undefined) {
+          process.env['EP_RATE_LIMIT'] = saved;
+        } else {
+          delete process.env['EP_RATE_LIMIT'];
+        }
+      }
+    });
   });
 
   describe('getMaxTokens', () => {
