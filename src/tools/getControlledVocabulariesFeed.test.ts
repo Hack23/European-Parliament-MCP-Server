@@ -81,7 +81,7 @@ describe('get_controlled_vocabularies_feed Tool', () => {
       vi.mocked(epClientModule.epClient.getControlledVocabulariesFeed)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetControlledVocabulariesFeed({})).rejects.toThrow('API unavailable');
+      await expect(handleGetControlledVocabulariesFeed({})).rejects.toThrow('Failed to retrieve controlled vocabularies feed');
     });
   });
 

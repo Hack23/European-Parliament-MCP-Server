@@ -81,7 +81,7 @@ describe('get_corporate_bodies_feed Tool', () => {
       vi.mocked(epClientModule.epClient.getCorporateBodiesFeed)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetCorporateBodiesFeed({})).rejects.toThrow('API unavailable');
+      await expect(handleGetCorporateBodiesFeed({})).rejects.toThrow('Failed to retrieve corporate bodies feed');
     });
   });
 

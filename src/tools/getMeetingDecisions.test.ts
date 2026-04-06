@@ -115,7 +115,7 @@ describe('get_meeting_decisions Tool', () => {
         .mockRejectedValueOnce(new Error('Sitting not found'));
 
       await expect(handleGetMeetingDecisions({ sittingId: 'INVALID-ID' }))
-        .rejects.toThrow('Sitting not found');
+        .rejects.toThrow('Failed to retrieve meeting decisions');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

@@ -18,6 +18,8 @@
 import { GetProcedureEventsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -49,30 +51,54 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link getProcedureEventsToolMetadata} for MCP schema registration
  * @see {@link handleGetProcedures} for retrieving the parent procedure record
  */
-export async function handleGetProcedureEvents(
-  args: unknown
-): Promise<ToolResult> {
-  const params = GetProcedureEventsSchema.parse(args);
+export async function handleGetProcedureEvents(args: unknown): Promise<ToolResult> {
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetProcedureEventsSchema.parse>;
+  try {
+    params = GetProcedureEventsSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_procedure_events',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
 
-  const result = await epClient.getProcedureEvents(params.processId, {
-    limit: params.limit,
-    offset: params.offset
-  });
+  try {
+    const result = await epClient.getProcedureEvents(params.processId, {
+      limit: params.limit,
+      offset: params.offset,
+    });
 
-  return buildToolResponse(result);
+    return buildToolResponse(result);
+  } catch (error: unknown) {
+    throw new ToolError({
+      toolName: 'get_procedure_events',
+      operation: 'fetchData',
+      message: 'Failed to retrieve procedure events',
+      isRetryable: true,
+      cause: error,
+    });
+  }
 }
-
 /** Tool metadata for get_procedure_events */
 export const getProcedureEventsToolMetadata = {
   name: 'get_procedure_events',
-  description: 'Get events linked to a specific EP legislative procedure (hearings, debates, votes). Returns the timeline of events for a procedure. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get events linked to a specific EP legislative procedure (hearings, debates, votes). Returns the timeline of events for a procedure. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       processId: { type: 'string', description: 'Procedure process ID (required)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },
-    required: ['processId']
-  }
+    required: ['processId'],
+  },
 };

@@ -139,14 +139,14 @@ describe('get_plenary_documents Tool', () => {
       vi.mocked(epClientModule.epClient.getPlenaryDocuments)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetPlenaryDocuments({})).rejects.toThrow('API unavailable');
+      await expect(handleGetPlenaryDocuments({})).rejects.toThrow('Failed to retrieve plenary documents');
     });
 
     it('should propagate errors from single document lookup', async () => {
       vi.mocked(epClientModule.epClient.getPlenaryDocumentById)
         .mockRejectedValueOnce(new Error('Document not found'));
 
-      await expect(handleGetPlenaryDocuments({ docId: 'bad-id' })).rejects.toThrow('Document not found');
+      await expect(handleGetPlenaryDocuments({ docId: 'bad-id' })).rejects.toThrow('Failed to retrieve plenary documents');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

@@ -12,6 +12,8 @@
 import { GetMEPDeclarationsFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -22,19 +24,48 @@ import type { ToolResult } from './shared/types.js';
  * @security Input is validated with Zod before any API call.
  */
 export async function handleGetMEPDeclarationsFeed(args: unknown): Promise<ToolResult> {
-  const params = GetMEPDeclarationsFeedSchema.parse(args);
-  const apiParams: Record<string, unknown> = {};
-  apiParams['timeframe'] = params.timeframe;
-  if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
-  if (params.workType !== undefined) apiParams['workType'] = params.workType;
-  const result = await epClient.getMEPDeclarationsFeed(apiParams as Parameters<typeof epClient.getMEPDeclarationsFeed>[0]);
-  return buildToolResponse(result);
-}
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetMEPDeclarationsFeedSchema.parse>;
+  try {
+    params = GetMEPDeclarationsFeedSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_mep_declarations_feed',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
 
+  try {
+    const apiParams: Record<string, unknown> = {};
+    apiParams['timeframe'] = params.timeframe;
+    if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
+    if (params.workType !== undefined) apiParams['workType'] = params.workType;
+    const result = await epClient.getMEPDeclarationsFeed(
+      apiParams as Parameters<typeof epClient.getMEPDeclarationsFeed>[0]
+    );
+    return buildToolResponse(result);
+  } catch (error: unknown) {
+    throw new ToolError({
+      toolName: 'get_mep_declarations_feed',
+      operation: 'fetchData',
+      message: 'Failed to retrieve MEP declarations feed',
+      isRetryable: true,
+      cause: error,
+    });
+  }
+}
 /** Tool metadata for get_mep_declarations_feed */
 export const getMEPDeclarationsFeedToolMetadata = {
   name: 'get_mep_declarations_feed',
-  description: 'Get recently updated MEP declarations from the feed. Returns declarations published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get recently updated MEP declarations from the feed. Returns declarations published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -42,10 +73,13 @@ export const getMEPDeclarationsFeedToolMetadata = {
         type: 'string',
         description: 'Timeframe for the feed (today, one-day, one-week, one-month, custom)',
         enum: ['today', 'one-day', 'one-week', 'one-month', 'custom'],
-        default: 'one-week'
+        default: 'one-week',
       },
-      startDate: { type: 'string', description: 'Start date (YYYY-MM-DD) — required when timeframe is "custom"' },
-      workType: { type: 'string', description: 'Work type filter' }
-    }
-  }
+      startDate: {
+        type: 'string',
+        description: 'Start date (YYYY-MM-DD) — required when timeframe is "custom"',
+      },
+      workType: { type: 'string', description: 'Work type filter' },
+    },
+  },
 };

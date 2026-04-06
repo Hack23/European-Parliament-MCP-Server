@@ -110,7 +110,7 @@ describe('get_incoming_meps Tool', () => {
       vi.mocked(epClientModule.epClient.getIncomingMEPs)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetIncomingMEPs({})).rejects.toThrow('API unavailable');
+      await expect(handleGetIncomingMEPs({})).rejects.toThrow('Failed to retrieve incoming MEPs');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

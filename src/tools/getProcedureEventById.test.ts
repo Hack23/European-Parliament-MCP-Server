@@ -88,7 +88,7 @@ describe('get_procedure_event_by_id Tool', () => {
 
       await expect(
         handleGetProcedureEventById({ processId: 'COD-2024-001', eventId: 'bad-id' })
-      ).rejects.toThrow('Event not found');
+      ).rejects.toThrow('Failed to retrieve procedure event');
     });
   });
 

@@ -120,7 +120,7 @@ describe('get_procedures Tool', () => {
       vi.mocked(epClientModule.epClient.getProcedures)
         .mockRejectedValueOnce(new Error('API timeout'));
 
-      await expect(handleGetProcedures({})).rejects.toThrow('API timeout');
+      await expect(handleGetProcedures({})).rejects.toThrow('Failed to retrieve procedures');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

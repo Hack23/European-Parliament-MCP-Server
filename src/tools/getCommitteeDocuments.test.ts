@@ -139,14 +139,14 @@ describe('get_committee_documents Tool', () => {
       vi.mocked(epClientModule.epClient.getCommitteeDocuments)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetCommitteeDocuments({})).rejects.toThrow('API unavailable');
+      await expect(handleGetCommitteeDocuments({})).rejects.toThrow('Failed to retrieve committee documents');
     });
 
     it('should propagate errors from single document lookup', async () => {
       vi.mocked(epClientModule.epClient.getCommitteeDocumentById)
         .mockRejectedValueOnce(new Error('Document not found'));
 
-      await expect(handleGetCommitteeDocuments({ docId: 'bad-id' })).rejects.toThrow('Document not found');
+      await expect(handleGetCommitteeDocuments({ docId: 'bad-id' })).rejects.toThrow('Failed to retrieve committee documents');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

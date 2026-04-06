@@ -114,7 +114,7 @@ describe('get_meeting_foreseen_activities Tool', () => {
       vi.mocked(epClientModule.epClient.getMeetingForeseenActivities)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetMeetingForeseenActivities({ sittingId: 'sitting-1' })).rejects.toThrow('API unavailable');
+      await expect(handleGetMeetingForeseenActivities({ sittingId: 'sitting-1' })).rejects.toThrow('Failed to retrieve meeting foreseen activities');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

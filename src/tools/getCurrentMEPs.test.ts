@@ -121,7 +121,7 @@ describe('get_current_meps Tool', () => {
       vi.mocked(epClientModule.epClient.getCurrentMEPs)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetCurrentMEPs({})).rejects.toThrow('API unavailable');
+      await expect(handleGetCurrentMEPs({})).rejects.toThrow('Failed to retrieve current MEPs');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

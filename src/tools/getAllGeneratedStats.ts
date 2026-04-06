@@ -29,7 +29,8 @@
 
 import { z } from 'zod';
 import { GENERATED_STATS } from '../data/generatedStats.js';
-import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
 import type { ToolResult } from './shared/types.js';
 
 export const GetAllGeneratedStatsSchema = z
@@ -87,13 +88,11 @@ export const GetAllGeneratedStatsSchema = z
   })
   .refine(
     (data) =>
-      data.yearFrom === undefined ||
-      data.yearTo === undefined ||
-      data.yearFrom <= data.yearTo,
+      data.yearFrom === undefined || data.yearTo === undefined || data.yearFrom <= data.yearTo,
     {
       message: 'yearFrom must be less than or equal to yearTo',
       path: ['yearFrom'],
-    },
+    }
   );
 
 export type GetAllGeneratedStatsParams = z.infer<typeof GetAllGeneratedStatsSchema>;
@@ -115,7 +114,7 @@ const CATEGORY_LABEL_MAP: Partial<Record<string, string>> = {
   // political_groups intentionally omitted — it has no numeric ranking
 };
 
-type RankingEntry = typeof GENERATED_STATS.categoryRankings[number];
+type RankingEntry = (typeof GENERATED_STATS.categoryRankings)[number];
 
 /**
  * Compute mean, standard deviation, and median from a numeric array.
@@ -124,8 +123,7 @@ type RankingEntry = typeof GENERATED_STATS.categoryRankings[number];
 function computeStats(values: number[]): { mean: number; stdDev: number; median: number } {
   const n = values.length;
   const mean = values.reduce((s, v) => s + v, 0) / n;
-  const variance =
-    n > 1 ? values.reduce((s, v) => s + (v - mean) ** 2, 0) / n : 0;
+  const variance = n > 1 ? values.reduce((s, v) => s + (v - mean) ** 2, 0) / n : 0;
   const stdDev = Math.round(Math.sqrt(variance) * 100) / 100;
 
   const sorted = [...values].sort((a, b) => a - b);
@@ -133,7 +131,7 @@ function computeStats(values: number[]): { mean: number; stdDev: number; median:
   const median =
     sorted.length % 2 === 0
       ? ((sorted[mid - 1] ?? 0) + (sorted[mid] ?? 0)) / 2
-      : sorted[mid] ?? 0;
+      : (sorted[mid] ?? 0);
 
   return { mean: Math.round(mean * 100) / 100, stdDev, median };
 }
@@ -142,14 +140,8 @@ function computeStats(values: number[]): { mean: number; stdDev: number; median:
  * Recompute ranking summary fields (mean, stdDev, median, topYear, bottomYear)
  * for a filtered year range. Re-sorts and re-ranks entries with fresh percentiles.
  */
-function recomputeRankingSummary(
-  r: RankingEntry,
-  yearFrom: number,
-  yearTo: number,
-): RankingEntry {
-  const filtered = r.rankings.filter(
-    (ry) => ry.year >= yearFrom && ry.year <= yearTo,
-  );
+function recomputeRankingSummary(r: RankingEntry, yearFrom: number, yearTo: number): RankingEntry {
+  const filtered = r.rankings.filter((ry) => ry.year >= yearFrom && ry.year <= yearTo);
 
   if (filtered.length === 0) {
     return { ...r, rankings: [], mean: 0, stdDev: 0, median: 0, topYear: 0, bottomYear: 0 };
@@ -159,17 +151,12 @@ function recomputeRankingSummary(
   const n = values.length;
   const stats = computeStats(values);
 
-  const reSorted = [...filtered].sort(
-    (a, b) => b.totalActivityScore - a.totalActivityScore,
-  );
+  const reSorted = [...filtered].sort((a, b) => b.totalActivityScore - a.totalActivityScore);
 
   const reRanked = reSorted.map((entry, idx) => ({
     ...entry,
     rank: idx + 1,
-    percentile:
-      n === 1
-        ? 100
-        : Math.round(((n - idx - 1) / (n - 1)) * 10000) / 100,
+    percentile: n === 1 ? 100 : Math.round(((n - idx - 1) / (n - 1)) * 10000) / 100,
   }));
 
   return {
@@ -193,8 +180,7 @@ function filterRankings(
 ): typeof GENERATED_STATS.categoryRankings {
   if (!params.includeRankings) return [];
 
-  const recompute = (r: RankingEntry): RankingEntry =>
-    recomputeRankingSummary(r, yearFrom, yearTo);
+  const recompute = (r: RankingEntry): RankingEntry => recomputeRankingSummary(r, yearFrom, yearTo);
 
   if (params.category === 'all') {
     return GENERATED_STATS.categoryRankings.map(recompute);
@@ -205,9 +191,7 @@ function filterRankings(
 
   const label = CATEGORY_LABEL_MAP[params.category];
   if (label === undefined) return [];
-  return GENERATED_STATS.categoryRankings
-    .filter((r) => r.category === label)
-    .map(recompute);
+  return GENERATED_STATS.categoryRankings.filter((r) => r.category === label).map(recompute);
 }
 
 /**
@@ -217,9 +201,7 @@ function filterRankings(
  * and `requestedPeriod` (the user-supplied year filter). The `analysisSummary` covers
  * the full dataset with a `coverageNote` clarifying scope when filters narrow the range.
  */
-export function getAllGeneratedStats(
-  params: GetAllGeneratedStatsParams
-): ToolResult {
+export function getAllGeneratedStats(params: GetAllGeneratedStatsParams): ToolResult {
   try {
     const yearFrom = params.yearFrom ?? GENERATED_STATS.coveragePeriod.from;
     const yearTo = params.yearTo ?? GENERATED_STATS.coveragePeriod.to;
@@ -240,9 +222,7 @@ export function getAllGeneratedStats(
 
     // Include predictions only if requested — predictions are always returned in full
     // since they cover future years (2027–2031) beyond the historical yearTo default (2026)
-    const filteredPredictions = params.includePredictions
-      ? GENERATED_STATS.predictions
-      : [];
+    const filteredPredictions = params.includePredictions ? GENERATED_STATS.predictions : [];
 
     const result = {
       generatedAt: GENERATED_STATS.generatedAt,
@@ -272,16 +252,18 @@ export function getAllGeneratedStats(
         'Rankings use ordinal ranking with percentile scores. ' +
         'Predictions use average-based extrapolation from 2021-2025 actuals with parliamentary term cycle adjustments. ' +
         'Data refreshed weekly by agentic workflow.',
-      sourceAttribution:
-        'European Parliament Open Data Portal — data.europarl.europa.eu',
+      sourceAttribution: 'European Parliament Open Data Portal — data.europarl.europa.eu',
     };
 
     return buildToolResponse(result);
   } catch (error: unknown) {
-    return buildErrorResponse(
-      error instanceof Error ? error : new Error(String(error)),
-      'get_all_generated_stats'
-    );
+    throw new ToolError({
+      toolName: 'get_all_generated_stats',
+      operation: 'processData',
+      message: 'Failed to process generated statistics',
+      isRetryable: false,
+      cause: error,
+    });
   }
 }
 
@@ -351,9 +333,24 @@ export const getAllGeneratedStatsToolMetadata = {
   },
 };
 
-export async function handleGetAllGeneratedStats(
-  args: unknown
-): Promise<ToolResult> {
-  const params = GetAllGeneratedStatsSchema.parse(args);
-  return Promise.resolve(getAllGeneratedStats(params));
+export async function handleGetAllGeneratedStats(args: unknown): Promise<ToolResult> {
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: GetAllGeneratedStatsParams;
+  try {
+    params = GetAllGeneratedStatsSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_all_generated_stats',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
+
+  return await Promise.resolve(getAllGeneratedStats(params));
 }

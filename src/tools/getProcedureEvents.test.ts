@@ -115,7 +115,7 @@ describe('get_procedure_events Tool', () => {
       vi.mocked(epClientModule.epClient.getProcedureEvents)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetProcedureEvents({ processId: 'proc-1' })).rejects.toThrow('API unavailable');
+      await expect(handleGetProcedureEvents({ processId: 'proc-1' })).rejects.toThrow('Failed to retrieve procedure events');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

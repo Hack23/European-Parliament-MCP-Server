@@ -19,6 +19,8 @@
 import { GetControlledVocabulariesSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -52,34 +54,58 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link getControlledVocabulariesToolMetadata} for MCP schema registration
  * @see {@link handleSearchDocuments} for tools that consume vocabulary terms as filter values
  */
-export async function handleGetControlledVocabularies(
-  args: unknown
-): Promise<ToolResult> {
-  const params = GetControlledVocabulariesSchema.parse(args);
-
-  if (params.vocId !== undefined) {
-    const result = await epClient.getControlledVocabularyById(params.vocId);
-    return buildToolResponse(result);
+export async function handleGetControlledVocabularies(args: unknown): Promise<ToolResult> {
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetControlledVocabulariesSchema.parse>;
+  try {
+    params = GetControlledVocabulariesSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_controlled_vocabularies',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
   }
 
-  const result = await epClient.getControlledVocabularies({
-    limit: params.limit,
-    offset: params.offset
-  });
+  try {
+    if (params.vocId !== undefined) {
+      const result = await epClient.getControlledVocabularyById(params.vocId);
+      return buildToolResponse(result);
+    }
 
-  return buildToolResponse(result);
+    const result = await epClient.getControlledVocabularies({
+      limit: params.limit,
+      offset: params.offset,
+    });
+
+    return buildToolResponse(result);
+  } catch (error: unknown) {
+    throw new ToolError({
+      toolName: 'get_controlled_vocabularies',
+      operation: 'fetchData',
+      message: 'Failed to retrieve controlled vocabularies',
+      isRetryable: true,
+      cause: error,
+    });
+  }
 }
-
 /** Tool metadata for get_controlled_vocabularies */
 export const getControlledVocabulariesToolMetadata = {
   name: 'get_controlled_vocabularies',
-  description: 'Get European Parliament controlled vocabularies (standardized classification terms). Supports single vocabulary lookup by vocId. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get European Parliament controlled vocabularies (standardized classification terms). Supports single vocabulary lookup by vocId. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       vocId: { type: 'string', description: 'Vocabulary ID for single vocabulary lookup' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
-    }
-  }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
+    },
+  },
 };

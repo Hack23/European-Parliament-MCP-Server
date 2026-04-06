@@ -19,6 +19,8 @@
 import { GetPlenaryDocumentsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -53,38 +55,64 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetPlenarySessions} for the sessions associated with these documents
  * @see {@link handleGetPlenarySessionDocuments} for session-level agendas and minutes
  */
-export async function handleGetPlenaryDocuments(
-  args: unknown
-): Promise<ToolResult> {
-  const params = GetPlenaryDocumentsSchema.parse(args);
-
-  if (params.docId !== undefined) {
-    const result = await epClient.getPlenaryDocumentById(params.docId);
-    return buildToolResponse(result);
+export async function handleGetPlenaryDocuments(args: unknown): Promise<ToolResult> {
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetPlenaryDocumentsSchema.parse>;
+  try {
+    params = GetPlenaryDocumentsSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_plenary_documents',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
   }
 
-  const apiParams: Record<string, unknown> = {
-    limit: params.limit,
-    offset: params.offset
-  };
-  if (params.year !== undefined) apiParams['year'] = params.year;
+  try {
+    if (params.docId !== undefined) {
+      const result = await epClient.getPlenaryDocumentById(params.docId);
+      return buildToolResponse(result);
+    }
 
-  const result = await epClient.getPlenaryDocuments(apiParams as Parameters<typeof epClient.getPlenaryDocuments>[0]);
+    const apiParams: Record<string, unknown> = {
+      limit: params.limit,
+      offset: params.offset,
+    };
+    if (params.year !== undefined) apiParams['year'] = params.year;
 
-  return buildToolResponse(result);
+    const result = await epClient.getPlenaryDocuments(
+      apiParams as Parameters<typeof epClient.getPlenaryDocuments>[0]
+    );
+
+    return buildToolResponse(result);
+  } catch (error: unknown) {
+    throw new ToolError({
+      toolName: 'get_plenary_documents',
+      operation: 'fetchData',
+      message: 'Failed to retrieve plenary documents',
+      isRetryable: true,
+      cause: error,
+    });
+  }
 }
-
 /** Tool metadata for get_plenary_documents */
 export const getPlenaryDocumentsToolMetadata = {
   name: 'get_plenary_documents',
-  description: 'Get European Parliament plenary documents. Supports single document lookup by docId or list with year filter. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get European Parliament plenary documents. Supports single document lookup by docId or list with year filter. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       docId: { type: 'string', description: 'Document ID for single document lookup' },
       year: { type: 'number', description: 'Filter by year' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
-    }
-  }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
+    },
+  },
 };

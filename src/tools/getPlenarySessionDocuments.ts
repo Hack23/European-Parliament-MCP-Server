@@ -19,6 +19,8 @@
 import { GetPlenarySessionDocumentsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -54,34 +56,58 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetPlenarySessions} for the sessions these documents belong to
  * @see {@link handleGetPlenaryDocuments} for broader legislative plenary documents
  */
-export async function handleGetPlenarySessionDocuments(
-  args: unknown
-): Promise<ToolResult> {
-  const params = GetPlenarySessionDocumentsSchema.parse(args);
-
-  if (params.docId !== undefined) {
-    const result = await epClient.getPlenarySessionDocumentById(params.docId);
-    return buildToolResponse(result);
+export async function handleGetPlenarySessionDocuments(args: unknown): Promise<ToolResult> {
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetPlenarySessionDocumentsSchema.parse>;
+  try {
+    params = GetPlenarySessionDocumentsSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_plenary_session_documents',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
   }
 
-  const result = await epClient.getPlenarySessionDocuments({
-    limit: params.limit,
-    offset: params.offset
-  });
+  try {
+    if (params.docId !== undefined) {
+      const result = await epClient.getPlenarySessionDocumentById(params.docId);
+      return buildToolResponse(result);
+    }
 
-  return buildToolResponse(result);
+    const result = await epClient.getPlenarySessionDocuments({
+      limit: params.limit,
+      offset: params.offset,
+    });
+
+    return buildToolResponse(result);
+  } catch (error: unknown) {
+    throw new ToolError({
+      toolName: 'get_plenary_session_documents',
+      operation: 'fetchData',
+      message: 'Failed to retrieve plenary session documents',
+      isRetryable: true,
+      cause: error,
+    });
+  }
 }
-
 /** Tool metadata for get_plenary_session_documents */
 export const getPlenarySessionDocumentsToolMetadata = {
   name: 'get_plenary_session_documents',
-  description: 'Get European Parliament plenary session documents (agendas, minutes, voting lists). Supports single document lookup by docId. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get European Parliament plenary session documents (agendas, minutes, voting lists). Supports single document lookup by docId. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       docId: { type: 'string', description: 'Document ID for single document lookup' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
-    }
-  }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
+    },
+  },
 };

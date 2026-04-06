@@ -81,7 +81,7 @@ describe('get_plenary_documents_feed Tool', () => {
       vi.mocked(epClientModule.epClient.getPlenaryDocumentsFeed)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetPlenaryDocumentsFeed({})).rejects.toThrow('API unavailable');
+      await expect(handleGetPlenaryDocumentsFeed({})).rejects.toThrow('Failed to retrieve plenary documents feed');
     });
   });
 

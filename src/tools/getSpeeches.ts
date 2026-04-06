@@ -21,6 +21,8 @@ import { GetSpeechesSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { buildApiParams } from './shared/paramBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -52,44 +54,75 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link getSpeechesToolMetadata} for MCP schema registration
  * @see {@link handleGetMeetingActivities} for retrieving broader meeting-level activities
  */
-export async function handleGetSpeeches(
-  args: unknown
-): Promise<ToolResult> {
-  const params = GetSpeechesSchema.parse(args);
-
-  if (params.speechId !== undefined) {
-    const result = await epClient.getSpeechById(params.speechId);
-    return buildToolResponse(result);
+export async function handleGetSpeeches(args: unknown): Promise<ToolResult> {
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetSpeechesSchema.parse>;
+  try {
+    params = GetSpeechesSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_speeches',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
   }
 
-  const apiParams = {
-    limit: params.limit,
-    offset: params.offset,
-    ...buildApiParams(params, [
-      { from: 'year', to: 'year' },
-      { from: 'dateFrom', to: 'dateFrom' },
-      { from: 'dateTo', to: 'dateTo' },
-    ]),
-  };
+  try {
+    if (params.speechId !== undefined) {
+      const result = await epClient.getSpeechById(params.speechId);
+      return buildToolResponse(result);
+    }
 
-  const result = await epClient.getSpeeches(apiParams as Parameters<typeof epClient.getSpeeches>[0]);
+    const apiParams = {
+      limit: params.limit,
+      offset: params.offset,
+      ...buildApiParams(params, [
+        { from: 'year', to: 'year' },
+        { from: 'dateFrom', to: 'dateFrom' },
+        { from: 'dateTo', to: 'dateTo' },
+      ]),
+    };
 
-  return buildToolResponse(result);
+    const result = await epClient.getSpeeches(
+      apiParams as Parameters<typeof epClient.getSpeeches>[0]
+    );
+
+    return buildToolResponse(result);
+  } catch (error: unknown) {
+    throw new ToolError({
+      toolName: 'get_speeches',
+      operation: 'fetchData',
+      message: 'Failed to retrieve speeches',
+      isRetryable: true,
+      cause: error,
+    });
+  }
 }
-
 /** Tool metadata for get_speeches */
 export const getSpeechesToolMetadata = {
   name: 'get_speeches',
-  description: 'Get European Parliament plenary speeches and debate contributions. Supports single speech lookup by speechId or list with year or date range filtering. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get European Parliament plenary speeches and debate contributions. Supports single speech lookup by speechId or list with year or date range filtering. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       speechId: { type: 'string', description: 'Speech ID for single speech lookup' },
-      year: { type: 'number', description: 'Filter by calendar year (recommended for annual counts)', minimum: 1900, maximum: 2100 },
+      year: {
+        type: 'number',
+        description: 'Filter by calendar year (recommended for annual counts)',
+        minimum: 1900,
+        maximum: 2100,
+      },
       dateFrom: { type: 'string', description: 'Start date (YYYY-MM-DD)' },
       dateTo: { type: 'string', description: 'End date (YYYY-MM-DD)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
-    }
-  }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
+    },
+  },
 };

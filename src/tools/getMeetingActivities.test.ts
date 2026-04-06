@@ -114,7 +114,7 @@ describe('get_meeting_activities Tool', () => {
         .mockRejectedValueOnce(new Error('Meeting not found'));
 
       await expect(handleGetMeetingActivities({ sittingId: 'INVALID-ID' }))
-        .rejects.toThrow('Meeting not found');
+        .rejects.toThrow('Failed to retrieve meeting activities');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

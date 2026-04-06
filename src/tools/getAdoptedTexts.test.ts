@@ -105,7 +105,7 @@ describe('get_adopted_texts Tool', () => {
       vi.mocked(epClientModule.epClient.getAdoptedTexts)
         .mockRejectedValueOnce(new Error('Connection refused'));
 
-      await expect(handleGetAdoptedTexts({})).rejects.toThrow('Connection refused');
+      await expect(handleGetAdoptedTexts({})).rejects.toThrow('Failed to retrieve adopted texts');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

@@ -89,7 +89,7 @@ describe('get_documents_feed Tool', () => {
       vi.mocked(epClientModule.epClient.getDocumentsFeed)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetDocumentsFeed({})).rejects.toThrow('API unavailable');
+      await expect(handleGetDocumentsFeed({})).rejects.toThrow('Failed to retrieve documents feed');
     });
   });
 

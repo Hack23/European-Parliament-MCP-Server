@@ -104,7 +104,7 @@ describe('get_procedures_feed Tool', () => {
       vi.mocked(epClientModule.epClient.getProceduresFeed)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetProceduresFeed({})).rejects.toThrow('API unavailable');
+      await expect(handleGetProceduresFeed({})).rejects.toThrow('Failed to retrieve procedures feed');
     });
   });
 
