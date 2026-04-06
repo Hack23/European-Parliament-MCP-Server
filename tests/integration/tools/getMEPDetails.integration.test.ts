@@ -222,7 +222,7 @@ describeIntegration('get_mep_details Integration Tests', () => {
       if (!testMEPId) { console.warn('[SKIP] No MEP ID available'); return; }
       const result1 = await retryOrSkip(async () => handleGetMEPDetails({ id: testMEPId! }), 'consistency first request');
       if (!result1) return;
-      const result2 = await handleGetMEPDetails({ id: testMEPId! });
+      const result2 = await handleGetMEPDetails({ id: testMEPId });
 
       validateMCPStructure(result1);
       validateMCPStructure(result2);
