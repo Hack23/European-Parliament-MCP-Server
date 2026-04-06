@@ -61,6 +61,10 @@ describe('MepIdSchema', () => {
     expect(() => MepIdSchema.parse('MEP-')).toThrow();
   });
 
+  it('should reject mixed-prefix "MEP-person/{number}"', () => {
+    expect(() => MepIdSchema.parse('MEP-person/123')).toThrow();
+  });
+
   it('should reject paths with double slashes', () => {
     expect(() => MepIdSchema.parse('person//123')).toThrow();
   });

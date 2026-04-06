@@ -29,7 +29,7 @@ export const MepIdSchema = z.string()
   .min(1)
   .max(100)
   .regex(
-    /^(MEP-)?(\d+|person\/\d+)$/,
+    /^(?:\d+|MEP-\d+|person\/\d+)$/,
     'MEP ID must be numeric, "MEP-{number}", or "person/{number}"'
   )
   .describe('MEP identifier');
