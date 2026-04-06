@@ -251,6 +251,27 @@ function collectDataQualityWarnings(votingDataAvailable: boolean, questionCount:
 }
 
 /**
+ * Build dataFreshness and methodology strings based on whether voting data is available.
+ * When voting stats are unavailable, the text accurately reflects that voting-based
+ * dimensions use zero-based proxies rather than live data.
+ */
+function buildInfluenceMetadata(votingDataAvailable: boolean): { dataFreshness: string; methodology: string } {
+  return {
+    dataFreshness: votingDataAvailable
+      ? 'Real-time EP API data — MEP voting statistics and committee memberships'
+      : 'Real-time EP API data — committee memberships only; voting statistics unavailable from EP API',
+    methodology: votingDataAvailable
+      ? 'CIA Political Scorecards - 5-dimension weighted scoring model using real EP Open Data. '
+        + 'Parliamentary questions fetched from /parliamentary-questions endpoint. '
+        + 'Data source: European Parliament Open Data Portal.'
+      : 'CIA Political Scorecards - 5-dimension weighted scoring model. '
+        + 'Voting statistics unavailable — voting and participation dimensions use zero-based proxies. '
+        + 'Parliamentary questions fetched from /parliamentary-questions endpoint. '
+        + 'Data source: European Parliament Open Data Portal.',
+  };
+}
+
+/**
  * Handles the assess_mep_influence MCP tool request.
  *
  * Assesses an MEP's influence within the European Parliament by evaluating their
@@ -355,6 +376,7 @@ export async function handleAssessMepInfluence(
     }
 
     const dataQualityWarnings = collectDataQualityWarnings(votingDataAvailable, questionCount);
+    const { dataFreshness, methodology } = buildInfluenceMetadata(votingDataAvailable);
 
     const votingDim = computeVotingActivityScore(stats);
     const legislativeDim = computeLegislativeOutputScore(mep.roles ?? [], mep.committees);
@@ -397,11 +419,9 @@ export async function handleAssessMepInfluence(
       },
       confidenceLevel: getConfidenceLevel(stats.totalVotes),
       votingDataAvailable,
-      dataFreshness: 'Real-time EP API data — MEP voting statistics and committee memberships',
+      dataFreshness,
       sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-      methodology: 'CIA Political Scorecards - 5-dimension weighted scoring model using real EP Open Data. '
-        + 'Parliamentary questions fetched from /parliamentary-questions endpoint. '
-        + 'Data source: European Parliament Open Data Portal.',
+      methodology,
       dataQualityWarnings,
     };
 
