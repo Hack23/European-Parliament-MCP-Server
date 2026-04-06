@@ -12,14 +12,17 @@ import { MCPTestClient } from './mcpClient.js';
 import { parsePaginatedMCPResponse, parseMCPResponse, validateMCPResponse, retryOrSkip } from '../helpers/testUtils.js';
 
 /**
- * E2E test timeout: 65 seconds
+ * E2E test timeout: 90 seconds
  * - API timeout: up to 60s when EP_REQUEST_TIMEOUT_MS=60000 (default 10s / 10000ms)
- * - Test overhead: ~5s (MCP protocol, framework)
- * 
- * Increased from 35s to 65s because European Parliament API can take 30-60+ seconds
- * to respond during peak usage or when data is not cached.
+ * - Test overhead: ~5s (MCP protocol serialisation, stdio transport)
+ * - CI jitter margin: ~25s (GC pauses, process scheduling, network variability)
+ *
+ * Increased from 65s to 90s because the 5s margin was insufficient — MCP protocol
+ * overhead plus CI environment jitter caused vitest to fire its test-level timeout
+ * before the HTTP AbortController could abort and propagate the timeout error
+ * through retryOrSkip, resulting in hard FAIL instead of graceful skip.
  */
-const E2E_TEST_TIMEOUT_MS = 65000;
+const E2E_TEST_TIMEOUT_MS = 90000;
 
 /**
  * Extended timeout for multi-step workflow tests and complex analytical tools.
@@ -29,7 +32,7 @@ const E2E_TEST_TIMEOUT_MS = 65000;
  * Also used for single-call tools (track_legislation, generate_report, analyze_voting_patterns)
  * where EP API latency plus MCP protocol overhead can exceed E2E_TEST_TIMEOUT_MS.
  */
-const E2E_WORKFLOW_TIMEOUT_MS = E2E_TEST_TIMEOUT_MS * 3; // 195s
+const E2E_WORKFLOW_TIMEOUT_MS = E2E_TEST_TIMEOUT_MS * 3; // 270s
 
 describe('Full Workflow E2E Tests', () => {
   let client: MCPTestClient;
