@@ -77,7 +77,7 @@ export async function handleGetMeetingPlenarySessionDocumentItems(
     params = GetMeetingPlenarySessionDocumentItemsSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_meeting_plenary_session_document_items',
         operation: 'validateInput',
@@ -91,11 +91,11 @@ export async function handleGetMeetingPlenarySessionDocumentItems(
 
   try {
     const result = await epClient.getMeetingPlenarySessionDocumentItems(params.sittingId, {
-    limit: params.limit,
-    offset: params.offset
-  });
+      limit: params.limit,
+      offset: params.offset,
+    });
 
-  return buildToolResponse(result);
+    return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_meeting_plenary_session_document_items',
@@ -109,14 +109,15 @@ export async function handleGetMeetingPlenarySessionDocumentItems(
 /** Tool metadata for get_meeting_plenary_session_document_items */
 export const getMeetingPlenarySessionDocumentItemsToolMetadata = {
   name: 'get_meeting_plenary_session_document_items',
-  description: 'Get plenary session document items for a specific EP meeting/plenary sitting. Returns individual agenda item documents for the meeting. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get plenary session document items for a specific EP meeting/plenary sitting. Returns individual agenda item documents for the meeting. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       sittingId: { type: 'string', description: 'Meeting / sitting identifier (required)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },
-    required: ['sittingId']
-  }
+    required: ['sittingId'],
+  },
 };

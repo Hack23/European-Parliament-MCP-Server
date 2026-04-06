@@ -43,16 +43,14 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link getMeetingActivitiesToolMetadata} for MCP schema registration
  * @see {@link handleGetMeetingDecisions} for retrieving decisions from the same sitting
  */
-export async function handleGetMeetingActivities(
-  args: unknown
-): Promise<ToolResult> {
+export async function handleGetMeetingActivities(args: unknown): Promise<ToolResult> {
   // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetMeetingActivitiesSchema.parse>;
   try {
     params = GetMeetingActivitiesSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_meeting_activities',
         operation: 'validateInput',
@@ -66,11 +64,11 @@ export async function handleGetMeetingActivities(
 
   try {
     const result = await epClient.getMeetingActivities(params.sittingId, {
-    limit: params.limit,
-    offset: params.offset
-  });
+      limit: params.limit,
+      offset: params.offset,
+    });
 
-  return buildToolResponse(result);
+    return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_meeting_activities',
@@ -84,14 +82,15 @@ export async function handleGetMeetingActivities(
 /** Tool metadata for get_meeting_activities */
 export const getMeetingActivitiesToolMetadata = {
   name: 'get_meeting_activities',
-  description: 'Get activities linked to a specific EP plenary sitting (debates, votes, presentations). Requires a sitting ID. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get activities linked to a specific EP plenary sitting (debates, votes, presentations). Requires a sitting ID. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       sittingId: { type: 'string', description: 'Meeting / sitting identifier (required)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },
-    required: ['sittingId']
-  }
+    required: ['sittingId'],
+  },
 };

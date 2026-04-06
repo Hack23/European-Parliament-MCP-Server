@@ -45,16 +45,14 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link getPlenarySessionDocumentItemsToolMetadata} for MCP schema registration
  * @see {@link handleGetAdoptedTexts} for retrieving finalized plenary documents
  */
-export async function handleGetPlenarySessionDocumentItems(
-  args: unknown
-): Promise<ToolResult> {
+export async function handleGetPlenarySessionDocumentItems(args: unknown): Promise<ToolResult> {
   // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetPlenarySessionDocumentItemsSchema.parse>;
   try {
     params = GetPlenarySessionDocumentItemsSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_plenary_session_document_items',
         operation: 'validateInput',
@@ -68,11 +66,11 @@ export async function handleGetPlenarySessionDocumentItems(
 
   try {
     const result = await epClient.getPlenarySessionDocumentItems({
-    limit: params.limit,
-    offset: params.offset
-  });
+      limit: params.limit,
+      offset: params.offset,
+    });
 
-  return buildToolResponse(result);
+    return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_plenary_session_document_items',
@@ -86,12 +84,13 @@ export async function handleGetPlenarySessionDocumentItems(
 /** Tool metadata for get_plenary_session_document_items */
 export const getPlenarySessionDocumentItemsToolMetadata = {
   name: 'get_plenary_session_document_items',
-  description: 'Get European Parliament plenary session document items. Returns individual items within plenary session documents. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get European Parliament plenary session document items. Returns individual items within plenary session documents. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
-    }
-  }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
+    },
+  },
 };

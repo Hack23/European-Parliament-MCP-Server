@@ -58,16 +58,14 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link getMEPDeclarationsToolMetadata} for MCP schema registration
  * @see {@link handleGetMEPDetails} for retrieving broader MEP profile information
  */
-export async function handleGetMEPDeclarations(
-  args: unknown
-): Promise<ToolResult> {
+export async function handleGetMEPDeclarations(args: unknown): Promise<ToolResult> {
   // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetMEPDeclarationsSchema.parse>;
   try {
     params = GetMEPDeclarationsSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_mep_declarations',
         operation: 'validateInput',
@@ -81,19 +79,21 @@ export async function handleGetMEPDeclarations(
 
   try {
     if (params.docId !== undefined) {
-    const result = await epClient.getMEPDeclarationById(params.docId);
+      const result = await epClient.getMEPDeclarationById(params.docId);
+      return buildToolResponse(result);
+    }
+
+    const apiParams: Record<string, unknown> = {
+      limit: params.limit,
+      offset: params.offset,
+    };
+    if (params.year !== undefined) apiParams['year'] = params.year;
+
+    const result = await epClient.getMEPDeclarations(
+      apiParams as Parameters<typeof epClient.getMEPDeclarations>[0]
+    );
+
     return buildToolResponse(result);
-  }
-
-  const apiParams: Record<string, unknown> = {
-    limit: params.limit,
-    offset: params.offset
-  };
-  if (params.year !== undefined) apiParams['year'] = params.year;
-
-  const result = await epClient.getMEPDeclarations(apiParams as Parameters<typeof epClient.getMEPDeclarations>[0]);
-
-  return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_mep_declarations',
@@ -107,14 +107,15 @@ export async function handleGetMEPDeclarations(
 /** Tool metadata for get_mep_declarations */
 export const getMEPDeclarationsToolMetadata = {
   name: 'get_mep_declarations',
-  description: 'Get MEP declarations of financial interests filed under the Rules of Procedure. Supports single declaration lookup by docId or list with year filter. Data source: European Parliament Open Data Portal. GDPR: Access is audit-logged.',
+  description:
+    'Get MEP declarations of financial interests filed under the Rules of Procedure. Supports single declaration lookup by docId or list with year filter. Data source: European Parliament Open Data Portal. GDPR: Access is audit-logged.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       docId: { type: 'string', description: 'Document ID for single declaration lookup' },
       year: { type: 'number', description: 'Filter by filing year (e.g., 2024)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
-    }
-  }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
+    },
+  },
 };

@@ -30,7 +30,7 @@ export async function handleGetProcedureEventById(args: unknown): Promise<ToolRe
     params = GetProcedureEventByIdSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_procedure_event_by_id',
         operation: 'validateInput',
@@ -44,7 +44,7 @@ export async function handleGetProcedureEventById(args: unknown): Promise<ToolRe
 
   try {
     const result = await epClient.getProcedureEventById(params.processId, params.eventId);
-  return buildToolResponse(result);
+    return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_procedure_event_by_id',
@@ -58,13 +58,14 @@ export async function handleGetProcedureEventById(args: unknown): Promise<ToolRe
 /** Tool metadata for get_procedure_event_by_id */
 export const getProcedureEventByIdToolMetadata = {
   name: 'get_procedure_event_by_id',
-  description: 'Get a specific event linked to a legislative procedure. Returns a single event for the specified procedure and event identifiers. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get a specific event linked to a legislative procedure. Returns a single event for the specified procedure and event identifiers. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       processId: { type: 'string', description: 'Procedure process ID' },
-      eventId: { type: 'string', description: 'Event identifier' }
+      eventId: { type: 'string', description: 'Event identifier' },
     },
-    required: ['processId', 'eventId']
-  }
+    required: ['processId', 'eventId'],
+  },
 };

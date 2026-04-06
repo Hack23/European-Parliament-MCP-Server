@@ -30,7 +30,7 @@ export async function handleGetCommitteeDocumentsFeed(args: unknown): Promise<To
     params = GetCommitteeDocumentsFeedSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_committee_documents_feed',
         operation: 'validateInput',
@@ -44,10 +44,12 @@ export async function handleGetCommitteeDocumentsFeed(args: unknown): Promise<To
 
   try {
     const apiParams: Record<string, unknown> = {};
-  apiParams['timeframe'] = params.timeframe;
-  if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
-  const result = await epClient.getCommitteeDocumentsFeed(apiParams as Parameters<typeof epClient.getCommitteeDocumentsFeed>[0]);
-  return buildToolResponse(result);
+    apiParams['timeframe'] = params.timeframe;
+    if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
+    const result = await epClient.getCommitteeDocumentsFeed(
+      apiParams as Parameters<typeof epClient.getCommitteeDocumentsFeed>[0]
+    );
+    return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_committee_documents_feed',
@@ -61,7 +63,8 @@ export async function handleGetCommitteeDocumentsFeed(args: unknown): Promise<To
 /** Tool metadata for get_committee_documents_feed */
 export const getCommitteeDocumentsFeedToolMetadata = {
   name: 'get_committee_documents_feed',
-  description: 'Get recently updated committee documents from the feed. Returns committee documents published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get recently updated committee documents from the feed. Returns committee documents published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -69,9 +72,12 @@ export const getCommitteeDocumentsFeedToolMetadata = {
         type: 'string',
         description: 'Timeframe for the feed (today, one-day, one-week, one-month, custom)',
         enum: ['today', 'one-day', 'one-week', 'one-month', 'custom'],
-        default: 'one-week'
+        default: 'one-week',
       },
-      startDate: { type: 'string', description: 'Start date (YYYY-MM-DD) — required when timeframe is "custom"' }
-    }
-  }
+      startDate: {
+        type: 'string',
+        description: 'Start date (YYYY-MM-DD) — required when timeframe is "custom"',
+      },
+    },
+  },
 };

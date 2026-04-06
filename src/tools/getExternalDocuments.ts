@@ -54,16 +54,14 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link getExternalDocumentsToolMetadata} for MCP schema registration
  * @see {@link handleSearchDocuments} for full-text search across EP legislative documents
  */
-export async function handleGetExternalDocuments(
-  args: unknown
-): Promise<ToolResult> {
+export async function handleGetExternalDocuments(args: unknown): Promise<ToolResult> {
   // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetExternalDocumentsSchema.parse>;
   try {
     params = GetExternalDocumentsSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_external_documents',
         operation: 'validateInput',
@@ -77,19 +75,21 @@ export async function handleGetExternalDocuments(
 
   try {
     if (params.docId !== undefined) {
-    const result = await epClient.getExternalDocumentById(params.docId);
+      const result = await epClient.getExternalDocumentById(params.docId);
+      return buildToolResponse(result);
+    }
+
+    const apiParams: Record<string, unknown> = {
+      limit: params.limit,
+      offset: params.offset,
+    };
+    if (params.year !== undefined) apiParams['year'] = params.year;
+
+    const result = await epClient.getExternalDocuments(
+      apiParams as Parameters<typeof epClient.getExternalDocuments>[0]
+    );
+
     return buildToolResponse(result);
-  }
-
-  const apiParams: Record<string, unknown> = {
-    limit: params.limit,
-    offset: params.offset
-  };
-  if (params.year !== undefined) apiParams['year'] = params.year;
-
-  const result = await epClient.getExternalDocuments(apiParams as Parameters<typeof epClient.getExternalDocuments>[0]);
-
-  return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_external_documents',
@@ -103,14 +103,15 @@ export async function handleGetExternalDocuments(
 /** Tool metadata for get_external_documents */
 export const getExternalDocumentsToolMetadata = {
   name: 'get_external_documents',
-  description: 'Get external documents (non-EP documents such as Council positions, Commission proposals) from the European Parliament data portal. Supports single document lookup by docId. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get external documents (non-EP documents such as Council positions, Commission proposals) from the European Parliament data portal. Supports single document lookup by docId. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       docId: { type: 'string', description: 'Document ID for single document lookup' },
       year: { type: 'number', description: 'Filter by year' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
-    }
-  }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
+    },
+  },
 };

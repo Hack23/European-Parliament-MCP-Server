@@ -30,7 +30,7 @@ export async function handleGetPlenaryDocumentsFeed(args: unknown): Promise<Tool
     params = GetPlenaryDocumentsFeedSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_plenary_documents_feed',
         operation: 'validateInput',
@@ -44,10 +44,12 @@ export async function handleGetPlenaryDocumentsFeed(args: unknown): Promise<Tool
 
   try {
     const apiParams: Record<string, unknown> = {};
-  apiParams['timeframe'] = params.timeframe;
-  if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
-  const result = await epClient.getPlenaryDocumentsFeed(apiParams as Parameters<typeof epClient.getPlenaryDocumentsFeed>[0]);
-  return buildToolResponse(result);
+    apiParams['timeframe'] = params.timeframe;
+    if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
+    const result = await epClient.getPlenaryDocumentsFeed(
+      apiParams as Parameters<typeof epClient.getPlenaryDocumentsFeed>[0]
+    );
+    return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_plenary_documents_feed',
@@ -61,7 +63,8 @@ export async function handleGetPlenaryDocumentsFeed(args: unknown): Promise<Tool
 /** Tool metadata for get_plenary_documents_feed */
 export const getPlenaryDocumentsFeedToolMetadata = {
   name: 'get_plenary_documents_feed',
-  description: 'Get recently updated plenary documents from the feed. Returns plenary documents published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get recently updated plenary documents from the feed. Returns plenary documents published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -69,9 +72,12 @@ export const getPlenaryDocumentsFeedToolMetadata = {
         type: 'string',
         description: 'Timeframe for the feed (today, one-day, one-week, one-month, custom)',
         enum: ['today', 'one-day', 'one-week', 'one-month', 'custom'],
-        default: 'one-week'
+        default: 'one-week',
       },
-      startDate: { type: 'string', description: 'Start date (YYYY-MM-DD) — required when timeframe is "custom"' }
-    }
-  }
+      startDate: {
+        type: 'string',
+        description: 'Start date (YYYY-MM-DD) — required when timeframe is "custom"',
+      },
+    },
+  },
 };

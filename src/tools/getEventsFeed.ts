@@ -30,7 +30,7 @@ export async function handleGetEventsFeed(args: unknown): Promise<ToolResult> {
     params = GetEventsFeedSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_events_feed',
         operation: 'validateInput',
@@ -44,11 +44,13 @@ export async function handleGetEventsFeed(args: unknown): Promise<ToolResult> {
 
   try {
     const apiParams: Record<string, unknown> = {};
-  apiParams['timeframe'] = params.timeframe;
-  if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
-  if (params.activityType !== undefined) apiParams['activityType'] = params.activityType;
-  const result = await epClient.getEventsFeed(apiParams as Parameters<typeof epClient.getEventsFeed>[0]);
-  return buildToolResponse(result);
+    apiParams['timeframe'] = params.timeframe;
+    if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
+    if (params.activityType !== undefined) apiParams['activityType'] = params.activityType;
+    const result = await epClient.getEventsFeed(
+      apiParams as Parameters<typeof epClient.getEventsFeed>[0]
+    );
+    return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_events_feed',
@@ -62,7 +64,8 @@ export async function handleGetEventsFeed(args: unknown): Promise<ToolResult> {
 /** Tool metadata for get_events_feed */
 export const getEventsFeedToolMetadata = {
   name: 'get_events_feed',
-  description: 'Get recently updated European Parliament events from the feed. Returns events published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get recently updated European Parliament events from the feed. Returns events published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -70,10 +73,13 @@ export const getEventsFeedToolMetadata = {
         type: 'string',
         description: 'Timeframe for the feed (today, one-day, one-week, one-month, custom)',
         enum: ['today', 'one-day', 'one-week', 'one-month', 'custom'],
-        default: 'one-week'
+        default: 'one-week',
       },
-      startDate: { type: 'string', description: 'Start date (YYYY-MM-DD) — required when timeframe is "custom"' },
-      activityType: { type: 'string', description: 'Activity type filter' }
-    }
-  }
+      startDate: {
+        type: 'string',
+        description: 'Start date (YYYY-MM-DD) — required when timeframe is "custom"',
+      },
+      activityType: { type: 'string', description: 'Activity type filter' },
+    },
+  },
 };

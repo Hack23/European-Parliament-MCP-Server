@@ -55,16 +55,14 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link getProceduresToolMetadata} for MCP schema registration
  * @see {@link handleGetProcedureEvents} for retrieving events linked to a specific procedure
  */
-export async function handleGetProcedures(
-  args: unknown
-): Promise<ToolResult> {
+export async function handleGetProcedures(args: unknown): Promise<ToolResult> {
   // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetProceduresSchema.parse>;
   try {
     params = GetProceduresSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_procedures',
         operation: 'validateInput',
@@ -78,21 +76,21 @@ export async function handleGetProcedures(
 
   try {
     if (params.processId !== undefined) {
-    const result = await epClient.getProcedureById(params.processId);
+      const result = await epClient.getProcedureById(params.processId);
+      return buildToolResponse(result);
+    }
+
+    const apiParams = {
+      limit: params.limit,
+      offset: params.offset,
+      ...buildApiParams(params, [{ from: 'year', to: 'year' }]),
+    };
+
+    const result = await epClient.getProcedures(
+      apiParams as Parameters<typeof epClient.getProcedures>[0]
+    );
+
     return buildToolResponse(result);
-  }
-
-  const apiParams = {
-    limit: params.limit,
-    offset: params.offset,
-    ...buildApiParams(params, [
-      { from: 'year', to: 'year' },
-    ]),
-  };
-
-  const result = await epClient.getProcedures(apiParams as Parameters<typeof epClient.getProcedures>[0]);
-
-  return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_procedures',
@@ -106,14 +104,15 @@ export async function handleGetProcedures(
 /** Tool metadata for get_procedures */
 export const getProceduresToolMetadata = {
   name: 'get_procedures',
-  description: 'Get European Parliament legislative procedures. Supports single procedure lookup by processId or list with year filter. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get European Parliament legislative procedures. Supports single procedure lookup by processId or list with year filter. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       processId: { type: 'string', description: 'Process ID for single procedure lookup' },
       year: { type: 'number', description: 'Filter by year (e.g., 2024)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
-    }
-  }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
+    },
+  },
 };

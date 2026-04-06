@@ -54,16 +54,14 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link getControlledVocabulariesToolMetadata} for MCP schema registration
  * @see {@link handleSearchDocuments} for tools that consume vocabulary terms as filter values
  */
-export async function handleGetControlledVocabularies(
-  args: unknown
-): Promise<ToolResult> {
+export async function handleGetControlledVocabularies(args: unknown): Promise<ToolResult> {
   // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetControlledVocabulariesSchema.parse>;
   try {
     params = GetControlledVocabulariesSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_controlled_vocabularies',
         operation: 'validateInput',
@@ -77,16 +75,16 @@ export async function handleGetControlledVocabularies(
 
   try {
     if (params.vocId !== undefined) {
-    const result = await epClient.getControlledVocabularyById(params.vocId);
+      const result = await epClient.getControlledVocabularyById(params.vocId);
+      return buildToolResponse(result);
+    }
+
+    const result = await epClient.getControlledVocabularies({
+      limit: params.limit,
+      offset: params.offset,
+    });
+
     return buildToolResponse(result);
-  }
-
-  const result = await epClient.getControlledVocabularies({
-    limit: params.limit,
-    offset: params.offset
-  });
-
-  return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_controlled_vocabularies',
@@ -100,13 +98,14 @@ export async function handleGetControlledVocabularies(
 /** Tool metadata for get_controlled_vocabularies */
 export const getControlledVocabulariesToolMetadata = {
   name: 'get_controlled_vocabularies',
-  description: 'Get European Parliament controlled vocabularies (standardized classification terms). Supports single vocabulary lookup by vocId. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get European Parliament controlled vocabularies (standardized classification terms). Supports single vocabulary lookup by vocId. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       vocId: { type: 'string', description: 'Vocabulary ID for single vocabulary lookup' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
-    }
-  }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
+    },
+  },
 };

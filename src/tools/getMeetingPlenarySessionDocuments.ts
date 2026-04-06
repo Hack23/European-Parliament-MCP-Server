@@ -67,16 +67,14 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetMeetingPlenarySessionDocumentItems} for individual agenda-item documents
  * @see {@link handleGetMeetingForeseenActivities} for planned meeting activities
  */
-export async function handleGetMeetingPlenarySessionDocuments(
-  args: unknown
-): Promise<ToolResult> {
+export async function handleGetMeetingPlenarySessionDocuments(args: unknown): Promise<ToolResult> {
   // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetMeetingPlenarySessionDocumentsSchema.parse>;
   try {
     params = GetMeetingPlenarySessionDocumentsSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_meeting_plenary_session_documents',
         operation: 'validateInput',
@@ -90,11 +88,11 @@ export async function handleGetMeetingPlenarySessionDocuments(
 
   try {
     const result = await epClient.getMeetingPlenarySessionDocuments(params.sittingId, {
-    limit: params.limit,
-    offset: params.offset
-  });
+      limit: params.limit,
+      offset: params.offset,
+    });
 
-  return buildToolResponse(result);
+    return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_meeting_plenary_session_documents',
@@ -108,14 +106,15 @@ export async function handleGetMeetingPlenarySessionDocuments(
 /** Tool metadata for get_meeting_plenary_session_documents */
 export const getMeetingPlenarySessionDocumentsToolMetadata = {
   name: 'get_meeting_plenary_session_documents',
-  description: 'Get plenary session documents for a specific EP meeting/plenary sitting. Returns session documents associated with the meeting. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get plenary session documents for a specific EP meeting/plenary sitting. Returns session documents associated with the meeting. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       sittingId: { type: 'string', description: 'Meeting / sitting identifier (required)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },
-    required: ['sittingId']
-  }
+    required: ['sittingId'],
+  },
 };

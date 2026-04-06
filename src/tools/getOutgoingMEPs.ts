@@ -48,16 +48,14 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetCurrentMEPs} for all currently active MEPs
  * @see {@link handleGetIncomingMEPs} for MEPs who are newly joining parliament
  */
-export async function handleGetOutgoingMEPs(
-  args: unknown
-): Promise<ToolResult> {
+export async function handleGetOutgoingMEPs(args: unknown): Promise<ToolResult> {
   // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetOutgoingMEPsSchema.parse>;
   try {
     params = GetOutgoingMEPsSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_outgoing_meps',
         operation: 'validateInput',
@@ -71,11 +69,11 @@ export async function handleGetOutgoingMEPs(
 
   try {
     const result = await epClient.getOutgoingMEPs({
-    limit: params.limit,
-    offset: params.offset
-  });
+      limit: params.limit,
+      offset: params.offset,
+    });
 
-  return buildToolResponse(result);
+    return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_outgoing_meps',
@@ -89,12 +87,13 @@ export async function handleGetOutgoingMEPs(
 /** Tool metadata for get_outgoing_meps */
 export const getOutgoingMEPsToolMetadata = {
   name: 'get_outgoing_meps',
-  description: 'Get outgoing Members of European Parliament for the current parliamentary term. Returns MEPs who are leaving parliament. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get outgoing Members of European Parliament for the current parliamentary term. Returns MEPs who are leaving parliament. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
-    }
-  }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
+    },
+  },
 };

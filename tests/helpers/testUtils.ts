@@ -32,6 +32,8 @@ function isRateLimitOrNetworkError(error: unknown): boolean {
     || msg.includes('429')
     || msg.includes('503')
     || msg.includes('failed to retrieve')
+    || msg.includes('failed to search')
+    || msg.includes('failed to process')
     || msg.includes('request failed')
     || msg.includes('econnrefused')
     || msg.includes('enotfound');

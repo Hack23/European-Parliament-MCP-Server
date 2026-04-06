@@ -53,16 +53,14 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link getEventsToolMetadata} for MCP schema registration
  * @see {@link handleGetMeetingActivities} for retrieving activities within a specific plenary sitting
  */
-export async function handleGetEvents(
-  args: unknown
-): Promise<ToolResult> {
+export async function handleGetEvents(args: unknown): Promise<ToolResult> {
   // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetEventsSchema.parse>;
   try {
     params = GetEventsSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_events',
         operation: 'validateInput',
@@ -76,21 +74,21 @@ export async function handleGetEvents(
 
   try {
     if (params.eventId !== undefined) {
-    const result = await epClient.getEventById(params.eventId);
+      const result = await epClient.getEventById(params.eventId);
+      return buildToolResponse(result);
+    }
+
+    const apiParams: Record<string, unknown> = {
+      limit: params.limit,
+      offset: params.offset,
+    };
+    if (params.year !== undefined) apiParams['year'] = params.year;
+    if (params.dateFrom !== undefined) apiParams['dateFrom'] = params.dateFrom;
+    if (params.dateTo !== undefined) apiParams['dateTo'] = params.dateTo;
+
+    const result = await epClient.getEvents(apiParams as Parameters<typeof epClient.getEvents>[0]);
+
     return buildToolResponse(result);
-  }
-
-  const apiParams: Record<string, unknown> = {
-    limit: params.limit,
-    offset: params.offset
-  };
-  if (params.year !== undefined) apiParams['year'] = params.year;
-  if (params.dateFrom !== undefined) apiParams['dateFrom'] = params.dateFrom;
-  if (params.dateTo !== undefined) apiParams['dateTo'] = params.dateTo;
-
-  const result = await epClient.getEvents(apiParams as Parameters<typeof epClient.getEvents>[0]);
-
-  return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_events',
@@ -104,16 +102,22 @@ export async function handleGetEvents(
 /** Tool metadata for get_events */
 export const getEventsToolMetadata = {
   name: 'get_events',
-  description: 'Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or list with year or date range filtering. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or list with year or date range filtering. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       eventId: { type: 'string', description: 'Event ID for single event lookup' },
-      year: { type: 'number', description: 'Filter by calendar year (recommended for annual counts)', minimum: 1900, maximum: 2100 },
+      year: {
+        type: 'number',
+        description: 'Filter by calendar year (recommended for annual counts)',
+        minimum: 1900,
+        maximum: 2100,
+      },
       dateFrom: { type: 'string', description: 'Start date (YYYY-MM-DD)' },
       dateTo: { type: 'string', description: 'End date (YYYY-MM-DD)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
-    }
-  }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
+    },
+  },
 };

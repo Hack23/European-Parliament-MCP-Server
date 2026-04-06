@@ -47,16 +47,14 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link getHomonymMEPsToolMetadata} for MCP schema registration
  * @see {@link handleGetMEPDetails} for disambiguating a specific MEP by unique ID
  */
-export async function handleGetHomonymMEPs(
-  args: unknown
-): Promise<ToolResult> {
+export async function handleGetHomonymMEPs(args: unknown): Promise<ToolResult> {
   // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetHomonymMEPsSchema.parse>;
   try {
     params = GetHomonymMEPsSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       throw new ToolError({
         toolName: 'get_homonym_meps',
         operation: 'validateInput',
@@ -70,11 +68,11 @@ export async function handleGetHomonymMEPs(
 
   try {
     const result = await epClient.getHomonymMEPs({
-    limit: params.limit,
-    offset: params.offset
-  });
+      limit: params.limit,
+      offset: params.offset,
+    });
 
-  return buildToolResponse(result);
+    return buildToolResponse(result);
   } catch (error: unknown) {
     throw new ToolError({
       toolName: 'get_homonym_meps',
@@ -88,12 +86,13 @@ export async function handleGetHomonymMEPs(
 /** Tool metadata for get_homonym_meps */
 export const getHomonymMEPsToolMetadata = {
   name: 'get_homonym_meps',
-  description: 'Get homonym Members of European Parliament (MEPs with identical names) for the current parliamentary term. Useful for name disambiguation. Data source: European Parliament Open Data Portal.',
+  description:
+    'Get homonym Members of European Parliament (MEPs with identical names) for the current parliamentary term. Useful for name disambiguation. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
-      offset: { type: 'number', description: 'Pagination offset', default: 0 }
-    }
-  }
+      offset: { type: 'number', description: 'Pagination offset', default: 0 },
+    },
+  },
 };
