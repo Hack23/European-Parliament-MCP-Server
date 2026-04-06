@@ -359,9 +359,9 @@ export async function handleDetectVotingAnomalies(
         + 'many voting statistic fields may be zero or unavailable from the EP API. Group-level analysis '
         + 'reflects data availability — detected anomalies are approximate and indicative only. '
         + 'Data source: European Parliament Open Data Portal (MEP metadata endpoints).',
-      dataQualityWarnings: result.anomalies.length === 0
-        ? ['Vote-level records not fetched — anomaly detection uses aggregated MEP metadata only']
-        : [],
+      dataQualityWarnings: [
+        'Vote-level records not fetched — anomaly detection uses aggregated MEP metadata only',
+      ],
     };
 
     return buildToolResponse(analysis);

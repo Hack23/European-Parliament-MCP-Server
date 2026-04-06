@@ -172,8 +172,8 @@ function buildCoalitionWarnings(groupSizes: GroupSize[], thresholds: Sensitivity
 function buildAttendanceWarnings(groupSizes: GroupSize[], focusArea: string): Warning[] {
   if (focusArea !== 'attendance' && focusArea !== 'all') return [];
 
-  // <= 5 members: EP Rules of Procedure Article 33 requires min 23 MEPs from >= 7 states
-  // to form a group. Groups with <= 5 members are NI or at significant fragmentation risk.
+  // Heuristic: groups with <= 5 members are treated as very small delegations that may be
+  // more vulnerable to attendance/quorum issues and may indicate NI-style fragmentation risk.
   const smallGroups = groupSizes.filter(g => g.memberCount <= 5);
   if (smallGroups.length === 0) return [];
 

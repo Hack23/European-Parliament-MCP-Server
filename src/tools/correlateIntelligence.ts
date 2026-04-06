@@ -693,6 +693,39 @@ function computeDataAvailability(
   return 'PARTIAL';
 }
 
+/**
+ * Aggregate data-quality warnings based on the correlation run context.
+ *
+ * Warnings are generated when:
+ * - Data availability is `PARTIAL` or `UNAVAILABLE` (downstream tools failed or had no signals)
+ * - Any collected confidence level is `LOW` (indicating proxy/heuristic data in a sub-tool)
+ * - Network analysis was excluded (consumer may expect it)
+ */
+function buildCorrelationWarnings(
+  dataAvailability: DataAvailability,
+  confidenceLevels: string[],
+  includeNetworkAnalysis: boolean
+): string[] {
+  const warnings: string[] = [];
+
+  if (dataAvailability === 'UNAVAILABLE') {
+    warnings.push('All downstream tool calls failed — no data available for correlation analysis');
+  } else if (dataAvailability === 'PARTIAL') {
+    warnings.push('Downstream tools responded but produced no actionable correlations — results may be incomplete');
+  }
+
+  const lowCount = confidenceLevels.filter(c => c === 'LOW').length;
+  if (lowCount > 0) {
+    warnings.push(`${String(lowCount)} of ${String(confidenceLevels.length)} sub-tool results have LOW confidence — underlying data is proxy or heuristic`);
+  }
+
+  if (!includeNetworkAnalysis) {
+    warnings.push('Network analysis was not included — committee co-membership correlations are absent');
+  }
+
+  return warnings;
+}
+
 // ---------------------------------------------------------------------------
 // Main handler
 // ---------------------------------------------------------------------------
@@ -843,6 +876,8 @@ export async function handleCorrelateIntelligence(
     ...networkConfidenceLevels,
   ];
 
+  const dataAvailability = computeDataAvailability(correlationsFound, confidenceLevels);
+
   const report: CorrelatedIntelligenceReport = {
     correlationId,
     analysisTime,
@@ -860,11 +895,11 @@ export async function handleCorrelateIntelligence(
     },
     summary: buildAlertSummary(allAlerts, correlationsFound),
     confidenceLevel: aggregateConfidence(confidenceLevels.length > 0 ? confidenceLevels : ['LOW']),
-    dataAvailability: computeDataAvailability(correlationsFound, confidenceLevels),
+    dataAvailability,
     methodology: buildMethodology(influenceThreshold, sensitivityLevel, includeNetworkAnalysis),
     dataFreshness: `Real-time EP API data — correlated at ${analysisTime}`,
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-    dataQualityWarnings: [],
+    dataQualityWarnings: buildCorrelationWarnings(dataAvailability, confidenceLevels, includeNetworkAnalysis),
   };
 
   // Validate the standard OSINT output fields before returning
