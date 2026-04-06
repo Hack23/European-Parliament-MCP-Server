@@ -157,7 +157,7 @@ describe('assess_mep_influence Tool', () => {
 
     it('should handle MEP with no voting statistics', async () => {
       vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValueOnce({
-        id: 'MEP-NEW',
+        id: 'MEP-99999',
         name: 'New MEP',
         country: 'DE',
         politicalGroup: 'S&D',
@@ -166,7 +166,7 @@ describe('assess_mep_influence Tool', () => {
         termStart: '2024-07-01'
       });
 
-      const result = await handleAssessMepInfluence({ mepId: 'MEP-NEW' });
+      const result = await handleAssessMepInfluence({ mepId: 'MEP-99999' });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as { confidenceLevel: string; overallScore: number };
 
       expect(data.confidenceLevel).toBe('LOW');
@@ -179,7 +179,7 @@ describe('assess_mep_influence Tool', () => {
       vi.mocked(epClientModule.epClient.getMEPDetails)
         .mockRejectedValueOnce(new Error('MEP not found'));
 
-      await expect(handleAssessMepInfluence({ mepId: 'INVALID' }))
+      await expect(handleAssessMepInfluence({ mepId: '999999' }))
         .rejects.toThrow('Failed to assess MEP influence');
     });
   });

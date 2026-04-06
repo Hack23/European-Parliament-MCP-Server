@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { DateStringSchema } from './common.js';
+import { DateStringSchema, MepIdSchema, SessionIdSchema, refineDateRange, DATE_RANGE_ERROR } from './common.js';
 
 /**
  * Get plenary sessions input schema
@@ -40,7 +40,10 @@ export const GetPlenarySessionsSchema = z.object({
     .min(0)
     .default(0)
     .describe('Pagination offset')
-});
+}).refine(
+  refineDateRange,
+  { message: DATE_RANGE_ERROR }
+);
 
 /**
  * Plenary session output schema
@@ -59,14 +62,10 @@ export const PlenarySessionSchema = z.object({
  * Get voting records input schema
  */
 export const GetVotingRecordsSchema = z.object({
-  sessionId: z.string()
-    .min(1)
-    .max(100)
+  sessionId: SessionIdSchema
     .optional()
     .describe('Plenary session identifier'),
-  mepId: z.string()
-    .min(1)
-    .max(100)
+  mepId: MepIdSchema
     .optional()
     .describe('MEP identifier'),
   topic: z.string()
@@ -87,7 +86,10 @@ export const GetVotingRecordsSchema = z.object({
     .min(0)
     .default(0)
     .describe('Pagination offset')
-});
+}).refine(
+  refineDateRange,
+  { message: DATE_RANGE_ERROR }
+);
 
 /**
  * Voting record output schema

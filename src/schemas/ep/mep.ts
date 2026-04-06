@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { CountryCodeSchema } from './common.js';
+import { CountryCodeSchema, MepIdSchema } from './common.js';
 
 /**
  * Get MEPs input schema
@@ -42,9 +42,7 @@ export const GetMEPsSchema = z.object({
  * Get MEP details input schema
  */
 export const GetMEPDetailsSchema = z.object({
-  id: z.string()
-    .min(1)
-    .max(100)
+  id: MepIdSchema
     .describe('MEP identifier')
 });
 
@@ -57,8 +55,7 @@ export const MEPSchema = z.object({
   country: z.string(),
   politicalGroup: z.string(),
   committees: z.array(z.string()),
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
-  email: z.string().email('Invalid email format').optional(),
+  email: z.email({ message: 'Invalid email format' }).optional(),
   active: z.boolean(),
   termStart: z.string(),
   termEnd: z.string().optional()
@@ -83,8 +80,7 @@ export const MEPDetailsSchema = MEPSchema.extend({
   biography: z.string().optional(),
   phone: z.string().optional(),
   address: z.string().optional(),
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
-  website: z.string().url('Invalid URL format').optional(),
+  website: z.url({ message: 'Invalid URL format' }).optional(),
   twitter: z.string().optional(),
   facebook: z.string().optional(),
   votingStatistics: VotingStatisticsSchema.optional(),

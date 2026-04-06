@@ -5,22 +5,23 @@
  */
 
 import { z } from 'zod';
-import { DateStringSchema } from './common.js';
+import { DateStringSchema, MepIdSchema, refineDateRange, DATE_RANGE_ERROR } from './common.js';
 
 /**
  * Analyze voting patterns input schema
  */
 export const AnalyzeVotingPatternsSchema = z.object({
-  mepId: z.string()
-    .min(1)
-    .max(100)
+  mepId: MepIdSchema
     .describe('MEP identifier'),
   dateFrom: DateStringSchema.optional(),
   dateTo: DateStringSchema.optional(),
   compareWithGroup: z.boolean()
     .default(true)
     .describe('Compare with political group average')
-});
+}).refine(
+  refineDateRange,
+  { message: DATE_RANGE_ERROR }
+);
 
 /**
  * Track legislation input schema
@@ -45,22 +46,26 @@ export const GenerateReportSchema = z.object({
     .describe('Subject identifier (MEP ID, Committee ID, etc.)'),
   dateFrom: DateStringSchema.optional(),
   dateTo: DateStringSchema.optional()
-});
+}).refine(
+  refineDateRange,
+  { message: DATE_RANGE_ERROR }
+);
 
 /**
  * Assess MEP influence input schema
  */
 export const AssessMepInfluenceSchema = z.object({
-  mepId: z.string()
-    .min(1)
-    .max(100)
+  mepId: MepIdSchema
     .describe('MEP identifier'),
   dateFrom: DateStringSchema.optional(),
   dateTo: DateStringSchema.optional(),
   includeDetails: z.boolean()
     .default(false)
     .describe('Include detailed breakdown per dimension')
-});
+}).refine(
+  refineDateRange,
+  { message: DATE_RANGE_ERROR }
+);
 
 /**
  * Analyze coalition dynamics input schema
@@ -78,15 +83,16 @@ export const AnalyzeCoalitionDynamicsSchema = z.object({
     .max(1)
     .default(0.5)
     .describe('Minimum cohesion threshold for alliance detection')
-});
+}).refine(
+  refineDateRange,
+  { message: DATE_RANGE_ERROR }
+);
 
 /**
  * Detect voting anomalies input schema
  */
 export const DetectVotingAnomaliesSchema = z.object({
-  mepId: z.string()
-    .min(1)
-    .max(100)
+  mepId: MepIdSchema
     .optional()
     .describe('MEP identifier (omit for all MEPs)'),
   groupId: z.string()
@@ -104,6 +110,9 @@ export const DetectVotingAnomaliesSchema = z.object({
 }).refine(
   data => !(data.mepId !== undefined && data.groupId !== undefined),
   { message: 'Cannot specify both mepId and groupId — use one or neither' }
+).refine(
+  refineDateRange,
+  { message: DATE_RANGE_ERROR }
 );
 
 /**
@@ -124,7 +133,10 @@ export const ComparePoliticalGroupsSchema = z.object({
     'cohesion'
   ])).optional()
     .describe('Comparison dimensions (omit for all)')
-});
+}).refine(
+  refineDateRange,
+  { message: DATE_RANGE_ERROR }
+);
 
 /**
  * Analyze legislative effectiveness input schema
@@ -138,7 +150,10 @@ export const AnalyzeLegislativeEffectivenessSchema = z.object({
     .describe('Subject identifier (MEP ID or committee abbreviation)'),
   dateFrom: DateStringSchema.optional(),
   dateTo: DateStringSchema.optional()
-});
+}).refine(
+  refineDateRange,
+  { message: DATE_RANGE_ERROR }
+);
 
 /**
  * Monitor legislative pipeline input schema
@@ -160,7 +175,10 @@ export const MonitorLegislativePipelineSchema = z.object({
     .max(100)
     .default(20)
     .describe('Maximum results to return')
-});
+}).refine(
+  refineDateRange,
+  { message: DATE_RANGE_ERROR }
+);
 
 /**
  * Standard OSINT output fields Zod schema.
@@ -195,7 +213,7 @@ export const OsintStandardOutputSchema = z.object({
  */
 export const CorrelateIntelligenceSchema = z.object({
   mepIds: z.array(
-    z.string().min(1).max(100).describe('MEP identifier')
+    MepIdSchema.describe('MEP identifier')
   )
     .min(1)
     .max(5)

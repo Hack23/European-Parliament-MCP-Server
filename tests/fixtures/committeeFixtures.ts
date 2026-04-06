@@ -15,57 +15,57 @@ export const committeeFixtures: Committee[] = [
     id: 'ENVI',
     name: 'Committee on the Environment, Public Health and Food Safety',
     abbreviation: 'ENVI',
-    members: ['mep-test-001', 'mep-test-003'],
-    chair: 'mep-test-001'
+    members: ['MEP-10001', 'MEP-10003'],
+    chair: 'MEP-10001'
   },
   {
     id: 'ECON',
     name: 'Committee on Economic and Monetary Affairs',
     abbreviation: 'ECON',
-    members: ['mep-test-002', 'mep-test-004'],
-    chair: 'mep-test-002'
+    members: ['MEP-10002', 'MEP-10004'],
+    chair: 'MEP-10002'
   },
   {
     id: 'ITRE',
     name: 'Committee on Industry, Research and Energy',
     abbreviation: 'ITRE',
-    members: ['mep-test-001', 'mep-test-002'],
-    chair: 'mep-test-002'
+    members: ['MEP-10001', 'MEP-10002'],
+    chair: 'MEP-10002'
   },
   {
     id: 'LIBE',
     name: 'Committee on Civil Liberties, Justice and Home Affairs',
     abbreviation: 'LIBE',
-    members: ['mep-test-003', 'mep-test-005'],
-    chair: 'mep-test-003'
+    members: ['MEP-10003', 'MEP-10005'],
+    chair: 'MEP-10003'
   },
   {
     id: 'AFET',
     name: 'Committee on Foreign Affairs',
     abbreviation: 'AFET',
-    members: ['mep-test-003', 'mep-test-004'],
-    chair: 'mep-test-004'
+    members: ['MEP-10003', 'MEP-10004'],
+    chair: 'MEP-10004'
   },
   {
     id: 'BUDG',
     name: 'Committee on Budgets',
     abbreviation: 'BUDG',
-    members: ['mep-test-002', 'mep-test-001'],
-    chair: 'mep-test-001'
+    members: ['MEP-10002', 'MEP-10001'],
+    chair: 'MEP-10001'
   },
   {
     id: 'AGRI',
     name: 'Committee on Agriculture and Rural Development',
     abbreviation: 'AGRI',
-    members: ['mep-test-004', 'mep-test-005'],
-    chair: 'mep-test-004'
+    members: ['MEP-10004', 'MEP-10005'],
+    chair: 'MEP-10004'
   },
   {
     id: 'CULT',
     name: 'Committee on Culture and Education',
     abbreviation: 'CULT',
-    members: ['mep-test-005', 'mep-test-003'],
-    chair: 'mep-test-005'
+    members: ['MEP-10005', 'MEP-10003'],
+    chair: 'MEP-10005'
   }
 ];
 

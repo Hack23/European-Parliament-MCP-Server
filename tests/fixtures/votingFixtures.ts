@@ -21,11 +21,11 @@ export const votingFixtures: VotingRecord[] = [
     abstentions: 55,
     result: 'ADOPTED',
     mepVotes: {
-      'mep-test-001': 'FOR',
-      'mep-test-002': 'AGAINST',
-      'mep-test-003': 'FOR',
-      'mep-test-004': 'ABSTAIN',
-      'mep-test-005': 'FOR'
+      'MEP-10001': 'FOR',
+      'MEP-10002': 'AGAINST',
+      'MEP-10003': 'FOR',
+      'MEP-10004': 'ABSTAIN',
+      'MEP-10005': 'FOR'
     }
   },
   {
@@ -38,10 +38,10 @@ export const votingFixtures: VotingRecord[] = [
     abstentions: 35,
     result: 'ADOPTED',
     mepVotes: {
-      'mep-test-001': 'FOR',
-      'mep-test-002': 'FOR',
-      'mep-test-003': 'AGAINST',
-      'mep-test-004': 'FOR'
+      'MEP-10001': 'FOR',
+      'MEP-10002': 'FOR',
+      'MEP-10003': 'AGAINST',
+      'MEP-10004': 'FOR'
     }
   },
   {
@@ -54,10 +54,10 @@ export const votingFixtures: VotingRecord[] = [
     abstentions: 45,
     result: 'REJECTED',
     mepVotes: {
-      'mep-test-001': 'AGAINST',
-      'mep-test-002': 'FOR',
-      'mep-test-003': 'AGAINST',
-      'mep-test-004': 'AGAINST'
+      'MEP-10001': 'AGAINST',
+      'MEP-10002': 'FOR',
+      'MEP-10003': 'AGAINST',
+      'MEP-10004': 'AGAINST'
     }
   },
   {
@@ -70,11 +70,11 @@ export const votingFixtures: VotingRecord[] = [
     abstentions: 55,
     result: 'ADOPTED',
     mepVotes: {
-      'mep-test-001': 'FOR',
-      'mep-test-002': 'AGAINST',
-      'mep-test-003': 'FOR',
-      'mep-test-004': 'ABSTAIN',
-      'mep-test-005': 'FOR'
+      'MEP-10001': 'FOR',
+      'MEP-10002': 'AGAINST',
+      'MEP-10003': 'FOR',
+      'MEP-10004': 'ABSTAIN',
+      'MEP-10005': 'FOR'
     }
   },
   {
@@ -87,10 +87,10 @@ export const votingFixtures: VotingRecord[] = [
     abstentions: 30,
     result: 'ADOPTED',
     mepVotes: {
-      'mep-test-001': 'FOR',
-      'mep-test-002': 'FOR',
-      'mep-test-003': 'FOR',
-      'mep-test-004': 'AGAINST'
+      'MEP-10001': 'FOR',
+      'MEP-10002': 'FOR',
+      'MEP-10003': 'FOR',
+      'MEP-10004': 'AGAINST'
     }
   }
 ];

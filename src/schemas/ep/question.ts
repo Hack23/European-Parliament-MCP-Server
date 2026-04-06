@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { DateStringSchema } from './common.js';
+import { DateStringSchema, refineDateRange, DATE_RANGE_ERROR } from './common.js';
 
 /**
  * Get parliamentary questions input schema
@@ -45,7 +45,10 @@ export const GetParliamentaryQuestionsSchema = z.object({
     .min(0)
     .default(0)
     .describe('Pagination offset')
-});
+}).refine(
+  refineDateRange,
+  { message: DATE_RANGE_ERROR }
+);
 
 /**
  * Parliamentary question output schema

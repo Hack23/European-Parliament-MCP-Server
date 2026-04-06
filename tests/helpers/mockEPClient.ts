@@ -34,7 +34,7 @@ const speechFixtures = [
   {
     id: 'speech-test-001',
     title: 'Debate on Climate Regulation (synthetic)',
-    speakerId: 'mep-test-001',
+    speakerId: 'MEP-10001',
     speakerName: 'Anna Andersson (synthetic)',
     date: '2024-01-15',
     type: 'DEBATE_SPEECH',
@@ -45,7 +45,7 @@ const speechFixtures = [
   {
     id: 'speech-test-002',
     title: 'Statement on Digital Economy (synthetic)',
-    speakerId: 'mep-test-002',
+    speakerId: 'MEP-10002',
     speakerName: 'Klaus Mueller (synthetic)',
     date: '2024-02-06',
     type: 'STATEMENT',
@@ -122,7 +122,7 @@ const meetingDecisionFixtures = [
 const mepDeclarationFixtures = [
   {
     id: 'decl-test-001',
-    mepId: 'mep-test-001',
+    mepId: 'MEP-10001',
     mepName: 'Test MEP',
     type: 'FINANCIAL_INTEREST',
     title: 'Declaration of Financial Interests 2024 (synthetic)',

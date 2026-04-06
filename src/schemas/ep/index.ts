@@ -14,7 +14,7 @@
  * @module schemas/ep
  */
 
-export { CountryCodeSchema, DateStringSchema, PaginatedResponseSchema } from './common.js';
+export { CountryCodeSchema, DateStringSchema, PaginatedResponseSchema, MepIdSchema, SessionIdSchema, refineDateRange, DATE_RANGE_ERROR } from './common.js';
 export {
   GetMEPsSchema,
   GetMEPDetailsSchema,

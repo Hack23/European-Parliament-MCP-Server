@@ -16,7 +16,7 @@ export const documentFixtures: LegislativeDocument[] = [
     type: 'REGULATION',
     title: 'Regulation on Climate Neutrality Framework (synthetic)',
     date: '2024-01-10',
-    authors: ['mep-test-001'],
+    authors: ['MEP-10001'],
     status: 'IN_COMMITTEE',
     summary: 'Synthetic regulation establishing framework for climate neutrality targets.'
   },
@@ -25,7 +25,7 @@ export const documentFixtures: LegislativeDocument[] = [
     type: 'DIRECTIVE',
     title: 'Directive on Digital Services Liability (synthetic)',
     date: '2024-01-12',
-    authors: ['mep-test-002', 'mep-test-003'],
+    authors: ['MEP-10002', 'MEP-10003'],
     status: 'IN_PLENARY',
     summary: 'Synthetic directive updating liability rules for digital service providers.'
   },
@@ -34,7 +34,7 @@ export const documentFixtures: LegislativeDocument[] = [
     type: 'REPORT',
     title: 'Annual Report on EU Trade Policy 2024 (synthetic)',
     date: '2024-01-14',
-    authors: ['mep-test-003'],
+    authors: ['MEP-10003'],
     status: 'ADOPTED',
     summary: 'Synthetic annual report reviewing EU trade policy developments.'
   },
@@ -43,7 +43,7 @@ export const documentFixtures: LegislativeDocument[] = [
     type: 'RESOLUTION',
     title: 'Resolution on AI Ethics Framework (synthetic)',
     date: '2024-02-05',
-    authors: ['mep-test-001', 'mep-test-004'],
+    authors: ['MEP-10001', 'MEP-10004'],
     status: 'IN_COMMITTEE',
     summary: 'Synthetic resolution calling for binding AI ethics standards.'
   },
@@ -52,7 +52,7 @@ export const documentFixtures: LegislativeDocument[] = [
     type: 'OPINION',
     title: 'Opinion on Single Market Barriers (synthetic)',
     date: '2024-02-07',
-    authors: ['mep-test-002'],
+    authors: ['MEP-10002'],
     status: 'ADOPTED',
     summary: 'Synthetic opinion identifying key barriers in the single market.'
   },
@@ -61,7 +61,7 @@ export const documentFixtures: LegislativeDocument[] = [
     type: 'REGULATION',
     title: 'Regulation on Green Finance Standards (synthetic)',
     date: '2024-03-10',
-    authors: ['mep-test-001', 'mep-test-003'],
+    authors: ['MEP-10001', 'MEP-10003'],
     status: 'FIRST_READING',
     summary: 'Synthetic regulation establishing green finance taxonomy updates.'
   },
@@ -70,7 +70,7 @@ export const documentFixtures: LegislativeDocument[] = [
     type: 'DIRECTIVE',
     title: 'Directive on Worker Platform Rights (synthetic)',
     date: '2024-03-11',
-    authors: ['mep-test-005'],
+    authors: ['MEP-10005'],
     status: 'IN_PLENARY',
     summary: 'Synthetic directive on rights of platform economy workers.'
   }

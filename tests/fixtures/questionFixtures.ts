@@ -14,7 +14,7 @@ export const questionFixtures: ParliamentaryQuestion[] = [
   {
     id: 'q-test-001',
     type: 'WRITTEN',
-    author: 'mep-test-001',
+    author: 'MEP-10001',
     date: '2024-01-10',
     topic: 'EU Climate Policy Implementation (synthetic)',
     questionText: 'What synthetic measures is the Commission taking to ensure member states meet 2030 climate targets?',
@@ -25,7 +25,7 @@ export const questionFixtures: ParliamentaryQuestion[] = [
   {
     id: 'q-test-002',
     type: 'ORAL',
-    author: 'mep-test-002',
+    author: 'MEP-10002',
     date: '2024-01-15',
     topic: 'Digital Single Market Progress (synthetic)',
     questionText: 'What synthetic steps has the Commission taken to reduce barriers in the Digital Single Market?',
@@ -36,7 +36,7 @@ export const questionFixtures: ParliamentaryQuestion[] = [
   {
     id: 'q-test-003',
     type: 'WRITTEN',
-    author: 'mep-test-003',
+    author: 'MEP-10003',
     date: '2024-02-05',
     topic: 'AI Governance Framework (synthetic)',
     questionText: 'How will the Commission enforce compliance with the synthetic AI Act provisions?',
@@ -47,7 +47,7 @@ export const questionFixtures: ParliamentaryQuestion[] = [
   {
     id: 'q-test-004',
     type: 'WRITTEN',
-    author: 'mep-test-001',
+    author: 'MEP-10001',
     date: '2024-02-20',
     topic: 'Agricultural Subsidies Allocation 2024 (synthetic)',
     questionText: 'What criteria govern allocation of synthetic agricultural subsidies under the new CAP?',
@@ -58,7 +58,7 @@ export const questionFixtures: ParliamentaryQuestion[] = [
   {
     id: 'q-test-005',
     type: 'ORAL',
-    author: 'mep-test-004',
+    author: 'MEP-10004',
     date: '2024-03-01',
     topic: 'Trade Agreement Negotiations (synthetic)',
     questionText: 'What is the status of synthetic trade agreement negotiations with partner countries?',
