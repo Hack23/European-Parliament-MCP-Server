@@ -15,6 +15,8 @@
 import { GetCurrentMEPsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -46,16 +48,41 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetCurrentMEPs(
   args: unknown
 ): Promise<ToolResult> {
-  const params = GetCurrentMEPsSchema.parse(args);
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetCurrentMEPsSchema.parse>;
+  try {
+    params = GetCurrentMEPsSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_current_meps',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
 
-  const result = await epClient.getCurrentMEPs({
+  try {
+    const result = await epClient.getCurrentMEPs({
     limit: params.limit,
     offset: params.offset
   });
 
   return buildToolResponse(result);
+  } catch (error: unknown) {
+    throw new ToolError({
+      toolName: 'get_current_meps',
+      operation: 'fetchData',
+      message: 'Failed to retrieve current MEPs',
+      isRetryable: true,
+      cause: error,
+    });
+  }
 }
-
 /** Tool metadata for get_current_meps */
 export const getCurrentMEPsToolMetadata = {
   name: 'get_current_meps',

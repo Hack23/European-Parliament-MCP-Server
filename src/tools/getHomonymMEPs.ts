@@ -17,6 +17,8 @@
 import { GetHomonymMEPsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -48,16 +50,41 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetHomonymMEPs(
   args: unknown
 ): Promise<ToolResult> {
-  const params = GetHomonymMEPsSchema.parse(args);
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetHomonymMEPsSchema.parse>;
+  try {
+    params = GetHomonymMEPsSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_homonym_meps',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
 
-  const result = await epClient.getHomonymMEPs({
+  try {
+    const result = await epClient.getHomonymMEPs({
     limit: params.limit,
     offset: params.offset
   });
 
   return buildToolResponse(result);
+  } catch (error: unknown) {
+    throw new ToolError({
+      toolName: 'get_homonym_meps',
+      operation: 'fetchData',
+      message: 'Failed to retrieve homonym MEPs',
+      isRetryable: true,
+      cause: error,
+    });
+  }
 }
-
 /** Tool metadata for get_homonym_meps */
 export const getHomonymMEPsToolMetadata = {
   name: 'get_homonym_meps',

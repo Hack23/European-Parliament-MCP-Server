@@ -19,6 +19,8 @@
 import { GetCommitteeDocumentsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -53,9 +55,26 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetCommitteeDocuments(
   args: unknown
 ): Promise<ToolResult> {
-  const params = GetCommitteeDocumentsSchema.parse(args);
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetCommitteeDocumentsSchema.parse>;
+  try {
+    params = GetCommitteeDocumentsSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_committee_documents',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
 
-  if (params.docId !== undefined) {
+  try {
+    if (params.docId !== undefined) {
     const result = await epClient.getCommitteeDocumentById(params.docId);
     return buildToolResponse(result);
   }
@@ -69,8 +88,16 @@ export async function handleGetCommitteeDocuments(
   const result = await epClient.getCommitteeDocuments(apiParams as Parameters<typeof epClient.getCommitteeDocuments>[0]);
 
   return buildToolResponse(result);
+  } catch (error: unknown) {
+    throw new ToolError({
+      toolName: 'get_committee_documents',
+      operation: 'fetchData',
+      message: 'Failed to retrieve committee documents',
+      isRetryable: true,
+      cause: error,
+    });
+  }
 }
-
 /** Tool metadata for get_committee_documents */
 export const getCommitteeDocumentsToolMetadata = {
   name: 'get_committee_documents',

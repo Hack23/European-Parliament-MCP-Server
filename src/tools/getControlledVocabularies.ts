@@ -19,6 +19,8 @@
 import { GetControlledVocabulariesSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -55,9 +57,26 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetControlledVocabularies(
   args: unknown
 ): Promise<ToolResult> {
-  const params = GetControlledVocabulariesSchema.parse(args);
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetControlledVocabulariesSchema.parse>;
+  try {
+    params = GetControlledVocabulariesSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_controlled_vocabularies',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
 
-  if (params.vocId !== undefined) {
+  try {
+    if (params.vocId !== undefined) {
     const result = await epClient.getControlledVocabularyById(params.vocId);
     return buildToolResponse(result);
   }
@@ -68,8 +87,16 @@ export async function handleGetControlledVocabularies(
   });
 
   return buildToolResponse(result);
+  } catch (error: unknown) {
+    throw new ToolError({
+      toolName: 'get_controlled_vocabularies',
+      operation: 'fetchData',
+      message: 'Failed to retrieve controlled vocabularies',
+      isRetryable: true,
+      cause: error,
+    });
+  }
 }
-
 /** Tool metadata for get_controlled_vocabularies */
 export const getControlledVocabulariesToolMetadata = {
   name: 'get_controlled_vocabularies',

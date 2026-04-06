@@ -21,6 +21,8 @@ import { GetProceduresSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { buildApiParams } from './shared/paramBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -56,9 +58,26 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetProcedures(
   args: unknown
 ): Promise<ToolResult> {
-  const params = GetProceduresSchema.parse(args);
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetProceduresSchema.parse>;
+  try {
+    params = GetProceduresSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_procedures',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
 
-  if (params.processId !== undefined) {
+  try {
+    if (params.processId !== undefined) {
     const result = await epClient.getProcedureById(params.processId);
     return buildToolResponse(result);
   }
@@ -74,8 +93,16 @@ export async function handleGetProcedures(
   const result = await epClient.getProcedures(apiParams as Parameters<typeof epClient.getProcedures>[0]);
 
   return buildToolResponse(result);
+  } catch (error: unknown) {
+    throw new ToolError({
+      toolName: 'get_procedures',
+      operation: 'fetchData',
+      message: 'Failed to retrieve procedures',
+      isRetryable: true,
+      cause: error,
+    });
+  }
 }
-
 /** Tool metadata for get_procedures */
 export const getProceduresToolMetadata = {
   name: 'get_procedures',

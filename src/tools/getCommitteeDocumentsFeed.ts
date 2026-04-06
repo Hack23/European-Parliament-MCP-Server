@@ -12,6 +12,8 @@
 import { GetCommitteeDocumentsFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -22,14 +24,40 @@ import type { ToolResult } from './shared/types.js';
  * @security Input is validated with Zod before any API call.
  */
 export async function handleGetCommitteeDocumentsFeed(args: unknown): Promise<ToolResult> {
-  const params = GetCommitteeDocumentsFeedSchema.parse(args);
-  const apiParams: Record<string, unknown> = {};
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetCommitteeDocumentsFeedSchema.parse>;
+  try {
+    params = GetCommitteeDocumentsFeedSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_committee_documents_feed',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
+
+  try {
+    const apiParams: Record<string, unknown> = {};
   apiParams['timeframe'] = params.timeframe;
   if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
   const result = await epClient.getCommitteeDocumentsFeed(apiParams as Parameters<typeof epClient.getCommitteeDocumentsFeed>[0]);
   return buildToolResponse(result);
+  } catch (error: unknown) {
+    throw new ToolError({
+      toolName: 'get_committee_documents_feed',
+      operation: 'fetchData',
+      message: 'Failed to retrieve committee documents feed',
+      isRetryable: true,
+      cause: error,
+    });
+  }
 }
-
 /** Tool metadata for get_committee_documents_feed */
 export const getCommitteeDocumentsFeedToolMetadata = {
   name: 'get_committee_documents_feed',

@@ -12,6 +12,8 @@
 import { GetProceduresFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
+import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -22,15 +24,41 @@ import type { ToolResult } from './shared/types.js';
  * @security Input is validated with Zod before any API call.
  */
 export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult> {
-  const params = GetProceduresFeedSchema.parse(args);
-  const apiParams: Record<string, unknown> = {};
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: ReturnType<typeof GetProceduresFeedSchema.parse>;
+  try {
+    params = GetProceduresFeedSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_procedures_feed',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
+
+  try {
+    const apiParams: Record<string, unknown> = {};
   apiParams['timeframe'] = params.timeframe;
   if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
   if (params.processType !== undefined) apiParams['processType'] = params.processType;
   const result = await epClient.getProceduresFeed(apiParams as Parameters<typeof epClient.getProceduresFeed>[0]);
   return buildToolResponse(result);
+  } catch (error: unknown) {
+    throw new ToolError({
+      toolName: 'get_procedures_feed',
+      operation: 'fetchData',
+      message: 'Failed to retrieve procedures feed',
+      isRetryable: true,
+      cause: error,
+    });
+  }
 }
-
 /** Tool metadata for get_procedures_feed */
 export const getProceduresFeedToolMetadata = {
   name: 'get_procedures_feed',

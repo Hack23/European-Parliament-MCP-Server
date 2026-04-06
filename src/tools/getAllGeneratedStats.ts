@@ -29,7 +29,8 @@
 
 import { z } from 'zod';
 import { GENERATED_STATS } from '../data/generatedStats.js';
-import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
 import type { ToolResult } from './shared/types.js';
 
 export const GetAllGeneratedStatsSchema = z
@@ -278,10 +279,13 @@ export function getAllGeneratedStats(
 
     return buildToolResponse(result);
   } catch (error: unknown) {
-    return buildErrorResponse(
-      error instanceof Error ? error : new Error(String(error)),
-      'get_all_generated_stats'
-    );
+    throw new ToolError({
+      toolName: 'get_all_generated_stats',
+      operation: 'processData',
+      message: 'Failed to process generated statistics',
+      isRetryable: false,
+      cause: error,
+    });
   }
 }
 
@@ -354,6 +358,23 @@ export const getAllGeneratedStatsToolMetadata = {
 export async function handleGetAllGeneratedStats(
   args: unknown
 ): Promise<ToolResult> {
-  const params = GetAllGeneratedStatsSchema.parse(args);
-  return Promise.resolve(getAllGeneratedStats(params));
+  // Validate input — ZodErrors here are client mistakes (non-retryable)
+  let params: GetAllGeneratedStatsParams;
+  try {
+    params = GetAllGeneratedStatsSchema.parse(args);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_all_generated_stats',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
+
+  return await Promise.resolve(getAllGeneratedStats(params));
 }
