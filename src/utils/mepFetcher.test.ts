@@ -21,6 +21,16 @@ vi.mock('./auditLogger.js', () => ({
 }));
 
 describe('fetchAllCurrentMEPs', () => {
+  const mockMEP = (id: number) => ({
+    id: `person/${String(id)}`,
+    name: `MEP ${String(id)}`,
+    country: 'SE',
+    politicalGroup: 'Renew',
+    committees: [] as string[],
+    active: true,
+    termStart: '2024-07-16',
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -47,16 +57,6 @@ describe('fetchAllCurrentMEPs', () => {
   });
 
   it('should paginate through multiple pages', async () => {
-    const mockMEP = (id: number) => ({
-      id: `person/${id}`,
-      name: `MEP ${id}`,
-      country: 'SE',
-      politicalGroup: 'Renew',
-      committees: [],
-      active: true,
-      termStart: '2024-07-16',
-    });
-
     // First page: 100 MEPs, hasMore = true
     vi.mocked(epClientModule.epClient.getCurrentMEPs)
       .mockResolvedValueOnce({
@@ -116,15 +116,6 @@ describe('fetchAllCurrentMEPs', () => {
 
   it('should return partial results when API fails mid-pagination', async () => {
     const { auditLogger } = await import('./auditLogger.js');
-    const mockMEP = (id: number) => ({
-      id: `person/${id}`,
-      name: `MEP ${id}`,
-      country: 'SE',
-      politicalGroup: 'Renew',
-      committees: [],
-      active: true,
-      termStart: '2024-07-16',
-    });
 
     vi.mocked(epClientModule.epClient.getCurrentMEPs)
       .mockResolvedValueOnce({
