@@ -19,6 +19,7 @@ vi.mock('./auditLogger.js', () => ({
   auditLogger: {
     logError: vi.fn(),
   },
+  toErrorMessage: (error: unknown) => error instanceof Error ? error.message : 'Unknown error',
 }));
 
 describe('fetchAllCurrentMEPs', () => {

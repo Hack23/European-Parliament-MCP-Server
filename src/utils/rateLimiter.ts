@@ -401,8 +401,10 @@ export class RateLimiter {
  */
 export function createStandardRateLimiter(): RateLimiter {
   const DEFAULT_TOKENS = 100;
-  const envValue = parseInt(process.env['EP_RATE_LIMIT'] ?? '', 10);
-  const tokensPerInterval = Number.isFinite(envValue) && envValue > 0 ? envValue : DEFAULT_TOKENS;
+  const rawEnvValue = (process.env['EP_RATE_LIMIT'] ?? '').trim();
+  const parsedEnvValue = /^[1-9]\d*$/.test(rawEnvValue) ? Number(rawEnvValue) : Number.NaN;
+  const tokensPerInterval =
+    Number.isInteger(parsedEnvValue) && parsedEnvValue > 0 ? parsedEnvValue : DEFAULT_TOKENS;
   return new RateLimiter({
     tokensPerInterval,
     interval: 'minute'

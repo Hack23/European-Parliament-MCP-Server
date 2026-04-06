@@ -9,7 +9,7 @@
  */
 
 import { epClient } from '../clients/europeanParliamentClient.js';
-import { auditLogger } from './auditLogger.js';
+import { auditLogger, toErrorMessage } from './auditLogger.js';
 import type { MEP } from '../types/europeanParliament.js';
 
 /**
@@ -49,8 +49,7 @@ export async function fetchAllCurrentMEPs(): Promise<FetchMEPsResult> {
       hasMore = page.hasMore;
       offset += batchSize;
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      auditLogger.logError('fetchAllCurrentMEPs', { offset, batchSize }, `Pagination failed at offset ${String(offset)}: ${message}`);
+      auditLogger.logError('fetchAllCurrentMEPs', { offset, batchSize }, `Pagination failed at offset ${String(offset)}: ${toErrorMessage(error)}`);
       return { meps: allMeps, complete: false, failureOffset: offset };
     }
   }
