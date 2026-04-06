@@ -15,6 +15,7 @@ import { AnalyzeCoalitionDynamicsSchema } from '../schemas/europeanParliament.js
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 import type { DataAvailability, MetricResult } from '../types/index.js';
+import type { MEP } from '../types/europeanParliament.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 import { fetchAllCurrentMEPs } from '../utils/mepFetcher.js';
 
@@ -149,12 +150,10 @@ function computePairCohesion(
  * fields as "not available" and supplement with vote-result data when available.
  *
  * @param targetGroups - Political group identifiers to query (e.g., `['EPP', 'S&D']`)
- * @returns Promise resolving to an array of group cohesion metric objects, one per group
- * @throws {Error} If the EP API call fails
+ * @param allMeps - Pre-fetched array of current MEPs
+ * @returns Array of group cohesion metric objects, one per group
  */
-async function buildGroupMetrics(targetGroups: string[]): Promise<GroupCohesionMetrics[]> {
-  // Fetch all current MEPs once, then count per group in-memory
-  const allMeps = await fetchAllCurrentMEPs();
+function buildGroupMetrics(targetGroups: string[], allMeps: MEP[]): GroupCohesionMetrics[] {
   const groupCounts = new Map<string, number>();
   for (const mep of allMeps) {
     const g = mep.politicalGroup;
@@ -448,7 +447,8 @@ export async function handleAnalyzeCoalitionDynamics(
 
   try {
     const targetGroups = params.groupIds ?? POLITICAL_GROUPS;
-    const groupMetrics = await buildGroupMetrics(targetGroups);
+    const fetchResult = await fetchAllCurrentMEPs();
+    const groupMetrics = buildGroupMetrics(targetGroups, fetchResult.meps);
     const coalitionPairs = buildCoalitionPairs(targetGroups, params.minimumCohesion, groupMetrics);
     const sortedPairs = [...coalitionPairs].sort((a, b) => b.cohesionScore - a.cohesionScore);
     const stressIndicators = computeStressIndicators(groupMetrics);
@@ -473,6 +473,7 @@ export async function handleAnalyzeCoalitionDynamics(
       dataQualityWarnings: [
         'Per-MEP voting statistics unavailable from EP API — cohesion, defection, and attendance metrics are null',
         'Coalition pair cohesion derived from group size ratios only, not vote-level alignment data',
+        ...(!fetchResult.complete ? [`MEP data is incomplete — pagination failed at offset ${String(fetchResult.failureOffset ?? 0)}; results based on partial data`] : []),
       ],
     };
 

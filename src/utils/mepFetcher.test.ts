@@ -1,7 +1,8 @@
 /**
  * Unit tests for mepFetcher utility.
  *
- * Verifies paginated MEP fetching logic with proper batch handling.
+ * Verifies paginated MEP fetching logic with proper batch handling
+ * and the structured FetchMEPsResult return type.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -14,7 +15,24 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
   },
 }));
 
+vi.mock('./auditLogger.js', () => ({
+  auditLogger: {
+    logError: vi.fn(),
+  },
+  toErrorMessage: (error: unknown) => error instanceof Error ? error.message : 'Unknown error',
+}));
+
 describe('fetchAllCurrentMEPs', () => {
+  const mockMEP = (id: number) => ({
+    id: `person/${String(id)}`,
+    name: `MEP ${String(id)}`,
+    country: 'SE',
+    politicalGroup: 'Renew',
+    committees: [] as string[],
+    active: true,
+    termStart: '2024-07-16',
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -33,24 +51,16 @@ describe('fetchAllCurrentMEPs', () => {
 
     const result = await fetchAllCurrentMEPs();
 
-    expect(result).toHaveLength(2);
-    expect(result[0]?.name).toBe('MEP One');
-    expect(result[1]?.name).toBe('MEP Two');
+    expect(result.meps).toHaveLength(2);
+    expect(result.complete).toBe(true);
+    expect(result.failureOffset).toBeUndefined();
+    expect(result.meps[0]?.name).toBe('MEP One');
+    expect(result.meps[1]?.name).toBe('MEP Two');
     expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenCalledTimes(1);
     expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenCalledWith({ limit: 100, offset: 0 });
   });
 
   it('should paginate through multiple pages', async () => {
-    const mockMEP = (id: number) => ({
-      id: `person/${id}`,
-      name: `MEP ${id}`,
-      country: 'SE',
-      politicalGroup: 'Renew',
-      committees: [],
-      active: true,
-      termStart: '2024-07-16',
-    });
-
     // First page: 100 MEPs, hasMore = true
     vi.mocked(epClientModule.epClient.getCurrentMEPs)
       .mockResolvedValueOnce({
@@ -71,7 +81,9 @@ describe('fetchAllCurrentMEPs', () => {
 
     const result = await fetchAllCurrentMEPs();
 
-    expect(result).toHaveLength(150);
+    expect(result.meps).toHaveLength(150);
+    expect(result.complete).toBe(true);
+    expect(result.failureOffset).toBeUndefined();
     expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenCalledTimes(2);
     expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenNthCalledWith(1, { limit: 100, offset: 0 });
     expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenNthCalledWith(2, { limit: 100, offset: 100 });
@@ -88,15 +100,53 @@ describe('fetchAllCurrentMEPs', () => {
 
     const result = await fetchAllCurrentMEPs();
 
-    expect(result).toHaveLength(0);
+    expect(result.meps).toHaveLength(0);
+    expect(result.complete).toBe(true);
     expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenCalledTimes(1);
   });
 
-  it('should propagate API errors', async () => {
+  it('should return incomplete result and log error on first page failure', async () => {
+    const { auditLogger } = await import('./auditLogger.js');
     vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValueOnce(
       new Error('Network timeout')
     );
 
-    await expect(fetchAllCurrentMEPs()).rejects.toThrow('Network timeout');
+    const result = await fetchAllCurrentMEPs();
+
+    expect(result.meps).toHaveLength(0);
+    expect(result.complete).toBe(false);
+    expect(result.failureOffset).toBe(0);
+    expect(auditLogger.logError).toHaveBeenCalledWith(
+      'fetchAllCurrentMEPs',
+      { offset: 0, batchSize: 100 },
+      expect.stringContaining('Pagination failed at offset 0')
+    );
+  });
+
+  it('should return partial results when API fails mid-pagination', async () => {
+    const { auditLogger } = await import('./auditLogger.js');
+
+    vi.mocked(epClientModule.epClient.getCurrentMEPs)
+      .mockResolvedValueOnce({
+        data: Array.from({ length: 100 }, (_, i) => mockMEP(i + 1)),
+        total: 250,
+        limit: 100,
+        offset: 0,
+        hasMore: true,
+      })
+      .mockRejectedValueOnce(new Error('Connection reset'));
+
+    const result = await fetchAllCurrentMEPs();
+
+    // Should return the 100 MEPs from the first successful page
+    expect(result.meps).toHaveLength(100);
+    expect(result.complete).toBe(false);
+    expect(result.failureOffset).toBe(100);
+    expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenCalledTimes(2);
+    expect(auditLogger.logError).toHaveBeenCalledWith(
+      'fetchAllCurrentMEPs',
+      { offset: 100, batchSize: 100 },
+      expect.stringContaining('Pagination failed at offset 100')
+    );
   });
 });

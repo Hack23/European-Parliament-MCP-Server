@@ -433,9 +433,94 @@ describe('RateLimiter', () => {
 
   describe('createStandardRateLimiter', () => {
     it('should create limiter with standard config', () => {
-      const limiter = createStandardRateLimiter();
-      expect(limiter).toBeDefined();
-      expect(limiter.getAvailableTokens()).toBe(100);
+      const saved = process.env['EP_RATE_LIMIT'];
+      delete process.env['EP_RATE_LIMIT'];
+      try {
+        const limiter = createStandardRateLimiter();
+        expect(limiter).toBeDefined();
+        expect(limiter.getAvailableTokens()).toBe(100);
+      } finally {
+        if (saved !== undefined) {
+          process.env['EP_RATE_LIMIT'] = saved;
+        } else {
+          delete process.env['EP_RATE_LIMIT'];
+        }
+      }
+    });
+
+    it('should respect EP_RATE_LIMIT env variable', () => {
+      const saved = process.env['EP_RATE_LIMIT'];
+      process.env['EP_RATE_LIMIT'] = '50';
+      try {
+        const limiter = createStandardRateLimiter();
+        expect(limiter.getAvailableTokens()).toBe(50);
+      } finally {
+        if (saved !== undefined) {
+          process.env['EP_RATE_LIMIT'] = saved;
+        } else {
+          delete process.env['EP_RATE_LIMIT'];
+        }
+      }
+    });
+
+    it('should fall back to 100 for invalid EP_RATE_LIMIT', () => {
+      const saved = process.env['EP_RATE_LIMIT'];
+      process.env['EP_RATE_LIMIT'] = 'not-a-number';
+      try {
+        const limiter = createStandardRateLimiter();
+        expect(limiter.getAvailableTokens()).toBe(100);
+      } finally {
+        if (saved !== undefined) {
+          process.env['EP_RATE_LIMIT'] = saved;
+        } else {
+          delete process.env['EP_RATE_LIMIT'];
+        }
+      }
+    });
+
+    it('should fall back to 100 for zero EP_RATE_LIMIT', () => {
+      const saved = process.env['EP_RATE_LIMIT'];
+      process.env['EP_RATE_LIMIT'] = '0';
+      try {
+        const limiter = createStandardRateLimiter();
+        expect(limiter.getAvailableTokens()).toBe(100);
+      } finally {
+        if (saved !== undefined) {
+          process.env['EP_RATE_LIMIT'] = saved;
+        } else {
+          delete process.env['EP_RATE_LIMIT'];
+        }
+      }
+    });
+
+    it('should fall back to 100 for negative EP_RATE_LIMIT', () => {
+      const saved = process.env['EP_RATE_LIMIT'];
+      process.env['EP_RATE_LIMIT'] = '-5';
+      try {
+        const limiter = createStandardRateLimiter();
+        expect(limiter.getAvailableTokens()).toBe(100);
+      } finally {
+        if (saved !== undefined) {
+          process.env['EP_RATE_LIMIT'] = saved;
+        } else {
+          delete process.env['EP_RATE_LIMIT'];
+        }
+      }
+    });
+
+    it('should fall back to 100 for partially-numeric EP_RATE_LIMIT', () => {
+      const saved = process.env['EP_RATE_LIMIT'];
+      process.env['EP_RATE_LIMIT'] = '50abc';
+      try {
+        const limiter = createStandardRateLimiter();
+        expect(limiter.getAvailableTokens()).toBe(100);
+      } finally {
+        if (saved !== undefined) {
+          process.env['EP_RATE_LIMIT'] = saved;
+        } else {
+          delete process.env['EP_RATE_LIMIT'];
+        }
+      }
     });
   });
 

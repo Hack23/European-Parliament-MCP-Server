@@ -12,9 +12,9 @@ import { SERVER_NAME, SERVER_VERSION, DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API
 import { getToolMetadataArray } from './toolRegistry.js';
 import { getPromptMetadataArray } from '../prompts/index.js';
 import { getResourceTemplateArray } from '../resources/index.js';
-import { RateLimiter } from '../utils/rateLimiter.js';
-import { MetricsService } from '../services/MetricsService.js';
-import { HealthService } from '../services/HealthService.js';
+import { createDefaultContainer, TOKENS } from '../di/container.js';
+import type { DIContainer } from '../di/container.js';
+import type { HealthService } from '../services/HealthService.js';
 import type { CLIOptions } from './types.js';
 
 /** Re-export CLIOptions for consumers */
@@ -91,19 +91,24 @@ export function showVersion(): void {
  *
  * Combines a static capability report with a dynamic health snapshot
  * produced by {@link HealthService}.
+ *
+ * When called without a `container`, a fresh {@link DIContainer} is created
+ * via {@link createDefaultContainer}. Metrics and rate-limiter state will
+ * reflect a new process baseline (useful for CLI `--health` diagnostics).
+ * Pass a live container to report actual runtime state from an active server.
+ *
+ * @param container - Optional DI container to resolve services from.
+ *   Defaults to a new container created by {@link createDefaultContainer}.
  */
-export function showHealth(): void {
+export function showHealth(container?: DIContainer): void {
   const tools = getToolMetadataArray();
   const coreToolCount = tools.filter(t => t.category === 'core').length;
   const nonCoreToolCount = tools.length - coreToolCount;
   const prompts = getPromptMetadataArray();
   const resourceTemplates = getResourceTemplateArray();
 
-  const rateLimitEnv = parseInt(process.env['EP_RATE_LIMIT'] ?? String(DEFAULT_RATE_LIMIT_PER_MINUTE), 10);
-  const tokensPerInterval = Number.isFinite(rateLimitEnv) && rateLimitEnv > 0 ? rateLimitEnv : DEFAULT_RATE_LIMIT_PER_MINUTE;
-  const rateLimiter = new RateLimiter({ tokensPerInterval, interval: 'minute' });
-  const metricsService = new MetricsService();
-  const healthService = new HealthService(rateLimiter, metricsService);
+  const resolvedContainer = container ?? createDefaultContainer();
+  const healthService = resolvedContainer.resolve<HealthService>(TOKENS.HealthService);
   const dynamicHealth = healthService.checkHealth();
 
   const health = {

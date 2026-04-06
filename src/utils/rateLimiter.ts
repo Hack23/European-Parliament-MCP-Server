@@ -382,6 +382,10 @@ export class RateLimiter {
  * @returns A new {@link RateLimiter} instance with standard EP API settings
  *
  * @example
+ * The token capacity is configurable via the `EP_RATE_LIMIT` environment
+ * variable (must be a positive integer). When the variable is absent, empty,
+ * non-numeric, zero, or negative, the factory falls back to 100 tokens/min.
+ *
  * ```typescript
  * const rateLimiter = createStandardRateLimiter();
  * const result = await rateLimiter.removeTokens(1);
@@ -396,8 +400,13 @@ export class RateLimiter {
  * @since 0.8.0
  */
 export function createStandardRateLimiter(): RateLimiter {
+  const DEFAULT_TOKENS = 100;
+  const rawEnvValue = (process.env['EP_RATE_LIMIT'] ?? '').trim();
+  const parsedEnvValue = /^[1-9]\d*$/.test(rawEnvValue) ? Number(rawEnvValue) : Number.NaN;
+  const tokensPerInterval =
+    Number.isInteger(parsedEnvValue) && parsedEnvValue > 0 ? parsedEnvValue : DEFAULT_TOKENS;
   return new RateLimiter({
-    tokensPerInterval: 100,
+    tokensPerInterval,
     interval: 'minute'
   });
 }

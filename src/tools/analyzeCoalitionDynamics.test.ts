@@ -17,7 +17,7 @@ describe('analyze_coalition_dynamics Tool', () => {
     vi.clearAllMocks();
     auditLogger.clear();
 
-    vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue([
+    vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
       {
         id: 'MEP-1',
         name: 'Test MEP One',
@@ -36,7 +36,7 @@ describe('analyze_coalition_dynamics Tool', () => {
         active: true,
         termStart: '2019-07-02'
       }
-    ]);
+    ], complete: true });
   });
 
   describe('Input Validation', () => {
@@ -176,14 +176,14 @@ describe('analyze_coalition_dynamics Tool', () => {
 
     it('should classify cohesion trend as WEAKENING when groups have unequal sizes', async () => {
       // Arrange: Two groups with very different member counts
-      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue([
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
         ...Array.from({ length: 10 }, (_, i) => ({
           id: `MEP-A${i}`, name: `MEP A${i}`, country: 'DE', politicalGroup: 'BigGroup',
           committees: [] as string[], active: true as const, termStart: '2019-07-02'
         })),
         { id: 'MEP-B1', name: 'MEP B1', country: 'FR', politicalGroup: 'SmallGroup',
           committees: [] as string[], active: true as const, termStart: '2019-07-02' }
-      ]);
+      ], complete: true });
 
       // Act
       const result = await handleAnalyzeCoalitionDynamics({
