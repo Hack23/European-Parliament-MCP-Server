@@ -82,6 +82,7 @@ interface SentimentTrackerResult {
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 const KNOWN_POLITICAL_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID', 'GUE/NGL', 'NI'];
@@ -183,7 +184,8 @@ function buildEmptySentimentResult(params: SentimentTrackerParams): SentimentTra
     confidenceLevel: 'LOW',
     dataFreshness: 'No data available from EP API',
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-    methodology: 'Sentiment derived from seat-share proxies — no MEP data available.'
+    methodology: 'Sentiment derived from seat-share proxies — no MEP data available.',
+    dataQualityWarnings: ['No MEP data available from EP API — all sentiment scores are empty'],
   };
   return result;
 }
@@ -275,7 +277,7 @@ export async function sentimentTracker(params: SentimentTrackerParams): Promise<
       overallParliamentSentiment: overallSentiment,
       computedAttributes: buildSentimentComputedAttrs(validSentiments, sentimentScores, overallSentiment),
       dataAvailable: validSentiments.length > 0,
-      confidenceLevel: validSentiments.length >= 5 ? 'MEDIUM' : 'LOW',
+      confidenceLevel: 'LOW',
       dataFreshness: 'Real-time EP API data — sentiment derived from current MEP group composition',
       sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'Scores represent institutional positioning (not true internal sentiment): '
@@ -284,7 +286,11 @@ export async function sentimentTracker(params: SentimentTrackerParams): Promise<
         + 'Polarization index computed as standard deviation of group sentiment scores. '
         + 'NOTE: Direct voting cohesion data is not available from the EP API /meps endpoint; '
         + 'scores are proxy estimates based on group size distributions. '
-        + 'Data source: https://data.europarl.europa.eu/api/v2/meps'
+        + 'Data source: https://data.europarl.europa.eu/api/v2/meps',
+      dataQualityWarnings: [
+        'Sentiment scores are seat-share proxies, not derived from voting cohesion or textual analysis',
+        'Direct voting data unavailable from EP API — scores reflect institutional positioning by group size only',
+      ],
     };
 
     return buildToolResponse(result);

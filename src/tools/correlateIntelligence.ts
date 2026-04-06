@@ -29,7 +29,7 @@
 import { randomUUID } from 'node:crypto';
 import { CorrelateIntelligenceSchema, OsintStandardOutputSchema } from '../schemas/europeanParliament.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
-import type { ToolResult, OsintStandardOutput } from './shared/types.js';
+import type { ToolResult, OsintStandardOutput, ConfidenceLevel } from './shared/types.js';
 import type { DataAvailability } from '../types/index.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 
@@ -50,13 +50,13 @@ interface InfluenceResult {
   mepName: string;
   overallScore: number;
   rank: string;
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 }
 
 interface AnomalyResult {
   anomalies: { type: string; severity: string; mepId: string; mepName: string }[];
   summary: { totalAnomalies: number; highSeverity: number };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 }
 
 interface EarlyWarningResult {
@@ -64,26 +64,26 @@ interface EarlyWarningResult {
   riskLevel: string;
   stabilityScore: number;
   computedAttributes: { criticalWarnings: number; highWarnings: number; keyRiskFactor: string };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 }
 
 interface CoalitionResult {
   groupMetrics: { groupId: string; stressIndicator: { value: number | null; availability: string; confidence: string }; computedAttributes: { unityTrend: string } }[];
   stressIndicators: { indicator: string; severity: string; affectedGroups: string[] }[];
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 }
 
 interface NetworkResult {
   centralMEPs: { mepId: string; mepName: string; centralityScore: number }[];
   bridgingMEPs: { mepId: string; mepName: string }[];
   networkNodes?: { mepId: string; centralityScore: number }[];
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 }
 
 interface ComparativeResult {
   profiles: { mepId: string; name: string; scores: Record<string, number>; overallScore: number }[];
   outlierMEPs: { mepId: string; name: string; outlierDimension: string; zScore: number }[];
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 }
 
 // ---------------------------------------------------------------------------
@@ -316,7 +316,7 @@ async function correlateInfluenceAnomaly(
 ): Promise<{
   correlation: InfluenceAnomalyCorrelation | null;
   alert: CorrelationAlert | null;
-  toolConfidenceLevels: string[];
+  toolConfidenceLevels: ConfidenceLevel[];
 }> {
   const influenceData = await fetchInfluenceData(mepId);
   if (influenceData === null) return { correlation: null, alert: null, toolConfidenceLevels: [] };
@@ -441,7 +441,7 @@ async function correlateCoalitionFracture(
 ): Promise<{
   correlation: CoalitionFractureCorrelation | null;
   alert: CorrelationAlert | null;
-  toolConfidenceLevels: string[];
+  toolConfidenceLevels: ConfidenceLevel[];
 }> {
   const ewsSensitivity = mapSensitivityToEws(sensitivityLevel);
 
@@ -614,7 +614,7 @@ async function correlateNetworkProfiles(
 ): Promise<{
   correlations: NetworkProfileCorrelation[];
   alerts: CorrelationAlert[];
-  toolConfidenceLevels: string[];
+  toolConfidenceLevels: ConfidenceLevel[];
 }> {
   const numericIds = mepIds.map(id => parseInt(id, 10)).filter(n => !isNaN(n));
 
@@ -668,11 +668,9 @@ async function correlateNetworkProfiles(
  * @param levels - Array of confidence-level strings from individual tool results
  * @returns Aggregated confidence level
  */
-function aggregateConfidence(levels: string[]): 'HIGH' | 'MEDIUM' | 'LOW' {
-  // Treat 'NONE' (from unavailable-data tools) as 'LOW' for aggregation
-  const normalized = levels.map(l => (l === 'NONE' ? 'LOW' : l));
-  if (normalized.includes('HIGH') && !normalized.includes('LOW')) return 'HIGH';
-  if (normalized.every(l => l === 'LOW')) return 'LOW';
+function aggregateConfidence(levels: ConfidenceLevel[]): ConfidenceLevel {
+  if (levels.includes('HIGH') && !levels.includes('LOW')) return 'HIGH';
+  if (levels.every(l => l === 'LOW')) return 'LOW';
   return 'MEDIUM';
 }
 
@@ -686,11 +684,44 @@ function aggregateConfidence(levels: string[]): 'HIGH' | 'MEDIUM' | 'LOW' {
  */
 function computeDataAvailability(
   correlationsFound: number,
-  confidenceLevels: string[]
+  confidenceLevels: ConfidenceLevel[]
 ): DataAvailability {
   if (correlationsFound > 0) return 'AVAILABLE';
   if (confidenceLevels.length === 0) return 'UNAVAILABLE';
   return 'PARTIAL';
+}
+
+/**
+ * Aggregate data-quality warnings based on the correlation run context.
+ *
+ * Warnings are generated when:
+ * - Data availability is `PARTIAL` or `UNAVAILABLE` (downstream tools failed or had no signals)
+ * - Any collected confidence level is `LOW` (indicating proxy/heuristic data in a sub-tool)
+ * - Network analysis was excluded (consumer may expect it)
+ */
+function buildCorrelationWarnings(
+  dataAvailability: DataAvailability,
+  confidenceLevels: ConfidenceLevel[],
+  includeNetworkAnalysis: boolean
+): string[] {
+  const warnings: string[] = [];
+
+  if (dataAvailability === 'UNAVAILABLE') {
+    warnings.push('All downstream tool calls failed — no data available for correlation analysis');
+  } else if (dataAvailability === 'PARTIAL') {
+    warnings.push('Downstream tools responded but produced no actionable correlations — results may be incomplete');
+  }
+
+  const lowCount = confidenceLevels.filter(c => c === 'LOW').length;
+  if (lowCount > 0) {
+    warnings.push(`${String(lowCount)} of ${String(confidenceLevels.length)} sub-tool results have LOW confidence — underlying data is proxy or heuristic`);
+  }
+
+  if (!includeNetworkAnalysis) {
+    warnings.push('Network analysis was not included — committee co-membership correlations are absent');
+  }
+
+  return warnings;
 }
 
 // ---------------------------------------------------------------------------
@@ -808,7 +839,7 @@ export async function handleCorrelateIntelligence(
   );
   const influenceAnomalyCorrelations: InfluenceAnomalyCorrelation[] = [];
   const influenceAnomalyAlerts: CorrelationAlert[] = [];
-  const influenceToolConfidenceLevels: string[] = [];
+  const influenceToolConfidenceLevels: ConfidenceLevel[] = [];
 
   for (const { correlation, alert, toolConfidenceLevels } of influenceAnomalyResults) {
     if (correlation !== null) influenceAnomalyCorrelations.push(correlation);
@@ -837,11 +868,13 @@ export async function handleCorrelateIntelligence(
     (coalitionCorrelation !== null ? 1 : 0) +
     networkCorrelations.length;
 
-  const confidenceLevels: string[] = [
+  const confidenceLevels: ConfidenceLevel[] = [
     ...influenceToolConfidenceLevels,
     ...coalitionConfidenceLevels,
     ...networkConfidenceLevels,
   ];
+
+  const dataAvailability = computeDataAvailability(correlationsFound, confidenceLevels);
 
   const report: CorrelatedIntelligenceReport = {
     correlationId,
@@ -860,10 +893,11 @@ export async function handleCorrelateIntelligence(
     },
     summary: buildAlertSummary(allAlerts, correlationsFound),
     confidenceLevel: aggregateConfidence(confidenceLevels.length > 0 ? confidenceLevels : ['LOW']),
-    dataAvailability: computeDataAvailability(correlationsFound, confidenceLevels),
+    dataAvailability,
     methodology: buildMethodology(influenceThreshold, sensitivityLevel, includeNetworkAnalysis),
     dataFreshness: `Real-time EP API data — correlated at ${analysisTime}`,
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
+    dataQualityWarnings: buildCorrelationWarnings(dataAvailability, confidenceLevels, includeNetworkAnalysis),
   };
 
   // Validate the standard OSINT output fields before returning
@@ -873,6 +907,7 @@ export async function handleCorrelateIntelligence(
       methodology: report.methodology,
       dataFreshness: report.dataFreshness,
       sourceAttribution: report.sourceAttribution,
+      dataQualityWarnings: report.dataQualityWarnings,
     });
   } catch (validationError: unknown) {
     throw new ToolError({

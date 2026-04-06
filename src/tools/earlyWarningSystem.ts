@@ -77,6 +77,7 @@ interface EarlyWarningResult {
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 interface GroupSize {
@@ -171,6 +172,8 @@ function buildCoalitionWarnings(groupSizes: GroupSize[], thresholds: Sensitivity
 function buildAttendanceWarnings(groupSizes: GroupSize[], focusArea: string): Warning[] {
   if (focusArea !== 'attendance' && focusArea !== 'all') return [];
 
+  // Heuristic: groups with <= 5 members are treated as very small delegations that may be
+  // more vulnerable to attendance/quorum issues and may indicate NI-style fragmentation risk.
   const smallGroups = groupSizes.filter(g => g.memberCount <= 5);
   if (smallGroups.length === 0) return [];
 
@@ -284,7 +287,8 @@ function buildEmptyResult(params: EarlyWarningSystemParams, assessmentTime: stri
     confidenceLevel: 'LOW',
     dataFreshness: 'No data available from EP API',
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-    methodology: 'Early warning assessment could not be performed — no MEP data returned.'
+    methodology: 'Early warning assessment could not be performed — no MEP data returned.',
+    dataQualityWarnings: ['No MEP data returned from EP API — early warning analysis could not be performed'],
   };
 }
 
@@ -360,7 +364,10 @@ export async function earlyWarningSystem(params: EarlyWarningSystemParams): Prom
         + 'Stability score = 100 - (25*critical + 10*high + 3*medium warnings). '
         + 'NOTE: Voting cohesion and attendance data not available from EP API — '
         + 'warnings are derived from structural group composition only. '
-        + 'Data source: https://data.europarl.europa.eu/api/v2/meps'
+        + 'Data source: https://data.europarl.europa.eu/api/v2/meps',
+      dataQualityWarnings: [
+        'Warnings based on group size composition only — voting cohesion and attendance data unavailable from EP API',
+      ],
     };
 
     return buildToolResponse(result);

@@ -64,10 +64,11 @@ interface CoalitionDynamicsAnalysis {
     grandCoalitionViability: number | null;
     oppositionStrength: number;
   };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 const POLITICAL_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID', 'The Left', 'NI'];
@@ -468,7 +469,11 @@ export async function handleAnalyzeCoalitionDynamics(
         + 'each group metric has dataAvailability: UNAVAILABLE with null cohesion/defection/attendance. '
         + 'Coalition pair cohesion is currently derived from group size ratios only; '
         + 'coalitionPairs.sharedVotes and coalitionPairs.totalVotes are null (not computed from vote-level data). '
-        + 'Data source: European Parliament Open Data Portal.'
+        + 'Data source: European Parliament Open Data Portal.',
+      dataQualityWarnings: [
+        'Per-MEP voting statistics unavailable from EP API — cohesion, defection, and attendance metrics are null',
+        'Coalition pair cohesion derived from group size ratios only, not vote-level alignment data',
+      ],
     };
 
     return buildToolResponse(analysis);

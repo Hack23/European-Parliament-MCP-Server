@@ -182,6 +182,8 @@ export const OsintStandardOutputSchema = z.object({
     .describe('Data freshness indicator or description of data currency'),
   sourceAttribution: z.string()
     .describe('Attribution to European Parliament Open Data Portal data sources'),
+  dataQualityWarnings: z.array(z.string())
+    .describe('Warnings about data quality issues, unavailable metrics, or limitations'),
 });
 
 /**

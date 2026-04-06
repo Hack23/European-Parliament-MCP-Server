@@ -49,10 +49,11 @@ interface PoliticalGroupComparison {
     parliamentaryBalance: number;
     competitiveIndex: number;
   };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 const ALL_DIMENSIONS = ['votingDiscipline', 'activityLevel', 'legislativeOutput', 'attendance', 'cohesion'] as const;
@@ -216,14 +217,18 @@ export async function handleComparePoliticalGroups(
         parliamentaryBalance: Math.round(balance * 100) / 100,
         competitiveIndex
       },
-      confidenceLevel: 'LOW',
+      confidenceLevel: 'MEDIUM',
       dataFreshness: 'Real-time EP API data — political group composition from current MEP records',
       sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'Multi-dimensional comparative analysis using real EP Open Data MEP records. '
         + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
         + 'voting discipline, activity level, attendance, and cohesion dimensions report zero. '
         + 'Member counts and group composition are real. '
-        + 'Data source: European Parliament Open Data Portal.'
+        + 'Data source: European Parliament Open Data Portal.',
+      dataQualityWarnings: [
+        'Per-MEP voting statistics unavailable from EP API — voting discipline, activity level, attendance, and cohesion dimensions report zero',
+        'Seat share and member counts are real EP API data; performance scores are not comparable without voting data',
+      ]
     };
 
     return buildToolResponse(comparison);

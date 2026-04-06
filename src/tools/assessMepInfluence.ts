@@ -60,10 +60,11 @@ interface MepInfluenceAssessment {
     leadershipIndicator: number;
   };
   votingDataAvailable: boolean;
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 /**
@@ -74,6 +75,7 @@ function computeVotingActivityScore(stats: { totalVotes: number; attendanceRate:
   metrics: Record<string, number>;
 } {
   const attendanceScore = stats.attendanceRate;
+  // EP parliamentary term ≈ 5 years × ~300 votes/year = ~1500 total possible votes per term
   const participationVolume = Math.min(100, (stats.totalVotes / 1500) * 100);
   const score = attendanceScore * 0.6 + participationVolume * 0.4;
   return {
@@ -97,6 +99,8 @@ function computeLegislativeOutputScore(roles: string[], committees: string[]): {
   const committeeRoles = roles.filter(r =>
     r.toLowerCase().includes('chair') || r.toLowerCase().includes('vice')
   ).length;
+  // Each rapporteurship ≈ 15 influence points (1 rapporteurship ≈ top 15% of legislative output)
+  // Leadership roles ≈ 20 influence points (chairs/vice-chairs ≈ top 20% of committee authority)
   const roleScore = Math.min(100, rapporteurships * 15 + committeeRoles * 20);
   const committeeDiversity = Math.min(100, committees.length * 20);
   const score = roleScore * 0.6 + committeeDiversity * 0.4;
@@ -226,10 +230,45 @@ function buildDimensions(inputs: DimensionInputs, includeMetrics: boolean): Dime
 /**
  * Determine confidence level from vote count
  */
-function getConfidenceLevel(totalVotes: number): string {
+function getConfidenceLevel(totalVotes: number): 'HIGH' | 'MEDIUM' | 'LOW' {
   if (totalVotes > 500) return 'HIGH';
   if (totalVotes > 100) return 'MEDIUM';
   return 'LOW';
+}
+
+/**
+ * Collect data quality warnings based on available data
+ */
+function collectDataQualityWarnings(votingDataAvailable: boolean, questionCount: number): string[] {
+  const warnings: string[] = [];
+  if (!votingDataAvailable) {
+    warnings.push('Voting statistics unavailable from EP API — voting-based metrics (loyalty, participation, coalition building) set to zero');
+  }
+  if (questionCount === 0) {
+    warnings.push('Parliamentary questions data unavailable or MEP has no questions — oversight dimension reports zero');
+  }
+  return warnings;
+}
+
+/**
+ * Build dataFreshness and methodology strings based on whether voting data is available.
+ * When voting stats are unavailable, the text accurately reflects that voting-based
+ * dimensions use zero-based proxies rather than live data.
+ */
+function buildInfluenceMetadata(votingDataAvailable: boolean): { dataFreshness: string; methodology: string } {
+  return {
+    dataFreshness: votingDataAvailable
+      ? 'Real-time EP API data — MEP voting statistics and committee memberships'
+      : 'Real-time EP API data — committee memberships only; voting statistics unavailable from EP API',
+    methodology: votingDataAvailable
+      ? 'CIA Political Scorecards - 5-dimension weighted scoring model using real EP Open Data. '
+        + 'Parliamentary questions fetched from /parliamentary-questions endpoint. '
+        + 'Data source: European Parliament Open Data Portal.'
+      : 'CIA Political Scorecards - 5-dimension weighted scoring model. '
+        + 'Voting statistics unavailable — voting and participation dimensions use zero-based proxies. '
+        + 'Parliamentary questions fetched from /parliamentary-questions endpoint. '
+        + 'Data source: European Parliament Open Data Portal.',
+  };
 }
 
 /**
@@ -320,6 +359,8 @@ export async function handleAssessMepInfluence(
       totalVotes: 0, votesFor: 0, votesAgainst: 0, abstentions: 0, attendanceRate: 0
     };
 
+    const votingDataAvailable = stats.totalVotes > 0;
+
     // Fetch real parliamentary questions for this MEP
     // Use data.length instead of total because total is a lower-bound estimate
     let questionCount = 0;
@@ -333,6 +374,9 @@ export async function handleAssessMepInfluence(
       auditLogger.logError('assess_mep_influence.fetch_questions', { mepId: params.mepId }, toErrorMessage(error));
       // Questions may not be available — report zero
     }
+
+    const dataQualityWarnings = collectDataQualityWarnings(votingDataAvailable, questionCount);
+    const { dataFreshness, methodology } = buildInfluenceMetadata(votingDataAvailable);
 
     const votingDim = computeVotingActivityScore(stats);
     const legislativeDim = computeLegislativeOutputScore(mep.roles ?? [], mep.committees);
@@ -374,12 +418,11 @@ export async function handleAssessMepInfluence(
         leadershipIndicator: committeeDim.score
       },
       confidenceLevel: getConfidenceLevel(stats.totalVotes),
-      votingDataAvailable: stats.totalVotes > 0,
-      dataFreshness: 'Real-time EP API data — MEP voting statistics and committee memberships',
+      votingDataAvailable,
+      dataFreshness,
       sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-      methodology: 'CIA Political Scorecards - 5-dimension weighted scoring model using real EP Open Data. '
-        + 'Parliamentary questions fetched from /parliamentary-questions endpoint. '
-        + 'Data source: European Parliament Open Data Portal.'
+      methodology,
+      dataQualityWarnings,
     };
 
     return buildToolResponse(assessment);

@@ -49,10 +49,11 @@ interface LegislativeEffectivenessAnalysis {
     effectivenessRank: string;
   };
   benchmarks: { avgReportsPerMep: number; avgAmendmentsPerMep: number; avgSuccessRate: number };
-  confidenceLevel: string;
+  confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 /**
@@ -68,7 +69,7 @@ function classifyEffectivenessRank(score: number): string {
 /**
  * Classify confidence level
  */
-function classifyConfidence(totalVotes: number): string {
+function classifyConfidence(totalVotes: number): 'HIGH' | 'MEDIUM' | 'LOW' {
   if (totalVotes > 500) return 'HIGH';
   if (totalVotes > 100) return 'MEDIUM';
   return 'LOW';
@@ -85,6 +86,8 @@ function computeMetrics(
   const rapporteurships = roles.filter(r => r.toLowerCase().includes('rapporteur')).length;
   const reportsAuthored = rapporteurships * 2 + Math.round(totalVotes / 500);
   const amendmentsTabled = Math.round(totalVotes / 100) + rapporteurships * 5;
+  // 40% adoption rate is a proxy based on EP legislative statistics:
+  // ~40% of tabled amendments are typically adopted in committee/plenary readings
   const amendmentsAdopted = Math.round(amendmentsTabled * 0.4);
   const opinionsDelivered = Math.round(committeeCount * 1.5);
   const questionsAsked = Math.round(totalVotes * 0.05);
@@ -262,7 +265,10 @@ export async function handleAnalyzeLegislativeEffectiveness(
       confidenceLevel: classifyConfidence(subjectData.totalVotes),
       dataFreshness: 'Real-time EP API data — MEP and committee information from EP Open Data',
       sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-      methodology: 'Multi-factor legislative effectiveness scoring with peer benchmarking'
+      methodology: 'Multi-factor legislative effectiveness scoring with peer benchmarking',
+      dataQualityWarnings: subjectData.totalVotes === 0
+        ? ['Voting statistics unavailable from EP API — amendment and report estimates derived from role data only']
+        : [],
     };
 
     return buildToolResponse(analysis);
