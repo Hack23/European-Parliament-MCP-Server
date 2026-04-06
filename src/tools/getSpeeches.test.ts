@@ -136,7 +136,7 @@ describe('get_speeches Tool', () => {
       vi.mocked(epClientModule.epClient.getSpeeches)
         .mockRejectedValueOnce(new Error('Service unavailable'));
 
-      await expect(handleGetSpeeches({})).rejects.toThrow('Service unavailable');
+      await expect(handleGetSpeeches({})).rejects.toThrow('Failed to retrieve speeches');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

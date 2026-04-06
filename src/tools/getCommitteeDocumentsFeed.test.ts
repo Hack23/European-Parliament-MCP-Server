@@ -81,7 +81,7 @@ describe('get_committee_documents_feed Tool', () => {
       vi.mocked(epClientModule.epClient.getCommitteeDocumentsFeed)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetCommitteeDocumentsFeed({})).rejects.toThrow('API unavailable');
+      await expect(handleGetCommitteeDocumentsFeed({})).rejects.toThrow('Failed to retrieve committee documents feed');
     });
   });
 

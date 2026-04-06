@@ -104,7 +104,7 @@ describe('get_adopted_texts_feed Tool', () => {
       vi.mocked(epClientModule.epClient.getAdoptedTextsFeed)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetAdoptedTextsFeed({})).rejects.toThrow('API unavailable');
+      await expect(handleGetAdoptedTextsFeed({})).rejects.toThrow('Failed to retrieve adopted texts feed');
     });
   });
 

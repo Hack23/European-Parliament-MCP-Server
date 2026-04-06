@@ -104,7 +104,7 @@ describe('get_external_documents_feed Tool', () => {
       vi.mocked(epClientModule.epClient.getExternalDocumentsFeed)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetExternalDocumentsFeed({})).rejects.toThrow('API unavailable');
+      await expect(handleGetExternalDocumentsFeed({})).rejects.toThrow('Failed to retrieve external documents feed');
     });
   });
 

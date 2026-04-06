@@ -100,7 +100,7 @@ describe('get_homonym_meps Tool', () => {
       vi.mocked(epClientModule.epClient.getHomonymMEPs)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetHomonymMEPs({})).rejects.toThrow('API unavailable');
+      await expect(handleGetHomonymMEPs({})).rejects.toThrow('Failed to retrieve homonym MEPs');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

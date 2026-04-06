@@ -89,7 +89,7 @@ describe('get_meps_feed Tool', () => {
       vi.mocked(epClientModule.epClient.getMEPsFeed)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetMEPsFeed({})).rejects.toThrow('API unavailable');
+      await expect(handleGetMEPsFeed({})).rejects.toThrow('Failed to retrieve MEPs feed');
     });
   });
 

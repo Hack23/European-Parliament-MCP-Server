@@ -104,7 +104,7 @@ describe('get_events_feed Tool', () => {
       vi.mocked(epClientModule.epClient.getEventsFeed)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetEventsFeed({})).rejects.toThrow('API unavailable');
+      await expect(handleGetEventsFeed({})).rejects.toThrow('Failed to retrieve events feed');
     });
   });
 

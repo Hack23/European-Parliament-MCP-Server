@@ -81,7 +81,7 @@ describe('get_parliamentary_questions_feed Tool', () => {
       vi.mocked(epClientModule.epClient.getParliamentaryQuestionsFeed)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetParliamentaryQuestionsFeed({})).rejects.toThrow('API unavailable');
+      await expect(handleGetParliamentaryQuestionsFeed({})).rejects.toThrow('Failed to retrieve parliamentary questions feed');
     });
   });
 

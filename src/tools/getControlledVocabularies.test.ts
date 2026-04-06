@@ -131,14 +131,14 @@ describe('get_controlled_vocabularies Tool', () => {
       vi.mocked(epClientModule.epClient.getControlledVocabularies)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetControlledVocabularies({})).rejects.toThrow('API unavailable');
+      await expect(handleGetControlledVocabularies({})).rejects.toThrow('Failed to retrieve controlled vocabularies');
     });
 
     it('should propagate errors from single vocabulary lookup', async () => {
       vi.mocked(epClientModule.epClient.getControlledVocabularyById)
         .mockRejectedValueOnce(new Error('Vocabulary not found'));
 
-      await expect(handleGetControlledVocabularies({ vocId: 'bad-id' })).rejects.toThrow('Vocabulary not found');
+      await expect(handleGetControlledVocabularies({ vocId: 'bad-id' })).rejects.toThrow('Failed to retrieve controlled vocabularies');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

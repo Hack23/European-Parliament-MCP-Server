@@ -115,7 +115,7 @@ describe('get_mep_declarations Tool', () => {
       vi.mocked(epClientModule.epClient.getMEPDeclarations)
         .mockRejectedValueOnce(new Error('Unauthorized'));
 
-      await expect(handleGetMEPDeclarations({})).rejects.toThrow('Unauthorized');
+      await expect(handleGetMEPDeclarations({})).rejects.toThrow('Failed to retrieve MEP declarations');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

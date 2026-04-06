@@ -114,7 +114,7 @@ describe('get_meeting_plenary_session_document_items Tool', () => {
       vi.mocked(epClientModule.epClient.getMeetingPlenarySessionDocumentItems)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetMeetingPlenarySessionDocumentItems({ sittingId: 'sitting-1' })).rejects.toThrow('API unavailable');
+      await expect(handleGetMeetingPlenarySessionDocumentItems({ sittingId: 'sitting-1' })).rejects.toThrow('Failed to retrieve meeting plenary session document items');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

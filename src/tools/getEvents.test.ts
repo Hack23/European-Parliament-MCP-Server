@@ -123,7 +123,7 @@ describe('get_events Tool', () => {
       vi.mocked(epClientModule.epClient.getEvents)
         .mockRejectedValueOnce(new Error('Rate limit exceeded'));
 
-      await expect(handleGetEvents({})).rejects.toThrow('Rate limit exceeded');
+      await expect(handleGetEvents({})).rejects.toThrow('Failed to retrieve events');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {

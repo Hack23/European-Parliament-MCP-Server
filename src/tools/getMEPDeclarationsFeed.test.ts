@@ -104,7 +104,7 @@ describe('get_mep_declarations_feed Tool', () => {
       vi.mocked(epClientModule.epClient.getMEPDeclarationsFeed)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetMEPDeclarationsFeed({})).rejects.toThrow('API unavailable');
+      await expect(handleGetMEPDeclarationsFeed({})).rejects.toThrow('Failed to retrieve MEP declarations feed');
     });
   });
 

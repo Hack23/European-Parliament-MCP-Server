@@ -139,14 +139,14 @@ describe('get_external_documents Tool', () => {
       vi.mocked(epClientModule.epClient.getExternalDocuments)
         .mockRejectedValueOnce(new Error('API unavailable'));
 
-      await expect(handleGetExternalDocuments({})).rejects.toThrow('API unavailable');
+      await expect(handleGetExternalDocuments({})).rejects.toThrow('Failed to retrieve external documents');
     });
 
     it('should propagate errors from single document lookup', async () => {
       vi.mocked(epClientModule.epClient.getExternalDocumentById)
         .mockRejectedValueOnce(new Error('Document not found'));
 
-      await expect(handleGetExternalDocuments({ docId: 'bad-id' })).rejects.toThrow('Document not found');
+      await expect(handleGetExternalDocuments({ docId: 'bad-id' })).rejects.toThrow('Failed to retrieve external documents');
     });
 
     it('should propagate schema validation errors for invalid input', async () => {
