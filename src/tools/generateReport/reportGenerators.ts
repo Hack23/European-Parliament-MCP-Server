@@ -148,7 +148,9 @@ function buildCommitteeWarnings(
 /** Build data quality warnings for voting statistics report */
 function buildVotingWarnings(
   sessionCount: number | null,
-  adoptedCount: number | null
+  adoptedCount: number | null,
+  dateFrom: string,
+  dateTo: string
 ): string[] {
   const warnings: string[] = [];
   if (sessionCount === null) {
@@ -159,7 +161,19 @@ function buildVotingWarnings(
   }
   warnings.push('Average turnout is always zero; EP API does not provide turnout data.');
   warnings.push('Political group alignment requires the compare_political_groups tool for detailed analysis.');
+  if (!isFullYearRange(dateFrom, dateTo)) {
+    warnings.push(
+      'Session count is based on the full year derived from dateFrom; '
+      + 'partial-year date ranges are not applied to the EP API call.'
+    );
+  }
   return warnings;
+}
+
+/** Check whether a date range spans an entire calendar year (Jan 1 – Dec 31). */
+function isFullYearRange(dateFrom: string, dateTo: string): boolean {
+  return dateFrom.endsWith('-01-01') && dateTo.endsWith('-12-31')
+    && dateFrom.substring(0, 4) === dateTo.substring(0, 4);
 }
 
 /** Build data quality warnings for legislation progress report */
@@ -285,7 +299,7 @@ export async function generateVotingStatisticsReport(
 
   const sessionCount = await fetchSessionCount(dateFrom, dateTo);
   const adoptedCount = await fetchAdoptedTextCount(year);
-  const warnings = buildVotingWarnings(sessionCount, adoptedCount);
+  const warnings = buildVotingWarnings(sessionCount, adoptedCount, dateFrom, dateTo);
   
   return {
     reportType: 'VOTING_STATISTICS',

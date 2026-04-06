@@ -2,8 +2,10 @@
  * Procedure tracker for legislative data
  * 
  * Transforms real EP API Procedure data into structured legislative
- * tracking output. All data is derived from the API response—no
- * hardcoded or placeholder data.
+ * tracking output. Most fields are derived from the API response.
+ * Amendment counts and voting records are placeholder zeros/empty arrays
+ * because the single-procedure endpoint does not provide them; these
+ * are flagged via {@link LegislativeProcedure.dataQualityWarnings}.
  * 
  * ISMS Policy: SC-002 (Input Validation)
  */
@@ -71,7 +73,10 @@ function buildNextSteps(procedure: Procedure): string[] {
 /**
  * Build a legislative tracking result from a real EP API Procedure.
  * 
- * All fields are derived from the API response. No mock or placeholder data.
+ * Most fields are derived directly from the API response. Amendment counts
+ * and voting records are placeholders (zeros / empty array) because the
+ * single-procedure endpoint does not supply them; these are surfaced in
+ * {@link LegislativeProcedure.dataQualityWarnings}.
  * 
  * @param procedure - Real procedure data from EP API
  * @returns Structured legislative tracking data

@@ -79,7 +79,7 @@ describe('buildLegislativeTracking', () => {
     expect(result.voting).toEqual([]);
   });
 
-  it('always returns MEDIUM confidenceLevel', () => {
+  it('returns MEDIUM confidenceLevel when timeline and committee are present', () => {
     const result = buildLegislativeTracking(makeProcedure());
     expect(result.confidenceLevel).toBe('MEDIUM');
   });

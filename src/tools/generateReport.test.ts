@@ -299,31 +299,31 @@ describe('generate_report Tool', () => {
   });
 
   describe('Data Quality Warnings', () => {
-    it('should include dataQualityWarnings in VOTING_STATISTICS report', async () => {
+    it('should include non-empty dataQualityWarnings in VOTING_STATISTICS report', async () => {
       const result = await handleGenerateReport({
         reportType: 'VOTING_STATISTICS'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null && 'dataQualityWarnings' in parsed) {
-        expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
-      }
+      const parsed = JSON.parse(result.content[0].text) as { dataQualityWarnings?: string[] };
+      expect(parsed.dataQualityWarnings).toBeDefined();
+      expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
+      expect(parsed.dataQualityWarnings!.length).toBeGreaterThan(0);
+      expect(parsed.dataQualityWarnings!.some((w: string) => w.includes('turnout'))).toBe(true);
     });
 
-    it('should include dataQualityWarnings in LEGISLATION_PROGRESS report', async () => {
+    it('should include non-empty dataQualityWarnings in LEGISLATION_PROGRESS report', async () => {
       const result = await handleGenerateReport({
         reportType: 'LEGISLATION_PROGRESS'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null && 'dataQualityWarnings' in parsed) {
-        expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
-      }
+      const parsed = JSON.parse(result.content[0].text) as { dataQualityWarnings?: string[] };
+      expect(parsed.dataQualityWarnings).toBeDefined();
+      expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
+      expect(parsed.dataQualityWarnings!.length).toBeGreaterThan(0);
+      expect(parsed.dataQualityWarnings!.some((w: string) => w.includes('lower bounds'))).toBe(true);
     });
 
-    it('should include dataQualityWarnings in MEP_ACTIVITY report', async () => {
+    it('should include non-empty dataQualityWarnings in MEP_ACTIVITY report', async () => {
       const mockMEP = {
         id: 'MEP-124810',
         name: 'John Doe',
@@ -339,14 +339,14 @@ describe('generate_report Tool', () => {
         subjectId: 'MEP-124810'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null && 'dataQualityWarnings' in parsed) {
-        expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
-      }
+      const parsed = JSON.parse(result.content[0].text) as { dataQualityWarnings?: string[] };
+      expect(parsed.dataQualityWarnings).toBeDefined();
+      expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
+      expect(parsed.dataQualityWarnings!.length).toBeGreaterThan(0);
+      expect(parsed.dataQualityWarnings!.some((w: string) => w.includes('Reports authored'))).toBe(true);
     });
 
-    it('should include dataQualityWarnings in COMMITTEE_PERFORMANCE report', async () => {
+    it('should include non-empty dataQualityWarnings in COMMITTEE_PERFORMANCE report', async () => {
       const mockCommittee = {
         id: 'COMM-ENVI',
         abbreviation: 'ENVI',
@@ -360,11 +360,35 @@ describe('generate_report Tool', () => {
         subjectId: 'COMM-ENVI'
       });
 
-      const parsed: unknown = JSON.parse(result.content[0].text);
-      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
-      if (typeof parsed === 'object' && parsed !== null && 'dataQualityWarnings' in parsed) {
-        expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
-      }
+      const parsed = JSON.parse(result.content[0].text) as { dataQualityWarnings?: string[] };
+      expect(parsed.dataQualityWarnings).toBeDefined();
+      expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
+      expect(parsed.dataQualityWarnings!.length).toBeGreaterThan(0);
+      expect(parsed.dataQualityWarnings!.some((w: string) => w.includes('Meeting count'))).toBe(true);
+    });
+
+    it('should warn about partial-year range in VOTING_STATISTICS report', async () => {
+      const result = await handleGenerateReport({
+        reportType: 'VOTING_STATISTICS',
+        dateFrom: '2024-06-01',
+        dateTo: '2024-12-31'
+      });
+
+      const parsed = JSON.parse(result.content[0].text) as { dataQualityWarnings?: string[] };
+      expect(parsed.dataQualityWarnings).toBeDefined();
+      expect(parsed.dataQualityWarnings!.some((w: string) => w.includes('partial-year'))).toBe(true);
+    });
+
+    it('should not warn about partial-year range for full-year range', async () => {
+      const result = await handleGenerateReport({
+        reportType: 'VOTING_STATISTICS',
+        dateFrom: '2024-01-01',
+        dateTo: '2024-12-31'
+      });
+
+      const parsed = JSON.parse(result.content[0].text) as { dataQualityWarnings?: string[] };
+      expect(parsed.dataQualityWarnings).toBeDefined();
+      expect(parsed.dataQualityWarnings!.some((w: string) => w.includes('partial-year'))).toBe(false);
     });
   });
 });

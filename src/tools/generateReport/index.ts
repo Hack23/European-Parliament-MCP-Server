@@ -58,7 +58,7 @@ const reportGenerators: Record<
  * @returns MCP tool result containing a structured report with summary, sections,
  *   statistics, and recommendations appropriate to the requested report type
  * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws {ToolError} If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
