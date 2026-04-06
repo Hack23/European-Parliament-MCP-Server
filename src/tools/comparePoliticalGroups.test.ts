@@ -80,6 +80,12 @@ describe('compare_political_groups Tool', () => {
   });
 
   describe('Response Structure', () => {
+
+    it('should include dataQualityWarnings array in response', async () => {
+      const result = await handleComparePoliticalGroups({ groupIds: ['EPP', 'S&D'] });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { dataQualityWarnings: string[] };
+      expect(Array.isArray(data.dataQualityWarnings)).toBe(true);
+    });
     it('should return MCP-compliant response', async () => {
       const result = await handleComparePoliticalGroups({
         groupIds: ['EPP', 'S&D']
@@ -204,9 +210,10 @@ describe('compare_political_groups Tool', () => {
         confidenceLevel: string;
       };
 
-      // Assert: Confidence is LOW because per-MEP voting stats are not available
+      // Assert: Confidence is MEDIUM because real group membership data is available,
+      // even though per-MEP voting stats are not
       expect(data.groups).toHaveLength(3);
-      expect(data.confidenceLevel).toBe('LOW');
+      expect(data.confidenceLevel).toBe('MEDIUM');
       // All voting dimensions should be zero
       for (const group of data.groups) {
         expect(group.dimensions.votingDiscipline).toBe(0);

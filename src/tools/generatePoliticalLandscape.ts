@@ -78,10 +78,16 @@ interface PoliticalLandscape {
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 /**
- * Classify political group into bloc
+ * Classify political group into bloc.
+ * Based on European Parliament's traditional left-right spectrum:
+ * - Progressive: Greens/EFA, GUE/NGL (The Left), S&D — left-of-centre families
+ * - Conservative: ECR, ID/PfE — right-of-centre and eurosceptic families
+ * - Centre: EPP, Renew, and others — centrist or cross-spectrum
+ * - NI (Non-Inscrits) default to 'center' as they have no formal bloc alignment
  */
 function classifyBloc(group: string): 'progressive' | 'conservative' | 'center' {
   const normalised = group.toUpperCase();
@@ -264,7 +270,11 @@ async function buildLandscape(
       + 'group composition mapping, bloc classification, coalition threshold calculation, '
       + 'fragmentation indexing, and plenary session counts (fetched page count, lower bound). '
       + 'Attendance data is not available from the EP API and is reported as zero. '
-      + 'Data source: European Parliament Open Data Portal.'
+      + 'Data source: European Parliament Open Data Portal.',
+    dataQualityWarnings: [
+      'Bloc classification (progressive/conservative/centre) uses hardcoded group mapping — NI members classified as centre by default',
+      'Attendance data unavailable from EP API — average attendance reported as zero',
+    ],
   };
 }
 

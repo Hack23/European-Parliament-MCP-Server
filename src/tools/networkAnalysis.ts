@@ -104,6 +104,7 @@ interface NetworkAnalysisResult {
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 /**
@@ -331,7 +332,8 @@ function buildEmptyResult(params: NetworkAnalysisParams): NetworkAnalysisResult 
     confidenceLevel: 'LOW',
     dataFreshness: 'No data available',
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-    methodology: 'Committee co-membership network analysis — no MEP data returned from EP API.'
+    methodology: 'Committee co-membership network analysis — no MEP data returned from EP API.',
+    dataQualityWarnings: ['No MEP data returned from EP API — network analysis could not be performed'],
   };
 }
 
@@ -432,7 +434,10 @@ export async function networkAnalysis(params: NetworkAnalysisParams): Promise<To
         + 'Cluster assignment based on political group bloc classification. '
         + 'Bridging MEPs identified as nodes with cross-cluster connections. '
         + 'Network density = actual edges / maximum possible edges (complete graph). '
-        + 'Data source: https://data.europarl.europa.eu/api/v2/meps'
+        + 'Data source: https://data.europarl.europa.eu/api/v2/meps',
+      dataQualityWarnings: [
+        'Network edges based on committee co-membership only — voting-similarity edges not available from EP API',
+      ],
     };
 
     return buildToolResponse(result);

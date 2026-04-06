@@ -93,6 +93,7 @@ interface ComparativeIntelligenceResult {
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 interface MEPApiData {
@@ -446,7 +447,8 @@ function buildEmptyResult(profiles: MepProfile[], dimensions: Dimension[]): Comp
     confidenceLevel: 'LOW',
     dataFreshness: 'Insufficient MEP data retrieved',
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-    methodology: 'Comparative intelligence requires at least 2 valid MEP profiles.'
+    methodology: 'Comparative intelligence requires at least 2 valid MEP profiles.',
+    dataQualityWarnings: ['Insufficient MEP data — fewer than 2 valid profiles retrieved from EP API'],
   };
 }
 
@@ -663,7 +665,11 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
         + 'Outliers: z-score ≥ 1.5 standard deviations from group mean. '
         + 'Clusters: grouped by political group + performance tier. '
         + 'NOTE: Voting and attendance statistics are not available from the current EP API; all related scores are placeholder zeros. '
-        + 'Data source: https://data.europarl.europa.eu/api/v2/meps'
+        + 'Data source: https://data.europarl.europa.eu/api/v2/meps',
+      dataQualityWarnings: [
+        'Voting and attendance scores are placeholder zeros — EP API does not expose per-MEP voting statistics',
+        'Correlation matrix computed from partially-zero score vectors — similarity values may not be meaningful',
+      ],
     };
 
     return buildToolResponse(result);

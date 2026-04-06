@@ -64,6 +64,12 @@ describe('generate_political_landscape Tool', () => {
   });
 
   describe('Response Format', () => {
+
+    it('should include dataQualityWarnings array in response', async () => {
+      const result = await handleGeneratePoliticalLandscape({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { dataQualityWarnings: string[] };
+      expect(Array.isArray(data.dataQualityWarnings)).toBe(true);
+    });
     it('should return MCP-compliant response', async () => {
       const result = await handleGeneratePoliticalLandscape({});
       const data = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;

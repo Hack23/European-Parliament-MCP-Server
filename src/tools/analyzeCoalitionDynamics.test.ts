@@ -68,6 +68,12 @@ describe('analyze_coalition_dynamics Tool', () => {
   });
 
   describe('Response Structure', () => {
+
+    it('should include dataQualityWarnings array in response', async () => {
+      const result = await handleAnalyzeCoalitionDynamics({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { dataQualityWarnings: string[] };
+      expect(Array.isArray(data.dataQualityWarnings)).toBe(true);
+    });
     it('should return MCP-compliant response', async () => {
       const result = await handleAnalyzeCoalitionDynamics({
         groupIds: ['EPP', 'S&D']

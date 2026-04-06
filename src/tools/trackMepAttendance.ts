@@ -91,6 +91,7 @@ interface AttendanceAnalysis {
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 /**
@@ -196,7 +197,10 @@ async function buildSingleMepAnalysis(
     dataFreshness: 'Real-time EP API data — MEP voting statistics from current EP records',
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
     methodology: 'MEP attendance analysis using EP Open Data voting statistics. '
-      + 'Data source: European Parliament Open Data Portal.'
+      + 'Data source: European Parliament Open Data Portal.',
+    dataQualityWarnings: record.totalSessions === 0
+      ? ['Voting statistics unavailable for this MEP — attendance metrics derived from zero sessions']
+      : [],
   };
 }
 
@@ -229,6 +233,20 @@ async function fetchMepDetailsBatched(
     }
   }
   return details;
+}
+
+/**
+ * Build data quality warnings for group attendance analysis
+ */
+function buildGroupAttendanceWarnings(dataCoverage: number, totalMEPs: number): string[] {
+  const warnings: string[] = [];
+  if (dataCoverage < 1) {
+    warnings.push(`Partial data coverage: ${String(Math.round(dataCoverage * 100))}% of MEPs have voting statistics`);
+  }
+  if (totalMEPs === 0) {
+    warnings.push('No MEPs found for the specified filter criteria');
+  }
+  return warnings;
 }
 
 /**
@@ -295,7 +313,8 @@ async function buildGroupAnalysis(
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
     methodology: 'Group attendance analysis using EP Open Data voting statistics. '
       + 'Individual attendance rates derived from plenary vote participation. '
-      + 'Data source: European Parliament Open Data Portal.'
+      + 'Data source: European Parliament Open Data Portal.',
+    dataQualityWarnings: buildGroupAttendanceWarnings(dataCoverage, totalMEPs),
   };
 }
 

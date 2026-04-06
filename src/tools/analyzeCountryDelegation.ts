@@ -77,6 +77,7 @@ interface CountryDelegationAnalysis {
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 /**
@@ -233,7 +234,9 @@ async function buildDelegationAnalysis(
 
   const committeePresence = computeCommitteePresence(details);
 
-  // National cohesion - approximated from group concentration
+  // National cohesion - approximated from group concentration.
+  // The +10 baseline accounts for empirical national-interest cohesion (e.g., structural funds,
+  // CAP allocations) that cross-cuts political group lines even in fragmented delegations.
   const topGroupShare = distribution[0]?.percentage ?? 0;
   const nationalCohesion = Math.min(100, topGroupShare + 10);
 
@@ -266,7 +269,12 @@ async function buildDelegationAnalysis(
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
     methodology: 'Country delegation analysis using EP Open Data: political group distribution, '
       + 'voting behavior aggregation, committee representation mapping, and national cohesion scoring. '
-      + 'Data source: European Parliament Open Data Portal.'
+      + 'Data source: European Parliament Open Data Portal.',
+    dataQualityWarnings: [
+      ...(dataCoverage < 1 ? [`Voting statistics available for ${String(Math.round(dataCoverage * 100))}% of delegation MEPs`] : []),
+      'National cohesion includes +10 baseline offset (proxy for national-interest voting beyond group lines)',
+      ...(attendances.length === 0 ? ['No MEP voting statistics available — attendance and loyalty metrics are zero'] : []),
+    ],
   };
 }
 

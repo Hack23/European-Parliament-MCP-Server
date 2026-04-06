@@ -68,6 +68,12 @@ describe('sentiment_tracker Tool', () => {
   });
 
   describe('Response Structure', () => {
+
+    it('should include dataQualityWarnings array in response', async () => {
+      const result = await handleSentimentTracker({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { dataQualityWarnings: string[] };
+      expect(Array.isArray(data.dataQualityWarnings)).toBe(true);
+    });
     it('should return MCP-compliant response', async () => {
       const result = await handleSentimentTracker({});
       expect(result.content).toHaveLength(1);

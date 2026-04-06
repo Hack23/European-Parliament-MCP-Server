@@ -206,6 +206,12 @@ describe('correlate_intelligence Tool', () => {
   // ---- Response structure --------------------------------------------------
 
   describe('Response Structure', () => {
+
+    it('should include dataQualityWarnings array in response', async () => {
+      const result = await handleCorrelateIntelligence({ mepIds: ['123'] });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { dataQualityWarnings: string[] };
+      expect(Array.isArray(data.dataQualityWarnings)).toBe(true);
+    });
     it('should return MCP-compliant response with single text content', async () => {
       const result = await handleCorrelateIntelligence({ mepIds: ['123'] });
       expect(result.content).toHaveLength(1);

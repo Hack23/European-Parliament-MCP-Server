@@ -71,6 +71,7 @@ interface LegislativePipelineAnalysis {
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 /**
@@ -135,6 +136,10 @@ function computePipelineMetrics(proc: Procedure): {
   const initiated = proc.dateInitiated !== '' ? proc.dateInitiated : '';
   const lastAct = proc.dateLastActivity !== '' ? proc.dateLastActivity : undefined;
   const totalDays = daysBetween(initiated, lastAct);
+  // Progress bounded to 5-90% for active procedures:
+  // 5% floor: newly initiated procedures have at least entered the legislative cycle
+  // 90% ceiling: only completed procedures should report 100%
+  // Linear estimate: totalDays/10 approximates ~1000-day average EU legislative cycle
   const progressEstimate = isCompleted ? 100 : Math.min(90, Math.max(5, Math.round(totalDays / 10)));
   const velocityScore = isStalled ? 20 : Math.min(100, 100 - Math.min(80, daysInStage));
   const estimatedDays = isCompleted ? 0 : Math.max(30, daysInStage * 2);
@@ -328,6 +333,9 @@ export async function handleMonitorLegislativePipeline(
         + 'European Parliament open data. Computed attributes (health score, velocity, '
         + 'bottleneck risk, momentum) are derived from real procedure dates and stages. '
         + 'Data source: https://data.europarl.europa.eu/api/v2/procedures',
+      dataQualityWarnings: pipeline.length < 10
+        ? ['Small procedure sample (< 10) — pipeline health metrics may not be statistically representative']
+        : [],
     };
 
     return { content: [{ type: 'text', text: JSON.stringify(analysis, null, 2) }] };

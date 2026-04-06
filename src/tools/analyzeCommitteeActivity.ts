@@ -70,6 +70,7 @@ interface CommitteeActivityAnalysis {
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 /**
@@ -194,7 +195,11 @@ async function buildAnalysis(
       + 'procedures from /procedures, adopted texts from /adopted-texts. '
       + 'Document/procedure/adopted-text counts are parliament-wide lower bounds (single page, '
       + 'not filtered by committee). Fields showing zero indicate data not available from the EP API. '
-      + 'Data source: European Parliament Open Data Portal.'
+      + 'Data source: European Parliament Open Data Portal.',
+    dataQualityWarnings: [
+      ...(!hasRealData ? ['All document/procedure/adopted-text counts returned zero — either no data or EP API error (indistinguishable)'] : []),
+      'Meeting counts and member attendance not available from current EP API endpoints — reported as zero',
+    ],
   };
 }
 

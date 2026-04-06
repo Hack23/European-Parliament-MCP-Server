@@ -42,6 +42,7 @@ interface VotingAnomalyAnalysis {
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
+  dataQualityWarnings: string[];
 }
 
 /**
@@ -54,6 +55,7 @@ function classifyAttendanceSeverity(rate: number): string {
 /**
  * Classify abstention severity
  */
+// > 30% abstention: substantially above EP average (~5-10%), indicating protest or disengagement
 function classifyAbstentionSeverity(rate: number): string {
   return rate > 30 ? 'HIGH' : 'MEDIUM';
 }
@@ -61,6 +63,8 @@ function classifyAbstentionSeverity(rate: number): string {
 /**
  * Classify defection severity
  */
+// > 40%: near-majority breaks party line (Rice cohesion < 0.2)
+// > 25%: significant minority dissent; <= 25%: normal intra-party variance
 function classifyDefectionSeverity(rate: number): string {
   if (rate > 40) return 'HIGH';
   if (rate > 25) return 'MEDIUM';
@@ -327,7 +331,8 @@ export async function handleDetectVotingAnomalies(
         sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
         methodology: 'The EP API /meps/{id} endpoint does not return voting statistics. '
           + 'Anomaly detection requires voting data which is unavailable for this MEP. '
-          + 'Data source: European Parliament Open Data Portal.'
+          + 'Data source: European Parliament Open Data Portal.',
+        dataQualityWarnings: ['Voting statistics unavailable for this MEP — anomaly detection cannot be performed'],
       });
     }
 
@@ -353,7 +358,10 @@ export async function handleDetectVotingAnomalies(
         + 'from /meps/{id} on the European Parliament Open Data API. Vote-level records are not fetched; '
         + 'many voting statistic fields may be zero or unavailable from the EP API. Group-level analysis '
         + 'reflects data availability — detected anomalies are approximate and indicative only. '
-        + 'Data source: European Parliament Open Data Portal (MEP metadata endpoints).'
+        + 'Data source: European Parliament Open Data Portal (MEP metadata endpoints).',
+      dataQualityWarnings: result.anomalies.length === 0
+        ? ['Vote-level records not fetched — anomaly detection uses aggregated MEP metadata only']
+        : [],
     };
 
     return buildToolResponse(analysis);
