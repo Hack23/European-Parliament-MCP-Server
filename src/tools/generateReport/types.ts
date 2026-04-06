@@ -19,6 +19,8 @@ export interface Report {
   sections: ReportSection[];
   statistics: Record<string, number | string>;
   recommendations?: string[];
+  /** Warnings about partially available or missing data */
+  dataQualityWarnings?: string[];
 }
 
 /**

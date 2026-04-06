@@ -26,6 +26,7 @@ import {
 } from './reportGenerators.js';
 import type { Report, ReportType } from './types.js';
 import type { ToolResult } from '../shared/types.js';
+import { ToolError } from '../shared/errors.js';
 
 /**
  * Report parameters type inferred from schema
@@ -97,9 +98,13 @@ export async function handleGenerateReport(
       }]
     };
   } catch (error: unknown) {
-    // Handle errors without exposing internal details
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to generate report: ${errorMessage}`);
+    throw new ToolError({
+      toolName: 'generate_report',
+      operation: 'generateReport',
+      message: 'Failed to generate report',
+      isRetryable: true,
+      cause: error,
+    });
   }
 }
 

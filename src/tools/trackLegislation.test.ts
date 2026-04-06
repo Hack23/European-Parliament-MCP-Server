@@ -171,6 +171,16 @@ describe('track_legislation Tool', () => {
       expect(parsed.methodology).toContain('EP API');
       expect(parsed.methodology).toContain('/procedures');
     });
+
+    it('should include dataQualityWarnings array', async () => {
+      const result = await handleTrackLegislation({
+        procedureId: '2024/0001(COD)'
+      });
+
+      const parsed = JSON.parse(result.content[0].text) as { dataQualityWarnings: string[] };
+      expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
+      expect(parsed.dataQualityWarnings.length).toBeGreaterThan(0);
+    });
   });
 
   describe('Error Handling', () => {

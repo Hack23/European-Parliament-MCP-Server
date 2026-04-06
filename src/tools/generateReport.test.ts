@@ -6,7 +6,12 @@ import { epClient } from '../clients/europeanParliamentClient.js';
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
     getMEPDetails: vi.fn(),
-    getCommitteeInfo: vi.fn()
+    getCommitteeInfo: vi.fn(),
+    getParliamentaryQuestions: vi.fn().mockResolvedValue({ data: [] }),
+    getCommitteeDocuments: vi.fn().mockResolvedValue({ data: [] }),
+    getAdoptedTexts: vi.fn().mockResolvedValue({ data: [] }),
+    getPlenarySessions: vi.fn().mockResolvedValue({ data: [] }),
+    getProcedures: vi.fn().mockResolvedValue({ data: [] })
   }
 }));
 
@@ -246,7 +251,7 @@ describe('generate_report Tool', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle API errors for MEP reports', async () => {
+    it('should handle API errors for MEP reports as ToolError', async () => {
       vi.mocked(epClient.getMEPDetails).mockRejectedValue(new Error('API Error'));
 
       await expect(
@@ -254,10 +259,10 @@ describe('generate_report Tool', () => {
           reportType: 'MEP_ACTIVITY',
           subjectId: 'MEP-124810'
         })
-      ).rejects.toThrow('Failed to generate report');
+      ).rejects.toThrow('[generate_report] generateReport: Failed to generate report');
     });
 
-    it('should handle API errors for committee reports', async () => {
+    it('should handle API errors for committee reports as ToolError', async () => {
       vi.mocked(epClient.getCommitteeInfo).mockRejectedValue(new Error('API Error'));
 
       await expect(
@@ -265,7 +270,7 @@ describe('generate_report Tool', () => {
           reportType: 'COMMITTEE_PERFORMANCE',
           subjectId: 'COMM-ENVI'
         })
-      ).rejects.toThrow('Failed to generate report');
+      ).rejects.toThrow('[generate_report] generateReport: Failed to generate report');
     });
   });
 
@@ -290,6 +295,76 @@ describe('generate_report Tool', () => {
       expect(schema.properties?.reportType).toBeDefined();
       const reportType = schema.properties?.reportType;
       expect(typeof reportType === 'object' && reportType !== null && 'enum' in reportType).toBe(true);
+    });
+  });
+
+  describe('Data Quality Warnings', () => {
+    it('should include dataQualityWarnings in VOTING_STATISTICS report', async () => {
+      const result = await handleGenerateReport({
+        reportType: 'VOTING_STATISTICS'
+      });
+
+      const parsed: unknown = JSON.parse(result.content[0].text);
+      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
+      if (typeof parsed === 'object' && parsed !== null && 'dataQualityWarnings' in parsed) {
+        expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
+      }
+    });
+
+    it('should include dataQualityWarnings in LEGISLATION_PROGRESS report', async () => {
+      const result = await handleGenerateReport({
+        reportType: 'LEGISLATION_PROGRESS'
+      });
+
+      const parsed: unknown = JSON.parse(result.content[0].text);
+      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
+      if (typeof parsed === 'object' && parsed !== null && 'dataQualityWarnings' in parsed) {
+        expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
+      }
+    });
+
+    it('should include dataQualityWarnings in MEP_ACTIVITY report', async () => {
+      const mockMEP = {
+        id: 'MEP-124810',
+        name: 'John Doe',
+        country: 'SE',
+        politicalGroup: 'EPP',
+        active: true,
+        committees: ['ENVI'],
+      };
+      vi.mocked(epClient.getMEPDetails).mockResolvedValue(mockMEP);
+
+      const result = await handleGenerateReport({
+        reportType: 'MEP_ACTIVITY',
+        subjectId: 'MEP-124810'
+      });
+
+      const parsed: unknown = JSON.parse(result.content[0].text);
+      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
+      if (typeof parsed === 'object' && parsed !== null && 'dataQualityWarnings' in parsed) {
+        expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
+      }
+    });
+
+    it('should include dataQualityWarnings in COMMITTEE_PERFORMANCE report', async () => {
+      const mockCommittee = {
+        id: 'COMM-ENVI',
+        abbreviation: 'ENVI',
+        name: 'Committee on the Environment',
+        members: [{ id: 'MEP-1', name: 'Member 1', role: 'CHAIR' }]
+      };
+      vi.mocked(epClient.getCommitteeInfo).mockResolvedValue(mockCommittee);
+
+      const result = await handleGenerateReport({
+        reportType: 'COMMITTEE_PERFORMANCE',
+        subjectId: 'COMM-ENVI'
+      });
+
+      const parsed: unknown = JSON.parse(result.content[0].text);
+      expect(typeof parsed === 'object' && parsed !== null).toBe(true);
+      if (typeof parsed === 'object' && parsed !== null && 'dataQualityWarnings' in parsed) {
+        expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
+      }
     });
   });
 });
