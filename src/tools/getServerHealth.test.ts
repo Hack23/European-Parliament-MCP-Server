@@ -212,6 +212,22 @@ describe('get_server_health Tool', () => {
       const parsed = GetServerHealthSchema.parse({ extra: true });
       expect(parsed).toEqual({});
     });
+
+    it('should reject with ToolError via promise for non-object input', async () => {
+      await expect(handleGetServerHealth('bad')).rejects.toThrow('Invalid parameters');
+    });
+
+    it('should produce clean error message without leading colon for empty path', async () => {
+      try {
+        await handleGetServerHealth('bad');
+        expect.fail('should have rejected');
+      } catch (error: unknown) {
+        const msg = (error as Error).message;
+        // Empty path should NOT produce ": Expected" (leading colon before message)
+        expect(msg).toMatch(/Invalid parameters: [A-Z]/);
+        expect(msg).toContain('expected object, received string');
+      }
+    });
   });
 
   describe('Metadata', () => {

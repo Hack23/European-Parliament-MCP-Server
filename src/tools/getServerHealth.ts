@@ -59,12 +59,17 @@ function deriveServerStatus(level: AvailabilityLevel): 'healthy' | 'degraded' | 
  * @param args - Validated against empty-object schema (no parameters accepted)
  * @returns MCP tool result with JSON health payload
  */
-export function handleGetServerHealth(args: unknown): Promise<ToolResult> {
+export async function handleGetServerHealth(args: unknown): Promise<ToolResult> {
   try {
     GetServerHealthSchema.parse(args ?? {});
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = error.issues
+        .map((e) => {
+          const path = e.path.join('.');
+          return path ? `${path}: ${e.message}` : e.message;
+        })
+        .join('; ');
       throw new ToolError({
         toolName: 'get_server_health',
         operation: 'validateInput',
@@ -93,7 +98,7 @@ export function handleGetServerHealth(args: unknown): Promise<ToolResult> {
     },
   };
 
-  return Promise.resolve(buildToolResponse(result));
+  return await Promise.resolve(buildToolResponse(result));
 }
 
 /** Tool metadata for MCP registration. */
