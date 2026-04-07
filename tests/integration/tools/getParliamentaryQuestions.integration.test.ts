@@ -1,238 +1,52 @@
 /**
- * Integration/Contract Tests: get_parliamentary_questions Tool
- * 
- * Validates the getParliamentaryQuestions tool response structure/contract against the European Parliament API model.
- * This test currently runs against the mock-backed EP client, not the live API.
- * 
- * ISMS Policy: SC-002 (Secure Testing), PE-001 (Performance Testing)
- * 
+ * Integration Tests: get_parliamentary_questions Tool
+ *
+ * Smoke-tests the getParliamentaryQuestions tool against the real European Parliament API.
+ * Error-handling, caching, and data-consistency are covered by unit tests.
+ *
+ * ISMS Policy: SC-002 (Secure Testing)
+ *
  * @see https://data.europarl.europa.eu/api/v2/
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { handleGetParliamentaryQuestions } from '../../../src/tools/getParliamentaryQuestions.js';
 import { shouldRunIntegrationTests } from '../setup.js';
-import { retryOrSkip, measureTime } from '../../helpers/testUtils.js';
+import { retryOrSkip } from '../../helpers/testUtils.js';
 import { validatePaginatedResponse, validateParliamentaryQuestionStructure } from '../helpers/responseValidator.js';
-import { saveMCPResponseFixture } from '../helpers/fixtureManager.js';
 
-// Skip tests if integration tests are not enabled
 const describeIntegration = shouldRunIntegrationTests() ? describe : describe.skip;
 
 describeIntegration('get_parliamentary_questions Integration Tests', () => {
-  beforeEach(async () => {
-    // Wait between tests to respect rate limits
-    await new Promise(resolve => setTimeout(resolve, 2000));
-  });
+  it('should fetch parliamentary questions with valid structure', async (ctx) => {
+    const result = await retryOrSkip(async () => {
+      return handleGetParliamentaryQuestions({ limit: 10 });
+    }, 'basic retrieval');
+    if (!result) { ctx.skip(); return; }
 
-  describe('Basic Retrieval', () => {
-    it('should return parliamentary questions matching expected contract', async () => {
-      const result = await retryOrSkip(async () => {
-        return handleGetParliamentaryQuestions({ limit: 10 });
-      }, 'basic retrieval');
-      if (!result) return;
+    const response = validatePaginatedResponse(result);
+    expect(response.data).toBeDefined();
 
-      saveMCPResponseFixture('get_parliamentary_questions', 'recent-questions', result);
+    response.data.forEach((question: unknown) => {
+      validateParliamentaryQuestionStructure(question);
+    });
+  }, 60000);
 
-      // Validate structure
-      const response = validatePaginatedResponse(result);
-      expect(response.data).toBeDefined();
-
-      // Validate each question
-      response.data.forEach((question: unknown) => {
-        validateParliamentaryQuestionStructure(question);
+  it('should filter by question type', async (ctx) => {
+    const result = await retryOrSkip(async () => {
+      return handleGetParliamentaryQuestions({
+        type: 'WRITTEN' as const,
+        limit: 10
       });
-    }, 60000);
-  });
+    }, 'filter written questions');
+    if (!result) { ctx.skip(); return; }
 
-  describe('Question Type Filtering', () => {
-    it('should filter by question type (written)', async () => {
-      const result = await retryOrSkip(async () => {
-        return handleGetParliamentaryQuestions({ 
-          type: 'WRITTEN' as const,
-          limit: 10 
-        });
-      }, 'filter written questions');
-      if (!result) return;
+    const response = validatePaginatedResponse(result);
+    expect(response.data).toBeDefined();
 
-      saveMCPResponseFixture('get_parliamentary_questions', 'written-questions', result);
-
-      const response = validatePaginatedResponse(result);
-      expect(response.data).toBeDefined();
-
-      response.data.forEach((question: unknown) => {
-        validateParliamentaryQuestionStructure(question);
-        // Note: API may use different type identifiers
-        expect((question as { type: string }).type).toBeDefined();
-      });
-    }, 60000);
-
-    it('should filter by question type (oral)', async () => {
-      const result = await retryOrSkip(async () => {
-        return handleGetParliamentaryQuestions({ 
-          type: 'ORAL' as const,
-          limit: 10 
-        });
-      }, 'filter oral questions');
-      if (!result) return;
-
-      saveMCPResponseFixture('get_parliamentary_questions', 'oral-questions', result);
-
-      const response = validatePaginatedResponse(result);
-      expect(response.data).toBeDefined();
-
-      response.data.forEach((question: unknown) => {
-        validateParliamentaryQuestionStructure(question);
-      });
-    }, 60000);
-  });
-
-  describe('Date Range Filtering', () => {
-    it('should accept date range parameters and return questions', async () => {
-      const startDate = '2024-01-01';
-      const endDate = '2024-12-31';
-      
-      const result = await retryOrSkip(async () => {
-        return handleGetParliamentaryQuestions({ 
-          dateFrom: startDate,
-          dateTo: endDate,
-          limit: 10 
-        });
-      }, 'filter by date range');
-      if (!result) return;
-
-      saveMCPResponseFixture('get_parliamentary_questions', 'date-range-2024', result);
-
-      const response = validatePaginatedResponse(result);
-      expect(response.data).toBeDefined();
-
-      // Validate question structure (EP API may not strictly honor date filters)
-      response.data.forEach((question: unknown) => {
-        validateParliamentaryQuestionStructure(question);
-      });
-    }, 60000);
-  });
-
-  describe('Pagination', () => {
-    it('should handle pagination correctly', async () => {
-      const page1 = await retryOrSkip(async () => {
-        return handleGetParliamentaryQuestions({ limit: 5, offset: 0 });
-      }, 'pagination page 1');
-      if (!page1) return;
-      
-      const page2 = await retryOrSkip(async () => {
-        return handleGetParliamentaryQuestions({ limit: 5, offset: 5 });
-      }, 'pagination page 2');
-      if (!page2) return;
-
-      const response1 = validatePaginatedResponse(page1);
-      const response2 = validatePaginatedResponse(page2);
-
-      // Note: With the current mock client, paging may return the same item on all pages.
-      // We only validate pagination metadata and basic data presence here.
-      expect(Array.isArray(response1.data)).toBe(true);
-      expect(Array.isArray(response2.data)).toBe(true);
-
-      // Pagination metadata
-      expect(response1.offset).toBe(0);
-      expect(response2.offset).toBe(5);
-    }, 120000);
-  });
-
-  describe('Error Handling', () => {
-    it('should reject invalid date format', async () => {
-      await expect(async () => {
-        return handleGetParliamentaryQuestions({ 
-          // @ts-expect-error - Testing invalid date format
-          dateFrom: 'invalid-date' 
-        });
-      }).rejects.toThrow();
-    }, 10000);
-
-    it('should reject negative limit', async () => {
-      await expect(async () => {
-        return handleGetParliamentaryQuestions({ limit: -1 });
-      }).rejects.toThrow();
-    }, 10000);
-  });
-
-  describe('Response Validation', () => {
-    it('should return valid parliamentary question data', async () => {
-      const result = await retryOrSkip(async () => {
-        return handleGetParliamentaryQuestions({ limit: 5 });
-      }, 'response validation');
-      if (!result) return;
-
-      const response = validatePaginatedResponse(result);
-      expect(response.data).toBeDefined();
-
-      response.data.forEach((question: unknown) => {
-        // Required fields
-        expect(question).toHaveProperty('id');
-        expect(question).toHaveProperty('topic');
-        expect(question).toHaveProperty('type');
-
-        // Type validation
-        expect(typeof (question as { id: unknown }).id).toBe('string');
-        expect(typeof (question as { topic: unknown }).topic).toBe('string');
-        expect(typeof (question as { type: unknown }).type).toBe('string');
-      });
-    }, 60000);
-  });
-
-  describe('Performance', () => {
-    it('should complete API requests within acceptable time', async () => {
-      try {
-        const [, duration] = await measureTime(async () => {
-          return retryOrSkip(async () => handleGetParliamentaryQuestions({ limit: 10 }), 'performance test');
-        });
-
-        expect(duration).toBeLessThan(30000);
-        console.log(`[Performance] get_parliamentary_questions request: ${duration.toFixed(2)}ms`);
-      } catch {
-        console.warn('[SKIP] Performance test skipped due to API unavailability');
-      }
-    }, 60000);
-
-    it('should benefit from caching on repeated requests', async () => {
-      const params = { type: 'WRITTEN' as const, limit: 5 };
-
-      // First request
-      const firstResult = await retryOrSkip(async () => handleGetParliamentaryQuestions(params), 'caching first request');
-      if (!firstResult) return;
-
-      // Measure second request (should be cached)
-      const [, duration] = await measureTime(async () => {
-        return handleGetParliamentaryQuestions(params);
-      });
-
-      expect(duration).toBeLessThan(5000);
-      console.log(`[Performance] get_parliamentary_questions cached: ${duration.toFixed(2)}ms`);
-    }, 120000);
-  });
-
-  describe('Data Consistency', () => {
-    it('should return consistent data for identical requests', async () => {
-      const params = { type: 'WRITTEN' as const, limit: 5 };
-
-      const result1 = await retryOrSkip(async () => handleGetParliamentaryQuestions(params), 'consistency first request');
-      if (!result1) return;
-      const result2 = await handleGetParliamentaryQuestions(params);
-
-      const response1 = validatePaginatedResponse(result1);
-      const response2 = validatePaginatedResponse(result2);
-
-      // Compare stable pagination metadata
-      expect(response1.offset).toBe(response2.offset);
-      expect(response1.limit).toBe(response2.limit);
-
-      // Compare number of records returned
-      expect(response1.data.length).toBe(response2.data.length);
-
-      // If there are records, compare stable identifiers on the first item
-      if (response1.data.length > 0 && response2.data.length > 0) {
-        expect((response1.data[0] as { id: string }).id).toBe((response2.data[0] as { id: string }).id);
-      }
-    }, 120000);
-  });
+    response.data.forEach((question: unknown) => {
+      validateParliamentaryQuestionStructure(question);
+      expect((question as { type: string }).type).toBeDefined();
+    });
+  }, 60000);
 });

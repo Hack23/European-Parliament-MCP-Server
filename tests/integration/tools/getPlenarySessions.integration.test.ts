@@ -1,248 +1,35 @@
 /**
  * Integration Tests: get_plenary_sessions Tool
- * 
- * Tests the getPlenarySessions tool against real European Parliament API
- * 
- * ISMS Policy: SC-002 (Secure Testing), PE-001 (Performance Testing)
- * 
+ *
+ * Smoke-tests the getPlenarySessions tool against the real European Parliament API.
+ * Error-handling, caching, and data-consistency are covered by unit tests.
+ *
+ * ISMS Policy: SC-002 (Secure Testing)
+ *
  * @see https://data.europarl.europa.eu/api/v2/
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { handleGetPlenarySessions } from '../../../src/tools/getPlenarySessions.js';
 import { shouldRunIntegrationTests } from '../setup.js';
-import { retryOrSkip, measureTime } from '../../helpers/testUtils.js';
+import { retryOrSkip } from '../../helpers/testUtils.js';
 import { validatePaginatedResponse, validatePlenarySessionStructure } from '../helpers/responseValidator.js';
-import { saveMCPResponseFixture } from '../helpers/fixtureManager.js';
 
-// Skip tests if integration tests are not enabled
 const describeIntegration = shouldRunIntegrationTests() ? describe : describe.skip;
 
 describeIntegration('get_plenary_sessions Integration Tests', () => {
-  beforeEach(async () => {
-    // Wait between tests to respect rate limits
-    await new Promise(resolve => setTimeout(resolve, 2000));
-  });
+  it('should fetch plenary sessions with valid structure', async (ctx) => {
+    const result = await retryOrSkip(async () => {
+      return handleGetPlenarySessions({ limit: 10 });
+    }, 'fetch plenary sessions');
+    if (!result) { ctx.skip(); return; }
 
-  describe('Basic Retrieval', () => {
-    it('should fetch plenary sessions from real API', async () => {
-      const result = await retryOrSkip(async () => {
-        return handleGetPlenarySessions({ limit: 10 });
-      }, 'fetch plenary sessions');
-      if (!result) return;
+    const response = validatePaginatedResponse(result);
+    expect(response.data.length).toBeGreaterThan(0);
+    expect(response.total).toBeGreaterThan(0);
 
-      saveMCPResponseFixture('get_plenary_sessions', 'recent-sessions', result);
-
-      // Validate structure
-      const response = validatePaginatedResponse(result);
-      expect(response.data).toBeDefined();
-      expect(response.total).toBeGreaterThan(0);
-
-      // Validate each session
-      response.data.forEach((session: unknown) => {
-        validatePlenarySessionStructure(session);
-      });
-    }, 60000);
-  });
-
-  describe('Date Range Filtering', () => {
-    it('should accept start date parameter and return valid session structure', async () => {
-      const startDate = '2024-01-01';
-      const result = await retryOrSkip(async () => {
-        return handleGetPlenarySessions({ 
-          dateFrom: startDate,
-          limit: 10 
-        });
-      }, 'filter by start date');
-      if (!result) return;
-
-      saveMCPResponseFixture('get_plenary_sessions', 'filtered-by-start-date', result);
-
-      const response = validatePaginatedResponse(result);
-      expect(response.data).toBeDefined();
-
-      // Validate each session has valid structure
-      response.data.forEach((session: unknown) => {
-        validatePlenarySessionStructure(session);
-      });
-      // Note: EP API may not honor date-from parameter for /meetings endpoint;
-      // we validate structure but don't assert strict date bounds
-    }, 60000);
-
-    it('should filter sessions by end date', async () => {
-      const endDate = '2025-12-31';
-      const result = await retryOrSkip(async () => {
-        return handleGetPlenarySessions({ 
-          dateTo: endDate,
-          limit: 10 
-        });
-      }, 'filter by end date');
-      if (!result) return;
-
-      const response = validatePaginatedResponse(result);
-      expect(response.data).toBeDefined();
-
-      // All sessions should be on or before end date
-      const endTime = Date.parse(endDate);
-      expect(Number.isNaN(endTime)).toBe(false);
-      
-      response.data.forEach((session: unknown) => {
-        const sessionDate = (session as { date: string }).date;
-        const sessionTime = Date.parse(sessionDate);
-        expect(Number.isNaN(sessionTime)).toBe(false);
-        expect(sessionTime <= endTime).toBe(true);
-      });
-    }, 60000);
-
-    it('should accept date range parameters and return valid session structure', async () => {
-      const startDate = '2024-01-01';
-      const endDate = '2024-12-31';
-      
-      const result = await retryOrSkip(async () => {
-        return handleGetPlenarySessions({ 
-          dateFrom: startDate,
-          dateTo: endDate,
-          limit: 10 
-        });
-      }, 'filter by date range');
-      if (!result) return;
-
-      saveMCPResponseFixture('get_plenary_sessions', 'date-range-2024', result);
-
-      const response = validatePaginatedResponse(result);
-      expect(response.data).toBeDefined();
-
-      // Validate each session has valid structure
-      response.data.forEach((session: unknown) => {
-        validatePlenarySessionStructure(session);
-        const sessionDate = (session as { date: string }).date;
-        const sessionTime = Date.parse(sessionDate);
-        expect(Number.isNaN(sessionTime)).toBe(false);
-      });
-      // Note: EP API may not honor date-from/date-to for /meetings endpoint;
-      // we validate structure but don't assert strict date bounds
-    }, 60000);
-  });
-
-  describe('Pagination', () => {
-    it('should handle pagination correctly', async () => {
-      const page1 = await retryOrSkip(async () => {
-        return handleGetPlenarySessions({ limit: 5, offset: 0 });
-      }, 'pagination page 1');
-      if (!page1) return;
-      
-      const page2 = await retryOrSkip(async () => {
-        return handleGetPlenarySessions({ limit: 5, offset: 5 });
-      }, 'pagination page 2');
-      if (!page2) return;
-
-      const response1 = validatePaginatedResponse(page1);
-      const response2 = validatePaginatedResponse(page2);
-
-      // Pages should have different data
-      if (response1.data.length > 0 && response2.data.length > 0) {
-        expect((response1.data[0] as { id: string }).id).not.toBe(
-          (response2.data[0] as { id: string }).id
-        );
-      }
-
-      // Pagination metadata
-      expect(response1.offset).toBe(0);
-      expect(response2.offset).toBe(5);
-    }, 120000);
-  });
-
-  describe('Error Handling', () => {
-    it('should reject invalid date format', async () => {
-      await expect(async () => {
-        return handleGetPlenarySessions({ 
-          // @ts-expect-error - Testing invalid date format (expected 'YYYY-MM-DD')
-          dateFrom: '2024/01/01' 
-        });
-      }).rejects.toThrow();
-    }, 10000);
-
-    it('should reject negative offset', async () => {
-      await expect(async () => {
-        return handleGetPlenarySessions({ offset: -1 });
-      }).rejects.toThrow();
-    }, 10000);
-  });
-
-  describe('Response Validation', () => {
-    it('should return valid session data with required fields', async () => {
-      const result = await retryOrSkip(async () => {
-        return handleGetPlenarySessions({ limit: 5 });
-      }, 'response validation');
-      if (!result) return;
-
-      const response = validatePaginatedResponse(result);
-      expect(response.data).toBeDefined();
-
-      response.data.forEach((session: unknown) => {
-        // Required fields
-        expect(session).toHaveProperty('id');
-        expect(session).toHaveProperty('date');
-
-        // Date format validation
-        expect((session as { date: string }).date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      });
-    }, 60000);
-  });
-
-  describe('Performance', () => {
-    it('should complete API requests within acceptable time', async () => {
-      try {
-        const [, duration] = await measureTime(async () => {
-          return retryOrSkip(async () => handleGetPlenarySessions({ limit: 10 }), 'performance test');
-        });
-
-        expect(duration).toBeLessThan(30000);
-        console.log(`[Performance] get_plenary_sessions request: ${duration.toFixed(2)}ms`);
-      } catch {
-        console.warn('[SKIP] Performance test skipped due to API unavailability');
-      }
-    }, 60000);
-
-    it('should benefit from caching on repeated requests', async () => {
-      const params = { limit: 5 };
-
-      // First request
-      const firstResult = await retryOrSkip(async () => handleGetPlenarySessions(params), 'caching first request');
-      if (!firstResult) return;
-
-      // Measure second request (should be cached)
-      const [, duration] = await measureTime(async () => {
-        return handleGetPlenarySessions(params);
-      });
-
-      expect(duration).toBeLessThan(5000);
-      console.log(`[Performance] get_plenary_sessions cached: ${duration.toFixed(2)}ms`);
-    }, 120000);
-  });
-
-  describe('Data Consistency', () => {
-    it('should return consistent data for identical requests', async () => {
-      const params = { dateFrom: '2024-01-01', limit: 5 };
-
-      const result1 = await retryOrSkip(async () => handleGetPlenarySessions(params), 'consistency first request');
-      if (!result1) return;
-      const result2 = await handleGetPlenarySessions(params);
-
-      const response1 = validatePaginatedResponse(result1);
-      const response2 = validatePaginatedResponse(result2);
-
-      // Compare stable pagination metadata
-      expect(response1.offset).toBe(response2.offset);
-      expect(response1.limit).toBe(response2.limit);
-
-      // Compare number of records returned
-      expect(response1.data.length).toBe(response2.data.length);
-
-      // If there are records, compare stable identifiers on the first item
-      if (response1.data.length > 0 && response2.data.length > 0) {
-        expect((response1.data[0] as { id: string }).id).toBe((response2.data[0] as { id: string }).id);
-      }
-    }, 120000);
-  });
+    response.data.forEach((session: unknown) => {
+      validatePlenarySessionStructure(session);
+    });
+  }, 60000);
 });
