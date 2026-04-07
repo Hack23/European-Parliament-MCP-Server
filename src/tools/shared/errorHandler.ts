@@ -75,7 +75,7 @@ export function classifyError(error: unknown): ErrorClassification {
 
   // 4. Plain Error heuristics (timeout detection)
   if (error instanceof Error && error.message.includes('timed out')) {
-    return { errorCode: 'UPSTREAM_TIMEOUT', errorCategory: 'TIMEOUT', httpStatus: 408, retryable: true };
+    return { errorCode: 'UPSTREAM_TIMEOUT', errorCategory: 'TIMEOUT', retryable: true };
   }
 
   // 5. Default
@@ -102,7 +102,7 @@ function classifyToolErrorHeuristic(error: ToolError): ErrorClassification {
     return { errorCode: 'INVALID_PARAMS', errorCategory: 'CLIENT_ERROR', retryable: false };
   }
   if (error.message.includes('timed out')) {
-    return { errorCode: 'UPSTREAM_TIMEOUT', errorCategory: 'TIMEOUT', httpStatus: 408, retryable: true };
+    return { errorCode: 'UPSTREAM_TIMEOUT', errorCategory: 'TIMEOUT', retryable: true };
   }
   return { errorCode: 'INTERNAL_ERROR', errorCategory: 'INTERNAL', retryable: error.isRetryable };
 }

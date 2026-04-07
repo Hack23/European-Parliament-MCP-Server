@@ -193,6 +193,7 @@ describe('classifyError', () => {
     expect(result.errorCode).toBe('UPSTREAM_TIMEOUT');
     expect(result.errorCategory).toBe('TIMEOUT');
     expect(result.retryable).toBe(true);
+    expect(result.httpStatus).toBeUndefined();
   });
 
   it('should classify ToolError with "timed out" in message as TIMEOUT', () => {
@@ -205,6 +206,7 @@ describe('classifyError', () => {
     const result = classifyError(err);
     expect(result.errorCode).toBe('UPSTREAM_TIMEOUT');
     expect(result.errorCategory).toBe('TIMEOUT');
+    expect(result.httpStatus).toBeUndefined();
   });
 
   it('should classify ToolError with cause having statusCode', () => {
