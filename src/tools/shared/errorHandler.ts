@@ -75,11 +75,11 @@ export function extractTimeoutMs(error: unknown): number | undefined {
 }
 
 /**
- * Extracts the most specific `toolName` from an error's cause chain.
+ * Extracts the nearest `toolName` from an error's cause chain.
  *
- * Walks the chain looking for the nearest `ToolError` and returns its
- * `toolName`. Falls back to the provided `fallback` when no `ToolError`
- * is found in the chain.
+ * Walks the chain from the provided error toward its causes, returning the
+ * first `ToolError` encountered (that is, the outermost `ToolError` in the
+ * chain). Falls back to the provided `fallback` when no `ToolError` is found.
  *
  * @param error - Root error to inspect
  * @param fallback - Default tool name when no `ToolError` is in the chain
@@ -139,9 +139,11 @@ export function buildTimeoutResponse(toolName: string, timeoutMs: number | undef
  * `data: []` and a `dataQualityWarnings` array instead of `isError: true`.
  * This prevents MCP clients from retrying the same slow request.
  *
- * If the error is a {@link ToolError}, its own `toolName` and `isRetryable` are
- * used so the originating tool and retryability are correctly surfaced to callers
- * even when the error crosses handler boundaries.
+ * For non-timeout {@link ToolError} instances, the error's own `toolName` and
+ * `isRetryable` values are used so the originating tool and retryability are
+ * correctly surfaced to callers even when the error crosses handler boundaries.
+ * Timeout-related `ToolError` instances are handled by the timeout branch above
+ * and return the structured timeout response instead.
  *
  * @param error - Caught error value
  * @param toolName - Fallback tool name when error carries no tool identity
