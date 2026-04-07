@@ -28,8 +28,8 @@ describe('getToolMetadataArray', () => {
   // Cache once to avoid constructing a fresh 61-element array per test.
   const tools = getToolMetadataArray();
 
-  it('returns exactly 61 tools', () => {
-    expect(tools).toHaveLength(61);
+  it('returns exactly 62 tools', () => {
+    expect(tools).toHaveLength(62);
   });
 
   it('all tools have a non-empty name', () => {
@@ -78,9 +78,9 @@ describe('getToolMetadataArray', () => {
 
   // ── Category distribution ──────────────────────────────────────
 
-  it('has exactly 7 core tools', () => {
+  it('has exactly 8 core tools', () => {
     const coreTools = tools.filter((t) => t.category === 'core');
-    expect(coreTools).toHaveLength(7);
+    expect(coreTools).toHaveLength(8);
   });
 
   it('has exactly 3 advanced tools', () => {
@@ -108,18 +108,18 @@ describe('getToolMetadataArray', () => {
     expect(feed).toHaveLength(13);
   });
 
-  it('category counts sum to 61', () => {
+  it('category counts sum to 62', () => {
     const counts: Record<string, number> = { core: 0, advanced: 0, osint: 0, phase4: 0, phase5: 0, feed: 0 };
     for (const tool of tools) {
       counts[tool.category]++;
     }
     const total = Object.values(counts).reduce((a, b) => a + b, 0);
-    expect(total).toBe(61);
+    expect(total).toBe(62);
   });
 
   // ── Core tool names ────────────────────────────────────────────
 
-  it('includes all 7 core tool names', () => {
+  it('includes all 8 core tool names', () => {
     const names = tools.map((t) => t.name);
     const coreNames = [
       'get_meps',
@@ -129,6 +129,7 @@ describe('getToolMetadataArray', () => {
       'search_documents',
       'get_committee_info',
       'get_parliamentary_questions',
+      'get_server_health',
     ];
     for (const name of coreNames) {
       expect(names).toContain(name);
