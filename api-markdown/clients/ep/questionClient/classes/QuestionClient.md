@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.28**](../../../../README.md)
 
 ***
 
@@ -178,7 +178,7 @@ Builds EP API parameters for parliamentary question search.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:650](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L650)
+Defined in: [clients/ep/baseClient.ts:651](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L651)
 
 Clears all entries from the LRU cache.
 
@@ -234,7 +234,7 @@ Applies client-side filters to parliamentary questions.
 
 > `protected` **get**\<`T`\>(`endpoint`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:583](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L583)
+Defined in: [clients/ep/baseClient.ts:584](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L584)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -280,7 +280,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:659](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L659)
+Defined in: [clients/ep/baseClient.ts:660](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L660)
 
 Returns cache statistics for monitoring and debugging.
 
