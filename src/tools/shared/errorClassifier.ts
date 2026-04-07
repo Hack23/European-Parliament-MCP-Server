@@ -46,8 +46,10 @@ function extractHttpStatus(error: unknown): number | undefined {
  * Priority:
  * 1. If the error is a `ToolError` with explicit `errorCode` already set, use it.
  *    Retryability is derived from the error code's standard meaning (via
- *    {@link retryableForCode}) to prevent callers from setting `errorCode`
- *    without a matching `isRetryable`.
+ *    {@link retryableForCode}) rather than `ToolError.isRetryable`, ensuring
+ *    consistency even when callers set `errorCode` without a matching
+ *    `isRetryable`. **Note:** `ToolError.isRetryable` is ignored when
+ *    `errorCode` is present.
  * 2. Inspect the cause chain for HTTP status codes (from `APIError`).
  * 3. Fall back to operation-based heuristics (`validateInput` → `INVALID_PARAMS`).
  * 4. Default to `INTERNAL_ERROR`.
