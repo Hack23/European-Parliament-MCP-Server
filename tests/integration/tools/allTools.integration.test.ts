@@ -143,7 +143,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       }
 
       const result = await retryOrSkip(
-        () => handleGetMEPDetails({ mepId: testMEPId }),
+        () => handleGetMEPDetails({ id: testMEPId }),
         'get_mep_details'
       );
       if (!result) return;
@@ -329,8 +329,8 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       );
       if (!result) return;
 
-      const parsed = parseAndValidateNoMockData(result) as { groups: unknown[]; confidenceLevel: string };
-      expect(parsed).toHaveProperty('groups');
+      const parsed = parseAndValidateNoMockData(result) as { groupMetrics: unknown[]; confidenceLevel: string };
+      expect(parsed).toHaveProperty('groupMetrics');
       expect(parsed).toHaveProperty('confidenceLevel');
     }, 120000);
   });
@@ -431,7 +431,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
 
       const parsed = parseAndValidateNoMockData(result) as { country: string };
       expect(parsed).toHaveProperty('country');
-    }, 30000);
+    }, 120000);
   });
 
   describe('OSINT Tool: generate_political_landscape', () => {

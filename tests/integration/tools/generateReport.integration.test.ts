@@ -42,7 +42,7 @@ describeIntegration('generate_report Integration Tests', () => {
         console.warn('[SKIP] No MEPs returned from handleGetMEPs');
       }
     }
-  });
+  }, 60000);
 
   describe('MEP Activity Report', () => {
     it('should generate MEP activity report', async () => {
