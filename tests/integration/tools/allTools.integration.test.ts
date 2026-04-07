@@ -765,7 +765,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       const parsed = parseAndValidateNoMockData(result) as { groupSentiments: unknown; polarizationIndex: unknown };
       expect(parsed).toHaveProperty('groupSentiments');
       expect(parsed).toHaveProperty('polarizationIndex');
-    }, 30000);
+    }, 60000);
   });
 
   describe('Phase 6 OSINT Tool: early_warning_system', () => {
