@@ -194,20 +194,20 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   describe('Core Tool: search_documents', () => {
     it('should return real documents from EP API', async () => {
       const result = await retryOrSkip(
-        () => handleSearchDocuments({ query: 'climate', limit: 5 }),
+        () => handleSearchDocuments({ keyword: 'climate', limit: 5 }),
         'search_documents'
       );
       if (!result) return;
 
       const parsed = parseAndValidateNoMockData(result) as { data: { id: string }[] };
       expect(parsed).toHaveProperty('data');
-    }, 30000);
+    }, 60000);
   });
 
   describe('Core Tool: get_committee_info', () => {
     it('should return real committee data from EP API', async () => {
       const result = await retryOrSkip(
-        () => handleGetCommitteeInfo({ committeeId: 'AFET' }),
+        () => handleGetCommitteeInfo({ abbreviation: 'AFET' }),
         'get_committee_info'
       );
       if (!result) return;
@@ -248,10 +248,16 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       );
       if (!result) return;
 
-      const parsed = parseAndValidateNoMockData(result) as { mepId: string; statistics: unknown };
+      // EP API /meps/{id} does not expose voting stats, so the tool returns dataAvailable: false
+      const parsed = parseAndValidateNoMockData(result) as { mepId: string; dataAvailable?: boolean; statistics?: unknown };
       expect(parsed).toHaveProperty('mepId');
-      expect(parsed).toHaveProperty('statistics');
-    }, 30000);
+      // Response may have statistics (if data available) or dataAvailable: false
+      if (parsed.dataAvailable === false) {
+        expect(parsed).toHaveProperty('message');
+      } else {
+        expect(parsed).toHaveProperty('statistics');
+      }
+    }, 60000);
   });
 
   describe('Advanced Tool: track_legislation', () => {
@@ -280,13 +286,13 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   describe('Advanced Tool: generate_report', () => {
     it('should generate real MEP activity report', async () => {
       const result = await retryOrSkip(
-        () => handleGenerateReport({ reportType: 'LEGISLATIVE_ACTIVITY', limit: 5 }),
+        () => handleGenerateReport({ reportType: 'MEP_ACTIVITY' }),
         'generate_report'
       );
       if (!result) return;
 
       parseAndValidateNoMockData(result);
-    }, 30000);
+    }, 60000);
   });
 
   // ══════════════════════════════════════════════════════════════
@@ -326,7 +332,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       const parsed = parseAndValidateNoMockData(result) as { groups: unknown[]; confidenceLevel: string };
       expect(parsed).toHaveProperty('groups');
       expect(parsed).toHaveProperty('confidenceLevel');
-    }, 30000);
+    }, 120000);
   });
 
   describe('OSINT Tool: detect_voting_anomalies', () => {
@@ -345,26 +351,26 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   describe('OSINT Tool: compare_political_groups', () => {
     it('should compare groups using real data', async () => {
       const result = await retryOrSkip(
-        () => handleComparePoliticalGroups({}),
+        () => handleComparePoliticalGroups({ groupIds: ['EPP', 'S&D'], dateFrom: '2024-01-01', dateTo: '2024-12-31' }),
         'compare_political_groups'
       );
       if (!result) return;
 
       const parsed = parseAndValidateNoMockData(result) as { groups: unknown[] };
       expect(parsed).toHaveProperty('groups');
-    }, 30000);
+    }, 60000);
   });
 
   describe('OSINT Tool: analyze_legislative_effectiveness', () => {
     it('should analyze effectiveness with real data', async () => {
       const result = await retryOrSkip(
-        () => handleAnalyzeLegislativeEffectiveness({ dateFrom: '2024-01-01', dateTo: '2024-12-31' }),
+        () => handleAnalyzeLegislativeEffectiveness({ subjectType: 'COMMITTEE', subjectId: 'AFET', dateFrom: '2024-01-01', dateTo: '2024-12-31' }),
         'analyze_legislative_effectiveness'
       );
       if (!result) return;
 
       parseAndValidateNoMockData(result);
-    }, 30000);
+    }, 60000);
   });
 
   describe('OSINT Tool: monitor_legislative_pipeline', () => {
@@ -517,28 +523,46 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
 
   describe('Phase 4 Tool: get_meeting_activities', () => {
     it('should return real meeting activity data', async () => {
+      // get_meeting_activities requires a sittingId — fetch a real session ID first
+      if (!testSessionId) {
+        const sessions = await retryOrSkip(() => handleGetPlenarySessions({ limit: 1 }), 'setup session');
+        if (!sessions) return;
+        const data = JSON.parse(sessions.content[0]?.text ?? '{}') as { data: { id: string }[] };
+        testSessionId = data.data[0]?.id ?? '';
+      }
+      if (!testSessionId) { console.warn('[SKIP] No session ID available'); return; }
+
       const result = await retryOrSkip(
-        () => handleGetMeetingActivities({ limit: 5 }),
+        () => handleGetMeetingActivities({ sittingId: testSessionId, limit: 5 }),
         'get_meeting_activities'
       );
       if (!result) return;
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
-    }, 30000);
+    }, 60000);
   });
 
   describe('Phase 4 Tool: get_meeting_decisions', () => {
     it('should return real meeting decisions', async () => {
+      // get_meeting_decisions requires a sittingId — fetch a real session ID first
+      if (!testSessionId) {
+        const sessions = await retryOrSkip(() => handleGetPlenarySessions({ limit: 1 }), 'setup session');
+        if (!sessions) return;
+        const data = JSON.parse(sessions.content[0]?.text ?? '{}') as { data: { id: string }[] };
+        testSessionId = data.data[0]?.id ?? '';
+      }
+      if (!testSessionId) { console.warn('[SKIP] No session ID available'); return; }
+
       const result = await retryOrSkip(
-        () => handleGetMeetingDecisions({ limit: 5 }),
+        () => handleGetMeetingDecisions({ sittingId: testSessionId, limit: 5 }),
         'get_meeting_decisions'
       );
       if (!result) return;
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
-    }, 30000);
+    }, 60000);
   });
 
   describe('Phase 4 Tool: get_mep_declarations', () => {

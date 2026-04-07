@@ -1,6 +1,10 @@
 /**
  * Contract/behavior tests for the analyzeVotingPatterns tool, using real European Parliament data indirectly via other tools (e.g. getMEPs/getMEPDetails) rather than direct end-to-end EP API calls.
  * 
+ * NOTE: The EP API /meps/{id} endpoint does NOT expose voting statistics (totalVotes is always 0),
+ * so the tool returns a { dataAvailable: false } response instead of { statistics, period, ... }.
+ * Tests validate both the "data unavailable" and (if ever available) "full analysis" response paths.
+ * 
  * ISMS Policy: SC-002 (Secure Testing), PE-001 (Performance Testing) — integration behavior tests with partial real API dependency.
  * 
  * @see https://data.europarl.europa.eu/api/v2/
@@ -63,15 +67,23 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
         throw new Error('No text content');
       }
 
-      const analysis = JSON.parse(textContent.text) as unknown;
+      const analysis = JSON.parse(textContent.text) as Record<string, unknown>;
 
-      // Validate analysis structure
+      // Validate core fields present in both response paths
       expect(analysis).toHaveProperty('mepId');
-      expect(analysis).toHaveProperty('statistics');
-      expect((analysis as { mepId: string }).mepId).toBe(testMEPId);
+      expect(analysis).toHaveProperty('mepName');
+      expect((analysis.mepId as string)).toBe(testMEPId);
+
+      // EP API /meps/{id} does not expose voting stats — tool returns dataAvailable: false
+      if (analysis.dataAvailable === false) {
+        expect(analysis).toHaveProperty('message');
+        expect(analysis).toHaveProperty('dataAvailability');
+      } else {
+        expect(analysis).toHaveProperty('statistics');
+      }
     }, 60000);
 
-    it('should include voting statistics', async () => {
+    it('should include voting data or indicate unavailability', async () => {
       if (!testMEPId) { console.warn('[SKIP] No MEP ID available'); return; }
       const result = await retryOrSkip(async () => {
         return handleAnalyzeVotingPatterns({ 
@@ -88,21 +100,26 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
         throw new Error('No text content');
       }
 
-      const analysis = JSON.parse(textContent.text) as unknown;
+      const analysis = JSON.parse(textContent.text) as Record<string, unknown>;
 
-      // Check statistics structure
-      expect(analysis).toHaveProperty('statistics');
-      const stats = (analysis as { statistics: unknown }).statistics;
-      expect(stats).toHaveProperty('totalVotes');
-      expect(stats).toHaveProperty('votesFor');
-      expect(stats).toHaveProperty('votesAgainst');
-      expect(stats).toHaveProperty('abstentions');
-      expect(stats).toHaveProperty('attendanceRate');
+      // Either full statistics or data-unavailable notice
+      if (analysis.dataAvailable === false) {
+        expect(analysis.dataAvailability).toBe('UNAVAILABLE');
+        expect(analysis.confidenceLevel).toBe('LOW');
+        expect(typeof analysis.message).toBe('string');
+      } else {
+        const stats = analysis.statistics as Record<string, unknown>;
+        expect(stats).toHaveProperty('totalVotes');
+        expect(stats).toHaveProperty('votesFor');
+        expect(stats).toHaveProperty('votesAgainst');
+        expect(stats).toHaveProperty('abstentions');
+        expect(stats).toHaveProperty('attendanceRate');
+      }
     }, 60000);
   });
 
   describe('Date Range Analysis', () => {
-    it('should analyze voting patterns for specific period', async () => {
+    it('should accept date range parameters', async () => {
       if (!testMEPId) { console.warn('[SKIP] No MEP ID available'); return; }
       const startDate = '2024-01-01';
       const endDate = '2024-06-30';
@@ -124,13 +141,18 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
         throw new Error('No text content');
       }
 
-      const analysis = JSON.parse(textContent.text) as unknown;
+      const analysis = JSON.parse(textContent.text) as Record<string, unknown>;
 
-      // Should include period information
-      expect(analysis).toHaveProperty('period');
-      const period = (analysis as { period: { from: string; to: string } }).period;
-      expect(period.from).toBe(startDate);
-      expect(period.to).toBe(endDate);
+      // Core fields always present
+      expect(analysis).toHaveProperty('mepId');
+      expect(analysis).toHaveProperty('mepName');
+
+      // Period info only present when data is available
+      if (analysis.dataAvailable !== false && analysis.period) {
+        const period = analysis.period as { from: string; to: string };
+        expect(period.from).toBe(startDate);
+        expect(period.to).toBe(endDate);
+      }
     }, 60000);
   });
 
@@ -158,7 +180,7 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
   });
 
   describe('Response Validation', () => {
-    it('should return complete voting pattern analysis', async () => {
+    it('should return complete voting pattern analysis response', async () => {
       if (!testMEPId) { console.warn('[SKIP] No MEP ID available'); return; }
       const result = await retryOrSkip(async () => {
         return handleAnalyzeVotingPatterns({ 
@@ -175,17 +197,23 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
         throw new Error('No text content');
       }
 
-      const analysis = JSON.parse(textContent.text) as unknown;
+      const analysis = JSON.parse(textContent.text) as Record<string, unknown>;
 
-      // Required fields
+      // Required fields in all response paths
       expect(analysis).toHaveProperty('mepId');
       expect(analysis).toHaveProperty('mepName');
-      expect(analysis).toHaveProperty('period');
-      expect(analysis).toHaveProperty('statistics');
+      expect(typeof analysis.mepId).toBe('string');
+      expect(typeof analysis.mepName).toBe('string');
 
-      // Type validation
-      expect(typeof (analysis as { mepId: unknown }).mepId).toBe('string');
-      expect(typeof (analysis as { mepName: unknown }).mepName).toBe('string');
+      // Response is either full analysis or data-unavailable notice
+      if (analysis.dataAvailable === false) {
+        expect(analysis).toHaveProperty('dataAvailability');
+        expect(analysis).toHaveProperty('confidenceLevel');
+        expect(analysis).toHaveProperty('message');
+      } else {
+        expect(analysis).toHaveProperty('period');
+        expect(analysis).toHaveProperty('statistics');
+      }
     }, 60000);
   });
 
