@@ -52,9 +52,9 @@ describe('Server Constants', () => {
 });
 
 describe('getToolMetadataArray', () => {
-  it('should return 61 tools', () => {
+  it('should return 62 tools', () => {
     const tools = getToolMetadataArray();
-    expect(tools).toHaveLength(61);
+    expect(tools).toHaveLength(62);
   });
 
   it('should have unique non-empty tool names', () => {
@@ -229,15 +229,16 @@ describe('sanitizeUrl', () => {
 });
 
 describe('MCP Protocol Implementation', () => {
-  it('should have tool registration for all 61 tools', () => {
+  it('should have tool registration for all 62 tools', () => {
     const tools = getToolMetadataArray();
-    expect(tools.length).toBe(61);
+    expect(tools.length).toBe(62);
   });
 
-  it('should have exactly 7 core + 3 advanced + 15 OSINT + 8 Phase 4 + 14 Phase 5 + 14 feed tools', () => {
+  it('should have exactly 8 core + 3 advanced + 15 OSINT + 8 Phase 4 + 14 Phase 5 + 14 feed tools', () => {
     const tools = getToolMetadataArray();
     const coreToolNames = ['get_meps', 'get_mep_details', 'get_plenary_sessions',
-      'get_voting_records', 'search_documents', 'get_committee_info', 'get_parliamentary_questions'];
+      'get_voting_records', 'search_documents', 'get_committee_info', 'get_parliamentary_questions',
+      'get_server_health'];
     const advancedToolNames = ['analyze_voting_patterns', 'track_legislation', 'generate_report'];
     const osintToolNames = [
       'assess_mep_influence', 'analyze_coalition_dynamics', 'detect_voting_anomalies',
@@ -272,7 +273,7 @@ describe('MCP Protocol Implementation', () => {
     for (const name of [...coreToolNames, ...advancedToolNames, ...osintToolNames, ...phase4ToolNames, ...phase5ToolNames, ...feedToolNames]) {
       expect(names).toContain(name);
     }
-    expect(coreToolNames.length + advancedToolNames.length + osintToolNames.length + phase4ToolNames.length + phase5ToolNames.length + feedToolNames.length).toBe(61);
+    expect(coreToolNames.length + advancedToolNames.length + osintToolNames.length + phase4ToolNames.length + phase5ToolNames.length + feedToolNames.length).toBe(62);
   });
 });
 
@@ -320,7 +321,7 @@ describe('EuropeanParliamentMCPServer', () => {
       const result = await handler();
       expect(result).toHaveProperty('tools');
       expect(Array.isArray(result.tools)).toBe(true);
-      expect(result.tools.length).toBe(61);
+      expect(result.tools.length).toBe(62);
     });
   });
 
