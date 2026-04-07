@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.28**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **buildToolResponse**(`data`): [`ToolResult`](../../types/interfaces/ToolResult.md)
 
-Defined in: [tools/shared/responseBuilder.ts:15](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/responseBuilder.ts#L15)
+Defined in: [tools/shared/responseBuilder.ts:17](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/responseBuilder.ts#L17)
 
 Build a standard success response wrapping data as formatted JSON text.
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.27**](../../../README.md)
+[**European Parliament MCP Server API v1.1.28**](../../../README.md)
 
 ***
 
@@ -9,3 +9,8 @@
 ## Classes
 
 - [ToolError](classes/ToolError.md)
+
+## Type Aliases
+
+- [ErrorCategory](type-aliases/ErrorCategory.md)
+- [ErrorCode](type-aliases/ErrorCode.md)

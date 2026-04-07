@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.28**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: ToolError
 
-Defined in: [tools/shared/errors.ts:12](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L12)
+Defined in: [tools/shared/errors.ts:39](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L39)
 
 Structured error class that all MCP tools use for consistent error reporting.
 Ensures tool name, operation, and safe context are always included without
@@ -22,7 +22,7 @@ leaking internal implementation details to clients.
 
 > **new ToolError**(`options`): `ToolError`
 
-Defined in: [tools/shared/errors.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L18)
+Defined in: [tools/shared/errors.ts:48](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L48)
 
 #### Parameters
 
@@ -44,6 +44,18 @@ Defined in: [tools/shared/errors.ts:18](https://github.com/Hack23/European-Parli
 
 `unknown`
 
+###### errorCategory?
+
+[`ErrorCategory`](../type-aliases/ErrorCategory.md)
+
+###### errorCode?
+
+[`ErrorCode`](../type-aliases/ErrorCode.md)
+
+###### httpStatus?
+
+`number`
+
 ###### isRetryable?
 
 `boolean`
@@ -62,7 +74,7 @@ Defined in: [tools/shared/errors.ts:18](https://github.com/Hack23/European-Parli
 
 > `readonly` **isRetryable**: `boolean`
 
-Defined in: [tools/shared/errors.ts:15](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L15)
+Defined in: [tools/shared/errors.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L42)
 
 ***
 
@@ -70,7 +82,7 @@ Defined in: [tools/shared/errors.ts:15](https://github.com/Hack23/European-Parli
 
 > `readonly` **operation**: `string`
 
-Defined in: [tools/shared/errors.ts:14](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L14)
+Defined in: [tools/shared/errors.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L41)
 
 ***
 
@@ -78,7 +90,7 @@ Defined in: [tools/shared/errors.ts:14](https://github.com/Hack23/European-Parli
 
 > `readonly` **toolName**: `string`
 
-Defined in: [tools/shared/errors.ts:13](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L13)
+Defined in: [tools/shared/errors.ts:40](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L40)
 
 ***
 
@@ -86,8 +98,32 @@ Defined in: [tools/shared/errors.ts:13](https://github.com/Hack23/European-Parli
 
 > `readonly` `optional` **cause?**: [`Error`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error)
 
-Defined in: [tools/shared/errors.ts:16](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L16)
+Defined in: [tools/shared/errors.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L46)
 
 #### Overrides
 
 `Error.cause`
+
+***
+
+### errorCategory?
+
+> `readonly` `optional` **errorCategory?**: [`ErrorCategory`](../type-aliases/ErrorCategory.md)
+
+Defined in: [tools/shared/errors.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L44)
+
+***
+
+### errorCode?
+
+> `readonly` `optional` **errorCode?**: [`ErrorCode`](../type-aliases/ErrorCode.md)
+
+Defined in: [tools/shared/errors.ts:43](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L43)
+
+***
+
+### httpStatus?
+
+> `readonly` `optional` **httpStatus?**: `number`
+
+Defined in: [tools/shared/errors.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L45)

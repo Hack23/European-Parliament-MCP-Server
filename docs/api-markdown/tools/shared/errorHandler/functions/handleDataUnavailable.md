@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.28**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleDataUnavailable**(`toolName`, `message`): [`ToolResult`](../../types/interfaces/ToolResult.md)
 
-Defined in: [tools/shared/errorHandler.ts:47](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errorHandler.ts#L47)
+Defined in: [tools/shared/errorHandler.ts:196](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errorHandler.ts#L196)
 
 Build a structured data-unavailable response for tools that cannot
 compute meaningful results due to missing upstream data.

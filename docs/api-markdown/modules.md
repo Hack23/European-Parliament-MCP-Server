@@ -1,8 +1,8 @@
-[**European Parliament MCP Server API v1.1.27**](README.md)
+[**European Parliament MCP Server API v1.1.28**](README.md)
 
 ***
 
-# European Parliament MCP Server API v1.1.27
+# European Parliament MCP Server API v1.1.28
 
 ## Documents
 
@@ -59,6 +59,7 @@
 - [server/cli](server/cli/README.md)
 - [server/toolRegistry](server/toolRegistry/README.md)
 - [server/types](server/types/README.md)
+- [services/FeedHealthTracker](services/FeedHealthTracker/README.md)
 - [services/HealthService](services/HealthService/README.md)
 - [services/MetricsService](services/MetricsService/README.md)
 - [tools/analyzeCoalitionDynamics](tools/analyzeCoalitionDynamics/README.md)
@@ -118,14 +119,17 @@
 - [tools/getProcedureEvents](tools/getProcedureEvents/README.md)
 - [tools/getProcedures](tools/getProcedures/README.md)
 - [tools/getProceduresFeed](tools/getProceduresFeed/README.md)
+- [tools/getServerHealth](tools/getServerHealth/README.md)
 - [tools/getSpeeches](tools/getSpeeches/README.md)
 - [tools/getVotingRecords](tools/getVotingRecords/README.md)
 - [tools/monitorLegislativePipeline](tools/monitorLegislativePipeline/README.md)
 - [tools/networkAnalysis](tools/networkAnalysis/README.md)
 - [tools/searchDocuments](tools/searchDocuments/README.md)
 - [tools/sentimentTracker](tools/sentimentTracker/README.md)
+- [tools/shared/errorClassifier](tools/shared/errorClassifier/README.md)
 - [tools/shared/errorHandler](tools/shared/errorHandler/README.md)
 - [tools/shared/errors](tools/shared/errors/README.md)
+- [tools/shared/feedUtils](tools/shared/feedUtils/README.md)
 - [tools/shared/paramBuilder](tools/shared/paramBuilder/README.md)
 - [tools/shared/responseBuilder](tools/shared/responseBuilder/README.md)
 - [tools/shared/types](tools/shared/types/README.md)
