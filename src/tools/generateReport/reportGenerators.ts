@@ -117,7 +117,7 @@ function buildMEPWarnings(
   if (questionsSubmitted === null) {
     warnings.push('Parliamentary questions count unavailable from EP API.');
   }
-  if (mep?.votingStatistics === undefined) {
+  if (mep !== null && mep.votingStatistics === undefined) {
     warnings.push('Voting statistics not available for this MEP.');
   }
   warnings.push('Reports authored count is always zero; EP API does not provide per-MEP report authorship data.');
@@ -163,8 +163,8 @@ function buildVotingWarnings(
   warnings.push('Political group alignment requires the compare_political_groups tool for detailed analysis.');
   if (!isFullYearRange(dateFrom, dateTo)) {
     warnings.push(
-      'Session count is based on the full year derived from dateFrom; '
-      + 'partial-year date ranges are not applied to the EP API call.'
+      'Plenary session count and adopted texts count are based on the full year derived from dateFrom; '
+      + 'partial-year date ranges are not applied to these EP API calls.'
     );
   }
   return warnings;
