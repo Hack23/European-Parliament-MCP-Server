@@ -134,7 +134,7 @@ flowchart TD
 | SC-010 | Health Monitoring | Detective | HealthService singleton | ✅ Implemented |
 | SC-011 | Metrics Collection | Detective | MetricsService, rate/error tracking | ✅ Implemented |
 | SC-012 | Branded Types | Preventive | Zod branded types for EP identifiers | ✅ Implemented |
-| SC-013 | Data Quality Controls | Preventive | All OSINT outputs include confidence level, data availability status, and quality warnings | ✅ Implemented |
+| SC-013 | Data Quality Controls | Preventive | OSINT outputs standardize confidence level and quality warnings; data availability status is included where implemented | ✅ Implemented |
 
 ---
 

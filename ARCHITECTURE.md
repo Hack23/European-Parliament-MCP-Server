@@ -628,7 +628,7 @@ MCP args (unknown) → Zod.parse() → typed input → EP API call
 - `DataAvailability` enum (`AVAILABLE`, `PARTIAL`, `ESTIMATED`, `UNAVAILABLE`) for every metric
 - `dataQualityWarnings: string[]` on every OSINT output to surface data limitations
 - `MetricResult<T>` generic wrapper with `value`, `availability`, `confidence`, and `source`
-- Confidence levels computed from actual data availability, not heuristics
+- Confidence levels computed from a combination of data availability and heuristic volume/coverage thresholds
 
 **Consequences:**
 - ✅ Consumers can distinguish "zero" from "unavailable" for all metrics

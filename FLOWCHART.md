@@ -272,17 +272,15 @@ How paginated EP API responses are processed to compute consistent pagination me
 
 ```mermaid
 flowchart TD
-    A["EP API Response received"] --> B{"Has total_count header?"}
-    B -->|"Yes"| C["total = header value"]
-    B -->|"No"| D["total = offset + data.length"]
-    D --> E["totalEstimated = true"]
-    C --> F{"data.length === limit?"}
-    E --> F
-    F -->|"Yes"| G["hasMore = true"]
-    F -->|"No"| H["hasMore = false"]
-    G --> I["Build PaginatedResponse\n{data, total, limit, offset, hasMore}"]
-    H --> I
-    I --> J["Return to tool handler"]
+    A["EP API Response received"] --> B["pageSize = data.length"]
+    B --> C{"pageSize === limit?"}
+    C -->|"Yes"| D["hasMore = true"]
+    C -->|"No"| E["hasMore = false"]
+    D --> F["total = offset + pageSize + 1"]
+    E --> G["total = offset + pageSize"]
+    F --> H["Build PaginatedResponse\n{data, total, limit, offset, hasMore}"]
+    G --> H
+    H --> I["`total` is a heuristic sentinel,\nnot an exact count"]
 ```
 
 ---

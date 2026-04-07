@@ -387,13 +387,7 @@ erDiagram
         string methodology "Analytical approach description"
         string dataFreshness "Data recency description"
         string sourceAttribution "EP Open Data Portal API v2"
-        array dataQualityWarnings "String array of data limitations"
-    }
-
-    DATA_QUALITY_WARNING {
-        string message "Human-readable warning text"
-        string affectedMetric "Which metric is impacted"
-        string severity "info, warning, limitation"
+        string_array dataQualityWarnings "Plain string warnings about data limitations"
     }
 
     METRIC_RESULT {
@@ -404,9 +398,10 @@ erDiagram
         string reason "Why unavailable or estimated"
     }
 
-    OSINT_OUTPUT ||--o{ DATA_QUALITY_WARNING : "contains"
     OSINT_OUTPUT ||--o{ METRIC_RESULT : "wraps metrics with"
 ```
+
+> **Note:** `dataQualityWarnings` is currently implemented as `string[]` (see `src/tools/shared/types.ts`). A structured warning type with `message`, `affectedMetric`, and `severity` fields is a future enhancement not yet implemented.
 
 ### DataAvailability Enum
 
