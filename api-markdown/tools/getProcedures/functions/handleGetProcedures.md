@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetProcedures**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getProcedures.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProcedures.ts#L56)
+Defined in: [tools/getProcedures.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProcedures.ts#L58)
 
 Handles the get_procedures MCP tool request.
 

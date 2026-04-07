@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetParliamentaryQuestions**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getParliamentaryQuestions.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getParliamentaryQuestions.ts#L58)
+Defined in: [tools/getParliamentaryQuestions.ts:61](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getParliamentaryQuestions.ts#L61)
 
 Handles the get_parliamentary_questions MCP tool request.
 

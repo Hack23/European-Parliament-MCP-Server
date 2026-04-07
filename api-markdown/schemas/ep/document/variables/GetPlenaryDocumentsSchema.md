@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **GetPlenaryDocumentsSchema**: `ZodObject`\<\{ `docId`: `ZodOptional`\<`ZodString`\>; `limit`: `ZodDefault`\<`ZodNumber`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; `year`: `ZodOptional`\<`ZodNumber`\>; \}, `$strip`\>
 
-Defined in: [schemas/ep/document.ts:83](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/document.ts#L83)
+Defined in: [schemas/ep/document.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/document.ts#L89)
 
 Get plenary documents input schema

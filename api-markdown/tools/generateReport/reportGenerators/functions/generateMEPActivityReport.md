@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **generateMEPActivityReport**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Report`](../../types/interfaces/Report.md)\>
 
-Defined in: [tools/generateReport/reportGenerators.ts:112](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/reportGenerators.ts#L112)
+Defined in: [tools/generateReport/reportGenerators.ts:204](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/reportGenerators.ts#L204)
 
 Generate MEP activity report using real EP API data
 Cyclomatic complexity: 2

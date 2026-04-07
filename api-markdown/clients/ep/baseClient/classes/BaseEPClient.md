@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
 
 ***
 
@@ -177,7 +177,7 @@ Builds the full request URL from endpoint + optional params.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:613](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L613)
+Defined in: [clients/ep/baseClient.ts:650](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L650)
 
 Clears all entries from the LRU cache.
 
@@ -191,7 +191,7 @@ Clears all entries from the LRU cache.
 
 > `private` **fetchWithRetry**\<`T`\>(`url`, `endpoint`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:512](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L512)
+Defined in: [clients/ep/baseClient.ts:542](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L542)
 
 Wraps a fetch call with the configured retry policy.
 
@@ -221,7 +221,7 @@ Wraps a fetch call with the configured retry policy.
 
 > `private` **fetchWithTimeout**\<`T`\>(`url`, `endpoint`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:451](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L451)
+Defined in: [clients/ep/baseClient.ts:478](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L478)
 
 Executes the HTTP fetch with timeout/abort support and response size guard.
 
@@ -251,7 +251,7 @@ Executes the HTTP fetch with timeout/abort support and response size guard.
 
 > `protected` **get**\<`T`\>(`endpoint`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:553](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L553)
+Defined in: [clients/ep/baseClient.ts:583](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L583)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -293,7 +293,7 @@ On HTTP errors, network failures, or parse failures
 
 > `private` **getCacheKey**(`endpoint`, `params?`): `string`
 
-Defined in: [clients/ep/baseClient.ts:600](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L600)
+Defined in: [clients/ep/baseClient.ts:630](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L630)
 
 Generates a deterministic cache key.
 
@@ -323,7 +323,7 @@ JSON string used as cache key
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:622](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L622)
+Defined in: [clients/ep/baseClient.ts:659](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L659)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -414,7 +414,7 @@ Does NOT retry on 4xx client errors (except 429).
 
 > `private` **toAPIError**(`error`, `endpoint`): [`APIError`](APIError.md)
 
-Defined in: [clients/ep/baseClient.ts:528](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L528)
+Defined in: [clients/ep/baseClient.ts:558](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L558)
 
 Converts a caught error to a typed [APIError](APIError.md).
 
@@ -535,3 +535,29 @@ Extracted to keep constructor complexity within limits.
 ##### timeoutMs
 
 > **timeoutMs**: `number`
+
+***
+
+### validateContentType()
+
+> `private` `static` **validateContentType**(`response`): `void`
+
+Defined in: [clients/ep/baseClient.ts:457](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L457)
+
+Validates the Content-Type header of an API response.
+Throws if the response is not JSON (e.g. HTML error pages from reverse proxies).
+Cancels the response body before throwing to allow connection reuse.
+
+A missing or empty Content-Type header is treated as acceptable because
+the EP API occasionally omits it on valid JSON responses, and rejecting
+those would cause false-negative failures.
+
+#### Parameters
+
+##### response
+
+`Response`
+
+#### Returns
+
+`void`

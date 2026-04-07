@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getAdoptedTextsToolMetadata**: `object`
 
-Defined in: [tools/getAdoptedTexts.ts:78](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAdoptedTexts.ts#L78)
+Defined in: [tools/getAdoptedTexts.ts:105](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAdoptedTexts.ts#L105)
 
 Tool metadata for get_adopted_texts
 

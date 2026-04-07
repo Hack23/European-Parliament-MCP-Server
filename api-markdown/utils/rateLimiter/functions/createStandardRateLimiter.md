@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **createStandardRateLimiter**(): [`RateLimiter`](../classes/RateLimiter.md)
 
-Defined in: [utils/rateLimiter.ts:398](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L398)
+Defined in: [utils/rateLimiter.ts:402](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L402)
 
 Creates a [RateLimiter](../classes/RateLimiter.md) pre-configured for EP API usage.
 
@@ -22,6 +22,10 @@ European Parliament Open Data Portal's recommended fair-use policy.
 A new [RateLimiter](../classes/RateLimiter.md) instance with standard EP API settings
 
 ## Example
+
+The token capacity is configurable via the `EP_RATE_LIMIT` environment
+variable (must be a positive integer). When the variable is absent, empty,
+non-numeric, zero, or negative, the factory falls back to 100 tokens/min.
 
 ```typescript
 const rateLimiter = createStandardRateLimiter();

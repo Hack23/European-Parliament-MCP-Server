@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGenerateReport**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/generateReport/index.ts:81](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/index.ts#L81)
+Defined in: [tools/generateReport/index.ts:82](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/index.ts#L82)
 
 Handles the generate_report MCP tool request.
 

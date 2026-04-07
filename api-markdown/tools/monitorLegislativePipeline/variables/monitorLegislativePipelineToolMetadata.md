@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **monitorLegislativePipelineToolMetadata**: `object`
 
-Defined in: [tools/monitorLegislativePipeline.ts:343](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/monitorLegislativePipeline.ts#L343)
+Defined in: [tools/monitorLegislativePipeline.ts:352](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/monitorLegislativePipeline.ts#L352)
 
 Tool metadata for MCP registration
 

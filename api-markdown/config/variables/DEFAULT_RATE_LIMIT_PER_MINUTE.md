@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **DEFAULT\_RATE\_LIMIT\_PER\_MINUTE**: `100` = `100`
 
-Defined in: [config.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/config.ts#L35)
+Defined in: [config.ts:49](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/config.ts#L49)
 
 Default rate limit applied to EP API requests (requests per minute).
 Consumed by `baseClient.ts` (`DEFAULT_RATE_LIMIT_TOKENS`) and by the CLI

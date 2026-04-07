@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **AssessMepInfluenceSchema**: `ZodObject`\<\{ `dateFrom`: `ZodOptional`\<`ZodString`\>; `dateTo`: `ZodOptional`\<`ZodString`\>; `includeDetails`: `ZodDefault`\<`ZodBoolean`\>; `mepId`: `ZodString`; \}, `$strip`\>
 
-Defined in: [schemas/ep/analysis.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/analysis.ts#L53)
+Defined in: [schemas/ep/analysis.ts:57](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/analysis.ts#L57)
 
 Assess MEP influence input schema

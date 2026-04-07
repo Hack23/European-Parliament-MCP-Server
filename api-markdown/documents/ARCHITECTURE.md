@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../README.md)
+[**European Parliament MCP Server API v1.1.27**](../README.md)
 
 ***
 
@@ -328,7 +328,9 @@ The following five tools extend the OSINT capability with network analysis, sent
 - `confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW'` reflects data completeness at execution time
 - `dataFreshness` and `sourceAttribution` provide full data provenance for OSINT analysis
 - `methodology` documents the analytical approach for reproducibility and audit
-- Input validation via Zod schemas with strict typing throughout
+- `dataQualityWarnings: string[]` surfaces data limitations and proxy metrics to end users
+- Input validation via Zod schemas with `.refine()` cross-field constraints and strict typing throughout
+- Standardized error handling via `ToolError` (toolName, operation, isRetryable) and `buildToolResponse()` for consistent response building
 
 #### EP Data Access Tools (8)
 
@@ -484,6 +486,52 @@ flowchart TD
 
 ---
 
+## 📊 Data Quality Management
+
+All OSINT intelligence tools implement a cross-cutting data quality framework that ensures analytical transparency and reliability. This is a key improvement introduced in v1.1 to provide explicit signals about data completeness and confidence.
+
+### Data Quality Components
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| `DataAvailability` | Enum | `AVAILABLE`, `PARTIAL`, `ESTIMATED`, `UNAVAILABLE` — status of underlying EP API data |
+| `dataQualityWarnings` | `string[]` | Array of human-readable warnings flagging data limitations, proxy metrics, or unavailable sources |
+| `confidenceLevel` | Enum | `HIGH`, `MEDIUM`, `LOW` — confidence in computed value based on actual data availability |
+| `MetricResult<T>` | Generic wrapper | Wraps metric value with `availability`, `confidence`, `source`, and optional `reason` fields |
+
+### MetricResult Wrapper Pattern
+
+```typescript
+interface MetricResult<T = number> {
+  value: T | null;                      // Computed value, or null when unavailable
+  availability: DataAvailability;       // AVAILABLE | PARTIAL | ESTIMATED | UNAVAILABLE
+  confidence: 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
+  source?: string;                      // Human-readable data source description
+  reason?: string;                      // Explanation for unavailable/estimated data
+}
+```
+
+### Standardized Error Handling
+
+All tool handlers use the `ToolError` class for structured error reporting and `buildToolResponse()` for consistent success responses:
+
+```typescript
+// ToolError — structured error with retryability signal
+class ToolError extends Error {
+  readonly toolName: string;
+  readonly operation: string;
+  readonly isRetryable: boolean;
+  readonly cause?: Error;
+}
+
+// buildToolResponse — standard JSON response wrapper
+function buildToolResponse(data: unknown): ToolResult {
+  return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
+}
+```
+
+---
+
 ## 📐 Architectural Decision Records
 
 ### ADR-001: Dependency Injection Container Pattern
@@ -572,6 +620,27 @@ MCP args (unknown) → Zod.parse() → typed input → EP API call
 - ✅ Clear error messages for AI clients
 - ✅ Security: malformed inputs rejected at boundary
 - ✅ Eliminates defensive null-checks in business logic
+
+---
+
+### ADR-005: Data Quality Signaling for OSINT Outputs
+
+**Status:** Accepted | **Date:** 2026-04-01
+
+**Context:** OSINT intelligence tools (assess_mep_influence, analyze_coalition_dynamics, etc.) compute analytical metrics from EP API data. However, the EP API does not expose all data needed for every metric (e.g., voting statistics are unavailable per MEP). Without explicit signaling, consumers cannot distinguish between "metric is zero" and "metric is unavailable."
+
+**Decision:** Introduce a data quality framework across all OSINT tools:
+- `DataAvailability` enum (`AVAILABLE`, `PARTIAL`, `ESTIMATED`, `UNAVAILABLE`) for every metric
+- `dataQualityWarnings: string[]` on every OSINT output to surface data limitations
+- `MetricResult<T>` generic wrapper with `value`, `availability`, `confidence`, and `source`
+- Confidence levels computed from a combination of data availability and heuristic volume/coverage thresholds
+
+**Consequences:**
+- ✅ Consumers can distinguish "zero" from "unavailable" for all metrics
+- ✅ Proxy metrics are explicitly labeled as `ESTIMATED`
+- ✅ Data limitations are surfaced to end users via warnings array
+- ✅ Analytical transparency meets ISMS A.8.11 (data integrity) requirements
+- ⚠️ Slightly larger response payloads due to quality metadata
 
 ---
 

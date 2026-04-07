@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetExternalDocuments**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getExternalDocuments.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getExternalDocuments.ts#L55)
+Defined in: [tools/getExternalDocuments.ts:57](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getExternalDocuments.ts#L57)
 
 Handles the get_external_documents MCP tool request.
 

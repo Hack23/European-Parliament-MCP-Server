@@ -62,8 +62,10 @@ mindmap
         OSINT Phase 1 6
         OSINT Phase 2 2
         OSINT Phase 3 2
+        Advanced OSINT 5
         Phase 4 EP API v2 8
-        Phase 5 Coverage 11
+        Phase 5 Coverage 15
+        Feed Endpoints 13
       9 Resources
         ep://meps
         ep://meps/id
@@ -282,6 +284,11 @@ mindmap
       Phase 3 2 tools
         analyze_country_delegation
         generate_political_landscape
+      Data Quality Framework
+        DataAvailability enum
+        dataQualityWarnings array
+        MetricResult wrapper
+        Confidence scoring
     Phase 4 EP API v2 8
       get_current_meps
       get_speeches
@@ -378,7 +385,7 @@ mindmap
 mindmap
   root((Tech Stack))
     Runtime
-      Node.js 20+ LTS
+      Node.js 25+ LTS
         V8 engine
         Event loop
         stdio transport
@@ -396,17 +403,19 @@ mindmap
         stdio primary
         JSON-RPC 2.0
     Validation
-      Zod 3.x
+      Zod 4.x
         Runtime validation
         Branded types
         Schema inference
         Error formatting
+        refine constraints
     Caching
-      lru-cache 10.x
+      lru-cache 11.x
         500 max entries
         15-min TTL
         LRU eviction
         Memory bounded
+        Deterministic cache keys
     Quality Gates
       ESLint 9.x
         TypeScript rules

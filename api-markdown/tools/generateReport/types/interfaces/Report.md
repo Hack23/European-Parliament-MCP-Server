@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
 
 ***
 
@@ -73,6 +73,16 @@ Defined in: [tools/generateReport/types.ts:12](https://github.com/Hack23/Europea
 > **summary**: `string`
 
 Defined in: [tools/generateReport/types.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/types.ts#L18)
+
+***
+
+### dataQualityWarnings?
+
+> `optional` **dataQualityWarnings?**: `string`[]
+
+Defined in: [tools/generateReport/types.ts:23](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/types.ts#L23)
+
+Warnings about partially available or missing data
 
 ***
 

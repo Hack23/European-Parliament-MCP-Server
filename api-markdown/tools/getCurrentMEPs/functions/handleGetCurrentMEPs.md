@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetCurrentMEPs**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getCurrentMEPs.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCurrentMEPs.ts#L46)
+Defined in: [tools/getCurrentMEPs.ts:48](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCurrentMEPs.ts#L48)
 
 Handles the get_current_meps MCP tool request.
 

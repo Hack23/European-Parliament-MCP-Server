@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
 
 ***
 
@@ -180,15 +180,30 @@ data: []
 
 > **hasMore**: `boolean`
 
-Defined in: [types/ep/common.ts:249](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L249)
+Defined in: [types/ep/common.ts:284](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L284)
 
-Indicates if more items exist beyond current page.
+Indicates if more items may exist beyond the current page.
 
-Boolean flag for easy "load more" / "next page" logic. True if
-there are more items to fetch after the current page. False on
-last page or when all results fit on current page.
+Boolean flag for "load more" / "next page" logic. When `true`,
+another page may exist and the caller should fetch it. When `false`,
+the current page is definitively the last one.
 
-**Calculation:** `(offset + data.length) < total`
+For **server-paginated** results this is a heuristic based on the
+underlying server page fullness, not always on the filtered
+`data.length` returned to the caller:
+- For ordinary server-paginated endpoints, `hasMore` is typically
+  derived from server page fullness (effectively whether the server
+  returned `limit` items). A full page suggests more data may follow,
+  but can be a **false positive** when the dataset size is an exact
+  multiple of `limit`.
+- For **client-filtered server endpoints** (e.g. `searchDocuments`,
+  `getPlenarySessions`, `getParliamentaryQuestions`), `hasMore` is
+  derived from the **unfiltered server page size** before client-side
+  filtering. This means `hasMore` can be `true` even when the filtered
+  `data` array contains fewer than `limit` items or is empty.
+
+Callers should paginate until `hasMore` is `false`. For **in-memory
+paginated** results, `hasMore` is exact: `(offset + data.length) < total`.
 
 #### Examples
 
@@ -217,7 +232,7 @@ if (response.hasMore) {
 
 > **limit**: `number`
 
-Defined in: [types/ep/common.ts:204](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L204)
+Defined in: [types/ep/common.ts:224](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L224)
 
 Maximum items per page (requested page size).
 
@@ -251,7 +266,7 @@ less on last page or with filtered queries.
 
 > **offset**: `number`
 
-Defined in: [types/ep/common.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L223)
+Defined in: [types/ep/common.ts:243](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L243)
 
 Number of items skipped (pagination offset).
 
@@ -288,27 +303,50 @@ Used for offset-based pagination. To get page N, use
 
 > **total**: `number`
 
-Defined in: [types/ep/common.ts:185](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L185)
+Defined in: [types/ep/common.ts:205](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L205)
 
-Total number of items matching the query.
+Total number of items matching the query (exact or heuristic estimate).
 
-Total count of all items across all pages that match the current
-query/filter criteria. Used for calculating total pages and showing
-"X of Y results" displays. Count includes items on all pages, not
-just current page.
+For **in-memory paginated** results (e.g. `getCurrentMEPs` with filters,
+`getVotingRecords`), this is the **exact** count of all matching items.
 
-**Calculation:** `SELECT COUNT(*) FROM ... WHERE ...`
+For **server-paginated** results where the EP API does not return a total
+count header, this is a **heuristic sentinel**:
+- On the **last page** (`hasMore === false`): the value is exact
+  (`offset + data.length`), **assuming `offset` is within the actual
+  result range**. If the caller requests an out-of-range `offset`
+  (beyond the dataset), the EP API returns an empty page and `total`
+  becomes `offset`, which may overestimate the real count.
+- On **earlier pages** (`hasMore === true`): the value is
+  `offset + data.length + 1`. This signals that more data may exist
+  but may **overestimate by 1** when the dataset size is an exact
+  multiple of `limit` (i.e., the last server page is exactly full).
+
+For **client-filtered server endpoints** (e.g. `searchDocuments` with keyword,
+`getPlenarySessions` with location, `getParliamentaryQuestions` with author/topic),
+`total` and `hasMore` are derived from the **unfiltered server page size**, not
+from `data.length` after client-side filtering. This means `hasMore` can be `true`
+even when the filtered `data` array is empty, and `total` will not reflect the
+count of filtered matches.
+
+**Do not** use this value for exact "X of Y" UI or page-count
+calculations on server-paginated endpoints. Instead, iterate all
+pages (using `hasMore`) to determine the true dataset size.
+
 **Min Value:** 0 (no matches)
-**Performance:** Cached for efficiency
 
 #### Examples
 
 ```ts
-705 // Total MEPs in current term
+705 // Exact total from in-memory pagination
 ```
 
 ```ts
-143 // MEPs matching filter (e.g., country="DE")
+51  // Heuristic: offset=0, data.length=50, hasMore=true (may overestimate by 1)
+```
+
+```ts
+23  // Exact on last page: offset=20, data.length=3, hasMore=false
 ```
 
 ```ts

@@ -134,6 +134,8 @@ The 7 MCP prompts are English-only. EP data is multilingual (24 official EU lang
 ### W5: Limited Historical Data Depth
 Current tools focus on recent parliamentary terms. Deep historical analysis (pre-2009 data) is limited by EP API coverage.
 
+**Mitigation implemented:** Data quality framework with `DataAvailability` enum and `dataQualityWarnings` explicitly signals when historical data is unavailable or estimated, enabling consumers to adjust their analysis appropriately. Tools degrade gracefully with confidence-scored metrics rather than failing silently.
+
 ### W6: No Persistent Storage
 All caching is in-memory only. Server restarts lose all cache state, requiring re-fetching from EP API.
 

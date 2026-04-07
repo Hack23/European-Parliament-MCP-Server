@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **getAllGeneratedStats**(`params`): [`ToolResult`](../../shared/types/interfaces/ToolResult.md)
 
-Defined in: [tools/getAllGeneratedStats.ts:220](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L220)
+Defined in: [tools/getAllGeneratedStats.ts:204](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L204)
 
 Retrieve precomputed EP activity statistics with optional year/category filtering.
 

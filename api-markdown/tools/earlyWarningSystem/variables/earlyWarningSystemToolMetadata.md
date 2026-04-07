@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **earlyWarningSystemToolMetadata**: `object`
 
-Defined in: [tools/earlyWarningSystem.ts:375](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/earlyWarningSystem.ts#L375)
+Defined in: [tools/earlyWarningSystem.ts:382](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/earlyWarningSystem.ts#L382)
 
 ## Type Declaration
 

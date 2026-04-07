@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getCurrentMEPsToolMetadata**: `object`
 
-Defined in: [tools/getCurrentMEPs.ts:60](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCurrentMEPs.ts#L60)
+Defined in: [tools/getCurrentMEPs.ts:85](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCurrentMEPs.ts#L85)
 
 Tool metadata for get_current_meps
 
@@ -16,7 +16,7 @@ Tool metadata for get_current_meps
 
 ### description
 
-> **description**: `string` = 'Get currently active Members of European Parliament (today\'s date). Returns only MEPs with active mandates. Data source: European Parliament Open Data Portal.'
+> **description**: `string` = `"Get currently active Members of European Parliament (today's date). Returns only MEPs with active mandates. Data source: European Parliament Open Data Portal."`
 
 ### inputSchema
 

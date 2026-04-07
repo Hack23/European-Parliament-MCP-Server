@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getPlenarySessionDocumentsToolMetadata**: `object`
 
-Defined in: [tools/getPlenarySessionDocuments.ts:76](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenarySessionDocuments.ts#L76)
+Defined in: [tools/getPlenarySessionDocuments.ts:101](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenarySessionDocuments.ts#L101)
 
 Tool metadata for get_plenary_session_documents
 

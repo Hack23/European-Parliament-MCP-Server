@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getSpeechesToolMetadata**: `object`
 
-Defined in: [tools/getSpeeches.ts:81](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getSpeeches.ts#L81)
+Defined in: [tools/getSpeeches.ts:108](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getSpeeches.ts#L108)
 
 Tool metadata for get_speeches
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **transformPlenarySession**(`apiData`): [`PlenarySession`](../../../../types/ep/plenary/interfaces/PlenarySession.md)
 
-Defined in: [clients/ep/transformers.ts:171](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L171)
+Defined in: [clients/ep/transformers.ts:165](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L165)
 
 Transforms EP API plenary session data to internal [PlenarySession](../../../../types/ep/plenary/interfaces/PlenarySession.md) format.
 

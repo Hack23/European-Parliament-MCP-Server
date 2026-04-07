@@ -32,6 +32,7 @@
 5. [Cache Entry States](#cache-entry-states)
 6. [Rate Limiter States](#rate-limiter-states)
 7. [DI Container States](#di-container-states)
+8. [Data Availability States](#data-availability-states)
 
 ---
 
@@ -309,6 +310,64 @@ stateDiagram-v2
         - AuditLogger (1 instance)
         - HealthService (1 instance)
         Shared across all 61 tools
+    end note
+```
+
+---
+
+## 📊 Data Availability States
+
+State machine for OSINT data quality assessment. Each metric in an OSINT tool output transitions through availability states based on EP API data completeness:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Checking : OSINT tool executes
+
+    Checking --> Available : EP API returns complete data
+    Checking --> Partial : EP API returns incomplete data
+    Checking --> Estimated : No direct data, proxy metrics used
+    Checking --> Unavailable : EP API returns no relevant data
+
+    Available --> HighConfidence : MetricResult computed
+    Partial --> MediumConfidence : MetricResult computed with gaps
+    Estimated --> LowConfidence : MetricResult derived from proxy
+    Unavailable --> NoConfidence : MetricResult value is null
+
+    HighConfidence --> QualityCheck : Validate metric
+    MediumConfidence --> QualityCheck : Add warning
+    LowConfidence --> QualityCheck : Add proxy warning
+    NoConfidence --> QualityCheck : Add unavailable warning
+
+    QualityCheck --> OutputReady : Assemble OsintStandardOutput
+
+    OutputReady --> [*] : Return with dataQualityWarnings
+
+    note right of Available
+        DataAvailability.AVAILABLE
+        All required data retrieved.
+        Confidence: HIGH
+        No warnings needed.
+    end note
+
+    note right of Partial
+        DataAvailability.PARTIAL
+        Some data retrieved.
+        Confidence: MEDIUM
+        Warning: partial data.
+    end note
+
+    note right of Estimated
+        DataAvailability.ESTIMATED
+        Metric derived from proxy
+        or indirect data sources.
+        Confidence: LOW
+    end note
+
+    note right of Unavailable
+        DataAvailability.UNAVAILABLE
+        EP API does not expose
+        required data. Value is null.
+        Confidence: NONE
     end note
 ```
 
