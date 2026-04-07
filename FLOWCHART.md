@@ -33,6 +33,8 @@
 6. [Audit Logging Flow](#audit-logging-flow)
 7. [Error Handling Flow](#error-handling-flow)
 8. [Cache Management Flow](#cache-management-flow)
+9. [Pagination Metadata Flow](#pagination-metadata-flow)
+10. [OSINT Data Quality Check Flow](#osint-data-quality-check-flow)
 
 ---
 
@@ -260,6 +262,52 @@ flowchart TD
     LRU_EVICT --> RETURN
     HIT --> METRICS["Update hit counter\nin MetricsService"]
     RETURN --> METRICS2["Update miss+fetch counter\nin MetricsService"]
+```
+
+---
+
+## 📊 Pagination Metadata Flow
+
+How paginated EP API responses are processed to compute consistent pagination metadata:
+
+```mermaid
+flowchart TD
+    A["EP API Response received"] --> B{"Has total_count header?"}
+    B -->|"Yes"| C["total = header value"]
+    B -->|"No"| D["total = offset + data.length"]
+    D --> E["totalEstimated = true"]
+    C --> F{"data.length === limit?"}
+    E --> F
+    F -->|"Yes"| G["hasMore = true"]
+    F -->|"No"| H["hasMore = false"]
+    G --> I["Build PaginatedResponse\n{data, total, limit, offset, hasMore}"]
+    H --> I
+    I --> J["Return to tool handler"]
+```
+
+---
+
+## 🔍 OSINT Data Quality Check Flow
+
+How OSINT intelligence tools assess data availability and build quality warnings:
+
+```mermaid
+flowchart TD
+    A["OSINT Tool executed\n(e.g., assess_mep_influence)"] --> B["Fetch data from EP API\n(via EP API clients)"]
+    B --> C{"Check data sources"}
+    C --> D{"Voting stats available?\n(totalVotes > 0)"}
+    D -->|"Yes"| E["availability = AVAILABLE\nconfidence = HIGH"]
+    D -->|"No"| F["Add warning:\nVoting statistics unavailable"]
+    F --> G["availability = UNAVAILABLE\nconfidence = LOW"]
+    E --> H["Compute analytical metrics\n(using MetricResult wrapper)"]
+    G --> H
+    H --> I{"Any proxy metrics used?"}
+    I -->|"Yes"| J["Add warning:\nMetric estimated from proxy data"]
+    I -->|"No"| K["Assemble OsintStandardOutput"]
+    J --> K
+    K --> L["Set confidenceLevel\nbased on worst-case availability"]
+    L --> M["Set dataQualityWarnings array"]
+    M --> N["Return buildToolResponse\nwith quality metadata"]
 ```
 
 ---
