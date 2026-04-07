@@ -70,7 +70,7 @@ CAPABILITIES:
 
 ENVIRONMENT VARIABLES:
   EP_API_URL              Override EP API base URL
-  EP_REQUEST_TIMEOUT_MS   Override request timeout (default: 10000ms)
+  EP_REQUEST_TIMEOUT_MS   Override request timeout (default: 60000ms)
   EP_CACHE_TTL            Cache TTL in ms (default: 900000)
   EP_RATE_LIMIT           Rate limit requests/min (default: ${String(DEFAULT_RATE_LIMIT_PER_MINUTE)})
 

@@ -104,8 +104,8 @@ export function validateApiUrl(url: string, label = 'EP_API_URL'): string {
 
 /** Default base URL for European Parliament Open Data Portal API v2 — derived from centralized config */
 export const DEFAULT_EP_API_BASE_URL = DEFAULT_API_URL;
-/** Default HTTP request timeout in milliseconds (10 seconds) */
-export const DEFAULT_REQUEST_TIMEOUT_MS = 10_000;
+/** Default HTTP request timeout in milliseconds (60 seconds) */
+export const DEFAULT_REQUEST_TIMEOUT_MS = 60_000;
 /** Whether automatic retry on transient failures is enabled by default */
 export const DEFAULT_RETRY_ENABLED = true;
 /** Default maximum number of retry attempts for failed requests */
@@ -172,7 +172,7 @@ export interface EPClientConfig {
   maxCacheSize?: number;
   /** Custom rate limiter instance. */
   rateLimiter?: RateLimiter;
-  /** Request timeout in milliseconds. @default 10000 */
+  /** Request timeout in milliseconds. @default 60000 */
   timeoutMs?: number;
   /** Enable automatic retry on transient failures. @default true */
   enableRetry?: boolean;
