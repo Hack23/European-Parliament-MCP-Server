@@ -329,5 +329,5 @@ export async function dispatchToolCall(
     }
   }
 
-  return await handler(args);
+  return handler(args);
 }
