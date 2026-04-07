@@ -33,10 +33,11 @@
 6. [Meeting and Session Model](#meeting-and-session-model)
 7. [Document Entity Model](#document-entity-model)
 8. [Vote Entity Model](#vote-entity-model)
-9. [Branded Type Documentation](#branded-type-documentation)
-10. [Zod Schema Overview](#zod-schema-overview)
-11. [EP API JSON-LD Structure](#ep-api-json-ld-structure)
-12. [Cache Key Patterns](#cache-key-patterns)
+9. [OSINT Output and Data Quality Model](#osint-output-and-data-quality-model)
+10. [Branded Type Documentation](#branded-type-documentation)
+11. [Zod Schema Overview](#zod-schema-overview)
+12. [EP API JSON-LD Structure](#ep-api-json-ld-structure)
+13. [Cache Key Patterns](#cache-key-patterns)
 
 ---
 
@@ -375,6 +376,44 @@ erDiagram
 
 ---
 
+## 📈 OSINT Output and Data Quality Model
+
+All OSINT intelligence tools produce outputs conforming to the `OsintStandardOutput` interface, which includes explicit data quality metadata:
+
+```mermaid
+erDiagram
+    OSINT_OUTPUT {
+        string confidenceLevel "HIGH, MEDIUM, LOW"
+        string methodology "Analytical approach description"
+        string dataFreshness "Data recency description"
+        string sourceAttribution "EP Open Data Portal API v2"
+        string_array dataQualityWarnings "Plain string warnings about data limitations"
+    }
+
+    METRIC_RESULT {
+        number value "Computed value or null"
+        string availability "AVAILABLE, PARTIAL, ESTIMATED, UNAVAILABLE"
+        string confidence "HIGH, MEDIUM, LOW, NONE"
+        string source "Data source description"
+        string reason "Why unavailable or estimated"
+    }
+
+    OSINT_OUTPUT ||--o{ METRIC_RESULT : "wraps metrics with"
+```
+
+> **Note:** `dataQualityWarnings` is currently implemented as `string[]` (see `src/tools/shared/types.ts`). A structured warning type with `message`, `affectedMetric`, and `severity` fields is a future enhancement not yet implemented.
+
+### DataAvailability Enum
+
+| Value | Meaning | Example |
+|-------|---------|---------|
+| `AVAILABLE` | All required data retrieved from EP API | MEP name, country, political group |
+| `PARTIAL` | Some data retrieved; metric may be incomplete | Committee membership without role details |
+| `ESTIMATED` | Metric derived from proxy/indirect data sources | Influence score based on committee count (not votes) |
+| `UNAVAILABLE` | Required data not provided by EP API endpoint | Per-MEP voting statistics (EP API returns 0) |
+
+---
+
 ## 🏷️ Branded Type Documentation
 
 Branded types enforce semantic correctness for EP domain identifiers at both compile-time and runtime.
@@ -510,7 +549,7 @@ EP API JSON-LD → JSON.parse() → Extract @graph array → Map to typed object
 
 ## 🗝️ Cache Key Patterns
 
-The LRU cache uses deterministic key generation for all EP API calls:
+The LRU cache uses **deterministic key generation** for all EP API calls. Parameter keys are sorted alphabetically before serialization to ensure identical queries always produce the same cache key regardless of property insertion order (ISMS A.8.11 — Data integrity).
 
 | Pattern | Example Key | TTL |
 |---------|-------------|-----|
@@ -524,14 +563,16 @@ The LRU cache uses deterministic key generation for all EP API calls:
 | `committee:{id}` | `committee:ENVI` | 15 min |
 | `vocab:{type}` | `vocab:countries` | 60 min |
 
-**Cache Key Construction:**
+**Deterministic Cache Key Construction:**
 ```typescript
-function buildCacheKey(client: string, params: Record<string, unknown>): string {
-  const sortedParams = Object.keys(params)
-    .sort()
-    .map(k => `${k}:${params[k] ?? ''}`)
-    .join(':');
-  return `${client}:${sortedParams}`;
+// Cache keys are deterministic regardless of property insertion order.
+// Object.entries(params).sort() ensures { a: 1, b: 2 } and { b: 2, a: 1 }
+// produce identical keys, preventing cache misses and duplicate entries.
+private getCacheKey(endpoint: string, params?: Record<string, unknown>): string {
+  const sortedParams = params !== undefined
+    ? Object.fromEntries(Object.entries(params).sort(([a], [b]) => a.localeCompare(b)))
+    : undefined;
+  return JSON.stringify({ endpoint, params: sortedParams });
 }
 ```
 
