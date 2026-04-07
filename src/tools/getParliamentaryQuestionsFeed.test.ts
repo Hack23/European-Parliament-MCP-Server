@@ -83,6 +83,22 @@ describe('get_parliamentary_questions_feed Tool', () => {
 
       await expect(handleGetParliamentaryQuestionsFeed({})).rejects.toThrow('Failed to retrieve parliamentary questions feed');
     });
+
+    it('should return empty feed on upstream 404', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getParliamentaryQuestionsFeed)
+        .mockRejectedValueOnce(new APIError('Not Found', 404));
+
+      const result = await handleGetParliamentaryQuestionsFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        data: unknown[];
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.data).toEqual([]);
+      expect(parsed.dataQualityWarnings[0]).toContain('404');
+    });
   });
 
   describe('Metadata', () => {
