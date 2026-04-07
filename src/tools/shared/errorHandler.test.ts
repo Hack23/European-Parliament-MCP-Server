@@ -3,8 +3,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { handleToolError, handleDataUnavailable } from './errorHandler.js';
+import { handleToolError, handleDataUnavailable, isTimeoutRelatedError, extractTimeoutMs, buildTimeoutResponse } from './errorHandler.js';
 import { ToolError } from './errors.js';
+import { APIError } from '../../clients/ep/baseClient.js';
+import { TimeoutError } from '../../utils/timeout.js';
 
 describe('handleToolError', () => {
   it('should return isError: true for Error instances', () => {
@@ -66,6 +68,69 @@ describe('handleToolError', () => {
     expect(retryableResult.retryable).toBe(true);
     expect(nonRetryableResult.retryable).toBe(false);
   });
+
+  // ── Timeout handling ────────────────────────────────────────────────────
+
+  it('should return structured non-error response for ToolError wrapping APIError(408)', () => {
+    const apiErr = new APIError('EP API request to /adopted-texts/feed timed out after 120000ms', 408);
+    const toolErr = new ToolError({
+      toolName: 'get_adopted_texts_feed',
+      operation: 'fetchData',
+      message: 'Failed to retrieve adopted texts feed',
+      isRetryable: true,
+      cause: apiErr,
+    });
+    const result = handleToolError(toolErr, 'get_adopted_texts_feed');
+    expect(result.isError).toBeUndefined();
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.items).toEqual([]);
+    expect(parsed.partial).toBe(false);
+    expect(parsed.dataQualityWarning).toContain('timed out');
+    expect(parsed.dataQualityWarning).toContain('120000ms');
+    expect(parsed.toolName).toBe('get_adopted_texts_feed');
+  });
+
+  it('should return structured non-error response for direct TimeoutError', () => {
+    const err = new TimeoutError('Operation timed out after 180000ms', 180000);
+    const result = handleToolError(err, 'get_events_feed');
+    expect(result.isError).toBeUndefined();
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.items).toEqual([]);
+    expect(parsed.partial).toBe(false);
+    expect(parsed.dataQualityWarning).toContain('180000ms');
+    expect(parsed.toolName).toBe('get_events_feed');
+  });
+
+  it('should return structured non-error response for direct APIError(408)', () => {
+    const err = new APIError('EP API request timed out after 10000ms', 408);
+    const result = handleToolError(err, 'get_meps');
+    expect(result.isError).toBeUndefined();
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.items).toEqual([]);
+    expect(parsed.partial).toBe(false);
+    expect(parsed.dataQualityWarning).toContain('10000ms');
+  });
+
+  it('should include query narrowing guidance in timeout response', () => {
+    const err = new TimeoutError('timed out', 5000);
+    const result = handleToolError(err, 'tool');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.dataQualityWarning).toContain('narrowing query parameters');
+  });
+
+  it('should use ToolError.toolName over fallback for timeout responses', () => {
+    const apiErr = new APIError('timed out after 10000ms', 408);
+    const toolErr = new ToolError({
+      toolName: 'get_procedures_feed',
+      operation: 'fetchData',
+      message: 'Failed',
+      isRetryable: true,
+      cause: apiErr,
+    });
+    const result = handleToolError(toolErr, 'fallback_name');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.toolName).toBe('get_procedures_feed');
+  });
 });
 
 describe('handleDataUnavailable', () => {
@@ -102,6 +167,137 @@ describe('handleDataUnavailable', () => {
 
   it('should produce valid JSON content', () => {
     const result = handleDataUnavailable('tool', 'msg');
+    expect(() => JSON.parse(result.content[0]?.text ?? '') as unknown).not.toThrow();
+  });
+});
+
+// ── isTimeoutRelatedError ───────────────────────────────────────────────
+
+describe('isTimeoutRelatedError', () => {
+  it('should detect direct TimeoutError', () => {
+    expect(isTimeoutRelatedError(new TimeoutError('timed out', 5000))).toBe(true);
+  });
+
+  it('should detect APIError with status 408', () => {
+    expect(isTimeoutRelatedError(new APIError('timed out', 408))).toBe(true);
+  });
+
+  it('should detect ToolError wrapping APIError(408)', () => {
+    const apiErr = new APIError('timed out after 10000ms', 408);
+    const toolErr = new ToolError({ toolName: 't', operation: 'o', message: 'm', cause: apiErr });
+    expect(isTimeoutRelatedError(toolErr)).toBe(true);
+  });
+
+  it('should detect ToolError wrapping TimeoutError', () => {
+    const te = new TimeoutError('timed out', 5000);
+    const toolErr = new ToolError({ toolName: 't', operation: 'o', message: 'm', cause: te });
+    expect(isTimeoutRelatedError(toolErr)).toBe(true);
+  });
+
+  it('should return false for regular Error', () => {
+    expect(isTimeoutRelatedError(new Error('something failed'))).toBe(false);
+  });
+
+  it('should return false for APIError with non-408 status', () => {
+    expect(isTimeoutRelatedError(new APIError('not found', 404))).toBe(false);
+    expect(isTimeoutRelatedError(new APIError('server error', 500))).toBe(false);
+  });
+
+  it('should return false for ToolError without timeout cause', () => {
+    const toolErr = new ToolError({ toolName: 't', operation: 'o', message: 'm', cause: new Error('network') });
+    expect(isTimeoutRelatedError(toolErr)).toBe(false);
+  });
+
+  it('should return false for non-Error values', () => {
+    expect(isTimeoutRelatedError(null)).toBe(false);
+    expect(isTimeoutRelatedError(undefined)).toBe(false);
+    expect(isTimeoutRelatedError('timeout')).toBe(false);
+  });
+});
+
+// ── extractTimeoutMs ────────────────────────────────────────────────────
+
+describe('extractTimeoutMs', () => {
+  it('should extract from TimeoutError.timeoutMs', () => {
+    expect(extractTimeoutMs(new TimeoutError('timed out', 120000))).toBe(120000);
+  });
+
+  it('should extract from APIError(408) message pattern', () => {
+    expect(extractTimeoutMs(new APIError('timed out after 180000ms', 408))).toBe(180000);
+  });
+
+  it('should extract from ToolError wrapping APIError(408)', () => {
+    const apiErr = new APIError('EP API request to /feed timed out after 10000ms', 408);
+    const toolErr = new ToolError({ toolName: 't', operation: 'o', message: 'm', cause: apiErr });
+    expect(extractTimeoutMs(toolErr)).toBe(10000);
+  });
+
+  it('should extract from ToolError wrapping TimeoutError', () => {
+    const te = new TimeoutError('timed out', 5000);
+    const toolErr = new ToolError({ toolName: 't', operation: 'o', message: 'm', cause: te });
+    expect(extractTimeoutMs(toolErr)).toBe(5000);
+  });
+
+  it('should return undefined for non-timeout errors', () => {
+    expect(extractTimeoutMs(new Error('fail'))).toBeUndefined();
+    expect(extractTimeoutMs(null)).toBeUndefined();
+  });
+
+  it('should return undefined for APIError(408) without ms in message', () => {
+    expect(extractTimeoutMs(new APIError('request timeout', 408))).toBeUndefined();
+  });
+});
+
+// ── buildTimeoutResponse ────────────────────────────────────────────────
+
+describe('buildTimeoutResponse', () => {
+  it('should return MCP-compliant response without isError', () => {
+    const result = buildTimeoutResponse('get_meps', 10000);
+    expect(result.isError).toBeUndefined();
+    expect(result.content).toHaveLength(1);
+    expect(result.content[0]?.type).toBe('text');
+  });
+
+  it('should include empty items array', () => {
+    const result = buildTimeoutResponse('tool', 5000);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.items).toEqual([]);
+  });
+
+  it('should include partial: false', () => {
+    const result = buildTimeoutResponse('tool', 5000);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.partial).toBe(false);
+  });
+
+  it('should include timeout duration in dataQualityWarning', () => {
+    const result = buildTimeoutResponse('tool', 120000);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.dataQualityWarning).toContain('120000ms');
+  });
+
+  it('should include query narrowing guidance', () => {
+    const result = buildTimeoutResponse('tool', 5000);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.dataQualityWarning).toContain('narrowing query parameters');
+    expect(parsed.dataQualityWarning).toContain('year filter');
+  });
+
+  it('should include toolName', () => {
+    const result = buildTimeoutResponse('get_adopted_texts_feed', 5000);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.toolName).toBe('get_adopted_texts_feed');
+  });
+
+  it('should handle undefined timeoutMs gracefully', () => {
+    const result = buildTimeoutResponse('tool', undefined);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.dataQualityWarning).toContain('timed out');
+    expect(parsed.items).toEqual([]);
+  });
+
+  it('should produce valid JSON content', () => {
+    const result = buildTimeoutResponse('tool', 5000);
     expect(() => JSON.parse(result.content[0]?.text ?? '') as unknown).not.toThrow();
   });
 });
