@@ -5,7 +5,7 @@
  * cached health status without making upstream API calls.
  *
  * The tracker is a module-level singleton that records success/error
- * outcomes for each feed tool call. The {@link getServerHealth} tool
+ * outcomes for each feed tool call. The `get_server_health` tool
  * reads from this tracker to report feed availability.
  *
  * ISMS Policy: MO-001 (Monitoring and Alerting), PE-001 (Performance Standards)
@@ -100,8 +100,9 @@ export class FeedHealthTracker {
     return this.feedToolSet.has(name);
   }
 
-  /** Record a successful feed invocation. */
+  /** Record a successful feed invocation. Silently ignores unknown feed names. */
   recordSuccess(feedName: string): void {
+    if (!this.feedToolSet.has(feedName)) return;
     const now = new Date().toISOString();
     this.statuses.set(feedName, {
       status: 'ok',
@@ -110,8 +111,9 @@ export class FeedHealthTracker {
     });
   }
 
-  /** Record a failed feed invocation, preserving the last success timestamp. */
+  /** Record a failed feed invocation, preserving the last success timestamp. Silently ignores unknown feed names. */
   recordError(feedName: string, errorMessage: string): void {
+    if (!this.feedToolSet.has(feedName)) return;
     const now = new Date().toISOString();
     const existing = this.statuses.get(feedName);
     const entry: FeedStatus = {

@@ -97,6 +97,9 @@ import { handleGetServerHealth, getServerHealthToolMetadata } from '../tools/get
 // ── Feed health tracking ──────────────────────────────────────────
 import { feedHealthTracker, FEED_TOOL_NAMES } from '../services/FeedHealthTracker.js';
 
+// ── Error imports (for validation-error filtering) ────────────────
+import { ToolError } from '../tools/shared/errors.js';
+
 // ── Type imports ──────────────────────────────────────────────────
 import type { ToolHandler, ToolCategory, ToolResult, ToolMetadata } from './types.js';
 
@@ -314,8 +317,14 @@ export async function dispatchToolCall(
       feedHealthTracker.recordSuccess(name);
       return result;
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      feedHealthTracker.recordError(name, msg);
+      // Don't mark a feed as unavailable for client-side validation errors —
+      // only track failures that reflect upstream availability.
+      const isValidationError =
+        error instanceof ToolError && error.operation === 'validateInput';
+      if (!isValidationError) {
+        const msg = error instanceof Error ? error.message : 'Unknown error';
+        feedHealthTracker.recordError(name, msg);
+      }
       throw error;
     }
   }

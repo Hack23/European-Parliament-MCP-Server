@@ -51,6 +51,15 @@ describe('FeedHealthTracker', () => {
       expect(status.lastAttempt).toBeDefined();
       expect(status.lastError).toBeUndefined();
     });
+
+    it('silently ignores unknown feed names', () => {
+      tracker.recordSuccess('not_a_feed_tool');
+      // Should not appear in allStatuses (only tracked feeds are listed)
+      const statuses = tracker.getAllStatuses();
+      expect(statuses).not.toHaveProperty('not_a_feed_tool');
+      // Should still return unknown for unknown names
+      expect(tracker.getStatus('not_a_feed_tool').status).toBe('unknown');
+    });
   });
 
   describe('recordError', () => {
@@ -74,6 +83,13 @@ describe('FeedHealthTracker', () => {
       expect(afterError.status).toBe('error');
       expect(afterError.lastSuccess).toBe(successTimestamp);
       expect(afterError.lastError).toBe('timeout');
+    });
+
+    it('silently ignores unknown feed names', () => {
+      tracker.recordError('not_a_feed_tool', 'some error');
+      const statuses = tracker.getAllStatuses();
+      expect(statuses).not.toHaveProperty('not_a_feed_tool');
+      expect(tracker.getStatus('not_a_feed_tool').status).toBe('unknown');
     });
   });
 

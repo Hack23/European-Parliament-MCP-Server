@@ -22,6 +22,17 @@ vi.mock('../tools/getMEPs.js', async (importOriginal) => {
   };
 });
 
+// ── Mock a feed tool to test feed health tracking in dispatch ──
+vi.mock('../tools/getMEPsFeed.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../tools/getMEPsFeed.js')>();
+  return {
+    getMEPsFeedToolMetadata: actual.getMEPsFeedToolMetadata,
+    handleGetMEPsFeed: vi.fn().mockResolvedValue({
+      content: [{ type: 'text' as const, text: 'mocked feed result' }],
+    }),
+  };
+});
+
 // ── getToolMetadataArray ───────────────────────────────────────────
 
 describe('getToolMetadataArray', () => {
@@ -327,5 +338,59 @@ describe('dispatchToolCall', () => {
     expect(metadataNames).toContain('assess_mep_influence');  // osint
     expect(metadataNames).toContain('get_current_meps');      // phase4
     expect(metadataNames).toContain('get_incoming_meps');     // phase5
+  });
+
+  // ── Feed health tracking in dispatch ───────────────────────────
+
+  it('records feed success on successful feed tool dispatch', async () => {
+    const { feedHealthTracker } = await import('../services/FeedHealthTracker.js');
+    feedHealthTracker.reset();
+
+    await dispatchToolCall('get_meps_feed', { timeframe: 'one-week' });
+
+    const status = feedHealthTracker.getStatus('get_meps_feed');
+    expect(status.status).toBe('ok');
+  });
+
+  it('records feed error on feed tool dispatch failure', async () => {
+    const { feedHealthTracker } = await import('../services/FeedHealthTracker.js');
+    const { handleGetMEPsFeed } = await import('../tools/getMEPsFeed.js');
+    feedHealthTracker.reset();
+
+    const mockedFeed = vi.mocked(handleGetMEPsFeed);
+    mockedFeed.mockRejectedValueOnce(new Error('upstream failure'));
+
+    await expect(dispatchToolCall('get_meps_feed', {})).rejects.toThrow('upstream failure');
+
+    const status = feedHealthTracker.getStatus('get_meps_feed');
+    expect(status.status).toBe('error');
+    expect(status.lastError).toBe('upstream failure');
+  });
+
+  it('does not record error for validation failures (ToolError with validateInput operation)', async () => {
+    const { feedHealthTracker } = await import('../services/FeedHealthTracker.js');
+    const { handleGetMEPsFeed } = await import('../tools/getMEPsFeed.js');
+    const { ToolError } = await import('../tools/shared/errors.js');
+    feedHealthTracker.reset();
+
+    // First, record a success so we can verify it's preserved
+    feedHealthTracker.recordSuccess('get_meps_feed');
+    expect(feedHealthTracker.getStatus('get_meps_feed').status).toBe('ok');
+
+    const mockedFeed = vi.mocked(handleGetMEPsFeed);
+    mockedFeed.mockRejectedValueOnce(
+      new ToolError({
+        toolName: 'get_meps_feed',
+        operation: 'validateInput',
+        message: 'Invalid parameters',
+        isRetryable: false,
+      })
+    );
+
+    await expect(dispatchToolCall('get_meps_feed', {})).rejects.toThrow('Invalid parameters');
+
+    // Feed status should still be ok — validation errors don't reflect upstream health
+    const status = feedHealthTracker.getStatus('get_meps_feed');
+    expect(status.status).toBe('ok');
   });
 });
