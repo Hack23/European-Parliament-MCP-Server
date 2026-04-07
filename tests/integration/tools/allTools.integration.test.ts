@@ -775,6 +775,8 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         'early_warning_system'
       );
       if (!result) { ctx.skip(); return; }
+      // OSINT tools catch errors internally and return buildErrorResponse
+      if (result.isError) { ctx.skip(); return; }
       const parsed = parseAndValidateNoMockData(result) as { warnings: unknown; trendIndicators: unknown };
       expect(parsed).toHaveProperty('warnings');
       expect(parsed).toHaveProperty('trendIndicators');

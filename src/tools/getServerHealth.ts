@@ -41,6 +41,10 @@ function deriveServerStatus(level: AvailabilityLevel): 'healthy' | 'degraded' | 
     case 'Degraded':
     case 'Sparse':
       return 'degraded';
+    default: {
+      const exhaustiveCheck: never = level;
+      throw new Error(`Unhandled availability level: ${String(exhaustiveCheck)}`);
+    }
   }
 }
 
