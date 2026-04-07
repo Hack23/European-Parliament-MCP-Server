@@ -98,7 +98,7 @@ export async function handleGetServerHealth(args: unknown): Promise<ToolResult> 
     },
   };
 
-  return await Promise.resolve(buildToolResponse(result));
+  return buildToolResponse(result);
 }
 
 /** Tool metadata for MCP registration. */
