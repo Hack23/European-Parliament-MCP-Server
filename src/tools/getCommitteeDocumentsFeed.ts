@@ -50,7 +50,7 @@ export async function handleGetCommitteeDocumentsFeed(args: unknown): Promise<To
     const result = await epClient.getCommitteeDocumentsFeed(
       apiParams as Parameters<typeof epClient.getCommitteeDocumentsFeed>[0]
     );
-    return buildToolResponse(result);
+    return buildToolResponse({ ...result, dataQualityWarnings: [] as string[] });
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({

@@ -50,7 +50,7 @@ export async function handleGetPlenaryDocumentsFeed(args: unknown): Promise<Tool
     const result = await epClient.getPlenaryDocumentsFeed(
       apiParams as Parameters<typeof epClient.getPlenaryDocumentsFeed>[0]
     );
-    return buildToolResponse(result);
+    return buildToolResponse({ ...result, dataQualityWarnings: [] as string[] });
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({

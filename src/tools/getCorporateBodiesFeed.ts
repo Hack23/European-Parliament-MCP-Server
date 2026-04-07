@@ -50,7 +50,7 @@ export async function handleGetCorporateBodiesFeed(args: unknown): Promise<ToolR
     const result = await epClient.getCorporateBodiesFeed(
       apiParams as Parameters<typeof epClient.getCorporateBodiesFeed>[0]
     );
-    return buildToolResponse(result);
+    return buildToolResponse({ ...result, dataQualityWarnings: [] as string[] });
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({

@@ -50,7 +50,7 @@ export async function handleGetMEPsFeed(args: unknown): Promise<ToolResult> {
     const result = await epClient.getMEPsFeed(
       apiParams as Parameters<typeof epClient.getMEPsFeed>[0]
     );
-    return buildToolResponse(result);
+    return buildToolResponse({ ...result, dataQualityWarnings: [] as string[] });
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({

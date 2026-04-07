@@ -51,7 +51,7 @@ export async function handleGetMEPDeclarationsFeed(args: unknown): Promise<ToolR
     const result = await epClient.getMEPDeclarationsFeed(
       apiParams as Parameters<typeof epClient.getMEPDeclarationsFeed>[0]
     );
-    return buildToolResponse(result);
+    return buildToolResponse({ ...result, dataQualityWarnings: [] as string[] });
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({

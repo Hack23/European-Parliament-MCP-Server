@@ -50,7 +50,7 @@ export async function handleGetParliamentaryQuestionsFeed(args: unknown): Promis
     const result = await epClient.getParliamentaryQuestionsFeed(
       apiParams as Parameters<typeof epClient.getParliamentaryQuestionsFeed>[0]
     );
-    return buildToolResponse(result);
+    return buildToolResponse({ ...result, dataQualityWarnings: [] as string[] });
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({
