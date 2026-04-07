@@ -83,6 +83,22 @@ describe('get_committee_documents_feed Tool', () => {
 
       await expect(handleGetCommitteeDocumentsFeed({})).rejects.toThrow('Failed to retrieve committee documents feed');
     });
+
+    it('should return empty feed on upstream 404', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getCommitteeDocumentsFeed)
+        .mockRejectedValueOnce(new APIError('Not Found', 404));
+
+      const result = await handleGetCommitteeDocumentsFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        data: unknown[];
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.data).toEqual([]);
+      expect(parsed.dataQualityWarnings[0]).toContain('404');
+    });
   });
 
   describe('Metadata', () => {
