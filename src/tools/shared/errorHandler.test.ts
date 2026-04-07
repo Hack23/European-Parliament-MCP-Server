@@ -367,6 +367,54 @@ describe('buildTimeoutResponse', () => {
     const result = buildTimeoutResponse('tool', 5000);
     expect(() => JSON.parse(result.content[0]?.text ?? '') as unknown).not.toThrow();
   });
+
+  it('should include dataAvailable: false indicator', () => {
+    const result = buildTimeoutResponse('tool', 5000);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.dataAvailable).toBe(false);
+  });
+
+  it('should include timedOut: true indicator', () => {
+    const result = buildTimeoutResponse('tool', 5000);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.timedOut).toBe(true);
+  });
+
+  it('should include status: timeout', () => {
+    const result = buildTimeoutResponse('tool', 5000);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.status).toBe('timeout');
+  });
+
+  it('should include OSINT confidenceLevel as LOW', () => {
+    const result = buildTimeoutResponse('tool', 5000);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.confidenceLevel).toBe('LOW');
+  });
+
+  it('should include OSINT methodology as descriptive array', () => {
+    const result = buildTimeoutResponse('tool', 5000);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    const methodology = parsed.methodology as string[];
+    expect(Array.isArray(methodology)).toBe(true);
+    expect(methodology.length).toBeGreaterThan(0);
+    expect(methodology[0]).toContain('timeout handler');
+  });
+
+  it('should include OSINT dataFreshness with unknown status', () => {
+    const result = buildTimeoutResponse('tool', 5000);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    const freshness = parsed.dataFreshness as Record<string, unknown>;
+    expect(freshness.status).toBe('unknown');
+    expect(freshness.lastCheckedAt).toBeDefined();
+    expect(freshness.notes).toContain('Timeout');
+  });
+
+  it('should include OSINT sourceAttribution as empty array', () => {
+    const result = buildTimeoutResponse('tool', 5000);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.sourceAttribution).toEqual([]);
+  });
 });
 
 // ── extractToolName ─────────────────────────────────────────────────────
