@@ -13,6 +13,7 @@ import { GetPlenaryDocumentsFeedSchema } from '../schemas/europeanParliament.js'
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
+import { isUpstream404, buildEmptyFeedResponse } from './shared/feedUtils.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
@@ -51,6 +52,7 @@ export async function handleGetPlenaryDocumentsFeed(args: unknown): Promise<Tool
     );
     return buildToolResponse(result);
   } catch (error: unknown) {
+    if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({
       toolName: 'get_plenary_documents_feed',
       operation: 'fetchData',

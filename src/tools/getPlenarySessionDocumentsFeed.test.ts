@@ -83,6 +83,22 @@ describe('get_plenary_session_documents_feed Tool', () => {
 
       await expect(handleGetPlenarySessionDocumentsFeed({})).rejects.toThrow('Failed to retrieve plenary session documents feed');
     });
+
+    it('should return empty feed on upstream 404', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getPlenarySessionDocumentsFeed)
+        .mockRejectedValueOnce(new APIError('Not Found', 404));
+
+      const result = await handleGetPlenarySessionDocumentsFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        feed: unknown[];
+        dataQualityWarning: string;
+      };
+      expect(parsed.feed).toEqual([]);
+      expect(parsed.dataQualityWarning).toContain('404');
+    });
   });
 
   describe('Metadata', () => {

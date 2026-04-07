@@ -106,6 +106,22 @@ describe('get_adopted_texts_feed Tool', () => {
 
       await expect(handleGetAdoptedTextsFeed({})).rejects.toThrow('Failed to retrieve adopted texts feed');
     });
+
+    it('should return empty feed on upstream 404', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getAdoptedTextsFeed)
+        .mockRejectedValueOnce(new APIError('Not Found', 404));
+
+      const result = await handleGetAdoptedTextsFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        feed: unknown[];
+        dataQualityWarning: string;
+      };
+      expect(parsed.feed).toEqual([]);
+      expect(parsed.dataQualityWarning).toContain('404');
+    });
   });
 
   describe('Metadata', () => {

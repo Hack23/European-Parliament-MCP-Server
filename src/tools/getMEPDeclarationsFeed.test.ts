@@ -106,6 +106,22 @@ describe('get_mep_declarations_feed Tool', () => {
 
       await expect(handleGetMEPDeclarationsFeed({})).rejects.toThrow('Failed to retrieve MEP declarations feed');
     });
+
+    it('should return empty feed on upstream 404', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getMEPDeclarationsFeed)
+        .mockRejectedValueOnce(new APIError('Not Found', 404));
+
+      const result = await handleGetMEPDeclarationsFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        feed: unknown[];
+        dataQualityWarning: string;
+      };
+      expect(parsed.feed).toEqual([]);
+      expect(parsed.dataQualityWarning).toContain('404');
+    });
   });
 
   describe('Metadata', () => {

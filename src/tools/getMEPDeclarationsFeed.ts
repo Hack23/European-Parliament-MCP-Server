@@ -13,6 +13,7 @@ import { GetMEPDeclarationsFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
+import { isUpstream404, buildEmptyFeedResponse } from './shared/feedUtils.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
@@ -52,6 +53,7 @@ export async function handleGetMEPDeclarationsFeed(args: unknown): Promise<ToolR
     );
     return buildToolResponse(result);
   } catch (error: unknown) {
+    if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({
       toolName: 'get_mep_declarations_feed',
       operation: 'fetchData',
