@@ -34,6 +34,8 @@ export interface LegislativeProcedure {
   confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   /** Methodology and data source description */
   methodology: string;
+  /** Warnings about partially available or missing data */
+  dataQualityWarnings?: string[];
 }
 
 /**

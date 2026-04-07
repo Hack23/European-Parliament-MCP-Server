@@ -26,6 +26,7 @@ import {
 } from './reportGenerators.js';
 import type { Report, ReportType } from './types.js';
 import type { ToolResult } from '../shared/types.js';
+import { ToolError } from '../shared/errors.js';
 
 /**
  * Report parameters type inferred from schema
@@ -57,7 +58,7 @@ const reportGenerators: Record<
  * @returns MCP tool result containing a structured report with summary, sections,
  *   statistics, and recommendations appropriate to the requested report type
  * @throws {ZodError} If `args` fails schema validation (e.g., missing required fields or invalid format)
- * @throws {Error} If the European Parliament API is unreachable or returns an error response
+ * @throws {ToolError} If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
@@ -97,9 +98,16 @@ export async function handleGenerateReport(
       }]
     };
   } catch (error: unknown) {
-    // Handle errors without exposing internal details
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to generate report: ${errorMessage}`);
+    if (error instanceof ToolError) {
+      throw error;
+    }
+    throw new ToolError({
+      toolName: 'generate_report',
+      operation: 'generateReport',
+      message: 'Failed to generate report',
+      isRetryable: true,
+      cause: error,
+    });
   }
 }
 

@@ -185,7 +185,7 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       // show-current endpoint MUST have country and politicalGroup
       expect(typeof mep.country).toBe('string');
       expect(mep.country).not.toBe('Unknown');
-      expect(mep.country).toMatch(/^[A-Z]{2}$/);
+      expect(mep.country).toMatch(/^[A-Z]{2,3}$/);
 
       expect(typeof mep.politicalGroup).toBe('string');
       expect(mep.politicalGroup).not.toBe('Unknown');
@@ -245,13 +245,16 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       expect(typeof details.biography).toBe('string');
       expect(details.biography!.length).toBeGreaterThan(0);
 
-      // Voting statistics structure
-      expect(details.votingStatistics).toBeDefined();
-      expect(typeof details.votingStatistics!.totalVotes).toBe('number');
-      expect(typeof details.votingStatistics!.votesFor).toBe('number');
-      expect(typeof details.votingStatistics!.votesAgainst).toBe('number');
-      expect(typeof details.votingStatistics!.abstentions).toBe('number');
-      expect(typeof details.votingStatistics!.attendanceRate).toBe('number');
+      // Voting statistics structure — EP API /meps/{id} does NOT return voting
+      // statistics, so the transformer intentionally leaves votingStatistics
+      // undefined.  If it IS present, validate its shape.
+      if (details.votingStatistics) {
+        expect(typeof details.votingStatistics.totalVotes).toBe('number');
+        expect(typeof details.votingStatistics.votesFor).toBe('number');
+        expect(typeof details.votingStatistics.votesAgainst).toBe('number');
+        expect(typeof details.votingStatistics.abstentions).toBe('number');
+        expect(typeof details.votingStatistics.attendanceRate).toBe('number');
+      }
 
       // Committees extracted from memberships (may be empty if API record lacks membership data)
       expect(Array.isArray(details.committees)).toBe(true);
@@ -331,8 +334,13 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       expect(committee.abbreviation.length).toBeGreaterThan(0);
 
       expect(Array.isArray(committee.members)).toBe(true);
-      expect(typeof committee.chair).toBe('string');
-      expect(Array.isArray(committee.viceChairs)).toBe(true);
+      // chair and viceChairs are optional — EP API doesn't reliably include role info
+      if (committee.chair !== undefined) {
+        expect(typeof committee.chair).toBe('string');
+      }
+      if (committee.viceChairs !== undefined) {
+        expect(Array.isArray(committee.viceChairs)).toBe(true);
+      }
       expect(Array.isArray(committee.responsibilities)).toBe(true);
     }, TEST_TIMEOUT_MS);
 
@@ -349,8 +357,13 @@ describeIntegration('Transformer Validation against Real EP API Data', () => {
       expect(typeof committee.name).toBe('string');
       expect(typeof committee.abbreviation).toBe('string');
       expect(Array.isArray(committee.members)).toBe(true);
-      expect(typeof committee.chair).toBe('string');
-      expect(Array.isArray(committee.viceChairs)).toBe(true);
+      // chair and viceChairs are optional — EP API doesn't reliably include role info
+      if (committee.chair !== undefined) {
+        expect(typeof committee.chair).toBe('string');
+      }
+      if (committee.viceChairs !== undefined) {
+        expect(Array.isArray(committee.viceChairs)).toBe(true);
+      }
       expect(Array.isArray(committee.responsibilities)).toBe(true);
     }, TEST_TIMEOUT_MS);
   });

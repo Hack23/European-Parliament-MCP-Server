@@ -105,6 +105,98 @@ async function fetchProcedureCount(year: number): Promise<number | null> {
   }
 }
 
+/** Build data quality warnings for MEP activity report */
+function buildMEPWarnings(
+  mep: MEPDetails | null,
+  questionsSubmitted: number | null
+): string[] {
+  const warnings: string[] = [];
+  if (mep === null) {
+    warnings.push('MEP details not available; subject ID was not provided.');
+  }
+  if (questionsSubmitted === null) {
+    warnings.push('Parliamentary questions count unavailable from EP API.');
+  }
+  if (mep !== null && mep.votingStatistics === undefined) {
+    warnings.push('Voting statistics not available for this MEP.');
+  }
+  warnings.push('Reports authored count is always zero; EP API does not provide per-MEP report authorship data.');
+  return warnings;
+}
+
+/** Build data quality warnings for committee performance report */
+function buildCommitteeWarnings(
+  committee: { name: string; members: unknown[] } | null,
+  documentsProduced: number | null,
+  reportsProduced: number | null
+): string[] {
+  const warnings: string[] = [];
+  if (committee === null) {
+    warnings.push('Committee details not available; subject ID was not provided.');
+  }
+  if (documentsProduced === null) {
+    warnings.push('Committee documents count unavailable from EP API.');
+  }
+  if (reportsProduced === null) {
+    warnings.push('Adopted texts count unavailable from EP API.');
+  }
+  warnings.push('Meeting count is always zero; EP API does not provide committee-specific meeting counts.');
+  warnings.push('Document and adopted text counts are parliament-wide (first page), not filtered by committee.');
+  return warnings;
+}
+
+/** Build data quality warnings for voting statistics report */
+function buildVotingWarnings(
+  sessionCount: number | null,
+  adoptedCount: number | null,
+  dateFrom: string,
+  dateTo: string
+): string[] {
+  const warnings: string[] = [];
+  if (sessionCount === null) {
+    warnings.push('Plenary session count unavailable from EP API.');
+  }
+  if (adoptedCount === null) {
+    warnings.push('Adopted texts count unavailable from EP API.');
+  }
+  warnings.push('Average turnout is always zero; EP API does not provide turnout data.');
+  warnings.push('Political group alignment requires the compare_political_groups tool for detailed analysis.');
+  if (!isFullYearRange(dateFrom, dateTo)) {
+    warnings.push(
+      'Plenary session count and adopted texts count are based on the full year derived from dateFrom; '
+      + 'partial-year date ranges are not applied to these EP API calls.'
+    );
+  }
+  return warnings;
+}
+
+/** Check whether a date range spans an entire calendar year (Jan 1 – Dec 31). */
+function isFullYearRange(dateFrom: string, dateTo: string): boolean {
+  return dateFrom.endsWith('-01-01') && dateTo.endsWith('-12-31')
+    && dateFrom.substring(0, 4) === dateTo.substring(0, 4);
+}
+
+/** Build data quality warnings for legislation progress report */
+function buildLegislationWarnings(
+  procedureCount: number | null,
+  completedCount: number | null,
+  ongoingCount: number | null
+): string[] {
+  const warnings: string[] = [];
+  if (procedureCount === null) {
+    warnings.push('Legislative procedures count unavailable from EP API.');
+  }
+  if (completedCount === null) {
+    warnings.push('Completed procedures (adopted texts) count unavailable from EP API.');
+  }
+  if (ongoingCount === null) {
+    warnings.push('Ongoing procedures count could not be calculated due to missing data.');
+  }
+  warnings.push('Counts are lower bounds based on first page of API results (limit 100).');
+  warnings.push('Ongoing count is estimated as total procedures minus adopted texts.');
+  return warnings;
+}
+
 /**
  * Generate MEP activity report using real EP API data
  * Cyclomatic complexity: 2
@@ -117,6 +209,7 @@ export async function generateMEPActivityReport(
     : null;
   const data = extractMEPData(params, mep);
   const questionsSubmitted = await fetchQuestionCount(params.subjectId);
+  const warnings = buildMEPWarnings(mep, questionsSubmitted);
   
   return {
     reportType: 'MEP_ACTIVITY',
@@ -142,7 +235,8 @@ export async function generateMEPActivityReport(
       'Continue active participation in committee work',
       'Increase engagement with constituents',
       'Consider authoring legislation on key policy areas'
-    ]
+    ],
+    dataQualityWarnings: warnings
   };
 }
 
@@ -165,6 +259,7 @@ export async function generateCommitteePerformanceReport(
   // Parliament-wide counts (not filtered by committee)
   const documentsProduced = await fetchDocumentCount(year);
   const reportsProduced = await fetchAdoptedTextCount(year);
+  const warnings = buildCommitteeWarnings(committee, documentsProduced, reportsProduced);
   
   return {
     reportType: 'COMMITTEE_PERFORMANCE',
@@ -186,7 +281,8 @@ export async function generateCommitteePerformanceReport(
       opinionsIssued: 0, // EP API does not provide committee-specific opinion counts
       averageAttendance: 0, // EP API does not provide attendance data
       memberCount: membersLength
-    }
+    },
+    dataQualityWarnings: warnings
   };
 }
 
@@ -203,6 +299,7 @@ export async function generateVotingStatisticsReport(
 
   const sessionCount = await fetchSessionCount(dateFrom, dateTo);
   const adoptedCount = await fetchAdoptedTextCount(year);
+  const warnings = buildVotingWarnings(sessionCount, adoptedCount, dateFrom, dateTo);
   
   return {
     reportType: 'VOTING_STATISTICS',
@@ -222,7 +319,8 @@ export async function generateVotingStatisticsReport(
       totalSessions: sessionCount ?? 0,
       adopted: adoptedCount ?? 0,
       averageTurnout: 0 // EP API does not provide turnout data
-    }
+    },
+    dataQualityWarnings: warnings
   };
 }
 
@@ -242,6 +340,7 @@ export async function generateLegislationProgressReport(
   const ongoingCount = (procedureCount !== null && completedCount !== null)
     ? Math.max(0, procedureCount - completedCount)
     : null;
+  const warnings = buildLegislationWarnings(procedureCount, completedCount, ongoingCount);
   
   return {
     reportType: 'LEGISLATION_PROGRESS',
@@ -261,6 +360,7 @@ export async function generateLegislationProgressReport(
       totalProcedures: procedureCount ?? 0,
       completed: completedCount ?? 0,
       ongoing: ongoingCount ?? 0
-    }
+    },
+    dataQualityWarnings: warnings
   };
 }

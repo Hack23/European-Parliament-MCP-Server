@@ -79,15 +79,57 @@ describe('buildLegislativeTracking', () => {
     expect(result.voting).toEqual([]);
   });
 
-  it('always returns MEDIUM confidenceLevel', () => {
+  it('returns MEDIUM confidenceLevel when timeline and committee are present', () => {
     const result = buildLegislativeTracking(makeProcedure());
     expect(result.confidenceLevel).toBe('MEDIUM');
+  });
+
+  it('returns LOW confidenceLevel when timeline and committee are missing', () => {
+    const result = buildLegislativeTracking(
+      makeProcedure({ dateInitiated: '', dateLastActivity: '', responsibleCommittee: '' })
+    );
+    expect(result.confidenceLevel).toBe('LOW');
   });
 
   it('includes EP API reference in methodology', () => {
     const result = buildLegislativeTracking(makeProcedure());
     expect(result.methodology).toContain('/procedures');
     expect(result.methodology).toContain('EP API');
+  });
+
+  // ── data quality warnings ──────────────────────────────────────────────────
+
+  it('always includes amendment and voting data quality warnings', () => {
+    const result = buildLegislativeTracking(makeProcedure());
+    expect(result.dataQualityWarnings).toBeDefined();
+    expect(result.dataQualityWarnings?.some((w) => w.includes('Amendment'))).toBe(true);
+    expect(result.dataQualityWarnings?.some((w) => w.includes('Voting'))).toBe(true);
+  });
+
+  it('includes warning when dateInitiated is missing', () => {
+    const result = buildLegislativeTracking(makeProcedure({ dateInitiated: '' }));
+    expect(result.dataQualityWarnings?.some((w) => w.includes('initiation date'))).toBe(true);
+  });
+
+  it('includes warning when dateLastActivity is missing', () => {
+    const result = buildLegislativeTracking(makeProcedure({ dateLastActivity: '' }));
+    expect(result.dataQualityWarnings?.some((w) => w.includes('Last activity date'))).toBe(true);
+  });
+
+  it('includes warning when responsibleCommittee is missing', () => {
+    const result = buildLegislativeTracking(makeProcedure({ responsibleCommittee: '' }));
+    expect(result.dataQualityWarnings?.some((w) => w.includes('Responsible committee'))).toBe(true);
+  });
+
+  it('includes warning when rapporteur is missing', () => {
+    const result = buildLegislativeTracking(makeProcedure({ rapporteur: '' }));
+    expect(result.dataQualityWarnings?.some((w) => w.includes('Rapporteur'))).toBe(true);
+  });
+
+  it('does not include date warnings when dates are present', () => {
+    const result = buildLegislativeTracking(makeProcedure());
+    expect(result.dataQualityWarnings?.some((w) => w.includes('initiation date'))).toBe(false);
+    expect(result.dataQualityWarnings?.some((w) => w.includes('Last activity date'))).toBe(false);
   });
 
   // ── documents mapping ──────────────────────────────────────────────────────

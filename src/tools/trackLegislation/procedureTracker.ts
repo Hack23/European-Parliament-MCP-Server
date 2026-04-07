@@ -2,8 +2,10 @@
  * Procedure tracker for legislative data
  * 
  * Transforms real EP API Procedure data into structured legislative
- * tracking output. All data is derived from the API response—no
- * hardcoded or placeholder data.
+ * tracking output. Most fields are derived from the API response.
+ * Amendment counts and voting records are placeholder zeros/empty arrays
+ * because the single-procedure endpoint does not provide them; these
+ * are flagged via {@link LegislativeProcedure.dataQualityWarnings}.
  * 
  * ISMS Policy: SC-002 (Input Validation)
  */
@@ -71,12 +73,42 @@ function buildNextSteps(procedure: Procedure): string[] {
 /**
  * Build a legislative tracking result from a real EP API Procedure.
  * 
- * All fields are derived from the API response. No mock or placeholder data.
+ * Most fields are derived directly from the API response. Amendment counts
+ * and voting records are placeholders (zeros / empty array) because the
+ * single-procedure endpoint does not supply them; these are surfaced in
+ * {@link LegislativeProcedure.dataQualityWarnings}.
  * 
  * @param procedure - Real procedure data from EP API
  * @returns Structured legislative tracking data
  */
 export function buildLegislativeTracking(procedure: Procedure): LegislativeProcedure {
+  const warnings: string[] = [];
+
+  warnings.push(
+    'Amendment statistics not available from single procedure endpoint; proposed/adopted/rejected counts are zero.'
+  );
+  warnings.push(
+    'Voting records not available from single procedure endpoint; voting array is empty.'
+  );
+
+  if (!procedure.dateInitiated) {
+    warnings.push('Procedure initiation date is missing from EP API response.');
+  }
+  if (!procedure.dateLastActivity) {
+    warnings.push('Last activity date is missing from EP API response.');
+  }
+  if (!procedure.responsibleCommittee) {
+    warnings.push('Responsible committee is not assigned or missing from EP API response.');
+  }
+  if (!procedure.rapporteur) {
+    warnings.push('Rapporteur is not assigned or missing from EP API response.');
+  }
+
+  const hasTimeline = Boolean(procedure.dateInitiated) || Boolean(procedure.dateLastActivity);
+  const hasCommittee = Boolean(procedure.responsibleCommittee);
+  const confidenceLevel: LegislativeProcedure['confidenceLevel'] =
+    hasTimeline && hasCommittee ? 'MEDIUM' : 'LOW';
+
   return {
     procedureId: procedure.id,
     title: procedure.title,
@@ -94,11 +126,12 @@ export function buildLegislativeTracking(procedure: Procedure): LegislativeProce
       title: `Reference: ${docRef}`,
     })),
     nextSteps: buildNextSteps(procedure),
-    confidenceLevel: 'MEDIUM',
+    confidenceLevel,
     methodology: 'Real-time data from EP API /procedures endpoint. '
       + 'Procedure details (title, type, stage, status, dates, committee, rapporteur, documents) '
       + 'are sourced directly from the European Parliament open data API. '
       + 'Amendment and voting statistics require separate API calls and are not yet populated. '
       + 'Data source: https://data.europarl.europa.eu/api/v2/procedures',
+    dataQualityWarnings: warnings,
   };
 }
