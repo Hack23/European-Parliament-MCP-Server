@@ -93,11 +93,11 @@ describe('get_controlled_vocabularies_feed Tool', () => {
 
       expect(result.isError).toBeUndefined();
       const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
-        feed: unknown[];
-        dataQualityWarning: string;
+        data: unknown[];
+        dataQualityWarnings: string[];
       };
-      expect(parsed.feed).toEqual([]);
-      expect(parsed.dataQualityWarning).toContain('404');
+      expect(parsed.data).toEqual([]);
+      expect(parsed.dataQualityWarnings[0]).toContain('404');
     });
   });
 

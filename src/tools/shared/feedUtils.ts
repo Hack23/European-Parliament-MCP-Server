@@ -4,7 +4,8 @@
  * During EP recess or low-activity periods the upstream Open Data Portal
  * may return HTTP 404 for feeds with no recent updates.  These helpers
  * convert that 404 into an empty-but-successful MCP response so that
- * downstream consumers receive `{ feed: [] }` instead of a hard error.
+ * downstream consumers receive an empty JSON-LD envelope instead of a
+ * hard error.
  *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
@@ -24,14 +25,19 @@ export function isUpstream404(error: unknown): boolean {
 }
 
 /**
- * Build an empty feed response with a {@link dataQualityWarning} indicating
+ * Build an empty feed response with a `dataQualityWarnings` array indicating
  * that the upstream EP API returned 404 — likely no updates in the requested
  * timeframe.
+ *
+ * Returns the same JSON-LD envelope shape (`data` + `@context`) as the
+ * normal success path so callers do not need to branch on response shape.
  */
 export function buildEmptyFeedResponse(): ToolResult {
   return buildToolResponse({
-    feed: [],
-    dataQualityWarning:
+    data: [],
+    '@context': [],
+    dataQualityWarnings: [
       'EP Open Data Portal returned 404 for this feed — likely no updates in the requested timeframe',
+    ],
   });
 }

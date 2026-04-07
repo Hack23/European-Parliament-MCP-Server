@@ -50,16 +50,19 @@ describe('feedUtils', () => {
       expect(result.isError).toBeUndefined();
     });
 
-    it('should contain valid JSON with feed array and dataQualityWarning', () => {
+    it('should contain valid JSON with data array and dataQualityWarnings', () => {
       const result = buildEmptyFeedResponse();
       const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
-        feed: unknown[];
-        dataQualityWarning: string;
+        data: unknown[];
+        '@context': unknown[];
+        dataQualityWarnings: string[];
       };
 
-      expect(parsed.feed).toEqual([]);
-      expect(parsed.dataQualityWarning).toContain('404');
-      expect(parsed.dataQualityWarning).toContain('no updates');
+      expect(parsed.data).toEqual([]);
+      expect(parsed['@context']).toEqual([]);
+      expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
+      expect(parsed.dataQualityWarnings[0]).toContain('404');
+      expect(parsed.dataQualityWarnings[0]).toContain('no updates');
     });
   });
 });
