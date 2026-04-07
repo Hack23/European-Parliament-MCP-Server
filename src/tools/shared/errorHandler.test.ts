@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { handleToolError, handleDataUnavailable, isTimeoutRelatedError, extractTimeoutMs, buildTimeoutResponse } from './errorHandler.js';
+import { handleToolError, handleDataUnavailable, isTimeoutRelatedError, extractTimeoutMs, buildTimeoutResponse, extractToolName } from './errorHandler.js';
 import { ToolError } from './errors.js';
 import { APIError } from '../../clients/ep/baseClient.js';
 import { TimeoutError } from '../../utils/timeout.js';
@@ -84,6 +84,7 @@ describe('handleToolError', () => {
     expect(result.isError).toBeUndefined();
     const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.data).toEqual([]);
+    expect(parsed['@context']).toEqual([]);
     const warnings = parsed.dataQualityWarnings as string[];
     expect(Array.isArray(warnings)).toBe(true);
     expect(warnings[0]).toContain('timed out');
@@ -132,6 +133,23 @@ describe('handleToolError', () => {
     const result = handleToolError(toolErr, 'fallback_name');
     const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.toolName).toBe('get_procedures_feed');
+  });
+
+  it('should extract ToolError.toolName from nested cause chain for timeout responses', () => {
+    const apiErr = new APIError('timed out after 10000ms', 408, { timeoutMs: 10000 });
+    const toolErr = new ToolError({
+      toolName: 'get_events_feed',
+      operation: 'fetchData',
+      message: 'Failed',
+      isRetryable: true,
+      cause: apiErr,
+    });
+    // Wrap the ToolError in a generic Error (simulating a non-ToolError wrapper)
+    const wrapper = new Error('wrapper');
+    (wrapper as { cause?: unknown }).cause = toolErr;
+    const result = handleToolError(wrapper, 'fallback_name');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.toolName).toBe('get_events_feed');
   });
 });
 
@@ -291,6 +309,12 @@ describe('buildTimeoutResponse', () => {
     expect(parsed.data).toEqual([]);
   });
 
+  it('should include @context for JSON-LD envelope consistency', () => {
+    const result = buildTimeoutResponse('tool', 5000);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed['@context']).toEqual([]);
+  });
+
   it('should include dataQualityWarnings as string array', () => {
     const result = buildTimeoutResponse('tool', 5000);
     const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
@@ -321,11 +345,13 @@ describe('buildTimeoutResponse', () => {
     expect(parsed.toolName).toBe('get_adopted_texts_feed');
   });
 
-  it('should handle undefined timeoutMs gracefully', () => {
+  it('should handle undefined timeoutMs gracefully without double spaces', () => {
     const result = buildTimeoutResponse('tool', undefined);
     const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     const warnings = parsed.dataQualityWarnings as string[];
     expect(warnings[0]).toContain('timed out');
+    expect(warnings[0]).not.toContain('timed out  ');
+    expect(warnings[0]).not.toContain('out  —');
     expect(parsed.data).toEqual([]);
   });
 
@@ -340,5 +366,38 @@ describe('buildTimeoutResponse', () => {
   it('should produce valid JSON content', () => {
     const result = buildTimeoutResponse('tool', 5000);
     expect(() => JSON.parse(result.content[0]?.text ?? '') as unknown).not.toThrow();
+  });
+});
+
+// ── extractToolName ─────────────────────────────────────────────────────
+
+describe('extractToolName', () => {
+  it('should return ToolError.toolName for direct ToolError', () => {
+    const err = new ToolError({ toolName: 'get_meps', operation: 'op', message: 'msg' });
+    expect(extractToolName(err, 'fallback')).toBe('get_meps');
+  });
+
+  it('should return fallback for non-ToolError', () => {
+    expect(extractToolName(new Error('fail'), 'fallback')).toBe('fallback');
+  });
+
+  it('should return fallback for non-Error values', () => {
+    expect(extractToolName(null, 'fallback')).toBe('fallback');
+    expect(extractToolName('string', 'fallback')).toBe('fallback');
+  });
+
+  it('should walk cause chain to find ToolError', () => {
+    const apiErr = new APIError('timed out', 408);
+    const toolErr = new ToolError({ toolName: 'get_events_feed', operation: 'op', message: 'msg', cause: apiErr });
+    const wrapper = new Error('wrapper');
+    (wrapper as { cause?: unknown }).cause = toolErr;
+    expect(extractToolName(wrapper, 'fallback')).toBe('get_events_feed');
+  });
+
+  it('should find nearest ToolError in deeply nested chain', () => {
+    const apiErr = new APIError('timed out', 408);
+    const innerToolErr = new ToolError({ toolName: 'inner_tool', operation: 'op', message: 'inner', cause: apiErr });
+    const outerToolErr = new ToolError({ toolName: 'outer_tool', operation: 'op', message: 'outer', cause: innerToolErr });
+    expect(extractToolName(outerToolErr, 'fallback')).toBe('outer_tool');
   });
 });

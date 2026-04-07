@@ -75,6 +75,25 @@ export function extractTimeoutMs(error: unknown): number | undefined {
 }
 
 /**
+ * Extracts the most specific `toolName` from an error's cause chain.
+ *
+ * Walks the chain looking for the nearest `ToolError` and returns its
+ * `toolName`. Falls back to the provided `fallback` when no `ToolError`
+ * is found in the chain.
+ *
+ * @param error - Root error to inspect
+ * @param fallback - Default tool name when no `ToolError` is in the chain
+ * @returns The resolved tool name
+ */
+export function extractToolName(error: unknown, fallback: string): string {
+  if (error instanceof ToolError) return error.toolName;
+  if (error instanceof Error && error.cause !== undefined) {
+    return extractToolName(error.cause, fallback);
+  }
+  return fallback;
+}
+
+/**
  * Builds a structured non-error timeout response.
  *
  * Instead of returning `isError: true` (which causes MCP clients to retry
@@ -82,8 +101,9 @@ export function extractTimeoutMs(error: unknown): number | undefined {
  * an empty result set and a `dataQualityWarnings` array that guides the caller
  * toward narrowing the query.
  *
- * Uses `data: []` and `dataQualityWarnings: string[]` to match the JSON-LD
- * envelope shape and the `OsintStandardOutput` convention used throughout the codebase.
+ * Uses `data: []`, `'@context': []`, and `dataQualityWarnings: string[]` to
+ * match the JSON-LD envelope shape and the `OsintStandardOutput` convention
+ * used throughout the codebase.
  *
  * @param toolName - Name of the tool that timed out
  * @param timeoutMs - Configured timeout duration (if known)
@@ -91,17 +111,18 @@ export function extractTimeoutMs(error: unknown): number | undefined {
  *          successful (but empty) response and will not retry.
  */
 export function buildTimeoutResponse(toolName: string, timeoutMs: number | undefined): ToolResult {
-  const durationText = timeoutMs !== undefined
-    ? `after ${String(timeoutMs)}ms`
+  const durationSegment = timeoutMs !== undefined
+    ? ` after ${String(timeoutMs)}ms`
     : '';
   return {
     content: [{
       type: 'text',
       text: JSON.stringify({
         data: [],
+        '@context': [],
         dataQualityWarnings: [
-          `Request timed out ${durationText} — consider narrowing query parameters `
-          + '(e.g., add a year filter, reduce limit, or use a shorter timeframe)',
+          `Request timed out${durationSegment} — consider narrowing query parameters`
+          + ' (e.g., add a year filter, reduce limit, or use a shorter timeframe)',
         ],
         toolName,
       }, null, 2)
@@ -129,7 +150,7 @@ export function buildTimeoutResponse(toolName: string, timeoutMs: number | undef
 export function handleToolError(error: unknown, toolName: string): ToolResult {
   // Timeout errors → structured non-error response to prevent futile retries
   if (isTimeoutRelatedError(error)) {
-    const resolvedToolName = error instanceof ToolError ? error.toolName : toolName;
+    const resolvedToolName = extractToolName(error, toolName);
     return buildTimeoutResponse(resolvedToolName, extractTimeoutMs(error));
   }
 
