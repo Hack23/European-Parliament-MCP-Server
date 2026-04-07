@@ -83,11 +83,12 @@ export { epClient, rateLimiter };
 /**
  * Check if integration tests should run
  *
- * Integration tests always run to ensure release readiness on every PR.
+ * Integration tests always run in CI (EP_INTEGRATION_TESTS or CI env var).
+ * Local runs skip by default to avoid rate-limiting the EP API.
  * Rate limiting and network errors are handled gracefully via retryOrSkip.
  */
 export function shouldRunIntegrationTests(): boolean {
-  return true;
+  return process.env['EP_INTEGRATION_TESTS'] === 'true' || process.env['CI'] === 'true';
 }
 
 /**

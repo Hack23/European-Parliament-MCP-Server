@@ -98,6 +98,9 @@ export async function handleGenerateReport(
       }]
     };
   } catch (error: unknown) {
+    if (error instanceof ToolError) {
+      throw error;
+    }
     throw new ToolError({
       toolName: 'generate_report',
       operation: 'generateReport',

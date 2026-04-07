@@ -112,7 +112,7 @@ function buildMEPWarnings(
 ): string[] {
   const warnings: string[] = [];
   if (mep === null) {
-    warnings.push('MEP details not available; subject ID was not provided or lookup failed.');
+    warnings.push('MEP details not available; subject ID was not provided.');
   }
   if (questionsSubmitted === null) {
     warnings.push('Parliamentary questions count unavailable from EP API.');
@@ -132,7 +132,7 @@ function buildCommitteeWarnings(
 ): string[] {
   const warnings: string[] = [];
   if (committee === null) {
-    warnings.push('Committee details not available; subject ID was not provided or lookup failed.');
+    warnings.push('Committee details not available; subject ID was not provided.');
   }
   if (documentsProduced === null) {
     warnings.push('Committee documents count unavailable from EP API.');

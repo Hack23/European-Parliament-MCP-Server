@@ -115,12 +115,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   // ══════════════════════════════════════════════════════════════
 
   describe('Core Tool: get_meps', () => {
-    it('should return real MEP data from EP API', async () => {
+    it('should return real MEP data from EP API', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetMEPs({ limit: 5 }),
         'get_meps'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: { id: string }[] };
       expect(parsed).toHaveProperty('data');
@@ -134,7 +134,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Core Tool: get_mep_details', () => {
-    it('should return real MEP details from EP API', async () => {
+    it('should return real MEP details from EP API', async (ctx) => {
       if (!testMEPId) {
         const meps = await retryOrSkip(() => handleGetMEPs({ limit: 1 }), 'setup');
         if (!meps) return;
@@ -146,7 +146,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         () => handleGetMEPDetails({ id: testMEPId }),
         'get_mep_details'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { id: string; name: string };
       expect(parsed).toHaveProperty('id');
@@ -156,12 +156,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Core Tool: get_plenary_sessions', () => {
-    it('should return real plenary session data', async () => {
+    it('should return real plenary session data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetPlenarySessions({ limit: 5 }),
         'get_plenary_sessions'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: { id: string }[] };
       expect(parsed).toHaveProperty('data');
@@ -173,7 +173,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Core Tool: get_voting_records', () => {
-    it('should return real voting records data', async () => {
+    it('should return real voting records data', async (ctx) => {
       if (!testSessionId) {
         const sessions = await retryOrSkip(() => handleGetPlenarySessions({ limit: 1 }), 'setup');
         if (!sessions) return;
@@ -185,19 +185,19 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         () => handleGetVotingRecords({ sessionId: testSessionId }),
         'get_voting_records'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       parseAndValidateNoMockData(result);
     }, 30000);
   });
 
   describe('Core Tool: search_documents', () => {
-    it('should return real documents from EP API', async () => {
+    it('should return real documents from EP API', async (ctx) => {
       const result = await retryOrSkip(
         () => handleSearchDocuments({ keyword: 'climate', limit: 5 }),
         'search_documents'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: { id: string }[] };
       expect(parsed).toHaveProperty('data');
@@ -205,24 +205,24 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Core Tool: get_committee_info', () => {
-    it('should return real committee data from EP API', async () => {
+    it('should return real committee data from EP API', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetCommitteeInfo({ abbreviation: 'AFET' }),
         'get_committee_info'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       parseAndValidateNoMockData(result);
     }, 30000);
   });
 
   describe('Core Tool: get_parliamentary_questions', () => {
-    it('should return real parliamentary questions', async () => {
+    it('should return real parliamentary questions', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetParliamentaryQuestions({ limit: 5 }),
         'get_parliamentary_questions'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -234,7 +234,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   // ══════════════════════════════════════════════════════════════
 
   describe('Advanced Tool: analyze_voting_patterns', () => {
-    it('should analyze real voting patterns', async () => {
+    it('should analyze real voting patterns', async (ctx) => {
       if (!testMEPId) {
         const meps = await retryOrSkip(() => handleGetMEPs({ limit: 1 }), 'setup');
         if (!meps) return;
@@ -246,7 +246,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         () => handleAnalyzeVotingPatterns({ mepId: testMEPId, dateFrom: '2024-01-01', dateTo: '2024-12-31' }),
         'analyze_voting_patterns'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       // EP API /meps/{id} does not expose voting stats, so the tool returns dataAvailable: false
       const parsed = parseAndValidateNoMockData(result) as { mepId: string; dataAvailable?: boolean; statistics?: unknown };
@@ -261,7 +261,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Advanced Tool: track_legislation', () => {
-    it('should track real legislative procedure', async () => {
+    it('should track real legislative procedure', async (ctx) => {
       // First get a real procedure ID
       if (!testProcedureId) {
         const procs = await retryOrSkip(() => handleGetProcedures({ limit: 1 }), 'setup');
@@ -274,7 +274,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         () => handleTrackLegislation({ procedureId: testProcedureId }),
         'track_legislation'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { procedureId: string; title: string; confidenceLevel: string };
       expect(parsed).toHaveProperty('procedureId');
@@ -284,12 +284,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Advanced Tool: generate_report', () => {
-    it('should generate real MEP activity report', async () => {
+    it('should generate real MEP activity report', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGenerateReport({ reportType: 'MEP_ACTIVITY' }),
         'generate_report'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       parseAndValidateNoMockData(result);
     }, 60000);
@@ -300,7 +300,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   // ══════════════════════════════════════════════════════════════
 
   describe('OSINT Tool: assess_mep_influence', () => {
-    it('should assess influence using real MEP data', async () => {
+    it('should assess influence using real MEP data', async (ctx) => {
       if (!testMEPId) {
         const meps = await retryOrSkip(() => handleGetMEPs({ limit: 1 }), 'setup');
         if (!meps) return;
@@ -312,7 +312,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         () => handleAssessMepInfluence({ mepId: testMEPId }),
         'assess_mep_influence'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { mepId: string; overallScore: number };
       expect(parsed).toHaveProperty('mepId');
@@ -322,12 +322,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('OSINT Tool: analyze_coalition_dynamics', () => {
-    it('should analyze coalition dynamics with real data', async () => {
+    it('should analyze coalition dynamics with real data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleAnalyzeCoalitionDynamics({ dateFrom: '2024-01-01', dateTo: '2024-12-31' }),
         'analyze_coalition_dynamics'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { groupMetrics: unknown[]; confidenceLevel: string };
       expect(parsed).toHaveProperty('groupMetrics');
@@ -336,12 +336,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('OSINT Tool: detect_voting_anomalies', () => {
-    it('should detect anomalies using real voting data', async () => {
+    it('should detect anomalies using real voting data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleDetectVotingAnomalies({ dateFrom: '2024-01-01', dateTo: '2024-12-31' }),
         'detect_voting_anomalies'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { anomalies: unknown[] };
       expect(parsed).toHaveProperty('anomalies');
@@ -349,12 +349,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('OSINT Tool: compare_political_groups', () => {
-    it('should compare groups using real data', async () => {
+    it('should compare groups using real data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleComparePoliticalGroups({ groupIds: ['EPP', 'S&D'], dateFrom: '2024-01-01', dateTo: '2024-12-31' }),
         'compare_political_groups'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { groups: unknown[] };
       expect(parsed).toHaveProperty('groups');
@@ -362,24 +362,24 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('OSINT Tool: analyze_legislative_effectiveness', () => {
-    it('should analyze effectiveness with real data', async () => {
+    it('should analyze effectiveness with real data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleAnalyzeLegislativeEffectiveness({ subjectType: 'COMMITTEE', subjectId: 'AFET', dateFrom: '2024-01-01', dateTo: '2024-12-31' }),
         'analyze_legislative_effectiveness'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       parseAndValidateNoMockData(result);
     }, 60000);
   });
 
   describe('OSINT Tool: monitor_legislative_pipeline', () => {
-    it('should monitor pipeline with real procedure data', async () => {
+    it('should monitor pipeline with real procedure data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleMonitorLegislativePipeline({ status: 'ALL', limit: 5 }),
         'monitor_legislative_pipeline'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { pipeline: unknown[]; summary: unknown; methodology: string };
       expect(parsed).toHaveProperty('pipeline');
@@ -393,12 +393,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   // ══════════════════════════════════════════════════════════════
 
   describe('OSINT Tool: analyze_committee_activity', () => {
-    it('should analyze committee activity', async () => {
+    it('should analyze committee activity', async (ctx) => {
       const result = await retryOrSkip(
         () => handleAnalyzeCommitteeActivity({ committeeId: 'AFET' }),
         'analyze_committee_activity'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { committeeId: string };
       expect(parsed).toHaveProperty('committeeId');
@@ -406,12 +406,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('OSINT Tool: track_mep_attendance', () => {
-    it('should track MEP attendance with real data', async () => {
+    it('should track MEP attendance with real data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleTrackMepAttendance({}),
         'track_mep_attendance'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       parseAndValidateNoMockData(result);
     }, 30000);
@@ -422,12 +422,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   // ══════════════════════════════════════════════════════════════
 
   describe('OSINT Tool: analyze_country_delegation', () => {
-    it('should analyze country delegation with real data', async () => {
+    it('should analyze country delegation with real data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleAnalyzeCountryDelegation({ country: 'SE' }),
         'analyze_country_delegation'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { country: string };
       expect(parsed).toHaveProperty('country');
@@ -435,12 +435,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('OSINT Tool: generate_political_landscape', () => {
-    it('should generate landscape with real data', async () => {
+    it('should generate landscape with real data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGeneratePoliticalLandscape({}),
         'generate_political_landscape'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { groups: unknown[] };
       expect(parsed).toHaveProperty('groups');
@@ -452,12 +452,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   // ══════════════════════════════════════════════════════════════
 
   describe('Phase 4 Tool: get_current_meps', () => {
-    it('should return real current MEPs', async () => {
+    it('should return real current MEPs', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetCurrentMEPs({ limit: 5 }),
         'get_current_meps'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -466,12 +466,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 4 Tool: get_speeches', () => {
-    it('should return real speech data', async () => {
+    it('should return real speech data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetSpeeches({ limit: 5 }),
         'get_speeches'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -479,12 +479,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 4 Tool: get_procedures', () => {
-    it('should return real procedure data', async () => {
+    it('should return real procedure data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetProcedures({ limit: 5 }),
         'get_procedures'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: { id: string }[] };
       expect(parsed).toHaveProperty('data');
@@ -496,12 +496,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 4 Tool: get_adopted_texts', () => {
-    it('should return real adopted texts', async () => {
+    it('should return real adopted texts', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetAdoptedTexts({ limit: 5 }),
         'get_adopted_texts'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -509,12 +509,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 4 Tool: get_events', () => {
-    it('should return real event data', async () => {
+    it('should return real event data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetEvents({ limit: 5 }),
         'get_events'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -522,7 +522,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 4 Tool: get_meeting_activities', () => {
-    it('should return real meeting activity data', async () => {
+    it('should return real meeting activity data', async (ctx) => {
       // get_meeting_activities requires a sittingId — fetch a real session ID first
       if (!testSessionId) {
         const sessions = await retryOrSkip(() => handleGetPlenarySessions({ limit: 1 }), 'setup session');
@@ -536,7 +536,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         () => handleGetMeetingActivities({ sittingId: testSessionId, limit: 5 }),
         'get_meeting_activities'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -544,7 +544,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 4 Tool: get_meeting_decisions', () => {
-    it('should return real meeting decisions', async () => {
+    it('should return real meeting decisions', async (ctx) => {
       // get_meeting_decisions requires a sittingId — fetch a real session ID first
       if (!testSessionId) {
         const sessions = await retryOrSkip(() => handleGetPlenarySessions({ limit: 1 }), 'setup session');
@@ -558,7 +558,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         () => handleGetMeetingDecisions({ sittingId: testSessionId, limit: 5 }),
         'get_meeting_decisions'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -566,12 +566,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 4 Tool: get_mep_declarations', () => {
-    it('should return real MEP declarations', async () => {
+    it('should return real MEP declarations', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetMEPDeclarations({ limit: 5 }),
         'get_mep_declarations'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -583,12 +583,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   // ══════════════════════════════════════════════════════════════
 
   describe('Phase 5 Tool: get_incoming_meps', () => {
-    it('should return real incoming MEPs data', async () => {
+    it('should return real incoming MEPs data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetIncomingMEPs({ limit: 5 }),
         'get_incoming_meps'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -596,12 +596,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 5 Tool: get_outgoing_meps', () => {
-    it('should return real outgoing MEPs data', async () => {
+    it('should return real outgoing MEPs data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetOutgoingMEPs({ limit: 5 }),
         'get_outgoing_meps'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -609,12 +609,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 5 Tool: get_homonym_meps', () => {
-    it('should return real homonym MEPs data', async () => {
+    it('should return real homonym MEPs data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetHomonymMEPs({ limit: 5 }),
         'get_homonym_meps'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -622,12 +622,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 5 Tool: get_plenary_documents', () => {
-    it('should return real plenary documents', async () => {
+    it('should return real plenary documents', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetPlenaryDocuments({ limit: 5 }),
         'get_plenary_documents'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -635,12 +635,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 5 Tool: get_committee_documents', () => {
-    it('should return real committee documents', async () => {
+    it('should return real committee documents', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetCommitteeDocuments({ limit: 5 }),
         'get_committee_documents'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -648,12 +648,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 5 Tool: get_plenary_session_documents', () => {
-    it('should return real plenary session documents', async () => {
+    it('should return real plenary session documents', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetPlenarySessionDocuments({ limit: 5 }),
         'get_plenary_session_documents'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -661,12 +661,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 5 Tool: get_plenary_session_document_items', () => {
-    it('should return real plenary session document items', async () => {
+    it('should return real plenary session document items', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetPlenarySessionDocumentItems({ limit: 5 }),
         'get_plenary_session_document_items'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -674,12 +674,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 5 Tool: get_controlled_vocabularies', () => {
-    it('should return real controlled vocabularies', async () => {
+    it('should return real controlled vocabularies', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetControlledVocabularies({ limit: 5 }),
         'get_controlled_vocabularies'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -687,12 +687,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 5 Tool: get_external_documents', () => {
-    it('should return real external documents', async () => {
+    it('should return real external documents', async (ctx) => {
       const result = await retryOrSkip(
         () => handleGetExternalDocuments({ limit: 5 }),
         'get_external_documents'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
@@ -700,7 +700,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 5 Tool: get_meeting_foreseen_activities', () => {
-    it('should accept sittingId parameter', async () => {
+    it('should accept sittingId parameter', async (ctx) => {
       // This tool requires a sitting ID - get one from plenary sessions
       if (!testSessionId) {
         const sessions = await retryOrSkip(() => handleGetPlenarySessions({ limit: 1 }), 'setup');
@@ -713,14 +713,14 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         () => handleGetMeetingForeseenActivities({ sittingId: testSessionId, limit: 5 }),
         'get_meeting_foreseen_activities'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       parseAndValidateNoMockData(result);
     }, 30000);
   });
 
   describe('Phase 5 Tool: get_procedure_events', () => {
-    it('should return real procedure events', async () => {
+    it('should return real procedure events', async (ctx) => {
       if (!testProcedureId) {
         const procs = await retryOrSkip(() => handleGetProcedures({ limit: 1 }), 'setup');
         if (!procs) return;
@@ -732,7 +732,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         () => handleGetProcedureEvents({ processId: testProcedureId, limit: 5 }),
         'get_procedure_events'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
 
       parseAndValidateNoMockData(result);
     }, 30000);
@@ -743,12 +743,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   // ══════════════════════════════════════════════════════════════
 
   describe('Phase 6 OSINT Tool: network_analysis', () => {
-    it('should return network analysis data', async () => {
+    it('should return network analysis data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleNetworkAnalysis({}),
         'network_analysis'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
       const parsed = parseAndValidateNoMockData(result) as { networkNodes: unknown; networkEdges: unknown };
       expect(parsed).toHaveProperty('networkNodes');
       expect(parsed).toHaveProperty('networkEdges');
@@ -756,12 +756,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 6 OSINT Tool: sentiment_tracker', () => {
-    it('should return sentiment tracking data', async () => {
+    it('should return sentiment tracking data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleSentimentTracker({}),
         'sentiment_tracker'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
       const parsed = parseAndValidateNoMockData(result) as { groupSentiments: unknown; polarizationIndex: unknown };
       expect(parsed).toHaveProperty('groupSentiments');
       expect(parsed).toHaveProperty('polarizationIndex');
@@ -769,12 +769,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 6 OSINT Tool: early_warning_system', () => {
-    it('should return early warning data', async () => {
+    it('should return early warning data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleEarlyWarningSystem({}),
         'early_warning_system'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
       const parsed = parseAndValidateNoMockData(result) as { warnings: unknown; trendIndicators: unknown };
       expect(parsed).toHaveProperty('warnings');
       expect(parsed).toHaveProperty('trendIndicators');
@@ -782,12 +782,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 6 OSINT Tool: comparative_intelligence', () => {
-    it('should return comparative intelligence data', async () => {
+    it('should return comparative intelligence data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleComparativeIntelligence({ mepIds: [197047, 197048] }),
         'comparative_intelligence'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
       const parsed = parseAndValidateNoMockData(result) as { profiles: unknown; correlationMatrix: unknown };
       expect(parsed).toHaveProperty('profiles');
       expect(parsed).toHaveProperty('correlationMatrix');
@@ -795,12 +795,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('OSINT Correlation Tool: correlate_intelligence', () => {
-    it('should return correlation analysis data', async () => {
+    it('should return correlation analysis data', async (ctx) => {
       const result = await retryOrSkip(
         () => handleCorrelateIntelligence({ mepIds: ['197047', '197048'] }),
         'correlate_intelligence'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
       const parsed = parseAndValidateNoMockData(result) as { alerts: unknown; summary: unknown };
       expect(parsed).toHaveProperty('alerts');
       expect(parsed).toHaveProperty('summary');
@@ -808,7 +808,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   });
 
   describe('Phase 5 Tool: get_meeting_plenary_session_documents', () => {
-    it('should return meeting plenary session documents', async () => {
+    it('should return meeting plenary session documents', async (ctx) => {
       if (!testSessionId) {
         const sessions = await retryOrSkip(() => handleGetPlenarySessions({ limit: 1 }), 'setup');
         if (!sessions) return;
@@ -821,14 +821,14 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         () => handleGetMeetingPlenarySessionDocuments({ sittingId: testSessionId, limit: 5 }),
         'get_meeting_plenary_session_documents'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
     }, 30000);
   });
 
   describe('Phase 5 Tool: get_meeting_plenary_session_document_items', () => {
-    it('should return meeting plenary session document items', async () => {
+    it('should return meeting plenary session document items', async (ctx) => {
       if (!testSessionId) {
         const sessions = await retryOrSkip(() => handleGetPlenarySessions({ limit: 1 }), 'setup');
         if (!sessions) return;
@@ -841,7 +841,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         () => handleGetMeetingPlenarySessionDocumentItems({ sittingId: testSessionId, limit: 5 }),
         'get_meeting_plenary_session_document_items'
       );
-      if (!result) return;
+      if (!result) { ctx.skip(); return; }
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
     }, 30000);
