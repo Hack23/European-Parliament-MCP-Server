@@ -91,6 +91,15 @@ import { handleGetCorporateBodiesFeed, getCorporateBodiesFeedToolMetadata } from
 import { handleGetControlledVocabulariesFeed, getControlledVocabulariesFeedToolMetadata } from '../tools/getControlledVocabulariesFeed.js';
 import { handleGetProcedureEventById, getProcedureEventByIdToolMetadata } from '../tools/getProcedureEventById.js';
 
+// ── Server health tool ────────────────────────────────────────────
+import { handleGetServerHealth, getServerHealthToolMetadata } from '../tools/getServerHealth.js';
+
+// ── Feed health tracking ──────────────────────────────────────────
+import { feedHealthTracker, FEED_TOOL_NAMES } from '../services/FeedHealthTracker.js';
+
+// ── Error imports (for validation-error filtering) ────────────────
+import { ToolError } from '../tools/shared/errors.js';
+
 // ── Type imports ──────────────────────────────────────────────────
 import type { ToolHandler, ToolCategory, ToolResult, ToolMetadata } from './types.js';
 
@@ -122,6 +131,8 @@ export function getToolMetadataArray(): ToolMetadata[] {
     withCategory(searchDocumentsToolMetadata, 'core'),
     withCategory(getCommitteeInfoToolMetadata, 'core'),
     withCategory(getParliamentaryQuestionsToolMetadata, 'core'),
+    // Server health / diagnostics
+    withCategory(getServerHealthToolMetadata, 'core'),
     // Advanced analysis tools
     withCategory(analyzeVotingPatternsToolMetadata, 'advanced'),
     withCategory(trackLegislationToolMetadata, 'advanced'),
@@ -200,6 +211,8 @@ const toolHandlers: Record<string, ToolHandler> = {
   'search_documents': handleSearchDocuments,
   'get_committee_info': handleGetCommitteeInfo,
   'get_parliamentary_questions': handleGetParliamentaryQuestions,
+  // Server health / diagnostics
+  'get_server_health': handleGetServerHealth,
   // Advanced analysis tools
   'analyze_voting_patterns': handleAnalyzeVotingPatterns,
   'track_legislation': handleTrackLegislation,
@@ -265,8 +278,23 @@ const toolHandlers: Record<string, ToolHandler> = {
   'get_procedure_event_by_id': handleGetProcedureEventById,
 };
 
+// ── Feed tool name drift detection ────────────────────────────────
+// FEED_TOOL_NAMES (from FeedHealthTracker) is the single source of truth
+// for tracked feed tools. Fail fast if the handler map drifts.
+for (const feedName of FEED_TOOL_NAMES) {
+  if (toolHandlers[feedName] === undefined) {
+    throw new Error(
+      `Feed tool "${feedName}" is tracked by FeedHealthTracker but has no registered handler in toolRegistry`
+    );
+  }
+}
+
 /**
  * Dispatches a tool call to the registered handler.
+ *
+ * Feed tool calls are automatically tracked by the {@link feedHealthTracker}
+ * so that the `get_server_health` tool can report per-feed availability
+ * without making upstream API calls.
  *
  * @param name - Tool name from the MCP `CallTool` request
  * @param args - Validated tool arguments
@@ -281,5 +309,25 @@ export async function dispatchToolCall(
   if (handler === undefined) {
     throw new Error(`Unknown tool: ${name}`);
   }
-  return await handler(args);
+
+  // Track feed tool outcomes for the server health endpoint
+  if (feedHealthTracker.isFeedTool(name)) {
+    try {
+      const result = await handler(args);
+      feedHealthTracker.recordSuccess(name);
+      return result;
+    } catch (error: unknown) {
+      // Don't mark a feed as unavailable for client-side validation errors —
+      // only track failures that reflect upstream availability.
+      const isValidationError =
+        error instanceof ToolError && error.operation === 'validateInput';
+      if (!isValidationError) {
+        const msg = error instanceof Error ? error.message : 'Unknown error';
+        feedHealthTracker.recordError(name, msg);
+      }
+      throw error;
+    }
+  }
+
+  return handler(args);
 }
