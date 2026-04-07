@@ -106,6 +106,22 @@ describe('get_procedures_feed Tool', () => {
 
       await expect(handleGetProceduresFeed({})).rejects.toThrow('Failed to retrieve procedures feed');
     });
+
+    it('should return empty feed on upstream 404', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getProceduresFeed)
+        .mockRejectedValueOnce(new APIError('Not Found', 404));
+
+      const result = await handleGetProceduresFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        data: unknown[];
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.data).toEqual([]);
+      expect(parsed.dataQualityWarnings[0]).toContain('404');
+    });
   });
 
   describe('Metadata', () => {

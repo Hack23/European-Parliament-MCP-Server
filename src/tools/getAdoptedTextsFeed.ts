@@ -13,6 +13,7 @@ import { GetAdoptedTextsFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
+import { isUpstream404, buildEmptyFeedResponse } from './shared/feedUtils.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
@@ -50,8 +51,9 @@ export async function handleGetAdoptedTextsFeed(args: unknown): Promise<ToolResu
     const result = await epClient.getAdoptedTextsFeed(
       apiParams as Parameters<typeof epClient.getAdoptedTextsFeed>[0]
     );
-    return buildToolResponse(result);
+    return buildToolResponse({ ...result, dataQualityWarnings: [] });
   } catch (error: unknown) {
+    if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({
       toolName: 'get_adopted_texts_feed',
       operation: 'fetchData',

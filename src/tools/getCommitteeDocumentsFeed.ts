@@ -13,6 +13,7 @@ import { GetCommitteeDocumentsFeedSchema } from '../schemas/europeanParliament.j
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
+import { isUpstream404, buildEmptyFeedResponse } from './shared/feedUtils.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
@@ -49,8 +50,9 @@ export async function handleGetCommitteeDocumentsFeed(args: unknown): Promise<To
     const result = await epClient.getCommitteeDocumentsFeed(
       apiParams as Parameters<typeof epClient.getCommitteeDocumentsFeed>[0]
     );
-    return buildToolResponse(result);
+    return buildToolResponse({ ...result, dataQualityWarnings: [] });
   } catch (error: unknown) {
+    if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({
       toolName: 'get_committee_documents_feed',
       operation: 'fetchData',

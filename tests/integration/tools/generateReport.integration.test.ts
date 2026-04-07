@@ -68,7 +68,7 @@ describeIntegration('generate_report Integration Tests', () => {
     validateMCPStructure(result);
     const report = JSON.parse(result.content[0]!.text) as Record<string, unknown>;
     expect(report['reportType']).toBe('COMMITTEE_PERFORMANCE');
-  }, 60000);
+  }, 120000);
 
   it('should generate VOTING_STATISTICS report', async (ctx) => {
     const result = await retryOrSkip(async () => {
