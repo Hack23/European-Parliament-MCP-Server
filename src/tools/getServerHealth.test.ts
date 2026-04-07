@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { handleGetServerHealth, getServerHealthToolMetadata } from './getServerHealth.js';
+import { handleGetServerHealth, getServerHealthToolMetadata, GetServerHealthSchema } from './getServerHealth.js';
 import { feedHealthTracker } from '../services/FeedHealthTracker.js';
 import { FEED_TOOL_NAMES } from '../services/FeedHealthTracker.js';
 
@@ -192,20 +192,25 @@ describe('get_server_health Tool', () => {
     });
   });
 
-  describe('No Parameters Required', () => {
+  describe('Input Validation', () => {
     it('should accept empty object', async () => {
       const result = await handleGetServerHealth({});
       expect(result).toHaveProperty('content');
     });
 
-    it('should accept undefined', async () => {
+    it('should accept undefined (coerced to empty object)', async () => {
       const result = await handleGetServerHealth(undefined);
       expect(result).toHaveProperty('content');
     });
 
-    it('should accept null', async () => {
+    it('should accept null (coerced to empty object)', async () => {
       const result = await handleGetServerHealth(null);
       expect(result).toHaveProperty('content');
+    });
+
+    it('should strip unknown properties via Zod passthrough', () => {
+      // Schema accepts empty objects; extra keys are ignored by Zod default
+      expect(() => GetServerHealthSchema.parse({ extra: true })).not.toThrow();
     });
   });
 

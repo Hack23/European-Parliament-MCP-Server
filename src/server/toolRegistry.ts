@@ -95,7 +95,7 @@ import { handleGetProcedureEventById, getProcedureEventByIdToolMetadata } from '
 import { handleGetServerHealth, getServerHealthToolMetadata } from '../tools/getServerHealth.js';
 
 // ── Feed health tracking ──────────────────────────────────────────
-import { feedHealthTracker } from '../services/FeedHealthTracker.js';
+import { feedHealthTracker, FEED_TOOL_NAMES } from '../services/FeedHealthTracker.js';
 
 // ── Type imports ──────────────────────────────────────────────────
 import type { ToolHandler, ToolCategory, ToolResult, ToolMetadata } from './types.js';
@@ -274,6 +274,17 @@ const toolHandlers: Record<string, ToolHandler> = {
   'get_controlled_vocabularies_feed': handleGetControlledVocabulariesFeed,
   'get_procedure_event_by_id': handleGetProcedureEventById,
 };
+
+// ── Feed tool name drift detection ────────────────────────────────
+// FEED_TOOL_NAMES (from FeedHealthTracker) is the single source of truth
+// for tracked feed tools. Fail fast if the handler map drifts.
+for (const feedName of FEED_TOOL_NAMES) {
+  if (toolHandlers[feedName] === undefined) {
+    throw new Error(
+      `Feed tool "${feedName}" is tracked by FeedHealthTracker but has no registered handler in toolRegistry`
+    );
+  }
+}
 
 /**
  * Dispatches a tool call to the registered handler.

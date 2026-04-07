@@ -17,19 +17,31 @@
  * @module tools/getServerHealth
  */
 
+import { z } from 'zod';
 import { SERVER_VERSION } from '../config.js';
 import { feedHealthTracker } from '../services/FeedHealthTracker.js';
+import type { AvailabilityLevel } from '../services/FeedHealthTracker.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { ToolError } from './shared/errors.js';
 import type { ToolResult } from './shared/types.js';
+
+/** Zod schema for the (empty) input of this tool. */
+export const GetServerHealthSchema = z.object({});
 
 /**
  * Derive the overall server status from the feed availability level.
  * Cyclomatic complexity: 3
  */
-function deriveServerStatus(level: string): 'healthy' | 'degraded' | 'unhealthy' {
-  if (level === 'Full') return 'healthy';
-  if (level === 'Unavailable') return 'unhealthy';
-  return 'degraded';
+function deriveServerStatus(level: AvailabilityLevel): 'healthy' | 'degraded' | 'unhealthy' {
+  switch (level) {
+    case 'Full':
+      return 'healthy';
+    case 'Unavailable':
+      return 'unhealthy';
+    case 'Degraded':
+    case 'Sparse':
+      return 'degraded';
+  }
 }
 
 /**
@@ -40,10 +52,26 @@ function deriveServerStatus(level: string): 'healthy' | 'degraded' | 'unhealthy'
  * - Per-feed health status (ok / error / unknown)
  * - Aggregate availability level (Full / Degraded / Sparse / Unavailable)
  *
- * @param _args - Ignored; tool accepts no parameters
+ * @param args - Validated against empty-object schema (no parameters accepted)
  * @returns MCP tool result with JSON health payload
  */
-export async function handleGetServerHealth(_args: unknown): Promise<ToolResult> {
+export function handleGetServerHealth(args: unknown): Promise<ToolResult> {
+  try {
+    GetServerHealthSchema.parse(args ?? {});
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
+      throw new ToolError({
+        toolName: 'get_server_health',
+        operation: 'validateInput',
+        message: `Invalid parameters: ${fieldErrors}`,
+        isRetryable: false,
+        cause: error,
+      });
+    }
+    throw error;
+  }
+
   const feeds = feedHealthTracker.getAllStatuses();
   const availability = feedHealthTracker.getAvailability();
 
@@ -61,7 +89,7 @@ export async function handleGetServerHealth(_args: unknown): Promise<ToolResult>
     },
   };
 
-  return await Promise.resolve(buildToolResponse(result));
+  return Promise.resolve(buildToolResponse(result));
 }
 
 /** Tool metadata for MCP registration. */

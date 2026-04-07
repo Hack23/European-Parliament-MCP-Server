@@ -13,8 +13,9 @@ describe('FeedHealthTracker', () => {
   let tracker: FeedHealthTracker;
 
   beforeEach(() => {
-    tracker = new FeedHealthTracker();
     vi.useFakeTimers();
+    vi.setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
+    tracker = new FeedHealthTracker();
   });
 
   afterEach(() => {
