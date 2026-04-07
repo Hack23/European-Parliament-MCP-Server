@@ -25,6 +25,9 @@ if (shouldRunIntegrationTests()) {
 
 describeIntegration('European Parliament API Integration', () => {
   describe('MEP Data Access', () => {
+    // retryOrSkip() returns undefined on transient failures (timeout, rate-limit, network).
+    // Tests guard with `if (!result) { ctx.skip(); return; }` so flaky API issues
+    // are reported as skips rather than hard failures.
     it('should fetch real MEPs data from API', async (ctx) => {
       const result = await retryOrSkip(
         () => epClient.getMEPs({ country: 'SE', limit: 5 }),
@@ -76,7 +79,7 @@ describeIntegration('European Parliament API Integration', () => {
       expect(Array.isArray(result.data)).toBe(true);
     }, 60000);
 
-    it('should handle network errors with retry', async () => {
+    it('should reject requests to unreachable hosts', async () => {
       const badClient = new EuropeanParliamentClient({
         baseURL: 'https://invalid.example.com/api',
         cacheTTL: 0
