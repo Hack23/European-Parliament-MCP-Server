@@ -238,6 +238,27 @@ describe('classifyError', () => {
     expect(result.httpStatus).toBe(404);
   });
 
+  it('should walk deeper cause chain to find statusCode', () => {
+    const apiError = Object.assign(new Error('Service Unavailable'), { statusCode: 503 });
+    const wrapper1 = new Error('inner wrapper');
+    (wrapper1 as { cause?: unknown }).cause = apiError;
+    const wrapper2 = new Error('outer wrapper');
+    (wrapper2 as { cause?: unknown }).cause = wrapper1;
+    const result = classifyError(wrapper2);
+    expect(result.errorCode).toBe('UPSTREAM_503');
+    expect(result.httpStatus).toBe(503);
+    expect(result.retryable).toBe(true);
+  });
+
+  it('should handle circular cause chains without infinite loop', () => {
+    const err1 = new Error('err1');
+    const err2 = new Error('err2');
+    (err1 as { cause?: unknown }).cause = err2;
+    (err2 as { cause?: unknown }).cause = err1;
+    const result = classifyError(err1);
+    expect(result.errorCode).toBe('INTERNAL_ERROR');
+  });
+
   it('should default to INTERNAL_ERROR for unknown errors', () => {
     const result = classifyError('string error');
     expect(result.errorCode).toBe('INTERNAL_ERROR');

@@ -83,14 +83,34 @@ export function classifyError(error: unknown): ErrorClassification {
 }
 
 /**
- * Resolve HTTP status from an error or its cause chain (duck-typed).
+ * Resolve HTTP status by walking the error's cause chain (duck-typed).
+ * Stops after 10 levels or on a cycle to prevent infinite loops.
  * @internal
  */
 function resolveHttpStatus(error: unknown): number | undefined {
-  const directStatus = extractHttpStatus(error);
-  const causeStatus =
-    error instanceof Error ? extractHttpStatus(error.cause) : undefined;
-  return directStatus ?? causeStatus;
+  const maxDepth = 10;
+  const visited = new Set<object>();
+
+  let current: unknown = error;
+  for (let depth = 0; depth < maxDepth && current != null; depth += 1) {
+    const status = extractHttpStatus(current);
+    if (status !== undefined) {
+      return status;
+    }
+
+    if (typeof current !== 'object') {
+      return undefined;
+    }
+    if (visited.has(current)) {
+      return undefined;
+    }
+    visited.add(current);
+
+    current =
+      current instanceof Error ? current.cause : undefined;
+  }
+
+  return undefined;
 }
 
 /**
@@ -191,12 +211,14 @@ function categoryForCode(code: ErrorCode): ErrorCategory {
  * Handle a caught tool error, returning a safe MCP error response.
  * Never exposes raw stack traces to MCP clients.
  *
- * If the error is a {@link ToolError}, its own `toolName` and `isRetryable` are
- * used so the originating tool and retryability are correctly surfaced to callers
- * even when the error crosses handler boundaries.
+ * If the error is a {@link ToolError}, its own `toolName` is preserved so the
+ * originating tool is correctly surfaced to callers. Retryability is derived
+ * from the auto-classification (which may inspect the cause chain) rather than
+ * `error.isRetryable` to ensure consistency with the emitted `errorCode`.
  *
- * All error responses now include structured error classification metadata
- * (errorCode, errorCategory, httpStatus) enabling programmatic retry logic.
+ * Error responses produced by this handler include structured error
+ * classification metadata (errorCode, errorCategory, httpStatus) enabling
+ * programmatic retry logic.
  *
  * @param error - Caught error value
  * @param toolName - Fallback tool name when error carries no tool identity
