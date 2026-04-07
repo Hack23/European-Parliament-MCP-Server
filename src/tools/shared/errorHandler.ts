@@ -145,6 +145,12 @@ export function buildTimeoutResponse(toolName: string, timeoutMs: number | undef
   };
 }
 
+// Re-export classification utilities from the extracted module so existing
+// imports (e.g. `import { classifyError } from './errorHandler.js'`) continue
+// to work without breaking changes.
+export { classifyError } from './errorClassifier.js';
+export type { ErrorClassification } from './errorClassifier.js';
+
 /**
  * Handle a caught tool error, returning a safe MCP error response.
  * Never exposes raw stack traces to MCP clients.
@@ -154,11 +160,13 @@ export function buildTimeoutResponse(toolName: string, timeoutMs: number | undef
  * `data: []` and a `dataQualityWarnings` array instead of `isError: true`.
  * This prevents MCP clients from retrying the same slow request.
  *
- * For non-timeout {@link ToolError} instances, the error's own `toolName` and
- * `isRetryable` values are used so the originating tool and retryability are
- * correctly surfaced to callers even when the error crosses handler boundaries.
- * Timeout-related `ToolError` instances are handled by the timeout branch above
- * and return the structured timeout response instead.
+ * For non-timeout errors, the error is delegated to {@link buildErrorResponse}
+ * which auto-classifies via `classifyError()` and includes structured error
+ * classification metadata (errorCode, errorCategory, httpStatus) enabling
+ * programmatic retry logic. If the error is a {@link ToolError}, its own
+ * `toolName` is preserved. Retryability is determined by auto-classification
+ * (inspecting the cause chain) but can still honor `ToolError.isRetryable`
+ * in generic fallback cases when no more specific signal is available.
  *
  * @param error - Caught error value
  * @param toolName - Fallback tool name when error carries no tool identity
@@ -171,19 +179,10 @@ export function handleToolError(error: unknown, toolName: string): ToolResult {
     return buildTimeoutResponse(resolvedToolName, extractTimeoutMs(error));
   }
 
-  if (error instanceof ToolError) {
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify({ error: error.message, toolName: error.toolName, retryable: error.isRetryable }, null, 2)
-      }],
-      isError: true
-    };
-  }
-  if (error instanceof Error) {
-    return buildErrorResponse(error, toolName);
-  }
-  return buildErrorResponse(new Error('Unknown error occurred'), toolName);
+  // Non-timeout errors → delegate to buildErrorResponse which auto-classifies
+  const effectiveToolName = error instanceof ToolError ? error.toolName : toolName;
+  const effectiveError = error instanceof Error ? error : new Error('Unknown error occurred');
+  return buildErrorResponse(effectiveError, effectiveToolName);
 }
 
 /**

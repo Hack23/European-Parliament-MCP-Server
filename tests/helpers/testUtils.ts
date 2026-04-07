@@ -22,20 +22,52 @@ export const DEFAULT_TEST_TIMEOUT_MS =
     : 10000;
 
 /**
- * Check if an error is caused by rate limiting or network issues
+ * Check whether a single error message matches known rate-limit / network
+ * / timeout patterns.
+ */
+function matchesNetworkPattern(msg: string): boolean {
+  const lower = msg.toLowerCase();
+  return lower.includes('fetch failed')
+    || lower.includes('timed out')
+    || lower.includes('rate limit')
+    || lower.includes('429')
+    || lower.includes('503')
+    || lower.includes('failed to retrieve')
+    || lower.includes('failed to search')
+    || lower.includes('request failed')
+    || lower.includes('econnrefused')
+    || lower.includes('enotfound');
+}
+
+/**
+ * Check if an error (or any error in its cause chain) is caused by rate
+ * limiting, timeout, or network issues.  Walking the cause chain is
+ * necessary because tool handlers often wrap upstream APIErrors in a
+ * ToolError whose own message is generic (e.g. "Failed to generate report").
  */
 function isRateLimitOrNetworkError(error: unknown): boolean {
-  const msg = (error instanceof Error ? error.message : String(error)).toLowerCase();
-  return msg.includes('fetch failed')
-    || msg.includes('timed out')
-    || msg.includes('rate limit')
-    || msg.includes('429')
-    || msg.includes('503')
-    || msg.includes('failed to retrieve')
-    || msg.includes('failed to search')
-    || msg.includes('request failed')
-    || msg.includes('econnrefused')
-    || msg.includes('enotfound');
+  const maxDepth = 10;
+  let current: unknown = error;
+  for (let depth = 0; depth < maxDepth && current !== undefined && current !== null; depth++) {
+    const msg = current instanceof Error ? current.message : typeof current === 'string' ? current : '';
+    if (matchesNetworkPattern(msg)) {
+      return true;
+    }
+    // Also check statusCode for APIError-style objects (e.g. 408, 429, 503)
+    if (typeof current === 'object' && current !== null && 'statusCode' in current) {
+      const code = (current as { statusCode?: unknown }).statusCode;
+      if (code === 408 || code === 429 || code === 503) {
+        return true;
+      }
+    }
+    // Walk to the next cause
+    if (current instanceof Error && current.cause !== undefined) {
+      current = current.cause;
+    } else {
+      break;
+    }
+  }
+  return false;
 }
 
 /**

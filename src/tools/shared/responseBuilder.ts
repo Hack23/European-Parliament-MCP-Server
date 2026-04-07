@@ -5,6 +5,8 @@
  */
 
 import type { ToolResult } from './types.js';
+import { classifyError } from './errorClassifier.js';
+import type { ErrorClassification } from './errorClassifier.js';
 
 /**
  * Build a standard success response wrapping data as formatted JSON text.
@@ -22,11 +24,23 @@ export function buildToolResponse(data: unknown): ToolResult {
  * Build an error response from an error value or message string.
  * Never exposes raw stack traces to MCP clients.
  *
+ * When no explicit classification is provided, the error is automatically
+ * classified via {@link classifyError} so all error responses — whether
+ * routed through `handleToolError` or built directly by tool handlers —
+ * include consistent `errorCode`, `errorCategory`, and `retryable` metadata.
+ *
  * @param error - Error instance or message string
  * @param toolName - Name of the tool that produced the error
+ * @param classification - Optional pre-computed classification (auto-classified if omitted)
  * @returns MCP-compliant ToolResult with isError flag set
  */
-export function buildErrorResponse(error: unknown, toolName: string): ToolResult {
+export function buildErrorResponse(
+  error: unknown,
+  toolName: string,
+  classification?: ErrorClassification
+): ToolResult {
+  const cls = classification ?? classifyError(error);
+
   let message: string;
   let errorType: 'Error' | 'ZodError' | 'string' | 'unknown';
   if (error instanceof Error) {
@@ -39,8 +53,21 @@ export function buildErrorResponse(error: unknown, toolName: string): ToolResult
     message = 'Unknown error occurred';
     errorType = 'unknown';
   }
+
+  const payload: Record<string, unknown> = {
+    error: message,
+    toolName,
+    errorType,
+    retryable: cls.retryable,
+    errorCode: cls.errorCode,
+    errorCategory: cls.errorCategory,
+  };
+  if (cls.httpStatus !== undefined) {
+    payload['httpStatus'] = cls.httpStatus;
+  }
+
   return {
-    content: [{ type: 'text', text: JSON.stringify({ error: message, toolName, errorType }, null, 2) }],
+    content: [{ type: 'text', text: JSON.stringify(payload, null, 2) }],
     isError: true
   };
 }
