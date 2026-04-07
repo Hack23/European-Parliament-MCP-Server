@@ -13,10 +13,11 @@ import { TimeoutError } from '../../utils/timeout.js';
 /**
  * Checks whether an error represents an EP API request timeout.
  *
- * Detects timeouts regardless of how deeply they are wrapped:
+ * Detects timeouts regardless of how deeply they are wrapped by
+ * recursively walking the `cause` chain:
  * - Direct `TimeoutError`
  * - `APIError` with status 408 (produced by `baseClient.toAPIError`)
- * - `ToolError` whose `cause` is one of the above
+ * - `ToolError` or `Error` whose `cause` is any of the above (at any depth)
  *
  * @param error - Caught error value
  * @returns `true` when the root cause is a timeout
@@ -24,16 +25,40 @@ import { TimeoutError } from '../../utils/timeout.js';
 export function isTimeoutRelatedError(error: unknown): boolean {
   if (error instanceof TimeoutError) return true;
   if (error instanceof APIError && error.statusCode === 408) return true;
-  if (error instanceof ToolError && error.cause !== undefined) {
-    if (error.cause instanceof TimeoutError) return true;
-    if (error.cause instanceof APIError && error.cause.statusCode === 408) return true;
+  if (error instanceof Error && error.cause !== undefined) {
+    return isTimeoutRelatedError(error.cause);
   }
   return false;
 }
 
 /**
+ * Extracts the configured timeout duration (in ms) from an `APIError(408)`.
+ *
+ * Prefers structured `details.timeoutMs` metadata (set by `baseClient.toAPIError`),
+ * falling back to regex on the error message for `APIError`s created elsewhere.
+ *
+ * @param error - An `APIError` with status 408
+ * @returns The timeout duration in milliseconds, or `undefined`
+ * @private
+ */
+function extractTimeoutMsFromAPIError(error: APIError): number | undefined {
+  const details = error.details;
+  if (typeof details === 'object' && details !== null && 'timeoutMs' in details) {
+    const ms = (details as Record<string, unknown>)['timeoutMs'];
+    if (typeof ms === 'number' && Number.isFinite(ms)) return ms;
+  }
+  const match = /timed out after (\d+)ms/.exec(error.message);
+  if (match?.[1] !== undefined) return Number.parseInt(match[1], 10);
+  return undefined;
+}
+
+/**
  * Extracts the configured timeout duration (in ms) from a timeout-related error,
  * if available. Returns `undefined` when the duration cannot be determined.
+ *
+ * Prefers structured `details.timeoutMs` metadata on `APIError(408)` (set by
+ * `baseClient.toAPIError`), falling back to regex on the error message.
+ * Recurses into `Error.cause` chains.
  *
  * @param error - A timeout-related error
  * @returns The timeout duration in milliseconds, or `undefined`
@@ -41,11 +66,9 @@ export function isTimeoutRelatedError(error: unknown): boolean {
 export function extractTimeoutMs(error: unknown): number | undefined {
   if (error instanceof TimeoutError) return error.timeoutMs;
   if (error instanceof APIError && error.statusCode === 408) {
-    const match = /timed out after (\d+)ms/.exec(error.message);
-    if (match?.[1] !== undefined) return Number.parseInt(match[1], 10);
-    return undefined;
+    return extractTimeoutMsFromAPIError(error);
   }
-  if (error instanceof ToolError && error.cause !== undefined) {
+  if (error instanceof Error && error.cause !== undefined) {
     return extractTimeoutMs(error.cause);
   }
   return undefined;
@@ -56,8 +79,11 @@ export function extractTimeoutMs(error: unknown): number | undefined {
  *
  * Instead of returning `isError: true` (which causes MCP clients to retry
  * the same slow request), this returns a well-formed success response with
- * an empty result set and a `dataQualityWarning` that guides the caller
+ * an empty result set and a `dataQualityWarnings` array that guides the caller
  * toward narrowing the query.
+ *
+ * Uses `data: []` and `dataQualityWarnings: string[]` to match the JSON-LD
+ * envelope shape and the `OsintStandardOutput` convention used throughout the codebase.
  *
  * @param toolName - Name of the tool that timed out
  * @param timeoutMs - Configured timeout duration (if known)
@@ -72,11 +98,11 @@ export function buildTimeoutResponse(toolName: string, timeoutMs: number | undef
     content: [{
       type: 'text',
       text: JSON.stringify({
-        items: [],
-        dataQualityWarning:
+        data: [],
+        dataQualityWarnings: [
           `Request timed out ${durationText} — consider narrowing query parameters `
           + '(e.g., add a year filter, reduce limit, or use a shorter timeframe)',
-        partial: false,
+        ],
         toolName,
       }, null, 2)
     }]
@@ -89,7 +115,7 @@ export function buildTimeoutResponse(toolName: string, timeoutMs: number | undef
  *
  * **Timeout handling:** When the root cause is a request timeout (status 408
  * or `TimeoutError`), returns a structured non-error response with
- * `items: []` and a `dataQualityWarning` instead of `isError: true`.
+ * `data: []` and a `dataQualityWarnings` array instead of `isError: true`.
  * This prevents MCP clients from retrying the same slow request.
  *
  * If the error is a {@link ToolError}, its own `toolName` and `isRetryable` are
