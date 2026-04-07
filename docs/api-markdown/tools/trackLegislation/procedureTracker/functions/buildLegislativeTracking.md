@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
 
 ***
 
@@ -8,11 +8,14 @@
 
 > **buildLegislativeTracking**(`procedure`): [`LegislativeProcedure`](../../types/interfaces/LegislativeProcedure.md)
 
-Defined in: [tools/trackLegislation/procedureTracker.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/procedureTracker.ts#L79)
+Defined in: [tools/trackLegislation/procedureTracker.ts:84](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/procedureTracker.ts#L84)
 
 Build a legislative tracking result from a real EP API Procedure.
 
-All fields are derived from the API response. No mock or placeholder data.
+Most fields are derived directly from the API response. Amendment counts
+and voting records are placeholders (zeros / empty array) because the
+single-procedure endpoint does not supply them; these are surfaced in
+[LegislativeProcedure.dataQualityWarnings](../../types/interfaces/LegislativeProcedure.md#dataqualitywarnings).
 
 ## Parameters
 

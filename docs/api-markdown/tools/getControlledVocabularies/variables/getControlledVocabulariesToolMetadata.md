@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getControlledVocabulariesToolMetadata**: `object`
 
-Defined in: [tools/getControlledVocabularies.ts:74](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getControlledVocabularies.ts#L74)
+Defined in: [tools/getControlledVocabularies.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getControlledVocabularies.ts#L99)
 
 Tool metadata for get_controlled_vocabularies
 

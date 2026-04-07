@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **detectVotingAnomaliesToolMetadata**: `object`
 
-Defined in: [tools/detectVotingAnomalies.ts:369](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/detectVotingAnomalies.ts#L369)
+Defined in: [tools/detectVotingAnomalies.ts:377](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/detectVotingAnomalies.ts#L377)
 
 Tool metadata for MCP registration
 

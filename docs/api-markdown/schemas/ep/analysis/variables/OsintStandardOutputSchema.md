@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
 
 ***
 
@@ -6,9 +6,9 @@
 
 # Variable: OsintStandardOutputSchema
 
-> `const` **OsintStandardOutputSchema**: `ZodObject`\<\{ `confidenceLevel`: `ZodEnum`\<\{ `HIGH`: `"HIGH"`; `LOW`: `"LOW"`; `MEDIUM`: `"MEDIUM"`; \}\>; `dataFreshness`: `ZodString`; `methodology`: `ZodString`; `sourceAttribution`: `ZodString`; \}, `$strip`\>
+> `const` **OsintStandardOutputSchema**: `ZodObject`\<\{ `confidenceLevel`: `ZodEnum`\<\{ `HIGH`: `"HIGH"`; `LOW`: `"LOW"`; `MEDIUM`: `"MEDIUM"`; \}\>; `dataFreshness`: `ZodString`; `dataQualityWarnings`: `ZodArray`\<`ZodString`\>; `methodology`: `ZodString`; `sourceAttribution`: `ZodString`; \}, `$strip`\>
 
-Defined in: [schemas/ep/analysis.ts:176](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/analysis.ts#L176)
+Defined in: [schemas/ep/analysis.ts:194](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/analysis.ts#L194)
 
 Standard OSINT output fields Zod schema.
 

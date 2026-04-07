@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../README.md)
 
 ***
 
@@ -65,6 +65,12 @@ Re-exports [CorrelateIntelligenceSchema](analysis/variables/CorrelateIntelligenc
 ### CountryCodeSchema
 
 Re-exports [CountryCodeSchema](common/variables/CountryCodeSchema.md)
+
+***
+
+### DATE\_RANGE\_ERROR
+
+Re-exports [DATE_RANGE_ERROR](common/variables/DATE_RANGE_ERROR.md)
 
 ***
 
@@ -350,6 +356,12 @@ Re-exports [MEPDetailsSchema](mep/variables/MEPDetailsSchema.md)
 
 ***
 
+### MepIdSchema
+
+Re-exports [MepIdSchema](common/variables/MepIdSchema.md)
+
+***
+
 ### MEPSchema
 
 Re-exports [MEPSchema](mep/variables/MEPSchema.md)
@@ -386,9 +398,21 @@ Re-exports [PlenarySessionSchema](plenary/variables/PlenarySessionSchema.md)
 
 ***
 
+### refineDateRange
+
+Re-exports [refineDateRange](common/functions/refineDateRange.md)
+
+***
+
 ### SearchDocumentsSchema
 
 Re-exports [SearchDocumentsSchema](document/variables/SearchDocumentsSchema.md)
+
+***
+
+### SessionIdSchema
+
+Re-exports [SessionIdSchema](common/variables/SessionIdSchema.md)
 
 ***
 

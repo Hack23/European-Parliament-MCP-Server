@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
 
 ***
 
@@ -34,7 +34,7 @@ Committee assignments
 
 ### confidenceLevel
 
-> **confidenceLevel**: `string`
+> **confidenceLevel**: `"HIGH"` \| `"MEDIUM"` \| `"LOW"`
 
 Defined in: [tools/trackLegislation/types.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L34)
 
@@ -129,6 +129,16 @@ Procedure type (e.g., COD, NLE)
 Defined in: [tools/trackLegislation/types.ts:28](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L28)
 
 Voting records
+
+***
+
+### dataQualityWarnings?
+
+> `optional` **dataQualityWarnings?**: `string`[]
+
+Defined in: [tools/trackLegislation/types.ts:38](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L38)
+
+Warnings about partially available or missing data
 
 ***
 

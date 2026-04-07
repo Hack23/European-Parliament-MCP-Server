@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,4 +8,4 @@
 
 > `const` **GetAllGeneratedStatsSchema**: `ZodObject`\<[`GetAllGeneratedStatsParams`](../type-aliases/GetAllGeneratedStatsParams.md)\>
 
-Defined in: [tools/getAllGeneratedStats.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L35)
+Defined in: [tools/getAllGeneratedStats.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L36)

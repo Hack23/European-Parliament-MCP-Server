@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **analyzeCountryDelegationToolMetadata**: `object`
 
-Defined in: [tools/analyzeCountryDelegation.ts:337](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCountryDelegation.ts#L337)
+Defined in: [tools/analyzeCountryDelegation.ts:345](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCountryDelegation.ts#L345)
 
 Tool metadata for MCP listing
 

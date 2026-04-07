@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>31/31</span>
+                <span class='fraction'>28/28</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85% </span>
+                <span class="strong">87.5% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>17/20</span>
+                <span class='fraction'>14/16</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>29/29</span>
+                <span class='fraction'>26/26</span>
             </div>
         
             
@@ -229,7 +229,12 @@
 <a name='L164'></a><a href='#L164'>164</a>
 <a name='L165'></a><a href='#L165'>165</a>
 <a name='L166'></a><a href='#L166'>166</a>
-<a name='L167'></a><a href='#L167'>167</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -324,15 +329,20 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-yes">976x</span>
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-yes">16x</span>
@@ -409,9 +419,9 @@ import { SERVER_NAME, SERVER_VERSION, DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API
 import { getToolMetadataArray } from './toolRegistry.js';
 import { getPromptMetadataArray } from '../prompts/index.js';
 import { getResourceTemplateArray } from '../resources/index.js';
-import { RateLimiter } from '../utils/rateLimiter.js';
-import { MetricsService } from '../services/MetricsService.js';
-import { HealthService } from '../services/HealthService.js';
+import { createDefaultContainer, TOKENS } from '../di/container.js';
+import type { DIContainer } from '../di/container.js';
+import type { HealthService } from '../services/HealthService.js';
 import type { CLIOptions } from './types.js';
 &nbsp;
 /** Re-export CLIOptions for consumers */
@@ -488,19 +498,24 @@ export function showVersion(): void {
  *
  * Combines a static capability report with a dynamic health snapshot
  * produced by {@link HealthService}.
+ *
+ * When called without a `container`, a fresh {@link DIContainer} is created
+ * via {@link createDefaultContainer}. Metrics and rate-limiter state will
+ * reflect a new process baseline (useful for CLI `--health` diagnostics).
+ * Pass a live container to report actual runtime state from an active server.
+ *
+ * @param container - Optional DI container to resolve services from.
+ *   Defaults to a new container created by {@link createDefaultContainer}.
  */
-export function showHealth(): void {
+export function showHealth(container?: DIContainer): void {
   const tools = getToolMetadataArray();
   const coreToolCount = tools.filter(t =&gt; t.category === 'core').length;
   const nonCoreToolCount = tools.length - coreToolCount;
   const prompts = getPromptMetadataArray();
   const resourceTemplates = getResourceTemplateArray();
 &nbsp;
-  const rateLimitEnv = parseInt(process.env['EP_RATE_LIMIT'] ?? String(DEFAULT_RATE_LIMIT_PER_MINUTE), 10);
-  const tokensPerInterval = Number.isFinite(rateLimitEnv) &amp;&amp; rateLimitEnv &gt; 0 ? rateLimitEnv : <span class="branch-1 cbranch-no" title="branch not covered" >DEFAULT_RATE_LIMIT_PER_MINUTE;</span>
-  const rateLimiter = new RateLimiter({ tokensPerInterval, interval: 'minute' });
-  const metricsService = new MetricsService();
-  const healthService = new HealthService(rateLimiter, metricsService);
+  const resolvedContainer = container ?? createDefaultContainer();
+  const healthService = resolvedContainer.resolve&lt;HealthService&gt;(TOKENS.HealthService);
   const dynamicHealth = healthService.checkHealth();
 &nbsp;
   const health = {
@@ -568,7 +583,7 @@ export function parseCLIArgs(argv: string[]): CLIOptions {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-05T00:56:32.124Z
+                at 2026-04-07T02:22:33.933Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

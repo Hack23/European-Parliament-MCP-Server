@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetPlenaryDocuments**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getPlenaryDocuments.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenaryDocuments.ts#L56)
+Defined in: [tools/getPlenaryDocuments.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenaryDocuments.ts#L58)
 
 Handles the get_plenary_documents MCP tool request.
 

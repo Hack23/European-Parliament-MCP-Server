@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetMEPs**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getMEPs.ts:82](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPs.ts#L82)
+Defined in: [tools/getMEPs.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPs.ts#L73)
 
 Handles the get_meps MCP tool request.
 
@@ -41,22 +41,24 @@ MCP tool result containing a paginated list of MEP records with name, country,
 
 ## Throws
 
-- If `args` fails schema validation (e.g., country code not 2 uppercase
-  letters, limit out of range 1–100)
-- If the European Parliament API is unreachable or returns an error response
+With `operation: 'validateInput'` if `args` fails Zod schema validation
+  (e.g., country code not 2 uppercase letters, limit out of range 1–100)
+
+## Throws
+
+With `operation: 'validateOutput'` if the EP API response does not match
+  the expected schema shape
+
+## Throws
+
+With `operation: 'fetchData'` if the European Parliament API is
+  unreachable or returns an error response
 
 ## Examples
 
 ```typescript
 const result = await handleGetMEPs({ country: 'SE', limit: 10 });
 // Returns up to 10 Swedish MEPs with group and committee details
-```
-
-```typescript
-// Get Swedish MEPs
-const result = await handleGetMEPs({ country: "SE", limit: 10 });
-const data = JSON.parse(result.content[0].text);
-console.log(`Found ${data.total} Swedish MEPs`);
 ```
 
 ```typescript
@@ -67,8 +69,11 @@ const result = await handleGetMEPs({ group: "EPP", active: true, limit: 50 });
 ## Security
 
 - Input is validated with Zod before any API call.
+- Errors are sanitized to avoid exposing internal implementation details.
 - Personal data in responses is minimised per GDPR Article 5(1)(c).
+- Personal data access is audit-logged per GDPR Article 30.
 - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+- ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
 
 ## Since
 
@@ -78,17 +83,3 @@ const result = await handleGetMEPs({ group: "EPP", active: true, limit: 50 });
 
  - [getMEPsToolMetadata](../variables/getMEPsToolMetadata.md) for MCP schema registration
  - handleGetMEPDetails for retrieving full details of a single MEP
-
-## Throws
-
-When the EP API request fails or returns an unexpected error
-
-## Throws
-
-When input fails schema validation (invalid country code, out-of-range limit, etc.)
-
-## Security
-
-Input validated by Zod schema before any API call. Errors are sanitized
-to avoid exposing internal implementation details. Personal data access is
-audit-logged per GDPR Article 30. ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)

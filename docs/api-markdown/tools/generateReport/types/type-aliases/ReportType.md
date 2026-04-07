@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > **ReportType** = `"MEP_ACTIVITY"` \| `"COMMITTEE_PERFORMANCE"` \| `"VOTING_STATISTICS"` \| `"LEGISLATION_PROGRESS"`
 
-Defined in: [tools/generateReport/types.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/types.ts#L36)
+Defined in: [tools/generateReport/types.ts:38](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/types.ts#L38)
 
 Report type enumeration

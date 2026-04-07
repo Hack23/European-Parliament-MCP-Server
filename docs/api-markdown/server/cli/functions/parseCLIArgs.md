@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **parseCLIArgs**(`argv`): [`CLIOptions`](../../types/interfaces/CLIOptions.md)
 
-Defined in: [server/cli.ts:160](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L160)
+Defined in: [server/cli.ts:165](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L165)
 
 Parse an array of CLI argument strings into a typed [CLIOptions](../../types/interfaces/CLIOptions.md) object.
 

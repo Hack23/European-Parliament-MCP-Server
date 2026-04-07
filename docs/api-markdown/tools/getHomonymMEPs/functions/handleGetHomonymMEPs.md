@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetHomonymMEPs**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getHomonymMEPs.ts:48](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getHomonymMEPs.ts#L48)
+Defined in: [tools/getHomonymMEPs.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getHomonymMEPs.ts#L50)
 
 Handles the get_homonym_meps MCP tool request.
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -10,3 +10,7 @@
 
 - [OsintStandardOutput](interfaces/OsintStandardOutput.md)
 - [ToolResult](interfaces/ToolResult.md)
+
+## Type Aliases
+
+- [ConfidenceLevel](type-aliases/ConfidenceLevel.md)

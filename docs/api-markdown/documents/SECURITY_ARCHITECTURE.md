@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../README.md)
+[**European Parliament MCP Server API v1.1.27**](../README.md)
 
 ***
 
@@ -128,7 +128,7 @@ flowchart TD
 
 | Control ID | Control Name | Type | Implementation | Status |
 |------------|-------------|------|----------------|--------|
-| SC-001 | Input Validation | Preventive | Zod schema per tool (61 schemas) | ✅ Implemented |
+| SC-001 | Input Validation | Preventive | Zod schema per tool (61 schemas) with `.refine()` cross-field constraints, date range validation, and format-specific ID validation | ✅ Implemented |
 | SC-002 | Rate Limiting | Preventive | Token bucket, 100 req/min | ✅ Implemented |
 | SC-003 | Audit Logging | Detective | AuditLogger singleton, all invocations | ✅ Implemented |
 | SC-004 | GDPR Data Minimization | Preventive | Field selection, no over-fetching | ✅ Implemented |
@@ -140,6 +140,7 @@ flowchart TD
 | SC-010 | Health Monitoring | Detective | HealthService singleton | ✅ Implemented |
 | SC-011 | Metrics Collection | Detective | MetricsService, rate/error tracking | ✅ Implemented |
 | SC-012 | Branded Types | Preventive | Zod branded types for EP identifiers | ✅ Implemented |
+| SC-013 | Data Quality Controls | Preventive | OSINT outputs standardize confidence level and quality warnings; data availability status is included where implemented | ✅ Implemented |
 
 ---
 
@@ -259,7 +260,9 @@ flowchart LR
 | **Source integrity** | All data sourced from official EP API over HTTPS/TLS | TLS certificate validation |
 | **Transport integrity** | HTTPS with TLS 1.2+ for all API calls | Node.js default TLS verification |
 | **Cache integrity** | In-memory LRU cache (no persistent storage) — no disk tampering risk | Process isolation |
+| **Cache key integrity** | Deterministic cache key generation via sorted parameter keys | Prevents cache misses from property insertion order |
 | **Schema validation** | Zod schemas validate all API responses before processing | TypeScript strict mode + runtime validation |
+| **Data quality integrity** | OSINT outputs include `DataAvailability` and `dataQualityWarnings` (SC-013) | Consumers distinguish "zero" from "unavailable" |
 | **Audit immutability** | Audit logs written to stderr (append-only within process) | No log modification API exposed |
 | **Package integrity** | npm lockfile with exact versions, SLSA Level 3 provenance | Provenance attestations, Sigstore signing |
 
@@ -645,12 +648,16 @@ flowchart TD
 |-------|---------|---------------|
 | **Input parsing** | Zod schema validation | Every tool has a dedicated schema |
 | **Type enforcement** | Branded types via Zod | `MEPId`, `ProcedureId`, `SessionId` prevent type confusion |
+| **Cross-field validation** | `.refine()` constraints | Date range ordering, mutual exclusivity, conditional requirements |
 | **String sanitization** | Max length limits, pattern matching | Zod `.max()`, `.regex()` constraints |
 | **Numeric bounds** | Range validation | `.min()`, `.max()`, `.int()` constraints |
 | **Enum restriction** | Allowed value sets | `.enum()` for country codes, group names |
 | **Output encoding** | JSON serialization | `JSON.stringify()` prevents injection in responses |
+| **Data quality** | OSINT output validation | `dataQualityWarnings`, `confidenceLevel`, `DataAvailability` fields (SC-013) |
 
 ### Error Handling Security
+
+All tool errors are reported via the `ToolError` class which carries `toolName`, `operation`, `isRetryable`, and optional `cause` — ensuring structured error reporting without leaking internal implementation details. Success responses use `buildToolResponse()` for consistent JSON formatting.
 
 | Error Type | Response to Client | Logged Internally |
 |-----------|-------------------|-------------------|

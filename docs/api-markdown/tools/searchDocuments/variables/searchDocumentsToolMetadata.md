@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **searchDocumentsToolMetadata**: `object`
 
-Defined in: [tools/searchDocuments.ts:118](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/searchDocuments.ts#L118)
+Defined in: [tools/searchDocuments.ts:140](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/searchDocuments.ts#L140)
 
 Tool metadata for MCP registration
 

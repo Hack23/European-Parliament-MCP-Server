@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.26**](../../../README.md)
+[**European Parliament MCP Server API v1.1.27**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getHomonymMEPsToolMetadata**: `object`
 
-Defined in: [tools/getHomonymMEPs.ts:62](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getHomonymMEPs.ts#L62)
+Defined in: [tools/getHomonymMEPs.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getHomonymMEPs.ts#L87)
 
 Tool metadata for get_homonym_meps
 
