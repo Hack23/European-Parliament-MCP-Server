@@ -4,6 +4,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { ToolError } from './errors.js';
+import type { ErrorCode, ErrorCategory } from './errors.js';
 
 describe('ToolError', () => {
   it('should set name to ToolError', () => {
@@ -51,5 +52,58 @@ describe('ToolError', () => {
   it('should be instanceof ToolError', () => {
     const err = new ToolError({ toolName: 'tool', operation: 'op', message: 'msg' });
     expect(err).toBeInstanceOf(ToolError);
+  });
+
+  it('should default errorCode, errorCategory, httpStatus to undefined', () => {
+    const err = new ToolError({ toolName: 'tool', operation: 'op', message: 'msg' });
+    expect(err.errorCode).toBeUndefined();
+    expect(err.errorCategory).toBeUndefined();
+    expect(err.httpStatus).toBeUndefined();
+  });
+
+  it('should accept errorCode and errorCategory', () => {
+    const err = new ToolError({
+      toolName: 'tool',
+      operation: 'op',
+      message: 'msg',
+      errorCode: 'UPSTREAM_404',
+      errorCategory: 'DATA_UNAVAILABLE',
+    });
+    expect(err.errorCode).toBe('UPSTREAM_404');
+    expect(err.errorCategory).toBe('DATA_UNAVAILABLE');
+  });
+
+  it('should accept httpStatus', () => {
+    const err = new ToolError({
+      toolName: 'tool',
+      operation: 'op',
+      message: 'msg',
+      errorCode: 'UPSTREAM_500',
+      errorCategory: 'SERVER_ERROR',
+      httpStatus: 500,
+    });
+    expect(err.httpStatus).toBe(500);
+  });
+
+  it('should accept all error code values', () => {
+    const codes: ErrorCode[] = [
+      'UPSTREAM_404', 'UPSTREAM_500', 'UPSTREAM_503', 'UPSTREAM_TIMEOUT',
+      'RATE_LIMITED', 'INVALID_PARAMS', 'FEED_FALLBACK', 'UNKNOWN_TOOL', 'INTERNAL_ERROR',
+    ];
+    for (const code of codes) {
+      const err = new ToolError({ toolName: 'tool', operation: 'op', message: 'msg', errorCode: code });
+      expect(err.errorCode).toBe(code);
+    }
+  });
+
+  it('should accept all error category values', () => {
+    const categories: ErrorCategory[] = [
+      'DATA_UNAVAILABLE', 'SERVER_ERROR', 'TIMEOUT', 'RATE_LIMIT',
+      'CLIENT_ERROR', 'DATA_QUALITY', 'INTERNAL',
+    ];
+    for (const cat of categories) {
+      const err = new ToolError({ toolName: 'tool', operation: 'op', message: 'msg', errorCategory: cat });
+      expect(err.errorCategory).toBe(cat);
+    }
   });
 });

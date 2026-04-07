@@ -99,4 +99,39 @@ describe('buildErrorResponse', () => {
     expect(text).toContain('\n');
     expect(text).toContain('  ');
   });
+
+  it('should include classification metadata when provided', () => {
+    const classification = {
+      errorCode: 'UPSTREAM_500',
+      errorCategory: 'SERVER_ERROR',
+      httpStatus: 500,
+      retryable: true,
+    };
+    const result = buildErrorResponse(new Error('server error'), 'tool', classification);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.errorCode).toBe('UPSTREAM_500');
+    expect(parsed.errorCategory).toBe('SERVER_ERROR');
+    expect(parsed.httpStatus).toBe(500);
+    expect(parsed.retryable).toBe(true);
+  });
+
+  it('should omit httpStatus when not provided in classification', () => {
+    const classification = {
+      errorCode: 'INTERNAL_ERROR',
+      errorCategory: 'INTERNAL',
+      retryable: false,
+    };
+    const result = buildErrorResponse(new Error('unknown'), 'tool', classification);
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.errorCode).toBe('INTERNAL_ERROR');
+    expect(parsed.httpStatus).toBeUndefined();
+  });
+
+  it('should not include classification fields when no classification given', () => {
+    const result = buildErrorResponse(new Error('fail'), 'tool');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.errorCode).toBeUndefined();
+    expect(parsed.errorCategory).toBeUndefined();
+    expect(parsed.retryable).toBeUndefined();
+  });
 });
