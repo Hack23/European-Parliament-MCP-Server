@@ -40,9 +40,9 @@ export class ToolError extends Error {
   readonly toolName: string;
   readonly operation: string;
   readonly isRetryable: boolean;
-  readonly errorCode?: ErrorCode | undefined;
-  readonly errorCategory?: ErrorCategory | undefined;
-  readonly httpStatus?: number | undefined;
+  readonly errorCode?: ErrorCode;
+  readonly errorCategory?: ErrorCategory;
+  readonly httpStatus?: number;
   override readonly cause?: Error;
 
   constructor(options: {
@@ -60,9 +60,15 @@ export class ToolError extends Error {
     this.toolName = options.toolName;
     this.operation = options.operation;
     this.isRetryable = options.isRetryable ?? false;
-    this.errorCode = options.errorCode;
-    this.errorCategory = options.errorCategory;
-    this.httpStatus = options.httpStatus;
+    if (options.errorCode !== undefined) {
+      this.errorCode = options.errorCode;
+    }
+    if (options.errorCategory !== undefined) {
+      this.errorCategory = options.errorCategory;
+    }
+    if (options.httpStatus !== undefined) {
+      this.httpStatus = options.httpStatus;
+    }
     if (options.cause instanceof Error) {
       this.cause = options.cause;
     }

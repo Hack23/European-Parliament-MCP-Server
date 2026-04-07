@@ -120,6 +120,22 @@ describe('handleToolError', () => {
     expect(parsed.errorCode).toBe('INVALID_PARAMS');
     expect(parsed.errorCategory).toBe('CLIENT_ERROR');
   });
+
+  it('should use classification.retryable for ToolError (not error.isRetryable)', () => {
+    // ToolError says isRetryable: false, but cause is 429 (rate limited → retryable)
+    const apiError = Object.assign(new Error('Rate limited'), { statusCode: 429, name: 'APIError' });
+    const err = new ToolError({
+      toolName: 'tool',
+      operation: 'fetchData',
+      message: 'rate limited',
+      isRetryable: false,
+      cause: apiError,
+    });
+    const result = handleToolError(err, 'tool');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.errorCode).toBe('RATE_LIMITED');
+    expect(parsed.retryable).toBe(true);
+  });
 });
 
 describe('classifyError', () => {

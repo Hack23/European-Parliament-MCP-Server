@@ -749,7 +749,9 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         'network_analysis'
       );
       if (!result) { ctx.skip(); return; }
-      const parsed = parseAndValidateNoMockData(result) as { networkNodes: unknown; networkEdges: unknown };
+      const parsed = parseAndValidateNoMockData(result) as Record<string, unknown>;
+      // Tool may return an error response if EP API is unavailable
+      if ('error' in parsed) { ctx.skip(); return; }
       expect(parsed).toHaveProperty('networkNodes');
       expect(parsed).toHaveProperty('networkEdges');
     }, 30000);

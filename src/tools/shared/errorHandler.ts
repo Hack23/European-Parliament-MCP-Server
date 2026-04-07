@@ -15,7 +15,7 @@ import type { ErrorCode, ErrorCategory } from './errors.js';
 export interface ErrorClassification {
   errorCode: ErrorCode;
   errorCategory: ErrorCategory;
-  httpStatus?: number | undefined;
+  httpStatus?: number;
   retryable: boolean;
 }
 
@@ -57,7 +57,7 @@ export function classifyError(error: unknown): ErrorClassification {
     return {
       errorCode: code,
       errorCategory: error.errorCategory ?? categoryForCode(code),
-      httpStatus: error.httpStatus,
+      ...(error.httpStatus !== undefined ? { httpStatus: error.httpStatus } : {}),
       retryable: error.isRetryable,
     };
   }
@@ -212,7 +212,7 @@ export function handleToolError(error: unknown, toolName: string): ToolResult {
         text: JSON.stringify({
           error: error.message,
           toolName: error.toolName,
-          retryable: error.isRetryable,
+          retryable: classification.retryable,
           errorCode: classification.errorCode,
           errorCategory: classification.errorCategory,
           ...(classification.httpStatus !== undefined && { httpStatus: classification.httpStatus }),

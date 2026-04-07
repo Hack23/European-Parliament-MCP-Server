@@ -5,14 +5,15 @@
  */
 
 import type { ToolResult } from './types.js';
+import type { ErrorCode, ErrorCategory } from './errors.js';
 
 /**
  * Optional structured error classification passed from the error handler.
  */
 interface ErrorClassificationInfo {
-  errorCode: string;
-  errorCategory: string;
-  httpStatus?: number | undefined;
+  errorCode: ErrorCode;
+  errorCategory: ErrorCategory;
+  httpStatus?: number;
   retryable: boolean;
 }
 
