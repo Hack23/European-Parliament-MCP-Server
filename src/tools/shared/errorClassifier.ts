@@ -50,9 +50,14 @@ function extractHttpStatus(error: unknown): number | undefined {
  *    consistency even when callers set `errorCode` without a matching
  *    `isRetryable`. **Note:** `ToolError.isRetryable` is ignored when
  *    `errorCode` is present.
- * 2. Inspect the cause chain for HTTP status codes (from `APIError`).
- * 3. Fall back to operation-based heuristics (`validateInput` → `INVALID_PARAMS`).
- * 4. Default to `INTERNAL_ERROR`.
+ * 2. Inspect the error and its cause chain for HTTP status codes (for example
+ *    from `APIError`) and classify from the resolved status.
+ * 3. If the error is a `ToolError` without an explicit `errorCode`, apply
+ *    heuristic classification, including operation-based mappings
+ *    (`validateInput` → `INVALID_PARAMS`) and message-based timeout detection.
+ * 4. If the error is a plain `Error`, apply message-based timeout detection
+ *    (`timed out` → `UPSTREAM_TIMEOUT`).
+ * 5. Default to `INTERNAL_ERROR`.
  *
  * @param error - The caught error value
  * @returns Structured classification with code, category, httpStatus, and retryable flag

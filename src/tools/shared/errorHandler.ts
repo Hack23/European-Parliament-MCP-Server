@@ -19,9 +19,11 @@ export type { ErrorClassification } from './errorClassifier.js';
  * Never exposes raw stack traces to MCP clients.
  *
  * If the error is a {@link ToolError}, its own `toolName` is preserved so the
- * originating tool is correctly surfaced to callers. Retryability is derived
- * from the auto-classification (which may inspect the cause chain) rather than
- * `error.isRetryable` to ensure consistency with the emitted `errorCode`.
+ * originating tool is correctly surfaced to callers. Retryability is
+ * determined by the downstream error classification/response-building logic,
+ * which primarily uses auto-classification (and may inspect the cause chain)
+ * but can still honor `ToolError.isRetryable` in generic fallback cases when
+ * no more specific classification signal is available.
  *
  * Error responses produced by this handler include structured error
  * classification metadata (errorCode, errorCategory, httpStatus) enabling
