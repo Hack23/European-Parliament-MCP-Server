@@ -50,7 +50,7 @@ export async function handleGetPlenarySessionDocumentsFeed(args: unknown): Promi
     const result = await epClient.getPlenarySessionDocumentsFeed(
       apiParams as Parameters<typeof epClient.getPlenarySessionDocumentsFeed>[0]
     );
-    return buildToolResponse({ ...result, dataQualityWarnings: [] as string[] });
+    return buildToolResponse({ ...result, dataQualityWarnings: [] });
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({

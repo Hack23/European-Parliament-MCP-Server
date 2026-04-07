@@ -51,7 +51,7 @@ export async function handleGetExternalDocumentsFeed(args: unknown): Promise<Too
     const result = await epClient.getExternalDocumentsFeed(
       apiParams as Parameters<typeof epClient.getExternalDocumentsFeed>[0]
     );
-    return buildToolResponse({ ...result, dataQualityWarnings: [] as string[] });
+    return buildToolResponse({ ...result, dataQualityWarnings: [] });
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({

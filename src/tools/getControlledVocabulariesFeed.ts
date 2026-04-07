@@ -50,7 +50,7 @@ export async function handleGetControlledVocabulariesFeed(args: unknown): Promis
     const result = await epClient.getControlledVocabulariesFeed(
       apiParams as Parameters<typeof epClient.getControlledVocabulariesFeed>[0]
     );
-    return buildToolResponse({ ...result, dataQualityWarnings: [] as string[] });
+    return buildToolResponse({ ...result, dataQualityWarnings: [] });
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({

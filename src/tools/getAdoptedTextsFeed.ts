@@ -51,7 +51,7 @@ export async function handleGetAdoptedTextsFeed(args: unknown): Promise<ToolResu
     const result = await epClient.getAdoptedTextsFeed(
       apiParams as Parameters<typeof epClient.getAdoptedTextsFeed>[0]
     );
-    return buildToolResponse({ ...result, dataQualityWarnings: [] as string[] });
+    return buildToolResponse({ ...result, dataQualityWarnings: [] });
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({

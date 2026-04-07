@@ -51,7 +51,7 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
     const result = await epClient.getProceduresFeed(
       apiParams as Parameters<typeof epClient.getProceduresFeed>[0]
     );
-    return buildToolResponse({ ...result, dataQualityWarnings: [] as string[] });
+    return buildToolResponse({ ...result, dataQualityWarnings: [] });
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({
