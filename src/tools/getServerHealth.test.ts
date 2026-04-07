@@ -208,9 +208,9 @@ describe('get_server_health Tool', () => {
       expect(result).toHaveProperty('content');
     });
 
-    it('should strip unknown properties via Zod passthrough', () => {
-      // Schema accepts empty objects; extra keys are ignored by Zod default
-      expect(() => GetServerHealthSchema.parse({ extra: true })).not.toThrow();
+    it('should strip unknown properties via Zod default behavior', () => {
+      const parsed = GetServerHealthSchema.parse({ extra: true });
+      expect(parsed).toEqual({});
     });
   });
 
