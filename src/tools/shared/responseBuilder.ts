@@ -5,17 +5,8 @@
  */
 
 import type { ToolResult } from './types.js';
-import type { ErrorCode, ErrorCategory } from './errors.js';
-
-/**
- * Optional structured error classification passed from the error handler.
- */
-interface ErrorClassificationInfo {
-  errorCode: ErrorCode;
-  errorCategory: ErrorCategory;
-  httpStatus?: number;
-  retryable: boolean;
-}
+import { classifyError } from './errorClassifier.js';
+import type { ErrorClassification } from './errorClassifier.js';
 
 /**
  * Build a standard success response wrapping data as formatted JSON text.
@@ -33,20 +24,23 @@ export function buildToolResponse(data: unknown): ToolResult {
  * Build an error response from an error value or message string.
  * Never exposes raw stack traces to MCP clients.
  *
- * When classification metadata is provided (from {@link classifyError}),
- * the response includes `errorCode`, `errorCategory`, and optionally `httpStatus`
- * for programmatic retry/skip/fallback logic by clients.
+ * When no explicit classification is provided, the error is automatically
+ * classified via {@link classifyError} so all error responses — whether
+ * routed through `handleToolError` or built directly by tool handlers —
+ * include consistent `errorCode`, `errorCategory`, and `retryable` metadata.
  *
  * @param error - Error instance or message string
  * @param toolName - Name of the tool that produced the error
- * @param classification - Optional structured error classification
+ * @param classification - Optional pre-computed classification (auto-classified if omitted)
  * @returns MCP-compliant ToolResult with isError flag set
  */
 export function buildErrorResponse(
   error: unknown,
   toolName: string,
-  classification?: ErrorClassificationInfo
+  classification?: ErrorClassification
 ): ToolResult {
+  const cls = classification ?? classifyError(error);
+
   let message: string;
   let errorType: 'Error' | 'ZodError' | 'string' | 'unknown';
   if (error instanceof Error) {
@@ -60,14 +54,16 @@ export function buildErrorResponse(
     errorType = 'unknown';
   }
 
-  const payload: Record<string, unknown> = { error: message, toolName, errorType };
-  if (classification !== undefined) {
-    payload['retryable'] = classification.retryable;
-    payload['errorCode'] = classification.errorCode;
-    payload['errorCategory'] = classification.errorCategory;
-    if (classification.httpStatus !== undefined) {
-      payload['httpStatus'] = classification.httpStatus;
-    }
+  const payload: Record<string, unknown> = {
+    error: message,
+    toolName,
+    errorType,
+    retryable: cls.retryable,
+    errorCode: cls.errorCode,
+    errorCategory: cls.errorCategory,
+  };
+  if (cls.httpStatus !== undefined) {
+    payload['httpStatus'] = cls.httpStatus;
   }
 
   return {

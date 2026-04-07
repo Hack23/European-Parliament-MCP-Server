@@ -288,6 +288,19 @@ describe('classifyError', () => {
     const result = classifyError(err);
     expect(result.errorCategory).toBe('SERVER_ERROR');
   });
+
+  it('should derive retryable from errorCode (not error.isRetryable)', () => {
+    // Caller sets errorCode: UPSTREAM_503 (retryable) but forgets isRetryable
+    const err = new ToolError({
+      toolName: 'tool',
+      operation: 'op',
+      message: 'service unavailable',
+      errorCode: 'UPSTREAM_503',
+      // isRetryable defaults to false, but UPSTREAM_503 is retryable
+    });
+    const result = classifyError(err);
+    expect(result.retryable).toBe(true);
+  });
 });
 
 describe('handleDataUnavailable', () => {

@@ -127,11 +127,21 @@ describe('buildErrorResponse', () => {
     expect(parsed.httpStatus).toBeUndefined();
   });
 
-  it('should not include classification fields when no classification given', () => {
+  it('should auto-classify when no explicit classification is provided', () => {
     const result = buildErrorResponse(new Error('fail'), 'tool');
     const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
-    expect(parsed.errorCode).toBeUndefined();
-    expect(parsed.errorCategory).toBeUndefined();
-    expect(parsed.retryable).toBeUndefined();
+    expect(parsed.errorCode).toBe('INTERNAL_ERROR');
+    expect(parsed.errorCategory).toBe('INTERNAL');
+    expect(parsed.retryable).toBe(false);
+  });
+
+  it('should auto-classify upstream status when called directly', () => {
+    const apiError = Object.assign(new Error('Service Unavailable'), { statusCode: 503 });
+    const result = buildErrorResponse(apiError, 'tool');
+    const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+    expect(parsed.errorCode).toBe('UPSTREAM_503');
+    expect(parsed.errorCategory).toBe('SERVER_ERROR');
+    expect(parsed.httpStatus).toBe(503);
+    expect(parsed.retryable).toBe(true);
   });
 });
