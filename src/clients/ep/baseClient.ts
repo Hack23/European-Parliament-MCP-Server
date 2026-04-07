@@ -559,7 +559,8 @@ export class BaseEPClient {
     if (error instanceof TimeoutError) {
       return new APIError(
         `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`,
-        408
+        408,
+        { timeoutMs: this.timeoutMs }
       );
     }
     if (error instanceof APIError) return error;
