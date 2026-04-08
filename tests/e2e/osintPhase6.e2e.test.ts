@@ -333,8 +333,11 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
 
     it('should handle single mepId (below minimum) with graceful error response', async () => {
       try {
+        // Use a discovered ID or any positive integer — the test validates that
+        // a single-element array is rejected by the min(2) schema constraint.
+        const singleId = discoveredMepIds[0] ?? 1;
         const response = await client.callTool('comparative_intelligence', {
-          mepIds: [discoveredMepIds[0] ?? 99999]
+          mepIds: [singleId]
         });
         expect(response.content[0]?.type).toBe('text');
       } catch (error) {
