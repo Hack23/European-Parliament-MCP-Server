@@ -12,28 +12,46 @@
  * @module main
  */
 
-// ── Pre-import: apply --timeout to env before any module creates epClient ──
-const rawArgs = process.argv.slice(2);
-const timeoutIdx = rawArgs.indexOf('--timeout');
-if (timeoutIdx !== -1) {
-  const value = rawArgs[timeoutIdx + 1];
-  if (value === undefined || value.trim().length === 0 || value.startsWith('-')) {
+import { parseTimeoutValue } from './server/cliUtils.js';
+
+/**
+ * Apply `--timeout <ms>` from argv to `process.env['EP_REQUEST_TIMEOUT_MS']`
+ * and return the remaining args with `--timeout` and its value stripped out.
+ *
+ * Exits the process with code 1 if `--timeout` is present but the value is
+ * missing or invalid.
+ */
+function applyTimeoutArg(args: readonly string[]): string[] {
+  const timeoutIdx = args.indexOf('--timeout');
+  if (timeoutIdx === -1) {
+    return [...args];
+  }
+
+  const raw = args[timeoutIdx + 1];
+  if (raw === undefined || raw.startsWith('-')) {
     console.error('Error: --timeout requires a positive integer value (milliseconds).');
     process.exit(1);
   }
-  const parsed = Number.parseInt(value, 10);
-  if (!Number.isFinite(parsed) || parsed <= 0) {
-    console.error(`Error: Invalid --timeout value "${value}". Must be a positive integer (milliseconds).`);
+
+  const parsed = parseTimeoutValue(raw);
+  if (parsed === undefined) {
+    console.error(`Error: Invalid --timeout value "${raw}". Must be a positive integer (milliseconds).`);
     process.exit(1);
   }
+
   process.env['EP_REQUEST_TIMEOUT_MS'] = String(parsed);
+  return args.filter((_, index) => index !== timeoutIdx && index !== timeoutIdx + 1);
 }
+
+// ── Pre-import: apply --timeout to env before any module creates epClient ──
+const rawArgs = process.argv.slice(2);
+const sanitizedArgs = applyTimeoutArg(rawArgs);
 
 // ── Dynamic import after env vars are set ──────────────────────────────────
 const { parseCLIArgs, showHelp, showVersion, showHealth } = await import('./server/cli.js');
 const { EuropeanParliamentMCPServer, SERVER_NAME } = await import('./index.js');
 
-const opts = parseCLIArgs(rawArgs);
+const opts = parseCLIArgs(sanitizedArgs);
 
 if (opts.help === true) {
   showHelp();

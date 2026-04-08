@@ -1,21 +1,21 @@
 /**
  * Tests for src/main.ts – CLI entry point bootstrap.
  *
- * Tests the --timeout CLI argument by spawning `dist/main.js` as a
- * subprocess and verifying stdout/stderr and exit codes.
+ * Tests the --timeout CLI argument by spawning `src/main.ts` via
+ * `tsx` and verifying stdout/stderr and exit codes.
  */
 
 import { describe, it, expect } from 'vitest';
 import { execFileSync } from 'child_process';
 import { resolve } from 'path';
 
-const mainPath = resolve(import.meta.dirname, '..', 'dist', 'main.js');
+const mainPath = resolve(import.meta.dirname, '..', 'src', 'main.ts');
 
 function run(args: string[]): { stdout: string; stderr: string; exitCode: number } {
   try {
-    const stdout = execFileSync(process.execPath, [mainPath, ...args], {
+    const stdout = execFileSync('npx', ['tsx', mainPath, ...args], {
       encoding: 'utf-8',
-      timeout: 10_000,
+      timeout: 15_000,
       env: { ...process.env, EP_REQUEST_TIMEOUT_MS: undefined },
     });
     return { stdout, stderr: '', exitCode: 0 };
@@ -85,5 +85,11 @@ describe('main.ts CLI entry point', () => {
     const { stderr, exitCode } = run(['--timeout', '-1']);
     expect(exitCode).toBe(1);
     expect(stderr).toContain('--timeout requires a positive integer');
+  });
+
+  it('--timeout 10s (partially-numeric) exits 1 with error message', () => {
+    const { stderr, exitCode } = run(['--timeout', '10s']);
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain('Invalid --timeout value');
   });
 });

@@ -16,6 +16,7 @@ import { createDefaultContainer, TOKENS } from '../di/container.js';
 import type { DIContainer } from '../di/container.js';
 import type { HealthService } from '../services/HealthService.js';
 import type { CLIOptions } from './types.js';
+import { parseTimeoutValue, resolveEffectiveTimeout } from './cliUtils.js';
 
 /** Re-export CLIOptions for consumers */
 export type { CLIOptions };
@@ -139,7 +140,7 @@ export function showHealth(container?: DIContainer): void {
     },
     configuration: {
       apiUrl: sanitizeUrl(process.env['EP_API_URL'] ?? DEFAULT_API_URL),
-      requestTimeoutMs: process.env['EP_REQUEST_TIMEOUT_MS'] ?? '10000',
+      requestTimeoutMs: String(resolveEffectiveTimeout()),
       cacheTTL: process.env['EP_CACHE_TTL'] ?? '900000',
       rateLimit: process.env['EP_RATE_LIMIT'] ?? String(DEFAULT_RATE_LIMIT_PER_MINUTE),
     },
@@ -179,12 +180,9 @@ export function parseCLIArgs(argv: string[]): CLIOptions {
 
   const timeoutIdx = argv.indexOf('--timeout');
   if (timeoutIdx !== -1 && timeoutIdx + 1 < argv.length) {
-    const raw = argv[timeoutIdx + 1];
-    if (raw !== undefined && raw.trim().length > 0) {
-      const parsed = Number.parseInt(raw, 10);
-      if (Number.isFinite(parsed) && parsed > 0) {
-        opts.timeout = parsed;
-      }
+    const parsed = parseTimeoutValue(argv[timeoutIdx + 1]);
+    if (parsed !== undefined) {
+      opts.timeout = parsed;
     }
   }
 

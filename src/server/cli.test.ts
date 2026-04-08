@@ -526,6 +526,11 @@ describe('parseCLIArgs', () => {
     expect(opts.timeout).toBeUndefined();
   });
 
+  it('timeout is undefined for partially-numeric value like "10s"', () => {
+    const opts = parseCLIArgs(['--timeout', '10s']);
+    expect(opts.timeout).toBeUndefined();
+  });
+
   it('parses --timeout 1 as minimum valid timeout', () => {
     const opts = parseCLIArgs(['--timeout', '1']);
     expect(opts.timeout).toBe(1);
