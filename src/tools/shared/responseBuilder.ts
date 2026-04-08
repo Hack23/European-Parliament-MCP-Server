@@ -42,22 +42,18 @@ export function buildErrorResponse(
   const cls = classification ?? classifyError(error);
 
   let message: string;
-  let errorType: 'Error' | 'ZodError' | 'string' | 'unknown';
   if (error instanceof Error) {
     message = error.message;
-    errorType = error.name === 'ZodError' ? 'ZodError' : 'Error';
   } else if (typeof error === 'string') {
     message = error;
-    errorType = 'string';
   } else {
     message = 'Unknown error occurred';
-    errorType = 'unknown';
   }
 
   const payload: Record<string, unknown> = {
     error: message,
     toolName,
-    errorType,
+    errorType: cls.errorCategory,
     retryable: cls.retryable,
     errorCode: cls.errorCode,
     errorCategory: cls.errorCategory,

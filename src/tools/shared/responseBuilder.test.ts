@@ -50,10 +50,10 @@ describe('buildErrorResponse', () => {
     const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.error).toBe('something went wrong');
     expect(parsed.toolName).toBe('my_tool');
-    expect(parsed.errorType).toBe('Error');
+    expect(parsed.errorType).toBe('INTERNAL');
   });
 
-  it('should classify ZodError as errorType ZodError', () => {
+  it('should classify ZodError as errorType CLIENT_ERROR', () => {
     const schema = z.object({ name: z.string() });
     let zodError: Error | undefined;
     try {
@@ -64,7 +64,8 @@ describe('buildErrorResponse', () => {
     expect(zodError).toBeDefined();
     const result = buildErrorResponse(zodError!, 'zod_tool');
     const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
-    expect(parsed.errorType).toBe('ZodError');
+    expect(parsed.errorType).toBe('CLIENT_ERROR');
+    expect(parsed.errorCode).toBe('INVALID_PARAMS');
     expect(parsed.toolName).toBe('zod_tool');
   });
 
@@ -72,14 +73,14 @@ describe('buildErrorResponse', () => {
     const result = buildErrorResponse('string error message', 'my_tool');
     const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.error).toBe('string error message');
-    expect(parsed.errorType).toBe('string');
+    expect(parsed.errorType).toBe('INTERNAL');
   });
 
   it('should fall back to Unknown error for unknown types', () => {
     const result = buildErrorResponse(42, 'my_tool');
     const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed.error).toBe('Unknown error occurred');
-    expect(parsed.errorType).toBe('unknown');
+    expect(parsed.errorType).toBe('INTERNAL');
   });
 
   it('should include toolName in response', () => {
