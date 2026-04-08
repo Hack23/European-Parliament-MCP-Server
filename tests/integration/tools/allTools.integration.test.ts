@@ -793,9 +793,13 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       );
       if (!result) { ctx.skip(); return; }
       if (result.isError === true) { ctx.skip(); return; }
-      const timeoutResult = result as { timedOut?: boolean; status?: string };
-      if (timeoutResult.timedOut === true || timeoutResult.status === 'timeout') { ctx.skip(); return; }
-      const parsed = parseAndValidateNoMockData(result) as { profiles: unknown; correlationMatrix: unknown };
+      const parsed = parseAndValidateNoMockData(result) as {
+        profiles: unknown;
+        correlationMatrix: unknown;
+        timedOut?: boolean;
+        status?: string;
+      };
+      if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('profiles');
       expect(parsed).toHaveProperty('correlationMatrix');
     }, 30000);
