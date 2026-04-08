@@ -9,6 +9,7 @@
  */
 
 import { SERVER_NAME, SERVER_VERSION, DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API_URL } from '../config.js';
+import { DEFAULT_REQUEST_TIMEOUT_MS } from '../clients/ep/baseClient.js';
 import { getToolMetadataArray } from './toolRegistry.js';
 import { getPromptMetadataArray } from '../prompts/index.js';
 import { getResourceTemplateArray } from '../resources/index.js';
@@ -72,7 +73,7 @@ CAPABILITIES:
 
 ENVIRONMENT VARIABLES:
   EP_API_URL              Override EP API base URL
-  EP_REQUEST_TIMEOUT_MS   Override request timeout (default: 10000ms)
+  EP_REQUEST_TIMEOUT_MS   Override request timeout (default: ${String(DEFAULT_REQUEST_TIMEOUT_MS)}ms)
   EP_CACHE_TTL            Cache TTL in ms (default: 900000)
   EP_RATE_LIMIT           Rate limit requests/min (default: ${String(DEFAULT_RATE_LIMIT_PER_MINUTE)})
 
