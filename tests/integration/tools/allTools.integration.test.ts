@@ -99,9 +99,25 @@ function parseAndValidateNoMockData(result: { content: { type: string; text: str
   return parsed;
 }
 
+/**
+ * Extracts numeric MEP IDs from EP API string IDs (format: "person/124936").
+ * Returns up to `count` numeric IDs from the `testMEPIds` array.
+ */
+function resolveNumericMepIds(firstId: string, count: number, allIds: string[] = []): number[] {
+  const ids = allIds.length > 0 ? allIds : (firstId ? [firstId] : []);
+  return ids
+    .map(id => {
+      const numStr = id.includes('/') ? id.split('/').pop() ?? '' : id;
+      return parseInt(numStr, 10);
+    })
+    .filter(id => !isNaN(id) && id > 0)
+    .slice(0, count);
+}
+
 describeIntegration('All 46 MCP Tools Integration Coverage', () => {
   // Shared MEP ID resolved once for tests that need it
   let testMEPId: string;
+  let testMEPIds: string[] = [];
   let testSessionId: string;
   let testProcedureId: string;
 
@@ -129,6 +145,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
 
       // Save MEP ID for dependent tests
       testMEPId = parsed.data[0]?.id ?? '';
+      testMEPIds = parsed.data.map(m => m.id).filter(Boolean);
       expect(testMEPId).toBeTruthy();
     }, 90000);
   });
@@ -818,8 +835,12 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
 
   describe('Phase 6 OSINT Tool: comparative_intelligence', () => {
     it('should return comparative intelligence data', async (ctx) => {
+      // Use dynamically discovered MEP IDs to avoid stale hardcoded IDs returning 404
+      const numericIds = resolveNumericMepIds(testMEPId, 2, testMEPIds);
+      if (numericIds.length < 2) { ctx.skip(); return; }
+
       const result = await retryOrSkip(
-        () => handleComparativeIntelligence({ mepIds: [197047, 197048] }),
+        () => handleComparativeIntelligence({ mepIds: numericIds }),
         'comparative_intelligence'
       );
       if (!result) { ctx.skip(); return; }
@@ -838,8 +859,13 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
 
   describe('OSINT Correlation Tool: correlate_intelligence', () => {
     it('should return correlation analysis data', async (ctx) => {
+      // Use dynamically discovered MEP IDs to avoid stale hardcoded IDs returning 404
+      const numericIds = resolveNumericMepIds(testMEPId, 2, testMEPIds);
+      if (numericIds.length < 2) { ctx.skip(); return; }
+      const stringIds = numericIds.map(String);
+
       const result = await retryOrSkip(
-        () => handleCorrelateIntelligence({ mepIds: ['197047', '197048'] }),
+        () => handleCorrelateIntelligence({ mepIds: stringIds }),
         'correlate_intelligence'
       );
       if (!result) { ctx.skip(); return; }
