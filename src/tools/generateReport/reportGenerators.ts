@@ -7,9 +7,11 @@
 import type { z } from 'zod';
 import type { GenerateReportSchema } from '../../schemas/europeanParliament.js';
 import { epClient } from '../../clients/europeanParliamentClient.js';
+import { APIError } from '../../clients/ep/baseClient.js';
 import { auditLogger, toErrorMessage } from '../../utils/auditLogger.js';
-import type { MEPDetails } from '../../types/europeanParliament.js';
+import type { MEPDetails, Committee } from '../../types/europeanParliament.js';
 import type { Report } from './types.js';
+import { ToolError } from '../shared/errors.js';
 import {
   createVotingSection,
   createCommitteeSection,
@@ -48,6 +50,36 @@ function extractMEPData(
   };
 }
 
+/**
+ * Sanitize a subject ID for inclusion in error messages.
+ * Truncates to 100 chars and strips control characters to prevent log injection.
+ */
+function sanitizeSubjectId(subjectId: string): string {
+  return subjectId.replace(/[\x00-\x1F\x7F]/g, '').slice(0, 100);
+}
+
+/** Fetch MEP details (null if subjectId not provided; throws ToolError for 404) */
+async function fetchMEPDetails(subjectId: string | undefined): Promise<MEPDetails | null> {
+  if (subjectId === undefined) return null;
+  try {
+    return await epClient.getMEPDetails(subjectId);
+  } catch (error: unknown) {
+    // 404 = invalid subjectId — throw non-retryable error immediately
+    if (error instanceof APIError && error.statusCode === 404) {
+      throw new ToolError({
+        toolName: 'generate_report',
+        operation: 'generateReport',
+        message: `MEP not found: '${sanitizeSubjectId(subjectId)}' is not a valid MEP identifier`,
+        isRetryable: false,
+        errorCode: 'UPSTREAM_404',
+        httpStatus: 404,
+      });
+    }
+    auditLogger.logError('generate_report.fetch_mep_details', { subjectId }, toErrorMessage(error));
+    return null;
+  }
+}
+
 /** Fetch question count for an MEP (null if unavailable) */
 async function fetchQuestionCount(subjectId: string | undefined): Promise<number | null> {
   if (subjectId === undefined) return null;
@@ -56,6 +88,28 @@ async function fetchQuestionCount(subjectId: string | undefined): Promise<number
     return questions.data.length;
   } catch (error: unknown) {
     auditLogger.logError('generate_report.fetch_question_count', { subjectId }, toErrorMessage(error));
+    return null;
+  }
+}
+
+/** Fetch committee info (null if subjectId not provided; throws ToolError for 404) */
+async function fetchCommitteeInfo(subjectId: string | undefined): Promise<Committee | null> {
+  if (subjectId === undefined) return null;
+  try {
+    return await epClient.getCommitteeInfo({ id: subjectId });
+  } catch (error: unknown) {
+    // 404 = invalid subjectId — throw non-retryable error immediately
+    if (error instanceof APIError && error.statusCode === 404) {
+      throw new ToolError({
+        toolName: 'generate_report',
+        operation: 'generateReport',
+        message: `Committee not found: '${sanitizeSubjectId(subjectId)}' is not a valid committee identifier`,
+        isRetryable: false,
+        errorCode: 'UPSTREAM_404',
+        httpStatus: 404,
+      });
+    }
+    auditLogger.logError('generate_report.fetch_committee_info', { subjectId }, toErrorMessage(error));
     return null;
   }
 }
@@ -108,11 +162,14 @@ async function fetchProcedureCount(year: number): Promise<number | null> {
 /** Build data quality warnings for MEP activity report */
 function buildMEPWarnings(
   mep: MEPDetails | null,
-  questionsSubmitted: number | null
+  questionsSubmitted: number | null,
+  subjectIdProvided: boolean
 ): string[] {
   const warnings: string[] = [];
   if (mep === null) {
-    warnings.push('MEP details not available; subject ID was not provided.');
+    warnings.push(subjectIdProvided
+      ? 'MEP details unavailable from EP API; upstream data source failed.'
+      : 'MEP details not available; subject ID was not provided.');
   }
   if (questionsSubmitted === null) {
     warnings.push('Parliamentary questions count unavailable from EP API.');
@@ -126,13 +183,16 @@ function buildMEPWarnings(
 
 /** Build data quality warnings for committee performance report */
 function buildCommitteeWarnings(
-  committee: { name: string; members: unknown[] } | null,
+  committee: Committee | null,
   documentsProduced: number | null,
-  reportsProduced: number | null
+  reportsProduced: number | null,
+  subjectIdProvided: boolean
 ): string[] {
   const warnings: string[] = [];
   if (committee === null) {
-    warnings.push('Committee details not available; subject ID was not provided.');
+    warnings.push(subjectIdProvided
+      ? 'Committee details unavailable from EP API; upstream data source failed.'
+      : 'Committee details not available; subject ID was not provided.');
   }
   if (documentsProduced === null) {
     warnings.push('Committee documents count unavailable from EP API.');
@@ -176,6 +236,27 @@ function isFullYearRange(dateFrom: string, dateTo: string): boolean {
     && dateFrom.substring(0, 4) === dateTo.substring(0, 4);
 }
 
+/**
+ * Throw a ToolError when all EP API data fetches failed.
+ * This prevents returning a successful-looking report with all-zero statistics,
+ * which could mislead AI agents into treating empty data as valid.
+ */
+function throwIfAllDataUnavailable(
+  reportType: string,
+  fetchResults: unknown[]
+): void {
+  if (fetchResults.every((r) => r === null)) {
+    throw new ToolError({
+      toolName: 'generate_report',
+      operation: 'generateReport',
+      message: `EP API data unavailable for ${reportType} report — all upstream data sources failed`,
+      isRetryable: true,
+      errorCode: 'UPSTREAM_503',
+      httpStatus: 503,
+    });
+  }
+}
+
 /** Build data quality warnings for legislation progress report */
 function buildLegislationWarnings(
   procedureCount: number | null,
@@ -204,12 +285,13 @@ function buildLegislationWarnings(
 export async function generateMEPActivityReport(
   params: z.infer<typeof GenerateReportSchema>
 ): Promise<Report> {
-  const mep = params.subjectId !== undefined 
-    ? await epClient.getMEPDetails(params.subjectId) 
-    : null;
+  const mep = await fetchMEPDetails(params.subjectId);
   const data = extractMEPData(params, mep);
   const questionsSubmitted = await fetchQuestionCount(params.subjectId);
-  const warnings = buildMEPWarnings(mep, questionsSubmitted);
+  if (params.subjectId !== undefined) {
+    throwIfAllDataUnavailable('MEP_ACTIVITY', [mep, questionsSubmitted]);
+  }
+  const warnings = buildMEPWarnings(mep, questionsSubmitted, params.subjectId !== undefined);
   
   return {
     reportType: 'MEP_ACTIVITY',
@@ -247,9 +329,7 @@ export async function generateMEPActivityReport(
 export async function generateCommitteePerformanceReport(
   params: z.infer<typeof GenerateReportSchema>
 ): Promise<Report> {
-  const committee = params.subjectId !== undefined 
-    ? await epClient.getCommitteeInfo({ id: params.subjectId }) 
-    : null;
+  const committee = await fetchCommitteeInfo(params.subjectId);
   const committeeName = committee?.name ?? 'Unknown Committee';
   const dateFrom = params.dateFrom ?? '2024-01-01';
   const dateTo = params.dateTo ?? '2024-12-31';
@@ -259,7 +339,8 @@ export async function generateCommitteePerformanceReport(
   // Parliament-wide counts (not filtered by committee)
   const documentsProduced = await fetchDocumentCount(year);
   const reportsProduced = await fetchAdoptedTextCount(year);
-  const warnings = buildCommitteeWarnings(committee, documentsProduced, reportsProduced);
+  throwIfAllDataUnavailable('COMMITTEE_PERFORMANCE', [committee, documentsProduced, reportsProduced]);
+  const warnings = buildCommitteeWarnings(committee, documentsProduced, reportsProduced, params.subjectId !== undefined);
   
   return {
     reportType: 'COMMITTEE_PERFORMANCE',
@@ -299,6 +380,7 @@ export async function generateVotingStatisticsReport(
 
   const sessionCount = await fetchSessionCount(dateFrom, dateTo);
   const adoptedCount = await fetchAdoptedTextCount(year);
+  throwIfAllDataUnavailable('VOTING_STATISTICS', [sessionCount, adoptedCount]);
   const warnings = buildVotingWarnings(sessionCount, adoptedCount, dateFrom, dateTo);
   
   return {
@@ -337,6 +419,7 @@ export async function generateLegislationProgressReport(
 
   const procedureCount = await fetchProcedureCount(year);
   const completedCount = await fetchAdoptedTextCount(year);
+  throwIfAllDataUnavailable('LEGISLATION_PROGRESS', [procedureCount, completedCount]);
   const ongoingCount = (procedureCount !== null && completedCount !== null)
     ? Math.max(0, procedureCount - completedCount)
     : null;
