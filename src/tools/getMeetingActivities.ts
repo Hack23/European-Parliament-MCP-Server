@@ -32,8 +32,8 @@ import type { ToolResult } from './shared/types.js';
  *
  * @example
  * ```typescript
- * const result = await handleGetMeetingActivities({ sittingId: 'PV-9-2024-01-15', limit: 50 });
- * // Returns up to 50 activities from the specified plenary sitting
+ * const result = await handleGetMeetingActivities({ sittingId: 'PV-9-2024-01-15', limit: 20 });
+ * // Returns up to 20 activities from the specified plenary sitting
  * ```
  *
  * @security - Input is validated with Zod before any API call.
