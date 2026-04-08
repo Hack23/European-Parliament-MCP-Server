@@ -59,7 +59,7 @@
   </a>
 
   <!-- MCP Tools -->
-  <img src="https://img.shields.io/badge/MCP%20Tools-61-6366F1?style=flat-square&logo=typescript" alt="MCP Tools">
+  <img src="https://img.shields.io/badge/MCP%20Tools-62-6366F1?style=flat-square&logo=typescript" alt="MCP Tools">
 
   <!-- MCP Resources -->
   <img src="https://img.shields.io/badge/MCP%20Resources-9-6366F1?style=flat-square" alt="MCP Resources">

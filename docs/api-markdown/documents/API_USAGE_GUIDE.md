@@ -2145,6 +2145,9 @@ The response includes:
 | `server.status` | Overall server status (`healthy`, `degraded`, `unhealthy`) |
 | `feeds` | Object keyed by feed name, each value is a per-feed health status object |
 | `feeds.<feed_name>.status` | Feed status (`ok`, `error`, `unknown`) |
+| `feeds.<feed_name>.lastSuccess` | Timestamp of last successful call (if any) |
+| `feeds.<feed_name>.lastAttempt` | Timestamp of the most recent health check attempt (if any) |
+| `feeds.<feed_name>.lastError` | Last error message (if any) |
 | `availability` | Availability summary object |
 | `availability.operational_feeds` | Number of feeds currently operational |
 | `availability.total_feeds` | Total number of tracked feeds |

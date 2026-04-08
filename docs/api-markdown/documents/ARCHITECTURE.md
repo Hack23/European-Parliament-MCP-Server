@@ -395,7 +395,7 @@ The following five tools extend the OSINT capability with network analysis, sent
 
 | Category | Count | Tools |
 |----------|-------|-------|
-| **Core** | 8 | get_meps, get_mep_details, get_plenary_sessions, get_voting_records, search_documents, get_committee_info, get_parliamentary_questions |
+| **Core** | 8 | get_meps, get_mep_details, get_plenary_sessions, get_voting_records, search_documents, get_committee_info, get_parliamentary_questions, get_server_health |
 | **Advanced Analysis** | 3 | analyze_voting_patterns, track_legislation, generate_report |
 | **OSINT Phase 1** | 6 | assess_mep_influence, analyze_coalition_dynamics, detect_voting_anomalies, compare_political_groups, analyze_legislative_effectiveness, monitor_legislative_pipeline |
 | **OSINT Phase 2** | 2 | analyze_committee_activity, track_mep_attendance |
