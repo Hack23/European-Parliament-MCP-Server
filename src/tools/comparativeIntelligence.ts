@@ -655,11 +655,17 @@ function buildAllNotFoundError(notFoundMepIds: number[]): ToolResult {
  * excluding IDs that could not be resolved. When transient errors contributed
  * to the shortfall, the error is retryable (a retry may yield enough valid MEPs).
  */
-function buildInsufficientMepsError(validCount: number, totalCount: number, unresolvedIds: number[], hasTransientErrors: boolean): ToolResult {
+function buildInsufficientMepsError(
+  validCount: number,
+  totalCount: number,
+  unresolvedIds: number[],
+  hasTransientErrors: boolean,
+  transientCause?: unknown
+): ToolResult {
   if (hasTransientErrors) {
     return buildTransientError(
       `Only ${String(validCount)} of ${String(totalCount)} MEP IDs could be resolved. Comparative analysis requires at least 2 valid MEPs. Unresolved IDs: ${unresolvedIds.join(', ')}`,
-      undefined
+      transientCause
     );
   }
   return buildErrorResponse(
@@ -762,7 +768,7 @@ function validateMepResults(
 
   if (validMepIds.length < 2) {
     const unresolvedIds = [...notFoundMepIds, ...transientErrors.map(e => e.mepId)];
-    return { error: buildInsufficientMepsError(validMepIds.length, mepIds.length, unresolvedIds, transientErrors.length > 0) };
+    return { error: buildInsufficientMepsError(validMepIds.length, mepIds.length, unresolvedIds, transientErrors.length > 0, transientErrors[0]?.reason) };
   }
 
   const transientFailedMepIds = transientErrors.map(e => e.mepId);
