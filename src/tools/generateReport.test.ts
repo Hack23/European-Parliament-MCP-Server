@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { handleGenerateReport, generateReportToolMetadata } from './generateReport.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { APIError } from '../clients/ep/baseClient.js';
+import { ToolError } from './shared/errors.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
@@ -18,6 +20,14 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
 describe('generate_report Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset default mock implementations (clearAllMocks only clears call history)
+    vi.mocked(epClient.getMEPDetails).mockReset();
+    vi.mocked(epClient.getCommitteeInfo).mockReset();
+    vi.mocked(epClient.getParliamentaryQuestions).mockResolvedValue({ data: [] });
+    vi.mocked(epClient.getCommitteeDocuments).mockResolvedValue({ data: [] });
+    vi.mocked(epClient.getAdoptedTexts).mockResolvedValue({ data: [] });
+    vi.mocked(epClient.getPlenarySessions).mockResolvedValue({ data: [] });
+    vi.mocked(epClient.getProcedures).mockResolvedValue({ data: [] });
   });
 
   describe('Input Validation', () => {
@@ -251,26 +261,168 @@ describe('generate_report Tool', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle API errors for MEP reports as ToolError', async () => {
+    it('should throw ToolError for MEP reports when all EP API calls fail', async () => {
       vi.mocked(epClient.getMEPDetails).mockRejectedValue(new Error('API Error'));
+      vi.mocked(epClient.getParliamentaryQuestions).mockRejectedValue(new Error('API Error'));
 
       await expect(
         handleGenerateReport({
           reportType: 'MEP_ACTIVITY',
           subjectId: 'MEP-124810'
         })
-      ).rejects.toThrow('[generate_report] generateReport: Failed to generate report');
+      ).rejects.toThrow('EP API data unavailable for MEP_ACTIVITY report');
     });
 
-    it('should handle API errors for committee reports as ToolError', async () => {
+    it('should return partial report for MEP when getMEPDetails fails but questions succeed', async () => {
+      vi.mocked(epClient.getMEPDetails).mockRejectedValue(new Error('API Error'));
+      vi.mocked(epClient.getParliamentaryQuestions).mockResolvedValue({ data: [{ id: 'q1' }] });
+
+      const result = await handleGenerateReport({
+        reportType: 'MEP_ACTIVITY',
+        subjectId: 'MEP-124810'
+      });
+
+      const parsed = JSON.parse(result.content[0].text) as {
+        subject: string;
+        statistics: { questionsSubmitted: number };
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.subject).toBe('Unknown MEP');
+      expect(parsed.statistics.questionsSubmitted).toBe(1);
+      // Warning should say "upstream data source failed", not "subject ID was not provided"
+      expect(parsed.dataQualityWarnings.some((w: string) => w.includes('upstream data source failed'))).toBe(true);
+    });
+
+    it('should throw ToolError for committee reports when all EP API calls fail', async () => {
       vi.mocked(epClient.getCommitteeInfo).mockRejectedValue(new Error('API Error'));
+      vi.mocked(epClient.getCommitteeDocuments).mockRejectedValue(new Error('API Error'));
+      vi.mocked(epClient.getAdoptedTexts).mockRejectedValue(new Error('API Error'));
 
       await expect(
         handleGenerateReport({
           reportType: 'COMMITTEE_PERFORMANCE',
           subjectId: 'COMM-ENVI'
         })
-      ).rejects.toThrow('[generate_report] generateReport: Failed to generate report');
+      ).rejects.toThrow('EP API data unavailable for COMMITTEE_PERFORMANCE report');
+    });
+
+    it('should throw non-retryable ToolError when MEP subjectId returns 404', async () => {
+      vi.mocked(epClient.getMEPDetails).mockRejectedValue(new APIError('Not Found', 404));
+
+      try {
+        await handleGenerateReport({
+          reportType: 'MEP_ACTIVITY',
+          subjectId: 'INVALID-ID'
+        });
+        expect.unreachable('Should have thrown');
+      } catch (error: unknown) {
+        expect(error).toBeInstanceOf(ToolError);
+        const toolError = error as ToolError;
+        expect(toolError.errorCode).toBe('UPSTREAM_404');
+        expect(toolError.httpStatus).toBe(404);
+        expect(toolError.isRetryable).toBe(false);
+        expect(toolError.message).toContain('MEP not found');
+      }
+    });
+
+    it('should throw non-retryable ToolError when committee subjectId returns 404', async () => {
+      vi.mocked(epClient.getCommitteeInfo).mockRejectedValue(new APIError('Not Found', 404));
+
+      try {
+        await handleGenerateReport({
+          reportType: 'COMMITTEE_PERFORMANCE',
+          subjectId: 'INVALID-COMM'
+        });
+        expect.unreachable('Should have thrown');
+      } catch (error: unknown) {
+        expect(error).toBeInstanceOf(ToolError);
+        const toolError = error as ToolError;
+        expect(toolError.errorCode).toBe('UPSTREAM_404');
+        expect(toolError.httpStatus).toBe(404);
+        expect(toolError.isRetryable).toBe(false);
+        expect(toolError.message).toContain('Committee not found');
+      }
+    });
+  });
+
+  describe('EP API Unavailable - All Data Sources Failed', () => {
+    it('should throw ToolError for VOTING_STATISTICS when all EP API calls fail', async () => {
+      vi.mocked(epClient.getPlenarySessions).mockRejectedValue(new Error('Network Error'));
+      vi.mocked(epClient.getAdoptedTexts).mockRejectedValue(new Error('Network Error'));
+
+      await expect(
+        handleGenerateReport({
+          reportType: 'VOTING_STATISTICS',
+          dateFrom: '2025-01-01',
+          dateTo: '2025-03-31'
+        })
+      ).rejects.toThrow('EP API data unavailable for VOTING_STATISTICS report');
+    });
+
+    it('should throw retryable ToolError for VOTING_STATISTICS when EP API is down', async () => {
+      vi.mocked(epClient.getPlenarySessions).mockRejectedValue(new Error('ECONNREFUSED'));
+      vi.mocked(epClient.getAdoptedTexts).mockRejectedValue(new Error('ECONNREFUSED'));
+
+      try {
+        await handleGenerateReport({
+          reportType: 'VOTING_STATISTICS'
+        });
+        expect.unreachable('Should have thrown');
+      } catch (error: unknown) {
+        expect(error).toBeInstanceOf(ToolError);
+        const toolError = error as ToolError;
+        expect(toolError.isRetryable).toBe(true);
+        expect(toolError.errorCode).toBe('UPSTREAM_503');
+        expect(toolError.httpStatus).toBe(503);
+      }
+    });
+
+    it('should throw ToolError for LEGISLATION_PROGRESS when all EP API calls fail', async () => {
+      vi.mocked(epClient.getProcedures).mockRejectedValue(new Error('Network Error'));
+      vi.mocked(epClient.getAdoptedTexts).mockRejectedValue(new Error('Network Error'));
+
+      await expect(
+        handleGenerateReport({
+          reportType: 'LEGISLATION_PROGRESS',
+          dateFrom: '2025-01-01',
+          dateTo: '2025-12-31'
+        })
+      ).rejects.toThrow('EP API data unavailable for LEGISLATION_PROGRESS report');
+    });
+
+    it('should throw ToolError for COMMITTEE_PERFORMANCE when all EP API calls fail (no subjectId)', async () => {
+      vi.mocked(epClient.getCommitteeDocuments).mockRejectedValue(new Error('Network Error'));
+      vi.mocked(epClient.getAdoptedTexts).mockRejectedValue(new Error('Network Error'));
+
+      await expect(
+        handleGenerateReport({
+          reportType: 'COMMITTEE_PERFORMANCE'
+        })
+      ).rejects.toThrow('EP API data unavailable for COMMITTEE_PERFORMANCE report');
+    });
+
+    it('should still return report for VOTING_STATISTICS when at least one API call succeeds', async () => {
+      vi.mocked(epClient.getPlenarySessions).mockRejectedValue(new Error('Network Error'));
+      vi.mocked(epClient.getAdoptedTexts).mockResolvedValue({ data: [{ id: '1' }] });
+
+      const result = await handleGenerateReport({
+        reportType: 'VOTING_STATISTICS'
+      });
+
+      const parsed = JSON.parse(result.content[0].text) as { statistics: { adopted: number } };
+      expect(parsed.statistics.adopted).toBe(1);
+    });
+
+    it('should still return report for LEGISLATION_PROGRESS when at least one API call succeeds', async () => {
+      vi.mocked(epClient.getProcedures).mockResolvedValue({ data: [{ id: '1' }, { id: '2' }] });
+      vi.mocked(epClient.getAdoptedTexts).mockRejectedValue(new Error('Network Error'));
+
+      const result = await handleGenerateReport({
+        reportType: 'LEGISLATION_PROGRESS'
+      });
+
+      const parsed = JSON.parse(result.content[0].text) as { statistics: { totalProcedures: number } };
+      expect(parsed.statistics.totalProcedures).toBe(2);
     });
   });
 

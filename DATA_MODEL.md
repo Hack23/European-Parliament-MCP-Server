@@ -480,7 +480,7 @@ type PoliticalGroup = z.infer<typeof PoliticalGroupSchema>;
 
 ## 🔍 Zod Schema Overview
 
-Each of the 61 MCP tools has a corresponding Zod input schema. Representative examples:
+Each of the 62 MCP tools has a corresponding Zod input schema. Representative examples:
 
 ```typescript
 // get_meps tool schema
