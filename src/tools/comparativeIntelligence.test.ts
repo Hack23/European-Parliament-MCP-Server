@@ -358,6 +358,23 @@ describe('comparative_intelligence Tool', () => {
       // Warning about 503 transiently-failed ID
       expect(data.dataQualityWarnings.some(w => w.includes('888') && w.includes('upstream errors'))).toBe(true);
     });
+
+    it('should return structured timeout response when all MEP fetches timeout (408)', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockRejectedValue(
+        new APIError('Request Timeout', 408)
+      );
+
+      const result = await handleComparativeIntelligence({ mepIds: [1, 2] });
+      // handleToolError detects timeout-related errors and returns a non-error timeout response
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        timedOut?: boolean;
+        status?: string;
+        toolName?: string;
+      };
+      expect(parsed.timedOut).toBe(true);
+      expect(parsed.status).toBe('timeout');
+      expect(parsed.toolName).toBe('comparative_intelligence');
+    });
   });
 
   describe('Dimension Filtering', () => {

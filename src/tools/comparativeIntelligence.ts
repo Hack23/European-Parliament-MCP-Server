@@ -788,7 +788,9 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
     }
     const { notFoundMepIds, transientFailedMepIds, validResults, validMepIds } = validation;
 
-    // Build profiles only from valid (fulfilled) results
+    // Build profiles only from valid (fulfilled) results — invalid/transient IDs
+    // are intentionally excluded; buildProfilesFromResults will find only fulfilled
+    // entries in this pre-filtered subset (no placeholder profiles are generated).
     const profiles = buildProfilesFromResults(validResults, validMepIds, dimensions);
 
     if (profiles.length < 2) {
