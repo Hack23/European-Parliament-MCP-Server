@@ -16,6 +16,7 @@ import { createDefaultContainer, TOKENS } from '../di/container.js';
 import type { DIContainer } from '../di/container.js';
 import type { HealthService } from '../services/HealthService.js';
 import type { CLIOptions } from './types.js';
+import { parseTimeoutValue, resolveEffectiveTimeout } from './cliUtils.js';
 
 /** Re-export CLIOptions for consumers */
 export type { CLIOptions };
@@ -63,6 +64,7 @@ OPTIONS:
   --help      Show this help message
   --version   Show version information
   --health    Show health check / diagnostics
+  --timeout   Request timeout in milliseconds (overrides EP_REQUEST_TIMEOUT_MS)
 
 CAPABILITIES:
   Tools:     ${String(tools.length)} (${String(coreToolCount)} core + ${String(nonCoreToolCount)} additional)
@@ -138,6 +140,7 @@ export function showHealth(container?: DIContainer): void {
     },
     configuration: {
       apiUrl: sanitizeUrl(process.env['EP_API_URL'] ?? DEFAULT_API_URL),
+      requestTimeoutMs: String(resolveEffectiveTimeout()),
       cacheTTL: process.env['EP_CACHE_TTL'] ?? '900000',
       rateLimit: process.env['EP_RATE_LIMIT'] ?? String(DEFAULT_RATE_LIMIT_PER_MINUTE),
     },
@@ -151,21 +154,37 @@ export function showHealth(container?: DIContainer): void {
  * Parse an array of CLI argument strings into a typed {@link CLIOptions} object.
  *
  * Supports the canonical flags `--help` / `-h`, `--version` / `-v`,
- * and `--health`.
+ * `--health`, and the `--timeout <ms>` value flag.
  *
  * @param argv - Array of raw argument strings (typically `process.argv.slice(2)`)
- * @returns Typed CLI options with boolean flags
+ * @returns Typed CLI options with boolean flags and optional timeout
  *
  * @example
  * ```typescript
  * const opts = parseCLIArgs(['--health']);
  * if (opts.health) showHealth();
  * ```
+ *
+ * @example
+ * ```typescript
+ * const opts = parseCLIArgs(['--timeout', '90000']);
+ * // opts.timeout === 90000
+ * ```
  */
 export function parseCLIArgs(argv: string[]): CLIOptions {
-  return {
+  const opts: CLIOptions = {
     help: argv.includes('--help') || argv.includes('-h'),
     version: argv.includes('--version') || argv.includes('-v'),
     health: argv.includes('--health'),
   };
+
+  const timeoutIdx = argv.indexOf('--timeout');
+  if (timeoutIdx !== -1 && timeoutIdx + 1 < argv.length) {
+    const parsed = parseTimeoutValue(argv[timeoutIdx + 1]);
+    if (parsed !== undefined) {
+      opts.timeout = parsed;
+    }
+  }
+
+  return opts;
 }
