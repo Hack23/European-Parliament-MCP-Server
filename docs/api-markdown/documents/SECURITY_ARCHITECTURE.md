@@ -128,7 +128,7 @@ flowchart TD
 
 | Control ID | Control Name | Type | Implementation | Status |
 |------------|-------------|------|----------------|--------|
-| SC-001 | Input Validation | Preventive | Zod schema per tool (61 schemas) with `.refine()` cross-field constraints, date range validation, and format-specific ID validation | ✅ Implemented |
+| SC-001 | Input Validation | Preventive | Zod schema per tool (62 schemas) with `.refine()` cross-field constraints, date range validation, and format-specific ID validation | ✅ Implemented |
 | SC-002 | Rate Limiting | Preventive | Token bucket, 100 req/min | ✅ Implemented |
 | SC-003 | Audit Logging | Detective | AuditLogger singleton, all invocations | ✅ Implemented |
 | SC-004 | GDPR Data Minimization | Preventive | Field selection, no over-fetching | ✅ Implemented |
@@ -682,7 +682,7 @@ flowchart TD
     end
 
     subgraph Layer2["Layer 2: Input Validation"]
-        ZOD["Zod Schema Validation\n(61 tool schemas)"]
+        ZOD["Zod Schema Validation\n(62 tool schemas)"]
         BT["Branded Types\n(type-safe identifiers)"]
     end
 
@@ -769,7 +769,7 @@ flowchart TD
 | Control | Standard | Clause | Implementation |
 |---------|----------|--------|----------------|
 | Information Security Policies | ISO 27001 | A.5.1 | SECURITY.md, SECURITY_ARCHITECTURE.md, THREAT_MODEL.md |
-| Asset Management | ISO 27001 | A.8.1 | 61 tools + 9 resources inventoried |
+| Asset Management | ISO 27001 | A.8.1 | 62 tools + 9 resources inventoried |
 | Access Control | ISO 27001 | A.9.1 | stdio isolation, no network exposure |
 | Cryptography | ISO 27001 | A.10.1 | TLS 1.2+ for all EP API calls |
 | Secure Development | ISO 27001 | A.14.2 | TypeScript strict, Zod validation, ESLint |

@@ -39,7 +39,7 @@
 
 ## 🎯 Purpose & Scope
 
-This document establishes the **comprehensive performance testing strategy, benchmarks, and optimization practices** for the European Parliament MCP Server — a TypeScript/Node.js MCP server providing AI assistants with access to European Parliament open data via 61 MCP tools.
+This document establishes the **comprehensive performance testing strategy, benchmarks, and optimization practices** for the European Parliament MCP Server — a TypeScript/Node.js MCP server providing AI assistants with access to European Parliament open data via 62 MCP tools.
 
 Performance validation ensures:
 - ✅ Sub-200ms API response times for cached operations

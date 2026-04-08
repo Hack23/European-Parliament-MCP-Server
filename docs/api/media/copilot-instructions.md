@@ -12,7 +12,7 @@
 
 **European Parliament MCP Server** — Model Context Protocol server for European Parliament Open Data. TypeScript 6.0.2, Node.js 25, strict mode, Zod validation. ISMS-compliant (ISO 27001, NIST CSF 2.0, CIS Controls v8.1), GDPR-ready, SLSA Level 3.
 
-**Scale:** 61 MCP tools (7 core + 3 advanced + 15 OSINT + 8 phase 4 + 15 phase 5 + 13 feed) · 9 resources · 7 prompts · 1130+ unit tests · 71 E2E test cases · 80%+ coverage · <200ms API responses.
+**Scale:** 62 MCP tools (8 core + 3 advanced + 15 OSINT + 8 phase 4 + 15 phase 5 + 13 feed) · 9 resources · 7 prompts · 1130+ unit tests · 71 E2E test cases · 80%+ coverage · <200ms API responses.
 
 **Data source:** European Parliament Open Data Portal API v2 (`https://data.europarl.europa.eu/api/v2/`).
 
@@ -56,7 +56,7 @@ npx knip                  # Unused code/dependencies check
 
 ```
 src/
-├── tools/          # MCP tool implementations (61 tools)
+├── tools/          # MCP tool implementations (62 tools)
 ├── resources/      # MCP resource handlers (9 resources)
 ├── prompts/        # MCP prompt templates (7 prompts)
 ├── clients/ep/     # European Parliament API client
