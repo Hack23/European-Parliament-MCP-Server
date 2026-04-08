@@ -50,6 +50,14 @@ function extractMEPData(
   };
 }
 
+/**
+ * Sanitize a subject ID for inclusion in error messages.
+ * Truncates to 100 chars and strips control characters to prevent log injection.
+ */
+function sanitizeSubjectId(subjectId: string): string {
+  return subjectId.replace(/[\x00-\x1F\x7F]/g, '').slice(0, 100);
+}
+
 /** Fetch MEP details (null if subjectId not provided; throws ToolError for 404) */
 async function fetchMEPDetails(subjectId: string | undefined): Promise<MEPDetails | null> {
   if (subjectId === undefined) return null;
@@ -61,7 +69,7 @@ async function fetchMEPDetails(subjectId: string | undefined): Promise<MEPDetail
       throw new ToolError({
         toolName: 'generate_report',
         operation: 'generateReport',
-        message: `MEP not found: '${subjectId}' is not a valid MEP identifier`,
+        message: `MEP not found: '${sanitizeSubjectId(subjectId)}' is not a valid MEP identifier`,
         isRetryable: false,
         errorCode: 'UPSTREAM_404',
         httpStatus: 404,
@@ -95,7 +103,7 @@ async function fetchCommitteeInfo(subjectId: string | undefined): Promise<Commit
       throw new ToolError({
         toolName: 'generate_report',
         operation: 'generateReport',
-        message: `Committee not found: '${subjectId}' is not a valid committee identifier`,
+        message: `Committee not found: '${sanitizeSubjectId(subjectId)}' is not a valid committee identifier`,
         isRetryable: false,
         errorCode: 'UPSTREAM_404',
         httpStatus: 404,
