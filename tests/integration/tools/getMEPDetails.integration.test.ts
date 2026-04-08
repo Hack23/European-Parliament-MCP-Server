@@ -33,7 +33,7 @@ describeIntegration('get_mep_details Integration Tests', () => {
       testMEPId = firstMep.id;
       console.log(`[Integration] Using real MEP ID: ${testMEPId}`);
     }
-  }, 60000);
+  }, 90000);
 
   it('should fetch and validate MEP details from real API', async (ctx) => {
     if (!testMEPId) { ctx.skip(); return; }
@@ -58,7 +58,7 @@ describeIntegration('get_mep_details Integration Tests', () => {
     if (country !== 'Unknown') {
       expect(country).toMatch(/^[A-Z]{2,3}$/);
     }
-  }, 60000);
+  }, 90000);
 
   it('should handle PII fields appropriately (GDPR)', async (ctx) => {
     if (!testMEPId) { ctx.skip(); return; }
@@ -77,5 +77,5 @@ describeIntegration('get_mep_details Integration Tests', () => {
     if (mep['phone']) {
       expect(typeof mep['phone']).toBe('string');
     }
-  }, 60000);
+  }, 90000);
 });

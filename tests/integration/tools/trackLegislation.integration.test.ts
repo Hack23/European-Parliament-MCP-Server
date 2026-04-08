@@ -32,7 +32,7 @@ describeIntegration('track_legislation Integration Tests', () => {
       testProcedureId = firstProc.id;
       console.log(`[Integration] Using real procedure ID: ${testProcedureId}`);
     }
-  }, 60000);
+  }, 90000);
 
   it('should track legislation with full procedure structure', async (ctx) => {
     if (!testProcedureId) { ctx.skip(); return; }
@@ -59,5 +59,5 @@ describeIntegration('track_legislation Integration Tests', () => {
 
     // Committees
     expect(procedure).toHaveProperty('committees');
-  }, 60000);
+  }, 90000);
 });

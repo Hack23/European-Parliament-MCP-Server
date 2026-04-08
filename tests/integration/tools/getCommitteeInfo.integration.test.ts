@@ -31,5 +31,5 @@ describeIntegration('get_committee_info Integration Tests', () => {
     const committee = JSON.parse(textContent!.text) as unknown;
     validateCommitteeStructure(committee);
     expect((committee as { abbreviation: string }).abbreviation).toBe('ENVI');
-  }, 60000);
+  }, 90000);
 });
