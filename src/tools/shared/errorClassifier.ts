@@ -8,6 +8,7 @@
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
+import { z } from 'zod';
 import { ToolError } from './errors.js';
 import type { ErrorCode, ErrorCategory } from './errors.js';
 
@@ -55,9 +56,11 @@ function extractHttpStatus(error: unknown): number | undefined {
  * 3. If the error is a `ToolError` without an explicit `errorCode`, apply
  *    heuristic classification, including operation-based mappings
  *    (`validateInput` → `INVALID_PARAMS`) and message-based timeout detection.
- * 4. If the error is a plain `Error`, apply message-based timeout detection
+ * 4. If the error is a `ZodError` (validation failure), classify as
+ *    `INVALID_PARAMS` / `CLIENT_ERROR`.
+ * 5. If the error is a plain `Error`, apply message-based timeout detection
  *    (`timed out` → `UPSTREAM_TIMEOUT`).
- * 5. Default to `INTERNAL_ERROR`.
+ * 6. Default to `INTERNAL_ERROR`.
  *
  * @param error - The caught error value
  * @returns Structured classification with code, category, httpStatus, and retryable flag
@@ -85,13 +88,8 @@ export function classifyError(error: unknown): ErrorClassification {
     return classifyToolErrorHeuristic(error);
   }
 
-  // 4. Plain Error heuristics (timeout detection)
-  if (error instanceof Error && error.message.includes('timed out')) {
-    return { errorCode: 'UPSTREAM_TIMEOUT', errorCategory: 'TIMEOUT', retryable: true };
-  }
-
-  // 5. Default
-  return { errorCode: 'INTERNAL_ERROR', errorCategory: 'INTERNAL', retryable: false };
+  // 4–6. Plain Error heuristics (ZodError, timeout, default)
+  return classifyPlainErrorHeuristic(error);
 }
 
 /**
@@ -137,6 +135,21 @@ function classifyToolErrorHeuristic(error: ToolError): ErrorClassification {
     return { errorCode: 'UPSTREAM_TIMEOUT', errorCategory: 'TIMEOUT', retryable: true };
   }
   return { errorCode: 'INTERNAL_ERROR', errorCategory: 'INTERNAL', retryable: error.isRetryable };
+}
+
+/**
+ * Classify a plain Error (non-ToolError) using name and message heuristics.
+ * Detects ZodError (validation) and timeout patterns before falling back to INTERNAL_ERROR.
+ * @internal
+ */
+function classifyPlainErrorHeuristic(error: unknown): ErrorClassification {
+  if (error instanceof z.ZodError) {
+    return { errorCode: 'INVALID_PARAMS', errorCategory: 'CLIENT_ERROR', retryable: false };
+  }
+  if (error instanceof Error && error.message.includes('timed out')) {
+    return { errorCode: 'UPSTREAM_TIMEOUT', errorCategory: 'TIMEOUT', retryable: true };
+  }
+  return { errorCode: 'INTERNAL_ERROR', errorCategory: 'INTERNAL', retryable: false };
 }
 
 /**
