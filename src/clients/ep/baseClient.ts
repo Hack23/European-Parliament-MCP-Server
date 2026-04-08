@@ -18,7 +18,7 @@
 import { fetch } from 'undici';
 import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../../utils/rateLimiter.js';
-import { withRetry, withTimeoutAndAbort, TimeoutError } from '../../utils/timeout.js';
+import { withRetry, withTimeoutAndAbort, TimeoutError, DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 import { performanceMonitor } from '../../utils/performance.js';
 import { DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API_URL, USER_AGENT } from '../../config.js';
 
@@ -104,8 +104,12 @@ export function validateApiUrl(url: string, label = 'EP_API_URL'): string {
 
 /** Default base URL for European Parliament Open Data Portal API v2 — derived from centralized config */
 export const DEFAULT_EP_API_BASE_URL = DEFAULT_API_URL;
-/** Default HTTP request timeout in milliseconds (30 seconds — some EP API endpoints are slow) */
-export const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
+/**
+ * Default HTTP request timeout in milliseconds — derived from the centralised
+ * {@link DEFAULT_TIMEOUTS.EP_API_REQUEST_MS} constant in `timeout.ts` so there
+ * is a single source of truth for the EP API request timeout value.
+ */
+export const DEFAULT_REQUEST_TIMEOUT_MS = DEFAULT_TIMEOUTS.EP_API_REQUEST_MS;
 /** Whether automatic retry on transient failures is enabled by default */
 export const DEFAULT_RETRY_ENABLED = true;
 /** Default maximum number of retry attempts for failed requests */
@@ -172,7 +176,7 @@ export interface EPClientConfig {
   maxCacheSize?: number;
   /** Custom rate limiter instance. */
   rateLimiter?: RateLimiter;
-  /** Request timeout in milliseconds. @default 30000 */
+  /** Request timeout in milliseconds. @default DEFAULT_TIMEOUTS.EP_API_REQUEST_MS */
   timeoutMs?: number;
   /** Enable automatic retry on transient failures. @default true */
   enableRetry?: boolean;
