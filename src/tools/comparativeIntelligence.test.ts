@@ -210,22 +210,69 @@ describe('comparative_intelligence Tool', () => {
     });
   });
 
-  describe('dataAvailable: false scenario', () => {
-    it('should handle all MEPs not found', async () => {
+  describe('MEP ID Validation', () => {
+    it('should return error when all MEP IDs are invalid', async () => {
       vi.mocked(epClientModule.epClient.getMEPDetails).mockRejectedValue(
         new Error('Not found')
       );
 
       const result = await handleComparativeIntelligence({ mepIds: [999, 998] });
+      expect(result.isError).toBe(true);
+      const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+      expect(parsed.toolName).toBe('comparative_intelligence');
+      expect(parsed.error).toContain('None of the provided MEP IDs could be found');
+      expect(parsed.error).toContain('999');
+      expect(parsed.error).toContain('998');
+    });
+
+    it('should return error when only 1 valid MEP out of 3', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails)
+        .mockImplementation(async (id: string) => {
+          if (id === '1') return mockMEP1;
+          throw new Error(`MEP ${id} not found`);
+        });
+
+      const result = await handleComparativeIntelligence({ mepIds: [1, 999, 998] });
+      expect(result.isError).toBe(true);
+      const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+      expect(parsed.toolName).toBe('comparative_intelligence');
+      expect(parsed.error).toContain('Comparative analysis requires at least 2 valid MEPs');
+      expect(parsed.error).toContain('999');
+      expect(parsed.error).toContain('998');
+    });
+
+    it('should proceed with valid MEPs and warn about invalid ones', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails)
+        .mockImplementation(async (id: string) => {
+          if (id === '1') return mockMEP1;
+          if (id === '2') return mockMEP2;
+          throw new Error(`MEP ${id} not found`);
+        });
+
+      const result = await handleComparativeIntelligence({ mepIds: [1, 2, 999] });
+      expect(result.isError).toBeUndefined();
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
-        dataAvailable: boolean;
-        profiles: { overallScore: number }[];
+        profiles: { mepId: string }[];
+        mepCount: number;
+        dataQualityWarnings: string[];
       };
 
-      // Should still return a result but with zero scores
-      expect(data.dataAvailable).toBe(false);
+      // Should only include valid profiles
+      expect(data.mepCount).toBe(2);
       expect(data.profiles).toHaveLength(2);
-      expect(data.profiles.every(p => p.overallScore === 0)).toBe(true);
+      expect(data.profiles.map(p => p.mepId)).toEqual(['1', '2']);
+
+      // Should include warning about excluded invalid IDs
+      expect(data.dataQualityWarnings.some(w => w.includes('999'))).toBe(true);
+    });
+
+    it('should not include invalid ID warnings when all IDs are valid', async () => {
+      const result = await handleComparativeIntelligence({ mepIds: [1, 2] });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataQualityWarnings: string[];
+      };
+
+      expect(data.dataQualityWarnings.every(w => !w.includes('could not be found'))).toBe(true);
     });
   });
 

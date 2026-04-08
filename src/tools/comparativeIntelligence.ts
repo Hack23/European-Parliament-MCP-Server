@@ -23,7 +23,7 @@
 
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
-import { buildToolResponse } from './shared/responseBuilder.js';
+import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 import { ToolError } from './shared/errors.js';
 import { handleToolError } from './shared/errorHandler.js';
@@ -623,6 +623,62 @@ function buildComputedAttributes(
   };
 }
 
+/**
+ * Validates MEP API results and partitions them into valid and invalid sets.
+ *
+ * Returns an error ToolResult if validation fails (no valid MEPs or fewer than 2),
+ * or the validated partition on success.
+ */
+function validateMepResults(
+  detailsResults: PromiseSettledResult<unknown>[],
+  mepIds: number[]
+): { error: ToolResult } | { invalidMepIds: number[]; validResults: PromiseSettledResult<unknown>[]; validMepIds: number[] } {
+  const invalidMepIds: number[] = [];
+  const validResults: PromiseSettledResult<unknown>[] = [];
+  const validMepIds: number[] = [];
+  for (let i = 0; i < detailsResults.length; i++) {
+    const result = detailsResults[i];
+    const mepId = mepIds[i];
+    if (result === undefined || mepId === undefined) continue;
+    if (result.status === 'rejected') {
+      invalidMepIds.push(mepId);
+    } else {
+      validResults.push(result);
+      validMepIds.push(mepId);
+    }
+  }
+
+  if (validMepIds.length === 0) {
+    return {
+      error: buildErrorResponse(
+        new ToolError({
+          toolName: 'comparative_intelligence',
+          operation: 'validateMEPIds',
+          message: `None of the provided MEP IDs could be found: ${invalidMepIds.join(', ')}. Please verify the MEP IDs and try again.`,
+          isRetryable: false,
+        }),
+        'comparative_intelligence'
+      )
+    };
+  }
+
+  if (validMepIds.length < 2) {
+    return {
+      error: buildErrorResponse(
+        new ToolError({
+          toolName: 'comparative_intelligence',
+          operation: 'validateMEPIds',
+          message: `Only ${String(validMepIds.length)} of ${String(mepIds.length)} MEP IDs could be resolved. Comparative analysis requires at least 2 valid MEPs. Invalid IDs: ${invalidMepIds.join(', ')}`,
+          isRetryable: false,
+        }),
+        'comparative_intelligence'
+      )
+    };
+  }
+
+  return { invalidMepIds, validResults, validMepIds };
+}
+
 export async function comparativeIntelligence(params: ComparativeIntelligenceParams): Promise<ToolResult> {
   try {
     const dimensions = params.dimensions as Dimension[];
@@ -631,7 +687,15 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
       params.mepIds.map(id => epClient.getMEPDetails(String(id)))
     );
 
-    const profiles = buildProfilesFromResults(detailsResults, params.mepIds, dimensions);
+    // Early validation: identify which MEP IDs resolved and which failed
+    const validation = validateMepResults(detailsResults, params.mepIds);
+    if ('error' in validation) {
+      return validation.error;
+    }
+    const { invalidMepIds, validResults, validMepIds } = validation;
+
+    // Build profiles only from valid (fulfilled) results
+    const profiles = buildProfilesFromResults(validResults, validMepIds, dimensions);
 
     if (profiles.length < 2) {
       return buildToolResponse(buildEmptyResult(profiles, dimensions));
@@ -641,7 +705,17 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
     const correlationMatrix = buildCorrelationMatrix(profiles);
     const dataWithScores = profiles.filter(p => p.overallScore > 0).length;
     const confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW' =
-      dataWithScores >= params.mepIds.length * 0.8 ? 'MEDIUM' : 'LOW';
+      dataWithScores >= validMepIds.length * 0.8 ? 'MEDIUM' : 'LOW';
+
+    const dataQualityWarnings = [
+      'Voting and attendance scores are placeholder zeros — EP API does not expose per-MEP voting statistics',
+      'Correlation matrix computed from partially-zero score vectors — similarity values may not be meaningful',
+    ];
+    if (invalidMepIds.length > 0) {
+      dataQualityWarnings.push(
+        `${String(invalidMepIds.length)} MEP ID(s) could not be found and were excluded: ${invalidMepIds.join(', ')}`
+      );
+    }
 
     const result: ComparativeIntelligenceResult = {
       mepCount: profiles.length,
@@ -666,10 +740,7 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
         + 'Clusters: grouped by political group + performance tier. '
         + 'NOTE: Voting and attendance statistics are not available from the current EP API; all related scores are placeholder zeros. '
         + 'Data source: https://data.europarl.europa.eu/api/v2/meps',
-      dataQualityWarnings: [
-        'Voting and attendance scores are placeholder zeros — EP API does not expose per-MEP voting statistics',
-        'Correlation matrix computed from partially-zero score vectors — similarity values may not be meaningful',
-      ],
+      dataQualityWarnings,
     };
 
     return buildToolResponse(result);
