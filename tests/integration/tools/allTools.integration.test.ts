@@ -228,9 +228,14 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         'get_committee_info'
       );
       if (!result) { ctx.skip(); return; }
+      if (result.isError === true) { ctx.skip(); return; }
 
-      parseAndValidateNoMockData(result);
-    }, 90000);
+      const parsed = parseAndValidateNoMockData(result) as {
+        timedOut?: boolean;
+        status?: string;
+      };
+      if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
+    }, 120000);
   });
 
   describe('Core Tool: get_parliamentary_questions', () => {

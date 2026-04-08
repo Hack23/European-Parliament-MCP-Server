@@ -267,10 +267,10 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
       expect(toolNames).toContain('comparative_intelligence');
     }, E2E_TEST_TIMEOUT_MS);
 
-    it('should return valid MCP response for two MEP IDs', async () => {
+    it('should return valid MCP response for two MEP IDs', async (ctx) => {
       if (discoveredMepIds.length < 2) {
         console.warn('[SKIP] comparative_intelligence: insufficient valid MEP IDs discovered');
-        return;
+        ctx.skip(); return;
       }
 
       const response = await retryOrSkip(
@@ -283,10 +283,10 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
       expect(response.content[0]?.type).toBe('text');
     }, E2E_TEST_TIMEOUT_MS);
 
-    it('should return profiles in response', async () => {
+    it('should return profiles in response', async (ctx) => {
       if (discoveredMepIds.length < 2) {
         console.warn('[SKIP] comparative_intelligence: insufficient valid MEP IDs discovered');
-        return;
+        ctx.skip(); return;
       }
 
       const response = await retryOrSkip(
@@ -301,10 +301,10 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
       expect(data).toHaveProperty('profiles');
     }, E2E_TEST_TIMEOUT_MS);
 
-    it('should return correlationMatrix in response', async () => {
+    it('should return correlationMatrix in response', async (ctx) => {
       if (discoveredMepIds.length < 2) {
         console.warn('[SKIP] comparative_intelligence: insufficient valid MEP IDs discovered');
-        return;
+        ctx.skip(); return;
       }
 
       const response = await retryOrSkip(
