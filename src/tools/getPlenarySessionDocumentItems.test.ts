@@ -115,6 +115,49 @@ describe('get_plenary_session_document_items Tool', () => {
     it('should propagate schema validation errors for invalid input', async () => {
       await expect(handleGetPlenarySessionDocumentItems({ limit: -5 })).rejects.toThrow();
     });
+
+    it('should return empty result on upstream 404 instead of error', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getPlenarySessionDocumentItems)
+        .mockRejectedValueOnce(new APIError('Not Found', 404));
+
+      const result = await handleGetPlenarySessionDocumentItems({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        data: unknown[];
+        total: number;
+        hasMore: boolean;
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.data).toEqual([]);
+      expect(parsed.total).toBe(0);
+      expect(parsed.hasMore).toBe(false);
+      expect(parsed.dataQualityWarnings[0]).toContain('404');
+    });
+
+    it('should preserve limit and offset in empty 404 response', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getPlenarySessionDocumentItems)
+        .mockRejectedValueOnce(new APIError('Not Found', 404));
+
+      const result = await handleGetPlenarySessionDocumentItems({ limit: 20, offset: 10 });
+
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        limit: number;
+        offset: number;
+      };
+      expect(parsed.limit).toBe(20);
+      expect(parsed.offset).toBe(10);
+    });
+
+    it('should still throw on non-404 API errors', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getPlenarySessionDocumentItems)
+        .mockRejectedValueOnce(new APIError('Internal Server Error', 500));
+
+      await expect(handleGetPlenarySessionDocumentItems({})).rejects.toThrow('Failed to retrieve plenary session document items');
+    });
   });
 
   describe('Client Invocation', () => {
