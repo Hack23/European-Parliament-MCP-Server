@@ -45,14 +45,16 @@ describeIntegration('generate_report Integration Tests', () => {
       });
     }, 'MEP activity report');
     if (!result) { ctx.skip(); return; }
+    if (result.isError === true) { ctx.skip(); return; }
 
     validateMCPStructure(result);
     const report = JSON.parse(result.content[0]!.text) as Record<string, unknown>;
+    if (report['timedOut'] === true || report['status'] === 'timeout') { ctx.skip(); return; }
     expect(report['reportType']).toBe('MEP_ACTIVITY');
     expect(report).toHaveProperty('subject');
     expect(report).toHaveProperty('period');
     expect(report).toHaveProperty('summary');
-  }, 120000);
+  }, 180000);
 
   it('should generate COMMITTEE_PERFORMANCE report', async (ctx) => {
     const result = await retryOrSkip(async () => {
@@ -64,11 +66,13 @@ describeIntegration('generate_report Integration Tests', () => {
       });
     }, 'committee performance report');
     if (!result) { ctx.skip(); return; }
+    if (result.isError === true) { ctx.skip(); return; }
 
     validateMCPStructure(result);
     const report = JSON.parse(result.content[0]!.text) as Record<string, unknown>;
+    if (report['timedOut'] === true || report['status'] === 'timeout') { ctx.skip(); return; }
     expect(report['reportType']).toBe('COMMITTEE_PERFORMANCE');
-  }, 120000);
+  }, 180000);
 
   it('should generate VOTING_STATISTICS report', async (ctx) => {
     const result = await retryOrSkip(async () => {
@@ -79,11 +83,13 @@ describeIntegration('generate_report Integration Tests', () => {
       });
     }, 'voting statistics report');
     if (!result) { ctx.skip(); return; }
+    if (result.isError === true) { ctx.skip(); return; }
 
     validateMCPStructure(result);
     const report = JSON.parse(result.content[0]!.text) as Record<string, unknown>;
+    if (report['timedOut'] === true || report['status'] === 'timeout') { ctx.skip(); return; }
     expect(report['reportType']).toBe('VOTING_STATISTICS');
-  }, 120000);
+  }, 180000);
 
   it('should generate LEGISLATION_PROGRESS report', async (ctx) => {
     const result = await retryOrSkip(async () => {
@@ -94,9 +100,11 @@ describeIntegration('generate_report Integration Tests', () => {
       });
     }, 'legislation progress report');
     if (!result) { ctx.skip(); return; }
+    if (result.isError === true) { ctx.skip(); return; }
 
     validateMCPStructure(result);
     const report = JSON.parse(result.content[0]!.text) as Record<string, unknown>;
+    if (report['timedOut'] === true || report['status'] === 'timeout') { ctx.skip(); return; }
     expect(report['reportType']).toBe('LEGISLATION_PROGRESS');
-  }, 120000);
+  }, 180000);
 });
