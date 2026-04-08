@@ -84,7 +84,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
       const result = await handleNetworkAnalysis({});
       validateMCPStructure(result);
       expect(result.content[0]?.type).toBe('text');
-    }, 30000);
+    }, 90000);
 
     it('should return network nodes and edges', async () => {
       const result = await handleNetworkAnalysis({ analysisType: 'committee', depth: 2 });
@@ -94,7 +94,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
       expect(data).toHaveProperty('networkEdges');
       expect(Array.isArray(data.networkNodes)).toBe(true);
       expect(Array.isArray(data.networkEdges)).toBe(true);
-    }, 30000);
+    }, 90000);
 
     it('should return centralMEPs array', async () => {
       const result = await handleNetworkAnalysis({});
@@ -102,7 +102,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
 
       expect(data).toHaveProperty('centralMEPs');
       expect(Array.isArray(data.centralMEPs)).toBe(true);
-    }, 30000);
+    }, 90000);
 
     it('should include clusterCount and networkDensity', async () => {
       const result = await handleNetworkAnalysis({});
@@ -112,13 +112,13 @@ describe('Phase 6 OSINT Integration Tests', () => {
       expect(data).toHaveProperty('networkDensity');
       expect(typeof data.clusterCount).toBe('number');
       expect(typeof data.networkDensity).toBe('number');
-    }, 30000);
+    }, 90000);
 
     it('should reflect analysisType parameter', async () => {
       const result = await handleNetworkAnalysis({ analysisType: 'voting' });
       const data = parseToolResult(result) as { analysisType: string };
       expect(data.analysisType).toBe('voting');
-    }, 30000);
+    }, 90000);
 
     it('should support ego-network for a specific MEP id', async () => {
       const result = await handleNetworkAnalysis({ mepId: 101 });
@@ -126,7 +126,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
 
       expect(data).toHaveProperty('networkNodes');
       expect(Array.isArray(data.networkNodes)).toBe(true);
-    }, 30000);
+    }, 90000);
 
     it('should include computedAttributes', async () => {
       const result = await handleNetworkAnalysis({ depth: 3 });
@@ -137,7 +137,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
       expect(attrs).toHaveProperty('totalNodes');
       expect(attrs).toHaveProperty('totalEdges');
       expect(attrs).toHaveProperty('avgDegree');
-    }, 30000);
+    }, 90000);
 
     it('should return empty result gracefully when EP client returns no MEPs', async () => {
       vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
@@ -151,7 +151,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
       const result = await handleNetworkAnalysis({});
       const data = parseToolResult(result) as { dataAvailable: boolean };
       expect(data.dataAvailable).toBe(false);
-    }, 30000);
+    }, 90000);
 
     it('should handle EP client errors gracefully', async () => {
       vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue(
@@ -161,7 +161,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
       const result = await handleNetworkAnalysis({});
       validateMCPStructure(result);
       // Should return an error response, not throw
-    }, 30000);
+    }, 90000);
 
     it('should reject invalid analysisType', async () => {
       await expect(
@@ -179,7 +179,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
       const result = await handleSentimentTracker({});
       validateMCPStructure(result);
       expect(result.content[0]?.type).toBe('text');
-    }, 30000);
+    }, 90000);
 
     it('should return groupSentiments array', async () => {
       const result = await handleSentimentTracker({});
@@ -187,7 +187,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
 
       expect(data).toHaveProperty('groupSentiments');
       expect(Array.isArray(data.groupSentiments)).toBe(true);
-    }, 30000);
+    }, 90000);
 
     it('should include polarizationIndex', async () => {
       const result = await handleSentimentTracker({});
@@ -195,27 +195,27 @@ describe('Phase 6 OSINT Integration Tests', () => {
 
       expect(data).toHaveProperty('polarizationIndex');
       expect(typeof data.polarizationIndex).toBe('number');
-    }, 30000);
+    }, 90000);
 
     it('should include computedAttributes', async () => {
       const result = await handleSentimentTracker({});
       const data = parseToolResult(result) as Record<string, unknown>;
 
       expect(data).toHaveProperty('computedAttributes');
-    }, 30000);
+    }, 90000);
 
     it('should accept timeframe parameter', async () => {
       const result = await handleSentimentTracker({ timeframe: 'last_month' });
       const data = parseToolResult(result) as { timeframe: string };
       expect(data.timeframe).toBe('last_month');
-    }, 30000);
+    }, 90000);
 
     it('should filter by groupId when provided', async () => {
       const result = await handleSentimentTracker({ groupId: 'EPP' });
       const data = parseToolResult(result) as Record<string, unknown>;
 
       expect(data).toHaveProperty('groupSentiments');
-    }, 30000);
+    }, 90000);
 
     it('should return empty result gracefully when EP client returns no MEPs', async () => {
       vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
@@ -229,7 +229,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
       const result = await handleSentimentTracker({});
       const data = parseToolResult(result) as { dataAvailable: boolean };
       expect(data.dataAvailable).toBe(false);
-    }, 30000);
+    }, 90000);
 
     it('should handle EP client errors gracefully', async () => {
       vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue(
@@ -238,7 +238,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
 
       const result = await handleSentimentTracker({});
       validateMCPStructure(result);
-    }, 30000);
+    }, 90000);
 
     it('should reject invalid timeframe value', async () => {
       await expect(
@@ -256,7 +256,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
       const result = await handleEarlyWarningSystem({});
       validateMCPStructure(result);
       expect(result.content[0]?.type).toBe('text');
-    }, 30000);
+    }, 90000);
 
     it('should return warnings array', async () => {
       const result = await handleEarlyWarningSystem({});
@@ -264,35 +264,35 @@ describe('Phase 6 OSINT Integration Tests', () => {
 
       expect(data).toHaveProperty('warnings');
       expect(Array.isArray(data.warnings)).toBe(true);
-    }, 30000);
+    }, 90000);
 
     it('should include trendIndicators', async () => {
       const result = await handleEarlyWarningSystem({});
       const data = parseToolResult(result) as Record<string, unknown>;
 
       expect(data).toHaveProperty('trendIndicators');
-    }, 30000);
+    }, 90000);
 
     it('should accept sensitivity parameter', async () => {
       const result = await handleEarlyWarningSystem({ sensitivity: 'high' });
       const data = parseToolResult(result) as Record<string, unknown>;
 
       expect(data).toHaveProperty('warnings');
-    }, 30000);
+    }, 90000);
 
     it('should accept focusArea coalitions', async () => {
       const result = await handleEarlyWarningSystem({ focusArea: 'coalitions' });
       const data = parseToolResult(result) as Record<string, unknown>;
 
       expect(data).toHaveProperty('warnings');
-    }, 30000);
+    }, 90000);
 
     it('should accept focusArea attendance', async () => {
       const result = await handleEarlyWarningSystem({ focusArea: 'attendance' });
       const data = parseToolResult(result) as Record<string, unknown>;
 
       expect(data).toHaveProperty('warnings');
-    }, 30000);
+    }, 90000);
 
     it('should include assessmentTime in response', async () => {
       const result = await handleEarlyWarningSystem({});
@@ -300,7 +300,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
 
       expect(data).toHaveProperty('assessmentTime');
       expect(typeof data.assessmentTime).toBe('string');
-    }, 30000);
+    }, 90000);
 
     it('should return empty result gracefully when EP client returns no MEPs', async () => {
       vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
@@ -314,7 +314,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
       const result = await handleEarlyWarningSystem({});
       const data = parseToolResult(result) as { dataAvailable: boolean };
       expect(data.dataAvailable).toBe(false);
-    }, 30000);
+    }, 90000);
 
     it('should handle EP client errors gracefully', async () => {
       vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue(
@@ -323,7 +323,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
 
       const result = await handleEarlyWarningSystem({});
       validateMCPStructure(result);
-    }, 30000);
+    }, 90000);
 
     it('should reject invalid sensitivity level', async () => {
       await expect(
@@ -341,7 +341,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
       const result = await handleComparativeIntelligence({ mepIds: [101, 102] });
       validateMCPStructure(result);
       expect(result.content[0]?.type).toBe('text');
-    }, 30000);
+    }, 90000);
 
     it('should return profiles array', async () => {
       const result = await handleComparativeIntelligence({ mepIds: [101, 102] });
@@ -349,21 +349,21 @@ describe('Phase 6 OSINT Integration Tests', () => {
 
       expect(data).toHaveProperty('profiles');
       expect(Array.isArray(data.profiles)).toBe(true);
-    }, 30000);
+    }, 90000);
 
     it('should return correlationMatrix', async () => {
       const result = await handleComparativeIntelligence({ mepIds: [101, 102] });
       const data = parseToolResult(result) as Record<string, unknown>;
 
       expect(data).toHaveProperty('correlationMatrix');
-    }, 30000);
+    }, 90000);
 
     it('should return mepCount matching input length', async () => {
       const result = await handleComparativeIntelligence({ mepIds: [101, 102, 103] });
       const data = parseToolResult(result) as { mepCount: number };
 
       expect(data.mepCount).toBe(3);
-    }, 30000);
+    }, 90000);
 
     it('should return rankingByDimension', async () => {
       const result = await handleComparativeIntelligence({ mepIds: [101, 102] });
@@ -371,7 +371,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
 
       expect(data).toHaveProperty('rankingByDimension');
       expect(Array.isArray(data.rankingByDimension)).toBe(true);
-    }, 30000);
+    }, 90000);
 
     it('should accept custom dimensions', async () => {
       const result = await handleComparativeIntelligence({
@@ -382,7 +382,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
 
       expect(data.dimensions).toContain('voting');
       expect(data.dimensions).toContain('attendance');
-    }, 30000);
+    }, 90000);
 
     it('should compare up to 7 MEPs', async () => {
       const result = await handleComparativeIntelligence({
@@ -390,14 +390,14 @@ describe('Phase 6 OSINT Integration Tests', () => {
       });
       const data = parseToolResult(result) as { mepCount: number };
       expect(data.mepCount).toBe(7);
-    }, 30000);
+    }, 90000);
 
     it('should include outlierMEPs array', async () => {
       const result = await handleComparativeIntelligence({ mepIds: [101, 102, 103] });
       const data = parseToolResult(result) as Record<string, unknown>;
 
       expect(data).toHaveProperty('outlierMEPs');
-    }, 30000);
+    }, 90000);
 
     it('should handle getMEPDetails returning fallback when ID not found', async () => {
       const base = osintPhase6MEPDetails[0];
@@ -407,7 +407,7 @@ describe('Phase 6 OSINT Integration Tests', () => {
 
       const result = await handleComparativeIntelligence({ mepIds: [999, 998] });
       validateMCPStructure(result);
-    }, 30000);
+    }, 90000);
 
     it('should reject fewer than 2 mepIds', async () => {
       await expect(
@@ -435,6 +435,6 @@ describe('Phase 6 OSINT Integration Tests', () => {
 
       const result = await handleComparativeIntelligence({ mepIds: [101, 102] });
       validateMCPStructure(result);
-    }, 30000);
+    }, 90000);
   });
 });

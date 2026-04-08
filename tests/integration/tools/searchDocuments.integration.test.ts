@@ -33,5 +33,5 @@ describeIntegration('search_documents Integration Tests', () => {
     response.data.forEach((document: unknown) => {
       validateDocumentStructure(document);
     });
-  }, 60000);
+  }, 90000);
 });

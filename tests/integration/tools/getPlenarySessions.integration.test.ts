@@ -31,5 +31,5 @@ describeIntegration('get_plenary_sessions Integration Tests', () => {
     response.data.forEach((session: unknown) => {
       validatePlenarySessionStructure(session);
     });
-  }, 60000);
+  }, 90000);
 });

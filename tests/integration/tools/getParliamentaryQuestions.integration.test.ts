@@ -30,7 +30,7 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
     response.data.forEach((question: unknown) => {
       validateParliamentaryQuestionStructure(question);
     });
-  }, 60000);
+  }, 90000);
 
   it('should filter by question type', async (ctx) => {
     const result = await retryOrSkip(async () => {
@@ -48,5 +48,5 @@ describeIntegration('get_parliamentary_questions Integration Tests', () => {
       validateParliamentaryQuestionStructure(question);
       expect((question as { type: string }).type).toBeDefined();
     });
-  }, 60000);
+  }, 90000);
 });

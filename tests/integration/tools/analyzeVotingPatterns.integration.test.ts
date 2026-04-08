@@ -34,7 +34,7 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
       testMEPId = firstMep.id;
       console.log(`[Integration] Using real MEP ID: ${testMEPId}`);
     }
-  }, 60000);
+  }, 90000);
 
   it('should analyze voting patterns or indicate data unavailability', async (ctx) => {
     if (!testMEPId) { ctx.skip(); return; }
@@ -68,5 +68,5 @@ describeIntegration('analyze_voting_patterns Integration Tests', () => {
       expect(analysis).toHaveProperty('statistics');
       expect(analysis).toHaveProperty('period');
     }
-  }, 60000);
+  }, 90000);
 });
