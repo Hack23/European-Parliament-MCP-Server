@@ -18,6 +18,7 @@ import { GetPlenarySessionDocumentItemsSchema } from '../schemas/europeanParliam
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
+import { isUpstream404 } from './shared/feedUtils.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
@@ -72,6 +73,18 @@ export async function handleGetPlenarySessionDocumentItems(args: unknown): Promi
 
     return buildToolResponse(result);
   } catch (error: unknown) {
+    if (isUpstream404(error)) {
+      return buildToolResponse({
+        data: [],
+        total: 0,
+        limit: params.limit,
+        offset: params.offset,
+        hasMore: false,
+        dataQualityWarnings: [
+          'EP Open Data Portal returned 404 for plenary-session-documents-items — the endpoint may require specific parameters or no data is available for the given criteria',
+        ],
+      });
+    }
     throw new ToolError({
       toolName: 'get_plenary_session_document_items',
       operation: 'fetchData',
