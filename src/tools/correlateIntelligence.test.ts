@@ -587,9 +587,11 @@ describe('correlate_intelligence Tool', () => {
 
       const result = await handleCorrelateIntelligence({ mepIds: ['123'] });
       expect(result.isError).toBe(true);
-      const payload = JSON.parse(result.content[0]!.text) as { error: string; toolName: string; retryable: boolean };
+      const payload = JSON.parse(result.content[0]!.text) as { error: string; toolName: string; retryable: boolean; errorCode: string; errorCategory: string };
       expect(payload.toolName).toBe('correlate_intelligence');
       expect(payload.error).toContain('no data available');
+      expect(payload.errorCode).toBe('UPSTREAM_503');
+      expect(payload.errorCategory).toBe('SERVER_ERROR');
       expect(payload.retryable).toBe(true);
     });
 

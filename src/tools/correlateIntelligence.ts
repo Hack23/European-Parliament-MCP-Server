@@ -741,7 +741,7 @@ function buildCorrelationResponse(
         operation: 'correlateIntelligence',
         message: 'All downstream intelligence tools failed — no data available for correlation analysis. ' +
           'The result should not be interpreted as "no anomalies found".',
-        isRetryable: true,
+        errorCode: 'UPSTREAM_503',
       }),
       'correlate_intelligence',
     );
