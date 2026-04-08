@@ -23,10 +23,11 @@
 
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
-import { buildToolResponse } from './shared/responseBuilder.js';
+import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 import { ToolError } from './shared/errors.js';
 import { handleToolError } from './shared/errorHandler.js';
+import { extractHttpStatus } from './shared/errorClassifier.js';
 
 export const ComparativeIntelligenceSchema = z.object({
   mepIds: z.array(z.number().positive())
@@ -623,6 +624,155 @@ function buildComputedAttributes(
   };
 }
 
+/**
+ * Determines whether a rejected promise reason represents a 404 (MEP not found)
+ * as opposed to a transient error (timeout, 429, 5xx).
+ */
+function isNotFoundError(reason: unknown): boolean {
+  const status = extractHttpStatus(reason);
+  return status === 404;
+}
+
+/**
+ * Builds an error ToolResult for when all MEP IDs failed with 404.
+ */
+function buildAllNotFoundError(notFoundMepIds: number[]): ToolResult {
+  return buildErrorResponse(
+    new ToolError({
+      toolName: 'comparative_intelligence',
+      operation: 'validateMEPIds',
+      message: `None of the provided MEP IDs could be found: ${notFoundMepIds.join(', ')}. Please verify the MEP IDs and try again.`,
+      isRetryable: false,
+      errorCode: 'INVALID_PARAMS',
+    }),
+    'comparative_intelligence'
+  );
+}
+
+/**
+ * Builds an error ToolResult for when fewer than 2 valid MEPs remain after
+ * excluding IDs that could not be resolved. When transient errors contributed
+ * to the shortfall, the error is retryable (a retry may yield enough valid MEPs).
+ */
+function buildInsufficientMepsError(
+  validCount: number,
+  totalCount: number,
+  unresolvedIds: number[],
+  hasTransientErrors: boolean,
+  transientCause?: unknown
+): ToolResult {
+  if (hasTransientErrors) {
+    return buildTransientError(
+      `Only ${String(validCount)} of ${String(totalCount)} MEP IDs could be resolved. Comparative analysis requires at least 2 valid MEPs. Unresolved IDs: ${unresolvedIds.join(', ')}`,
+      transientCause
+    );
+  }
+  return buildErrorResponse(
+    new ToolError({
+      toolName: 'comparative_intelligence',
+      operation: 'validateMEPIds',
+      message: `Only ${String(validCount)} of ${String(totalCount)} MEP IDs could be resolved. Comparative analysis requires at least 2 valid MEPs. Unresolved IDs: ${unresolvedIds.join(', ')}`,
+      isRetryable: false,
+      errorCode: 'INVALID_PARAMS',
+    }),
+    'comparative_intelligence'
+  );
+}
+
+interface MepResultPartition {
+  notFoundMepIds: number[];
+  validResults: PromiseSettledResult<unknown>[];
+  validMepIds: number[];
+  transientErrors: { mepId: number; reason: unknown }[];
+}
+
+/**
+ * Partitions `Promise.allSettled` results into valid, not-found (404), and
+ * transient error buckets based on the rejection reason's status code.
+ */
+function partitionMepResults(
+  detailsResults: PromiseSettledResult<unknown>[],
+  mepIds: number[]
+): MepResultPartition {
+  const notFoundMepIds: number[] = [];
+  const validResults: PromiseSettledResult<unknown>[] = [];
+  const validMepIds: number[] = [];
+  const transientErrors: { mepId: number; reason: unknown }[] = [];
+
+  for (let i = 0; i < detailsResults.length; i++) {
+    const result = detailsResults[i];
+    const mepId = mepIds[i];
+    if (result === undefined || mepId === undefined) continue;
+    if (result.status === 'rejected') {
+      if (isNotFoundError(result.reason)) {
+        notFoundMepIds.push(mepId);
+      } else {
+        transientErrors.push({ mepId, reason: result.reason });
+      }
+    } else {
+      validResults.push(result);
+      validMepIds.push(mepId);
+    }
+  }
+
+  return { notFoundMepIds, validResults, validMepIds, transientErrors };
+}
+
+/**
+ * Builds a retryable error ToolResult for upstream/transient failures.
+ */
+function buildTransientError(message: string, cause: unknown): ToolResult {
+  return handleToolError(
+    new ToolError({
+      toolName: 'comparative_intelligence',
+      operation: 'fetchMEPProfiles',
+      message,
+      isRetryable: true,
+      cause: cause instanceof Error ? cause : undefined,
+    }),
+    'comparative_intelligence'
+  );
+}
+
+/**
+ * Validates partitioned MEP results and returns either an error ToolResult
+ * or the valid partition for continued analysis.
+ *
+ * - **404 rejections** are treated as invalid MEP IDs (non-retryable).
+ * - **Non-404 rejections** (timeout, 429, 503, etc.) are treated as transient
+ *   failures and propagated via `handleToolError` so retryability is correct.
+ * - When 2+ valid MEPs exist, transient-failed IDs are returned so callers
+ *   can surface warnings about silently excluded IDs.
+ */
+function validateMepResults(
+  detailsResults: PromiseSettledResult<unknown>[],
+  mepIds: number[]
+): { error: ToolResult } | { notFoundMepIds: number[]; transientFailedMepIds: number[]; validResults: PromiseSettledResult<unknown>[]; validMepIds: number[] } {
+  const { notFoundMepIds, validResults, validMepIds, transientErrors } =
+    partitionMepResults(detailsResults, mepIds);
+
+  // No valid MEPs: determine error type based on failure categories
+  if (validMepIds.length === 0 && transientErrors.length > 0) {
+    const cause = transientErrors[0]?.reason;
+    const message = notFoundMepIds.length === 0
+      ? 'Failed to retrieve any MEP profiles due to upstream errors'
+      : `Failed to retrieve MEP profiles. ${String(notFoundMepIds.length)} MEP ID(s) not found: ${notFoundMepIds.join(', ')}. ${String(transientErrors.length)} MEP ID(s) failed due to upstream errors and may be retried.`;
+    return { error: buildTransientError(message, cause) };
+  }
+
+  if (validMepIds.length === 0) {
+    return { error: buildAllNotFoundError(notFoundMepIds) };
+  }
+
+  if (validMepIds.length < 2) {
+    const unresolvedIds = [...notFoundMepIds, ...transientErrors.map(e => e.mepId)];
+    return { error: buildInsufficientMepsError(validMepIds.length, mepIds.length, unresolvedIds, transientErrors.length > 0, transientErrors[0]?.reason) };
+  }
+
+  const transientFailedMepIds = transientErrors.map(e => e.mepId);
+  return { notFoundMepIds, transientFailedMepIds, validResults, validMepIds };
+}
+
 export async function comparativeIntelligence(params: ComparativeIntelligenceParams): Promise<ToolResult> {
   try {
     const dimensions = params.dimensions as Dimension[];
@@ -631,7 +781,17 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
       params.mepIds.map(id => epClient.getMEPDetails(String(id)))
     );
 
-    const profiles = buildProfilesFromResults(detailsResults, params.mepIds, dimensions);
+    // Early validation: identify which MEP IDs resolved and which failed
+    const validation = validateMepResults(detailsResults, params.mepIds);
+    if ('error' in validation) {
+      return validation.error;
+    }
+    const { notFoundMepIds, transientFailedMepIds, validResults, validMepIds } = validation;
+
+    // Build profiles only from valid (fulfilled) results — invalid/transient IDs
+    // are intentionally excluded; buildProfilesFromResults will find only fulfilled
+    // entries in this pre-filtered subset (no placeholder profiles are generated).
+    const profiles = buildProfilesFromResults(validResults, validMepIds, dimensions);
 
     if (profiles.length < 2) {
       return buildToolResponse(buildEmptyResult(profiles, dimensions));
@@ -641,7 +801,22 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
     const correlationMatrix = buildCorrelationMatrix(profiles);
     const dataWithScores = profiles.filter(p => p.overallScore > 0).length;
     const confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW' =
-      dataWithScores >= params.mepIds.length * 0.8 ? 'MEDIUM' : 'LOW';
+      dataWithScores >= validMepIds.length * 0.8 ? 'MEDIUM' : 'LOW';
+
+    const dataQualityWarnings = [
+      'Voting and attendance scores are placeholder zeros — EP API does not expose per-MEP voting statistics',
+      'Correlation matrix computed from partially-zero score vectors — similarity values may not be meaningful',
+    ];
+    if (notFoundMepIds.length > 0) {
+      dataQualityWarnings.push(
+        `${String(notFoundMepIds.length)} MEP ID(s) could not be found and were excluded: ${notFoundMepIds.join(', ')}`
+      );
+    }
+    if (transientFailedMepIds.length > 0) {
+      dataQualityWarnings.push(
+        `${String(transientFailedMepIds.length)} MEP ID(s) could not be retrieved due to upstream errors and were excluded: ${transientFailedMepIds.join(', ')}`
+      );
+    }
 
     const result: ComparativeIntelligenceResult = {
       mepCount: profiles.length,
@@ -666,10 +841,7 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
         + 'Clusters: grouped by political group + performance tier. '
         + 'NOTE: Voting and attendance statistics are not available from the current EP API; all related scores are placeholder zeros. '
         + 'Data source: https://data.europarl.europa.eu/api/v2/meps',
-      dataQualityWarnings: [
-        'Voting and attendance scores are placeholder zeros — EP API does not expose per-MEP voting statistics',
-        'Correlation matrix computed from partially-zero score vectors — similarity values may not be meaningful',
-      ],
+      dataQualityWarnings,
     };
 
     return buildToolResponse(result);

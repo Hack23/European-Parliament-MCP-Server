@@ -231,15 +231,50 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
   // ══════════════════════════════════════════════════════════════════════════
 
   describe('comparative_intelligence', () => {
+    // Dynamically discovered MEP IDs — avoids hardcoding stale IDs that return 404
+    let discoveredMepIds: number[] = [];
+
+    beforeAll(async () => {
+      try {
+        const response = await retryOrSkip(
+          () => client.callTool('get_current_meps', { limit: 5 }),
+          'get_current_meps for comparative_intelligence setup'
+        );
+        if (response) {
+          validateMCPResponse(response);
+          const text = response.content[0]?.text ?? '{}';
+          const parsed = JSON.parse(text) as { data?: Array<{ id?: string }> };
+          if (Array.isArray(parsed.data)) {
+            discoveredMepIds = parsed.data
+              .map(m => {
+                const idStr = m.id ?? '';
+                // id format: "person/124936" or just "124936"
+                const numStr = idStr.includes('/') ? idStr.split('/').pop() ?? '' : idStr;
+                return parseInt(numStr, 10);
+              })
+              .filter(id => !isNaN(id) && id > 0)
+              .slice(0, 2);
+          }
+        }
+      } catch {
+        console.warn('[SKIP] comparative_intelligence: could not discover valid MEP IDs');
+      }
+    }, E2E_TEST_TIMEOUT_MS);
+
     it('should be registered as an MCP tool', async () => {
       const tools = await client.listTools();
       const toolNames = tools.map(t => t.name);
       expect(toolNames).toContain('comparative_intelligence');
     }, E2E_TEST_TIMEOUT_MS);
 
-    it('should return valid MCP response for two MEP IDs', async () => {
+    it('should return valid MCP response for two MEP IDs', async (ctx) => {
+      if (discoveredMepIds.length < 2) {
+        console.warn('[SKIP] comparative_intelligence: insufficient valid MEP IDs discovered');
+        ctx.skip(); return;
+      }
+
       const response = await retryOrSkip(
-        () => client.callTool('comparative_intelligence', { mepIds: [197047, 197048] }),
+        () => client.callTool('comparative_intelligence', { mepIds: discoveredMepIds }),
         'comparative_intelligence two MEPs'
       );
       if (response === undefined) return;
@@ -248,9 +283,14 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
       expect(response.content[0]?.type).toBe('text');
     }, E2E_TEST_TIMEOUT_MS);
 
-    it('should return profiles in response', async () => {
+    it('should return profiles in response', async (ctx) => {
+      if (discoveredMepIds.length < 2) {
+        console.warn('[SKIP] comparative_intelligence: insufficient valid MEP IDs discovered');
+        ctx.skip(); return;
+      }
+
       const response = await retryOrSkip(
-        () => client.callTool('comparative_intelligence', { mepIds: [197047, 197048] }),
+        () => client.callTool('comparative_intelligence', { mepIds: discoveredMepIds }),
         'comparative_intelligence profiles'
       );
       if (response === undefined) return;
@@ -261,10 +301,15 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
       expect(data).toHaveProperty('profiles');
     }, E2E_TEST_TIMEOUT_MS);
 
-    it('should return correlationMatrix in response', async () => {
+    it('should return correlationMatrix in response', async (ctx) => {
+      if (discoveredMepIds.length < 2) {
+        console.warn('[SKIP] comparative_intelligence: insufficient valid MEP IDs discovered');
+        ctx.skip(); return;
+      }
+
       const response = await retryOrSkip(
         () => client.callTool('comparative_intelligence', {
-          mepIds: [197047, 197048],
+          mepIds: discoveredMepIds,
           dimensions: ['voting', 'committee']
         }),
         'comparative_intelligence correlation'
@@ -288,8 +333,11 @@ describe('Phase 6 Advanced OSINT Tools — E2E Tests', () => {
 
     it('should handle single mepId (below minimum) with graceful error response', async () => {
       try {
+        // Use a discovered ID or any positive integer — the test validates that
+        // a single-element array is rejected by the min(2) schema constraint.
+        const singleId = discoveredMepIds[0] ?? 1;
         const response = await client.callTool('comparative_intelligence', {
-          mepIds: [197047]
+          mepIds: [singleId]
         });
         expect(response.content[0]?.type).toBe('text');
       } catch (error) {

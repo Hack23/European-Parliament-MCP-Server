@@ -26,9 +26,8 @@ export interface ErrorClassification {
  * Extract an HTTP status code from an error via duck typing.
  * Works with both `APIError` (from `clients/ep/baseClient`) and any error
  * carrying a numeric `statusCode` property (avoids circular imports).
- * @internal
  */
-function extractHttpStatus(error: unknown): number | undefined {
+export function extractHttpStatus(error: unknown): number | undefined {
   if (
     error !== null &&
     error !== undefined &&
