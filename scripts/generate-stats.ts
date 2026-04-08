@@ -106,6 +106,14 @@ interface ValidationSummary {
 
 // ── CLI argument parsing ──────────────────────────────────────────
 
+/**
+ * Number of recent years to validate when using `--recent`.
+ * Covers the current partial year plus two prior full years,
+ * which is sufficient for weekly scheduled refreshes since
+ * older years rarely change.
+ */
+const RECENT_YEAR_COUNT = 3;
+
 /** Parse command-line arguments. */
 function parseArgs(): { years: number[]; update: boolean } {
   const args = process.argv.slice(2);
@@ -120,6 +128,7 @@ Usage: npx tsx scripts/generate-stats.ts [options]
 Options:
   --year <YYYY>   Validate a specific year (default: latest covered year ${String(latestCoveredYear)})
   --all           Validate all years in the dataset (2004–${String(latestCoveredYear)})
+  --recent        Validate the last ${String(RECENT_YEAR_COUNT)} years only (faster, suitable for scheduled runs)
   --update        Write API-verified values back into generatedStats.ts
   --help, -h      Show this help message
 
@@ -127,6 +136,7 @@ Examples:
   npx tsx scripts/generate-stats.ts
   npx tsx scripts/generate-stats.ts --year 2024
   npx tsx scripts/generate-stats.ts --all
+  npx tsx scripts/generate-stats.ts --recent --update
   npx tsx scripts/generate-stats.ts --update
   npx tsx scripts/generate-stats.ts --all --update
 `);
@@ -137,6 +147,13 @@ Examples:
   if (args.includes('--all')) {
     const allYears = GENERATED_STATS.yearlyStats.map((y) => y.year);
     return { years: allYears, update };
+  }
+
+  // --recent: validate the last RECENT_YEAR_COUNT years
+  if (args.includes('--recent')) {
+    const allYears = GENERATED_STATS.yearlyStats.map((y) => y.year);
+    const recentYears = allYears.slice(-RECENT_YEAR_COUNT);
+    return { years: recentYears, update };
   }
 
   // --year <YYYY>
