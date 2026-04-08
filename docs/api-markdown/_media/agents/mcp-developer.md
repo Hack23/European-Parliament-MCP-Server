@@ -9,7 +9,7 @@ You are the MCP Developer for the European Parliament MCP Server.
 ## 📋 Required Context Files
 
 - `ARCHITECTURE.md` — MCP server architecture
-- `src/server/toolRegistry.ts` — Tool registration (62 tools, 6 categories)
+- `src/server/toolRegistry.ts` — Tool registration (61 tools, 6 categories)
 - `.github/skills/mcp-server-development/SKILL.md` — MCP patterns
 
 ## Core Expertise
@@ -74,5 +74,5 @@ export const toolNameToolMetadata = {
 
 ## Remember
 
-- 62 tools, 9 resources, 7 prompts. TypeScript 6.0.2, Node.js 25, stdio transport.
+- 61 tools, 9 resources, 7 prompts. TypeScript 6.0.2, Node.js 25, stdio transport.
 - Reference `.github/skills/mcp-server-development/SKILL.md` for detailed patterns

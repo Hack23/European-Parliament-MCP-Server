@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../README.md)
+[**European Parliament MCP Server API v1.2.0**](../README.md)
 
 ***
 
@@ -2127,13 +2127,24 @@ The response includes:
 
 ### Tool: get_server_health
 
-**Description**: Check server health and feed availability status. Returns server version, uptime, per-feed health status (ok/error/unknown), and overall availability level (Full/Degraded/Sparse/Unavailable). Does not make upstream API calls — reports cached status from recent tool invocations.
+**Description**: Check server health and feed availability status. Returns server version, uptime, per-feed health status (ok/error/unknown), and overall availability level (Full/Degraded/Sparse/Unavailable). Does not make upstream API calls — reports cached status from recent tool invocations. Use this to check which feeds are healthy before making data requests and to adapt data collection strategy.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | _(none)_ | - | - | - | No parameters required |
+
+#### Example Usage
+
+```
+Check server health and feed availability
+```
+
+**MCP Client - TypeScript:**
+```typescript
+const result = await client.callTool('get_server_health', {});
+```
 
 #### Response Structure
 

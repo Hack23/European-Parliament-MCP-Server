@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../README.md)
 
 ***
 
@@ -8,12 +8,12 @@
 
 > **parseCLIArgs**(`argv`): [`CLIOptions`](../../types/interfaces/CLIOptions.md)
 
-Defined in: [server/cli.ts:165](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L165)
+Defined in: [server/cli.ts:175](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L175)
 
 Parse an array of CLI argument strings into a typed [CLIOptions](../../types/interfaces/CLIOptions.md) object.
 
 Supports the canonical flags `--help` / `-h`, `--version` / `-v`,
-and `--health`.
+`--health`, and the `--timeout <ms>` value flag.
 
 ## Parameters
 
@@ -27,11 +27,16 @@ Array of raw argument strings (typically `process.argv.slice(2)`)
 
 [`CLIOptions`](../../types/interfaces/CLIOptions.md)
 
-Typed CLI options with boolean flags
+Typed CLI options with boolean flags and optional timeout
 
-## Example
+## Examples
 
 ```typescript
 const opts = parseCLIArgs(['--health']);
 if (opts.health) showHealth();
+```
+
+```typescript
+const opts = parseCLIArgs(['--timeout', '90000']);
+// opts.timeout === 90000
 ```

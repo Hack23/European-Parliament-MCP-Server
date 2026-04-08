@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../README.md)
+[**European Parliament MCP Server API v1.2.0**](../README.md)
 
 ***
 
@@ -295,6 +295,7 @@ flowchart TD
 | `search_documents` | `searchDocuments` | Legislative document search |
 | `get_committee_info` | `getCommitteeInfo` | Committee details |
 | `get_parliamentary_questions` | `getParliamentaryQuestions` | Written/oral questions |
+| `get_server_health` | `getServerHealth` | Server health & feed availability diagnostics |
 
 #### OSINT Intelligence Tools (10 + 5 Advanced)
 

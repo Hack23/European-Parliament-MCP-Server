@@ -52,6 +52,6 @@ You are the European Parliament Specialist for the EP MCP Server project.
 
 ## Remember
 
-- 62 MCP tools covering all major EP datasets. TypeScript 6.0.2, Node.js 25, Zod validation.
+- 61 MCP tools covering all major EP datasets. TypeScript 6.0.2, Node.js 25, Zod validation.
 - Always attribute data to European Parliament Open Data Portal
 - Reference `.github/skills/` for detailed API and GDPR patterns

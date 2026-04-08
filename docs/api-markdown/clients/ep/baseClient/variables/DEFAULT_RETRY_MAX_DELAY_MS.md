@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_RETRY\_MAX\_DELAY\_MS**: `30000` = `30_000`
 
-Defined in: [clients/ep/baseClient.ts:116](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L116)
+Defined in: [clients/ep/baseClient.ts:120](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L120)
 
 Default maximum retry delay in milliseconds (caps exponential backoff growth)

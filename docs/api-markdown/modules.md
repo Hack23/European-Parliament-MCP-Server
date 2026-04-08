@@ -1,8 +1,8 @@
-[**European Parliament MCP Server API v1.1.28**](README.md)
+[**European Parliament MCP Server API v1.2.0**](README.md)
 
 ***
 
-# European Parliament MCP Server API v1.1.28
+# European Parliament MCP Server API v1.2.0
 
 ## Documents
 
@@ -43,6 +43,7 @@
 - [europeanParliament](europeanParliament/README.md)
 - [generated/ep-api-types](generated/ep-api-types/README.md)
 - [index](index/README.md)
+- [main](main/README.md)
 - [prompts](prompts/README.md)
 - [resources](resources/README.md)
 - [schemas/ep](schemas/ep/README.md)
@@ -57,6 +58,7 @@
 - [schemas/ep/question](schemas/ep/question/README.md)
 - [schemas/europeanParliament](schemas/europeanParliament/README.md)
 - [server/cli](server/cli/README.md)
+- [server/cliUtils](server/cliUtils/README.md)
 - [server/toolRegistry](server/toolRegistry/README.md)
 - [server/types](server/types/README.md)
 - [services/FeedHealthTracker](services/FeedHealthTracker/README.md)

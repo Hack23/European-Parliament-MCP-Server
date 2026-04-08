@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **classifyError**(`error`): [`ErrorClassification`](../interfaces/ErrorClassification.md)
 
-Defined in: [tools/shared/errorClassifier.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errorClassifier.ts#L65)
+Defined in: [tools/shared/errorClassifier.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errorClassifier.ts#L67)
 
 Classify an error into a structured error code, category, and retryability.
 
@@ -24,9 +24,11 @@ Priority:
 3. If the error is a `ToolError` without an explicit `errorCode`, apply
    heuristic classification, including operation-based mappings
    (`validateInput` → `INVALID_PARAMS`) and message-based timeout detection.
-4. If the error is a plain `Error`, apply message-based timeout detection
+4. If the error is a `ZodError` (validation failure), classify as
+   `INVALID_PARAMS` / `CLIENT_ERROR`.
+5. If the error is a plain `Error`, apply message-based timeout detection
    (`timed out` → `UPSTREAM_TIMEOUT`).
-5. Default to `INTERNAL_ERROR`.
+6. Default to `INTERNAL_ERROR`.
 
 ## Parameters
 

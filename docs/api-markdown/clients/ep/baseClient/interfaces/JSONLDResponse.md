@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: JSONLDResponse\<T\>
 
-Defined in: [clients/ep/baseClient.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L156)
+Defined in: [clients/ep/baseClient.ts:160](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L160)
 
 **`Internal`**
 
@@ -32,7 +32,7 @@ JSON-LD response format from EP API.
 
 > **@context**: `unknown`[]
 
-Defined in: [clients/ep/baseClient.ts:159](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L159)
+Defined in: [clients/ep/baseClient.ts:163](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L163)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [clients/ep/baseClient.ts:159](https://github.com/Hack23/European-Pa
 
 > **data**: `T`[]
 
-Defined in: [clients/ep/baseClient.ts:158](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L158)
+Defined in: [clients/ep/baseClient.ts:162](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L162)

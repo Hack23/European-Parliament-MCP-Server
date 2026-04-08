@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: APIError
 
-Defined in: [clients/ep/baseClient.ts:139](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L139)
+Defined in: [clients/ep/baseClient.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L143)
 
 API Error thrown when European Parliament API requests fail.
 
@@ -26,7 +26,7 @@ throw new APIError('EP API request failed: Not Found', 404, { endpoint: '/meps/9
 
 > **new APIError**(`message`, `statusCode?`, `details?`): `APIError`
 
-Defined in: [clients/ep/baseClient.ts:140](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L140)
+Defined in: [clients/ep/baseClient.ts:144](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L144)
 
 #### Parameters
 
@@ -56,7 +56,7 @@ Defined in: [clients/ep/baseClient.ts:140](https://github.com/Hack23/European-Pa
 
 > `optional` **details?**: `unknown`
 
-Defined in: [clients/ep/baseClient.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L143)
+Defined in: [clients/ep/baseClient.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L147)
 
 ***
 
@@ -64,4 +64,4 @@ Defined in: [clients/ep/baseClient.ts:143](https://github.com/Hack23/European-Pa
 
 > `optional` **statusCode?**: `number`
 
-Defined in: [clients/ep/baseClient.ts:142](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L142)
+Defined in: [clients/ep/baseClient.ts:146](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L146)

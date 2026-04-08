@@ -56,5 +56,5 @@ You are the Performance Optimizer for the European Parliament MCP Server.
 ## Remember
 
 - EP config: `EP_REQUEST_TIMEOUT_MS=10000`, `EP_CACHE_TTL=900000`, `EP_RATE_LIMIT=100`
-- 62 MCP tools, each must meet <200ms P95. TypeScript 6.0.2, Node.js 25.
+- 61 MCP tools, each must meet <200ms P95. TypeScript 6.0.2, Node.js 25.
 - Reference `.github/skills/performance-optimization/SKILL.md` for patterns

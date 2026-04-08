@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **showHelp**(): `void`
 
-Defined in: [server/cli.ts:48](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L48)
+Defined in: [server/cli.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L50)
 
 Display help text.
 

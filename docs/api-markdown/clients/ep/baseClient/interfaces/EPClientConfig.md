@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: EPClientConfig
 
-Defined in: [clients/ep/baseClient.ts:166](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L166)
+Defined in: [clients/ep/baseClient.ts:170](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L170)
 
 **`Internal`**
 
@@ -18,7 +18,7 @@ Configuration options for EP API clients.
 
 > `optional` **baseURL?**: `string`
 
-Defined in: [clients/ep/baseClient.ts:168](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L168)
+Defined in: [clients/ep/baseClient.ts:172](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L172)
 
 Base URL for European Parliament API.
 
@@ -34,7 +34,7 @@ DEFAULT_EP_API_BASE_URL
 
 > `optional` **cacheTTL?**: `number`
 
-Defined in: [clients/ep/baseClient.ts:170](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L170)
+Defined in: [clients/ep/baseClient.ts:174](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L174)
 
 Cache time-to-live in milliseconds.
 
@@ -50,7 +50,7 @@ Cache time-to-live in milliseconds.
 
 > `optional` **enableRetry?**: `boolean`
 
-Defined in: [clients/ep/baseClient.ts:178](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L178)
+Defined in: [clients/ep/baseClient.ts:182](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L182)
 
 Enable automatic retry on transient failures.
 
@@ -66,7 +66,7 @@ true
 
 > `optional` **maxCacheSize?**: `number`
 
-Defined in: [clients/ep/baseClient.ts:172](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L172)
+Defined in: [clients/ep/baseClient.ts:176](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L176)
 
 Maximum number of entries in LRU cache.
 
@@ -82,7 +82,7 @@ Maximum number of entries in LRU cache.
 
 > `optional` **maxResponseBytes?**: `number`
 
-Defined in: [clients/ep/baseClient.ts:182](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L182)
+Defined in: [clients/ep/baseClient.ts:186](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L186)
 
 Maximum allowed response body size in bytes.
 
@@ -98,7 +98,7 @@ Maximum allowed response body size in bytes.
 
 > `optional` **maxRetries?**: `number`
 
-Defined in: [clients/ep/baseClient.ts:180](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L180)
+Defined in: [clients/ep/baseClient.ts:184](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L184)
 
 Maximum number of retry attempts.
 
@@ -114,7 +114,7 @@ Maximum number of retry attempts.
 
 > `optional` **rateLimiter?**: [`RateLimiter`](../../../../utils/rateLimiter/classes/RateLimiter.md)
 
-Defined in: [clients/ep/baseClient.ts:174](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L174)
+Defined in: [clients/ep/baseClient.ts:178](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L178)
 
 Custom rate limiter instance.
 
@@ -124,12 +124,12 @@ Custom rate limiter instance.
 
 > `optional` **timeoutMs?**: `number`
 
-Defined in: [clients/ep/baseClient.ts:176](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L176)
+Defined in: [clients/ep/baseClient.ts:180](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L180)
 
 Request timeout in milliseconds.
 
 #### Default
 
 ```ts
-10000
+DEFAULT_TIMEOUTS.EP_API_REQUEST_MS
 ```

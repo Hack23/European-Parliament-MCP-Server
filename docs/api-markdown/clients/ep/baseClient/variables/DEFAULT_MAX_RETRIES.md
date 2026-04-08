@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_MAX\_RETRIES**: `2` = `2`
 
-Defined in: [clients/ep/baseClient.ts:112](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L112)
+Defined in: [clients/ep/baseClient.ts:116](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L116)
 
 Default maximum number of retry attempts for failed requests

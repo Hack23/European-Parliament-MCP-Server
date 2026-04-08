@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **generateLegislationProgressReport**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Report`](../../types/interfaces/Report.md)\>
 
-Defined in: [tools/generateReport/reportGenerators.ts:331](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/reportGenerators.ts#L331)
+Defined in: [tools/generateReport/reportGenerators.ts:413](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/reportGenerators.ts#L413)
 
 Generate legislation progress report using real EP API data
 Cyclomatic complexity: 1

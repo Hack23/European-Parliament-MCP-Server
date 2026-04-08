@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../README.md)
+[**European Parliament MCP Server API v1.2.0**](../README.md)
 
 ***
 
@@ -169,7 +169,7 @@ Cmd+Shift+P (macOS) or Ctrl+Shift+P (Windows/Linux)
 
 1. Open Command Palette
 2. Search for "MCP: List Tools"
-3. Should show 61 European Parliament tools
+3. Should show 62 European Parliament tools
 
 ---
 

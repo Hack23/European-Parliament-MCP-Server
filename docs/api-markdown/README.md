@@ -1,4 +1,4 @@
-**European Parliament MCP Server API v1.1.28**
+**European Parliament MCP Server API v1.2.0**
 
 ***
 
@@ -436,6 +436,18 @@ Add to `~/.cursor/mcp.json` (or project-level `.cursor/mcp.json`):
   }
 }
 ```
+
+#### Custom Timeout Configuration
+
+Use `--timeout <ms>` to override the default 10 s request timeout. This is especially useful in `copilot-mcp.json` or other contexts where the `env` field may not reliably propagate:
+
+```json
+{
+  "args": ["european-parliament-mcp-server", "--timeout", "90000"]
+}
+```
+
+Precedence: `--timeout` CLI arg > `EP_REQUEST_TIMEOUT_MS` env var > default (10 000 ms).
 
 ---
 
@@ -983,7 +995,7 @@ npm run test:coverage
 npm run test:watch
 ```
 
-**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, the integration test suite validates 46 MCP tools against the real European Parliament API endpoints (see [**INTEGRATION_TESTING.md**](documents/INTEGRATION_TESTING.md) for the complete 61-tool coverage guide). All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/min).
+**Integration Testing**: When `EP_INTEGRATION_TESTS=true`, the integration test suite validates 46 MCP tools against the real European Parliament API endpoints (see [**INTEGRATION_TESTING.md**](documents/INTEGRATION_TESTING.md) for the complete 62-tool coverage guide). All tools return real data — no mock or placeholder data is used. Live API tests are disabled by default to respect rate limits (100 req/min).
 
 ### Code Quality
 
@@ -1211,7 +1223,7 @@ graph TB
     subgraph TOOLS["🔌 62 MCP Tools"]
         style TOOLS fill:#172554,stroke:#3B82F6,color:#DBEAFE
         T1["🕵️ 15 OSINT Intelligence"]
-        T2["📊 4 Advanced Analysis"]
+        T2["📊 3 Advanced Analysis + 1 Diagnostics"]
         T3["👤 7 MEP Data"]
         T4["🏛️ 9 Plenary & Meeting"]
         T5["📄 12 Document, Committee & Legislative"]

@@ -10,7 +10,7 @@ You are the Product Task Agent for the European Parliament MCP Server.
 
 - `README.md` — Project overview, tool inventory, quality metrics
 - `ARCHITECTURE.md` — System architecture
-- `src/server/toolRegistry.ts` — Tool registry (62 tools, 6 categories)
+- `src/server/toolRegistry.ts` — Tool registry (61 tools, 6 categories)
 - `.github/copilot-instructions.md` — Development guidelines
 
 ## Core Expertise
@@ -69,7 +69,7 @@ create_pull_request_with_copilot({ owner: "Hack23", repo: "European-Parliament-M
 
 ## Remember
 
-- 62 tools, 9 resources, 7 prompts. 14 agents. 41 skills.
+- 61 tools, 9 resources, 7 prompts. 14 agents. 41 skills.
 - TypeScript 6.0.2, Node.js 25, 80%+ coverage, 1130+ unit tests
 - Issues MUST have acceptance criteria, labels, and agent assignment
 - Reference `.github/skills/` for implementation patterns

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../README.md)
 
 ***
 
@@ -16,7 +16,7 @@ Tool metadata for get_meeting_activities
 
 ### description
 
-> **description**: `string` = `'Get activities linked to a specific EP plenary sitting (debates, votes, presentations). Requires a sitting ID. Data source: European Parliament Open Data Portal.'`
+> **description**: `string` = `'Get activities linked to a specific EP plenary sitting (debates, votes, presentations). Requires a sitting ID. Note: this endpoint can be slower than decisions; use a smaller limit for faster responses. Data source: European Parliament Open Data Portal.'`
 
 ### inputSchema
 
@@ -32,11 +32,11 @@ Tool metadata for get_meeting_activities
 
 #### inputSchema.properties.limit.default
 
-> **default**: `number` = `50`
+> **default**: `number` = `20`
 
 #### inputSchema.properties.limit.description
 
-> **description**: `string` = `'Maximum results to return (1-100)'`
+> **description**: `string` = `'Maximum results to return (1-100, default 20)'`
 
 #### inputSchema.properties.limit.type
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **showVersion**(): `void`
 
-Defined in: [server/cli.ts:84](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L84)
+Defined in: [server/cli.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L87)
 
 Display version information.
 
