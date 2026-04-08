@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { handleGenerateReport, generateReportToolMetadata } from './generateReport.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { ToolError } from './shared/errors.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
@@ -19,6 +20,8 @@ describe('generate_report Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset default mock implementations (clearAllMocks only clears call history)
+    vi.mocked(epClient.getMEPDetails).mockResolvedValue(undefined as never);
+    vi.mocked(epClient.getCommitteeInfo).mockResolvedValue(undefined as never);
     vi.mocked(epClient.getParliamentaryQuestions).mockResolvedValue({ data: [] });
     vi.mocked(epClient.getCommitteeDocuments).mockResolvedValue({ data: [] });
     vi.mocked(epClient.getAdoptedTexts).mockResolvedValue({ data: [] });
@@ -257,26 +260,43 @@ describe('generate_report Tool', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle API errors for MEP reports as ToolError', async () => {
+    it('should throw ToolError for MEP reports when all EP API calls fail', async () => {
       vi.mocked(epClient.getMEPDetails).mockRejectedValue(new Error('API Error'));
+      vi.mocked(epClient.getParliamentaryQuestions).mockRejectedValue(new Error('API Error'));
 
       await expect(
         handleGenerateReport({
           reportType: 'MEP_ACTIVITY',
           subjectId: 'MEP-124810'
         })
-      ).rejects.toThrow('[generate_report] generateReport: Failed to generate report');
+      ).rejects.toThrow('EP API data unavailable for MEP_ACTIVITY report');
     });
 
-    it('should handle API errors for committee reports as ToolError', async () => {
+    it('should return partial report for MEP when getMEPDetails fails but questions succeed', async () => {
+      vi.mocked(epClient.getMEPDetails).mockRejectedValue(new Error('API Error'));
+      vi.mocked(epClient.getParliamentaryQuestions).mockResolvedValue({ data: [{ id: 'q1' }] });
+
+      const result = await handleGenerateReport({
+        reportType: 'MEP_ACTIVITY',
+        subjectId: 'MEP-124810'
+      });
+
+      const parsed = JSON.parse(result.content[0].text) as { subject: string; statistics: { questionsSubmitted: number } };
+      expect(parsed.subject).toBe('Unknown MEP');
+      expect(parsed.statistics.questionsSubmitted).toBe(1);
+    });
+
+    it('should throw ToolError for committee reports when all EP API calls fail', async () => {
       vi.mocked(epClient.getCommitteeInfo).mockRejectedValue(new Error('API Error'));
+      vi.mocked(epClient.getCommitteeDocuments).mockRejectedValue(new Error('API Error'));
+      vi.mocked(epClient.getAdoptedTexts).mockRejectedValue(new Error('API Error'));
 
       await expect(
         handleGenerateReport({
           reportType: 'COMMITTEE_PERFORMANCE',
           subjectId: 'COMM-ENVI'
         })
-      ).rejects.toThrow('[generate_report] generateReport: Failed to generate report');
+      ).rejects.toThrow('EP API data unavailable for COMMITTEE_PERFORMANCE report');
     });
   });
 
@@ -304,11 +324,11 @@ describe('generate_report Tool', () => {
         });
         expect.unreachable('Should have thrown');
       } catch (error: unknown) {
-        expect(error).toBeInstanceOf(Error);
-        const toolError = error as { isRetryable?: boolean; errorCode?: string; errorCategory?: string };
+        expect(error).toBeInstanceOf(ToolError);
+        const toolError = error as ToolError;
         expect(toolError.isRetryable).toBe(true);
         expect(toolError.errorCode).toBe('UPSTREAM_503');
-        expect(toolError.errorCategory).toBe('DATA_UNAVAILABLE');
+        expect(toolError.httpStatus).toBe(503);
       }
     });
 

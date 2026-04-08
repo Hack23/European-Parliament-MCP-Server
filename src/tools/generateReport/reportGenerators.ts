@@ -49,6 +49,17 @@ function extractMEPData(
   };
 }
 
+/** Fetch MEP details (null if unavailable or subjectId not provided) */
+async function fetchMEPDetails(subjectId: string | undefined): Promise<MEPDetails | null> {
+  if (subjectId === undefined) return null;
+  try {
+    return await epClient.getMEPDetails(subjectId);
+  } catch (error: unknown) {
+    auditLogger.logError('generate_report.fetch_mep_details', { subjectId }, toErrorMessage(error));
+    return null;
+  }
+}
+
 /** Fetch question count for an MEP (null if unavailable) */
 async function fetchQuestionCount(subjectId: string | undefined): Promise<number | null> {
   if (subjectId === undefined) return null;
@@ -57,6 +68,17 @@ async function fetchQuestionCount(subjectId: string | undefined): Promise<number
     return questions.data.length;
   } catch (error: unknown) {
     auditLogger.logError('generate_report.fetch_question_count', { subjectId }, toErrorMessage(error));
+    return null;
+  }
+}
+
+/** Fetch committee info (null if unavailable or subjectId not provided) */
+async function fetchCommitteeInfo(subjectId: string | undefined): Promise<{ name: string; members: unknown[] } | null> {
+  if (subjectId === undefined) return null;
+  try {
+    return await epClient.getCommitteeInfo({ id: subjectId });
+  } catch (error: unknown) {
+    auditLogger.logError('generate_report.fetch_committee_info', { subjectId }, toErrorMessage(error));
     return null;
   }
 }
@@ -193,7 +215,7 @@ function throwIfAllDataUnavailable(
       message: `EP API data unavailable for ${reportType} report — all upstream data sources failed`,
       isRetryable: true,
       errorCode: 'UPSTREAM_503',
-      errorCategory: 'DATA_UNAVAILABLE',
+      httpStatus: 503,
     });
   }
 }
@@ -226,13 +248,9 @@ function buildLegislationWarnings(
 export async function generateMEPActivityReport(
   params: z.infer<typeof GenerateReportSchema>
 ): Promise<Report> {
-  const mep = params.subjectId !== undefined 
-    ? await epClient.getMEPDetails(params.subjectId) 
-    : null;
+  const mep = await fetchMEPDetails(params.subjectId);
   const data = extractMEPData(params, mep);
   const questionsSubmitted = await fetchQuestionCount(params.subjectId);
-  // When a subjectId was provided, mep fetch throws on failure (handled by caller).
-  // Check the remaining EP API fetch (questions) together with mep data.
   if (params.subjectId !== undefined) {
     throwIfAllDataUnavailable('MEP_ACTIVITY', [mep, questionsSubmitted]);
   }
@@ -274,9 +292,7 @@ export async function generateMEPActivityReport(
 export async function generateCommitteePerformanceReport(
   params: z.infer<typeof GenerateReportSchema>
 ): Promise<Report> {
-  const committee = params.subjectId !== undefined 
-    ? await epClient.getCommitteeInfo({ id: params.subjectId }) 
-    : null;
+  const committee = await fetchCommitteeInfo(params.subjectId);
   const committeeName = committee?.name ?? 'Unknown Committee';
   const dateFrom = params.dateFrom ?? '2024-01-01';
   const dateTo = params.dateTo ?? '2024-12-31';
