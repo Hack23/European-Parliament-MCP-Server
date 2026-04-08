@@ -8,7 +8,9 @@
 # The EP API does not provide a totalItems header, so all records are iterated
 # to obtain accurate counts (limit: 1000 per page, the API's server-side cap).
 #
-# Runs weekly (all years) or on demand (specific year).
+# Scheduled runs use --recent (last 3 years) to stay within timeout limits.
+# Manual dispatch supports --all for full dataset refresh, --recent for fast
+# refresh, or a specific 4-digit year.
 #
 # ISMS Policy: AU-002 (Audit Logging), SC-002 (Input Validation)
 # Data source: European Parliament Open Data Portal — data.europarl.europa.eu
@@ -22,7 +24,7 @@ on:
   workflow_dispatch:
     inputs:
       year:
-        description: 'Year to validate (leave empty or "all" for all years, or a 4-digit year e.g. 2024)'
+        description: 'Year to validate (leave empty for recent years, "all" for all years, or a 4-digit year e.g. 2024)'
         required: false
         default: ''
         type: string
@@ -56,15 +58,18 @@ jobs:
       - name: Fetch API data and update stats
         run: |
           INPUT_YEAR="${STATS_YEAR}"
-          # Default: scheduled runs update all years; manual can pick one
+          # Default: scheduled runs use --recent (last 3 years) to stay within
+          # timeout limits. Manual dispatch can specify "all" for a full refresh.
           if [ -z "${INPUT_YEAR}" ]; then
-            ARGS="--all --update"
+            ARGS="--recent --update"
           elif [ "${INPUT_YEAR}" = "all" ]; then
             ARGS="--all --update"
+          elif [ "${INPUT_YEAR}" = "recent" ]; then
+            ARGS="--recent --update"
           elif [[ "${INPUT_YEAR}" =~ ^[0-9]{4}$ ]]; then
             ARGS="--year ${INPUT_YEAR} --update"
           else
-            echo "Error: Invalid year input '${INPUT_YEAR}'. Must be 'all' or a 4-digit year (e.g. 2024)." >&2
+            echo "Error: Invalid year input '${INPUT_YEAR}'. Must be 'all', 'recent', or a 4-digit year (e.g. 2024)." >&2
             exit 1
           fi
           echo "Running: npx tsx scripts/generate-stats.ts $ARGS"
