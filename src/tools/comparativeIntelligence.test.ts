@@ -5,6 +5,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleComparativeIntelligence } from './comparativeIntelligence.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
+import { APIError } from '../clients/ep/baseClient.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
@@ -76,7 +77,7 @@ describe('comparative_intelligence Tool', () => {
         if (id === '1') return mockMEP1;
         if (id === '2') return mockMEP2;
         if (id === '3') return mockMEP3;
-        throw new Error(`MEP ${id} not found`);
+        throw new APIError(`MEP ${id} not found`, 404);
       });
   });
 
@@ -211,9 +212,9 @@ describe('comparative_intelligence Tool', () => {
   });
 
   describe('MEP ID Validation', () => {
-    it('should return error when all MEP IDs are invalid', async () => {
+    it('should return error when all MEP IDs are invalid (404)', async () => {
       vi.mocked(epClientModule.epClient.getMEPDetails).mockRejectedValue(
-        new Error('Not found')
+        new APIError('Not found', 404)
       );
 
       const result = await handleComparativeIntelligence({ mepIds: [999, 998] });
@@ -223,13 +224,16 @@ describe('comparative_intelligence Tool', () => {
       expect(parsed.error).toContain('None of the provided MEP IDs could be found');
       expect(parsed.error).toContain('999');
       expect(parsed.error).toContain('998');
+      expect(parsed.errorCode).toBe('INVALID_PARAMS');
+      expect(parsed.errorCategory).toBe('CLIENT_ERROR');
+      expect(parsed.retryable).toBe(false);
     });
 
-    it('should return error when only 1 valid MEP out of 3', async () => {
+    it('should return error when only 1 valid MEP out of 3 (others 404)', async () => {
       vi.mocked(epClientModule.epClient.getMEPDetails)
         .mockImplementation(async (id: string) => {
           if (id === '1') return mockMEP1;
-          throw new Error(`MEP ${id} not found`);
+          throw new APIError(`MEP ${id} not found`, 404);
         });
 
       const result = await handleComparativeIntelligence({ mepIds: [1, 999, 998] });
@@ -239,14 +243,15 @@ describe('comparative_intelligence Tool', () => {
       expect(parsed.error).toContain('Comparative analysis requires at least 2 valid MEPs');
       expect(parsed.error).toContain('999');
       expect(parsed.error).toContain('998');
+      expect(parsed.errorCode).toBe('INVALID_PARAMS');
     });
 
-    it('should proceed with valid MEPs and warn about invalid ones', async () => {
+    it('should proceed with valid MEPs and warn about 404 invalid ones', async () => {
       vi.mocked(epClientModule.epClient.getMEPDetails)
         .mockImplementation(async (id: string) => {
           if (id === '1') return mockMEP1;
           if (id === '2') return mockMEP2;
-          throw new Error(`MEP ${id} not found`);
+          throw new APIError(`MEP ${id} not found`, 404);
         });
 
       const result = await handleComparativeIntelligence({ mepIds: [1, 2, 999] });
@@ -273,6 +278,46 @@ describe('comparative_intelligence Tool', () => {
       };
 
       expect(data.dataQualityWarnings.every(w => !w.includes('could not be found'))).toBe(true);
+    });
+
+    it('should surface transient errors (503) as retryable tool errors, not invalid IDs', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockRejectedValue(
+        new APIError('Service Unavailable', 503)
+      );
+
+      const result = await handleComparativeIntelligence({ mepIds: [1, 2] });
+      expect(result.isError).toBe(true);
+      const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+      expect(parsed.toolName).toBe('comparative_intelligence');
+      // Should NOT say "could not be found" — these are transient failures
+      expect(parsed.error).not.toContain('could not be found');
+      expect(parsed.error).toContain('upstream errors');
+    });
+
+    it('should exclude 404 MEPs and keep valid ones even with mixed transient errors', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails)
+        .mockImplementation(async (id: string) => {
+          if (id === '1') return mockMEP1;
+          if (id === '2') return mockMEP2;
+          if (id === '999') throw new APIError('Not found', 404);
+          throw new APIError('Service Unavailable', 503);
+        });
+
+      const result = await handleComparativeIntelligence({ mepIds: [1, 2, 999, 888] });
+      expect(result.isError).toBeUndefined();
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        profiles: { mepId: string }[];
+        mepCount: number;
+        dataQualityWarnings: string[];
+      };
+
+      // Should only include valid profiles (ID 1 and 2)
+      expect(data.mepCount).toBe(2);
+      expect(data.profiles).toHaveLength(2);
+      // Warning about 404 excluded ID
+      expect(data.dataQualityWarnings.some(w => w.includes('999'))).toBe(true);
+      // 503 errors (ID 888) are transient — not reported as "not found"
+      expect(data.dataQualityWarnings.every(w => !w.includes('888'))).toBe(true);
     });
   });
 
