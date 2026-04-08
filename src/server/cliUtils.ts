@@ -45,10 +45,14 @@ export function parseTimeoutValue(value: string | undefined): number | undefined
 }
 
 /**
- * Resolve the effective timeout value in milliseconds.
+ * Resolve the effective timeout value in milliseconds from the environment.
  *
- * Applies the precedence chain:
+ * This function only resolves the **environment-level** precedence:
  *   `EP_REQUEST_TIMEOUT_MS` env var → {@link DEFAULT_REQUEST_TIMEOUT_MS}
+ *
+ * The full precedence chain (including the `--timeout` CLI argument) is
+ * handled by `applyTimeoutArg()` in `src/main.ts`, which sets the env var
+ * **before** modules are loaded.
  *
  * Invalid / empty env values are silently ignored (fall through to default).
  *

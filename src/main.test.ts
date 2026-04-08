@@ -92,4 +92,20 @@ describe('main.ts CLI entry point', () => {
     expect(exitCode).toBe(1);
     expect(stderr).toContain('Invalid --timeout value');
   });
+
+  it('--timeout at end of args after another flag exits 1', () => {
+    const { stderr, exitCode } = run(['--version', '--timeout']);
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain('--timeout requires a positive integer');
+  });
+
+  it('--timeout is stripped from args so parseCLIArgs does not see it', () => {
+    // When --timeout is provided, --health should still work (--timeout is stripped)
+    const { stdout, exitCode } = run(['--timeout', '30000', '--health']);
+    expect(exitCode).toBe(0);
+    const health = JSON.parse(stdout) as Record<string, unknown>;
+    const config = health['configuration'] as Record<string, unknown>;
+    // Confirms --timeout was consumed and applied to env, not left in args
+    expect(config['requestTimeoutMs']).toBe('30000');
+  });
 });
