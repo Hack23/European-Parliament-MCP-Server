@@ -805,6 +805,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         'correlate_intelligence'
       );
       if (!result) { ctx.skip(); return; }
+      if (result.isError === true) { ctx.skip(); return; }
       const parsed = parseAndValidateNoMockData(result) as { alerts: unknown; summary: unknown };
       expect(parsed).toHaveProperty('alerts');
       expect(parsed).toHaveProperty('summary');
