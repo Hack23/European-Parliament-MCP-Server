@@ -160,6 +160,12 @@ describe('showHelp', () => {
     expect(output).toContain('--health');
   });
 
+  it('output contains --timeout flag documentation', () => {
+    showHelp();
+    const output = String(consoleSpy.mock.calls[0]?.[0]);
+    expect(output).toContain('--timeout');
+  });
+
   it('output mentions MCP protocol', () => {
     showHelp();
     const output = String(consoleSpy.mock.calls[0]?.[0]);
@@ -322,6 +328,7 @@ describe('showHealth', () => {
     expect(health).toHaveProperty('configuration');
     const config = health['configuration'] as Record<string, unknown>;
     expect(config).toHaveProperty('apiUrl');
+    expect(config).toHaveProperty('requestTimeoutMs');
     expect(config).toHaveProperty('cacheTTL');
     expect(config).toHaveProperty('rateLimit');
   });
@@ -474,5 +481,64 @@ describe('parseCLIArgs', () => {
   it('handles process.argv style input with node and script paths', () => {
     const opts = parseCLIArgs(['node', 'server.js', '--help']);
     expect(opts.help).toBe(true);
+  });
+
+  // ── --timeout value flag ──────────────────────────────────────────
+
+  it('parses --timeout with valid positive integer', () => {
+    const opts = parseCLIArgs(['--timeout', '90000']);
+    expect(opts.timeout).toBe(90000);
+  });
+
+  it('parses --timeout combined with other flags', () => {
+    const opts = parseCLIArgs(['--health', '--timeout', '5000']);
+    expect(opts.health).toBe(true);
+    expect(opts.timeout).toBe(5000);
+  });
+
+  it('timeout is undefined when --timeout flag is absent', () => {
+    const opts = parseCLIArgs(['--help']);
+    expect(opts.timeout).toBeUndefined();
+  });
+
+  it('timeout is undefined when --timeout has no following value', () => {
+    const opts = parseCLIArgs(['--timeout']);
+    expect(opts.timeout).toBeUndefined();
+  });
+
+  it('timeout is undefined for non-numeric value', () => {
+    const opts = parseCLIArgs(['--timeout', 'abc']);
+    expect(opts.timeout).toBeUndefined();
+  });
+
+  it('timeout is undefined for zero', () => {
+    const opts = parseCLIArgs(['--timeout', '0']);
+    expect(opts.timeout).toBeUndefined();
+  });
+
+  it('timeout is undefined for negative value', () => {
+    const opts = parseCLIArgs(['--timeout', '-1']);
+    expect(opts.timeout).toBeUndefined();
+  });
+
+  it('timeout is undefined for empty string value', () => {
+    const opts = parseCLIArgs(['--timeout', '']);
+    expect(opts.timeout).toBeUndefined();
+  });
+
+  it('timeout is undefined for partially-numeric value like "10s"', () => {
+    const opts = parseCLIArgs(['--timeout', '10s']);
+    expect(opts.timeout).toBeUndefined();
+  });
+
+  it('parses --timeout 1 as minimum valid timeout', () => {
+    const opts = parseCLIArgs(['--timeout', '1']);
+    expect(opts.timeout).toBe(1);
+  });
+
+  it('parses --timeout before other flags', () => {
+    const opts = parseCLIArgs(['--timeout', '60000', '--version']);
+    expect(opts.timeout).toBe(60000);
+    expect(opts.version).toBe(true);
   });
 });
