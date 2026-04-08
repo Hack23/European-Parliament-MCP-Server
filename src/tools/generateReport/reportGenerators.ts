@@ -10,6 +10,7 @@ import { epClient } from '../../clients/europeanParliamentClient.js';
 import { auditLogger, toErrorMessage } from '../../utils/auditLogger.js';
 import type { MEPDetails } from '../../types/europeanParliament.js';
 import type { Report } from './types.js';
+import { ToolError } from '../shared/errors.js';
 import {
   createVotingSection,
   createCommitteeSection,
@@ -176,6 +177,27 @@ function isFullYearRange(dateFrom: string, dateTo: string): boolean {
     && dateFrom.substring(0, 4) === dateTo.substring(0, 4);
 }
 
+/**
+ * Throw a ToolError when all EP API data fetches failed.
+ * This prevents returning a successful-looking report with all-zero statistics,
+ * which could mislead AI agents into treating empty data as valid.
+ */
+function throwIfAllDataUnavailable(
+  reportType: string,
+  fetchResults: unknown[]
+): void {
+  if (fetchResults.every((r) => r === null)) {
+    throw new ToolError({
+      toolName: 'generate_report',
+      operation: 'generateReport',
+      message: `EP API data unavailable for ${reportType} report — all upstream data sources failed`,
+      isRetryable: true,
+      errorCode: 'UPSTREAM_503',
+      errorCategory: 'DATA_UNAVAILABLE',
+    });
+  }
+}
+
 /** Build data quality warnings for legislation progress report */
 function buildLegislationWarnings(
   procedureCount: number | null,
@@ -209,6 +231,11 @@ export async function generateMEPActivityReport(
     : null;
   const data = extractMEPData(params, mep);
   const questionsSubmitted = await fetchQuestionCount(params.subjectId);
+  // When a subjectId was provided, mep fetch throws on failure (handled by caller).
+  // Check the remaining EP API fetch (questions) together with mep data.
+  if (params.subjectId !== undefined) {
+    throwIfAllDataUnavailable('MEP_ACTIVITY', [mep, questionsSubmitted]);
+  }
   const warnings = buildMEPWarnings(mep, questionsSubmitted);
   
   return {
@@ -259,6 +286,7 @@ export async function generateCommitteePerformanceReport(
   // Parliament-wide counts (not filtered by committee)
   const documentsProduced = await fetchDocumentCount(year);
   const reportsProduced = await fetchAdoptedTextCount(year);
+  throwIfAllDataUnavailable('COMMITTEE_PERFORMANCE', [committee, documentsProduced, reportsProduced]);
   const warnings = buildCommitteeWarnings(committee, documentsProduced, reportsProduced);
   
   return {
@@ -299,6 +327,7 @@ export async function generateVotingStatisticsReport(
 
   const sessionCount = await fetchSessionCount(dateFrom, dateTo);
   const adoptedCount = await fetchAdoptedTextCount(year);
+  throwIfAllDataUnavailable('VOTING_STATISTICS', [sessionCount, adoptedCount]);
   const warnings = buildVotingWarnings(sessionCount, adoptedCount, dateFrom, dateTo);
   
   return {
@@ -337,6 +366,7 @@ export async function generateLegislationProgressReport(
 
   const procedureCount = await fetchProcedureCount(year);
   const completedCount = await fetchAdoptedTextCount(year);
+  throwIfAllDataUnavailable('LEGISLATION_PROGRESS', [procedureCount, completedCount]);
   const ongoingCount = (procedureCount !== null && completedCount !== null)
     ? Math.max(0, procedureCount - completedCount)
     : null;
