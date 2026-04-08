@@ -1,7 +1,7 @@
 {
   "name": "european-parliament-mcp-server",
   "display_name": "European Parliament MCP Server",
-  "description": "Model Context Protocol server providing AI assistants with structured access to European Parliament open data — MEPs, plenary sessions, committees, legislative documents, voting records, and parliamentary questions through 61 tools, 9 resources, and 7 prompts.",
+  "description": "Model Context Protocol server providing AI assistants with structured access to European Parliament open data — MEPs, plenary sessions, committees, legislative documents, voting records, and parliamentary questions through 62 tools, 9 resources, and 7 prompts.",
   "repository": "https://github.com/Hack23/European-Parliament-MCP-Server",
   "homepage": "https://hack23.github.io/European-Parliament-MCP-Server/",
   "license": "Apache-2.0",
@@ -55,6 +55,10 @@
     {
       "name": "get_parliamentary_questions",
       "description": "Retrieve European Parliament questions (written and oral) submitted by MEPs, or a single question by docId. Filter by question type, author, topic, status (pending/answered), and date range. Returns question text, answers if available, and metadata."
+    },
+    {
+      "name": "get_server_health",
+      "description": "Check server health and feed availability status. Returns server version, uptime, per-feed health status (ok/error/unknown), and overall availability level (Full/Degraded/Sparse/Unavailable). Does not make upstream API calls — reports cached status from recent tool invocations."
     },
     {
       "name": "analyze_voting_patterns",

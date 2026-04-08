@@ -228,7 +228,7 @@ mindmap
 
 ```mermaid
 mindmap
-  root((61 MCP Tools))
+  root((62 MCP Tools))
     Core Tools 7
       get_meps
         Filter by country

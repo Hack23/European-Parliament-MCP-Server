@@ -60,7 +60,7 @@ stateDiagram-v2
 
     Initializing --> DISetup : Environment loaded
     DISetup --> ClientsReady : DI container built
-    ClientsReady --> ToolsRegistered : 61 tools registered
+    ClientsReady --> ToolsRegistered : 62 tools registered
     ToolsRegistered --> ResourcesRegistered : 9 resources registered
     ResourcesRegistered --> PromptsRegistered : 7 prompts registered
     PromptsRegistered --> Running : MCP stdio listener started
@@ -309,7 +309,7 @@ stateDiagram-v2
         - MetricsService (1 instance)
         - AuditLogger (1 instance)
         - HealthService (1 instance)
-        Shared across all 61 tools
+        Shared across all 62 tools
     end note
 ```
 

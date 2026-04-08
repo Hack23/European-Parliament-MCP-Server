@@ -2,7 +2,7 @@
 
 ## 📋 Overview
 
-This guide explains how to run integration tests for the European Parliament MCP Server. The `allTools.integration.test.ts` suite validates 46 of the 61 MCP tools against the real European Parliament Open Data API. The remaining 15 tools — 13 feed endpoints, `get_all_generated_stats` (precomputed, no live API calls), and `get_procedure_event_by_id` — are validated through unit tests. **All integration-tested tools return real data — no mock or placeholder data is used.**
+This guide explains how to run integration tests for the European Parliament MCP Server. The `allTools.integration.test.ts` suite validates 46 of the 62 MCP tools against the real European Parliament Open Data API. The remaining 16 tools — 13 feed endpoints, `get_all_generated_stats` (precomputed, no live API calls), `get_server_health` (local diagnostics, no API calls), and `get_procedure_event_by_id` — are validated through unit tests. **All integration-tested tools return real data — no mock or placeholder data is used.**
 
 **ISMS Policy**: [Hack23 Secure Development Policy - Testing](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#testing)
 
@@ -12,7 +12,7 @@ This guide explains how to run integration tests for the European Parliament MCP
 
 ## 🎯 Integration Test Coverage
 
-### 61 MCP Tools — Integration & Unit Test Coverage
+### 62 MCP Tools — Integration & Unit Test Coverage
 
 **Core Data Access Tools** (7 — real EP API):
 1. **get_meps** - MEP retrieval with filtering
@@ -95,7 +95,7 @@ This guide explains how to run integration tests for the European Parliament MCP
 60. **get_corporate_bodies_feed** - Recently updated corporate bodies
 61. **get_controlled_vocabularies_feed** - Recently updated controlled vocabularies
 
-> **No Mock Data**: All tools return real data from the EP API. The integration test suite (`allTools.integration.test.ts`) currently covers 46 of 61 tools (core, advanced, OSINT, phase 4, and phase 5 data tools). Feed tools and precomputed analytics tools are validated through unit tests. The suite explicitly checks that no tool returns `confidenceLevel: 'NONE'` or `PLACEHOLDER DATA` markers.
+> **No Mock Data**: All tools return real data from the EP API. The integration test suite (`allTools.integration.test.ts`) currently covers 46 of 62 tools (core, advanced, OSINT, phase 4, and phase 5 data tools). Feed tools and precomputed analytics tools are validated through unit tests. The suite explicitly checks that no tool returns `confidenceLevel: 'NONE'` or `PLACEHOLDER DATA` markers.
 
 ### Test Categories
 
