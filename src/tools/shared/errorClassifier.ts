@@ -8,6 +8,7 @@
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
+import { z } from 'zod';
 import { ToolError } from './errors.js';
 import type { ErrorCode, ErrorCategory } from './errors.js';
 
@@ -142,7 +143,7 @@ function classifyToolErrorHeuristic(error: ToolError): ErrorClassification {
  * @internal
  */
 function classifyPlainErrorHeuristic(error: unknown): ErrorClassification {
-  if (error instanceof Error && error.name === 'ZodError') {
+  if (error instanceof z.ZodError) {
     return { errorCode: 'INVALID_PARAMS', errorCategory: 'CLIENT_ERROR', retryable: false };
   }
   if (error instanceof Error && error.message.includes('timed out')) {
