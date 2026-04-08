@@ -97,7 +97,7 @@
 
 ## 🎯 Overview
 
-The European Parliament MCP Server provides 62 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 7 core tools, 3 advanced tools, 15 OSINT intelligence tools, 1 statistics tool, 21 EP API v2 endpoint tools, 1 procedure event detail tool, and 13 EP API v2 feed tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
+The European Parliament MCP Server provides 62 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 8 core tools, 3 advanced tools, 15 OSINT intelligence tools, 1 statistics tool, 21 EP API v2 endpoint tools, 1 procedure event detail tool, and 13 EP API v2 feed tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
 
 ### Key Features
 
@@ -2120,6 +2120,35 @@ The response includes:
 | `documents` | Documents produced | `search_documents` |
 | `mep_turnover` | MEP arrivals/departures | `get_incoming_meps`, `get_outgoing_meps` |
 | `declarations` | MEP declarations | `get_mep_declarations` |
+
+---
+
+## 🔧 Server Diagnostics Tools
+
+### Tool: get_server_health
+
+**Description**: Check server health and feed availability status. Returns server version, uptime, per-feed health status (ok/error/unknown), and overall availability level (Full/Degraded/Sparse/Unavailable). Does not make upstream API calls — reports cached status from recent tool invocations.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| _(none)_ | - | - | - | No parameters required |
+
+#### Response Structure
+
+| Field | Description |
+|-------|-------------|
+| `server` | Server health summary object |
+| `server.version` | Server version string |
+| `server.uptime_seconds` | Server uptime in seconds |
+| `server.status` | Overall server status (`healthy`, `degraded`, `unhealthy`) |
+| `feeds` | Object keyed by feed name, each value is a per-feed health status object |
+| `feeds.<feed_name>.status` | Feed status (`ok`, `error`, `unknown`) |
+| `availability` | Availability summary object |
+| `availability.operational_feeds` | Number of feeds currently operational |
+| `availability.total_feeds` | Total number of tracked feeds |
+| `availability.level` | Overall availability level (`Full`, `Degraded`, `Sparse`, `Unavailable`) |
 
 ---
 

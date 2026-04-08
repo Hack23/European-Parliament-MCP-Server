@@ -578,12 +578,11 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 | [`track_mep_attendance`](./API_USAGE_GUIDE.md#tool-track_mep_attendance) | MEP attendance patterns & trends | mepId, country, groupId, dateFrom, dateTo, limit | Attendance report |
 | [`analyze_country_delegation`](./API_USAGE_GUIDE.md#tool-analyze_country_delegation) | Country delegation voting & composition | country (required), dateFrom, dateTo | Delegation analysis |
 
-### 📊 Advanced Analysis Tools (5)
+### 📊 Advanced Analysis Tools (4)
 
 | Tool | Description | Key Parameters | Output |
 |------|-------------|----------------|--------|
 | [`get_all_generated_stats`](./API_USAGE_GUIDE.md#tool-get_all_generated_stats) | Precomputed EP activity statistics (2004-2026) with rankings, predictions, political landscape, and [30 OSINT-derived intelligence metrics](./EP_POLITICAL_LANDSCAPE.md) including 3-axis political compass | yearFrom, yearTo, category, includePredictions | Statistics object |
-| [`get_server_health`](./API_USAGE_GUIDE.md#tool-get_server_health) | Server health and feed availability status | _(none)_ | Health object |
 | [`analyze_voting_patterns`](./API_USAGE_GUIDE.md#tool-analyze_voting_patterns) | Analyze MEP voting behavior | mepId (required), dateFrom, compareWithGroup | Analysis object |
 | [`track_legislation`](./API_USAGE_GUIDE.md#tool-track_legislation) | Track legislative procedure | procedureId (required) | Procedure object |
 | [`generate_report`](./API_USAGE_GUIDE.md#tool-generate_report) | Generate analytical reports | reportType (required), subjectId, dateFrom | Report object |
@@ -661,6 +660,12 @@ Real-time change feeds for monitoring recently updated data across all EP API ca
 | [`get_parliamentary_questions_feed`](./API_USAGE_GUIDE.md#tool-get_parliamentary_questions_feed) | Recently updated parliamentary questions | timeframe, startDate | `GET /parliamentary-questions/feed` |
 | [`get_corporate_bodies_feed`](./API_USAGE_GUIDE.md#tool-get_corporate_bodies_feed) | Recently updated corporate bodies | timeframe, startDate | `GET /corporate-bodies/feed` |
 | [`get_controlled_vocabularies_feed`](./API_USAGE_GUIDE.md#tool-get_controlled_vocabularies_feed) | Recently updated controlled vocabularies | timeframe, startDate | `GET /controlled-vocabularies/feed` |
+
+### 🔧 Server Diagnostics (1)
+
+| Tool | Description | Key Parameters | Output |
+|------|-------------|----------------|--------|
+| [`get_server_health`](./API_USAGE_GUIDE.md#tool-get_server_health) | Server health and feed availability status (no upstream API calls) | _(none)_ | Health object |
 
 📖 **[Complete TypeDoc API documentation →](https://hack23.github.io/European-Parliament-MCP-Server/api/)** · **[Markdown API docs →](https://hack23.github.io/European-Parliament-MCP-Server/api-markdown/)**
 
@@ -1220,7 +1225,7 @@ graph TB
     subgraph TOOLS["🔌 62 MCP Tools"]
         style TOOLS fill:#172554,stroke:#3B82F6,color:#DBEAFE
         T1["🕵️ 15 OSINT Intelligence"]
-        T2["📊 5 Advanced Analysis & Diagnostics"]
+        T2["📊 4 Advanced Analysis + 1 Diagnostics"]
         T3["👤 7 MEP Data"]
         T4["🏛️ 9 Plenary & Meeting"]
         T5["📄 12 Document, Committee & Legislative"]

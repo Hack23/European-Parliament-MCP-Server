@@ -2144,10 +2144,18 @@ const result = await client.callTool('get_server_health', {});
 
 | Field | Description |
 |-------|-------------|
-| `version` | Server version string |
-| `uptime` | Server uptime in human-readable format |
-| `feeds` | Per-feed health status map (`ok`, `error`, `unknown`) |
-| `availability` | Overall availability level (`Full`, `Degraded`, `Sparse`, `Unavailable`) |
+| `server` | Server health summary object |
+| `server.version` | Server version string |
+| `server.uptime_seconds` | Server uptime in seconds |
+| `server.status` | Overall server status (`healthy`, `degraded`, `unhealthy`) |
+| `feeds` | Object keyed by feed name, each value is a per-feed health status object |
+| `feeds.<feed_name>.status` | Feed status (`ok`, `error`, `unknown`) |
+| `feeds.<feed_name>.lastSuccess` | Timestamp of last successful call (if any) |
+| `feeds.<feed_name>.lastError` | Last error message (if any) |
+| `availability` | Availability summary object |
+| `availability.operational_feeds` | Number of feeds currently operational |
+| `availability.total_feeds` | Total number of tracked feeds |
+| `availability.level` | Overall availability level (`Full`, `Degraded`, `Sparse`, `Unavailable`) |
 
 ---
 

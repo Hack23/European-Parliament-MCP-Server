@@ -101,7 +101,7 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ### 🎯 Key Features
 
-- 🔌 **Full MCP Implementation**: 62 tools (7 core + 3 advanced + 15 OSINT + 8 Phase 4 + 15 Phase 5 + 13 feed), 9 Resources, and 7 Prompts
+- 🔌 **Full MCP Implementation**: 62 tools (8 core + 3 advanced + 15 OSINT + 8 Phase 4 + 15 Phase 5 + 13 feed), 9 Resources, and 7 Prompts
 - 🏛️ **Complete EP API v2 Coverage**: All European Parliament Open Data API endpoints covered
 - 🕵️ **OSINT Intelligence**: MEP influence scoring, coalition analysis, anomaly detection
 - 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance
@@ -540,7 +540,7 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 
 ---
 
-## 🔌 MCP Tools (61 Total)
+## 🔌 MCP Tools (62 Total)
 
 **62 tools** organized by capability — OSINT intelligence first, then analytical, data access, feed endpoints, and reference tools. Every tool includes Zod input validation, caching, and rate limiting.
 
@@ -646,6 +646,12 @@ Real-time change feeds for monitoring recently updated data across all EP API ca
 | [`get_parliamentary_questions_feed`](documents/API_USAGE_GUIDE.md) | Recently updated parliamentary questions | timeframe, startDate | `GET /parliamentary-questions/feed` |
 | [`get_corporate_bodies_feed`](documents/API_USAGE_GUIDE.md) | Recently updated corporate bodies | timeframe, startDate | `GET /corporate-bodies/feed` |
 | [`get_controlled_vocabularies_feed`](documents/API_USAGE_GUIDE.md) | Recently updated controlled vocabularies | timeframe, startDate | `GET /controlled-vocabularies/feed` |
+
+### 🔧 Server Diagnostics (1)
+
+| Tool | Description | Key Parameters | Output |
+|------|-------------|----------------|--------|
+| [`get_server_health`](documents/API_USAGE_GUIDE.md) | Server health and feed availability status (no upstream API calls) | _(none)_ | Health object |
 
 📖 **[Complete TypeDoc API documentation →](https://hack23.github.io/European-Parliament-MCP-Server/api/)** · **[Markdown API docs →](https://hack23.github.io/European-Parliament-MCP-Server/api-markdown/)**
 

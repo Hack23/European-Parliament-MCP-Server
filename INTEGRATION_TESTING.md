@@ -95,6 +95,9 @@ This guide explains how to run integration tests for the European Parliament MCP
 60. **get_corporate_bodies_feed** - Recently updated corporate bodies
 61. **get_controlled_vocabularies_feed** - Recently updated controlled vocabularies
 
+**Server Diagnostics** (1 — local only, no EP API calls):
+62. **get_server_health** - Server health and feed availability status
+
 > **No Mock Data**: All tools return real data from the EP API. The integration test suite (`allTools.integration.test.ts`) currently covers 46 of 62 tools (core, advanced, OSINT, phase 4, and phase 5 data tools). Feed tools and precomputed analytics tools are validated through unit tests. The suite explicitly checks that no tool returns `confidenceLevel: 'NONE'` or `PLACEHOLDER DATA` markers.
 
 ### Test Categories
