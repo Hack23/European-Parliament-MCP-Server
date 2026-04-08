@@ -243,7 +243,27 @@ describe('comparative_intelligence Tool', () => {
       expect(parsed.error).toContain('Comparative analysis requires at least 2 valid MEPs');
       expect(parsed.error).toContain('999');
       expect(parsed.error).toContain('998');
+      // All-404 shortfall: non-retryable
       expect(parsed.errorCode).toBe('INVALID_PARAMS');
+      expect(parsed.retryable).toBe(false);
+    });
+
+    it('should return retryable error when insufficient valid MEPs due to transient errors', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails)
+        .mockImplementation(async (id: string) => {
+          if (id === '1') return mockMEP1;
+          throw new APIError('Service Unavailable', 503);
+        });
+
+      const result = await handleComparativeIntelligence({ mepIds: [1, 888, 777] });
+      expect(result.isError).toBe(true);
+      const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+      expect(parsed.toolName).toBe('comparative_intelligence');
+      expect(parsed.error).toContain('Comparative analysis requires at least 2 valid MEPs');
+      // Transient shortfall: retryable (888 and 777 may be valid)
+      expect(parsed.retryable).toBe(true);
+      // Should NOT classify as INVALID_PARAMS when transient errors caused the shortfall
+      expect(parsed.errorCode).not.toBe('INVALID_PARAMS');
     });
 
     it('should surface mixed 404+transient failures as retryable when zero MEPs resolve', async () => {
@@ -258,10 +278,11 @@ describe('comparative_intelligence Tool', () => {
       const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
       expect(parsed.toolName).toBe('comparative_intelligence');
       // Should be retryable because 888 may be valid but transiently failed
+      expect(parsed.retryable).toBe(true);
       expect(parsed.error).toContain('upstream errors');
       expect(parsed.error).toContain('999');
       // Should NOT use "could not be found" framing since it's mixed
-      expect(String(parsed.error)).not.toMatch(/^None of the provided MEP IDs could be found/);
+      expect(String(parsed.error)).not.toContain('None of the provided MEP IDs could be found');
     });
 
     it('should proceed with valid MEPs and warn about 404 invalid ones', async () => {
@@ -333,9 +354,9 @@ describe('comparative_intelligence Tool', () => {
       expect(data.mepCount).toBe(2);
       expect(data.profiles).toHaveLength(2);
       // Warning about 404 excluded ID
-      expect(data.dataQualityWarnings.some(w => w.includes('999'))).toBe(true);
-      // 503 errors (ID 888) are transient — not reported as "not found"
-      expect(data.dataQualityWarnings.every(w => !w.includes('888'))).toBe(true);
+      expect(data.dataQualityWarnings.some(w => w.includes('999') && w.includes('could not be found'))).toBe(true);
+      // Warning about 503 transiently-failed ID
+      expect(data.dataQualityWarnings.some(w => w.includes('888') && w.includes('upstream errors'))).toBe(true);
     });
   });
 

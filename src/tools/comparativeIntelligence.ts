@@ -27,6 +27,7 @@ import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.
 import type { ToolResult } from './shared/types.js';
 import { ToolError } from './shared/errors.js';
 import { handleToolError } from './shared/errorHandler.js';
+import { extractHttpStatus } from './shared/errorClassifier.js';
 
 export const ComparativeIntelligenceSchema = z.object({
   mepIds: z.array(z.number().positive())
@@ -624,28 +625,11 @@ function buildComputedAttributes(
 }
 
 /**
- * Extracts an HTTP status code from an error via duck typing.
- * Works with `APIError` or any error carrying a numeric `statusCode`.
- */
-function extractStatusCode(error: unknown): number | undefined {
-  if (
-    error !== null &&
-    error !== undefined &&
-    typeof error === 'object' &&
-    'statusCode' in error &&
-    typeof (error as { statusCode?: unknown }).statusCode === 'number'
-  ) {
-    return (error as { statusCode: number }).statusCode;
-  }
-  return undefined;
-}
-
-/**
  * Determines whether a rejected promise reason represents a 404 (MEP not found)
  * as opposed to a transient error (timeout, 429, 5xx).
  */
 function isNotFoundError(reason: unknown): boolean {
-  const status = extractStatusCode(reason);
+  const status = extractHttpStatus(reason);
   return status === 404;
 }
 
@@ -668,9 +652,16 @@ function buildAllNotFoundError(notFoundMepIds: number[]): ToolResult {
 
 /**
  * Builds an error ToolResult for when fewer than 2 valid MEPs remain after
- * excluding IDs that could not be resolved.
+ * excluding IDs that could not be resolved. When transient errors contributed
+ * to the shortfall, the error is retryable (a retry may yield enough valid MEPs).
  */
-function buildInsufficientMepsError(validCount: number, totalCount: number, unresolvedIds: number[]): ToolResult {
+function buildInsufficientMepsError(validCount: number, totalCount: number, unresolvedIds: number[], hasTransientErrors: boolean): ToolResult {
+  if (hasTransientErrors) {
+    return buildTransientError(
+      `Only ${String(validCount)} of ${String(totalCount)} MEP IDs could be resolved. Comparative analysis requires at least 2 valid MEPs. Unresolved IDs: ${unresolvedIds.join(', ')}`,
+      undefined
+    );
+  }
   return buildErrorResponse(
     new ToolError({
       toolName: 'comparative_intelligence',
@@ -746,11 +737,13 @@ function buildTransientError(message: string, cause: unknown): ToolResult {
  * - **404 rejections** are treated as invalid MEP IDs (non-retryable).
  * - **Non-404 rejections** (timeout, 429, 503, etc.) are treated as transient
  *   failures and propagated via `handleToolError` so retryability is correct.
+ * - When 2+ valid MEPs exist, transient-failed IDs are returned so callers
+ *   can surface warnings about silently excluded IDs.
  */
 function validateMepResults(
   detailsResults: PromiseSettledResult<unknown>[],
   mepIds: number[]
-): { error: ToolResult } | { notFoundMepIds: number[]; validResults: PromiseSettledResult<unknown>[]; validMepIds: number[] } {
+): { error: ToolResult } | { notFoundMepIds: number[]; transientFailedMepIds: number[]; validResults: PromiseSettledResult<unknown>[]; validMepIds: number[] } {
   const { notFoundMepIds, validResults, validMepIds, transientErrors } =
     partitionMepResults(detailsResults, mepIds);
 
@@ -769,10 +762,11 @@ function validateMepResults(
 
   if (validMepIds.length < 2) {
     const unresolvedIds = [...notFoundMepIds, ...transientErrors.map(e => e.mepId)];
-    return { error: buildInsufficientMepsError(validMepIds.length, mepIds.length, unresolvedIds) };
+    return { error: buildInsufficientMepsError(validMepIds.length, mepIds.length, unresolvedIds, transientErrors.length > 0) };
   }
 
-  return { notFoundMepIds, validResults, validMepIds };
+  const transientFailedMepIds = transientErrors.map(e => e.mepId);
+  return { notFoundMepIds, transientFailedMepIds, validResults, validMepIds };
 }
 
 export async function comparativeIntelligence(params: ComparativeIntelligenceParams): Promise<ToolResult> {
@@ -788,7 +782,7 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
     if ('error' in validation) {
       return validation.error;
     }
-    const { notFoundMepIds, validResults, validMepIds } = validation;
+    const { notFoundMepIds, transientFailedMepIds, validResults, validMepIds } = validation;
 
     // Build profiles only from valid (fulfilled) results
     const profiles = buildProfilesFromResults(validResults, validMepIds, dimensions);
@@ -810,6 +804,11 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
     if (notFoundMepIds.length > 0) {
       dataQualityWarnings.push(
         `${String(notFoundMepIds.length)} MEP ID(s) could not be found and were excluded: ${notFoundMepIds.join(', ')}`
+      );
+    }
+    if (transientFailedMepIds.length > 0) {
+      dataQualityWarnings.push(
+        `${String(transientFailedMepIds.length)} MEP ID(s) could not be retrieved due to upstream errors and were excluded: ${transientFailedMepIds.join(', ')}`
       );
     }
 
