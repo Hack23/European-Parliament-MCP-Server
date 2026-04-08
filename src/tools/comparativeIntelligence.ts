@@ -667,14 +667,15 @@ function buildAllNotFoundError(notFoundMepIds: number[]): ToolResult {
 }
 
 /**
- * Builds an error ToolResult for when fewer than 2 valid MEPs remain.
+ * Builds an error ToolResult for when fewer than 2 valid MEPs remain after
+ * excluding IDs that could not be resolved.
  */
-function buildInsufficientMepsError(validCount: number, totalCount: number, excludedIds: number[]): ToolResult {
+function buildInsufficientMepsError(validCount: number, totalCount: number, unresolvedIds: number[]): ToolResult {
   return buildErrorResponse(
     new ToolError({
       toolName: 'comparative_intelligence',
       operation: 'validateMEPIds',
-      message: `Only ${String(validCount)} of ${String(totalCount)} MEP IDs could be resolved. Comparative analysis requires at least 2 valid MEPs. Invalid IDs: ${excludedIds.join(', ')}`,
+      message: `Only ${String(validCount)} of ${String(totalCount)} MEP IDs could be resolved. Comparative analysis requires at least 2 valid MEPs. Unresolved IDs: ${unresolvedIds.join(', ')}`,
       isRetryable: false,
       errorCode: 'INVALID_PARAMS',
       errorCategory: 'CLIENT_ERROR',
@@ -723,6 +724,22 @@ function partitionMepResults(
 }
 
 /**
+ * Builds a retryable error ToolResult for upstream/transient failures.
+ */
+function buildTransientError(message: string, cause: unknown): ToolResult {
+  return handleToolError(
+    new ToolError({
+      toolName: 'comparative_intelligence',
+      operation: 'fetchMEPProfiles',
+      message,
+      isRetryable: true,
+      cause: cause instanceof Error ? cause : undefined,
+    }),
+    'comparative_intelligence'
+  );
+}
+
+/**
  * Validates partitioned MEP results and returns either an error ToolResult
  * or the valid partition for continued analysis.
  *
@@ -737,21 +754,13 @@ function validateMepResults(
   const { notFoundMepIds, validResults, validMepIds, transientErrors } =
     partitionMepResults(detailsResults, mepIds);
 
-  // If all failures are transient (no valid data, no 404s), surface as tool error
-  if (validMepIds.length === 0 && transientErrors.length > 0 && notFoundMepIds.length === 0) {
+  // No valid MEPs: determine error type based on failure categories
+  if (validMepIds.length === 0 && transientErrors.length > 0) {
     const cause = transientErrors[0]?.reason;
-    return {
-      error: handleToolError(
-        new ToolError({
-          toolName: 'comparative_intelligence',
-          operation: 'fetchMEPProfiles',
-          message: 'Failed to retrieve any MEP profiles due to upstream errors',
-          isRetryable: true,
-          cause: cause instanceof Error ? cause : undefined,
-        }),
-        'comparative_intelligence'
-      )
-    };
+    const message = notFoundMepIds.length === 0
+      ? 'Failed to retrieve any MEP profiles due to upstream errors'
+      : `Failed to retrieve MEP profiles. ${String(notFoundMepIds.length)} MEP ID(s) not found: ${notFoundMepIds.join(', ')}. ${String(transientErrors.length)} MEP ID(s) failed due to upstream errors and may be retried.`;
+    return { error: buildTransientError(message, cause) };
   }
 
   if (validMepIds.length === 0) {
@@ -759,8 +768,8 @@ function validateMepResults(
   }
 
   if (validMepIds.length < 2) {
-    const excludedIds = [...notFoundMepIds, ...transientErrors.map(e => e.mepId)];
-    return { error: buildInsufficientMepsError(validMepIds.length, mepIds.length, excludedIds) };
+    const unresolvedIds = [...notFoundMepIds, ...transientErrors.map(e => e.mepId)];
+    return { error: buildInsufficientMepsError(validMepIds.length, mepIds.length, unresolvedIds) };
   }
 
   return { notFoundMepIds, validResults, validMepIds };

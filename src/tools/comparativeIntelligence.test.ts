@@ -246,6 +246,24 @@ describe('comparative_intelligence Tool', () => {
       expect(parsed.errorCode).toBe('INVALID_PARAMS');
     });
 
+    it('should surface mixed 404+transient failures as retryable when zero MEPs resolve', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails)
+        .mockImplementation(async (id: string) => {
+          if (id === '999') throw new APIError('Not found', 404);
+          throw new APIError('Service Unavailable', 503);
+        });
+
+      const result = await handleComparativeIntelligence({ mepIds: [999, 888] });
+      expect(result.isError).toBe(true);
+      const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
+      expect(parsed.toolName).toBe('comparative_intelligence');
+      // Should be retryable because 888 may be valid but transiently failed
+      expect(parsed.error).toContain('upstream errors');
+      expect(parsed.error).toContain('999');
+      // Should NOT use "could not be found" framing since it's mixed
+      expect(String(parsed.error)).not.toMatch(/^None of the provided MEP IDs could be found/);
+    });
+
     it('should proceed with valid MEPs and warn about 404 invalid ones', async () => {
       vi.mocked(epClientModule.epClient.getMEPDetails)
         .mockImplementation(async (id: string) => {
