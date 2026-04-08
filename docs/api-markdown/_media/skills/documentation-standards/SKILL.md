@@ -209,10 +209,14 @@ graph TB
     C -->|Log| H[Audit Logger]
     C -->|Check| I[Rate Limiter]
     
-    style B fill:#4A90E2
-    style D fill:#E8A631
-    style H fill:#50C878
-    style I fill:#E85D75
+    style B fill:#4A90E2,color:#ffffff
+
+    style D fill:#E8A631,color:#ffffff
+
+    style H fill:#50C878,color:#ffffff
+
+    style I fill:#E85D75,color:#ffffff
+
 \`\`\`
 
 ## 🔧 MCP Tools

@@ -59,10 +59,10 @@ quadrantChart
     title EP MCP Server v1.1 SWOT Quadrant
     x-axis Low Impact --> High Impact
     y-axis External --> Internal
-    quadrant-1
-    quadrant-2
-    quadrant-3
-    quadrant-4
+    quadrant-1 Internal Strengths
+    quadrant-2 Internal Weaknesses
+    quadrant-3 External Opportunities
+    quadrant-4 External Threats
     62 MCP Tools: [0.85, 0.9]
     ISMS Compliance: [0.75, 0.85]
     TypeScript Safety: [0.7, 0.8]

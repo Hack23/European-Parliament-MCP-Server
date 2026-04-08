@@ -561,13 +561,20 @@ graph LR
     C -.->|🛡️ stdio isolation| CD[Disrupted]
     A -.->|🛡️ EP API integrity| AD[Monitored]
 
-    style RD fill:#ffa726
-    style WD fill:#4CAF50
-    style DD fill:#4CAF50
-    style ED fill:#4CAF50
-    style ID fill:#4CAF50
-    style CD fill:#4CAF50
-    style AD fill:#ffa726
+    style RD fill:#ffa726,color:#ffffff
+
+    style WD fill:#4CAF50,color:#ffffff
+
+    style DD fill:#4CAF50,color:#ffffff
+
+    style ED fill:#4CAF50,color:#ffffff
+
+    style ID fill:#4CAF50,color:#ffffff
+
+    style CD fill:#4CAF50,color:#ffffff
+
+    style AD fill:#ffa726,color:#ffffff
+
 ```
 
 **Key Insight:** The EP MCP Server's **stateless stdio architecture** provides inherent disruption at Kill Chain phases 5 (Installation) and 6 (C2), while **SLSA Level 3 + Dependabot** provide strong disruption at phases 2-3. The primary residual risk is at phase 7 (Actions on Objectives) where continuous monitoring is essential.
@@ -778,11 +785,16 @@ graph LR
     C --> D[4️⃣ AI assistant provides false analysis]
     D --> E[5️⃣ Political decisions based on false data]
     
-    style A fill:#ff6b6b
-    style B fill:#ff6b6b
-    style C fill:#ffa726
-    style D fill:#ffa726
-    style E fill:#ef5350
+    style A fill:#ff6b6b,color:#ffffff
+
+    style B fill:#ff6b6b,color:#ffffff
+
+    style C fill:#ffa726,color:#ffffff
+
+    style D fill:#ffa726,color:#ffffff
+
+    style E fill:#ef5350,color:#ffffff
+
 ```
 
 **Attack Steps:**
@@ -824,11 +836,16 @@ graph LR
     C --> D[4️⃣ Commercial database sale]
     D --> E[5️⃣ GDPR Article 6 violation]
     
-    style A fill:#ffa726
-    style B fill:#ffa726
-    style C fill:#ff6b6b
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ffa726,color:#ffffff
+
+    style B fill:#ffa726,color:#ffffff
+
+    style C fill:#ff6b6b,color:#ffffff
+
+    style D fill:#ef5350,color:#ffffff
+
+    style E fill:#ef5350,color:#ffffff
+
 ```
 
 **Attack Steps:**
@@ -870,11 +887,16 @@ graph LR
     C --> D[4️⃣ News articles published]
     D --> E[5️⃣ Electoral influence achieved]
     
-    style A fill:#ff6b6b
-    style B fill:#ff6b6b
-    style C fill:#ffa726
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ff6b6b,color:#ffffff
+
+    style B fill:#ff6b6b,color:#ffffff
+
+    style C fill:#ffa726,color:#ffffff
+
+    style D fill:#ef5350,color:#ffffff
+
+    style E fill:#ef5350,color:#ffffff
+
 ```
 
 **Attack Steps:**
@@ -916,11 +938,16 @@ graph LR
     C --> D[4️⃣ Automatic updates infect users]
     D --> E[5️⃣ Widespread MCP server compromise]
     
-    style A fill:#ffa726
-    style B fill:#ff6b6b
-    style C fill:#ef5350
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ffa726,color:#ffffff
+
+    style B fill:#ff6b6b,color:#ffffff
+
+    style C fill:#ef5350,color:#ffffff
+
+    style D fill:#ef5350,color:#ffffff
+
+    style E fill:#ef5350,color:#ffffff
+
 ```
 
 **Attack Steps:**
@@ -962,11 +989,16 @@ graph LR
     C --> D[4️⃣ MCP server executes attacker code]
     D --> E[5️⃣ AI assistant compromise]
     
-    style A fill:#ffa726
-    style B fill:#ff6b6b
-    style C fill:#ef5350
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ffa726,color:#ffffff
+
+    style B fill:#ff6b6b,color:#ffffff
+
+    style C fill:#ef5350,color:#ffffff
+
+    style D fill:#ef5350,color:#ffffff
+
+    style E fill:#ef5350,color:#ffffff
+
 ```
 
 **Attack Steps:**
@@ -1011,13 +1043,20 @@ graph LR
     VALIDATE --> MONITOR[📊 MONITOR<br/>Continuous]
     MONITOR -.->|Next Cycle| PRE
 
-    style PRE fill:#4CAF50
-    style ENUM fill:#2196F3
-    style THREATS fill:#FF9800
-    style MAP fill:#9C27B0
-    style PLAN fill:#F44336
-    style VALIDATE fill:#00BCD4
-    style MONITOR fill:#795548
+    style PRE fill:#4CAF50,color:#ffffff
+
+    style ENUM fill:#2196F3,color:#ffffff
+
+    style THREATS fill:#FF9800,color:#ffffff
+
+    style MAP fill:#9C27B0,color:#ffffff
+
+    style PLAN fill:#F44336,color:#ffffff
+
+    style VALIDATE fill:#00BCD4,color:#ffffff
+
+    style MONITOR fill:#795548,color:#ffffff
+
 ```
 
 | Phase | Activities | EP MCP Server Focus | Output |
@@ -1112,12 +1151,18 @@ graph LR
     E --> F[📈 Measure<br/>Effectiveness]
     F --> A
     
-    style A fill:#4CAF50
-    style B fill:#2196F3
-    style C fill:#FF9800
-    style D fill:#9C27B0
-    style E fill:#F44336
-    style F fill:#00BCD4
+    style A fill:#4CAF50,color:#ffffff
+
+    style B fill:#2196F3,color:#ffffff
+
+    style C fill:#FF9800,color:#ffffff
+
+    style D fill:#9C27B0,color:#ffffff
+
+    style E fill:#F44336,color:#ffffff
+
+    style F fill:#00BCD4,color:#ffffff
+
 ```
 
 **Key Performance Indicators (KPIs) for Threat Model Health:**
@@ -1197,10 +1242,14 @@ graph TD
     L --> M[📢 Communicate Updates]
     M --> N[✅ Review Complete]
     
-    style A fill:#4CAF50
-    style B fill:#2196F3
-    style K fill:#FF9800
-    style N fill:#9C27B0
+    style A fill:#4CAF50,color:#ffffff
+
+    style B fill:#2196F3,color:#ffffff
+
+    style K fill:#FF9800,color:#ffffff
+
+    style N fill:#9C27B0,color:#ffffff
+
 ```
 
 ---
@@ -1547,7 +1596,7 @@ graph TD
     C --> C1["Package name squatting"]
     C --> C2["Account takeover"]
     C --> C3["npm registry compromise"]
-    C1 --> C1M["✅ Official ownership of \"european-parliament-mcp-server\" package"]
+    C1 --> C1M["✅ Official package ownership verified"]
     C2 --> C2M["✅ npm 2FA + strong passwords"]
     C3 --> C3M["❌ Out of scope (npm responsibility)"]
     
@@ -1770,11 +1819,16 @@ graph TB
     L4A --> L5A
     L4B --> L5A
     
-    style L1A fill:#ff6b6b
-    style L2A fill:#feca57
-    style L3A fill:#48dbfb
-    style L4A fill:#1dd1a1
-    style L5A fill:#9b59b6
+    style L1A fill:#ff6b6b,color:#ffffff
+
+    style L2A fill:#feca57,color:#000000
+
+    style L3A fill:#48dbfb,color:#ffffff
+
+    style L4A fill:#1dd1a1,color:#ffffff
+
+    style L5A fill:#9b59b6,color:#ffffff
+
 ```
 
 ### **🎯 Control Effectiveness Matrix**

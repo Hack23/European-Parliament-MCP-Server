@@ -66,14 +66,22 @@ graph TB
     Tools --> ToolsStatus[✅ Excellent: 95%<br/>⚠️ Good: 5% sub-modules only]
     Index --> IndexStatus[✅ Excellent: 100%]
 
-    style TypesStatus fill:#90EE90
-    style ClientsStatus fill:#90EE90
-    style SchemasStatus fill:#FFD700
-    style UtilsStatus fill:#90EE90
-    style ServicesStatus fill:#90EE90
-    style DIStatus fill:#90EE90
-    style ToolsStatus fill:#90EE90
-    style IndexStatus fill:#90EE90
+    style TypesStatus fill:#90EE90,color:#ffffff
+
+    style ClientsStatus fill:#90EE90,color:#ffffff
+
+    style SchemasStatus fill:#FFD700,color:#ffffff
+
+    style UtilsStatus fill:#90EE90,color:#ffffff
+
+    style ServicesStatus fill:#90EE90,color:#ffffff
+
+    style DIStatus fill:#90EE90,color:#ffffff
+
+    style ToolsStatus fill:#90EE90,color:#ffffff
+
+    style IndexStatus fill:#90EE90,color:#ffffff
+
 ```
 
 ---
@@ -279,10 +287,14 @@ graph LR
     B -->|Sprint 3| C[After Sub-modules<br/>75% Overall Score]
     C -->|Sprint 4| D[Target State<br/>85% Overall Score]
 
-    style A fill:#FF6B6B
-    style B fill:#A8E6CF
-    style C fill:#6BCF7F
-    style D fill:#4CAF50
+    style A fill:#FF6B6B,color:#ffffff
+
+    style B fill:#A8E6CF,color:#ffffff
+
+    style C fill:#6BCF7F,color:#ffffff
+
+    style D fill:#4CAF50,color:#ffffff
+
 ```
 
 ---

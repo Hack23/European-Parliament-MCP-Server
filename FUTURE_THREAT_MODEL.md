@@ -111,8 +111,10 @@ graph TB
     CC -->|Persistent| FD
     CD -->|Cloud-native| FE
 
-    style CA fill:#ffcc80
-    style FA fill:#81c784
+    style CA fill:#ffcc80,color:#000000
+
+    style FA fill:#81c784,color:#ffffff
+
 ```
 
 ---
@@ -284,11 +286,16 @@ graph LR
     C --> D[4️⃣ Access premium tenant data]
     D --> E[5️⃣ Exfiltrate competitor intelligence]
     
-    style A fill:#ffa726
-    style B fill:#ff6b6b
-    style C fill:#ef5350
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ffa726,color:#ffffff
+
+    style B fill:#ff6b6b,color:#ffffff
+
+    style C fill:#ef5350,color:#ffffff
+
+    style D fill:#ef5350,color:#ffffff
+
+    style E fill:#ef5350,color:#ffffff
+
 ```
 
 **🛡️ Planned Mitigations:** DynamoDB partition-key tenant isolation, IAM condition-based access, API Gateway tenant context validation, data access audit logging
@@ -306,11 +313,16 @@ graph LR
     C --> D[4️⃣ Systematic MEP data harvesting]
     D --> E[5️⃣ GDPR violation + data sale]
     
-    style A fill:#ffa726
-    style B fill:#ff6b6b
-    style C fill:#ef5350
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ffa726,color:#ffffff
+
+    style B fill:#ff6b6b,color:#ffffff
+
+    style C fill:#ef5350,color:#ffffff
+
+    style D fill:#ef5350,color:#ffffff
+
+    style E fill:#ef5350,color:#ffffff
+
 ```
 
 **🛡️ Planned Mitigations:** Short-lived access tokens (15 min), refresh token rotation, anomalous usage detection, IP-based session binding, MFA enforcement
@@ -328,11 +340,16 @@ graph LR
     C --> D[4️⃣ Manipulate voting records at scale]
     D --> E[5️⃣ Widespread disinformation]
     
-    style A fill:#ff6b6b
-    style B fill:#ef5350
-    style C fill:#ef5350
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ff6b6b,color:#ffffff
+
+    style B fill:#ef5350,color:#ffffff
+
+    style C fill:#ef5350,color:#ffffff
+
+    style D fill:#ef5350,color:#ffffff
+
+    style E fill:#ef5350,color:#ffffff
+
 ```
 
 **🛡️ Planned Mitigations:** Lambda layer pinning, function code signing, VPC isolation, GuardDuty Lambda protection, runtime integrity monitoring
@@ -427,12 +444,18 @@ graph TB
     
     L1A --> L2A --> L3A --> L4A --> L5A --> L6A
     
-    style L1A fill:#ff6b6b
-    style L2A fill:#ffa726
-    style L3A fill:#feca57
-    style L4A fill:#48dbfb
-    style L5A fill:#1dd1a1
-    style L6A fill:#9b59b6
+    style L1A fill:#ff6b6b,color:#ffffff
+
+    style L2A fill:#ffa726,color:#ffffff
+
+    style L3A fill:#feca57,color:#000000
+
+    style L4A fill:#48dbfb,color:#ffffff
+
+    style L5A fill:#1dd1a1,color:#ffffff
+
+    style L6A fill:#9b59b6,color:#ffffff
+
 ```
 
 ---

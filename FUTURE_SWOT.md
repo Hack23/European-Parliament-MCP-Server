@@ -57,10 +57,10 @@ quadrantChart
     title EP MCP Server v2.0 Future SWOT Quadrant
     x-axis Low Impact --> High Impact
     y-axis External --> Internal
-    quadrant-1
-    quadrant-2
-    quadrant-3
-    quadrant-4
+    quadrant-1 Internal Strengths
+    quadrant-2 Internal Weaknesses
+    quadrant-3 External Opportunities
+    quadrant-4 External Threats
     EU Data Federation: [0.9, 0.85]
     OAuth RBAC Security: [0.85, 0.9]
     AI Powered Analysis: [0.9, 0.8]

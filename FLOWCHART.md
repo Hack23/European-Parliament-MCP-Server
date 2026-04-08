@@ -280,7 +280,7 @@ flowchart TD
     E --> G["total = offset + pageSize"]
     F --> H["Build PaginatedResponse\n{data, total, limit, offset, hasMore}"]
     G --> H
-    H --> I["`total` is a heuristic sentinel,\nnot an exact count"]
+    H --> I["'total' is a heuristic sentinel,\nnot an exact count"]
 ```
 
 ---

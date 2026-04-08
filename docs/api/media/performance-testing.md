@@ -113,10 +113,14 @@ graph TB
         D --> D3[📊 Benchmark Tests]
     end
 
-    style A fill:#e3f2fd
-    style G fill:#c8e6c9
-    style F fill:#ffcdd2
-    style E fill:#fff9c4
+    style A fill:#e3f2fd,color:#000000
+
+    style G fill:#c8e6c9,color:#000000
+
+    style F fill:#ffcdd2,color:#000000
+
+    style E fill:#fff9c4,color:#000000
+
 ```
 
 ### Test Suite Structure

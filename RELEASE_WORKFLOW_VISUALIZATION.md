@@ -63,10 +63,14 @@ flowchart TB
     
     P9 -.->|Deploys to| Pages[📄 GitHub Pages<br/>gh-pages branch]
     
-    style Start fill:#4CAF50
-    style End fill:#4CAF50
-    style DocGen fill:#2196F3
-    style Pages fill:#FF9800
+    style Start fill:#4CAF50,color:#ffffff
+
+    style End fill:#4CAF50,color:#ffffff
+
+    style DocGen fill:#2196F3,color:#ffffff
+
+    style Pages fill:#FF9800,color:#ffffff
+
 ```
 
 ## 📊 Documentation Structure
@@ -209,8 +213,10 @@ flowchart LR
     Attest --> Public
     Prov --> Public
     
-    style Code fill:#4CAF50
-    style Public fill:#2196F3
+    style Code fill:#4CAF50,color:#ffffff
+
+    style Public fill:#2196F3,color:#ffffff
+
     style Security fill:#FF3D00,color:#fff
 ```
 
