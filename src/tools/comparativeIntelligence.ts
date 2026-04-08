@@ -644,7 +644,6 @@ function buildAllNotFoundError(notFoundMepIds: number[]): ToolResult {
       message: `None of the provided MEP IDs could be found: ${notFoundMepIds.join(', ')}. Please verify the MEP IDs and try again.`,
       isRetryable: false,
       errorCode: 'INVALID_PARAMS',
-      errorCategory: 'CLIENT_ERROR',
     }),
     'comparative_intelligence'
   );
@@ -675,7 +674,6 @@ function buildInsufficientMepsError(
       message: `Only ${String(validCount)} of ${String(totalCount)} MEP IDs could be resolved. Comparative analysis requires at least 2 valid MEPs. Unresolved IDs: ${unresolvedIds.join(', ')}`,
       isRetryable: false,
       errorCode: 'INVALID_PARAMS',
-      errorCategory: 'CLIENT_ERROR',
     }),
     'comparative_intelligence'
   );
