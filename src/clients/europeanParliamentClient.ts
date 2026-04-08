@@ -943,7 +943,7 @@ export class EuropeanParliamentClient {
  *
  * **Environment Variables:**
  * - `EP_API_URL`: Override base API URL
- * - `EP_REQUEST_TIMEOUT_MS`: Override request timeout in milliseconds (default: 60000)
+ * - `EP_REQUEST_TIMEOUT_MS`: Override request timeout in milliseconds (default: `DEFAULT_REQUEST_TIMEOUT_MS`)
  *
  * @example
  * ```typescript

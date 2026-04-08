@@ -172,7 +172,7 @@ export interface EPClientConfig {
   maxCacheSize?: number;
   /** Custom rate limiter instance. */
   rateLimiter?: RateLimiter;
-  /** Request timeout in milliseconds. @default 60000 */
+  /** Request timeout in milliseconds. @default DEFAULT_REQUEST_TIMEOUT_MS */
   timeoutMs?: number;
   /** Enable automatic retry on transient failures. @default true */
   enableRetry?: boolean;
