@@ -30,7 +30,7 @@ describe('get_meeting_plenary_session_documents Tool', () => {
         }
       ],
       total: 1,
-      limit: 50,
+      limit: 20,
       offset: 0,
       hasMore: false
     });
@@ -139,7 +139,7 @@ describe('get_meeting_plenary_session_documents Tool', () => {
       await handleGetMeetingPlenarySessionDocuments({ sittingId: 'sitting-1' });
 
       expect(epClientModule.epClient.getMeetingPlenarySessionDocuments).toHaveBeenCalledWith('sitting-1', {
-        limit: 50,
+        limit: 20,
         offset: 0
       });
     });

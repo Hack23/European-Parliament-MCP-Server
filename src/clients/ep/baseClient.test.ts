@@ -90,8 +90,8 @@ describe('Default configuration constants', () => {
     expect(DEFAULT_EP_API_BASE_URL).toBe('https://data.europarl.europa.eu/api/v2/');
   });
 
-  it('DEFAULT_REQUEST_TIMEOUT_MS should be 10000', () => {
-    expect(DEFAULT_REQUEST_TIMEOUT_MS).toBe(10_000);
+  it('DEFAULT_REQUEST_TIMEOUT_MS should be 30000', () => {
+    expect(DEFAULT_REQUEST_TIMEOUT_MS).toBe(30_000);
   });
 
   it('DEFAULT_RETRY_ENABLED should be true', () => {

@@ -110,12 +110,12 @@ export async function handleGetMeetingPlenarySessionDocumentItems(
 export const getMeetingPlenarySessionDocumentItemsToolMetadata = {
   name: 'get_meeting_plenary_session_document_items',
   description:
-    'Get plenary session document items for a specific EP meeting/plenary sitting. Returns individual agenda item documents for the meeting. Data source: European Parliament Open Data Portal.',
+    'Get plenary session document items for a specific EP meeting/plenary sitting. Returns individual agenda item documents for the meeting. Note: this endpoint can be slower than decisions; use a smaller limit for faster responses. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       sittingId: { type: 'string', description: 'Meeting / sitting identifier (required)' },
-      limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
+      limit: { type: 'number', description: 'Maximum results to return (1-100, default 20)', default: 20 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },
     required: ['sittingId'],

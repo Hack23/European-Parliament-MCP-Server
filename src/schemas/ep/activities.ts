@@ -131,7 +131,9 @@ export const GetEventsSchema = z.object({
 });
 
 /**
- * Get meeting activities input schema
+ * Get meeting activities input schema.
+ * Note: The EP API activities endpoint can be slow for large meetings;
+ * a lower default limit (20) reduces response time.
  */
 export const GetMeetingActivitiesSchema = z.object({
   sittingId: z.string()
@@ -142,8 +144,8 @@ export const GetMeetingActivitiesSchema = z.object({
     .int()
     .min(1)
     .max(100)
-    .default(50)
-    .describe('Maximum results to return'),
+    .default(20)
+    .describe('Maximum results to return (default 20 — activities endpoint can be slow)'),
   offset: z.number()
     .int()
     .min(0)
@@ -223,7 +225,9 @@ export const GetControlledVocabulariesSchema = z.object({
 });
 
 /**
- * Get meeting foreseen activities input schema
+ * Get meeting foreseen activities input schema.
+ * Note: The EP API foreseen-activities endpoint can be slow for large meetings;
+ * a lower default limit (20) reduces response time.
  */
 export const GetMeetingForeseenActivitiesSchema = z.object({
   sittingId: z.string()
@@ -234,8 +238,8 @@ export const GetMeetingForeseenActivitiesSchema = z.object({
     .int()
     .min(1)
     .max(100)
-    .default(50)
-    .describe('Maximum results to return'),
+    .default(20)
+    .describe('Maximum results to return (default 20 — foreseen-activities endpoint can be slow)'),
   offset: z.number()
     .int()
     .min(0)
@@ -265,8 +269,9 @@ export const GetProcedureEventsSchema = z.object({
 });
 
 /**
- * Get meeting plenary session documents input schema
+ * Get meeting plenary session documents input schema.
  * Maps to `GET /meetings/{sitting-id}/plenary-session-documents`
+ * Note: This EP API endpoint can be slow; a lower default limit (20) reduces response time.
  */
 export const GetMeetingPlenarySessionDocumentsSchema = z.object({
   sittingId: z.string()
@@ -277,8 +282,8 @@ export const GetMeetingPlenarySessionDocumentsSchema = z.object({
     .int()
     .min(1)
     .max(100)
-    .default(50)
-    .describe('Maximum results to return'),
+    .default(20)
+    .describe('Maximum results to return (default 20 — plenary-session-documents endpoint can be slow)'),
   offset: z.number()
     .int()
     .min(0)
@@ -287,8 +292,9 @@ export const GetMeetingPlenarySessionDocumentsSchema = z.object({
 });
 
 /**
- * Get meeting plenary session document items input schema
+ * Get meeting plenary session document items input schema.
  * Maps to `GET /meetings/{sitting-id}/plenary-session-document-items`
+ * Note: This EP API endpoint can be slow; a lower default limit (20) reduces response time.
  */
 export const GetMeetingPlenarySessionDocumentItemsSchema = z.object({
   sittingId: z.string()
@@ -299,8 +305,8 @@ export const GetMeetingPlenarySessionDocumentItemsSchema = z.object({
     .int()
     .min(1)
     .max(100)
-    .default(50)
-    .describe('Maximum results to return'),
+    .default(20)
+    .describe('Maximum results to return (default 20 — plenary-session-document-items endpoint can be slow)'),
   offset: z.number()
     .int()
     .min(0)

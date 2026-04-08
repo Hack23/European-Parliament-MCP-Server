@@ -31,7 +31,7 @@ describe('get_meeting_foreseen_activities Tool', () => {
         }
       ],
       total: 1,
-      limit: 50,
+      limit: 20,
       offset: 0,
       hasMore: false
     });
@@ -140,7 +140,7 @@ describe('get_meeting_foreseen_activities Tool', () => {
       await handleGetMeetingForeseenActivities({ sittingId: 'sitting-1' });
 
       expect(epClientModule.epClient.getMeetingForeseenActivities).toHaveBeenCalledWith('sitting-1', {
-        limit: 50,
+        limit: 20,
         offset: 0
       });
     });
