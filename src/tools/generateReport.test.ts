@@ -20,8 +20,8 @@ describe('generate_report Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset default mock implementations (clearAllMocks only clears call history)
-    vi.mocked(epClient.getMEPDetails).mockResolvedValue(undefined as never);
-    vi.mocked(epClient.getCommitteeInfo).mockResolvedValue(undefined as never);
+    vi.mocked(epClient.getMEPDetails).mockReset();
+    vi.mocked(epClient.getCommitteeInfo).mockReset();
     vi.mocked(epClient.getParliamentaryQuestions).mockResolvedValue({ data: [] });
     vi.mocked(epClient.getCommitteeDocuments).mockResolvedValue({ data: [] });
     vi.mocked(epClient.getAdoptedTexts).mockResolvedValue({ data: [] });
