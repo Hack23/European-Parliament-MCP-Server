@@ -75,4 +75,6 @@ export interface CLIOptions {
   version?: boolean;
   /** Show health-check / diagnostics JSON and exit */
   health?: boolean;
+  /** Override request timeout in milliseconds (takes precedence over EP_REQUEST_TIMEOUT_MS env var) */
+  timeout?: number;
 }
