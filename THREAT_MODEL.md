@@ -1845,7 +1845,7 @@ graph TB
 | Component | EP MCP Server Implementation | Scope |
 |-----------|------------------------------|-------|
 | **🔐 Authentication** | OS process isolation (stdio transport) — client identity is the spawning process | Process-level identity |
-| **📋 Authorization** | All 61 tools available to any authenticated client; no role-based restrictions in v1.1 | Flat access model |
+| **📋 Authorization** | All 62 tools available to any authenticated client; no role-based restrictions in v1.1 | Flat access model |
 | **📊 Accounting** | AuditLogger tracks every tool invocation with timestamp, tool name, sanitized parameters, duration | Full audit trail |
 
 ---

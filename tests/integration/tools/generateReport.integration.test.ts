@@ -83,7 +83,7 @@ describeIntegration('generate_report Integration Tests', () => {
     validateMCPStructure(result);
     const report = JSON.parse(result.content[0]!.text) as Record<string, unknown>;
     expect(report['reportType']).toBe('VOTING_STATISTICS');
-  }, 60000);
+  }, 120000);
 
   it('should generate LEGISLATION_PROGRESS report', async (ctx) => {
     const result = await retryOrSkip(async () => {
@@ -98,5 +98,5 @@ describeIntegration('generate_report Integration Tests', () => {
     validateMCPStructure(result);
     const report = JSON.parse(result.content[0]!.text) as Record<string, unknown>;
     expect(report['reportType']).toBe('LEGISLATION_PROGRESS');
-  }, 60000);
+  }, 120000);
 });
