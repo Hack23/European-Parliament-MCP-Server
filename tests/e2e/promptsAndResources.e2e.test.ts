@@ -13,7 +13,7 @@ import { MCPTestClient } from './mcpClient.js';
 
 /**
  * E2E test timeout: 180 seconds
- * - API timeout: up to 60s when EP_REQUEST_TIMEOUT_MS=60000 (default 30s / 30000ms)
+ * - API timeout: up to 60s when EP_REQUEST_TIMEOUT_MS=60000 (default 60s / 60000ms)
  * - MCP client timeout: 100s (includes MCP protocol overhead)
  * - CI jitter margin: ~80s (GC pauses, process scheduling, network variability)
  *

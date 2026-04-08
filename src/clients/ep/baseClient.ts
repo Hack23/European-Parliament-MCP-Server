@@ -105,7 +105,7 @@ export function validateApiUrl(url: string, label = 'EP_API_URL'): string {
 /** Default base URL for European Parliament Open Data Portal API v2 — derived from centralized config */
 export const DEFAULT_EP_API_BASE_URL = DEFAULT_API_URL;
 /**
- * Default HTTP request timeout in milliseconds — derived from the centralised
+ * Default HTTP request timeout in milliseconds — derived from the centralized
  * {@link DEFAULT_TIMEOUTS.EP_API_REQUEST_MS} constant in `timeout.ts` so there
  * is a single source of truth for the EP API request timeout value.
  */
