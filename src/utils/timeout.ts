@@ -30,7 +30,7 @@ export interface TimeoutConfig {
  * at the call site rather than relying on environment variables.
  */
 export const DEFAULT_TIMEOUTS = {
-  /** Standard EP API HTTP request (60 s) */
+  /** Standard EP API HTTP request (60 s — some meeting sub-endpoints are slow) */
   EP_API_REQUEST_MS: 60_000,
   /** Short health-check probe (3 s) */
   HEALTH_CHECK_MS: 3_000,

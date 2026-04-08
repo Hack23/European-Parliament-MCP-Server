@@ -31,7 +31,7 @@ describe('get_meeting_activities Tool', () => {
         }
       ],
       total: 1,
-      limit: 50,
+      limit: 20,
       offset: 0,
       hasMore: false
     });
@@ -137,7 +137,7 @@ describe('get_meeting_activities Tool', () => {
 
       expect(epClientModule.epClient.getMeetingActivities).toHaveBeenCalledWith(
         'MTG-PL-2024-001',
-        { limit: 50, offset: 0 }
+        { limit: 20, offset: 0 }
       );
     });
   });

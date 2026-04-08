@@ -38,7 +38,7 @@ import type { ToolResult } from './shared/types.js';
  * @param args - Raw tool arguments provided by the MCP client. Must conform to
  *   {@link GetMeetingPlenarySessionDocumentsSchema}:
  *   - `sittingId` (string, required): EP plenary sitting identifier.
- *   - `limit` (number, optional): Maximum results to return (1–100, default 50).
+ *   - `limit` (number, optional): Maximum results to return (1–100, default 20).
  *   - `offset` (number, optional): Pagination offset (default 0).
  * @returns A promise that resolves to an MCP {@link ToolResult} containing the
  *   plenary session documents for the requested sitting.
@@ -107,12 +107,12 @@ export async function handleGetMeetingPlenarySessionDocuments(args: unknown): Pr
 export const getMeetingPlenarySessionDocumentsToolMetadata = {
   name: 'get_meeting_plenary_session_documents',
   description:
-    'Get plenary session documents for a specific EP meeting/plenary sitting. Returns session documents associated with the meeting. Data source: European Parliament Open Data Portal.',
+    'Get plenary session documents for a specific EP meeting/plenary sitting. Returns session documents associated with the meeting. Note: this endpoint can be slower than decisions; use a smaller limit for faster responses. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       sittingId: { type: 'string', description: 'Meeting / sitting identifier (required)' },
-      limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
+      limit: { type: 'number', description: 'Maximum results to return (1-100, default 20)', default: 20 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },
     required: ['sittingId'],

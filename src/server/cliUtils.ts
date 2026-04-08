@@ -5,11 +5,20 @@
  * heavyweight server modules, so it can be loaded by `src/main.ts`
  * **before** the EP API client singleton is constructed.
  *
+ * `timeout.ts` is a lightweight utility with zero heavyweight deps,
+ * so importing {@link DEFAULT_TIMEOUTS} is safe here.
+ *
  * @module server/cliUtils
  */
 
-/** Default EP API request timeout in milliseconds (10 seconds) */
-export const DEFAULT_REQUEST_TIMEOUT_MS = 10_000;
+import { DEFAULT_TIMEOUTS } from '../utils/timeout.js';
+
+/**
+ * Default EP API request timeout in milliseconds — derived from the centralized
+ * {@link DEFAULT_TIMEOUTS.EP_API_REQUEST_MS} constant in `timeout.ts` so there
+ * is a single source of truth for the EP API request timeout value.
+ */
+export const DEFAULT_REQUEST_TIMEOUT_MS = DEFAULT_TIMEOUTS.EP_API_REQUEST_MS;
 
 /**
  * Parse and validate a timeout string value.

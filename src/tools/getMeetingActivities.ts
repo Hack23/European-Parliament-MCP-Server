@@ -32,8 +32,8 @@ import type { ToolResult } from './shared/types.js';
  *
  * @example
  * ```typescript
- * const result = await handleGetMeetingActivities({ sittingId: 'PV-9-2024-01-15', limit: 50 });
- * // Returns up to 50 activities from the specified plenary sitting
+ * const result = await handleGetMeetingActivities({ sittingId: 'PV-9-2024-01-15', limit: 20 });
+ * // Returns up to 20 activities from the specified plenary sitting
  * ```
  *
  * @security - Input is validated with Zod before any API call.
@@ -83,12 +83,12 @@ export async function handleGetMeetingActivities(args: unknown): Promise<ToolRes
 export const getMeetingActivitiesToolMetadata = {
   name: 'get_meeting_activities',
   description:
-    'Get activities linked to a specific EP plenary sitting (debates, votes, presentations). Requires a sitting ID. Data source: European Parliament Open Data Portal.',
+    'Get activities linked to a specific EP plenary sitting (debates, votes, presentations). Requires a sitting ID. Note: this endpoint can be slower than decisions; use a smaller limit for faster responses. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       sittingId: { type: 'string', description: 'Meeting / sitting identifier (required)' },
-      limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
+      limit: { type: 'number', description: 'Maximum results to return (1-100, default 20)', default: 20 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },
     required: ['sittingId'],

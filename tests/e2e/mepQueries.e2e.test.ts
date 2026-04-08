@@ -14,7 +14,7 @@ import type { MEP } from '../../src/types/europeanParliament.js';
 
 /**
  * E2E test timeout: 180 seconds
- * - API timeout: up to 60s when EP_REQUEST_TIMEOUT_MS=60000 (default 10s)
+ * - API timeout: up to 60s when EP_REQUEST_TIMEOUT_MS=60000 (default 60s)
  * - MCP client timeout: 100s (includes MCP protocol overhead)
  * - CI jitter margin: ~80s (GC pauses, process scheduling, network variability)
  *

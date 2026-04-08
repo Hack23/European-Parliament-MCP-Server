@@ -169,7 +169,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       expect(parsed).toHaveProperty('id');
       expect(parsed).toHaveProperty('name');
       expect(typeof parsed.name).toBe('string');
-    }, 90000);
+    }, 120000);
   });
 
   describe('Core Tool: get_plenary_sessions', () => {
@@ -205,7 +205,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       if (!result) { ctx.skip(); return; }
 
       parseAndValidateNoMockData(result);
-    }, 90000);
+    }, 120000);
   });
 
   describe('Core Tool: search_documents', () => {
@@ -274,7 +274,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       } else {
         expect(parsed).toHaveProperty('statistics');
       }
-    }, 90000);
+    }, 120000);
   });
 
   describe('Advanced Tool: track_legislation', () => {
@@ -297,7 +297,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       expect(parsed).toHaveProperty('procedureId');
       expect(parsed).toHaveProperty('title');
       expect(parsed.confidenceLevel).not.toBe('NONE');
-    }, 90000);
+    }, 120000);
   });
 
   describe('Advanced Tool: generate_report', () => {
@@ -340,7 +340,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       expect(parsed).toHaveProperty('mepId');
       expect(parsed).toHaveProperty('overallScore');
       expect(typeof parsed.overallScore).toBe('number');
-    }, 90000);
+    }, 120000);
   });
 
   describe('OSINT Tool: analyze_coalition_dynamics', () => {
@@ -581,7 +581,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
-    }, 90000);
+    }, 120000);
   });
 
   describe('Phase 4 Tool: get_meeting_decisions', () => {
@@ -603,7 +603,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
-    }, 90000);
+    }, 120000);
   });
 
   describe('Phase 4 Tool: get_mep_declarations', () => {
@@ -757,7 +757,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       if (!result) { ctx.skip(); return; }
 
       parseAndValidateNoMockData(result);
-    }, 90000);
+    }, 120000);
   });
 
   describe('Phase 5 Tool: get_procedure_events', () => {
@@ -776,7 +776,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       if (!result) { ctx.skip(); return; }
 
       parseAndValidateNoMockData(result);
-    }, 90000);
+    }, 120000);
   });
 
   // ══════════════════════════════════════════════════════════════
@@ -899,7 +899,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       if (!result) { ctx.skip(); return; }
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
-    }, 90000);
+    }, 120000);
   });
 
   describe('Phase 5 Tool: get_meeting_plenary_session_document_items', () => {
@@ -919,6 +919,6 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       if (!result) { ctx.skip(); return; }
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
-    }, 90000);
+    }, 120000);
   });
 });
