@@ -6,6 +6,7 @@
 
 import { describe, it, expect, afterEach } from 'vitest';
 import { parseTimeoutValue, resolveEffectiveTimeout, DEFAULT_REQUEST_TIMEOUT_MS } from './cliUtils.js';
+import { DEFAULT_TIMEOUTS } from '../utils/timeout.js';
 
 // ── parseTimeoutValue ──────────────────────────────────────────────
 
@@ -111,7 +112,7 @@ describe('resolveEffectiveTimeout', () => {
 // ── DEFAULT_REQUEST_TIMEOUT_MS ─────────────────────────────────────
 
 describe('DEFAULT_REQUEST_TIMEOUT_MS', () => {
-  it('equals 10000 (10 seconds)', () => {
-    expect(DEFAULT_REQUEST_TIMEOUT_MS).toBe(10_000);
+  it('derives from DEFAULT_TIMEOUTS.EP_API_REQUEST_MS (single source of truth)', () => {
+    expect(DEFAULT_REQUEST_TIMEOUT_MS).toBe(DEFAULT_TIMEOUTS.EP_API_REQUEST_MS);
   });
 });

@@ -39,7 +39,7 @@ import type { ToolResult } from './shared/types.js';
  * @param args - Raw tool arguments provided by the MCP client. Must conform to
  *   {@link GetMeetingPlenarySessionDocumentItemsSchema}:
  *   - `sittingId` (string, required): EP plenary sitting identifier.
- *   - `limit` (number, optional): Maximum results to return (1–100, default 50).
+ *   - `limit` (number, optional): Maximum results to return (1–100, default 20).
  *   - `offset` (number, optional): Pagination offset (default 0).
  * @returns A promise that resolves to an MCP {@link ToolResult} containing the
  *   plenary session document items for the requested sitting.
@@ -53,7 +53,7 @@ import type { ToolResult } from './shared/types.js';
  * ```typescript
  * const result = await handleGetMeetingPlenarySessionDocumentItems({
  *   sittingId: 'PV-9-2024-04-22',
- *   limit: 50,
+ *   limit: 20,
  *   offset: 0
  * });
  * // Returns individual agenda-item documents for plenary sitting PV-9-2024-04-22

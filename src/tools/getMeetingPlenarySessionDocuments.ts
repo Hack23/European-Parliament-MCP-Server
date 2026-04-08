@@ -38,7 +38,7 @@ import type { ToolResult } from './shared/types.js';
  * @param args - Raw tool arguments provided by the MCP client. Must conform to
  *   {@link GetMeetingPlenarySessionDocumentsSchema}:
  *   - `sittingId` (string, required): EP plenary sitting identifier.
- *   - `limit` (number, optional): Maximum results to return (1–100, default 50).
+ *   - `limit` (number, optional): Maximum results to return (1–100, default 20).
  *   - `offset` (number, optional): Pagination offset (default 0).
  * @returns A promise that resolves to an MCP {@link ToolResult} containing the
  *   plenary session documents for the requested sitting.
