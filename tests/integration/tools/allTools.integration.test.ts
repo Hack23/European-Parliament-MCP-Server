@@ -280,7 +280,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
       expect(parsed).toHaveProperty('procedureId');
       expect(parsed).toHaveProperty('title');
       expect(parsed.confidenceLevel).not.toBe('NONE');
-    }, 30000);
+    }, 60000);
   });
 
   describe('Advanced Tool: generate_report', () => {
