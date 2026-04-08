@@ -30,5 +30,5 @@ describeIntegration('get_voting_records Integration Tests', () => {
     response.data.forEach((record: unknown) => {
       validateVotingRecordStructure(record);
     });
-  }, 60000);
+  }, 90000);
 });

@@ -32,7 +32,7 @@ describeIntegration('generate_report Integration Tests', () => {
       testMEPId = firstMep.id;
       console.log(`[Integration] Using real MEP ID: ${testMEPId}`);
     }
-  }, 60000);
+  }, 90000);
 
   it('should generate MEP_ACTIVITY report', async (ctx) => {
     if (!testMEPId) { ctx.skip(); return; }

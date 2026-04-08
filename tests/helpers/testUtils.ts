@@ -129,7 +129,7 @@ export async function retryOrSkip<T>(
 
       // Skip immediately on rate limit or network/timeout errors – do NOT retry.
       // Retrying these would exceed the test timeout because each attempt can take
-      // up to EP_REQUEST_TIMEOUT_MS (default 10s, up to 60s in CI) before failing.
+      // up to EP_REQUEST_TIMEOUT_MS (default 60s) before failing.
       if (isRateLimitOrNetworkError(error)) {
         console.warn(`[SKIP] ${testName}: rate limited or network error — ${lastError.message}`);
         return undefined;

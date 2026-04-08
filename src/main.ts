@@ -7,7 +7,7 @@
  * is set before the EP API client singleton is created at
  * module-load time.
  *
- * Precedence: `--timeout` CLI arg > `EP_REQUEST_TIMEOUT_MS` env var > default (10 s)
+ * Precedence: `--timeout` CLI arg > `EP_REQUEST_TIMEOUT_MS` env var > default (60 s, from DEFAULT_TIMEOUTS.EP_API_REQUEST_MS)
  *
  * @module main
  */

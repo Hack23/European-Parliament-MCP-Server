@@ -46,7 +46,7 @@ describeIntegration('European Parliament API Integration', () => {
         expect(mep).toHaveProperty('id');
         expect(mep).toHaveProperty('name');
       }
-    }, 60000);
+    }, 90000);
   });
 
   describe('Rate Limiting', () => {
@@ -62,7 +62,7 @@ describeIntegration('European Parliament API Integration', () => {
 
       const availableAfter = rateLimiter.getAvailableTokens();
       expect(availableAfter).toBeGreaterThanOrEqual(0);
-    }, 60000);
+    }, 90000);
   });
 
   describe('Error Handling', () => {
@@ -77,7 +77,7 @@ describeIntegration('European Parliament API Integration', () => {
 
       expect(result).toHaveProperty('data');
       expect(Array.isArray(result.data)).toBe(true);
-    }, 60000);
+    }, 90000);
 
     it('should reject requests to unreachable hosts', async () => {
       const badClient = new EuropeanParliamentClient({
@@ -113,6 +113,6 @@ describeIntegration('European Parliament API Integration', () => {
           expect(typeof mep.politicalGroup).toBe('string');
         }
       });
-    }, 60000);
+    }, 90000);
   });
 });

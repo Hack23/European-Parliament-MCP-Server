@@ -31,7 +31,7 @@ describeIntegration('get_meps Integration Tests', () => {
     response.data.forEach((mep: unknown) => {
       validateMEPStructure(mep);
     });
-  }, 60000);
+  }, 90000);
 
   it('should filter MEPs by country', async (ctx) => {
     const result = await retryOrSkip(async () => {
@@ -46,7 +46,7 @@ describeIntegration('get_meps Integration Tests', () => {
       validateMEPStructure(mep);
       expect(['SE', 'Unknown']).toContain((mep as { country: string }).country);
     });
-  }, 60000);
+  }, 90000);
 
   it('should paginate correctly', async (ctx) => {
     const page1 = await retryOrSkip(async () => {

@@ -24,6 +24,7 @@ import {
 } from './baseClient.js';
 import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../../utils/rateLimiter.js';
+import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
 // Mock undici so no real HTTP calls are made
 vi.mock('undici', () => ({
@@ -90,8 +91,8 @@ describe('Default configuration constants', () => {
     expect(DEFAULT_EP_API_BASE_URL).toBe('https://data.europarl.europa.eu/api/v2/');
   });
 
-  it('DEFAULT_REQUEST_TIMEOUT_MS should be 60000', () => {
-    expect(DEFAULT_REQUEST_TIMEOUT_MS).toBe(60_000);
+  it('DEFAULT_REQUEST_TIMEOUT_MS should equal DEFAULT_TIMEOUTS.EP_API_REQUEST_MS (single source of truth)', () => {
+    expect(DEFAULT_REQUEST_TIMEOUT_MS).toBe(DEFAULT_TIMEOUTS.EP_API_REQUEST_MS);
   });
 
   it('DEFAULT_RETRY_ENABLED should be true', () => {
