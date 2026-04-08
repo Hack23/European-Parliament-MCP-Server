@@ -28,7 +28,7 @@
 
 import { randomUUID } from 'node:crypto';
 import { CorrelateIntelligenceSchema, OsintStandardOutputSchema } from '../schemas/europeanParliament.js';
-import { buildToolResponse } from './shared/responseBuilder.js';
+import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
 import type { ToolResult, OsintStandardOutput, ConfidenceLevel } from './shared/types.js';
 import type { DataAvailability } from '../types/index.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
@@ -724,6 +724,31 @@ function buildCorrelationWarnings(
   return warnings;
 }
 
+/**
+ * Build the final tool response, returning an error when data is unavailable.
+ *
+ * When `dataAvailability` is `'UNAVAILABLE'` (all downstream tools failed),
+ * the function returns `buildErrorResponse` with `isError: true` so AI agents
+ * do not confuse "no data fetched" with "no anomalies found".
+ */
+function buildCorrelationResponse(
+  report: CorrelatedIntelligenceReport
+): ToolResult {
+  if (report.dataAvailability === 'UNAVAILABLE') {
+    return buildErrorResponse(
+      new ToolError({
+        toolName: 'correlate_intelligence',
+        operation: 'correlateIntelligence',
+        message: 'All downstream intelligence tools failed — no data available for correlation analysis. ' +
+          'The result should not be interpreted as "no anomalies found".',
+        isRetryable: true,
+      }),
+      'correlate_intelligence',
+    );
+  }
+  return buildToolResponse(report);
+}
+
 // ---------------------------------------------------------------------------
 // Main handler
 // ---------------------------------------------------------------------------
@@ -919,7 +944,7 @@ export async function handleCorrelateIntelligence(
     });
   }
 
-  return buildToolResponse(report);
+  return buildCorrelationResponse(report);
 }
 
 // ---------------------------------------------------------------------------

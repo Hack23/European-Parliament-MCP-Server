@@ -564,31 +564,33 @@ describe('correlate_intelligence Tool', () => {
       expect(['HIGH', 'MEDIUM', 'LOW']).toContain(report.confidenceLevel);
     });
 
-    it('should return LOW confidence when all tools fail', async () => {
+    it('should return error response when all tools fail', async () => {
       vi.mocked(handleAssessMepInfluence).mockRejectedValue(new Error('fail'));
       vi.mocked(handleDetectVotingAnomalies).mockRejectedValue(new Error('fail'));
       vi.mocked(handleEarlyWarningSystem).mockRejectedValue(new Error('fail'));
       vi.mocked(handleAnalyzeCoalitionDynamics).mockRejectedValue(new Error('fail'));
 
       const result = await handleCorrelateIntelligence({ mepIds: ['123'] });
-      const report = JSON.parse(result.content[0]!.text) as { confidenceLevel: string };
-      // Falls back to LOW (empty levels default) — not MEDIUM, since no data at all
-      expect(report.confidenceLevel).toBe('LOW');
+      // When all tools fail, data is UNAVAILABLE → error response
+      expect(result.isError).toBe(true);
     });
   });
 
   // ---- Data availability markers ------------------------------------------
 
   describe('Data Availability Markers', () => {
-    it('should return UNAVAILABLE when all dependent tools fail', async () => {
+    it('should return error with isError flag when all dependent tools fail', async () => {
       vi.mocked(handleAssessMepInfluence).mockRejectedValue(new Error('fail'));
       vi.mocked(handleDetectVotingAnomalies).mockRejectedValue(new Error('fail'));
       vi.mocked(handleEarlyWarningSystem).mockRejectedValue(new Error('fail'));
       vi.mocked(handleAnalyzeCoalitionDynamics).mockRejectedValue(new Error('fail'));
 
       const result = await handleCorrelateIntelligence({ mepIds: ['123'] });
-      const report = JSON.parse(result.content[0]!.text) as { dataAvailability: string };
-      expect(report.dataAvailability).toBe('UNAVAILABLE');
+      expect(result.isError).toBe(true);
+      const payload = JSON.parse(result.content[0]!.text) as { error: string; toolName: string; retryable: boolean };
+      expect(payload.toolName).toBe('correlate_intelligence');
+      expect(payload.error).toContain('no data available');
+      expect(payload.retryable).toBe(true);
     });
 
     it('should return PARTIAL when tools succeed but produce no correlations', async () => {
