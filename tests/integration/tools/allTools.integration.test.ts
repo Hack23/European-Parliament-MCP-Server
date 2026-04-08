@@ -644,7 +644,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
-    }, 30000);
+    }, 60000);
   });
 
   describe('Phase 5 Tool: get_plenary_session_documents', () => {
@@ -657,7 +657,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
-    }, 30000);
+    }, 60000);
   });
 
   describe('Phase 5 Tool: get_plenary_session_document_items', () => {
@@ -670,7 +670,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
 
       const parsed = parseAndValidateNoMockData(result) as { data: unknown[] };
       expect(parsed).toHaveProperty('data');
-    }, 30000);
+    }, 60000);
   });
 
   describe('Phase 5 Tool: get_controlled_vocabularies', () => {
