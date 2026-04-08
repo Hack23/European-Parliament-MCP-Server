@@ -54,12 +54,13 @@ describe('main.ts CLI entry point', () => {
     expect(config['requestTimeoutMs']).toBe('90000');
   });
 
-  it('--health without --timeout shows default 10000', () => {
+  it('--health without --timeout shows default from DEFAULT_TIMEOUTS.EP_API_REQUEST_MS', () => {
     const { stdout, exitCode } = run(['--health']);
     expect(exitCode).toBe(0);
     const health = JSON.parse(stdout) as Record<string, unknown>;
     const config = health['configuration'] as Record<string, unknown>;
-    expect(config['requestTimeoutMs']).toBe('10000');
+    // cliUtils.DEFAULT_REQUEST_TIMEOUT_MS derives from DEFAULT_TIMEOUTS.EP_API_REQUEST_MS (60_000)
+    expect(config['requestTimeoutMs']).toBe('60000');
   });
 
   // ── --timeout error cases ─────────────────────────────────────────
