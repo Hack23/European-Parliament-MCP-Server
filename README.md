@@ -439,6 +439,18 @@ Add to `~/.cursor/mcp.json` (or project-level `.cursor/mcp.json`):
 }
 ```
 
+#### Custom Timeout Configuration
+
+Use `--timeout <ms>` to override the default 10 s request timeout. This is especially useful in `copilot-mcp.json` or other contexts where the `env` field may not reliably propagate:
+
+```json
+{
+  "args": ["european-parliament-mcp-server", "--timeout", "90000"]
+}
+```
+
+Precedence: `--timeout` CLI arg > `EP_REQUEST_TIMEOUT_MS` env var > default (10 000 ms).
+
 ---
 
 ## 📚 Documentation
