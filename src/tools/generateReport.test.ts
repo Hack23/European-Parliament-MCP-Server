@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { handleGenerateReport, generateReportToolMetadata } from './generateReport.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { APIError } from '../clients/ep/baseClient.js';
 import { ToolError } from './shared/errors.js';
 
 // Mock the EP client
@@ -281,9 +282,15 @@ describe('generate_report Tool', () => {
         subjectId: 'MEP-124810'
       });
 
-      const parsed = JSON.parse(result.content[0].text) as { subject: string; statistics: { questionsSubmitted: number } };
+      const parsed = JSON.parse(result.content[0].text) as {
+        subject: string;
+        statistics: { questionsSubmitted: number };
+        dataQualityWarnings: string[];
+      };
       expect(parsed.subject).toBe('Unknown MEP');
       expect(parsed.statistics.questionsSubmitted).toBe(1);
+      // Warning should say "upstream data source failed", not "subject ID was not provided"
+      expect(parsed.dataQualityWarnings.some((w: string) => w.includes('upstream data source failed'))).toBe(true);
     });
 
     it('should throw ToolError for committee reports when all EP API calls fail', async () => {
@@ -297,6 +304,44 @@ describe('generate_report Tool', () => {
           subjectId: 'COMM-ENVI'
         })
       ).rejects.toThrow('EP API data unavailable for COMMITTEE_PERFORMANCE report');
+    });
+
+    it('should throw non-retryable ToolError when MEP subjectId returns 404', async () => {
+      vi.mocked(epClient.getMEPDetails).mockRejectedValue(new APIError('Not Found', 404));
+
+      try {
+        await handleGenerateReport({
+          reportType: 'MEP_ACTIVITY',
+          subjectId: 'INVALID-ID'
+        });
+        expect.unreachable('Should have thrown');
+      } catch (error: unknown) {
+        expect(error).toBeInstanceOf(ToolError);
+        const toolError = error as ToolError;
+        expect(toolError.errorCode).toBe('UPSTREAM_404');
+        expect(toolError.httpStatus).toBe(404);
+        expect(toolError.isRetryable).toBe(false);
+        expect(toolError.message).toContain('MEP not found');
+      }
+    });
+
+    it('should throw non-retryable ToolError when committee subjectId returns 404', async () => {
+      vi.mocked(epClient.getCommitteeInfo).mockRejectedValue(new APIError('Not Found', 404));
+
+      try {
+        await handleGenerateReport({
+          reportType: 'COMMITTEE_PERFORMANCE',
+          subjectId: 'INVALID-COMM'
+        });
+        expect.unreachable('Should have thrown');
+      } catch (error: unknown) {
+        expect(error).toBeInstanceOf(ToolError);
+        const toolError = error as ToolError;
+        expect(toolError.errorCode).toBe('UPSTREAM_404');
+        expect(toolError.httpStatus).toBe(404);
+        expect(toolError.isRetryable).toBe(false);
+        expect(toolError.message).toContain('Committee not found');
+      }
     });
   });
 

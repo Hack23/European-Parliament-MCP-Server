@@ -7,8 +7,9 @@
 import type { z } from 'zod';
 import type { GenerateReportSchema } from '../../schemas/europeanParliament.js';
 import { epClient } from '../../clients/europeanParliamentClient.js';
+import { APIError } from '../../clients/ep/baseClient.js';
 import { auditLogger, toErrorMessage } from '../../utils/auditLogger.js';
-import type { MEPDetails } from '../../types/europeanParliament.js';
+import type { MEPDetails, Committee } from '../../types/europeanParliament.js';
 import type { Report } from './types.js';
 import { ToolError } from '../shared/errors.js';
 import {
@@ -49,12 +50,23 @@ function extractMEPData(
   };
 }
 
-/** Fetch MEP details (null if unavailable or subjectId not provided) */
+/** Fetch MEP details (null if subjectId not provided; throws ToolError for 404) */
 async function fetchMEPDetails(subjectId: string | undefined): Promise<MEPDetails | null> {
   if (subjectId === undefined) return null;
   try {
     return await epClient.getMEPDetails(subjectId);
   } catch (error: unknown) {
+    // 404 = invalid subjectId — throw non-retryable error immediately
+    if (error instanceof APIError && error.statusCode === 404) {
+      throw new ToolError({
+        toolName: 'generate_report',
+        operation: 'generateReport',
+        message: `MEP not found: '${subjectId}' is not a valid MEP identifier`,
+        isRetryable: false,
+        errorCode: 'UPSTREAM_404',
+        httpStatus: 404,
+      });
+    }
     auditLogger.logError('generate_report.fetch_mep_details', { subjectId }, toErrorMessage(error));
     return null;
   }
@@ -72,12 +84,23 @@ async function fetchQuestionCount(subjectId: string | undefined): Promise<number
   }
 }
 
-/** Fetch committee info (null if unavailable or subjectId not provided) */
-async function fetchCommitteeInfo(subjectId: string | undefined): Promise<{ name: string; members: unknown[] } | null> {
+/** Fetch committee info (null if subjectId not provided; throws ToolError for 404) */
+async function fetchCommitteeInfo(subjectId: string | undefined): Promise<Committee | null> {
   if (subjectId === undefined) return null;
   try {
     return await epClient.getCommitteeInfo({ id: subjectId });
   } catch (error: unknown) {
+    // 404 = invalid subjectId — throw non-retryable error immediately
+    if (error instanceof APIError && error.statusCode === 404) {
+      throw new ToolError({
+        toolName: 'generate_report',
+        operation: 'generateReport',
+        message: `Committee not found: '${subjectId}' is not a valid committee identifier`,
+        isRetryable: false,
+        errorCode: 'UPSTREAM_404',
+        httpStatus: 404,
+      });
+    }
     auditLogger.logError('generate_report.fetch_committee_info', { subjectId }, toErrorMessage(error));
     return null;
   }
@@ -131,11 +154,14 @@ async function fetchProcedureCount(year: number): Promise<number | null> {
 /** Build data quality warnings for MEP activity report */
 function buildMEPWarnings(
   mep: MEPDetails | null,
-  questionsSubmitted: number | null
+  questionsSubmitted: number | null,
+  subjectIdProvided: boolean
 ): string[] {
   const warnings: string[] = [];
   if (mep === null) {
-    warnings.push('MEP details not available; subject ID was not provided.');
+    warnings.push(subjectIdProvided
+      ? 'MEP details unavailable from EP API; upstream data source failed.'
+      : 'MEP details not available; subject ID was not provided.');
   }
   if (questionsSubmitted === null) {
     warnings.push('Parliamentary questions count unavailable from EP API.');
@@ -149,13 +175,16 @@ function buildMEPWarnings(
 
 /** Build data quality warnings for committee performance report */
 function buildCommitteeWarnings(
-  committee: { name: string; members: unknown[] } | null,
+  committee: Committee | null,
   documentsProduced: number | null,
-  reportsProduced: number | null
+  reportsProduced: number | null,
+  subjectIdProvided: boolean
 ): string[] {
   const warnings: string[] = [];
   if (committee === null) {
-    warnings.push('Committee details not available; subject ID was not provided.');
+    warnings.push(subjectIdProvided
+      ? 'Committee details unavailable from EP API; upstream data source failed.'
+      : 'Committee details not available; subject ID was not provided.');
   }
   if (documentsProduced === null) {
     warnings.push('Committee documents count unavailable from EP API.');
@@ -254,7 +283,7 @@ export async function generateMEPActivityReport(
   if (params.subjectId !== undefined) {
     throwIfAllDataUnavailable('MEP_ACTIVITY', [mep, questionsSubmitted]);
   }
-  const warnings = buildMEPWarnings(mep, questionsSubmitted);
+  const warnings = buildMEPWarnings(mep, questionsSubmitted, params.subjectId !== undefined);
   
   return {
     reportType: 'MEP_ACTIVITY',
@@ -303,7 +332,7 @@ export async function generateCommitteePerformanceReport(
   const documentsProduced = await fetchDocumentCount(year);
   const reportsProduced = await fetchAdoptedTextCount(year);
   throwIfAllDataUnavailable('COMMITTEE_PERFORMANCE', [committee, documentsProduced, reportsProduced]);
-  const warnings = buildCommitteeWarnings(committee, documentsProduced, reportsProduced);
+  const warnings = buildCommitteeWarnings(committee, documentsProduced, reportsProduced, params.subjectId !== undefined);
   
   return {
     reportType: 'COMMITTEE_PERFORMANCE',
