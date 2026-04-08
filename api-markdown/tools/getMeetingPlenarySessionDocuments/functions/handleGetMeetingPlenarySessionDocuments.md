@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../README.md)
 
 ***
 
@@ -26,7 +26,7 @@ sitting by calling `GET /meetings/{sitting-id}/plenary-session-documents` via
 Raw tool arguments provided by the MCP client. Must conform to
   [GetMeetingPlenarySessionDocumentsSchema](../../../schemas/ep/activities/variables/GetMeetingPlenarySessionDocumentsSchema.md):
   - `sittingId` (string, required): EP plenary sitting identifier.
-  - `limit` (number, optional): Maximum results to return (1–100, default 50).
+  - `limit` (number, optional): Maximum results to return (1–100, default 20).
   - `offset` (number, optional): Pagination offset (default 0).
 
 ## Returns

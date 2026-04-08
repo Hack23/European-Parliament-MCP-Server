@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../README.md)
 
 ***
 
@@ -18,9 +18,9 @@ at the call site rather than relying on environment variables.
 
 ### EP\_API\_REQUEST\_MS
 
-> `readonly` **EP\_API\_REQUEST\_MS**: `10000` = `10_000`
+> `readonly` **EP\_API\_REQUEST\_MS**: `60000` = `60_000`
 
-Standard EP API HTTP request (10 s)
+Standard EP API HTTP request (60 s — some meeting sub-endpoints are slow)
 
 ### HEALTH\_CHECK\_MS
 

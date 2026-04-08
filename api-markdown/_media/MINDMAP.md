@@ -228,8 +228,8 @@ mindmap
 
 ```mermaid
 mindmap
-  root((61 MCP Tools))
-    Core Tools 7
+  root((62 MCP Tools))
+    Core Tools 8
       get_meps
         Filter by country
         Filter by political group
@@ -257,6 +257,10 @@ mindmap
         By author MEP
         By type
         By status
+      get_server_health
+        Service status
+        Feed availability
+        Readiness check
     Advanced Analysis 3
       analyze_voting_patterns
         MEP cohesion scoring

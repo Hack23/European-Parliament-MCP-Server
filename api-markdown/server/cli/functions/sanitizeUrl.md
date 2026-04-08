@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **sanitizeUrl**(`urlString`): `string`
 
-Defined in: [server/cli.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L30)
+Defined in: [server/cli.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cli.ts#L32)
 
 **`Internal`**
 

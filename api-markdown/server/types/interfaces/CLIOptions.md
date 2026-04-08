@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../README.md)
 
 ***
 
@@ -32,6 +32,16 @@ Show health-check / diagnostics JSON and exit
 Defined in: [server/types.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L73)
 
 Show usage / help text and exit
+
+***
+
+### timeout?
+
+> `optional` **timeout?**: `number`
+
+Defined in: [server/types.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L79)
+
+Override request timeout in milliseconds (takes precedence over EP_REQUEST_TIMEOUT_MS env var)
 
 ***
 

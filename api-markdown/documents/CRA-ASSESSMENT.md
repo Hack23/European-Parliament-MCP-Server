@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../README.md)
+[**European Parliament MCP Server API v1.2.0**](../README.md)
 
 ***
 
@@ -82,7 +82,7 @@ This assessment documents the European Parliament MCP Server's conformity with t
 | 🏷️ Version Tag | v1.1.13 (reflects current project state) |
 | 🔗 Repository | <https://github.com/Hack23/European-Parliament-MCP-Server> |
 | 📧 Security Contact | security@hack23.org |
-| 🎯 Purpose | MCP server providing AI assistants with structured access to European Parliament open datasets (MEPs, plenary sessions, committees, legislative documents, parliamentary questions) via 61 tools, 9 resources, and 7 prompts |
+| 🎯 Purpose | MCP server providing AI assistants with structured access to European Parliament open datasets (MEPs, plenary sessions, committees, legislative documents, parliamentary questions) via 62 tools, 9 resources, and 7 prompts |
 | 🏪 Market | Open Source |
 
 ### 🏪 Market Category:
@@ -166,7 +166,7 @@ graph LR
 
 **📋 ISMS Policy Integration:**
 - **🏗️ Architecture & Design:** Implementation aligned with [🔐 Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
-- **📦 Asset Management:** All 61 tools + 9 resources documented in [ARCHITECTURE.md](ARCHITECTURE.md)
+- **📦 Asset Management:** All 62 tools + 9 resources documented in [ARCHITECTURE.md](ARCHITECTURE.md)
 - **🔒 Encryption Standards:** HTTPS-only EP API communication per [🔒 Cryptography Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Cryptography_Policy.md)
 - **🌐 Network Security:** stdio transport (no network listener) per [🌐 Network Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Network_Security_Policy.md)
 
@@ -181,7 +181,7 @@ Reference: [📊 Risk Assessment Methodology](https://github.com/Hack23/ISMS-PUB
 | 🚨 **CRA Risk Category** | 🎯 Asset | 📊 Likelihood | 💥 Impact (C/I/A) | 🛡️ CRA Control Implementation | ⚖️ Residual | 📋 Evidence |
 |--------------------------|----------|---------------|------------------|------------------------------|-------------|-------------|
 | **Supply Chain Attack** *(Art. 11)* | npm dependencies | M | L/H/M | SBOM + SLSA provenance + Dependabot + npm audit | L | [Attestations](https://github.com/Hack23/European-Parliament-MCP-Server/attestations) |
-| **Input Injection** *(Art. 11)* | MCP tool parameters | M | L/M/L | Zod schema validation on all 61 tools | L | `src/tools/` (Zod schemas) |
+| **Input Injection** *(Art. 11)* | MCP tool parameters | M | L/M/L | Zod schema validation on all 62 tools | L | `src/tools/` (Zod schemas) |
 | **Data Integrity** *(Art. 11)* | EP API responses | L | L/H/L | HTTPS transport + response validation + Zod parsing | L | [SECURITY_ARCHITECTURE.md](SECURITY_ARCHITECTURE.md) |
 | **Denial of Service** *(Art. 11)* | Rate limiter | M | L/L/H | Token-bucket rate limiting (100 req/min) + LRU cache | L | `src/clients/ep/baseClient.ts` |
 | **Component Vulnerability** *(Art. 11)* | npm packages | M | L/M/M | CodeQL + npm audit + Dependabot + weekly scans | L | [.github/workflows/](https://github.com/Hack23/European-Parliament-MCP-Server/tree/main/.github/workflows) |
@@ -205,7 +205,7 @@ Reference: [📊 Risk Assessment Methodology](https://github.com/Hack23/ISMS-PUB
 
 | 📋 **CRA Annex I Requirement** | ✅ Status | 📋 Implementation Evidence |
 |--------------------------------|-----------|---------------------------|
-| **🛡️ § 1.1 — Secure by Design** | [x] | TypeScript strict mode, Zod validation for all 61 tools, defense-in-depth architecture — [SECURITY_ARCHITECTURE.md](SECURITY_ARCHITECTURE.md) |
+| **🛡️ § 1.1 — Secure by Design** | [x] | TypeScript strict mode, Zod validation for all 62 tools, defense-in-depth architecture — [SECURITY_ARCHITECTURE.md](SECURITY_ARCHITECTURE.md) |
 | **🔒 § 1.2 — Secure by Default** | [x] | Safe defaults, no credentials required, public data only, stdio transport (no network exposure) — `src/config.ts` |
 | **🏷️ § 2.1 — Personal Data Protection** | [x] | Public data only, no PII storage, GDPR compliance, data minimization in API requests — [SECURITY_ARCHITECTURE.md](SECURITY_ARCHITECTURE.md) |
 | **🔍 § 2.2 — Vulnerability Disclosure** | [x] | Public VDP via [SECURITY.md](SECURITY.md) + GitHub Security Advisories + [⚠️ Vulnerability Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) |

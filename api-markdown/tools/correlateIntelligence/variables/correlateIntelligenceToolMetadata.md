@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **correlateIntelligenceToolMetadata**: `object`
 
-Defined in: [tools/correlateIntelligence.ts:932](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L932)
+Defined in: [tools/correlateIntelligence.ts:958](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/correlateIntelligence.ts#L958)
 
 MCP tool metadata for `correlate_intelligence` registration.
 

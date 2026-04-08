@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../README.md)
 
 ***
 
@@ -18,7 +18,7 @@ the application.
 
 **Environment Variables:**
 - `EP_API_URL`: Override base API URL
-- `EP_REQUEST_TIMEOUT_MS`: Override request timeout in milliseconds (default: 10000)
+- `EP_REQUEST_TIMEOUT_MS`: Override request timeout in milliseconds (default: `DEFAULT_REQUEST_TIMEOUT_MS`)
 
 ## Example
 

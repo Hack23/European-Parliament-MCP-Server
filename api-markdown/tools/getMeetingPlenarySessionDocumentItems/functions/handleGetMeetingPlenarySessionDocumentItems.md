@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../README.md)
 
 ***
 
@@ -27,7 +27,7 @@ using [buildToolResponse](../../shared/responseBuilder/functions/buildToolRespon
 Raw tool arguments provided by the MCP client. Must conform to
   [GetMeetingPlenarySessionDocumentItemsSchema](../../../schemas/ep/activities/variables/GetMeetingPlenarySessionDocumentItemsSchema.md):
   - `sittingId` (string, required): EP plenary sitting identifier.
-  - `limit` (number, optional): Maximum results to return (1–100, default 50).
+  - `limit` (number, optional): Maximum results to return (1–100, default 20).
   - `offset` (number, optional): Pagination offset (default 0).
 
 ## Returns
@@ -56,7 +56,7 @@ If the European Parliament API is unreachable or returns an error response.
 ```typescript
 const result = await handleGetMeetingPlenarySessionDocumentItems({
   sittingId: 'PV-9-2024-04-22',
-  limit: 50,
+  limit: 20,
   offset: 0
 });
 // Returns individual agenda-item documents for plenary sitting PV-9-2024-04-22

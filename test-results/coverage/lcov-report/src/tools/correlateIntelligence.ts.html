@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">91.35% </span>
+                <span class="strong">91.48% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>169/185</span>
+                <span class='fraction'>172/188</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.66% </span>
+                <span class="strong">81.96% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>98/120</span>
+                <span class='fraction'>100/122</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.29% </span>
+                <span class="strong">97.36% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>36/37</span>
+                <span class='fraction'>37/38</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">91.77% </span>
+                <span class="strong">91.92% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>145/158</span>
+                <span class='fraction'>148/161</span>
             </div>
         
             
@@ -1033,7 +1033,33 @@
 <a name='L968'></a><a href='#L968'>968</a>
 <a name='L969'></a><a href='#L969'>969</a>
 <a name='L970'></a><a href='#L970'>970</a>
-<a name='L971'></a><a href='#L971'>971</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L971'></a><a href='#L971'>971</a>
+<a name='L972'></a><a href='#L972'>972</a>
+<a name='L973'></a><a href='#L973'>973</a>
+<a name='L974'></a><a href='#L974'>974</a>
+<a name='L975'></a><a href='#L975'>975</a>
+<a name='L976'></a><a href='#L976'>976</a>
+<a name='L977'></a><a href='#L977'>977</a>
+<a name='L978'></a><a href='#L978'>978</a>
+<a name='L979'></a><a href='#L979'>979</a>
+<a name='L980'></a><a href='#L980'>980</a>
+<a name='L981'></a><a href='#L981'>981</a>
+<a name='L982'></a><a href='#L982'>982</a>
+<a name='L983'></a><a href='#L983'>983</a>
+<a name='L984'></a><a href='#L984'>984</a>
+<a name='L985'></a><a href='#L985'>985</a>
+<a name='L986'></a><a href='#L986'>986</a>
+<a name='L987'></a><a href='#L987'>987</a>
+<a name='L988'></a><a href='#L988'>988</a>
+<a name='L989'></a><a href='#L989'>989</a>
+<a name='L990'></a><a href='#L990'>990</a>
+<a name='L991'></a><a href='#L991'>991</a>
+<a name='L992'></a><a href='#L992'>992</a>
+<a name='L993'></a><a href='#L993'>993</a>
+<a name='L994'></a><a href='#L994'>994</a>
+<a name='L995'></a><a href='#L995'>995</a>
+<a name='L996'></a><a href='#L996'>996</a>
+<a name='L997'></a><a href='#L997'>997</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1769,6 +1795,32 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">38x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">36x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -2033,7 +2085,7 @@
 &nbsp;
 import { randomUUID } from 'node:crypto';
 import { CorrelateIntelligenceSchema, OsintStandardOutputSchema } from '../schemas/europeanParliament.js';
-import { buildToolResponse } from './shared/responseBuilder.js';
+import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
 import type { ToolResult, OsintStandardOutput, ConfidenceLevel } from './shared/types.js';
 import type { DataAvailability } from '../types/index.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
@@ -2729,6 +2781,32 @@ function buildCorrelationWarnings(
   return warnings;
 }
 &nbsp;
+/**
+ * Build the final tool response, returning an error when data is unavailable.
+ *
+ * When `dataAvailability` is `'UNAVAILABLE'` (all downstream tools failed),
+ * the function returns `buildErrorResponse` with `isError: true` so AI agents
+ * do not confuse "no data fetched" with "no anomalies found".
+ */
+function buildCorrelationResponse(
+  report: CorrelatedIntelligenceReport
+): ToolResult {
+  if (report.dataAvailability === 'UNAVAILABLE') {
+    return buildErrorResponse(
+      new ToolError({
+        toolName: 'correlate_intelligence',
+        operation: 'correlateIntelligence',
+        message: 'All downstream intelligence tools failed — no data available for correlation analysis. ' +
+          'The result should not be interpreted as "no anomalies found".',
+        errorCode: 'UPSTREAM_503',
+        httpStatus: 503,
+      }),
+      'correlate_intelligence',
+    );
+  }
+  return buildToolResponse(report);
+}
+&nbsp;
 // ---------------------------------------------------------------------------
 // Main handler
 // ---------------------------------------------------------------------------
@@ -2924,7 +3002,7 @@ export async function handleCorrelateIntelligence(
     });
   }
 &nbsp;
-  return buildToolResponse(report);
+  return buildCorrelationResponse(report);
 }
 &nbsp;
 // ---------------------------------------------------------------------------
@@ -2980,7 +3058,7 @@ export const correlateIntelligenceToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-07T14:46:45.706Z
+                at 2026-04-08T19:13:48.952Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.1.28**](../../../README.md)
+[**European Parliament MCP Server API v1.2.0**](../../../README.md)
 
 ***
 
@@ -37,8 +37,8 @@ MCP tool result containing a paginated list of activities for the specified plen
 ## Example
 
 ```typescript
-const result = await handleGetMeetingActivities({ sittingId: 'PV-9-2024-01-15', limit: 50 });
-// Returns up to 50 activities from the specified plenary sitting
+const result = await handleGetMeetingActivities({ sittingId: 'PV-9-2024-01-15', limit: 20 });
+// Returns up to 20 activities from the specified plenary sitting
 ```
 
 ## Security
