@@ -26,7 +26,6 @@ import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 import { ToolError } from './shared/errors.js';
-import type { ErrorCode, ErrorCategory } from './shared/errors.js';
 import { handleToolError } from './shared/errorHandler.js';
 
 export const ComparativeIntelligenceSchema = z.object({
@@ -654,16 +653,14 @@ function isNotFoundError(reason: unknown): boolean {
  * Builds an error ToolResult for when all MEP IDs failed with 404.
  */
 function buildAllNotFoundError(notFoundMepIds: number[]): ToolResult {
-  const invalidParams: ErrorCode = 'INVALID_PARAMS';
-  const clientError: ErrorCategory = 'CLIENT_ERROR';
   return buildErrorResponse(
     new ToolError({
       toolName: 'comparative_intelligence',
       operation: 'validateMEPIds',
       message: `None of the provided MEP IDs could be found: ${notFoundMepIds.join(', ')}. Please verify the MEP IDs and try again.`,
       isRetryable: false,
-      errorCode: invalidParams,
-      errorCategory: clientError,
+      errorCode: 'INVALID_PARAMS',
+      errorCategory: 'CLIENT_ERROR',
     }),
     'comparative_intelligence'
   );
@@ -673,16 +670,14 @@ function buildAllNotFoundError(notFoundMepIds: number[]): ToolResult {
  * Builds an error ToolResult for when fewer than 2 valid MEPs remain.
  */
 function buildInsufficientMepsError(validCount: number, totalCount: number, excludedIds: number[]): ToolResult {
-  const invalidParams: ErrorCode = 'INVALID_PARAMS';
-  const clientError: ErrorCategory = 'CLIENT_ERROR';
   return buildErrorResponse(
     new ToolError({
       toolName: 'comparative_intelligence',
       operation: 'validateMEPIds',
       message: `Only ${String(validCount)} of ${String(totalCount)} MEP IDs could be resolved. Comparative analysis requires at least 2 valid MEPs. Invalid IDs: ${excludedIds.join(', ')}`,
       isRetryable: false,
-      errorCode: invalidParams,
-      errorCategory: clientError,
+      errorCode: 'INVALID_PARAMS',
+      errorCategory: 'CLIENT_ERROR',
     }),
     'comparative_intelligence'
   );
@@ -744,8 +739,7 @@ function validateMepResults(
 
   // If all failures are transient (no valid data, no 404s), surface as tool error
   if (validMepIds.length === 0 && transientErrors.length > 0 && notFoundMepIds.length === 0) {
-    const firstError = transientErrors[0];
-    const cause = firstError !== undefined ? firstError.reason : undefined;
+    const cause = transientErrors[0]?.reason;
     return {
       error: handleToolError(
         new ToolError({
