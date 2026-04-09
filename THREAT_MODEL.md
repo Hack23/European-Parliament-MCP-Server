@@ -1685,7 +1685,7 @@ graph TD
     C --> C1["Package name squatting"]
     C --> C2["Account takeover"]
     C --> C3["npm registry compromise"]
-    C1 --> C1M["✅ Official package ownership verified"]
+    C1 --> C1M["✅ Official package ownership verified: european-parliament-mcp-server"]
     C2 --> C2M["✅ npm 2FA + strong passwords"]
     C3 --> C3M["❌ Out of scope (npm responsibility)"]
     
