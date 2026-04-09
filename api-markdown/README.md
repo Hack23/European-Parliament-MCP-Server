@@ -1,4 +1,4 @@
-**European Parliament MCP Server API v1.2.0**
+**European Parliament MCP Server API v1.2.1**
 
 ***
 
@@ -517,7 +517,7 @@ graph TB
     subgraph "MCP Server (src/)"
         direction TB
         Tools[🔧 61 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …]
-        Resources[📦 9 Resources<br/>ep://meps/{id}<br/>ep://procedures/{id} · …]
+        Resources["📦 9 Resources<br/>ep://meps/\{mepId\}<br/>ep://procedures/\{procedureId\} · …"]
         Prompts[💬 7 Prompts<br/>mep_briefing<br/>coalition_analysis · …]
     end
 
