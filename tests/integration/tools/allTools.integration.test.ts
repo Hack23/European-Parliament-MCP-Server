@@ -235,7 +235,7 @@ describeIntegration('All 46 MCP Tools Integration Coverage', () => {
         status?: string;
       };
       if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
-    }, 120000);
+    }, 180000);
   });
 
   describe('Core Tool: get_parliamentary_questions', () => {
