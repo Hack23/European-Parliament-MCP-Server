@@ -269,20 +269,13 @@ graph TB
     Lambda1b --> DDB1b
     Lambda1c --> DDB1c
     
-    style ALB1 fill:#ff9900,color:#000000
-
-    style Lambda1a fill:#ff9900,color:#000000
-
-    style Lambda1b fill:#ff9900,color:#000000
-
-    style Lambda1c fill:#ff9900,color:#000000
-
-    style DDB1a fill:#527fff,color:#ffffff
-
-    style DDB1b fill:#527fff,color:#ffffff
-
-    style DDB1c fill:#527fff,color:#ffffff
-
+    style ALB1 fill:#ff9900
+    style Lambda1a fill:#ff9900
+    style Lambda1b fill:#ff9900
+    style Lambda1c fill:#ff9900
+    style DDB1a fill:#527fff
+    style DDB1b fill:#527fff
+    style DDB1c fill:#527fff
 ```
 
 **RTO/RPO**:

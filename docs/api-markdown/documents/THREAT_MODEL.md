@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.0**](../README.md)
+[**European Parliament MCP Server API v1.2.1**](../README.md)
 
 ***
 
@@ -563,24 +563,17 @@ graph LR
 
     style RD fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
-
     style WD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
-
 
     style DD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
-
     style ED fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
-
 
     style ID fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
-
     style CD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
-
     style AD fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
-
 
 ```
 
@@ -817,18 +810,13 @@ graph LR
     
     style A fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
 
-
     style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
-
 
     style C fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
-
     style D fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
-
     style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
-
 
 ```
 
@@ -873,18 +861,13 @@ graph LR
     
     style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
-
     style B fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
-
 
     style C fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
 
-
     style D fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
 
-
     style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
-
 
 ```
 
@@ -929,18 +912,13 @@ graph LR
     
     style A fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
 
-
     style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
-
 
     style C fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
-
     style D fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
 
-
     style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
-
 
 ```
 
@@ -985,18 +963,13 @@ graph LR
     
     style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
-
     style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
-
 
     style C fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
 
-
     style D fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
 
-
     style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
-
 
 ```
 
@@ -1041,18 +1014,13 @@ graph LR
     
     style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
-
     style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
-
 
     style C fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
 
-
     style D fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
 
-
     style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
-
 
 ```
 
@@ -1100,24 +1068,17 @@ graph LR
 
     style PRE fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
-
     style ENUM fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
-
 
     style THREATS fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
 
-
     style MAP fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
-
 
     style PLAN fill:#F44336,stroke:#aa2e25,stroke-width:2px,color:#ffffff
 
-
     style VALIDATE fill:#00BCD4,stroke:#008394,stroke-width:2px,color:#ffffff
 
-
     style MONITOR fill:#795548,stroke:#543b32,stroke-width:2px,color:#ffffff
-
 
 ```
 
@@ -1215,21 +1176,15 @@ graph LR
     
     style A fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
-
     style B fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
-
 
     style C fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
 
-
     style D fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
-
 
     style E fill:#F44336,stroke:#aa2e25,stroke-width:2px,color:#ffffff
 
-
     style F fill:#00BCD4,stroke:#008394,stroke-width:2px,color:#ffffff
-
 
 ```
 
@@ -1312,15 +1267,11 @@ graph TD
     
     style A fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
-
     style B fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
-
 
     style K fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
 
-
     style N fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
-
 
 ```
 
@@ -1691,7 +1642,7 @@ graph TD
     C --> C1["Package name squatting"]
     C --> C2["Account takeover"]
     C --> C3["npm registry compromise"]
-    C1 --> C1M["✅ european-parliament-mcp-server ownership verified"]
+    C1 --> C1M["✅ Official package ownership verified: european-parliament-mcp-server"]
     C2 --> C2M["✅ npm 2FA + strong passwords"]
     C3 --> C3M["❌ Out of scope (npm responsibility)"]
     
@@ -1916,18 +1867,13 @@ graph TB
     
     style L1A fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
 
-
     style L2A fill:#feca57,stroke:#b18d3c,stroke-width:2px,color:#000000
-
 
     style L3A fill:#48dbfb,stroke:#3299af,stroke-width:2px,color:#000000
 
-
     style L4A fill:#1dd1a1,stroke:#149270,stroke-width:2px,color:#000000
 
-
     style L5A fill:#9b59b6,stroke:#6c3e7f,stroke-width:2px,color:#ffffff
-
 
 ```
 

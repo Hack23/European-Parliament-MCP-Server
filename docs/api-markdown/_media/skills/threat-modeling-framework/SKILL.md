@@ -75,14 +75,10 @@ graph LR
     Server -->|HTTPS| EPAPI[EP API<br/>External]
     Server --> Cache[LRU Cache<br/>Trusted]
     
-    style Client fill:#ff6b6b,color:#ffffff
-
-    style Server fill:#51cf66,color:#ffffff
-
-    style EPAPI fill:#ffd43b,color:#000000
-
-    style Cache fill:#51cf66,color:#ffffff
-
+    style Client fill:#ff6b6b
+    style Server fill:#51cf66
+    style EPAPI fill:#ffd43b
+    style Cache fill:#51cf66
 ```
 
 ## Assets
@@ -203,20 +199,13 @@ graph TB
     EPAPI -->|JSON Response| Tools
     Tools -->|MCP Response| Client
     
-    style Client fill:#ff6b6b,color:#ffffff
-
-    style User fill:#ff6b6b,color:#ffffff
-
-    style InputVal fill:#51cf66,color:#ffffff
-
-    style Tools fill:#51cf66,color:#ffffff
-
-    style Cache fill:#51cf66,color:#ffffff
-
-    style Audit fill:#51cf66,color:#ffffff
-
-    style EPAPI fill:#ffd43b,color:#000000
-
+    style Client fill:#ff6b6b
+    style User fill:#ff6b6b
+    style InputVal fill:#51cf66
+    style Tools fill:#51cf66
+    style Cache fill:#51cf66
+    style Audit fill:#51cf66
+    style EPAPI fill:#ffd43b
 ```
 
 **Trust Boundaries**:

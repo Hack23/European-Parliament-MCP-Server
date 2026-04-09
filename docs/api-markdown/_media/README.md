@@ -333,20 +333,13 @@ graph TB
     TaskAgent -.->|Assigns| Marketing
     
     style TaskAgent fill:#FFC107,stroke:#F57C00,stroke-width:3px,color:#000
-    style Frontend fill:#2196F3,color:#ffffff
-
-    style TestEng fill:#FF9800,color:#000
-
-    style Security fill:#D32F2F,color:#ffffff
-
-    style DocWriter fill:#9C27B0,color:#ffffff
-
-    style Intel fill:#607D8B,color:#ffffff
-
-    style BizDev fill:#00897B,color:#ffffff
-
-    style Marketing fill:#E91E63,color:#ffffff
-
+    style Frontend fill:#2196F3
+    style TestEng fill:#FF9800
+    style Security fill:#D32F2F
+    style DocWriter fill:#9C27B0
+    style Intel fill:#607D8B
+    style BizDev fill:#00897B
+    style Marketing fill:#E91E63
 ```
 
 ## 💡 How to Use
