@@ -1914,10 +1914,10 @@ graph TB
     style L2A fill:#feca57,stroke:#b18d3c,stroke-width:2px,color:#000000
 
 
-    style L3A fill:#48dbfb,stroke:#3299af,stroke-width:2px,color:#ffffff
+    style L3A fill:#48dbfb,stroke:#3299af,stroke-width:2px,color:#000000
 
 
-    style L4A fill:#1dd1a1,stroke:#149270,stroke-width:2px,color:#ffffff
+    style L4A fill:#1dd1a1,stroke:#149270,stroke-width:2px,color:#000000
 
 
     style L5A fill:#9b59b6,stroke:#6c3e7f,stroke-width:2px,color:#ffffff

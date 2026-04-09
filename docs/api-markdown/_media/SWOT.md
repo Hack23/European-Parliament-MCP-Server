@@ -58,9 +58,9 @@
 %%{init: {
   "theme": "neutral",
   "themeVariables": {
-    "quadrant1Fill": "#2E7D32",
-    "quadrant2Fill": "#D32F2F",
-    "quadrant3Fill": "#1565C0",
+    "quadrant1Fill": "#1565C0",
+    "quadrant2Fill": "#2E7D32",
+    "quadrant3Fill": "#D32F2F",
     "quadrant4Fill": "#FF9800",
     "quadrantTitleFill": "#ffffff",
     "quadrantPointFill": "#ffffff",
@@ -82,9 +82,9 @@ quadrantChart
     title 🎯 EP MCP Server v1.1 SWOT Analysis
     x-axis Internal Factors --> External Factors
     y-axis Threats --> Opportunities
-    quadrant-1 STRENGTHS
-    quadrant-2 WEAKNESSES
-    quadrant-3 OPPORTUNITIES
+    quadrant-1 OPPORTUNITIES
+    quadrant-2 STRENGTHS
+    quadrant-3 WEAKNESSES
     quadrant-4 THREATS
     "🔧 62 MCP Tools": [0.15, 0.90]
     "🛡️ ISMS Compliance": [0.25, 0.85]
