@@ -555,13 +555,27 @@ graph LR
     C -.->|🛡️ stdio isolation| CD[Disrupted]
     A -.->|🛡️ EP API integrity| AD[Monitored]
 
-    style RD fill:#ffa726
-    style WD fill:#4CAF50
-    style DD fill:#4CAF50
-    style ED fill:#4CAF50
-    style ID fill:#4CAF50
-    style CD fill:#4CAF50
-    style AD fill:#ffa726
+    style RD fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
+
+
+    style WD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+
+
+    style DD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+
+
+    style ED fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+
+
+    style ID fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+
+
+    style CD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+
+
+    style AD fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
+
+
 ```
 
 **Key Insight:** The EP MCP Server's **stateless stdio architecture** provides inherent disruption at Kill Chain phases 5 (Installation) and 6 (C2), while **SLSA Level 3 + Dependabot** provide strong disruption at phases 2-3. The primary residual risk is at phase 7 (Actions on Objectives) where continuous monitoring is essential.
@@ -660,19 +674,42 @@ Understanding potential adversaries is critical for proportionate security inves
 ### **Threat Actor Priority Matrix**
 
 ```mermaid
+%%{init: {
+  "theme": "dark",
+  "themeVariables": {
+    "quadrant1Fill": "#D32F2F",
+    "quadrant2Fill": "#FF9800",
+    "quadrant3Fill": "#4CAF50",
+    "quadrant4Fill": "#1565C0",
+    "quadrantTitleFill": "#ffffff",
+    "quadrantPointFill": "#ffffff",
+    "quadrantPointTextFill": "#ffffff",
+    "quadrantXAxisTextFill": "#ffffff",
+    "quadrantYAxisTextFill": "#ffffff"
+  },
+  "quadrantChart": {
+    "chartWidth": 700,
+    "chartHeight": 700,
+    "pointLabelFontSize": 12,
+    "titleFontSize": 20,
+    "quadrantLabelFontSize": 16,
+    "xAxisLabelFontSize": 14,
+    "yAxisLabelFontSize": 14
+  }
+}}%%
 quadrantChart
-    title Threat Actor Assessment: Capability vs Motivation
+    title 🎯 Threat Actor Assessment — Capability vs Motivation
     x-axis Low Motivation --> High Motivation
     y-axis Low Capability --> High Capability
-    quadrant-1 Critical Threats
-    quadrant-2 High-Risk Actors
-    quadrant-3 Opportunistic Threats
-    quadrant-4 Persistent Threats
-    Nation-State APT: [0.9, 0.95]
-    Insider Threat: [0.7, 0.85]
-    Hacktivist Groups: [0.8, 0.5]
-    Competitor Espionage: [0.65, 0.6]
-    Automated Bots: [0.4, 0.2]
+    quadrant-1 CRITICAL THREATS
+    quadrant-2 HIGH-RISK ACTORS
+    quadrant-3 OPPORTUNISTIC
+    quadrant-4 PERSISTENT
+    "🏴 Nation-State APT": [0.9, 0.95]
+    "👤 Insider Threat": [0.7, 0.85]
+    "💻 Hacktivist Groups": [0.8, 0.5]
+    "🕵️ Competitor Espionage": [0.65, 0.6]
+    "🤖 Automated Bots": [0.4, 0.2]
 ```
 
 **Action Items by Actor:**
@@ -772,11 +809,21 @@ graph LR
     C --> D[4️⃣ AI assistant provides false analysis]
     D --> E[5️⃣ Political decisions based on false data]
     
-    style A fill:#ff6b6b
-    style B fill:#ff6b6b
-    style C fill:#ffa726
-    style D fill:#ffa726
-    style E fill:#ef5350
+    style A fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
+
+
+    style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
+
+
+    style C fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
+
+
+    style D fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
+
+
+    style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
 ```
 
 **Attack Steps:**
@@ -818,11 +865,21 @@ graph LR
     C --> D[4️⃣ Commercial database sale]
     D --> E[5️⃣ GDPR Article 6 violation]
     
-    style A fill:#ffa726
-    style B fill:#ffa726
-    style C fill:#ff6b6b
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
+
+
+    style B fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
+
+
+    style C fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
+
+
+    style D fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
+    style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
 ```
 
 **Attack Steps:**
@@ -864,11 +921,21 @@ graph LR
     C --> D[4️⃣ News articles published]
     D --> E[5️⃣ Electoral influence achieved]
     
-    style A fill:#ff6b6b
-    style B fill:#ff6b6b
-    style C fill:#ffa726
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
+
+
+    style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
+
+
+    style C fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
+
+
+    style D fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
+    style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
 ```
 
 **Attack Steps:**
@@ -910,11 +977,21 @@ graph LR
     C --> D[4️⃣ Automatic updates infect users]
     D --> E[5️⃣ Widespread MCP server compromise]
     
-    style A fill:#ffa726
-    style B fill:#ff6b6b
-    style C fill:#ef5350
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
+
+
+    style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
+
+
+    style C fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
+    style D fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
+    style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
 ```
 
 **Attack Steps:**
@@ -956,11 +1033,21 @@ graph LR
     C --> D[4️⃣ MCP server executes attacker code]
     D --> E[5️⃣ AI assistant compromise]
     
-    style A fill:#ffa726
-    style B fill:#ff6b6b
-    style C fill:#ef5350
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
+
+
+    style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
+
+
+    style C fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
+    style D fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
+    style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
 ```
 
 **Attack Steps:**
@@ -1005,13 +1092,27 @@ graph LR
     VALIDATE --> MONITOR[📊 MONITOR<br/>Continuous]
     MONITOR -.->|Next Cycle| PRE
 
-    style PRE fill:#4CAF50
-    style ENUM fill:#2196F3
-    style THREATS fill:#FF9800
-    style MAP fill:#9C27B0
-    style PLAN fill:#F44336
-    style VALIDATE fill:#00BCD4
-    style MONITOR fill:#795548
+    style PRE fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+
+
+    style ENUM fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
+
+
+    style THREATS fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
+
+
+    style MAP fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
+
+
+    style PLAN fill:#F44336,stroke:#aa2e25,stroke-width:2px,color:#ffffff
+
+
+    style VALIDATE fill:#00BCD4,stroke:#008394,stroke-width:2px,color:#ffffff
+
+
+    style MONITOR fill:#795548,stroke:#543b32,stroke-width:2px,color:#ffffff
+
+
 ```
 
 | Phase | Activities | EP MCP Server Focus | Output |
@@ -1106,12 +1207,24 @@ graph LR
     E --> F[📈 Measure<br/>Effectiveness]
     F --> A
     
-    style A fill:#4CAF50
-    style B fill:#2196F3
-    style C fill:#FF9800
-    style D fill:#9C27B0
-    style E fill:#F44336
-    style F fill:#00BCD4
+    style A fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+
+
+    style B fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
+
+
+    style C fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
+
+
+    style D fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
+
+
+    style E fill:#F44336,stroke:#aa2e25,stroke-width:2px,color:#ffffff
+
+
+    style F fill:#00BCD4,stroke:#008394,stroke-width:2px,color:#ffffff
+
+
 ```
 
 **Key Performance Indicators (KPIs) for Threat Model Health:**
@@ -1191,10 +1304,18 @@ graph TD
     L --> M[📢 Communicate Updates]
     M --> N[✅ Review Complete]
     
-    style A fill:#4CAF50
-    style B fill:#2196F3
-    style K fill:#FF9800
-    style N fill:#9C27B0
+    style A fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+
+
+    style B fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
+
+
+    style K fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
+
+
+    style N fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
+
+
 ```
 
 ---
@@ -1421,22 +1542,45 @@ To objectively measure progression, the following criteria are used for annual m
 ### **Risk Matrix**
 
 ```mermaid
+%%{init: {
+  "theme": "dark",
+  "themeVariables": {
+    "quadrant1Fill": "#D32F2F",
+    "quadrant2Fill": "#4CAF50",
+    "quadrant3Fill": "#2E7D32",
+    "quadrant4Fill": "#FF9800",
+    "quadrantTitleFill": "#ffffff",
+    "quadrantPointFill": "#ffffff",
+    "quadrantPointTextFill": "#ffffff",
+    "quadrantXAxisTextFill": "#ffffff",
+    "quadrantYAxisTextFill": "#ffffff"
+  },
+  "quadrantChart": {
+    "chartWidth": 700,
+    "chartHeight": 700,
+    "pointLabelFontSize": 12,
+    "titleFontSize": 20,
+    "quadrantLabelFontSize": 16,
+    "xAxisLabelFontSize": 14,
+    "yAxisLabelFontSize": 14
+  }
+}}%%
 quadrantChart
-    title Threat Risk Assessment Matrix
+    title 🎯 Threat Risk Assessment Matrix
     x-axis Low Likelihood --> High Likelihood
     y-axis Low Impact --> High Impact
-    quadrant-1 Monitor
-    quadrant-2 Critical Priority
-    quadrant-3 Accept
-    quadrant-4 Mitigate
-    Supply Chain Attack: [0.5, 0.9]
-    API Rate Exhaustion: [0.6, 0.5]
-    Input Injection: [0.4, 0.6]
-    Error Info Leak: [0.5, 0.4]
-    Package Squatting: [0.3, 0.7]
-    Prototype Pollution: [0.2, 0.7]
-    MITM Attack: [0.2, 0.6]
-    Build Tampering: [0.2, 0.8]
+    quadrant-1 CRITICAL PRIORITY
+    quadrant-2 MONITOR
+    quadrant-3 ACCEPT
+    quadrant-4 MITIGATE
+    "📦 Supply Chain Attack": [0.5, 0.9]
+    "⚡ API Rate Exhaustion": [0.6, 0.5]
+    "💉 Input Injection": [0.4, 0.6]
+    "🔍 Error Info Leak": [0.5, 0.4]
+    "📛 Package Squatting": [0.3, 0.7]
+    "🧬 Prototype Pollution": [0.2, 0.7]
+    "🕵️ MITM Attack": [0.2, 0.6]
+    "🏗️ Build Tampering": [0.2, 0.8]
 ```
 
 ### **Top Priority Risks**
@@ -1541,7 +1685,7 @@ graph TD
     C --> C1["Package name squatting"]
     C --> C2["Account takeover"]
     C --> C3["npm registry compromise"]
-    C1 --> C1M["✅ Official ownership of \"european-parliament-mcp-server\" package"]
+    C1 --> C1M["✅ Official package ownership verified: european-parliament-mcp-server"]
     C2 --> C2M["✅ npm 2FA + strong passwords"]
     C3 --> C3M["❌ Out of scope (npm responsibility)"]
     
@@ -1764,11 +1908,21 @@ graph TB
     L4A --> L5A
     L4B --> L5A
     
-    style L1A fill:#ff6b6b
-    style L2A fill:#feca57
-    style L3A fill:#48dbfb
-    style L4A fill:#1dd1a1
-    style L5A fill:#9b59b6
+    style L1A fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
+
+
+    style L2A fill:#feca57,stroke:#b18d3c,stroke-width:2px,color:#000000
+
+
+    style L3A fill:#48dbfb,stroke:#3299af,stroke-width:2px,color:#000000
+
+
+    style L4A fill:#1dd1a1,stroke:#149270,stroke-width:2px,color:#000000
+
+
+    style L5A fill:#9b59b6,stroke:#6c3e7f,stroke-width:2px,color:#ffffff
+
+
 ```
 
 ### **🎯 Control Effectiveness Matrix**

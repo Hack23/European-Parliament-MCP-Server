@@ -245,14 +245,37 @@ Groups are classified on three independent axes using the [Chapel Hill Expert Su
 ### Group Positions on the Political Compass
 
 ```mermaid
+%%{init: {
+  "theme": "dark",
+  "themeVariables": {
+    "quadrant1Fill": "#D32F2F",
+    "quadrant2Fill": "#FF9800",
+    "quadrant3Fill": "#1565C0",
+    "quadrant4Fill": "#2E7D32",
+    "quadrantTitleFill": "#ffffff",
+    "quadrantPointFill": "#ffffff",
+    "quadrantPointTextFill": "#ffffff",
+    "quadrantXAxisTextFill": "#ffffff",
+    "quadrantYAxisTextFill": "#ffffff"
+  },
+  "quadrantChart": {
+    "chartWidth": 700,
+    "chartHeight": 700,
+    "pointLabelFontSize": 12,
+    "titleFontSize": 20,
+    "quadrantLabelFontSize": 16,
+    "xAxisLabelFontSize": 14,
+    "yAxisLabelFontSize": 14
+  }
+}}%%
 quadrantChart
-    title Political Compass — EP Groups (Economic × Social)
+    title 🏛️ Political Compass — EP Groups (Economic x Social)
     x-axis "Economic Left" --> "Economic Right"
     y-axis "Libertarian" --> "Authoritarian"
-    quadrant-1 "Authoritarian Right"
-    quadrant-2 "Authoritarian Left"
-    quadrant-3 "Libertarian Left"
-    quadrant-4 "Libertarian Right"
+    quadrant-1 "AUTHORITARIAN RIGHT"
+    quadrant-2 "AUTHORITARIAN LEFT"
+    quadrant-3 "LIBERTARIAN LEFT"
+    quadrant-4 "LIBERTARIAN RIGHT"
     "GUE/NGL (1.5, 3.0)": [0.15, 0.30]
     "Greens/EFA (3.0, 2.0)": [0.30, 0.20]
     "S&D (3.5, 4.0)": [0.35, 0.40]

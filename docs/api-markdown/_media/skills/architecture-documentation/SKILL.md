@@ -90,9 +90,12 @@ graph TB
     User -->|MCP Protocol<br/>stdio| EPMCP
     EPMCP -->|HTTPS<br/>RESTful API| EPAPI
     
-    style User fill:#4a90e2
-    style EPMCP fill:#7cb342
-    style EPAPI fill:#ffa726
+    style User fill:#4a90e2,color:#ffffff
+
+    style EPMCP fill:#7cb342,color:#ffffff
+
+    style EPAPI fill:#ffa726,color:#000000
+
 ```
 
 **External Dependencies**:
@@ -126,15 +129,24 @@ graph TB
     Tools --> Audit
     Tools -->|HTTPS| EPAPI
     
-    style Client fill:#ff6b6b
-    style Transport fill:#51cf66
-    style Tools fill:#51cf66
-    style Resources fill:#51cf66
-    style Prompts fill:#51cf66
-    style Validation fill:#51cf66
-    style Cache fill:#51cf66
-    style Audit fill:#51cf66
-    style EPAPI fill:#ffd43b
+    style Client fill:#ff6b6b,color:#ffffff
+
+    style Transport fill:#51cf66,color:#ffffff
+
+    style Tools fill:#51cf66,color:#ffffff
+
+    style Resources fill:#51cf66,color:#ffffff
+
+    style Prompts fill:#51cf66,color:#ffffff
+
+    style Validation fill:#51cf66,color:#ffffff
+
+    style Cache fill:#51cf66,color:#ffffff
+
+    style Audit fill:#51cf66,color:#ffffff
+
+    style EPAPI fill:#ffd43b,color:#000000
+
 ```
 
 ### Level 3: Component Diagram (Tool Handler)
@@ -163,14 +175,22 @@ graph TB
     Transform --> AuditLog
     AuditLog --> Output
     
-    style Input fill:#4a90e2
-    style Schema fill:#51cf66
-    style RateLimit fill:#51cf66
-    style CacheCheck fill:#51cf66
-    style APIClient fill:#ffd43b
-    style Transform fill:#51cf66
-    style AuditLog fill:#51cf66
-    style Output fill:#4a90e2
+    style Input fill:#4a90e2,color:#ffffff
+
+    style Schema fill:#51cf66,color:#ffffff
+
+    style RateLimit fill:#51cf66,color:#ffffff
+
+    style CacheCheck fill:#51cf66,color:#ffffff
+
+    style APIClient fill:#ffd43b,color:#000000
+
+    style Transform fill:#51cf66,color:#ffffff
+
+    style AuditLog fill:#51cf66,color:#ffffff
+
+    style Output fill:#4a90e2,color:#ffffff
+
 ```
 
 ## Authentication & Authorization
@@ -299,11 +319,16 @@ graph TB
     L4 --> L5
     L5 --> Response[Response]
     
-    style L1 fill:#51cf66
-    style L2 fill:#51cf66
-    style L3 fill:#51cf66
-    style L4 fill:#51cf66
-    style L5 fill:#51cf66
+    style L1 fill:#51cf66,color:#ffffff
+
+    style L2 fill:#51cf66,color:#ffffff
+
+    style L3 fill:#51cf66,color:#ffffff
+
+    style L4 fill:#51cf66,color:#ffffff
+
+    style L5 fill:#51cf66,color:#ffffff
+
 ```
 
 ## Future Security Architecture
@@ -345,10 +370,14 @@ graph TB
         Data[Data Store<br/>Database/Cache]
     end
     
-    style Untrusted fill:#ff6b6b
-    style Trusted fill:#51cf66
-    style External fill:#ffd43b
-    style Data fill:#4a90e2
+    style Untrusted fill:#ff6b6b,color:#ffffff
+
+    style Trusted fill:#51cf66,color:#ffffff
+
+    style External fill:#ffd43b,color:#000000
+
+    style Data fill:#4a90e2,color:#ffffff
+
 ```
 
 **Color Standards**:
@@ -368,10 +397,14 @@ graph LR
     
     System -->|Audit Log<br/>Internal| Logs[Audit Logs<br/>Internal]
     
-    style User fill:#ff6b6b
-    style System fill:#51cf66
-    style DB fill:#4a90e2
-    style Logs fill:#4a90e2
+    style User fill:#ff6b6b,color:#ffffff
+
+    style System fill:#51cf66,color:#ffffff
+
+    style DB fill:#4a90e2,color:#ffffff
+
+    style Logs fill:#4a90e2,color:#ffffff
+
 ```
 
 ## Anti-Patterns

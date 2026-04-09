@@ -111,8 +111,12 @@ graph TB
     CC -->|Persistent| FD
     CD -->|Cloud-native| FE
 
-    style CA fill:#ffcc80
-    style FA fill:#81c784
+    style CA fill:#ffcc80,stroke:#b28e59,stroke-width:2px,color:#000000
+
+
+    style FA fill:#81c784,stroke:#5a8b5c,stroke-width:2px,color:#000000
+
+
 ```
 
 ---
@@ -284,11 +288,21 @@ graph LR
     C --> D[4️⃣ Access premium tenant data]
     D --> E[5️⃣ Exfiltrate competitor intelligence]
     
-    style A fill:#ffa726
-    style B fill:#ff6b6b
-    style C fill:#ef5350
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
+
+
+    style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
+
+
+    style C fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
+    style D fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
+    style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
 ```
 
 **🛡️ Planned Mitigations:** DynamoDB partition-key tenant isolation, IAM condition-based access, API Gateway tenant context validation, data access audit logging
@@ -306,11 +320,21 @@ graph LR
     C --> D[4️⃣ Systematic MEP data harvesting]
     D --> E[5️⃣ GDPR violation + data sale]
     
-    style A fill:#ffa726
-    style B fill:#ff6b6b
-    style C fill:#ef5350
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
+
+
+    style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
+
+
+    style C fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
+    style D fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
+    style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
 ```
 
 **🛡️ Planned Mitigations:** Short-lived access tokens (15 min), refresh token rotation, anomalous usage detection, IP-based session binding, MFA enforcement
@@ -328,11 +352,21 @@ graph LR
     C --> D[4️⃣ Manipulate voting records at scale]
     D --> E[5️⃣ Widespread disinformation]
     
-    style A fill:#ff6b6b
-    style B fill:#ef5350
-    style C fill:#ef5350
-    style D fill:#ef5350
-    style E fill:#ef5350
+    style A fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
+
+
+    style B fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
+    style C fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
+    style D fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
+    style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
+
+
 ```
 
 **🛡️ Planned Mitigations:** Lambda layer pinning, function code signing, VPC isolation, GuardDuty Lambda protection, runtime integrity monitoring
@@ -346,22 +380,45 @@ graph LR
 ### **Future Risk Matrix**
 
 ```mermaid
+%%{init: {
+  "theme": "dark",
+  "themeVariables": {
+    "quadrant1Fill": "#D32F2F",
+    "quadrant2Fill": "#4CAF50",
+    "quadrant3Fill": "#2E7D32",
+    "quadrant4Fill": "#FF9800",
+    "quadrantTitleFill": "#ffffff",
+    "quadrantPointFill": "#ffffff",
+    "quadrantPointTextFill": "#ffffff",
+    "quadrantXAxisTextFill": "#ffffff",
+    "quadrantYAxisTextFill": "#ffffff"
+  },
+  "quadrantChart": {
+    "chartWidth": 700,
+    "chartHeight": 700,
+    "pointLabelFontSize": 12,
+    "titleFontSize": 20,
+    "quadrantLabelFontSize": 16,
+    "xAxisLabelFontSize": 14,
+    "yAxisLabelFontSize": 14
+  }
+}}%%
 quadrantChart
-    title Future Threat Risk Assessment
+    title 🎯 Future Threat Risk Assessment
     x-axis Low Likelihood --> High Likelihood
     y-axis Low Impact --> High Impact
-    quadrant-1 Monitor
-    quadrant-2 Critical Priority
-    quadrant-3 Accept
-    quadrant-4 Mitigate
-    Cross-Tenant Breach: [0.4, 0.95]
-    OAuth2 Token Theft: [0.6, 0.8]
-    Lambda Compromise: [0.3, 0.9]
-    API DDoS: [0.7, 0.6]
-    Credential Stuffing: [0.8, 0.5]
-    DynamoDB Injection: [0.3, 0.7]
-    WAF Bypass: [0.4, 0.6]
-    Billing Fraud: [0.5, 0.4]
+    quadrant-1 CRITICAL PRIORITY
+    quadrant-2 MONITOR
+    quadrant-3 ACCEPT
+    quadrant-4 MITIGATE
+    "🔓 Cross-Tenant Breach": [0.4, 0.95]
+    "🔑 OAuth2 Token Theft": [0.6, 0.8]
+    "⚡ Lambda Compromise": [0.3, 0.9]
+    "🌊 API DDoS": [0.7, 0.6]
+    "🔐 Credential Stuffing": [0.8, 0.5]
+    "💉 DynamoDB Injection": [0.3, 0.7]
+    "🛡️ WAF Bypass": [0.4, 0.6]
+    "💰 Billing Fraud": [0.5, 0.4]
 ```
 
 ### **Future Risk Priority Table**
@@ -427,12 +484,24 @@ graph TB
     
     L1A --> L2A --> L3A --> L4A --> L5A --> L6A
     
-    style L1A fill:#ff6b6b
-    style L2A fill:#ffa726
-    style L3A fill:#feca57
-    style L4A fill:#48dbfb
-    style L5A fill:#1dd1a1
-    style L6A fill:#9b59b6
+    style L1A fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
+
+
+    style L2A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
+
+
+    style L3A fill:#feca57,stroke:#b18d3c,stroke-width:2px,color:#000000
+
+
+    style L4A fill:#48dbfb,stroke:#3299af,stroke-width:2px,color:#000000
+
+
+    style L5A fill:#1dd1a1,stroke:#149270,stroke-width:2px,color:#000000
+
+
+    style L6A fill:#9b59b6,stroke:#6c3e7f,stroke-width:2px,color:#ffffff
+
+
 ```
 
 ---
