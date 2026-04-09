@@ -53,9 +53,13 @@ function isRateLimitOrNetworkError(error: unknown): boolean {
     if (matchesNetworkPattern(msg)) {
       return true;
     }
-    // Also check statusCode for APIError-style objects (e.g. 408, 429, 503)
-    if (typeof current === 'object' && current !== null && 'statusCode' in current) {
-      const code = (current as { statusCode?: unknown }).statusCode;
+    // Also check statusCode (APIError) or httpStatus (ToolError) for 408, 429, 503
+    if (typeof current === 'object' && current !== null) {
+      const code = 'statusCode' in current
+        ? (current as { statusCode?: unknown }).statusCode
+        : 'httpStatus' in current
+          ? (current as { httpStatus?: unknown }).httpStatus
+          : undefined;
       if (code === 408 || code === 429 || code === 503) {
         return true;
       }
