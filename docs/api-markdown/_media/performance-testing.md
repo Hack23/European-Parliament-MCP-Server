@@ -113,13 +113,17 @@ graph TB
         D --> D3[📊 Benchmark Tests]
     end
 
-    style A fill:#e3f2fd,color:#000000
+    style A fill:#e3f2fd,stroke:#9ea9b1,stroke-width:2px,color:#000000
 
-    style G fill:#c8e6c9,color:#000000
 
-    style F fill:#ffcdd2,color:#000000
+    style G fill:#c8e6c9,stroke:#8ca18c,stroke-width:2px,color:#000000
 
-    style E fill:#fff9c4,color:#000000
+
+    style F fill:#ffcdd2,stroke:#b28f93,stroke-width:2px,color:#000000
+
+
+    style E fill:#fff9c4,stroke:#b2ae89,stroke-width:2px,color:#000000
+
 
 ```
 

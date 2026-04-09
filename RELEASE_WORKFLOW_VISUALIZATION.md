@@ -63,13 +63,17 @@ flowchart TB
     
     P9 -.->|Deploys to| Pages[📄 GitHub Pages<br/>gh-pages branch]
     
-    style Start fill:#4CAF50,color:#ffffff
+    style Start fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
-    style End fill:#4CAF50,color:#ffffff
 
-    style DocGen fill:#2196F3,color:#ffffff
+    style End fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
-    style Pages fill:#FF9800,color:#ffffff
+
+    style DocGen fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
+
+
+    style Pages fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#ffffff
+
 
 ```
 
@@ -101,12 +105,18 @@ graph TD
     E2E --> E2EHTML[report.html]
     E2E --> E2EJSON[results.json]
     
-    style Root fill:#673AB7,color:#fff
-    style Index fill:#2196F3,color:#fff
-    style API fill:#00C853,color:#fff
-    style Coverage fill:#FF9800,color:#fff
-    style Tests fill:#4CAF50,color:#fff
-    style E2E fill:#03A9F4,color:#fff
+    style Root fill:#673AB7,stroke:#482880,stroke-width:2px,color:#fff
+
+    style Index fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#fff
+
+    style API fill:#00C853,stroke:#008c3a,stroke-width:2px,color:#fff
+
+    style Coverage fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#fff
+
+    style Tests fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#fff
+
+    style E2E fill:#03A9F4,stroke:#0276aa,stroke-width:2px,color:#fff
+
 ```
 
 ## 🎨 Landing Page Preview
@@ -213,11 +223,14 @@ flowchart LR
     Attest --> Public
     Prov --> Public
     
-    style Code fill:#4CAF50,color:#ffffff
+    style Code fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
-    style Public fill:#2196F3,color:#ffffff
 
-    style Security fill:#FF3D00,color:#fff
+    style Public fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
+
+
+    style Security fill:#FF3D00,stroke:#b22a00,stroke-width:2px,color:#fff
+
 ```
 
 ## 📊 Coverage Distribution

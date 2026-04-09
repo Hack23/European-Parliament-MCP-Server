@@ -53,26 +53,49 @@
 ## 📊 Future SWOT Overview
 
 ```mermaid
+%%{init: {
+  "theme": "neutral",
+  "themeVariables": {
+    "quadrant1Fill": "#2E7D32",
+    "quadrant2Fill": "#D32F2F",
+    "quadrant3Fill": "#1565C0",
+    "quadrant4Fill": "#FF9800",
+    "quadrantTitleFill": "#ffffff",
+    "quadrantPointFill": "#ffffff",
+    "quadrantPointTextFill": "#000000",
+    "quadrantXAxisTextFill": "#000000",
+    "quadrantYAxisTextFill": "#000000"
+  },
+  "quadrantChart": {
+    "chartWidth": 700,
+    "chartHeight": 700,
+    "pointLabelFontSize": 12,
+    "titleFontSize": 20,
+    "quadrantLabelFontSize": 16,
+    "xAxisLabelFontSize": 14,
+    "yAxisLabelFontSize": 14
+  }
+}}%%
 quadrantChart
-    title EP MCP Server v2.0 Future SWOT Quadrant
-    x-axis Low Impact --> High Impact
-    y-axis External --> Internal
-    quadrant-1 Internal Strengths
-    quadrant-2 Internal Weaknesses
-    quadrant-3 External Opportunities
-    quadrant-4 External Threats
-    EU Data Federation: [0.9, 0.85]
-    OAuth RBAC Security: [0.85, 0.9]
-    AI Powered Analysis: [0.9, 0.8]
-    Enterprise Compliance: [0.8, 0.85]
-    HTTP Streaming Transport: [0.75, 0.35]
-    Multi Tenant SaaS: [0.7, 0.3]
-    EU AI Act Alignment: [0.95, 0.65]
-    Digital Democracy Wave: [0.9, 0.6]
-    EP Official Competition: [0.7, 0.45]
-    MCP Protocol Lock-in: [0.5, 0.4]
-    GDPR Stricter Rules: [0.6, 0.45]
-    Graph DB Complexity: [0.45, 0.25]
+    title 🎯 EP MCP Server v2.0 Future SWOT Analysis
+    x-axis Internal Factors --> External Factors
+    y-axis Threats --> Opportunities
+    quadrant-1 STRENGTHS
+    quadrant-2 WEAKNESSES
+    quadrant-3 OPPORTUNITIES
+    quadrant-4 THREATS
+    "🌐 EU Data Federation": [0.15, 0.90]
+    "🔐 OAuth RBAC Security": [0.25, 0.95]
+    "🤖 AI Powered Analysis": [0.10, 0.85]
+    "📋 Enterprise Compliance": [0.20, 0.80]
+    "📡 HTTP Streaming Transport": [0.25, 0.25]
+    "🏢 Multi Tenant SaaS": [0.15, 0.20]
+    "⚖️ EU AI Act Alignment": [0.75, 0.90]
+    "🏛️ Digital Democracy Wave": [0.85, 0.85]
+    "🏢 EP Official Competition": [0.70, 0.20]
+    "🔒 MCP Protocol Lock-in": [0.80, 0.25]
+    "📜 GDPR Stricter Rules": [0.75, 0.15]
+    "💾 Graph DB Complexity": [0.20, 0.30]
 ```
 
 ---

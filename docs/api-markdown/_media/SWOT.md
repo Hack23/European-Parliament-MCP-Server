@@ -55,25 +55,48 @@
 ## 📊 SWOT Overview
 
 ```mermaid
+%%{init: {
+  "theme": "neutral",
+  "themeVariables": {
+    "quadrant1Fill": "#2E7D32",
+    "quadrant2Fill": "#D32F2F",
+    "quadrant3Fill": "#1565C0",
+    "quadrant4Fill": "#FF9800",
+    "quadrantTitleFill": "#ffffff",
+    "quadrantPointFill": "#ffffff",
+    "quadrantPointTextFill": "#000000",
+    "quadrantXAxisTextFill": "#000000",
+    "quadrantYAxisTextFill": "#000000"
+  },
+  "quadrantChart": {
+    "chartWidth": 700,
+    "chartHeight": 700,
+    "pointLabelFontSize": 12,
+    "titleFontSize": 20,
+    "quadrantLabelFontSize": 16,
+    "xAxisLabelFontSize": 14,
+    "yAxisLabelFontSize": 14
+  }
+}}%%
 quadrantChart
-    title EP MCP Server v1.1 SWOT Quadrant
-    x-axis Low Impact --> High Impact
-    y-axis External --> Internal
-    quadrant-1 Internal Strengths
-    quadrant-2 Internal Weaknesses
-    quadrant-3 External Opportunities
-    quadrant-4 External Threats
-    62 MCP Tools: [0.85, 0.9]
-    ISMS Compliance: [0.75, 0.85]
-    TypeScript Safety: [0.7, 0.8]
-    Open Source: [0.8, 0.75]
-    EP API Dependency: [0.7, 0.2]
-    No Auth Layer: [0.5, 0.25]
-    stdio Only: [0.45, 0.3]
-    AI Integration Growth: [0.9, 0.55]
-    EU Digital Democracy: [0.85, 0.6]
-    EP API Changes: [0.65, 0.4]
-    Competitor MCP Servers: [0.5, 0.45]
+    title 🎯 EP MCP Server v1.1 SWOT Analysis
+    x-axis Internal Factors --> External Factors
+    y-axis Threats --> Opportunities
+    quadrant-1 STRENGTHS
+    quadrant-2 WEAKNESSES
+    quadrant-3 OPPORTUNITIES
+    quadrant-4 THREATS
+    "🔧 62 MCP Tools": [0.15, 0.90]
+    "🛡️ ISMS Compliance": [0.25, 0.85]
+    "📘 TypeScript Safety": [0.20, 0.80]
+    "🌟 Open Source": [0.30, 0.75]
+    "⚠️ EP API Dependency": [0.25, 0.20]
+    "🔓 No Auth Layer": [0.15, 0.25]
+    "📡 stdio Only": [0.20, 0.30]
+    "🤖 AI Integration Growth": [0.75, 0.85]
+    "🏛️ EU Digital Democracy": [0.85, 0.90]
+    "⚡ EP API Changes": [0.70, 0.15]
+    "🏢 Competitor MCP Servers": [0.80, 0.25]
 ```
 
 ---
