@@ -211,9 +211,9 @@ graph TB
     
     style B fill:#4A90E2,color:#ffffff
 
-    style D fill:#E8A631,color:#ffffff
+    style D fill:#E8A631,color:#1f1f1f
 
-    style H fill:#50C878,color:#ffffff
+    style H fill:#50C878,color:#1f1f1f
 
     style I fill:#E85D75,color:#ffffff
 

@@ -335,7 +335,7 @@ graph TB
     style TaskAgent fill:#FFC107,stroke:#F57C00,stroke-width:3px,color:#000
     style Frontend fill:#2196F3,color:#ffffff
 
-    style TestEng fill:#FF9800,color:#ffffff
+    style TestEng fill:#FF9800,color:#000
 
     style Security fill:#D32F2F,color:#ffffff
 

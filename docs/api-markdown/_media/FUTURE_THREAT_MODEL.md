@@ -114,7 +114,7 @@ graph TB
     style CA fill:#ffcc80,stroke:#b28e59,stroke-width:2px,color:#000000
 
 
-    style FA fill:#81c784,stroke:#5a8b5c,stroke-width:2px,color:#ffffff
+    style FA fill:#81c784,stroke:#5a8b5c,stroke-width:2px,color:#000000
 
 
 ```
