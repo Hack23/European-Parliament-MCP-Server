@@ -1551,8 +1551,8 @@ To objectively measure progression, the following criteria are used for annual m
 %%{init: {
   "theme": "dark",
   "themeVariables": {
-    "quadrant1Fill": "#4CAF50",
-    "quadrant2Fill": "#D32F2F",
+    "quadrant1Fill": "#D32F2F",
+    "quadrant2Fill": "#4CAF50",
     "quadrant3Fill": "#2E7D32",
     "quadrant4Fill": "#FF9800",
     "quadrantTitleFill": "#ffffff",
@@ -1575,8 +1575,8 @@ quadrantChart
     title 🎯 Threat Risk Assessment Matrix
     x-axis Low Likelihood --> High Likelihood
     y-axis Low Impact --> High Impact
-    quadrant-1 MONITOR
-    quadrant-2 CRITICAL PRIORITY
+    quadrant-1 CRITICAL PRIORITY
+    quadrant-2 MONITOR
     quadrant-3 ACCEPT
     quadrant-4 MITIGATE
     "📦 Supply Chain Attack": [0.5, 0.9]
