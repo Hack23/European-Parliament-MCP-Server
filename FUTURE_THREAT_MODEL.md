@@ -288,7 +288,7 @@ graph LR
     C --> D[4️⃣ Access premium tenant data]
     D --> E[5️⃣ Exfiltrate competitor intelligence]
     
-    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#ffffff
+    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
     style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
@@ -320,7 +320,7 @@ graph LR
     C --> D[4️⃣ Systematic MEP data harvesting]
     D --> E[5️⃣ GDPR violation + data sale]
     
-    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#ffffff
+    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
     style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
@@ -487,7 +487,7 @@ graph TB
     style L1A fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
 
 
-    style L2A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#ffffff
+    style L2A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
     style L3A fill:#feca57,stroke:#b18d3c,stroke-width:2px,color:#000000

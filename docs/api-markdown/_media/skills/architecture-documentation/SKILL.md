@@ -94,7 +94,7 @@ graph TB
 
     style EPMCP fill:#7cb342,color:#ffffff
 
-    style EPAPI fill:#ffa726,color:#ffffff
+    style EPAPI fill:#ffa726,color:#000000
 
 ```
 

@@ -72,7 +72,7 @@ flowchart TB
     style DocGen fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
 
 
-    style Pages fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#ffffff
+    style Pages fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1f1f1f
 
 
 ```
@@ -111,7 +111,7 @@ graph TD
 
     style API fill:#00C853,stroke:#008c3a,stroke-width:2px,color:#fff
 
-    style Coverage fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#fff
+    style Coverage fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1f1f1f
 
     style Tests fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#fff
 

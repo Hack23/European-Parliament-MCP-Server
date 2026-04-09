@@ -561,7 +561,7 @@ graph LR
     C -.->|🛡️ stdio isolation| CD[Disrupted]
     A -.->|🛡️ EP API integrity| AD[Monitored]
 
-    style RD fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#ffffff
+    style RD fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
     style WD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
@@ -579,7 +579,7 @@ graph LR
     style CD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style AD fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#ffffff
+    style AD fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
 ```
@@ -821,10 +821,10 @@ graph LR
     style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
 
 
-    style C fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#ffffff
+    style C fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
-    style D fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#ffffff
+    style D fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
     style E fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
@@ -871,10 +871,10 @@ graph LR
     C --> D[4️⃣ Commercial database sale]
     D --> E[5️⃣ GDPR Article 6 violation]
     
-    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#ffffff
+    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
-    style B fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#ffffff
+    style B fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
     style C fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
@@ -933,7 +933,7 @@ graph LR
     style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
 
 
-    style C fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#ffffff
+    style C fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
     style D fill:#ef5350,stroke:#a73a38,stroke-width:2px,color:#ffffff
@@ -983,7 +983,7 @@ graph LR
     C --> D[4️⃣ Automatic updates infect users]
     D --> E[5️⃣ Widespread MCP server compromise]
     
-    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#ffffff
+    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
     style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
@@ -1039,7 +1039,7 @@ graph LR
     C --> D[4️⃣ MCP server executes attacker code]
     D --> E[5️⃣ AI assistant compromise]
     
-    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#ffffff
+    style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
     style B fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
@@ -1104,7 +1104,7 @@ graph LR
     style ENUM fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
 
 
-    style THREATS fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#ffffff
+    style THREATS fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
 
 
     style MAP fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
@@ -1219,7 +1219,7 @@ graph LR
     style B fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
 
 
-    style C fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#ffffff
+    style C fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
 
 
     style D fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
@@ -1316,7 +1316,7 @@ graph TD
     style B fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
 
 
-    style K fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#ffffff
+    style K fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
 
 
     style N fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
