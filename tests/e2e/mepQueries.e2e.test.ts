@@ -100,7 +100,10 @@ describe('MEP Query E2E Tests', () => {
         () => client.callTool('get_meps', { limit: 3, offset: 0 }),
         'get_meps pagination'
       );
-      if (response === undefined) { ctx.skip(); return; } // Skipped due to rate limit/timeout
+      if (response === undefined) {
+        ctx.skip();
+        return;
+      }
 
       validateMCPResponse(response);
       const data = parsePaginatedMCPResponse<MEP>(response.content);
