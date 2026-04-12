@@ -789,7 +789,8 @@ describe('BaseEPClient.get() per-request minimum timeout', () => {
     // fetch never resolves, so the request will time out at the effective timeout
     mockFetch.mockReturnValue(new Promise<Response>(() => { /* never resolves */ }));
 
-    const promise = client.testGet('procedures/feed', {}, 120_000);
+    // Register .catch() BEFORE advancing timers to avoid unhandled rejection
+    const promise = client.testGet('procedures/feed', {}, 120_000).catch((e: unknown) => e);
 
     // Advance past the 5 ms global timeout — request should still be pending
     // because the effective timeout is 120_000 ms
@@ -797,7 +798,7 @@ describe('BaseEPClient.get() per-request minimum timeout', () => {
     // Advance past the 120_000 ms effective timeout
     await vi.advanceTimersByTimeAsync(120_000);
 
-    const error = await promise.catch((e: unknown) => e) as APIError;
+    const error = await promise as APIError;
     expect(error).toBeInstanceOf(APIError);
     expect(error.statusCode).toBe(408);
     expect(error.message).toContain('120000ms');
@@ -812,11 +813,12 @@ describe('BaseEPClient.get() per-request minimum timeout', () => {
 
     mockFetch.mockReturnValue(new Promise<Response>(() => { /* never resolves */ }));
 
-    const promise = client.testGet('events/feed', {}, 5);
+    // Register .catch() BEFORE advancing timers to avoid unhandled rejection
+    const promise = client.testGet('events/feed', {}, 5).catch((e: unknown) => e);
 
     await vi.advanceTimersByTimeAsync(60_001);
 
-    const error = await promise.catch((e: unknown) => e) as APIError;
+    const error = await promise as APIError;
     expect(error).toBeInstanceOf(APIError);
     expect(error.statusCode).toBe(408);
     expect(error.message).toContain('60000ms');
@@ -830,9 +832,10 @@ describe('BaseEPClient.get() per-request minimum timeout', () => {
     mockFetch.mockReturnValue(new Promise<Response>(() => { /* never resolves */ }));
 
     // NaN should be ignored — falls back to global 50ms
-    const p1 = client.testGet('procedures/feed', {}, NaN);
+    // Register .catch() BEFORE advancing timers to avoid unhandled rejection
+    const p1 = client.testGet('procedures/feed', {}, NaN).catch((e: unknown) => e);
     await vi.advanceTimersByTimeAsync(51);
-    const err1 = await p1.catch((e: unknown) => e) as APIError;
+    const err1 = await p1 as APIError;
     expect(err1).toBeInstanceOf(APIError);
     expect(err1.statusCode).toBe(408);
 
@@ -841,9 +844,9 @@ describe('BaseEPClient.get() per-request minimum timeout', () => {
     mockFetch.mockReturnValue(new Promise<Response>(() => { /* never resolves */ }));
 
     // 0 should be ignored — falls back to global 50ms
-    const p2 = client.testGet('events/feed', {}, 0);
+    const p2 = client.testGet('events/feed', {}, 0).catch((e: unknown) => e);
     await vi.advanceTimersByTimeAsync(51);
-    const err2 = await p2.catch((e: unknown) => e) as APIError;
+    const err2 = await p2 as APIError;
     expect(err2).toBeInstanceOf(APIError);
     expect(err2.statusCode).toBe(408);
 
@@ -852,9 +855,9 @@ describe('BaseEPClient.get() per-request minimum timeout', () => {
     mockFetch.mockReturnValue(new Promise<Response>(() => { /* never resolves */ }));
 
     // Negative should be ignored — falls back to global 50ms
-    const p3 = client.testGet('procedures/feed', {}, -100);
+    const p3 = client.testGet('procedures/feed', {}, -100).catch((e: unknown) => e);
     await vi.advanceTimersByTimeAsync(51);
-    const err3 = await p3.catch((e: unknown) => e) as APIError;
+    const err3 = await p3 as APIError;
     expect(err3).toBeInstanceOf(APIError);
     expect(err3.statusCode).toBe(408);
   });
@@ -866,10 +869,11 @@ describe('BaseEPClient.get() per-request minimum timeout', () => {
 
     mockFetch.mockReturnValue(new Promise<Response>(() => { /* never resolves */ }));
 
-    const promise = client.testGet('meps', {}, undefined);
+    // Register .catch() BEFORE advancing timers to avoid unhandled rejection
+    const promise = client.testGet('meps', {}, undefined).catch((e: unknown) => e);
     await vi.advanceTimersByTimeAsync(51);
 
-    const error = await promise.catch((e: unknown) => e) as APIError;
+    const error = await promise as APIError;
     expect(error).toBeInstanceOf(APIError);
     expect(error.statusCode).toBe(408);
     expect(error.message).toContain('50ms');
