@@ -145,7 +145,7 @@ export const getVotingRecordsToolMetadata = {
       },
       mepId: {
         type: 'string',
-        description: 'MEP identifier to filter votes by specific MEP',
+        description: 'MEP identifier (accepted but ignored — the EP API only provides aggregate vote tallies, not individual MEP positions)',
         minLength: 1,
         maxLength: 100
       },

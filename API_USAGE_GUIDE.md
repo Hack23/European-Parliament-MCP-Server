@@ -448,16 +448,18 @@ console.log(`Found ${sessions.data.length} sessions`);
 
 ### Tool: get_voting_records
 
-**Description**: Retrieve voting records with filters for MEP, session, topic, and date range.
+**Description**: Retrieve aggregate voting records from European Parliament plenary sessions. Filter by session, topic, or date range. Returns aggregate vote counts (for/against/abstain) and final result.
 
 > ℹ️ **Data delay**: The EP publishes roll-call voting data with a delay of several weeks. Queries for the most recent 1–2 months may return empty results — this is expected EP API behavior, not an error.
+
+> ⚠️ **EP API limitation**: The `mepId` parameter is accepted but **has no effect** — the EP API only provides aggregate vote tallies, not individual MEP positions.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| mepId | string | No | - | Filter by specific MEP |
 | sessionId | string | No | - | Filter by plenary session |
+| mepId | string | No | - | Accepted but ignored (EP API limitation — no per-MEP vote data) |
 | topic | string | No | - | Filter by topic/keyword |
 | dateFrom | string | No | - | Start date (YYYY-MM-DD) |
 | dateTo | string | No | - | End date (YYYY-MM-DD) |
@@ -477,7 +479,6 @@ console.log(`Found ${sessions.data.length} sessions`);
           \"sessionId\": \"PLENARY-2024-05\",
           \"date\": \"2024-05-15\",
           \"subject\": \"Climate Action Directive\",
-          \"mepVote\": \"FOR\",
           \"result\": \"ADOPTED\",
           \"votesFor\": 450,
           \"votesAgainst\": 120,
@@ -496,13 +497,12 @@ console.log(`Found ${sessions.data.length} sessions`);
 
 **Claude Desktop:**
 ```
-Show voting records for MEP-124810 on climate topics from 2024
+Show voting records on climate topics from 2024
 ```
 
 **TypeScript:**
 ```typescript
 const result = await client.callTool('get_voting_records', {
-  mepId: 'MEP-124810',
   topic: 'climate',
   dateFrom: '2024-01-01',
   limit: 100
@@ -511,9 +511,9 @@ const result = await client.callTool('get_voting_records', {
 
 #### Use Cases
 
-1. **MEP Accountability**: Track how specific MEPs vote
-2. **Topic Analysis**: Find all votes on specific topics
-3. **Session Votes**: Get all votes from a plenary session
+1. **Topic Analysis**: Find all votes on specific topics
+2. **Session Votes**: Get all votes from a plenary session
+3. **Trend Analysis**: Track voting patterns over time on policy areas
 
 ---
 

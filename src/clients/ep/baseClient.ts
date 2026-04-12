@@ -490,8 +490,16 @@ export class BaseEPClient {
     // endpoints), use it as a floor: the effective timeout is the greater
     // of the global timeout (which the user may have raised via --timeout
     // or EP_REQUEST_TIMEOUT_MS) and the per-endpoint minimum.
-    const effectiveTimeout = minimumTimeoutMs !== undefined
-      ? Math.max(minimumTimeoutMs, this.timeoutMs)
+    // Ignore invalid values so this low-level HTTP primitive never forwards
+    // a non-finite or non-positive timeout to withTimeoutAndAbort().
+    const validMinimum =
+      minimumTimeoutMs !== undefined &&
+      Number.isFinite(minimumTimeoutMs) &&
+      minimumTimeoutMs > 0
+        ? minimumTimeoutMs
+        : undefined;
+    const effectiveTimeout = validMinimum !== undefined
+      ? Math.max(validMinimum, this.timeoutMs)
       : this.timeoutMs;
     return withTimeoutAndAbort(
       async (signal) => {

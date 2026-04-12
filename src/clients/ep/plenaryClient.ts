@@ -351,12 +351,17 @@ export class PlenaryClient extends BaseEPClient {
     startDate?: string;
     activityType?: string;
   } = {}): Promise<JSONLDResponse> {
+    // Apply extended timeout only for 'one-month' timeframe which is known to
+    // be slow (120+ seconds). Other timeframes use the default global timeout.
+    const minimumTimeout = params.timeframe === 'one-month'
+      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
+      : undefined;
     return this.get<JSONLDResponse>('events/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.activityType !== undefined ? { 'activity-type': params.activityType } : {}),
-    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
+    }, minimumTimeout);
   }
 
   /**

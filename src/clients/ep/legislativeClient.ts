@@ -179,12 +179,17 @@ export class LegislativeClient extends BaseEPClient {
     startDate?: string;
     processType?: string;
   } = {}): Promise<JSONLDResponse> {
+    // Apply extended timeout only for 'one-month' timeframe which is known to
+    // be slow (120+ seconds). Other timeframes use the default global timeout.
+    const minimumTimeout = params.timeframe === 'one-month'
+      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
+      : undefined;
     return this.get<JSONLDResponse>('procedures/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.processType !== undefined ? { 'process-type': params.processType } : {}),
-    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
+    }, minimumTimeout);
   }
 
   /**
