@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { handleGetVotingRecords } from './getVotingRecords.js';
+import { handleGetVotingRecords, getVotingRecordsToolMetadata } from './getVotingRecords.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 import { setupToolTest } from '../../tests/helpers/mockFactory.js';
 import { expectValidMCPResponse, expectValidPaginatedMCPResponse } from '../../tests/helpers/assertions.js';
@@ -294,6 +294,17 @@ describe('get_voting_records Tool', () => {
 
       await expect(handleGetVotingRecords({}))
         .rejects.toThrow('Failed to retrieve voting records');
+    });
+  });
+
+  describe('Metadata', () => {
+    it('should export tool metadata with correct name', () => {
+      expect(getVotingRecordsToolMetadata).toHaveProperty('name', 'get_voting_records');
+    });
+
+    it('should export tool metadata with description containing data delay note', () => {
+      expect(getVotingRecordsToolMetadata.description).toContain('delay');
+      expect(getVotingRecordsToolMetadata.description).toContain('1-2 months');
     });
   });
 });

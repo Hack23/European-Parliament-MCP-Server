@@ -28,6 +28,7 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
+import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
 // ─── Plenary Client ───────────────────────────────────────────────────────────
 
@@ -340,18 +341,31 @@ export class PlenaryClient extends BaseEPClient {
   /**
    * Retrieves recently updated events via the feed endpoint.
    * **EP API Endpoint:** `GET /events/feed`
+   *
+   * **Note:** The EP API `events/feed` endpoint is significantly slower
+   * than other feed endpoints and may take 120+ seconds for `one-month`
+   * timeframes. For `one-month`, this client applies
+   * `DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS` as a minimum timeout for the
+   * request. Callers may still need to increase the configured global timeout
+   * if the EP API takes longer than that minimum to respond.
    */
   async getEventsFeed(params: {
     timeframe?: string;
     startDate?: string;
     activityType?: string;
   } = {}): Promise<JSONLDResponse> {
+    // Apply a minimum timeout only for the known-slow 'one-month' timeframe.
+    // Responses can still exceed this minimum, so callers may need a higher
+    // global timeout in their client configuration.
+    const minimumTimeout = params.timeframe === 'one-month'
+      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
+      : undefined;
     return this.get<JSONLDResponse>('events/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.activityType !== undefined ? { 'activity-type': params.activityType } : {}),
-    });
+    }, minimumTimeout);
   }
 
   /**

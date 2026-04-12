@@ -32,6 +32,17 @@ export interface TimeoutConfig {
 export const DEFAULT_TIMEOUTS = {
   /** Standard EP API HTTP request (60 s — some meeting sub-endpoints are slow) */
   EP_API_REQUEST_MS: 60_000,
+  /**
+   * Extended timeout for known slow EP API feed endpoints (120 s).
+   *
+   * The `procedures/feed` and `events/feed` endpoints on the EP Open Data
+   * Portal are significantly slower than other feed endpoints (e.g.
+   * `adopted-texts/feed`) and routinely exceed the standard 60 s timeout
+   * when queried with `timeframe=one-month`.  This extended timeout gives
+   * those endpoints enough headroom to respond without falling back to
+   * empty timeout responses.
+   */
+  EP_FEED_SLOW_REQUEST_MS: 120_000,
   /** Short health-check probe (3 s) */
   HEALTH_CHECK_MS: 3_000,
   /** Retry delay base (1 s) */
