@@ -581,20 +581,23 @@ export class BaseEPClient {
 
   /**
    * Converts a caught error to a typed {@link APIError}.
+   * For timeout errors, the actual timeout value is read from the
+   * {@link TimeoutError} instance (which carries the effective value used
+   * by `withTimeoutAndAbort`), avoiding the need to re-validate or
+   * recompute the per-endpoint minimum here.
    * @param error - The caught error
    * @param endpoint - Relative endpoint path (for error messages)
-   * @param minimumTimeoutMs - If a per-endpoint minimum timeout was used, compute the effective timeout for the error message
    * @private
    */
-  private toAPIError(error: unknown, endpoint: string, minimumTimeoutMs?: number): APIError {
+  private toAPIError(error: unknown, endpoint: string): APIError {
     if (error instanceof TimeoutError) {
-      const effectiveTimeout = minimumTimeoutMs !== undefined
-        ? Math.max(minimumTimeoutMs, this.timeoutMs)
-        : this.timeoutMs;
+      // Use the actual timeout that was applied (carried by TimeoutError),
+      // falling back to the global timeout if unavailable.
+      const actualTimeout = error.timeoutMs ?? this.timeoutMs;
       return new APIError(
-        `EP API request to ${endpoint} timed out after ${String(effectiveTimeout)}ms`,
+        `EP API request to ${endpoint} timed out after ${String(actualTimeout)}ms`,
         408,
-        { timeoutMs: effectiveTimeout }
+        { timeoutMs: actualTimeout }
       );
     }
     if (error instanceof APIError) return error;
@@ -657,7 +660,7 @@ export class BaseEPClient {
       return data;
     } catch (error: unknown) {
       performanceMonitor.recordDuration('ep_api_request_failed', performance.now() - requestStart);
-      throw this.toAPIError(error, endpoint, minimumTimeoutMs);
+      throw this.toAPIError(error, endpoint);
     }
   }
 
