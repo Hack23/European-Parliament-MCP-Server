@@ -134,6 +134,11 @@ describe('get_procedures_feed Tool', () => {
       expect(getProceduresFeedToolMetadata.description.length).toBeGreaterThan(0);
     });
 
+    it('should export tool metadata with description containing slow endpoint warning', () => {
+      expect(getProceduresFeedToolMetadata.description).toContain('120+ seconds');
+      expect(getProceduresFeedToolMetadata.description).toContain('get_procedures');
+    });
+
     it('should export tool metadata with inputSchema', () => {
       expect(getProceduresFeedToolMetadata).toHaveProperty('inputSchema');
       expect(getProceduresFeedToolMetadata.inputSchema).toHaveProperty('type', 'object');

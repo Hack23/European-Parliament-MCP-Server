@@ -28,6 +28,7 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
+import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
 // ─── Plenary Client ───────────────────────────────────────────────────────────
 
@@ -340,6 +341,10 @@ export class PlenaryClient extends BaseEPClient {
   /**
    * Retrieves recently updated events via the feed endpoint.
    * **EP API Endpoint:** `GET /events/feed`
+   *
+   * **Note:** The EP API `events/feed` endpoint is significantly slower
+   * than other feed endpoints and may take 120+ seconds for `one-month`
+   * timeframes.  An extended timeout is applied automatically.
    */
   async getEventsFeed(params: {
     timeframe?: string;
@@ -351,7 +356,7 @@ export class PlenaryClient extends BaseEPClient {
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.activityType !== undefined ? { 'activity-type': params.activityType } : {}),
-    });
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
   }
 
   /**

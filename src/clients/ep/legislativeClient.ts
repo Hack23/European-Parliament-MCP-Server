@@ -24,6 +24,7 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
+import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
 // ─── Legislative Client ───────────────────────────────────────────────────────
 
@@ -168,6 +169,10 @@ export class LegislativeClient extends BaseEPClient {
   /**
    * Retrieves recently updated procedures via the feed endpoint.
    * **EP API Endpoint:** `GET /procedures/feed`
+   *
+   * **Note:** The EP API `procedures/feed` endpoint is significantly slower
+   * than other feed endpoints and may take 120+ seconds for `one-month`
+   * timeframes.  An extended timeout is applied automatically.
    */
   async getProceduresFeed(params: {
     timeframe?: string;
@@ -179,7 +184,7 @@ export class LegislativeClient extends BaseEPClient {
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.processType !== undefined ? { 'process-type': params.processType } : {}),
-    });
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
   }
 
   /**

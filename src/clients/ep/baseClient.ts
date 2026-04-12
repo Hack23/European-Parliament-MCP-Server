@@ -477,9 +477,15 @@ export class BaseEPClient {
 
   /**
    * Executes the HTTP fetch with timeout/abort support and response size guard.
+   * @param url - Fully resolved request URL
+   * @param endpoint - Relative endpoint path (for error messages)
+   * @param overrideTimeoutMs - Optional per-request timeout override (ms).
+   *   When provided, takes precedence over the instance-level `timeoutMs`.
+   *   Use for known slow EP API endpoints (e.g. `procedures/feed`, `events/feed`).
    * @private
    */
-  private async fetchWithTimeout<T>(url: URL, endpoint: string): Promise<T> {
+  private async fetchWithTimeout<T>(url: URL, endpoint: string, overrideTimeoutMs?: number): Promise<T> {
+    const effectiveTimeout = overrideTimeoutMs ?? this.timeoutMs;
     return withTimeoutAndAbort(
       async (signal) => {
         const response = await fetch(url.toString(), {
@@ -534,18 +540,21 @@ export class BaseEPClient {
         // before they are fully buffered in memory.
         return this.readStreamedBody<T>(response);
       },
-      this.timeoutMs,
-      `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`
+      effectiveTimeout,
+      `EP API request to ${endpoint} timed out after ${String(effectiveTimeout)}ms`
     );
   }
 
   /**
    * Wraps a fetch call with the configured retry policy.
+   * @param url - Fully resolved request URL
+   * @param endpoint - Relative endpoint path (for error messages)
+   * @param overrideTimeoutMs - Optional per-request timeout override (ms)
    * @private
    */
-  private async fetchWithRetry<T>(url: URL, endpoint: string): Promise<T> {
+  private async fetchWithRetry<T>(url: URL, endpoint: string, overrideTimeoutMs?: number): Promise<T> {
     return withRetry(
-      () => this.fetchWithTimeout<T>(url, endpoint),
+      () => this.fetchWithTimeout<T>(url, endpoint, overrideTimeoutMs),
       {
         maxRetries: this.enableRetry ? this.maxRetries : 0,
         retryDelayMs: DEFAULT_RETRY_BASE_DELAY_MS,
@@ -557,14 +566,18 @@ export class BaseEPClient {
 
   /**
    * Converts a caught error to a typed {@link APIError}.
+   * @param error - The caught error
+   * @param endpoint - Relative endpoint path (for error messages)
+   * @param overrideTimeoutMs - If a per-request timeout was used, include it in the error message
    * @private
    */
-  private toAPIError(error: unknown, endpoint: string): APIError {
+  private toAPIError(error: unknown, endpoint: string, overrideTimeoutMs?: number): APIError {
     if (error instanceof TimeoutError) {
+      const effectiveTimeout = overrideTimeoutMs ?? this.timeoutMs;
       return new APIError(
-        `EP API request to ${endpoint} timed out after ${String(this.timeoutMs)}ms`,
+        `EP API request to ${endpoint} timed out after ${String(effectiveTimeout)}ms`,
         408,
-        { timeoutMs: this.timeoutMs }
+        { timeoutMs: effectiveTimeout }
       );
     }
     if (error instanceof APIError) return error;
@@ -581,13 +594,17 @@ export class BaseEPClient {
    * @template T - Expected response type (extends `Record<string, unknown>`)
    * @param endpoint - API endpoint path (relative to `baseURL`)
    * @param params - Optional query parameters
+   * @param overrideTimeoutMs - Optional per-request timeout in milliseconds.
+   *   When provided, overrides the instance-level timeout for this single request.
+   *   Use for known slow EP API endpoints such as `procedures/feed` and `events/feed`.
    * @returns Promise resolving to the typed API response
    * @throws {APIError} On HTTP errors, network failures, or parse failures
    * @protected
    */
   protected async get<T extends Record<string, unknown>>(
     endpoint: string,
-    params?: Record<string, unknown>
+    params?: Record<string, unknown>,
+    overrideTimeoutMs?: number
   ): Promise<T> {
     // Consume one rate-limit token; waits asynchronously up to 5 s before giving up
     const rlResult = await this.rateLimiter.removeTokens(1);
@@ -615,13 +632,13 @@ export class BaseEPClient {
     const requestStart = performance.now();
 
     try {
-      const data = await this.fetchWithRetry<T>(url, endpoint);
+      const data = await this.fetchWithRetry<T>(url, endpoint, overrideTimeoutMs);
       performanceMonitor.recordDuration('ep_api_request', performance.now() - requestStart);
       this.cache.set(cacheKey, data);
       return data;
     } catch (error: unknown) {
       performanceMonitor.recordDuration('ep_api_request_failed', performance.now() - requestStart);
-      throw this.toAPIError(error, endpoint);
+      throw this.toAPIError(error, endpoint, overrideTimeoutMs);
     }
   }
 

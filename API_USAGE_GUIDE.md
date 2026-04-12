@@ -450,6 +450,8 @@ console.log(`Found ${sessions.data.length} sessions`);
 
 **Description**: Retrieve voting records with filters for MEP, session, topic, and date range.
 
+> ℹ️ **Data delay**: The EP publishes roll-call voting data with a delay of several weeks. Queries for the most recent 1–2 months may return empty results — this is expected EP API behavior, not an error.
+
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
@@ -2164,6 +2166,27 @@ const result = await client.callTool('get_server_health', {});
 
 These tools provide access to European Parliament Open Data API v2 feed endpoints. Feed endpoints return recently updated records within a specified timeframe, enabling change-tracking and incremental data synchronization workflows.
 
+### ⚠️ Known EP API Behavior & Limitations
+
+#### Slow Feed Endpoints
+
+The EP API `procedures/feed` and `events/feed` endpoints are **significantly slower** than other feed endpoints. With `timeframe: "one-month"`, these endpoints can take **120+ seconds** to respond, compared to ~30 seconds for `adopted-texts/feed`.
+
+| Feed Endpoint | `one-week` | `one-month` | Notes |
+|--------------|------------|-------------|-------|
+| `adopted-texts/feed` | ~10s | ~30s | ✅ Reliable |
+| `meps/feed` | ~10s | ~30s | ✅ Reliable |
+| `procedures/feed` | ~30s | **120+ s** | ⚠️ May time out |
+| `events/feed` | ~30s | **120+ s** | ⚠️ May time out |
+
+The MCP server automatically applies an **extended 120-second timeout** to `get_procedures_feed` and `get_events_feed` to accommodate these slow endpoints. If you need an even longer timeout, use the `--timeout <ms>` CLI argument or the `EP_REQUEST_TIMEOUT_MS` environment variable.
+
+**Recommended fallback:** When `get_procedures_feed({ timeframe: "one-month" })` times out, use `get_procedures({ year: 2026, limit: 20 })` instead. Similarly, use `get_plenary_sessions({ year: 2026 })` as a fallback for `get_events_feed`.
+
+#### Voting Records Data Delay
+
+The EP publishes roll-call voting data with a delay of **several weeks**. Queries to `get_voting_records` for the most recent 1–2 months may return empty results — this is expected EP API behavior, not an error. For recent legislative activity, use `get_adopted_texts` or `get_adopted_texts_feed` instead.
+
 ### Common Feed Parameters
 
 All feed tools share these common parameters:
@@ -2206,6 +2229,8 @@ const result = await client.callTool('get_meps_feed', {
 
 **Description**: Get recently updated events from the European Parliament feed endpoint. Returns event records that have been modified within the specified timeframe.
 
+> ⚠️ **Slow endpoint**: The EP API `events/feed` endpoint is significantly slower than other feeds — `one-month` queries may take 120+ seconds. An extended timeout (120s) is applied automatically. For faster results, use `get_plenary_sessions` with a `year` filter instead.
+
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
@@ -2233,6 +2258,8 @@ const result = await client.callTool('get_events_feed', {
 ### Tool: get_procedures_feed
 
 **Description**: Get recently updated legislative procedures from the European Parliament feed endpoint. Returns procedure records that have been modified within the specified timeframe.
+
+> ⚠️ **Slow endpoint**: The EP API `procedures/feed` endpoint is significantly slower than other feeds — `one-month` queries may take 120+ seconds. An extended timeout (120s) is applied automatically. For faster results, use `get_procedures` with a `year` filter instead.
 
 #### Parameters
 

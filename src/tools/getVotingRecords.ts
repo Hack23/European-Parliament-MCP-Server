@@ -131,7 +131,7 @@ export async function handleGetVotingRecords(
  */
 export const getVotingRecordsToolMetadata = {
   name: 'get_voting_records',
-  description: 'Retrieve voting records from European Parliament plenary sessions. Filter by session, MEP, topic, or date range. Returns vote counts (for/against/abstain), final result, and optionally individual MEP votes.',
+  description: 'Retrieve voting records from European Parliament plenary sessions. Filter by session, MEP, topic, or date range. Returns vote counts (for/against/abstain), final result, and optionally individual MEP votes. NOTE: The EP publishes roll-call voting data with a delay of several weeks, so queries for the most recent 1-2 months may return empty results — this is expected EP API behavior, not an error.',
   inputSchema: {
     type: 'object' as const,
     properties: {

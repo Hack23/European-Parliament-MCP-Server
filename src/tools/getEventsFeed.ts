@@ -67,7 +67,7 @@ export async function handleGetEventsFeed(args: unknown): Promise<ToolResult> {
 export const getEventsFeedToolMetadata = {
   name: 'get_events_feed',
   description:
-    'Get recently updated European Parliament events from the feed. Returns events published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.',
+    'Get recently updated European Parliament events from the feed. Returns events published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API events/feed endpoint is significantly slower than other feeds — "one-month" queries may take 120+ seconds. For faster results, use get_plenary_sessions with a year filter instead.',
   inputSchema: {
     type: 'object' as const,
     properties: {

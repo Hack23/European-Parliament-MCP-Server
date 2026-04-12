@@ -134,6 +134,11 @@ describe('get_events_feed Tool', () => {
       expect(getEventsFeedToolMetadata.description.length).toBeGreaterThan(0);
     });
 
+    it('should export tool metadata with description containing slow endpoint warning', () => {
+      expect(getEventsFeedToolMetadata.description).toContain('120+ seconds');
+      expect(getEventsFeedToolMetadata.description).toContain('get_plenary_sessions');
+    });
+
     it('should export tool metadata with inputSchema', () => {
       expect(getEventsFeedToolMetadata).toHaveProperty('inputSchema');
       expect(getEventsFeedToolMetadata.inputSchema).toHaveProperty('type', 'object');

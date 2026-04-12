@@ -4,6 +4,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import {
+  DEFAULT_TIMEOUTS,
   TimeoutError,
   withTimeout,
   withTimeoutAndAbort,
@@ -35,6 +36,28 @@ afterAll(() => {
   if (unhandledRejectionHandler) {
     process.off('unhandledRejection', unhandledRejectionHandler);
   }
+});
+
+describe('DEFAULT_TIMEOUTS', () => {
+  it('should define standard EP API request timeout', () => {
+    expect(DEFAULT_TIMEOUTS.EP_API_REQUEST_MS).toBe(60_000);
+  });
+
+  it('should define extended timeout for known slow feed endpoints', () => {
+    expect(DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS).toBe(120_000);
+  });
+
+  it('should have slow feed timeout greater than standard timeout', () => {
+    expect(DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS).toBeGreaterThan(DEFAULT_TIMEOUTS.EP_API_REQUEST_MS);
+  });
+
+  it('should define health check timeout', () => {
+    expect(DEFAULT_TIMEOUTS.HEALTH_CHECK_MS).toBe(3_000);
+  });
+
+  it('should define retry delay', () => {
+    expect(DEFAULT_TIMEOUTS.RETRY_DELAY_MS).toBe(1_000);
+  });
 });
 
 describe('TimeoutError', () => {
