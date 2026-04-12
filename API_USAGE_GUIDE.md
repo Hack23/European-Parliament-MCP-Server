@@ -2179,7 +2179,7 @@ The EP API `procedures/feed` and `events/feed` endpoints are **significantly slo
 | `procedures/feed` | ~30s | **120+ s** | ⚠️ May time out |
 | `events/feed` | ~30s | **120+ s** | ⚠️ May time out |
 
-The MCP server automatically applies an **extended 120-second timeout** to `get_procedures_feed` and `get_events_feed` to accommodate these slow endpoints. If you need an even longer timeout, use the `--timeout <ms>` CLI argument or the `EP_REQUEST_TIMEOUT_MS` environment variable.
+The MCP server automatically applies a **minimum 120-second timeout** to `get_procedures_feed` and `get_events_feed` to accommodate these slow endpoints. If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead.
 
 **Recommended fallback:** When `get_procedures_feed({ timeframe: "one-month" })` times out, use `get_procedures({ year: 2026, limit: 20 })` instead. Similarly, use `get_plenary_sessions({ year: 2026 })` as a fallback for `get_events_feed`.
 

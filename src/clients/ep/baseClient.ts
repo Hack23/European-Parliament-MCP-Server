@@ -479,13 +479,20 @@ export class BaseEPClient {
    * Executes the HTTP fetch with timeout/abort support and response size guard.
    * @param url - Fully resolved request URL
    * @param endpoint - Relative endpoint path (for error messages)
-   * @param overrideTimeoutMs - Optional per-request timeout override (ms).
-   *   When provided, takes precedence over the instance-level `timeoutMs`.
+   * @param minimumTimeoutMs - Optional per-request minimum timeout (ms).
+   *   When provided, the effective timeout is `Math.max(minimumTimeoutMs, this.timeoutMs)`,
+   *   so it acts as a floor that the global timeout can still extend.
    *   Use for known slow EP API endpoints (e.g. `procedures/feed`, `events/feed`).
    * @private
    */
-  private async fetchWithTimeout<T>(url: URL, endpoint: string, overrideTimeoutMs?: number): Promise<T> {
-    const effectiveTimeout = overrideTimeoutMs ?? this.timeoutMs;
+  private async fetchWithTimeout<T>(url: URL, endpoint: string, minimumTimeoutMs?: number): Promise<T> {
+    // When a per-endpoint minimum is specified (e.g. for known slow feed
+    // endpoints), use it as a floor: the effective timeout is the greater
+    // of the global timeout (which the user may have raised via --timeout
+    // or EP_REQUEST_TIMEOUT_MS) and the per-endpoint minimum.
+    const effectiveTimeout = minimumTimeoutMs !== undefined
+      ? Math.max(minimumTimeoutMs, this.timeoutMs)
+      : this.timeoutMs;
     return withTimeoutAndAbort(
       async (signal) => {
         const response = await fetch(url.toString(), {
@@ -549,12 +556,12 @@ export class BaseEPClient {
    * Wraps a fetch call with the configured retry policy.
    * @param url - Fully resolved request URL
    * @param endpoint - Relative endpoint path (for error messages)
-   * @param overrideTimeoutMs - Optional per-request timeout override (ms)
+   * @param minimumTimeoutMs - Optional per-request minimum timeout (ms)
    * @private
    */
-  private async fetchWithRetry<T>(url: URL, endpoint: string, overrideTimeoutMs?: number): Promise<T> {
+  private async fetchWithRetry<T>(url: URL, endpoint: string, minimumTimeoutMs?: number): Promise<T> {
     return withRetry(
-      () => this.fetchWithTimeout<T>(url, endpoint, overrideTimeoutMs),
+      () => this.fetchWithTimeout<T>(url, endpoint, minimumTimeoutMs),
       {
         maxRetries: this.enableRetry ? this.maxRetries : 0,
         retryDelayMs: DEFAULT_RETRY_BASE_DELAY_MS,
@@ -568,12 +575,14 @@ export class BaseEPClient {
    * Converts a caught error to a typed {@link APIError}.
    * @param error - The caught error
    * @param endpoint - Relative endpoint path (for error messages)
-   * @param overrideTimeoutMs - If a per-request timeout was used, include it in the error message
+   * @param minimumTimeoutMs - If a per-endpoint minimum timeout was used, compute the effective timeout for the error message
    * @private
    */
-  private toAPIError(error: unknown, endpoint: string, overrideTimeoutMs?: number): APIError {
+  private toAPIError(error: unknown, endpoint: string, minimumTimeoutMs?: number): APIError {
     if (error instanceof TimeoutError) {
-      const effectiveTimeout = overrideTimeoutMs ?? this.timeoutMs;
+      const effectiveTimeout = minimumTimeoutMs !== undefined
+        ? Math.max(minimumTimeoutMs, this.timeoutMs)
+        : this.timeoutMs;
       return new APIError(
         `EP API request to ${endpoint} timed out after ${String(effectiveTimeout)}ms`,
         408,
@@ -594,8 +603,10 @@ export class BaseEPClient {
    * @template T - Expected response type (extends `Record<string, unknown>`)
    * @param endpoint - API endpoint path (relative to `baseURL`)
    * @param params - Optional query parameters
-   * @param overrideTimeoutMs - Optional per-request timeout in milliseconds.
-   *   When provided, overrides the instance-level timeout for this single request.
+   * @param minimumTimeoutMs - Optional per-request minimum timeout in milliseconds.
+   *   When provided, the effective timeout is `Math.max(minimumTimeoutMs, this.timeoutMs)`,
+   *   so the global timeout (set via `--timeout` or `EP_REQUEST_TIMEOUT_MS`) can still
+   *   extend it beyond the per-endpoint minimum.
    *   Use for known slow EP API endpoints such as `procedures/feed` and `events/feed`.
    * @returns Promise resolving to the typed API response
    * @throws {APIError} On HTTP errors, network failures, or parse failures
@@ -604,7 +615,7 @@ export class BaseEPClient {
   protected async get<T extends Record<string, unknown>>(
     endpoint: string,
     params?: Record<string, unknown>,
-    overrideTimeoutMs?: number
+    minimumTimeoutMs?: number
   ): Promise<T> {
     // Consume one rate-limit token; waits asynchronously up to 5 s before giving up
     const rlResult = await this.rateLimiter.removeTokens(1);
@@ -632,13 +643,13 @@ export class BaseEPClient {
     const requestStart = performance.now();
 
     try {
-      const data = await this.fetchWithRetry<T>(url, endpoint, overrideTimeoutMs);
+      const data = await this.fetchWithRetry<T>(url, endpoint, minimumTimeoutMs);
       performanceMonitor.recordDuration('ep_api_request', performance.now() - requestStart);
       this.cache.set(cacheKey, data);
       return data;
     } catch (error: unknown) {
       performanceMonitor.recordDuration('ep_api_request_failed', performance.now() - requestStart);
-      throw this.toAPIError(error, endpoint, overrideTimeoutMs);
+      throw this.toAPIError(error, endpoint, minimumTimeoutMs);
     }
   }
 

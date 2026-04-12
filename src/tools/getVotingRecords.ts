@@ -28,8 +28,10 @@ import type { ToolResult } from './shared/types.js';
  * Handles the get_voting_records MCP tool request.
  *
  * Retrieves voting records from European Parliament plenary sessions, supporting
- * filtering by session, MEP, topic, and date range. Returns vote tallies
- * (for/against/abstain), final results, and optionally individual MEP votes.
+ * filtering by session, topic, and date range. Returns aggregate vote tallies
+ * (for/against/abstain) and final results. The `mepId` parameter is accepted but
+ * has no effect — the EP API only provides aggregate vote counts, not individual
+ * MEP positions.
  *
  * @param args - Raw tool arguments, validated against {@link GetVotingRecordsSchema}
  * @returns MCP tool result containing a paginated list of voting records with vote counts and results
@@ -131,7 +133,7 @@ export async function handleGetVotingRecords(
  */
 export const getVotingRecordsToolMetadata = {
   name: 'get_voting_records',
-  description: 'Retrieve voting records from European Parliament plenary sessions. Filter by session, MEP, topic, or date range. Returns vote counts (for/against/abstain), final result, and optionally individual MEP votes. NOTE: The EP publishes roll-call voting data with a delay of several weeks, so queries for the most recent 1-2 months may return empty results — this is expected EP API behavior, not an error.',
+  description: 'Retrieve voting records from European Parliament plenary sessions. Filter by session, topic, or date range. Returns aggregate vote counts (for/against/abstain) and final result. The mepId parameter is accepted but has no effect — the EP API only provides aggregate vote tallies, not individual MEP positions. NOTE: The EP publishes roll-call voting data with a delay of several weeks, so queries for the most recent 1-2 months may return empty results — this is expected EP API behavior, not an error.',
   inputSchema: {
     type: 'object' as const,
     properties: {
