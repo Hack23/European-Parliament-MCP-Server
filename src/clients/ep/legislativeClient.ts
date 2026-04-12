@@ -172,15 +172,19 @@ export class LegislativeClient extends BaseEPClient {
    *
    * **Note:** The EP API `procedures/feed` endpoint is significantly slower
    * than other feed endpoints and may take 120+ seconds for `one-month`
-   * timeframes.  An extended timeout is applied automatically.
+   * timeframes. For `one-month`, this client applies an extended minimum
+   * timeout automatically, but callers may still need to increase the global
+   * request timeout if the endpoint takes longer to respond.
    */
   async getProceduresFeed(params: {
     timeframe?: string;
     startDate?: string;
     processType?: string;
   } = {}): Promise<JSONLDResponse> {
-    // Apply extended timeout only for 'one-month' timeframe which is known to
-    // be slow (120+ seconds). Other timeframes use the default global timeout.
+    // Apply an extended minimum timeout only for the known slow 'one-month'
+    // timeframe (120+ seconds). Slower responses may still require callers to
+    // raise the global request timeout. Other timeframes use the default
+    // global timeout.
     const minimumTimeout = params.timeframe === 'one-month'
       ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
       : undefined;

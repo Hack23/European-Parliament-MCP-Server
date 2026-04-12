@@ -40,9 +40,10 @@ class TestEPClient extends BaseEPClient {
   /** Exposes the protected get() method for testing */
   async testGet<T extends Record<string, unknown>>(
     endpoint: string,
-    params?: Record<string, unknown>
+    params?: Record<string, unknown>,
+    minimumTimeoutMs?: number
   ): Promise<T> {
-    return this.get<T>(endpoint, params);
+    return this.get<T>(endpoint, params, minimumTimeoutMs);
   }
 }
 
@@ -770,5 +771,107 @@ describe('BaseEPClient.get() retry behaviour', () => {
     // Non-truncation SyntaxError should NOT be retried
     await expect(client.testGet('adopted-texts')).rejects.toBeInstanceOf(APIError);
     expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('BaseEPClient.get() per-request minimum timeout', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('should apply extended timeout when minimumTimeoutMs exceeds global timeout', async () => {
+    vi.useFakeTimers();
+    // Global timeout is 5 ms; per-request minimum is 120_000 ms.
+    // Math.max(120_000, 5) = 120_000 should be the effective timeout.
+    const client = new TestEPClient({ timeoutMs: 5, enableRetry: false });
+    client.clearCache();
+
+    // fetch never resolves, so the request will time out at the effective timeout
+    mockFetch.mockReturnValue(new Promise<Response>(() => { /* never resolves */ }));
+
+    const promise = client.testGet('procedures/feed', {}, 120_000);
+
+    // Advance past the 5 ms global timeout — request should still be pending
+    // because the effective timeout is 120_000 ms
+    await vi.advanceTimersByTimeAsync(10);
+    // Advance past the 120_000 ms effective timeout
+    await vi.advanceTimersByTimeAsync(120_000);
+
+    const error = await promise.catch((e: unknown) => e) as APIError;
+    expect(error).toBeInstanceOf(APIError);
+    expect(error.statusCode).toBe(408);
+    expect(error.message).toContain('120000ms');
+  });
+
+  it('should use global timeout when minimumTimeoutMs is smaller', async () => {
+    vi.useFakeTimers();
+    // Global timeout is 60_000 ms; per-request minimum is 5 ms.
+    // Math.max(5, 60_000) = 60_000 should be the effective timeout.
+    const client = new TestEPClient({ timeoutMs: 60_000, enableRetry: false });
+    client.clearCache();
+
+    mockFetch.mockReturnValue(new Promise<Response>(() => { /* never resolves */ }));
+
+    const promise = client.testGet('events/feed', {}, 5);
+
+    await vi.advanceTimersByTimeAsync(60_001);
+
+    const error = await promise.catch((e: unknown) => e) as APIError;
+    expect(error).toBeInstanceOf(APIError);
+    expect(error.statusCode).toBe(408);
+    expect(error.message).toContain('60000ms');
+  });
+
+  it('should ignore invalid minimumTimeoutMs values (NaN, 0, negative)', async () => {
+    vi.useFakeTimers();
+    const client = new TestEPClient({ timeoutMs: 50, enableRetry: false });
+    client.clearCache();
+
+    mockFetch.mockReturnValue(new Promise<Response>(() => { /* never resolves */ }));
+
+    // NaN should be ignored — falls back to global 50ms
+    const p1 = client.testGet('procedures/feed', {}, NaN);
+    await vi.advanceTimersByTimeAsync(51);
+    const err1 = await p1.catch((e: unknown) => e) as APIError;
+    expect(err1).toBeInstanceOf(APIError);
+    expect(err1.statusCode).toBe(408);
+
+    client.clearCache();
+    vi.clearAllMocks();
+    mockFetch.mockReturnValue(new Promise<Response>(() => { /* never resolves */ }));
+
+    // 0 should be ignored — falls back to global 50ms
+    const p2 = client.testGet('events/feed', {}, 0);
+    await vi.advanceTimersByTimeAsync(51);
+    const err2 = await p2.catch((e: unknown) => e) as APIError;
+    expect(err2).toBeInstanceOf(APIError);
+    expect(err2.statusCode).toBe(408);
+
+    client.clearCache();
+    vi.clearAllMocks();
+    mockFetch.mockReturnValue(new Promise<Response>(() => { /* never resolves */ }));
+
+    // Negative should be ignored — falls back to global 50ms
+    const p3 = client.testGet('procedures/feed', {}, -100);
+    await vi.advanceTimersByTimeAsync(51);
+    const err3 = await p3.catch((e: unknown) => e) as APIError;
+    expect(err3).toBeInstanceOf(APIError);
+    expect(err3.statusCode).toBe(408);
+  });
+
+  it('should use default global timeout when minimumTimeoutMs is undefined', async () => {
+    vi.useFakeTimers();
+    const client = new TestEPClient({ timeoutMs: 50, enableRetry: false });
+    client.clearCache();
+
+    mockFetch.mockReturnValue(new Promise<Response>(() => { /* never resolves */ }));
+
+    const promise = client.testGet('meps', {}, undefined);
+    await vi.advanceTimersByTimeAsync(51);
+
+    const error = await promise.catch((e: unknown) => e) as APIError;
+    expect(error).toBeInstanceOf(APIError);
+    expect(error.statusCode).toBe(408);
+    expect(error.message).toContain('50ms');
   });
 });

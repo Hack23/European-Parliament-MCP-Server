@@ -135,7 +135,7 @@ describe('get_procedures_feed Tool', () => {
     });
 
     it('should export tool metadata with description containing slow endpoint warning', () => {
-      expect(getProceduresFeedToolMetadata.description).toContain('120+ seconds');
+      expect(getProceduresFeedToolMetadata.description).toContain('120 seconds');
       expect(getProceduresFeedToolMetadata.description).toContain('get_procedures');
     });
 

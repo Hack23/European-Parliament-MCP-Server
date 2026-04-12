@@ -135,7 +135,7 @@ describe('get_events_feed Tool', () => {
     });
 
     it('should export tool metadata with description containing slow endpoint warning', () => {
-      expect(getEventsFeedToolMetadata.description).toContain('120+ seconds');
+      expect(getEventsFeedToolMetadata.description).toContain('120-second');
       expect(getEventsFeedToolMetadata.description).toContain('get_plenary_sessions');
     });
 

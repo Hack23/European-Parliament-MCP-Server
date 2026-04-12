@@ -344,15 +344,19 @@ export class PlenaryClient extends BaseEPClient {
    *
    * **Note:** The EP API `events/feed` endpoint is significantly slower
    * than other feed endpoints and may take 120+ seconds for `one-month`
-   * timeframes.  An extended timeout is applied automatically.
+   * timeframes. For `one-month`, this client applies
+   * `DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS` as a minimum timeout for the
+   * request. Callers may still need to increase the configured global timeout
+   * if the EP API takes longer than that minimum to respond.
    */
   async getEventsFeed(params: {
     timeframe?: string;
     startDate?: string;
     activityType?: string;
   } = {}): Promise<JSONLDResponse> {
-    // Apply extended timeout only for 'one-month' timeframe which is known to
-    // be slow (120+ seconds). Other timeframes use the default global timeout.
+    // Apply a minimum timeout only for the known-slow 'one-month' timeframe.
+    // Responses can still exceed this minimum, so callers may need a higher
+    // global timeout in their client configuration.
     const minimumTimeout = params.timeframe === 'one-month'
       ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
       : undefined;

@@ -67,7 +67,7 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
 export const getProceduresFeedToolMetadata = {
   name: 'get_procedures_feed',
   description:
-    'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take 120+ seconds. For faster results, use get_procedures with a year filter instead.',
+    'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take around 120 seconds and can still time out. If you see timeouts, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. For faster results, use get_procedures with a year filter instead.',
   inputSchema: {
     type: 'object' as const,
     properties: {
