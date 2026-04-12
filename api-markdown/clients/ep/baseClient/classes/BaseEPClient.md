@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.4**](../../../../README.md)
 
 ***
 
@@ -177,7 +177,7 @@ Builds the full request URL from endpoint + optional params.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:655](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L655)
+Defined in: [clients/ep/baseClient.ts:694](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L694)
 
 Clears all entries from the LRU cache.
 
@@ -189,9 +189,9 @@ Clears all entries from the LRU cache.
 
 ### fetchWithRetry()
 
-> `private` **fetchWithRetry**\<`T`\>(`url`, `endpoint`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `private` **fetchWithRetry**\<`T`\>(`url`, `endpoint`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:546](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L546)
+Defined in: [clients/ep/baseClient.ts:570](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L570)
 
 Wraps a fetch call with the configured retry policy.
 
@@ -207,9 +207,19 @@ Wraps a fetch call with the configured retry policy.
 
 `URL`
 
+Fully resolved request URL
+
 ##### endpoint
 
 `string`
+
+Relative endpoint path (for error messages)
+
+##### minimumTimeoutMs?
+
+`number`
+
+Optional per-request minimum timeout (ms)
 
 #### Returns
 
@@ -219,9 +229,9 @@ Wraps a fetch call with the configured retry policy.
 
 ### fetchWithTimeout()
 
-> `private` **fetchWithTimeout**\<`T`\>(`url`, `endpoint`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `private` **fetchWithTimeout**\<`T`\>(`url`, `endpoint`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:482](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L482)
+Defined in: [clients/ep/baseClient.ts:488](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L488)
 
 Executes the HTTP fetch with timeout/abort support and response size guard.
 
@@ -237,9 +247,22 @@ Executes the HTTP fetch with timeout/abort support and response size guard.
 
 `URL`
 
+Fully resolved request URL
+
 ##### endpoint
 
 `string`
+
+Relative endpoint path (for error messages)
+
+##### minimumTimeoutMs?
+
+`number`
+
+Optional per-request minimum timeout (ms).
+  When provided, the effective timeout is `Math.max(minimumTimeoutMs, this.timeoutMs)`,
+  so it acts as a floor that the global timeout can still extend.
+  Use for known slow EP API endpoints (e.g. `procedures/feed`, `events/feed`).
 
 #### Returns
 
@@ -249,9 +272,9 @@ Executes the HTTP fetch with timeout/abort support and response size guard.
 
 ### get()
 
-> `protected` **get**\<`T`\>(`endpoint`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:588](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L588)
+Defined in: [clients/ep/baseClient.ts:626](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L626)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -277,6 +300,16 @@ API endpoint path (relative to `baseURL`)
 
 Optional query parameters
 
+##### minimumTimeoutMs?
+
+`number`
+
+Optional per-request minimum timeout in milliseconds.
+  When provided, the effective timeout is `Math.max(minimumTimeoutMs, this.timeoutMs)`,
+  so the global timeout (set via `--timeout` or `EP_REQUEST_TIMEOUT_MS`) can still
+  extend it beyond the per-endpoint minimum.
+  Use for known slow EP API endpoints such as `procedures/feed` and `events/feed`.
+
 #### Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
@@ -293,7 +326,7 @@ On HTTP errors, network failures, or parse failures
 
 > `private` **getCacheKey**(`endpoint`, `params?`): `string`
 
-Defined in: [clients/ep/baseClient.ts:635](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L635)
+Defined in: [clients/ep/baseClient.ts:674](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L674)
 
 Generates a deterministic cache key.
 
@@ -323,7 +356,7 @@ JSON string used as cache key
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:664](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L664)
+Defined in: [clients/ep/baseClient.ts:703](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L703)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -414,9 +447,13 @@ Does NOT retry on 4xx client errors (except 429).
 
 > `private` **toAPIError**(`error`, `endpoint`): [`APIError`](APIError.md)
 
-Defined in: [clients/ep/baseClient.ts:562](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L562)
+Defined in: [clients/ep/baseClient.ts:592](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L592)
 
 Converts a caught error to a typed [APIError](APIError.md).
+For timeout errors, the actual timeout value is read from the
+[TimeoutError](../../../../utils/timeout/classes/TimeoutError.md) instance (which carries the effective value used
+by `withTimeoutAndAbort`), avoiding the need to re-validate or
+recompute the per-endpoint minimum here.
 
 #### Parameters
 
@@ -424,9 +461,13 @@ Converts a caught error to a typed [APIError](APIError.md).
 
 `unknown`
 
+The caught error
+
 ##### endpoint
 
 `string`
+
+Relative endpoint path (for error messages)
 
 #### Returns
 

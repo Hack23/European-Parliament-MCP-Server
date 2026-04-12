@@ -1,4 +1,4 @@
-**European Parliament MCP Server API v1.2.3**
+**European Parliament MCP Server API v1.2.4**
 
 ***
 
@@ -439,7 +439,7 @@ Add to `~/.cursor/mcp.json` (or project-level `.cursor/mcp.json`):
 
 #### Custom Timeout Configuration
 
-Use `--timeout <ms>` to override the default 10 s request timeout. This is especially useful in `copilot-mcp.json` or other contexts where the `env` field may not reliably propagate:
+Use `--timeout <ms>` to override the default 60 s request timeout. This is especially useful in `copilot-mcp.json` or other contexts where the `env` field may not reliably propagate:
 
 ```json
 {
@@ -447,7 +447,9 @@ Use `--timeout <ms>` to override the default 10 s request timeout. This is espec
 }
 ```
 
-Precedence: `--timeout` CLI arg > `EP_REQUEST_TIMEOUT_MS` env var > default (10 000 ms).
+Precedence: `--timeout` CLI arg > `EP_REQUEST_TIMEOUT_MS` env var > default (60 000 ms).
+
+> **Note:** The `procedures/feed` and `events/feed` endpoints automatically use an extended 120 s timeout because these EP API endpoints are significantly slower than others. If you experience timeouts with `one-month` timeframes, consider using year-based queries (e.g., `get_procedures({ year: 2026 })`) as a faster alternative.
 
 ---
 

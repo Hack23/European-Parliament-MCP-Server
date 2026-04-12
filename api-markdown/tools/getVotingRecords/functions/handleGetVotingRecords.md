@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.3**](../../../README.md)
+[**European Parliament MCP Server API v1.2.4**](../../../README.md)
 
 ***
 
@@ -8,13 +8,15 @@
 
 > **handleGetVotingRecords**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getVotingRecords.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getVotingRecords.ts#L56)
+Defined in: [tools/getVotingRecords.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getVotingRecords.ts#L58)
 
 Handles the get_voting_records MCP tool request.
 
 Retrieves voting records from European Parliament plenary sessions, supporting
-filtering by session, MEP, topic, and date range. Returns vote tallies
-(for/against/abstain), final results, and optionally individual MEP votes.
+filtering by session, topic, and date range. Returns aggregate vote tallies
+(for/against/abstain) and final results. The `mepId` parameter is accepted but
+has no effect — the EP API only provides aggregate vote counts, not individual
+MEP positions.
 
 ## Parameters
 

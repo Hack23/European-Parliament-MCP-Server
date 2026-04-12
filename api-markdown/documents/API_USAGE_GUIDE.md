@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.3**](../README.md)
+[**European Parliament MCP Server API v1.2.4**](../README.md)
 
 ***
 
@@ -454,14 +454,18 @@ console.log(`Found ${sessions.data.length} sessions`);
 
 ### Tool: get_voting_records
 
-**Description**: Retrieve voting records with filters for MEP, session, topic, and date range.
+**Description**: Retrieve aggregate voting records from European Parliament plenary sessions. Filter by session, topic, or date range. Returns aggregate vote counts (for/against/abstain) and final result.
+
+> ℹ️ **Data delay**: The EP publishes roll-call voting data with a delay of several weeks. Queries for the most recent 1–2 months may return empty results — this is expected EP API behavior, not an error.
+
+> ⚠️ **EP API limitation**: The `mepId` parameter is accepted but **has no effect** — the EP API only provides aggregate vote tallies, not individual MEP positions.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| mepId | string | No | - | Filter by specific MEP |
 | sessionId | string | No | - | Filter by plenary session |
+| mepId | string | No | - | Accepted but ignored (EP API limitation — no per-MEP vote data) |
 | topic | string | No | - | Filter by topic/keyword |
 | dateFrom | string | No | - | Start date (YYYY-MM-DD) |
 | dateTo | string | No | - | End date (YYYY-MM-DD) |
@@ -481,7 +485,6 @@ console.log(`Found ${sessions.data.length} sessions`);
           \"sessionId\": \"PLENARY-2024-05\",
           \"date\": \"2024-05-15\",
           \"subject\": \"Climate Action Directive\",
-          \"mepVote\": \"FOR\",
           \"result\": \"ADOPTED\",
           \"votesFor\": 450,
           \"votesAgainst\": 120,
@@ -500,13 +503,12 @@ console.log(`Found ${sessions.data.length} sessions`);
 
 **Claude Desktop:**
 ```
-Show voting records for MEP-124810 on climate topics from 2024
+Show voting records on climate topics from 2024
 ```
 
 **TypeScript:**
 ```typescript
 const result = await client.callTool('get_voting_records', {
-  mepId: 'MEP-124810',
   topic: 'climate',
   dateFrom: '2024-01-01',
   limit: 100
@@ -515,9 +517,9 @@ const result = await client.callTool('get_voting_records', {
 
 #### Use Cases
 
-1. **MEP Accountability**: Track how specific MEPs vote
-2. **Topic Analysis**: Find all votes on specific topics
-3. **Session Votes**: Get all votes from a plenary session
+1. **Topic Analysis**: Find all votes on specific topics
+2. **Session Votes**: Get all votes from a plenary session
+3. **Trend Analysis**: Track voting patterns over time on policy areas
 
 ---
 
@@ -2170,6 +2172,27 @@ const result = await client.callTool('get_server_health', {});
 
 These tools provide access to European Parliament Open Data API v2 feed endpoints. Feed endpoints return recently updated records within a specified timeframe, enabling change-tracking and incremental data synchronization workflows.
 
+### ⚠️ Known EP API Behavior & Limitations
+
+#### Slow Feed Endpoints
+
+The EP API `procedures/feed` and `events/feed` endpoints are **significantly slower** than other feed endpoints. With `timeframe: "one-month"`, these endpoints can take **120+ seconds** to respond, compared to ~30 seconds for `adopted-texts/feed`.
+
+| Feed Endpoint | `one-week` | `one-month` | Notes |
+|--------------|------------|-------------|-------|
+| `adopted-texts/feed` | ~10s | ~30s | ✅ Reliable |
+| `meps/feed` | ~10s | ~30s | ✅ Reliable |
+| `procedures/feed` | ~30s | **120+ s** | ⚠️ May time out |
+| `events/feed` | ~30s | **120+ s** | ⚠️ May time out |
+
+The MCP server automatically applies a **minimum 120-second timeout** to `get_procedures_feed` and `get_events_feed` to accommodate these slow endpoints. If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead.
+
+**Recommended fallback:** When `get_procedures_feed({ timeframe: "one-month" })` times out, use `get_procedures({ year: 2026, limit: 20 })` instead. Similarly, use `get_plenary_sessions({ year: 2026 })` as a fallback for `get_events_feed`.
+
+#### Voting Records Data Delay
+
+The EP publishes roll-call voting data with a delay of **several weeks**. Queries to `get_voting_records` for the most recent 1–2 months may return empty results — this is expected EP API behavior, not an error. For recent legislative activity, use `get_adopted_texts` or `get_adopted_texts_feed` instead.
+
 ### Common Feed Parameters
 
 All feed tools share these common parameters:
@@ -2212,6 +2235,8 @@ const result = await client.callTool('get_meps_feed', {
 
 **Description**: Get recently updated events from the European Parliament feed endpoint. Returns event records that have been modified within the specified timeframe.
 
+> ⚠️ **Slow endpoint**: The EP API `events/feed` endpoint is significantly slower than other feeds — `one-month` queries may take 120+ seconds. An extended timeout (120s) is applied automatically. For faster results, use `get_plenary_sessions` with a `year` filter instead.
+
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
@@ -2239,6 +2264,8 @@ const result = await client.callTool('get_events_feed', {
 ### Tool: get_procedures_feed
 
 **Description**: Get recently updated legislative procedures from the European Parliament feed endpoint. Returns procedure records that have been modified within the specified timeframe.
+
+> ⚠️ **Slow endpoint**: The EP API `procedures/feed` endpoint is significantly slower than other feeds — `one-month` queries may take 120+ seconds. An extended timeout (120s) is applied automatically. For faster results, use `get_procedures` with a `year` filter instead.
 
 #### Parameters
 

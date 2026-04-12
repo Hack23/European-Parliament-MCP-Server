@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.3**](../../../README.md)
+[**European Parliament MCP Server API v1.2.4**](../../../README.md)
 
 ***
 
@@ -21,6 +21,19 @@ at the call site rather than relying on environment variables.
 > `readonly` **EP\_API\_REQUEST\_MS**: `60000` = `60_000`
 
 Standard EP API HTTP request (60 s — some meeting sub-endpoints are slow)
+
+### EP\_FEED\_SLOW\_REQUEST\_MS
+
+> `readonly` **EP\_FEED\_SLOW\_REQUEST\_MS**: `120000` = `120_000`
+
+Extended timeout for known slow EP API feed endpoints (120 s).
+
+The `procedures/feed` and `events/feed` endpoints on the EP Open Data
+Portal are significantly slower than other feed endpoints (e.g.
+`adopted-texts/feed`) and routinely exceed the standard 60 s timeout
+when queried with `timeframe=one-month`.  This extended timeout gives
+those endpoints enough headroom to respond without falling back to
+empty timeout responses.
 
 ### HEALTH\_CHECK\_MS
 
