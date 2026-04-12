@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.4**](../../../../README.md)
 
 ***
 
@@ -144,7 +144,7 @@ Request timeout in milliseconds.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:655](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L655)
+Defined in: [clients/ep/baseClient.ts:694](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L694)
 
 Clears all entries from the LRU cache.
 
@@ -244,9 +244,9 @@ Applies client-side filters to voting records.
 
 ### get()
 
-> `protected` **get**\<`T`\>(`endpoint`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:588](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L588)
+Defined in: [clients/ep/baseClient.ts:626](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L626)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -272,6 +272,16 @@ API endpoint path (relative to `baseURL`)
 
 Optional query parameters
 
+##### minimumTimeoutMs?
+
+`number`
+
+Optional per-request minimum timeout in milliseconds.
+  When provided, the effective timeout is `Math.max(minimumTimeoutMs, this.timeoutMs)`,
+  so the global timeout (set via `--timeout` or `EP_REQUEST_TIMEOUT_MS`) can still
+  extend it beyond the per-endpoint minimum.
+  Use for known slow EP API endpoints such as `procedures/feed` and `events/feed`.
+
 #### Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
@@ -292,7 +302,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:664](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L664)
+Defined in: [clients/ep/baseClient.ts:703](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L703)
 
 Returns cache statistics for monitoring and debugging.
 

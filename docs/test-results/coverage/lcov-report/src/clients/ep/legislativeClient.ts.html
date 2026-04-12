@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.96% </span>
+                <span class="strong">76.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>46/59</span>
+                <span class='fraction'>46/60</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">54.54% </span>
+                <span class="strong">52.94% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>36/66</span>
+                <span class='fraction'>36/68</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75.47% </span>
+                <span class="strong">74.07% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>40/53</span>
+                <span class='fraction'>40/54</span>
             </div>
         
             
@@ -311,7 +311,22 @@
 <a name='L246'></a><a href='#L246'>246</a>
 <a name='L247'></a><a href='#L247'>247</a>
 <a name='L248'></a><a href='#L248'>248</a>
-<a name='L249'></a><a href='#L249'>249</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a>
+<a name='L259'></a><a href='#L259'>259</a>
+<a name='L260'></a><a href='#L260'>260</a>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -487,6 +502,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -585,6 +613,7 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
+import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 &nbsp;
 // ─── Legislative Client ───────────────────────────────────────────────────────
 &nbsp;
@@ -729,18 +758,31 @@ export class LegislativeClient extends BaseEPClient {
   /**
    * Retrieves recently updated procedures via the feed endpoint.
    * **EP API Endpoint:** `GET /procedures/feed`
+   *
+   * **Note:** The EP API `procedures/feed` endpoint is significantly slower
+   * than other feed endpoints and may take 120+ seconds for `one-month`
+   * timeframes. For `one-month`, this client applies an extended minimum
+   * timeout automatically, but callers may still need to increase the global
+   * request timeout if the endpoint takes longer to respond.
    */
   async <span class="fstat-no" title="function not covered" >getProceduresFeed(p</span>arams: {
     timeframe?: string;
     startDate?: string;
     processType?: string;
   } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
+    // Apply an extended minimum timeout only for the known slow 'one-month'
+    // timeframe (120+ seconds). Slower responses may still require callers to
+    // raise the global request timeout. Other timeframes use the default
+    // global timeout.
+    const minimumTimeout = <span class="cstat-no" title="statement not covered" >params.timeframe === 'one-month'</span>
+      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
+      : undefined;
 <span class="cstat-no" title="statement not covered" >    return this.get&lt;JSONLDResponse&gt;('procedures/feed', {</span>
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.processType !== undefined ? { 'process-type': params.processType } : {}),
-    });
+    }, minimumTimeout);
   }
 &nbsp;
   /**
@@ -814,7 +856,7 @@ export class LegislativeClient extends BaseEPClient {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-12T08:53:13.231Z
+                at 2026-04-12T18:05:55.080Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

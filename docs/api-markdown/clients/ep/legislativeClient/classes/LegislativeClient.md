@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.4**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: LegislativeClient
 
-Defined in: [clients/ep/legislativeClient.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L36)
+Defined in: [clients/ep/legislativeClient.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L37)
 
 Sub-client for legislative procedures and adopted-texts EP API endpoints.
 
@@ -20,7 +20,7 @@ Sub-client for legislative procedures and adopted-texts EP API endpoints.
 
 > **new LegislativeClient**(`config?`, `shared?`): `LegislativeClient`
 
-Defined in: [clients/ep/legislativeClient.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L37)
+Defined in: [clients/ep/legislativeClient.ts:38](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L38)
 
 #### Parameters
 
@@ -144,7 +144,7 @@ Request timeout in milliseconds.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:655](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L655)
+Defined in: [clients/ep/baseClient.ts:694](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L694)
 
 Clears all entries from the LRU cache.
 
@@ -160,9 +160,9 @@ Clears all entries from the LRU cache.
 
 ### get()
 
-> `protected` **get**\<`T`\>(`endpoint`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:588](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L588)
+Defined in: [clients/ep/baseClient.ts:626](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L626)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -188,6 +188,16 @@ API endpoint path (relative to `baseURL`)
 
 Optional query parameters
 
+##### minimumTimeoutMs?
+
+`number`
+
+Optional per-request minimum timeout in milliseconds.
+  When provided, the effective timeout is `Math.max(minimumTimeoutMs, this.timeoutMs)`,
+  so the global timeout (set via `--timeout` or `EP_REQUEST_TIMEOUT_MS`) can still
+  extend it beyond the per-endpoint minimum.
+  Use for known slow EP API endpoints such as `procedures/feed` and `events/feed`.
+
 #### Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
@@ -208,7 +218,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getAdoptedTextById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`AdoptedText`](../../../../types/ep/activities/interfaces/AdoptedText.md)\>
 
-Defined in: [clients/ep/legislativeClient.ts:240](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L240)
+Defined in: [clients/ep/legislativeClient.ts:254](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L254)
 
 Returns a single adopted text by document ID.
 **EP API Endpoint:** `GET /adopted-texts/{doc-id}`
@@ -229,7 +239,7 @@ Returns a single adopted text by document ID.
 
 > **getAdoptedTexts**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`AdoptedText`](../../../../types/ep/activities/interfaces/AdoptedText.md)\>\>
 
-Defined in: [clients/ep/legislativeClient.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L147)
+Defined in: [clients/ep/legislativeClient.ts:148](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L148)
 
 Returns adopted texts.
 **EP API Endpoint:** `GET /adopted-texts`
@@ -262,7 +272,7 @@ year, limit, offset
 
 > **getAdoptedTextsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/legislativeClient.ts:189](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L189)
+Defined in: [clients/ep/legislativeClient.ts:203](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L203)
 
 Retrieves recently updated adopted texts via the feed endpoint.
 **EP API Endpoint:** `GET /adopted-texts/feed`
@@ -293,7 +303,7 @@ Retrieves recently updated adopted texts via the feed endpoint.
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:664](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L664)
+Defined in: [clients/ep/baseClient.ts:703](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L703)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -333,7 +343,7 @@ Returns cache statistics for monitoring and debugging.
 
 > **getProcedureById**(`processId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Procedure`](../../../../types/ep/activities/interfaces/Procedure.md)\>
 
-Defined in: [clients/ep/legislativeClient.ts:98](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L98)
+Defined in: [clients/ep/legislativeClient.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L99)
 
 Returns a single procedure by ID.
 
@@ -366,7 +376,7 @@ When the procedure is not found (404)
 
 > **getProcedureEventById**(`processId`, `eventId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>
 
-Defined in: [clients/ep/legislativeClient.ts:209](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L209)
+Defined in: [clients/ep/legislativeClient.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L223)
 
 Returns a single event within a procedure by event ID.
 **EP API Endpoint:** `GET /procedures/{process-id}/events/{event-id}`
@@ -395,7 +405,7 @@ Event identifier within the procedure
 
 > **getProcedureEvents**(`processId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>\>
 
-Defined in: [clients/ep/legislativeClient.ts:120](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L120)
+Defined in: [clients/ep/legislativeClient.ts:121](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L121)
 
 Returns events linked to a procedure.
 **EP API Endpoint:** `GET /procedures/{process-id}/events`
@@ -430,7 +440,7 @@ limit, offset
 
 > **getProcedures**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Procedure`](../../../../types/ep/activities/interfaces/Procedure.md)\>\>
 
-Defined in: [clients/ep/legislativeClient.ts:64](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L64)
+Defined in: [clients/ep/legislativeClient.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L65)
 
 Returns legislative procedures.
 **EP API Endpoint:** `GET /procedures`
@@ -465,10 +475,16 @@ Paginated list of procedures
 
 > **getProceduresFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/legislativeClient.ts:172](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L172)
+Defined in: [clients/ep/legislativeClient.ts:179](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L179)
 
 Retrieves recently updated procedures via the feed endpoint.
 **EP API Endpoint:** `GET /procedures/feed`
+
+**Note:** The EP API `procedures/feed` endpoint is significantly slower
+than other feed endpoints and may take 120+ seconds for `one-month`
+timeframes. For `one-month`, this client applies an extended minimum
+timeout automatically, but callers may still need to increase the global
+request timeout if the endpoint takes longer to respond.
 
 #### Parameters
 
@@ -496,7 +512,7 @@ Retrieves recently updated procedures via the feed endpoint.
 
 > `private` **transformAdoptedText**(`apiData`): [`AdoptedText`](../../../../types/ep/activities/interfaces/AdoptedText.md)
 
-Defined in: [clients/ep/legislativeClient.ts:47](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L47)
+Defined in: [clients/ep/legislativeClient.ts:48](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L48)
 
 #### Parameters
 
@@ -514,7 +530,7 @@ Defined in: [clients/ep/legislativeClient.ts:47](https://github.com/Hack23/Europ
 
 > `private` **transformEvent**(`apiData`): [`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)
 
-Defined in: [clients/ep/legislativeClient.ts:51](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L51)
+Defined in: [clients/ep/legislativeClient.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L52)
 
 #### Parameters
 
@@ -532,7 +548,7 @@ Defined in: [clients/ep/legislativeClient.ts:51](https://github.com/Hack23/Europ
 
 > `private` **transformProcedure**(`apiData`): [`Procedure`](../../../../types/ep/activities/interfaces/Procedure.md)
 
-Defined in: [clients/ep/legislativeClient.ts:43](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L43)
+Defined in: [clients/ep/legislativeClient.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L44)
 
 #### Parameters
 
