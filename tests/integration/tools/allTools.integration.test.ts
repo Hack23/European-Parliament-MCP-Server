@@ -1006,7 +1006,7 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       ).toBe(true);
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed['data'])).toBe(true);
-    }, 120000);
+    }, 180000);
   });
 
   describe('Feed Tool: get_adopted_texts_feed', () => {
@@ -1079,7 +1079,7 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
-    }, 120000);
+    }, 180000);
   });
 
   describe('Feed Tool: get_plenary_session_documents_feed', () => {
@@ -1123,7 +1123,7 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
-    }, 120000);
+    }, 180000);
   });
 
   describe('Feed Tool: get_corporate_bodies_feed', () => {

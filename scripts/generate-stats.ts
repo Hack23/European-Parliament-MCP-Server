@@ -279,9 +279,12 @@ const MAX_PAGES_PER_METRIC = 200;
  * stops when a page returns fewer items than the limit, or when the
  * absolute page limit ({@link MAX_PAGES_PER_METRIC}) is reached.
  *
- * This replaces the earlier `limit: 1` probe approach which always
- * returned `total = 1` because the client computes
- * `PaginatedResponse.total` as `items.length + offset`.
+ * When the page limit is reached, a lightweight probe (limit: 1) is
+ * sent to confirm whether more data actually exists — the EP client
+ * uses a heuristic (`items.length === limit`) for `hasMore`, which
+ * gives a false positive when a dataset ends on a page-aligned
+ * boundary.  If the probe returns 0 items, the count is treated as
+ * complete.
  *
  * Returns the total count or null on failure.
  */
@@ -306,9 +309,26 @@ async function countItems(
       // returns a successful count instead of an error.
       if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
 
-      // Safety: absolute page limit — return as incomplete/error only when
-      // there is still more data to fetch (hasMore was true above).
+      // Safety: absolute page limit — reached only when hasMore is still
+      // true (natural termination was checked first above).
+      // Because the EP client uses a heuristic for hasMore
+      // (items.length === limit), a dataset ending exactly on page
+      // MAX_PAGES_PER_METRIC with a full page would still report
+      // hasMore=true.  Do a lightweight probe (limit: 1) to confirm
+      // whether more data actually exists before declaring incomplete.
       if (pageNum >= MAX_PAGES_PER_METRIC) {
+        try {
+          const probe = await fetcher({ limit: 1, offset: offset + EP_API_MAX_PAGE_SIZE });
+          if (probe.data.length === 0) {
+            // Dataset exhausted — the heuristic hasMore was a false positive
+            progress(`✅ ${label}: ${String(totalCount)} items total (probe confirmed complete, ${formatElapsed(Date.now() - fetchStart)})`);
+            return { total: totalCount };
+          }
+          // Probe returned data — genuinely incomplete
+          totalCount += probe.data.length;
+        } catch {
+          // Probe failed — treat conservatively as incomplete
+        }
         const note = `Reached max page limit (${String(MAX_PAGES_PER_METRIC)}) for ${label} — count of ${String(totalCount)} is incomplete.`;
         progress(`⚠️  ${label}: ${note}`);
         return { total: null, error: note };
@@ -398,9 +418,13 @@ function extractRecordDate(item: Record<string, unknown>): string | null {
  * **Early termination** (ordered endpoints): If
  * {@link MAX_CONSECUTIVE_EMPTY_PAGES} consecutive pages contain zero
  * records matching the target year *and* the endpoint's data is expected
- * to be date-ordered, pagination stops.  For unordered endpoints (like
- * `/events`), early termination is not applied — the function relies
- * on the {@link MAX_PAGES_PER_METRIC} safety cap instead.
+ * to be date-ordered, pagination stops.  The error message is tailored
+ * to the endpoint: when `yearFilterSupported` is true (default), the
+ * message reports a date-extraction or empty-year issue; when false,
+ * it explains the endpoint lacks server-side year filtering.
+ * For unordered endpoints (like `/events`), early termination is not
+ * applied — the function relies on the {@link MAX_PAGES_PER_METRIC}
+ * safety cap instead.
  *
  * Returns per-month counts (12 elements, Jan=0..Dec=11) and the total.
  * Items whose date doesn't match the target year are excluded from
@@ -410,9 +434,10 @@ async function countItemsGroupedByMonth(
   label: string,
   year: number,
   fetcher: (params: { limit: number; offset: number }) => Promise<{ data: Array<Record<string, unknown>>; hasMore: boolean }>,
-  options?: { ordered?: boolean }
+  options?: { ordered?: boolean; yearFilterSupported?: boolean }
 ): Promise<{ total: number | null; monthlyCounts: number[]; error?: string }> {
   const isOrdered = options?.ordered !== false; // default: true (ordered)
+  const yearFilterKnown = options?.yearFilterSupported !== false; // default: true
   const monthlyCounts: number[] = new Array<number>(12).fill(0);
   let totalCount = 0;
   let outsideYearOrUndated = 0;
@@ -453,9 +478,12 @@ async function countItemsGroupedByMonth(
       // pages without matches.  For unordered endpoints (e.g. /events),
       // skip this check — matching records may appear later in pagination.
       if (isOrdered && consecutiveEmptyPages >= MAX_CONSECUTIVE_EMPTY_PAGES && totalCount === 0) {
-        const note = `EP API does not support year filtering for ${label} — ` +
-          `${String(pageNum)} pages fetched with 0 matches for ${yearStr}. ` +
-          `This endpoint does not accept the year parameter per the EP API specification.`;
+        const note = yearFilterKnown
+          ? `0 parseable dates matched year ${yearStr} for ${label} after ${String(pageNum)} pages — ` +
+            `date extraction may have failed or the year has no data.`
+          : `EP API does not support year filtering for ${label} — ` +
+            `${String(pageNum)} pages fetched with 0 matches for ${yearStr}. ` +
+            `This endpoint does not accept the year parameter per the EP API specification.`;
         progress(`⚠️  ${label}: early termination after ${String(pageNum)} pages with 0 matches`);
         return { total: null, monthlyCounts, error: note };
       }
@@ -475,7 +503,19 @@ async function countItemsGroupedByMonth(
 
       // Safety: absolute page limit — only reached when hasMore is still
       // true (natural termination was checked first above).
+      // Because the EP client uses a heuristic for hasMore
+      // (items.length === limit), do a lightweight probe to confirm
+      // whether more data actually exists before declaring incomplete.
       if (pageNum >= MAX_PAGES_PER_METRIC) {
+        try {
+          const probe = await fetcher({ limit: 1, offset: offset + EP_API_MAX_PAGE_SIZE });
+          if (probe.data.length === 0) {
+            // Dataset exhausted — heuristic hasMore was a false positive
+            break; // fall through to the success summary below
+          }
+        } catch {
+          // Probe failed — treat conservatively as incomplete
+        }
         const note = `Reached max page limit (${String(MAX_PAGES_PER_METRIC)}) for ${label} — count of ${String(totalCount)} is incomplete.`;
         progress(`⚠️  ${label}: ${note}`);
         return { total: null, monthlyCounts, error: note };
@@ -602,7 +642,7 @@ async function validateYearAgainstAPI(
       count: async () => {
         const result = await countItemsGroupedByMonth('Events', year, (p) =>
           client.getEvents(p),
-          { ordered: false }
+          { ordered: false, yearFilterSupported: false }
         );
         // Always attach a note so --update skips this metric
         const note = 'EP API /events has no year/date filtering and results are unordered — ' +
