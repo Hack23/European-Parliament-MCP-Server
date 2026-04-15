@@ -172,7 +172,7 @@ describe('get_committee_documents Tool', () => {
     });
 
     it('should not pass year to client (EP API /committee-documents does not support it)', async () => {
-      await handleGetCommitteeDocuments({});
+      await handleGetCommitteeDocuments({ year: 2024 });
 
       expect(vi.mocked(epClientModule.epClient.getCommitteeDocuments)).toHaveBeenCalledTimes(1);
       const callArgs = vi.mocked(epClientModule.epClient.getCommitteeDocuments).mock.calls[0]?.[0];

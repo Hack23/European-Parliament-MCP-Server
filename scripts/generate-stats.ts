@@ -301,13 +301,18 @@ async function countItems(
       if (pageNum === 1 || pageNum % 3 === 0 || !result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) {
         progress(`📊 ${label}: page ${String(pageNum)}, ${String(totalCount)} items so far (${formatElapsed(Date.now() - fetchStart)})`);
       }
-      // Safety: absolute page limit — return as incomplete/error
+      // Natural termination — check BEFORE the safety cap so that
+      // a dataset that happens to end exactly on page MAX_PAGES_PER_METRIC
+      // returns a successful count instead of an error.
+      if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
+
+      // Safety: absolute page limit — return as incomplete/error only when
+      // there is still more data to fetch (hasMore was true above).
       if (pageNum >= MAX_PAGES_PER_METRIC) {
         const note = `Reached max page limit (${String(MAX_PAGES_PER_METRIC)}) for ${label} — count of ${String(totalCount)} is incomplete.`;
         progress(`⚠️  ${label}: ${note}`);
         return { total: null, error: note };
       }
-      if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
       offset += EP_API_MAX_PAGE_SIZE;
     }
     progress(`✅ ${label}: ${String(totalCount)} items total (${formatElapsed(Date.now() - fetchStart)})`);
@@ -432,14 +437,19 @@ async function countItemsGroupedByMonth(
         break;
       }
 
-      // Safety: absolute page limit
+      // Natural termination — check BEFORE the safety cap so that
+      // a dataset ending exactly on page MAX_PAGES_PER_METRIC returns
+      // successfully instead of being flagged as incomplete.
+      if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
+
+      // Safety: absolute page limit — only reached when hasMore is still
+      // true (natural termination was checked first above).
       if (pageNum >= MAX_PAGES_PER_METRIC) {
         const note = `Reached max page limit (${String(MAX_PAGES_PER_METRIC)}) for ${label} — count of ${String(totalCount)} is incomplete.`;
         progress(`⚠️  ${label}: ${note}`);
         return { total: null, monthlyCounts, error: note };
       }
 
-      if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
       offset += EP_API_MAX_PAGE_SIZE;
     }
 
@@ -554,10 +564,23 @@ async function validateYearAgainstAPI(
       label: 'Events',
       storedKey: 'events',
       // EP API `/events` does NOT support `year` or any date filter ❌.
-      // Client-side bucketing with early termination.
-      count: () => countItemsGroupedByMonth('Events', year, (p) =>
-        client.getEvents(p)
-      ),
+      // Results are NOT ordered by date, so client-side bucketing with
+      // early termination may produce incomplete year counts.
+      // Mark as non-updatable to prevent overwriting per-year stats
+      // with unreliable all-time scan results.
+      count: async () => {
+        const result = await countItemsGroupedByMonth('Events', year, (p) =>
+          client.getEvents(p)
+        );
+        // Always attach a note so --update skips this metric
+        const note = 'EP API /events has no year/date filtering and results are unordered — ' +
+          'year count is a client-side estimate, not suitable for per-year stat updates.';
+        return {
+          total: result.total,
+          monthlyCounts: result.monthlyCounts,
+          error: result.error ?? note,
+        };
+      },
     },
     {
       label: 'Parliamentary Questions',
@@ -594,13 +617,30 @@ async function validateYearAgainstAPI(
     {
       label: 'Procedures',
       storedKey: 'procedures',
-      count: () => countItems('Procedures', (p) => client.getProcedures(p)),
+      // EP API /procedures does NOT support `year` ❌ — returns ALL
+      // procedures.  Mark as non-updatable so --update skips this metric
+      // instead of overwriting per-year stats with an all-time total.
+      count: async () => {
+        const result = await countItems('Procedures', (p) => client.getProcedures(p));
+        const note = 'EP API /procedures has no year filtering — ' +
+          'count represents all procedures, not year-specific. Not suitable for per-year stat updates.';
+        return {
+          total: result.total,
+          error: result.error ?? note,
+        };
+      },
     },
     {
       label: 'Plenary Documents',
       storedKey: 'documents',
       // Document count = sum of plenary + committee + external documents.
       // Fetched in parallel for better performance.
+      //
+      // ⚠️  /committee-documents and /external-documents do NOT support
+      // `year` filtering — their counts are all-time totals, making the
+      // combined sum not strictly year-specific.  We always attach a note
+      // so --update skips this metric rather than overwriting per-year
+      // stats with a partially non-year-filtered total.
       count: async () => {
         progress('🔍 Plenary Documents: fetching plenary + committee + external in parallel...');
         const [plenary, committee, external] = await Promise.all([
@@ -612,13 +652,18 @@ async function validateYearAgainstAPI(
         if (plenary.error) errors.push(`Plenary: ${plenary.error}`);
         if (committee.error) errors.push(`Committee: ${committee.error}`);
         if (external.error) errors.push(`External: ${external.error}`);
+        // Always add a note about partial year coverage
+        errors.push(
+          'Committee/External doc counts are all-time (EP API has no year filtering for these endpoints) — ' +
+          'combined total is not strictly year-specific.'
+        );
 
         const total = (plenary.total ?? 0) + (committee.total ?? 0) + (external.total ?? 0);
         if (plenary.total === null && committee.total === null && external.total === null) {
           return { total: null, error: errors.join(' | ') };
         }
         progress(`✅ Plenary Documents: ${String(plenary.total ?? 0)} plenary + ${String(committee.total ?? 0)} committee + ${String(external.total ?? 0)} external = ${String(total)}`);
-        return { total, error: errors.length > 0 ? errors.join(' | ') : undefined };
+        return { total, error: errors.join(' | ') };
       },
     },
     {
