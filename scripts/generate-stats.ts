@@ -1151,6 +1151,9 @@ function syncPoliticalLandscapeWithMepCount(
 
   const newMepCount = mepCountComparison.apiValue;
 
+  // Guard against zero/implausible mepCount
+  if (newMepCount <= 0) return content;
+
   // Read the current POLITICAL_LANDSCAPE data for the latest year
   const yearStats = GENERATED_STATS.yearlyStats.find((y) => y.year === latestCoveredYear);
   if (!yearStats) return content;
@@ -1186,6 +1189,11 @@ function syncPoliticalLandscapeWithMepCount(
     .map((y) => y.year);
 
   for (const year of yearsToSync) {
+    // Look up this year's NI seats for accurate logging
+    const yearData = GENERATED_STATS.yearlyStats.find((y) => y.year === year);
+    const yearNiGroup = yearData?.politicalLandscape.groups.find((g) => g.name === 'NI');
+    const oldNiSeats = yearNiGroup?.seats ?? niGroup.seats;
+
     // Match the NI group entry within this year's POLITICAL_LANDSCAPE line
     // Pattern: within a line starting with "  YYYY:", find "name: 'NI', seats: NN"
     const niPattern = new RegExp(
@@ -1203,7 +1211,7 @@ function syncPoliticalLandscapeWithMepCount(
       const shareUpdated = newContent.replace(sharePattern, `$1${String(newSeatShare)}$2`);
       updated = shareUpdated;
       console.log(
-        `  ${GREEN}↻${RESET} Synced ${String(year)} POLITICAL_LANDSCAPE NI seats: ${String(niGroup.seats)} → ${String(newNiSeats)} (seatShare: ${String(newSeatShare)}%)`
+        `  ${GREEN}↻${RESET} Synced ${String(year)} POLITICAL_LANDSCAPE NI seats: ${String(oldNiSeats)} → ${String(newNiSeats)} (seatShare: ${String(newSeatShare)}%)`
       );
     }
   }

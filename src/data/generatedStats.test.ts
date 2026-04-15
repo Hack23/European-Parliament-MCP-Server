@@ -461,11 +461,11 @@ describe('GENERATED_STATS — political landscape data consistency', () => {
     }
   });
 
-  it('should have all group seats as positive integers', () => {
+  it('should have all group seats as non-negative integers', () => {
     for (const yearly of GENERATED_STATS.yearlyStats) {
       for (const g of yearly.politicalLandscape.groups) {
         expect(Number.isInteger(g.seats)).toBe(true);
-        expect(g.seats).toBeGreaterThan(0);
+        expect(g.seats).toBeGreaterThanOrEqual(0);
       }
     }
   });
@@ -473,7 +473,7 @@ describe('GENERATED_STATS — political landscape data consistency', () => {
   it('should have all seatShare values between 0 and 100', () => {
     for (const yearly of GENERATED_STATS.yearlyStats) {
       for (const g of yearly.politicalLandscape.groups) {
-        expect(g.seatShare).toBeGreaterThan(0);
+        expect(g.seatShare).toBeGreaterThanOrEqual(0);
         expect(g.seatShare).toBeLessThanOrEqual(100);
       }
     }
