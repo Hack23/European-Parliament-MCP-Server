@@ -911,10 +911,6 @@ export class EuropeanParliamentClient {
   /**
    * Retrieves recently updated controlled vocabularies via the feed endpoint.
    * **EP API Endpoint:** `GET /controlled-vocabularies/feed`
-   */
-  /**
-   * Retrieves recently updated controlled vocabularies via the feed endpoint.
-   * **EP API Endpoint:** `GET /controlled-vocabularies/feed`
    * Fixed-window feed — no parameters per OpenAPI spec.
    */
   async getControlledVocabulariesFeed(): Promise<JSONLDResponse> {
