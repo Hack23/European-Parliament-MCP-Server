@@ -1,7 +1,10 @@
 /**
  * MCP Tool: get_documents_feed
  *
- * Get recently updated European Parliament documents from the feed.
+ * Get recently updated documents from the feed.
+ * This is a **fixed-window feed** — the EP API does not accept a timeframe
+ * or start-date parameter. It returns updates from a server-defined default
+ * window (typically one month).
  *
  * **EP API Endpoint:**
  * - `GET /documents/feed`
@@ -13,7 +16,7 @@ import { GetDocumentsFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
-import { isUpstream404, buildEmptyFeedResponse } from './shared/feedUtils.js';
+import { isUpstream404, buildEmptyFeedResponse, isErrorInBody } from './shared/feedUtils.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
@@ -21,14 +24,13 @@ import type { ToolResult } from './shared/types.js';
  * Handles the get_documents_feed MCP tool request.
  *
  * @param args - Raw tool arguments, validated against {@link GetDocumentsFeedSchema}
- * @returns MCP tool result containing recently updated document data
+ * @returns MCP tool result containing recently updated documents data
  * @security Input is validated with Zod before any API call.
  */
 export async function handleGetDocumentsFeed(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
-  let params: ReturnType<typeof GetDocumentsFeedSchema.parse>;
+  // Validate input — fixed-window feeds accept no parameters
   try {
-    params = GetDocumentsFeedSchema.parse(args);
+    GetDocumentsFeedSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
@@ -44,12 +46,12 @@ export async function handleGetDocumentsFeed(args: unknown): Promise<ToolResult>
   }
 
   try {
-    const apiParams: Record<string, unknown> = {};
-    apiParams['timeframe'] = params.timeframe;
-    if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
-    const result = await epClient.getDocumentsFeed(
-      apiParams as Parameters<typeof epClient.getDocumentsFeed>[0]
-    );
+    const result = await epClient.getDocumentsFeed();
+    if (isErrorInBody(result as Record<string, unknown>)) {
+      return buildEmptyFeedResponse(
+        'EP API returned an error-in-body response for get_documents_feed — the upstream enrichment step may have failed.',
+      );
+    }
     return buildToolResponse({ ...result, dataQualityWarnings: [] });
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
@@ -66,20 +68,9 @@ export async function handleGetDocumentsFeed(args: unknown): Promise<ToolResult>
 export const getDocumentsFeedToolMetadata = {
   name: 'get_documents_feed',
   description:
-    'Get recently updated European Parliament documents from the feed. Returns documents published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.',
+    'Get recently updated documents from the EP Open Data Portal feed. This is a fixed-window feed — no parameters needed. Returns items updated within the server-defined default window (typically one month). Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
-    properties: {
-      timeframe: {
-        type: 'string',
-        description: 'Timeframe for the feed (today, one-day, one-week, one-month, custom)',
-        enum: ['today', 'one-day', 'one-week', 'one-month', 'custom'],
-        default: 'one-week',
-      },
-      startDate: {
-        type: 'string',
-        description: 'Start date (YYYY-MM-DD) — required when timeframe is "custom"',
-      },
-    },
+    properties: {},
   },
 };

@@ -879,12 +879,10 @@ export class EuropeanParliamentClient {
   /**
    * Retrieves recently updated parliamentary questions via the feed endpoint.
    * **EP API Endpoint:** `GET /parliamentary-questions/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async getParliamentaryQuestionsFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
-    return this.questionClient.getParliamentaryQuestionsFeed(params);
+  async getParliamentaryQuestionsFeed(): Promise<JSONLDResponse> {
+    return this.questionClient.getParliamentaryQuestionsFeed();
   }
 
   // ─── Vocabulary endpoints ─────────────────────────────────────────────────
@@ -914,11 +912,13 @@ export class EuropeanParliamentClient {
    * Retrieves recently updated controlled vocabularies via the feed endpoint.
    * **EP API Endpoint:** `GET /controlled-vocabularies/feed`
    */
-  async getControlledVocabulariesFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
-    return this.vocabularyClient.getControlledVocabulariesFeed(params);
+  /**
+   * Retrieves recently updated controlled vocabularies via the feed endpoint.
+   * **EP API Endpoint:** `GET /controlled-vocabularies/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
+   */
+  async getControlledVocabulariesFeed(): Promise<JSONLDResponse> {
+    return this.vocabularyClient.getControlledVocabulariesFeed();
   }
 }
 
