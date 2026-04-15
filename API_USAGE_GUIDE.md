@@ -125,10 +125,10 @@ Currently, the server does **not require authentication** for tool access. Futur
 
 | Tool | Purpose | Key Parameters | Response Type |
 |------|---------|----------------|---------------|
-| `get_plenary_sessions` | List plenary sessions | dateFrom, dateTo, eventId | Paginated list |
+| `get_plenary_sessions` | List plenary sessions | dateFrom, dateTo, eventId, year, location | Paginated list |
 | `get_voting_records` | Aggregate voting data | sessionId, topic, dateFrom | Paginated list |
-| `get_speeches` | Plenary speeches | speechId, dateFrom, dateTo | Paginated list |
-| `get_events` | EP events | eventId, dateFrom, dateTo | Paginated list |
+| `get_speeches` | Plenary speeches | speechId, year, dateFrom, dateTo | Paginated list |
+| `get_events` | EP events | eventId, year, dateFrom, dateTo | Paginated list |
 | `get_meeting_activities` | Meeting activities | sittingId (required) | Paginated list |
 | `get_meeting_decisions` | Meeting decisions | sittingId (required) | Paginated list |
 | `get_meeting_foreseen_activities` | Planned agenda items | sittingId (required) | Paginated list |
@@ -139,7 +139,7 @@ Currently, the server does **not require authentication** for tool access. Futur
 
 | Tool | Purpose | Key Parameters | Response Type |
 |------|---------|----------------|---------------|
-| `get_committee_info` | Committee data | id, abbreviation | Single object |
+| `get_committee_info` | Committee data | id, abbreviation, showCurrent | Single object |
 | `get_committee_documents` | Committee documents | docId, year | Paginated list |
 
 ### 📄 Document Tools
@@ -152,7 +152,7 @@ Currently, the server does **not require authentication** for tool access. Futur
 | `get_plenary_session_documents` | Session documents | docId | Paginated list |
 | `get_plenary_session_document_items` | Session document items | limit, offset | Paginated list |
 | `get_external_documents` | External documents | docId, year | Paginated list |
-| `get_parliamentary_questions` | Q&A data | author, dateFrom | Paginated list |
+| `get_parliamentary_questions` | Q&A data | docId, type, author, topic, status, dateFrom | Paginated list |
 
 ### ⚖️ Legislative Procedure Tools
 
@@ -377,16 +377,21 @@ console.log(`Attendance: ${mep.votingStatistics.attendanceRate}%`);
 
 ### Tool: get_plenary_sessions
 
-**Description**: Retrieve European Parliament plenary sessions with optional date range filtering.
+**Description**: Retrieve European Parliament plenary sessions with optional date range, year, or location filtering. Supports single meeting lookup by eventId.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
+| eventId | string | No | - | Meeting event ID for single meeting lookup |
+| year | number | No | - | Filter by calendar year (1900-2100, recommended for annual counts) |
 | dateFrom | string | No | - | Start date (YYYY-MM-DD format) |
 | dateTo | string | No | - | End date (YYYY-MM-DD format) |
+| location | string | No | - | Session location (e.g., "Strasbourg", "Brussels") |
 | limit | number | No | 50 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
+
+> **Note:** `dateFrom` must be ≤ `dateTo` when both are provided.
 
 #### Response Format
 
@@ -596,7 +601,7 @@ const result = await client.callTool('search_documents', {
 
 ### Tool: get_committee_info
 
-**Description**: Retrieve detailed information about a European Parliament committee including composition, members, chair, and areas of responsibility.
+**Description**: Retrieve detailed information about a European Parliament committee including composition, members, chair, and areas of responsibility. Can also list all current active corporate bodies.
 
 #### Parameters
 
@@ -604,8 +609,9 @@ const result = await client.callTool('search_documents', {
 |-----------|------|----------|---------|-------------|
 | id | string | No* | - | Committee identifier |
 | abbreviation | string | No* | - | Committee abbreviation (e.g., "ENVI", "AGRI") |
+| showCurrent | boolean | No | false | If true, returns all current active corporate bodies |
 
-*At least one parameter required
+*Either `showCurrent: true`, `id`, or `abbreviation` must be provided.
 
 #### Response Format
 
@@ -657,20 +663,23 @@ console.log(`${committee.name} has ${committee.members.length} members`);
 
 ### Tool: get_parliamentary_questions
 
-**Description**: Retrieve parliamentary questions (written and oral) with filters for author, topic, and date range.
+**Description**: Retrieve parliamentary questions (written and oral) with filters for author, topic, and date range. Supports single question lookup by docId.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| author | string | No | - | Question author MEP ID |
-| topic | string | No | - | Question topic/keyword |
-| questionType | string | No | - | Type: WRITTEN or ORAL |
+| docId | string | No | - | Document ID for single question lookup (e.g., "E-000001/2024") |
+| type | string | No | - | Question type: `WRITTEN` or `ORAL` |
+| author | string | No | - | MEP identifier or name of question author |
+| topic | string | No | - | Question topic or keyword to search |
+| status | string | No | - | Question status: `PENDING` or `ANSWERED` |
 | dateFrom | string | No | - | Start date (YYYY-MM-DD) |
 | dateTo | string | No | - | End date (YYYY-MM-DD) |
-| answered | boolean | No | - | Filter by answered status |
 | limit | number | No | 50 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
+
+> **Note:** `dateFrom` must be ≤ `dateTo` when both are provided.
 
 #### Response Format
 
@@ -711,9 +720,9 @@ Show me written questions about climate change from 2024
 ```typescript
 const result = await client.callTool('get_parliamentary_questions', {
   topic: 'climate change',
-  questionType: 'WRITTEN',
+  type: 'WRITTEN',
   dateFrom: '2024-01-01',
-  answered: true,
+  status: 'ANSWERED',
   limit: 50
 });
 ```
@@ -1532,6 +1541,7 @@ const result = await client.callTool('get_homonym_meps', { limit: 50 });
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | speechId | string | No | - | Specific speech ID for single lookup |
+| year | number | No | - | Filter by calendar year (1900-2100, recommended for annual counts) |
 | dateFrom | string | No | - | Start date filter (YYYY-MM-DD) |
 | dateTo | string | No | - | End date filter (YYYY-MM-DD) |
 | limit | number | No | 50 | Maximum results (1-100) |
@@ -1546,8 +1556,14 @@ Get plenary speeches from January 2024
 
 **MCP Client - TypeScript:**
 ```typescript
-// List speeches in a date range
+// List speeches by year
 const result = await client.callTool('get_speeches', {
+  year: 2024,
+  limit: 20
+});
+
+// List speeches in a date range
+const rangeResult = await client.callTool('get_speeches', {
   dateFrom: '2024-01-01',
   dateTo: '2024-01-31',
   limit: 20
@@ -1658,6 +1674,7 @@ const result = await client.callTool('get_adopted_texts', { year: 2024, limit: 2
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | eventId | string | No | - | Specific event ID for single lookup |
+| year | number | No | - | Filter by calendar year (1900-2100, recommended for annual counts) |
 | dateFrom | string | No | - | Start date filter (YYYY-MM-DD) |
 | dateTo | string | No | - | End date filter (YYYY-MM-DD) |
 | limit | number | No | 50 | Maximum results (1-100) |
@@ -1689,7 +1706,7 @@ const result = await client.callTool('get_events', {
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | sittingId | string | Yes | - | Plenary sitting ID |
-| limit | number | No | 50 | Maximum results (1-100) |
+| limit | number | No | 20 | Maximum results (1-100). Default 20 — activities endpoint can be slow |
 | offset | number | No | 0 | Pagination offset |
 
 #### Example Usage
@@ -1702,7 +1719,7 @@ What activities took place during plenary sitting MTG-PL-2024-01-15?
 ```typescript
 const result = await client.callTool('get_meeting_activities', {
   sittingId: 'MTG-PL-2024-01-15',
-  limit: 50
+  limit: 20
 });
 ```
 
@@ -1745,7 +1762,7 @@ const result = await client.callTool('get_meeting_decisions', {
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | sittingId | string | Yes | - | Plenary sitting ID |
-| limit | number | No | 50 | Maximum results (1-100) |
+| limit | number | No | 20 | Maximum results (1-100). Default 20 — foreseen-activities endpoint can be slow |
 | offset | number | No | 0 | Pagination offset |
 
 #### Example Usage
@@ -1758,7 +1775,7 @@ What is planned for the upcoming plenary sitting MTG-PL-2024-03-11?
 ```typescript
 const result = await client.callTool('get_meeting_foreseen_activities', {
   sittingId: 'MTG-PL-2024-03-11',
-  limit: 50
+  limit: 20
 });
 ```
 
@@ -1773,7 +1790,7 @@ const result = await client.callTool('get_meeting_foreseen_activities', {
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | sittingId | string | Yes | - | Meeting / sitting identifier |
-| limit | number | No | 50 | Maximum results (1-100) |
+| limit | number | No | 20 | Maximum results (1-100). Default 20 — plenary-session-documents endpoint can be slow |
 | offset | number | No | 0 | Pagination offset |
 
 #### Example Usage
@@ -1787,7 +1804,7 @@ Get plenary session documents for sitting MTG-PL-2024-03-11
 ```typescript
 const result = await client.callTool('get_meeting_plenary_session_documents', {
   sittingId: 'MTG-PL-2024-03-11',
-  limit: 50
+  limit: 20
 });
 ```
 
@@ -1802,7 +1819,7 @@ const result = await client.callTool('get_meeting_plenary_session_documents', {
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | sittingId | string | Yes | - | Meeting / sitting identifier |
-| limit | number | No | 50 | Maximum results (1-100) |
+| limit | number | No | 20 | Maximum results (1-100). Default 20 — plenary-session-document-items endpoint can be slow |
 | offset | number | No | 0 | Pagination offset |
 
 #### Example Usage
@@ -1816,7 +1833,7 @@ Get individual agenda item documents for plenary sitting MTG-PL-2024-03-11
 ```typescript
 const result = await client.callTool('get_meeting_plenary_session_document_items', {
   sittingId: 'MTG-PL-2024-03-11',
-  limit: 50
+  limit: 20
 });
 ```
 
