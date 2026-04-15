@@ -1,6 +1,6 @@
 ---
 name: gdpr-compliance
-description: GDPR and data protection patterns for handling European Parliament personal data with privacy by design
+description: "Enforces GDPR data protection for European Parliament personal data — data minimization, audit logging, cache TTL limits, and data subject rights (access, rectification, erasure). Use when processing MEP personal data, implementing privacy controls, handling data subject requests, conducting a DPIA, applying PII anonymization, or configuring cache retention policies."
 license: MIT
 ---
 
@@ -11,14 +11,13 @@ license: MIT
 This skill applies when:
 - Processing personal data from European Parliament (MEP information)
 - Implementing data minimization strategies
-- Supporting GDPR rights (access, rectification, erasure)
-- Implementing audit logging for personal data access
+- Supporting data subject rights: access, rectification, erasure, consent withdrawal
+- Implementing audit logging for PII and personal data access
 - Designing privacy-by-design features
 - Handling data retention and deletion
 - Implementing consent mechanisms
-- Creating data protection impact assessments
-
-GDPR (EU Regulation 2016/679) applies to all processing of EU citizens' personal data. Even though MEP data is public, GDPR principles still apply.
+- Creating data protection impact assessments (DPIA)
+- Applying anonymization or pseudonymization to personal data
 
 ## Rules
 
@@ -33,32 +32,35 @@ GDPR (EU Regulation 2016/679) applies to all processing of EU citizens' personal
 9. **Data Protection by Design**: Build privacy into architecture
 10. **Transparency**: Document all data processing activities
 
+## Workflow
+
+1. Define minimal data interface — include only public parliamentary fields (name, country, party, active status), exclude private data
+2. Implement audit logging for all personal data access (GDPR Art. 30) — every read, write, and delete must be recorded
+3. Configure cache with TTL (max 24h for personal data) and hourly stale-entry purge
+4. Add data subject rights handlers: access (Art. 15), rectification (Art. 16), erasure (Art. 17)
+5. Conduct a DPIA if introducing new processing activities or changing data flows
+6. Verify: confirm audit logs capture every access path, cache entries expire correctly, and no PII leaks into unprotected stores
+
 ## Examples
 
 ### ✅ Good Pattern: Data Minimization
 
 ```typescript
-// GOOD: Only public information
 interface MEPPublicData {
   id: number;
   fullName: string;
   country: string;
   partyGroup: string;
   active: boolean;
-  // DO NOT collect: private addresses, personal phones, family data
 }
 
-// Define data purpose
 const DATA_PURPOSE = 'Providing public parliamentary information via MCP protocol';
 ```
 
 ### ✅ Good Pattern: Audit Logging
 
 ```typescript
-/**
- * GDPR-compliant audit logging
- * Requirement: GDPR Art. 30 (Records of processing activities)
- */
+/** GDPR Art. 30 — Records of processing activities */
 function logPersonalDataAccess(
   actor: string,
   subject: string,
@@ -74,7 +76,6 @@ function logPersonalDataAccess(
   });
 }
 
-// Usage
 logPersonalDataAccess(
   'mcp_client',
   'mep:12345',
@@ -85,23 +86,15 @@ logPersonalDataAccess(
 ### ✅ Good Pattern: Right to Rectification
 
 ```typescript
-/**
- * Support GDPR Art. 16 (Right to rectification)
- */
+/** GDPR Art. 16 — Right to rectification */
 async function updateMEPData(
   id: number,
   corrections: Partial<MEP>
 ): Promise<void> {
-  // Validate corrections
   const validated = MEPUpdateSchema.parse(corrections);
-  
-  // Update data
   await updateMEP(id, validated);
-  
-  // Invalidate cache
   invalidateMEPCache(id);
-  
-  // Audit log
+
   auditLog.record({
     eventType: 'data_rectification',
     subject: `mep:${id}`,
@@ -115,50 +108,23 @@ async function updateMEPData(
 ### ✅ Good Pattern: Storage Limitation
 
 ```typescript
-/**
- * GDPR Art. 5(1)(e): Storage limitation
- * Personal data cached for max 24 hours
- */
+/** GDPR Art. 5(1)(e) — Personal data cached for max 24 hours */
 const mepCache = new LRUCache<string, MEP>({
   max: 1000,
-  ttl: 1000 * 60 * 60 * 24, // 24 hours max
+  ttl: 1000 * 60 * 60 * 24,
   allowStale: false,
 });
 
-// Auto-purge expired entries
 setInterval(() => {
   mepCache.purgeStale();
-}, 1000 * 60 * 60); // Hourly cleanup
+}, 1000 * 60 * 60);
 ```
 
 ## Anti-Patterns
 
-### ❌ Bad: No Audit Logging
-```typescript
-// NEVER - GDPR requires audit logs!
-async function bad(mepId: number) {
-  return await getMEP(mepId); // No logging!
-}
-```
-
-### ❌ Bad: Excessive Data Collection
-```typescript
-// NEVER - violates data minimization!
-interface MEPBad {
-  id: number;
-  fullName: string;
-  privateAddress: string;      // Excessive!
-  personalPhone: string;        // Excessive!
-  familyMembers: string[];      // Excessive!
-  medicalRecords: string;       // Excessive!
-}
-```
-
-### ❌ Bad: Indefinite Storage
-```typescript
-// NEVER - violates storage limitation!
-const cache = new Map(); // No TTL = indefinite storage!
-```
+- **Never** access personal data without audit logging — every `getMEP()` call must be recorded
+- **Never** collect private addresses, personal phones, family data, or medical records (data minimization)
+- **Never** store personal data in a cache without TTL — use max 24h with `allowStale: false`
 
 ## GDPR Rights Implementation
 
@@ -178,11 +144,10 @@ async function getPersonalData(mepId: number): Promise<PersonalDataExport> {
 ### Right to Erasure (Art. 17)
 ```typescript
 async function handleErasureRequest(mepId: number): Promise<ErasureResult> {
-  // For current MEPs: Cannot erase (public interest exemption)
-  // CAN erase: Cached personal contact information
-  
+  // Current MEPs: public interest exemption (Art. 17(3)(e))
+  // Cached personal contact info: eligible for erasure
   invalidateMEPCache(mepId);
-  
+
   return {
     success: true,
     scope: 'cached_data_only',

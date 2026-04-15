@@ -1,6 +1,6 @@
 ---
 name: european-parliament-api
-description: European Parliament API integration patterns, data source navigation, response validation, and cache optimization
+description: "Queries European Parliament API endpoints to fetch legislative documents, MEP profiles, voting records, and committee data with caching and rate limiting. Use when integrating EP Open Data Portal, fetching EU parliamentary data, accessing Europarl endpoints, or configuring API caching strategies."
 license: MIT
 ---
 
@@ -10,15 +10,10 @@ license: MIT
 
 This skill applies when:
 - Integrating with European Parliament Open Data Portal API
-- Fetching MEP, plenary, committee, document, or question data
-- Implementing API caching strategies
-- Handling rate limits and retries
-- Validating European Parliament data structures
-- Supporting multilingual data (24 EU languages)
-- Ensuring GDPR compliance for personal data
-- Adding proper data attribution
-
-The European Parliament Open Data Portal (`data.europarl.europa.eu`) is the authoritative source for all parliamentary data accessed through this MCP server.
+- Fetching MEP profiles, plenary sessions, committee data, or legislative documents
+- Configuring API caching, rate limiting, or retry strategies
+- Validating EP API responses or handling multilingual data (24 EU languages)
+- Adding EP source attribution or ensuring GDPR compliance
 
 ## Rules
 
@@ -33,6 +28,14 @@ The European Parliament Open Data Portal (`data.europarl.europa.eu`) is the auth
 9. **Log API Access**: Log all European Parliament API calls for audit
 10. **Support GDPR**: Implement data minimization and cache time limits
 
+## Workflow
+
+1. Initialize API client with `User-Agent` header and base URL (`https://data.europarl.europa.eu/api/v2/`)
+2. Configure rate limiter (60 req/min) — check burst limits before each request
+3. Set up caches with TTLs per data type (MEPs: 1h, documents: 6h, votes: 24h)
+4. Make request through rate limiter → validate response with Zod schema → add attribution
+5. Return cached result on subsequent calls; purge stale entries hourly
+
 ## Examples
 
 ### ✅ Good Pattern: API Client with Caching
@@ -40,21 +43,16 @@ The European Parliament Open Data Portal (`data.europarl.europa.eu`) is the auth
 ```typescript
 import { LRUCache } from 'lru-cache';
 
-// Cache configuration by data type
 const mepCache = new LRUCache<string, MEP>({
   max: 1000,
   ttl: 1000 * 60 * 60, // 1 hour
 });
 
-// Fetch MEP with caching
 async function getMEP(id: number): Promise<MEP> {
   const cacheKey = `mep:${id}`;
-  
-  // Check cache
   const cached = mepCache.get(cacheKey);
   if (cached) return cached;
-  
-  // Fetch from API
+
   const response = await fetch(
     `https://data.europarl.europa.eu/api/v2/meps/${id}`,
     {
@@ -64,16 +62,13 @@ async function getMEP(id: number): Promise<MEP> {
       },
     }
   );
-  
+
   if (!response.ok) {
     throw new APIError(`EP API error: ${response.status}`);
   }
-  
+
   const mep = await response.json();
-  
-  // Cache result
   mepCache.set(cacheKey, mep);
-  
   return mep;
 }
 ```
@@ -104,10 +99,8 @@ const rateLimiter = new EPAPIRateLimiter();
 
 async function fetchFromEP(url: string): Promise<Response> {
   await rateLimiter.waitForSlot();
-  
   const response = await fetch(url);
-  
-  // Handle rate limit
+
   if (response.status === 429) {
     const retryAfter = response.headers.get('Retry-After');
     const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : 60000;
@@ -144,23 +137,9 @@ interface Attribution {
 
 ## Anti-Patterns
 
-### ❌ Bad: No Rate Limiting
-```typescript
-// NEVER - will hit rate limits!
-async function bad() {
-  const promises = ids.map(id => fetch(`https://data.europarl.europa.eu/api/v2/meps/${id}`));
-  return await Promise.all(promises); // Too many concurrent requests!
-}
-```
-
-### ❌ Bad: No Attribution
-```typescript
-// NEVER - violates EP terms of use!
-async function bad() {
-  const data = await fetchFromEP(url);
-  return data; // Missing source attribution!
-}
-```
+- **No rate limiting**: Do not fire unbounded `Promise.all` against EP endpoints — always route through the rate limiter.
+- **Missing attribution**: Every response must include EP source attribution; omitting it violates terms of use.
+- **Unbounded caches**: Always set `max` size and `ttl` on caches to avoid memory leaks and stale data.
 
 ## ISMS Compliance
 

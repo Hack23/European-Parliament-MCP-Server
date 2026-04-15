@@ -1,6 +1,6 @@
 ---
 name: mcp-server-development
-description: MCP protocol patterns, tool implementation, resource handlers, prompt templates, and error handling for Model Context Protocol servers
+description: "Implements MCP tool handlers with Zod validation, defines resource endpoints with URI patterns, and creates prompt templates for the European Parliament MCP server. Use when building MCP tools, registering resources, designing prompts, or debugging Model Context Protocol integrations."
 license: MIT
 ---
 
@@ -18,20 +18,22 @@ This skill applies when:
 - Testing MCP server implementations
 - Optimizing MCP tool performance
 
-MCP (Model Context Protocol) is the foundation of this server. All data access must follow MCP specification patterns to ensure compatibility with MCP clients.
-
 ## Rules
 
-1. **Follow MCP Specification**: Implement all handlers according to [MCP protocol specification](https://spec.modelcontextprotocol.io/)
-2. **Validate Tool Inputs**: Use Zod schemas to validate all tool inputs before processing
-3. **Return Structured Responses**: Always return MCP-compliant response structures with `content` array
-4. **Handle Errors Gracefully**: Catch errors and return safe error messages (never expose internal details)
-5. **Use Type Safety**: Leverage TypeScript types for all MCP handlers and request/response objects
-6. **Implement Resources with URIs**: Use consistent URI patterns (e.g., `ep://meps/{id}`)
-7. **Provide Tool Descriptions**: Write clear, concise descriptions for all tools, resources, and prompts
-8. **Document Input Schemas**: Use JSON Schema in tool listings to document expected inputs
-9. **Log MCP Operations**: Log all tool invocations, resource accesses for audit trails
-10. **Test MCP Handlers**: Write comprehensive tests for all MCP tools and resources
+1. **Follow MCP Specification**: Implement all handlers according to [MCP protocol specification](https://spec.modelcontextprotocol.io/) — use `ListToolsRequestSchema`, `CallToolRequestSchema`, `ListResourcesRequestSchema`, and `ReadResourceRequestSchema` from `@modelcontextprotocol/sdk`
+2. **Validate Tool Inputs with Zod**: Define a `.strict()` Zod schema for every tool's arguments and call `.parse()` before any processing to reject unknown fields
+3. **Return Structured Responses**: Always return `{ content: [{ type: "text", text: string }] }` for tools and `{ contents: [{ uri, mimeType, text }] }` for resources
+4. **Handle Errors Gracefully**: Catch errors, log them internally with `console.error`, and re-throw a safe user-facing message via `throw new Error('...')` — never expose stack traces or internal details
+5. **Implement Resources with URI Patterns**: Use consistent URI templates (e.g., `ep://meps/{id}`, `ep://committees/{code}`) and validate URIs with regex before parsing
+6. **Provide Tool Descriptions**: Write clear, action-oriented descriptions for every tool, resource, and prompt so MCP clients can discover and present them accurately
+
+## Workflow
+
+1. Define a Zod input schema with `.strict()` to reject unknown fields
+2. Register the tool via `server.setRequestHandler(ListToolsRequestSchema, ...)` with name, description, and JSON Schema
+3. Implement the handler: parse input with Zod → fetch/process data → wrap result in `{ content: [{ type: "text", text }] }`
+4. Add error handling: catch errors, log internally with `console.error`, return safe message via `throw new Error('...')`
+5. Verify registration with `server.listTools()` and test with sample inputs
 
 ## Examples
 
@@ -122,26 +124,10 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 
 ## Anti-Patterns
 
-### ❌ Bad: No Input Validation
-```typescript
-// NEVER - no validation!
-async function bad(request: any) {
-  const data = await fetch(request.params.arguments.url); // Injection risk!
-  return { content: [{ type: "text", text: data }] };
-}
-```
-
-### ❌ Bad: Exposing Internal Errors
-```typescript
-// NEVER - exposes internals!
-async function bad(request: any) {
-  try {
-    return await process(request);
-  } catch (error) {
-    throw error; // Exposes stack trace!
-  }
-}
-```
+- **No input validation**: Never use `request.params.arguments` directly without Zod parsing — risks injection and malformed data
+- **Exposing internal errors**: Never re-throw raw errors (`throw error`) — wrap them in a safe message to avoid leaking stack traces
+- **Missing content wrapper**: Never return plain strings — always wrap in `{ content: [{ type: "text", text }] }`
+- **Hardcoded resource URIs**: Never skip URI validation with regex before parsing resource identifiers
 
 ## ISMS Compliance
 
