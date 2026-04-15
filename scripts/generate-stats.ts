@@ -1130,8 +1130,9 @@ function isCredibleApiValue(apiValue: number, storedValue: number): boolean {
  * match. This function adjusts the NI (non-attached) group seat count
  * to absorb the difference, keeping the data internally consistent.
  *
- * Only applies to the latest covered year and years sharing the same
- * parliamentary term (EP10 currently covers 2024–2026).
+ * Applies to all years sharing the same parliamentary term as the latest
+ * covered year (e.g. EP10 covers 2025–2026, transition year 2024 has its
+ * own term label and is not affected).
  */
 function syncPoliticalLandscapeWithMepCount(
   content: string,
@@ -1179,13 +1180,13 @@ function syncPoliticalLandscapeWithMepCount(
     return content;
   }
 
-  // Update NI seats in the POLITICAL_LANDSCAPE for the latest year and any
-  // future years within the same EP term. Future years inherit the current
-  // term's group structure until explicitly updated, so they must be kept
-  // in sync to maintain internal consistency.
+  // Sync NI seats for all years sharing the same parliamentary term as the
+  // latest covered year. Within a single EP term the group composition is
+  // inherited, so all years must stay in sync to maintain consistency.
   let updated = content;
+  const latestTerm = yearStats.parliamentaryTerm;
   const yearsToSync = GENERATED_STATS.yearlyStats
-    .filter((y) => y.year >= latestCoveredYear)
+    .filter((y) => y.parliamentaryTerm === latestTerm)
     .map((y) => y.year);
 
   for (const year of yearsToSync) {
@@ -1333,7 +1334,11 @@ function updateStatsFile(
   // that the sum of all group seats equals mepCount. This prevents the test
   // `should have total seats across all groups within ±5 of mepCount` from
   // failing due to mepCount being updated independently of group seats.
-  content = syncPoliticalLandscapeWithMepCount(content, yearValidations, latestCoveredYear);
+  const syncedContent = syncPoliticalLandscapeWithMepCount(content, yearValidations, latestCoveredYear);
+  if (syncedContent !== content) {
+    content = syncedContent;
+    updatedFields += 1;
+  }
 
   // Update generatedAt timestamp if any fields changed
   if (content !== originalContent) {
