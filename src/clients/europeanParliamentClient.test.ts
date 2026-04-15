@@ -2438,6 +2438,7 @@ describe('EuropeanParliamentClient', () => {
 
       await client.getSpeeches({ year: 2024 });
 
+      expect(mockFetch).toHaveBeenCalledTimes(1);
       // year is NOT a valid param for /speeches — it should not appear in the URL
       const url = mockFetch.mock.calls[0]?.[0] as string;
       expect(url).not.toContain('year=');
@@ -2714,6 +2715,7 @@ describe('EuropeanParliamentClient', () => {
 
       await client.getEvents({ dateFrom: '2024-06-01', dateTo: '2024-06-30' });
 
+      expect(mockFetch).toHaveBeenCalledTimes(1);
       // /events does not support date-from/date-to — they should not appear in the URL
       const url = mockFetch.mock.calls[0]?.[0] as string;
       expect(url).not.toContain('date-from=');
@@ -2729,6 +2731,7 @@ describe('EuropeanParliamentClient', () => {
 
       await client.getEvents({ year: 2024 });
 
+      expect(mockFetch).toHaveBeenCalledTimes(1);
       // /events does not support year — it should not appear in the URL
       const url = mockFetch.mock.calls[0]?.[0] as string;
       expect(url).not.toContain('year=');

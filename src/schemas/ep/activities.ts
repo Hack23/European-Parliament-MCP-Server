@@ -11,7 +11,11 @@ import { z } from 'zod';
 import { DateStringSchema } from './common.js';
 
 /**
- * Get speeches input schema
+ * Get speeches input schema.
+ *
+ * **EP API /speeches filtering:** The EP API does not support a `year`
+ * parameter.  Use `dateFrom` / `dateTo` (YYYY-MM-DD) which are mapped to
+ * the EP API `sitting-date` / `sitting-date-end` parameters.
  */
 export const GetSpeechesSchema = z.object({
   speechId: z.string()
@@ -19,16 +23,10 @@ export const GetSpeechesSchema = z.object({
     .max(200)
     .optional()
     .describe('Speech ID for single speech lookup'),
-  year: z.number()
-    .int()
-    .min(1900)
-    .max(2100)
-    .optional()
-    .describe('Filter by calendar year (recommended for annual counts)'),
   dateFrom: DateStringSchema.optional()
-    .describe('Start date filter (YYYY-MM-DD)'),
+    .describe('Start date filter (YYYY-MM-DD). Mapped to EP API sitting-date parameter.'),
   dateTo: DateStringSchema.optional()
-    .describe('End date filter (YYYY-MM-DD)'),
+    .describe('End date filter (YYYY-MM-DD). Mapped to EP API sitting-date-end parameter.'),
   limit: z.number()
     .int()
     .min(1)
@@ -43,7 +41,11 @@ export const GetSpeechesSchema = z.object({
 });
 
 /**
- * Get procedures input schema
+ * Get procedures input schema.
+ *
+ * **EP API /procedures filtering:** The EP API does not support a `year`
+ * parameter — only `process-type` is available.  Callers needing
+ * year-specific counts must filter client-side.
  */
 export const GetProceduresSchema = z.object({
   processId: z.string()
@@ -51,12 +53,6 @@ export const GetProceduresSchema = z.object({
     .max(200)
     .optional()
     .describe('Process ID for single procedure lookup'),
-  year: z.number()
-    .int()
-    .min(1990)
-    .max(2040)
-    .optional()
-    .describe('Filter by year'),
   limit: z.number()
     .int()
     .min(1)
@@ -99,7 +95,10 @@ export const GetAdoptedTextsSchema = z.object({
 });
 
 /**
- * Get events input schema
+ * Get events input schema.
+ *
+ * **EP API /events filtering:** The EP API `/events` endpoint has no date
+ * filtering at all — only pagination (limit/offset) is supported.
  */
 export const GetEventsSchema = z.object({
   eventId: z.string()
@@ -107,16 +106,6 @@ export const GetEventsSchema = z.object({
     .max(200)
     .optional()
     .describe('Event ID for single event lookup'),
-  year: z.number()
-    .int()
-    .min(1900)
-    .max(2100)
-    .optional()
-    .describe('Filter by calendar year (recommended for annual counts)'),
-  dateFrom: DateStringSchema.optional()
-    .describe('Start date filter (YYYY-MM-DD)'),
-  dateTo: DateStringSchema.optional()
-    .describe('End date filter (YYYY-MM-DD)'),
   limit: z.number()
     .int()
     .min(1)

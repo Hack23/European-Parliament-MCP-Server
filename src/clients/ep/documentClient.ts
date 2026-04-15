@@ -210,12 +210,10 @@ export class DocumentClient extends BaseEPClient {
    * **EP API Endpoint:** `GET /committee-documents`
    *
    * **Note:** The EP API `/committee-documents` endpoint does **not**
-   * support a `year` query parameter per the OpenAPI spec.  The `year`
-   * parameter is accepted here for interface consistency but the API
-   * silently ignores it and returns ALL committee documents.
+   * support a `year` query parameter per the OpenAPI spec.
+   * Only pagination (limit/offset) is supported.
    */
   async getCommitteeDocuments(params: {
-    year?: number;
     limit?: number;
     offset?: number;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
@@ -227,7 +225,7 @@ export class DocumentClient extends BaseEPClient {
       limit,
     };
     // Note: `year` is NOT a valid param for /committee-documents per EP API spec.
-    if (params.year !== undefined) apiParams['year'] = params.year;
+    // Not forwarded to avoid misleading callers or future API validation failures.
 
     const response = await this.get<JSONLDResponse>('committee-documents', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];
@@ -286,12 +284,10 @@ export class DocumentClient extends BaseEPClient {
    * **EP API Endpoint:** `GET /external-documents`
    *
    * **Note:** The EP API `/external-documents` endpoint does **not**
-   * support a `year` query parameter per the OpenAPI spec.  The `year`
-   * parameter is accepted here for interface consistency but the API
-   * silently ignores it and returns ALL external documents.
+   * support a `year` query parameter per the OpenAPI spec.
+   * Only pagination (limit/offset) is supported.
    */
   async getExternalDocuments(params: {
-    year?: number;
     limit?: number;
     offset?: number;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
@@ -303,7 +299,7 @@ export class DocumentClient extends BaseEPClient {
       limit,
     };
     // Note: `year` is NOT a valid param for /external-documents per EP API spec.
-    if (params.year !== undefined) apiParams['year'] = params.year;
+    // Not forwarded to avoid misleading callers or future API validation failures.
 
     const response = await this.get<JSONLDResponse>('external-documents', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];

@@ -312,14 +312,9 @@ export class PlenaryClient extends BaseEPClient {
    *
    * **Note:** The EP API `/events` endpoint does **not** support `year`,
    * `date-from`, or `date-to` query parameters — it has no date filtering
-   * at all per the OpenAPI spec.  The `year`/`dateFrom`/`dateTo` parameters
-   * are accepted here for interface consistency but the API silently ignores
-   * them and returns ALL events regardless.  Callers must filter client-side.
+   * at all per the OpenAPI spec.  Only pagination (limit/offset) is supported.
    */
   async getEvents(params: {
-    year?: number;
-    dateFrom?: string;
-    dateTo?: string;
     limit?: number;
     offset?: number;
   } = {}): Promise<PaginatedResponse<EPEvent>> {

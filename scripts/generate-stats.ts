@@ -301,10 +301,11 @@ async function countItems(
       if (pageNum === 1 || pageNum % 3 === 0 || !result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) {
         progress(`📊 ${label}: page ${String(pageNum)}, ${String(totalCount)} items so far (${formatElapsed(Date.now() - fetchStart)})`);
       }
-      // Safety: absolute page limit
+      // Safety: absolute page limit — return as incomplete/error
       if (pageNum >= MAX_PAGES_PER_METRIC) {
-        progress(`⚠️  ${label}: reached max page limit (${String(MAX_PAGES_PER_METRIC)}), stopping at ${String(totalCount)} items`);
-        break;
+        const note = `Reached max page limit (${String(MAX_PAGES_PER_METRIC)}) for ${label} — count of ${String(totalCount)} is incomplete.`;
+        progress(`⚠️  ${label}: ${note}`);
+        return { total: null, error: note };
       }
       if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
       offset += EP_API_MAX_PAGE_SIZE;
@@ -554,7 +555,7 @@ async function validateYearAgainstAPI(
       // EP API `/events` does NOT support `year` or any date filter ❌.
       // Client-side bucketing with early termination.
       count: () => countItemsGroupedByMonth('Events', year, (p) =>
-        client.getEvents({ year, ...p })
+        client.getEvents(p)
       ),
     },
     {
@@ -574,10 +575,10 @@ async function validateYearAgainstAPI(
   //
   // EP API year-filter support (from OpenAPI spec):
   //   /adopted-texts:       ✅ supports `year`
-  //   /procedures:          ❌ NO `year` — returns ALL procedures (count may be inaccurate)
+  //   /procedures:          ❌ NO `year` — returns ALL procedures (total count, not year-specific)
   //   /plenary-documents:   ✅ supports `year`
-  //   /committee-documents: ❌ NO `year` — returns ALL (count may be inaccurate)
-  //   /external-documents:  ❌ NO `year` — returns ALL (count may be inaccurate)
+  //   /committee-documents: ❌ NO `year` — returns ALL (total count, not year-specific)
+  //   /external-documents:  ❌ NO `year` — returns ALL (total count, not year-specific)
   //   /meps-declarations:   ✅ supports `year`
   const yearlyMetrics: Array<{
     label: string;
@@ -592,7 +593,7 @@ async function validateYearAgainstAPI(
     {
       label: 'Procedures',
       storedKey: 'procedures',
-      count: () => countItems('Procedures', (p) => client.getProcedures({ year, ...p })),
+      count: () => countItems('Procedures', (p) => client.getProcedures(p)),
     },
     {
       label: 'Plenary Documents',
@@ -603,8 +604,8 @@ async function validateYearAgainstAPI(
         progress('🔍 Plenary Documents: fetching plenary + committee + external in parallel...');
         const [plenary, committee, external] = await Promise.all([
           countItems('Plenary Docs', (p) => client.getPlenaryDocuments({ year, ...p })),
-          countItems('Committee Docs', (p) => client.getCommitteeDocuments({ year, ...p })),
-          countItems('External Docs', (p) => client.getExternalDocuments({ year, ...p })),
+          countItems('Committee Docs', (p) => client.getCommitteeDocuments(p)),
+          countItems('External Docs', (p) => client.getExternalDocuments(p)),
         ]);
         const errors: string[] = [];
         if (plenary.error) errors.push(`Plenary: ${plenary.error}`);

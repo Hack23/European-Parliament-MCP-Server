@@ -112,7 +112,10 @@ export const GetPlenaryDocumentsSchema = z.object({
 });
 
 /**
- * Get committee documents input schema
+ * Get committee documents input schema.
+ *
+ * **EP API /committee-documents filtering:** The EP API does not support
+ * a `year` parameter for this endpoint.  Only pagination is available.
  */
 export const GetCommitteeDocumentsSchema = z.object({
   docId: z.string()
@@ -120,12 +123,6 @@ export const GetCommitteeDocumentsSchema = z.object({
     .max(200)
     .optional()
     .describe('Document ID for single document lookup'),
-  year: z.number()
-    .int()
-    .min(1990)
-    .max(2040)
-    .optional()
-    .describe('Filter by year'),
   limit: z.number()
     .int()
     .min(1)
@@ -179,7 +176,10 @@ export const GetPlenarySessionDocumentItemsSchema = z.object({
 });
 
 /**
- * Get external documents input schema
+ * Get external documents input schema.
+ *
+ * **EP API /external-documents filtering:** The EP API does not support
+ * a `year` parameter for this endpoint.  Only pagination is available.
  */
 export const GetExternalDocumentsSchema = z.object({
   docId: z.string()
@@ -187,12 +187,6 @@ export const GetExternalDocumentsSchema = z.object({
     .max(200)
     .optional()
     .describe('Document ID for single document lookup'),
-  year: z.number()
-    .int()
-    .min(1990)
-    .max(2040)
-    .optional()
-    .describe('Filter by year'),
   limit: z.number()
     .int()
     .min(1)

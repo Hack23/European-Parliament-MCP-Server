@@ -27,7 +27,10 @@ import type { ToolResult } from './shared/types.js';
  * Handles the get_committee_documents MCP tool request.
  *
  * Retrieves European Parliament committee documents, supporting single document
- * lookup by docId or a paginated list optionally filtered by year.
+ * lookup by docId or a paginated list.
+ *
+ * Note: The EP API `/committee-documents` endpoint does **not** support `year` filtering.
+ * Only pagination (limit/offset) is available.
  *
  * @param args - Raw tool arguments, validated against {@link GetCommitteeDocumentsSchema}
  * @returns MCP tool result containing either a single committee document or a paginated list of documents
@@ -40,9 +43,9 @@ import type { ToolResult } from './shared/types.js';
  * const result = await handleGetCommitteeDocuments({ docId: 'A9-0001/2024' });
  * // Returns the full record for the specified committee document
  *
- * // List documents filtered by year
- * const list = await handleGetCommitteeDocuments({ year: 2024, limit: 25 });
- * // Returns up to 25 committee documents from 2024
+ * // List documents (no year filter available in the EP API)
+ * const list = await handleGetCommitteeDocuments({ limit: 25 });
+ * // Returns up to 25 committee documents
  * ```
  *
  * @security - Input is validated with Zod before any API call.
@@ -81,7 +84,6 @@ export async function handleGetCommitteeDocuments(args: unknown): Promise<ToolRe
       limit: params.limit,
       offset: params.offset,
     };
-    if (params.year !== undefined) apiParams['year'] = params.year;
 
     const result = await epClient.getCommitteeDocuments(
       apiParams as Parameters<typeof epClient.getCommitteeDocuments>[0]
@@ -102,12 +104,11 @@ export async function handleGetCommitteeDocuments(args: unknown): Promise<ToolRe
 export const getCommitteeDocumentsToolMetadata = {
   name: 'get_committee_documents',
   description:
-    'Get European Parliament committee documents. Supports single document lookup by docId or list with year filter. Data source: European Parliament Open Data Portal.',
+    'Get European Parliament committee documents. Supports single document lookup by docId or paginated list. Note: The EP API /committee-documents endpoint does not support year filtering. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       docId: { type: 'string', description: 'Document ID for single document lookup' },
-      year: { type: 'number', description: 'Filter by year' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },

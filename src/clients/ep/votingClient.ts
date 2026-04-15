@@ -207,15 +207,12 @@ export class VotingClient extends BaseEPClient {
    *
    * **Note:** The EP API `/speeches` endpoint does **not** support a
    * `year` query parameter.  It supports `sitting-date` (range start)
-   * and `sitting-date-end` (range end) for date filtering.  The `year`
-   * parameter is accepted here for backwards compatibility but is NOT
-   * forwarded to the API (it would be silently ignored).
+   * and `sitting-date-end` (range end) for date filtering.
    *
    * Use `dateFrom` / `dateTo` (YYYY-MM-DD) for date-range queries —
    * these are mapped to `sitting-date` / `sitting-date-end`.
    */
   async getSpeeches(params: {
-    year?: number;
     dateFrom?: string;
     dateTo?: string;
     limit?: number;
