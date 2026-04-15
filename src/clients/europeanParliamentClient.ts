@@ -578,12 +578,10 @@ export class EuropeanParliamentClient {
   /**
    * Retrieves recently updated corporate bodies via the feed endpoint.
    * **EP API Endpoint:** `GET /corporate-bodies/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async getCorporateBodiesFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
-    return this.committeeClient.getCorporateBodiesFeed(params);
+  async getCorporateBodiesFeed(): Promise<JSONLDResponse> {
+    return this.committeeClient.getCorporateBodiesFeed();
   }
 
   // ─── Document endpoints ───────────────────────────────────────────────────
@@ -710,45 +708,37 @@ export class EuropeanParliamentClient {
   /**
    * Retrieves recently updated documents via the feed endpoint.
    * **EP API Endpoint:** `GET /documents/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async getDocumentsFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
-    return this.documentClient.getDocumentsFeed(params);
+  async getDocumentsFeed(): Promise<JSONLDResponse> {
+    return this.documentClient.getDocumentsFeed();
   }
 
   /**
    * Retrieves recently updated plenary documents via the feed endpoint.
    * **EP API Endpoint:** `GET /plenary-documents/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async getPlenaryDocumentsFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
-    return this.documentClient.getPlenaryDocumentsFeed(params);
+  async getPlenaryDocumentsFeed(): Promise<JSONLDResponse> {
+    return this.documentClient.getPlenaryDocumentsFeed();
   }
 
   /**
    * Retrieves recently updated committee documents via the feed endpoint.
    * **EP API Endpoint:** `GET /committee-documents/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async getCommitteeDocumentsFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
-    return this.documentClient.getCommitteeDocumentsFeed(params);
+  async getCommitteeDocumentsFeed(): Promise<JSONLDResponse> {
+    return this.documentClient.getCommitteeDocumentsFeed();
   }
 
   /**
    * Retrieves recently updated plenary session documents via the feed endpoint.
    * **EP API Endpoint:** `GET /plenary-session-documents/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async getPlenarySessionDocumentsFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
-    return this.documentClient.getPlenarySessionDocumentsFeed(params);
+  async getPlenarySessionDocumentsFeed(): Promise<JSONLDResponse> {
+    return this.documentClient.getPlenarySessionDocumentsFeed();
   }
 
   /**

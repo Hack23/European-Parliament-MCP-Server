@@ -23,6 +23,7 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
+import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
 // ─── Document Client ──────────────────────────────────────────────────────────
 
@@ -302,78 +303,79 @@ export class DocumentClient extends BaseEPClient {
   /**
    * Retrieves recently updated documents via the feed endpoint.
    * **EP API Endpoint:** `GET /documents/feed`
+   *
+   * This is a **fixed-window feed** — the EP API does NOT accept a
+   * `timeframe` parameter.  It returns updates from a server-defined
+   * default window (typically one month).  Response times can exceed
+   * 120 s, so an extended minimum timeout is applied automatically.
    */
-  async getDocumentsFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
+  async getDocumentsFeed(): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('documents/feed', {
       format: 'application/ld+json',
-      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
-      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
-    });
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
   }
 
   /**
    * Retrieves recently updated plenary documents via the feed endpoint.
    * **EP API Endpoint:** `GET /plenary-documents/feed`
+   *
+   * Fixed-window feed — no `timeframe` parameter.
+   * Extended timeout applied (120 s minimum).
    */
-  async getPlenaryDocumentsFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
+  async getPlenaryDocumentsFeed(): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('plenary-documents/feed', {
       format: 'application/ld+json',
-      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
-      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
-    });
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
   }
 
   /**
    * Retrieves recently updated committee documents via the feed endpoint.
    * **EP API Endpoint:** `GET /committee-documents/feed`
+   *
+   * Fixed-window feed — no `timeframe` parameter.
+   * Extended timeout applied (120 s minimum).
    */
-  async getCommitteeDocumentsFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
+  async getCommitteeDocumentsFeed(): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('committee-documents/feed', {
       format: 'application/ld+json',
-      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
-      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
-    });
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
   }
 
   /**
    * Retrieves recently updated plenary session documents via the feed endpoint.
    * **EP API Endpoint:** `GET /plenary-session-documents/feed`
+   *
+   * Fixed-window feed — no `timeframe` parameter.
+   * Extended timeout applied (120 s minimum).
    */
-  async getPlenarySessionDocumentsFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
+  async getPlenarySessionDocumentsFeed(): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('plenary-session-documents/feed', {
       format: 'application/ld+json',
-      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
-      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
-    });
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
   }
 
   /**
    * Retrieves recently updated external documents via the feed endpoint.
    * **EP API Endpoint:** `GET /external-documents/feed`
+   *
+   * This is a **configurable-window feed** that accepts `timeframe`,
+   * `start-date`, and `work-type` parameters.
+   * Extended timeout applied for `one-month` timeframe.
    */
   async getExternalDocumentsFeed(params: {
     timeframe?: string;
     startDate?: string;
     workType?: string;
   } = {}): Promise<JSONLDResponse> {
+    const minimumTimeout = params.timeframe === 'one-month'
+      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
+      : undefined;
     return this.get<JSONLDResponse>('external-documents/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.workType !== undefined ? { 'work-type': params.workType } : {}),
-    });
+    }, minimumTimeout);
   }
 
   /**

@@ -171,46 +171,43 @@ export class LegislativeClient extends BaseEPClient {
    * **EP API Endpoint:** `GET /procedures/feed`
    *
    * **Note:** The EP API `procedures/feed` endpoint is significantly slower
-   * than other feed endpoints and may take 120+ seconds for `one-month`
-   * timeframes. For `one-month`, this client applies an extended minimum
-   * timeout automatically, but callers may still need to increase the global
-   * request timeout if the endpoint takes longer to respond.
+   * than other feed endpoints — it typically takes 25–40 s even for `one-week`
+   * and 120+ seconds for `one-month`.  An extended minimum timeout of 120 s
+   * is always applied.
    */
   async getProceduresFeed(params: {
     timeframe?: string;
     startDate?: string;
     processType?: string;
   } = {}): Promise<JSONLDResponse> {
-    // Apply an extended minimum timeout only for the known slow 'one-month'
-    // timeframe (120+ seconds). Slower responses may still require callers to
-    // raise the global request timeout. Other timeframes use the default
-    // global timeout.
-    const minimumTimeout = params.timeframe === 'one-month'
-      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
-      : undefined;
     return this.get<JSONLDResponse>('procedures/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.processType !== undefined ? { 'process-type': params.processType } : {}),
-    }, minimumTimeout);
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
   }
 
   /**
    * Retrieves recently updated adopted texts via the feed endpoint.
    * **EP API Endpoint:** `GET /adopted-texts/feed`
+   *
+   * Configurable-window feed.  Extended timeout applied for `one-month`.
    */
   async getAdoptedTextsFeed(params: {
     timeframe?: string;
     startDate?: string;
     workType?: string;
   } = {}): Promise<JSONLDResponse> {
+    const minimumTimeout = params.timeframe === 'one-month'
+      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
+      : undefined;
     return this.get<JSONLDResponse>('adopted-texts/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.workType !== undefined ? { 'work-type': params.workType } : {}),
-    });
+    }, minimumTimeout);
   }
 
   /**
