@@ -93,6 +93,114 @@
 
 The European Parliament MCP Server provides 62 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 8 core tools, 3 advanced tools, 15 OSINT intelligence tools, 1 statistics tool, 21 EP API v2 endpoint tools, 1 procedure event detail tool, and 13 EP API v2 feed tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
 
+### Political Intelligence Coverage
+
+```mermaid
+graph TB
+    subgraph OSINT["🕵️ OSINT Intelligence Layer (15 tools)"]
+        direction TB
+        subgraph MEP_INTEL["MEP Intelligence"]
+            AI[assess_mep_influence]
+            CI[comparative_intelligence]
+            NA[network_analysis]
+        end
+        subgraph COALITION["Coalition & Group Analysis"]
+            ACD[analyze_coalition_dynamics]
+            CPG[compare_political_groups]
+            DVA[detect_voting_anomalies]
+            ST[sentiment_tracker]
+        end
+        subgraph STRATEGIC["Strategic Intelligence"]
+            EWS[early_warning_system]
+            GPL[generate_political_landscape]
+            COR[correlate_intelligence]
+        end
+        subgraph LEGISLATIVE["Legislative Intelligence"]
+            ALE[analyze_legislative_effectiveness]
+            MLP[monitor_legislative_pipeline]
+            ACA[analyze_committee_activity]
+        end
+        subgraph NATIONAL["National & Attendance"]
+            ACD2[analyze_country_delegation]
+            TMA[track_mep_attendance]
+        end
+    end
+
+    subgraph ANALYSIS["📊 Advanced Analysis (4 tools)"]
+        AVP[analyze_voting_patterns]
+        TL[track_legislation]
+        GR[generate_report]
+        GAGS[get_all_generated_stats]
+    end
+
+    subgraph CORE["📦 Core Data Access (22 tools)"]
+        direction TB
+        MEP_TOOLS["👤 MEP Tools (7)"]
+        PLENARY["🏛️ Plenary & Meeting (9)"]
+        DOC["📄 Document Tools (7)"]
+        LEG["⚖️ Legislative (4)"]
+        COMM["🏢 Committee (2)"]
+        DIAG["🔧 Diagnostics (1)"]
+    end
+
+    subgraph FEEDS["📡 Real-Time Feeds (13 tools)"]
+        FEED_ALL["13 change monitoring feeds"]
+    end
+
+    OSINT --> ANALYSIS
+    ANALYSIS --> CORE
+    CORE --> FEEDS
+
+    style OSINT fill:#D32F2F,stroke:#B71C1C,color:#fff,stroke-width:2px
+    style ANALYSIS fill:#1565C0,stroke:#0D47A1,color:#fff,stroke-width:2px
+    style CORE fill:#2E7D32,stroke:#1B5E20,color:#fff,stroke-width:2px
+    style FEEDS fill:#FF8F00,stroke:#E65100,color:#000,stroke-width:2px
+    style MEP_INTEL fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    style COALITION fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    style STRATEGIC fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    style LEGISLATIVE fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    style NATIONAL fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+```
+
+### Tool Category Overview
+
+```mermaid
+graph LR
+    subgraph INPUT["🔍 Intelligence Questions"]
+        Q1["Who are the key players?"]
+        Q2["What coalitions are forming?"]
+        Q3["Where are the risks?"]
+        Q4["How effective is legislation?"]
+        Q5["What changed recently?"]
+    end
+
+    subgraph TOOLS["🛠️ MCP Tool Categories"]
+        T1["MEP Profiling\n7 core + 4 OSINT"]
+        T2["Coalition Analysis\n4 OSINT tools"]
+        T3["Risk Detection\n3 OSINT tools"]
+        T4["Legislative Tracking\n5 analysis tools"]
+        T5["Change Monitoring\n13 feed tools"]
+    end
+
+    subgraph OUTPUT["📊 Intelligence Products"]
+        O1["Influence Scores\nNetwork Maps"]
+        O2["Cohesion Metrics\nAlliance Detection"]
+        O3["Anomaly Alerts\nEarly Warnings"]
+        O4["Pipeline Status\nEffectiveness Scores"]
+        O5["Real-Time Updates\nTrend Data"]
+    end
+
+    Q1 --> T1 --> O1
+    Q2 --> T2 --> O2
+    Q3 --> T3 --> O3
+    Q4 --> T4 --> O4
+    Q5 --> T5 --> O5
+
+    style INPUT fill:#4A90E2,stroke:#2171C7,color:#fff,stroke-width:2px
+    style TOOLS fill:#9C27B0,stroke:#7B1FA2,color:#fff,stroke-width:2px
+    style OUTPUT fill:#2E7D32,stroke:#1B5E20,color:#fff,stroke-width:2px
+```
+
 ### Key Features
 
 - **Type Safety**: All inputs validated with Zod schemas
@@ -123,45 +231,45 @@ Currently, the server does **not require authentication** for tool access. Futur
 
 ### 🏛️ Plenary & Meeting Tools
 
-| Tool | Purpose | Key Parameters | Response Type |
-|------|---------|----------------|---------------|
-| `get_plenary_sessions` | List plenary sessions | dateFrom, dateTo, eventId | Paginated list |
-| `get_voting_records` | Aggregate voting data | sessionId, topic, dateFrom | Paginated list |
-| `get_speeches` | Plenary speeches | speechId, dateFrom, dateTo | Paginated list |
-| `get_events` | EP events | eventId, dateFrom, dateTo | Paginated list |
-| `get_meeting_activities` | Meeting activities | sittingId (required) | Paginated list |
-| `get_meeting_decisions` | Meeting decisions | sittingId (required) | Paginated list |
-| `get_meeting_foreseen_activities` | Planned agenda items | sittingId (required) | Paginated list |
-| `get_meeting_plenary_session_documents` | Meeting session documents | sittingId (required) | Paginated list |
-| `get_meeting_plenary_session_document_items` | Meeting session doc items | sittingId (required) | Paginated list |
+| Tool | Purpose | Key Parameters | Response Type | Notes |
+|------|---------|----------------|---------------|-------|
+| `get_plenary_sessions` | List plenary sessions | dateFrom, dateTo, eventId, year, location | Paginated list | ✅ Fast with `year` filter |
+| `get_voting_records` | Aggregate voting data | sessionId, topic, dateFrom | Paginated list | ⚠️ Roll-call data delayed by weeks |
+| `get_speeches` | Plenary speeches | speechId, year, dateFrom, dateTo | Paginated list | |
+| `get_events` | EP events | eventId, year, dateFrom, dateTo | Paginated list | |
+| `get_meeting_activities` | Meeting activities | sittingId (required) | Paginated list | ✅ Works with session IDs like `MTG-PL-2025-01-20` |
+| `get_meeting_decisions` | Meeting decisions | sittingId (required) | Paginated list | ✅ Works with session IDs |
+| `get_meeting_foreseen_activities` | Planned agenda items | sittingId (required) | Paginated list | ✅ Works with session IDs |
+| `get_meeting_plenary_session_documents` | Meeting session documents | sittingId (required) | Paginated list | ⚠️ Returns 404 for many sittingIds |
+| `get_meeting_plenary_session_document_items` | Meeting session doc items | sittingId (required) | Paginated list | ⚠️ Returns 404 for many sittingIds |
 
 ### 🏢 Committee Tools
 
 | Tool | Purpose | Key Parameters | Response Type |
 |------|---------|----------------|---------------|
-| `get_committee_info` | Committee data | id, abbreviation | Single object |
+| `get_committee_info` | Committee data | id, abbreviation, showCurrent | Single object |
 | `get_committee_documents` | Committee documents | docId, year | Paginated list |
 
 ### 📄 Document Tools
 
-| Tool | Purpose | Key Parameters | Response Type |
-|------|---------|----------------|---------------|
-| `search_documents` | Find documents | keyword, documentType | Paginated list |
-| `get_adopted_texts` | Adopted texts | docId, year | Paginated list |
-| `get_plenary_documents` | Plenary documents | docId, year | Paginated list |
-| `get_plenary_session_documents` | Session documents | docId | Paginated list |
-| `get_plenary_session_document_items` | Session document items | limit, offset | Paginated list |
-| `get_external_documents` | External documents | docId, year | Paginated list |
-| `get_parliamentary_questions` | Q&A data | author, dateFrom | Paginated list |
+| Tool | Purpose | Key Parameters | Response Type | Notes |
+|------|---------|----------------|---------------|-------|
+| `search_documents` | Find documents | keyword, documentType, dateFrom, dateTo | Paginated list | ⚠️ **Always use date filters** — unfiltered searches time out |
+| `get_adopted_texts` | Adopted texts | docId, year | Paginated list | ✅ Fast with `year` filter |
+| `get_plenary_documents` | Plenary documents | docId, year | Paginated list | ✅ Fast with `year` filter |
+| `get_plenary_session_documents` | Session documents | docId | Paginated list | |
+| `get_plenary_session_document_items` | Session document items | limit, offset | Paginated list | ⚠️ EP API returns 404 — endpoint may require specific parameters |
+| `get_external_documents` | External documents | docId, year | Paginated list | ✅ Fast with `year` filter |
+| `get_parliamentary_questions` | Q&A data | docId, type, author, topic, status, dateFrom | Paginated list | |
 
 ### ⚖️ Legislative Procedure Tools
 
-| Tool | Purpose | Key Parameters | Response Type |
-|------|---------|----------------|---------------|
-| `get_procedures` | Legislative procedures | processId, year | Paginated list |
-| `get_procedure_events` | Procedure timeline events | processId (required) | Paginated list |
-| `get_procedure_event_by_id` | Single procedure event | processId, eventId (both required) | Single object |
-| `get_controlled_vocabularies` | Classification terms | vocId | Paginated list |
+| Tool | Purpose | Key Parameters | Response Type | Notes |
+|------|---------|----------------|---------------|-------|
+| `get_procedures` | Legislative procedures | processId, year | Paginated list | ⚠️ Use `year` filter — unfiltered queries may time out |
+| `get_procedure_events` | Procedure timeline events | processId (required) | Paginated list | Use short processId (e.g., `2025-0012`), not full URI |
+| `get_procedure_event_by_id` | Single procedure event | processId, eventId (both required) | Single object | Use short IDs for both parameters |
+| `get_controlled_vocabularies` | Classification terms | vocId | Paginated list | ✅ Fast; use short vocId (e.g., `ep-document-types`) |
 
 ### 📊 Advanced Analysis Tools
 
@@ -194,21 +302,38 @@ Currently, the server does **not require authentication** for tool access. Futur
 
 ### 📡 Feed Tools
 
-| Tool | Purpose | Key Parameters | Response Type |
-|------|---------|----------------|---------------|
-| `get_meps_feed` | Recently updated MEPs | timeframe, startDate | Feed list |
-| `get_events_feed` | Recently updated events | timeframe, activityType | Feed list |
-| `get_procedures_feed` | Recently updated procedures | timeframe, processType | Feed list |
-| `get_adopted_texts_feed` | Recently updated adopted texts | timeframe, workType | Feed list |
-| `get_mep_declarations_feed` | Recently updated MEP declarations | timeframe, workType | Feed list |
-| `get_documents_feed` | Recently updated documents | timeframe, startDate | Feed list |
-| `get_plenary_documents_feed` | Recently updated plenary documents | timeframe, startDate | Feed list |
-| `get_committee_documents_feed` | Recently updated committee documents | timeframe, startDate | Feed list |
-| `get_plenary_session_documents_feed` | Recently updated plenary session docs | timeframe, startDate | Feed list |
-| `get_external_documents_feed` | Recently updated external documents | timeframe, workType | Feed list |
-| `get_parliamentary_questions_feed` | Recently updated questions | timeframe, startDate | Feed list |
-| `get_corporate_bodies_feed` | Recently updated corporate bodies | timeframe, startDate | Feed list |
-| `get_controlled_vocabularies_feed` | Recently updated vocabularies | timeframe, startDate | Feed list |
+EP API v2 feed endpoints fall into two groups per the [OpenAPI spec](docs/ep-openapi-spec.json):
+
+**Configurable-window feeds** (accept `timeframe` + `startDate`):
+
+| Tool | Purpose | Key Parameters | Response Type | Tested Response Time |
+|------|---------|----------------|---------------|---------------------|
+| `get_meps_feed` | Recently updated MEPs | timeframe, startDate | Feed list | ~9 s |
+| `get_events_feed` | Recently updated events | timeframe, startDate, activityType | Feed list | 30–120 s ⚠️ |
+| `get_procedures_feed` | Recently updated procedures | timeframe, startDate, processType | Feed list | 30–120 s ⚠️ |
+| `get_adopted_texts_feed` | Recently updated adopted texts | timeframe, startDate, workType | Feed list | ~1 s ✅ |
+| `get_mep_declarations_feed` | Recently updated MEP declarations | timeframe, startDate, workType | Feed list | ~1 s ✅ |
+| `get_external_documents_feed` | Recently updated external documents | timeframe, startDate, workType | Feed list | ~1 s ✅ |
+
+**Fixed-window feeds** (no parameters — server-defined default window, typically one month):
+
+| Tool | Purpose | Key Parameters | Response Type | Tested Response Time |
+|------|---------|----------------|---------------|---------------------|
+| `get_documents_feed` | Recently updated documents | _(none)_ | Feed list | 60–120+ s ⚠️ |
+| `get_plenary_documents_feed` | Recently updated plenary documents | _(none)_ | Feed list | 30–120+ s ⚠️ |
+| `get_committee_documents_feed` | Recently updated committee documents | _(none)_ | Feed list | 30–120+ s ⚠️ |
+| `get_plenary_session_documents_feed` | Recently updated plenary session docs | _(none)_ | Feed list | 20–120+ s ⚠️ |
+| `get_parliamentary_questions_feed` | Recently updated questions | _(none)_ | Feed list | 30–120+ s ⚠️ |
+| `get_corporate_bodies_feed` | Recently updated corporate bodies | _(none)_ | Feed list | 60–180+ s ⚠️ |
+| `get_controlled_vocabularies_feed` | Recently updated vocabularies | _(none)_ | Feed list | Returns HTTP 204 (no content) when no updates exist |
+
+> ⚠️ **EP API response times are highly variable.** During peak load, even normally fast feeds can exceed the default 60s timeout. Set `--timeout 180000` for reliable feed access.
+>
+> **Known EP API feed behaviors:**
+> - `controlled-vocabularies/feed` — returns HTTP 204 No Content when no vocabulary updates exist in the default window (common since vocabularies change infrequently). The server handles this gracefully and returns an empty data array.
+> - `corporate-bodies/feed` — consistently the slowest feed endpoint (60–180 s). Increase timeout if using this endpoint.
+> - `plenary-session-documents/feed` — may return an error-in-body response (HTTP 200 with `error` field) when the EP API's internal enrichment step fails. Handled gracefully by the server.
+> - All fixed-window feeds accept **no parameters** — passing unknown parameters such as `timeframe` or `startDate` will fail input validation rather than being ignored.
 
 ---
 
@@ -377,16 +502,21 @@ console.log(`Attendance: ${mep.votingStatistics.attendanceRate}%`);
 
 ### Tool: get_plenary_sessions
 
-**Description**: Retrieve European Parliament plenary sessions with optional date range filtering.
+**Description**: Retrieve European Parliament plenary sessions with optional date range, year, or location filtering. Supports single meeting lookup by eventId.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
+| eventId | string | No | - | Meeting event ID for single meeting lookup |
+| year | number | No | - | Filter by calendar year (1900-2100, recommended for annual counts) |
 | dateFrom | string | No | - | Start date (YYYY-MM-DD format) |
 | dateTo | string | No | - | End date (YYYY-MM-DD format) |
+| location | string | No | - | Session location (e.g., "Strasbourg", "Brussels") |
 | limit | number | No | 50 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
+
+> **Note:** `dateFrom` must be ≤ `dateTo` when both are provided.
 
 #### Response Format
 
@@ -596,7 +726,7 @@ const result = await client.callTool('search_documents', {
 
 ### Tool: get_committee_info
 
-**Description**: Retrieve detailed information about a European Parliament committee including composition, members, chair, and areas of responsibility.
+**Description**: Retrieve detailed information about a European Parliament committee including composition, members, chair, and areas of responsibility. Can also list all current active corporate bodies.
 
 #### Parameters
 
@@ -604,8 +734,9 @@ const result = await client.callTool('search_documents', {
 |-----------|------|----------|---------|-------------|
 | id | string | No* | - | Committee identifier |
 | abbreviation | string | No* | - | Committee abbreviation (e.g., "ENVI", "AGRI") |
+| showCurrent | boolean | No | false | If true, returns all current active corporate bodies |
 
-*At least one parameter required
+*Either `showCurrent: true`, `id`, or `abbreviation` must be provided.
 
 #### Response Format
 
@@ -657,20 +788,23 @@ console.log(`${committee.name} has ${committee.members.length} members`);
 
 ### Tool: get_parliamentary_questions
 
-**Description**: Retrieve parliamentary questions (written and oral) with filters for author, topic, and date range.
+**Description**: Retrieve parliamentary questions (written and oral) with filters for author, topic, and date range. Supports single question lookup by docId.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| author | string | No | - | Question author MEP ID |
-| topic | string | No | - | Question topic/keyword |
-| questionType | string | No | - | Type: WRITTEN or ORAL |
+| docId | string | No | - | Document ID for single question lookup (e.g., "E-000001/2024") |
+| type | string | No | - | Question type: `WRITTEN` or `ORAL` |
+| author | string | No | - | MEP identifier or name of question author |
+| topic | string | No | - | Question topic or keyword to search |
+| status | string | No | - | Question status: `PENDING` or `ANSWERED` |
 | dateFrom | string | No | - | Start date (YYYY-MM-DD) |
 | dateTo | string | No | - | End date (YYYY-MM-DD) |
-| answered | boolean | No | - | Filter by answered status |
 | limit | number | No | 50 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
+
+> **Note:** `dateFrom` must be ≤ `dateTo` when both are provided.
 
 #### Response Format
 
@@ -711,9 +845,9 @@ Show me written questions about climate change from 2024
 ```typescript
 const result = await client.callTool('get_parliamentary_questions', {
   topic: 'climate change',
-  questionType: 'WRITTEN',
+  type: 'WRITTEN',
   dateFrom: '2024-01-01',
-  answered: true,
+  status: 'ANSWERED',
   limit: 50
 });
 ```
@@ -1532,6 +1666,7 @@ const result = await client.callTool('get_homonym_meps', { limit: 50 });
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | speechId | string | No | - | Specific speech ID for single lookup |
+| year | number | No | - | Filter by calendar year (1900-2100, recommended for annual counts) |
 | dateFrom | string | No | - | Start date filter (YYYY-MM-DD) |
 | dateTo | string | No | - | End date filter (YYYY-MM-DD) |
 | limit | number | No | 50 | Maximum results (1-100) |
@@ -1546,8 +1681,14 @@ Get plenary speeches from January 2024
 
 **MCP Client - TypeScript:**
 ```typescript
-// List speeches in a date range
+// List speeches by year
 const result = await client.callTool('get_speeches', {
+  year: 2024,
+  limit: 20
+});
+
+// List speeches in a date range
+const rangeResult = await client.callTool('get_speeches', {
   dateFrom: '2024-01-01',
   dateTo: '2024-01-31',
   limit: 20
@@ -1564,6 +1705,8 @@ const speech = await client.callTool('get_speeches', {
 ### Tool: get_procedures
 
 **Description**: Get European Parliament legislative procedures. Supports single procedure lookup by processId or list with year filter.
+
+> ⚠️ **Performance note:** Always use a `year` filter or `processId` when querying procedures. Unfiltered queries can take 60+ seconds and may time out with the default 60s timeout.
 
 #### Parameters
 
@@ -1583,7 +1726,7 @@ Show me legislative procedures from 2024
 
 **MCP Client - TypeScript:**
 ```typescript
-// List procedures by year
+// List procedures by year (recommended — avoids timeout)
 const result = await client.callTool('get_procedures', { year: 2024, limit: 20 });
 
 // Get a specific procedure
@@ -1598,11 +1741,13 @@ const procedure = await client.callTool('get_procedures', {
 
 **Description**: Get events linked to a specific EP legislative procedure (hearings, debates, votes). Returns the timeline of events for a procedure.
 
+> ⚠️ **EP API note:** This endpoint can be slow (30–60+ s) and may return 404 for some procedure IDs. Use the `eli/dl/proc/` prefixed IDs returned by `get_procedures` for best results.
+
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| processId | string | Yes | - | Procedure ID (YYYY-NNNN format) |
+| processId | string | Yes | - | Procedure process ID (e.g., `eli/dl/proc/2024-0006` or `2024-0006`) |
 | limit | number | No | 50 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
 
@@ -1615,7 +1760,7 @@ Show me the timeline of events for procedure 2024-0006
 **MCP Client - TypeScript:**
 ```typescript
 const result = await client.callTool('get_procedure_events', {
-  processId: '2024-0006',
+  processId: 'eli/dl/proc/2024-0006',
   limit: 50
 });
 ```
@@ -1658,6 +1803,7 @@ const result = await client.callTool('get_adopted_texts', { year: 2024, limit: 2
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | eventId | string | No | - | Specific event ID for single lookup |
+| year | number | No | - | Filter by calendar year (1900-2100, recommended for annual counts) |
 | dateFrom | string | No | - | Start date filter (YYYY-MM-DD) |
 | dateTo | string | No | - | End date filter (YYYY-MM-DD) |
 | limit | number | No | 50 | Maximum results (1-100) |
@@ -1689,7 +1835,7 @@ const result = await client.callTool('get_events', {
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | sittingId | string | Yes | - | Plenary sitting ID |
-| limit | number | No | 50 | Maximum results (1-100) |
+| limit | number | No | 20 | Maximum results (1-100). Default 20 — activities endpoint can be slow |
 | offset | number | No | 0 | Pagination offset |
 
 #### Example Usage
@@ -1702,7 +1848,7 @@ What activities took place during plenary sitting MTG-PL-2024-01-15?
 ```typescript
 const result = await client.callTool('get_meeting_activities', {
   sittingId: 'MTG-PL-2024-01-15',
-  limit: 50
+  limit: 20
 });
 ```
 
@@ -1745,7 +1891,7 @@ const result = await client.callTool('get_meeting_decisions', {
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | sittingId | string | Yes | - | Plenary sitting ID |
-| limit | number | No | 50 | Maximum results (1-100) |
+| limit | number | No | 20 | Maximum results (1-100). Default 20 — foreseen-activities endpoint can be slow |
 | offset | number | No | 0 | Pagination offset |
 
 #### Example Usage
@@ -1758,7 +1904,7 @@ What is planned for the upcoming plenary sitting MTG-PL-2024-03-11?
 ```typescript
 const result = await client.callTool('get_meeting_foreseen_activities', {
   sittingId: 'MTG-PL-2024-03-11',
-  limit: 50
+  limit: 20
 });
 ```
 
@@ -1773,7 +1919,7 @@ const result = await client.callTool('get_meeting_foreseen_activities', {
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | sittingId | string | Yes | - | Meeting / sitting identifier |
-| limit | number | No | 50 | Maximum results (1-100) |
+| limit | number | No | 20 | Maximum results (1-100). Default 20 — plenary-session-documents endpoint can be slow |
 | offset | number | No | 0 | Pagination offset |
 
 #### Example Usage
@@ -1787,7 +1933,7 @@ Get plenary session documents for sitting MTG-PL-2024-03-11
 ```typescript
 const result = await client.callTool('get_meeting_plenary_session_documents', {
   sittingId: 'MTG-PL-2024-03-11',
-  limit: 50
+  limit: 20
 });
 ```
 
@@ -1802,7 +1948,7 @@ const result = await client.callTool('get_meeting_plenary_session_documents', {
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | sittingId | string | Yes | - | Meeting / sitting identifier |
-| limit | number | No | 50 | Maximum results (1-100) |
+| limit | number | No | 20 | Maximum results (1-100). Default 20 — plenary-session-document-items endpoint can be slow |
 | offset | number | No | 0 | Pagination offset |
 
 #### Example Usage
@@ -1816,7 +1962,7 @@ Get individual agenda item documents for plenary sitting MTG-PL-2024-03-11
 ```typescript
 const result = await client.callTool('get_meeting_plenary_session_document_items', {
   sittingId: 'MTG-PL-2024-03-11',
-  limit: 50
+  limit: 20
 });
 ```
 
@@ -1961,9 +2107,11 @@ const result = await client.callTool('get_plenary_session_document_items', {
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| vocId | string | No | - | Specific vocabulary ID for single lookup |
+| vocId | string | No | - | Specific vocabulary ID for single lookup (e.g., `ep-document-types`) |
 | limit | number | No | 50 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
+
+> **Note:** The `vocId` parameter should use the short identifier form (e.g., `ep-document-types`), not the full URI form (`def/ep-document-types`). The list endpoint returns one entry: `def/ep-document-types`. Use the short form for single-vocabulary lookup.
 
 #### Example Usage
 
@@ -1976,11 +2124,114 @@ Get the controlled vocabularies used by the European Parliament
 // List all vocabularies
 const result = await client.callTool('get_controlled_vocabularies', { limit: 50 });
 
-// Get a specific vocabulary
+// Get a specific vocabulary by short ID
 const vocab = await client.callTool('get_controlled_vocabularies', {
-  vocId: 'COMMITTEE_TYPE'
+  vocId: 'ep-document-types'
 });
 ```
+
+#### EP Controlled Vocabularies Reference
+
+The EP Open Data Portal exposes the following controlled vocabulary schemes. These are available at `https://data.europarl.europa.eu/api/v2/controlled-vocabularies/{vocId}`:
+
+##### Document Types (`ep-document-types`) — 114 terms
+
+Key document type identifiers used across EP API responses:
+
+| Identifier | Label | Description |
+|-----------|-------|-------------|
+| `TEXT_ADOPTED` | Text adopted | Text adopted by a vote in plenary |
+| `REPORT` | Report | A report document |
+| `REPORT_PLENARY` | EP plenary report | Report for plenary debate/vote |
+| `REPORT_OWN_INITIATIVE` | Own initiative report | Text drawn up on Parliament's own initiative |
+| `RESOLUTION` | Resolution | Text expressing opinion on a matter/topic |
+| `RESOLUTION_LEGISLATIVE` | Legislative resolution | Legislative resolution text |
+| `RESOLUTION_MOTION` | Motion for a resolution | Motion declaring EP's opinion |
+| `RESOLUTION_MOTION_JOINT` | Joint motion for a resolution | Joint motion from multiple groups |
+| `OPINION` | Opinion | Non-binding institutional statement |
+| `OPINION_PARLIAMENTARY_COMMITTEE` | Parliamentary committee opinion | Committee opinion with amendments |
+| `AMENDMENT` | Amendment | Change to original text |
+| `AMENDMENT_PLENARY` | EP plenary amendment | Amendment tabled to plenary |
+| `CRE_PLENARY` | EP plenary verbatim report | Plenary sitting proceedings record |
+| `CRE_SPEECH` | Speech | Individual speech in proceedings |
+| `MINUTES_PLENARY` | EP plenary sitting minutes | Written meeting record |
+| `QUESTION_WRITTEN` | Written question | Written form question |
+| `QUESTION_ORAL` | Oral question | Oral question to plenary |
+| `QUESTION_WRITTEN_ANSWER` | Written answer | Answer to written question |
+| `MEMBER_DECLARATION` | Members' declaration | MEP code of conduct declaration |
+| `MEMBER_DECLARATION_INTEREST_PRIVATE` | Declaration of private interests | MEP private interests declaration |
+| `MEMBER_DECLARATION_INTEREST_CONFLICT` | Declaration on conflicts of interest | MEP conflict of interest declaration |
+| `DIRECTIVE` | Directive | EU legislative act (goals for member states) |
+| `REGULATION` | Regulation | Binding legislative act (EU-wide) |
+| `DECISION` | Decision | Binding act for specific addressees |
+| `ACT_FOLLOWUP` | Follow-up of acts | Commission follow-up document |
+| `AGENDA_PLENARY_WEEK` | EP plenary part-session agenda | Plenary session agenda |
+| `VOTE_ROLLCALL_PLENARY` | EP plenary roll-call votes | Roll-call vote results |
+| `VOTE_RESULTS_PLENARY` | EP plenary vote results | Vote results record |
+| `ANNEX` | Annex | Appended document section |
+| `CORRIGENDUM` | Corrigendum | Corrections document |
+
+##### Activity Types (`ep-activities`) — 70 terms
+
+Key activity type identifiers used in events and procedure events:
+
+| Identifier | Label |
+|-----------|-------|
+| `PLENARY_SESSION` | European Parliament plenary session |
+| `PLENARY_SITTING` | European Parliament plenary sitting |
+| `PLENARY_DEBATE` | Debates in plenary sitting |
+| `PLENARY_VOTE` | Vote in plenary sitting |
+| `PLENARY_ADOPT_POSITION` | EP position at 1st reading |
+| `PLENARY_AMEND_PROPOSAL` | EP position at 1st reading with amendments |
+| `PLENARY_APPROVE_COUNCIL_POSITION` | Approval of Council's position at 2nd reading |
+| `PLENARY_REJECT_PROPOSAL` | Plenary reject proposal |
+| `PLENARY_DECISION` | EP decision |
+| `COMMITTEE_MEETING` | Committee meeting |
+| `COMMITTEE_ADOPTING_REPORT` | Adoption of report by committee |
+| `COMMITTEE_APPOINT_RAPPORTEUR` | Appointment of rapporteur |
+| `COMMITTEE_DEBATE` | Deliberations in committee |
+| `COMMITTEE_VOTE` | Committee vote |
+| `REFERRAL` | Proposal referred to plenary |
+| `INTERINSTITUTIONAL_NEGOTIATION` | Interinstitutional negotiation (trilogue) |
+| `PUBLICATION_OFFICIAL_JOURNAL` | Publication in Official Journal |
+| `SIGNATURE` | Signature |
+| `PROCEEDING_ACTIVITY` | Proceeding activity |
+
+##### Procedure Types (`ep-procedure-types`) — 40+ terms
+
+Key legislative procedure type identifiers:
+
+| Identifier | Label | Description |
+|-----------|-------|-------------|
+| `COD` | Ordinary legislative procedure | Main EU legislative process (co-decision) |
+| `CNS` | Consultation procedure | Council consults Parliament |
+| `APP` | Consent procedure | Parliament must give consent |
+| `NLE` | Non-legislative procedure | Non-legislative enactment |
+| `BUD` | Budgetary procedure | EU budget process |
+| `DEC` | Discharge procedure | Budget discharge |
+| `INI` | Own-initiative procedure | Parliament's own initiative |
+| `INL` | Legislative initiative procedure | Parliament's legislative initiative |
+| `INS` | Institutional procedure | Institutional matters |
+| `IMM` | Members' immunity | Immunity proceedings |
+| `DEA` | Delegated acts | Examination of delegated acts |
+| `RSP` | Resolutions on topical subjects | Topical resolutions |
+
+##### Statuses (`ep-statuses`) — 24 terms
+
+| Identifier | Label |
+|-----------|-------|
+| `ACTIVE` | Active |
+| `ACTIVE_PROC` | Active procedure |
+| `ADOPTED` | Adopted |
+| `CANCELLED` | Cancelled |
+| `COMPLETED` | Completed |
+| `COMPLETED_PROC` | Completed procedure |
+| `LAPSED` | Lapsed |
+| `PENDING` | Pending |
+| `REJECTED` | Rejected |
+| `SUBMITTED` | Submitted |
+| `WITHDRAWN` | Withdrawn |
+| `WITHDRAWN_PROC` | Withdrawn procedure |
 
 ---
 
@@ -2164,37 +2415,170 @@ const result = await client.callTool('get_server_health', {});
 
 ## 📡 EP API v2 Feed Endpoint Tools
 
-These tools provide access to European Parliament Open Data API v2 feed endpoints. Feed endpoints return recently updated records within a specified timeframe, enabling change-tracking and incremental data synchronization workflows.
+These tools provide access to European Parliament Open Data API v2 feed endpoints. Feed endpoints return recently updated records, enabling change-tracking and incremental data synchronization workflows.
+
+The 13 feed tools fall into two groups per the [EP OpenAPI spec](docs/ep-openapi-spec.json):
+
+- **Configurable-window feeds** (6 tools): Accept a `timeframe` parameter (`today`, `one-day`, `one-week`, `one-month`, `custom`) and optional `startDate`. Some also accept domain-specific filters.
+- **Fixed-window feeds** (7 tools): Accept **no parameters**. They return updates from a server-defined default window (typically one month).
+
+All feed tools return a JSON-LD envelope with a `data` array and gracefully handle empty results (EP API returns 404 during recess or low-activity periods, or HTTP 200 with an error-in-body response).
+
+### Feed Response Format
+
+All feed tools return the same response structure:
+
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{
+      \"data\": [
+        { \"id\": \"...\", \"type\": \"...\", ... },
+        { \"id\": \"...\", \"type\": \"...\", ... }
+      ],
+      \"@context\": [ ... ],
+      \"dataQualityWarnings\": []
+    }"
+  }]
+}
+```
+
+When no updates exist in the requested timeframe (EP API returns 404):
+
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{
+      \"data\": [],
+      \"@context\": [],
+      \"dataQualityWarnings\": [
+        \"EP Open Data Portal returned no data for this feed — likely no updates in the requested timeframe\"
+      ]
+    }"
+  }]
+}
+```
+
+> **Important:** An empty `data` array with a `dataQualityWarnings` message is **not an error** — it means the EP API had no updates in the requested timeframe. Always check `dataQualityWarnings` before assuming the feed is broken.
 
 ### ⚠️ Known EP API Behavior & Limitations
 
 #### Slow Feed Endpoints
 
-The EP API `procedures/feed` and `events/feed` endpoints are **significantly slower** than other feed endpoints. With `timeframe: "one-month"`, these endpoints can take **120+ seconds** to respond, compared to ~30 seconds for `adopted-texts/feed`.
+Several EP API feed endpoints are **significantly slower** than standard data endpoints. The response times below reflect real-world measurements (April 2026). **Note:** EP API response times are highly variable — during high-load periods, even "fast" feeds may exceed the default 60s timeout.
 
-| Feed Endpoint | `one-week` | `one-month` | Notes |
-|--------------|------------|-------------|-------|
-| `adopted-texts/feed` | ~10s | ~30s | ✅ Reliable |
-| `meps/feed` | ~10s | ~30s | ✅ Reliable |
-| `procedures/feed` | ~30s | **120+ s** | ⚠️ May time out |
-| `events/feed` | ~30s | **120+ s** | ⚠️ May time out |
+| Feed Endpoint | Type | Best-Case Response Time | Peak-Load Response Time | Notes |
+|--------------|------|------------------------|------------------------|-------|
+| `adopted-texts/feed` | Configurable | ~1 s | 30–60+ s | ✅ Usually fast; may slow during peak load |
+| `meps-declarations/feed` | Configurable | ~1 s | 10–30 s | ✅ Usually fast and reliable |
+| `external-documents/feed` | Configurable | ~1 s | 5–15 s | ✅ Usually fast and reliable |
+| `controlled-vocabularies/feed` | Fixed | HTTP 204 | HTTP 204 | Returns 204 No Content (vocabularies rarely change) |
+| `meps/feed` | Configurable | ~9 s | 30–60+ s | ⚠️ May time out under load |
+| `plenary-session-documents/feed` | Fixed | 20–40 s | 60–120+ s | ⚠️ Slow; may return error-in-body |
+| `parliamentary-questions/feed` | Fixed | 30–60 s | 60–120+ s | ⚠️ Slow; may return error-in-body |
+| `procedures/feed` | Configurable | 30–60 s | 60–120+ s | ⚠️ May time out |
+| `plenary-documents/feed` | Fixed | 30–60 s | 60–120+ s | ⚠️ May return error-in-body |
+| `events/feed` | Configurable | 30–60 s | 60–120+ s | ⚠️ May time out |
+| `committee-documents/feed` | Fixed | 30–60 s | 60–120+ s | ⚠️ May return error-in-body |
+| `documents/feed` | Fixed | 60–120 s | 120+ s | ⚠️ Very slow; frequently times out |
+| `corporate-bodies/feed` | Fixed | 60–180 s | 180+ s | ⚠️ Slowest feed; frequently times out |
 
-The MCP server automatically applies a **minimum 120-second timeout** to `get_procedures_feed` and `get_events_feed` to accommodate these slow endpoints. If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead.
+The MCP server automatically applies a **minimum 120-second timeout** to all fixed-window feeds and to the slow configurable feeds (`get_procedures_feed`, `get_events_feed`). If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead.
 
-**Recommended fallback:** When `get_procedures_feed({ timeframe: "one-month" })` times out, use `get_procedures({ year: 2026, limit: 20 })` instead. Similarly, use `get_plenary_sessions({ year: 2026 })` as a fallback for `get_events_feed`.
+> **Tip:** For production use, set `--timeout 180000` (180 seconds) to accommodate the slowest feeds. The default 60-second timeout is sufficient for most data endpoints but too short for many feeds during peak load.
+
+**Recommended fallbacks when feeds time out:**
+- `get_procedures_feed` → use `get_procedures({ year: 2026, limit: 20 })` instead
+- `get_events_feed` → use `get_plenary_sessions({ year: 2026 })` instead
+- `get_meps_feed` → use `get_current_meps({ limit: 50 })` instead
+- `get_adopted_texts_feed` → use `get_adopted_texts({ year: 2026 })` instead
+
+#### Feed 404 Responses (Empty Feeds)
+
+During EP recess periods or low-activity windows, feed endpoints may return HTTP 404. The MCP server **converts these to empty-but-successful responses** with `dataQualityWarnings`. This is expected behavior — not an error.
 
 #### Voting Records Data Delay
 
 The EP publishes roll-call voting data with a delay of **several weeks**. Queries to `get_voting_records` for the most recent 1–2 months may return empty results — this is expected EP API behavior, not an error. For recent legislative activity, use `get_adopted_texts` or `get_adopted_texts_feed` instead.
 
-### Common Feed Parameters
+### Feed Parameters
 
-All feed tools share these common parameters:
+#### Configurable-window feeds (6 tools)
+
+These tools accept a `timeframe` parameter to control the data window:
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
 | startDate | string | Conditional | - | Start date in YYYY-MM-DD format. **Required** when timeframe is `custom` |
+
+> **Validation rule:** When `timeframe` is `custom`, the `startDate` parameter becomes required. The server returns a validation error if `startDate` is missing or empty for custom timeframes.
+
+Tools: `get_meps_feed`, `get_events_feed`, `get_procedures_feed`, `get_adopted_texts_feed`, `get_mep_declarations_feed`, `get_external_documents_feed`
+
+Some also accept an additional filter: `activityType` (events), `processType` (procedures), `workType` (adopted-texts, declarations, external-documents).
+
+#### Fixed-window feeds (7 tools)
+
+These tools accept **no parameters**. The EP API returns updates from a server-defined default window (typically one month). Per the [EP OpenAPI spec](docs/ep-openapi-spec.json), these endpoints only accept a `user-agent` header — no `timeframe` or `start-date` query parameters.
+
+Tools: `get_documents_feed`, `get_plenary_documents_feed`, `get_committee_documents_feed`, `get_plenary_session_documents_feed`, `get_parliamentary_questions_feed`, `get_corporate_bodies_feed`, `get_controlled_vocabularies_feed`
+
+### Feed Tools by Category
+
+| Category | Feed Tools | Type | Extra Filter |
+|----------|-----------|------|--------------|
+| **MEP Data** | `get_meps_feed`, `get_mep_declarations_feed` | Configurable | `workType` (declarations) |
+| **Legislative** | `get_procedures_feed`, `get_adopted_texts_feed` | Configurable | `processType` / `workType` |
+| **Documents** | `get_documents_feed` ⛶, `get_plenary_documents_feed` ⛶, `get_committee_documents_feed` ⛶, `get_plenary_session_documents_feed` ⛶, `get_external_documents_feed` | Mixed | `workType` (external only) |
+| **Events** | `get_events_feed` | Configurable | `activityType` |
+| **Questions** | `get_parliamentary_questions_feed` ⛶ | Fixed | — |
+| **Institutional** | `get_corporate_bodies_feed` ⛶, `get_controlled_vocabularies_feed` ⛶ | Fixed | — |
+
+> ⛶ = Fixed-window feed (no parameters)
+
+### Working with Feed Responses (TypeScript)
+
+```typescript
+// Standard feed consumption pattern
+const result = await client.callTool('get_meps_feed', {
+  timeframe: 'one-week'
+});
+
+const response = JSON.parse(result.content[0].text);
+
+// Check for empty feed (404 converted to empty result)
+if (response.dataQualityWarnings?.length > 0) {
+  console.log('Feed warning:', response.dataQualityWarnings[0]);
+}
+
+// Process data
+if (response.data.length > 0) {
+  for (const item of response.data) {
+    console.log(`Updated: ${item.id} (${item.type})`);
+  }
+} else {
+  console.log('No updates in the requested timeframe');
+}
+```
+
+```typescript
+// Custom timeframe with specific start date
+const result = await client.callTool('get_adopted_texts_feed', {
+  timeframe: 'custom',
+  startDate: '2026-01-01'
+});
+```
+
+```typescript
+// Using type filters
+const result = await client.callTool('get_external_documents_feed', {
+  timeframe: 'one-month',
+  workType: 'COUNCIL_POSITION'
+});
+```
 
 ---
 
@@ -2343,108 +2727,94 @@ const result = await client.callTool('get_mep_declarations_feed', {
 
 ### Tool: get_documents_feed
 
-**Description**: Get recently updated documents from the European Parliament feed endpoint. Returns document records that have been modified within the specified timeframe.
+**Description**: Get recently updated documents from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
+
+> ⚠️ **Slow endpoint**: Response times typically 60–120 s. The EP API often returns an error-in-body response (HTTP 200 with `error` field) during low-activity periods.
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-What documents were updated in the last day?
+Get the latest documents feed from the European Parliament
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_documents_feed', {
-  timeframe: 'one-day'
-});
+const result = await client.callTool('get_documents_feed', {});
 ```
 
 ---
 
 ### Tool: get_plenary_documents_feed
 
-**Description**: Get recently updated plenary documents from the European Parliament feed endpoint. Returns plenary document records that have been modified within the specified timeframe.
+**Description**: Get recently updated plenary documents from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
+
+> ⚠️ **Slow endpoint**: Response times typically 30–60 s. The EP API often returns an error-in-body response during low-activity periods.
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-Show me plenary documents updated this week
+Show me the latest plenary documents feed
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_plenary_documents_feed', {
-  timeframe: 'one-week'
-});
+const result = await client.callTool('get_plenary_documents_feed', {});
 ```
 
 ---
 
 ### Tool: get_committee_documents_feed
 
-**Description**: Get recently updated committee documents from the European Parliament feed endpoint. Returns committee document records that have been modified within the specified timeframe.
+**Description**: Get recently updated committee documents from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
+
+> ⚠️ **Slow endpoint**: Response times typically 30–60 s. The EP API often returns an error-in-body response during low-activity periods.
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-Get committee documents updated in the past week
+Get the latest committee documents feed
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_committee_documents_feed', {
-  timeframe: 'one-week'
-});
+const result = await client.callTool('get_committee_documents_feed', {});
 ```
 
 ---
 
 ### Tool: get_plenary_session_documents_feed
 
-**Description**: Get recently updated plenary session documents from the European Parliament feed endpoint. Returns plenary session document records that have been modified within the specified timeframe.
+**Description**: Get recently updated plenary session documents from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-Show plenary session documents updated today
+Show me the plenary session documents feed
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_plenary_session_documents_feed', {
-  timeframe: 'today'
-});
+const result = await client.callTool('get_plenary_session_documents_feed', {});
 ```
 
 ---
@@ -2479,68 +2849,61 @@ const result = await client.callTool('get_external_documents_feed', {
 
 ### Tool: get_parliamentary_questions_feed
 
-**Description**: Get recently updated parliamentary questions from the European Parliament feed endpoint. Returns parliamentary question records that have been modified within the specified timeframe.
+**Description**: Get recently updated parliamentary questions from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
+
+> ⚠️ **Slow endpoint**: Response times typically 30–60 s. The EP API often returns an error-in-body response during low-activity periods.
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-What parliamentary questions were updated this week?
+Check the parliamentary questions feed for recent updates
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_parliamentary_questions_feed', {
-  timeframe: 'one-week'
-});
+const result = await client.callTool('get_parliamentary_questions_feed', {});
 ```
 
 ---
 
 ### Tool: get_corporate_bodies_feed
 
-**Description**: Get recently updated corporate bodies (committees, delegations, inter-parliamentary delegations) from the European Parliament feed endpoint. Returns corporate body records that have been modified within the specified timeframe.
+**Description**: Get recently updated corporate bodies (committees, delegations, inter-parliamentary delegations) from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
+
+> ⚠️ **Very slow endpoint**: Response times typically 60–180 s. May time out with default timeout settings.
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-Show me corporate bodies updated in the last month
+Check the corporate bodies feed for recent updates
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_corporate_bodies_feed', {
-  timeframe: 'one-month'
-});
+const result = await client.callTool('get_corporate_bodies_feed', {});
 ```
 
 ---
 
 ### Tool: get_controlled_vocabularies_feed
 
-**Description**: Get recently updated controlled vocabularies from the European Parliament feed endpoint. Returns controlled vocabulary records that have been modified within the specified timeframe.
+**Description**: Get recently updated controlled vocabularies from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
+
+> ℹ️ This endpoint typically returns HTTP 204 (No Content) when vocabularies have not changed — the MCP server converts this to an empty feed response.
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
@@ -2551,9 +2914,7 @@ Have any controlled vocabularies been updated recently?
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_controlled_vocabularies_feed', {
-  timeframe: 'one-week'
-});
+const result = await client.callTool('get_controlled_vocabularies_feed', {});
 ```
 
 ---

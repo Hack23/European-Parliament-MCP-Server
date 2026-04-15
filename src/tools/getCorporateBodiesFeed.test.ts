@@ -1,5 +1,5 @@
 /**
- * Tests for get_corporate_bodies_feed MCP tool
+ * Tests for get_corporate_bodies_feed MCP tool (fixed-window feed)
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -17,31 +17,18 @@ describe('get_corporate_bodies_feed Tool', () => {
     vi.clearAllMocks();
 
     vi.mocked(epClientModule.epClient.getCorporateBodiesFeed).mockResolvedValue({
-      data: [{ id: 'cb-1', type: 'CorporateBody' }],
+      data: [{ id: 'item-1', type: 'Item' }],
       '@context': []
     });
   });
 
   describe('Input Validation', () => {
-    it('should accept empty arguments and apply defaults', async () => {
+    it('should accept empty arguments (fixed-window feed has no params)', async () => {
       const result = await handleGetCorporateBodiesFeed({});
       expect(result).toHaveProperty('content');
       expect(result.content[0]?.type).toBe('text');
     });
 
-    it('should accept valid timeframe', async () => {
-      const result = await handleGetCorporateBodiesFeed({ timeframe: 'one-week' });
-      expect(result).toHaveProperty('content');
-    });
-
-    it('should accept startDate with custom timeframe', async () => {
-      const result = await handleGetCorporateBodiesFeed({ timeframe: 'custom', startDate: '2024-03-01' });
-      expect(result).toHaveProperty('content');
-    });
-
-    it('should reject invalid timeframe value', async () => {
-      await expect(handleGetCorporateBodiesFeed({ timeframe: 'invalid' })).rejects.toThrow();
-    });
   });
 
   describe('Response Format', () => {
@@ -67,12 +54,9 @@ describe('get_corporate_bodies_feed Tool', () => {
   });
 
   describe('Client Invocation', () => {
-    it('should pass timeframe to client', async () => {
-      await handleGetCorporateBodiesFeed({ timeframe: 'today' });
-
-      expect(epClientModule.epClient.getCorporateBodiesFeed).toHaveBeenCalledWith(
-        expect.objectContaining({ timeframe: 'today' })
-      );
+    it('should call client with no arguments (fixed-window feed)', async () => {
+      await handleGetCorporateBodiesFeed({});
+      expect(epClientModule.epClient.getCorporateBodiesFeed).toHaveBeenCalledWith();
     });
   });
 
@@ -97,7 +81,25 @@ describe('get_corporate_bodies_feed Tool', () => {
         dataQualityWarnings: string[];
       };
       expect(parsed.data).toEqual([]);
-      expect(parsed.dataQualityWarnings[0]).toContain('404');
+      expect(parsed.dataQualityWarnings.length).toBeGreaterThan(0);
+    });
+
+    it('should handle error-in-body response', async () => {
+      vi.mocked(epClientModule.epClient.getCorporateBodiesFeed).mockResolvedValue({
+        '@id': 'https://data.europarl.europa.eu/eli/dl/test',
+        'error': '404 Not Found from POST ...',
+        '@context': { error: {} },
+      } as unknown as { data: unknown[]; '@context': unknown[] });
+
+      const result = await handleGetCorporateBodiesFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        data: unknown[];
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.data).toEqual([]);
+      expect(parsed.dataQualityWarnings[0]).toContain('error-in-body');
     });
   });
 
@@ -111,10 +113,10 @@ describe('get_corporate_bodies_feed Tool', () => {
       expect(getCorporateBodiesFeedToolMetadata.description.length).toBeGreaterThan(0);
     });
 
-    it('should export tool metadata with inputSchema', () => {
+    it('should export tool metadata with empty inputSchema (fixed-window feed)', () => {
       expect(getCorporateBodiesFeedToolMetadata).toHaveProperty('inputSchema');
       expect(getCorporateBodiesFeedToolMetadata.inputSchema).toHaveProperty('type', 'object');
-      expect(getCorporateBodiesFeedToolMetadata.inputSchema).toHaveProperty('properties');
+      expect(getCorporateBodiesFeedToolMetadata.inputSchema.properties).toEqual({});
     });
   });
 });

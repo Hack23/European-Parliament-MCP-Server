@@ -58,15 +58,13 @@ export class VocabularyClient extends BaseEPClient {
   /**
    * Retrieves recently updated controlled vocabularies via the feed endpoint.
    * **EP API Endpoint:** `GET /controlled-vocabularies/feed`
+   *
+   * Fixed-window feed — no `timeframe` parameter per OpenAPI spec.
+   * Returns HTTP 204 No Content when no updates exist (handled by baseClient).
    */
-  async getControlledVocabulariesFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
+  async getControlledVocabulariesFeed(): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('controlled-vocabularies/feed', {
       format: 'application/ld+json',
-      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
-      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
     });
   }
 

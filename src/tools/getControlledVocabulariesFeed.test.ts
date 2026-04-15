@@ -1,5 +1,5 @@
 /**
- * Tests for get_controlled_vocabularies_feed MCP tool
+ * Tests for get_controlled_vocabularies_feed MCP tool (fixed-window feed)
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -17,31 +17,18 @@ describe('get_controlled_vocabularies_feed Tool', () => {
     vi.clearAllMocks();
 
     vi.mocked(epClientModule.epClient.getControlledVocabulariesFeed).mockResolvedValue({
-      data: [{ id: 'voc-1', type: 'Vocabulary' }],
+      data: [{ id: 'item-1', type: 'Item' }],
       '@context': []
     });
   });
 
   describe('Input Validation', () => {
-    it('should accept empty arguments and apply defaults', async () => {
+    it('should accept empty arguments (fixed-window feed has no params)', async () => {
       const result = await handleGetControlledVocabulariesFeed({});
       expect(result).toHaveProperty('content');
       expect(result.content[0]?.type).toBe('text');
     });
 
-    it('should accept valid timeframe', async () => {
-      const result = await handleGetControlledVocabulariesFeed({ timeframe: 'one-week' });
-      expect(result).toHaveProperty('content');
-    });
-
-    it('should accept startDate with custom timeframe', async () => {
-      const result = await handleGetControlledVocabulariesFeed({ timeframe: 'custom', startDate: '2024-03-01' });
-      expect(result).toHaveProperty('content');
-    });
-
-    it('should reject invalid timeframe value', async () => {
-      await expect(handleGetControlledVocabulariesFeed({ timeframe: 'invalid' })).rejects.toThrow();
-    });
   });
 
   describe('Response Format', () => {
@@ -67,12 +54,9 @@ describe('get_controlled_vocabularies_feed Tool', () => {
   });
 
   describe('Client Invocation', () => {
-    it('should pass timeframe to client', async () => {
-      await handleGetControlledVocabulariesFeed({ timeframe: 'today' });
-
-      expect(epClientModule.epClient.getControlledVocabulariesFeed).toHaveBeenCalledWith(
-        expect.objectContaining({ timeframe: 'today' })
-      );
+    it('should call client with no arguments (fixed-window feed)', async () => {
+      await handleGetControlledVocabulariesFeed({});
+      expect(epClientModule.epClient.getControlledVocabulariesFeed).toHaveBeenCalledWith();
     });
   });
 
@@ -97,7 +81,25 @@ describe('get_controlled_vocabularies_feed Tool', () => {
         dataQualityWarnings: string[];
       };
       expect(parsed.data).toEqual([]);
-      expect(parsed.dataQualityWarnings[0]).toContain('404');
+      expect(parsed.dataQualityWarnings.length).toBeGreaterThan(0);
+    });
+
+    it('should handle error-in-body response', async () => {
+      vi.mocked(epClientModule.epClient.getControlledVocabulariesFeed).mockResolvedValue({
+        '@id': 'https://data.europarl.europa.eu/eli/dl/test',
+        'error': '404 Not Found from POST ...',
+        '@context': { error: {} },
+      } as unknown as { data: unknown[]; '@context': unknown[] });
+
+      const result = await handleGetControlledVocabulariesFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        data: unknown[];
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.data).toEqual([]);
+      expect(parsed.dataQualityWarnings[0]).toContain('error-in-body');
     });
   });
 
@@ -111,10 +113,10 @@ describe('get_controlled_vocabularies_feed Tool', () => {
       expect(getControlledVocabulariesFeedToolMetadata.description.length).toBeGreaterThan(0);
     });
 
-    it('should export tool metadata with inputSchema', () => {
+    it('should export tool metadata with empty inputSchema (fixed-window feed)', () => {
       expect(getControlledVocabulariesFeedToolMetadata).toHaveProperty('inputSchema');
       expect(getControlledVocabulariesFeedToolMetadata.inputSchema).toHaveProperty('type', 'object');
-      expect(getControlledVocabulariesFeedToolMetadata.inputSchema).toHaveProperty('properties');
+      expect(getControlledVocabulariesFeedToolMetadata.inputSchema.properties).toEqual({});
     });
   });
 });

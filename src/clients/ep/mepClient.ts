@@ -29,6 +29,7 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
+import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
 // ─── MEP Client ───────────────────────────────────────────────────────────────
 
@@ -381,33 +382,43 @@ export class MEPClient extends BaseEPClient {
   /**
    * Retrieves recently updated MEPs via the feed endpoint.
    * **EP API Endpoint:** `GET /meps/feed`
+   *
+   * Configurable-window feed.  Extended timeout applied for `one-month`.
    */
   async getMEPsFeed(params: {
     timeframe?: string;
     startDate?: string;
   } = {}): Promise<JSONLDResponse> {
+    const minimumTimeout = params.timeframe === 'one-month'
+      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
+      : undefined;
     return this.get<JSONLDResponse>('meps/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
-    });
+    }, minimumTimeout);
   }
 
   /**
    * Retrieves recently updated MEP declarations via the feed endpoint.
    * **EP API Endpoint:** `GET /meps-declarations/feed`
+   *
+   * Configurable-window feed.  Extended timeout applied for `one-month`.
    */
   async getMEPDeclarationsFeed(params: {
     timeframe?: string;
     startDate?: string;
     workType?: string;
   } = {}): Promise<JSONLDResponse> {
+    const minimumTimeout = params.timeframe === 'one-month'
+      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
+      : undefined;
     return this.get<JSONLDResponse>('meps-declarations/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.workType !== undefined ? { 'work-type': params.workType } : {}),
-    });
+    }, minimumTimeout);
   }
 
   /**

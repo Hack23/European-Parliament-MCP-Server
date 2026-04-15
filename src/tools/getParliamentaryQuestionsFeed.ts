@@ -2,6 +2,9 @@
  * MCP Tool: get_parliamentary_questions_feed
  *
  * Get recently updated parliamentary questions from the feed.
+ * This is a **fixed-window feed** — the EP API does not accept a timeframe
+ * or start-date parameter. It returns updates from a server-defined default
+ * window (typically one month).
  *
  * **EP API Endpoint:**
  * - `GET /parliamentary-questions/feed`
@@ -13,7 +16,7 @@ import { GetParliamentaryQuestionsFeedSchema } from '../schemas/europeanParliame
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
-import { isUpstream404, buildEmptyFeedResponse } from './shared/feedUtils.js';
+import { isUpstream404, buildEmptyFeedResponse, isErrorInBody } from './shared/feedUtils.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
@@ -21,14 +24,13 @@ import type { ToolResult } from './shared/types.js';
  * Handles the get_parliamentary_questions_feed MCP tool request.
  *
  * @param args - Raw tool arguments, validated against {@link GetParliamentaryQuestionsFeedSchema}
- * @returns MCP tool result containing recently updated parliamentary question data
+ * @returns MCP tool result containing recently updated parliamentary questions data
  * @security Input is validated with Zod before any API call.
  */
 export async function handleGetParliamentaryQuestionsFeed(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
-  let params: ReturnType<typeof GetParliamentaryQuestionsFeedSchema.parse>;
+  // Validate input — fixed-window feeds accept no parameters
   try {
-    params = GetParliamentaryQuestionsFeedSchema.parse(args);
+    GetParliamentaryQuestionsFeedSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       const fieldErrors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
@@ -44,12 +46,12 @@ export async function handleGetParliamentaryQuestionsFeed(args: unknown): Promis
   }
 
   try {
-    const apiParams: Record<string, unknown> = {};
-    apiParams['timeframe'] = params.timeframe;
-    if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
-    const result = await epClient.getParliamentaryQuestionsFeed(
-      apiParams as Parameters<typeof epClient.getParliamentaryQuestionsFeed>[0]
-    );
+    const result = await epClient.getParliamentaryQuestionsFeed();
+    if (isErrorInBody(result as Record<string, unknown>)) {
+      return buildEmptyFeedResponse(
+        'EP API returned an error-in-body response for get_parliamentary_questions_feed — the upstream enrichment step may have failed.',
+      );
+    }
     return buildToolResponse({ ...result, dataQualityWarnings: [] });
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
@@ -66,20 +68,9 @@ export async function handleGetParliamentaryQuestionsFeed(args: unknown): Promis
 export const getParliamentaryQuestionsFeedToolMetadata = {
   name: 'get_parliamentary_questions_feed',
   description:
-    'Get recently updated parliamentary questions from the feed. Returns parliamentary questions published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.',
+    'Get recently updated parliamentary questions from the EP Open Data Portal feed. This is a fixed-window feed — no parameters needed. Returns items updated within the server-defined default window (typically one month). Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
-    properties: {
-      timeframe: {
-        type: 'string',
-        description: 'Timeframe for the feed (today, one-day, one-week, one-month, custom)',
-        enum: ['today', 'one-day', 'one-week', 'one-month', 'custom'],
-        default: 'one-week',
-      },
-      startDate: {
-        type: 'string',
-        description: 'Start date (YYYY-MM-DD) — required when timeframe is "custom"',
-      },
-    },
+    properties: {},
   },
 };

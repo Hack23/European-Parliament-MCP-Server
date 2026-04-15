@@ -1,13 +1,21 @@
 /**
  * Feed-endpoint Zod validation schemas.
  *
- * All EP API v2 `/…/feed` endpoints share a common parameter pattern:
- * - `timeframe` — one of `today | one-day | one-week | one-month | custom`
- * - `startDate` — YYYY-MM-DD, required when `timeframe` is `custom`
+ * EP API v2 `/…/feed` endpoints fall into two groups:
  *
- * Some feeds add a domain-specific type filter (`workType`, `activityType`,
- * `processType`).  Each schema below covers one feed endpoint.
+ * **Group A — Fixed-window feeds** (no timeframe parameter per OpenAPI spec):
+ *   `documents/feed`, `plenary-documents/feed`, `committee-documents/feed`,
+ *   `plenary-session-documents/feed`, `parliamentary-questions/feed`,
+ *   `corporate-bodies/feed`, `controlled-vocabularies/feed`
+ *   These return updates from a server-defined default window (typically one month).
  *
+ * **Group B — Configurable-window feeds** (accept `timeframe` + `start-date`):
+ *   `meps/feed`, `events/feed`, `procedures/feed`, `adopted-texts/feed`,
+ *   `meps-declarations/feed`, `external-documents/feed`
+ *   Some also accept a domain-specific type filter (`workType`, `activityType`,
+ *   `processType`).
+ *
+ * @see https://data.europarl.europa.eu/api/v2/ (OpenAPI spec)
  * @module schemas/ep/feed
  */
 
@@ -17,7 +25,7 @@ import { DateStringSchema } from './common.js';
 // ── Shared primitives ─────────────────────────────────────────────────────
 
 /**
- * Feed timeframe values accepted by every `/…/feed` endpoint.
+ * Feed timeframe values accepted by configurable-window feed endpoints.
  */
 export const FeedTimeframeSchema = z
   .enum(['today', 'one-day', 'one-week', 'one-month', 'custom'])
@@ -25,7 +33,7 @@ export const FeedTimeframeSchema = z
   .describe('Timeframe for the feed (default: one-week)');
 
 /**
- * Base feed parameters shared by all feed endpoints.
+ * Base feed parameters for configurable-window feed endpoints (Group B).
  */
 const BaseFeedParamsSchema = z
   .object({
@@ -43,33 +51,45 @@ const BaseFeedParamsSchema = z
     }
   });
 
-// ── Group A – timeframe only ──────────────────────────────────────────────
+/**
+ * Schema for fixed-window feed endpoints (Group A).
+ *
+ * These EP API endpoints do NOT accept a `timeframe` or `start-date`
+ * parameter.  They always return updates from a server-defined default
+ * window (typically one month).  Accepting no parameters keeps the
+ * MCP tool interface honest about what the upstream API supports.
+ */
+const FixedWindowFeedSchema = z.object({}).strict().describe(
+  'No parameters — this feed uses a server-defined default window (typically one month).'
+);
+
+// ── Group A – fixed-window feeds (no timeframe parameter) ─────────────────
+
+/** GET /documents/feed — server-default window */
+export const GetDocumentsFeedSchema = FixedWindowFeedSchema;
+
+/** GET /plenary-documents/feed — server-default window */
+export const GetPlenaryDocumentsFeedSchema = FixedWindowFeedSchema;
+
+/** GET /committee-documents/feed — server-default window */
+export const GetCommitteeDocumentsFeedSchema = FixedWindowFeedSchema;
+
+/** GET /plenary-session-documents/feed — server-default window */
+export const GetPlenarySessionDocumentsFeedSchema = FixedWindowFeedSchema;
+
+/** GET /parliamentary-questions/feed — server-default window */
+export const GetParliamentaryQuestionsFeedSchema = FixedWindowFeedSchema;
+
+/** GET /corporate-bodies/feed — server-default window */
+export const GetCorporateBodiesFeedSchema = FixedWindowFeedSchema;
+
+/** GET /controlled-vocabularies/feed — server-default window */
+export const GetControlledVocabulariesFeedSchema = FixedWindowFeedSchema;
+
+// ── Group B – configurable-window feeds (accept timeframe + optional filter) ─
 
 /** GET /meps/feed */
 export const GetMEPsFeedSchema = BaseFeedParamsSchema;
-
-/** GET /corporate-bodies/feed */
-export const GetCorporateBodiesFeedSchema = BaseFeedParamsSchema;
-
-/** GET /committee-documents/feed */
-export const GetCommitteeDocumentsFeedSchema = BaseFeedParamsSchema;
-
-/** GET /controlled-vocabularies/feed */
-export const GetControlledVocabulariesFeedSchema = BaseFeedParamsSchema;
-
-/** GET /documents/feed */
-export const GetDocumentsFeedSchema = BaseFeedParamsSchema;
-
-/** GET /plenary-documents/feed */
-export const GetPlenaryDocumentsFeedSchema = BaseFeedParamsSchema;
-
-/** GET /parliamentary-questions/feed */
-export const GetParliamentaryQuestionsFeedSchema = BaseFeedParamsSchema;
-
-/** GET /plenary-session-documents/feed */
-export const GetPlenarySessionDocumentsFeedSchema = BaseFeedParamsSchema;
-
-// ── Group B – timeframe + type filter ─────────────────────────────────────
 
 /** GET /events/feed */
 export const GetEventsFeedSchema = BaseFeedParamsSchema.extend({

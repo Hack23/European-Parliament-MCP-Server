@@ -22,6 +22,7 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
+import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
 // ─── Committee Client ─────────────────────────────────────────────────────────
 
@@ -135,16 +136,14 @@ export class CommitteeClient extends BaseEPClient {
   /**
    * Retrieves recently updated corporate bodies via the feed endpoint.
    * **EP API Endpoint:** `GET /corporate-bodies/feed`
+   *
+   * Fixed-window feed — no `timeframe` parameter per OpenAPI spec.
+   * Extended timeout applied (120 s minimum).
    */
-  async getCorporateBodiesFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
+  async getCorporateBodiesFeed(): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('corporate-bodies/feed', {
       format: 'application/ld+json',
-      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
-      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
-    });
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
   }
 
   /**

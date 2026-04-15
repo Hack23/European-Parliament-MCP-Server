@@ -22,6 +22,7 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
+import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
 // ─── Question Client ──────────────────────────────────────────────────────────
 
@@ -164,16 +165,14 @@ export class QuestionClient extends BaseEPClient {
   /**
    * Retrieves recently updated parliamentary questions via the feed endpoint.
    * **EP API Endpoint:** `GET /parliamentary-questions/feed`
+   *
+   * Fixed-window feed — no `timeframe` parameter per OpenAPI spec.
+   * Extended timeout applied (120 s minimum).
    */
-  async getParliamentaryQuestionsFeed(params: {
-    timeframe?: string;
-    startDate?: string;
-  } = {}): Promise<JSONLDResponse> {
+  async getParliamentaryQuestionsFeed(): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('parliamentary-questions/feed', {
       format: 'application/ld+json',
-      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
-      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
-    });
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
   }
 
   /**

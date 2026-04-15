@@ -120,7 +120,7 @@ describe('get_mep_declarations_feed Tool', () => {
         dataQualityWarnings: string[];
       };
       expect(parsed.data).toEqual([]);
-      expect(parsed.dataQualityWarnings[0]).toContain('404');
+      expect(parsed.dataQualityWarnings[0]).toContain('no data');
     });
   });
 
