@@ -560,6 +560,120 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 
 **62 tools** organized by capability — OSINT intelligence first, then analytical, data access, feed endpoints, and reference tools. Every tool includes Zod input validation, caching, and rate limiting.
 
+### 🗺️ Political Intelligence Coverage Map
+
+```mermaid
+graph TB
+    subgraph OSINT["🕵️ OSINT Intelligence — 15 Tools"]
+        direction LR
+        subgraph MEP["MEP Profiling"]
+            A1["assess_mep_influence"]
+            A2["comparative_intelligence"]
+            A3["network_analysis"]
+            A4["track_mep_attendance"]
+        end
+        subgraph COALITION["Coalition Dynamics"]
+            B1["analyze_coalition_dynamics"]
+            B2["compare_political_groups"]
+            B3["detect_voting_anomalies"]
+            B4["sentiment_tracker"]
+        end
+        subgraph STRATEGY["Strategic Warning"]
+            C1["early_warning_system"]
+            C2["generate_political_landscape"]
+            C3["correlate_intelligence"]
+        end
+        subgraph LEG_INTEL["Legislative Intelligence"]
+            D1["analyze_legislative_effectiveness"]
+            D2["monitor_legislative_pipeline"]
+            D3["analyze_committee_activity"]
+            D4["analyze_country_delegation"]
+        end
+    end
+
+    subgraph ANALYTICS["📊 Advanced Analysis — 4 Tools"]
+        E1["analyze_voting_patterns"]
+        E2["track_legislation"]
+        E3["generate_report"]
+        E4["get_all_generated_stats"]
+    end
+
+    subgraph DATA["📦 Core EP Data — 30 Tools"]
+        F1["👤 MEP Tools (7)"]
+        F2["🏛️ Plenary & Meeting (9)"]
+        F3["📄 Document Tools (7)"]
+        F4["⚖️ Legislative (4)"]
+        F5["🏢 Committee (2)"]
+        F6["🔧 Diagnostics (1)"]
+    end
+
+    subgraph FEEDS["📡 Real-Time Feeds — 13 Tools"]
+        G1["13 change monitoring endpoints"]
+    end
+
+    OSINT -->|"enriched by"| ANALYTICS
+    ANALYTICS -->|"queries"| DATA
+    DATA -->|"monitors"| FEEDS
+
+    style OSINT fill:#D32F2F,stroke:#B71C1C,color:#fff,stroke-width:2px
+    style ANALYTICS fill:#1565C0,stroke:#0D47A1,color:#fff,stroke-width:2px
+    style DATA fill:#2E7D32,stroke:#1B5E20,color:#fff,stroke-width:2px
+    style FEEDS fill:#FF8F00,stroke:#E65100,color:#000,stroke-width:2px
+    style MEP fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    style COALITION fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    style STRATEGY fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    style LEG_INTEL fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+```
+
+### 🎯 OSINT Intelligence Workflow
+
+```mermaid
+graph LR
+    subgraph COLLECT["1️⃣ Collect"]
+        direction TB
+        C1["get_meps"]
+        C2["get_plenary_sessions"]
+        C3["get_voting_records"]
+        C4["get_procedures"]
+        C5["13 feed tools"]
+    end
+
+    subgraph ANALYZE["2️⃣ Analyze"]
+        direction TB
+        AN1["analyze_voting_patterns"]
+        AN2["track_legislation"]
+        AN3["generate_report"]
+        AN4["get_all_generated_stats"]
+    end
+
+    subgraph ENRICH["3️⃣ Enrich"]
+        direction TB
+        E1["assess_mep_influence"]
+        E2["analyze_coalition_dynamics"]
+        E3["detect_voting_anomalies"]
+        E4["network_analysis"]
+        E5["analyze_legislative_effectiveness"]
+    end
+
+    subgraph FUSE["4️⃣ Fuse & Alert"]
+        direction TB
+        F1["correlate_intelligence"]
+        F2["early_warning_system"]
+        F3["generate_political_landscape"]
+        F4["comparative_intelligence"]
+        F5["sentiment_tracker"]
+    end
+
+    COLLECT -->|"raw data"| ANALYZE
+    ANALYZE -->|"structured"| ENRICH
+    ENRICH -->|"intelligence"| FUSE
+
+    style COLLECT fill:#2E7D32,stroke:#1B5E20,color:#fff,stroke-width:2px
+    style ANALYZE fill:#1565C0,stroke:#0D47A1,color:#fff,stroke-width:2px
+    style ENRICH fill:#9C27B0,stroke:#7B1FA2,color:#fff,stroke-width:2px
+    style FUSE fill:#D32F2F,stroke:#B71C1C,color:#fff,stroke-width:2px
+```
+
 ### 🕵️ OSINT Intelligence Tools (15)
 
 | Tool | Description | Key Parameters | Output |
@@ -605,10 +719,10 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
-| [`get_plenary_sessions`](./API_USAGE_GUIDE.md#tool-get_plenary_sessions) | List plenary sessions/meetings, or single by eventId | dateFrom, dateTo, eventId, limit | `GET /meetings`, `GET /meetings/{id}` |
+| [`get_plenary_sessions`](./API_USAGE_GUIDE.md#tool-get_plenary_sessions) | List plenary sessions/meetings, or single by eventId | dateFrom, dateTo, eventId, year, location | `GET /meetings`, `GET /meetings/{id}` |
 | [`get_voting_records`](./API_USAGE_GUIDE.md#tool-get_voting_records) | Retrieve aggregate voting records (no per‑MEP positions) | sessionId, topic, dateFrom | `GET /meetings/{id}/vote-results` |
-| [`get_speeches`](./API_USAGE_GUIDE.md#tool-get_speeches) | Plenary speeches and debate contributions | speechId, dateFrom, dateTo, limit | `GET /speeches`, `GET /speeches/{id}` |
-| [`get_events`](./API_USAGE_GUIDE.md#tool-get_events) | EP events (hearings, conferences, seminars) | eventId, dateFrom, dateTo, limit | `GET /events`, `GET /events/{id}` |
+| [`get_speeches`](./API_USAGE_GUIDE.md#tool-get_speeches) | Plenary speeches and debate contributions | speechId, year, dateFrom, dateTo, limit | `GET /speeches`, `GET /speeches/{id}` |
+| [`get_events`](./API_USAGE_GUIDE.md#tool-get_events) | EP events (hearings, conferences, seminars) | eventId, year, dateFrom, dateTo, limit | `GET /events`, `GET /events/{id}` |
 | [`get_meeting_activities`](./API_USAGE_GUIDE.md#tool-get_meeting_activities) | Activities linked to a plenary sitting | sittingId (required), limit | `GET /meetings/{id}/activities` |
 | [`get_meeting_decisions`](./API_USAGE_GUIDE.md#tool-get_meeting_decisions) | Decisions made in a plenary sitting | sittingId (required), limit | `GET /meetings/{id}/decisions` |
 | [`get_meeting_foreseen_activities`](./API_USAGE_GUIDE.md#tool-get_meeting_foreseen_activities) | Planned agenda items for upcoming meetings | sittingId (required), limit | `GET /meetings/{id}/foreseen-activities` |

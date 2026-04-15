@@ -93,6 +93,114 @@
 
 The European Parliament MCP Server provides 62 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 8 core tools, 3 advanced tools, 15 OSINT intelligence tools, 1 statistics tool, 21 EP API v2 endpoint tools, 1 procedure event detail tool, and 13 EP API v2 feed tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
 
+### Political Intelligence Coverage
+
+```mermaid
+graph TB
+    subgraph OSINT["🕵️ OSINT Intelligence Layer (15 tools)"]
+        direction TB
+        subgraph MEP_INTEL["MEP Intelligence"]
+            AI[assess_mep_influence]
+            CI[comparative_intelligence]
+            NA[network_analysis]
+        end
+        subgraph COALITION["Coalition & Group Analysis"]
+            ACD[analyze_coalition_dynamics]
+            CPG[compare_political_groups]
+            DVA[detect_voting_anomalies]
+            ST[sentiment_tracker]
+        end
+        subgraph STRATEGIC["Strategic Intelligence"]
+            EWS[early_warning_system]
+            GPL[generate_political_landscape]
+            COR[correlate_intelligence]
+        end
+        subgraph LEGISLATIVE["Legislative Intelligence"]
+            ALE[analyze_legislative_effectiveness]
+            MLP[monitor_legislative_pipeline]
+            ACA[analyze_committee_activity]
+        end
+        subgraph NATIONAL["National & Attendance"]
+            ACD2[analyze_country_delegation]
+            TMA[track_mep_attendance]
+        end
+    end
+
+    subgraph ANALYSIS["📊 Advanced Analysis (4 tools)"]
+        AVP[analyze_voting_patterns]
+        TL[track_legislation]
+        GR[generate_report]
+        GAGS[get_all_generated_stats]
+    end
+
+    subgraph CORE["📦 Core Data Access (22 tools)"]
+        direction TB
+        MEP_TOOLS["👤 MEP Tools (7)"]
+        PLENARY["🏛️ Plenary & Meeting (9)"]
+        DOC["📄 Document Tools (7)"]
+        LEG["⚖️ Legislative (4)"]
+        COMM["🏢 Committee (2)"]
+        DIAG["🔧 Diagnostics (1)"]
+    end
+
+    subgraph FEEDS["📡 Real-Time Feeds (13 tools)"]
+        FEED_ALL["13 change monitoring feeds"]
+    end
+
+    OSINT --> ANALYSIS
+    ANALYSIS --> CORE
+    CORE --> FEEDS
+
+    style OSINT fill:#D32F2F,stroke:#B71C1C,color:#fff,stroke-width:2px
+    style ANALYSIS fill:#1565C0,stroke:#0D47A1,color:#fff,stroke-width:2px
+    style CORE fill:#2E7D32,stroke:#1B5E20,color:#fff,stroke-width:2px
+    style FEEDS fill:#FF8F00,stroke:#E65100,color:#000,stroke-width:2px
+    style MEP_INTEL fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    style COALITION fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    style STRATEGIC fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    style LEGISLATIVE fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    style NATIONAL fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+```
+
+### Tool Category Overview
+
+```mermaid
+graph LR
+    subgraph INPUT["🔍 Intelligence Questions"]
+        Q1["Who are the key players?"]
+        Q2["What coalitions are forming?"]
+        Q3["Where are the risks?"]
+        Q4["How effective is legislation?"]
+        Q5["What changed recently?"]
+    end
+
+    subgraph TOOLS["🛠️ MCP Tool Categories"]
+        T1["MEP Profiling\n7 core + 4 OSINT"]
+        T2["Coalition Analysis\n4 OSINT tools"]
+        T3["Risk Detection\n3 OSINT tools"]
+        T4["Legislative Tracking\n5 analysis tools"]
+        T5["Change Monitoring\n13 feed tools"]
+    end
+
+    subgraph OUTPUT["📊 Intelligence Products"]
+        O1["Influence Scores\nNetwork Maps"]
+        O2["Cohesion Metrics\nAlliance Detection"]
+        O3["Anomaly Alerts\nEarly Warnings"]
+        O4["Pipeline Status\nEffectiveness Scores"]
+        O5["Real-Time Updates\nTrend Data"]
+    end
+
+    Q1 --> T1 --> O1
+    Q2 --> T2 --> O2
+    Q3 --> T3 --> O3
+    Q4 --> T4 --> O4
+    Q5 --> T5 --> O5
+
+    style INPUT fill:#4A90E2,stroke:#2171C7,color:#fff,stroke-width:2px
+    style TOOLS fill:#9C27B0,stroke:#7B1FA2,color:#fff,stroke-width:2px
+    style OUTPUT fill:#2E7D32,stroke:#1B5E20,color:#fff,stroke-width:2px
+```
+
 ### Key Features
 
 - **Type Safety**: All inputs validated with Zod schemas
