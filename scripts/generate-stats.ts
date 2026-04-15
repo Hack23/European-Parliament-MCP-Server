@@ -325,7 +325,6 @@ async function countItems(
             return { total: totalCount };
           }
           // Probe returned data — genuinely incomplete
-          totalCount += probe.data.length;
         } catch {
           // Probe failed — treat conservatively as incomplete
         }
@@ -437,7 +436,7 @@ async function countItemsGroupedByMonth(
   options?: { ordered?: boolean; yearFilterSupported?: boolean }
 ): Promise<{ total: number | null; monthlyCounts: number[]; error?: string }> {
   const isOrdered = options?.ordered !== false; // default: true (ordered)
-  const yearFilterKnown = options?.yearFilterSupported !== false; // default: true
+  const supportsYearFilter = options?.yearFilterSupported !== false; // default: true
   const monthlyCounts: number[] = new Array<number>(12).fill(0);
   let totalCount = 0;
   let outsideYearOrUndated = 0;
@@ -478,7 +477,7 @@ async function countItemsGroupedByMonth(
       // pages without matches.  For unordered endpoints (e.g. /events),
       // skip this check — matching records may appear later in pagination.
       if (isOrdered && consecutiveEmptyPages >= MAX_CONSECUTIVE_EMPTY_PAGES && totalCount === 0) {
-        const note = yearFilterKnown
+        const note = supportsYearFilter
           ? `0 parseable dates matched year ${yearStr} for ${label} after ${String(pageNum)} pages — ` +
             `date extraction may have failed or the year has no data.`
           : `EP API does not support year filtering for ${label} — ` +
