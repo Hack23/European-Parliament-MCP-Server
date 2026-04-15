@@ -2436,8 +2436,8 @@ describe('EuropeanParliamentClient', () => {
         json: async () => createMockSpeechesResponse(1)
       } as Response);
 
-      // year is not in the getSpeeches interface — passing it should have no effect
-      await client.getSpeeches({});
+      // Use type-escape to pass year even though the interface doesn't accept it
+      await (client as unknown as { getSpeeches(p: Record<string, unknown>): Promise<unknown> }).getSpeeches({ year: 2024 });
 
       expect(mockFetch).toHaveBeenCalledTimes(1);
       const url = mockFetch.mock.calls[0]?.[0] as string;
@@ -2526,7 +2526,8 @@ describe('EuropeanParliamentClient', () => {
         json: async () => createMockProceduresResponse(1)
       } as Response);
 
-      await client.getProcedures({});
+      // Use type-escape to pass year even though the interface doesn't accept it
+      await (client as unknown as { getProcedures(p: Record<string, unknown>): Promise<unknown> }).getProcedures({ year: 2024 });
 
       expect(mockFetch).toHaveBeenCalledTimes(1);
       const url = mockFetch.mock.calls[0]?.[0] as string;
@@ -2712,7 +2713,8 @@ describe('EuropeanParliamentClient', () => {
         json: async () => createMockEventsResponse(1)
       } as Response);
 
-      await client.getEvents({});
+      // Use type-escape to pass year/dateFrom/dateTo even though the interface doesn't accept them
+      await (client as unknown as { getEvents(p: Record<string, unknown>): Promise<unknown> }).getEvents({ year: 2024, dateFrom: '2024-01-01', dateTo: '2024-12-31' });
 
       expect(mockFetch).toHaveBeenCalledTimes(1);
       const url = mockFetch.mock.calls[0]?.[0] as string;
@@ -3033,7 +3035,8 @@ describe('EuropeanParliamentClient', () => {
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
-      await client.getCommitteeDocuments({});
+      // Use type-escape to pass year even though the interface doesn't accept it
+      await (client as unknown as { getCommitteeDocuments(p: Record<string, unknown>): Promise<unknown> }).getCommitteeDocuments({ year: 2024 });
 
       expect(mockFetch).toHaveBeenCalledTimes(1);
       const url = mockFetch.mock.calls[0]?.[0] as string;
@@ -4245,7 +4248,8 @@ describe('EuropeanParliamentClient', () => {
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
-      await client.getExternalDocuments({});
+      // Use type-escape to pass year even though the interface doesn't accept it
+      await (client as unknown as { getExternalDocuments(p: Record<string, unknown>): Promise<unknown> }).getExternalDocuments({ year: 2024 });
 
       expect(mockFetch).toHaveBeenCalledTimes(1);
       const url = mockFetch.mock.calls[0]?.[0] as string;

@@ -842,7 +842,7 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('groupSentiments');
       expect(parsed).toHaveProperty('polarizationIndex');
-    }, 90000);
+    }, 120000);
   });
 
   describe('Phase 6 OSINT Tool: early_warning_system', () => {

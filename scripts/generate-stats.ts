@@ -388,17 +388,19 @@ function extractRecordDate(item: Record<string, unknown>): string | null {
 /**
  * Count items by month for a given year using client-side date bucketing.
  *
- * The EP API ignores `dateFrom`/`dateTo` params on most endpoints,
- * returning all records for the given `year` regardless of date range.
- * This function fetches items, extracts dates from each record (from
- * the `date` field or by parsing the `id`), and buckets items into
- * months client-side.
+ * Several EP API endpoints lack server-side year/date filtering entirely
+ * (e.g. `/events`, `/procedures`).  For these, this function fetches
+ * unfiltered pages, extracts dates from each record (from `date`,
+ * `activity_date.@value`, `activity_start_date.@value`,
+ * `had_activity_date.@value`, or by parsing the `id`), and buckets
+ * items into months client-side.
  *
- * **Early termination:** If {@link MAX_CONSECUTIVE_EMPTY_PAGES}
- * consecutive pages contain zero records matching the target year,
- * pagination stops.  This prevents runaway iteration on endpoints
- * that do not support server-side year filtering (e.g. `/speeches`,
- * `/events`).
+ * **Early termination** (ordered endpoints): If
+ * {@link MAX_CONSECUTIVE_EMPTY_PAGES} consecutive pages contain zero
+ * records matching the target year *and* the endpoint's data is expected
+ * to be date-ordered, pagination stops.  For unordered endpoints (like
+ * `/events`), early termination is not applied — the function relies
+ * on the {@link MAX_PAGES_PER_METRIC} safety cap instead.
  *
  * Returns per-month counts (12 elements, Jan=0..Dec=11) and the total.
  * Items whose date doesn't match the target year are excluded from
@@ -407,8 +409,10 @@ function extractRecordDate(item: Record<string, unknown>): string | null {
 async function countItemsGroupedByMonth(
   label: string,
   year: number,
-  fetcher: (params: { limit: number; offset: number }) => Promise<{ data: Array<Record<string, unknown>>; hasMore: boolean }>
+  fetcher: (params: { limit: number; offset: number }) => Promise<{ data: Array<Record<string, unknown>>; hasMore: boolean }>,
+  options?: { ordered?: boolean }
 ): Promise<{ total: number | null; monthlyCounts: number[]; error?: string }> {
+  const isOrdered = options?.ordered !== false; // default: true (ordered)
   const monthlyCounts: number[] = new Array<number>(12).fill(0);
   let totalCount = 0;
   let outsideYearOrUndated = 0;
@@ -445,10 +449,10 @@ async function countItemsGroupedByMonth(
       // Show progress every page
       progress(`📊 ${label}: page ${String(pageNum)}, ${String(totalCount)} matched ${yearStr}, ${String(outsideYearOrUndated)} outside year or undated (${formatElapsed(Date.now() - fetchStart)})`);
 
-      // Early termination: too many consecutive pages without matches.
-      // This means the API endpoint does not support year filtering and
-      // is returning the entire unfiltered dataset.
-      if (consecutiveEmptyPages >= MAX_CONSECUTIVE_EMPTY_PAGES && totalCount === 0) {
+      // Early termination (ordered endpoints only): too many consecutive
+      // pages without matches.  For unordered endpoints (e.g. /events),
+      // skip this check — matching records may appear later in pagination.
+      if (isOrdered && consecutiveEmptyPages >= MAX_CONSECUTIVE_EMPTY_PAGES && totalCount === 0) {
         const note = `EP API does not support year filtering for ${label} — ` +
           `${String(pageNum)} pages fetched with 0 matches for ${yearStr}. ` +
           `This endpoint does not accept the year parameter per the EP API specification.`;
@@ -456,9 +460,10 @@ async function countItemsGroupedByMonth(
         return { total: null, monthlyCounts, error: note };
       }
 
-      // Early termination: we found some matches earlier but now seeing
-      // consecutive empty pages — likely exhausted all records for this year.
-      if (consecutiveEmptyPages >= MAX_CONSECUTIVE_EMPTY_PAGES && totalCount > 0) {
+      // Early termination (ordered endpoints only): we found some matches
+      // earlier but now seeing consecutive empty pages — likely exhausted
+      // all records for this year.
+      if (isOrdered && consecutiveEmptyPages >= MAX_CONSECUTIVE_EMPTY_PAGES && totalCount > 0) {
         progress(`✅ ${label}: ${String(totalCount)} items in ${yearStr} (early stop after ${String(consecutiveEmptyPages)} empty pages, ${formatElapsed(Date.now() - fetchStart)})`);
         break;
       }
@@ -596,7 +601,8 @@ async function validateYearAgainstAPI(
       // with unreliable all-time scan results.
       count: async () => {
         const result = await countItemsGroupedByMonth('Events', year, (p) =>
-          client.getEvents(p)
+          client.getEvents(p),
+          { ordered: false }
         );
         // Always attach a note so --update skips this metric
         const note = 'EP API /events has no year/date filtering and results are unordered — ' +

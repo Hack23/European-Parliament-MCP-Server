@@ -120,7 +120,7 @@ async function fetchAllTimeDocumentCount(logContext: { year: number }): Promise<
     const docs = await epClient.getCommitteeDocuments({ limit: 100 });
     return docs.data.length;
   } catch (error: unknown) {
-    auditLogger.logError('generate_report.fetch_document_count', logContext, toErrorMessage(error));
+    auditLogger.logError('generate_report.fetch_all_time_document_count', logContext, toErrorMessage(error));
     return null;
   }
 }
@@ -154,7 +154,7 @@ async function fetchAllTimeProcedureCount(logContext: { year: number }): Promise
     const procedures = await epClient.getProcedures({ limit: 100 });
     return procedures.data.length;
   } catch (error: unknown) {
-    auditLogger.logError('generate_report.fetch_procedure_count', logContext, toErrorMessage(error));
+    auditLogger.logError('generate_report.fetch_all_time_procedure_count', logContext, toErrorMessage(error));
     return null;
   }
 }
