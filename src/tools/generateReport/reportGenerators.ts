@@ -114,13 +114,13 @@ async function fetchCommitteeInfo(subjectId: string | undefined): Promise<Commit
   }
 }
 
-/** Fetch committee document count for a year (null if unavailable) */
-async function fetchDocumentCount(year: number): Promise<number | null> {
+/** Fetch committee document count (EP API does not support year filtering) */
+async function fetchDocumentCount(_year: number): Promise<number | null> {
   try {
-    const docs = await epClient.getCommitteeDocuments({ year, limit: 100 });
+    const docs = await epClient.getCommitteeDocuments({ limit: 100 });
     return docs.data.length;
   } catch (error: unknown) {
-    auditLogger.logError('generate_report.fetch_document_count', { year }, toErrorMessage(error));
+    auditLogger.logError('generate_report.fetch_document_count', { _year }, toErrorMessage(error));
     return null;
   }
 }
@@ -148,13 +148,13 @@ async function fetchSessionCount(dateFrom: string, dateTo: string): Promise<numb
   }
 }
 
-/** Fetch procedure count for a year (null if unavailable) */
-async function fetchProcedureCount(year: number): Promise<number | null> {
+/** Fetch procedure count (EP API does not support year filtering) */
+async function fetchProcedureCount(_year: number): Promise<number | null> {
   try {
-    const procedures = await epClient.getProcedures({ year, limit: 100 });
+    const procedures = await epClient.getProcedures({ limit: 100 });
     return procedures.data.length;
   } catch (error: unknown) {
-    auditLogger.logError('generate_report.fetch_procedure_count', { year }, toErrorMessage(error));
+    auditLogger.logError('generate_report.fetch_procedure_count', { _year }, toErrorMessage(error));
     return null;
   }
 }

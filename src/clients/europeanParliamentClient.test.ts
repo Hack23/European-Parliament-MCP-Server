@@ -2423,10 +2423,10 @@ describe('EuropeanParliamentClient', () => {
 
       await client.getSpeeches({ dateFrom: '2024-01-01', dateTo: '2024-06-30' });
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('sitting-date=2024-01-01'),
-        expect.any(Object)
-      );
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      const url = mockFetch.mock.calls[0]?.[0] as string;
+      expect(url).toContain('sitting-date=2024-01-01');
+      expect(url).toContain('sitting-date-end=2024-06-30');
     });
 
     it('should not pass year parameter (EP API /speeches does not support it)', async () => {

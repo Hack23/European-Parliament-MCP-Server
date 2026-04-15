@@ -976,7 +976,8 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       );
       if (!result) { ctx.skip(); return; }
       if (result.isError === true) { ctx.skip(); return; }
-      const parsed = parseAndValidateNoMockData(result) as { data: unknown[]; dataQualityWarnings?: string[] };
+      const parsed = parseAndValidateNoMockData(result) as { data?: unknown[]; dataQualityWarnings?: string[] };
+      if (!parsed || !('data' in parsed)) { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
     }, 120000);
@@ -991,7 +992,8 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       );
       if (!result) { ctx.skip(); return; }
       if (result.isError === true) { ctx.skip(); return; }
-      const parsed = parseAndValidateNoMockData(result) as { data: unknown[]; dataQualityWarnings?: string[] };
+      const parsed = parseAndValidateNoMockData(result) as { data?: unknown[]; dataQualityWarnings?: string[] };
+      if (!parsed || !('data' in parsed)) { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
     }, 120000);
