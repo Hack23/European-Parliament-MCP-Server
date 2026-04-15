@@ -226,14 +226,15 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
   describe('Core Tool: search_documents', () => {
     it('should return real documents from EP API', async (ctx) => {
       const result = await retryOrSkip(
-        () => handleSearchDocuments({ keyword: 'climate', limit: 5 }),
+        () => handleSearchDocuments({ keyword: 'climate', dateFrom: '2025-01-01', dateTo: '2025-06-30', limit: 5 }),
         'search_documents'
       );
       if (!result) { ctx.skip(); return; }
-
-      const parsed = parseAndValidateNoMockData(result) as { data: { id: string }[] };
+      if (result.isError === true) { ctx.skip(); return; }
+      const parsed = parseAndValidateNoMockData(result) as { timedOut?: boolean; status?: string; data: { id: string }[] };
+      if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
-    }, 90000);
+    }, 120000);
   });
 
   describe('Core Tool: get_committee_info', () => {
@@ -1027,26 +1028,28 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
   describe('Feed Tool: get_documents_feed', () => {
     it('should return recently updated documents', async (ctx) => {
       const result = await retryOrSkip(
-        () => handleGetDocumentsFeed({ timeframe: 'one-week' }),
+        () => handleGetDocumentsFeed({}),
         'get_documents_feed'
       );
       if (!result) { ctx.skip(); return; }
       if (result.isError === true) { ctx.skip(); return; }
-      const parsed = parseAndValidateNoMockData(result) as { data: unknown[]; dataQualityWarnings?: string[] };
+      const parsed = parseAndValidateNoMockData(result) as { timedOut?: boolean; status?: string; data: unknown[]; dataQualityWarnings?: string[] };
+      if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
-    }, 120000);
+    }, 180000);
   });
 
   describe('Feed Tool: get_plenary_documents_feed', () => {
     it('should return recently updated plenary documents', async (ctx) => {
       const result = await retryOrSkip(
-        () => handleGetPlenaryDocumentsFeed({ timeframe: 'one-week' }),
+        () => handleGetPlenaryDocumentsFeed({}),
         'get_plenary_documents_feed'
       );
       if (!result) { ctx.skip(); return; }
       if (result.isError === true) { ctx.skip(); return; }
-      const parsed = parseAndValidateNoMockData(result) as { data: unknown[]; dataQualityWarnings?: string[] };
+      const parsed = parseAndValidateNoMockData(result) as { timedOut?: boolean; status?: string; data: unknown[]; dataQualityWarnings?: string[] };
+      if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
     }, 120000);
@@ -1055,12 +1058,13 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
   describe('Feed Tool: get_committee_documents_feed', () => {
     it('should return recently updated committee documents', async (ctx) => {
       const result = await retryOrSkip(
-        () => handleGetCommitteeDocumentsFeed({ timeframe: 'one-week' }),
+        () => handleGetCommitteeDocumentsFeed({}),
         'get_committee_documents_feed'
       );
       if (!result) { ctx.skip(); return; }
       if (result.isError === true) { ctx.skip(); return; }
-      const parsed = parseAndValidateNoMockData(result) as { data: unknown[]; dataQualityWarnings?: string[] };
+      const parsed = parseAndValidateNoMockData(result) as { timedOut?: boolean; status?: string; data: unknown[]; dataQualityWarnings?: string[] };
+      if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
     }, 120000);
@@ -1074,7 +1078,8 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       );
       if (!result) { ctx.skip(); return; }
       if (result.isError === true) { ctx.skip(); return; }
-      const parsed = parseAndValidateNoMockData(result) as { data: unknown[]; dataQualityWarnings?: string[] };
+      const parsed = parseAndValidateNoMockData(result) as { timedOut?: boolean; status?: string; data: unknown[]; dataQualityWarnings?: string[] };
+      if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
     }, 120000);
@@ -1097,12 +1102,13 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
   describe('Feed Tool: get_parliamentary_questions_feed', () => {
     it('should return recently updated parliamentary questions', async (ctx) => {
       const result = await retryOrSkip(
-        () => handleGetParliamentaryQuestionsFeed({ timeframe: 'one-week' }),
+        () => handleGetParliamentaryQuestionsFeed({}),
         'get_parliamentary_questions_feed'
       );
       if (!result) { ctx.skip(); return; }
       if (result.isError === true) { ctx.skip(); return; }
-      const parsed = parseAndValidateNoMockData(result) as { data: unknown[]; dataQualityWarnings?: string[] };
+      const parsed = parseAndValidateNoMockData(result) as { timedOut?: boolean; status?: string; data: unknown[]; dataQualityWarnings?: string[] };
+      if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
     }, 120000);
@@ -1111,26 +1117,28 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
   describe('Feed Tool: get_corporate_bodies_feed', () => {
     it('should return recently updated corporate bodies', async (ctx) => {
       const result = await retryOrSkip(
-        () => handleGetCorporateBodiesFeed({ timeframe: 'one-week' }),
+        () => handleGetCorporateBodiesFeed({}),
         'get_corporate_bodies_feed'
       );
       if (!result) { ctx.skip(); return; }
       if (result.isError === true) { ctx.skip(); return; }
-      const parsed = parseAndValidateNoMockData(result) as { data: unknown[]; dataQualityWarnings?: string[] };
+      const parsed = parseAndValidateNoMockData(result) as { timedOut?: boolean; status?: string; data: unknown[]; dataQualityWarnings?: string[] };
+      if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
-    }, 120000);
+    }, 180000);
   });
 
   describe('Feed Tool: get_controlled_vocabularies_feed', () => {
     it('should return recently updated controlled vocabularies', async (ctx) => {
       const result = await retryOrSkip(
-        () => handleGetControlledVocabulariesFeed({ timeframe: 'one-week' }),
+        () => handleGetControlledVocabulariesFeed({}),
         'get_controlled_vocabularies_feed'
       );
       if (!result) { ctx.skip(); return; }
       if (result.isError === true) { ctx.skip(); return; }
-      const parsed = parseAndValidateNoMockData(result) as { data: unknown[]; dataQualityWarnings?: string[] };
+      const parsed = parseAndValidateNoMockData(result) as { timedOut?: boolean; status?: string; data: unknown[]; dataQualityWarnings?: string[] };
+      if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
     }, 120000);

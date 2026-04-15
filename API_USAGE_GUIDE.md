@@ -231,17 +231,17 @@ Currently, the server does **not require authentication** for tool access. Futur
 
 ### 🏛️ Plenary & Meeting Tools
 
-| Tool | Purpose | Key Parameters | Response Type |
-|------|---------|----------------|---------------|
-| `get_plenary_sessions` | List plenary sessions | dateFrom, dateTo, eventId, year, location | Paginated list |
-| `get_voting_records` | Aggregate voting data | sessionId, topic, dateFrom | Paginated list |
-| `get_speeches` | Plenary speeches | speechId, year, dateFrom, dateTo | Paginated list |
-| `get_events` | EP events | eventId, year, dateFrom, dateTo | Paginated list |
-| `get_meeting_activities` | Meeting activities | sittingId (required) | Paginated list |
-| `get_meeting_decisions` | Meeting decisions | sittingId (required) | Paginated list |
-| `get_meeting_foreseen_activities` | Planned agenda items | sittingId (required) | Paginated list |
-| `get_meeting_plenary_session_documents` | Meeting session documents | sittingId (required) | Paginated list |
-| `get_meeting_plenary_session_document_items` | Meeting session doc items | sittingId (required) | Paginated list |
+| Tool | Purpose | Key Parameters | Response Type | Notes |
+|------|---------|----------------|---------------|-------|
+| `get_plenary_sessions` | List plenary sessions | dateFrom, dateTo, eventId, year, location | Paginated list | ✅ Fast with `year` filter |
+| `get_voting_records` | Aggregate voting data | sessionId, topic, dateFrom | Paginated list | ⚠️ Roll-call data delayed by weeks |
+| `get_speeches` | Plenary speeches | speechId, year, dateFrom, dateTo | Paginated list | |
+| `get_events` | EP events | eventId, year, dateFrom, dateTo | Paginated list | |
+| `get_meeting_activities` | Meeting activities | sittingId (required) | Paginated list | ✅ Works with session IDs like `MTG-PL-2025-01-20` |
+| `get_meeting_decisions` | Meeting decisions | sittingId (required) | Paginated list | ✅ Works with session IDs |
+| `get_meeting_foreseen_activities` | Planned agenda items | sittingId (required) | Paginated list | ✅ Works with session IDs |
+| `get_meeting_plenary_session_documents` | Meeting session documents | sittingId (required) | Paginated list | ⚠️ Returns 404 for many sittingIds |
+| `get_meeting_plenary_session_document_items` | Meeting session doc items | sittingId (required) | Paginated list | ⚠️ Returns 404 for many sittingIds |
 
 ### 🏢 Committee Tools
 
@@ -252,24 +252,24 @@ Currently, the server does **not require authentication** for tool access. Futur
 
 ### 📄 Document Tools
 
-| Tool | Purpose | Key Parameters | Response Type |
-|------|---------|----------------|---------------|
-| `search_documents` | Find documents | keyword, documentType | Paginated list |
-| `get_adopted_texts` | Adopted texts | docId, year | Paginated list |
-| `get_plenary_documents` | Plenary documents | docId, year | Paginated list |
-| `get_plenary_session_documents` | Session documents | docId | Paginated list |
-| `get_plenary_session_document_items` | Session document items | limit, offset | Paginated list |
-| `get_external_documents` | External documents | docId, year | Paginated list |
-| `get_parliamentary_questions` | Q&A data | docId, type, author, topic, status, dateFrom | Paginated list |
+| Tool | Purpose | Key Parameters | Response Type | Notes |
+|------|---------|----------------|---------------|-------|
+| `search_documents` | Find documents | keyword, documentType, dateFrom, dateTo | Paginated list | ⚠️ **Always use date filters** — unfiltered searches time out |
+| `get_adopted_texts` | Adopted texts | docId, year | Paginated list | ✅ Fast with `year` filter |
+| `get_plenary_documents` | Plenary documents | docId, year | Paginated list | ✅ Fast with `year` filter |
+| `get_plenary_session_documents` | Session documents | docId | Paginated list | |
+| `get_plenary_session_document_items` | Session document items | limit, offset | Paginated list | ⚠️ EP API returns 404 — endpoint may require specific parameters |
+| `get_external_documents` | External documents | docId, year | Paginated list | ✅ Fast with `year` filter |
+| `get_parliamentary_questions` | Q&A data | docId, type, author, topic, status, dateFrom | Paginated list | |
 
 ### ⚖️ Legislative Procedure Tools
 
 | Tool | Purpose | Key Parameters | Response Type | Notes |
 |------|---------|----------------|---------------|-------|
 | `get_procedures` | Legislative procedures | processId, year | Paginated list | ⚠️ Use `year` filter — unfiltered queries may time out |
-| `get_procedure_events` | Procedure timeline events | processId (required) | Paginated list | ⚠️ Can be slow; may time out for large procedures |
-| `get_procedure_event_by_id` | Single procedure event | processId, eventId (both required) | Single object | Returns 404 if event ID format doesn't match EP API |
-| `get_controlled_vocabularies` | Classification terms | vocId | Paginated list | ✅ Fast without vocId; single-vocab lookup may be slow |
+| `get_procedure_events` | Procedure timeline events | processId (required) | Paginated list | Use short processId (e.g., `2025-0012`), not full URI |
+| `get_procedure_event_by_id` | Single procedure event | processId, eventId (both required) | Single object | Use short IDs for both parameters |
+| `get_controlled_vocabularies` | Classification terms | vocId | Paginated list | ✅ Fast; use short vocId (e.g., `ep-document-types`) |
 
 ### 📊 Advanced Analysis Tools
 
@@ -306,28 +306,34 @@ EP API v2 feed endpoints fall into two groups per the [OpenAPI spec](docs/ep-ope
 
 **Configurable-window feeds** (accept `timeframe` + `startDate`):
 
-| Tool | Purpose | Key Parameters | Response Type | Typical Response Time |
-|------|---------|----------------|---------------|----------------------|
-| `get_meps_feed` | Recently updated MEPs | timeframe, startDate | Feed list | ~9 s (up to 60+ s under load) ⚠️ |
+| Tool | Purpose | Key Parameters | Response Type | Tested Response Time |
+|------|---------|----------------|---------------|---------------------|
+| `get_meps_feed` | Recently updated MEPs | timeframe, startDate | Feed list | ~9 s |
 | `get_events_feed` | Recently updated events | timeframe, startDate, activityType | Feed list | 30–120 s ⚠️ |
 | `get_procedures_feed` | Recently updated procedures | timeframe, startDate, processType | Feed list | 30–120 s ⚠️ |
-| `get_adopted_texts_feed` | Recently updated adopted texts | timeframe, startDate, workType | Feed list | ~1 s (up to 60+ s under load) ⚠️ |
-| `get_mep_declarations_feed` | Recently updated MEP declarations | timeframe, startDate, workType | Feed list | ~1 s |
-| `get_external_documents_feed` | Recently updated external documents | timeframe, startDate, workType | Feed list | ~1 s |
+| `get_adopted_texts_feed` | Recently updated adopted texts | timeframe, startDate, workType | Feed list | ~1 s ✅ |
+| `get_mep_declarations_feed` | Recently updated MEP declarations | timeframe, startDate, workType | Feed list | ~1 s ✅ |
+| `get_external_documents_feed` | Recently updated external documents | timeframe, startDate, workType | Feed list | ~1 s ✅ |
 
 **Fixed-window feeds** (no parameters — server-defined default window, typically one month):
 
-| Tool | Purpose | Key Parameters | Response Type | Typical Response Time |
-|------|---------|----------------|---------------|----------------------|
+| Tool | Purpose | Key Parameters | Response Type | Tested Response Time |
+|------|---------|----------------|---------------|---------------------|
 | `get_documents_feed` | Recently updated documents | _(none)_ | Feed list | 60–120+ s ⚠️ |
 | `get_plenary_documents_feed` | Recently updated plenary documents | _(none)_ | Feed list | 30–120+ s ⚠️ |
 | `get_committee_documents_feed` | Recently updated committee documents | _(none)_ | Feed list | 30–120+ s ⚠️ |
 | `get_plenary_session_documents_feed` | Recently updated plenary session docs | _(none)_ | Feed list | 20–120+ s ⚠️ |
 | `get_parliamentary_questions_feed` | Recently updated questions | _(none)_ | Feed list | 30–120+ s ⚠️ |
 | `get_corporate_bodies_feed` | Recently updated corporate bodies | _(none)_ | Feed list | 60–180+ s ⚠️ |
-| `get_controlled_vocabularies_feed` | Recently updated vocabularies | _(none)_ | Feed list | ~6 s (up to 60+ s under load) ⚠️ |
+| `get_controlled_vocabularies_feed` | Recently updated vocabularies | _(none)_ | Feed list | Returns HTTP 204 (no content) when no updates exist |
 
 > ⚠️ **EP API response times are highly variable.** During peak load, even normally fast feeds can exceed the default 60s timeout. Set `--timeout 180000` for reliable feed access.
+>
+> **Known EP API feed behaviors:**
+> - `controlled-vocabularies/feed` — returns HTTP 204 No Content when no vocabulary updates exist in the default window (common since vocabularies change infrequently). The server handles this gracefully and returns an empty data array.
+> - `corporate-bodies/feed` — consistently the slowest feed endpoint (60–180 s). Increase timeout if using this endpoint.
+> - `plenary-session-documents/feed` — may return an error-in-body response (HTTP 200 with `error` field) when the EP API's internal enrichment step fails. Handled gracefully by the server.
+> - All fixed-window feeds accept **no parameters** — any `timeframe` or `startDate` parameters are silently ignored.
 
 ---
 
@@ -2101,9 +2107,11 @@ const result = await client.callTool('get_plenary_session_document_items', {
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| vocId | string | No | - | Specific vocabulary ID for single lookup |
+| vocId | string | No | - | Specific vocabulary ID for single lookup (e.g., `ep-document-types`) |
 | limit | number | No | 50 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
+
+> **Note:** The `vocId` parameter should use the short identifier form (e.g., `ep-document-types`), not the full URI form (`def/ep-document-types`). The list endpoint returns one entry: `def/ep-document-types`. Use the short form for single-vocabulary lookup.
 
 #### Example Usage
 
@@ -2116,11 +2124,114 @@ Get the controlled vocabularies used by the European Parliament
 // List all vocabularies
 const result = await client.callTool('get_controlled_vocabularies', { limit: 50 });
 
-// Get a specific vocabulary
+// Get a specific vocabulary by short ID
 const vocab = await client.callTool('get_controlled_vocabularies', {
-  vocId: 'COMMITTEE_TYPE'
+  vocId: 'ep-document-types'
 });
 ```
+
+#### EP Controlled Vocabularies Reference
+
+The EP Open Data Portal exposes the following controlled vocabulary schemes. These are available at `https://data.europarl.europa.eu/api/v2/controlled-vocabularies/{vocId}`:
+
+##### Document Types (`ep-document-types`) — 114 terms
+
+Key document type identifiers used across EP API responses:
+
+| Identifier | Label | Description |
+|-----------|-------|-------------|
+| `TEXT_ADOPTED` | Text adopted | Text adopted by a vote in plenary |
+| `REPORT` | Report | A report document |
+| `REPORT_PLENARY` | EP plenary report | Report for plenary debate/vote |
+| `REPORT_OWN_INITIATIVE` | Own initiative report | Text drawn up on Parliament's own initiative |
+| `RESOLUTION` | Resolution | Text expressing opinion on a matter/topic |
+| `RESOLUTION_LEGISLATIVE` | Legislative resolution | Legislative resolution text |
+| `RESOLUTION_MOTION` | Motion for a resolution | Motion declaring EP's opinion |
+| `RESOLUTION_MOTION_JOINT` | Joint motion for a resolution | Joint motion from multiple groups |
+| `OPINION` | Opinion | Non-binding institutional statement |
+| `OPINION_PARLIAMENTARY_COMMITTEE` | Parliamentary committee opinion | Committee opinion with amendments |
+| `AMENDMENT` | Amendment | Change to original text |
+| `AMENDMENT_PLENARY` | EP plenary amendment | Amendment tabled to plenary |
+| `CRE_PLENARY` | EP plenary verbatim report | Plenary sitting proceedings record |
+| `CRE_SPEECH` | Speech | Individual speech in proceedings |
+| `MINUTES_PLENARY` | EP plenary sitting minutes | Written meeting record |
+| `QUESTION_WRITTEN` | Written question | Written form question |
+| `QUESTION_ORAL` | Oral question | Oral question to plenary |
+| `QUESTION_WRITTEN_ANSWER` | Written answer | Answer to written question |
+| `MEMBER_DECLARATION` | Members' declaration | MEP code of conduct declaration |
+| `MEMBER_DECLARATION_INTEREST_PRIVATE` | Declaration of private interests | MEP private interests declaration |
+| `MEMBER_DECLARATION_INTEREST_CONFLICT` | Declaration on conflicts of interest | MEP conflict of interest declaration |
+| `DIRECTIVE` | Directive | EU legislative act (goals for member states) |
+| `REGULATION` | Regulation | Binding legislative act (EU-wide) |
+| `DECISION` | Decision | Binding act for specific addressees |
+| `ACT_FOLLOWUP` | Follow-up of acts | Commission follow-up document |
+| `AGENDA_PLENARY_WEEK` | EP plenary part-session agenda | Plenary session agenda |
+| `VOTE_ROLLCALL_PLENARY` | EP plenary roll-call votes | Roll-call vote results |
+| `VOTE_RESULTS_PLENARY` | EP plenary vote results | Vote results record |
+| `ANNEX` | Annex | Appended document section |
+| `CORRIGENDUM` | Corrigendum | Corrections document |
+
+##### Activity Types (`ep-activities`) — 70 terms
+
+Key activity type identifiers used in events and procedure events:
+
+| Identifier | Label |
+|-----------|-------|
+| `PLENARY_SESSION` | European Parliament plenary session |
+| `PLENARY_SITTING` | European Parliament plenary sitting |
+| `PLENARY_DEBATE` | Debates in plenary sitting |
+| `PLENARY_VOTE` | Vote in plenary sitting |
+| `PLENARY_ADOPT_POSITION` | EP position at 1st reading |
+| `PLENARY_AMEND_PROPOSAL` | EP position at 1st reading with amendments |
+| `PLENARY_APPROVE_COUNCIL_POSITION` | Approval of Council's position at 2nd reading |
+| `PLENARY_REJECT_PROPOSAL` | Plenary reject proposal |
+| `PLENARY_DECISION` | EP decision |
+| `COMMITTEE_MEETING` | Committee meeting |
+| `COMMITTEE_ADOPTING_REPORT` | Adoption of report by committee |
+| `COMMITTEE_APPOINT_RAPPORTEUR` | Appointment of rapporteur |
+| `COMMITTEE_DEBATE` | Deliberations in committee |
+| `COMMITTEE_VOTE` | Committee vote |
+| `REFERRAL` | Proposal referred to plenary |
+| `INTERINSTITUTIONAL_NEGOTIATION` | Interinstitutional negotiation (trilogue) |
+| `PUBLICATION_OFFICIAL_JOURNAL` | Publication in Official Journal |
+| `SIGNATURE` | Signature |
+| `PROCEEDING_ACTIVITY` | Proceeding activity |
+
+##### Procedure Types (`ep-procedure-types`) — 40+ terms
+
+Key legislative procedure type identifiers:
+
+| Identifier | Label | Description |
+|-----------|-------|-------------|
+| `COD` | Ordinary legislative procedure | Main EU legislative process (co-decision) |
+| `CNS` | Consultation procedure | Council consults Parliament |
+| `APP` | Consent procedure | Parliament must give consent |
+| `NLE` | Non-legislative procedure | Non-legislative enactment |
+| `BUD` | Budgetary procedure | EU budget process |
+| `DEC` | Discharge procedure | Budget discharge |
+| `INI` | Own-initiative procedure | Parliament's own initiative |
+| `INL` | Legislative initiative procedure | Parliament's legislative initiative |
+| `INS` | Institutional procedure | Institutional matters |
+| `IMM` | Members' immunity | Immunity proceedings |
+| `DEA` | Delegated acts | Examination of delegated acts |
+| `RSP` | Resolutions on topical subjects | Topical resolutions |
+
+##### Statuses (`ep-statuses`) — 24 terms
+
+| Identifier | Label |
+|-----------|-------|
+| `ACTIVE` | Active |
+| `ACTIVE_PROC` | Active procedure |
+| `ADOPTED` | Adopted |
+| `CANCELLED` | Cancelled |
+| `COMPLETED` | Completed |
+| `COMPLETED_PROC` | Completed procedure |
+| `LAPSED` | Lapsed |
+| `PENDING` | Pending |
+| `REJECTED` | Rejected |
+| `SUBMITTED` | Submitted |
+| `WITHDRAWN` | Withdrawn |
+| `WITHDRAWN_PROC` | Withdrawn procedure |
 
 ---
 
@@ -2363,14 +2474,14 @@ Several EP API feed endpoints are **significantly slower** than standard data en
 | `adopted-texts/feed` | Configurable | ~1 s | 30–60+ s | ✅ Usually fast; may slow during peak load |
 | `meps-declarations/feed` | Configurable | ~1 s | 10–30 s | ✅ Usually fast and reliable |
 | `external-documents/feed` | Configurable | ~1 s | 5–15 s | ✅ Usually fast and reliable |
-| `controlled-vocabularies/feed` | Fixed | ~6 s | 30–60+ s | ⚠️ Often returns HTTP 204 (no content) |
+| `controlled-vocabularies/feed` | Fixed | HTTP 204 | HTTP 204 | Returns 204 No Content (vocabularies rarely change) |
 | `meps/feed` | Configurable | ~9 s | 30–60+ s | ⚠️ May time out under load |
-| `plenary-session-documents/feed` | Fixed | 20–40 s | 60–120+ s | ⚠️ Slow; often returns error-in-body |
-| `parliamentary-questions/feed` | Fixed | 30–60 s | 60–120+ s | ⚠️ Slow; often returns error-in-body |
+| `plenary-session-documents/feed` | Fixed | 20–40 s | 60–120+ s | ⚠️ Slow; may return error-in-body |
+| `parliamentary-questions/feed` | Fixed | 30–60 s | 60–120+ s | ⚠️ Slow; may return error-in-body |
 | `procedures/feed` | Configurable | 30–60 s | 60–120+ s | ⚠️ May time out |
-| `plenary-documents/feed` | Fixed | 30–60 s | 60–120+ s | ⚠️ Often returns error-in-body |
+| `plenary-documents/feed` | Fixed | 30–60 s | 60–120+ s | ⚠️ May return error-in-body |
 | `events/feed` | Configurable | 30–60 s | 60–120+ s | ⚠️ May time out |
-| `committee-documents/feed` | Fixed | 30–60 s | 60–120+ s | ⚠️ Often returns error-in-body |
+| `committee-documents/feed` | Fixed | 30–60 s | 60–120+ s | ⚠️ May return error-in-body |
 | `documents/feed` | Fixed | 60–120 s | 120+ s | ⚠️ Very slow; frequently times out |
 | `corporate-bodies/feed` | Fixed | 60–180 s | 180+ s | ⚠️ Slowest feed; frequently times out |
 
