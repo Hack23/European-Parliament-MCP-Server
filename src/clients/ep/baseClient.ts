@@ -476,6 +476,39 @@ export class BaseEPClient {
   }
 
   /**
+   * Empty JSON-LD shape returned for bodyless responses (HTTP 204, content-length: 0).
+   * @private
+   */
+  private static readonly EMPTY_JSONLD = Object.freeze({ data: [], '@context': [] });
+
+  /**
+   * Parses the response body based on content-length header.
+   * Returns `undefined` when content-length is absent or non-finite (caller
+   * should fall through to streamed-body parsing).
+   * @private
+   */
+  private async parseByContentLength<T>(response: Response): Promise<T | undefined> {
+    const contentLength = response.headers.get('content-length');
+    if (contentLength === null) return undefined;
+
+    const bytes = Number.parseInt(contentLength, 10);
+    if (!Number.isFinite(bytes) || bytes < 0) return undefined;
+
+    if (bytes === 0) {
+      await response.body?.cancel();
+      return BaseEPClient.EMPTY_JSONLD as unknown as T;
+    }
+    if (bytes > this.maxResponseBytes) {
+      await response.body?.cancel();
+      throw new APIError(
+        `EP API response too large: ${String(bytes)} bytes exceeds limit of ${String(this.maxResponseBytes)} bytes`,
+        413
+      );
+    }
+    return BaseEPClient.parseResponseJson<T>(response);
+  }
+
+  /**
    * Executes the HTTP fetch with timeout/abort support and response size guard.
    * @param url - Fully resolved request URL
    * @param endpoint - Relative endpoint path (for error messages)
@@ -520,44 +553,17 @@ export class BaseEPClient {
 
         // HTTP 204 No Content — some EP API feed endpoints (e.g.
         // controlled-vocabularies/feed) return 204 when no updates exist.
-        // The response has no body and no Content-Type header, so skip
-        // content-type validation and body parsing entirely.
         if (response.status === 204) {
           await response.body?.cancel();
-          return { data: [], '@context': [] } as unknown as T;
+          return BaseEPClient.EMPTY_JSONLD as unknown as T;
         }
 
         // Validate content-type to reject non-JSON responses early.
         BaseEPClient.validateContentType(response);
 
-        // Guard against oversized responses to prevent memory exhaustion.
-        const contentLength = response.headers.get('content-length');
-        if (contentLength !== null) {
-          const bytes = Number.parseInt(contentLength, 10);
-          // Non-finite / negative values (e.g. garbled header) are treated as
-          // "no content-length" and fall through to readStreamedBody() which
-          // enforces the byte cap incrementally.
-          if (Number.isFinite(bytes) && bytes >= 0) {
-            // Empty body (content-length: 0) — the EP API returns this for
-            // out-of-range offsets or when no data exists.  Return a minimal
-            // JSON-LD shape so callers get an empty `data` array instead of a
-            // JSON parse error.
-            if (bytes === 0) {
-              await response.body?.cancel();
-              return { data: [], '@context': [] } as unknown as T;
-            }
-            if (bytes > this.maxResponseBytes) {
-              // Cancel/drain the body before throwing so the underlying TCP
-              // connection can be returned to the pool and reused.
-              await response.body?.cancel();
-              throw new APIError(
-                `EP API response too large: ${String(bytes)} bytes exceeds limit of ${String(this.maxResponseBytes)} bytes`,
-                413
-              );
-            }
-            return BaseEPClient.parseResponseJson<T>(response);
-          }
-        }
+        // Try content-length-based parsing first.
+        const clResult = await this.parseByContentLength<T>(response);
+        if (clResult !== undefined) return clResult;
 
         // No content-length header (chunked encoding) — stream the body and
         // enforce the cap incrementally so oversized responses are aborted
