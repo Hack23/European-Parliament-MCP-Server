@@ -248,10 +248,36 @@ function padRight(str: string, len: number): string {
 const EP_API_MAX_PAGE_SIZE = 1000;
 
 /**
+ * Maximum consecutive pages with zero matches before early termination.
+ *
+ * Some EP API endpoints (`/speeches`, `/events`, `/procedures`,
+ * `/committee-documents`, `/external-documents`) do NOT support the
+ * `year` query parameter — the API silently ignores it and returns
+ * ALL records regardless.  Without early termination the script would
+ * paginate through the entire dataset (100 k+ records for speeches)
+ * with zero year-matched results, wasting time and API quota.
+ *
+ * When this many consecutive pages yield no records matching the
+ * target year, pagination stops and the result is reported as an
+ * API_ERROR with a descriptive message.
+ */
+const MAX_CONSECUTIVE_EMPTY_PAGES = 3;
+
+/**
+ * Absolute upper bound on pages fetched per metric.
+ *
+ * Safety net to prevent runaway pagination even for endpoints that
+ * do support year filtering — if the dataset is enormous (e.g.
+ * parliamentary questions spanning decades) this caps the effort.
+ */
+const MAX_PAGES_PER_METRIC = 200;
+
+/**
  * Count the total number of items for a metric by paginating through
  * the EP API.  Pages are fetched with `limit = EP_API_MAX_PAGE_SIZE`
  * (the server-side cap) and the item counts are summed.  Pagination
- * stops when a page returns fewer items than the limit.
+ * stops when a page returns fewer items than the limit, or when the
+ * absolute page limit ({@link MAX_PAGES_PER_METRIC}) is reached.
  *
  * This replaces the earlier `limit: 1` probe approach which always
  * returned `total = 1` because the client computes
@@ -274,6 +300,11 @@ async function countItems(
       totalCount += result.data.length;
       if (pageNum === 1 || pageNum % 3 === 0 || !result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) {
         progress(`📊 ${label}: page ${String(pageNum)}, ${String(totalCount)} items so far (${formatElapsed(Date.now() - fetchStart)})`);
+      }
+      // Safety: absolute page limit
+      if (pageNum >= MAX_PAGES_PER_METRIC) {
+        progress(`⚠️  ${label}: reached max page limit (${String(MAX_PAGES_PER_METRIC)}), stopping at ${String(totalCount)} items`);
+        break;
       }
       if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
       offset += EP_API_MAX_PAGE_SIZE;
@@ -327,9 +358,15 @@ function extractRecordDate(item: { id?: string; date?: string }): string | null 
  *
  * The EP API ignores `dateFrom`/`dateTo` params on most endpoints,
  * returning all records for the given `year` regardless of date range.
- * This function fetches ALL items, extracts dates from each record
- * (from the `date` field or by parsing the `id`), and buckets items
- * into months client-side.
+ * This function fetches items, extracts dates from each record (from
+ * the `date` field or by parsing the `id`), and buckets items into
+ * months client-side.
+ *
+ * **Early termination:** If {@link MAX_CONSECUTIVE_EMPTY_PAGES}
+ * consecutive pages contain zero records matching the target year,
+ * pagination stops.  This prevents runaway iteration on endpoints
+ * that do not support server-side year filtering (e.g. `/speeches`,
+ * `/events`).
  *
  * Returns per-month counts (12 elements, Jan=0..Dec=11) and the total.
  * Items whose date doesn't match the target year are excluded from
@@ -345,6 +382,7 @@ async function countItemsGroupedByMonth(
   let undated = 0;
   let offset = 0;
   let pageNum = 0;
+  let consecutiveEmptyPages = 0;
   const yearStr = String(year);
   const fetchStart = Date.now();
 
@@ -354,6 +392,7 @@ async function countItemsGroupedByMonth(
     for (;;) {
       pageNum++;
       const result = await fetcher({ limit: EP_API_MAX_PAGE_SIZE, offset });
+      let pageMatches = 0;
       for (const item of result.data) {
         const dateStr = extractRecordDate(item);
         if (!dateStr || !dateStr.startsWith(yearStr)) {
@@ -361,13 +400,42 @@ async function countItemsGroupedByMonth(
           continue; // skip items without a parseable date in the target year
         }
         totalCount++;
+        pageMatches++;
         const monthIdx = Number.parseInt(dateStr.substring(5, 7), 10) - 1;
         if (monthIdx >= 0 && monthIdx < 12) {
           monthlyCounts[monthIdx]++;
         }
       }
+
+      // Track consecutive pages with zero matches for early termination
+      consecutiveEmptyPages = pageMatches > 0 ? 0 : consecutiveEmptyPages + 1;
+
       // Show progress every page
       progress(`📊 ${label}: page ${String(pageNum)}, ${String(totalCount)} matched ${yearStr}, ${String(undated)} outside (${formatElapsed(Date.now() - fetchStart)})`);
+
+      // Early termination: too many consecutive pages without matches.
+      // This means the API endpoint does not support year filtering and
+      // is returning the entire unfiltered dataset.
+      if (consecutiveEmptyPages >= MAX_CONSECUTIVE_EMPTY_PAGES && totalCount === 0) {
+        const note = `EP API does not filter by year for ${label} — ${String(pageNum)} pages fetched with 0 matches for ${yearStr}. ` +
+          `Endpoint likely ignores the year parameter.`;
+        progress(`⚠️  ${label}: early termination after ${String(pageNum)} pages with 0 matches`);
+        return { total: null, monthlyCounts, error: note };
+      }
+
+      // Early termination: we found some matches earlier but now seeing
+      // consecutive empty pages — likely exhausted all records for this year.
+      if (consecutiveEmptyPages >= MAX_CONSECUTIVE_EMPTY_PAGES && totalCount > 0) {
+        progress(`✅ ${label}: ${String(totalCount)} items in ${yearStr} (early stop after ${String(consecutiveEmptyPages)} empty pages, ${formatElapsed(Date.now() - fetchStart)})`);
+        break;
+      }
+
+      // Safety: absolute page limit
+      if (pageNum >= MAX_PAGES_PER_METRIC) {
+        progress(`⚠️  ${label}: reached max page limit (${String(MAX_PAGES_PER_METRIC)}), stopping`);
+        break;
+      }
+
       if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
       offset += EP_API_MAX_PAGE_SIZE;
     }
@@ -444,9 +512,16 @@ async function validateYearAgainstAPI(
 
   // ── Metrics with date bucketing ────────────────────────────────
   // Records from these endpoints have dates extractable from their
-  // `date` field or ID.  We fetch all items and bucket client-side.
+  // `date` field or ID.  We fetch items and bucket client-side.
   //
-  // Parliamentary Questions use server-side dateFrom/dateTo per month.
+  // EP API year-filter support per endpoint (from OpenAPI spec):
+  //   /meetings (plenary sessions): ✅ supports `year` param
+  //   /speeches:                     ❌ NO `year` — use `sitting-date` + `sitting-date-end`
+  //   /events:                       ❌ NO `year` or date params — client-side only
+  //   /parliamentary-questions:      ✅ supports `year` (derived from dateFrom)
+  //
+  // Endpoints without server-side filtering rely on early termination
+  // (MAX_CONSECUTIVE_EMPTY_PAGES) to avoid downloading the entire dataset.
   const monthlyMetrics: Array<{
     label: string;
     storedKey: keyof YearlyStats;
@@ -455,6 +530,7 @@ async function validateYearAgainstAPI(
     {
       label: 'Plenary Sessions',
       storedKey: 'plenarySessions',
+      // EP API `/meetings` supports `year` ✅ — server-side filtered.
       // Session IDs contain dates: MTG-PL-2025-01-20
       count: () => countItemsGroupedByMonth('Plenary Sessions', year, (p) =>
         client.getPlenarySessions({ year, ...p })
@@ -463,13 +539,19 @@ async function validateYearAgainstAPI(
     {
       label: 'Speeches',
       storedKey: 'speeches',
+      // EP API `/speeches` does NOT support `year` ❌ — it supports
+      // `sitting-date` and `sitting-date-end` for date-range filtering.
+      // We use dateFrom/dateTo which the client maps to the API params.
+      // Early termination prevents downloading all 100k+ speeches.
       count: () => countItemsGroupedByMonth('Speeches', year, (p) =>
-        client.getSpeeches({ year, ...p })
+        client.getSpeeches({ dateFrom: `${String(year)}-01-01`, dateTo: `${String(year)}-12-31`, ...p })
       ),
     },
     {
       label: 'Events',
       storedKey: 'events',
+      // EP API `/events` does NOT support `year` or any date filter ❌.
+      // Client-side bucketing with early termination.
       count: () => countItemsGroupedByMonth('Events', year, (p) =>
         client.getEvents({ year, ...p })
       ),
@@ -477,9 +559,8 @@ async function validateYearAgainstAPI(
     {
       label: 'Parliamentary Questions',
       storedKey: 'parliamentaryQuestions',
-      // Fetch once per year and bucket client-side by question date to
-      // avoid relying on server-side dateFrom/dateTo filtering (the client
-      // only forwards `year` derived from dateFrom, not actual date bounds).
+      // EP API `/parliamentary-questions` supports `year` ✅ (derived
+      // from dateFrom in the client).
       count: () => countItemsGroupedByMonth('Parliamentary Questions', year, (p) =>
         client.getParliamentaryQuestions({ dateFrom: `${String(year)}-01-01`, dateTo: `${String(year)}-12-31`, ...p })
       ),
@@ -489,6 +570,14 @@ async function validateYearAgainstAPI(
   // ── Metrics using simple pagination counting ───────────────────
   // These endpoints don't have easily extractable dates per record,
   // or the data volume makes full-item fetching impractical.
+  //
+  // EP API year-filter support (from OpenAPI spec):
+  //   /adopted-texts:       ✅ supports `year`
+  //   /procedures:          ❌ NO `year` — returns ALL procedures (count may be inaccurate)
+  //   /plenary-documents:   ✅ supports `year`
+  //   /committee-documents: ❌ NO `year` — returns ALL (count may be inaccurate)
+  //   /external-documents:  ❌ NO `year` — returns ALL (count may be inaccurate)
+  //   /meps-declarations:   ✅ supports `year`
   const yearlyMetrics: Array<{
     label: string;
     storedKey: keyof YearlyStats;

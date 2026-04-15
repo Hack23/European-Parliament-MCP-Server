@@ -59,7 +59,13 @@ export class LegislativeClient extends BaseEPClient {
    * Returns legislative procedures.
    * **EP API Endpoint:** `GET /procedures`
    *
-   * @param params - year, limit, offset
+   * **Note:** The EP API `/procedures` endpoint does **not** support a
+   * `year` query parameter per the OpenAPI spec — it only has
+   * `process-type`.  The `year` parameter is accepted here for interface
+   * consistency but the API silently ignores it and returns ALL procedures.
+   * Callers needing year-specific counts must filter client-side.
+   *
+   * @param params - year (ignored by API), limit, offset
    * @returns Paginated list of procedures
    */
   async getProcedures(params: {
@@ -74,6 +80,8 @@ export class LegislativeClient extends BaseEPClient {
       offset,
       limit,
     };
+    // Note: `year` is NOT a valid param for /procedures per EP API spec.
+    // Kept for interface consistency; the API ignores it.
     if (params.year !== undefined) apiParams['year'] = params.year;
 
     const response = await this.get<JSONLDResponse>('procedures', apiParams);

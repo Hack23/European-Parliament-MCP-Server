@@ -310,7 +310,11 @@ export class PlenaryClient extends BaseEPClient {
    * Returns EP events (hearings, conferences, etc.).
    * **EP API Endpoint:** `GET /events`
    *
-   * The EP API supports filtering by `year` (recommended for annual counts).
+   * **Note:** The EP API `/events` endpoint does **not** support `year`,
+   * `date-from`, or `date-to` query parameters — it has no date filtering
+   * at all per the OpenAPI spec.  The `year`/`dateFrom`/`dateTo` parameters
+   * are accepted here for interface consistency but the API silently ignores
+   * them and returns ALL events regardless.  Callers must filter client-side.
    */
   async getEvents(params: {
     year?: number;
@@ -327,9 +331,8 @@ export class PlenaryClient extends BaseEPClient {
       offset,
       limit,
     };
-    if (params.year !== undefined) apiParams['year'] = params.year;
-    if (params.dateFrom !== undefined) apiParams['date-from'] = params.dateFrom;
-    if (params.dateTo !== undefined) apiParams['date-to'] = params.dateTo;
+    // Note: `year`, `date-from`, `date-to` are NOT valid params for /events.
+    // The API ignores them — callers must filter client-side.
 
     const response = await this.get<JSONLDResponse>('events', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];

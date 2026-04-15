@@ -2414,7 +2414,7 @@ describe('EuropeanParliamentClient', () => {
       expect(speech).toHaveProperty('sessionReference');
     });
 
-    it('should pass date-from and date-to parameters', async () => {
+    it('should pass sitting-date and sitting-date-end parameters', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -2424,12 +2424,12 @@ describe('EuropeanParliamentClient', () => {
       await client.getSpeeches({ dateFrom: '2024-01-01', dateTo: '2024-06-30' });
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('date-from=2024-01-01'),
+        expect.stringContaining('sitting-date=2024-01-01'),
         expect.any(Object)
       );
     });
 
-    it('should pass year parameter', async () => {
+    it('should not pass year parameter (EP API /speeches does not support it)', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -2438,10 +2438,9 @@ describe('EuropeanParliamentClient', () => {
 
       await client.getSpeeches({ year: 2024 });
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('year=2024'),
-        expect.any(Object)
-      );
+      // year is NOT a valid param for /speeches — it should not appear in the URL
+      const url = mockFetch.mock.calls[0]?.[0] as string;
+      expect(url).not.toContain('year=');
     });
 
     it('should handle empty results', async () => {
@@ -2706,7 +2705,7 @@ describe('EuropeanParliamentClient', () => {
       expect(event).toHaveProperty('status');
     });
 
-    it('should pass date range parameters', async () => {
+    it('should not pass date range parameters (EP API /events has no date filtering)', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -2715,13 +2714,13 @@ describe('EuropeanParliamentClient', () => {
 
       await client.getEvents({ dateFrom: '2024-06-01', dateTo: '2024-06-30' });
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('date-from=2024-06-01'),
-        expect.any(Object)
-      );
+      // /events does not support date-from/date-to — they should not appear in the URL
+      const url = mockFetch.mock.calls[0]?.[0] as string;
+      expect(url).not.toContain('date-from=');
+      expect(url).not.toContain('date-to=');
     });
 
-    it('should pass year parameter', async () => {
+    it('should not pass year parameter (EP API /events does not support it)', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -2730,10 +2729,9 @@ describe('EuropeanParliamentClient', () => {
 
       await client.getEvents({ year: 2024 });
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('year=2024'),
-        expect.any(Object)
-      );
+      // /events does not support year — it should not appear in the URL
+      const url = mockFetch.mock.calls[0]?.[0] as string;
+      expect(url).not.toContain('year=');
     });
 
     it('should handle API errors', async () => {
