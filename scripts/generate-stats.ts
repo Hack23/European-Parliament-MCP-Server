@@ -332,26 +332,52 @@ async function countItems(
 }
 
 /**
- * Extract a YYYY-MM-DD date string from either the `date` field or the `id`.
+ * Extract a YYYY-MM-DD date string from an EP API record.
  *
- * Some EP API endpoints return empty `date` fields in their transformed
- * records, but embed dates in the record ID:
- * - Plenary sessions: `MTG-PL-2025-01-20`
- * - Events: `eli/dl/event/1972-0003-ANPRO-1972-11-06`
- * - Speeches: `eli/dl/event/MTG-PL-2023-10-17-OTH-20390000`
+ * EP API endpoints return dates in different shapes depending on the
+ * endpoint and whether the client has normalised the response:
  *
- * This regex extracts the first YYYY-MM-DD pattern found in the id.
+ * - **Normalised records:** `item.date` is a `YYYY-MM-DD` string.
+ * - **Raw EP API shapes:** date may be in nested objects like
+ *   `activity_date.@value` (speeches), `activity_start_date.@value`
+ *   (events), or `had_activity_date.@value` (various).
+ * - **ID-embedded dates:** Plenary sessions (`MTG-PL-2025-01-20`),
+ *   Events (`eli/dl/event/1972-0003-ANPRO-1972-11-06`), and Speeches
+ *   (`eli/dl/event/MTG-PL-2023-10-17-OTH-20390000`) embed dates in
+ *   the record ID.
+ *
+ * This function tries each strategy in order: normalised `date` field,
+ * known nested EP API date objects, then regex extraction from the `id`.
  */
 const DATE_PATTERN = /\b(\d{4})-(\d{2})-(\d{2})\b/;
 
-function extractRecordDate(item: { id?: string; date?: string }): string | null {
-  // Prefer the explicit date field if it looks like a date
-  if (item.date && DATE_PATTERN.test(item.date)) {
-    return item.date.substring(0, 10);
+function extractRecordDate(item: Record<string, unknown>): string | null {
+  // 1. Prefer the normalised `date` field if it looks like a date
+  const dateField = item['date'];
+  if (typeof dateField === 'string' && DATE_PATTERN.test(dateField)) {
+    return dateField.substring(0, 10);
   }
-  // Fall back to extracting a date from the id field
-  if (item.id) {
-    const match = DATE_PATTERN.exec(item.id);
+
+  // 2. Try known EP API nested date shapes
+  const nestedDateFields = [
+    'activity_date',
+    'activity_start_date',
+    'had_activity_date',
+  ] as const;
+  for (const field of nestedDateFields) {
+    const nested: unknown = item[field];
+    if (nested && typeof nested === 'object' && nested !== null) {
+      const value = (nested as Record<string, unknown>)['@value'];
+      if (typeof value === 'string' && DATE_PATTERN.test(value)) {
+        return value.substring(0, 10);
+      }
+    }
+  }
+
+  // 3. Fall back to extracting a date from the `id` field
+  const idField = item['id'];
+  if (typeof idField === 'string') {
+    const match = DATE_PATTERN.exec(idField);
     if (match) {
       return `${match[1]}-${match[2]}-${match[3]}`;
     }
@@ -381,11 +407,11 @@ function extractRecordDate(item: { id?: string; date?: string }): string | null 
 async function countItemsGroupedByMonth(
   label: string,
   year: number,
-  fetcher: (params: { limit: number; offset: number }) => Promise<{ data: Array<{ id?: string; date?: string }>; hasMore: boolean }>
+  fetcher: (params: { limit: number; offset: number }) => Promise<{ data: Array<Record<string, unknown>>; hasMore: boolean }>
 ): Promise<{ total: number | null; monthlyCounts: number[]; error?: string }> {
   const monthlyCounts: number[] = new Array<number>(12).fill(0);
   let totalCount = 0;
-  let undated = 0;
+  let outsideYearOrUndated = 0;
   let offset = 0;
   let pageNum = 0;
   let consecutiveEmptyPages = 0;
@@ -402,8 +428,8 @@ async function countItemsGroupedByMonth(
       for (const item of result.data) {
         const dateStr = extractRecordDate(item);
         if (!dateStr || !dateStr.startsWith(yearStr)) {
-          undated++;
-          continue; // skip items without a parseable date in the target year
+          outsideYearOrUndated++;
+          continue; // skip items without a parseable date or outside the target year
         }
         totalCount++;
         pageMatches++;
@@ -417,7 +443,7 @@ async function countItemsGroupedByMonth(
       consecutiveEmptyPages = pageMatches > 0 ? 0 : consecutiveEmptyPages + 1;
 
       // Show progress every page
-      progress(`📊 ${label}: page ${String(pageNum)}, ${String(totalCount)} matched ${yearStr}, ${String(undated)} outside (${formatElapsed(Date.now() - fetchStart)})`);
+      progress(`📊 ${label}: page ${String(pageNum)}, ${String(totalCount)} matched ${yearStr}, ${String(outsideYearOrUndated)} outside year or undated (${formatElapsed(Date.now() - fetchStart)})`);
 
       // Early termination: too many consecutive pages without matches.
       // This means the API endpoint does not support year filtering and
@@ -458,8 +484,8 @@ async function countItemsGroupedByMonth(
     const monthSummary = monthlyCounts
       .map((c, i) => `${monthNames[i] ?? ''}:${String(c)}`)
       .join(' ');
-    const undatedNote = undated > 0 ? ` (${String(undated)} outside ${yearStr})` : '';
-    console.log(`    ${DIM}📅 ${monthSummary} = ${String(totalCount)}${undatedNote}${RESET}`);
+    const outsideNote = outsideYearOrUndated > 0 ? ` (${String(outsideYearOrUndated)} outside year or undated for ${yearStr})` : '';
+    console.log(`    ${DIM}📅 ${monthSummary} = ${String(totalCount)}${outsideNote}${RESET}`);
     progress(`✅ ${label}: ${String(totalCount)} items in ${yearStr} (${formatElapsed(Date.now() - fetchStart)})`);
 
     return { total: totalCount, monthlyCounts };

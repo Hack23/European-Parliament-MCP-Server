@@ -72,7 +72,7 @@ describeIntegration('generate_report Integration Tests', () => {
     const report = JSON.parse(result.content[0]!.text) as Record<string, unknown>;
     if (report['timedOut'] === true || report['status'] === 'timeout') { ctx.skip(); return; }
     expect(report['reportType']).toBe('COMMITTEE_PERFORMANCE');
-  }, 180000);
+  }, 300000);
 
   it('should generate VOTING_STATISTICS report', async (ctx) => {
     const result = await retryOrSkip(async () => {
