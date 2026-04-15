@@ -1179,10 +1179,10 @@ function syncPoliticalLandscapeWithMepCount(
     return content;
   }
 
-  // Update NI seats in the POLITICAL_LANDSCAPE for all years sharing the
-  // same composition (latest year and forward). The POLITICAL_LANDSCAPE
-  // entries for recent years within the same EP term typically share the
-  // same group composition.
+  // Update NI seats in the POLITICAL_LANDSCAPE for the latest year and any
+  // future years within the same EP term. Future years inherit the current
+  // term's group structure until explicitly updated, so they must be kept
+  // in sync to maintain internal consistency.
   let updated = content;
   const yearsToSync = GENERATED_STATS.yearlyStats
     .filter((y) => y.year >= latestCoveredYear)
@@ -1202,10 +1202,10 @@ function syncPoliticalLandscapeWithMepCount(
     );
     const newContent = updated.replace(niPattern, `$1${String(newNiSeats)}$2`);
     if (newContent !== updated) {
-      // Also update the NI seatShare
+      // Also update the NI seatShare (handle both "4.7" and "4" formats)
       const newSeatShare = Math.round((newNiSeats / newMepCount) * 1000) / 10;
       const sharePattern = new RegExp(
-        `^(\\s*${String(year)}:.*?name:\\s*'NI',\\s*seats:\\s*${String(newNiSeats)},\\s*seatShare:\\s*)\\d+\\.\\d+(.*$)`,
+        `^(\\s*${String(year)}:.*?name:\\s*'NI',\\s*seats:\\s*${String(newNiSeats)},\\s*seatShare:\\s*)\\d+(?:\\.\\d+)?(.*$)`,
         'm'
       );
       const shareUpdated = newContent.replace(sharePattern, `$1${String(newSeatShare)}$2`);
