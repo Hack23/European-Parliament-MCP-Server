@@ -208,9 +208,12 @@ export class DocumentClient extends BaseEPClient {
   /**
    * Returns committee documents.
    * **EP API Endpoint:** `GET /committee-documents`
+   *
+   * **Note:** The EP API `/committee-documents` endpoint does **not**
+   * support a `year` query parameter per the OpenAPI spec.
+   * Only pagination (limit/offset) is supported.
    */
   async getCommitteeDocuments(params: {
-    year?: number;
     limit?: number;
     offset?: number;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
@@ -221,7 +224,8 @@ export class DocumentClient extends BaseEPClient {
       offset,
       limit,
     };
-    if (params.year !== undefined) apiParams['year'] = params.year;
+    // Note: `year` is NOT a valid param for /committee-documents per EP API spec.
+    // Not forwarded to avoid misleading callers or future API validation failures.
 
     const response = await this.get<JSONLDResponse>('committee-documents', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];
@@ -278,9 +282,12 @@ export class DocumentClient extends BaseEPClient {
   /**
    * Returns all External Documents.
    * **EP API Endpoint:** `GET /external-documents`
+   *
+   * **Note:** The EP API `/external-documents` endpoint does **not**
+   * support a `year` query parameter per the OpenAPI spec.
+   * Only pagination (limit/offset) is supported.
    */
   async getExternalDocuments(params: {
-    year?: number;
     limit?: number;
     offset?: number;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
@@ -291,7 +298,8 @@ export class DocumentClient extends BaseEPClient {
       offset,
       limit,
     };
-    if (params.year !== undefined) apiParams['year'] = params.year;
+    // Note: `year` is NOT a valid param for /external-documents per EP API spec.
+    // Not forwarded to avoid misleading callers or future API validation failures.
 
     const response = await this.get<JSONLDResponse>('external-documents', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];

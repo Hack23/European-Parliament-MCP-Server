@@ -842,7 +842,7 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('groupSentiments');
       expect(parsed).toHaveProperty('polarizationIndex');
-    }, 90000);
+    }, 120000);
   });
 
   describe('Phase 6 OSINT Tool: early_warning_system', () => {
@@ -976,9 +976,14 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       );
       if (!result) { ctx.skip(); return; }
       if (result.isError === true) { ctx.skip(); return; }
-      const parsed = parseAndValidateNoMockData(result) as { data: unknown[]; dataQualityWarnings?: string[] };
-      expect(parsed).toHaveProperty('data');
-      expect(Array.isArray(parsed.data)).toBe(true);
+      const parsed = parseAndValidateNoMockData(result) as Record<string, unknown>;
+      // Skip for transient upstream errors (e.g. 404/503 from EP API)
+      if (typeof parsed === 'object' && parsed !== null && 'error' in parsed) { ctx.skip(); return; }
+      // Fail with a clear message for genuinely unexpected response shapes
+      if (!(typeof parsed === 'object' && parsed !== null && 'data' in parsed)) {
+        expect.fail(`Expected parsed response to be an object with a 'data' property, got: ${JSON.stringify(parsed).substring(0, 200)}`);
+      }
+      expect(Array.isArray(parsed['data'])).toBe(true);
     }, 120000);
   });
 
@@ -991,10 +996,15 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       );
       if (!result) { ctx.skip(); return; }
       if (result.isError === true) { ctx.skip(); return; }
-      const parsed = parseAndValidateNoMockData(result) as { data: unknown[]; dataQualityWarnings?: string[] };
-      expect(parsed).toHaveProperty('data');
-      expect(Array.isArray(parsed.data)).toBe(true);
-    }, 120000);
+      const parsed = parseAndValidateNoMockData(result) as Record<string, unknown>;
+      // Skip for transient upstream errors (e.g. 404/503 from EP API)
+      if (typeof parsed === 'object' && parsed !== null && 'error' in parsed) { ctx.skip(); return; }
+      // Fail with a clear message for genuinely unexpected response shapes
+      if (!(typeof parsed === 'object' && parsed !== null && 'data' in parsed)) {
+        expect.fail(`Expected parsed response to be an object with a 'data' property, got: ${JSON.stringify(parsed).substring(0, 200)}`);
+      }
+      expect(Array.isArray(parsed['data'])).toBe(true);
+    }, 180000);
   });
 
   describe('Feed Tool: get_adopted_texts_feed', () => {
@@ -1067,7 +1077,7 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
-    }, 120000);
+    }, 180000);
   });
 
   describe('Feed Tool: get_plenary_session_documents_feed', () => {
@@ -1111,7 +1121,7 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
-    }, 120000);
+    }, 180000);
   });
 
   describe('Feed Tool: get_corporate_bodies_feed', () => {

@@ -248,14 +248,43 @@ function padRight(str: string, len: number): string {
 const EP_API_MAX_PAGE_SIZE = 1000;
 
 /**
+ * Maximum consecutive pages with zero matches before early termination.
+ *
+ * Some EP API endpoints (`/speeches`, `/events`, `/procedures`,
+ * `/committee-documents`, `/external-documents`) do NOT support the
+ * `year` query parameter — the API silently ignores it and returns
+ * ALL records regardless.  Without early termination the script would
+ * paginate through the entire dataset (100k+ records for speeches)
+ * with zero year-matched results, wasting time and API quota.
+ *
+ * When this many consecutive pages yield no records matching the
+ * target year, pagination stops and the result is reported as an
+ * API_ERROR with a descriptive message.
+ */
+const MAX_CONSECUTIVE_EMPTY_PAGES = 3;
+
+/**
+ * Absolute upper bound on pages fetched per metric.
+ *
+ * Safety net to prevent runaway pagination even for endpoints that
+ * do support year filtering — if the dataset is enormous (e.g.
+ * parliamentary questions spanning decades) this caps the effort.
+ */
+const MAX_PAGES_PER_METRIC = 200;
+
+/**
  * Count the total number of items for a metric by paginating through
  * the EP API.  Pages are fetched with `limit = EP_API_MAX_PAGE_SIZE`
  * (the server-side cap) and the item counts are summed.  Pagination
- * stops when a page returns fewer items than the limit.
+ * stops when a page returns fewer items than the limit, or when the
+ * absolute page limit ({@link MAX_PAGES_PER_METRIC}) is reached.
  *
- * This replaces the earlier `limit: 1` probe approach which always
- * returned `total = 1` because the client computes
- * `PaginatedResponse.total` as `items.length + offset`.
+ * When the page limit is reached, a lightweight probe (limit: 1) is
+ * sent to confirm whether more data actually exists — the EP client
+ * uses a heuristic (`items.length === limit`) for `hasMore`, which
+ * gives a false positive when a dataset ends on a page-aligned
+ * boundary.  If the probe returns 0 items, the count is treated as
+ * complete.
  *
  * Returns the total count or null on failure.
  */
@@ -275,7 +304,34 @@ async function countItems(
       if (pageNum === 1 || pageNum % 3 === 0 || !result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) {
         progress(`📊 ${label}: page ${String(pageNum)}, ${String(totalCount)} items so far (${formatElapsed(Date.now() - fetchStart)})`);
       }
+      // Natural termination — check BEFORE the safety cap so that
+      // a dataset that happens to end exactly on page MAX_PAGES_PER_METRIC
+      // returns a successful count instead of an error.
       if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
+
+      // Safety: absolute page limit — reached only when hasMore is still
+      // true (natural termination was checked first above).
+      // Because the EP client uses a heuristic for hasMore
+      // (items.length === limit), a dataset ending exactly on page
+      // MAX_PAGES_PER_METRIC with a full page would still report
+      // hasMore=true.  Do a lightweight probe (limit: 1) to confirm
+      // whether more data actually exists before declaring incomplete.
+      if (pageNum >= MAX_PAGES_PER_METRIC) {
+        try {
+          const probe = await fetcher({ limit: 1, offset: offset + EP_API_MAX_PAGE_SIZE });
+          if (probe.data.length === 0) {
+            // Dataset exhausted — the heuristic hasMore was a false positive
+            progress(`✅ ${label}: ${String(totalCount)} items total (probe confirmed complete, ${formatElapsed(Date.now() - fetchStart)})`);
+            return { total: totalCount };
+          }
+          // Probe returned data — genuinely incomplete
+        } catch {
+          // Probe failed — treat conservatively as incomplete
+        }
+        const note = `Reached max page limit (${String(MAX_PAGES_PER_METRIC)}) for ${label} — count of ${String(totalCount)} is incomplete.`;
+        progress(`⚠️  ${label}: ${note}`);
+        return { total: null, error: note };
+      }
       offset += EP_API_MAX_PAGE_SIZE;
     }
     progress(`✅ ${label}: ${String(totalCount)} items total (${formatElapsed(Date.now() - fetchStart)})`);
@@ -295,26 +351,52 @@ async function countItems(
 }
 
 /**
- * Extract a YYYY-MM-DD date string from either the `date` field or the `id`.
+ * Extract a YYYY-MM-DD date string from an EP API record.
  *
- * Some EP API endpoints return empty `date` fields in their transformed
- * records, but embed dates in the record ID:
- * - Plenary sessions: `MTG-PL-2025-01-20`
- * - Events: `eli/dl/event/1972-0003-ANPRO-1972-11-06`
- * - Speeches: `eli/dl/event/MTG-PL-2023-10-17-OTH-20390000`
+ * EP API endpoints return dates in different shapes depending on the
+ * endpoint and whether the client has normalised the response:
  *
- * This regex extracts the first YYYY-MM-DD pattern found in the id.
+ * - **Normalised records:** `item.date` is a `YYYY-MM-DD` string.
+ * - **Raw EP API shapes:** date may be in nested objects like
+ *   `activity_date.@value` (speeches), `activity_start_date.@value`
+ *   (events), or `had_activity_date.@value` (various).
+ * - **ID-embedded dates:** Plenary sessions (`MTG-PL-2025-01-20`),
+ *   Events (`eli/dl/event/1972-0003-ANPRO-1972-11-06`), and Speeches
+ *   (`eli/dl/event/MTG-PL-2023-10-17-OTH-20390000`) embed dates in
+ *   the record ID.
+ *
+ * This function tries each strategy in order: normalised `date` field,
+ * known nested EP API date objects, then regex extraction from the `id`.
  */
 const DATE_PATTERN = /\b(\d{4})-(\d{2})-(\d{2})\b/;
 
-function extractRecordDate(item: { id?: string; date?: string }): string | null {
-  // Prefer the explicit date field if it looks like a date
-  if (item.date && DATE_PATTERN.test(item.date)) {
-    return item.date.substring(0, 10);
+function extractRecordDate(item: Record<string, unknown>): string | null {
+  // 1. Prefer the normalised `date` field if it looks like a date
+  const dateField = item['date'];
+  if (typeof dateField === 'string' && DATE_PATTERN.test(dateField)) {
+    return dateField.substring(0, 10);
   }
-  // Fall back to extracting a date from the id field
-  if (item.id) {
-    const match = DATE_PATTERN.exec(item.id);
+
+  // 2. Try known EP API nested date shapes
+  const nestedDateFields = [
+    'activity_date',
+    'activity_start_date',
+    'had_activity_date',
+  ] as const;
+  for (const field of nestedDateFields) {
+    const nested: unknown = item[field];
+    if (nested && typeof nested === 'object' && nested !== null) {
+      const value = (nested as Record<string, unknown>)['@value'];
+      if (typeof value === 'string' && DATE_PATTERN.test(value)) {
+        return value.substring(0, 10);
+      }
+    }
+  }
+
+  // 3. Fall back to extracting a date from the `id` field
+  const idField = item['id'];
+  if (typeof idField === 'string') {
+    const match = DATE_PATTERN.exec(idField);
     if (match) {
       return `${match[1]}-${match[2]}-${match[3]}`;
     }
@@ -325,11 +407,23 @@ function extractRecordDate(item: { id?: string; date?: string }): string | null 
 /**
  * Count items by month for a given year using client-side date bucketing.
  *
- * The EP API ignores `dateFrom`/`dateTo` params on most endpoints,
- * returning all records for the given `year` regardless of date range.
- * This function fetches ALL items, extracts dates from each record
- * (from the `date` field or by parsing the `id`), and buckets items
- * into months client-side.
+ * Several EP API endpoints lack server-side year/date filtering entirely
+ * (e.g. `/events`, `/procedures`).  For these, this function fetches
+ * unfiltered pages, extracts dates from each record (from `date`,
+ * `activity_date.@value`, `activity_start_date.@value`,
+ * `had_activity_date.@value`, or by parsing the `id`), and buckets
+ * items into months client-side.
+ *
+ * **Early termination** (ordered endpoints): If
+ * {@link MAX_CONSECUTIVE_EMPTY_PAGES} consecutive pages contain zero
+ * records matching the target year *and* the endpoint's data is expected
+ * to be date-ordered, pagination stops.  The error message is tailored
+ * to the endpoint: when `yearFilterSupported` is true (default), the
+ * message reports a date-extraction or empty-year issue; when false,
+ * it explains the endpoint lacks server-side year filtering.
+ * For unordered endpoints (like `/events`), early termination is not
+ * applied — the function relies on the {@link MAX_PAGES_PER_METRIC}
+ * safety cap instead.
  *
  * Returns per-month counts (12 elements, Jan=0..Dec=11) and the total.
  * Items whose date doesn't match the target year are excluded from
@@ -338,13 +432,17 @@ function extractRecordDate(item: { id?: string; date?: string }): string | null 
 async function countItemsGroupedByMonth(
   label: string,
   year: number,
-  fetcher: (params: { limit: number; offset: number }) => Promise<{ data: Array<{ id?: string; date?: string }>; hasMore: boolean }>
+  fetcher: (params: { limit: number; offset: number }) => Promise<{ data: Array<Record<string, unknown>>; hasMore: boolean }>,
+  options?: { ordered?: boolean; yearFilterSupported?: boolean }
 ): Promise<{ total: number | null; monthlyCounts: number[]; error?: string }> {
+  const isOrdered = options?.ordered !== false; // default: true (ordered)
+  const supportsYearFilter = options?.yearFilterSupported !== false; // default: true
   const monthlyCounts: number[] = new Array<number>(12).fill(0);
   let totalCount = 0;
-  let undated = 0;
+  let outsideYearOrUndated = 0;
   let offset = 0;
   let pageNum = 0;
+  let consecutiveEmptyPages = 0;
   const yearStr = String(year);
   const fetchStart = Date.now();
 
@@ -354,21 +452,74 @@ async function countItemsGroupedByMonth(
     for (;;) {
       pageNum++;
       const result = await fetcher({ limit: EP_API_MAX_PAGE_SIZE, offset });
+      let pageMatches = 0;
       for (const item of result.data) {
         const dateStr = extractRecordDate(item);
         if (!dateStr || !dateStr.startsWith(yearStr)) {
-          undated++;
-          continue; // skip items without a parseable date in the target year
+          outsideYearOrUndated++;
+          continue; // skip items without a parseable date or outside the target year
         }
         totalCount++;
+        pageMatches++;
         const monthIdx = Number.parseInt(dateStr.substring(5, 7), 10) - 1;
         if (monthIdx >= 0 && monthIdx < 12) {
           monthlyCounts[monthIdx]++;
         }
       }
+
+      // Track consecutive pages with zero matches for early termination
+      consecutiveEmptyPages = pageMatches > 0 ? 0 : consecutiveEmptyPages + 1;
+
       // Show progress every page
-      progress(`📊 ${label}: page ${String(pageNum)}, ${String(totalCount)} matched ${yearStr}, ${String(undated)} outside (${formatElapsed(Date.now() - fetchStart)})`);
+      progress(`📊 ${label}: page ${String(pageNum)}, ${String(totalCount)} matched ${yearStr}, ${String(outsideYearOrUndated)} outside year or undated (${formatElapsed(Date.now() - fetchStart)})`);
+
+      // Early termination (ordered endpoints only): too many consecutive
+      // pages without matches.  For unordered endpoints (e.g. /events),
+      // skip this check — matching records may appear later in pagination.
+      if (isOrdered && consecutiveEmptyPages >= MAX_CONSECUTIVE_EMPTY_PAGES && totalCount === 0) {
+        const note = supportsYearFilter
+          ? `0 parseable dates matched year ${yearStr} for ${label} after ${String(pageNum)} pages — ` +
+            `date extraction may have failed or the year has no data.`
+          : `EP API does not support year filtering for ${label} — ` +
+            `${String(pageNum)} pages fetched with 0 matches for ${yearStr}. ` +
+            `This endpoint does not accept the year parameter per the EP API specification.`;
+        progress(`⚠️  ${label}: early termination after ${String(pageNum)} pages with 0 matches`);
+        return { total: null, monthlyCounts, error: note };
+      }
+
+      // Early termination (ordered endpoints only): we found some matches
+      // earlier but now seeing consecutive empty pages — likely exhausted
+      // all records for this year.
+      if (isOrdered && consecutiveEmptyPages >= MAX_CONSECUTIVE_EMPTY_PAGES && totalCount > 0) {
+        progress(`✅ ${label}: ${String(totalCount)} items in ${yearStr} (early stop after ${String(consecutiveEmptyPages)} empty pages, ${formatElapsed(Date.now() - fetchStart)})`);
+        break;
+      }
+
+      // Natural termination — check BEFORE the safety cap so that
+      // a dataset ending exactly on page MAX_PAGES_PER_METRIC returns
+      // successfully instead of being flagged as incomplete.
       if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;
+
+      // Safety: absolute page limit — only reached when hasMore is still
+      // true (natural termination was checked first above).
+      // Because the EP client uses a heuristic for hasMore
+      // (items.length === limit), do a lightweight probe to confirm
+      // whether more data actually exists before declaring incomplete.
+      if (pageNum >= MAX_PAGES_PER_METRIC) {
+        try {
+          const probe = await fetcher({ limit: 1, offset: offset + EP_API_MAX_PAGE_SIZE });
+          if (probe.data.length === 0) {
+            // Dataset exhausted — heuristic hasMore was a false positive
+            break; // fall through to the success summary below
+          }
+        } catch {
+          // Probe failed — treat conservatively as incomplete
+        }
+        const note = `Reached max page limit (${String(MAX_PAGES_PER_METRIC)}) for ${label} — count of ${String(totalCount)} is incomplete.`;
+        progress(`⚠️  ${label}: ${note}`);
+        return { total: null, monthlyCounts, error: note };
+      }
+
       offset += EP_API_MAX_PAGE_SIZE;
     }
 
@@ -377,8 +528,8 @@ async function countItemsGroupedByMonth(
     const monthSummary = monthlyCounts
       .map((c, i) => `${monthNames[i] ?? ''}:${String(c)}`)
       .join(' ');
-    const undatedNote = undated > 0 ? ` (${String(undated)} outside ${yearStr})` : '';
-    console.log(`    ${DIM}📅 ${monthSummary} = ${String(totalCount)}${undatedNote}${RESET}`);
+    const outsideNote = outsideYearOrUndated > 0 ? ` (${String(outsideYearOrUndated)} outside year or undated for ${yearStr})` : '';
+    console.log(`    ${DIM}📅 ${monthSummary} = ${String(totalCount)}${outsideNote}${RESET}`);
     progress(`✅ ${label}: ${String(totalCount)} items in ${yearStr} (${formatElapsed(Date.now() - fetchStart)})`);
 
     return { total: totalCount, monthlyCounts };
@@ -444,9 +595,16 @@ async function validateYearAgainstAPI(
 
   // ── Metrics with date bucketing ────────────────────────────────
   // Records from these endpoints have dates extractable from their
-  // `date` field or ID.  We fetch all items and bucket client-side.
+  // `date` field or ID.  We fetch items and bucket client-side.
   //
-  // Parliamentary Questions use server-side dateFrom/dateTo per month.
+  // EP API year-filter support per endpoint (from OpenAPI spec):
+  //   /meetings (plenary sessions): ✅ supports `year` param
+  //   /speeches:                     ❌ NO `year` — use `sitting-date` + `sitting-date-end`
+  //   /events:                       ❌ NO `year` or date params — client-side only
+  //   /parliamentary-questions:      ✅ supports `year` (derived from dateFrom)
+  //
+  // Endpoints without server-side filtering rely on early termination
+  // (MAX_CONSECUTIVE_EMPTY_PAGES) to avoid downloading the entire dataset.
   const monthlyMetrics: Array<{
     label: string;
     storedKey: keyof YearlyStats;
@@ -455,6 +613,7 @@ async function validateYearAgainstAPI(
     {
       label: 'Plenary Sessions',
       storedKey: 'plenarySessions',
+      // EP API `/meetings` supports `year` ✅ — server-side filtered.
       // Session IDs contain dates: MTG-PL-2025-01-20
       count: () => countItemsGroupedByMonth('Plenary Sessions', year, (p) =>
         client.getPlenarySessions({ year, ...p })
@@ -463,23 +622,42 @@ async function validateYearAgainstAPI(
     {
       label: 'Speeches',
       storedKey: 'speeches',
+      // EP API `/speeches` does NOT support `year` ❌ — it supports
+      // `sitting-date` and `sitting-date-end` for date-range filtering.
+      // We use dateFrom/dateTo which the client maps to the API params.
+      // Early termination prevents downloading all 100k+ speeches.
       count: () => countItemsGroupedByMonth('Speeches', year, (p) =>
-        client.getSpeeches({ year, ...p })
+        client.getSpeeches({ dateFrom: `${String(year)}-01-01`, dateTo: `${String(year)}-12-31`, ...p })
       ),
     },
     {
       label: 'Events',
       storedKey: 'events',
-      count: () => countItemsGroupedByMonth('Events', year, (p) =>
-        client.getEvents({ year, ...p })
-      ),
+      // EP API `/events` does NOT support `year` or any date filter ❌.
+      // Results are NOT ordered by date, so client-side bucketing with
+      // early termination may produce incomplete year counts.
+      // Mark as non-updatable to prevent overwriting per-year stats
+      // with unreliable all-time scan results.
+      count: async () => {
+        const result = await countItemsGroupedByMonth('Events', year, (p) =>
+          client.getEvents(p),
+          { ordered: false, yearFilterSupported: false }
+        );
+        // Always attach a note so --update skips this metric
+        const note = 'EP API /events has no year/date filtering and results are unordered — ' +
+          'year count is a client-side estimate, not suitable for per-year stat updates.';
+        return {
+          total: result.total,
+          monthlyCounts: result.monthlyCounts,
+          error: result.error ?? note,
+        };
+      },
     },
     {
       label: 'Parliamentary Questions',
       storedKey: 'parliamentaryQuestions',
-      // Fetch once per year and bucket client-side by question date to
-      // avoid relying on server-side dateFrom/dateTo filtering (the client
-      // only forwards `year` derived from dateFrom, not actual date bounds).
+      // EP API `/parliamentary-questions` supports `year` ✅ (derived
+      // from dateFrom in the client).
       count: () => countItemsGroupedByMonth('Parliamentary Questions', year, (p) =>
         client.getParliamentaryQuestions({ dateFrom: `${String(year)}-01-01`, dateTo: `${String(year)}-12-31`, ...p })
       ),
@@ -489,6 +667,14 @@ async function validateYearAgainstAPI(
   // ── Metrics using simple pagination counting ───────────────────
   // These endpoints don't have easily extractable dates per record,
   // or the data volume makes full-item fetching impractical.
+  //
+  // EP API year-filter support (from OpenAPI spec):
+  //   /adopted-texts:       ✅ supports `year`
+  //   /procedures:          ❌ NO `year` — returns ALL procedures (total count, not year-specific)
+  //   /plenary-documents:   ✅ supports `year`
+  //   /committee-documents: ❌ NO `year` — returns ALL (total count, not year-specific)
+  //   /external-documents:  ❌ NO `year` — returns ALL (total count, not year-specific)
+  //   /meps-declarations:   ✅ supports `year`
   const yearlyMetrics: Array<{
     label: string;
     storedKey: keyof YearlyStats;
@@ -502,31 +688,53 @@ async function validateYearAgainstAPI(
     {
       label: 'Procedures',
       storedKey: 'procedures',
-      count: () => countItems('Procedures', (p) => client.getProcedures({ year, ...p })),
+      // EP API /procedures does NOT support `year` ❌ — returns ALL
+      // procedures.  Mark as non-updatable so --update skips this metric
+      // instead of overwriting per-year stats with an all-time total.
+      count: async () => {
+        const result = await countItems('Procedures', (p) => client.getProcedures(p));
+        const note = 'EP API /procedures has no year filtering — ' +
+          'count represents all procedures, not year-specific. Not suitable for per-year stat updates.';
+        return {
+          total: result.total,
+          error: result.error ?? note,
+        };
+      },
     },
     {
       label: 'Plenary Documents',
       storedKey: 'documents',
       // Document count = sum of plenary + committee + external documents.
       // Fetched in parallel for better performance.
+      //
+      // ⚠️  /committee-documents and /external-documents do NOT support
+      // `year` filtering — their counts are all-time totals, making the
+      // combined sum not strictly year-specific.  We always attach a note
+      // so --update skips this metric rather than overwriting per-year
+      // stats with a partially non-year-filtered total.
       count: async () => {
         progress('🔍 Plenary Documents: fetching plenary + committee + external in parallel...');
         const [plenary, committee, external] = await Promise.all([
           countItems('Plenary Docs', (p) => client.getPlenaryDocuments({ year, ...p })),
-          countItems('Committee Docs', (p) => client.getCommitteeDocuments({ year, ...p })),
-          countItems('External Docs', (p) => client.getExternalDocuments({ year, ...p })),
+          countItems('Committee Docs', (p) => client.getCommitteeDocuments(p)),
+          countItems('External Docs', (p) => client.getExternalDocuments(p)),
         ]);
         const errors: string[] = [];
         if (plenary.error) errors.push(`Plenary: ${plenary.error}`);
         if (committee.error) errors.push(`Committee: ${committee.error}`);
         if (external.error) errors.push(`External: ${external.error}`);
+        // Always add a note about partial year coverage
+        errors.push(
+          'Committee/External doc counts are all-time (EP API has no year filtering for these endpoints) — ' +
+          'combined total is not strictly year-specific.'
+        );
 
         const total = (plenary.total ?? 0) + (committee.total ?? 0) + (external.total ?? 0);
         if (plenary.total === null && committee.total === null && external.total === null) {
           return { total: null, error: errors.join(' | ') };
         }
         progress(`✅ Plenary Documents: ${String(plenary.total ?? 0)} plenary + ${String(committee.total ?? 0)} committee + ${String(external.total ?? 0)} external = ${String(total)}`);
-        return { total, error: errors.length > 0 ? errors.join(' | ') : undefined };
+        return { total, error: errors.join(' | ') };
       },
     },
     {

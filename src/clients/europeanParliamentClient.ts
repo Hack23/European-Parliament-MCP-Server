@@ -467,11 +467,11 @@ export class EuropeanParliamentClient {
   /**
    * Returns EP events (hearings, conferences, etc.).
    * **EP API Endpoint:** `GET /events`
+   *
+   * **Note:** The EP API `/events` endpoint has no date filtering.
+   * Only pagination (limit/offset) is supported.
    */
   async getEvents(params: {
-    year?: number;
-    dateFrom?: string;
-    dateTo?: string;
     limit?: number;
     offset?: number;
   } = {}): Promise<PaginatedResponse<EPEvent>> {
@@ -527,9 +527,11 @@ export class EuropeanParliamentClient {
   /**
    * Returns plenary speeches.
    * **EP API Endpoint:** `GET /speeches`
+   *
+   * **Note:** The EP API `/speeches` endpoint does not support `year`.
+   * Use `dateFrom`/`dateTo` (mapped to `sitting-date`/`sitting-date-end`).
    */
   async getSpeeches(params: {
-    year?: number;
     dateFrom?: string;
     dateTo?: string;
     limit?: number;
@@ -622,9 +624,11 @@ export class EuropeanParliamentClient {
   /**
    * Returns committee documents.
    * **EP API Endpoint:** `GET /committee-documents`
+   *
+   * **Note:** The EP API `/committee-documents` endpoint does not support `year`.
+   * Only pagination (limit/offset) is supported.
    */
   async getCommitteeDocuments(params: {
-    year?: number;
     limit?: number;
     offset?: number;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
@@ -656,9 +660,11 @@ export class EuropeanParliamentClient {
   /**
    * Returns all External Documents.
    * **EP API Endpoint:** `GET /external-documents`
+   *
+   * **Note:** The EP API `/external-documents` endpoint does not support `year`.
+   * Only pagination (limit/offset) is supported.
    */
   async getExternalDocuments(params: {
-    year?: number;
     limit?: number;
     offset?: number;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
@@ -758,9 +764,11 @@ export class EuropeanParliamentClient {
   /**
    * Returns legislative procedures.
    * **EP API Endpoint:** `GET /procedures`
+   *
+   * **Note:** The EP API `/procedures` endpoint does not support `year`.
+   * Only pagination (limit/offset) is supported.
    */
   async getProcedures(params: {
-    year?: number;
     limit?: number;
     offset?: number;
   } = {}): Promise<PaginatedResponse<Procedure>> {

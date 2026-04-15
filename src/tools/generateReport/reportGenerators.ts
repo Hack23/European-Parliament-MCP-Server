@@ -114,13 +114,13 @@ async function fetchCommitteeInfo(subjectId: string | undefined): Promise<Commit
   }
 }
 
-/** Fetch committee document count for a year (null if unavailable) */
-async function fetchDocumentCount(year: number): Promise<number | null> {
+/** Fetch committee document count lower bound (first page only — EP API does not support year filtering or total counts) */
+async function fetchDocumentCountLowerBound(logContext: { year: number }): Promise<number | null> {
   try {
-    const docs = await epClient.getCommitteeDocuments({ year, limit: 100 });
+    const docs = await epClient.getCommitteeDocuments({ limit: 100 });
     return docs.data.length;
   } catch (error: unknown) {
-    auditLogger.logError('generate_report.fetch_document_count', { year }, toErrorMessage(error));
+    auditLogger.logError('generate_report.fetch_document_count_lower_bound', logContext, toErrorMessage(error));
     return null;
   }
 }
@@ -148,13 +148,13 @@ async function fetchSessionCount(dateFrom: string, dateTo: string): Promise<numb
   }
 }
 
-/** Fetch procedure count for a year (null if unavailable) */
-async function fetchProcedureCount(year: number): Promise<number | null> {
+/** Fetch procedure count lower bound (first page only — EP API does not support year filtering or total counts) */
+async function fetchProcedureCountLowerBound(logContext: { year: number }): Promise<number | null> {
   try {
-    const procedures = await epClient.getProcedures({ year, limit: 100 });
+    const procedures = await epClient.getProcedures({ limit: 100 });
     return procedures.data.length;
   } catch (error: unknown) {
-    auditLogger.logError('generate_report.fetch_procedure_count', { year }, toErrorMessage(error));
+    auditLogger.logError('generate_report.fetch_procedure_count_lower_bound', logContext, toErrorMessage(error));
     return null;
   }
 }
@@ -337,7 +337,7 @@ export async function generateCommitteePerformanceReport(
   const year = parseInt(dateFrom.substring(0, 4), 10);
 
   // Parliament-wide counts (not filtered by committee)
-  const documentsProduced = await fetchDocumentCount(year);
+  const documentsProduced = await fetchDocumentCountLowerBound({ year });
   const reportsProduced = await fetchAdoptedTextCount(year);
   throwIfAllDataUnavailable('COMMITTEE_PERFORMANCE', [committee, documentsProduced, reportsProduced]);
   const warnings = buildCommitteeWarnings(committee, documentsProduced, reportsProduced, params.subjectId !== undefined);
@@ -417,7 +417,7 @@ export async function generateLegislationProgressReport(
   const dateTo = params.dateTo ?? '2024-12-31';
   const year = parseInt(dateFrom.substring(0, 4), 10);
 
-  const procedureCount = await fetchProcedureCount(year);
+  const procedureCount = await fetchProcedureCountLowerBound({ year });
   const completedCount = await fetchAdoptedTextCount(year);
   throwIfAllDataUnavailable('LEGISLATION_PROGRESS', [procedureCount, completedCount]);
   const ongoingCount = (procedureCount !== null && completedCount !== null)

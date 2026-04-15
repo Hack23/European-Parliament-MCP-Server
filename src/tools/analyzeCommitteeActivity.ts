@@ -127,8 +127,8 @@ async function fetchCommitteeData(dateFrom: string): Promise<{
 }> {
   const year = parseInt(dateFrom.substring(0, 4), 10);
   const [documentsProduced, activeLegFiles, reportsAdopted] = await Promise.all([
-    safeCount('getCommitteeDocuments', () => epClient.getCommitteeDocuments({ year, limit: 100 })),
-    safeCount('getProcedures', () => epClient.getProcedures({ year, limit: 100 })),
+    safeCount('getCommitteeDocuments', () => epClient.getCommitteeDocuments({ limit: 100 })),
+    safeCount('getProcedures', () => epClient.getProcedures({ limit: 100 })),
     safeCount('getAdoptedTexts', () => epClient.getAdoptedTexts({ year, limit: 100 }))
   ]);
   return { documentsProduced, activeLegFiles, reportsAdopted };

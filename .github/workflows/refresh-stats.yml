@@ -5,8 +5,24 @@
 # stats (derived intelligence, rankings, predictions, monthly distributions),
 # and commits the result when all checks pass.
 #
-# The EP API does not provide a totalItems header, so all records are iterated
+# The EP API does not provide a totalItems header, so records are iterated
 # to obtain accurate counts (limit: 1000 per page, the API's server-side cap).
+#
+# EP API endpoint year-filter support (per OpenAPI spec):
+#   ✅ /meetings (plenary sessions) — supports `year`
+#   ✅ /adopted-texts              — supports `year`
+#   ✅ /plenary-documents          — supports `year`
+#   ✅ /meps-declarations          — supports `year`
+#   ✅ /parliamentary-questions    — supports `year` (via dateFrom)
+#   ❌ /speeches                   — NO `year`; uses `sitting-date`/`sitting-date-end`
+#   ❌ /events                     — NO date filtering at all
+#   ❌ /procedures                 — NO `year`
+#   ❌ /committee-documents        — NO `year`
+#   ❌ /external-documents         — NO `year`
+#
+# Endpoints without year support use client-side date bucketing with
+# early termination (MAX_CONSECUTIVE_EMPTY_PAGES) to avoid downloading
+# entire datasets.
 #
 # Scheduled runs use --recent (last 3 years) to stay within timeout limits.
 # Manual dispatch supports --all for full dataset refresh, --recent for fast

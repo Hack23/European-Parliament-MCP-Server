@@ -2,7 +2,11 @@
  * MCP Tool: get_events
  *
  * Retrieve European Parliament events (hearings, conferences, seminars).
- * Supports single event lookup by eventId or list with date range filtering.
+ * Supports single event lookup by eventId or paginated list.
+ *
+ * **Note:** The EP API `/events` endpoint has **no** date filtering
+ * (`year`, `date-from`, `date-to` are all unsupported).
+ * Only pagination (limit/offset) is available.
  *
  * **Intelligence Perspective:** Event monitoring enables early detection of emerging
  * policy priorities and stakeholder engagement patterns.
@@ -28,7 +32,10 @@ import type { ToolResult } from './shared/types.js';
  * Handles the get_events MCP tool request.
  *
  * Retrieves European Parliament events including hearings, conferences, and seminars.
- * Supports single event lookup by eventId or a paginated list filtered by date range.
+ * Supports single event lookup by eventId or a paginated list.
+ *
+ * **Note:** The EP API `/events` endpoint has no date filtering.
+ * Only pagination (limit/offset) is supported.
  *
  * @param args - Raw tool arguments, validated against {@link GetEventsSchema}
  * @returns MCP tool result containing either a single event record or a paginated list of EP events
@@ -41,9 +48,9 @@ import type { ToolResult } from './shared/types.js';
  * const result = await handleGetEvents({ eventId: 'EVT-2024-001' });
  * // Returns the full record for the specified event
  *
- * // List events within a date range
- * const list = await handleGetEvents({ dateFrom: '2024-06-01', dateTo: '2024-06-30', limit: 30 });
- * // Returns up to 30 EP events in June 2024
+ * // List events (pagination only — no date filtering available)
+ * const list = await handleGetEvents({ limit: 30, offset: 0 });
+ * // Returns up to 30 EP events
  * ```
  *
  * @security - Input is validated with Zod before any API call.
@@ -82,9 +89,6 @@ export async function handleGetEvents(args: unknown): Promise<ToolResult> {
       limit: params.limit,
       offset: params.offset,
     };
-    if (params.year !== undefined) apiParams['year'] = params.year;
-    if (params.dateFrom !== undefined) apiParams['dateFrom'] = params.dateFrom;
-    if (params.dateTo !== undefined) apiParams['dateTo'] = params.dateTo;
 
     const result = await epClient.getEvents(apiParams as Parameters<typeof epClient.getEvents>[0]);
 
@@ -103,19 +107,11 @@ export async function handleGetEvents(args: unknown): Promise<ToolResult> {
 export const getEventsToolMetadata = {
   name: 'get_events',
   description:
-    'Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or list with year or date range filtering. Data source: European Parliament Open Data Portal.',
+    'Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or paginated list. Note: The EP API /events endpoint has no date filtering — only pagination (limit/offset) is supported. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       eventId: { type: 'string', description: 'Event ID for single event lookup' },
-      year: {
-        type: 'number',
-        description: 'Filter by calendar year (recommended for annual counts)',
-        minimum: 1900,
-        maximum: 2100,
-      },
-      dateFrom: { type: 'string', description: 'Start date (YYYY-MM-DD)' },
-      dateTo: { type: 'string', description: 'End date (YYYY-MM-DD)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },

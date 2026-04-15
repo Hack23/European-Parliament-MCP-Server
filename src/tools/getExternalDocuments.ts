@@ -42,9 +42,9 @@ import type { ToolResult } from './shared/types.js';
  * const single = await handleGetExternalDocuments({ docId: 'COM-2024-123' });
  * // Returns the external document with ID COM-2024-123
  *
- * // List documents filtered by year
- * const list = await handleGetExternalDocuments({ year: 2024, limit: 30, offset: 0 });
- * // Returns up to 30 external documents from 2024
+ * // List documents (no year filter available in the EP API)
+ * const list = await handleGetExternalDocuments({ limit: 30, offset: 0 });
+ * // Returns up to 30 external documents
  * ```
  *
  * @security - Input is validated with Zod before any API call.
@@ -83,7 +83,6 @@ export async function handleGetExternalDocuments(args: unknown): Promise<ToolRes
       limit: params.limit,
       offset: params.offset,
     };
-    if (params.year !== undefined) apiParams['year'] = params.year;
 
     const result = await epClient.getExternalDocuments(
       apiParams as Parameters<typeof epClient.getExternalDocuments>[0]
@@ -104,12 +103,11 @@ export async function handleGetExternalDocuments(args: unknown): Promise<ToolRes
 export const getExternalDocumentsToolMetadata = {
   name: 'get_external_documents',
   description:
-    'Get external documents (non-EP documents such as Council positions, Commission proposals) from the European Parliament data portal. Supports single document lookup by docId. Data source: European Parliament Open Data Portal.',
+    'Get external documents (non-EP documents such as Council positions, Commission proposals) from the European Parliament data portal. Supports single document lookup by docId or paginated list. Note: The EP API /external-documents endpoint does not support year filtering. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       docId: { type: 'string', description: 'Document ID for single document lookup' },
-      year: { type: 'number', description: 'Filter by year' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },

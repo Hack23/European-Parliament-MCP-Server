@@ -2414,7 +2414,7 @@ describe('EuropeanParliamentClient', () => {
       expect(speech).toHaveProperty('sessionReference');
     });
 
-    it('should pass date-from and date-to parameters', async () => {
+    it('should pass sitting-date and sitting-date-end parameters', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -2423,25 +2423,25 @@ describe('EuropeanParliamentClient', () => {
 
       await client.getSpeeches({ dateFrom: '2024-01-01', dateTo: '2024-06-30' });
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('date-from=2024-01-01'),
-        expect.any(Object)
-      );
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      const url = mockFetch.mock.calls[0]?.[0] as string;
+      expect(url).toContain('sitting-date=2024-01-01');
+      expect(url).toContain('sitting-date-end=2024-06-30');
     });
 
-    it('should pass year parameter', async () => {
+    it('should not pass year parameter (EP API /speeches does not support it)', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
         json: async () => createMockSpeechesResponse(1)
       } as Response);
 
-      await client.getSpeeches({ year: 2024 });
+      // Use type-escape to pass year even though the interface doesn't accept it
+      await (client as unknown as { getSpeeches(p: Record<string, unknown>): Promise<unknown> }).getSpeeches({ year: 2024 });
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('year=2024'),
-        expect.any(Object)
-      );
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      const url = mockFetch.mock.calls[0]?.[0] as string;
+      expect(url).not.toContain('year=');
     });
 
     it('should handle empty results', async () => {
@@ -2519,19 +2519,19 @@ describe('EuropeanParliamentClient', () => {
       expect(proc).toHaveProperty('documents');
     });
 
-    it('should pass year parameter', async () => {
+    it('should not pass year parameter (EP API /procedures does not support it)', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
         json: async () => createMockProceduresResponse(1)
       } as Response);
 
-      await client.getProcedures({ year: 2024 });
+      // Use type-escape to pass year even though the interface doesn't accept it
+      await (client as unknown as { getProcedures(p: Record<string, unknown>): Promise<unknown> }).getProcedures({ year: 2024 });
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('year=2024'),
-        expect.any(Object)
-      );
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      const url = mockFetch.mock.calls[0]?.[0] as string;
+      expect(url).not.toContain('year=');
     });
 
     it('should handle API errors', async () => {
@@ -2706,34 +2706,21 @@ describe('EuropeanParliamentClient', () => {
       expect(event).toHaveProperty('status');
     });
 
-    it('should pass date range parameters', async () => {
+    it('should not pass date range parameters (EP API /events has no date filtering)', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
         json: async () => createMockEventsResponse(1)
       } as Response);
 
-      await client.getEvents({ dateFrom: '2024-06-01', dateTo: '2024-06-30' });
+      // Use type-escape to pass year/dateFrom/dateTo even though the interface doesn't accept them
+      await (client as unknown as { getEvents(p: Record<string, unknown>): Promise<unknown> }).getEvents({ year: 2024, dateFrom: '2024-01-01', dateTo: '2024-12-31' });
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('date-from=2024-06-01'),
-        expect.any(Object)
-      );
-    });
-
-    it('should pass year parameter', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        headers: new Headers(),
-        json: async () => createMockEventsResponse(1)
-      } as Response);
-
-      await client.getEvents({ year: 2024 });
-
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('year=2024'),
-        expect.any(Object)
-      );
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      const url = mockFetch.mock.calls[0]?.[0] as string;
+      expect(url).not.toContain('date-from=');
+      expect(url).not.toContain('date-to=');
+      expect(url).not.toContain('year=');
     });
 
     it('should handle API errors', async () => {
@@ -3041,19 +3028,19 @@ describe('EuropeanParliamentClient', () => {
       );
     });
 
-    it('should pass year parameter', async () => {
+    it('should not pass year parameter (EP API /committee-documents does not support it)', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
-      await client.getCommitteeDocuments({ year: 2024 });
+      // Use type-escape to pass year even though the interface doesn't accept it
+      await (client as unknown as { getCommitteeDocuments(p: Record<string, unknown>): Promise<unknown> }).getCommitteeDocuments({ year: 2024 });
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('year=2024'),
-        expect.any(Object)
-      );
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      const url = mockFetch.mock.calls[0]?.[0] as string;
+      expect(url).not.toContain('year=');
     });
 
     it('should handle API errors', async () => {
@@ -4254,19 +4241,19 @@ describe('EuropeanParliamentClient', () => {
       );
     });
 
-    it('should pass year parameter', async () => {
+    it('should not pass year parameter (EP API /external-documents does not support it)', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
       } as Response);
 
-      await client.getExternalDocuments({ year: 2024 });
+      // Use type-escape to pass year even though the interface doesn't accept it
+      await (client as unknown as { getExternalDocuments(p: Record<string, unknown>): Promise<unknown> }).getExternalDocuments({ year: 2024 });
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('year=2024'),
-        expect.any(Object)
-      );
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      const url = mockFetch.mock.calls[0]?.[0] as string;
+      expect(url).not.toContain('year=');
     });
 
     it('should apply default limit and offset', async () => {

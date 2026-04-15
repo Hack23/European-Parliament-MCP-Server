@@ -171,12 +171,12 @@ describe('get_external_documents Tool', () => {
       );
     });
 
-    it('should pass year filter when specified', async () => {
+    it('should not pass year to client (EP API /external-documents does not support it)', async () => {
       await handleGetExternalDocuments({ year: 2024 });
 
-      expect(epClientModule.epClient.getExternalDocuments).toHaveBeenCalledWith(
-        expect.objectContaining({ year: 2024 })
-      );
+      expect(vi.mocked(epClientModule.epClient.getExternalDocuments)).toHaveBeenCalledTimes(1);
+      const callArgs = vi.mocked(epClientModule.epClient.getExternalDocuments).mock.calls[0]?.[0];
+      expect(callArgs).not.toHaveProperty('year');
     });
   });
 

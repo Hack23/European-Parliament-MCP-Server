@@ -205,10 +205,14 @@ export class VotingClient extends BaseEPClient {
    * Returns plenary speeches.
    * **EP API Endpoint:** `GET /speeches`
    *
-   * The EP API supports filtering by `year` (recommended for annual counts).
+   * **Note:** The EP API `/speeches` endpoint does **not** support a
+   * `year` query parameter.  It supports `sitting-date` (range start)
+   * and `sitting-date-end` (range end) for date filtering.
+   *
+   * Use `dateFrom` / `dateTo` (YYYY-MM-DD) for date-range queries —
+   * these are mapped to `sitting-date` / `sitting-date-end`.
    */
   async getSpeeches(params: {
-    year?: number;
     dateFrom?: string;
     dateTo?: string;
     limit?: number;
@@ -222,9 +226,10 @@ export class VotingClient extends BaseEPClient {
       offset,
       limit,
     };
-    if (params.year !== undefined) apiParams['year'] = params.year;
-    if (params.dateFrom !== undefined) apiParams['date-from'] = params.dateFrom;
-    if (params.dateTo !== undefined) apiParams['date-to'] = params.dateTo;
+    // Note: `year` is NOT a valid param for /speeches (EP API ignores it).
+    // Use sitting-date / sitting-date-end for date filtering.
+    if (params.dateFrom !== undefined) apiParams['sitting-date'] = params.dateFrom;
+    if (params.dateTo !== undefined) apiParams['sitting-date-end'] = params.dateTo;
 
     const response = await this.get<JSONLDResponse>('speeches', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];

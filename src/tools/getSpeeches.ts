@@ -83,7 +83,6 @@ export async function handleGetSpeeches(args: unknown): Promise<ToolResult> {
       limit: params.limit,
       offset: params.offset,
       ...buildApiParams(params, [
-        { from: 'year', to: 'year' },
         { from: 'dateFrom', to: 'dateFrom' },
         { from: 'dateTo', to: 'dateTo' },
       ]),
@@ -108,19 +107,13 @@ export async function handleGetSpeeches(args: unknown): Promise<ToolResult> {
 export const getSpeechesToolMetadata = {
   name: 'get_speeches',
   description:
-    'Get European Parliament plenary speeches and debate contributions. Supports single speech lookup by speechId or list with year or date range filtering. Data source: European Parliament Open Data Portal.',
+    'Get European Parliament plenary speeches and debate contributions. Supports single speech lookup by speechId or list with date range filtering (dateFrom/dateTo mapped to EP API sitting-date/sitting-date-end). Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       speechId: { type: 'string', description: 'Speech ID for single speech lookup' },
-      year: {
-        type: 'number',
-        description: 'Filter by calendar year (recommended for annual counts)',
-        minimum: 1900,
-        maximum: 2100,
-      },
-      dateFrom: { type: 'string', description: 'Start date (YYYY-MM-DD)' },
-      dateTo: { type: 'string', description: 'End date (YYYY-MM-DD)' },
+      dateFrom: { type: 'string', description: 'Start date (YYYY-MM-DD). Mapped to EP API sitting-date parameter.' },
+      dateTo: { type: 'string', description: 'End date (YYYY-MM-DD). Mapped to EP API sitting-date-end parameter.' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },

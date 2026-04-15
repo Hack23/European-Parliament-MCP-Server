@@ -67,12 +67,13 @@ describe('get_speeches Tool', () => {
       expect(result).toHaveProperty('content');
     });
 
-    it('should accept valid year parameter', async () => {
+    it('should strip year parameter (EP API /speeches does not support it)', async () => {
       const result = await handleGetSpeeches({ year: 2024 });
       expect(result).toHaveProperty('content');
-      expect(epClientModule.epClient.getSpeeches).toHaveBeenCalledWith(
-        expect.objectContaining({ year: 2024 })
-      );
+      // year is stripped by the schema — not forwarded to the client
+      expect(vi.mocked(epClientModule.epClient.getSpeeches)).toHaveBeenCalledTimes(1);
+      const callArgs = vi.mocked(epClientModule.epClient.getSpeeches).mock.calls[0]?.[0];
+      expect(callArgs).not.toHaveProperty('year');
     });
 
     it('should accept valid limit and offset', async () => {

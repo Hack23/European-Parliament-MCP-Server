@@ -2,7 +2,8 @@
  * MCP Tool: get_procedures
  *
  * Retrieve European Parliament legislative procedures.
- * Supports single procedure lookup by processId or list with year filtering.
+ * Supports single procedure lookup by processId or paginated list.
+ * Note: The EP API /procedures endpoint does not support year filtering.
  *
  * **Intelligence Perspective:** Procedure data enables end-to-end legislative tracking,
  * outcome prediction, and timeline analysis—core for policy monitoring intelligence.
@@ -20,7 +21,6 @@
 import { GetProceduresSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
-import { buildApiParams } from './shared/paramBuilder.js';
 import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
@@ -30,7 +30,11 @@ import type { ToolResult } from './shared/types.js';
  *
  * Retrieves European Parliament legislative procedures enabling end-to-end legislative
  * tracking, outcome prediction, and timeline analysis. Supports both a single-procedure
- * lookup by `processId` and a paginated list optionally filtered by year.
+ * lookup by `processId` and a paginated list.
+ *
+ * Note: The EP API `/procedures` endpoint does **not** support `year` filtering.
+ * Only `process-type` is available.  Callers needing year-specific counts
+ * must filter client-side.
  *
  * @param args - Raw tool arguments, validated against {@link GetProceduresSchema}
  * @returns MCP tool result containing procedure data (single procedure or paginated list)
@@ -43,9 +47,9 @@ import type { ToolResult } from './shared/types.js';
  * const single = await handleGetProcedures({ processId: '2023/0132(COD)' });
  * // Returns the legislative procedure for the Artificial Intelligence Act
  *
- * // List procedures from 2024
- * const list = await handleGetProcedures({ year: 2024, limit: 50, offset: 0 });
- * // Returns up to 50 legislative procedures initiated in 2024
+ * // List procedures (no year filter available in the EP API)
+ * const list = await handleGetProcedures({ limit: 50, offset: 0 });
+ * // Returns up to 50 legislative procedures
  * ```
  *
  * @security - Input is validated with Zod before any API call.
@@ -83,7 +87,6 @@ export async function handleGetProcedures(args: unknown): Promise<ToolResult> {
     const apiParams = {
       limit: params.limit,
       offset: params.offset,
-      ...buildApiParams(params, [{ from: 'year', to: 'year' }]),
     };
 
     const result = await epClient.getProcedures(
@@ -105,12 +108,11 @@ export async function handleGetProcedures(args: unknown): Promise<ToolResult> {
 export const getProceduresToolMetadata = {
   name: 'get_procedures',
   description:
-    'Get European Parliament legislative procedures. Supports single procedure lookup by processId or list with year filter. Data source: European Parliament Open Data Portal.',
+    'Get European Parliament legislative procedures. Supports single procedure lookup by processId or paginated list. Note: The EP API /procedures endpoint does not support year filtering. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       processId: { type: 'string', description: 'Process ID for single procedure lookup' },
-      year: { type: 'number', description: 'Filter by year (e.g., 2024)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },
