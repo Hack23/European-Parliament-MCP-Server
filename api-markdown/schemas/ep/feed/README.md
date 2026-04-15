@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.6**](../../../README.md)
+[**European Parliament MCP Server API v1.2.7**](../../../README.md)
 
 ***
 
@@ -8,12 +8,23 @@
 
 Feed-endpoint Zod validation schemas.
 
-All EP API v2 `/…/feed` endpoints share a common parameter pattern:
-- `timeframe` — one of `today | one-day | one-week | one-month | custom`
-- `startDate` — YYYY-MM-DD, required when `timeframe` is `custom`
+EP API v2 `/…/feed` endpoints fall into two groups:
 
-Some feeds add a domain-specific type filter (`workType`, `activityType`,
-`processType`).  Each schema below covers one feed endpoint.
+**Group A — Fixed-window feeds** (no timeframe parameter per OpenAPI spec):
+  `documents/feed`, `plenary-documents/feed`, `committee-documents/feed`,
+  `plenary-session-documents/feed`, `parliamentary-questions/feed`,
+  `corporate-bodies/feed`, `controlled-vocabularies/feed`
+  These return updates from a server-defined default window (typically one month).
+
+**Group B — Configurable-window feeds** (accept `timeframe` + `start-date`):
+  `meps/feed`, `events/feed`, `procedures/feed`, `adopted-texts/feed`,
+  `meps-declarations/feed`, `external-documents/feed`
+  Some also accept a domain-specific type filter (`workType`, `activityType`,
+  `processType`).
+
+## See
+
+https://data.europarl.europa.eu/api/v2/ (OpenAPI spec)
 
 ## Variables
 

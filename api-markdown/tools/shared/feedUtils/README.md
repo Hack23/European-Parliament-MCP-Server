@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.6**](../../../README.md)
+[**European Parliament MCP Server API v1.2.7**](../../../README.md)
 
 ***
 
@@ -9,4 +9,5 @@
 ## Functions
 
 - [buildEmptyFeedResponse](functions/buildEmptyFeedResponse.md)
+- [isErrorInBody](functions/isErrorInBody.md)
 - [isUpstream404](functions/isUpstream404.md)

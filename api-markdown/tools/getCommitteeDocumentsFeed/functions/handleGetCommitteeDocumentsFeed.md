@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.6**](../../../README.md)
+[**European Parliament MCP Server API v1.2.7**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetCommitteeDocumentsFeed**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getCommitteeDocumentsFeed.ts:27](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCommitteeDocumentsFeed.ts#L27)
+Defined in: [tools/getCommitteeDocumentsFeed.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCommitteeDocumentsFeed.ts#L30)
 
 Handles the get_committee_documents_feed MCP tool request.
 
@@ -24,7 +24,7 @@ Raw tool arguments, validated against [GetCommitteeDocumentsFeedSchema](../../..
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-MCP tool result containing recently updated committee document data
+MCP tool result containing recently updated committee documents data
 
 ## Security
 

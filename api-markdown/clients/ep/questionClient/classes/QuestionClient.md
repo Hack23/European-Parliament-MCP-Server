@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.6**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.7**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: QuestionClient
 
-Defined in: [clients/ep/questionClient.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L34)
+Defined in: [clients/ep/questionClient.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L35)
 
 Sub-client for parliamentary-questions EP API endpoints.
 
@@ -20,7 +20,7 @@ Sub-client for parliamentary-questions EP API endpoints.
 
 > **new QuestionClient**(`config?`, `shared?`): `QuestionClient`
 
-Defined in: [clients/ep/questionClient.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L35)
+Defined in: [clients/ep/questionClient.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L36)
 
 #### Parameters
 
@@ -144,7 +144,7 @@ Request timeout in milliseconds.
 
 > `private` **buildQuestionSearchParams**(`params`): [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
-Defined in: [clients/ep/questionClient.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L53)
+Defined in: [clients/ep/questionClient.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L54)
 
 Builds EP API parameters for parliamentary question search.
 
@@ -178,7 +178,7 @@ Builds EP API parameters for parliamentary question search.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:694](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L694)
+Defined in: [clients/ep/baseClient.ts:709](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L709)
 
 Clears all entries from the LRU cache.
 
@@ -196,7 +196,7 @@ Clears all entries from the LRU cache.
 
 > `private` **filterQuestions**(`questions`, `params`): [`ParliamentaryQuestion`](../../../../types/ep/question/interfaces/ParliamentaryQuestion.md)[]
 
-Defined in: [clients/ep/questionClient.ts:74](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L74)
+Defined in: [clients/ep/questionClient.ts:75](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L75)
 
 Applies client-side filters to parliamentary questions.
 
@@ -234,7 +234,7 @@ Applies client-side filters to parliamentary questions.
 
 > `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:626](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L626)
+Defined in: [clients/ep/baseClient.ts:641](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L641)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -290,7 +290,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:703](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L703)
+Defined in: [clients/ep/baseClient.ts:718](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L718)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -330,7 +330,7 @@ Returns cache statistics for monitoring and debugging.
 
 > **getParliamentaryQuestionById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ParliamentaryQuestion`](../../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>
 
-Defined in: [clients/ep/questionClient.ts:183](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L183)
+Defined in: [clients/ep/questionClient.ts:182](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L182)
 
 Returns a single parliamentary question by document ID.
 **EP API Endpoint:** `GET /parliamentary-questions/{doc-id}`
@@ -351,7 +351,7 @@ Returns a single parliamentary question by document ID.
 
 > **getParliamentaryQuestions**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`ParliamentaryQuestion`](../../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>\>
 
-Defined in: [clients/ep/questionClient.ts:112](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L112)
+Defined in: [clients/ep/questionClient.ts:113](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L113)
 
 Retrieves parliamentary questions with filtering by type, author, and status.
 
@@ -409,24 +409,15 @@ Audit logged per GDPR Article 30
 
 ### getParliamentaryQuestionsFeed()
 
-> **getParliamentaryQuestionsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getParliamentaryQuestionsFeed**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/questionClient.ts:168](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L168)
+Defined in: [clients/ep/questionClient.ts:172](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L172)
 
 Retrieves recently updated parliamentary questions via the feed endpoint.
 **EP API Endpoint:** `GET /parliamentary-questions/feed`
 
-#### Parameters
-
-##### params?
-
-###### startDate?
-
-`string`
-
-###### timeframe?
-
-`string`
+Fixed-window feed — no `timeframe` parameter per OpenAPI spec.
+Extended timeout applied (120 s minimum).
 
 #### Returns
 
@@ -438,7 +429,7 @@ Retrieves recently updated parliamentary questions via the feed endpoint.
 
 > `private` **transformParliamentaryQuestion**(`apiData`): [`ParliamentaryQuestion`](../../../../types/ep/question/interfaces/ParliamentaryQuestion.md)
 
-Defined in: [clients/ep/questionClient.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L41)
+Defined in: [clients/ep/questionClient.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/questionClient.ts#L42)
 
 #### Parameters
 

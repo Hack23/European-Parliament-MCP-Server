@@ -322,10 +322,7 @@
 <a name='L257'></a><a href='#L257'>257</a>
 <a name='L258'></a><a href='#L258'>258</a>
 <a name='L259'></a><a href='#L259'>259</a>
-<a name='L260'></a><a href='#L260'>260</a>
-<a name='L261'></a><a href='#L261'>261</a>
-<a name='L262'></a><a href='#L262'>262</a>
-<a name='L263'></a><a href='#L263'>263</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L260'></a><a href='#L260'>260</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -507,14 +504,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -530,6 +519,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -760,46 +754,43 @@ export class LegislativeClient extends BaseEPClient {
    * **EP API Endpoint:** `GET /procedures/feed`
    *
    * **Note:** The EP API `procedures/feed` endpoint is significantly slower
-   * than other feed endpoints and may take 120+ seconds for `one-month`
-   * timeframes. For `one-month`, this client applies an extended minimum
-   * timeout automatically, but callers may still need to increase the global
-   * request timeout if the endpoint takes longer to respond.
+   * than other feed endpoints — it typically takes 25–40 s even for `one-week`
+   * and 120+ seconds for `one-month`.  An extended minimum timeout of 120 s
+   * is always applied.
    */
   async <span class="fstat-no" title="function not covered" >getProceduresFeed(p</span>arams: {
     timeframe?: string;
     startDate?: string;
     processType?: string;
   } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
-    // Apply an extended minimum timeout only for the known slow 'one-month'
-    // timeframe (120+ seconds). Slower responses may still require callers to
-    // raise the global request timeout. Other timeframes use the default
-    // global timeout.
-    const minimumTimeout = <span class="cstat-no" title="statement not covered" >params.timeframe === 'one-month'</span>
-      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
-      : undefined;
 <span class="cstat-no" title="statement not covered" >    return this.get&lt;JSONLDResponse&gt;('procedures/feed', {</span>
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.processType !== undefined ? { 'process-type': params.processType } : {}),
-    }, minimumTimeout);
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
   }
 &nbsp;
   /**
    * Retrieves recently updated adopted texts via the feed endpoint.
    * **EP API Endpoint:** `GET /adopted-texts/feed`
+   *
+   * Configurable-window feed.  Extended timeout applied for `one-month`.
    */
   async <span class="fstat-no" title="function not covered" >getAdoptedTextsFeed(p</span>arams: {
     timeframe?: string;
     startDate?: string;
     workType?: string;
   } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
+    const minimumTimeout = <span class="cstat-no" title="statement not covered" >params.timeframe === 'one-month'</span>
+      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
+      : undefined;
 <span class="cstat-no" title="statement not covered" >    return this.get&lt;JSONLDResponse&gt;('adopted-texts/feed', {</span>
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.workType !== undefined ? { 'work-type': params.workType } : {}),
-    });
+    }, minimumTimeout);
   }
 &nbsp;
   /**
@@ -856,7 +847,7 @@ export class LegislativeClient extends BaseEPClient {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-13T19:25:19.138Z
+                at 2026-04-15T12:00:11.976Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.6**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.7**](../../../../README.md)
 
 ***
 
@@ -144,7 +144,7 @@ Request timeout in milliseconds.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:694](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L694)
+Defined in: [clients/ep/baseClient.ts:709](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L709)
 
 Clears all entries from the LRU cache.
 
@@ -162,7 +162,7 @@ Clears all entries from the LRU cache.
 
 > `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:626](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L626)
+Defined in: [clients/ep/baseClient.ts:641](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L641)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -218,7 +218,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getAdoptedTextById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`AdoptedText`](../../../../types/ep/activities/interfaces/AdoptedText.md)\>
 
-Defined in: [clients/ep/legislativeClient.ts:254](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L254)
+Defined in: [clients/ep/legislativeClient.ts:251](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L251)
 
 Returns a single adopted text by document ID.
 **EP API Endpoint:** `GET /adopted-texts/{doc-id}`
@@ -272,10 +272,12 @@ year, limit, offset
 
 > **getAdoptedTextsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/legislativeClient.ts:203](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L203)
+Defined in: [clients/ep/legislativeClient.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L197)
 
 Retrieves recently updated adopted texts via the feed endpoint.
 **EP API Endpoint:** `GET /adopted-texts/feed`
+
+Configurable-window feed.  Extended timeout applied for `one-month`.
 
 #### Parameters
 
@@ -303,7 +305,7 @@ Retrieves recently updated adopted texts via the feed endpoint.
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:703](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L703)
+Defined in: [clients/ep/baseClient.ts:718](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L718)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -376,7 +378,7 @@ When the procedure is not found (404)
 
 > **getProcedureEventById**(`processId`, `eventId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>
 
-Defined in: [clients/ep/legislativeClient.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L223)
+Defined in: [clients/ep/legislativeClient.ts:220](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L220)
 
 Returns a single event within a procedure by event ID.
 **EP API Endpoint:** `GET /procedures/{process-id}/events/{event-id}`
@@ -475,16 +477,15 @@ Paginated list of procedures
 
 > **getProceduresFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/legislativeClient.ts:179](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L179)
+Defined in: [clients/ep/legislativeClient.ts:178](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L178)
 
 Retrieves recently updated procedures via the feed endpoint.
 **EP API Endpoint:** `GET /procedures/feed`
 
 **Note:** The EP API `procedures/feed` endpoint is significantly slower
-than other feed endpoints and may take 120+ seconds for `one-month`
-timeframes. For `one-month`, this client applies an extended minimum
-timeout automatically, but callers may still need to increase the global
-request timeout if the endpoint takes longer to respond.
+than other feed endpoints — it typically takes 25–40 s even for `one-week`
+and 120+ seconds for `one-month`.  An extended minimum timeout of 120 s
+is always applied.
 
 #### Parameters
 

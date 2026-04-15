@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">63.23% </span>
+                <span class="strong">70.49% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>43/68</span>
+                <span class='fraction'>43/61</span>
             </div>
         
             
@@ -1026,21 +1026,7 @@
 <a name='L961'></a><a href='#L961'>961</a>
 <a name='L962'></a><a href='#L962'>962</a>
 <a name='L963'></a><a href='#L963'>963</a>
-<a name='L964'></a><a href='#L964'>964</a>
-<a name='L965'></a><a href='#L965'>965</a>
-<a name='L966'></a><a href='#L966'>966</a>
-<a name='L967'></a><a href='#L967'>967</a>
-<a name='L968'></a><a href='#L968'>968</a>
-<a name='L969'></a><a href='#L969'>969</a>
-<a name='L970'></a><a href='#L970'>970</a>
-<a name='L971'></a><a href='#L971'>971</a>
-<a name='L972'></a><a href='#L972'>972</a>
-<a name='L973'></a><a href='#L973'>973</a>
-<a name='L974'></a><a href='#L974'>974</a>
-<a name='L975'></a><a href='#L975'>975</a>
-<a name='L976'></a><a href='#L976'>976</a>
-<a name='L977'></a><a href='#L977'>977</a>
-<a name='L978'></a><a href='#L978'>978</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L964'></a><a href='#L964'>964</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1623,8 +1609,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1755,6 +1739,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1766,22 +1757,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1934,8 +1910,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1960,8 +1934,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -2597,12 +2569,10 @@ export class EuropeanParliamentClient {
   /**
    * Retrieves recently updated corporate bodies via the feed endpoint.
    * **EP API Endpoint:** `GET /corporate-bodies/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async <span class="fstat-no" title="function not covered" >getCorporateBodiesFeed(p</span>arams: {
-    timeframe?: string;
-    startDate?: string;
-  } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.committeeClient.getCorporateBodiesFeed(params);</span>
+  async <span class="fstat-no" title="function not covered" >getCorporateBodiesFeed(): Promise&lt;JSONLDResponse&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    return this.committeeClient.getCorporateBodiesFeed();</span>
   }
 &nbsp;
   // ─── Document endpoints ───────────────────────────────────────────────────
@@ -2729,45 +2699,37 @@ export class EuropeanParliamentClient {
   /**
    * Retrieves recently updated documents via the feed endpoint.
    * **EP API Endpoint:** `GET /documents/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async <span class="fstat-no" title="function not covered" >getDocumentsFeed(p</span>arams: {
-    timeframe?: string;
-    startDate?: string;
-  } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.documentClient.getDocumentsFeed(params);</span>
+  async <span class="fstat-no" title="function not covered" >getDocumentsFeed(): Promise&lt;JSONLDResponse&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    return this.documentClient.getDocumentsFeed();</span>
   }
 &nbsp;
   /**
    * Retrieves recently updated plenary documents via the feed endpoint.
    * **EP API Endpoint:** `GET /plenary-documents/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async <span class="fstat-no" title="function not covered" >getPlenaryDocumentsFeed(p</span>arams: {
-    timeframe?: string;
-    startDate?: string;
-  } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.documentClient.getPlenaryDocumentsFeed(params);</span>
+  async <span class="fstat-no" title="function not covered" >getPlenaryDocumentsFeed(): Promise&lt;JSONLDResponse&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    return this.documentClient.getPlenaryDocumentsFeed();</span>
   }
 &nbsp;
   /**
    * Retrieves recently updated committee documents via the feed endpoint.
    * **EP API Endpoint:** `GET /committee-documents/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async <span class="fstat-no" title="function not covered" >getCommitteeDocumentsFeed(p</span>arams: {
-    timeframe?: string;
-    startDate?: string;
-  } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.documentClient.getCommitteeDocumentsFeed(params);</span>
+  async <span class="fstat-no" title="function not covered" >getCommitteeDocumentsFeed(): Promise&lt;JSONLDResponse&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    return this.documentClient.getCommitteeDocumentsFeed();</span>
   }
 &nbsp;
   /**
    * Retrieves recently updated plenary session documents via the feed endpoint.
    * **EP API Endpoint:** `GET /plenary-session-documents/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async <span class="fstat-no" title="function not covered" >getPlenarySessionDocumentsFeed(p</span>arams: {
-    timeframe?: string;
-    startDate?: string;
-  } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.documentClient.getPlenarySessionDocumentsFeed(params);</span>
+  async <span class="fstat-no" title="function not covered" >getPlenarySessionDocumentsFeed(): Promise&lt;JSONLDResponse&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    return this.documentClient.getPlenarySessionDocumentsFeed();</span>
   }
 &nbsp;
   /**
@@ -2908,12 +2870,10 @@ export class EuropeanParliamentClient {
   /**
    * Retrieves recently updated parliamentary questions via the feed endpoint.
    * **EP API Endpoint:** `GET /parliamentary-questions/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async <span class="fstat-no" title="function not covered" >getParliamentaryQuestionsFeed(p</span>arams: {
-    timeframe?: string;
-    startDate?: string;
-  } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.questionClient.getParliamentaryQuestionsFeed(params);</span>
+  async <span class="fstat-no" title="function not covered" >getParliamentaryQuestionsFeed(): Promise&lt;JSONLDResponse&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    return this.questionClient.getParliamentaryQuestionsFeed();</span>
   }
 &nbsp;
   // ─── Vocabulary endpoints ─────────────────────────────────────────────────
@@ -2942,12 +2902,10 @@ export class EuropeanParliamentClient {
   /**
    * Retrieves recently updated controlled vocabularies via the feed endpoint.
    * **EP API Endpoint:** `GET /controlled-vocabularies/feed`
+   * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async <span class="fstat-no" title="function not covered" >getControlledVocabulariesFeed(p</span>arams: {
-    timeframe?: string;
-    startDate?: string;
-  } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.vocabularyClient.getControlledVocabulariesFeed(params);</span>
+  async <span class="fstat-no" title="function not covered" >getControlledVocabulariesFeed(): Promise&lt;JSONLDResponse&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    return this.vocabularyClient.getControlledVocabulariesFeed();</span>
   }
 }
 &nbsp;
@@ -3001,7 +2959,7 @@ export const epClient = new EuropeanParliamentClient({
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-13T19:25:19.138Z
+                at 2026-04-15T12:00:11.976Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

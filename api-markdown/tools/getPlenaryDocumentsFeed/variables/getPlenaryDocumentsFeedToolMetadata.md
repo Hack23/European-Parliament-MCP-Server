@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.6**](../../../README.md)
+[**European Parliament MCP Server API v1.2.7**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getPlenaryDocumentsFeedToolMetadata**: `object`
 
-Defined in: [tools/getPlenaryDocumentsFeed.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenaryDocumentsFeed.ts#L66)
+Defined in: [tools/getPlenaryDocumentsFeed.ts:68](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenaryDocumentsFeed.ts#L68)
 
 Tool metadata for get_plenary_documents_feed
 
@@ -16,7 +16,7 @@ Tool metadata for get_plenary_documents_feed
 
 ### description
 
-> **description**: `string` = `'Get recently updated plenary documents from the feed. Returns plenary documents published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.'`
+> **description**: `string` = `'Get recently updated plenary documents from the EP Open Data Portal feed. This is a fixed-window feed — no parameters needed. Returns items updated within the server-defined default window (typically one month). Data source: European Parliament Open Data Portal.'`
 
 ### inputSchema
 
@@ -24,39 +24,7 @@ Tool metadata for get_plenary_documents_feed
 
 #### inputSchema.properties
 
-> **properties**: `object`
-
-#### inputSchema.properties.startDate
-
-> **startDate**: `object`
-
-#### inputSchema.properties.startDate.description
-
-> **description**: `string` = `'Start date (YYYY-MM-DD) — required when timeframe is "custom"'`
-
-#### inputSchema.properties.startDate.type
-
-> **type**: `string` = `'string'`
-
-#### inputSchema.properties.timeframe
-
-> **timeframe**: `object`
-
-#### inputSchema.properties.timeframe.default
-
-> **default**: `string` = `'one-week'`
-
-#### inputSchema.properties.timeframe.description
-
-> **description**: `string` = `'Timeframe for the feed (today, one-day, one-week, one-month, custom)'`
-
-#### inputSchema.properties.timeframe.enum
-
-> **enum**: `string`[]
-
-#### inputSchema.properties.timeframe.type
-
-> **type**: `string` = `'string'`
+> **properties**: `object` = `{}`
 
 #### inputSchema.type
 

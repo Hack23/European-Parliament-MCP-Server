@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.6**](../../../README.md)
+[**European Parliament MCP Server API v1.2.7**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetParliamentaryQuestionsFeed**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getParliamentaryQuestionsFeed.ts:27](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getParliamentaryQuestionsFeed.ts#L27)
+Defined in: [tools/getParliamentaryQuestionsFeed.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getParliamentaryQuestionsFeed.ts#L30)
 
 Handles the get_parliamentary_questions_feed MCP tool request.
 
@@ -24,7 +24,7 @@ Raw tool arguments, validated against [GetParliamentaryQuestionsFeedSchema](../.
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-MCP tool result containing recently updated parliamentary question data
+MCP tool result containing recently updated parliamentary questions data
 
 ## Security
 
