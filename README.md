@@ -759,13 +759,19 @@ graph LR
 
 ### 📡 Feed Tools (13)
 
-Real-time change feeds for monitoring recently updated data across all EP API categories. Each feed supports configurable timeframes (`today`, `one-day`, `one-week`, `one-month`, `custom`).
+Real-time change feeds for monitoring recently updated data across all EP API categories. Per the [EP OpenAPI spec](docs/ep-openapi-spec.json), feeds fall into two groups:
+
+- **Configurable-window** (6 tools): Accept `timeframe` (`today`, `one-day`, `one-week`, `one-month`, `custom`) + optional `startDate`
+- **Fixed-window** (7 tools): No parameters — return updates from a server-defined default window (typically one month)
 
 > **Key behaviors:**
 > - All feeds return JSON-LD with `data[]`, `@context[]`, and `dataQualityWarnings[]`
-> - Empty feeds (EP API 404) are converted to empty `data[]` with a warning — not errors
+> - Empty feeds (EP API 404 or error-in-body) are converted to empty `data[]` with a warning — not errors
 > - `get_events_feed` and `get_procedures_feed` are slow with `one-month` — auto-extended to 120s timeout
-> - When `timeframe` is `custom`, `startDate` (YYYY-MM-DD) is required
+> - Fixed-window feeds can be very slow (30–180 s) and often return error-in-body responses
+> - For configurable feeds, when `timeframe` is `custom`, `startDate` (YYYY-MM-DD) is required
+
+**Configurable-window feeds:**
 
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
@@ -774,14 +780,19 @@ Real-time change feeds for monitoring recently updated data across all EP API ca
 | [`get_procedures_feed`](./API_USAGE_GUIDE.md#tool-get_procedures_feed) | Recently updated procedures | timeframe, startDate, processType | `GET /procedures/feed` |
 | [`get_adopted_texts_feed`](./API_USAGE_GUIDE.md#tool-get_adopted_texts_feed) | Recently updated adopted texts | timeframe, startDate, workType | `GET /adopted-texts/feed` |
 | [`get_mep_declarations_feed`](./API_USAGE_GUIDE.md#tool-get_mep_declarations_feed) | Recently updated MEP declarations | timeframe, startDate, workType | `GET /meps-declarations/feed` |
-| [`get_documents_feed`](./API_USAGE_GUIDE.md#tool-get_documents_feed) | Recently updated documents | timeframe, startDate | `GET /documents/feed` |
-| [`get_plenary_documents_feed`](./API_USAGE_GUIDE.md#tool-get_plenary_documents_feed) | Recently updated plenary documents | timeframe, startDate | `GET /plenary-documents/feed` |
-| [`get_committee_documents_feed`](./API_USAGE_GUIDE.md#tool-get_committee_documents_feed) | Recently updated committee documents | timeframe, startDate | `GET /committee-documents/feed` |
-| [`get_plenary_session_documents_feed`](./API_USAGE_GUIDE.md#tool-get_plenary_session_documents_feed) | Recently updated plenary session documents | timeframe, startDate | `GET /plenary-session-documents/feed` |
 | [`get_external_documents_feed`](./API_USAGE_GUIDE.md#tool-get_external_documents_feed) | Recently updated external documents | timeframe, startDate, workType | `GET /external-documents/feed` |
-| [`get_parliamentary_questions_feed`](./API_USAGE_GUIDE.md#tool-get_parliamentary_questions_feed) | Recently updated parliamentary questions | timeframe, startDate | `GET /parliamentary-questions/feed` |
-| [`get_corporate_bodies_feed`](./API_USAGE_GUIDE.md#tool-get_corporate_bodies_feed) | Recently updated corporate bodies | timeframe, startDate | `GET /corporate-bodies/feed` |
-| [`get_controlled_vocabularies_feed`](./API_USAGE_GUIDE.md#tool-get_controlled_vocabularies_feed) | Recently updated controlled vocabularies | timeframe, startDate | `GET /controlled-vocabularies/feed` |
+
+**Fixed-window feeds (no parameters):**
+
+| Tool | Description | Key Parameters | EP API Endpoint |
+|------|-------------|----------------|-----------------|
+| [`get_documents_feed`](./API_USAGE_GUIDE.md#tool-get_documents_feed) | Recently updated documents | _(none)_ | `GET /documents/feed` |
+| [`get_plenary_documents_feed`](./API_USAGE_GUIDE.md#tool-get_plenary_documents_feed) | Recently updated plenary documents | _(none)_ | `GET /plenary-documents/feed` |
+| [`get_committee_documents_feed`](./API_USAGE_GUIDE.md#tool-get_committee_documents_feed) | Recently updated committee docs | _(none)_ | `GET /committee-documents/feed` |
+| [`get_plenary_session_documents_feed`](./API_USAGE_GUIDE.md#tool-get_plenary_session_documents_feed) | Recently updated plenary session docs | _(none)_ | `GET /plenary-session-documents/feed` |
+| [`get_parliamentary_questions_feed`](./API_USAGE_GUIDE.md#tool-get_parliamentary_questions_feed) | Recently updated questions | _(none)_ | `GET /parliamentary-questions/feed` |
+| [`get_corporate_bodies_feed`](./API_USAGE_GUIDE.md#tool-get_corporate_bodies_feed) | Recently updated corporate bodies | _(none)_ | `GET /corporate-bodies/feed` |
+| [`get_controlled_vocabularies_feed`](./API_USAGE_GUIDE.md#tool-get_controlled_vocabularies_feed) | Recently updated vocabularies | _(none)_ | `GET /controlled-vocabularies/feed` |
 
 ### 🔧 Server Diagnostics (1)
 

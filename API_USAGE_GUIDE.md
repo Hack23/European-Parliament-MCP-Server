@@ -302,21 +302,30 @@ Currently, the server does **not require authentication** for tool access. Futur
 
 ### 📡 Feed Tools
 
-| Tool | Purpose | Key Parameters | Response Type |
-|------|---------|----------------|---------------|
-| `get_meps_feed` | Recently updated MEPs | timeframe, startDate | Feed list |
-| `get_events_feed` | Recently updated events | timeframe, startDate, activityType | Feed list |
-| `get_procedures_feed` | Recently updated procedures | timeframe, startDate, processType | Feed list |
-| `get_adopted_texts_feed` | Recently updated adopted texts | timeframe, startDate, workType | Feed list |
-| `get_mep_declarations_feed` | Recently updated MEP declarations | timeframe, startDate, workType | Feed list |
-| `get_documents_feed` | Recently updated documents | timeframe, startDate | Feed list |
-| `get_plenary_documents_feed` | Recently updated plenary documents | timeframe, startDate | Feed list |
-| `get_committee_documents_feed` | Recently updated committee documents | timeframe, startDate | Feed list |
-| `get_plenary_session_documents_feed` | Recently updated plenary session docs | timeframe, startDate | Feed list |
-| `get_external_documents_feed` | Recently updated external documents | timeframe, startDate, workType | Feed list |
-| `get_parliamentary_questions_feed` | Recently updated questions | timeframe, startDate | Feed list |
-| `get_corporate_bodies_feed` | Recently updated corporate bodies | timeframe, startDate | Feed list |
-| `get_controlled_vocabularies_feed` | Recently updated vocabularies | timeframe, startDate | Feed list |
+EP API v2 feed endpoints fall into two groups per the [OpenAPI spec](docs/ep-openapi-spec.json):
+
+**Configurable-window feeds** (accept `timeframe` + `startDate`):
+
+| Tool | Purpose | Key Parameters | Response Type | Typical Response Time |
+|------|---------|----------------|---------------|----------------------|
+| `get_meps_feed` | Recently updated MEPs | timeframe, startDate | Feed list | ~9 s |
+| `get_events_feed` | Recently updated events | timeframe, startDate, activityType | Feed list | 30–120 s ⚠️ |
+| `get_procedures_feed` | Recently updated procedures | timeframe, startDate, processType | Feed list | 30–120 s ⚠️ |
+| `get_adopted_texts_feed` | Recently updated adopted texts | timeframe, startDate, workType | Feed list | ~1 s |
+| `get_mep_declarations_feed` | Recently updated MEP declarations | timeframe, startDate, workType | Feed list | ~1 s |
+| `get_external_documents_feed` | Recently updated external documents | timeframe, startDate, workType | Feed list | ~1 s |
+
+**Fixed-window feeds** (no parameters — server-defined default window, typically one month):
+
+| Tool | Purpose | Key Parameters | Response Type | Typical Response Time |
+|------|---------|----------------|---------------|----------------------|
+| `get_documents_feed` | Recently updated documents | _(none)_ | Feed list | 30–120 s ⚠️ |
+| `get_plenary_documents_feed` | Recently updated plenary documents | _(none)_ | Feed list | 30–60 s ⚠️ |
+| `get_committee_documents_feed` | Recently updated committee documents | _(none)_ | Feed list | 30–60 s ⚠️ |
+| `get_plenary_session_documents_feed` | Recently updated plenary session docs | _(none)_ | Feed list | 20–40 s |
+| `get_parliamentary_questions_feed` | Recently updated questions | _(none)_ | Feed list | 30–60 s ⚠️ |
+| `get_corporate_bodies_feed` | Recently updated corporate bodies | _(none)_ | Feed list | 60–180 s ⚠️ |
+| `get_controlled_vocabularies_feed` | Recently updated vocabularies | _(none)_ | Feed list | ~6 s |
 
 ---
 
@@ -2289,9 +2298,14 @@ const result = await client.callTool('get_server_health', {});
 
 ## 📡 EP API v2 Feed Endpoint Tools
 
-These tools provide access to European Parliament Open Data API v2 feed endpoints. Feed endpoints return recently updated records within a specified timeframe, enabling change-tracking and incremental data synchronization workflows.
+These tools provide access to European Parliament Open Data API v2 feed endpoints. Feed endpoints return recently updated records, enabling change-tracking and incremental data synchronization workflows.
 
-All 13 feed tools follow a consistent pattern: they accept a `timeframe` parameter, return a JSON-LD envelope with a `data` array, and gracefully handle empty results (EP API returns 404 during recess or low-activity periods).
+The 13 feed tools fall into two groups per the [EP OpenAPI spec](docs/ep-openapi-spec.json):
+
+- **Configurable-window feeds** (6 tools): Accept a `timeframe` parameter (`today`, `one-day`, `one-week`, `one-month`, `custom`) and optional `startDate`. Some also accept domain-specific filters.
+- **Fixed-window feeds** (7 tools): Accept **no parameters**. They return updates from a server-defined default window (typically one month).
+
+All feed tools return a JSON-LD envelope with a `data` array and gracefully handle empty results (EP API returns 404 during recess or low-activity periods, or HTTP 200 with an error-in-body response).
 
 ### Feed Response Format
 
@@ -2336,15 +2350,23 @@ When no updates exist in the requested timeframe (EP API returns 404):
 
 #### Slow Feed Endpoints
 
-The EP API `procedures/feed` and `events/feed` endpoints are **significantly slower** than other feed endpoints. With `timeframe: "one-month"`, these endpoints can take **120+ seconds** to respond, compared to ~30 seconds for `adopted-texts/feed`.
+Several EP API feed endpoints are **significantly slower** than standard data endpoints. The response times below reflect real-world measurements (April 2026):
 
-| Feed Endpoint | `one-week` | `one-month` | Notes |
-|--------------|------------|-------------|-------|
-| `adopted-texts/feed` | ~10s | ~30s | ✅ Reliable |
-| `meps/feed` | ~10s | ~30s | ✅ Reliable |
-| `documents/feed` | ~10s | ~60s | ⚠️ May time out on `one-month` |
-| `procedures/feed` | ~30s | **120+ s** | ⚠️ May time out |
-| `events/feed` | ~30s | **120+ s** | ⚠️ May time out |
+| Feed Endpoint | Type | Typical Response Time | Notes |
+|--------------|------|----------------------|-------|
+| `adopted-texts/feed` | Configurable | ~1 s | ✅ Fast and reliable |
+| `meps-declarations/feed` | Configurable | ~1 s | ✅ Fast and reliable |
+| `external-documents/feed` | Configurable | ~1 s | ✅ Fast and reliable |
+| `controlled-vocabularies/feed` | Fixed | ~6 s | ✅ Usually returns HTTP 204 (empty) |
+| `meps/feed` | Configurable | ~9 s | ✅ Reliable |
+| `plenary-session-documents/feed` | Fixed | 20–40 s | ⚠️ Slow, often returns error-in-body |
+| `parliamentary-questions/feed` | Fixed | 30–60 s | ⚠️ Slow, often returns error-in-body |
+| `procedures/feed` | Configurable | 30–120 s | ⚠️ May time out |
+| `plenary-documents/feed` | Fixed | 30–60 s | ⚠️ Often returns error-in-body |
+| `events/feed` | Configurable | 30–120 s | ⚠️ May time out |
+| `committee-documents/feed` | Fixed | 30–60 s | ⚠️ Often returns error-in-body |
+| `documents/feed` | Fixed | 60–120 s | ⚠️ Slow, often returns error-in-body |
+| `corporate-bodies/feed` | Fixed | 60–180 s | ⚠️ May time out |
 
 The MCP server automatically applies a **minimum 120-second timeout** to `get_procedures_feed` and `get_events_feed` to accommodate these slow endpoints. If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead.
 
@@ -2358,9 +2380,11 @@ During EP recess periods or low-activity windows, feed endpoints may return HTTP
 
 The EP publishes roll-call voting data with a delay of **several weeks**. Queries to `get_voting_records` for the most recent 1–2 months may return empty results — this is expected EP API behavior, not an error. For recent legislative activity, use `get_adopted_texts` or `get_adopted_texts_feed` instead.
 
-### Common Feed Parameters
+### Feed Parameters
 
-All feed tools share these common parameters:
+#### Configurable-window feeds (6 tools)
+
+These tools accept a `timeframe` parameter to control the data window:
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
@@ -2369,16 +2393,28 @@ All feed tools share these common parameters:
 
 > **Validation rule:** When `timeframe` is `custom`, the `startDate` parameter becomes required. The server returns a validation error if `startDate` is missing or empty for custom timeframes.
 
+Tools: `get_meps_feed`, `get_events_feed`, `get_procedures_feed`, `get_adopted_texts_feed`, `get_mep_declarations_feed`, `get_external_documents_feed`
+
+Some also accept an additional filter: `activityType` (events), `processType` (procedures), `workType` (adopted-texts, declarations, external-documents).
+
+#### Fixed-window feeds (7 tools)
+
+These tools accept **no parameters**. The EP API returns updates from a server-defined default window (typically one month). Per the [EP OpenAPI spec](docs/ep-openapi-spec.json), these endpoints only accept a `user-agent` header — no `timeframe` or `start-date` query parameters.
+
+Tools: `get_documents_feed`, `get_plenary_documents_feed`, `get_committee_documents_feed`, `get_plenary_session_documents_feed`, `get_parliamentary_questions_feed`, `get_corporate_bodies_feed`, `get_controlled_vocabularies_feed`
+
 ### Feed Tools by Category
 
-| Category | Feed Tools | Extra Filter |
-|----------|-----------|--------------|
-| **MEP Data** | `get_meps_feed`, `get_mep_declarations_feed` | `workType` (declarations) |
-| **Legislative** | `get_procedures_feed`, `get_adopted_texts_feed` | `processType` / `workType` |
-| **Documents** | `get_documents_feed`, `get_plenary_documents_feed`, `get_committee_documents_feed`, `get_plenary_session_documents_feed`, `get_external_documents_feed` | `workType` (external) |
-| **Events** | `get_events_feed` | `activityType` |
-| **Questions** | `get_parliamentary_questions_feed` | — |
-| **Institutional** | `get_corporate_bodies_feed`, `get_controlled_vocabularies_feed` | — |
+| Category | Feed Tools | Type | Extra Filter |
+|----------|-----------|------|--------------|
+| **MEP Data** | `get_meps_feed`, `get_mep_declarations_feed` | Configurable | `workType` (declarations) |
+| **Legislative** | `get_procedures_feed`, `get_adopted_texts_feed` | Configurable | `processType` / `workType` |
+| **Documents** | `get_documents_feed` ⛶, `get_plenary_documents_feed` ⛶, `get_committee_documents_feed` ⛶, `get_plenary_session_documents_feed` ⛶, `get_external_documents_feed` | Mixed | `workType` (external only) |
+| **Events** | `get_events_feed` | Configurable | `activityType` |
+| **Questions** | `get_parliamentary_questions_feed` ⛶ | Fixed | — |
+| **Institutional** | `get_corporate_bodies_feed` ⛶, `get_controlled_vocabularies_feed` ⛶ | Fixed | — |
+
+> ⛶ = Fixed-window feed (no parameters)
 
 ### Working with Feed Responses (TypeScript)
 
@@ -2568,108 +2604,94 @@ const result = await client.callTool('get_mep_declarations_feed', {
 
 ### Tool: get_documents_feed
 
-**Description**: Get recently updated documents from the European Parliament feed endpoint. Returns document records that have been modified within the specified timeframe.
+**Description**: Get recently updated documents from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
+
+> ⚠️ **Slow endpoint**: Response times typically 60–120 s. The EP API often returns an error-in-body response (HTTP 200 with `error` field) during low-activity periods.
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-What documents were updated in the last day?
+Get the latest documents feed from the European Parliament
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_documents_feed', {
-  timeframe: 'one-day'
-});
+const result = await client.callTool('get_documents_feed', {});
 ```
 
 ---
 
 ### Tool: get_plenary_documents_feed
 
-**Description**: Get recently updated plenary documents from the European Parliament feed endpoint. Returns plenary document records that have been modified within the specified timeframe.
+**Description**: Get recently updated plenary documents from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
+
+> ⚠️ **Slow endpoint**: Response times typically 30–60 s. The EP API often returns an error-in-body response during low-activity periods.
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-Show me plenary documents updated this week
+Show me the latest plenary documents feed
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_plenary_documents_feed', {
-  timeframe: 'one-week'
-});
+const result = await client.callTool('get_plenary_documents_feed', {});
 ```
 
 ---
 
 ### Tool: get_committee_documents_feed
 
-**Description**: Get recently updated committee documents from the European Parliament feed endpoint. Returns committee document records that have been modified within the specified timeframe.
+**Description**: Get recently updated committee documents from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
+
+> ⚠️ **Slow endpoint**: Response times typically 30–60 s. The EP API often returns an error-in-body response during low-activity periods.
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-Get committee documents updated in the past week
+Get the latest committee documents feed
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_committee_documents_feed', {
-  timeframe: 'one-week'
-});
+const result = await client.callTool('get_committee_documents_feed', {});
 ```
 
 ---
 
 ### Tool: get_plenary_session_documents_feed
 
-**Description**: Get recently updated plenary session documents from the European Parliament feed endpoint. Returns plenary session document records that have been modified within the specified timeframe.
+**Description**: Get recently updated plenary session documents from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-Show plenary session documents updated today
+Show me the plenary session documents feed
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_plenary_session_documents_feed', {
-  timeframe: 'today'
-});
+const result = await client.callTool('get_plenary_session_documents_feed', {});
 ```
 
 ---
@@ -2704,68 +2726,61 @@ const result = await client.callTool('get_external_documents_feed', {
 
 ### Tool: get_parliamentary_questions_feed
 
-**Description**: Get recently updated parliamentary questions from the European Parliament feed endpoint. Returns parliamentary question records that have been modified within the specified timeframe.
+**Description**: Get recently updated parliamentary questions from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
+
+> ⚠️ **Slow endpoint**: Response times typically 30–60 s. The EP API often returns an error-in-body response during low-activity periods.
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-What parliamentary questions were updated this week?
+Check the parliamentary questions feed for recent updates
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_parliamentary_questions_feed', {
-  timeframe: 'one-week'
-});
+const result = await client.callTool('get_parliamentary_questions_feed', {});
 ```
 
 ---
 
 ### Tool: get_corporate_bodies_feed
 
-**Description**: Get recently updated corporate bodies (committees, delegations, inter-parliamentary delegations) from the European Parliament feed endpoint. Returns corporate body records that have been modified within the specified timeframe.
+**Description**: Get recently updated corporate bodies (committees, delegations, inter-parliamentary delegations) from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
+
+> ⚠️ **Very slow endpoint**: Response times typically 60–180 s. May time out with default timeout settings.
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-Show me corporate bodies updated in the last month
+Check the corporate bodies feed for recent updates
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_corporate_bodies_feed', {
-  timeframe: 'one-month'
-});
+const result = await client.callTool('get_corporate_bodies_feed', {});
 ```
 
 ---
 
 ### Tool: get_controlled_vocabularies_feed
 
-**Description**: Get recently updated controlled vocabularies from the European Parliament feed endpoint. Returns controlled vocabulary records that have been modified within the specified timeframe.
+**Description**: Get recently updated controlled vocabularies from the EP Open Data Portal feed. This is a **fixed-window feed** — no parameters needed. Returns items updated within the server-defined default window (typically one month).
+
+> ℹ️ This endpoint typically returns HTTP 204 (No Content) when vocabularies have not changed — the MCP server converts this to an empty feed response.
 
 #### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
-| startDate | string | Conditional | - | Start date (YYYY-MM-DD). Required when timeframe is `custom` |
+_No parameters — this feed uses a server-defined default window (typically one month)._
 
 #### Example Usage
 
@@ -2776,9 +2791,7 @@ Have any controlled vocabularies been updated recently?
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('get_controlled_vocabularies_feed', {
-  timeframe: 'one-week'
-});
+const result = await client.callTool('get_controlled_vocabularies_feed', {});
 ```
 
 ---

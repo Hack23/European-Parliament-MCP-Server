@@ -61,7 +61,7 @@ describe('feedUtils', () => {
       expect(parsed.data).toEqual([]);
       expect(parsed['@context']).toEqual([]);
       expect(Array.isArray(parsed.dataQualityWarnings)).toBe(true);
-      expect(parsed.dataQualityWarnings[0]).toContain('404');
+      expect(parsed.dataQualityWarnings[0]).toContain('no data');
       expect(parsed.dataQualityWarnings[0]).toContain('no updates');
     });
   });
