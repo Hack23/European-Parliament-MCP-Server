@@ -59,7 +59,7 @@ const BaseFeedParamsSchema = z
  * window (typically one month).  Accepting no parameters keeps the
  * MCP tool interface honest about what the upstream API supports.
  */
-const FixedWindowFeedSchema = z.object({}).describe(
+const FixedWindowFeedSchema = z.object({}).strict().describe(
   'No parameters — this feed uses a server-defined default window (typically one month).'
 );
 

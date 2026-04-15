@@ -592,6 +592,7 @@ describe('BaseEPClient.get() error handling', () => {
 
     const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('controlled-vocabularies/feed');
     expect(result).toEqual({ data: [], '@context': [] });
+    expect(cancelMock).toHaveBeenCalled();
   });
 
   it('should return empty data when response body is whitespace-only (with content-length)', async () => {

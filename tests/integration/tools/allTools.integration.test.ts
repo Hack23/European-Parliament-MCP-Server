@@ -1073,7 +1073,7 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
   describe('Feed Tool: get_plenary_session_documents_feed', () => {
     it('should return recently updated plenary session documents', async (ctx) => {
       const result = await retryOrSkip(
-        () => handleGetPlenarySessionDocumentsFeed({ timeframe: 'one-week' }),
+        () => handleGetPlenarySessionDocumentsFeed({}),
         'get_plenary_session_documents_feed'
       );
       if (!result) { ctx.skip(); return; }
