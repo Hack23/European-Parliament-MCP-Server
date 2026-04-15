@@ -980,10 +980,9 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       // Skip for transient upstream errors (e.g. 404/503 from EP API)
       if (typeof parsed === 'object' && parsed !== null && 'error' in parsed) { ctx.skip(); return; }
       // Fail with a clear message for genuinely unexpected response shapes
-      expect(typeof parsed === 'object' && parsed !== null && 'data' in parsed,
-        `Expected parsed response to be an object with a 'data' property, got: ${JSON.stringify(parsed).substring(0, 200)}`
-      ).toBe(true);
-      expect(parsed).toHaveProperty('data');
+      if (!(typeof parsed === 'object' && parsed !== null && 'data' in parsed)) {
+        expect.fail(`Expected parsed response to be an object with a 'data' property, got: ${JSON.stringify(parsed).substring(0, 200)}`);
+      }
       expect(Array.isArray(parsed['data'])).toBe(true);
     }, 120000);
   });
@@ -1001,10 +1000,9 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       // Skip for transient upstream errors (e.g. 404/503 from EP API)
       if (typeof parsed === 'object' && parsed !== null && 'error' in parsed) { ctx.skip(); return; }
       // Fail with a clear message for genuinely unexpected response shapes
-      expect(typeof parsed === 'object' && parsed !== null && 'data' in parsed,
-        `Expected parsed response to be an object with a 'data' property, got: ${JSON.stringify(parsed).substring(0, 200)}`
-      ).toBe(true);
-      expect(parsed).toHaveProperty('data');
+      if (!(typeof parsed === 'object' && parsed !== null && 'data' in parsed)) {
+        expect.fail(`Expected parsed response to be an object with a 'data' property, got: ${JSON.stringify(parsed).substring(0, 200)}`);
+      }
       expect(Array.isArray(parsed['data'])).toBe(true);
     }, 180000);
   });
