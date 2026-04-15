@@ -171,12 +171,11 @@ describe('get_committee_documents Tool', () => {
       );
     });
 
-    it('should pass year filter when specified', async () => {
-      await handleGetCommitteeDocuments({ year: 2024 });
+    it('should not pass year to client (EP API /committee-documents does not support it)', async () => {
+      await handleGetCommitteeDocuments({});
 
-      expect(epClientModule.epClient.getCommitteeDocuments).toHaveBeenCalledWith(
-        expect.objectContaining({ year: 2024 })
-      );
+      const callArgs = vi.mocked(epClientModule.epClient.getCommitteeDocuments).mock.calls[0]?.[0];
+      expect(callArgs).not.toHaveProperty('year');
     });
   });
 

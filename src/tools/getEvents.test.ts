@@ -46,20 +46,19 @@ describe('get_events Tool', () => {
       expect(result.content[0]?.type).toBe('text');
     });
 
-    it('should accept valid date range', async () => {
-      const result = await handleGetEvents({
-        dateFrom: '2024-01-01',
-        dateTo: '2024-12-31'
-      });
-      expect(result).toHaveProperty('content');
-    });
-
-    it('should accept valid year parameter', async () => {
+    it('should strip year parameter (EP API /events does not support it)', async () => {
       const result = await handleGetEvents({ year: 2024 });
       expect(result).toHaveProperty('content');
-      expect(epClientModule.epClient.getEvents).toHaveBeenCalledWith(
-        expect.objectContaining({ year: 2024 })
-      );
+      // year is stripped by the schema — not forwarded to the client
+      const callArgs = vi.mocked(epClientModule.epClient.getEvents).mock.calls[0]?.[0];
+      expect(callArgs).not.toHaveProperty('year');
+    });
+
+    it('should strip dateFrom parameter (EP API /events has no date filtering)', async () => {
+      const result = await handleGetEvents({ dateFrom: '2024-01-01' });
+      expect(result).toHaveProperty('content');
+      const callArgs = vi.mocked(epClientModule.epClient.getEvents).mock.calls[0]?.[0];
+      expect(callArgs).not.toHaveProperty('dateFrom');
     });
 
     it('should accept valid limit and offset', async () => {
@@ -79,8 +78,8 @@ describe('get_events Tool', () => {
       await expect(handleGetEvents({ offset: -1 })).rejects.toThrow();
     });
 
-    it('should reject invalid date format', async () => {
-      await expect(handleGetEvents({ dateFrom: '15-06-2024' })).rejects.toThrow();
+    it('should reject invalid limit type', async () => {
+      await expect(handleGetEvents({ limit: 'bad' })).rejects.toThrow();
     });
   });
 
@@ -132,25 +131,15 @@ describe('get_events Tool', () => {
   });
 
   describe('Client Invocation', () => {
-    it('should pass date filters to client when provided', async () => {
-      await handleGetEvents({ dateFrom: '2024-01-01', dateTo: '2024-12-31', limit: 10, offset: 5 });
+    it('should pass only pagination params to client', async () => {
+      await handleGetEvents({ limit: 10, offset: 5 });
 
       expect(epClientModule.epClient.getEvents).toHaveBeenCalledWith(
         expect.objectContaining({
-          dateFrom: '2024-01-01',
-          dateTo: '2024-12-31',
           limit: 10,
           offset: 5
         })
       );
-    });
-
-    it('should not pass undefined date filters to client', async () => {
-      await handleGetEvents({ limit: 20 });
-
-      const callArgs = vi.mocked(epClientModule.epClient.getEvents).mock.calls[0]?.[0];
-      expect(callArgs).not.toHaveProperty('dateFrom');
-      expect(callArgs).not.toHaveProperty('dateTo');
     });
   });
 
@@ -170,10 +159,8 @@ describe('get_events Tool', () => {
       expect(getEventsToolMetadata.inputSchema).toHaveProperty('properties');
     });
 
-    it('should define dateFrom, dateTo, limit, offset in schema', () => {
+    it('should define limit, offset in schema', () => {
       const props = getEventsToolMetadata.inputSchema.properties;
-      expect(props).toHaveProperty('dateFrom');
-      expect(props).toHaveProperty('dateTo');
       expect(props).toHaveProperty('limit');
       expect(props).toHaveProperty('offset');
     });

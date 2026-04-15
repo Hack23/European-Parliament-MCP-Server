@@ -50,22 +50,16 @@ describe('get_procedures Tool', () => {
       expect(result.content[0]?.type).toBe('text');
     });
 
-    it('should accept valid year filter', async () => {
+    it('should strip year parameter (EP API /procedures does not support it)', async () => {
       const result = await handleGetProcedures({ year: 2024 });
       expect(result).toHaveProperty('content');
+      const callArgs = vi.mocked(epClientModule.epClient.getProcedures).mock.calls[0]?.[0];
+      expect(callArgs).not.toHaveProperty('year');
     });
 
     it('should accept valid limit and offset', async () => {
       const result = await handleGetProcedures({ limit: 25, offset: 10 });
       expect(result).toHaveProperty('content');
-    });
-
-    it('should reject year below minimum', async () => {
-      await expect(handleGetProcedures({ year: 1989 })).rejects.toThrow();
-    });
-
-    it('should reject year above maximum', async () => {
-      await expect(handleGetProcedures({ year: 2041 })).rejects.toThrow();
     });
 
     it('should reject limit below minimum', async () => {
@@ -124,28 +118,20 @@ describe('get_procedures Tool', () => {
     });
 
     it('should propagate schema validation errors for invalid input', async () => {
-      await expect(handleGetProcedures({ year: 'invalid' })).rejects.toThrow();
+      await expect(handleGetProcedures({ limit: 'invalid' })).rejects.toThrow();
     });
   });
 
   describe('Client Invocation', () => {
-    it('should pass year filter to client when provided', async () => {
-      await handleGetProcedures({ year: 2024, limit: 10 });
+    it('should pass only pagination params to client', async () => {
+      await handleGetProcedures({ limit: 10 });
 
       expect(epClientModule.epClient.getProcedures).toHaveBeenCalledWith(
         expect.objectContaining({
-          year: 2024,
           limit: 10,
           offset: 0
         })
       );
-    });
-
-    it('should not pass undefined year to client', async () => {
-      await handleGetProcedures({ limit: 20 });
-
-      const callArgs = vi.mocked(epClientModule.epClient.getProcedures).mock.calls[0]?.[0];
-      expect(callArgs).not.toHaveProperty('year');
     });
   });
 
@@ -165,9 +151,9 @@ describe('get_procedures Tool', () => {
       expect(getProceduresToolMetadata.inputSchema).toHaveProperty('properties');
     });
 
-    it('should define year, limit, offset in schema', () => {
+    it('should define limit, offset in schema (no year)', () => {
       const props = getProceduresToolMetadata.inputSchema.properties;
-      expect(props).toHaveProperty('year');
+      expect(props).not.toHaveProperty('year');
       expect(props).toHaveProperty('limit');
       expect(props).toHaveProperty('offset');
     });
