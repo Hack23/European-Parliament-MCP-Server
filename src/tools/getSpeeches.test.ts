@@ -71,6 +71,7 @@ describe('get_speeches Tool', () => {
       const result = await handleGetSpeeches({ year: 2024 });
       expect(result).toHaveProperty('content');
       // year is stripped by the schema — not forwarded to the client
+      expect(vi.mocked(epClientModule.epClient.getSpeeches)).toHaveBeenCalledTimes(1);
       const callArgs = vi.mocked(epClientModule.epClient.getSpeeches).mock.calls[0]?.[0];
       expect(callArgs).not.toHaveProperty('year');
     });

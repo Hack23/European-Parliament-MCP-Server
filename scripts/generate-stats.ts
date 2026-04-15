@@ -436,7 +436,7 @@ async function countItemsGroupedByMonth(
       if (pageNum >= MAX_PAGES_PER_METRIC) {
         const note = `Reached max page limit (${String(MAX_PAGES_PER_METRIC)}) for ${label} — count of ${String(totalCount)} is incomplete.`;
         progress(`⚠️  ${label}: ${note}`);
-        return { total: null, error: note };
+        return { total: null, monthlyCounts, error: note };
       }
 
       if (!result.hasMore || result.data.length < EP_API_MAX_PAGE_SIZE) break;

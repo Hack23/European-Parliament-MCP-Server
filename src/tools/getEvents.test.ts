@@ -50,6 +50,7 @@ describe('get_events Tool', () => {
       const result = await handleGetEvents({ year: 2024 });
       expect(result).toHaveProperty('content');
       // year is stripped by the schema — not forwarded to the client
+      expect(vi.mocked(epClientModule.epClient.getEvents)).toHaveBeenCalledTimes(1);
       const callArgs = vi.mocked(epClientModule.epClient.getEvents).mock.calls[0]?.[0];
       expect(callArgs).not.toHaveProperty('year');
     });
@@ -57,6 +58,7 @@ describe('get_events Tool', () => {
     it('should strip dateFrom parameter (EP API /events has no date filtering)', async () => {
       const result = await handleGetEvents({ dateFrom: '2024-01-01' });
       expect(result).toHaveProperty('content');
+      expect(vi.mocked(epClientModule.epClient.getEvents)).toHaveBeenCalledTimes(1);
       const callArgs = vi.mocked(epClientModule.epClient.getEvents).mock.calls[0]?.[0];
       expect(callArgs).not.toHaveProperty('dateFrom');
     });

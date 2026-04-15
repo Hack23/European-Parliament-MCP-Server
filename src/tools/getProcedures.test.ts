@@ -53,6 +53,7 @@ describe('get_procedures Tool', () => {
     it('should strip year parameter (EP API /procedures does not support it)', async () => {
       const result = await handleGetProcedures({ year: 2024 });
       expect(result).toHaveProperty('content');
+      expect(vi.mocked(epClientModule.epClient.getProcedures)).toHaveBeenCalledTimes(1);
       const callArgs = vi.mocked(epClientModule.epClient.getProcedures).mock.calls[0]?.[0];
       expect(callArgs).not.toHaveProperty('year');
     });
