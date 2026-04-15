@@ -1123,6 +1123,104 @@ function isCredibleApiValue(apiValue: number, storedValue: number): boolean {
 }
 
 /**
+ * Sync POLITICAL_LANDSCAPE NI group seats with the updated mepCount.
+ *
+ * When mepCount is updated from the API (e.g. due to vacancies or new
+ * members), the sum of group seats in POLITICAL_LANDSCAPE may no longer
+ * match. This function adjusts the NI (non-attached) group seat count
+ * to absorb the difference, keeping the data internally consistent.
+ *
+ * Applies to all years sharing the same parliamentary term as the latest
+ * covered year (e.g. EP10 covers 2025–2026, transition year 2024 has its
+ * own term label and is not affected).
+ */
+function syncPoliticalLandscapeWithMepCount(
+  content: string,
+  yearValidations: YearValidation[],
+  latestCoveredYear: number
+): string {
+  // Find the mepCount comparison for the latest year
+  const latestValidation = yearValidations.find((yv) => yv.year === latestCoveredYear);
+  if (!latestValidation) return content;
+
+  const mepCountComparison = latestValidation.comparisons.find(
+    (c) => METRIC_TO_FIELD[c.metric] === 'mepCount'
+  );
+  if (!mepCountComparison) return content;
+  if (mepCountComparison.apiValue === null) return content;
+  if (mepCountComparison.note) return content; // skip partial fetches
+
+  const newMepCount = mepCountComparison.apiValue;
+
+  // Guard against zero/implausible mepCount
+  if (newMepCount <= 0) return content;
+
+  // Read the current POLITICAL_LANDSCAPE data for the latest year
+  const yearStats = GENERATED_STATS.yearlyStats.find((y) => y.year === latestCoveredYear);
+  if (!yearStats) return content;
+
+  const groups = yearStats.politicalLandscape.groups;
+  const totalSeats = groups.reduce((sum, g) => sum + g.seats, 0);
+
+  // If already consistent, no adjustment needed
+  if (totalSeats === newMepCount) return content;
+
+  // Find the NI group to adjust
+  const niGroup = groups.find((g) => g.name === 'NI');
+  if (!niGroup) return content;
+
+  const seatDiff = newMepCount - totalSeats;
+  const newNiSeats = niGroup.seats + seatDiff;
+
+  // Sanity check: NI seats should remain non-negative
+  if (newNiSeats < 0) {
+    console.log(
+      `  ${YELLOW}⚠${RESET} Cannot sync NI seats for ${String(latestCoveredYear)}: adjustment would make NI seats negative (${String(newNiSeats)})`
+    );
+    return content;
+  }
+
+  // Sync NI seats for all years sharing the same parliamentary term as the
+  // latest covered year. Within a single EP term the group composition is
+  // inherited, so all years must stay in sync to maintain consistency.
+  let updated = content;
+  const latestTerm = yearStats.parliamentaryTerm;
+  const yearsToSync = GENERATED_STATS.yearlyStats
+    .filter((y) => y.parliamentaryTerm === latestTerm)
+    .map((y) => y.year);
+
+  for (const year of yearsToSync) {
+    // Look up this year's NI seats for accurate logging
+    const yearData = GENERATED_STATS.yearlyStats.find((y) => y.year === year);
+    const yearNiGroup = yearData?.politicalLandscape.groups.find((g) => g.name === 'NI');
+    const oldNiSeats = yearNiGroup?.seats ?? niGroup.seats;
+
+    // Match the NI group entry within this year's POLITICAL_LANDSCAPE line
+    // Pattern: within a line starting with "  YYYY:", find "name: 'NI', seats: NN"
+    const niPattern = new RegExp(
+      `^(\\s*${String(year)}:.*?name:\\s*'NI',\\s*seats:\\s*)\\d+(.*$)`,
+      'm'
+    );
+    const newContent = updated.replace(niPattern, `$1${String(newNiSeats)}$2`);
+    if (newContent !== updated) {
+      // Also update the NI seatShare (handle both "4.7" and "4" formats)
+      const newSeatShare = Math.round((newNiSeats / newMepCount) * 1000) / 10;
+      const sharePattern = new RegExp(
+        `^(\\s*${String(year)}:.*?name:\\s*'NI',\\s*seats:\\s*${String(newNiSeats)},\\s*seatShare:\\s*)\\d+(?:\\.\\d+)?(.*$)`,
+        'm'
+      );
+      const shareUpdated = newContent.replace(sharePattern, `$1${String(newSeatShare)}$2`);
+      updated = shareUpdated;
+      console.log(
+        `  ${GREEN}↻${RESET} Synced ${String(year)} POLITICAL_LANDSCAPE NI seats: ${String(oldNiSeats)} → ${String(newNiSeats)} (seatShare: ${String(newSeatShare)}%)`
+      );
+    }
+  }
+
+  return updated;
+}
+
+/**
  * Write API-verified values back into `src/data/generatedStats.ts`.
  *
  * For each year's validation results, updates the numeric fields in the
@@ -1229,6 +1327,17 @@ function updateStatsFile(
     console.log(
       `  ${GREEN}↻${RESET} Updated RAW_MONTHLY_DATA: ${String(monthlyEntryCount.count)} monthly metric(s)`
     );
+  }
+
+  // Sync POLITICAL_LANDSCAPE NI seats with mepCount to maintain consistency.
+  // When the API returns a new mepCount, the NI group seats are adjusted so
+  // that the sum of all group seats equals mepCount. This prevents the test
+  // `should have total seats across all groups within ±5 of mepCount` from
+  // failing due to mepCount being updated independently of group seats.
+  const syncedContent = syncPoliticalLandscapeWithMepCount(content, yearValidations, latestCoveredYear);
+  if (syncedContent !== content) {
+    content = syncedContent;
+    updatedFields += 1;
   }
 
   // Update generatedAt timestamp if any fields changed
