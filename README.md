@@ -767,7 +767,7 @@ Real-time change feeds for monitoring recently updated data across all EP API ca
 > **Key behaviors:**
 > - All feeds return JSON-LD with `data[]`, `@context[]`, and `dataQualityWarnings[]`
 > - Empty feeds (EP API 404 or error-in-body) are converted to empty `data[]` with a warning — not errors
-> - `get_events_feed` and `get_procedures_feed` are slow with `one-month` — auto-extended to 120s timeout
+> - `get_events_feed` and `get_procedures_feed` always use a minimum 120s timeout because these endpoints are consistently slow
 > - Fixed-window feeds can be very slow (30–180 s) and often return error-in-body responses
 > - For configurable feeds, when `timeframe` is `custom`, `startDate` (YYYY-MM-DD) is required
 

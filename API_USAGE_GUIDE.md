@@ -333,7 +333,7 @@ EP API v2 feed endpoints fall into two groups per the [OpenAPI spec](docs/ep-ope
 > - `controlled-vocabularies/feed` — returns HTTP 204 No Content when no vocabulary updates exist in the default window (common since vocabularies change infrequently). The server handles this gracefully and returns an empty data array.
 > - `corporate-bodies/feed` — consistently the slowest feed endpoint (60–180 s). Increase timeout if using this endpoint.
 > - `plenary-session-documents/feed` — may return an error-in-body response (HTTP 200 with `error` field) when the EP API's internal enrichment step fails. Handled gracefully by the server.
-> - All fixed-window feeds accept **no parameters** — any `timeframe` or `startDate` parameters are silently ignored.
+> - All fixed-window feeds accept **no parameters** — passing unknown parameters such as `timeframe` or `startDate` will fail input validation rather than being ignored.
 
 ---
 
@@ -2454,7 +2454,7 @@ When no updates exist in the requested timeframe (EP API returns 404):
       \"data\": [],
       \"@context\": [],
       \"dataQualityWarnings\": [
-        \"EP Open Data Portal returned 404 for this feed — likely no updates in the requested timeframe\"
+        \"EP Open Data Portal returned no data for this feed — likely no updates in the requested timeframe\"
       ]
     }"
   }]
