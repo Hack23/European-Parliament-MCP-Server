@@ -264,12 +264,12 @@ Currently, the server does **not require authentication** for tool access. Futur
 
 ### ⚖️ Legislative Procedure Tools
 
-| Tool | Purpose | Key Parameters | Response Type |
-|------|---------|----------------|---------------|
-| `get_procedures` | Legislative procedures | processId, year | Paginated list |
-| `get_procedure_events` | Procedure timeline events | processId (required) | Paginated list |
-| `get_procedure_event_by_id` | Single procedure event | processId, eventId (both required) | Single object |
-| `get_controlled_vocabularies` | Classification terms | vocId | Paginated list |
+| Tool | Purpose | Key Parameters | Response Type | Notes |
+|------|---------|----------------|---------------|-------|
+| `get_procedures` | Legislative procedures | processId, year | Paginated list | ⚠️ Use `year` filter — unfiltered queries may time out |
+| `get_procedure_events` | Procedure timeline events | processId (required) | Paginated list | ⚠️ Can be slow; may time out for large procedures |
+| `get_procedure_event_by_id` | Single procedure event | processId, eventId (both required) | Single object | Returns 404 if event ID format doesn't match EP API |
+| `get_controlled_vocabularies` | Classification terms | vocId | Paginated list | ✅ Fast without vocId; single-vocab lookup may be slow |
 
 ### 📊 Advanced Analysis Tools
 
@@ -308,10 +308,10 @@ EP API v2 feed endpoints fall into two groups per the [OpenAPI spec](docs/ep-ope
 
 | Tool | Purpose | Key Parameters | Response Type | Typical Response Time |
 |------|---------|----------------|---------------|----------------------|
-| `get_meps_feed` | Recently updated MEPs | timeframe, startDate | Feed list | ~9 s |
+| `get_meps_feed` | Recently updated MEPs | timeframe, startDate | Feed list | ~9 s (up to 60+ s under load) ⚠️ |
 | `get_events_feed` | Recently updated events | timeframe, startDate, activityType | Feed list | 30–120 s ⚠️ |
 | `get_procedures_feed` | Recently updated procedures | timeframe, startDate, processType | Feed list | 30–120 s ⚠️ |
-| `get_adopted_texts_feed` | Recently updated adopted texts | timeframe, startDate, workType | Feed list | ~1 s |
+| `get_adopted_texts_feed` | Recently updated adopted texts | timeframe, startDate, workType | Feed list | ~1 s (up to 60+ s under load) ⚠️ |
 | `get_mep_declarations_feed` | Recently updated MEP declarations | timeframe, startDate, workType | Feed list | ~1 s |
 | `get_external_documents_feed` | Recently updated external documents | timeframe, startDate, workType | Feed list | ~1 s |
 
@@ -319,13 +319,15 @@ EP API v2 feed endpoints fall into two groups per the [OpenAPI spec](docs/ep-ope
 
 | Tool | Purpose | Key Parameters | Response Type | Typical Response Time |
 |------|---------|----------------|---------------|----------------------|
-| `get_documents_feed` | Recently updated documents | _(none)_ | Feed list | 30–120 s ⚠️ |
-| `get_plenary_documents_feed` | Recently updated plenary documents | _(none)_ | Feed list | 30–60 s ⚠️ |
-| `get_committee_documents_feed` | Recently updated committee documents | _(none)_ | Feed list | 30–60 s ⚠️ |
-| `get_plenary_session_documents_feed` | Recently updated plenary session docs | _(none)_ | Feed list | 20–40 s |
-| `get_parliamentary_questions_feed` | Recently updated questions | _(none)_ | Feed list | 30–60 s ⚠️ |
-| `get_corporate_bodies_feed` | Recently updated corporate bodies | _(none)_ | Feed list | 60–180 s ⚠️ |
-| `get_controlled_vocabularies_feed` | Recently updated vocabularies | _(none)_ | Feed list | ~6 s |
+| `get_documents_feed` | Recently updated documents | _(none)_ | Feed list | 60–120+ s ⚠️ |
+| `get_plenary_documents_feed` | Recently updated plenary documents | _(none)_ | Feed list | 30–120+ s ⚠️ |
+| `get_committee_documents_feed` | Recently updated committee documents | _(none)_ | Feed list | 30–120+ s ⚠️ |
+| `get_plenary_session_documents_feed` | Recently updated plenary session docs | _(none)_ | Feed list | 20–120+ s ⚠️ |
+| `get_parliamentary_questions_feed` | Recently updated questions | _(none)_ | Feed list | 30–120+ s ⚠️ |
+| `get_corporate_bodies_feed` | Recently updated corporate bodies | _(none)_ | Feed list | 60–180+ s ⚠️ |
+| `get_controlled_vocabularies_feed` | Recently updated vocabularies | _(none)_ | Feed list | ~6 s (up to 60+ s under load) ⚠️ |
+
+> ⚠️ **EP API response times are highly variable.** During peak load, even normally fast feeds can exceed the default 60s timeout. Set `--timeout 180000` for reliable feed access.
 
 ---
 
@@ -1698,6 +1700,8 @@ const speech = await client.callTool('get_speeches', {
 
 **Description**: Get European Parliament legislative procedures. Supports single procedure lookup by processId or list with year filter.
 
+> ⚠️ **Performance note:** Always use a `year` filter or `processId` when querying procedures. Unfiltered queries can take 60+ seconds and may time out with the default 60s timeout.
+
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
@@ -1716,7 +1720,7 @@ Show me legislative procedures from 2024
 
 **MCP Client - TypeScript:**
 ```typescript
-// List procedures by year
+// List procedures by year (recommended — avoids timeout)
 const result = await client.callTool('get_procedures', { year: 2024, limit: 20 });
 
 // Get a specific procedure
@@ -1731,11 +1735,13 @@ const procedure = await client.callTool('get_procedures', {
 
 **Description**: Get events linked to a specific EP legislative procedure (hearings, debates, votes). Returns the timeline of events for a procedure.
 
+> ⚠️ **EP API note:** This endpoint can be slow (30–60+ s) and may return 404 for some procedure IDs. Use the `eli/dl/proc/` prefixed IDs returned by `get_procedures` for best results.
+
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| processId | string | Yes | - | Procedure ID (YYYY-NNNN format) |
+| processId | string | Yes | - | Procedure process ID (e.g., `eli/dl/proc/2024-0006` or `2024-0006`) |
 | limit | number | No | 50 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
 
@@ -1748,7 +1754,7 @@ Show me the timeline of events for procedure 2024-0006
 **MCP Client - TypeScript:**
 ```typescript
 const result = await client.callTool('get_procedure_events', {
-  processId: '2024-0006',
+  processId: 'eli/dl/proc/2024-0006',
   limit: 50
 });
 ```
@@ -2350,27 +2356,33 @@ When no updates exist in the requested timeframe (EP API returns 404):
 
 #### Slow Feed Endpoints
 
-Several EP API feed endpoints are **significantly slower** than standard data endpoints. The response times below reflect real-world measurements (April 2026):
+Several EP API feed endpoints are **significantly slower** than standard data endpoints. The response times below reflect real-world measurements (April 2026). **Note:** EP API response times are highly variable — during high-load periods, even "fast" feeds may exceed the default 60s timeout.
 
-| Feed Endpoint | Type | Typical Response Time | Notes |
-|--------------|------|----------------------|-------|
-| `adopted-texts/feed` | Configurable | ~1 s | ✅ Fast and reliable |
-| `meps-declarations/feed` | Configurable | ~1 s | ✅ Fast and reliable |
-| `external-documents/feed` | Configurable | ~1 s | ✅ Fast and reliable |
-| `controlled-vocabularies/feed` | Fixed | ~6 s | ✅ Usually returns HTTP 204 (empty) |
-| `meps/feed` | Configurable | ~9 s | ✅ Reliable |
-| `plenary-session-documents/feed` | Fixed | 20–40 s | ⚠️ Slow, often returns error-in-body |
-| `parliamentary-questions/feed` | Fixed | 30–60 s | ⚠️ Slow, often returns error-in-body |
-| `procedures/feed` | Configurable | 30–120 s | ⚠️ May time out |
-| `plenary-documents/feed` | Fixed | 30–60 s | ⚠️ Often returns error-in-body |
-| `events/feed` | Configurable | 30–120 s | ⚠️ May time out |
-| `committee-documents/feed` | Fixed | 30–60 s | ⚠️ Often returns error-in-body |
-| `documents/feed` | Fixed | 60–120 s | ⚠️ Slow, often returns error-in-body |
-| `corporate-bodies/feed` | Fixed | 60–180 s | ⚠️ May time out |
+| Feed Endpoint | Type | Best-Case Response Time | Peak-Load Response Time | Notes |
+|--------------|------|------------------------|------------------------|-------|
+| `adopted-texts/feed` | Configurable | ~1 s | 30–60+ s | ✅ Usually fast; may slow during peak load |
+| `meps-declarations/feed` | Configurable | ~1 s | 10–30 s | ✅ Usually fast and reliable |
+| `external-documents/feed` | Configurable | ~1 s | 5–15 s | ✅ Usually fast and reliable |
+| `controlled-vocabularies/feed` | Fixed | ~6 s | 30–60+ s | ⚠️ Often returns HTTP 204 (no content) |
+| `meps/feed` | Configurable | ~9 s | 30–60+ s | ⚠️ May time out under load |
+| `plenary-session-documents/feed` | Fixed | 20–40 s | 60–120+ s | ⚠️ Slow; often returns error-in-body |
+| `parliamentary-questions/feed` | Fixed | 30–60 s | 60–120+ s | ⚠️ Slow; often returns error-in-body |
+| `procedures/feed` | Configurable | 30–60 s | 60–120+ s | ⚠️ May time out |
+| `plenary-documents/feed` | Fixed | 30–60 s | 60–120+ s | ⚠️ Often returns error-in-body |
+| `events/feed` | Configurable | 30–60 s | 60–120+ s | ⚠️ May time out |
+| `committee-documents/feed` | Fixed | 30–60 s | 60–120+ s | ⚠️ Often returns error-in-body |
+| `documents/feed` | Fixed | 60–120 s | 120+ s | ⚠️ Very slow; frequently times out |
+| `corporate-bodies/feed` | Fixed | 60–180 s | 180+ s | ⚠️ Slowest feed; frequently times out |
 
-The MCP server automatically applies a **minimum 120-second timeout** to `get_procedures_feed` and `get_events_feed` to accommodate these slow endpoints. If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead.
+The MCP server automatically applies a **minimum 120-second timeout** to all fixed-window feeds and to the slow configurable feeds (`get_procedures_feed`, `get_events_feed`). If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead.
 
-**Recommended fallback:** When `get_procedures_feed({ timeframe: "one-month" })` times out, use `get_procedures({ year: 2026, limit: 20 })` instead. Similarly, use `get_plenary_sessions({ year: 2026 })` as a fallback for `get_events_feed`.
+> **Tip:** For production use, set `--timeout 180000` (180 seconds) to accommodate the slowest feeds. The default 60-second timeout is sufficient for most data endpoints but too short for many feeds during peak load.
+
+**Recommended fallbacks when feeds time out:**
+- `get_procedures_feed` → use `get_procedures({ year: 2026, limit: 20 })` instead
+- `get_events_feed` → use `get_plenary_sessions({ year: 2026 })` instead
+- `get_meps_feed` → use `get_current_meps({ limit: 50 })` instead
+- `get_adopted_texts_feed` → use `get_adopted_texts({ year: 2026 })` instead
 
 #### Feed 404 Responses (Empty Feeds)
 
