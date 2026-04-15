@@ -305,15 +305,15 @@ Currently, the server does **not require authentication** for tool access. Futur
 | Tool | Purpose | Key Parameters | Response Type |
 |------|---------|----------------|---------------|
 | `get_meps_feed` | Recently updated MEPs | timeframe, startDate | Feed list |
-| `get_events_feed` | Recently updated events | timeframe, activityType | Feed list |
-| `get_procedures_feed` | Recently updated procedures | timeframe, processType | Feed list |
-| `get_adopted_texts_feed` | Recently updated adopted texts | timeframe, workType | Feed list |
-| `get_mep_declarations_feed` | Recently updated MEP declarations | timeframe, workType | Feed list |
+| `get_events_feed` | Recently updated events | timeframe, startDate, activityType | Feed list |
+| `get_procedures_feed` | Recently updated procedures | timeframe, startDate, processType | Feed list |
+| `get_adopted_texts_feed` | Recently updated adopted texts | timeframe, startDate, workType | Feed list |
+| `get_mep_declarations_feed` | Recently updated MEP declarations | timeframe, startDate, workType | Feed list |
 | `get_documents_feed` | Recently updated documents | timeframe, startDate | Feed list |
 | `get_plenary_documents_feed` | Recently updated plenary documents | timeframe, startDate | Feed list |
 | `get_committee_documents_feed` | Recently updated committee documents | timeframe, startDate | Feed list |
 | `get_plenary_session_documents_feed` | Recently updated plenary session docs | timeframe, startDate | Feed list |
-| `get_external_documents_feed` | Recently updated external documents | timeframe, workType | Feed list |
+| `get_external_documents_feed` | Recently updated external documents | timeframe, startDate, workType | Feed list |
 | `get_parliamentary_questions_feed` | Recently updated questions | timeframe, startDate | Feed list |
 | `get_corporate_bodies_feed` | Recently updated corporate bodies | timeframe, startDate | Feed list |
 | `get_controlled_vocabularies_feed` | Recently updated vocabularies | timeframe, startDate | Feed list |
@@ -2291,6 +2291,47 @@ const result = await client.callTool('get_server_health', {});
 
 These tools provide access to European Parliament Open Data API v2 feed endpoints. Feed endpoints return recently updated records within a specified timeframe, enabling change-tracking and incremental data synchronization workflows.
 
+All 13 feed tools follow a consistent pattern: they accept a `timeframe` parameter, return a JSON-LD envelope with a `data` array, and gracefully handle empty results (EP API returns 404 during recess or low-activity periods).
+
+### Feed Response Format
+
+All feed tools return the same response structure:
+
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{
+      \"data\": [
+        { \"id\": \"...\", \"type\": \"...\", ... },
+        { \"id\": \"...\", \"type\": \"...\", ... }
+      ],
+      \"@context\": [ ... ],
+      \"dataQualityWarnings\": []
+    }"
+  }]
+}
+```
+
+When no updates exist in the requested timeframe (EP API returns 404):
+
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{
+      \"data\": [],
+      \"@context\": [],
+      \"dataQualityWarnings\": [
+        \"EP Open Data Portal returned 404 for this feed — likely no updates in the requested timeframe\"
+      ]
+    }"
+  }]
+}
+```
+
+> **Important:** An empty `data` array with a `dataQualityWarnings` message is **not an error** — it means the EP API had no updates in the requested timeframe. Always check `dataQualityWarnings` before assuming the feed is broken.
+
 ### ⚠️ Known EP API Behavior & Limitations
 
 #### Slow Feed Endpoints
@@ -2301,12 +2342,17 @@ The EP API `procedures/feed` and `events/feed` endpoints are **significantly slo
 |--------------|------------|-------------|-------|
 | `adopted-texts/feed` | ~10s | ~30s | ✅ Reliable |
 | `meps/feed` | ~10s | ~30s | ✅ Reliable |
+| `documents/feed` | ~10s | ~60s | ⚠️ May time out on `one-month` |
 | `procedures/feed` | ~30s | **120+ s** | ⚠️ May time out |
 | `events/feed` | ~30s | **120+ s** | ⚠️ May time out |
 
 The MCP server automatically applies a **minimum 120-second timeout** to `get_procedures_feed` and `get_events_feed` to accommodate these slow endpoints. If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead.
 
 **Recommended fallback:** When `get_procedures_feed({ timeframe: "one-month" })` times out, use `get_procedures({ year: 2026, limit: 20 })` instead. Similarly, use `get_plenary_sessions({ year: 2026 })` as a fallback for `get_events_feed`.
+
+#### Feed 404 Responses (Empty Feeds)
+
+During EP recess periods or low-activity windows, feed endpoints may return HTTP 404. The MCP server **converts these to empty-but-successful responses** with `dataQualityWarnings`. This is expected behavior — not an error.
 
 #### Voting Records Data Delay
 
@@ -2320,6 +2366,60 @@ All feed tools share these common parameters:
 |-----------|------|----------|---------|-------------|
 | timeframe | string | No | one-week | Time window: `today`, `one-day`, `one-week`, `one-month`, or `custom` |
 | startDate | string | Conditional | - | Start date in YYYY-MM-DD format. **Required** when timeframe is `custom` |
+
+> **Validation rule:** When `timeframe` is `custom`, the `startDate` parameter becomes required. The server returns a validation error if `startDate` is missing or empty for custom timeframes.
+
+### Feed Tools by Category
+
+| Category | Feed Tools | Extra Filter |
+|----------|-----------|--------------|
+| **MEP Data** | `get_meps_feed`, `get_mep_declarations_feed` | `workType` (declarations) |
+| **Legislative** | `get_procedures_feed`, `get_adopted_texts_feed` | `processType` / `workType` |
+| **Documents** | `get_documents_feed`, `get_plenary_documents_feed`, `get_committee_documents_feed`, `get_plenary_session_documents_feed`, `get_external_documents_feed` | `workType` (external) |
+| **Events** | `get_events_feed` | `activityType` |
+| **Questions** | `get_parliamentary_questions_feed` | — |
+| **Institutional** | `get_corporate_bodies_feed`, `get_controlled_vocabularies_feed` | — |
+
+### Working with Feed Responses (TypeScript)
+
+```typescript
+// Standard feed consumption pattern
+const result = await client.callTool('get_meps_feed', {
+  timeframe: 'one-week'
+});
+
+const response = JSON.parse(result.content[0].text);
+
+// Check for empty feed (404 converted to empty result)
+if (response.dataQualityWarnings?.length > 0) {
+  console.log('Feed warning:', response.dataQualityWarnings[0]);
+}
+
+// Process data
+if (response.data.length > 0) {
+  for (const item of response.data) {
+    console.log(`Updated: ${item.id} (${item.type})`);
+  }
+} else {
+  console.log('No updates in the requested timeframe');
+}
+```
+
+```typescript
+// Custom timeframe with specific start date
+const result = await client.callTool('get_adopted_texts_feed', {
+  timeframe: 'custom',
+  startDate: '2026-01-01'
+});
+```
+
+```typescript
+// Using type filters
+const result = await client.callTool('get_external_documents_feed', {
+  timeframe: 'one-month',
+  workType: 'COUNCIL_POSITION'
+});
+```
 
 ---
 

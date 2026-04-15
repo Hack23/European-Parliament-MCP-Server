@@ -759,7 +759,13 @@ graph LR
 
 ### 📡 Feed Tools (13)
 
-Real-time change feeds for monitoring recently updated data across all EP API categories. Each feed supports configurable timeframes (today, one-day, one-week, one-month, custom).
+Real-time change feeds for monitoring recently updated data across all EP API categories. Each feed supports configurable timeframes (`today`, `one-day`, `one-week`, `one-month`, `custom`).
+
+> **Key behaviors:**
+> - All feeds return JSON-LD with `data[]`, `@context[]`, and `dataQualityWarnings[]`
+> - Empty feeds (EP API 404) are converted to empty `data[]` with a warning — not errors
+> - `get_events_feed` and `get_procedures_feed` are slow with `one-month` — auto-extended to 120s timeout
+> - When `timeframe` is `custom`, `startDate` (YYYY-MM-DD) is required
 
 | Tool | Description | Key Parameters | EP API Endpoint |
 |------|-------------|----------------|-----------------|
