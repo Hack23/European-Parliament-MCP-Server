@@ -254,7 +254,7 @@ const EP_API_MAX_PAGE_SIZE = 1000;
  * `/committee-documents`, `/external-documents`) do NOT support the
  * `year` query parameter — the API silently ignores it and returns
  * ALL records regardless.  Without early termination the script would
- * paginate through the entire dataset (100 k+ records for speeches)
+ * paginate through the entire dataset (100k+ records for speeches)
  * with zero year-matched results, wasting time and API quota.
  *
  * When this many consecutive pages yield no records matching the
@@ -417,8 +417,9 @@ async function countItemsGroupedByMonth(
       // This means the API endpoint does not support year filtering and
       // is returning the entire unfiltered dataset.
       if (consecutiveEmptyPages >= MAX_CONSECUTIVE_EMPTY_PAGES && totalCount === 0) {
-        const note = `EP API does not filter by year for ${label} — ${String(pageNum)} pages fetched with 0 matches for ${yearStr}. ` +
-          `Endpoint likely ignores the year parameter.`;
+        const note = `EP API does not support year filtering for ${label} — ` +
+          `${String(pageNum)} pages fetched with 0 matches for ${yearStr}. ` +
+          `This endpoint does not accept the year parameter per the EP API specification.`;
         progress(`⚠️  ${label}: early termination after ${String(pageNum)} pages with 0 matches`);
         return { total: null, monthlyCounts, error: note };
       }
