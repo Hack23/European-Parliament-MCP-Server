@@ -581,6 +581,19 @@ describe('BaseEPClient.get() error handling', () => {
     expect(result).toEqual({ data: [], '@context': [] });
   });
 
+  it('should return empty data for HTTP 204 No Content (e.g. controlled-vocabularies/feed)', async () => {
+    const cancelMock = vi.fn();
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      status: 204,
+      headers: new Headers(),
+      body: { cancel: cancelMock },
+    } as unknown as Response);
+
+    const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('controlled-vocabularies/feed');
+    expect(result).toEqual({ data: [], '@context': [] });
+  });
+
   it('should return empty data when response body is whitespace-only (with content-length)', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,

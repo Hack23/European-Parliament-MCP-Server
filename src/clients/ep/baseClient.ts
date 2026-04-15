@@ -518,6 +518,15 @@ export class BaseEPClient {
           );
         }
 
+        // HTTP 204 No Content — some EP API feed endpoints (e.g.
+        // controlled-vocabularies/feed) return 204 when no updates exist.
+        // The response has no body and no Content-Type header, so skip
+        // content-type validation and body parsing entirely.
+        if (response.status === 204) {
+          await response.body?.cancel();
+          return { data: [], '@context': [] } as unknown as T;
+        }
+
         // Validate content-type to reject non-JSON responses early.
         BaseEPClient.validateContentType(response);
 
