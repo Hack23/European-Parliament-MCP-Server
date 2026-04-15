@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.6**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.7**](../../../../README.md)
 
 ***
 
@@ -6,8 +6,8 @@
 
 # Variable: GetParliamentaryQuestionsFeedSchema
 
-> `const` **GetParliamentaryQuestionsFeedSchema**: `ZodObject`\<\{ `startDate`: `ZodOptional`\<`ZodString`\>; `timeframe`: `ZodDefault`\<`ZodEnum`\<\{ `custom`: `"custom"`; `one-day`: `"one-day"`; `one-month`: `"one-month"`; `one-week`: `"one-week"`; `today`: `"today"`; \}\>\>; \}, `$strip`\> = `BaseFeedParamsSchema`
+> `const` **GetParliamentaryQuestionsFeedSchema**: `ZodObject`\<\{ \}, `$strict`\> = `FixedWindowFeedSchema`
 
-Defined in: [schemas/ep/feed.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/feed.ts#L67)
+Defined in: [schemas/ep/feed.ts:81](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/feed.ts#L81)
 
-GET /parliamentary-questions/feed
+GET /parliamentary-questions/feed — server-default window

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.6**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.7**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: CommitteeClient
 
-Defined in: [clients/ep/committeeClient.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L34)
+Defined in: [clients/ep/committeeClient.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L35)
 
 Sub-client for committee/corporate-body EP API endpoints.
 
@@ -20,7 +20,7 @@ Sub-client for committee/corporate-body EP API endpoints.
 
 > **new CommitteeClient**(`config?`, `shared?`): `CommitteeClient`
 
-Defined in: [clients/ep/committeeClient.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L35)
+Defined in: [clients/ep/committeeClient.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L36)
 
 #### Parameters
 
@@ -144,7 +144,7 @@ Request timeout in milliseconds.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:694](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L694)
+Defined in: [clients/ep/baseClient.ts:709](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L709)
 
 Clears all entries from the LRU cache.
 
@@ -162,7 +162,7 @@ Clears all entries from the LRU cache.
 
 > `private` **fetchCommitteeDirectly**(`bodyId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
 
-Defined in: [clients/ep/committeeClient.ts:68](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L68)
+Defined in: [clients/ep/committeeClient.ts:69](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L69)
 
 Attempts a direct corporate-body lookup by ID.
 
@@ -182,7 +182,7 @@ Attempts a direct corporate-body lookup by ID.
 
 > `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:626](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L626)
+Defined in: [clients/ep/baseClient.ts:641](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L641)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -238,7 +238,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:703](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L703)
+Defined in: [clients/ep/baseClient.ts:718](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L718)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -278,7 +278,7 @@ Returns cache statistics for monitoring and debugging.
 
 > **getCommitteeInfo**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
-Defined in: [clients/ep/committeeClient.ts:115](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L115)
+Defined in: [clients/ep/committeeClient.ts:116](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L116)
 
 Retrieves committee (corporate body) information by ID or abbreviation.
 
@@ -312,24 +312,15 @@ Audit logged per GDPR Article 30
 
 ### getCorporateBodiesFeed()
 
-> **getCorporateBodiesFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getCorporateBodiesFeed**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/committeeClient.ts:139](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L139)
+Defined in: [clients/ep/committeeClient.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L143)
 
 Retrieves recently updated corporate bodies via the feed endpoint.
 **EP API Endpoint:** `GET /corporate-bodies/feed`
 
-#### Parameters
-
-##### params?
-
-###### startDate?
-
-`string`
-
-###### timeframe?
-
-`string`
+Fixed-window feed — no `timeframe` parameter per OpenAPI spec.
+Extended timeout applied (120 s minimum).
 
 #### Returns
 
@@ -341,7 +332,7 @@ Retrieves recently updated corporate bodies via the feed endpoint.
 
 > **getCurrentCorporateBodies**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
 
-Defined in: [clients/ep/committeeClient.ts:154](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L154)
+Defined in: [clients/ep/committeeClient.ts:153](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L153)
 
 Returns the list of all current EP Corporate Bodies for today's date.
 **EP API Endpoint:** `GET /corporate-bodies/show-current`
@@ -368,7 +359,7 @@ Returns the list of all current EP Corporate Bodies for today's date.
 
 > `private` **resolveCommittee**(`searchTerm`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
-Defined in: [clients/ep/committeeClient.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L52)
+Defined in: [clients/ep/committeeClient.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L53)
 
 Resolves a committee by trying direct lookup then list search.
 
@@ -392,7 +383,7 @@ If committee not found
 
 > `private` **searchCommitteeInList**(`searchTerm`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
 
-Defined in: [clients/ep/committeeClient.ts:88](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L88)
+Defined in: [clients/ep/committeeClient.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L89)
 
 Searches the corporate-bodies list for a matching committee.
 
@@ -412,7 +403,7 @@ Searches the corporate-bodies list for a matching committee.
 
 > `private` **transformCorporateBody**(`apiData`): [`Committee`](../../../../types/ep/committee/interfaces/Committee.md)
 
-Defined in: [clients/ep/committeeClient.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L41)
+Defined in: [clients/ep/committeeClient.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L42)
 
 #### Parameters
 

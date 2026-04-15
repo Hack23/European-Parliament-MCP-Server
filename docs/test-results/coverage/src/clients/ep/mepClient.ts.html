@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.11% </span>
+                <span class="strong">92.75% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>128/136</span>
+                <span class='fraction'>128/138</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">73.58% </span>
+                <span class="strong">70.9% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>78/106</span>
+                <span class='fraction'>78/110</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.86% </span>
+                <span class="strong">94.3% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>116/121</span>
+                <span class='fraction'>116/123</span>
             </div>
         
             
@@ -493,7 +493,19 @@
 <a name='L428'></a><a href='#L428'>428</a>
 <a name='L429'></a><a href='#L429'>429</a>
 <a name='L430'></a><a href='#L430'>430</a>
-<a name='L431'></a><a href='#L431'>431</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L431'></a><a href='#L431'>431</a>
+<a name='L432'></a><a href='#L432'>432</a>
+<a name='L433'></a><a href='#L433'>433</a>
+<a name='L434'></a><a href='#L434'>434</a>
+<a name='L435'></a><a href='#L435'>435</a>
+<a name='L436'></a><a href='#L436'>436</a>
+<a name='L437'></a><a href='#L437'>437</a>
+<a name='L438'></a><a href='#L438'>438</a>
+<a name='L439'></a><a href='#L439'>439</a>
+<a name='L440'></a><a href='#L440'>440</a>
+<a name='L441'></a><a href='#L441'>441</a>
+<a name='L442'></a><a href='#L442'>442</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -881,6 +893,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -895,6 +912,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -954,6 +976,7 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
+import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 &nbsp;
 // ─── MEP Client ───────────────────────────────────────────────────────────────
 &nbsp;
@@ -1306,33 +1329,43 @@ export class MEPClient extends BaseEPClient {
   /**
    * Retrieves recently updated MEPs via the feed endpoint.
    * **EP API Endpoint:** `GET /meps/feed`
+   *
+   * Configurable-window feed.  Extended timeout applied for `one-month`.
    */
   async <span class="fstat-no" title="function not covered" >getMEPsFeed(p</span>arams: {
     timeframe?: string;
     startDate?: string;
   } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
+    const minimumTimeout = <span class="cstat-no" title="statement not covered" >params.timeframe === 'one-month'</span>
+      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
+      : undefined;
 <span class="cstat-no" title="statement not covered" >    return this.get&lt;JSONLDResponse&gt;('meps/feed', {</span>
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
-    });
+    }, minimumTimeout);
   }
 &nbsp;
   /**
    * Retrieves recently updated MEP declarations via the feed endpoint.
    * **EP API Endpoint:** `GET /meps-declarations/feed`
+   *
+   * Configurable-window feed.  Extended timeout applied for `one-month`.
    */
   async <span class="fstat-no" title="function not covered" >getMEPDeclarationsFeed(p</span>arams: {
     timeframe?: string;
     startDate?: string;
     workType?: string;
   } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
+    const minimumTimeout = <span class="cstat-no" title="statement not covered" >params.timeframe === 'one-month'</span>
+      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
+      : undefined;
 <span class="cstat-no" title="statement not covered" >    return this.get&lt;JSONLDResponse&gt;('meps-declarations/feed', {</span>
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.workType !== undefined ? { 'work-type': params.workType } : {}),
-    });
+    }, minimumTimeout);
   }
 &nbsp;
   /**
@@ -1360,7 +1393,7 @@ export class MEPClient extends BaseEPClient {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-13T19:25:19.043Z
+                at 2026-04-15T12:00:11.882Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.6**](../../../README.md)
+[**European Parliament MCP Server API v1.2.7**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetPlenarySessionDocumentsFeed**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getPlenarySessionDocumentsFeed.ts:27](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenarySessionDocumentsFeed.ts#L27)
+Defined in: [tools/getPlenarySessionDocumentsFeed.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenarySessionDocumentsFeed.ts#L30)
 
 Handles the get_plenary_session_documents_feed MCP tool request.
 
@@ -24,7 +24,7 @@ Raw tool arguments, validated against [GetPlenarySessionDocumentsFeedSchema](../
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-MCP tool result containing recently updated plenary session document data
+MCP tool result containing recently updated plenary session documents data
 
 ## Security
 

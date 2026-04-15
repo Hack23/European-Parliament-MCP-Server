@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.6**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.7**](../../../../README.md)
 
 ***
 
@@ -147,6 +147,16 @@ Defined in: [clients/ep/baseClient.ts:225](https://github.com/Hack23/European-Pa
 
 Request timeout in milliseconds.
 
+***
+
+### EMPTY\_JSONLD
+
+> `private` `readonly` `static` **EMPTY\_JSONLD**: [`Readonly`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype)\<\{ `@context`: `never`[]; `data`: `never`[]; \}\>
+
+Defined in: [clients/ep/baseClient.ts:482](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L482)
+
+Empty JSON-LD shape returned for bodyless responses (HTTP 204, content-length: 0).
+
 ## Methods
 
 ### buildRequestUrl()
@@ -177,7 +187,7 @@ Builds the full request URL from endpoint + optional params.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:694](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L694)
+Defined in: [clients/ep/baseClient.ts:709](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L709)
 
 Clears all entries from the LRU cache.
 
@@ -191,7 +201,7 @@ Clears all entries from the LRU cache.
 
 > `private` **fetchWithRetry**\<`T`\>(`url`, `endpoint`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:570](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L570)
+Defined in: [clients/ep/baseClient.ts:585](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L585)
 
 Wraps a fetch call with the configured retry policy.
 
@@ -231,7 +241,7 @@ Optional per-request minimum timeout (ms)
 
 > `private` **fetchWithTimeout**\<`T`\>(`url`, `endpoint`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:488](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L488)
+Defined in: [clients/ep/baseClient.ts:521](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L521)
 
 Executes the HTTP fetch with timeout/abort support and response size guard.
 
@@ -274,7 +284,7 @@ Optional per-request minimum timeout (ms).
 
 > `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:626](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L626)
+Defined in: [clients/ep/baseClient.ts:641](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L641)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -326,7 +336,7 @@ On HTTP errors, network failures, or parse failures
 
 > `private` **getCacheKey**(`endpoint`, `params?`): `string`
 
-Defined in: [clients/ep/baseClient.ts:674](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L674)
+Defined in: [clients/ep/baseClient.ts:689](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L689)
 
 Generates a deterministic cache key.
 
@@ -356,7 +366,7 @@ JSON string used as cache key
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:703](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L703)
+Defined in: [clients/ep/baseClient.ts:718](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L718)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -385,6 +395,34 @@ Returns cache statistics for monitoring and debugging.
 ##### size
 
 > **size**: `number`
+
+***
+
+### parseByContentLength()
+
+> `private` **parseByContentLength**\<`T`\>(`response`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T` \| `undefined`\>
+
+Defined in: [clients/ep/baseClient.ts:490](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L490)
+
+Parses the response body based on content-length header.
+Returns `undefined` when content-length is absent or non-finite (caller
+should fall through to streamed-body parsing).
+
+#### Type Parameters
+
+##### T
+
+`T`
+
+#### Parameters
+
+##### response
+
+`Response`
+
+#### Returns
+
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T` \| `undefined`\>
 
 ***
 
@@ -447,7 +485,7 @@ Does NOT retry on 4xx client errors (except 429).
 
 > `private` **toAPIError**(`error`, `endpoint`): [`APIError`](APIError.md)
 
-Defined in: [clients/ep/baseClient.ts:592](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L592)
+Defined in: [clients/ep/baseClient.ts:607](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L607)
 
 Converts a caught error to a typed [APIError](APIError.md).
 For timeout errors, the actual timeout value is read from the

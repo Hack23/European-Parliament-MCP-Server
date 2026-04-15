@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.68% </span>
+                <span class="strong">93.44% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>114/123</span>
+                <span class='fraction'>114/122</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75.86% </span>
+                <span class="strong">77.19% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>88/116</span>
+                <span class='fraction'>88/114</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.45% </span>
+                <span class="strong">94.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>100/107</span>
+                <span class='fraction'>100/106</span>
             </div>
         
             
@@ -440,15 +440,7 @@
 <a name='L375'></a><a href='#L375'>375</a>
 <a name='L376'></a><a href='#L376'>376</a>
 <a name='L377'></a><a href='#L377'>377</a>
-<a name='L378'></a><a href='#L378'>378</a>
-<a name='L379'></a><a href='#L379'>379</a>
-<a name='L380'></a><a href='#L380'>380</a>
-<a name='L381'></a><a href='#L381'>381</a>
-<a name='L382'></a><a href='#L382'>382</a>
-<a name='L383'></a><a href='#L383'>383</a>
-<a name='L384'></a><a href='#L384'>384</a>
-<a name='L385'></a><a href='#L385'>385</a>
-<a name='L386'></a><a href='#L386'>386</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L378'></a><a href='#L378'>378</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -800,14 +792,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1178,29 +1162,21 @@ export class PlenaryClient extends BaseEPClient {
    * **EP API Endpoint:** `GET /events/feed`
    *
    * **Note:** The EP API `events/feed` endpoint is significantly slower
-   * than other feed endpoints and may take 120+ seconds for `one-month`
-   * timeframes. For `one-month`, this client applies
-   * `DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS` as a minimum timeout for the
-   * request. Callers may still need to increase the configured global timeout
-   * if the EP API takes longer than that minimum to respond.
+   * than other feed endpoints — it typically takes 30–50 s even for `one-week`
+   * and 120+ seconds for `one-month`.  An extended minimum timeout of 120 s
+   * is always applied.
    */
   async <span class="fstat-no" title="function not covered" >getEventsFeed(p</span>arams: {
     timeframe?: string;
     startDate?: string;
     activityType?: string;
   } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
-    // Apply a minimum timeout only for the known-slow 'one-month' timeframe.
-    // Responses can still exceed this minimum, so callers may need a higher
-    // global timeout in their client configuration.
-    const minimumTimeout = <span class="cstat-no" title="statement not covered" >params.timeframe === 'one-month'</span>
-      ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
-      : undefined;
 <span class="cstat-no" title="statement not covered" >    return this.get&lt;JSONLDResponse&gt;('events/feed', {</span>
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.activityType !== undefined ? { 'activity-type': params.activityType } : {}),
-    }, minimumTimeout);
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
   }
 &nbsp;
   /**
@@ -1225,7 +1201,7 @@ export class PlenaryClient extends BaseEPClient {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-13T19:25:19.043Z
+                at 2026-04-15T12:00:11.882Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

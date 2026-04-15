@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.6**](../README.md)
+[**European Parliament MCP Server API v1.2.7**](../README.md)
 
 ***
 
@@ -127,14 +127,14 @@ This MCP server implements comprehensive security measures aligned with our **[S
 
 - **📄 SBOM Generation** - Software Bill of Materials in SPDX format
   - Policy: [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md)
-  - Implementation: [SBOM Generation Workflow](../_media/sbom-generation.yml)
+  - Implementation: [SBOM Generation Workflow](.github/workflows/sbom-generation.yml)
   - Documentation: [SBOM.md](../_media/SBOM.md)
   - Location: Included in every release
   - Format: SPDX 2.3+ JSON
 
 - **📊 SBOM Quality Validation** - Automated quality scoring with SBOMQS
   - Policy: [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
-  - Implementation: [SBOM Generation Workflow](../_media/sbom-generation.yml)
+  - Implementation: [SBOM Generation Workflow](.github/workflows/sbom-generation.yml)
   - Minimum Score: 7.0/10
   - Standards: NTIA-minimum-elements, BSI v1.1/v2.0
 

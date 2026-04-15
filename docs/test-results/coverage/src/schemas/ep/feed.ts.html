@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>19/19</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>19/19</span>
             </div>
         
             
@@ -173,7 +173,35 @@
 <a name='L108'></a><a href='#L108'>108</a>
 <a name='L109'></a><a href='#L109'>109</a>
 <a name='L110'></a><a href='#L110'>110</a>
-<a name='L111'></a><a href='#L111'>111</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -209,7 +237,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">127x</span>
+<span class="cline-any cline-yes">70x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -221,6 +249,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">58x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">58x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -242,9 +282,9 @@
 <span class="cline-any cline-yes">58x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">58x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">58x</span>
@@ -286,13 +326,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * Feed-endpoint Zod validation schemas.
  *
- * All EP API v2 `/…/feed` endpoints share a common parameter pattern:
- * - `timeframe` — one of `today | one-day | one-week | one-month | custom`
- * - `startDate` — YYYY-MM-DD, required when `timeframe` is `custom`
+ * EP API v2 `/…/feed` endpoints fall into two groups:
  *
- * Some feeds add a domain-specific type filter (`workType`, `activityType`,
- * `processType`).  Each schema below covers one feed endpoint.
+ * **Group A — Fixed-window feeds** (no timeframe parameter per OpenAPI spec):
+ *   `documents/feed`, `plenary-documents/feed`, `committee-documents/feed`,
+ *   `plenary-session-documents/feed`, `parliamentary-questions/feed`,
+ *   `corporate-bodies/feed`, `controlled-vocabularies/feed`
+ *   These return updates from a server-defined default window (typically one month).
  *
+ * **Group B — Configurable-window feeds** (accept `timeframe` + `start-date`):
+ *   `meps/feed`, `events/feed`, `procedures/feed`, `adopted-texts/feed`,
+ *   `meps-declarations/feed`, `external-documents/feed`
+ *   Some also accept a domain-specific type filter (`workType`, `activityType`,
+ *   `processType`).
+ *
+ * @see https://data.europarl.europa.eu/api/v2/ (OpenAPI spec)
  * @module schemas/ep/feed
  */
 &nbsp;
@@ -302,7 +350,7 @@ import { DateStringSchema } from './common.js';
 // ── Shared primitives ─────────────────────────────────────────────────────
 &nbsp;
 /**
- * Feed timeframe values accepted by every `/…/feed` endpoint.
+ * Feed timeframe values accepted by configurable-window feed endpoints.
  */
 export const FeedTimeframeSchema = z
   .enum(['today', 'one-day', 'one-week', 'one-month', 'custom'])
@@ -310,7 +358,7 @@ export const FeedTimeframeSchema = z
   .describe('Timeframe for the feed (default: one-week)');
 &nbsp;
 /**
- * Base feed parameters shared by all feed endpoints.
+ * Base feed parameters for configurable-window feed endpoints (Group B).
  */
 const BaseFeedParamsSchema = z
   .object({
@@ -328,33 +376,45 @@ const BaseFeedParamsSchema = z
     }
   });
 &nbsp;
-// ── Group A – timeframe only ──────────────────────────────────────────────
+/**
+ * Schema for fixed-window feed endpoints (Group A).
+ *
+ * These EP API endpoints do NOT accept a `timeframe` or `start-date`
+ * parameter.  They always return updates from a server-defined default
+ * window (typically one month).  Accepting no parameters keeps the
+ * MCP tool interface honest about what the upstream API supports.
+ */
+const FixedWindowFeedSchema = z.object({}).strict().describe(
+  'No parameters — this feed uses a server-defined default window (typically one month).'
+);
+&nbsp;
+// ── Group A – fixed-window feeds (no timeframe parameter) ─────────────────
+&nbsp;
+/** GET /documents/feed — server-default window */
+export const GetDocumentsFeedSchema = FixedWindowFeedSchema;
+&nbsp;
+/** GET /plenary-documents/feed — server-default window */
+export const GetPlenaryDocumentsFeedSchema = FixedWindowFeedSchema;
+&nbsp;
+/** GET /committee-documents/feed — server-default window */
+export const GetCommitteeDocumentsFeedSchema = FixedWindowFeedSchema;
+&nbsp;
+/** GET /plenary-session-documents/feed — server-default window */
+export const GetPlenarySessionDocumentsFeedSchema = FixedWindowFeedSchema;
+&nbsp;
+/** GET /parliamentary-questions/feed — server-default window */
+export const GetParliamentaryQuestionsFeedSchema = FixedWindowFeedSchema;
+&nbsp;
+/** GET /corporate-bodies/feed — server-default window */
+export const GetCorporateBodiesFeedSchema = FixedWindowFeedSchema;
+&nbsp;
+/** GET /controlled-vocabularies/feed — server-default window */
+export const GetControlledVocabulariesFeedSchema = FixedWindowFeedSchema;
+&nbsp;
+// ── Group B – configurable-window feeds (accept timeframe + optional filter) ─
 &nbsp;
 /** GET /meps/feed */
 export const GetMEPsFeedSchema = BaseFeedParamsSchema;
-&nbsp;
-/** GET /corporate-bodies/feed */
-export const GetCorporateBodiesFeedSchema = BaseFeedParamsSchema;
-&nbsp;
-/** GET /committee-documents/feed */
-export const GetCommitteeDocumentsFeedSchema = BaseFeedParamsSchema;
-&nbsp;
-/** GET /controlled-vocabularies/feed */
-export const GetControlledVocabulariesFeedSchema = BaseFeedParamsSchema;
-&nbsp;
-/** GET /documents/feed */
-export const GetDocumentsFeedSchema = BaseFeedParamsSchema;
-&nbsp;
-/** GET /plenary-documents/feed */
-export const GetPlenaryDocumentsFeedSchema = BaseFeedParamsSchema;
-&nbsp;
-/** GET /parliamentary-questions/feed */
-export const GetParliamentaryQuestionsFeedSchema = BaseFeedParamsSchema;
-&nbsp;
-/** GET /plenary-session-documents/feed */
-export const GetPlenarySessionDocumentsFeedSchema = BaseFeedParamsSchema;
-&nbsp;
-// ── Group B – timeframe + type filter ─────────────────────────────────────
 &nbsp;
 /** GET /events/feed */
 export const GetEventsFeedSchema = BaseFeedParamsSchema.extend({
@@ -400,7 +460,7 @@ export const GetProcedureEventByIdSchema = z.object({
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-13T19:25:19.043Z
+                at 2026-04-15T12:00:11.882Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
