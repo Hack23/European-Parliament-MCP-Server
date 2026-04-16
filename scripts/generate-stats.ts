@@ -1441,8 +1441,10 @@ function updateStatsFile(
 /**
  * Update RAW_MONTHLY_DATA entries in the stats file content.
  *
- * Replaces or inserts per-year entries in the RAW_MONTHLY_DATA map.
- * Each year's entry contains metric names mapped to 12-element arrays.
+ * Merges per-year monthly metrics into the existing RAW_MONTHLY_DATA map.
+ * Only the specific metric arrays present in `monthlyUpdates[year]` are
+ * overwritten; any existing metric arrays for that year that weren't
+ * updated in this run are preserved.
  */
 function updateMonthlyData(
   monthlyUpdates: Record<number, Record<string, number[]>>,
@@ -1480,20 +1482,42 @@ function updateMonthlyData(
     const year = Number(yearStr);
     if (Object.keys(metrics).length === 0) continue;
 
-    // Build the year entry string
-    const lines: string[] = [];
-    for (const [field, counts] of Object.entries(metrics)) {
-      lines.push(`    ${field}: [${counts.join(', ')}]`);
-      count++;
-    }
-    const yearEntry = `  ${String(year)}: {\n${lines.join(',\n')},\n  }`;
-
     // Check if this year already exists within the block
     const existingYearPattern = new RegExp(
       `  ${String(year)}:\\s*\\{[^}]*\\}`,
       's'
     );
-    if (existingYearPattern.test(block)) {
+    const existingMatch = existingYearPattern.exec(block);
+
+    // Parse existing metrics for this year so we can merge (not replace)
+    const mergedMetrics: Record<string, number[]> = {};
+    if (existingMatch) {
+      // Extract existing field: [values] entries from the matched year block
+      const fieldPattern = /(\w+):\s*\[([^\]]*)\]/g;
+      let fieldMatch;
+      while ((fieldMatch = fieldPattern.exec(existingMatch[0])) !== null) {
+        const fieldName = fieldMatch[1];
+        const values = fieldMatch[2].split(',').map((v) => Number(v.trim()));
+        if (fieldName !== undefined && values.length === 12) {
+          mergedMetrics[fieldName] = values;
+        }
+      }
+    }
+
+    // Overlay new metrics on top of existing ones
+    for (const [field, counts] of Object.entries(metrics)) {
+      mergedMetrics[field] = counts;
+      count++;
+    }
+
+    // Build the merged year entry string
+    const lines: string[] = [];
+    for (const [field, counts] of Object.entries(mergedMetrics)) {
+      lines.push(`    ${field}: [${counts.join(', ')}]`);
+    }
+    const yearEntry = `  ${String(year)}: {\n${lines.join(',\n')},\n  }`;
+
+    if (existingMatch) {
       block = block.replace(existingYearPattern, yearEntry);
     } else {
       // Insert new year entry before the closing brace of the block
