@@ -1494,11 +1494,15 @@ function updateMonthlyData(
     if (existingMatch) {
       // Extract existing field: [values] entries from the matched year block
       const fieldPattern = /(\w+):\s*\[([^\]]*)\]/g;
-      let fieldMatch;
+      let fieldMatch: RegExpExecArray | null = null;
       while ((fieldMatch = fieldPattern.exec(existingMatch[0])) !== null) {
         const fieldName = fieldMatch[1];
-        const values = fieldMatch[2].split(',').map((v) => Number(v.trim()));
-        if (fieldName !== undefined && values.length === 12) {
+        const rawValues = fieldMatch[2];
+        if (fieldName === undefined || rawValues === undefined) {
+          continue;
+        }
+        const values = rawValues.split(',').map((v) => Number(v.trim()));
+        if (values.length === 12) {
           mergedMetrics[fieldName] = values;
         }
       }
