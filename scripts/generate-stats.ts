@@ -307,7 +307,14 @@ const MAX_PAGES_PER_METRIC = 200;
  * boundary.  If the probe returns 0 items, the count is treated as
  * complete.
  *
- * Returns the total count or null on failure.
+ * **Return contract:**
+ * - Success: `{ total: N }` — complete count, no `error` field.
+ * - Partial: `{ total: N, error: "..." }` — `total` is a **lower
+ *   bound** (items counted before a pagination error).  The `error`
+ *   field signals to `--update` callers that the count is incomplete
+ *   and must NOT be written back to stored data.
+ * - Failure: `{ total: null, error: "..." }` — no items were
+ *   retrieved; the API call failed outright.
  */
 async function countItems(
   label: string,
@@ -1148,6 +1155,21 @@ const UPDATABLE_FIELDS = [
 /** Fields updated only for the latest covered year. */
 const LATEST_YEAR_FIELDS = ['mepCount', 'mepTurnover'] as const;
 
+/**
+ * Metrics whose API responses contain real per-month dates, making their
+ * monthly distributions trustworthy for RAW_MONTHLY_DATA.
+ *
+ * - `plenarySessions`: dates from session IDs (`MTG-PL-YYYY-MM-DD`)
+ * - `speeches`: dates from sitting-date filter + speech IDs
+ * - `events`: dates from event ID suffixes (`-DEPOT-YYYY-MM-DD`)
+ *
+ * Excluded metrics like `procedures` use year-only extraction
+ * (`YYYY-01-01` synthetic date) so their monthly bucketing is misleading
+ * (all items land in January).  `distributeMonthly()` already uses
+ * synthetic distribution for these metrics.
+ */
+const MONTHLY_CAPABLE_FIELDS = new Set(['plenarySessions', 'speeches', 'events']);
+
 /** Map metric labels to RAW_YEARLY field names. */
 const METRIC_TO_FIELD: Record<string, string> = {
   'Adopted Texts': 'adoptedTexts',
@@ -1382,10 +1404,11 @@ function updateStatsFile(
       // and only when the monthly counts contain useful data (not all zeros).
       // Monthly data is gated by the same credibility check as yearly totals
       // to prevent writing incomplete monthly distributions.
+      // Only metrics with real per-month dates are eligible (see MONTHLY_CAPABLE_FIELDS).
       if (comparison.monthlyCounts && comparison.apiValue !== null) {
         const mField = METRIC_TO_FIELD[comparison.metric];
         const hasNonZeroMonth = comparison.monthlyCounts.some((c) => c > 0);
-        if (mField && isUpdatableField(mField) && hasNonZeroMonth) {
+        if (mField && isUpdatableField(mField) && hasNonZeroMonth && MONTHLY_CAPABLE_FIELDS.has(mField)) {
           // Apply credibility check: only collect monthly data if the total is credible
           const storedVal = comparison.storedValue;
           if (isCredibleApiValue(comparison.apiValue, storedVal)) {
