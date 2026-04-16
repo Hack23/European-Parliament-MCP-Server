@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90.16% </span>
+                <span class="strong">89.83% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>110/122</span>
+                <span class='fraction'>106/118</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">74.54% </span>
+                <span class="strong">73.58% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>82/110</span>
+                <span class='fraction'>78/106</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.52% </span>
+                <span class="strong">89.32% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>94/105</span>
+                <span class='fraction'>92/103</span>
             </div>
         
             
@@ -508,7 +508,15 @@
 <a name='L443'></a><a href='#L443'>443</a>
 <a name='L444'></a><a href='#L444'>444</a>
 <a name='L445'></a><a href='#L445'>445</a>
-<a name='L446'></a><a href='#L446'>446</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L446'></a><a href='#L446'>446</a>
+<a name='L447'></a><a href='#L447'>447</a>
+<a name='L448'></a><a href='#L448'>448</a>
+<a name='L449'></a><a href='#L449'>449</a>
+<a name='L450'></a><a href='#L450'>450</a>
+<a name='L451'></a><a href='#L451'>451</a>
+<a name='L452'></a><a href='#L452'>452</a>
+<a name='L453'></a><a href='#L453'>453</a>
+<a name='L454'></a><a href='#L454'>454</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -545,7 +553,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">342x</span>
+<span class="cline-any cline-yes">341x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -724,6 +732,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
@@ -731,7 +742,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -794,6 +806,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
@@ -801,7 +816,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">4x</span>
@@ -1163,9 +1179,12 @@ export class DocumentClient extends BaseEPClient {
   /**
    * Returns committee documents.
    * **EP API Endpoint:** `GET /committee-documents`
+   *
+   * **Note:** The EP API `/committee-documents` endpoint does **not**
+   * support a `year` query parameter per the OpenAPI spec.
+   * Only pagination (limit/offset) is supported.
    */
   async getCommitteeDocuments(params: {
-    year?: number;
     limit?: number;
     offset?: number;
   } = {}): Promise&lt;PaginatedResponse&lt;LegislativeDocument&gt;&gt; {
@@ -1176,7 +1195,8 @@ export class DocumentClient extends BaseEPClient {
       offset,
       limit,
     };
-    if (params.year !== undefined) apiParams['year'] = params.year;
+    // Note: `year` is NOT a valid param for /committee-documents per EP API spec.
+    // Not forwarded to avoid misleading callers or future API validation failures.
 &nbsp;
     const response = await this.get&lt;JSONLDResponse&gt;('committee-documents', apiParams);
     const items = Array.isArray(response.data) ? response.data : <span class="branch-1 cbranch-no" title="branch not covered" >[];</span>
@@ -1233,9 +1253,12 @@ export class DocumentClient extends BaseEPClient {
   /**
    * Returns all External Documents.
    * **EP API Endpoint:** `GET /external-documents`
+   *
+   * **Note:** The EP API `/external-documents` endpoint does **not**
+   * support a `year` query parameter per the OpenAPI spec.
+   * Only pagination (limit/offset) is supported.
    */
   async getExternalDocuments(params: {
-    year?: number;
     limit?: number;
     offset?: number;
   } = {}): Promise&lt;PaginatedResponse&lt;LegislativeDocument&gt;&gt; {
@@ -1246,7 +1269,8 @@ export class DocumentClient extends BaseEPClient {
       offset,
       limit,
     };
-    if (params.year !== undefined) apiParams['year'] = params.year;
+    // Note: `year` is NOT a valid param for /external-documents per EP API spec.
+    // Not forwarded to avoid misleading callers or future API validation failures.
 &nbsp;
     const response = await this.get&lt;JSONLDResponse&gt;('external-documents', apiParams);
     const items = Array.isArray(response.data) ? response.data : <span class="branch-1 cbranch-no" title="branch not covered" >[];</span>
@@ -1405,7 +1429,7 @@ export class DocumentClient extends BaseEPClient {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-15T12:00:11.976Z
+                at 2026-04-16T15:31:10.072Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

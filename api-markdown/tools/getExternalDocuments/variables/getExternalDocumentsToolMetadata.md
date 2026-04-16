@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.7**](../../../README.md)
+[**European Parliament MCP Server API v1.2.8**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getExternalDocumentsToolMetadata**: `object`
 
-Defined in: [tools/getExternalDocuments.ts:104](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getExternalDocuments.ts#L104)
+Defined in: [tools/getExternalDocuments.ts:103](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getExternalDocuments.ts#L103)
 
 Tool metadata for get_external_documents
 
@@ -16,7 +16,7 @@ Tool metadata for get_external_documents
 
 ### description
 
-> **description**: `string` = `'Get external documents (non-EP documents such as Council positions, Commission proposals) from the European Parliament data portal. Supports single document lookup by docId. Data source: European Parliament Open Data Portal.'`
+> **description**: `string` = `'Get external documents (non-EP documents such as Council positions, Commission proposals) from the European Parliament data portal. Supports single document lookup by docId or paginated list. Note: The EP API /external-documents endpoint does not support year filtering. Data source: European Parliament Open Data Portal.'`
 
 ### inputSchema
 
@@ -67,18 +67,6 @@ Tool metadata for get_external_documents
 > **description**: `string` = `'Pagination offset'`
 
 #### inputSchema.properties.offset.type
-
-> **type**: `string` = `'number'`
-
-#### inputSchema.properties.year
-
-> **year**: `object`
-
-#### inputSchema.properties.year.description
-
-> **description**: `string` = `'Filter by year'`
-
-#### inputSchema.properties.year.type
 
 > **type**: `string` = `'number'`
 

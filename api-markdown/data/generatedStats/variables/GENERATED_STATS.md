@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.7**](../../../README.md)
+[**European Parliament MCP Server API v1.2.8**](../../../README.md)
 
 ***
 
@@ -8,4 +8,4 @@
 
 > `const` **GENERATED\_STATS**: [`GeneratedStatsData`](../interfaces/GeneratedStatsData.md)
 
-Defined in: [data/generatedStats.ts:1299](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L1299)
+Defined in: [data/generatedStats.ts:1300](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L1300)

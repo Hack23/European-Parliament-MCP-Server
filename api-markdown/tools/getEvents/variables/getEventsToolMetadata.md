@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.7**](../../../README.md)
+[**European Parliament MCP Server API v1.2.8**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getEventsToolMetadata**: `object`
 
-Defined in: [tools/getEvents.ts:103](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getEvents.ts#L103)
+Defined in: [tools/getEvents.ts:107](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getEvents.ts#L107)
 
 Tool metadata for get_events
 
@@ -16,7 +16,7 @@ Tool metadata for get_events
 
 ### description
 
-> **description**: `string` = `'Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or list with year or date range filtering. Data source: European Parliament Open Data Portal.'`
+> **description**: `string` = `'Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or paginated list. Note: The EP API /events endpoint has no date filtering — only pagination (limit/offset) is supported. Data source: European Parliament Open Data Portal.'`
 
 ### inputSchema
 
@@ -25,30 +25,6 @@ Tool metadata for get_events
 #### inputSchema.properties
 
 > **properties**: `object`
-
-#### inputSchema.properties.dateFrom
-
-> **dateFrom**: `object`
-
-#### inputSchema.properties.dateFrom.description
-
-> **description**: `string` = `'Start date (YYYY-MM-DD)'`
-
-#### inputSchema.properties.dateFrom.type
-
-> **type**: `string` = `'string'`
-
-#### inputSchema.properties.dateTo
-
-> **dateTo**: `object`
-
-#### inputSchema.properties.dateTo.description
-
-> **description**: `string` = `'End date (YYYY-MM-DD)'`
-
-#### inputSchema.properties.dateTo.type
-
-> **type**: `string` = `'string'`
 
 #### inputSchema.properties.eventId
 
@@ -91,26 +67,6 @@ Tool metadata for get_events
 > **description**: `string` = `'Pagination offset'`
 
 #### inputSchema.properties.offset.type
-
-> **type**: `string` = `'number'`
-
-#### inputSchema.properties.year
-
-> **year**: `object`
-
-#### inputSchema.properties.year.description
-
-> **description**: `string` = `'Filter by calendar year (recommended for annual counts)'`
-
-#### inputSchema.properties.year.maximum
-
-> **maximum**: `number` = `2100`
-
-#### inputSchema.properties.year.minimum
-
-> **minimum**: `number` = `1900`
-
-#### inputSchema.properties.year.type
 
 > **type**: `string` = `'number'`
 

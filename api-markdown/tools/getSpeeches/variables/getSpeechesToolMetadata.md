@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.7**](../../../README.md)
+[**European Parliament MCP Server API v1.2.8**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getSpeechesToolMetadata**: `object`
 
-Defined in: [tools/getSpeeches.ts:108](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getSpeeches.ts#L108)
+Defined in: [tools/getSpeeches.ts:107](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getSpeeches.ts#L107)
 
 Tool metadata for get_speeches
 
@@ -16,7 +16,7 @@ Tool metadata for get_speeches
 
 ### description
 
-> **description**: `string` = `'Get European Parliament plenary speeches and debate contributions. Supports single speech lookup by speechId or list with year or date range filtering. Data source: European Parliament Open Data Portal.'`
+> **description**: `string` = `'Get European Parliament plenary speeches and debate contributions. Supports single speech lookup by speechId or list with date range filtering (dateFrom/dateTo mapped to EP API sitting-date/sitting-date-end). Data source: European Parliament Open Data Portal.'`
 
 ### inputSchema
 
@@ -32,7 +32,7 @@ Tool metadata for get_speeches
 
 #### inputSchema.properties.dateFrom.description
 
-> **description**: `string` = `'Start date (YYYY-MM-DD)'`
+> **description**: `string` = `'Start date (YYYY-MM-DD). Mapped to EP API sitting-date parameter.'`
 
 #### inputSchema.properties.dateFrom.type
 
@@ -44,7 +44,7 @@ Tool metadata for get_speeches
 
 #### inputSchema.properties.dateTo.description
 
-> **description**: `string` = `'End date (YYYY-MM-DD)'`
+> **description**: `string` = `'End date (YYYY-MM-DD). Mapped to EP API sitting-date-end parameter.'`
 
 #### inputSchema.properties.dateTo.type
 
@@ -93,26 +93,6 @@ Tool metadata for get_speeches
 #### inputSchema.properties.speechId.type
 
 > **type**: `string` = `'string'`
-
-#### inputSchema.properties.year
-
-> **year**: `object`
-
-#### inputSchema.properties.year.description
-
-> **description**: `string` = `'Filter by calendar year (recommended for annual counts)'`
-
-#### inputSchema.properties.year.maximum
-
-> **maximum**: `number` = `2100`
-
-#### inputSchema.properties.year.minimum
-
-> **minimum**: `number` = `1900`
-
-#### inputSchema.properties.year.type
-
-> **type**: `string` = `'number'`
 
 #### inputSchema.type
 

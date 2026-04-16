@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.87% </span>
+                <span class="strong">94.73% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>74/78</span>
+                <span class='fraction'>72/76</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85.96% </span>
+                <span class="strong">85.45% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>49/57</span>
+                <span class='fraction'>47/55</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.01% </span>
+                <span class="strong">96.96% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>65/67</span>
+                <span class='fraction'>64/66</span>
             </div>
         
             
@@ -313,7 +313,12 @@
 <a name='L248'></a><a href='#L248'>248</a>
 <a name='L249'></a><a href='#L249'>249</a>
 <a name='L250'></a><a href='#L250'>250</a>
-<a name='L251'></a><a href='#L251'>251</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -350,7 +355,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">342x</span>
+<span class="cline-any cline-yes">341x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -529,15 +534,20 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -770,10 +780,14 @@ export class VotingClient extends BaseEPClient {
    * Returns plenary speeches.
    * **EP API Endpoint:** `GET /speeches`
    *
-   * The EP API supports filtering by `year` (recommended for annual counts).
+   * **Note:** The EP API `/speeches` endpoint does **not** support a
+   * `year` query parameter.  It supports `sitting-date` (range start)
+   * and `sitting-date-end` (range end) for date filtering.
+   *
+   * Use `dateFrom` / `dateTo` (YYYY-MM-DD) for date-range queries —
+   * these are mapped to `sitting-date` / `sitting-date-end`.
    */
   async getSpeeches(params: {
-    year?: number;
     dateFrom?: string;
     dateTo?: string;
     limit?: number;
@@ -787,9 +801,10 @@ export class VotingClient extends BaseEPClient {
       offset,
       limit,
     };
-    if (params.year !== undefined) apiParams['year'] = params.year;
-    if (params.dateFrom !== undefined) apiParams['date-from'] = params.dateFrom;
-    if (params.dateTo !== undefined) apiParams['date-to'] = params.dateTo;
+    // Note: `year` is NOT a valid param for /speeches (EP API ignores it).
+    // Use sitting-date / sitting-date-end for date filtering.
+    if (params.dateFrom !== undefined) apiParams['sitting-date'] = params.dateFrom;
+    if (params.dateTo !== undefined) apiParams['sitting-date-end'] = params.dateTo;
 &nbsp;
     const response = await this.get&lt;JSONLDResponse&gt;('speeches', apiParams);
     const items = Array.isArray(response.data) ? response.data : <span class="branch-1 cbranch-no" title="branch not covered" >[];</span>
@@ -820,7 +835,7 @@ export class VotingClient extends BaseEPClient {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-15T12:00:11.882Z
+                at 2026-04-16T15:31:09.972Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

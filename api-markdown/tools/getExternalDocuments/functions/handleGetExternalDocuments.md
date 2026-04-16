@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.7**](../../../README.md)
+[**European Parliament MCP Server API v1.2.8**](../../../README.md)
 
 ***
 
@@ -42,9 +42,9 @@ MCP tool result containing external document data (single document or paginated 
 const single = await handleGetExternalDocuments({ docId: 'COM-2024-123' });
 // Returns the external document with ID COM-2024-123
 
-// List documents filtered by year
-const list = await handleGetExternalDocuments({ year: 2024, limit: 30, offset: 0 });
-// Returns up to 30 external documents from 2024
+// List documents (no year filter available in the EP API)
+const list = await handleGetExternalDocuments({ limit: 30, offset: 0 });
+// Returns up to 30 external documents
 ```
 
 ## Security

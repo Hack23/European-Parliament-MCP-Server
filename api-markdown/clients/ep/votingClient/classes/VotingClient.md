@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.7**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.8**](../../../../README.md)
 
 ***
 
@@ -342,7 +342,7 @@ Returns cache statistics for monitoring and debugging.
 
 > **getSpeechById**(`speechId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>
 
-Defined in: [clients/ep/votingClient.ts:240](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L240)
+Defined in: [clients/ep/votingClient.ts:245](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L245)
 
 Returns a single speech by ID.
 **EP API Endpoint:** `GET /speeches/{speech-id}`
@@ -363,12 +363,17 @@ Returns a single speech by ID.
 
 > **getSpeeches**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>\>
 
-Defined in: [clients/ep/votingClient.ts:210](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L210)
+Defined in: [clients/ep/votingClient.ts:215](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L215)
 
 Returns plenary speeches.
 **EP API Endpoint:** `GET /speeches`
 
-The EP API supports filtering by `year` (recommended for annual counts).
+**Note:** The EP API `/speeches` endpoint does **not** support a
+`year` query parameter.  It supports `sitting-date` (range start)
+and `sitting-date-end` (range end) for date filtering.
+
+Use `dateFrom` / `dateTo` (YYYY-MM-DD) for date-range queries —
+these are mapped to `sitting-date` / `sitting-date-end`.
 
 #### Parameters
 
@@ -387,10 +392,6 @@ The EP API supports filtering by `year` (recommended for annual counts).
 `number`
 
 ###### offset?
-
-`number`
-
-###### year?
 
 `number`
 
