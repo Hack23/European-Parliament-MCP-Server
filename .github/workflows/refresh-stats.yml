@@ -13,16 +13,17 @@
 #   ✅ /adopted-texts              — supports `year`
 #   ✅ /plenary-documents          — supports `year`
 #   ✅ /meps-declarations          — supports `year`
-#   ✅ /parliamentary-questions    — supports `year` (via dateFrom)
-#   ❌ /speeches                   — NO `year`; uses `sitting-date`/`sitting-date-end`
-#   ❌ /events                     — NO date filtering at all
-#   ❌ /procedures                 — NO `year`
-#   ❌ /committee-documents        — NO `year`
-#   ❌ /external-documents         — NO `year`
+#   ✅ /parliamentary-questions    — supports `year` (via dateFrom → year extraction)
+#   ✅ /speeches                   — supports `sitting-date`/`sitting-date-end`
+#   ⏭ /events                     — NO date filtering; skipped (curated estimates used)
+#   ⏭ /procedures                 — NO `year`; skipped (curated estimates used)
+#   ⏭ /committee-documents        — NO `year`; excluded from per-year document count
+#   ⏭ /external-documents         — NO `year`; excluded from per-year document count
 #
-# Endpoints without year support use client-side date bucketing with
-# early termination (MAX_CONSECUTIVE_EMPTY_PAGES) to avoid downloading
-# entire datasets.
+# Only endpoints with server-side year/date filtering are fetched.
+# Endpoints without year support are skipped entirely to avoid downloading
+# large unfiltered datasets (e.g. /events has 50k+ unordered records).
+# Client-side counting of server-filtered results is trusted.
 #
 # Scheduled runs use --recent (last 3 years) to stay within timeout limits.
 # Manual dispatch supports --all for full dataset refresh, --recent for fast

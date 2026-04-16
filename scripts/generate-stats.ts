@@ -15,6 +15,17 @@
  *    iterated to obtain accurate counts. Discrepancies are logged but do
  *    not affect the exit code (data may legitimately drift between releases).
  *
+ * **Endpoint strategy (only server-filtered endpoints are fetched):**
+ * - ✅ /meetings, /adopted-texts, /plenary-documents, /meps-declarations,
+ *   /parliamentary-questions — support `year` param; client-side counting
+ *   of server-filtered results is trusted.
+ * - ✅ /speeches — supports `sitting-date`/`sitting-date-end`; server-
+ *   filtered results are counted and bucketed by month.
+ * - ⏭ /events, /procedures — NO year/date filtering; skipped entirely
+ *   to avoid downloading large unfiltered datasets.
+ * - ⏭ /committee-documents, /external-documents — NO year filtering;
+ *   excluded from per-year document counts.
+ *
  * When invoked with `--update`, the script writes API-verified values back
  * into `src/data/generatedStats.ts` and updates the `generatedAt` timestamp.
  * Only fields where the API returned a valid count are updated.
@@ -595,16 +606,14 @@ async function validateYearAgainstAPI(
 
   // ── Metrics with date bucketing ────────────────────────────────
   // Records from these endpoints have dates extractable from their
-  // `date` field or ID.  We fetch items and bucket client-side.
+  // `date` field or ID.  Server-side filtering returns only the
+  // target year's data; client-side extraction provides monthly
+  // distribution.
   //
   // EP API year-filter support per endpoint (from OpenAPI spec):
   //   /meetings (plenary sessions): ✅ supports `year` param
-  //   /speeches:                     ❌ NO `year` — use `sitting-date` + `sitting-date-end`
-  //   /events:                       ❌ NO `year` or date params — client-side only
-  //   /parliamentary-questions:      ✅ supports `year` (derived from dateFrom)
-  //
-  // Endpoints without server-side filtering rely on early termination
-  // (MAX_CONSECUTIVE_EMPTY_PAGES) to avoid downloading the entire dataset.
+  //   /speeches:                     ✅ supports `sitting-date` + `sitting-date-end`
+  //   /events:                       ⏭ NO year/date params — skipped entirely
   const monthlyMetrics: Array<{
     label: string;
     storedKey: keyof YearlyStats;
@@ -622,10 +631,11 @@ async function validateYearAgainstAPI(
     {
       label: 'Speeches',
       storedKey: 'speeches',
-      // EP API `/speeches` does NOT support `year` ❌ — it supports
-      // `sitting-date` and `sitting-date-end` for date-range filtering.
-      // We use dateFrom/dateTo which the client maps to the API params.
-      // Early termination prevents downloading all 100k+ speeches.
+      // EP API `/speeches` supports `sitting-date` + `sitting-date-end` ✅.
+      // The client maps dateFrom/dateTo to these API params.
+      // Server-side filtering returns only speeches for this year; client-
+      // side date extraction from IDs (MTG-PL-YYYY-MM-DD-*) gives monthly
+      // bucketing.
       count: () => countItemsGroupedByMonth('Speeches', year, (p) =>
         client.getSpeeches({ dateFrom: `${String(year)}-01-01`, dateTo: `${String(year)}-12-31`, ...p })
       ),
@@ -634,52 +644,53 @@ async function validateYearAgainstAPI(
       label: 'Events',
       storedKey: 'events',
       // EP API `/events` does NOT support `year` or any date filter ❌.
-      // Results are NOT ordered by date, so client-side bucketing with
-      // early termination may produce incomplete year counts.
-      // Mark as non-updatable to prevent overwriting per-year stats
-      // with unreliable all-time scan results.
+      // Results are NOT ordered by date — iterating through all ~54 000+
+      // events takes 18+ minutes and produces an unreliable client-side
+      // estimate.  Skip the expensive fetch entirely and mark as non-
+      // updatable.  The stored per-year value is curated/estimated.
       count: async () => {
-        const result = await countItemsGroupedByMonth('Events', year, (p) =>
-          client.getEvents(p),
-          { ordered: false, yearFilterSupported: false }
-        );
-        // Always attach a note so --update skips this metric
         const note = 'EP API /events has no year/date filtering and results are unordered — ' +
-          'year count is a client-side estimate, not suitable for per-year stat updates.';
+          'year count is a client-side estimate, not suitable for per-year stat updates. ' +
+          'Skipped to avoid downloading entire 50k+ event dataset.';
+        progress(`⏭  Events: skipped (no server-side year/date filtering, ~50k unordered records)`);
         return {
-          total: result.total,
-          monthlyCounts: result.monthlyCounts,
-          error: result.error ?? note,
+          total: null,
+          monthlyCounts: new Array<number>(12).fill(0),
+          error: note,
         };
       },
-    },
-    {
-      label: 'Parliamentary Questions',
-      storedKey: 'parliamentaryQuestions',
-      // EP API `/parliamentary-questions` supports `year` ✅ (derived
-      // from dateFrom in the client).
-      count: () => countItemsGroupedByMonth('Parliamentary Questions', year, (p) =>
-        client.getParliamentaryQuestions({ dateFrom: `${String(year)}-01-01`, dateTo: `${String(year)}-12-31`, ...p })
-      ),
     },
   ];
 
   // ── Metrics using simple pagination counting ───────────────────
-  // These endpoints don't have easily extractable dates per record,
-  // or the data volume makes full-item fetching impractical.
+  // These endpoints have server-side `year` filtering (or are skipped
+  // because they lack it), making full-item download unnecessary.
   //
   // EP API year-filter support (from OpenAPI spec):
-  //   /adopted-texts:       ✅ supports `year`
-  //   /procedures:          ❌ NO `year` — returns ALL procedures (total count, not year-specific)
-  //   /plenary-documents:   ✅ supports `year`
-  //   /committee-documents: ❌ NO `year` — returns ALL (total count, not year-specific)
-  //   /external-documents:  ❌ NO `year` — returns ALL (total count, not year-specific)
-  //   /meps-declarations:   ✅ supports `year`
+  //   /adopted-texts:            ✅ supports `year`
+  //   /parliamentary-questions:  ✅ supports `year` (via dateFrom → year extraction)
+  //   /procedures:               ❌ NO `year` — skipped (non-updatable)
+  //   /plenary-documents:        ✅ supports `year`
+  //   /committee-documents:      ❌ NO `year` — excluded from per-year count
+  //   /external-documents:       ❌ NO `year` — excluded from per-year count
+  //   /meps-declarations:        ✅ supports `year`
   const yearlyMetrics: Array<{
     label: string;
     storedKey: keyof YearlyStats;
     count: () => Promise<{ total: number | null; error?: string }>;
   }> = [
+    {
+      label: 'Parliamentary Questions',
+      storedKey: 'parliamentaryQuestions',
+      // EP API `/parliamentary-questions` supports `year` ✅.
+      // The client maps dateFrom to the `year` query parameter.
+      // Use simple pagination counting since the server already filters
+      // by year — client-side date bucketing fails because transformed
+      // question records often lack parseable date fields.
+      count: () => countItems('Parliamentary Questions', (p) =>
+        client.getParliamentaryQuestions({ dateFrom: `${String(year)}-01-01`, ...p })
+      ),
+    },
     {
       label: 'Adopted Texts',
       storedKey: 'adoptedTexts',
@@ -689,52 +700,30 @@ async function validateYearAgainstAPI(
       label: 'Procedures',
       storedKey: 'procedures',
       // EP API /procedures does NOT support `year` ❌ — returns ALL
-      // procedures.  Mark as non-updatable so --update skips this metric
-      // instead of overwriting per-year stats with an all-time total.
+      // procedures.  Iterating through the entire dataset is expensive
+      // (~10k+ items, often times out).  Skip the fetch entirely and
+      // preserve the curated stored value.
       count: async () => {
-        const result = await countItems('Procedures', (p) => client.getProcedures(p));
         const note = 'EP API /procedures has no year filtering — ' +
-          'count represents all procedures, not year-specific. Not suitable for per-year stat updates.';
-        return {
-          total: result.total,
-          error: result.error ?? note,
-        };
+          'count represents all procedures, not year-specific. ' +
+          'Skipped to avoid expensive full-dataset pagination.';
+        progress(`⏭  Procedures: skipped (no server-side year filtering)`);
+        return { total: null, error: note };
       },
     },
     {
       label: 'Plenary Documents',
       storedKey: 'documents',
-      // Document count = sum of plenary + committee + external documents.
-      // Fetched in parallel for better performance.
-      //
-      // ⚠️  /committee-documents and /external-documents do NOT support
-      // `year` filtering — their counts are all-time totals, making the
-      // combined sum not strictly year-specific.  We always attach a note
-      // so --update skips this metric rather than overwriting per-year
-      // stats with a partially non-year-filtered total.
+      // Only count plenary documents (year-filtered ✅).
+      // /committee-documents and /external-documents do NOT support year
+      // filtering — including them inflates the count with all-time totals
+      // and wastes API bandwidth.  Per-year document count = plenary only.
       count: async () => {
-        progress('🔍 Plenary Documents: fetching plenary + committee + external in parallel...');
-        const [plenary, committee, external] = await Promise.all([
-          countItems('Plenary Docs', (p) => client.getPlenaryDocuments({ year, ...p })),
-          countItems('Committee Docs', (p) => client.getCommitteeDocuments(p)),
-          countItems('External Docs', (p) => client.getExternalDocuments(p)),
-        ]);
-        const errors: string[] = [];
-        if (plenary.error) errors.push(`Plenary: ${plenary.error}`);
-        if (committee.error) errors.push(`Committee: ${committee.error}`);
-        if (external.error) errors.push(`External: ${external.error}`);
-        // Always add a note about partial year coverage
-        errors.push(
-          'Committee/External doc counts are all-time (EP API has no year filtering for these endpoints) — ' +
-          'combined total is not strictly year-specific.'
-        );
-
-        const total = (plenary.total ?? 0) + (committee.total ?? 0) + (external.total ?? 0);
-        if (plenary.total === null && committee.total === null && external.total === null) {
-          return { total: null, error: errors.join(' | ') };
+        const plenary = await countItems('Plenary Docs', (p) => client.getPlenaryDocuments({ year, ...p }));
+        if (plenary.total !== null) {
+          progress(`✅ Plenary Documents: ${String(plenary.total)} (year-filtered plenary only)`);
         }
-        progress(`✅ Plenary Documents: ${String(plenary.total ?? 0)} plenary + ${String(committee.total ?? 0)} committee + ${String(external.total ?? 0)} external = ${String(total)}`);
-        return { total, error: errors.join(' | ') };
+        return plenary;
       },
     },
     {
@@ -1459,8 +1448,10 @@ async function main(): Promise<void> {
   // Create client with generous timeouts and response size limits for CLI validation.
   // The EP API can return up to ~20 MiB for adopted-texts with limit=1000.
   // Monthly batching reduces per-request data volume significantly.
+  // 180 s timeout gives slow endpoints (meps-declarations, adopted-texts)
+  // enough headroom while still failing fast on truly broken endpoints.
   const client = new EuropeanParliamentClient({
-    timeoutMs: 120_000,
+    timeoutMs: 180_000,
     maxResponseBytes: 50 * 1024 * 1024, // 50 MiB — CLI tool, not a server
   });
 
