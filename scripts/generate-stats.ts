@@ -67,7 +67,7 @@ import { fileURLToPath } from 'node:url';
 import { EuropeanParliamentClient } from '../src/clients/europeanParliamentClient.js';
 import { GENERATED_STATS } from '../src/data/generatedStats.js';
 import type { YearlyStats, PoliticalGroupSnapshot, PoliticalLandscapeData } from '../src/data/generatedStats.js';
-import { isCredibleApiValue, MIN_CREDIBLE_VALUE, MAX_ALLOWED_DROP_PERCENT, MIN_STORED_FOR_DROP_CHECK } from '../src/utils/credibilityCheck.js';
+import { isCredibleApiValue } from '../src/utils/credibilityCheck.js';
 
 // ── Types ─────────────────────────────────────────────────────────
 

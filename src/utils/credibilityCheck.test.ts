@@ -117,7 +117,7 @@ describe('isCredibleApiValue', () => {
       expect(isCredibleApiValue(0, 0)).toBe(true);
     });
 
-    it('should accept large API value regardless of stored', () => {
+    it('should accept when the drop is exactly at MAX_ALLOWED_DROP_PERCENT', () => {
       expect(isCredibleApiValue(10000, 20000)).toBe(true);
     });
   });
