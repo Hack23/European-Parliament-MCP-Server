@@ -7,23 +7,26 @@
 #
 # The EP API does not provide a totalItems header, so records are iterated
 # to obtain accurate counts (limit: 1000 per page, the API's server-side cap).
+# Client-side counting of downloaded data is trusted.
 #
-# EP API endpoint year-filter support (per OpenAPI spec):
-#   ✅ /meetings (plenary sessions) — supports `year`
-#   ✅ /adopted-texts              — supports `year`
-#   ✅ /plenary-documents          — supports `year`
-#   ✅ /meps-declarations          — supports `year`
-#   ✅ /parliamentary-questions    — supports `year` (via dateFrom → year extraction)
-#   ✅ /speeches                   — supports `sitting-date`/`sitting-date-end`
-#   ⏭ /events                     — NO date filtering; skipped (curated estimates used)
-#   ⏭ /procedures                 — NO `year`; skipped (curated estimates used)
-#   ⏭ /committee-documents        — NO `year`; excluded from per-year document count
-#   ⏭ /external-documents         — NO `year`; excluded from per-year document count
+# EP API endpoint strategy:
+#   ✅ /meetings (plenary sessions) — server-side `year` filter
+#   ✅ /adopted-texts              — server-side `year` filter
+#   ✅ /plenary-documents          — server-side `year` filter
+#   ✅ /meps-declarations          — server-side `year` filter
+#   ✅ /parliamentary-questions    — server-side `year` (via dateFrom)
+#   ✅ /speeches                   — server-side `sitting-date`/`sitting-date-end`
+#   ✅ /events                     — NO server filter; dates from ID suffix
+#                                    (e.g. -DEPOT-2025-03-26); client-side bucketing
+#   ✅ /procedures                 — NO server filter; year from YYYY-NNNN reference;
+#                                    client-side bucketing
+#   ✅ /external-documents         — NO server filter; date from document_date field;
+#                                    client-side bucketing
+#   ⏭ /committee-documents        — NO year filter AND no date field; excluded
 #
-# Only endpoints with server-side year/date filtering are fetched.
-# Endpoints without year support are skipped entirely to avoid downloading
-# large unfiltered datasets (e.g. /events has 50k+ unordered records).
-# Client-side counting of server-filtered results is trusted.
+# Endpoints without server-side year filter iterate the full dataset and
+# extract dates/years client-side.  Early termination stops pagination once
+# the target year's contiguous block is exhausted.
 #
 # Scheduled runs use --recent (last 3 years) to stay within timeout limits.
 # Manual dispatch supports --all for full dataset refresh, --recent for fast
