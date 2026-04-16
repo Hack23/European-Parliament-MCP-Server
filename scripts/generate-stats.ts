@@ -33,6 +33,13 @@
  * into `src/data/generatedStats.ts` and updates the `generatedAt` timestamp.
  * Only fields where the API returned a valid count are updated.
  *
+ * **Data quality safeguards (--update mode):**
+ * - Partial fetches (pagination errors mid-stream) are never written back.
+ * - API values below 10 are rejected when stored value is > 5× larger.
+ * - API values representing > 50% drop from substantial stored values
+ *   (> 100 items) are rejected as likely incomplete EP API data.
+ * - All API calls are sequential to respect EP API rate limits.
+ *
  * **Usage:**
  * ```bash
  * npx tsx scripts/generate-stats.ts              # validate latest covered year
@@ -351,14 +358,16 @@ async function countItems(
     progress(`✅ ${label}: ${String(totalCount)} items total (${formatElapsed(Date.now() - fetchStart)})`);
     return { total: totalCount };
   } catch (err: unknown) {
-    // If we already counted some items before the error, the last page
-    // likely returned an empty body (the EP API does this when offset
-    // exceeds available data).  The accumulated count is correct.
-    if (totalCount > 0) {
-      progress(`⚠️  ${label}: ${String(totalCount)} items (partial, error on page ${String(pageNum)})`);
-      return { total: totalCount };
-    }
     const message = err instanceof Error ? err.message : 'Unknown error';
+    // If we already counted some items before the error, the accumulated
+    // count is a lower bound but NOT necessarily the complete count.
+    // Return the partial count with an error marker so callers (--update)
+    // don't overwrite stored values with incomplete data.
+    if (totalCount > 0) {
+      const partialNote = `Partial count (${String(totalCount)} items) — error on page ${String(pageNum)}: ${message}`;
+      progress(`⚠️  ${label}: ${partialNote}`);
+      return { total: totalCount, error: partialNote };
+    }
     console.error(`  ${DIM}⚠ API error fetching ${label}: ${message}${RESET}`);
     return { total: null, error: message };
   }
@@ -771,14 +780,16 @@ async function validateYearAgainstAPI(
       // /committee-documents has neither year filtering nor date fields
       // in its response — excluded from per-year count.
       count: async () => {
-        progress('🔍 Plenary Documents: fetching plenary (year-filtered) + external (date-bucketed) in parallel...');
-        const [plenary, external] = await Promise.all([
-          countItems('Plenary Docs', (p) => client.getPlenaryDocuments({ year, ...p })),
-          countItemsGroupedByMonth('External Docs', year, (p) =>
-            client.getExternalDocuments(p),
-            { ordered: true, yearFilterSupported: false }
-          ),
-        ]);
+        // Fetch plenary docs and external docs SEQUENTIALLY to respect
+        // EP API rate limits.  External docs require full pagination
+        // (no year filter) so this can be slow — sequential ordering
+        // avoids concurrent requests that may trigger rate limiting.
+        progress('🔍 Plenary Documents: fetching plenary (year-filtered) then external (date-bucketed) sequentially...');
+        const plenary = await countItems('Plenary Docs', (p) => client.getPlenaryDocuments({ year, ...p }));
+        const external = await countItemsGroupedByMonth('External Docs', year, (p) =>
+          client.getExternalDocuments(p),
+          { ordered: true, yearFilterSupported: false }
+        );
         const errors: string[] = [];
         if (plenary.error) errors.push(`Plenary: ${plenary.error}`);
         if (external.error) errors.push(`External: ${external.error}`);
@@ -1163,19 +1174,66 @@ const METRIC_TO_FIELD: Record<string, string> = {
 const MIN_CREDIBLE_VALUE = 10;
 
 /**
+ * Maximum allowed percentage drop from stored value before the API value
+ * is treated as incomplete/unreliable.
+ *
+ * EP API endpoints sometimes return partial datasets due to:
+ * - Server-side pagination issues or timeouts
+ * - Data reorganisation or migration
+ * - Incomplete database loads
+ *
+ * When the stored value is substantial (> {@link MIN_STORED_FOR_DROP_CHECK})
+ * and the API returns a value more than this percentage below the stored
+ * value, the update is rejected as likely incomplete.
+ *
+ * Set to 50% to catch clearly incomplete data (e.g. 80% drops in speeches,
+ * 73% drops in documents) while still allowing genuine corrections.
+ */
+const MAX_ALLOWED_DROP_PERCENT = 50;
+
+/**
+ * Minimum stored value before the "significant drop" guard activates.
+ *
+ * Small stored values (≤ 100) are allowed to fluctuate freely since
+ * even large percentage changes represent small absolute differences.
+ */
+const MIN_STORED_FOR_DROP_CHECK = 100;
+
+/**
  * Check whether an API value is credible enough to overwrite the stored value.
  *
  * Returns false when the API clearly returned incomplete data:
- * - API value is below the credibility threshold, AND
- * - stored value is much larger (> 5× the API value)
  *
- * This protects curated historical estimates from being overwritten by
- * incomplete EP API data while still allowing genuine corrections.
+ * **Guard 1 — tiny API value:** API value is below {@link MIN_CREDIBLE_VALUE}
+ * AND stored value is much larger (> 5× the API value).
+ *
+ * **Guard 2 — significant drop:** Stored value is substantial
+ * (> {@link MIN_STORED_FOR_DROP_CHECK}) AND the API value represents a drop
+ * of more than {@link MAX_ALLOWED_DROP_PERCENT}% from stored. This catches
+ * scenarios where the EP API returns a plausible-looking number (e.g. 1998
+ * speeches) that is nonetheless far below the known count (10000), indicating
+ * incomplete pagination or partial data loads.
+ *
+ * Both guards protect curated data from being overwritten by incomplete
+ * EP API responses while still allowing genuine corrections (increases
+ * and small decreases).
  */
 function isCredibleApiValue(apiValue: number, storedValue: number): boolean {
-  if (apiValue >= MIN_CREDIBLE_VALUE) return true;
-  // API returned a tiny value — only trust it if stored is also small
-  return storedValue <= apiValue * 5;
+  // Guard 1: Very small API value when stored is much larger
+  if (apiValue < MIN_CREDIBLE_VALUE && storedValue > apiValue * 5) return false;
+
+  // Guard 2: Significant drop from a substantial stored value.
+  // Increases are always trusted (API has more data than stored).
+  // Only decreases beyond the threshold are flagged.
+  if (
+    storedValue > MIN_STORED_FOR_DROP_CHECK &&
+    apiValue < storedValue &&
+    ((storedValue - apiValue) / storedValue) * 100 > MAX_ALLOWED_DROP_PERCENT
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 /**
@@ -1321,13 +1379,21 @@ function updateStatsFile(
       }
 
       // Collect monthly data only for successful fetches (no note/error)
+      // and only when the monthly counts contain useful data (not all zeros).
+      // Monthly data is gated by the same credibility check as yearly totals
+      // to prevent writing incomplete monthly distributions.
       if (comparison.monthlyCounts && comparison.apiValue !== null) {
         const mField = METRIC_TO_FIELD[comparison.metric];
-        if (mField && isUpdatableField(mField)) {
-          if (!monthlyUpdates[yv.year]) {
-            monthlyUpdates[yv.year] = {};
+        const hasNonZeroMonth = comparison.monthlyCounts.some((c) => c > 0);
+        if (mField && isUpdatableField(mField) && hasNonZeroMonth) {
+          // Apply credibility check: only collect monthly data if the total is credible
+          const storedVal = comparison.storedValue;
+          if (isCredibleApiValue(comparison.apiValue, storedVal)) {
+            if (!monthlyUpdates[yv.year]) {
+              monthlyUpdates[yv.year] = {};
+            }
+            monthlyUpdates[yv.year][mField] = comparison.monthlyCounts;
           }
-          monthlyUpdates[yv.year][mField] = comparison.monthlyCounts;
         }
       }
 
@@ -1351,8 +1417,11 @@ function updateStatsFile(
       // Credibility check: skip obviously incomplete API data
       if (!isCredibleApiValue(comparison.apiValue, comparison.storedValue)) {
         skippedFields++;
+        const dropPercent = comparison.storedValue > 0
+          ? ((comparison.storedValue - comparison.apiValue) / comparison.storedValue * 100).toFixed(1)
+          : '∞';
         console.log(
-          `  ${DIM}⊘ Skipped ${String(yv.year)}.${field}: API=${String(comparison.apiValue)} looks incomplete (stored=${String(comparison.storedValue)})${RESET}`
+          `  ${DIM}⊘ Skipped ${String(yv.year)}.${field}: API=${String(comparison.apiValue)} looks incomplete (stored=${String(comparison.storedValue)}, ${dropPercent}% drop)${RESET}`
         );
         continue;
       }

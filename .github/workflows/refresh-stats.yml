@@ -30,6 +30,15 @@
 # dates/years client-side.  Pagination may stop early once the target year's
 # contiguous block is exhausted, and a safety cap also limits traversal.
 #
+# Data quality safeguards (--update mode):
+#   • Partial fetches (pagination errors mid-stream) are never written back
+#   • API values below 10 are rejected when stored value is >5× larger
+#   • API values representing >50% drop from substantial stored values
+#     (>100 items) are rejected as likely incomplete EP API data
+#   • All-zero monthly distributions are not written to RAW_MONTHLY_DATA
+#   • Monthly data is gated by the same credibility check as yearly totals
+#   • All API calls are sequential to respect EP API rate limits
+#
 # Scheduled runs use --recent (last 3 years) to stay within timeout limits.
 # Manual dispatch supports --all for full dataset refresh, --recent for fast
 # refresh, or a specific 4-digit year.
