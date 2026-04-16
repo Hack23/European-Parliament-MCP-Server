@@ -15,17 +15,18 @@
  *    iterated to obtain accurate counts. Discrepancies are logged but do
  *    not affect the exit code (data may legitimately drift between releases).
  *
- * **Endpoint strategy — client-side counting is trusted:**
+ * **Endpoint strategy — all endpoints counted, client-side bucketing where needed:**
  * - ✅ /meetings, /adopted-texts, /plenary-documents, /meps-declarations,
  *   /parliamentary-questions — support `year` param; server-filtered.
  * - ✅ /speeches — supports `sitting-date`/`sitting-date-end`; server-filtered.
  * - ✅ /events — NO server-side year filter; dates extracted from event IDs
- *   (e.g. `...-DEPOT-2025-03-26`); full dataset iterated with client-side
- *   year bucketing and early termination after target year's block.
+ *   (e.g. `...-DEPOT-2025-03-26`); paginated with client-side year bucketing.
+ *   Early termination stops once the target year's block is exhausted.
  * - ✅ /procedures — NO server-side year filter; year extracted from
- *   `YYYY-NNNN` reference (e.g. `2024-0123`); full dataset iterated.
+ *   `dateInitiated` when available, or from procedure references in both
+ *   dash form (`2024-0123`) and slash form (`2023/0123(COD)`).
  * - ✅ /external-documents — NO year filter; date from `document_date` field;
- *   iterated with client-side year bucketing.
+ *   counted as part of "Plenary Documents" total via client-side bucketing.
  * - ⏭ /committee-documents — NO year filter AND no date field; excluded.
  *
  * When invoked with `--update`, the script writes API-verified values back
@@ -388,16 +389,15 @@ async function countItems(
 const DATE_PATTERN = /\b(\d{4})-(\d{2})-(\d{2})\b/;
 
 /**
- * Pattern for procedure-style identifiers: `YYYY-NNNN` where NNNN is a
- * 3-to-5-digit sequence number (not a date).  Used as a last-resort
- * year-only extraction for `/procedures` records.
+ * Pattern for procedure-style identifiers.  Matches both:
+ *   - Dash form:  `2024-0123`, `2011-0901A`   (from `process_id`)
+ *   - Slash form: `2023/0123(COD)`             (from `reference`)
  *
- * Uses word boundary at start but not end — some procedure IDs have a
- * trailing letter suffix (e.g. `2011-0901A`).
- *
- * Examples: `2024-0123`, `2011-0901A` (trailing letter tolerated).
+ * Captures the 4-digit year in group 1.  Used as a last-resort
+ * year-only extraction for `/procedures` records when `dateInitiated`
+ * is not available.
  */
-const PROCEDURE_YEAR_PATTERN = /\b(\d{4})-\d{3,5}/;
+const PROCEDURE_YEAR_PATTERN = /\b(\d{4})[-/]\d{3,5}/;
 
 function extractRecordDate(item: Record<string, unknown>): string | null {
   // 1. Prefer the normalised `date` field if it looks like a date
@@ -434,8 +434,17 @@ function extractRecordDate(item: Record<string, unknown>): string | null {
     }
   }
 
-  // 4. Last resort: extract year from procedure-style reference field.
-  //    Procedures have `reference: "2024-0123"` — no month/day available.
+  // 4. Try `dateInitiated` / `dateLastActivity` — available on procedure records.
+  //    These are proper YYYY-MM-DD dates set by the transformer.
+  for (const field of ['dateInitiated', 'dateLastActivity'] as const) {
+    const val = item[field];
+    if (typeof val === 'string' && DATE_PATTERN.test(val)) {
+      return val.substring(0, 10);
+    }
+  }
+
+  // 5. Last resort: extract year from procedure-style reference field.
+  //    Procedures have `reference: "2023/0123(COD)"` or `process_id: "2024-0123"`.
   //    Return `YYYY-01-01` as a synthetic date so the year matches.
   //    Monthly bucketing will show all procedures in January (acceptable
   //    since yearly total is the primary use case).
@@ -727,7 +736,9 @@ async function validateYearAgainstAPI(
   //   /adopted-texts:            ✅ supports `year`
   //   /parliamentary-questions:  ✅ supports `year` (via dateFrom → year extraction)
   //   /plenary-documents:        ✅ supports `year`
-  //   /external-documents:       ❌ NO `year` — has `document_date` in response, counted via monthly bucketing above? No, counted separately below
+  //   /external-documents:       ❌ NO `year` — included in the "Plenary Documents"
+  //                              metric via `countItemsGroupedByMonth`, using
+  //                              `document_date` for client-side year/month bucketing
   //   /committee-documents:      ❌ NO `year`, NO date field — excluded
   //   /meps-declarations:        ✅ supports `year`
   const yearlyMetrics: Array<{

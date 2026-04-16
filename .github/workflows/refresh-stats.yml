@@ -18,15 +18,17 @@
 #   ✅ /speeches                   — server-side `sitting-date`/`sitting-date-end`
 #   ✅ /events                     — NO server filter; dates from ID suffix
 #                                    (e.g. -DEPOT-2025-03-26); client-side bucketing
-#   ✅ /procedures                 — NO server filter; year from YYYY-NNNN reference;
+#   ✅ /procedures                 — NO server filter; year from `dateInitiated`
+#                                    when available, or from procedure references
+#                                    (e.g. 2024-0123, 2023/0123(COD));
 #                                    client-side bucketing
 #   ✅ /external-documents         — NO server filter; date from document_date field;
 #                                    client-side bucketing
 #   ⏭ /committee-documents        — NO year filter AND no date field; excluded
 #
-# Endpoints without server-side year filter iterate the full dataset and
-# extract dates/years client-side.  Early termination stops pagination once
-# the target year's contiguous block is exhausted.
+# Endpoints without server-side year filter paginate records and extract
+# dates/years client-side.  Pagination may stop early once the target year's
+# contiguous block is exhausted, and a safety cap also limits traversal.
 #
 # Scheduled runs use --recent (last 3 years) to stay within timeout limits.
 # Manual dispatch supports --all for full dataset refresh, --recent for fast
