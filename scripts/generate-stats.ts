@@ -1418,7 +1418,7 @@ function updateStatsFile(
       if (!isCredibleApiValue(comparison.apiValue, comparison.storedValue)) {
         skippedFields++;
         const dropPercent = comparison.storedValue > 0
-          ? ((comparison.storedValue - comparison.apiValue) / comparison.storedValue * 100).toFixed(1)
+          ? (((comparison.storedValue - comparison.apiValue) / comparison.storedValue) * 100).toFixed(1)
           : '∞';
         console.log(
           `  ${DIM}⊘ Skipped ${String(yv.year)}.${field}: API=${String(comparison.apiValue)} looks incomplete (stored=${String(comparison.storedValue)}, ${dropPercent}% drop)${RESET}`
