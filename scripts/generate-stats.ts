@@ -67,6 +67,7 @@ import { fileURLToPath } from 'node:url';
 import { EuropeanParliamentClient } from '../src/clients/europeanParliamentClient.js';
 import { GENERATED_STATS } from '../src/data/generatedStats.js';
 import type { YearlyStats, PoliticalGroupSnapshot, PoliticalLandscapeData } from '../src/data/generatedStats.js';
+import { isCredibleApiValue, MIN_CREDIBLE_VALUE, MAX_ALLOWED_DROP_PERCENT, MIN_STORED_FOR_DROP_CHECK } from '../src/utils/credibilityCheck.js';
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -310,11 +311,11 @@ const MAX_PAGES_PER_METRIC = 200;
  * **Return contract:**
  * - Success: `{ total: N }` — complete count, no `error` field.
  * - Partial: `{ total: N, error: "..." }` — `total` is a **lower
- *   bound** (items counted before a pagination error).  The `error`
- *   field signals to `--update` callers that the count is incomplete
- *   and must NOT be written back to stored data.
+ *   bound** (items counted before a pagination error or page-limit
+ *   cap).  The `error` field signals to `--update` callers that the
+ *   count is incomplete and must NOT be written back to stored data.
  * - Failure: `{ total: null, error: "..." }` — no items were
- *   retrieved; the API call failed outright.
+ *   retrieved; the API call failed outright on the first page.
  */
 async function countItems(
   label: string,
@@ -358,7 +359,7 @@ async function countItems(
         }
         const note = `Reached max page limit (${String(MAX_PAGES_PER_METRIC)}) for ${label} — count of ${String(totalCount)} is incomplete.`;
         progress(`⚠️  ${label}: ${note}`);
-        return { total: null, error: note };
+        return { total: totalCount, error: note };
       }
       offset += EP_API_MAX_PAGE_SIZE;
     }
@@ -1184,79 +1185,8 @@ const METRIC_TO_FIELD: Record<string, string> = {
   'MEP Turnover (incoming + outgoing)': 'mepTurnover',
 };
 
-/**
- * Minimum credibility threshold for API values.
- *
- * The EP Open Data API has incomplete historical data for certain
- * endpoints (e.g. adopted-texts returns 1–2 items for years before 2014).
- * When the API returns a value below this threshold AND the stored value
- * is substantially higher, the API value is treated as unreliable and
- * the stored value is preserved.
- */
-const MIN_CREDIBLE_VALUE = 10;
-
-/**
- * Maximum allowed percentage drop from stored value before the API value
- * is treated as incomplete/unreliable.
- *
- * EP API endpoints sometimes return partial datasets due to:
- * - Server-side pagination issues or timeouts
- * - Data reorganisation or migration
- * - Incomplete database loads
- *
- * When the stored value is substantial (> {@link MIN_STORED_FOR_DROP_CHECK})
- * and the API returns a value more than this percentage below the stored
- * value, the update is rejected as likely incomplete.
- *
- * Set to 50% to catch clearly incomplete data (e.g. 80% drops in speeches,
- * 73% drops in documents) while still allowing genuine corrections.
- */
-const MAX_ALLOWED_DROP_PERCENT = 50;
-
-/**
- * Minimum stored value before the "significant drop" guard activates.
- *
- * Small stored values (≤ 100) are allowed to fluctuate freely since
- * even large percentage changes represent small absolute differences.
- */
-const MIN_STORED_FOR_DROP_CHECK = 100;
-
-/**
- * Check whether an API value is credible enough to overwrite the stored value.
- *
- * Returns false when the API clearly returned incomplete data:
- *
- * **Guard 1 — tiny API value:** API value is below {@link MIN_CREDIBLE_VALUE}
- * AND stored value is much larger (> 5× the API value).
- *
- * **Guard 2 — significant drop:** Stored value is substantial
- * (> {@link MIN_STORED_FOR_DROP_CHECK}) AND the API value represents a drop
- * of more than {@link MAX_ALLOWED_DROP_PERCENT}% from stored. This catches
- * scenarios where the EP API returns a plausible-looking number (e.g. 1998
- * speeches) that is nonetheless far below the known count (10000), indicating
- * incomplete pagination or partial data loads.
- *
- * Both guards protect curated data from being overwritten by incomplete
- * EP API responses while still allowing genuine corrections (increases
- * and small decreases).
- */
-function isCredibleApiValue(apiValue: number, storedValue: number): boolean {
-  // Guard 1: Very small API value when stored is much larger
-  if (apiValue < MIN_CREDIBLE_VALUE && storedValue > apiValue * 5) return false;
-
-  // Guard 2: Significant drop from a substantial stored value.
-  // Increases are always trusted (API has more data than stored).
-  // Only decreases beyond the threshold are flagged.
-  if (
-    storedValue > MIN_STORED_FOR_DROP_CHECK &&
-    apiValue < storedValue &&
-    ((storedValue - apiValue) / storedValue) * 100 > MAX_ALLOWED_DROP_PERCENT
-  ) {
-    return false;
-  }
-
-  return true;
-}
+// Credibility check constants and function are imported from
+// src/utils/credibilityCheck.ts — see that module for documentation.
 
 /**
  * Sync POLITICAL_LANDSCAPE NI group seats with the updated mepCount.
