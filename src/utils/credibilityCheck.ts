@@ -4,7 +4,7 @@
  * Used by `scripts/generate-stats.ts --update` to prevent overwriting
  * curated statistics with incomplete EP API data.
  *
- * @module
+ * @module utils/credibilityCheck
  */
 
 /** API values below this are suspicious when stored value is much larger. */
