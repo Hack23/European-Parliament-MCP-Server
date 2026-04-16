@@ -13,6 +13,7 @@
   <tr>
     <td width="120" align="center">
       <img src="https://img.shields.io/badge/MCP-Server-6366F1?style=for-the-badge&logo=typescript&logoColor=white" width="80" alt="European Parliament MCP Server"/>
+[![SafeSkill 68/100](https://img.shields.io/badge/SafeSkill-68%2F100_Use%20with%20Caution-orange)](https://safeskill.dev/scan/hack23-european-parliament-mcp-server)
       <div>
         <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
           <img src="https://img.shields.io/npm/v/european-parliament-mcp-server.svg" alt="npm version">
