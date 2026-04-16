@@ -33,6 +33,13 @@
  * into `src/data/generatedStats.ts` and updates the `generatedAt` timestamp.
  * Only fields where the API returned a valid count are updated.
  *
+ * **Data quality safeguards (--update mode):**
+ * - Partial fetches (pagination errors mid-stream) are never written back.
+ * - API values below 10 are rejected when stored value is > 5× larger.
+ * - API values representing > 50% drop from substantial stored values
+ *   (> 100 items) are rejected as likely incomplete EP API data.
+ * - All API calls are sequential to respect EP API rate limits.
+ *
  * **Usage:**
  * ```bash
  * npx tsx scripts/generate-stats.ts              # validate latest covered year
@@ -60,6 +67,7 @@ import { fileURLToPath } from 'node:url';
 import { EuropeanParliamentClient } from '../src/clients/europeanParliamentClient.js';
 import { GENERATED_STATS } from '../src/data/generatedStats.js';
 import type { YearlyStats, PoliticalGroupSnapshot, PoliticalLandscapeData } from '../src/data/generatedStats.js';
+import { isCredibleApiValue } from '../src/utils/credibilityCheck.js';
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -300,7 +308,14 @@ const MAX_PAGES_PER_METRIC = 200;
  * boundary.  If the probe returns 0 items, the count is treated as
  * complete.
  *
- * Returns the total count or null on failure.
+ * **Return contract:**
+ * - Success: `{ total: N }` — complete count, no `error` field.
+ * - Partial: `{ total: N, error: "..." }` — `total` is a **lower
+ *   bound** (items counted before a pagination error or page-limit
+ *   cap).  The `error` field signals to `--update` callers that the
+ *   count is incomplete and must NOT be written back to stored data.
+ * - Failure: `{ total: null, error: "..." }` — no items were
+ *   retrieved; the API call failed outright on the first page.
  */
 async function countItems(
   label: string,
@@ -344,21 +359,23 @@ async function countItems(
         }
         const note = `Reached max page limit (${String(MAX_PAGES_PER_METRIC)}) for ${label} — count of ${String(totalCount)} is incomplete.`;
         progress(`⚠️  ${label}: ${note}`);
-        return { total: null, error: note };
+        return { total: totalCount, error: note };
       }
       offset += EP_API_MAX_PAGE_SIZE;
     }
     progress(`✅ ${label}: ${String(totalCount)} items total (${formatElapsed(Date.now() - fetchStart)})`);
     return { total: totalCount };
   } catch (err: unknown) {
-    // If we already counted some items before the error, the last page
-    // likely returned an empty body (the EP API does this when offset
-    // exceeds available data).  The accumulated count is correct.
-    if (totalCount > 0) {
-      progress(`⚠️  ${label}: ${String(totalCount)} items (partial, error on page ${String(pageNum)})`);
-      return { total: totalCount };
-    }
     const message = err instanceof Error ? err.message : 'Unknown error';
+    // If we already counted some items before the error, the accumulated
+    // count is a lower bound but NOT necessarily the complete count.
+    // Return the partial count with an error marker so callers (--update)
+    // don't overwrite stored values with incomplete data.
+    if (totalCount > 0) {
+      const partialNote = `Partial count (${String(totalCount)} items) — error on page ${String(pageNum)}: ${message}`;
+      progress(`⚠️  ${label}: ${partialNote}`);
+      return { total: totalCount, error: partialNote };
+    }
     console.error(`  ${DIM}⚠ API error fetching ${label}: ${message}${RESET}`);
     return { total: null, error: message };
   }
@@ -771,14 +788,16 @@ async function validateYearAgainstAPI(
       // /committee-documents has neither year filtering nor date fields
       // in its response — excluded from per-year count.
       count: async () => {
-        progress('🔍 Plenary Documents: fetching plenary (year-filtered) + external (date-bucketed) in parallel...');
-        const [plenary, external] = await Promise.all([
-          countItems('Plenary Docs', (p) => client.getPlenaryDocuments({ year, ...p })),
-          countItemsGroupedByMonth('External Docs', year, (p) =>
-            client.getExternalDocuments(p),
-            { ordered: true, yearFilterSupported: false }
-          ),
-        ]);
+        // Fetch plenary docs and external docs SEQUENTIALLY to respect
+        // EP API rate limits.  External docs require full pagination
+        // (no year filter) so this can be slow — sequential ordering
+        // avoids concurrent requests that may trigger rate limiting.
+        progress('🔍 Plenary Documents: fetching plenary (year-filtered) then external (date-bucketed) sequentially...');
+        const plenary = await countItems('Plenary Docs', (p) => client.getPlenaryDocuments({ year, ...p }));
+        const external = await countItemsGroupedByMonth('External Docs', year, (p) =>
+          client.getExternalDocuments(p),
+          { ordered: true, yearFilterSupported: false }
+        );
         const errors: string[] = [];
         if (plenary.error) errors.push(`Plenary: ${plenary.error}`);
         if (external.error) errors.push(`External: ${external.error}`);
@@ -1137,6 +1156,21 @@ const UPDATABLE_FIELDS = [
 /** Fields updated only for the latest covered year. */
 const LATEST_YEAR_FIELDS = ['mepCount', 'mepTurnover'] as const;
 
+/**
+ * Metrics whose API responses contain real per-month dates, making their
+ * monthly distributions trustworthy for RAW_MONTHLY_DATA.
+ *
+ * - `plenarySessions`: dates from session IDs (`MTG-PL-YYYY-MM-DD`)
+ * - `speeches`: dates from sitting-date filter + speech IDs
+ * - `events`: dates from event ID suffixes (`-DEPOT-YYYY-MM-DD`)
+ *
+ * Excluded metrics like `procedures` use year-only extraction
+ * (`YYYY-01-01` synthetic date) so their monthly bucketing is misleading
+ * (all items land in January).  `distributeMonthly()` already uses
+ * synthetic distribution for these metrics.
+ */
+const MONTHLY_CAPABLE_FIELDS = new Set(['plenarySessions', 'speeches', 'events']);
+
 /** Map metric labels to RAW_YEARLY field names. */
 const METRIC_TO_FIELD: Record<string, string> = {
   'Adopted Texts': 'adoptedTexts',
@@ -1151,32 +1185,8 @@ const METRIC_TO_FIELD: Record<string, string> = {
   'MEP Turnover (incoming + outgoing)': 'mepTurnover',
 };
 
-/**
- * Minimum credibility threshold for API values.
- *
- * The EP Open Data API has incomplete historical data for certain
- * endpoints (e.g. adopted-texts returns 1–2 items for years before 2014).
- * When the API returns a value below this threshold AND the stored value
- * is substantially higher, the API value is treated as unreliable and
- * the stored value is preserved.
- */
-const MIN_CREDIBLE_VALUE = 10;
-
-/**
- * Check whether an API value is credible enough to overwrite the stored value.
- *
- * Returns false when the API clearly returned incomplete data:
- * - API value is below the credibility threshold, AND
- * - stored value is much larger (> 5× the API value)
- *
- * This protects curated historical estimates from being overwritten by
- * incomplete EP API data while still allowing genuine corrections.
- */
-function isCredibleApiValue(apiValue: number, storedValue: number): boolean {
-  if (apiValue >= MIN_CREDIBLE_VALUE) return true;
-  // API returned a tiny value — only trust it if stored is also small
-  return storedValue <= apiValue * 5;
-}
+// Credibility check constants and function are imported from
+// src/utils/credibilityCheck.ts — see that module for documentation.
 
 /**
  * Sync POLITICAL_LANDSCAPE NI group seats with the updated mepCount.
@@ -1321,13 +1331,22 @@ function updateStatsFile(
       }
 
       // Collect monthly data only for successful fetches (no note/error)
+      // and only when the monthly counts contain useful data (not all zeros).
+      // Monthly data is gated by the same credibility check as yearly totals
+      // to prevent writing incomplete monthly distributions.
+      // Only metrics with real per-month dates are eligible (see MONTHLY_CAPABLE_FIELDS).
       if (comparison.monthlyCounts && comparison.apiValue !== null) {
         const mField = METRIC_TO_FIELD[comparison.metric];
-        if (mField && isUpdatableField(mField)) {
-          if (!monthlyUpdates[yv.year]) {
-            monthlyUpdates[yv.year] = {};
+        const hasNonZeroMonth = comparison.monthlyCounts.some((c) => c > 0);
+        if (mField && isUpdatableField(mField) && hasNonZeroMonth && MONTHLY_CAPABLE_FIELDS.has(mField)) {
+          // Apply credibility check: only collect monthly data if the total is credible
+          const storedVal = comparison.storedValue;
+          if (isCredibleApiValue(comparison.apiValue, storedVal)) {
+            if (!monthlyUpdates[yv.year]) {
+              monthlyUpdates[yv.year] = {};
+            }
+            monthlyUpdates[yv.year][mField] = comparison.monthlyCounts;
           }
-          monthlyUpdates[yv.year][mField] = comparison.monthlyCounts;
         }
       }
 
@@ -1351,8 +1370,11 @@ function updateStatsFile(
       // Credibility check: skip obviously incomplete API data
       if (!isCredibleApiValue(comparison.apiValue, comparison.storedValue)) {
         skippedFields++;
+        const dropPercent = comparison.storedValue > 0
+          ? (((comparison.storedValue - comparison.apiValue) / comparison.storedValue) * 100).toFixed(1)
+          : '∞';
         console.log(
-          `  ${DIM}⊘ Skipped ${String(yv.year)}.${field}: API=${String(comparison.apiValue)} looks incomplete (stored=${String(comparison.storedValue)})${RESET}`
+          `  ${DIM}⊘ Skipped ${String(yv.year)}.${field}: API=${String(comparison.apiValue)} looks incomplete (stored=${String(comparison.storedValue)}, ${dropPercent}% drop)${RESET}`
         );
         continue;
       }
@@ -1419,8 +1441,10 @@ function updateStatsFile(
 /**
  * Update RAW_MONTHLY_DATA entries in the stats file content.
  *
- * Replaces or inserts per-year entries in the RAW_MONTHLY_DATA map.
- * Each year's entry contains metric names mapped to 12-element arrays.
+ * Merges per-year monthly metrics into the existing RAW_MONTHLY_DATA map.
+ * Only the specific metric arrays present in `monthlyUpdates[year]` are
+ * overwritten; any existing metric arrays for that year that weren't
+ * updated in this run are preserved.
  */
 function updateMonthlyData(
   monthlyUpdates: Record<number, Record<string, number[]>>,
@@ -1458,20 +1482,46 @@ function updateMonthlyData(
     const year = Number(yearStr);
     if (Object.keys(metrics).length === 0) continue;
 
-    // Build the year entry string
-    const lines: string[] = [];
-    for (const [field, counts] of Object.entries(metrics)) {
-      lines.push(`    ${field}: [${counts.join(', ')}]`);
-      count++;
-    }
-    const yearEntry = `  ${String(year)}: {\n${lines.join(',\n')},\n  }`;
-
     // Check if this year already exists within the block
     const existingYearPattern = new RegExp(
       `  ${String(year)}:\\s*\\{[^}]*\\}`,
       's'
     );
-    if (existingYearPattern.test(block)) {
+    const existingMatch = existingYearPattern.exec(block);
+
+    // Parse existing metrics for this year so we can merge (not replace)
+    const mergedMetrics: Record<string, number[]> = {};
+    if (existingMatch) {
+      // Extract existing field: [values] entries from the matched year block
+      const fieldPattern = /(\w+):\s*\[([^\]]*)\]/g;
+      let fieldMatch: RegExpExecArray | null = null;
+      while ((fieldMatch = fieldPattern.exec(existingMatch[0])) !== null) {
+        const fieldName = fieldMatch[1];
+        const rawValues = fieldMatch[2];
+        if (fieldName === undefined || rawValues === undefined) {
+          continue;
+        }
+        const values = rawValues.split(',').map((v) => Number(v.trim()));
+        if (values.length === 12) {
+          mergedMetrics[fieldName] = values;
+        }
+      }
+    }
+
+    // Overlay new metrics on top of existing ones
+    for (const [field, counts] of Object.entries(metrics)) {
+      mergedMetrics[field] = counts;
+      count++;
+    }
+
+    // Build the merged year entry string
+    const lines: string[] = [];
+    for (const [field, counts] of Object.entries(mergedMetrics)) {
+      lines.push(`    ${field}: [${counts.join(', ')}]`);
+    }
+    const yearEntry = `  ${String(year)}: {\n${lines.join(',\n')},\n  }`;
+
+    if (existingMatch) {
       block = block.replace(existingYearPattern, yearEntry);
     } else {
       // Insert new year entry before the closing brace of the block

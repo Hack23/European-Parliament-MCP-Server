@@ -1062,7 +1062,7 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
-    }, 120000);
+    }, 180000);
   });
 
   describe('Feed Tool: get_committee_documents_feed', () => {
@@ -1092,7 +1092,7 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
       if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
-    }, 120000);
+    }, 180000);
   });
 
   describe('Feed Tool: get_external_documents_feed', () => {
