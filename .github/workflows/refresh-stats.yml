@@ -7,22 +7,28 @@
 #
 # The EP API does not provide a totalItems header, so records are iterated
 # to obtain accurate counts (limit: 1000 per page, the API's server-side cap).
+# Client-side counting of downloaded data is trusted.
 #
-# EP API endpoint year-filter support (per OpenAPI spec):
-#   ✅ /meetings (plenary sessions) — supports `year`
-#   ✅ /adopted-texts              — supports `year`
-#   ✅ /plenary-documents          — supports `year`
-#   ✅ /meps-declarations          — supports `year`
-#   ✅ /parliamentary-questions    — supports `year` (via dateFrom)
-#   ❌ /speeches                   — NO `year`; uses `sitting-date`/`sitting-date-end`
-#   ❌ /events                     — NO date filtering at all
-#   ❌ /procedures                 — NO `year`
-#   ❌ /committee-documents        — NO `year`
-#   ❌ /external-documents         — NO `year`
+# EP API endpoint strategy:
+#   ✅ /meetings (plenary sessions) — server-side `year` filter
+#   ✅ /adopted-texts              — server-side `year` filter
+#   ✅ /plenary-documents          — server-side `year` filter
+#   ✅ /meps-declarations          — server-side `year` filter
+#   ✅ /parliamentary-questions    — server-side `year` (via dateFrom)
+#   ✅ /speeches                   — server-side `sitting-date`/`sitting-date-end`
+#   ✅ /events                     — NO server filter; dates from ID suffix
+#                                    (e.g. -DEPOT-2025-03-26); client-side bucketing
+#   ✅ /procedures                 — NO server filter; year from `dateInitiated`
+#                                    when available, or from procedure references
+#                                    (e.g. 2024-0123, 2023/0123(COD));
+#                                    client-side bucketing
+#   ✅ /external-documents         — NO server filter; date from document_date field;
+#                                    client-side bucketing
+#   ⏭ /committee-documents        — NO year filter AND no date field; excluded
 #
-# Endpoints without year support use client-side date bucketing with
-# early termination (MAX_CONSECUTIVE_EMPTY_PAGES) to avoid downloading
-# entire datasets.
+# Endpoints without server-side year filter paginate records and extract
+# dates/years client-side.  Pagination may stop early once the target year's
+# contiguous block is exhausted, and a safety cap also limits traversal.
 #
 # Scheduled runs use --recent (last 3 years) to stay within timeout limits.
 # Manual dispatch supports --all for full dataset refresh, --recent for fast
