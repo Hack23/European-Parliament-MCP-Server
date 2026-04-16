@@ -563,7 +563,7 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | '
   { year: 2023, parliamentaryTerm: 'EP9 (2019-2024)', mepCount: 705, plenarySessions: 58, legislativeActsAdopted: 148, rollCallVotes: 660, committeeMeetings: 2520, parliamentaryQuestions: 6580, resolutions: 218, speeches: 15200, adoptedTexts: 487, procedures: 903, events: 1676, documents: 5020, mepTurnover: 38, declarations: 343, commentary: 'Peak EP9 legislative output. AI Act negotiations concluded. Nature Restoration Law controversial vote. Corporate Sustainability Due Diligence. Critical Raw Materials Act. Record-high legislative productivity driven by end-of-term urgency.' },
   { year: 2024, parliamentaryTerm: 'EP9/EP10 transition', mepCount: 720, plenarySessions: 50, legislativeActsAdopted: 72, rollCallVotes: 375, committeeMeetings: 1680, parliamentaryQuestions: 3950, resolutions: 108, speeches: 7800, adoptedTexts: 459, procedures: 676, events: 310, documents: 2680, mepTurnover: 405, declarations: 560, commentary: 'EP9/EP10 transition. European elections June 2024. Significant rightward shift in composition. New MEPs (720 total after redistribution). Reduced output due to election cycle. AI Act entered into force.' },
   { year: 2025, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 720, plenarySessions: 53, legislativeActsAdopted: 78, rollCallVotes: 420, committeeMeetings: 1980, parliamentaryQuestions: 4941, resolutions: 135, speeches: 10000, adoptedTexts: 347, procedures: 923, events: 2657, documents: 3516, mepTurnover: 36, declarations: 3000, commentary: 'EP10 ramp-up year (720 MEPs from 27 EU countries). New committee chairs and rapporteurs established. Defence and security policy gained prominence. Strategic autonomy debates. Clean Industrial Deal proposals. Parliament adapting to new political balance with stronger ECR and right-wing presence.' },
-  { year: 2026, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 718, plenarySessions: 54, legislativeActsAdopted: 114, rollCallVotes: 567, committeeMeetings: 2363, parliamentaryQuestions: 6147, resolutions: 180, speeches: 996, adoptedTexts: 104, procedures: 935, events: 2327, documents: 4265, mepTurnover: 39, declarations: 1158, commentary: 'PARTIAL YEAR — data through Q1 2026. EP10 has 720 MEPs from 27 EU countries. Plenary session count (54) reflects full-year EP calendar; all other activity totals are projected full-year estimates based on 2021-2025 historical average with EP10 year-2 cycle adjustment. Actual Q1 activity: 10 plenary sittings completed (Jan-Feb), adopted texts and procedures accumulating. Defence spending, Clean Industrial Deal, and AI Act implementation dominating legislative agenda.' },
+  { year: 2026, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 718, plenarySessions: 54, legislativeActsAdopted: 114, rollCallVotes: 567, committeeMeetings: 2363, parliamentaryQuestions: 1355, resolutions: 180, speeches: 996, adoptedTexts: 104, procedures: 935, events: 2327, documents: 285, mepTurnover: 39, declarations: 1158, commentary: 'PARTIAL YEAR — data through Q1 2026. EP10 has 720 MEPs from 27 EU countries. Plenary session count (54) reflects full-year EP calendar; all other activity totals are projected full-year estimates based on 2021-2025 historical average with EP10 year-2 cycle adjustment. Actual Q1 activity: 10 plenary sittings completed (Jan-Feb), adopted texts and procedures accumulating. Defence spending, Clean Industrial Deal, and AI Act implementation dominating legislative agenda.' },
 ];
 
 // ── Real monthly data from EP API ─────────────────────────────────
@@ -585,7 +585,7 @@ const RAW_MONTHLY_DATA: Record<number, Record<string, number[]>> = {
   2026: {
     plenarySessions: [5, 5, 6, 4, 4, 4, 4, 0, 4, 8, 6, 4],
     speeches: [297, 314, 385, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    parliamentaryQuestions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    procedures: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   },
   2025: {
     plenarySessions: [5, 4, 5, 3, 6, 4, 4, 0, 4, 8, 6, 4],
@@ -1299,7 +1299,7 @@ const predictions = buildPredictions();
 const analysisSummary = buildAnalysisSummary(yearlyStats);
 
 export const GENERATED_STATS: GeneratedStatsData = {
-  generatedAt: '2026-04-15T23:48:12Z',
+  generatedAt: '2026-04-16T01:33:15Z',
   coveragePeriod: { from: 2004, to: 2026 },
   methodologyVersion: '2.0.0',
   dataSource: 'European Parliament Open Data Portal — data.europarl.europa.eu',
