@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.7**](../../../README.md)
+[**European Parliament MCP Server API v1.2.8**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getCommitteeDocumentsToolMetadata**: `object`
 
-Defined in: [tools/getCommitteeDocuments.ts:102](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCommitteeDocuments.ts#L102)
+Defined in: [tools/getCommitteeDocuments.ts:104](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCommitteeDocuments.ts#L104)
 
 Tool metadata for get_committee_documents
 
@@ -16,7 +16,7 @@ Tool metadata for get_committee_documents
 
 ### description
 
-> **description**: `string` = `'Get European Parliament committee documents. Supports single document lookup by docId or list with year filter. Data source: European Parliament Open Data Portal.'`
+> **description**: `string` = `'Get European Parliament committee documents. Supports single document lookup by docId or paginated list. Note: The EP API /committee-documents endpoint does not support year filtering. Data source: European Parliament Open Data Portal.'`
 
 ### inputSchema
 
@@ -67,18 +67,6 @@ Tool metadata for get_committee_documents
 > **description**: `string` = `'Pagination offset'`
 
 #### inputSchema.properties.offset.type
-
-> **type**: `string` = `'number'`
-
-#### inputSchema.properties.year
-
-> **year**: `object`
-
-#### inputSchema.properties.year.description
-
-> **description**: `string` = `'Filter by year'`
-
-#### inputSchema.properties.year.type
 
 > **type**: `string` = `'number'`
 

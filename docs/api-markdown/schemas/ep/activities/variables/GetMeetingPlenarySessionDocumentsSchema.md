@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.7**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.8**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **GetMeetingPlenarySessionDocumentsSchema**: `ZodObject`\<\{ `limit`: `ZodDefault`\<`ZodNumber`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; `sittingId`: `ZodString`; \}, `$strip`\>
 
-Defined in: [schemas/ep/activities.ts:276](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/activities.ts#L276)
+Defined in: [schemas/ep/activities.ts:265](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/activities.ts#L265)
 
 Get meeting plenary session documents input schema.
 Maps to `GET /meetings/{sitting-id}/plenary-session-documents`

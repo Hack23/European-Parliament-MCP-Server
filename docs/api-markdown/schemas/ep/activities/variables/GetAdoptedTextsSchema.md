@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.7**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.8**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **GetAdoptedTextsSchema**: `ZodObject`\<\{ `docId`: `ZodOptional`\<`ZodString`\>; `limit`: `ZodDefault`\<`ZodNumber`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; `year`: `ZodOptional`\<`ZodNumber`\>; \}, `$strip`\>
 
-Defined in: [schemas/ep/activities.ts:76](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/activities.ts#L76)
+Defined in: [schemas/ep/activities.ts:72](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/activities.ts#L72)
 
 Get adopted texts input schema

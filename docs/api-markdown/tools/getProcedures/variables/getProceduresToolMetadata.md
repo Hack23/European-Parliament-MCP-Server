@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.7**](../../../README.md)
+[**European Parliament MCP Server API v1.2.8**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getProceduresToolMetadata**: `object`
 
-Defined in: [tools/getProcedures.ts:105](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProcedures.ts#L105)
+Defined in: [tools/getProcedures.ts:108](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProcedures.ts#L108)
 
 Tool metadata for get_procedures
 
@@ -16,7 +16,7 @@ Tool metadata for get_procedures
 
 ### description
 
-> **description**: `string` = `'Get European Parliament legislative procedures. Supports single procedure lookup by processId or list with year filter. Data source: European Parliament Open Data Portal.'`
+> **description**: `string` = `'Get European Parliament legislative procedures. Supports single procedure lookup by processId or paginated list. Note: The EP API /procedures endpoint does not support year filtering. Data source: European Parliament Open Data Portal.'`
 
 ### inputSchema
 
@@ -69,18 +69,6 @@ Tool metadata for get_procedures
 #### inputSchema.properties.processId.type
 
 > **type**: `string` = `'string'`
-
-#### inputSchema.properties.year
-
-> **year**: `object`
-
-#### inputSchema.properties.year.description
-
-> **description**: `string` = `'Filter by year (e.g., 2024)'`
-
-#### inputSchema.properties.year.type
-
-> **type**: `string` = `'number'`
 
 #### inputSchema.type
 

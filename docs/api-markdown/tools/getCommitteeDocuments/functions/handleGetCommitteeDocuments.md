@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.7**](../../../README.md)
+[**European Parliament MCP Server API v1.2.8**](../../../README.md)
 
 ***
 
@@ -8,12 +8,15 @@
 
 > **handleGetCommitteeDocuments**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getCommitteeDocuments.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCommitteeDocuments.ts#L55)
+Defined in: [tools/getCommitteeDocuments.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCommitteeDocuments.ts#L58)
 
 Handles the get_committee_documents MCP tool request.
 
 Retrieves European Parliament committee documents, supporting single document
-lookup by docId or a paginated list optionally filtered by year.
+lookup by docId or a paginated list.
+
+Note: The EP API `/committee-documents` endpoint does **not** support `year` filtering.
+Only pagination (limit/offset) is available.
 
 ## Parameters
 
@@ -41,9 +44,9 @@ MCP tool result containing either a single committee document or a paginated lis
 const result = await handleGetCommitteeDocuments({ docId: 'A9-0001/2024' });
 // Returns the full record for the specified committee document
 
-// List documents filtered by year
-const list = await handleGetCommitteeDocuments({ year: 2024, limit: 25 });
-// Returns up to 25 committee documents from 2024
+// List documents (no year filter available in the EP API)
+const list = await handleGetCommitteeDocuments({ limit: 25 });
+// Returns up to 25 committee documents
 ```
 
 ## Security

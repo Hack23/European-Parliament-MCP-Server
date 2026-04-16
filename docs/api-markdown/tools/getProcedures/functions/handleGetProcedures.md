@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.7**](../../../README.md)
+[**European Parliament MCP Server API v1.2.8**](../../../README.md)
 
 ***
 
@@ -8,13 +8,17 @@
 
 > **handleGetProcedures**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getProcedures.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProcedures.ts#L58)
+Defined in: [tools/getProcedures.ts:62](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProcedures.ts#L62)
 
 Handles the get_procedures MCP tool request.
 
 Retrieves European Parliament legislative procedures enabling end-to-end legislative
 tracking, outcome prediction, and timeline analysis. Supports both a single-procedure
-lookup by `processId` and a paginated list optionally filtered by year.
+lookup by `processId` and a paginated list.
+
+Note: The EP API `/procedures` endpoint does **not** support `year` filtering.
+Only `process-type` is available.  Callers needing year-specific counts
+must filter client-side.
 
 ## Parameters
 
@@ -42,9 +46,9 @@ MCP tool result containing procedure data (single procedure or paginated list)
 const single = await handleGetProcedures({ processId: '2023/0132(COD)' });
 // Returns the legislative procedure for the Artificial Intelligence Act
 
-// List procedures from 2024
-const list = await handleGetProcedures({ year: 2024, limit: 50, offset: 0 });
-// Returns up to 50 legislative procedures initiated in 2024
+// List procedures (no year filter available in the EP API)
+const list = await handleGetProcedures({ limit: 50, offset: 0 });
+// Returns up to 50 legislative procedures
 ```
 
 ## Security

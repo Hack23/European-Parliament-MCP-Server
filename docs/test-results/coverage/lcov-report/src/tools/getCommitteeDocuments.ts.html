@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.44% </span>
+                <span class="strong">93.75% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>17/18</span>
+                <span class='fraction'>15/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>5/6</span>
+                <span class='fraction'>3/4</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.75% </span>
+                <span class="strong">93.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>15/16</span>
+                <span class='fraction'>14/15</span>
             </div>
         
             
@@ -178,7 +178,11 @@
 <a name='L113'></a><a href='#L113'>113</a>
 <a name='L114'></a><a href='#L114'>114</a>
 <a name='L115'></a><a href='#L115'>115</a>
-<a name='L116'></a><a href='#L116'>116</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -261,7 +265,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -280,7 +283,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -322,7 +324,10 @@ import type { ToolResult } from './shared/types.js';
  * Handles the get_committee_documents MCP tool request.
  *
  * Retrieves European Parliament committee documents, supporting single document
- * lookup by docId or a paginated list optionally filtered by year.
+ * lookup by docId or a paginated list.
+ *
+ * Note: The EP API `/committee-documents` endpoint does **not** support `year` filtering.
+ * Only pagination (limit/offset) is available.
  *
  * @param args - Raw tool arguments, validated against {@link GetCommitteeDocumentsSchema}
  * @returns MCP tool result containing either a single committee document or a paginated list of documents
@@ -335,9 +340,9 @@ import type { ToolResult } from './shared/types.js';
  * const result = await handleGetCommitteeDocuments({ docId: 'A9-0001/2024' });
  * // Returns the full record for the specified committee document
  *
- * // List documents filtered by year
- * const list = await handleGetCommitteeDocuments({ year: 2024, limit: 25 });
- * // Returns up to 25 committee documents from 2024
+ * // List documents (no year filter available in the EP API)
+ * const list = await handleGetCommitteeDocuments({ limit: 25 });
+ * // Returns up to 25 committee documents
  * ```
  *
  * @security - Input is validated with Zod before any API call.
@@ -376,7 +381,6 @@ export async function handleGetCommitteeDocuments(args: unknown): Promise&lt;Too
       limit: params.limit,
       offset: params.offset,
     };
-    if (params.year !== undefined) apiParams['year'] = params.year;
 &nbsp;
     const result = await epClient.getCommitteeDocuments(
       apiParams as Parameters&lt;typeof epClient.getCommitteeDocuments&gt;[0]
@@ -397,12 +401,11 @@ export async function handleGetCommitteeDocuments(args: unknown): Promise&lt;Too
 export const getCommitteeDocumentsToolMetadata = {
   name: 'get_committee_documents',
   description:
-    'Get European Parliament committee documents. Supports single document lookup by docId or list with year filter. Data source: European Parliament Open Data Portal.',
+    'Get European Parliament committee documents. Supports single document lookup by docId or paginated list. Note: The EP API /committee-documents endpoint does not support year filtering. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       docId: { type: 'string', description: 'Document ID for single document lookup' },
-      year: { type: 'number', description: 'Filter by year' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },
@@ -415,7 +418,7 @@ export const getCommitteeDocumentsToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-15T12:00:11.976Z
+                at 2026-04-16T15:31:10.072Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

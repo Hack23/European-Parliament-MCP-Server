@@ -181,7 +181,9 @@
 <a name='L116'></a><a href='#L116'>116</a>
 <a name='L117'></a><a href='#L117'>117</a>
 <a name='L118'></a><a href='#L118'>118</a>
-<a name='L119'></a><a href='#L119'>119</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -241,12 +243,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -257,23 +263,22 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -298,12 +303,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * MCP Tool: get_procedures
  *
  * Retrieve European Parliament legislative procedures.
- * Supports single procedure lookup by processId or list with year filtering.
+ * Supports single procedure lookup by processId or paginated list.
+ * Note: The EP API /procedures endpoint does not support year filtering.
  *
  * **Intelligence Perspective:** Procedure data enables end-to-end legislative tracking,
  * outcome prediction, and timeline analysis—core for policy monitoring intelligence.
@@ -321,7 +326,6 @@
 import { GetProceduresSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
-import { buildApiParams } from './shared/paramBuilder.js';
 import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
@@ -331,7 +335,11 @@ import type { ToolResult } from './shared/types.js';
  *
  * Retrieves European Parliament legislative procedures enabling end-to-end legislative
  * tracking, outcome prediction, and timeline analysis. Supports both a single-procedure
- * lookup by `processId` and a paginated list optionally filtered by year.
+ * lookup by `processId` and a paginated list.
+ *
+ * Note: The EP API `/procedures` endpoint does **not** support `year` filtering.
+ * Only `process-type` is available.  Callers needing year-specific counts
+ * must filter client-side.
  *
  * @param args - Raw tool arguments, validated against {@link GetProceduresSchema}
  * @returns MCP tool result containing procedure data (single procedure or paginated list)
@@ -344,9 +352,9 @@ import type { ToolResult } from './shared/types.js';
  * const single = await handleGetProcedures({ processId: '2023/0132(COD)' });
  * // Returns the legislative procedure for the Artificial Intelligence Act
  *
- * // List procedures from 2024
- * const list = await handleGetProcedures({ year: 2024, limit: 50, offset: 0 });
- * // Returns up to 50 legislative procedures initiated in 2024
+ * // List procedures (no year filter available in the EP API)
+ * const list = await handleGetProcedures({ limit: 50, offset: 0 });
+ * // Returns up to 50 legislative procedures
  * ```
  *
  * @security - Input is validated with Zod before any API call.
@@ -384,7 +392,6 @@ export async function handleGetProcedures(args: unknown): Promise&lt;ToolResult&
     const apiParams = {
       limit: params.limit,
       offset: params.offset,
-      ...buildApiParams(params, [{ from: 'year', to: 'year' }]),
     };
 &nbsp;
     const result = await epClient.getProcedures(
@@ -406,12 +413,11 @@ export async function handleGetProcedures(args: unknown): Promise&lt;ToolResult&
 export const getProceduresToolMetadata = {
   name: 'get_procedures',
   description:
-    'Get European Parliament legislative procedures. Supports single procedure lookup by processId or list with year filter. Data source: European Parliament Open Data Portal.',
+    'Get European Parliament legislative procedures. Supports single procedure lookup by processId or paginated list. Note: The EP API /procedures endpoint does not support year filtering. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       processId: { type: 'string', description: 'Process ID for single procedure lookup' },
-      year: { type: 'number', description: 'Filter by year (e.g., 2024)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },
@@ -424,7 +430,7 @@ export const getProceduresToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-15T12:00:11.882Z
+                at 2026-04-16T15:31:09.972Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

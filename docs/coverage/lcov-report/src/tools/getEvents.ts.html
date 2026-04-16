@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.45% </span>
+                <span class="strong">93.75% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>21/22</span>
+                <span class='fraction'>15/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>9/10</span>
+                <span class='fraction'>3/4</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.44% </span>
+                <span class="strong">93.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>17/18</span>
+                <span class='fraction'>14/15</span>
             </div>
         
             
@@ -182,11 +182,7 @@
 <a name='L117'></a><a href='#L117'>117</a>
 <a name='L118'></a><a href='#L118'>118</a>
 <a name='L119'></a><a href='#L119'>119</a>
-<a name='L120'></a><a href='#L120'>120</a>
-<a name='L121'></a><a href='#L121'>121</a>
-<a name='L122'></a><a href='#L122'>122</a>
-<a name='L123'></a><a href='#L123'>123</a>
-<a name='L124'></a><a href='#L124'>124</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L120'></a><a href='#L120'>120</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -244,8 +240,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
@@ -260,23 +263,20 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -301,19 +301,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * MCP Tool: get_events
  *
  * Retrieve European Parliament events (hearings, conferences, seminars).
- * Supports single event lookup by eventId or list with date range filtering.
+ * Supports single event lookup by eventId or paginated list.
+ *
+ * **Note:** The EP API `/events` endpoint has **no** date filtering
+ * (`year`, `date-from`, `date-to` are all unsupported).
+ * Only pagination (limit/offset) is available.
  *
  * **Intelligence Perspective:** Event monitoring enables early detection of emerging
  * policy priorities and stakeholder engagement patterns.
@@ -339,7 +335,10 @@ import type { ToolResult } from './shared/types.js';
  * Handles the get_events MCP tool request.
  *
  * Retrieves European Parliament events including hearings, conferences, and seminars.
- * Supports single event lookup by eventId or a paginated list filtered by date range.
+ * Supports single event lookup by eventId or a paginated list.
+ *
+ * **Note:** The EP API `/events` endpoint has no date filtering.
+ * Only pagination (limit/offset) is supported.
  *
  * @param args - Raw tool arguments, validated against {@link GetEventsSchema}
  * @returns MCP tool result containing either a single event record or a paginated list of EP events
@@ -352,9 +351,9 @@ import type { ToolResult } from './shared/types.js';
  * const result = await handleGetEvents({ eventId: 'EVT-2024-001' });
  * // Returns the full record for the specified event
  *
- * // List events within a date range
- * const list = await handleGetEvents({ dateFrom: '2024-06-01', dateTo: '2024-06-30', limit: 30 });
- * // Returns up to 30 EP events in June 2024
+ * // List events (pagination only — no date filtering available)
+ * const list = await handleGetEvents({ limit: 30, offset: 0 });
+ * // Returns up to 30 EP events
  * ```
  *
  * @security - Input is validated with Zod before any API call.
@@ -393,9 +392,6 @@ export async function handleGetEvents(args: unknown): Promise&lt;ToolResult&gt; 
       limit: params.limit,
       offset: params.offset,
     };
-    if (params.year !== undefined) apiParams['year'] = params.year;
-    if (params.dateFrom !== undefined) apiParams['dateFrom'] = params.dateFrom;
-    if (params.dateTo !== undefined) apiParams['dateTo'] = params.dateTo;
 &nbsp;
     const result = await epClient.getEvents(apiParams as Parameters&lt;typeof epClient.getEvents&gt;[0]);
 &nbsp;
@@ -414,19 +410,11 @@ export async function handleGetEvents(args: unknown): Promise&lt;ToolResult&gt; 
 export const getEventsToolMetadata = {
   name: 'get_events',
   description:
-    'Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or list with year or date range filtering. Data source: European Parliament Open Data Portal.',
+    'Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or paginated list. Note: The EP API /events endpoint has no date filtering — only pagination (limit/offset) is supported. Data source: European Parliament Open Data Portal.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       eventId: { type: 'string', description: 'Event ID for single event lookup' },
-      year: {
-        type: 'number',
-        description: 'Filter by calendar year (recommended for annual counts)',
-        minimum: 1900,
-        maximum: 2100,
-      },
-      dateFrom: { type: 'string', description: 'Start date (YYYY-MM-DD)' },
-      dateTo: { type: 'string', description: 'End date (YYYY-MM-DD)' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 },
     },
@@ -439,7 +427,7 @@ export const getEventsToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-15T12:00:11.976Z
+                at 2026-04-16T15:31:10.072Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

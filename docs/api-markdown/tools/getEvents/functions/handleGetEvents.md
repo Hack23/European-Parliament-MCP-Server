@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.7**](../../../README.md)
+[**European Parliament MCP Server API v1.2.8**](../../../README.md)
 
 ***
 
@@ -8,12 +8,15 @@
 
 > **handleGetEvents**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getEvents.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getEvents.ts#L56)
+Defined in: [tools/getEvents.ts:63](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getEvents.ts#L63)
 
 Handles the get_events MCP tool request.
 
 Retrieves European Parliament events including hearings, conferences, and seminars.
-Supports single event lookup by eventId or a paginated list filtered by date range.
+Supports single event lookup by eventId or a paginated list.
+
+**Note:** The EP API `/events` endpoint has no date filtering.
+Only pagination (limit/offset) is supported.
 
 ## Parameters
 
@@ -41,9 +44,9 @@ MCP tool result containing either a single event record or a paginated list of E
 const result = await handleGetEvents({ eventId: 'EVT-2024-001' });
 // Returns the full record for the specified event
 
-// List events within a date range
-const list = await handleGetEvents({ dateFrom: '2024-06-01', dateTo: '2024-06-30', limit: 30 });
-// Returns up to 30 EP events in June 2024
+// List events (pagination only — no date filtering available)
+const list = await handleGetEvents({ limit: 30, offset: 0 });
+// Returns up to 30 EP events
 ```
 
 ## Security
