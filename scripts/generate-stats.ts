@@ -379,7 +379,11 @@ async function countItems(
  *   the record ID.
  *
  * This function tries each strategy in order: normalised `date` field,
- * known nested EP API date objects, then regex extraction from the `id`.
+ * known nested EP API date objects, regex extraction from the `id`,
+ * and finally procedure-style `YYYY-NNNN` year extraction from
+ * `reference` / `id` fields (returns synthetic `YYYY-01-01` — only
+ * the year is available, so monthly bucketing shows all procedures in
+ * January; the yearly total remains accurate).
  */
 const DATE_PATTERN = /\b(\d{4})-(\d{2})-(\d{2})\b/;
 
