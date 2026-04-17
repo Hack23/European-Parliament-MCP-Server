@@ -24,19 +24,23 @@ All business models, partnerships, and revenue strategies **MUST** comply with [
 
 ### Security Constraints on Business Models
 
-- **[Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md)**: Core MCP server remains open source; monetization layers must not undermine transparency
-- **[Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)**: Partner integrations must follow secure SDLC, SLSA Level 3 provenance
-- **[Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md)**: All data handling must be GDPR-compliant with privacy by design
-- **[Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md)**: Partner and customer access must follow least-privilege principles
-- **[Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)**: Data monetization must never compromise security posture
+- **[Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)** — Transparency, security-by-design, stakeholder trust
+- **[Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md)** — Core MCP server remains open source; monetisation layers must not undermine transparency or redistribution
+- **[Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)** — Partner integrations must follow secure SDLC, SLSA Level 3 provenance, SBOM
+- **[Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md)** — All data handling must be GDPR-compliant with privacy by design (Art. 25)
+- **[Data Classification Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Data_Classification_Policy.md)** — Contractual tiers mirror classification
+- **[Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md)** — Partner / customer access follows least privilege
+- **[Third Party Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Third_Party_Management.md)** — Due diligence, risk scoring, exit clauses for every partner
+- **[AI Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/AI_Policy.md)** — Responsible AI positioning in commercial narrative
 
 ### Compliance Decision Framework
 
-- **IF** proposing a new revenue model → Verify GDPR Article 6 lawful basis for data processing
-- **IF** onboarding a partner → Require Data Processing Agreement (DPA) per GDPR Article 28
-- **IF** expanding to new markets → Assess data sovereignty and cross-border transfer requirements
-- **IF** offering premium features → Ensure open-source core is not diminished (Open Source Policy)
-- **IF** handling personal data → Apply data minimization, purpose limitation, and storage limitation
+- **IF** proposing a new revenue model → Verify GDPR Article 6 lawful basis
+- **IF** onboarding a partner → Require Data Processing Agreement (DPA) per GDPR Article 28 + Third Party Management due diligence
+- **IF** expanding to new markets → Assess data sovereignty, cross-border transfer (SCCs), NIS2 impact
+- **IF** offering premium features → Preserve open-source core (Open Source Policy)
+- **IF** handling personal data → Apply data minimisation, purpose limitation, storage limitation
+- **IF** pricing around security / compliance → Claims must be verifiable (OSSF Scorecard, SLSA, SBOM artefacts)
 
 ## 🎯 Core Expertise
 

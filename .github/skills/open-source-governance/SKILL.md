@@ -467,11 +467,26 @@ Use this checklist for new repositories:
 
 ## ISMS Compliance
 
-This skill enforces:
-- **OS-001**: Public transparency through badges
-- **OS-002**: License compliance framework
-- **OS-003**: Supply chain security
-- **OS-004**: Vulnerability management
-- **OS-005**: Governance artifacts
+This skill enforces the following Open Source Policy controls:
+- **OS-001**: Public transparency through badges (Scorecard, CII, SLSA)
+- **OS-002**: License compliance framework (approved-licence allowlist)
+- **OS-003**: Supply-chain security (SBOM, pinned deps, OSSF Scorecard ≥ 8.0)
+- **OS-004**: Vulnerability management (Dependabot, npm audit, CodeQL)
+- **OS-005**: Governance artefacts (LICENSE, SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md, DCO, CODEOWNERS)
 
-**Policy Reference**: [Hack23 Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md)
+### Policy References
+
+**Primary policy:**
+
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md)
+
+**Related policies (cite in governance PRs):**
+
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md) — Transparency, stakeholder trust
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) — SBOM, SLSA, signing as SDLC outputs
+- [Vulnerability Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) — Disclosure SLAs
+- [Incident Response Plan](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md) — Coordinated disclosure, GitHub Security Advisory
+- [Cryptography Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Cryptography_Policy.md) — Release signing, Sigstore / cosign
+- [Change Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Change_Management.md) — Governance artefact updates tracked as changes
+- [Third Party Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Third_Party_Management.md) — Dependency / maintainer trust
+- [AI Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/AI_Policy.md) — Disclosure of AI-assisted contributions

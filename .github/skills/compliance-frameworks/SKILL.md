@@ -511,5 +511,28 @@ This skill enforces:
 - **CF-002**: NIST CSF 2.0 function alignment
 - **CF-003**: CIS Controls v8.1 safeguards
 - **CF-004**: EU CRA conformity assessment
+- **CF-005**: GDPR / NIS2 linkage
 
-**Policy Reference**: [Hack23 ISMS-PUBLIC](https://github.com/Hack23/ISMS-PUBLIC)
+### Policy References
+
+**Primary:**
+
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md) — Top-level frame for multi-standard alignment
+- [Hack23 ISMS-PUBLIC](https://github.com/Hack23/ISMS-PUBLIC) — Full policy portfolio
+
+**All policies contribute to compliance mapping:**
+
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) → ISO A.8.25 / A.8.28, NIST PR.PS, CIS 16
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) → ISO A.5.19/23, NIST ID.SC, CIS 15
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) → GDPR Art. 5/6/25/30, ISO A.5.34
+- [Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) → ISO A.5.15-18, NIST PR.AA, CIS 6
+- [Cryptography Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Cryptography_Policy.md) → ISO A.8.24, NIST PR.DS, CIS 3.11
+- [Vulnerability Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) → ISO A.8.8, NIST ID.RA/DE.CM-8, CIS 7
+- [Incident Response Plan](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md) → ISO A.5.24-28, NIST RS, CIS 17
+- [Change Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Change_Management.md) → ISO A.8.32, NIST ID.GV
+- [Threat Modeling](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md) → ISO A.8.27, NIST ID.RA
+- [Business Continuity Plan](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Business_Continuity_Plan.md) → ISO A.5.29-30, NIST RC
+- [Backup Recovery Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Backup_Recovery_Policy.md) → ISO A.8.13, NIST PR.IP-4
+- [AI Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/AI_Policy.md) + [OWASP LLM Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/OWASP_LLM_Security_Policy.md) → EU AI Act, ISO 42001 (emerging)
+- [Third Party Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Third_Party_Management.md) → ISO A.5.19-22, NIST ID.SC
+- [Segregation of Duties Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Segregation_of_Duties_Policy.md) → ISO A.5.3, CIS 6.8

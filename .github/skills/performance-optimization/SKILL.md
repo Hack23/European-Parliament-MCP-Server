@@ -692,8 +692,19 @@ export async function search(query: string): Promise<Results> {
 - [High Performance Browser Networking](https://hpbn.co/)
 
 ### ISMS Policies
-- [SC-001 Secure Configuration](https://github.com/Hack23/ISMS-PUBLIC/blob/main/policies/SC-001.md)
-- [IM-001 Incident Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/policies/IM-001.md)
+
+**Primary:**
+
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) — Performance budgets and monitoring as SDLC gates
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md) — Availability is a core security property
+
+**Supporting:**
+
+- [Business Continuity Plan](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Business_Continuity_Plan.md) — RTO / RPO expectations
+- [Incident Response Plan](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md) — Performance degradation as incident
+- [Vulnerability Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) — DoS / ReDoS as vulnerabilities
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) — Cache TTL on personal data
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Transparency of performance characteristics
 
 ## Remember
 

@@ -129,8 +129,23 @@ return {
 ## ISMS Compliance
 
 - **AI-001**: AI risk assessment and EU AI Act classification for all MCP tools
-- **SC-002**: Output sanitization to prevent prompt injection in LLM contexts
+- **SC-002**: Output sanitisation to prevent prompt injection in LLM contexts
 - **AU-002**: Audit logging for AI system interactions with parliamentary data
-- **DP-001**: GDPR data minimization in AI-consumed MEP personal data
+- **DP-001**: GDPR data minimisation in AI-consumed MEP personal data
 
-Reference: [Hack23 ISMS Policies](https://github.com/Hack23/ISMS-PUBLIC)
+### Policy References
+
+**Primary:**
+
+- [AI Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/AI_Policy.md)
+- [OWASP LLM Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/OWASP_LLM_Security_Policy.md)
+
+**Related:**
+
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) — EU AI Act + GDPR intersection
+- [Data Classification Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Data_Classification_Policy.md) — Sensitive inputs to models
+- [Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) — Human-oversight gates
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Model / data provenance and attribution
+- [Incident Response Plan](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md) — AI misuse / prompt-injection incident handling
