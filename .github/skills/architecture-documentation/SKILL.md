@@ -434,9 +434,22 @@ graph LR
 ## ISMS Compliance
 
 This skill enforces:
-- **SD-ARCH-001**: Security architecture documentation requirements
-- **SD-ARCH-002**: C4 model implementation standards
-- **SD-ARCH-003**: Mermaid diagram standards
-- **SD-ARCH-004**: Compliance mapping requirements
+- **SD-ARCH-001**: Security architecture documentation requirements (`SECURITY_ARCHITECTURE.md`, `FUTURE_SECURITY_ARCHITECTURE.md`)
+- **SD-ARCH-002**: C4 model implementation standards (Context → Container → Component → Code)
+- **SD-ARCH-003**: Mermaid diagram standards (accessibility, versioning, source-of-truth)
+- **SD-ARCH-004**: Compliance-mapping requirements — each diagram cites controls
 
-**Policy Reference**: [Hack23 Secure Development Policy Section 🏗️](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#architecture-documentation-matrix)
+### Policy References
+
+**Primary:**
+
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) (Section 🏗️ Architecture Documentation Matrix)
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md) — Transparency via architectural evidence
+
+**Related:**
+
+- [Threat Modeling](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md) — Models anchored to architecture
+- [Change Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Change_Management.md) — ADRs for architecturally-significant changes
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) — Personal-data flows in `DATA_MODEL.md` / `FLOWCHART.md`
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Public architecture documentation as governance signal
+- [Business Continuity Plan](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Business_Continuity_Plan.md) — Architecture supports recovery plans

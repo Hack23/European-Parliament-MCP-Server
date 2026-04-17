@@ -82,18 +82,18 @@ export class InputValidationService {
 ## Security Architecture
 
 ### Authentication & Authorization
-- **Policy**: [AC-001 Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/policies/AC-001.md)
+- **Policy**: [Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md)
 - **Implementation**: API key authentication with rate limiting
 - **Compliance**: ISO 27001:2022 A.5.15, NIST CSF PR.AC-1
 
 ### Data Protection
-- **Policy**: [DP-001 Data Protection Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/policies/DP-001.md)
+- **Policy**: [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) + [Cryptography Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Cryptography_Policy.md)
 - **Encryption**: TLS 1.3 for all API communications
 - **Compliance**: ISO 27001:2022 A.8.24, NIST CSF PR.DS-1
 
 ### Input Validation
-- **Policy**: [SC-002 Secure Coding Standards](https://github.com/Hack23/ISMS-PUBLIC/blob/main/policies/SC-002.md)
-- **Implementation**: Whitelist validation for all user inputs
+- **Policy**: [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
+- **Implementation**: Zod whitelist validation for all inputs
 - **Compliance**: OWASP API Security Top 10 (API1:2023)
 ```
 

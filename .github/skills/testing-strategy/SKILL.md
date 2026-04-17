@@ -895,7 +895,19 @@ it('should cache results for 5 minutes', () => { /* ... */ });
 - [Testing Trophy](https://kentcdodds.com/blog/the-testing-trophy-and-testing-classifications)
 
 ### ISMS Policies
-- [SC-002 Secure Coding Standards](https://github.com/Hack23/ISMS-PUBLIC/blob/main/policies/SC-002.md)
+
+**Primary:**
+
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) — Testing is a mandatory SDLC control; 80%+ coverage, security tests required
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
+
+**Supporting:**
+
+- [Vulnerability Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) — Regression test for every fixed CVE / bug
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Licence-compliance tests, public CI evidence
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) — No real PII in fixtures; test-data governance
+- [Change Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Change_Management.md) — All tests pass before merge
+- [OWASP LLM Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/OWASP_LLM_Security_Policy.md) — Prompt-injection and tool-abuse test patterns for MCP code
 
 ## Remember
 
