@@ -59,11 +59,27 @@ interface CoalitionDynamicsAnalysis {
   dominantCoalition: { groups: string[]; combinedStrength: number | null; cohesion: number };
   stressIndicators: { indicator: string; severity: string; affectedGroups: string[] }[];
   computedAttributes: {
-    parliamentaryFragmentation: number;
-    effectiveNumberOfParties: number;
+    /** null when group coverage is incomplete (at least one target group has memberCount 0) */
+    parliamentaryFragmentation: number | null;
+    /** null when group coverage is incomplete (at least one target group has memberCount 0) */
+    effectiveNumberOfParties: number | null;
     /** null when cohesion data is UNAVAILABLE */
     grandCoalitionViability: number | null;
     oppositionStrength: number;
+  };
+  /**
+   * Data coverage counters — allow consumers to detect partial data before
+   * acting on derived analytics. `groupsTotal` is the size of the **analyzed
+   * target set after normalization and deduplication** (callers passing
+   * aliases/duplicates collapse to canonical codes); `groupsKnown` is the
+   * number of those groups that matched at least one MEP from the EP API
+   * after label normalization.
+   */
+  coverage: {
+    groupsKnown: number;
+    groupsTotal: number;
+    /** Raw EP API political-group labels observed whose canonical group was not in the analyzed target set (after normalization). Labels are sanitized — control characters stripped, whitespace collapsed, and length capped. */
+    unrecognizedGroups: string[];
   };
   confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
@@ -72,7 +88,171 @@ interface CoalitionDynamicsAnalysis {
   dataQualityWarnings: string[];
 }
 
-const POLITICAL_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID', 'The Left', 'NI'];
+/**
+ * Canonical EP10 (post-July-2024 constitutive session) political groups.
+ *
+ * Order reflects seat-share descending as of the EP10 constitutive composition
+ * (EPP largest → NI smallest). `ID` is intentionally excluded: it was dissolved
+ * in July 2024 and succeeded by `PfE` (Patriots for Europe). `ESN` (Europe of
+ * Sovereign Nations) is a new group formed in July 2024.
+ *
+ * @see {@link normalizePoliticalGroup} for mapping raw EP API labels to these codes.
+ */
+const POLITICAL_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'PfE', 'The Left', 'ESN', 'NI'];
+
+/**
+ * Upper bound on the length of a sanitized raw EP API political-group label
+ * when echoed back in `coverage.unrecognizedGroups` or warning messages.
+ * Guards against unbounded response sizes from pathological upstream payloads.
+ */
+const MAX_UNRECOGNIZED_LABEL_LENGTH = 120;
+
+/**
+ * Alias table mapping normalized lowercase EP API political-group labels to
+ * canonical short codes. Covers common variants observed on the EP Open Data
+ * Portal: URI suffixes, full group names, historical names (pre-EP10), and
+ * succession relationships (e.g. `ID → PfE` post-July-2024).
+ *
+ * Keys are lowercased with whitespace trimmed; `normalizePoliticalGroup`
+ * additionally strips the URI path prefix before lookup.
+ */
+const POLITICAL_GROUP_ALIASES: ReadonlyMap<string, string> = new Map([
+  // EPP variants
+  ['epp', 'EPP'],
+  ['epp-ed', 'EPP'],
+  ["group of the european people's party (christian democrats)", 'EPP'],
+  ["group of the european people's party", 'EPP'],
+  ["european people's party", 'EPP'],
+  ['european people’s party', 'EPP'],
+  // S&D variants
+  ['s&d', 'S&D'],
+  ['sd', 'S&D'],
+  ['group of the progressive alliance of socialists and democrats in the european parliament', 'S&D'],
+  ['progressive alliance of socialists and democrats', 'S&D'],
+  // Renew Europe variants
+  ['renew', 'Renew'],
+  ['re', 'Renew'],
+  ['renew europe', 'Renew'],
+  ['renew europe group', 'Renew'],
+  ['alde', 'Renew'],
+  // Greens/EFA variants
+  ['greens/efa', 'Greens/EFA'],
+  ['greens-efa', 'Greens/EFA'],
+  ['verts/ale', 'Greens/EFA'],
+  ['group of the greens/european free alliance', 'Greens/EFA'],
+  ['the greens/european free alliance', 'Greens/EFA'],
+  ['greens/european free alliance', 'Greens/EFA'],
+  // ECR variants
+  ['ecr', 'ECR'],
+  ['european conservatives and reformists group', 'ECR'],
+  ['european conservatives and reformists', 'ECR'],
+  // PfE variants (successor to ID from July 2024)
+  ['pfe', 'PfE'],
+  ['patriots for europe', 'PfE'],
+  ['id', 'PfE'],
+  ['identity and democracy', 'PfE'],
+  ['identity and democracy group', 'PfE'],
+  // The Left (GUE/NGL) variants
+  ['the left', 'The Left'],
+  ['gue/ngl', 'The Left'],
+  ['gue-ngl', 'The Left'],
+  ['the left in the european parliament - gue/ngl', 'The Left'],
+  ['the left group in the european parliament - gue/ngl', 'The Left'],
+  ['confederal group of the european united left - nordic green left', 'The Left'],
+  // ESN (new EP10 group)
+  ['esn', 'ESN'],
+  ['europe of sovereign nations', 'ESN'],
+  ['europe of sovereign nations group', 'ESN'],
+  // Non-Inscrits variants
+  ['ni', 'NI'],
+  ['non-attached', 'NI'],
+  ['non-inscrits', 'NI'],
+  ['non-attached members', 'NI'],
+]);
+
+/**
+ * Normalizes a raw political-group label returned by the EP Open Data Portal
+ * API to a canonical short code (e.g. `EPP`, `S&D`, `PfE`).
+ *
+ * Handles three common EP API formats:
+ * 1. **Short codes** — already canonical (`EPP`, `S&D`, ...) are returned as-is
+ *    after lookup (case-insensitive).
+ * 2. **URI identifiers** — e.g. `http://publications.europa.eu/.../corporate-body/EPP`.
+ *    The URI suffix is extracted and then looked up.
+ * 3. **Full group names** — e.g. `"Group of the European People's Party (Christian Democrats)"`.
+ *    Matched case-insensitively against {@link POLITICAL_GROUP_ALIASES}.
+ *
+ * Also handles succession relationships so historical pre-EP10 labels (e.g.
+ * `ID` from EP9) are counted against their EP10 successor (`PfE`).
+ *
+ * @param raw - Raw political-group label from the EP API (may be empty/unknown)
+ * @returns Canonical short code when recognized, otherwise the original `raw`
+ *   string trimmed (so callers can surface unrecognized labels as a data-quality
+ *   warning).
+ */
+export function normalizePoliticalGroup(raw: string): string {
+  const trimmed = raw.trim();
+  if (trimmed === '' || trimmed.toLowerCase() === 'unknown') return trimmed;
+  // Strip URI path prefix if present — preserves the last segment for lookup.
+  const lastSlash = trimmed.lastIndexOf('/');
+  const suffix = lastSlash >= 0 ? trimmed.substring(lastSlash + 1) : trimmed;
+  const key = suffix.toLowerCase().trim();
+  const canonical = POLITICAL_GROUP_ALIASES.get(key);
+  if (canonical !== undefined) return canonical;
+  // Also try the full original string (handles full group names that include
+  // slashes like "Greens/EFA" where stripping the URI prefix would be wrong).
+  const fullKey = trimmed.toLowerCase();
+  const canonicalFull = POLITICAL_GROUP_ALIASES.get(fullKey);
+  if (canonicalFull !== undefined) return canonicalFull;
+  return trimmed;
+}
+
+/**
+ * Normalizes a list of caller-supplied group identifiers into a deduplicated
+ * sequence of canonical EP10 codes, preserving the first-seen order.
+ *
+ * Accepts any input format supported by {@link normalizePoliticalGroup}
+ * (short codes, URI suffixes, full group names, historical aliases such as
+ * `ID` → `PfE`). Empty / whitespace-only / `"unknown"` entries and duplicates
+ * after normalization are dropped. Unrecognized labels are preserved as-is
+ * (after trimming) so downstream coverage reporting can surface them.
+ *
+ * @param groupIds - Raw caller-provided group identifiers
+ * @returns Deduplicated canonical group identifiers in first-seen order
+ */
+function normalizeTargetGroups(groupIds: readonly string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const raw of groupIds) {
+    const canonical = normalizePoliticalGroup(raw);
+    if (canonical === '' || canonical.toLowerCase() === 'unknown') continue;
+    if (seen.has(canonical)) continue;
+    seen.add(canonical);
+    result.push(canonical);
+  }
+  return result;
+}
+
+/**
+ * Sanitizes a raw EP API political-group label for safe inclusion in the
+ * response (`coverage.unrecognizedGroups`) and warning messages.
+ *
+ * Strips ASCII control characters (including CR/LF that would break
+ * warning-line rendering), collapses internal runs of whitespace to a single
+ * space, trims, and caps the length at `MAX_UNRECOGNIZED_LABEL_LENGTH`
+ * characters (truncation suffixed with `…`) to guard against pathological or
+ * injected payloads producing unbounded response sizes.
+ *
+ * @param raw - Raw EP API political-group label
+ * @returns Sanitized label suitable for echoing back to consumers
+ */
+function sanitizeUnrecognizedLabel(raw: string): string {
+  const stripped = raw.replace(/[\x00-\x1F\x7F]+/g, ' ').replace(/\s+/g, ' ').trim();
+  if (stripped.length <= MAX_UNRECOGNIZED_LABEL_LENGTH) return stripped;
+  // Reserve one character for the ellipsis so the final string length is
+  // exactly `MAX_UNRECOGNIZED_LABEL_LENGTH` and never exceeds the documented bound.
+  return `${stripped.slice(0, MAX_UNRECOGNIZED_LABEL_LENGTH - 1)}…`;
+}
 
 /**
  * Classifies a coalition cohesion score as a qualitative trend string.
@@ -143,6 +323,16 @@ function computePairCohesion(
  * in batches of 100, then counts per group locally. This avoids per-group API calls that
  * each trigger a full multi-page fetch when client-side filtering is used.
  *
+ * **Note (label normalization):** Raw `politicalGroup` strings from the EP API
+ * are passed through {@link normalizePoliticalGroup} before tallying, so MEPs
+ * whose group is returned as a URI, full name, or historical alias (e.g. `ID`
+ * → `PfE`) are counted against the correct canonical short code. Raw labels
+ * whose canonical group is not in the analyzed target set (after
+ * normalization) are collected — sanitized via
+ * {@link sanitizeUnrecognizedLabel} — in the returned `unrecognizedGroups`
+ * set so consumers can surface a data-quality warning. Note that this
+ * includes recognized canonical groups that were simply outside `groupIds`.
+ *
  * **Note (voting data):** The EP API does not provide per-MEP voting statistics.
  * As a result, `internalCohesion`, `defectionRate`, and `avgAttendance` are set to
  * `null`, `dataAvailability` and `stressIndicator.availability` are set to
@@ -151,13 +341,28 @@ function computePairCohesion(
  *
  * @param targetGroups - Political group identifiers to query (e.g., `['EPP', 'S&D']`)
  * @param allMeps - Pre-fetched array of current MEPs
- * @returns Array of group cohesion metric objects, one per group
+ * @returns Object with per-group cohesion metrics and the set of sanitized
+ *   EP API group labels whose canonical group was not in the analyzed target
+ *   set after normalization (for data-quality reporting).
  */
-function buildGroupMetrics(targetGroups: string[], allMeps: MEP[]): GroupCohesionMetrics[] {
+function buildGroupMetrics(
+  targetGroups: string[],
+  allMeps: MEP[]
+): { metrics: GroupCohesionMetrics[]; unrecognizedGroups: string[] } {
+  const targetSet = new Set(targetGroups);
   const groupCounts = new Map<string, number>();
+  const unrecognizedSet = new Set<string>();
+
   for (const mep of allMeps) {
-    const g = mep.politicalGroup;
-    groupCounts.set(g, (groupCounts.get(g) ?? 0) + 1);
+    const raw = mep.politicalGroup.trim();
+    if (raw === '') continue;
+    const canonical = normalizePoliticalGroup(raw);
+    if (canonical === '' || canonical.toLowerCase() === 'unknown') continue;
+    if (targetSet.has(canonical)) {
+      groupCounts.set(canonical, (groupCounts.get(canonical) ?? 0) + 1);
+    } else {
+      unrecognizedSet.add(sanitizeUnrecognizedLabel(raw));
+    }
   }
 
   const metrics: GroupCohesionMetrics[] = [];
@@ -185,7 +390,7 @@ function buildGroupMetrics(targetGroups: string[], allMeps: MEP[]): GroupCohesio
       }
     });
   }
-  return metrics;
+  return { metrics, unrecognizedGroups: [...unrecognizedSet].sort() };
 }
 
 /**
@@ -333,7 +538,10 @@ function buildDominantCoalition(sortedPairs: CoalitionPairAnalysis[]): {
  * Derives the `computedAttributes` block for the coalition dynamics analysis.
  *
  * - **`parliamentaryFragmentation`** and **`effectiveNumberOfParties`** both echo the
- *   ENP value (two fields for different consumer use cases).
+ *   ENP value (two fields for different consumer use cases). When `coverageComplete`
+ *   is `false` (at least one target group has `memberCount: 0`) both are emitted
+ *   as `null` to avoid a plausible-but-wrong fragmentation index — see the
+ *   upstream data-quality warnings for the reason.
  * - **`grandCoalitionViability`** reflects EPP + S&D cohesion mean (see
  *   {@link computeFragmentationMetrics}).
  * - **`oppositionStrength`** is approximated as `1 − topCohesion`, where
@@ -341,19 +549,83 @@ function buildDominantCoalition(sortedPairs: CoalitionPairAnalysis[]): {
  *
  * @param fragMetrics - Fragmentation metrics from {@link computeFragmentationMetrics}
  * @param sortedPairs - Coalition pairs sorted descending by cohesion score
+ * @param coverageComplete - `true` when every target group matched at least one MEP;
+ *   `false` triggers null fragmentation / ENP values to signal incomplete data
  * @returns Computed attributes object for the coalition dynamics result
  */
 function buildCoalitionComputedAttrs(
   fragMetrics: { effectiveParties: number; grandCoalitionViability: number | null },
-  sortedPairs: CoalitionPairAnalysis[]
+  sortedPairs: CoalitionPairAnalysis[],
+  coverageComplete: boolean
 ): CoalitionDynamicsAnalysis['computedAttributes'] {
   const topCohesion = sortedPairs[0]?.cohesionScore ?? 0;
+  const enp = coverageComplete
+    ? Math.round(fragMetrics.effectiveParties * 100) / 100
+    : null;
   return {
-    parliamentaryFragmentation: Math.round(fragMetrics.effectiveParties * 100) / 100,
-    effectiveNumberOfParties: Math.round(fragMetrics.effectiveParties * 100) / 100,
+    parliamentaryFragmentation: enp,
+    effectiveNumberOfParties: enp,
     grandCoalitionViability: fragMetrics.grandCoalitionViability,
     oppositionStrength: Math.round((1 - topCohesion) * 100) / 100
   };
+}
+
+/**
+ * Renders a bounded, comma-separated preview of raw EP API group labels for
+ * inclusion in data-quality warning messages. When the list exceeds `max`
+ * entries the first `max` are rendered followed by a `(+N more)` suffix so
+ * consumers can tell the preview was truncated.
+ */
+function previewUnrecognized(labels: readonly string[], max = 10): string {
+  if (labels.length <= max) return labels.join(', ');
+  const extra = labels.length - max;
+  return `${labels.slice(0, max).join(', ')} (+${String(extra)} more)`;
+}
+
+/**
+ * Builds the `dataQualityWarnings` array for a coalition dynamics response.
+ *
+ * Encapsulates the coverage-warning branching so the request handler stays
+ * under the project's cyclomatic-complexity budget. Warnings cover three
+ * orthogonal data-quality concerns:
+ *
+ * 1. **Vote-level data unavailable** (always emitted) — reflects the EP API
+ *    `/meps/{id}` limitation that per-MEP vote statistics are not exposed.
+ * 2. **Pagination failures** — emitted when the MEP fetch did not complete.
+ * 3. **Group coverage** — emitted when at least one target group has
+ *    `memberCount: 0`, or when EP API labels were observed whose canonical
+ *    group was not in the analyzed target set after normalization.
+ *
+ * @param fetchResult - Result from {@link fetchAllCurrentMEPs}; inspected for
+ *   `complete` and `failureOffset` to decide whether to warn about partial data
+ * @param missingGroups - Target-group IDs that ended up with `memberCount: 0`
+ * @param totalGroups - Total number of target groups analyzed
+ * @param unrecognizedGroups - Sanitized EP API group labels whose canonical
+ *   group was not in the analyzed target set after normalization
+ * @returns Ordered array of human-readable warning messages for the response
+ */
+function buildCoverageWarnings(
+  fetchResult: { complete: boolean; failureOffset?: number },
+  missingGroups: string[],
+  totalGroups: number,
+  unrecognizedGroups: string[]
+): string[] {
+  const warnings: string[] = [
+    'Per-MEP voting statistics unavailable from EP API — cohesion, defection, and attendance metrics are null',
+    'Coalition pair cohesion derived from group size ratios only, not vote-level alignment data',
+  ];
+  if (!fetchResult.complete) {
+    warnings.push(`MEP data is incomplete — pagination failed at offset ${String(fetchResult.failureOffset ?? 0)}; results based on partial data`);
+  }
+  if (missingGroups.length > 0) {
+    const observed = unrecognizedGroups.length > 0
+      ? `Out-of-target EP API group labels observed (recognized canonical codes or unknown labels outside the requested groupIds): ${previewUnrecognized(unrecognizedGroups)}`
+      : 'No out-of-target EP API group labels observed — groups may have zero seats or the lookup table may be stale.';
+    warnings.push(`Incomplete group coverage — ${String(missingGroups.length)}/${String(totalGroups)} target group(s) returned memberCount: 0 (${missingGroups.join(', ')}); derived fragmentation/ENP set to null. ${observed}`);
+  } else if (unrecognizedGroups.length > 0) {
+    warnings.push(`Observed ${String(unrecognizedGroups.length)} EP API group label(s) not in the analyzed target set: ${previewUnrecognized(unrecognizedGroups)}`);
+  }
+  return warnings;
 }
 
 /**
@@ -410,7 +682,7 @@ function buildCoalitionComputedAttrs(
  * > supplemented with vote-result data when available.
  *
  * @param args - Tool arguments matching AnalyzeCoalitionDynamicsSchema
- * @param args.groupIds - Political group identifiers to analyze (optional; defaults to all 8 groups)
+ * @param args.groupIds - Political group identifiers to analyze (optional; defaults to all 9 EP10 groups)
  * @param args.dateFrom - Analysis start date in YYYY-MM-DD format (optional)
  * @param args.dateTo - Analysis end date in YYYY-MM-DD format (optional)
  * @param args.minimumCohesion - Minimum cohesion threshold for alliance detection, 0–1 (default 0.5)
@@ -446,13 +718,25 @@ export async function handleAnalyzeCoalitionDynamics(
   const params = AnalyzeCoalitionDynamicsSchema.parse(args);
 
   try {
-    const targetGroups = params.groupIds ?? POLITICAL_GROUPS;
+    const targetGroups = normalizeTargetGroups(params.groupIds ?? POLITICAL_GROUPS);
+    if (targetGroups.length === 0) {
+      throw new Error(
+        'groupIds must contain at least one recognizable political-group identifier — '
+        + 'all provided values were empty, whitespace-only, or normalized to "unknown"'
+      );
+    }
     const fetchResult = await fetchAllCurrentMEPs();
-    const groupMetrics = buildGroupMetrics(targetGroups, fetchResult.meps);
+    const { metrics: groupMetrics, unrecognizedGroups } = buildGroupMetrics(targetGroups, fetchResult.meps);
     const coalitionPairs = buildCoalitionPairs(targetGroups, params.minimumCohesion, groupMetrics);
     const sortedPairs = [...coalitionPairs].sort((a, b) => b.cohesionScore - a.cohesionScore);
     const stressIndicators = computeStressIndicators(groupMetrics);
     const fragMetrics = computeFragmentationMetrics(groupMetrics);
+
+    const missingGroups = groupMetrics.filter(g => g.memberCount === 0).map(g => g.groupId);
+    const groupsKnown = groupMetrics.length - missingGroups.length;
+    const coverageComplete = missingGroups.length === 0;
+
+    const warnings = buildCoverageWarnings(fetchResult, missingGroups, groupMetrics.length, unrecognizedGroups);
 
     const analysis: CoalitionDynamicsAnalysis = {
       period: { from: params.dateFrom ?? '2024-01-01', to: params.dateTo ?? '2024-12-31' },
@@ -460,21 +744,26 @@ export async function handleAnalyzeCoalitionDynamics(
       coalitionPairs: sortedPairs,
       dominantCoalition: buildDominantCoalition(sortedPairs),
       stressIndicators,
-      computedAttributes: buildCoalitionComputedAttrs(fragMetrics, sortedPairs),
+      computedAttributes: buildCoalitionComputedAttrs(fragMetrics, sortedPairs, coverageComplete),
+      coverage: {
+        groupsKnown,
+        groupsTotal: groupMetrics.length,
+        unrecognizedGroups,
+      },
       confidenceLevel: 'LOW',
       dataFreshness: 'Real-time EP API data — political group composition from current MEP records',
       sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology: 'CIA Coalition Analysis — group composition from real EP Open Data MEP records. '
+        + 'Raw political-group labels from the EP API are normalized to canonical short codes '
+        + '(e.g. full names, URI suffixes, and EP9→EP10 successions such as ID→PfE are mapped). '
         + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
         + 'each group metric has dataAvailability: UNAVAILABLE with null cohesion/defection/attendance. '
         + 'Coalition pair cohesion is currently derived from group size ratios only; '
         + 'coalitionPairs.sharedVotes and coalitionPairs.totalVotes are null (not computed from vote-level data). '
+        + 'When any target group returns memberCount: 0 the parliamentaryFragmentation and '
+        + 'effectiveNumberOfParties fields are emitted as null to avoid a plausible-but-wrong score. '
         + 'Data source: European Parliament Open Data Portal.',
-      dataQualityWarnings: [
-        'Per-MEP voting statistics unavailable from EP API — cohesion, defection, and attendance metrics are null',
-        'Coalition pair cohesion derived from group size ratios only, not vote-level alignment data',
-        ...(!fetchResult.complete ? [`MEP data is incomplete — pagination failed at offset ${String(fetchResult.failureOffset ?? 0)}; results based on partial data`] : []),
-      ],
+      dataQualityWarnings: warnings,
     };
 
     return buildToolResponse(analysis);
