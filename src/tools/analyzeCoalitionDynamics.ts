@@ -113,8 +113,8 @@ const POLITICAL_GROUP_ALIASES: ReadonlyMap<string, string> = new Map([
   ['epp-ed', 'EPP'],
   ["group of the european people's party (christian democrats)", 'EPP'],
   ["group of the european people's party", 'EPP'],
-  ['european people\u2019s party', 'EPP'],
   ["european people's party", 'EPP'],
+  ['european people’s party', 'EPP'],
   // S&D variants
   ['s&d', 'S&D'],
   ['sd', 'S&D'],
@@ -140,7 +140,6 @@ const POLITICAL_GROUP_ALIASES: ReadonlyMap<string, string> = new Map([
   // PfE variants (successor to ID from July 2024)
   ['pfe', 'PfE'],
   ['patriots for europe', 'PfE'],
-  ['patriots.eu', 'PfE'],
   ['id', 'PfE'],
   ['identity and democracy', 'PfE'],
   ['identity and democracy group', 'PfE'],
@@ -511,6 +510,18 @@ function buildCoalitionComputedAttrs(
 }
 
 /**
+ * Renders a bounded, comma-separated preview of raw EP API group labels for
+ * inclusion in data-quality warning messages. When the list exceeds `max`
+ * entries the first `max` are rendered followed by a `` (+N more)`` suffix so
+ * consumers can tell the preview was truncated.
+ */
+function previewUnrecognized(labels: readonly string[], max = 10): string {
+  if (labels.length <= max) return labels.join(', ');
+  const extra = labels.length - max;
+  return `${labels.slice(0, max).join(', ')} (+${String(extra)} more)`;
+}
+
+/**
  * Builds the `dataQualityWarnings` array for a coalition dynamics response.
  *
  * Encapsulates the coverage-warning branching so the request handler stays
@@ -546,11 +557,11 @@ function buildCoverageWarnings(
   }
   if (missingGroups.length > 0) {
     const observed = unrecognizedGroups.length > 0
-      ? `Unmapped EP API group labels observed: ${unrecognizedGroups.slice(0, 10).join(', ')}`
+      ? `Unmapped EP API group labels observed: ${previewUnrecognized(unrecognizedGroups)}`
       : 'No unmapped EP API group labels observed — groups may have zero seats or the lookup table may be stale.';
     warnings.push(`Incomplete group coverage — ${String(missingGroups.length)}/${String(totalGroups)} target group(s) returned memberCount: 0 (${missingGroups.join(', ')}); derived fragmentation/ENP set to null. ${observed}`);
   } else if (unrecognizedGroups.length > 0) {
-    warnings.push(`Observed ${String(unrecognizedGroups.length)} EP API group label(s) not in the analyzed target set: ${unrecognizedGroups.slice(0, 10).join(', ')}`);
+    warnings.push(`Observed ${String(unrecognizedGroups.length)} EP API group label(s) not in the analyzed target set: ${previewUnrecognized(unrecognizedGroups)}`);
   }
   return warnings;
 }
