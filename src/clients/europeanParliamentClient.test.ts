@@ -3901,6 +3901,23 @@ describe('EuropeanParliamentClient', () => {
         expect.any(Object)
       );
     });
+
+    it('should throw APIError(404) when upstream returns a content-pending document (all fields empty)', async () => {
+      // Upstream returns HTTP 200 with a JSON body that has no recognisable
+      // fields — this is the content-pending sentinel observed for freshly
+      // indexed docs such as TA-10-2026-0099.
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({})
+      } as Response);
+
+      await expect(client.getAdoptedTextById('TA-10-2026-0099'))
+        .rejects.toMatchObject({
+          statusCode: 404,
+          message: expect.stringContaining('content not yet available') as unknown as string
+        });
+    });
   });
 
   describe('getDocumentById', () => {

@@ -252,6 +252,18 @@ export class LegislativeClient extends BaseEPClient {
   /**
    * Returns a single adopted text by document ID.
    * **EP API Endpoint:** `GET /adopted-texts/{doc-id}`
+   *
+   * **Content-pending detection:** The EP Open Data Portal will sometimes respond
+   * with HTTP 200 for a document that is indexed in the feed but whose detail
+   * enrichment has not yet completed — every transformable field comes back empty.
+   * Returning that shape to callers would emit a response that passes JSON-schema
+   * validation but carries no data, leading to blank titles/dates/references being
+   * rendered downstream. We treat this sentinel as a 404 so callers get the same
+   * error semantics they would for a truly missing document.
+   *
+   * @throws {APIError} 400 when `docId` is empty or whitespace.
+   * @throws {APIError} 404 when the upstream document is indexed but content is
+   *   not yet available (all transformable fields empty).
    */
   async getAdoptedTextById(docId: string): Promise<AdoptedText> {
     if (docId.trim() === '') throw new APIError('Document ID is required', 400);
@@ -259,6 +271,31 @@ export class LegislativeClient extends BaseEPClient {
       `adopted-texts/${docId}`,
       { format: 'application/ld+json' }
     );
-    return this.transformAdoptedText(response);
+    const transformed = this.transformAdoptedText(response);
+    if (isEmptyAdoptedText(transformed)) {
+      throw new APIError(
+        `Adopted text "${docId}": document indexed but content not yet available`,
+        404
+      );
+    }
+    return transformed;
   }
+}
+
+/**
+ * Returns `true` when every string field of an {@link AdoptedText} is empty —
+ * the upstream content-pending sentinel that must not be surfaced to callers.
+ *
+ * @internal
+ */
+function isEmptyAdoptedText(text: AdoptedText): boolean {
+  return (
+    text.id === '' &&
+    text.title === '' &&
+    text.reference === '' &&
+    text.type === '' &&
+    text.dateAdopted === '' &&
+    text.procedureReference === '' &&
+    text.subjectMatter === ''
+  );
 }

@@ -175,5 +175,29 @@ describe('get_adopted_texts Tool', () => {
       const parsed = JSON.parse(result.content[0].text) as { id: string };
       expect(parsed.id).toBe('TA-9-2024-0001');
     });
+
+    it('should translate a content-pending APIError(404) from the client to a non-retryable UPSTREAM_404 ToolError', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getAdoptedTextById).mockRejectedValueOnce(
+        new APIError(
+          'Adopted text "TA-10-2026-0099": document indexed but content not yet available',
+          404
+        )
+      );
+
+      try {
+        await handleGetAdoptedTexts({ docId: 'TA-10-2026-0099' });
+        expect.fail('Expected handleGetAdoptedTexts to throw');
+      } catch (error: unknown) {
+        const { ToolError } = await import('./shared/errors.js');
+        expect(error).toBeInstanceOf(ToolError);
+        const toolError = error as InstanceType<typeof ToolError>;
+        expect(toolError.errorCode).toBe('UPSTREAM_404');
+        expect(toolError.httpStatus).toBe(404);
+        expect(toolError.isRetryable).toBe(false);
+        expect(toolError.message).toContain('TA-10-2026-0099');
+        expect(toolError.message).toContain('content not yet available');
+      }
+    });
   });
 });
