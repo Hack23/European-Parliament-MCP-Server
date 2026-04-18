@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.8**](../../../README.md)
+[**European Parliament MCP Server API v1.2.9**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getMEPsFeedToolMetadata**: `object`
 
-Defined in: [tools/getMEPsFeed.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPsFeed.ts#L66)
+Defined in: [tools/getMEPsFeed.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPsFeed.ts#L65)
 
 Tool metadata for get_meps_feed
 

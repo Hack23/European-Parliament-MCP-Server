@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.8**](../../../README.md)
+[**European Parliament MCP Server API v1.2.9**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getProceduresFeedToolMetadata**: `object`
 
-Defined in: [tools/getProceduresFeed.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProceduresFeed.ts#L67)
+Defined in: [tools/getProceduresFeed.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProceduresFeed.ts#L66)
 
 Tool metadata for get_procedures_feed
 

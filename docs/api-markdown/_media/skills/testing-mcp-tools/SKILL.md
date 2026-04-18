@@ -417,8 +417,22 @@ Target: **80% line coverage, 70% branch coverage**
 
 ## ISMS Compliance
 
-- **SC-002**: Test security validations
-- **AU-002**: Test audit logging
-- **PE-001**: Performance testing
+- **SC-002**: Test security validations (negative / injection / boundary)
+- **AU-002**: Test audit-logging paths
+- **PE-001**: Performance-regression testing
+- **VM-001**: Regression test for every closed CVE / bug
 
-Reference: [Hack23 Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
+### Policy References
+
+**Primary:**
+
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) — Mandatory unit / integration / security / performance testing
+- [Vulnerability Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) — Regression tests block re-introduction
+
+**Related:**
+
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) — No real PII in fixtures
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Licence-compliance tests (`npm run test:licenses`)
+- [OWASP LLM Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/OWASP_LLM_Security_Policy.md) — Prompt-injection / output-leak test cases for MCP tools
+- [Change Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Change_Management.md) — Tests are merge gates

@@ -193,9 +193,23 @@ async function handleErasureRequest(mepId: number): Promise<ErasureResult> {
 
 ## ISMS Compliance
 
-- **PR-001**: Privacy by Design and Default
-- **PR-002**: Data Minimization
-- **PR-003**: Data Subject Rights
-- **AU-002**: Audit Logging
+- **PR-001**: Privacy by Design and Default (GDPR Art. 25)
+- **PR-002**: Data Minimisation (GDPR Art. 5(1)(c))
+- **PR-003**: Data Subject Rights (GDPR Art. 15–22)
+- **AU-002**: Audit Logging for personal-data access
+- **SC-001**: Transport security (TLS 1.3) for all personal-data flows
 
-Reference: [Hack23 Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md)
+### Policy References
+
+**Primary:** [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md)
+
+**Related policies:**
+
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
+- [Data Classification Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Data_Classification_Policy.md) — Classify every MEP data element
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) — SDLC controls, audit log implementation
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Transparency vs. data minimisation balance
+- [Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) — Least privilege on personal data
+- [Cryptography Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Cryptography_Policy.md) — Encryption in transit / at rest
+- [Incident Response Plan](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md) — GDPR Art. 33/34 breach notification (≤ 72 h)
+- [AI Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/AI_Policy.md) — AI processing of personal data

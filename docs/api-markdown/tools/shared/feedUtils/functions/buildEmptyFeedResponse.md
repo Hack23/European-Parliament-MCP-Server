@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.8**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.9**](../../../../README.md)
 
 ***
 
@@ -6,22 +6,31 @@
 
 # Function: buildEmptyFeedResponse()
 
-> **buildEmptyFeedResponse**(`warning?`): [`ToolResult`](../../types/interfaces/ToolResult.md)
+> **buildEmptyFeedResponse**(`reason?`): [`ToolResult`](../../types/interfaces/ToolResult.md)
 
-Defined in: [tools/shared/feedUtils.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L70)
+Defined in: [tools/shared/feedUtils.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L197)
 
-Build an empty feed response with a `dataQualityWarnings` array.
+Build an empty feed response under the uniform contract.
 
-Returns the same JSON-LD envelope shape (`data` + `@context`) as the
-normal success path so callers do not need to branch on response shape.
+Returns the same envelope shape as [buildFeedSuccessResponse](buildFeedSuccessResponse.md)
+with `status: "unavailable"` and `items: []`. This helper is used
+when the upstream returned 404 / empty body / error-in-body and we
+have no fresh data to report.
+
+`"degraded"` is intentionally **not** accepted here because it
+denotes "partial data with warnings" — for that case, call
+[buildFeedSuccessResponse](buildFeedSuccessResponse.md) with the partial payload and the
+warnings (`status` will be derived as `"degraded"`).
 
 ## Parameters
 
-### warning?
+### reason?
 
-`string` = `'EP Open Data Portal returned no data for this feed — likely no updates in the requested timeframe'`
+`string` = `EMPTY_FEED_REASON`
 
-Human-readable warning message describing why the feed is empty
+Human-readable reason describing why the feed is empty
+                (also surfaced in `dataQualityWarnings` for backwards
+                compatibility with consumers reading the legacy field).
 
 ## Returns
 

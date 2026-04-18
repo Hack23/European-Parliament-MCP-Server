@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.8**](../../../README.md)
+[**European Parliament MCP Server API v1.2.9**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetCommitteeDocumentsFeed**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getCommitteeDocumentsFeed.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCommitteeDocumentsFeed.ts#L30)
+Defined in: [tools/getCommitteeDocumentsFeed.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCommitteeDocumentsFeed.ts#L29)
 
 Handles the get_committee_documents_feed MCP tool request.
 

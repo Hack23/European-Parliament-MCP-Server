@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.8**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.9**](../../../../README.md)
 
 ***
 
@@ -158,6 +158,42 @@ Clears all entries from the LRU cache.
 
 ***
 
+### evictFromCache()
+
+> `protected` **evictFromCache**(`endpoint`, `params?`): `void`
+
+Defined in: [clients/ep/baseClient.ts:724](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L724)
+
+Evicts a single cache entry matching the given endpoint and params.
+Sub-clients use this when they detect that a successfully-fetched payload
+is a content-pending sentinel that must not be served from cache for the
+remainder of the TTL — eviction lets availability recover as soon as the
+upstream document is enriched.
+
+#### Parameters
+
+##### endpoint
+
+`string`
+
+API endpoint path (same value passed to [get](../../baseClient/classes/BaseEPClient.md#get))
+
+##### params?
+
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+
+Optional query parameters (same value passed to [get](../../baseClient/classes/BaseEPClient.md#get))
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[`BaseEPClient`](../../baseClient/classes/BaseEPClient.md).[`evictFromCache`](../../baseClient/classes/BaseEPClient.md#evictfromcache)
+
+***
+
 ### get()
 
 > `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
@@ -218,10 +254,20 @@ On HTTP errors, network failures, or parse failures
 
 > **getAdoptedTextById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`AdoptedText`](../../../../types/ep/activities/interfaces/AdoptedText.md)\>
 
-Defined in: [clients/ep/legislativeClient.ts:256](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L256)
+Defined in: [clients/ep/legislativeClient.ts:273](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/legislativeClient.ts#L273)
 
 Returns a single adopted text by document ID.
 **EP API Endpoint:** `GET /adopted-texts/{doc-id}`
+
+**Content-pending detection:** The EP Open Data Portal will sometimes respond
+with HTTP 200 for a document that is indexed in the feed but whose detail
+enrichment has not yet completed — every transformable field comes back empty.
+Returning that shape to callers would emit a response that passes JSON-schema
+validation but carries no data, leading to blank titles/dates/references being
+rendered downstream. We treat this sentinel as a 404 so callers get the same
+error semantics they would for a truly missing document, and we also evict
+the cached empty payload so availability recovers as soon as the upstream
+document is enriched (instead of blocking for the full cache TTL).
 
 #### Parameters
 
@@ -232,6 +278,18 @@ Returns a single adopted text by document ID.
 #### Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`AdoptedText`](../../../../types/ep/activities/interfaces/AdoptedText.md)\>
+
+#### Throws
+
+400 when `docId` is empty or whitespace.
+
+#### Throws
+
+404 in two cases:
+  - the upstream returns HTTP 404 because no document exists for `docId`
+    (re-thrown by [BaseEPClient.get](../../baseClient/classes/BaseEPClient.md#get)); or
+  - the upstream returns HTTP 200 but every transformable field is empty
+    (the indexed-but-content-pending sentinel detected here).
 
 ***
 
@@ -305,7 +363,7 @@ Configurable-window feed.  Extended timeout applied for `one-month`.
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:718](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L718)
+Defined in: [clients/ep/baseClient.ts:733](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L733)
 
 Returns cache statistics for monitoring and debugging.
 

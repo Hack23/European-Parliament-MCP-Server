@@ -94,5 +94,16 @@ git push origin feature/new-mcp-tool
 
 ## ISMS Policy References
 
-- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) - Contribution standards
-- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) - Code review requirements
+**Core policies:**
+
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — **Primary policy**: Contribution standards, licensing, DCO, redistribution, supply chain
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) — Code-review requirements, CI gates, test coverage
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md) — Transparency, community trust
+- [Change Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Change_Management.md) — PR workflow, approvals, reversibility
+
+**Supporting policies (cite when applicable):**
+
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) — Contributor PII (email in git log) handling
+- [Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) — Branch protection, CODEOWNERS
+- [AI Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/AI_Policy.md) — Disclosure when contribution is AI-assisted
+- [Vulnerability Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) — Responsible disclosure for security-related contributions

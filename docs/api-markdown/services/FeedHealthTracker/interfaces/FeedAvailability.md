@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.8**](../../../README.md)
+[**European Parliament MCP Server API v1.2.9**](../../../README.md)
 
 ***
 
@@ -6,17 +6,27 @@
 
 # Interface: FeedAvailability
 
-Defined in: [services/FeedHealthTracker.ts:51](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L51)
+Defined in: [services/FeedHealthTracker.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L55)
 
 Summary of feed availability.
 
 ## Properties
 
+### errorFeeds
+
+> **errorFeeds**: `number`
+
+Defined in: [services/FeedHealthTracker.ts:59](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L59)
+
+Feeds with `status === 'error'` in the cache.
+
+***
+
 ### level
 
 > **level**: [`AvailabilityLevel`](../type-aliases/AvailabilityLevel.md)
 
-Defined in: [services/FeedHealthTracker.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L54)
+Defined in: [services/FeedHealthTracker.ts:63](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L63)
 
 ***
 
@@ -24,7 +34,9 @@ Defined in: [services/FeedHealthTracker.ts:54](https://github.com/Hack23/Europea
 
 > **operationalFeeds**: `number`
 
-Defined in: [services/FeedHealthTracker.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L52)
+Defined in: [services/FeedHealthTracker.ts:57](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L57)
+
+Feeds with `status === 'ok'` in the cache.
 
 ***
 
@@ -32,4 +44,14 @@ Defined in: [services/FeedHealthTracker.ts:52](https://github.com/Hack23/Europea
 
 > **totalFeeds**: `number`
 
-Defined in: [services/FeedHealthTracker.ts:53](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L53)
+Defined in: [services/FeedHealthTracker.ts:62](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L62)
+
+***
+
+### unknownFeeds
+
+> **unknownFeeds**: `number`
+
+Defined in: [services/FeedHealthTracker.ts:61](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L61)
+
+Feeds that have never been probed (`status === 'unknown'`).

@@ -122,10 +122,25 @@ const TOKEN_SECRET = "super-secret-signing-key";
 ## ISMS Compliance
 
 - **AC-001**: Authentication required for all MCP client connections
-- **AC-003**: Authorization enforcement based on client tier and tool access policies
-- **AU-002**: Comprehensive audit logging for all parliamentary data access
+- **AC-003**: Authorisation enforcement based on client tier and tool access policies
+- **AU-002**: Comprehensive audit logging for all parliamentary-data access
 - **SC-001**: Transport security (TLS 1.3) for all gateway communications
 - **SM-001**: Secrets management for backend credentials and signing keys
-- **IR-001**: Anomaly detection and incident response triggers for suspicious access patterns
+- **IR-001**: Anomaly detection and incident-response triggers for suspicious access patterns
 
-Reference: [Hack23 ISMS Policies](https://github.com/Hack23/ISMS-PUBLIC)
+### Policy References
+
+**Primary:**
+
+- [Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md)
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
+- [Cryptography Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Cryptography_Policy.md)
+
+**Related:**
+
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) — Personal-data access audit
+- [Incident Response Plan](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md) — Gateway compromise playbook
+- [Vulnerability Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) — Patching cadence for gateway dependencies
+- [OWASP LLM Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/OWASP_LLM_Security_Policy.md) — Prompt-injection defence at the gateway boundary
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Gateway licence / supply chain

@@ -406,9 +406,23 @@ export async function handleSensitiveData(data: any) {
 ## ISMS Compliance
 
 This skill enforces:
-- **SD-TM-001**: STRIDE threat modeling methodology
+- **SD-TM-001**: STRIDE threat modelling methodology
 - **SD-TM-002**: Threat model documentation requirements
-- **SD-TM-003**: SDLC integration processes
-- **SD-TM-004**: Evidence portfolio maintenance
+- **SD-TM-003**: SDLC integration — model at design / before implementation
+- **SD-TM-004**: Evidence portfolio maintenance — linked to ADRs and architecture docs
 
-**Policy Reference**: [Hack23 Secure Development Policy Section 🕷️](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#advanced-security-testing-framework)
+### Policy References
+
+**Primary:**
+
+- [Threat Modeling](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md)
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) (Section 🕷️ Advanced Security Testing Framework)
+
+**Related:**
+
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
+- [Vulnerability Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) — Threats → risks → remediation issues
+- [Change Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Change_Management.md) — Revisit model on significant change
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) — GDPR-specific threats
+- [OWASP LLM Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/OWASP_LLM_Security_Policy.md) — Prompt-injection STRIDE branch
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Supply-chain threats

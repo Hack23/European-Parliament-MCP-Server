@@ -341,7 +341,20 @@ type MEPWithOptionalEmail = PartialBy<MEP, 'email' | 'phone'>;
 
 ## ISMS Compliance
 
-- **SC-002**: Type safety prevents runtime errors
-- **SC-001**: Strong typing improves code quality
+- **SC-002**: Type safety prevents runtime errors (input validation boundary)
+- **SC-001**: Strong typing improves code quality and review depth
+- **VM-002**: Typed boundaries reduce exploitable attack surface
 
-Reference: [Hack23 Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
+### Policy References
+
+**Primary:**
+
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) — Strict typing + validation is a mandatory SDLC control
+
+**Related:**
+
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
+- [Data Classification Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Data_Classification_Policy.md) — Branded types mirror classification
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) — Typed PII fields enable redaction
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — `import type` for minimal runtime footprint
+- [OWASP LLM Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/OWASP_LLM_Security_Policy.md) — Bounded Zod schemas resist prompt-injection

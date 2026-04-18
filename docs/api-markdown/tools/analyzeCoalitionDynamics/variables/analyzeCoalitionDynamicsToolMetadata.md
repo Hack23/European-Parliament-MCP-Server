@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.8**](../../../README.md)
+[**European Parliament MCP Server API v1.2.9**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **analyzeCoalitionDynamicsToolMetadata**: `object`
 
-Defined in: [tools/analyzeCoalitionDynamics.ts:491](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCoalitionDynamics.ts#L491)
+Defined in: [tools/analyzeCoalitionDynamics.ts:848](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCoalitionDynamics.ts#L848)
 
 Tool metadata for MCP registration
 
@@ -96,7 +96,7 @@ Tool metadata for MCP registration
 
 #### inputSchema.properties.minimumCohesion.description
 
-> **description**: `string` = `'Minimum cohesion threshold for alliance detection (0-1)'`
+> **description**: `string` = `'Threshold for coalition allianceSignal detection (0-1, default 0.5). NOTE: Until per-MEP roll-call data is exposed by the EP Open Data Portal, this is applied to coalitionPairs[].sizeSimilarityScore (a group-size ratio proxy) — NOT to vote-level cohesion. The parameter name is preserved for backward compatibility.'`
 
 #### inputSchema.properties.minimumCohesion.maximum
 

@@ -104,7 +104,7 @@ This skill applies when:
  * }
  * ```
  * 
- * @see {@link https://github.com/Hack23/ISMS-PUBLIC/blob/main/policies/AC-001.md | Access Control Policy}
+ * @see {@link https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md | Access Control Policy}
  * @see {@link https://data.europarl.europa.eu/api/docs | European Parliament API Documentation}
  * @since 1.0.0
  * @public
@@ -375,7 +375,8 @@ We will use MCP protocol to expose European Parliament data.
 ## References
 - [MCP Protocol Specification](https://modelcontextprotocol.io/)
 - [European Parliament Open Data](https://data.europarl.europa.eu/)
-- [ISMS Policy SC-001](https://github.com/Hack23/ISMS-PUBLIC/blob/main/policies/SC-001.md)
+- [ISMS Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
+- [ISMS Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
 
 ## Date
 2025-01-08

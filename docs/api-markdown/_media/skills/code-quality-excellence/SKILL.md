@@ -76,5 +76,14 @@ npm run test:licenses # License compliance
 
 ## ISMS Policy References
 
-- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) - Code quality standards
-- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) - License compliance
+**Core policies:**
+
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) — **Primary**: Code-quality gates are mandatory SDLC controls; TypeScript strict + ESLint + tests + SAST
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Licence compliance (allowlist), `npm run test:licenses`, SBOM
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md) — Quality as a risk-reduction control and transparency enabler
+
+**Supporting policies:**
+
+- [Change Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Change_Management.md) — Gates run on every PR before merge
+- [Vulnerability Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) — Lint / CodeQL findings triaged with CVSS where applicable
+- [AI Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/AI_Policy.md) — AI-generated code must pass the same quality gates as human code

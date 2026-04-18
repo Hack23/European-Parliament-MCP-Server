@@ -892,10 +892,25 @@ const url = `https://api.example.com/data?apikey=${API_KEY}`;
 - [CWE Top 25](https://cwe.mitre.org/top25/)
 
 ### ISMS Policies
-- [Hack23 ISMS Public Repository](https://github.com/Hack23/ISMS-PUBLIC)
-- [SC-002 Secure Coding Standards](https://github.com/Hack23/ISMS-PUBLIC/blob/main/policies/SC-002.md)
-- [AC-002 Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/policies/AC-002.md)
-- [IM-001 Incident Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/policies/IM-001.md)
+
+**Core:**
+
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md) — Security-by-design foundation
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) — Secure coding, validation, testing, DevSecOps
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Supply chain, SBOM, SLSA, OSSF Scorecard
+
+**Supporting:**
+
+- [Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) — Least privilege
+- [Cryptography Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Cryptography_Policy.md) — TLS 1.3+, approved algorithms
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) — GDPR, data minimisation
+- [Data Classification Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Data_Classification_Policy.md)
+- [Vulnerability Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) — CVSS-based SLAs
+- [Threat Modeling](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Threat_Modeling.md) — STRIDE
+- [Incident Response Plan](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md) — NIST SP 800-61r2
+- [Change Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Change_Management.md)
+- [OWASP LLM Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/OWASP_LLM_Security_Policy.md) — MCP-specific
+- [AI Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/AI_Policy.md)
 
 ### Security Tools
 - [npm audit](https://docs.npmjs.com/cli/v8/commands/npm-audit) - Dependency vulnerability scanning
