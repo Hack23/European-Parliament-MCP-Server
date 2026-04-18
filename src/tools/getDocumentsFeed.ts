@@ -14,9 +14,8 @@
 
 import { GetDocumentsFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
-import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
-import { isUpstream404, buildEmptyFeedResponse, isErrorInBody } from './shared/feedUtils.js';
+import { isUpstream404, buildEmptyFeedResponse, isErrorInBody, buildFeedSuccessResponse } from './shared/feedUtils.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
@@ -52,7 +51,7 @@ export async function handleGetDocumentsFeed(args: unknown): Promise<ToolResult>
         'EP API returned an error-in-body response for get_documents_feed — the upstream enrichment step may have failed.',
       );
     }
-    return buildToolResponse({ ...result, dataQualityWarnings: [] });
+    return buildFeedSuccessResponse(result);
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({
