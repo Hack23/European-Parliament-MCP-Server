@@ -122,8 +122,20 @@ describe('feedUtils', () => {
   });
 
   describe('buildFeedSuccessResponse — uniform contract', () => {
-    it('should emit status="operational" with no reason field when no warnings', () => {
+    it('should emit status="unavailable" with a reason when the upstream payload has no data', () => {
       const result = buildFeedSuccessResponse({ data: [], '@context': [] });
+      const env = parseEnvelope(result.content[0]?.text);
+
+      expect(env.status).toBe('unavailable');
+      expect(env.items).toEqual([]);
+      expect(env.itemCount).toBe(0);
+      expect(typeof env.reason).toBe('string');
+      expect(env.reason ?? '').not.toBe('');
+      expect(typeof env.generatedAt).toBe('string');
+    });
+
+    it('should emit status="operational" with no reason when items are present and no warnings', () => {
+      const result = buildFeedSuccessResponse({ data: [{ id: 'x' }], '@context': [] });
       const env = parseEnvelope(result.content[0]?.text);
 
       expect(env.status).toBe('operational');
@@ -149,6 +161,7 @@ describe('feedUtils', () => {
       expect(env.items).toEqual([]);
       expect(env.data).toEqual([]);
       expect(env.itemCount).toBe(0);
+      expect(env.status).toBe('unavailable');
     });
 
     it('should normalize data to [] when source.data is non-array', () => {
@@ -158,6 +171,7 @@ describe('feedUtils', () => {
       expect(env.items).toEqual([]);
       expect(env.data).toEqual([]);
       expect(env.itemCount).toBe(0);
+      expect(env.status).toBe('unavailable');
     });
 
     it('should preserve existing dataQualityWarnings from upstream payload', () => {
@@ -170,6 +184,7 @@ describe('feedUtils', () => {
 
       expect(env.dataQualityWarnings).toEqual(['stale cache']);
       expect(env.status).toBe('degraded');
+      expect(env.reason).toBe('stale cache');
     });
 
     it('should derive status="degraded" when explicit warnings are passed', () => {
@@ -198,7 +213,7 @@ describe('feedUtils', () => {
       expect(env.dataQualityWarnings).toEqual(['upstream warn', 'handler warn']);
     });
 
-    it('should attach an empty dataQualityWarnings array when none supplied', () => {
+    it('should attach an empty dataQualityWarnings array when none supplied and items present', () => {
       const result = buildFeedSuccessResponse({ data: [{ id: 'x' }], '@context': [] });
       const env = parseEnvelope(result.content[0]?.text);
 
@@ -206,20 +221,29 @@ describe('feedUtils', () => {
       expect(env.status).toBe('operational');
     });
 
-    it('should not set isError flag', () => {
+    it('should surface empty-feed reason in dataQualityWarnings when items are empty', () => {
       const result = buildFeedSuccessResponse({ data: [], '@context': [] });
+      const env = parseEnvelope(result.content[0]?.text);
+
+      expect(env.status).toBe('unavailable');
+      expect(env.dataQualityWarnings.length).toBe(1);
+      expect(env.dataQualityWarnings[0]).toBe(env.reason);
+    });
+
+    it('should not set isError flag', () => {
+      const result = buildFeedSuccessResponse({ data: [{ id: 'x' }], '@context': [] });
       expect(result.isError).toBeUndefined();
     });
 
-    it('should be safe with null/undefined input', () => {
+    it('should be safe with null/undefined input (treated as empty / unavailable)', () => {
       const env1 = parseEnvelope(buildFeedSuccessResponse(null).content[0]?.text);
       const env2 = parseEnvelope(buildFeedSuccessResponse(undefined).content[0]?.text);
 
-      expect(env1.status).toBe('operational');
+      expect(env1.status).toBe('unavailable');
       expect(env1.items).toEqual([]);
       expect(env1.data).toEqual([]);
       expect(env1.itemCount).toBe(0);
-      expect(env2.status).toBe('operational');
+      expect(env2.status).toBe('unavailable');
       expect(env2.items).toEqual([]);
       expect(env2.data).toEqual([]);
     });
