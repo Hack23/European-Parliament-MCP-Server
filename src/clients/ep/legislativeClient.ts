@@ -286,16 +286,11 @@ export class LegislativeClient extends BaseEPClient {
  * Returns `true` when every string field of an {@link AdoptedText} is empty —
  * the upstream content-pending sentinel that must not be surfaced to callers.
  *
+ * Iterates over `Object.values` so the check stays correct if new fields are
+ * added to {@link AdoptedText} (all current fields are `string`).
+ *
  * @internal
  */
 function isEmptyAdoptedText(text: AdoptedText): boolean {
-  return (
-    text.id === '' &&
-    text.title === '' &&
-    text.reference === '' &&
-    text.type === '' &&
-    text.dateAdopted === '' &&
-    text.procedureReference === '' &&
-    text.subjectMatter === ''
-  );
+  return Object.values(text).every((v) => v === '');
 }
