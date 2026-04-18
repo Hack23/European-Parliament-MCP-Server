@@ -39,9 +39,11 @@
  *   `"degraded"` for fresh data accompanied by data-quality warnings,
  *   `"unavailable"` when the upstream returned a 404 / error-in-body /
  *   empty body and we have no fresh data to report.
- * - `items` — alias for `data`; the canonical name in the contract.
- * - `data` — always normalized to the same array as `items` so consumers
- *   reading the legacy field always see an array.
+ * - `items` — canonical array field in the response contract.
+ * - `data` — legacy compatibility field, normalized so serialized
+ *   responses always expose it as an array with the same contents as
+ *   `items` (note: responses are JSON-serialized, so consumers see
+ *   structural equality, not referential identity).
  * - `itemCount` — length of `items`.
  * - `generatedAt` — ISO-8601 timestamp of when the response was built
  *   (not "last upstream success" — that would require state/caching).
@@ -116,8 +118,10 @@ export function isErrorInBody(result: Record<string, unknown>): boolean {
  *     `dataQualityWarnings` are present (either supplied via `result`
  *     or passed explicitly);
  *   - `"operational"` when items are present and no warnings.
- * - `data` is normalized to the same array reference as `items` so
- *   consumers reading the legacy `data` field always see an array.
+ * - `data` is normalized so that, after JSON serialization, consumers
+ *   reading the legacy `data` field always see an array with the same
+ *   contents as `items` (structural equality across the wire, not
+ *   referential identity).
  * - Existing `dataQualityWarnings` from `result` are preserved and
  *   merged with any explicitly-supplied warnings (rather than
  *   clobbered). When `status` is `"unavailable"`, the empty-feed
