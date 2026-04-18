@@ -69,9 +69,11 @@ interface CoalitionDynamicsAnalysis {
   };
   /**
    * Data coverage counters — allow consumers to detect partial data before
-   * acting on derived analytics. `groupsTotal` is the number of target groups
-   * requested; `groupsKnown` is the number of those groups that matched at
-   * least one MEP from the EP API after label normalization.
+   * acting on derived analytics. `groupsTotal` is the size of the **analyzed
+   * target set after normalization and deduplication** (callers passing
+   * aliases/duplicates collapse to canonical codes); `groupsKnown` is the
+   * number of those groups that matched at least one MEP from the EP API
+   * after label normalization.
    */
   coverage: {
     groupsKnown: number;
@@ -247,7 +249,9 @@ function normalizeTargetGroups(groupIds: readonly string[]): string[] {
 function sanitizeUnrecognizedLabel(raw: string): string {
   const stripped = raw.replace(/[\x00-\x1F\x7F]+/g, ' ').replace(/\s+/g, ' ').trim();
   if (stripped.length <= MAX_UNRECOGNIZED_LABEL_LENGTH) return stripped;
-  return `${stripped.slice(0, MAX_UNRECOGNIZED_LABEL_LENGTH)}…`;
+  // Reserve one character for the ellipsis so the final string length is
+  // exactly `MAX_UNRECOGNIZED_LABEL_LENGTH` and never exceeds the documented bound.
+  return `${stripped.slice(0, MAX_UNRECOGNIZED_LABEL_LENGTH - 1)}…`;
 }
 
 /**
@@ -715,6 +719,12 @@ export async function handleAnalyzeCoalitionDynamics(
 
   try {
     const targetGroups = normalizeTargetGroups(params.groupIds ?? POLITICAL_GROUPS);
+    if (targetGroups.length === 0) {
+      throw new Error(
+        'groupIds must contain at least one recognizable political-group identifier — '
+        + 'all provided values were empty, whitespace-only, or normalized to "unknown"'
+      );
+    }
     const fetchResult = await fetchAllCurrentMEPs();
     const { metrics: groupMetrics, unrecognizedGroups } = buildGroupMetrics(targetGroups, fetchResult.meps);
     const coalitionPairs = buildCoalitionPairs(targetGroups, params.minimumCohesion, groupMetrics);

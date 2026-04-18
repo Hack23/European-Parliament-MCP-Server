@@ -371,9 +371,19 @@ describe('analyze_coalition_dynamics Tool', () => {
       expect(data.coverage.unrecognizedGroups).toContain('Foo Bar Baz Qux Zap');
       for (const label of data.coverage.unrecognizedGroups) {
         expect(label).not.toMatch(/[\x00-\x1F\x7F]/);
-        expect(label.length).toBeLessThanOrEqual(121); // 120 + '…'
+        expect(label.length).toBeLessThanOrEqual(120); // MAX_UNRECOGNIZED_LABEL_LENGTH (including ellipsis)
       }
-      expect(data.coverage.unrecognizedGroups.some(l => l.endsWith('…'))).toBe(true);
+      expect(data.coverage.unrecognizedGroups.some(l => l.endsWith('…') && l.length === 120)).toBe(true);
+    });
+
+    it('should throw when groupIds normalizes to an empty set (e.g., whitespace-only)', async () => {
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
+        { id: 'MEP-1', name: 'A', country: 'DE', politicalGroup: 'EPP',
+          committees: [], active: true, termStart: '2024-07-16' },
+      ], complete: true });
+
+      await expect(handleAnalyzeCoalitionDynamics({ groupIds: ['   ', 'unknown'] }))
+        .rejects.toThrow(/at least one recognizable political-group identifier/i);
     });
   });
 });
