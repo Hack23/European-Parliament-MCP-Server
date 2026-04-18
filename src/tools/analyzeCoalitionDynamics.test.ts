@@ -200,4 +200,136 @@ describe('analyze_coalition_dynamics Tool', () => {
       expect(weakeningPairs[0]?.cohesionScore).toBeLessThanOrEqual(0.4);
     });
   });
+
+  describe('Political group label normalization (EP10 coverage)', () => {
+    it('should normalize full EP API group names to canonical short codes', async () => {
+      // Arrange: EP API sometimes returns full group names instead of short codes.
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
+        { id: 'MEP-1', name: 'A', country: 'DE',
+          politicalGroup: "Group of the European People's Party (Christian Democrats)",
+          committees: [], active: true, termStart: '2024-07-16' },
+        { id: 'MEP-2', name: 'B', country: 'DE',
+          politicalGroup: 'The Greens/European Free Alliance',
+          committees: [], active: true, termStart: '2024-07-16' },
+        { id: 'MEP-3', name: 'C', country: 'FR',
+          politicalGroup: 'Patriots for Europe',
+          committees: [], active: true, termStart: '2024-07-16' },
+        { id: 'MEP-4', name: 'D', country: 'DE',
+          politicalGroup: 'Europe of Sovereign Nations Group',
+          committees: [], active: true, termStart: '2024-07-16' },
+      ], complete: true });
+
+      const result = await handleAnalyzeCoalitionDynamics({
+        groupIds: ['EPP', 'Greens/EFA', 'PfE', 'ESN']
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        groupMetrics: { groupId: string; memberCount: number }[];
+      };
+
+      const counts = Object.fromEntries(data.groupMetrics.map(g => [g.groupId, g.memberCount]));
+      expect(counts['EPP']).toBe(1);
+      expect(counts['Greens/EFA']).toBe(1);
+      expect(counts['PfE']).toBe(1);
+      expect(counts['ESN']).toBe(1);
+    });
+
+    it('should strip URI prefixes from EP API group identifiers', async () => {
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
+        { id: 'MEP-1', name: 'A', country: 'DE',
+          politicalGroup: 'http://publications.europa.eu/resource/authority/corporate-body/EPP',
+          committees: [], active: true, termStart: '2024-07-16' },
+      ], complete: true });
+
+      const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        groupMetrics: { groupId: string; memberCount: number }[];
+      };
+      expect(data.groupMetrics[0]?.memberCount).toBe(1);
+    });
+
+    it('should map the historical ID label to its EP10 successor PfE', async () => {
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
+        { id: 'MEP-1', name: 'A', country: 'FR', politicalGroup: 'ID',
+          committees: [], active: true, termStart: '2024-07-16' },
+        { id: 'MEP-2', name: 'B', country: 'IT', politicalGroup: 'Identity and Democracy',
+          committees: [], active: true, termStart: '2024-07-16' },
+      ], complete: true });
+
+      const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['PfE'] });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        groupMetrics: { groupId: string; memberCount: number }[];
+      };
+      expect(data.groupMetrics[0]?.memberCount).toBe(2);
+    });
+
+    it('should default to the EP10 9-group composition when no groupIds provided', async () => {
+      const result = await handleAnalyzeCoalitionDynamics({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        groupMetrics: { groupId: string }[];
+      };
+      const ids = data.groupMetrics.map(g => g.groupId);
+      expect(ids).toEqual(['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'PfE', 'The Left', 'ESN', 'NI']);
+    });
+  });
+
+  describe('Coverage reporting and incomplete-data handling', () => {
+    it('should expose groupsKnown/groupsTotal counters and mark full coverage', async () => {
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
+        { id: 'MEP-1', name: 'A', country: 'DE', politicalGroup: 'EPP',
+          committees: [], active: true, termStart: '2024-07-16' },
+        { id: 'MEP-2', name: 'B', country: 'ES', politicalGroup: 'S&D',
+          committees: [], active: true, termStart: '2024-07-16' },
+      ], complete: true });
+
+      const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP', 'S&D'] });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        coverage: { groupsKnown: number; groupsTotal: number; unrecognizedGroups: string[] };
+      };
+      expect(data.coverage.groupsTotal).toBe(2);
+      expect(data.coverage.groupsKnown).toBe(2);
+      expect(data.coverage.unrecognizedGroups).toEqual([]);
+    });
+
+    it('should return null ENP / fragmentation and emit warning when any target group has memberCount=0', async () => {
+      // Arrange: EP API only returns one group (S&D), EPP is missing.
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
+        { id: 'MEP-1', name: 'A', country: 'ES', politicalGroup: 'S&D',
+          committees: [], active: true, termStart: '2024-07-16' },
+      ], complete: true });
+
+      const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP', 'S&D'] });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        computedAttributes: {
+          parliamentaryFragmentation: number | null;
+          effectiveNumberOfParties: number | null;
+        };
+        coverage: { groupsKnown: number; groupsTotal: number };
+        dataQualityWarnings: string[];
+      };
+
+      expect(data.computedAttributes.parliamentaryFragmentation).toBeNull();
+      expect(data.computedAttributes.effectiveNumberOfParties).toBeNull();
+      expect(data.coverage.groupsKnown).toBe(1);
+      expect(data.coverage.groupsTotal).toBe(2);
+      expect(data.dataQualityWarnings.some(w => w.includes('Incomplete group coverage'))).toBe(true);
+      expect(data.dataQualityWarnings.some(w => w.includes('EPP'))).toBe(true);
+    });
+
+    it('should collect unrecognized EP API group labels for out-of-target MEPs', async () => {
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
+        { id: 'MEP-1', name: 'A', country: 'DE', politicalGroup: 'EPP',
+          committees: [], active: true, termStart: '2024-07-16' },
+        { id: 'MEP-2', name: 'B', country: 'SK', politicalGroup: 'Mystery Group XYZ',
+          committees: [], active: true, termStart: '2024-07-16' },
+      ], complete: true });
+
+      const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        coverage: { unrecognizedGroups: string[] };
+        dataQualityWarnings: string[];
+      };
+      expect(data.coverage.unrecognizedGroups).toContain('Mystery Group XYZ');
+      expect(data.dataQualityWarnings.some(w => w.includes('Mystery Group XYZ'))).toBe(true);
+    });
+  });
 });
