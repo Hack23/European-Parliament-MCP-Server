@@ -439,6 +439,8 @@ function buildGroupMetrics(
  * Iterates over the upper-triangle of group combinations (O(n²)) and calls
  * {@link computePairSizeSimilarity} for each pair using the sample-based `memberCount`
  * estimates from `groupMetrics` (see {@link buildGroupMetrics} for data scope limits).
+ * A `groupId → memberCount` `Map` is built once up front so per-pair member-count
+ * lookups are O(1), keeping the overall complexity at O(n²).
  *
  * @param targetGroups - Ordered list of political group identifiers
  * @param minimumSizeSimilarity - Threshold against which `sizeSimilarityScore`
@@ -452,13 +454,20 @@ function buildCoalitionPairs(
   minimumSizeSimilarity: number,
   groupMetrics: GroupCohesionMetrics[]
 ): CoalitionPairAnalysis[] {
+  // Precompute a groupId → memberCount lookup once so the nested loop below
+  // is truly O(n²) in the number of target groups (avoids an O(n³) blowup
+  // from per-pair `Array.find` scans of `groupMetrics`).
+  const memberCountByGroup = new Map<string, number>();
+  for (const metric of groupMetrics) {
+    memberCountByGroup.set(metric.groupId, metric.memberCount);
+  }
   const pairs: CoalitionPairAnalysis[] = [];
   for (let i = 0; i < targetGroups.length; i++) {
     for (let j = i + 1; j < targetGroups.length; j++) {
       const groupA = targetGroups[i] ?? '';
       const groupB = targetGroups[j] ?? '';
-      const groupAMembers = groupMetrics.find(g => g.groupId === groupA)?.memberCount ?? 0;
-      const groupBMembers = groupMetrics.find(g => g.groupId === groupB)?.memberCount ?? 0;
+      const groupAMembers = memberCountByGroup.get(groupA) ?? 0;
+      const groupBMembers = memberCountByGroup.get(groupB) ?? 0;
       pairs.push(computePairSizeSimilarity(groupA, groupB, groupAMembers, groupBMembers, minimumSizeSimilarity));
     }
   }
