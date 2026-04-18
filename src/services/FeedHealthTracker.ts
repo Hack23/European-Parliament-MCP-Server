@@ -38,18 +38,27 @@ export interface FeedStatus {
 /**
  * Overall feed availability level.
  *
- * | Level        | Condition   | Description |
- * |--------------|-------------|-------------|
- * | Full         | ≥10/13 ok   | Normal operation |
- * | Degraded     | 5–9/13 ok   | Reduced data quality expected |
- * | Sparse       | 1–4/13 ok   | Minimal data, analysis-only mode likely |
- * | Unavailable  | 0/13 ok     | No EP feed data available |
+ * | Level        | Condition                                | Description |
+ * |--------------|------------------------------------------|-------------|
+ * | Full         | ≥10/13 ok                                | Normal operation |
+ * | Degraded     | 5–9/13 ok                                | Reduced data quality expected |
+ * | Sparse       | 1–4/13 ok                                | Minimal data, analysis-only mode likely |
+ * | Unavailable  | 0/13 ok AND ≥1 probed feed errored       | All probed feeds failing |
+ * | Unknown      | 0/13 ok AND 0 errors (no probes yet)     | Cache is empty — status cannot be determined without a live probe |
+ *
+ * `Unknown` is distinct from `Unavailable` to prevent consumers from
+ * interpreting "no cached data" as "feeds are down". See issue #1.
  */
-export type AvailabilityLevel = 'Full' | 'Degraded' | 'Sparse' | 'Unavailable';
+export type AvailabilityLevel = 'Full' | 'Degraded' | 'Sparse' | 'Unavailable' | 'Unknown';
 
 /** Summary of feed availability. */
 export interface FeedAvailability {
+  /** Feeds with `status === 'ok'` in the cache. */
   operationalFeeds: number;
+  /** Feeds with `status === 'error'` in the cache. */
+  errorFeeds: number;
+  /** Feeds that have never been probed (`status === 'unknown'`). */
+  unknownFeeds: number;
   totalFeeds: number;
   level: AvailabilityLevel;
 }
@@ -149,14 +158,23 @@ export class FeedHealthTracker {
   /** Derive the overall availability level from current feed statuses. */
   getAvailability(): FeedAvailability {
     let operational = 0;
+    let errored = 0;
+    let unknown = 0;
     for (const name of FEED_TOOL_NAMES) {
-      if (this.getStatus(name).status === 'ok') {
-        operational++;
-      }
+      const { status } = this.getStatus(name);
+      if (status === 'ok') operational++;
+      else if (status === 'error') errored++;
+      else unknown++;
     }
 
     const total = FEED_TOOL_NAMES.length;
-    return { operationalFeeds: operational, totalFeeds: total, level: deriveLevel(operational) };
+    return {
+      operationalFeeds: operational,
+      errorFeeds: errored,
+      unknownFeeds: unknown,
+      totalFeeds: total,
+      level: deriveLevel(operational, errored),
+    };
   }
 
   /**
@@ -171,12 +189,20 @@ export class FeedHealthTracker {
 
 // ── Helpers ───────────────────────────────────────────────────────
 
-/** Map operational feed count to an availability level. */
-function deriveLevel(operational: number): AvailabilityLevel {
+/**
+ * Map operational feed count to an availability level.
+ *
+ * When `operational === 0`, we distinguish two cases:
+ * - If at least one probed feed has errored, report `Unavailable` (feeds are down).
+ * - Otherwise (cache is empty, no probes yet) report `Unknown` — consumers
+ *   must not treat "no data" as "feeds are down". See issue #1.
+ */
+function deriveLevel(operational: number, errored: number): AvailabilityLevel {
   if (operational >= FULL_THRESHOLD) return 'Full';
   if (operational >= DEGRADED_THRESHOLD) return 'Degraded';
   if (operational >= 1) return 'Sparse';
-  return 'Unavailable';
+  if (errored >= 1) return 'Unavailable';
+  return 'Unknown';
 }
 
 // ── Module-level singleton ────────────────────────────────────────

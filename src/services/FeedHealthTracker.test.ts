@@ -154,11 +154,22 @@ describe('FeedHealthTracker', () => {
   // ── getAvailability ─────────────────────────────────────────────
 
   describe('getAvailability', () => {
-    it('returns Unavailable when no feeds have been called', () => {
+    it('returns Unknown when no feeds have been called (cache empty)', () => {
+      const avail = tracker.getAvailability();
+      expect(avail.level).toBe('Unknown');
+      expect(avail.operationalFeeds).toBe(0);
+      expect(avail.errorFeeds).toBe(0);
+      expect(avail.unknownFeeds).toBe(FEED_TOOL_NAMES.length);
+      expect(avail.totalFeeds).toBe(FEED_TOOL_NAMES.length);
+    });
+
+    it('returns Unavailable when 0 ok and at least one probed feed has errored', () => {
+      tracker.recordError('get_meps_feed', 'HTTP 500');
       const avail = tracker.getAvailability();
       expect(avail.level).toBe('Unavailable');
       expect(avail.operationalFeeds).toBe(0);
-      expect(avail.totalFeeds).toBe(FEED_TOOL_NAMES.length);
+      expect(avail.errorFeeds).toBe(1);
+      expect(avail.unknownFeeds).toBe(FEED_TOOL_NAMES.length - 1);
     });
 
     it('returns Sparse when 1–4 feeds are ok', () => {
@@ -225,7 +236,7 @@ describe('FeedHealthTracker', () => {
 
   describe('availability level boundaries', () => {
     const testCases: Array<{ ok: number; expected: AvailabilityLevel }> = [
-      { ok: 0, expected: 'Unavailable' },
+      { ok: 0, expected: 'Unknown' },
       { ok: 1, expected: 'Sparse' },
       { ok: 4, expected: 'Sparse' },
       { ok: 5, expected: 'Degraded' },

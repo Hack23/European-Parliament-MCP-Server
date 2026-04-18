@@ -70,7 +70,18 @@ describe('get_server_health Tool', () => {
       expect(parsed.server.uptime_seconds).toBeGreaterThanOrEqual(0);
     });
 
-    it('should report unhealthy when no feeds have been called', async () => {
+    it('should report unknown when no feeds have been called (cache empty, not an outage)', async () => {
+      const result = await handleGetServerHealth({});
+      const parsed = JSON.parse(result.content[0]?.text ?? '') as {
+        server: { status: string };
+      };
+
+      expect(parsed.server.status).toBe('unknown');
+    });
+
+    it('should report unhealthy when all probed feeds have errored', async () => {
+      feedHealthTracker.recordError('get_meps_feed', 'HTTP 500');
+
       const result = await handleGetServerHealth({});
       const parsed = JSON.parse(result.content[0]?.text ?? '') as {
         server: { status: string };
@@ -150,31 +161,83 @@ describe('get_server_health Tool', () => {
       expect(parsed.feeds['get_events_feed']?.status).toBe('error');
       expect(parsed.feeds['get_events_feed']?.lastError).toBe('HTTP 404');
     });
+
+    it('should expose lastProbedAt alias alongside lastAttempt for probed feeds', async () => {
+      feedHealthTracker.recordSuccess('get_meps_feed');
+
+      const result = await handleGetServerHealth({});
+      const parsed = JSON.parse(result.content[0]?.text ?? '') as {
+        feeds: Record<
+          string,
+          { status: string; lastAttempt?: string; lastProbedAt?: string }
+        >;
+      };
+
+      const feed = parsed.feeds['get_meps_feed'];
+      expect(feed?.lastAttempt).toBeDefined();
+      expect(feed?.lastProbedAt).toBeDefined();
+      expect(feed?.lastProbedAt).toBe(feed?.lastAttempt);
+    });
+
+    it('should omit lastProbedAt for feeds that have never been probed', async () => {
+      const result = await handleGetServerHealth({});
+      const parsed = JSON.parse(result.content[0]?.text ?? '') as {
+        feeds: Record<string, { status: string; lastProbedAt?: string }>;
+      };
+
+      expect(parsed.feeds['get_meps_feed']?.status).toBe('unknown');
+      expect(parsed.feeds['get_meps_feed']?.lastProbedAt).toBeUndefined();
+    });
   });
 
   describe('Availability Section', () => {
-    it('should include operational_feeds, total_feeds, and level', async () => {
+    it('should include operational_feeds, error_feeds, unknown_feeds, total_feeds, and level', async () => {
       const result = await handleGetServerHealth({});
       const parsed = JSON.parse(result.content[0]?.text ?? '') as {
         availability: {
           operational_feeds: number;
+          error_feeds: number;
+          unknown_feeds: number;
           total_feeds: number;
           level: string;
         };
       };
 
       expect(typeof parsed.availability.operational_feeds).toBe('number');
+      expect(typeof parsed.availability.error_feeds).toBe('number');
+      expect(typeof parsed.availability.unknown_feeds).toBe('number');
       expect(typeof parsed.availability.total_feeds).toBe('number');
       expect(typeof parsed.availability.level).toBe('string');
     });
 
-    it('should report Unavailable with zero operational feeds initially', async () => {
+    it('should report Unknown with zero operational and zero error feeds initially', async () => {
       const result = await handleGetServerHealth({});
       const parsed = JSON.parse(result.content[0]?.text ?? '') as {
-        availability: { operational_feeds: number; level: string };
+        availability: {
+          operational_feeds: number;
+          error_feeds: number;
+          unknown_feeds: number;
+          total_feeds: number;
+          level: string;
+        };
       };
 
       expect(parsed.availability.operational_feeds).toBe(0);
+      expect(parsed.availability.error_feeds).toBe(0);
+      expect(parsed.availability.unknown_feeds).toBe(parsed.availability.total_feeds);
+      expect(parsed.availability.level).toBe('Unknown');
+    });
+
+    it('should report Unavailable only when operational is 0 and at least one feed errored', async () => {
+      feedHealthTracker.recordError('get_meps_feed', 'timeout');
+
+      const result = await handleGetServerHealth({});
+      const parsed = JSON.parse(result.content[0]?.text ?? '') as {
+        availability: { operational_feeds: number; error_feeds: number; level: string };
+      };
+
+      expect(parsed.availability.operational_feeds).toBe(0);
+      expect(parsed.availability.error_feeds).toBe(1);
       expect(parsed.availability.level).toBe('Unavailable');
     });
 
