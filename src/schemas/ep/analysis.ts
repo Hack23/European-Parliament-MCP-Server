@@ -82,7 +82,7 @@ export const AnalyzeCoalitionDynamicsSchema = z.object({
     .min(0)
     .max(1)
     .default(0.5)
-    .describe('Minimum cohesion threshold for alliance detection')
+    .describe('Threshold for coalition allianceSignal detection (0-1). NOTE: applied to coalitionPairs[].sizeSimilarityScore (a group-size ratio proxy) until vote-level cohesion data becomes available; the parameter name is preserved for backward compatibility.')
 }).refine(
   refineDateRange,
   { message: DATE_RANGE_ERROR }

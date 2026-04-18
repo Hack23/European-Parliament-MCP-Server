@@ -313,18 +313,21 @@ function sanitizeUnrecognizedLabel(raw: string): string {
  * @param groupB - Political group identifier for the second group
  * @param groupAMembers - Sample-based member count estimate (lower bound) for `groupA` derived from EP API data
  * @param groupBMembers - Sample-based member count estimate (lower bound) for `groupB` derived from EP API data
- * @param minimumCohesion - Threshold above which `allianceSignal` is set to `true`
- *   (compared against `sizeSimilarityScore` — a structural signal, not vote alignment)
+ * @param minimumSizeSimilarity - Threshold above which `allianceSignal` is set to `true`
+ *   (compared against `sizeSimilarityScore` — a structural signal, not vote alignment).
+ *   Sourced from the public `minimumCohesion` input, which is preserved for
+ *   backward-compatibility but applied to the size-similarity proxy until
+ *   vote-level cohesion is available.
  * @returns {@link CoalitionPairAnalysis} record where `sizeSimilarityScore` is
  *   the size-balance proxy and `cohesion`/`trend`/`sharedVotes`/`totalVotes`
  *   are `null` until vote-level data is available.
  */
-function computePairCohesion(
+function computePairSizeSimilarity(
   groupA: string,
   groupB: string,
   groupAMembers: number,
   groupBMembers: number,
-  minimumCohesion: number
+  minimumSizeSimilarity: number
 ): CoalitionPairAnalysis {
   // Use relative group sizes as a proxy — no synthetic seed-based data.
   // This is **size similarity**, not vote-level cohesion (Hix/Noury/Roland).
@@ -344,7 +347,7 @@ function computePairCohesion(
     cohesion,
     sharedVotes,
     totalVotes,
-    allianceSignal: sizeSimilarityScore > minimumCohesion,
+    allianceSignal: sizeSimilarityScore > minimumSizeSimilarity,
     // Suppress trend entirely while vote-level data is unavailable — a "trend"
     // derived from a static group-size ratio carries no temporal/political
     // meaning. Will be repopulated from vote-level cohesion once
@@ -434,17 +437,19 @@ function buildGroupMetrics(
  * Builds all pairwise coalition pair analyses for the target groups.
  *
  * Iterates over the upper-triangle of group combinations (O(n²)) and calls
- * {@link computePairCohesion} for each pair using the sample-based `memberCount`
+ * {@link computePairSizeSimilarity} for each pair using the sample-based `memberCount`
  * estimates from `groupMetrics` (see {@link buildGroupMetrics} for data scope limits).
  *
  * @param targetGroups - Ordered list of political group identifiers
- * @param minimumCohesion - Cohesion threshold for `allianceSignal` detection
+ * @param minimumSizeSimilarity - Threshold against which `sizeSimilarityScore`
+ *   is compared to set `allianceSignal` (sourced from the public
+ *   `minimumCohesion` input — see {@link computePairSizeSimilarity})
  * @param groupMetrics - Pre-fetched group metrics containing sampled `memberCount` per group
  * @returns Array of {@link CoalitionPairAnalysis} records for every group combination
  */
 function buildCoalitionPairs(
   targetGroups: string[],
-  minimumCohesion: number,
+  minimumSizeSimilarity: number,
   groupMetrics: GroupCohesionMetrics[]
 ): CoalitionPairAnalysis[] {
   const pairs: CoalitionPairAnalysis[] = [];
@@ -454,7 +459,7 @@ function buildCoalitionPairs(
       const groupB = targetGroups[j] ?? '';
       const groupAMembers = groupMetrics.find(g => g.groupId === groupA)?.memberCount ?? 0;
       const groupBMembers = groupMetrics.find(g => g.groupId === groupB)?.memberCount ?? 0;
-      pairs.push(computePairCohesion(groupA, groupB, groupAMembers, groupBMembers, minimumCohesion));
+      pairs.push(computePairSizeSimilarity(groupA, groupB, groupAMembers, groupBMembers, minimumSizeSimilarity));
     }
   }
   return pairs;
@@ -547,12 +552,12 @@ function computeFragmentationMetrics(groupMetrics: GroupCohesionMetrics[]): {
 /**
  * Identifies the dominant coalition from the sorted pair list.
  *
- * The dominant coalition is the top-ranked pair by cohesion score. Its
+ * The dominant coalition is the top-ranked pair by `sizeSimilarityScore`. Its
  * `combinedStrength` is set to `sharedVotes`, which is currently `null`
  * when vote-level data is unavailable due to EP API limitations — see
- * {@link computePairCohesion}.
+ * {@link computePairSizeSimilarity}.
  *
- * @param sortedPairs - Coalition pairs sorted descending by cohesion score
+ * @param sortedPairs - Coalition pairs sorted descending by `sizeSimilarityScore`
  * @returns Dominant coalition record, or an empty record if the list is empty
  */
 function buildDominantCoalition(sortedPairs: CoalitionPairAnalysis[]): {
@@ -583,11 +588,13 @@ function buildDominantCoalition(sortedPairs: CoalitionPairAnalysis[]): {
  *   upstream data-quality warnings for the reason.
  * - **`grandCoalitionViability`** reflects EPP + S&D cohesion mean (see
  *   {@link computeFragmentationMetrics}).
- * - **`oppositionStrength`** is approximated as `1 − topCohesion`, where
- *   lower top-pair cohesion implies a stronger opposition bloc.
+ * - **`oppositionStrength`** is approximated as `1 − topSizeSimilarity`, where
+ *   a lower top-pair size-similarity score implies a stronger opposition bloc.
+ *   Note: this is a structural proxy derived from group-size ratios, not from
+ *   vote-level cohesion (see {@link computePairSizeSimilarity}).
  *
  * @param fragMetrics - Fragmentation metrics from {@link computeFragmentationMetrics}
- * @param sortedPairs - Coalition pairs sorted descending by cohesion score
+ * @param sortedPairs - Coalition pairs sorted descending by `sizeSimilarityScore`
  * @param coverageComplete - `true` when every target group matched at least one MEP;
  *   `false` triggers null fragmentation / ENP values to signal incomplete data
  * @returns Computed attributes object for the coalition dynamics result
@@ -651,7 +658,7 @@ function buildCoverageWarnings(
 ): string[] {
   const warnings: string[] = [
     'Per-MEP voting statistics unavailable from EP API — cohesion, defection, and attendance metrics are null',
-    'coalitionPairs[].cohesion and trend are null — vote-level alignment data is not available via the EP Open Data Portal; only sizeSimilarityScore (group-size ratio proxy) is populated',
+    'coalitionPairs[].cohesion and coalitionPairs[].trend are null — vote-level alignment data is not available via the EP Open Data Portal; only coalitionPairs[].sizeSimilarityScore (group-size ratio proxy) is populated',
   ];
   if (!fetchResult.complete) {
     warnings.push(`MEP data is incomplete — pagination failed at offset ${String(fetchResult.failureOffset ?? 0)}; results based on partial data`);
@@ -724,7 +731,11 @@ function buildCoverageWarnings(
  * @param args.groupIds - Political group identifiers to analyze (optional; defaults to all 9 EP10 groups)
  * @param args.dateFrom - Analysis start date in YYYY-MM-DD format (optional)
  * @param args.dateTo - Analysis end date in YYYY-MM-DD format (optional)
- * @param args.minimumCohesion - Minimum cohesion threshold for alliance detection, 0–1 (default 0.5)
+ * @param args.minimumCohesion - Threshold used for `allianceSignal` detection in `[0, 1]`
+ *   (default 0.5). Until per-MEP roll-call data is exposed by the EP Open Data Portal,
+ *   this value is applied to `coalitionPairs[].sizeSimilarityScore` (a group-size
+ *   ratio proxy), not to vote-level cohesion. The parameter name is preserved for
+ *   backward compatibility.
  * @returns MCP ToolResult containing `CoalitionDynamicsAnalysis` object as JSON
  * @throws {Error} When the EP API request fails or group data cannot be fetched
  * @throws {ZodError} When input fails schema validation (invalid group IDs, date format)
@@ -797,8 +808,8 @@ export async function handleAnalyzeCoalitionDynamics(
         + '(e.g. full names, URI suffixes, and EP9→EP10 successions such as ID→PfE are mapped). '
         + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
         + 'each group metric has dataAvailability: UNAVAILABLE with null cohesion/defection/attendance. '
-        + 'Coalition pair sizeSimilarityScore is a group-size ratio proxy (min/max member counts), NOT vote-level cohesion; '
-        + 'coalitionPairs.cohesion, coalitionPairs.trend, coalitionPairs.sharedVotes, and coalitionPairs.totalVotes are null '
+        + 'coalitionPairs[].sizeSimilarityScore is a group-size ratio proxy (min/max member counts), NOT vote-level cohesion; '
+        + 'coalitionPairs[].cohesion, coalitionPairs[].trend, coalitionPairs[].sharedVotes, and coalitionPairs[].totalVotes are null '
         + '(not computed from vote-level data — vote-alignment data is not available via the EP Open Data Portal). '
         + 'When any target group returns memberCount: 0 the parliamentaryFragmentation and '
         + 'effectiveNumberOfParties fields are emitted as null to avoid a plausible-but-wrong score. '
@@ -807,8 +818,11 @@ export async function handleAnalyzeCoalitionDynamics(
       methodologyNote:
         'coalitionPairs[].sizeSimilarityScore is derived from group-size ratios '
         + '(min(sizeA, sizeB) / max(sizeA, sizeB)) and is NOT vote-level cohesion '
-        + '(Hix/Noury/Roland sense). coalitionPairs[].cohesion and trend are emitted '
-        + 'as null because vote-alignment data is not available via the EP Open Data Portal.',
+        + '(Hix/Noury/Roland sense). coalitionPairs[].cohesion and coalitionPairs[].trend '
+        + 'are emitted as null because vote-alignment data is not available via the EP Open Data Portal. '
+        + 'The public input parameter `minimumCohesion` is preserved for backward compatibility '
+        + 'but is currently applied as a threshold on coalitionPairs[].sizeSimilarityScore until '
+        + 'vote-level cohesion data becomes available.',
     };
 
     return buildToolResponse(analysis);
@@ -847,7 +861,7 @@ export const analyzeCoalitionDynamicsToolMetadata = {
       },
       minimumCohesion: {
         type: 'number',
-        description: 'Minimum cohesion threshold for alliance detection (0-1)',
+        description: 'Threshold for coalition allianceSignal detection (0-1, default 0.5). NOTE: Until per-MEP roll-call data is exposed by the EP Open Data Portal, this is applied to coalitionPairs[].sizeSimilarityScore (a group-size ratio proxy) — NOT to vote-level cohesion. The parameter name is preserved for backward compatibility.',
         minimum: 0,
         maximum: 1,
         default: 0.5
