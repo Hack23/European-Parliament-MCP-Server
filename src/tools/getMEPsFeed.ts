@@ -11,9 +11,8 @@
 
 import { GetMEPsFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
-import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
-import { isUpstream404, buildEmptyFeedResponse } from './shared/feedUtils.js';
+import { isUpstream404, buildEmptyFeedResponse, buildFeedSuccessResponse } from './shared/feedUtils.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
@@ -50,7 +49,7 @@ export async function handleGetMEPsFeed(args: unknown): Promise<ToolResult> {
     const result = await epClient.getMEPsFeed(
       apiParams as Parameters<typeof epClient.getMEPsFeed>[0]
     );
-    return buildToolResponse({ ...result, dataQualityWarnings: [] });
+    return buildFeedSuccessResponse(result);
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse();
     throw new ToolError({

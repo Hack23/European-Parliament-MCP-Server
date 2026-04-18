@@ -124,6 +124,48 @@ describe('get_events_feed Tool', () => {
     });
   });
 
+  describe('Uniform feed envelope (Defect #5)', () => {
+    interface FeedEnvelope {
+      status: 'operational' | 'degraded' | 'unavailable';
+      lastSuccessfulProbe: string;
+      items: unknown[];
+      itemCount: number;
+      reason?: string;
+      data?: unknown[];
+      dataQualityWarnings: string[];
+    }
+
+    it('should emit status="operational" with items/itemCount on the success path', async () => {
+      const result = await handleGetEventsFeed({});
+      const env = JSON.parse(result.content[0]?.text ?? '{}') as FeedEnvelope;
+
+      expect(env.status).toBe('operational');
+      expect(env.items).toEqual([{ id: 'evt-1', type: 'Event' }]);
+      expect(env.itemCount).toBe(1);
+      expect(env.dataQualityWarnings).toEqual([]);
+      expect(typeof env.lastSuccessfulProbe).toBe('string');
+      expect(env.reason).toBeUndefined();
+      // Legacy field still present for backwards compatibility
+      expect(env.data).toEqual([{ id: 'evt-1', type: 'Event' }]);
+    });
+
+    it('should emit status="unavailable" with reason on upstream 404', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getEventsFeed)
+        .mockRejectedValueOnce(new APIError('Not Found', 404));
+
+      const result = await handleGetEventsFeed({});
+      const env = JSON.parse(result.content[0]?.text ?? '{}') as FeedEnvelope;
+
+      expect(env.status).toBe('unavailable');
+      expect(env.items).toEqual([]);
+      expect(env.itemCount).toBe(0);
+      expect(typeof env.reason).toBe('string');
+      expect(env.reason ?? '').not.toBe('');
+      expect(typeof env.lastSuccessfulProbe).toBe('string');
+    });
+  });
+
   describe('Metadata', () => {
     it('should export tool metadata with correct name', () => {
       expect(getEventsFeedToolMetadata).toHaveProperty('name', 'get_events_feed');

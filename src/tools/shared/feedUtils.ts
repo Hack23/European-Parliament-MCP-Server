@@ -14,9 +14,43 @@
  *    EP API's internal enrichment/POST step fails.  These look like
  *    successful responses but contain no `data` array.
  *
- * These helpers convert all three cases into empty-but-successful MCP
- * responses so downstream consumers always receive a valid JSON-LD
- * envelope.
+ * These helpers convert all three cases into uniform MCP responses so
+ * downstream consumers always receive the same envelope shape — see
+ * {@link FeedEnvelope} below.
+ *
+ * ## Uniform feed response envelope
+ *
+ * Every feed handler emits the same body shape, regardless of whether
+ * the upstream call succeeded, returned no data, or failed in-band:
+ *
+ * ```json
+ * {
+ *   "status": "operational" | "degraded" | "unavailable",
+ *   "lastSuccessfulProbe": "2026-04-18T07:12:00Z",
+ *   "items": [],
+ *   "itemCount": 0,
+ *   "reason": "Optional string when status !== 'operational'",
+ *   "data": [],
+ *   "@context": [],
+ *   "dataQualityWarnings": []
+ * }
+ * ```
+ *
+ * - `status` — `"operational"` for fresh data, `"unavailable"` when the
+ *   upstream returned a 404 / error-in-body / empty body, `"degraded"`
+ *   for partial data with warnings.
+ * - `items` — alias for `data`; the canonical name in the contract.
+ * - `itemCount` — length of `items`.
+ * - `lastSuccessfulProbe` — ISO-8601 timestamp of the response build.
+ * - `reason` — present only when `status !== "operational"`.
+ *
+ * The legacy `data` / `@context` / `dataQualityWarnings` fields are
+ * preserved so existing consumers continue to work unchanged.
+ *
+ * Reserve HTTP 4xx / 5xx for genuine transport errors (auth, rate
+ * limit, gateway timeout, endpoint removed permanently). Empty
+ * timeframes / temporary upstream outages always yield HTTP 200 with
+ * `status: "unavailable"`.
  *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
@@ -24,6 +58,9 @@
 import { APIError } from '../../clients/ep/baseClient.js';
 import { buildToolResponse } from './responseBuilder.js';
 import type { ToolResult } from './types.js';
+
+/** Operational status for a feed response under the uniform contract. */
+export type FeedStatus = 'operational' | 'degraded' | 'unavailable';
 
 /**
  * Check whether an error is an upstream EP API 404.
@@ -60,19 +97,55 @@ export function isErrorInBody(result: Record<string, unknown>): boolean {
 }
 
 /**
- * Build an empty feed response with a `dataQualityWarnings` array.
+ * Wrap a successful upstream feed result in the uniform envelope.
  *
- * Returns the same JSON-LD envelope shape (`data` + `@context`) as the
- * normal success path so callers do not need to branch on response shape.
+ * The original payload (typically `{ data, '@context' }`) is preserved
+ * verbatim and augmented with the uniform contract fields:
+ * `status: "operational"`, `items` (alias for `data`), `itemCount`,
+ * `lastSuccessfulProbe`, and an empty `dataQualityWarnings` array.
  *
- * @param warning - Human-readable warning message describing why the feed is empty
+ * @param result - Raw upstream response payload
+ * @returns MCP-compliant ToolResult containing the uniform envelope
+ */
+export function buildFeedSuccessResponse(result: unknown): ToolResult {
+  const source = (result ?? {}) as Record<string, unknown>;
+  const items = Array.isArray(source['data']) ? (source['data'] as unknown[]) : [];
+  return buildToolResponse({
+    ...source,
+    status: 'operational' satisfies FeedStatus,
+    lastSuccessfulProbe: new Date().toISOString(),
+    items,
+    itemCount: items.length,
+    dataQualityWarnings: [],
+  });
+}
+
+/**
+ * Build an empty feed response under the uniform contract.
+ *
+ * Returns the same envelope shape as {@link buildFeedSuccessResponse}
+ * so callers do not need to branch on response shape. The
+ * `status` field defaults to `"unavailable"` because callers invoke
+ * this helper when the upstream returned 404 / empty body / error-in-body.
+ *
+ * @param reason - Human-readable reason describing why the feed is empty
+ *                 (also surfaced in `dataQualityWarnings` for backwards
+ *                 compatibility with consumers reading the legacy field).
+ * @param status - Feed status, defaults to `"unavailable"`. Use
+ *                 `"degraded"` for partial-data scenarios.
  */
 export function buildEmptyFeedResponse(
-  warning = 'EP Open Data Portal returned no data for this feed — likely no updates in the requested timeframe',
+  reason = 'EP Open Data Portal returned no data for this feed — likely no updates in the requested timeframe',
+  status: FeedStatus = 'unavailable',
 ): ToolResult {
   return buildToolResponse({
+    status,
+    lastSuccessfulProbe: new Date().toISOString(),
+    items: [],
+    itemCount: 0,
+    reason,
     data: [],
     '@context': [],
-    dataQualityWarnings: [warning],
+    dataQualityWarnings: [reason],
   });
 }
