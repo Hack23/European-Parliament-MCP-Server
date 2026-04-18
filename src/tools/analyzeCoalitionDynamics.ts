@@ -294,7 +294,8 @@ function buildGroupMetrics(
   const unrecognizedSet = new Set<string>();
 
   for (const mep of allMeps) {
-    const raw = mep.politicalGroup;
+    const raw = mep.politicalGroup.trim();
+    if (raw === '') continue;
     const canonical = normalizePoliticalGroup(raw);
     if (canonical === '' || canonical.toLowerCase() === 'unknown') continue;
     if (targetSet.has(canonical)) {
@@ -557,8 +558,8 @@ function buildCoverageWarnings(
   }
   if (missingGroups.length > 0) {
     const observed = unrecognizedGroups.length > 0
-      ? `Unmapped EP API group labels observed: ${previewUnrecognized(unrecognizedGroups)}`
-      : 'No unmapped EP API group labels observed — groups may have zero seats or the lookup table may be stale.';
+      ? `Out-of-target EP API group labels observed (recognized canonical codes or unknown labels outside the requested groupIds): ${previewUnrecognized(unrecognizedGroups)}`
+      : 'No out-of-target EP API group labels observed — groups may have zero seats or the lookup table may be stale.';
     warnings.push(`Incomplete group coverage — ${String(missingGroups.length)}/${String(totalGroups)} target group(s) returned memberCount: 0 (${missingGroups.join(', ')}); derived fragmentation/ENP set to null. ${observed}`);
   } else if (unrecognizedGroups.length > 0) {
     warnings.push(`Observed ${String(unrecognizedGroups.length)} EP API group label(s) not in the analyzed target set: ${previewUnrecognized(unrecognizedGroups)}`);
@@ -620,7 +621,7 @@ function buildCoverageWarnings(
  * > supplemented with vote-result data when available.
  *
  * @param args - Tool arguments matching AnalyzeCoalitionDynamicsSchema
- * @param args.groupIds - Political group identifiers to analyze (optional; defaults to all 8 groups)
+ * @param args.groupIds - Political group identifiers to analyze (optional; defaults to all 9 EP10 groups)
  * @param args.dateFrom - Analysis start date in YYYY-MM-DD format (optional)
  * @param args.dateTo - Analysis end date in YYYY-MM-DD format (optional)
  * @param args.minimumCohesion - Minimum cohesion threshold for alliance detection, 0–1 (default 0.5)
