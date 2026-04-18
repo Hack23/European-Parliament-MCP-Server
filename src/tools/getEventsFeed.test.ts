@@ -127,7 +127,7 @@ describe('get_events_feed Tool', () => {
   describe('Uniform feed envelope (Defect #5)', () => {
     interface FeedEnvelope {
       status: 'operational' | 'degraded' | 'unavailable';
-      lastSuccessfulProbe: string;
+      generatedAt: string;
       items: unknown[];
       itemCount: number;
       reason?: string;
@@ -143,7 +143,7 @@ describe('get_events_feed Tool', () => {
       expect(env.items).toEqual([{ id: 'evt-1', type: 'Event' }]);
       expect(env.itemCount).toBe(1);
       expect(env.dataQualityWarnings).toEqual([]);
-      expect(typeof env.lastSuccessfulProbe).toBe('string');
+      expect(typeof env.generatedAt).toBe('string');
       expect(env.reason).toBeUndefined();
       // Legacy field still present for backwards compatibility
       expect(env.data).toEqual([{ id: 'evt-1', type: 'Event' }]);
@@ -162,7 +162,7 @@ describe('get_events_feed Tool', () => {
       expect(env.itemCount).toBe(0);
       expect(typeof env.reason).toBe('string');
       expect(env.reason ?? '').not.toBe('');
-      expect(typeof env.lastSuccessfulProbe).toBe('string');
+      expect(typeof env.generatedAt).toBe('string');
     });
   });
 

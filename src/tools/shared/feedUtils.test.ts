@@ -14,7 +14,7 @@ import { APIError } from '../../clients/ep/baseClient.js';
 
 interface FeedEnvelope {
   status: 'operational' | 'degraded' | 'unavailable';
-  lastSuccessfulProbe: string;
+  generatedAt: string;
   items: unknown[];
   itemCount: number;
   reason?: string;
@@ -88,7 +88,7 @@ describe('feedUtils', () => {
       expect(result.isError).toBeUndefined();
     });
 
-    it('should emit uniform envelope with status="unavailable" by default', () => {
+    it('should always emit status="unavailable"', () => {
       const result = buildEmptyFeedResponse();
       const env = parseEnvelope(result.content[0]?.text);
 
@@ -97,8 +97,8 @@ describe('feedUtils', () => {
       expect(env.itemCount).toBe(0);
       expect(typeof env.reason).toBe('string');
       expect(env.reason ?? '').not.toBe('');
-      expect(typeof env.lastSuccessfulProbe).toBe('string');
-      expect(() => new Date(env.lastSuccessfulProbe).toISOString()).not.toThrow();
+      expect(typeof env.generatedAt).toBe('string');
+      expect(() => new Date(env.generatedAt).toISOString()).not.toThrow();
     });
 
     it('should preserve legacy data / @context / dataQualityWarnings fields', () => {
@@ -119,24 +119,16 @@ describe('feedUtils', () => {
       expect(env.reason).toBe(reason);
       expect(env.dataQualityWarnings[0]).toBe(reason);
     });
-
-    it('should accept an explicit "degraded" status', () => {
-      const result = buildEmptyFeedResponse('partial outage', 'degraded');
-      const env = parseEnvelope(result.content[0]?.text);
-
-      expect(env.status).toBe('degraded');
-      expect(env.reason).toBe('partial outage');
-    });
   });
 
   describe('buildFeedSuccessResponse — uniform contract', () => {
-    it('should emit status="operational" with no reason field', () => {
+    it('should emit status="operational" with no reason field when no warnings', () => {
       const result = buildFeedSuccessResponse({ data: [], '@context': [] });
       const env = parseEnvelope(result.content[0]?.text);
 
       expect(env.status).toBe('operational');
       expect(env.reason).toBeUndefined();
-      expect(typeof env.lastSuccessfulProbe).toBe('string');
+      expect(typeof env.generatedAt).toBe('string');
     });
 
     it('should expose items as alias for data and itemCount as data.length', () => {
@@ -150,19 +142,68 @@ describe('feedUtils', () => {
       expect(env['@context']).toEqual(['ctx']);
     });
 
-    it('should default items to [] when upstream payload has no data array', () => {
+    it('should normalize data to the same array as items when source has no data array', () => {
       const result = buildFeedSuccessResponse({ '@context': [] });
       const env = parseEnvelope(result.content[0]?.text);
 
       expect(env.items).toEqual([]);
+      expect(env.data).toEqual([]);
       expect(env.itemCount).toBe(0);
     });
 
-    it('should attach an empty dataQualityWarnings array on success', () => {
+    it('should normalize data to [] when source.data is non-array', () => {
+      const result = buildFeedSuccessResponse({ data: 'not-an-array', '@context': [] });
+      const env = parseEnvelope(result.content[0]?.text);
+
+      expect(env.items).toEqual([]);
+      expect(env.data).toEqual([]);
+      expect(env.itemCount).toBe(0);
+    });
+
+    it('should preserve existing dataQualityWarnings from upstream payload', () => {
+      const result = buildFeedSuccessResponse({
+        data: [{ id: 'x' }],
+        '@context': [],
+        dataQualityWarnings: ['stale cache'],
+      });
+      const env = parseEnvelope(result.content[0]?.text);
+
+      expect(env.dataQualityWarnings).toEqual(['stale cache']);
+      expect(env.status).toBe('degraded');
+    });
+
+    it('should derive status="degraded" when explicit warnings are passed', () => {
+      const result = buildFeedSuccessResponse(
+        { data: [{ id: 'x' }], '@context': [] },
+        ['partial enrichment failure'],
+      );
+      const env = parseEnvelope(result.content[0]?.text);
+
+      expect(env.status).toBe('degraded');
+      expect(env.dataQualityWarnings).toEqual(['partial enrichment failure']);
+    });
+
+    it('should merge upstream warnings with explicit warnings', () => {
+      const result = buildFeedSuccessResponse(
+        {
+          data: [{ id: 'x' }],
+          '@context': [],
+          dataQualityWarnings: ['upstream warn'],
+        },
+        ['handler warn'],
+      );
+      const env = parseEnvelope(result.content[0]?.text);
+
+      expect(env.status).toBe('degraded');
+      expect(env.dataQualityWarnings).toEqual(['upstream warn', 'handler warn']);
+    });
+
+    it('should attach an empty dataQualityWarnings array when none supplied', () => {
       const result = buildFeedSuccessResponse({ data: [{ id: 'x' }], '@context': [] });
       const env = parseEnvelope(result.content[0]?.text);
 
       expect(env.dataQualityWarnings).toEqual([]);
+      expect(env.status).toBe('operational');
     });
 
     it('should not set isError flag', () => {
@@ -176,9 +217,11 @@ describe('feedUtils', () => {
 
       expect(env1.status).toBe('operational');
       expect(env1.items).toEqual([]);
+      expect(env1.data).toEqual([]);
       expect(env1.itemCount).toBe(0);
       expect(env2.status).toBe('operational');
       expect(env2.items).toEqual([]);
+      expect(env2.data).toEqual([]);
     });
   });
 });

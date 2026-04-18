@@ -15,8 +15,7 @@
  *    successful responses but contain no `data` array.
  *
  * These helpers convert all three cases into uniform MCP responses so
- * downstream consumers always receive the same envelope shape — see
- * {@link FeedEnvelope} below.
+ * downstream consumers always receive the same envelope shape.
  *
  * ## Uniform feed response envelope
  *
@@ -26,7 +25,7 @@
  * ```json
  * {
  *   "status": "operational" | "degraded" | "unavailable",
- *   "lastSuccessfulProbe": "2026-04-18T07:12:00Z",
+ *   "generatedAt": "2026-04-18T07:12:00Z",
  *   "items": [],
  *   "itemCount": 0,
  *   "reason": "Optional string when status !== 'operational'",
@@ -36,12 +35,16 @@
  * }
  * ```
  *
- * - `status` — `"operational"` for fresh data, `"unavailable"` when the
- *   upstream returned a 404 / error-in-body / empty body, `"degraded"`
- *   for partial data with warnings.
+ * - `status` — `"operational"` for fresh data without warnings,
+ *   `"degraded"` for fresh data accompanied by data-quality warnings,
+ *   `"unavailable"` when the upstream returned a 404 / error-in-body /
+ *   empty body and we have no fresh data to report.
  * - `items` — alias for `data`; the canonical name in the contract.
+ * - `data` — always normalized to the same array as `items` so consumers
+ *   reading the legacy field always see an array.
  * - `itemCount` — length of `items`.
- * - `lastSuccessfulProbe` — ISO-8601 timestamp of the response build.
+ * - `generatedAt` — ISO-8601 timestamp of when the response was built
+ *   (not "last upstream success" — that would require state/caching).
  * - `reason` — present only when `status !== "operational"`.
  *
  * The legacy `data` / `@context` / `dataQualityWarnings` fields are
@@ -101,22 +104,47 @@ export function isErrorInBody(result: Record<string, unknown>): boolean {
  *
  * The original payload (typically `{ data, '@context' }`) is preserved
  * verbatim and augmented with the uniform contract fields:
- * `status: "operational"`, `items` (alias for `data`), `itemCount`,
- * `lastSuccessfulProbe`, and an empty `dataQualityWarnings` array.
  *
- * @param result - Raw upstream response payload
+ * - `status` is **derived** from the warnings: `"degraded"` when any
+ *   `dataQualityWarnings` are present (either supplied via `result` or
+ *   passed explicitly), otherwise `"operational"`.
+ * - `data` is normalized to the same array reference as `items` so
+ *   consumers reading the legacy `data` field always see an array.
+ * - Existing `dataQualityWarnings` from `result` are preserved and
+ *   merged with any explicitly-supplied warnings (rather than
+ *   clobbered).
+ *
+ * @param result - Raw upstream response payload (may contain `data`,
+ *                 `@context`, and optionally `dataQualityWarnings`)
+ * @param warnings - Optional extra data-quality warnings to merge into
+ *                   the response. When non-empty, `status` is derived
+ *                   as `"degraded"`.
  * @returns MCP-compliant ToolResult containing the uniform envelope
  */
-export function buildFeedSuccessResponse(result: unknown): ToolResult {
+export function buildFeedSuccessResponse(
+  result: unknown,
+  warnings: readonly string[] = [],
+): ToolResult {
   const source = (result ?? {}) as Record<string, unknown>;
   const items = Array.isArray(source['data']) ? (source['data'] as unknown[]) : [];
+
+  const existingWarnings = Array.isArray(source['dataQualityWarnings'])
+    ? (source['dataQualityWarnings'] as unknown[]).filter(
+        (w): w is string => typeof w === 'string',
+      )
+    : [];
+  const mergedWarnings = [...existingWarnings, ...warnings];
+
+  const status: FeedStatus = mergedWarnings.length > 0 ? 'degraded' : 'operational';
+
   return buildToolResponse({
     ...source,
-    status: 'operational' satisfies FeedStatus,
-    lastSuccessfulProbe: new Date().toISOString(),
+    status,
+    generatedAt: new Date().toISOString(),
     items,
     itemCount: items.length,
-    dataQualityWarnings: [],
+    data: items,
+    dataQualityWarnings: mergedWarnings,
   });
 }
 
@@ -124,23 +152,25 @@ export function buildFeedSuccessResponse(result: unknown): ToolResult {
  * Build an empty feed response under the uniform contract.
  *
  * Returns the same envelope shape as {@link buildFeedSuccessResponse}
- * so callers do not need to branch on response shape. The
- * `status` field defaults to `"unavailable"` because callers invoke
- * this helper when the upstream returned 404 / empty body / error-in-body.
+ * with `status: "unavailable"` and `items: []`. This helper is used
+ * when the upstream returned 404 / empty body / error-in-body and we
+ * have no fresh data to report.
+ *
+ * `"degraded"` is intentionally **not** accepted here because it
+ * denotes "partial data with warnings" — for that case, call
+ * {@link buildFeedSuccessResponse} with the partial payload and the
+ * warnings (`status` will be derived as `"degraded"`).
  *
  * @param reason - Human-readable reason describing why the feed is empty
  *                 (also surfaced in `dataQualityWarnings` for backwards
  *                 compatibility with consumers reading the legacy field).
- * @param status - Feed status, defaults to `"unavailable"`. Use
- *                 `"degraded"` for partial-data scenarios.
  */
 export function buildEmptyFeedResponse(
   reason = 'EP Open Data Portal returned no data for this feed — likely no updates in the requested timeframe',
-  status: FeedStatus = 'unavailable',
 ): ToolResult {
   return buildToolResponse({
-    status,
-    lastSuccessfulProbe: new Date().toISOString(),
+    status: 'unavailable' satisfies FeedStatus,
+    generatedAt: new Date().toISOString(),
     items: [],
     itemCount: 0,
     reason,
