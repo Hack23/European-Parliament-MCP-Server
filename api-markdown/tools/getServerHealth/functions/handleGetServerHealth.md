@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.8**](../../../README.md)
+[**European Parliament MCP Server API v1.2.9**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetServerHealth**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getServerHealth.ts:62](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L62)
+Defined in: [tools/getServerHealth.ts:101](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L101)
 
 Handles the get_server_health MCP tool request.
 

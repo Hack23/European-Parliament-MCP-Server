@@ -432,9 +432,25 @@ Changed the search function.
 ## ISMS Compliance
 
 This skill enforces:
-- **AI-001**: AI as proposal generator principle
-- **AI-002**: PR review requirements for AI code
-- **AI-003**: Custom agent governance
-- **AI-004**: AI security requirements
+- **AI-001**: AI as proposal generator principle (human accepts or rejects)
+- **AI-002**: PR-review requirements for AI-generated code
+- **AI-003**: Custom-agent governance (definition, scope, minimal privilege)
+- **AI-004**: AI security requirements (prompt-injection resistance, output filtering)
+- **AI-005**: Provenance — every AI-assisted change traceable to prompt + reviewer
 
-**Policy Reference**: [Hack23 Secure Development Policy Section 🤖](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md#ai-augmented-development-controls)
+### Policy References
+
+**Primary:**
+
+- [AI Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/AI_Policy.md)
+- [OWASP LLM Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/OWASP_LLM_Security_Policy.md)
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) (Section 🤖 AI-Augmented Development Controls)
+
+**Related:**
+
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
+- [Change Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Change_Management.md) — AI-assisted change review
+- [Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) — Agent-token least privilege
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) — No personal data in training / prompt context
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Licence-clean AI code output
+- [Incident Response Plan](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md) — AI-driven incident triage

@@ -15,7 +15,7 @@ Specialized in:
 - Using GitHub MCP and other tools for comprehensive analysis
 - Identifying improvements for European Parliament dataset integrations
 
-**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+**Tools:** `["*"]` (all tools allowed)
 
 **Key Capabilities:**
 - 🔍 Analyze codebase for quality, security, and API design improvements
@@ -38,7 +38,7 @@ Specialized in:
 - User guides and tutorials
 - Mermaid diagrams and architecture docs
 
-**Tools:** `view`, `edit`, `create`, `search_code`, `custom-agent`
+**Tools:** `["*"]` (all tools allowed)
 
 ---
 
@@ -52,7 +52,7 @@ Specialized in:
 - Testing with Vitest
 - Build optimization
 
-**Tools:** `view`, `edit`, `create`, `bash`, `custom-agent`
+**Tools:** `["*"]` (all tools allowed)
 
 ---
 
@@ -69,7 +69,7 @@ Specialized in:
 - [ISMS-PUBLIC](https://github.com/Hack23/ISMS-PUBLIC) policy compliance
 - Security documentation aligned with [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
 
-**Tools:** `view`, `edit`, `bash`, `search_code`, `custom-agent`
+**Tools:** `["*"]` (all tools allowed)
 
 ---
 
@@ -83,7 +83,7 @@ Specialized in:
 - Testing data transformations and API clients
 - CI/CD integration and test automation
 
-**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+**Tools:** `["*"]` (all tools allowed)
 
 ---
 
@@ -99,7 +99,7 @@ Specialized in:
 - MCP-compliant error handling and logging
 - @modelcontextprotocol/sdk best practices
 
-**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+**Tools:** `["*"]` (all tools allowed)
 
 **Key Capabilities:**
 - 🛠️ Implement MCP tools with comprehensive input validation
@@ -122,7 +122,7 @@ Specialized in:
 - Data attribution and European Parliament terms of use
 - API rate limiting and caching strategies
 
-**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+**Tools:** `["*"]` (all tools allowed)
 
 **Key Capabilities:**
 - 🗳️ Navigate all 5 core European Parliament datasets
@@ -145,7 +145,7 @@ Specialized in:
 - Connection pooling and HTTP/2
 - Request metrics and latency tracking
 
-**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+**Tools:** `["*"]` (all tools allowed)
 
 **Key Capabilities:**
 - 🚀 Design high-performance API clients with connection pooling
@@ -168,7 +168,7 @@ Specialized in:
 - Async validation patterns
 - Schema composition and reusability
 
-**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+**Tools:** `["*"]` (all tools allowed)
 
 **Key Capabilities:**
 - ✅ Create bulletproof input validation with Zod schemas
@@ -191,7 +191,7 @@ Specialized in:
 - HTTP/2 and response compression
 - CPU profiling and flame graph analysis
 
-**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+**Tools:** `["*"]` (all tools allowed)
 
 **Key Capabilities:**
 - 🏃 Achieve <200ms P95 API response times
@@ -214,7 +214,7 @@ Specialized in:
 - Security audit logging and monitoring
 - Vulnerability management and SLA tracking
 
-**Tools:** `view`, `edit`, `create`, `bash`, `search_code`, `custom-agent`
+**Tools:** `["*"]` (all tools allowed)
 
 **Key Capabilities:**
 - 📋 Map code to ISO 27001, NIST CSF, CIS Controls
@@ -381,29 +381,28 @@ The product-task-agent is your go-to for:
 - Review documentation completeness and assign to documentation-writer
 ```
 
-## 🛠️ Agent Tools
+## 🛠️ Agent Tools & Scope
 
-Each agent has access to specific tools based on their responsibilities:
+All repository-level agents are configured with `tools: ["*"]` — every tool that Copilot has available for this repository is accessible. This keeps the agents below any per-agent limit while giving them full capability to read, edit, create, run CLI commands, search code, invoke other agents, and fetch web resources as needed.
 
-| Tool | Alias | Description | Agents |
-|------|-------|-------------|---------|
-| **view** | read | Read file contents, inspect code | All agents |
-| **edit** | edit | Modify existing files | All agents |
-| **create** | create | Create new files | 🎨 🧪 📝 🎯 |
-| **bash** | shell | Execute shell commands, run npm scripts, build, test | 🎨 🧪 🔒 🎯 |
-| **search_code** | search | Search codebase for patterns | 🧪 🔒 📝 🎯 |
-| **custom-agent** | - | Invoke other custom agents for specialized tasks | All agents |
+| Alias | Description |
+|-------|-------------|
+| `view` (read) | Read file contents |
+| `edit` | Modify existing files |
+| `create` | Create new files |
+| `bash` (shell) | Run commands, tests, builds, lint, coverage, license checks |
+| `search_code` (search) | Search codebase |
+| `custom-agent` | Invoke other specialist agents |
+| `web` | Fetch remote resources where allowed |
 
-### MCP Server Capabilities
+### Repository vs. Organization Agent Scope
 
-All agents can leverage MCP (Model Context Protocol) servers configured in `.github/copilot-mcp.json`:
+- **Repository-level agents** (this directory, `.github/agents/`) do **not** declare `mcp-servers` in their frontmatter. MCP server configuration is repository-wide via [`.github/copilot-mcp.json`](../copilot-mcp.json). All agents here consume whichever MCP servers the repository has enabled.
+- **Organization-level agents** live in the `Hack23/.github-private` repository under `/agents/` and may define their own `mcp-servers` block (e.g. GitHub MCP with Insiders toolset for cross-repo governance).
 
-- **📁 Filesystem Server:** Secure file access and project structure navigation
-- **🐙 GitHub Server:** Repository metadata, issues, PRs, and workflow status
-- **📋 Git Server:** Commit history, branches, and code evolution tracking
-- **💭 Memory Server:** Conversation context and session history
+### MCP Server Capabilities (repository-wide)
 
-MCP servers provide enhanced capabilities beyond basic agent tools, enabling agents to perform complex operations like repository analysis and contextual memory.
+All agents can leverage MCP (Model Context Protocol) servers configured in [`.github/copilot-mcp.json`](../copilot-mcp.json) — examples include filesystem, GitHub, git, memory, sequential-thinking, and project-specific European Parliament MCP tools.
 
 ## ⚙️ Agent Configuration
 
@@ -413,21 +412,41 @@ Each agent is defined in a markdown file with YAML frontmatter:
 ---
 name: agent-name
 description: Brief description of agent expertise (max 200 chars)
-tools: ["view", "edit", "create", "bash"]
+tools: ["*"]
 ---
 
 You are the [Agent Name], a specialized expert in...
 
+## 📋 Required Context Files
+
+- Project context files
+- ISMS policy references
+
+## 🔒 ISMS Policy Alignment
+
+- Information_Security_Policy.md linkage
+- Secure_Development_Policy.md linkage
+- Open_Source_Policy.md linkage
+- Other applicable policies
+
 ## Core Expertise
 
-You specialize in:
 - Area 1
 - Area 2
 
-## Guidelines
+## Enforcement Rules
 
-- Guideline 1
-- Guideline 2
+- Rule 1 (with policy citation)
+- Rule 2 (with policy citation)
+
+## Decision Framework
+
+- If X then Y
+
+## Quality Gates
+
+- Gate 1
+- Gate 2
 
 ## Remember
 
@@ -439,14 +458,15 @@ You specialize in:
 
 - **name:** Lowercase with hyphens (e.g., `product-task-agent`)
 - **description:** Max 200 characters describing expertise
-- **tools:** Array of tool aliases the agent needs
+- **tools:** `["*"]` — all tools allowed for repository-level agents
 
 ### Agent Design Principles
 
-✅ **Single Responsibility:** Each agent focuses on one domain
-✅ **Minimal Tools:** Only include tools the agent actually needs
-✅ **Clear Expertise:** Well-defined areas of specialization
-✅ **Consistent Standards:** All agents follow project guidelines
+✅ **Single Responsibility** — Each agent focuses on one domain
+✅ **Full Tool Access** — `tools: ["*"]` so agents never lose capability
+✅ **Policy-Linked** — Every enforcement rule cites a Hack23 ISMS policy
+✅ **Small, Verifiable Output** — Favours tests, CI gates, and measurable outcomes
+✅ **Consistent Structure** — Required-context → ISMS alignment → expertise → rules → framework → gates → remember
 
 ## 📊 Agent Specialization Matrix
 
@@ -483,3 +503,16 @@ You specialize in:
 ### External Resources
 - [GitHub Awesome Copilot](https://github.com/github/awesome-copilot) - Community resources
 - [Hack23 ISMS-PUBLIC](https://github.com/Hack23/ISMS-PUBLIC) - Security policies
+
+## 🔒 ISMS Policy Alignment (all agents)
+
+Every agent in this directory is aligned with the Hack23 Information Security Management System. At minimum each agent references:
+
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md) — Top-level governance
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) — SDLC, validation, testing, supply-chain security
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Licensing, SBOM, Scorecard, disclosure
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) — GDPR, MEP personal data
+- [Data Classification Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Data_Classification_Policy.md) — Public vs. personal parliamentary data
+- Domain-specific policies (Access Control, Cryptography, Vulnerability Management, Threat Modeling, Incident Response, Change Management, AI Policy, OWASP LLM Security Policy, Third Party Management, Business Continuity) — referenced by the agents whose scope they touch
+
+Every PR opened by these agents should cite the applicable policies in its description, following the Change Management policy.

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.8**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.9**](../../../../README.md)
 
 ***
 
@@ -192,6 +192,42 @@ Clears all entries from the LRU cache.
 
 ***
 
+### evictFromCache()
+
+> `protected` **evictFromCache**(`endpoint`, `params?`): `void`
+
+Defined in: [clients/ep/baseClient.ts:724](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L724)
+
+Evicts a single cache entry matching the given endpoint and params.
+Sub-clients use this when they detect that a successfully-fetched payload
+is a content-pending sentinel that must not be served from cache for the
+remainder of the TTL — eviction lets availability recover as soon as the
+upstream document is enriched.
+
+#### Parameters
+
+##### endpoint
+
+`string`
+
+API endpoint path (same value passed to [get](../../baseClient/classes/BaseEPClient.md#get))
+
+##### params?
+
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+
+Optional query parameters (same value passed to [get](../../baseClient/classes/BaseEPClient.md#get))
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[`BaseEPClient`](../../baseClient/classes/BaseEPClient.md).[`evictFromCache`](../../baseClient/classes/BaseEPClient.md#evictfromcache)
+
+***
+
 ### filterQuestions()
 
 > `private` **filterQuestions**(`questions`, `params`): [`ParliamentaryQuestion`](../../../../types/ep/question/interfaces/ParliamentaryQuestion.md)[]
@@ -290,7 +326,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:718](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L718)
+Defined in: [clients/ep/baseClient.ts:733](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L733)
 
 Returns cache statistics for monitoring and debugging.
 

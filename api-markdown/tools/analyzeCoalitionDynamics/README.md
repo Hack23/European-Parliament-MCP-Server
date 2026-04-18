@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.8**](../../README.md)
+[**European Parliament MCP Server API v1.2.9**](../../README.md)
 
 ***
 
@@ -13,3 +13,4 @@
 ## Functions
 
 - [handleAnalyzeCoalitionDynamics](functions/handleAnalyzeCoalitionDynamics.md)
+- [normalizePoliticalGroup](functions/normalizePoliticalGroup.md)

@@ -145,8 +145,22 @@ async function bad(request: any) {
 
 ## ISMS Compliance
 
-- **SC-002**: Input validation for all tool parameters
-- **AU-002**: Audit logging for tool invocations
-- **AC-003**: Rate limiting and access control
+- **SC-002**: Input validation for all tool parameters (Zod schemas)
+- **AU-002**: Audit logging for tool invocations (personal-data tools especially)
+- **AC-003**: Rate limiting and access control (`EP_RATE_LIMIT`)
+- **SC-001**: Safe output — no raw upstream errors, sanitised responses
 
-Reference: [Hack23 ISMS Policies](https://github.com/Hack23/ISMS-PUBLIC)
+### Policy References
+
+**Primary:**
+
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) — Input validation, audit logging, secure error handling
+- [OWASP LLM Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/OWASP_LLM_Security_Policy.md) — Prompt-injection resistance in tool descriptions, output filtering
+
+**Related:**
+
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
+- [Privacy Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) — MEP personal-data tools
+- [Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) — Least privilege on tool capabilities
+- [AI Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/AI_Policy.md) — Responsible MCP-tool integration with LLMs
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Attribution in tool output

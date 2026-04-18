@@ -115,5 +115,16 @@ release:
 
 ## ISMS Policy References
 
-- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) — CI/CD security requirements
-- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Supply chain security, SBOM, SLSA
+**Core policies:**
+
+- [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) — CI/CD security requirements, CodeQL, SAST/DAST, SBOM, SLSA Level 3, signed releases
+- [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) — Supply-chain security, dependency pinning, OSSF Scorecard, SLSA provenance
+- [Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md) — Pipeline as critical security control
+
+**Supporting policies:**
+
+- [Access Control Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) — Least-privilege `GITHUB_TOKEN`, fine-grained `permissions:` blocks
+- [Cryptography Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Cryptography_Policy.md) — Signed commits / keyless Sigstore / cosign
+- [Change Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Change_Management.md) — Protected branches, required reviews, status checks
+- [Vulnerability Management](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md) — Dependabot, CodeQL scheduling
+- [Incident Response Plan](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Incident_Response_Plan.md) — Workflow-failure / compromise response
