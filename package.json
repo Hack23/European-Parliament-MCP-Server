@@ -163,7 +163,7 @@
     "@typescript-eslint/parser": "8.58.2",
     "@vitest/coverage-v8": "4.1.4",
     "@vitest/ui": "4.1.4",
-    "eslint": "10.2.0",
+    "eslint": "10.2.1",
     "globals": "17.5.0",
     "knip": "6.4.1",
     "license-compliance": "3.0.1",
