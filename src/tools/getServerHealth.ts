@@ -20,7 +20,7 @@
 import { z } from 'zod';
 import { SERVER_VERSION } from '../config.js';
 import { feedHealthTracker } from '../services/FeedHealthTracker.js';
-import type { AvailabilityLevel } from '../services/FeedHealthTracker.js';
+import type { AvailabilityLevel, FeedStatus } from '../services/FeedHealthTracker.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
 import type { ToolResult } from './shared/types.js';
@@ -29,15 +29,54 @@ import type { ToolResult } from './shared/types.js';
 export const GetServerHealthSchema = z.object({});
 
 /**
- * Derive the overall server status from the feed availability level.
- * Cyclomatic complexity: 3
+ * Per-feed projection used in the `get_server_health` response.
+ *
+ * Preserves the existing `lastSuccess` / `lastError` / `lastAttempt`
+ * fields (backward compatible) and adds a `lastProbedAt` alias for
+ * `lastAttempt` so consumers can judge cache staleness
+ * (see issue #1, recommendation 3).
  */
-function deriveServerStatus(level: AvailabilityLevel): 'healthy' | 'degraded' | 'unhealthy' {
+export interface FeedProjection {
+  status: FeedStatus['status'];
+  lastAttempt?: string;
+  lastProbedAt?: string;
+  lastSuccess?: string;
+  lastError?: string;
+}
+
+/** Build the per-feed projection map from the tracker's raw statuses. */
+function projectFeeds(feeds: Record<string, FeedStatus>): Record<string, FeedProjection> {
+  const projection: Record<string, FeedProjection> = {};
+  for (const [name, feed] of Object.entries(feeds)) {
+    const entry: FeedProjection = { status: feed.status };
+    if (feed.lastAttempt !== undefined) {
+      entry.lastAttempt = feed.lastAttempt;
+      entry.lastProbedAt = feed.lastAttempt;
+    }
+    if (feed.lastSuccess !== undefined) entry.lastSuccess = feed.lastSuccess;
+    if (feed.lastError !== undefined) entry.lastError = feed.lastError;
+    projection[name] = entry;
+  }
+  return projection;
+}
+
+/**
+ * Derive the overall server status from the feed availability level.
+ *
+ * The `Unknown` level maps to `'unknown'` — distinct from `'unhealthy'` —
+ * so consumers do not treat an empty health cache as a feeds outage.
+ * Cyclomatic complexity: 4
+ */
+function deriveServerStatus(
+  level: AvailabilityLevel,
+): 'healthy' | 'degraded' | 'unhealthy' | 'unknown' {
   switch (level) {
     case 'Full':
       return 'healthy';
     case 'Unavailable':
       return 'unhealthy';
+    case 'Unknown':
+      return 'unknown';
     case 'Degraded':
     case 'Sparse':
       return 'degraded';
@@ -83,6 +122,7 @@ export async function handleGetServerHealth(args: unknown): Promise<ToolResult> 
 
   const feeds = feedHealthTracker.getAllStatuses();
   const availability = feedHealthTracker.getAvailability();
+  const feedsProjection = projectFeeds(feeds);
 
   const result = {
     server: {
@@ -90,9 +130,11 @@ export async function handleGetServerHealth(args: unknown): Promise<ToolResult> 
       uptime_seconds: feedHealthTracker.getUptimeSeconds(),
       status: deriveServerStatus(availability.level),
     },
-    feeds,
+    feeds: feedsProjection,
     availability: {
       operational_feeds: availability.operationalFeeds,
+      error_feeds: availability.errorFeeds,
+      unknown_feeds: availability.unknownFeeds,
       total_feeds: availability.totalFeeds,
       level: availability.level,
     },
@@ -106,10 +148,15 @@ export const getServerHealthToolMetadata = {
   name: 'get_server_health',
   description:
     'Check server health and feed availability status. Returns server version, uptime, ' +
-    'per-feed health status (ok/error/unknown), and overall availability level ' +
-    '(Full/Degraded/Sparse/Unavailable). Does not make upstream API calls — reports ' +
-    'cached status from recent tool invocations. Use this to check which feeds are ' +
-    'healthy before making data requests and to adapt data collection strategy.',
+    'per-feed health status (ok/error/unknown) and overall availability level ' +
+    '(Full/Degraded/Sparse/Unavailable/Unknown). Per-feed `lastProbedAt` and ' +
+    '`lastAttempt` staleness timestamps are included only once a feed has been probed ' +
+    '(absent for never-probed feeds). `Unknown` is reported when no feeds have been ' +
+    'probed yet (cache empty) and must NOT be interpreted as an outage — consumers ' +
+    'should attempt at least one feed probe before treating the server as down. Does ' +
+    'not make upstream API calls — reports cached status from recent tool invocations. ' +
+    'Use this to check which feeds are healthy before making data requests and to ' +
+    'adapt data collection strategy.',
   inputSchema: {
     type: 'object' as const,
     properties: {},
