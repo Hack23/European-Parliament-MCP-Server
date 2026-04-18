@@ -20,13 +20,45 @@
 import { z } from 'zod';
 import { SERVER_VERSION } from '../config.js';
 import { feedHealthTracker } from '../services/FeedHealthTracker.js';
-import type { AvailabilityLevel } from '../services/FeedHealthTracker.js';
+import type { AvailabilityLevel, FeedStatus } from '../services/FeedHealthTracker.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
 import type { ToolResult } from './shared/types.js';
 
 /** Zod schema for the (empty) input of this tool. */
 export const GetServerHealthSchema = z.object({});
+
+/**
+ * Per-feed projection used in the `get_server_health` response.
+ *
+ * Preserves the existing `lastSuccess` / `lastError` / `lastAttempt`
+ * fields (backward compatible) and adds a `lastProbedAt` alias for
+ * `lastAttempt` so consumers can judge cache staleness
+ * (see issue #1, recommendation 3).
+ */
+export interface FeedProjection {
+  status: 'ok' | 'error' | 'unknown';
+  lastAttempt?: string;
+  lastProbedAt?: string;
+  lastSuccess?: string;
+  lastError?: string;
+}
+
+/** Build the per-feed projection map from the tracker's raw statuses. */
+function projectFeeds(feeds: Record<string, FeedStatus>): Record<string, FeedProjection> {
+  const projection: Record<string, FeedProjection> = {};
+  for (const [name, feed] of Object.entries(feeds)) {
+    const entry: FeedProjection = { status: feed.status };
+    if (feed.lastAttempt !== undefined) {
+      entry.lastAttempt = feed.lastAttempt;
+      entry.lastProbedAt = feed.lastAttempt;
+    }
+    if (feed.lastSuccess !== undefined) entry.lastSuccess = feed.lastSuccess;
+    if (feed.lastError !== undefined) entry.lastError = feed.lastError;
+    projection[name] = entry;
+  }
+  return projection;
+}
 
 /**
  * Derive the overall server status from the feed availability level.
@@ -90,29 +122,7 @@ export async function handleGetServerHealth(args: unknown): Promise<ToolResult> 
 
   const feeds = feedHealthTracker.getAllStatuses();
   const availability = feedHealthTracker.getAvailability();
-
-  // Project per-feed statuses for the tool response. Preserves the existing
-  // `lastSuccess` / `lastError` / `lastAttempt` fields (backward compatible)
-  // and adds a `lastProbedAt` alias for `lastAttempt` so consumers can judge
-  // cache staleness (see issue #1, recommendation 3).
-  interface FeedProjection {
-    status: 'ok' | 'error' | 'unknown';
-    lastAttempt?: string;
-    lastProbedAt?: string;
-    lastSuccess?: string;
-    lastError?: string;
-  }
-  const feedsProjection: Record<string, FeedProjection> = {};
-  for (const [name, feed] of Object.entries(feeds)) {
-    const entry: FeedProjection = { status: feed.status };
-    if (feed.lastAttempt !== undefined) {
-      entry.lastAttempt = feed.lastAttempt;
-      entry.lastProbedAt = feed.lastAttempt;
-    }
-    if (feed.lastSuccess !== undefined) entry.lastSuccess = feed.lastSuccess;
-    if (feed.lastError !== undefined) entry.lastError = feed.lastError;
-    feedsProjection[name] = entry;
-  }
+  const feedsProjection = projectFeeds(feeds);
 
   const result = {
     server: {
