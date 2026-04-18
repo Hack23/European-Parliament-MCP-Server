@@ -3918,6 +3918,37 @@ describe('EuropeanParliamentClient', () => {
           message: expect.stringContaining('content not yet available') as unknown as string
         });
     });
+
+    it('should evict the cached content-pending payload so a retry hits the upstream again', async () => {
+      // First call: upstream returns the empty sentinel — must throw 404 and
+      // evict the cached empty payload.
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({})
+      } as Response);
+
+      await expect(client.getAdoptedTextById('TA-10-2026-0099')).rejects.toMatchObject({
+        statusCode: 404
+      });
+
+      // Second call: upstream is now enriched. If the empty payload were still
+      // cached, fetch would not be called a second time and this would resolve
+      // to the cached (empty) sentinel instead of the real document.
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          identifier: 'TA-10-2026-0099',
+          title: 'Resolution on something important'
+        })
+      } as Response);
+
+      const result = await client.getAdoptedTextById('TA-10-2026-0099');
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.id).toBe('TA-10-2026-0099');
+      expect(result.title).toBe('Resolution on something important');
+    });
   });
 
   describe('getDocumentById', () => {

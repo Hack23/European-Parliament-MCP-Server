@@ -199,5 +199,27 @@ describe('get_adopted_texts Tool', () => {
         expect(toolError.message).toContain('content not yet available');
       }
     });
+
+    it('should append docId to UPSTREAM_404 message when upstream APIError(404) message is generic', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      // BaseEPClient surfaces raw HTTP 404s as a generic message that does
+      // not include the requested docId — the tool layer must append it so
+      // clients can identify what was not found.
+      vi.mocked(epClientModule.epClient.getAdoptedTextById).mockRejectedValueOnce(
+        new APIError('EP API request failed: Not Found', 404)
+      );
+
+      try {
+        await handleGetAdoptedTexts({ docId: 'TA-9-2024-9999' });
+        expect.fail('Expected handleGetAdoptedTexts to throw');
+      } catch (error: unknown) {
+        const { ToolError } = await import('./shared/errors.js');
+        expect(error).toBeInstanceOf(ToolError);
+        const toolError = error as InstanceType<typeof ToolError>;
+        expect(toolError.errorCode).toBe('UPSTREAM_404');
+        expect(toolError.message).toContain('TA-9-2024-9999');
+        expect(toolError.message).toContain('Not Found');
+      }
+    });
   });
 });

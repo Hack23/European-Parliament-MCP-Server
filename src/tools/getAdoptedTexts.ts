@@ -98,10 +98,18 @@ export async function handleGetAdoptedTexts(args: unknown): Promise<ToolResult> 
     // `UPSTREAM_404`, so clients can distinguish "document unavailable" from a
     // transient retryable failure instead of receiving an empty-string stub.
     if (error instanceof APIError && error.statusCode === 404) {
+      // Ensure the requested docId is identifiable in the ToolError message
+      // even when the upstream message is generic (e.g. BaseEPClient surfaces
+      // raw HTTP 404s as "EP API request failed: Not Found").
+      const baseMessage = error.message;
+      const message =
+        params.docId !== undefined && !baseMessage.includes(params.docId)
+          ? `${baseMessage} (docId: "${params.docId}")`
+          : baseMessage;
       throw new ToolError({
         toolName: 'get_adopted_texts',
         operation: 'fetchData',
-        message: error.message,
+        message,
         isRetryable: false,
         errorCode: 'UPSTREAM_404',
         httpStatus: 404,
