@@ -130,6 +130,62 @@ describe('analyze_coalition_dynamics Tool', () => {
       expect(group?.computedAttributes).toHaveProperty('unityTrend');
       expect(group?.computedAttributes).toHaveProperty('activeParticipationRate');
     });
+
+    it('should expose sizeSimilarityScore and null cohesion/trend on coalition pairs (issue #3)', async () => {
+      // Regression guard: prior versions exposed a group-size ratio under the
+      // misleading name `cohesionScore` with a `trend` string, leading consumers
+      // to read it as Hix/Noury/Roland vote-level cohesion (e.g. Renew + ECR
+      // scoring 0.95 purely because of similar seat counts). The contract is
+      // now: `sizeSimilarityScore` carries the size-balance proxy; `cohesion`
+      // and `trend` are explicitly null until vote-level data is available;
+      // and `methodologyNote` makes the caveat machine-visible.
+      const result = await handleAnalyzeCoalitionDynamics({
+        groupIds: ['EPP', 'S&D', 'Renew']
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        coalitionPairs: {
+          groupA: string;
+          groupB: string;
+          sizeSimilarityScore: number;
+          cohesion: number | null;
+          trend: string | null;
+          sharedVotes: number | null;
+          totalVotes: number | null;
+          allianceSignal: boolean;
+        }[];
+        dominantCoalition: {
+          groups: string[];
+          combinedStrength: number | null;
+          cohesion: number | null;
+          sizeSimilarityScore: number;
+        };
+        methodologyNote: string;
+      };
+
+      expect(data.coalitionPairs.length).toBeGreaterThan(0);
+      for (const pair of data.coalitionPairs) {
+        // The mislabelled field must be gone.
+        expect(pair).not.toHaveProperty('cohesionScore');
+        // Size-similarity proxy is present and bounded.
+        expect(typeof pair.sizeSimilarityScore).toBe('number');
+        expect(pair.sizeSimilarityScore).toBeGreaterThanOrEqual(0);
+        expect(pair.sizeSimilarityScore).toBeLessThanOrEqual(1);
+        // Vote-level fields are explicitly null while EP API does not expose them.
+        expect(pair.cohesion).toBeNull();
+        expect(pair.trend).toBeNull();
+        expect(pair.sharedVotes).toBeNull();
+        expect(pair.totalVotes).toBeNull();
+      }
+
+      // Dominant coalition mirrors the new field shape.
+      expect(data.dominantCoalition).toHaveProperty('sizeSimilarityScore');
+      expect(data.dominantCoalition.cohesion).toBeNull();
+
+      // Machine-visible disclosure so the caveat cannot be missed.
+      expect(typeof data.methodologyNote).toBe('string');
+      expect(data.methodologyNote).toContain('sizeSimilarityScore');
+      expect(data.methodologyNote.toLowerCase()).toContain('not vote-level cohesion');
+    });
   });
 
   describe('Error Handling', () => {
@@ -174,8 +230,10 @@ describe('analyze_coalition_dynamics Tool', () => {
       expect(data.confidenceLevel).toBe('LOW');
     });
 
-    it('should classify cohesion trend as WEAKENING when groups have unequal sizes', async () => {
-      // Arrange: Two groups with very different member counts
+    it('should suppress trend (null) and emit sizeSimilarityScore when sharedVotes are unavailable', async () => {
+      // Arrange: Two groups with very different member counts.
+      // After issue #3 the size-ratio proxy is exposed as `sizeSimilarityScore`
+      // and `trend` is suppressed (null) whenever `sharedVotes === null`.
       vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
         ...Array.from({ length: 10 }, (_, i) => ({
           id: `MEP-A${i}`, name: `MEP A${i}`, country: 'DE', politicalGroup: 'BigGroup',
@@ -191,13 +249,21 @@ describe('analyze_coalition_dynamics Tool', () => {
         minimumCohesion: 0.5
       });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
-        coalitionPairs: { trend: string; cohesionScore: number }[];
+        coalitionPairs: {
+          trend: string | null;
+          sizeSimilarityScore: number;
+          cohesion: number | null;
+          sharedVotes: number | null;
+        }[];
       };
 
-      // Assert: balance = min(1,10)/max(1,10) = 0.1 → WEAKENING
-      const weakeningPairs = data.coalitionPairs.filter(p => p.trend === 'WEAKENING');
-      expect(weakeningPairs.length).toBeGreaterThan(0);
-      expect(weakeningPairs[0]?.cohesionScore).toBeLessThanOrEqual(0.4);
+      // Assert: balance = min(1,10)/max(1,10) = 0.1; trend & cohesion null
+      expect(data.coalitionPairs.length).toBeGreaterThan(0);
+      const pair = data.coalitionPairs[0];
+      expect(pair?.sizeSimilarityScore).toBeLessThanOrEqual(0.4);
+      expect(pair?.sharedVotes).toBeNull();
+      expect(pair?.cohesion).toBeNull();
+      expect(pair?.trend).toBeNull();
     });
   });
 
