@@ -3901,6 +3901,54 @@ describe('EuropeanParliamentClient', () => {
         expect.any(Object)
       );
     });
+
+    it('should throw APIError(404) when upstream returns a content-pending document (all fields empty)', async () => {
+      // Upstream returns HTTP 200 with a JSON body that has no recognisable
+      // fields — this is the content-pending sentinel observed for freshly
+      // indexed docs such as TA-10-2026-0099.
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({})
+      } as Response);
+
+      await expect(client.getAdoptedTextById('TA-10-2026-0099'))
+        .rejects.toMatchObject({
+          statusCode: 404,
+          message: expect.stringContaining('content not yet available') as unknown as string
+        });
+    });
+
+    it('should evict the cached content-pending payload so a retry hits the upstream again', async () => {
+      // First call: upstream returns the empty sentinel — must throw 404 and
+      // evict the cached empty payload.
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({})
+      } as Response);
+
+      await expect(client.getAdoptedTextById('TA-10-2026-0099')).rejects.toMatchObject({
+        statusCode: 404
+      });
+
+      // Second call: upstream is now enriched. If the empty payload were still
+      // cached, fetch would not be called a second time and this would resolve
+      // to the cached (empty) sentinel instead of the real document.
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          identifier: 'TA-10-2026-0099',
+          title: 'Resolution on something important'
+        })
+      } as Response);
+
+      const result = await client.getAdoptedTextById('TA-10-2026-0099');
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.id).toBe('TA-10-2026-0099');
+      expect(result.title).toBe('Resolution on something important');
+    });
   });
 
   describe('getDocumentById', () => {

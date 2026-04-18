@@ -252,13 +252,53 @@ export class LegislativeClient extends BaseEPClient {
   /**
    * Returns a single adopted text by document ID.
    * **EP API Endpoint:** `GET /adopted-texts/{doc-id}`
+   *
+   * **Content-pending detection:** The EP Open Data Portal will sometimes respond
+   * with HTTP 200 for a document that is indexed in the feed but whose detail
+   * enrichment has not yet completed — every transformable field comes back empty.
+   * Returning that shape to callers would emit a response that passes JSON-schema
+   * validation but carries no data, leading to blank titles/dates/references being
+   * rendered downstream. We treat this sentinel as a 404 so callers get the same
+   * error semantics they would for a truly missing document, and we also evict
+   * the cached empty payload so availability recovers as soon as the upstream
+   * document is enriched (instead of blocking for the full cache TTL).
+   *
+   * @throws {APIError} 400 when `docId` is empty or whitespace.
+   * @throws {APIError} 404 in two cases:
+   *   - the upstream returns HTTP 404 because no document exists for `docId`
+   *     (re-thrown by {@link BaseEPClient.get}); or
+   *   - the upstream returns HTTP 200 but every transformable field is empty
+   *     (the indexed-but-content-pending sentinel detected here).
    */
   async getAdoptedTextById(docId: string): Promise<AdoptedText> {
     if (docId.trim() === '') throw new APIError('Document ID is required', 400);
-    const response = await this.get<Record<string, unknown>>(
-      `adopted-texts/${docId}`,
-      { format: 'application/ld+json' }
-    );
-    return this.transformAdoptedText(response);
+    const endpoint = `adopted-texts/${docId}`;
+    const params = { format: 'application/ld+json' };
+    const response = await this.get<Record<string, unknown>>(endpoint, params);
+    const transformed = this.transformAdoptedText(response);
+    if (isEmptyAdoptedText(transformed)) {
+      // Evict the empty payload so a retry after upstream enrichment gets the
+      // real document instead of the cached sentinel for the remainder of the
+      // cache TTL.
+      this.evictFromCache(endpoint, params);
+      throw new APIError(
+        `Adopted text "${docId}": document indexed but content not yet available`,
+        404
+      );
+    }
+    return transformed;
   }
+}
+
+/**
+ * Returns `true` when every string field of an {@link AdoptedText} is empty —
+ * the upstream content-pending sentinel that must not be surfaced to callers.
+ *
+ * Iterates over `Object.values` so the check stays correct if new fields are
+ * added to {@link AdoptedText} (all current fields are `string`).
+ *
+ * @internal
+ */
+function isEmptyAdoptedText(text: AdoptedText): boolean {
+  return Object.values(text).every((v) => typeof v === 'string' && v === '');
 }

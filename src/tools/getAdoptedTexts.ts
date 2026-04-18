@@ -20,6 +20,7 @@
 
 import { GetAdoptedTextsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { APIError } from '../clients/ep/baseClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
@@ -92,6 +93,29 @@ export async function handleGetAdoptedTexts(args: unknown): Promise<ToolResult> 
 
     return buildToolResponse(result);
   } catch (error: unknown) {
+    // Surface upstream 404s (including the content-pending sentinel translated
+    // by `LegislativeClient.getAdoptedTextById`) as a non-retryable
+    // `UPSTREAM_404`, so clients can distinguish "document unavailable" from a
+    // transient retryable failure instead of receiving an empty-string stub.
+    if (error instanceof APIError && error.statusCode === 404) {
+      // Ensure the requested docId is identifiable in the ToolError message
+      // even when the upstream message is generic (e.g. BaseEPClient surfaces
+      // raw HTTP 404s as "EP API request failed: Not Found").
+      const baseMessage = error.message;
+      const message =
+        params.docId !== undefined && !baseMessage.includes(params.docId)
+          ? `${baseMessage} (docId: "${params.docId}")`
+          : baseMessage;
+      throw new ToolError({
+        toolName: 'get_adopted_texts',
+        operation: 'fetchData',
+        message,
+        isRetryable: false,
+        errorCode: 'UPSTREAM_404',
+        httpStatus: 404,
+        cause: error,
+      });
+    }
     throw new ToolError({
       toolName: 'get_adopted_texts',
       operation: 'fetchData',
