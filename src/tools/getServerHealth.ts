@@ -37,7 +37,7 @@ export const GetServerHealthSchema = z.object({});
  * (see issue #1, recommendation 3).
  */
 export interface FeedProjection {
-  status: 'ok' | 'error' | 'unknown';
+  status: FeedStatus['status'];
   lastAttempt?: string;
   lastProbedAt?: string;
   lastSuccess?: string;
@@ -148,13 +148,15 @@ export const getServerHealthToolMetadata = {
   name: 'get_server_health',
   description:
     'Check server health and feed availability status. Returns server version, uptime, ' +
-    'per-feed health status (ok/error/unknown) with `lastProbedAt` staleness timestamps, ' +
-    'and overall availability level (Full/Degraded/Sparse/Unavailable/Unknown). ' +
-    '`Unknown` is reported when no feeds have been probed yet (cache empty) and must ' +
-    'NOT be interpreted as an outage — consumers should attempt at least one feed probe ' +
-    'before treating the server as down. Does not make upstream API calls — reports ' +
-    'cached status from recent tool invocations. Use this to check which feeds are ' +
-    'healthy before making data requests and to adapt data collection strategy.',
+    'per-feed health status (ok/error/unknown) and overall availability level ' +
+    '(Full/Degraded/Sparse/Unavailable/Unknown). Per-feed `lastProbedAt` and ' +
+    '`lastAttempt` staleness timestamps are included only once a feed has been probed ' +
+    '(absent for never-probed feeds). `Unknown` is reported when no feeds have been ' +
+    'probed yet (cache empty) and must NOT be interpreted as an outage — consumers ' +
+    'should attempt at least one feed probe before treating the server as down. Does ' +
+    'not make upstream API calls — reports cached status from recent tool invocations. ' +
+    'Use this to check which feeds are healthy before making data requests and to ' +
+    'adapt data collection strategy.',
   inputSchema: {
     type: 'object' as const,
     properties: {},
