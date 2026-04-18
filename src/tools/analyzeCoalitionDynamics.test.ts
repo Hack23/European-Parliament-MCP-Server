@@ -352,5 +352,28 @@ describe('analyze_coalition_dynamics Tool', () => {
       expect(data.coverage.unrecognizedGroups).toContain('Mystery Group XYZ');
       expect(data.dataQualityWarnings.some(w => w.includes('Mystery Group XYZ'))).toBe(true);
     });
+
+    it('should sanitize unrecognized labels (strip control chars, collapse whitespace, cap length)', async () => {
+      const longLabel = 'A'.repeat(200);
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
+        { id: 'MEP-1', name: 'A', country: 'DE', politicalGroup: 'EPP',
+          committees: [], active: true, termStart: '2024-07-16' },
+        { id: 'MEP-2', name: 'B', country: 'XX', politicalGroup: 'Foo\nBar\tBaz  Qux\x00Zap',
+          committees: [], active: true, termStart: '2024-07-16' },
+        { id: 'MEP-3', name: 'C', country: 'XX', politicalGroup: longLabel,
+          committees: [], active: true, termStart: '2024-07-16' },
+      ], complete: true });
+
+      const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        coverage: { unrecognizedGroups: string[] };
+      };
+      expect(data.coverage.unrecognizedGroups).toContain('Foo Bar Baz Qux Zap');
+      for (const label of data.coverage.unrecognizedGroups) {
+        expect(label).not.toMatch(/[\x00-\x1F\x7F]/);
+        expect(label.length).toBeLessThanOrEqual(121); // 120 + '…'
+      }
+      expect(data.coverage.unrecognizedGroups.some(l => l.endsWith('…'))).toBe(true);
+    });
   });
 });

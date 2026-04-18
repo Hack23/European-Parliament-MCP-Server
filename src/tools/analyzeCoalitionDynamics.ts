@@ -76,7 +76,7 @@ interface CoalitionDynamicsAnalysis {
   coverage: {
     groupsKnown: number;
     groupsTotal: number;
-    /** Raw EP API political-group labels observed that did not map to any target group. */
+    /** Raw EP API political-group labels observed whose canonical group was not in the analyzed target set (after normalization). Labels are sanitized — control characters stripped, whitespace collapsed, and length capped. */
     unrecognizedGroups: string[];
   };
   confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
@@ -97,6 +97,13 @@ interface CoalitionDynamicsAnalysis {
  * @see {@link normalizePoliticalGroup} for mapping raw EP API labels to these codes.
  */
 const POLITICAL_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'PfE', 'The Left', 'ESN', 'NI'];
+
+/**
+ * Upper bound on the length of a sanitized raw EP API political-group label
+ * when echoed back in `coverage.unrecognizedGroups` or warning messages.
+ * Guards against unbounded response sizes from pathological upstream payloads.
+ */
+const MAX_UNRECOGNIZED_LABEL_LENGTH = 120;
 
 /**
  * Alias table mapping normalized lowercase EP API political-group labels to
@@ -225,6 +232,25 @@ function normalizeTargetGroups(groupIds: readonly string[]): string[] {
 }
 
 /**
+ * Sanitizes a raw EP API political-group label for safe inclusion in the
+ * response (`coverage.unrecognizedGroups`) and warning messages.
+ *
+ * Strips ASCII control characters (including CR/LF that would break
+ * warning-line rendering), collapses internal runs of whitespace to a single
+ * space, trims, and caps the length at `MAX_UNRECOGNIZED_LABEL_LENGTH`
+ * characters (truncation suffixed with `…`) to guard against pathological or
+ * injected payloads producing unbounded response sizes.
+ *
+ * @param raw - Raw EP API political-group label
+ * @returns Sanitized label suitable for echoing back to consumers
+ */
+function sanitizeUnrecognizedLabel(raw: string): string {
+  const stripped = raw.replace(/[\x00-\x1F\x7F]+/g, ' ').replace(/\s+/g, ' ').trim();
+  if (stripped.length <= MAX_UNRECOGNIZED_LABEL_LENGTH) return stripped;
+  return `${stripped.slice(0, MAX_UNRECOGNIZED_LABEL_LENGTH)}…`;
+}
+
+/**
  * Classifies a coalition cohesion score as a qualitative trend string.
  *
  * Thresholds:
@@ -297,8 +323,11 @@ function computePairCohesion(
  * are passed through {@link normalizePoliticalGroup} before tallying, so MEPs
  * whose group is returned as a URI, full name, or historical alias (e.g. `ID`
  * → `PfE`) are counted against the correct canonical short code. Raw labels
- * that don't map to any target group are collected in the returned
- * `unrecognizedGroups` set so consumers can surface a data-quality warning.
+ * whose canonical group is not in the analyzed target set (after
+ * normalization) are collected — sanitized via
+ * {@link sanitizeUnrecognizedLabel} — in the returned `unrecognizedGroups`
+ * set so consumers can surface a data-quality warning. Note that this
+ * includes recognized canonical groups that were simply outside `groupIds`.
  *
  * **Note (voting data):** The EP API does not provide per-MEP voting statistics.
  * As a result, `internalCohesion`, `defectionRate`, and `avgAttendance` are set to
@@ -308,8 +337,9 @@ function computePairCohesion(
  *
  * @param targetGroups - Political group identifiers to query (e.g., `['EPP', 'S&D']`)
  * @param allMeps - Pre-fetched array of current MEPs
- * @returns Object with per-group cohesion metrics and the set of raw EP API
- *   group labels that did not map to any target group (for data-quality reporting).
+ * @returns Object with per-group cohesion metrics and the set of sanitized
+ *   EP API group labels whose canonical group was not in the analyzed target
+ *   set after normalization (for data-quality reporting).
  */
 function buildGroupMetrics(
   targetGroups: string[],
@@ -327,7 +357,7 @@ function buildGroupMetrics(
     if (targetSet.has(canonical)) {
       groupCounts.set(canonical, (groupCounts.get(canonical) ?? 0) + 1);
     } else {
-      unrecognizedSet.add(raw);
+      unrecognizedSet.add(sanitizeUnrecognizedLabel(raw));
     }
   }
 
@@ -559,14 +589,15 @@ function previewUnrecognized(labels: readonly string[], max = 10): string {
  *    `/meps/{id}` limitation that per-MEP vote statistics are not exposed.
  * 2. **Pagination failures** — emitted when the MEP fetch did not complete.
  * 3. **Group coverage** — emitted when at least one target group has
- *    `memberCount: 0`, or when raw EP API labels were observed that did not
- *    map to any analyzed target group.
+ *    `memberCount: 0`, or when EP API labels were observed whose canonical
+ *    group was not in the analyzed target set after normalization.
  *
  * @param fetchResult - Result from {@link fetchAllCurrentMEPs}; inspected for
  *   `complete` and `failureOffset` to decide whether to warn about partial data
  * @param missingGroups - Target-group IDs that ended up with `memberCount: 0`
  * @param totalGroups - Total number of target groups analyzed
- * @param unrecognizedGroups - Raw EP API group labels not mapped to any target
+ * @param unrecognizedGroups - Sanitized EP API group labels whose canonical
+ *   group was not in the analyzed target set after normalization
  * @returns Ordered array of human-readable warning messages for the response
  */
 function buildCoverageWarnings(
