@@ -573,7 +573,7 @@ function buildCoalitionComputedAttrs(
 /**
  * Renders a bounded, comma-separated preview of raw EP API group labels for
  * inclusion in data-quality warning messages. When the list exceeds `max`
- * entries the first `max` are rendered followed by a `` (+N more)`` suffix so
+ * entries the first `max` are rendered followed by a `(+N more)` suffix so
  * consumers can tell the preview was truncated.
  */
 function previewUnrecognized(labels: readonly string[], max = 10): string {
