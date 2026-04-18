@@ -270,6 +270,27 @@ describe('analyze_coalition_dynamics Tool', () => {
       const ids = data.groupMetrics.map(g => g.groupId);
       expect(ids).toEqual(['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'PfE', 'The Left', 'ESN', 'NI']);
     });
+
+    it('should normalize and dedupe caller-supplied groupIds (legacy ID, URI, alias, duplicate)', async () => {
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
+        { id: 'MEP-1', name: 'A', country: 'IT', politicalGroup: 'PfE',
+          committees: [], active: true, termStart: '2024-07-16' },
+      ], complete: true });
+
+      const result = await handleAnalyzeCoalitionDynamics({ groupIds: [
+        'ID', // legacy → PfE
+        'authority/corporate-body/PfE', // URI suffix → PfE (duplicate)
+        'European People\'s Party', // alias → EPP
+        'EPP', // duplicate of previous
+      ] });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        groupMetrics: { groupId: string; memberCount: number }[];
+        coverage: { groupsTotal: number };
+      };
+      expect(data.groupMetrics.map(g => g.groupId)).toEqual(['PfE', 'EPP']);
+      expect(data.coverage.groupsTotal).toBe(2);
+      expect(data.groupMetrics.find(g => g.groupId === 'PfE')?.memberCount).toBe(1);
+    });
   });
 
   describe('Coverage reporting and incomplete-data handling', () => {

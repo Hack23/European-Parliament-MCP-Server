@@ -199,6 +199,32 @@ export function normalizePoliticalGroup(raw: string): string {
 }
 
 /**
+ * Normalizes a list of caller-supplied group identifiers into a deduplicated
+ * sequence of canonical EP10 codes, preserving the first-seen order.
+ *
+ * Accepts any input format supported by {@link normalizePoliticalGroup}
+ * (short codes, URI suffixes, full group names, historical aliases such as
+ * `ID` → `PfE`). Empty / whitespace-only / `"unknown"` entries and duplicates
+ * after normalization are dropped. Unrecognized labels are preserved as-is
+ * (after trimming) so downstream coverage reporting can surface them.
+ *
+ * @param groupIds - Raw caller-provided group identifiers
+ * @returns Deduplicated canonical group identifiers in first-seen order
+ */
+function normalizeTargetGroups(groupIds: readonly string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const raw of groupIds) {
+    const canonical = normalizePoliticalGroup(raw);
+    if (canonical === '' || canonical.toLowerCase() === 'unknown') continue;
+    if (seen.has(canonical)) continue;
+    seen.add(canonical);
+    result.push(canonical);
+  }
+  return result;
+}
+
+/**
  * Classifies a coalition cohesion score as a qualitative trend string.
  *
  * Thresholds:
@@ -657,7 +683,7 @@ export async function handleAnalyzeCoalitionDynamics(
   const params = AnalyzeCoalitionDynamicsSchema.parse(args);
 
   try {
-    const targetGroups = params.groupIds ?? POLITICAL_GROUPS;
+    const targetGroups = normalizeTargetGroups(params.groupIds ?? POLITICAL_GROUPS);
     const fetchResult = await fetchAllCurrentMEPs();
     const { metrics: groupMetrics, unrecognizedGroups } = buildGroupMetrics(targetGroups, fetchResult.meps);
     const coalitionPairs = buildCoalitionPairs(targetGroups, params.minimumCohesion, groupMetrics);
