@@ -711,6 +711,21 @@ export class BaseEPClient {
   }
 
   /**
+   * Evicts a single cache entry matching the given endpoint and params.
+   * Sub-clients use this when they detect that a successfully-fetched payload
+   * is a content-pending sentinel that must not be served from cache for the
+   * remainder of the TTL — eviction lets availability recover as soon as the
+   * upstream document is enriched.
+   *
+   * @param endpoint - API endpoint path (same value passed to {@link get})
+   * @param params - Optional query parameters (same value passed to {@link get})
+   * @protected
+   */
+  protected evictFromCache(endpoint: string, params?: Record<string, unknown>): void {
+    this.cache.delete(this.getCacheKey(endpoint, params));
+  }
+
+  /**
    * Returns cache statistics for monitoring and debugging.
    * @returns `{ size, maxSize, hitRate, hits, misses }`
    * @public
