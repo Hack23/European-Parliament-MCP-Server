@@ -292,5 +292,5 @@ export class LegislativeClient extends BaseEPClient {
  * @internal
  */
 function isEmptyAdoptedText(text: AdoptedText): boolean {
-  return Object.values(text).every((v) => v === '');
+  return Object.values(text).every((v) => typeof v === 'string' && v === '');
 }
