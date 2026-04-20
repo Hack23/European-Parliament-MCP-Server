@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.9**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.10**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **buildFeedSuccessResponse**(`result`, `warnings?`): [`ToolResult`](../../types/interfaces/ToolResult.md)
 
-Defined in: [tools/shared/feedUtils.ts:138](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L138)
+Defined in: [tools/shared/feedUtils.ts:180](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L180)
 
 Wrap a successful upstream feed result in the uniform envelope.
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.9**](../../../README.md)
+[**European Parliament MCP Server API v1.2.10**](../../../README.md)
 
 ***
 
@@ -9,6 +9,10 @@
 ## Type Aliases
 
 - [FeedStatus](type-aliases/FeedStatus.md)
+
+## Variables
+
+- [FIXED\_WINDOW\_FEED\_INPUT\_SCHEMA](variables/FIXED_WINDOW_FEED_INPUT_SCHEMA.md)
 
 ## Functions
 
