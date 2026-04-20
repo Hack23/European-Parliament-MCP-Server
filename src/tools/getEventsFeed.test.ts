@@ -122,6 +122,28 @@ describe('get_events_feed Tool', () => {
       expect(parsed.data).toEqual([]);
       expect(parsed.dataQualityWarnings[0]).toContain('no data');
     });
+
+    it('should handle error-in-body response (HTTP 200 with upstream 404-in-body)', async () => {
+      vi.mocked(epClientModule.epClient.getEventsFeed).mockResolvedValueOnce({
+        '@id': 'https://data.europarl.europa.eu/eli/dl/event/ITRE-AM-786788-DEPOT-2026',
+        'error': '404 Not Found from POST ...',
+        '@context': { error: {} },
+      } as unknown as { data: unknown[]; '@context': unknown[] });
+
+      const result = await handleGetEventsFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        data: unknown[];
+        items: unknown[];
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.data).toEqual([]);
+      expect(parsed.items).toEqual([]);
+      expect(parsed.dataQualityWarnings[0]).toContain('error-in-body');
+    });
   });
 
   describe('Uniform feed envelope (Defect #5)', () => {
