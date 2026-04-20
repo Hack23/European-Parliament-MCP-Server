@@ -76,7 +76,7 @@ export type FeedStatus = 'operational' | 'degraded' | 'unavailable';
  * (typically one month).  For contract uniformity with the sliding-window
  * feed tools (Group B), this schema still advertises those parameters —
  * they are accepted by the Zod validator but silently ignored at the
- * upstream call site.  See {@link FixedWindowFeedSchema} in
+ * upstream call site.  See `FixedWindowFeedSchema` in
  * `src/schemas/ep/feed.ts`.
  */
 export const FIXED_WINDOW_FEED_INPUT_SCHEMA = {
