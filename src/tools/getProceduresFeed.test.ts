@@ -122,6 +122,28 @@ describe('get_procedures_feed Tool', () => {
       expect(parsed.data).toEqual([]);
       expect(parsed.dataQualityWarnings[0]).toContain('no data');
     });
+
+    it('should handle error-in-body response (HTTP 200 with upstream 404-in-body)', async () => {
+      vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
+        '@id': 'https://data.europarl.europa.eu/eli/dl/proc/2026-2033',
+        'error': '404 Not Found from POST ...',
+        '@context': { error: {} },
+      } as unknown as { data: unknown[]; '@context': unknown[] });
+
+      const result = await handleGetProceduresFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        data: unknown[];
+        items: unknown[];
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.data).toEqual([]);
+      expect(parsed.items).toEqual([]);
+      expect(parsed.dataQualityWarnings[0]).toContain('error-in-body');
+    });
   });
 
   describe('Metadata', () => {
