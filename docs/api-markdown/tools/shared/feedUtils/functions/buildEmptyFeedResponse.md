@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.9**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.10**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **buildEmptyFeedResponse**(`reason?`): [`ToolResult`](../../types/interfaces/ToolResult.md)
 
-Defined in: [tools/shared/feedUtils.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L197)
+Defined in: [tools/shared/feedUtils.ts:239](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L239)
 
 Build an empty feed response under the uniform contract.
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.9**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.10**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **isErrorInBody**(`result`): `boolean`
 
-Defined in: [tools/shared/feedUtils.ts:100](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L100)
+Defined in: [tools/shared/feedUtils.ts:142](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L142)
 
 Detect an EP API "error-in-body" response.
 
