@@ -90,7 +90,7 @@ export async function handleGetEvents(args: unknown): Promise<ToolResult> {
       offset: params.offset,
     };
 
-    const result = await epClient.getEvents(apiParams as Parameters<typeof epClient.getEvents>[0]);
+    const result = await epClient.getEvents(apiParams);
 
     return buildToolResponse(result);
   } catch (error: unknown) {

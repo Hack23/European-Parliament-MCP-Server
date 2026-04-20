@@ -89,7 +89,7 @@ export async function handleGetCommitteeInfo(
       { from: 'abbreviation', to: 'abbreviation' },
     ]);
     
-    const result = await epClient.getCommitteeInfo(apiParams as Parameters<typeof epClient.getCommitteeInfo>[0]);
+    const result = await epClient.getCommitteeInfo(apiParams);
     
     // Validate output
     const validated = CommitteeSchema.parse(result);

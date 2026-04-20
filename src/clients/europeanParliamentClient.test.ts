@@ -164,7 +164,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(10)
-      } as Response);
+      });
 
       const result = await client.getMEPs({ limit: 10 });
 
@@ -182,7 +182,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
-      } as Response);
+      });
 
       const result = await client.getMEPs({ country: 'SE' });
       
@@ -198,7 +198,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(25)
-      } as Response);
+      });
 
       const result = await client.getMEPs({ limit: 25 });
       
@@ -210,7 +210,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 500,
         statusText: 'Internal Server Error'
-      } as Response);
+      });
 
       await expect(client.getMEPs({ limit: 10 })).rejects.toThrow(APIError);
     });
@@ -220,7 +220,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
-      } as Response);
+      });
 
       // First request
       await client.getMEPs({ limit: 10 });
@@ -255,7 +255,7 @@ describe('EuropeanParliamentClient', () => {
             'https://data.europarl.europa.eu/api/v2/context.jsonld'
           ]
         })
-      } as Response);
+      });
 
       const result = await client.getMEPDetails('MEP-124810');
 
@@ -283,7 +283,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getMEPDetails('MEP-124810');
 
@@ -298,7 +298,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMeetingsResponse(10)
-      } as Response);
+      });
 
       const result = await client.getPlenarySessions({ limit: 10 });
 
@@ -312,7 +312,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMeetingsResponse(1)
-      } as Response);
+      });
 
       const result = await client.getPlenarySessions({ limit: 10 });
 
@@ -330,7 +330,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMeetingsResponse(1)
-      } as Response);
+      });
 
       const result = await client.getPlenarySessions({ limit: 1 });
 
@@ -342,7 +342,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMeetingsResponse(1)
-      } as Response);
+      });
 
       await client.getPlenarySessions({ year: 2024, limit: 10 });
 
@@ -1662,7 +1662,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
-      } as Response);
+      });
 
       // First call
       const result1 = await client.getMEPs({ country: 'SE', limit: 10 });
@@ -1690,7 +1690,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
-      } as Response);
+      });
 
       // Initial state: no hits or misses
       let stats = client.getCacheStats();
@@ -1718,7 +1718,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
-      } as Response);
+      });
 
       // First call should populate cache
       await client.getMEPs({ limit: 10 });
@@ -1744,7 +1744,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 500,
         statusText: 'Internal Server Error'
-      } as Response);
+      });
 
       await expect(clientNoRetry.getMEPs({ limit: 10 })).rejects.toThrow(APIError);
     });
@@ -1758,12 +1758,12 @@ describe('EuropeanParliamentClient', () => {
             ok: false,
             status: 500,
             statusText: 'Internal Server Error'
-          } as Response)
+          })
           .mockResolvedValueOnce({
             ok: true,
             headers: new Headers(),
             json: async () => createMockMEPsResponse(1)
-          } as Response);
+          });
 
         const requestPromise = client.getMEPs({ limit: 10 });
 
@@ -1786,7 +1786,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 400,
         statusText: 'Bad Request'
-      } as Response);
+      });
 
       await expect(client.getMEPs({ limit: 10 })).rejects.toThrow(APIError);
       // 4xx errors should not be retried
@@ -1817,7 +1817,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getMEPs({ limit: 1 });
       expect(result.data).toHaveLength(1);
@@ -1837,7 +1837,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getMEPs({ limit: 1 });
       expect(result.data[0].id).toContain('person/');
@@ -1856,7 +1856,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getMEPs({ limit: 1 });
       expect(result.data[0].name).toBe('Jane Smith');
@@ -1875,7 +1875,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getPlenarySessions({ limit: 1 });
       expect(result.data[0].date).toBe('');
@@ -1894,7 +1894,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getPlenarySessions({ limit: 1 });
       expect(result.data[0].date).toBe('');
@@ -1913,7 +1913,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getPlenarySessions({ limit: 1 });
       expect(result.data[0].location).toBe('Unknown');
@@ -1933,7 +1933,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getMEPDetails('123');
       expect(result.biography).toBe('Born: Unknown');
@@ -1956,7 +1956,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getMEPDetails('123');
       // With null/empty organizations, should fall back to empty committees array from transformMEP
@@ -1974,7 +1974,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getMEPDetails('MEP-124810');
       expect(result).toBeDefined();
@@ -2001,7 +2001,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getMEPDetails('person/124810');
       expect(result).toBeDefined();
@@ -2135,7 +2135,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(5)
-      } as Response);
+      });
 
       const result = await client.getCurrentMEPs({ limit: 10 });
 
@@ -2153,7 +2153,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(3)
-      } as Response);
+      });
 
       const result = await client.getCurrentMEPs({ limit: 10 });
 
@@ -2167,7 +2167,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
-      } as Response);
+      });
 
       const result = await client.getCurrentMEPs({ limit: 10 });
 
@@ -2182,7 +2182,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(1)
-      } as Response);
+      });
 
       await client.getCurrentMEPs({});
 
@@ -2198,7 +2198,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getCurrentMEPs({ limit: 10 })).rejects.toThrow(APIError);
     });
@@ -2208,7 +2208,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
-      } as Response);
+      });
 
       const result = await client.getCurrentMEPs();
 
@@ -2221,7 +2221,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(10)
-      } as Response);
+      });
 
       const result = await client.getCurrentMEPs({ country: 'DE', limit: 50 });
 
@@ -2237,7 +2237,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(10)
-      } as Response);
+      });
 
       const result = await client.getCurrentMEPs({ group: 'EPP', limit: 50 });
 
@@ -2252,7 +2252,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(10)
-      } as Response);
+      });
 
       const result = await client.getCurrentMEPs({ country: 'DE', group: 'EPP', limit: 50 });
 
@@ -2267,7 +2267,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(5)
-      } as Response);
+      });
 
       await client.getCurrentMEPs({ country: 'DE', limit: 50 });
 
@@ -2283,7 +2283,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(10)
-      } as Response);
+      });
 
       const result = await client.getCurrentMEPs({ country: 'DE', limit: 50 });
 
@@ -2298,7 +2298,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(3)
-      } as Response);
+      });
 
       const result = await client.getIncomingMEPs({ limit: 10 });
 
@@ -2313,7 +2313,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(1)
-      } as Response);
+      });
 
       await client.getIncomingMEPs({});
 
@@ -2328,7 +2328,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getIncomingMEPs({})).rejects.toThrow(APIError);
     });
@@ -2340,7 +2340,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(4)
-      } as Response);
+      });
 
       const result = await client.getOutgoingMEPs({ limit: 10 });
 
@@ -2354,7 +2354,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(1)
-      } as Response);
+      });
 
       await client.getOutgoingMEPs({});
 
@@ -2370,7 +2370,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getOutgoingMEPs({})).rejects.toThrow(APIError);
     });
@@ -2382,7 +2382,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockSpeechesResponse(3)
-      } as Response);
+      });
 
       const result = await client.getSpeeches({ limit: 10 });
 
@@ -2399,7 +2399,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockSpeechesResponse(1)
-      } as Response);
+      });
 
       const result = await client.getSpeeches({ limit: 1 });
       const speech = result.data[0];
@@ -2419,7 +2419,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockSpeechesResponse(1)
-      } as Response);
+      });
 
       await client.getSpeeches({ dateFrom: '2024-01-01', dateTo: '2024-06-30' });
 
@@ -2434,7 +2434,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockSpeechesResponse(1)
-      } as Response);
+      });
 
       // Use type-escape to pass year even though the interface doesn't accept it
       await (client as unknown as { getSpeeches(p: Record<string, unknown>): Promise<unknown> }).getSpeeches({ year: 2024 });
@@ -2452,7 +2452,7 @@ describe('EuropeanParliamentClient', () => {
           data: [],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getSpeeches({});
 
@@ -2466,7 +2466,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getSpeeches({})).rejects.toThrow(APIError);
     });
@@ -2476,7 +2476,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockSpeechesResponse(10)
-      } as Response);
+      });
 
       const result = await client.getSpeeches({ limit: 10 });
 
@@ -2490,7 +2490,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockProceduresResponse(3)
-      } as Response);
+      });
 
       const result = await client.getProcedures({ limit: 10 });
 
@@ -2505,7 +2505,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockProceduresResponse(1)
-      } as Response);
+      });
 
       const result = await client.getProcedures({ limit: 1 });
       const proc = result.data[0];
@@ -2524,7 +2524,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockProceduresResponse(1)
-      } as Response);
+      });
 
       // Use type-escape to pass year even though the interface doesn't accept it
       await (client as unknown as { getProcedures(p: Record<string, unknown>): Promise<unknown> }).getProcedures({ year: 2024 });
@@ -2540,7 +2540,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getProcedures({})).rejects.toThrow(APIError);
     });
@@ -2553,7 +2553,7 @@ describe('EuropeanParliamentClient', () => {
           data: [],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getProcedures({});
       expect(result.data).toEqual([]);
@@ -2575,7 +2575,7 @@ describe('EuropeanParliamentClient', () => {
           process_date_update: '2024-06-15',
           was_attributed_to: 'IMCO'
         })
-      } as Response);
+      });
 
       const result = await client.getProcedureById('2024/0001(COD)');
 
@@ -2600,7 +2600,7 @@ describe('EuropeanParliamentClient', () => {
           identifier: 'PROC-1',
           title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
         })
-      } as Response);
+      });
 
       await client.getProcedureById('PROC-1');
 
@@ -2617,7 +2617,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockAdoptedTextsResponse(3)
-      } as Response);
+      });
 
       const result = await client.getAdoptedTexts({ limit: 10 });
 
@@ -2632,7 +2632,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockAdoptedTextsResponse(1)
-      } as Response);
+      });
 
       const result = await client.getAdoptedTexts({ limit: 1 });
       const text = result.data[0];
@@ -2649,7 +2649,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockAdoptedTextsResponse(1)
-      } as Response);
+      });
 
       await client.getAdoptedTexts({ year: 2024 });
 
@@ -2665,7 +2665,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getAdoptedTexts({})).rejects.toThrow(APIError);
     });
@@ -2677,7 +2677,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockEventsResponse(3)
-      } as Response);
+      });
 
       const result = await client.getEvents({ limit: 10 });
 
@@ -2692,7 +2692,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockEventsResponse(1)
-      } as Response);
+      });
 
       const result = await client.getEvents({ limit: 1 });
       const event = result.data[0];
@@ -2711,7 +2711,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockEventsResponse(1)
-      } as Response);
+      });
 
       // Use type-escape to pass year/dateFrom/dateTo even though the interface doesn't accept them
       await (client as unknown as { getEvents(p: Record<string, unknown>): Promise<unknown> }).getEvents({ year: 2024, dateFrom: '2024-01-01', dateTo: '2024-12-31' });
@@ -2729,7 +2729,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getEvents({})).rejects.toThrow(APIError);
     });
@@ -2742,7 +2742,7 @@ describe('EuropeanParliamentClient', () => {
           data: [],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getEvents({});
       expect(result.data).toEqual([]);
@@ -2756,7 +2756,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMeetingActivitiesResponse(3)
-      } as Response);
+      });
 
       const result = await client.getMeetingActivities('MTG-PL-2024-001', { limit: 10 });
 
@@ -2771,7 +2771,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMeetingActivitiesResponse(1)
-      } as Response);
+      });
 
       const result = await client.getMeetingActivities('MTG-PL-2024-001', { limit: 1 });
       const activity = result.data[0];
@@ -2797,7 +2797,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMeetingActivitiesResponse(1)
-      } as Response);
+      });
 
       await client.getMeetingActivities('MTG-PL-2024-001', {});
 
@@ -2812,7 +2812,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getMeetingActivities('INVALID', {})).rejects.toThrow(APIError);
     });
@@ -2824,7 +2824,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(3)
-      } as Response);
+      });
 
       const result = await client.getMeetingDecisions('MTG-PL-2024-001', { limit: 10 });
 
@@ -2846,7 +2846,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       await client.getMeetingDecisions('MTG-PL-2024-001', {});
 
@@ -2862,7 +2862,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getMeetingDecisions('MTG-1', {})).rejects.toThrow(APIError);
     });
@@ -2874,7 +2874,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDeclarationsResponse(3)
-      } as Response);
+      });
 
       const result = await client.getMEPDeclarations({ limit: 10 });
 
@@ -2889,7 +2889,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDeclarationsResponse(1)
-      } as Response);
+      });
 
       const result = await client.getMEPDeclarations({ limit: 1 });
       const decl = result.data[0];
@@ -2907,7 +2907,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDeclarationsResponse(1)
-      } as Response);
+      });
 
       await client.getMEPDeclarations({ year: 2024 });
 
@@ -2923,7 +2923,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getMEPDeclarations({})).rejects.toThrow(APIError);
     });
@@ -2936,7 +2936,7 @@ describe('EuropeanParliamentClient', () => {
           data: [],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getMEPDeclarations({});
       expect(result.data).toEqual([]);
@@ -2949,7 +2949,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(3)
-      } as Response);
+      });
 
       const result = await client.getPlenaryDocuments({ limit: 10 });
 
@@ -2962,7 +2962,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       await client.getPlenaryDocuments({});
 
@@ -2977,7 +2977,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       await client.getPlenaryDocuments({ year: 2024 });
 
@@ -2993,7 +2993,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getPlenaryDocuments({})).rejects.toThrow(APIError);
     });
@@ -3005,7 +3005,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(3)
-      } as Response);
+      });
 
       const result = await client.getCommitteeDocuments({ limit: 10 });
 
@@ -3018,7 +3018,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       await client.getCommitteeDocuments({});
 
@@ -3033,7 +3033,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       // Use type-escape to pass year even though the interface doesn't accept it
       await (client as unknown as { getCommitteeDocuments(p: Record<string, unknown>): Promise<unknown> }).getCommitteeDocuments({ year: 2024 });
@@ -3049,7 +3049,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getCommitteeDocuments({})).rejects.toThrow(APIError);
     });
@@ -3061,7 +3061,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(3)
-      } as Response);
+      });
 
       const result = await client.getPlenarySessionDocuments({ limit: 10 });
 
@@ -3074,7 +3074,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       await client.getPlenarySessionDocuments({});
 
@@ -3090,7 +3090,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getPlenarySessionDocuments({})).rejects.toThrow(APIError);
     });
@@ -3108,7 +3108,7 @@ describe('EuropeanParliamentClient', () => {
           ],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getControlledVocabularies({ limit: 10 });
 
@@ -3125,7 +3125,7 @@ describe('EuropeanParliamentClient', () => {
           data: [],
           '@context': []
         })
-      } as Response);
+      });
 
       await client.getControlledVocabularies({});
 
@@ -3141,7 +3141,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getControlledVocabularies({})).rejects.toThrow(APIError);
     });
@@ -3154,7 +3154,7 @@ describe('EuropeanParliamentClient', () => {
           data: [{ customField: 'value', anotherField: 42 }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getControlledVocabularies({});
 
@@ -3181,7 +3181,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getSpeeches({ limit: 1 });
       const speech = result.data[0];
@@ -3203,7 +3203,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getSpeeches({ limit: 1 });
       const speech = result.data[0];
@@ -3228,7 +3228,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getProcedures({ limit: 1 });
       const proc = result.data[0];
@@ -3249,7 +3249,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getProcedures({ limit: 1 });
       const proc = result.data[0];
@@ -3269,7 +3269,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getProcedures({ limit: 1 });
       const proc = result.data[0];
@@ -3289,7 +3289,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getProcedures({ limit: 1 });
       const proc = result.data[0];
@@ -3307,7 +3307,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getProcedures({ limit: 1 });
       const proc = result.data[0];
@@ -3332,7 +3332,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getAdoptedTexts({ limit: 1 });
       const text = result.data[0];
@@ -3362,7 +3362,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getEvents({ limit: 1 });
       const event = result.data[0];
@@ -3393,7 +3393,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getMeetingActivities('MTG-1', { limit: 1 });
       const activity = result.data[0];
@@ -3413,7 +3413,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getMeetingActivities('MTG-1', { limit: 1 });
       const activity = result.data[0];
@@ -3439,7 +3439,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getMEPDeclarations({ limit: 1 });
       const decl = result.data[0];
@@ -3463,7 +3463,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getMEPDeclarations({ limit: 1 });
       const decl = result.data[0];
@@ -3483,7 +3483,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(3)
-      } as Response);
+      });
 
       const result = await client.getHomonymMEPs({ limit: 10 });
 
@@ -3501,7 +3501,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(1)
-      } as Response);
+      });
 
       await client.getHomonymMEPs({});
 
@@ -3516,7 +3516,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMEPsResponse(2)
-      } as Response);
+      });
 
       const result = await client.getHomonymMEPs();
 
@@ -3530,7 +3530,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 500,
         statusText: 'Internal Server Error'
-      } as Response);
+      });
 
       await expect(client.getHomonymMEPs({ limit: 10 })).rejects.toThrow(APIError);
     });
@@ -3542,7 +3542,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
-      } as Response);
+      });
 
       const result = await client.getCurrentCorporateBodies({ limit: 10 });
 
@@ -3558,7 +3558,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
-      } as Response);
+      });
 
       await client.getCurrentCorporateBodies({});
 
@@ -3573,7 +3573,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockCorporateBodyResponse()
-      } as Response);
+      });
 
       const result = await client.getCurrentCorporateBodies();
 
@@ -3587,7 +3587,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getCurrentCorporateBodies({})).rejects.toThrow(APIError);
     });
@@ -3608,7 +3608,7 @@ describe('EuropeanParliamentClient', () => {
           was_organized_by: 'IMCO',
           activity_status: 'CONFIRMED'
         })
-      } as Response);
+      });
 
       const result = await client.getEventById('EVT-2024-001');
 
@@ -3634,7 +3634,7 @@ describe('EuropeanParliamentClient', () => {
           identifier: 'EVT-2024-001',
           label: [{ '@language': 'en', '@value': 'Test' }]
         })
-      } as Response);
+      });
 
       await client.getEventById('EVT-2024-001');
 
@@ -3657,7 +3657,7 @@ describe('EuropeanParliamentClient', () => {
           activity_id: 'MTG-PL-2024-01-15',
           activity_label: { en: 'Plenary session' }
         })
-      } as Response);
+      });
 
       const result = await client.getMeetingById('MTG-PL-2024-01-15');
 
@@ -3681,7 +3681,7 @@ describe('EuropeanParliamentClient', () => {
           type: 'Activity',
           activity_id: 'MTG-PL-2024-01-15'
         })
-      } as Response);
+      });
 
       await client.getMeetingById('MTG-PL-2024-01-15');
 
@@ -3698,7 +3698,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMeetingActivitiesResponse(2)
-      } as Response);
+      });
 
       const result = await client.getMeetingForeseenActivities('MTG-PL-2024-001', { limit: 10 });
 
@@ -3721,7 +3721,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMeetingActivitiesResponse(1)
-      } as Response);
+      });
 
       await client.getMeetingForeseenActivities('MTG-PL-2024-001');
 
@@ -3736,7 +3736,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockMeetingActivitiesResponse(1)
-      } as Response);
+      });
 
       const result = await client.getMeetingForeseenActivities('MTG-PL-2024-001');
 
@@ -3762,7 +3762,7 @@ describe('EuropeanParliamentClient', () => {
           text: 'Speech content',
           was_part_of: 'event/MTG-PL-2024-03-10'
         })
-      } as Response);
+      });
 
       const result = await client.getSpeechById('SPEECH-1');
 
@@ -3788,7 +3788,7 @@ describe('EuropeanParliamentClient', () => {
           identifier: 'SPEECH-1',
           label: 'Speech'
         })
-      } as Response);
+      });
 
       await client.getSpeechById('SPEECH-1');
 
@@ -3805,7 +3805,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockEventsResponse(2)
-      } as Response);
+      });
 
       const result = await client.getProcedureEvents('2024/0001(COD)', { limit: 10 });
 
@@ -3828,7 +3828,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockEventsResponse(1)
-      } as Response);
+      });
 
       await client.getProcedureEvents('2024/0001(COD)');
 
@@ -3843,7 +3843,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockEventsResponse(1)
-      } as Response);
+      });
 
       const result = await client.getProcedureEvents('2024/0001(COD)');
 
@@ -3866,7 +3866,7 @@ describe('EuropeanParliamentClient', () => {
           based_on_a_concept_procedure: '2023/0123(COD)',
           subject_matter: [{ '@language': 'en', '@value': 'Digital policy' }]
         })
-      } as Response);
+      });
 
       const result = await client.getAdoptedTextById('TA-9-2024-0001');
 
@@ -3892,7 +3892,7 @@ describe('EuropeanParliamentClient', () => {
           work_id: 'TA-9-2024-0001',
           title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
         })
-      } as Response);
+      });
 
       await client.getAdoptedTextById('TA-9-2024-0001');
 
@@ -3910,7 +3910,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => ({})
-      } as Response);
+      });
 
       await expect(client.getAdoptedTextById('TA-10-2026-0099'))
         .rejects.toMatchObject({
@@ -3926,7 +3926,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => ({})
-      } as Response);
+      });
 
       await expect(client.getAdoptedTextById('TA-10-2026-0099')).rejects.toMatchObject({
         statusCode: 404
@@ -3942,7 +3942,7 @@ describe('EuropeanParliamentClient', () => {
           identifier: 'TA-10-2026-0099',
           title: 'Resolution on something important'
         })
-      } as Response);
+      });
 
       const result = await client.getAdoptedTextById('TA-10-2026-0099');
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -3963,7 +3963,7 @@ describe('EuropeanParliamentClient', () => {
           title_dcterms: [{ '@language': 'en', '@value': 'Climate report' }],
           work_date_document: '2024-01-10'
         })
-      } as Response);
+      });
 
       const result = await client.getDocumentById('A-9-2024-0001');
 
@@ -3989,7 +3989,7 @@ describe('EuropeanParliamentClient', () => {
           work_id: 'A-9-2024-0001',
           title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
         })
-      } as Response);
+      });
 
       await client.getDocumentById('A-9-2024-0001');
 
@@ -4012,7 +4012,7 @@ describe('EuropeanParliamentClient', () => {
           title_dcterms: [{ '@language': 'en', '@value': 'Committee report' }],
           work_date_document: '2024-02-15'
         })
-      } as Response);
+      });
 
       const result = await client.getCommitteeDocumentById('CM-9-2024-0001');
 
@@ -4038,7 +4038,7 @@ describe('EuropeanParliamentClient', () => {
           work_id: 'CM-9-2024-0001',
           title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
         })
-      } as Response);
+      });
 
       await client.getCommitteeDocumentById('CM-9-2024-0001');
 
@@ -4063,7 +4063,7 @@ describe('EuropeanParliamentClient', () => {
           was_created_by: 'person/124810',
           was_realized_by: 'answer-ref'
         })
-      } as Response);
+      });
 
       const result = await client.getParliamentaryQuestionById('E-9-2024-000001');
 
@@ -4089,7 +4089,7 @@ describe('EuropeanParliamentClient', () => {
           work_id: 'E-9-2024-000001',
           title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
         })
-      } as Response);
+      });
 
       await client.getParliamentaryQuestionById('E-9-2024-000001');
 
@@ -4112,7 +4112,7 @@ describe('EuropeanParliamentClient', () => {
           title_dcterms: [{ '@language': 'en', '@value': 'Plenary report' }],
           work_date_document: '2024-03-10'
         })
-      } as Response);
+      });
 
       const result = await client.getPlenaryDocumentById('PV-9-2024-0001');
 
@@ -4138,7 +4138,7 @@ describe('EuropeanParliamentClient', () => {
           work_id: 'PV-9-2024-0001',
           title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
         })
-      } as Response);
+      });
 
       await client.getPlenaryDocumentById('PV-9-2024-0001');
 
@@ -4161,7 +4161,7 @@ describe('EuropeanParliamentClient', () => {
           title_dcterms: [{ '@language': 'en', '@value': 'Session document' }],
           work_date_document: '2024-04-01'
         })
-      } as Response);
+      });
 
       const result = await client.getPlenarySessionDocumentById('PS-9-2024-0001');
 
@@ -4187,7 +4187,7 @@ describe('EuropeanParliamentClient', () => {
           work_id: 'PS-9-2024-0001',
           title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
         })
-      } as Response);
+      });
 
       await client.getPlenarySessionDocumentById('PS-9-2024-0001');
 
@@ -4204,7 +4204,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(3)
-      } as Response);
+      });
 
       const result = await client.getPlenarySessionDocumentItems({ limit: 10 });
 
@@ -4221,7 +4221,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       await client.getPlenarySessionDocumentItems({});
 
@@ -4236,7 +4236,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       const result = await client.getPlenarySessionDocumentItems();
 
@@ -4250,7 +4250,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 500,
         statusText: 'Internal Server Error'
-      } as Response);
+      });
 
       await expect(client.getPlenarySessionDocumentItems({})).rejects.toThrow(APIError);
     });
@@ -4262,7 +4262,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(2)
-      } as Response);
+      });
 
       const result = await client.getExternalDocuments({ limit: 10 });
 
@@ -4279,7 +4279,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       await client.getExternalDocuments({});
 
@@ -4294,7 +4294,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       // Use type-escape to pass year even though the interface doesn't accept it
       await (client as unknown as { getExternalDocuments(p: Record<string, unknown>): Promise<unknown> }).getExternalDocuments({ year: 2024 });
@@ -4309,7 +4309,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       const result = await client.getExternalDocuments();
 
@@ -4323,7 +4323,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getExternalDocuments({})).rejects.toThrow(APIError);
     });
@@ -4341,7 +4341,7 @@ describe('EuropeanParliamentClient', () => {
           title_dcterms: [{ '@language': 'en', '@value': 'External report' }],
           work_date_document: '2024-05-01'
         })
-      } as Response);
+      });
 
       const result = await client.getExternalDocumentById('EXT-2024-0001');
 
@@ -4367,7 +4367,7 @@ describe('EuropeanParliamentClient', () => {
           work_id: 'EXT-2024-0001',
           title_dcterms: [{ '@language': 'en', '@value': 'Test' }]
         })
-      } as Response);
+      });
 
       await client.getExternalDocumentById('EXT-2024-0001');
 
@@ -4389,7 +4389,7 @@ describe('EuropeanParliamentClient', () => {
           notation: 'TEST',
           entries: [{ code: 'A', label: 'Alpha' }]
         })
-      } as Response);
+      });
 
       const result = await client.getControlledVocabularyById('voc-1');
 
@@ -4413,7 +4413,7 @@ describe('EuropeanParliamentClient', () => {
           id: 'voc-1',
           label: 'Test'
         })
-      } as Response);
+      });
 
       await client.getControlledVocabularyById('voc-1');
 
@@ -4439,7 +4439,7 @@ describe('EuropeanParliamentClient', () => {
           work_date_document: '2024-01-10',
           'resource_legal_in-force': 'PUBLISHED'
         })
-      } as Response);
+      });
 
       const result = await client.getMEPDeclarationById('DFI-9-2024-000001');
 
@@ -4466,7 +4466,7 @@ describe('EuropeanParliamentClient', () => {
           title_dcterms: [{ '@language': 'en', '@value': 'Test' }],
           was_attributed_to: 'person/10001'
         })
-      } as Response);
+      });
 
       await client.getMEPDeclarationById('DFI-9-2024-000001');
 
@@ -4483,7 +4483,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(3)
-      } as Response);
+      });
 
       const result = await client.getMeetingPlenarySessionDocuments('MTG-PL-2024-001', { limit: 10 });
 
@@ -4513,7 +4513,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       await client.getMeetingPlenarySessionDocuments('MTG-PL-2024-001');
 
@@ -4528,7 +4528,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       const result = await client.getMeetingPlenarySessionDocuments('MTG-PL-2024-001');
 
@@ -4542,7 +4542,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found'
-      } as Response);
+      });
 
       await expect(client.getMeetingPlenarySessionDocuments('INVALID')).rejects.toThrow(APIError);
     });
@@ -4554,7 +4554,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(2)
-      } as Response);
+      });
 
       const result = await client.getMeetingPlenarySessionDocumentItems('MTG-PL-2024-001', { limit: 10 });
 
@@ -4584,7 +4584,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       await client.getMeetingPlenarySessionDocumentItems('MTG-PL-2024-001');
 
@@ -4599,7 +4599,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(),
         json: async () => createMockDocumentsResponse(1)
-      } as Response);
+      });
 
       const result = await client.getMeetingPlenarySessionDocumentItems('MTG-PL-2024-001');
 
@@ -4613,7 +4613,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 500,
         statusText: 'Internal Server Error'
-      } as Response);
+      });
 
       await expect(client.getMeetingPlenarySessionDocumentItems('MTG-1')).rejects.toThrow(APIError);
     });
@@ -4629,12 +4629,12 @@ describe('EuropeanParliamentClient', () => {
             ok: false,
             status: 429,
             statusText: 'Too Many Requests'
-          } as Response)
+          })
           .mockResolvedValueOnce({
             ok: true,
             headers: new Headers(),
             json: async () => createMockDocumentsResponse(1)
-          } as Response);
+          });
 
         // Use a client with retry enabled; fake timers avoid real backoff delay
         const retryClient = new EuropeanParliamentClient({ enableRetry: true, maxRetries: 1 });
@@ -4656,7 +4656,7 @@ describe('EuropeanParliamentClient', () => {
         ok: false,
         status: 400,
         statusText: 'Bad Request'
-      } as Response);
+      });
 
       const retryClient = new EuropeanParliamentClient({ enableRetry: true, maxRetries: 2 });
       retryClient.clearCache();
@@ -4673,7 +4673,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers({ 'content-length': String(20 * 1024 * 1024) }), // 20 MB
         json: async () => createMockDocumentsResponse(1)
-      } as unknown as Response);
+      });
 
       await expect(client.getMeetingPlenarySessionDocuments('MTG-1')).rejects.toThrow(APIError);
     });
@@ -4684,7 +4684,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers({ 'content-length': String(1024) }), // 1 KB
         text: async () => JSON.stringify(payload),
-      } as unknown as Response);
+      });
 
       const result = await client.getMeetingPlenarySessionDocuments('MTG-PL-2024-001');
       expect(result.data).toHaveLength(1);
@@ -4704,7 +4704,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(), // no content-length
         body,
-      } as unknown as Response);
+      });
 
       await expect(client.getMeetingPlenarySessionDocuments('MTG-1')).rejects.toThrow(APIError);
     });
@@ -4722,7 +4722,7 @@ describe('EuropeanParliamentClient', () => {
         ok: true,
         headers: new Headers(), // no content-length
         body,
-      } as unknown as Response);
+      });
 
       const result = await client.getMeetingPlenarySessionDocuments('MTG-PL-2024-001');
       expect(result.data).toHaveLength(1);
@@ -4741,7 +4741,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getProcedures({ limit: 1 });
       expect(result.data[0].documents).toEqual([]);
@@ -4758,7 +4758,7 @@ describe('EuropeanParliamentClient', () => {
           }],
           '@context': []
         })
-      } as Response);
+      });
 
       const result = await client.getProcedures({ limit: 1 });
       expect(result.data[0].documents).toEqual(['doc-1', 'doc-2']);
@@ -4919,13 +4919,13 @@ describe('EuropeanParliamentClient', () => {
       try {
         // Two 500 failures then success
         mockFetch
-          .mockResolvedValueOnce({ ok: false, status: 500, statusText: 'Internal Server Error' } as Response)
-          .mockResolvedValueOnce({ ok: false, status: 500, statusText: 'Internal Server Error' } as Response)
+          .mockResolvedValueOnce({ ok: false, status: 500, statusText: 'Internal Server Error' })
+          .mockResolvedValueOnce({ ok: false, status: 500, statusText: 'Internal Server Error' })
           .mockResolvedValueOnce({
             ok: true,
             headers: new Headers(),
             json: async () => createMockMEPsResponse(1)
-          } as Response);
+          });
 
         const retryClient = new EuropeanParliamentClient({ enableRetry: true, maxRetries: 2 });
         retryClient.clearCache();

@@ -46,7 +46,7 @@ export async function handleGetCommitteeDocumentsFeed(args: unknown): Promise<To
 
   try {
     const result = await epClient.getCommitteeDocumentsFeed();
-    if (isErrorInBody(result as Record<string, unknown>)) {
+    if (isErrorInBody(result)) {
       return buildEmptyFeedResponse(
         'EP API returned an error-in-body response for get_committee_documents_feed — the upstream enrichment step may have failed.',
       );

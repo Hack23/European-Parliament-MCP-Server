@@ -42,7 +42,7 @@ beforeAll(async () => {
   if (isMockClient) {
     // Use mock client with synthetic data — no real API calls.
     // Single-step cast: the mock structurally matches the picked methods.
-    epClient = createMockEPClient() as IntegrationEPClient;
+    epClient = createMockEPClient();
     rateLimiter = new RateLimiter({ tokensPerInterval: 1000, interval: 'minute' });
     console.log('[Integration Tests] Mock EP Client initialized (EP_USE_MOCK=true)');
   } else {

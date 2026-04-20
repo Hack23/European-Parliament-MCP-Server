@@ -86,7 +86,7 @@ export async function handleGetCommitteeDocuments(args: unknown): Promise<ToolRe
     };
 
     const result = await epClient.getCommitteeDocuments(
-      apiParams as Parameters<typeof epClient.getCommitteeDocuments>[0]
+      apiParams
     );
 
     return buildToolResponse(result);

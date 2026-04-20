@@ -106,7 +106,7 @@ export async function handleSearchDocuments(
       ]),
     };
     
-    const result = await epClient.searchDocuments(apiParams as Parameters<typeof epClient.searchDocuments>[0]);
+    const result = await epClient.searchDocuments(apiParams);
     
     // Validate output
     const outputSchema = PaginatedResponseSchema(LegislativeDocumentSchema);

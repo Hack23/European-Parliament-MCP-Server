@@ -837,7 +837,7 @@ export async function handleAnalyzeCoalitionDynamics(
     return buildToolResponse(analysis);
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    auditLogger.logError('analyze_coalition_dynamics', params as Record<string, unknown>, toErrorMessage(error));
+    auditLogger.logError('analyze_coalition_dynamics', params, toErrorMessage(error));
     throw new Error(`Failed to analyze coalition dynamics: ${errorMessage}`);
   }
 }

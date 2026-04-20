@@ -319,11 +319,11 @@ describe('dispatchToolCall', () => {
 
   it('returns a ToolResult with content array', async () => {
     const result = await dispatchToolCall('get_meps', {});
-    expect(result).toMatchObject({
-      content: expect.arrayContaining([
+    expect(result.content).toEqual(
+      expect.arrayContaining([
         expect.objectContaining({ type: 'text' }),
-      ]) as unknown as unknown[],
-    });
+      ])
+    );
   });
 
   it('spot-checks one representative tool name per category is present in metadata', () => {

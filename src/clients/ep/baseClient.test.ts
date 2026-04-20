@@ -474,7 +474,7 @@ describe('BaseEPClient.get() error handling', () => {
       status: 404,
       statusText: 'Not Found',
       headers: new Headers(),
-    } as unknown as Response);
+    });
 
     await expect(client.testGet('meps/9999')).rejects.toBeInstanceOf(APIError);
   });
@@ -485,7 +485,7 @@ describe('BaseEPClient.get() error handling', () => {
       status: 500,
       statusText: 'Internal Server Error',
       headers: new Headers(),
-    } as unknown as Response);
+    });
 
     await expect(client.testGet('meps')).rejects.toBeInstanceOf(APIError);
   });
@@ -496,7 +496,7 @@ describe('BaseEPClient.get() error handling', () => {
       status: 403,
       statusText: 'Forbidden',
       headers: new Headers(),
-    } as unknown as Response);
+    });
 
     let thrownError: APIError | undefined;
     try {
@@ -513,7 +513,7 @@ describe('BaseEPClient.get() error handling', () => {
       headers: new Headers({ 'content-length': String(DEFAULT_MAX_RESPONSE_BYTES + 1) }),
       json: async () => ({ data: [], '@context': [] }),
       body: { cancel: vi.fn().mockResolvedValue(undefined) },
-    } as unknown as Response);
+    });
 
     await expect(client.testGet('meps')).rejects.toBeInstanceOf(APIError);
   });
@@ -529,7 +529,7 @@ describe('BaseEPClient.get() error handling', () => {
       ok: true,
       headers: new Headers({ 'content-type': 'text/html; charset=utf-8' }),
       json: async () => ({ data: [], '@context': [] }),
-    } as unknown as Response);
+    });
 
     await expect(client.testGet('meps')).rejects.toThrow(/unexpected content-type/);
   });
@@ -542,7 +542,7 @@ describe('BaseEPClient.get() error handling', () => {
         'content-length': '30',
       }),
       text: async () => JSON.stringify({ data: [], '@context': [] }),
-    } as unknown as Response);
+    });
 
     const result = await client.testGet<{ data: unknown[] }>('meps');
     expect(result.data).toEqual([]);
@@ -564,7 +564,7 @@ describe('BaseEPClient.get() error handling', () => {
         'content-length': '30',
       }),
       text: async () => JSON.stringify({ data: [], '@context': [] }),
-    } as unknown as Response);
+    });
 
     const result = await client.testGet<{ data: unknown[] }>('meps');
     expect(result.data).toEqual([]);
@@ -575,7 +575,7 @@ describe('BaseEPClient.get() error handling', () => {
       ok: true,
       headers: new Headers({ 'content-length': '42' }),
       text: async () => '',
-    } as unknown as Response);
+    });
 
     const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
     expect(result).toEqual({ data: [], '@context': [] });
@@ -588,7 +588,7 @@ describe('BaseEPClient.get() error handling', () => {
       status: 204,
       headers: new Headers(),
       body: { cancel: cancelMock },
-    } as unknown as Response);
+    });
 
     const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('controlled-vocabularies/feed');
     expect(result).toEqual({ data: [], '@context': [] });
@@ -600,7 +600,7 @@ describe('BaseEPClient.get() error handling', () => {
       ok: true,
       headers: new Headers({ 'content-length': '5' }),
       text: async () => '\n  \t',
-    } as unknown as Response);
+    });
 
     const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
     expect(result).toEqual({ data: [], '@context': [] });
@@ -620,7 +620,7 @@ describe('BaseEPClient.get() error handling', () => {
       ok: true,
       headers: new Headers({ 'content-length': 'garbage' }),
       body: stream,
-    } as unknown as Response);
+    });
 
     const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
     expect(result).toEqual(payload);
@@ -631,7 +631,7 @@ describe('BaseEPClient.get() error handling', () => {
       ok: true,
       headers: new Headers({ 'content-length': '42' }),
       text: async () => 'not valid json{',
-    } as unknown as Response);
+    });
 
     await expect(client.testGet('adopted-texts')).rejects.toBeInstanceOf(APIError);
   });
@@ -647,7 +647,7 @@ describe('BaseEPClient.get() error handling', () => {
       ok: true,
       headers: new Headers(), // no content-length → triggers readStreamedBody
       body: stream,
-    } as unknown as Response);
+    });
 
     const result = await client.testGet<{ data: unknown[]; '@context': unknown[] }>('adopted-texts');
     expect(result).toEqual({ data: [], '@context': [] });
@@ -666,7 +666,7 @@ describe('BaseEPClient.get() error handling', () => {
       ok: true,
       headers: new Headers(), // no content-length → triggers readStreamedBody
       body: stream,
-    } as unknown as Response);
+    });
 
     await expect(client.testGet('adopted-texts')).rejects.toBeInstanceOf(APIError);
   });
@@ -692,7 +692,7 @@ describe('BaseEPClient.get() retry behaviour', () => {
           status: 429,
           statusText: 'Too Many Requests',
           headers: new Headers(),
-        } as unknown as Response)
+        })
         .mockResolvedValueOnce(makeSuccessResponse(payload));
 
       const requestPromise = client.testGet('meps');
@@ -715,7 +715,7 @@ describe('BaseEPClient.get() retry behaviour', () => {
       status: 404,
       statusText: 'Not Found',
       headers: new Headers(),
-    } as unknown as Response);
+    });
 
     await expect(client.testGet('meps/9999')).rejects.toBeInstanceOf(APIError);
     expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -730,7 +730,7 @@ describe('BaseEPClient.get() retry behaviour', () => {
       status: 500,
       statusText: 'Internal Server Error',
       headers: new Headers(),
-    } as unknown as Response);
+    });
 
     await expect(client.testGet('meps')).rejects.toBeInstanceOf(APIError);
     expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -780,7 +780,7 @@ describe('BaseEPClient.get() retry behaviour', () => {
       headers: new Headers(),
       body: null,
       json: async () => { throw new SyntaxError('Unexpected token < in JSON'); },
-    } as unknown as Response);
+    });
 
     // Non-truncation SyntaxError should NOT be retried
     await expect(client.testGet('adopted-texts')).rejects.toBeInstanceOf(APIError);

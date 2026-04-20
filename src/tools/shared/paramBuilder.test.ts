@@ -49,7 +49,7 @@ describe('buildApiParams', () => {
 
     it('omits keys whose value is null', () => {
       const result = buildApiParams(
-        { country: null, group: 'EPP' } as Record<string, unknown>,
+        { country: null, group: 'EPP' },
         [
           { from: 'country', to: 'country-of-representation' },
           { from: 'group', to: 'political-group' },
@@ -61,7 +61,7 @@ describe('buildApiParams', () => {
 
     it('omits keys whose value is an object (non-primitive)', () => {
       const result = buildApiParams(
-        { meta: { nested: true }, label: 'test' } as Record<string, unknown>,
+        { meta: { nested: true }, label: 'test' },
         [
           { from: 'meta', to: 'meta' },
           { from: 'label', to: 'label' },
@@ -73,7 +73,7 @@ describe('buildApiParams', () => {
 
     it('returns an empty object when all values are undefined', () => {
       const result = buildApiParams(
-        { a: undefined, b: undefined } as Record<string, unknown>,
+        { a: undefined, b: undefined },
         [
           { from: 'a', to: 'alpha' },
           { from: 'b', to: 'beta' },

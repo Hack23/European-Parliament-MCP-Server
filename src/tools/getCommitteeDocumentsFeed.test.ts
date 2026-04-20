@@ -44,7 +44,7 @@ describe('get_committee_documents_feed Tool', () => {
     });
 
     it('should silently ignore unknown extra keys (forward-compatible)', async () => {
-      const result = await handleGetCommitteeDocumentsFeed({ unknownKey: 'future-param' } as unknown);
+      const result = await handleGetCommitteeDocumentsFeed({ unknownKey: 'future-param' });
       expect(result).toHaveProperty('content');
     });
 

@@ -101,7 +101,7 @@ export async function handleGetParliamentaryQuestions(
       ]),
     };
     
-    const result = await epClient.getParliamentaryQuestions(apiParams as Parameters<typeof epClient.getParliamentaryQuestions>[0]);
+    const result = await epClient.getParliamentaryQuestions(apiParams);
     
     // Validate output
     const outputSchema = PaginatedResponseSchema(ParliamentaryQuestionSchema);

@@ -89,7 +89,7 @@ export async function handleGetSpeeches(args: unknown): Promise<ToolResult> {
     };
 
     const result = await epClient.getSpeeches(
-      apiParams as Parameters<typeof epClient.getSpeeches>[0]
+      apiParams
     );
 
     return buildToolResponse(result);

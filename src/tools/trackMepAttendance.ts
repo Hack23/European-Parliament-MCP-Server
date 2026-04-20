@@ -277,7 +277,7 @@ async function buildGroupAnalysis(
   const meps = Array.isArray(mepResult.data) ? mepResult.data : [];
 
   const details = await fetchMepDetailsBatched(
-    meps.slice(0, params.limit) as { id: string }[],
+    meps.slice(0, params.limit),
     5
   );
 

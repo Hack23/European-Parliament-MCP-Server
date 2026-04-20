@@ -44,7 +44,7 @@ describe('get_plenary_session_documents_feed Tool', () => {
     });
 
     it('should silently ignore unknown extra keys (forward-compatible)', async () => {
-      const result = await handleGetPlenarySessionDocumentsFeed({ unknownKey: 'future-param' } as unknown);
+      const result = await handleGetPlenarySessionDocumentsFeed({ unknownKey: 'future-param' });
       expect(result).toHaveProperty('content');
     });
 

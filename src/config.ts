@@ -19,7 +19,7 @@ try {
       typeof parsed === 'object' &&
       parsed !== null &&
       'version' in parsed &&
-      typeof (parsed as { version: unknown }).version === 'string'
+      typeof (parsed).version === 'string'
     ) {
       pkg = parsed as { version: string };
     }

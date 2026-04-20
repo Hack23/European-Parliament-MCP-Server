@@ -104,7 +104,7 @@ export async function handleGetMEPs(
       ]),
     };
     
-    const result = await epClient.getMEPs(apiParams as Parameters<typeof epClient.getMEPs>[0]);
+    const result = await epClient.getMEPs(apiParams);
     
     // Validate output
     const outputSchema = PaginatedResponseSchema(MEPSchema);

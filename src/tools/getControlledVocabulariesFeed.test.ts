@@ -44,7 +44,7 @@ describe('get_controlled_vocabularies_feed Tool', () => {
     });
 
     it('should silently ignore unknown extra keys (forward-compatible)', async () => {
-      const result = await handleGetControlledVocabulariesFeed({ unknownKey: 'future-param' } as unknown);
+      const result = await handleGetControlledVocabulariesFeed({ unknownKey: 'future-param' });
       expect(result).toHaveProperty('content');
     });
 

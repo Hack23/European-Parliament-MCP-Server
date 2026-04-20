@@ -44,7 +44,7 @@ describe('get_documents_feed Tool', () => {
     });
 
     it('should silently ignore unknown extra keys (forward-compatible)', async () => {
-      const result = await handleGetDocumentsFeed({ unknownKey: 'future-param' } as unknown);
+      const result = await handleGetDocumentsFeed({ unknownKey: 'future-param' });
       expect(result).toHaveProperty('content');
     });
 

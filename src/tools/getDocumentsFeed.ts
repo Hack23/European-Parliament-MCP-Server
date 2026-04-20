@@ -46,7 +46,7 @@ export async function handleGetDocumentsFeed(args: unknown): Promise<ToolResult>
 
   try {
     const result = await epClient.getDocumentsFeed();
-    if (isErrorInBody(result as Record<string, unknown>)) {
+    if (isErrorInBody(result)) {
       return buildEmptyFeedResponse(
         'EP API returned an error-in-body response for get_documents_feed — the upstream enrichment step may have failed.',
       );

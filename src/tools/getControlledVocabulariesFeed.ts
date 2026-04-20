@@ -46,7 +46,7 @@ export async function handleGetControlledVocabulariesFeed(args: unknown): Promis
 
   try {
     const result = await epClient.getControlledVocabulariesFeed();
-    if (isErrorInBody(result as Record<string, unknown>)) {
+    if (isErrorInBody(result)) {
       return buildEmptyFeedResponse(
         'EP API returned an error-in-body response for get_controlled_vocabularies_feed — the upstream enrichment step may have failed.',
       );

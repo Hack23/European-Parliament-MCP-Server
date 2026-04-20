@@ -127,7 +127,7 @@ export function createMockFetch(
       JSON.stringify(buildEPApiResponse([])),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
-  }) as unknown as typeof fetch;
+  });
 }
 
 /**
@@ -149,7 +149,7 @@ export function createRateLimitingMockFetch(
       JSON.stringify(buildEPApiResponse(mepFixtures)),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
-  }) as unknown as typeof fetch;
+  });
 }
 
 /**
@@ -162,7 +162,7 @@ export function createTimeoutMockFetch(delayMs = 30000): typeof fetch {
         reject(new Error(`Network timeout after ${delayMs}ms`));
       }, delayMs);
     });
-  }) as unknown as typeof fetch;
+  });
 }
 
 /**

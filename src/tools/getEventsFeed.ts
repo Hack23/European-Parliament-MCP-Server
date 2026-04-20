@@ -48,9 +48,9 @@ export async function handleGetEventsFeed(args: unknown): Promise<ToolResult> {
     if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
     if (params.activityType !== undefined) apiParams['activityType'] = params.activityType;
     const result = await epClient.getEventsFeed(
-      apiParams as Parameters<typeof epClient.getEventsFeed>[0]
+      apiParams
     );
-    if (isErrorInBody(result as Record<string, unknown>)) {
+    if (isErrorInBody(result)) {
       return buildEmptyFeedResponse(
         'EP API returned an error-in-body response for get_events_feed — the upstream enrichment step may have failed.',
       );

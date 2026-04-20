@@ -90,7 +90,7 @@ export async function handleGetVotingRecords(
       ]),
     };
     
-    const result = await epClient.getVotingRecords(apiParams as Parameters<typeof epClient.getVotingRecords>[0]);
+    const result = await epClient.getVotingRecords(apiParams);
     
     // Validate output
     const outputSchema = PaginatedResponseSchema(VotingRecordSchema);
