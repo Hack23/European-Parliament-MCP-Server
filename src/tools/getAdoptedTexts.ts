@@ -88,7 +88,7 @@ export async function handleGetAdoptedTexts(args: unknown): Promise<ToolResult> 
     if (params.year !== undefined) apiParams['year'] = params.year;
 
     const result = await epClient.getAdoptedTexts(
-      apiParams as Parameters<typeof epClient.getAdoptedTexts>[0]
+      apiParams
     );
 
     return buildToolResponse(result);

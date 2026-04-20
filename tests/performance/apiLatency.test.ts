@@ -194,7 +194,7 @@ describe('EP API Endpoint Latency Benchmarks', () => {
 
       const response = await mockFetch(
         'https://data.europarl.europa.eu/api/v2/meps',
-        {} as RequestInit
+        {}
       );
       expect(response.status).toBe(200);
 

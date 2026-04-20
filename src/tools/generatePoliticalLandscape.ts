@@ -215,7 +215,7 @@ async function buildLandscape(
   const meps = Array.isArray(mepResult.data) ? mepResult.data : [];
 
   const { groups, countriesRepresented, totalMEPs } = aggregateByGroup(
-    meps as { politicalGroup: string; country: string }[]
+    meps
   );
 
   const powerDynamics = computePowerDynamics(groups, totalMEPs);

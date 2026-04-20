@@ -87,7 +87,7 @@ export async function handleGetPlenaryDocuments(args: unknown): Promise<ToolResu
     if (params.year !== undefined) apiParams['year'] = params.year;
 
     const result = await epClient.getPlenaryDocuments(
-      apiParams as Parameters<typeof epClient.getPlenaryDocuments>[0]
+      apiParams
     );
 
     return buildToolResponse(result);

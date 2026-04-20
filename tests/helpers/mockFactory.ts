@@ -278,7 +278,7 @@ export function createStubEPClient(
   // Single cast — safe because `base` satisfies the structural shape of
   // `EPClientPublicAPI` (all public methods present), and `Mocked<EPClientPublicAPI>`
   // only requires the structural public surface (no private members).
-  return { ...base, ...overrides } as Mocked<EPClientPublicAPI>;
+  return { ...base, ...overrides };
 }
 
 /**

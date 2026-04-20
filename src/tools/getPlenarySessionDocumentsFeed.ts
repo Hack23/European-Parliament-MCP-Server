@@ -46,7 +46,7 @@ export async function handleGetPlenarySessionDocumentsFeed(args: unknown): Promi
 
   try {
     const result = await epClient.getPlenarySessionDocumentsFeed();
-    if (isErrorInBody(result as Record<string, unknown>)) {
+    if (isErrorInBody(result)) {
       return buildEmptyFeedResponse(
         'EP API returned an error-in-body response for get_plenary_session_documents_feed — the upstream enrichment step may have failed.',
       );

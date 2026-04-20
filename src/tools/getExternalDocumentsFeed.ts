@@ -48,7 +48,7 @@ export async function handleGetExternalDocumentsFeed(args: unknown): Promise<Too
     if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
     if (params.workType !== undefined) apiParams['workType'] = params.workType;
     const result = await epClient.getExternalDocumentsFeed(
-      apiParams as Parameters<typeof epClient.getExternalDocumentsFeed>[0]
+      apiParams
     );
     return buildFeedSuccessResponse(result);
   } catch (error: unknown) {

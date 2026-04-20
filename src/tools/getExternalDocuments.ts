@@ -85,7 +85,7 @@ export async function handleGetExternalDocuments(args: unknown): Promise<ToolRes
     };
 
     const result = await epClient.getExternalDocuments(
-      apiParams as Parameters<typeof epClient.getExternalDocuments>[0]
+      apiParams
     );
 
     return buildToolResponse(result);

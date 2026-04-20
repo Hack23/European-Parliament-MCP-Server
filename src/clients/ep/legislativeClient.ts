@@ -246,7 +246,7 @@ export class LegislativeClient extends BaseEPClient {
 
     // Fall back to transforming the raw response only when the response shape
     // is not JSON-LD-wrapped.
-    return this.transformEvent(response as unknown as Record<string, unknown>);
+    return this.transformEvent(response);
   }
 
   /**

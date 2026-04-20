@@ -44,7 +44,7 @@ describe('get_corporate_bodies_feed Tool', () => {
     });
 
     it('should silently ignore unknown extra keys (forward-compatible)', async () => {
-      const result = await handleGetCorporateBodiesFeed({ unknownKey: 'future-param' } as unknown);
+      const result = await handleGetCorporateBodiesFeed({ unknownKey: 'future-param' });
       expect(result).toHaveProperty('content');
     });
 

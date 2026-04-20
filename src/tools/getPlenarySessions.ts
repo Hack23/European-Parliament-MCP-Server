@@ -102,7 +102,7 @@ export async function handleGetPlenarySessions(
       ]),
     };
     
-    const result = await epClient.getPlenarySessions(apiParams as Parameters<typeof epClient.getPlenarySessions>[0]);
+    const result = await epClient.getPlenarySessions(apiParams);
     
     // Validate output
     const outputSchema = PaginatedResponseSchema(PlenarySessionSchema);

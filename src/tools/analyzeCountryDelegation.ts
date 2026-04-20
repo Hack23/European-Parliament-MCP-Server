@@ -217,10 +217,10 @@ async function buildDelegationAnalysis(
   const meps = Array.isArray(mepResult.data) ? mepResult.data : [];
   const totalMEPs = meps.length;
 
-  const details = await fetchMepDetails(meps as { id: string }[]);
+  const details = await fetchMepDetails(meps);
 
   const distribution = computeGroupDistribution(
-    meps as { politicalGroup: string }[]
+    meps
   );
 
   // Compute attendance averages

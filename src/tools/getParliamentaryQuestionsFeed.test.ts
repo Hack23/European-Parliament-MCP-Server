@@ -44,7 +44,7 @@ describe('get_parliamentary_questions_feed Tool', () => {
     });
 
     it('should silently ignore unknown extra keys (forward-compatible)', async () => {
-      const result = await handleGetParliamentaryQuestionsFeed({ unknownKey: 'future-param' } as unknown);
+      const result = await handleGetParliamentaryQuestionsFeed({ unknownKey: 'future-param' });
       expect(result).toHaveProperty('content');
     });
 

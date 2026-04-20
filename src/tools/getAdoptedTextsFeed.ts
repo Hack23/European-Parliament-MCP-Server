@@ -48,7 +48,7 @@ export async function handleGetAdoptedTextsFeed(args: unknown): Promise<ToolResu
     if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
     if (params.workType !== undefined) apiParams['workType'] = params.workType;
     const result = await epClient.getAdoptedTextsFeed(
-      apiParams as Parameters<typeof epClient.getAdoptedTextsFeed>[0]
+      apiParams
     );
     return buildFeedSuccessResponse(result);
   } catch (error: unknown) {

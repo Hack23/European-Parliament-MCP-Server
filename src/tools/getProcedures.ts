@@ -90,7 +90,7 @@ export async function handleGetProcedures(args: unknown): Promise<ToolResult> {
     };
 
     const result = await epClient.getProcedures(
-      apiParams as Parameters<typeof epClient.getProcedures>[0]
+      apiParams
     );
 
     return buildToolResponse(result);

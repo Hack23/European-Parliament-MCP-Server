@@ -90,7 +90,7 @@ export async function handleGetMEPDeclarations(args: unknown): Promise<ToolResul
     if (params.year !== undefined) apiParams['year'] = params.year;
 
     const result = await epClient.getMEPDeclarations(
-      apiParams as Parameters<typeof epClient.getMEPDeclarations>[0]
+      apiParams
     );
 
     return buildToolResponse(result);

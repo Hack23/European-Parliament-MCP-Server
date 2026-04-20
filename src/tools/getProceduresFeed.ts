@@ -48,9 +48,9 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
     if (params.startDate !== undefined) apiParams['startDate'] = params.startDate;
     if (params.processType !== undefined) apiParams['processType'] = params.processType;
     const result = await epClient.getProceduresFeed(
-      apiParams as Parameters<typeof epClient.getProceduresFeed>[0]
+      apiParams
     );
-    if (isErrorInBody(result as Record<string, unknown>)) {
+    if (isErrorInBody(result)) {
       return buildEmptyFeedResponse(
         'EP API returned an error-in-body response for get_procedures_feed — the upstream enrichment step may have failed.',
       );

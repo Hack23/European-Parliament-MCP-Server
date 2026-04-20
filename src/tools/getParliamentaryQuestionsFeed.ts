@@ -46,7 +46,7 @@ export async function handleGetParliamentaryQuestionsFeed(args: unknown): Promis
 
   try {
     const result = await epClient.getParliamentaryQuestionsFeed();
-    if (isErrorInBody(result as Record<string, unknown>)) {
+    if (isErrorInBody(result)) {
       return buildEmptyFeedResponse(
         'EP API returned an error-in-body response for get_parliamentary_questions_feed — the upstream enrichment step may have failed.',
       );
