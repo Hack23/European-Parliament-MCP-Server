@@ -15,7 +15,7 @@
 import { GetPlenaryDocumentsFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { ToolError } from './shared/errors.js';
-import { isUpstream404, buildEmptyFeedResponse, isErrorInBody, buildFeedSuccessResponse } from './shared/feedUtils.js';
+import { isUpstream404, buildEmptyFeedResponse, isErrorInBody, buildFeedSuccessResponse, FIXED_WINDOW_FEED_INPUT_SCHEMA } from './shared/feedUtils.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
@@ -67,9 +67,6 @@ export async function handleGetPlenaryDocumentsFeed(args: unknown): Promise<Tool
 export const getPlenaryDocumentsFeedToolMetadata = {
   name: 'get_plenary_documents_feed',
   description:
-    'Get recently updated plenary documents from the EP Open Data Portal feed. This is a fixed-window feed — no parameters needed. Returns items updated within the server-defined default window (typically one month). Data source: European Parliament Open Data Portal.',
-  inputSchema: {
-    type: 'object' as const,
-    properties: {},
-  },
+    'Get recently updated plenary documents from the EP Open Data Portal feed. This is a fixed-window feed — the upstream EP API always returns items updated within a server-defined default window (typically one month). For contract uniformity with sliding-window feed tools, the common feed parameters (timeframe, startDate, limit, offset) are accepted but informational-only — they are silently ignored. Data source: European Parliament Open Data Portal.',
+  inputSchema: FIXED_WINDOW_FEED_INPUT_SCHEMA,
 };

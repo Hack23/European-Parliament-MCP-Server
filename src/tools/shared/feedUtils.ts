@@ -67,6 +67,48 @@ import type { ToolResult } from './types.js';
 /** Operational status for a feed response under the uniform contract. */
 export type FeedStatus = 'operational' | 'degraded' | 'unavailable';
 
+/**
+ * Shared MCP `tools/list` inputSchema for fixed-window feed tools
+ * (Group A: `get_documents_feed`, `get_plenary_documents_feed`, etc.).
+ *
+ * The underlying EP API endpoints do not accept `timeframe` / `startDate`
+ * / `limit` / `offset` and always serve a server-defined default window
+ * (typically one month).  For contract uniformity with the sliding-window
+ * feed tools (Group B), this schema still advertises those parameters —
+ * they are accepted by the Zod validator but silently ignored at the
+ * upstream call site.  See {@link FixedWindowFeedSchema} in
+ * `src/schemas/ep/feed.ts`.
+ */
+export const FIXED_WINDOW_FEED_INPUT_SCHEMA = {
+  type: 'object' as const,
+  properties: {
+    timeframe: {
+      type: 'string',
+      description:
+        'Informational-only — this feed uses a server-defined default window (typically one month) and ignores this parameter. Accepted for contract uniformity with sliding-window feed tools.',
+      enum: ['today', 'one-day', 'one-week', 'one-month', 'custom'],
+    },
+    startDate: {
+      type: 'string',
+      description:
+        'Informational-only — ignored by this fixed-window feed. Accepted for contract uniformity with sliding-window feed tools.',
+    },
+    limit: {
+      type: 'number',
+      description:
+        'Informational-only — the upstream EP API does not paginate this fixed-window feed. Accepted for contract uniformity.',
+      minimum: 1,
+      maximum: 100,
+    },
+    offset: {
+      type: 'number',
+      description:
+        'Informational-only — the upstream EP API does not paginate this fixed-window feed. Accepted for contract uniformity.',
+      minimum: 0,
+    },
+  },
+};
+
 /** Default reason surfaced when an empty/no-data feed response is built. */
 const EMPTY_FEED_REASON =
   'EP Open Data Portal returned no data for this feed — likely no updates in the requested timeframe';

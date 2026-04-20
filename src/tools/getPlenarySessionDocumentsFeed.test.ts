@@ -29,6 +29,25 @@ describe('get_plenary_session_documents_feed Tool', () => {
       expect(result.content[0]?.type).toBe('text');
     });
 
+    it('should accept informational-only common feed params without throwing INVALID_PARAMS', async () => {
+      // Regression: issue #379 — all feed tools must accept the common
+      // { timeframe, startDate, limit, offset } shape so consumers that model
+      // "feeds" with a single type do not hard-fail on fixed-window feeds.
+      const result = await handleGetPlenarySessionDocumentsFeed({
+        timeframe: 'one-week',
+        startDate: '2026-01-01',
+        limit: 20,
+        offset: 0,
+      });
+      expect(result).toHaveProperty('content');
+      expect(result.content[0]?.type).toBe('text');
+    });
+
+    it('should silently ignore unknown extra keys (forward-compatible)', async () => {
+      const result = await handleGetPlenarySessionDocumentsFeed({ unknownKey: 'future-param' } as unknown);
+      expect(result).toHaveProperty('content');
+    });
+
   });
 
   describe('Response Format', () => {
@@ -113,10 +132,14 @@ describe('get_plenary_session_documents_feed Tool', () => {
       expect(getPlenarySessionDocumentsFeedToolMetadata.description.length).toBeGreaterThan(0);
     });
 
-    it('should export tool metadata with empty inputSchema (fixed-window feed)', () => {
+    it('should export tool metadata with informational-only parameters (fixed-window feed)', () => {
       expect(getPlenarySessionDocumentsFeedToolMetadata).toHaveProperty('inputSchema');
       expect(getPlenarySessionDocumentsFeedToolMetadata.inputSchema).toHaveProperty('type', 'object');
-      expect(getPlenarySessionDocumentsFeedToolMetadata.inputSchema.properties).toEqual({});
+      const props = getPlenarySessionDocumentsFeedToolMetadata.inputSchema.properties as Record<string, unknown>;
+      expect(props).toHaveProperty('timeframe');
+      expect(props).toHaveProperty('startDate');
+      expect(props).toHaveProperty('limit');
+      expect(props).toHaveProperty('offset');
     });
   });
 });
