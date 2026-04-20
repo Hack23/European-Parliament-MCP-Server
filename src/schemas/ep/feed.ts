@@ -56,12 +56,38 @@ const BaseFeedParamsSchema = z
  *
  * These EP API endpoints do NOT accept a `timeframe` or `start-date`
  * parameter.  They always return updates from a server-defined default
- * window (typically one month).  Accepting no parameters keeps the
- * MCP tool interface honest about what the upstream API supports.
+ * window (typically one month).
+ *
+ * For API-contract uniformity across all feed tools, this schema still
+ * accepts the common feed parameters (`timeframe`, `startDate`, `limit`,
+ * `offset`) as **informational-only** — they are silently ignored at the
+ * upstream call site.  This allows consumers that model all feeds with a
+ * single shape (e.g. `FeedBaseOptions extends { timeframe, startDate,
+ * limit, offset }`) to call these tools without hard-failing at runtime.
+ *
+ * Unknown extra keys are also tolerated (no `.strict()`) so additional
+ * future feed primitives are forward-compatible.
+ *
+ * @see Option 1 in issue #379 (uniform feed input schema).
  */
-const FixedWindowFeedSchema = z.object({}).strict().describe(
-  'No parameters — this feed uses a server-defined default window (typically one month).'
-);
+const FixedWindowFeedSchema = z
+  .object({
+    timeframe: FeedTimeframeSchema.optional().describe(
+      'Informational-only — this feed uses a server-defined default window (typically one month) and ignores this parameter. Accepted for contract uniformity with sliding-window feed tools.'
+    ),
+    startDate: DateStringSchema.optional().describe(
+      'Informational-only — ignored by this fixed-window feed. Accepted for contract uniformity with sliding-window feed tools.'
+    ),
+    limit: z.number().int().min(1).max(100).optional().describe(
+      'Informational-only — the upstream EP API does not paginate this fixed-window feed. Accepted for contract uniformity.'
+    ),
+    offset: z.number().int().min(0).optional().describe(
+      'Informational-only — the upstream EP API does not paginate this fixed-window feed. Accepted for contract uniformity.'
+    ),
+  })
+  .describe(
+    'Fixed-window feed — the EP API always returns updates from a server-defined default window (typically one month). All parameters are informational-only and silently ignored.'
+  );
 
 // ── Group A – fixed-window feeds (no timeframe parameter) ─────────────────
 
