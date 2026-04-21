@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.10**](../README.md)
+[**European Parliament MCP Server API v1.2.11**](../README.md)
 
 ***
 
@@ -17,14 +17,14 @@
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-CEO-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.1-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--03--19-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.2-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--04--21-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
   <a href="https://www.bestpractices.dev/projects/12067"><img src="https://www.bestpractices.dev/projects/12067/badge" alt="OpenSSF Best Practices"/></a>
 </p>
 
-**📋 Document Owner:** CEO | **📄 Version:** 1.1 | **📅 Last Updated:** 2026-03-19 (UTC)
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-06-19
+**📋 Document Owner:** CEO | **📄 Version:** 1.2 | **📅 Last Updated:** 2026-04-21 (UTC)
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-07-21
 **🏷️ Classification:** Public (Open Source MCP Server)
 **✅ ISMS Compliance:** ISO 27001 (A.14.2), NIST CSF 2.0 (PR.DS, ID.SC), CIS Controls v8.1 (16.1)
 
@@ -79,7 +79,7 @@ This assessment documents the European Parliament MCP Server's conformity with t
 | Field | Value |
 |-------|-------|
 | 📦 Product | European Parliament MCP Server |
-| 🏷️ Version Tag | v1.1.13 (reflects current project state) |
+| 🏷️ Version Tag | v1.2.10 (reflects current project state) |
 | 🔗 Repository | <https://github.com/Hack23/European-Parliament-MCP-Server> |
 | 📧 Security Contact | security@hack23.org |
 | 🎯 Purpose | MCP server providing AI assistants with structured access to European Parliament open datasets (MEPs, plenary sessions, committees, legislative documents, parliamentary questions) via 62 tools, 9 resources, and 7 prompts |

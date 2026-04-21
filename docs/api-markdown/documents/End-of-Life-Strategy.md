@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.10**](../README.md)
+[**European Parliament MCP Server API v1.2.11**](../README.md)
 
 ***
 
@@ -22,8 +22,8 @@
   <a href="#"><img src="https://img.shields.io/badge/Review-Annual-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** CEO | **📄 Version:** 3.0 | **📅 Last Updated:** 2026-03-18 (UTC)  
-**🔄 Review Cycle:** Annual | **⏰ Next Review:** 2027-03-18  
+**📋 Document Owner:** CEO | **📄 Version:** 3.1 | **📅 Last Updated:** 2026-04-21 (UTC)  
+**🔄 Review Cycle:** Annual | **⏰ Next Review:** 2027-04-21  
 **🏷️ Classification:** Public (Open Source MCP Server)
 
 ---
@@ -97,7 +97,7 @@ graph TB
 
 | Component | Current Version | EOL Date | Risk Level | Migration Path |
 |-----------|----------------|----------|------------|---------------|
-| **Node.js** | >=25.0.0 (25.x Current) | **April 2026** 🔴 | 🔴 **Imminent** | **Upgrade to Node.js 26 immediately on release (≈ April 2026)** |
+| **Node.js** | >=25.0.0 (25.x Current) | **April 2026** 🔴 | 🔴 **IMMINENT** | **Upgrade to Node.js 26 immediately upon release (≈ April 22, 2026 — this week)** |
 | **Node.js 26** | Releasing April 2026 | April 2029 | 🟢 Low | Will be even-numbered LTS candidate; migrate within days of release |
 | **TypeScript** | 6.0.2 | Active | 🟢 Low | Stay on 6.0.x until the next supported minor |
 | **MCP SDK** | Latest | Active | 🟡 Medium | Track protocol evolution |
@@ -223,7 +223,7 @@ Following the **"Living on the Edge"** philosophy from [Vulnerability Management
 6. **CI Matrix:** Test against current, next Current/alpha, and previous LTS
 7. **Automated Alerts:** Dependabot monitors for Node.js security updates
 
-> ⚠️ **URGENT ACTION REQUIRED:** Node.js 25 (odd-numbered, Current-only) reaches End-of-Life when Node.js 26 releases in **≈ 2 weeks** (April 2026). Upgrade plan is documented in the [Node.js 25 → 26 Transition Plan](#-nodejs-25--26-transition-plan-urgent) below.
+> ⚠️ **URGENT ACTION REQUIRED:** Node.js 25 (odd-numbered, Current-only) reaches End-of-Life when Node.js 26 releases **this week** (≈ April 22, 2026). Upgrade plan is documented in the [Node.js 25 → 26 Transition Plan](#-nodejs-25--26-transition-plan-urgent) below.
 
 ### **🔄 Upgrade Process (Updated for New Release Model)**
 
@@ -254,11 +254,11 @@ Phase 3 — LTS Migration (Oct, on LTS promotion)
 
 ### **📋 Node.js 25 → 26 Transition Plan (URGENT)**
 
-> 🔴 **Node.js 25 EOL is imminent** — it expires when Node.js 26 releases in ≈ 2 weeks. Execute this plan immediately upon Node.js 26 release.
+> 🔴 **Node.js 25 EOL is imminent** — it expires when Node.js 26 releases this week (≈ April 22, 2026). Execute this plan immediately upon Node.js 26 release.
 
 | Phase | Timeline | Actions | Risk |
 |-------|----------|---------|------|
-| **Current Production** | Now (March 2026) | Node.js 25.x Current in production | 🔴 **HIGH — EOL in ≈2 weeks** |
+| **Current Production** | Now (April 2026) | Node.js 25.x Current in production | 🔴 **HIGH — EOL imminent (Node 26 releasing this week)** |
 | **Day 0: Node.js 26 Release** | ≈ April 22, 2026 | Update `package.json` engines, all CI/CD workflows, devcontainer | 🟡 Medium |
 | **Day 0–2: Validation** | April 22–24, 2026 | Run full test suite, lint, build on Node.js 26; publish new npm version | 🟡 Medium |
 | **Day 2+: Production** | April 24, 2026+ | Node.js 26 in production; Node.js 25 fully retired | 🟢 Low |
@@ -275,7 +275,7 @@ Day 0 — Upgrade (April 22, 2026, release day):
   Step 5:  Update End-of-Life-Strategy.md: Technology Lifecycle Matrix and roadmap
   Step 6:  Update WORKFLOWS.md, FUTURE_WORKFLOWS.md
   Step 7:  Run: npm ci (rebuild any native modules)
-  Step 8:  Run: npm test (full test suite — 2600+ unit tests must pass)
+  Step 8:  Run: npm test (full test suite — 1130+ unit tests and 71 E2E tests must pass)
   Step 9:  Run: npm run lint (zero warnings required)
   Step 10: Run: npm run build (TypeScript compilation must succeed)
   Step 11: Run: npm run knip (no unused exports)
@@ -399,7 +399,7 @@ IMMEDIATE Upgrade to Node.js 26 (upon April 2026 release):
   Step 2: Update GitHub Actions workflows: node-version: "26"
   Step 3: Update .devcontainer: node version 26
   Step 4: Run: npm ci (rebuild native modules if any)
-  Step 5: Run: npm test (full test suite — 2600+ unit tests)
+  Step 5: Run: npm test (full test suite — 1130+ unit tests and 71 E2E tests)
   Step 6: Run: npm run lint (code quality check)
   Step 7: Run: npm run build (TypeScript compilation)
   Step 8: Update all documentation (README, DEVELOPER_GUIDE, this EOL Strategy)
@@ -423,7 +423,7 @@ Migration (On LTS Promotion, October):
   Step 4: Update package.json engines field to new LTS version
   Step 5: Update GitHub Actions workflow (Node.js version matrix)
   Step 6: Run: npm install (rebuild native modules if any)
-  Step 7: Run: npm test (full test suite — 2500+ unit tests)
+  Step 7: Run: npm test (full test suite — 1130+ unit tests and 71 E2E tests)
   Step 8: Run: npm run lint (code quality check)
   Step 9: Run: npm run build (TypeScript compilation)
   Step 10: Update documentation (README, DEVELOPER_GUIDE, End-of-Life-Strategy.md)
@@ -512,6 +512,7 @@ Step 6: Publish new version
 | 1.0 | 2026-02-20 | CEO | Initial EOL strategy — technology stack analysis, lifecycle matrix, dependency monitoring, migration procedures |
 | 2.0 | 2026-03-12 | CEO | Major update: Node.js new release schedule (one major/year, every release LTS, alpha channel); added transition roadmap, Gantt timeline, release model comparison; updated version strategy for alpha CI integration; aligned with [nodejs/Release#1113](https://github.com/nodejs/Release/issues/1113) |
 | 3.0 | 2026-03-18 | CEO | **Node.js 25 migration:** Updated current production runtime to Node.js 25.x (Current); added urgent Node.js 26 upgrade plan (≈ April 22, 2026 — 2-week target); expanded full Node.js roadmap projections 2026–2031; updated Technology Lifecycle Matrix with Node.js 25 EOL risk; added Node.js 25 → 26 transition checklist; updated Gantt chart with Node.js 25 EOL and Node.js 26 LTS timeline |
+| 3.1 | 2026-04-21 | CEO | Documentation review — verified accuracy of current state; confirmed Node.js 25 EOL is imminent (Node.js 26 releasing this week, ≈ April 22, 2026); updated test count references from "2500+/2600+" to "1130+ unit tests and 71 E2E tests"; aligned references with ARCHITECTURE.md and WORKFLOWS.md |
 
 ---
 

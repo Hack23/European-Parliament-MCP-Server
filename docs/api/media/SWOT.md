@@ -11,13 +11,13 @@
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-Hack23-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.1-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--03--19-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.2-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--04--21-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** Hack23 | **📄 Version:** 1.1 | **📅 Last Updated:** 2026-03-19 (UTC)
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-06-19
+**📋 Document Owner:** Hack23 | **📄 Version:** 1.2 | **📅 Last Updated:** 2026-04-21 (UTC)
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-07-21
 **🏷️ Classification:** Public (Open Source MCP Server)
 **✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.14.2), NIST CSF 2.0 (ID.AM, PR.DS), CIS Controls v8.1 (2.1, 16.1)
 
@@ -79,7 +79,7 @@
   }
 }}%%
 quadrantChart
-    title 🎯 EP MCP Server v1.1 SWOT Analysis
+    title 🎯 EP MCP Server v1.2.10 SWOT Analysis
     x-axis Internal Factors --> External Factors
     y-axis Threats --> Opportunities
     quadrant-1 OPPORTUNITIES
@@ -237,9 +237,9 @@ If the European Parliament restructures its data portal or migrates to a new API
 
 ---
 
-## 🏆 v1.1 Positioning Statement
+## 🏆 v1.2.10 Positioning Statement
 
-> **The European Parliament MCP Server v1.1 is the most comprehensive, security-conscious, and production-ready MCP server for accessing European Parliament open data.** With 62 tools spanning basic data access to advanced OSINT analysis, a 4-layer security architecture, full ISMS compliance documentation, and TypeScript strict-mode implementation with branded types, it sets the standard for parliamentary data integration in AI-augmented research workflows.
+> **The European Parliament MCP Server v1.2.10 is the most comprehensive, security-conscious, and production-ready MCP server for accessing European Parliament open data.** With 62 tools spanning basic data access to advanced OSINT analysis, a 4-layer security architecture, full ISMS compliance documentation, and TypeScript strict-mode implementation with branded types, it sets the standard for parliamentary data integration in AI-augmented research workflows.
 
 **Target Users:**
 - Political researchers and analysts using AI assistants

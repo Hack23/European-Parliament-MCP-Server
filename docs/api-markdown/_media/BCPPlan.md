@@ -16,8 +16,8 @@
   <a href="#"><img src="https://img.shields.io/badge/Review-Semi_Annual-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** CEO | **📄 Version:** 1.1 | **📅 Last Updated:** 2026-03-12 (UTC)  
-**🔄 Review Cycle:** Semi-Annual | **⏰ Next Review:** 2026-09-12 | **✅ Status:** Production Ready
+**📋 Document Owner:** CEO | **📄 Version:** 1.2 | **📅 Last Updated:** 2026-04-21 (UTC)  
+**🔄 Review Cycle:** Semi-Annual | **⏰ Next Review:** 2026-10-21 | **✅ Status:** Production Ready
 
 ---
 
@@ -226,7 +226,7 @@ graph LR
 | **GitHub** (Source Code) | Source Control | 🟠 High | Distributed Git clones; contributors have full repository copies |
 | **GitHub Actions** (CI/CD) | Automation | 🟡 Medium | Manual build and publish fallback via local npm scripts |
 | **GitHub Pages** (Documentation) | Documentation | 🟢 Low | README in npm package; docs in source repository |
-| **Node.js Runtime** (≥ 25.x) | Runtime | 🟠 High | Pinned versions; current supported line (25.x Current, upgrading to 26.x LTS in ≈ April 2026). Starting with Node.js 27, new annual release model with every release becoming LTS (36-month support). See [End-of-Life-Strategy.md](End-of-Life-Strategy.md) |
+| **Node.js Runtime** (≥ 25.x) | Runtime | 🟠 High | Pinned versions; current supported line (25.x Current, upgrading to 26.x LTS immediately upon release this week ≈ April 22, 2026). Starting with Node.js 27, new annual release model with every release becoming LTS (36-month support). See [End-of-Life-Strategy.md](End-of-Life-Strategy.md) |
 | **TypeScript Compiler** | Build Tool | 🟡 Medium | Version-locked in `package-lock.json`; offline build possible |
 | **Zod** (Validation) | Library | 🟠 High | Locked version; no external runtime dependency |
 | **MCP SDK** (`@modelcontextprotocol/sdk`) | Protocol | 🟠 High | Locked version; protocol is standardized |
@@ -477,6 +477,7 @@ This BCP aligns with the following [Hack23 AB ISMS policies](https://github.com/
 |---------|------|--------|---------|
 | 1.0 | 2026-02-20 | CEO | Initial BCP document — business impact analysis, recovery objectives, disruption scenarios, recovery procedures, testing schedule, and ISMS policy alignment |
 | 1.1 | 2026-03-12 | CEO | Updated Node.js runtime dependency note to reference new annual release model (Node.js 27+); cross-referenced End-of-Life-Strategy.md |
+| 1.2 | 2026-04-21 | CEO | Documentation review — updated Node.js 26 upgrade timing to "this week" reflecting imminent release (≈ April 22, 2026); aligned references with End-of-Life-Strategy.md |
 
 ---
 
