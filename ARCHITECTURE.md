@@ -11,14 +11,14 @@
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-Hack23-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-1.1-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--03--19-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-1.2-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--04--21-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
   <a href="https://www.bestpractices.dev/projects/12067"><img src="https://www.bestpractices.dev/projects/12067/badge" alt="OpenSSF Best Practices"/></a>
 </p>
 
-**📋 Document Owner:** Hack23 | **📄 Version:** 1.1 | **📅 Last Updated:** 2026-03-19 (UTC)
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-06-19
+**📋 Document Owner:** Hack23 | **📄 Version:** 1.2 | **📅 Last Updated:** 2026-04-21 (UTC)
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-07-21
 **🏷️ Classification:** Public (Open Source MCP Server)
 **✅ ISMS Compliance:** ISO 27001 (A.5.1, A.8.1, A.14.2), NIST CSF 2.0 (ID.AM, PR.DS), CIS Controls v8.1 (2.1, 16.1)
 
@@ -58,7 +58,7 @@
 
 ## 🎯 Executive Summary
 
-The **European Parliament MCP Server** (v1.0) is a TypeScript/Node.js application implementing the **Model Context Protocol (MCP)** to expose structured access to European Parliament datasets. It bridges AI assistants and LLM clients with the EP Open Data Portal API v2, enabling parliamentary intelligence, legislative monitoring, and OSINT analysis workflows.
+The **European Parliament MCP Server** (v1.2.10) is a TypeScript/Node.js application implementing the **Model Context Protocol (MCP)** to expose structured access to European Parliament datasets. It bridges AI assistants and LLM clients with the EP Open Data Portal API v2, enabling parliamentary intelligence, legislative monitoring, and OSINT analysis workflows.
 
 ### Key Capabilities
 
@@ -471,9 +471,10 @@ flowchart TD
 |-------|-----------|---------|---------|
 | **Runtime** | Node.js | 25+ | Server runtime |
 | **Language** | TypeScript | 6.0.2 | Type-safe implementation |
-| **MCP SDK** | @modelcontextprotocol/sdk | latest | MCP protocol implementation |
+| **MCP SDK** | @modelcontextprotocol/sdk | 1.29.0 | MCP protocol implementation |
 | **Validation** | Zod | 4.3.6 | Runtime schema validation and branded types |
-| **Caching** | lru-cache | 11.2.7 | LRU cache (500 entries, 15-min TTL) |
+| **HTTP Client** | undici | 8.1.0 | Fast HTTP/1.1 client for EP API requests |
+| **Caching** | lru-cache | 11.3.5 | LRU cache (500 entries, 15-min TTL) |
 | **Testing** | Vitest | latest | Unit and integration testing |
 | **Linting** | ESLint | 10.1.0 | Code quality enforcement |
 | **Unused Detection** | Knip | latest | Dead code detection |
