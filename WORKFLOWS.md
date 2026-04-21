@@ -104,7 +104,7 @@ graph LR
 ### Key Principles
 
 - 🔒 **Security First** — All workflows use `step-security/harden-runner`, pinned action SHAs, and least-privilege permissions
-- 📦 **Supply Chain Integrity** — SLSA Level 3 provenance, CycloneDX/SPDX SBOMs, GitHub Attestations API
+- 📦 **Supply Chain Integrity** — SLSA Level 3 provenance, SPDX JSON SBOMs with GitHub Attestations
 - 🧪 **Quality Enforcement** — 80%+ code coverage, zero lint errors, type-safe builds, license compliance
 - 📊 **Transparency** — All evidence available in the [Documentation Portal](https://hack23.github.io/European-Parliament-MCP-Server/)
 
@@ -120,7 +120,7 @@ graph LR
 | 4 | **Integration Testing** | `integration-tests.yml` | Push, PR, Daily | ~5 min | E2E tests, live API validation |
 | 5 | **Release & Publish** | `release.yml` | Tag (v\*) | ~8 min | npm publish, GitHub Release, docs, SBOM generation |
 | 6 | **Supply Chain** | `slsa-provenance.yml` | Release, Push | ~4 min | SLSA provenance, attestations |
-| 7 | **Continuous Monitoring** | `scorecard.yml`, `refresh-stats.yml` | Push, Weekly | ~3 min | OpenSSF Scorecard, EP statistics refresh |
+| 7 | **Continuous Monitoring** | `scorecard.yml`, `refresh-stats.yml` | Push, Weekly | ~5 min | OpenSSF Scorecard, EP statistics refresh |
 | 8 | **Repository Mgmt** | `setup-labels.yml`, `copilot-setup-steps.yml` | Manual | ~1 min | Label sync, Copilot agent setup |
 
 ---
@@ -187,7 +187,7 @@ flowchart TB
         RELEASE --> NPM["npm publish<br>--provenance"]
         RELEASE --> GH_RELEASE["GitHub Release<br>+ Changelog"]
         RELEASE --> DOCS["📚 TypeDoc"]
-        RELEASE --> SBOM_RELEASE["📋 SBOM (CycloneDX)"]
+        RELEASE --> SBOM_RELEASE["📋 SBOM (SPDX JSON)"]
     end
 
     subgraph "Stage 6: Supply Chain"
@@ -412,7 +412,7 @@ prepare → build → release
 | Job | Permissions | Key Steps |
 |-----|-------------|-----------|
 | **prepare** | `contents: write` | Version extraction, `tsc --noEmit`, full test suite, TypeDoc generation, coverage reports, commit docs to repo |
-| **build** | `contents: read`, `id-token: write`, `attestations: write` | `npm run build`, `npm pack`, zip creation, CycloneDX SBOM generation, GitHub Attestations API |
+| **build** | `contents: read`, `id-token: write`, `attestations: write` | `npm run build`, `npm pack`, zip creation, SPDX JSON SBOM generation, GitHub Attestations API |
 | **release** | `contents: write`, `id-token: write` | Download artifacts, draft release notes, create GitHub Release, `npm publish --provenance` |
 
 **Release Process:**
@@ -428,7 +428,7 @@ sequenceDiagram
     GH->>GH: Prepare (type-check, test, docs)
     GH->>GH: Build (tsc, npm pack, zip)
     GH->>API: Generate build attestation
-    GH->>GH: Generate CycloneDX SBOM
+    GH->>GH: Generate SPDX JSON SBOM
     GH->>API: Create GitHub Release + changelog
     GH->>NPM: npm publish --provenance
     NPM-->>GH: Published with SLSA provenance
@@ -441,31 +441,31 @@ sequenceDiagram
 |----------|--------|-------------|
 | npm package | `--provenance` flag (Sigstore) | `npm audit signatures` |
 | Build artifacts | GitHub Attestations API | `gh attestation verify` |
-| SBOM | CycloneDX with attestation | `gh attestation verify` |
+| SBOM | SPDX JSON with attestation | `gh attestation verify` |
 | Release | GitHub Release with checksums | SHA256 hash comparison |
 
 ---
 
 ### Stage 6: Supply Chain Security
 
-#### 6.1 SBOM Generation (Integrated into Release Workflow)
+#### 6.1 SBOM Generation (Integrated into CI and Release Workflows)
 
-> **Note:** SBOM generation is integrated into the `release.yml` and `slsa-provenance.yml` workflows. There is **no standalone `sbom-generation.yml` workflow file**. SBOM creation occurs automatically during the release process using CycloneDX format with GitHub attestations.
+> **Note:** SBOM generation is integrated into the `test-and-report.yml` and `release.yml` workflows. There is **no standalone `sbom-generation.yml` workflow file**, and `slsa-provenance.yml` does not produce an SBOM. Every push/PR produces a SPDX-JSON SBOM via `test-and-report.yml` (with an SBOMQS quality gate), and every tagged release produces an attested SPDX-JSON SBOM attached to the GitHub Release via `release.yml`.
 
-**SBOM Creation in Release Pipeline:**
+**SBOM Creation in CI and Release Pipelines:**
 
 | Property | Value |
 |----------|-------|
-| **Workflow Files** | `.github/workflows/release.yml`, `.github/workflows/slsa-provenance.yml` |
-| **Trigger** | Tag push (`v*`), Manual dispatch |
-| **Duration** | Included in ~8 min release workflow |
-| **Quality Gate** | SBOM quality score ≥7.0/10 |
-| **Format** | CycloneDX JSON with GitHub Attestations |
-| **Permissions** | `contents: write`, `id-token: write`, `attestations: write` |
+| **Workflow Files** | `.github/workflows/test-and-report.yml` (PR/push quality gate), `.github/workflows/release.yml` (release artifact + attestation) |
+| **Trigger** | Push, PR (`test-and-report.yml`); Tag push (`v*`), Manual dispatch (`release.yml`) |
+| **Duration** | Included in the ~3 min build-validation job and the ~8 min release workflow |
+| **Quality Gate** | SBOMQS quality score ≥7.0/10 (enforced in `test-and-report.yml`) |
+| **Format** | SPDX 2.3 JSON (via `anchore/sbom-action` with `format: spdx-json`) + GitHub Attestations on release |
+| **Permissions** | `contents: write`, `id-token: write`, `attestations: write` (release only) |
 
 **SBOM Process:**
 
-The release workflow generates a CycloneDX SBOM and attests it via GitHub's built-in attestation framework. The SLSA provenance workflow also includes SBOM metadata. SBOM artifacts are attached to GitHub releases and verifiable via `gh attestation verify`.
+`test-and-report.yml` generates a SPDX-JSON SBOM via `anchore/sbom-action` on every push and PR, then scores it with [SBOMQS](https://github.com/interlynk-io/sbomqs) and fails the build if the average score falls below 7.0/10. `release.yml` generates the same SPDX-JSON SBOM at release time, produces a GitHub SBOM attestation (`actions/attest-sbom`), attaches the `.spdx.json` and `.spdx.json.intoto.jsonl` attestation bundle to the GitHub Release, and uploads them as release assets that are verifiable via `gh attestation verify`.
 
 #### 6.2 SLSA Provenance
 
@@ -530,7 +530,7 @@ build → provenance → verify → publish-npm (release only)
 | Property | Value |
 |----------|-------|
 | **Workflow File** | `.github/workflows/refresh-stats.yml` |
-| **Trigger** | Weekly (Tuesday 02:00 UTC cron), Manual dispatch |
+| **Trigger** | Weekly (Monday 06:00 UTC cron), Manual dispatch |
 | **Duration** | ~5 min |
 | **Node.js Version** | 25.x |
 | **Permissions** | `contents: write` |
@@ -696,7 +696,7 @@ graph LR
 | Function | Category | Subcategory | Workflow Implementation |
 |----------|----------|-------------|------------------------|
 | **GOVERN (GV)** | GV.SC | Supply Chain Risk Management | `scorecard.yml`, `dependency-review.yml` — supply chain monitoring |
-| **IDENTIFY (ID)** | ID.AM-2 | Software Inventory | `release.yml`, `slsa-provenance.yml` — SPDX + CycloneDX SBOM generation |
+| **IDENTIFY (ID)** | ID.AM-2 | Software Inventory | `test-and-report.yml`, `release.yml` — SPDX JSON SBOM generation with SBOMQS quality gate |
 | **PROTECT (PR)** | PR.DS-6 | Integrity Checking | `slsa-provenance.yml` — SLSA Level 3 build provenance |
 | **PROTECT (PR)** | PR.DS-1 | Data-at-Rest Protection | `release.yml` — signed artifacts with attestations |
 | **DETECT (DE)** | DE.CM-8 | Vulnerability Scanning | `codeql.yml` — weekly SAST, `dependency-review.yml` — PR dep scan |
@@ -706,7 +706,7 @@ graph LR
 
 | Control | Safeguard | Workflow Implementation | Measurement |
 |---------|-----------|------------------------|-------------|
-| **2.1** | Establish Software Inventory | `release.yml`, `slsa-provenance.yml` — CycloneDX + SPDX SBOM | SBOM quality score ≥7.0 |
+| **2.1** | Establish Software Inventory | `test-and-report.yml`, `release.yml` — SPDX JSON SBOM with SBOMQS scoring and attestation | SBOM quality score ≥7.0 |
 | **2.2** | Ensure Authorized Software | `dependency-review.yml` — license + vulnerability check | Blocked PRs with violations |
 | **4.1** | Establish Secure Configuration | `test-and-report.yml` — ESLint security rules, type checking | Zero lint errors |
 | **7.1** | Establish Vulnerability Management | `codeql.yml` + `scorecard.yml` — continuous scanning | SARIF findings, Scorecard ≥8.0 |

@@ -16,7 +16,7 @@
   <a href="#"><img src="https://img.shields.io/badge/Review-Annual-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** CEO | **📄 Version:** 3.0 | **📅 Last Updated:** 2026-04-21 (UTC)  
+**📋 Document Owner:** CEO | **📄 Version:** 3.1 | **📅 Last Updated:** 2026-04-21 (UTC)  
 **🔄 Review Cycle:** Annual | **⏰ Next Review:** 2027-04-21  
 **🏷️ Classification:** Public (Open Source MCP Server)
 
