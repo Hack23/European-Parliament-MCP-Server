@@ -18,14 +18,15 @@
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-DevOps-0A66C2?style=for-the-badge" alt="Owner"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-0.6.2-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2025--06--20-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-0.7.0-555?style=for-the-badge" alt="Version"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--04--21-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** DevOps Team | **📄 Version:** 0.6.2 | **📅 Last Updated:** 2026-03-31 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-06-20  
+**📋 Document Owner:** DevOps Team | **📄 Version:** 0.7.0 | **📅 Last Updated:** 2026-04-21 (UTC)  
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-07-21  
 **🏷️ Classification:** Public (Open Source MCP Server)  
+**🔷 Project Version:** 1.2.10  
 **🔷 TypeScript Baseline:** 6.0.2
 **✅ ISMS Compliance:** ISO 27001 (A.8.31, A.14.2, A.12.1), NIST CSF 2.0 (PR.DS-6, DE.CM-8), CIS Controls v8.1 (2.2, 4.1, 16.6)
 
@@ -117,9 +118,9 @@ graph LR
 | 2 | **Build & Test** | `test-and-report.yml` | Push, PR | ~3 min | TypeScript build, lint, unit tests, coverage |
 | 3 | **Security Analysis** | `codeql.yml` | Push, PR, Weekly | ~5 min | SAST scanning (CodeQL) |
 | 4 | **Integration Testing** | `integration-tests.yml` | Push, PR, Daily | ~5 min | E2E tests, live API validation |
-| 5 | **Release & Publish** | `release.yml` | Tag (v\*) | ~8 min | npm publish, GitHub Release, docs |
-| 6 | **Supply Chain** | `sbom-generation.yml`, `slsa-provenance.yml` | Release, Push | ~4 min | SBOM, SLSA provenance, attestations |
-| 7 | **Continuous Monitoring** | `scorecard.yml` | Push, Weekly | ~3 min | OpenSSF Scorecard assessment |
+| 5 | **Release & Publish** | `release.yml` | Tag (v\*) | ~8 min | npm publish, GitHub Release, docs, SBOM generation |
+| 6 | **Supply Chain** | `slsa-provenance.yml` | Release, Push | ~4 min | SLSA provenance, attestations |
+| 7 | **Continuous Monitoring** | `scorecard.yml`, `refresh-stats.yml` | Push, Weekly | ~3 min | OpenSSF Scorecard, EP statistics refresh |
 | 8 | **Repository Mgmt** | `setup-labels.yml`, `copilot-setup-steps.yml` | Manual | ~1 min | Label sync, Copilot agent setup |
 
 ---
@@ -130,15 +131,15 @@ graph LR
 |---|---------|------|---------|---------|-------------|---------------|
 | 1 | **Test and Report** | `test-and-report.yml` | Push, PR | 25.x + TS 6.0.2 | `read-all`, scoped per job | [Secure Dev Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
 | 2 | **CodeQL Analysis** | `codeql.yml` | Push, PR, Weekly | — | `security-events: write` | ISO 27001 A.14.2.8 |
-| 3 | **Build, Attest and Release** | `release.yml` | Tag (v\*), Manual | 25.x + TS 6.0.2 | `id-token: write`, `attestations: write` | SLSA Level 3 |
+| 3 | **Build, Attest and Release** | `release.yml` | Tag (v\*), Manual | 25.x + TS 6.0.2 | `id-token: write`, `attestations: write` | SLSA Level 3, includes SBOM |
 | 4 | **Integration & E2E Tests** | `integration-tests.yml` | Push, PR, Daily, Manual | 25.x + TS 6.0.2 | `read-all` | Quality Assurance |
-| 5 | **SBOM Generation** | `sbom-generation.yml` | Release, Push, Manual | 25.x + TS 6.0.2 | `id-token: write`, `attestations: write` | CIS Controls 2.2 |
-| 6 | **SLSA Provenance** | `slsa-provenance.yml` | Tag (v\*), Release, Manual | 25.x | `id-token: write`, `attestations: write` | SLSA Level 3 |
-| 7 | **Scorecard** | `scorecard.yml` | Push, Weekly | — | `security-events: write`, `id-token: write` | [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
-| 8 | **Dependency Review** | `dependency-review.yml` | PR | — | `contents: read` | NIST CSF DE.CM-8 |
-| 9 | **PR Labeler** | `labeler.yml` | PR | — | `pull-requests: write` | Process Automation |
-| 10 | **Setup Labels** | `setup-labels.yml` | Manual | — | `issues: write` | Configuration Mgmt |
-| 11 | **Copilot Setup** | `copilot-setup-steps.yml` | Push, PR, Manual | 25.x + TS 6.0.2 | Scoped per caller | Dev Tooling |
+| 5 | **SLSA Provenance** | `slsa-provenance.yml` | Tag (v\*), Release, Manual | 25.x | `id-token: write`, `attestations: write` | SLSA Level 3 |
+| 6 | **Scorecard** | `scorecard.yml` | Push, Weekly | — | `security-events: write`, `id-token: write` | [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
+| 7 | **Dependency Review** | `dependency-review.yml` | PR | — | `contents: read` | NIST CSF DE.CM-8 |
+| 8 | **PR Labeler** | `labeler.yml` | PR | — | `pull-requests: write` | Process Automation |
+| 9 | **Setup Labels** | `setup-labels.yml` | Manual | — | `issues: write` | Configuration Mgmt |
+| 10 | **Copilot Setup** | `copilot-setup-steps.yml` | Push, PR, Manual | 25.x + TS 6.0.2 | Scoped per caller | Dev Tooling |
+| 11 | **EP Statistics Refresh** | `refresh-stats.yml` | Weekly (cron), Manual | 25.x + TS 6.0.2 | `contents: write` | Agentic data intelligence |
 
 ---
 
@@ -186,17 +187,18 @@ flowchart TB
         RELEASE --> NPM["npm publish<br>--provenance"]
         RELEASE --> GH_RELEASE["GitHub Release<br>+ Changelog"]
         RELEASE --> DOCS["📚 TypeDoc"]
+        RELEASE --> SBOM_RELEASE["📋 SBOM (CycloneDX)"]
     end
 
     subgraph "Stage 6: Supply Chain"
-        RELEASE --> SBOM_GEN["📋 SBOM Generation<br><code>sbom-generation.yml</code>"]
         RELEASE --> SLSA["🛡️ SLSA Provenance<br><code>slsa-provenance.yml</code>"]
-        SBOM_GEN --> SBOM_ATTEST["🔏 SBOM Attestation"]
         SLSA --> SLSA_VERIFY["✅ Verify Provenance"]
+        SLSA --> SLSA_ATTEST["🔏 SLSA Attestation"]
     end
 
     subgraph "Stage 7: Continuous Monitoring"
         WEEKLY["⏰ Scheduled"] --> SCORECARD["🏆 OpenSSF Scorecard<br><code>scorecard.yml</code>"]
+        WEEKLY --> REFRESH_STATS["📊 EP Statistics Refresh<br><code>refresh-stats.yml</code>"]
         WEEKLY --> CODEQL
         WEEKLY --> INTEGRATION
     end
@@ -206,9 +208,9 @@ flowchart TB
     style CODEQL fill:#e74c3c,stroke:#c0392b,color:#fff
     style INTEGRATION fill:#2ecc71,stroke:#27ae60,color:#fff
     style RELEASE fill:#9b59b6,stroke:#8e44ad,color:#fff
-    style SBOM_GEN fill:#e67e22,stroke:#d35400,color:#fff
     style SLSA fill:#e67e22,stroke:#d35400,color:#fff
     style SCORECARD fill:#1abc9c,stroke:#16a085,color:#fff
+    style REFRESH_STATS fill:#1abc9c,stroke:#16a085,color:#fff
     style PASS fill:#51cf66,stroke:#40c057,color:#fff
 ```
 
@@ -446,30 +448,24 @@ sequenceDiagram
 
 ### Stage 6: Supply Chain Security
 
-#### 6.1 SBOM Generation
+#### 6.1 SBOM Generation (Integrated into Release Workflow)
+
+> **Note:** SBOM generation is integrated into the `release.yml` and `slsa-provenance.yml` workflows. There is **no standalone `sbom-generation.yml` workflow file**. SBOM creation occurs automatically during the release process using CycloneDX format with GitHub attestations.
+
+**SBOM Creation in Release Pipeline:**
 
 | Property | Value |
 |----------|-------|
-| **Workflow File** | `.github/workflows/sbom-generation.yml` |
-| **Trigger** | Push to `main`, Push tags (`v*`), Release (published), Manual |
-| **Duration** | ~3 min |
+| **Workflow Files** | `.github/workflows/release.yml`, `.github/workflows/slsa-provenance.yml` |
+| **Trigger** | Tag push (`v*`), Manual dispatch |
+| **Duration** | Included in ~8 min release workflow |
 | **Quality Gate** | SBOM quality score ≥7.0/10 |
+| **Format** | CycloneDX JSON with GitHub Attestations |
 | **Permissions** | `contents: write`, `id-token: write`, `attestations: write` |
 
-**Jobs:**
+**SBOM Process:**
 
-| Job | Purpose | Key Steps |
-|-----|---------|-----------|
-| **generate-sbom** | Create and validate SBOM | Install Syft, generate SPDX + CycloneDX SBOMs, validate with SBOMQS (min 7.0), attest SBOM |
-| **vulnerability-scan** | Scan SBOM for CVEs | Download SBOM, scan with Grype, fail on critical vulnerabilities |
-
-**Output Formats:**
-
-| Format | File | Purpose |
-|--------|------|---------|
-| SPDX 2.3 JSON | `sbom.spdx.json` | Industry-standard SBOM |
-| CycloneDX JSON | `sbom.cyclonedx.json` | Detailed component inventory |
-| Quality Report | `sbom-quality-report.json` | SBOMQS assessment |
+The release workflow generates a CycloneDX SBOM and attests it via GitHub's built-in attestation framework. The SLSA provenance workflow also includes SBOM metadata. SBOM artifacts are attached to GitHub releases and verifiable via `gh attestation verify`.
 
 #### 6.2 SLSA Provenance
 
@@ -528,6 +524,33 @@ build → provenance → verify → publish-npm (release only)
 | Signed-Releases | Provenance on releases | ✅ SLSA L3 |
 | Token-Permissions | Minimal token permissions | ✅ Scoped |
 | Vulnerabilities | No known CVEs | ✅ Monitored |
+
+#### 7.2 EP Statistics Refresh (Agentic Workflow)
+
+| Property | Value |
+|----------|-------|
+| **Workflow File** | `.github/workflows/refresh-stats.yml` |
+| **Trigger** | Weekly (Tuesday 02:00 UTC cron), Manual dispatch |
+| **Duration** | ~5 min |
+| **Node.js Version** | 25.x |
+| **Permissions** | `contents: write` |
+
+**Purpose:**
+
+The `refresh-stats.yml` workflow is an **agentic GitHub workflow** that automatically refreshes precomputed European Parliament statistics in `src/data/generatedStats.ts`. It fetches live counts from the EP Open Data Portal API, validates both raw and computed statistics, and commits updates on successful validation. This is an example of the **Continuous AI pattern** — automated intelligence gathering with validation guardrails.
+
+**Jobs:**
+
+| Job | Purpose | Key Steps |
+|-----|---------|-----------|
+| **refresh-stats** | Refresh EP stats | Check out repo, setup Node.js 25.x, install deps, run refresh script, validate stats, commit if changed |
+
+**Workflow Features:**
+
+- **Agentic execution:** Autonomous weekly data refresh without human intervention
+- **Validation gates:** Validates raw EP API counts + computed statistics before commit
+- **Idempotent:** Commits only if stats have actually changed
+- **Rollback safe:** Uses standard git commit workflow — errors can be reverted via Git
 
 ---
 
@@ -611,7 +634,7 @@ graph LR
 | **Secret Scoping** | Secrets scoped to specific jobs/environments | `release.yml`, `integration-tests.yml` | Job-level secret access |
 | **Egress Monitoring** | Outbound connection tracking and alerting | All 11 workflows | Step Security dashboard |
 | **SARIF Upload** | Security findings uploaded to GitHub Security tab | `codeql.yml`, `scorecard.yml` | Code scanning alerts |
-| **Attestation Signing** | Sigstore-backed artifact attestations | `release.yml`, `sbom-generation.yml`, `slsa-provenance.yml` | `gh attestation verify` |
+| **Attestation Signing** | Sigstore-backed artifact attestations | `release.yml`, `slsa-provenance.yml` | `gh attestation verify` |
 
 ### Secrets Inventory
 
@@ -673,7 +696,7 @@ graph LR
 | Function | Category | Subcategory | Workflow Implementation |
 |----------|----------|-------------|------------------------|
 | **GOVERN (GV)** | GV.SC | Supply Chain Risk Management | `scorecard.yml`, `dependency-review.yml` — supply chain monitoring |
-| **IDENTIFY (ID)** | ID.AM-2 | Software Inventory | `sbom-generation.yml` — SPDX + CycloneDX SBOM generation |
+| **IDENTIFY (ID)** | ID.AM-2 | Software Inventory | `release.yml`, `slsa-provenance.yml` — SPDX + CycloneDX SBOM generation |
 | **PROTECT (PR)** | PR.DS-6 | Integrity Checking | `slsa-provenance.yml` — SLSA Level 3 build provenance |
 | **PROTECT (PR)** | PR.DS-1 | Data-at-Rest Protection | `release.yml` — signed artifacts with attestations |
 | **DETECT (DE)** | DE.CM-8 | Vulnerability Scanning | `codeql.yml` — weekly SAST, `dependency-review.yml` — PR dep scan |
@@ -683,7 +706,7 @@ graph LR
 
 | Control | Safeguard | Workflow Implementation | Measurement |
 |---------|-----------|------------------------|-------------|
-| **2.1** | Establish Software Inventory | `sbom-generation.yml` — CycloneDX + SPDX SBOM | SBOM quality score ≥7.0 |
+| **2.1** | Establish Software Inventory | `release.yml`, `slsa-provenance.yml` — CycloneDX + SPDX SBOM | SBOM quality score ≥7.0 |
 | **2.2** | Ensure Authorized Software | `dependency-review.yml` — license + vulnerability check | Blocked PRs with violations |
 | **4.1** | Establish Secure Configuration | `test-and-report.yml` — ESLint security rules, type checking | Zero lint errors |
 | **7.1** | Establish Vulnerability Management | `codeql.yml` + `scorecard.yml` — continuous scanning | SARIF findings, Scorecard ≥8.0 |
