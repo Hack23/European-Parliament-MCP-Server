@@ -161,8 +161,8 @@
     "@types/node": "25.6.0",
     "@typescript-eslint/eslint-plugin": "8.59.0",
     "@typescript-eslint/parser": "8.59.0",
-    "@vitest/coverage-v8": "4.1.4",
-    "@vitest/ui": "4.1.4",
+    "@vitest/coverage-v8": "4.1.5",
+    "@vitest/ui": "4.1.5",
     "eslint": "10.2.1",
     "globals": "17.5.0",
     "knip": "6.6.0",
@@ -175,6 +175,6 @@
     "typedoc-plugin-zod": "1.4.3",
     "typescript": "6.0.3",
     "typescript-eslint": "8.59.0",
-    "vitest": "4.1.4"
+    "vitest": "4.1.5"
   }
 }
