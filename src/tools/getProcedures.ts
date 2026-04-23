@@ -96,18 +96,20 @@ export async function handleGetProcedures(args: unknown): Promise<ToolResult> {
 
     return buildToolResponse(result);
   } catch (error: unknown) {
-    // Surface upstream 404s as a non-retryable UPSTREAM_404 ToolError so
-    // callers can distinguish "procedure not found" from a transient failure
-    // instead of retrying indefinitely on a processId that does not exist.
-    if (error instanceof APIError && error.statusCode === 404) {
-      const message =
-        params.processId !== undefined
-          ? `Procedure not found: ${params.processId} (EP API returned 404)`
-          : error.message;
+    // Surface upstream 404s as a non-retryable UPSTREAM_404 ToolError only for
+    // single-procedure lookups, where 404 semantically means the requested
+    // procedure does not exist. List retrievals fall through to the generic
+    // retryable failure path because a 404 there likely indicates
+    // misconfiguration or transient upstream routing issues.
+    if (
+      params.processId !== undefined &&
+      error instanceof APIError &&
+      error.statusCode === 404
+    ) {
       throw new ToolError({
         toolName: 'get_procedures',
         operation: 'fetchData',
-        message,
+        message: `Procedure not found: ${params.processId} (EP API returned 404)`,
         isRetryable: false,
         errorCode: 'UPSTREAM_404',
         httpStatus: 404,
