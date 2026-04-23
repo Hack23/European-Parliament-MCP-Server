@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../README.md)
 
 ***
 
@@ -6,8 +6,13 @@
 
 # tools/shared/feedUtils
 
+## Interfaces
+
+- [FeedErrorMeta](interfaces/FeedErrorMeta.md)
+
 ## Type Aliases
 
+- [FeedErrorCode](type-aliases/FeedErrorCode.md)
 - [FeedStatus](type-aliases/FeedStatus.md)
 
 ## Variables
@@ -18,5 +23,6 @@
 
 - [buildEmptyFeedResponse](functions/buildEmptyFeedResponse.md)
 - [buildFeedSuccessResponse](functions/buildFeedSuccessResponse.md)
+- [extractUpstreamStatusCode](functions/extractUpstreamStatusCode.md)
 - [isErrorInBody](functions/isErrorInBody.md)
 - [isUpstream404](functions/isUpstream404.md)

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetProceduresFeed**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getProceduresFeed.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProceduresFeed.ts#L26)
+Defined in: [tools/getProceduresFeed.ts:163](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProceduresFeed.ts#L163)
 
 Handles the get_procedures_feed MCP tool request.
 

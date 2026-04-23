@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: VotingRecord
 
-Defined in: [tools/trackLegislation/types.ts:72](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L72)
+Defined in: [tools/trackLegislation/types.ts:85](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L85)
 
 Voting record
 
@@ -16,7 +16,7 @@ Voting record
 
 > **abstentions**: `number`
 
-Defined in: [tools/trackLegislation/types.ts:78](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L78)
+Defined in: [tools/trackLegislation/types.ts:91](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L91)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [tools/trackLegislation/types.ts:78](https://github.com/Hack23/Europ
 
 > **date**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L73)
+Defined in: [tools/trackLegislation/types.ts:86](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L86)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [tools/trackLegislation/types.ts:73](https://github.com/Hack23/Europ
 
 > **result**: `"ADOPTED"` \| `"REJECTED"`
 
-Defined in: [tools/trackLegislation/types.ts:75](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L75)
+Defined in: [tools/trackLegislation/types.ts:88](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L88)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [tools/trackLegislation/types.ts:75](https://github.com/Hack23/Europ
 
 > **stage**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:74](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L74)
+Defined in: [tools/trackLegislation/types.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L87)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [tools/trackLegislation/types.ts:74](https://github.com/Hack23/Europ
 
 > **votesAgainst**: `number`
 
-Defined in: [tools/trackLegislation/types.ts:77](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L77)
+Defined in: [tools/trackLegislation/types.ts:90](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L90)
 
 ***
 
@@ -56,4 +56,4 @@ Defined in: [tools/trackLegislation/types.ts:77](https://github.com/Hack23/Europ
 
 > **votesFor**: `number`
 
-Defined in: [tools/trackLegislation/types.ts:76](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L76)
+Defined in: [tools/trackLegislation/types.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L89)

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **isUpstream404**(`error`): `boolean`
 
-Defined in: [tools/shared/feedUtils.ts:122](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L122)
+Defined in: [tools/shared/feedUtils.ts:172](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L172)
 
 Check whether an error is an upstream EP API 404.
 

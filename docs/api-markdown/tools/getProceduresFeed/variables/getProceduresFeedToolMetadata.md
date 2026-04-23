@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getProceduresFeedToolMetadata**: `object`
 
-Defined in: [tools/getProceduresFeed.ts:71](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProceduresFeed.ts#L71)
+Defined in: [tools/getProceduresFeed.ts:213](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProceduresFeed.ts#L213)
 
 Tool metadata for get_procedures_feed
 
@@ -16,7 +16,7 @@ Tool metadata for get_procedures_feed
 
 ### description
 
-> **description**: `string` = `'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take around 120 seconds and can still time out. If you see timeouts, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. For faster results, use get_procedures with a year filter instead.'`
+> **description**: `string` = `'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take around 120 seconds and can still time out. If you see timeouts, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. When no procedures were updated in the requested timeframe (common during parliamentary recess or low-activity periods), the response will have status:"unavailable" and empty items — this is expected behaviour, not an error. In that case, use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback.'`
 
 ### inputSchema
 

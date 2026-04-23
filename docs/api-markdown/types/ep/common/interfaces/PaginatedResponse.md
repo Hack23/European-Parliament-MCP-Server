@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../../README.md)
 
 ***
 
@@ -180,7 +180,7 @@ data: []
 
 > **hasMore**: `boolean`
 
-Defined in: [types/ep/common.ts:284](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L284)
+Defined in: [types/ep/common.ts:303](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L303)
 
 Indicates if more items may exist beyond the current page.
 
@@ -196,11 +196,15 @@ underlying server page fullness, not always on the filtered
   returned `limit` items). A full page suggests more data may follow,
   but can be a **false positive** when the dataset size is an exact
   multiple of `limit`.
-- For **client-filtered server endpoints** (e.g. `searchDocuments`,
-  `getPlenarySessions`, `getParliamentaryQuestions`), `hasMore` is
-  derived from the **unfiltered server page size** before client-side
-  filtering. This means `hasMore` can be `true` even when the filtered
-  `data` array contains fewer than `limit` items or is empty.
+- For **client-filtered server endpoints** (e.g. `getPlenarySessions`,
+  `getParliamentaryQuestions`), `hasMore` is derived from the
+  **unfiltered server page size** before client-side filtering. This
+  means `hasMore` can be `true` even when the filtered `data` array
+  contains fewer than `limit` items or is empty.
+- **Exception — `searchDocuments`:** `hasMore` still reflects pre-filter
+  server page fullness (so callers continue paginating for more matches),
+  but `total` is derived from the post-filter `data.length` — guaranteeing
+  the identity `total === offset + data.length + (hasMore ? 1 : 0)`.
 
 Callers should paginate until `hasMore` is `false`. For **in-memory
 paginated** results, `hasMore` is exact: `(offset + data.length) < total`.
@@ -232,7 +236,7 @@ if (response.hasMore) {
 
 > **limit**: `number`
 
-Defined in: [types/ep/common.ts:224](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L224)
+Defined in: [types/ep/common.ts:239](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L239)
 
 Maximum items per page (requested page size).
 
@@ -266,7 +270,7 @@ less on last page or with filtered queries.
 
 > **offset**: `number`
 
-Defined in: [types/ep/common.ts:243](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L243)
+Defined in: [types/ep/common.ts:258](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L258)
 
 Number of items skipped (pagination offset).
 
@@ -303,7 +307,7 @@ Used for offset-based pagination. To get page N, use
 
 > **total**: `number`
 
-Defined in: [types/ep/common.ts:205](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L205)
+Defined in: [types/ep/common.ts:220](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/common.ts#L220)
 
 Total number of items matching the query (exact or heuristic estimate).
 
@@ -322,12 +326,27 @@ count header, this is a **heuristic sentinel**:
   but may **overestimate by 1** when the dataset size is an exact
   multiple of `limit` (i.e., the last server page is exactly full).
 
-For **client-filtered server endpoints** (e.g. `searchDocuments` with keyword,
-`getPlenarySessions` with location, `getParliamentaryQuestions` with author/topic),
-`total` and `hasMore` are derived from the **unfiltered server page size**, not
-from `data.length` after client-side filtering. This means `hasMore` can be `true`
-even when the filtered `data` array is empty, and `total` will not reflect the
-count of filtered matches.
+For **client-filtered server endpoints** (e.g. `getPlenarySessions` with
+location, `getParliamentaryQuestions` with author/topic), `total` and
+`hasMore` are derived from the **unfiltered server page size**, not
+from `data.length` after client-side filtering. This means `hasMore` can
+be `true` even when the filtered `data` array is empty, and `total` will
+not reflect the count of filtered matches.
+
+**Exception — `searchDocuments`:** `total` is derived from the
+**post-filter** `data.length`, not the unfiltered server page size.
+Concretely, this endpoint guarantees the envelope identity
+`total === offset + data.length + (hasMore ? 1 : 0)` while `hasMore`
+remains pre-filter (server page fullness). Note that `total` here is a
+**pagination-envelope sentinel**, not a count of items matching the
+post-filter query: because `offset` is the raw server offset (not a
+cumulative count of filtered matches across previous pages), `total`
+may exceed the true number of matches. Its role is purely to keep the
+envelope internally consistent. This prevents misleading responses such
+as `data:[] total:21 hasMore:true` when a full server page is
+eliminated by keyword/committee/date filters (the new envelope in that
+case is `data:[] total:1 hasMore:true`). Callers should still paginate
+until `hasMore === false` to enumerate all matches.
 
 **Do not** use this value for exact "X of Y" UI or page-count
 calculations on server-paginated endpoints. Instead, iterate all

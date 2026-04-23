@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">98.7% </span>
+                <span class="strong">98.72% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>153/155</span>
+                <span class='fraction'>155/157</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.07% </span>
+                <span class="strong">95.12% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>193/203</span>
+                <span class='fraction'>195/205</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>141/141</span>
+                <span class='fraction'>143/143</span>
             </div>
         
             
@@ -559,7 +559,14 @@
 <a name='L494'></a><a href='#L494'>494</a>
 <a name='L495'></a><a href='#L495'>495</a>
 <a name='L496'></a><a href='#L496'>496</a>
-<a name='L497'></a><a href='#L497'>497</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L497'></a><a href='#L497'>497</a>
+<a name='L498'></a><a href='#L498'>498</a>
+<a name='L499'></a><a href='#L499'>499</a>
+<a name='L500'></a><a href='#L500'>500</a>
+<a name='L501'></a><a href='#L501'>501</a>
+<a name='L502'></a><a href='#L502'>502</a>
+<a name='L503'></a><a href='#L503'>503</a>
+<a name='L504'></a><a href='#L504'>504</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -849,26 +856,26 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">132x</span>
-<span class="cline-any cline-yes">132x</span>
-<span class="cline-any cline-yes">132x</span>
-<span class="cline-any cline-yes">132x</span>
-<span class="cline-any cline-yes">132x</span>
-<span class="cline-any cline-yes">132x</span>
+<span class="cline-any cline-yes">152x</span>
+<span class="cline-any cline-yes">152x</span>
+<span class="cline-any cline-yes">152x</span>
+<span class="cline-any cline-yes">152x</span>
+<span class="cline-any cline-yes">152x</span>
+<span class="cline-any cline-yes">152x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">132x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">152x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">132x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">152x</span>
 <span class="cline-any cline-yes">89x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">132x</span>
+<span class="cline-any cline-yes">152x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -970,7 +977,14 @@
 <span class="cline-any cline-yes">79x</span>
 <span class="cline-any cline-yes">79x</span>
 <span class="cline-any cline-yes">79x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">79x</span>
+<span class="cline-any cline-yes">79x</span>
+<span class="cline-any cline-yes">79x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1466,11 +1480,18 @@ export function transformProcedure(apiData: Record&lt;string, unknown&gt;): Proc
   const dateStartField = firstDefined(apiData, 'process_date_start', 'date_start', 'date');
   const dateUpdateField = firstDefined(apiData, 'process_date_update', 'date_update');
   const subjectField = firstDefined(apiData, 'subject_matter', 'subject');
+  // Extract the procedure-type code from a URI like "def/ep-procedure-types/COD" → "COD".
+  // For strings without a "/" (e.g. plain "COD"), lastIndexOf returns -1, so
+  // slice(0) returns the full string unchanged.
+  const rawType = extractField(apiData, ['process_type', 'type']);
+  const typeCode = rawType.includes('/') ? rawType.slice(rawType.lastIndexOf('/') + 1) : rawType;
   return {
-    id: extractField(apiData, ['identifier', 'id', 'process_id']),
+    // Prefer the human-readable process_id (e.g. "2025-0009") over the full JSON-LD URI
+    // (e.g. "eli/dl/proc/2025-0009") that the EP API places in the "id" field.
+    id: extractField(apiData, ['identifier', 'process_id', 'id']),
     title: extractMultilingualText(titleField),
     reference: extractField(apiData, ['identifier', 'process_id']),
-    type: extractField(apiData, ['process_type', 'type']),
+    type: typeCode,
     subjectMatter: extractMultilingualText(subjectField),
     stage: extractField(apiData, ['process_stage', 'stage']),
     status: extractField(apiData, ['process_status', 'status']),
@@ -1558,7 +1579,7 @@ export function transformMEPDeclaration(apiData: Record&lt;string, unknown&gt;):
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-23T11:01:16.826Z
+                at 2026-04-23T22:08:13.836Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

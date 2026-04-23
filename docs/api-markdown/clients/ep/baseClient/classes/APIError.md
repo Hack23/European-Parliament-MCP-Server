@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../../README.md)
 
 ***
 
@@ -6,14 +6,26 @@
 
 # Class: APIError
 
-Defined in: [clients/ep/baseClient.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L143)
+Defined in: [clients/ep/baseClient.ts:155](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L155)
 
 API Error thrown when European Parliament API requests fail.
+
+When thrown from [BaseEPClient](BaseEPClient.md)'s HTTP layer, the message always
+includes the numeric HTTP status code and, when present, the HTTP reason
+phrase (`statusText`). Some HTTP/2 responses omit `statusText`, in which
+case the message contains only the status code — the status code is
+therefore always surfaced in the message, never empty.
+
+Message format: `EP API request failed: <status>[ <statusText>]`
 
 ## Example
 
 ```typescript
-throw new APIError('EP API request failed: Not Found', 404, { endpoint: '/meps/999999' });
+// HTTP/1.1 with a reason phrase
+throw new APIError('EP API request failed: 404 Not Found', 404, { endpoint: '/meps/999999' });
+
+// HTTP/2 where statusText is empty
+throw new APIError('EP API request failed: 404', 404, { endpoint: '/meps/999999' });
 ```
 
 ## Extends
@@ -26,7 +38,7 @@ throw new APIError('EP API request failed: Not Found', 404, { endpoint: '/meps/9
 
 > **new APIError**(`message`, `statusCode?`, `details?`): `APIError`
 
-Defined in: [clients/ep/baseClient.ts:144](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L144)
+Defined in: [clients/ep/baseClient.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L156)
 
 #### Parameters
 
@@ -56,7 +68,7 @@ Defined in: [clients/ep/baseClient.ts:144](https://github.com/Hack23/European-Pa
 
 > `optional` **details?**: `unknown`
 
-Defined in: [clients/ep/baseClient.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L147)
+Defined in: [clients/ep/baseClient.ts:159](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L159)
 
 ***
 
@@ -64,4 +76,4 @@ Defined in: [clients/ep/baseClient.ts:147](https://github.com/Hack23/European-Pa
 
 > `optional` **statusCode?**: `number`
 
-Defined in: [clients/ep/baseClient.ts:146](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L146)
+Defined in: [clients/ep/baseClient.ts:158](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L158)
