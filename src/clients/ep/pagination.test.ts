@@ -327,10 +327,11 @@ describe('Pagination metadata correctness', () => {
       expect(result.total).toBe(21); // 0 + 20 filtered + 1 sentinel
     });
 
-    it('full server page with all items filtered out by keyword: envelope invariant holds', async () => {
+    it('full server page with all items filtered out by keyword: envelope identity holds', async () => {
       // 20 documents with titles "Document N" do NOT match keyword "climate" —
       // this reproduces the reported bug scenario (data:[] total:21 hasMore:true).
-      // Fix: total reflects the post-filter count so `total - offset >= data.length`.
+      // Fix: total is derived from the post-filter count so the envelope
+      // satisfies the identity total === offset + data.length + (hasMore ? 1 : 0).
       mockOk(buildDocumentResponse(20));
       const result = await client.searchDocuments({
         keyword: 'climate',
@@ -340,8 +341,12 @@ describe('Pagination metadata correctness', () => {
       expect(result.data.length).toBe(0);
       expect(result.hasMore).toBe(true); // server page was full, more may follow
       expect(result.total).toBe(1); // 0 + 0 filtered + 1 sentinel (NOT 21)
-      // Envelope invariant
-      expect(result.total - result.offset).toBeGreaterThanOrEqual(result.data.length);
+      // Envelope identity (stronger than the `>=` inequality — this is the
+      // exact contract documented in `PaginatedResponse` JSDoc and is what
+      // distinguishes the new post-filter `total` from the old pre-filter one).
+      expect(result.total).toBe(
+        result.offset + result.data.length + (result.hasMore ? 1 : 0)
+      );
     });
 
     it('partial server page with all items filtered out: total === offset, hasMore=false', async () => {

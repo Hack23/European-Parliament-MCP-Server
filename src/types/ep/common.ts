@@ -193,16 +193,18 @@ export interface PaginatedResponse<T> {
    *
    * **Exception — `searchDocuments`:** `total` is derived from the
    * **post-filter** `data.length`, not the unfiltered server page size.
-   * Concretely, this endpoint guarantees the stronger identity
+   * Concretely, this endpoint guarantees the envelope identity
    * `total === offset + data.length + (hasMore ? 1 : 0)` while `hasMore`
-   * remains pre-filter (server page fullness). This means `total` is exact
-   * on the last page (`hasMore === false`) and overestimates by exactly 1
-   * when `hasMore === true`, so `total - offset <= data.length + 1` always
-   * holds. This prevents misleading envelopes such as
-   * `data:[] total:21 hasMore:true` when a full server page is eliminated
-   * by keyword/committee/date filters (the new envelope in that case is
-   * `data:[] total:1 hasMore:true`). Callers should still paginate until
-   * `hasMore === false` to enumerate all matches.
+   * remains pre-filter (server page fullness). Note that `total` here is a
+   * **pagination-envelope sentinel**, not a count of items matching the
+   * post-filter query: because `offset` is the raw server offset (not a
+   * cumulative count of filtered matches across previous pages), `total`
+   * may exceed the true number of matches. Its role is purely to keep the
+   * envelope internally consistent. This prevents misleading responses such
+   * as `data:[] total:21 hasMore:true` when a full server page is
+   * eliminated by keyword/committee/date filters (the new envelope in that
+   * case is `data:[] total:1 hasMore:true`). Callers should still paginate
+   * until `hasMore === false` to enumerate all matches.
    * 
    * **Do not** use this value for exact "X of Y" UI or page-count
    * calculations on server-paginated endpoints. Instead, iterate all

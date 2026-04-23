@@ -160,10 +160,14 @@ export class DocumentClient extends BaseEPClient {
       // exist to fetch, even if all items on the current page were removed by
       // the client-side keyword/committee/date filters.
       //
-      // `total` is computed from the *filtered* `documents.length` (not the
-      // raw `pageSize`), so it is effectively a lower-bound estimate: exact
-      // when `hasMore === false`, and exactly `offset + data.length + 1` when
-      // `hasMore === true`. This hybrid prevents the misleading
+      // `total` is computed from the *filtered* `documents.length` plus a
+      // +1 sentinel when `hasMore === true`. It is a **pagination-envelope
+      // sentinel**, not a match count: because `offset` is the raw server
+      // offset (not a cumulative count of filtered matches across previous
+      // pages), `total` may be larger than the actual number of filtered
+      // matches in the dataset. Its sole purpose is to satisfy the envelope
+      // identity `total === offset + data.length + (hasMore ? 1 : 0)` so the
+      // response stays internally consistent. This prevents the misleading
       // `data:[] total:21 hasMore:true` envelope that would occur if `total`
       // were derived from the unfiltered page size.
       //
