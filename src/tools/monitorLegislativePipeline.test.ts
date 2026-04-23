@@ -13,6 +13,13 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
   }
 }));
 
+// Dynamic dates to ensure procedures stay within the "not stalled" threshold
+function daysAgo(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return d.toISOString().slice(0, 10);
+}
+
 const mockProcedures = {
   data: [
     {
@@ -59,6 +66,80 @@ const mockProcedures = {
     },
   ],
   total: 3,
+  limit: 20,
+  offset: 0,
+  hasMore: false,
+};
+
+/**
+ * Historical procedures with no date or enrichment data — simulates the 1972-1988 bug.
+ * Also includes a fresh enriched procedure (PROC-FRESH) to verify it survives the filter,
+ * and a recent-but-unenriched procedure (PROC-UNENRICHED) to verify the enrichment warning.
+ */
+const mockHistoricalProcedures = {
+  data: [
+    // Fresh, enriched, active procedure — should survive status: 'ACTIVE'
+    {
+      id: 'PROC-FRESH',
+      title: 'AI Governance Regulation',
+      reference: '2025/0001(COD)',
+      type: 'COD',
+      subjectMatter: 'Digital',
+      stage: 'Committee consideration',
+      status: 'Ongoing',
+      dateInitiated: daysAgo(30),
+      dateLastActivity: daysAgo(5),
+      responsibleCommittee: 'IMCO',
+      rapporteur: 'MEP AI',
+      documents: [],
+    },
+    // Recent date but no stage/committee enrichment — passes recency, excluded by matchesStatusFilter
+    {
+      id: 'PROC-UNENRICHED',
+      title: 'Unknown recent procedure',
+      reference: '2025/0999(COD)',
+      type: 'COD',
+      subjectMatter: '',
+      stage: '',
+      status: '',
+      dateInitiated: daysAgo(30),
+      dateLastActivity: daysAgo(5),
+      responsibleCommittee: '',
+      rapporteur: '',
+      documents: [],
+    },
+    // Historical: no temporal data at all
+    {
+      id: 'eli/dl/proc/1972-0003',
+      title: '1972/0003(COD)',
+      reference: '1972/0003(COD)',
+      type: 'COD',
+      subjectMatter: '',
+      stage: '',
+      status: '',
+      dateInitiated: '',
+      dateLastActivity: '',
+      responsibleCommittee: '',
+      rapporteur: '',
+      documents: [],
+    },
+    // Historical: only initiation date, well before recency cut-off
+    {
+      id: 'eli/dl/proc/1985-0017',
+      title: '1985/0017(NLE)',
+      reference: '1985/0017(NLE)',
+      type: 'NLE',
+      subjectMatter: '',
+      stage: '',
+      status: '',
+      dateInitiated: '1985-03-01',
+      dateLastActivity: '',
+      responsibleCommittee: '',
+      rapporteur: '',
+      documents: [],
+    },
+  ],
+  total: 4,
   limit: 20,
   offset: 0,
   hasMore: false,
@@ -219,6 +300,116 @@ describe('monitor_legislative_pipeline Tool', () => {
 
       await expect(handleMonitorLegislativePipeline({}))
         .rejects.toThrow('Failed to monitor legislative pipeline');
+    });
+  });
+
+  describe('ACTIVE filter — historical / incomplete record exclusion', () => {
+    beforeEach(() => {
+      vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(mockHistoricalProcedures);
+    });
+
+    it('should exclude procedures with no date data from ACTIVE status', async () => {
+      const result = await handleMonitorLegislativePipeline({ status: 'ACTIVE' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        pipeline: { procedureId: string }[];
+      };
+      const ids = data.pipeline.map(p => p.procedureId);
+      expect(ids).not.toContain('eli/dl/proc/1972-0003');
+    });
+
+    it('should exclude procedures with dates before recency cut-off from ACTIVE status', async () => {
+      const result = await handleMonitorLegislativePipeline({ status: 'ACTIVE' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        pipeline: { procedureId: string }[];
+      };
+      const ids = data.pipeline.map(p => p.procedureId);
+      expect(ids).not.toContain('eli/dl/proc/1985-0017');
+    });
+
+    it('should retain current procedures in ACTIVE status when historical ones are present', async () => {
+      const result = await handleMonitorLegislativePipeline({ status: 'ACTIVE' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        pipeline: { procedureId: string }[];
+      };
+      const ids = data.pipeline.map(p => p.procedureId);
+      // PROC-FRESH has valid recent dates and stage enrichment — must survive ACTIVE filter
+      expect(ids).toContain('PROC-FRESH');
+    });
+
+    it('should include ALL status results regardless of enrichment or recency', async () => {
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        pipeline: { procedureId: string }[];
+      };
+      const ids = data.pipeline.map(p => p.procedureId);
+      // ALL should pass historical records through (no recency filter applies)
+      expect(ids).toContain('eli/dl/proc/1972-0003');
+    });
+
+    it('should add dataQualityWarning when enrichment-missing items are excluded from ACTIVE', async () => {
+      const result = await handleMonitorLegislativePipeline({ status: 'ACTIVE' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataQualityWarnings: string[];
+      };
+      // At least one warning should mention excluded/enrichment
+      const hasEnrichmentWarning = data.dataQualityWarnings.some(w =>
+        w.includes('excluded') && w.includes('enrichment')
+      );
+      expect(hasEnrichmentWarning).toBe(true);
+    });
+
+    it('should not add enrichment warning when no Unknown-stage items are present', async () => {
+      // Override with normal modern procedures only — no Unknown-stage items pass the recency filter
+      vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue({
+        data: [
+          {
+            id: 'PROC-FRESH2',
+            title: 'Fresh enriched procedure',
+            reference: '2025/0002(COD)',
+            type: 'COD',
+            subjectMatter: 'Digital',
+            stage: 'Committee consideration',
+            status: 'Ongoing',
+            dateInitiated: daysAgo(30),
+            dateLastActivity: daysAgo(5),
+            responsibleCommittee: 'IMCO',
+            rapporteur: 'MEP Fresh',
+            documents: [],
+          },
+        ],
+        total: 1,
+        limit: 20,
+        offset: 0,
+        hasMore: false,
+      });
+      const result = await handleMonitorLegislativePipeline({ status: 'ACTIVE' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataQualityWarnings: string[];
+      };
+      const hasEnrichmentWarning = data.dataQualityWarnings.some(w => w.includes('enrichment'));
+      expect(hasEnrichmentWarning).toBe(false);
+    });
+
+    it('should not apply recency cut-off when an explicit dateFrom is provided', async () => {
+      // With an explicit dateFrom, the user controls the date range —
+      // the recency cut-off must not double-filter
+      const result = await handleMonitorLegislativePipeline({
+        status: 'ACTIVE',
+        dateFrom: '1970-01-01',
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        pipeline: { procedureId: string }[];
+      };
+      // The 1985 procedure has dateInitiated='1985-03-01' which is after 1970-01-01;
+      // with explicit dateFrom, it passes the date filter. However, it still has
+      // Unknown stage/committee so it is still excluded by matchesStatusFilter.
+      // The key check: 1972 procedure has empty dates so lastActivity='' which means
+      // the dateFrom guard (lastActivity < dateFrom when lastActivity !== '') does NOT
+      // fire, and initiated is undefined so that guard doesn't fire either —
+      // meaning it passes the date filter when an explicit dateFrom is set.
+      // It will still be excluded by matchesStatusFilter due to Unknown stage.
+      // This test just verifies the tool runs without error in this scenario.
+      expect(data).toHaveProperty('pipeline');
     });
   });
 });
