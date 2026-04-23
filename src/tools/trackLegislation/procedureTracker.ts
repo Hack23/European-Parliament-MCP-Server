@@ -139,7 +139,9 @@ export function buildLegislativeTracking(
   }
 
   // Merge timeline from procedure date fields and events from the events endpoint.
-  // Deduplicate by combining date + stage as a key to avoid double-entries.
+  // Procedure-date entries are placed first so they take precedence: if both
+  // sources produce an entry with the same date+stage key, the procedure-date
+  // entry is kept and the event entry is silently dropped.
   const procedureTimeline = buildTimeline(procedure);
   const eventsTimeline = buildTimelineFromEvents(events);
   const seenKeys = new Set<string>();

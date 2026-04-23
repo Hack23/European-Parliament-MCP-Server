@@ -24,6 +24,13 @@ import type { EPEvent } from '../../types/europeanParliament.js';
 import { ToolError } from '../shared/errors.js';
 
 /**
+ * Maximum number of procedure events to fetch for timeline enrichment.
+ * 20 covers the typical lifecycle milestones for an EP procedure while
+ * keeping the API call lightweight.
+ */
+const EVENTS_ENRICHMENT_LIMIT = 20;
+
+/**
  * Convert a user-supplied procedure reference to the EP API process-id format.
  *
  * The EP API uses process IDs like `2024-0006` (dashes, no type suffix),
@@ -96,7 +103,7 @@ export async function handleTrackLegislation(
     const enrichmentFailures: string[] = [];
     let events: EPEvent[] = [];
     try {
-      const eventsResponse = await epClient.getProcedureEvents(processId, { limit: 20 });
+      const eventsResponse = await epClient.getProcedureEvents(processId, { limit: EVENTS_ENRICHMENT_LIMIT });
       events = eventsResponse.data;
     } catch {
       enrichmentFailures.push('events-lookup');

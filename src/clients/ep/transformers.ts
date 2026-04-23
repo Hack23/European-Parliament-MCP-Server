@@ -410,7 +410,8 @@ export function transformProcedure(apiData: Record<string, unknown>): Procedure 
   const dateUpdateField = firstDefined(apiData, 'process_date_update', 'date_update');
   const subjectField = firstDefined(apiData, 'subject_matter', 'subject');
   // Extract the procedure-type code from a URI like "def/ep-procedure-types/COD" → "COD".
-  // Plain codes (e.g. "COD") that contain no "/" are returned as-is.
+  // For strings without a "/" (e.g. plain "COD"), lastIndexOf returns -1, so
+  // slice(0) returns the full string unchanged.
   const rawType = extractField(apiData, ['process_type', 'type']);
   const typeCode = rawType.includes('/') ? rawType.slice(rawType.lastIndexOf('/') + 1) : rawType;
   return {
