@@ -75,6 +75,13 @@ interface LegislativePipelineAnalysis {
 }
 
 /**
+ * Default recency window (years) applied to the ACTIVE status filter when no
+ * explicit dateFrom is provided. Procedures whose best available date predates
+ * this window cannot be confirmed as currently active and are excluded.
+ */
+const ACTIVE_RECENCY_YEARS = 10;
+
+/**
  * Calculate days between two date strings (or since a date).
  */
 function daysBetween(dateStr: string, endStr?: string): number {
@@ -182,10 +189,42 @@ function procedureToPipelineItem(proc: Procedure): PipelineItem {
   };
 }
 
+/**
+ * Check if a procedure's dates pass the recency cut-off for the ACTIVE filter.
+ * Returns false if the procedure has no temporal data or is older than the cut-off.
+ */
+function isWithinRecencyCutoff(
+  lastActivity: string,
+  initiated: string | undefined,
+  cutoffDate: string
+): boolean {
+  if (lastActivity === '' && initiated === undefined) return false;
+  const referenceDate = lastActivity !== '' ? lastActivity : initiated;
+  return referenceDate !== undefined && referenceDate >= cutoffDate;
+}
+
+/** Check if a procedure matches an explicit date range (dateFrom / dateTo) */
+function matchesDateRange(
+  lastActivity: string,
+  initiated: string | undefined,
+  dateFrom: string | undefined,
+  dateTo: string | undefined
+): boolean {
+  if (dateFrom !== undefined && lastActivity !== '' && lastActivity < dateFrom) return false;
+  if (dateTo !== undefined && initiated !== undefined && initiated > dateTo) return false;
+  return true;
+}
+
 /** Check if item matches status filter */
 function matchesStatusFilter(item: PipelineItem, status: string): boolean {
   if (status === 'ALL') return true;
-  if (status === 'ACTIVE') return !item.isStalled && item.computedAttributes.progressPercentage < 100;
+  if (status === 'ACTIVE') {
+    // Exclude items with missing enrichment (Unknown stage) — these are historical
+    // or incomplete records that cannot be confirmed as currently active
+    return !item.isStalled
+      && item.computedAttributes.progressPercentage < 100
+      && item.currentStage !== 'Unknown';
+  }
   if (status === 'STALLED') return item.isStalled;
   if (status === 'COMPLETED') return item.computedAttributes.progressPercentage >= 100;
   return true;
@@ -288,16 +327,37 @@ export async function handleMonitorLegislativePipeline(
 
     const dateFrom = params.dateFrom;
     const dateTo = params.dateTo;
+
+    // Compute default recency cut-off date for the ACTIVE filter.
+    // When dateFrom is not explicitly set, procedures whose best available date
+    // predates the cut-off window are excluded — they cannot be confirmed as active.
+    const activeCutoffDate: string | undefined = ((): string | undefined => {
+      if (params.status !== 'ACTIVE' || dateFrom !== undefined) return undefined;
+      const referenceYear = parseInt(
+        (dateTo ?? new Date().toISOString().slice(0, 10)).slice(0, 4),
+        10
+      );
+      return `${String(referenceYear - ACTIVE_RECENCY_YEARS)}-01-01`;
+    })();
+
     const filteredProcs = procedures.data.filter(proc => {
       const lastActivity = proc.dateLastActivity !== '' ? proc.dateLastActivity : proc.dateInitiated;
       const initiated = proc.dateInitiated !== '' ? proc.dateInitiated : undefined;
-      if (dateFrom !== undefined && lastActivity !== '' && lastActivity < dateFrom) return false;
-      if (dateTo !== undefined && initiated !== undefined && initiated > dateTo) return false;
-      return true;
+      if (activeCutoffDate !== undefined && !isWithinRecencyCutoff(lastActivity, initiated, activeCutoffDate)) {
+        return false;
+      }
+      return matchesDateRange(lastActivity, initiated, dateFrom, dateTo);
     });
 
-    const allItems = filteredProcs
-      .map(proc => procedureToPipelineItem(proc))
+    const allMappedItems = filteredProcs.map(proc => procedureToPipelineItem(proc));
+
+    // Count items with missing enrichment before applying the status filter so we
+    // can surface a data-quality warning in the response.
+    const unknownEnrichmentCount = params.status === 'ACTIVE'
+      ? allMappedItems.filter(item => item.currentStage === 'Unknown').length
+      : 0;
+
+    const allItems = allMappedItems
       .filter(item => matchesStatusFilter(item, params.status))
       .filter(item => matchesCommitteeFilter(item, params.committee));
 
@@ -334,9 +394,14 @@ export async function handleMonitorLegislativePipeline(
         + 'European Parliament open data. Computed attributes (health score, velocity, '
         + 'bottleneck risk, momentum) are derived from real procedure dates and stages. '
         + 'Data source: https://data.europarl.europa.eu/api/v2/procedures',
-      dataQualityWarnings: pipeline.length < 10
-        ? ['Small procedure sample (< 10) — pipeline health metrics may not be statistically representative']
-        : [],
+      dataQualityWarnings: [
+        ...(pipeline.length < 10
+          ? ['Small procedure sample (< 10) — pipeline health metrics may not be statistically representative']
+          : []),
+        ...(unknownEnrichmentCount > 0
+          ? [`${String(unknownEnrichmentCount)} procedure(s) excluded from ACTIVE filter due to missing enrichment data (stage/committee unknown) — these may be historical or incomplete records`]
+          : []),
+      ],
     };
 
     return { content: [{ type: 'text', text: JSON.stringify(analysis, null, 2) }] };
