@@ -301,26 +301,67 @@ describe('Pagination metadata correctness', () => {
   // ── searchDocuments ─────────────────────────────────────────────────────
 
   describe('searchDocuments', () => {
-    it('hasMore=true based on pre-filter page size', async () => {
+    it('full server page with all items matching keyword: hasMore=true, total=offset+pageSize+1', async () => {
+      // All 20 documents have title "Climate report N" → match keyword "climate"
+      const response: JSONLDResponse = {
+        data: Array.from({ length: 20 }, (_, i) => ({
+          id: `doc-${i + 1}`,
+          work_id: `A-9-2024-${String(i + 1).padStart(4, '0')}`,
+          work_type: 'REPORT_PLENARY',
+          title_dcterms: [{ '@language': 'en', '@value': `Climate report ${i + 1}` }],
+          work_date_document: '2024-01-15',
+        })),
+        '@context': [
+          { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
+          'https://data.europarl.europa.eu/api/v2/context.jsonld',
+        ],
+      };
+      mockOk(response);
+      const result = await client.searchDocuments({
+        keyword: 'climate',
+        limit: 20,
+        offset: 0,
+      });
+      expect(result.data.length).toBe(20);
+      expect(result.hasMore).toBe(true);
+      expect(result.total).toBe(21); // 0 + 20 filtered + 1 sentinel
+    });
+
+    it('full server page with all items filtered out by keyword: envelope identity holds', async () => {
+      // 20 documents with titles "Document N" do NOT match keyword "climate" —
+      // this reproduces the reported bug scenario (data:[] total:21 hasMore:true).
+      // Fix: total is derived from the post-filter count so the envelope
+      // satisfies the identity total === offset + data.length + (hasMore ? 1 : 0).
       mockOk(buildDocumentResponse(20));
       const result = await client.searchDocuments({
         keyword: 'climate',
         limit: 20,
         offset: 0,
       });
-      expect(result.hasMore).toBe(true);
-      expect(result.total).toBe(21);
+      expect(result.data.length).toBe(0);
+      expect(result.hasMore).toBe(true); // server page was full, more may follow
+      expect(result.total).toBe(1); // 0 + 0 filtered + 1 sentinel (NOT 21)
+      // Envelope identity (stronger than the `>=` inequality — this is the
+      // exact contract documented in `PaginatedResponse` JSDoc and is what
+      // distinguishes the new post-filter `total` from the old pre-filter one).
+      expect(result.total).toBe(
+        result.offset + result.data.length + (result.hasMore ? 1 : 0)
+      );
     });
 
-    it('hasMore=false on partial page', async () => {
+    it('partial server page with all items filtered out: total === offset, hasMore=false', async () => {
+      // 5 documents with titles "Document N" do NOT match keyword "climate".
+      // Partial page → hasMore=false; total reflects exhausted filter result.
       mockOk(buildDocumentResponse(5));
       const result = await client.searchDocuments({
         keyword: 'climate',
         limit: 20,
         offset: 10,
       });
+      expect(result.data.length).toBe(0);
       expect(result.hasMore).toBe(false);
-      expect(result.total).toBe(15);
+      expect(result.total).toBe(10); // offset + 0 filtered (no +1 since hasMore=false)
+      expect(result.total).toBe(result.offset);
     });
   });
 

@@ -151,18 +151,36 @@ export class DocumentClient extends BaseEPClient {
       let documents = response.data.map((item) => this.transformDocument(item));
       documents = this.filterDocuments(documents, params);
 
+      // Pagination envelope:
+      //   hasMore = pageSize === requestedLimit        (pre-filter, server-page)
+      //   total   = offset + filteredCount + (hasMore ? 1 : 0)  (post-filter)
+      //
+      // `hasMore` is derived from whether the server returned a full page —
+      // it signals that more documents (of the requested `work-type`) may
+      // exist to fetch, even if all items on the current page were removed by
+      // the client-side keyword/committee/date filters.
+      //
+      // `total` is computed from the *filtered* `documents.length` plus a
+      // +1 sentinel when `hasMore === true`. It is a **pagination-envelope
+      // sentinel**, not a match count: because `offset` is the raw server
+      // offset (not a cumulative count of filtered matches across previous
+      // pages), `total` may be larger than the actual number of filtered
+      // matches in the dataset. Its sole purpose is to satisfy the envelope
+      // identity `total === offset + data.length + (hasMore ? 1 : 0)` so the
+      // response stays internally consistent. This prevents the misleading
+      // `data:[] total:21 hasMore:true` envelope that would occur if `total`
+      // were derived from the unfiltered page size.
+      //
+      // Note: this differs from the repo-wide client-filtered-endpoint
+      // convention (see `types/ep/common.ts` — e.g. `getPlenarySessions`,
+      // `getParliamentaryQuestions` derive both `total` and `hasMore` from
+      // the unfiltered page size). `searchDocuments` is documented as an
+      // explicit exception in `PaginatedResponse`'s JSDoc.
       const hasMore = pageSize === requestedLimit;
+      const filteredCount = documents.length;
       const result: PaginatedResponse<LegislativeDocument> = {
         data: documents,
-        // total/hasMore are derived from the unfiltered server page size, not from
-        // `documents.length` after client-side filtering. This means `hasMore` can
-        // be true even when the filtered result set is empty. Callers should
-        // continue paginating until `hasMore` is false, not stop on an empty
-        // filtered page. While `hasMore` is true, `total` is only a heuristic
-        // sentinel derived from the server page size and may be off by 1 when the
-        // last server page is exactly full. Do not use it for exact page-count UI
-        // until a page has been observed with `hasMore === false`.
-        total: currentOffset + pageSize + (hasMore ? 1 : 0),
+        total: currentOffset + filteredCount + (hasMore ? 1 : 0),
         limit: requestedLimit,
         offset: currentOffset,
         hasMore,

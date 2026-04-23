@@ -184,12 +184,27 @@ export interface PaginatedResponse<T> {
    *   but may **overestimate by 1** when the dataset size is an exact
    *   multiple of `limit` (i.e., the last server page is exactly full).
    * 
-   * For **client-filtered server endpoints** (e.g. `searchDocuments` with keyword,
-   * `getPlenarySessions` with location, `getParliamentaryQuestions` with author/topic),
-   * `total` and `hasMore` are derived from the **unfiltered server page size**, not
-   * from `data.length` after client-side filtering. This means `hasMore` can be `true`
-   * even when the filtered `data` array is empty, and `total` will not reflect the
-   * count of filtered matches.
+   * For **client-filtered server endpoints** (e.g. `getPlenarySessions` with
+   * location, `getParliamentaryQuestions` with author/topic), `total` and
+   * `hasMore` are derived from the **unfiltered server page size**, not
+   * from `data.length` after client-side filtering. This means `hasMore` can
+   * be `true` even when the filtered `data` array is empty, and `total` will
+   * not reflect the count of filtered matches.
+   *
+   * **Exception — `searchDocuments`:** `total` is derived from the
+   * **post-filter** `data.length`, not the unfiltered server page size.
+   * Concretely, this endpoint guarantees the envelope identity
+   * `total === offset + data.length + (hasMore ? 1 : 0)` while `hasMore`
+   * remains pre-filter (server page fullness). Note that `total` here is a
+   * **pagination-envelope sentinel**, not a count of items matching the
+   * post-filter query: because `offset` is the raw server offset (not a
+   * cumulative count of filtered matches across previous pages), `total`
+   * may exceed the true number of matches. Its role is purely to keep the
+   * envelope internally consistent. This prevents misleading responses such
+   * as `data:[] total:21 hasMore:true` when a full server page is
+   * eliminated by keyword/committee/date filters (the new envelope in that
+   * case is `data:[] total:1 hasMore:true`). Callers should still paginate
+   * until `hasMore === false` to enumerate all matches.
    * 
    * **Do not** use this value for exact "X of Y" UI or page-count
    * calculations on server-paginated endpoints. Instead, iterate all
@@ -257,11 +272,15 @@ export interface PaginatedResponse<T> {
    *   returned `limit` items). A full page suggests more data may follow,
    *   but can be a **false positive** when the dataset size is an exact
    *   multiple of `limit`.
-   * - For **client-filtered server endpoints** (e.g. `searchDocuments`,
-   *   `getPlenarySessions`, `getParliamentaryQuestions`), `hasMore` is
-   *   derived from the **unfiltered server page size** before client-side
-   *   filtering. This means `hasMore` can be `true` even when the filtered
-   *   `data` array contains fewer than `limit` items or is empty.
+   * - For **client-filtered server endpoints** (e.g. `getPlenarySessions`,
+   *   `getParliamentaryQuestions`), `hasMore` is derived from the
+   *   **unfiltered server page size** before client-side filtering. This
+   *   means `hasMore` can be `true` even when the filtered `data` array
+   *   contains fewer than `limit` items or is empty.
+   * - **Exception — `searchDocuments`:** `hasMore` still reflects pre-filter
+   *   server page fullness (so callers continue paginating for more matches),
+   *   but `total` is derived from the post-filter `data.length` — guaranteeing
+   *   the identity `total === offset + data.length + (hasMore ? 1 : 0)`.
    * 
    * Callers should paginate until `hasMore` is `false`. For **in-memory
    * paginated** results, `hasMore` is exact: `(offset + data.length) < total`.
