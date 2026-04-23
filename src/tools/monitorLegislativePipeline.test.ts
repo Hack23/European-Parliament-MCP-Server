@@ -145,6 +145,30 @@ const mockHistoricalProcedures = {
   hasMore: false,
 };
 
+/** Single fresh, enriched procedure — used to verify no enrichment warning fires */
+const mockFreshProceduresOnly = {
+  data: [
+    {
+      id: 'PROC-FRESH2',
+      title: 'Fresh enriched procedure',
+      reference: '2025/0002(COD)',
+      type: 'COD',
+      subjectMatter: 'Digital',
+      stage: 'Committee consideration',
+      status: 'Ongoing',
+      dateInitiated: daysAgo(30),
+      dateLastActivity: daysAgo(5),
+      responsibleCommittee: 'IMCO',
+      rapporteur: 'MEP Fresh',
+      documents: [],
+    },
+  ],
+  total: 1,
+  limit: 20,
+  offset: 0,
+  hasMore: false,
+};
+
 describe('monitor_legislative_pipeline Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -360,28 +384,7 @@ describe('monitor_legislative_pipeline Tool', () => {
 
     it('should not add enrichment warning when no Unknown-stage items are present', async () => {
       // Override with normal modern procedures only — no Unknown-stage items pass the recency filter
-      vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue({
-        data: [
-          {
-            id: 'PROC-FRESH2',
-            title: 'Fresh enriched procedure',
-            reference: '2025/0002(COD)',
-            type: 'COD',
-            subjectMatter: 'Digital',
-            stage: 'Committee consideration',
-            status: 'Ongoing',
-            dateInitiated: daysAgo(30),
-            dateLastActivity: daysAgo(5),
-            responsibleCommittee: 'IMCO',
-            rapporteur: 'MEP Fresh',
-            documents: [],
-          },
-        ],
-        total: 1,
-        limit: 20,
-        offset: 0,
-        hasMore: false,
-      });
+      vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(mockFreshProceduresOnly);
       const result = await handleMonitorLegislativePipeline({ status: 'ACTIVE' });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         dataQualityWarnings: string[];

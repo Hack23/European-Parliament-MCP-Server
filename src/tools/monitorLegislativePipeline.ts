@@ -199,9 +199,8 @@ function isWithinRecencyCutoff(
   cutoffDate: string
 ): boolean {
   if (lastActivity === '' && initiated === undefined) return false;
-  if (lastActivity !== '' && lastActivity < cutoffDate) return false;
-  if (lastActivity === '' && initiated !== undefined && initiated < cutoffDate) return false;
-  return true;
+  const referenceDate = lastActivity !== '' ? lastActivity : initiated;
+  return referenceDate !== undefined && referenceDate >= cutoffDate;
 }
 
 /** Check if a procedure matches an explicit date range (dateFrom / dateTo) */
