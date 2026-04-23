@@ -1,6 +1,6 @@
 /**
  * Tests for feed utility helpers (isUpstream404, isErrorInBody,
- * buildEmptyFeedResponse, buildFeedSuccessResponse).
+ * buildEmptyFeedResponse, buildFeedSuccessResponse, extractUpstreamStatusCode).
  */
 
 import { describe, it, expect } from 'vitest';
@@ -9,6 +9,7 @@ import {
   isErrorInBody,
   buildEmptyFeedResponse,
   buildFeedSuccessResponse,
+  extractUpstreamStatusCode,
 } from './feedUtils.js';
 import { APIError } from '../../clients/ep/baseClient.js';
 
@@ -18,6 +19,9 @@ interface FeedEnvelope {
   items: unknown[];
   itemCount: number;
   reason?: string;
+  errorCode?: string;
+  retryable?: boolean;
+  upstream?: { statusCode?: number; errorMessage?: string };
   data?: unknown[];
   '@context'?: unknown[];
   dataQualityWarnings: string[];
@@ -246,6 +250,80 @@ describe('feedUtils', () => {
       expect(env2.status).toBe('unavailable');
       expect(env2.items).toEqual([]);
       expect(env2.data).toEqual([]);
+    });
+  });
+
+  describe('extractUpstreamStatusCode', () => {
+    it('should extract 404 from "404 Not Found from POST …"', () => {
+      expect(extractUpstreamStatusCode('404 Not Found from POST …')).toBe(404);
+    });
+
+    it('should extract 502 from "502 Bad Gateway"', () => {
+      expect(extractUpstreamStatusCode('502 Bad Gateway')).toBe(502);
+    });
+
+    it('should extract 500 from a message beginning with the code', () => {
+      expect(extractUpstreamStatusCode('500 Internal Server Error from upstream')).toBe(500);
+    });
+
+    it('should return undefined for an empty string', () => {
+      expect(extractUpstreamStatusCode('')).toBeUndefined();
+    });
+
+    it('should return undefined when no HTTP status code is present', () => {
+      expect(extractUpstreamStatusCode('Something went wrong')).toBeUndefined();
+    });
+
+    it('should return undefined for out-of-range three-digit numbers', () => {
+      expect(extractUpstreamStatusCode('000 not an HTTP status')).toBeUndefined();
+      // 600-999 are not valid HTTP statuses and excluded by the regex
+      expect(extractUpstreamStatusCode('600 is out of range')).toBeUndefined();
+    });
+  });
+
+  describe('buildEmptyFeedResponse — FeedErrorMeta', () => {
+    it('should include errorCode in the envelope when provided', () => {
+      const result = buildEmptyFeedResponse('reason', { errorCode: 'ENRICHMENT_FAILED' });
+      const env = parseEnvelope(result.content[0]?.text);
+      expect(env.errorCode).toBe('ENRICHMENT_FAILED');
+    });
+
+    it('should include retryable in the envelope when provided', () => {
+      const result = buildEmptyFeedResponse('reason', { retryable: true });
+      const env = parseEnvelope(result.content[0]?.text);
+      expect(env.retryable).toBe(true);
+    });
+
+    it('should include upstream statusCode when provided', () => {
+      const result = buildEmptyFeedResponse('reason', {
+        upstream: { statusCode: 404, errorMessage: '404 Not Found' },
+      });
+      const env = parseEnvelope(result.content[0]?.text);
+      expect(env.upstream?.statusCode).toBe(404);
+      expect(env.upstream?.errorMessage).toBe('404 Not Found');
+    });
+
+    it('should omit errorCode, retryable, upstream when meta is not provided', () => {
+      const result = buildEmptyFeedResponse();
+      const env = parseEnvelope(result.content[0]?.text);
+      expect(env.errorCode).toBeUndefined();
+      expect(env.retryable).toBeUndefined();
+      expect(env.upstream).toBeUndefined();
+    });
+
+    it('should omit upstream when meta.upstream is not provided', () => {
+      const result = buildEmptyFeedResponse('reason', { errorCode: 'RATE_LIMIT', retryable: true });
+      const env = parseEnvelope(result.content[0]?.text);
+      expect(env.upstream).toBeUndefined();
+    });
+
+    it('should still emit status="unavailable" and preserve legacy fields when meta is provided', () => {
+      const result = buildEmptyFeedResponse('reason', { errorCode: 'UPSTREAM_TIMEOUT', retryable: true });
+      const env = parseEnvelope(result.content[0]?.text);
+      expect(env.status).toBe('unavailable');
+      expect(env.items).toEqual([]);
+      expect(env.data).toEqual([]);
+      expect(Array.isArray(env.dataQualityWarnings)).toBe(true);
     });
   });
 });
