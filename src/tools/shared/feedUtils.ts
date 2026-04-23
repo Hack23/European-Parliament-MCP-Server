@@ -68,6 +68,56 @@ import type { ToolResult } from './types.js';
 export type FeedStatus = 'operational' | 'degraded' | 'unavailable';
 
 /**
+ * Machine-readable error code for a feed failure.
+ *
+ * Enables programmatic retry/skip/fallback logic by downstream consumers:
+ * - `ENRICHMENT_FAILED` — EP API internal enrichment/POST step returned an
+ *   error-in-body (HTTP 200 with `error` field and no `data` array).
+ * - `UPSTREAM_TIMEOUT` — The upstream request exceeded the configured timeout.
+ * - `UPSTREAM_ERROR` — A non-timeout, non-rate-limit upstream error occurred.
+ * - `RATE_LIMIT` — The upstream API returned HTTP 429 (too many requests).
+ */
+export type FeedErrorCode = 'ENRICHMENT_FAILED' | 'UPSTREAM_TIMEOUT' | 'UPSTREAM_ERROR' | 'RATE_LIMIT';
+
+/**
+ * Optional machine-readable metadata attached to an empty/failed feed response.
+ *
+ * Allows downstream consumers to classify the failure and decide whether to
+ * retry the request, fall back to a non-feed endpoint, or skip entirely.
+ */
+export interface FeedErrorMeta {
+  /** Machine-readable failure classification. */
+  errorCode?: FeedErrorCode;
+  /** Whether the failure is transient and the request should be retried. */
+  retryable?: boolean;
+  /** Information about the upstream error, when available. */
+  upstream?: {
+    /** HTTP status code parsed from the upstream error message, if present. */
+    statusCode?: number;
+    /** Raw error message from the upstream response body. */
+    errorMessage?: string;
+  };
+}
+
+/**
+ * Parse an HTTP status code from an EP API error-in-body message.
+ *
+ * EP API error-in-body messages often embed the HTTP status code in the error
+ * string, e.g. `"404 Not Found from POST …"` or `"502 Bad Gateway from …"`.
+ * This function extracts the first three-digit integer in the range 100–599.
+ *
+ * @param errorMessage - Raw error string from the EP API response body
+ * @returns The numeric HTTP status code, or `undefined` if none is found
+ */
+export function extractUpstreamStatusCode(errorMessage: string): number | undefined {
+  const match = /\b([1-5]\d{2})\b/.exec(errorMessage);
+  if (match?.[1] !== undefined) {
+    return parseInt(match[1], 10);
+  }
+  return undefined;
+}
+
+/**
  * Shared MCP `tools/list` inputSchema for fixed-window feed tools
  * (Group A: `get_documents_feed`, `get_plenary_documents_feed`, etc.).
  *
@@ -243,8 +293,12 @@ export function buildFeedSuccessResponse(
  * @param reason - Human-readable reason describing why the feed is empty
  *                 (also surfaced in `dataQualityWarnings` for backwards
  *                 compatibility with consumers reading the legacy field).
+ * @param meta   - Optional machine-readable failure metadata. When provided,
+ *                 `errorCode`, `retryable`, and `upstream` are included in the
+ *                 response envelope so downstream consumers can classify the
+ *                 failure and decide whether to retry, fall back, or skip.
  */
-export function buildEmptyFeedResponse(reason = EMPTY_FEED_REASON): ToolResult {
+export function buildEmptyFeedResponse(reason = EMPTY_FEED_REASON, meta?: FeedErrorMeta): ToolResult {
   const items: unknown[] = [];
   return buildToolResponse({
     status: 'unavailable' satisfies FeedStatus,
@@ -252,6 +306,9 @@ export function buildEmptyFeedResponse(reason = EMPTY_FEED_REASON): ToolResult {
     items,
     itemCount: 0,
     reason,
+    ...(meta?.errorCode !== undefined ? { errorCode: meta.errorCode } : {}),
+    ...(meta?.retryable !== undefined ? { retryable: meta.retryable } : {}),
+    ...(meta?.upstream !== undefined ? { upstream: meta.upstream } : {}),
     data: items,
     '@context': [],
     dataQualityWarnings: [reason],
