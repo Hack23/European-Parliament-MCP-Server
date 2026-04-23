@@ -234,9 +234,26 @@ describe('feedUtils', () => {
       expect(env.dataQualityWarnings[0]).toBe(env.reason);
     });
 
-    it('should not set isError flag', () => {
-      const result = buildFeedSuccessResponse({ data: [{ id: 'x' }], '@context': [] });
-      expect(result.isError).toBeUndefined();
+    it('should use a custom empty reason when provided via the third argument', () => {
+      const customReason = 'procedures/feed had no updates for one-week — use get_procedures as fallback';
+      const ctx = ['https://example.org/ctx'];
+      const result = buildFeedSuccessResponse({ data: [], '@context': ctx }, [], customReason);
+      const env = parseEnvelope(result.content[0]?.text);
+
+      expect(env.status).toBe('unavailable');
+      expect(env.reason).toBe(customReason);
+      expect(env.dataQualityWarnings[0]).toBe(customReason);
+      // Upstream @context must be preserved
+      expect(env['@context']).toEqual(ctx);
+    });
+
+    it('should fall back to shared EMPTY_FEED_REASON when customEmptyReason is omitted', () => {
+      const result = buildFeedSuccessResponse({ data: [], '@context': [] });
+      const env = parseEnvelope(result.content[0]?.text);
+
+      expect(env.status).toBe('unavailable');
+      // Should not be the custom message — it was not provided
+      expect(env.reason).toContain('no data');
     });
 
     it('should be safe with null/undefined input (treated as empty / unavailable)', () => {
