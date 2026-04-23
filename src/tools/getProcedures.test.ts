@@ -161,6 +161,29 @@ describe('get_procedures Tool', () => {
         expect(toolError.isRetryable).toBe(false);
       }
     });
+
+    it('should NOT translate APIError(404) on list retrieval to UPSTREAM_404 (retryable generic failure instead)', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getProcedures).mockRejectedValueOnce(
+        new APIError('EP API request failed: 404 Not Found', 404)
+      );
+
+      try {
+        await handleGetProcedures({ limit: 10 });
+        expect.fail('Expected handleGetProcedures to throw');
+      } catch (error: unknown) {
+        const { ToolError } = await import('./shared/errors.js');
+        expect(error).toBeInstanceOf(ToolError);
+        const toolError = error as InstanceType<typeof ToolError>;
+        // List-path 404 must fall through to the generic retryable path —
+        // it may indicate misconfiguration or transient upstream routing and
+        // must NOT be masked as "not found".
+        expect(toolError.errorCode).not.toBe('UPSTREAM_404');
+        expect(toolError.httpStatus).not.toBe(404);
+        expect(toolError.isRetryable).toBe(true);
+        expect(toolError.message).toContain('Failed to retrieve procedures');
+      }
+    });
   });
 
   describe('Client Invocation', () => {
