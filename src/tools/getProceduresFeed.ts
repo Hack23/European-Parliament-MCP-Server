@@ -25,25 +25,61 @@ import { TimeoutError } from '../utils/timeout.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
+/** Parameters passed to the degraded fallback, used to build an accurate warning. */
+interface FallbackParams {
+  timeframe?: string | undefined;
+  startDate?: string | undefined;
+  processType?: string | undefined;
+}
+
 /**
  * Attempt to fetch a degraded fallback from the non-feed procedures endpoint.
  *
  * Called when the feed's enrichment step fails (error-in-body). Returns a
  * degraded feed response with a warning, or `null` if the fallback also fails.
  *
+ * **Note on envelope shape:** `GET /procedures` returns a
+ * {@link PaginatedResponse} without the JSON-LD `@context` field that the
+ * feed envelope normally carries.  To keep the uniform feed envelope stable
+ * for downstream consumers, we spread the fallback payload into an object
+ * with a default empty `@context: []` before passing it to
+ * {@link buildFeedSuccessResponse}.
+ *
+ * **Note on filters:** the fallback uses `GET /procedures` which does not
+ * accept `timeframe`, `startDate`, or `processType`.  Any caller-supplied
+ * filters are listed in the warning so consumers do not misinterpret the
+ * degraded payload as a properly-filtered result.
+ *
  * @param rawError - The raw error string from the error-in-body payload
+ * @param params   - Caller-supplied parameters (surfaced in the warning)
  * @returns Degraded ToolResult on success, or `null` on failure
  * @internal
  */
-async function tryProceduresFallback(rawError: string): Promise<ToolResult | null> {
+async function tryProceduresFallback(
+  rawError: string,
+  params: FallbackParams,
+): Promise<ToolResult | null> {
   try {
     const fallbackResult = await epClient.getProcedures({ limit: 50, offset: 0 });
     const errorSuffix = rawError ? ` (upstream: ${rawError})` : '';
+    const ignoredFilters: string[] = [];
+    if (params.timeframe !== undefined) ignoredFilters.push(`timeframe="${params.timeframe}"`);
+    if (params.startDate !== undefined) ignoredFilters.push(`startDate="${params.startDate}"`);
+    if (params.processType !== undefined) ignoredFilters.push(`processType="${params.processType}"`);
+    const ignoredSuffix =
+      ignoredFilters.length > 0
+        ? ` The following caller-supplied filters are NOT applied in degraded mode: ${ignoredFilters.join(', ')}.`
+        : '';
     const fallbackWarning =
       `ENRICHMENT_FAILED: EP API enrichment step failed${errorSuffix}. ` +
-      `Degraded mode: showing recent procedures without timeframe filter` +
-      ` — consider retrying get_procedures_feed.`;
-    return buildFeedSuccessResponse(fallbackResult, [fallbackWarning]);
+      `Degraded mode: showing recent procedures from GET /procedures (non-feed endpoint).` +
+      ` Items are procedure summaries rather than feed entries and may differ in shape from normal feed items.${ignoredSuffix}` +
+      ` Consider retrying get_procedures_feed.`;
+    // GET /procedures returns a PaginatedResponse without the JSON-LD `@context`
+    // that the uniform feed envelope normally carries; inject an empty default
+    // so the envelope shape stays stable for downstream consumers.
+    const envelope = { '@context': [] as unknown[], ...fallbackResult };
+    return buildFeedSuccessResponse(envelope, [fallbackWarning]);
   } catch {
     return null;
   }
@@ -103,7 +139,14 @@ function handleUpstreamCatchError(error: unknown): ToolResult | null {
   if (error instanceof APIError && error.statusCode === 429) {
     return buildEmptyFeedResponse(
       `EP API rate limit reached for get_procedures_feed — retry after a short delay.`,
-      { errorCode: 'RATE_LIMIT', retryable: true },
+      {
+        errorCode: 'RATE_LIMIT',
+        retryable: true,
+        upstream: {
+          statusCode: 429,
+          ...(error.message ? { errorMessage: error.message } : {}),
+        },
+      },
     );
   }
 
@@ -144,7 +187,11 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
     const result = await epClient.getProceduresFeed(apiParams);
     if (isErrorInBody(result)) {
       const rawError = typeof result['error'] === 'string' ? result['error'] : '';
-      const fallback = await tryProceduresFallback(rawError);
+      const fallback = await tryProceduresFallback(rawError, {
+        timeframe: params.timeframe,
+        startDate: params.startDate,
+        processType: params.processType,
+      });
       if (fallback !== null) return fallback;
       return buildEnrichmentFailedResponse(rawError);
     }

@@ -192,18 +192,27 @@ describe('get_procedures_feed Tool', () => {
         hasMore: false,
       });
 
-      const result = await handleGetProceduresFeed({});
+      const result = await handleGetProceduresFeed({
+        timeframe: 'one-week',
+        processType: 'COD',
+      });
 
       const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
         status: string;
         data: unknown[];
         items: unknown[];
+        '@context': unknown[];
         dataQualityWarnings: string[];
       };
       expect(parsed.status).toBe('degraded');
       expect(parsed.items.length).toBeGreaterThan(0);
       expect(parsed.dataQualityWarnings[0]).toContain('ENRICHMENT_FAILED');
       expect(parsed.dataQualityWarnings[0]).toContain('Degraded mode');
+      // Warning should list the caller-supplied filters that are NOT applied in degraded mode
+      expect(parsed.dataQualityWarnings[0]).toContain('timeframe="one-week"');
+      expect(parsed.dataQualityWarnings[0]).toContain('processType="COD"');
+      // @context should be present (injected as default empty array when /procedures omits it)
+      expect(Array.isArray(parsed['@context'])).toBe(true);
     });
 
     it('should return UPSTREAM_TIMEOUT errorCode and retryable=true on timeout', async () => {
@@ -224,7 +233,7 @@ describe('get_procedures_feed Tool', () => {
       expect(parsed.retryable).toBe(true);
     });
 
-    it('should return RATE_LIMIT errorCode and retryable=true on HTTP 429', async () => {
+    it('should return RATE_LIMIT errorCode with upstream.statusCode=429 on HTTP 429', async () => {
       const { APIError } = await import('../clients/ep/baseClient.js');
       vi.mocked(epClientModule.epClient.getProceduresFeed)
         .mockRejectedValueOnce(new APIError('Too Many Requests', 429));
@@ -236,10 +245,13 @@ describe('get_procedures_feed Tool', () => {
         status: string;
         errorCode: string;
         retryable: boolean;
+        upstream: { statusCode?: number; errorMessage?: string };
       };
       expect(parsed.status).toBe('unavailable');
       expect(parsed.errorCode).toBe('RATE_LIMIT');
       expect(parsed.retryable).toBe(true);
+      expect(parsed.upstream?.statusCode).toBe(429);
+      expect(parsed.upstream?.errorMessage).toBe('Too Many Requests');
     });
   });
 
