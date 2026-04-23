@@ -9,6 +9,7 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
     getProceduresFeed: vi.fn(),
+    getProcedures: vi.fn(),
   }
 }));
 
@@ -19,6 +20,13 @@ describe('get_procedures_feed Tool', () => {
     vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValue({
       data: [{ id: 'proc-1', type: 'Procedure' }],
       '@context': []
+    });
+    vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue({
+      data: [{ id: 'proc-fallback', type: 'Procedure' }],
+      total: 1,
+      limit: 50,
+      offset: 0,
+      hasMore: false,
     });
   });
 
@@ -139,10 +147,99 @@ describe('get_procedures_feed Tool', () => {
         items: unknown[];
         dataQualityWarnings: string[];
       };
+      // Degraded fallback succeeds (getProcedures mock returns data)
+      expect(parsed.status).toBe('degraded');
+      expect(parsed.data).not.toEqual([]);
+      expect(parsed.items).not.toEqual([]);
+    });
+
+    it('should return ENRICHMENT_FAILED errorCode when error-in-body and fallback also fails', async () => {
+      vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
+        '@id': 'https://data.europarl.europa.eu/eli/dl/proc/2026-2033',
+        'error': '502 Bad Gateway from POST ...',
+        '@context': { error: {} },
+      } as unknown as { data: unknown[]; '@context': unknown[] });
+      vi.mocked(epClientModule.epClient.getProcedures).mockRejectedValueOnce(new Error('network error'));
+
+      const result = await handleGetProceduresFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        errorCode: string;
+        retryable: boolean;
+        upstream: { statusCode?: number; errorMessage?: string };
+        data: unknown[];
+      };
       expect(parsed.status).toBe('unavailable');
+      expect(parsed.errorCode).toBe('ENRICHMENT_FAILED');
+      expect(parsed.retryable).toBe(true);
+      expect(parsed.upstream?.statusCode).toBe(502);
+      expect(parsed.upstream?.errorMessage).toContain('502');
       expect(parsed.data).toEqual([]);
-      expect(parsed.items).toEqual([]);
-      expect(parsed.dataQualityWarnings[0]).toContain('error-in-body');
+    });
+
+    it('should surface degraded fallback data with ENRICHMENT_FAILED warning when enrichment fails', async () => {
+      vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
+        'error': '503 Service Unavailable',
+        '@context': {},
+      } as unknown as { data: unknown[]; '@context': unknown[] });
+      vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValueOnce({
+        data: [{ id: 'fallback-proc-1' }, { id: 'fallback-proc-2' }],
+        total: 2,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetProceduresFeed({});
+
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        data: unknown[];
+        items: unknown[];
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.status).toBe('degraded');
+      expect(parsed.items.length).toBeGreaterThan(0);
+      expect(parsed.dataQualityWarnings[0]).toContain('ENRICHMENT_FAILED');
+      expect(parsed.dataQualityWarnings[0]).toContain('Degraded mode');
+    });
+
+    it('should return UPSTREAM_TIMEOUT errorCode and retryable=true on timeout', async () => {
+      const { TimeoutError } = await import('../utils/timeout.js');
+      vi.mocked(epClientModule.epClient.getProceduresFeed)
+        .mockRejectedValueOnce(new TimeoutError('Request timed out after 120000ms'));
+
+      const result = await handleGetProceduresFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        errorCode: string;
+        retryable: boolean;
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.errorCode).toBe('UPSTREAM_TIMEOUT');
+      expect(parsed.retryable).toBe(true);
+    });
+
+    it('should return RATE_LIMIT errorCode and retryable=true on HTTP 429', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getProceduresFeed)
+        .mockRejectedValueOnce(new APIError('Too Many Requests', 429));
+
+      const result = await handleGetProceduresFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        errorCode: string;
+        retryable: boolean;
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.errorCode).toBe('RATE_LIMIT');
+      expect(parsed.retryable).toBe(true);
     });
   });
 
