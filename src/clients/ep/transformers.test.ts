@@ -983,8 +983,11 @@ describe('transformers with real EP API JSON-LD format', () => {
     };
     const proc = transformProcedure(apiData);
     expect(proc.title).toBe('2025/0009(NLE)');
-    expect(proc.type).toBe('def/ep-procedure-types/NLE');
+    // process_type URI is stripped to just the code
+    expect(proc.type).toBe('NLE');
     expect(proc.reference).toBe('2025-0009');
+    // id prefers process_id over the full JSON-LD URI
+    expect(proc.id).toBe('2025-0009');
   });
 
   it('transformParliamentaryQuestion: handles minimal real EP API list format', () => {
@@ -1208,11 +1211,11 @@ describe('Real EP API v2 Response Shapes', () => {
         label: '2024/0003(BUD)',
       };
       const procedure = transformProcedure(apiData);
-      // extractField picks process_id for both id and reference since it's the first scalar match
-      // from the ['identifier', 'id', 'process_id'] priority list; 'id' contains a slash URI
-      expect(procedure.id).toBeTruthy();
+      // process_id is preferred over the full JSON-LD URI in 'id'
+      expect(procedure.id).toBe('2024-0003');
       expect(procedure.title).toBe('2024/0003(BUD)');
-      expect(procedure.type).toBe('def/ep-procedure-types/BUD');
+      // URI suffix is stripped: "def/ep-procedure-types/BUD" → "BUD"
+      expect(procedure.type).toBe('BUD');
     });
 
     it('transforms COD procedure type', () => {
@@ -1224,7 +1227,8 @@ describe('Real EP API v2 Response Shapes', () => {
         label: '2024/0006(COD)',
       };
       const procedure = transformProcedure(apiData);
-      expect(procedure.type).toBe('def/ep-procedure-types/COD');
+      // URI suffix is stripped: "def/ep-procedure-types/COD" → "COD"
+      expect(procedure.type).toBe('COD');
       expect(procedure.title).toBe('2024/0006(COD)');
     });
   });

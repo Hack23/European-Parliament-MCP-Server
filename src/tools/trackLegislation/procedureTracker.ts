@@ -10,7 +10,7 @@
  * ISMS Policy: SC-002 (Input Validation)
  */
 
-import type { Procedure } from '../../types/europeanParliament.js';
+import type { Procedure, EPEvent } from '../../types/europeanParliament.js';
 import type { LegislativeProcedure } from './types.js';
 
 /**
@@ -37,6 +37,22 @@ function buildTimeline(procedure: Procedure): LegislativeProcedure['timeline'] {
   }
 
   return events;
+}
+
+/**
+ * Build timeline entries from EP procedure events.
+ * Events come from the `/procedures/{id}/events` endpoint.
+ */
+function buildTimelineFromEvents(events: EPEvent[]): LegislativeProcedure['timeline'] {
+  return events
+    .filter((event) => Boolean(event.date))
+    .map((event) => ({
+      date: event.date,
+      stage: event.type || 'Event',
+      description: event.title || event.id,
+      ...(event.organizer ? { responsible: event.organizer } : {}),
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
 }
 
 /**
@@ -78,11 +94,24 @@ function buildNextSteps(procedure: Procedure): string[] {
  * single-procedure endpoint does not supply them; these are surfaced in
  * {@link LegislativeProcedure.dataQualityWarnings}.
  * 
+ * Per-step enrichment failures are tracked and returned in
+ * {@link LegislativeProcedure.enrichmentFailures} so that consumers can
+ * identify exactly which data dimensions are incomplete and weight
+ * per-field confidence accordingly.
+ * 
  * @param procedure - Real procedure data from EP API
+ * @param events - Optional events from `/procedures/{id}/events` endpoint for timeline enrichment
+ * @param externalEnrichmentFailures - Named sub-steps that already failed before this call
+ *   (e.g. `["events-lookup"]` when the events API call threw an error)
  * @returns Structured legislative tracking data
  */
-export function buildLegislativeTracking(procedure: Procedure): LegislativeProcedure {
+export function buildLegislativeTracking(
+  procedure: Procedure,
+  events: EPEvent[] = [],
+  externalEnrichmentFailures: string[] = []
+): LegislativeProcedure {
   const warnings: string[] = [];
+  const enrichmentFailures: string[] = [...externalEnrichmentFailures];
 
   warnings.push(
     'Amendment statistics not available from single procedure endpoint; proposed/adopted/rejected counts are zero.'
@@ -99,12 +128,33 @@ export function buildLegislativeTracking(procedure: Procedure): LegislativeProce
   }
   if (!procedure.responsibleCommittee) {
     warnings.push('Responsible committee is not assigned or missing from EP API response.');
+    enrichmentFailures.push('committeeResolve');
   }
   if (!procedure.rapporteur) {
     warnings.push('Rapporteur is not assigned or missing from EP API response.');
+    enrichmentFailures.push('rapporteurResolve');
+  }
+  if (procedure.documents.length === 0) {
+    enrichmentFailures.push('documentResolve');
   }
 
-  const hasTimeline = Boolean(procedure.dateInitiated) || Boolean(procedure.dateLastActivity);
+  // Merge timeline from procedure date fields and events from the events endpoint.
+  // Deduplicate by combining date + stage as a key to avoid double-entries.
+  const procedureTimeline = buildTimeline(procedure);
+  const eventsTimeline = buildTimelineFromEvents(events);
+  const seenKeys = new Set<string>();
+  const timeline = [...procedureTimeline, ...eventsTimeline].filter((entry) => {
+    const key = `${entry.date}:${entry.stage}`;
+    if (seenKeys.has(key)) return false;
+    seenKeys.add(key);
+    return true;
+  });
+
+  if (!procedure.dateInitiated && !procedure.dateLastActivity && events.length === 0) {
+    enrichmentFailures.push('basicMetadata');
+  }
+
+  const hasTimeline = timeline.length > 0;
   const hasCommittee = Boolean(procedure.responsibleCommittee);
   const confidenceLevel: LegislativeProcedure['confidenceLevel'] =
     hasTimeline && hasCommittee ? 'MEDIUM' : 'LOW';
@@ -115,7 +165,7 @@ export function buildLegislativeTracking(procedure: Procedure): LegislativeProce
     type: procedure.type,
     status: procedure.status || 'COMMITTEE',
     currentStage: procedure.stage || 'Unknown',
-    timeline: buildTimeline(procedure),
+    timeline,
     committees: buildCommittees(procedure),
     amendments: { proposed: 0, adopted: 0, rejected: 0 },
     voting: [],
@@ -130,8 +180,10 @@ export function buildLegislativeTracking(procedure: Procedure): LegislativeProce
     methodology: 'Real-time data from EP API /procedures endpoint. '
       + 'Procedure details (title, type, stage, status, dates, committee, rapporteur, documents) '
       + 'are sourced directly from the European Parliament open data API. '
+      + 'Timeline is enriched with events from /procedures/{id}/events when available. '
       + 'Amendment and voting statistics require separate API calls and are not yet populated. '
       + 'Data source: https://data.europarl.europa.eu/api/v2/procedures',
     dataQualityWarnings: warnings,
+    ...(enrichmentFailures.length > 0 ? { enrichmentFailures } : {}),
   };
 }

@@ -7,7 +7,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { buildLegislativeTracking } from './procedureTracker.js';
-import type { Procedure } from '../../types/europeanParliament.js';
+import type { Procedure, EPEvent } from '../../types/europeanParliament.js';
 
 // ─── Fixture helpers ─────────────────────────────────────────────────────────
 
@@ -25,6 +25,20 @@ function makeProcedure(overrides: Partial<Procedure> = {}): Procedure {
     responsibleCommittee: 'IMCO',
     rapporteur: 'Test Rapporteur',
     documents: ['COM(2024)0001', 'A9-0123/2024'],
+    ...overrides,
+  };
+}
+
+function makeEvent(overrides: Partial<EPEvent> = {}): EPEvent {
+  return {
+    id: 'evt-001',
+    title: 'Committee hearing',
+    date: '2025-02-10',
+    endDate: '',
+    type: 'HEARING',
+    location: 'Brussels',
+    organizer: 'IMCO',
+    status: 'CONFIRMED',
     ...overrides,
   };
 }
@@ -307,5 +321,147 @@ describe('buildNextSteps (via buildLegislativeTracking)', () => {
       makeProcedure({ stage: '', status: '' })
     );
     expect(result.nextSteps).toEqual([]);
+  });
+});
+
+// ─── enrichmentFailures (tested via buildLegislativeTracking) ────────────────
+
+describe('enrichmentFailures (via buildLegislativeTracking)', () => {
+  it('returns undefined enrichmentFailures when all fields are present', () => {
+    const result = buildLegislativeTracking(makeProcedure());
+    expect(result.enrichmentFailures).toBeUndefined();
+  });
+
+  it('includes committeeResolve when responsibleCommittee is empty', () => {
+    const result = buildLegislativeTracking(makeProcedure({ responsibleCommittee: '' }));
+    expect(result.enrichmentFailures).toContain('committeeResolve');
+  });
+
+  it('includes rapporteurResolve when rapporteur is empty', () => {
+    const result = buildLegislativeTracking(makeProcedure({ rapporteur: '' }));
+    expect(result.enrichmentFailures).toContain('rapporteurResolve');
+  });
+
+  it('includes documentResolve when documents array is empty', () => {
+    const result = buildLegislativeTracking(makeProcedure({ documents: [] }));
+    expect(result.enrichmentFailures).toContain('documentResolve');
+  });
+
+  it('includes basicMetadata when dates and events are all empty', () => {
+    const result = buildLegislativeTracking(
+      makeProcedure({ dateInitiated: '', dateLastActivity: '' }),
+      []
+    );
+    expect(result.enrichmentFailures).toContain('basicMetadata');
+  });
+
+  it('does NOT include basicMetadata when events are provided even without dates', () => {
+    const result = buildLegislativeTracking(
+      makeProcedure({ dateInitiated: '', dateLastActivity: '' }),
+      [makeEvent()]
+    );
+    // enrichmentFailures may be undefined (no failures) or an array without basicMetadata
+    expect(result.enrichmentFailures ?? []).not.toContain('basicMetadata');
+  });
+
+  it('propagates external enrichment failures (e.g. events-lookup)', () => {
+    const result = buildLegislativeTracking(makeProcedure(), [], ['events-lookup']);
+    expect(result.enrichmentFailures).toContain('events-lookup');
+  });
+
+  it('merges external and internal enrichment failures', () => {
+    const result = buildLegislativeTracking(
+      makeProcedure({ responsibleCommittee: '', rapporteur: '' }),
+      [],
+      ['events-lookup']
+    );
+    expect(result.enrichmentFailures).toContain('events-lookup');
+    expect(result.enrichmentFailures).toContain('committeeResolve');
+    expect(result.enrichmentFailures).toContain('rapporteurResolve');
+  });
+});
+
+// ─── events-enriched timeline (tested via buildLegislativeTracking) ──────────
+
+describe('events-enriched timeline (via buildLegislativeTracking)', () => {
+  it('merges procedure dates and events into the timeline', () => {
+    const result = buildLegislativeTracking(
+      makeProcedure({ dateInitiated: '2024-01-15', dateLastActivity: '2024-06-20' }),
+      [makeEvent({ date: '2025-02-10', type: 'HEARING', title: 'Committee hearing' })]
+    );
+    expect(result.timeline.length).toBe(3);
+    const dates = result.timeline.map((t) => t.date);
+    expect(dates).toContain('2024-01-15');
+    expect(dates).toContain('2024-06-20');
+    expect(dates).toContain('2025-02-10');
+  });
+
+  it('deduplicates timeline entries with same date and stage', () => {
+    const result = buildLegislativeTracking(
+      makeProcedure({ dateInitiated: '2024-01-15', dateLastActivity: '2024-06-20' }),
+      [makeEvent({ date: '2024-01-15', type: 'Initiated', title: 'Same day event' })]
+    );
+    const initiated = result.timeline.filter((t) => t.date === '2024-01-15' && t.stage === 'Initiated');
+    expect(initiated.length).toBe(1);
+  });
+
+  it('populates timeline from events when procedure dates are absent', () => {
+    const result = buildLegislativeTracking(
+      makeProcedure({ dateInitiated: '', dateLastActivity: '' }),
+      [makeEvent({ date: '2025-03-01', type: 'COMMITTEE_VOTE', title: 'Vote on draft' })]
+    );
+    expect(result.timeline.length).toBe(1);
+    expect(result.timeline[0].date).toBe('2025-03-01');
+    expect(result.timeline[0].stage).toBe('COMMITTEE_VOTE');
+  });
+
+  it('events timeline entries are sorted by date', () => {
+    const result = buildLegislativeTracking(
+      makeProcedure({ dateInitiated: '', dateLastActivity: '' }),
+      [
+        makeEvent({ id: 'evt-b', date: '2025-04-01', type: 'B' }),
+        makeEvent({ id: 'evt-a', date: '2025-01-01', type: 'A' }),
+      ]
+    );
+    expect(result.timeline[0].date).toBe('2025-01-01');
+    expect(result.timeline[1].date).toBe('2025-04-01');
+  });
+
+  it('events with empty date are excluded from timeline', () => {
+    const result = buildLegislativeTracking(
+      makeProcedure({ dateInitiated: '', dateLastActivity: '' }),
+      [makeEvent({ date: '' })]
+    );
+    expect(result.timeline).toHaveLength(0);
+  });
+
+  it('achieves MEDIUM confidence when only events provide timeline (no committee)', () => {
+    // Committee is present, events provide timeline
+    const result = buildLegislativeTracking(
+      makeProcedure({ dateInitiated: '', dateLastActivity: '', responsibleCommittee: 'IMCO' }),
+      [makeEvent()]
+    );
+    expect(result.confidenceLevel).toBe('MEDIUM');
+  });
+
+  it('populates responsible from event organizer', () => {
+    const result = buildLegislativeTracking(
+      makeProcedure({ dateInitiated: '', dateLastActivity: '' }),
+      [makeEvent({ organizer: 'ENVI', date: '2025-01-01', type: 'HEARING' })]
+    );
+    expect(result.timeline[0].responsible).toBe('ENVI');
+  });
+
+  it('omits responsible when event organizer is empty', () => {
+    const result = buildLegislativeTracking(
+      makeProcedure({ dateInitiated: '', dateLastActivity: '' }),
+      [makeEvent({ organizer: '', date: '2025-01-01', type: 'HEARING' })]
+    );
+    expect(result.timeline[0].responsible).toBeUndefined();
+  });
+
+  it('includes events enrichment note in methodology', () => {
+    const result = buildLegislativeTracking(makeProcedure());
+    expect(result.methodology).toContain('/procedures/{id}/events');
   });
 });

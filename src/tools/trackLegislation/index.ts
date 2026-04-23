@@ -20,6 +20,7 @@ import { TrackLegislationSchema } from '../../schemas/europeanParliament.js';
 import { epClient } from '../../clients/europeanParliamentClient.js';
 import { buildLegislativeTracking } from './procedureTracker.js';
 import type { ToolResult } from '../shared/types.js';
+import type { EPEvent } from '../../types/europeanParliament.js';
 import { ToolError } from '../shared/errors.js';
 
 /**
@@ -88,7 +89,20 @@ export async function handleTrackLegislation(
   
   try {
     const procedure = await epClient.getProcedureById(processId);
-    const tracking = buildLegislativeTracking(procedure);
+
+    // Attempt to enrich the timeline with events from the events sub-endpoint.
+    // If the call fails (network error, 404, rate-limit), we surface the failure
+    // name in enrichmentFailures instead of propagating an exception.
+    const enrichmentFailures: string[] = [];
+    let events: EPEvent[] = [];
+    try {
+      const eventsResponse = await epClient.getProcedureEvents(processId, { limit: 20 });
+      events = eventsResponse.data;
+    } catch {
+      enrichmentFailures.push('events-lookup');
+    }
+
+    const tracking = buildLegislativeTracking(procedure, events, enrichmentFailures);
     
     return {
       content: [{

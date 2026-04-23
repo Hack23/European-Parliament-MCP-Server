@@ -36,6 +36,19 @@ export interface LegislativeProcedure {
   methodology: string;
   /** Warnings about partially available or missing data */
   dataQualityWarnings?: string[];
+  /**
+   * Named enrichment sub-steps that could not be resolved.
+   * Consumers can use this to identify which data dimensions are incomplete
+   * and weight per-field confidence accordingly.
+   *
+   * Known step names:
+   * - `"basicMetadata"` — procedure dates / stage / status unavailable
+   * - `"committeeResolve"` — responsible committee not found in API response
+   * - `"rapporteurResolve"` — rapporteur not found in API response
+   * - `"documentResolve"` — no document references in API response
+   * - `"events-lookup"` — `/procedures/{id}/events` API call failed
+   */
+  enrichmentFailures?: string[];
 }
 
 /**
