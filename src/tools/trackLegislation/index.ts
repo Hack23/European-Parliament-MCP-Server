@@ -20,7 +20,15 @@ import { TrackLegislationSchema } from '../../schemas/europeanParliament.js';
 import { epClient } from '../../clients/europeanParliamentClient.js';
 import { buildLegislativeTracking } from './procedureTracker.js';
 import type { ToolResult } from '../shared/types.js';
+import type { EPEvent } from '../../types/europeanParliament.js';
 import { ToolError } from '../shared/errors.js';
+
+/**
+ * Maximum number of procedure events to fetch for timeline enrichment.
+ * 20 covers the typical lifecycle milestones for an EP procedure while
+ * keeping the API call lightweight.
+ */
+const EVENTS_ENRICHMENT_LIMIT = 20;
 
 /**
  * Convert a user-supplied procedure reference to the EP API process-id format.
@@ -88,7 +96,20 @@ export async function handleTrackLegislation(
   
   try {
     const procedure = await epClient.getProcedureById(processId);
-    const tracking = buildLegislativeTracking(procedure);
+
+    // Attempt to enrich the timeline with events from the events sub-endpoint.
+    // If the call fails (network error, 404, rate-limit), we surface the failure
+    // name in enrichmentFailures instead of propagating an exception.
+    const enrichmentFailures: string[] = [];
+    let events: EPEvent[] = [];
+    try {
+      const eventsResponse = await epClient.getProcedureEvents(processId, { limit: EVENTS_ENRICHMENT_LIMIT });
+      events = eventsResponse.data;
+    } catch {
+      enrichmentFailures.push('events-lookup');
+    }
+
+    const tracking = buildLegislativeTracking(procedure, events, enrichmentFailures);
     
     return {
       content: [{

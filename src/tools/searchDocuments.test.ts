@@ -250,4 +250,59 @@ describe('search_documents Tool', () => {
       }
     });
   });
+
+  describe('Envelope consistency', () => {
+    // Note: these tool-level tests mock `epClient.searchDocuments` directly,
+    // so they only verify that the tool faithfully forwards the envelope
+    // returned by the client without altering it. The end-to-end behavior
+    // (total derived from post-filter data.length) is covered by real
+    // client-level tests in `src/clients/ep/pagination.test.ts` which mock
+    // the underlying `undici` fetch and exercise `DocumentClient.searchDocuments`.
+
+    it('should forward an exhausted envelope unchanged (total === offset, hasMore=false)', async () => {
+      vi.mocked(epClientModule.epClient.searchDocuments).mockResolvedValue({
+        data: [],
+        total: 0,
+        limit: 20,
+        offset: 0,
+        hasMore: false
+      });
+
+      const result = await handleSearchDocuments({ keyword: 'motions resolution', documentType: 'RESOLUTION' });
+      const text = result.content[0]?.text ?? '{}';
+      const envelope = JSON.parse(text) as { data: unknown[]; total: number; offset: number; hasMore: boolean };
+
+      expect(envelope.data.length).toBe(0);
+      expect(envelope.hasMore).toBe(false);
+      expect(envelope.total).toBe(envelope.offset);
+    });
+
+    it('should forward the client total verbatim without re-inflating to the pre-filter page size', async () => {
+      // Regression guard for the reported bug: if the tool were to
+      // re-derive `total` from the request (e.g., from `limit` or an
+      // unfiltered server page size), it would inflate back to 21. The
+      // tool must forward the client envelope exactly.
+      vi.mocked(epClientModule.epClient.searchDocuments).mockResolvedValue({
+        data: [],
+        total: 1,   // 0 filtered + 1 heuristic (hasMore=true) — not 21 (raw server page)
+        limit: 20,
+        offset: 0,
+        hasMore: true
+      });
+
+      const result = await handleSearchDocuments({ keyword: 'motions resolution', documentType: 'RESOLUTION' });
+      const text = result.content[0]?.text ?? '{}';
+      const envelope = JSON.parse(text) as { data: unknown[]; total: number; offset: number; limit: number; hasMore: boolean };
+
+      // Exact forwarding: total is the mocked value, not 21.
+      expect(envelope.total).toBe(1);
+      expect(envelope.data.length).toBe(0);
+      expect(envelope.hasMore).toBe(true);
+      expect(envelope.offset).toBe(0);
+      expect(envelope.limit).toBe(20);
+      // Stronger behavioral property for the post-filter + pre-filter-hasMore hybrid:
+      //   total === offset + data.length + (hasMore ? 1 : 0)
+      expect(envelope.total).toBe(envelope.offset + envelope.data.length + (envelope.hasMore ? 1 : 0));
+    });
+  });
 });
