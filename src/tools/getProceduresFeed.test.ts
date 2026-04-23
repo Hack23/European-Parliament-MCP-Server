@@ -148,7 +148,7 @@ describe('get_procedures_feed Tool', () => {
     it('should return unavailable with descriptive reason when data array is empty', async () => {
       vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
         data: [],
-        '@context': []
+        '@context': ['https://example.org/ctx']
       });
 
       const result = await handleGetProceduresFeed({ timeframe: 'one-week' });
@@ -160,13 +160,18 @@ describe('get_procedures_feed Tool', () => {
         items: unknown[];
         dataQualityWarnings: string[];
         reason: string;
+        '@context': unknown[];
       };
       expect(parsed.status).toBe('unavailable');
       expect(parsed.data).toEqual([]);
       expect(parsed.items).toEqual([]);
+      // Reason must mention the timeframe and the correct fallback (no year parameter)
       expect(parsed.reason).toContain('one-week');
       expect(parsed.reason).toContain('get_procedures');
+      expect(parsed.reason).not.toContain('year');
       expect(parsed.dataQualityWarnings[0]).toContain('one-week');
+      // Upstream @context must be preserved
+      expect(parsed['@context']).toEqual(['https://example.org/ctx']);
     });
   });
 

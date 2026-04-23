@@ -52,20 +52,14 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
     );
     if (isErrorInBody(result)) {
       return buildEmptyFeedResponse(
-        `EP API returned an error-in-body response for get_procedures_feed (timeframe: '${params.timeframe}') — the upstream enrichment step may have failed. Use get_procedures with a year filter as a reliable fallback.`,
+        `EP API returned an error-in-body response for get_procedures_feed (timeframe: '${params.timeframe}') — the upstream enrichment step may have failed. Use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback.`,
       );
     }
-    const dataItems = Array.isArray(result.data) ? result.data : [];
-    if (dataItems.length === 0) {
-      const currentYear = String(new Date().getFullYear());
-      return buildEmptyFeedResponse(
-        `EP API procedures/feed returned no data for timeframe '${params.timeframe}' — no procedures were updated in the requested period. This is expected during parliamentary recess or low-activity weeks. Use get_procedures with a year filter as a reliable fallback (e.g. get_procedures({ year: ${currentYear} })).`,
-      );
-    }
-    return buildFeedSuccessResponse(result);
+    const emptyReason = `EP API procedures/feed returned no data for timeframe '${params.timeframe}' — no procedures were updated in the requested period. This is expected during parliamentary recess or low-activity weeks. Use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback.`;
+    return buildFeedSuccessResponse(result, [], emptyReason);
   } catch (error: unknown) {
     if (isUpstream404(error)) return buildEmptyFeedResponse(
-      `EP API returned 404 for procedures/feed (timeframe: '${params.timeframe}') — no procedures were updated in the requested period. Use get_procedures with a year filter as a reliable fallback.`,
+      `EP API returned 404 for procedures/feed (timeframe: '${params.timeframe}') — no procedures were updated in the requested period. Use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback.`,
     );
     throw new ToolError({
       toolName: 'get_procedures_feed',
@@ -80,7 +74,7 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
 export const getProceduresFeedToolMetadata = {
   name: 'get_procedures_feed',
   description:
-    'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take around 120 seconds and can still time out. If you see timeouts, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. When no procedures were updated in the requested timeframe (common during parliamentary recess or low-activity periods), the response will have status:"unavailable" and empty items — this is expected behaviour, not an error. In that case, use get_procedures with a year filter as a reliable fallback (e.g. get_procedures({ year: 2025 })).',
+    'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take around 120 seconds and can still time out. If you see timeouts, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. When no procedures were updated in the requested timeframe (common during parliamentary recess or low-activity periods), the response will have status:"unavailable" and empty items — this is expected behaviour, not an error. In that case, use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback.',
   inputSchema: {
     type: 'object' as const,
     properties: {
