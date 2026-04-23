@@ -546,7 +546,7 @@ export class BaseEPClient {
 
         if (!response.ok) {
           throw new APIError(
-            `EP API request failed: ${response.status}${response.statusText ? ` ${response.statusText}` : ''}`,
+            `EP API request failed: ${String(response.status)}${response.statusText ? ` ${response.statusText}` : ''}`,
             response.status
           );
         }
