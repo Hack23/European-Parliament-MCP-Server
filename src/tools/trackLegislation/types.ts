@@ -42,7 +42,7 @@ export interface LegislativeProcedure {
    * and weight per-field confidence accordingly.
    *
    * Known step names:
-   * - `"basicMetadata"` — procedure dates / stage / status unavailable
+   * - `"basicMetadata"` — neither procedure dates nor dated events produced a timeline entry
    * - `"committeeResolve"` — responsible committee not found in API response
    * - `"rapporteurResolve"` — rapporteur not found in API response
    * - `"documentResolve"` — no document references in API response

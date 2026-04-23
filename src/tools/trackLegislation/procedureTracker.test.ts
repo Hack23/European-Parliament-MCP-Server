@@ -364,6 +364,16 @@ describe('enrichmentFailures (via buildLegislativeTracking)', () => {
     expect(result.enrichmentFailures ?? []).not.toContain('basicMetadata');
   });
 
+  it('includes basicMetadata when events are provided but all have empty dates', () => {
+    // Events exist but are filtered out of the timeline because they have no date.
+    // basicMetadata should be flagged since the merged timeline is still empty.
+    const result = buildLegislativeTracking(
+      makeProcedure({ dateInitiated: '', dateLastActivity: '' }),
+      [makeEvent({ date: '' }), makeEvent({ id: 'evt-002', date: '' })]
+    );
+    expect(result.enrichmentFailures).toContain('basicMetadata');
+  });
+
   it('propagates external enrichment failures (e.g. events-lookup)', () => {
     const result = buildLegislativeTracking(makeProcedure(), [], ['events-lookup']);
     expect(result.enrichmentFailures).toContain('events-lookup');
@@ -405,6 +415,17 @@ describe('events-enriched timeline (via buildLegislativeTracking)', () => {
     expect(initiated.length).toBe(1);
   });
 
+  it('merged timeline is sorted chronologically across procedure dates and events', () => {
+    // Event date (2024-03-05) falls between dateInitiated (2024-01-15) and dateLastActivity (2024-06-20).
+    // Without sorting, the merged list would be [2024-01-15, 2024-06-20, 2024-03-05].
+    const result = buildLegislativeTracking(
+      makeProcedure({ dateInitiated: '2024-01-15', dateLastActivity: '2024-06-20' }),
+      [makeEvent({ date: '2024-03-05', type: 'HEARING', title: 'Mid-term hearing' })]
+    );
+    const dates = result.timeline.map((t) => t.date);
+    expect(dates).toEqual(['2024-01-15', '2024-03-05', '2024-06-20']);
+  });
+
   it('populates timeline from events when procedure dates are absent', () => {
     const result = buildLegislativeTracking(
       makeProcedure({ dateInitiated: '', dateLastActivity: '' }),
@@ -435,8 +456,8 @@ describe('events-enriched timeline (via buildLegislativeTracking)', () => {
     expect(result.timeline).toHaveLength(0);
   });
 
-  it('achieves MEDIUM confidence when only events provide timeline (no committee)', () => {
-    // Committee is present, events provide timeline
+  it('achieves MEDIUM confidence when only events provide timeline and committee is present', () => {
+    // Committee is present and events provide the timeline
     const result = buildLegislativeTracking(
       makeProcedure({ dateInitiated: '', dateLastActivity: '', responsibleCommittee: 'IMCO' }),
       [makeEvent()]

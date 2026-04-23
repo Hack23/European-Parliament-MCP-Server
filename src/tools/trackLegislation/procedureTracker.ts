@@ -105,21 +105,14 @@ function buildNextSteps(procedure: Procedure): string[] {
  *   (e.g. `["events-lookup"]` when the events API call threw an error)
  * @returns Structured legislative tracking data
  */
-export function buildLegislativeTracking(
-  procedure: Procedure,
-  events: EPEvent[] = [],
-  externalEnrichmentFailures: string[] = []
-): LegislativeProcedure {
-  const warnings: string[] = [];
-  const enrichmentFailures: string[] = [...externalEnrichmentFailures];
-
-  warnings.push(
-    'Amendment statistics not available from single procedure endpoint; proposed/adopted/rejected counts are zero.'
-  );
-  warnings.push(
-    'Voting records not available from single procedure endpoint; voting array is empty.'
-  );
-
+/**
+ * Build per-field data-quality warnings from the procedure response.
+ */
+function buildDataQualityWarnings(procedure: Procedure): string[] {
+  const warnings: string[] = [
+    'Amendment statistics not available from single procedure endpoint; proposed/adopted/rejected counts are zero.',
+    'Voting records not available from single procedure endpoint; voting array is empty.',
+  ];
   if (!procedure.dateInitiated) {
     warnings.push('Procedure initiation date is missing from EP API response.');
   }
@@ -128,38 +121,67 @@ export function buildLegislativeTracking(
   }
   if (!procedure.responsibleCommittee) {
     warnings.push('Responsible committee is not assigned or missing from EP API response.');
-    enrichmentFailures.push('committeeResolve');
   }
   if (!procedure.rapporteur) {
     warnings.push('Rapporteur is not assigned or missing from EP API response.');
-    enrichmentFailures.push('rapporteurResolve');
   }
-  if (procedure.documents.length === 0) {
-    enrichmentFailures.push('documentResolve');
-  }
+  return warnings;
+}
 
-  // Merge timeline from procedure date fields and events from the events endpoint.
-  // Procedure-date entries are placed first so they take precedence: if both
-  // sources produce an entry with the same date+stage key, the procedure-date
-  // entry is kept and the event entry is silently dropped.
-  const procedureTimeline = buildTimeline(procedure);
-  const eventsTimeline = buildTimelineFromEvents(events);
+/**
+ * Determine which internal enrichment sub-steps could not be resolved from the
+ * procedure payload. `basicMetadata` is added only when no usable timeline
+ * entry exists (neither procedure dates nor dated events produced any entry).
+ */
+function collectInternalEnrichmentFailures(
+  procedure: Procedure,
+  eventsTimelineLength: number
+): string[] {
+  const failures: string[] = [];
+  if (!procedure.responsibleCommittee) failures.push('committeeResolve');
+  if (!procedure.rapporteur) failures.push('rapporteurResolve');
+  if (procedure.documents.length === 0) failures.push('documentResolve');
+  if (!procedure.dateInitiated && !procedure.dateLastActivity && eventsTimelineLength === 0) {
+    failures.push('basicMetadata');
+  }
+  return failures;
+}
+
+/**
+ * Merge procedure-date timeline and events timeline, deduplicate by
+ * `date:stage` key (procedure-date entries take precedence), and sort
+ * chronologically by date so consumers receive a time-ordered sequence.
+ */
+function mergeAndSortTimeline(
+  procedureTimeline: LegislativeProcedure['timeline'],
+  eventsTimeline: LegislativeProcedure['timeline']
+): LegislativeProcedure['timeline'] {
   const seenKeys = new Set<string>();
-  const timeline = [...procedureTimeline, ...eventsTimeline].filter((entry) => {
+  const deduped = [...procedureTimeline, ...eventsTimeline].filter((entry) => {
     const key = `${entry.date}:${entry.stage}`;
     if (seenKeys.has(key)) return false;
     seenKeys.add(key);
     return true;
   });
+  return deduped.sort((a, b) => a.date.localeCompare(b.date));
+}
 
-  if (!procedure.dateInitiated && !procedure.dateLastActivity && events.length === 0) {
-    enrichmentFailures.push('basicMetadata');
-  }
+export function buildLegislativeTracking(
+  procedure: Procedure,
+  events: EPEvent[] = [],
+  externalEnrichmentFailures: string[] = []
+): LegislativeProcedure {
+  const procedureTimeline = buildTimeline(procedure);
+  const eventsTimeline = buildTimelineFromEvents(events);
+  const timeline = mergeAndSortTimeline(procedureTimeline, eventsTimeline);
 
-  const hasTimeline = timeline.length > 0;
-  const hasCommittee = Boolean(procedure.responsibleCommittee);
+  const enrichmentFailures = [
+    ...externalEnrichmentFailures,
+    ...collectInternalEnrichmentFailures(procedure, eventsTimeline.length),
+  ];
+
   const confidenceLevel: LegislativeProcedure['confidenceLevel'] =
-    hasTimeline && hasCommittee ? 'MEDIUM' : 'LOW';
+    timeline.length > 0 && Boolean(procedure.responsibleCommittee) ? 'MEDIUM' : 'LOW';
 
   return {
     procedureId: procedure.id,
@@ -185,7 +207,7 @@ export function buildLegislativeTracking(
       + 'Timeline is enriched with events from /procedures/{id}/events when available. '
       + 'Amendment and voting statistics require separate API calls and are not yet populated. '
       + 'Data source: https://data.europarl.europa.eu/api/v2/procedures',
-    dataQualityWarnings: warnings,
+    dataQualityWarnings: buildDataQualityWarnings(procedure),
     ...(enrichmentFailures.length > 0 ? { enrichmentFailures } : {}),
   };
 }
