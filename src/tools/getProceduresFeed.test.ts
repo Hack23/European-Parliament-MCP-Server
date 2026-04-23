@@ -124,11 +124,12 @@ describe('get_procedures_feed Tool', () => {
 
       expect(result.isError).toBeUndefined();
       const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
         data: unknown[];
         dataQualityWarnings: string[];
       };
+      expect(parsed.status).toBe('unavailable');
       expect(parsed.data).toEqual([]);
-      expect(parsed.dataQualityWarnings[0]).toContain('no data');
     });
 
     it('should handle error-in-body response (HTTP 200 with upstream 404-in-body)', async () => {
@@ -253,6 +254,35 @@ describe('get_procedures_feed Tool', () => {
       expect(parsed.upstream?.statusCode).toBe(429);
       expect(parsed.upstream?.errorMessage).toBe('Too Many Requests');
     });
+
+    it('should return unavailable with descriptive reason when data array is empty', async () => {
+      vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
+        data: [],
+        '@context': ['https://example.org/ctx']
+      });
+
+      const result = await handleGetProceduresFeed({ timeframe: 'one-week' });
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        data: unknown[];
+        items: unknown[];
+        dataQualityWarnings: string[];
+        reason: string;
+        '@context': unknown[];
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.data).toEqual([]);
+      expect(parsed.items).toEqual([]);
+      // Reason must mention the timeframe and the correct fallback (no year parameter)
+      expect(parsed.reason).toContain('one-week');
+      expect(parsed.reason).toContain('get_procedures');
+      expect(parsed.reason).not.toContain('year');
+      expect(parsed.dataQualityWarnings[0]).toContain('one-week');
+      // Upstream @context must be preserved
+      expect(parsed['@context']).toEqual(['https://example.org/ctx']);
+    });
   });
 
   describe('Metadata', () => {
@@ -268,6 +298,11 @@ describe('get_procedures_feed Tool', () => {
     it('should export tool metadata with description containing slow endpoint warning', () => {
       expect(getProceduresFeedToolMetadata.description).toContain('120 seconds');
       expect(getProceduresFeedToolMetadata.description).toContain('get_procedures');
+    });
+
+    it('should export tool metadata with description documenting unavailable response', () => {
+      expect(getProceduresFeedToolMetadata.description).toContain('unavailable');
+      expect(getProceduresFeedToolMetadata.description).toContain('recess');
     });
 
     it('should export tool metadata with inputSchema', () => {

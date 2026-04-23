@@ -225,11 +225,19 @@ export function isErrorInBody(result: Record<string, unknown>): boolean {
  *                 `@context`, and optionally `dataQualityWarnings`)
  * @param warnings - Optional extra data-quality warnings to merge into
  *                   the response.
+ * @param customEmptyReason - Optional human-readable reason to use instead
+ *                            of the shared {@link EMPTY_FEED_REASON} when
+ *                            `items.length === 0`.  Useful when a specific
+ *                            tool wants to surface a more descriptive message
+ *                            while still preserving the upstream JSON-LD
+ *                            payload (e.g. `@context`).  When omitted the
+ *                            default shared reason is used.
  * @returns MCP-compliant ToolResult containing the uniform envelope
  */
 export function buildFeedSuccessResponse(
   result: unknown,
   warnings: readonly string[] = [],
+  customEmptyReason?: string,
 ): ToolResult {
   const source = (result ?? {}) as Record<string, unknown>;
   const items = Array.isArray(source['data']) ? (source['data'] as unknown[]) : [];
@@ -245,7 +253,7 @@ export function buildFeedSuccessResponse(
   let reason: string | undefined;
   if (items.length === 0) {
     status = 'unavailable';
-    reason = EMPTY_FEED_REASON;
+    reason = customEmptyReason ?? EMPTY_FEED_REASON;
     // Surface the empty-feed reason in dataQualityWarnings for legacy consumers.
     if (!mergedWarnings.includes(reason)) {
       mergedWarnings.push(reason);
