@@ -252,39 +252,14 @@ describe('search_documents Tool', () => {
   });
 
   describe('Envelope consistency', () => {
-    it('should return data.length > 0 when total > offset', async () => {
-      // Normal case: server + client filters both yield results
-      vi.mocked(epClientModule.epClient.searchDocuments).mockResolvedValue({
-        data: [
-          {
-            id: 'B-9-2024-0001',
-            type: 'RESOLUTION',
-            title: 'Motion for a resolution on energy',
-            date: '2024-03-01',
-            authors: [],
-            committee: 'ITRE',
-            status: 'ADOPTED',
-            pdfUrl: 'https://www.europarl.europa.eu/doceo/document/B-9-2024-0001_EN.pdf',
-            summary: 'Motion for a resolution on energy'
-          }
-        ],
-        total: 2,
-        limit: 20,
-        offset: 0,
-        hasMore: true
-      });
+    // Note: these tool-level tests mock `epClient.searchDocuments` directly,
+    // so they only verify that the tool faithfully forwards the envelope
+    // returned by the client without altering it. The end-to-end behavior
+    // (total derived from post-filter data.length) is covered by real
+    // client-level tests in `src/clients/ep/pagination.test.ts` which mock
+    // the underlying `undici` fetch and exercise `DocumentClient.searchDocuments`.
 
-      const result = await handleSearchDocuments({ keyword: 'resolution', documentType: 'RESOLUTION' });
-      const text = result.content[0]?.text ?? '{}';
-      const envelope = JSON.parse(text) as { data: unknown[]; total: number; offset: number; hasMore: boolean };
-
-      // Envelope invariant: data.length > 0 when total > offset (there are items on this page)
-      expect(envelope.data.length).toBeGreaterThan(0);
-      expect(envelope.total).toBeGreaterThan(envelope.offset);
-    });
-
-    it('should not return total > offset when data is empty and hasMore is false', async () => {
-      // Client returned empty data and no more pages
+    it('should forward an exhausted envelope unchanged (total === offset, hasMore=false)', async () => {
       vi.mocked(epClientModule.epClient.searchDocuments).mockResolvedValue({
         data: [],
         total: 0,
@@ -297,17 +272,15 @@ describe('search_documents Tool', () => {
       const text = result.content[0]?.text ?? '{}';
       const envelope = JSON.parse(text) as { data: unknown[]; total: number; offset: number; hasMore: boolean };
 
-      // When data is empty and hasMore is false: total must equal offset (no items)
       expect(envelope.data.length).toBe(0);
       expect(envelope.hasMore).toBe(false);
       expect(envelope.total).toBe(envelope.offset);
     });
 
-    it('should satisfy envelope invariant (total - offset >= data.length) when keyword filters reduce results', async () => {
-      // Simulates the bug scenario: client returns a consistent envelope where
-      // total reflects the filtered count, not the raw server page size.
-      // The mock here represents what the DocumentClient should return after
-      // the fix (total derived from filtered documents.length, not pageSize).
+    it('should preserve envelope invariant (total - offset >= data.length) from the client', async () => {
+      // Regression guard for the reported bug: if the client returns a
+      // filtered-empty envelope with hasMore=true, the tool must not inflate
+      // `total` back to the pre-filter server page size.
       vi.mocked(epClientModule.epClient.searchDocuments).mockResolvedValue({
         data: [],
         total: 1,   // 0 filtered + 1 heuristic (hasMore=true) — not 21 (raw server page)
@@ -320,7 +293,6 @@ describe('search_documents Tool', () => {
       const text = result.content[0]?.text ?? '{}';
       const envelope = JSON.parse(text) as { data: unknown[]; total: number; offset: number; hasMore: boolean };
 
-      // Core invariant: total - offset >= data.length (never less)
       expect(envelope.total - envelope.offset).toBeGreaterThanOrEqual(envelope.data.length);
     });
   });

@@ -153,11 +153,16 @@ export class DocumentClient extends BaseEPClient {
 
       // `hasMore` is derived from whether the server returned a full page —
       // indicating there may be more documents (of the requested type) to fetch.
-      // `total` is derived from the *filtered* document count so that the
-      // envelope remains consistent: `total - offset >= data.length` always holds.
-      // When client-side keyword/committee/date filters remove all items from a
-      // server page, `total` reflects 0 items found (not the raw server page
-      // size), preventing the misleading `data:[] total:21 hasMore:true` state.
+      // `total` is a **heuristic lower-bound** derived from the *filtered*
+      // `documents.length` plus a +1 sentinel when `hasMore` is true, so the
+      // envelope always satisfies `total - offset >= data.length`.
+      //
+      // Note: this differs from the repo-wide client-filtered-endpoint
+      // convention (see `types/ep/common.ts` — e.g. `getPlenarySessions` uses
+      // the *unfiltered* page size). `searchDocuments` uses post-filter
+      // semantics to prevent the misleading `data:[] total:21 hasMore:true`
+      // envelope that occurs when a full server page is entirely eliminated
+      // by client-side keyword/committee/date filters.
       const hasMore = pageSize === requestedLimit;
       const filteredCount = documents.length;
       const result: PaginatedResponse<LegislativeDocument> = {

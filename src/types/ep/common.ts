@@ -184,12 +184,19 @@ export interface PaginatedResponse<T> {
    *   but may **overestimate by 1** when the dataset size is an exact
    *   multiple of `limit` (i.e., the last server page is exactly full).
    * 
-   * For **client-filtered server endpoints** (e.g. `searchDocuments` with keyword,
-   * `getPlenarySessions` with location, `getParliamentaryQuestions` with author/topic),
-   * `total` and `hasMore` are derived from the **unfiltered server page size**, not
-   * from `data.length` after client-side filtering. This means `hasMore` can be `true`
-   * even when the filtered `data` array is empty, and `total` will not reflect the
-   * count of filtered matches.
+   * For **client-filtered server endpoints** (e.g. `getPlenarySessions` with
+   * location, `getParliamentaryQuestions` with author/topic), `total` and
+   * `hasMore` are derived from the **unfiltered server page size**, not
+   * from `data.length` after client-side filtering. This means `hasMore` can
+   * be `true` even when the filtered `data` array is empty, and `total` will
+   * not reflect the count of filtered matches.
+   *
+   * **Exception — `searchDocuments`:** to guarantee the envelope invariant
+   * `total - offset >= data.length` (preventing misleading `data:[] total:N>0`
+   * responses when keyword/committee/date filters eliminate all items on a
+   * server page), `total` is derived from the **post-filter** `data.length`
+   * plus the +1 sentinel while `hasMore` remains pre-filter. Callers should
+   * paginate until `hasMore === false`.
    * 
    * **Do not** use this value for exact "X of Y" UI or page-count
    * calculations on server-paginated endpoints. Instead, iterate all
@@ -257,11 +264,15 @@ export interface PaginatedResponse<T> {
    *   returned `limit` items). A full page suggests more data may follow,
    *   but can be a **false positive** when the dataset size is an exact
    *   multiple of `limit`.
-   * - For **client-filtered server endpoints** (e.g. `searchDocuments`,
-   *   `getPlenarySessions`, `getParliamentaryQuestions`), `hasMore` is
-   *   derived from the **unfiltered server page size** before client-side
-   *   filtering. This means `hasMore` can be `true` even when the filtered
-   *   `data` array contains fewer than `limit` items or is empty.
+   * - For **client-filtered server endpoints** (e.g. `getPlenarySessions`,
+   *   `getParliamentaryQuestions`), `hasMore` is derived from the
+   *   **unfiltered server page size** before client-side filtering. This
+   *   means `hasMore` can be `true` even when the filtered `data` array
+   *   contains fewer than `limit` items or is empty.
+   * - **Exception — `searchDocuments`:** `hasMore` still reflects pre-filter
+   *   server page fullness (so callers continue paginating for more matches),
+   *   but `total` reflects post-filter `data.length` to keep the envelope
+   *   consistent (`total - offset >= data.length`).
    * 
    * Callers should paginate until `hasMore` is `false`. For **in-memory
    * paginated** results, `hasMore` is exact: `(offset + data.length) < total`.
