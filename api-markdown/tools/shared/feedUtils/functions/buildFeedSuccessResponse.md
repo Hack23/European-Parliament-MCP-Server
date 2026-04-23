@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../../README.md)
 
 ***
 
@@ -6,9 +6,9 @@
 
 # Function: buildFeedSuccessResponse()
 
-> **buildFeedSuccessResponse**(`result`, `warnings?`): [`ToolResult`](../../types/interfaces/ToolResult.md)
+> **buildFeedSuccessResponse**(`result`, `warnings?`, `customEmptyReason?`): [`ToolResult`](../../types/interfaces/ToolResult.md)
 
-Defined in: [tools/shared/feedUtils.ts:180](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L180)
+Defined in: [tools/shared/feedUtils.ts:237](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L237)
 
 Wrap a successful upstream feed result in the uniform envelope.
 
@@ -48,6 +48,18 @@ readonly `string`[] = `[]`
 
 Optional extra data-quality warnings to merge into
                   the response.
+
+### customEmptyReason?
+
+`string`
+
+Optional human-readable reason to use instead
+                           of the shared EMPTY\_FEED\_REASON when
+                           `items.length === 0`.  Useful when a specific
+                           tool wants to surface a more descriptive message
+                           while still preserving the upstream JSON-LD
+                           payload (e.g. `@context`).  When omitted the
+                           default shared reason is used.
 
 ## Returns
 

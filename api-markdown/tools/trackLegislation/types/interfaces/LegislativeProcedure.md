@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../../README.md)
 
 ***
 
@@ -139,6 +139,25 @@ Voting records
 Defined in: [tools/trackLegislation/types.ts:38](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L38)
 
 Warnings about partially available or missing data
+
+***
+
+### enrichmentFailures?
+
+> `optional` **enrichmentFailures?**: `string`[]
+
+Defined in: [tools/trackLegislation/types.ts:51](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L51)
+
+Named enrichment sub-steps that could not be resolved.
+Consumers can use this to identify which data dimensions are incomplete
+and weight per-field confidence accordingly.
+
+Known step names:
+- `"basicMetadata"` — neither procedure dates nor dated events produced a timeline entry
+- `"committeeResolve"` — responsible committee not found in API response
+- `"rapporteurResolve"` — rapporteur not found in API response
+- `"documentResolve"` — no document references in API response
+- `"events-lookup"` — `/procedures/{process-id}/events` API call failed
 
 ***
 

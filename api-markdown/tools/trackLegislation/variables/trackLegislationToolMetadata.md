@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **trackLegislationToolMetadata**: `object`
 
-Defined in: [tools/trackLegislation/index.ts:113](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/index.ts#L113)
+Defined in: [tools/trackLegislation/index.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/index.ts#L134)
 
 Tool metadata for MCP registration
 

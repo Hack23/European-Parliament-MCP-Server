@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **FIXED\_WINDOW\_FEED\_INPUT\_SCHEMA**: `object`
 
-Defined in: [tools/shared/feedUtils.ts:82](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L82)
+Defined in: [tools/shared/feedUtils.ts:132](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L132)
 
 Shared MCP `tools/list` inputSchema for fixed-window feed tools
 (Group A: `get_documents_feed`, `get_plenary_documents_feed`, etc.).

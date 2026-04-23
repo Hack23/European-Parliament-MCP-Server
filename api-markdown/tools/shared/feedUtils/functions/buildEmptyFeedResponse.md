@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../../README.md)
 
 ***
 
@@ -6,9 +6,9 @@
 
 # Function: buildEmptyFeedResponse()
 
-> **buildEmptyFeedResponse**(`reason?`): [`ToolResult`](../../types/interfaces/ToolResult.md)
+> **buildEmptyFeedResponse**(`reason?`, `meta?`): [`ToolResult`](../../types/interfaces/ToolResult.md)
 
-Defined in: [tools/shared/feedUtils.ts:239](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L239)
+Defined in: [tools/shared/feedUtils.ts:301](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L301)
 
 Build an empty feed response under the uniform contract.
 
@@ -31,6 +31,15 @@ warnings (`status` will be derived as `"degraded"`).
 Human-readable reason describing why the feed is empty
                 (also surfaced in `dataQualityWarnings` for backwards
                 compatibility with consumers reading the legacy field).
+
+### meta?
+
+[`FeedErrorMeta`](../interfaces/FeedErrorMeta.md)
+
+Optional machine-readable failure metadata. When provided,
+                `errorCode`, `retryable`, and `upstream` are included in the
+                response envelope so downstream consumers can classify the
+                failure and decide whether to retry, fall back, or skip.
 
 ## Returns
 

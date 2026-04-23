@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: TimelineEvent
 
-Defined in: [tools/trackLegislation/types.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L44)
+Defined in: [tools/trackLegislation/types.ts:57](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L57)
 
 Timeline event
 
@@ -16,7 +16,7 @@ Timeline event
 
 > **date**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L45)
+Defined in: [tools/trackLegislation/types.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L58)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [tools/trackLegislation/types.ts:45](https://github.com/Hack23/Europ
 
 > **description**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:47](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L47)
+Defined in: [tools/trackLegislation/types.ts:60](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L60)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [tools/trackLegislation/types.ts:47](https://github.com/Hack23/Europ
 
 > **stage**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L46)
+Defined in: [tools/trackLegislation/types.ts:59](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L59)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [tools/trackLegislation/types.ts:46](https://github.com/Hack23/Europ
 
 > `optional` **responsible?**: `string`
 
-Defined in: [tools/trackLegislation/types.ts:48](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L48)
+Defined in: [tools/trackLegislation/types.ts:61](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L61)

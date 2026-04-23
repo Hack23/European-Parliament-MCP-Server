@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.12**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.13**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: AmendmentStats
 
-Defined in: [tools/trackLegislation/types.ts:63](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L63)
+Defined in: [tools/trackLegislation/types.ts:76](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L76)
 
 Amendment statistics
 
@@ -16,7 +16,7 @@ Amendment statistics
 
 > **adopted**: `number`
 
-Defined in: [tools/trackLegislation/types.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L65)
+Defined in: [tools/trackLegislation/types.ts:78](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L78)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [tools/trackLegislation/types.ts:65](https://github.com/Hack23/Europ
 
 > **proposed**: `number`
 
-Defined in: [tools/trackLegislation/types.ts:64](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L64)
+Defined in: [tools/trackLegislation/types.ts:77](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L77)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [tools/trackLegislation/types.ts:64](https://github.com/Hack23/Europ
 
 > **rejected**: `number`
 
-Defined in: [tools/trackLegislation/types.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L66)
+Defined in: [tools/trackLegislation/types.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/types.ts#L79)
