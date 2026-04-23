@@ -134,9 +134,21 @@ export const DEFAULT_MAX_RESPONSE_BYTES = 10_485_760;
 /**
  * API Error thrown when European Parliament API requests fail.
  *
+ * When thrown from {@link BaseEPClient}'s HTTP layer, the message always
+ * includes the numeric HTTP status code and, when present, the HTTP reason
+ * phrase (`statusText`). Some HTTP/2 responses omit `statusText`, in which
+ * case the message contains only the status code — the status code is
+ * therefore always surfaced in the message, never empty.
+ *
+ * Message format: `EP API request failed: <status>[ <statusText>]`
+ *
  * @example
  * ```typescript
- * throw new APIError('EP API request failed: Not Found', 404, { endpoint: '/meps/999999' });
+ * // HTTP/1.1 with a reason phrase
+ * throw new APIError('EP API request failed: 404 Not Found', 404, { endpoint: '/meps/999999' });
+ *
+ * // HTTP/2 where statusText is empty
+ * throw new APIError('EP API request failed: 404', 404, { endpoint: '/meps/999999' });
  * ```
  * @public
  */
@@ -546,7 +558,7 @@ export class BaseEPClient {
 
         if (!response.ok) {
           throw new APIError(
-            `EP API request failed: ${response.statusText}`,
+            `EP API request failed: ${String(response.status)}${response.statusText ? ` ${response.statusText}` : ''}`,
             response.status
           );
         }

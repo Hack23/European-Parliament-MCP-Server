@@ -507,6 +507,24 @@ describe('BaseEPClient.get() error handling', () => {
     expect(thrownError?.statusCode).toBe(403);
   });
 
+  it('should include status code in APIError message even when statusText is empty (HTTP/2)', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 404,
+      statusText: '',
+      headers: new Headers(),
+    });
+
+    let thrownError: APIError | undefined;
+    try {
+      await client.testGet('procedures/eli/dl/proc/2025-0261');
+    } catch (err) {
+      thrownError = err as APIError;
+    }
+    expect(thrownError?.statusCode).toBe(404);
+    expect(thrownError?.message).toContain('404');
+  });
+
   it('should throw APIError when content-length exceeds limit', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
