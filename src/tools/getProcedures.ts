@@ -20,6 +20,7 @@
 
 import { GetProceduresSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { APIError } from '../clients/ep/baseClient.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
@@ -95,6 +96,24 @@ export async function handleGetProcedures(args: unknown): Promise<ToolResult> {
 
     return buildToolResponse(result);
   } catch (error: unknown) {
+    // Surface upstream 404s as a non-retryable UPSTREAM_404 ToolError so
+    // callers can distinguish "procedure not found" from a transient failure
+    // instead of retrying indefinitely on a processId that does not exist.
+    if (error instanceof APIError && error.statusCode === 404) {
+      const message =
+        params.processId !== undefined
+          ? `Procedure not found: ${params.processId} (EP API returned 404)`
+          : error.message;
+      throw new ToolError({
+        toolName: 'get_procedures',
+        operation: 'fetchData',
+        message,
+        isRetryable: false,
+        errorCode: 'UPSTREAM_404',
+        httpStatus: 404,
+        cause: error,
+      });
+    }
     throw new ToolError({
       toolName: 'get_procedures',
       operation: 'fetchData',

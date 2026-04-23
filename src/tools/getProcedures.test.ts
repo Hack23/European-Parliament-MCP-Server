@@ -121,6 +121,46 @@ describe('get_procedures Tool', () => {
     it('should propagate schema validation errors for invalid input', async () => {
       await expect(handleGetProcedures({ limit: 'invalid' })).rejects.toThrow();
     });
+
+    it('should translate APIError(404) on processId lookup to non-retryable UPSTREAM_404 ToolError', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getProcedureById).mockRejectedValueOnce(
+        new APIError('EP API request failed: 404 Not Found', 404)
+      );
+
+      try {
+        await handleGetProcedures({ processId: 'eli/dl/proc/2025-0261' });
+        expect.fail('Expected handleGetProcedures to throw');
+      } catch (error: unknown) {
+        const { ToolError } = await import('./shared/errors.js');
+        expect(error).toBeInstanceOf(ToolError);
+        const toolError = error as InstanceType<typeof ToolError>;
+        expect(toolError.errorCode).toBe('UPSTREAM_404');
+        expect(toolError.httpStatus).toBe(404);
+        expect(toolError.isRetryable).toBe(false);
+        expect(toolError.message).toContain('eli/dl/proc/2025-0261');
+        expect(toolError.message).toContain('not found');
+      }
+    });
+
+    it('should include processId in UPSTREAM_404 ToolError message', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getProcedureById).mockRejectedValueOnce(
+        new APIError('EP API request failed: 404', 404)
+      );
+
+      try {
+        await handleGetProcedures({ processId: '2024/0001(COD)' });
+        expect.fail('Expected handleGetProcedures to throw');
+      } catch (error: unknown) {
+        const { ToolError } = await import('./shared/errors.js');
+        expect(error).toBeInstanceOf(ToolError);
+        const toolError = error as InstanceType<typeof ToolError>;
+        expect(toolError.message).toContain('2024/0001(COD)');
+        expect(toolError.errorCode).toBe('UPSTREAM_404');
+        expect(toolError.isRetryable).toBe(false);
+      }
+    });
   });
 
   describe('Client Invocation', () => {
