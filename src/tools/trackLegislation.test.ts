@@ -5,7 +5,8 @@ import * as epClientModule from '../clients/europeanParliamentClient.js';
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getProcedureById: vi.fn()
+    getProcedureById: vi.fn(),
+    getProcedureEvents: vi.fn(),
   }
 }));
 
@@ -26,6 +27,15 @@ describe('track_legislation Tool', () => {
       responsibleCommittee: 'IMCO',
       rapporteur: 'Test Rapporteur',
       documents: ['COM(2024)0001', 'A9-0123/2024'],
+    });
+
+    // Default: events endpoint returns empty list
+    vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue({
+      data: [],
+      total: 0,
+      limit: 20,
+      offset: 0,
+      hasMore: false,
     });
   });
 
@@ -283,6 +293,60 @@ describe('track_legislation Tool', () => {
 
       await expect(handleTrackLegislation({ procedureId: '9999/9999(COD)' }))
         .rejects.toThrow('[track_legislation] fetchProcedure: Failed to retrieve legislative procedure data');
+    });
+  });
+
+  describe('Events enrichment', () => {
+    it('enriches timeline with events when events endpoint succeeds', async () => {
+      vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue({
+        data: [{
+          id: 'evt-001',
+          title: 'Committee hearing',
+          date: '2025-03-10',
+          endDate: '',
+          type: 'HEARING',
+          location: 'Brussels',
+          organizer: 'IMCO',
+          status: 'CONFIRMED',
+        }],
+        total: 1,
+        limit: 20,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleTrackLegislation({ procedureId: '2024/0001(COD)' });
+      const parsed = JSON.parse(result.content[0].text) as { timeline: { date: string }[] };
+      const dates = parsed.timeline.map((t) => t.date);
+      expect(dates).toContain('2025-03-10');
+    });
+
+    it('adds events-lookup to enrichmentFailures when events API throws', async () => {
+      vi.mocked(epClientModule.epClient.getProcedureEvents).mockRejectedValue(
+        new Error('Events API error')
+      );
+
+      const result = await handleTrackLegislation({ procedureId: '2024/0001(COD)' });
+      const parsed = JSON.parse(result.content[0].text) as { enrichmentFailures?: string[] };
+      expect(Array.isArray(parsed.enrichmentFailures)).toBe(true);
+      expect(parsed.enrichmentFailures).toContain('events-lookup');
+    });
+
+    it('does not include enrichmentFailures when events fetch succeeds and data is complete', async () => {
+      const result = await handleTrackLegislation({ procedureId: '2024/0001(COD)' });
+      const parsed = JSON.parse(result.content[0].text) as { enrichmentFailures?: unknown };
+      // All fields complete + events succeeded → no failures
+      expect(parsed.enrichmentFailures).toBeUndefined();
+    });
+
+    it('still succeeds even when events API call fails', async () => {
+      vi.mocked(epClientModule.epClient.getProcedureEvents).mockRejectedValue(
+        new Error('Events 503')
+      );
+
+      // Should not throw — just degrade gracefully
+      const result = await handleTrackLegislation({ procedureId: '2024/0001(COD)' });
+      expect(result.content[0].type).toBe('text');
     });
   });
 });

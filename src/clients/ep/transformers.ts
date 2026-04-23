@@ -409,11 +409,18 @@ export function transformProcedure(apiData: Record<string, unknown>): Procedure 
   const dateStartField = firstDefined(apiData, 'process_date_start', 'date_start', 'date');
   const dateUpdateField = firstDefined(apiData, 'process_date_update', 'date_update');
   const subjectField = firstDefined(apiData, 'subject_matter', 'subject');
+  // Extract the procedure-type code from a URI like "def/ep-procedure-types/COD" → "COD".
+  // For strings without a "/" (e.g. plain "COD"), lastIndexOf returns -1, so
+  // slice(0) returns the full string unchanged.
+  const rawType = extractField(apiData, ['process_type', 'type']);
+  const typeCode = rawType.includes('/') ? rawType.slice(rawType.lastIndexOf('/') + 1) : rawType;
   return {
-    id: extractField(apiData, ['identifier', 'id', 'process_id']),
+    // Prefer the human-readable process_id (e.g. "2025-0009") over the full JSON-LD URI
+    // (e.g. "eli/dl/proc/2025-0009") that the EP API places in the "id" field.
+    id: extractField(apiData, ['identifier', 'process_id', 'id']),
     title: extractMultilingualText(titleField),
     reference: extractField(apiData, ['identifier', 'process_id']),
-    type: extractField(apiData, ['process_type', 'type']),
+    type: typeCode,
     subjectMatter: extractMultilingualText(subjectField),
     stage: extractField(apiData, ['process_stage', 'stage']),
     status: extractField(apiData, ['process_status', 'status']),
