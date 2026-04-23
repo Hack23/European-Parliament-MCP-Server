@@ -46,7 +46,7 @@ export interface LegislativeProcedure {
    * - `"committeeResolve"` — responsible committee not found in API response
    * - `"rapporteurResolve"` — rapporteur not found in API response
    * - `"documentResolve"` — no document references in API response
-   * - `"events-lookup"` — `/procedures/{id}/events` API call failed
+   * - `"events-lookup"` — `/procedures/{process-id}/events` API call failed
    */
   enrichmentFailures?: string[];
 }

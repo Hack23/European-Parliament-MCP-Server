@@ -41,7 +41,10 @@ function buildTimeline(procedure: Procedure): LegislativeProcedure['timeline'] {
 
 /**
  * Build timeline entries from EP procedure events.
- * Events come from the `/procedures/{id}/events` endpoint.
+ * Events come from the `/procedures/{process-id}/events` endpoint,
+ * where `process-id` is the EP procedure process identifier.
+ * The returned entries are not sorted here; {@link mergeAndSortTimeline}
+ * performs the final chronological sort on the merged list.
  */
 function buildTimelineFromEvents(events: EPEvent[]): LegislativeProcedure['timeline'] {
   return events
@@ -51,8 +54,7 @@ function buildTimelineFromEvents(events: EPEvent[]): LegislativeProcedure['timel
       stage: event.type || 'Event',
       description: event.title || event.id,
       ...(event.organizer ? { responsible: event.organizer } : {}),
-    }))
-    .sort((a, b) => a.date.localeCompare(b.date));
+    }));
 }
 
 /**
@@ -86,25 +88,6 @@ function buildNextSteps(procedure: Procedure): string[] {
   return steps;
 }
 
-/**
- * Build a legislative tracking result from a real EP API Procedure.
- * 
- * Most fields are derived directly from the API response. Amendment counts
- * and voting records are placeholders (zeros / empty array) because the
- * single-procedure endpoint does not supply them; these are surfaced in
- * {@link LegislativeProcedure.dataQualityWarnings}.
- * 
- * Per-step enrichment failures are tracked and returned in
- * {@link LegislativeProcedure.enrichmentFailures} so that consumers can
- * identify exactly which data dimensions are incomplete and weight
- * per-field confidence accordingly.
- * 
- * @param procedure - Real procedure data from EP API
- * @param events - Optional events from `/procedures/{id}/events` endpoint for timeline enrichment
- * @param externalEnrichmentFailures - Named sub-steps that already failed before this call
- *   (e.g. `["events-lookup"]` when the events API call threw an error)
- * @returns Structured legislative tracking data
- */
 /**
  * Build per-field data-quality warnings from the procedure response.
  */
@@ -166,6 +149,25 @@ function mergeAndSortTimeline(
   return deduped.sort((a, b) => a.date.localeCompare(b.date));
 }
 
+/**
+ * Build a legislative tracking result from a real EP API Procedure.
+ *
+ * Most fields are derived directly from the API response. Amendment counts
+ * and voting records are placeholders (zeros / empty array) because the
+ * single-procedure endpoint does not supply them; these are surfaced in
+ * {@link LegislativeProcedure.dataQualityWarnings}.
+ *
+ * Per-step enrichment failures are tracked and returned in
+ * {@link LegislativeProcedure.enrichmentFailures} so that consumers can
+ * identify exactly which data dimensions are incomplete and weight
+ * per-field confidence accordingly.
+ *
+ * @param procedure - Real procedure data from EP API
+ * @param events - Optional events from `/procedures/{process-id}/events` endpoint for timeline enrichment
+ * @param externalEnrichmentFailures - Named sub-steps that already failed before this call
+ *   (e.g. `["events-lookup"]` when the events API call threw an error)
+ * @returns Structured legislative tracking data
+ */
 export function buildLegislativeTracking(
   procedure: Procedure,
   events: EPEvent[] = [],
@@ -204,7 +206,7 @@ export function buildLegislativeTracking(
     methodology: 'Real-time data from EP API /procedures endpoint. '
       + 'Procedure details (title, type, stage, status, dates, committee, rapporteur, documents) '
       + 'are sourced directly from the European Parliament open data API. '
-      + 'Timeline is enriched with events from /procedures/{id}/events when available. '
+      + 'Timeline is enriched with events from /procedures/{process-id}/events when available. '
       + 'Amendment and voting statistics require separate API calls and are not yet populated. '
       + 'Data source: https://data.europarl.europa.eu/api/v2/procedures',
     dataQualityWarnings: buildDataQualityWarnings(procedure),

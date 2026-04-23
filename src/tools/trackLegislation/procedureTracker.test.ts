@@ -483,6 +483,6 @@ describe('events-enriched timeline (via buildLegislativeTracking)', () => {
 
   it('includes events enrichment note in methodology', () => {
     const result = buildLegislativeTracking(makeProcedure());
-    expect(result.methodology).toContain('/procedures/{id}/events');
+    expect(result.methodology).toContain('/procedures/{process-id}/events');
   });
 });
