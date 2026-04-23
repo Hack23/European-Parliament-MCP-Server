@@ -277,10 +277,11 @@ describe('search_documents Tool', () => {
       expect(envelope.total).toBe(envelope.offset);
     });
 
-    it('should preserve envelope invariant (total - offset >= data.length) from the client', async () => {
-      // Regression guard for the reported bug: if the client returns a
-      // filtered-empty envelope with hasMore=true, the tool must not inflate
-      // `total` back to the pre-filter server page size.
+    it('should forward the client total verbatim without re-inflating to the pre-filter page size', async () => {
+      // Regression guard for the reported bug: if the tool were to
+      // re-derive `total` from the request (e.g., from `limit` or an
+      // unfiltered server page size), it would inflate back to 21. The
+      // tool must forward the client envelope exactly.
       vi.mocked(epClientModule.epClient.searchDocuments).mockResolvedValue({
         data: [],
         total: 1,   // 0 filtered + 1 heuristic (hasMore=true) — not 21 (raw server page)
@@ -291,9 +292,17 @@ describe('search_documents Tool', () => {
 
       const result = await handleSearchDocuments({ keyword: 'motions resolution', documentType: 'RESOLUTION' });
       const text = result.content[0]?.text ?? '{}';
-      const envelope = JSON.parse(text) as { data: unknown[]; total: number; offset: number; hasMore: boolean };
+      const envelope = JSON.parse(text) as { data: unknown[]; total: number; offset: number; limit: number; hasMore: boolean };
 
-      expect(envelope.total - envelope.offset).toBeGreaterThanOrEqual(envelope.data.length);
+      // Exact forwarding: total is the mocked value, not 21.
+      expect(envelope.total).toBe(1);
+      expect(envelope.data.length).toBe(0);
+      expect(envelope.hasMore).toBe(true);
+      expect(envelope.offset).toBe(0);
+      expect(envelope.limit).toBe(20);
+      // Stronger behavioral property for the post-filter + pre-filter-hasMore hybrid:
+      //   total === offset + data.length + (hasMore ? 1 : 0)
+      expect(envelope.total).toBe(envelope.offset + envelope.data.length + (envelope.hasMore ? 1 : 0));
     });
   });
 });

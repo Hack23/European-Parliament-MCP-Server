@@ -151,18 +151,27 @@ export class DocumentClient extends BaseEPClient {
       let documents = response.data.map((item) => this.transformDocument(item));
       documents = this.filterDocuments(documents, params);
 
+      // Pagination envelope:
+      //   hasMore = pageSize === requestedLimit        (pre-filter, server-page)
+      //   total   = offset + filteredCount + (hasMore ? 1 : 0)  (post-filter)
+      //
       // `hasMore` is derived from whether the server returned a full page —
-      // indicating there may be more documents (of the requested type) to fetch.
-      // `total` is a **heuristic lower-bound** derived from the *filtered*
-      // `documents.length` plus a +1 sentinel when `hasMore` is true, so the
-      // envelope always satisfies `total - offset >= data.length`.
+      // it signals that more documents (of the requested `work-type`) may
+      // exist to fetch, even if all items on the current page were removed by
+      // the client-side keyword/committee/date filters.
+      //
+      // `total` is computed from the *filtered* `documents.length` (not the
+      // raw `pageSize`), so it is effectively a lower-bound estimate: exact
+      // when `hasMore === false`, and exactly `offset + data.length + 1` when
+      // `hasMore === true`. This hybrid prevents the misleading
+      // `data:[] total:21 hasMore:true` envelope that would occur if `total`
+      // were derived from the unfiltered page size.
       //
       // Note: this differs from the repo-wide client-filtered-endpoint
-      // convention (see `types/ep/common.ts` — e.g. `getPlenarySessions` uses
-      // the *unfiltered* page size). `searchDocuments` uses post-filter
-      // semantics to prevent the misleading `data:[] total:21 hasMore:true`
-      // envelope that occurs when a full server page is entirely eliminated
-      // by client-side keyword/committee/date filters.
+      // convention (see `types/ep/common.ts` — e.g. `getPlenarySessions`,
+      // `getParliamentaryQuestions` derive both `total` and `hasMore` from
+      // the unfiltered page size). `searchDocuments` is documented as an
+      // explicit exception in `PaginatedResponse`'s JSDoc.
       const hasMore = pageSize === requestedLimit;
       const filteredCount = documents.length;
       const result: PaginatedResponse<LegislativeDocument> = {

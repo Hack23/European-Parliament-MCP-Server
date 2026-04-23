@@ -191,12 +191,18 @@ export interface PaginatedResponse<T> {
    * be `true` even when the filtered `data` array is empty, and `total` will
    * not reflect the count of filtered matches.
    *
-   * **Exception — `searchDocuments`:** to guarantee the envelope invariant
-   * `total - offset >= data.length` (preventing misleading `data:[] total:N>0`
-   * responses when keyword/committee/date filters eliminate all items on a
-   * server page), `total` is derived from the **post-filter** `data.length`
-   * plus the +1 sentinel while `hasMore` remains pre-filter. Callers should
-   * paginate until `hasMore === false`.
+   * **Exception — `searchDocuments`:** `total` is derived from the
+   * **post-filter** `data.length`, not the unfiltered server page size.
+   * Concretely, this endpoint guarantees the stronger identity
+   * `total === offset + data.length + (hasMore ? 1 : 0)` while `hasMore`
+   * remains pre-filter (server page fullness). This means `total` is exact
+   * on the last page (`hasMore === false`) and overestimates by exactly 1
+   * when `hasMore === true`, so `total - offset <= data.length + 1` always
+   * holds. This prevents misleading envelopes such as
+   * `data:[] total:21 hasMore:true` when a full server page is eliminated
+   * by keyword/committee/date filters (the new envelope in that case is
+   * `data:[] total:1 hasMore:true`). Callers should still paginate until
+   * `hasMore === false` to enumerate all matches.
    * 
    * **Do not** use this value for exact "X of Y" UI or page-count
    * calculations on server-paginated endpoints. Instead, iterate all
@@ -271,8 +277,8 @@ export interface PaginatedResponse<T> {
    *   contains fewer than `limit` items or is empty.
    * - **Exception — `searchDocuments`:** `hasMore` still reflects pre-filter
    *   server page fullness (so callers continue paginating for more matches),
-   *   but `total` reflects post-filter `data.length` to keep the envelope
-   *   consistent (`total - offset >= data.length`).
+   *   but `total` is derived from the post-filter `data.length` — guaranteeing
+   *   the identity `total === offset + data.length + (hasMore ? 1 : 0)`.
    * 
    * Callers should paginate until `hasMore` is `false`. For **in-memory
    * paginated** results, `hasMore` is exact: `(offset + data.length) < total`.
