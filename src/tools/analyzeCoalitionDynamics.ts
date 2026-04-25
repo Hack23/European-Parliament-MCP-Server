@@ -155,7 +155,12 @@ const MAX_UNRECOGNIZED_LABEL_LENGTH = 120;
  * additionally strips the URI path prefix before lookup.
  */
 const POLITICAL_GROUP_ALIASES: ReadonlyMap<string, string> = new Map([
-  // EPP variants
+  // EPP variants — including French/Italian native names observed in the
+  // EP Open Data Portal (e.g. URI suffix `…/corporate-body/PPE`, full
+  // French group name `Groupe du Parti populaire européen…`). Added in
+  // response to Hack23/euparliamentmonitor 2026-04-24 propositions Defect
+  // #4 where `memberCount: 0` was reported for EPP because the upstream
+  // returned the French acronym `PPE`.
   ['epp', 'EPP'],
   ['epp-ed', 'EPP'],
   // EP Open Data Portal also returns the French acronym `PPE` (Parti Populaire
@@ -171,7 +176,9 @@ const POLITICAL_GROUP_ALIASES: ReadonlyMap<string, string> = new Map([
   ["group of the european people's party", 'EPP'],
   ["european people's party", 'EPP'],
   ['european people’s party', 'EPP'],
-  // S&D variants — EP API also returns French acronym `SOC` (Socialistes)
+  // S&D variants — `SOC` and `PSE` are the legacy/native acronyms returned
+  // by the EP API in some responses; the French group name is included for
+  // the same reason as the EPP variants above.
   ['s&d', 'S&D'],
   ['sd', 'S&D'],
   ['s-d', 'S&D'],

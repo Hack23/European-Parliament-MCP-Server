@@ -334,11 +334,12 @@ export async function handleMonitorLegislativePipeline(
     // #6 in the Hack23/euparliamentmonitor 2026-04-24 propositions audit
     // (`monitor_legislative_pipeline returned empty … period.from: 2024-01-01,
     // period.to: 2024-12-31`).
-    const todayIso = new Date().toISOString().slice(0, 10);
+    const toIsoDate = (d: Date): string => d.toISOString().slice(0, 10);
+    const todayIso = toIsoDate(new Date());
     const defaultFromIso = ((): string => {
       const d = new Date();
       d.setUTCDate(d.getUTCDate() - 30);
-      return d.toISOString().slice(0, 10);
+      return toIsoDate(d);
     })();
     const reportFrom = dateFrom ?? defaultFromIso;
     const reportTo = dateTo ?? todayIso;
