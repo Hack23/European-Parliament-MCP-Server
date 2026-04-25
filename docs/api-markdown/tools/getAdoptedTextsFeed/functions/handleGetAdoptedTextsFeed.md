@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.13**](../../../README.md)
+[**European Parliament MCP Server API v1.2.14**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetAdoptedTextsFeed**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getAdoptedTextsFeed.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAdoptedTextsFeed.ts#L26)
+Defined in: [tools/getAdoptedTextsFeed.ts:119](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAdoptedTextsFeed.ts#L119)
 
 Handles the get_adopted_texts_feed MCP tool request.
 

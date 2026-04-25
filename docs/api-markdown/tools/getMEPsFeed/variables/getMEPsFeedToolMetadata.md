@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.13**](../../../README.md)
+[**European Parliament MCP Server API v1.2.14**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getMEPsFeedToolMetadata**: `object`
 
-Defined in: [tools/getMEPsFeed.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPsFeed.ts#L65)
+Defined in: [tools/getMEPsFeed.ts:104](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPsFeed.ts#L104)
 
 Tool metadata for get_meps_feed
 
@@ -16,7 +16,7 @@ Tool metadata for get_meps_feed
 
 ### description
 
-> **description**: `string` = `'Get recently updated MEPs from the European Parliament feed. Returns MEPs published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.'`
+> **description**: `string` = `'Get recently updated MEPs from the European Parliament feed. Returns MEPs published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: when the upstream returns more than 200 items (a known failure mode where delta-pagination falls back to a full-census dump) the response surfaces an OVERSIZED_PAYLOAD entry in dataQualityWarnings so consumers can detect the regression mechanically.'`
 
 ### inputSchema
 
