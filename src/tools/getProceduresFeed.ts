@@ -202,27 +202,37 @@ function inspectProcedureItem(
  *
  * @internal
  */
+/**
+ * Scan a list of procedure-like items to determine whether any carries a
+ * current-year token, and report the oldest reference year observed across
+ * non-matching items (used purely for diagnostic context in the warning).
+ *
+ * @internal
+ */
+function scanProceduresForCurrentYear(
+  items: readonly unknown[],
+  yearStr: string,
+  refRegex: RegExp,
+): { hasCurrentYear: boolean; oldestYearObserved: number | undefined } {
+  let oldestYearObserved: number | undefined;
+  for (const item of items) {
+    const { hasCurrentYear: cy, observedYear } = inspectProcedureItem(item, yearStr, refRegex);
+    if (cy) return { hasCurrentYear: true, oldestYearObserved: undefined };
+    if (observedYear !== undefined &&
+        (oldestYearObserved === undefined || observedYear < oldestYearObserved)) {
+      oldestYearObserved = observedYear;
+    }
+  }
+  return { hasCurrentYear: false, oldestYearObserved };
+}
+
 function buildStalenessWarnings(result: unknown): readonly string[] {
   const source = (result ?? {}) as Record<string, unknown>;
   const items = Array.isArray(source['data']) ? (source['data'] as unknown[]) : [];
   if (items.length === 0) return [];
-  const currentYear = new Date().getUTCFullYear();
-  const yearStr = String(currentYear);
+  const yearStr = String(new Date().getUTCFullYear());
   const refRegex = new RegExp(`^${yearStr}/`);
-  let oldestYearObserved: number | undefined;
-  let hasCurrentYear = false;
-  for (const item of items) {
-    const { hasCurrentYear: cy, observedYear } = inspectProcedureItem(item, yearStr, refRegex);
-    if (cy) {
-      hasCurrentYear = true;
-      break;
-    }
-    if (observedYear !== undefined) {
-      if (oldestYearObserved === undefined || observedYear < oldestYearObserved) {
-        oldestYearObserved = observedYear;
-      }
-    }
-  }
+  const { hasCurrentYear, oldestYearObserved } = scanProceduresForCurrentYear(items, yearStr, refRegex);
   if (hasCurrentYear) return [];
   const ageSuffix =
     oldestYearObserved !== undefined
