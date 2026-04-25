@@ -188,4 +188,59 @@ describe('get_plenary_sessions Tool', () => {
       expect(parsed.id).toBe('MTG-2024-001');
     });
   });
+
+  describe('Client-side date filter (Defect #5 — EP /meetings ignores date-from/date-to)', () => {
+    /**
+     * Regression for the Hack23/euparliamentmonitor 2026-04-24 propositions
+     * audit Defect #5: a `dateFrom: 2026-04-01` request used to return
+     * sessions stretching back to January 2014 because the EP `/meetings`
+     * endpoint silently ignores its date filters. We now post-filter the
+     * EP response client-side so callers get only sessions that actually
+     * fall in their requested window.
+     */
+    it('should drop sessions outside the supplied dateFrom/dateTo window', async () => {
+      vi.mocked(epClientModule.epClient.getPlenarySessions).mockResolvedValue({
+        data: [
+          { id: 'PLENARY-2014-01', date: '2014-01-15', location: 'Strasbourg',
+            agendaItems: [], attendanceCount: 0, documents: [] },
+          { id: 'PLENARY-2025-12', date: '2025-12-15', location: 'Strasbourg',
+            agendaItems: [], attendanceCount: 0, documents: [] },
+          { id: 'PLENARY-2026-04', date: '2026-04-08', location: 'Strasbourg',
+            agendaItems: [], attendanceCount: 0, documents: [] },
+        ],
+        total: 3,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetPlenarySessions({ dateFrom: '2026-04-01' });
+      const parsed = JSON.parse(result.content[0].text) as {
+        data: Array<{ id: string; date: string }>;
+      };
+      expect(parsed.data).toHaveLength(1);
+      expect(parsed.data[0]?.id).toBe('PLENARY-2026-04');
+    });
+
+    it('should not filter when neither dateFrom nor dateTo is supplied', async () => {
+      vi.mocked(epClientModule.epClient.getPlenarySessions).mockResolvedValue({
+        data: [
+          { id: 'PLENARY-2014-01', date: '2014-01-15', location: 'Strasbourg',
+            agendaItems: [], attendanceCount: 0, documents: [] },
+          { id: 'PLENARY-2026-04', date: '2026-04-08', location: 'Strasbourg',
+            agendaItems: [], attendanceCount: 0, documents: [] },
+        ],
+        total: 2,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetPlenarySessions({});
+      const parsed = JSON.parse(result.content[0].text) as {
+        data: Array<{ id: string }>;
+      };
+      expect(parsed.data).toHaveLength(2);
+    });
+  });
 });

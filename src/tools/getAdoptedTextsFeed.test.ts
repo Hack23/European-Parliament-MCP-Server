@@ -140,4 +140,105 @@ describe('get_adopted_texts_feed Tool', () => {
       expect(getAdoptedTextsFeedToolMetadata.inputSchema).toHaveProperty('properties');
     });
   });
+
+  describe('Freshness fallback (Defect #7 — feed returns no current-year items)', () => {
+    /**
+     * Regression for the Hack23/euparliamentmonitor 2026-04-24 propositions
+     * audit Defect #7 / breaking audit §1.2: the EP `/adopted-texts/feed`
+     * endpoint has been observed returning historical backfill (TA-9-2024,
+     * TA-10-2025) under `timeframe: today` for ≥ 8 consecutive days, with no
+     * current-year items reaching consumers. The tool now augments the feed
+     * payload with `/adopted-texts?year={currentYear}` whenever the feed
+     * itself has no current-year items.
+     */
+    const currentYear = new Date().getUTCFullYear();
+
+    beforeEach(() => {
+      // Augment the existing mock with `getAdoptedTexts` (used by the
+      // freshness-fallback path). Re-mock for isolation.
+      vi.mocked(epClientModule.epClient.getAdoptedTextsFeed).mockReset();
+    });
+
+    it('should NOT trigger the fallback when the feed already has current-year items', async () => {
+      vi.mocked(epClientModule.epClient.getAdoptedTextsFeed).mockResolvedValue({
+        data: [
+          { id: `TA-10-${String(currentYear)}-0001`, dateAdopted: `${String(currentYear)}-04-08`,
+            title: 'Fresh', reference: '', type: '', procedureReference: '', subjectMatter: '' },
+        ],
+        '@context': [],
+      });
+      // getAdoptedTexts mock will throw if called — we don't expect it to be.
+      const fakeClient = epClientModule.epClient as unknown as {
+        getAdoptedTexts?: ReturnType<typeof vi.fn>;
+      };
+      fakeClient.getAdoptedTexts = vi.fn().mockRejectedValue(new Error('should not be called'));
+
+      const result = await handleGetAdoptedTextsFeed({ timeframe: 'today' });
+      const parsed = JSON.parse(result.content[0].text) as {
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.dataQualityWarnings.some((w) => w.startsWith('FRESHNESS_FALLBACK'))).toBe(false);
+      expect(fakeClient.getAdoptedTexts).not.toHaveBeenCalled();
+    });
+
+    it('should augment with /adopted-texts?year={currentYear} when feed has no current-year items', async () => {
+      // Feed returns historical backfill (no current-year items)
+      vi.mocked(epClientModule.epClient.getAdoptedTextsFeed).mockResolvedValue({
+        data: [
+          { id: 'TA-9-2024-0314', dateAdopted: '2024-03-13',
+            title: 'Old text', reference: '', type: '', procedureReference: '', subjectMatter: '' },
+        ],
+        '@context': [],
+      });
+      const augmentedItem = {
+        id: `TA-10-${String(currentYear)}-0010`,
+        dateAdopted: `${String(currentYear)}-04-20`,
+        title: 'Augmented current-year item',
+        reference: '',
+        type: '',
+        procedureReference: '',
+        subjectMatter: '',
+      };
+      const fakeClient = epClientModule.epClient as unknown as {
+        getAdoptedTexts: ReturnType<typeof vi.fn>;
+      };
+      fakeClient.getAdoptedTexts = vi.fn().mockResolvedValue({
+        data: [augmentedItem],
+        total: 1,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetAdoptedTextsFeed({ timeframe: 'today' });
+      const parsed = JSON.parse(result.content[0].text) as {
+        items: Array<{ id: string }>;
+        dataQualityWarnings: string[];
+      };
+      // Augmented item must appear before the legacy backfill
+      expect(parsed.items[0]?.id).toBe(augmentedItem.id);
+      expect(parsed.items.some((i) => i.id === 'TA-9-2024-0314')).toBe(true);
+      expect(parsed.dataQualityWarnings.some((w) => w.startsWith('FRESHNESS_FALLBACK'))).toBe(true);
+      expect(fakeClient.getAdoptedTexts).toHaveBeenCalledWith(
+        expect.objectContaining({ year: currentYear }),
+      );
+    });
+
+    it('should surface FRESHNESS_FALLBACK_FAILED when both feed and fallback are empty', async () => {
+      vi.mocked(epClientModule.epClient.getAdoptedTextsFeed).mockResolvedValue({
+        data: [],
+        '@context': [],
+      });
+      const fakeClient = epClientModule.epClient as unknown as {
+        getAdoptedTexts: ReturnType<typeof vi.fn>;
+      };
+      fakeClient.getAdoptedTexts = vi.fn().mockRejectedValue(new Error('upstream 502'));
+
+      const result = await handleGetAdoptedTextsFeed({ timeframe: 'today' });
+      const parsed = JSON.parse(result.content[0].text) as {
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.dataQualityWarnings.some((w) => w.startsWith('FRESHNESS_FALLBACK_FAILED'))).toBe(true);
+    });
+  });
 });

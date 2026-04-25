@@ -415,4 +415,44 @@ describe('monitor_legislative_pipeline Tool', () => {
       expect(data).toHaveProperty('pipeline');
     });
   });
+
+  describe('Default reporting period (Defect #6 — last-30-days)', () => {
+    /**
+     * Regression for the Hack23/euparliamentmonitor 2026-04-24 propositions
+     * audit Defect #6 — when neither dateFrom nor dateTo is supplied the
+     * tool used to emit `period.from: 2024-01-01` / `period.to: 2024-12-31`.
+     * It should now default to a last-30-days window anchored on "now".
+     */
+    it('should default `period` to a last-30-days window when no dates are supplied', async () => {
+      vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(mockProcedures);
+
+      const result = await handleMonitorLegislativePipeline({});
+      const parsed = JSON.parse(result.content[0].text) as {
+        period: { from: string; to: string };
+      };
+      const today = new Date().toISOString().slice(0, 10);
+      expect(parsed.period.to).toBe(today);
+      expect(parsed.period.from).not.toBe('2024-01-01');
+      expect(parsed.period.from).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      // last-30-days: from must be exactly 30 days before to
+      const fromMs = new Date(parsed.period.from).getTime();
+      const toMs = new Date(parsed.period.to).getTime();
+      const days = Math.round((toMs - fromMs) / (1000 * 60 * 60 * 24));
+      expect(days).toBe(30);
+    });
+
+    it('should still echo back caller-supplied `dateFrom`/`dateTo` verbatim', async () => {
+      vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(mockProcedures);
+
+      const result = await handleMonitorLegislativePipeline({
+        dateFrom: '2025-01-01',
+        dateTo: '2025-12-31',
+      });
+      const parsed = JSON.parse(result.content[0].text) as {
+        period: { from: string; to: string };
+      };
+      expect(parsed.period.from).toBe('2025-01-01');
+      expect(parsed.period.to).toBe('2025-12-31');
+    });
+  });
 });

@@ -158,28 +158,43 @@ const POLITICAL_GROUP_ALIASES: ReadonlyMap<string, string> = new Map([
   // EPP variants
   ['epp', 'EPP'],
   ['epp-ed', 'EPP'],
+  // EP Open Data Portal also returns the French acronym `PPE` (Parti Populaire
+  // Européen) for the EPP group, e.g. as the URI suffix
+  // `…/corporate-body/PPE`. See `analyze_coalition_dynamics` reliability audit
+  // (Hack23/euparliamentmonitor 2026-04-24 propositions, Defect #4).
+  ['ppe', 'EPP'],
+  ['ppe-de', 'EPP'],
+  ['groupe du parti populaire européen (démocrates-chrétiens)', 'EPP'],
+  ['groupe du parti populaire européen', 'EPP'],
+  ['parti populaire européen', 'EPP'],
   ["group of the european people's party (christian democrats)", 'EPP'],
   ["group of the european people's party", 'EPP'],
   ["european people's party", 'EPP'],
   ['european people’s party', 'EPP'],
-  // S&D variants
+  // S&D variants — EP API also returns French acronym `SOC` (Socialistes)
   ['s&d', 'S&D'],
   ['sd', 'S&D'],
+  ['s-d', 'S&D'],
+  ['soc', 'S&D'],
+  ['pse', 'S&D'],
   ['group of the progressive alliance of socialists and democrats in the european parliament', 'S&D'],
   ['progressive alliance of socialists and democrats', 'S&D'],
+  ['groupe de l\'alliance progressiste des socialistes et démocrates au parlement européen', 'S&D'],
   // Renew Europe variants
   ['renew', 'Renew'],
   ['re', 'Renew'],
   ['renew europe', 'Renew'],
   ['renew europe group', 'Renew'],
   ['alde', 'Renew'],
-  // Greens/EFA variants
+  // Greens/EFA variants — EP URI suffix is `Verts-ALE`
   ['greens/efa', 'Greens/EFA'],
   ['greens-efa', 'Greens/EFA'],
   ['verts/ale', 'Greens/EFA'],
+  ['verts-ale', 'Greens/EFA'],
   ['group of the greens/european free alliance', 'Greens/EFA'],
   ['the greens/european free alliance', 'Greens/EFA'],
   ['greens/european free alliance', 'Greens/EFA'],
+  ['groupe des verts/alliance libre européenne', 'Greens/EFA'],
   // ECR variants
   ['ecr', 'ECR'],
   ['european conservatives and reformists group', 'ECR'],
