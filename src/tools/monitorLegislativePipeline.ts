@@ -328,6 +328,22 @@ export async function handleMonitorLegislativePipeline(
     const dateFrom = params.dateFrom;
     const dateTo = params.dateTo;
 
+    // When the caller supplies neither dateFrom nor dateTo, default to a
+    // last-30-days window anchored on "now". Previously the response carried
+    // a fixed `2024-01-01..2024-12-31` placeholder, which surfaced as Defect
+    // #6 in the Hack23/euparliamentmonitor 2026-04-24 propositions audit
+    // (`monitor_legislative_pipeline returned empty … period.from: 2024-01-01,
+    // period.to: 2024-12-31`).
+    const toIsoDate = (d: Date): string => d.toISOString().slice(0, 10);
+    const todayIso = toIsoDate(new Date());
+    const defaultFromIso = ((): string => {
+      const d = new Date();
+      d.setUTCDate(d.getUTCDate() - 30);
+      return toIsoDate(d);
+    })();
+    const reportFrom = dateFrom ?? defaultFromIso;
+    const reportTo = dateTo ?? todayIso;
+
     // Compute default recency cut-off date for the ACTIVE filter.
     // When dateFrom is not explicitly set, procedures whose best available date
     // predates the cut-off window are excluded — they cannot be confirmed as active.
@@ -367,7 +383,7 @@ export async function handleMonitorLegislativePipeline(
     const health = computeHealthMetrics(pipeline, summary);
 
     const analysis: LegislativePipelineAnalysis = {
-      period: { from: params.dateFrom ?? '2024-01-01', to: params.dateTo ?? '2024-12-31' },
+      period: { from: reportFrom, to: reportTo },
       filter: { ...(params.committee !== undefined ? { committee: params.committee } : {}), status: params.status },
       pipeline,
       summary: {

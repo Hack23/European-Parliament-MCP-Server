@@ -311,4 +311,69 @@ describe('get_procedures_feed Tool', () => {
       expect(getProceduresFeedToolMetadata.inputSchema).toHaveProperty('properties');
     });
   });
+
+  describe('Staleness warning (Defect #8 — historical-tail ordering)', () => {
+    /**
+     * Regression for the Hack23/euparliamentmonitor 2026-04-24 breaking-run
+     * audit §1.4: the EP API was returning legacy 1972/1980 procedure IDs
+     * first instead of date-sorted newest-first results, even though the
+     * envelope was structurally healthy. We surface a STALENESS_WARNING in
+     * `dataQualityWarnings` whenever the payload contains no current-year
+     * items so consumers can detect the regression mechanically.
+     */
+    const currentYear = new Date().getUTCFullYear();
+
+    it('should NOT add STALENESS_WARNING when at least one current-year item is present', async () => {
+      vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
+        data: [
+          { id: 'proc-old', reference: '1972/0003(COD)', dateLastActivity: '1972-06-15' },
+          { id: 'proc-new', reference: `${String(currentYear)}/0001(COD)`, dateLastActivity: `${String(currentYear)}-04-08` },
+        ],
+        '@context': [],
+      });
+
+      const result = await handleGetProceduresFeed({});
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataQualityWarnings: string[];
+        status: string;
+      };
+      expect(parsed.dataQualityWarnings.some((w) => w.startsWith('STALENESS_WARNING'))).toBe(false);
+      expect(parsed.status).toBe('operational');
+    });
+
+    it('should add STALENESS_WARNING when payload has only historical items', async () => {
+      vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
+        data: [
+          { id: 'proc-1972', reference: '1972/0003(COD)', dateLastActivity: '1972-06-15' },
+          { id: 'proc-1980', reference: '1980/0013(NLE)', dateLastActivity: '1980-03-04' },
+          { id: 'proc-1987', reference: '1987/1140(CNS)', dateLastActivity: '' },
+        ],
+        '@context': [],
+      });
+
+      const result = await handleGetProceduresFeed({});
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataQualityWarnings: string[];
+        status: string;
+      };
+      const stalenessWarn = parsed.dataQualityWarnings.find((w) => w.startsWith('STALENESS_WARNING'));
+      expect(stalenessWarn).toBeDefined();
+      expect(stalenessWarn).toContain('1972'); // oldest reference observed
+      expect(stalenessWarn).toContain('get_procedures');
+      expect(parsed.status).toBe('degraded');
+    });
+
+    it('should NOT add STALENESS_WARNING when payload is empty', async () => {
+      vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
+        data: [],
+        '@context': [],
+      });
+
+      const result = await handleGetProceduresFeed({});
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.dataQualityWarnings.some((w) => w.startsWith('STALENESS_WARNING'))).toBe(false);
+    });
+  });
 });

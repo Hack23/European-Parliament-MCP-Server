@@ -452,4 +452,56 @@ describe('analyze_coalition_dynamics Tool', () => {
         .rejects.toThrow(/at least one recognizable political-group identifier/i);
     });
   });
+
+  describe('Political-group label normalization (Defect #4 — PPE/EPP alias)', () => {
+    /**
+     * Regression for the 2026-04-24 Hack23/euparliamentmonitor propositions
+     * audit Defect #4: when the EP API exposes the EPP group via the French
+     * acronym `PPE` (e.g. URI suffix `…/corporate-body/PPE`), the coalition
+     * tool used to surface `memberCount: 0` for EPP and put `PPE` in
+     * `coverage.unrecognizedGroups`. The alias table now normalises common
+     * native-language variants so EPP/PPE, S&D/SOC and Greens/EFA / VERTS-ALE
+     * collapse to the canonical short codes.
+     */
+    it('should fold the EP API French acronym `PPE` into the canonical `EPP` group', async () => {
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({
+        meps: [
+          { id: 'MEP-A', name: 'A', country: 'DE', politicalGroup: 'PPE',
+            committees: [], active: true, termStart: '2024-07-16' },
+          { id: 'MEP-B', name: 'B', country: 'FR', politicalGroup: 'PPE',
+            committees: [], active: true, termStart: '2024-07-16' },
+          { id: 'MEP-C', name: 'C', country: 'IT', politicalGroup: 'S&D',
+            committees: [], active: true, termStart: '2024-07-16' },
+        ],
+        complete: true,
+      });
+
+      const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP', 'S&D'] });
+      const parsed = JSON.parse(result.content[0].text) as {
+        groupMetrics: Array<{ groupId: string; memberCount: number }>;
+        coverage: { unrecognizedGroups: string[] };
+      };
+      const epp = parsed.groupMetrics.find((g) => g.groupId === 'EPP');
+      expect(epp?.memberCount).toBe(2);
+      expect(parsed.coverage.unrecognizedGroups).not.toContain('PPE');
+    });
+
+    it('should fold the URI suffix `Verts-ALE` into `Greens/EFA`', async () => {
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({
+        meps: [
+          { id: 'MEP-X', name: 'X', country: 'DE',
+            politicalGroup: 'http://publications.europa.eu/resource/authority/corporate-body/Verts-ALE',
+            committees: [], active: true, termStart: '2024-07-16' },
+        ],
+        complete: true,
+      });
+
+      const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['Greens/EFA'] });
+      const parsed = JSON.parse(result.content[0].text) as {
+        groupMetrics: Array<{ groupId: string; memberCount: number }>;
+      };
+      const greens = parsed.groupMetrics.find((g) => g.groupId === 'Greens/EFA');
+      expect(greens?.memberCount).toBe(1);
+    });
+  });
 });

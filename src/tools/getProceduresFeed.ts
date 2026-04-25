@@ -154,6 +154,99 @@ function handleUpstreamCatchError(error: unknown): ToolResult | null {
 }
 
 /**
+ * Inspect a single procedure-like item and return whether it carries a
+ * current-year token in either `dateLastActivity` or its `reference`. Also
+ * reports the oldest-observed reference year for diagnostic context.
+ *
+ * @internal
+ */
+function inspectProcedureItem(
+  item: unknown,
+  yearStr: string,
+  refRegex: RegExp,
+): { hasCurrentYear: boolean; observedYear: number | undefined } {
+  if (item === null || typeof item !== 'object') {
+    return { hasCurrentYear: false, observedYear: undefined };
+  }
+  const obj = item as Record<string, unknown>;
+  const dateLastActivity = obj['dateLastActivity'];
+  if (typeof dateLastActivity === 'string' && dateLastActivity.startsWith(yearStr)) {
+    return { hasCurrentYear: true, observedYear: undefined };
+  }
+  const reference = obj['reference'];
+  if (typeof reference !== 'string') {
+    return { hasCurrentYear: false, observedYear: undefined };
+  }
+  if (refRegex.test(reference)) {
+    return { hasCurrentYear: true, observedYear: undefined };
+  }
+  const m = /^(\d{4})\//.exec(reference);
+  if (m?.[1] === undefined) return { hasCurrentYear: false, observedYear: undefined };
+  return { hasCurrentYear: false, observedYear: parseInt(m[1], 10) };
+}
+
+/**
+ * Scan a list of procedure-like items to determine whether any carries a
+ * current-year token, and report the oldest reference year observed across
+ * non-matching items (used purely for diagnostic context in the warning).
+ *
+ * @internal
+ */
+function scanProceduresForCurrentYear(
+  items: readonly unknown[],
+  yearStr: string,
+  refRegex: RegExp,
+): { hasCurrentYear: boolean; oldestYearObserved: number | undefined } {
+  let oldestYearObserved: number | undefined;
+  for (const item of items) {
+    const { hasCurrentYear: cy, observedYear } = inspectProcedureItem(item, yearStr, refRegex);
+    if (cy) return { hasCurrentYear: true, oldestYearObserved: undefined };
+    if (observedYear !== undefined &&
+        (oldestYearObserved === undefined || observedYear < oldestYearObserved)) {
+      oldestYearObserved = observedYear;
+    }
+  }
+  return { hasCurrentYear: false, oldestYearObserved };
+}
+
+/**
+ * Build STALENESS_WARNING entries when the procedures-feed payload contains
+ * no items dated within the current calendar year.
+ *
+ * Background: the Hack23/euparliamentmonitor 2026-04-24 breaking-run
+ * reliability audit §1.4 reported that `get_procedures_feed` was returning
+ * historical-tail ordering (1972/0003, 1980/0013) instead of date-sorted
+ * newest-first results — even though the envelope was structurally healthy.
+ * That means consumers applying the JSON envelope alone could not tell
+ * whether the result was current. We inspect the canonical
+ * `dateLastActivity` field and the procedure `reference` (`YYYY/NNNN(...)`)
+ * for the current calendar year and emit a structured warning when neither
+ * surfaces a current-year token. The check is conservative: any single
+ * current-year item suppresses the warning.
+ *
+ * @internal
+ */
+function buildStalenessWarnings(result: unknown): readonly string[] {
+  const source = (result ?? {}) as Record<string, unknown>;
+  const items = Array.isArray(source['data']) ? (source['data'] as unknown[]) : [];
+  if (items.length === 0) return [];
+  const yearStr = String(new Date().getUTCFullYear());
+  const refRegex = new RegExp(`^${yearStr}/`);
+  const { hasCurrentYear, oldestYearObserved } = scanProceduresForCurrentYear(items, yearStr, refRegex);
+  if (hasCurrentYear) return [];
+  const ageSuffix =
+    oldestYearObserved !== undefined
+      ? ` Oldest reference observed in payload: ${String(oldestYearObserved)}.`
+      : '';
+  return [
+    `STALENESS_WARNING: EP /procedures/feed returned ${String(items.length)} item(s) but none carry a ` +
+      `${yearStr} reference or dateLastActivity. The upstream feed has been observed returning historical-tail ` +
+      `ordering instead of date-sorted newest-first results.${ageSuffix} Consider falling back to ` +
+      `get_procedures(limit=100) and sorting client-side by dateLastActivity descending.`,
+  ];
+}
+
+/**
  * Handles the get_procedures_feed MCP tool request.
  *
  * @param args - Raw tool arguments, validated against {@link GetProceduresFeedSchema}
@@ -196,7 +289,14 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
       return buildEnrichmentFailedResponse(rawError);
     }
     const emptyReason = `EP API procedures/feed returned no data for timeframe '${params.timeframe}' — no procedures were updated in the requested period. This is expected during parliamentary recess or low-activity weeks. Use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback.`;
-    return buildFeedSuccessResponse(result, [], emptyReason);
+    // Detect the historical-tail-ordering regression flagged in the
+    // Hack23/euparliamentmonitor 2026-04-24 breaking audit §1.4: the EP API
+    // sometimes returns 1972/1980 procedure IDs first instead of date-sorted
+    // newest-first. When no item carries a current-year reference / activity
+    // date we surface a STALENESS_WARNING so consumers can detect the
+    // regression mechanically rather than by parsing prose.
+    const stalenessWarnings = buildStalenessWarnings(result);
+    return buildFeedSuccessResponse(result, stalenessWarnings, emptyReason);
   } catch (error: unknown) {
     const inBand = handleUpstreamCatchError(error);
     if (inBand !== null) return inBand;
@@ -213,7 +313,7 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
 export const getProceduresFeedToolMetadata = {
   name: 'get_procedures_feed',
   description:
-    'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take around 120 seconds and can still time out. If you see timeouts, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. When no procedures were updated in the requested timeframe (common during parliamentary recess or low-activity periods), the response will have status:"unavailable" and empty items — this is expected behaviour, not an error. In that case, use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback.',
+    'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take around 120 seconds and can still time out. If you see timeouts, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. When no procedures were updated in the requested timeframe (common during parliamentary recess or low-activity periods), the response will have status:"unavailable" and empty items — this is expected behaviour, not an error. In that case, use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback. The response also surfaces a STALENESS_WARNING entry in dataQualityWarnings whenever the upstream returns historical-tail ordering with no current-year items (a known degraded-upstream pattern), so consumers can detect the regression programmatically.',
   inputSchema: {
     type: 'object' as const,
     properties: {

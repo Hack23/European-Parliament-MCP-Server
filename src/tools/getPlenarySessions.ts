@@ -107,7 +107,40 @@ export async function handleGetPlenarySessions(
     // Validate output
     const outputSchema = PaginatedResponseSchema(PlenarySessionSchema);
     const validated = outputSchema.parse(result);
-    
+
+    // Client-side post-filter for dateFrom / dateTo.
+    // The EP `/meetings` endpoint accepts the `date-from` / `date-to` query
+    // params but historically ignores them and returns sessions stretching
+    // back to January 2014. See Hack23/euparliamentmonitor 2026-04-24
+    // propositions audit, Defect #5 (`get_plenary_sessions returns historical
+    // sessions despite dateFrom`). Until the upstream is fixed, we apply a
+    // best-effort post-filter on the returned `date` field so callers get
+    // sessions that actually fall in their requested window.
+    //
+    // Pagination semantics: we preserve the upstream `total` and `hasMore`
+    // (which describe the unfiltered page returned by the EP API) and
+    // surface the post-filter outcome via separate `filteredTotal` /
+    // `filteredHasMore` fields so consumers can still drive cursor-style
+    // pagination correctly even when later pages contain in-range
+    // sessions that the current page filtered out.
+    if (params.dateFrom !== undefined || params.dateTo !== undefined) {
+      const minDate = params.dateFrom;
+      const maxDate = params.dateTo;
+      const filtered = validated.data.filter((session) => {
+        const d = session.date;
+        if (typeof d !== 'string' || d === '') return false;
+        if (minDate !== undefined && d < minDate) return false;
+        if (maxDate !== undefined && d > maxDate) return false;
+        return true;
+      });
+      return buildToolResponse({
+        ...validated,
+        data: filtered,
+        filteredTotal: filtered.length,
+        filteredHasMore: validated.hasMore && filtered.length === validated.data.length,
+      });
+    }
+
     return buildToolResponse(validated);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
