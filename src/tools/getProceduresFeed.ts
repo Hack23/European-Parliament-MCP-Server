@@ -186,23 +186,6 @@ function inspectProcedureItem(
 }
 
 /**
- * Build STALENESS_WARNING entries when the procedures-feed payload contains
- * no items dated within the current calendar year.
- *
- * Background: the Hack23/euparliamentmonitor 2026-04-24 breaking-run
- * reliability audit §1.4 reported that `get_procedures_feed` was returning
- * historical-tail ordering (1972/0003, 1980/0013) instead of date-sorted
- * newest-first results — even though the envelope was structurally healthy.
- * That means consumers applying the JSON envelope alone could not tell
- * whether the result was current. We inspect the canonical
- * `dateLastActivity` field and the procedure `reference` (`YYYY/NNNN(...)`)
- * for the current calendar year and emit a structured warning when neither
- * surfaces a current-year token. The check is conservative: any single
- * current-year item suppresses the warning.
- *
- * @internal
- */
-/**
  * Scan a list of procedure-like items to determine whether any carries a
  * current-year token, and report the oldest reference year observed across
  * non-matching items (used purely for diagnostic context in the warning).
@@ -226,6 +209,23 @@ function scanProceduresForCurrentYear(
   return { hasCurrentYear: false, oldestYearObserved };
 }
 
+/**
+ * Build STALENESS_WARNING entries when the procedures-feed payload contains
+ * no items dated within the current calendar year.
+ *
+ * Background: the Hack23/euparliamentmonitor 2026-04-24 breaking-run
+ * reliability audit §1.4 reported that `get_procedures_feed` was returning
+ * historical-tail ordering (1972/0003, 1980/0013) instead of date-sorted
+ * newest-first results — even though the envelope was structurally healthy.
+ * That means consumers applying the JSON envelope alone could not tell
+ * whether the result was current. We inspect the canonical
+ * `dateLastActivity` field and the procedure `reference` (`YYYY/NNNN(...)`)
+ * for the current calendar year and emit a structured warning when neither
+ * surfaces a current-year token. The check is conservative: any single
+ * current-year item suppresses the warning.
+ *
+ * @internal
+ */
 function buildStalenessWarnings(result: unknown): readonly string[] {
   const source = (result ?? {}) as Record<string, unknown>;
   const items = Array.isArray(source['data']) ? (source['data'] as unknown[]) : [];
