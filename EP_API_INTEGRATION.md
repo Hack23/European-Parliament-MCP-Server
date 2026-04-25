@@ -11,6 +11,7 @@ This document provides comprehensive information about the integration between t
 - [Data Transformation](#data-transformation)
 - [Error Handling](#error-handling)
 - [Rate Limiting](#rate-limiting)
+- [Data-Quality Warning Codes](#data-quality-warning-codes)
 - [Caching Strategy](#caching-strategy)
 - [Testing](#testing)
 
@@ -229,6 +230,52 @@ const rateLimiter = new RateLimiter({
 2. **Batch requests** - Combine multiple queries when possible
 3. **Pagination** - Use reasonable page sizes (default: 50 items)
 4. **Exponential backoff** - Retry with increasing delays on 429
+
+## 🛎️ Data-Quality Warning Codes
+
+Feed-style tools (`get_*_feed`, `get_adopted_texts_feed`, `get_procedures_feed`,
+`get_meps_feed`, …) and a small number of analytical tools surface a uniform
+`dataQualityWarnings: string[]` field in their response envelope so consumers
+can detect upstream degradation **mechanically** (without parsing prose). Each
+entry begins with one of the structured codes documented below, followed by a
+human-readable diagnostic. When warnings are present and the response still
+includes one or more `items`, the envelope `status` is set to `"degraded"`;
+when the feed is empty (`items.length === 0`), `status` remains
+`"unavailable"` even if `dataQualityWarnings` contains the empty-feed reason.
+
+| Code | Emitted by | Trigger | Retryable? | Recommended consumer action |
+|------|------------|---------|:---------:|-----------------------------|
+| `FRESHNESS_FALLBACK` | `get_adopted_texts_feed` | Feed payload has zero items dated within the current calendar year, but the augmentation call to `/adopted-texts?year={Y}` succeeded. | ✅ Yes | Use the augmented `items[]` as fresh content; do NOT downgrade the freshness grade — the items are confirmable, current-year, EP-published documents. |
+| `FRESHNESS_FALLBACK_FAILED` | `get_adopted_texts_feed` | Both the feed and the augmentation `/adopted-texts?year={Y}` returned no usable items. | ✅ Yes | Treat as `ANALYSIS_ONLY` — no current content available; do not synthesise narrative claims that require fresh source material. |
+| `STALENESS_WARNING` | `get_procedures_feed` | Feed envelope is structurally healthy but no item carries a current-year `dateLastActivity` or `reference` (`YYYY/NNNN(...)`). | ✅ Yes | Fall back to `get_procedures(limit=100)` and sort client-side by `dateLastActivity` descending — the EP `/procedures` endpoint accepts no date filter, so this is the only reliable way to surface fresh procedures during the regression. |
+| `OVERSIZED_PAYLOAD` | `get_meps_feed` | Item count exceeds the delta-vs-census threshold (200) — upstream delta-pagination has likely failed open to a full census dump. | ✅ Yes | Switch to `get_meps` for census queries; re-issue `get_meps_feed` with a narrower timeframe to see if the delta path recovers. |
+| `ENRICHMENT_FAILED` | `get_*_feed` family (via `feedUtils`) | EP API returned a `200 OK` envelope containing an `error` body marker (the upstream enrichment step failed). The response includes `errorCode`, `retryable`, and an `upstream: { statusCode?, errorMessage? }` block. | ✅ Yes (typically) | Inspect `upstream.statusCode` (often 502/503/504); back off then retry. For `get_procedures_feed` the tool also auto-falls back to `GET /procedures` (non-feed) and surfaces the **degraded** payload along with this warning. |
+| `UPSTREAM_TIMEOUT` | `get_procedures_feed` (and others using `feedUtils`) | The EP API request timed out (the procedures-feed endpoint is the most prone). | ✅ Yes | Retry with back-off, OR fall back to `get_procedures(limit=…)` for a single page of bounded-size results. |
+| `RATE_LIMIT` | `get_*_feed` family (via `feedUtils`) | Upstream returned HTTP 429. | ✅ Yes | Honour the embedded `upstream.errorMessage` if it includes a `Retry-After` hint; otherwise back off exponentially. |
+
+**Envelope shape with warnings (example):**
+
+```jsonc
+{
+  "status": "degraded",                        // automatically derived
+  "@context": [],
+  "data": [ /* items as returned by the EP API */ ],
+  "items": [ /* same items, plus fallback augmentations when applicable */ ],
+  "dataQualityWarnings": [
+    "FRESHNESS_FALLBACK: EP /adopted-texts/feed returned no items from the current year (2026). Augmented response with 12 item(s) from /adopted-texts?year=2026 …"
+  ],
+  "errorCode": "ENRICHMENT_FAILED",            // present only on enrichment failures
+  "retryable": true,                            // present only on enrichment failures
+  "upstream": { "statusCode": 502, "errorMessage": "…" }  // present only on enrichment failures
+}
+```
+
+**Origin:** these codes were introduced in response to the
+`Hack23/euparliamentmonitor` 2026-04-24 daily MCP-reliability audits — see
+[`docs/EUPARLIAMENTMONITOR_RELIABILITY_RESPONSE.md`](EUPARLIAMENTMONITOR_RELIABILITY_RESPONSE.md)
+for the full triage and the cross-repo issue trail. Consumer-side guidance for
+each code is also tracked in `Hack23/euparliamentmonitor` issues
+[#1422](https://github.com/Hack23/euparliamentmonitor/issues/1422)–[#1427](https://github.com/Hack23/euparliamentmonitor/issues/1427).
 
 ## 💾 Caching Strategy
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.13**](../../../README.md)
+[**European Parliament MCP Server API v1.2.14**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getAdoptedTextsFeedToolMetadata**: `object`
 
-Defined in: [tools/getAdoptedTextsFeed.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAdoptedTextsFeed.ts#L66)
+Defined in: [tools/getAdoptedTextsFeed.ts:170](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAdoptedTextsFeed.ts#L170)
 
 Tool metadata for get_adopted_texts_feed
 
@@ -16,7 +16,7 @@ Tool metadata for get_adopted_texts_feed
 
 ### description
 
-> **description**: `string` = `'Get recently updated European Parliament adopted texts from the feed. Returns adopted texts published or updated during the specified timeframe. Data source: European Parliament Open Data Portal.'`
+> **description**: `string` = `'Get recently updated European Parliament adopted texts from the feed. Returns adopted texts published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: When the EP /adopted-texts/feed endpoint returns no items from the current calendar year (a known degraded-upstream pattern), the response is automatically augmented with /adopted-texts?year={currentYear} so callers can still discover recent documents — a FRESHNESS_FALLBACK warning is surfaced in dataQualityWarnings whenever this happens.'`
 
 ### inputSchema
 
