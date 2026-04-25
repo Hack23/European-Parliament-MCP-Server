@@ -240,5 +240,33 @@ describe('get_adopted_texts_feed Tool', () => {
       };
       expect(parsed.dataQualityWarnings.some((w) => w.startsWith('FRESHNESS_FALLBACK_FAILED'))).toBe(true);
     });
+
+    it('should surface FRESHNESS_FALLBACK_FAILED when fallback resolves with 0 items', async () => {
+      vi.mocked(epClientModule.epClient.getAdoptedTextsFeed).mockResolvedValue({
+        data: [{ id: 'TA-9-2024-0001', dateAdopted: '2024-06-01' }],
+        '@context': [],
+      });
+      const fakeClient = epClientModule.epClient as unknown as {
+        getAdoptedTexts: ReturnType<typeof vi.fn>;
+      };
+      fakeClient.getAdoptedTexts = vi.fn().mockResolvedValue({
+        data: [],
+        total: 0,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetAdoptedTextsFeed({ timeframe: 'today' });
+      const parsed = JSON.parse(result.content[0].text) as {
+        dataQualityWarnings: string[];
+      };
+      // Augmentation succeeded structurally but produced no fresh items —
+      // distinguish from a healthy augmentation by emitting *_FAILED.
+      expect(parsed.dataQualityWarnings.some((w) => w.startsWith('FRESHNESS_FALLBACK_FAILED'))).toBe(true);
+      expect(parsed.dataQualityWarnings.some(
+        (w) => w.startsWith('FRESHNESS_FALLBACK:') || w.startsWith('FRESHNESS_FALLBACK ')
+      )).toBe(false);
+    });
   });
 });

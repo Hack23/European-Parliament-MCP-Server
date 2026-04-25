@@ -217,9 +217,20 @@ describe('get_plenary_sessions Tool', () => {
       const result = await handleGetPlenarySessions({ dateFrom: '2026-04-01' });
       const parsed = JSON.parse(result.content[0].text) as {
         data: Array<{ id: string; date: string }>;
+        total: number;
+        hasMore: boolean;
+        filteredTotal: number;
+        filteredHasMore: boolean;
       };
       expect(parsed.data).toHaveLength(1);
       expect(parsed.data[0]?.id).toBe('PLENARY-2026-04');
+      // Pagination semantics: preserve upstream total/hasMore; surface
+      // post-filter outcome via filtered* fields so cursor pagination still
+      // works when later pages contain in-range sessions.
+      expect(parsed.total).toBe(3);
+      expect(parsed.hasMore).toBe(false);
+      expect(parsed.filteredTotal).toBe(1);
+      expect(parsed.filteredHasMore).toBe(false);
     });
 
     it('should not filter when neither dateFrom nor dateTo is supplied', async () => {

@@ -37,12 +37,13 @@ import type { ToolResult } from './shared/types.js';
 const FRESHNESS_FALLBACK_LIMIT = 50;
 
 /**
- * Returns `true` when the supplied feed item carries no current-year
- * marker.  We inspect both the canonical `dateAdopted` field and the
- * generated TA-identifier (`TA-{term}-{year}-{nnnn}`) because the EP
- * feed payload is JSON-LD and individual items may lack one but not
- * both fields.  Anything else (missing string, malformed) is treated
- * as "not current-year" so the fallback runs.
+ * Returns `true` when the supplied feed item carries a current-year
+ * marker. We inspect the canonical `dateAdopted` field, the generated
+ * TA-identifier (`TA-{term}-{year}-{nnnn}`), and the `reference` field
+ * because the EP feed payload is JSON-LD and individual items may omit
+ * some of these markers. Anything else (missing string, malformed) is
+ * treated as "not current-year", so this function returns `false` and
+ * the freshness fallback may run.
  *
  * @internal
  */
@@ -80,9 +81,9 @@ async function augmentWithCurrentYear(
     });
     if (recent.data.length === 0) {
       warnings.push(
-        `FRESHNESS_FALLBACK: EP /adopted-texts/feed returned no items from the current year (${String(currentYear)}). ` +
-          `Augmented with /adopted-texts?year=${String(currentYear)} but that endpoint also returned 0 items — ` +
-          `consider retrying later or widening the search.`,
+        `FRESHNESS_FALLBACK_FAILED: EP /adopted-texts/feed returned no items from the current year (${String(currentYear)}), ` +
+          `/adopted-texts?year=${String(currentYear)} also returned 0 items, and the original feed response is being ` +
+          `returned unchanged — consider retrying later or widening the search.`,
       );
       return { result: feedResult, warnings };
     }

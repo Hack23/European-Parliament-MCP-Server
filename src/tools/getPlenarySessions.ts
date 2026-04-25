@@ -116,6 +116,13 @@ export async function handleGetPlenarySessions(
     // sessions despite dateFrom`). Until the upstream is fixed, we apply a
     // best-effort post-filter on the returned `date` field so callers get
     // sessions that actually fall in their requested window.
+    //
+    // Pagination semantics: we preserve the upstream `total` and `hasMore`
+    // (which describe the unfiltered page returned by the EP API) and
+    // surface the post-filter outcome via separate `filteredTotal` /
+    // `filteredHasMore` fields so consumers can still drive cursor-style
+    // pagination correctly even when later pages contain in-range
+    // sessions that the current page filtered out.
     if (params.dateFrom !== undefined || params.dateTo !== undefined) {
       const minDate = params.dateFrom;
       const maxDate = params.dateTo;
@@ -129,8 +136,8 @@ export async function handleGetPlenarySessions(
       return buildToolResponse({
         ...validated,
         data: filtered,
-        total: filtered.length,
-        hasMore: validated.hasMore && filtered.length === validated.data.length,
+        filteredTotal: filtered.length,
+        filteredHasMore: validated.hasMore && filtered.length === validated.data.length,
       });
     }
 

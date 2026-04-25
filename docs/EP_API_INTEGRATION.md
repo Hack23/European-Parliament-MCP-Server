@@ -11,7 +11,7 @@ This document provides comprehensive information about the integration between t
 - [Data Transformation](#data-transformation)
 - [Error Handling](#error-handling)
 - [Rate Limiting](#rate-limiting)
-- [Data-Quality Warning Codes](#-data-quality-warning-codes)
+- [Data-Quality Warning Codes](#data-quality-warning-codes)
 - [Caching Strategy](#caching-strategy)
 - [Testing](#testing)
 
@@ -238,8 +238,10 @@ Feed-style tools (`get_*_feed`, `get_adopted_texts_feed`, `get_procedures_feed`,
 `dataQualityWarnings: string[]` field in their response envelope so consumers
 can detect upstream degradation **mechanically** (without parsing prose). Each
 entry begins with one of the structured codes documented below, followed by a
-human-readable diagnostic. The envelope's `status` is automatically set to
-`"degraded"` whenever any warning is present.
+human-readable diagnostic. When warnings are present and the response still
+includes one or more `items`, the envelope `status` is set to `"degraded"`;
+when the feed is empty (`items.length === 0`), `status` remains
+`"unavailable"` even if `dataQualityWarnings` contains the empty-feed reason.
 
 | Code | Emitted by | Trigger | Retryable? | Recommended consumer action |
 |------|------------|---------|:---------:|-----------------------------|
