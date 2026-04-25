@@ -125,4 +125,65 @@ describe('get_meps_feed Tool', () => {
       expect(getMEPsFeedToolMetadata.inputSchema).toHaveProperty('properties');
     });
   });
+
+  describe('Oversized payload warning (Defect #9 — full-census dump)', () => {
+    /**
+     * Regression for the Hack23/euparliamentmonitor 2026-04-24 breaking-run
+     * audit §1.5: the upstream `/meps/feed` was returning a 33.6 MB payload
+     * (~700 MEPs) — a full-census dump rather than a delta of recent
+     * mandate changes. We now surface an OVERSIZED_PAYLOAD warning in
+     * `dataQualityWarnings` when the item count crosses 200 so consumers
+     * can detect the failure mode mechanically.
+     */
+    function makeMeps(count: number): unknown[] {
+      return Array.from({ length: count }, (_, i) => ({ id: `mep-${String(i)}` }));
+    }
+
+    it('should NOT add OVERSIZED_PAYLOAD warning when item count is small (delta)', async () => {
+      vi.mocked(epClientModule.epClient.getMEPsFeed).mockResolvedValueOnce({
+        data: makeMeps(5),
+        '@context': [],
+      });
+
+      const result = await handleGetMEPsFeed({});
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataQualityWarnings: string[];
+        status: string;
+      };
+      expect(parsed.dataQualityWarnings.some((w) => w.startsWith('OVERSIZED_PAYLOAD'))).toBe(false);
+      expect(parsed.status).toBe('operational');
+    });
+
+    it('should NOT add OVERSIZED_PAYLOAD warning at the threshold boundary (200 items)', async () => {
+      vi.mocked(epClientModule.epClient.getMEPsFeed).mockResolvedValueOnce({
+        data: makeMeps(200),
+        '@context': [],
+      });
+
+      const result = await handleGetMEPsFeed({});
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.dataQualityWarnings.some((w) => w.startsWith('OVERSIZED_PAYLOAD'))).toBe(false);
+    });
+
+    it('should add OVERSIZED_PAYLOAD warning when item count exceeds threshold (full-census dump)', async () => {
+      vi.mocked(epClientModule.epClient.getMEPsFeed).mockResolvedValueOnce({
+        data: makeMeps(700),
+        '@context': [],
+      });
+
+      const result = await handleGetMEPsFeed({});
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataQualityWarnings: string[];
+        status: string;
+      };
+      const warn = parsed.dataQualityWarnings.find((w) => w.startsWith('OVERSIZED_PAYLOAD'));
+      expect(warn).toBeDefined();
+      expect(warn).toContain('700');
+      expect(warn).toContain('200'); // threshold
+      expect(warn).toContain('get_meps');
+      expect(parsed.status).toBe('degraded');
+    });
+  });
 });
