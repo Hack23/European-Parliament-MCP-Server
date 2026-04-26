@@ -1,8 +1,8 @@
-[**European Parliament MCP Server API v1.2.14**](README.md)
+[**European Parliament MCP Server API v1.2.15**](README.md)
 
 ***
 
-# European Parliament MCP Server API v1.2.14
+# European Parliament MCP Server API v1.2.15
 
 ## Documents
 
@@ -156,5 +156,6 @@
 - [utils/credibilityCheck](utils/credibilityCheck/README.md)
 - [utils/mepFetcher](utils/mepFetcher/README.md)
 - [utils/performance](utils/performance/README.md)
+- [utils/politicalGroupNormalization](utils/politicalGroupNormalization/README.md)
 - [utils/rateLimiter](utils/rateLimiter/README.md)
 - [utils/timeout](utils/timeout/README.md)
