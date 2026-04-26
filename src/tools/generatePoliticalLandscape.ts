@@ -276,8 +276,11 @@ async function buildLandscape(
     'Attendance data unavailable from EP API — average attendance reported as zero',
   ];
   if (!mepResult.complete) {
+    const offsetLabel = mepResult.failureOffset !== undefined
+      ? `offset ${String(mepResult.failureOffset)}`
+      : 'an unknown offset';
     dataQualityWarnings.push(
-      `MEP pagination failed at offset ${String(mepResult.failureOffset ?? 0)}; seat shares are computed from the partial roster collected before the failure.`
+      `MEP pagination failed at ${offsetLabel}; seat shares are computed from the partial roster collected before the failure.`
     );
   }
 
