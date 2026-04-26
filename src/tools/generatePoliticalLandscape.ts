@@ -21,7 +21,7 @@ import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 import { fetchAllCurrentMEPs } from '../utils/mepFetcher.js';
-import { normalizePoliticalGroup } from './analyzeCoalitionDynamics.js';
+import { normalizePoliticalGroup } from '../utils/politicalGroupNormalization.js';
 import type { ToolResult } from './shared/types.js';
 
 /**

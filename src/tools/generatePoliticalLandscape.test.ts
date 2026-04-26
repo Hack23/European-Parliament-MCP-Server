@@ -310,7 +310,7 @@ describe('generate_political_landscape Tool', () => {
     });
 
     it('should report HIGH confidence when full ~720-MEP roster is collected', async () => {
-      // Arrange: 720 MEPs across two pages — emulates the EP10 composition
+      // Arrange: 720 MEPs across eight pages (7×100 + 1×20) — emulates the EP10 composition
       const buildPage = (start: number, count: number, hasMore: boolean) => ({
         data: Array.from({ length: count }, (_, i) => ({
           id: `MEP-${String(start + i)}`,
