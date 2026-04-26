@@ -20,6 +20,8 @@
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
+import { fetchAllCurrentMEPs } from '../utils/mepFetcher.js';
+import { normalizePoliticalGroup } from '../utils/politicalGroupNormalization.js';
 import type { ToolResult } from './shared/types.js';
 
 /**
@@ -152,12 +154,20 @@ function aggregateByGroup(
 
   for (const mep of meps) {
     allCountries.add(mep.country);
-    const existing = groupMap.get(mep.politicalGroup);
+    // Normalize political-group label so EP API native-language acronyms
+    // (e.g. French `PPE` / `Verts-ALE`) and legacy successor names
+    // (e.g. EP9 `ID` → EP10 `PfE`) collapse onto their canonical short codes
+    // before aggregation. Without this, the same group can appear twice with
+    // split member counts. See `analyze_coalition_dynamics` Defect #1 / D-01
+    // (Hack23/euparliamentmonitor 2026-04-26 reliability audits) for the
+    // root-cause analysis of the equivalent issue in coalition dynamics.
+    const groupKey = normalizePoliticalGroup(mep.politicalGroup);
+    const existing = groupMap.get(groupKey);
     if (existing !== undefined) {
       existing.count++;
       existing.countries.add(mep.country);
     } else {
-      groupMap.set(mep.politicalGroup, {
+      groupMap.set(groupKey, {
         count: 1,
         countries: new Set([mep.country])
       });
@@ -211,8 +221,13 @@ async function buildLandscape(
   dateFrom: string,
   dateTo: string
 ): Promise<PoliticalLandscape> {
-  const mepResult = await epClient.getCurrentMEPs({ limit: 100 });
-  const meps = Array.isArray(mepResult.data) ? mepResult.data : [];
+  // Fetch ALL active MEPs via paginated batches (typically ~720 for EP10)
+  // rather than a single 100-MEP page. The previous `getCurrentMEPs({ limit: 100 })`
+  // call produced ~14% sample-based seat shares and triggered Defect #3 / D-08
+  // in the Hack23/euparliamentmonitor 2026-04-26 reliability audits, where
+  // `totalMEPs: 100` was reported instead of the full Parliament composition.
+  const mepResult = await fetchAllCurrentMEPs();
+  const meps = mepResult.meps;
 
   const { groups, countriesRepresented, totalMEPs } = aggregateByGroup(
     meps
@@ -240,6 +255,35 @@ async function buildLandscape(
     // API may not return sessions for this date range — report zero
   }
 
+  // Confidence reflects (a) whether the MEP pagination completed and (b)
+  // whether the resulting roster is large enough to be representative of
+  // the full Parliament (~720 MEPs in EP10). A partial fetch (pagination
+  // failure) or a small roster (<200 MEPs) downgrades confidence so
+  // downstream consumers can flag the snapshot accordingly.
+  let confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
+  if (!mepResult.complete) {
+    confidenceLevel = 'LOW';
+  } else if (totalMEPs >= 600) {
+    confidenceLevel = 'HIGH';
+  } else if (totalMEPs >= 200) {
+    confidenceLevel = 'MEDIUM';
+  } else {
+    confidenceLevel = 'LOW';
+  }
+
+  const dataQualityWarnings: string[] = [
+    'Bloc classification (progressive/conservative/centre) uses hardcoded group mapping — NI members classified as centre by default',
+    'Attendance data unavailable from EP API — average attendance reported as zero',
+  ];
+  if (!mepResult.complete) {
+    const offsetLabel = mepResult.failureOffset !== undefined
+      ? `offset ${String(mepResult.failureOffset)}`
+      : 'an unknown offset';
+    dataQualityWarnings.push(
+      `MEP pagination failed at ${offsetLabel}; seat shares are computed from the partial roster collected before the failure.`
+    );
+  }
+
   return {
     period: { from: dateFrom, to: dateTo },
     parliament: {
@@ -263,18 +307,16 @@ async function buildLandscape(
       ),
       overallEngagement: computeEngagement(0)
     },
-    confidenceLevel: totalMEPs > 50 ? 'MEDIUM' : 'LOW',
+    confidenceLevel,
     dataFreshness: 'Real-time EP API data — MEP records and plenary sessions from EP Open Data',
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-    methodology: 'Political landscape analysis using real EP Open Data: MEP records, '
-      + 'group composition mapping, bloc classification, coalition threshold calculation, '
-      + 'fragmentation indexing, and plenary session counts (fetched page count, lower bound). '
-      + 'Attendance data is not available from the EP API and is reported as zero. '
-      + 'Data source: European Parliament Open Data Portal.',
-    dataQualityWarnings: [
-      'Bloc classification (progressive/conservative/centre) uses hardcoded group mapping — NI members classified as centre by default',
-      'Attendance data unavailable from EP API — average attendance reported as zero',
-    ],
+    methodology: 'Political landscape analysis using real EP Open Data: full paginated MEP '
+      + 'roster (typically ~720 MEPs in EP10), group composition mapping with native-language '
+      + 'acronym normalisation (e.g. PPE → EPP, Verts-ALE → Greens/EFA, ID → PfE), bloc '
+      + 'classification, coalition threshold calculation, fragmentation indexing, and plenary '
+      + 'session counts (fetched page count, lower bound). Attendance data is not available '
+      + 'from the EP API and is reported as zero. Data source: European Parliament Open Data Portal.',
+    dataQualityWarnings,
   };
 }
 
