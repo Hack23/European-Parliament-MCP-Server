@@ -1331,7 +1331,7 @@ Analyze the Swedish delegation's composition, voting behavior, and committee rep
 
 ### Tool: generate_political_landscape
 
-**Description**: Generate a comprehensive political landscape overview of the European Parliament, including group composition, power dynamics, coalition thresholds, bloc analysis, and fragmentation metrics.
+**Description**: Generate a comprehensive political landscape overview of the European Parliament, including group composition, power dynamics, coalition thresholds, bloc analysis, and fragmentation metrics. Aggregates the **full paginated MEP roster** (~720 MEPs in EP10) and normalises EP API native-language acronyms (e.g. `PPE` → `EPP`, `Verts-ALE` → `Greens/EFA`, legacy `ID` → EP10 successor `PfE`) before computing seat shares.
 
 #### Parameters
 
@@ -1340,11 +1340,21 @@ Analyze the Swedish delegation's composition, voting behavior, and committee rep
 | dateFrom | string | No | Start date (ISO 8601) |
 | dateTo | string | No | End date (ISO 8601) |
 
+#### Confidence Levels
+
+| `confidenceLevel` | Trigger | Interpretation |
+|-------------------|---------|----------------|
+| `HIGH` | Full pagination complete and `totalMEPs ≥ 600` | Roster covers the full EP10 Parliament |
+| `MEDIUM` | Full pagination complete and `200 ≤ totalMEPs < 600` | Roster is representative but partial term coverage |
+| `LOW` | Pagination failed (`MEP pagination failed at offset N` warning) **or** `totalMEPs < 200` | Treat seat shares as a partial sample |
+
 #### Example Usage
 
 ```
 Generate a current political landscape overview including group sizes, coalition possibilities, and bloc dynamics
 ```
+
+> **Note (since 1.2.15):** Earlier releases sampled only the first 100 MEPs (`getCurrentMEPs({ limit: 100 })`) and skipped political-group-name normalisation, so reports could show `totalMEPs: 100` and the same group split across multiple acronyms (e.g. `PPE` and `EPP` as separate entries). Both issues are fixed — see Hack23/euparliamentmonitor 2026-04-26 reliability audits Defect #3 / D-08 and Defect #1 / D-01 for the original observations.
 
 ---
 

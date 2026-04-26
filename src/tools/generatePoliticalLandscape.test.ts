@@ -160,13 +160,24 @@ describe('generate_political_landscape Tool', () => {
   });
 
   describe('Error Handling', () => {
-    it('should propagate API errors', async () => {
+    it('should return partial snapshot with warning when MEP pagination fails', async () => {
+      // fetchAllCurrentMEPs catches pagination errors and returns partial
+      // results with `complete: false` so a transient EP API outage
+      // produces a degraded snapshot rather than a hard tool failure.
       vi.mocked(epClientModule.epClient.getCurrentMEPs).mockRejectedValue(
         new Error('API Error')
       );
 
-      await expect(handleGeneratePoliticalLandscape({}))
-        .rejects.toThrow('API Error');
+      const result = await handleGeneratePoliticalLandscape({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        confidenceLevel: string;
+        parliament: { totalMEPs: number };
+        dataQualityWarnings: string[];
+      };
+
+      expect(data.confidenceLevel).toBe('LOW');
+      expect(data.parliament.totalMEPs).toBe(0);
+      expect(data.dataQualityWarnings.some(w => w.includes('MEP pagination failed'))).toBe(true);
     });
 
     it('should handle empty MEP list', async () => {
@@ -256,6 +267,124 @@ describe('generate_political_landscape Tool', () => {
       expect(data.computedAttributes.fragmentationIndex).toBe('HIGH'); // 8 groups >= 8
       // Session count comes from real EP API data (mocked as 12)
       expect(data.activityMetrics.recentSessionCount).toBe(12);
+    });
+  });
+
+  describe('Defect #3 / D-08 regression — full paginated MEP roster', () => {
+    it('should fetch all MEPs via pagination, not a single 100-MEP page', async () => {
+      // Arrange: simulate three pages totalling 250 MEPs to verify the tool
+      // uses fetchAllCurrentMEPs() instead of a single getCurrentMEPs({limit:100}) call.
+      // Previous bug (Hack23/euparliamentmonitor 2026-04-26 audits, Defect #3 / D-08)
+      // reported `totalMEPs: 100` instead of the full Parliament composition.
+      const buildPage = (start: number, count: number, hasMore: boolean) => ({
+        data: Array.from({ length: count }, (_, i) => ({
+          id: `MEP-${String(start + i)}`,
+          name: `MEP ${String(start + i)}`,
+          country: 'DE',
+          politicalGroup: 'EPP',
+          committees: [],
+          active: true as const,
+          termStart: '2024-07-16'
+        })),
+        total: 250,
+        limit: 100,
+        offset: start,
+        hasMore
+      });
+      vi.mocked(epClientModule.epClient.getCurrentMEPs)
+        .mockResolvedValueOnce(buildPage(0, 100, true))
+        .mockResolvedValueOnce(buildPage(100, 100, true))
+        .mockResolvedValueOnce(buildPage(200, 50, false));
+
+      // Act
+      const result = await handleGeneratePoliticalLandscape({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        parliament: { totalMEPs: number };
+        confidenceLevel: string;
+      };
+
+      // Assert — full 250-MEP roster aggregated (not just first page of 100)
+      expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenCalledTimes(3);
+      expect(data.parliament.totalMEPs).toBe(250);
+      expect(data.confidenceLevel).toBe('MEDIUM'); // 200 ≤ 250 < 600
+    });
+
+    it('should report HIGH confidence when full ~720-MEP roster is collected', async () => {
+      // Arrange: 720 MEPs across two pages — emulates the EP10 composition
+      const buildPage = (start: number, count: number, hasMore: boolean) => ({
+        data: Array.from({ length: count }, (_, i) => ({
+          id: `MEP-${String(start + i)}`,
+          name: `MEP ${String(start + i)}`,
+          country: 'DE',
+          politicalGroup: 'EPP',
+          committees: [],
+          active: true as const,
+          termStart: '2024-07-16'
+        })),
+        total: 720, limit: 600, offset: start, hasMore
+      });
+      vi.mocked(epClientModule.epClient.getCurrentMEPs)
+        .mockResolvedValueOnce(buildPage(0, 100, true))
+        .mockResolvedValueOnce(buildPage(100, 100, true))
+        .mockResolvedValueOnce(buildPage(200, 100, true))
+        .mockResolvedValueOnce(buildPage(300, 100, true))
+        .mockResolvedValueOnce(buildPage(400, 100, true))
+        .mockResolvedValueOnce(buildPage(500, 100, true))
+        .mockResolvedValueOnce(buildPage(600, 100, true))
+        .mockResolvedValueOnce(buildPage(700, 20, false));
+
+      // Act
+      const result = await handleGeneratePoliticalLandscape({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        parliament: { totalMEPs: number };
+        confidenceLevel: string;
+      };
+
+      // Assert
+      expect(data.parliament.totalMEPs).toBe(720);
+      expect(data.confidenceLevel).toBe('HIGH');
+    });
+
+    it('should normalise EP API native-language acronyms (e.g. PPE → EPP, Verts-ALE → Greens/EFA, ID → PfE)', async () => {
+      // Arrange: the EP Open Data Portal returns French acronyms (PPE) and
+      // URI suffixes (Verts-ALE) interchangeably with English short codes.
+      // Without normalisation, the same group appears twice with split
+      // member counts. See `analyze_coalition_dynamics` Defect #1 / D-01.
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValueOnce({
+        data: [
+          // EPP variants — French acronym `PPE`, English short code `EPP`,
+          // and the full English group name should all collapse onto `EPP`.
+          { id: 'MEP-1', name: 'A', country: 'DE', politicalGroup: 'PPE', committees: [], active: true, termStart: '2024-07-16' },
+          { id: 'MEP-2', name: 'B', country: 'IT', politicalGroup: 'EPP', committees: [], active: true, termStart: '2024-07-16' },
+          { id: 'MEP-3', name: 'C', country: 'PL', politicalGroup: "Group of the European People's Party (Christian Democrats)", committees: [], active: true, termStart: '2024-07-16' },
+          // Greens/EFA variants — URI suffix `Verts-ALE` should collapse onto `Greens/EFA`.
+          { id: 'MEP-4', name: 'D', country: 'SE', politicalGroup: 'Verts-ALE', committees: [], active: true, termStart: '2024-07-16' },
+          { id: 'MEP-5', name: 'E', country: 'FR', politicalGroup: 'Greens/EFA', committees: [], active: true, termStart: '2024-07-16' },
+          // Legacy ID → EP10 successor PfE.
+          { id: 'MEP-6', name: 'F', country: 'IT', politicalGroup: 'ID', committees: [], active: true, termStart: '2024-07-16' },
+          { id: 'MEP-7', name: 'G', country: 'FR', politicalGroup: 'PfE', committees: [], active: true, termStart: '2024-07-16' }
+        ],
+        total: 7, limit: 100, offset: 0, hasMore: false
+      });
+
+      // Act
+      const result = await handleGeneratePoliticalLandscape({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        groups: { name: string; memberCount: number }[];
+        parliament: { totalMEPs: number; politicalGroups: number };
+      };
+
+      // Assert — expect three canonical groups (EPP=3, Greens/EFA=2, PfE=2),
+      // not six split entries.
+      expect(data.parliament.totalMEPs).toBe(7);
+      expect(data.parliament.politicalGroups).toBe(3);
+      const byName = new Map(data.groups.map(g => [g.name, g.memberCount]));
+      expect(byName.get('EPP')).toBe(3);
+      expect(byName.get('Greens/EFA')).toBe(2);
+      expect(byName.get('PfE')).toBe(2);
+      expect(byName.has('PPE')).toBe(false);
+      expect(byName.has('Verts-ALE')).toBe(false);
+      expect(byName.has('ID')).toBe(false);
     });
   });
 });
