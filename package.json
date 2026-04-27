@@ -162,8 +162,8 @@
   },
   "devDependencies": {
     "@types/node": "25.6.0",
-    "@typescript-eslint/eslint-plugin": "8.59.0",
-    "@typescript-eslint/parser": "8.59.0",
+    "@typescript-eslint/eslint-plugin": "8.59.1",
+    "@typescript-eslint/parser": "8.59.1",
     "@vitest/coverage-v8": "4.1.5",
     "@vitest/ui": "4.1.5",
     "eslint": "10.2.1",
@@ -177,7 +177,7 @@
     "typedoc-plugin-mdn-links": "5.1.1",
     "typedoc-plugin-zod": "1.4.3",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.59.0",
+    "typescript-eslint": "8.59.1",
     "vitest": "4.1.5"
   }
 }
