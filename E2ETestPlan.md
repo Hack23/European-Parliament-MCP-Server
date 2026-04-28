@@ -155,7 +155,7 @@ pie title E2E Test Case Distribution
 | MCP Operation | Covered By | Verified Assertions |
 |---------------|-----------|---------------------|
 | `initialize` (handshake) | All files (via `mcpClient.connect()`) | Server starts, capabilities negotiated |
-| `tools/list` | `fullWorkflow` | 63 tools returned with names and descriptions |
+| `tools/list` | `fullWorkflow` | 62 tools returned with names and descriptions |
 | `tools/call` | All files | Tool execution, response structure, error handling |
 | `resources/list` | `fullWorkflow`, `promptsAndResources` | 9 resource templates returned |
 | `resources/read` | `promptsAndResources` | Resource content returned for valid URIs |
@@ -243,7 +243,7 @@ npm run docs:e2e-reports
 |------|-----------|-------------|
 | **All E2E tests pass** | 71/71 green | CI blocks merge on failure |
 | **Server starts successfully** | `mcpClient.connect()` succeeds | First assertion in every test file |
-| **Tool listing complete** | 63 tools returned | Verified in `fullWorkflow` |
+| **Tool listing complete** | 62 tools returned | Verified in `fullWorkflow` |
 | **Resource listing complete** | 9 resources returned | Verified in `fullWorkflow` / `promptsAndResources` |
 | **Prompt listing complete** | 7 prompts returned | Verified in `promptsAndResources` |
 | **No unhandled exceptions** | Server process exits cleanly | Harness monitors child process |
@@ -286,7 +286,7 @@ E2E test coverage is uploaded to Codecov with the `e2e` flag, enabling separate 
 |---------|-------------|------------|
 | `ECONNREFUSED` during connect | Server binary not built | Run `npm run build` |
 | `Timeout` on tool calls | EP API slow or unreachable | Check EP API status; increase `EP_REQUEST_TIMEOUT_MS` |
-| Tool count mismatch (≠63) | Tool added/removed without test update | Update `fullWorkflow` assertion |
+| Tool count mismatch (≠62) | Tool added/removed without test update | Update `fullWorkflow` assertion |
 | Zod validation error in response | EP API schema change | Update Zod schema in corresponding tool handler |
 | `SIGTERM` / process crash | Server bug or OOM | Check Node.js memory; review recent code changes |
 | Rate limit errors | Previous test run didn't clean up | Wait 1 minute for token bucket refill |
