@@ -9,7 +9,8 @@
   ],
   "project": [
     "src/**/*.ts",
-    "tests/**/*.ts"
+    "tests/**/*.ts",
+    "scripts/**/*.ts"
   ],
   "ignoreDependencies": [
     "@typescript-eslint/eslint-plugin",
