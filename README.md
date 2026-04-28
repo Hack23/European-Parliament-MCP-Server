@@ -195,7 +195,7 @@ graph LR
       <img src="https://img.shields.io/badge/EU-Parliament-003399?style=for-the-badge&logo=european-union&logoColor=FFCC00" width="80" alt="EU Parliament Monitor"/>
       <div>
         <a href="https://euparliamentmonitor.com">
-          <img src="https://img.shields.io/website?url=https%3A%2F%2Feuparliamentmonitor.com" alt="Website Status">
+          <img src="https://img.shields.io/website?url=https://euparliamentmonitor.com" alt="Website Status">
         </a>
       </div>
       <div>
@@ -208,9 +208,9 @@ graph LR
       <p><strong>EU Parliament Monitor turns the EP's own open data into auditable political intelligence — and publishes it as readable news in 14 languages, every day, fully sourced.</strong> An AI-driven newsroom that monitors plenary sessions, committee work, motions, propositions, urgency files and the forward calendar; produces <em>Economist-style</em> analytical articles backed by 51 structured analysis artifacts per run; and exposes <strong>every</strong> methodology, template and analysis tree publicly so any reader, journalist or NGO can verify the analysis behind the prose.</p>
       <p><strong>Powered by this repository</strong> — consumes the European-Parliament-MCP-Server (60+ EP data tools) plus IMF + World Bank for economic context, with built-in fallback to the EP Open Data Portal <code>/api/v2/decision</code> endpoint when MCP returns empty voting payloads.</p>
       <ul>
-        <li>📰 <strong>9 unified gh-aw workflows</strong> — 8 article types (<code>breaking</code>, <code>week-ahead</code>, <code>month-ahead</code>, <code>week-in-review</code>, <code>month-in-review</code>, <code>committee-reports</code>, <code>motions</code>, <code>propositions</code>) running Stages A → E in a single 45-minute session, plus <code>news-translate</code> for 14-language flush translation</li>
+        <li>📰 <strong>9 unified <a href="https://github.com/githubnext/gh-aw">gh-aw</a> (GitHub Agentic Workflows) pipelines</strong> — 8 article types (<code>breaking</code>, <code>week-ahead</code>, <code>month-ahead</code>, <code>week-in-review</code>, <code>month-in-review</code>, <code>committee-reports</code>, <code>motions</code>, <code>propositions</code>) running Stages A → E in a single 45-minute session, plus <code>news-translate</code> for 14-language flush translation</li>
         <li>📚 <strong>17 published methodologies + 52 analysis templates + 19 tradecraft references</strong> — ICD-203 Key Judgments · Admiralty source grades · WEP probability bands · ACH · 5-framework political-threat model · 6-dimension threat landscape · electoral domain methodology (361-seat threshold) · IMF/World Bank indicator mappings</li>
-        <li>🌍 <strong>14 languages</strong> — EN · SV · DA · NO · FI · DE · FR · ES · NL · AR (RTL) · HE (RTL) · JA · KO · ZH — culturally adapted, not machine-translated, with WCAG 2.1 AA accessibility, JSON-LD <code>NewsArticle.isBasedOn</code> provenance, and <code>hreflang</code> alternates on every page</li>
+        <li>🌍 <strong>14 languages</strong> — EN · SV · DA · NO · FI · DE · FR · ES · NL · AR (RTL) · HE (RTL) · JA · KO · ZH — every page rendered with WCAG 2.1 AA accessibility, JSON-LD <code>NewsArticle.isBasedOn</code> provenance linking back to source artifacts, and <code>hreflang</code> alternates on every page</li>
         <li>🛡️ <strong>Deterministic aggregator</strong> — agents author analysis Markdown only; TypeScript renders HTML deterministically (no AI-authored HTML, no template-prose leakage, fully reproducible)</li>
         <li>📦 <strong>npm package <code>euparliamentmonitor</code></strong> — published with <a href="https://docs.npmjs.com/generating-provenance-statements">npm provenance</a> and SLSA Level 3 build attestations</li>
       </ul>
@@ -254,7 +254,7 @@ graph LR
       <img src="https://img.shields.io/badge/Riksdag-Monitor-00338D?style=for-the-badge&logo=swedish&logoColor=FECC00" width="80" alt="Riksdagsmonitor"/>
       <div>
         <a href="https://riksdagsmonitor.com">
-          <img src="https://img.shields.io/website?url=https%3A%2F%2Friksdagsmonitor.com" alt="Website Status">
+          <img src="https://img.shields.io/website?url=https://riksdagsmonitor.com" alt="Website Status">
         </a>
       </div>
       <div>
@@ -271,7 +271,7 @@ graph LR
         <li>🧠 <strong>91 skills across 12 categories</strong> + <strong>24 Copilot agents</strong> (14 personas + 9 workflow specialists + shared developer instructions) — full catalog at <a href="https://github.com/Hack23/riksdagsmonitor/blob/main/SKILLS.md">SKILLS.md</a> / <a href="https://github.com/Hack23/riksdagsmonitor/blob/main/AGENTS.md">AGENTS.md</a></li>
         <li>📚 <strong>11 published methodologies + 23 templates</strong> (8 core T1–T8 + 15 extended/Tier-C) — AI-Driven Analysis Guide · OSINT Tradecraft Standards · Political Risk · Political SWOT · Political Threat Framework · Electoral Domain · Synthesis · Strategic Extensions (scenario / wildcard / long-horizon) · Style Guide</li>
         <li>📊 <strong>5 flagship Chart.js / D3.js dashboards</strong> + <a href="https://riksdagsmonitor.com/dashboard/index.html">CIA Intelligence Dashboard</a> — Seasonal Activity (2002–2025 · Z-score anomaly) · 349-MP Politician Dashboard · Pre-Election Monitor · Party Performance (1990–2026) · Anomaly &amp; Early Warning</li>
-        <li>🌍 <strong>14 languages</strong> — EN · SV · DA · NO · FI · DE · FR · ES · NL · AR (RTL) · HE (RTL) · JA · KO · ZH — daily refresh at 03:00 CET, WCAG 2.1 AA, CSP-hardened with SRI</li>
+        <li>🌍 <strong>14 languages</strong> — EN · SV · DA · NO · FI · DE · FR · ES · NL · AR (RTL) · HE (RTL) · JA · KO · ZH — daily refresh at 03:00 CET, WCAG 2.1 AA, CSP-hardened with Subresource Integrity (SRI) on all bundled assets</li>
         <li>📦 <strong>npm package <code>riksdagsmonitor</code></strong> — Theme System · Chart Factory · Resilient Data Loader · 12 dashboard modules · CIA intelligence modules — published with SLSA build provenance</li>
         <li>🛡️ <strong>OpenSSF Best Practices Project #12069</strong> · Risk level 🟢 LOW (5.52 / 10.0 — 99.7 % risk reduction) · ISO 27001:2022 · NIST CSF 2.0 · CIS Controls v8.1 · GDPR Art. 9(2)(e/g) for political opinions</li>
       </ul>
