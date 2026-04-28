@@ -6,7 +6,11 @@
 
 <p align="center">
   <strong>Model Context Protocol Server for European Parliament Open Data</strong><br>
-  <em>Providing AI assistants with structured access to parliamentary datasets and OSINT Intelligence Capabilities</em>
+  <em>🇪🇺 EU parliamentary intelligence for AI agents · 🕵️ 15 OSINT analytics tools · 🏛️ Full EP API v2 coverage · 🛡️ ISMS-aligned · 🔒 GDPR-by-design · 📦 SLSA Level 3</em>
+</p>
+
+<p align="center">
+  <strong>The canonical TypeScript MCP bridge between the <a href="https://data.europarl.europa.eu/">European Parliament Open Data Portal</a> and any MCP-aware AI client</strong> — Claude Desktop, VS Code, Cursor, GitHub Copilot, Smithery. Powers the <a href="https://euparliamentmonitor.com">EU Parliament Monitor</a> AI newsroom and is a sister project to <a href="https://riksdagsmonitor.com">Riksdagsmonitor</a> in the <a href="https://hack23.com">Hack23</a> political-intelligence portfolio.
 </p>
 
 <table>
@@ -110,61 +114,139 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ## 🌍 Hack23 Political Intelligence Ecosystem
 
-This MCP server is part of **[Hack23's](https://hack23.com/)** mission to **disrupt journalism with AI-generated news coverage and real-time analysis of democratic governments** — increasing transparency and accountability through open-source intelligence.
+This MCP server is the **EU data backbone** of [Hack23](https://hack23.com/)'s mission to **disrupt parliamentary journalism with AI-generated political intelligence and real-time accountability analysis** — increasing democratic transparency through structured open-source intelligence (OSINT) tradecraft applied to public legislative data.
 
 ### 🎯 Vision: AI-Powered Democratic Transparency
 
-Hack23 builds **open-source intelligence platforms** that enable citizens, journalists, and researchers to monitor democratic institutions in real-time. By combining MCP servers, AI analysis, and open parliamentary data, we create automated intelligence products that were previously only available to well-funded lobbying organizations.
+Hack23 AB builds **open-source intelligence platforms** that put rigorous, evidence-based political analysis in the hands of every citizen, journalist, researcher and policymaker. By combining MCP servers, agentic AI newsrooms, and open parliamentary data, we produce automated intelligence products — coalition analysis, voting-pattern decoding, MEP/MP influence scoring, legislative-pipeline forecasting — that previously required well-funded lobbying organisations or in-house policy units to generate.
 
-> *"Democratizing access to political intelligence — what used to require a team of analysts can now be done by any citizen with an AI assistant."*
+> *"Democratising access to political intelligence — what used to require a team of analysts can now be done by any citizen with an AI assistant."*
 
-### 🔗 Hack23 Projects
+The portfolio is **non-partisan, fully open-source (Apache-2.0)**, operated under the [Hack23 ISMS](https://github.com/Hack23/ISMS-PUBLIC) with full ISO 27001:2022 / NIST CSF 2.0 / CIS Controls v8.1 alignment, GDPR-by-design, and architecturally engineered so it cannot be weaponised for partisan influence: equal treatment of all political groups, public-data only, no user accounts, no ads, no tracking.
 
-### 🇪🇺 EU Parliament Monitor
+### 🧭 The Ecosystem at a Glance
+
+```mermaid
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#6366F1","primaryTextColor":"#fff","primaryBorderColor":"#4F46E5","lineColor":"#94A3B8","secondaryColor":"#003399","tertiaryColor":"#00338D","background":"#0F172A"}}}%%
+graph LR
+    subgraph SOURCES["📡 Primary Open-Data Sources"]
+        EP["🇪🇺 European Parliament<br/>Open Data Portal v2<br/><i>data.europarl.europa.eu</i>"]
+        RD["🇸🇪 Riksdagen Open Data<br/><i>data.riksdagen.se</i>"]
+        REG["🇸🇪 Regeringskansliet<br/><i>regeringen.se</i>"]
+        IMF["💰 IMF / World Bank<br/><i>economic context</i>"]
+    end
+
+    subgraph MCP["🔌 MCP Servers"]
+        EPMCP["<b>European-Parliament-<br/>MCP-Server</b><br/>62 tools · 9 resources<br/>7 prompts · TS strict<br/><i>(this repository)</i>"]
+        RRMCP["riksdag-regering MCP<br/>32+ tools"]
+    end
+
+    subgraph PRODUCTS["📰 AI-Driven Public Platforms"]
+        EUPM["🏛️ <b>EU Parliament Monitor</b><br/>euparliamentmonitor.com<br/>8 unified gh-aw workflows<br/>51-artifact analysis<br/>14 languages"]
+        RM["🗳️ <b>Riksdagsmonitor</b><br/>riksdagsmonitor.com<br/>11 agentic workflows<br/>91 skills · 14 languages<br/>Tidö coalition tracker"]
+        CIA["🕵️ <b>Citizen Intelligence<br/>Agency (CIA)</b><br/>Java/Spring backend<br/>15 subsystems · 1971–2024<br/>3.5M votes · 109K docs"]
+    end
+
+    subgraph CITIZENS["👥 Citizens · Journalists · Researchers · NGOs"]
+        AUDIENCE["AI assistants · Dashboards · 14-language news · Intelligence briefings"]
+    end
+
+    EP --> EPMCP
+    RD --> RRMCP
+    REG --> RRMCP
+    EPMCP --> EUPM
+    RRMCP --> RM
+    RM <-->|"15 CIA subsystems<br/>nightly sync"| CIA
+    IMF -.->|"economic context"| EUPM
+    IMF -.->|"economic context"| RM
+    EUPM --> AUDIENCE
+    RM --> AUDIENCE
+    CIA --> AUDIENCE
+    EPMCP -.->|"AI assistants<br/>Claude · Cursor · VS Code"| AUDIENCE
+
+    style EPMCP fill:#6366F1,stroke:#4F46E5,color:#fff,stroke-width:3px
+    style EP fill:#003399,stroke:#FFCC00,color:#fff
+    style RD fill:#00338D,stroke:#FECC00,color:#fff
+    style REG fill:#00338D,stroke:#FECC00,color:#fff
+    style EUPM fill:#003399,stroke:#FFCC00,color:#fff
+    style RM fill:#00338D,stroke:#FECC00,color:#fff
+    style CIA fill:#1B5E20,stroke:#43A047,color:#fff
+    style AUDIENCE fill:#7B1FA2,stroke:#9C27B0,color:#fff
+```
+
+**This MCP server's role:** the canonical, type-safe TypeScript bridge between the European Parliament Open Data Portal and any MCP-aware AI client (Claude Desktop, VS Code, Cursor, GitHub Copilot, Smithery) — and the upstream data layer that powers the **EU Parliament Monitor** newsroom. Every tool is Zod-validated, audit-logged, GDPR-aware, and SLSA Level 3 attested.
+
+### 🗂️ Portfolio Comparison Matrix
+
+| Project | Scope | Primary Source | Audience | Live URL | Repository |
+|:--------|:------|:---------------|:---------|:---------|:-----------|
+| 🇪🇺 **European-Parliament-MCP-Server** *(this repo)* | EU Parliament data layer for AI agents — 62 MCP tools, 9 resources, 7 prompts, OSINT analytics | [data.europarl.europa.eu](https://data.europarl.europa.eu/) | Developers, AI assistants, journalists, researchers | [npm: european-parliament-mcp-server](https://www.npmjs.com/package/european-parliament-mcp-server) · [Smithery](https://smithery.ai/server/european-parliament-mcp-server) | [Hack23/European-Parliament-MCP-Server](https://github.com/Hack23/European-Parliament-MCP-Server) |
+| 🏛️ **EU Parliament Monitor** | Daily AI-generated EP intelligence in 14 languages — 8 unified gh-aw workflows + 51-artifact analysis pipeline | This MCP server (60+ tools) + IMF + World Bank | Citizens, journalists, NGOs across all 27 EU member states | **[euparliamentmonitor.com](https://euparliamentmonitor.com)** · [Political Intelligence Hub](https://euparliamentmonitor.com/political-intelligence.html) · [Site Map](https://euparliamentmonitor.com/sitemap.html) · [API Reference](https://euparliamentmonitor.com/docs/api/) | [Hack23/euparliamentmonitor](https://github.com/Hack23/euparliamentmonitor) |
+| 🗳️ **Riksdagsmonitor** | Daily AI-generated Swedish parliamentary intelligence — 11 agentic workflows · 91 skills · 50+ years of evidence (1971–2024) · Tidö coalition fragility tracker | `riksdag-regering` MCP (32+ tools) + SCB + IMF + World Bank + CIA exports | Swedish citizens, Nordic journalists, election researchers | **[riksdagsmonitor.com](https://riksdagsmonitor.com)** · [Political Intelligence](https://riksdagsmonitor.com/political-intelligence.html) · [AI Newsroom](https://riksdagsmonitor.com/news/index.html) · [Dashboard](https://riksdagsmonitor.com/dashboard/index.html) | [Hack23/riksdagsmonitor](https://github.com/Hack23/riksdagsmonitor) |
+| 🕵️ **Citizen Intelligence Agency (CIA)** | 15-subsystem Java/Spring political-analytics backend — 349 current MPs, 2,494 historical politicians, 3.5M+ votes, 109k+ documents, 45-rule risk engine | `data.riksdagen.se` direct + Valmyndigheten + ESV | Hack23 platform consumers (Riksdagsmonitor) and OSINT analysts | [hack23.github.io/cia](https://hack23.github.io/cia/) | [Hack23/cia](https://github.com/Hack23/cia) |
+
+### 🇪🇺 EU Parliament Monitor — `euparliamentmonitor.com`
+
+> **European Parliament Political Intelligence Platform** — *🧠 Political intelligence · 🔍 Radical transparency · 🗳️ Democratic accountability · 🤖 AI-generated news in 14 languages*
 
 <table>
   <tr>
     <td width="120" align="center">
       <img src="https://img.shields.io/badge/EU-Parliament-003399?style=for-the-badge&logo=european-union&logoColor=FFCC00" width="80" alt="EU Parliament Monitor"/>
       <div>
-        <a href="https://github.com/Hack23/euparliamentmonitor">
+        <a href="https://euparliamentmonitor.com">
+          <img src="https://img.shields.io/website?url=https%3A%2F%2Feuparliamentmonitor.com" alt="Website Status">
+        </a>
+      </div>
+      <div>
+        <a href="https://github.com/Hack23/euparliamentmonitor/releases">
           <img src="https://img.shields.io/github/v/release/Hack23/euparliamentmonitor" alt="Release">
         </a>
       </div>
     </td>
     <td>
-      <p><strong>European Parliament Intelligence Platform</strong> — an automated multi-language news platform that monitors EU Parliament activities with 14-language support, covering plenary sessions, committee reports, propositions, and breaking news.</p>
+      <p><strong>EU Parliament Monitor turns the EP's own open data into auditable political intelligence — and publishes it as readable news in 14 languages, every day, fully sourced.</strong> An AI-driven newsroom that monitors plenary sessions, committee work, motions, propositions, urgency files and the forward calendar; produces <em>Economist-style</em> analytical articles backed by 51 structured analysis artifacts per run; and exposes <strong>every</strong> methodology, template and analysis tree publicly so any reader, journalist or NGO can verify the analysis behind the prose.</p>
+      <p><strong>Powered by this repository</strong> — consumes the European-Parliament-MCP-Server (60+ EP data tools) plus IMF + World Bank for economic context, with built-in fallback to the EP Open Data Portal <code>/api/v2/decision</code> endpoint when MCP returns empty voting payloads.</p>
+      <ul>
+        <li>📰 <strong>9 unified gh-aw workflows</strong> — 8 article types (<code>breaking</code>, <code>week-ahead</code>, <code>month-ahead</code>, <code>week-in-review</code>, <code>month-in-review</code>, <code>committee-reports</code>, <code>motions</code>, <code>propositions</code>) running Stages A → E in a single 45-minute session, plus <code>news-translate</code> for 14-language flush translation</li>
+        <li>📚 <strong>17 published methodologies + 52 analysis templates + 19 tradecraft references</strong> — ICD-203 Key Judgments · Admiralty source grades · WEP probability bands · ACH · 5-framework political-threat model · 6-dimension threat landscape · electoral domain methodology (361-seat threshold) · IMF/World Bank indicator mappings</li>
+        <li>🌍 <strong>14 languages</strong> — EN · SV · DA · NO · FI · DE · FR · ES · NL · AR (RTL) · HE (RTL) · JA · KO · ZH — culturally adapted, not machine-translated, with WCAG 2.1 AA accessibility, JSON-LD <code>NewsArticle.isBasedOn</code> provenance, and <code>hreflang</code> alternates on every page</li>
+        <li>🛡️ <strong>Deterministic aggregator</strong> — agents author analysis Markdown only; TypeScript renders HTML deterministically (no AI-authored HTML, no template-prose leakage, fully reproducible)</li>
+        <li>📦 <strong>npm package <code>euparliamentmonitor</code></strong> — published with <a href="https://docs.npmjs.com/generating-provenance-statements">npm provenance</a> and SLSA Level 3 build attestations</li>
+      </ul>
       <div>
-        <a href="https://scorecard.dev/viewer/?uri=github.com/Hack23/euparliamentmonitor">
-          <img src="https://api.securityscorecards.dev/projects/github.com/Hack23/euparliamentmonitor/badge" alt="OpenSSF Scorecard">
-        </a>
-        <a href="https://github.com/Hack23/euparliamentmonitor/attestations">
-          <img src="https://slsa.dev/images/gh-badge-level3.svg" alt="SLSA 3">
-        </a>
-        <a href="https://github.com/Hack23/euparliamentmonitor/license">
-          <img src="https://img.shields.io/github/license/Hack23/euparliamentmonitor" alt="License">
-        </a>
-      </div>
-      <div>
-        <a href="https://euparliamentmonitor.com"><strong>EU Parliament Monitor - News</strong></a> •
-        <a href="https://github.com/Hack23/euparliamentmonitor"><strong>📂 Repository</strong></a> •
-        <a href="https://hack23.com/euparliamentmonitor-features.html"><strong>✨ Features</strong></a> •
+        <a href="https://euparliamentmonitor.com"><strong>🌐 Live News Site</strong></a> ·
+        <a href="https://euparliamentmonitor.com/political-intelligence.html"><strong>🧠 Political Intelligence Hub</strong></a> ·
+        <a href="https://euparliamentmonitor.com/sitemap.html"><strong>🗺️ Site Map (14 languages)</strong></a> ·
+        <a href="https://euparliamentmonitor.com/docs/api/"><strong>📔 TypeDoc API</strong></a> ·
+        <a href="https://euparliamentmonitor.com/docs/coverage/index.html"><strong>📓 Coverage</strong></a> ·
+        <a href="https://euparliamentmonitor.com/playwright-report/index.html"><strong>🎭 E2E Report</strong></a> ·
+        <a href="https://github.com/Hack23/euparliamentmonitor"><strong>📂 Repository</strong></a> ·
+        <a href="https://hack23.com/euparliamentmonitor-features.html"><strong>✨ Features</strong></a> ·
         <a href="https://hack23.com/euparliamentmonitor-docs.html"><strong>📚 Documentation</strong></a>
       </div>
     </td>
   </tr>
 </table>
 
+[![Live Site](https://img.shields.io/badge/🌐_Live_Site-euparliamentmonitor.com-003399?style=flat-square&logoColor=FFCC00)](https://euparliamentmonitor.com)
+[![Political Intelligence Hub](https://img.shields.io/badge/🧠_Political_Intelligence-Hub-7B1FA2?style=flat-square)](https://euparliamentmonitor.com/political-intelligence.html)
+[![Site Map](https://img.shields.io/badge/🗺️_Site_Map-14_languages-0A66C2?style=flat-square)](https://euparliamentmonitor.com/sitemap.html)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Hack23/euparliamentmonitor/badge)](https://scorecard.dev/viewer/?uri=github.com/Hack23/euparliamentmonitor)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12068/badge)](https://www.bestpractices.dev/projects/12068)
 [![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://github.com/Hack23/euparliamentmonitor/attestations)
-[![News Generation](https://github.com/Hack23/euparliamentmonitor/actions/workflows/news-generation.yml/badge.svg)](https://github.com/Hack23/euparliamentmonitor/actions/workflows/news-generation.yml)
-[![Test and Report](https://github.com/Hack23/euparliamentmonitor/actions/workflows/test-and-report.yml/badge.svg)](https://github.com/Hack23/euparliamentmonitor/actions/workflows/test-and-report.yml)
 [![License](https://img.shields.io/github/license/Hack23/euparliamentmonitor)](https://github.com/Hack23/euparliamentmonitor/blob/main/LICENSE)
 [![ISMS](https://img.shields.io/badge/Hack23-ISMS-blue)](https://github.com/Hack23/ISMS-PUBLIC)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Hack23/euparliamentmonitor)
+[![News Generation](https://github.com/Hack23/euparliamentmonitor/actions/workflows/compile-agentic-workflows.yml/badge.svg)](https://github.com/Hack23/euparliamentmonitor/actions/workflows/compile-agentic-workflows.yml)
+[![CodeQL](https://github.com/Hack23/euparliamentmonitor/actions/workflows/codeql.yml/badge.svg)](https://github.com/Hack23/euparliamentmonitor/actions/workflows/codeql.yml)
+[![Test and Report](https://github.com/Hack23/euparliamentmonitor/actions/workflows/test-and-report.yml/badge.svg)](https://github.com/Hack23/euparliamentmonitor/actions/workflows/test-and-report.yml)
+[![E2E Tests](https://github.com/Hack23/euparliamentmonitor/actions/workflows/e2e.yml/badge.svg)](https://github.com/Hack23/euparliamentmonitor/actions/workflows/e2e.yml)
+[![Release](https://github.com/Hack23/euparliamentmonitor/actions/workflows/release.yml/badge.svg)](https://github.com/Hack23/euparliamentmonitor/actions/workflows/release.yml)
 
+### 🗳️ Riksdagsmonitor — `riksdagsmonitor.com`
 
-### 🗳️ Riksdagsmonitor
+> **Swedish Political Intelligence Platform** — *🕵️ Political intelligence · 🔍 Democratic transparency · 🤖 AI-generated news · 📊 50+ years of evidence*
 
 <table>
   <tr>
@@ -172,28 +254,35 @@ Hack23 builds **open-source intelligence platforms** that enable citizens, journ
       <img src="https://img.shields.io/badge/Riksdag-Monitor-00338D?style=for-the-badge&logo=swedish&logoColor=FECC00" width="80" alt="Riksdagsmonitor"/>
       <div>
         <a href="https://riksdagsmonitor.com">
-          <img src="https://img.shields.io/website?url=https://riksdagsmonitor.com" alt="Website Status">
+          <img src="https://img.shields.io/website?url=https%3A%2F%2Friksdagsmonitor.com" alt="Website Status">
+        </a>
+      </div>
+      <div>
+        <a href="https://www.npmjs.com/package/riksdagsmonitor">
+          <img src="https://img.shields.io/npm/v/riksdagsmonitor.svg" alt="npm version">
         </a>
       </div>
     </td>
     <td>
-      <p><strong>Swedish Parliament Intelligence Platform</strong> monitoring political activity in Sweden's Riksdag with systematic transparency through real-time analysis and 50+ years of historical data (1971-2024).</p>
+      <p><strong>Riksdagsmonitor monitors Sweden's Riksdag (Parliament), the Government (Regeringskansliet) and public agencies (Myndigheter) with structured intelligence techniques</strong> — ACH, SWOT, PESTLE, STRIDE, political-risk scoring and OSINT/INTOP tradecraft — applied to <strong>349 current MPs</strong>, <strong>2,494 historical politicians (1971–2024)</strong>, <strong>3.5M+ votes</strong> and <strong>109,000+ parliamentary documents</strong>.</p>
+      <p>An autonomous AI newsroom — <strong>11 agentic workflows</strong>, Claude Opus, zero human editors — turns this evidence into <strong>publication-ready intelligence articles in 14 languages, every day</strong>. Front-loads the live <strong>Tidö Agreement coalition status</strong> (176/349 seats, fragility indicators, CIA risk alerts) and dives into 40 years of election-cycle intelligence (1994–2034), party performance (1990–2026, 8 parties), 15 committee networks, seasonal Z-score anomaly detection, ministry risk and a 45-rule × 349-MP live risk heat map.</p>
+      <ul>
+        <li>📰 <strong>11 agentic workflows</strong> — committee reports · propositions · motions · interpellations · week-ahead · month-ahead · real-time monitor · evening analysis · weekly review · monthly review · translate (Mon–Fri + weekend cycles, all on UTC schedules)</li>
+        <li>🧠 <strong>91 skills across 12 categories</strong> + <strong>24 Copilot agents</strong> (14 personas + 9 workflow specialists + shared developer instructions) — full catalog at <a href="https://github.com/Hack23/riksdagsmonitor/blob/main/SKILLS.md">SKILLS.md</a> / <a href="https://github.com/Hack23/riksdagsmonitor/blob/main/AGENTS.md">AGENTS.md</a></li>
+        <li>📚 <strong>11 published methodologies + 23 templates</strong> (8 core T1–T8 + 15 extended/Tier-C) — AI-Driven Analysis Guide · OSINT Tradecraft Standards · Political Risk · Political SWOT · Political Threat Framework · Electoral Domain · Synthesis · Strategic Extensions (scenario / wildcard / long-horizon) · Style Guide</li>
+        <li>📊 <strong>5 flagship Chart.js / D3.js dashboards</strong> + <a href="https://riksdagsmonitor.com/dashboard/index.html">CIA Intelligence Dashboard</a> — Seasonal Activity (2002–2025 · Z-score anomaly) · 349-MP Politician Dashboard · Pre-Election Monitor · Party Performance (1990–2026) · Anomaly &amp; Early Warning</li>
+        <li>🌍 <strong>14 languages</strong> — EN · SV · DA · NO · FI · DE · FR · ES · NL · AR (RTL) · HE (RTL) · JA · KO · ZH — daily refresh at 03:00 CET, WCAG 2.1 AA, CSP-hardened with SRI</li>
+        <li>📦 <strong>npm package <code>riksdagsmonitor</code></strong> — Theme System · Chart Factory · Resilient Data Loader · 12 dashboard modules · CIA intelligence modules — published with SLSA build provenance</li>
+        <li>🛡️ <strong>OpenSSF Best Practices Project #12069</strong> · Risk level 🟢 LOW (5.52 / 10.0 — 99.7 % risk reduction) · ISO 27001:2022 · NIST CSF 2.0 · CIS Controls v8.1 · GDPR Art. 9(2)(e/g) for political opinions</li>
+      </ul>
       <div>
-        <a href="https://scorecard.dev/viewer/?uri=github.com/Hack23/riksdagsmonitor">
-          <img src="https://api.securityscorecards.dev/projects/github.com/Hack23/riksdagsmonitor/badge" alt="OpenSSF Scorecard">
-        </a>
-        <a href="https://github.com/Hack23/riksdagsmonitor/actions/workflows/quality-checks.yml">
-          <img src="https://github.com/Hack23/riksdagsmonitor/actions/workflows/quality-checks.yml/badge.svg" alt="Quality Checks">
-        </a>
-        <a href="https://github.com/Hack23/riksdagsmonitor/license">
-          <img src="https://img.shields.io/github/license/Hack23/riksdagsmonitor" alt="License">
-        </a>
-      </div>
-      <div>
-        <a href="https://riksdagsmonitor.com"><strong>🌐 Riksdags Monitor</strong></a> •
-        <a href="https://riksdagsmonitor.com/news/"><strong>🌐 Riksdags Monitor News</strong></a> •
-        <a href="https://github.com/Hack23/riksdagsmonitor"><strong>📂 Repository</strong></a> •
-        <a href="https://hack23.com/riksdagsmonitor-features.html"><strong>✨ Features</strong></a> •
+        <a href="https://riksdagsmonitor.com"><strong>🌐 Live Platform</strong></a> ·
+        <a href="https://riksdagsmonitor.com/political-intelligence.html"><strong>🕵️ Political Intelligence</strong></a> ·
+        <a href="https://riksdagsmonitor.com/news/index.html"><strong>📰 AI Newsroom</strong></a> ·
+        <a href="https://riksdagsmonitor.com/dashboard/index.html"><strong>📊 Intelligence Dashboard</strong></a> ·
+        <a href="https://riksdagsmonitor.com/sitemap.html"><strong>🗺️ Sitemap</strong></a> ·
+        <a href="https://github.com/Hack23/riksdagsmonitor"><strong>📂 Repository</strong></a> ·
+        <a href="https://hack23.com/riksdagsmonitor-features.html"><strong>✨ Features</strong></a> ·
         <a href="https://hack23.com/riksdagsmonitor-docs.html"><strong>📚 Documentation</strong></a>
       </div>
     </td>
@@ -203,39 +292,39 @@ Hack23 builds **open-source intelligence platforms** that enable citizens, journ
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Hack23/riksdagsmonitor/badge)](https://scorecard.dev/viewer/?uri=github.com/Hack23/riksdagsmonitor)
 [![Quality Checks](https://github.com/Hack23/riksdagsmonitor/actions/workflows/quality-checks.yml/badge.svg)](https://github.com/Hack23/riksdagsmonitor/actions/workflows/quality-checks.yml)
 [![Dependency Review](https://github.com/Hack23/riksdagsmonitor/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/Hack23/riksdagsmonitor/actions/workflows/dependency-review.yml)
+[![CodeQL](https://github.com/Hack23/riksdagsmonitor/actions/workflows/codeql.yml/badge.svg)](https://github.com/Hack23/riksdagsmonitor/actions/workflows/codeql.yml)
+[![JavaScript Testing](https://github.com/Hack23/riksdagsmonitor/actions/workflows/javascript-testing.yml/badge.svg)](https://github.com/Hack23/riksdagsmonitor/actions/workflows/javascript-testing.yml)
+[![Translation Validation](https://github.com/Hack23/riksdagsmonitor/actions/workflows/translation-validation.yml/badge.svg)](https://github.com/Hack23/riksdagsmonitor/actions/workflows/translation-validation.yml)
+[![Release](https://github.com/Hack23/riksdagsmonitor/actions/workflows/release.yml/badge.svg)](https://github.com/Hack23/riksdagsmonitor/actions/workflows/release.yml)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12069/badge)](https://www.bestpractices.dev/projects/12069)
 [![License](https://img.shields.io/github/license/Hack23/riksdagsmonitor)](https://github.com/Hack23/riksdagsmonitor/blob/main/LICENSE)
-[![ISMS](https://img.shields.io/badge/Hack23-ISMS-blue)](https://github.com/Hack23/ISMS-PUBLIC)
+[![ISMS](https://img.shields.io/badge/Hack23-ISMS-blue?logo=shield)](https://github.com/Hack23/ISMS-PUBLIC)
+[![ISO 27001](https://img.shields.io/badge/ISO-27001:2022-purple?logo=iso)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
+[![NIST CSF](https://img.shields.io/badge/NIST-CSF_2.0-orange?logo=nist)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
+[![CIS Controls](https://img.shields.io/badge/CIS-Controls_v8.1-red?logo=cisecurity)](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Hack23/riksdagsmonitor)
 
+### 🕵️ Citizen Intelligence Agency (CIA)
 
-### 🔍 Citizen Intelligence Agency
+> **Political transparency platform** — Java/Spring data backbone behind Riksdagsmonitor's historical evidence layer
 
 <table>
   <tr>
     <td width="120" align="center">
       <img src="https://raw.githubusercontent.com/Hack23/cia/refs/heads/master/citizen-intelligence-agency/src/main/webapp/VAADIN/themes/cia/cia-logo.png" width="80" height="80" alt="CIA Logo"/>
       <div>
-        <a href="https://github.com/Hack23/cia">
+        <a href="https://github.com/Hack23/cia/releases">
           <img src="https://img.shields.io/github/v/release/Hack23/cia" alt="Release">
         </a>
       </div>
     </td>
     <td>
-      <p><strong>Political transparency platform</strong> monitoring Swedish political activity with data-driven insights, analytics, dashboard visualizations, and accountability metrics.</p>
+      <p>The <strong>Citizen Intelligence Agency</strong> is the Java/Spring Boot political-analytics backend that supplies <strong>15 CIA subsystems</strong> (anomaly · coalition · committee · distribution · election · election-cycle · ministry · parties · party · percentile · politician · pre-election · risk · seasonal · voting) consumed nightly by Riksdagsmonitor. It is the primary historical-evidence layer for Swedish political activity with <strong>50+ years of voting records (1971–2024)</strong>, <strong>2,494 historical politicians</strong>, <strong>349 current MPs</strong>, <strong>3.5M+ votes</strong>, <strong>109,000+ documents</strong>, <strong>8,740 committee documents</strong>, and a <strong>45-rule transparency engine</strong> tracking 2,308 identified rule violations across 8 Riksdag-represented parties.</p>
       <div>
-        <a href="https://bestpractices.coreinfrastructure.org/projects/770">
-          <img src="https://bestpractices.coreinfrastructure.org/projects/770/badge" alt="CII Best Practices">
-        </a>
-        <a href="[https://slsa.dev/spec/v1.0/levels](https://github.com/Hack23/cia/attestations)">
-          <img src="https://slsa.dev/images/gh-badge-level3.svg" alt="SLSA 3">
-        </a>
-        <a href="https://sonarcloud.io/summary/new_code?id=Hack23_cia">
-          <img src="https://sonarcloud.io/api/project_badges/measure?project=Hack23_cia&metric=security_rating" alt="Security Rating">
-        </a>
-      </div>
-      <div>
-        <a href="https://github.com/Hack23/cia"><strong>📂 Repository</strong></a> •
-        <a href="https://hack23.com/cia-features.html"><strong>✨ Features</strong></a> •
+        <a href="https://github.com/Hack23/cia"><strong>📂 Repository</strong></a> ·
+        <a href="https://hack23.github.io/cia/"><strong>🌐 GitHub Pages</strong></a> ·
+        <a href="https://github.com/Hack23/cia/tree/master/json-export-specs/visualizations"><strong>📊 JSON Export Specs</strong></a> ·
+        <a href="https://hack23.com/cia-features.html"><strong>✨ Features</strong></a> ·
         <a href="https://hack23.com/cia-docs.html"><strong>📚 Documentation</strong></a>
       </div>
     </td>
@@ -244,14 +333,35 @@ Hack23 builds **open-source intelligence platforms** that enable citizens, journ
 
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/770/badge)](https://bestpractices.coreinfrastructure.org/projects/770)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Hack23/cia/badge)](https://scorecard.dev/viewer/?uri=github.com/Hack23/cia)
-[![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://slsa.dev/spec/v1.0/levels)
+[![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://github.com/Hack23/cia/attestations)
 [![Verify & Deploy](https://github.com/Hack23/cia/actions/workflows/release.yml/badge.svg?branch=master)](https://github.com/Hack23/cia/actions/workflows/release.yml)
 [![Scorecard supply-chain security](https://github.com/Hack23/cia/actions/workflows/scorecards.yml/badge.svg?branch=master)](https://github.com/Hack23/cia/actions/workflows/scorecards.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Hack23_cia&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Hack23_cia)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Hack23_cia&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Hack23_cia)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Hack23_cia&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Hack23_cia)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Hack23_cia&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Hack23_cia)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Hack23/cia)
 
+### 🌍 Shared Across the Portfolio
 
+| Dimension | Coverage |
+|:----------|:---------|
+| 🌐 **Languages** | 14 — English · Swedish · Danish · Norwegian · Finnish · German · French · Spanish · Dutch · Arabic (RTL) · Hebrew (RTL) · Japanese · Korean · Chinese |
+| ♿ **Accessibility** | WCAG 2.1 AA · keyboard navigable · screen-reader optimised · 4.5:1 contrast · responsive 320 px → 1440 px+ |
+| 🔒 **Compliance** | ISO 27001:2022 · NIST CSF 2.0 · CIS Controls v8.1 · GDPR · NIS2 · EU CRA |
+| 🛡️ **Supply chain** | SHA-pinned GitHub Actions · `step-security/harden-runner` · Dependabot · CodeQL · Secret Scanning · SLSA Level 3 · SPDX SBOM |
+| 📜 **License** | Apache License 2.0 across the entire portfolio |
+| 🏢 **Operator** | [Hack23 AB](https://www.hack23.com) (Org.nr 559534-7807) — Swedish cybersecurity & open-source intelligence consultancy |
+| 🛡️ **ISMS** | [Hack23 ISMS-PUBLIC](https://github.com/Hack23/ISMS-PUBLIC) — fully documented information-security management system |
+
+### 🔗 Hack23 Portfolio Quick Links
+
+- 🌐 **Live platforms** — [euparliamentmonitor.com](https://euparliamentmonitor.com) · [riksdagsmonitor.com](https://riksdagsmonitor.com) · [hack23.github.io/cia](https://hack23.github.io/cia/) · [hack23.com](https://hack23.com)
+- 🧠 **Political Intelligence Hubs** — [EU Parliament](https://euparliamentmonitor.com/political-intelligence.html) · [Riksdag](https://riksdagsmonitor.com/political-intelligence.html)
+- 📂 **Source repositories** — [European-Parliament-MCP-Server](https://github.com/Hack23/European-Parliament-MCP-Server) · [euparliamentmonitor](https://github.com/Hack23/euparliamentmonitor) · [riksdagsmonitor](https://github.com/Hack23/riksdagsmonitor) · [cia](https://github.com/Hack23/cia) · [ISMS-PUBLIC](https://github.com/Hack23/ISMS-PUBLIC)
+- 📦 **npm packages** — [`european-parliament-mcp-server`](https://www.npmjs.com/package/european-parliament-mcp-server) · [`euparliamentmonitor`](https://www.npmjs.com/package/euparliamentmonitor) · [`riksdagsmonitor`](https://www.npmjs.com/package/riksdagsmonitor)
+- 📰 **Blog & company** — [Hack23 blog](https://hack23.com/blog.html) · [LinkedIn — Hack23 AB](https://www.linkedin.com/company/hack23/) · founder [James Pether Sörling, CISSP, CISM](https://www.linkedin.com/in/jamessorling/)
+- 🤖 **AI-readable wikis** — [DeepWiki: European-Parliament-MCP-Server](https://deepwiki.com/Hack23/European-Parliament-MCP-Server) · [DeepWiki: euparliamentmonitor](https://deepwiki.com/Hack23/euparliamentmonitor) · [DeepWiki: riksdagsmonitor](https://deepwiki.com/Hack23/riksdagsmonitor) · [DeepWiki: cia](https://deepwiki.com/Hack23/cia)
 
 ---
 
@@ -1569,10 +1679,11 @@ This project is licensed under the **Apache License 2.0** - see [LICENSE.md](./L
 - [Security Policy](./SECURITY.md)
 
 ### Hack23 Ecosystem
-- [Hack23](https://hack23.com/) — AI-powered democratic transparency platform
-- [EU Parliament Monitor](https://github.com/Hack23/euparliamentmonitor) — European Parliament monitoring dashboard
-- [Riksdagsmonitor](https://riksdagsmonitor.com/) · [GitHub](https://github.com/Hack23/riksdagsmonitor) — Swedish Parliament monitoring
-- [Citizen Intelligence Agency](https://github.com/Hack23/cia) — Comprehensive political intelligence platform
+- 🏢 [Hack23 AB](https://hack23.com/) — Swedish cybersecurity & open-source intelligence consultancy ([blog](https://hack23.com/blog.html) · [LinkedIn](https://www.linkedin.com/company/hack23/))
+- 🏛️ [EU Parliament Monitor](https://euparliamentmonitor.com) ([repo](https://github.com/Hack23/euparliamentmonitor) · [npm](https://www.npmjs.com/package/euparliamentmonitor) · [Political Intelligence Hub](https://euparliamentmonitor.com/political-intelligence.html) · [DeepWiki](https://deepwiki.com/Hack23/euparliamentmonitor)) — daily AI-generated EU parliamentary intelligence in 14 languages, powered by this MCP server
+- 🗳️ [Riksdagsmonitor](https://riksdagsmonitor.com) ([repo](https://github.com/Hack23/riksdagsmonitor) · [npm](https://www.npmjs.com/package/riksdagsmonitor) · [News](https://riksdagsmonitor.com/news/) · [Dashboard](https://riksdagsmonitor.com/dashboard/index.html) · [DeepWiki](https://deepwiki.com/Hack23/riksdagsmonitor)) — Swedish Parliament intelligence, 11 agentic workflows, 50+ years of historical evidence
+- 🕵️ [Citizen Intelligence Agency (CIA)](https://github.com/Hack23/cia) ([Pages](https://hack23.github.io/cia/) · [DeepWiki](https://deepwiki.com/Hack23/cia)) — Java/Spring political-analytics backend, 15 subsystems, 1971–2024 voting & document corpus
+- 🛡️ [Hack23 ISMS-PUBLIC](https://github.com/Hack23/ISMS-PUBLIC) — public ISO 27001:2022 / NIST CSF 2.0 / CIS Controls v8.1 information-security management system
 
 ### European Parliament
 - [Open Data Portal](https://data.europarl.europa.eu/)
