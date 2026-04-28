@@ -161,7 +161,7 @@ graph LR
 **📋 ISMS Policy Integration:**
 - **🏗️ Architecture & Design:** Implementation aligned with [🔐 Information Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Information_Security_Policy.md)
 - **📦 Asset Management:** All 62 tools + 9 resources documented in [ARCHITECTURE.md](ARCHITECTURE.md)
-- **🎯 Threat Model:** Quantitative risk scoring (SLE/ARO/ALE) and CRA Annex I mapping in [THREAT_MODEL.md §Quantitative Risk Scoring](THREAT_MODEL.md#-quantitative-risk-scoring-sle--aro--ale) and [§CRA Annex I Mapping](THREAT_MODEL.md#-eu-cra-annex-i-essential-cybersecurity-requirements-mapping)
+- **🎯 Threat Model:** Quantitative risk scoring (SLE/ARO/ALE) and CRA Annex I mapping in [THREAT_MODEL.md §Quantitative Risk Scoring](THREAT_MODEL.md#quantitative-risk-scoring-top-7-priority-scenarios) and [§CRA Annex I Mapping](THREAT_MODEL.md#eu-cyber-resilience-act-annex-i-mapping)
 - **🔒 Encryption Standards:** HTTPS-only EP API communication per [🔒 Cryptography Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Cryptography_Policy.md)
 - **🌐 Network Security:** stdio transport (no network listener) per [🌐 Network Security Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Network_Security_Policy.md)
 
@@ -191,8 +191,8 @@ Reference: [📊 Risk Assessment Methodology](https://github.com/Hack23/ISMS-PUB
 - **⚠️ Risk Tracking:** Risks documented in [⚠️ Risk Register](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Risk_Register.md)
 - **🔄 Business Impact:** Continuity planning via [BCPPlan.md](BCPPlan.md)
 - **🆘 Recovery Planning:** End-of-life strategy per [End-of-Life-Strategy.md](End-of-Life-Strategy.md)
-- **📊 Quantitative Risk:** Annual Loss Expectancy (ALE) calculations in [THREAT_MODEL.md §Quantitative Risk Scoring](THREAT_MODEL.md#-quantitative-risk-scoring-sle--aro--ale)
-- **🇪🇺 CRA Annex I:** Full requirements traceability in [THREAT_MODEL.md §CRA Annex I Mapping](THREAT_MODEL.md#-eu-cra-annex-i-essential-cybersecurity-requirements-mapping)
+- **📊 Quantitative Risk:** Annual Loss Expectancy (ALE) calculations in [THREAT_MODEL.md §Quantitative Risk Scoring](THREAT_MODEL.md#quantitative-risk-scoring-top-7-priority-scenarios)
+- **🇪🇺 CRA Annex I:** Full requirements traceability in [THREAT_MODEL.md §CRA Annex I Mapping](THREAT_MODEL.md#eu-cyber-resilience-act-annex-i-mapping)
 
 ---
 

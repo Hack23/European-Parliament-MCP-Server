@@ -154,8 +154,8 @@ flowchart TD
 | **Elevation of Privilege** | Unauthorized tool access | Low | Low | No auth layer needed — local stdio process |
 | **Elevation of Privilege** | Prototype pollution via input | Low | Medium | SC-001: Zod validation with strict mode |
 | **Supply Chain** | Malicious npm package | Medium | High | SC-006: Dependabot, npm audit, lockfile |
-| **MCP Protocol** | Prompt injection, tool abuse (M-1…M-12) | Medium | High | See [THREAT_MODEL.md §MCP Threats](./THREAT_MODEL.md#-mcp-protocol-specific-threat-catalog) |
-| **LLM Integration** | OWASP LLM Top 10 risks (L-01…L-10) | Medium | High | See [THREAT_MODEL.md §OWASP LLM](./THREAT_MODEL.md#-owasp-llm-top-10-2025-mapping) |
+| **MCP Protocol** | Prompt injection, tool abuse (M-1…M-7) | Medium | High | See [THREAT_MODEL.md §MCP Threats](./THREAT_MODEL.md#mcp-protocol-specific-threats-20252026-research) |
+| **LLM Integration** | OWASP LLM Top 10 risks (L-01…L-10) | Medium | High | See [THREAT_MODEL.md §OWASP LLM](./THREAT_MODEL.md#owasp-llm-top-10-2025-ep-mcp-server-mapping) |
 
 ---
 

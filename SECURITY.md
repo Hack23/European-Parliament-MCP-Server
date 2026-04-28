@@ -181,7 +181,7 @@ This MCP server implements comprehensive security measures aligned with our **[S
 - **🧪 End-to-End Testing** - Full server binary over stdio transport
   - Policy: [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
   - Coverage: 71 E2E test cases across 4 test files; see [E2ETestPlan.md](E2ETestPlan.md)
-  - Validates: OWASP LLM Top 10 (2025) mitigations and MCP-protocol threat controls (M-1 … M-12)
+  - Validates: OWASP LLM Top 10 (2025) mitigations and MCP-protocol threat controls (M-1 … M-7)
 
 - **🔒 Security Testing** - Dedicated security test suites
   - Authentication/authorization tests

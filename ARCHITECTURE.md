@@ -650,7 +650,7 @@ The server implements a **4-layer security architecture**:
 3. **Layer 3 — Audit Logging**: All tool invocations logged with parameters (PII-stripped) for compliance
 4. **Layer 4 — GDPR Compliance**: MEP personal data handled with data minimization and purpose limitation
 
-See [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) for full details. For OWASP LLM Top 10 (2025) mapping and MCP-protocol-specific threat analysis (M-1 … M-12), see [THREAT_MODEL.md §OWASP LLM Top 10](./THREAT_MODEL.md#-owasp-llm-top-10-2025-mapping) and [§MCP-Protocol Threats](./THREAT_MODEL.md#-mcp-protocol-specific-threat-catalog).
+See [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) for full details. For OWASP LLM Top 10 (2025) mapping and MCP-protocol-specific threat analysis, see [THREAT_MODEL.md](./THREAT_MODEL.md).
 
 ---
 
