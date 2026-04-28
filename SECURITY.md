@@ -71,6 +71,8 @@ All security practices in this repository are governed by our publicly available
 | 🏷️ **Data Classification Policy** | Data sensitivity levels, handling requirements | [View Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Data_Classification_Policy.md) |
 | 🔒 **Privacy Policy** | Personal data protection, GDPR compliance | [View Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Privacy_Policy.md) |
 | 🔑 **Access Control Policy** | Authentication, authorization, identity management | [View Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Access_Control_Policy.md) |
+| 🧪 **E2E Test Plan** | End-to-end test strategy and coverage matrix | [E2ETestPlan.md](E2ETestPlan.md) |
+| 🧪 **Unit Test Plan** | Unit test plan and coverage targets | [docs/UnitTestPlan.md](docs/UnitTestPlan.md) |
 
 ---
 
@@ -175,6 +177,11 @@ This MCP server implements comprehensive security measures aligned with our **[S
   - Policy: [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
   - Focus: MCP protocol compliance, European Parliament API integration
   - Tools: Supertest, API testing frameworks
+
+- **🧪 End-to-End Testing** - Full server binary over stdio transport
+  - Policy: [Secure Development Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md)
+  - Coverage: 71 E2E test cases across 4 test files; see [E2ETestPlan.md](E2ETestPlan.md)
+  - Validates: OWASP LLM Top 10 (2025) mitigations and MCP-protocol threat controls (M-1 … M-12)
 
 - **🔒 Security Testing** - Dedicated security test suites
   - Authentication/authorization tests

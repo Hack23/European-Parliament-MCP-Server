@@ -63,6 +63,8 @@
 | **SWOT Analysis** | [SWOT.md](./SWOT.md) | [FUTURE_SWOT.md](./FUTURE_SWOT.md) | Strategic positioning |
 | **Threat Model** | [THREAT_MODEL.md](./THREAT_MODEL.md) | [FUTURE_THREAT_MODEL.md](./FUTURE_THREAT_MODEL.md) | STRIDE, MITRE ATT&CK, attack trees |
 | **CRA Assessment** | [CRA-ASSESSMENT.md](./CRA-ASSESSMENT.md) | — | EU Cyber Resilience Act conformity |
+| **E2E Test Plan** | [E2ETestPlan.md](./E2ETestPlan.md) | — | End-to-end test strategy and coverage matrix |
+| **Unit Test Plan** | [docs/UnitTestPlan.md](./docs/UnitTestPlan.md) | — | Unit test plan and coverage targets |
 
 ---
 
@@ -152,6 +154,8 @@ flowchart TD
 | **Elevation of Privilege** | Unauthorized tool access | Low | Low | No auth layer needed — local stdio process |
 | **Elevation of Privilege** | Prototype pollution via input | Low | Medium | SC-001: Zod validation with strict mode |
 | **Supply Chain** | Malicious npm package | Medium | High | SC-006: Dependabot, npm audit, lockfile |
+| **MCP Protocol** | Prompt injection, tool abuse (M-1…M-12) | Medium | High | See [THREAT_MODEL.md §MCP Threats](./THREAT_MODEL.md#-mcp-protocol-specific-threat-catalog) |
+| **LLM Integration** | OWASP LLM Top 10 risks (L-01…L-10) | Medium | High | See [THREAT_MODEL.md §OWASP LLM](./THREAT_MODEL.md#-owasp-llm-top-10-2025-mapping) |
 
 ---
 
