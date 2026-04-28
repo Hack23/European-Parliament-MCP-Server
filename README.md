@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <strong>The canonical TypeScript MCP bridge between the <a href="https://data.europarl.europa.eu/">European Parliament Open Data Portal</a> and any MCP-aware AI client</strong> — Claude Desktop, VS Code, Cursor, GitHub Copilot, Smithery. Powers the <a href="https://euparliamentmonitor.com">EU Parliament Monitor</a> AI newsroom and is a sister project to <a href="https://riksdagsmonitor.com">Riksdagsmonitor</a> in the <a href="https://hack23.com">Hack23</a> political-intelligence portfolio.
+  <strong>The canonical TypeScript MCP bridge between the <a href="https://data.europarl.europa.eu/">European Parliament Open Data Portal</a> and any MCP-aware AI client</strong> — Claude Desktop, VS Code, Cursor, GitHub Copilot. Powers the <a href="https://euparliamentmonitor.com">EU Parliament Monitor</a> AI newsroom and is a sister project to <a href="https://riksdagsmonitor.com">Riksdagsmonitor</a> in the <a href="https://hack23.com">Hack23</a> political-intelligence portfolio.
 </p>
 
 <table>
@@ -43,11 +43,6 @@
 ## 📊 Quality Metrics & Documentation
 
 <p align="center">
-  <!-- MCP Registry -->
-  <a href="https://smithery.ai/server/european-parliament-mcp-server">
-    <img src="https://smithery.ai/badge/european-parliament-mcp-server" alt="Smithery MCP Registry">
-  </a>
-
   <!-- npm version -->
   <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
     <img src="https://img.shields.io/npm/v/european-parliament-mcp-server.svg?style=flat-square&logo=npm" alt="npm version">
@@ -174,16 +169,82 @@ graph LR
     style AUDIENCE fill:#7B1FA2,stroke:#9C27B0,color:#fff
 ```
 
-**This MCP server's role:** the canonical, type-safe TypeScript bridge between the European Parliament Open Data Portal and any MCP-aware AI client (Claude Desktop, VS Code, Cursor, GitHub Copilot, Smithery) — and the upstream data layer that powers the **EU Parliament Monitor** newsroom. Every tool is Zod-validated, audit-logged, GDPR-aware, and SLSA Level 3 attested.
+**This MCP server's role:** the canonical, type-safe TypeScript bridge between the European Parliament Open Data Portal and any MCP-aware AI client (Claude Desktop, VS Code, Cursor, GitHub Copilot) — and the upstream data layer that powers the **EU Parliament Monitor** newsroom. Every tool is Zod-validated, audit-logged, GDPR-aware, and SLSA Level 3 attested.
 
 ### 🗂️ Portfolio Comparison Matrix
 
-| Project | Scope | Primary Source | Audience | Live URL | Repository |
-|:--------|:------|:---------------|:---------|:---------|:-----------|
-| 🇪🇺 **European-Parliament-MCP-Server** *(this repo)* | EU Parliament data layer for AI agents — 62 MCP tools, 9 resources, 7 prompts, OSINT analytics | [data.europarl.europa.eu](https://data.europarl.europa.eu/) | Developers, AI assistants, journalists, researchers | [npm: european-parliament-mcp-server](https://www.npmjs.com/package/european-parliament-mcp-server) · [Smithery](https://smithery.ai/server/european-parliament-mcp-server) | [Hack23/European-Parliament-MCP-Server](https://github.com/Hack23/European-Parliament-MCP-Server) |
-| 🏛️ **EU Parliament Monitor** | Daily AI-generated EP intelligence in 14 languages — 8 unified gh-aw workflows + 51-artifact analysis pipeline | This MCP server (60+ tools) + IMF + World Bank | Citizens, journalists, NGOs across all 27 EU member states | **[euparliamentmonitor.com](https://euparliamentmonitor.com)** · [Political Intelligence Hub](https://euparliamentmonitor.com/political-intelligence.html) · [Site Map](https://euparliamentmonitor.com/sitemap.html) · [API Reference](https://euparliamentmonitor.com/docs/api/) | [Hack23/euparliamentmonitor](https://github.com/Hack23/euparliamentmonitor) |
-| 🗳️ **Riksdagsmonitor** | Daily AI-generated Swedish parliamentary intelligence — 11 agentic workflows · 91 skills · 50+ years of evidence (1971–2024) · Tidö coalition fragility tracker | `riksdag-regering` MCP (32+ tools) + SCB + IMF + World Bank + CIA exports | Swedish citizens, Nordic journalists, election researchers | **[riksdagsmonitor.com](https://riksdagsmonitor.com)** · [Political Intelligence](https://riksdagsmonitor.com/political-intelligence.html) · [AI Newsroom](https://riksdagsmonitor.com/news/index.html) · [Dashboard](https://riksdagsmonitor.com/dashboard/index.html) | [Hack23/riksdagsmonitor](https://github.com/Hack23/riksdagsmonitor) |
-| 🕵️ **Citizen Intelligence Agency (CIA)** | 15-subsystem Java/Spring political-analytics backend — 349 current MPs, 2,494 historical politicians, 3.5M+ votes, 109k+ documents, 45-rule risk engine | `data.riksdagen.se` direct + Valmyndigheten + ESV | Hack23 platform consumers (Riksdagsmonitor) and OSINT analysts | [hack23.github.io/cia](https://hack23.github.io/cia/) | [Hack23/cia](https://github.com/Hack23/cia) |
+<table>
+  <thead>
+    <tr>
+      <th align="left">Project</th>
+      <th align="left">Scope</th>
+      <th align="left">Audience</th>
+      <th align="left">Links</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td valign="top">
+        🇪🇺 <b>European-Parliament-MCP-Server</b><br/>
+        <sub><i>(this repo)</i></sub>
+      </td>
+      <td valign="top">
+        EU Parliament data layer for AI agents<br/>
+        <sub>62 MCP tools · 9 resources · 7 prompts · OSINT analytics</sub><br/>
+        <sub><b>Source:</b> <a href="https://data.europarl.europa.eu/">data.europarl.europa.eu</a></sub>
+      </td>
+      <td valign="top">Developers · AI assistants · Journalists · Researchers</td>
+      <td valign="top">
+        📦 <a href="https://www.npmjs.com/package/european-parliament-mcp-server"><b>npm</b></a><br/>
+        💻 <a href="https://github.com/Hack23/European-Parliament-MCP-Server">GitHub</a>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">🏛️ <b>EU Parliament Monitor</b></td>
+      <td valign="top">
+        Daily AI-generated EP intelligence in 14 languages<br/>
+        <sub>8 unified gh-aw workflows · 51-artifact analysis pipeline</sub><br/>
+        <sub><b>Source:</b> this MCP server (60+ tools) + IMF + World Bank</sub>
+      </td>
+      <td valign="top">Citizens · Journalists · NGOs across all 27 EU member states</td>
+      <td valign="top">
+        🌐 <a href="https://euparliamentmonitor.com"><b>euparliamentmonitor.com</b></a><br/>
+        🧠 <a href="https://euparliamentmonitor.com/political-intelligence.html">Intelligence Hub</a><br/>
+        📚 <a href="https://euparliamentmonitor.com/docs/api/">API Reference</a><br/>
+        💻 <a href="https://github.com/Hack23/euparliamentmonitor">GitHub</a>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">🗳️ <b>Riksdagsmonitor</b></td>
+      <td valign="top">
+        Daily AI-generated Swedish parliamentary intelligence<br/>
+        <sub>11 agentic workflows · 91 skills · 50+ years of evidence (1971–2024) · Tidö coalition fragility tracker</sub><br/>
+        <sub><b>Source:</b> <code>riksdag-regering</code> MCP (32+ tools) + SCB + IMF + World Bank + CIA exports</sub>
+      </td>
+      <td valign="top">Swedish citizens · Nordic journalists · Election researchers</td>
+      <td valign="top">
+        🌐 <a href="https://riksdagsmonitor.com"><b>riksdagsmonitor.com</b></a><br/>
+        🧠 <a href="https://riksdagsmonitor.com/political-intelligence.html">Intelligence</a><br/>
+        📰 <a href="https://riksdagsmonitor.com/news/index.html">AI Newsroom</a><br/>
+        📊 <a href="https://riksdagsmonitor.com/dashboard/index.html">Dashboard</a><br/>
+        💻 <a href="https://github.com/Hack23/riksdagsmonitor">GitHub</a>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">🕵️ <b>Citizen Intelligence Agency</b><br/><sub>(CIA)</sub></td>
+      <td valign="top">
+        15-subsystem Java/Spring political-analytics backend<br/>
+        <sub>349 current MPs · 2,494 historical politicians · 3.5M+ votes · 109k+ documents · 45-rule risk engine</sub><br/>
+        <sub><b>Source:</b> <code>data.riksdagen.se</code> direct + Valmyndigheten + ESV</sub>
+      </td>
+      <td valign="top">Hack23 platform consumers (Riksdagsmonitor) · OSINT analysts</td>
+      <td valign="top">
+        🌐 <a href="https://hack23.github.io/cia/"><b>hack23.github.io/cia</b></a><br/>
+        💻 <a href="https://github.com/Hack23/cia">GitHub</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 ### 🇪🇺 EU Parliament Monitor — `euparliamentmonitor.com`
 
@@ -1696,7 +1757,6 @@ This project is licensed under the **Apache License 2.0** - see [LICENSE.md](./L
 - [MCP Documentation](https://modelcontextprotocol.io/docs)
 
 ### MCP Registries
-- [Smithery](https://smithery.ai/server/european-parliament-mcp-server) — MCP server registry listing
 - [npm Package](https://www.npmjs.com/package/european-parliament-mcp-server) — npm registry
 
 ### Political & Government MCP Servers

@@ -43,11 +43,6 @@
 ## 📊 Quality Metrics & Documentation
 
 <p align="center">
-  <!-- MCP Registry -->
-  <a href="https://smithery.ai/server/european-parliament-mcp-server">
-    <img src="https://smithery.ai/badge/european-parliament-mcp-server" alt="Smithery MCP Registry">
-  </a>
-
   <!-- npm version -->
   <a href="https://www.npmjs.com/package/european-parliament-mcp-server">
     <img src="https://img.shields.io/npm/v/european-parliament-mcp-server.svg?style=flat-square&logo=npm" alt="npm version">
@@ -1583,7 +1578,6 @@ This project is licensed under the **Apache License 2.0** - see [LICENSE.md](_me
 - [MCP Documentation](https://modelcontextprotocol.io/docs)
 
 ### MCP Registries
-- [Smithery](https://smithery.ai/server/european-parliament-mcp-server) — MCP server registry listing
 - [npm Package](https://www.npmjs.com/package/european-parliament-mcp-server) — npm registry
 
 ### Political & Government MCP Servers
