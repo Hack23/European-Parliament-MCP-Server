@@ -582,14 +582,13 @@ console.log(`Found ${sessions.data.length} sessions`);
 
 > ℹ️ **Data delay**: The EP publishes roll-call voting data with a delay of several weeks. Queries for the most recent 1–2 months may return empty results — this is expected EP API behavior, not an error.
 
-> ⚠️ **EP API limitation**: The `mepId` parameter is accepted but **has no effect** — the EP API only provides aggregate vote tallies, not individual MEP positions.
+> ℹ️ **EP API limitation**: This endpoint returns only aggregate vote tallies — the EP API does not expose individual MEP voting positions. Filter by `sessionId`, `topic`, or date range to scope results.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | sessionId | string | No | - | Filter by plenary session |
-| mepId | string | No | - | Accepted but ignored (EP API limitation — no per-MEP vote data) |
 | topic | string | No | - | Filter by topic/keyword |
 | dateFrom | string | No | - | Start date (YYYY-MM-DD) |
 | dateTo | string | No | - | End date (YYYY-MM-DD) |

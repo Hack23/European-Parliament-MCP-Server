@@ -75,38 +75,6 @@ function isRateLimitOrNetworkError(error: unknown): boolean {
 }
 
 /**
- * Retry a function with exponential backoff.
- * Always throws on final failure (use `retryOrSkip` to skip on rate limit errors).
- * 
- * @param fn - Function to retry
- * @param maxRetries - Maximum number of retries
- * @param baseDelay - Base delay in milliseconds
- * @returns Result from function
- */
-export async function retry<T>(
-  fn: () => Promise<T>,
-  maxRetries = 3,
-  baseDelay = 1000
-): Promise<T> {
-  let lastError: Error | undefined;
-  
-  for (let i = 0; i <= maxRetries; i++) {
-    try {
-      return await fn();
-    } catch (error) {
-      lastError = error as Error;
-      
-      if (i < maxRetries) {
-        const delay = baseDelay * Math.pow(2, i);
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
-    }
-  }
-  
-  throw lastError ?? new Error('Retry failed');
-}
-
-/**
  * Retry, but skip test (log warning) on rate limit or network errors instead of failing.
  * Skips immediately on the FIRST rate-limit/timeout/network error; does not retry those.
  * 
@@ -163,32 +131,6 @@ export async function measureTime<T>(
   const duration = performance.now() - start;
   
   return [result, duration];
-}
-
-/**
- * Wait for a condition to become true, polling at the given interval.
- * Throws if the condition is not met within the timeout.
- *
- * @param condition - Predicate to check
- * @param timeoutMs - Maximum wait time in milliseconds (default: DEFAULT_TEST_TIMEOUT_MS)
- * @param intervalMs - Polling interval in milliseconds (default: 100)
- * @throws Error if condition not met within timeout
- */
-export async function waitFor(
-  condition: () => boolean | Promise<boolean>,
-  timeoutMs = DEFAULT_TEST_TIMEOUT_MS,
-  intervalMs = 100
-): Promise<void> {
-  const deadline = Date.now() + timeoutMs;
-
-  while (Date.now() < deadline) {
-    if (await condition()) {
-      return;
-    }
-    await new Promise(resolve => setTimeout(resolve, intervalMs));
-  }
-
-  throw new Error(`waitFor: condition not met within ${timeoutMs}ms`);
 }
 
 /**

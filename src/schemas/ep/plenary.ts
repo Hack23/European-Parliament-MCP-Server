@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { DateStringSchema, MepIdSchema, SessionIdSchema, refineDateRange, DATE_RANGE_ERROR } from './common.js';
+import { DateStringSchema, SessionIdSchema, refineDateRange, DATE_RANGE_ERROR } from './common.js';
 
 /**
  * Get plenary sessions input schema
@@ -65,9 +65,6 @@ export const GetVotingRecordsSchema = z.object({
   sessionId: SessionIdSchema
     .optional()
     .describe('Plenary session identifier'),
-  mepId: MepIdSchema
-    .optional()
-    .describe('MEP identifier'),
   topic: z.string()
     .min(1)
     .max(200)
