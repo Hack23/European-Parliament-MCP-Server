@@ -85,6 +85,11 @@ describe('get_voting_records Tool', () => {
       await expect(handleGetVotingRecords({ limit: 101 }))
         .rejects.toThrow();
     });
+
+    it('should reject removed/unknown parameters (e.g. deprecated mepId)', async () => {
+      await expect(handleGetVotingRecords({ mepId: 'MEP-12345' }))
+        .rejects.toThrow(/Invalid parameters/);
+    });
   });
 
   describe('Response Format', () => {
