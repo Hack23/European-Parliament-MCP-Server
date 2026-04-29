@@ -1330,7 +1330,7 @@ Analyze the Swedish delegation's composition, voting behavior, and committee rep
 
 ### Tool: generate_political_landscape
 
-**Description**: Generate a comprehensive political landscape overview of the European Parliament, including group composition, power dynamics, coalition thresholds, bloc analysis, and fragmentation metrics. Aggregates the **full paginated MEP roster** (~720 MEPs in EP10) and normalises EP API native-language acronyms (e.g. `PPE` → `EPP`, `Verts-ALE` → `Greens/EFA`, legacy `ID` → EP10 successor `PfE`) before computing seat shares.
+**Description**: Generate a comprehensive political landscape overview of the European Parliament, including group composition, power dynamics, coalition thresholds, bloc analysis, and fragmentation metrics. Aggregates the **full paginated MEP roster** (~720 MEPs in EP10) and normalises EP API native-language acronyms (e.g. `PPE` → `EPP`, `Verts-ALE` → `Greens/EFA`, EP9 `ID` → EP10 successor `PfE`) before computing seat shares.
 
 #### Parameters
 

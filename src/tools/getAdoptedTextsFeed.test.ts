@@ -215,7 +215,7 @@ describe('get_adopted_texts_feed Tool', () => {
         items: Array<{ id: string }>;
         dataQualityWarnings: string[];
       };
-      // Augmented item must appear before the legacy backfill
+      // Augmented item must appear before the year-based backfill
       expect(parsed.items[0]?.id).toBe(augmentedItem.id);
       expect(parsed.items.some((i) => i.id === 'TA-9-2024-0314')).toBe(true);
       expect(parsed.dataQualityWarnings.some((w) => w.startsWith('FRESHNESS_FALLBACK'))).toBe(true);
