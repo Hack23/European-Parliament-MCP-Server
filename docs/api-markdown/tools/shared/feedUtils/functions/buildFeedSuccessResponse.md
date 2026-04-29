@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.16**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.17**](../../../../README.md)
 
 ***
 
@@ -23,14 +23,14 @@ verbatim and augmented with the uniform contract fields:
     or passed explicitly);
   - `"operational"` when items are present and no warnings.
 - `data` is normalized so that, after JSON serialization, consumers
-  reading the legacy `data` field always see an array with the same
-  contents as `items` (structural equality across the wire, not
+  reading the backwards-compatible `data` field always see an array with
+  the same contents as `items` (structural equality across the wire, not
   referential identity).
 - Existing `dataQualityWarnings` from `result` are preserved and
   merged with any explicitly-supplied warnings (rather than
   clobbered). When `status` is `"unavailable"`, the empty-feed
   reason is appended for backwards compatibility with consumers
-  reading the legacy field.
+  reading `dataQualityWarnings`.
 - `reason` is set whenever `status !== "operational"`.
 
 ## Parameters
