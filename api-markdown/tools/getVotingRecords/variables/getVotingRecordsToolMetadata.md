@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.16**](../../../README.md)
+[**European Parliament MCP Server API v1.2.17**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getVotingRecordsToolMetadata**: `object`
 
-Defined in: [tools/getVotingRecords.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getVotingRecords.ts#L134)
+Defined in: [tools/getVotingRecords.ts:139](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getVotingRecords.ts#L139)
 
 Tool metadata for MCP registration
 
@@ -16,7 +16,7 @@ Tool metadata for MCP registration
 
 ### description
 
-> **description**: `string` = `'Retrieve voting records from European Parliament plenary sessions. Filter by session, topic, or date range. Returns aggregate vote counts (for/against/abstain) and final result. The mepId parameter is accepted but has no effect — the EP API only provides aggregate vote tallies, not individual MEP positions. NOTE: The EP publishes roll-call voting data with a delay of several weeks, so queries for the most recent 1-2 months may return empty results — this is expected EP API behavior, not an error.'`
+> **description**: `string` = `'Retrieve voting records from European Parliament plenary sessions. Filter by session, topic, or date range. Returns aggregate vote counts (for/against/abstain) and final result. The EP API only provides aggregate vote tallies, not individual MEP positions. NOTE: The EP publishes roll-call voting data with a delay of several weeks, so queries for the most recent 1-2 months may return empty results — this is expected EP API behavior, not an error.'`
 
 ### inputSchema
 
@@ -81,26 +81,6 @@ Tool metadata for MCP registration
 #### inputSchema.properties.limit.type
 
 > **type**: `string` = `'number'`
-
-#### inputSchema.properties.mepId
-
-> **mepId**: `object`
-
-#### inputSchema.properties.mepId.description
-
-> **description**: `string` = `'MEP identifier (accepted but ignored — the EP API only provides aggregate vote tallies, not individual MEP positions)'`
-
-#### inputSchema.properties.mepId.maxLength
-
-> **maxLength**: `number` = `100`
-
-#### inputSchema.properties.mepId.minLength
-
-> **minLength**: `number` = `1`
-
-#### inputSchema.properties.mepId.type
-
-> **type**: `string` = `'string'`
 
 #### inputSchema.properties.offset
 

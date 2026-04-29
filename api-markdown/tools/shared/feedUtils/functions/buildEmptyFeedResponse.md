@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.16**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.17**](../../../../README.md)
 
 ***
 
@@ -30,7 +30,7 @@ warnings (`status` will be derived as `"degraded"`).
 
 Human-readable reason describing why the feed is empty
                 (also surfaced in `dataQualityWarnings` for backwards
-                compatibility with consumers reading the legacy field).
+                compatibility with consumers reading that field).
 
 ### meta?
 

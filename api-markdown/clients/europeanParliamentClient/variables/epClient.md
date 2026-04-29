@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.16**](../../../README.md)
+[**European Parliament MCP Server API v1.2.17**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **epClient**: [`EuropeanParliamentClient`](../classes/EuropeanParliamentClient.md)
 
-Defined in: [clients/europeanParliamentClient.ts:951](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L951)
+Defined in: [clients/europeanParliamentClient.ts:950](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L950)
 
 Singleton instance of European Parliament API client for global use.
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.16**](../../../../README.md)
+[**European Parliament MCP Server API v1.2.17**](../../../../README.md)
 
 ***
 
@@ -17,8 +17,8 @@ the same slow request), this returns a well-formed success response with
 explicit timeout indicators and OSINT-standard metadata so callers can
 reliably distinguish a timeout from a normal successful analysis result.
 
-The payload preserves the legacy `data: []` and `'@context': []` fields for
-compatibility, while also including standard OSINT output fields such as
+The payload preserves the backwards-compatible `data: []` and `'@context': []`
+fields, while also including standard OSINT output fields such as
 `confidenceLevel`, `methodology`, `dataFreshness`, and `sourceAttribution`.
 
 ## Parameters
