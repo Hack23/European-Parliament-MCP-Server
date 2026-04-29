@@ -40,7 +40,7 @@
  *   `"unavailable"` when the upstream returned a 404 / error-in-body /
  *   empty body and we have no fresh data to report.
  * - `items` — canonical array field in the response contract.
- * - `data` — legacy compatibility field, normalized so serialized
+ * - `data` — backwards-compatibility alias, normalized so serialized
  *   responses always expose it as an array with the same contents as
  *   `items` (note: responses are JSON-serialized, so consumers see
  *   structural equality, not referential identity).
@@ -49,8 +49,8 @@
  *   (not "last upstream success" — that would require state/caching).
  * - `reason` — present only when `status !== "operational"`.
  *
- * The legacy `data` / `@context` / `dataQualityWarnings` fields are
- * preserved so existing consumers continue to work unchanged.
+ * The backwards-compatibility `data` / `@context` / `dataQualityWarnings`
+ * fields are preserved so existing consumers continue to work unchanged.
  *
  * Reserve HTTP 4xx / 5xx for genuine transport errors (auth, rate
  * limit, gateway timeout, endpoint removed permanently). Empty
@@ -211,14 +211,14 @@ export function isErrorInBody(result: Record<string, unknown>): boolean {
  *     or passed explicitly);
  *   - `"operational"` when items are present and no warnings.
  * - `data` is normalized so that, after JSON serialization, consumers
- *   reading the legacy `data` field always see an array with the same
- *   contents as `items` (structural equality across the wire, not
+ *   reading the backwards-compatible `data` field always see an array with
+ *   the same contents as `items` (structural equality across the wire, not
  *   referential identity).
  * - Existing `dataQualityWarnings` from `result` are preserved and
  *   merged with any explicitly-supplied warnings (rather than
  *   clobbered). When `status` is `"unavailable"`, the empty-feed
  *   reason is appended for backwards compatibility with consumers
- *   reading the legacy field.
+ *   reading `dataQualityWarnings`.
  * - `reason` is set whenever `status !== "operational"`.
  *
  * @param result - Raw upstream response payload (may contain `data`,
@@ -254,7 +254,7 @@ export function buildFeedSuccessResponse(
   if (items.length === 0) {
     status = 'unavailable';
     reason = customEmptyReason ?? EMPTY_FEED_REASON;
-    // Surface the empty-feed reason in dataQualityWarnings for legacy consumers.
+    // Surface the empty-feed reason in dataQualityWarnings for backwards-compatible consumers.
     if (!mergedWarnings.includes(reason)) {
       mergedWarnings.push(reason);
     }
@@ -292,7 +292,7 @@ export function buildFeedSuccessResponse(
  *
  * @param reason - Human-readable reason describing why the feed is empty
  *                 (also surfaced in `dataQualityWarnings` for backwards
- *                 compatibility with consumers reading the legacy field).
+ *                 compatibility with consumers reading that field).
  * @param meta   - Optional machine-readable failure metadata. When provided,
  *                 `errorCode`, `retryable`, and `upstream` are included in the
  *                 response envelope so downstream consumers can classify the

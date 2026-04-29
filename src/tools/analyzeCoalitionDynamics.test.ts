@@ -337,14 +337,14 @@ describe('analyze_coalition_dynamics Tool', () => {
       expect(ids).toEqual(['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'PfE', 'The Left', 'ESN', 'NI']);
     });
 
-    it('should normalize and dedupe caller-supplied groupIds (legacy ID, URI, alias, duplicate)', async () => {
+    it('should normalize and dedupe caller-supplied groupIds (predecessor ID, URI, alias, duplicate)', async () => {
       vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
         { id: 'MEP-1', name: 'A', country: 'IT', politicalGroup: 'PfE',
           committees: [], active: true, termStart: '2024-07-16' },
       ], complete: true });
 
       const result = await handleAnalyzeCoalitionDynamics({ groupIds: [
-        'ID', // legacy → PfE
+        'ID', // EP9 predecessor → PfE
         'authority/corporate-body/PfE', // URI suffix → PfE (duplicate)
         'European People\'s Party', // alias → EPP
         'EPP', // duplicate of previous

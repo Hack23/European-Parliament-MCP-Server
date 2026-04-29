@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { DateStringSchema, MepIdSchema, SessionIdSchema, refineDateRange, DATE_RANGE_ERROR } from './common.js';
+import { DateStringSchema, SessionIdSchema, refineDateRange, DATE_RANGE_ERROR } from './common.js';
 
 /**
  * Get plenary sessions input schema
@@ -59,15 +59,17 @@ export const PlenarySessionSchema = z.object({
 });
 
 /**
- * Get voting records input schema
+ * Get voting records input schema.
+ *
+ * Marked `.strict()` to reject unknown/removed parameters (e.g. the
+ * deprecated `mepId` field, which was removed because the EP API does not
+ * expose individual MEP votes). Clients passing such fields receive a
+ * clear validation error instead of having them silently stripped.
  */
 export const GetVotingRecordsSchema = z.object({
   sessionId: SessionIdSchema
     .optional()
     .describe('Plenary session identifier'),
-  mepId: MepIdSchema
-    .optional()
-    .describe('MEP identifier'),
   topic: z.string()
     .min(1)
     .max(200)
@@ -86,7 +88,7 @@ export const GetVotingRecordsSchema = z.object({
     .min(0)
     .default(0)
     .describe('Pagination offset')
-}).refine(
+}).strict().refine(
   refineDateRange,
   { message: DATE_RANGE_ERROR }
 );

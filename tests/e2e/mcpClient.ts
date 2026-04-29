@@ -205,15 +205,3 @@ export class MCPTestClient {
     return this.connected;
   }
 }
-
-/**
- * Create and connect a test client
- * 
- * @param serverPath - Path to server executable
- * @returns Connected MCP test client
- */
-export async function createTestClient(serverPath?: string): Promise<MCPTestClient> {
-  const client = new MCPTestClient();
-  await client.connect(serverPath);
-  return client;
-}

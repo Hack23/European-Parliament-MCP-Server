@@ -155,7 +155,7 @@ function aggregateByGroup(
   for (const mep of meps) {
     allCountries.add(mep.country);
     // Normalize political-group label so EP API native-language acronyms
-    // (e.g. French `PPE` / `Verts-ALE`) and legacy successor names
+    // (e.g. French `PPE` / `Verts-ALE`) and predecessor / successor names
     // (e.g. EP9 `ID` → EP10 `PfE`) collapse onto their canonical short codes
     // before aggregation. Without this, the same group can appear twice with
     // split member counts. See `analyze_coalition_dynamics` Defect #1 / D-01

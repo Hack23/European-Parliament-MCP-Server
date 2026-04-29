@@ -78,46 +78,6 @@ export function expectValidMCPResponse(response: unknown): unknown {
 }
 
 /**
- * Asserts that `response` is a valid MCP tool response and returns the parsed
- * JSON payload cast to the given type parameter `T`.
- *
- * This is the **type-safe** variant of {@link expectValidMCPResponse}.
- * Use it when you know the expected shape of the payload:
- *
- * ```typescript
- * interface MyPayload { data: string[]; total: number; }
- * const parsed = expectTypedMCPResponse<MyPayload>(response);
- * expect(parsed.total).toBeGreaterThan(0);
- * ```
- *
- * @typeParam T - Expected shape of the parsed JSON payload.
- * @param response - The raw value returned by a tool handler.
- * @returns The parsed and typed JSON payload.
- * @throws If any structural expectation fails.
- */
-export function expectTypedMCPResponse<T>(response: unknown): T {
-  return expectValidMCPResponse(response) as T;
-}
-
-/**
- * Type-safe wrapper around `JSON.parse` for MCP tool response text content.
- *
- * Avoids the common `JSON.parse(result.content[0]?.text ?? '{}')` pattern
- * which returns `any`. Instead, this helper safely parses and casts to `T`.
- *
- * @typeParam T - Expected shape of the parsed JSON payload.
- * @param content - MCP response content array.
- * @returns The parsed and typed JSON payload.
- */
-export function parseToolResponseJson<T>(content: MCPContentItem[]): T {
-  const textItem = content[0];
-  expect(textItem).toBeDefined();
-  expect(textItem!.type).toBe('text');
-  expect(typeof textItem!.text).toBe('string');
-  return JSON.parse(textItem!.text!) as T;
-}
-
-/**
  * Asserts that `response` is a valid MCP tool response containing a paginated
  * payload, and returns the parsed paginated object.
  *

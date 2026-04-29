@@ -360,7 +360,7 @@ describe('generate_political_landscape Tool', () => {
           // Greens/EFA variants — URI suffix `Verts-ALE` should collapse onto `Greens/EFA`.
           { id: 'MEP-4', name: 'D', country: 'SE', politicalGroup: 'Verts-ALE', committees: [], active: true, termStart: '2024-07-16' },
           { id: 'MEP-5', name: 'E', country: 'FR', politicalGroup: 'Greens/EFA', committees: [], active: true, termStart: '2024-07-16' },
-          // Legacy ID → EP10 successor PfE.
+          // EP9 ID → EP10 successor PfE.
           { id: 'MEP-6', name: 'F', country: 'IT', politicalGroup: 'ID', committees: [], active: true, termStart: '2024-07-16' },
           { id: 'MEP-7', name: 'G', country: 'FR', politicalGroup: 'PfE', committees: [], active: true, termStart: '2024-07-16' }
         ],

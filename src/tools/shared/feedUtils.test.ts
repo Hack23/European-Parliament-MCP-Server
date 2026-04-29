@@ -105,7 +105,7 @@ describe('feedUtils', () => {
       expect(() => new Date(env.generatedAt).toISOString()).not.toThrow();
     });
 
-    it('should preserve legacy data / @context / dataQualityWarnings fields', () => {
+    it('should preserve backwards-compatible data / @context / dataQualityWarnings fields', () => {
       const result = buildEmptyFeedResponse();
       const env = parseEnvelope(result.content[0]?.text);
 
@@ -334,7 +334,7 @@ describe('feedUtils', () => {
       expect(env.upstream).toBeUndefined();
     });
 
-    it('should still emit status="unavailable" and preserve legacy fields when meta is provided', () => {
+    it('should still emit status="unavailable" and preserve backwards-compatible fields when meta is provided', () => {
       const result = buildEmptyFeedResponse('reason', { errorCode: 'UPSTREAM_TIMEOUT', retryable: true });
       const env = parseEnvelope(result.content[0]?.text);
       expect(env.status).toBe('unavailable');

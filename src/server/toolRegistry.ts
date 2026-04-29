@@ -21,8 +21,8 @@ import { handleGetParliamentaryQuestions, getParliamentaryQuestionsToolMetadata 
 
 // ── Advanced analysis tool imports ────────────────────────────────
 import { handleAnalyzeVotingPatterns, analyzeVotingPatternsToolMetadata } from '../tools/analyzeVotingPatterns.js';
-import { handleTrackLegislation, trackLegislationToolMetadata } from '../tools/trackLegislation.js';
-import { handleGenerateReport, generateReportToolMetadata } from '../tools/generateReport.js';
+import { handleTrackLegislation, trackLegislationToolMetadata } from '../tools/trackLegislation/index.js';
+import { handleGenerateReport, generateReportToolMetadata } from '../tools/generateReport/index.js';
 
 // ── Phase 1 OSINT Intelligence Tools ──────────────────────────────
 import { handleAssessMepInfluence, assessMepInfluenceToolMetadata } from '../tools/assessMepInfluence.js';
