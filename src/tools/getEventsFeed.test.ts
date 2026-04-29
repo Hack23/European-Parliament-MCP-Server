@@ -167,7 +167,7 @@ describe('get_events_feed Tool', () => {
       expect(env.dataQualityWarnings).toEqual([]);
       expect(typeof env.generatedAt).toBe('string');
       expect(env.reason).toBeUndefined();
-      // Legacy field still present for backwards compatibility
+      // Backwards-compatible field still present
       expect(env.data).toEqual([{ id: 'evt-1', type: 'Event' }]);
     });
 

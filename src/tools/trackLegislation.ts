@@ -1,10 +1,12 @@
 /**
- * MCP Tool: track_legislation (Legacy export)
- * 
- * Re-exports from modular structure in ./trackLegislation/
- * 
+ * MCP Tool: track_legislation (public subpath entrypoint)
+ *
+ * Thin re-export shim that preserves the package's public subpath
+ * `european-parliament-mcp-server/tools/trackLegislation` (declared in
+ * `package.json#exports["./tools/*"]`). The actual implementation lives
+ * in the modular structure under `./trackLegislation/`.
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
-/** Re-export legislation tracking handler and metadata from modular implementation */
 export { handleTrackLegislation, trackLegislationToolMetadata, toProcessId } from './trackLegislation/index.js';

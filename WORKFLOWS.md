@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>CI/CD Pipeline & Automation Documentation</strong><br>
-  <em>11 GitHub Actions Workflows — TypeScript/Node.js — DevSecOps Pipeline</em>
+  <em>12 GitHub Actions Workflows — TypeScript/Node.js — DevSecOps Pipeline</em>
 </p>
 
 <p align="center">
@@ -114,7 +114,7 @@ graph LR
 
 | Stage | Pipeline Phase | Workflows | Trigger | Duration | Purpose |
 |-------|---------------|-----------|---------|----------|---------|
-| 1 | **Code Validation** | `dependency-review.yml`, `labeler.yml` | PR | ~1 min | Dependency scanning, PR labeling |
+| 1 | **Code Validation** | `dependency-review.yml`, `labeler.yml`, `knip.yml` | PR | ~1 min | Dependency scanning, PR labeling, unused-code detection |
 | 2 | **Build & Test** | `test-and-report.yml` | Push, PR | ~3 min | TypeScript build, lint, unit tests, coverage |
 | 3 | **Security Analysis** | `codeql.yml` | Push, PR, Weekly | ~5 min | SAST scanning (CodeQL) |
 | 4 | **Integration Testing** | `integration-tests.yml` | Push, PR, Daily | ~5 min | E2E tests, live API validation |
@@ -140,6 +140,7 @@ graph LR
 | 9 | **Setup Labels** | `setup-labels.yml` | Manual | — | `issues: write` | Configuration Mgmt |
 | 10 | **Copilot Setup** | `copilot-setup-steps.yml` | Push, PR, Manual | 25.x + TS 6.0.2 | Scoped per caller | Dev Tooling |
 | 11 | **EP Statistics Refresh** | `refresh-stats.yml` | Weekly (cron), Manual | 25.x + TS 6.0.2 | `contents: write` | Agentic data intelligence |
+| 12 | **Knip — Unused Code** | `knip.yml` | Push, PR, Manual | 25.x | `contents: read` | ISO 27001 A.8.28 (Secure Coding) |
 
 ---
 
@@ -154,6 +155,7 @@ flowchart TB
     subgraph "Stage 1: Code Validation"
         DEV --> LABEL["🏷️ PR Labeler<br><code>labeler.yml</code>"]
         DEV --> DEPREVIEW["🔍 Dependency Review<br><code>dependency-review.yml</code>"]
+        DEV --> KNIP_WF["🧹 Knip<br><code>knip.yml</code>"]
     end
 
     subgraph "Stage 2: Build & Test"
@@ -261,6 +263,41 @@ flowchart TB
 | **EP Data** | `ep-api`, `ep-data`, `meps`, `plenary`, `committees`, `documents` | `src/api/**`, `src/ep-*/**` |
 | **Quality** | `testing`, `documentation`, `security`, `dependencies` | `tests/**`, `docs/**`, `*.md` |
 | **Components** | `component-tools`, `component-resources`, `component-client` | `src/tools/**`, `src/resources/**` |
+
+#### 1.3 Knip — Unused Code Detection
+
+| Property | Value |
+|----------|-------|
+| **Workflow File** | `.github/workflows/knip.yml` |
+| **Trigger** | Push to `main`, Pull requests to `main`, Manual dispatch |
+| **Duration** | ~1 min |
+| **Node.js Version** | 25.x |
+| **Quality Gate** | 0 unused exports, dependencies, or files (blocking) |
+| **Runner Hardening** | `step-security/harden-runner` (egress audit) |
+| **Concurrency** | `cancel-in-progress` per ref to save CI minutes |
+
+**Key Steps:**
+
+1. Harden runner environment
+2. Checkout repository
+3. Setup Node.js 25 + cache `~/.npm`
+4. `npm ci`
+5. `npm run knip` (uses `knip.json` covering `src/**/*.ts`, `tests/**/*.ts`, `scripts/**/*.ts`)
+6. Post job summary with triage guidance on failure
+
+**Triage Guidance (surfaced in failure summary):**
+
+1. **Integrate** — code is intended but not yet wired up; complete integration.
+2. **Whitelist** — code is used by tooling Knip cannot detect (agentic workflows, dynamic imports); update `knip.json`.
+3. **Delete** — code is genuinely dead; remove it.
+
+**Coverage Scope:**
+
+- `src/**/*.ts` — production source
+- `tests/**/*.ts` — unit, integration, E2E, performance tests
+- `scripts/**/*.ts` — build, release, and statistics-generation scripts
+
+**Note:** `npm run knip` also runs as a step inside `test-and-report.yml`'s `build-validation` job. The dedicated `knip.yml` workflow runs in parallel for faster developer feedback and clearer signal in PR checks.
 
 ---
 
@@ -654,7 +691,7 @@ graph LR
 |---|------|------|-----------|----------|----------|
 | 1 | TypeScript compilation | `tsc --noEmit` | 0 errors | ✅ Yes | `test-and-report.yml` |
 | 2 | Linting | ESLint 10.x | 0 errors, 0 warnings | ✅ Yes | `test-and-report.yml` |
-| 3 | Unused code detection | Knip | 0 unused exports | ✅ Yes | `test-and-report.yml` |
+| 3 | Unused code detection | Knip | 0 unused exports | ✅ Yes | `knip.yml` (dedicated), `test-and-report.yml` (build-validation) |
 | 4 | Unit tests | Vitest | All tests pass | ✅ Yes | `test-and-report.yml` |
 | 5 | Code coverage | Vitest coverage (v8) | ≥80% lines | ⚠️ Warning | `test-and-report.yml` |
 | 6 | License compliance | `license-checker` | MIT, Apache-2.0, BSD, ISC only | ✅ Yes | `test-and-report.yml` |
@@ -686,7 +723,7 @@ graph LR
 | **A.8.25** | Secure Development Lifecycle | `test-and-report.yml` — automated build, lint, test pipeline | Test reports, coverage data |
 | **A.8.26** | Application Security Requirements | `codeql.yml` — SAST scanning with CWE coverage | SARIF reports, security alerts |
 | **A.8.27** | Secure System Architecture | `dependency-review.yml` — dependency vulnerability scanning | PR review comments |
-| **A.8.28** | Secure Coding | `test-and-report.yml` — ESLint, type checking, Knip | Lint reports, build logs |
+| **A.8.28** | Secure Coding | `test-and-report.yml` + `knip.yml` — ESLint, type checking, Knip unused-code detection | Lint reports, Knip job summaries, build logs |
 | **A.8.31** | Separation of Development, Test, Production | `release.yml` — tagged releases with provenance | Release artifacts, npm provenance |
 | **A.8.33** | Test Information | `integration-tests.yml` — comprehensive test suite (unit, integration, E2E) | Test reports, coverage data |
 | **A.14.2.8** | System Security Testing | `codeql.yml` + `scorecard.yml` — weekly security scans | SARIF, Scorecard results |

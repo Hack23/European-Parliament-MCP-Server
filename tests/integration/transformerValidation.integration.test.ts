@@ -71,6 +71,22 @@ async function fetchEP(path: string): Promise<JSONLDResponse | undefined> {
         console.warn(`[EP API] ${res.status} ${res.statusText} for ${path} (transient — skipping)`);
         return undefined;
       }
+      // 404 on a list-style endpoint (i.e. one with query params or
+      // pagination filters such as `?year=YYYY&offset=N&limit=M`) is
+      // returned by the upstream EP portal when the index has no matching
+      // documents — treat as "no data available" and skip rather than
+      // failing, since the test only validates the transformer when data
+      // is actually returned.
+      //
+      // For single-resource detail endpoints (e.g. `/meps/{id}`,
+      // `/documents/{id}`) a 404 indicates a broken test setup or an
+      // upstream breaking change and MUST fail the test so regressions
+      // remain visible. We detect list-style paths by the presence of
+      // a query string.
+      if (res.status === 404 && path.includes('?')) {
+        console.warn(`[EP API] 404 Not Found for ${path} (list endpoint with no matching documents — skipping)`);
+        return undefined;
+      }
       // Unexpected client error → fail the test so regressions are visible
       throw new Error(`[EP API] Unexpected ${res.status} ${res.statusText} for ${path}`);
     }

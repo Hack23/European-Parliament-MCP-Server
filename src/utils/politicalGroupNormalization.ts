@@ -47,7 +47,7 @@ const POLITICAL_GROUP_ALIASES: ReadonlyMap<string, string> = new Map([
   ["group of the european people's party", 'EPP'],
   ["european people's party", 'EPP'],
   ['european people’s party', 'EPP'],
-  // S&D variants — `SOC` and `PSE` are the legacy/native acronyms returned
+  // S&D variants — `SOC` and `PSE` are older / native acronyms returned
   // by the EP API in some responses; the French group name is included for
   // the same reason as the EPP variants above.
   ['s&d', 'S&D'],

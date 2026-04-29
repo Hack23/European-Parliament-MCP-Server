@@ -25,13 +25,29 @@ import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
+ * Format a list of Zod issues into a single human-readable string.
+ *
+ * Root-level issues (e.g. `unrecognized_keys` produced by `.strict()`) have
+ * an empty `path` array; rendering them as `path.join('.')` would yield
+ * `: message` with a misleading leading colon. We substitute `(root)` for
+ * such issues so the error reads `(root): Unrecognized key(s) ...`.
+ */
+function formatZodIssues(error: z.ZodError): string {
+  return error.issues
+    .map(issue => {
+      const pathStr = issue.path.length > 0 ? issue.path.join('.') : '(root)';
+      return `${pathStr}: ${issue.message}`;
+    })
+    .join('; ');
+}
+
+/**
  * Handles the get_voting_records MCP tool request.
  *
  * Retrieves voting records from European Parliament plenary sessions, supporting
  * filtering by session, topic, and date range. Returns aggregate vote tallies
- * (for/against/abstain) and final results. The `mepId` parameter is accepted but
- * has no effect — the EP API only provides aggregate vote counts, not individual
- * MEP positions.
+ * (for/against/abstain) and final results. The EP API only provides aggregate
+ * vote counts, not individual MEP positions.
  *
  * @param args - Raw tool arguments, validated against {@link GetVotingRecordsSchema}
  * @returns MCP tool result containing a paginated list of voting records with vote counts and results
@@ -64,7 +80,7 @@ export async function handleGetVotingRecords(
     params = GetVotingRecordsSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = formatZodIssues(error);
       throw new ToolError({
         toolName: 'get_voting_records',
         operation: 'validateInput',
@@ -83,7 +99,6 @@ export async function handleGetVotingRecords(
       offset: params.offset,
       ...buildApiParams(params, [
         { from: 'sessionId', to: 'sessionId' },
-        { from: 'mepId', to: 'mepId' },
         { from: 'topic', to: 'topic' },
         { from: 'dateFrom', to: 'dateFrom' },
         { from: 'dateTo', to: 'dateTo' },
@@ -96,20 +111,10 @@ export async function handleGetVotingRecords(
     const outputSchema = PaginatedResponseSchema(VotingRecordSchema);
     const validated = outputSchema.parse(result);
 
-    // Add deprecation warning when mepId is provided (EP API limitation)
-    const responsePayload = {
-      ...validated,
-      _warning:
-        params.mepId !== undefined
-          ? 'The mepId parameter is not supported by the EP API and has no effect on results. ' +
-            'The EP votes endpoint only returns aggregate vote counts, not per-MEP positions.'
-          : undefined
-    };
-    
-    return buildToolResponse(responsePayload);
+    return buildToolResponse(validated);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = formatZodIssues(error);
       throw new ToolError({
         toolName: 'get_voting_records',
         operation: 'validateOutput',
@@ -133,19 +138,13 @@ export async function handleGetVotingRecords(
  */
 export const getVotingRecordsToolMetadata = {
   name: 'get_voting_records',
-  description: 'Retrieve voting records from European Parliament plenary sessions. Filter by session, topic, or date range. Returns aggregate vote counts (for/against/abstain) and final result. The mepId parameter is accepted but has no effect — the EP API only provides aggregate vote tallies, not individual MEP positions. NOTE: The EP publishes roll-call voting data with a delay of several weeks, so queries for the most recent 1-2 months may return empty results — this is expected EP API behavior, not an error.',
+  description: 'Retrieve voting records from European Parliament plenary sessions. Filter by session, topic, or date range. Returns aggregate vote counts (for/against/abstain) and final result. The EP API only provides aggregate vote tallies, not individual MEP positions. NOTE: The EP publishes roll-call voting data with a delay of several weeks, so queries for the most recent 1-2 months may return empty results — this is expected EP API behavior, not an error.',
   inputSchema: {
     type: 'object' as const,
     properties: {
       sessionId: {
         type: 'string',
         description: 'Plenary session identifier',
-        minLength: 1,
-        maxLength: 100
-      },
-      mepId: {
-        type: 'string',
-        description: 'MEP identifier (accepted but ignored — the EP API only provides aggregate vote tallies, not individual MEP positions)',
         minLength: 1,
         maxLength: 100
       },

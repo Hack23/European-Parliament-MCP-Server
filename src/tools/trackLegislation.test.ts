@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { handleTrackLegislation, trackLegislationToolMetadata, toProcessId } from './trackLegislation.js';
+import { handleTrackLegislation, trackLegislationToolMetadata, toProcessId } from './trackLegislation/index.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 
 // Mock the EP client

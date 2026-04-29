@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { handleGenerateReport, generateReportToolMetadata } from './generateReport.js';
+import { handleGenerateReport, generateReportToolMetadata } from './generateReport/index.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { APIError } from '../clients/ep/baseClient.js';
 import { ToolError } from './shared/errors.js';

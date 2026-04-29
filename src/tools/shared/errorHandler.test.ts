@@ -590,7 +590,7 @@ describe('buildTimeoutResponse', () => {
     expect(parsed.data).toEqual([]);
   });
 
-  it('should not include deprecated items or partial fields', () => {
+  it('should not include withdrawn items or partial fields', () => {
     const result = buildTimeoutResponse('tool', 5000);
     const parsed = JSON.parse(result.content[0]?.text ?? '') as Record<string, unknown>;
     expect(parsed).not.toHaveProperty('items');

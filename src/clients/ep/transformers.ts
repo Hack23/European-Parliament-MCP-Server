@@ -98,7 +98,7 @@ export function transformMEP(apiData: Record<string, unknown>): MEP {
   const name = resolveMEPName(apiData);
 
   // EP API returns `api:country-of-representation` and `api:political-group`
-  // in JSON-LD responses; also check legacy/alternative field names.
+  // in JSON-LD responses; also check older / alternative field names.
   const country = toSafeString(firstDefined(apiData, 'api:country-of-representation', 'country', 'citizenship', 'nationality')) || 'Unknown';
   const politicalGroup = toSafeString(firstDefined(apiData, 'api:political-group', 'politicalGroup', 'political_group')) || 'Unknown';
 
@@ -441,7 +441,7 @@ export function transformAdoptedText(apiData: Record<string, unknown>): AdoptedT
     title: extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']),
     reference: extractField(apiData, ['work_id', 'identifier']),
     type: extractField(apiData, ['work_type', 'type']),
-    // EP API returns document_date; also check legacy field names
+    // EP API returns document_date; also check older / alternative field names
     dateAdopted: extractDateValue(apiData['document_date'] ?? apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']),
     procedureReference: extractField(apiData, ['based_on_a_concept_procedure', 'inverse_decided_on_a_realization_of', 'procedure']),
     // EP API uses isAboutSubjectMatter (URI array) for subject classification
@@ -496,7 +496,7 @@ export function transformMEPDeclaration(apiData: Record<string, unknown>): MEPDe
     mepId,
     mepName,
     type: extractField(apiData, ['work_type', 'type']),
-    // EP API returns document_date; also check legacy field names
+    // EP API returns document_date; also check older / alternative field names
     dateFiled: extractDateValue(apiData['document_date'] ?? apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']),
     status: extractField(apiData, ['resource_legal_in-force', 'status']),
   };

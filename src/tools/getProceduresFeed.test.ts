@@ -315,7 +315,7 @@ describe('get_procedures_feed Tool', () => {
   describe('Staleness warning (Defect #8 — historical-tail ordering)', () => {
     /**
      * Regression for the Hack23/euparliamentmonitor 2026-04-24 breaking-run
-     * audit §1.4: the EP API was returning legacy 1972/1980 procedure IDs
+     * audit §1.4: the EP API was returning historical 1972/1980 procedure IDs
      * first instead of date-sorted newest-first results, even though the
      * envelope was structurally healthy. We surface a STALENESS_WARNING in
      * `dataQualityWarnings` whenever the payload contains no current-year
