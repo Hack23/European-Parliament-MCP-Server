@@ -290,7 +290,7 @@ describe('Full Workflow E2E Tests', () => {
 
       // Step 3: Get voting records
       const votingResponse = await retryOrSkip(
-        () => client.callTool('get_voting_records', { mepId: mep.id, limit: 5 }),
+        () => client.callTool('get_voting_records', { limit: 5 }),
         'get_voting_records in research workflow'
       );
       if (votingResponse === undefined) return; // Skipped due to rate limit/timeout
