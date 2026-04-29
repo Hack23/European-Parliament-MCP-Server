@@ -28,8 +28,8 @@ import { handleGetParliamentaryQuestions } from '../../../src/tools/getParliamen
 
 // ── Advanced Analysis Tools ─────────────────────────────────────
 import { handleAnalyzeVotingPatterns } from '../../../src/tools/analyzeVotingPatterns.js';
-import { handleTrackLegislation } from '../../../src/tools/trackLegislation.js';
-import { handleGenerateReport } from '../../../src/tools/generateReport.js';
+import { handleTrackLegislation } from '../../../src/tools/trackLegislation/index.js';
+import { handleGenerateReport } from '../../../src/tools/generateReport/index.js';
 
 // ── Phase 1 OSINT Intelligence Tools ────────────────────────────
 import { handleAssessMepInfluence } from '../../../src/tools/assessMepInfluence.js';

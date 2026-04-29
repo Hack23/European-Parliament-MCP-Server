@@ -10,7 +10,7 @@
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { handleTrackLegislation } from '../../../src/tools/trackLegislation.js';
+import { handleTrackLegislation } from '../../../src/tools/trackLegislation/index.js';
 import { handleGetProcedures } from '../../../src/tools/getProcedures.js';
 import { shouldRunIntegrationTests } from '../setup.js';
 import { retryOrSkip } from '../../helpers/testUtils.js';

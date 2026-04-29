@@ -10,7 +10,7 @@
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { handleGenerateReport } from '../../../src/tools/generateReport.js';
+import { handleGenerateReport } from '../../../src/tools/generateReport/index.js';
 import { handleGetMEPs } from '../../../src/tools/getMEPs.js';
 import { shouldRunIntegrationTests } from '../setup.js';
 import { retryOrSkip } from '../../helpers/testUtils.js';
