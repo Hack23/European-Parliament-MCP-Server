@@ -218,7 +218,7 @@ export function isErrorInBody(result: Record<string, unknown>): boolean {
  *   merged with any explicitly-supplied warnings (rather than
  *   clobbered). When `status` is `"unavailable"`, the empty-feed
  *   reason is appended for backwards compatibility with consumers
- *   reading that field.
+ *   reading `dataQualityWarnings`.
  * - `reason` is set whenever `status !== "operational"`.
  *
  * @param result - Raw upstream response payload (may contain `data`,
