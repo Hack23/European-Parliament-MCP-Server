@@ -71,6 +71,15 @@ async function fetchEP(path: string): Promise<JSONLDResponse | undefined> {
         console.warn(`[EP API] ${res.status} ${res.statusText} for ${path} (transient — skipping)`);
         return undefined;
       }
+      // 404 on a list-style endpoint (e.g. with year/work-type filters) is
+      // returned by the upstream EP portal when the index has no matching
+      // documents — treat as "no data available" and skip rather than
+      // failing, since the test only validates the transformer when data
+      // is actually returned.
+      if (res.status === 404) {
+        console.warn(`[EP API] 404 Not Found for ${path} (no data available — skipping)`);
+        return undefined;
+      }
       // Unexpected client error → fail the test so regressions are visible
       throw new Error(`[EP API] Unexpected ${res.status} ${res.statusText} for ${path}`);
     }

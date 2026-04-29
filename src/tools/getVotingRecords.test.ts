@@ -87,8 +87,9 @@ describe('get_voting_records Tool', () => {
     });
 
     it('should reject removed/unknown parameters (e.g. deprecated mepId)', async () => {
+      // Strict schema → unrecognized_keys issue with empty path → formatted as (root)
       await expect(handleGetVotingRecords({ mepId: 'MEP-12345' }))
-        .rejects.toThrow(/Invalid parameters/);
+        .rejects.toThrow(/Invalid parameters:\s+\(root\):.*mepId/);
     });
   });
 

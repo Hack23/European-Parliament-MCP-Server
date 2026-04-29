@@ -25,6 +25,23 @@ import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
 /**
+ * Format a list of Zod issues into a single human-readable string.
+ *
+ * Root-level issues (e.g. `unrecognized_keys` produced by `.strict()`) have
+ * an empty `path` array; rendering them as `path.join('.')` would yield
+ * `: message` with a misleading leading colon. We substitute `(root)` for
+ * such issues so the error reads `(root): Unrecognized key(s) ...`.
+ */
+function formatZodIssues(error: z.ZodError): string {
+  return error.issues
+    .map(issue => {
+      const pathStr = issue.path.length > 0 ? issue.path.join('.') : '(root)';
+      return `${pathStr}: ${issue.message}`;
+    })
+    .join('; ');
+}
+
+/**
  * Handles the get_voting_records MCP tool request.
  *
  * Retrieves voting records from European Parliament plenary sessions, supporting
@@ -63,7 +80,7 @@ export async function handleGetVotingRecords(
     params = GetVotingRecordsSchema.parse(args);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = formatZodIssues(error);
       throw new ToolError({
         toolName: 'get_voting_records',
         operation: 'validateInput',
@@ -97,7 +114,7 @@ export async function handleGetVotingRecords(
     return buildToolResponse(validated);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const fieldErrors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const fieldErrors = formatZodIssues(error);
       throw new ToolError({
         toolName: 'get_voting_records',
         operation: 'validateOutput',
