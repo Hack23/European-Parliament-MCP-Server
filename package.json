@@ -154,8 +154,8 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0",
     "lru-cache": "11.3.5",
-    "undici": "8.1.0",
-    "zod": "4.4.1"
+    "undici": "8.2.0",
+    "zod": "4.4.2"
   },
   "overrides": {
     "vite": "8.0.10"
