@@ -13,12 +13,23 @@
 
 import { AnalyzeCoalitionDynamicsSchema } from '../schemas/europeanParliament.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
+import { buildTimeoutResponse } from './shared/errorHandler.js';
 import type { ToolResult } from './shared/types.js';
 import type { DataAvailability, MetricResult } from '../types/index.js';
 import type { MEP } from '../types/europeanParliament.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 import { fetchAllCurrentMEPs } from '../utils/mepFetcher.js';
 import { normalizePoliticalGroup } from '../utils/politicalGroupNormalization.js';
+import { withTimeout, TimeoutError } from '../utils/timeout.js';
+
+/**
+ * Maximum wall-clock time (ms) allowed for the full coalition-dynamics
+ * computation (MEP pagination + metrics). Chosen to be comfortably below
+ * the integration-test timeout of 180 000 ms so the tool can return a
+ * graceful `timedOut: true` response instead of being killed by the test
+ * runner.
+ */
+const OPERATION_TIMEOUT_MS = 150_000;
 
 // Re-export for backward compatibility — `normalizePoliticalGroup` was
 // originally defined in this module and may be imported from it by
@@ -693,65 +704,74 @@ export async function handleAnalyzeCoalitionDynamics(
   const params = AnalyzeCoalitionDynamicsSchema.parse(args);
 
   try {
-    const targetGroups = normalizeTargetGroups(params.groupIds ?? POLITICAL_GROUPS);
-    if (targetGroups.length === 0) {
-      throw new Error(
-        'groupIds must contain at least one recognizable political-group identifier — '
-        + 'all provided values were empty, whitespace-only, or normalized to "unknown"'
-      );
-    }
-    const fetchResult = await fetchAllCurrentMEPs();
-    const { metrics: groupMetrics, unrecognizedGroups } = buildGroupMetrics(targetGroups, fetchResult.meps);
-    const coalitionPairs = buildCoalitionPairs(targetGroups, params.minimumCohesion, groupMetrics);
-    const sortedPairs = [...coalitionPairs].sort((a, b) => b.sizeSimilarityScore - a.sizeSimilarityScore);
-    const stressIndicators = computeStressIndicators(groupMetrics);
-    const fragMetrics = computeFragmentationMetrics(groupMetrics);
+    return await withTimeout(
+      (async (): Promise<ToolResult> => {
+        const targetGroups = normalizeTargetGroups(params.groupIds ?? POLITICAL_GROUPS);
+        if (targetGroups.length === 0) {
+          throw new Error(
+            'groupIds must contain at least one recognizable political-group identifier — '
+            + 'all provided values were empty, whitespace-only, or normalized to "unknown"'
+          );
+        }
+        const fetchResult = await fetchAllCurrentMEPs();
+        const { metrics: groupMetrics, unrecognizedGroups } = buildGroupMetrics(targetGroups, fetchResult.meps);
+        const coalitionPairs = buildCoalitionPairs(targetGroups, params.minimumCohesion, groupMetrics);
+        const sortedPairs = [...coalitionPairs].sort((a, b) => b.sizeSimilarityScore - a.sizeSimilarityScore);
+        const stressIndicators = computeStressIndicators(groupMetrics);
+        const fragMetrics = computeFragmentationMetrics(groupMetrics);
 
-    const missingGroups = groupMetrics.filter(g => g.memberCount === 0).map(g => g.groupId);
-    const groupsKnown = groupMetrics.length - missingGroups.length;
-    const coverageComplete = missingGroups.length === 0;
+        const missingGroups = groupMetrics.filter(g => g.memberCount === 0).map(g => g.groupId);
+        const groupsKnown = groupMetrics.length - missingGroups.length;
+        const coverageComplete = missingGroups.length === 0;
 
-    const warnings = buildCoverageWarnings(fetchResult, missingGroups, groupMetrics.length, unrecognizedGroups);
+        const warnings = buildCoverageWarnings(fetchResult, missingGroups, groupMetrics.length, unrecognizedGroups);
 
-    const analysis: CoalitionDynamicsAnalysis = {
-      period: { from: params.dateFrom ?? '2024-01-01', to: params.dateTo ?? '2024-12-31' },
-      groupMetrics,
-      coalitionPairs: sortedPairs,
-      dominantCoalition: buildDominantCoalition(sortedPairs),
-      stressIndicators,
-      computedAttributes: buildCoalitionComputedAttrs(fragMetrics, sortedPairs, coverageComplete),
-      coverage: {
-        groupsKnown,
-        groupsTotal: groupMetrics.length,
-        unrecognizedGroups,
-      },
-      confidenceLevel: 'LOW',
-      dataFreshness: 'Real-time EP API data — political group composition from current MEP records',
-      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-      methodology: 'CIA Coalition Analysis — group composition from real EP Open Data MEP records. '
-        + 'Raw political-group labels from the EP API are normalized to canonical short codes '
-        + '(e.g. full names, URI suffixes, and EP9→EP10 successions such as ID→PfE are mapped). '
-        + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
-        + 'each group metric has dataAvailability: UNAVAILABLE with null cohesion/defection/attendance. '
-        + 'coalitionPairs[].sizeSimilarityScore is a group-size ratio proxy (min/max member counts), NOT vote-level cohesion; '
-        + 'coalitionPairs[].cohesion, coalitionPairs[].trend, coalitionPairs[].sharedVotes, and coalitionPairs[].totalVotes are null '
-        + '(not computed from vote-level data — vote-alignment data is not available via the EP Open Data Portal). '
-        + 'When any target group returns memberCount: 0 the parliamentaryFragmentation and '
-        + 'effectiveNumberOfParties fields are emitted as null to avoid a plausible-but-wrong score. '
-        + 'Data source: European Parliament Open Data Portal.',
-      dataQualityWarnings: warnings,
-      methodologyNote:
-        'coalitionPairs[].sizeSimilarityScore is derived from group-size ratios '
-        + '(min(sizeA, sizeB) / max(sizeA, sizeB)) and is NOT vote-level cohesion '
-        + '(Hix/Noury/Roland sense). coalitionPairs[].cohesion and coalitionPairs[].trend '
-        + 'are emitted as null because vote-alignment data is not available via the EP Open Data Portal. '
-        + 'The public input parameter `minimumCohesion` is preserved for backward compatibility '
-        + 'but is currently applied as a threshold on coalitionPairs[].sizeSimilarityScore until '
-        + 'vote-level cohesion data becomes available.',
-    };
+        const analysis: CoalitionDynamicsAnalysis = {
+          period: { from: params.dateFrom ?? '2024-01-01', to: params.dateTo ?? '2024-12-31' },
+          groupMetrics,
+          coalitionPairs: sortedPairs,
+          dominantCoalition: buildDominantCoalition(sortedPairs),
+          stressIndicators,
+          computedAttributes: buildCoalitionComputedAttrs(fragMetrics, sortedPairs, coverageComplete),
+          coverage: {
+            groupsKnown,
+            groupsTotal: groupMetrics.length,
+            unrecognizedGroups,
+          },
+          confidenceLevel: 'LOW',
+          dataFreshness: 'Real-time EP API data — political group composition from current MEP records',
+          sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
+          methodology: 'CIA Coalition Analysis — group composition from real EP Open Data MEP records. '
+            + 'Raw political-group labels from the EP API are normalized to canonical short codes '
+            + '(e.g. full names, URI suffixes, and EP9→EP10 successions such as ID→PfE are mapped). '
+            + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
+            + 'each group metric has dataAvailability: UNAVAILABLE with null cohesion/defection/attendance. '
+            + 'coalitionPairs[].sizeSimilarityScore is a group-size ratio proxy (min/max member counts), NOT vote-level cohesion; '
+            + 'coalitionPairs[].cohesion, coalitionPairs[].trend, coalitionPairs[].sharedVotes, and coalitionPairs[].totalVotes are null '
+            + '(not computed from vote-level data — vote-alignment data is not available via the EP Open Data Portal). '
+            + 'When any target group returns memberCount: 0 the parliamentaryFragmentation and '
+            + 'effectiveNumberOfParties fields are emitted as null to avoid a plausible-but-wrong score. '
+            + 'Data source: European Parliament Open Data Portal.',
+          dataQualityWarnings: warnings,
+          methodologyNote:
+            'coalitionPairs[].sizeSimilarityScore is derived from group-size ratios '
+            + '(min(sizeA, sizeB) / max(sizeA, sizeB)) and is NOT vote-level cohesion '
+            + '(Hix/Noury/Roland sense). coalitionPairs[].cohesion and coalitionPairs[].trend '
+            + 'are emitted as null because vote-alignment data is not available via the EP Open Data Portal. '
+            + 'The public input parameter `minimumCohesion` is preserved for backward compatibility '
+            + 'but is currently applied as a threshold on coalitionPairs[].sizeSimilarityScore until '
+            + 'vote-level cohesion data becomes available.',
+        };
 
-    return buildToolResponse(analysis);
+        return buildToolResponse(analysis);
+      })(),
+      OPERATION_TIMEOUT_MS,
+      'analyze_coalition_dynamics operation timed out'
+    );
   } catch (error: unknown) {
+    if (error instanceof TimeoutError) {
+      return buildTimeoutResponse('analyze_coalition_dynamics', OPERATION_TIMEOUT_MS);
+    }
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     auditLogger.logError('analyze_coalition_dynamics', params, toErrorMessage(error));
     throw new Error(`Failed to analyze coalition dynamics: ${errorMessage}`);

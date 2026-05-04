@@ -19,6 +19,16 @@
 import { z } from 'zod';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import type { ToolResult } from './shared/types.js';
+import { withTimeout, TimeoutError } from '../utils/timeout.js';
+import { buildTimeoutResponse } from './shared/errorHandler.js';
+
+/**
+ * Maximum wall-clock time (ms) allowed for the full attendance computation.
+ * Chosen to be comfortably below the integration-test timeout of 90 000 ms
+ * so the tool can return a graceful `timedOut: true` response instead of
+ * being killed by the test runner.
+ */
+const OPERATION_TIMEOUT_MS = 75_000;
 
 /**
  * Schema for track_mep_attendance tool input
@@ -371,31 +381,41 @@ export async function handleTrackMepAttendance(
   ).toISOString().split('T')[0] ?? '';
   const dateTo = params.dateTo ?? now.toISOString().split('T')[0] ?? '';
 
-  let analysis: AttendanceAnalysis;
+  try {
+    const analysis = await withTimeout(
+      (async (): Promise<AttendanceAnalysis> => {
+        if (params.mepId !== undefined) {
+          return buildSingleMepAnalysis(params.mepId, dateFrom, dateTo);
+        }
+        const groupParams: { country?: string; groupId?: string; limit: number } = {
+          limit: params.limit
+        };
+        if (params.country !== undefined) {
+          groupParams.country = params.country;
+        }
+        if (params.groupId !== undefined) {
+          groupParams.groupId = params.groupId;
+        }
+        return buildGroupAnalysis(groupParams, dateFrom, dateTo);
+      })(),
+      OPERATION_TIMEOUT_MS,
+      'track_mep_attendance operation timed out'
+    );
 
-  if (params.mepId !== undefined) {
-    analysis = await buildSingleMepAnalysis(params.mepId, dateFrom, dateTo);
-  } else {
-    const groupParams: { country?: string; groupId?: string; limit: number } = {
-      limit: params.limit
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(analysis, null, 2)
+        }
+      ]
     };
-    if (params.country !== undefined) {
-      groupParams.country = params.country;
+  } catch (error: unknown) {
+    if (error instanceof TimeoutError) {
+      return buildTimeoutResponse('track_mep_attendance', OPERATION_TIMEOUT_MS);
     }
-    if (params.groupId !== undefined) {
-      groupParams.groupId = params.groupId;
-    }
-    analysis = await buildGroupAnalysis(groupParams, dateFrom, dateTo);
+    throw error;
   }
-
-  return {
-    content: [
-      {
-        type: 'text',
-        text: JSON.stringify(analysis, null, 2)
-      }
-    ]
-  };
 }
 
 /**

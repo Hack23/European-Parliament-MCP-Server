@@ -155,7 +155,7 @@
     "@modelcontextprotocol/sdk": "1.29.0",
     "lru-cache": "11.3.5",
     "undici": "8.2.0",
-    "zod": "4.4.2"
+    "zod": "4.4.3"
   },
   "overrides": {
     "vite": "8.0.10"
