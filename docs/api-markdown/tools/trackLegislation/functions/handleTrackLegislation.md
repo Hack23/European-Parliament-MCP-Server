@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.20**](../../../README.md)
+[**European Parliament MCP Server API v1.2.21**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleTrackLegislation**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/trackLegislation/index.ts:91](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/index.ts#L91)
+Defined in: [tools/trackLegislation/index.ts:101](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackLegislation/index.ts#L101)
 
 Handles the track_legislation MCP tool request.
 

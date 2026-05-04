@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.20**](../../../README.md)
+[**European Parliament MCP Server API v1.2.21**](../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **TrackMepAttendanceSchema**: `ZodObject`\<\{ `country`: `ZodOptional`\<`ZodString`\>; `dateFrom`: `ZodOptional`\<`ZodString`\>; `dateTo`: `ZodOptional`\<`ZodString`\>; `groupId`: `ZodOptional`\<`ZodString`\>; `limit`: `ZodDefault`\<`ZodNumber`\>; `mepId`: `ZodOptional`\<`ZodString`\>; \}, `$strip`\>
 
-Defined in: [tools/trackMepAttendance.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackMepAttendance.ts#L26)
+Defined in: [tools/trackMepAttendance.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackMepAttendance.ts#L36)
 
 Schema for track_mep_attendance tool input
