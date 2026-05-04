@@ -770,7 +770,6 @@ export async function handleAnalyzeCoalitionDynamics(
     );
   } catch (error: unknown) {
     if (error instanceof TimeoutError) {
-      auditLogger.logError('analyze_coalition_dynamics', params, `Operation timed out after ${String(OPERATION_TIMEOUT_MS)}ms`);
       return buildTimeoutResponse('analyze_coalition_dynamics', OPERATION_TIMEOUT_MS);
     }
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
