@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.20**](../../../README.md)
+[**European Parliament MCP Server API v1.2.21**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **generatePoliticalLandscapeToolMetadata**: `object`
 
-Defined in: [tools/generatePoliticalLandscape.ts:382](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generatePoliticalLandscape.ts#L382)
+Defined in: [tools/generatePoliticalLandscape.ts:403](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generatePoliticalLandscape.ts#L403)
 
 Tool metadata for MCP listing
 

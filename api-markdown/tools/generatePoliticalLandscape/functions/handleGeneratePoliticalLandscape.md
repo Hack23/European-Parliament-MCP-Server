@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.20**](../../../README.md)
+[**European Parliament MCP Server API v1.2.21**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGeneratePoliticalLandscape**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/generatePoliticalLandscape.ts:354](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generatePoliticalLandscape.ts#L354)
+Defined in: [tools/generatePoliticalLandscape.ts:364](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generatePoliticalLandscape.ts#L364)
 
 Handles the generate_political_landscape MCP tool request.
 
