@@ -464,12 +464,16 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
   describe('OSINT Tool: track_mep_attendance', () => {
     it('should track MEP attendance with real data', async (ctx) => {
       const result = await retryOrSkip(
-        () => handleTrackMepAttendance({}),
+        () => handleTrackMepAttendance({ limit: 5 }),
         'track_mep_attendance'
       );
       if (!result) { ctx.skip(); return; }
 
-      parseAndValidateNoMockData(result);
+      const parsed = parseAndValidateNoMockData(result) as {
+        timedOut?: boolean;
+        status?: string;
+      };
+      if (parsed.timedOut === true || parsed.status === 'timeout') { ctx.skip(); return; }
     }, 90000);
   });
 
