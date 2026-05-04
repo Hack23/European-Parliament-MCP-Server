@@ -705,7 +705,7 @@ export async function handleAnalyzeCoalitionDynamics(
 
   try {
     return await withTimeout(
-      (async () => {
+      (async (): Promise<ToolResult> => {
         const targetGroups = normalizeTargetGroups(params.groupIds ?? POLITICAL_GROUPS);
         if (targetGroups.length === 0) {
           throw new Error(
