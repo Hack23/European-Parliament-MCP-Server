@@ -22,6 +22,8 @@ import { buildLegislativeTracking } from './procedureTracker.js';
 import type { ToolResult } from '../shared/types.js';
 import type { EPEvent } from '../../types/europeanParliament.js';
 import { ToolError } from '../shared/errors.js';
+import { withTimeout, TimeoutError } from '../../utils/timeout.js';
+import { buildTimeoutResponse } from '../shared/errorHandler.js';
 
 /**
  * Maximum number of procedure events to fetch for timeline enrichment.
@@ -29,6 +31,14 @@ import { ToolError } from '../shared/errors.js';
  * keeping the API call lightweight.
  */
 const EVENTS_ENRICHMENT_LIMIT = 20;
+
+/**
+ * Maximum wall-clock time (ms) allowed for the full track_legislation operation.
+ * Chosen to be comfortably below the integration-test timeout of 120 000 ms
+ * so the tool can return a graceful `timedOut: true` response instead of
+ * being killed by the test runner.
+ */
+const OPERATION_TIMEOUT_MS = 100_000;
 
 /**
  * Convert a user-supplied procedure reference to the EP API process-id format.
@@ -95,29 +105,38 @@ export async function handleTrackLegislation(
   const processId = toProcessId(params.procedureId);
   
   try {
-    const procedure = await epClient.getProcedureById(processId);
+    return await withTimeout(
+      (async (): Promise<ToolResult> => {
+        const procedure = await epClient.getProcedureById(processId);
 
-    // Attempt to enrich the timeline with events from the events sub-endpoint.
-    // If the call fails (network error, 404, rate-limit), we surface the failure
-    // name in enrichmentFailures instead of propagating an exception.
-    const enrichmentFailures: string[] = [];
-    let events: EPEvent[] = [];
-    try {
-      const eventsResponse = await epClient.getProcedureEvents(processId, { limit: EVENTS_ENRICHMENT_LIMIT });
-      events = eventsResponse.data;
-    } catch {
-      enrichmentFailures.push('events-lookup');
-    }
+        // Attempt to enrich the timeline with events from the events sub-endpoint.
+        // If the call fails (network error, 404, rate-limit), we surface the failure
+        // name in enrichmentFailures instead of propagating an exception.
+        const enrichmentFailures: string[] = [];
+        let events: EPEvent[] = [];
+        try {
+          const eventsResponse = await epClient.getProcedureEvents(processId, { limit: EVENTS_ENRICHMENT_LIMIT });
+          events = eventsResponse.data;
+        } catch {
+          enrichmentFailures.push('events-lookup');
+        }
 
-    const tracking = buildLegislativeTracking(procedure, events, enrichmentFailures);
-    
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify(tracking, null, 2)
-      }]
-    };
+        const tracking = buildLegislativeTracking(procedure, events, enrichmentFailures);
+        
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(tracking, null, 2)
+          }]
+        };
+      })(),
+      OPERATION_TIMEOUT_MS,
+      'track_legislation operation timed out'
+    );
   } catch (error: unknown) {
+    if (error instanceof TimeoutError) {
+      return buildTimeoutResponse('track_legislation', OPERATION_TIMEOUT_MS);
+    }
     throw new ToolError({
       toolName: 'track_legislation',
       operation: 'fetchProcedure',

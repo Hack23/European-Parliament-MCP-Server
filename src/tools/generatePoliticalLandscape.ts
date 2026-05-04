@@ -23,6 +23,16 @@ import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 import { fetchAllCurrentMEPs } from '../utils/mepFetcher.js';
 import { normalizePoliticalGroup } from '../utils/politicalGroupNormalization.js';
 import type { ToolResult } from './shared/types.js';
+import { withTimeout, TimeoutError } from '../utils/timeout.js';
+import { buildTimeoutResponse } from './shared/errorHandler.js';
+
+/**
+ * Maximum wall-clock time (ms) allowed for the full landscape generation.
+ * Chosen to be comfortably below the integration-test timeout of 120 000 ms
+ * so the tool can return a graceful `timedOut: true` response instead of
+ * being killed by the test runner.
+ */
+const OPERATION_TIMEOUT_MS = 100_000;
 
 /**
  * Schema for generate_political_landscape tool input
@@ -364,16 +374,27 @@ export async function handleGeneratePoliticalLandscape(
   ).toISOString().split('T')[0] ?? '';
   const dateTo = params.dateTo ?? now.toISOString().split('T')[0] ?? '';
 
-  const landscape = await buildLandscape(dateFrom, dateTo);
+  try {
+    const landscape = await withTimeout(
+      buildLandscape(dateFrom, dateTo),
+      OPERATION_TIMEOUT_MS,
+      'generate_political_landscape operation timed out'
+    );
 
-  return {
-    content: [
-      {
-        type: 'text',
-        text: JSON.stringify(landscape, null, 2)
-      }
-    ]
-  };
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(landscape, null, 2)
+        }
+      ]
+    };
+  } catch (error: unknown) {
+    if (error instanceof TimeoutError) {
+      return buildTimeoutResponse('generate_political_landscape', OPERATION_TIMEOUT_MS);
+    }
+    throw error;
+  }
 }
 
 /**

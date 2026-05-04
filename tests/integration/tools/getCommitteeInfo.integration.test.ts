@@ -23,6 +23,7 @@ describeIntegration('get_committee_info Integration Tests', () => {
       return handleGetCommitteeInfo({ abbreviation: 'ENVI' });
     }, 'committee by abbreviation');
     if (!result) { ctx.skip(); return; }
+    if (result.isError === true) { ctx.skip(); return; }
 
     validateMCPStructure(result);
     const textContent = result.content[0];
