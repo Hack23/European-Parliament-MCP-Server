@@ -188,6 +188,13 @@ describe('doceoXmlParser', () => {
         ],
         abstentions: [],
         result: 'ADOPTED' as const,
+        sittingDate: '2026-04-27',
+        sittingNumber: '1',
+        voteType: 'normal',
+        officialForCount: 385,
+        officialAgainstCount: 210,
+        officialAbstentionCount: 45,
+        corrections: [],
       }];
 
       const records = rcvToLatestVotes(rcvResults, '2026-04-27');
@@ -200,6 +207,12 @@ describe('doceoXmlParser', () => {
       expect(records[0]!.votesAgainst).toBe(1);
       expect(records[0]!.abstentions).toBe(0);
       expect(records[0]!.result).toBe('ADOPTED');
+      expect(records[0]!.dataSource).toBe('RCV');
+      expect(records[0]!.sittingDate).toBe('2026-04-27');
+      expect(records[0]!.sittingNumber).toBe('1');
+      expect(records[0]!.voteType).toBe('normal');
+      expect(records[0]!.officialCounts).toEqual({ for: 385, against: 210, abstentions: 45 });
+      expect(records[0]!.corrections).toBeUndefined(); // empty array → undefined
       expect(records[0]!.mepVotes).toEqual({
         '100': 'FOR',
         '101': 'FOR',
@@ -209,6 +222,29 @@ describe('doceoXmlParser', () => {
         'EPP': { for: 2, against: 0, abstain: 0 },
         'S&D': { for: 0, against: 1, abstain: 0 },
       });
+    });
+
+    it('includes corrections when present', () => {
+      const rcvResults = [{
+        voteId: '2',
+        description: 'Vote with corrections',
+        reference: 'B10-0001/2026',
+        votesFor: [],
+        votesAgainst: [],
+        abstentions: [],
+        result: 'REJECTED' as const,
+        sittingDate: '',
+        sittingNumber: '',
+        voteType: '',
+        officialForCount: 0,
+        officialAgainstCount: 0,
+        officialAbstentionCount: 0,
+        corrections: [{ mepId: '999', name: 'Corrector', politicalGroup: 'EPP', country: 'DE' }],
+      }];
+
+      const records = rcvToLatestVotes(rcvResults, '2026-04-28');
+      expect(records[0]!.corrections).toHaveLength(1);
+      expect(records[0]!.corrections?.[0]?.mepId).toBe('999');
     });
   });
 
@@ -223,6 +259,11 @@ describe('doceoXmlParser', () => {
         abstentions: 45,
         result: 'ADOPTED' as const,
         voteType: 'single',
+        tableTitle: 'Results of votes',
+        rowType: 'normal',
+        officialForCount: 385,
+        officialAgainstCount: 210,
+        officialAbstentionCount: 45,
       }];
 
       const records = votToLatestVotes(votResults, '2026-04-28');
@@ -232,7 +273,142 @@ describe('doceoXmlParser', () => {
       expect(records[0]!.subject).toBe('Climate resolution');
       expect(records[0]!.votesFor).toBe(385);
       expect(records[0]!.votesAgainst).toBe(210);
+      expect(records[0]!.dataSource).toBe('VOT');
+      expect(records[0]!.voteType).toBe('normal');
+      expect(records[0]!.officialCounts).toEqual({ for: 385, against: 210, abstentions: 45 });
       expect(records[0]!.mepVotes).toBeUndefined();
+    });
+  });
+
+  describe('New XML attribute extraction', () => {
+    it('extracts sittingDate, sittingNumber, voteType from RCV XML', () => {
+      const xml = `
+        <RollCallVoteResults>
+          <RollCallVote.Result Identifier="42" Date="2026-04-27" Number.Sitting="3" Type="normal">
+            <RollCallVote.Description.Text>Digital Markets Act</RollCallVote.Description.Text>
+            <RollCallVote.Reference>A10-0042/2026</RollCallVote.Reference>
+            <Result.For Number="385">
+              <PoliticalGroup.List Identifier="EPP">
+                <PoliticalGroup.Member.Name MepId="124810" Country="FR">Marie Dupont</PoliticalGroup.Member.Name>
+              </PoliticalGroup.List>
+            </Result.For>
+            <Result.Against Number="210">
+            </Result.Against>
+            <Result.Abstention Number="45">
+            </Result.Abstention>
+            <Correction>
+              <PoliticalGroup.List Identifier="S&amp;D">
+                <PoliticalGroup.Member.Name MepId="99999" Country="DE">Hans Mueller</PoliticalGroup.Member.Name>
+              </PoliticalGroup.List>
+            </Correction>
+          </RollCallVote.Result>
+        </RollCallVoteResults>
+      `;
+
+      const results = parseRcvXml(xml);
+      expect(results).toHaveLength(1);
+      const r = results[0]!;
+      expect(r.sittingDate).toBe('2026-04-27');
+      expect(r.sittingNumber).toBe('3');
+      expect(r.voteType).toBe('normal');
+      expect(r.officialForCount).toBe(385);
+      expect(r.officialAgainstCount).toBe(210);
+      expect(r.officialAbstentionCount).toBe(45);
+      expect(r.corrections).toHaveLength(1);
+      expect(r.corrections[0]!.mepId).toBe('99999');
+      expect(r.corrections[0]!.politicalGroup).toBe('S&D');
+      expect(r.corrections[0]!.country).toBe('DE');
+    });
+
+    it('extracts Country attribute from MEP votes', () => {
+      const xml = `
+        <RollCallVoteResults>
+          <RollCallVote.Result Identifier="1">
+            <Result.For>
+              <PoliticalGroup.List Identifier="EPP">
+                <PoliticalGroup.Member.Name MepId="124810" Country="FR">Marie Dupont</PoliticalGroup.Member.Name>
+                <PoliticalGroup.Member.Name MepId="124811">No Country</PoliticalGroup.Member.Name>
+              </PoliticalGroup.List>
+            </Result.For>
+            <Result.Against></Result.Against>
+            <Result.Abstention></Result.Abstention>
+          </RollCallVote.Result>
+        </RollCallVoteResults>
+      `;
+
+      const results = parseRcvXml(xml);
+      expect(results[0]!.votesFor[0]!.country).toBe('FR');
+      expect(results[0]!.votesFor[1]!.country).toBeUndefined();
+    });
+
+    it('falls back to MEP count when Number attribute absent', () => {
+      const xml = `
+        <RollCallVoteResults>
+          <RollCallVote.Result Identifier="1">
+            <Result.For>
+              <PoliticalGroup.List Identifier="EPP">
+                <PoliticalGroup.Member.Name MepId="100" Country="DE">Alice</PoliticalGroup.Member.Name>
+                <PoliticalGroup.Member.Name MepId="101" Country="AT">Bob</PoliticalGroup.Member.Name>
+              </PoliticalGroup.List>
+            </Result.For>
+            <Result.Against></Result.Against>
+            <Result.Abstention></Result.Abstention>
+          </RollCallVote.Result>
+        </RollCallVoteResults>
+      `;
+      const results = parseRcvXml(xml);
+      expect(results[0]!.officialForCount).toBe(2); // falls back to MEP count
+    });
+
+    it('parses Table/Row format in VOT XML', () => {
+      const xml = `
+        <Text>
+          <Table Title="Results of votes - 27 April 2026">
+            <Row Number="1" Type="normal">
+              <Text.Object>A10-0042/2026</Text.Object>
+              <Instution><Text.Object>Climate Action Framework</Text.Object></Instution>
+              <Result.Group For="385" Against="210" Abst="45">+</Result.Group>
+              <Row.Result>+</Row.Result>
+            </Row>
+            <Row Number="2" Type="amendment">
+              <Result.Group For="100" Against="450" Abst="30">-</Result.Group>
+              <Row.Result>-</Row.Result>
+            </Row>
+          </Table>
+        </Text>
+      `;
+
+      const results = parseVotXml(xml);
+      expect(results).toHaveLength(2);
+      const r = results[0]!;
+      expect(r.tableTitle).toBe('Results of votes - 27 April 2026');
+      expect(r.rowType).toBe('normal');
+      expect(r.officialForCount).toBe(385);
+      expect(r.officialAgainstCount).toBe(210);
+      expect(r.officialAbstentionCount).toBe(45);
+      expect(r.votesFor).toBe(385);
+      expect(r.votesAgainst).toBe(210);
+      expect(r.result).toBe('ADOPTED');
+      expect(results[1]!.result).toBe('REJECTED');
+      expect(results[1]!.rowType).toBe('amendment');
+    });
+
+    it('VOT: prefers official Result.Group counts over tag content', () => {
+      const xml = `
+        <VoteResults>
+          <Vote.Result Number="1">
+            <Subject>Test</Subject>
+            <For>100</For>
+            <Against>50</Against>
+            <Abstention>10</Abstention>
+            <Result.Group For="400" Against="200" Abst="20">+</Result.Group>
+            <Result>Adopted</Result>
+          </Vote.Result>
+        </VoteResults>
+      `;
+      const results = parseVotXml(xml);
+      expect(results[0]!.votesFor).toBe(400);
+      expect(results[0]!.officialForCount).toBe(400);
     });
   });
 });

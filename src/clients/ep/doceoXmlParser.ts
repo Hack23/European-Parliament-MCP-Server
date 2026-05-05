@@ -21,6 +21,8 @@ export interface RcvMepVote {
   name: string;
   /** Political group abbreviation */
   politicalGroup: string;
+  /** ISO 3166-1 alpha-2 country code from the Country attribute (optional) */
+  country?: string;
 }
 
 /**
@@ -41,6 +43,20 @@ export interface RcvVoteResult {
   abstentions: RcvMepVote[];
   /** Intended result interpretation */
   result: 'ADOPTED' | 'REJECTED';
+  /** Sitting date from Date attribute on RollCallVote.Result (YYYY-MM-DD; empty string if absent) */
+  sittingDate: string;
+  /** Sitting number from Number.Sitting attribute (empty string if absent) */
+  sittingNumber: string;
+  /** Vote type from Type attribute on RollCallVote.Result (empty string if absent) */
+  voteType: string;
+  /** Official FOR count from Number attribute on Result.For; falls back to MEP count */
+  officialForCount: number;
+  /** Official AGAINST count from Number attribute on Result.Against; falls back to MEP count */
+  officialAgainstCount: number;
+  /** Official ABSTENTION count from Number attribute on Result.Abstention; falls back to MEP count */
+  officialAbstentionCount: number;
+  /** MEPs listed in the Correction element (empty array if absent) */
+  corrections: RcvMepVote[];
 }
 
 /**
@@ -63,6 +79,16 @@ export interface VotVoteResult {
   result: 'ADOPTED' | 'REJECTED';
   /** Vote type (e.g., "single", "split", "separate", "amendment") */
   voteType: string;
+  /** Title of the parent Table element (empty string if absent) */
+  tableTitle: string;
+  /** Row/Vote.Result Type attribute value (empty string if absent) */
+  rowType: string;
+  /** Official FOR count from For attribute on Result.Group (0 if absent) */
+  officialForCount: number;
+  /** Official AGAINST count from Against attribute on Result.Group (0 if absent) */
+  officialAgainstCount: number;
+  /** Official ABSTENTION count from Abst attribute on Result.Group (0 if absent) */
+  officialAbstentionCount: number;
 }
 
 /**
@@ -93,6 +119,18 @@ export interface LatestVoteRecord {
   groupBreakdown?: Record<string, { for: number; against: number; abstain: number }>;
   /** Source URL of the XML document */
   sourceUrl: string;
+  /** Which XML document type provided the data */
+  dataSource: 'RCV' | 'VOT';
+  /** Vote type from the XML Type attribute (optional) */
+  voteType?: string;
+  /** Sitting date from RCV data (YYYY-MM-DD; optional) */
+  sittingDate?: string;
+  /** Sitting number from RCV data (optional) */
+  sittingNumber?: string;
+  /** Official counts from XML Number/For/Against/Abst attributes (optional) */
+  officialCounts?: { for: number; against: number; abstentions: number };
+  /** Vote corrections from RCV Correction element (optional) */
+  corrections?: RcvMepVote[];
 }
 
 // ─── XML Text Extraction Helpers ──────────────────────────────────────────────
@@ -115,12 +153,24 @@ function extractTagContent(xml: string, tagName: string): string[] {
 }
 
 /**
+ * Decode common XML character entities in an attribute value.
+ */
+function decodeXmlEntities(value: string): string {
+  return value
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'");
+}
+
+/**
  * Extract a single attribute value from an XML element string.
  */
 function extractAttribute(element: string, attrName: string): string {
   const regex = new RegExp(`${attrName}="([^"]*)"`, 'i');
   const match = regex.exec(element);
-  return match?.[1] ?? '';
+  return decodeXmlEntities(match?.[1] ?? '');
 }
 
 /**
@@ -166,15 +216,62 @@ function parseGroupSection(groupXml: string, votes: RcvMepVote[]): void {
   const groupName = extractAttribute(groupXml, 'Identifier') ||
     extractAttribute(groupXml, 'Name') || 'Unknown';
 
-  // Match member elements - multiple possible formats
-  const memberRegex = /(?:PoliticalGroup\.Member\.Name|Member\.Name|Name)[^>]*MepId="(\d+)"[^>]*>([^<]*)</gi;
-  for (const memberMatch of groupXml.matchAll(memberRegex)) {
-    const mepId = memberMatch[1] ?? '';
+  // Match member element opening tags to capture all attributes then text
+  const memberTagRegex = /<(?:PoliticalGroup\.Member\.Name|Member\.Name|Name)([^>]*)>([^<]*)</gi;
+  for (const memberMatch of groupXml.matchAll(memberTagRegex)) {
+    const attrs = memberMatch[1] ?? '';
     const name = sanitizeText(memberMatch[2] ?? '');
+    const mepId = extractAttribute(attrs, 'MepId');
+    const country = extractAttribute(attrs, 'Country');
     if (mepId !== '' && name !== '') {
-      votes.push({ mepId, name, politicalGroup: groupName });
+      const vote: RcvMepVote = { mepId, name, politicalGroup: groupName };
+      if (country !== '') vote.country = country;
+      votes.push(vote);
     }
   }
+}
+
+/**
+ * Extract the official count from a Result.For/Against/Abstention element.
+ * Falls back to the parsed MEP array length when the Number attribute is absent.
+ */
+function extractOfficialCount(section: string | undefined, fallback: number): number {
+  if (section === undefined) return fallback;
+  const raw = extractAttribute(section, 'Number');
+  const parsed = parseInt(raw, 10);
+  return Number.isNaN(parsed) ? fallback : parsed;
+}
+
+/**
+ * Parse a FOR/AGAINST/ABSTENTION/CORRECTION section element into votes + official count.
+ * Extracts all votes in a section element using the appropriate tag name.
+ */
+function parseRcvMepSection(voteXml: string, tagName: string): { votes: RcvMepVote[]; count: number } {
+  const section = extractElements(voteXml, tagName)[0];
+  const votes = section !== undefined ? parseRcvMepVotes(section) : [];
+  return { votes, count: extractOfficialCount(section, votes.length) };
+}
+
+/**
+ * Resolve VOT vote counts, preferring official Result.Group attributes over tag content.
+ */
+function resolveVotCounts(row: string): { for: number; against: number; abst: number } {
+  const rg = extractResultGroupCounts(row);
+  return {
+    for: rg.for > 0 ? rg.for : parseVoteCount(extractTagContent(row, 'For')[0]),
+    against: rg.against > 0 ? rg.against : parseVoteCount(extractTagContent(row, 'Against')[0]),
+    abst: rg.abst > 0 ? rg.abst : parseVoteCount(extractTagContent(row, 'Abstention')[0]),
+  };
+}
+
+/**
+ * Select effective vote type, preferring rowType (Table/Row format) over voteType.
+ * Returns undefined when both are empty strings.
+ */
+function pickVoteType(rowType: string, voteType: string): string | undefined {
+  if (rowType !== '') return rowType;
+  if (voteType !== '') return voteType;
+  return undefined;
 }
 
 /**
@@ -185,6 +282,11 @@ function parseSingleRcvVote(voteXml: string, fallbackId: string): RcvVoteResult 
     extractAttribute(voteXml, 'Number') ||
     fallbackId;
 
+  // Sitting metadata
+  const sittingDate = extractAttribute(voteXml, 'Date');
+  const sittingNumber = extractAttribute(voteXml, 'Number\\.Sitting');
+  const voteType = extractAttribute(voteXml, 'Type');
+
   // Description/subject
   const descTexts = extractTagContent(voteXml, 'RollCallVote\\.Description\\.Text');
   const fallbackDesc = extractTagContent(voteXml, 'Description\\.Text');
@@ -194,32 +296,30 @@ function parseSingleRcvVote(voteXml: string, fallbackId: string): RcvVoteResult 
   const refTexts = extractTagContent(voteXml, 'RollCallVote\\.Reference');
   const reference = refTexts[0] ?? extractAttribute(voteXml, 'Reference');
 
-  // FOR section
-  const forSections = extractElements(voteXml, 'Result\\.For');
-  const forSection = forSections[0];
-  const votesFor = forSection !== undefined ? parseRcvMepVotes(forSection) : [];
+  // FOR / AGAINST / ABSTENTION / CORRECTION sections via shared helper
+  const forData = parseRcvMepSection(voteXml, 'Result\\.For');
+  const againstData = parseRcvMepSection(voteXml, 'Result\\.Against');
+  const abstData = parseRcvMepSection(voteXml, 'Result\\.Abstention');
+  const corrData = parseRcvMepSection(voteXml, 'Correction');
 
-  // AGAINST section
-  const againstSections = extractElements(voteXml, 'Result\\.Against');
-  const againstSection = againstSections[0];
-  const votesAgainst = againstSection !== undefined ? parseRcvMepVotes(againstSection) : [];
-
-  // ABSTENTION section
-  const abstSections = extractElements(voteXml, 'Result\\.Abstention');
-  const abstSection = abstSections[0];
-  const abstentions = abstSection !== undefined ? parseRcvMepVotes(abstSection) : [];
-
-  // Determine result - if more FOR than AGAINST
-  const result: 'ADOPTED' | 'REJECTED' = votesFor.length > votesAgainst.length ? 'ADOPTED' : 'REJECTED';
+  // Determine result using official counts (prefer over MEP array length)
+  const result: 'ADOPTED' | 'REJECTED' = forData.count > againstData.count ? 'ADOPTED' : 'REJECTED';
 
   return {
     voteId,
     description: sanitizeText(description),
     reference: sanitizeText(reference),
-    votesFor,
-    votesAgainst,
-    abstentions,
+    votesFor: forData.votes,
+    votesAgainst: againstData.votes,
+    abstentions: abstData.votes,
     result,
+    sittingDate,
+    sittingNumber,
+    voteType,
+    officialForCount: forData.count,
+    officialAgainstCount: againstData.count,
+    officialAbstentionCount: abstData.count,
+    corrections: corrData.votes,
   };
 }
 
@@ -254,22 +354,43 @@ function determineVotOutcome(resultStr: string): 'ADOPTED' | 'REJECTED' {
 }
 
 /**
+ * Extract official counts from a Result.Group element.
+ */
+function extractResultGroupCounts(row: string): { for: number; against: number; abst: number } {
+  const rgSections = extractElements(row, 'Result\\.Group');
+  const rg = rgSections[0];
+  if (rg === undefined) return { for: 0, against: 0, abst: 0 };
+  return {
+    for: parseInt(extractAttribute(rg, 'For'), 10) || 0,
+    against: parseInt(extractAttribute(rg, 'Against'), 10) || 0,
+    abst: parseInt(extractAttribute(rg, 'Abst'), 10) || 0,
+  };
+}
+
+/**
+ * Extract the best available result string from a VOT row.
+ */
+function extractVotResultString(row: string): string {
+  return extractTagContent(row, 'Result')[0] ??
+    extractTagContent(row, 'Row\\.Result')[0] ??
+    '';
+}
+
+/**
  * Parse a single VOT row into a structured result.
  */
-function parseSingleVotResult(row: string, fallbackNumber: string): VotVoteResult {
+function parseSingleVotResult(row: string, fallbackNumber: string, tableTitle = ''): VotVoteResult {
   const itemNumber = extractAttribute(row, 'Number') ||
     extractAttribute(row, 'Item') ||
     fallbackNumber;
 
+  const rowType = extractAttribute(row, 'Type');
   const subject = extractTagContent(row, 'Subject')[0] ??
     extractTagContent(row, 'Title')[0] ?? '';
   const reference = extractTagContent(row, 'Reference')[0] ?? '';
 
-  const votesFor = parseVoteCount(extractTagContent(row, 'For')[0]);
-  const votesAgainst = parseVoteCount(extractTagContent(row, 'Against')[0]);
-  const abstentions = parseVoteCount(extractTagContent(row, 'Abstention')[0]);
-
-  const resultStr = extractTagContent(row, 'Result')[0] ?? '';
+  const counts = resolveVotCounts(row);
+  const resultStr = extractVotResultString(row);
   const voteType = extractAttribute(row, 'Type') ||
     (extractTagContent(row, 'VoteType')[0] ?? 'single');
 
@@ -277,27 +398,60 @@ function parseSingleVotResult(row: string, fallbackNumber: string): VotVoteResul
     itemNumber,
     subject: sanitizeText(subject),
     reference: sanitizeText(reference),
-    votesFor,
-    votesAgainst,
-    abstentions,
+    votesFor: counts.for,
+    votesAgainst: counts.against,
+    abstentions: counts.abst,
     result: determineVotOutcome(resultStr),
     voteType: sanitizeText(voteType),
+    tableTitle: sanitizeText(tableTitle),
+    rowType: sanitizeText(rowType),
+    officialForCount: counts.for,
+    officialAgainstCount: counts.against,
+    officialAbstentionCount: counts.abst,
   };
+}
+
+/**
+ * Parse VOT XML in Table/Row format, extracting table title from each Table element.
+ *
+ * @param xml - Raw XML string
+ * @returns Parsed results or empty array if no Table elements found
+ */
+function parseVotTableFormat(xml: string): VotVoteResult[] {
+  const tableElements = extractElements(xml, 'Table');
+  if (tableElements.length === 0) return [];
+
+  const results: VotVoteResult[] = [];
+  for (const table of tableElements) {
+    const tableTitle = extractAttribute(table, 'Title');
+    const rows = extractElements(table, 'Row');
+    for (const row of rows) {
+      results.push(parseSingleVotResult(row, String(results.length + 1), tableTitle));
+    }
+  }
+  return results;
 }
 
 /**
  * Parse a VOT (Vote Results) XML document into structured results.
  *
+ * Tries Table/Row format first (newer EP DOCEO format), then falls back
+ * to Vote.Result / Result element format.
+ *
  * @param xml - Raw XML string from VOT document
  * @returns Array of parsed aggregate vote results
  */
 export function parseVotXml(xml: string): VotVoteResult[] {
-  // VOT XML uses table-row-like structures
+  // Try Table/Row format first (newer format with Title attribute)
+  const tableResults = parseVotTableFormat(xml);
+  if (tableResults.length > 0) return tableResults;
+
+  // Fallback: Vote.Result / Result element format
   const rows = extractElements(xml, 'Vote\\.Result');
   const voteItems = rows.length > 0 ? rows : extractElements(xml, 'Result');
 
   return voteItems.map((row, idx) =>
-    parseSingleVotResult(row, String(idx + 1))
+    parseSingleVotResult(row, String(idx + 1), '')
   );
 }
 
@@ -449,6 +603,16 @@ export function rcvToLatestVotes(
     mepVotes: buildMepVotesMap(rcv),
     groupBreakdown: buildGroupBreakdown(rcv),
     sourceUrl,
+    dataSource: 'RCV' as const,
+    ...(rcv.voteType !== '' && { voteType: rcv.voteType }),
+    ...(rcv.sittingDate !== '' && { sittingDate: rcv.sittingDate }),
+    ...(rcv.sittingNumber !== '' && { sittingNumber: rcv.sittingNumber }),
+    officialCounts: {
+      for: rcv.officialForCount,
+      against: rcv.officialAgainstCount,
+      abstentions: rcv.officialAbstentionCount,
+    },
+    ...(rcv.corrections.length > 0 && { corrections: rcv.corrections }),
   }));
 }
 
@@ -467,16 +631,26 @@ export function votToLatestVotes(
   term = CURRENT_PARLIAMENTARY_TERM,
   sourceUrl = ''
 ): LatestVoteRecord[] {
-  return votResults.map((vot, index) => ({
-    id: `VOT-${String(term)}-${date}-${String(index + 1).padStart(3, '0')}`,
-    date,
-    term,
-    subject: vot.subject || vot.reference || `Vote item #${vot.itemNumber}`,
-    reference: vot.reference,
-    votesFor: vot.votesFor,
-    votesAgainst: vot.votesAgainst,
-    abstentions: vot.abstentions,
-    result: vot.result,
-    sourceUrl,
-  }));
+  return votResults.map((vot, index) => {
+    const vt = pickVoteType(vot.rowType, vot.voteType);
+    return {
+      id: `VOT-${String(term)}-${date}-${String(index + 1).padStart(3, '0')}`,
+      date,
+      term,
+      subject: vot.subject || vot.reference || `Vote item #${vot.itemNumber}`,
+      reference: vot.reference,
+      votesFor: vot.votesFor,
+      votesAgainst: vot.votesAgainst,
+      abstentions: vot.abstentions,
+      result: vot.result,
+      sourceUrl,
+      dataSource: 'VOT' as const,
+      ...(vt !== undefined && { voteType: vt }),
+      officialCounts: {
+        for: vot.officialForCount,
+        against: vot.officialAgainstCount,
+        abstentions: vot.officialAbstentionCount,
+      },
+    };
+  });
 }

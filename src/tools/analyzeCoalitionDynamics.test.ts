@@ -5,6 +5,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleAnalyzeCoalitionDynamics } from './analyzeCoalitionDynamics.js';
 import * as mepFetcherModule from '../utils/mepFetcher.js';
+import * as doceoClientModule from '../clients/ep/doceoClient.js';
 import { auditLogger } from '../utils/auditLogger.js';
 
 // Mock the MEP fetcher utility
@@ -12,10 +13,29 @@ vi.mock('../utils/mepFetcher.js', () => ({
   fetchAllCurrentMEPs: vi.fn()
 }));
 
+// Mock the DOCEO client — default to empty response so existing cohesion-null tests pass
+vi.mock('../clients/ep/doceoClient.js', () => ({
+  doceoClient: {
+    getLatestVotes: vi.fn()
+  }
+}));
+
 describe('analyze_coalition_dynamics Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     auditLogger.clear();
+
+    // Default DOCEO response: empty data — keeps existing cohesion-null assertions passing
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+      data: [],
+      total: 0,
+      datesAvailable: [],
+      datesUnavailable: [],
+      source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+      limit: 100,
+      offset: 0,
+      hasMore: false,
+    });
 
     vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: [
       {
@@ -502,6 +522,105 @@ describe('analyze_coalition_dynamics Tool', () => {
       };
       const greens = parsed.groupMetrics.find((g) => g.groupId === 'Greens/EFA');
       expect(greens?.memberCount).toBe(1);
+    });
+  });
+
+  describe('DOCEO XML cohesion integration', () => {
+    it('should compute real cohesion from DOCEO roll-call vote data', async () => {
+      // Provide two MEPs in EPP and S&D groups
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({
+        meps: [
+          { id: 'MEP-A', name: 'Alice EPP', country: 'DE', politicalGroup: 'EPP',
+            committees: [], active: true, termStart: '2024-07-16' },
+          { id: 'MEP-B', name: 'Bob SD', country: 'FR', politicalGroup: 'S&D',
+            committees: [], active: true, termStart: '2024-07-16' },
+        ],
+        complete: true,
+      });
+
+      // Two votes: one where EPP+S&D both voted FOR (same), one where they split
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        data: [
+          {
+            id: 'vote-1', title: 'Vote A', date: '2025-01-20',
+            result: 'ADOPTED' as const,
+            forCount: 400, againstCount: 100, abstentionCount: 50,
+            dataSource: 'RCV' as const,
+            groupBreakdown: {
+              EPP: { for: 80, against: 0, abstain: 0 },
+              'S&D': { for: 70, against: 0, abstain: 0 },
+            },
+          },
+          {
+            id: 'vote-2', title: 'Vote B', date: '2025-01-20',
+            result: 'REJECTED' as const,
+            forCount: 150, againstCount: 350, abstentionCount: 50,
+            dataSource: 'RCV' as const,
+            groupBreakdown: {
+              EPP: { for: 60, against: 20, abstain: 0 },
+              'S&D': { for: 0, against: 65, abstain: 5 },
+            },
+          },
+        ],
+        total: 2,
+        datesAvailable: ['2025-01-20'],
+        datesUnavailable: [],
+        source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+        limit: 100,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP', 'S&D'] });
+      const parsed = JSON.parse(result.content[0].text) as {
+        coalitionPairs: Array<{
+          groupA: string; groupB: string;
+          cohesion: number | null;
+          sharedVotes: number | null;
+          totalVotes: number | null;
+          trend: string | null;
+        }>;
+        methodology: string;
+      };
+
+      const pair = parsed.coalitionPairs.find(
+        (p) => (p.groupA === 'EPP' && p.groupB === 'S&D') ||
+                (p.groupA === 'S&D' && p.groupB === 'EPP')
+      );
+      expect(pair).toBeDefined();
+      // 1 shared vote out of 2 → cohesion = 0.5
+      expect(pair?.cohesion).toBeCloseTo(0.5, 1);
+      expect(pair?.totalVotes).toBe(2);
+      expect(pair?.sharedVotes).toBe(1);
+      // 0.5 is between 0.4 and 0.6 → STABLE
+      expect(pair?.trend).toBe('STABLE');
+      // Methodology should mention DOCEO
+      expect(parsed.methodology.toLowerCase()).toContain('doceo');
+    });
+
+    it('should fall back gracefully when DOCEO returns empty data (cohesion stays null)', async () => {
+      // doceoClient.getLatestVotes already mocked to return empty data in beforeEach
+      const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP', 'S&D'] });
+      const parsed = JSON.parse(result.content[0].text) as {
+        coalitionPairs: Array<{ cohesion: number | null; trend: string | null }>;
+      };
+      for (const pair of parsed.coalitionPairs) {
+        expect(pair.cohesion).toBeNull();
+        expect(pair.trend).toBeNull();
+      }
+    });
+
+    it('should fall back gracefully when DOCEO throws an error (cohesion stays null)', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockRejectedValue(
+        new Error('Network error')
+      );
+      const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP', 'S&D'] });
+      const parsed = JSON.parse(result.content[0].text) as {
+        coalitionPairs: Array<{ cohesion: number | null }>;
+      };
+      for (const pair of parsed.coalitionPairs) {
+        expect(pair.cohesion).toBeNull();
+      }
     });
   });
 });

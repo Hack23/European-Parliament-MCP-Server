@@ -5,12 +5,20 @@
  *         predictions, monthly breakdown, and error handling.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   handleGetAllGeneratedStats,
   getAllGeneratedStats,
   GetAllGeneratedStatsSchema,
 } from './getAllGeneratedStats.js';
+import * as doceoClientModule from '../clients/ep/doceoClient.js';
+
+// Mock DOCEO client — default to empty response so non-DOCEO tests are unaffected
+vi.mock('../clients/ep/doceoClient.js', () => ({
+  doceoClient: {
+    getLatestVotes: vi.fn(),
+  },
+}));
 
 // ── Type-safe JSON parse helper ─────────────────────────────────────
 
@@ -642,6 +650,21 @@ describe('getAllGeneratedStats', () => {
 // ── Handler Integration ──────────────────────────────────────────
 
 describe('handleGetAllGeneratedStats', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Default: empty DOCEO response — existing tests remain unaffected
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+      data: [],
+      total: 0,
+      datesAvailable: [],
+      datesUnavailable: [],
+      source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+      limit: 100,
+      offset: 0,
+      hasMore: false,
+    });
+  });
+
   it('handles empty args (all defaults)', async () => {
     const result = await handleGetAllGeneratedStats({});
     expect(result.content).toHaveLength(1);
@@ -712,5 +735,126 @@ describe('handleGetAllGeneratedStats', () => {
       expect(pred.methodology).toContain('Average-based extrapolation');
       expect(pred.confidenceInterval).toMatch(/^±\d+%$/);
     }
+  });
+
+  describe('DOCEO recent vote activity enrichment', () => {
+    it('includes recentVoteActivity when DOCEO returns data (category=all, includeRankings=true)', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        data: [
+          {
+            id: 'v1', title: 'Vote 1', date: '2025-01-20',
+            result: 'ADOPTED' as const,
+            forCount: 400, againstCount: 100, abstentionCount: 50,
+            dataSource: 'RCV' as const,
+            groupBreakdown: { EPP: { for: 100, against: 10, abstain: 5 } },
+          },
+          {
+            id: 'v2', title: 'Vote 2', date: '2025-01-20',
+            result: 'REJECTED' as const,
+            forCount: 150, againstCount: 350, abstentionCount: 50,
+            dataSource: 'RCV' as const,
+          },
+        ],
+        total: 2,
+        datesAvailable: ['2025-01-20'],
+        datesUnavailable: [],
+        source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+        limit: 100,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetAllGeneratedStats({ category: 'all', includeRankings: true });
+      const data = parseStatsResponse(result) as {
+        recentVoteActivity?: {
+          recentVoteCount: number;
+          adoptedCount: number;
+          rejectedCount: number;
+          adoptionRate: number;
+          datesWithData: string[];
+          groupVotingLeaders: Array<{ group: string; totalVotes: number }>;
+          dataFreshness: string;
+          dataSource: string;
+        };
+      };
+
+      expect(data.recentVoteActivity).toBeDefined();
+      expect(data.recentVoteActivity?.recentVoteCount).toBe(2);
+      expect(data.recentVoteActivity?.adoptedCount).toBe(1);
+      expect(data.recentVoteActivity?.rejectedCount).toBe(1);
+      expect(data.recentVoteActivity?.adoptionRate).toBe(50);
+      expect(data.recentVoteActivity?.datesWithData).toContain('2025-01-20');
+      expect(data.recentVoteActivity?.groupVotingLeaders[0]?.group).toBe('EPP');
+      expect(data.recentVoteActivity?.dataFreshness).toBe('NEAR_REALTIME');
+      expect(data.recentVoteActivity?.dataSource).toBe('EP_DOCEO_XML');
+    });
+
+    it('omits recentVoteActivity when category is not all/roll_call_votes', async () => {
+      const result = await handleGetAllGeneratedStats({
+        category: 'plenary_sessions',
+        includeRankings: true,
+      });
+      const data = parseStatsResponse(result) as { recentVoteActivity?: unknown };
+      expect(data.recentVoteActivity).toBeUndefined();
+    });
+
+    it('omits recentVoteActivity when includeRankings=false', async () => {
+      const result = await handleGetAllGeneratedStats({
+        category: 'all',
+        includeRankings: false,
+      });
+      const data = parseStatsResponse(result) as { recentVoteActivity?: unknown };
+      expect(data.recentVoteActivity).toBeUndefined();
+    });
+
+    it('omits recentVoteActivity when DOCEO returns empty data', async () => {
+      // beforeEach already mocks getLatestVotes to return empty data
+      const result = await handleGetAllGeneratedStats({ category: 'all', includeRankings: true });
+      const data = parseStatsResponse(result) as { recentVoteActivity?: unknown };
+      // Empty data array → recentVoteActivity is returned but recentVoteCount = 0
+      if (data.recentVoteActivity !== undefined) {
+        const rva = data.recentVoteActivity as { recentVoteCount: number };
+        expect(rva.recentVoteCount).toBe(0);
+      }
+    });
+
+    it('omits recentVoteActivity gracefully when DOCEO throws', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockRejectedValue(
+        new Error('upstream failure')
+      );
+      const result = await handleGetAllGeneratedStats({ category: 'all', includeRankings: true });
+      const data = parseStatsResponse(result) as { recentVoteActivity?: unknown };
+      expect(data.recentVoteActivity).toBeUndefined();
+    });
+
+    it('includes recentVoteActivity when category=roll_call_votes', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        data: [
+          {
+            id: 'v1', title: 'Vote 1', date: '2025-01-20',
+            result: 'ADOPTED' as const,
+            forCount: 300, againstCount: 100, abstentionCount: 50,
+            dataSource: 'VOT' as const,
+          },
+        ],
+        total: 1,
+        datesAvailable: ['2025-01-20'],
+        datesUnavailable: ['2025-01-19'],
+        source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+        limit: 100,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetAllGeneratedStats({
+        category: 'roll_call_votes',
+        includeRankings: true,
+      });
+      const data = parseStatsResponse(result) as {
+        recentVoteActivity?: { recentVoteCount: number; datesWithoutData: string[] };
+      };
+      expect(data.recentVoteActivity?.recentVoteCount).toBe(1);
+      expect(data.recentVoteActivity?.datesWithoutData).toContain('2025-01-19');
+    });
   });
 });
