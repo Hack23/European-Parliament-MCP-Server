@@ -624,3 +624,194 @@ describe('analyze_coalition_dynamics Tool', () => {
     });
   });
 });
+
+// ─── Coverage for previewUnrecognized, incomplete fetch, and timeout ──────────
+
+describe('Coverage for previewUnrecognized, incomplete fetch, and timeout', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    auditLogger.clear();
+
+    // Default: empty DOCEO response
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+      data: [],
+      total: 0,
+      datesAvailable: [],
+      datesUnavailable: [],
+      source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+      limit: 100,
+      offset: 0,
+      hasMore: false,
+    });
+  });
+
+  // A. previewUnrecognized truncation (lines 678-679)
+  it('should truncate long unrecognized group lists with (+N more) suffix', async () => {
+    // S&D has no MEPs → appears in missingGroups
+    // 12 different unrecognized groups → previewUnrecognized gets truncated
+    const mepList = [
+      {
+        id: 'MEP-EPP', name: 'A', country: 'DE', politicalGroup: 'EPP',
+        committees: [], active: true, termStart: '2024-07-16',
+      },
+      ...Array.from({ length: 12 }, (_, i) => ({
+        id: `MEP-UNK-${String(i)}`,
+        name: `Unknown ${String(i)}`,
+        country: 'FR',
+        politicalGroup: `GROUP_UNK_${String(i).padStart(2, '0')}`,
+        committees: [],
+        active: true,
+        termStart: '2024-07-16',
+      })),
+    ];
+    vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({ meps: mepList, complete: true });
+
+    const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP', 'S&D'] });
+    const parsed = JSON.parse(result.content[0].text) as { dataQualityWarnings: string[] };
+    // At least one warning should mention "(+" truncation
+    const hasMoreSuffix = parsed.dataQualityWarnings.some(
+      (w: string) => w.includes('(+') && w.includes('more)')
+    );
+    expect(hasMoreSuffix).toBe(true);
+  });
+
+  // B. Incomplete fetch warning (line 715)
+  it('should include incomplete-fetch warning when pagination failed', async () => {
+    vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({
+      meps: [
+        {
+          id: 'MEP-1', name: 'A', country: 'DE', politicalGroup: 'EPP',
+          committees: [], active: true, termStart: '2024-07-16',
+        },
+      ],
+      complete: false,
+      failureOffset: 50,
+    });
+
+    const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] });
+    const parsed = JSON.parse(result.content[0].text) as { dataQualityWarnings: string[] };
+    const hasIncompleteWarning = parsed.dataQualityWarnings.some(
+      (w: string) => w.includes('incomplete') && w.includes('50')
+    );
+    expect(hasIncompleteWarning).toBe(true);
+  });
+
+  // C. classifyDoceoTrend — CONVERGING path (cohesion >= 0.6)
+  it('should classify cohesion >= 0.6 as CONVERGING', async () => {
+    vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({
+      meps: [
+        {
+          id: 'MEP-A', name: 'Alice', country: 'DE', politicalGroup: 'EPP',
+          committees: [], active: true, termStart: '2024-07-16',
+        },
+        {
+          id: 'MEP-B', name: 'Bob', country: 'FR', politicalGroup: 'S&D',
+          committees: [], active: true, termStart: '2024-07-16',
+        },
+      ],
+      complete: true,
+    });
+
+    // All 3 votes: both groups FOR → cohesion = 1.0 → CONVERGING
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+      data: [
+        {
+          id: 'v1', date: '2025-01-20', result: 'ADOPTED' as const,
+          subject: 'V1', reference: '', votesFor: 10, votesAgainst: 0, abstentions: 0,
+          sourceUrl: '', dataSource: 'RCV' as const,
+          groupBreakdown: {
+            EPP: { for: 10, against: 0, abstain: 0 },
+            'S&D': { for: 8, against: 0, abstain: 0 },
+          },
+        },
+        {
+          id: 'v2', date: '2025-01-20', result: 'ADOPTED' as const,
+          subject: 'V2', reference: '', votesFor: 10, votesAgainst: 0, abstentions: 0,
+          sourceUrl: '', dataSource: 'RCV' as const,
+          groupBreakdown: {
+            EPP: { for: 10, against: 0, abstain: 0 },
+            'S&D': { for: 8, against: 0, abstain: 0 },
+          },
+        },
+        {
+          id: 'v3', date: '2025-01-20', result: 'ADOPTED' as const,
+          subject: 'V3', reference: '', votesFor: 10, votesAgainst: 0, abstentions: 0,
+          sourceUrl: '', dataSource: 'RCV' as const,
+          groupBreakdown: {
+            EPP: { for: 10, against: 0, abstain: 0 },
+            'S&D': { for: 8, against: 0, abstain: 0 },
+          },
+        },
+      ],
+      total: 3, datesAvailable: ['2025-01-20'], datesUnavailable: [],
+      source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+      limit: 100, offset: 0, hasMore: false,
+    });
+
+    const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP', 'S&D'] });
+    const parsed = JSON.parse(result.content[0].text) as {
+      coalitionPairs: Array<{ groupA: string; groupB: string; trend: string | null }>;
+    };
+    const pair = parsed.coalitionPairs.find(
+      (p) => (p.groupA === 'EPP' && p.groupB === 'S&D') || (p.groupA === 'S&D' && p.groupB === 'EPP')
+    );
+    expect(pair?.trend).toBe('CONVERGING');
+  });
+
+  // D. classifyDoceoTrend — DIVERGING path (cohesion <= 0.4)
+  it('should classify cohesion <= 0.4 as DIVERGING', async () => {
+    vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({
+      meps: [
+        {
+          id: 'MEP-A', name: 'Alice', country: 'DE', politicalGroup: 'EPP',
+          committees: [], active: true, termStart: '2024-07-16',
+        },
+        {
+          id: 'MEP-B', name: 'Bob', country: 'FR', politicalGroup: 'S&D',
+          committees: [], active: true, termStart: '2024-07-16',
+        },
+      ],
+      complete: true,
+    });
+
+    // 5 votes: EPP FOR, S&D AGAINST on all → cohesion = 0 → DIVERGING
+    const makeVote = (id: string) => ({
+      id, date: '2025-01-20', result: 'ADOPTED' as const, subject: id, reference: '',
+      votesFor: 10, votesAgainst: 8, abstentions: 0, sourceUrl: '', dataSource: 'RCV' as const,
+      groupBreakdown: {
+        EPP: { for: 10, against: 0, abstain: 0 },
+        'S&D': { for: 0, against: 8, abstain: 0 },
+      },
+    });
+
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+      data: ['v1', 'v2', 'v3', 'v4', 'v5'].map(makeVote),
+      total: 5, datesAvailable: ['2025-01-20'], datesUnavailable: [],
+      source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+      limit: 100, offset: 0, hasMore: false,
+    });
+
+    const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP', 'S&D'] });
+    const parsed = JSON.parse(result.content[0].text) as {
+      coalitionPairs: Array<{ groupA: string; groupB: string; trend: string | null }>;
+    };
+    const pair = parsed.coalitionPairs.find(
+      (p) => (p.groupA === 'EPP' && p.groupB === 'S&D') || (p.groupA === 'S&D' && p.groupB === 'EPP')
+    );
+    expect(pair?.trend).toBe('DIVERGING');
+  });
+
+  // E. Timeout path (line 875) — make withTimeout throw a TimeoutError
+  it('should return buildTimeoutResponse when operation times out', async () => {
+    const { TimeoutError } = await import('../utils/timeout.js');
+    // Inject a TimeoutError via fetchAllCurrentMEPs so the outer catch handles it
+    vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockRejectedValue(
+      new TimeoutError('test timeout')
+    );
+
+    const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP'] });
+    const text = result.content[0]!.text;
+    // buildTimeoutResponse returns JSON with timedOut: true and status: 'timeout'
+    expect(text).toMatch(/timeout/i);
+  });
+});

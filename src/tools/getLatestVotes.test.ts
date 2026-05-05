@@ -128,3 +128,17 @@ describe('handleGetLatestVotes', () => {
     }));
   });
 });
+
+// ─── Gap 4: line 109 — non-ZodError rethrow ──────────────────────────────────
+
+describe('handleGetLatestVotes — non-ZodError rethrow', () => {
+  it('rethrows non-ZodError from schema validation', async () => {
+    const { GetLatestVotesSchema } = await import('./getLatestVotes.js');
+    const parseError = new RangeError('unexpected crash');
+    vi.spyOn(GetLatestVotesSchema, 'parse').mockImplementationOnce(() => {
+      throw parseError;
+    });
+    await expect(handleGetLatestVotes({})).rejects.toThrow('unexpected crash');
+    vi.restoreAllMocks();
+  });
+});

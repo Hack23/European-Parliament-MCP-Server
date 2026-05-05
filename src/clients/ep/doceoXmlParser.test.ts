@@ -412,3 +412,172 @@ describe('doceoXmlParser', () => {
     });
   });
 });
+
+// ─── Edge cases and branch coverage ──────────────────────────────────────────
+
+describe('Edge cases and branch coverage', () => {
+  // A. pickVoteType — rowType empty, voteType non-empty (lines 276-277)
+  describe('pickVoteType via votToLatestVotes', () => {
+    it('uses voteType when rowType is empty', () => {
+      const votResults = [{
+        itemNumber: '1', subject: 'X', reference: '', votesFor: 10, votesAgainst: 5,
+        abstentions: 1, result: 'ADOPTED' as const, voteType: 'single', tableTitle: '',
+        rowType: '', officialForCount: 10, officialAgainstCount: 5, officialAbstentionCount: 1,
+      }];
+      const records = votToLatestVotes(votResults, '2026-05-01');
+      expect(records[0]!.voteType).toBe('single');
+    });
+
+    it('omits voteType when both rowType and voteType are empty', () => {
+      const votResults = [{
+        itemNumber: '1', subject: 'X', reference: '', votesFor: 10, votesAgainst: 5,
+        abstentions: 1, result: 'ADOPTED' as const, voteType: '', tableTitle: '',
+        rowType: '', officialForCount: 10, officialAgainstCount: 5, officialAbstentionCount: 1,
+      }];
+      const records = votToLatestVotes(votResults, '2026-05-01');
+      expect(records[0]!.voteType).toBeUndefined();
+    });
+  });
+
+  // B. buildGroupBreakdown — abstain path (lines 560-562)
+  describe('buildGroupBreakdown abstentions', () => {
+    it('counts abstentions in groupBreakdown', () => {
+      const rcvResults = [{
+        voteId: '1', description: 'Test', reference: '',
+        votesFor: [], votesAgainst: [],
+        abstentions: [{ mepId: '300', name: 'Eve', politicalGroup: 'Greens/EFA' }],
+        result: 'REJECTED' as const, sittingDate: '', sittingNumber: '', voteType: '',
+        officialForCount: 0, officialAgainstCount: 1, officialAbstentionCount: 1, corrections: [],
+      }];
+      const records = rcvToLatestVotes(rcvResults, '2026-05-01');
+      expect(records[0]!.groupBreakdown?.['Greens/EFA']?.abstain).toBe(1);
+      expect(records[0]!.groupBreakdown?.['Greens/EFA']?.for).toBe(0);
+    });
+  });
+
+  // C. decodeXmlEntities — S&D group identifier
+  describe('decodeXmlEntities via parseRcvXml', () => {
+    it('decodes XML entities in group identifiers', () => {
+      const xml = `<RollCallVoteResults>
+        <RollCallVote.Result Identifier="1">
+          <Result.For>
+            <PoliticalGroup Identifier="S&amp;D">
+              <PoliticalGroup.Member.Name MepId="100">Alice</PoliticalGroup.Member.Name>
+            </PoliticalGroup>
+          </Result.For>
+          <Result.Against></Result.Against>
+          <Result.Abstention></Result.Abstention>
+        </RollCallVote.Result>
+      </RollCallVoteResults>`;
+      const results = parseRcvXml(xml);
+      expect(results[0]!.votesFor[0]!.politicalGroup).toBe('S&D');
+    });
+  });
+
+  // D. parseSingleRcvVote — reference present, no description
+  describe('parseSingleRcvVote fallback', () => {
+    it('falls back to reference when description is empty', () => {
+      const xml = `<RollCallVoteResults>
+        <RollCallVote.Result Identifier="5">
+          <RollCallVote.Reference>A10-0099/2026</RollCallVote.Reference>
+          <Result.For></Result.For>
+          <Result.Against></Result.Against>
+          <Result.Abstention></Result.Abstention>
+        </RollCallVote.Result>
+      </RollCallVoteResults>`;
+      const results = parseRcvXml(xml);
+      expect(results[0]!.reference).toBe('A10-0099/2026');
+      expect(results[0]!.description).toBe('');
+    });
+  });
+
+  // E. rcvToLatestVotes — subject fallback chain
+  describe('rcvToLatestVotes subject fallback', () => {
+    it('uses reference as subject fallback when description is empty', () => {
+      const rcvResults = [{
+        voteId: '1', description: '', reference: 'A10-0005/2026',
+        votesFor: [], votesAgainst: [], abstentions: [],
+        result: 'REJECTED' as const, sittingDate: '', sittingNumber: '', voteType: '',
+        officialForCount: 0, officialAgainstCount: 0, officialAbstentionCount: 0, corrections: [],
+      }];
+      const records = rcvToLatestVotes(rcvResults, '2026-05-01');
+      expect(records[0]!.subject).toBe('A10-0005/2026');
+    });
+
+    it('uses Vote #N as subject when both description and reference are empty', () => {
+      const rcvResults = [{
+        voteId: '1', description: '', reference: '',
+        votesFor: [], votesAgainst: [], abstentions: [],
+        result: 'REJECTED' as const, sittingDate: '', sittingNumber: '', voteType: '',
+        officialForCount: 0, officialAgainstCount: 0, officialAbstentionCount: 0, corrections: [],
+      }];
+      const records = rcvToLatestVotes(rcvResults, '2026-05-01');
+      expect(records[0]!.subject).toBe('Vote #1');
+    });
+  });
+
+  // F. votToLatestVotes — subject fallback chain
+  describe('votToLatestVotes subject fallback', () => {
+    it('uses reference as subject fallback when subject is empty in VOT', () => {
+      const votResults = [{
+        itemNumber: '3', subject: '', reference: 'B10-0002/2026',
+        votesFor: 5, votesAgainst: 3, abstentions: 1,
+        result: 'ADOPTED' as const, voteType: '', tableTitle: '', rowType: '',
+        officialForCount: 5, officialAgainstCount: 3, officialAbstentionCount: 1,
+      }];
+      const records = votToLatestVotes(votResults, '2026-05-01');
+      expect(records[0]!.subject).toBe('B10-0002/2026');
+    });
+
+    it('uses Vote item #N as subject when both subject and reference are empty in VOT', () => {
+      const votResults = [{
+        itemNumber: '7', subject: '', reference: '',
+        votesFor: 0, votesAgainst: 1, abstentions: 0,
+        result: 'REJECTED' as const, voteType: '', tableTitle: '', rowType: '',
+        officialForCount: 0, officialAgainstCount: 1, officialAbstentionCount: 0,
+      }];
+      const records = votToLatestVotes(votResults, '2026-05-01');
+      expect(records[0]!.subject).toBe('Vote item #7');
+    });
+  });
+
+  // G. parseVotXml — fallback to Result elements when no Vote.Result elements
+  describe('parseVotXml fallback element names', () => {
+    it('falls back to Result elements when Vote.Result is absent', () => {
+      const xml = `<VoteResults>
+        <Result Number="1">
+          <Subject>Direct result format</Subject>
+          <Reference>C10-0001/2026</Reference>
+          <For>300</For>
+          <Against>50</Against>
+          <Abstention>20</Abstention>
+          <Result>Adopted</Result>
+        </Result>
+      </VoteResults>`;
+      const results = parseVotXml(xml);
+      expect(results).toHaveLength(1);
+      expect(results[0]!.subject).toBe('Direct result format');
+    });
+  });
+
+  // H. parseRcvXml — fallback to RollCallVote when RollCallVote.Result is absent
+  describe('parseRcvXml fallback element names', () => {
+    it('falls back to RollCallVote elements when RollCallVote.Result is absent', () => {
+      const xml = `<RollCallVoteResults>
+        <RollCallVote Identifier="99">
+          <RollCallVote.Description.Text>Fallback element</RollCallVote.Description.Text>
+          <Result.For>
+            <PoliticalGroup Identifier="EPP">
+              <PoliticalGroup.Member.Name MepId="1">A</PoliticalGroup.Member.Name>
+            </PoliticalGroup>
+          </Result.For>
+          <Result.Against></Result.Against>
+          <Result.Abstention></Result.Abstention>
+        </RollCallVote>
+      </RollCallVoteResults>`;
+      const results = parseRcvXml(xml);
+      expect(results).toHaveLength(1);
+      expect(results[0]!.description).toBe('Fallback element');
+    });
+  });
+});
