@@ -129,18 +129,18 @@ graph LR
 
 | # | Workflow | File | Trigger | Node.js | Permissions | ISMS Evidence |
 |---|---------|------|---------|---------|-------------|---------------|
-| 1 | **Test and Report** | `test-and-report.yml` | Push, PR | 25.x + TS 6.0.2 | `read-all`, scoped per job | [Secure Dev Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
+| 1 | **Test and Report** | `test-and-report.yml` | Push, PR | 26.x + TS 6.0.2 | `read-all`, scoped per job | [Secure Dev Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
 | 2 | **CodeQL Analysis** | `codeql.yml` | Push, PR, Weekly | — | `security-events: write` | ISO 27001 A.14.2.8 |
-| 3 | **Build, Attest and Release** | `release.yml` | Tag (v\*), Manual | 25.x + TS 6.0.2 | `id-token: write`, `attestations: write` | SLSA Level 3, includes SBOM |
-| 4 | **Integration & E2E Tests** | `integration-tests.yml` | Push, PR, Daily, Manual | 25.x + TS 6.0.2 | `read-all` | Quality Assurance |
-| 5 | **SLSA Provenance** | `slsa-provenance.yml` | Tag (v\*), Release, Manual | 25.x | `id-token: write`, `attestations: write` | SLSA Level 3 |
+| 3 | **Build, Attest and Release** | `release.yml` | Tag (v\*), Manual | 26.x + TS 6.0.2 | `id-token: write`, `attestations: write` | SLSA Level 3, includes SBOM |
+| 4 | **Integration & E2E Tests** | `integration-tests.yml` | Push, PR, Daily, Manual | 26.x + TS 6.0.2 | `read-all` | Quality Assurance |
+| 5 | **SLSA Provenance** | `slsa-provenance.yml` | Tag (v\*), Release, Manual | node-version: 26 | `id-token: write`, `attestations: write` | SLSA Level 3 |
 | 6 | **Scorecard** | `scorecard.yml` | Push, Weekly | — | `security-events: write`, `id-token: write` | [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
 | 7 | **Dependency Review** | `dependency-review.yml` | PR | — | `contents: read` | NIST CSF DE.CM-8 |
 | 8 | **PR Labeler** | `labeler.yml` | PR | — | `pull-requests: write` | Process Automation |
 | 9 | **Setup Labels** | `setup-labels.yml` | Manual | — | `issues: write` | Configuration Mgmt |
-| 10 | **Copilot Setup** | `copilot-setup-steps.yml` | Push, PR, Manual | 25.x + TS 6.0.2 | Scoped per caller | Dev Tooling |
-| 11 | **EP Statistics Refresh** | `refresh-stats.yml` | Weekly (cron), Manual | 25.x + TS 6.0.2 | `contents: write` | Agentic data intelligence |
-| 12 | **Knip — Unused Code** | `knip.yml` | Push, PR, Manual | 25.x | `contents: read` | ISO 27001 A.8.28 (Secure Coding) |
+| 10 | **Copilot Setup** | `copilot-setup-steps.yml` | Push, PR, Manual | 26.x + TS 6.0.2 | Scoped per caller | Dev Tooling |
+| 11 | **EP Statistics Refresh** | `refresh-stats.yml` | Weekly (cron), Manual | 26.x + TS 6.0.2 | `contents: write` | Agentic data intelligence |
+| 12 | **Knip — Unused Code** | `knip.yml` | Push, PR, Manual | node-version: 26 | `contents: read` | ISO 27001 A.8.28 (Secure Coding) |
 
 ---
 
@@ -160,7 +160,7 @@ flowchart TB
 
     subgraph "Stage 2: Build & Test"
         DEV --> TEST["🧪 Test & Report<br><code>test-and-report.yml</code>"]
-        TEST --> PREPARE["⚙️ Prepare<br>Node.js 25, npm install"]
+        TEST --> PREPARE["⚙️ Prepare<br>Node.js 26, npm install"]
         PREPARE --> BUILD_VAL["📦 Build Validation"]
         PREPARE --> UNIT["🧪 Unit Tests"]
         BUILD_VAL --> TYPE["tsc --noEmit"]
@@ -271,7 +271,7 @@ flowchart TB
 | **Workflow File** | `.github/workflows/knip.yml` |
 | **Trigger** | Push to `main`, Pull requests to `main`, Manual dispatch |
 | **Duration** | ~1 min |
-| **Node.js Version** | 25.x |
+| **Node.js Version** | node-version: 26 |
 | **Quality Gate** | 0 unused exports, dependencies, or files (blocking) |
 | **Runner Hardening** | `step-security/harden-runner` (egress audit) |
 | **Concurrency** | `cancel-in-progress` per ref to save CI minutes |
@@ -280,7 +280,7 @@ flowchart TB
 
 1. Harden runner environment
 2. Checkout repository
-3. Setup Node.js 25 + cache `~/.npm`
+3. Setup Node.js 26 + cache `~/.npm`
 4. `npm ci`
 5. `npm run knip` (uses `knip.json` covering `src/**/*.ts`, `tests/**/*.ts`, `scripts/**/*.ts`)
 6. Post job summary with triage guidance on failure
@@ -310,7 +310,7 @@ flowchart TB
 | **Workflow File** | `.github/workflows/test-and-report.yml` |
 | **Trigger** | Push to `main`, Pull requests to `main` |
 | **Duration** | ~3 min |
-| **Node.js Version** | 25.x |
+| **Node.js Version** | node-version: 26 |
 | **Quality Gates** | 9 gates (see table below) |
 
 **Jobs:**
@@ -323,7 +323,7 @@ prepare → build-validation → unit-tests → report
 
 | Job | Steps | Artifacts |
 |-----|-------|-----------|
-| **prepare** | Setup Node.js 25, `npm ci`, cache dependencies | Cached `node_modules` |
+| **prepare** | Setup Node.js 26, `npm ci`, cache dependencies | Cached `node_modules` |
 | **build-validation** | `tsc --noEmit` (TypeScript 6.0.2), ESLint, Knip, `npm run build`, license check, SBOM quality | Build artifacts, SBOM report |
 | **unit-tests** | `npm run test:coverage`, coverage threshold check, Codecov upload | Coverage reports (lcov, JSON) |
 | **report** | Combine artifacts, generate test summary, PR comment | Combined test report |
@@ -388,7 +388,7 @@ prepare → build-validation → unit-tests → report
 | **Workflow File** | `.github/workflows/integration-tests.yml` |
 | **Trigger** | Push to `main`, PR to `main`, Daily (02:00 UTC), Manual |
 | **Duration** | ~5 min |
-| **Node.js Version** | 25.x |
+| **Node.js Version** | node-version: 26 |
 | **Quality Gate** | All integration and E2E tests pass |
 
 **Environment Variables:**
@@ -434,7 +434,7 @@ prepare → build-validation → unit-tests → report
 | **Workflow File** | `.github/workflows/release.yml` |
 | **Trigger** | Push tags (`v*`), Manual dispatch |
 | **Duration** | ~8 min |
-| **Node.js Version** | 25.x |
+| **Node.js Version** | node-version: 26 |
 | **Secrets** | `NPM_TOKEN` |
 | **Quality Gate** | Full test suite passes, attestations generated |
 
@@ -569,7 +569,7 @@ build → provenance → verify → publish-npm (release only)
 | **Workflow File** | `.github/workflows/refresh-stats.yml` |
 | **Trigger** | Weekly (Monday 06:00 UTC cron), Manual dispatch |
 | **Duration** | ~5 min |
-| **Node.js Version** | 25.x |
+| **Node.js Version** | node-version: 26 |
 | **Permissions** | `contents: write` |
 
 **Purpose:**
@@ -580,7 +580,7 @@ The `refresh-stats.yml` workflow is an **agentic GitHub workflow** that automati
 
 | Job | Purpose | Key Steps |
 |-----|---------|-----------|
-| **refresh-stats** | Refresh EP stats | Check out repo, setup Node.js 25.x, install deps, run refresh script, validate stats, commit if changed |
+| **refresh-stats** | Refresh EP stats | Check out repo, setup Node.js 26.x, install deps, run refresh script, validate stats, commit if changed |
 
 **Workflow Features:**
 
@@ -616,13 +616,13 @@ The `refresh-stats.yml` workflow is an **agentic GitHub workflow** that automati
 | **Workflow File** | `.github/workflows/copilot-setup-steps.yml` |
 | **Trigger** | `workflow_call` (reusable workflow) |
 | **Duration** | ~2 min |
-| **Node.js Version** | 25.x |
+| **Node.js Version** | node-version: 26 |
 
 **Setup Steps:**
 
 1. Checkout repository with full history
 2. Cache APT packages and npm modules
-3. Setup Node.js 25.x with npm cache
+3. Setup Node.js 26.x with npm cache
 4. Install global MCP servers (`@modelcontextprotocol/server-filesystem`, `-memory`, `-sequential-thinking`, `@playwright/mcp`)
 5. Install project dependencies (`npm ci`)
 6. Verify all MCP server installations

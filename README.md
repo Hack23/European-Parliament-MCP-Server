@@ -508,7 +508,7 @@ npx -y european-parliament-mcp-server
 
 ### Prerequisites
 
-- Node.js 25.x or higher
+- Node.js 26.x or higher
 - npm 10.x or higher
 
 ### Installation
@@ -1361,8 +1361,8 @@ console.log(`Cache hit rate: ${stats.hitRate}%`);
 
 **Solutions:**
 ```bash
-# Ensure Node.js 25+ is installed
-node --version   # Must be >= 25.0.0
+# Ensure Node.js 26+ is installed
+node --version   # Must be >= 26.0.0
 
 # Clear npm cache and reinstall
 npm cache clean --force

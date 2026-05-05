@@ -1,6 +1,6 @@
 {
   "name": "European Parliament MCP Server Dev Container",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:24-trixie",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:26-trixie",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {
       "installDirectlyFromGitHubRelease": true,
@@ -9,7 +9,7 @@
     // Using a single feature for Node.js for simplicity
     "ghcr.io/devcontainers/features/node:1": {
       "nodeGypDependencies": true,
-      "version": "25" // Aligned with base image
+      "version": "26" // Aligned with base image
     },
     "ghcr.io/devcontainers/features/git:1": {
       "ppa": true,
