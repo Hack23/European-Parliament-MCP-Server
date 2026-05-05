@@ -122,7 +122,7 @@ describe('Full Workflow E2E Tests', () => {
       // Server health / diagnostics (1)
       expect(toolNames).toContain('get_server_health');
 
-      expect(toolNames.length).toBe(62);
+      expect(toolNames.length).toBe(63);
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute get_meps tool', async () => {

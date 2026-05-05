@@ -39,8 +39,8 @@ describe('getToolMetadataArray', () => {
   // Cache once to avoid constructing a fresh 61-element array per test.
   const tools = getToolMetadataArray();
 
-  it('returns exactly 62 tools', () => {
-    expect(tools).toHaveLength(62);
+  it('returns exactly 63 tools', () => {
+    expect(tools).toHaveLength(63);
   });
 
   it('all tools have a non-empty name', () => {
@@ -89,9 +89,9 @@ describe('getToolMetadataArray', () => {
 
   // ── Category distribution ──────────────────────────────────────
 
-  it('has exactly 8 core tools', () => {
+  it('has exactly 9 core tools', () => {
     const coreTools = tools.filter((t) => t.category === 'core');
-    expect(coreTools).toHaveLength(8);
+    expect(coreTools).toHaveLength(9);
   });
 
   it('has exactly 3 advanced tools', () => {
@@ -119,13 +119,13 @@ describe('getToolMetadataArray', () => {
     expect(feed).toHaveLength(13);
   });
 
-  it('category counts sum to 62', () => {
+  it('category counts sum to 63', () => {
     const counts: Record<string, number> = { core: 0, advanced: 0, osint: 0, phase4: 0, phase5: 0, feed: 0 };
     for (const tool of tools) {
       counts[tool.category]++;
     }
     const total = Object.values(counts).reduce((a, b) => a + b, 0);
-    expect(total).toBe(62);
+    expect(total).toBe(63);
   });
 
   // ── Core tool names ────────────────────────────────────────────
@@ -261,10 +261,10 @@ describe('getToolMetadataArray', () => {
     expect(first.category).toBe('core');
   });
 
-  it('last tool is get_procedure_event_by_id with phase5 category', () => {
+  it('last tool is get_latest_votes with core category', () => {
     const last = tools[tools.length - 1] as ToolMetadata;
-    expect(last.name).toBe('get_procedure_event_by_id');
-    expect(last.category).toBe('phase5');
+    expect(last.name).toBe('get_latest_votes');
+    expect(last.category).toBe('core');
   });
 });
 

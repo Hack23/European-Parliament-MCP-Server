@@ -48,6 +48,7 @@ export { DocumentClient } from './documentClient.js';
 export { LegislativeClient } from './legislativeClient.js';
 export { QuestionClient } from './questionClient.js';
 export { VocabularyClient } from './vocabularyClient.js';
+export { DoceoClient, doceoClient } from './doceoClient.js';
 
 // ─── JSON-LD helpers (pure, re-exported for consumers) ───────────────────────
 
