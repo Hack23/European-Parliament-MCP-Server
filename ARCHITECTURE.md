@@ -58,7 +58,7 @@
 
 ## 🎯 Executive Summary
 
-The **European Parliament MCP Server** (v1.2.10) is a TypeScript/Node.js application implementing the **Model Context Protocol (MCP)** to expose structured access to European Parliament datasets. It bridges AI assistants and LLM clients with the EP Open Data Portal API v2, enabling parliamentary intelligence, legislative monitoring, and OSINT analysis workflows.
+The **European Parliament MCP Server** (v1.2.21) is a TypeScript/Node.js application implementing the **Model Context Protocol (MCP)** to expose structured access to European Parliament datasets. It bridges AI assistants and LLM clients with the EP Open Data Portal API v2, enabling parliamentary intelligence, legislative monitoring, and OSINT analysis workflows.
 
 ### Key Capabilities
 

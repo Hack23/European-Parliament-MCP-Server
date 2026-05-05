@@ -19,14 +19,14 @@
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Owner-DevOps-0A66C2?style=for-the-badge" alt="Owner"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Version-0.7.0-555?style=for-the-badge" alt="Version"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--04--21-success?style=for-the-badge" alt="Effective Date"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Effective-2026--05--05-success?style=for-the-badge" alt="Effective Date"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Review-Quarterly-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** DevOps Team | **📄 Version:** 0.7.0 | **📅 Last Updated:** 2026-04-21 (UTC)  
-**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-07-21  
+**📋 Document Owner:** DevOps Team | **📄 Version:** 0.7.0 | **📅 Last Updated:** 2026-05-05 (UTC)  
+**🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-08-05  
 **🏷️ Classification:** Public (Open Source MCP Server)  
-**🔷 Project Version:** 1.2.10  
+**🔷 Project Version:** 1.2.21  
 **🔷 TypeScript Baseline:** 6.0.3
 **✅ ISMS Compliance:** ISO 27001 (A.8.31, A.14.2, A.12.1), NIST CSF 2.0 (PR.DS-6, DE.CM-8), CIS Controls v8.1 (2.2, 4.1, 16.6)
 
