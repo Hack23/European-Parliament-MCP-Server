@@ -244,6 +244,7 @@ export async function fetchRecentVoteStats(): Promise<RecentVoteActivity | null>
     const adoptedCount = votes.filter((v) => v.result === 'ADOPTED').length;
     const rejectedCount = votes.filter((v) => v.result === 'REJECTED').length;
     const recentVoteCount = votes.length;
+    // Multiply by 1000 then divide by 10 to round to one decimal place (e.g. 50.5%)
     const adoptionRate =
       recentVoteCount > 0 ? Math.round((adoptedCount / recentVoteCount) * 1000) / 10 : 0;
     return {

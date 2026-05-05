@@ -342,7 +342,10 @@ function processVoteGroupPairs(
   const forGroups = extractForGroups(breakdown);
   for (let i = 0; i < groups.length; i++) {
     for (let j = i + 1; j < groups.length; j++) {
-      recordGroupPairVote(groups[i] ?? '', groups[j] ?? '', forGroups, pairStats);
+      const gA = groups[i];
+      const gB = groups[j];
+      if (gA === undefined || gB === undefined) continue;
+      recordGroupPairVote(gA, gB, forGroups, pairStats);
     }
   }
 }
@@ -499,8 +502,9 @@ function buildCoalitionPairs(
   const pairs: CoalitionPairAnalysis[] = [];
   for (let i = 0; i < targetGroups.length; i++) {
     for (let j = i + 1; j < targetGroups.length; j++) {
-      const groupA = targetGroups[i] ?? '';
-      const groupB = targetGroups[j] ?? '';
+      const groupA = targetGroups[i];
+      const groupB = targetGroups[j];
+      if (groupA === undefined || groupB === undefined) continue;
       pairs.push(computePairSizeSimilarity(
         groupA, groupB,
         memberCountByGroup.get(groupA) ?? 0,
