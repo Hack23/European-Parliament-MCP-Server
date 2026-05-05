@@ -27,9 +27,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Stable Node.js version used for required CI jobs
         node-version: [26.x]
         experimental: [false]
         include:
+          # Node.js 27 nightly: experimental, non-blocking (continue-on-error: true)
           - node-version: '27-nightly'
             experimental: true
 

@@ -569,8 +569,8 @@ node --version
 # Install Node.js 26 from: https://nodejs.org/
 
 # Or use nvm (Node Version Manager)
-nvm install 25
-nvm use 25
+nvm install 26
+nvm use 26
 ```
 
 ---
