@@ -153,15 +153,18 @@ function extractTagContent(xml: string, tagName: string): string[] {
 }
 
 /**
- * Decode common XML character entities in an attribute value.
+ * Decode common XML character entities in an attribute value using a single-pass
+ * replacement map. Decodes &amp; &lt; &gt; &quot; &apos; to their literal characters.
  */
 function decodeXmlEntities(value: string): string {
-  return value
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&apos;/g, "'");
+  const XML_ENTITIES: Record<string, string> = {
+    amp: '&',
+    lt: '<',
+    gt: '>',
+    quot: '"',
+    apos: "'",
+  };
+  return value.replace(/&(amp|lt|gt|quot|apos);/g, (_, entity: string) => XML_ENTITIES[entity] ?? `&${entity};`);
 }
 
 /**
