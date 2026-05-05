@@ -111,13 +111,7 @@ function sanitizeText(text: string): string {
  */
 function extractTagContent(xml: string, tagName: string): string[] {
   const regex = new RegExp(`<${tagName}[^>]*>([\\s\\S]*?)</${tagName}>`, 'gi');
-  const results: string[] = [];
-  let match: RegExpExecArray | null = regex.exec(xml);
-  while (match !== null) {
-    results.push(sanitizeText(match[1] ?? ''));
-    match = regex.exec(xml);
-  }
-  return results;
+  return [...xml.matchAll(regex)].map(m => sanitizeText(m[1] ?? ''));
 }
 
 /**
@@ -134,13 +128,7 @@ function extractAttribute(element: string, attrName: string): string {
  */
 function extractElements(xml: string, tagName: string): string[] {
   const regex = new RegExp(`<${tagName}[^>]*(?:/>|>[\\s\\S]*?</${tagName}>)`, 'gi');
-  const results: string[] = [];
-  let match: RegExpExecArray | null = regex.exec(xml);
-  while (match !== null) {
-    results.push(match[0]);
-    match = regex.exec(xml);
-  }
-  return results;
+  return [...xml.matchAll(regex)].map(m => m[0]);
 }
 
 // ─── RCV XML Parser ───────────────────────────────────────────────────────────
@@ -180,14 +168,12 @@ function parseGroupSection(groupXml: string, votes: RcvMepVote[]): void {
 
   // Match member elements - multiple possible formats
   const memberRegex = /(?:PoliticalGroup\.Member\.Name|Member\.Name|Name)[^>]*MepId="(\d+)"[^>]*>([^<]*)</gi;
-  let memberMatch: RegExpExecArray | null = memberRegex.exec(groupXml);
-  while (memberMatch !== null) {
+  for (const memberMatch of groupXml.matchAll(memberRegex)) {
     const mepId = memberMatch[1] ?? '';
     const name = sanitizeText(memberMatch[2] ?? '');
     if (mepId !== '' && name !== '') {
       votes.push({ mepId, name, politicalGroup: groupName });
     }
-    memberMatch = memberRegex.exec(groupXml);
   }
 }
 
