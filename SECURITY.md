@@ -82,7 +82,7 @@ This project is under active development, and we provide security updates for th
 
 | Version | Supported          | Node.js Compatibility |
 | ------- | ------------------ | --------------------- |
-| latest  | :white_check_mark: | Node.js 25.x |
+| latest  | :white_check_mark: | Node.js 26.x |
 
 ---
 

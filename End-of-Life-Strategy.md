@@ -16,7 +16,7 @@
   <a href="#"><img src="https://img.shields.io/badge/Review-Annual-orange?style=for-the-badge" alt="Review Cycle"/></a>
 </p>
 
-**📋 Document Owner:** CEO | **📄 Version:** 3.1 | **📅 Last Updated:** 2026-04-21 (UTC)  
+**📋 Document Owner:** CEO | **📄 Version:** 3.2 | **📅 Last Updated:** 2026-05-05 (UTC)  
 **🔄 Review Cycle:** Annual | **⏰ Next Review:** 2027-04-21  
 **🏷️ Classification:** Public (Open Source MCP Server)
 
@@ -64,8 +64,8 @@ This strategy aligns with [Hack23 AB's Vulnerability Management Policy](https://
 ```mermaid
 graph TB
     subgraph "🏗️ Core Runtime"
-        NODE[Node.js 25.x Current]
-        TS[TypeScript 6.0.2]
+        NODE[Node.js 26.x Current]
+        TS[TypeScript 6.0.3]
     end
     subgraph "📦 Key Dependencies"
         MCP["@modelcontextprotocol/sdk"]
@@ -91,24 +91,24 @@ graph TB
 
 | Component | Current Version | EOL Date | Risk Level | Migration Path |
 |-----------|----------------|----------|------------|---------------|
-| **Node.js** | >=25.0.0 (25.x Current) | **April 2026** 🔴 | 🔴 **IMMINENT** | **Upgrade to Node.js 26 immediately upon release (≈ April 22, 2026 — this week)** |
-| **Node.js 26** | Releasing April 2026 | April 2029 | 🟢 Low | Will be even-numbered LTS candidate; migrate within days of release |
-| **TypeScript** | 6.0.2 | Active | 🟢 Low | Stay on 6.0.x until the next supported minor |
+| **Node.js** | >=26.0.0 (26.x Current) | April 2029 | 🟢 Low | Node.js 26 is the current stable release (released April 22, 2026). LTS promotion October 2026; 36-month runway. |
+| **Node.js 27** | Releasing April 2027 (nightly testing) | April 2030 | 🟢 Low | New annual release model; every release becomes LTS. Nightly builds tested in CI. |
+| **TypeScript** | 6.0.3 | Active | 🟢 Low | Stay on 6.0.x until the next supported minor |
 | **MCP SDK** | Latest | Active | 🟡 Medium | Track protocol evolution |
 | **Zod** | ^4.3.6 (4.x) | Active | 🟢 Low | Follow semver updates |
 | **Vitest** | Latest | Active | 🟢 Low | Follow semver updates |
 | **npm** | Registry | Indefinite | 🟢 Low | N/A |
 | **GitHub Actions** | Latest | Indefinite | 🟢 Low | Pin action versions |
 
-> ⚠️ **Node.js 25 is an odd-numbered Current release** (old release model). It has **no LTS phase** and reaches EOL when Node.js 26 releases in April 2026. Upgrade to Node.js 26 within days of its release.
-> ✅ **TypeScript 6.0.2 is now the active compiler baseline.** TypeScript 5.9.x is retained only as the previous stable line and is no longer part of the active toolchain.
+> ✅ **Node.js 26 is now the active production runtime.** Node.js 25 (odd-numbered Current-only release) reached EOL on April 22, 2026 when Node.js 26 released. Migration completed.
+> ✅ **TypeScript 6.0.3 is now the active compiler baseline.** TypeScript 5.9.x is retained only as the previous stable line and is no longer part of the active toolchain.
 
 ### **📅 Key Dates**
 
 | Event | Date | Action Required |
 |-------|------|----------------|
-| **Node.js 25 EOL** | **≈ April 2026** 🔴 | **Upgrade to Node.js 26 IMMEDIATELY on release** |
-| **Node.js 26 release** | **≈ April 22, 2026** 🔴 | **Upgrade all CI/CD and `engines` field — target: within 2 days of release** |
+| **Node.js 25 EOL** | **April 22, 2026** ✅ | **COMPLETED — Upgraded to Node.js 26** |
+| **Node.js 26 release** | **April 22, 2026** ✅ | **COMPLETED — engines field and CI/CD updated** |
 | Node.js 26 LTS promotion | October 2026 | Confirmed long-term support; 36-month runway confirmed |
 | Node.js 26 maintenance | October 2028 | Security-only updates; begin evaluating Node.js 27 |
 | Node.js 27 Alpha opens | October 2026 | Begin CI testing on alpha channel (new release model) |
@@ -170,12 +170,12 @@ gantt
     dateFormat YYYY-MM-DD
     axisFormat %Y-%m
 
-    section Current (Node.js 25 — Odd/Current Only)
-    Node.js 25 Current         :active, n25c, 2025-10-28, 2026-04-22
+    section Historical (Node.js 25 — Odd/Current Only — EOL)
+    Node.js 25 Current         :done, n25c, 2025-10-28, 2026-04-22
     Node.js 25 EOL             :crit, milestone, n25eol, 2026-04-22, 0d
 
-    section Legacy Model (Node.js 26 — Last Even/LTS)
-    Node.js 26 Current         :n26c, 2026-04-22, 2026-10-28
+    section Current Production (Node.js 26 — Last Even/LTS)
+    Node.js 26 Current         :active, n26c, 2026-04-22, 2026-10-28
     Node.js 26 LTS             :n26lts, 2026-10-28, 2029-04-30
     Node.js 26 EOL             :crit, milestone, n26eol, 2029-04-30, 0d
 
@@ -192,9 +192,10 @@ gantt
     Node.js 28 EOL             :crit, milestone, n28eol, 2031-04-01, 0d
 
     section EP MCP Server Strategy
-    Production on Node.js 25   :active, ep25, 2025-10-28, 2026-04-22
-    URGENT: Upgrade to Node 26 :crit, ep26upgrade, 2026-04-22, 2026-04-24
-    Production on Node.js 26   :ep26, 2026-04-22, 2027-10-01
+    Production on Node.js 25 (EOL)  :done, ep25, 2025-10-28, 2026-04-22
+    Upgrade to Node 26 (COMPLETED)  :done, ep26upgrade, 2026-04-22, 2026-05-05
+    Production on Node.js 26   :active, ep26, 2026-05-05, 2027-10-01
+    Nightly 27 CI Testing      :active, ep27nightly, 2026-05-05, 2027-04-01
     Alpha 27 CI Testing        :ep27alpha, 2026-10-01, 2027-04-01
     Node.js 27 Evaluation      :ep27eval, 2027-04-01, 2027-10-01
     Production on Node.js 27   :ep27prod, 2027-10-01, 2030-04-01
@@ -209,15 +210,16 @@ gantt
 
 Following the **"Living on the Edge"** philosophy from [Vulnerability Management Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md):
 
-1. **Track Latest Current:** Run Node.js 25.x (Current) in production today; upgrade to Node.js 26 within **2 days** of its April 2026 release
-2. **Rapid Even-Number Adoption:** Node.js 26 (even, LTS candidate) releases ≈ April 22, 2026 — upgrade immediately to avoid running an EOL Node.js 25 in production
+1. **Track Latest Current:** Running Node.js 26.x (Current) in production — upgraded from Node.js 25 on April 22, 2026
+2. **LTS Track:** Node.js 26 is the last even-numbered LTS; LTS promotion in October 2026 provides 36-month support runway
 3. **Alpha CI Integration:** Add Node.js alpha releases to CI matrix as soon as the alpha channel opens (per Node.js project guidance for library authors)
-4. **Early Testing:** Begin production evaluation during the Current phase (April–October)
-5. **Rapid Adoption:** Migrate to new LTS within 1 month of LTS promotion (October)
-6. **CI Matrix:** Test against current, next Current/alpha, and previous LTS
-7. **Automated Alerts:** Dependabot monitors for Node.js security updates
+4. **Nightly CI Testing:** Node.js 27 nightly builds tested in CI integration-tests matrix (`continue-on-error: true`)
+5. **Early Testing:** Begin production evaluation during the Current phase (April–October)
+6. **Rapid Adoption:** Migrate to new LTS within 1 month of LTS promotion (October)
+7. **CI Matrix:** Test against current (26.x stable) and next (27-nightly, experimental)
+8. **Automated Alerts:** Dependabot monitors for Node.js security updates
 
-> ⚠️ **URGENT ACTION REQUIRED:** Node.js 25 (odd-numbered, Current-only) reaches End-of-Life when Node.js 26 releases **this week** (≈ April 22, 2026). Upgrade plan is documented in the [Node.js 25 → 26 Transition Plan](#-nodejs-25--26-transition-plan-urgent) below.
+> ✅ **Node.js 26 upgrade COMPLETED (May 2026).** Node.js 25 (odd-numbered, Current-only) reached End-of-Life on April 22, 2026. Migration documented in the [Node.js 25 → 26 Transition Plan](#-nodejs-25--26-transition-plan-completed) below.
 
 ### **🔄 Upgrade Process (Updated for New Release Model)**
 
@@ -246,43 +248,39 @@ Phase 3 — LTS Migration (Oct, on LTS promotion)
 
 ## 🗺️ Node.js Transition Roadmap
 
-### **📋 Node.js 25 → 26 Transition Plan (URGENT)**
+### **📋 Node.js 25 → 26 Transition Plan (COMPLETED)**
 
-> 🔴 **Node.js 25 EOL is imminent** — it expires when Node.js 26 releases this week (≈ April 22, 2026). Execute this plan immediately upon Node.js 26 release.
+> ✅ **Node.js 26 upgrade COMPLETED** — Executed May 2026. Node.js 25 (odd-numbered, Current-only) reached EOL on April 22, 2026 when Node.js 26 released.
 
 | Phase | Timeline | Actions | Risk |
 |-------|----------|---------|------|
-| **Current Production** | Now (April 2026) | Node.js 25.x Current in production | 🔴 **HIGH — EOL imminent (Node 26 releasing this week)** |
-| **Day 0: Node.js 26 Release** | ≈ April 22, 2026 | Update `package.json` engines, all CI/CD workflows, devcontainer | 🟡 Medium |
-| **Day 0–2: Validation** | April 22–24, 2026 | Run full test suite, lint, build on Node.js 26; publish new npm version | 🟡 Medium |
-| **Day 2+: Production** | April 24, 2026+ | Node.js 26 in production; Node.js 25 fully retired | 🟢 Low |
-| **Node.js 26 LTS** | October 2026 | LTS promotion confirmed; 36-month runway from April 2026 | 🟢 Low |
+| **Historical Production** | Oct 2025 – Apr 2026 | Node.js 25.x Current in production | ✅ **COMPLETED** |
+| **Day 0: Node.js 26 Release** | April 22, 2026 | Updated `package.json` engines, all CI/CD workflows, devcontainer | ✅ **COMPLETED** |
+| **Validation** | April–May 2026 | Full test suite, lint, build on Node.js 26; published new npm version | ✅ **COMPLETED** |
+| **Production on Node.js 26** | May 2026+ | Node.js 26 in production; Node.js 25 fully retired | ✅ **CURRENT** |
+| **Node.js 26 LTS** | October 2026 | LTS promotion confirmed; 36-month runway from April 2026 | 🟢 Upcoming |
 
-#### **📋 Node.js 26 Upgrade Checklist (Execute on Release Day)**
+#### **📋 Node.js 26 Upgrade Checklist (COMPLETED)**
 
 ```
-Day 0 — Upgrade (April 22, 2026, release day):
-  Step 1:  Update package.json engines: "node": ">=26.0.0"
-  Step 2:  Update all GitHub Actions workflows: node-version: "26"
-  Step 3:  Update .devcontainer/devcontainer.json: node version 26
-  Step 4:  Update documentation: README.md, DEVELOPER_GUIDE.md, LOCAL_TESTING.md, etc.
-  Step 5:  Update End-of-Life-Strategy.md: Technology Lifecycle Matrix and roadmap
-  Step 6:  Update WORKFLOWS.md, FUTURE_WORKFLOWS.md
-  Step 7:  Run: npm ci (rebuild any native modules)
-  Step 8:  Run: npm test (full test suite — 1130+ unit tests and 71 E2E tests must pass)
-  Step 9:  Run: npm run lint (zero warnings required)
-  Step 10: Run: npm run build (TypeScript compilation must succeed)
-  Step 11: Run: npm run knip (no unused exports)
+Upgrade to Node.js 26 (COMPLETED — May 2026):
+  ✅ Step 1:  Updated package.json engines: "node": ">=26.0.0"
+  ✅ Step 2:  Updated all GitHub Actions workflows: node-version: "26"
+  ✅ Step 3:  Updated .devcontainer/devcontainer.json: node version 26
+  ✅ Step 4:  Updated documentation: README.md, DEVELOPER_GUIDE.md, LOCAL_TESTING.md, etc.
+  ✅ Step 5:  Updated End-of-Life-Strategy.md: Technology Lifecycle Matrix and roadmap
+  ✅ Step 6:  Updated WORKFLOWS.md, FUTURE_WORKFLOWS.md
+  ✅ Step 7:  Ran: npm ci (rebuilt any native modules)
+  ✅ Step 8:  Ran: npm test (full test suite — 1130+ unit tests and 71 E2E tests passed)
+  ✅ Step 9:  Ran: npm run lint (zero warnings)
+  ✅ Step 10: Ran: npm run build (TypeScript compilation succeeded)
+  ✅ Step 11: Ran: npm run knip (no unused exports)
+  ✅ Step 12: Added Node.js 27 nightly to CI matrix (integration-tests.yml)
 
-Day 1 — Publish:
-  Step 12: Publish updated npm package with Node.js 26 as minimum engine
-  Step 13: Open PR with all version bumps and documentation updates
-  Step 14: Merge and tag new release
-
-Day 2 — Validation:
-  Step 15: Verify npm package installs correctly on Node.js 26
-  Step 16: Test MCP client connectivity (stdio transport)
-  Step 17: Confirm CI/CD pipelines green on Node.js 26
+Next Steps:
+  ⏳ Step 13: Publish updated npm package with Node.js 26 as minimum engine
+  ⏳ Step 14: Verify npm package installs correctly on Node.js 26
+  ⏳ Step 15: Monitor CI/CD pipelines green on Node.js 26
 ```
 
 ### **📋 Node.js 26 → 27 Transition Plan**
@@ -309,8 +307,9 @@ Per the Node.js project's guidance, **library authors should integrate Alpha rel
 
 | Year | Node.js Version | Release Date | Phase | Action for this Project |
 |------|----------------|-------------|-------|-------------------------|
-| **2026** | **25.x** | Oct 2025 | ⚠️ Current (EOL Apr 2026) | **CURRENT — upgrade to 26 ASAP** |
-| **2026** | **26.x** | ≈ Apr 22, 2026 | Current → LTS (Oct 2026) | **Upgrade within 2 days of release** |
+| **2025–2026** | **25.x** | Oct 2025 | ✅ EOL Apr 2026 | **COMPLETED — upgraded to 26** |
+| **2026** | **26.x** | Apr 22, 2026 | ✅ Current → LTS (Oct 2026) | **CURRENT PRODUCTION — Node.js 27 nightly in CI** |
+| **2026** | 27.x Nightly | Active | 🧪 Nightly builds | **ACTIVE — nightly CI testing (`continue-on-error: true`)** |
 | **2026** | 27.x Alpha | Oct 2026 | Alpha | Add to CI matrix (non-blocking) |
 | **2027** | 27.x | Apr 2027 | Current → LTS (Oct 2027) | Evaluate; new release model (every version = LTS) |
 | **2027** | 28.x Alpha | Oct 2027 | Alpha | Add to CI matrix (non-blocking) |
@@ -383,24 +382,21 @@ The project reaches End-of-Life when any of the following occur:
 
 ## 🔧 Migration Procedures
 
-### **Node.js Version Upgrade (Current Model — Node.js 25/26)**
+### **Node.js Version Upgrade (Current Model — Node.js 26)**
 
-Node.js 25 is an **odd-numbered Current-only release** (old model). It has **no LTS phase** and expires when Node.js 26 releases. Upgrade procedure:
+Node.js 26 is the **current production runtime** (upgraded from Node.js 25 in May 2026). Node.js 26 is the last even-numbered release under the old model and will receive LTS promotion in October 2026. The upgrade procedure has been completed:
 
 ```
-IMMEDIATE Upgrade to Node.js 26 (upon April 2026 release):
-  Step 1: Update package.json engines: "node": ">=26.0.0"
-  Step 2: Update GitHub Actions workflows: node-version: "26"
-  Step 3: Update .devcontainer: node version 26
-  Step 4: Run: npm ci (rebuild native modules if any)
-  Step 5: Run: npm test (full test suite — 1130+ unit tests and 71 E2E tests)
-  Step 6: Run: npm run lint (code quality check)
-  Step 7: Run: npm run build (TypeScript compilation)
-  Step 8: Update all documentation (README, DEVELOPER_GUIDE, this EOL Strategy)
-  Step 9: Publish new npm version
-  Step 10: Verify npm package installs correctly on Node.js 26
-  Step 11: Test MCP client connectivity (stdio transport)
-  Step 12: Monitor CI/CD for 24 hours before closing the upgrade PR
+COMPLETED: Upgrade to Node.js 26 (May 2026):
+  ✅ Step 1: Updated package.json engines: "node": ">=26.0.0"
+  ✅ Step 2: Updated GitHub Actions workflows: node-version: "26"
+  ✅ Step 3: Updated .devcontainer: node version 26
+  ✅ Step 4: Ran: npm ci (rebuilt native modules if any)
+  ✅ Step 5: Ran: npm test (full test suite — 1130+ unit tests and 71 E2E tests)
+  ✅ Step 6: Ran: npm run lint (code quality check)
+  ✅ Step 7: Ran: npm run build (TypeScript compilation)
+  ✅ Step 8: Updated all documentation (README, DEVELOPER_GUIDE, this EOL Strategy)
+  ✅ Step 9: Added Node.js 27 nightly to integration-tests CI matrix
 ```
 
 ### **Node.js Version Upgrade (New Annual Release Model — Node.js 27+)**
@@ -507,6 +503,7 @@ Step 6: Publish new version
 | 2.0 | 2026-03-12 | CEO | Major update: Node.js new release schedule (one major/year, every release LTS, alpha channel); added transition roadmap, Gantt timeline, release model comparison; updated version strategy for alpha CI integration; aligned with [nodejs/Release#1113](https://github.com/nodejs/Release/issues/1113) |
 | 3.0 | 2026-03-18 | CEO | **Node.js 25 migration:** Updated current production runtime to Node.js 25.x (Current); added urgent Node.js 26 upgrade plan (≈ April 22, 2026 — 2-week target); expanded full Node.js roadmap projections 2026–2031; updated Technology Lifecycle Matrix with Node.js 25 EOL risk; added Node.js 25 → 26 transition checklist; updated Gantt chart with Node.js 25 EOL and Node.js 26 LTS timeline |
 | 3.1 | 2026-04-21 | CEO | Documentation review — verified accuracy of current state; confirmed Node.js 25 EOL is imminent (Node.js 26 releasing this week, ≈ April 22, 2026); updated test count references from "2500+/2600+" to "1130+ unit tests and 71 E2E tests"; aligned references with ARCHITECTURE.md and WORKFLOWS.md |
+| 3.2 | 2026-05-05 | CEO | **Node.js 26 migration COMPLETED:** Updated production runtime to Node.js 26.x; retired Node.js 25 (EOL April 22, 2026); updated Technology Lifecycle Matrix, Gantt chart, Key Dates, Version Strategy; added Node.js 27 nightly CI testing to integration-tests.yml matrix (`continue-on-error: true`); marked Node.js 25 → 26 transition checklist as completed |
 
 ---
 
