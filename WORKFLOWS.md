@@ -27,7 +27,7 @@
 **🔄 Review Cycle:** Quarterly | **⏰ Next Review:** 2026-07-21  
 **🏷️ Classification:** Public (Open Source MCP Server)  
 **🔷 Project Version:** 1.2.10  
-**🔷 TypeScript Baseline:** 6.0.2
+**🔷 TypeScript Baseline:** 6.0.3
 **✅ ISMS Compliance:** ISO 27001 (A.8.31, A.14.2, A.12.1), NIST CSF 2.0 (PR.DS-6, DE.CM-8), CIS Controls v8.1 (2.2, 4.1, 16.6)
 
 ---
@@ -129,17 +129,17 @@ graph LR
 
 | # | Workflow | File | Trigger | Node.js | Permissions | ISMS Evidence |
 |---|---------|------|---------|---------|-------------|---------------|
-| 1 | **Test and Report** | `test-and-report.yml` | Push, PR | 26.x + TS 6.0.2 | `read-all`, scoped per job | [Secure Dev Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
+| 1 | **Test and Report** | `test-and-report.yml` | Push, PR | 26.x + TS 6.0.3 | `read-all`, scoped per job | [Secure Dev Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md) |
 | 2 | **CodeQL Analysis** | `codeql.yml` | Push, PR, Weekly | — | `security-events: write` | ISO 27001 A.14.2.8 |
-| 3 | **Build, Attest and Release** | `release.yml` | Tag (v\*), Manual | 26.x + TS 6.0.2 | `id-token: write`, `attestations: write` | SLSA Level 3, includes SBOM |
-| 4 | **Integration & E2E Tests** | `integration-tests.yml` | Push, PR, Daily, Manual | 26.x + TS 6.0.2 | `read-all` | Quality Assurance |
+| 3 | **Build, Attest and Release** | `release.yml` | Tag (v\*), Manual | 26.x + TS 6.0.3 | `id-token: write`, `attestations: write` | SLSA Level 3, includes SBOM |
+| 4 | **Integration & E2E Tests** | `integration-tests.yml` | Push, PR, Daily, Manual | 26.x + TS 6.0.3 | `read-all` | Quality Assurance |
 | 5 | **SLSA Provenance** | `slsa-provenance.yml` | Tag (v\*), Release, Manual | node-version: 26 | `id-token: write`, `attestations: write` | SLSA Level 3 |
 | 6 | **Scorecard** | `scorecard.yml` | Push, Weekly | — | `security-events: write`, `id-token: write` | [Open Source Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md) |
 | 7 | **Dependency Review** | `dependency-review.yml` | PR | — | `contents: read` | NIST CSF DE.CM-8 |
 | 8 | **PR Labeler** | `labeler.yml` | PR | — | `pull-requests: write` | Process Automation |
 | 9 | **Setup Labels** | `setup-labels.yml` | Manual | — | `issues: write` | Configuration Mgmt |
-| 10 | **Copilot Setup** | `copilot-setup-steps.yml` | Push, PR, Manual | 26.x + TS 6.0.2 | Scoped per caller | Dev Tooling |
-| 11 | **EP Statistics Refresh** | `refresh-stats.yml` | Weekly (cron), Manual | 26.x + TS 6.0.2 | `contents: write` | Agentic data intelligence |
+| 10 | **Copilot Setup** | `copilot-setup-steps.yml` | Push, PR, Manual | 26.x + TS 6.0.3 | Scoped per caller | Dev Tooling |
+| 11 | **EP Statistics Refresh** | `refresh-stats.yml` | Weekly (cron), Manual | 26.x + TS 6.0.3 | `contents: write` | Agentic data intelligence |
 | 12 | **Knip — Unused Code** | `knip.yml` | Push, PR, Manual | node-version: 26 | `contents: read` | ISO 27001 A.8.28 (Secure Coding) |
 
 ---
@@ -324,7 +324,7 @@ prepare → build-validation → unit-tests → report
 | Job | Steps | Artifacts |
 |-----|-------|-----------|
 | **prepare** | Setup Node.js 26, `npm ci`, cache dependencies | Cached `node_modules` |
-| **build-validation** | `tsc --noEmit` (TypeScript 6.0.2), ESLint, Knip, `npm run build`, license check, SBOM quality | Build artifacts, SBOM report |
+| **build-validation** | `tsc --noEmit` (TypeScript 6.0.3), ESLint, Knip, `npm run build`, license check, SBOM quality | Build artifacts, SBOM report |
 | **unit-tests** | `npm run test:coverage`, coverage threshold check, Codecov upload | Coverage reports (lcov, JSON) |
 | **report** | Combine artifacts, generate test summary, PR comment | Combined test report |
 

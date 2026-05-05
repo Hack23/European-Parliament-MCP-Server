@@ -65,7 +65,7 @@ This strategy aligns with [Hack23 AB's Vulnerability Management Policy](https://
 graph TB
     subgraph "🏗️ Core Runtime"
         NODE[Node.js 26.x Current]
-        TS[TypeScript 6.0.2]
+        TS[TypeScript 6.0.3]
     end
     subgraph "📦 Key Dependencies"
         MCP["@modelcontextprotocol/sdk"]
@@ -93,7 +93,7 @@ graph TB
 |-----------|----------------|----------|------------|---------------|
 | **Node.js** | >=26.0.0 (26.x Current) | April 2029 | 🟢 Low | Node.js 26 is the current stable release (released April 22, 2026). LTS promotion October 2026; 36-month runway. |
 | **Node.js 27** | Releasing April 2027 (nightly testing) | April 2030 | 🟢 Low | New annual release model; every release becomes LTS. Nightly builds tested in CI. |
-| **TypeScript** | 6.0.2 | Active | 🟢 Low | Stay on 6.0.x until the next supported minor |
+| **TypeScript** | 6.0.3 | Active | 🟢 Low | Stay on 6.0.x until the next supported minor |
 | **MCP SDK** | Latest | Active | 🟡 Medium | Track protocol evolution |
 | **Zod** | ^4.3.6 (4.x) | Active | 🟢 Low | Follow semver updates |
 | **Vitest** | Latest | Active | 🟢 Low | Follow semver updates |
@@ -101,7 +101,7 @@ graph TB
 | **GitHub Actions** | Latest | Indefinite | 🟢 Low | Pin action versions |
 
 > ✅ **Node.js 26 is now the active production runtime.** Node.js 25 (odd-numbered Current-only release) reached EOL on April 22, 2026 when Node.js 26 released. Migration completed.
-> ✅ **TypeScript 6.0.2 is now the active compiler baseline.** TypeScript 5.9.x is retained only as the previous stable line and is no longer part of the active toolchain.
+> ✅ **TypeScript 6.0.3 is now the active compiler baseline.** TypeScript 5.9.x is retained only as the previous stable line and is no longer part of the active toolchain.
 
 ### **📅 Key Dates**
 

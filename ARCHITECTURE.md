@@ -69,7 +69,7 @@ The **European Parliament MCP Server** (v1.2.10) is a TypeScript/Node.js applica
 | **MCP Prompts** | 7 intelligence-analysis prompts |
 | **Data Source** | EP Open Data Portal API v2 |
 | **Transport** | stdio (MCP standard) |
-| **Runtime** | Node.js 26+ / TypeScript 6.0.2 |
+| **Runtime** | Node.js 26+ / TypeScript 6.0.3 |
 | **Security** | 4-layer: Zod → Rate Limiting → Audit Logging → GDPR |
 
 ---
@@ -470,15 +470,15 @@ flowchart TD
 | Layer | Technology | Version | Purpose |
 |-------|-----------|---------|---------|
 | **Runtime** | Node.js | 26+ | Server runtime |
-| **Language** | TypeScript | 6.0.2 | Type-safe implementation |
+| **Language** | TypeScript | 6.0.3 | Type-safe implementation |
 | **MCP SDK** | @modelcontextprotocol/sdk | 1.29.0 | MCP protocol implementation |
-| **Validation** | Zod | 4.3.6 | Runtime schema validation and branded types |
-| **HTTP Client** | undici | 8.1.0 | Fast HTTP/1.1 client for EP API requests |
-| **Caching** | lru-cache | 11.3.5 | LRU cache (500 entries, 15-min TTL) |
+| **Validation** | Zod | 4.4.3 | Runtime schema validation and branded types |
+| **HTTP Client** | undici | 8.2.0 | Fast HTTP/1.1 client for EP API requests |
+| **Caching** | lru-cache | 11.3.6 | LRU cache (500 entries, 15-min TTL) |
 | **Testing** | Vitest | latest | Unit and integration testing |
-| **Linting** | ESLint | 10.1.0 | Code quality enforcement |
+| **Linting** | ESLint | 10.3.0 | Code quality enforcement |
 | **Unused Detection** | Knip | latest | Dead code detection |
-| **Build** | tsc | 6.0.2 | TypeScript compilation |
+| **Build** | tsc | 6.0.3 | TypeScript compilation |
 | **Package Manager** | npm | 10.x | Dependency management |
 
 ---
