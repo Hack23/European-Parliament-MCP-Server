@@ -284,6 +284,23 @@ describe('DoceoClient', () => {
       expect(result.hasMore).toBe(true);
     });
 
+    it('rejects limit < 1 with a RangeError', async () => {
+      await expect(client.getLatestVotes({ date: '2026-04-27', limit: 0 }))
+        .rejects.toThrow(RangeError);
+      await expect(client.getLatestVotes({ date: '2026-04-27', limit: -1 }))
+        .rejects.toThrow('limit must be between 1 and 100');
+    });
+
+    it('rejects limit > 100 with a RangeError', async () => {
+      await expect(client.getLatestVotes({ date: '2026-04-27', limit: 101 }))
+        .rejects.toThrow('limit must be between 1 and 100');
+    });
+
+    it('rejects negative offset with a RangeError', async () => {
+      await expect(client.getLatestVotes({ date: '2026-04-27', offset: -1 }))
+        .rejects.toThrow('offset must be >= 0');
+    });
+
     it('uses weekStart parameter to determine Mon–Thu date range', async () => {
       vi.mocked(undici.fetch).mockResolvedValue(
         makeMockResponse({ ok: false, status: 404 })

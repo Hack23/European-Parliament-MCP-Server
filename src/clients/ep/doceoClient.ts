@@ -68,6 +68,21 @@ function isBodyTooLarge(text: string): boolean {
   return Buffer.byteLength(text, 'utf8') > MAX_XML_RESPONSE_BYTES;
 }
 
+/**
+ * Validate and extract pagination parameters, throwing a RangeError on invalid input.
+ */
+function validatePagination(params: GetLatestVotesParams): { limit: number; offset: number } {
+  const limit = params.limit ?? 50;
+  const offset = params.offset ?? 0;
+  if (limit < 1 || limit > 100) {
+    throw new RangeError(`limit must be between 1 and 100, got ${String(limit)}`);
+  }
+  if (offset < 0) {
+    throw new RangeError(`offset must be >= 0, got ${String(offset)}`);
+  }
+  return { limit, offset };
+}
+
 function buildAuditParams(params: GetLatestVotesParams): Record<string, unknown> {
   const { abortSignal: _abortSignal, ...auditParams } = params;
   return auditParams;
@@ -284,8 +299,7 @@ export class DoceoClient {
   async getLatestVotes(params: GetLatestVotesParams = {}): Promise<LatestVotesResponse> {
     const action = 'get_latest_votes';
     const term = params.term ?? this.term;
-    const limit = params.limit ?? 50;
-    const offset = params.offset ?? 0;
+    const { limit, offset } = validatePagination(params);
     const includeIndividual = params.includeIndividualVotes ?? true;
     const dates = this.resolveDates(params);
 

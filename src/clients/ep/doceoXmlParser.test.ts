@@ -55,6 +55,11 @@ describe('doceoXmlParser', () => {
         expect(d).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       }
     });
+
+    it('returns empty array for an invalid calendar date string', () => {
+      expect(getPlenaryWeekDates('2026-13-40')).toEqual([]);
+      expect(getPlenaryWeekDates('not-a-date')).toEqual([]);
+    });
   });
 
   describe('parseRcvXml', () => {

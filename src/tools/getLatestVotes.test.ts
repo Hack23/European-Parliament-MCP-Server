@@ -86,6 +86,34 @@ describe('handleGetLatestVotes', () => {
     ).rejects.toThrow('Invalid parameters');
   });
 
+  it('validates input schema - invalid calendar date (e.g., 2026-13-40)', async () => {
+    await expect(
+      handleGetLatestVotes({ date: '2026-13-40' })
+    ).rejects.toThrow('Invalid parameters');
+  });
+
+  it('validates input schema - weekStart must be a Monday', async () => {
+    // 2026-04-28 is a Tuesday
+    await expect(
+      handleGetLatestVotes({ weekStart: '2026-04-28' })
+    ).rejects.toThrow('Invalid parameters');
+  });
+
+  it('accepts weekStart that is a Monday', async () => {
+    mockGetLatestVotes.mockResolvedValue({
+      data: [],
+      total: 0,
+      datesAvailable: [],
+      datesUnavailable: [],
+      source: { type: 'DOCEO_XML', term: 10, urls: [] },
+      limit: 50,
+      offset: 0,
+      hasMore: false,
+    });
+    // 2026-04-27 is a Monday
+    await expect(handleGetLatestVotes({ weekStart: '2026-04-27' })).resolves.toBeDefined();
+  });
+
   it('validates input schema - rejects unknown parameters', async () => {
     await expect(
       handleGetLatestVotes({ unknownParam: 'value' })

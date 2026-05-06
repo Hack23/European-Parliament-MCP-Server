@@ -25,16 +25,30 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
 import type { ToolResult } from './shared/types.js';
 
+/** Returns true when str is a real calendar date (rejects e.g. "2026-13-40"). */
+function isValidCalendarDate(str: string): boolean {
+  const d = new Date(`${str}T00:00:00Z`);
+  return !isNaN(d.getTime()) && d.toISOString().slice(0, 10) === str;
+}
+
+/** Returns true when str parses to a Monday (UTC). */
+function isMonday(str: string): boolean {
+  return new Date(`${str}T00:00:00Z`).getUTCDay() === 1;
+}
+
 /**
  * Input schema for get_latest_votes tool.
  */
 export const GetLatestVotesSchema = z.object({
   date: z.string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')
+    .refine(isValidCalendarDate, { message: 'date must be a valid calendar date' })
     .optional()
     .describe('Specific date to fetch votes for (YYYY-MM-DD). Mutually exclusive with weekStart. If omitted, fetches the requested or most recent plenary week.'),
   weekStart: z.string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')
+    .refine(isValidCalendarDate, { message: 'weekStart must be a valid calendar date' })
+    .refine(isMonday, { message: 'weekStart must be a Monday (the start of the plenary week)' })
     .optional()
     .describe('Monday of a specific plenary week (YYYY-MM-DD). Mutually exclusive with date. Fetches Mon-Thu of that week.'),
   term: z.number()

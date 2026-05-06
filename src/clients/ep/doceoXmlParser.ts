@@ -389,7 +389,9 @@ function parseSingleVotResult(row: string, fallbackNumber: string, tableTitle = 
 
   const rowType = extractAttribute(row, 'Type');
   const subject = extractTagContent(row, 'Subject')[0] ??
-    extractTagContent(row, 'Title')[0] ?? '';
+    extractTagContent(row, 'Title')[0] ??
+    extractTagContent(row, 'Description')[0] ??
+    tableTitle;
   const reference = extractTagContent(row, 'Reference')[0] ?? '';
 
   const counts = resolveVotCounts(row);
@@ -518,6 +520,9 @@ export function getPlenaryWeekDates(weekStart?: string): string[] {
 
   if (weekStart !== undefined && weekStart !== '') {
     monday = new Date(`${weekStart}T00:00:00Z`);
+    if (isNaN(monday.getTime())) {
+      return [];
+    }
   } else {
     // Find the most recent Monday
     const now = new Date();
