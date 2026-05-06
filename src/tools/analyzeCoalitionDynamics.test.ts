@@ -28,6 +28,7 @@ describe('analyze_coalition_dynamics Tool', () => {
     vi.clearAllMocks();
     clearDoceoCoalitionCohesionCache();
     auditLogger.clear();
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockReset();
 
     // Default DOCEO response: empty data — keeps existing cohesion-null assertions passing
     vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
@@ -756,6 +757,73 @@ describe('analyze_coalition_dynamics Tool', () => {
       expect(doceoClientModule.doceoClient.getLatestVotes).toHaveBeenCalledTimes(1);
     });
 
+    it('should clear DOCEO cohesion cache when reset hook is called', async () => {
+      vi.mocked(mepFetcherModule.fetchAllCurrentMEPs).mockResolvedValue({
+        meps: [
+          { id: 'MEP-A', name: 'Alice EPP', country: 'DE', politicalGroup: 'EPP',
+            committees: [], active: true, termStart: '2024-07-16' },
+          { id: 'MEP-B', name: 'Bob SD', country: 'FR', politicalGroup: 'S&D',
+            committees: [], active: true, termStart: '2024-07-16' },
+        ],
+        complete: true,
+      });
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes)
+        .mockResolvedValueOnce({
+          data: [
+            {
+              id: 'vote-1', subject: 'Vote A', reference: '', date: '2025-01-20',
+              result: 'ADOPTED' as const, votesFor: 200, votesAgainst: 100,
+              abstentions: 0, sourceUrl: '', dataSource: 'RCV' as const,
+              groupBreakdown: {
+                EPP: { for: 80, against: 0, abstain: 0 },
+                'S&D': { for: 70, against: 0, abstain: 0 },
+              },
+            },
+          ],
+          total: 1,
+          datesAvailable: ['2025-01-20'],
+          datesUnavailable: [],
+          source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+          limit: 100,
+          offset: 0,
+          hasMore: false,
+        })
+        .mockResolvedValueOnce({
+          data: [
+            {
+              id: 'vote-2', subject: 'Vote B', reference: '', date: '2025-01-20',
+              result: 'REJECTED' as const, votesFor: 100, votesAgainst: 200,
+              abstentions: 0, sourceUrl: '', dataSource: 'RCV' as const,
+              groupBreakdown: {
+                EPP: { for: 80, against: 0, abstain: 0 },
+                'S&D': { for: 0, against: 70, abstain: 0 },
+              },
+            },
+          ],
+          total: 1,
+          datesAvailable: ['2025-01-20'],
+          datesUnavailable: [],
+          source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+          limit: 100,
+          offset: 0,
+          hasMore: false,
+        });
+
+      await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP', 'S&D'] });
+      clearDoceoCoalitionCohesionCache();
+      const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP', 'S&D'] });
+      const parsed = JSON.parse(result.content[0].text) as {
+        coalitionPairs: Array<{ groupA: string; groupB: string; cohesion: number | null }>;
+      };
+      const pair = parsed.coalitionPairs.find(
+        (p) => (p.groupA === 'EPP' && p.groupB === 'S&D') ||
+                (p.groupA === 'S&D' && p.groupB === 'EPP')
+      );
+
+      expect(pair?.cohesion).toBe(0);
+      expect(doceoClientModule.doceoClient.getLatestVotes).toHaveBeenCalledTimes(2);
+    });
+
     it('should fall back gracefully when DOCEO returns empty data (cohesion stays null)', async () => {
       // doceoClient.getLatestVotes already mocked to return empty data in beforeEach
       const result = await handleAnalyzeCoalitionDynamics({ groupIds: ['EPP', 'S&D'] });
@@ -790,6 +858,7 @@ describe('Coverage for previewUnrecognized, incomplete fetch, and timeout', () =
     vi.clearAllMocks();
     clearDoceoCoalitionCohesionCache();
     auditLogger.clear();
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockReset();
 
     // Default: empty DOCEO response
     vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({

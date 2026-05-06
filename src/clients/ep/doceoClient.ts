@@ -68,7 +68,6 @@ function isBodyTooLarge(text: string): boolean {
 
 function buildAuditParams(params: GetLatestVotesParams): Record<string, unknown> {
   const { abortSignal: _abortSignal, ...auditParams } = params;
-  void _abortSignal;
   return auditParams;
 }
 
