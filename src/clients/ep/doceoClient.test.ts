@@ -88,6 +88,15 @@ describe('DoceoClient', () => {
       expect(result).toEqual([]);
     });
 
+    it('enforces response body limit in UTF-8 bytes, not string length', async () => {
+      const multiByteBody = '€'.repeat(1_800_000); // 5.4 MiB in UTF-8 bytes
+      vi.mocked(undici.fetch).mockResolvedValueOnce(
+        makeMockResponse({ ok: true, text: multiByteBody })
+      );
+      const result = await client.fetchRcvForDate('2026-04-27');
+      expect(result).toEqual([]);
+    });
+
     it('returns empty array on network error (fetch throws)', async () => {
       const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
       try {
@@ -296,6 +305,20 @@ describe('DoceoClient', () => {
       await client.getLatestVotes({ date: '2026-04-27', term: 9 });
       expect(capturedUrls.some((u) => u.includes('PV-9-'))).toBe(true);
       expect(capturedUrls.some((u) => u.includes('PV-10-'))).toBe(false);
+    });
+
+    it('passes an external abort signal to DOCEO fetches', async () => {
+      const controller = new AbortController();
+      controller.abort();
+      let receivedSignal: AbortSignal | undefined;
+      vi.mocked(undici.fetch).mockImplementationOnce(async (_url: unknown, init: unknown) => {
+        receivedSignal = (init as { signal?: AbortSignal }).signal;
+        return makeMockResponse({ ok: false, status: 404 });
+      });
+
+      await client.getLatestVotes({ date: '2026-04-27', abortSignal: controller.signal });
+
+      expect(receivedSignal?.aborted).toBe(true);
     });
   });
 });

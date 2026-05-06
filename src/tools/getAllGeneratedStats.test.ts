@@ -745,16 +745,18 @@ describe('handleGetAllGeneratedStats', () => {
       vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
         data: [
           {
-            id: 'v1', title: 'Vote 1', date: '2025-01-20',
+            id: 'v1', subject: 'Vote 1', reference: '', date: '2025-01-20',
             result: 'ADOPTED' as const,
-            forCount: 400, againstCount: 100, abstentionCount: 50,
+            votesFor: 400, votesAgainst: 100, abstentions: 50,
+            sourceUrl: '',
             dataSource: 'RCV' as const,
             groupBreakdown: { EPP: { for: 100, against: 10, abstain: 5 } },
           },
           {
-            id: 'v2', title: 'Vote 2', date: '2025-01-20',
+            id: 'v2', subject: 'Vote 2', reference: '', date: '2025-01-20',
             result: 'REJECTED' as const,
-            forCount: 150, againstCount: 350, abstentionCount: 50,
+            votesFor: 150, votesAgainst: 350, abstentions: 50,
+            sourceUrl: '',
             dataSource: 'RCV' as const,
           },
         ],
@@ -790,6 +792,9 @@ describe('handleGetAllGeneratedStats', () => {
       expect(data.recentVoteActivity?.groupVotingLeaders[0]?.group).toBe('EPP');
       expect(data.recentVoteActivity?.dataFreshness).toBe('NEAR_REALTIME');
       expect(data.recentVoteActivity?.dataSource).toBe('EP_DOCEO_XML');
+      const callArgs = vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mock.calls[0]?.[0];
+      expect(callArgs).toMatchObject({ includeIndividualVotes: false, limit: 100 });
+      expect(callArgs?.abortSignal).toBeInstanceOf(AbortSignal);
     });
 
     it('omits recentVoteActivity when category is not all/roll_call_votes', async () => {
@@ -834,9 +839,10 @@ describe('handleGetAllGeneratedStats', () => {
       vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
         data: [
           {
-            id: 'v1', title: 'Vote 1', date: '2025-01-20',
+            id: 'v1', subject: 'Vote 1', reference: '', date: '2025-01-20',
             result: 'ADOPTED' as const,
-            forCount: 300, againstCount: 100, abstentionCount: 50,
+            votesFor: 300, votesAgainst: 100, abstentions: 50,
+            sourceUrl: '',
             dataSource: 'VOT' as const,
           },
         ],
@@ -864,9 +870,10 @@ describe('handleGetAllGeneratedStats', () => {
       vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValueOnce({
         data: [
           {
-            id: 'v1', title: 'Vote 1', date: '2025-01-20',
+            id: 'v1', subject: 'Vote 1', reference: '', date: '2025-01-20',
             result: 'ADOPTED' as const,
-            forCount: 300, againstCount: 100, abstentionCount: 50,
+            votesFor: 300, votesAgainst: 100, abstentions: 50,
+            sourceUrl: '',
             dataSource: 'VOT' as const,
           },
         ],

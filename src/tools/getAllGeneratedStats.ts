@@ -36,7 +36,7 @@ import { GENERATED_STATS } from '../data/generatedStats.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
 import type { ToolResult } from './shared/types.js';
-import { withTimeout } from '../utils/timeout.js';
+import { withTimeoutAndAbort } from '../utils/timeout.js';
 
 export const GetAllGeneratedStatsSchema = z
   .object({
@@ -259,8 +259,12 @@ export async function fetchRecentVoteStats(): Promise<RecentVoteActivity | null>
   }
 
   try {
-    const response = await withTimeout(
-      doceoClient.getLatestVotes({ includeIndividualVotes: false, limit: 100 }),
+    const response = await withTimeoutAndAbort(
+      (abortSignal) => doceoClient.getLatestVotes({
+        includeIndividualVotes: false,
+        limit: 100,
+        abortSignal,
+      }),
       RECENT_VOTE_ACTIVITY_TIMEOUT_MS,
       'DOCEO recent vote enrichment timed out'
     );

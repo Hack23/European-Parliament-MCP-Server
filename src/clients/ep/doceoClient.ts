@@ -32,10 +32,44 @@ const DOCEO_TIMEOUT_MS = 30_000;
 /** Maximum response size for XML documents (5 MiB) */
 const MAX_XML_RESPONSE_BYTES = 5_242_880;
 
+interface LinkedAbortController {
+  controller: AbortController;
+  cleanup: () => void;
+}
+
 function clearFetchTimeout(timeout: ReturnType<typeof setTimeout> | undefined): void {
   if (timeout !== undefined) {
     clearTimeout(timeout);
   }
+}
+
+function createLinkedAbortController(externalSignal?: AbortSignal): LinkedAbortController {
+  const controller = new AbortController();
+  if (externalSignal === undefined) {
+    return { controller, cleanup: () => undefined };
+  }
+
+  if (externalSignal.aborted) {
+    controller.abort();
+    return { controller, cleanup: () => undefined };
+  }
+
+  const abort = (): void => { controller.abort(); };
+  externalSignal.addEventListener('abort', abort, { once: true });
+  return {
+    controller,
+    cleanup: (): void => { externalSignal.removeEventListener('abort', abort); },
+  };
+}
+
+function isBodyTooLarge(text: string): boolean {
+  return Buffer.byteLength(text, 'utf8') > MAX_XML_RESPONSE_BYTES;
+}
+
+function buildAuditParams(params: GetLatestVotesParams): Record<string, unknown> {
+  const { abortSignal: _abortSignal, ...auditParams } = params;
+  void _abortSignal;
+  return auditParams;
 }
 
 /**
@@ -54,6 +88,8 @@ export interface GetLatestVotesParams {
   limit?: number | undefined;
   /** Pagination offset */
   offset?: number | undefined;
+  /** Optional cancellation signal for bounded internal enrichment calls */
+  abortSignal?: AbortSignal | undefined;
 }
 
 /**
@@ -105,18 +141,18 @@ export class DoceoClient {
    * @param url - Full URL to the XML document
    * @returns Raw XML string, or null if document not available
    */
-  private async fetchXml(url: string): Promise<string | null> {
+  private async fetchXml(url: string, abortSignal?: AbortSignal): Promise<string | null> {
     let timeout: ReturnType<typeof setTimeout> | undefined;
+    const linkedAbort = createLinkedAbortController(abortSignal);
     try {
-      const controller = new AbortController();
-      timeout = setTimeout(() => { controller.abort(); }, DOCEO_TIMEOUT_MS);
+      timeout = setTimeout(() => { linkedAbort.controller.abort(); }, DOCEO_TIMEOUT_MS);
 
       const response = await fetch(url, {
         headers: {
           'Accept': 'application/xml, text/xml',
           'User-Agent': USER_AGENT,
         },
-        signal: controller.signal,
+        signal: linkedAbort.controller.signal,
       });
 
       if (!response.ok) {
@@ -139,7 +175,7 @@ export class DoceoClient {
       }
 
       const text = await response.text();
-      if (text.length > MAX_XML_RESPONSE_BYTES) {
+      if (isBodyTooLarge(text)) {
         auditLogger.logError('doceo_fetch', { url }, 'Response body too large');
         return null;
       }
@@ -150,6 +186,7 @@ export class DoceoClient {
       return null;
     } finally {
       clearFetchTimeout(timeout);
+      linkedAbort.cleanup();
     }
   }
 
@@ -159,9 +196,13 @@ export class DoceoClient {
    * @param date - Date in YYYY-MM-DD format
    * @returns Parsed RCV results, or empty array if unavailable
    */
-  async fetchRcvForDate(date: string, term = this.term): Promise<RcvVoteResult[]> {
+  async fetchRcvForDate(
+    date: string,
+    term = this.term,
+    abortSignal?: AbortSignal
+  ): Promise<RcvVoteResult[]> {
     const url = buildDoceoUrl(date, 'RCV', term);
-    const xml = await this.fetchXml(url);
+    const xml = await this.fetchXml(url, abortSignal);
     if (xml === null) return [];
     return parseRcvXml(xml);
   }
@@ -172,9 +213,13 @@ export class DoceoClient {
    * @param date - Date in YYYY-MM-DD format
    * @returns Parsed VOT results, or empty array if unavailable
    */
-  async fetchVotForDate(date: string, term = this.term): Promise<VotVoteResult[]> {
+  async fetchVotForDate(
+    date: string,
+    term = this.term,
+    abortSignal?: AbortSignal
+  ): Promise<VotVoteResult[]> {
     const url = buildDoceoUrl(date, 'VOT', term);
-    const xml = await this.fetchXml(url);
+    const xml = await this.fetchXml(url, abortSignal);
     if (xml === null) return [];
     return parseVotXml(xml);
   }
@@ -186,12 +231,13 @@ export class DoceoClient {
   private async fetchVotesForDate(
     date: string,
     term: number,
-    includeIndividual: boolean
+    includeIndividual: boolean,
+    abortSignal?: AbortSignal
   ): Promise<{ votes: LatestVoteRecord[]; url: string } | null> {
     const rcvUrl = buildDoceoUrl(date, 'RCV', term);
 
     // Try RCV first (richer data with individual MEP votes)
-    const rcvResults = await this.fetchRcvForDate(date, term);
+    const rcvResults = await this.fetchRcvForDate(date, term, abortSignal);
     if (rcvResults.length > 0) {
       let records = rcvToLatestVotes(rcvResults, date, term, rcvUrl);
       if (!includeIndividual) {
@@ -202,7 +248,7 @@ export class DoceoClient {
 
     // Fall back to VOT (aggregate only)
     const votUrl = buildDoceoUrl(date, 'VOT', term);
-    const votResults = await this.fetchVotForDate(date, term);
+    const votResults = await this.fetchVotForDate(date, term, abortSignal);
     if (votResults.length > 0) {
       const records = votToLatestVotes(votResults, date, term, votUrl);
       return { votes: records, url: votUrl };
@@ -249,7 +295,7 @@ export class DoceoClient {
       const urls: string[] = [];
 
       for (const date of dates) {
-        const result = await this.fetchVotesForDate(date, term, includeIndividual);
+        const result = await this.fetchVotesForDate(date, term, includeIndividual, params.abortSignal);
         if (result !== null) {
           allVotes.push(...result.votes);
           datesAvailable.push(date);
@@ -273,10 +319,10 @@ export class DoceoClient {
         hasMore: offset + paginatedVotes.length < total,
       };
 
-      auditLogger.logDataAccess(action, params as Record<string, unknown>, response.data.length);
+      auditLogger.logDataAccess(action, buildAuditParams(params), response.data.length);
       return response;
     } catch (error: unknown) {
-      auditLogger.logError(action, params as Record<string, unknown>, toErrorMessage(error));
+      auditLogger.logError(action, buildAuditParams(params), toErrorMessage(error));
       throw error;
     }
   }

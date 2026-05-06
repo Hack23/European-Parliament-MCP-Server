@@ -217,7 +217,7 @@ describe('getToolMetadataArray', () => {
 
   // ── Phase 5 tool names ─────────────────────────────────────────
 
-  it('includes all 14 phase5 tool names', () => {
+  it('includes all 15 phase5 tool names', () => {
     const names = tools.map((t) => t.name);
     const phase5Names = [
       'get_incoming_meps',
@@ -234,6 +234,7 @@ describe('getToolMetadataArray', () => {
       'get_meeting_plenary_session_documents',
       'get_meeting_plenary_session_document_items',
       'get_all_generated_stats',
+      'get_procedure_event_by_id',
     ];
     for (const name of phase5Names) {
       expect(names).toContain(name);
