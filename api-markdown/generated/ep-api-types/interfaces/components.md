@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.21**](../../../README.md)
+[**European Parliament MCP Server API v1.3.0**](../../../README.md)
 
 ***
 
@@ -186,7 +186,7 @@ Define the layaout for Json+ld
 
 #### language
 
-> **language**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> **language**: `"en"` \| `"mul"` \| `"lt"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ##### Description
 
@@ -194,7 +194,7 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 #### language-filter
 
-> **language-filter**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> **language-filter**: `"en"` \| `"mul"` \| `"lt"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 ##### Description
 
@@ -250,7 +250,7 @@ The number of items to skip before starting to collect the result set.
 
 #### original-language
 
-> **original-language**: (`"en"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
+> **original-language**: (`"en"` \| `"lt"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
 
 ##### Description
 
@@ -362,7 +362,7 @@ A type of the related process. Values are concepts of the EP Vocabulary [ep-proc
 
 #### search-language
 
-> **search-language**: (`"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
+> **search-language**: (`"en"` \| `"mul"` \| `"lt"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
 
 ##### Description
 
@@ -1849,15 +1849,15 @@ Hit
 
 #### lang-list
 
-> **lang-list**: `"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
+> **lang-list**: `"en"` \| `"mul"` \| `"lt"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`
 
 #### lang-list-24-array
 
-> **lang-list-24-array**: (`"en"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
+> **lang-list-24-array**: (`"en"` \| `"lt"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
 
 #### lang-list-default-en
 
-> **lang-list-default-en**: (`"en"` \| `"mul"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"lt"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
+> **lang-list-default-en**: (`"en"` \| `"mul"` \| `"lt"` \| `"bg"` \| `"es"` \| `"cs"` \| `"da"` \| `"de"` \| `"et"` \| `"el"` \| `"fr"` \| `"ga"` \| `"hr"` \| `"it"` \| `"lv"` \| `"hu"` \| `"mt"` \| `"nl"` \| `"pl"` \| `"pt"` \| `"ro"` \| `"sk"` \| `"sl"` \| `"fi"` \| `"sv"`)[]
 
 ##### Default
 

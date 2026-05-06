@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.21**](../README.md)
+[**European Parliament MCP Server API v1.3.0**](../README.md)
 
 ***
 
@@ -35,7 +35,7 @@
 
 ### Required Software
 
-- **Node.js**: v25.x or higher
+- **Node.js**: v26.x or higher
 - **npm**: v10.x or higher
 - **Git**: Latest version
 
@@ -487,7 +487,7 @@ export RATE_LIMIT_REQUESTS=100
 
 ```bash
 # Check Node.js version
-node --version  # Must be v25.x+
+node --version  # Must be v26.x+
 
 # Check if port is in use
 lsof -i :3000

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.21**](../README.md)
+[**European Parliament MCP Server API v1.3.0**](../README.md)
 
 ***
 
@@ -39,7 +39,7 @@
 ### Prerequisites
 
 **Required**:
-- Node.js 25.x or higher
+- Node.js 26.x or higher
 - npm 10.x or higher
 - Git
 - TypeScript knowledge

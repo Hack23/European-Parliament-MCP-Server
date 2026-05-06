@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.21**](../../../README.md)
+[**European Parliament MCP Server API v1.3.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **dispatchToolCall**(`name`, `args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../../tools/shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [server/toolRegistry.ts:304](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/toolRegistry.ts#L304)
+Defined in: [server/toolRegistry.ts:311](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/toolRegistry.ts#L311)
 
 Dispatches a tool call to the registered handler.
 

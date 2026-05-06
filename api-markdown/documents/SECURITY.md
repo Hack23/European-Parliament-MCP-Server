@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.21**](../README.md)
+[**European Parliament MCP Server API v1.3.0**](../README.md)
 
 ***
 
@@ -88,7 +88,7 @@ This project is under active development, and we provide security updates for th
 
 | Version | Supported          | Node.js Compatibility |
 | ------- | ------------------ | --------------------- |
-| latest  | :white_check_mark: | Node.js 25.x |
+| latest  | :white_check_mark: | Node.js 26.x |
 
 ---
 
