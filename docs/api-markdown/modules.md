@@ -1,8 +1,8 @@
-[**European Parliament MCP Server API v1.2.21**](README.md)
+[**European Parliament MCP Server API v1.3.0**](README.md)
 
 ***
 
-# European Parliament MCP Server API v1.2.21
+# European Parliament MCP Server API v1.3.0
 
 ## Documents
 
@@ -26,6 +26,8 @@
 - [clients/ep](clients/ep/README.md)
 - [clients/ep/baseClient](clients/ep/baseClient/README.md)
 - [clients/ep/committeeClient](clients/ep/committeeClient/README.md)
+- [clients/ep/doceoClient](clients/ep/doceoClient/README.md)
+- [clients/ep/doceoXmlParser](clients/ep/doceoXmlParser/README.md)
 - [clients/ep/documentClient](clients/ep/documentClient/README.md)
 - [clients/ep/jsonLdHelpers](clients/ep/jsonLdHelpers/README.md)
 - [clients/ep/legislativeClient](clients/ep/legislativeClient/README.md)
@@ -98,6 +100,7 @@
 - [tools/getExternalDocumentsFeed](tools/getExternalDocumentsFeed/README.md)
 - [tools/getHomonymMEPs](tools/getHomonymMEPs/README.md)
 - [tools/getIncomingMEPs](tools/getIncomingMEPs/README.md)
+- [tools/getLatestVotes](tools/getLatestVotes/README.md)
 - [tools/getMeetingActivities](tools/getMeetingActivities/README.md)
 - [tools/getMeetingDecisions](tools/getMeetingDecisions/README.md)
 - [tools/getMeetingForeseenActivities](tools/getMeetingForeseenActivities/README.md)

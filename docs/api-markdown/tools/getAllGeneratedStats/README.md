@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.21**](../../README.md)
+[**European Parliament MCP Server API v1.3.0**](../../README.md)
 
 ***
 
@@ -13,8 +13,11 @@ parliamentary terms EP6–EP10 (2004–2026), including monthly activity
 breakdowns, category rankings with percentiles, analytical commentary,
 and trend-based predictions for 2027–2031.
 
-The underlying data is static and designed to be refreshed weekly by
-an agentic workflow. No live EP API calls are made by this tool.
+The underlying historical dataset is static and designed to be refreshed
+weekly by an agentic workflow. When rankings are requested for all activity or
+roll-call votes, the response may also include a bounded, cached near-real-time
+`recentVoteActivity` enrichment from EP DOCEO XML; that enrichment is omitted
+on timeout or upstream failure.
 
 **Intelligence Perspective:** Enables rapid longitudinal analysis of
 EP legislative productivity, committee workload, and parliamentary
@@ -31,6 +34,10 @@ analytical capabilities with rich, pre-formatted intelligence products.
 ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
 Data source: European Parliament Open Data Portal — data.europarl.europa.eu
 
+## Interfaces
+
+- [RecentVoteActivity](interfaces/RecentVoteActivity.md)
+
 ## Type Aliases
 
 - [GetAllGeneratedStatsParams](type-aliases/GetAllGeneratedStatsParams.md)
@@ -42,5 +49,7 @@ Data source: European Parliament Open Data Portal — data.europarl.europa.eu
 
 ## Functions
 
+- [clearRecentVoteStatsCache](functions/clearRecentVoteStatsCache.md)
+- [fetchRecentVoteStats](functions/fetchRecentVoteStats.md)
 - [getAllGeneratedStats](functions/getAllGeneratedStats.md)
 - [handleGetAllGeneratedStats](functions/handleGetAllGeneratedStats.md)

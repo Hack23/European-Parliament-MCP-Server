@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.21**](../../README.md)
+[**European Parliament MCP Server API v1.3.0**](../../README.md)
 
 ***
 
@@ -97,6 +97,18 @@ Re-exports [DEFAULT_RETRY_ENABLED](baseClient/variables/DEFAULT_RETRY_ENABLED.md
 ### determineVoteOutcome
 
 Re-exports [determineVoteOutcome](jsonLdHelpers/functions/determineVoteOutcome.md)
+
+***
+
+### doceoClient
+
+Re-exports [doceoClient](doceoClient/variables/doceoClient.md)
+
+***
+
+### DoceoClient
+
+Re-exports [DoceoClient](doceoClient/classes/DoceoClient.md)
 
 ***
 

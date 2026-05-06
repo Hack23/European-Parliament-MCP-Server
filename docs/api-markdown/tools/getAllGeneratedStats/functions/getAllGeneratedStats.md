@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.21**](../../../README.md)
+[**European Parliament MCP Server API v1.3.0**](../../../README.md)
 
 ***
 
@@ -6,15 +6,17 @@
 
 # Function: getAllGeneratedStats()
 
-> **getAllGeneratedStats**(`params`): [`ToolResult`](../../shared/types/interfaces/ToolResult.md)
+> **getAllGeneratedStats**(`params`, `recentVoteActivity?`): [`ToolResult`](../../shared/types/interfaces/ToolResult.md)
 
-Defined in: [tools/getAllGeneratedStats.ts:204](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L204)
+Defined in: [tools/getAllGeneratedStats.ts:323](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L323)
 
 Retrieve precomputed EP activity statistics with optional year/category filtering.
 
 The response always includes `coveragePeriod` (the full dataset range, 2004–2026)
 and `requestedPeriod` (the user-supplied year filter). The `analysisSummary` covers
 the full dataset with a `coverageNote` clarifying scope when filters narrow the range.
+When `recentVoteActivity` is provided (fetched from DOCEO XML), it is appended to
+the result for near-realtime vote enrichment.
 
 ## Parameters
 
@@ -43,6 +45,10 @@ the full dataset with a `coverageNote` clarifying scope when filters narrow the 
 #### yearTo?
 
 `number` = `...`
+
+### recentVoteActivity?
+
+[`RecentVoteActivity`](../interfaces/RecentVoteActivity.md) \| `null`
 
 ## Returns
 

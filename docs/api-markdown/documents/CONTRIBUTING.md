@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.2.21**](../README.md)
+[**European Parliament MCP Server API v1.3.0**](../README.md)
 
 ***
 
@@ -26,7 +26,7 @@ We'd also love PRs. If you're thinking of a large PR, we advise opening up an is
 
 | Requirement | Minimum Version | Check |
 |-------------|-----------------|-------|
-| Node.js | 25.0.0 | `node --version` |
+| Node.js | 26.0.0 | `node --version` |
 | npm | 10.0.0 | `npm --version` |
 | Git | 2.x | `git --version` |
 
