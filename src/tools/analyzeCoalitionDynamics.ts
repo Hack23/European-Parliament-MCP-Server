@@ -43,7 +43,10 @@ let doceoCohesionCache:
   | { expiresAt: number; value: DoceoCohesionResult }
   | undefined;
 
-/** Test-only hook for resetting bounded DOCEO cohesion cache between isolated specs. */
+/**
+ * Test-only hook for resetting bounded DOCEO cohesion cache between isolated specs.
+ * @internal
+ */
 export function clearDoceoCoalitionCohesionCache(): void {
   doceoCohesionCache = undefined;
 }

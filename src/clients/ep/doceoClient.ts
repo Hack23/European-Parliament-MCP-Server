@@ -63,6 +63,8 @@ function createLinkedAbortController(externalSignal?: AbortSignal): LinkedAbortC
 }
 
 function isBodyTooLarge(text: string): boolean {
+  if (text.length > MAX_XML_RESPONSE_BYTES) return true;
+  if (text.length * 4 <= MAX_XML_RESPONSE_BYTES) return false;
   return Buffer.byteLength(text, 'utf8') > MAX_XML_RESPONSE_BYTES;
 }
 
