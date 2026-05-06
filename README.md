@@ -54,7 +54,7 @@
   </a>
 
   <!-- MCP Tools -->
-  <img src="https://img.shields.io/badge/MCP%20Tools-62-6366F1?style=flat-square&logo=typescript" alt="MCP Tools">
+  <img src="https://img.shields.io/badge/MCP%20Tools-63-6366F1?style=flat-square&logo=typescript" alt="MCP Tools">
 
   <!-- MCP Resources -->
   <img src="https://img.shields.io/badge/MCP%20Resources-9-6366F1?style=flat-square" alt="MCP Resources">
@@ -96,7 +96,7 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 
 ### 🎯 Key Features
 
-- 🔌 **Full MCP Implementation**: 62 tools (8 core + 3 advanced + 15 OSINT + 8 Phase 4 + 15 Phase 5 + 13 feed), 9 Resources, and 7 Prompts
+- 🔌 **Full MCP Implementation**: 63 tools (9 core + 3 advanced + 15 OSINT + 8 Phase 4 + 15 Phase 5 + 13 feed), 9 Resources, and 7 Prompts
 - 🏛️ **Complete EP API v2 Coverage**: All European Parliament Open Data API endpoints covered
 - 🕵️ **OSINT Intelligence**: MEP influence scoring, coalition analysis, anomaly detection
 - 🔒 **Security First**: ISMS-compliant, GDPR-ready, SLSA Level 3 provenance
@@ -132,7 +132,7 @@ graph LR
     end
 
     subgraph MCP["🔌 MCP Servers"]
-        EPMCP["<b>European-Parliament-<br/>MCP-Server</b><br/>62 tools · 9 resources<br/>7 prompts · TS strict<br/><i>(this repository)</i>"]
+        EPMCP["<b>European-Parliament-<br/>MCP-Server</b><br/>63 tools · 9 resources<br/>7 prompts · TS strict<br/><i>(this repository)</i>"]
         RRMCP["riksdag-regering MCP<br/>32+ tools"]
     end
 
@@ -727,9 +727,9 @@ as structured JSON. All personal data access is audit-logged per GDPR Article 30
 
 ---
 
-## 🔌 MCP Tools (62 Total)
+## 🔌 MCP Tools (63 Total)
 
-**62 tools** organized by capability — OSINT intelligence first, then analytical, data access, feed endpoints, and reference tools. Every tool includes Zod input validation, caching, and rate limiting.
+**63 tools** organized by capability — OSINT intelligence first, then analytical, data access, feed endpoints, and reference tools. Every tool includes Zod input validation, caching, and rate limiting.
 
 ### 🗺️ Political Intelligence Coverage Map
 
@@ -1050,7 +1050,7 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 
 | Country | Server | Data Source | Coverage |
 |---------|--------|-------------|----------|
-| 🇪🇺 **European Union** | [**European Parliament MCP Server**](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions — **62 tools** (15 OSINT) |
+| 🇪🇺 **European Union** | [**European Parliament MCP Server**](https://github.com/Hack23/European-Parliament-MCP-Server) | data.europarl.europa.eu | MEPs, votes, legislation, committees, questions — **63 tools** (15 OSINT) |
 | 🇺🇸 **United States** | [Congress.gov API MCP Server](https://github.com/bsmi021/mcp-congress_gov_server) | congress.gov | Bills, members, votes, committees (TypeScript, v3 API) |
 | 🇺🇸 **United States** | [CongressMCP](https://github.com/amurshak/congressMCP) | congress.gov | Real-time Congress data — bills, votes, members |
 | 🇺🇸 **United States** | [Congress.gov MCP](https://github.com/AshwinSundar/congress_gov_mcp) | congress.gov | Unofficial Congress.gov API access |
@@ -1112,9 +1112,9 @@ The European Parliament MCP Server is part of a growing ecosystem of **political
 | Attendance tracking | ✅ Trend detection + engagement scoring | ❌ | ❌ | ❌ |
 | GDPR compliance | ✅ Privacy-first design | N/A | N/A | ✅ |
 | MCP prompts & resources | ✅ 7 prompts + 9 resources | ❌ | ❌ | ❌ |
-| Tool count | **62 tools** | ~5 tools | ~5 tools | ~4 tools |
+| Tool count | **63 tools** | ~5 tools | ~5 tools | ~4 tools |
 
-> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **62 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, cross-tool intelligence correlation, political landscape generation, and precomputed longitudinal statistics. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
+> 💡 **The European Parliament MCP Server offers the most comprehensive OSINT intelligence capabilities** of any political MCP server, with **63 specialized tools** including advanced analytics like coalition stress analysis, voting anomaly detection, cross-tool intelligence correlation, political landscape generation, and precomputed longitudinal statistics. It is the only political MCP server with built-in MCP prompts, resources, and a 5-dimension MEP influence scoring model.
 
 ---
 

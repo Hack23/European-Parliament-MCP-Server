@@ -20,7 +20,8 @@ import type { MEP } from '../types/europeanParliament.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 import { fetchAllCurrentMEPs } from '../utils/mepFetcher.js';
 import { normalizePoliticalGroup } from '../utils/politicalGroupNormalization.js';
-import { withTimeout, TimeoutError } from '../utils/timeout.js';
+import { withTimeout, withTimeoutAndAbort, TimeoutError } from '../utils/timeout.js';
+import { doceoClient } from '../clients/ep/doceoClient.js';
 
 /**
  * Maximum wall-clock time (ms) allowed for the full coalition-dynamics
@@ -30,6 +31,27 @@ import { withTimeout, TimeoutError } from '../utils/timeout.js';
  * runner.
  */
 const OPERATION_TIMEOUT_MS = 150_000;
+const DOCEO_COHESION_TIMEOUT_MS = 2_000;
+const DOCEO_COHESION_CACHE_TTL_MS = 5 * 60_000;
+
+interface DoceoCohesionResult {
+  cohesionMap: Map<string, { cohesion: number; sharedVotes: number; totalVotes: number }>;
+  voteCount: number;
+  /** Number of DOCEO votes that had group-level breakdown data (RCV-backed). */
+  rcvVoteCount: number;
+}
+
+let doceoCohesionCache:
+  | { expiresAt: number; value: DoceoCohesionResult }
+  | undefined;
+
+/**
+ * Test-only hook for resetting bounded DOCEO cohesion cache between isolated specs.
+ * @internal
+ */
+export function clearDoceoCoalitionCohesionCache(): void {
+  doceoCohesionCache = undefined;
+}
 
 // Re-export for backward compatibility — `normalizePoliticalGroup` was
 // originally defined in this module and may be imported from it by
@@ -53,14 +75,13 @@ interface CoalitionPairAnalysis {
   sizeSimilarityScore: number;
   /**
    * Vote-level alignment score in `[0, 1]` (Hix/Noury/Roland-style cohesion).
-   * Currently always `null` because the EP Open Data Portal does not expose
-   * individual MEP roll-call positions. Will be populated once vote-level
-   * data becomes available.
+   * Populated from recent DOCEO roll-call XML groupBreakdown data when available;
+   * otherwise `null` when near-real-time vote data cannot be fetched.
    */
   cohesion: number | null;
-  /** null — vote-level data not available from EP API; not a real vote count */
+  /** Number of comparable recent DOCEO votes where both groups had the same majority position. */
   sharedVotes: number | null;
-  /** null — vote-level data not available from EP API; not a real vote count */
+  /** Number of comparable recent DOCEO votes used for the pair cohesion calculation. */
   totalVotes: number | null;
   /**
    * `true` when the size-similarity score exceeds `minimumCohesion`. This is a
@@ -69,9 +90,8 @@ interface CoalitionPairAnalysis {
    */
   allianceSignal: boolean;
   /**
-   * Cohesion trend classification. Set to `null` whenever `sharedVotes` is
-   * `null` (i.e. always, until vote-level data is available) because a trend
-   * derived from a static size ratio carries no temporal/political meaning.
+   * DOCEO-backed cohesion classification. Set to `null` whenever recent DOCEO
+   * alignment data is unavailable; never derived from static size similarity.
    */
   trend: string | null;
 }
@@ -222,17 +242,14 @@ function sanitizeUnrecognizedLabel(raw: string): string {
 /**
  * Computes a pairwise coalition pair record for two political groups.
  *
- * **Limitation:** The EP API `/meps/{id}` endpoint does not expose per-vote
- * statistics, so true pairwise voting cohesion (Hix/Noury/Roland sense)
- * cannot be calculated. Instead this function emits a `sizeSimilarityScore`
- * computed from group size balance — smaller groups paired with similarly
- * sized peers are *structurally* better positioned to form a balanced
- * alliance, but this score says **nothing** about how the groups vote.
+ * The EP API `/meps/{id}` endpoint does not expose per-vote statistics, so this
+ * function always emits a separate `sizeSimilarityScore` computed from group-size
+ * balance. When recent DOCEO roll-call XML is available, it also fills
+ * `cohesion`, `trend`, `sharedVotes`, and `totalVotes` from group-level majority
+ * vote alignment; otherwise those DOCEO-backed fields remain `null`.
  *
  * Formula: `sizeSimilarityScore = min(sizeA, sizeB) / max(sizeA, sizeB)` (range 0–1).
- * `cohesion`, `trend`, `sharedVotes`, and `totalVotes` are all set to `null`
- * to reflect that vote-alignment data is unavailable via the EP Open Data
- * Portal. This naming change (per issue #3) prevents downstream consumers
+ * This naming separation (per issue #3) prevents downstream consumers
  * from misreading a size-ratio artefact as evidence of political alignment
  * (e.g. Renew + ECR scoring `0.95` purely because they hold 77 vs 81 seats).
  *
@@ -246,15 +263,16 @@ function sanitizeUnrecognizedLabel(raw: string): string {
  *   backward-compatibility but applied to the size-similarity proxy until
  *   vote-level cohesion is available.
  * @returns {@link CoalitionPairAnalysis} record where `sizeSimilarityScore` is
- *   the size-balance proxy and `cohesion`/`trend`/`sharedVotes`/`totalVotes`
- *   are `null` until vote-level data is available.
+ *   the size-balance proxy and, when recent DOCEO roll-call data is available,
+ *   `cohesion`/`trend`/`sharedVotes`/`totalVotes` are populated from group-level
+ *   majority-position alignment. They remain `null` only when DOCEO data is unavailable.
  */
 function computePairSizeSimilarity(
   groupA: string,
   groupB: string,
   groupAMembers: number,
   groupBMembers: number,
-  minimumSizeSimilarity: number
+  opts: PairSimilarityOptions
 ): CoalitionPairAnalysis {
   // Use relative group sizes as a proxy — no synthetic seed-based data.
   // This is **size similarity**, not vote-level cohesion (Hix/Noury/Roland).
@@ -263,9 +281,14 @@ function computePairSizeSimilarity(
     ? Math.min(groupAMembers, groupBMembers) / Math.max(1, Math.max(groupAMembers, groupBMembers))
     : 0;
   const sizeSimilarityScore = Math.round(balance * 100) / 100;
-  const sharedVotes = null; // Not available from EP API without vote-level analysis
-  const totalVotes = null;
-  const cohesion = null; // Vote-level alignment unavailable from EP Open Data Portal
+
+  // Populate cohesion from DOCEO vote-level data when available
+  const pairKey = makePairKey(groupA, groupB);
+  const doceoEntry = opts.cohesionMap?.get(pairKey);
+  const cohesion = doceoEntry?.cohesion ?? null;
+  const sharedVotes = doceoEntry?.sharedVotes ?? null;
+  const totalVotes = doceoEntry?.totalVotes ?? null;
+  const trend = doceoEntry !== undefined ? classifyDoceoTrend(doceoEntry.cohesion) : null;
 
   return {
     groupA,
@@ -274,14 +297,190 @@ function computePairSizeSimilarity(
     cohesion,
     sharedVotes,
     totalVotes,
-    allianceSignal: sizeSimilarityScore > minimumSizeSimilarity,
-    // Suppress trend entirely while vote-level data is unavailable — a "trend"
-    // derived from a static group-size ratio carries no temporal/political
-    // meaning. Will be repopulated from vote-level cohesion once
-    // sharedVotes/cohesion are sourced from real EP roll-call data.
-    trend: null
+    allianceSignal: sizeSimilarityScore > opts.minimumSizeSimilarity,
+    trend,
   };
 }
+
+// ─── DOCEO vote-level cohesion helpers ─────────────────────────────────────
+
+/** Options for pair size similarity computation. */
+interface PairSimilarityOptions {
+  minimumSizeSimilarity: number;
+  cohesionMap?: Map<string, { cohesion: number; sharedVotes: number; totalVotes: number }>;
+}
+
+/** Classify DOCEO vote cohesion score as a trend direction. */
+function classifyDoceoTrend(cohesion: number): string {
+  if (cohesion >= 0.6) return 'CONVERGING';
+  if (cohesion <= 0.4) return 'DIVERGING';
+  return 'STABLE';
+}
+interface PairVoteStats { sameVotes: number; totalVotes: number }
+type GroupVotePosition = 'FOR' | 'AGAINST' | 'ABSTAIN' | 'SPLIT';
+
+/** Stable canonical key for a group pair (alphabetical order). */
+function makePairKey(a: string, b: string): string {
+  return a < b ? `${a}:${b}` : `${b}:${a}`;
+}
+
+/** Determine the majority position for a group, returning SPLIT on ties. */
+function getGroupVotePosition(
+  counts: { for: number; against: number; abstain: number }
+): GroupVotePosition {
+  const max = Math.max(counts.for, counts.against, counts.abstain);
+  const forWins = counts.for === max;
+  const againstWins = counts.against === max;
+  const abstainWins = counts.abstain === max;
+  if (forWins && !againstWins && !abstainWins) return 'FOR';
+  if (againstWins && !forWins && !abstainWins) return 'AGAINST';
+  if (abstainWins && !forWins && !againstWins) return 'ABSTAIN';
+  return 'SPLIT';
+}
+
+/** Merge raw group breakdown entries by canonical political-group code. */
+function normalizeGroupBreakdown(
+  breakdown: Record<string, { for: number; against: number; abstain: number }>
+): Map<string, { for: number; against: number; abstain: number }> {
+  const normalized = new Map<string, { for: number; against: number; abstain: number }>();
+  for (const [group, counts] of Object.entries(breakdown)) {
+    const normalizedGroup = normalizePoliticalGroup(group);
+    if (normalizedGroup === 'unknown') continue;
+    const existing = normalized.get(normalizedGroup) ?? { for: 0, against: 0, abstain: 0 };
+    normalized.set(normalizedGroup, {
+      for: existing.for + counts.for,
+      against: existing.against + counts.against,
+      abstain: existing.abstain + counts.abstain,
+    });
+  }
+  return normalized;
+}
+
+/** Tally votes for a single pair of groups from their majority positions. */
+function recordGroupPairVote(
+  gA: string,
+  gB: string,
+  positions: Map<string, GroupVotePosition>,
+  pairStats: Map<string, PairVoteStats>
+): void {
+  const aPosition = positions.get(gA);
+  const bPosition = positions.get(gB);
+  if (aPosition === undefined || bPosition === undefined) return;
+  if (aPosition === 'SPLIT' || bPosition === 'SPLIT') return;
+  const key = makePairKey(gA, gB);
+  const existing = pairStats.get(key) ?? { sameVotes: 0, totalVotes: 0 };
+  pairStats.set(key, {
+    sameVotes: existing.sameVotes + (aPosition === bPosition ? 1 : 0),
+    totalVotes: existing.totalVotes + 1,
+  });
+}
+
+/** Extract the majority position per group from a normalized groupBreakdown record. */
+function extractGroupPositions(
+  breakdown: Map<string, { for: number; against: number; abstain: number }>
+): Map<string, GroupVotePosition> {
+  const positions = new Map<string, GroupVotePosition>();
+  for (const [group, counts] of breakdown) {
+    positions.set(group, getGroupVotePosition(counts));
+  }
+  return positions;
+}
+
+/** Process all group pairs from a single vote's breakdown. */
+function processVoteGroupPairs(
+  breakdown: Record<string, { for: number; against: number; abstain: number }>,
+  pairStats: Map<string, PairVoteStats>
+): void {
+  const normalizedBreakdown = normalizeGroupBreakdown(breakdown);
+  const groups = [...normalizedBreakdown.keys()];
+  if (groups.length < 2) return;
+  const positions = extractGroupPositions(normalizedBreakdown);
+  for (let i = 0; i < groups.length; i++) {
+    for (let j = i + 1; j < groups.length; j++) {
+      const gA = groups[i];
+      const gB = groups[j];
+      if (gA === undefined || gB === undefined) continue;
+      recordGroupPairVote(gA, gB, positions, pairStats);
+    }
+  }
+}
+
+/** Convert raw pair tallies to normalized cohesion values. */
+function buildCohesionMap(
+  pairStats: Map<string, PairVoteStats>
+): Map<string, { cohesion: number; sharedVotes: number; totalVotes: number }> {
+  const result = new Map<string, { cohesion: number; sharedVotes: number; totalVotes: number }>();
+  for (const [key, stats] of pairStats) {
+    if (stats.totalVotes === 0) continue;
+    result.set(key, {
+      cohesion: Math.round((stats.sameVotes / stats.totalVotes) * 100) / 100,
+      sharedVotes: stats.sameVotes,
+      totalVotes: stats.totalVotes,
+    });
+  }
+  return result;
+}
+
+function emptyDoceoCohesionResult(): DoceoCohesionResult {
+  return { cohesionMap: new Map(), voteCount: 0, rcvVoteCount: 0 };
+}
+
+/** Fetch recent DOCEO votes and compute inter-group cohesion statistics. */
+async function computeCoalitionCohesionFromDoceo(
+  abortSignal: AbortSignal
+): Promise<DoceoCohesionResult> {
+  const response = await doceoClient.getLatestVotes({
+    includeIndividualVotes: false,
+    limit: 100,
+    abortSignal,
+  });
+  const pairStats = new Map<string, PairVoteStats>();
+  let rcvVoteCount = 0;
+  for (const vote of response.data) {
+    if (vote.groupBreakdown !== undefined) {
+      rcvVoteCount++;
+      processVoteGroupPairs(vote.groupBreakdown, pairStats);
+    }
+  }
+  return {
+    cohesionMap: buildCohesionMap(pairStats),
+    voteCount: response.data.length,
+    rcvVoteCount,
+  };
+}
+
+/**
+ * Load DOCEO coalition cohesion data, returning an empty result on any error.
+ * Errors are silently suppressed — DOCEO data enriches but does not block the tool.
+ */
+async function loadDoceoCoalitionCohesion(): Promise<DoceoCohesionResult> {
+  const now = Date.now();
+  if (doceoCohesionCache !== undefined && doceoCohesionCache.expiresAt > now) {
+    return doceoCohesionCache.value;
+  }
+
+  try {
+    const value = await withTimeoutAndAbort(
+      computeCoalitionCohesionFromDoceo,
+      DOCEO_COHESION_TIMEOUT_MS,
+      'DOCEO coalition cohesion enrichment timed out'
+    );
+    doceoCohesionCache = {
+      expiresAt: now + DOCEO_COHESION_CACHE_TTL_MS,
+      value,
+    };
+    return value;
+  } catch {
+    const value = emptyDoceoCohesionResult();
+    doceoCohesionCache = {
+      expiresAt: now + DOCEO_COHESION_CACHE_TTL_MS,
+      value,
+    };
+    return value;
+  }
+}
+
+// ─── End DOCEO helpers ──────────────────────────────────────────────────────
 
 /**
  * Fetches all current MEPs once and computes per-group membership counts in-memory.
@@ -379,23 +578,29 @@ function buildGroupMetrics(
 function buildCoalitionPairs(
   targetGroups: string[],
   minimumSizeSimilarity: number,
-  groupMetrics: GroupCohesionMetrics[]
+  groupMetrics: GroupCohesionMetrics[],
+  cohesionMap?: Map<string, { cohesion: number; sharedVotes: number; totalVotes: number }>
 ): CoalitionPairAnalysis[] {
-  // Precompute a groupId → memberCount lookup once so the nested loop below
-  // is truly O(n²) in the number of target groups (avoids an O(n³) blowup
-  // from per-pair `Array.find` scans of `groupMetrics`).
   const memberCountByGroup = new Map<string, number>();
   for (const metric of groupMetrics) {
     memberCountByGroup.set(metric.groupId, metric.memberCount);
   }
+  const opts: PairSimilarityOptions = {
+    minimumSizeSimilarity,
+    ...(cohesionMap !== undefined && { cohesionMap }),
+  };
   const pairs: CoalitionPairAnalysis[] = [];
   for (let i = 0; i < targetGroups.length; i++) {
     for (let j = i + 1; j < targetGroups.length; j++) {
-      const groupA = targetGroups[i] ?? '';
-      const groupB = targetGroups[j] ?? '';
-      const groupAMembers = memberCountByGroup.get(groupA) ?? 0;
-      const groupBMembers = memberCountByGroup.get(groupB) ?? 0;
-      pairs.push(computePairSizeSimilarity(groupA, groupB, groupAMembers, groupBMembers, minimumSizeSimilarity));
+      const groupA = targetGroups[i];
+      const groupB = targetGroups[j];
+      if (groupA === undefined || groupB === undefined) continue;
+      pairs.push(computePairSizeSimilarity(
+        groupA, groupB,
+        memberCountByGroup.get(groupA) ?? 0,
+        memberCountByGroup.get(groupB) ?? 0,
+        opts
+      ));
     }
   }
   return pairs;
@@ -571,8 +776,9 @@ function previewUnrecognized(labels: readonly string[], max = 10): string {
  * under the project's cyclomatic-complexity budget. Warnings cover three
  * orthogonal data-quality concerns:
  *
- * 1. **Vote-level data unavailable** (always emitted) — reflects the EP API
- *    `/meps/{id}` limitation that per-MEP vote statistics are not exposed.
+ * 1. **Per-MEP vote data unavailable** (always emitted) — reflects the EP API
+ *    `/meps/{id}` limitation for group metrics. Pair-level cohesion may still
+ *    be enriched from DOCEO XML when recent roll-call data is available.
  * 2. **Pagination failures** — emitted when the MEP fetch did not complete.
  * 3. **Group coverage** — emitted when at least one target group has
  *    `memberCount: 0`, or when EP API labels were observed whose canonical
@@ -594,7 +800,7 @@ function buildCoverageWarnings(
 ): string[] {
   const warnings: string[] = [
     'Per-MEP voting statistics unavailable from EP API — cohesion, defection, and attendance metrics are null',
-    'coalitionPairs[].cohesion and coalitionPairs[].trend are null — vote-level alignment data is not available via the EP Open Data Portal; only coalitionPairs[].sizeSimilarityScore (group-size ratio proxy) is populated',
+    'coalitionPairs[].cohesion and coalitionPairs[].trend are populated from recent DOCEO XML group-level roll-call alignment when available; otherwise they are null and only coalitionPairs[].sizeSimilarityScore (group-size ratio proxy) is populated',
   ];
   if (!fetchResult.complete) {
     warnings.push(`MEP data is incomplete — pagination failed at offset ${String(fetchResult.failureOffset ?? 0)}; results based on partial data`);
@@ -714,8 +920,11 @@ export async function handleAnalyzeCoalitionDynamics(
           );
         }
         const fetchResult = await fetchAllCurrentMEPs();
+        const doceoCohesion = await loadDoceoCoalitionCohesion();
+        const cohesionMap = doceoCohesion.cohesionMap;
+        const hasDoceoData = doceoCohesion.rcvVoteCount > 0;
         const { metrics: groupMetrics, unrecognizedGroups } = buildGroupMetrics(targetGroups, fetchResult.meps);
-        const coalitionPairs = buildCoalitionPairs(targetGroups, params.minimumCohesion, groupMetrics);
+        const coalitionPairs = buildCoalitionPairs(targetGroups, params.minimumCohesion, groupMetrics, cohesionMap);
         const sortedPairs = [...coalitionPairs].sort((a, b) => b.sizeSimilarityScore - a.sizeSimilarityScore);
         const stressIndicators = computeStressIndicators(groupMetrics);
         const fragMetrics = computeFragmentationMetrics(groupMetrics);
@@ -739,28 +948,13 @@ export async function handleAnalyzeCoalitionDynamics(
             unrecognizedGroups,
           },
           confidenceLevel: 'LOW',
-          dataFreshness: 'Real-time EP API data — political group composition from current MEP records',
+          dataFreshness: hasDoceoData
+            ? 'Real-time EP API data + near-realtime DOCEO XML vote-level cohesion'
+            : 'Real-time EP API data — political group composition from current MEP records',
           sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-          methodology: 'CIA Coalition Analysis — group composition from real EP Open Data MEP records. '
-            + 'Raw political-group labels from the EP API are normalized to canonical short codes '
-            + '(e.g. full names, URI suffixes, and EP9→EP10 successions such as ID→PfE are mapped). '
-            + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
-            + 'each group metric has dataAvailability: UNAVAILABLE with null cohesion/defection/attendance. '
-            + 'coalitionPairs[].sizeSimilarityScore is a group-size ratio proxy (min/max member counts), NOT vote-level cohesion; '
-            + 'coalitionPairs[].cohesion, coalitionPairs[].trend, coalitionPairs[].sharedVotes, and coalitionPairs[].totalVotes are null '
-            + '(not computed from vote-level data — vote-alignment data is not available via the EP Open Data Portal). '
-            + 'When any target group returns memberCount: 0 the parliamentaryFragmentation and '
-            + 'effectiveNumberOfParties fields are emitted as null to avoid a plausible-but-wrong score. '
-            + 'Data source: European Parliament Open Data Portal.',
+          methodology: buildMethodologyText(hasDoceoData),
           dataQualityWarnings: warnings,
-          methodologyNote:
-            'coalitionPairs[].sizeSimilarityScore is derived from group-size ratios '
-            + '(min(sizeA, sizeB) / max(sizeA, sizeB)) and is NOT vote-level cohesion '
-            + '(Hix/Noury/Roland sense). coalitionPairs[].cohesion and coalitionPairs[].trend '
-            + 'are emitted as null because vote-alignment data is not available via the EP Open Data Portal. '
-            + 'The public input parameter `minimumCohesion` is preserved for backward compatibility '
-            + 'but is currently applied as a threshold on coalitionPairs[].sizeSimilarityScore until '
-            + 'vote-level cohesion data becomes available.',
+          methodologyNote: buildMethodologyNote(hasDoceoData),
         };
 
         return buildToolResponse(analysis);
@@ -776,6 +970,47 @@ export async function handleAnalyzeCoalitionDynamics(
     auditLogger.logError('analyze_coalition_dynamics', params, toErrorMessage(error));
     throw new Error(`Failed to analyze coalition dynamics: ${errorMessage}`);
   }
+}
+
+/** Build methodology text for the coalition analysis report. */
+function buildMethodologyText(hasDoceoData: boolean): string {
+  const base = 'CIA Coalition Analysis — group composition from real EP Open Data MEP records. '
+    + 'Raw political-group labels from the EP API are normalized to canonical short codes '
+    + '(e.g. full names, URI suffixes, and EP9→EP10 successions such as ID→PfE are mapped). ';
+  const voteSection = hasDoceoData
+    ? 'DOCEO XML roll-call vote data was fetched for recent plenary activity. '
+      + 'coalitionPairs[].cohesion is populated for comparable group pairs '
+      + '(fraction of votes where both groups had the same majority position); '
+      + 'split/tied group positions are excluded from the denominator, so some pairs may remain null. '
+    : 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
+      + 'each group metric has dataAvailability: UNAVAILABLE with null cohesion/defection/attendance. '
+      + 'coalitionPairs[].cohesion, coalitionPairs[].trend, coalitionPairs[].sharedVotes, '
+      + 'and coalitionPairs[].totalVotes are null '
+      + '(vote-alignment data not available — DOCEO XML fetch returned no data). ';
+  const suffix = 'coalitionPairs[].sizeSimilarityScore is a group-size ratio proxy (min/max member counts), '
+    + 'NOT vote-level cohesion. '
+    + 'When any target group returns memberCount: 0 the parliamentaryFragmentation and '
+    + 'effectiveNumberOfParties fields are emitted as null to avoid a plausible-but-wrong score. '
+    + 'Data source: European Parliament Open Data Portal.';
+  return `${base}${voteSection}${suffix}`;
+}
+
+/** Build methodologyNote for the coalition analysis report. */
+function buildMethodologyNote(hasDoceoData: boolean): string {
+  if (hasDoceoData) {
+    return 'DOCEO XML roll-call vote data was fetched for recent plenary sessions; '
+      + 'coalitionPairs[].cohesion is derived for comparable group pairs from majority-position alignment. '
+      + 'coalitionPairs[].sizeSimilarityScore is a group-size ratio proxy and is NOT vote-level cohesion. '
+      + 'Pairs with only split/tied positions can still have null cohesion/trend. '
+      + 'trend is classified as CONVERGING (cohesion ≥ 0.6), DIVERGING (≤ 0.4), or STABLE when cohesion is available.';
+  }
+  return 'coalitionPairs[].sizeSimilarityScore is derived from group-size ratios '
+    + '(min(sizeA, sizeB) / max(sizeA, sizeB)) and is NOT vote-level cohesion '
+    + '(Hix/Noury/Roland sense). coalitionPairs[].cohesion and coalitionPairs[].trend '
+    + 'are emitted as null because DOCEO XML vote data was unavailable at query time. '
+    + 'The public input parameter `minimumCohesion` is preserved for backward compatibility '
+    + 'but is currently applied as a threshold on coalitionPairs[].sizeSimilarityScore until '
+    + 'vote-level cohesion data becomes available.';
 }
 
 /**

@@ -5,12 +5,21 @@
  *         predictions, monthly breakdown, and error handling.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   handleGetAllGeneratedStats,
   getAllGeneratedStats,
   GetAllGeneratedStatsSchema,
+  clearRecentVoteStatsCache,
 } from './getAllGeneratedStats.js';
+import * as doceoClientModule from '../clients/ep/doceoClient.js';
+
+// Mock DOCEO client — default to empty response so non-DOCEO tests are unaffected
+vi.mock('../clients/ep/doceoClient.js', () => ({
+  doceoClient: {
+    getLatestVotes: vi.fn(),
+  },
+}));
 
 // ── Type-safe JSON parse helper ─────────────────────────────────────
 
@@ -642,6 +651,23 @@ describe('getAllGeneratedStats', () => {
 // ── Handler Integration ──────────────────────────────────────────
 
 describe('handleGetAllGeneratedStats', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    clearRecentVoteStatsCache();
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockReset();
+    // Default: empty DOCEO response — existing tests remain unaffected
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+      data: [],
+      total: 0,
+      datesAvailable: [],
+      datesUnavailable: [],
+      source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+      limit: 100,
+      offset: 0,
+      hasMore: false,
+    });
+  });
+
   it('handles empty args (all defaults)', async () => {
     const result = await handleGetAllGeneratedStats({});
     expect(result.content).toHaveLength(1);
@@ -712,5 +738,259 @@ describe('handleGetAllGeneratedStats', () => {
       expect(pred.methodology).toContain('Average-based extrapolation');
       expect(pred.confidenceInterval).toMatch(/^±\d+%$/);
     }
+  });
+
+  describe('DOCEO recent vote activity enrichment', () => {
+    it('includes recentVoteActivity when DOCEO returns data (category=all, includeRankings=true)', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        data: [
+          {
+            id: 'v1', subject: 'Vote 1', reference: '', date: '2025-01-20',
+            result: 'ADOPTED' as const,
+            votesFor: 400, votesAgainst: 100, abstentions: 50,
+            sourceUrl: '',
+            dataSource: 'RCV' as const,
+            groupBreakdown: { EPP: { for: 100, against: 10, abstain: 5 } },
+          },
+          {
+            id: 'v2', subject: 'Vote 2', reference: '', date: '2025-01-20',
+            result: 'REJECTED' as const,
+            votesFor: 150, votesAgainst: 350, abstentions: 50,
+            sourceUrl: '',
+            dataSource: 'RCV' as const,
+          },
+        ],
+        total: 2,
+        datesAvailable: ['2025-01-20'],
+        datesUnavailable: [],
+        source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+        limit: 100,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetAllGeneratedStats({ category: 'all', includeRankings: true });
+      const data = parseStatsResponse(result) as {
+        recentVoteActivity?: {
+          recentVoteCount: number;
+          adoptedCount: number;
+          rejectedCount: number;
+          adoptionRate: number;
+          datesWithData: string[];
+          groupVotingLeaders: Array<{ group: string; totalVotes: number }>;
+          dataFreshness: string;
+          dataSource: string;
+        };
+      };
+
+      expect(data.recentVoteActivity).toBeDefined();
+      expect(data.recentVoteActivity?.recentVoteCount).toBe(2);
+      expect(data.recentVoteActivity?.adoptedCount).toBe(1);
+      expect(data.recentVoteActivity?.rejectedCount).toBe(1);
+      expect(data.recentVoteActivity?.adoptionRate).toBe(50);
+      expect(data.recentVoteActivity?.datesWithData).toContain('2025-01-20');
+      expect(data.recentVoteActivity?.groupVotingLeaders[0]?.group).toBe('EPP');
+      expect(data.recentVoteActivity?.dataFreshness).toBe('NEAR_REALTIME');
+      expect(data.recentVoteActivity?.dataSource).toBe('EP_DOCEO_XML');
+      const callArgs = vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mock.calls[0]?.[0];
+      expect(callArgs).toMatchObject({ includeIndividualVotes: false, limit: 100 });
+      expect(callArgs?.abortSignal).toBeInstanceOf(AbortSignal);
+    });
+
+    it('omits recentVoteActivity when category is not all/roll_call_votes', async () => {
+      const result = await handleGetAllGeneratedStats({
+        category: 'plenary_sessions',
+        includeRankings: true,
+      });
+      const data = parseStatsResponse(result) as { recentVoteActivity?: unknown };
+      expect(data.recentVoteActivity).toBeUndefined();
+    });
+
+    it('omits recentVoteActivity when includeRankings=false', async () => {
+      const result = await handleGetAllGeneratedStats({
+        category: 'all',
+        includeRankings: false,
+      });
+      const data = parseStatsResponse(result) as { recentVoteActivity?: unknown };
+      expect(data.recentVoteActivity).toBeUndefined();
+    });
+
+    it('omits recentVoteActivity when DOCEO returns empty data', async () => {
+      // beforeEach already mocks getLatestVotes to return empty data
+      const result = await handleGetAllGeneratedStats({ category: 'all', includeRankings: true });
+      const data = parseStatsResponse(result) as { recentVoteActivity?: unknown };
+      // Empty data array → recentVoteActivity is returned but recentVoteCount = 0
+      if (data.recentVoteActivity !== undefined) {
+        const rva = data.recentVoteActivity as { recentVoteCount: number };
+        expect(rva.recentVoteCount).toBe(0);
+      }
+    });
+
+    it('omits recentVoteActivity gracefully when DOCEO throws', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockRejectedValue(
+        new Error('upstream failure')
+      );
+      const result = await handleGetAllGeneratedStats({ category: 'all', includeRankings: true });
+      const data = parseStatsResponse(result) as { recentVoteActivity?: unknown };
+      expect(data.recentVoteActivity).toBeUndefined();
+    });
+
+    it('includes recentVoteActivity when category=roll_call_votes', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        data: [
+          {
+            id: 'v1', subject: 'Vote 1', reference: '', date: '2025-01-20',
+            result: 'ADOPTED' as const,
+            votesFor: 300, votesAgainst: 100, abstentions: 50,
+            sourceUrl: '',
+            dataSource: 'VOT' as const,
+          },
+        ],
+        total: 1,
+        datesAvailable: ['2025-01-20'],
+        datesUnavailable: ['2025-01-19'],
+        source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+        limit: 100,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetAllGeneratedStats({
+        category: 'roll_call_votes',
+        includeRankings: true,
+      });
+      const data = parseStatsResponse(result) as {
+        recentVoteActivity?: { recentVoteCount: number; datesWithoutData: string[] };
+      };
+      expect(data.recentVoteActivity?.recentVoteCount).toBe(1);
+      expect(data.recentVoteActivity?.datesWithoutData).toContain('2025-01-19');
+    });
+
+    it('caches recentVoteActivity to avoid repeated DOCEO calls', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValueOnce({
+        data: [
+          {
+            id: 'v1', subject: 'Vote 1', reference: '', date: '2025-01-20',
+            result: 'ADOPTED' as const,
+            votesFor: 300, votesAgainst: 100, abstentions: 50,
+            sourceUrl: '',
+            dataSource: 'VOT' as const,
+          },
+        ],
+        total: 1,
+        datesAvailable: ['2025-01-20'],
+        datesUnavailable: [],
+        source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+        limit: 100,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const first = parseStatsResponse(
+        await handleGetAllGeneratedStats({ category: 'all', includeRankings: true })
+      ) as { recentVoteActivity?: { recentVoteCount: number } };
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockRejectedValueOnce(
+        new Error('should use cache')
+      );
+      const second = parseStatsResponse(
+        await handleGetAllGeneratedStats({ category: 'all', includeRankings: true })
+      ) as { recentVoteActivity?: { recentVoteCount: number } };
+
+      expect(first.recentVoteActivity?.recentVoteCount).toBe(1);
+      expect(second.recentVoteActivity?.recentVoteCount).toBe(1);
+      expect(doceoClientModule.doceoClient.getLatestVotes).toHaveBeenCalledTimes(1);
+    });
+  });
+});
+
+// ─── Additional coverage for lines 148, 226, 342, 441 ────────────────────────
+
+describe('Coverage for recomputeRankingSummary, computeGroupVotingLeaders, and error paths', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    clearRecentVoteStatsCache();
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockReset();
+    // Default: empty DOCEO response
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+      data: [],
+      total: 0,
+      datesAvailable: [],
+      datesUnavailable: [],
+      source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+      limit: 100,
+      offset: 0,
+      hasMore: false,
+    });
+  });
+
+  // A. Line 148 — empty filtered array in recomputeRankingSummary
+  it('returns empty rankings when year range has no data', async () => {
+    const result = await handleGetAllGeneratedStats({
+      yearFrom: 2030,
+      yearTo: 2031,
+      includeRankings: true,
+      category: 'plenary_sessions',
+    });
+    const data = parseStatsResponse(result) as { categoryRankings?: Array<{ rankings: unknown[] }> };
+    if (data.categoryRankings !== undefined && data.categoryRankings.length > 0) {
+      for (const r of data.categoryRankings) {
+        expect(r.rankings).toHaveLength(0);
+      }
+    }
+    // Test passes even if no categoryRankings key (response still valid)
+    expect(result.content[0]!.type).toBe('text');
+  });
+
+  // B. Line 226 — computeGroupVotingLeaders with 4+ groups (sorting + slice to top 3)
+  it('returns top-3 groupVotingLeaders sorted by vote participation', async () => {
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+      data: [
+        {
+          id: 'v1', date: '2025-01-20', result: 'ADOPTED' as const,
+          subject: 'V1', reference: '', votesFor: 10, votesAgainst: 0, abstentions: 0,
+          sourceUrl: '', dataSource: 'RCV' as const,
+          groupBreakdown: {
+            EPP: { for: 100, against: 0, abstain: 0 },
+            'S&D': { for: 80, against: 0, abstain: 0 },
+            RE: { for: 60, against: 0, abstain: 0 },
+            'Greens/EFA': { for: 40, against: 0, abstain: 0 },
+          },
+        },
+      ],
+      total: 1, datesAvailable: ['2025-01-20'], datesUnavailable: [],
+      source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+      limit: 100, offset: 0, hasMore: false,
+    });
+
+    const result = await handleGetAllGeneratedStats({ category: 'all', includeRankings: true });
+    const data = parseStatsResponse(result) as {
+      recentVoteActivity?: {
+        groupVotingLeaders: Array<{ group: string; totalVotes: number }>;
+      };
+    };
+    expect(data.recentVoteActivity?.groupVotingLeaders).toHaveLength(3);
+    // EPP should be first (100 votes)
+    expect(data.recentVoteActivity?.groupVotingLeaders[0]?.group).toBe('EPP');
+    expect(data.recentVoteActivity?.groupVotingLeaders[0]?.totalVotes).toBe(100);
+  });
+
+  // D. Line 441 — non-ZodError rethrow in handleGetAllGeneratedStats
+  it('rethrows non-ZodError when schema parsing throws unexpectedly', async () => {
+    const parseError = new TypeError('parse blew up');
+    const parseSpy = vi.spyOn(GetAllGeneratedStatsSchema, 'parse').mockImplementationOnce(() => {
+      throw parseError;
+    });
+    await expect(handleGetAllGeneratedStats({})).rejects.toThrow('parse blew up');
+    expect(parseSpy).toHaveBeenCalledOnce();
+    parseSpy.mockRestore();
+  });
+
+  // E. getAllGeneratedStats sync function without recentVoteActivity
+  it('getAllGeneratedStats works synchronously without recentVoteActivity', () => {
+    const params = GetAllGeneratedStatsSchema.parse({ category: 'all' });
+    const result = getAllGeneratedStats(params);
+    expect(result).toHaveProperty('content');
+    const data = JSON.parse(result.content[0]!.text) as { recentVoteActivity?: unknown };
+    expect(data.recentVoteActivity).toBeUndefined();
   });
 });

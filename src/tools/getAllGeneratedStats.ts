@@ -6,8 +6,11 @@
  * breakdowns, category rankings with percentiles, analytical commentary,
  * and trend-based predictions for 2027–2031.
  *
- * The underlying data is static and designed to be refreshed weekly by
- * an agentic workflow. No live EP API calls are made by this tool.
+ * The underlying historical dataset is static and designed to be refreshed
+ * weekly by an agentic workflow. When rankings are requested for all activity or
+ * roll-call votes, the response may also include a bounded, cached near-real-time
+ * `recentVoteActivity` enrichment from EP DOCEO XML; that enrichment is omitted
+ * on timeout or upstream failure.
  *
  * **Intelligence Perspective:** Enables rapid longitudinal analysis of
  * EP legislative productivity, committee workload, and parliamentary
@@ -28,10 +31,12 @@
  */
 
 import { z } from 'zod';
+import { doceoClient } from '../clients/ep/doceoClient.js';
 import { GENERATED_STATS } from '../data/generatedStats.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
 import type { ToolResult } from './shared/types.js';
+import { withTimeoutAndAbort } from '../utils/timeout.js';
 
 export const GetAllGeneratedStatsSchema = z
   .object({
@@ -116,6 +121,17 @@ const CATEGORY_LABEL_MAP: Partial<Record<string, string>> = {
 
 type RankingEntry = (typeof GENERATED_STATS.categoryRankings)[number];
 
+const RECENT_VOTE_ACTIVITY_TIMEOUT_MS = 2_000;
+const RECENT_VOTE_ACTIVITY_CACHE_TTL_MS = 5 * 60_000;
+let recentVoteActivityCache:
+  | { expiresAt: number; value: RecentVoteActivity | null }
+  | undefined;
+
+/** Test-only hook for resetting bounded DOCEO enrichment cache between isolated specs. @internal */
+export function clearRecentVoteStatsCache(): void {
+  recentVoteActivityCache = undefined;
+}
+
 /**
  * Compute mean, standard deviation, and median from a numeric array.
  * Used to recalculate ranking summary statistics for filtered year ranges.
@@ -194,14 +210,120 @@ function filterRankings(
   return GENERATED_STATS.categoryRankings.filter((r) => r.category === label).map(recompute);
 }
 
+/** Recent DOCEO vote activity stats appended to the precomputed response. */
+export interface RecentVoteActivity {
+  recentVoteCount: number;
+  adoptedCount: number;
+  rejectedCount: number;
+  /** Adoption rate as a percentage (0-100, one decimal place). */
+  adoptionRate: number;
+  datesWithData: string[];
+  datesWithoutData: string[];
+  /** Top-3 political groups by total vote participation across recent plenary sittings. */
+  groupVotingLeaders: { group: string; totalVotes: number }[];
+  dataFreshness: 'NEAR_REALTIME';
+  dataSource: 'EP_DOCEO_XML';
+}
+
+/** Compute top-3 groups by total vote participation from a set of recent vote records. */
+function computeGroupVotingLeaders(
+  votes: { groupBreakdown?: Record<string, { for: number; against: number; abstain: number }> }[]
+): { group: string; totalVotes: number }[] {
+  const totals = new Map<string, number>();
+  for (const vote of votes) {
+    if (!vote.groupBreakdown) continue;
+    for (const [group, counts] of Object.entries(vote.groupBreakdown)) {
+      const existing = totals.get(group) ?? 0;
+      totals.set(group, existing + counts.for + counts.against + counts.abstain);
+    }
+  }
+  return [...totals.entries()]
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 3)
+    .map(([group, totalVotes]) => ({ group, totalVotes }));
+}
+
+/** Returns true when recent DOCEO activity should be appended to the response. */
+function shouldIncludeRecentActivity(params: GetAllGeneratedStatsParams): boolean {
+  return params.includeRankings && (params.category === 'all' || params.category === 'roll_call_votes');
+}
+
+/**
+ * Fetch recent vote statistics from EP DOCEO XML for near-realtime enrichment.
+ * Returns null on any upstream error — callers treat absence as degraded-upstream.
+ */
+export async function fetchRecentVoteStats(): Promise<RecentVoteActivity | null> {
+  const now = Date.now();
+  if (recentVoteActivityCache !== undefined && recentVoteActivityCache.expiresAt > now) {
+    return recentVoteActivityCache.value;
+  }
+
+  try {
+    const response = await withTimeoutAndAbort(
+      (abortSignal) => doceoClient.getLatestVotes({
+        includeIndividualVotes: false,
+        limit: 100,
+        abortSignal,
+      }),
+      RECENT_VOTE_ACTIVITY_TIMEOUT_MS,
+      'DOCEO recent vote enrichment timed out'
+    );
+    const votes = response.data;
+    const adoptedCount = votes.filter((v) => v.result === 'ADOPTED').length;
+    const rejectedCount = votes.filter((v) => v.result === 'REJECTED').length;
+    const recentVoteCount = votes.length;
+    // Multiply by 1000 then divide by 10 to round to one decimal place (e.g. 50.5%)
+    const adoptionRate =
+      recentVoteCount > 0 ? Math.round((adoptedCount / recentVoteCount) * 1000) / 10 : 0;
+    const value: RecentVoteActivity = {
+      recentVoteCount,
+      adoptedCount,
+      rejectedCount,
+      adoptionRate,
+      datesWithData: response.datesAvailable,
+      datesWithoutData: response.datesUnavailable,
+      groupVotingLeaders: computeGroupVotingLeaders(votes),
+      dataFreshness: 'NEAR_REALTIME',
+      dataSource: 'EP_DOCEO_XML',
+    };
+    recentVoteActivityCache = {
+      expiresAt: now + RECENT_VOTE_ACTIVITY_CACHE_TTL_MS,
+      value,
+    };
+    return value;
+  } catch {
+    recentVoteActivityCache = {
+      expiresAt: now + RECENT_VOTE_ACTIVITY_CACHE_TTL_MS,
+      value: null,
+    };
+    return null;
+  }
+}
+
+/** Build a coverage note for the analysis summary based on year filter bounds. */
+function buildCoverageNote(yearFrom: number, yearTo: number): string {
+  const full = `${String(GENERATED_STATS.coveragePeriod.from)}-${String(GENERATED_STATS.coveragePeriod.to)}`;
+  const isFiltered =
+    yearFrom > GENERATED_STATS.coveragePeriod.from || yearTo < GENERATED_STATS.coveragePeriod.to;
+  if (isFiltered) {
+    return `This summary reflects the full ${full} dataset; filtered results cover ${String(yearFrom)}-${String(yearTo)} only.`;
+  }
+  return `Covers the complete ${full} dataset.`;
+}
+
 /**
  * Retrieve precomputed EP activity statistics with optional year/category filtering.
  *
  * The response always includes `coveragePeriod` (the full dataset range, 2004–2026)
  * and `requestedPeriod` (the user-supplied year filter). The `analysisSummary` covers
  * the full dataset with a `coverageNote` clarifying scope when filters narrow the range.
+ * When `recentVoteActivity` is provided (fetched from DOCEO XML), it is appended to
+ * the result for near-realtime vote enrichment.
  */
-export function getAllGeneratedStats(params: GetAllGeneratedStatsParams): ToolResult {
+export function getAllGeneratedStats(
+  params: GetAllGeneratedStatsParams,
+  recentVoteActivity?: RecentVoteActivity | null
+): ToolResult {
   try {
     const yearFrom = params.yearFrom ?? GENERATED_STATS.coveragePeriod.from;
     const yearTo = params.yearTo ?? GENERATED_STATS.coveragePeriod.to;
@@ -240,19 +362,16 @@ export function getAllGeneratedStats(params: GetAllGeneratedStatsParams): ToolRe
       }),
       analysisSummary: {
         ...GENERATED_STATS.analysisSummary,
-        coverageNote:
-          yearFrom > GENERATED_STATS.coveragePeriod.from ||
-          yearTo < GENERATED_STATS.coveragePeriod.to
-            ? `This summary reflects the full ${String(GENERATED_STATS.coveragePeriod.from)}-${String(GENERATED_STATS.coveragePeriod.to)} dataset; filtered results cover ${String(yearFrom)}-${String(yearTo)} only.`
-            : `Covers the complete ${String(GENERATED_STATS.coveragePeriod.from)}-${String(GENERATED_STATS.coveragePeriod.to)} dataset.`,
+        coverageNote: buildCoverageNote(yearFrom, yearTo),
       },
       confidenceLevel: 'HIGH' as const,
       methodology:
-        'Precomputed statistics from European Parliament Open Data Portal. ' +
+        'Precomputed statistics from European Parliament Open Data Portal, with optional cached DOCEO XML recentVoteActivity enrichment when rankings include all activity or roll-call votes. ' +
         'Rankings use ordinal ranking with percentile scores. ' +
         'Predictions use average-based extrapolation from 2021-2025 actuals with parliamentary term cycle adjustments. ' +
         'Data refreshed weekly by agentic workflow.',
       sourceAttribution: 'European Parliament Open Data Portal — data.europarl.europa.eu',
+      ...(recentVoteActivity != null && { recentVoteActivity }),
     };
 
     return buildToolResponse(result);
@@ -276,7 +395,7 @@ export const getAllGeneratedStatsToolMetadata = {
     'Data covers parliamentary terms EP6-EP10 including plenary sessions, legislative acts, roll-call votes, ' +
     'committee meetings, parliamentary questions, resolutions, speeches, adopted texts, procedures, events, ' +
     'documents, MEP turnover, and declarations. ' +
-    'Static data refreshed weekly by agentic workflow — no live API calls.',
+    'Static data refreshed weekly by agentic workflow; optional near-real-time DOCEO XML enrichment is bounded by a short timeout and omitted when unavailable.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -333,6 +452,13 @@ export const getAllGeneratedStatsToolMetadata = {
   },
 };
 
+// Helper: fetches DOCEO activity when the requested category warrants near-realtime enrichment.
+async function resolveRecentActivity(
+  params: GetAllGeneratedStatsParams
+): Promise<RecentVoteActivity | null> {
+  return shouldIncludeRecentActivity(params) ? fetchRecentVoteStats() : null;
+}
+
 export async function handleGetAllGeneratedStats(args: unknown): Promise<ToolResult> {
   // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: GetAllGeneratedStatsParams;
@@ -352,5 +478,6 @@ export async function handleGetAllGeneratedStats(args: unknown): Promise<ToolRes
     throw error;
   }
 
-  return await Promise.resolve(getAllGeneratedStats(params));
+  const recentVoteActivity = await resolveRecentActivity(params);
+  return getAllGeneratedStats(params, recentVoteActivity);
 }

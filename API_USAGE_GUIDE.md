@@ -7,7 +7,7 @@
 <h1 align="center">European Parliament MCP Server - API Usage Guide</h1>
 
 <p align="center">
-  <strong>Comprehensive guide to using all 62 MCP tools</strong><br>
+  <strong>Comprehensive guide to using all 63 MCP tools</strong><br>
   <em>Real-world examples, best practices, and query patterns</em>
 </p>
 
@@ -22,6 +22,7 @@
   - [get_mep_details](#tool-get_mep_details)
   - [get_plenary_sessions](#tool-get_plenary_sessions)
   - [get_voting_records](#tool-get_voting_records)
+  - [get_latest_votes](#tool-get_latest_votes)
   - [search_documents](#tool-search_documents)
   - [get_committee_info](#tool-get_committee_info)
   - [get_parliamentary_questions](#tool-get_parliamentary_questions)
@@ -91,7 +92,7 @@
 
 ## 🎯 Overview
 
-The European Parliament MCP Server provides 62 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 8 core tools, 3 advanced tools, 15 OSINT intelligence tools, 1 statistics tool, 21 EP API v2 endpoint tools, 1 procedure event detail tool, and 13 EP API v2 feed tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
+The European Parliament MCP Server provides 63 specialized tools for accessing parliamentary data through the Model Context Protocol — organized into 9 core tools (including the DOCEO-backed near-real-time `get_latest_votes`), 3 advanced tools, 15 OSINT intelligence tools, 1 statistics tool, 21 EP API v2 endpoint tools, 1 procedure event detail tool, and 13 EP API v2 feed tools. Each tool is designed for specific data queries with input validation, caching, and rate limiting.
 
 ### Political Intelligence Coverage
 
@@ -235,6 +236,7 @@ Currently, the server does **not require authentication** for tool access. Futur
 |------|---------|----------------|---------------|-------|
 | `get_plenary_sessions` | List plenary sessions | dateFrom, dateTo, eventId, year, location | Paginated list | ✅ Fast with `year` filter |
 | `get_voting_records` | Aggregate voting data | sessionId, topic, dateFrom | Paginated list | ⚠️ Roll-call data delayed by weeks |
+| `get_latest_votes` | Near-real-time DOCEO vote data | date, weekStart, term, includeIndividualVotes | Vote records | ✅ Hours fresh — RCV preferred; falls back to VOT |
 | `get_speeches` | Plenary speeches | speechId, year, dateFrom, dateTo | Paginated list | |
 | `get_events` | EP events | eventId, year, dateFrom, dateTo | Paginated list | |
 | `get_meeting_activities` | Meeting activities | sittingId (required) | Paginated list | ✅ Works with session IDs like `MTG-PL-2025-01-20` |
@@ -643,6 +645,138 @@ const result = await client.callTool('get_voting_records', {
 1. **Topic Analysis**: Find all votes on specific topics
 2. **Session Votes**: Get all votes from a plenary session
 3. **Trend Analysis**: Track voting patterns over time on policy areas
+
+---
+
+### Tool: get_latest_votes
+
+**Description**: Retrieve the latest plenary votes from European Parliament DOCEO XML documents. Provides near-real-time access to vote data — hours fresh — compared to the EP Open Data API which has a publication delay of several weeks for roll-call voting data.
+
+> 💡 **Data Freshness:** DOCEO data is typically available within hours of plenary votes. RCV (Roll-Call Vote) data includes individual MEP positions by political group. VOT (Vote Results) provides aggregate tallies and is used as fallback when RCV is unavailable.
+>
+> ⚠️ **`get_all_generated_stats` enrichment:** When `includeRankings=true`, `get_all_generated_stats` also performs a bounded (2s timeout) DOCEO enrichment for recent vote activity. This enrichment may be unavailable if DOCEO is slow or down; the response will indicate missing `recentVoteActivity` in that case.
+>
+> ⚠️ **`analyze_coalition_dynamics` enrichment:** Coalition cohesion scores are enriched with DOCEO RCV group-breakdown data (bounded 3s timeout, cached 5 minutes). If DOCEO is unavailable, cohesion falls back to `null` and `dataFreshness` will indicate no DOCEO data was used.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| date | string | No | - | Specific date (YYYY-MM-DD, real calendar date). **Mutually exclusive with weekStart.** |
+| weekStart | string | No | - | **Monday** date of a specific plenary week (YYYY-MM-DD). **Mutually exclusive with date.** Fetches Mon–Thu of that week. |
+| term | number | No | 10 | Parliamentary term (1–15; default 10 = 2024–2029 term) |
+| includeIndividualVotes | boolean | No | true | Include individual MEP vote positions from RCV data |
+| limit | number | No | 50 | Maximum vote records to return (1–100) |
+| offset | number | No | 0 | Pagination offset (≥ 0) |
+
+> **Mutual exclusivity:** Passing both `date` and `weekStart` simultaneously is a validation error.
+> **Calendar date enforcement:** Both `date` and `weekStart` must be real calendar dates (e.g., `2026-13-40` is rejected). `weekStart` must be a Monday.
+
+#### Response Format
+
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{
+      \"data\": [
+        {
+          \"id\": \"RCV-10-2026-04-28-001\",
+          \"date\": \"2026-04-28\",
+          \"term\": 10,
+          \"subject\": \"Regulation on digital markets: amendment 47\",
+          \"reference\": \"A10-0012/2026\",
+          \"votesFor\": 412,
+          \"votesAgainst\": 198,
+          \"abstentions\": 35,
+          \"result\": \"ADOPTED\",
+          \"dataSource\": \"RCV\",
+          \"sittingDate\": \"2026-04-28\",
+          \"voteType\": \"single\",
+          \"officialCounts\": { \"for\": 412, \"against\": 198, \"abstentions\": 35 },
+          \"groupBreakdown\": {
+            \"EPP\": { \"for\": 175, \"against\": 2, \"abstain\": 3 },
+            \"S&D\": { \"for\": 120, \"against\": 10, \"abstain\": 5 }
+          },
+          \"mepVotes\": { \"12345\": \"FOR\", \"23456\": \"AGAINST\" },
+          \"sourceUrl\": \"https://www.europarl.europa.eu/doceo/document/PV-10-2026-04-28-RCV_EN.xml\"
+        }
+      ],
+      \"total\": 48,
+      \"datesAvailable\": [\"2026-04-28\"],
+      \"datesUnavailable\": [\"2026-04-29\", \"2026-04-30\", \"2026-05-01\"],
+      \"source\": {
+        \"type\": \"DOCEO_XML\",
+        \"term\": 10,
+        \"urls\": [\"https://www.europarl.europa.eu/doceo/document/PV-10-2026-04-28-RCV_EN.xml\"]
+      },
+      \"limit\": 50,
+      \"offset\": 0,
+      \"hasMore\": false
+    }"
+  }]
+}
+```
+
+#### Example Usage
+
+**Claude Desktop - Natural Language:**
+```
+What votes happened in the European Parliament this week?
+```
+
+**VS Code/MCP Client - TypeScript:**
+```typescript
+// Get votes from the most recent plenary week (no individual MEP positions)
+const result = await client.callTool('get_latest_votes', {
+  includeIndividualVotes: false
+});
+
+const response = JSON.parse(result.content[0].text);
+console.log(`Fetched ${response.total} votes from dates: ${response.datesAvailable.join(', ')}`);
+
+// Get votes for a specific date with individual MEP positions
+const specific = await client.callTool('get_latest_votes', {
+  date: '2026-04-28',
+  includeIndividualVotes: true
+});
+
+// Get votes for a specific plenary week (Mon–Thu)
+const weekly = await client.callTool('get_latest_votes', {
+  weekStart: '2026-04-27',   // must be a Monday
+  limit: 20,
+  offset: 0
+});
+```
+
+**Python MCP Client:**
+```python
+result = await client.call_tool('get_latest_votes', {
+    'date': '2026-04-28',
+    'includeIndividualVotes': False
+})
+
+data = json.loads(result['content'][0]['text'])
+adopted = [v for v in data['data'] if v['result'] == 'ADOPTED']
+print(f"Adopted: {len(adopted)} of {data['total']}")
+```
+
+#### Common Errors
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| `Invalid parameters: date: date must be a valid calendar date` | Date string matches YYYY-MM-DD pattern but is not a real date (e.g., `2026-13-40`) | Use a real calendar date |
+| `Invalid parameters: weekStart: weekStart must be a Monday` | The `weekStart` date is valid but falls on a non-Monday | Use the Monday of the desired plenary week |
+| `Invalid parameters: weekStart: date and weekStart are mutually exclusive` | Both `date` and `weekStart` were provided | Provide only one, or omit both for the most recent plenary week |
+| `Failed to retrieve latest votes from DOCEO` | DOCEO upstream network error or document not yet published | The documents may not be published yet; retry later |
+
+#### Use Cases
+
+1. **Near-Real-Time Vote Monitoring**: Get vote results within hours of plenary sessions
+2. **Group Cohesion Analysis**: Use `groupBreakdown` to compare how political groups voted
+3. **MEP Position Tracking**: With `includeIndividualVotes: true`, trace each MEP's vote
+4. **Historical Week Lookup**: Use `weekStart` (must be a Monday) to fetch an entire plenary week
+5. **Coalition Intelligence**: Feed vote data into `analyze_coalition_dynamics` for enriched cohesion scores
 
 ---
 

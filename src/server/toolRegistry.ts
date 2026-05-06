@@ -91,6 +91,9 @@ import { handleGetCorporateBodiesFeed, getCorporateBodiesFeedToolMetadata } from
 import { handleGetControlledVocabulariesFeed, getControlledVocabulariesFeedToolMetadata } from '../tools/getControlledVocabulariesFeed.js';
 import { handleGetProcedureEventById, getProcedureEventByIdToolMetadata } from '../tools/getProcedureEventById.js';
 
+// ── DOCEO latest votes tool ───────────────────────────────────────
+import { handleGetLatestVotes, getLatestVotesToolMetadata } from '../tools/getLatestVotes.js';
+
 // ── Server health tool ────────────────────────────────────────────
 import { handleGetServerHealth, getServerHealthToolMetadata } from '../tools/getServerHealth.js';
 
@@ -196,6 +199,8 @@ export function getToolMetadataArray(): ToolMetadata[] {
     withCategory(getCorporateBodiesFeedToolMetadata, 'feed'),
     withCategory(getControlledVocabulariesFeedToolMetadata, 'feed'),
     withCategory(getProcedureEventByIdToolMetadata, 'phase5'),
+    // DOCEO latest votes (near-real-time plenary vote data)
+    withCategory(getLatestVotesToolMetadata, 'core'),
   ];
 }
 
@@ -276,6 +281,8 @@ const toolHandlers: Record<string, ToolHandler> = {
   'get_corporate_bodies_feed': handleGetCorporateBodiesFeed,
   'get_controlled_vocabularies_feed': handleGetControlledVocabulariesFeed,
   'get_procedure_event_by_id': handleGetProcedureEventById,
+  // DOCEO latest votes
+  'get_latest_votes': handleGetLatestVotes,
 };
 
 // ── Feed tool name drift detection ────────────────────────────────
