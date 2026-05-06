@@ -127,7 +127,7 @@ let recentVoteActivityCache:
   | { expiresAt: number; value: RecentVoteActivity | null }
   | undefined;
 
-/** Test-only hook for resetting bounded DOCEO enrichment cache between isolated specs. */
+/** Test-only hook for resetting bounded DOCEO enrichment cache between isolated specs. @internal */
 export function clearRecentVoteStatsCache(): void {
   recentVoteActivityCache = undefined;
 }

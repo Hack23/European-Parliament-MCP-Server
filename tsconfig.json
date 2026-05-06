@@ -41,6 +41,7 @@
     
     // Type Checking
     "skipLibCheck": true,
+    "stripInternal": true,
     
     "typeRoots": ["./node_modules/@types"]
   },

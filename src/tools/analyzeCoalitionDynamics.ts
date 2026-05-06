@@ -37,6 +37,8 @@ const DOCEO_COHESION_CACHE_TTL_MS = 5 * 60_000;
 interface DoceoCohesionResult {
   cohesionMap: Map<string, { cohesion: number; sharedVotes: number; totalVotes: number }>;
   voteCount: number;
+  /** Number of DOCEO votes that had group-level breakdown data (RCV-backed). */
+  rcvVoteCount: number;
 }
 
 let doceoCohesionCache:
@@ -420,7 +422,7 @@ function buildCohesionMap(
 }
 
 function emptyDoceoCohesionResult(): DoceoCohesionResult {
-  return { cohesionMap: new Map(), voteCount: 0 };
+  return { cohesionMap: new Map(), voteCount: 0, rcvVoteCount: 0 };
 }
 
 /** Fetch recent DOCEO votes and compute inter-group cohesion statistics. */
@@ -433,14 +435,17 @@ async function computeCoalitionCohesionFromDoceo(
     abortSignal,
   });
   const pairStats = new Map<string, PairVoteStats>();
+  let rcvVoteCount = 0;
   for (const vote of response.data) {
     if (vote.groupBreakdown !== undefined) {
+      rcvVoteCount++;
       processVoteGroupPairs(vote.groupBreakdown, pairStats);
     }
   }
   return {
     cohesionMap: buildCohesionMap(pairStats),
     voteCount: response.data.length,
+    rcvVoteCount,
   };
 }
 
@@ -917,7 +922,7 @@ export async function handleAnalyzeCoalitionDynamics(
         const fetchResult = await fetchAllCurrentMEPs();
         const doceoCohesion = await loadDoceoCoalitionCohesion();
         const cohesionMap = doceoCohesion.cohesionMap;
-        const hasDoceoData = doceoCohesion.voteCount > 0;
+        const hasDoceoData = doceoCohesion.rcvVoteCount > 0;
         const { metrics: groupMetrics, unrecognizedGroups } = buildGroupMetrics(targetGroups, fetchResult.meps);
         const coalitionPairs = buildCoalitionPairs(targetGroups, params.minimumCohesion, groupMetrics, cohesionMap);
         const sortedPairs = [...coalitionPairs].sort((a, b) => b.sizeSimilarityScore - a.sizeSimilarityScore);
