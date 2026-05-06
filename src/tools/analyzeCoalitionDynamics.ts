@@ -311,11 +311,10 @@ function getGroupVotePosition(
   const forWins = counts.for === max;
   const againstWins = counts.against === max;
   const abstainWins = counts.abstain === max;
-  const winnerCount = Number(forWins) + Number(againstWins) + Number(abstainWins);
-  if (winnerCount !== 1) return 'SPLIT';
-  if (forWins) return 'FOR';
-  if (againstWins) return 'AGAINST';
-  return 'ABSTAIN';
+  if (forWins && !againstWins && !abstainWins) return 'FOR';
+  if (againstWins && !forWins && !abstainWins) return 'AGAINST';
+  if (abstainWins && !forWins && !againstWins) return 'ABSTAIN';
+  return 'SPLIT';
 }
 
 /** Merge raw group breakdown entries by canonical political-group code. */

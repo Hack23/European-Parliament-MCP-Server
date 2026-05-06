@@ -974,6 +974,7 @@ describe('Coverage for recomputeRankingSummary, computeGroupVotingLeaders, and e
       throw parseError;
     });
     await expect(handleGetAllGeneratedStats({})).rejects.toThrow('parse blew up');
+    expect(parseSpy).toHaveBeenCalledOnce();
     parseSpy.mockRestore();
   });
 

@@ -145,6 +145,7 @@ describe('handleGetLatestVotes — non-ZodError rethrow', () => {
       throw parseError;
     });
     await expect(handleGetLatestVotes({})).rejects.toThrow('unexpected crash');
+    expect(parseSpy).toHaveBeenCalledOnce();
     parseSpy.mockRestore();
   });
 });
