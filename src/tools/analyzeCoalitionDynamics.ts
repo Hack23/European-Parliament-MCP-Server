@@ -308,12 +308,14 @@ function getGroupVotePosition(
   counts: { for: number; against: number; abstain: number }
 ): GroupVotePosition {
   const max = Math.max(counts.for, counts.against, counts.abstain);
-  const winners = [
-    counts.for === max ? 'FOR' : undefined,
-    counts.against === max ? 'AGAINST' : undefined,
-    counts.abstain === max ? 'ABSTAIN' : undefined,
-  ].filter((v): v is Exclude<GroupVotePosition, 'SPLIT'> => v !== undefined);
-  return winners.length === 1 ? (winners[0] ?? 'SPLIT') : 'SPLIT';
+  const forWins = counts.for === max;
+  const againstWins = counts.against === max;
+  const abstainWins = counts.abstain === max;
+  const winnerCount = Number(forWins) + Number(againstWins) + Number(abstainWins);
+  if (winnerCount !== 1) return 'SPLIT';
+  if (forWins) return 'FOR';
+  if (againstWins) return 'AGAINST';
+  return 'ABSTAIN';
 }
 
 /** Merge raw group breakdown entries by canonical political-group code. */

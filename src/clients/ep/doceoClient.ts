@@ -32,6 +32,12 @@ const DOCEO_TIMEOUT_MS = 30_000;
 /** Maximum response size for XML documents (5 MiB) */
 const MAX_XML_RESPONSE_BYTES = 5_242_880;
 
+function clearFetchTimeout(timeout: ReturnType<typeof setTimeout> | undefined): void {
+  if (timeout !== undefined) {
+    clearTimeout(timeout);
+  }
+}
+
 /**
  * Parameters for fetching latest votes from DOCEO.
  */
@@ -100,9 +106,11 @@ export class DoceoClient {
    * @returns Raw XML string, or null if document not available
    */
   private async fetchXml(url: string): Promise<string | null> {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => { controller.abort(); }, DOCEO_TIMEOUT_MS);
+    let timeout: ReturnType<typeof setTimeout> | undefined;
     try {
+      const controller = new AbortController();
+      timeout = setTimeout(() => { controller.abort(); }, DOCEO_TIMEOUT_MS);
+
       const response = await fetch(url, {
         headers: {
           'Accept': 'application/xml, text/xml',
@@ -141,7 +149,7 @@ export class DoceoClient {
       auditLogger.logError('doceo_fetch', { url }, toErrorMessage(error));
       return null;
     } finally {
-      clearTimeout(timeout);
+      clearFetchTimeout(timeout);
     }
   }
 
