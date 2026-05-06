@@ -10,6 +10,7 @@ import {
   handleGetAllGeneratedStats,
   getAllGeneratedStats,
   GetAllGeneratedStatsSchema,
+  clearRecentVoteStatsCache,
 } from './getAllGeneratedStats.js';
 import * as doceoClientModule from '../clients/ep/doceoClient.js';
 
@@ -652,6 +653,8 @@ describe('getAllGeneratedStats', () => {
 describe('handleGetAllGeneratedStats', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    clearRecentVoteStatsCache();
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockReset();
     // Default: empty DOCEO response — existing tests remain unaffected
     vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
       data: [],
@@ -856,6 +859,40 @@ describe('handleGetAllGeneratedStats', () => {
       expect(data.recentVoteActivity?.recentVoteCount).toBe(1);
       expect(data.recentVoteActivity?.datesWithoutData).toContain('2025-01-19');
     });
+
+    it('caches recentVoteActivity to avoid repeated DOCEO calls', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValueOnce({
+        data: [
+          {
+            id: 'v1', title: 'Vote 1', date: '2025-01-20',
+            result: 'ADOPTED' as const,
+            forCount: 300, againstCount: 100, abstentionCount: 50,
+            dataSource: 'VOT' as const,
+          },
+        ],
+        total: 1,
+        datesAvailable: ['2025-01-20'],
+        datesUnavailable: [],
+        source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+        limit: 100,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const first = parseStatsResponse(
+        await handleGetAllGeneratedStats({ category: 'all', includeRankings: true })
+      ) as { recentVoteActivity?: { recentVoteCount: number } };
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockRejectedValueOnce(
+        new Error('should use cache')
+      );
+      const second = parseStatsResponse(
+        await handleGetAllGeneratedStats({ category: 'all', includeRankings: true })
+      ) as { recentVoteActivity?: { recentVoteCount: number } };
+
+      expect(first.recentVoteActivity?.recentVoteCount).toBe(1);
+      expect(second.recentVoteActivity?.recentVoteCount).toBe(1);
+      expect(doceoClientModule.doceoClient.getLatestVotes).toHaveBeenCalledTimes(1);
+    });
   });
 });
 
@@ -864,6 +901,8 @@ describe('handleGetAllGeneratedStats', () => {
 describe('Coverage for recomputeRankingSummary, computeGroupVotingLeaders, and error paths', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    clearRecentVoteStatsCache();
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockReset();
     // Default: empty DOCEO response
     vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
       data: [],
@@ -931,11 +970,11 @@ describe('Coverage for recomputeRankingSummary, computeGroupVotingLeaders, and e
   // D. Line 441 — non-ZodError rethrow in handleGetAllGeneratedStats
   it('rethrows non-ZodError when schema parsing throws unexpectedly', async () => {
     const parseError = new TypeError('parse blew up');
-    vi.spyOn(GetAllGeneratedStatsSchema, 'parse').mockImplementationOnce(() => {
+    const parseSpy = vi.spyOn(GetAllGeneratedStatsSchema, 'parse').mockImplementationOnce(() => {
       throw parseError;
     });
     await expect(handleGetAllGeneratedStats({})).rejects.toThrow('parse blew up');
-    vi.restoreAllMocks();
+    parseSpy.mockRestore();
   });
 
   // E. getAllGeneratedStats sync function without recentVoteActivity

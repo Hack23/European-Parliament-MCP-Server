@@ -203,9 +203,9 @@ describe('doceoXmlParser', () => {
       expect(records[0]!.date).toBe('2026-04-27');
       expect(records[0]!.term).toBe(CURRENT_PARLIAMENTARY_TERM);
       expect(records[0]!.subject).toBe('Test vote');
-      expect(records[0]!.votesFor).toBe(2);
-      expect(records[0]!.votesAgainst).toBe(1);
-      expect(records[0]!.abstentions).toBe(0);
+      expect(records[0]!.votesFor).toBe(385);
+      expect(records[0]!.votesAgainst).toBe(210);
+      expect(records[0]!.abstentions).toBe(45);
       expect(records[0]!.result).toBe('ADOPTED');
       expect(records[0]!.dataSource).toBe('RCV');
       expect(records[0]!.sittingDate).toBe('2026-04-27');
@@ -457,7 +457,7 @@ describe('Edge cases and branch coverage', () => {
 
   // C. decodeXmlEntities — S&D group identifier
   describe('decodeXmlEntities via parseRcvXml', () => {
-    it('decodes XML entities in group identifiers', () => {
+  it('decodes XML entities in group identifiers', () => {
       const xml = `<RollCallVoteResults>
         <RollCallVote.Result Identifier="1">
           <Result.For>
@@ -469,9 +469,24 @@ describe('Edge cases and branch coverage', () => {
           <Result.Abstention></Result.Abstention>
         </RollCallVote.Result>
       </RollCallVoteResults>`;
-      const results = parseRcvXml(xml);
-      expect(results[0]!.votesFor[0]!.politicalGroup).toBe('S&D');
-    });
+    const results = parseRcvXml(xml);
+    expect(results[0]!.votesFor[0]!.politicalGroup).toBe('S&D');
+  });
+
+  it('decodes XML entities in tag text content', () => {
+    const xml = `<VoteResults>
+      <Vote.Result Number="1">
+        <Subject>Research &amp; innovation &lt;pilot&gt;</Subject>
+        <Reference>A10-0001/2026</Reference>
+        <For>10</For>
+        <Against>2</Against>
+        <Abstention>1</Abstention>
+        <Result>Adopted</Result>
+      </Vote.Result>
+    </VoteResults>`;
+    const results = parseVotXml(xml);
+    expect(results[0]!.subject).toBe('Research & innovation <pilot>');
+  });
   });
 
   // D. parseSingleRcvVote — reference present, no description

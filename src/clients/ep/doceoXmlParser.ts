@@ -137,10 +137,10 @@ export interface LatestVoteRecord {
 
 /**
  * Sanitize XML text content to prevent injection issues.
- * Strips control characters and trims whitespace.
+ * Decodes common XML entities, strips control characters, and trims whitespace.
  */
 function sanitizeText(text: string): string {
-  return text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '').trim();
+  return decodeXmlEntities(text).replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '').trim();
 }
 
 /**
@@ -173,7 +173,7 @@ function decodeXmlEntities(value: string): string {
 function extractAttribute(element: string, attrName: string): string {
   const regex = new RegExp(`${attrName}="([^"]*)"`, 'i');
   const match = regex.exec(element);
-  return decodeXmlEntities(match?.[1] ?? '');
+  return sanitizeText(match?.[1] ?? '');
 }
 
 /**
@@ -599,9 +599,9 @@ export function rcvToLatestVotes(
     term,
     subject: rcv.description || rcv.reference || `Vote #${String(index + 1)}`,
     reference: rcv.reference,
-    votesFor: rcv.votesFor.length,
-    votesAgainst: rcv.votesAgainst.length,
-    abstentions: rcv.abstentions.length,
+    votesFor: rcv.officialForCount,
+    votesAgainst: rcv.officialAgainstCount,
+    abstentions: rcv.officialAbstentionCount,
     result: rcv.result,
     mepVotes: buildMepVotesMap(rcv),
     groupBreakdown: buildGroupBreakdown(rcv),

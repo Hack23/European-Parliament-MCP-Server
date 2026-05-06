@@ -6,8 +6,11 @@
  * breakdowns, category rankings with percentiles, analytical commentary,
  * and trend-based predictions for 2027–2031.
  *
- * The underlying data is static and designed to be refreshed weekly by
- * an agentic workflow. No live EP API calls are made by this tool.
+ * The underlying historical dataset is static and designed to be refreshed
+ * weekly by an agentic workflow. When rankings are requested for all activity or
+ * roll-call votes, the response may also include a bounded, cached near-real-time
+ * `recentVoteActivity` enrichment from EP DOCEO XML; that enrichment is omitted
+ * on timeout or upstream failure.
  *
  * **Intelligence Perspective:** Enables rapid longitudinal analysis of
  * EP legislative productivity, committee workload, and parliamentary
@@ -33,6 +36,7 @@ import { GENERATED_STATS } from '../data/generatedStats.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
 import type { ToolResult } from './shared/types.js';
+import { withTimeout } from '../utils/timeout.js';
 
 export const GetAllGeneratedStatsSchema = z
   .object({
@@ -116,6 +120,17 @@ const CATEGORY_LABEL_MAP: Partial<Record<string, string>> = {
 };
 
 type RankingEntry = (typeof GENERATED_STATS.categoryRankings)[number];
+
+const RECENT_VOTE_ACTIVITY_TIMEOUT_MS = 2_000;
+const RECENT_VOTE_ACTIVITY_CACHE_TTL_MS = 5 * 60_000;
+let recentVoteActivityCache:
+  | { expiresAt: number; value: RecentVoteActivity | null }
+  | undefined;
+
+/** Test-only hook for resetting bounded DOCEO enrichment cache between isolated specs. */
+export function clearRecentVoteStatsCache(): void {
+  recentVoteActivityCache = undefined;
+}
 
 /**
  * Compute mean, standard deviation, and median from a numeric array.
@@ -238,8 +253,17 @@ function shouldIncludeRecentActivity(params: GetAllGeneratedStatsParams): boolea
  * Returns null on any upstream error — callers treat absence as degraded-upstream.
  */
 export async function fetchRecentVoteStats(): Promise<RecentVoteActivity | null> {
+  const now = Date.now();
+  if (recentVoteActivityCache !== undefined && recentVoteActivityCache.expiresAt > now) {
+    return recentVoteActivityCache.value;
+  }
+
   try {
-    const response = await doceoClient.getLatestVotes({ includeIndividualVotes: false, limit: 100 });
+    const response = await withTimeout(
+      doceoClient.getLatestVotes({ includeIndividualVotes: false, limit: 100 }),
+      RECENT_VOTE_ACTIVITY_TIMEOUT_MS,
+      'DOCEO recent vote enrichment timed out'
+    );
     const votes = response.data;
     const adoptedCount = votes.filter((v) => v.result === 'ADOPTED').length;
     const rejectedCount = votes.filter((v) => v.result === 'REJECTED').length;
@@ -247,7 +271,7 @@ export async function fetchRecentVoteStats(): Promise<RecentVoteActivity | null>
     // Multiply by 1000 then divide by 10 to round to one decimal place (e.g. 50.5%)
     const adoptionRate =
       recentVoteCount > 0 ? Math.round((adoptedCount / recentVoteCount) * 1000) / 10 : 0;
-    return {
+    const value: RecentVoteActivity = {
       recentVoteCount,
       adoptedCount,
       rejectedCount,
@@ -258,7 +282,16 @@ export async function fetchRecentVoteStats(): Promise<RecentVoteActivity | null>
       dataFreshness: 'NEAR_REALTIME',
       dataSource: 'EP_DOCEO_XML',
     };
+    recentVoteActivityCache = {
+      expiresAt: now + RECENT_VOTE_ACTIVITY_CACHE_TTL_MS,
+      value,
+    };
+    return value;
   } catch {
+    recentVoteActivityCache = {
+      expiresAt: now + RECENT_VOTE_ACTIVITY_CACHE_TTL_MS,
+      value: null,
+    };
     return null;
   }
 }
@@ -329,7 +362,7 @@ export function getAllGeneratedStats(
       },
       confidenceLevel: 'HIGH' as const,
       methodology:
-        'Precomputed statistics from European Parliament Open Data Portal. ' +
+        'Precomputed statistics from European Parliament Open Data Portal, with optional cached DOCEO XML recentVoteActivity enrichment when rankings include all activity or roll-call votes. ' +
         'Rankings use ordinal ranking with percentile scores. ' +
         'Predictions use average-based extrapolation from 2021-2025 actuals with parliamentary term cycle adjustments. ' +
         'Data refreshed weekly by agentic workflow.',
@@ -358,7 +391,7 @@ export const getAllGeneratedStatsToolMetadata = {
     'Data covers parliamentary terms EP6-EP10 including plenary sessions, legislative acts, roll-call votes, ' +
     'committee meetings, parliamentary questions, resolutions, speeches, adopted texts, procedures, events, ' +
     'documents, MEP turnover, and declarations. ' +
-    'Static data refreshed weekly by agentic workflow — no live API calls.',
+    'Static data refreshed weekly by agentic workflow; optional near-real-time DOCEO XML enrichment is bounded by a short timeout and omitted when unavailable.',
   inputSchema: {
     type: 'object' as const,
     properties: {

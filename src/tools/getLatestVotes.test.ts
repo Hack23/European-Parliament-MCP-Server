@@ -102,6 +102,12 @@ describe('handleGetLatestVotes', () => {
     ).rejects.toThrow('Invalid parameters');
   });
 
+  it('validates input schema - date and weekStart are mutually exclusive', async () => {
+    await expect(
+      handleGetLatestVotes({ date: '2026-04-27', weekStart: '2026-04-27' })
+    ).rejects.toThrow('Invalid parameters');
+  });
+
   it('handles API errors gracefully', async () => {
     mockGetLatestVotes.mockRejectedValue(new Error('Network timeout'));
 
@@ -135,10 +141,10 @@ describe('handleGetLatestVotes — non-ZodError rethrow', () => {
   it('rethrows non-ZodError from schema validation', async () => {
     const { GetLatestVotesSchema } = await import('./getLatestVotes.js');
     const parseError = new RangeError('unexpected crash');
-    vi.spyOn(GetLatestVotesSchema, 'parse').mockImplementationOnce(() => {
+    const parseSpy = vi.spyOn(GetLatestVotesSchema, 'parse').mockImplementationOnce(() => {
       throw parseError;
     });
     await expect(handleGetLatestVotes({})).rejects.toThrow('unexpected crash');
-    vi.restoreAllMocks();
+    parseSpy.mockRestore();
   });
 });

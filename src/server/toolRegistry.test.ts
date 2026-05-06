@@ -36,7 +36,7 @@ vi.mock('../tools/getMEPsFeed.js', async (importOriginal) => {
 // ── getToolMetadataArray ───────────────────────────────────────────
 
 describe('getToolMetadataArray', () => {
-  // Cache once to avoid constructing a fresh 61-element array per test.
+  // Cache once to avoid constructing a fresh 63-element array per test.
   const tools = getToolMetadataArray();
 
   it('returns exactly 63 tools', () => {

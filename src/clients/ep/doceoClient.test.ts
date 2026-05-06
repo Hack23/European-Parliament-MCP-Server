@@ -45,7 +45,7 @@ describe('DoceoClient', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   // ── fetchRcvForDate ─────────────────────────────────────────────────────────
@@ -89,9 +89,15 @@ describe('DoceoClient', () => {
     });
 
     it('returns empty array on network error (fetch throws)', async () => {
-      vi.mocked(undici.fetch).mockRejectedValueOnce(new Error('ECONNREFUSED'));
-      const result = await client.fetchRcvForDate('2026-04-27');
-      expect(result).toEqual([]);
+      const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
+      try {
+        vi.mocked(undici.fetch).mockRejectedValueOnce(new Error('ECONNREFUSED'));
+        const result = await client.fetchRcvForDate('2026-04-27');
+        expect(result).toEqual([]);
+        expect(clearTimeoutSpy).toHaveBeenCalled();
+      } finally {
+        clearTimeoutSpy.mockRestore();
+      }
     });
 
     it('parses valid RCV XML response', async () => {
@@ -281,16 +287,15 @@ describe('DoceoClient', () => {
     });
 
     it('uses custom term when provided', async () => {
-      // Create a client with term 9 directly to verify term-based URL construction
-      const term9Client = new DoceoClient(9);
       const capturedUrls: string[] = [];
       vi.mocked(undici.fetch).mockImplementation(async (url: unknown) => {
         capturedUrls.push(String(url));
         return makeMockResponse({ ok: false, status: 404 });
       });
 
-      await term9Client.getLatestVotes({ date: '2026-04-27' });
+      await client.getLatestVotes({ date: '2026-04-27', term: 9 });
       expect(capturedUrls.some((u) => u.includes('PV-9-'))).toBe(true);
+      expect(capturedUrls.some((u) => u.includes('PV-10-'))).toBe(false);
     });
   });
 });

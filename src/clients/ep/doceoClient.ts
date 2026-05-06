@@ -100,10 +100,9 @@ export class DoceoClient {
    * @returns Raw XML string, or null if document not available
    */
   private async fetchXml(url: string): Promise<string | null> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => { controller.abort(); }, DOCEO_TIMEOUT_MS);
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => { controller.abort(); }, DOCEO_TIMEOUT_MS);
-
       const response = await fetch(url, {
         headers: {
           'Accept': 'application/xml, text/xml',
@@ -111,8 +110,6 @@ export class DoceoClient {
         },
         signal: controller.signal,
       });
-
-      clearTimeout(timeout);
 
       if (!response.ok) {
         // 404 is expected for dates without plenary sessions
@@ -143,6 +140,8 @@ export class DoceoClient {
     } catch (error: unknown) {
       auditLogger.logError('doceo_fetch', { url }, toErrorMessage(error));
       return null;
+    } finally {
+      clearTimeout(timeout);
     }
   }
 
@@ -152,8 +151,8 @@ export class DoceoClient {
    * @param date - Date in YYYY-MM-DD format
    * @returns Parsed RCV results, or empty array if unavailable
    */
-  async fetchRcvForDate(date: string): Promise<RcvVoteResult[]> {
-    const url = buildDoceoUrl(date, 'RCV', this.term);
+  async fetchRcvForDate(date: string, term = this.term): Promise<RcvVoteResult[]> {
+    const url = buildDoceoUrl(date, 'RCV', term);
     const xml = await this.fetchXml(url);
     if (xml === null) return [];
     return parseRcvXml(xml);
@@ -165,8 +164,8 @@ export class DoceoClient {
    * @param date - Date in YYYY-MM-DD format
    * @returns Parsed VOT results, or empty array if unavailable
    */
-  async fetchVotForDate(date: string): Promise<VotVoteResult[]> {
-    const url = buildDoceoUrl(date, 'VOT', this.term);
+  async fetchVotForDate(date: string, term = this.term): Promise<VotVoteResult[]> {
+    const url = buildDoceoUrl(date, 'VOT', term);
     const xml = await this.fetchXml(url);
     if (xml === null) return [];
     return parseVotXml(xml);
@@ -184,7 +183,7 @@ export class DoceoClient {
     const rcvUrl = buildDoceoUrl(date, 'RCV', term);
 
     // Try RCV first (richer data with individual MEP votes)
-    const rcvResults = await this.fetchRcvForDate(date);
+    const rcvResults = await this.fetchRcvForDate(date, term);
     if (rcvResults.length > 0) {
       let records = rcvToLatestVotes(rcvResults, date, term, rcvUrl);
       if (!includeIndividual) {
@@ -195,7 +194,7 @@ export class DoceoClient {
 
     // Fall back to VOT (aggregate only)
     const votUrl = buildDoceoUrl(date, 'VOT', term);
-    const votResults = await this.fetchVotForDate(date);
+    const votResults = await this.fetchVotForDate(date, term);
     if (votResults.length > 0) {
       const records = votToLatestVotes(votResults, date, term, votUrl);
       return { votes: records, url: votUrl };
@@ -204,18 +203,6 @@ export class DoceoClient {
     return null;
   }
 
-  /**
-   * Get the latest votes from DOCEO XML sources.
-   *
-   * Attempts to fetch both RCV (individual MEP votes) and VOT (aggregate results)
-   * for each day in the plenary week. RCV data is preferred as it includes
-   * individual MEP positions and political group breakdowns.
-   *
-   * @param params - Query parameters
-   * @returns Latest votes response with available data
-   *
-   * @security Audit-logged per GDPR Article 30
-   */
   /**
    * Determine which dates to query based on params.
    * @private

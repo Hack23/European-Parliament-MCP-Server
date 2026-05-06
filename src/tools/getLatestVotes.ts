@@ -32,11 +32,11 @@ export const GetLatestVotesSchema = z.object({
   date: z.string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')
     .optional()
-    .describe('Specific date to fetch votes for (YYYY-MM-DD). If omitted, fetches the most recent plenary week.'),
+    .describe('Specific date to fetch votes for (YYYY-MM-DD). Mutually exclusive with weekStart. If omitted, fetches the requested or most recent plenary week.'),
   weekStart: z.string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')
     .optional()
-    .describe('Monday of a specific plenary week (YYYY-MM-DD). Fetches Mon-Thu of that week.'),
+    .describe('Monday of a specific plenary week (YYYY-MM-DD). Mutually exclusive with date. Fetches Mon-Thu of that week.'),
   term: z.number()
     .int()
     .min(1)
@@ -58,7 +58,13 @@ export const GetLatestVotesSchema = z.object({
     .min(0)
     .default(0)
     .describe('Pagination offset'),
-}).strict();
+}).strict().refine(
+  (data) => data.date === undefined || data.weekStart === undefined,
+  {
+    message: 'date and weekStart are mutually exclusive; provide only one, or omit both for the most recent plenary week',
+    path: ['weekStart'],
+  }
+);
 
 /**
  * Handles the get_latest_votes MCP tool request.
@@ -142,12 +148,12 @@ export const getLatestVotesToolMetadata = {
     properties: {
       date: {
         type: 'string',
-        description: 'Specific date to fetch votes for (YYYY-MM-DD). If omitted, fetches the most recent plenary week (Mon-Thu).',
+        description: 'Specific date to fetch votes for (YYYY-MM-DD). Mutually exclusive with weekStart. If omitted, fetches the requested or most recent plenary week (Mon-Thu).',
         pattern: '^\\d{4}-\\d{2}-\\d{2}$'
       },
       weekStart: {
         type: 'string',
-        description: 'Monday of a specific plenary week (YYYY-MM-DD). Fetches Mon-Thu of that week.',
+        description: 'Monday of a specific plenary week (YYYY-MM-DD). Mutually exclusive with date. Fetches Mon-Thu of that week.',
         pattern: '^\\d{4}-\\d{2}-\\d{2}$'
       },
       term: {
