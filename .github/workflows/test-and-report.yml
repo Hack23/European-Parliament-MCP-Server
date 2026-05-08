@@ -125,25 +125,26 @@ jobs:
           set -euo pipefail
           SBOMQS_VERSION="1.2.0"
           SBOMQS_BINARY="sbomqs-linux-amd64"
+          SBOMQS_DOWNLOAD_PATH="/tmp/sbomqs"
           SBOMQS_BASE_URL="https://github.com/interlynk-io/sbomqs/releases/download/v${SBOMQS_VERSION}"
 
           curl --fail --location --show-error --silent \
                --retry 5 --retry-delay 5 --retry-max-time 120 \
                --connect-timeout 30 --max-time 180 \
-               -o /tmp/sbomqs \
+               -o "${SBOMQS_DOWNLOAD_PATH}" \
                "${SBOMQS_BASE_URL}/${SBOMQS_BINARY}"
           curl --fail --location --show-error --silent \
                --retry 5 --retry-delay 5 --retry-max-time 120 \
                --connect-timeout 30 --max-time 180 \
                -o /tmp/sbomqs_checksums.txt \
                "${SBOMQS_BASE_URL}/sbomqs_${SBOMQS_VERSION}_checksums.txt"
-          expected_sha="$(awk -v file="${SBOMQS_BINARY}" '$2 == file { print $1 }' /tmp/sbomqs_checksums.txt)"
+          expected_sha="$(awk -v file="${SBOMQS_BINARY}" '$NF == file { print $1; exit }' /tmp/sbomqs_checksums.txt)"
           if [ -z "${expected_sha}" ]; then
             echo "::error::Unable to find checksum entry for ${SBOMQS_BINARY}"
             exit 1
           fi
-          printf '%s  %s\n' "${expected_sha}" "/tmp/sbomqs" | sha256sum -c -
-          sudo mv /tmp/sbomqs /usr/local/bin/sbomqs
+          printf '%s  %s\n' "${expected_sha}" "${SBOMQS_DOWNLOAD_PATH}" | sha256sum -c -
+          sudo mv "${SBOMQS_DOWNLOAD_PATH}" /usr/local/bin/sbomqs
           sudo chmod a+x /usr/local/bin/sbomqs
 
       - name: Details SBOM Quality
