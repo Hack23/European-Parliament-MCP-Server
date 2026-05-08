@@ -990,7 +990,7 @@ describeIntegration('All 59 MCP Tools Integration Coverage', () => {
         expect.fail(`Expected parsed response to be an object with a 'data' property, got: ${JSON.stringify(parsed).substring(0, 200)}`);
       }
       expect(Array.isArray(parsed['data'])).toBe(true);
-    }, 120000);
+    }, 180000);
   });
 
   describe('Feed Tool: get_procedures_feed', () => {

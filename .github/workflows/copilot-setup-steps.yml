@@ -15,8 +15,18 @@ on:
 
 env:
   NODE_VERSION: "26"
+  MCP_SERVER_FILESYSTEM_VERSION: "2026.1.14"
+  MCP_SERVER_MEMORY_VERSION: "2026.1.26"
+  MCP_SERVER_SEQUENTIAL_THINKING_VERSION: "2025.12.18"
+  PLAYWRIGHT_MCP_VERSION: "0.0.75"
   GITHUB_TOKEN: ${{ secrets.COPILOT_MCP_GITHUB_PERSONAL_ACCESS_TOKEN }}
   GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.COPILOT_MCP_GITHUB_PERSONAL_ACCESS_TOKEN }}
+  # Resilience against transient npm registry / mirror failures —
+  # important for the global MCP installs below that can otherwise hang.
+  NPM_CONFIG_FETCH_RETRIES: "5"
+  NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: "20000"
+  NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: "120000"
+  NPM_CONFIG_FETCH_TIMEOUT: "300000"
 
 jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
@@ -48,11 +58,24 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "26"
+          node-version: ${{ env.NODE_VERSION }}
+          # Built-in npm cache for the local project install (single source of truth).
+          cache: "npm"
   
-      - name: Install packages 
+      - name: Install packages
+        # Wrap with timeout + retry to survive transient registry hiccups.
         run: |
-          npm ci
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if timeout 600 npm ci; then
+              echo "✅ npm ci succeeded on attempt ${attempt}"
+              exit 0
+            fi
+            echo "⚠️ npm ci failed on attempt ${attempt}; retrying after backoff..."
+            sleep $((attempt * 15))
+          done
+          echo "❌ npm ci failed after 3 attempts"
+          exit 1
 
       # Build the European Parliament MCP Server and link globally so it's available as a local MCP server
       - name: Build European Parliament MCP Server
@@ -64,17 +87,37 @@ jobs:
 
       # Pre-install MCP server packages globally
       - name: Install MCP server packages globally
+        # Resilient retry wrapper protects against transient npm registry outages
+        # and prevents the well-known "npm install hangs" issue when the registry
+        # or a mirror is degraded. Each individual install is bounded by `timeout`.
         run: |
+          set -euo pipefail
           echo "📦 Installing MCP server packages globally..."
-          
+
+          install_with_retry() {
+            local pkg="$1"
+            for attempt in 1 2 3; do
+              if timeout 300 npm install -g --no-audit --no-fund "$pkg"; then
+                echo "✅ Installed $pkg (attempt ${attempt})"
+                return 0
+              fi
+              echo "⚠️ Install of $pkg failed on attempt ${attempt}; retrying..."
+              sleep $((attempt * 10))
+            done
+            echo "❌ Failed to install $pkg after 3 attempts"
+            return 1
+          }
+
           # Install Node.js MCP servers that exist on npm
-          npm install -g @modelcontextprotocol/server-filesystem
-          npm install -g @modelcontextprotocol/server-memory
-          npm install -g @modelcontextprotocol/server-sequential-thinking
-          
-          # Install @playwright/mcp for browser automation
-          npm install -g @playwright/mcp
-                    
+          install_with_retry "@modelcontextprotocol/server-filesystem@${MCP_SERVER_FILESYSTEM_VERSION}"
+          install_with_retry "@modelcontextprotocol/server-memory@${MCP_SERVER_MEMORY_VERSION}"
+          install_with_retry "@modelcontextprotocol/server-sequential-thinking@${MCP_SERVER_SEQUENTIAL_THINKING_VERSION}"
+
+          # Install @playwright/mcp for browser automation.
+          # NOTE: this only installs the MCP wrapper; the Playwright browser
+          # binaries themselves are downloaded lazily on first use.
+          install_with_retry "@playwright/mcp@${PLAYWRIGHT_MCP_VERSION}"
+
           echo "✅ Node.js MCP server packages installed globally"
 
       # Verify all MCP server installations

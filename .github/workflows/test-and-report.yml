@@ -9,6 +9,16 @@ on:
 # Set default permissions to read-only
 permissions: read-all
 
+# Resilience against transient npm registry / mirror failures.
+# Applied to every job; npm honours these env vars natively.
+env:
+  # Single source of truth for all setup-node steps and cache keys in this workflow.
+  NODE_VERSION: "26"
+  NPM_CONFIG_FETCH_RETRIES: "5"
+  NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: "20000"
+  NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: "120000"
+  NPM_CONFIG_FETCH_TIMEOUT: "300000"
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -25,19 +35,13 @@ jobs:
       
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "26"
+          node-version: ${{ env.NODE_VERSION }}
+          # Built-in npm cache (single source of truth — no extra actions/cache step).
+          # Cache key automatically derived from package-lock.json + Node major version.
           cache: "npm"
 
-      - name: Cache dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
   build-validation:
     needs: prepare
@@ -58,28 +62,21 @@ jobs:
       
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "26"
+          node-version: ${{ env.NODE_VERSION }}
+          # Built-in npm cache (single source of truth — no extra actions/cache step).
           cache: "npm"
-
-      - name: Cache dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
 
       - name: Install dependencies
         run: npm ci
 
       - name: Cache build artifacts
+        id: build-cache
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: dist
-          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**/*') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}-
-            ${{ runner.os }}-build-
+          # Unique key: cache-version + OS + Node major + lockfile hash + source hash + tsconfig hash.
+          # Bumping the `build-vN-` prefix expires every old build cache atomically.
+          key: build-v2-${{ runner.os }}-node${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**/*.ts', 'tsconfig*.json') }}
 
       # TypeScript type checking
       - name: Type check
@@ -99,6 +96,8 @@ jobs:
 
       # Build the project (ensures dist/ output is valid)
       - name: Build
+        # cache-hit is emitted as the string "true"/"false" by actions/cache.
+        if: steps.build-cache.outputs.cache-hit != 'true'
         run: npm run build
 
       # Verify package can be packed (catches prepublish issues before release)
@@ -118,9 +117,31 @@ jobs:
           artifact-name: european-parliament-mcp-server
 
       - name: Install SBOMQS
+        # Resilient download: retry transient network failures, fail fast on hard errors.
         run: |
-          curl -LO https://github.com/interlynk-io/sbomqs/releases/download/v1.2.0/sbomqs-linux-amd64
-          sudo mv sbomqs-linux-amd64 /usr/local/bin/sbomqs
+          set -euo pipefail
+          SBOMQS_VERSION="1.2.0"
+          SBOMQS_BINARY="sbomqs-linux-amd64"
+          SBOMQS_DOWNLOAD_PATH="/tmp/sbomqs"
+          SBOMQS_BASE_URL="https://github.com/interlynk-io/sbomqs/releases/download/v${SBOMQS_VERSION}"
+
+          curl --fail --location --show-error --silent \
+               --retry 5 --retry-delay 5 --retry-max-time 120 \
+               --connect-timeout 30 --max-time 180 \
+               -o "${SBOMQS_DOWNLOAD_PATH}" \
+               "${SBOMQS_BASE_URL}/${SBOMQS_BINARY}"
+          curl --fail --location --show-error --silent \
+               --retry 5 --retry-delay 5 --retry-max-time 120 \
+               --connect-timeout 30 --max-time 180 \
+               -o /tmp/sbomqs_checksums.txt \
+               "${SBOMQS_BASE_URL}/sbomqs_${SBOMQS_VERSION}_checksums.txt"
+          expected_sha="$(awk -v file="${SBOMQS_BINARY}" '$NF == file { print $1; exit }' /tmp/sbomqs_checksums.txt)"
+          if [ -z "${expected_sha}" ]; then
+            echo "::error::Unable to find checksum entry for ${SBOMQS_BINARY} in checksums file. Verify the release asset and checksum format."
+            exit 1
+          fi
+          printf '%s  %s\n' "${expected_sha}" "${SBOMQS_DOWNLOAD_PATH}" | sha256sum -c -
+          sudo mv "${SBOMQS_DOWNLOAD_PATH}" /usr/local/bin/sbomqs
           sudo chmod a+x /usr/local/bin/sbomqs
 
       - name: Details SBOM Quality
@@ -163,19 +184,12 @@ jobs:
       
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "26"
+          node-version: ${{ env.NODE_VERSION }}
+          # Built-in npm cache (single source of truth — no extra actions/cache step).
           cache: "npm"
 
-      - name: Cache dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run unit tests with coverage
         run: npm run test:coverage

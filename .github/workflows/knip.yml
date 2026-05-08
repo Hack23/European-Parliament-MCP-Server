@@ -18,6 +18,13 @@ on:
 # Set default permissions to read-only
 permissions: read-all
 
+# Resilience against transient npm registry / mirror failures.
+env:
+  NPM_CONFIG_FETCH_RETRIES: "5"
+  NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: "20000"
+  NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: "120000"
+  NPM_CONFIG_FETCH_TIMEOUT: "300000"
+
 # Cancel any in-progress run for the same ref to save CI minutes
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
