@@ -140,7 +140,7 @@ jobs:
                "${SBOMQS_BASE_URL}/sbomqs_${SBOMQS_VERSION}_checksums.txt"
           expected_sha="$(awk -v file="${SBOMQS_BINARY}" '$NF == file { print $1; exit }' /tmp/sbomqs_checksums.txt)"
           if [ -z "${expected_sha}" ]; then
-            echo "::error::Unable to find checksum entry for ${SBOMQS_BINARY}"
+            echo "::error::Unable to find checksum entry for ${SBOMQS_BINARY} in checksums file. Verify the release asset and checksum format."
             exit 1
           fi
           printf '%s  %s\n' "${expected_sha}" "${SBOMQS_DOWNLOAD_PATH}" | sha256sum -c -
