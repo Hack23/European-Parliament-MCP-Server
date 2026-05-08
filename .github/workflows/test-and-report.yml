@@ -73,7 +73,7 @@ jobs:
         with:
           path: dist
           # Unique key: cache-version + OS + Node major + lockfile hash + source hash + tsconfig hash.
-          # Bumping CACHE_VERSION (in `key:` prefix) expires every old build cache atomically.
+          # Bumping the `build-vN-` prefix expires every old build cache atomically.
           key: build-v2-${{ runner.os }}-node${{ env.CACHE_NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**/*.ts', 'tsconfig*.json') }}
           restore-keys: |
             build-v2-${{ runner.os }}-node${{ env.CACHE_NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}-
