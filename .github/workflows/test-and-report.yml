@@ -12,8 +12,9 @@ permissions: read-all
 # Resilience against transient npm registry / mirror failures.
 # Applied to every job; npm honours these env vars natively.
 env:
-  # Included in build cache key so Node major upgrades invalidate stale dist caches.
-  CACHE_NODE_VERSION: "26"
+  # Kept separate from setup-node declarations so cache key rotation is explicit.
+  # Node major upgrades must bump this value to invalidate stale dist caches.
+  NODE_MAJOR_VERSION: "26"
   NPM_CONFIG_FETCH_RETRIES: "5"
   NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: "20000"
   NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: "120000"
@@ -75,10 +76,10 @@ jobs:
           path: dist
           # Unique key: cache-version + OS + Node major + lockfile hash + source hash + tsconfig hash.
           # Bumping the `build-vN-` prefix expires every old build cache atomically.
-          key: build-v2-${{ runner.os }}-node${{ env.CACHE_NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**/*.ts', 'tsconfig*.json') }}
+          key: build-v2-${{ runner.os }}-node${{ env.NODE_MAJOR_VERSION }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**/*.ts', 'tsconfig*.json') }}
           restore-keys: |
-            build-v2-${{ runner.os }}-node${{ env.CACHE_NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}-
-            build-v2-${{ runner.os }}-node${{ env.CACHE_NODE_VERSION }}-
+            build-v2-${{ runner.os }}-node${{ env.NODE_MAJOR_VERSION }}-${{ hashFiles('**/package-lock.json') }}-
+            build-v2-${{ runner.os }}-node${{ env.NODE_MAJOR_VERSION }}-
 
       # TypeScript type checking
       - name: Type check
