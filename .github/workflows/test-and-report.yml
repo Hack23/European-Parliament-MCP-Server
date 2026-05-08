@@ -99,6 +99,7 @@ jobs:
 
       # Build the project (ensures dist/ output is valid)
       - name: Build
+        # cache-hit is emitted as the string "true"/"false" by actions/cache.
         if: steps.build-cache.outputs.cache-hit != 'true'
         run: npm run build
 
