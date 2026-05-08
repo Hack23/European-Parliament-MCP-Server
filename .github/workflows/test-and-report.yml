@@ -122,10 +122,9 @@ jobs:
         # Resilient download: retry transient network failures, fail fast on hard errors.
         run: |
           set -euo pipefail
-          SBOMQS_VERSION="v1.2.0"
-          SBOMQS_VERSION_NO_V="${SBOMQS_VERSION#v}"
+          SBOMQS_VERSION="1.2.0"
           SBOMQS_BINARY="sbomqs-linux-amd64"
-          SBOMQS_BASE_URL="https://github.com/interlynk-io/sbomqs/releases/download/${SBOMQS_VERSION}"
+          SBOMQS_BASE_URL="https://github.com/interlynk-io/sbomqs/releases/download/v${SBOMQS_VERSION}"
 
           curl --fail --location --show-error --silent \
                --retry 5 --retry-delay 5 --retry-max-time 120 \
@@ -136,7 +135,7 @@ jobs:
                --retry 5 --retry-delay 5 --retry-max-time 120 \
                --connect-timeout 30 --max-time 180 \
                -o /tmp/sbomqs_checksums.txt \
-               "${SBOMQS_BASE_URL}/sbomqs_${SBOMQS_VERSION_NO_V}_checksums.txt"
+               "${SBOMQS_BASE_URL}/sbomqs_${SBOMQS_VERSION}_checksums.txt"
           grep " ${SBOMQS_BINARY}$" /tmp/sbomqs_checksums.txt | sha256sum -c -
           sudo mv /tmp/sbomqs /usr/local/bin/sbomqs
           sudo chmod a+x /usr/local/bin/sbomqs
