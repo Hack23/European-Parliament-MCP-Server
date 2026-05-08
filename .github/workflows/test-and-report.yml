@@ -12,6 +12,7 @@ permissions: read-all
 # Resilience against transient npm registry / mirror failures.
 # Applied to every job; npm honours these env vars natively.
 env:
+  # Included in build cache key so Node major upgrades invalidate stale dist caches.
   CACHE_NODE_VERSION: "26"
   NPM_CONFIG_FETCH_RETRIES: "5"
   NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: "20000"
