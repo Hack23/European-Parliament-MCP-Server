@@ -12,9 +12,8 @@ permissions: read-all
 # Resilience against transient npm registry / mirror failures.
 # Applied to every job; npm honours these env vars natively.
 env:
-  # Kept separate from setup-node declarations so cache key rotation is explicit.
-  # Node major upgrades must bump this value to invalidate stale dist caches.
-  NODE_MAJOR_VERSION: "26"
+  # Single source of truth for all setup-node steps and cache keys in this workflow.
+  NODE_VERSION: "26"
   NPM_CONFIG_FETCH_RETRIES: "5"
   NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: "20000"
   NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: "120000"
@@ -36,7 +35,7 @@ jobs:
       
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "26"
+          node-version: ${{ env.NODE_VERSION }}
           # Built-in npm cache (single source of truth — no extra actions/cache step).
           # Cache key automatically derived from package-lock.json + Node major version.
           cache: "npm"
@@ -63,7 +62,7 @@ jobs:
       
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "26"
+          node-version: ${{ env.NODE_VERSION }}
           # Built-in npm cache (single source of truth — no extra actions/cache step).
           cache: "npm"
 
@@ -71,15 +70,16 @@ jobs:
         run: npm ci
 
       - name: Cache build artifacts
+        id: build-cache
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: dist
           # Unique key: cache-version + OS + Node major + lockfile hash + source hash + tsconfig hash.
           # Bumping the `build-vN-` prefix expires every old build cache atomically.
-          key: build-v2-${{ runner.os }}-node${{ env.NODE_MAJOR_VERSION }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**/*.ts', 'tsconfig*.json') }}
+          key: build-v2-${{ runner.os }}-node${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**/*.ts', 'tsconfig*.json') }}
           restore-keys: |
-            build-v2-${{ runner.os }}-node${{ env.NODE_MAJOR_VERSION }}-${{ hashFiles('**/package-lock.json') }}-
-            build-v2-${{ runner.os }}-node${{ env.NODE_MAJOR_VERSION }}-
+            build-v2-${{ runner.os }}-node${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}-
+            build-v2-${{ runner.os }}-node${{ env.NODE_VERSION }}-
 
       # TypeScript type checking
       - name: Type check
@@ -99,6 +99,7 @@ jobs:
 
       # Build the project (ensures dist/ output is valid)
       - name: Build
+        if: steps.build-cache.outputs.cache-hit != 'true'
         run: npm run build
 
       # Verify package can be packed (catches prepublish issues before release)
@@ -120,11 +121,23 @@ jobs:
       - name: Install SBOMQS
         # Resilient download: retry transient network failures, fail fast on hard errors.
         run: |
+          set -euo pipefail
+          SBOMQS_VERSION="v1.2.0"
+          SBOMQS_VERSION_NO_V="${SBOMQS_VERSION#v}"
+          SBOMQS_BINARY="sbomqs-linux-amd64"
+          SBOMQS_BASE_URL="https://github.com/interlynk-io/sbomqs/releases/download/${SBOMQS_VERSION}"
+
           curl --fail --location --show-error --silent \
                --retry 5 --retry-delay 5 --retry-max-time 120 \
                --connect-timeout 30 --max-time 180 \
                -o /tmp/sbomqs \
-               https://github.com/interlynk-io/sbomqs/releases/download/v1.2.0/sbomqs-linux-amd64
+               "${SBOMQS_BASE_URL}/${SBOMQS_BINARY}"
+          curl --fail --location --show-error --silent \
+               --retry 5 --retry-delay 5 --retry-max-time 120 \
+               --connect-timeout 30 --max-time 180 \
+               -o /tmp/sbomqs_checksums.txt \
+               "${SBOMQS_BASE_URL}/sbomqs_${SBOMQS_VERSION_NO_V}_checksums.txt"
+          grep " ${SBOMQS_BINARY}$" /tmp/sbomqs_checksums.txt | sha256sum -c -
           sudo mv /tmp/sbomqs /usr/local/bin/sbomqs
           sudo chmod a+x /usr/local/bin/sbomqs
 
@@ -168,7 +181,7 @@ jobs:
       
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "26"
+          node-version: ${{ env.NODE_VERSION }}
           # Built-in npm cache (single source of truth — no extra actions/cache step).
           cache: "npm"
 

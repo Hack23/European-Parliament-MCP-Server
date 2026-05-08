@@ -641,7 +641,7 @@ Workflows are tuned for **fast, reproducible builds** and **graceful degradation
 | Cache | Mechanism | Path | Where | Why |
 |-------|-----------|------|-------|-----|
 | **npm package cache** | `actions/setup-node@v6.4.0` with `cache: "npm"` (built-in) | `~/.npm` | All Node-based workflows | Official, automatically keyed on `package-lock.json` + Node major version, automatically pruned. No extra `actions/cache` step required. |
-| **TypeScript build output** | `actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5` | `dist/` | `test-and-report.yml` (build-validation) | Avoids re-compiling unchanged sources across jobs. |
+| **TypeScript build output** | `actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5` | `dist/` | `test-and-report.yml` (build-validation) | Reuses prior `dist/` output across workflow runs with identical inputs and skips `npm run build` on cache hit. |
 
 **Pinned cache action (the *only* explicit one in the repo):**
 
@@ -655,7 +655,7 @@ uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
 |----------|-------|-----------|
 | **Version prefix** | `build-v2-…` | Bumping the prefix atomically expires every old cache entry (cheap rotation / forced invalidation). |
 | **Runner OS** | `${{ runner.os }}` | Linux/macOS binaries are not interchangeable. |
-| **Node major** | `node26` (literal) | Compiled artifacts are tied to V8 / Node ABI. |
+| **Node major** | `node${{ env.NODE_VERSION }}` | Conservative runtime-compatibility and policy-driven invalidation signal when the workflow Node major changes. |
 | **Lockfile hash** | `${{ hashFiles('**/package-lock.json') }}` | Dep changes invalidate dependent caches. |
 | **Source hash** | `${{ hashFiles('src/**/*.ts', 'tsconfig*.json') }}` | Source or compiler-config change invalidates the build cache. |
 | **Restore-keys** | Cascading prefixes | Allows partial reuse when only the source hash changed. |
@@ -665,10 +665,10 @@ uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
   uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
   with:
     path: dist
-    key: build-v2-${{ runner.os }}-node26-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**/*.ts', 'tsconfig*.json') }}
+    key: build-v2-${{ runner.os }}-node${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**/*.ts', 'tsconfig*.json') }}
     restore-keys: |
-      build-v2-${{ runner.os }}-node26-${{ hashFiles('**/package-lock.json') }}-
-      build-v2-${{ runner.os }}-node26-
+      build-v2-${{ runner.os }}-node${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}-
+      build-v2-${{ runner.os }}-node${{ env.NODE_VERSION }}-
 ```
 
 ### Cache Expiration
