@@ -137,7 +137,12 @@ jobs:
                --connect-timeout 30 --max-time 180 \
                -o /tmp/sbomqs_checksums.txt \
                "${SBOMQS_BASE_URL}/sbomqs_${SBOMQS_VERSION}_checksums.txt"
-          grep " ${SBOMQS_BINARY}$" /tmp/sbomqs_checksums.txt | sha256sum -c -
+          expected_sha="$(awk -v file="${SBOMQS_BINARY}" '$2 == file { print $1 }' /tmp/sbomqs_checksums.txt)"
+          if [ -z "${expected_sha}" ]; then
+            echo "::error::Unable to find checksum entry for ${SBOMQS_BINARY}"
+            exit 1
+          fi
+          printf '%s  %s\n' "${expected_sha}" "/tmp/sbomqs" | sha256sum -c -
           sudo mv /tmp/sbomqs /usr/local/bin/sbomqs
           sudo chmod a+x /usr/local/bin/sbomqs
 
