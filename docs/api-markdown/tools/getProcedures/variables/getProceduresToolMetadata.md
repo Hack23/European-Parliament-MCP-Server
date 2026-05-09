@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.1**](../../../README.md)
+[**European Parliament MCP Server API v1.3.2**](../../../README.md)
 
 ***
 

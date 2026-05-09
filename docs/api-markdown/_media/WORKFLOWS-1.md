@@ -48,10 +48,11 @@
    - [Stage 6: Supply Chain Security](#stage-6-supply-chain-security)
    - [Stage 7: Continuous Monitoring](#stage-7-continuous-monitoring)
    - [Stage 8: Repository Management](#stage-8-repository-management)
-7. [Security Controls](#-security-controls)
-8. [Quality Gates](#-quality-gates)
-9. [ISMS Compliance](#-isms-compliance)
-10. [Related Documentation](#-related-documentation)
+7. [Caching & Resilience](#-caching--resilience)
+8. [Security Controls](#-security-controls)
+9. [Quality Gates](#-quality-gates)
+10. [ISMS Compliance](#-isms-compliance)
+11. [Related Documentation](#-related-documentation)
 
 ---
 
@@ -626,6 +627,84 @@ The `refresh-stats.yml` workflow is an **agentic GitHub workflow** that automati
 4. Install global MCP servers (`@modelcontextprotocol/server-filesystem`, `-memory`, `-sequential-thinking`, `@playwright/mcp`)
 5. Install project dependencies (`npm ci`)
 6. Verify all MCP server installations
+
+---
+
+## 💾 Caching & Resilience
+
+Workflows are tuned for **fast, reproducible builds** and **graceful degradation** when external registries (npm, GitHub Releases, OS mirrors) experience transient failures.
+
+### Caching Strategy — Single Source of Truth
+
+> **Rule:** exactly **one** cache statement per logical artifact. Never stack `actions/cache` on top of `actions/setup-node`'s built-in cache for the same path.
+
+| Cache | Mechanism | Path | Where | Why |
+|-------|-----------|------|-------|-----|
+| **npm package cache** | `actions/setup-node@v6.4.0` with `cache: "npm"` (built-in) | `~/.npm` | All Node-based workflows | Official, automatically keyed on `package-lock.json` + Node major version, automatically pruned. No extra `actions/cache` step required. |
+| **TypeScript build output** | `actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5` | `dist/` | `test-and-report.yml` (build-validation) | Reuses prior `dist/` output across workflow runs with identical inputs and skips `npm run build` on cache hit. |
+
+**Pinned cache action (the *only* explicit one in the repo):**
+
+```yaml
+uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+```
+
+### Cache Key Design
+
+| Property | Value | Rationale |
+|----------|-------|-----------|
+| **Version prefix** | `build-v2-…` | Bumping the prefix atomically expires every old cache entry (cheap rotation / forced invalidation). |
+| **Runner OS** | `${{ runner.os }}` | Linux/macOS binaries are not interchangeable. |
+| **Node major** | `node${{ env.NODE_VERSION }}` | Conservative runtime-compatibility and policy-driven invalidation signal when the workflow Node major changes. |
+| **Lockfile hash** | `${{ hashFiles('**/package-lock.json') }}` | Dep changes invalidate dependent caches. |
+| **Source hash** | `${{ hashFiles('src/**/*.ts', 'tsconfig*.json') }}` | Source or compiler-config change invalidates the build cache. |
+| **Restore-keys** | Cascading prefixes | Allows partial reuse when only the source hash changed. |
+
+```yaml
+- name: Cache build artifacts
+  uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+  with:
+    path: dist
+    key: build-v2-${{ runner.os }}-node${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**/*.ts', 'tsconfig*.json') }}
+    restore-keys: |
+      build-v2-${{ runner.os }}-node${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}-
+      build-v2-${{ runner.os }}-node${{ env.NODE_VERSION }}-
+```
+
+### Cache Expiration
+
+- **GitHub-managed eviction** — Actions cache entries expire automatically after **7 days of no read access** and the repository pool is capped at **10 GB** (least-recently-used eviction).
+- **Forced invalidation** — bump the `build-v2-` prefix to `build-v3-` to expire every existing build cache entry on the next run.
+- **Lockfile-driven invalidation** — every `package-lock.json` change produces a new key; old entries fall off naturally.
+
+### Resilience Against External Registry Failures
+
+| Failure Mode | Mitigation |
+|--------------|------------|
+| **npm registry slow / flaky** | Workflow-level env: `NPM_CONFIG_FETCH_RETRIES=5`, `NPM_CONFIG_FETCH_RETRY_MINTIMEOUT=20000`, `NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT=120000`, `NPM_CONFIG_FETCH_TIMEOUT=300000`. Native npm honours these on every fetch. |
+| **`npm install` hangs** | `copilot-setup-steps.yml` wraps every `npm install -g` in `timeout 300` and a 3-attempt retry with exponential backoff. The local `npm ci` is wrapped in `timeout 600` + 3 attempts. |
+| **Playwright / browser binary download fails** | `@playwright/mcp` is installed via the resilient retry wrapper; browser binaries are downloaded **lazily on first use** (no eager `npx playwright install` at setup time, eliminating a known flaky step). |
+| **GitHub Releases asset (sbomqs) download fails** | `curl --fail --retry 5 --retry-delay 5 --retry-max-time 120 --connect-timeout 30 --max-time 180`. |
+| **OS package mirror (apt) failure** | No `apt` installs are required by the current pipeline. Any future `apt` step **must** use `sudo apt-get update -o Acquire::Retries=5 && sudo apt-get install -y --no-install-recommends …` per the resilience policy below. |
+| **Concurrent runs piling up** | `knip.yml` uses `concurrency.cancel-in-progress` per ref; recommended for any new fast-feedback workflow. |
+
+### Resilience Policy for Future External Tooling
+
+Whenever a workflow downloads or installs anything from an external host:
+
+1. **Bound the operation** — wrap with `timeout <seconds>` so a hung process cannot occupy the runner.
+2. **Retry on failure** — at least 3 attempts with exponential backoff (e.g. `sleep $((attempt * 10))`).
+3. **Use registry-native retry knobs** when available (`NPM_CONFIG_FETCH_RETRIES`, `curl --retry`, `apt -o Acquire::Retries`).
+4. **Pin** to a SHA / version (no floating tags).
+5. **Document** the install in `WORKFLOWS.md` so reviewers can audit the supply-chain entry point.
+
+### What Was Removed (December 2025 Hardening)
+
+- Removed **6 redundant `actions/cache` blocks** for `~/.npm` from `release.yml` (×3) and `test-and-report.yml` (×3). They duplicated `actions/setup-node`'s built-in npm cache and could cause cache-restore races / wasted storage.
+- Replaced `npm install` with `npm ci` in `test-and-report.yml`'s `prepare` and `unit-tests` jobs (lockfile-faithful, deterministic).
+- Hardened the `sbomqs` download with explicit `curl` retries / timeouts.
+- Added workflow-level npm fetch-retry env to every Node workflow.
+- Added retry + timeout wrappers around all global MCP server installs in `copilot-setup-steps.yml`.
 
 ---
 
