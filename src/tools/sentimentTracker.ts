@@ -100,14 +100,14 @@ const KNOWN_POLITICAL_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID'
 const SEAT_SHARE_THRESHOLDS = {
   large: 0.25,   // ≥25% of total MEPs → "major governing bloc"
   medium: 0.15,  // ≥15% and <25% → "significant player"
-  small: 0.05    // ≥5% and <15% → "minor coalition partner"
+  small: 0.05
 } as const;
 
 const SENTIMENT_SCORES = {
   large: 0.3,    // Major blocs: positive alignment with institutional norms
   medium: 0.2,   // Significant players: constructive engagement
   small: 0.1,    // Minor partners: moderate positive
-  micro: -0.1    // Micro-groups: procedural disadvantage → slight negative sentiment proxy
+  micro: -0.1
 } as const;
 
 function deriveSentimentScore(memberCount: number, totalMEPs: number): number {
@@ -208,11 +208,6 @@ function buildTopicsAndShifts(validSentiments: GroupSentiment[]): {
   divisiveTopics: string[];
   sentimentShifts: SentimentShift[];
 } {
-  // Topic-level analysis is not currently implemented.
-  // To avoid misleading intelligence output, we do not infer or fabricate
-  // consensus/divisive policy areas from the available EP data.
-  // These arrays are intentionally empty until a data-backed topic model
-  // (e.g. based on votes, committee work, or speech analysis) is available.
   const consensusTopics: string[] = [];
   const divisiveTopics: string[] = [];
   return { consensusTopics, divisiveTopics, sentimentShifts: buildSentimentShifts(validSentiments) };
@@ -236,9 +231,6 @@ function buildSentimentComputedAttrs(
 
 export async function sentimentTracker(params: SentimentTrackerParams): Promise<ToolResult> {
   try {
-    // Fetch all current MEPs once via paginated batches, then aggregate
-    // per-group counts in-memory. This avoids per-group API calls that each
-    // trigger a full multi-page fetch when client-side filtering is used.
     const fetchResult = await fetchAllCurrentMEPs();
     const allMeps = fetchResult.meps;
     const totalMEPs = allMeps.length;
@@ -247,7 +239,6 @@ export async function sentimentTracker(params: SentimentTrackerParams): Promise<
       return buildToolResponse(buildEmptySentimentResult(params));
     }
 
-    // Count MEPs per group in-memory (one fetch, no per-group API calls)
     const groupCounts = new Map<string, number>();
     for (const mep of allMeps) {
       const g = mep.politicalGroup;

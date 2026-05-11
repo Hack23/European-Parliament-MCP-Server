@@ -1,13 +1,12 @@
 /**
  * Dependency Injection Container
- * 
+ *
  * Provides type-safe service registration and resolution with support for
  * singleton and transient lifetimes.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
-// Re-export tokens so callers only need one import
 export { TOKENS } from './tokens.js';
 export type { DIToken } from './tokens.js';
 
@@ -47,7 +46,7 @@ export class DIContainer {
   /**
    * Register a service with the container
    * Cyclomatic complexity: 1
-   * 
+   *
    * @param token - Service identifier token
    * @param factory - Factory function to create service instances
    * @param lifetime - Service lifetime ('singleton' or 'transient')
@@ -75,7 +74,7 @@ export class DIContainer {
   /**
    * Resolve a service from the container
    * Cyclomatic complexity: 4
-   * 
+   *
    * @param token - Service identifier token
    * @returns Resolved service instance
    * @throws {Error} If service is not registered
@@ -95,15 +94,12 @@ export class DIContainer {
       throw new Error(`Service not registered: ${String(token)}`);
     }
 
-    // Return singleton instance if already created
     if (descriptor.lifetime === 'singleton' && descriptor.instance !== undefined) {
       return descriptor.instance;
     }
 
-    // Create new instance
     const instance = descriptor.factory(this);
 
-    // Cache singleton instances
     if (descriptor.lifetime === 'singleton') {
       descriptor.instance = instance;
     }
@@ -114,7 +110,7 @@ export class DIContainer {
   /**
    * Check if a service is registered
    * Cyclomatic complexity: 1
-   * 
+   *
    * @param token - Service identifier token
    * @returns `true` if the token is registered, `false` otherwise
    *

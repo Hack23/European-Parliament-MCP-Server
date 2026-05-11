@@ -55,7 +55,6 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleSearchDocuments} for full-text search across EP legislative documents
  */
 export async function handleGetExternalDocuments(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetExternalDocumentsSchema.parse>;
   try {
     params = GetExternalDocumentsSchema.parse(args);

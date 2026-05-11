@@ -24,8 +24,6 @@ import {
 } from './baseClient.js';
 import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
-// ─── Question Client ──────────────────────────────────────────────────────────
-
 /**
  * Sub-client for parliamentary-questions EP API endpoints.
  *
@@ -37,15 +35,11 @@ export class QuestionClient extends BaseEPClient {
     super(config, shared);
   }
 
-  // ─── Transform helpers ────────────────────────────────────────────────────
-
   private transformParliamentaryQuestion(
     apiData: Record<string, unknown>
   ): ParliamentaryQuestion {
     return _transformParliamentaryQuestion(apiData);
   }
-
-  // ─── Private helpers ──────────────────────────────────────────────────────
 
   /**
    * Builds EP API parameters for parliamentary question search.
@@ -99,8 +93,6 @@ export class QuestionClient extends BaseEPClient {
     return filtered;
   }
 
-  // ─── Public methods ───────────────────────────────────────────────────────
-
   /**
    * Retrieves parliamentary questions with filtering by type, author, and status.
    *
@@ -126,8 +118,6 @@ export class QuestionClient extends BaseEPClient {
       const offset = params.offset ?? 0;
 
       const apiParams = this.buildQuestionSearchParams(params);
-      // Always apply the resolved limit/offset so the server page size matches
-      // the pagination metadata we return.
       apiParams['limit'] = limit;
       apiParams['offset'] = offset;
 

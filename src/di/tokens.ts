@@ -30,34 +30,14 @@
  * @since 0.8.0
  */
 export const TOKENS = {
-  /**
-   * European Parliament API client
-   * (`EuropeanParliamentClient` from `clients/europeanParliamentClient`)
-   */
   EPClient: Symbol('EPClient'),
 
-  /**
-   * Performance metrics collection service
-   * (`MetricsService` from `services/MetricsService`)
-   */
   MetricsService: Symbol('MetricsService'),
 
-  /**
-   * GDPR-compliant audit logger
-   * (`AuditLogger` from `utils/auditLogger`)
-   */
   AuditLogger: Symbol('AuditLogger'),
 
-  /**
-   * Token-bucket rate limiter for EP API calls
-   * (`RateLimiter` from `utils/rateLimiter`)
-   */
   RateLimiter: Symbol('RateLimiter'),
 
-  /**
-   * Server health-check service
-   * (`HealthService` from `services/HealthService`)
-   */
   HealthService: Symbol('HealthService'),
 } as const;
 

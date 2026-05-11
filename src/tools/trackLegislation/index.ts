@@ -1,18 +1,18 @@
 /**
  * MCP Tool: track_legislation
- * 
+ *
  * Track legislative procedure progress through European Parliament
- * 
+ *
  * **Intelligence Perspective:** Enables real-time legislative pipeline monitoring,
  * procedure stage analysis, and trilogue outcome tracking for strategic intelligence
  * on EU regulatory developments and policy trajectory forecasting.
- * 
+ *
  * **Business Perspective:** Core compliance monitoring product—essential for enterprises
  * tracking regulatory changes, industry associations monitoring sector-specific legislation.
- * 
+ *
  * **Marketing Perspective:** Demonstrates end-to-end legislative tracking capability—
  * differentiator for RegTech market and EU affairs consultancy customer acquisition.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -55,16 +55,13 @@ const OPERATION_TIMEOUT_MS = 100_000;
  * @returns Process ID suitable for the EP API (e.g. `"2024-0006"`)
  */
 export function toProcessId(ref: string): string {
-  // Already in process-id format (e.g. "2024-0006")
   if (/^\d{4}-\d{4}$/.test(ref)) {
     return ref;
   }
-  // Reference format: "2024/0006(COD)" → "2024-0006"
   const match = /^(\d{4})\/(\d{4})\(.*\)$/.exec(ref);
   if (match?.[1] !== undefined && match[2] !== undefined) {
     return `${match[1]}-${match[2]}`;
   }
-  // Fallback: replace slashes with dashes and strip parenthetical suffix
   return ref.replace(/\(.*\)$/, '').replace(/\//g, '-');
 }
 
@@ -103,15 +100,12 @@ export async function handleTrackLegislation(
 ): Promise<ToolResult> {
   const params = TrackLegislationSchema.parse(args);
   const processId = toProcessId(params.procedureId);
-  
+
   try {
     return await withTimeout(
       (async (): Promise<ToolResult> => {
         const procedure = await epClient.getProcedureById(processId);
 
-        // Attempt to enrich the timeline with events from the events sub-endpoint.
-        // If the call fails (network error, 404, rate-limit), we surface the failure
-        // name in enrichmentFailures instead of propagating an exception.
         const enrichmentFailures: string[] = [];
         let events: EPEvent[] = [];
         try {
@@ -122,7 +116,7 @@ export async function handleTrackLegislation(
         }
 
         const tracking = buildLegislativeTracking(procedure, events, enrichmentFailures);
-        
+
         return {
           content: [{
             type: 'text',

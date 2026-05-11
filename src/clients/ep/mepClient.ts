@@ -31,8 +31,6 @@ import {
 } from './baseClient.js';
 import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
-// ─── MEP Client ───────────────────────────────────────────────────────────────
-
 /**
  * Sub-client for MEP-related European Parliament API endpoints.
  *
@@ -47,8 +45,6 @@ export class MEPClient extends BaseEPClient {
     super(config, shared);
   }
 
-  // ─── Transform helpers ────────────────────────────────────────────────────
-
   private transformMEP(apiData: Record<string, unknown>): MEP {
     return _transformMEP(apiData);
   }
@@ -60,8 +56,6 @@ export class MEPClient extends BaseEPClient {
   private transformMEPDeclaration(apiData: Record<string, unknown>): MEPDeclaration {
     return _transformMEPDeclaration(apiData);
   }
-
-  // ─── Private helpers ─────────────────────────────────────────────────────
 
   /**
    * Maps getMEPs params to EP API query parameters.
@@ -133,18 +127,14 @@ export class MEPClient extends BaseEPClient {
     meps: MEP[], limit: number, offset: number, filtered: boolean
   ): PaginatedResponse<MEP> {
     if (filtered) {
-      // In-memory pagination: we have the full filtered dataset, so total is exact.
       const paged = meps.slice(offset, offset + limit);
       const hasMore = offset + paged.length < meps.length;
       return { data: paged, total: meps.length, limit, offset, hasMore };
     }
-    // Server pagination: `meps` is a single server page.
     const hasMore = meps.length === limit;
     const total = offset + meps.length + (hasMore ? 1 : 0);
     return { data: meps, total, limit, offset, hasMore };
   }
-
-  // ─── Public methods ───────────────────────────────────────────────────────
 
   /**
    * Retrieves Members of the European Parliament with filtering and pagination.
@@ -167,8 +157,6 @@ export class MEPClient extends BaseEPClient {
       const offset = params.offset ?? 0;
 
       const apiParams = this.buildMEPParams(params);
-      // Always apply the resolved limit/offset so the server page size matches
-      // the pagination metadata we return.
       apiParams['limit'] = limit;
       apiParams['offset'] = offset;
 
@@ -260,13 +248,11 @@ export class MEPClient extends BaseEPClient {
     const needsFiltering = params.country !== undefined || params.group !== undefined;
 
     if (needsFiltering) {
-      // Fetch all MEPs in batches of 100 for client-side filtering
       const allMeps = await this.fetchAllCurrentMEPs();
       const filtered = this.filterMEPs(allMeps, params.country, params.group);
       return this.paginateFiltered(filtered, limit, offset, true);
     }
 
-    // No filtering — single request with caller's pagination
     const response = await this.get<JSONLDResponse>('meps/show-current', {
       format: 'application/ld+json',
       offset,
@@ -274,9 +260,6 @@ export class MEPClient extends BaseEPClient {
     });
 
     const items = Array.isArray(response.data) ? response.data : [];
-    // show-current endpoint only returns MEPs with active mandates,
-    // so mark every returned MEP as active even when the API response
-    // omits the explicit `active` flag.
     const allMeps = items.map((item) => ({ ...this.transformMEP(item), active: true }));
     return this.paginateFiltered(allMeps, limit, offset, false);
   }

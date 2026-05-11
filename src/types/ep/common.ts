@@ -9,27 +9,27 @@
 
 /**
  * Generic paginated response wrapper for API results.
- * 
+ *
  * Standard pagination format used across all European Parliament MCP Server
  * endpoints. Wraps arrays of data with pagination metadata enabling
  * efficient iteration through large datasets. Implements offset-based
  * pagination pattern.
- * 
+ *
  * **Pagination Strategy:** Offset-based (not cursor-based)
  * - Predictable page jumps
  * - Total count available
  * - Direct page access
  * - May miss/duplicate items if data changes during pagination
- * 
+ *
  * **Performance Considerations:**
  * - Cached responses (15 min TTL) for better performance
  * - Large offsets may have slower query performance
  * - Recommended limit: 50-100 items per page
  * - Maximum limit: 100 items per page
- * 
+ *
  * @template T The type of items in the data array
  * @interface PaginatedResponse
- * 
+ *
  * @example
  * ```typescript
  * // Basic pagination usage
@@ -43,11 +43,11 @@
  *   offset: 0,
  *   hasMore: true
  * };
- * 
+ *
  * console.log(`Showing ${response.data.length} of ${response.total} MEPs`);
  * console.log(`Current page: ${Math.floor(response.offset / response.limit) + 1}`);
  * ```
- * 
+ *
  * @example
  * ```typescript
  * // Iterating through all pages
@@ -55,26 +55,26 @@
  *   const allMEPs: MEP[] = [];
  *   let offset = 0;
  *   const limit = 50;
- *   
+ *
  *   while (true) {
- *     const response: PaginatedResponse<MEP> = await getMEPs({ 
- *       limit, 
- *       offset 
+ *     const response: PaginatedResponse<MEP> = await getMEPs({
+ *       limit,
+ *       offset
  *     });
- *     
+ *
  *     allMEPs.push(...response.data);
- *     
+ *
  *     if (!response.hasMore) {
  *       break;
  *     }
- *     
+ *
  *     offset += limit;
  *   }
- *   
+ *
  *   return allMEPs;
  * }
  * ```
- * 
+ *
  * @example
  * ```typescript
  * // Calculating pagination metadata
@@ -84,7 +84,7 @@
  *   const itemsOnPage = response.data.length;
  *   const startItem = response.offset + 1;
  *   const endItem = response.offset + itemsOnPage;
- *   
+ *
  *   return {
  *     currentPage,      // e.g., 3
  *     totalPages,       // e.g., 15
@@ -95,7 +95,7 @@
  *   };
  * }
  * ```
- * 
+ *
  * @example
  * ```typescript
  * // Empty result set
@@ -107,7 +107,7 @@
  *   hasMore: false
  * };
  * ```
- * 
+ *
  * @example
  * ```typescript
  * // Last page (partial page)
@@ -121,7 +121,7 @@
  *   hasMore: false
  * };
  * ```
- * 
+ *
  * @see {@link MEP} for MEP data example
  * @see {@link VotingRecord} for voting record pagination
  * @see {@link LegislativeDocument} for document pagination
@@ -129,15 +129,15 @@
 export interface PaginatedResponse<T> {
   /**
    * Array of items for current page.
-   * 
+   *
    * Contains the actual data items for the current page/offset.
    * Array length may be less than limit on last page or when
    * fewer items match the query.
-   * 
+   *
    * **Type:** Array of generic type T
    * **Min Length:** 0 (empty result set)
    * **Max Length:** limit value (typically 50-100)
-   * 
+   *
    * @example
    * ```typescript
    * // Full page
@@ -147,7 +147,7 @@ export interface PaginatedResponse<T> {
    *   // ... 48 more items for limit=50
    * ]
    * ```
-   * 
+   *
    * @example
    * ```typescript
    * // Partial page (last page)
@@ -157,7 +157,7 @@ export interface PaginatedResponse<T> {
    *   // Only 5 items on last page
    * ]
    * ```
-   * 
+   *
    * @example
    * ```typescript
    * // Empty result
@@ -168,10 +168,10 @@ export interface PaginatedResponse<T> {
 
   /**
    * Total number of items matching the query (exact or heuristic estimate).
-   * 
+   *
    * For **in-memory paginated** results (e.g. `getCurrentMEPs` with filters,
    * `getVotingRecords`), this is the **exact** count of all matching items.
-   * 
+   *
    * For **server-paginated** results where the EP API does not return a total
    * count header, this is a **heuristic sentinel**:
    * - On the **last page** (`hasMore === false`): the value is exact
@@ -183,7 +183,7 @@ export interface PaginatedResponse<T> {
    *   `offset + data.length + 1`. This signals that more data may exist
    *   but may **overestimate by 1** when the dataset size is an exact
    *   multiple of `limit` (i.e., the last server page is exactly full).
-   * 
+   *
    * For **client-filtered server endpoints** (e.g. `getPlenarySessions` with
    * location, `getParliamentaryQuestions` with author/topic), `total` and
    * `hasMore` are derived from the **unfiltered server page size**, not
@@ -205,13 +205,13 @@ export interface PaginatedResponse<T> {
    * eliminated by keyword/committee/date filters (the new envelope in that
    * case is `data:[] total:1 hasMore:true`). Callers should still paginate
    * until `hasMore === false` to enumerate all matches.
-   * 
+   *
    * **Do not** use this value for exact "X of Y" UI or page-count
    * calculations on server-paginated endpoints. Instead, iterate all
    * pages (using `hasMore`) to determine the true dataset size.
-   * 
+   *
    * **Min Value:** 0 (no matches)
-   * 
+   *
    * @example 705 // Exact total from in-memory pagination
    * @example 51  // Heuristic: offset=0, data.length=50, hasMore=true (may overestimate by 1)
    * @example 23  // Exact on last page: offset=20, data.length=3, hasMore=false
@@ -221,17 +221,17 @@ export interface PaginatedResponse<T> {
 
   /**
    * Maximum items per page (requested page size).
-   * 
+   *
    * The limit value that was requested for this query. Determines
    * maximum array size for data field. Actual data length may be
    * less on last page or with filtered queries.
-   * 
+   *
    * **EP API Field:** Query parameter `limit`
    * **Min Value:** 1
    * **Max Value:** 100 (enforced by API)
    * **Default:** 50
    * **Recommended:** 50-100 for performance
-   * 
+   *
    * @example 50  // Default page size
    * @example 100 // Maximum page size
    * @example 20  // Custom smaller page size
@@ -240,16 +240,16 @@ export interface PaginatedResponse<T> {
 
   /**
    * Number of items skipped (pagination offset).
-   * 
+   *
    * Number of items to skip from the beginning of the result set.
    * Used for offset-based pagination. To get page N, use
    * `offset = (N - 1) * limit`.
-   * 
+   *
    * **EP API Field:** Query parameter `offset`
    * **Min Value:** 0 (first page)
    * **Max Value:** total - 1
    * **Calculation:** `(currentPage - 1) * limit`
-   * 
+   *
    * @example 0    // First page
    * @example 50   // Second page (if limit=50)
    * @example 100  // Third page (if limit=50)
@@ -259,11 +259,11 @@ export interface PaginatedResponse<T> {
 
   /**
    * Indicates if more items may exist beyond the current page.
-   * 
+   *
    * Boolean flag for "load more" / "next page" logic. When `true`,
    * another page may exist and the caller should fetch it. When `false`,
    * the current page is definitively the last one.
-   * 
+   *
    * For **server-paginated** results this is a heuristic based on the
    * underlying server page fullness, not always on the filtered
    * `data.length` returned to the caller:
@@ -281,13 +281,13 @@ export interface PaginatedResponse<T> {
    *   server page fullness (so callers continue paginating for more matches),
    *   but `total` is derived from the post-filter `data.length` — guaranteeing
    *   the identity `total === offset + data.length + (hasMore ? 1 : 0)`.
-   * 
+   *
    * Callers should paginate until `hasMore` is `false`. For **in-memory
    * paginated** results, `hasMore` is exact: `(offset + data.length) < total`.
-   * 
+   *
    * @example true  // More pages available
    * @example false // Last page or all results shown
-   * 
+   *
    * @example
    * ```typescript
    * // Using hasMore for navigation

@@ -41,10 +41,6 @@ import { handleNetworkAnalysis } from './networkAnalysis.js';
 import { handleComparativeIntelligence } from './comparativeIntelligence.js';
 import { ToolError } from './shared/errors.js';
 
-// ---------------------------------------------------------------------------
-// Internal parsed-result interfaces (subset of each tool's output)
-// ---------------------------------------------------------------------------
-
 interface InfluenceResult {
   mepId: string;
   mepName: string;
@@ -85,10 +81,6 @@ interface ComparativeResult {
   outlierMEPs: { mepId: string; name: string; outlierDimension: string; zScore: number }[];
   confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
 }
-
-// ---------------------------------------------------------------------------
-// Correlation output types
-// ---------------------------------------------------------------------------
 
 /** A single correlated intelligence alert */
 export interface CorrelationAlert {
@@ -159,10 +151,6 @@ export interface CorrelatedIntelligenceReport extends OsintStandardOutput {
   dataAvailability: DataAvailability;
 }
 
-// ---------------------------------------------------------------------------
-// Sensitivity thresholds
-// ---------------------------------------------------------------------------
-
 const INFLUENCE_THRESHOLDS: Record<'HIGH' | 'MEDIUM' | 'LOW', number> = {
   HIGH: 50,
   MEDIUM: 70,
@@ -170,10 +158,6 @@ const INFLUENCE_THRESHOLDS: Record<'HIGH' | 'MEDIUM' | 'LOW', number> = {
 };
 
 const DEFAULT_COALITION_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID'];
-
-// ---------------------------------------------------------------------------
-// Helper: safely parse JSON from a ToolResult
-// ---------------------------------------------------------------------------
 
 /**
  * Safely parses the JSON payload from a {@link ToolResult} returned by a dependent tool.
@@ -210,10 +194,6 @@ function parseToolResult(result: ToolResult): unknown {
     );
   }
 }
-
-// ---------------------------------------------------------------------------
-// Correlation scenario 1: Influence × Anomaly
-// ---------------------------------------------------------------------------
 
 /**
  * Determines the significance level of an influence × anomaly correlation.
@@ -360,10 +340,6 @@ async function correlateInfluenceAnomaly(
 
   return { correlation, alert, toolConfidenceLevels };
 }
-
-// ---------------------------------------------------------------------------
-// Correlation scenario 2: Early Warning × Coalition Dynamics
-// ---------------------------------------------------------------------------
 
 /**
  * Maps the caller-facing `sensitivityLevel` enum to the EWS tool's `sensitivity` parameter.
@@ -516,10 +492,6 @@ async function correlateCoalitionFracture(
   return { correlation, alert, toolConfidenceLevels };
 }
 
-// ---------------------------------------------------------------------------
-// Correlation scenario 3: Network Centrality × Comparative Intelligence
-// ---------------------------------------------------------------------------
-
 /**
  * Determines the profile significance level for Scenario 3 (Network × Profiles).
  *
@@ -654,10 +626,6 @@ async function correlateNetworkProfiles(
   return { correlations, alerts, toolConfidenceLevels };
 }
 
-// ---------------------------------------------------------------------------
-// Confidence aggregation
-// ---------------------------------------------------------------------------
-
 /**
  * Derives the aggregate confidence level from across all tool results in the pipeline.
  *
@@ -749,10 +717,6 @@ function buildCorrelationResponse(
   }
   return buildToolResponse(report);
 }
-
-// ---------------------------------------------------------------------------
-// Main handler
-// ---------------------------------------------------------------------------
 
 /**
  * Builds the summary block of the {@link CorrelatedIntelligenceReport}.
@@ -859,7 +823,6 @@ export async function handleCorrelateIntelligence(
   const analysisTime = new Date().toISOString();
   const correlationId = `CORR-${randomUUID().replace(/-/g, '').toUpperCase().slice(0, 12)}`;
 
-  // Scenario 1: Per-MEP influence × anomaly correlation (parallelised)
   const influenceAnomalyResults = await Promise.all(
     mepIds.map((mepId) => correlateInfluenceAnomaly(mepId, influenceThreshold)),
   );
@@ -873,11 +836,9 @@ export async function handleCorrelateIntelligence(
     influenceToolConfidenceLevels.push(...toolConfidenceLevels);
   }
 
-  // Scenario 2: Coalition fracture
   const { correlation: coalitionCorrelation, alert: coalitionAlert, toolConfidenceLevels: coalitionConfidenceLevels } =
     await correlateCoalitionFracture(resolvedGroups, sensitivityLevel);
 
-  // Scenario 3: Network × comparative profiles
   const { correlations: networkCorrelations, alerts: networkAlerts, toolConfidenceLevels: networkConfidenceLevels } =
     includeNetworkAnalysis
       ? await correlateNetworkProfiles(mepIds)
@@ -926,7 +887,6 @@ export async function handleCorrelateIntelligence(
     dataQualityWarnings: buildCorrelationWarnings(dataAvailability, confidenceLevels, includeNetworkAnalysis),
   };
 
-  // Validate the standard OSINT output fields before returning
   try {
     OsintStandardOutputSchema.parse({
       confidenceLevel: report.confidenceLevel,
@@ -947,10 +907,6 @@ export async function handleCorrelateIntelligence(
 
   return buildCorrelationResponse(report);
 }
-
-// ---------------------------------------------------------------------------
-// Tool metadata
-// ---------------------------------------------------------------------------
 
 /**
  * MCP tool metadata for `correlate_intelligence` registration.

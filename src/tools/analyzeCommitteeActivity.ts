@@ -1,16 +1,16 @@
 /**
  * MCP Tool: analyze_committee_activity
- * 
+ *
  * Analyze committee workload and member engagement for EP committees
  * using real data from the European Parliament Open Data Portal.
- * 
+ *
  * **Intelligence Perspective:** Committee activity analysis reveals institutional
  * priorities, resource allocation patterns, and policy domain intensity—essential
  * for understanding where legislative power concentrates.
- * 
+ *
  * **Business Perspective:** Committee monitoring enables enterprise government affairs
  * teams to track policy areas relevant to their industry with precision.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -173,7 +173,6 @@ async function buildAnalysis(
     memberEngagement: {
       totalMembers: memberCount,
       averageAttendance: 0,
-      // 0 indicates unknown due to lack of member-level activity data
       activeContributors: 0
     },
     legislativeOutput: {

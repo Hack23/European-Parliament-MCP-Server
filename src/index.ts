@@ -1,21 +1,21 @@
 #!/usr/bin/env node
 /**
  * European Parliament MCP Server
- * 
+ *
  * Model Context Protocol server providing access to European Parliament open data.
- * 
+ *
  * **Intelligence Perspective:** Serves as the primary OSINT platform for EU parliamentary
  * intelligence—enabling MEP profiling, voting pattern analysis, coalition detection,
  * legislative monitoring, and political risk assessment through structured MCP tools.
- * 
+ *
  * **Business Perspective:** Core product offering structured access to EU parliamentary
  * data via MCP protocol—targeting AI developers, civic tech platforms, journalists,
  * researchers, and enterprise government affairs teams.
- * 
+ *
  * **Marketing Perspective:** First MCP server for European Parliament data—positioned
  * at the intersection of AI/LLM tooling and democratic transparency, targeting the
  * growing MCP ecosystem and EU civic tech market.
- * 
+ *
  * @see https://data.europarl.europa.eu/
  * @see https://spec.modelcontextprotocol.io/
  */
@@ -34,14 +34,11 @@ import { fileURLToPath } from 'url';
 import { resolve } from 'path';
 import { realpathSync } from 'fs';
 
-// ── Extracted modules ─────────────────────────────────────────────
 import { getToolMetadataArray, dispatchToolCall } from './server/toolRegistry.js';
 import { showHelp, showVersion, showHealth, parseCLIArgs } from './server/cli.js';
 import { handleToolError } from './tools/shared/errorHandler.js';
 import { SERVER_NAME, SERVER_VERSION } from './config.js';
-// MCP Prompts
 import { getPromptMetadataArray, handleGetPrompt } from './prompts/index.js';
-// MCP Resources
 import { getResourceTemplateArray, handleReadResource } from './resources/index.js';
 /** Re-export all public types, branded identifiers, and error classes */
 export type * from './types/index.js';
@@ -100,40 +97,38 @@ export { SERVER_NAME, SERVER_VERSION } from './config.js';
 
 /**
  * Main MCP Server class for European Parliament data access
- * 
+ *
  * Implements the Model Context Protocol (MCP) to provide AI assistants,
  * IDEs, and other MCP clients with structured access to European Parliament
  * open data, including information about MEPs, plenary sessions, committees,
  * legislative documents, and parliamentary questions.
- * 
+ *
  * **Features:**
  * - MCP protocol implementation with tools, resources, and prompts
  * - Type-safe TypeScript implementation with strict mode
  * - GDPR-compliant data handling
  * - Rate limiting and security controls
  * - Comprehensive error handling
- * 
+ *
  * **Data Sources:**
  * - European Parliament Open Data Portal (https://data.europarl.europa.eu/)
  * - API v2: https://data.europarl.europa.eu/api/v2/
- * 
+ *
  * @example
  * ```typescript
  * const server = new EuropeanParliamentMCPServer();
  * await server.start();
  * ```
- * 
+ *
  * @see https://spec.modelcontextprotocol.io/ - MCP specification
  * @see https://data.europarl.europa.eu/ - EP Open Data Portal
  * @see https://github.com/Hack23/ISMS-PUBLIC - ISMS compliance policies
  */
 export class EuropeanParliamentMCPServer {
-  // Using Server for now until McpServer is available in the SDK version
   // eslint-disable-next-line @typescript-eslint/no-deprecated
   private readonly server: Server;
 
   constructor() {
-    // Using Server for now until McpServer is available in the SDK version
     // eslint-disable-next-line @typescript-eslint/no-deprecated
     this.server = new Server(
       {
@@ -154,53 +149,45 @@ export class EuropeanParliamentMCPServer {
 
   /**
    * Set up MCP protocol handlers
-   * 
+   *
    * Registers handlers for:
    * - Tool listing: Returns available tools with schemas
    * - Tool execution: Routes tool calls to appropriate handlers
-   * 
+   *
    * **Security:**
    * - All inputs validated before processing
    * - Rate limiting applied per client
    * - GDPR compliance enforced
    * - Audit logging for all data access
-   * 
+   *
    * @throws {Error} If handler registration fails
-   * 
+   *
    * @internal
    */
   private setupHandlers(): void {
-    // List available tools
     this.server.setRequestHandler(ListToolsRequestSchema, () => {
       return Promise.resolve({
         tools: getToolMetadataArray(),
       });
     });
 
-    // Handle tool calls
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
 
       try {
         return await this.dispatchToolCall(name, args);
       } catch (error: unknown) {
-        // MCP best practice: Convert ALL tool errors to in-band MCP error responses
-        // with isError: true, so clients (including LLMs) receive a well-formed
-        // ToolResult with a readable error message instead of an opaque JSON-RPC
-        // protocol error that may cause disconnects or prevent retry logic.
         console.error(`[ERROR] Tool ${name} failed:`, error);
         return handleToolError(error, name);
       }
     });
 
-    // List available prompts
     this.server.setRequestHandler(ListPromptsRequestSchema, () => {
       return Promise.resolve({
         prompts: getPromptMetadataArray(),
       });
     });
 
-    // Handle prompt requests
     this.server.setRequestHandler(GetPromptRequestSchema, (request) => {
       const { name, arguments: args } = request.params;
 
@@ -215,14 +202,12 @@ export class EuropeanParliamentMCPServer {
       }
     });
 
-    // List resource templates
     this.server.setRequestHandler(ListResourceTemplatesRequestSchema, () => {
       return Promise.resolve({
         resourceTemplates: getResourceTemplateArray(),
       });
     });
 
-    // Handle resource reads
     this.server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
       const { uri } = request.params;
 
@@ -240,7 +225,7 @@ export class EuropeanParliamentMCPServer {
 
   /**
    * Dispatch tool calls to appropriate handlers
-   * 
+   *
    * @internal
    * @param name - Tool name
    * @param args - Tool arguments
@@ -255,28 +240,28 @@ export class EuropeanParliamentMCPServer {
 
   /**
    * Start the MCP server
-   * 
+   *
    * Initializes the server with stdio transport and begins listening for
    * MCP protocol messages. The server communicates via standard input/output
    * following the MCP specification.
-   * 
+   *
    * **Lifecycle:**
    * 1. Create stdio transport
    * 2. Connect server to transport
    * 3. Log startup message to stderr
    * 4. Begin handling MCP requests
-   * 
+   *
    * @returns Promise that resolves when server is started
-   * 
+   *
    * @throws {Error} If server initialization fails
-   * 
+   *
    * @example
    * ```typescript
    * const server = new EuropeanParliamentMCPServer();
    * await server.start();
    * // Server now listening on stdio
    * ```
-   * 
+   *
    * @see https://spec.modelcontextprotocol.io/specification/architecture/
    */
   async start(): Promise<void> {
@@ -297,7 +282,6 @@ export class EuropeanParliamentMCPServer {
     const prompts = getPromptMetadataArray();
     const resourceTemplates = getResourceTemplateArray();
 
-    // Log to stderr (stdout is used for MCP protocol)
     console.error(`${SERVER_NAME} v${SERVER_VERSION} started`);
     console.error('Server ready to handle requests');
     console.error(`Available tools: ${String(tools.length)} (${String(coreToolCount)} core + ${String(nonCoreToolCount)} additional)`);
@@ -306,19 +290,14 @@ export class EuropeanParliamentMCPServer {
   }
 }
 
-// Only execute CLI logic if this module is the entry point
-// This prevents CLI behavior from interfering when imported as a library
-// Use realpathSync to handle npm bin symlinks/shims correctly
 const isMainModule =
   process.argv[1] !== undefined &&
   realpathSync(resolve(fileURLToPath(import.meta.url))) === realpathSync(resolve(process.argv[1]));
 
 if (isMainModule) {
-  // Parse command-line arguments using typed CLIOptions
   const cliArgs = process.argv.slice(2);
   const opts = parseCLIArgs(cliArgs);
 
-  // Handle CLI commands
   if (opts.help === true) {
     showHelp();
     process.exit(0);
@@ -334,14 +313,10 @@ if (isMainModule) {
     process.exit(0);
   }
 
-  // Start the MCP server (default behavior)
   const server = new EuropeanParliamentMCPServer();
 
-  // Shutdown signal handlers — exit immediately on SIGTERM / SIGINT
-  // (stdio would otherwise keep the event loop alive in containers)
   function handleShutdownSignal(signal: string): void {
     console.error(`[${SERVER_NAME}] Received ${signal} — exiting`);
-    // Explicitly exit so that stdio doesn't keep the event loop alive in containers
     process.exit(0);
   }
 

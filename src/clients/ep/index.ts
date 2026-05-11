@@ -16,8 +16,6 @@
  * @module clients/ep
  */
 
-// ─── Infrastructure ───────────────────────────────────────────────────────────
-
 export {
   BaseEPClient,
   APIError,
@@ -38,8 +36,6 @@ export type {
   JSONLDResponse,
 } from './baseClient.js';
 
-// ─── Sub-clients ──────────────────────────────────────────────────────────────
-
 export { MEPClient } from './mepClient.js';
 export { PlenaryClient } from './plenaryClient.js';
 export { VotingClient } from './votingClient.js';
@@ -49,8 +45,6 @@ export { LegislativeClient } from './legislativeClient.js';
 export { QuestionClient } from './questionClient.js';
 export { VocabularyClient } from './vocabularyClient.js';
 export { DoceoClient, doceoClient } from './doceoClient.js';
-
-// ─── JSON-LD helpers (pure, re-exported for consumers) ───────────────────────
 
 export {
   toSafeString,
@@ -70,8 +64,6 @@ export {
   mapDocumentStatus,
   mapQuestionType,
 } from './jsonLdHelpers.js';
-
-// ─── Transformers (pure, re-exported for consumers) ──────────────────────────
 
 export {
   transformMEP,

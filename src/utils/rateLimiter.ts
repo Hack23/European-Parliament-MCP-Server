@@ -1,17 +1,17 @@
 /**
  * Rate Limiter utility using token bucket algorithm
- * 
+ *
  * **Intelligence Perspective:** Ensures sustainable OSINT collection rates from EP API,
  * preventing service disruption that would compromise intelligence product reliability.
- * 
+ *
  * **Business Perspective:** SLA compliance depends on rate limiting—ensures fair resource
  * allocation across API tiers and prevents abuse from high-volume customers.
- * 
+ *
  * **Marketing Perspective:** Responsible API usage demonstrates platform maturity
  * and reliability commitment to potential enterprise customers and partners.
- * 
+ *
  * ISMS Policy: SC-002 (Secure Coding), AC-003 (Access Control)
- * 
+ *
  * Implements token bucket algorithm for rate limiting to prevent abuse
  * and ensure fair resource allocation.
  */
@@ -52,12 +52,12 @@ interface RateLimiterOptions {
    * Maximum number of tokens in the bucket (must be a finite integer >= 1)
    */
   tokensPerInterval: number;
-  
+
   /**
    * Time interval for token refill
    */
   interval: 'second' | 'minute' | 'hour';
-  
+
   /**
    * Initial number of tokens (defaults to tokensPerInterval)
    */
@@ -102,8 +102,7 @@ export class RateLimiter {
     }
     this.tokens = initialTokens;
     this.lastRefill = Date.now();
-    
-    // Convert interval to milliseconds
+
     switch (options.interval) {
       case 'second':
         this.intervalMs = 1000;
@@ -134,7 +133,7 @@ export class RateLimiter {
     const now = Date.now();
     const elapsedMs = now - this.lastRefill;
     const tokensToAdd = (elapsedMs / this.intervalMs) * this.tokensPerInterval;
-    
+
     if (tokensToAdd > 0) {
       this.tokens = Math.min(
         this.tokensPerInterval,
@@ -182,20 +181,15 @@ export class RateLimiter {
     count: number,
     options?: { timeoutMs?: number }
   ): Promise<RateLimitResult> {
-    // Validate count: must be a finite integer >= 1
     if (!Number.isFinite(count) || count < 1 || !Number.isInteger(count)) {
       throw new Error(`removeTokens: count must be a finite integer >= 1, got ${String(count)}`);
     }
-    // A count larger than the bucket capacity can never be satisfied
     if (count > this.tokensPerInterval) {
       throw new Error(
         `removeTokens: count (${String(count)}) exceeds bucket capacity (${String(this.tokensPerInterval)})`
       );
     }
 
-    // Validate timeoutMs: coerce invalid (NaN/Infinity/negative) to 0 so the
-    // call never blocks and either succeeds immediately if enough tokens are
-    // available or returns allowed:false immediately if not
     const rawTimeoutMs = options?.timeoutMs;
     const timeoutMs = RateLimiter.resolveTimeout(rawTimeoutMs);
 
@@ -223,9 +217,6 @@ export class RateLimiter {
 
       await new Promise<void>(resolve => setTimeout(resolve, waitMs));
 
-      // Hard deadline guard: if the timer fired late (event-loop delay) and the
-      // deadline has already elapsed, reject without consuming tokens.
-      // retryAfterMs is always >= 1 so callers always receive a positive retry hint.
       if (Date.now() >= deadline) {
         this.refill();
         return {
@@ -272,12 +263,12 @@ export class RateLimiter {
       );
     }
     this.refill();
-    
+
     if (this.tokens >= count) {
       this.tokens -= count;
       return true;
     }
-    
+
     return false;
   }
 

@@ -56,7 +56,6 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetCommitteeInfo} for retrieving committee membership and structure
  */
 export async function handleGetCommitteeDocuments(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetCommitteeDocumentsSchema.parse>;
   try {
     params = GetCommitteeDocumentsSchema.parse(args);

@@ -68,7 +68,6 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetMeetingForeseenActivities} for planned meeting activities
  */
 export async function handleGetMeetingPlenarySessionDocuments(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetMeetingPlenarySessionDocumentsSchema.parse>;
   try {
     params = GetMeetingPlenarySessionDocumentsSchema.parse(args);

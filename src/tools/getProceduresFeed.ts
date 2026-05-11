@@ -75,9 +75,6 @@ async function tryProceduresFallback(
       `Degraded mode: showing recent procedures from GET /procedures (non-feed endpoint).` +
       ` Items are procedure summaries rather than feed entries and may differ in shape from normal feed items.${ignoredSuffix}` +
       ` Consider retrying get_procedures_feed.`;
-    // GET /procedures returns a PaginatedResponse without the JSON-LD `@context`
-    // that the uniform feed envelope normally carries; inject an empty default
-    // so the envelope shape stays stable for downstream consumers.
     const envelope = { '@context': [] as unknown[], ...fallbackResult };
     return buildFeedSuccessResponse(envelope, [fallbackWarning]);
   } catch {
@@ -254,7 +251,6 @@ function buildStalenessWarnings(result: unknown): readonly string[] {
  * @security Input is validated with Zod before any API call.
  */
 export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetProceduresFeedSchema.parse>;
   try {
     params = GetProceduresFeedSchema.parse(args);
@@ -289,12 +285,6 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
       return buildEnrichmentFailedResponse(rawError);
     }
     const emptyReason = `EP API procedures/feed returned no data for timeframe '${params.timeframe}' — no procedures were updated in the requested period. This is expected during parliamentary recess or low-activity weeks. Use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback.`;
-    // Detect the historical-tail-ordering regression flagged in the
-    // Hack23/euparliamentmonitor 2026-04-24 breaking audit §1.4: the EP API
-    // sometimes returns 1972/1980 procedure IDs first instead of date-sorted
-    // newest-first. When no item carries a current-year reference / activity
-    // date we surface a STALENESS_WARNING so consumers can detect the
-    // regression mechanically rather than by parsing prose.
     const stalenessWarnings = buildStalenessWarnings(result);
     return buildFeedSuccessResponse(result, stalenessWarnings, emptyReason);
   } catch (error: unknown) {

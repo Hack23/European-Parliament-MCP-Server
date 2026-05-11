@@ -26,18 +26,8 @@
  * additionally strips the URI path prefix before lookup.
  */
 const POLITICAL_GROUP_ALIASES: ReadonlyMap<string, string> = new Map([
-  // EPP variants — including French/Italian native names observed in the
-  // EP Open Data Portal (e.g. URI suffix `…/corporate-body/PPE`, full
-  // French group name `Groupe du Parti populaire européen…`). Added in
-  // response to Hack23/euparliamentmonitor 2026-04-24 propositions Defect
-  // #4 where `memberCount: 0` was reported for EPP because the upstream
-  // returned the French acronym `PPE`.
   ['epp', 'EPP'],
   ['epp-ed', 'EPP'],
-  // EP Open Data Portal also returns the French acronym `PPE` (Parti Populaire
-  // Européen) for the EPP group, e.g. as the URI suffix
-  // `…/corporate-body/PPE`. See `analyze_coalition_dynamics` reliability audit
-  // (Hack23/euparliamentmonitor 2026-04-24 propositions, Defect #4).
   ['ppe', 'EPP'],
   ['ppe-de', 'EPP'],
   ['groupe du parti populaire européen (démocrates-chrétiens)', 'EPP'],
@@ -47,9 +37,6 @@ const POLITICAL_GROUP_ALIASES: ReadonlyMap<string, string> = new Map([
   ["group of the european people's party", 'EPP'],
   ["european people's party", 'EPP'],
   ['european people’s party', 'EPP'],
-  // S&D variants — `SOC` and `PSE` are older / native acronyms returned
-  // by the EP API in some responses; the French group name is included for
-  // the same reason as the EPP variants above.
   ['s&d', 'S&D'],
   ['sd', 'S&D'],
   ['s-d', 'S&D'],
@@ -58,13 +45,11 @@ const POLITICAL_GROUP_ALIASES: ReadonlyMap<string, string> = new Map([
   ['group of the progressive alliance of socialists and democrats in the european parliament', 'S&D'],
   ['progressive alliance of socialists and democrats', 'S&D'],
   ['groupe de l\'alliance progressiste des socialistes et démocrates au parlement européen', 'S&D'],
-  // Renew Europe variants
   ['renew', 'Renew'],
   ['re', 'Renew'],
   ['renew europe', 'Renew'],
   ['renew europe group', 'Renew'],
   ['alde', 'Renew'],
-  // Greens/EFA variants — EP URI suffix is `Verts-ALE`
   ['greens/efa', 'Greens/EFA'],
   ['greens-efa', 'Greens/EFA'],
   ['verts/ale', 'Greens/EFA'],
@@ -73,28 +58,23 @@ const POLITICAL_GROUP_ALIASES: ReadonlyMap<string, string> = new Map([
   ['the greens/european free alliance', 'Greens/EFA'],
   ['greens/european free alliance', 'Greens/EFA'],
   ['groupe des verts/alliance libre européenne', 'Greens/EFA'],
-  // ECR variants
   ['ecr', 'ECR'],
   ['european conservatives and reformists group', 'ECR'],
   ['european conservatives and reformists', 'ECR'],
-  // PfE variants (successor to ID from July 2024)
   ['pfe', 'PfE'],
   ['patriots for europe', 'PfE'],
   ['id', 'PfE'],
   ['identity and democracy', 'PfE'],
   ['identity and democracy group', 'PfE'],
-  // The Left (GUE/NGL) variants
   ['the left', 'The Left'],
   ['gue/ngl', 'The Left'],
   ['gue-ngl', 'The Left'],
   ['the left in the european parliament - gue/ngl', 'The Left'],
   ['the left group in the european parliament - gue/ngl', 'The Left'],
   ['confederal group of the european united left - nordic green left', 'The Left'],
-  // ESN (new EP10 group)
   ['esn', 'ESN'],
   ['europe of sovereign nations', 'ESN'],
   ['europe of sovereign nations group', 'ESN'],
-  // Non-Inscrits variants
   ['ni', 'NI'],
   ['non-attached', 'NI'],
   ['non-inscrits', 'NI'],
@@ -124,14 +104,11 @@ const POLITICAL_GROUP_ALIASES: ReadonlyMap<string, string> = new Map([
 export function normalizePoliticalGroup(raw: string): string {
   const trimmed = raw.trim();
   if (trimmed === '' || trimmed.toLowerCase() === 'unknown') return trimmed;
-  // Strip URI path prefix if present — preserves the last segment for lookup.
   const lastSlash = trimmed.lastIndexOf('/');
   const suffix = lastSlash >= 0 ? trimmed.substring(lastSlash + 1) : trimmed;
   const key = suffix.toLowerCase().trim();
   const canonical = POLITICAL_GROUP_ALIASES.get(key);
   if (canonical !== undefined) return canonical;
-  // Also try the full original string (handles full group names that include
-  // slashes like "Greens/EFA" where stripping the URI prefix would be wrong).
   const fullKey = trimmed.toLowerCase();
   const canonicalFull = POLITICAL_GROUP_ALIASES.get(fullKey);
   if (canonicalFull !== undefined) return canonicalFull;

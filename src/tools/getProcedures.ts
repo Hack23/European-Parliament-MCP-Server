@@ -61,7 +61,6 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetProcedureEvents} for retrieving events linked to a specific procedure
  */
 export async function handleGetProcedures(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetProceduresSchema.parse>;
   try {
     params = GetProceduresSchema.parse(args);
@@ -96,11 +95,6 @@ export async function handleGetProcedures(args: unknown): Promise<ToolResult> {
 
     return buildToolResponse(result);
   } catch (error: unknown) {
-    // Surface upstream 404s as a non-retryable UPSTREAM_404 ToolError only for
-    // single-procedure lookups, where 404 semantically means the requested
-    // procedure does not exist. List retrievals fall through to the generic
-    // retryable failure path because a 404 there likely indicates
-    // misconfiguration or transient upstream routing issues.
     if (
       params.processId !== undefined &&
       error instanceof APIError &&

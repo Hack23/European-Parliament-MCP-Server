@@ -1,18 +1,18 @@
 /**
  * MCP Tool: get_mep_details
- * 
+ *
  * Retrieve detailed information about a specific MEP
- * 
+ *
  * **Intelligence Perspective:** Enables deep-dive MEP profiling including voting statistics,
  * committee memberships, political group alignment, and behavioral pattern analysis for
  * individual actor intelligence assessments.
- * 
+ *
  * **Business Perspective:** Powers premium MEP profile products for corporate affairs teams,
  * lobbyists, and political consultancies requiring comprehensive stakeholder intelligence.
- * 
+ *
  * **Marketing Perspective:** Demonstrates depth of EP data access—key differentiator
  * for attracting enterprise customers and academic researchers.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AU-002 (Audit Logging), GDPR Compliance
  */
 
@@ -52,7 +52,6 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetMEPDetails(
   args: unknown
 ): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetMEPDetailsSchema.parse>;
   try {
     params = GetMEPDetailsSchema.parse(args);
@@ -71,12 +70,10 @@ export async function handleGetMEPDetails(
   }
 
   try {
-    // Fetch MEP details from EP API
     const result = await epClient.getMEPDetails(params.id);
-    
-    // Validate output
+
     const validated = MEPDetailsSchema.parse(result);
-    
+
     return buildToolResponse(validated);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {

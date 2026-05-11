@@ -22,8 +22,6 @@ import { withRetry, withTimeoutAndAbort, TimeoutError, DEFAULT_TIMEOUTS } from '
 import { performanceMonitor } from '../../utils/performance.js';
 import { DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API_URL, USER_AGENT } from '../../config.js';
 
-// ─── URL Validation (SSRF prevention) ────────────────────────────────────────
-
 /** Exact hostnames that must never be used as API endpoints. */
 const BLOCKED_HOSTS_EXACT = new Set(['localhost', '0.0.0.0', '::1']);
 
@@ -84,12 +82,6 @@ export function validateApiUrl(url: string, label = 'EP_API_URL'): string {
   if (parsed.protocol !== 'https:') {
     throw new Error(`${label} must use HTTPS protocol`);
   }
-  // In the Node.js WHATWG URL API, .hostname includes the surrounding brackets
-  // for IPv6 addresses (e.g. new URL('https://[::1]/').hostname === '[::1]').
-  // Strip them before pattern matching so both IPv4 and IPv6 patterns are
-  // applied to the bare address string without brackets.
-  // Also strip a single trailing dot so the FQDN form "localhost." is treated
-  // identically to "localhost" (both resolve to loopback).
   const rawHost = parsed.hostname.replace(/\.$/, '');
   const host = rawHost.startsWith('[') && rawHost.endsWith(']')
     ? rawHost.slice(1, -1)
@@ -99,8 +91,6 @@ export function validateApiUrl(url: string, label = 'EP_API_URL'): string {
   }
   return url;
 }
-
-// ─── Default configuration constants ─────────────────────────────────────────
 
 /** Default base URL for European Parliament Open Data Portal API v2 — derived from centralized config */
 export const DEFAULT_EP_API_BASE_URL = DEFAULT_API_URL;
@@ -128,8 +118,6 @@ export const DEFAULT_RATE_LIMIT_TOKENS = DEFAULT_RATE_LIMIT_PER_MINUTE;
 export const DEFAULT_RATE_LIMIT_INTERVAL = 'minute' as const;
 /** Maximum allowed response body size in bytes (10 MiB, 10×1024×1024) to prevent memory exhaustion */
 export const DEFAULT_MAX_RESPONSE_BYTES = 10_485_760;
-
-// ─── Exported error class ─────────────────────────────────────────────────────
 
 /**
  * API Error thrown when European Parliament API requests fail.
@@ -162,8 +150,6 @@ export class APIError extends Error {
     this.name = 'APIError';
   }
 }
-
-// ─── Interfaces ───────────────────────────────────────────────────────────────
 
 /**
  * JSON-LD response format from EP API.
@@ -215,8 +201,6 @@ export interface EPSharedResources {
   cacheCounters: { hits: number; misses: number };
 }
 
-// ─── Base client ──────────────────────────────────────────────────────────────
-
 /**
  * Base class for European Parliament API sub-clients.
  *
@@ -260,10 +244,7 @@ export class BaseEPClient {
     maxResponseBytes: number;
   } {
     const rawBaseURL = config.baseURL ?? DEFAULT_EP_API_BASE_URL;
-    // Validate baseURL to prevent SSRF when sub-clients are instantiated directly
     validateApiUrl(rawBaseURL, 'config.baseURL');
-    // Ensure baseURL always ends with '/' so that relative endpoints resolve correctly
-    // e.g. new URL('meps', 'https://host/api/v2') would drop 'v2' without the trailing slash
     const baseURL = rawBaseURL.endsWith('/') ? rawBaseURL : `${rawBaseURL}/`;
     return {
       baseURL,
@@ -320,8 +301,6 @@ export class BaseEPClient {
     }
   }
 
-  // ─── HTTP infrastructure ────────────────────────────────────────────────────
-
   /**
    * Builds the full request URL from endpoint + optional params.
    * @private
@@ -366,10 +345,6 @@ export class BaseEPClient {
       const code = error.statusCode ?? 500;
       return code === 429 || code >= 500;
     }
-    // JSON parse errors (SyntaxError) are generally not retried, but
-    // "Unexpected end of JSON input" indicates a truncated response body
-    // (e.g. the EP API's own server-side timeout cut the stream short).
-    // These are transient and often succeed on retry.
     if (error instanceof SyntaxError) {
       return error.message.includes('Unexpected end of JSON input');
     }
@@ -444,19 +419,12 @@ export class BaseEPClient {
    * @private
    */
   private static async parseResponseJson<T>(response: Response): Promise<T> {
-    // Use text + JSON.parse instead of response.json() so we can distinguish
-    // between an actually empty body and malformed JSON content.
     const raw = await response.text();
 
-    // Empty or whitespace-only body — mirror the behaviour used for
-    // `content-length: 0` responses and return a minimal JSON-LD shape so
-    // callers see an empty `data` array instead of a parse error.
     if (raw.length === 0 || /^\s*$/.test(raw)) {
       return { data: [], '@context': [] } as unknown as T;
     }
 
-    // Non-empty body must be valid JSON; let any SyntaxError propagate so
-    // callers are aware of malformed API responses.
     return JSON.parse(raw) as T;
   }
 
@@ -531,12 +499,6 @@ export class BaseEPClient {
    * @private
    */
   private async fetchWithTimeout<T>(url: URL, endpoint: string, minimumTimeoutMs?: number): Promise<T> {
-    // When a per-endpoint minimum is specified (e.g. for known slow feed
-    // endpoints), use it as a floor: the effective timeout is the greater
-    // of the global timeout (which the user may have raised via --timeout
-    // or EP_REQUEST_TIMEOUT_MS) and the per-endpoint minimum.
-    // Ignore invalid values so this low-level HTTP primitive never forwards
-    // a non-finite or non-positive timeout to withTimeoutAndAbort().
     const validMinimum =
       minimumTimeoutMs !== undefined &&
       Number.isFinite(minimumTimeoutMs) &&
@@ -563,23 +525,16 @@ export class BaseEPClient {
           );
         }
 
-        // HTTP 204 No Content — some EP API feed endpoints (e.g.
-        // controlled-vocabularies/feed) return 204 when no updates exist.
         if (response.status === 204) {
           await response.body?.cancel();
           return BaseEPClient.EMPTY_JSONLD as unknown as T;
         }
 
-        // Validate content-type to reject non-JSON responses early.
         BaseEPClient.validateContentType(response);
 
-        // Try content-length-based parsing first.
         const clResult = await this.parseByContentLength<T>(response);
         if (clResult !== undefined) return clResult;
 
-        // No content-length header (chunked encoding) — stream the body and
-        // enforce the cap incrementally so oversized responses are aborted
-        // before they are fully buffered in memory.
         return this.readStreamedBody<T>(response);
       },
       effectiveTimeout,
@@ -618,8 +573,6 @@ export class BaseEPClient {
    */
   private toAPIError(error: unknown, endpoint: string): APIError {
     if (error instanceof TimeoutError) {
-      // Use the actual timeout that was applied (carried by TimeoutError),
-      // falling back to the global timeout if unavailable.
       const actualTimeout = error.timeoutMs ?? this.timeoutMs;
       return new APIError(
         `EP API request to ${endpoint} timed out after ${String(actualTimeout)}ms`,
@@ -655,7 +608,6 @@ export class BaseEPClient {
     params?: Record<string, unknown>,
     minimumTimeoutMs?: number
   ): Promise<T> {
-    // Consume one rate-limit token; waits asynchronously up to 5 s before giving up
     const rlResult = await this.rateLimiter.removeTokens(1);
     if (!rlResult.allowed) {
       throw new APIError(
@@ -667,7 +619,6 @@ export class BaseEPClient {
 
     const cacheKey = this.getCacheKey(endpoint, params);
 
-    // Cache hit path
     const cacheStart = performance.now();
     const cached = this.cache.get(cacheKey);
     if (cached !== undefined) {
@@ -702,17 +653,11 @@ export class BaseEPClient {
     endpoint: string,
     params?: Record<string, unknown>
   ): string {
-    // Sort params keys to ensure deterministic cache keys regardless of
-    // property insertion order. This prevents cache misses and duplicate
-    // cache entries where { a: 1, b: 2 } and { b: 2, a: 1 } would
-    // otherwise produce different keys. (ISMS A.8.11 — Data integrity)
     const sortedParams = params !== undefined
       ? Object.fromEntries(Object.entries(params).sort(([a], [b]) => a.localeCompare(b)))
       : undefined;
     return JSON.stringify({ endpoint, params: sortedParams });
   }
-
-  // ─── Public cache helpers ───────────────────────────────────────────────────
 
   /**
    * Clears all entries from the LRU cache.

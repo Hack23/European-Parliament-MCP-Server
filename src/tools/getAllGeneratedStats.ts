@@ -202,7 +202,6 @@ function filterRankings(
     return GENERATED_STATS.categoryRankings.map(recompute);
   }
 
-  // political_groups has no numeric ranking category
   if (params.category === 'political_groups') return [];
 
   const label = CATEGORY_LABEL_MAP[params.category];
@@ -272,7 +271,6 @@ export async function fetchRecentVoteStats(): Promise<RecentVoteActivity | null>
     const adoptedCount = votes.filter((v) => v.result === 'ADOPTED').length;
     const rejectedCount = votes.filter((v) => v.result === 'REJECTED').length;
     const recentVoteCount = votes.length;
-    // Multiply by 1000 then divide by 10 to round to one decimal place (e.g. 50.5%)
     const adoptionRate =
       recentVoteCount > 0 ? Math.round((adoptedCount / recentVoteCount) * 1000) / 10 : 0;
     const value: RecentVoteActivity = {
@@ -328,22 +326,17 @@ export function getAllGeneratedStats(
     const yearFrom = params.yearFrom ?? GENERATED_STATS.coveragePeriod.from;
     const yearTo = params.yearTo ?? GENERATED_STATS.coveragePeriod.to;
 
-    // Filter yearly stats by requested year range
     const filteredYearly = GENERATED_STATS.yearlyStats
       .filter((y) => y.year >= yearFrom && y.year <= yearTo)
       .map((y) => {
         if (params.includeMonthlyBreakdown) return y;
-        // Omit monthly breakdown for compact output
         const { monthlyActivity: _monthly, ...rest } = y;
         void _monthly;
         return rest;
       });
 
-    // Filter rankings by category if specified
     const filteredRankings = filterRankings(params, yearFrom, yearTo);
 
-    // Include predictions only if requested — predictions are always returned in full
-    // since they cover future years (2027–2031) beyond the historical yearTo default (2026)
     const filteredPredictions = params.includePredictions ? GENERATED_STATS.predictions : [];
 
     const result = {
@@ -452,7 +445,6 @@ export const getAllGeneratedStatsToolMetadata = {
   },
 };
 
-// Helper: fetches DOCEO activity when the requested category warrants near-realtime enrichment.
 async function resolveRecentActivity(
   params: GetAllGeneratedStatsParams
 ): Promise<RecentVoteActivity | null> {
@@ -460,7 +452,6 @@ async function resolveRecentActivity(
 }
 
 export async function handleGetAllGeneratedStats(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: GetAllGeneratedStatsParams;
   try {
     params = GetAllGeneratedStatsSchema.parse(args);

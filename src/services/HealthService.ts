@@ -22,8 +22,6 @@ import type { RateLimiter, RateLimiterStatus } from '../utils/rateLimiter.js';
 import type { MetricsService } from './MetricsService.js';
 import { MetricName } from './MetricsService.js';
 
-// ── Public types ──────────────────────────────────────────────────
-
 /**
  * Overall server health verdict.
  *
@@ -71,8 +69,6 @@ export interface HealthStatus {
   /** Server uptime in milliseconds */
   uptimeMs: number;
 }
-
-// ── HealthService implementation ──────────────────────────────────
 
 /**
  * Health Check Service
@@ -161,8 +157,6 @@ export class HealthService {
     };
   }
 
-  // ── Private helpers ─────────────────────────────────────────────
-
   /**
    * Build rate-limiter snapshot by delegating to RateLimiter.getStatus().
    * Cyclomatic complexity: 1
@@ -184,11 +178,9 @@ export class HealthService {
     const callCount = this.metricsService.getMetric(MetricName.EP_API_CALL_COUNT) ?? 0;
 
     if (callCount === 0) {
-      // No calls yet — reachability is unknown
       return null;
     }
 
-    // Reachable if at least some calls succeeded
     return errorCount < callCount;
   }
 
@@ -217,12 +209,10 @@ export class HealthService {
     rateLimiter: RateLimiterHealthStatus,
     epApiReachable: boolean | null
   ): HealthStatusLevel {
-    // null = unknown (no metrics yet) — treat as not failing
     if (epApiReachable === false) {
       return 'unhealthy';
     }
 
-    // Degraded if less than 10 % of tokens remain
     const rateLimiterLow =
       rateLimiter.maxTokens > 0 &&
       rateLimiter.availableTokens / rateLimiter.maxTokens < 0.1;

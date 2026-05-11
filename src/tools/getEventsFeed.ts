@@ -24,7 +24,6 @@ import type { ToolResult } from './shared/types.js';
  * @security Input is validated with Zod before any API call.
  */
 export async function handleGetEventsFeed(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetEventsFeedSchema.parse>;
   try {
     params = GetEventsFeedSchema.parse(args);

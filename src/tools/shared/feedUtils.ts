@@ -254,7 +254,6 @@ export function buildFeedSuccessResponse(
   if (items.length === 0) {
     status = 'unavailable';
     reason = customEmptyReason ?? EMPTY_FEED_REASON;
-    // Surface the empty-feed reason in dataQualityWarnings for backwards-compatible consumers.
     if (!mergedWarnings.includes(reason)) {
       mergedWarnings.push(reason);
     }

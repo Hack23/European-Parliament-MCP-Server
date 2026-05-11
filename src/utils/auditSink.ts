@@ -19,10 +19,6 @@
 import { isAbsolute } from 'node:path';
 import { appendFile, rename, stat } from 'node:fs/promises';
 
-// ---------------------------------------------------------------------------
-// Core data model
-// ---------------------------------------------------------------------------
-
 /**
  * Represents a single audited operation and its contextual metadata.
  *
@@ -51,10 +47,6 @@ export interface AuditLogEntry {
   ipAddress?: string;
 }
 
-// ---------------------------------------------------------------------------
-// Query / access-control types
-// ---------------------------------------------------------------------------
-
 /**
  * Filter for querying audit log entries.
  */
@@ -76,10 +68,6 @@ export interface AuditFilter {
  * @security Must be kept secret; treat as a capability key.
  */
 export type AuthToken = string;
-
-// ---------------------------------------------------------------------------
-// Sink interface
-// ---------------------------------------------------------------------------
 
 /**
  * Pluggable audit sink interface.
@@ -112,10 +100,6 @@ export interface AuditSink {
   clear?(authorization?: AuthToken): void;
 }
 
-// ---------------------------------------------------------------------------
-// AuditLogger constructor options
-// ---------------------------------------------------------------------------
-
 /**
  * Constructor options for {@link AuditLogger}.
  */
@@ -139,10 +123,6 @@ export interface AuditLoggerOptions {
    */
   sensitiveKeys?: readonly string[];
 }
-
-// ---------------------------------------------------------------------------
-// Parameter sanitisation
-// ---------------------------------------------------------------------------
 
 /**
  * Default set of top-level parameter keys treated as personally identifiable
@@ -184,10 +164,6 @@ export function sanitizeParams(
   );
 }
 
-// ---------------------------------------------------------------------------
-// Data retention
-// ---------------------------------------------------------------------------
-
 /**
  * Enforces a configurable data-retention window by filtering out expired entries.
  *
@@ -218,10 +194,6 @@ export class RetentionPolicy {
     return Date.now() - entry.timestamp.getTime() > this.maxAgeMs;
   }
 }
-
-// ---------------------------------------------------------------------------
-// MemoryAuditSink
-// ---------------------------------------------------------------------------
 
 /**
  * In-memory audit sink.
@@ -279,10 +251,6 @@ export class MemoryAuditSink implements AuditSink {
   }
 }
 
-// ---------------------------------------------------------------------------
-// StderrAuditSink
-// ---------------------------------------------------------------------------
-
 /**
  * Writes structured JSON audit lines to `stderr`.
  *
@@ -295,10 +263,6 @@ export class StderrAuditSink implements AuditSink {
     console.error('[AUDIT]', JSON.stringify(entry));
   }
 }
-
-// ---------------------------------------------------------------------------
-// FileAuditSink
-// ---------------------------------------------------------------------------
 
 /**
  * Constructor options for {@link FileAuditSink}.
@@ -340,16 +304,10 @@ export class FileAuditSink implements AuditSink {
   }
 
   write(entry: AuditLogEntry): Promise<void> {
-    // Chain each write onto the tail of the previous one so concurrent callers
-    // are serialised — preventing interleaved stat/rename/append sequences.
-    // Swap `writeQueue` to a promise that always resolves (never rejects) so
-    // the next enqueued write is not blocked after a prior write failure.
     const next = this.writeQueue.then(async (): Promise<void> => {
       await this.rotateIfNeeded();
       await appendFile(this.filePath, `${JSON.stringify(entry)}\n`, 'utf8');
     });
-    // Always keep `writeQueue` as a resolved promise for the next caller;
-    // propagate the actual error only through the returned `next` promise.
     this.writeQueue = next.then(
       (): void => { /* success — queue stays resolved */ },
       (): void => { /* failure — reset queue to resolved so next write proceeds */ }
@@ -369,20 +327,13 @@ export class FileAuditSink implements AuditSink {
     } catch (error: unknown) {
       const err = error as NodeJS.ErrnoException;
       if (err.code === 'ENOENT') {
-        // File does not exist yet — no rotation needed.
         return;
       }
-      // Surface unexpected errors (permissions, EBUSY, disk errors, etc.)
-      // so rotation failures are observable rather than silently swallowed.
       console.error('[FileAuditSink] Failed to rotate audit log file:', err);
       throw err;
     }
   }
 }
-
-// ---------------------------------------------------------------------------
-// StructuredJsonSink
-// ---------------------------------------------------------------------------
 
 /**
  * Serialises each audit entry to JSON and passes it to a writer callback.

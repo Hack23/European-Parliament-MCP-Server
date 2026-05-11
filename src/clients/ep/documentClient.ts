@@ -25,8 +25,6 @@ import {
 } from './baseClient.js';
 import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
-// ─── Document Client ──────────────────────────────────────────────────────────
-
 /**
  * Sub-client for document EP API endpoints.
  *
@@ -38,13 +36,9 @@ export class DocumentClient extends BaseEPClient {
     super(config, shared);
   }
 
-  // ─── Transform helpers ────────────────────────────────────────────────────
-
   private transformDocument(apiData: Record<string, unknown>): LegislativeDocument {
     return _transformDocument(apiData);
   }
-
-  // ─── Private helpers ──────────────────────────────────────────────────────
 
   /**
    * Builds EP API parameters for document search.
@@ -110,8 +104,6 @@ export class DocumentClient extends BaseEPClient {
     return filtered;
   }
 
-  // ─── Public methods ───────────────────────────────────────────────────────
-
   /**
    * Searches legislative documents by keyword, type, date, and committee.
    *
@@ -139,10 +131,6 @@ export class DocumentClient extends BaseEPClient {
       const currentOffset = params.offset ?? 0;
 
       const apiParams = this.buildDocumentSearchParams(params);
-      // Always apply the resolved limit/offset so the server page size matches
-      // the pagination metadata we return (callers may omit them, in which case
-      // buildDocumentSearchParams would leave them unset and the server default
-      // could differ from our requestedLimit/currentOffset defaults).
       apiParams['limit'] = requestedLimit;
       apiParams['offset'] = currentOffset;
       const response = await this.get<JSONLDResponse>('documents', apiParams);
@@ -151,31 +139,6 @@ export class DocumentClient extends BaseEPClient {
       let documents = response.data.map((item) => this.transformDocument(item));
       documents = this.filterDocuments(documents, params);
 
-      // Pagination envelope:
-      //   hasMore = pageSize === requestedLimit        (pre-filter, server-page)
-      //   total   = offset + filteredCount + (hasMore ? 1 : 0)  (post-filter)
-      //
-      // `hasMore` is derived from whether the server returned a full page —
-      // it signals that more documents (of the requested `work-type`) may
-      // exist to fetch, even if all items on the current page were removed by
-      // the client-side keyword/committee/date filters.
-      //
-      // `total` is computed from the *filtered* `documents.length` plus a
-      // +1 sentinel when `hasMore === true`. It is a **pagination-envelope
-      // sentinel**, not a match count: because `offset` is the raw server
-      // offset (not a cumulative count of filtered matches across previous
-      // pages), `total` may be larger than the actual number of filtered
-      // matches in the dataset. Its sole purpose is to satisfy the envelope
-      // identity `total === offset + data.length + (hasMore ? 1 : 0)` so the
-      // response stays internally consistent. This prevents the misleading
-      // `data:[] total:21 hasMore:true` envelope that would occur if `total`
-      // were derived from the unfiltered page size.
-      //
-      // Note: this differs from the repo-wide client-filtered-endpoint
-      // convention (see `types/ep/common.ts` — e.g. `getPlenarySessions`,
-      // `getParliamentaryQuestions` derive both `total` and `hasMore` from
-      // the unfiltered page size). `searchDocuments` is documented as an
-      // explicit exception in `PaginatedResponse`'s JSDoc.
       const hasMore = pageSize === requestedLimit;
       const filteredCount = documents.length;
       const result: PaginatedResponse<LegislativeDocument> = {
@@ -242,8 +205,6 @@ export class DocumentClient extends BaseEPClient {
       offset,
       limit,
     };
-    // Note: `year` is NOT a valid param for /committee-documents per EP API spec.
-    // Not forwarded to avoid misleading callers or future API validation failures.
 
     const response = await this.get<JSONLDResponse>('committee-documents', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];
@@ -316,8 +277,6 @@ export class DocumentClient extends BaseEPClient {
       offset,
       limit,
     };
-    // Note: `year` is NOT a valid param for /external-documents per EP API spec.
-    // Not forwarded to avoid misleading callers or future API validation failures.
 
     const response = await this.get<JSONLDResponse>('external-documents', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];

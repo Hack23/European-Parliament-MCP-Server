@@ -1,17 +1,17 @@
 /**
  * MCP Tool: get_plenary_sessions
- * 
+ *
  * Retrieve European Parliament plenary session information
- * 
+ *
  * **Intelligence Perspective:** Critical for legislative monitoring, session activity tracking,
  * debate analysis, and identifying legislative priorities across parliamentary terms.
- * 
+ *
  * **Business Perspective:** Enables real-time legislative tracking products for compliance
  * teams, regulatory affairs departments, and policy monitoring services.
- * 
+ *
  * **Marketing Perspective:** Showcases live parliamentary data access—compelling for
  * journalists, media organizations, and civic tech platforms.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -64,7 +64,6 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetPlenarySessions(
   args: unknown
 ): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetPlenarySessionsSchema.parse>;
   try {
     params = GetPlenarySessionsSchema.parse(args);
@@ -83,14 +82,12 @@ export async function handleGetPlenarySessions(
   }
 
   try {
-    // Single meeting lookup by ID
     if (params.eventId !== undefined) {
       const result = await epClient.getMeetingById(params.eventId);
       const validated = PlenarySessionSchema.parse(result);
       return buildToolResponse(validated);
     }
 
-    // Fetch plenary sessions from EP API (only pass defined properties)
     const apiParams = {
       limit: params.limit,
       offset: params.offset,
@@ -101,28 +98,12 @@ export async function handleGetPlenarySessions(
         { from: 'location', to: 'location' },
       ]),
     };
-    
+
     const result = await epClient.getPlenarySessions(apiParams);
-    
-    // Validate output
+
     const outputSchema = PaginatedResponseSchema(PlenarySessionSchema);
     const validated = outputSchema.parse(result);
 
-    // Client-side post-filter for dateFrom / dateTo.
-    // The EP `/meetings` endpoint accepts the `date-from` / `date-to` query
-    // params but historically ignores them and returns sessions stretching
-    // back to January 2014. See Hack23/euparliamentmonitor 2026-04-24
-    // propositions audit, Defect #5 (`get_plenary_sessions returns historical
-    // sessions despite dateFrom`). Until the upstream is fixed, we apply a
-    // best-effort post-filter on the returned `date` field so callers get
-    // sessions that actually fall in their requested window.
-    //
-    // Pagination semantics: we preserve the upstream `total` and `hasMore`
-    // (which describe the unfiltered page returned by the EP API) and
-    // surface the post-filter outcome via separate `filteredTotal` /
-    // `filteredHasMore` fields so consumers can still drive cursor-style
-    // pagination correctly even when later pages contain in-range
-    // sessions that the current page filtered out.
     if (params.dateFrom !== undefined || params.dateTo !== undefined) {
       const minDate = params.dateFrom;
       const maxDate = params.dateTo;

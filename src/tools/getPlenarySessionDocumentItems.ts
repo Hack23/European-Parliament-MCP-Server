@@ -47,7 +47,6 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetAdoptedTexts} for retrieving finalized plenary documents
  */
 export async function handleGetPlenarySessionDocumentItems(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetPlenarySessionDocumentItemsSchema.parse>;
   try {
     params = GetPlenarySessionDocumentItemsSchema.parse(args);

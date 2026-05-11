@@ -1,17 +1,17 @@
 /**
  * MCP Tool: get_parliamentary_questions
- * 
+ *
  * Retrieve European Parliament questions and answers
- * 
+ *
  * **Intelligence Perspective:** Reveals MEP policy priorities, Commission/Council scrutiny
  * patterns, and emerging political concerns through question topic analysis and frequency.
- * 
+ *
  * **Business Perspective:** Enables regulatory early-warning products—questions often signal
  * upcoming policy initiatives, making this valuable for compliance and government affairs.
- * 
+ *
  * **Marketing Perspective:** Unique dataset showcasing democratic accountability—ideal
  * for transparency advocates, investigative journalists, and academic researchers.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -61,7 +61,6 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetParliamentaryQuestions(
   args: unknown
 ): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetParliamentaryQuestionsSchema.parse>;
   try {
     params = GetParliamentaryQuestionsSchema.parse(args);
@@ -80,14 +79,12 @@ export async function handleGetParliamentaryQuestions(
   }
 
   try {
-    // Single question lookup by ID
     if (params.docId !== undefined) {
       const result = await epClient.getParliamentaryQuestionById(params.docId);
       const validated = ParliamentaryQuestionSchema.parse(result);
       return buildToolResponse(validated);
     }
 
-    // Fetch parliamentary questions from EP API (only pass defined properties)
     const apiParams = {
       limit: params.limit,
       offset: params.offset,
@@ -100,13 +97,12 @@ export async function handleGetParliamentaryQuestions(
         { from: 'dateTo', to: 'dateTo' },
       ]),
     };
-    
+
     const result = await epClient.getParliamentaryQuestions(apiParams);
-    
-    // Validate output
+
     const outputSchema = PaginatedResponseSchema(ParliamentaryQuestionSchema);
     const validated = outputSchema.parse(result);
-    
+
     return buildToolResponse(validated);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {

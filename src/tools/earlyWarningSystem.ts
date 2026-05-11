@@ -172,8 +172,6 @@ function buildCoalitionWarnings(groupSizes: GroupSize[], thresholds: Sensitivity
 function buildAttendanceWarnings(groupSizes: GroupSize[], focusArea: string): Warning[] {
   if (focusArea !== 'attendance' && focusArea !== 'all') return [];
 
-  // Heuristic: groups with <= 5 members are treated as very small delegations that may be
-  // more vulnerable to attendance/quorum issues and may indicate NI-style fragmentation risk.
   const smallGroups = groupSizes.filter(g => g.memberCount <= 5);
   if (smallGroups.length === 0) return [];
 
@@ -302,10 +300,6 @@ function resolveKeyRiskFactor(warnings: Warning[]): string {
 
 export async function earlyWarningSystem(params: EarlyWarningSystemParams): Promise<ToolResult> {
   try {
-    // NOTE: getCurrentMEPs uses /meps/show-current which returns country and
-    // politicalGroup fields. Paginated; limit:100 returns only the first page.
-    // Group-size distributions may be underestimated when hasMore is true.
-    // Warnings are sample-based; confidence is adjusted accordingly.
     const mepResult = await epClient.getCurrentMEPs({ limit: 100 });
     const assessmentTime = new Date().toISOString();
 

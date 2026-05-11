@@ -49,7 +49,6 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetIncomingMEPs} for MEPs who are newly joining parliament
  */
 export async function handleGetOutgoingMEPs(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetOutgoingMEPsSchema.parse>;
   try {
     params = GetOutgoingMEPsSchema.parse(args);

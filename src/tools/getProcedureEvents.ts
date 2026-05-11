@@ -52,7 +52,6 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetProcedures} for retrieving the parent procedure record
  */
 export async function handleGetProcedureEvents(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetProcedureEventsSchema.parse>;
   try {
     params = GetProcedureEventsSchema.parse(args);

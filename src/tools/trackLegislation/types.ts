@@ -1,6 +1,6 @@
 /**
  * Type definitions for legislation tracking
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation)
  */
 

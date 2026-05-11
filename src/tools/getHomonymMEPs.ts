@@ -48,7 +48,6 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetMEPDetails} for disambiguating a specific MEP by unique ID
  */
 export async function handleGetHomonymMEPs(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetHomonymMEPsSchema.parse>;
   try {
     params = GetHomonymMEPsSchema.parse(args);

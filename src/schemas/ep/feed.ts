@@ -22,8 +22,6 @@
 import { z } from 'zod';
 import { DateStringSchema } from './common.js';
 
-// ── Shared primitives ─────────────────────────────────────────────────────
-
 /**
  * Feed timeframe values accepted by configurable-window feed endpoints.
  */
@@ -89,8 +87,6 @@ const FixedWindowFeedSchema = z
     'Fixed-window feed — the EP API always returns updates from a server-defined default window (typically one month). All parameters are informational-only and silently ignored.'
   );
 
-// ── Group A – fixed-window feeds (no timeframe parameter) ─────────────────
-
 /** GET /documents/feed — server-default window */
 export const GetDocumentsFeedSchema = FixedWindowFeedSchema;
 
@@ -111,8 +107,6 @@ export const GetCorporateBodiesFeedSchema = FixedWindowFeedSchema;
 
 /** GET /controlled-vocabularies/feed — server-default window */
 export const GetControlledVocabulariesFeedSchema = FixedWindowFeedSchema;
-
-// ── Group B – configurable-window feeds (accept timeframe + optional filter) ─
 
 /** GET /meps/feed */
 export const GetMEPsFeedSchema = BaseFeedParamsSchema;
@@ -146,8 +140,6 @@ export const GetExternalDocumentsFeedSchema = BaseFeedParamsSchema.extend({
   workType: z.string().max(200).optional()
     .describe('Work type filter'),
 });
-
-// ── Optional endpoint ─────────────────────────────────────────────────────
 
 /** GET /procedures/{process-id}/events/{event-id} */
 export const GetProcedureEventByIdSchema = z.object({

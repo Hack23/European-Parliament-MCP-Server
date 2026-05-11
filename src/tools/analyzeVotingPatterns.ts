@@ -1,18 +1,18 @@
 /**
  * MCP Tool: analyze_voting_patterns
- * 
+ *
  * Analyze MEP voting behavior and patterns
- * 
+ *
  * **Intelligence Perspective:** Advanced analytic tool for political group cohesion measurement,
  * cross-party voting detection, MEP independence scoring, and predictive analysis of
  * legislative outcomes using structured intelligence analysis techniques.
- * 
+ *
  * **Business Perspective:** Premium analytics product differentiator—enables political risk
  * scoring, policy outcome prediction, and quantitative political analysis for enterprise clients.
- * 
+ *
  * **Marketing Perspective:** Flagship intelligence capability demonstrating AI-powered
  * parliamentary analysis—key selling point for MCP ecosystem positioning.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -142,13 +142,11 @@ function computeConfidence(totalVotes: number): 'HIGH' | 'MEDIUM' | 'LOW' {
 export async function handleAnalyzeVotingPatterns(
   args: unknown
 ): Promise<ToolResult> {
-  // Validate input
   const params = AnalyzeVotingPatternsSchema.parse(args);
-  
+
   try {
-    // Fetch MEP details for context
     const mep = await epClient.getMEPDetails(params.mepId);
-    
+
     const stats = mep.votingStatistics ?? {
       totalVotes: 0,
       votesFor: 0,
@@ -157,7 +155,6 @@ export async function handleAnalyzeVotingPatterns(
       attendanceRate: 0
     };
 
-    // EP API /meps/{id} does not expose voting statistics — totalVotes is always 0
     if (stats.totalVotes === 0) {
       return buildToolResponse({
         mepId: params.mepId,
@@ -188,7 +185,7 @@ export async function handleAnalyzeVotingPatterns(
         + 'Cross-party voting approximated from against-vote frequency. '
         + 'Data source: European Parliament Open Data Portal.'
     };
-    
+
     return buildToolResponse(analysis);
   } catch (error: unknown) {
     throw new ToolError({

@@ -1,18 +1,18 @@
 /**
  * MCP Tool: get_voting_records
- * 
+ *
  * Retrieve voting records from European Parliament plenary sessions
- * 
+ *
  * **Intelligence Perspective:** Core intelligence product for voting pattern analysis,
  * political group cohesion measurement, cross-party alliance detection, and MEP
  * loyalty/independence scoring through structured analytic techniques.
- * 
+ *
  * **Business Perspective:** High-value data product for political risk assessment firms,
  * policy analysis consultancies, and corporate government affairs departments.
- * 
+ *
  * **Marketing Perspective:** Most compelling data for data journalism partnerships,
  * academic research collaborations, and transparency advocacy organizations.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -74,7 +74,6 @@ function formatZodIssues(error: z.ZodError): string {
 export async function handleGetVotingRecords(
   args: unknown
 ): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetVotingRecordsSchema.parse>;
   try {
     params = GetVotingRecordsSchema.parse(args);
@@ -93,7 +92,6 @@ export async function handleGetVotingRecords(
   }
 
   try {
-    // Fetch voting records from EP API (only pass defined properties)
     const apiParams = {
       limit: params.limit,
       offset: params.offset,
@@ -104,10 +102,9 @@ export async function handleGetVotingRecords(
         { from: 'dateTo', to: 'dateTo' },
       ]),
     };
-    
+
     const result = await epClient.getVotingRecords(apiParams);
-    
-    // Validate output
+
     const outputSchema = PaginatedResponseSchema(VotingRecordSchema);
     const validated = outputSchema.parse(result);
 

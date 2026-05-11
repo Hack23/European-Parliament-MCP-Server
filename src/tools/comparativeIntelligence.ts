@@ -201,7 +201,6 @@ function computeLegislativeScore(mep: MEPApiData): number {
  *   that attendance data is not available from the underlying EP API
  */
 function computeAttendanceScore(mep: MEPApiData): number {
-  // attendanceRate is already in the 0-100 range; use it directly without scaling
   return Math.round((mep.votingStatistics?.attendanceRate ?? 0) * 100) / 100;
 }
 
@@ -751,7 +750,6 @@ function validateMepResults(
   const { notFoundMepIds, validResults, validMepIds, transientErrors } =
     partitionMepResults(detailsResults, mepIds);
 
-  // No valid MEPs: determine error type based on failure categories
   if (validMepIds.length === 0 && transientErrors.length > 0) {
     const cause = transientErrors[0]?.reason;
     const message = notFoundMepIds.length === 0
@@ -781,16 +779,12 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
       params.mepIds.map(id => epClient.getMEPDetails(String(id)))
     );
 
-    // Early validation: identify which MEP IDs resolved and which failed
     const validation = validateMepResults(detailsResults, params.mepIds);
     if ('error' in validation) {
       return validation.error;
     }
     const { notFoundMepIds, transientFailedMepIds, validResults, validMepIds } = validation;
 
-    // Build profiles only from valid (fulfilled) results — invalid/transient IDs
-    // are intentionally excluded; buildProfilesFromResults will find only fulfilled
-    // entries in this pre-filtered subset (no placeholder profiles are generated).
     const profiles = buildProfilesFromResults(validResults, validMepIds, dimensions);
 
     if (profiles.length < 2) {

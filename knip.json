@@ -19,7 +19,8 @@
   ],
   "ignoreBinaries": [],
   "ignore": [
-    "tests/fixtures/**"
+    "tests/fixtures/**",
+    "scripts/strip-comments.ts"
   ],
   "ignoreExportsUsedInFile": true
 }

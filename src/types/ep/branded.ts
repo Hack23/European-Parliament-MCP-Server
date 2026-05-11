@@ -33,8 +33,6 @@ export {
 
 import type { Brand } from '../branded.js';
 
-// ─── Additional EP-specific branded types ─────────────────────────────────────
-
 /**
  * Procedure ID – identifies a legislative procedure by its EP API **process-id**.
  *
@@ -86,8 +84,6 @@ export type VocabularyID = Brand<string, 'VocabularyID'>;
  */
 export type SittingID = Brand<string, 'SittingID'>;
 
-// ─── Type guards ───────────────────────────────────────────────────────────────
-
 /**
  * Type guard: checks that a string looks like an EP procedure ID.
  *
@@ -132,8 +128,6 @@ export function isVocabularyID(value: string): value is VocabularyID {
 export function isSittingID(value: string): value is SittingID {
   return /^MTG-PL-\d{4}-\d{2}-\d{2}$/.test(value);
 }
-
-// ─── Factory functions ─────────────────────────────────────────────────────────
 
 /**
  * Factory: validates and creates a ProcedureID.
