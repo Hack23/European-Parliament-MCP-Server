@@ -145,9 +145,6 @@ export function transformMEPDetails(apiData: Record<string, unknown>): MEPDetail
     country,
     committees: committees.length > 0 ? committees : baseMEP.committees,
     biography: `Born: ${bday !== '' ? bday : 'Unknown'}`,
-    // EP API /meps/{id} endpoint does not return voting statistics;
-    // votingStatistics is intentionally left undefined (not set to zeros)
-    // so consumers can distinguish "no data" from "zero votes".
   };
 }
 

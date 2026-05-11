@@ -354,10 +354,10 @@ export async function generateCommitteePerformanceReport(
       createMemberParticipationSection(membersLength)
     ],
     statistics: {
-      meetingsHeld: 0, // EP API does not provide committee-specific meeting counts
+      meetingsHeld: 0,
       reportsProduced: reportsProduced ?? 0,
-      opinionsIssued: 0, // EP API does not provide committee-specific opinion counts
-      averageAttendance: 0, // EP API does not provide attendance data
+      opinionsIssued: 0,
+      averageAttendance: 0,
       memberCount: membersLength
     },
     dataQualityWarnings: warnings

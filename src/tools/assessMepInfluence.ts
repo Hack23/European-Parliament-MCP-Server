@@ -367,7 +367,6 @@ export async function handleAssessMepInfluence(
       questionCount = questions.data.length;
     } catch (error: unknown) {
       auditLogger.logError('assess_mep_influence.fetch_questions', { mepId: params.mepId }, toErrorMessage(error));
-      // Questions may not be available — report zero
     }
 
     const dataQualityWarnings = collectDataQualityWarnings(votingDataAvailable, questionCount);

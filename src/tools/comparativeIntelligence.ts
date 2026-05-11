@@ -330,7 +330,7 @@ function detectOutliers(profiles: MepProfile[], dimensions: Dimension[]): Compar
     for (const profile of profiles) {
       const score = profile.scores[dim] ?? 0;
       const zScore = stdDev > 0 ? (score - mean) / stdDev : 0;
-      if (Math.abs(zScore) >= 1.5) { // z ≥ 1.5σ: captures ~6.7% in each tail (~13.4% combined); balanced outlier sensitivity
+      if (Math.abs(zScore) >= 1.5) {
         outliers.push({ mepId: profile.mepId, name: profile.name, outlierDimension: dim, outlierScore: score, zScore: Math.round(zScore * 100) / 100 });
       }
     }

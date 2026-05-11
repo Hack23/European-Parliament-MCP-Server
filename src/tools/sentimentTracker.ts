@@ -98,15 +98,15 @@ const KNOWN_POLITICAL_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID'
  * These are proxy estimates; direct voting cohesion data is not available from the EP API.
  */
 const SEAT_SHARE_THRESHOLDS = {
-  large: 0.25,   // ≥25% of total MEPs → "major governing bloc"
-  medium: 0.15,  // ≥15% and <25% → "significant player"
+  large: 0.25,
+  medium: 0.15,
   small: 0.05
 } as const;
 
 const SENTIMENT_SCORES = {
-  large: 0.3,    // Major blocs: positive alignment with institutional norms
-  medium: 0.2,   // Significant players: constructive engagement
-  small: 0.1,    // Minor partners: moderate positive
+  large: 0.3,
+  medium: 0.2,
+  small: 0.1,
   micro: -0.1
 } as const;
 

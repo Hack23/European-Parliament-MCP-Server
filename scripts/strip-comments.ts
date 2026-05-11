@@ -43,31 +43,9 @@ function isJSDoc(text: string): boolean {
   return text.startsWith('/**') && !text.startsWith('/***');
 }
 
-const DECLARATION_KINDS = new Set<ts.SyntaxKind>([
-  ts.SyntaxKind.FunctionDeclaration,
-  ts.SyntaxKind.ClassDeclaration,
-  ts.SyntaxKind.InterfaceDeclaration,
-  ts.SyntaxKind.TypeAliasDeclaration,
-  ts.SyntaxKind.EnumDeclaration,
-  ts.SyntaxKind.EnumMember,
-  ts.SyntaxKind.VariableStatement,
-  ts.SyntaxKind.ModuleDeclaration,
-  ts.SyntaxKind.ImportDeclaration,
-  ts.SyntaxKind.ExportDeclaration,
-  ts.SyntaxKind.ExportAssignment,
-  ts.SyntaxKind.MethodDeclaration,
-  ts.SyntaxKind.MethodSignature,
-  ts.SyntaxKind.PropertyDeclaration,
-  ts.SyntaxKind.PropertySignature,
-  ts.SyntaxKind.GetAccessor,
-  ts.SyntaxKind.SetAccessor,
-  ts.SyntaxKind.Constructor,
-  ts.SyntaxKind.ConstructSignature,
-  ts.SyntaxKind.CallSignature,
-  ts.SyntaxKind.IndexSignature,
-  ts.SyntaxKind.Parameter,
-  ts.SyntaxKind.TypeParameter,
-]);
+const DECLARATION_KINDS_UNUSED = 0;
+void DECLARATION_KINDS_UNUSED;
+
 
 interface CommentRange {
   readonly pos: number;
@@ -78,10 +56,11 @@ interface CommentRange {
 function collectAllComments(
   source: ts.SourceFile,
   text: string
-): { all: CommentRange[]; keepStart: Set<number> } {
+): { all: CommentRange[]; jsdocSpans: Range[] } {
   const seen = new Set<string>();
   const all: CommentRange[] = [];
-  const keepStart = new Set<number>();
+  const jsdocSpans: Range[] = [];
+  const jsdocSeen = new Set<string>();
 
   function record(ranges: readonly ts.CommentRange[] | undefined): void {
     if (!ranges) return;
@@ -91,41 +70,32 @@ function collectAllComments(
         seen.add(key);
         all.push({ pos: r.pos, end: r.end, kind: r.kind });
       }
-    }
-  }
-
-  function visit(node: ts.Node): void {
-    const leading = ts.getLeadingCommentRanges(text, node.getFullStart());
-    record(leading);
-
-    if (DECLARATION_KINDS.has(node.kind) && leading) {
-      for (const r of leading) {
-        const c = text.slice(r.pos, r.end);
-        if (isJSDoc(c)) keepStart.add(r.pos);
-      }
-    }
-
-    const trailing = ts.getTrailingCommentRanges(text, node.getEnd());
-    record(trailing);
-
-    ts.forEachChild(node, visit);
-  }
-
-  // File-level header — keep the very first JSDoc block in the file
-  const fileLeading = ts.getLeadingCommentRanges(text, 0);
-  record(fileLeading);
-  if (fileLeading) {
-    for (const r of fileLeading) {
       const c = text.slice(r.pos, r.end);
-      if (isJSDoc(c)) {
-        keepStart.add(r.pos);
-        break;
+      if (r.kind === ts.SyntaxKind.MultiLineCommentTrivia && isJSDoc(c)) {
+        const k = `${String(r.pos)}:${String(r.end)}`;
+        if (!jsdocSeen.has(k)) {
+          jsdocSeen.add(k);
+          jsdocSpans.push({ pos: r.pos, end: r.end });
+        }
       }
     }
   }
 
+  // Walk every leaf token in the AST. `node.getChildren(source)` returns
+  // both syntax-token children (commas, braces, semicolons, ...) and
+  // structural children, ensuring we visit positions that `forEachChild`
+  // skips (e.g. between elements in an array literal).
+  function visit(node: ts.Node): void {
+    record(ts.getLeadingCommentRanges(text, node.getFullStart()));
+    record(ts.getTrailingCommentRanges(text, node.getEnd()));
+    const children = node.getChildren(source);
+    if (children.length === 0) return;
+    for (const child of children) visit(child);
+  }
+  record(ts.getLeadingCommentRanges(text, 0));
   visit(source);
-  return { all, keepStart };
+
+  return { all, jsdocSpans };
 }
 
 interface Range { readonly pos: number; readonly end: number; }
@@ -162,12 +132,12 @@ function stripComments(filePath: string, text: string): string {
     filePath.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS
   );
 
-  const { all, keepStart } = collectAllComments(source, body);
+  const { all } = collectAllComments(source, body);
 
   const toRemove: Range[] = [];
   for (const c of all) {
     const commentText = body.slice(c.pos, c.end);
-    if (keepStart.has(c.pos)) continue;
+    if (commentText.startsWith('/**') && !commentText.startsWith('/***')) continue;
     if (isDirective(commentText)) continue;
     toRemove.push({ pos: c.pos, end: c.end });
   }

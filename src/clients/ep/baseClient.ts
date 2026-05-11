@@ -33,18 +33,18 @@ const BLOCKED_HOSTS_EXACT = new Set(['localhost', '0.0.0.0', '::1']);
  * parser emits (e.g. `::ffff:127.0.0.1` → `::ffff:7f00:1`).
  */
 const BLOCKED_HOST_PATTERNS = [
-  /^fe[89ab][0-9a-f]:/i,         // IPv6 link-local           fe80::/10
-  /^f[cd][0-9a-f]{2}:/i,         // IPv6 unique-local         fc00::/7
-  /^::ffff:7f/i,                  // IPv6-mapped 127.x.x.x     loopback
-  /^::ffff:a[0-9a-f]{2}:/i,       // IPv6-mapped 10.x.x.x      RFC-1918
-  /^::ffff:ac1[0-9a-f]:/i,        // IPv6-mapped 172.16-31.x.x RFC-1918
-  /^::ffff:c0a8:/i,               // IPv6-mapped 192.168.x.x   RFC-1918
-  /^::ffff:a9fe:/i,               // IPv6-mapped 169.254.x.x   link-local
-  /^127\./,                       // IPv4 loopback             127.0.0.0/8
-  /^169\.254\./,                  // IPv4 link-local           169.254.0.0/16
-  /^10\./,                        // RFC-1918                  10.0.0.0/8
-  /^172\.(1[6-9]|2\d|3[01])\./,  // RFC-1918                  172.16.0.0/12
-  /^192\.168\./,                  // RFC-1918                  192.168.0.0/16
+  /^fe[89ab][0-9a-f]:/i,
+  /^f[cd][0-9a-f]{2}:/i,
+  /^::ffff:7f/i,
+  /^::ffff:a[0-9a-f]{2}:/i,
+  /^::ffff:ac1[0-9a-f]:/i,
+  /^::ffff:c0a8:/i,
+  /^::ffff:a9fe:/i,
+  /^127\./,
+  /^169\.254\./,
+  /^10\./,
+  /^172\.(1[6-9]|2\d|3[01])\./,
+  /^192\.168\./,
 ];
 
 /**

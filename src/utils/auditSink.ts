@@ -309,8 +309,8 @@ export class FileAuditSink implements AuditSink {
       await appendFile(this.filePath, `${JSON.stringify(entry)}\n`, 'utf8');
     });
     this.writeQueue = next.then(
-      (): void => { /* success — queue stays resolved */ },
-      (): void => { /* failure — reset queue to resolved so next write proceeds */ }
+      (): undefined => undefined,
+      (): undefined => undefined
     );
     return next;
   }

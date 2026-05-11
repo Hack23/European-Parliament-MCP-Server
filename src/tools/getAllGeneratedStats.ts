@@ -116,7 +116,6 @@ const CATEGORY_LABEL_MAP: Partial<Record<string, string>> = {
   documents: 'Documents',
   mep_turnover: 'MEP Turnover',
   declarations: 'Declarations',
-  // political_groups intentionally omitted — it has no numeric ranking
 };
 
 type RankingEntry = (typeof GENERATED_STATS.categoryRankings)[number];

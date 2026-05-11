@@ -25,7 +25,6 @@ try {
     }
   }
 } catch {
-  // Fall back to { version: 'unknown' } on any read/parse error
 }
 
 /** Canonical server name used in MCP handshake and CLI output */

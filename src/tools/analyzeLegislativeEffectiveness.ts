@@ -170,7 +170,7 @@ async function fetchCommitteeSubjectData(subjectId: string): Promise<{
     subjectName: committee.name,
     committeeCount: 1,
     roles: [],
-    totalVotes: 0, // Voting statistics not available from EP API committee endpoints
+    totalVotes: 0,
     votesFor: 0,
     attendanceRate: 0
   };

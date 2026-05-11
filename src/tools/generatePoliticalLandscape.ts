@@ -247,7 +247,6 @@ async function buildLandscape(
     recentSessionCount = sessions.data.length;
   } catch (error: unknown) {
     auditLogger.logError('generate_political_landscape.fetch_sessions', { dateFrom, dateTo }, toErrorMessage(error));
-    // API may not return sessions for this date range — report zero
   }
 
   let confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
@@ -284,7 +283,7 @@ async function buildLandscape(
     groups,
     powerDynamics,
     activityMetrics: {
-      averageAttendance: 0, // EP API does not provide attendance data
+      averageAttendance: 0,
       recentSessionCount
     },
     computedAttributes: {

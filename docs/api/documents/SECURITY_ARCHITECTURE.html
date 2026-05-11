@@ -134,38 +134,7 @@
 <p>The server does <strong>not</strong> handle authentication tokens, passwords, or payment data, significantly reducing the attack surface.</p>
 <hr>
 <h2 id="🛡️-4-layer-security-architecture" class="tsd-anchor-link">🛡️ 4-Layer Security Architecture<a href="#🛡️-4-layer-security-architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<pre><code class="mermaid">flowchart TD
-    MCP_IN["MCP Tool Invocation\n(args: unknown)"]
-
-    subgraph L1["Layer 1: Input Validation"]
-        ZOD["Zod Schema Validation\nStrict type checking, format enforcement"]
-        ZE["ZodError → MCP error response"]
-    end
-
-    subgraph L2["Layer 2: Rate Limiting"]
-        RL["Token Bucket Rate Limiter\n100 tokens/minute"]
-        RLE["Rate limit exceeded → 429 response"]
-    end
-
-    subgraph L3["Layer 3: Audit Logging"]
-        AL["Audit Logger\nTool name, params (PII-stripped), timestamp, user context"]
-    end
-
-    subgraph L4["Layer 4: GDPR Compliance"]
-        GDPR["Data Minimization\nPurpose Limitation\nStorage Limitation"]
-    end
-
-    EP_API["EP Open Data Portal API v2\n(HTTPS/TLS)"]
-    RESULT["Tool Result → MCP Client"]
-
-    MCP_IN --> ZOD
-    ZOD -->|"invalid"| ZE
-    ZOD -->|"valid"| RL
-    RL -->|"exceeded"| RLE
-    RL -->|"token available"| AL
-    AL --> GDPR
-    GDPR --> EP_API
-    EP_API --> RESULT
+<pre><code class="mermaid"><span class="hl-0">flowchart TD</span><br/><span class="hl-0">    MCP_IN[&quot;MCP Tool Invocation\n(args: unknown)&quot;]</span><br/><br/><span class="hl-0">    subgraph L1[&quot;Layer 1: Input Validation&quot;]</span><br/><span class="hl-0">        ZOD[&quot;Zod Schema Validation\nStrict type checking, format enforcement&quot;]</span><br/><span class="hl-0">        ZE[&quot;ZodError → MCP error response&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph L2[&quot;Layer 2: Rate Limiting&quot;]</span><br/><span class="hl-0">        RL[&quot;Token Bucket Rate Limiter\n100 tokens/minute&quot;]</span><br/><span class="hl-0">        RLE[&quot;Rate limit exceeded → 429 response&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph L3[&quot;Layer 3: Audit Logging&quot;]</span><br/><span class="hl-0">        AL[&quot;Audit Logger\nTool name, params (PII-stripped), timestamp, user context&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph L4[&quot;Layer 4: GDPR Compliance&quot;]</span><br/><span class="hl-0">        GDPR[&quot;Data Minimization\nPurpose Limitation\nStorage Limitation&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    EP_API[&quot;EP Open Data Portal API v2\n(HTTPS/TLS)&quot;]</span><br/><span class="hl-0">    RESULT[&quot;Tool Result → MCP Client&quot;]</span><br/><br/><span class="hl-0">    MCP_IN --&gt; ZOD</span><br/><span class="hl-0">    ZOD --&gt;|&quot;invalid&quot;| ZE</span><br/><span class="hl-0">    ZOD --&gt;|&quot;valid&quot;| RL</span><br/><span class="hl-0">    RL --&gt;|&quot;exceeded&quot;| RLE</span><br/><span class="hl-0">    RL --&gt;|&quot;token available&quot;| AL</span><br/><span class="hl-0">    AL --&gt; GDPR</span><br/><span class="hl-0">    GDPR --&gt; EP_API</span><br/><span class="hl-0">    EP_API --&gt; RESULT</span>
 </code><button type="button">Copy</button></pre>
 
 <hr>
@@ -384,30 +353,7 @@
 <li><strong>EP API access</strong> — public open data, no authentication required by EP</li>
 </ul>
 <h3 id="trust-boundaries" class="tsd-anchor-link">Trust Boundaries<a href="#trust-boundaries" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<pre><code class="mermaid">flowchart LR
-    subgraph TrustHigh["High Trust Zone"]
-        OS["Operating System"]
-        User["Local User Account"]
-    end
-
-    subgraph TrustMedium["Medium Trust Zone"]
-        MCP["MCP Client Process\n(Claude Desktop / Cursor)"]
-        Server["EP MCP Server Process"]
-    end
-
-    subgraph TrustLow["Low Trust Zone"]
-        Input["Tool Arguments\n(from AI-generated content)"]
-    end
-
-    subgraph External["Untrusted External"]
-        EPAPI["EP Open Data Portal\n(public internet)"]
-    end
-
-    OS --> MCP
-    MCP --> Server
-    Server --> Input
-    Input -->|"Zod validation"| Server
-    Server -->|"HTTPS"| EPAPI
+<pre><code class="mermaid"><span class="hl-0">flowchart LR</span><br/><span class="hl-0">    subgraph TrustHigh[&quot;High Trust Zone&quot;]</span><br/><span class="hl-0">        OS[&quot;Operating System&quot;]</span><br/><span class="hl-0">        User[&quot;Local User Account&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph TrustMedium[&quot;Medium Trust Zone&quot;]</span><br/><span class="hl-0">        MCP[&quot;MCP Client Process\n(Claude Desktop / Cursor)&quot;]</span><br/><span class="hl-0">        Server[&quot;EP MCP Server Process&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph TrustLow[&quot;Low Trust Zone&quot;]</span><br/><span class="hl-0">        Input[&quot;Tool Arguments\n(from AI-generated content)&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph External[&quot;Untrusted External&quot;]</span><br/><span class="hl-0">        EPAPI[&quot;EP Open Data Portal\n(public internet)&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    OS --&gt; MCP</span><br/><span class="hl-0">    MCP --&gt; Server</span><br/><span class="hl-0">    Server --&gt; Input</span><br/><span class="hl-0">    Input --&gt;|&quot;Zod validation&quot;| Server</span><br/><span class="hl-0">    Server --&gt;|&quot;HTTPS&quot;| EPAPI</span>
 </code><button type="button">Copy</button></pre>
 
 <p><strong>Key principle:</strong> Tool arguments are treated as <strong>untrusted input</strong> regardless of their origin, since AI models may generate unexpected parameter values.</p>
@@ -415,24 +361,7 @@
 <h2 id="📊-session-and-action-tracking" class="tsd-anchor-link">📊 Session and Action Tracking<a href="#📊-session-and-action-tracking" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <p>All user interactions with the MCP server are tracked through the integrated audit and metrics systems:</p>
 <h3 id="session-tracking-model" class="tsd-anchor-link">Session Tracking Model<a href="#session-tracking-model" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<pre><code class="mermaid">flowchart LR
-    subgraph SessionContext["Session Context"]
-        STDIO["stdio Connection\n(1 session per process)"]
-        TC["Tool Call Counter"]
-        TS["Session Start Time"]
-    end
-
-    subgraph ActionTracking["Action Tracking"]
-        AL["AuditLogger\n(every tool invocation)"]
-        MS["MetricsService\n(aggregated counters)"]
-        HS["HealthService\n(process health)"]
-    end
-
-    STDIO --> AL
-    STDIO --> MS
-    AL --> TC
-    MS --> TS
-    HS --> TC
+<pre><code class="mermaid"><span class="hl-0">flowchart LR</span><br/><span class="hl-0">    subgraph SessionContext[&quot;Session Context&quot;]</span><br/><span class="hl-0">        STDIO[&quot;stdio Connection\n(1 session per process)&quot;]</span><br/><span class="hl-0">        TC[&quot;Tool Call Counter&quot;]</span><br/><span class="hl-0">        TS[&quot;Session Start Time&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph ActionTracking[&quot;Action Tracking&quot;]</span><br/><span class="hl-0">        AL[&quot;AuditLogger\n(every tool invocation)&quot;]</span><br/><span class="hl-0">        MS[&quot;MetricsService\n(aggregated counters)&quot;]</span><br/><span class="hl-0">        HS[&quot;HealthService\n(process health)&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    STDIO --&gt; AL</span><br/><span class="hl-0">    STDIO --&gt; MS</span><br/><span class="hl-0">    AL --&gt; TC</span><br/><span class="hl-0">    MS --&gt; TS</span><br/><span class="hl-0">    HS --&gt; TC</span>
 </code><button type="button">Copy</button></pre>
 
 <h3 id="tracked-actions" class="tsd-anchor-link">Tracked Actions<a href="#tracked-actions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
@@ -540,12 +469,7 @@
 </tbody>
 </table>
 <h3 id="audit-trail-architecture" class="tsd-anchor-link">Audit Trail Architecture<a href="#audit-trail-architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<pre><code class="mermaid">flowchart TD
-    ToolCall["Tool Invocation"] --> AuditLog["AuditLogger.logToolCall()"]
-    AuditLog --> PIIStrip["PII Stripping\n(remove personal data fields)"]
-    PIIStrip --> Format["JSON Structured Format"]
-    Format --> Stderr["stderr Output\n(append-only)"]
-    Stderr --> External["External Log Collection\n(host-managed)"]
+<pre><code class="mermaid"><span class="hl-0">flowchart TD</span><br/><span class="hl-0">    ToolCall[&quot;Tool Invocation&quot;] --&gt; AuditLog[&quot;AuditLogger.logToolCall()&quot;]</span><br/><span class="hl-0">    AuditLog --&gt; PIIStrip[&quot;PII Stripping\n(remove personal data fields)&quot;]</span><br/><span class="hl-0">    PIIStrip --&gt; Format[&quot;JSON Structured Format&quot;]</span><br/><span class="hl-0">    Format --&gt; Stderr[&quot;stderr Output\n(append-only)&quot;]</span><br/><span class="hl-0">    Stderr --&gt; External[&quot;External Log Collection\n(host-managed)&quot;]</span>
 </code><button type="button">Copy</button></pre>
 
 <h3 id="audit-log-fields" class="tsd-anchor-link">Audit Log Fields<a href="#audit-log-fields" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
@@ -716,7 +640,7 @@
 </tbody>
 </table>
 <h3 id="security-headers-outbound-requests" class="tsd-anchor-link">Security Headers (Outbound Requests)<a href="#security-headers-outbound-requests" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<pre><code class="typescript"><span class="hl-4">// Applied to all EP API requests</span><br/><span class="hl-8">headers</span><span class="hl-1">: {</span><br/><span class="hl-1">  </span><span class="hl-3">&#39;Accept&#39;</span><span class="hl-1">: </span><span class="hl-3">&#39;application/json&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-3">&#39;User-Agent&#39;</span><span class="hl-1">: </span><span class="hl-3">&#39;European-Parliament-MCP-Server/1.1&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-3">&#39;Accept-Encoding&#39;</span><span class="hl-1">: </span><span class="hl-3">&#39;gzip, deflate, br&#39;</span><br/><span class="hl-1">}</span>
+<pre><code class="typescript"><span class="hl-4">// Applied to all EP API requests</span><br/><span class="hl-8">headers</span><span class="hl-0">: {</span><br/><span class="hl-0">  </span><span class="hl-3">&#39;Accept&#39;</span><span class="hl-0">: </span><span class="hl-3">&#39;application/json&#39;</span><span class="hl-0">,</span><br/><span class="hl-0">  </span><span class="hl-3">&#39;User-Agent&#39;</span><span class="hl-0">: </span><span class="hl-3">&#39;European-Parliament-MCP-Server/1.1&#39;</span><span class="hl-0">,</span><br/><span class="hl-0">  </span><span class="hl-3">&#39;Accept-Encoding&#39;</span><span class="hl-0">: </span><span class="hl-3">&#39;gzip, deflate, br&#39;</span><br/><span class="hl-0">}</span>
 </code><button type="button">Copy</button></pre>
 
 <h3 id="no-inbound-network-exposure" class="tsd-anchor-link">No Inbound Network Exposure<a href="#no-inbound-network-exposure" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
@@ -728,7 +652,7 @@
 <hr>
 <h2 id="📊-audit-and-monitoring" class="tsd-anchor-link">📊 Audit and Monitoring<a href="#📊-audit-and-monitoring" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <h3 id="audit-log-schema" class="tsd-anchor-link">Audit Log Schema<a href="#audit-log-schema" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<pre><code class="typescript"><span class="hl-2">interface</span><span class="hl-1"> </span><span class="hl-10">AuditLogEntry</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-7">timestamp</span><span class="hl-1">: </span><span class="hl-10">string</span><span class="hl-1">;        </span><span class="hl-4">// ISO 8601</span><br/><span class="hl-1">  </span><span class="hl-7">toolName</span><span class="hl-1">: </span><span class="hl-10">string</span><span class="hl-1">;         </span><span class="hl-4">// e.g., &quot;get_mep_details&quot;</span><br/><span class="hl-1">  </span><span class="hl-7">parameters</span><span class="hl-1">: </span><span class="hl-10">Record</span><span class="hl-1">&lt;</span><span class="hl-10">string</span><span class="hl-1">, </span><span class="hl-10">unknown</span><span class="hl-1">&gt;;  </span><span class="hl-4">// PII-stripped</span><br/><span class="hl-1">  </span><span class="hl-7">resultStatus</span><span class="hl-1">: </span><span class="hl-3">&#39;success&#39;</span><span class="hl-1"> | </span><span class="hl-3">&#39;error&#39;</span><span class="hl-1"> | </span><span class="hl-3">&#39;rate_limited&#39;</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-7">durationMs</span><span class="hl-1">: </span><span class="hl-10">number</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-7">errorType</span><span class="hl-1">?: </span><span class="hl-10">string</span><span class="hl-1">;       </span><span class="hl-4">// Error category (no stack traces)</span><br/><span class="hl-1">}</span>
+<pre><code class="typescript"><span class="hl-2">interface</span><span class="hl-0"> </span><span class="hl-10">AuditLogEntry</span><span class="hl-0"> {</span><br/><span class="hl-0">  </span><span class="hl-7">timestamp</span><span class="hl-0">: </span><span class="hl-10">string</span><span class="hl-0">;        </span><span class="hl-4">// ISO 8601</span><br/><span class="hl-0">  </span><span class="hl-7">toolName</span><span class="hl-0">: </span><span class="hl-10">string</span><span class="hl-0">;         </span><span class="hl-4">// e.g., &quot;get_mep_details&quot;</span><br/><span class="hl-0">  </span><span class="hl-7">parameters</span><span class="hl-0">: </span><span class="hl-10">Record</span><span class="hl-0">&lt;</span><span class="hl-10">string</span><span class="hl-0">, </span><span class="hl-10">unknown</span><span class="hl-0">&gt;;  </span><span class="hl-4">// PII-stripped</span><br/><span class="hl-0">  </span><span class="hl-7">resultStatus</span><span class="hl-0">: </span><span class="hl-3">&#39;success&#39;</span><span class="hl-0"> | </span><span class="hl-3">&#39;error&#39;</span><span class="hl-0"> | </span><span class="hl-3">&#39;rate_limited&#39;</span><span class="hl-0">;</span><br/><span class="hl-0">  </span><span class="hl-7">durationMs</span><span class="hl-0">: </span><span class="hl-10">number</span><span class="hl-0">;</span><br/><span class="hl-0">  </span><span class="hl-7">errorType</span><span class="hl-0">?: </span><span class="hl-10">string</span><span class="hl-0">;       </span><span class="hl-4">// Error category (no stack traces)</span><br/><span class="hl-0">}</span>
 </code><button type="button">Copy</button></pre>
 
 <h3 id="metrics-collected" class="tsd-anchor-link">Metrics Collected<a href="#metrics-collected" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
@@ -797,18 +721,7 @@
 <li><strong>Process-level isolation</strong> — OS process boundaries provide access control</li>
 </ul>
 <h3 id="network-access-pattern" class="tsd-anchor-link">Network Access Pattern<a href="#network-access-pattern" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<pre><code class="mermaid">flowchart LR
-    subgraph LocalMachine["Local Machine"]
-        MCPClient["MCP Client\n(Claude/Cursor)"]
-        MCPServer["EP MCP Server\n(child process)"]
-    end
-
-    subgraph Internet["Public Internet"]
-        EPAPI["EP Open Data Portal\n(data.europarl.europa.eu)"]
-    end
-
-    MCPClient -->|"stdio pipe"| MCPServer
-    MCPServer -->|"HTTPS/TLS 1.2+"| EPAPI
+<pre><code class="mermaid"><span class="hl-0">flowchart LR</span><br/><span class="hl-0">    subgraph LocalMachine[&quot;Local Machine&quot;]</span><br/><span class="hl-0">        MCPClient[&quot;MCP Client\n(Claude/Cursor)&quot;]</span><br/><span class="hl-0">        MCPServer[&quot;EP MCP Server\n(child process)&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph Internet[&quot;Public Internet&quot;]</span><br/><span class="hl-0">        EPAPI[&quot;EP Open Data Portal\n(data.europarl.europa.eu)&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    MCPClient --&gt;|&quot;stdio pipe&quot;| MCPServer</span><br/><span class="hl-0">    MCPServer --&gt;|&quot;HTTPS/TLS 1.2+&quot;| EPAPI</span>
 </code><button type="button">Copy</button></pre>
 
 <h3 id="future-cloud-deployment-considerations" class="tsd-anchor-link">Future Cloud Deployment Considerations<a href="#future-cloud-deployment-considerations" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
@@ -860,24 +773,7 @@
 </tbody>
 </table>
 <h3 id="fault-tolerance-architecture" class="tsd-anchor-link">Fault Tolerance Architecture<a href="#fault-tolerance-architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<pre><code class="mermaid">flowchart TD
-    subgraph Resilience["Resilience Controls"]
-        RC["Rate Limiter\n(100 req/min)"]
-        CA["LRU Cache\n(500 entries, 15-min TTL)"]
-        TO["Request Timeout\n(30s default)"]
-        EH["Error Handler\n(graceful degradation)"]
-    end
-
-    subgraph Recovery["Recovery Mechanisms"]
-        AR["Auto-restart\n(MCP client managed)"]
-        CE["Cache eviction\n(LRU policy)"]
-        TR["Token refill\n(1-minute window)"]
-    end
-
-    RC --> TR
-    CA --> CE
-    TO --> EH
-    EH --> AR
+<pre><code class="mermaid"><span class="hl-0">flowchart TD</span><br/><span class="hl-0">    subgraph Resilience[&quot;Resilience Controls&quot;]</span><br/><span class="hl-0">        RC[&quot;Rate Limiter\n(100 req/min)&quot;]</span><br/><span class="hl-0">        CA[&quot;LRU Cache\n(500 entries, 15-min TTL)&quot;]</span><br/><span class="hl-0">        TO[&quot;Request Timeout\n(30s default)&quot;]</span><br/><span class="hl-0">        EH[&quot;Error Handler\n(graceful degradation)&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph Recovery[&quot;Recovery Mechanisms&quot;]</span><br/><span class="hl-0">        AR[&quot;Auto-restart\n(MCP client managed)&quot;]</span><br/><span class="hl-0">        CE[&quot;Cache eviction\n(LRU policy)&quot;]</span><br/><span class="hl-0">        TR[&quot;Token refill\n(1-minute window)&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    RC --&gt; TR</span><br/><span class="hl-0">    CA --&gt; CE</span><br/><span class="hl-0">    TO --&gt; EH</span><br/><span class="hl-0">    EH --&gt; AR</span>
 </code><button type="button">Copy</button></pre>
 
 <h3 id="data-durability" class="tsd-anchor-link">Data Durability<a href="#data-durability" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
@@ -932,16 +828,7 @@
 </tbody>
 </table>
 <h3 id="investigation-workflow" class="tsd-anchor-link">Investigation Workflow<a href="#investigation-workflow" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<pre><code class="mermaid">flowchart TD
-    Alert["Security Alert\n(error spike, validation failure)"] --> Triage["Triage\n(review audit logs)"]
-    Triage --> Analyze["Analyze\n(correlate metrics + logs)"]
-    Analyze --> Classify{"Classify"}
-    Classify -->|"False Positive"| Document["Document & Close"]
-    Classify -->|"True Positive"| Respond["Incident Response"]
-    Respond --> Contain["Contain\n(rate limit, block input)"]
-    Contain --> Remediate["Remediate\n(patch, update schema)"]
-    Remediate --> Verify["Verify Fix"]
-    Verify --> Document
+<pre><code class="mermaid"><span class="hl-0">flowchart TD</span><br/><span class="hl-0">    Alert[&quot;Security Alert\n(error spike, validation failure)&quot;] --&gt; Triage[&quot;Triage\n(review audit logs)&quot;]</span><br/><span class="hl-0">    Triage --&gt; Analyze[&quot;Analyze\n(correlate metrics + logs)&quot;]</span><br/><span class="hl-0">    Analyze --&gt; Classify{&quot;Classify&quot;}</span><br/><span class="hl-0">    Classify --&gt;|&quot;False Positive&quot;| Document[&quot;Document &amp; Close&quot;]</span><br/><span class="hl-0">    Classify --&gt;|&quot;True Positive&quot;| Respond[&quot;Incident Response&quot;]</span><br/><span class="hl-0">    Respond --&gt; Contain[&quot;Contain\n(rate limit, block input)&quot;]</span><br/><span class="hl-0">    Contain --&gt; Remediate[&quot;Remediate\n(patch, update schema)&quot;]</span><br/><span class="hl-0">    Remediate --&gt; Verify[&quot;Verify Fix&quot;]</span><br/><span class="hl-0">    Verify --&gt; Document</span>
 </code><button type="button">Copy</button></pre>
 
 <hr>
@@ -1221,17 +1108,7 @@
 <hr>
 <h2 id="🤖-automated-security-operations" class="tsd-anchor-link">🤖 Automated Security Operations<a href="#🤖-automated-security-operations" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <h3 id="cicd-security-automation" class="tsd-anchor-link">CI/CD Security Automation<a href="#cicd-security-automation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<pre><code class="mermaid">flowchart LR
-    subgraph CI["GitHub Actions CI/CD"]
-        Lint["ESLint\n+ TypeScript"]
-        Test["Vitest\n(1130+ unit + 71 E2E tests)"]
-        Scan["CodeQL\n+ npm audit"]
-        License["License\nCompliance"]
-        Build["TypeScript\nBuild"]
-        Publish["npm Publish\n+ SLSA Provenance"]
-    end
-
-    Commit["Git Commit"] --> Lint --> Test --> Scan --> License --> Build --> Publish
+<pre><code class="mermaid"><span class="hl-0">flowchart LR</span><br/><span class="hl-0">    subgraph CI[&quot;GitHub Actions CI/CD&quot;]</span><br/><span class="hl-0">        Lint[&quot;ESLint\n+ TypeScript&quot;]</span><br/><span class="hl-0">        Test[&quot;Vitest\n(1130+ unit + 71 E2E tests)&quot;]</span><br/><span class="hl-0">        Scan[&quot;CodeQL\n+ npm audit&quot;]</span><br/><span class="hl-0">        License[&quot;License\nCompliance&quot;]</span><br/><span class="hl-0">        Build[&quot;TypeScript\nBuild&quot;]</span><br/><span class="hl-0">        Publish[&quot;npm Publish\n+ SLSA Provenance&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    Commit[&quot;Git Commit&quot;] --&gt; Lint --&gt; Test --&gt; Scan --&gt; License --&gt; Build --&gt; Publish</span>
 </code><button type="button">Copy</button></pre>
 
 <h3 id="automated-security-controls" class="tsd-anchor-link">Automated Security Controls<a href="#automated-security-controls" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
@@ -1299,13 +1176,7 @@
 <hr>
 <h2 id="🛡️-application-security-controls" class="tsd-anchor-link">🛡️ Application Security Controls<a href="#🛡️-application-security-controls" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <h3 id="input-validation-architecture" class="tsd-anchor-link">Input Validation Architecture<a href="#input-validation-architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<pre><code class="mermaid">flowchart TD
-    Input["Raw MCP Input\n(unknown type)"] --> ZodParse["Zod Schema.parse()"]
-    ZodParse -->|"Valid"| TypeSafe["Type-Safe Parameters"]
-    ZodParse -->|"Invalid"| ZodError["ZodError\n(structured rejection)"]
-    TypeSafe --> BrandedTypes["Branded Type Enforcement\n(MEPId, ProcedureId, etc.)"]
-    BrandedTypes --> Handler["Tool Handler\n(type-safe execution)"]
-    ZodError --> ErrorResponse["MCP Error Response\n(no internal details)"]
+<pre><code class="mermaid"><span class="hl-0">flowchart TD</span><br/><span class="hl-0">    Input[&quot;Raw MCP Input\n(unknown type)&quot;] --&gt; ZodParse[&quot;Zod Schema.parse()&quot;]</span><br/><span class="hl-0">    ZodParse --&gt;|&quot;Valid&quot;| TypeSafe[&quot;Type-Safe Parameters&quot;]</span><br/><span class="hl-0">    ZodParse --&gt;|&quot;Invalid&quot;| ZodError[&quot;ZodError\n(structured rejection)&quot;]</span><br/><span class="hl-0">    TypeSafe --&gt; BrandedTypes[&quot;Branded Type Enforcement\n(MEPId, ProcedureId, etc.)&quot;]</span><br/><span class="hl-0">    BrandedTypes --&gt; Handler[&quot;Tool Handler\n(type-safe execution)&quot;]</span><br/><span class="hl-0">    ZodError --&gt; ErrorResponse[&quot;MCP Error Response\n(no internal details)&quot;]</span>
 </code><button type="button">Copy</button></pre>
 
 <h3 id="validation-controls-per-layer" class="tsd-anchor-link">Validation Controls per Layer<a href="#validation-controls-per-layer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
@@ -1406,41 +1277,7 @@
 <hr>
 <h2 id="🏆-defense-in-depth-strategy" class="tsd-anchor-link">🏆 Defense-in-Depth Strategy<a href="#🏆-defense-in-depth-strategy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <h3 id="security-layer-architecture" class="tsd-anchor-link">Security Layer Architecture<a href="#security-layer-architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<pre><code class="mermaid">flowchart TD
-    subgraph Layer1["Layer 1: Process Isolation"]
-        OS["OS Process Boundaries"]
-        STDIO["stdio Transport\n(no network exposure)"]
-    end
-
-    subgraph Layer2["Layer 2: Input Validation"]
-        ZOD["Zod Schema Validation\n(62 tool schemas)"]
-        BT["Branded Types\n(type-safe identifiers)"]
-    end
-
-    subgraph Layer3["Layer 3: Rate Limiting & Caching"]
-        RL["Token Bucket Rate Limiter"]
-        LRU["LRU Cache\n(bounded memory)"]
-    end
-
-    subgraph Layer4["Layer 4: Transport Security"]
-        TLS["HTTPS/TLS 1.2+\n(to EP API)"]
-        CERT["Certificate Validation\n(Node.js defaults)"]
-    end
-
-    subgraph Layer5["Layer 5: Audit & Monitoring"]
-        AUDIT["Audit Logger\n(PII-stripped)"]
-        METRICS["MetricsService\n(performance + errors)"]
-        HEALTH["HealthService\n(availability)"]
-    end
-
-    subgraph Layer6["Layer 6: Supply Chain Security"]
-        SLSA["SLSA Level 3 Provenance"]
-        DEPS["Minimal Dependencies (4)"]
-        LOCK["Lockfile Pinning"]
-        SCAN["Dependabot + CodeQL"]
-    end
-
-    Layer1 --> Layer2 --> Layer3 --> Layer4 --> Layer5 --> Layer6
+<pre><code class="mermaid"><span class="hl-0">flowchart TD</span><br/><span class="hl-0">    subgraph Layer1[&quot;Layer 1: Process Isolation&quot;]</span><br/><span class="hl-0">        OS[&quot;OS Process Boundaries&quot;]</span><br/><span class="hl-0">        STDIO[&quot;stdio Transport\n(no network exposure)&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph Layer2[&quot;Layer 2: Input Validation&quot;]</span><br/><span class="hl-0">        ZOD[&quot;Zod Schema Validation\n(62 tool schemas)&quot;]</span><br/><span class="hl-0">        BT[&quot;Branded Types\n(type-safe identifiers)&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph Layer3[&quot;Layer 3: Rate Limiting &amp; Caching&quot;]</span><br/><span class="hl-0">        RL[&quot;Token Bucket Rate Limiter&quot;]</span><br/><span class="hl-0">        LRU[&quot;LRU Cache\n(bounded memory)&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph Layer4[&quot;Layer 4: Transport Security&quot;]</span><br/><span class="hl-0">        TLS[&quot;HTTPS/TLS 1.2+\n(to EP API)&quot;]</span><br/><span class="hl-0">        CERT[&quot;Certificate Validation\n(Node.js defaults)&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph Layer5[&quot;Layer 5: Audit &amp; Monitoring&quot;]</span><br/><span class="hl-0">        AUDIT[&quot;Audit Logger\n(PII-stripped)&quot;]</span><br/><span class="hl-0">        METRICS[&quot;MetricsService\n(performance + errors)&quot;]</span><br/><span class="hl-0">        HEALTH[&quot;HealthService\n(availability)&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph Layer6[&quot;Layer 6: Supply Chain Security&quot;]</span><br/><span class="hl-0">        SLSA[&quot;SLSA Level 3 Provenance&quot;]</span><br/><span class="hl-0">        DEPS[&quot;Minimal Dependencies (4)&quot;]</span><br/><span class="hl-0">        LOCK[&quot;Lockfile Pinning&quot;]</span><br/><span class="hl-0">        SCAN[&quot;Dependabot + CodeQL&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    Layer1 --&gt; Layer2 --&gt; Layer3 --&gt; Layer4 --&gt; Layer5 --&gt; Layer6</span>
 </code><button type="button">Copy</button></pre>
 
 <h3 id="defense-in-depth-summary" class="tsd-anchor-link">Defense-in-Depth Summary<a href="#defense-in-depth-summary" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>

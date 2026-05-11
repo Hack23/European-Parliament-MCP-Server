@@ -409,18 +409,18 @@ export interface GeneratedStatsData {
 }
 
 const MONTHLY_WEIGHTS = [
-  0.07, // Jan
-  0.09, // Feb
-  0.10, // Mar
-  0.09, // Apr
-  0.09, // May
-  0.08, // Jun
-  0.07, // Jul
-  0.01, // Aug (recess)
-  0.09, // Sep
-  0.10, // Oct
-  0.11, // Nov
-  0.10, // Dec
+  0.07,
+  0.09,
+  0.10,
+  0.09,
+  0.09,
+  0.08,
+  0.07,
+  0.01,
+  0.09,
+  0.10,
+  0.11,
+  0.10,
 ];
 
 /**
