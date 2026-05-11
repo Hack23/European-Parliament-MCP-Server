@@ -164,13 +164,6 @@ function aggregateByGroup(
 
   for (const mep of meps) {
     allCountries.add(mep.country);
-    // Normalize political-group label so EP API native-language acronyms
-    // (e.g. French `PPE` / `Verts-ALE`) and predecessor / successor names
-    // (e.g. EP9 `ID` → EP10 `PfE`) collapse onto their canonical short codes
-    // before aggregation. Without this, the same group can appear twice with
-    // split member counts. See `analyze_coalition_dynamics` Defect #1 / D-01
-    // (Hack23/euparliamentmonitor 2026-04-26 reliability audits) for the
-    // root-cause analysis of the equivalent issue in coalition dynamics.
     const groupKey = normalizePoliticalGroup(mep.politicalGroup);
     const existing = groupMap.get(groupKey);
     if (existing !== undefined) {
@@ -231,11 +224,6 @@ async function buildLandscape(
   dateFrom: string,
   dateTo: string
 ): Promise<PoliticalLandscape> {
-  // Fetch ALL active MEPs via paginated batches (typically ~720 for EP10)
-  // rather than a single 100-MEP page. The previous `getCurrentMEPs({ limit: 100 })`
-  // call produced ~14% sample-based seat shares and triggered Defect #3 / D-08
-  // in the Hack23/euparliamentmonitor 2026-04-26 reliability audits, where
-  // `totalMEPs: 100` was reported instead of the full Parliament composition.
   const mepResult = await fetchAllCurrentMEPs();
   const meps = mepResult.meps;
 
@@ -249,9 +237,6 @@ async function buildLandscape(
     (powerDynamics.grandCoalitionSize / Math.max(1, totalMEPs)) * 10000
   ) / 100;
 
-  // Fetch real plenary session data from EP API
-  // Use data.length instead of total because total is a lower-bound estimate
-  // capped by the page size at offset 0
   let recentSessionCount = 0;
   try {
     const year = parseInt(dateFrom.substring(0, 4), 10);
@@ -262,14 +247,8 @@ async function buildLandscape(
     recentSessionCount = sessions.data.length;
   } catch (error: unknown) {
     auditLogger.logError('generate_political_landscape.fetch_sessions', { dateFrom, dateTo }, toErrorMessage(error));
-    // API may not return sessions for this date range — report zero
   }
 
-  // Confidence reflects (a) whether the MEP pagination completed and (b)
-  // whether the resulting roster is large enough to be representative of
-  // the full Parliament (~720 MEPs in EP10). A partial fetch (pagination
-  // failure) or a small roster (<200 MEPs) downgrades confidence so
-  // downstream consumers can flag the snapshot accordingly.
   let confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   if (!mepResult.complete) {
     confidenceLevel = 'LOW';
@@ -303,9 +282,8 @@ async function buildLandscape(
     },
     groups,
     powerDynamics,
-    // Activity metrics from real EP API data
     activityMetrics: {
-      averageAttendance: 0, // EP API does not provide attendance data
+      averageAttendance: 0,
       recentSessionCount
     },
     computedAttributes: {

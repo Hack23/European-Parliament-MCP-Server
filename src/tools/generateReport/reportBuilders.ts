@@ -1,6 +1,6 @@
 /**
  * Report section builders
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation)
  */
 
@@ -12,18 +12,18 @@ import type { ReportSection } from './types.js';
  * Cyclomatic complexity: 2
  */
 export function createVotingSection(
-  totalVotes: number, 
+  totalVotes: number,
   mep: MEPDetails | null
 ): ReportSection {
   const section: ReportSection = {
     title: 'Voting Activity',
     content: `The MEP participated in ${String(totalVotes)} votes during this period.`
   };
-  
+
   if (mep?.votingStatistics !== undefined) {
     section.data = { votingStatistics: mep.votingStatistics };
   }
-  
+
   return section;
 }
 
@@ -32,7 +32,7 @@ export function createVotingSection(
  * Cyclomatic complexity: 1
  */
 export function createCommitteeSection(
-  committeesLength: number, 
+  committeesLength: number,
   mep: MEPDetails | null
 ): ReportSection {
   return {

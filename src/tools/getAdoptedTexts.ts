@@ -57,7 +57,6 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetPlenarySessionDocumentItems} for retrieving in-session document items
  */
 export async function handleGetAdoptedTexts(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetAdoptedTextsSchema.parse>;
   try {
     params = GetAdoptedTextsSchema.parse(args);
@@ -93,14 +92,7 @@ export async function handleGetAdoptedTexts(args: unknown): Promise<ToolResult> 
 
     return buildToolResponse(result);
   } catch (error: unknown) {
-    // Surface upstream 404s (including the content-pending sentinel translated
-    // by `LegislativeClient.getAdoptedTextById`) as a non-retryable
-    // `UPSTREAM_404`, so clients can distinguish "document unavailable" from a
-    // transient retryable failure instead of receiving an empty-string stub.
     if (error instanceof APIError && error.statusCode === 404) {
-      // Ensure the requested docId is identifiable in the ToolError message
-      // even when the upstream message is generic (e.g. BaseEPClient surfaces
-      // raw HTTP 404s as "EP API request failed: Not Found").
       const baseMessage = error.message;
       const message =
         params.docId !== undefined && !baseMessage.includes(params.docId)

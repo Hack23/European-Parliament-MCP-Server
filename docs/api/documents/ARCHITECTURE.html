@@ -144,193 +144,17 @@
 </table>
 <hr>
 <h2 id="🌐-c4-context-diagram" class="tsd-anchor-link">🌐 C4 Context Diagram<a href="#🌐-c4-context-diagram" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<pre><code class="mermaid">C4Context
-    title System Context — European Parliament MCP Server
-
-    Person(aiUser, "AI User / Developer", "Uses AI assistants to query EP data")
-    Person(analyst, "Political Analyst", "Performs legislative intelligence analysis")
-
-    System(mcpServer, "EP MCP Server", "MCP server exposing 62 tools, 9 resources, 7 prompts for EP parliamentary data")
-
-    System_Ext(claudeDesktop, "Claude Desktop / Cursor / Copilot", "MCP-compatible AI client")
-    System_Ext(epApi, "EP Open Data Portal API v2", "Official European Parliament open data API at data.europarl.europa.eu/api/v2/")
-    System_Ext(epVocab, "EP Controlled Vocabularies", "AT4EU, Europarl taxonomy, authority tables")
-
-    Rel(aiUser, claudeDesktop, "Asks questions about EP")
-    Rel(analyst, claudeDesktop, "Runs intelligence workflows")
-    Rel(claudeDesktop, mcpServer, "MCP protocol over stdio")
-    Rel(mcpServer, epApi, "HTTPS REST requests")
-    Rel(mcpServer, epVocab, "Vocabulary lookups")
+<pre><code class="mermaid"><span class="hl-0">C4Context</span><br/><span class="hl-0">    title System Context — European Parliament MCP Server</span><br/><br/><span class="hl-0">    Person(aiUser, &quot;AI User / Developer&quot;, &quot;Uses AI assistants to query EP data&quot;)</span><br/><span class="hl-0">    Person(analyst, &quot;Political Analyst&quot;, &quot;Performs legislative intelligence analysis&quot;)</span><br/><br/><span class="hl-0">    System(mcpServer, &quot;EP MCP Server&quot;, &quot;MCP server exposing 62 tools, 9 resources, 7 prompts for EP parliamentary data&quot;)</span><br/><br/><span class="hl-0">    System_Ext(claudeDesktop, &quot;Claude Desktop / Cursor / Copilot&quot;, &quot;MCP-compatible AI client&quot;)</span><br/><span class="hl-0">    System_Ext(epApi, &quot;EP Open Data Portal API v2&quot;, &quot;Official European Parliament open data API at data.europarl.europa.eu/api/v2/&quot;)</span><br/><span class="hl-0">    System_Ext(epVocab, &quot;EP Controlled Vocabularies&quot;, &quot;AT4EU, Europarl taxonomy, authority tables&quot;)</span><br/><br/><span class="hl-0">    Rel(aiUser, claudeDesktop, &quot;Asks questions about EP&quot;)</span><br/><span class="hl-0">    Rel(analyst, claudeDesktop, &quot;Runs intelligence workflows&quot;)</span><br/><span class="hl-0">    Rel(claudeDesktop, mcpServer, &quot;MCP protocol over stdio&quot;)</span><br/><span class="hl-0">    Rel(mcpServer, epApi, &quot;HTTPS REST requests&quot;)</span><br/><span class="hl-0">    Rel(mcpServer, epVocab, &quot;Vocabulary lookups&quot;)</span>
 </code><button type="button">Copy</button></pre>
 
 <hr>
 <h2 id="📦-c4-container-diagram" class="tsd-anchor-link">📦 C4 Container Diagram<a href="#📦-c4-container-diagram" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<pre><code class="mermaid">flowchart TD
-    subgraph MCPClients["MCP Clients (External)"]
-        CC["Claude Desktop"]
-        CU["Cursor IDE"]
-        CO["GitHub Copilot"]
-    end
-
-    subgraph EPMCPServer["EP MCP Server — Node.js Process"]
-        direction TB
-        MH["MCP Handler\n(stdio transport)"]
-        TR["Tool Router\n(62 tools dispatched)"]
-        RE["Resource Engine\n(9 URI resources)"]
-        PR["Prompt Registry\n(7 prompts)"]
-        DI["DI Container\n(singletons)"]
-        TC["Tool Categories\n(7 modules)"]
-        EC["EP API Clients\n(9 modular clients)"]
-        CA["LRU Cache\n(500 entries, 15-min TTL)"]
-        RL["Rate Limiter\n(100 tokens/min)"]
-        AL["Audit Logger"]
-        MS["Metrics Service"]
-        HS["Health Service"]
-    end
-
-    subgraph ExternalSystems["External Systems"]
-        EPA["EP Open Data Portal\nAPI v2"]
-        EV["EP Vocabulary\nEndpoints"]
-    end
-
-    MCPClients -->|"stdio MCP"| MH
-    MH --> TR
-    MH --> RE
-    MH --> PR
-    TR --> DI
-    DI --> TC
-    TC --> EC
-    EC --> CA
-    CA -->|"cache miss"| RL
-    RL --> EPA
-    EC --> EV
-    DI -->|"singletons"| AL
-    DI -->|"singletons"| MS
-    DI -->|"singletons"| HS
+<pre><code class="mermaid"><span class="hl-0">flowchart TD</span><br/><span class="hl-0">    subgraph MCPClients[&quot;MCP Clients (External)&quot;]</span><br/><span class="hl-0">        CC[&quot;Claude Desktop&quot;]</span><br/><span class="hl-0">        CU[&quot;Cursor IDE&quot;]</span><br/><span class="hl-0">        CO[&quot;GitHub Copilot&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph EPMCPServer[&quot;EP MCP Server — Node.js Process&quot;]</span><br/><span class="hl-0">        direction TB</span><br/><span class="hl-0">        MH[&quot;MCP Handler\n(stdio transport)&quot;]</span><br/><span class="hl-0">        TR[&quot;Tool Router\n(62 tools dispatched)&quot;]</span><br/><span class="hl-0">        RE[&quot;Resource Engine\n(9 URI resources)&quot;]</span><br/><span class="hl-0">        PR[&quot;Prompt Registry\n(7 prompts)&quot;]</span><br/><span class="hl-0">        DI[&quot;DI Container\n(singletons)&quot;]</span><br/><span class="hl-0">        TC[&quot;Tool Categories\n(7 modules)&quot;]</span><br/><span class="hl-0">        EC[&quot;EP API Clients\n(9 modular clients)&quot;]</span><br/><span class="hl-0">        CA[&quot;LRU Cache\n(500 entries, 15-min TTL)&quot;]</span><br/><span class="hl-0">        RL[&quot;Rate Limiter\n(100 tokens/min)&quot;]</span><br/><span class="hl-0">        AL[&quot;Audit Logger&quot;]</span><br/><span class="hl-0">        MS[&quot;Metrics Service&quot;]</span><br/><span class="hl-0">        HS[&quot;Health Service&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph ExternalSystems[&quot;External Systems&quot;]</span><br/><span class="hl-0">        EPA[&quot;EP Open Data Portal\nAPI v2&quot;]</span><br/><span class="hl-0">        EV[&quot;EP Vocabulary\nEndpoints&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    MCPClients --&gt;|&quot;stdio MCP&quot;| MH</span><br/><span class="hl-0">    MH --&gt; TR</span><br/><span class="hl-0">    MH --&gt; RE</span><br/><span class="hl-0">    MH --&gt; PR</span><br/><span class="hl-0">    TR --&gt; DI</span><br/><span class="hl-0">    DI --&gt; TC</span><br/><span class="hl-0">    TC --&gt; EC</span><br/><span class="hl-0">    EC --&gt; CA</span><br/><span class="hl-0">    CA --&gt;|&quot;cache miss&quot;| RL</span><br/><span class="hl-0">    RL --&gt; EPA</span><br/><span class="hl-0">    EC --&gt; EV</span><br/><span class="hl-0">    DI --&gt;|&quot;singletons&quot;| AL</span><br/><span class="hl-0">    DI --&gt;|&quot;singletons&quot;| MS</span><br/><span class="hl-0">    DI --&gt;|&quot;singletons&quot;| HS</span>
 </code><button type="button">Copy</button></pre>
 
 <hr>
 <h2 id="🔧-c4-component-diagram-tool-engine" class="tsd-anchor-link">🔧 C4 Component Diagram — Tool Engine<a href="#🔧-c4-component-diagram-tool-engine" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<pre><code class="mermaid">flowchart TD
-    subgraph ToolEngine["Tool Engine — src/tools/"]
-        direction TB
-
-        subgraph CoreTools["Core Tools (7)"]
-            GM["get_meps"]
-            GMD["get_mep_details"]
-            GPS["get_plenary_sessions"]
-            GVR["get_voting_records"]
-            SD["search_documents"]
-            GCI["get_committee_info"]
-            GPQ["get_parliamentary_questions"]
-        end
-
-        subgraph AdvancedTools["Advanced Analysis (3)"]
-            AVP["analyze_voting_patterns"]
-            TL["track_legislation"]
-            GR["generate_report"]
-        end
-
-        subgraph OSINT1["OSINT Phase 1 (6)"]
-            AMI["assess_mep_influence"]
-            ACD["analyze_coalition_dynamics"]
-            DVA["detect_voting_anomalies"]
-            CPG["compare_political_groups"]
-            ALE["analyze_legislative_effectiveness"]
-            MLP["monitor_legislative_pipeline"]
-        end
-
-        subgraph OSINT2["OSINT Phase 2 (2)"]
-            ACA["analyze_committee_activity"]
-            TMA["track_mep_attendance"]
-        end
-
-        subgraph OSINT3["OSINT Phase 3 (2)"]
-            ACD2["analyze_country_delegation"]
-            GPL["generate_political_landscape"]
-        end
-
-        subgraph Phase6["Advanced OSINT (5)"]
-            NA["network_analysis"]
-            ST["sentiment_tracker"]
-            EWS["early_warning_system"]
-            CI["comparative_intelligence"]
-            CRI["correlate_intelligence"]
-        end
-
-        subgraph Phase4["Phase 4 EP API v2 (8)"]
-            GCM["get_current_meps"]
-            GSP["get_speeches"]
-            GP["get_procedures"]
-            GAT["get_adopted_texts"]
-            GE["get_events"]
-            GMA["get_meeting_activities"]
-            GMD2["get_meeting_decisions"]
-            GMPD["get_mep_declarations"]
-        end
-
-        subgraph Phase5["Phase 5 Complete Coverage (15)"]
-            GIM["get_incoming_meps"]
-            GOM["get_outgoing_meps"]
-            GHM["get_homonym_meps"]
-            GPD["get_plenary_documents"]
-            GCD["get_committee_documents"]
-            GPSD["get_plenary_session_documents"]
-            GPSDI["get_plenary_session_document_items"]
-            GCV["get_controlled_vocabularies"]
-            GED["get_external_documents"]
-            GMFA["get_meeting_foreseen_activities"]
-            GPE["get_procedure_events"]
-            GMPSD["get_meeting_plenary_session_documents"]
-            GMPSDI["get_meeting_plenary_session_document_items"]
-            GPEID["get_procedure_event_by_id"]
-            GAGS["get_all_generated_stats"]
-        end
-
-        subgraph FeedTools["Feed Endpoints (13)"]
-            GMFEED["get_meps_feed"]
-            GEFEED["get_events_feed"]
-            GPFEED["get_procedures_feed"]
-            GATFEED["get_adopted_texts_feed"]
-            GMDFEED["get_mep_declarations_feed"]
-            GDFEED["get_documents_feed"]
-            GPDFEED["get_plenary_documents_feed"]
-            GCDFEED["get_committee_documents_feed"]
-            GPSDFEED["get_plenary_session_documents_feed"]
-            GEDFEED["get_external_documents_feed"]
-            GPQFEED["get_parliamentary_questions_feed"]
-            GCBFEED["get_corporate_bodies_feed"]
-            GCVFEED["get_controlled_vocabularies_feed"]
-        end
-    end
-
-    subgraph Validators["Zod Validation Layer"]
-        ZV["Input Validators\n(schema per tool)"]
-    end
-
-    subgraph Clients["EP API Client Layer"]
-        BC["baseClient"]
-        MC["mepClient"]
-        VC["votingClient"]
-        COMC["committeeClient"]
-        PC["plenaryClient"]
-        DC["documentClient"]
-        LC["legislativeClient"]
-        QC["questionClient"]
-        VCC["vocabularyClient"]
-    end
-
-    CoreTools --> ZV
-    AdvancedTools --> ZV
-    OSINT1 --> ZV
-    OSINT2 --> ZV
-    OSINT3 --> ZV
-    Phase6 --> ZV
-    Phase4 --> ZV
-    Phase5 --> ZV
-    FeedTools --> ZV
-
-    ZV --> Clients
+<pre><code class="mermaid"><span class="hl-0">flowchart TD</span><br/><span class="hl-0">    subgraph ToolEngine[&quot;Tool Engine — src/tools/&quot;]</span><br/><span class="hl-0">        direction TB</span><br/><br/><span class="hl-0">        subgraph CoreTools[&quot;Core Tools (7)&quot;]</span><br/><span class="hl-0">            GM[&quot;get_meps&quot;]</span><br/><span class="hl-0">            GMD[&quot;get_mep_details&quot;]</span><br/><span class="hl-0">            GPS[&quot;get_plenary_sessions&quot;]</span><br/><span class="hl-0">            GVR[&quot;get_voting_records&quot;]</span><br/><span class="hl-0">            SD[&quot;search_documents&quot;]</span><br/><span class="hl-0">            GCI[&quot;get_committee_info&quot;]</span><br/><span class="hl-0">            GPQ[&quot;get_parliamentary_questions&quot;]</span><br/><span class="hl-0">        end</span><br/><br/><span class="hl-0">        subgraph AdvancedTools[&quot;Advanced Analysis (3)&quot;]</span><br/><span class="hl-0">            AVP[&quot;analyze_voting_patterns&quot;]</span><br/><span class="hl-0">            TL[&quot;track_legislation&quot;]</span><br/><span class="hl-0">            GR[&quot;generate_report&quot;]</span><br/><span class="hl-0">        end</span><br/><br/><span class="hl-0">        subgraph OSINT1[&quot;OSINT Phase 1 (6)&quot;]</span><br/><span class="hl-0">            AMI[&quot;assess_mep_influence&quot;]</span><br/><span class="hl-0">            ACD[&quot;analyze_coalition_dynamics&quot;]</span><br/><span class="hl-0">            DVA[&quot;detect_voting_anomalies&quot;]</span><br/><span class="hl-0">            CPG[&quot;compare_political_groups&quot;]</span><br/><span class="hl-0">            ALE[&quot;analyze_legislative_effectiveness&quot;]</span><br/><span class="hl-0">            MLP[&quot;monitor_legislative_pipeline&quot;]</span><br/><span class="hl-0">        end</span><br/><br/><span class="hl-0">        subgraph OSINT2[&quot;OSINT Phase 2 (2)&quot;]</span><br/><span class="hl-0">            ACA[&quot;analyze_committee_activity&quot;]</span><br/><span class="hl-0">            TMA[&quot;track_mep_attendance&quot;]</span><br/><span class="hl-0">        end</span><br/><br/><span class="hl-0">        subgraph OSINT3[&quot;OSINT Phase 3 (2)&quot;]</span><br/><span class="hl-0">            ACD2[&quot;analyze_country_delegation&quot;]</span><br/><span class="hl-0">            GPL[&quot;generate_political_landscape&quot;]</span><br/><span class="hl-0">        end</span><br/><br/><span class="hl-0">        subgraph Phase6[&quot;Advanced OSINT (5)&quot;]</span><br/><span class="hl-0">            NA[&quot;network_analysis&quot;]</span><br/><span class="hl-0">            ST[&quot;sentiment_tracker&quot;]</span><br/><span class="hl-0">            EWS[&quot;early_warning_system&quot;]</span><br/><span class="hl-0">            CI[&quot;comparative_intelligence&quot;]</span><br/><span class="hl-0">            CRI[&quot;correlate_intelligence&quot;]</span><br/><span class="hl-0">        end</span><br/><br/><span class="hl-0">        subgraph Phase4[&quot;Phase 4 EP API v2 (8)&quot;]</span><br/><span class="hl-0">            GCM[&quot;get_current_meps&quot;]</span><br/><span class="hl-0">            GSP[&quot;get_speeches&quot;]</span><br/><span class="hl-0">            GP[&quot;get_procedures&quot;]</span><br/><span class="hl-0">            GAT[&quot;get_adopted_texts&quot;]</span><br/><span class="hl-0">            GE[&quot;get_events&quot;]</span><br/><span class="hl-0">            GMA[&quot;get_meeting_activities&quot;]</span><br/><span class="hl-0">            GMD2[&quot;get_meeting_decisions&quot;]</span><br/><span class="hl-0">            GMPD[&quot;get_mep_declarations&quot;]</span><br/><span class="hl-0">        end</span><br/><br/><span class="hl-0">        subgraph Phase5[&quot;Phase 5 Complete Coverage (15)&quot;]</span><br/><span class="hl-0">            GIM[&quot;get_incoming_meps&quot;]</span><br/><span class="hl-0">            GOM[&quot;get_outgoing_meps&quot;]</span><br/><span class="hl-0">            GHM[&quot;get_homonym_meps&quot;]</span><br/><span class="hl-0">            GPD[&quot;get_plenary_documents&quot;]</span><br/><span class="hl-0">            GCD[&quot;get_committee_documents&quot;]</span><br/><span class="hl-0">            GPSD[&quot;get_plenary_session_documents&quot;]</span><br/><span class="hl-0">            GPSDI[&quot;get_plenary_session_document_items&quot;]</span><br/><span class="hl-0">            GCV[&quot;get_controlled_vocabularies&quot;]</span><br/><span class="hl-0">            GED[&quot;get_external_documents&quot;]</span><br/><span class="hl-0">            GMFA[&quot;get_meeting_foreseen_activities&quot;]</span><br/><span class="hl-0">            GPE[&quot;get_procedure_events&quot;]</span><br/><span class="hl-0">            GMPSD[&quot;get_meeting_plenary_session_documents&quot;]</span><br/><span class="hl-0">            GMPSDI[&quot;get_meeting_plenary_session_document_items&quot;]</span><br/><span class="hl-0">            GPEID[&quot;get_procedure_event_by_id&quot;]</span><br/><span class="hl-0">            GAGS[&quot;get_all_generated_stats&quot;]</span><br/><span class="hl-0">        end</span><br/><br/><span class="hl-0">        subgraph FeedTools[&quot;Feed Endpoints (13)&quot;]</span><br/><span class="hl-0">            GMFEED[&quot;get_meps_feed&quot;]</span><br/><span class="hl-0">            GEFEED[&quot;get_events_feed&quot;]</span><br/><span class="hl-0">            GPFEED[&quot;get_procedures_feed&quot;]</span><br/><span class="hl-0">            GATFEED[&quot;get_adopted_texts_feed&quot;]</span><br/><span class="hl-0">            GMDFEED[&quot;get_mep_declarations_feed&quot;]</span><br/><span class="hl-0">            GDFEED[&quot;get_documents_feed&quot;]</span><br/><span class="hl-0">            GPDFEED[&quot;get_plenary_documents_feed&quot;]</span><br/><span class="hl-0">            GCDFEED[&quot;get_committee_documents_feed&quot;]</span><br/><span class="hl-0">            GPSDFEED[&quot;get_plenary_session_documents_feed&quot;]</span><br/><span class="hl-0">            GEDFEED[&quot;get_external_documents_feed&quot;]</span><br/><span class="hl-0">            GPQFEED[&quot;get_parliamentary_questions_feed&quot;]</span><br/><span class="hl-0">            GCBFEED[&quot;get_corporate_bodies_feed&quot;]</span><br/><span class="hl-0">            GCVFEED[&quot;get_controlled_vocabularies_feed&quot;]</span><br/><span class="hl-0">        end</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph Validators[&quot;Zod Validation Layer&quot;]</span><br/><span class="hl-0">        ZV[&quot;Input Validators\n(schema per tool)&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph Clients[&quot;EP API Client Layer&quot;]</span><br/><span class="hl-0">        BC[&quot;baseClient&quot;]</span><br/><span class="hl-0">        MC[&quot;mepClient&quot;]</span><br/><span class="hl-0">        VC[&quot;votingClient&quot;]</span><br/><span class="hl-0">        COMC[&quot;committeeClient&quot;]</span><br/><span class="hl-0">        PC[&quot;plenaryClient&quot;]</span><br/><span class="hl-0">        DC[&quot;documentClient&quot;]</span><br/><span class="hl-0">        LC[&quot;legislativeClient&quot;]</span><br/><span class="hl-0">        QC[&quot;questionClient&quot;]</span><br/><span class="hl-0">        VCC[&quot;vocabularyClient&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    CoreTools --&gt; ZV</span><br/><span class="hl-0">    AdvancedTools --&gt; ZV</span><br/><span class="hl-0">    OSINT1 --&gt; ZV</span><br/><span class="hl-0">    OSINT2 --&gt; ZV</span><br/><span class="hl-0">    OSINT3 --&gt; ZV</span><br/><span class="hl-0">    Phase6 --&gt; ZV</span><br/><span class="hl-0">    Phase4 --&gt; ZV</span><br/><span class="hl-0">    Phase5 --&gt; ZV</span><br/><span class="hl-0">    FeedTools --&gt; ZV</span><br/><br/><span class="hl-0">    ZV --&gt; Clients</span>
 </code><button type="button">Copy</button></pre>
 
 <hr>
@@ -891,29 +715,7 @@
 </table>
 <hr>
 <h2 id="🚀-deployment-architecture" class="tsd-anchor-link">🚀 Deployment Architecture<a href="#🚀-deployment-architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<pre><code class="mermaid">flowchart TD
-    subgraph Developer["Developer Workstation"]
-        IDE["IDE (Cursor / VS Code)"]
-        ClaudeApp["Claude Desktop"]
-    end
-
-    subgraph Runtime["Node.js Runtime"]
-        NPX["npx / node dist/index.js"]
-        PROC["EP MCP Server Process"]
-        ENV[".env Configuration"]
-    end
-
-    subgraph EPInfra["European Parliament Infrastructure"]
-        CDN["EP CDN / Load Balancer"]
-        API["EP Open Data Portal API v2\nhttps://data.europarl.europa.eu/api/v2/"]
-    end
-
-    IDE -->|"MCP stdio"| PROC
-    ClaudeApp -->|"MCP stdio"| PROC
-    NPX --> PROC
-    ENV --> PROC
-    PROC -->|"HTTPS/TLS"| CDN
-    CDN --> API
+<pre><code class="mermaid"><span class="hl-0">flowchart TD</span><br/><span class="hl-0">    subgraph Developer[&quot;Developer Workstation&quot;]</span><br/><span class="hl-0">        IDE[&quot;IDE (Cursor / VS Code)&quot;]</span><br/><span class="hl-0">        ClaudeApp[&quot;Claude Desktop&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph Runtime[&quot;Node.js Runtime&quot;]</span><br/><span class="hl-0">        NPX[&quot;npx / node dist/index.js&quot;]</span><br/><span class="hl-0">        PROC[&quot;EP MCP Server Process&quot;]</span><br/><span class="hl-0">        ENV[&quot;.env Configuration&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    subgraph EPInfra[&quot;European Parliament Infrastructure&quot;]</span><br/><span class="hl-0">        CDN[&quot;EP CDN / Load Balancer&quot;]</span><br/><span class="hl-0">        API[&quot;EP Open Data Portal API v2\nhttps://data.europarl.europa.eu/api/v2/&quot;]</span><br/><span class="hl-0">    end</span><br/><br/><span class="hl-0">    IDE --&gt;|&quot;MCP stdio&quot;| PROC</span><br/><span class="hl-0">    ClaudeApp --&gt;|&quot;MCP stdio&quot;| PROC</span><br/><span class="hl-0">    NPX --&gt; PROC</span><br/><span class="hl-0">    ENV --&gt; PROC</span><br/><span class="hl-0">    PROC --&gt;|&quot;HTTPS/TLS&quot;| CDN</span><br/><span class="hl-0">    CDN --&gt; API</span>
 </code><button type="button">Copy</button></pre>
 
 <p><strong>Deployment Modes:</strong></p>
@@ -1038,12 +840,12 @@
 </tbody>
 </table>
 <h3 id="metricresult-wrapper-pattern" class="tsd-anchor-link">MetricResult Wrapper Pattern<a href="#metricresult-wrapper-pattern" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<pre><code class="typescript"><span class="hl-2">interface</span><span class="hl-1"> </span><span class="hl-10">MetricResult</span><span class="hl-1">&lt;</span><span class="hl-10">T</span><span class="hl-1"> = </span><span class="hl-10">number</span><span class="hl-1">&gt; {</span><br/><span class="hl-1">  </span><span class="hl-7">value</span><span class="hl-1">: </span><span class="hl-10">T</span><span class="hl-1"> | </span><span class="hl-10">null</span><span class="hl-1">;                      </span><span class="hl-4">// Computed value, or null when unavailable</span><br/><span class="hl-1">  </span><span class="hl-7">availability</span><span class="hl-1">: </span><span class="hl-10">DataAvailability</span><span class="hl-1">;       </span><span class="hl-4">// AVAILABLE | PARTIAL | ESTIMATED | UNAVAILABLE</span><br/><span class="hl-1">  </span><span class="hl-7">confidence</span><span class="hl-1">: </span><span class="hl-3">&#39;HIGH&#39;</span><span class="hl-1"> | </span><span class="hl-3">&#39;MEDIUM&#39;</span><span class="hl-1"> | </span><span class="hl-3">&#39;LOW&#39;</span><span class="hl-1"> | </span><span class="hl-3">&#39;NONE&#39;</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-7">source</span><span class="hl-1">?: </span><span class="hl-10">string</span><span class="hl-1">;                      </span><span class="hl-4">// Human-readable data source description</span><br/><span class="hl-1">  </span><span class="hl-7">reason</span><span class="hl-1">?: </span><span class="hl-10">string</span><span class="hl-1">;                      </span><span class="hl-4">// Explanation for unavailable/estimated data</span><br/><span class="hl-1">}</span>
+<pre><code class="typescript"><span class="hl-2">interface</span><span class="hl-0"> </span><span class="hl-10">MetricResult</span><span class="hl-0">&lt;</span><span class="hl-10">T</span><span class="hl-0"> = </span><span class="hl-10">number</span><span class="hl-0">&gt; {</span><br/><span class="hl-0">  </span><span class="hl-7">value</span><span class="hl-0">: </span><span class="hl-10">T</span><span class="hl-0"> | </span><span class="hl-10">null</span><span class="hl-0">;                      </span><span class="hl-4">// Computed value, or null when unavailable</span><br/><span class="hl-0">  </span><span class="hl-7">availability</span><span class="hl-0">: </span><span class="hl-10">DataAvailability</span><span class="hl-0">;       </span><span class="hl-4">// AVAILABLE | PARTIAL | ESTIMATED | UNAVAILABLE</span><br/><span class="hl-0">  </span><span class="hl-7">confidence</span><span class="hl-0">: </span><span class="hl-3">&#39;HIGH&#39;</span><span class="hl-0"> | </span><span class="hl-3">&#39;MEDIUM&#39;</span><span class="hl-0"> | </span><span class="hl-3">&#39;LOW&#39;</span><span class="hl-0"> | </span><span class="hl-3">&#39;NONE&#39;</span><span class="hl-0">;</span><br/><span class="hl-0">  </span><span class="hl-7">source</span><span class="hl-0">?: </span><span class="hl-10">string</span><span class="hl-0">;                      </span><span class="hl-4">// Human-readable data source description</span><br/><span class="hl-0">  </span><span class="hl-7">reason</span><span class="hl-0">?: </span><span class="hl-10">string</span><span class="hl-0">;                      </span><span class="hl-4">// Explanation for unavailable/estimated data</span><br/><span class="hl-0">}</span>
 </code><button type="button">Copy</button></pre>
 
 <h3 id="standardized-error-handling" class="tsd-anchor-link">Standardized Error Handling<a href="#standardized-error-handling" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <p>All tool handlers use the <code>ToolError</code> class for structured error reporting and <code>buildToolResponse()</code> for consistent success responses:</p>
-<pre><code class="typescript"><span class="hl-4">// ToolError — structured error with retryability signal</span><br/><span class="hl-2">class</span><span class="hl-1"> </span><span class="hl-10">ToolError</span><span class="hl-1"> </span><span class="hl-2">extends</span><span class="hl-1"> </span><span class="hl-10">Error</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-2">readonly</span><span class="hl-1"> </span><span class="hl-7">toolName</span><span class="hl-1">: </span><span class="hl-10">string</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-2">readonly</span><span class="hl-1"> </span><span class="hl-7">operation</span><span class="hl-1">: </span><span class="hl-10">string</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-2">readonly</span><span class="hl-1"> </span><span class="hl-7">isRetryable</span><span class="hl-1">: </span><span class="hl-10">boolean</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-2">readonly</span><span class="hl-1"> </span><span class="hl-7">cause</span><span class="hl-1">?: </span><span class="hl-10">Error</span><span class="hl-1">;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-4">// buildToolResponse — standard JSON response wrapper</span><br/><span class="hl-2">function</span><span class="hl-1"> </span><span class="hl-0">buildToolResponse</span><span class="hl-1">(</span><span class="hl-7">data</span><span class="hl-1">: </span><span class="hl-10">unknown</span><span class="hl-1">): </span><span class="hl-10">ToolResult</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-11">return</span><span class="hl-1"> { </span><span class="hl-7">content:</span><span class="hl-1"> [{ </span><span class="hl-7">type:</span><span class="hl-1"> </span><span class="hl-3">&#39;text&#39;</span><span class="hl-1">, </span><span class="hl-7">text:</span><span class="hl-1"> </span><span class="hl-9">JSON</span><span class="hl-1">.</span><span class="hl-0">stringify</span><span class="hl-1">(</span><span class="hl-7">data</span><span class="hl-1">, </span><span class="hl-2">null</span><span class="hl-1">, </span><span class="hl-6">2</span><span class="hl-1">) }] };</span><br/><span class="hl-1">}</span>
+<pre><code class="typescript"><span class="hl-4">// ToolError — structured error with retryability signal</span><br/><span class="hl-2">class</span><span class="hl-0"> </span><span class="hl-10">ToolError</span><span class="hl-0"> </span><span class="hl-2">extends</span><span class="hl-0"> </span><span class="hl-10">Error</span><span class="hl-0"> {</span><br/><span class="hl-0">  </span><span class="hl-2">readonly</span><span class="hl-0"> </span><span class="hl-7">toolName</span><span class="hl-0">: </span><span class="hl-10">string</span><span class="hl-0">;</span><br/><span class="hl-0">  </span><span class="hl-2">readonly</span><span class="hl-0"> </span><span class="hl-7">operation</span><span class="hl-0">: </span><span class="hl-10">string</span><span class="hl-0">;</span><br/><span class="hl-0">  </span><span class="hl-2">readonly</span><span class="hl-0"> </span><span class="hl-7">isRetryable</span><span class="hl-0">: </span><span class="hl-10">boolean</span><span class="hl-0">;</span><br/><span class="hl-0">  </span><span class="hl-2">readonly</span><span class="hl-0"> </span><span class="hl-7">cause</span><span class="hl-0">?: </span><span class="hl-10">Error</span><span class="hl-0">;</span><br/><span class="hl-0">}</span><br/><br/><span class="hl-4">// buildToolResponse — standard JSON response wrapper</span><br/><span class="hl-2">function</span><span class="hl-0"> </span><span class="hl-1">buildToolResponse</span><span class="hl-0">(</span><span class="hl-7">data</span><span class="hl-0">: </span><span class="hl-10">unknown</span><span class="hl-0">): </span><span class="hl-10">ToolResult</span><span class="hl-0"> {</span><br/><span class="hl-0">  </span><span class="hl-11">return</span><span class="hl-0"> { </span><span class="hl-7">content:</span><span class="hl-0"> [{ </span><span class="hl-7">type:</span><span class="hl-0"> </span><span class="hl-3">&#39;text&#39;</span><span class="hl-0">, </span><span class="hl-7">text:</span><span class="hl-0"> </span><span class="hl-9">JSON</span><span class="hl-0">.</span><span class="hl-1">stringify</span><span class="hl-0">(</span><span class="hl-7">data</span><span class="hl-0">, </span><span class="hl-2">null</span><span class="hl-0">, </span><span class="hl-6">2</span><span class="hl-0">) }] };</span><br/><span class="hl-0">}</span>
 </code><button type="button">Copy</button></pre>
 
 <hr>
@@ -1085,7 +887,7 @@
 <p><strong>Context:</strong> The EP Open Data Portal API v2 has rate limits and non-trivial latency. Parliamentary data (MEP lists, committee info, plenary schedules) changes infrequently. Repeated calls for the same data waste API quota.</p>
 <p><strong>Decision:</strong> Implement a shared LRU cache with 500 maximum entries and 15-minute TTL. All EP API client modules share a single cache instance registered in the DI container.</p>
 <p><strong>Cache Configuration:</strong></p>
-<pre><code><span class="hl-8">max</span><span class="hl-1">: </span><span class="hl-6">500</span><span class="hl-1"> </span><span class="hl-7">entries</span><br/><span class="hl-8">ttl</span><span class="hl-1">: </span><span class="hl-6">900</span><span class="hl-1">,</span><span class="hl-6">000</span><span class="hl-1"> </span><span class="hl-0">ms</span><span class="hl-1"> (</span><span class="hl-6">15</span><span class="hl-1"> </span><span class="hl-7">minutes</span><span class="hl-1">)</span><br/><span class="hl-8">allowStale</span><span class="hl-1">: </span><span class="hl-2">false</span><br/><span class="hl-8">updateAgeOnGet</span><span class="hl-1">: </span><span class="hl-2">false</span>
+<pre><code><span class="hl-8">max</span><span class="hl-0">: </span><span class="hl-6">500</span><span class="hl-0"> </span><span class="hl-7">entries</span><br/><span class="hl-8">ttl</span><span class="hl-0">: </span><span class="hl-6">900</span><span class="hl-0">,</span><span class="hl-6">000</span><span class="hl-0"> </span><span class="hl-1">ms</span><span class="hl-0"> (</span><span class="hl-6">15</span><span class="hl-0"> </span><span class="hl-7">minutes</span><span class="hl-0">)</span><br/><span class="hl-8">allowStale</span><span class="hl-0">: </span><span class="hl-2">false</span><br/><span class="hl-8">updateAgeOnGet</span><span class="hl-0">: </span><span class="hl-2">false</span>
 </code><button>Copy</button></pre>
 
 <p><strong>Cache Key Pattern:</strong> <code>{clientName}:{endpoint}:{sortedParams}</code></p>
@@ -1102,7 +904,7 @@
 <p><strong>Context:</strong> MCP tool handlers receive untyped <code>args</code> from AI clients. Without validation, malformed inputs can cause cryptic errors, security vulnerabilities, or corrupted API calls to the EP API.</p>
 <p><strong>Decision:</strong> Every tool handler validates its input schema using Zod <strong>before</strong> any business logic executes. Validation failures return structured MCP error responses immediately.</p>
 <p><strong>Validation Pipeline:</strong></p>
-<pre><code><span class="hl-9">MCP</span><span class="hl-1"> </span><span class="hl-0">args</span><span class="hl-1"> (</span><span class="hl-7">unknown</span><span class="hl-1">) → </span><span class="hl-7">Zod</span><span class="hl-1">.</span><span class="hl-0">parse</span><span class="hl-1">() → </span><span class="hl-7">typed</span><span class="hl-1"> </span><span class="hl-7">input</span><span class="hl-1"> → </span><span class="hl-9">EP</span><span class="hl-1"> </span><span class="hl-9">API</span><span class="hl-1"> </span><span class="hl-7">call</span><br/><span class="hl-1">                         ↓ (</span><span class="hl-7">on</span><span class="hl-1"> </span><span class="hl-7">failure</span><span class="hl-1">)</span><br/><span class="hl-1">                    </span><span class="hl-7">ZodError</span><span class="hl-1"> → </span><span class="hl-9">MCP</span><span class="hl-1"> </span><span class="hl-7">error</span><span class="hl-1"> </span><span class="hl-7">response</span>
+<pre><code><span class="hl-9">MCP</span><span class="hl-0"> </span><span class="hl-1">args</span><span class="hl-0"> (</span><span class="hl-7">unknown</span><span class="hl-0">) → </span><span class="hl-7">Zod</span><span class="hl-0">.</span><span class="hl-1">parse</span><span class="hl-0">() → </span><span class="hl-7">typed</span><span class="hl-0"> </span><span class="hl-7">input</span><span class="hl-0"> → </span><span class="hl-9">EP</span><span class="hl-0"> </span><span class="hl-9">API</span><span class="hl-0"> </span><span class="hl-7">call</span><br/><span class="hl-0">                         ↓ (</span><span class="hl-7">on</span><span class="hl-0"> </span><span class="hl-7">failure</span><span class="hl-0">)</span><br/><span class="hl-0">                    </span><span class="hl-7">ZodError</span><span class="hl-0"> → </span><span class="hl-9">MCP</span><span class="hl-0"> </span><span class="hl-7">error</span><span class="hl-0"> </span><span class="hl-7">response</span>
 </code><button>Copy</button></pre>
 
 <p><strong>Consequences:</strong></p>

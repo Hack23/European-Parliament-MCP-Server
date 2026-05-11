@@ -8,10 +8,8 @@
  */
 
 export {
-  // Common primitives
   PaginatedResponseSchema,
 
-  // MEP schemas
   GetMEPsSchema,
   GetMEPDetailsSchema,
   MEPSchema,
@@ -21,17 +19,14 @@ export {
   GetOutgoingMEPsSchema,
   GetHomonymMEPsSchema,
 
-  // Plenary schemas
   GetPlenarySessionsSchema,
   PlenarySessionSchema,
   GetVotingRecordsSchema,
   VotingRecordSchema,
 
-  // Committee schemas
   GetCommitteeInfoSchema,
   CommitteeSchema,
 
-  // Document schemas
   SearchDocumentsSchema,
   LegislativeDocumentSchema,
   GetPlenaryDocumentsSchema,
@@ -40,11 +35,9 @@ export {
   GetPlenarySessionDocumentItemsSchema,
   GetExternalDocumentsSchema,
 
-  // Question schemas
   GetParliamentaryQuestionsSchema,
   ParliamentaryQuestionSchema,
 
-  // Analysis/OSINT schemas
   AnalyzeVotingPatternsSchema,
   TrackLegislationSchema,
   GenerateReportSchema,
@@ -57,7 +50,6 @@ export {
   OsintStandardOutputSchema,
   CorrelateIntelligenceSchema,
 
-  // Activity schemas
   GetSpeechesSchema,
   GetProceduresSchema,
   GetAdoptedTextsSchema,
@@ -71,7 +63,6 @@ export {
   GetMeetingPlenarySessionDocumentsSchema,
   GetMeetingPlenarySessionDocumentItemsSchema,
 
-  // Feed schemas
   FeedTimeframeSchema,
   GetMEPsFeedSchema,
   GetCorporateBodiesFeedSchema,

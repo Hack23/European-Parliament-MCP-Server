@@ -1,17 +1,17 @@
 /**
  * MCP Tool: get_committee_info
- * 
+ *
  * Retrieve European Parliament committee information
- * 
+ *
  * **Intelligence Perspective:** Maps committee power structures, membership networks,
  * and policy domain specialization for institutional analysis and influence mapping.
- * 
+ *
  * **Business Perspective:** Powers committee monitoring products for industry associations,
  * trade groups, and corporate government affairs tracking specific policy areas.
- * 
+ *
  * **Marketing Perspective:** Highlights structured access to EP's 20+ standing committees—
  * compelling for policy monitoring platforms and civic tech integrations.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -56,7 +56,6 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetCommitteeInfo(
   args: unknown
 ): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetCommitteeInfoSchema.parse>;
   try {
     params = GetCommitteeInfoSchema.parse(args);
@@ -75,7 +74,6 @@ export async function handleGetCommitteeInfo(
   }
 
   try {
-    // Return current active bodies if showCurrent is true
     if (params.showCurrent === true) {
       const result = await epClient.getCurrentCorporateBodies();
       const outputSchema = PaginatedResponseSchema(CommitteeSchema);
@@ -83,17 +81,15 @@ export async function handleGetCommitteeInfo(
       return buildToolResponse(validated);
     }
 
-    // Fetch committee info from EP API (only pass defined properties)
     const apiParams = buildApiParams(params, [
       { from: 'id', to: 'id' },
       { from: 'abbreviation', to: 'abbreviation' },
     ]);
-    
+
     const result = await epClient.getCommitteeInfo(apiParams);
-    
-    // Validate output
+
     const validated = CommitteeSchema.parse(result);
-    
+
     return buildToolResponse(validated);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {

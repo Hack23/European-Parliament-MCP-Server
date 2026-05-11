@@ -1,23 +1,23 @@
 /**
  * Performance Monitoring Utilities
- * 
+ *
  * **Intelligence Perspective:** Performance metrics enable operational intelligence
  * on system health—critical for maintaining reliable intelligence product delivery.
- * 
+ *
  * **Business Perspective:** P95 latency targets (<200ms) directly impact customer
  * satisfaction and SLA compliance for premium API tier customers.
- * 
+ *
  * **Marketing Perspective:** Sub-200ms response times are a key performance claim
  * for developer marketing and competitive positioning against alternatives.
- * 
+ *
  * ISMS Policy: PE-001 (Performance Standards), MO-001 (Monitoring)
- * 
+ *
  * Provides performance monitoring and metrics collection for:
  * - Operation duration tracking
  * - Percentile calculations (p50, p95, p99)
  * - Performance baseline validation
  * - Alerting on degradation
- * 
+ *
  * @see https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md
  */
 
@@ -68,18 +68,18 @@ export const DEFAULT_PERFORMANCE_THRESHOLDS: PerformanceThresholds = {
 
 /**
  * Performance monitor for tracking operation metrics
- * 
+ *
  * Tracks duration of operations and provides statistical analysis.
  * Useful for identifying performance regressions and bottlenecks.
- * 
+ *
  * @example
  * ```typescript
  * const monitor = new PerformanceMonitor();
- * 
+ *
  * // Record operation durations
  * monitor.recordDuration('api_call', 150);
  * monitor.recordDuration('api_call', 200);
- * 
+ *
  * // Get statistics
  * const stats = monitor.getStats('api_call');
  * console.log(`p95: ${stats.p95}ms`);
@@ -88,7 +88,7 @@ export const DEFAULT_PERFORMANCE_THRESHOLDS: PerformanceThresholds = {
 export class PerformanceMonitor {
   private readonly metrics = new Map<string, number[]>();
   private readonly maxSamples: number;
-  
+
   /**
    * Creates a new performance monitor.
    *
@@ -110,7 +110,7 @@ export class PerformanceMonitor {
     }
     this.maxSamples = maxSamples;
   }
-  
+
   /**
    * Records a duration sample for the named operation.
    *
@@ -133,23 +133,20 @@ export class PerformanceMonitor {
    */
   recordDuration(operation: string, durationMs: number): void {
     let durations = this.metrics.get(operation);
-    
+
     if (!durations) {
       durations = [];
       this.metrics.set(operation, durations);
     }
-    
+
     durations.push(durationMs);
-    
-    // Limit number of samples to prevent unbounded memory growth
-    // Trim the oldest entries in-place using splice instead of repeatedly calling shift()
-    // to keep the most recent samples while avoiding extra array allocations
+
     if (durations.length > this.maxSamples) {
       const overflow = durations.length - this.maxSamples;
       durations.splice(0, overflow);
     }
   }
-  
+
   /**
    * Returns aggregated performance statistics for a named operation.
    *
@@ -173,24 +170,22 @@ export class PerformanceMonitor {
    */
   getStats(operation: string): PerformanceStats | null {
     const durations = this.metrics.get(operation);
-    
+
     if (!durations || durations.length === 0) {
       return null;
     }
-    
-    // Sort durations for percentile calculation
+
     const sorted = [...durations].sort((a, b) => a - b);
     const count = sorted.length;
-    
-    // Calculate statistics
+
     const sum = sorted.reduce((acc, val) => acc + val, 0);
     const min = sorted[0];
     const max = sorted[count - 1];
-    
+
     if (min === undefined || max === undefined) {
       return null;
     }
-    
+
     return {
       p50: this.percentile(sorted, 0.5),
       p95: this.percentile(sorted, 0.95),
@@ -201,43 +196,43 @@ export class PerformanceMonitor {
       count
     };
   }
-  
+
   /**
    * Calculate percentile from sorted array
-   * 
+   *
    * Uses linear interpolation for more accurate percentile calculation
-   * 
+   *
    * @param sorted - Sorted array of numbers
    * @param p - Percentile (0.0 to 1.0)
    * @returns Value at the specified percentile
-   * 
+   *
    * @internal
    */
   private percentile(sorted: number[], p: number): number {
     if (sorted.length === 0) return 0;
-    
+
     const first = sorted[0];
     if (sorted.length === 1 && first !== undefined) return first;
-    
+
     const index = (sorted.length - 1) * p;
     const lower = Math.floor(index);
     const upper = Math.ceil(index);
     const weight = index % 1;
-    
+
     if (lower === upper) {
       return sorted[lower] ?? 0;
     }
-    
+
     const lowerValue = sorted[lower];
     const upperValue = sorted[upper];
-    
+
     if (lowerValue === undefined || upperValue === undefined) {
       return 0;
     }
-    
+
     return lowerValue * (1 - weight) + upperValue * weight;
   }
-  
+
   /**
    * Returns all operation names currently being tracked.
    *
@@ -257,7 +252,7 @@ export class PerformanceMonitor {
   getOperations(): string[] {
     return Array.from(this.metrics.keys());
   }
-  
+
   /**
    * Clears all recorded duration samples for every tracked operation.
    *
@@ -277,7 +272,7 @@ export class PerformanceMonitor {
   clear(): void {
     this.metrics.clear();
   }
-  
+
   /**
    * Clears recorded duration samples for a single operation.
    *
@@ -297,10 +292,10 @@ export class PerformanceMonitor {
 
 /**
  * Execute an async function and track its performance
- * 
+ *
  * Automatically records the duration of the operation in the
  * provided performance monitor.
- * 
+ *
  * @template T - Return type of the function
  * @param monitor - Performance monitor to record the duration in
  * @param operation - Operation name for tracking (e.g., `'fetch_meps'`)
@@ -329,7 +324,7 @@ export async function withPerformanceTracking<T>(
   fn: () => Promise<T>
 ): Promise<T> {
   const start = performance.now();
-  
+
   try {
     return await fn();
   } finally {
@@ -340,17 +335,17 @@ export async function withPerformanceTracking<T>(
 
 /**
  * Global performance monitor instance
- * 
+ *
  * Shared instance for application-wide performance tracking.
  * Use this for convenience when you don't need isolated monitoring.
- * 
+ *
  * @example
  * ```typescript
  * import { performanceMonitor } from './utils/performance.js';
- * 
+ *
  * // Record duration
  * performanceMonitor.recordDuration('api_call', 150);
- * 
+ *
  * // Get statistics
  * const stats = performanceMonitor.getStats('api_call');
  * ```

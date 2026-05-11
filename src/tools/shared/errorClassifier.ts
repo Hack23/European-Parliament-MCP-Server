@@ -65,7 +65,6 @@ export function extractHttpStatus(error: unknown): number | undefined {
  * @returns Structured classification with code, category, httpStatus, and retryable flag
  */
 export function classifyError(error: unknown): ErrorClassification {
-  // 1. ToolError with explicit classification
   if (error instanceof ToolError && error.errorCode !== undefined) {
     const code = error.errorCode;
     return {
@@ -76,18 +75,15 @@ export function classifyError(error: unknown): ErrorClassification {
     };
   }
 
-  // 2. Extract HTTP status from error or its cause chain
   const httpStatus = resolveHttpStatus(error);
   if (httpStatus !== undefined) {
     return classifyHttpStatus(httpStatus);
   }
 
-  // 3. ToolError operation-based and message-based heuristics
   if (error instanceof ToolError) {
     return classifyToolErrorHeuristic(error);
   }
 
-  // 4–6. Plain Error heuristics (ZodError, timeout, default)
   return classifyPlainErrorHeuristic(error);
 }
 

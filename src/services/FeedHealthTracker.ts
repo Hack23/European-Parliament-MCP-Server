@@ -13,8 +13,6 @@
  * @module services/FeedHealthTracker
  */
 
-// ── Public types ──────────────────────────────────────────────────
-
 /**
  * Per-feed health status.
  *
@@ -63,8 +61,6 @@ export interface FeedAvailability {
   level: AvailabilityLevel;
 }
 
-// ── Constants ─────────────────────────────────────────────────────
-
 /** All tracked feed tool names. */
 export const FEED_TOOL_NAMES = [
   'get_meps_feed',
@@ -85,8 +81,6 @@ export const FEED_TOOL_NAMES = [
 /** Threshold boundaries for availability levels. */
 const FULL_THRESHOLD = 10;
 const DEGRADED_THRESHOLD = 5;
-
-// ── FeedHealthTracker implementation ──────────────────────────────
 
 /**
  * Singleton service that records feed tool invocation outcomes
@@ -187,8 +181,6 @@ export class FeedHealthTracker {
   }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────
-
 /**
  * Map operational feed count to an availability level.
  *
@@ -204,8 +196,6 @@ function deriveLevel(operational: number, errored: number): AvailabilityLevel {
   if (errored >= 1) return 'Unavailable';
   return 'Unknown';
 }
-
-// ── Module-level singleton ────────────────────────────────────────
 
 /** Global feed health tracker instance used by tool dispatch and the health tool. */
 export const feedHealthTracker = new FeedHealthTracker();

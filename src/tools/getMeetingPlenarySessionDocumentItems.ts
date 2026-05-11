@@ -71,7 +71,6 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetMeetingPlenarySessionDocumentItems(
   args: unknown
 ): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetMeetingPlenarySessionDocumentItemsSchema.parse>;
   try {
     params = GetMeetingPlenarySessionDocumentItemsSchema.parse(args);

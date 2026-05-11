@@ -1,25 +1,25 @@
 /**
  * Custom Error Types for European Parliament MCP Server
- * 
+ *
  * Provides comprehensive error handling with structured error types for:
  * - Validation failures
  * - API errors
  * - Rate limiting
  * - GDPR compliance violations
- * 
+ *
  * All errors include proper error codes, status codes, and optional details
  * for debugging while ensuring sensitive information is not leaked to clients.
- * 
+ *
  * @see https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md
  * @see https://github.com/Hack23/European-Parliament-MCP-Server
  */
 
 /**
  * Base error class for European Parliament MCP Server
- * 
+ *
  * Provides structured error handling with error codes, HTTP status codes,
  * and optional details for debugging. All errors extend this base class.
- * 
+ *
  * @example
  * ```typescript
  * throw new MCPServerError(
@@ -33,7 +33,7 @@
 export class MCPServerError extends Error {
   /**
    * Create a new MCP Server error
-   * 
+   *
    * @param message - Human-readable error message
    * @param code - Machine-readable error code (e.g., 'VALIDATION_ERROR')
    * @param statusCode - HTTP status code (default: 500)
@@ -53,10 +53,10 @@ export class MCPServerError extends Error {
 
 /**
  * Validation error for input validation failures
- * 
+ *
  * Thrown when user input fails validation (e.g., invalid country code,
  * out of range limit, malformed ID). Always returns HTTP 400 status.
- * 
+ *
  * @example
  * ```typescript
  * if (!isValidCountryCode(country)) {
@@ -70,7 +70,7 @@ export class MCPServerError extends Error {
 export class ValidationError extends MCPServerError {
   /**
    * Create a new validation error
-   * 
+   *
    * @param message - Description of validation failure
    * @param details - Optional details about what failed validation
    */
@@ -82,10 +82,10 @@ export class ValidationError extends MCPServerError {
 
 /**
  * Rate limit error when API rate limit is exceeded
- * 
+ *
  * Thrown when the client exceeds the configured rate limit.
  * Always returns HTTP 429 status and includes retry-after information.
- * 
+ *
  * @example
  * ```typescript
  * if (requestCount > maxRequests) {
@@ -99,7 +99,7 @@ export class ValidationError extends MCPServerError {
 export class RateLimitError extends MCPServerError {
   /**
    * Create a new rate limit error
-   * 
+   *
    * @param message - Description of rate limit violation
    * @param retryAfter - Number of seconds to wait before retrying (optional)
    */
@@ -114,11 +114,11 @@ export class RateLimitError extends MCPServerError {
 
 /**
  * EP API error for European Parliament API failures
- * 
+ *
  * Thrown when the European Parliament API returns an error or
  * when communication with the API fails. Preserves the original
  * status code from the upstream API.
- * 
+ *
  * @example
  * ```typescript
  * const response = await fetch(epApiUrl);
@@ -134,7 +134,7 @@ export class RateLimitError extends MCPServerError {
 export class EPAPIError extends MCPServerError {
   /**
    * Create a new EP API error
-   * 
+   *
    * @param message - Description of API failure
    * @param statusCode - HTTP status code from EP API
    * @param details - Optional details about the failure
@@ -147,15 +147,15 @@ export class EPAPIError extends MCPServerError {
 
 /**
  * GDPR compliance error
- * 
+ *
  * Thrown when an operation would violate GDPR requirements, such as:
  * - Accessing personal data without proper authorization
  * - Caching personal data beyond retention limits
  * - Missing required audit logging
  * - Data minimization violations
- * 
+ *
  * Always returns HTTP 403 status to indicate forbidden operation.
- * 
+ *
  * @example
  * ```typescript
  * if (cacheAge > maxPersonalDataCacheAge) {
@@ -169,7 +169,7 @@ export class EPAPIError extends MCPServerError {
 export class GDPRComplianceError extends MCPServerError {
   /**
    * Create a new GDPR compliance error
-   * 
+   *
    * @param message - Description of GDPR violation
    * @param details - Optional details about the violation
    */
@@ -181,13 +181,13 @@ export class GDPRComplianceError extends MCPServerError {
 
 /**
  * Type guard for MCPServerError
- * 
+ *
  * Checks if an unknown error is an instance of MCPServerError or one of
  * its subclasses. Useful for error handling and formatting.
- * 
+ *
  * @param error - Unknown error to check
  * @returns true if error is an MCPServerError or subclass
- * 
+ *
  * @example
  * ```typescript
  * try {
@@ -205,14 +205,14 @@ export function isMCPServerError(error: unknown): error is MCPServerError {
 
 /**
  * Error formatter for MCP responses
- * 
+ *
  * Formats errors for safe transmission to MCP clients. Internal errors
  * are sanitized to prevent information leakage while preserving useful
  * debugging information for expected error types.
- * 
+ *
  * @param error - Error to format
  * @returns Formatted error object safe for client transmission
- * 
+ *
  * @example
  * ```typescript
  * try {
@@ -223,7 +223,7 @@ export function isMCPServerError(error: unknown): error is MCPServerError {
  *   return { content: [{ type: 'text', text: JSON.stringify(formatted) }] };
  * }
  * ```
- * 
+ *
  * @security
  * - Sanitizes internal errors to prevent information leakage
  * - Preserves error codes and safe details for structured errors
@@ -242,8 +242,6 @@ export function formatMCPError(error: unknown): {
     };
   }
 
-  // Don't expose internal errors to clients
-  // Log the full error internally for debugging
   if (error instanceof Error) {
     console.error('Internal error:', error);
   } else {

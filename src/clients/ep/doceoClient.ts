@@ -172,7 +172,6 @@ export class DoceoClient {
       });
 
       if (!response.ok) {
-        // 404 is expected for dates without plenary sessions
         if (response.status === 404) {
           await response.body?.cancel();
           return null;
@@ -182,7 +181,6 @@ export class DoceoClient {
         return null;
       }
 
-      // Check content length
       const contentLength = response.headers.get('content-length');
       if (contentLength !== null && parseInt(contentLength, 10) > MAX_XML_RESPONSE_BYTES) {
         await response.body?.cancel();
@@ -252,7 +250,6 @@ export class DoceoClient {
   ): Promise<{ votes: LatestVoteRecord[]; url: string } | null> {
     const rcvUrl = buildDoceoUrl(date, 'RCV', term);
 
-    // Try RCV first (richer data with individual MEP votes)
     const rcvResults = await this.fetchRcvForDate(date, term, abortSignal);
     if (rcvResults.length > 0) {
       let records = rcvToLatestVotes(rcvResults, date, term, rcvUrl);
@@ -262,7 +259,6 @@ export class DoceoClient {
       return { votes: records, url: rcvUrl };
     }
 
-    // Fall back to VOT (aggregate only)
     const votUrl = buildDoceoUrl(date, 'VOT', term);
     const votResults = await this.fetchVotForDate(date, term, abortSignal);
     if (votResults.length > 0) {

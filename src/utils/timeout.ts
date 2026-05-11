@@ -1,11 +1,11 @@
 /**
  * Request Timeout Utilities
- * 
+ *
  * ISMS Policy: SC-002 (Secure Coding), PE-001 (Performance Standards)
- * 
+ *
  * Provides timeout handling for long-running operations to prevent
  * resource exhaustion and ensure responsive API behavior.
- * 
+ *
  * @see https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md
  */
 
@@ -30,28 +30,15 @@ export interface TimeoutConfig {
  * at the call site rather than relying on environment variables.
  */
 export const DEFAULT_TIMEOUTS = {
-  /** Standard EP API HTTP request (60 s — some meeting sub-endpoints are slow) */
   EP_API_REQUEST_MS: 60_000,
-  /**
-   * Extended timeout for known slow EP API feed endpoints (120 s).
-   *
-   * The `procedures/feed` and `events/feed` endpoints on the EP Open Data
-   * Portal are significantly slower than other feed endpoints (e.g.
-   * `adopted-texts/feed`) and routinely exceed the standard 60 s timeout
-   * when queried with `timeframe=one-month`.  This extended timeout gives
-   * those endpoints enough headroom to respond without falling back to
-   * empty timeout responses.
-   */
   EP_FEED_SLOW_REQUEST_MS: 120_000,
-  /** Short health-check probe (3 s) */
   HEALTH_CHECK_MS: 3_000,
-  /** Retry delay base (1 s) */
   RETRY_DELAY_MS: 1_000,
 } as const;
 
 /**
  * Timeout error thrown when an operation exceeds its time limit
- * 
+ *
  * @example
  * ```typescript
  * if (Date.now() - startTime > timeout) {
@@ -62,7 +49,7 @@ export const DEFAULT_TIMEOUTS = {
 export class TimeoutError extends Error {
   /**
    * Create a new timeout error
-   * 
+   *
    * @param message - Description of the timeout
    * @param timeoutMs - The timeout duration in milliseconds
    */
@@ -78,16 +65,16 @@ export class TimeoutError extends Error {
 
 /**
  * Execute a promise with a timeout
- * 
+ *
  * Races the provided promise against a timeout. If the timeout expires
  * before the promise resolves, a TimeoutError is thrown.
- * 
+ *
  * @template T - Type of the promise result
  * @param promise - Promise to execute with timeout
  * @param timeoutMs - Timeout in milliseconds
  * @param errorMessage - Optional custom error message
  * @returns Promise that resolves with the result or rejects with TimeoutError
- * 
+ *
  * @throws {TimeoutError} If operation exceeds timeout
  *
  * @example
@@ -111,8 +98,7 @@ export async function withTimeout<T>(
   errorMessage?: string
 ): Promise<T> {
   let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
-  
-  // Create timeout promise that rejects after specified time
+
   const timeoutPromise = new Promise<never>((_, reject) => {
     timeoutHandle = setTimeout(() => {
       reject(
@@ -123,12 +109,10 @@ export async function withTimeout<T>(
       );
     }, timeoutMs);
   });
-  
-  // Race between the actual operation and timeout
+
   try {
     return await Promise.race([promise, timeoutPromise]);
   } finally {
-    // Always clear timeout to prevent memory leaks
     if (timeoutHandle !== undefined) {
       clearTimeout(timeoutHandle);
     }
@@ -137,11 +121,11 @@ export async function withTimeout<T>(
 
 /**
  * Wraps a promise with a timeout and optional AbortSignal support.
- * 
+ *
  * For operations that support cancellation (like fetch), pass a function that
  * accepts an AbortSignal. The signal will be aborted when the timeout fires,
  * allowing the underlying operation to clean up resources.
- * 
+ *
  * @template T - Type of the promise result
  * @param fn - Function that returns a promise and optionally accepts an AbortSignal
  * @param timeoutMs - Timeout in milliseconds
@@ -171,11 +155,10 @@ export async function withTimeoutAndAbort<T>(
 ): Promise<T> {
   const controller = new AbortController();
   let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
-  
-  // Create timeout promise that rejects and aborts after specified time
+
   const timeoutPromise = new Promise<never>((_, reject) => {
     timeoutHandle = setTimeout(() => {
-      controller.abort(); // Cancel the underlying operation
+      controller.abort();
       reject(
         new TimeoutError(
           errorMessage ?? `Operation timed out after ${String(timeoutMs)}ms`,
@@ -184,13 +167,11 @@ export async function withTimeoutAndAbort<T>(
       );
     }, timeoutMs);
   });
-  
-  // Race between the actual operation and timeout
+
   try {
     const result = await Promise.race([fn(controller.signal), timeoutPromise]);
     return result;
   } finally {
-    // Always clear timeout to prevent memory leaks
     if (timeoutHandle !== undefined) {
       clearTimeout(timeoutHandle);
     }
@@ -199,9 +180,9 @@ export async function withTimeoutAndAbort<T>(
 
 /**
  * Validate withRetry options
- * 
+ *
  * @param maxRetries - Maximum retry count
- * @param timeoutMs - Timeout duration  
+ * @param timeoutMs - Timeout duration
  * @param retryDelayMs - Retry delay duration
  * @param maxDelayMs - Maximum delay cap
  * @throws {Error} If any option is invalid
@@ -228,16 +209,16 @@ function validateRetryOptions(
 
 /**
  * Execute a function with retry logic and timeout
- * 
+ *
  * Retries the operation up to {@link options.maxRetries} times (for a total
  * of maxRetries + 1 attempts including the initial call). Each retry has its
  * own timeout (if timeoutMs is provided).
- * 
+ *
  * By default, all non-{@link TimeoutError} failures are considered retryable.
  * To restrict retries to transient failures only (for example, network
  * errors or 5xx status codes), provide a {@link options.shouldRetry}
  * predicate that returns true only for errors that should be retried.
- * 
+ *
  * @template T - Type of the function result
  * @param fn - Async function to execute
  * @param options - Retry and timeout configuration
@@ -248,7 +229,7 @@ function validateRetryOptions(
  * @param options.timeoutErrorMessage - Custom error message for timeout errors
  * @param options.shouldRetry - Predicate that decides if a failed attempt should be retried (default: retry all non-timeout errors)
  * @returns Promise that resolves with the result
- * 
+ *
  * @throws {TimeoutError} If any attempt exceeds timeout
  * @throws {Error} If all retries are exhausted
  *
@@ -301,53 +282,45 @@ export async function withRetry<T>(
     timeoutErrorMessage,
     shouldRetry = (): boolean => true
   } = options;
-  
-  // Input validation
+
   validateRetryOptions(maxRetries, timeoutMs, retryDelayMs, maxDelayMs);
-  
+
   let lastError: unknown;
-  
+
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      // Add timeout to each attempt only if timeoutMs is provided
-      // If the function handles timeout internally (e.g., withTimeoutAndAbort), skip wrapping
       const result = timeoutMs !== undefined
         ? await withTimeout(fn(), timeoutMs, timeoutErrorMessage)
         : await fn();
       return result;
     } catch (error: unknown) {
       lastError = error;
-      
-      // Don't retry timeout errors
+
       if (error instanceof TimeoutError) {
         throw error;
       }
-      
-      // Check if we should retry this error
+
       if (!shouldRetry(error)) {
         throw error;
       }
-      
-      // Don't wait after the last attempt
+
       if (attempt < maxRetries) {
-        // Exponential backoff with jitter and max cap to prevent thundering herd
         const baseDelay = Math.min(retryDelayMs * Math.pow(2, attempt), maxDelayMs);
         const jitter = baseDelay * 0.1 * Math.random();
         await new Promise(resolve => setTimeout(resolve, baseDelay + jitter));
       }
     }
   }
-  
-  // All retries exhausted - this should always have a value since we attempt at least once
+
   throw lastError;
 }
 
 /**
  * Type guard to check if an error is a TimeoutError
- * 
+ *
  * @param error - Error to check
  * @returns true if error is a TimeoutError
- * 
+ *
  * @example
  * ```typescript
  * try {

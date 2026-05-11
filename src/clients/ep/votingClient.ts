@@ -25,8 +25,6 @@ import {
   type JSONLDResponse,
 } from './baseClient.js';
 
-// ─── Voting Client ────────────────────────────────────────────────────────────
-
 /**
  * Sub-client for voting records and speeches EP API endpoints.
  *
@@ -38,8 +36,6 @@ export class VotingClient extends BaseEPClient {
     super(config, shared);
   }
 
-  // ─── Transform helpers ────────────────────────────────────────────────────
-
   private transformVoteResult(
     apiData: Record<string, unknown>,
     sessionId: string
@@ -50,8 +46,6 @@ export class VotingClient extends BaseEPClient {
   private transformSpeech(apiData: Record<string, unknown>): Speech {
     return _transformSpeech(apiData);
   }
-
-  // ─── Private helpers ──────────────────────────────────────────────────────
 
   /**
    * Fetches vote results for a specific sitting/session.
@@ -102,7 +96,6 @@ export class VotingClient extends BaseEPClient {
         );
         records.push(...transformed);
       } catch (error: unknown) {
-        // Some meetings may not have vote results – continue with degraded result
         auditLogger.logError('get_voting_records', { meetingId }, toErrorMessage(error));
       }
 
@@ -138,8 +131,6 @@ export class VotingClient extends BaseEPClient {
     return filtered;
   }
 
-  // ─── Public methods ───────────────────────────────────────────────────────
-
   /**
    * Retrieves voting records with filtering by session, topic, and date.
    *
@@ -173,10 +164,8 @@ export class VotingClient extends BaseEPClient {
         records = await this.fetchVoteResultsFromRecentMeetings(params);
       }
 
-      // Apply client-side filters
       records = this.filterVotingRecords(records, params);
 
-      // Apply pagination
       const offset = params.offset ?? 0;
       const limit = params.limit ?? 50;
       const paginatedRecords = records.slice(offset, offset + limit);
@@ -226,8 +215,6 @@ export class VotingClient extends BaseEPClient {
       offset,
       limit,
     };
-    // Note: `year` is NOT a valid param for /speeches (EP API ignores it).
-    // Use sitting-date / sitting-date-end for date filtering.
     if (params.dateFrom !== undefined) apiParams['sitting-date'] = params.dateFrom;
     if (params.dateTo !== undefined) apiParams['sitting-date-end'] = params.dateTo;
 

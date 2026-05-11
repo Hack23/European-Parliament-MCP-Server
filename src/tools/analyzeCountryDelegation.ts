@@ -223,7 +223,6 @@ async function buildDelegationAnalysis(
     meps
   );
 
-  // Compute attendance averages
   const attendances = details
     .map(d => d.votingStatistics?.attendanceRate)
     .filter((a): a is number => a !== undefined);
@@ -234,13 +233,9 @@ async function buildDelegationAnalysis(
 
   const committeePresence = computeCommitteePresence(details);
 
-  // National cohesion - approximated from group concentration.
-  // The +10 baseline accounts for empirical national-interest cohesion (e.g., structural funds,
-  // CAP allocations) that cross-cuts political group lines even in fragmented delegations.
   const topGroupShare = distribution[0]?.percentage ?? 0;
   const nationalCohesion = Math.min(100, topGroupShare + 10);
 
-  // Confidence based on data coverage, not just delegation size
   const dataCoverage = totalMEPs > 0 ? attendances.length / totalMEPs : 0;
 
   return {
@@ -253,7 +248,6 @@ async function buildDelegationAnalysis(
     },
     votingBehavior: {
       averageAttendance: avgAttendance,
-      // Loyalty approximated from group fragmentation; detailed roll-call analysis not yet available
       averageLoyalty: Math.round(Math.max(60, 95 - distribution.length * 5) * 100) / 100,
       nationalCohesion: Math.round(nationalCohesion * 100) / 100
     },

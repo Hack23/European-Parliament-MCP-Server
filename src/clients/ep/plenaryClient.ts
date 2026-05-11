@@ -30,8 +30,6 @@ import {
 } from './baseClient.js';
 import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
-// ─── Plenary Client ───────────────────────────────────────────────────────────
-
 /**
  * Sub-client for plenary sessions and meeting-related EP API endpoints.
  *
@@ -42,8 +40,6 @@ export class PlenaryClient extends BaseEPClient {
   constructor(config: EPClientConfig = {}, shared?: EPSharedResources) {
     super(config, shared);
   }
-
-  // ─── Transform helpers ────────────────────────────────────────────────────
 
   private transformPlenarySession(apiData: Record<string, unknown>): PlenarySession {
     return _transformPlenarySession(apiData);
@@ -60,8 +56,6 @@ export class PlenaryClient extends BaseEPClient {
   private transformDocument(apiData: Record<string, unknown>): LegislativeDocument {
     return _transformDocument(apiData);
   }
-
-  // ─── Helpers ──────────────────────────────────────────────────────────────
 
   /**
    * Maps internal params to EP API query parameters for meetings.
@@ -89,8 +83,6 @@ export class PlenaryClient extends BaseEPClient {
     return apiParams;
   }
 
-  // ─── Public methods ───────────────────────────────────────────────────────
-
   /**
    * Retrieves plenary sessions with year/date and location filtering.
    *
@@ -117,8 +109,6 @@ export class PlenaryClient extends BaseEPClient {
       const offset = params.offset ?? 0;
 
       const apiParams = this.buildMeetingsAPIParams(params);
-      // Always apply the resolved limit/offset so the server page size matches
-      // the pagination metadata we return.
       apiParams['limit'] = limit;
       apiParams['offset'] = offset;
 
@@ -326,8 +316,6 @@ export class PlenaryClient extends BaseEPClient {
       offset,
       limit,
     };
-    // Note: `year`, `date-from`, `date-to` are NOT valid params for /events.
-    // The API ignores them — callers must filter client-side.
 
     const response = await this.get<JSONLDResponse>('events', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];

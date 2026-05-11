@@ -1,13 +1,13 @@
 /**
  * MCP Tool: detect_voting_anomalies
- * 
+ *
  * Flag unusual voting patterns — party defections, sudden alignment shifts,
  * abstention spikes, and behavioral anomalies.
- * 
+ *
  * **Intelligence Perspective:** Anomaly detection tool identifying deviations from
  * expected voting behavior—enables early warning for party splits, political
  * realignments, and emerging cross-party movements.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -55,7 +55,6 @@ function classifyAttendanceSeverity(rate: number): string {
 /**
  * Classify abstention severity
  */
-// > 30% abstention: substantially above EP average (~5-10%), indicating protest or disengagement
 function classifyAbstentionSeverity(rate: number): string {
   return rate > 30 ? 'HIGH' : 'MEDIUM';
 }
@@ -63,8 +62,6 @@ function classifyAbstentionSeverity(rate: number): string {
 /**
  * Classify defection severity
  */
-// > 40%: near-majority breaks party line (Rice cohesion < 0.2)
-// > 25%: significant minority dissent; <= 25%: normal intra-party variance
 function classifyDefectionSeverity(rate: number): string {
   if (rate > 40) return 'HIGH';
   if (rate > 25) return 'MEDIUM';
@@ -228,8 +225,6 @@ async function detectGroupAnomalies(
   }
   const scope = groupId !== undefined ? `Group: ${groupId}` : 'All MEPs';
   const mepsResult = await epClient.getCurrentMEPs({ ...groupFilter, limit: 50 });
-  // Per-MEP voting statistics are not available from the EP API /meps/{id}
-  // endpoint, so we cannot detect group-wide anomalies from individual stats.
   return { scope, anomalies: [], mepCount: mepsResult.data.length };
 }
 
@@ -242,11 +237,9 @@ function buildAnomalySummary(
   const highSeverity = anomalies.filter(a => a.severity === 'HIGH').length;
   const mediumSeverity = anomalies.filter(a => a.severity === 'MEDIUM').length;
   const lowSeverity = anomalies.filter(a => a.severity === 'LOW').length;
-  // anomalyRate: true proportion of HIGH-severity anomalies in [0, 1]
   const anomalyRate = anomalies.length > 0
     ? Math.round((highSeverity / anomalies.length) * 100) / 100
     : 0;
-  // severityIndex: weighted-average severity on ~1–3 scale
   const severityIndex = anomalies.length > 0
     ? Math.round((highSeverity * 3 + mediumSeverity * 2 + lowSeverity) / anomalies.length * 100) / 100
     : 0;
@@ -311,7 +304,6 @@ export async function handleDetectVotingAnomalies(
       ? await detectSingleMepAnomalies(mepId, params.sensitivityThreshold, period)
       : await detectGroupAnomalies(params.groupId, params.sensitivityThreshold, period);
 
-    // When single MEP has no voting data, report unavailability with same shape as normal path
     if (isSingleMep && 'dataAvailable' in result && !result.dataAvailable) {
       return buildToolResponse({
         period,

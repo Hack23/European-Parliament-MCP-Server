@@ -1,13 +1,13 @@
 /**
  * MCP Tool: assess_mep_influence
- * 
+ *
  * Compute MEP influence score from voting activity, committee roles,
  * rapporteurships, questions filed, and coalition building metrics.
- * 
+ *
  * **Intelligence Perspective:** Core OSINT scorecard tool computing composite MEP
  * influence scores using CIA Political Scorecards methodology—enables comparative
  * ranking, trend analysis, and political weight assessment across 5 dimensions.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -75,7 +75,6 @@ function computeVotingActivityScore(stats: { totalVotes: number; attendanceRate:
   metrics: Record<string, number>;
 } {
   const attendanceScore = stats.attendanceRate;
-  // EP parliamentary term ≈ 5 years × ~300 votes/year = ~1500 total possible votes per term
   const participationVolume = Math.min(100, (stats.totalVotes / 1500) * 100);
   const score = attendanceScore * 0.6 + participationVolume * 0.4;
   return {
@@ -99,8 +98,6 @@ function computeLegislativeOutputScore(roles: string[], committees: string[]): {
   const committeeRoles = roles.filter(r =>
     r.toLowerCase().includes('chair') || r.toLowerCase().includes('vice')
   ).length;
-  // Each rapporteurship ≈ 15 influence points (1 rapporteurship ≈ top 15% of legislative output)
-  // Leadership roles ≈ 20 influence points (chairs/vice-chairs ≈ top 20% of committee authority)
   const roleScore = Math.min(100, rapporteurships * 15 + committeeRoles * 20);
   const committeeDiversity = Math.min(100, committees.length * 20);
   const score = roleScore * 0.6 + committeeDiversity * 0.4;
@@ -361,8 +358,6 @@ export async function handleAssessMepInfluence(
 
     const votingDataAvailable = stats.totalVotes > 0;
 
-    // Fetch real parliamentary questions for this MEP
-    // Use data.length instead of total because total is a lower-bound estimate
     let questionCount = 0;
     try {
       const questions = await epClient.getParliamentaryQuestions({
@@ -372,7 +367,6 @@ export async function handleAssessMepInfluence(
       questionCount = questions.data.length;
     } catch (error: unknown) {
       auditLogger.logError('assess_mep_influence.fetch_questions', { mepId: params.mepId }, toErrorMessage(error));
-      // Questions may not be available — report zero
     }
 
     const dataQualityWarnings = collectDataQualityWarnings(votingDataAvailable, questionCount);

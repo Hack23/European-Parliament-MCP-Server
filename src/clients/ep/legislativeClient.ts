@@ -26,8 +26,6 @@ import {
 } from './baseClient.js';
 import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
-// ─── Legislative Client ───────────────────────────────────────────────────────
-
 /**
  * Sub-client for legislative procedures and adopted-texts EP API endpoints.
  *
@@ -38,8 +36,6 @@ export class LegislativeClient extends BaseEPClient {
   constructor(config: EPClientConfig = {}, shared?: EPSharedResources) {
     super(config, shared);
   }
-
-  // ─── Transform helpers ────────────────────────────────────────────────────
 
   private transformProcedure(apiData: Record<string, unknown>): Procedure {
     return _transformProcedure(apiData);
@@ -52,8 +48,6 @@ export class LegislativeClient extends BaseEPClient {
   private transformEvent(apiData: Record<string, unknown>): EPEvent {
     return _transformEvent(apiData);
   }
-
-  // ─── Public methods ───────────────────────────────────────────────────────
 
   /**
    * Returns legislative procedures.
@@ -78,8 +72,6 @@ export class LegislativeClient extends BaseEPClient {
       offset,
       limit,
     };
-    // Note: `year` is NOT a valid param for /procedures per EP API spec.
-    // Not forwarded to avoid misleading callers or future API validation failures.
 
     const response = await this.get<JSONLDResponse>('procedures', apiParams);
     const items = Array.isArray(response.data) ? response.data : [];
@@ -233,7 +225,6 @@ export class LegislativeClient extends BaseEPClient {
       `procedures/${processId}/events/${eventId}`,
       { format: 'application/ld+json' }
     );
-    // EP API wraps single-item responses in a `data` array
     if (Array.isArray(response.data)) {
       if (response.data.length === 0) {
         throw new APIError(
@@ -244,8 +235,6 @@ export class LegislativeClient extends BaseEPClient {
       return this.transformEvent(response.data[0] ?? {});
     }
 
-    // Fall back to transforming the raw response only when the response shape
-    // is not JSON-LD-wrapped.
     return this.transformEvent(response);
   }
 
@@ -277,9 +266,6 @@ export class LegislativeClient extends BaseEPClient {
     const response = await this.get<Record<string, unknown>>(endpoint, params);
     const transformed = this.transformAdoptedText(response);
     if (isEmptyAdoptedText(transformed)) {
-      // Evict the empty payload so a retry after upstream enrichment gets the
-      // real document instead of the cached sentinel for the remainder of the
-      // cache TTL.
       this.evictFromCache(endpoint, params);
       throw new APIError(
         `Adopted text "${docId}": document indexed but content not yet available`,

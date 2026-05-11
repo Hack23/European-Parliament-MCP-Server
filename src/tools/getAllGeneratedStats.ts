@@ -38,6 +38,11 @@ import { ToolError } from './shared/errors.js';
 import type { ToolResult } from './shared/types.js';
 import { withTimeoutAndAbort } from '../utils/timeout.js';
 
+/**
+ * Zod input schema for the `get_all_generated_stats` MCP tool. Filters
+ * the dataset by year range (2004-2031) and activity category, and
+ * controls inclusion of predictions, monthly breakdowns and rankings.
+ */
 export const GetAllGeneratedStatsSchema = z
   .object({
     yearFrom: z
@@ -100,6 +105,10 @@ export const GetAllGeneratedStatsSchema = z
     }
   );
 
+/**
+ * Validated parameter type for the `get_all_generated_stats` tool,
+ * inferred from {@link GetAllGeneratedStatsSchema}.
+ */
 export type GetAllGeneratedStatsParams = z.infer<typeof GetAllGeneratedStatsSchema>;
 
 const CATEGORY_LABEL_MAP: Partial<Record<string, string>> = {
@@ -116,7 +125,6 @@ const CATEGORY_LABEL_MAP: Partial<Record<string, string>> = {
   documents: 'Documents',
   mep_turnover: 'MEP Turnover',
   declarations: 'Declarations',
-  // political_groups intentionally omitted — it has no numeric ranking
 };
 
 type RankingEntry = (typeof GENERATED_STATS.categoryRankings)[number];
@@ -202,7 +210,6 @@ function filterRankings(
     return GENERATED_STATS.categoryRankings.map(recompute);
   }
 
-  // political_groups has no numeric ranking category
   if (params.category === 'political_groups') return [];
 
   const label = CATEGORY_LABEL_MAP[params.category];
@@ -272,7 +279,6 @@ export async function fetchRecentVoteStats(): Promise<RecentVoteActivity | null>
     const adoptedCount = votes.filter((v) => v.result === 'ADOPTED').length;
     const rejectedCount = votes.filter((v) => v.result === 'REJECTED').length;
     const recentVoteCount = votes.length;
-    // Multiply by 1000 then divide by 10 to round to one decimal place (e.g. 50.5%)
     const adoptionRate =
       recentVoteCount > 0 ? Math.round((adoptedCount / recentVoteCount) * 1000) / 10 : 0;
     const value: RecentVoteActivity = {
@@ -328,22 +334,17 @@ export function getAllGeneratedStats(
     const yearFrom = params.yearFrom ?? GENERATED_STATS.coveragePeriod.from;
     const yearTo = params.yearTo ?? GENERATED_STATS.coveragePeriod.to;
 
-    // Filter yearly stats by requested year range
     const filteredYearly = GENERATED_STATS.yearlyStats
       .filter((y) => y.year >= yearFrom && y.year <= yearTo)
       .map((y) => {
         if (params.includeMonthlyBreakdown) return y;
-        // Omit monthly breakdown for compact output
         const { monthlyActivity: _monthly, ...rest } = y;
         void _monthly;
         return rest;
       });
 
-    // Filter rankings by category if specified
     const filteredRankings = filterRankings(params, yearFrom, yearTo);
 
-    // Include predictions only if requested — predictions are always returned in full
-    // since they cover future years (2027–2031) beyond the historical yearTo default (2026)
     const filteredPredictions = params.includePredictions ? GENERATED_STATS.predictions : [];
 
     const result = {
@@ -386,6 +387,11 @@ export function getAllGeneratedStats(
   }
 }
 
+/**
+ * MCP tool metadata for `get_all_generated_stats` (name, description,
+ * and JSON Schema for the tool's input). Consumed by the server's tool
+ * registry to advertise this tool in `ListTools` responses.
+ */
 export const getAllGeneratedStatsToolMetadata = {
   name: 'get_all_generated_stats',
   description:
@@ -452,15 +458,25 @@ export const getAllGeneratedStatsToolMetadata = {
   },
 };
 
-// Helper: fetches DOCEO activity when the requested category warrants near-realtime enrichment.
 async function resolveRecentActivity(
   params: GetAllGeneratedStatsParams
 ): Promise<RecentVoteActivity | null> {
   return shouldIncludeRecentActivity(params) ? fetchRecentVoteStats() : null;
 }
 
+/**
+ * MCP `CallTool` handler entry point for `get_all_generated_stats`.
+ *
+ * Validates the raw input arguments against
+ * {@link GetAllGeneratedStatsSchema}, raises a structured
+ * {@link ToolError} on validation failure, and otherwise delegates to
+ * the underlying generator.
+ *
+ * @param args - Raw, untrusted MCP `CallTool` arguments
+ * @returns A {@link ToolResult} with the generated statistics report
+ * @throws {@link ToolError} when the schema validation fails
+ */
 export async function handleGetAllGeneratedStats(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: GetAllGeneratedStatsParams;
   try {
     params = GetAllGeneratedStatsSchema.parse(args);

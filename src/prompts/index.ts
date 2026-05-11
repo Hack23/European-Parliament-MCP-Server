@@ -1,17 +1,17 @@
 /**
  * MCP Prompts for European Parliament Intelligence Analysis
- * 
+ *
  * Pre-built prompt templates for common EU parliamentary intelligence queries.
  * These prompts guide AI assistants through structured analysis using EP data.
- * 
+ *
  * **Intelligence Perspective:** Standardized analytical templates ensure consistent,
  * reproducible intelligence products—from MEP briefings to coalition assessments.
- * 
+ *
  * **Business Perspective:** Pre-built prompts lower the barrier to entry for users
  * and demonstrate the full analytical capability of the MCP server.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
- * 
+ *
  * @see https://spec.modelcontextprotocol.io/specification/server/prompts/
  */
 
@@ -49,8 +49,6 @@ export interface PromptResult {
   messages: PromptMessage[];
   [key: string]: unknown;
 }
-
-// ─── Prompt Definitions ──────────────────────────────────────
 
 const mepBriefingPrompt: PromptMetadata = {
   name: 'mep_briefing',
@@ -103,8 +101,6 @@ const votingPatternAnalysisPrompt: PromptMetadata = {
     { name: 'mepId', description: 'Focus on specific MEP', required: false }
   ]
 };
-
-// ─── Prompt Argument Schema ──────────────────────────────────
 
 const PromptArgsSchema = z.record(
   z.string().min(1).max(50),
@@ -166,8 +162,6 @@ export const CountryDelegationArgsSchema = z.object({
   period: z.string().min(1).max(50).optional().describe('Analysis period'),
 });
 
-// ─── Country Delegation Analysis Prompt ─────────────────────
-
 /** @internal Country delegation analysis prompt metadata */
 const countryDelegationAnalysisPrompt: PromptMetadata = {
   name: 'country_delegation_analysis',
@@ -177,8 +171,6 @@ const countryDelegationAnalysisPrompt: PromptMetadata = {
     { name: 'period', description: 'Analysis period (e.g., "2024", "current-term")', required: false },
   ],
 };
-
-// ─── Prompt Result Generators ────────────────────────────────
 
 /**
  * Generate an MEP intelligence briefing prompt
@@ -476,8 +468,6 @@ Data source: European Parliament Open Data Portal`
   };
 }
 
-// ─── Public API ──────────────────────────────────────────────
-
 /**
  * Get all prompt metadata for MCP listing
  */
@@ -495,9 +485,9 @@ export function getPromptMetadataArray(): PromptMetadata[] {
 
 /**
  * Handle GetPrompt request
- * 
+ *
  * @param name - Prompt name
- * @param args - Prompt arguments  
+ * @param args - Prompt arguments
  * @returns Prompt result with messages
  * @throws Error if prompt name is unknown
  */
@@ -524,7 +514,6 @@ export function handleGetPrompt(
     throw new Error(`Unknown prompt: ${name}`);
   }
 
-  // Enforce required arguments based on prompt metadata
   const metadata = getPromptMetadataArray().find((prompt) => prompt.name === name);
   if (metadata?.arguments !== undefined) {
     const missingRequired = metadata.arguments

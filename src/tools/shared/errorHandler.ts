@@ -145,9 +145,6 @@ export function buildTimeoutResponse(toolName: string, timeoutMs: number | undef
   };
 }
 
-// Re-export classification utilities from the extracted module so existing
-// imports (e.g. `import { classifyError } from './errorHandler.js'`) continue
-// to work without breaking changes.
 export { classifyError } from './errorClassifier.js';
 export type { ErrorClassification } from './errorClassifier.js';
 
@@ -173,13 +170,11 @@ export type { ErrorClassification } from './errorClassifier.js';
  * @returns MCP-compliant ToolResult with isError flag set (or structured timeout response)
  */
 export function handleToolError(error: unknown, toolName: string): ToolResult {
-  // Timeout errors → structured non-error response to prevent futile retries
   if (isTimeoutRelatedError(error)) {
     const resolvedToolName = extractToolName(error, toolName);
     return buildTimeoutResponse(resolvedToolName, extractTimeoutMs(error));
   }
 
-  // Non-timeout errors → delegate to buildErrorResponse which auto-classifies
   const effectiveToolName = error instanceof ToolError ? error.toolName : toolName;
   const effectiveError = error instanceof Error ? error : new Error('Unknown error occurred');
   return buildErrorResponse(effectiveError, effectiveToolName);

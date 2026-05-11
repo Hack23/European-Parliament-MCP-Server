@@ -1,13 +1,13 @@
 /**
  * MCP Tool: analyze_legislative_effectiveness
- * 
+ *
  * Score MEP/committee legislative output — bills passed, amendments adopted,
  * report quality, and overall legislative productivity.
- * 
+ *
  * **Intelligence Perspective:** Performance analysis tool measuring legislative
  * productivity and effectiveness—enables ranking of MEPs and committees by
  * legislative impact for stakeholder assessment.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -86,8 +86,6 @@ function computeMetrics(
   const rapporteurships = roles.filter(r => r.toLowerCase().includes('rapporteur')).length;
   const reportsAuthored = rapporteurships * 2 + Math.round(totalVotes / 500);
   const amendmentsTabled = Math.round(totalVotes / 100) + rapporteurships * 5;
-  // 40% adoption rate is a proxy based on EP legislative statistics:
-  // ~40% of tabled amendments are typically adopted in committee/plenary readings
   const amendmentsAdopted = Math.round(amendmentsTabled * 0.4);
   const opinionsDelivered = Math.round(committeeCount * 1.5);
   const questionsAsked = Math.round(totalVotes * 0.05);
@@ -172,7 +170,7 @@ async function fetchCommitteeSubjectData(subjectId: string): Promise<{
     subjectName: committee.name,
     committeeCount: 1,
     roles: [],
-    totalVotes: 0, // Voting statistics not available from EP API committee endpoints
+    totalVotes: 0,
     votesFor: 0,
     attendanceRate: 0
   };

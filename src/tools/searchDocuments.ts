@@ -1,21 +1,21 @@
 /**
  * MCP Tool: search_documents
- * 
+ *
  * Search European Parliament legislative documents or retrieve a single document by ID.
- * 
+ *
  * **Intelligence Perspective:** Essential for legislative monitoring, policy tracking,
  * amendment analysis, and building intelligence products around EU regulatory developments.
- * 
+ *
  * **Business Perspective:** Enables document search products for legal firms, compliance
  * teams, and regulatory intelligence services requiring legislative text access.
- * 
+ *
  * **Marketing Perspective:** Demonstrates comprehensive document search capability—
  * key for attracting legal tech, RegTech, and policy research customer segments.
- * 
+ *
  * **EP API Endpoints:**
  * - `GET /documents` (list/search)
  * - `GET /documents/{doc-id}` (single)
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -67,7 +67,6 @@ import type { ToolResult } from './shared/types.js';
 export async function handleSearchDocuments(
   args: unknown
 ): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof SearchDocumentsSchema.parse>;
   try {
     params = SearchDocumentsSchema.parse(args);
@@ -86,14 +85,12 @@ export async function handleSearchDocuments(
   }
 
   try {
-    // Single document lookup by ID
     if (params.docId !== undefined) {
       const result = await epClient.getDocumentById(params.docId);
       const validated = LegislativeDocumentSchema.parse(result);
       return buildToolResponse(validated);
     }
 
-    // Search documents via EP API (only pass defined properties)
     const apiParams = {
       keyword: params.keyword ?? '',
       limit: params.limit,
@@ -105,13 +102,12 @@ export async function handleSearchDocuments(
         { from: 'committee', to: 'committee' },
       ]),
     };
-    
+
     const result = await epClient.searchDocuments(apiParams);
-    
-    // Validate output
+
     const outputSchema = PaginatedResponseSchema(LegislativeDocumentSchema);
     const validated = outputSchema.parse(result);
-    
+
     return buildToolResponse(validated);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {

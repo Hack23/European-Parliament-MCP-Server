@@ -1,6 +1,6 @@
 /**
  * Type definitions for report generation
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation)
  */
 
@@ -35,8 +35,8 @@ export interface ReportSection {
 /**
  * Report type enumeration
  */
-export type ReportType = 
-  | 'MEP_ACTIVITY' 
-  | 'COMMITTEE_PERFORMANCE' 
-  | 'VOTING_STATISTICS' 
+export type ReportType =
+  | 'MEP_ACTIVITY'
+  | 'COMMITTEE_PERFORMANCE'
+  | 'VOTING_STATISTICS'
   | 'LEGISLATION_PROGRESS';

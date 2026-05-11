@@ -55,7 +55,6 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleSearchDocuments} for tools that consume vocabulary terms as filter values
  */
 export async function handleGetControlledVocabularies(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetControlledVocabulariesSchema.parse>;
   try {
     params = GetControlledVocabulariesSchema.parse(args);

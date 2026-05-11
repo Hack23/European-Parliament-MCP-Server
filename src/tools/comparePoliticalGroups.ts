@@ -1,13 +1,13 @@
 /**
  * MCP Tool: compare_political_groups
- * 
+ *
  * Cross-group comparison of voting discipline, activity levels, policy focus
  * areas, internal cohesion, and legislative effectiveness.
- * 
+ *
  * **Intelligence Perspective:** Comparative analysis tool enabling side-by-side
  * assessment of political groups across multiple dimensions—supports SWOT/PESTLE
  * analysis frameworks for EU parliamentary dynamics.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -78,8 +78,6 @@ async function buildGroupMetrics(groupIds: string[]): Promise<GroupComparisonMet
     groupIds.map(async (groupId): Promise<GroupComparisonMetrics> => {
       const mepsResult = await epClient.getCurrentMEPs({ group: groupId, limit: 100 });
 
-      // Per-MEP voting statistics are not available from the EP API,
-      // so voting-related dimensions report zero.
       const memberCount = mepsResult.data.length;
 
       return {

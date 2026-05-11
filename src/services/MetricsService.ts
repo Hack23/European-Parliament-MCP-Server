@@ -1,8 +1,8 @@
 /**
  * Performance Metrics Service
- * 
+ *
  * Provides Prometheus-style metrics collection for monitoring and observability
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -53,9 +53,9 @@ interface SingleMetric {
  */
 interface HistogramMetric {
   type: 'histogram';
-  samples: number[]; // Bounded array of samples
-  count: number; // Total observation count
-  sum: number; // Running sum
+  samples: number[];
+  count: number;
+  sum: number;
   labels?: Record<string, string> | undefined;
   timestamp: number;
 }
@@ -162,14 +162,12 @@ export class MetricsService {
     const current = this.metrics.get(key);
 
     if (current?.type === 'histogram') {
-      // Add to existing histogram with reservoir sampling for bounded size
       current.count += 1;
       current.sum += value;
-      
+
       if (current.samples.length < this.maxHistogramSamples) {
         current.samples.push(value);
       } else {
-        // Reservoir sampling: replace random element
         const randomIndex = Math.floor(Math.random() * current.count);
         if (randomIndex < this.maxHistogramSamples) {
           current.samples[randomIndex] = value;
@@ -177,7 +175,6 @@ export class MetricsService {
       }
       current.timestamp = Date.now();
     } else {
-      // Create new histogram
       this.metrics.set(key, {
         type: 'histogram',
         samples: [value],
@@ -212,7 +209,7 @@ export class MetricsService {
   getMetric(name: MetricKey, labels?: Record<string, string>): number | undefined {
     const key = this.buildKey(name, labels);
     const metric = this.metrics.get(key);
-    
+
     return metric?.type === 'histogram' ? undefined : metric?.value;
   }
 
@@ -248,7 +245,7 @@ export class MetricsService {
   } | undefined {
     const key = this.buildKey(name, labels);
     const metric = this.metrics.get(key);
-    
+
     if (metric?.type !== 'histogram' || metric.samples.length === 0) {
       return undefined;
     }
@@ -300,7 +297,7 @@ export class MetricsService {
   /**
    * Compute a percentile value from an unsorted array using quickselect
    * Cyclomatic complexity: 3
-   * 
+   *
    * @param values - Array of samples
    * @param percentile - Percentile to compute (0-100)
    * @returns Percentile value
@@ -310,11 +307,9 @@ export class MetricsService {
       return 0;
     }
 
-    // Use ceiling-based index for consistency with original implementation
     const index = Math.ceil((percentile / 100) * values.length) - 1;
     const clampedIndex = Math.min(values.length - 1, Math.max(0, index));
 
-    // Work on a copy to avoid mutating the original
     const work = values.slice();
     return this.selectKth(work, clampedIndex);
   }
@@ -322,7 +317,7 @@ export class MetricsService {
   /**
    * Select the k-th smallest element using quickselect
    * Cyclomatic complexity: 5
-   * 
+   *
    * @param arr - Array to select from (will be mutated)
    * @param k - Index of element to select (0-based)
    * @returns The k-th smallest element
@@ -356,7 +351,7 @@ export class MetricsService {
   /**
    * Partition helper for quickselect (Lomuto-style)
    * Cyclomatic complexity: 4
-   * 
+   *
    * @param arr - Array to partition
    * @param left - Left bound
    * @param right - Right bound

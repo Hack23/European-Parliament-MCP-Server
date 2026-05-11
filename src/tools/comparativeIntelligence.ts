@@ -29,6 +29,12 @@ import { ToolError } from './shared/errors.js';
 import { handleToolError } from './shared/errorHandler.js';
 import { extractHttpStatus } from './shared/errorClassifier.js';
 
+/**
+ * Zod input schema for the `comparative_intelligence` MCP tool.
+ *
+ * Validates a list of 2-10 MEP IDs and an optional set of comparison
+ * dimensions (`voting`, `committee`, `legislative`, `attendance`).
+ */
 export const ComparativeIntelligenceSchema = z.object({
   mepIds: z.array(z.number().positive())
     .min(2)
@@ -42,6 +48,10 @@ export const ComparativeIntelligenceSchema = z.object({
     .describe('Dimensions to include in the comparison')
 });
 
+/**
+ * Validated parameter type for the `comparative_intelligence` tool,
+ * inferred from {@link ComparativeIntelligenceSchema}.
+ */
 export type ComparativeIntelligenceParams = z.infer<typeof ComparativeIntelligenceSchema>;
 
 type Dimension = 'voting' | 'committee' | 'legislative' | 'attendance';
@@ -201,7 +211,6 @@ function computeLegislativeScore(mep: MEPApiData): number {
  *   that attendance data is not available from the underlying EP API
  */
 function computeAttendanceScore(mep: MEPApiData): number {
-  // attendanceRate is already in the 0-100 range; use it directly without scaling
   return Math.round((mep.votingStatistics?.attendanceRate ?? 0) * 100) / 100;
 }
 
@@ -331,7 +340,7 @@ function detectOutliers(profiles: MepProfile[], dimensions: Dimension[]): Compar
     for (const profile of profiles) {
       const score = profile.scores[dim] ?? 0;
       const zScore = stdDev > 0 ? (score - mean) / stdDev : 0;
-      if (Math.abs(zScore) >= 1.5) { // z ≥ 1.5σ: captures ~6.7% in each tail (~13.4% combined); balanced outlier sensitivity
+      if (Math.abs(zScore) >= 1.5) {
         outliers.push({ mepId: profile.mepId, name: profile.name, outlierDimension: dim, outlierScore: score, zScore: Math.round(zScore * 100) / 100 });
       }
     }
@@ -751,7 +760,6 @@ function validateMepResults(
   const { notFoundMepIds, validResults, validMepIds, transientErrors } =
     partitionMepResults(detailsResults, mepIds);
 
-  // No valid MEPs: determine error type based on failure categories
   if (validMepIds.length === 0 && transientErrors.length > 0) {
     const cause = transientErrors[0]?.reason;
     const message = notFoundMepIds.length === 0
@@ -773,6 +781,20 @@ function validateMepResults(
   return { notFoundMepIds, transientFailedMepIds, validResults, validMepIds };
 }
 
+/**
+ * Build a comparative-intelligence profile across 2-10 MEPs.
+ *
+ * Implementation of the MCP `comparative_intelligence` tool. Fetches each
+ * MEP's profile in parallel, builds per-dimension scores, computes
+ * rankings and a cosine-similarity correlation matrix, detects outliers
+ * (z-score ≥ 1.5) and groups MEPs into political-group + performance-tier
+ * clusters.
+ *
+ * @param params - Validated tool parameters
+ *   (see {@link ComparativeIntelligenceSchema})
+ * @returns A {@link ToolResult} containing the comparative analysis or a
+ *   structured error response on failure
+ */
 export async function comparativeIntelligence(params: ComparativeIntelligenceParams): Promise<ToolResult> {
   try {
     const dimensions = params.dimensions as Dimension[];
@@ -781,16 +803,12 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
       params.mepIds.map(id => epClient.getMEPDetails(String(id)))
     );
 
-    // Early validation: identify which MEP IDs resolved and which failed
     const validation = validateMepResults(detailsResults, params.mepIds);
     if ('error' in validation) {
       return validation.error;
     }
     const { notFoundMepIds, transientFailedMepIds, validResults, validMepIds } = validation;
 
-    // Build profiles only from valid (fulfilled) results — invalid/transient IDs
-    // are intentionally excluded; buildProfilesFromResults will find only fulfilled
-    // entries in this pre-filtered subset (no placeholder profiles are generated).
     const profiles = buildProfilesFromResults(validResults, validMepIds, dimensions);
 
     if (profiles.length < 2) {
@@ -859,6 +877,11 @@ export async function comparativeIntelligence(params: ComparativeIntelligencePar
   }
 }
 
+/**
+ * MCP tool metadata for `comparative_intelligence` (name, description,
+ * and JSON Schema for the tool's input). Consumed by the server's tool
+ * registry to advertise this tool in `ListTools` responses.
+ */
 export const comparativeIntelligenceToolMetadata = {
   name: 'comparative_intelligence',
   description: 'Cross-reference 2-10 MEP activities across voting, committee, legislative, and attendance dimensions. Returns ranked profiles, correlation matrix, outlier detection, and cluster analysis for comprehensive comparative intelligence.',
@@ -883,6 +906,17 @@ export const comparativeIntelligenceToolMetadata = {
   }
 };
 
+/**
+ * MCP `CallTool` handler entry point for `comparative_intelligence`.
+ *
+ * Validates the raw input arguments against
+ * {@link ComparativeIntelligenceSchema} and delegates execution to
+ * {@link comparativeIntelligence}.
+ *
+ * @param args - Raw, untrusted MCP `CallTool` arguments
+ * @returns The same {@link ToolResult} produced by
+ *   {@link comparativeIntelligence}
+ */
 export async function handleComparativeIntelligence(args: unknown): Promise<ToolResult> {
   const params = ComparativeIntelligenceSchema.parse(args);
   return comparativeIntelligence(params);

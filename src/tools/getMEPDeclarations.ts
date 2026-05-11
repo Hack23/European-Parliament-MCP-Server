@@ -59,7 +59,6 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetMEPDetails} for retrieving broader MEP profile information
  */
 export async function handleGetMEPDeclarations(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetMEPDeclarationsSchema.parse>;
   try {
     params = GetMEPDeclarationsSchema.parse(args);

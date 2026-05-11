@@ -133,8 +133,6 @@ export interface LatestVoteRecord {
   corrections?: RcvMepVote[];
 }
 
-// ─── XML Text Extraction Helpers ──────────────────────────────────────────────
-
 /**
  * Sanitize XML text content to prevent injection issues.
  * Decodes common XML entities, strips control characters, and trims whitespace.
@@ -184,22 +182,17 @@ function extractElements(xml: string, tagName: string): string[] {
   return [...xml.matchAll(regex)].map(m => m[0]);
 }
 
-// ─── RCV XML Parser ───────────────────────────────────────────────────────────
-
 /**
  * Extract MEP vote entries from an RCV result section (For/Against/Abstention).
  */
 function parseRcvMepVotes(sectionXml: string): RcvMepVote[] {
   const votes: RcvMepVote[] = [];
-  // Political groups
   const groupElements = extractElements(sectionXml, 'PoliticalGroup\\.List');
   if (groupElements.length === 0) {
-    // Try alternate format with Result.PoliticalGroup.List
     const altGroups = extractElements(sectionXml, 'Result\\.PoliticalGroup\\.List');
     for (const groupSection of altGroups) {
       parseGroupSection(groupSection, votes);
     }
-    // Also try direct PoliticalGroup elements
     const directGroups = extractElements(sectionXml, 'PoliticalGroup');
     for (const groupEl of directGroups) {
       parseGroupSection(groupEl, votes);
@@ -219,7 +212,6 @@ function parseGroupSection(groupXml: string, votes: RcvMepVote[]): void {
   const groupName = extractAttribute(groupXml, 'Identifier') ||
     extractAttribute(groupXml, 'Name') || 'Unknown';
 
-  // Match member element opening tags to capture all attributes then text
   const memberTagRegex = /<(?:PoliticalGroup\.Member\.Name|Member\.Name|Name)([^>]*)>([^<]*)</gi;
   for (const memberMatch of groupXml.matchAll(memberTagRegex)) {
     const attrs = memberMatch[1] ?? '';
@@ -285,27 +277,22 @@ function parseSingleRcvVote(voteXml: string, fallbackId: string): RcvVoteResult 
     extractAttribute(voteXml, 'Number') ||
     fallbackId;
 
-  // Sitting metadata
   const sittingDate = extractAttribute(voteXml, 'Date');
   const sittingNumber = extractAttribute(voteXml, 'Number\\.Sitting');
   const voteType = extractAttribute(voteXml, 'Type');
 
-  // Description/subject
   const descTexts = extractTagContent(voteXml, 'RollCallVote\\.Description\\.Text');
   const fallbackDesc = extractTagContent(voteXml, 'Description\\.Text');
   const description = descTexts[0] ?? fallbackDesc[0] ?? '';
 
-  // Reference
   const refTexts = extractTagContent(voteXml, 'RollCallVote\\.Reference');
   const reference = refTexts[0] ?? extractAttribute(voteXml, 'Reference');
 
-  // FOR / AGAINST / ABSTENTION / CORRECTION sections via shared helper
   const forData = parseRcvMepSection(voteXml, 'Result\\.For');
   const againstData = parseRcvMepSection(voteXml, 'Result\\.Against');
   const abstData = parseRcvMepSection(voteXml, 'Result\\.Abstention');
   const corrData = parseRcvMepSection(voteXml, 'Correction');
 
-  // Determine result using official counts (prefer over MEP array length)
   const result: 'ADOPTED' | 'REJECTED' = forData.count > againstData.count ? 'ADOPTED' : 'REJECTED';
 
   return {
@@ -333,17 +320,13 @@ function parseSingleRcvVote(voteXml: string, fallbackId: string): RcvVoteResult 
  * @returns Array of parsed roll-call vote results
  */
 export function parseRcvXml(xml: string): RcvVoteResult[] {
-  // Each RollCallVote.Result is a separate vote
   const voteElements = extractElements(xml, 'RollCallVote\\.Result');
-  // Fallback: try RollCallVote element name
   const voteElems = voteElements.length > 0 ? voteElements : extractElements(xml, 'RollCallVote');
 
   return voteElems.map((voteXml, idx) =>
     parseSingleRcvVote(voteXml, String(idx + 1))
   );
 }
-
-// ─── VOT XML Parser ───────────────────────────────────────────────────────────
 
 /**
  * Parse a single VOT row into a structured result.
@@ -447,11 +430,9 @@ function parseVotTableFormat(xml: string): VotVoteResult[] {
  * @returns Array of parsed aggregate vote results
  */
 export function parseVotXml(xml: string): VotVoteResult[] {
-  // Try Table/Row format first (newer format with Title attribute)
   const tableResults = parseVotTableFormat(xml);
   if (tableResults.length > 0) return tableResults;
 
-  // Fallback: Vote.Result / Result element format
   const rows = extractElements(xml, 'Vote\\.Result');
   const voteItems = rows.length > 0 ? rows : extractElements(xml, 'Result');
 
@@ -468,8 +449,6 @@ function parseVoteCount(text: string | undefined): number {
   const num = parseInt(text.replace(/\D/g, ''), 10);
   return Number.isNaN(num) ? 0 : num;
 }
-
-// ─── URL Construction ─────────────────────────────────────────────────────────
 
 /** Base URL for EP DOCEO document system */
 export const DOCEO_BASE_URL = 'https://www.europarl.europa.eu/doceo/document/';
@@ -500,7 +479,6 @@ export function buildDoceoUrl(
   term = CURRENT_PARLIAMENTARY_TERM,
   language = 'EN'
 ): string {
-  // Validate date format
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     throw new Error(`Invalid date format: ${date}. Expected YYYY-MM-DD.`);
   }
@@ -524,9 +502,8 @@ export function getPlenaryWeekDates(weekStart?: string): string[] {
       return [];
     }
   } else {
-    // Find the most recent Monday
     const now = new Date();
-    const dayOfWeek = now.getUTCDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+    const dayOfWeek = now.getUTCDay();
     const daysBack = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     monday = new Date(now);
     monday.setUTCDate(now.getUTCDate() - daysBack);
@@ -540,8 +517,6 @@ export function getPlenaryWeekDates(weekStart?: string): string[] {
   }
   return dates;
 }
-
-// ─── Merge RCV + VOT Data ─────────────────────────────────────────────────────
 
 /**
  * Build group breakdown from RCV vote data.

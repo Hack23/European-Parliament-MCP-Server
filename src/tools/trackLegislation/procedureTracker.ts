@@ -1,12 +1,12 @@
 /**
  * Procedure tracker for legislative data
- * 
+ *
  * Transforms real EP API Procedure data into structured legislative
  * tracking output. Most fields are derived from the API response.
  * Amendment counts and voting records are placeholder zeros/empty arrays
  * because the single-procedure endpoint does not provide them; these
  * are flagged via {@link LegislativeProcedure.dataQualityWarnings}.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation)
  */
 

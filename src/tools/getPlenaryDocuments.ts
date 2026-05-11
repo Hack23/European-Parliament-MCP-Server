@@ -56,7 +56,6 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetPlenarySessionDocuments} for session-level agendas and minutes
  */
 export async function handleGetPlenaryDocuments(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetPlenaryDocumentsSchema.parse>;
   try {
     params = GetPlenaryDocumentsSchema.parse(args);

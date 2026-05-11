@@ -42,8 +42,6 @@ import {
   mapQuestionType,
 } from './jsonLdHelpers.js';
 
-// ─── MEP transformers ───────────────────────────────────────────
-
 /** Extract the resolved MEP identifier string. */
 function resolveMEPId(apiData: Record<string, unknown>): string {
   const identifier = firstDefined(apiData, 'identifier', '@id', 'id');
@@ -97,8 +95,6 @@ export function transformMEP(apiData: Record<string, unknown>): MEP {
   const mepId = resolveMEPId(apiData);
   const name = resolveMEPName(apiData);
 
-  // EP API returns `api:country-of-representation` and `api:political-group`
-  // in JSON-LD responses; also check older / alternative field names.
   const country = toSafeString(firstDefined(apiData, 'api:country-of-representation', 'country', 'citizenship', 'nationality')) || 'Unknown';
   const politicalGroup = toSafeString(firstDefined(apiData, 'api:political-group', 'politicalGroup', 'political_group')) || 'Unknown';
 
@@ -125,8 +121,6 @@ export function transformMEP(apiData: Record<string, unknown>): MEP {
 export function transformMEPDetails(apiData: Record<string, unknown>): MEPDetails {
   const baseMEP = transformMEP(apiData);
 
-  // EP API returns citizenship as URI (e.g. http://.../country/ITA)
-  // Extract the country code from the URI if country is still the full URI
   let country = baseMEP.country;
   if (country.startsWith('http')) {
     const parts = country.split('/');
@@ -151,29 +145,21 @@ export function transformMEPDetails(apiData: Record<string, unknown>): MEPDetail
     country,
     committees: committees.length > 0 ? committees : baseMEP.committees,
     biography: `Born: ${bday !== '' ? bday : 'Unknown'}`,
-    // EP API /meps/{id} endpoint does not return voting statistics;
-    // votingStatistics is intentionally left undefined (not set to zeros)
-    // so consumers can distinguish "no data" from "zero votes".
   };
 }
-
-// ─── Plenary transformers ───────────────────────────────────────
 
 /**
  * Transforms EP API plenary session data to internal {@link PlenarySession} format.
  */
 export function transformPlenarySession(apiData: Record<string, unknown>): PlenarySession {
   const id = toSafeString(apiData['activity_id']) || toSafeString(apiData['id']) || '';
-  // EP API returns activity_date as plain string; fall back to eli-dl: prefixed variant
   const dateValue = resolveActivityDate(apiData);
   const localityUrl = toSafeString(apiData['hasLocality']);
   const location = extractLocation(localityUrl);
 
-  // EP API provides number_of_attendees for plenary sessions
   const rawAttendance = apiData['number_of_attendees'];
   const attendanceCount = typeof rawAttendance === 'number' ? rawAttendance : 0;
 
-  // EP API provides consists_of (agenda item refs) and documented_by/recorded_in (document refs)
   const agendaItems = Array.isArray(apiData['consists_of'])
     ? (apiData['consists_of'] as string[]).map(item => toSafeString(item)).filter(s => s !== '')
     : [];
@@ -213,8 +199,6 @@ export function transformVoteResult(apiData: Record<string, unknown>, sessionId:
 
   return { id, sessionId, topic, date, votesFor, votesAgainst, abstentions, result };
 }
-
-// ─── Committee transformers ─────────────────────────────────────
 
 /**
  * Resolve a full committee display name.
@@ -275,14 +259,9 @@ export function transformCorporateBody(apiData: Record<string, unknown>): Commit
     name: name !== '' ? name : `Committee ${abbreviation}`,
     abbreviation,
     members,
-    // EP API membership data does not reliably include role information;
-    // chair and viceChairs are left undefined rather than assuming the
-    // first members hold those positions.
     responsibilities,
   };
 }
-
-// ─── Document transformers ──────────────────────────────────────
 
 /**
  * Transforms EP API document data to internal {@link LegislativeDocument} format.
@@ -309,8 +288,6 @@ export function transformDocument(apiData: Record<string, unknown>): Legislative
   }
   return doc;
 }
-
-// ─── Question transformers ──────────────────────────────────────
 
 /**
  * Transforms EP API parliamentary question data to internal {@link ParliamentaryQuestion} format.
@@ -339,8 +316,6 @@ export function transformParliamentaryQuestion(apiData: Record<string, unknown>)
   }
   return result;
 }
-
-// ─── Activity transformers ──────────────────────────────────────
 
 /**
  * Extracts speaker ID and name from EP API participation data.
@@ -388,7 +363,6 @@ export function transformSpeech(apiData: Record<string, unknown>): Speech {
 
   return {
     id: extractField(apiData, ['activity_id', 'identifier', 'id']),
-    // EP API uses activity_label for speech title text
     title: extractMultilingualText(apiData['activity_label'] ?? apiData['had_activity_type'] ?? apiData['label'] ?? apiData['title']),
     speakerId,
     speakerName,
@@ -396,7 +370,6 @@ export function transformSpeech(apiData: Record<string, unknown>): Speech {
     type: extractField(apiData, ['had_activity_type', 'type']),
     language: extractField(apiData, ['language', 'was_created_in_language']),
     text: extractMultilingualText(apiData['text'] ?? apiData['content'] ?? ''),
-    // EP API uses inverse_consists_of (array) for session reference
     sessionReference: extractAuthorId(apiData['inverse_consists_of'] ?? apiData['was_part_of'] ?? apiData['is_part_of'] ?? apiData['event']),
   };
 }
@@ -409,14 +382,9 @@ export function transformProcedure(apiData: Record<string, unknown>): Procedure 
   const dateStartField = firstDefined(apiData, 'process_date_start', 'date_start', 'date');
   const dateUpdateField = firstDefined(apiData, 'process_date_update', 'date_update');
   const subjectField = firstDefined(apiData, 'subject_matter', 'subject');
-  // Extract the procedure-type code from a URI like "def/ep-procedure-types/COD" → "COD".
-  // For strings without a "/" (e.g. plain "COD"), lastIndexOf returns -1, so
-  // slice(0) returns the full string unchanged.
   const rawType = extractField(apiData, ['process_type', 'type']);
   const typeCode = rawType.includes('/') ? rawType.slice(rawType.lastIndexOf('/') + 1) : rawType;
   return {
-    // Prefer the human-readable process_id (e.g. "2025-0009") over the full JSON-LD URI
-    // (e.g. "eli/dl/proc/2025-0009") that the EP API places in the "id" field.
     id: extractField(apiData, ['identifier', 'process_id', 'id']),
     title: extractMultilingualText(titleField),
     reference: extractField(apiData, ['identifier', 'process_id']),
@@ -441,10 +409,8 @@ export function transformAdoptedText(apiData: Record<string, unknown>): AdoptedT
     title: extractMultilingualText(apiData['title_dcterms'] ?? apiData['label'] ?? apiData['title']),
     reference: extractField(apiData, ['work_id', 'identifier']),
     type: extractField(apiData, ['work_type', 'type']),
-    // EP API returns document_date; also check older / alternative field names
     dateAdopted: extractDateValue(apiData['document_date'] ?? apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']),
     procedureReference: extractField(apiData, ['based_on_a_concept_procedure', 'inverse_decided_on_a_realization_of', 'procedure']),
-    // EP API uses isAboutSubjectMatter (URI array) for subject classification
     subjectMatter: extractCodesFromUriArray(apiData['isAboutSubjectMatter']) || extractMultilingualText(apiData['subject_matter'] ?? apiData['subject'] ?? ''),
   };
 }
@@ -454,9 +420,7 @@ export function transformAdoptedText(apiData: Record<string, unknown>): AdoptedT
  */
 export function transformEvent(apiData: Record<string, unknown>): EPEvent {
   return {
-    // EP API uses activity_id for events
     id: extractField(apiData, ['activity_id', 'identifier', 'id']),
-    // EP API may use activity_label instead of label for event titles
     title: extractMultilingualText(apiData['activity_label'] ?? apiData['label'] ?? apiData['title'] ?? ''),
     date: extractDateValue(apiData['activity_start_date'] ?? apiData['activity_date'] ?? apiData['date']),
     endDate: extractDateValue(apiData['activity_end_date'] ?? ''),
@@ -496,7 +460,6 @@ export function transformMEPDeclaration(apiData: Record<string, unknown>): MEPDe
     mepId,
     mepName,
     type: extractField(apiData, ['work_type', 'type']),
-    // EP API returns document_date; also check older / alternative field names
     dateFiled: extractDateValue(apiData['document_date'] ?? apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']),
     status: extractField(apiData, ['resource_legal_in-force', 'status']),
   };

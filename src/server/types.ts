@@ -7,8 +7,6 @@
  * @module server/types
  */
 
-// ── Tool result type ──────────────────────────────────────────────
-
 /**
  * Standard MCP tool execution result.
  * Re-exported from the canonical definition in tools/shared/types.ts
@@ -25,8 +23,6 @@ export type { ToolResult };
  */
 export type ToolHandler = (args: unknown) => Promise<ToolResult>;
 
-// ── Tool category ─────────────────────────────────────────────────
-
 /**
  * Logical grouping for tools in the registry.
  *
@@ -40,8 +36,6 @@ export type ToolHandler = (args: unknown) => Promise<ToolResult>;
  * | `feed`     | EP API v2 change-feed endpoints for monitoring recently updated data |
  */
 export type ToolCategory = 'core' | 'advanced' | 'osint' | 'phase4' | 'phase5' | 'feed';
-
-// ── Tool metadata ─────────────────────────────────────────────────
 
 /**
  * Full metadata descriptor for a registered MCP tool.
@@ -59,8 +53,6 @@ export interface ToolMetadata {
   /** Logical category for grouping and display */
   category: ToolCategory;
 }
-
-// ── CLI options ───────────────────────────────────────────────────
 
 /**
  * Parsed command-line options for the MCP server binary.

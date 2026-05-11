@@ -47,6 +47,12 @@ export const NetworkAnalysisSchema = z.object({
     .describe('Requested network traversal depth. Currently the implementation does not perform traversal-by-depth; this value is echoed back (reserved for future use).')
 });
 
+/**
+ * Inferred parameter type for the {@link NetworkAnalysisSchema}.
+ *
+ * All fields default-fill to their schema-defined defaults, so the type
+ * exposes already-validated, fully-defaulted parameters to downstream code.
+ */
 export type NetworkAnalysisParams = z.infer<typeof NetworkAnalysisSchema>;
 
 interface MEPRecord {
@@ -381,6 +387,19 @@ function computeNetworkMetrics(nodes: NetworkNode[], edges: NetworkEdge[]): {
   return { clusterCount: clusterLabels.size, isolatedMEPs, networkDensity, avgDegree };
 }
 
+/**
+ * Compute the MEP committee co-membership network for the supplied parameters.
+ *
+ * Implementation of the MCP `network_analysis` tool. Fetches the current MEP
+ * roster (or the ego network around a focal MEP), builds undirected edges
+ * from shared committee memberships, derives degree and centrality scores,
+ * assigns political-bloc clusters, and identifies bridging MEPs that connect
+ * different clusters.
+ *
+ * @param params - Validated tool parameters (see {@link NetworkAnalysisSchema})
+ * @returns A {@link ToolResult} containing the network analysis or a
+ *   structured error response on failure
+ */
 export async function networkAnalysis(params: NetworkAnalysisParams): Promise<ToolResult> {
   try {
     const mepResult = await epClient.getCurrentMEPs({ limit: 50 });
@@ -449,6 +468,11 @@ export async function networkAnalysis(params: NetworkAnalysisParams): Promise<To
   }
 }
 
+/**
+ * MCP tool metadata for `network_analysis` (name, human-readable
+ * description, and JSON Schema for the tool's input). Consumed by the
+ * server's tool registry to advertise this tool in `ListTools` responses.
+ */
 export const networkAnalysisToolMetadata = {
   name: 'network_analysis',
   description: 'MEP relationship network mapping using committee co-membership. Computes centrality scores, cluster assignments, bridging MEPs, and network density metrics. Identifies informal power structures and cross-party collaboration pathways. NOTE: edges are derived from shared committee membership only; voting-similarity edges are reserved for a future version.',
@@ -476,6 +500,16 @@ export const networkAnalysisToolMetadata = {
   }
 };
 
+/**
+ * MCP `CallTool` handler entry point for `network_analysis`.
+ *
+ * Validates the raw input arguments against {@link NetworkAnalysisSchema}
+ * and delegates execution to {@link networkAnalysis}. Schema validation
+ * errors propagate as Zod errors and are formatted by the registry.
+ *
+ * @param args - Raw, untrusted MCP `CallTool` arguments
+ * @returns The same {@link ToolResult} produced by {@link networkAnalysis}
+ */
 export async function handleNetworkAnalysis(args: unknown): Promise<ToolResult> {
   const params = NetworkAnalysisSchema.parse(args);
   return networkAnalysis(params);

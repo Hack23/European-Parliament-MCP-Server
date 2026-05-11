@@ -52,12 +52,8 @@ export const MIN_STORED_FOR_DROP_CHECK = 100;
  * and small decreases).
  */
 export function isCredibleApiValue(apiValue: number, storedValue: number): boolean {
-  // Guard 1: Very small API value when stored is much larger
   if (apiValue < MIN_CREDIBLE_VALUE && storedValue > apiValue * 5) return false;
 
-  // Guard 2: Significant drop from a substantial stored value.
-  // Increases are always trusted (API has more data than stored).
-  // Only decreases beyond the threshold are flagged.
   if (
     storedValue > MIN_STORED_FOR_DROP_CHECK &&
     apiValue < storedValue &&

@@ -30,6 +30,12 @@ import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.
 import type { ToolResult } from './shared/types.js';
 import { fetchAllCurrentMEPs } from '../utils/mepFetcher.js';
 
+/**
+ * Zod input schema for the `sentiment_tracker` MCP tool. Optional
+ * `groupId` filters the analysis to a single political group; `timeframe`
+ * is an informational label (the current implementation always uses the
+ * latest available MEP composition data, not historical time series).
+ */
 export const SentimentTrackerSchema = z.object({
   groupId: z.string()
     .min(1)
@@ -42,6 +48,10 @@ export const SentimentTrackerSchema = z.object({
     .describe('Informational-only time window label; current implementation always uses latest available MEP composition data, not historical time-series'),
 });
 
+/**
+ * Validated parameter type for the `sentiment_tracker` tool, inferred
+ * from {@link SentimentTrackerSchema}.
+ */
 export type SentimentTrackerParams = z.infer<typeof SentimentTrackerSchema>;
 
 interface GroupSentiment {
@@ -98,16 +108,16 @@ const KNOWN_POLITICAL_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID'
  * These are proxy estimates; direct voting cohesion data is not available from the EP API.
  */
 const SEAT_SHARE_THRESHOLDS = {
-  large: 0.25,   // ≥25% of total MEPs → "major governing bloc"
-  medium: 0.15,  // ≥15% and <25% → "significant player"
-  small: 0.05    // ≥5% and <15% → "minor coalition partner"
+  large: 0.25,
+  medium: 0.15,
+  small: 0.05
 } as const;
 
 const SENTIMENT_SCORES = {
-  large: 0.3,    // Major blocs: positive alignment with institutional norms
-  medium: 0.2,   // Significant players: constructive engagement
-  small: 0.1,    // Minor partners: moderate positive
-  micro: -0.1    // Micro-groups: procedural disadvantage → slight negative sentiment proxy
+  large: 0.3,
+  medium: 0.2,
+  small: 0.1,
+  micro: -0.1
 } as const;
 
 function deriveSentimentScore(memberCount: number, totalMEPs: number): number {
@@ -208,11 +218,6 @@ function buildTopicsAndShifts(validSentiments: GroupSentiment[]): {
   divisiveTopics: string[];
   sentimentShifts: SentimentShift[];
 } {
-  // Topic-level analysis is not currently implemented.
-  // To avoid misleading intelligence output, we do not infer or fabricate
-  // consensus/divisive policy areas from the available EP data.
-  // These arrays are intentionally empty until a data-backed topic model
-  // (e.g. based on votes, committee work, or speech analysis) is available.
   const consensusTopics: string[] = [];
   const divisiveTopics: string[] = [];
   return { consensusTopics, divisiveTopics, sentimentShifts: buildSentimentShifts(validSentiments) };
@@ -234,11 +239,21 @@ function buildSentimentComputedAttrs(
   };
 }
 
+/**
+ * Compute political-group institutional-positioning sentiment scores.
+ *
+ * Implementation of the MCP `sentiment_tracker` tool. Aggregates current
+ * MEP group composition into per-group sentiment scores (seat-share
+ * proxies), computes a polarization index, derives consensus and
+ * divisive topics and returns an overall parliament sentiment score.
+ *
+ * @param params - Validated tool parameters
+ *   (see {@link SentimentTrackerSchema})
+ * @returns A {@link ToolResult} containing the sentiment report or a
+ *   structured error response on failure
+ */
 export async function sentimentTracker(params: SentimentTrackerParams): Promise<ToolResult> {
   try {
-    // Fetch all current MEPs once via paginated batches, then aggregate
-    // per-group counts in-memory. This avoids per-group API calls that each
-    // trigger a full multi-page fetch when client-side filtering is used.
     const fetchResult = await fetchAllCurrentMEPs();
     const allMeps = fetchResult.meps;
     const totalMEPs = allMeps.length;
@@ -247,7 +262,6 @@ export async function sentimentTracker(params: SentimentTrackerParams): Promise<
       return buildToolResponse(buildEmptySentimentResult(params));
     }
 
-    // Count MEPs per group in-memory (one fetch, no per-group API calls)
     const groupCounts = new Map<string, number>();
     for (const mep of allMeps) {
       const g = mep.politicalGroup;
@@ -304,6 +318,11 @@ export async function sentimentTracker(params: SentimentTrackerParams): Promise<
   }
 }
 
+/**
+ * MCP tool metadata for `sentiment_tracker` (name, description, and
+ * JSON Schema for the tool's input). Consumed by the server's tool
+ * registry to advertise this tool in `ListTools` responses.
+ */
 export const sentimentTrackerToolMetadata = {
   name: 'sentiment_tracker',
   description: 'Track political group institutional-positioning scores based on seat-share proxy (not direct voting cohesion data, which is unavailable from the EP API). Computes scores (-1 to +1), polarization index, and identifies consensus and divisive topics. NOTE: timeframe parameter is informational-only; scores always reflect current group composition.',
@@ -326,6 +345,15 @@ export const sentimentTrackerToolMetadata = {
   }
 };
 
+/**
+ * MCP `CallTool` handler entry point for `sentiment_tracker`.
+ *
+ * Validates the raw input arguments against {@link SentimentTrackerSchema}
+ * and delegates execution to {@link sentimentTracker}.
+ *
+ * @param args - Raw, untrusted MCP `CallTool` arguments
+ * @returns The same {@link ToolResult} produced by {@link sentimentTracker}
+ */
 export async function handleSentimentTracker(args: unknown): Promise<ToolResult> {
   const params = SentimentTrackerSchema.parse(args);
   return sentimentTracker(params);

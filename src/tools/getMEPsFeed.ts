@@ -62,7 +62,6 @@ function buildOversizedPayloadWarnings(result: unknown): readonly string[] {
  * @security Input is validated with Zod before any API call.
  */
 export async function handleGetMEPsFeed(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetMEPsFeedSchema.parse>;
   try {
     params = GetMEPsFeedSchema.parse(args);

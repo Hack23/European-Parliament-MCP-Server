@@ -1,13 +1,13 @@
 /**
  * MCP Tool: analyze_coalition_dynamics
- * 
+ *
  * Detect voting coalitions, cross-party alliances, group cohesion rates,
  * and coalition stress indicators.
- * 
+ *
  * **Intelligence Perspective:** Coalition analysis tool detecting voting blocs,
  * measuring political group cohesion, and identifying emerging cross-party alliances
  * using CIA Coalition Analysis methodology.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -53,12 +53,6 @@ export function clearDoceoCoalitionCohesionCache(): void {
   doceoCohesionCache = undefined;
 }
 
-// Re-export for backward compatibility — `normalizePoliticalGroup` was
-// originally defined in this module and may be imported from it by
-// downstream consumers. The implementation now lives in
-// `src/utils/politicalGroupNormalization.ts` so other tools (e.g.
-// `generate_political_landscape`) can reuse it without depending on the
-// full coalition-dynamics module.
 export { normalizePoliticalGroup };
 
 interface CoalitionPairAnalysis {
@@ -234,8 +228,6 @@ function normalizeTargetGroups(groupIds: readonly string[]): string[] {
 function sanitizeUnrecognizedLabel(raw: string): string {
   const stripped = raw.replace(/[\x00-\x1F\x7F]+/g, ' ').replace(/\s+/g, ' ').trim();
   if (stripped.length <= MAX_UNRECOGNIZED_LABEL_LENGTH) return stripped;
-  // Reserve one character for the ellipsis so the final string length is
-  // exactly `MAX_UNRECOGNIZED_LABEL_LENGTH` and never exceeds the documented bound.
   return `${stripped.slice(0, MAX_UNRECOGNIZED_LABEL_LENGTH - 1)}…`;
 }
 
@@ -274,15 +266,12 @@ function computePairSizeSimilarity(
   groupBMembers: number,
   opts: PairSimilarityOptions
 ): CoalitionPairAnalysis {
-  // Use relative group sizes as a proxy — no synthetic seed-based data.
-  // This is **size similarity**, not vote-level cohesion (Hix/Noury/Roland).
   const totalMembers = groupAMembers + groupBMembers;
   const balance = totalMembers > 0
     ? Math.min(groupAMembers, groupBMembers) / Math.max(1, Math.max(groupAMembers, groupBMembers))
     : 0;
   const sizeSimilarityScore = Math.round(balance * 100) / 100;
 
-  // Populate cohesion from DOCEO vote-level data when available
   const pairKey = makePairKey(groupA, groupB);
   const doceoEntry = opts.cohesionMap?.get(pairKey);
   const cohesion = doceoEntry?.cohesion ?? null;
@@ -301,8 +290,6 @@ function computePairSizeSimilarity(
     trend,
   };
 }
-
-// ─── DOCEO vote-level cohesion helpers ─────────────────────────────────────
 
 /** Options for pair size similarity computation. */
 interface PairSimilarityOptions {
@@ -479,8 +466,6 @@ async function loadDoceoCoalitionCohesion(): Promise<DoceoCohesionResult> {
     return value;
   }
 }
-
-// ─── End DOCEO helpers ──────────────────────────────────────────────────────
 
 /**
  * Fetches all current MEPs once and computes per-group membership counts in-memory.
@@ -682,7 +667,6 @@ function computeFragmentationMetrics(groupMetrics: GroupCohesionMetrics[]): {
 
   const eppCohesion = groupMetrics.find(g => g.groupId === 'EPP')?.internalCohesion ?? null;
   const sdCohesion = groupMetrics.find(g => g.groupId === 'S&D')?.internalCohesion ?? null;
-  // Return null when cohesion data is unavailable to avoid misleading computed score
   const grandCoalitionViability = (eppCohesion !== null && sdCohesion !== null)
     ? Math.round((eppCohesion + sdCohesion) / 2 * 100) / 100
     : null;

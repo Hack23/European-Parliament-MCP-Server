@@ -10,8 +10,6 @@
 
 import type { DocumentType, DocumentStatus } from '../../types/europeanParliament.js';
 
-// ─── Primitive helpers ──────────────────────────────────────────
-
 /**
  * Safely converts an unknown value to a string.
  *
@@ -39,8 +37,6 @@ export function firstDefined(data: Record<string, unknown>, ...keys: string[]): 
   return undefined;
 }
 
-// ─── Field extraction ───────────────────────────────────────────
-
 /**
  * Extracts a string value from the first matching field name.
  *
@@ -57,8 +53,6 @@ export function extractField(data: Record<string, unknown>, fields: string[]): s
     const value = data[field];
     if (value !== undefined && value !== null) {
       if (Array.isArray(value) && value.length > 0) {
-        // EP API JSON-LD often wraps single values in arrays;
-        // extract the first element as the representative value
         return toSafeString(value[0]);
       }
       return toSafeString(value);
@@ -66,8 +60,6 @@ export function extractField(data: Record<string, unknown>, fields: string[]): s
   }
   return '';
 }
-
-// ─── Date handling ──────────────────────────────────────────────
 
 /**
  * Extracts an ISO 8601 date string from various EP API date formats.
@@ -108,8 +100,6 @@ export function extractActivityDate(activityDate: unknown): string {
   }
   return '';
 }
-
-// ─── Multilingual text ──────────────────────────────────────────
 
 /**
  * Extracts preferred-language text from an array of language-tagged objects.
@@ -160,8 +150,6 @@ export function extractMultilingualText(field: unknown): string {
   }
   return '';
 }
-
-// ─── Member / Author extraction ─────────────────────────────────
 
 /**
  * Extracts member IDs from EP API membership data.
@@ -224,8 +212,6 @@ export function extractDocumentRefs(docs: unknown): string[] {
   return [];
 }
 
-// ─── Document type / status mapping ─────────────────────────────
-
 /**
  * Maps a raw work-type string to a valid DocumentType.
  *
@@ -249,8 +235,6 @@ export function mapDocumentStatus(rawStatus: string): DocumentStatus {
   return validStatuses.find(s => rawStatus.toUpperCase().includes(s)) ?? 'SUBMITTED';
 }
 
-// ─── Location extraction ────────────────────────────────────────
-
 /**
  * Extracts location string from EP API locality URL.
  *
@@ -262,8 +246,6 @@ export function extractLocation(localityUrl: string): string {
   if (localityUrl.includes('BEL_BRU')) return 'Brussels';
   return 'Unknown';
 }
-
-// ─── Vote helpers ───────────────────────────────────────────────
 
 /**
  * Extracts a numeric vote count from an EP API value.

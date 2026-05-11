@@ -1,17 +1,17 @@
 /**
  * MCP Tool: get_meps
- * 
+ *
  * Retrieve Members of European Parliament with filtering options
- * 
+ *
  * **Intelligence Perspective:** Foundation for MEP profiling, political group cohesion analysis,
  * national delegation mapping, and cross-party alliance detection via OSINT methodologies.
- * 
+ *
  * **Business Perspective:** Core data product for B2G/B2B customers requiring MEP contact
  * databases, political risk assessments, and stakeholder mapping services.
- * 
+ *
  * **Marketing Perspective:** Primary showcase tool demonstrating API value proposition
  * to journalists, researchers, and civic tech developers seeking structured MEP data.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -73,7 +73,6 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetMEPs(
   args: unknown
 ): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetMEPsSchema.parse>;
   try {
     params = GetMEPsSchema.parse(args);
@@ -92,7 +91,6 @@ export async function handleGetMEPs(
   }
 
   try {
-    // Fetch MEPs from EP API (only pass defined properties)
     const apiParams = {
       active: params.active,
       limit: params.limit,
@@ -103,13 +101,12 @@ export async function handleGetMEPs(
         { from: 'committee', to: 'committee' },
       ]),
     };
-    
+
     const result = await epClient.getMEPs(apiParams);
-    
-    // Validate output
+
     const outputSchema = PaginatedResponseSchema(MEPSchema);
     const validated = outputSchema.parse(result);
-    
+
     return buildToolResponse(validated);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {

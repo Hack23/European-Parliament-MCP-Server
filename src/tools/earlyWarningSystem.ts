@@ -26,6 +26,11 @@ import { epClient } from '../clients/europeanParliamentClient.js';
 import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
+/**
+ * Zod input schema for the `early_warning_system` MCP tool. Configures
+ * detection sensitivity (low / medium / high) and the focus area
+ * (coalitions / attendance / all).
+ */
 export const EarlyWarningSystemSchema = z.object({
   sensitivity: z.enum(['low', 'medium', 'high'])
     .optional()
@@ -37,6 +42,10 @@ export const EarlyWarningSystemSchema = z.object({
     .describe('Area of political activity to monitor')
 });
 
+/**
+ * Validated parameter type for the `early_warning_system` tool, inferred
+ * from {@link EarlyWarningSystemSchema}.
+ */
 export type EarlyWarningSystemParams = z.infer<typeof EarlyWarningSystemSchema>;
 
 type SeverityLevel = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
@@ -172,8 +181,6 @@ function buildCoalitionWarnings(groupSizes: GroupSize[], thresholds: Sensitivity
 function buildAttendanceWarnings(groupSizes: GroupSize[], focusArea: string): Warning[] {
   if (focusArea !== 'attendance' && focusArea !== 'all') return [];
 
-  // Heuristic: groups with <= 5 members are treated as very small delegations that may be
-  // more vulnerable to attendance/quorum issues and may indicate NI-style fragmentation risk.
   const smallGroups = groupSizes.filter(g => g.memberCount <= 5);
   if (smallGroups.length === 0) return [];
 
@@ -300,12 +307,21 @@ function resolveKeyRiskFactor(warnings: Warning[]): string {
   return 'NONE';
 }
 
+/**
+ * Compute an early-warning assessment of EP political stability.
+ *
+ * Implementation of the MCP `early_warning_system` tool. Analyses current
+ * group composition for fragmentation, dominant-group risks, minority
+ * quorum risks and coalition viability, derives severity-tagged warnings,
+ * and produces an overall stability score (0-100) and risk level.
+ *
+ * @param params - Validated tool parameters
+ *   (see {@link EarlyWarningSystemSchema})
+ * @returns A {@link ToolResult} containing the warning report or a
+ *   structured error response on failure
+ */
 export async function earlyWarningSystem(params: EarlyWarningSystemParams): Promise<ToolResult> {
   try {
-    // NOTE: getCurrentMEPs uses /meps/show-current which returns country and
-    // politicalGroup fields. Paginated; limit:100 returns only the first page.
-    // Group-size distributions may be underestimated when hasMore is true.
-    // Warnings are sample-based; confidence is adjusted accordingly.
     const mepResult = await epClient.getCurrentMEPs({ limit: 100 });
     const assessmentTime = new Date().toISOString();
 
@@ -379,6 +395,11 @@ export async function earlyWarningSystem(params: EarlyWarningSystemParams): Prom
   }
 }
 
+/**
+ * MCP tool metadata for `early_warning_system` (name, description, and
+ * JSON Schema for the tool's input). Consumed by the server's tool
+ * registry to advertise this tool in `ListTools` responses.
+ */
 export const earlyWarningSystemToolMetadata = {
   name: 'early_warning_system',
   description: 'Detect emerging political shifts, coalition fracture signals, and unusual patterns. Generates warnings with severity levels (CRITICAL/HIGH/MEDIUM/LOW), computes stability score (0-100), trend indicators, and overall risk level. Configurable sensitivity and focus area.',
@@ -401,6 +422,17 @@ export const earlyWarningSystemToolMetadata = {
   }
 };
 
+/**
+ * MCP `CallTool` handler entry point for `early_warning_system`.
+ *
+ * Validates the raw input arguments against
+ * {@link EarlyWarningSystemSchema} and delegates execution to
+ * {@link earlyWarningSystem}.
+ *
+ * @param args - Raw, untrusted MCP `CallTool` arguments
+ * @returns The same {@link ToolResult} produced by
+ *   {@link earlyWarningSystem}
+ */
 export async function handleEarlyWarningSystem(args: unknown): Promise<ToolResult> {
   const params = EarlyWarningSystemSchema.parse(args);
   return earlyWarningSystem(params);

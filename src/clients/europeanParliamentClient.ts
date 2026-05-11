@@ -47,7 +47,6 @@ import type {
   MEPDeclaration,
 } from '../types/europeanParliament.js';
 
-// Re-export infrastructure types/constants so existing consumers keep working.
 export {
   APIError,
   DEFAULT_EP_API_BASE_URL,
@@ -91,8 +90,6 @@ import {
   QuestionClient,
   VocabularyClient,
 } from './ep/index.js';
-
-// ─── Facade ───────────────────────────────────────────────────────────────────
 
 /**
  * European Parliament API Client.
@@ -145,7 +142,6 @@ import {
  * @see https://gdpr-info.eu/art-30-gdpr/ - GDPR Article 30
  */
 export class EuropeanParliamentClient {
-  // ─── Sub-clients (package-private for testability) ──────────────────────
   private readonly mepClient: MEPClient;
   private readonly plenaryClient: PlenaryClient;
   private readonly votingClient: VotingClient;
@@ -197,9 +193,7 @@ export class EuropeanParliamentClient {
         interval: DEFAULT_RATE_LIMIT_INTERVAL,
       });
     const rawBaseURL = config.baseURL ?? DEFAULT_EP_API_BASE_URL;
-    // Validate baseURL to prevent SSRF (same rules as EP_API_URL env var)
     validateApiUrl(rawBaseURL, 'config.baseURL');
-    // Ensure baseURL always ends with '/' so relative endpoints resolve correctly
     const baseURL = rawBaseURL.endsWith('/') ? rawBaseURL : `${rawBaseURL}/`;
     return {
       cache: sharedCache,
@@ -213,8 +207,6 @@ export class EuropeanParliamentClient {
     };
   }
 
-  // ─── Cache management ────────────────────────────────────────────────────
-
   /**
    * Clears all entries from the LRU cache.
    *
@@ -226,7 +218,6 @@ export class EuropeanParliamentClient {
    * @public
    */
   clearCache(): void {
-    // Delegating to any sub-client clears the shared cache
     this.mepClient.clearCache();
   }
 
@@ -241,12 +232,8 @@ export class EuropeanParliamentClient {
    * @public
    */
   getCacheStats(): { size: number; maxSize: number; hitRate: number; hits: number; misses: number } {
-    // All sub-clients share the same cache and counters; delegation
-    // to mepClient returns aggregate stats for the entire facade.
     return this.mepClient.getCacheStats();
   }
-
-  // ─── MEP endpoints ────────────────────────────────────────────────────────
 
   /**
    * Retrieves Members of the European Parliament with filtering and pagination.
@@ -380,8 +367,6 @@ export class EuropeanParliamentClient {
     return this.mepClient.getMEPDeclarationsFeed(params);
   }
 
-  // ─── Plenary / meeting endpoints ─────────────────────────────────────────
-
   /**
    * Retrieves plenary sessions with date and location filtering.
    *
@@ -498,8 +483,6 @@ export class EuropeanParliamentClient {
     return this.plenaryClient.getEventsFeed(params);
   }
 
-  // ─── Voting / speech endpoints ────────────────────────────────────────────
-
   /**
    * Retrieves voting records with filtering by session, topic, and date.
    *
@@ -547,8 +530,6 @@ export class EuropeanParliamentClient {
     return this.votingClient.getSpeechById(speechId);
   }
 
-  // ─── Committee endpoints ──────────────────────────────────────────────────
-
   /**
    * Retrieves committee (corporate body) information by ID or abbreviation.
    *
@@ -584,8 +565,6 @@ export class EuropeanParliamentClient {
   async getCorporateBodiesFeed(): Promise<JSONLDResponse> {
     return this.committeeClient.getCorporateBodiesFeed();
   }
-
-  // ─── Document endpoints ───────────────────────────────────────────────────
 
   /**
    * Searches legislative documents by keyword, type, date, and committee.
@@ -758,8 +737,6 @@ export class EuropeanParliamentClient {
     return this.documentClient.getExternalDocumentsFeed(params);
   }
 
-  // ─── Legislative endpoints ────────────────────────────────────────────────
-
   /**
    * Returns legislative procedures.
    * **EP API Endpoint:** `GET /procedures`
@@ -849,8 +826,6 @@ export class EuropeanParliamentClient {
     return this.legislativeClient.getProcedureEventById(processId, eventId);
   }
 
-  // ─── Parliamentary question endpoints ────────────────────────────────────
-
   /**
    * Retrieves parliamentary questions with filtering by type, author, and status.
    *
@@ -892,8 +867,6 @@ export class EuropeanParliamentClient {
     return this.questionClient.getParliamentaryQuestionsFeed();
   }
 
-  // ─── Vocabulary endpoints ─────────────────────────────────────────────────
-
   /**
    * Returns EP controlled vocabularies.
    * **EP API Endpoint:** `GET /controlled-vocabularies`
@@ -924,8 +897,6 @@ export class EuropeanParliamentClient {
     return this.vocabularyClient.getControlledVocabulariesFeed();
   }
 }
-
-// ─── Singleton ────────────────────────────────────────────────────────────────
 
 /**
  * Singleton instance of European Parliament API client for global use.

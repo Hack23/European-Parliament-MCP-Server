@@ -1,18 +1,18 @@
 /**
  * MCP Tool: track_mep_attendance
- * 
+ *
  * Track and analyze MEP attendance patterns across plenary sessions
  * with trend detection. Attendance is derived from votingStatistics
  * (plenary vote participation); committee meeting attendance is not
  * currently tracked.
- * 
+ *
  * **Intelligence Perspective:** Attendance analysis reveals MEP engagement levels,
  * potential disengagement signals, and participation patterns that correlate with
  * political influence and legislative effectiveness.
- * 
+ *
  * **Business Perspective:** Attendance tracking enables stakeholders to identify
  * the most engaged and accessible MEPs for advocacy and outreach.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -187,8 +187,6 @@ async function buildSingleMepAnalysis(
   const mepData = await epClient.getMEPDetails(mepId);
   const record = buildAttendanceRecord(mepData);
 
-  // EP API /meps/{id} intentionally does not include votingStatistics —
-  // undefined signals data unavailability (distinct from "present but zero votes").
   const hasVotingStats = mepData.votingStatistics !== undefined;
 
   return {

@@ -15,8 +15,6 @@ import {
   type JSONLDResponse,
 } from './baseClient.js';
 
-// ─── Vocabulary Client ────────────────────────────────────────────────────────
-
 /**
  * Sub-client for EP controlled-vocabularies endpoints.
  *
@@ -27,8 +25,6 @@ export class VocabularyClient extends BaseEPClient {
   constructor(config: EPClientConfig = {}, shared?: EPSharedResources) {
     super(config, shared);
   }
-
-  // ─── Public methods ───────────────────────────────────────────────────────
 
   /**
    * Returns EP controlled vocabularies.

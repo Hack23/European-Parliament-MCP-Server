@@ -24,7 +24,6 @@ import type { ToolResult } from './shared/types.js';
  * @security Input is validated with Zod before any API call.
  */
 export async function handleGetExternalDocumentsFeed(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetExternalDocumentsFeedSchema.parse>;
   try {
     params = GetExternalDocumentsFeedSchema.parse(args);

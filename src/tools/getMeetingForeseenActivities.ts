@@ -50,7 +50,6 @@ import type { ToolResult } from './shared/types.js';
  * @see {@link handleGetMeetings} for retrieving the parent meeting records
  */
 export async function handleGetMeetingForeseenActivities(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetMeetingForeseenActivitiesSchema.parse>;
   try {
     params = GetMeetingForeseenActivitiesSchema.parse(args);

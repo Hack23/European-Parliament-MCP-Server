@@ -27,7 +27,6 @@ import type { ToolResult } from './shared/types.js';
  * @security Input is validated with Zod before any API call.
  */
 export async function handleGetControlledVocabulariesFeed(args: unknown): Promise<ToolResult> {
-  // Validate input — fixed-window feeds accept no parameters
   try {
     GetControlledVocabulariesFeedSchema.parse(args);
   } catch (error: unknown) {

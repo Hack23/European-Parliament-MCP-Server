@@ -117,7 +117,6 @@ async function augmentWithCurrentYear(
  * @security Input is validated with Zod before any API call.
  */
 export async function handleGetAdoptedTextsFeed(args: unknown): Promise<ToolResult> {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType<typeof GetAdoptedTextsFeedSchema.parse>;
   try {
     params = GetAdoptedTextsFeedSchema.parse(args);
@@ -142,10 +141,6 @@ export async function handleGetAdoptedTextsFeed(args: unknown): Promise<ToolResu
     if (params.workType !== undefined) apiParams['workType'] = params.workType;
     const result = await epClient.getAdoptedTextsFeed(apiParams);
 
-    // Freshness check: when the feed payload contains no current-year items
-    // (a known degraded-upstream pattern observed since 2026-04-14), augment
-    // with the current calendar year of /adopted-texts so callers can still
-    // discover recent documents.
     const currentYear = new Date().getUTCFullYear();
     const items = Array.isArray(result['data']) ? (result['data'] as unknown[]) : [];
     const hasCurrentYear = items.some((item) => isCurrentYearItem(item, currentYear));

@@ -42,7 +42,6 @@ export function parseTimeoutValue(value: string | undefined): number | undefined
     return undefined;
   }
   const trimmed = value.trim();
-  // Strict digits-only check — reject partially-numeric values like "10s"
   if (!/^\d+$/.test(trimmed)) {
     return undefined;
   }

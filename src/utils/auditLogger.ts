@@ -34,10 +34,8 @@ import {
   StderrAuditSink,
 } from './auditSink.js';
 
-// Re-export the shared data model for backward compatibility.
 export type { AuditLogEntry } from './auditSink.js';
 
-// Re-export the pluggable-sink public API so consumers only need one import.
 export type {
   AuditFilter,
   AuditLoggerOptions,
@@ -66,9 +64,13 @@ export type { FileAuditSinkOptions } from './auditSink.js';
  * | `ERROR` | Failed operations |
  */
 export enum LogLevel {
+  /** Verbose trace information for development and debugging only. */
   DEBUG = 'DEBUG',
+  /** Normal data-access and tool-invocation events (default sink level). */
   INFO = 'INFO',
+  /** Recoverable anomalies — degraded functionality but no failure. */
   WARN = 'WARN',
+  /** Failed operations that prevented the requested action. */
   ERROR = 'ERROR',
 }
 
@@ -98,10 +100,6 @@ export interface AuditEvent {
   /** Wall-clock duration of the operation in milliseconds */
   duration?: number;
 }
-
-// ---------------------------------------------------------------------------
-// AuditLogger
-// ---------------------------------------------------------------------------
 
 /**
  * GDPR-compliant audit logger with pluggable sinks, parameter sanitisation,
@@ -206,9 +204,6 @@ export class AuditLogger {
       ...(sanitized !== undefined ? { params: sanitized } : {}),
       timestamp: new Date(),
     };
-    // Prune expired entries before writing to prevent unbounded memory growth
-    // and ensure PII is not retained past the configured retention window
-    // (GDPR Art. 5(1)(e) — Storage limitation principle).
     if (this.retentionPolicy !== undefined) {
       this.pruneExpiredEntries(this.retentionPolicy);
     }
@@ -237,11 +232,6 @@ export class AuditLogger {
     duration?: number,
     error?: string
   ): void {
-    // Sanitize the tool params object before wrapping so that PII in
-    // top-level tool parameter keys is redacted. The outer log() call will
-    // also sanitize the top-level params object, but the 'tool' key is not in
-    // sensitiveKeys, so the already-sanitized inner params pass through
-    // unchanged.
     const sanitizedToolParams = sanitizeParams(params, this.sensitiveKeys);
     this.log({
       action: 'tool_call',
@@ -367,10 +357,6 @@ export class AuditLogger {
     this.memorySink.clear(authorization);
   }
 
-  // --------------------------------------------------------------------------
-  // Private helpers
-  // --------------------------------------------------------------------------
-
   private checkAuthorization(authorization?: AuthToken): void {
     if (
       this.requiredAuthToken !== undefined &&
@@ -384,18 +370,12 @@ export class AuditLogger {
 
   private pruneExpiredEntries(policy: RetentionPolicy): void {
     const all = this.memorySink.query({});
-    // Use policy.enforce() so that a single cutoff timestamp is computed once
-    // rather than calling Date.now() for every entry via isExpired().
     const fresh = policy.enforce(all);
 
-    // If nothing expired, avoid unnecessary buffer rebuild.
     if (fresh.length === all.length) {
       return;
     }
 
-    // Rebuild the in-memory buffer with only non-expired entries.
-    // This correctly handles users who have both fresh and expired entries —
-    // their fresh entries are preserved while only expired ones are dropped.
     this.memorySink.clear(undefined);
     for (const entry of fresh) {
       this.memorySink.write(entry);
@@ -410,23 +390,16 @@ export class AuditLogger {
           | { then?: (onFulfilled?: unknown, onRejected?: (reason: unknown) => void) => unknown }
           | undefined;
         if (thenable && typeof thenable.then === 'function') {
-          // Fire-and-forget async sinks; surface errors to stderr so they are
-          // observable without blocking the calling code path.
           void thenable.then(undefined, (err: unknown) => {
             console.error('[AuditLogger] Async sink write failed:', err);
           });
         }
       } catch (err: unknown) {
-        // Ensure synchronous sink failures do not break the caller.
         console.error('[AuditLogger] Sync sink write failed:', err);
       }
     }
   }
 }
-
-// ---------------------------------------------------------------------------
-// Global singleton
-// ---------------------------------------------------------------------------
 
 /**
  * Global audit logger instance.

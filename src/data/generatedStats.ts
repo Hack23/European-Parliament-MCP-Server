@@ -14,8 +14,6 @@
  * @module data/generatedStats
  */
 
-// ── Types ─────────────────────────────────────────────────────────
-
 /** Monthly breakdown of European Parliament activity for a single calendar month. */
 export interface MonthlyActivity {
   /** Calendar month (1–12) */
@@ -58,6 +56,14 @@ export interface PoliticalGroupSnapshot {
   seatShare: number;
 }
 
+/**
+ * Snapshot of the political landscape of the European Parliament for a
+ * single year: composition of political groups, fragmentation metrics,
+ * coalition viability indicators, and turnover statistics.
+ *
+ * Used by {@link GENERATED_STATS} as the per-year landscape record and
+ * surfaced by the `get_all_generated_stats` MCP tool.
+ */
 export interface PoliticalLandscapeData {
   /**
    * Political groups in the parliament for this year.
@@ -85,20 +91,6 @@ export interface PoliticalLandscapeData {
   politicalBalance: string;
 }
 
-// ── Multi-dimensional political compass ───────────────────────────
-// Three-axis classification system (Political Compass / Nolan Chart + EU axis):
-//   Axis 1 — Economic: Left (interventionist) ↔ Right (free-market)
-//   Axis 2 — Social:   Libertarian (personal freedom) ↔ Authoritarian (state control)
-//   Axis 3 — EU Integration: Pro-EU (federalist) ↔ Eurosceptic (sovereignty)
-//
-// Scores range 0–10. Economic: 0 = far-left, 10 = far-right.
-// Social: 0 = libertarian, 10 = authoritarian.
-// EU Integration: 0 = hard eurosceptic, 10 = federalist.
-// NI is excluded — no coherent ideological positioning.
-//
-// Classification based on Chapel Hill Expert Survey (CHES) methodology,
-// party manifesto analysis, and voting behaviour in the EP.
-
 /** Multi-axis ideological position for a political group. */
 interface GroupCompassPosition {
   /** Economic axis: 0 = far-left (interventionist), 10 = far-right (free-market) */
@@ -114,28 +106,20 @@ interface GroupCompassPosition {
  * Based on Chapel Hill Expert Survey (CHES) methodology with EP voting behaviour adjustments.
  */
 const GROUP_COMPASS: Record<string, GroupCompassPosition> = {
-  // Radical left — anti-capitalist, civil liberties, EU-critical
   'GUE/NGL':  { economic: 1.5, social: 3.0, euIntegration: 4.0 },
   'The Left': { economic: 1.5, social: 3.0, euIntegration: 4.0 },
-  // Social democrats — centre-left economics, moderate social, pro-EU
   'PES':      { economic: 3.5, social: 4.0, euIntegration: 7.5 },
   'S&D':      { economic: 3.5, social: 4.0, euIntegration: 7.5 },
-  // Greens — left economics, most libertarian, strongly pro-EU
   'Greens/EFA': { economic: 3.0, social: 2.0, euIntegration: 8.0 },
-  // Liberals — centre economics, libertarian on social, strongly pro-EU
   'ALDE':     { economic: 6.0, social: 3.0, euIntegration: 8.5 },
   'RE':       { economic: 6.0, social: 3.0, euIntegration: 8.5 },
-  // Christian democrats — centre-right, moderate authoritarian, pro-EU
   'EPP':      { economic: 6.5, social: 5.5, euIntegration: 7.5 },
   'EPP-ED':   { economic: 6.5, social: 5.5, euIntegration: 7.5 },
-  // Conservatives — right economics, socially conservative, EU-reform
   'ECR':      { economic: 7.5, social: 7.0, euIntegration: 3.5 },
   'UEN':      { economic: 7.0, social: 7.5, euIntegration: 3.0 },
-  // Eurosceptic populist — mixed economics, authoritarian, anti-EU
   'IND/DEM':  { economic: 6.5, social: 7.0, euIntegration: 1.5 },
   'EFD':      { economic: 7.0, social: 7.0, euIntegration: 1.5 },
   'EFDD':     { economic: 7.0, social: 7.0, euIntegration: 1.5 },
-  // National-populist / far-right — protectionist economics, authoritarian, anti-EU
   'ENF':      { economic: 5.5, social: 8.0, euIntegration: 1.0 },
   'ID':       { economic: 5.5, social: 8.0, euIntegration: 1.0 },
   'PfE':      { economic: 5.5, social: 8.0, euIntegration: 1.0 },
@@ -198,7 +182,6 @@ export interface PoliticalCompassAnalysis {
 
 /** Combined political balance analysis: 1D blocs + 2D compass + EU axis. */
 export interface PoliticalBlocAnalysis {
-  // ── Traditional 1D left-right blocs ─────────────────────────────
   /** Combined seat share of left-wing groups (S&D, GUE/NGL, Greens/EFA) */
   leftBlocShare: number;
   /** Combined seat share of centre/liberal groups (ALDE, RE) */
@@ -210,14 +193,12 @@ export interface PoliticalBlocAnalysis {
   /** Bipolar index: (right - left) / (right + left); range -1 (left) to +1 (right) */
   bipolarIndex: number;
 
-  // ── Multi-dimensional political compass ─────────────────────────
   /** Three-axis political compass analysis (economic × social × EU integration) */
   politicalCompass: PoliticalCompassAnalysis;
 }
 
 /** Derived OSINT intelligence metrics computed from raw EP activity data. */
 export interface DerivedIntelligenceMetrics {
-  // ── Legislative efficiency ──────────────────────────────────────
   /** Legislative acts adopted per plenary session */
   legislativeOutputPerSession: number;
   /** Legislative acts adopted per MEP (per-capita productivity) */
@@ -231,7 +212,6 @@ export interface DerivedIntelligenceMetrics {
   /** Documents produced per legislative act adopted */
   documentBurdenPerAct: number;
 
-  // ── Parliamentary engagement ────────────────────────────────────
   /** Parliamentary questions per MEP (oversight intensity) */
   mepOversightIntensity: number;
   /** Speeches per MEP (debate participation rate) */
@@ -241,7 +221,6 @@ export interface DerivedIntelligenceMetrics {
   /** Parliamentary questions per plenary session (oversight tempo) */
   oversightPerSession: number;
 
-  // ── Political concentration ─────────────────────────────────────
   /** Top-2 groups combined seat share (%) — grand coalition viability */
   topTwoGroupsConcentration: number;
   /** Top-3 groups combined seat share (%) — minimum viable coalition */
@@ -261,11 +240,9 @@ export interface DerivedIntelligenceMetrics {
   /** Effective opposition parties: ENPP minus 1 */
   effectiveOppositionParties: number;
 
-  // ── Left-right political balance ────────────────────────────────
   /** Political bloc analysis with left/centre/right seat shares */
   politicalBlocAnalysis: PoliticalBlocAnalysis;
 
-  // ── Institutional stability ─────────────────────────────────────
   /** Stability index: 1 - (turnover / mepCount); below 0.5 = election year */
   mepStabilityIndex: number;
   /** Turnover rate as percentage of total MEPs */
@@ -275,7 +252,6 @@ export interface DerivedIntelligenceMetrics {
   /** Declarations per MEP — transparency/accountability indicator */
   declarationCoverageRatio: number;
 
-  // ── Year-over-year dynamics (null for the first year) ───────────
   /** YoY percentage change in legislative acts adopted */
   legislativeOutputChange: number | null;
   /** YoY change in ENPP (fragmentation velocity) */
@@ -283,7 +259,6 @@ export interface DerivedIntelligenceMetrics {
   /** YoY percentage change in parliamentary questions */
   questionsChange: number | null;
 
-  // ── Composite indices ───────────────────────────────────────────
   /** Parliamentary questions per legislative act (oversight vs. lawmaking) */
   oversightToLegislationBalance: number;
   /** Speeches per roll-call vote (debate intensity relative to decisions) */
@@ -441,22 +416,19 @@ export interface GeneratedStatsData {
   };
 }
 
-// ── Monthly distribution template ─────────────────────────────────
-// European Parliament follows a roughly Sep–Jul cycle with August recess.
-// Distribution weights approximate the typical monthly share of annual activity.
 const MONTHLY_WEIGHTS = [
-  0.07, // Jan
-  0.09, // Feb
-  0.10, // Mar
-  0.09, // Apr
-  0.09, // May
-  0.08, // Jun
-  0.07, // Jul
-  0.01, // Aug (recess)
-  0.09, // Sep
-  0.10, // Oct
-  0.11, // Nov
-  0.10, // Dec
+  0.07,
+  0.09,
+  0.10,
+  0.09,
+  0.09,
+  0.08,
+  0.07,
+  0.01,
+  0.09,
+  0.10,
+  0.11,
+  0.10,
 ];
 
 /**
@@ -491,7 +463,6 @@ function distributeMetric(total: number): number[] {
 }
 
 function distributeMonthly(annual: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | 'derivedIntelligence'>): MonthlyActivity[] {
-  // Check if real monthly data is available for this year
   const realMonthly = RAW_MONTHLY_DATA[annual.year];
 
   /** Return real monthly data for a metric if available, otherwise use synthetic distribution. */
@@ -537,9 +508,6 @@ function distributeMonthly(annual: Omit<YearlyStats, 'monthlyActivity' | 'politi
   }));
 }
 
-// ── Raw annual data (EP6–EP10) ────────────────────────────────────
-// Based on European Parliament activity reports and open data portal records.
-
 const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | 'derivedIntelligence'>[] = [
   { year: 2004, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 42, legislativeActsAdopted: 68, rollCallVotes: 356, committeeMeetings: 1820, parliamentaryQuestions: 4215, resolutions: 120, speeches: 8500, adoptedTexts: 85, procedures: 511, events: 1189, documents: 2647, mepTurnover: 385, declarations: 580, commentary: 'EP6 began with the 2004 enlargement (10 new member states). Transition year with new MEPs, committee formation, and establishment of working relationships in an expanded Parliament of 25 member states.' },
   { year: 2005, parliamentaryTerm: 'EP6 (2004-2009)', mepCount: 732, plenarySessions: 48, legislativeActsAdopted: 82, rollCallVotes: 412, committeeMeetings: 2050, parliamentaryQuestions: 4580, resolutions: 145, speeches: 10200, adoptedTexts: 102, procedures: 565, events: 1245, documents: 2964, mepTurnover: 42, declarations: 620, commentary: 'Full operational year of EP6. REACH chemicals regulation debate began. Constitutional Treaty rejected by French and Dutch referendums, impacting EU institutional dynamics.' },
@@ -566,21 +534,6 @@ const RAW_YEARLY: Omit<YearlyStats, 'monthlyActivity' | 'politicalLandscape' | '
   { year: 2026, parliamentaryTerm: 'EP10 (2024-2029)', mepCount: 717, plenarySessions: 54, legislativeActsAdopted: 114, rollCallVotes: 567, committeeMeetings: 2363, parliamentaryQuestions: 6147, resolutions: 180, speeches: 997, adoptedTexts: 164, procedures: 935, events: 2327, documents: 4265, mepTurnover: 42, declarations: 2762, commentary: 'PARTIAL YEAR — data through Q1 2026. EP10 has 720 MEPs from 27 EU countries. Plenary session count (54) reflects the full-year EP calendar; speeches (996) and adoptedTexts (104) reflect actual Q1 cumulative activity; other activity totals are projected full-year estimates based on 2021-2025 historical average with EP10 year-2 cycle adjustment. Actual Q1 activity: 10 plenary sittings completed (Jan-Feb), adopted texts and procedures accumulating. Defence spending, Clean Industrial Deal, and AI Act implementation dominating legislative agenda.' },
 ];
 
-// ── Real monthly data from EP API ─────────────────────────────────
-// Actual monthly counts from the EP API extracted via client-side
-// date bucketing (dates parsed from record IDs and date fields).
-// These override the synthetic distribution from MONTHLY_WEIGHTS.
-//
-// Metrics with real monthly data (dates extractable from IDs/fields):
-// - plenarySessions: date from session ID (MTG-PL-YYYY-MM-DD)
-// - speeches: date field populated by EP API
-// - events: date from event ID (contains YYYY-MM-DD)
-//
-// Metrics without monthly data (no date in ID or field):
-// - parliamentaryQuestions, adoptedTexts, procedures, documents,
-//   declarations — use synthetic distribution via MONTHLY_WEIGHTS.
-//
-// Updated by: npx tsx scripts/generate-stats.ts --update
 const RAW_MONTHLY_DATA: Record<number, Record<string, number[]>> = {
   2026: {
     plenarySessions: [5, 5, 6, 4, 4, 4, 4, 0, 4, 8, 6, 4],
@@ -678,10 +631,6 @@ const RAW_MONTHLY_DATA: Record<number, Record<string, number[]>> = {
   },
 };
 
-// ── Political landscape data per year ──────────────────────────────
-// Historical political group composition of the European Parliament.
-// Groups and seat counts reflect official EP composition records.
-
 const POLITICAL_LANDSCAPE: Record<number, PoliticalLandscapeData> = {
   2004: { groups: [{ name: 'EPP-ED', seats: 268, seatShare: 36.6 }, { name: 'PES', seats: 200, seatShare: 27.3 }, { name: 'ALDE', seats: 88, seatShare: 12.0 }, { name: 'Greens/EFA', seats: 42, seatShare: 5.7 }, { name: 'GUE/NGL', seats: 41, seatShare: 5.6 }, { name: 'IND/DEM', seats: 37, seatShare: 5.1 }, { name: 'UEN', seats: 27, seatShare: 3.7 }, { name: 'NI', seats: 29, seatShare: 4.0 }], totalGroups: 7, largestGroup: 'EPP-ED', largestGroupSeatShare: 36.6, fragmentationIndex: 4.12, grandCoalitionPossible: true, politicalBalance: 'Centre-right dominated with EPP-ED as largest group; centre-left PES as main opposition' },
   2005: { groups: [{ name: 'EPP-ED', seats: 268, seatShare: 36.6 }, { name: 'PES', seats: 200, seatShare: 27.3 }, { name: 'ALDE', seats: 88, seatShare: 12.0 }, { name: 'Greens/EFA', seats: 42, seatShare: 5.7 }, { name: 'GUE/NGL', seats: 41, seatShare: 5.6 }, { name: 'IND/DEM', seats: 37, seatShare: 5.1 }, { name: 'UEN', seats: 27, seatShare: 3.7 }, { name: 'NI', seats: 29, seatShare: 4.0 }], totalGroups: 7, largestGroup: 'EPP-ED', largestGroupSeatShare: 36.6, fragmentationIndex: 4.12, grandCoalitionPossible: true, politicalBalance: 'Stable EP6 configuration with EPP-ED/PES grand coalition governing most legislation' },
@@ -718,11 +667,6 @@ const DEFAULT_POLITICAL_LANDSCAPE: PoliticalLandscapeData = {
   politicalBalance: 'Data unavailable',
 };
 
-// ── Derived intelligence computation ──────────────────────────────
-// Computes OSINT-derived metrics from raw EP activity data and
-// political group composition. All metrics are derivable from the
-// existing annual counts + political landscape without API calls.
-
 /** Safe division: returns 0 when divisor is 0. */
 function safeDivide(numerator: number, denominator: number): number {
   return denominator === 0 ? 0 : numerator / denominator;
@@ -744,27 +688,20 @@ function roundTo(value: number, decimals: number): number {
  * NI members are excluded from bloc analysis.
  */
 
-// Explicit group membership sets for traditional 1D left-centre-right classification.
-// These avoid misleading threshold-based misclassification (e.g. ID/PfE economic=5.5
-// falling into "centre" via threshold despite being far-right in political science terms).
 const LEFT_BLOC_GROUPS = new Set(['GUE/NGL', 'The Left', 'PES', 'S&D', 'Greens/EFA']);
 const CENTRE_BLOC_GROUPS = new Set(['ALDE', 'RE']);
-// Right bloc = all recognised groups not in left or centre (EPP, EPP-ED, ECR, UEN, + far-right)
-// Hard eurosceptic: groups with EU integration score < 2.0 in GROUP_COMPASS
 const HARD_EUROSCEPTIC_THRESHOLD = 2.0;
 
 function computePoliticalBlocAnalysis(groups: PoliticalGroupSnapshot[]): PoliticalBlocAnalysis {
-  // ── 1D traditional bloc shares ──────────────────────────────────
-  let leftShare = 0;    // GUE/NGL, The Left, PES, S&D, Greens/EFA
-  let centreShare = 0;  // ALDE, RE
-  let rightShare = 0;   // EPP, EPP-ED, ECR, UEN + far-right
-  let euroscepticShare = 0; // IND/DEM, EFD, EFDD, ENF, ID, PfE, ESN
+  let leftShare = 0;
+  let centreShare = 0;
+  let rightShare = 0;
+  let euroscepticShare = 0;
 
   for (const group of groups) {
     if (group.name === 'NI') continue;
     const compass = GROUP_COMPASS[group.name];
     if (compass === undefined) continue;
-    // Explicit set-based 1D bloc assignment
     if (LEFT_BLOC_GROUPS.has(group.name)) {
       leftShare += group.seatShare;
     } else if (CENTRE_BLOC_GROUPS.has(group.name)) {
@@ -772,7 +709,6 @@ function computePoliticalBlocAnalysis(groups: PoliticalGroupSnapshot[]): Politic
     } else {
       rightShare += group.seatShare;
     }
-    // Hard eurosceptic: groups with EU integration score < 2.0
     if (compass.euIntegration < HARD_EUROSCEPTIC_THRESHOLD) {
       euroscepticShare += group.seatShare;
     }
@@ -852,14 +788,12 @@ function computePoliticalCompass(groups: PoliticalGroupSnapshot[]): PoliticalCom
     };
   }
 
-  // Seat-share-weighted average positions
   const wEcon = classified.reduce((s, g) => s + g.compass.economic * g.seatShare, 0) / totalShare;
   const wSocial = classified.reduce((s, g) => s + g.compass.social * g.seatShare, 0) / totalShare;
   const wEU = classified.reduce((s, g) => s + g.compass.euIntegration * g.seatShare, 0) / totalShare;
 
   const quadrantDistribution = computeQuadrantDistribution(classified);
 
-  // Determine dominant quadrant
   const quadrants: { key: PoliticalQuadrant; value: number }[] = [
     { key: 'libertarianLeft', value: quadrantDistribution.libertarianLeft },
     { key: 'libertarianRight', value: quadrantDistribution.libertarianRight },
@@ -870,7 +804,6 @@ function computePoliticalCompass(groups: PoliticalGroupSnapshot[]): PoliticalCom
     q.value > best.value ? q : best
   ).key;
 
-  // Weighted standard deviations (polarisation/tension measures)
   const wVarEcon = classified.reduce((s, g) =>
     s + g.seatShare * (g.compass.economic - wEcon) ** 2, 0
   ) / totalShare;
@@ -923,11 +856,9 @@ function computeConcentrationMetrics(landscape: PoliticalLandscapeData): {
   effectiveOppositionParties: number;
 } {
   const groups = landscape.groups;
-  // Recognised political groups exclude non-attached members (NI) from concentration metrics
   const recognisedGroups = groups.filter((g) => g.name !== 'NI');
   const sortedRecognised = [...recognisedGroups].sort((a, b) => b.seatShare - a.seatShare);
   const top2 = shareAtRank(sortedRecognised, 0) + shareAtRank(sortedRecognised, 1);
-  // HHI uses all groups (including NI) as it measures system-wide market concentration
   const hhi = roundTo(groups.reduce((s, g) => s + (g.seatShare / 100) ** 2, 0), 4);
   const ni = groups.find((g) => g.name === 'NI');
   return {
@@ -993,39 +924,30 @@ function computeDerivedIntelligence(
   const yoy = computeYoYDynamics(y, landscape, prevYear, prevLandscape);
 
   return {
-    // Legislative efficiency
     legislativeOutputPerSession: roundTo(safeDivide(y.legislativeActsAdopted, y.plenarySessions), 2),
     legislativeOutputPerMEP: roundTo(safeDivide(y.legislativeActsAdopted, y.mepCount), 3),
     rollCallVoteYield: roundTo(safeDivide(y.legislativeActsAdopted, y.rollCallVotes) * 100, 1),
     procedureCompletionRate: roundTo(safeDivide(y.legislativeActsAdopted, y.procedures) * 100, 1),
     resolutionToLegislationRatio: roundTo(safeDivide(y.resolutions, y.legislativeActsAdopted), 2),
     documentBurdenPerAct: roundTo(safeDivide(y.documents, y.legislativeActsAdopted), 1),
-    // Parliamentary engagement
     mepOversightIntensity: roundTo(safeDivide(y.parliamentaryQuestions, y.mepCount), 2),
     mepSpeechRate: roundTo(safeDivide(y.speeches, y.mepCount), 1),
     debateIntensityPerSession: roundTo(safeDivide(y.speeches, y.plenarySessions), 1),
     oversightPerSession: roundTo(safeDivide(y.parliamentaryQuestions, y.plenarySessions), 1),
-    // Political concentration
     ...concentration,
-    // Political bloc analysis
     politicalBlocAnalysis: computePoliticalBlocAnalysis(landscape.groups),
-    // Institutional stability
     mepStabilityIndex: roundTo(1 - safeDivide(y.mepTurnover, y.mepCount), 3),
     turnoverRate,
     institutionalMemoryRisk: classifyMemoryRisk(turnoverRate),
     declarationCoverageRatio: roundTo(safeDivide(y.declarations, y.mepCount), 2),
-    // Year-over-year dynamics
     legislativeOutputChange: yoy.legislativeOutputChange,
     fragmentationVelocity: yoy.fragmentationVelocity,
     questionsChange: yoy.questionsChange,
-    // Composite indices
     oversightToLegislationBalance: roundTo(safeDivide(y.parliamentaryQuestions, y.legislativeActsAdopted), 1),
     speechToVoteRatio: roundTo(safeDivide(y.speeches, y.rollCallVotes), 1),
     committeeToPlenaryRatio: roundTo(safeDivide(y.committeeMeetings, y.plenarySessions), 1),
   };
 }
-
-// ── Build complete stats ──────────────────────────────────────────
 
 function buildYearlyStats(): YearlyStats[] {
   return RAW_YEARLY.map((y, idx) => {
@@ -1042,8 +964,6 @@ function buildYearlyStats(): YearlyStats[] {
     };
   });
 }
-
-// ── Ranking & percentile computation ──────────────────────────────
 
 function computeRankings(yearly: YearlyStats[]): CategoryRanking[] {
   const categories: { key: keyof YearlyStats; label: string }[] = [
@@ -1098,16 +1018,7 @@ function computeRankings(yearly: YearlyStats[]): CategoryRanking[] {
   });
 }
 
-// ── Predictions (2027–2031) ───────────────────────────────────────
-// Average-based extrapolation from the last 5 years (2021-2025),
-// including the 2024 transition year and 2025 ramp-up year for a
-// representative mix of recent parliamentary activity levels.
-// Each prediction year applies a parliamentary term cycle factor
-// to the 2021-2025 average (not a linear regression/slope).
-
 function buildPredictions(): PredictionYear[] {
-  // Use last 5 years (2021-2025) for trend calculation; all complete actual data
-  // years covering both EP9 end-of-term push and EP10 transition
   const trendYears = RAW_YEARLY.filter((y) =>
     [2021, 2022, 2023, 2024, 2025].includes(y.year)
   );
@@ -1129,7 +1040,6 @@ function buildPredictions(): PredictionYear[] {
   const avgMepTurnover = avg((y) => y.mepTurnover);
   const avgDeclarations = avg((y) => y.declarations);
 
-  // EP10 ramp-up curve: years 3-4 peak, year 5 decline (election transition)
   const termCurve = [
     { year: 2027, factor: 1.15, conf: '±12%', note: 'EP10 year 3 — peak legislative productivity expected' },
     { year: 2028, factor: 1.20, conf: '±15%', note: 'EP10 year 4 — highest output before end-of-term push' },
@@ -1157,8 +1067,6 @@ function buildPredictions(): PredictionYear[] {
     methodology: `Average-based extrapolation from 2021-2025 with parliamentary term cycle adjustment (factor: ${String(factor)}). ${note}`,
   }));
 }
-
-// ── Analysis summary ──────────────────────────────────────────────
 
 /**
  * Find the largest year-over-year increase in eurosceptic share.
@@ -1201,7 +1109,6 @@ function buildDerivedKeyFindings(yearly: YearlyStats[]): string[] {
     const firstDI = first.derivedIntelligence;
     const lastDI = last.derivedIntelligence;
 
-    // Top-2 concentration structural shift
     const cr2ThresholdCrossingYear = yearly.find(
       (y) => y.derivedIntelligence.topTwoGroupsConcentration < 50,
     )?.year;
@@ -1212,22 +1119,18 @@ function buildDerivedKeyFindings(yearly: YearlyStats[]): string[] {
       `OSINT: Top-2 group concentration (CR₂) fell from ${String(firstDI.topTwoGroupsConcentration)}% (${String(first.year)}) to ${String(lastDI.topTwoGroupsConcentration)}% (${String(last.year)})${cr2ThresholdText}—a structural regime change requiring 3+ groups for every legislative majority.`,
     );
 
-    // Minimum winning coalition
     findings.push(
       `OSINT: Minimum winning coalition size increased from ${String(firstDI.minimumWinningCoalitionSize)} groups (${String(first.year)}) to ${String(lastDI.minimumWinningCoalitionSize)} groups (${String(last.year)}), increasing legislative negotiation complexity.`,
     );
 
-    // MEP oversight intensity
     findings.push(
       `OSINT: MEP oversight intensity rose from ${String(firstDI.mepOversightIntensity)} to ${String(lastDI.mepOversightIntensity)} questions per MEP, indicating structurally stronger Commission scrutiny.`,
     );
 
-    // Political balance shift
     findings.push(
       `OSINT: Bipolar index shifted from ${String(firstDI.politicalBlocAnalysis.bipolarIndex)} (${String(first.year)}) to ${String(lastDI.politicalBlocAnalysis.bipolarIndex)} (${String(last.year)}), reflecting a ${lastDI.politicalBlocAnalysis.bipolarIndex > firstDI.politicalBlocAnalysis.bipolarIndex ? 'rightward' : 'leftward'} political rebalancing.`,
     );
 
-    // Eurosceptic share trend
     const surge = findLargestEuroscepticSurge(yearly);
     const surgeText = surge !== null
       ? `, with the most significant surge in ${String(surge.startYear)}-${String(surge.endYear)}`
@@ -1236,7 +1139,6 @@ function buildDerivedKeyFindings(yearly: YearlyStats[]): string[] {
       `OSINT: Eurosceptic/far-right seat share grew from ${String(firstDI.politicalBlocAnalysis.euroscepticShare)}% (${String(first.year)}) to ${String(lastDI.politicalBlocAnalysis.euroscepticShare)}% (${String(last.year)})${surgeText}.`,
     );
 
-    // HHI
     findings.push(
       `OSINT: Herfindahl-Hirschman Index fell from ${String(firstDI.herfindahlHirschmanIndex)} to ${String(lastDI.herfindahlHirschmanIndex)}, confirming deconcentration from a near-duopoly to a multi-polar party system.`,
     );
@@ -1255,7 +1157,6 @@ function buildAnalysisSummary(yearly: YearlyStats[]): GeneratedStatsData['analys
     y.legislativeActsAdopted < worst.legislativeActsAdopted ? y : worst
   );
 
-  // Calculate 5-year moving average trend
   const recentAvg = yearly.slice(-5).reduce((s, y) => s + y.legislativeActsAdopted, 0) / 5;
   const olderAvg = yearly.slice(0, 5).reduce((s, y) => s + y.legislativeActsAdopted, 0) / 5;
   let trend: string;
@@ -1290,13 +1191,24 @@ function buildAnalysisSummary(yearly: YearlyStats[]): GeneratedStatsData['analys
   };
 }
 
-// ── Exported pre-built stats object ───────────────────────────────
-
 const yearlyStats = buildYearlyStats();
 const categoryRankings = computeRankings(yearlyStats);
 const predictions = buildPredictions();
 const analysisSummary = buildAnalysisSummary(yearlyStats);
 
+/**
+ * Precomputed European Parliament activity dataset (2004-2026) used by
+ * the `get_all_generated_stats` MCP tool.
+ *
+ * Includes monthly breakdowns and yearly totals for plenary sessions,
+ * legislative acts, roll-call votes, committee meetings, parliamentary
+ * questions, resolutions, speeches, adopted texts, procedures, events,
+ * documents, MEP turnover and declarations, plus per-year
+ * {@link PoliticalLandscapeData} snapshots.
+ *
+ * Data is refreshed weekly by an agentic workflow; see
+ * `src/tools/getAllGeneratedStats.ts` for retrieval and filtering logic.
+ */
 export const GENERATED_STATS: GeneratedStatsData = {
   generatedAt: '2026-05-11T07:11:06Z',
   coveragePeriod: { from: 2004, to: 2026 },

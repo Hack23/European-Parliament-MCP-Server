@@ -1,6 +1,6 @@
 /**
  * Report generators for different report types
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 
@@ -32,7 +32,7 @@ import {
  * Cyclomatic complexity: 1
  */
 function extractMEPData(
-  params: z.infer<typeof GenerateReportSchema>, 
+  params: z.infer<typeof GenerateReportSchema>,
   mep: MEPDetails | null
 ): {
   mepName: string;
@@ -64,7 +64,6 @@ async function fetchMEPDetails(subjectId: string | undefined): Promise<MEPDetail
   try {
     return await epClient.getMEPDetails(subjectId);
   } catch (error: unknown) {
-    // 404 = invalid subjectId — throw non-retryable error immediately
     if (error instanceof APIError && error.statusCode === 404) {
       throw new ToolError({
         toolName: 'generate_report',
@@ -98,7 +97,6 @@ async function fetchCommitteeInfo(subjectId: string | undefined): Promise<Commit
   try {
     return await epClient.getCommitteeInfo({ id: subjectId });
   } catch (error: unknown) {
-    // 404 = invalid subjectId — throw non-retryable error immediately
     if (error instanceof APIError && error.statusCode === 404) {
       throw new ToolError({
         toolName: 'generate_report',
@@ -292,7 +290,7 @@ export async function generateMEPActivityReport(
     throwIfAllDataUnavailable('MEP_ACTIVITY', [mep, questionsSubmitted]);
   }
   const warnings = buildMEPWarnings(mep, questionsSubmitted, params.subjectId !== undefined);
-  
+
   return {
     reportType: 'MEP_ACTIVITY',
     subject: data.mepName,
@@ -311,7 +309,7 @@ export async function generateMEPActivityReport(
       totalVotes: mep?.votingStatistics?.totalVotes ?? 0,
       attendanceRate: mep?.votingStatistics?.attendanceRate ?? 0,
       questionsSubmitted: questionsSubmitted ?? 0,
-      reportsAuthored: 0 // EP API does not provide per-MEP report authorship counts
+      reportsAuthored: 0
     },
     recommendations: [
       'Continue active participation in committee work',
@@ -336,12 +334,11 @@ export async function generateCommitteePerformanceReport(
   const membersLength = committee?.members.length ?? 0;
   const year = parseInt(dateFrom.substring(0, 4), 10);
 
-  // Parliament-wide counts (not filtered by committee)
   const documentsProduced = await fetchDocumentCountLowerBound({ year });
   const reportsProduced = await fetchAdoptedTextCount(year);
   throwIfAllDataUnavailable('COMMITTEE_PERFORMANCE', [committee, documentsProduced, reportsProduced]);
   const warnings = buildCommitteeWarnings(committee, documentsProduced, reportsProduced, params.subjectId !== undefined);
-  
+
   return {
     reportType: 'COMMITTEE_PERFORMANCE',
     subject: committeeName,
@@ -357,10 +354,10 @@ export async function generateCommitteePerformanceReport(
       createMemberParticipationSection(membersLength)
     ],
     statistics: {
-      meetingsHeld: 0, // EP API does not provide committee-specific meeting counts
+      meetingsHeld: 0,
       reportsProduced: reportsProduced ?? 0,
-      opinionsIssued: 0, // EP API does not provide committee-specific opinion counts
-      averageAttendance: 0, // EP API does not provide attendance data
+      opinionsIssued: 0,
+      averageAttendance: 0,
       memberCount: membersLength
     },
     dataQualityWarnings: warnings
@@ -382,7 +379,7 @@ export async function generateVotingStatisticsReport(
   const adoptedCount = await fetchAdoptedTextCount(year);
   throwIfAllDataUnavailable('VOTING_STATISTICS', [sessionCount, adoptedCount]);
   const warnings = buildVotingWarnings(sessionCount, adoptedCount, dateFrom, dateTo);
-  
+
   return {
     reportType: 'VOTING_STATISTICS',
     subject: 'Parliament-wide Voting Analysis',
@@ -400,7 +397,7 @@ export async function generateVotingStatisticsReport(
     statistics: {
       totalSessions: sessionCount ?? 0,
       adopted: adoptedCount ?? 0,
-      averageTurnout: 0 // EP API does not provide turnout data
+      averageTurnout: 0
     },
     dataQualityWarnings: warnings
   };
@@ -424,7 +421,7 @@ export async function generateLegislationProgressReport(
     ? Math.max(0, procedureCount - completedCount)
     : null;
   const warnings = buildLegislationWarnings(procedureCount, completedCount, ongoingCount);
-  
+
   return {
     reportType: 'LEGISLATION_PROGRESS',
     subject: 'Legislative Activity Overview',

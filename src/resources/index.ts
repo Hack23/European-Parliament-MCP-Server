@@ -1,17 +1,17 @@
 /**
  * MCP Resources for European Parliament Data Access
- * 
+ *
  * Resource templates and handlers for direct EP data access via MCP resources.
  * Resources provide a standardized way to read EP data using URI patterns.
- * 
+ *
  * **Intelligence Perspective:** Resources enable direct data access for intelligence
  * pipelines—bypassing tool call overhead for known-entity lookups and bulk retrieval.
- * 
+ *
  * **Business Perspective:** Resource URIs provide stable, addressable data endpoints
  * that enterprise integrations can cache, bookmark, and reference programmatically.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
- * 
+ *
  * @see https://spec.modelcontextprotocol.io/specification/server/resources/
  */
 
@@ -44,8 +44,6 @@ export interface ResourceReadResult {
   contents: ResourceContent[];
   [key: string]: unknown;
 }
-
-// ─── Resource Templates ──────────────────────────────────────
 
 const mepResourceTemplate: ResourceTemplate = {
   uriTemplate: 'ep://meps/{mepId}',
@@ -110,8 +108,6 @@ const documentResourceTemplate: ResourceTemplate = {
   mimeType: 'application/json'
 };
 
-// ─── URI Validation ──────────────────────────────────────────
-
 const MepIdSchema = z.string().min(1).max(100);
 /** Generic resource ID validator (reused for procedures, plenary sessions, documents) */
 const ResourceIdSchema = z.string().min(1).max(200);
@@ -156,8 +152,6 @@ function matchOtherUri(segments: string[]): { template: string; params: Record<s
   if (resource === 'political-groups' && segments.length === 1) {
     return { template: 'political_groups', params: {} };
   }
-  // Extended URI patterns — all listed in getResourceTemplateArray and
-  // discoverable via MCP ListResourceTemplates
   if (resource === 'procedures') {
     return matchProcedureUri(segments);
   }
@@ -224,12 +218,11 @@ function matchDocumentUri(segments: string[]): { template: string; params: Recor
  * Parse a resource URI and extract template parameters
  */
 function parseResourceUri(uri: string): { template: string; params: Record<string, string> } {
-  // Validate URI format
   if (!uri.startsWith('ep://')) {
     throw new Error(`Invalid resource URI scheme: ${uri}. Must start with "ep://"`);
   }
 
-  const path = uri.slice(5); // Remove 'ep://'
+  const path = uri.slice(5);
   const segments = path.split('/');
 
   if (segments.length === 0 || segments[0] === '') {
@@ -244,8 +237,6 @@ function parseResourceUri(uri: string): { template: string; params: Record<strin
 
   throw new Error(`Unknown resource URI: ${uri}`);
 }
-
-// ─── Resource Handlers ───────────────────────────────────────
 
 /**
  * Handle MEP detail resource request
@@ -356,7 +347,6 @@ async function handleVotingRecord(sessionId: string): Promise<ResourceContent> {
 async function handlePoliticalGroups(): Promise<ResourceContent> {
   const data = await epClient.getMEPs({ limit: 100 });
 
-  // Extract unique political groups from MEP data
   const groups = new Map<string, number>();
   if (Array.isArray(data.data)) {
     for (const mep of data.data) {
@@ -449,8 +439,6 @@ async function handleDocumentDetail(documentId: string): Promise<ResourceContent
   };
 }
 
-// ─── Public API ──────────────────────────────────────────────
-
 /**
  * Get all resource template metadata for MCP listing
  */
@@ -481,7 +469,7 @@ function requireParam(params: Record<string, string>, key: string, uriPattern: s
 
 /**
  * Handle ReadResource request
- * 
+ *
  * @param uri - Resource URI (e.g., "ep://meps/12345")
  * @returns Resource content
  * @throws Error if URI is invalid or resource not found

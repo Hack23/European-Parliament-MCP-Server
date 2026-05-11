@@ -43,11 +43,9 @@ function applyTimeoutArg(args: readonly string[]): string[] {
   return args.filter((_, index) => index !== timeoutIdx && index !== timeoutIdx + 1);
 }
 
-// ── Pre-import: apply --timeout to env before any module creates epClient ──
 const rawArgs = process.argv.slice(2);
 const sanitizedArgs = applyTimeoutArg(rawArgs);
 
-// ── Dynamic import after env vars are set ──────────────────────────────────
 const { parseCLIArgs, showHelp, showVersion, showHealth } = await import('./server/cli.js');
 const { EuropeanParliamentMCPServer, SERVER_NAME } = await import('./index.js');
 
@@ -68,7 +66,6 @@ if (opts.health === true) {
   process.exit(0);
 }
 
-// ── Start MCP server (default behaviour) ───────────────────────────────────
 const server = new EuropeanParliamentMCPServer();
 
 function handleShutdownSignal(signal: string): void {
