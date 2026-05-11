@@ -37,6 +37,15 @@ export interface ToolResult {
  */
 export type ConfidenceLevel = 'HIGH' | 'MEDIUM' | 'LOW';
 
+/**
+ * Standard envelope of OSINT-quality metadata returned alongside the
+ * substantive output of every OSINT-style MCP tool.
+ *
+ * Provides callers with a uniform set of trust signals — confidence
+ * level, methodology description, freshness, source attribution, and
+ * known data-quality caveats — so downstream consumers can make
+ * informed decisions about how to use the analysis.
+ */
 export interface OsintStandardOutput {
   /**
    * Confidence level of the analysis: HIGH, MEDIUM, or LOW.

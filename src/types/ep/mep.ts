@@ -7,6 +7,14 @@
  * @see https://data.europarl.europa.eu/api/v2/
  */
 
+/**
+ * Member of the European Parliament — biographical and political profile
+ * returned by the EP Open Data Portal `/meps` endpoints.
+ *
+ * Provides core identifying information (ID, name, country, political
+ * group, national party) plus optional contact and biographical fields.
+ * Used by MEP-related MCP tools and resources.
+ */
 export interface MEP {
   /**
    * Unique MEP identifier.

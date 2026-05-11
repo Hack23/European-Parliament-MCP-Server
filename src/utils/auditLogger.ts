@@ -64,9 +64,13 @@ export type { FileAuditSinkOptions } from './auditSink.js';
  * | `ERROR` | Failed operations |
  */
 export enum LogLevel {
+  /** Verbose trace information for development and debugging only. */
   DEBUG = 'DEBUG',
+  /** Normal data-access and tool-invocation events (default sink level). */
   INFO = 'INFO',
+  /** Recoverable anomalies — degraded functionality but no failure. */
   WARN = 'WARN',
+  /** Failed operations that prevented the requested action. */
   ERROR = 'ERROR',
 }
 

@@ -56,6 +56,14 @@ export interface PoliticalGroupSnapshot {
   seatShare: number;
 }
 
+/**
+ * Snapshot of the political landscape of the European Parliament for a
+ * single year: composition of political groups, fragmentation metrics,
+ * coalition viability indicators, and turnover statistics.
+ *
+ * Used by {@link GENERATED_STATS} as the per-year landscape record and
+ * surfaced by the `get_all_generated_stats` MCP tool.
+ */
 export interface PoliticalLandscapeData {
   /**
    * Political groups in the parliament for this year.
@@ -1188,6 +1196,19 @@ const categoryRankings = computeRankings(yearlyStats);
 const predictions = buildPredictions();
 const analysisSummary = buildAnalysisSummary(yearlyStats);
 
+/**
+ * Precomputed European Parliament activity dataset (2004-2026) used by
+ * the `get_all_generated_stats` MCP tool.
+ *
+ * Includes monthly breakdowns and yearly totals for plenary sessions,
+ * legislative acts, roll-call votes, committee meetings, parliamentary
+ * questions, resolutions, speeches, adopted texts, procedures, events,
+ * documents, MEP turnover and declarations, plus per-year
+ * {@link PoliticalLandscapeData} snapshots.
+ *
+ * Data is refreshed weekly by an agentic workflow; see
+ * `src/tools/getAllGeneratedStats.ts` for retrieval and filtering logic.
+ */
 export const GENERATED_STATS: GeneratedStatsData = {
   generatedAt: '2026-05-11T07:11:06Z',
   coveragePeriod: { from: 2004, to: 2026 },

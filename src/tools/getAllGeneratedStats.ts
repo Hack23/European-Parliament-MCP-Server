@@ -38,6 +38,11 @@ import { ToolError } from './shared/errors.js';
 import type { ToolResult } from './shared/types.js';
 import { withTimeoutAndAbort } from '../utils/timeout.js';
 
+/**
+ * Zod input schema for the `get_all_generated_stats` MCP tool. Filters
+ * the dataset by year range (2004-2031) and activity category, and
+ * controls inclusion of predictions, monthly breakdowns and rankings.
+ */
 export const GetAllGeneratedStatsSchema = z
   .object({
     yearFrom: z
@@ -100,6 +105,10 @@ export const GetAllGeneratedStatsSchema = z
     }
   );
 
+/**
+ * Validated parameter type for the `get_all_generated_stats` tool,
+ * inferred from {@link GetAllGeneratedStatsSchema}.
+ */
 export type GetAllGeneratedStatsParams = z.infer<typeof GetAllGeneratedStatsSchema>;
 
 const CATEGORY_LABEL_MAP: Partial<Record<string, string>> = {
@@ -378,6 +387,11 @@ export function getAllGeneratedStats(
   }
 }
 
+/**
+ * MCP tool metadata for `get_all_generated_stats` (name, description,
+ * and JSON Schema for the tool's input). Consumed by the server's tool
+ * registry to advertise this tool in `ListTools` responses.
+ */
 export const getAllGeneratedStatsToolMetadata = {
   name: 'get_all_generated_stats',
   description:
@@ -450,6 +464,18 @@ async function resolveRecentActivity(
   return shouldIncludeRecentActivity(params) ? fetchRecentVoteStats() : null;
 }
 
+/**
+ * MCP `CallTool` handler entry point for `get_all_generated_stats`.
+ *
+ * Validates the raw input arguments against
+ * {@link GetAllGeneratedStatsSchema}, raises a structured
+ * {@link ToolError} on validation failure, and otherwise delegates to
+ * the underlying generator.
+ *
+ * @param args - Raw, untrusted MCP `CallTool` arguments
+ * @returns A {@link ToolResult} with the generated statistics report
+ * @throws {@link ToolError} when the schema validation fails
+ */
 export async function handleGetAllGeneratedStats(args: unknown): Promise<ToolResult> {
   let params: GetAllGeneratedStatsParams;
   try {
