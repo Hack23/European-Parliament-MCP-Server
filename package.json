@@ -168,7 +168,7 @@
     "@vitest/ui": "4.1.6",
     "eslint": "10.3.0",
     "globals": "17.6.0",
-    "knip": "6.12.2",
+    "knip": "6.13.0",
     "license-compliance": "3.0.1",
     "prettier": "3.8.3",
     "tsx": "4.21.0",
