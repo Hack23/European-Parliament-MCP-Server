@@ -9,7 +9,12 @@ updates:
       - "dependencies"
       - "github-actions"
     open-pull-requests-limit: 10
-  
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: daily
+
   # NPM dependencies
   - package-ecosystem: npm
     directory: /
