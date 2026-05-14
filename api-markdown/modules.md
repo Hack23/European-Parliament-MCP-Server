@@ -1,8 +1,8 @@
-[**European Parliament MCP Server API v1.3.4**](README.md)
+[**European Parliament MCP Server API v1.3.5**](README.md)
 
 ***
 
-# European Parliament MCP Server API v1.3.4
+# European Parliament MCP Server API v1.3.5
 
 ## Documents
 
