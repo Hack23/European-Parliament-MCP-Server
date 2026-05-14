@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: AuditLogger
 
-Defined in: [utils/auditLogger.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L156)
+Defined in: [utils/auditLogger.ts:154](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L154)
 
 GDPR-compliant audit logger with pluggable sinks, parameter sanitisation,
 data retention enforcement, and access-controlled log retrieval.
@@ -65,7 +65,7 @@ const logger = new AuditLogger({
 
 > **new AuditLogger**(`options?`): `AuditLogger`
 
-Defined in: [utils/auditLogger.ts:163](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L163)
+Defined in: [utils/auditLogger.ts:161](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L161)
 
 #### Parameters
 
@@ -83,7 +83,7 @@ Defined in: [utils/auditLogger.ts:163](https://github.com/Hack23/European-Parlia
 
 > `private` `readonly` **extraSinks**: readonly [`AuditSink`](../../auditSink/interfaces/AuditSink.md)[]
 
-Defined in: [utils/auditLogger.ts:158](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L158)
+Defined in: [utils/auditLogger.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L156)
 
 ***
 
@@ -91,7 +91,7 @@ Defined in: [utils/auditLogger.ts:158](https://github.com/Hack23/European-Parlia
 
 > `private` `readonly` **memorySink**: [`MemoryAuditSink`](../../auditSink/classes/MemoryAuditSink.md)
 
-Defined in: [utils/auditLogger.ts:157](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L157)
+Defined in: [utils/auditLogger.ts:155](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L155)
 
 ***
 
@@ -99,7 +99,7 @@ Defined in: [utils/auditLogger.ts:157](https://github.com/Hack23/European-Parlia
 
 > `private` `readonly` **requiredAuthToken**: `string` \| `undefined`
 
-Defined in: [utils/auditLogger.ts:161](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L161)
+Defined in: [utils/auditLogger.ts:159](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L159)
 
 ***
 
@@ -107,7 +107,7 @@ Defined in: [utils/auditLogger.ts:161](https://github.com/Hack23/European-Parlia
 
 > `private` `readonly` **retentionPolicy**: [`RetentionPolicy`](../../auditSink/classes/RetentionPolicy.md) \| `undefined`
 
-Defined in: [utils/auditLogger.ts:160](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L160)
+Defined in: [utils/auditLogger.ts:158](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L158)
 
 ***
 
@@ -115,7 +115,7 @@ Defined in: [utils/auditLogger.ts:160](https://github.com/Hack23/European-Parlia
 
 > `private` `readonly` **sensitiveKeys**: readonly `string`[]
 
-Defined in: [utils/auditLogger.ts:159](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L159)
+Defined in: [utils/auditLogger.ts:157](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L157)
 
 ## Methods
 
@@ -123,7 +123,7 @@ Defined in: [utils/auditLogger.ts:159](https://github.com/Hack23/European-Parlia
 
 > `private` **checkAuthorization**(`authorization?`): `void`
 
-Defined in: [utils/auditLogger.ts:374](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L374)
+Defined in: [utils/auditLogger.ts:360](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L360)
 
 #### Parameters
 
@@ -141,7 +141,7 @@ Defined in: [utils/auditLogger.ts:374](https://github.com/Hack23/European-Parlia
 
 > **clear**(`authorization?`): `void`
 
-Defined in: [utils/auditLogger.ts:365](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L365)
+Defined in: [utils/auditLogger.ts:355](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L355)
 
 Clears all in-memory audit log entries.
 
@@ -170,7 +170,7 @@ Authorization token (required when configured)
 
 > **eraseByUser**(`userId`, `authorization?`): `void`
 
-Defined in: [utils/auditLogger.ts:351](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L351)
+Defined in: [utils/auditLogger.ts:341](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L341)
 
 Removes all audit entries associated with `userId` from in-memory storage.
 
@@ -206,7 +206,7 @@ Authorization token (required when configured)
 
 > **getLogs**(`authorization?`): [`AuditLogEntry`](../../auditSink/interfaces/AuditLogEntry.md)[]
 
-Defined in: [utils/auditLogger.ts:317](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L317)
+Defined in: [utils/auditLogger.ts:307](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L307)
 
 Returns a snapshot of all in-memory audit log entries, optionally filtered
 by the configured data-retention policy.
@@ -243,7 +243,7 @@ When `requiredAuthToken` is configured, this method is access-
 
 > **log**(`entry`): `void`
 
-Defined in: [utils/auditLogger.ts:199](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L199)
+Defined in: [utils/auditLogger.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L197)
 
 Logs an audit event to the in-memory store and all configured sinks.
 
@@ -277,7 +277,7 @@ Writes to sinks only (not stdout, which is reserved for MCP).
 
 > **logDataAccess**(`action`, `params`, `count`, `duration?`): `void`
 
-Defined in: [utils/auditLogger.ts:266](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L266)
+Defined in: [utils/auditLogger.ts:256](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L256)
 
 Logs a successful data-access event (e.g. a query returning records).
 
@@ -321,7 +321,7 @@ Optional wall-clock duration in milliseconds
 
 > **logError**(`action`, `params`, `error`, `duration?`): `void`
 
-Defined in: [utils/auditLogger.ts:289](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L289)
+Defined in: [utils/auditLogger.ts:279](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L279)
 
 Logs a failed operation as an audit error event.
 
@@ -365,7 +365,7 @@ Optional wall-clock duration in milliseconds
 
 > **logToolCall**(`toolName`, `params`, `success`, `duration?`, `error?`): `void`
 
-Defined in: [utils/auditLogger.ts:233](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L233)
+Defined in: [utils/auditLogger.ts:228](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L228)
 
 Log an MCP tool call as an audit record.
 
@@ -419,7 +419,7 @@ Optional error message if the call failed
 
 > `private` **pruneExpiredEntries**(`policy`): `void`
 
-Defined in: [utils/auditLogger.ts:385](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L385)
+Defined in: [utils/auditLogger.ts:371](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L371)
 
 #### Parameters
 
@@ -437,7 +437,7 @@ Defined in: [utils/auditLogger.ts:385](https://github.com/Hack23/European-Parlia
 
 > **queryLogs**(`filter`, `authorization?`): [`AuditLogEntry`](../../auditSink/interfaces/AuditLogEntry.md)[]
 
-Defined in: [utils/auditLogger.ts:332](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L332)
+Defined in: [utils/auditLogger.ts:322](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L322)
 
 Queries the in-memory log using a filter.
 
@@ -469,7 +469,7 @@ Authorization token (required when configured)
 
 > `private` **writeSinks**(`entry`): `void`
 
-Defined in: [utils/auditLogger.ts:405](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L405)
+Defined in: [utils/auditLogger.ts:385](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L385)
 
 #### Parameters
 
@@ -487,7 +487,7 @@ Defined in: [utils/auditLogger.ts:405](https://github.com/Hack23/European-Parlia
 
 > `private` `static` **buildRetentionPolicy**(`retentionMs`): [`RetentionPolicy`](../../auditSink/classes/RetentionPolicy.md) \| `undefined`
 
-Defined in: [utils/auditLogger.ts:171](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L171)
+Defined in: [utils/auditLogger.ts:169](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L169)
 
 #### Parameters
 

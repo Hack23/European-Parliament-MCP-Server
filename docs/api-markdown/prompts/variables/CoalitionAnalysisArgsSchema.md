@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **CoalitionAnalysisArgsSchema**: `ZodObject`\<\{ `period`: `ZodOptional`\<`ZodString`\>; `policyArea`: `ZodOptional`\<`ZodString`\>; \}, `$strip`\>
 
-Defined in: [prompts/index.ts:126](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L126)
+Defined in: [prompts/index.ts:122](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L122)
 
 Typed Zod schema for coalition analysis prompt arguments.

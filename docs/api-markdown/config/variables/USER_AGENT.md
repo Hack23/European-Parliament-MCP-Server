@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **USER\_AGENT**: `string`
 
-Defined in: [config.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/config.ts#L41)
+Defined in: [config.ts:40](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/config.ts#L40)
 
 HTTP `User-Agent` header value sent with every request to the EP API.
 Includes the actual package version instead of a hardcoded string.

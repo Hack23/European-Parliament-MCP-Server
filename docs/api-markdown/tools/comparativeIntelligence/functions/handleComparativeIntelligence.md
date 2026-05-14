@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,13 @@
 
 > **handleComparativeIntelligence**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/comparativeIntelligence.ts:886](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L886)
+Defined in: [tools/comparativeIntelligence.ts:920](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L920)
+
+MCP `CallTool` handler entry point for `comparative_intelligence`.
+
+Validates the raw input arguments against
+[ComparativeIntelligenceSchema](../variables/ComparativeIntelligenceSchema.md) and delegates execution to
+[comparativeIntelligence](comparativeIntelligence.md).
 
 ## Parameters
 
@@ -16,6 +22,11 @@ Defined in: [tools/comparativeIntelligence.ts:886](https://github.com/Hack23/Eur
 
 `unknown`
 
+Raw, untrusted MCP `CallTool` arguments
+
 ## Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+
+The same [ToolResult](../../shared/types/interfaces/ToolResult.md) produced by
+  [comparativeIntelligence](comparativeIntelligence.md)

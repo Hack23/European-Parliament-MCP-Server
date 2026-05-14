@@ -469,15 +469,7 @@
 <a name='L404'></a><a href='#L404'>404</a>
 <a name='L405'></a><a href='#L405'>405</a>
 <a name='L406'></a><a href='#L406'>406</a>
-<a name='L407'></a><a href='#L407'>407</a>
-<a name='L408'></a><a href='#L408'>408</a>
-<a name='L409'></a><a href='#L409'>409</a>
-<a name='L410'></a><a href='#L410'>410</a>
-<a name='L411'></a><a href='#L411'>411</a>
-<a name='L412'></a><a href='#L412'>412</a>
-<a name='L413'></a><a href='#L413'>413</a>
-<a name='L414'></a><a href='#L414'>414</a>
-<a name='L415'></a><a href='#L415'>415</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L407'></a><a href='#L407'>407</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -535,10 +527,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -707,8 +696,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -721,9 +708,7 @@
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">15x</span>
@@ -787,7 +772,6 @@
 <span class="cline-any cline-yes">18x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">18x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -893,14 +877,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * MCP Tool: detect_voting_anomalies
- * 
+ *
  * Flag unusual voting patterns — party defections, sudden alignment shifts,
  * abstention spikes, and behavioral anomalies.
- * 
+ *
  * **Intelligence Perspective:** Anomaly detection tool identifying deviations from
  * expected voting behavior—enables early warning for party splits, political
  * realignments, and emerging cross-party movements.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 &nbsp;
@@ -948,7 +932,6 @@ function classifyAttendanceSeverity(rate: number): string {
 /**
  * Classify abstention severity
  */
-// &gt; 30% abstention: substantially above EP average (~5-10%), indicating protest or disengagement
 function <span class="fstat-no" title="function not covered" >classifyAbstentionSeverity(r</span>ate: number): string {
 <span class="cstat-no" title="statement not covered" >  return rate &gt; 30 ? 'HIGH' : 'MEDIUM';</span>
 }
@@ -956,8 +939,6 @@ function <span class="fstat-no" title="function not covered" >classifyAbstention
 /**
  * Classify defection severity
  */
-// &gt; 40%: near-majority breaks party line (Rice cohesion &lt; 0.2)
-// &gt; 25%: significant minority dissent; &lt;= 25%: normal intra-party variance
 function classifyDefectionSeverity(rate: number): string {
   <span class="missing-if-branch" title="else path not taken" >E</span>if (rate &gt; 40) return 'HIGH';
 <span class="cstat-no" title="statement not covered" >  if (rate &gt; 25) <span class="cstat-no" title="statement not covered" >return 'MEDIUM';</span></span>
@@ -1121,8 +1102,6 @@ async function detectGroupAnomalies(
   }
   const scope = groupId !== undefined ? `Group: ${groupId}` : 'All MEPs';
   const mepsResult = await epClient.getCurrentMEPs({ ...groupFilter, limit: 50 });
-  // Per-MEP voting statistics are not available from the EP API /meps/{id}
-  // endpoint, so we cannot detect group-wide anomalies from individual stats.
   return { scope, anomalies: [], mepCount: mepsResult.data.length };
 }
 &nbsp;
@@ -1135,11 +1114,9 @@ function buildAnomalySummary(
   const highSeverity = anomalies.filter(a =&gt; a.severity === 'HIGH').length;
   const mediumSeverity = anomalies.filter(a =&gt; a.severity === 'MEDIUM').length;
   const lowSeverity = anomalies.filter(a =&gt; a.severity === 'LOW').length;
-  // anomalyRate: true proportion of HIGH-severity anomalies in [0, 1]
   const anomalyRate = anomalies.length &gt; 0
     ? Math.round((highSeverity / anomalies.length) * 100) / 100
     : 0;
-  // severityIndex: weighted-average severity on ~1–3 scale
   const severityIndex = anomalies.length &gt; 0
     ? Math.round((highSeverity * 3 + mediumSeverity * 2 + lowSeverity) / anomalies.length * 100) / 100
     : 0;
@@ -1204,7 +1181,6 @@ export async function handleDetectVotingAnomalies(
       ? await detectSingleMepAnomalies(mepId, params.sensitivityThreshold, period)
       : await detectGroupAnomalies(params.groupId, params.sensitivityThreshold, period);
 &nbsp;
-    // When single MEP has no voting data, report unavailability with same shape as normal path
     <span class="missing-if-branch" title="if path not taken" >I</span>if (isSingleMep &amp;&amp; 'dataAvailable' in result &amp;&amp; !result.dataAvailable) {
 <span class="cstat-no" title="statement not covered" >      return buildToolResponse({</span>
         period,
@@ -1312,7 +1288,7 @@ export const detectVotingAnomaliesToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-11T17:10:37.572Z
+                at 2026-05-14T09:28:39.799Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

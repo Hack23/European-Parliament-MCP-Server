@@ -598,20 +598,7 @@
 <a name='L533'></a><a href='#L533'>533</a>
 <a name='L534'></a><a href='#L534'>534</a>
 <a name='L535'></a><a href='#L535'>535</a>
-<a name='L536'></a><a href='#L536'>536</a>
-<a name='L537'></a><a href='#L537'>537</a>
-<a name='L538'></a><a href='#L538'>538</a>
-<a name='L539'></a><a href='#L539'>539</a>
-<a name='L540'></a><a href='#L540'>540</a>
-<a name='L541'></a><a href='#L541'>541</a>
-<a name='L542'></a><a href='#L542'>542</a>
-<a name='L543'></a><a href='#L543'>543</a>
-<a name='L544'></a><a href='#L544'>544</a>
-<a name='L545'></a><a href='#L545'>545</a>
-<a name='L546'></a><a href='#L546'>546</a>
-<a name='L547'></a><a href='#L547'>547</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L536'></a><a href='#L536'>536</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -715,8 +702,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -778,11 +763,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1055,8 +1036,6 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1135,7 +1114,6 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">73x</span>
 <span class="cline-any cline-yes">19x</span>
 <span class="cline-any cline-yes">19x</span>
@@ -1157,18 +1135,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * MCP Prompts for European Parliament Intelligence Analysis
- * 
+ *
  * Pre-built prompt templates for common EU parliamentary intelligence queries.
  * These prompts guide AI assistants through structured analysis using EP data.
- * 
+ *
  * **Intelligence Perspective:** Standardized analytical templates ensure consistent,
  * reproducible intelligence products—from MEP briefings to coalition assessments.
- * 
+ *
  * **Business Perspective:** Pre-built prompts lower the barrier to entry for users
  * and demonstrate the full analytical capability of the MCP server.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
- * 
+ *
  * @see https://spec.modelcontextprotocol.io/specification/server/prompts/
  */
 &nbsp;
@@ -1206,8 +1184,6 @@ export interface PromptResult {
   messages: PromptMessage[];
   [key: string]: unknown;
 }
-&nbsp;
-// ─── Prompt Definitions ──────────────────────────────────────
 &nbsp;
 const mepBriefingPrompt: PromptMetadata = {
   name: 'mep_briefing',
@@ -1260,8 +1236,6 @@ const votingPatternAnalysisPrompt: PromptMetadata = {
     { name: 'mepId', description: 'Focus on specific MEP', required: false }
   ]
 };
-&nbsp;
-// ─── Prompt Argument Schema ──────────────────────────────────
 &nbsp;
 const PromptArgsSchema = z.record(
   z.string().min(1).max(50),
@@ -1323,8 +1297,6 @@ export const CountryDelegationArgsSchema = z.object({
   period: z.string().min(1).max(50).optional().describe('Analysis period'),
 });
 &nbsp;
-// ─── Country Delegation Analysis Prompt ─────────────────────
-&nbsp;
 /** @internal Country delegation analysis prompt metadata */
 const countryDelegationAnalysisPrompt: PromptMetadata = {
   name: 'country_delegation_analysis',
@@ -1334,8 +1306,6 @@ const countryDelegationAnalysisPrompt: PromptMetadata = {
     { name: 'period', description: 'Analysis period (e.g., "2024", "current-term")', required: false },
   ],
 };
-&nbsp;
-// ─── Prompt Result Generators ────────────────────────────────
 &nbsp;
 /**
  * Generate an MEP intelligence briefing prompt
@@ -1633,8 +1603,6 @@ Data source: European Parliament Open Data Portal`
   };
 }
 &nbsp;
-// ─── Public API ──────────────────────────────────────────────
-&nbsp;
 /**
  * Get all prompt metadata for MCP listing
  */
@@ -1652,9 +1620,9 @@ export function getPromptMetadataArray(): PromptMetadata[] {
 &nbsp;
 /**
  * Handle GetPrompt request
- * 
+ *
  * @param name - Prompt name
- * @param args - Prompt arguments  
+ * @param args - Prompt arguments
  * @returns Prompt result with messages
  * @throws Error if prompt name is unknown
  */
@@ -1681,7 +1649,6 @@ export function handleGetPrompt(
     throw new Error(`Unknown prompt: ${name}`);
   }
 &nbsp;
-  // Enforce required arguments based on prompt metadata
   const metadata = getPromptMetadataArray().find((prompt) =&gt; prompt.name === name);
   <span class="missing-if-branch" title="else path not taken" >E</span>if (metadata?.arguments !== undefined) {
     const missingRequired = metadata.arguments
@@ -1708,7 +1675,7 @@ export function handleGetPrompt(
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-11T17:10:37.572Z
+                at 2026-05-14T09:28:39.799Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

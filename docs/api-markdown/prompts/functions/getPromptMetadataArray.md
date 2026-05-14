@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **getPromptMetadataArray**(): [`PromptMetadata`](../interfaces/PromptMetadata.md)[]
 
-Defined in: [prompts/index.ts:484](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L484)
+Defined in: [prompts/index.ts:474](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L474)
 
 Get all prompt metadata for MCP listing
 

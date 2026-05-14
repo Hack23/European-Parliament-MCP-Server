@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -26,7 +26,9 @@ declaration data are compelling for NGO, academic, and media customer segments.
 
 **ISMS Policy:** SC-002 (Secure Coding Standards), AU-002 (Audit Logging)
 
- MEPDeclaration
+## Interface
+
+MEPDeclaration
 
 ## Gdpr
 

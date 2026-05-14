@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **isTimeoutError**(`error`): `error is TimeoutError`
 
-Defined in: [utils/timeout.ts:364](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L364)
+Defined in: [utils/timeout.ts:337](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L337)
 
 Type guard to check if an error is a TimeoutError
 

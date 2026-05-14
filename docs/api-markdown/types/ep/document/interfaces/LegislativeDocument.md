@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -23,7 +23,9 @@ All documents follow strict formatting and reference standards.
 
 **Data Source:** EP API `/documents`
 
- LegislativeDocument
+## Interface
+
+LegislativeDocument
 
 ## Examples
 

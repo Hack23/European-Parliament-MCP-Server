@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: PoliticalBlocAnalysis
 
-Defined in: [data/generatedStats.ts:200](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L200)
+Defined in: [data/generatedStats.ts:184](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L184)
 
 Combined political balance analysis: 1D blocs + 2D compass + EU axis.
 
@@ -16,7 +16,7 @@ Combined political balance analysis: 1D blocs + 2D compass + EU axis.
 
 > **bipolarIndex**: `number`
 
-Defined in: [data/generatedStats.ts:211](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L211)
+Defined in: [data/generatedStats.ts:194](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L194)
 
 Bipolar index: (right - left) / (right + left); range -1 (left) to +1 (right)
 
@@ -26,7 +26,7 @@ Bipolar index: (right - left) / (right + left); range -1 (left) to +1 (right)
 
 > **centreBlocShare**: `number`
 
-Defined in: [data/generatedStats.ts:205](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L205)
+Defined in: [data/generatedStats.ts:188](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L188)
 
 Combined seat share of centre/liberal groups (ALDE, RE)
 
@@ -36,7 +36,7 @@ Combined seat share of centre/liberal groups (ALDE, RE)
 
 > **euroscepticShare**: `number`
 
-Defined in: [data/generatedStats.ts:209](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L209)
+Defined in: [data/generatedStats.ts:192](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L192)
 
 Combined seat share of far-right/eurosceptic groups (ID, PfE, ESN, etc.)
 
@@ -46,7 +46,7 @@ Combined seat share of far-right/eurosceptic groups (ID, PfE, ESN, etc.)
 
 > **leftBlocShare**: `number`
 
-Defined in: [data/generatedStats.ts:203](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L203)
+Defined in: [data/generatedStats.ts:186](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L186)
 
 Combined seat share of left-wing groups (S&D, GUE/NGL, Greens/EFA)
 
@@ -56,7 +56,7 @@ Combined seat share of left-wing groups (S&D, GUE/NGL, Greens/EFA)
 
 > **politicalCompass**: [`PoliticalCompassAnalysis`](PoliticalCompassAnalysis.md)
 
-Defined in: [data/generatedStats.ts:215](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L215)
+Defined in: [data/generatedStats.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L197)
 
 Three-axis political compass analysis (economic × social × EU integration)
 
@@ -66,6 +66,6 @@ Three-axis political compass analysis (economic × social × EU integration)
 
 > **rightBlocShare**: `number`
 
-Defined in: [data/generatedStats.ts:207](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L207)
+Defined in: [data/generatedStats.ts:190](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L190)
 
 Combined seat share of centre-right + right groups (EPP, ECR, UEN, far-right)

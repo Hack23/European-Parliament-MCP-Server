@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **normalizePoliticalGroup**(`raw`): `string`
 
-Defined in: [utils/politicalGroupNormalization.ts:124](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/politicalGroupNormalization.ts#L124)
+Defined in: [utils/politicalGroupNormalization.ts:104](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/politicalGroupNormalization.ts#L104)
 
 Normalizes a raw political-group label returned by the EP Open Data Portal
 API to a canonical short code (e.g. `EPP`, `S&D`, `PfE`).

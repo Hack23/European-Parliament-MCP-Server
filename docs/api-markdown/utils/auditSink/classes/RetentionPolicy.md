@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: RetentionPolicy
 
-Defined in: [utils/auditSink.ts:203](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L203)
+Defined in: [utils/auditSink.ts:179](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L179)
 
 Enforces a configurable data-retention window by filtering out expired entries.
 
@@ -29,7 +29,7 @@ const fresh = policy.enforce(auditLogger.getLogs());
 
 > **new RetentionPolicy**(`maxAgeMs`): `RetentionPolicy`
 
-Defined in: [utils/auditSink.ts:204](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L204)
+Defined in: [utils/auditSink.ts:180](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L180)
 
 #### Parameters
 
@@ -47,7 +47,7 @@ Defined in: [utils/auditSink.ts:204](https://github.com/Hack23/European-Parliame
 
 > `private` `readonly` **maxAgeMs**: `number`
 
-Defined in: [utils/auditSink.ts:204](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L204)
+Defined in: [utils/auditSink.ts:180](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L180)
 
 ## Methods
 
@@ -55,7 +55,7 @@ Defined in: [utils/auditSink.ts:204](https://github.com/Hack23/European-Parliame
 
 > **enforce**(`entries`): [`AuditLogEntry`](../interfaces/AuditLogEntry.md)[]
 
-Defined in: [utils/auditSink.ts:209](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L209)
+Defined in: [utils/auditSink.ts:185](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L185)
 
 Returns only entries whose timestamp is within the retention window.
 
@@ -75,7 +75,7 @@ Returns only entries whose timestamp is within the retention window.
 
 > **isExpired**(`entry`): `boolean`
 
-Defined in: [utils/auditSink.ts:217](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L217)
+Defined in: [utils/auditSink.ts:193](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L193)
 
 Returns `true` if the given entry has exceeded the retention period.
 

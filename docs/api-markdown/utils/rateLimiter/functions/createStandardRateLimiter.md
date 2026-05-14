@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **createStandardRateLimiter**(): [`RateLimiter`](../classes/RateLimiter.md)
 
-Defined in: [utils/rateLimiter.ts:402](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L402)
+Defined in: [utils/rateLimiter.ts:393](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L393)
 
 Creates a [RateLimiter](../classes/RateLimiter.md) pre-configured for EP API usage.
 

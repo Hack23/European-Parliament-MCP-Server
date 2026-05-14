@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **GetProcedureEventByIdSchema**: `ZodObject`\<\{ `eventId`: `ZodString`; `processId`: `ZodString`; \}, `$strip`\>
 
-Defined in: [schemas/ep/feed.ts:153](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/feed.ts#L153)
+Defined in: [schemas/ep/feed.ts:145](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/feed.ts#L145)
 
 GET /procedures/{process-id}/events/{event-id}

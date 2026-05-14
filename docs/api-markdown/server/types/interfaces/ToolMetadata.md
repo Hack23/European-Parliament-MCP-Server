@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: ToolMetadata
 
-Defined in: [server/types.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L52)
+Defined in: [server/types.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L46)
 
 Full metadata descriptor for a registered MCP tool.
 
@@ -19,7 +19,7 @@ can group, filter, or display tools by logical purpose.
 
 > **category**: [`ToolCategory`](../type-aliases/ToolCategory.md)
 
-Defined in: [server/types.ts:60](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L60)
+Defined in: [server/types.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L54)
 
 Logical category for grouping and display
 
@@ -29,7 +29,7 @@ Logical category for grouping and display
 
 > **description**: `string`
 
-Defined in: [server/types.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L56)
+Defined in: [server/types.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L50)
 
 Human-readable description shown in `ListTools` responses
 
@@ -39,7 +39,7 @@ Human-readable description shown in `ListTools` responses
 
 > **inputSchema**: `unknown`
 
-Defined in: [server/types.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L58)
+Defined in: [server/types.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L52)
 
 JSON-Schema object describing the tool's input parameters
 
@@ -49,6 +49,6 @@ JSON-Schema object describing the tool's input parameters
 
 > **name**: `string`
 
-Defined in: [server/types.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L54)
+Defined in: [server/types.ts:48](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L48)
 
 Unique tool identifier used in MCP `CallTool` requests

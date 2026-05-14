@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **VotingPatternArgsSchema**: `ZodObject`\<\{ `mepId`: `ZodOptional`\<`ZodString`\>; `topic`: `ZodOptional`\<`ZodString`\>; \}, `$strip`\>
 
-Defined in: [prompts/index.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L156)
+Defined in: [prompts/index.ts:152](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L152)
 
 Typed Zod schema for voting pattern analysis prompt arguments.

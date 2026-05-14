@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: FileAuditSink
 
-Defined in: [utils/auditSink.ts:323](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L323)
+Defined in: [utils/auditSink.ts:287](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L287)
 
 Appends audit entries as newline-delimited JSON (NDJSON) to a file.
 
@@ -32,7 +32,7 @@ The log file should be stored on a volume with restricted write
 
 > **new FileAuditSink**(`options`): `FileAuditSink`
 
-Defined in: [utils/auditSink.ts:332](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L332)
+Defined in: [utils/auditSink.ts:296](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L296)
 
 #### Parameters
 
@@ -50,7 +50,7 @@ Defined in: [utils/auditSink.ts:332](https://github.com/Hack23/European-Parliame
 
 > `private` `readonly` **filePath**: `string`
 
-Defined in: [utils/auditSink.ts:324](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L324)
+Defined in: [utils/auditSink.ts:288](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L288)
 
 ***
 
@@ -58,7 +58,7 @@ Defined in: [utils/auditSink.ts:324](https://github.com/Hack23/European-Parliame
 
 > `private` `readonly` **maxSizeBytes**: `number`
 
-Defined in: [utils/auditSink.ts:325](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L325)
+Defined in: [utils/auditSink.ts:289](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L289)
 
 ***
 
@@ -66,7 +66,7 @@ Defined in: [utils/auditSink.ts:325](https://github.com/Hack23/European-Parliame
 
 > `private` **writeQueue**: [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
-Defined in: [utils/auditSink.ts:330](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L330)
+Defined in: [utils/auditSink.ts:294](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L294)
 
 Serialises concurrent write calls so that stat + rename + appendFile
 sequences never interleave across parallel `log()` invocations.
@@ -77,7 +77,7 @@ sequences never interleave across parallel `log()` invocations.
 
 > `private` **rotateIfNeeded**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
-Defined in: [utils/auditSink.ts:360](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L360)
+Defined in: [utils/auditSink.ts:318](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L318)
 
 #### Returns
 
@@ -89,7 +89,7 @@ Defined in: [utils/auditSink.ts:360](https://github.com/Hack23/European-Parliame
 
 > **write**(`entry`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
-Defined in: [utils/auditSink.ts:342](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L342)
+Defined in: [utils/auditSink.ts:306](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L306)
 
 Write a single audit entry to the sink
 

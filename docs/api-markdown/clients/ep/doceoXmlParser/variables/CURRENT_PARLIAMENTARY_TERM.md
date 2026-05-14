@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **CURRENT\_PARLIAMENTARY\_TERM**: `10` = `10`
 
-Defined in: [clients/ep/doceoXmlParser.ts:480](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoXmlParser.ts#L480)
+Defined in: [clients/ep/doceoXmlParser.ts:459](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoXmlParser.ts#L459)
 
 Current parliamentary term number (10th Parliament: 2024-2029).

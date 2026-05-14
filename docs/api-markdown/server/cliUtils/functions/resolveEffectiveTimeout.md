@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **resolveEffectiveTimeout**(): `number`
 
-Defined in: [server/cliUtils.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cliUtils.ts#L70)
+Defined in: [server/cliUtils.ts:69](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/cliUtils.ts#L69)
 
 Resolve the effective timeout value in milliseconds from the environment.
 

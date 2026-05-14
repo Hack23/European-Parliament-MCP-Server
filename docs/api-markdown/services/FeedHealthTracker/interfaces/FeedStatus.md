@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: FeedStatus
 
-Defined in: [services/FeedHealthTracker.ts:27](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L27)
+Defined in: [services/FeedHealthTracker.ts:25](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L25)
 
 Per-feed health status.
 
@@ -22,7 +22,7 @@ Per-feed health status.
 
 > **status**: `"unknown"` \| `"error"` \| `"ok"`
 
-Defined in: [services/FeedHealthTracker.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L29)
+Defined in: [services/FeedHealthTracker.ts:27](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L27)
 
 Current feed health verdict
 
@@ -32,7 +32,7 @@ Current feed health verdict
 
 > `optional` **lastAttempt?**: `string`
 
-Defined in: [services/FeedHealthTracker.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L35)
+Defined in: [services/FeedHealthTracker.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L33)
 
 ISO-8601 timestamp of the last invocation attempt
 
@@ -42,7 +42,7 @@ ISO-8601 timestamp of the last invocation attempt
 
 > `optional` **lastError?**: `string`
 
-Defined in: [services/FeedHealthTracker.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L33)
+Defined in: [services/FeedHealthTracker.ts:31](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L31)
 
 Error message from the last failed invocation
 
@@ -52,6 +52,6 @@ Error message from the last failed invocation
 
 > `optional` **lastSuccess?**: `string`
 
-Defined in: [services/FeedHealthTracker.ts:31](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L31)
+Defined in: [services/FeedHealthTracker.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L29)
 
 ISO-8601 timestamp of the last successful invocation

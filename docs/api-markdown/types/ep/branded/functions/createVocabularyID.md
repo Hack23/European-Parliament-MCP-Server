@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **createVocabularyID**(`value`): [`VocabularyID`](../type-aliases/VocabularyID.md)
 
-Defined in: [types/ep/branded.ts:167](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L167)
+Defined in: [types/ep/branded.ts:161](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L161)
 
 Factory: validates and creates a VocabularyID.
 

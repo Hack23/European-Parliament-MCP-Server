@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -26,7 +26,9 @@ part of parliamentary record.
 
 **Data Source:** EP API `/parliamentary-questions`
 
- ParliamentaryQuestion
+## Interface
+
+ParliamentaryQuestion
 
 ## Examples
 

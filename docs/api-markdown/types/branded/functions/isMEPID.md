@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **isMEPID**(`value`): `value is MEPID`
 
-Defined in: [types/branded.ts:118](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L118)
+Defined in: [types/branded.ts:116](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L116)
 
 Type guard to check if a string is a valid MEP ID
 

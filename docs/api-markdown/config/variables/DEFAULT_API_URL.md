@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_API\_URL**: `"https://data.europarl.europa.eu/api/v2/"` = `'https://data.europarl.europa.eu/api/v2/'`
 
-Defined in: [config.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/config.ts#L52)
+Defined in: [config.ts:51](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/config.ts#L51)
 
 Default base URL for the European Parliament Open Data Portal API v2

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **AvailabilityLevel** = `"Full"` \| `"Degraded"` \| `"Sparse"` \| `"Unavailable"` \| `"Unknown"`
 
-Defined in: [services/FeedHealthTracker.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L52)
+Defined in: [services/FeedHealthTracker.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L50)
 
 Overall feed availability level.
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **DOCEO\_BASE\_URL**: `"https://www.europarl.europa.eu/doceo/document/"` = `'https://www.europarl.europa.eu/doceo/document/'`
 
-Defined in: [clients/ep/doceoXmlParser.ts:475](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoXmlParser.ts#L475)
+Defined in: [clients/ep/doceoXmlParser.ts:454](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoXmlParser.ts#L454)
 
 Base URL for EP DOCEO document system

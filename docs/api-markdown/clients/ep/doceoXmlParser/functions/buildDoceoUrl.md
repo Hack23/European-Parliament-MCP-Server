@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **buildDoceoUrl**(`date`, `type`, `term?`, `language?`): `string`
 
-Defined in: [clients/ep/doceoXmlParser.ts:497](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoXmlParser.ts#L497)
+Defined in: [clients/ep/doceoXmlParser.ts:476](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoXmlParser.ts#L476)
 
 Build the DOCEO XML URL for a given date and document type.
 

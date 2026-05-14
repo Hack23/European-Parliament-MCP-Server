@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **parseResourceUri**(`uri`): `object`
 
-Defined in: [resources/index.ts:226](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/resources/index.ts#L226)
+Defined in: [resources/index.ts:220](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/resources/index.ts#L220)
 
 Parse a resource URI and extract template parameters
 

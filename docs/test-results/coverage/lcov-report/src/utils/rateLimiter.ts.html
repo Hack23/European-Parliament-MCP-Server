@@ -466,16 +466,7 @@
 <a name='L401'></a><a href='#L401'>401</a>
 <a name='L402'></a><a href='#L402'>402</a>
 <a name='L403'></a><a href='#L403'>403</a>
-<a name='L404'></a><a href='#L404'>404</a>
-<a name='L405'></a><a href='#L405'>405</a>
-<a name='L406'></a><a href='#L406'>406</a>
-<a name='L407'></a><a href='#L407'>407</a>
-<a name='L408'></a><a href='#L408'>408</a>
-<a name='L409'></a><a href='#L409'>409</a>
-<a name='L410'></a><a href='#L410'>410</a>
-<a name='L411'></a><a href='#L411'>411</a>
-<a name='L412'></a><a href='#L412'>412</a>
-<a name='L413'></a><a href='#L413'>413</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L404'></a><a href='#L404'>404</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -580,7 +571,6 @@
 <span class="cline-any cline-yes">467x</span>
 <span class="cline-any cline-yes">467x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">467x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">26x</span>
@@ -613,12 +603,11 @@
 <span class="cline-any cline-yes">423x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">423x</span>
-<span class="cline-any cline-yes">91x</span>
+<span class="cline-any cline-yes">72x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">91x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">72x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -663,12 +652,8 @@
 <span class="cline-any cline-yes">362x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">359x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -699,9 +684,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -889,18 +871,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * Rate Limiter utility using token bucket algorithm
- * 
+ *
  * **Intelligence Perspective:** Ensures sustainable OSINT collection rates from EP API,
  * preventing service disruption that would compromise intelligence product reliability.
- * 
+ *
  * **Business Perspective:** SLA compliance depends on rate limiting—ensures fair resource
  * allocation across API tiers and prevents abuse from high-volume customers.
- * 
+ *
  * **Marketing Perspective:** Responsible API usage demonstrates platform maturity
  * and reliability commitment to potential enterprise customers and partners.
- * 
+ *
  * ISMS Policy: SC-002 (Secure Coding), AC-003 (Access Control)
- * 
+ *
  * Implements token bucket algorithm for rate limiting to prevent abuse
  * and ensure fair resource allocation.
  */
@@ -941,12 +923,12 @@ interface RateLimiterOptions {
    * Maximum number of tokens in the bucket (must be a finite integer &gt;= 1)
    */
   tokensPerInterval: number;
-  
+&nbsp;
   /**
    * Time interval for token refill
    */
   interval: 'second' | 'minute' | 'hour';
-  
+&nbsp;
   /**
    * Initial number of tokens (defaults to tokensPerInterval)
    */
@@ -991,8 +973,7 @@ export class RateLimiter {
     }
     this.tokens = initialTokens;
     this.lastRefill = Date.now();
-    
-    // Convert interval to milliseconds
+&nbsp;
     switch (options.interval) {
       case 'second':
         this.intervalMs = 1000;
@@ -1023,7 +1004,7 @@ export class RateLimiter {
     const now = Date.now();
     const elapsedMs = now - this.lastRefill;
     const tokensToAdd = (elapsedMs / this.intervalMs) * this.tokensPerInterval;
-    
+&nbsp;
     if (tokensToAdd &gt; 0) {
       this.tokens = Math.min(
         this.tokensPerInterval,
@@ -1071,20 +1052,15 @@ export class RateLimiter {
     count: number,
     options?: { timeoutMs?: number }
   ): Promise&lt;RateLimitResult&gt; {
-    // Validate count: must be a finite integer &gt;= 1
     if (!Number.isFinite(count) || count &lt; 1 || !Number.isInteger(count)) {
       throw new Error(`removeTokens: count must be a finite integer &gt;= 1, got ${String(count)}`);
     }
-    // A count larger than the bucket capacity can never be satisfied
     if (count &gt; this.tokensPerInterval) {
       throw new Error(
         `removeTokens: count (${String(count)}) exceeds bucket capacity (${String(this.tokensPerInterval)})`
       );
     }
 &nbsp;
-    // Validate timeoutMs: coerce invalid (NaN/Infinity/negative) to 0 so the
-    // call never blocks and either succeeds immediately if enough tokens are
-    // available or returns allowed:false immediately if not
     const rawTimeoutMs = options?.timeoutMs;
     const timeoutMs = RateLimiter.resolveTimeout(rawTimeoutMs);
 &nbsp;
@@ -1112,9 +1088,6 @@ export class RateLimiter {
 &nbsp;
       await new Promise&lt;void&gt;(resolve =&gt; setTimeout(resolve, waitMs));
 &nbsp;
-      // Hard deadline guard: if the timer fired late (event-loop delay) and the
-      // deadline has already elapsed, reject without consuming tokens.
-      // retryAfterMs is always &gt;= 1 so callers always receive a positive retry hint.
       if (Date.now() &gt;= deadline) {
         this.refill();
         return {
@@ -1161,12 +1134,12 @@ export class RateLimiter {
       );
     }
     this.refill();
-    
+&nbsp;
     if (this.tokens &gt;= count) {
       this.tokens -= count;
       return true;
     }
-    
+&nbsp;
     return false;
   }
 &nbsp;
@@ -1306,7 +1279,7 @@ export function createStandardRateLimiter(): RateLimiter {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-11T17:10:37.572Z
+                at 2026-05-14T09:28:39.799Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

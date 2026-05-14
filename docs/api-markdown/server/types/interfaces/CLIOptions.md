@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: CLIOptions
 
-Defined in: [server/types.ts:71](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L71)
+Defined in: [server/types.ts:63](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L63)
 
 Parsed command-line options for the MCP server binary.
 
@@ -19,7 +19,7 @@ provided on the command line.
 
 > `optional` **health?**: `boolean`
 
-Defined in: [server/types.ts:77](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L77)
+Defined in: [server/types.ts:69](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L69)
 
 Show health-check / diagnostics JSON and exit
 
@@ -29,7 +29,7 @@ Show health-check / diagnostics JSON and exit
 
 > `optional` **help?**: `boolean`
 
-Defined in: [server/types.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L73)
+Defined in: [server/types.ts:65](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L65)
 
 Show usage / help text and exit
 
@@ -39,7 +39,7 @@ Show usage / help text and exit
 
 > `optional` **timeout?**: `number`
 
-Defined in: [server/types.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L79)
+Defined in: [server/types.ts:71](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L71)
 
 Override request timeout in milliseconds (takes precedence over EP_REQUEST_TIMEOUT_MS env var)
 
@@ -49,6 +49,6 @@ Override request timeout in milliseconds (takes precedence over EP_REQUEST_TIMEO
 
 > `optional` **version?**: `boolean`
 
-Defined in: [server/types.ts:75](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L75)
+Defined in: [server/types.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L67)
 
 Show version string and exit

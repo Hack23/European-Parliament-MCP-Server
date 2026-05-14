@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **PoliticalQuadrant** = `"libertarianLeft"` \| `"libertarianRight"` \| `"authoritarianLeft"` \| `"authoritarianRight"`
 
-Defined in: [data/generatedStats.ts:161](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L161)
+Defined in: [data/generatedStats.ts:145](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L145)
 
 Political compass quadrant (2D: economic × social axes).
 

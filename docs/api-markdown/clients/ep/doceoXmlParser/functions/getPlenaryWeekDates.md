@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **getPlenaryWeekDates**(`weekStart?`): `string`[]
 
-Defined in: [clients/ep/doceoXmlParser.ts:518](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoXmlParser.ts#L518)
+Defined in: [clients/ep/doceoXmlParser.ts:496](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoXmlParser.ts#L496)
 
 Get dates for the most recent plenary week (Monday-Thursday).
 If a specific week start date is provided, uses that week.

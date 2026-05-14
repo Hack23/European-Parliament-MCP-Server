@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getCurrentMEPsToolMetadata**: `object`
 
-Defined in: [tools/getCurrentMEPs.ts:85](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCurrentMEPs.ts#L85)
+Defined in: [tools/getCurrentMEPs.ts:84](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCurrentMEPs.ts#L84)
 
 Tool metadata for get_current_meps
 

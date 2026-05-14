@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -23,36 +23,21 @@ For type-level uniqueness, each `Symbol(...)` is a distinct runtime value;
 
 > `readonly` **AuditLogger**: `symbol`
 
-GDPR-compliant audit logger
-(`AuditLogger` from `utils/auditLogger`)
-
 ### EPClient
 
 > `readonly` **EPClient**: `symbol`
-
-European Parliament API client
-(`EuropeanParliamentClient` from `clients/europeanParliamentClient`)
 
 ### HealthService
 
 > `readonly` **HealthService**: `symbol`
 
-Server health-check service
-(`HealthService` from `services/HealthService`)
-
 ### MetricsService
 
 > `readonly` **MetricsService**: `symbol`
 
-Performance metrics collection service
-(`MetricsService` from `services/MetricsService`)
-
 ### RateLimiter
 
 > `readonly` **RateLimiter**: `symbol`
-
-Token-bucket rate limiter for EP API calls
-(`RateLimiter` from `utils/rateLimiter`)
 
 ## Since
 

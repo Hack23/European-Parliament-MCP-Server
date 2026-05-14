@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -87,7 +87,7 @@ Defined in: [utils/performance.ts:89](https://github.com/Hack23/European-Parliam
 
 > **clear**(): `void`
 
-Defined in: [utils/performance.ts:277](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L277)
+Defined in: [utils/performance.ts:272](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L272)
 
 Clears all recorded duration samples for every tracked operation.
 
@@ -117,7 +117,7 @@ afterEach(() => {
 
 > **clearOperation**(`operation`): `void`
 
-Defined in: [utils/performance.ts:293](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L293)
+Defined in: [utils/performance.ts:288](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L288)
 
 Clears recorded duration samples for a single operation.
 
@@ -149,7 +149,7 @@ monitor.clearOperation('api_call');
 
 > **getOperations**(): `string`[]
 
-Defined in: [utils/performance.ts:257](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L257)
+Defined in: [utils/performance.ts:252](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L252)
 
 Returns all operation names currently being tracked.
 
@@ -179,7 +179,7 @@ operations.forEach(op => {
 
 > **getStats**(`operation`): [`PerformanceStats`](../interfaces/PerformanceStats.md) \| `null`
 
-Defined in: [utils/performance.ts:174](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L174)
+Defined in: [utils/performance.ts:171](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L171)
 
 Returns aggregated performance statistics for a named operation.
 
@@ -224,7 +224,7 @@ if (stats && stats.p95 > 1000) {
 
 > `private` **percentile**(`sorted`, `p`): `number`
 
-Defined in: [utils/performance.ts:216](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L216)
+Defined in: [utils/performance.ts:211](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L211)
 
 **`Internal`**
 

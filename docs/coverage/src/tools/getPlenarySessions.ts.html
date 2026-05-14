@@ -260,27 +260,7 @@
 <a name='L195'></a><a href='#L195'>195</a>
 <a name='L196'></a><a href='#L196'>196</a>
 <a name='L197'></a><a href='#L197'>197</a>
-<a name='L198'></a><a href='#L198'>198</a>
-<a name='L199'></a><a href='#L199'>199</a>
-<a name='L200'></a><a href='#L200'>200</a>
-<a name='L201'></a><a href='#L201'>201</a>
-<a name='L202'></a><a href='#L202'>202</a>
-<a name='L203'></a><a href='#L203'>203</a>
-<a name='L204'></a><a href='#L204'>204</a>
-<a name='L205'></a><a href='#L205'>205</a>
-<a name='L206'></a><a href='#L206'>206</a>
-<a name='L207'></a><a href='#L207'>207</a>
-<a name='L208'></a><a href='#L208'>208</a>
-<a name='L209'></a><a href='#L209'>209</a>
-<a name='L210'></a><a href='#L210'>210</a>
-<a name='L211'></a><a href='#L211'>211</a>
-<a name='L212'></a><a href='#L212'>212</a>
-<a name='L213'></a><a href='#L213'>213</a>
-<a name='L214'></a><a href='#L214'>214</a>
-<a name='L215'></a><a href='#L215'>215</a>
-<a name='L216'></a><a href='#L216'>216</a>
-<a name='L217'></a><a href='#L217'>217</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L198'></a><a href='#L198'>198</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -364,14 +344,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -385,24 +363,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -497,18 +459,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * MCP Tool: get_plenary_sessions
- * 
+ *
  * Retrieve European Parliament plenary session information
- * 
+ *
  * **Intelligence Perspective:** Critical for legislative monitoring, session activity tracking,
  * debate analysis, and identifying legislative priorities across parliamentary terms.
- * 
+ *
  * **Business Perspective:** Enables real-time legislative tracking products for compliance
  * teams, regulatory affairs departments, and policy monitoring services.
- * 
+ *
  * **Marketing Perspective:** Showcases live parliamentary data access—compelling for
  * journalists, media organizations, and civic tech platforms.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 &nbsp;
@@ -561,7 +523,6 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetPlenarySessions(
   args: unknown
 ): Promise&lt;ToolResult&gt; {
-  // Validate input — ZodErrors here are client mistakes (non-retryable)
   let params: ReturnType&lt;typeof GetPlenarySessionsSchema.parse&gt;;
   try {
     params = GetPlenarySessionsSchema.parse(args);
@@ -580,14 +541,12 @@ export async function handleGetPlenarySessions(
   }
 &nbsp;
   try {
-    // Single meeting lookup by ID
     if (params.eventId !== undefined) {
       const result = await epClient.getMeetingById(params.eventId);
       const validated = PlenarySessionSchema.parse(result);
       return buildToolResponse(validated);
     }
 &nbsp;
-    // Fetch plenary sessions from EP API (only pass defined properties)
     const apiParams = {
       limit: params.limit,
       offset: params.offset,
@@ -598,28 +557,12 @@ export async function handleGetPlenarySessions(
         { from: 'location', to: 'location' },
       ]),
     };
-    
+&nbsp;
     const result = await epClient.getPlenarySessions(apiParams);
-    
-    // Validate output
+&nbsp;
     const outputSchema = PaginatedResponseSchema(PlenarySessionSchema);
     const validated = outputSchema.parse(result);
 &nbsp;
-    // Client-side post-filter for dateFrom / dateTo.
-    // The EP `/meetings` endpoint accepts the `date-from` / `date-to` query
-    // params but historically ignores them and returns sessions stretching
-    // back to January 2014. See Hack23/euparliamentmonitor 2026-04-24
-    // propositions audit, Defect #5 (`get_plenary_sessions returns historical
-    // sessions despite dateFrom`). Until the upstream is fixed, we apply a
-    // best-effort post-filter on the returned `date` field so callers get
-    // sessions that actually fall in their requested window.
-    //
-    // Pagination semantics: we preserve the upstream `total` and `hasMore`
-    // (which describe the unfiltered page returned by the EP API) and
-    // surface the post-filter outcome via separate `filteredTotal` /
-    // `filteredHasMore` fields so consumers can still drive cursor-style
-    // pagination correctly even when later pages contain in-range
-    // sessions that the current page filtered out.
     if (params.dateFrom !== undefined || params.dateTo !== undefined) {
       const minDate = params.dateFrom;
       const maxDate = params.dateTo;
@@ -718,7 +661,7 @@ export const getPlenarySessionsToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-11T17:10:37.472Z
+                at 2026-05-14T09:28:39.698Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

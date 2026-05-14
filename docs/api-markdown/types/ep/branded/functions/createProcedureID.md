@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **createProcedureID**(`value`): [`ProcedureID`](../type-aliases/ProcedureID.md)
 
-Defined in: [types/ep/branded.ts:143](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L143)
+Defined in: [types/ep/branded.ts:137](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L137)
 
 Factory: validates and creates a ProcedureID.
 

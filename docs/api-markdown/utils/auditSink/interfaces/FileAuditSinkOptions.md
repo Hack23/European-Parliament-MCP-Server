@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: FileAuditSinkOptions
 
-Defined in: [utils/auditSink.ts:306](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L306)
+Defined in: [utils/auditSink.ts:270](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L270)
 
 Constructor options for [FileAuditSink](../classes/FileAuditSink.md).
 
@@ -16,7 +16,7 @@ Constructor options for [FileAuditSink](../classes/FileAuditSink.md).
 
 > **filePath**: `string`
 
-Defined in: [utils/auditSink.ts:308](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L308)
+Defined in: [utils/auditSink.ts:272](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L272)
 
 Absolute path to the NDJSON log file
 
@@ -26,6 +26,6 @@ Absolute path to the NDJSON log file
 
 > `optional` **maxSizeBytes?**: `number`
 
-Defined in: [utils/auditSink.ts:310](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L310)
+Defined in: [utils/auditSink.ts:274](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L274)
 
 Maximum file size in bytes before log rotation (default: 10 MiB)

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getProcedureEventsToolMetadata**: `object`
 
-Defined in: [tools/getProcedureEvents.ts:91](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProcedureEvents.ts#L91)
+Defined in: [tools/getProcedureEvents.ts:90](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProcedureEvents.ts#L90)
 
 Tool metadata for get_procedure_events
 

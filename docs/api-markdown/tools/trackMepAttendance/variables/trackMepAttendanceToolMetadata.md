@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **trackMepAttendanceToolMetadata**: `object`
 
-Defined in: [tools/trackMepAttendance.ts:424](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackMepAttendance.ts#L424)
+Defined in: [tools/trackMepAttendance.ts:422](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackMepAttendance.ts#L422)
 
 Tool metadata for MCP listing
 

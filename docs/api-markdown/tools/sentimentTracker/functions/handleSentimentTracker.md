@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,12 @@
 
 > **handleSentimentTracker**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/sentimentTracker.ts:329](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L329)
+Defined in: [tools/sentimentTracker.ts:357](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L357)
+
+MCP `CallTool` handler entry point for `sentiment_tracker`.
+
+Validates the raw input arguments against [SentimentTrackerSchema](../variables/SentimentTrackerSchema.md)
+and delegates execution to [sentimentTracker](sentimentTracker.md).
 
 ## Parameters
 
@@ -16,6 +21,10 @@ Defined in: [tools/sentimentTracker.ts:329](https://github.com/Hack23/European-P
 
 `unknown`
 
+Raw, untrusted MCP `CallTool` arguments
+
 ## Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+
+The same [ToolResult](../../shared/types/interfaces/ToolResult.md) produced by [sentimentTracker](sentimentTracker.md)

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **SittingID** = [`Brand`](../../../branded/type-aliases/Brand.md)\<`string`, `"SittingID"`\>
 
-Defined in: [types/ep/branded.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L87)
+Defined in: [types/ep/branded.ts:85](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L85)
 
 Meeting/Sitting ID – identifies a plenary sitting.
 

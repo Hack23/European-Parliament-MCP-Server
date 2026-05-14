@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **createDefaultContainer**(): [`DIContainer`](../classes/DIContainer.md)
 
-Defined in: [di/container.ts:167](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/di/container.ts#L167)
+Defined in: [di/container.ts:163](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/di/container.ts#L163)
 
 Create a pre-configured DI container with the standard MCP server services
 registered as singletons.

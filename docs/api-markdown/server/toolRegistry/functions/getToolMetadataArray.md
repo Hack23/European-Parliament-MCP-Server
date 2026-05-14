@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **getToolMetadataArray**(): [`ToolMetadata`](../../types/interfaces/ToolMetadata.md)[]
 
-Defined in: [server/toolRegistry.ts:127](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/toolRegistry.ts#L127)
+Defined in: [server/toolRegistry.ts:112](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/toolRegistry.ts#L112)
 
 Returns the full ordered list of tool metadata for the MCP `ListTools` response.
 Each entry includes the tool's `category` in addition to the standard MCP fields.

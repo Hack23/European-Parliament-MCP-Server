@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **isSessionID**(`value`): `value is SessionID`
 
-Defined in: [types/branded.ts:136](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L136)
+Defined in: [types/branded.ts:133](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L133)
 
 Type guard to check if a string is a valid Session ID
 

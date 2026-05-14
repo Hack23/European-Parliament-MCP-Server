@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: AuditSink
 
-Defined in: [utils/auditSink.ts:98](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L98)
+Defined in: [utils/auditSink.ts:86](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L86)
 
 Pluggable audit sink interface.
 
@@ -28,7 +28,7 @@ class MyCustomSink implements AuditSink {
 
 > **write**(`entry`): `void` \| [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
-Defined in: [utils/auditSink.ts:100](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L100)
+Defined in: [utils/auditSink.ts:88](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L88)
 
 Write a single audit entry to the sink
 
@@ -48,7 +48,7 @@ Write a single audit entry to the sink
 
 > `optional` **clear**(`authorization?`): `void`
 
-Defined in: [utils/auditSink.ts:112](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L112)
+Defined in: [utils/auditSink.ts:100](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L100)
 
 Clear all entries.
 Implemented by in-memory sinks; write-only sinks omit this.
@@ -71,7 +71,7 @@ the responsibility of the calling context (typically AuditLogger).
 
 > `optional` **query**(`filter`): [`AuditLogEntry`](AuditLogEntry.md)[]
 
-Defined in: [utils/auditSink.ts:105](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L105)
+Defined in: [utils/auditSink.ts:93](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L93)
 
 Query entries matching a filter.
 Implemented by in-memory sinks; write-only sinks omit this.

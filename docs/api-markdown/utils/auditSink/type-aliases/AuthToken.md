@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **AuthToken** = `string`
 
-Defined in: [utils/auditSink.ts:78](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L78)
+Defined in: [utils/auditSink.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L70)
 
 Authorization token for privileged audit operations such as
 `getLogs()` and `eraseByUser()`.

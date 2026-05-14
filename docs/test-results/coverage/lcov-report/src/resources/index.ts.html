@@ -581,21 +581,7 @@
 <a name='L516'></a><a href='#L516'>516</a>
 <a name='L517'></a><a href='#L517'>517</a>
 <a name='L518'></a><a href='#L518'>518</a>
-<a name='L519'></a><a href='#L519'>519</a>
-<a name='L520'></a><a href='#L520'>520</a>
-<a name='L521'></a><a href='#L521'>521</a>
-<a name='L522'></a><a href='#L522'>522</a>
-<a name='L523'></a><a href='#L523'>523</a>
-<a name='L524'></a><a href='#L524'>524</a>
-<a name='L525'></a><a href='#L525'>525</a>
-<a name='L526'></a><a href='#L526'>526</a>
-<a name='L527'></a><a href='#L527'>527</a>
-<a name='L528'></a><a href='#L528'>528</a>
-<a name='L529'></a><a href='#L529'>529</a>
-<a name='L530'></a><a href='#L530'>530</a>
-<a name='L531'></a><a href='#L531'>531</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L519'></a><a href='#L519'>519</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -699,8 +685,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -750,8 +734,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-yes">4x</span>
@@ -819,7 +801,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">27x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -847,8 +828,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -950,7 +929,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -1034,8 +1012,6 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1125,18 +1101,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * MCP Resources for European Parliament Data Access
- * 
+ *
  * Resource templates and handlers for direct EP data access via MCP resources.
  * Resources provide a standardized way to read EP data using URI patterns.
- * 
+ *
  * **Intelligence Perspective:** Resources enable direct data access for intelligence
  * pipelines—bypassing tool call overhead for known-entity lookups and bulk retrieval.
- * 
+ *
  * **Business Perspective:** Resource URIs provide stable, addressable data endpoints
  * that enterprise integrations can cache, bookmark, and reference programmatically.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
- * 
+ *
  * @see https://spec.modelcontextprotocol.io/specification/server/resources/
  */
 &nbsp;
@@ -1169,8 +1145,6 @@ export interface ResourceReadResult {
   contents: ResourceContent[];
   [key: string]: unknown;
 }
-&nbsp;
-// ─── Resource Templates ──────────────────────────────────────
 &nbsp;
 const mepResourceTemplate: ResourceTemplate = {
   uriTemplate: 'ep://meps/{mepId}',
@@ -1235,8 +1209,6 @@ const documentResourceTemplate: ResourceTemplate = {
   mimeType: 'application/json'
 };
 &nbsp;
-// ─── URI Validation ──────────────────────────────────────────
-&nbsp;
 const MepIdSchema = z.string().min(1).max(100);
 /** Generic resource ID validator (reused for procedures, plenary sessions, documents) */
 const ResourceIdSchema = z.string().min(1).max(200);
@@ -1281,8 +1253,6 @@ function matchOtherUri(segments: string[]): { template: string; params: Record&l
   if (resource === 'political-groups' &amp;&amp; segments.length === 1) {
     return { template: 'political_groups', params: {} };
   }
-  // Extended URI patterns — all listed in getResourceTemplateArray and
-  // discoverable via MCP ListResourceTemplates
   if (resource === 'procedures') {
     return matchProcedureUri(segments);
   }
@@ -1349,12 +1319,11 @@ function matchDocumentUri(segments: string[]): { template: string; params: Recor
  * Parse a resource URI and extract template parameters
  */
 function parseResourceUri(uri: string): { template: string; params: Record&lt;string, string&gt; } {
-  // Validate URI format
   if (!uri.startsWith('ep://')) {
     throw new Error(`Invalid resource URI scheme: ${uri}. Must start with "ep://"`);
   }
 &nbsp;
-  const path = uri.slice(5); // Remove 'ep://'
+  const path = uri.slice(5);
   const segments = path.split('/');
 &nbsp;
   if (segments.length === 0 || segments[0] === '') {
@@ -1369,8 +1338,6 @@ function parseResourceUri(uri: string): { template: string; params: Record&lt;st
 &nbsp;
   throw new Error(`Unknown resource URI: ${uri}`);
 }
-&nbsp;
-// ─── Resource Handlers ───────────────────────────────────────
 &nbsp;
 /**
  * Handle MEP detail resource request
@@ -1481,7 +1448,6 @@ async function handleVotingRecord(sessionId: string): Promise&lt;ResourceContent
 async function handlePoliticalGroups(): Promise&lt;ResourceContent&gt; {
   const data = await epClient.getMEPs({ limit: 100 });
 &nbsp;
-  // Extract unique political groups from MEP data
   const groups = new Map&lt;string, number&gt;();
   <span class="missing-if-branch" title="else path not taken" >E</span>if (Array.isArray(data.data)) {
     for (const mep of data.data) {
@@ -1574,8 +1540,6 @@ async function handleDocumentDetail(documentId: string): Promise&lt;ResourceCont
   };
 }
 &nbsp;
-// ─── Public API ──────────────────────────────────────────────
-&nbsp;
 /**
  * Get all resource template metadata for MCP listing
  */
@@ -1606,7 +1570,7 @@ function requireParam(params: Record&lt;string, string&gt;, key: string, uriPatt
 &nbsp;
 /**
  * Handle ReadResource request
- * 
+ *
  * @param uri - Resource URI (e.g., "ep://meps/12345")
  * @returns Resource content
  * @throws Error if URI is invalid or resource not found
@@ -1660,7 +1624,7 @@ export { parseResourceUri };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-11T17:10:37.572Z
+                at 2026-05-14T09:28:39.799Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

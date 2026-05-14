@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,11 +8,22 @@
 
 > **comparativeIntelligence**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/comparativeIntelligence.ts:776](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L776)
+Defined in: [tools/comparativeIntelligence.ts:798](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L798)
+
+Build a comparative-intelligence profile across 2-10 MEPs.
+
+Implementation of the MCP `comparative_intelligence` tool. Fetches each
+MEP's profile in parallel, builds per-dimension scores, computes
+rankings and a cosine-similarity correlation matrix, detects outliers
+(z-score ≥ 1.5) and groups MEPs into political-group + performance-tier
+clusters.
 
 ## Parameters
 
 ### params
+
+Validated tool parameters
+  (see [ComparativeIntelligenceSchema](../variables/ComparativeIntelligenceSchema.md))
 
 #### dimensions
 
@@ -25,3 +36,6 @@ Defined in: [tools/comparativeIntelligence.ts:776](https://github.com/Hack23/Eur
 ## Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+
+A [ToolResult](../../shared/types/interfaces/ToolResult.md) containing the comparative analysis or a
+  structured error response on failure

@@ -416,12 +416,7 @@
 <a name='L351'></a><a href='#L351'>351</a>
 <a name='L352'></a><a href='#L352'>352</a>
 <a name='L353'></a><a href='#L353'>353</a>
-<a name='L354'></a><a href='#L354'>354</a>
-<a name='L355'></a><a href='#L355'>355</a>
-<a name='L356'></a><a href='#L356'>356</a>
-<a name='L357'></a><a href='#L357'>357</a>
-<a name='L358'></a><a href='#L358'>358</a>
-<a name='L359'></a><a href='#L359'>359</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L354'></a><a href='#L354'>354</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -564,9 +559,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">620x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">620x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
@@ -601,10 +593,8 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">264x</span>
+<span class="cline-any cline-yes">263x</span>
 <span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">277x</span>
 <span class="cline-any cline-yes">19x</span>
@@ -781,24 +771,24 @@
 <span class="cline-any cline-yes">32x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * Performance Monitoring Utilities
- * 
+ *
  * **Intelligence Perspective:** Performance metrics enable operational intelligence
  * on system health—critical for maintaining reliable intelligence product delivery.
- * 
+ *
  * **Business Perspective:** P95 latency targets (&lt;200ms) directly impact customer
  * satisfaction and SLA compliance for premium API tier customers.
- * 
+ *
  * **Marketing Perspective:** Sub-200ms response times are a key performance claim
  * for developer marketing and competitive positioning against alternatives.
- * 
+ *
  * ISMS Policy: PE-001 (Performance Standards), MO-001 (Monitoring)
- * 
+ *
  * Provides performance monitoring and metrics collection for:
  * - Operation duration tracking
  * - Percentile calculations (p50, p95, p99)
  * - Performance baseline validation
  * - Alerting on degradation
- * 
+ *
  * @see https://github.com/Hack23/ISMS-PUBLIC/blob/main/Secure_Development_Policy.md
  */
 &nbsp;
@@ -849,18 +839,18 @@ export const DEFAULT_PERFORMANCE_THRESHOLDS: PerformanceThresholds = {
 &nbsp;
 /**
  * Performance monitor for tracking operation metrics
- * 
+ *
  * Tracks duration of operations and provides statistical analysis.
  * Useful for identifying performance regressions and bottlenecks.
- * 
+ *
  * @example
  * ```typescript
  * const monitor = new PerformanceMonitor();
- * 
+ *
  * // Record operation durations
  * monitor.recordDuration('api_call', 150);
  * monitor.recordDuration('api_call', 200);
- * 
+ *
  * // Get statistics
  * const stats = monitor.getStats('api_call');
  * console.log(`p95: ${stats.p95}ms`);
@@ -869,7 +859,7 @@ export const DEFAULT_PERFORMANCE_THRESHOLDS: PerformanceThresholds = {
 export class PerformanceMonitor {
   private readonly metrics = new Map&lt;string, number[]&gt;();
   private readonly maxSamples: number;
-  
+&nbsp;
   /**
    * Creates a new performance monitor.
    *
@@ -891,7 +881,7 @@ export class PerformanceMonitor {
     }
     this.maxSamples = maxSamples;
   }
-  
+&nbsp;
   /**
    * Records a duration sample for the named operation.
    *
@@ -914,23 +904,20 @@ export class PerformanceMonitor {
    */
   recordDuration(operation: string, durationMs: number): void {
     let durations = this.metrics.get(operation);
-    
+&nbsp;
     if (!durations) {
       durations = [];
       this.metrics.set(operation, durations);
     }
-    
+&nbsp;
     durations.push(durationMs);
-    
-    // Limit number of samples to prevent unbounded memory growth
-    // Trim the oldest entries in-place using splice instead of repeatedly calling shift()
-    // to keep the most recent samples while avoiding extra array allocations
+&nbsp;
     if (durations.length &gt; this.maxSamples) {
       const overflow = durations.length - this.maxSamples;
       durations.splice(0, overflow);
     }
   }
-  
+&nbsp;
   /**
    * Returns aggregated performance statistics for a named operation.
    *
@@ -954,24 +941,22 @@ export class PerformanceMonitor {
    */
   getStats(operation: string): PerformanceStats | null {
     const durations = this.metrics.get(operation);
-    
+&nbsp;
     if (!durations || durations.length === 0) {
       return null;
     }
-    
-    // Sort durations for percentile calculation
+&nbsp;
     const sorted = [...durations].sort((a, b) =&gt; a - b);
     const count = sorted.length;
-    
-    // Calculate statistics
+&nbsp;
     const sum = sorted.reduce((acc, val) =&gt; acc + val, 0);
     const min = sorted[0];
     const max = sorted[count - 1];
-    
+&nbsp;
     <span class="missing-if-branch" title="if path not taken" >I</span>if (min === undefined || max === undefined) {
 <span class="cstat-no" title="statement not covered" >      return null;</span>
     }
-    
+&nbsp;
     return {
       p50: this.percentile(sorted, 0.5),
       p95: this.percentile(sorted, 0.95),
@@ -982,43 +967,43 @@ export class PerformanceMonitor {
       count
     };
   }
-  
+&nbsp;
   /**
    * Calculate percentile from sorted array
-   * 
+   *
    * Uses linear interpolation for more accurate percentile calculation
-   * 
+   *
    * @param sorted - Sorted array of numbers
    * @param p - Percentile (0.0 to 1.0)
    * @returns Value at the specified percentile
-   * 
+   *
    * @internal
    */
   private percentile(sorted: number[], p: number): number {
     <span class="missing-if-branch" title="if path not taken" >I</span>if (sorted.length === 0) <span class="cstat-no" title="statement not covered" >return 0;</span>
-    
+&nbsp;
     const first = sorted[0];
     if (sorted.length === 1 &amp;&amp; first !== undefined) return first;
-    
+&nbsp;
     const index = (sorted.length - 1) * p;
     const lower = Math.floor(index);
     const upper = Math.ceil(index);
     const weight = index % 1;
-    
+&nbsp;
     if (lower === upper) {
       return sorted[lower] ?? <span class="branch-1 cbranch-no" title="branch not covered" >0;</span>
     }
-    
+&nbsp;
     const lowerValue = sorted[lower];
     const upperValue = sorted[upper];
-    
+&nbsp;
     <span class="missing-if-branch" title="if path not taken" >I</span>if (lowerValue === undefined || upperValue === undefined) {
 <span class="cstat-no" title="statement not covered" >      return 0;</span>
     }
-    
+&nbsp;
     return lowerValue * (1 - weight) + upperValue * weight;
   }
-  
+&nbsp;
   /**
    * Returns all operation names currently being tracked.
    *
@@ -1038,7 +1023,7 @@ export class PerformanceMonitor {
   getOperations(): string[] {
     return Array.from(this.metrics.keys());
   }
-  
+&nbsp;
   /**
    * Clears all recorded duration samples for every tracked operation.
    *
@@ -1058,7 +1043,7 @@ export class PerformanceMonitor {
   clear(): void {
     this.metrics.clear();
   }
-  
+&nbsp;
   /**
    * Clears recorded duration samples for a single operation.
    *
@@ -1078,10 +1063,10 @@ export class PerformanceMonitor {
 &nbsp;
 /**
  * Execute an async function and track its performance
- * 
+ *
  * Automatically records the duration of the operation in the
  * provided performance monitor.
- * 
+ *
  * @template T - Return type of the function
  * @param monitor - Performance monitor to record the duration in
  * @param operation - Operation name for tracking (e.g., `'fetch_meps'`)
@@ -1110,7 +1095,7 @@ export async function withPerformanceTracking&lt;T&gt;(
   fn: () =&gt; Promise&lt;T&gt;
 ): Promise&lt;T&gt; {
   const start = performance.now();
-  
+&nbsp;
   try {
     return await fn();
   } finally {
@@ -1121,17 +1106,17 @@ export async function withPerformanceTracking&lt;T&gt;(
 &nbsp;
 /**
  * Global performance monitor instance
- * 
+ *
  * Shared instance for application-wide performance tracking.
  * Use this for convenience when you don't need isolated monitoring.
- * 
+ *
  * @example
  * ```typescript
  * import { performanceMonitor } from './utils/performance.js';
- * 
+ *
  * // Record duration
  * performanceMonitor.recordDuration('api_call', 150);
- * 
+ *
  * // Get statistics
  * const stats = performanceMonitor.getStats('api_call');
  * ```
@@ -1144,7 +1129,7 @@ export const performanceMonitor = new PerformanceMonitor();
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-11T17:10:37.572Z
+                at 2026-05-14T09:28:39.799Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

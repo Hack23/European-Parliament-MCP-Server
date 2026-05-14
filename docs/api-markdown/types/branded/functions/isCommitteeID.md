@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **isCommitteeID**(`value`): `value is CommitteeID`
 
-Defined in: [types/branded.ts:154](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L154)
+Defined in: [types/branded.ts:150](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L150)
 
 Type guard to check if a string is a valid Committee ID
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: EPSharedResources
 
-Defined in: [clients/ep/baseClient.ts:206](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L206)
+Defined in: [clients/ep/baseClient.ts:192](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L192)
 
 **`Internal`**
 
@@ -19,7 +19,7 @@ so they all operate on the same cache and rate-limiter bucket.
 
 > **baseURL**: `string`
 
-Defined in: [clients/ep/baseClient.ts:209](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L209)
+Defined in: [clients/ep/baseClient.ts:195](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L195)
 
 ***
 
@@ -27,7 +27,7 @@ Defined in: [clients/ep/baseClient.ts:209](https://github.com/Hack23/European-Pa
 
 > **cache**: `LRUCache`\<`string`, [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>
 
-Defined in: [clients/ep/baseClient.ts:207](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L207)
+Defined in: [clients/ep/baseClient.ts:193](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L193)
 
 ***
 
@@ -35,7 +35,7 @@ Defined in: [clients/ep/baseClient.ts:207](https://github.com/Hack23/European-Pa
 
 > **cacheCounters**: `object`
 
-Defined in: [clients/ep/baseClient.ts:215](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L215)
+Defined in: [clients/ep/baseClient.ts:201](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L201)
 
 Shared cache hit/miss counters so all sub-clients contribute to aggregate stats.
 
@@ -53,7 +53,7 @@ Shared cache hit/miss counters so all sub-clients contribute to aggregate stats.
 
 > **enableRetry**: `boolean`
 
-Defined in: [clients/ep/baseClient.ts:211](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L211)
+Defined in: [clients/ep/baseClient.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L197)
 
 ***
 
@@ -61,7 +61,7 @@ Defined in: [clients/ep/baseClient.ts:211](https://github.com/Hack23/European-Pa
 
 > **maxResponseBytes**: `number`
 
-Defined in: [clients/ep/baseClient.ts:213](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L213)
+Defined in: [clients/ep/baseClient.ts:199](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L199)
 
 ***
 
@@ -69,7 +69,7 @@ Defined in: [clients/ep/baseClient.ts:213](https://github.com/Hack23/European-Pa
 
 > **maxRetries**: `number`
 
-Defined in: [clients/ep/baseClient.ts:212](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L212)
+Defined in: [clients/ep/baseClient.ts:198](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L198)
 
 ***
 
@@ -77,7 +77,7 @@ Defined in: [clients/ep/baseClient.ts:212](https://github.com/Hack23/European-Pa
 
 > **rateLimiter**: [`RateLimiter`](../../../../utils/rateLimiter/classes/RateLimiter.md)
 
-Defined in: [clients/ep/baseClient.ts:208](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L208)
+Defined in: [clients/ep/baseClient.ts:194](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L194)
 
 ***
 
@@ -85,4 +85,4 @@ Defined in: [clients/ep/baseClient.ts:208](https://github.com/Hack23/European-Pa
 
 > **timeoutMs**: `number`
 
-Defined in: [clients/ep/baseClient.ts:210](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L210)
+Defined in: [clients/ep/baseClient.ts:196](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L196)

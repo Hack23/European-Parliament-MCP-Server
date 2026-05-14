@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getMEPDeclarationsToolMetadata**: `object`
 
-Defined in: [tools/getMEPDeclarations.ts:108](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPDeclarations.ts#L108)
+Defined in: [tools/getMEPDeclarations.ts:107](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPDeclarations.ts#L107)
 
 Tool metadata for get_mep_declarations
 
