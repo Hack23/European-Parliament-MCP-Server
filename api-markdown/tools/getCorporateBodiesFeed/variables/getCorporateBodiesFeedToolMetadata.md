@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getCorporateBodiesFeedToolMetadata**: `object`
 
-Defined in: [tools/getCorporateBodiesFeed.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCorporateBodiesFeed.ts#L67)
+Defined in: [tools/getCorporateBodiesFeed.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCorporateBodiesFeed.ts#L66)
 
 Tool metadata for get_corporate_bodies_feed
 

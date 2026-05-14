@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **SERVER\_VERSION**: `string` = `pkg.version`
 
-Defined in: [config.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/config.ts#L35)
+Defined in: [config.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/config.ts#L34)
 
 Server version loaded from package.json at startup

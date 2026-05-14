@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: DerivedIntelligenceMetrics
 
-Defined in: [data/generatedStats.ts:219](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L219)
+Defined in: [data/generatedStats.ts:201](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L201)
 
 Derived OSINT intelligence metrics computed from raw EP activity data.
 
@@ -16,7 +16,7 @@ Derived OSINT intelligence metrics computed from raw EP activity data.
 
 > **committeeToPlenaryRatio**: `number`
 
-Defined in: [data/generatedStats.ts:292](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L292)
+Defined in: [data/generatedStats.ts:267](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L267)
 
 Committee meetings per plenary session (preparatory work depth)
 
@@ -26,7 +26,7 @@ Committee meetings per plenary session (preparatory work depth)
 
 > **debateIntensityPerSession**: `number`
 
-Defined in: [data/generatedStats.ts:240](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L240)
+Defined in: [data/generatedStats.ts:220](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L220)
 
 Speeches per plenary session (debate intensity)
 
@@ -36,7 +36,7 @@ Speeches per plenary session (debate intensity)
 
 > **declarationCoverageRatio**: `number`
 
-Defined in: [data/generatedStats.ts:276](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L276)
+Defined in: [data/generatedStats.ts:253](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L253)
 
 Declarations per MEP — transparency/accountability indicator
 
@@ -46,7 +46,7 @@ Declarations per MEP — transparency/accountability indicator
 
 > **documentBurdenPerAct**: `number`
 
-Defined in: [data/generatedStats.ts:232](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L232)
+Defined in: [data/generatedStats.ts:213](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L213)
 
 Documents produced per legislative act adopted
 
@@ -56,7 +56,7 @@ Documents produced per legislative act adopted
 
 > **dominanceRatio**: `number`
 
-Defined in: [data/generatedStats.ts:252](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L252)
+Defined in: [data/generatedStats.ts:231](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L231)
 
 Largest group seat share / second-largest group seat share
 
@@ -66,7 +66,7 @@ Largest group seat share / second-largest group seat share
 
 > **effectiveOppositionParties**: `number`
 
-Defined in: [data/generatedStats.ts:262](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L262)
+Defined in: [data/generatedStats.ts:241](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L241)
 
 Effective opposition parties: ENPP minus 1
 
@@ -76,7 +76,7 @@ Effective opposition parties: ENPP minus 1
 
 > **fragmentationVelocity**: `number` \| `null`
 
-Defined in: [data/generatedStats.ts:282](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L282)
+Defined in: [data/generatedStats.ts:258](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L258)
 
 YoY change in ENPP (fragmentation velocity)
 
@@ -86,7 +86,7 @@ YoY change in ENPP (fragmentation velocity)
 
 > **grandCoalitionSurplusDeficit**: `number`
 
-Defined in: [data/generatedStats.ts:258](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L258)
+Defined in: [data/generatedStats.ts:237](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L237)
 
 Top-2 groups combined seat share minus 50 (positive = surplus, negative = deficit)
 
@@ -96,7 +96,7 @@ Top-2 groups combined seat share minus 50 (positive = surplus, negative = defici
 
 > **herfindahlHirschmanIndex**: `number`
 
-Defined in: [data/generatedStats.ts:250](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L250)
+Defined in: [data/generatedStats.ts:229](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L229)
 
 Herfindahl-Hirschman Index — standard market concentration metric
 
@@ -106,7 +106,7 @@ Herfindahl-Hirschman Index — standard market concentration metric
 
 > **institutionalMemoryRisk**: `"HIGH"` \| `"MEDIUM"` \| `"LOW"`
 
-Defined in: [data/generatedStats.ts:274](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L274)
+Defined in: [data/generatedStats.ts:251](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L251)
 
 Institutional memory risk classification
 
@@ -116,7 +116,7 @@ Institutional memory risk classification
 
 > **legislativeOutputChange**: `number` \| `null`
 
-Defined in: [data/generatedStats.ts:280](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L280)
+Defined in: [data/generatedStats.ts:256](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L256)
 
 YoY percentage change in legislative acts adopted
 
@@ -126,7 +126,7 @@ YoY percentage change in legislative acts adopted
 
 > **legislativeOutputPerMEP**: `number`
 
-Defined in: [data/generatedStats.ts:224](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L224)
+Defined in: [data/generatedStats.ts:205](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L205)
 
 Legislative acts adopted per MEP (per-capita productivity)
 
@@ -136,7 +136,7 @@ Legislative acts adopted per MEP (per-capita productivity)
 
 > **legislativeOutputPerSession**: `number`
 
-Defined in: [data/generatedStats.ts:222](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L222)
+Defined in: [data/generatedStats.ts:203](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L203)
 
 Legislative acts adopted per plenary session
 
@@ -146,7 +146,7 @@ Legislative acts adopted per plenary session
 
 > **majorityThresholdGap**: `number`
 
-Defined in: [data/generatedStats.ts:254](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L254)
+Defined in: [data/generatedStats.ts:233](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L233)
 
 Percentage points the largest group is from 50% majority
 
@@ -156,7 +156,7 @@ Percentage points the largest group is from 50% majority
 
 > **mepOversightIntensity**: `number`
 
-Defined in: [data/generatedStats.ts:236](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L236)
+Defined in: [data/generatedStats.ts:216](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L216)
 
 Parliamentary questions per MEP (oversight intensity)
 
@@ -166,7 +166,7 @@ Parliamentary questions per MEP (oversight intensity)
 
 > **mepSpeechRate**: `number`
 
-Defined in: [data/generatedStats.ts:238](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L238)
+Defined in: [data/generatedStats.ts:218](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L218)
 
 Speeches per MEP (debate participation rate)
 
@@ -176,7 +176,7 @@ Speeches per MEP (debate participation rate)
 
 > **mepStabilityIndex**: `number`
 
-Defined in: [data/generatedStats.ts:270](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L270)
+Defined in: [data/generatedStats.ts:247](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L247)
 
 Stability index: 1 - (turnover / mepCount); below 0.5 = election year
 
@@ -186,7 +186,7 @@ Stability index: 1 - (turnover / mepCount); below 0.5 = election year
 
 > **minimumWinningCoalitionSize**: `number`
 
-Defined in: [data/generatedStats.ts:256](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L256)
+Defined in: [data/generatedStats.ts:235](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L235)
 
 Fewest groups needed to form a majority (cumulative > 50%)
 
@@ -196,7 +196,7 @@ Fewest groups needed to form a majority (cumulative > 50%)
 
 > **nonAttachedShare**: `number`
 
-Defined in: [data/generatedStats.ts:260](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L260)
+Defined in: [data/generatedStats.ts:239](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L239)
 
 Non-attached (NI) members seat share (%) — parliamentary marginalization
 
@@ -206,7 +206,7 @@ Non-attached (NI) members seat share (%) — parliamentary marginalization
 
 > **oversightPerSession**: `number`
 
-Defined in: [data/generatedStats.ts:242](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L242)
+Defined in: [data/generatedStats.ts:222](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L222)
 
 Parliamentary questions per plenary session (oversight tempo)
 
@@ -216,7 +216,7 @@ Parliamentary questions per plenary session (oversight tempo)
 
 > **oversightToLegislationBalance**: `number`
 
-Defined in: [data/generatedStats.ts:288](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L288)
+Defined in: [data/generatedStats.ts:263](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L263)
 
 Parliamentary questions per legislative act (oversight vs. lawmaking)
 
@@ -226,7 +226,7 @@ Parliamentary questions per legislative act (oversight vs. lawmaking)
 
 > **politicalBlocAnalysis**: [`PoliticalBlocAnalysis`](PoliticalBlocAnalysis.md)
 
-Defined in: [data/generatedStats.ts:266](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L266)
+Defined in: [data/generatedStats.ts:244](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L244)
 
 Political bloc analysis with left/centre/right seat shares
 
@@ -236,7 +236,7 @@ Political bloc analysis with left/centre/right seat shares
 
 > **procedureCompletionRate**: `number`
 
-Defined in: [data/generatedStats.ts:228](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L228)
+Defined in: [data/generatedStats.ts:209](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L209)
 
 Fraction of procedures resulting in adopted legislation (%)
 
@@ -246,7 +246,7 @@ Fraction of procedures resulting in adopted legislation (%)
 
 > **questionsChange**: `number` \| `null`
 
-Defined in: [data/generatedStats.ts:284](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L284)
+Defined in: [data/generatedStats.ts:260](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L260)
 
 YoY percentage change in parliamentary questions
 
@@ -256,7 +256,7 @@ YoY percentage change in parliamentary questions
 
 > **resolutionToLegislationRatio**: `number`
 
-Defined in: [data/generatedStats.ts:230](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L230)
+Defined in: [data/generatedStats.ts:211](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L211)
 
 Ratio of resolutions (non-binding) to legislative acts (binding)
 
@@ -266,7 +266,7 @@ Ratio of resolutions (non-binding) to legislative acts (binding)
 
 > **rollCallVoteYield**: `number`
 
-Defined in: [data/generatedStats.ts:226](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L226)
+Defined in: [data/generatedStats.ts:207](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L207)
 
 Fraction of roll-call votes producing legislation (%)
 
@@ -276,7 +276,7 @@ Fraction of roll-call votes producing legislation (%)
 
 > **speechToVoteRatio**: `number`
 
-Defined in: [data/generatedStats.ts:290](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L290)
+Defined in: [data/generatedStats.ts:265](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L265)
 
 Speeches per roll-call vote (debate intensity relative to decisions)
 
@@ -286,7 +286,7 @@ Speeches per roll-call vote (debate intensity relative to decisions)
 
 > **topThreeGroupsConcentration**: `number`
 
-Defined in: [data/generatedStats.ts:248](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L248)
+Defined in: [data/generatedStats.ts:227](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L227)
 
 Top-3 groups combined seat share (%) — minimum viable coalition
 
@@ -296,7 +296,7 @@ Top-3 groups combined seat share (%) — minimum viable coalition
 
 > **topTwoGroupsConcentration**: `number`
 
-Defined in: [data/generatedStats.ts:246](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L246)
+Defined in: [data/generatedStats.ts:225](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L225)
 
 Top-2 groups combined seat share (%) — grand coalition viability
 
@@ -306,6 +306,6 @@ Top-2 groups combined seat share (%) — grand coalition viability
 
 > **turnoverRate**: `number`
 
-Defined in: [data/generatedStats.ts:272](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L272)
+Defined in: [data/generatedStats.ts:249](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L249)
 
 Turnover rate as percentage of total MEPs

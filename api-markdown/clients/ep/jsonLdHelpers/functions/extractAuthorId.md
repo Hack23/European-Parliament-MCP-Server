@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **extractAuthorId**(`authorField`): `string`
 
-Defined in: [clients/ep/jsonLdHelpers.ts:193](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L193)
+Defined in: [clients/ep/jsonLdHelpers.ts:181](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L181)
 
 Extracts author ID from EP API author field.
 

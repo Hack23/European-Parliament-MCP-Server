@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **isDocumentID**(`value`): `value is DocumentID`
 
-Defined in: [types/branded.ts:172](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L172)
+Defined in: [types/branded.ts:167](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/branded.ts#L167)
 
 Type guard to check if a string is a valid Document ID
 

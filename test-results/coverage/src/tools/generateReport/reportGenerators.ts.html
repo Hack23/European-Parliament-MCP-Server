@@ -509,10 +509,7 @@
 <a name='L444'></a><a href='#L444'>444</a>
 <a name='L445'></a><a href='#L445'>445</a>
 <a name='L446'></a><a href='#L446'>446</a>
-<a name='L447'></a><a href='#L447'>447</a>
-<a name='L448'></a><a href='#L448'>448</a>
-<a name='L449'></a><a href='#L449'>449</a>
-<a name='L450'></a><a href='#L450'>450</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L447'></a><a href='#L447'>447</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -577,7 +574,6 @@
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -611,7 +607,6 @@
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -850,7 +845,6 @@
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
@@ -963,7 +957,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * Report generators for different report types
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 &nbsp;
@@ -995,7 +989,7 @@ import {
  * Cyclomatic complexity: 1
  */
 function extractMEPData(
-  params: z.infer&lt;typeof GenerateReportSchema&gt;, 
+  params: z.infer&lt;typeof GenerateReportSchema&gt;,
   mep: MEPDetails | null
 ): {
   mepName: string;
@@ -1027,7 +1021,6 @@ async function fetchMEPDetails(subjectId: string | undefined): Promise&lt;MEPDet
   try {
     return await epClient.getMEPDetails(subjectId);
   } catch (error: unknown) {
-    // 404 = invalid subjectId — throw non-retryable error immediately
     if (error instanceof APIError &amp;&amp; error.statusCode === 404) {
       throw new ToolError({
         toolName: 'generate_report',
@@ -1061,7 +1054,6 @@ async function fetchCommitteeInfo(subjectId: string | undefined): Promise&lt;Com
   try {
     return await epClient.getCommitteeInfo({ id: subjectId });
   } catch (error: unknown) {
-    // 404 = invalid subjectId — throw non-retryable error immediately
     if (error instanceof APIError &amp;&amp; error.statusCode === 404) {
       throw new ToolError({
         toolName: 'generate_report',
@@ -1255,7 +1247,7 @@ export async function generateMEPActivityReport(
     throwIfAllDataUnavailable('MEP_ACTIVITY', [mep, questionsSubmitted]);
   }
   const warnings = buildMEPWarnings(mep, questionsSubmitted, params.subjectId !== undefined);
-  
+&nbsp;
   return {
     reportType: 'MEP_ACTIVITY',
     subject: data.mepName,
@@ -1274,7 +1266,7 @@ export async function generateMEPActivityReport(
       totalVotes: mep?.votingStatistics?.totalVotes ?? 0,
       attendanceRate: mep?.votingStatistics?.attendanceRate ?? 0,
       questionsSubmitted: questionsSubmitted ?? <span class="branch-1 cbranch-no" title="branch not covered" >0,</span>
-      reportsAuthored: 0 // EP API does not provide per-MEP report authorship counts
+      reportsAuthored: 0
     },
     recommendations: [
       'Continue active participation in committee work',
@@ -1299,12 +1291,11 @@ export async function generateCommitteePerformanceReport(
   const membersLength = committee?.members.length ?? 0;
   const year = parseInt(dateFrom.substring(0, 4), 10);
 &nbsp;
-  // Parliament-wide counts (not filtered by committee)
   const documentsProduced = await fetchDocumentCountLowerBound({ year });
   const reportsProduced = await fetchAdoptedTextCount(year);
   throwIfAllDataUnavailable('COMMITTEE_PERFORMANCE', [committee, documentsProduced, reportsProduced]);
   const warnings = buildCommitteeWarnings(committee, documentsProduced, reportsProduced, params.subjectId !== undefined);
-  
+&nbsp;
   return {
     reportType: 'COMMITTEE_PERFORMANCE',
     subject: committeeName,
@@ -1320,10 +1311,10 @@ export async function generateCommitteePerformanceReport(
       createMemberParticipationSection(membersLength)
     ],
     statistics: {
-      meetingsHeld: 0, // EP API does not provide committee-specific meeting counts
+      meetingsHeld: 0,
       reportsProduced: reportsProduced ?? <span class="branch-1 cbranch-no" title="branch not covered" >0,</span>
-      opinionsIssued: 0, // EP API does not provide committee-specific opinion counts
-      averageAttendance: 0, // EP API does not provide attendance data
+      opinionsIssued: 0,
+      averageAttendance: 0,
       memberCount: membersLength
     },
     dataQualityWarnings: warnings
@@ -1345,7 +1336,7 @@ export async function generateVotingStatisticsReport(
   const adoptedCount = await fetchAdoptedTextCount(year);
   throwIfAllDataUnavailable('VOTING_STATISTICS', [sessionCount, adoptedCount]);
   const warnings = buildVotingWarnings(sessionCount, adoptedCount, dateFrom, dateTo);
-  
+&nbsp;
   return {
     reportType: 'VOTING_STATISTICS',
     subject: 'Parliament-wide Voting Analysis',
@@ -1363,7 +1354,7 @@ export async function generateVotingStatisticsReport(
     statistics: {
       totalSessions: sessionCount ?? 0,
       adopted: adoptedCount ?? <span class="branch-1 cbranch-no" title="branch not covered" >0,</span>
-      averageTurnout: 0 // EP API does not provide turnout data
+      averageTurnout: 0
     },
     dataQualityWarnings: warnings
   };
@@ -1387,7 +1378,7 @@ export async function generateLegislationProgressReport(
     ? Math.max(0, procedureCount - completedCount)
     : null;
   const warnings = buildLegislationWarnings(procedureCount, completedCount, ongoingCount);
-  
+&nbsp;
   return {
     reportType: 'LEGISLATION_PROGRESS',
     subject: 'Legislative Activity Overview',
@@ -1417,7 +1408,7 @@ export async function generateLegislationProgressReport(
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-11T17:10:37.472Z
+                at 2026-05-14T09:28:39.698Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: YearlyStats
 
-Defined in: [data/generatedStats.ts:296](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L296)
+Defined in: [data/generatedStats.ts:271](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L271)
 
 Aggregated annual statistics for a single calendar year of EP activity.
 
@@ -16,7 +16,7 @@ Aggregated annual statistics for a single calendar year of EP activity.
 
 > **adoptedTexts**: `number`
 
-Defined in: [data/generatedStats.ts:318](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L318)
+Defined in: [data/generatedStats.ts:293](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L293)
 
 Texts adopted (reports, opinions, etc.)
 
@@ -26,7 +26,7 @@ Texts adopted (reports, opinions, etc.)
 
 > **commentary**: `string`
 
-Defined in: [data/generatedStats.ts:334](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L334)
+Defined in: [data/generatedStats.ts:309](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L309)
 
 Notable events and key developments during the year
 
@@ -36,7 +36,7 @@ Notable events and key developments during the year
 
 > **committeeMeetings**: `number`
 
-Defined in: [data/generatedStats.ts:310](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L310)
+Defined in: [data/generatedStats.ts:285](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L285)
 
 Committee meetings held
 
@@ -46,7 +46,7 @@ Committee meetings held
 
 > **declarations**: `number`
 
-Defined in: [data/generatedStats.ts:328](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L328)
+Defined in: [data/generatedStats.ts:303](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L303)
 
 MEP financial/interest declarations (get_mep_declarations)
 
@@ -56,7 +56,7 @@ MEP financial/interest declarations (get_mep_declarations)
 
 > **derivedIntelligence**: [`DerivedIntelligenceMetrics`](DerivedIntelligenceMetrics.md)
 
-Defined in: [data/generatedStats.ts:336](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L336)
+Defined in: [data/generatedStats.ts:311](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L311)
 
 OSINT-derived intelligence metrics computed from raw activity data
 
@@ -66,7 +66,7 @@ OSINT-derived intelligence metrics computed from raw activity data
 
 > **documents**: `number`
 
-Defined in: [data/generatedStats.ts:324](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L324)
+Defined in: [data/generatedStats.ts:299](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L299)
 
 Total documents: plenary + committee + external (get_plenary_documents, get_committee_documents, get_external_documents)
 
@@ -76,7 +76,7 @@ Total documents: plenary + committee + external (get_plenary_documents, get_comm
 
 > **events**: `number`
 
-Defined in: [data/generatedStats.ts:322](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L322)
+Defined in: [data/generatedStats.ts:297](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L297)
 
 Parliamentary events (get_events)
 
@@ -86,7 +86,7 @@ Parliamentary events (get_events)
 
 > **legislativeActsAdopted**: `number`
 
-Defined in: [data/generatedStats.ts:306](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L306)
+Defined in: [data/generatedStats.ts:281](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L281)
 
 Legislative acts adopted
 
@@ -96,7 +96,7 @@ Legislative acts adopted
 
 > **mepCount**: `number`
 
-Defined in: [data/generatedStats.ts:302](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L302)
+Defined in: [data/generatedStats.ts:277](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L277)
 
 Total number of MEPs in office
 
@@ -106,7 +106,7 @@ Total number of MEPs in office
 
 > **mepTurnover**: `number`
 
-Defined in: [data/generatedStats.ts:326](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L326)
+Defined in: [data/generatedStats.ts:301](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L301)
 
 MEP turnover: incoming + outgoing (get_incoming_meps, get_outgoing_meps)
 
@@ -116,7 +116,7 @@ MEP turnover: incoming + outgoing (get_incoming_meps, get_outgoing_meps)
 
 > **monthlyActivity**: [`MonthlyActivity`](MonthlyActivity.md)[]
 
-Defined in: [data/generatedStats.ts:330](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L330)
+Defined in: [data/generatedStats.ts:305](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L305)
 
 Month-by-month activity breakdown (12 entries, Jan–Dec)
 
@@ -126,7 +126,7 @@ Month-by-month activity breakdown (12 entries, Jan–Dec)
 
 > **parliamentaryQuestions**: `number`
 
-Defined in: [data/generatedStats.ts:312](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L312)
+Defined in: [data/generatedStats.ts:287](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L287)
 
 Parliamentary questions tabled
 
@@ -136,7 +136,7 @@ Parliamentary questions tabled
 
 > **parliamentaryTerm**: `string`
 
-Defined in: [data/generatedStats.ts:300](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L300)
+Defined in: [data/generatedStats.ts:275](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L275)
 
 Parliamentary term identifier (e.g. 'EP6', 'EP9/EP10 transition')
 
@@ -146,7 +146,7 @@ Parliamentary term identifier (e.g. 'EP6', 'EP9/EP10 transition')
 
 > **plenarySessions**: `number`
 
-Defined in: [data/generatedStats.ts:304](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L304)
+Defined in: [data/generatedStats.ts:279](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L279)
 
 Number of plenary sessions held
 
@@ -156,7 +156,7 @@ Number of plenary sessions held
 
 > **politicalLandscape**: [`PoliticalLandscapeData`](PoliticalLandscapeData.md)
 
-Defined in: [data/generatedStats.ts:332](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L332)
+Defined in: [data/generatedStats.ts:307](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L307)
 
 Political landscape snapshot for the year
 
@@ -166,7 +166,7 @@ Political landscape snapshot for the year
 
 > **procedures**: `number`
 
-Defined in: [data/generatedStats.ts:320](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L320)
+Defined in: [data/generatedStats.ts:295](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L295)
 
 Legislative procedures tracked (get_procedures, get_procedure_events)
 
@@ -176,7 +176,7 @@ Legislative procedures tracked (get_procedures, get_procedure_events)
 
 > **resolutions**: `number`
 
-Defined in: [data/generatedStats.ts:314](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L314)
+Defined in: [data/generatedStats.ts:289](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L289)
 
 Resolutions adopted
 
@@ -186,7 +186,7 @@ Resolutions adopted
 
 > **rollCallVotes**: `number`
 
-Defined in: [data/generatedStats.ts:308](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L308)
+Defined in: [data/generatedStats.ts:283](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L283)
 
 Roll-call votes conducted
 
@@ -196,7 +196,7 @@ Roll-call votes conducted
 
 > **speeches**: `number`
 
-Defined in: [data/generatedStats.ts:316](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L316)
+Defined in: [data/generatedStats.ts:291](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L291)
 
 Speeches delivered in plenary
 
@@ -206,6 +206,6 @@ Speeches delivered in plenary
 
 > **year**: `number`
 
-Defined in: [data/generatedStats.ts:298](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L298)
+Defined in: [data/generatedStats.ts:273](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L273)
 
 Calendar year (e.g. 2004)

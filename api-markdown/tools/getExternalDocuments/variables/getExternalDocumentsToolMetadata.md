@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getExternalDocumentsToolMetadata**: `object`
 
-Defined in: [tools/getExternalDocuments.ts:103](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getExternalDocuments.ts#L103)
+Defined in: [tools/getExternalDocuments.ts:102](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getExternalDocuments.ts#L102)
 
 Tool metadata for get_external_documents
 

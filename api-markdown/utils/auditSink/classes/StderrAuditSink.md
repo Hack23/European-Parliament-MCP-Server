@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: StderrAuditSink
 
-Defined in: [utils/auditSink.ts:293](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L293)
+Defined in: [utils/auditSink.ts:261](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L261)
 
 Writes structured JSON audit lines to `stderr`.
 
@@ -36,7 +36,7 @@ MCP-compatible: `stdout` is reserved for the MCP protocol wire format.
 
 > **write**(`entry`): `void`
 
-Defined in: [utils/auditSink.ts:294](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L294)
+Defined in: [utils/auditSink.ts:262](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L262)
 
 Write a single audit entry to the sink
 

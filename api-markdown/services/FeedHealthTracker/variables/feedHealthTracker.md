@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **feedHealthTracker**: [`FeedHealthTracker`](../classes/FeedHealthTracker.md)
 
-Defined in: [services/FeedHealthTracker.ts:211](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L211)
+Defined in: [services/FeedHealthTracker.ts:201](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L201)
 
 Global feed health tracker instance used by tool dispatch and the health tool.

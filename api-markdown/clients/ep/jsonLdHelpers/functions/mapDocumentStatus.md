@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **mapDocumentStatus**(`rawStatus`): [`DocumentStatus`](../../../../types/ep/document/type-aliases/DocumentStatus.md)
 
-Defined in: [clients/ep/jsonLdHelpers.ts:247](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L247)
+Defined in: [clients/ep/jsonLdHelpers.ts:233](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L233)
 
 Maps a raw status string to a valid DocumentStatus.
 

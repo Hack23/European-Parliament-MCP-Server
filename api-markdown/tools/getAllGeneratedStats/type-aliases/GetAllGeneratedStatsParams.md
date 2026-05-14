@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,10 @@
 
 > **GetAllGeneratedStatsParams** = `object`
 
-Defined in: [tools/getAllGeneratedStats.ts:103](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L103)
+Defined in: [tools/getAllGeneratedStats.ts:112](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L112)
+
+Validated parameter type for the `get_all_generated_stats` tool,
+inferred from [GetAllGeneratedStatsSchema](../variables/GetAllGeneratedStatsSchema.md).
 
 ## Type Declaration
 

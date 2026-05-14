@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: RecentVoteActivity
 
-Defined in: [tools/getAllGeneratedStats.ts:214](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L214)
+Defined in: [tools/getAllGeneratedStats.ts:221](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L221)
 
 Recent DOCEO vote activity stats appended to the precomputed response.
 
@@ -16,7 +16,7 @@ Recent DOCEO vote activity stats appended to the precomputed response.
 
 > **adoptedCount**: `number`
 
-Defined in: [tools/getAllGeneratedStats.ts:216](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L216)
+Defined in: [tools/getAllGeneratedStats.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L223)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [tools/getAllGeneratedStats.ts:216](https://github.com/Hack23/Europe
 
 > **adoptionRate**: `number`
 
-Defined in: [tools/getAllGeneratedStats.ts:219](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L219)
+Defined in: [tools/getAllGeneratedStats.ts:226](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L226)
 
 Adoption rate as a percentage (0-100, one decimal place).
 
@@ -34,7 +34,7 @@ Adoption rate as a percentage (0-100, one decimal place).
 
 > **dataFreshness**: `"NEAR_REALTIME"`
 
-Defined in: [tools/getAllGeneratedStats.ts:224](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L224)
+Defined in: [tools/getAllGeneratedStats.ts:231](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L231)
 
 ***
 
@@ -42,7 +42,7 @@ Defined in: [tools/getAllGeneratedStats.ts:224](https://github.com/Hack23/Europe
 
 > **dataSource**: `"EP_DOCEO_XML"`
 
-Defined in: [tools/getAllGeneratedStats.ts:225](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L225)
+Defined in: [tools/getAllGeneratedStats.ts:232](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L232)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: [tools/getAllGeneratedStats.ts:225](https://github.com/Hack23/Europe
 
 > **datesWithData**: `string`[]
 
-Defined in: [tools/getAllGeneratedStats.ts:220](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L220)
+Defined in: [tools/getAllGeneratedStats.ts:227](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L227)
 
 ***
 
@@ -58,7 +58,7 @@ Defined in: [tools/getAllGeneratedStats.ts:220](https://github.com/Hack23/Europe
 
 > **datesWithoutData**: `string`[]
 
-Defined in: [tools/getAllGeneratedStats.ts:221](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L221)
+Defined in: [tools/getAllGeneratedStats.ts:228](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L228)
 
 ***
 
@@ -66,7 +66,7 @@ Defined in: [tools/getAllGeneratedStats.ts:221](https://github.com/Hack23/Europe
 
 > **groupVotingLeaders**: `object`[]
 
-Defined in: [tools/getAllGeneratedStats.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L223)
+Defined in: [tools/getAllGeneratedStats.ts:230](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L230)
 
 Top-3 political groups by total vote participation across recent plenary sittings.
 
@@ -84,7 +84,7 @@ Top-3 political groups by total vote participation across recent plenary sitting
 
 > **recentVoteCount**: `number`
 
-Defined in: [tools/getAllGeneratedStats.ts:215](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L215)
+Defined in: [tools/getAllGeneratedStats.ts:222](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L222)
 
 ***
 
@@ -92,4 +92,4 @@ Defined in: [tools/getAllGeneratedStats.ts:215](https://github.com/Hack23/Europe
 
 > **rejectedCount**: `number`
 
-Defined in: [tools/getAllGeneratedStats.ts:217](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L217)
+Defined in: [tools/getAllGeneratedStats.ts:224](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L224)

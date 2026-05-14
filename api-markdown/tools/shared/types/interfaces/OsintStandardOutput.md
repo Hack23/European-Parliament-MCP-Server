@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,15 @@
 
 # Interface: OsintStandardOutput
 
-Defined in: [tools/shared/types.ts:40](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/types.ts#L40)
+Defined in: [tools/shared/types.ts:49](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/types.ts#L49)
+
+Standard envelope of OSINT-quality metadata returned alongside the
+substantive output of every OSINT-style MCP tool.
+
+Provides callers with a uniform set of trust signals — confidence
+level, methodology description, freshness, source attribution, and
+known data-quality caveats — so downstream consumers can make
+informed decisions about how to use the analysis.
 
 ## Extended by
 
@@ -18,7 +26,7 @@ Defined in: [tools/shared/types.ts:40](https://github.com/Hack23/European-Parlia
 
 > **confidenceLevel**: [`ConfidenceLevel`](../type-aliases/ConfidenceLevel.md)
 
-Defined in: [tools/shared/types.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/types.ts#L45)
+Defined in: [tools/shared/types.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/types.ts#L54)
 
 Confidence level of the analysis: HIGH, MEDIUM, or LOW.
 Derived from the volume and quality of underlying data.
@@ -29,7 +37,7 @@ Derived from the volume and quality of underlying data.
 
 > **dataFreshness**: `string`
 
-Defined in: [tools/shared/types.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/types.ts#L55)
+Defined in: [tools/shared/types.ts:64](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/types.ts#L64)
 
 Human-readable indicator of how recent the underlying data is.
 
@@ -39,7 +47,7 @@ Human-readable indicator of how recent the underlying data is.
 
 > **dataQualityWarnings**: `string`[]
 
-Defined in: [tools/shared/types.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/types.ts#L70)
+Defined in: [tools/shared/types.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/types.ts#L79)
 
 Explicit warnings about data quality issues, unavailable metrics,
 or limitations that affect the reliability of this analysis.
@@ -53,7 +61,7 @@ ISMS Policy: A.8.11 (Data integrity), GDPR Article 5(1)(d) (Accuracy)
 
 > **methodology**: `string`
 
-Defined in: [tools/shared/types.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/types.ts#L50)
+Defined in: [tools/shared/types.ts:59](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/types.ts#L59)
 
 Description of the analytical methodology used to produce this output.
 
@@ -63,7 +71,7 @@ Description of the analytical methodology used to produce this output.
 
 > **sourceAttribution**: `string`
 
-Defined in: [tools/shared/types.ts:61](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/types.ts#L61)
+Defined in: [tools/shared/types.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/types.ts#L70)
 
 Attribution string identifying the European Parliament Open Data Portal
 data sources used in this analysis.

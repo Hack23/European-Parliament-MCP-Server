@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **comparePoliticalGroupsToolMetadata**: `object`
 
-Defined in: [tools/comparePoliticalGroups.ts:244](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparePoliticalGroups.ts#L244)
+Defined in: [tools/comparePoliticalGroups.ts:242](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparePoliticalGroups.ts#L242)
 
 Tool metadata for MCP registration
 

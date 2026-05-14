@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: AuditEvent
 
-Defined in: [utils/auditLogger.ts:81](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L81)
+Defined in: [utils/auditLogger.ts:83](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L83)
 
 Structured audit event used for MCP tool call tracking.
 
@@ -19,7 +19,7 @@ Designed to be serialised to JSON for append-only log sinks
 
 > **action**: `string`
 
-Defined in: [utils/auditLogger.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L87)
+Defined in: [utils/auditLogger.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L89)
 
 Action / tool name
 
@@ -29,7 +29,7 @@ Action / tool name
 
 > **level**: [`LogLevel`](../enumerations/LogLevel.md)
 
-Defined in: [utils/auditLogger.ts:83](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L83)
+Defined in: [utils/auditLogger.ts:85](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L85)
 
 Severity level of the event
 
@@ -39,7 +39,7 @@ Severity level of the event
 
 > **timestamp**: `string`
 
-Defined in: [utils/auditLogger.ts:85](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L85)
+Defined in: [utils/auditLogger.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L87)
 
 ISO-8601 timestamp
 
@@ -49,7 +49,7 @@ ISO-8601 timestamp
 
 > `optional` **duration?**: `number`
 
-Defined in: [utils/auditLogger.ts:99](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L99)
+Defined in: [utils/auditLogger.ts:101](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L101)
 
 Wall-clock duration of the operation in milliseconds
 
@@ -59,7 +59,7 @@ Wall-clock duration of the operation in milliseconds
 
 > `optional` **params?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
-Defined in: [utils/auditLogger.ts:91](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L91)
+Defined in: [utils/auditLogger.ts:93](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L93)
 
 Sanitised tool input parameters
 
@@ -69,7 +69,7 @@ Sanitised tool input parameters
 
 > `optional` **result?**: `object`
 
-Defined in: [utils/auditLogger.ts:93](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L93)
+Defined in: [utils/auditLogger.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L95)
 
 Outcome metadata
 
@@ -91,6 +91,6 @@ Outcome metadata
 
 > `optional` **toolName?**: `string`
 
-Defined in: [utils/auditLogger.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L89)
+Defined in: [utils/auditLogger.ts:91](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L91)
 
 MCP tool name (if the event was triggered by a tool call)

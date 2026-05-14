@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -27,7 +27,9 @@ electronically and published for transparency.
 
 **Data Source:** EP API `/voting-records`
 
- VotingRecord
+## Interface
+
+VotingRecord
 
 ## Examples
 

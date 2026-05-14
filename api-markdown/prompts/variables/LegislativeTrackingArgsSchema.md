@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **LegislativeTrackingArgsSchema**: `ZodObject`\<\{ `committee`: `ZodOptional`\<`ZodString`\>; `procedureId`: `ZodOptional`\<`ZodString`\>; \}, `$strip`\>
 
-Defined in: [prompts/index.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L134)
+Defined in: [prompts/index.ts:130](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L130)
 
 Typed Zod schema for legislative tracking prompt arguments.

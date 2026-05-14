@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **analyzeLegislativeEffectivenessToolMetadata**: `object`
 
-Defined in: [tools/analyzeLegislativeEffectiveness.ts:284](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeLegislativeEffectiveness.ts#L284)
+Defined in: [tools/analyzeLegislativeEffectiveness.ts:282](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeLegislativeEffectiveness.ts#L282)
 
 Tool metadata for MCP registration
 

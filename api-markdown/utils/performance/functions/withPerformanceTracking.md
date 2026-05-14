@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **withPerformanceTracking**\<`T`\>(`monitor`, `operation`, `fn`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [utils/performance.ts:326](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L326)
+Defined in: [utils/performance.ts:321](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L321)
 
 Execute an async function and track its performance
 

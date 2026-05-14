@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: QuadrantDistribution
 
-Defined in: [data/generatedStats.ts:168](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L168)
+Defined in: [data/generatedStats.ts:152](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L152)
 
 Seat share distribution across the 4 political compass quadrants.
 
@@ -16,7 +16,7 @@ Seat share distribution across the 4 political compass quadrants.
 
 > **authoritarianLeft**: `number`
 
-Defined in: [data/generatedStats.ts:174](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L174)
+Defined in: [data/generatedStats.ts:158](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L158)
 
 Authoritarian-Left: state control + economic intervention (none currently in EP)
 
@@ -26,7 +26,7 @@ Authoritarian-Left: state control + economic intervention (none currently in EP)
 
 > **authoritarianRight**: `number`
 
-Defined in: [data/generatedStats.ts:176](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L176)
+Defined in: [data/generatedStats.ts:160](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L160)
 
 Authoritarian-Right: state control + free market/nationalism (ECR, far-right)
 
@@ -36,7 +36,7 @@ Authoritarian-Right: state control + free market/nationalism (ECR, far-right)
 
 > **libertarianLeft**: `number`
 
-Defined in: [data/generatedStats.ts:170](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L170)
+Defined in: [data/generatedStats.ts:154](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L154)
 
 Libertarian-Left: civil liberties + economic intervention (Greens, radical left)
 
@@ -46,6 +46,6 @@ Libertarian-Left: civil liberties + economic intervention (Greens, radical left)
 
 > **libertarianRight**: `number`
 
-Defined in: [data/generatedStats.ts:172](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L172)
+Defined in: [data/generatedStats.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L156)
 
 Libertarian-Right: civil liberties + free market (liberals)

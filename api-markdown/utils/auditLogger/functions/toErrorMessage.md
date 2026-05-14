@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **toErrorMessage**(`error`): `string`
 
-Defined in: [utils/auditLogger.ts:449](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L449)
+Defined in: [utils/auditLogger.ts:422](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L422)
 
 Extract a safe, human-readable error message from an unknown caught value.
 Returns `error.message` for Error instances; `'Unknown error'` otherwise.

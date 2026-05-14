@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: VotingStatistics
 
-Defined in: [types/ep/mep.ts:419](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L419)
+Defined in: [types/ep/mep.ts:427](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L427)
 
 Voting statistics for an MEP.
 
@@ -23,7 +23,9 @@ accountability reporting.
 Attendance rate may differ from physical attendance as it only counts
 voting participation.
 
- VotingStatistics
+## Interface
+
+VotingStatistics
 
 ## Examples
 
@@ -63,7 +65,7 @@ const lowParticipation: VotingStatistics = {
 
 > **abstentions**: `number`
 
-Defined in: [types/ep/mep.ts:471](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L471)
+Defined in: [types/ep/mep.ts:479](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L479)
 
 Number of abstentions.
 
@@ -85,7 +87,7 @@ Abstention is a recorded choice distinct from absence.
 
 > **attendanceRate**: `number`
 
-Defined in: [types/ep/mep.ts:488](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L488)
+Defined in: [types/ep/mep.ts:496](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L496)
 
 Attendance rate as percentage (0 to 100).
 
@@ -117,7 +119,7 @@ between physical absence and strategic non-participation.
 
 > **totalVotes**: `number`
 
-Defined in: [types/ep/mep.ts:432](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L432)
+Defined in: [types/ep/mep.ts:440](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L440)
 
 Total number of votes cast.
 
@@ -140,7 +142,7 @@ Does not include missed votes or votes without recorded position.
 
 > **votesAgainst**: `number`
 
-Defined in: [types/ep/mep.ts:458](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L458)
+Defined in: [types/ep/mep.ts:466](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L466)
 
 Number of votes against.
 
@@ -162,7 +164,7 @@ Indicates opposition voting behavior.
 
 > **votesFor**: `number`
 
-Defined in: [types/ep/mep.ts:445](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L445)
+Defined in: [types/ep/mep.ts:453](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L453)
 
 Number of votes in favor.
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,11 @@
 
 > `const` **networkAnalysisToolMetadata**: `object`
 
-Defined in: [tools/networkAnalysis.ts:452](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/networkAnalysis.ts#L452)
+Defined in: [tools/networkAnalysis.ts:476](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/networkAnalysis.ts#L476)
+
+MCP tool metadata for `network_analysis` (name, human-readable
+description, and JSON Schema for the tool's input). Consumed by the
+server's tool registry to advertise this tool in `ListTools` responses.
 
 ## Type Declaration
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,11 @@
 
 > `const` **getAllGeneratedStatsToolMetadata**: `object`
 
-Defined in: [tools/getAllGeneratedStats.ts:389](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L389)
+Defined in: [tools/getAllGeneratedStats.ts:395](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L395)
+
+MCP tool metadata for `get_all_generated_stats` (name, description,
+and JSON Schema for the tool's input). Consumed by the server's tool
+registry to advertise this tool in `ListTools` responses.
 
 ## Type Declaration
 

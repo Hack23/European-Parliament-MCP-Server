@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getEventsFeedToolMetadata**: `object`
 
-Defined in: [tools/getEventsFeed.ts:71](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getEventsFeed.ts#L71)
+Defined in: [tools/getEventsFeed.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getEventsFeed.ts#L70)
 
 Tool metadata for get_events_feed
 

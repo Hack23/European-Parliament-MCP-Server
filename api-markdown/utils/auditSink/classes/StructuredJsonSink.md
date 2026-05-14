@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: StructuredJsonSink
 
-Defined in: [utils/auditSink.ts:400](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L400)
+Defined in: [utils/auditSink.ts:351](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L351)
 
 Serialises each audit entry to JSON and passes it to a writer callback.
 
@@ -34,7 +34,7 @@ const logger = new AuditLogger({ sinks: [sink] });
 
 > **new StructuredJsonSink**(`writer?`): `StructuredJsonSink`
 
-Defined in: [utils/auditSink.ts:403](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L403)
+Defined in: [utils/auditSink.ts:354](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L354)
 
 #### Parameters
 
@@ -52,7 +52,7 @@ Defined in: [utils/auditSink.ts:403](https://github.com/Hack23/European-Parliame
 
 > `private` `readonly` **writer**: (`json`) => `void`
 
-Defined in: [utils/auditSink.ts:401](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L401)
+Defined in: [utils/auditSink.ts:352](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L352)
 
 #### Parameters
 
@@ -70,7 +70,7 @@ Defined in: [utils/auditSink.ts:401](https://github.com/Hack23/European-Parliame
 
 > **write**(`entry`): `void`
 
-Defined in: [utils/auditSink.ts:409](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L409)
+Defined in: [utils/auditSink.ts:360](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L360)
 
 Write a single audit entry to the sink
 

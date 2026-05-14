@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -28,7 +28,9 @@ topic trend visualizations that drive user acquisition and retention.
 
 **ISMS Policy:** SC-002 (Secure Coding Standards), AU-002 (Audit Logging)
 
- Speech
+## Interface
+
+Speech
 
 ## See
 

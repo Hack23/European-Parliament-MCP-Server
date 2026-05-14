@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,9 +8,12 @@
 
 > **NetworkAnalysisParams** = `object`
 
-Defined in: [tools/networkAnalysis.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/networkAnalysis.ts#L50)
+Defined in: [tools/networkAnalysis.ts:56](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/networkAnalysis.ts#L56)
 
-Schema for network_analysis tool input
+Inferred parameter type for the [NetworkAnalysisSchema](../variables/NetworkAnalysisSchema.md).
+
+All fields default-fill to their schema-defined defaults, so the type
+exposes already-validated, fully-defaulted parameters to downstream code.
 
 ## Type Declaration
 

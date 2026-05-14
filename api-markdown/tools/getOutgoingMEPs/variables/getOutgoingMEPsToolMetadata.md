@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getOutgoingMEPsToolMetadata**: `object`
 
-Defined in: [tools/getOutgoingMEPs.ts:88](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getOutgoingMEPs.ts#L88)
+Defined in: [tools/getOutgoingMEPs.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getOutgoingMEPs.ts#L87)
 
 Tool metadata for get_outgoing_meps
 

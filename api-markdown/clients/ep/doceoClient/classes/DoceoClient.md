@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -52,7 +52,7 @@ Defined in: [clients/ep/doceoClient.ts:148](https://github.com/Hack23/European-P
 
 > **fetchRcvForDate**(`date`, `term?`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`RcvVoteResult`](../../doceoXmlParser/interfaces/RcvVoteResult.md)[]\>
 
-Defined in: [clients/ep/doceoClient.ts:215](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L215)
+Defined in: [clients/ep/doceoClient.ts:213](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L213)
 
 Fetch roll-call vote data for a specific date.
 
@@ -84,7 +84,7 @@ Parsed RCV results, or empty array if unavailable
 
 > `private` **fetchVotesForDate**(`date`, `term`, `includeIndividual`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `url`: `string`; `votes`: [`LatestVoteRecord`](../../doceoXmlParser/interfaces/LatestVoteRecord.md)[]; \} \| `null`\>
 
-Defined in: [clients/ep/doceoClient.ts:247](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L247)
+Defined in: [clients/ep/doceoClient.ts:245](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L245)
 
 Fetch votes for a single date, trying RCV first then VOT.
 
@@ -110,13 +110,15 @@ Fetch votes for a single date, trying RCV first then VOT.
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `url`: `string`; `votes`: [`LatestVoteRecord`](../../doceoXmlParser/interfaces/LatestVoteRecord.md)[]; \} \| `null`\>
 
+#### Private
+
 ***
 
 ### fetchVotForDate()
 
 > **fetchVotForDate**(`date`, `term?`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`VotVoteResult`](../../doceoXmlParser/interfaces/VotVoteResult.md)[]\>
 
-Defined in: [clients/ep/doceoClient.ts:232](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L232)
+Defined in: [clients/ep/doceoClient.ts:230](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L230)
 
 Fetch aggregate vote results for a specific date.
 
@@ -176,7 +178,7 @@ Raw XML string, or null if document not available
 
 > **getLatestVotes**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LatestVotesResponse`](../interfaces/LatestVotesResponse.md)\>
 
-Defined in: [clients/ep/doceoClient.ts:299](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L299)
+Defined in: [clients/ep/doceoClient.ts:295](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L295)
 
 Get the latest votes from DOCEO XML sources.
 
@@ -208,7 +210,7 @@ Audit-logged per GDPR Article 30
 
 > `private` **resolveDates**(`params`): `string`[]
 
-Defined in: [clients/ep/doceoClient.ts:280](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L280)
+Defined in: [clients/ep/doceoClient.ts:276](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L276)
 
 Determine which dates to query based on params.
 
@@ -221,3 +223,5 @@ Determine which dates to query based on params.
 #### Returns
 
 `string`[]
+
+#### Private

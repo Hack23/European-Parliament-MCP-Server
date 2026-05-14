@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -30,7 +30,7 @@ EP Rules of Procedure.
 ```typescript
 // Using in document filtering
 const legislativeTypes: DocumentType[] = ["REGULATION", "DIRECTIVE", "DECISION"];
-const documents = allDocuments.filter(doc => 
+const documents = allDocuments.filter(doc =>
   legislativeTypes.includes(doc.type)
 );
 ```

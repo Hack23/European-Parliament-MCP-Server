@@ -515,25 +515,7 @@
 <a name='L450'></a><a href='#L450'>450</a>
 <a name='L451'></a><a href='#L451'>451</a>
 <a name='L452'></a><a href='#L452'>452</a>
-<a name='L453'></a><a href='#L453'>453</a>
-<a name='L454'></a><a href='#L454'>454</a>
-<a name='L455'></a><a href='#L455'>455</a>
-<a name='L456'></a><a href='#L456'>456</a>
-<a name='L457'></a><a href='#L457'>457</a>
-<a name='L458'></a><a href='#L458'>458</a>
-<a name='L459'></a><a href='#L459'>459</a>
-<a name='L460'></a><a href='#L460'>460</a>
-<a name='L461'></a><a href='#L461'>461</a>
-<a name='L462'></a><a href='#L462'>462</a>
-<a name='L463'></a><a href='#L463'>463</a>
-<a name='L464'></a><a href='#L464'>464</a>
-<a name='L465'></a><a href='#L465'>465</a>
-<a name='L466'></a><a href='#L466'>466</a>
-<a name='L467'></a><a href='#L467'>467</a>
-<a name='L468'></a><a href='#L468'>468</a>
-<a name='L469'></a><a href='#L469'>469</a>
-<a name='L470'></a><a href='#L470'>470</a>
-<a name='L471'></a><a href='#L471'>471</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L453'></a><a href='#L453'>453</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -678,11 +660,6 @@
 <span class="cline-any cline-yes">65x</span>
 <span class="cline-any cline-yes">65x</span>
 <span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">65x</span>
 <span class="cline-any cline-yes">65x</span>
 <span class="cline-any cline-yes">65x</span>
@@ -754,8 +731,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">65x</span>
 <span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">37x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -863,12 +838,6 @@
 <span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">48x</span>
 <span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-yes">24x</span>
@@ -878,9 +847,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-yes">26x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">26x</span>
 <span class="cline-any cline-yes">24x</span>
@@ -901,8 +867,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">26x</span>
 <span class="cline-any cline-yes">37x</span>
@@ -1005,14 +969,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * MCP Tool: monitor_legislative_pipeline
- * 
+ *
  * Real-time legislative pipeline status with bottleneck detection
  * and timeline forecasting.
- * 
+ *
  * **Intelligence Perspective:** Pipeline monitoring tool providing situational
  * awareness of legislative progress—enables early warning for stalled procedures,
  * bottleneck identification, and timeline forecasting.
- * 
+ *
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
 &nbsp;
@@ -1148,11 +1112,6 @@ function computePipelineMetrics(proc: Procedure): {
   const initiated = proc.dateInitiated !== '' ? proc.dateInitiated : '';
   const lastAct = proc.dateLastActivity !== '' ? proc.dateLastActivity : undefined;
   const totalDays = daysBetween(initiated, lastAct);
-  // Progress bounded to 5-90% for active procedures:
-  // 5% floor: newly initiated procedures have at least entered the legislative cycle
-  // 90% ceiling: only completed procedures should report 100%; active ones may still stall
-  // Linear estimate: totalDays/10 means 900 days ≈ 90% (the ceiling); this is a rough proxy
-  // since EU legislative procedures typically span 12-36 months (360-1080 days)
   const progressEstimate = isCompleted ? 100 : Math.min(90, Math.max(5, Math.round(totalDays / 10)));
   const velocityScore = isStalled ? 20 : Math.min(100, 100 - Math.min(80, daysInStage));
   const estimatedDays = isCompleted ? 0 : Math.max(30, daysInStage * 2);
@@ -1224,8 +1183,6 @@ function matchesDateRange(
 function matchesStatusFilter(item: PipelineItem, status: string): boolean {
   if (status === 'ALL') return true;
   if (status === 'ACTIVE') {
-    // Exclude items with missing enrichment (Unknown stage) — these are historical
-    // or incomplete records that cannot be confirmed as currently active
     return !item.isStalled
       &amp;&amp; item.computedAttributes.progressPercentage &lt; 100
       &amp;&amp; item.currentStage !== 'Unknown';
@@ -1333,12 +1290,6 @@ export async function handleMonitorLegislativePipeline(
     const dateFrom = params.dateFrom;
     const dateTo = params.dateTo;
 &nbsp;
-    // When the caller supplies neither dateFrom nor dateTo, default to a
-    // last-30-days window anchored on "now". Previously the response carried
-    // a fixed `2024-01-01..2024-12-31` placeholder, which surfaced as Defect
-    // #6 in the Hack23/euparliamentmonitor 2026-04-24 propositions audit
-    // (`monitor_legislative_pipeline returned empty … period.from: 2024-01-01,
-    // period.to: 2024-12-31`).
     const toIsoDate = (d: Date): string =&gt; d.toISOString().slice(0, 10);
     const todayIso = toIsoDate(new Date());
     const defaultFromIso = ((): string =&gt; {
@@ -1349,9 +1300,6 @@ export async function handleMonitorLegislativePipeline(
     const reportFrom = dateFrom ?? defaultFromIso;
     const reportTo = dateTo ?? todayIso;
 &nbsp;
-    // Compute default recency cut-off date for the ACTIVE filter.
-    // When dateFrom is not explicitly set, procedures whose best available date
-    // predates the cut-off window are excluded — they cannot be confirmed as active.
     const activeCutoffDate: string | undefined = ((): string | undefined =&gt; {
       if (params.status !== 'ACTIVE' || dateFrom !== undefined) return undefined;
       const referenceYear = parseInt(
@@ -1372,8 +1320,6 @@ export async function handleMonitorLegislativePipeline(
 &nbsp;
     const allMappedItems = filteredProcs.map(proc =&gt; procedureToPipelineItem(proc));
 &nbsp;
-    // Count items with missing enrichment before applying the status filter so we
-    // can surface a data-quality warning in the response.
     const unknownEnrichmentCount = params.status === 'ACTIVE'
       ? allMappedItems.filter(item =&gt; item.currentStage === 'Unknown').length
       : 0;
@@ -1480,7 +1426,7 @@ export const monitorLegislativePipelineToolMetadata = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-11T17:10:37.472Z
+                at 2026-05-14T09:28:39.698Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

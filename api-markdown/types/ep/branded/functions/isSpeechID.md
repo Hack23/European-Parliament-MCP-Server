@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **isSpeechID**(`value`): `value is SpeechID`
 
-Defined in: [types/ep/branded.ts:109](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L109)
+Defined in: [types/ep/branded.ts:105](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/branded.ts#L105)
 
 Type guard: checks that a string looks like an EP speech ID.
 

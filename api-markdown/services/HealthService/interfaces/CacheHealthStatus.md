@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: CacheHealthStatus
 
-Defined in: [services/HealthService.ts:47](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L47)
+Defined in: [services/HealthService.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L45)
 
 Cache status snapshot for health reporting.
 
@@ -16,7 +16,7 @@ Cache status snapshot for health reporting.
 
 > **description**: `string`
 
-Defined in: [services/HealthService.ts:51](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L51)
+Defined in: [services/HealthService.ts:49](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L49)
 
 Human-readable description of cache state
 
@@ -26,6 +26,6 @@ Human-readable description of cache state
 
 > **populated**: `boolean`
 
-Defined in: [services/HealthService.ts:49](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L49)
+Defined in: [services/HealthService.ts:47](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/HealthService.ts#L47)
 
 Whether the cache is populated (has at least one entry)

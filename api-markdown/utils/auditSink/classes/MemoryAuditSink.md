@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: MemoryAuditSink
 
-Defined in: [utils/auditSink.ts:234](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L234)
+Defined in: [utils/auditSink.ts:206](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L206)
 
 In-memory audit sink.
 
@@ -37,7 +37,7 @@ erasure (GDPR Article 17 — Right to Erasure).
 
 > `private` **entries**: [`AuditLogEntry`](../interfaces/AuditLogEntry.md)[] = `[]`
 
-Defined in: [utils/auditSink.ts:235](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L235)
+Defined in: [utils/auditSink.ts:207](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L207)
 
 ## Methods
 
@@ -45,7 +45,7 @@ Defined in: [utils/auditSink.ts:235](https://github.com/Hack23/European-Parliame
 
 > **clear**(`_authorization?`): `void`
 
-Defined in: [utils/auditSink.ts:252](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L252)
+Defined in: [utils/auditSink.ts:224](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L224)
 
 Clears the internal buffer.
 The `authorization` param is accepted but unused — access control is
@@ -71,7 +71,7 @@ enforced by `AuditLogger`.
 
 > **eraseByUser**(`userId`): `void`
 
-Defined in: [utils/auditSink.ts:261](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L261)
+Defined in: [utils/auditSink.ts:233](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L233)
 
 Removes all entries associated with `userId`.
 
@@ -93,7 +93,7 @@ GDPR Article 17 — Right to Erasure.
 
 > `private` **matchesFilter**(`entry`, `filter`): `boolean`
 
-Defined in: [utils/auditSink.ts:265](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L265)
+Defined in: [utils/auditSink.ts:237](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L237)
 
 #### Parameters
 
@@ -115,7 +115,7 @@ Defined in: [utils/auditSink.ts:265](https://github.com/Hack23/European-Parliame
 
 > **query**(`filter`): [`AuditLogEntry`](../interfaces/AuditLogEntry.md)[]
 
-Defined in: [utils/auditSink.ts:243](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L243)
+Defined in: [utils/auditSink.ts:215](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L215)
 
 Returns entries matching the supplied filter.
 
@@ -139,7 +139,7 @@ Returns entries matching the supplied filter.
 
 > **write**(`entry`): `void`
 
-Defined in: [utils/auditSink.ts:238](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L238)
+Defined in: [utils/auditSink.ts:210](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L210)
 
 Appends the entry to the internal buffer.
 

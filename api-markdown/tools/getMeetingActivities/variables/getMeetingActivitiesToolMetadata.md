@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getMeetingActivitiesToolMetadata**: `object`
 
-Defined in: [tools/getMeetingActivities.ts:83](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMeetingActivities.ts#L83)
+Defined in: [tools/getMeetingActivities.ts:82](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMeetingActivities.ts#L82)
 
 Tool metadata for get_meeting_activities
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetPrompt**(`name`, `args?`): [`PromptResult`](../interfaces/PromptResult.md)
 
-Defined in: [prompts/index.ts:504](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L504)
+Defined in: [prompts/index.ts:494](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L494)
 
 Handle GetPrompt request
 

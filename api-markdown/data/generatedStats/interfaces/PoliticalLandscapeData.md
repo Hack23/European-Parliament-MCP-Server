@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,14 @@
 
 # Interface: PoliticalLandscapeData
 
-Defined in: [data/generatedStats.ts:61](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L61)
+Defined in: [data/generatedStats.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L67)
+
+Snapshot of the political landscape of the European Parliament for a
+single year: composition of political groups, fragmentation metrics,
+coalition viability indicators, and turnover statistics.
+
+Used by [GENERATED\_STATS](../variables/GENERATED_STATS.md) as the per-year landscape record and
+surfaced by the `get_all_generated_stats` MCP tool.
 
 ## Properties
 
@@ -14,7 +21,7 @@ Defined in: [data/generatedStats.ts:61](https://github.com/Hack23/European-Parli
 
 > **fragmentationIndex**: `number`
 
-Defined in: [data/generatedStats.ts:81](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L81)
+Defined in: [data/generatedStats.ts:87](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L87)
 
 Effective Number of Parliamentary Parties (Laakso-Taagepera index)
 
@@ -24,7 +31,7 @@ Effective Number of Parliamentary Parties (Laakso-Taagepera index)
 
 > **grandCoalitionPossible**: `boolean`
 
-Defined in: [data/generatedStats.ts:83](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L83)
+Defined in: [data/generatedStats.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L89)
 
 Whether any two groups can form a majority
 
@@ -34,7 +41,7 @@ Whether any two groups can form a majority
 
 > **groups**: [`PoliticalGroupSnapshot`](PoliticalGroupSnapshot.md)[]
 
-Defined in: [data/generatedStats.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L70)
+Defined in: [data/generatedStats.ts:76](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L76)
 
 Political groups in the parliament for this year.
 
@@ -49,7 +56,7 @@ and is not counted in `totalGroups`.
 
 > **largestGroup**: `string`
 
-Defined in: [data/generatedStats.ts:77](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L77)
+Defined in: [data/generatedStats.ts:83](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L83)
 
 Largest group name
 
@@ -59,7 +66,7 @@ Largest group name
 
 > **largestGroupSeatShare**: `number`
 
-Defined in: [data/generatedStats.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L79)
+Defined in: [data/generatedStats.ts:85](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L85)
 
 Largest group seat share (0–100)
 
@@ -69,7 +76,7 @@ Largest group seat share (0–100)
 
 > **politicalBalance**: `string`
 
-Defined in: [data/generatedStats.ts:85](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L85)
+Defined in: [data/generatedStats.ts:91](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L91)
 
 Political balance: centre-right vs centre-left vs other
 
@@ -79,7 +86,7 @@ Political balance: centre-right vs centre-left vs other
 
 > **totalGroups**: `number`
 
-Defined in: [data/generatedStats.ts:75](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L75)
+Defined in: [data/generatedStats.ts:81](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L81)
 
 Total number of recognised political groups (excluding non-attached
 members, i.e. the `NI` entry in `groups` when present).

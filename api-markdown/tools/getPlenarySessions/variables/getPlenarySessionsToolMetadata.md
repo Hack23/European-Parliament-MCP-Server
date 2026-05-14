@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getPlenarySessionsToolMetadata**: `object`
 
-Defined in: [tools/getPlenarySessions.ts:169](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenarySessions.ts#L169)
+Defined in: [tools/getPlenarySessions.ts:150](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenarySessions.ts#L150)
 
 Tool metadata for MCP registration
 

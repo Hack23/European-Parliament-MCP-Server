@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -26,7 +26,9 @@ offering only session-level data—key selling point for premium tiers.
 
 **ISMS Policy:** SC-002 (Secure Coding Standards)
 
- MeetingActivity
+## Interface
+
+MeetingActivity
 
 ## See
 

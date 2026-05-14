@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **withTimeoutConfig**\<`T`\>(`promise`, `config`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [utils/timeout.ts:390](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L390)
+Defined in: [utils/timeout.ts:363](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L363)
 
 Execute a promise with timeout settings from a [TimeoutConfig](../interfaces/TimeoutConfig.md).
 

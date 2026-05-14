@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -15,14 +15,16 @@ and vote on legislation. Plenary sessions typically occur in Strasbourg
 (monthly) and Brussels (additional sessions). Each session includes
 agenda items, voting records, attendance tracking, and associated documents.
 
-**Schedule:** 
+**Schedule:**
 - Monthly plenary: 3-4 days in Strasbourg (mandatory)
 - Additional sessions: Brussels as needed
 - Mini-plenaries: 2-day Brussels sessions
 
 **Data Source:** EP API `/plenary-sessions`
 
- PlenarySession
+## Interface
+
+PlenarySession
 
 ## Examples
 

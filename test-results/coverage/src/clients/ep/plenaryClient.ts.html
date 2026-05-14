@@ -426,21 +426,7 @@
 <a name='L361'></a><a href='#L361'>361</a>
 <a name='L362'></a><a href='#L362'>362</a>
 <a name='L363'></a><a href='#L363'>363</a>
-<a name='L364'></a><a href='#L364'>364</a>
-<a name='L365'></a><a href='#L365'>365</a>
-<a name='L366'></a><a href='#L366'>366</a>
-<a name='L367'></a><a href='#L367'>367</a>
-<a name='L368'></a><a href='#L368'>368</a>
-<a name='L369'></a><a href='#L369'>369</a>
-<a name='L370'></a><a href='#L370'>370</a>
-<a name='L371'></a><a href='#L371'>371</a>
-<a name='L372'></a><a href='#L372'>372</a>
-<a name='L373'></a><a href='#L373'>373</a>
-<a name='L374'></a><a href='#L374'>374</a>
-<a name='L375'></a><a href='#L375'>375</a>
-<a name='L376'></a><a href='#L376'>376</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L364'></a><a href='#L364'>364</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -484,8 +470,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">31x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -516,8 +500,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -549,16 +531,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -767,8 +745,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">6x</span>
@@ -845,8 +821,6 @@ import {
 } from './baseClient.js';
 import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 &nbsp;
-// ─── Plenary Client ───────────────────────────────────────────────────────────
-&nbsp;
 /**
  * Sub-client for plenary sessions and meeting-related EP API endpoints.
  *
@@ -857,8 +831,6 @@ export class PlenaryClient extends BaseEPClient {
   constructor(config: EPClientConfig = {}, shared?: EPSharedResources) {
     super(config, shared);
   }
-&nbsp;
-  // ─── Transform helpers ────────────────────────────────────────────────────
 &nbsp;
   private transformPlenarySession(apiData: Record&lt;string, unknown&gt;): PlenarySession {
     return _transformPlenarySession(apiData);
@@ -875,8 +847,6 @@ export class PlenaryClient extends BaseEPClient {
   private transformDocument(apiData: Record&lt;string, unknown&gt;): LegislativeDocument {
     return _transformDocument(apiData);
   }
-&nbsp;
-  // ─── Helpers ──────────────────────────────────────────────────────────────
 &nbsp;
   /**
    * Maps internal params to EP API query parameters for meetings.
@@ -904,8 +874,6 @@ export class PlenaryClient extends BaseEPClient {
     return apiParams;
   }
 &nbsp;
-  // ─── Public methods ───────────────────────────────────────────────────────
-&nbsp;
   /**
    * Retrieves plenary sessions with year/date and location filtering.
    *
@@ -932,8 +900,6 @@ export class PlenaryClient extends BaseEPClient {
       const offset = params.offset ?? 0;
 &nbsp;
       const apiParams = this.buildMeetingsAPIParams(params);
-      // Always apply the resolved limit/offset so the server page size matches
-      // the pagination metadata we return.
       apiParams['limit'] = limit;
       apiParams['offset'] = offset;
 &nbsp;
@@ -1141,8 +1107,6 @@ export class PlenaryClient extends BaseEPClient {
       offset,
       limit,
     };
-    // Note: `year`, `date-from`, `date-to` are NOT valid params for /events.
-    // The API ignores them — callers must filter client-side.
 &nbsp;
     const response = await this.get&lt;JSONLDResponse&gt;('events', apiParams);
     const items = Array.isArray(response.data) ? response.data : <span class="branch-1 cbranch-no" title="branch not covered" >[];</span>
@@ -1195,7 +1159,7 @@ export class PlenaryClient extends BaseEPClient {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-11T17:10:37.472Z
+                at 2026-05-14T09:28:39.698Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

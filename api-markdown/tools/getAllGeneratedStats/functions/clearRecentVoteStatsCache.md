@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **clearRecentVoteStatsCache**(): `void`
 
-Defined in: [tools/getAllGeneratedStats.ts:131](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L131)
+Defined in: [tools/getAllGeneratedStats.ts:139](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L139)
 
 **`Internal`**
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -27,6 +27,10 @@ pagination pattern.
 - Recommended limit: 50-100 items per page
 - Maximum limit: 100 items per page
 
+## Interface
+
+PaginatedResponse
+
 ## Examples
 
 ```typescript
@@ -52,22 +56,22 @@ async function getAllMEPs(): Promise<MEP[]> {
   const allMEPs: MEP[] = [];
   let offset = 0;
   const limit = 50;
-  
+
   while (true) {
-    const response: PaginatedResponse<MEP> = await getMEPs({ 
-      limit, 
-      offset 
+    const response: PaginatedResponse<MEP> = await getMEPs({
+      limit,
+      offset
     });
-    
+
     allMEPs.push(...response.data);
-    
+
     if (!response.hasMore) {
       break;
     }
-    
+
     offset += limit;
   }
-  
+
   return allMEPs;
 }
 ```
@@ -80,7 +84,7 @@ function getPaginationInfo<T>(response: PaginatedResponse<T>) {
   const itemsOnPage = response.data.length;
   const startItem = response.offset + 1;
   const endItem = response.offset + itemsOnPage;
-  
+
   return {
     currentPage,      // e.g., 3
     totalPages,       // e.g., 15
@@ -129,7 +133,6 @@ const lastPageResponse: PaginatedResponse<MEP> = {
 `T`
 
 The type of items in the data array
- PaginatedResponse
 
 ## Properties
 

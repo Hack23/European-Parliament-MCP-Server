@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,14 @@
 
 # Interface: MEP
 
-Defined in: [types/ep/mep.ts:10](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L10)
+Defined in: [types/ep/mep.ts:18](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L18)
+
+Member of the European Parliament — biographical and political profile
+returned by the EP Open Data Portal `/meps` endpoints.
+
+Provides core identifying information (ID, name, country, political
+group, national party) plus optional contact and biographical fields.
+Used by MEP-related MCP tools and resources.
 
 ## Extended by
 
@@ -18,7 +25,7 @@ Defined in: [types/ep/mep.ts:10](https://github.com/Hack23/European-Parliament-M
 
 > **active**: `boolean`
 
-Defined in: [types/ep/mep.ts:140](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L140)
+Defined in: [types/ep/mep.ts:148](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L148)
 
 Current active status.
 
@@ -43,7 +50,7 @@ false // Former MEP
 
 > **committees**: `string`[]
 
-Defined in: [types/ep/mep.ts:111](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L111)
+Defined in: [types/ep/mep.ts:119](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L119)
 
 Committee memberships.
 
@@ -95,7 +102,7 @@ Committee for committee details
 
 > **country**: `string`
 
-Defined in: [types/ep/mep.ts:50](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L50)
+Defined in: [types/ep/mep.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L58)
 
 Country of representation.
 
@@ -125,7 +132,7 @@ Represents the EU member state the MEP represents.
 
 > **id**: `string`
 
-Defined in: [types/ep/mep.ts:22](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L22)
+Defined in: [types/ep/mep.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L30)
 
 Unique MEP identifier.
 
@@ -150,7 +157,7 @@ Stable across parliamentary terms for historical tracking.
 
 > **name**: `string`
 
-Defined in: [types/ep/mep.ts:35](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L35)
+Defined in: [types/ep/mep.ts:43](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L43)
 
 Full name in official format.
 
@@ -175,7 +182,7 @@ May include titles in some cases.
 
 > **politicalGroup**: `string`
 
-Defined in: [types/ep/mep.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L73)
+Defined in: [types/ep/mep.ts:81](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L81)
 
 Political group affiliation.
 
@@ -210,7 +217,7 @@ Groups may change during parliamentary terms due to realignments.
 
 > **termStart**: `string`
 
-Defined in: [types/ep/mep.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L156)
+Defined in: [types/ep/mep.ts:164](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L164)
 
 Term start date.
 
@@ -238,7 +245,7 @@ For replacements, may be mid-term.
 
 > `optional` **email?**: `string`
 
-Defined in: [types/ep/mep.ts:127](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L127)
+Defined in: [types/ep/mep.ts:135](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L135)
 
 Official European Parliament email address.
 
@@ -265,7 +272,7 @@ Personal data - requires audit logging per ISMS AU-002
 
 > `optional` **termEnd?**: `string`
 
-Defined in: [types/ep/mep.ts:172](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L172)
+Defined in: [types/ep/mep.ts:180](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L180)
 
 Term end date.
 

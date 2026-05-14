@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **ToolCategory** = `"core"` \| `"advanced"` \| `"osint"` \| `"phase4"` \| `"phase5"` \| `"feed"`
 
-Defined in: [server/types.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L42)
+Defined in: [server/types.ts:38](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L38)
 
 Logical grouping for tools in the registry.
 

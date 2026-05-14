@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **toSafeString**(`value`): `string`
 
-Defined in: [clients/ep/jsonLdHelpers.ts:21](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L21)
+Defined in: [clients/ep/jsonLdHelpers.ts:19](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L19)
 
 Safely converts an unknown value to a string.
 

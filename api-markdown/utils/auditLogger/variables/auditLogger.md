@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **auditLogger**: [`AuditLogger`](../classes/AuditLogger.md)
 
-Defined in: [utils/auditLogger.ts:438](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L438)
+Defined in: [utils/auditLogger.ts:411](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L411)
 
 Global audit logger instance.
 

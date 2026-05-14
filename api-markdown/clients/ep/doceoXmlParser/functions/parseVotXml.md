@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **parseVotXml**(`xml`): [`VotVoteResult`](../interfaces/VotVoteResult.md)[]
 
-Defined in: [clients/ep/doceoXmlParser.ts:449](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoXmlParser.ts#L449)
+Defined in: [clients/ep/doceoXmlParser.ts:432](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoXmlParser.ts#L432)
 
 Parse a VOT (Vote Results) XML document into structured results.
 

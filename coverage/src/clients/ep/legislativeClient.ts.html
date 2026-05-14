@@ -353,23 +353,7 @@
 <a name='L288'></a><a href='#L288'>288</a>
 <a name='L289'></a><a href='#L289'>289</a>
 <a name='L290'></a><a href='#L290'>290</a>
-<a name='L291'></a><a href='#L291'>291</a>
-<a name='L292'></a><a href='#L292'>292</a>
-<a name='L293'></a><a href='#L293'>293</a>
-<a name='L294'></a><a href='#L294'>294</a>
-<a name='L295'></a><a href='#L295'>295</a>
-<a name='L296'></a><a href='#L296'>296</a>
-<a name='L297'></a><a href='#L297'>297</a>
-<a name='L298'></a><a href='#L298'>298</a>
-<a name='L299'></a><a href='#L299'>299</a>
-<a name='L300'></a><a href='#L300'>300</a>
-<a name='L301'></a><a href='#L301'>301</a>
-<a name='L302'></a><a href='#L302'>302</a>
-<a name='L303'></a><a href='#L303'>303</a>
-<a name='L304'></a><a href='#L304'>304</a>
-<a name='L305'></a><a href='#L305'>305</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L291'></a><a href='#L291'>291</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -409,8 +393,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">74x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -438,13 +420,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -602,7 +580,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -611,8 +588,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -646,9 +621,6 @@
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -699,8 +671,6 @@ import {
 } from './baseClient.js';
 import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 &nbsp;
-// ─── Legislative Client ───────────────────────────────────────────────────────
-&nbsp;
 /**
  * Sub-client for legislative procedures and adopted-texts EP API endpoints.
  *
@@ -711,8 +681,6 @@ export class LegislativeClient extends BaseEPClient {
   constructor(config: EPClientConfig = {}, shared?: EPSharedResources) {
     super(config, shared);
   }
-&nbsp;
-  // ─── Transform helpers ────────────────────────────────────────────────────
 &nbsp;
   private transformProcedure(apiData: Record&lt;string, unknown&gt;): Procedure {
     return _transformProcedure(apiData);
@@ -725,8 +693,6 @@ export class LegislativeClient extends BaseEPClient {
   private transformEvent(apiData: Record&lt;string, unknown&gt;): EPEvent {
     return _transformEvent(apiData);
   }
-&nbsp;
-  // ─── Public methods ───────────────────────────────────────────────────────
 &nbsp;
   /**
    * Returns legislative procedures.
@@ -751,8 +717,6 @@ export class LegislativeClient extends BaseEPClient {
       offset,
       limit,
     };
-    // Note: `year` is NOT a valid param for /procedures per EP API spec.
-    // Not forwarded to avoid misleading callers or future API validation failures.
 &nbsp;
     const response = await this.get&lt;JSONLDResponse&gt;('procedures', apiParams);
     const items = Array.isArray(response.data) ? response.data : <span class="branch-1 cbranch-no" title="branch not covered" >[];</span>
@@ -906,7 +870,6 @@ export class LegislativeClient extends BaseEPClient {
       `procedures/${processId}/events/${eventId}`,
       { format: 'application/ld+json' }
     );
-    // EP API wraps single-item responses in a `data` array
 <span class="cstat-no" title="statement not covered" >    if (Array.isArray(response.data)) {</span>
 <span class="cstat-no" title="statement not covered" >      if (response.data.length === 0) {</span>
 <span class="cstat-no" title="statement not covered" >        throw new APIError(</span>
@@ -917,8 +880,6 @@ export class LegislativeClient extends BaseEPClient {
 <span class="cstat-no" title="statement not covered" >      return this.transformEvent(response.data[0] ?? {});</span>
     }
 &nbsp;
-    // Fall back to transforming the raw response only when the response shape
-    // is not JSON-LD-wrapped.
 <span class="cstat-no" title="statement not covered" >    return this.transformEvent(response);</span>
   }
 &nbsp;
@@ -950,9 +911,6 @@ export class LegislativeClient extends BaseEPClient {
     const response = await this.get&lt;Record&lt;string, unknown&gt;&gt;(endpoint, params);
     const transformed = this.transformAdoptedText(response);
     if (isEmptyAdoptedText(transformed)) {
-      // Evict the empty payload so a retry after upstream enrichment gets the
-      // real document instead of the cached sentinel for the remainder of the
-      // cache TTL.
       this.evictFromCache(endpoint, params);
       throw new APIError(
         `Adopted text "${docId}": document indexed but content not yet available`,
@@ -982,7 +940,7 @@ function isEmptyAdoptedText(text: AdoptedText): boolean {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-11T17:10:37.472Z
+                at 2026-05-14T09:28:39.698Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

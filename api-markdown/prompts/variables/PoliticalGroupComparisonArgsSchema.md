@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **PoliticalGroupComparisonArgsSchema**: `ZodObject`\<\{ `groups`: `ZodOptional`\<`ZodString`\>; \}, `$strip`\>
 
-Defined in: [prompts/index.ts:142](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L142)
+Defined in: [prompts/index.ts:138](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/prompts/index.ts#L138)
 
 Typed Zod schema for political group comparison prompt arguments.

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.4**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **extractVoteCount**(`value`): `number`
 
-Defined in: [clients/ep/jsonLdHelpers.ts:274](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L274)
+Defined in: [clients/ep/jsonLdHelpers.ts:256](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/jsonLdHelpers.ts#L256)
 
 Extracts a numeric vote count from an EP API value.
 
