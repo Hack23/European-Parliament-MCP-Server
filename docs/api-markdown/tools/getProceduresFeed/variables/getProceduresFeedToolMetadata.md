@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.5**](../../../README.md)
+[**European Parliament MCP Server API v1.3.6**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getProceduresFeedToolMetadata**: `object`
 
-Defined in: [tools/getProceduresFeed.ts:303](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProceduresFeed.ts#L303)
+Defined in: [tools/getProceduresFeed.ts:343](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProceduresFeed.ts#L343)
 
 Tool metadata for get_procedures_feed
 
@@ -16,7 +16,7 @@ Tool metadata for get_procedures_feed
 
 ### description
 
-> **description**: `string` = `'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take around 120 seconds and can still time out. If you see timeouts, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. When no procedures were updated in the requested timeframe (common during parliamentary recess or low-activity periods), the response will have status:"unavailable" and empty items — this is expected behaviour, not an error. In that case, use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback. The response also surfaces a STALENESS_WARNING entry in dataQualityWarnings whenever the upstream returns historical-tail ordering with no current-year items (a known degraded-upstream pattern), so consumers can detect the regression programmatically.'`
+> **description**: `string` = `'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take around 120 seconds and can still time out. If you see timeouts, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. When no procedures were updated in the requested timeframe (common during parliamentary recess or low-activity periods), the response will have status:"unavailable" and empty items — this is expected behaviour, not an error. In that case, use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback. ORDERING: Results are normalized before delivery — current-year procedures are promoted first, then items are sorted by dateLastActivity descending; ties preserve the original upstream order. This compensates for a known upstream pattern where the EP API returns historical-tail ordering instead of newest-first. The response also surfaces a STALENESS_WARNING entry in dataQualityWarnings whenever the upstream returns historical-tail ordering with no current-year items (a known degraded-upstream pattern), so consumers can detect the regression programmatically.'`
 
 ### inputSchema
 

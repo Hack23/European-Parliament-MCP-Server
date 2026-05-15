@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.5**](../../../README.md)
+[**European Parliament MCP Server API v1.3.6**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getEventsFeedToolMetadata**: `object`
 
-Defined in: [tools/getEventsFeed.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getEventsFeed.ts#L70)
+Defined in: [tools/getEventsFeed.ts:270](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getEventsFeed.ts#L270)
 
 Tool metadata for get_events_feed
 
@@ -16,7 +16,7 @@ Tool metadata for get_events_feed
 
 ### description
 
-> **description**: `string` = `'Get recently updated European Parliament events from the feed. Returns events published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API events/feed endpoint is significantly slower than other feeds — "one-month" queries can exceed the default 120-second extended timeout. If needed, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. For faster results, use get_plenary_sessions with a year filter instead.'`
+> **description**: `string` = `'Get recently updated European Parliament events from the feed. Returns events published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API events/feed endpoint is significantly slower than other feeds, so this tool uses the global EP request timeout (default 60 seconds) and normalizes timeout/rate-limit/upstream failures into the feed envelope. For faster fallback browsing, use get_events with limit/offset.'`
 
 ### inputSchema
 

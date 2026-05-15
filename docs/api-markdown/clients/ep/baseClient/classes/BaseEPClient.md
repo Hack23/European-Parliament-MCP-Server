@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.5**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.6**](../../../../README.md)
 
 ***
 
@@ -310,7 +310,7 @@ Relative endpoint path (for error messages)
 Optional per-request minimum timeout (ms).
   When provided, the effective timeout is `Math.max(minimumTimeoutMs, this.timeoutMs)`,
   so it acts as a floor that the global timeout can still extend.
-  Use for known slow EP API endpoints (e.g. `procedures/feed`, `events/feed`).
+  Use for known slow EP API endpoints (e.g. `procedures/feed`).
 
 #### Returns
 
@@ -358,7 +358,7 @@ Optional per-request minimum timeout in milliseconds.
   When provided, the effective timeout is `Math.max(minimumTimeoutMs, this.timeoutMs)`,
   so the global timeout (set via `--timeout` or `EP_REQUEST_TIMEOUT_MS`) can still
   extend it beyond the per-endpoint minimum.
-  Use for known slow EP API endpoints such as `procedures/feed` and `events/feed`.
+  Use for known slow EP API endpoints such as `procedures/feed`.
 
 #### Returns
 
