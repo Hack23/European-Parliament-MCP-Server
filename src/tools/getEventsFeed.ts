@@ -12,9 +12,110 @@
 import { GetEventsFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { ToolError } from './shared/errors.js';
-import { isUpstream404, buildEmptyFeedResponse, isErrorInBody, buildFeedSuccessResponse } from './shared/feedUtils.js';
+import {
+  isUpstream404,
+  buildEmptyFeedResponse,
+  isErrorInBody,
+  buildFeedSuccessResponse,
+  extractUpstreamStatusCode,
+  type FeedErrorMeta,
+} from './shared/feedUtils.js';
+import { APIError } from '../clients/ep/baseClient.js';
+import { TimeoutError } from '../utils/timeout.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
+
+/**
+ * Build an in-band response for an error-in-body reply.
+ *
+ * @param rawError - Raw EP API error string from the response body
+ * @internal
+ */
+function buildEnrichmentFailedResponse(rawError: string): ToolResult {
+  const upstreamStatusCode = extractUpstreamStatusCode(rawError);
+  const upstream =
+    upstreamStatusCode !== undefined || rawError !== ''
+      ? {
+          ...(upstreamStatusCode !== undefined && { statusCode: upstreamStatusCode }),
+          ...(rawError !== '' && { errorMessage: rawError }),
+        }
+      : undefined;
+  const meta: FeedErrorMeta = {
+    errorCode: 'ENRICHMENT_FAILED',
+    retryable: true,
+    ...(upstream !== undefined ? { upstream } : {}),
+  };
+  const errorSuffix = rawError ? ` (upstream: ${rawError})` : '';
+  return buildEmptyFeedResponse(
+    `EP API returned an error-in-body response for get_events_feed — the upstream enrichment step may have failed${errorSuffix}.`,
+    meta,
+  );
+}
+
+function isTimeoutLikeError(error: unknown): boolean {
+  return (
+    error instanceof TimeoutError ||
+    (error instanceof APIError && error.statusCode === 408) ||
+    (error instanceof Error && error.message.includes('timed out'))
+  );
+}
+
+function buildRateLimitResponse(error: APIError): ToolResult {
+  return buildEmptyFeedResponse(
+    `EP API rate limit reached for get_events_feed — retry after a short delay.`,
+    {
+      errorCode: 'RATE_LIMIT',
+      retryable: true,
+      upstream: {
+        statusCode: 429,
+        ...(error.message ? { errorMessage: error.message } : {}),
+      },
+    },
+  );
+}
+
+function buildUpstreamErrorResponse(error: APIError, statusCode: number): ToolResult {
+  return buildEmptyFeedResponse(
+    `EP API upstream error for get_events_feed — retry later or use get_events with limit/offset as a fallback.`,
+    {
+      errorCode: 'UPSTREAM_ERROR',
+      retryable: true,
+      upstream: {
+        statusCode,
+        ...(error.message ? { errorMessage: error.message } : {}),
+      },
+    },
+  );
+}
+
+/**
+ * Classify transient upstream errors into the uniform feed envelope.
+ *
+ * @param error - Caught error from the EP API client
+ * @returns In-band ToolResult for known transient failures, or null
+ * @internal
+ */
+function handleUpstreamCatchError(error: unknown): ToolResult | null {
+  if (isUpstream404(error)) return buildEmptyFeedResponse();
+
+  if (isTimeoutLikeError(error)) {
+    return buildEmptyFeedResponse(
+      `EP API request timed out for get_events_feed — the endpoint is known to be slow. ` +
+        `Consider retrying with timeframe="one-week" or using get_events with limit/offset as a fallback.`,
+      { errorCode: 'UPSTREAM_TIMEOUT', retryable: true },
+    );
+  }
+
+  if (error instanceof APIError && error.statusCode === 429) {
+    return buildRateLimitResponse(error);
+  }
+
+  if (error instanceof APIError && error.statusCode !== undefined && error.statusCode >= 500) {
+    return buildUpstreamErrorResponse(error, error.statusCode);
+  }
+
+  return null;
+}
 
 /**
  * Handles the get_events_feed MCP tool request.
@@ -50,13 +151,14 @@ export async function handleGetEventsFeed(args: unknown): Promise<ToolResult> {
       apiParams
     );
     if (isErrorInBody(result)) {
-      return buildEmptyFeedResponse(
-        'EP API returned an error-in-body response for get_events_feed — the upstream enrichment step may have failed.',
-      );
+      const rawError = typeof result['error'] === 'string' ? result['error'] : '';
+      return buildEnrichmentFailedResponse(rawError);
     }
-    return buildFeedSuccessResponse(result);
+    const emptyReason = `EP API events/feed returned no data for timeframe '${params.timeframe}' — no events were updated in the requested period. Use get_events (with limit/offset) to browse a paginated list of events as a fallback.`;
+    return buildFeedSuccessResponse(result, [], emptyReason);
   } catch (error: unknown) {
-    if (isUpstream404(error)) return buildEmptyFeedResponse();
+    const inBand = handleUpstreamCatchError(error);
+    if (inBand !== null) return inBand;
     throw new ToolError({
       toolName: 'get_events_feed',
       operation: 'fetchData',
@@ -70,7 +172,7 @@ export async function handleGetEventsFeed(args: unknown): Promise<ToolResult> {
 export const getEventsFeedToolMetadata = {
   name: 'get_events_feed',
   description:
-    'Get recently updated European Parliament events from the feed. Returns events published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API events/feed endpoint is significantly slower than other feeds — "one-month" queries can exceed the default 120-second extended timeout. If needed, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. For faster results, use get_plenary_sessions with a year filter instead.',
+    'Get recently updated European Parliament events from the feed. Returns events published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API events/feed endpoint is significantly slower than other feeds, so this tool uses the global EP request timeout (default 60 seconds) and normalizes timeout/rate-limit/upstream failures into the feed envelope. For faster fallback browsing, use get_events with limit/offset.',
   inputSchema: {
     type: 'object' as const,
     properties: {

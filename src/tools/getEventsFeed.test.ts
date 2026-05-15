@@ -123,6 +123,67 @@ describe('get_events_feed Tool', () => {
       expect(parsed.dataQualityWarnings[0]).toContain('no data');
     });
 
+    it('should normalize upstream timeouts into an unavailable feed envelope', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getEventsFeed)
+        .mockRejectedValueOnce(new APIError('EP API request to events/feed timed out after 60000ms', 408));
+
+      const result = await handleGetEventsFeed({ timeframe: 'one-month' });
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        errorCode?: string;
+        retryable?: boolean;
+        reason?: string;
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.errorCode).toBe('UPSTREAM_TIMEOUT');
+      expect(parsed.retryable).toBe(true);
+      expect(parsed.reason).toContain('timed out');
+    });
+
+    it('should normalize upstream 5xx errors into a retryable feed envelope', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getEventsFeed)
+        .mockRejectedValueOnce(new APIError('EP API request failed: 502 Bad Gateway', 502));
+
+      const result = await handleGetEventsFeed({ timeframe: 'one-week' });
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        errorCode?: string;
+        retryable?: boolean;
+        upstream?: { statusCode?: number; errorMessage?: string };
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.errorCode).toBe('UPSTREAM_ERROR');
+      expect(parsed.retryable).toBe(true);
+      expect(parsed.upstream?.statusCode).toBe(502);
+      expect(parsed.upstream?.errorMessage).toContain('502');
+    });
+
+    it('should normalize upstream rate limits into a retryable feed envelope', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getEventsFeed)
+        .mockRejectedValueOnce(new APIError('Rate limit exceeded', 429));
+
+      const result = await handleGetEventsFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        errorCode?: string;
+        retryable?: boolean;
+        upstream?: { statusCode?: number };
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.errorCode).toBe('RATE_LIMIT');
+      expect(parsed.retryable).toBe(true);
+      expect(parsed.upstream?.statusCode).toBe(429);
+    });
+
     it('should handle error-in-body response (HTTP 200 with upstream 404-in-body)', async () => {
       vi.mocked(epClientModule.epClient.getEventsFeed).mockResolvedValueOnce({
         '@id': 'https://data.europarl.europa.eu/eli/dl/event/ITRE-AM-786788-DEPOT-2026',
@@ -138,11 +199,18 @@ describe('get_events_feed Tool', () => {
         data: unknown[];
         items: unknown[];
         dataQualityWarnings: string[];
+        errorCode?: string;
+        retryable?: boolean;
+        upstream?: { statusCode?: number; errorMessage?: string };
       };
       expect(parsed.status).toBe('unavailable');
       expect(parsed.data).toEqual([]);
       expect(parsed.items).toEqual([]);
       expect(parsed.dataQualityWarnings[0]).toContain('error-in-body');
+      expect(parsed.errorCode).toBe('ENRICHMENT_FAILED');
+      expect(parsed.retryable).toBe(true);
+      expect(parsed.upstream?.statusCode).toBe(404);
+      expect(parsed.upstream?.errorMessage).toContain('404');
     });
   });
 
@@ -199,8 +267,8 @@ describe('get_events_feed Tool', () => {
     });
 
     it('should export tool metadata with description containing slow endpoint warning', () => {
-      expect(getEventsFeedToolMetadata.description).toContain('120-second');
-      expect(getEventsFeedToolMetadata.description).toContain('get_plenary_sessions');
+      expect(getEventsFeedToolMetadata.description).toContain('global EP request timeout');
+      expect(getEventsFeedToolMetadata.description).toContain('get_events');
     });
 
     it('should export tool metadata with inputSchema', () => {

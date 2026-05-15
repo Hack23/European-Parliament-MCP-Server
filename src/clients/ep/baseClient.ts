@@ -598,7 +598,7 @@ export class BaseEPClient {
    *   When provided, the effective timeout is `Math.max(minimumTimeoutMs, this.timeoutMs)`,
    *   so the global timeout (set via `--timeout` or `EP_REQUEST_TIMEOUT_MS`) can still
    *   extend it beyond the per-endpoint minimum.
-   *   Use for known slow EP API endpoints such as `procedures/feed` and `events/feed`.
+   *   Use for known slow EP API endpoints such as `procedures/feed`.
    * @returns Promise resolving to the typed API response
    * @throws {APIError} On HTTP errors, network failures, or parse failures
    * @protected
