@@ -12,9 +12,81 @@
 import { GetExternalDocumentsFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { ToolError } from './shared/errors.js';
-import { isUpstream404, buildEmptyFeedResponse, buildFeedSuccessResponse } from './shared/feedUtils.js';
+import { isUpstream404, isErrorInBody, buildFeedSuccessResponse, buildEmptyFeedResponse } from './shared/feedUtils.js';
+import { buildToolResponse } from './shared/responseBuilder.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
+
+const EXTERNAL_DOCUMENTS_EMPTY_REASON =
+  'EP external-documents feed returned zero items for the requested window; this is ambiguous between a true empty window and feed freshness/ordering lag.';
+
+interface ExternalDocumentsFeedDiagnostics {
+  endpoint: 'external-documents/feed';
+  requestedWindow: {
+    timeframe: string;
+    startDate?: string;
+    workType?: string;
+  };
+  emptyResultAmbiguity: 'true-empty-or-feed-freshness-lag';
+  freshnessStatus: 'unknown';
+  fallbackTool: 'get_external_documents';
+  fallbackArguments: {
+    limit: 20;
+  };
+}
+
+type ExternalDocumentsFeedParams = ReturnType<typeof GetExternalDocumentsFeedSchema.parse>;
+
+function buildExternalDocumentsFeedDiagnostics(
+  params: ExternalDocumentsFeedParams
+): ExternalDocumentsFeedDiagnostics {
+  const requestedWindow: ExternalDocumentsFeedDiagnostics['requestedWindow'] = {
+    timeframe: params.timeframe,
+  };
+  if (params.startDate !== undefined) requestedWindow.startDate = params.startDate;
+  if (params.workType !== undefined) requestedWindow.workType = params.workType;
+
+  return {
+    endpoint: 'external-documents/feed',
+    requestedWindow,
+    emptyResultAmbiguity: 'true-empty-or-feed-freshness-lag',
+    freshnessStatus: 'unknown',
+    fallbackTool: 'get_external_documents',
+    fallbackArguments: { limit: 20 },
+  };
+}
+
+function hasFeedItems(result: unknown): boolean {
+  const source = (result ?? {}) as Record<string, unknown>;
+  return Array.isArray(source['data']) && source['data'].length > 0;
+}
+
+function withEmptyFeedDiagnostics(result: unknown, params: ExternalDocumentsFeedParams): unknown {
+  if (hasFeedItems(result)) return result;
+  const source = (result ?? {}) as Record<string, unknown>;
+  // Error-in-body responses are upstream enrichment failures, not ambiguous
+  // true-empty/freshness-lag windows — do not attach diagnostics.
+  if (isErrorInBody(source)) return result;
+  return {
+    ...source,
+    dataQualityDiagnostics: buildExternalDocumentsFeedDiagnostics(params),
+  };
+}
+
+function buildExternalDocumentsUnavailableResponse(params: ExternalDocumentsFeedParams): ToolResult {
+  const items: unknown[] = [];
+  return buildToolResponse({
+    status: 'unavailable',
+    generatedAt: new Date().toISOString(),
+    items,
+    itemCount: 0,
+    reason: EXTERNAL_DOCUMENTS_EMPTY_REASON,
+    data: items,
+    '@context': [],
+    dataQualityWarnings: [EXTERNAL_DOCUMENTS_EMPTY_REASON],
+    dataQualityDiagnostics: buildExternalDocumentsFeedDiagnostics(params),
+  });
+}
 
 /**
  * Handles the get_external_documents_feed MCP tool request.
@@ -49,9 +121,19 @@ export async function handleGetExternalDocumentsFeed(args: unknown): Promise<Too
     const result = await epClient.getExternalDocumentsFeed(
       apiParams
     );
-    return buildFeedSuccessResponse(result);
+    const source = result as Record<string, unknown>;
+    if (isErrorInBody(source)) {
+      return buildEmptyFeedResponse(
+        'EP API returned an error-in-body response for get_external_documents_feed — the upstream enrichment step may have failed.',
+      );
+    }
+    return buildFeedSuccessResponse(
+      withEmptyFeedDiagnostics(result, params),
+      [],
+      EXTERNAL_DOCUMENTS_EMPTY_REASON,
+    );
   } catch (error: unknown) {
-    if (isUpstream404(error)) return buildEmptyFeedResponse();
+    if (isUpstream404(error)) return buildExternalDocumentsUnavailableResponse(params);
     throw new ToolError({
       toolName: 'get_external_documents_feed',
       operation: 'fetchData',

@@ -12,6 +12,30 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
   }
 }));
 
+interface ExternalDocumentsFeedResponse {
+  status: string;
+  items: unknown[];
+  itemCount: number;
+  reason?: string;
+  data: unknown[];
+  '@context': unknown;
+  dataQualityWarnings: string[];
+  dataQualityDiagnostics?: {
+    endpoint: string;
+    requestedWindow: {
+      timeframe: string;
+      startDate?: string;
+      workType?: string;
+    };
+    emptyResultAmbiguity: string;
+    freshnessStatus: string;
+    fallbackTool: string;
+    fallbackArguments: {
+      limit: number;
+    };
+  };
+}
+
 describe('get_external_documents_feed Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -63,6 +87,71 @@ describe('get_external_documents_feed Tool', () => {
         const parsed: unknown = JSON.parse(text ?? '');
         return parsed;
       }).not.toThrow();
+    });
+
+    it('should mark active-window non-empty results as operational', async () => {
+      const result = await handleGetExternalDocumentsFeed({ timeframe: 'one-week' });
+
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as ExternalDocumentsFeedResponse;
+      expect(parsed.status).toBe('operational');
+      expect(parsed.itemCount).toBe(1);
+      expect(parsed.items).toEqual([{ id: 'edoc-1', type: 'ExternalDocument' }]);
+      expect(parsed.data).toEqual(parsed.items);
+      expect(parsed.dataQualityWarnings).toEqual([]);
+      expect(parsed.reason).toBeUndefined();
+      expect(parsed.dataQualityDiagnostics).toBeUndefined();
+    });
+
+    it('should mark zero-item active-window results as unavailable with freshness diagnostics', async () => {
+      vi.mocked(epClientModule.epClient.getExternalDocumentsFeed).mockResolvedValueOnce({
+        data: [],
+        '@context': ['external-documents-context']
+      });
+
+      const result = await handleGetExternalDocumentsFeed({
+        timeframe: 'one-week',
+        startDate: '2026-05-01',
+        workType: 'REPORT',
+      });
+
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as ExternalDocumentsFeedResponse;
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.itemCount).toBe(0);
+      expect(parsed.data).toEqual([]);
+      expect(parsed['@context']).toEqual(['external-documents-context']);
+      expect(parsed.reason).toContain('feed freshness/ordering lag');
+      expect(parsed.dataQualityWarnings).toContain(parsed.reason);
+      expect(parsed.dataQualityDiagnostics).toEqual({
+        endpoint: 'external-documents/feed',
+        requestedWindow: {
+          timeframe: 'one-week',
+          startDate: '2026-05-01',
+          workType: 'REPORT',
+        },
+        emptyResultAmbiguity: 'true-empty-or-feed-freshness-lag',
+        freshnessStatus: 'unknown',
+        fallbackTool: 'get_external_documents',
+        fallbackArguments: { limit: 20 },
+      });
+    });
+
+    it('should not attach freshness diagnostics to error-in-body responses', async () => {
+      vi.mocked(epClientModule.epClient.getExternalDocumentsFeed).mockResolvedValueOnce({
+        '@id': 'https://data.europarl.europa.eu/eli/dl/proc/2024-001',
+        'error': '404 Not Found from POST https://data.europarl.europa.eu/api/v2/…',
+        '@context': { error: { '@id': 'http://www.w3.org/ns/hydra/core#Error' } }
+      } as unknown as Record<string, unknown>);
+
+      const result = await handleGetExternalDocumentsFeed({ timeframe: 'one-week' });
+
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as ExternalDocumentsFeedResponse;
+      // Should be unavailable with enrichment-failure reason, not freshness/lag
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.dataQualityDiagnostics).toBeUndefined();
+      expect(parsed.reason).toContain('error-in-body');
+      expect(parsed.reason).toContain('upstream enrichment');
+      expect(parsed.reason).not.toContain('freshness/ordering lag');
+      expect(parsed.dataQualityWarnings[0]).toContain('error-in-body');
     });
   });
 
@@ -117,10 +206,13 @@ describe('get_external_documents_feed Tool', () => {
       expect(result.isError).toBeUndefined();
       const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
         data: unknown[];
+        dataQualityDiagnostics: ExternalDocumentsFeedResponse['dataQualityDiagnostics'];
         dataQualityWarnings: string[];
       };
       expect(parsed.data).toEqual([]);
-      expect(parsed.dataQualityWarnings[0]).toContain('no data');
+      expect(parsed.dataQualityWarnings[0]).toContain('zero items');
+      expect(parsed.dataQualityDiagnostics?.emptyResultAmbiguity).toBe('true-empty-or-feed-freshness-lag');
+      expect(parsed.dataQualityDiagnostics?.fallbackTool).toBe('get_external_documents');
     });
   });
 
