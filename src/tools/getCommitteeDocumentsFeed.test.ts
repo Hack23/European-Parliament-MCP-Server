@@ -70,6 +70,23 @@ describe('get_committee_documents_feed Tool', () => {
         return parsed;
       }).not.toThrow();
     });
+
+    it('should return an operational active-window envelope when upstream has committee documents', async () => {
+      const result = await handleGetCommitteeDocumentsFeed({});
+
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        items: unknown[];
+        itemCount: number;
+        data: unknown[];
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.status).toBe('operational');
+      expect(parsed.items).toEqual([{ id: 'item-1', type: 'Item' }]);
+      expect(parsed.data).toEqual(parsed.items);
+      expect(parsed.itemCount).toBe(1);
+      expect(parsed.dataQualityWarnings).toEqual([]);
+    });
   });
 
   describe('Client Invocation', () => {
@@ -96,14 +113,28 @@ describe('get_committee_documents_feed Tool', () => {
 
       expect(result.isError).toBeUndefined();
       const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        reason: string;
         data: unknown[];
         dataQualityWarnings: string[];
+        errorCode: string;
+        retryable: boolean;
+        upstream?: {
+          statusCode?: number;
+          errorMessage?: string;
+        };
       };
+      expect(parsed.status).toBe('unavailable');
       expect(parsed.data).toEqual([]);
-      expect(parsed.dataQualityWarnings.length).toBeGreaterThan(0);
+      expect(parsed.reason).toContain('HTTP 404');
+      expect(parsed.dataQualityWarnings).toContain(parsed.reason);
+      expect(parsed.errorCode).toBe('UPSTREAM_ERROR');
+      expect(parsed.retryable).toBe(true);
+      expect(parsed.upstream?.statusCode).toBe(404);
+      expect(parsed.upstream?.errorMessage).toBe('Not Found');
     });
 
-    it('should handle error-in-body response', async () => {
+    it('should normalize 404-style error-in-body payloads into an unavailable envelope', async () => {
       vi.mocked(epClientModule.epClient.getCommitteeDocumentsFeed).mockResolvedValue({
         '@id': 'https://data.europarl.europa.eu/eli/dl/test',
         'error': '404 Not Found from POST ...',
@@ -114,11 +145,25 @@ describe('get_committee_documents_feed Tool', () => {
 
       expect(result.isError).toBeUndefined();
       const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        reason: string;
         data: unknown[];
         dataQualityWarnings: string[];
+        errorCode: string;
+        retryable: boolean;
+        upstream?: {
+          statusCode?: number;
+          errorMessage?: string;
+        };
       };
+      expect(parsed.status).toBe('unavailable');
       expect(parsed.data).toEqual([]);
-      expect(parsed.dataQualityWarnings[0]).toContain('error-in-body');
+      expect(parsed.reason).toContain('error-in-body');
+      expect(parsed.dataQualityWarnings).toContain(parsed.reason);
+      expect(parsed.errorCode).toBe('ENRICHMENT_FAILED');
+      expect(parsed.retryable).toBe(true);
+      expect(parsed.upstream?.statusCode).toBe(404);
+      expect(parsed.upstream?.errorMessage).toBe('404 Not Found from POST ...');
     });
   });
 

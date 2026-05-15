@@ -206,6 +206,45 @@ function scanProceduresForCurrentYear(
   return { hasCurrentYear: false, oldestYearObserved };
 }
 
+function isProcedureRecord(item: unknown): item is Record<string, unknown> {
+  return typeof item === 'object' && item !== null && !Array.isArray(item);
+}
+
+function getProcedureDateLastActivityTimestamp(item: unknown): number | undefined {
+  if (!isProcedureRecord(item)) return undefined;
+  const dateLastActivity = item['dateLastActivity'];
+  if (typeof dateLastActivity !== 'string' || dateLastActivity === '') return undefined;
+  const timestamp = Date.parse(dateLastActivity);
+  return Number.isFinite(timestamp) ? timestamp : undefined;
+}
+
+function prioritizeProcedureFeedResult(result: unknown, yearStr: string, refRegex: RegExp): unknown {
+  const source = (result ?? {}) as Record<string, unknown>;
+  const items = Array.isArray(source['data']) ? (source['data'] as unknown[]) : [];
+  if (items.length < 2) return result;
+
+  const sortedItems = items
+    .map((item, index) => ({
+      item,
+      index,
+      isCurrentYear: inspectProcedureItem(item, yearStr, refRegex).hasCurrentYear,
+      timestamp: getProcedureDateLastActivityTimestamp(item),
+    }))
+    .sort((a, b) => {
+      if (a.isCurrentYear !== b.isCurrentYear) return a.isCurrentYear ? -1 : 1;
+      // More recent activity dates should lead older archive entries.
+      if (a.timestamp !== undefined && b.timestamp !== undefined && a.timestamp !== b.timestamp) {
+        return b.timestamp - a.timestamp;
+      }
+      if (a.timestamp !== undefined && b.timestamp === undefined) return -1;
+      if (a.timestamp === undefined && b.timestamp !== undefined) return 1;
+      return a.index - b.index;
+    })
+    .map(({ item }) => item);
+
+  return { ...source, data: sortedItems };
+}
+
 /**
  * Build STALENESS_WARNING entries when the procedures-feed payload contains
  * no items dated within the current calendar year.
@@ -223,12 +262,10 @@ function scanProceduresForCurrentYear(
  *
  * @internal
  */
-function buildStalenessWarnings(result: unknown): readonly string[] {
+function buildStalenessWarnings(result: unknown, yearStr: string, refRegex: RegExp): readonly string[] {
   const source = (result ?? {}) as Record<string, unknown>;
   const items = Array.isArray(source['data']) ? (source['data'] as unknown[]) : [];
   if (items.length === 0) return [];
-  const yearStr = String(new Date().getUTCFullYear());
-  const refRegex = new RegExp(`^${yearStr}/`);
   const { hasCurrentYear, oldestYearObserved } = scanProceduresForCurrentYear(items, yearStr, refRegex);
   if (hasCurrentYear) return [];
   const ageSuffix =
@@ -285,8 +322,11 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
       return buildEnrichmentFailedResponse(rawError);
     }
     const emptyReason = `EP API procedures/feed returned no data for timeframe '${params.timeframe}' — no procedures were updated in the requested period. This is expected during parliamentary recess or low-activity weeks. Use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback.`;
-    const stalenessWarnings = buildStalenessWarnings(result);
-    return buildFeedSuccessResponse(result, stalenessWarnings, emptyReason);
+    const yearStr = String(new Date().getUTCFullYear());
+    const refRegex = new RegExp(`^${yearStr}/`);
+    const prioritizedResult = prioritizeProcedureFeedResult(result, yearStr, refRegex);
+    const stalenessWarnings = buildStalenessWarnings(prioritizedResult, yearStr, refRegex);
+    return buildFeedSuccessResponse(prioritizedResult, stalenessWarnings, emptyReason);
   } catch (error: unknown) {
     const inBand = handleUpstreamCatchError(error);
     if (inBand !== null) return inBand;
@@ -303,7 +343,7 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
 export const getProceduresFeedToolMetadata = {
   name: 'get_procedures_feed',
   description:
-    'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take around 120 seconds and can still time out. If you see timeouts, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. When no procedures were updated in the requested timeframe (common during parliamentary recess or low-activity periods), the response will have status:"unavailable" and empty items — this is expected behaviour, not an error. In that case, use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback. The response also surfaces a STALENESS_WARNING entry in dataQualityWarnings whenever the upstream returns historical-tail ordering with no current-year items (a known degraded-upstream pattern), so consumers can detect the regression programmatically.',
+    'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take around 120 seconds and can still time out. If you see timeouts, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. When no procedures were updated in the requested timeframe (common during parliamentary recess or low-activity periods), the response will have status:"unavailable" and empty items — this is expected behaviour, not an error. In that case, use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback. ORDERING: Results are normalized before delivery — current-year procedures are promoted first, then items are sorted by dateLastActivity descending; ties preserve the original upstream order. This compensates for a known upstream pattern where the EP API returns historical-tail ordering instead of newest-first. The response also surfaces a STALENESS_WARNING entry in dataQualityWarnings whenever the upstream returns historical-tail ordering with no current-year items (a known degraded-upstream pattern), so consumers can detect the regression programmatically.',
   inputSchema: {
     type: 'object' as const,
     properties: {
