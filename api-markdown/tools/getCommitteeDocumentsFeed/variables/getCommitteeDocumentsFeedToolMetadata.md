@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.5**](../../../README.md)
+[**European Parliament MCP Server API v1.3.6**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getCommitteeDocumentsFeedToolMetadata**: `object`
 
-Defined in: [tools/getCommitteeDocumentsFeed.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCommitteeDocumentsFeed.ts#L66)
+Defined in: [tools/getCommitteeDocumentsFeed.ts:88](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCommitteeDocumentsFeed.ts#L88)
 
 Tool metadata for get_committee_documents_feed
 

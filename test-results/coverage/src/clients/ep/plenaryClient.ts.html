@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.1% </span>
+                <span class="strong">93.96% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>108/116</span>
+                <span class='fraction'>109/116</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75.92% </span>
+                <span class="strong">79.62% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>82/108</span>
+                <span class='fraction'>86/108</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.83% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>23/24</span>
+                <span class='fraction'>24/24</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.17% </span>
+                <span class="strong">95.14% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>97/103</span>
+                <span class='fraction'>98/103</span>
             </div>
         
             
@@ -426,7 +426,10 @@
 <a name='L361'></a><a href='#L361'>361</a>
 <a name='L362'></a><a href='#L362'>362</a>
 <a name='L363'></a><a href='#L363'>363</a>
-<a name='L364'></a><a href='#L364'>364</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L364'></a><a href='#L364'>364</a>
+<a name='L365'></a><a href='#L365'>365</a>
+<a name='L366'></a><a href='#L366'>366</a>
+<a name='L367'></a><a href='#L367'>367</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -465,8 +468,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">344x</span>
+<span class="cline-any cline-yes">346x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -766,7 +768,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -819,7 +825,6 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
-import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 &nbsp;
 /**
  * Sub-client for plenary sessions and meeting-related EP API endpoints.
@@ -1120,21 +1125,25 @@ export class PlenaryClient extends BaseEPClient {
    * **EP API Endpoint:** `GET /events/feed`
    *
    * **Note:** The EP API `events/feed` endpoint is significantly slower
-   * than other feed endpoints — it typically takes 30–50 s even for `one-week`
-   * and 120+ seconds for `one-month`.  An extended minimum timeout of 120 s
-   * is always applied.
+   * than other feed endpoints. This method uses the global EP request
+   * timeout (no extended slow-feed minimum) and **throws** `APIError` on
+   * HTTP failures (including timeouts surfaced as status 408).
+   *
+   * The MCP tool layer (`handleGetEventsFeed`) converts thrown errors into
+   * a machine-readable in-band feed envelope; direct `PlenaryClient` /
+   * `EuropeanParliamentClient` consumers should handle `APIError` throws.
    */
-  async <span class="fstat-no" title="function not covered" >getEventsFeed(p</span>arams: {
+  async getEventsFeed(params: {
     timeframe?: string;
     startDate?: string;
     activityType?: string;
-  } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.get&lt;JSONLDResponse&gt;('events/feed', {</span>
+  } = {}): Promise&lt;JSONLDResponse&gt; {
+    return this.get&lt;JSONLDResponse&gt;('events/feed', {
       format: 'application/ld+json',
-      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
-      ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
-      ...(params.activityType !== undefined ? { 'activity-type': params.activityType } : {}),
-    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
+      ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : <span class="branch-1 cbranch-no" title="branch not covered" >{})</span>,
+      ...(params.startDate !== undefined ? <span class="branch-0 cbranch-no" title="branch not covered" >{ 'start-date': params.startDate } </span>: {}),
+      ...(params.activityType !== undefined ? <span class="branch-0 cbranch-no" title="branch not covered" >{ 'activity-type': params.activityType } </span>: {}),
+    });
   }
 &nbsp;
   /**
@@ -1159,7 +1168,7 @@ export class PlenaryClient extends BaseEPClient {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-14T21:19:36.489Z
+                at 2026-05-15T18:30:59.062Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.5**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.6**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: FeedErrorMeta
 
-Defined in: [tools/shared/feedUtils.ts:88](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L88)
+Defined in: [tools/shared/feedUtils.ts:114](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L114)
 
 Optional machine-readable metadata attached to an empty/failed feed response.
 
@@ -19,7 +19,7 @@ retry the request, fall back to a non-feed endpoint, or skip entirely.
 
 > `optional` **errorCode?**: [`FeedErrorCode`](../type-aliases/FeedErrorCode.md)
 
-Defined in: [tools/shared/feedUtils.ts:90](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L90)
+Defined in: [tools/shared/feedUtils.ts:116](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L116)
 
 Machine-readable failure classification.
 
@@ -29,9 +29,23 @@ Machine-readable failure classification.
 
 > `optional` **retryable?**: `boolean`
 
-Defined in: [tools/shared/feedUtils.ts:92](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L92)
+Defined in: [tools/shared/feedUtils.ts:118](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L118)
 
 Whether the failure is transient and the request should be retried.
+
+***
+
+### retryAfterMs?
+
+> `optional` **retryAfterMs?**: `number`
+
+Defined in: [tools/shared/feedUtils.ts:126](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L126)
+
+Suggested delay (in milliseconds) before retrying, when known.
+
+Populated for `RATE_LIMIT` failures originating from the local
+token-bucket limiter (where the wait time is precisely known) and may be
+populated for upstream rate-limits when a `Retry-After` value is parsed.
 
 ***
 
@@ -39,7 +53,7 @@ Whether the failure is transient and the request should be retried.
 
 > `optional` **upstream?**: `object`
 
-Defined in: [tools/shared/feedUtils.ts:94](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L94)
+Defined in: [tools/shared/feedUtils.ts:128](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L128)
 
 Information about the upstream error, when available.
 

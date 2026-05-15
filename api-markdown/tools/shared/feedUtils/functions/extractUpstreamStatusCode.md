@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.5**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.6**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **extractUpstreamStatusCode**(`errorMessage`): `number` \| `undefined`
 
-Defined in: [tools/shared/feedUtils.ts:112](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L112)
+Defined in: [tools/shared/feedUtils.ts:146](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/feedUtils.ts#L146)
 
 Parse an HTTP status code from an EP API error-in-body message.
 
