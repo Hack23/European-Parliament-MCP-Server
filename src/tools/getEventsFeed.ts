@@ -93,23 +93,23 @@ function isLocalRateLimit(error: APIError): boolean {
  *
  * @internal
  */
+function extractRetryAfterMsFromDetails(details: unknown): number | undefined {
+  if (details === null || typeof details !== 'object' || !('retryAfterMs' in details)) {
+    return undefined;
+  }
+  const ms = (details as { retryAfterMs?: unknown }).retryAfterMs;
+  return typeof ms === 'number' && Number.isFinite(ms) && ms > 0 ? ms : undefined;
+}
+
+function extractRetryAfterMsFromMessage(message: string): number | undefined {
+  const match = /Retry after (\d+)\s*ms/i.exec(message);
+  if (match?.[1] === undefined) return undefined;
+  const parsed = parseInt(match[1], 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
+}
+
 function extractRetryAfterMs(error: APIError): number | undefined {
-  const details = error.details;
-  if (
-    details !== null &&
-    typeof details === 'object' &&
-    'retryAfterMs' in details &&
-    typeof (details as { retryAfterMs?: unknown }).retryAfterMs === 'number'
-  ) {
-    const ms = (details as { retryAfterMs: number }).retryAfterMs;
-    if (Number.isFinite(ms) && ms > 0) return ms;
-  }
-  const match = /Retry after (\d+)\s*ms/i.exec(error.message);
-  if (match?.[1] !== undefined) {
-    const parsed = parseInt(match[1], 10);
-    if (Number.isFinite(parsed) && parsed > 0) return parsed;
-  }
-  return undefined;
+  return extractRetryAfterMsFromDetails(error.details) ?? extractRetryAfterMsFromMessage(error.message);
 }
 
 /**
