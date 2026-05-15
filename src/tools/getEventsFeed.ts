@@ -28,14 +28,6 @@ import type { ToolResult } from './shared/types.js';
 type EventsFeedParams = ReturnType<typeof GetEventsFeedSchema.parse>;
 type EventsFeedTimeframe = EventsFeedParams['timeframe'];
 
-const EVENT_FEED_TIMEFRAME_LABELS = {
-  today: 'today',
-  'one-day': 'one-day',
-  'one-week': 'one-week',
-  'one-month': 'one-month',
-  custom: 'custom',
-} as const satisfies Record<EventsFeedTimeframe, string>;
-
 /**
  * Build an in-band response for an error-in-body reply.
  *
@@ -73,8 +65,7 @@ function buildEnrichmentFailedResponse(rawError: string): ToolResult {
 function isTimeoutLikeError(error: unknown): boolean {
   return (
     error instanceof TimeoutError ||
-    (error instanceof APIError && error.statusCode === 408) ||
-    (error instanceof Error && error.message.includes('timed out'))
+    (error instanceof APIError && error.statusCode === 408)
   );
 }
 
@@ -187,7 +178,7 @@ export async function handleGetEventsFeed(args: unknown): Promise<ToolResult> {
       const rawError = typeof result['error'] === 'string' ? result['error'] : '';
       return buildEnrichmentFailedResponse(rawError);
     }
-    const timeframeLabel = EVENT_FEED_TIMEFRAME_LABELS[params.timeframe];
+    const timeframeLabel: EventsFeedTimeframe = params.timeframe;
     const emptyReason = `EP API events/feed returned no data for timeframe '${timeframeLabel}' — no events were updated in the requested period. Use get_events (with limit/offset) to browse a paginated list of events as a fallback.`;
     return buildFeedSuccessResponse(result, [], emptyReason);
   } catch (error: unknown) {
