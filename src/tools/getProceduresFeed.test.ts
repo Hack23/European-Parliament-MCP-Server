@@ -341,6 +341,33 @@ describe('get_procedures_feed Tool', () => {
       expect(parsed.status).toBe('operational');
     });
 
+    it('should prioritize current-window items when upstream includes stale historical tail first', async () => {
+      vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
+        data: [
+          { id: 'proc-1972', reference: '1972/0003(COD)', dateLastActivity: '1972-06-15' },
+          { id: 'proc-current-newer', reference: `${String(currentYear)}/0002(COD)`, dateLastActivity: `${String(currentYear)}-04-09` },
+          { id: 'proc-current-older', reference: `${String(currentYear)}/0001(COD)`, dateLastActivity: `${String(currentYear)}-04-08` },
+        ],
+        '@context': [],
+      });
+
+      const result = await handleGetProceduresFeed({ timeframe: 'one-week' });
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        items: Array<{ id: string }>;
+        data: Array<{ id: string }>;
+        dataQualityWarnings: string[];
+        status: string;
+      };
+      expect(parsed.items.map((item) => item.id)).toEqual([
+        'proc-current-newer',
+        'proc-current-older',
+        'proc-1972',
+      ]);
+      expect(parsed.data.map((item) => item.id)).toEqual(parsed.items.map((item) => item.id));
+      expect(parsed.dataQualityWarnings.some((w) => w.startsWith('STALENESS_WARNING'))).toBe(false);
+      expect(parsed.status).toBe('operational');
+    });
+
     it('should add STALENESS_WARNING when payload has only historical items', async () => {
       vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
         data: [

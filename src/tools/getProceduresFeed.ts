@@ -206,6 +206,51 @@ function scanProceduresForCurrentYear(
   return { hasCurrentYear: false, oldestYearObserved };
 }
 
+function getProcedureDateLastActivityTimestamp(item: unknown): number | undefined {
+  if (item === null || typeof item !== 'object') return undefined;
+  const dateLastActivity = (item as Record<string, unknown>)['dateLastActivity'];
+  if (typeof dateLastActivity !== 'string' || dateLastActivity === '') return undefined;
+  const timestamp = Date.parse(dateLastActivity);
+  return Number.isFinite(timestamp) ? timestamp : undefined;
+}
+
+function hasCurrentYearProcedureToken(item: unknown, yearStr: string, refRegex: RegExp): boolean {
+  if (item === null || typeof item !== 'object') return false;
+  const obj = item as Record<string, unknown>;
+  const dateLastActivity = obj['dateLastActivity'];
+  if (typeof dateLastActivity === 'string' && dateLastActivity.startsWith(yearStr)) return true;
+  const reference = obj['reference'];
+  return typeof reference === 'string' && refRegex.test(reference);
+}
+
+function prioritizeProcedureFeedResult(result: unknown): unknown {
+  const source = (result ?? {}) as Record<string, unknown>;
+  const items = Array.isArray(source['data']) ? (source['data'] as unknown[]) : [];
+  if (items.length < 2) return result;
+
+  const yearStr = String(new Date().getUTCFullYear());
+  const refRegex = new RegExp(`^${yearStr}/`);
+  const sortedItems = items
+    .map((item, index) => ({
+      item,
+      index,
+      isCurrentYear: hasCurrentYearProcedureToken(item, yearStr, refRegex),
+      timestamp: getProcedureDateLastActivityTimestamp(item),
+    }))
+    .sort((a, b) => {
+      if (a.isCurrentYear !== b.isCurrentYear) return a.isCurrentYear ? -1 : 1;
+      if (a.timestamp !== undefined && b.timestamp !== undefined && a.timestamp !== b.timestamp) {
+        return b.timestamp - a.timestamp;
+      }
+      if (a.timestamp !== undefined && b.timestamp === undefined) return -1;
+      if (a.timestamp === undefined && b.timestamp !== undefined) return 1;
+      return a.index - b.index;
+    })
+    .map(({ item }) => item);
+
+  return { ...source, data: sortedItems };
+}
+
 /**
  * Build STALENESS_WARNING entries when the procedures-feed payload contains
  * no items dated within the current calendar year.
@@ -285,8 +330,9 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
       return buildEnrichmentFailedResponse(rawError);
     }
     const emptyReason = `EP API procedures/feed returned no data for timeframe '${params.timeframe}' — no procedures were updated in the requested period. This is expected during parliamentary recess or low-activity weeks. Use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback.`;
-    const stalenessWarnings = buildStalenessWarnings(result);
-    return buildFeedSuccessResponse(result, stalenessWarnings, emptyReason);
+    const prioritizedResult = prioritizeProcedureFeedResult(result);
+    const stalenessWarnings = buildStalenessWarnings(prioritizedResult);
+    return buildFeedSuccessResponse(prioritizedResult, stalenessWarnings, emptyReason);
   } catch (error: unknown) {
     const inBand = handleUpstreamCatchError(error);
     if (inBand !== null) return inBand;
