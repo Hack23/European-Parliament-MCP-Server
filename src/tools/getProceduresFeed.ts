@@ -207,7 +207,7 @@ function scanProceduresForCurrentYear(
 }
 
 function isProcedureRecord(item: unknown): item is Record<string, unknown> {
-  return typeof item === 'object' && item !== null;
+  return typeof item === 'object' && item !== null && !Array.isArray(item);
 }
 
 function getProcedureDateLastActivityTimestamp(item: unknown): number | undefined {
@@ -216,14 +216,6 @@ function getProcedureDateLastActivityTimestamp(item: unknown): number | undefine
   if (typeof dateLastActivity !== 'string' || dateLastActivity === '') return undefined;
   const timestamp = Date.parse(dateLastActivity);
   return Number.isFinite(timestamp) ? timestamp : undefined;
-}
-
-function hasCurrentYearProcedureToken(item: unknown, yearStr: string, refRegex: RegExp): boolean {
-  if (!isProcedureRecord(item)) return false;
-  const dateLastActivity = item['dateLastActivity'];
-  if (typeof dateLastActivity === 'string' && dateLastActivity.startsWith(yearStr)) return true;
-  const reference = item['reference'];
-  return typeof reference === 'string' && refRegex.test(reference);
 }
 
 function prioritizeProcedureFeedResult(result: unknown, yearStr: string, refRegex: RegExp): unknown {
@@ -235,7 +227,7 @@ function prioritizeProcedureFeedResult(result: unknown, yearStr: string, refRege
     .map((item, index) => ({
       item,
       index,
-      isCurrentYear: hasCurrentYearProcedureToken(item, yearStr, refRegex),
+      isCurrentYear: inspectProcedureItem(item, yearStr, refRegex).hasCurrentYear,
       timestamp: getProcedureDateLastActivityTimestamp(item),
     }))
     .sort((a, b) => {
@@ -351,7 +343,7 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
 export const getProceduresFeedToolMetadata = {
   name: 'get_procedures_feed',
   description:
-    'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take around 120 seconds and can still time out. If you see timeouts, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. When no procedures were updated in the requested timeframe (common during parliamentary recess or low-activity periods), the response will have status:"unavailable" and empty items — this is expected behaviour, not an error. In that case, use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback. The response also surfaces a STALENESS_WARNING entry in dataQualityWarnings whenever the upstream returns historical-tail ordering with no current-year items (a known degraded-upstream pattern), so consumers can detect the regression programmatically.',
+    'Get recently updated European Parliament procedures from the feed. Returns procedures published or updated during the specified timeframe. Data source: European Parliament Open Data Portal. NOTE: The EP API procedures/feed endpoint is significantly slower than other feeds — "one-month" queries may take around 120 seconds and can still time out. If you see timeouts, increase the global timeout with --timeout or EP_REQUEST_TIMEOUT_MS. When no procedures were updated in the requested timeframe (common during parliamentary recess or low-activity periods), the response will have status:"unavailable" and empty items — this is expected behaviour, not an error. In that case, use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback. ORDERING: Results are normalized before delivery — current-year procedures are promoted first, then items are sorted by dateLastActivity descending; ties preserve the original upstream order. This compensates for a known upstream pattern where the EP API returns historical-tail ordering instead of newest-first. The response also surfaces a STALENESS_WARNING entry in dataQualityWarnings whenever the upstream returns historical-tail ordering with no current-year items (a known degraded-upstream pattern), so consumers can detect the regression programmatically.',
   inputSchema: {
     type: 'object' as const,
     properties: {
