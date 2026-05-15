@@ -238,7 +238,7 @@ Currently, the server does **not require authentication** for tool access. Futur
 | `get_voting_records` | Aggregate voting data | sessionId, topic, dateFrom | Paginated list | ⚠️ Roll-call data delayed by weeks |
 | `get_latest_votes` | Near-real-time DOCEO vote data | date, weekStart, term, includeIndividualVotes | Vote records | ✅ Hours fresh — RCV preferred; falls back to VOT |
 | `get_speeches` | Plenary speeches | speechId, year, dateFrom, dateTo | Paginated list | |
-| `get_events` | EP events | eventId, year, dateFrom, dateTo | Paginated list | |
+| `get_events` | EP events | eventId, limit, offset | Paginated list | ⚠️ No date filtering |
 | `get_meeting_activities` | Meeting activities | sittingId (required) | Paginated list | ✅ Works with session IDs like `MTG-PL-2025-01-20` |
 | `get_meeting_decisions` | Meeting decisions | sittingId (required) | Paginated list | ✅ Works with session IDs |
 | `get_meeting_foreseen_activities` | Planned agenda items | sittingId (required) | Paginated list | ✅ Works with session IDs |
@@ -2640,7 +2640,7 @@ If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIME
 
 **Recommended fallbacks when feeds time out:**
 - `get_procedures_feed` → use `get_procedures({ year: 2026, limit: 20 })` instead
-- `get_events_feed` → use `get_events({ limit: 50 })` (or with `year`/date filters) instead
+- `get_events_feed` → use `get_events({ limit: 50 })` instead (note: `get_events` supports only `eventId`, `limit`, and `offset` — no date filtering)
 - `get_meps_feed` → use `get_current_meps({ limit: 50 })` instead
 - `get_adopted_texts_feed` → use `get_adopted_texts({ year: 2026 })` instead
 
@@ -2762,7 +2762,7 @@ const result = await client.callTool('get_meps_feed', {
 
 **Description**: Get recently updated events from the European Parliament feed endpoint. Returns event records that have been modified within the specified timeframe.
 
-> ⚠️ **Slow endpoint**: The EP API `events/feed` endpoint is significantly slower than other feeds — `one-month` queries may take 60+ seconds. The global EP request timeout (default 60s, configurable via `--timeout` / `EP_REQUEST_TIMEOUT_MS`) applies; this tool no longer forces an extended per-request minimum. For faster results, use `get_events` with a `year`/`limit`/`offset` filter instead.
+> ⚠️ **Slow endpoint**: The EP API `events/feed` endpoint is significantly slower than other feeds — `one-month` queries may take 60+ seconds. The global EP request timeout (default 60s, configurable via `--timeout` / `EP_REQUEST_TIMEOUT_MS`) applies; this tool no longer forces an extended per-request minimum. For faster results, use `get_events` with `limit`/`offset` pagination instead (note: `get_events` has no date filtering — only `eventId`, `limit`, and `offset` are supported).
 
 > ✅ **Normalized error envelope** (since v1.3.x): Transient upstream failures are converted into the uniform feed response shape rather than thrown errors. The response always parses as JSON with `status: "unavailable"` and machine-readable `errorCode` / `retryable` / optional `upstream` and `retryAfterMs` metadata, so downstream consumers can branch on a single envelope shape instead of catching exceptions:
 >
