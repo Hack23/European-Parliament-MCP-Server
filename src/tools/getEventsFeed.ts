@@ -25,6 +25,17 @@ import { TimeoutError } from '../utils/timeout.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
+type EventsFeedParams = ReturnType<typeof GetEventsFeedSchema.parse>;
+type EventsFeedTimeframe = EventsFeedParams['timeframe'];
+
+const EVENT_FEED_TIMEFRAME_LABELS = {
+  today: 'today',
+  'one-day': 'one-day',
+  'one-week': 'one-week',
+  'one-month': 'one-month',
+  custom: 'custom',
+} as const satisfies Record<EventsFeedTimeframe, string>;
+
 /**
  * Build an in-band response for an error-in-body reply.
  *
@@ -147,7 +158,7 @@ function handleUpstreamCatchError(error: unknown): ToolResult | null {
  * @security Input is validated with Zod before any API call.
  */
 export async function handleGetEventsFeed(args: unknown): Promise<ToolResult> {
-  let params: ReturnType<typeof GetEventsFeedSchema.parse>;
+  let params: EventsFeedParams;
   try {
     params = GetEventsFeedSchema.parse(args);
   } catch (error: unknown) {
@@ -176,7 +187,8 @@ export async function handleGetEventsFeed(args: unknown): Promise<ToolResult> {
       const rawError = typeof result['error'] === 'string' ? result['error'] : '';
       return buildEnrichmentFailedResponse(rawError);
     }
-    const emptyReason = `EP API events/feed returned no data for timeframe '${params.timeframe}' — no events were updated in the requested period. Use get_events (with limit/offset) to browse a paginated list of events as a fallback.`;
+    const timeframeLabel = EVENT_FEED_TIMEFRAME_LABELS[params.timeframe];
+    const emptyReason = `EP API events/feed returned no data for timeframe '${timeframeLabel}' — no events were updated in the requested period. Use get_events (with limit/offset) to browse a paginated list of events as a fallback.`;
     return buildFeedSuccessResponse(result, [], emptyReason);
   } catch (error: unknown) {
     const inBand = handleUpstreamCatchError(error);

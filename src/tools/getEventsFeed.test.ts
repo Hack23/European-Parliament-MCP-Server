@@ -269,6 +269,8 @@ describe('get_events_feed Tool', () => {
     it('should export tool metadata with description containing slow endpoint warning', () => {
       expect(getEventsFeedToolMetadata.description).toContain('global EP request timeout');
       expect(getEventsFeedToolMetadata.description).toContain('get_events');
+      expect(getEventsFeedToolMetadata.description).not.toContain('120-second');
+      expect(getEventsFeedToolMetadata.description).not.toContain('get_plenary_sessions');
     });
 
     it('should export tool metadata with inputSchema', () => {
