@@ -1939,30 +1939,25 @@ const result = await client.callTool('get_adopted_texts', { year: 2024, limit: 2
 
 ### Tool: get_events
 
-**Description**: Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or list with date range filtering.
+**Description**: Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or paginated list. Note: The EP API `/events` endpoint has no date filtering — only `eventId`, `limit`, and `offset` are supported.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | eventId | string | No | - | Specific event ID for single lookup |
-| year | number | No | - | Filter by calendar year (1900-2100, recommended for annual counts) |
-| dateFrom | string | No | - | Start date filter (YYYY-MM-DD) |
-| dateTo | string | No | - | End date filter (YYYY-MM-DD) |
 | limit | number | No | 50 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
 
 #### Example Usage
 
 ```
-Show me European Parliament events scheduled for March 2024
+Show me recent European Parliament events
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
 const result = await client.callTool('get_events', {
-  dateFrom: '2024-03-01',
-  dateTo: '2024-03-31',
   limit: 20
 });
 ```
@@ -2764,7 +2759,7 @@ const result = await client.callTool('get_meps_feed', {
 
 > ⚠️ **Slow endpoint**: The EP API `events/feed` endpoint is significantly slower than other feeds — `one-month` queries may take 60+ seconds. The global EP request timeout (default 60s, configurable via `--timeout` / `EP_REQUEST_TIMEOUT_MS`) applies; this tool no longer forces an extended per-request minimum. For faster results, use `get_events` with `limit`/`offset` pagination instead (note: `get_events` has no date filtering — only `eventId`, `limit`, and `offset` are supported).
 
-> ✅ **Normalized error envelope** (since v1.3.x): Transient upstream failures are converted into the uniform feed response shape rather than thrown errors. The response always parses as JSON with `status: "unavailable"` and machine-readable `errorCode` / `retryable` / optional `upstream` and `retryAfterMs` metadata, so downstream consumers can branch on a single envelope shape instead of catching exceptions:
+> ✅ **Normalized error envelope** (since v1.3.x): The following **known** transient upstream failure modes are caught and returned as the uniform feed response shape (with `status: "unavailable"` plus machine-readable `errorCode` / `retryable` / optional `upstream` and `retryAfterMs` metadata). Unclassified or unexpected errors (e.g., network socket failures, schema validation errors) still throw — callers should combine envelope inspection with standard exception handling:
 >
 > | `errorCode` | When | `retryable` | `upstream` present |
 > |-------------|------|-------------|--------------------|
@@ -2812,8 +2807,10 @@ if (envelope.status === 'operational') {
   // status === 'unavailable' — no items to process.
   console.warn(`get_events_feed unavailable: ${envelope.errorCode} — ${envelope.reason}`);
   if (envelope.retryable && envelope.retryAfterMs) {
-    // Honor the precise retry hint from the local rate limiter
-    setTimeout(retry, envelope.retryAfterMs);
+    // Honor the precise retry hint from the local rate limiter.
+    // Re-invoke the same call after the suggested delay.
+    await new Promise(resolve => setTimeout(resolve, envelope.retryAfterMs));
+    // … then retry the callTool request
   }
 }
 ```
