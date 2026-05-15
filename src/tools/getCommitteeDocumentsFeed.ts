@@ -15,7 +15,7 @@
 import { GetCommitteeDocumentsFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { ToolError } from './shared/errors.js';
-import { isUpstream404, buildEmptyFeedResponse, isErrorInBody, buildFeedSuccessResponse, FIXED_WINDOW_FEED_INPUT_SCHEMA } from './shared/feedUtils.js';
+import { isUpstream404, buildEmptyFeedResponse, isErrorInBody, buildFeedSuccessResponse, FIXED_WINDOW_FEED_INPUT_SCHEMA, extractUpstreamStatusCode } from './shared/feedUtils.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 
@@ -46,13 +46,35 @@ export async function handleGetCommitteeDocumentsFeed(args: unknown): Promise<To
   try {
     const result = await epClient.getCommitteeDocumentsFeed();
     if (isErrorInBody(result)) {
+      const errorMessage = typeof result['error'] === 'string' ? result['error'] : 'Unknown upstream error';
+      const statusCode = extractUpstreamStatusCode(errorMessage);
       return buildEmptyFeedResponse(
         'EP API returned an error-in-body response for get_committee_documents_feed — the upstream enrichment step may have failed.',
+        {
+          errorCode: 'ENRICHMENT_FAILED',
+          retryable: true,
+          upstream: {
+            ...(statusCode !== undefined ? { statusCode } : {}),
+            errorMessage,
+          },
+        },
       );
     }
     return buildFeedSuccessResponse(result);
   } catch (error: unknown) {
-    if (isUpstream404(error)) return buildEmptyFeedResponse();
+    if (isUpstream404(error)) {
+      return buildEmptyFeedResponse(
+        'EP API returned HTTP 404 for get_committee_documents_feed — no committee document feed entries are currently available for the upstream fixed window.',
+        {
+          errorCode: 'UPSTREAM_ERROR',
+          retryable: true,
+          upstream: {
+            statusCode: 404,
+            errorMessage: error instanceof Error ? error.message : 'Not Found',
+          },
+        },
+      );
+    }
     throw new ToolError({
       toolName: 'get_committee_documents_feed',
       operation: 'fetchData',
