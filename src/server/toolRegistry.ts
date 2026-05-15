@@ -255,11 +255,76 @@ for (const feedName of FEED_TOOL_NAMES) {
 }
 
 /**
+ * Parse the JSON envelope from a feed tool result, or `undefined` when
+ * the content is missing/unparseable.
+ *
+ * @internal
+ */
+function parseFeedEnvelope(result: ToolResult): Record<string, unknown> | undefined {
+  const text = result.content[0]?.text;
+  if (typeof text !== 'string' || text === '') return undefined;
+  try {
+    const parsed: unknown = JSON.parse(text);
+    if (parsed === null || typeof parsed !== 'object') return undefined;
+    return parsed as Record<string, unknown>;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Extract the upstream HTTP status code from a feed envelope, if any.
+ *
+ * @internal
+ */
+function extractUpstreamStatusCode(envelope: Record<string, unknown>): number | undefined {
+  const upstream = envelope['upstream'];
+  if (upstream === null || typeof upstream !== 'object') return undefined;
+  const statusCode = (upstream as { statusCode?: unknown }).statusCode;
+  return typeof statusCode === 'number' ? statusCode : undefined;
+}
+
+/**
+ * Inspect an in-band feed envelope for an operational failure code.
+ *
+ * Feed tool handlers may convert transient upstream failures (timeouts,
+ * rate limits, 5xx, enrichment failures) into an "unavailable" envelope
+ * returned via a normal {@link ToolResult} instead of a thrown error.
+ * Without inspection, {@link FeedHealthTracker.recordSuccess} would mark
+ * such calls as healthy and `get_server_health` would lose visibility
+ * into real upstream problems.
+ *
+ * Returns a short error message when the envelope encodes an operational
+ * failure that should be recorded, or `undefined` for success/no-data
+ * responses (including `NOT_FOUND`, which represents a definitive empty
+ * window rather than an upstream malfunction).
+ *
+ * @internal
+ */
+function extractInBandFeedError(result: ToolResult): string | undefined {
+  const envelope = parseFeedEnvelope(result);
+  if (envelope === undefined) return undefined;
+  if (envelope['status'] !== 'unavailable') return undefined;
+  const code = typeof envelope['errorCode'] === 'string' ? envelope['errorCode'] : undefined;
+  // NOT_FOUND (and bare unavailable responses without errorCode metadata)
+  // represent a healthy empty-window response, not an upstream failure.
+  if (code === undefined || code === 'NOT_FOUND') return undefined;
+  const reason = typeof envelope['reason'] === 'string' ? envelope['reason'] : '';
+  const statusCode = extractUpstreamStatusCode(envelope);
+  const statusSuffix = statusCode !== undefined ? ` (upstream ${String(statusCode)})` : '';
+  return reason !== '' ? `${code}${statusSuffix}: ${reason}` : `${code}${statusSuffix}`;
+}
+
+/**
  * Dispatches a tool call to the registered handler.
  *
  * Feed tool calls are automatically tracked by the {@link feedHealthTracker}
  * so that the `get_server_health` tool can report per-feed availability
- * without making upstream API calls.
+ * without making upstream API calls. Both thrown errors and in-band
+ * "unavailable" envelopes carrying an operational `errorCode`
+ * (e.g. `UPSTREAM_TIMEOUT`, `UPSTREAM_ERROR`, `RATE_LIMIT`,
+ * `ENRICHMENT_FAILED`) are recorded as failures; `NOT_FOUND` and
+ * empty-but-healthy responses are recorded as successes.
  *
  * @param name - Tool name from the MCP `CallTool` request
  * @param args - Validated tool arguments
@@ -278,7 +343,12 @@ export async function dispatchToolCall(
   if (feedHealthTracker.isFeedTool(name)) {
     try {
       const result = await handler(args);
-      feedHealthTracker.recordSuccess(name);
+      const inBandError = extractInBandFeedError(result);
+      if (inBandError !== undefined) {
+        feedHealthTracker.recordError(name, inBandError);
+      } else {
+        feedHealthTracker.recordSuccess(name);
+      }
       return result;
     } catch (error: unknown) {
       const isValidationError =

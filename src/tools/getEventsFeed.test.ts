@@ -129,6 +129,30 @@ describe('get_events_feed Tool', () => {
       expect(parsed.upstream?.statusCode).toBe(404);
     });
 
+    it('should emit timeframe-specific empty-feed reason on HTTP 200 with empty data array', async () => {
+      vi.mocked(epClientModule.epClient.getEventsFeed).mockResolvedValueOnce({
+        data: [],
+        '@context': [],
+      });
+
+      const result = await handleGetEventsFeed({ timeframe: 'one-day' });
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        items: unknown[];
+        itemCount: number;
+        reason?: string;
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.items).toEqual([]);
+      expect(parsed.itemCount).toBe(0);
+      expect(parsed.reason).toContain("timeframe 'one-day'");
+      expect(parsed.reason).toContain('get_events');
+      expect(parsed.dataQualityWarnings.some((w) => w.includes("timeframe 'one-day'"))).toBe(true);
+    });
+
     it('should normalize upstream timeouts into an unavailable feed envelope', async () => {
       const { APIError } = await import('../clients/ep/baseClient.js');
       vi.mocked(epClientModule.epClient.getEventsFeed)

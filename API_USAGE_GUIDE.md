@@ -2628,13 +2628,19 @@ Several EP API feed endpoints are **significantly slower** than standard data en
 | `documents/feed` | Fixed | 60–120 s | 120+ s | ⚠️ Very slow; frequently times out |
 | `corporate-bodies/feed` | Fixed | 60–180 s | 180+ s | ⚠️ Slowest feed; frequently times out |
 
-The MCP server automatically applies a **minimum 120-second timeout** to all fixed-window feeds and to the slow configurable feed `get_procedures_feed`. If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead. `get_events_feed` uses the global EP request timeout (no per-request minimum) and surfaces timeouts/rate-limits/upstream failures via the normalized feed envelope (see [Tool: get_events_feed](#tool-get_events_feed)).
+The MCP server applies a **minimum 120-second timeout** to the following feed tools regardless of the global timeout setting:
+
+- **Always (fixed-window):** `get_documents_feed`, `get_plenary_documents_feed`, `get_committee_documents_feed`, `get_plenary_session_documents_feed`, `get_parliamentary_questions_feed`, `get_corporate_bodies_feed`, and the configurable `get_procedures_feed`.
+- **Only when `timeframe === "one-month"` (configurable):** `get_meps_feed`, `get_mep_declarations_feed`, `get_adopted_texts_feed`, `get_external_documents_feed` — shorter timeframes use the global EP request timeout.
+- **No per-request floor (uses the global EP request timeout):** `get_controlled_vocabularies_feed` (returns HTTP 204 almost instantly) and `get_events_feed`. The latter surfaces timeouts/rate-limits/upstream failures via the normalized feed envelope (see [Tool: get_events_feed](#tool-get_events_feed)).
+
+If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead for tools that apply the 120-second floor.
 
 > **Tip:** For production use, set `--timeout 180000` (180 seconds) to accommodate the slowest feeds. The default 60-second timeout is sufficient for most data endpoints but too short for many feeds during peak load.
 
 **Recommended fallbacks when feeds time out:**
 - `get_procedures_feed` → use `get_procedures({ year: 2026, limit: 20 })` instead
-- `get_events_feed` → use `get_plenary_sessions({ year: 2026 })` instead
+- `get_events_feed` → use `get_events({ limit: 50 })` (or with `year`/date filters) instead
 - `get_meps_feed` → use `get_current_meps({ limit: 50 })` instead
 - `get_adopted_texts_feed` → use `get_adopted_texts({ year: 2026 })` instead
 
@@ -2756,7 +2762,7 @@ const result = await client.callTool('get_meps_feed', {
 
 **Description**: Get recently updated events from the European Parliament feed endpoint. Returns event records that have been modified within the specified timeframe.
 
-> ⚠️ **Slow endpoint**: The EP API `events/feed` endpoint is significantly slower than other feeds — `one-month` queries may take 60+ seconds. The global EP request timeout (default 60s, configurable via `--timeout` / `EP_REQUEST_TIMEOUT_MS`) applies; this tool no longer forces an extended per-request minimum. For faster results, use `get_plenary_sessions` with a `year` filter instead.
+> ⚠️ **Slow endpoint**: The EP API `events/feed` endpoint is significantly slower than other feeds — `one-month` queries may take 60+ seconds. The global EP request timeout (default 60s, configurable via `--timeout` / `EP_REQUEST_TIMEOUT_MS`) applies; this tool no longer forces an extended per-request minimum. For faster results, use `get_events` with a `year`/`limit`/`offset` filter instead.
 
 > ✅ **Normalized error envelope** (since v1.3.x): Transient upstream failures are converted into the uniform feed response shape rather than thrown errors. The response always parses as JSON with `status: "unavailable"` and machine-readable `errorCode` / `retryable` / optional `upstream` and `retryAfterMs` metadata, so downstream consumers can branch on a single envelope shape instead of catching exceptions:
 >
@@ -2796,8 +2802,14 @@ if (envelope.status === 'operational') {
   for (const event of envelope.items) {
     console.log(event['@id']);
   }
+} else if (envelope.status === 'degraded') {
+  // Items are present but there are data-quality warnings — still process them.
+  console.warn(`get_events_feed degraded: ${envelope.dataQualityWarnings?.join('; ')}`);
+  for (const event of envelope.items) {
+    console.log(event['@id']);
+  }
 } else {
-  // status === 'unavailable' or 'degraded'
+  // status === 'unavailable' — no items to process.
   console.warn(`get_events_feed unavailable: ${envelope.errorCode} — ${envelope.reason}`);
   if (envelope.retryable && envelope.retryAfterMs) {
     // Honor the precise retry hint from the local rate limiter
