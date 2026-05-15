@@ -72,10 +72,23 @@ export type FeedStatus = 'operational' | 'degraded' | 'unavailable';
  *
  * Enables programmatic retry/skip/fallback logic by downstream consumers:
  * - `ENRICHMENT_FAILED` — EP API internal enrichment/POST step returned an
- *   error-in-body (HTTP 200 with `error` field and no `data` array).
+ *   error-in-body (HTTP 200 with `error` field and no `data` array). Retryable.
  * - `UPSTREAM_TIMEOUT` — The upstream request exceeded the configured timeout.
- * - `UPSTREAM_ERROR` — A non-timeout, non-rate-limit upstream error occurred.
- * - `RATE_LIMIT` — The upstream API returned HTTP 429 (too many requests).
+ *   Retryable; consumers may back off and retry with a narrower timeframe.
+ * - `UPSTREAM_ERROR` — A non-timeout, non-rate-limit upstream error occurred
+ *   (typically HTTP 5xx). Retryable. `upstream.statusCode` is present.
+ * - `RATE_LIMIT` — Either the upstream API returned HTTP 429 (too many
+ *   requests) or the local token-bucket rate limiter in BaseEPClient rejected
+ *   the request before any upstream call was made. Local rate-limit responses
+ *   **omit** the `upstream` field, while genuine upstream 429s include
+ *   `upstream.statusCode: 429`. Both cases are retryable and surface a
+ *   `retryAfterMs` value when the limiter reported one. Consumers can use the
+ *   presence/absence of `upstream` to distinguish the two cases.
+ * - `NOT_FOUND` — The upstream returned HTTP 404 for the requested feed
+ *   window (e.g. EP recess or low-activity period with no records updated).
+ *   Not retryable for the same window; consumers should widen the timeframe
+ *   or fall back to a non-feed endpoint (e.g. `get_events`). `upstream.statusCode`
+ *   is `404` when present.
  */
 export type FeedErrorCode = 'ENRICHMENT_FAILED' | 'UPSTREAM_TIMEOUT' | 'UPSTREAM_ERROR' | 'RATE_LIMIT' | 'NOT_FOUND';
 
@@ -90,6 +103,14 @@ export interface FeedErrorMeta {
   errorCode?: FeedErrorCode;
   /** Whether the failure is transient and the request should be retried. */
   retryable?: boolean;
+  /**
+   * Suggested delay (in milliseconds) before retrying, when known.
+   *
+   * Populated for `RATE_LIMIT` failures originating from the local
+   * token-bucket limiter (where the wait time is precisely known) and may be
+   * populated for upstream rate-limits when a `Retry-After` value is parsed.
+   */
+  retryAfterMs?: number;
   /** Information about the upstream error, when available. */
   upstream?: {
     /** HTTP status code parsed from the upstream error message, if present. */
@@ -307,6 +328,7 @@ export function buildEmptyFeedResponse(reason = EMPTY_FEED_REASON, meta?: FeedEr
     reason,
     ...(meta?.errorCode !== undefined ? { errorCode: meta.errorCode } : {}),
     ...(meta?.retryable !== undefined ? { retryable: meta.retryable } : {}),
+    ...(meta?.retryAfterMs !== undefined ? { retryAfterMs: meta.retryAfterMs } : {}),
     ...(meta?.upstream !== undefined ? { upstream: meta.upstream } : {}),
     data: items,
     '@context': [],

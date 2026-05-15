@@ -84,10 +84,43 @@ function isLocalRateLimit(error: APIError): boolean {
 }
 
 /**
+ * Extract the suggested retry delay (in ms) from a rate-limit APIError.
+ *
+ * BaseEPClient attaches `{ retryAfterMs, remainingTokens }` to `error.details`
+ * for local token-bucket rejections; this helper reads from `details` first
+ * and falls back to parsing the `Retry after <n>ms` substring from the
+ * message when `details` is unavailable (e.g. mocked test fixtures).
+ *
+ * @internal
+ */
+function extractRetryAfterMs(error: APIError): number | undefined {
+  const details = error.details;
+  if (
+    details !== null &&
+    typeof details === 'object' &&
+    'retryAfterMs' in details &&
+    typeof (details as { retryAfterMs?: unknown }).retryAfterMs === 'number'
+  ) {
+    const ms = (details as { retryAfterMs: number }).retryAfterMs;
+    if (Number.isFinite(ms) && ms > 0) return ms;
+  }
+  const match = /Retry after (\d+)\s*ms/i.exec(error.message);
+  if (match?.[1] !== undefined) {
+    const parsed = parseInt(match[1], 10);
+    if (Number.isFinite(parsed) && parsed > 0) return parsed;
+  }
+  return undefined;
+}
+
+/**
  * Build the uniform feed envelope for HTTP 429 rate limits.
  *
  * Distinguishes local token-bucket rejections from upstream EP API 429s so
- * downstream consumers get accurate diagnostics.
+ * downstream consumers get accurate diagnostics. When the underlying error
+ * exposes a `retryAfterMs` hint (always present for local limiter rejections),
+ * surface it in both the human-readable `reason` and the machine-readable
+ * `retryAfterMs` metadata field so automated clients can schedule retries
+ * precisely instead of guessing.
  *
  * @param error - APIError carrying the rate-limit failure details
  * @returns MCP ToolResult with RATE_LIMIT metadata for downstream retry logic
@@ -95,13 +128,17 @@ function isLocalRateLimit(error: APIError): boolean {
  */
 function buildRateLimitResponse(error: APIError): ToolResult {
   const local = isLocalRateLimit(error);
+  const retryAfterMs = extractRetryAfterMs(error);
+  const retryHint =
+    retryAfterMs !== undefined ? `retry after ${String(retryAfterMs)}ms` : 'retry after a short delay';
   return buildEmptyFeedResponse(
     local
-      ? `Local rate limit reached for get_events_feed — retry after a short delay.`
-      : `EP API rate limit reached for get_events_feed — retry after a short delay.`,
+      ? `Local rate limit reached for get_events_feed — ${retryHint}.`
+      : `EP API rate limit reached for get_events_feed — ${retryHint}.`,
     {
       errorCode: 'RATE_LIMIT',
       retryable: true,
+      ...(retryAfterMs !== undefined ? { retryAfterMs } : {}),
       ...(!local
         ? {
             upstream: {

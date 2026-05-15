@@ -2628,7 +2628,7 @@ Several EP API feed endpoints are **significantly slower** than standard data en
 | `documents/feed` | Fixed | 60–120 s | 120+ s | ⚠️ Very slow; frequently times out |
 | `corporate-bodies/feed` | Fixed | 60–180 s | 180+ s | ⚠️ Slowest feed; frequently times out |
 
-The MCP server automatically applies a **minimum 120-second timeout** to all fixed-window feeds and to the slow configurable feeds (`get_procedures_feed`, `get_events_feed`). If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead.
+The MCP server automatically applies a **minimum 120-second timeout** to all fixed-window feeds and to the slow configurable feed `get_procedures_feed`. If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead. `get_events_feed` uses the global EP request timeout (no per-request minimum) and surfaces timeouts/rate-limits/upstream failures via the normalized feed envelope (see [Tool: get_events_feed](#tool-get_events_feed)).
 
 > **Tip:** For production use, set `--timeout 180000` (180 seconds) to accommodate the slowest feeds. The default 60-second timeout is sufficient for most data endpoints but too short for many feeds during peak load.
 
@@ -2756,7 +2756,18 @@ const result = await client.callTool('get_meps_feed', {
 
 **Description**: Get recently updated events from the European Parliament feed endpoint. Returns event records that have been modified within the specified timeframe.
 
-> ⚠️ **Slow endpoint**: The EP API `events/feed` endpoint is significantly slower than other feeds — `one-month` queries may take 120+ seconds. An extended timeout (120s) is applied automatically. For faster results, use `get_plenary_sessions` with a `year` filter instead.
+> ⚠️ **Slow endpoint**: The EP API `events/feed` endpoint is significantly slower than other feeds — `one-month` queries may take 60+ seconds. The global EP request timeout (default 60s, configurable via `--timeout` / `EP_REQUEST_TIMEOUT_MS`) applies; this tool no longer forces an extended per-request minimum. For faster results, use `get_plenary_sessions` with a `year` filter instead.
+
+> ✅ **Normalized error envelope** (since v1.3.x): Transient upstream failures are converted into the uniform feed response shape rather than thrown errors. The response always parses as JSON with `status: "unavailable"` and machine-readable `errorCode` / `retryable` / optional `upstream` and `retryAfterMs` metadata, so downstream consumers can branch on a single envelope shape instead of catching exceptions:
+>
+> | `errorCode` | When | `retryable` | `upstream` present |
+> |-------------|------|-------------|--------------------|
+> | `NOT_FOUND` | Upstream HTTP 404 (empty timeframe / recess window) | `false` | `statusCode: 404` |
+> | `UPSTREAM_TIMEOUT` | Request exceeded the configured timeout | `true` | _omitted_ |
+> | `RATE_LIMIT` (local) | Local token-bucket limiter rejected the call before any HTTP request | `true` | _omitted_ — `retryAfterMs` is set |
+> | `RATE_LIMIT` (upstream) | EP API returned HTTP 429 | `true` | `statusCode: 429` |
+> | `UPSTREAM_ERROR` | EP API returned HTTP 5xx | `true` | `statusCode: 5xx` |
+> | `ENRICHMENT_FAILED` | HTTP 200 with `error` field and no `data` array | `true` | parsed upstream status when present |
 
 #### Parameters
 
@@ -2778,6 +2789,21 @@ Show me EP events updated today
 const result = await client.callTool('get_events_feed', {
   timeframe: 'today'
 });
+
+const envelope = JSON.parse(result.content[0].text);
+
+if (envelope.status === 'operational') {
+  for (const event of envelope.items) {
+    console.log(event['@id']);
+  }
+} else {
+  // status === 'unavailable' or 'degraded'
+  console.warn(`get_events_feed unavailable: ${envelope.errorCode} — ${envelope.reason}`);
+  if (envelope.retryable && envelope.retryAfterMs) {
+    // Honor the precise retry hint from the local rate limiter
+    setTimeout(retry, envelope.retryAfterMs);
+  }
+}
 ```
 
 ---

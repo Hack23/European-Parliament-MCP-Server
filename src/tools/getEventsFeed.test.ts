@@ -195,7 +195,12 @@ describe('get_events_feed Tool', () => {
     it('should normalize local rate-limit 429 without upstream metadata', async () => {
       const { APIError } = await import('../clients/ep/baseClient.js');
       vi.mocked(epClientModule.epClient.getEventsFeed)
-        .mockRejectedValueOnce(new APIError('Rate limit exceeded. Retry after 5000ms', 429));
+        .mockRejectedValueOnce(
+          new APIError('Rate limit exceeded. Retry after 5000ms', 429, {
+            retryAfterMs: 5000,
+            remainingTokens: 0,
+          }),
+        );
 
       const result = await handleGetEventsFeed({});
 
@@ -204,6 +209,7 @@ describe('get_events_feed Tool', () => {
         status: string;
         errorCode?: string;
         retryable?: boolean;
+        retryAfterMs?: number;
         upstream?: { statusCode?: number };
         reason?: string;
       };
@@ -211,7 +217,27 @@ describe('get_events_feed Tool', () => {
       expect(parsed.errorCode).toBe('RATE_LIMIT');
       expect(parsed.retryable).toBe(true);
       expect(parsed.upstream).toBeUndefined();
+      expect(parsed.retryAfterMs).toBe(5000);
       expect(parsed.reason).toContain('Local rate limit');
+      expect(parsed.reason).toContain('5000ms');
+    });
+
+    it('should parse retryAfterMs from local rate-limit message when details missing', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getEventsFeed)
+        .mockRejectedValueOnce(new APIError('Rate limit exceeded. Retry after 2500ms', 429));
+
+      const result = await handleGetEventsFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        errorCode?: string;
+        retryAfterMs?: number;
+        reason?: string;
+      };
+      expect(parsed.errorCode).toBe('RATE_LIMIT');
+      expect(parsed.retryAfterMs).toBe(2500);
+      expect(parsed.reason).toContain('2500ms');
     });
 
     it('should handle error-in-body response (HTTP 200 with upstream 404-in-body)', async () => {
