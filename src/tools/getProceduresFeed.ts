@@ -206,20 +206,23 @@ function scanProceduresForCurrentYear(
   return { hasCurrentYear: false, oldestYearObserved };
 }
 
+function isProcedureRecord(item: unknown): item is Record<string, unknown> {
+  return typeof item === 'object' && item !== null;
+}
+
 function getProcedureDateLastActivityTimestamp(item: unknown): number | undefined {
-  if (item === null || typeof item !== 'object') return undefined;
-  const dateLastActivity = (item as Record<string, unknown>)['dateLastActivity'];
+  if (!isProcedureRecord(item)) return undefined;
+  const dateLastActivity = item['dateLastActivity'];
   if (typeof dateLastActivity !== 'string' || dateLastActivity === '') return undefined;
   const timestamp = Date.parse(dateLastActivity);
   return Number.isFinite(timestamp) ? timestamp : undefined;
 }
 
 function hasCurrentYearProcedureToken(item: unknown, yearStr: string, refRegex: RegExp): boolean {
-  if (item === null || typeof item !== 'object') return false;
-  const obj = item as Record<string, unknown>;
-  const dateLastActivity = obj['dateLastActivity'];
+  if (!isProcedureRecord(item)) return false;
+  const dateLastActivity = item['dateLastActivity'];
   if (typeof dateLastActivity === 'string' && dateLastActivity.startsWith(yearStr)) return true;
-  const reference = obj['reference'];
+  const reference = item['reference'];
   return typeof reference === 'string' && refRegex.test(reference);
 }
 
@@ -239,6 +242,7 @@ function prioritizeProcedureFeedResult(result: unknown): unknown {
     }))
     .sort((a, b) => {
       if (a.isCurrentYear !== b.isCurrentYear) return a.isCurrentYear ? -1 : 1;
+      // More recent activity dates should lead older archive entries.
       if (a.timestamp !== undefined && b.timestamp !== undefined && a.timestamp !== b.timestamp) {
         return b.timestamp - a.timestamp;
       }
