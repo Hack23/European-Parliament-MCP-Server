@@ -12,7 +12,7 @@
 import { GetExternalDocumentsFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { ToolError } from './shared/errors.js';
-import { isUpstream404, isErrorInBody, buildFeedSuccessResponse } from './shared/feedUtils.js';
+import { isUpstream404, isErrorInBody, buildFeedSuccessResponse, buildEmptyFeedResponse } from './shared/feedUtils.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
@@ -121,6 +121,12 @@ export async function handleGetExternalDocumentsFeed(args: unknown): Promise<Too
     const result = await epClient.getExternalDocumentsFeed(
       apiParams
     );
+    const source = (result ?? {}) as Record<string, unknown>;
+    if (isErrorInBody(source)) {
+      return buildEmptyFeedResponse(
+        'EP API returned an error-in-body response for get_external_documents_feed — the upstream enrichment step may have failed.',
+      );
+    }
     return buildFeedSuccessResponse(
       withEmptyFeedDiagnostics(result, params),
       [],

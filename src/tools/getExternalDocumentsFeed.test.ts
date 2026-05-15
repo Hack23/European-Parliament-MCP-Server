@@ -145,8 +145,13 @@ describe('get_external_documents_feed Tool', () => {
       const result = await handleGetExternalDocumentsFeed({ timeframe: 'one-week' });
 
       const parsed = JSON.parse(result.content[0]?.text ?? '{}') as ExternalDocumentsFeedResponse;
-      // Should be treated as unavailable (no data) but without freshness diagnostics
+      // Should be unavailable with enrichment-failure reason, not freshness/lag
+      expect(parsed.status).toBe('unavailable');
       expect(parsed.dataQualityDiagnostics).toBeUndefined();
+      expect(parsed.reason).toContain('error-in-body');
+      expect(parsed.reason).toContain('upstream enrichment');
+      expect(parsed.reason).not.toContain('freshness/ordering lag');
+      expect(parsed.dataQualityWarnings[0]).toContain('error-in-body');
     });
   });
 
