@@ -52,6 +52,13 @@ function buildEnrichmentFailedResponse(rawError: string): ToolResult {
   );
 }
 
+/**
+ * Detect timeout failures surfaced either directly or via the EP API wrapper.
+ *
+ * @param error - Error thrown by the EP API client or timeout utility
+ * @returns true when the failure should be classified as UPSTREAM_TIMEOUT
+ * @internal
+ */
 function isTimeoutLikeError(error: unknown): boolean {
   return (
     error instanceof TimeoutError ||
@@ -60,6 +67,13 @@ function isTimeoutLikeError(error: unknown): boolean {
   );
 }
 
+/**
+ * Build the uniform feed envelope for upstream HTTP 429 rate limits.
+ *
+ * @param error - APIError carrying the rate-limit failure details
+ * @returns MCP ToolResult with RATE_LIMIT metadata for downstream retry logic
+ * @internal
+ */
 function buildRateLimitResponse(error: APIError): ToolResult {
   return buildEmptyFeedResponse(
     `EP API rate limit reached for get_events_feed — retry after a short delay.`,
@@ -74,6 +88,14 @@ function buildRateLimitResponse(error: APIError): ToolResult {
   );
 }
 
+/**
+ * Build the uniform feed envelope for retryable upstream 5xx failures.
+ *
+ * @param error - APIError carrying the upstream failure details
+ * @param statusCode - HTTP 5xx status code to expose in the envelope
+ * @returns MCP ToolResult with UPSTREAM_ERROR metadata
+ * @internal
+ */
 function buildUpstreamErrorResponse(error: APIError, statusCode: number): ToolResult {
   return buildEmptyFeedResponse(
     `EP API upstream error for get_events_feed — retry later or use get_events with limit/offset as a fallback.`,
