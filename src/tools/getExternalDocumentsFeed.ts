@@ -121,7 +121,7 @@ export async function handleGetExternalDocumentsFeed(args: unknown): Promise<Too
     const result = await epClient.getExternalDocumentsFeed(
       apiParams
     );
-    const source = (result ?? {}) as Record<string, unknown>;
+    const source = result as Record<string, unknown>;
     if (isErrorInBody(source)) {
       return buildEmptyFeedResponse(
         'EP API returned an error-in-body response for get_external_documents_feed — the upstream enrichment step may have failed.',
