@@ -107,7 +107,7 @@ describe('get_events_feed Tool', () => {
       await expect(handleGetEventsFeed({})).rejects.toThrow('Failed to retrieve events feed');
     });
 
-    it('should return empty feed on upstream 404', async () => {
+    it('should return empty feed with NOT_FOUND metadata on upstream 404', async () => {
       const { APIError } = await import('../clients/ep/baseClient.js');
       vi.mocked(epClientModule.epClient.getEventsFeed)
         .mockRejectedValueOnce(new APIError('Not Found', 404));
@@ -118,9 +118,150 @@ describe('get_events_feed Tool', () => {
       const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
         data: unknown[];
         dataQualityWarnings: string[];
+        errorCode?: string;
+        retryable?: boolean;
+        upstream?: { statusCode?: number; errorMessage?: string };
       };
       expect(parsed.data).toEqual([]);
-      expect(parsed.dataQualityWarnings[0]).toContain('no data');
+      expect(parsed.dataQualityWarnings[0]).toContain('404');
+      expect(parsed.errorCode).toBe('NOT_FOUND');
+      expect(parsed.retryable).toBe(false);
+      expect(parsed.upstream?.statusCode).toBe(404);
+    });
+
+    it('should emit timeframe-specific empty-feed reason on HTTP 200 with empty data array', async () => {
+      vi.mocked(epClientModule.epClient.getEventsFeed).mockResolvedValueOnce({
+        data: [],
+        '@context': [],
+      });
+
+      const result = await handleGetEventsFeed({ timeframe: 'one-day' });
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        items: unknown[];
+        itemCount: number;
+        reason?: string;
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.items).toEqual([]);
+      expect(parsed.itemCount).toBe(0);
+      expect(parsed.reason).toContain("timeframe 'one-day'");
+      expect(parsed.reason).toContain('get_events');
+      expect(parsed.dataQualityWarnings.some((w) => w.includes("timeframe 'one-day'"))).toBe(true);
+    });
+
+    it('should normalize upstream timeouts into an unavailable feed envelope', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getEventsFeed)
+        .mockRejectedValueOnce(new APIError('EP API request to events/feed timed out after 60000ms', 408));
+
+      const result = await handleGetEventsFeed({ timeframe: 'one-month' });
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        errorCode?: string;
+        retryable?: boolean;
+        reason?: string;
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.errorCode).toBe('UPSTREAM_TIMEOUT');
+      expect(parsed.retryable).toBe(true);
+      expect(parsed.reason).toContain('timed out');
+    });
+
+    it('should normalize upstream 5xx errors into a retryable feed envelope', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getEventsFeed)
+        .mockRejectedValueOnce(new APIError('EP API request failed: 502 Bad Gateway', 502));
+
+      const result = await handleGetEventsFeed({ timeframe: 'one-week' });
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        errorCode?: string;
+        retryable?: boolean;
+        upstream?: { statusCode?: number; errorMessage?: string };
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.errorCode).toBe('UPSTREAM_ERROR');
+      expect(parsed.retryable).toBe(true);
+      expect(parsed.upstream?.statusCode).toBe(502);
+      expect(parsed.upstream?.errorMessage).toContain('502');
+    });
+
+    it('should normalize upstream rate limits into a retryable feed envelope', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getEventsFeed)
+        .mockRejectedValueOnce(new APIError('EP API request failed: 429', 429));
+
+      const result = await handleGetEventsFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        errorCode?: string;
+        retryable?: boolean;
+        upstream?: { statusCode?: number };
+        reason?: string;
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.errorCode).toBe('RATE_LIMIT');
+      expect(parsed.retryable).toBe(true);
+      expect(parsed.upstream?.statusCode).toBe(429);
+      expect(parsed.reason).toContain('EP API rate limit');
+    });
+
+    it('should normalize local rate-limit 429 without upstream metadata', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getEventsFeed)
+        .mockRejectedValueOnce(
+          new APIError('Rate limit exceeded. Retry after 5000ms', 429, {
+            retryAfterMs: 5000,
+            remainingTokens: 0,
+          }),
+        );
+
+      const result = await handleGetEventsFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        errorCode?: string;
+        retryable?: boolean;
+        retryAfterMs?: number;
+        upstream?: { statusCode?: number };
+        reason?: string;
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.errorCode).toBe('RATE_LIMIT');
+      expect(parsed.retryable).toBe(true);
+      expect(parsed.upstream).toBeUndefined();
+      expect(parsed.retryAfterMs).toBe(5000);
+      expect(parsed.reason).toContain('Local rate limit');
+      expect(parsed.reason).toContain('5000ms');
+    });
+
+    it('should parse retryAfterMs from local rate-limit message when details missing', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getEventsFeed)
+        .mockRejectedValueOnce(new APIError('Rate limit exceeded. Retry after 2500ms', 429));
+
+      const result = await handleGetEventsFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        errorCode?: string;
+        retryAfterMs?: number;
+        reason?: string;
+      };
+      expect(parsed.errorCode).toBe('RATE_LIMIT');
+      expect(parsed.retryAfterMs).toBe(2500);
+      expect(parsed.reason).toContain('2500ms');
     });
 
     it('should handle error-in-body response (HTTP 200 with upstream 404-in-body)', async () => {
@@ -138,11 +279,18 @@ describe('get_events_feed Tool', () => {
         data: unknown[];
         items: unknown[];
         dataQualityWarnings: string[];
+        errorCode?: string;
+        retryable?: boolean;
+        upstream?: { statusCode?: number; errorMessage?: string };
       };
       expect(parsed.status).toBe('unavailable');
       expect(parsed.data).toEqual([]);
       expect(parsed.items).toEqual([]);
       expect(parsed.dataQualityWarnings[0]).toContain('error-in-body');
+      expect(parsed.errorCode).toBe('ENRICHMENT_FAILED');
+      expect(parsed.retryable).toBe(true);
+      expect(parsed.upstream?.statusCode).toBe(404);
+      expect(parsed.upstream?.errorMessage).toContain('404');
     });
   });
 
@@ -171,13 +319,17 @@ describe('get_events_feed Tool', () => {
       expect(env.data).toEqual([{ id: 'evt-1', type: 'Event' }]);
     });
 
-    it('should emit status="unavailable" with reason on upstream 404', async () => {
+    it('should emit status="unavailable" with NOT_FOUND metadata on upstream 404', async () => {
       const { APIError } = await import('../clients/ep/baseClient.js');
       vi.mocked(epClientModule.epClient.getEventsFeed)
         .mockRejectedValueOnce(new APIError('Not Found', 404));
 
       const result = await handleGetEventsFeed({});
-      const env = JSON.parse(result.content[0]?.text ?? '{}') as FeedEnvelope;
+      const env = JSON.parse(result.content[0]?.text ?? '{}') as FeedEnvelope & {
+        errorCode?: string;
+        retryable?: boolean;
+        upstream?: { statusCode?: number };
+      };
 
       expect(env.status).toBe('unavailable');
       expect(env.items).toEqual([]);
@@ -185,6 +337,9 @@ describe('get_events_feed Tool', () => {
       expect(typeof env.reason).toBe('string');
       expect(env.reason ?? '').not.toBe('');
       expect(typeof env.generatedAt).toBe('string');
+      expect(env.errorCode).toBe('NOT_FOUND');
+      expect(env.retryable).toBe(false);
+      expect(env.upstream?.statusCode).toBe(404);
     });
   });
 
@@ -199,8 +354,10 @@ describe('get_events_feed Tool', () => {
     });
 
     it('should export tool metadata with description containing slow endpoint warning', () => {
-      expect(getEventsFeedToolMetadata.description).toContain('120-second');
-      expect(getEventsFeedToolMetadata.description).toContain('get_plenary_sessions');
+      expect(getEventsFeedToolMetadata.description).toContain('global EP request timeout');
+      expect(getEventsFeedToolMetadata.description).toContain('get_events');
+      expect(getEventsFeedToolMetadata.description).not.toContain('120-second');
+      expect(getEventsFeedToolMetadata.description).not.toContain('get_plenary_sessions');
     });
 
     it('should export tool metadata with inputSchema', () => {

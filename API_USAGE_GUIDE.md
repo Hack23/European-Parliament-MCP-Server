@@ -238,7 +238,7 @@ Currently, the server does **not require authentication** for tool access. Futur
 | `get_voting_records` | Aggregate voting data | sessionId, topic, dateFrom | Paginated list | ⚠️ Roll-call data delayed by weeks |
 | `get_latest_votes` | Near-real-time DOCEO vote data | date, weekStart, term, includeIndividualVotes | Vote records | ✅ Hours fresh — RCV preferred; falls back to VOT |
 | `get_speeches` | Plenary speeches | speechId, year, dateFrom, dateTo | Paginated list | |
-| `get_events` | EP events | eventId, year, dateFrom, dateTo | Paginated list | |
+| `get_events` | EP events | eventId, limit, offset | Paginated list | ⚠️ No date filtering |
 | `get_meeting_activities` | Meeting activities | sittingId (required) | Paginated list | ✅ Works with session IDs like `MTG-PL-2025-01-20` |
 | `get_meeting_decisions` | Meeting decisions | sittingId (required) | Paginated list | ✅ Works with session IDs |
 | `get_meeting_foreseen_activities` | Planned agenda items | sittingId (required) | Paginated list | ✅ Works with session IDs |
@@ -1939,30 +1939,25 @@ const result = await client.callTool('get_adopted_texts', { year: 2024, limit: 2
 
 ### Tool: get_events
 
-**Description**: Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or list with date range filtering.
+**Description**: Get European Parliament events including hearings, conferences, seminars, and institutional events. Supports single event lookup by eventId or paginated list. Note: The EP API `/events` endpoint has no date filtering — only `eventId`, `limit`, and `offset` are supported.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | eventId | string | No | - | Specific event ID for single lookup |
-| year | number | No | - | Filter by calendar year (1900-2100, recommended for annual counts) |
-| dateFrom | string | No | - | Start date filter (YYYY-MM-DD) |
-| dateTo | string | No | - | End date filter (YYYY-MM-DD) |
 | limit | number | No | 50 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
 
 #### Example Usage
 
 ```
-Show me European Parliament events scheduled for March 2024
+Show me recent European Parliament events
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
 const result = await client.callTool('get_events', {
-  dateFrom: '2024-03-01',
-  dateTo: '2024-03-31',
   limit: 20
 });
 ```
@@ -2628,13 +2623,19 @@ Several EP API feed endpoints are **significantly slower** than standard data en
 | `documents/feed` | Fixed | 60–120 s | 120+ s | ⚠️ Very slow; frequently times out |
 | `corporate-bodies/feed` | Fixed | 60–180 s | 180+ s | ⚠️ Slowest feed; frequently times out |
 
-The MCP server automatically applies a **minimum 120-second timeout** to all fixed-window feeds and to the slow configurable feeds (`get_procedures_feed`, `get_events_feed`). If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead.
+The MCP server applies a **minimum 120-second timeout** to the following feed tools regardless of the global timeout setting:
+
+- **Always (fixed-window):** `get_documents_feed`, `get_plenary_documents_feed`, `get_committee_documents_feed`, `get_plenary_session_documents_feed`, `get_parliamentary_questions_feed`, `get_corporate_bodies_feed`, and the configurable `get_procedures_feed`.
+- **Only when `timeframe === "one-month"` (configurable):** `get_meps_feed`, `get_mep_declarations_feed`, `get_adopted_texts_feed`, `get_external_documents_feed` — shorter timeframes use the global EP request timeout.
+- **No per-request floor (uses the global EP request timeout):** `get_controlled_vocabularies_feed` (returns HTTP 204 almost instantly) and `get_events_feed`. The latter surfaces timeouts/rate-limits/upstream failures via the normalized feed envelope (see [Tool: get_events_feed](#tool-get_events_feed)).
+
+If the global timeout (set via `--timeout <ms>` CLI argument or `EP_REQUEST_TIMEOUT_MS` environment variable) is higher than 120 seconds, that higher value is used instead for tools that apply the 120-second floor.
 
 > **Tip:** For production use, set `--timeout 180000` (180 seconds) to accommodate the slowest feeds. The default 60-second timeout is sufficient for most data endpoints but too short for many feeds during peak load.
 
 **Recommended fallbacks when feeds time out:**
 - `get_procedures_feed` → use `get_procedures({ year: 2026, limit: 20 })` instead
-- `get_events_feed` → use `get_plenary_sessions({ year: 2026 })` instead
+- `get_events_feed` → use `get_events({ limit: 50 })` instead (note: `get_events` supports only `eventId`, `limit`, and `offset` — no date filtering)
 - `get_meps_feed` → use `get_current_meps({ limit: 50 })` instead
 - `get_adopted_texts_feed` → use `get_adopted_texts({ year: 2026 })` instead
 
@@ -2756,7 +2757,18 @@ const result = await client.callTool('get_meps_feed', {
 
 **Description**: Get recently updated events from the European Parliament feed endpoint. Returns event records that have been modified within the specified timeframe.
 
-> ⚠️ **Slow endpoint**: The EP API `events/feed` endpoint is significantly slower than other feeds — `one-month` queries may take 120+ seconds. An extended timeout (120s) is applied automatically. For faster results, use `get_plenary_sessions` with a `year` filter instead.
+> ⚠️ **Slow endpoint**: The EP API `events/feed` endpoint is significantly slower than other feeds — `one-month` queries may take 60+ seconds. The global EP request timeout (default 60s, configurable via `--timeout` / `EP_REQUEST_TIMEOUT_MS`) applies; this tool no longer forces an extended per-request minimum. For faster results, use `get_events` with `limit`/`offset` pagination instead (note: `get_events` has no date filtering — only `eventId`, `limit`, and `offset` are supported).
+
+> ✅ **Normalized error envelope** (since v1.3.x): The following **known** transient upstream failure modes are caught and returned as the uniform feed response shape (with `status: "unavailable"` plus machine-readable `errorCode` / `retryable` / optional `upstream` and `retryAfterMs` metadata). Unclassified or unexpected errors (e.g., network socket failures, schema validation errors) still throw — callers should combine envelope inspection with standard exception handling:
+>
+> | `errorCode` | When | `retryable` | `upstream` present |
+> |-------------|------|-------------|--------------------|
+> | `NOT_FOUND` | Upstream HTTP 404 (empty timeframe / recess window) | `false` | `statusCode: 404` |
+> | `UPSTREAM_TIMEOUT` | Request exceeded the configured timeout | `true` | _omitted_ |
+> | `RATE_LIMIT` (local) | Local token-bucket limiter rejected the call before any HTTP request | `true` | _omitted_ — `retryAfterMs` is set |
+> | `RATE_LIMIT` (upstream) | EP API returned HTTP 429 | `true` | `statusCode: 429` |
+> | `UPSTREAM_ERROR` | EP API returned HTTP 5xx | `true` | `statusCode: 5xx` |
+> | `ENRICHMENT_FAILED` | HTTP 200 with `error` field and no `data` array | `true` | parsed upstream status when present |
 
 #### Parameters
 
@@ -2778,6 +2790,29 @@ Show me EP events updated today
 const result = await client.callTool('get_events_feed', {
   timeframe: 'today'
 });
+
+const envelope = JSON.parse(result.content[0].text);
+
+if (envelope.status === 'operational') {
+  for (const event of envelope.items) {
+    console.log(event['@id']);
+  }
+} else if (envelope.status === 'degraded') {
+  // Items are present but there are data-quality warnings — still process them.
+  console.warn(`get_events_feed degraded: ${envelope.dataQualityWarnings?.join('; ')}`);
+  for (const event of envelope.items) {
+    console.log(event['@id']);
+  }
+} else {
+  // status === 'unavailable' — no items to process.
+  console.warn(`get_events_feed unavailable: ${envelope.errorCode} — ${envelope.reason}`);
+  if (envelope.retryable && envelope.retryAfterMs) {
+    // Honor the precise retry hint from the local rate limiter.
+    // Re-invoke the same call after the suggested delay.
+    await new Promise(resolve => setTimeout(resolve, envelope.retryAfterMs));
+    // … then retry the callTool request
+  }
+}
 ```
 
 ---

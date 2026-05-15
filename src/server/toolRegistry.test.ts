@@ -394,4 +394,119 @@ describe('dispatchToolCall', () => {
     const status = feedHealthTracker.getStatus('get_meps_feed');
     expect(status.status).toBe('ok');
   });
+
+  it('records feed error when handler returns in-band UPSTREAM_TIMEOUT envelope', async () => {
+    const { feedHealthTracker } = await import('../services/FeedHealthTracker.js');
+    const { handleGetMEPsFeed } = await import('../tools/getMEPsFeed.js');
+    feedHealthTracker.reset();
+
+    const mockedFeed = vi.mocked(handleGetMEPsFeed);
+    mockedFeed.mockResolvedValueOnce({
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify({
+            status: 'unavailable',
+            items: [],
+            itemCount: 0,
+            reason: 'EP API request timed out',
+            errorCode: 'UPSTREAM_TIMEOUT',
+            retryable: true,
+          }),
+        },
+      ],
+    });
+
+    await dispatchToolCall('get_meps_feed', {});
+
+    const status = feedHealthTracker.getStatus('get_meps_feed');
+    expect(status.status).toBe('error');
+    expect(status.lastError).toContain('UPSTREAM_TIMEOUT');
+  });
+
+  it('records feed error when handler returns in-band UPSTREAM_ERROR envelope', async () => {
+    const { feedHealthTracker } = await import('../services/FeedHealthTracker.js');
+    const { handleGetMEPsFeed } = await import('../tools/getMEPsFeed.js');
+    feedHealthTracker.reset();
+
+    const mockedFeed = vi.mocked(handleGetMEPsFeed);
+    mockedFeed.mockResolvedValueOnce({
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify({
+            status: 'unavailable',
+            items: [],
+            itemCount: 0,
+            reason: 'EP API upstream error',
+            errorCode: 'UPSTREAM_ERROR',
+            retryable: true,
+            upstream: { statusCode: 502 },
+          }),
+        },
+      ],
+    });
+
+    await dispatchToolCall('get_meps_feed', {});
+
+    const status = feedHealthTracker.getStatus('get_meps_feed');
+    expect(status.status).toBe('error');
+    expect(status.lastError).toContain('UPSTREAM_ERROR');
+    expect(status.lastError).toContain('502');
+  });
+
+  it('records feed success when handler returns in-band NOT_FOUND envelope (empty window is healthy)', async () => {
+    const { feedHealthTracker } = await import('../services/FeedHealthTracker.js');
+    const { handleGetMEPsFeed } = await import('../tools/getMEPsFeed.js');
+    feedHealthTracker.reset();
+
+    const mockedFeed = vi.mocked(handleGetMEPsFeed);
+    mockedFeed.mockResolvedValueOnce({
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify({
+            status: 'unavailable',
+            items: [],
+            itemCount: 0,
+            reason: 'No data available',
+            errorCode: 'NOT_FOUND',
+            retryable: false,
+            upstream: { statusCode: 404 },
+          }),
+        },
+      ],
+    });
+
+    await dispatchToolCall('get_meps_feed', {});
+
+    const status = feedHealthTracker.getStatus('get_meps_feed');
+    expect(status.status).toBe('ok');
+  });
+
+  it('records feed success when handler returns unavailable envelope without errorCode (legacy empty feed)', async () => {
+    const { feedHealthTracker } = await import('../services/FeedHealthTracker.js');
+    const { handleGetMEPsFeed } = await import('../tools/getMEPsFeed.js');
+    feedHealthTracker.reset();
+
+    const mockedFeed = vi.mocked(handleGetMEPsFeed);
+    mockedFeed.mockResolvedValueOnce({
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify({
+            status: 'unavailable',
+            items: [],
+            itemCount: 0,
+            reason: 'No updates in timeframe',
+          }),
+        },
+      ],
+    });
+
+    await dispatchToolCall('get_meps_feed', {});
+
+    const status = feedHealthTracker.getStatus('get_meps_feed');
+    expect(status.status).toBe('ok');
+  });
 });

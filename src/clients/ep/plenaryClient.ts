@@ -28,7 +28,6 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
-import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
 /**
  * Sub-client for plenary sessions and meeting-related EP API endpoints.
@@ -329,9 +328,13 @@ export class PlenaryClient extends BaseEPClient {
    * **EP API Endpoint:** `GET /events/feed`
    *
    * **Note:** The EP API `events/feed` endpoint is significantly slower
-   * than other feed endpoints — it typically takes 30–50 s even for `one-week`
-   * and 120+ seconds for `one-month`.  An extended minimum timeout of 120 s
-   * is always applied.
+   * than other feed endpoints. This method uses the global EP request
+   * timeout (no extended slow-feed minimum) and **throws** `APIError` on
+   * HTTP failures (including timeouts surfaced as status 408).
+   *
+   * The MCP tool layer (`handleGetEventsFeed`) converts thrown errors into
+   * a machine-readable in-band feed envelope; direct `PlenaryClient` /
+   * `EuropeanParliamentClient` consumers should handle `APIError` throws.
    */
   async getEventsFeed(params: {
     timeframe?: string;
@@ -343,7 +346,7 @@ export class PlenaryClient extends BaseEPClient {
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.activityType !== undefined ? { 'activity-type': params.activityType } : {}),
-    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
+    });
   }
 
   /**
