@@ -226,13 +226,11 @@ function hasCurrentYearProcedureToken(item: unknown, yearStr: string, refRegex: 
   return typeof reference === 'string' && refRegex.test(reference);
 }
 
-function prioritizeProcedureFeedResult(result: unknown): unknown {
+function prioritizeProcedureFeedResult(result: unknown, yearStr: string, refRegex: RegExp): unknown {
   const source = (result ?? {}) as Record<string, unknown>;
   const items = Array.isArray(source['data']) ? (source['data'] as unknown[]) : [];
   if (items.length < 2) return result;
 
-  const yearStr = String(new Date().getUTCFullYear());
-  const refRegex = new RegExp(`^${yearStr}/`);
   const sortedItems = items
     .map((item, index) => ({
       item,
@@ -272,12 +270,10 @@ function prioritizeProcedureFeedResult(result: unknown): unknown {
  *
  * @internal
  */
-function buildStalenessWarnings(result: unknown): readonly string[] {
+function buildStalenessWarnings(result: unknown, yearStr: string, refRegex: RegExp): readonly string[] {
   const source = (result ?? {}) as Record<string, unknown>;
   const items = Array.isArray(source['data']) ? (source['data'] as unknown[]) : [];
   if (items.length === 0) return [];
-  const yearStr = String(new Date().getUTCFullYear());
-  const refRegex = new RegExp(`^${yearStr}/`);
   const { hasCurrentYear, oldestYearObserved } = scanProceduresForCurrentYear(items, yearStr, refRegex);
   if (hasCurrentYear) return [];
   const ageSuffix =
@@ -334,8 +330,10 @@ export async function handleGetProceduresFeed(args: unknown): Promise<ToolResult
       return buildEnrichmentFailedResponse(rawError);
     }
     const emptyReason = `EP API procedures/feed returned no data for timeframe '${params.timeframe}' — no procedures were updated in the requested period. This is expected during parliamentary recess or low-activity weeks. Use get_procedures (with limit/offset) to browse a paginated list of procedures as a reliable fallback.`;
-    const prioritizedResult = prioritizeProcedureFeedResult(result);
-    const stalenessWarnings = buildStalenessWarnings(prioritizedResult);
+    const yearStr = String(new Date().getUTCFullYear());
+    const refRegex = new RegExp(`^${yearStr}/`);
+    const prioritizedResult = prioritizeProcedureFeedResult(result, yearStr, refRegex);
+    const stalenessWarnings = buildStalenessWarnings(prioritizedResult, yearStr, refRegex);
     return buildFeedSuccessResponse(prioritizedResult, stalenessWarnings, emptyReason);
   } catch (error: unknown) {
     const inBand = handleUpstreamCatchError(error);
