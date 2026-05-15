@@ -368,6 +368,64 @@ describe('get_procedures_feed Tool', () => {
       expect(parsed.status).toBe('operational');
     });
 
+    it('should preserve original order for current-year items with identical timestamps', async () => {
+      vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
+        data: [
+          { id: 'proc-current-first', reference: `${String(currentYear)}/0001(COD)`, dateLastActivity: `${String(currentYear)}-04-08` },
+          { id: 'proc-current-second', reference: `${String(currentYear)}/0002(COD)`, dateLastActivity: `${String(currentYear)}-04-08` },
+          { id: 'proc-1972', reference: '1972/0003(COD)', dateLastActivity: '1972-06-15' },
+        ],
+        '@context': [],
+      });
+
+      const result = await handleGetProceduresFeed({ timeframe: 'one-week' });
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        items: Array<{ id: string }>;
+      };
+      expect(parsed.items.map((item) => item.id)).toEqual([
+        'proc-current-first',
+        'proc-current-second',
+        'proc-1972',
+      ]);
+    });
+
+    it('should prioritize current-year references even when dateLastActivity is missing', async () => {
+      vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
+        data: [
+          { id: 'proc-1972', reference: '1972/0003(COD)', dateLastActivity: '1972-06-15' },
+          { id: 'proc-current-no-date', reference: `${String(currentYear)}/0001(COD)` },
+        ],
+        '@context': [],
+      });
+
+      const result = await handleGetProceduresFeed({ timeframe: 'one-week' });
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        items: Array<{ id: string }>;
+        dataQualityWarnings: string[];
+      };
+      expect(parsed.items.map((item) => item.id)).toEqual(['proc-current-no-date', 'proc-1972']);
+      expect(parsed.dataQualityWarnings.some((w) => w.startsWith('STALENESS_WARNING'))).toBe(false);
+    });
+
+    it('should preserve original order when items have no timestamps or current-year tokens', async () => {
+      vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
+        data: [
+          { id: 'proc-first', reference: '1972/0003(COD)' },
+          { id: 'proc-second', reference: '1980/0013(NLE)' },
+          { id: 'proc-third' },
+        ],
+        '@context': [],
+      });
+
+      const result = await handleGetProceduresFeed({ timeframe: 'one-week' });
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        items: Array<{ id: string }>;
+        status: string;
+      };
+      expect(parsed.items.map((item) => item.id)).toEqual(['proc-first', 'proc-second', 'proc-third']);
+      expect(parsed.status).toBe('degraded');
+    });
+
     it('should add STALENESS_WARNING when payload has only historical items', async () => {
       vi.mocked(epClientModule.epClient.getProceduresFeed).mockResolvedValueOnce({
         data: [
