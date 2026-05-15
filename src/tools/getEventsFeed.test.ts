@@ -107,7 +107,7 @@ describe('get_events_feed Tool', () => {
       await expect(handleGetEventsFeed({})).rejects.toThrow('Failed to retrieve events feed');
     });
 
-    it('should return empty feed on upstream 404', async () => {
+    it('should return empty feed with NOT_FOUND metadata on upstream 404', async () => {
       const { APIError } = await import('../clients/ep/baseClient.js');
       vi.mocked(epClientModule.epClient.getEventsFeed)
         .mockRejectedValueOnce(new APIError('Not Found', 404));
@@ -118,9 +118,15 @@ describe('get_events_feed Tool', () => {
       const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
         data: unknown[];
         dataQualityWarnings: string[];
+        errorCode?: string;
+        retryable?: boolean;
+        upstream?: { statusCode?: number; errorMessage?: string };
       };
       expect(parsed.data).toEqual([]);
-      expect(parsed.dataQualityWarnings[0]).toContain('no data');
+      expect(parsed.dataQualityWarnings[0]).toContain('404');
+      expect(parsed.errorCode).toBe('NOT_FOUND');
+      expect(parsed.retryable).toBe(false);
+      expect(parsed.upstream?.statusCode).toBe(404);
     });
 
     it('should normalize upstream timeouts into an unavailable feed envelope', async () => {
@@ -167,7 +173,7 @@ describe('get_events_feed Tool', () => {
     it('should normalize upstream rate limits into a retryable feed envelope', async () => {
       const { APIError } = await import('../clients/ep/baseClient.js');
       vi.mocked(epClientModule.epClient.getEventsFeed)
-        .mockRejectedValueOnce(new APIError('Rate limit exceeded', 429));
+        .mockRejectedValueOnce(new APIError('EP API request failed: 429', 429));
 
       const result = await handleGetEventsFeed({});
 
@@ -177,11 +183,35 @@ describe('get_events_feed Tool', () => {
         errorCode?: string;
         retryable?: boolean;
         upstream?: { statusCode?: number };
+        reason?: string;
       };
       expect(parsed.status).toBe('unavailable');
       expect(parsed.errorCode).toBe('RATE_LIMIT');
       expect(parsed.retryable).toBe(true);
       expect(parsed.upstream?.statusCode).toBe(429);
+      expect(parsed.reason).toContain('EP API rate limit');
+    });
+
+    it('should normalize local rate-limit 429 without upstream metadata', async () => {
+      const { APIError } = await import('../clients/ep/baseClient.js');
+      vi.mocked(epClientModule.epClient.getEventsFeed)
+        .mockRejectedValueOnce(new APIError('Rate limit exceeded. Retry after 5000ms', 429));
+
+      const result = await handleGetEventsFeed({});
+
+      expect(result.isError).toBeUndefined();
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        status: string;
+        errorCode?: string;
+        retryable?: boolean;
+        upstream?: { statusCode?: number };
+        reason?: string;
+      };
+      expect(parsed.status).toBe('unavailable');
+      expect(parsed.errorCode).toBe('RATE_LIMIT');
+      expect(parsed.retryable).toBe(true);
+      expect(parsed.upstream).toBeUndefined();
+      expect(parsed.reason).toContain('Local rate limit');
     });
 
     it('should handle error-in-body response (HTTP 200 with upstream 404-in-body)', async () => {
@@ -239,13 +269,17 @@ describe('get_events_feed Tool', () => {
       expect(env.data).toEqual([{ id: 'evt-1', type: 'Event' }]);
     });
 
-    it('should emit status="unavailable" with reason on upstream 404', async () => {
+    it('should emit status="unavailable" with NOT_FOUND metadata on upstream 404', async () => {
       const { APIError } = await import('../clients/ep/baseClient.js');
       vi.mocked(epClientModule.epClient.getEventsFeed)
         .mockRejectedValueOnce(new APIError('Not Found', 404));
 
       const result = await handleGetEventsFeed({});
-      const env = JSON.parse(result.content[0]?.text ?? '{}') as FeedEnvelope;
+      const env = JSON.parse(result.content[0]?.text ?? '{}') as FeedEnvelope & {
+        errorCode?: string;
+        retryable?: boolean;
+        upstream?: { statusCode?: number };
+      };
 
       expect(env.status).toBe('unavailable');
       expect(env.items).toEqual([]);
@@ -253,6 +287,9 @@ describe('get_events_feed Tool', () => {
       expect(typeof env.reason).toBe('string');
       expect(env.reason ?? '').not.toBe('');
       expect(typeof env.generatedAt).toBe('string');
+      expect(env.errorCode).toBe('NOT_FOUND');
+      expect(env.retryable).toBe(false);
+      expect(env.upstream?.statusCode).toBe(404);
     });
   });
 

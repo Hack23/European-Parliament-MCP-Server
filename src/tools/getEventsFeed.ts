@@ -70,22 +70,46 @@ function isTimeoutLikeError(error: unknown): boolean {
 }
 
 /**
- * Build the uniform feed envelope for upstream HTTP 429 rate limits.
+ * Detect whether an APIError(429) originated from the local token-bucket
+ * rate limiter rather than an upstream EP API response.
+ *
+ * BaseEPClient throws `APIError('Rate limit exceeded. Retry after …', 429)`
+ * when the local limiter rejects a request *before* any HTTP call is made.
+ * Upstream 429s use the standard `EP API request failed: 429` format.
+ *
+ * @internal
+ */
+function isLocalRateLimit(error: APIError): boolean {
+  return error.message.startsWith('Rate limit exceeded');
+}
+
+/**
+ * Build the uniform feed envelope for HTTP 429 rate limits.
+ *
+ * Distinguishes local token-bucket rejections from upstream EP API 429s so
+ * downstream consumers get accurate diagnostics.
  *
  * @param error - APIError carrying the rate-limit failure details
  * @returns MCP ToolResult with RATE_LIMIT metadata for downstream retry logic
  * @internal
  */
 function buildRateLimitResponse(error: APIError): ToolResult {
+  const local = isLocalRateLimit(error);
   return buildEmptyFeedResponse(
-    `EP API rate limit reached for get_events_feed — retry after a short delay.`,
+    local
+      ? `Local rate limit reached for get_events_feed — retry after a short delay.`
+      : `EP API rate limit reached for get_events_feed — retry after a short delay.`,
     {
       errorCode: 'RATE_LIMIT',
       retryable: true,
-      upstream: {
-        statusCode: 429,
-        ...(error.message ? { errorMessage: error.message } : {}),
-      },
+      ...(!local
+        ? {
+            upstream: {
+              statusCode: 429,
+              ...(error.message ? { errorMessage: error.message } : {}),
+            },
+          }
+        : {}),
     },
   );
 }
@@ -120,7 +144,19 @@ function buildUpstreamErrorResponse(error: APIError, statusCode: number): ToolRe
  * @internal
  */
 function handleUpstreamCatchError(error: unknown): ToolResult | null {
-  if (isUpstream404(error)) return buildEmptyFeedResponse();
+  if (isUpstream404(error)) {
+    return buildEmptyFeedResponse(
+      `EP API returned 404 for get_events_feed — no data available for the requested feed window.`,
+      {
+        errorCode: 'NOT_FOUND',
+        retryable: false,
+        upstream: {
+          statusCode: 404,
+          ...(error instanceof APIError && error.message ? { errorMessage: error.message } : {}),
+        },
+      },
+    );
+  }
 
   if (isTimeoutLikeError(error)) {
     return buildEmptyFeedResponse(

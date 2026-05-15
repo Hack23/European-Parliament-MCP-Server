@@ -77,7 +77,7 @@ export type FeedStatus = 'operational' | 'degraded' | 'unavailable';
  * - `UPSTREAM_ERROR` — A non-timeout, non-rate-limit upstream error occurred.
  * - `RATE_LIMIT` — The upstream API returned HTTP 429 (too many requests).
  */
-export type FeedErrorCode = 'ENRICHMENT_FAILED' | 'UPSTREAM_TIMEOUT' | 'UPSTREAM_ERROR' | 'RATE_LIMIT';
+export type FeedErrorCode = 'ENRICHMENT_FAILED' | 'UPSTREAM_TIMEOUT' | 'UPSTREAM_ERROR' | 'RATE_LIMIT' | 'NOT_FOUND';
 
 /**
  * Optional machine-readable metadata attached to an empty/failed feed response.

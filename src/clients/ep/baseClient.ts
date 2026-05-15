@@ -495,7 +495,7 @@ export class BaseEPClient {
    * @param minimumTimeoutMs - Optional per-request minimum timeout (ms).
    *   When provided, the effective timeout is `Math.max(minimumTimeoutMs, this.timeoutMs)`,
    *   so it acts as a floor that the global timeout can still extend.
-   *   Use for known slow EP API endpoints (e.g. `procedures/feed`, `events/feed`).
+   *   Use for known slow EP API endpoints (e.g. `procedures/feed`).
    * @private
    */
   private async fetchWithTimeout<T>(url: URL, endpoint: string, minimumTimeoutMs?: number): Promise<T> {

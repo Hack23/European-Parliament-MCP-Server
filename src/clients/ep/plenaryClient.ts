@@ -328,9 +328,13 @@ export class PlenaryClient extends BaseEPClient {
    * **EP API Endpoint:** `GET /events/feed`
    *
    * **Note:** The EP API `events/feed` endpoint is significantly slower
-   * than other feed endpoints. It intentionally uses the global EP request
-   * timeout instead of the extended slow-feed timeout so callers receive a
-   * predictable in-band timeout envelope rather than waiting 120+ seconds.
+   * than other feed endpoints. This method uses the global EP request
+   * timeout (no extended slow-feed minimum) and **throws** `APIError` on
+   * HTTP failures (including timeouts surfaced as status 408).
+   *
+   * The MCP tool layer (`handleGetEventsFeed`) converts thrown errors into
+   * a machine-readable in-band feed envelope; direct `PlenaryClient` /
+   * `EuropeanParliamentClient` consumers should handle `APIError` throws.
    */
   async getEventsFeed(params: {
     timeframe?: string;
