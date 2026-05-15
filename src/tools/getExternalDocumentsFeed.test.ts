@@ -134,6 +134,20 @@ describe('get_external_documents_feed Tool', () => {
         fallbackArguments: { limit: 20 },
       });
     });
+
+    it('should not attach freshness diagnostics to error-in-body responses', async () => {
+      vi.mocked(epClientModule.epClient.getExternalDocumentsFeed).mockResolvedValueOnce({
+        '@id': 'https://data.europarl.europa.eu/eli/dl/proc/2024-001',
+        'error': '404 Not Found from POST https://data.europarl.europa.eu/api/v2/…',
+        '@context': { error: { '@id': 'http://www.w3.org/ns/hydra/core#Error' } }
+      } as unknown as Record<string, unknown>);
+
+      const result = await handleGetExternalDocumentsFeed({ timeframe: 'one-week' });
+
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as ExternalDocumentsFeedResponse;
+      // Should be treated as unavailable (no data) but without freshness diagnostics
+      expect(parsed.dataQualityDiagnostics).toBeUndefined();
+    });
   });
 
   describe('Client Invocation', () => {

@@ -12,7 +12,7 @@
 import { GetExternalDocumentsFeedSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { ToolError } from './shared/errors.js';
-import { isUpstream404, buildFeedSuccessResponse } from './shared/feedUtils.js';
+import { isUpstream404, isErrorInBody, buildFeedSuccessResponse } from './shared/feedUtils.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
@@ -64,6 +64,9 @@ function hasFeedItems(result: unknown): boolean {
 function withEmptyFeedDiagnostics(result: unknown, params: ExternalDocumentsFeedParams): unknown {
   if (hasFeedItems(result)) return result;
   const source = (result ?? {}) as Record<string, unknown>;
+  // Error-in-body responses are upstream enrichment failures, not ambiguous
+  // true-empty/freshness-lag windows — do not attach diagnostics.
+  if (isErrorInBody(source)) return result;
   return {
     ...source,
     dataQualityDiagnostics: buildExternalDocumentsFeedDiagnostics(params),
