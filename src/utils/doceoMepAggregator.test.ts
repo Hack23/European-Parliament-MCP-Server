@@ -240,7 +240,7 @@ describe('computeMepVotingActivityFromDoceo', () => {
     );
   });
 
-  it('returns totalVotes 0 when MEP is absent from all RCV rolls (does not inflate confidence)', async () => {
+  it('returns totalVotes 0 when MEP is absent from all RCV rolls', async () => {
     // rcvVotesInspected > 0 but the MEP never appears in mepVotes.
     const voteWithoutMep = { ...baseVote, mepVotes: { 'OTHER-MEP': 'FOR' as const } };
     vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({

@@ -92,7 +92,7 @@ function makeCacheKey(
   politicalGroup: string | undefined,
   limit: number | undefined
 ): string {
-  return `${mepId}|${dateFrom ?? ''}|${dateTo ?? ''}|${politicalGroup ?? ''}|${limit !== undefined ? String(limit) : ''}`;
+  return `${mepId}|${dateFrom ?? ''}|${dateTo ?? ''}|${politicalGroup ?? ''}|${String(limit ?? '')}`;
 }
 
 function readCache(key: string): DoceoMepAggregateResult | undefined {
