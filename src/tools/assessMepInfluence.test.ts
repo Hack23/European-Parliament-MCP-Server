@@ -5,17 +5,39 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleAssessMepInfluence } from './assessMepInfluence.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
+import * as doceoClientModule from '../clients/ep/doceoClient.js';
+import { clearDoceoMepAggregatorCache } from '../utils/doceoMepAggregator.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getMEPDetails: vi.fn()
+    getMEPDetails: vi.fn(),
+    getParliamentaryQuestions: vi.fn()
   }
 }));
+
+// Mock the DOCEO client so tests do not hit the network.
+vi.mock('../clients/ep/doceoClient.js', () => ({
+  doceoClient: {
+    getLatestVotes: vi.fn()
+  }
+}));
+
+const emptyDoceoResponse = {
+  data: [],
+  total: 0,
+  datesAvailable: [],
+  datesUnavailable: [],
+  source: { type: 'DOCEO_XML' as const, term: 10, urls: [] },
+  limit: 100,
+  offset: 0,
+  hasMore: false,
+};
 
 describe('assess_mep_influence Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    clearDoceoMepAggregatorCache();
 
     vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
       id: 'MEP-1',
@@ -34,6 +56,16 @@ describe('assess_mep_influence Tool', () => {
         attendanceRate: 92.5
       }
     });
+
+    vi.mocked(epClientModule.epClient.getParliamentaryQuestions).mockResolvedValue({
+      data: [],
+      total: 0,
+      limit: 100,
+      offset: 0,
+      hasMore: false,
+    });
+
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue(emptyDoceoResponse);
   });
 
   describe('Input Validation', () => {
@@ -130,11 +162,13 @@ describe('assess_mep_influence Tool', () => {
       expect(Object.keys(firstDim?.metrics ?? {}).length).toBeGreaterThan(0);
     });
 
-    it('should return proper confidence level based on vote count', async () => {
+    it('should return MEDIUM confidence when EP API has votes but DOCEO is unavailable', async () => {
       const result = await handleAssessMepInfluence({ mepId: 'MEP-1' });
-      const data = JSON.parse(result.content[0]?.text ?? '{}') as { confidenceLevel: string };
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { confidenceLevel: string; dataSource: string };
 
-      expect(data.confidenceLevel).toBe('HIGH');
+      // No DOCEO data + >100 EP API votes = MEDIUM (HIGH requires real DOCEO RCV observations).
+      expect(data.confidenceLevel).toBe('MEDIUM');
+      expect(data.dataSource).toBe('EP_API');
     });
   });
 
@@ -181,6 +215,152 @@ describe('assess_mep_influence Tool', () => {
 
       await expect(handleAssessMepInfluence({ mepId: '999999' }))
         .rejects.toThrow('Failed to assess MEP influence');
+    });
+  });
+
+  describe('DOCEO RCV Enrichment', () => {
+    const doceoVoteWithMep = {
+      id: 'RCV-10-2026-05-15-001',
+      date: '2026-05-15',
+      term: 10,
+      subject: 'Test vote',
+      reference: 'A10-0001/2026',
+      votesFor: 300,
+      votesAgainst: 200,
+      abstentions: 50,
+      result: 'ADOPTED' as const,
+      mepVotes: { 'MEP-1': 'FOR' as const, 'MEP-2': 'AGAINST' as const, 'MEP-3': 'FOR' as const },
+      groupBreakdown: {
+        EPP: { for: 150, against: 10, abstain: 5 },
+        'S&D': { for: 5, against: 120, abstain: 8 },
+      },
+      sourceUrl: 'https://www.europarl.europa.eu/doceo/test.xml',
+      dataSource: 'RCV' as const,
+      sittingDate: '2026-05-15',
+    };
+
+    const doceoVoteAgainst = {
+      ...doceoVoteWithMep,
+      id: 'RCV-10-2026-05-15-002',
+      mepVotes: { 'MEP-1': 'AGAINST' as const },
+      groupBreakdown: {
+        EPP: { for: 140, against: 20, abstain: 5 },
+      },
+    };
+
+    it('should use DOCEO data and set dataSource to EP_API+DOCEO when both sources have data', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        ...emptyDoceoResponse,
+        data: [doceoVoteWithMep, doceoVoteAgainst],
+        total: 2,
+      });
+
+      const result = await handleAssessMepInfluence({ mepId: 'MEP-1' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataSource: string;
+        confidenceLevel: string;
+        computedAttributes: { loyaltyScore: number; participationRate: number };
+        dataQualityWarnings: string[];
+      };
+
+      expect(data.dataSource).toBe('EP_API+DOCEO');
+      expect(data.confidenceLevel).toBe('HIGH');
+      // MEP-1 voted FOR once, AGAINST once → loyalty = 1 agreement (FOR aligns with EPP majority FOR) / 2 decisive = 50%
+      expect(data.computedAttributes.loyaltyScore).toBe(50);
+      // No fallback warning when DOCEO succeeded.
+      expect(data.dataQualityWarnings.some(w => w.includes('DOCEO RCV enrichment unavailable'))).toBe(false);
+    });
+
+    it('should set dataSource to DOCEO when EP API has no voting statistics', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValueOnce({
+        id: 'MEP-1',
+        name: 'Test MEP',
+        country: 'SE',
+        politicalGroup: 'EPP',
+        committees: ['ENVI'],
+        active: true,
+        termStart: '2024-07-01',
+      });
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        ...emptyDoceoResponse,
+        data: [doceoVoteWithMep],
+        total: 1,
+      });
+
+      const result = await handleAssessMepInfluence({ mepId: 'MEP-1' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { dataSource: string; confidenceLevel: string };
+
+      expect(data.dataSource).toBe('DOCEO');
+      expect(data.confidenceLevel).toBe('HIGH');
+    });
+
+    it('should fall back to EP_API and emit warning when DOCEO call rejects', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockRejectedValue(new Error('Network down'));
+
+      const result = await handleAssessMepInfluence({ mepId: 'MEP-1' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataSource: string;
+        confidenceLevel: string;
+        dataQualityWarnings: string[];
+      };
+
+      expect(data.dataSource).toBe('EP_API');
+      expect(data.confidenceLevel).toBe('MEDIUM');
+      expect(data.dataQualityWarnings.some(w => w.includes('DOCEO RCV enrichment unavailable'))).toBe(true);
+    });
+
+    it('should fall back to EP_API when DOCEO returns no votes (empty period)', async () => {
+      // emptyDoceoResponse is the default mock; just assert behaviour.
+      const result = await handleAssessMepInfluence({ mepId: 'MEP-1' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { dataSource: string };
+
+      expect(data.dataSource).toBe('EP_API');
+    });
+
+    it('should cache DOCEO results across repeated calls', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        ...emptyDoceoResponse,
+        data: [doceoVoteWithMep],
+        total: 1,
+      });
+
+      await handleAssessMepInfluence({ mepId: 'MEP-1' });
+      await handleAssessMepInfluence({ mepId: 'MEP-1' });
+      await handleAssessMepInfluence({ mepId: 'MEP-1' });
+
+      // First call hits DOCEO, second/third are cache hits → exactly one DOCEO fetch.
+      expect(vi.mocked(doceoClientModule.doceoClient.getLatestVotes)).toHaveBeenCalledTimes(1);
+    });
+
+    it('should fall back to EP_API when DOCEO times out', async () => {
+      // Simulate a long-running DOCEO call by returning a promise that resolves after the timeout.
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockImplementation(
+        async (params: { abortSignal?: AbortSignal } = {}) => {
+          const signal = params.abortSignal;
+          await new Promise<void>((resolve, reject) => {
+            const onAbort = (): void => {
+              if (signal !== undefined) signal.removeEventListener('abort', onAbort);
+              reject(new Error('aborted'));
+            };
+            if (signal !== undefined) signal.addEventListener('abort', onAbort);
+            // Safety: resolve after 10s if abort never fires (should not happen in test).
+            setTimeout(() => { resolve(); }, 10_000);
+          });
+          return emptyDoceoResponse;
+        }
+      );
+
+      // Override default 2s timeout to keep the test fast.
+      const { computeMepVotingActivityFromDoceo } = await import('../utils/doceoMepAggregator.js');
+      const result = await computeMepVotingActivityFromDoceo('MEP-1', { timeoutMs: 50 });
+      expect(result).toBeNull();
+    });
+
+    it('should expose dataSource field in the response envelope', async () => {
+      const result = await handleAssessMepInfluence({ mepId: 'MEP-1' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { dataSource: string };
+
+      expect(['EP_API', 'DOCEO', 'EP_API+DOCEO']).toContain(data.dataSource);
     });
   });
 });

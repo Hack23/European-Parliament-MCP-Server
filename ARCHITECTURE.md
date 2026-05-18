@@ -641,6 +641,37 @@ MCP args (unknown) → Zod.parse() → typed input → EP API call
 
 ---
 
+### ADR-006: Shared DOCEO RCV aggregator for per-MEP voting metrics
+
+**Status:** Accepted | **Date:** 2026-05-18
+
+**Context:** `MEPDetails.votingStatistics` from the EP Open Data API is a
+placeholder that frequently returns zeros, producing zero-valued OSINT
+metrics (loyalty, participation, coalition-building) for active MEPs. The
+DOCEO XML source already used by `analyze_coalition_dynamics` and
+`get_latest_votes` exposes real per-MEP RCV positions and political-group
+breakdowns.
+
+**Decision:** Introduce a shared utility `src/utils/doceoMepAggregator.ts`
+exposing `computeMepVotingActivityFromDoceo(mepId, options)` that:
+- aggregates per-MEP `totalVotes` / `votesFor` / `votesAgainst` / `abstentions`
+- computes a real `loyaltyScore` from group-majority alignment
+- is bounded by `withTimeoutAndAbort` (default 2 s)
+- caches results for 5 minutes keyed by `${mepId}|${dateFrom}|${dateTo}`
+- returns `null` on any failure so callers can degrade gracefully
+
+OSINT tools that consume the aggregator surface a `dataSource: 'EP_API' |
+'DOCEO' | 'EP_API+DOCEO'` field in their response envelope and emit a
+`dataQualityWarning` when DOCEO is unreachable.
+
+**Consequences:**
+- ✅ Real per-MEP voting metrics replace placeholder zeros for active MEPs
+- ✅ Single shared aggregator avoids duplicating DOCEO orchestration across tools
+- ✅ Graceful degradation: tool always returns a valid response even when DOCEO is down
+- ✅ Confidence levels are now grounded in observed RCV count, not placeholder counts
+
+---
+
 ## 🔒 Security Architecture Summary
 
 The server implements a **4-layer security architecture**:

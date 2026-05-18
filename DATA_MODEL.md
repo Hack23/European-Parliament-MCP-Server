@@ -67,6 +67,27 @@ The EP MCP Server's data model reflects the structure of the **European Parliame
 - **Authentication**: None required (public open data)
 - **Rate Limits**: 100 requests/minute (enforced server-side)
 
+### Secondary authoritative source — DOCEO RCV XML
+
+For **per-MEP roll-call vote (RCV) statistics**, the EP Open Data API exposes
+only the placeholder `MEPDetails.votingStatistics` shape and frequently returns
+no real per-MEP vote counts. The MCP server therefore enriches voting-related
+metrics from the **European Parliament DOCEO XML** source
+(`https://www.europarl.europa.eu/doceo/document/PV-{term}-{date}-RCV_EN.xml`).
+
+DOCEO XML is the authoritative near-real-time source for the following
+per-MEP fields consumed by `assess_mep_influence`, `detect_voting_anomalies`,
+and `comparative_intelligence`:
+
+- `totalVotes`, `votesFor`, `votesAgainst`, `abstentions`
+- `attendanceRate` (fraction of inspected RCVs the MEP appeared on)
+- `loyaltyScore` (% of decisive votes where the MEP voted with their political-group majority)
+
+The shared aggregator lives in `src/utils/doceoMepAggregator.ts` and is
+bounded (≤ 2 s) and cached (5-minute TTL keyed by `${mepId}|${dateFrom}|${dateTo}`).
+OSINT tool responses surface a `dataSource: 'EP_API' | 'DOCEO' | 'EP_API+DOCEO'`
+field so consumers can distinguish placeholder data from real RCV-backed metrics.
+
 ---
 
 ## 🔗 Core Entity Relationships

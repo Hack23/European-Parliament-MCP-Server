@@ -14,8 +14,16 @@
 import { AssessMepInfluenceSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
+import { computeMepVotingActivityFromDoceo } from '../utils/doceoMepAggregator.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
+
+/**
+ * Data source attribution surfaced in the response envelope so consumers
+ * know whether the voting dimensions were sourced from the EP Open Data
+ * API placeholder, the DOCEO RCV XML enrichment, or both.
+ */
+export type AssessMepInfluenceDataSource = 'EP_API' | 'DOCEO' | 'EP_API+DOCEO';
 
 /**
  * Dimension weight configuration for influence scoring
@@ -63,6 +71,16 @@ interface MepInfluenceAssessment {
   confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
   dataFreshness: string;
   sourceAttribution: string;
+  /**
+   * Indicates which underlying data source(s) supplied the voting and
+   * coalition-building dimensions.
+   * - `EP_API`: only the EP Open Data API `MEPDetails.votingStatistics`
+   *   (placeholder; typically zeros).
+   * - `DOCEO`: per-MEP roll-call vote aggregation from DOCEO XML.
+   * - `EP_API+DOCEO`: DOCEO supplied the RCV counts, EP API filled in
+   *   fields DOCEO does not expose (e.g. attendance over a longer window).
+   */
+  dataSource: AssessMepInfluenceDataSource;
   methodology: string;
   dataQualityWarnings: string[];
 }
@@ -225,20 +243,34 @@ function buildDimensions(inputs: DimensionInputs, includeMetrics: boolean): Dime
 }
 
 /**
- * Determine confidence level from vote count
+ * Determine confidence level from real DOCEO RCV votes observed and
+ * the legacy EP-API vote count. `HIGH` is reserved for paths backed
+ * by at least one real DOCEO RCV observation; otherwise the score is
+ * still placeholder-derived and stays at `LOW`/`MEDIUM` per the
+ * EP-API vote count.
  */
-function getConfidenceLevel(totalVotes: number): 'HIGH' | 'MEDIUM' | 'LOW' {
-  if (totalVotes > 500) return 'HIGH';
-  if (totalVotes > 100) return 'MEDIUM';
+function getConfidenceLevel(doceoRcvVotes: number, epApiTotalVotes: number): 'HIGH' | 'MEDIUM' | 'LOW' {
+  if (doceoRcvVotes > 0) return 'HIGH';
+  if (epApiTotalVotes > 100) return 'MEDIUM';
   return 'LOW';
 }
 
 /**
  * Collect data quality warnings based on available data
  */
-function collectDataQualityWarnings(votingDataAvailable: boolean, questionCount: number): string[] {
+function collectDataQualityWarnings(
+  votingDataAvailable: boolean,
+  questionCount: number,
+  dataSource: AssessMepInfluenceDataSource,
+  doceoFallback: boolean
+): string[] {
   const warnings: string[] = [];
-  if (!votingDataAvailable) {
+  if (doceoFallback) {
+    warnings.push(
+      'DOCEO RCV enrichment unavailable (timeout, network error, or no votes in the selected period) — voting dimensions fall back to EP API placeholder data'
+    );
+  }
+  if (!votingDataAvailable && dataSource === 'EP_API') {
     warnings.push('Voting statistics unavailable from EP API — voting-based metrics (loyalty, participation, coalition building) set to zero');
   }
   if (questionCount === 0) {
@@ -247,24 +279,44 @@ function collectDataQualityWarnings(votingDataAvailable: boolean, questionCount:
   return warnings;
 }
 
+function buildDataFreshness(votingDataAvailable: boolean, dataSource: AssessMepInfluenceDataSource): string {
+  const doceoNote = dataSource === 'EP_API'
+    ? ''
+    : ' Per-MEP voting activity and loyalty score derived from DOCEO RCV XML (near-real-time roll-call data).';
+  return votingDataAvailable
+    ? `Real-time EP API data — MEP voting statistics and committee memberships.${doceoNote}`
+    : `Real-time EP API data — committee memberships only; voting statistics unavailable from EP API.${doceoNote}`;
+}
+
+function buildMethodology(votingDataAvailable: boolean, dataSource: AssessMepInfluenceDataSource): string {
+  const portal = 'Data source: European Parliament Open Data Portal';
+  const portalSuffix = dataSource === 'EP_API' ? '.' : ' + DOCEO XML.';
+  const dimensionsSentence = dataSource === 'EP_API'
+    ? 'Voting Activity and Coalition Building dimensions sourced from EP API MEPDetails.votingStatistics.'
+    : 'Voting Activity and Coalition Building dimensions sourced from DOCEO RCV XML (per-MEP roll-call aggregation).';
+  const questions = 'Parliamentary questions fetched from /parliamentary-questions endpoint.';
+
+  if (votingDataAvailable) {
+    return `CIA Political Scorecards - 5-dimension weighted scoring model using real EP Open Data. ${questions} ${dimensionsSentence} ${portal}${portalSuffix}`;
+  }
+  const fallbackSentence = dataSource === 'EP_API'
+    ? 'Voting statistics unavailable — voting and participation dimensions use zero-based proxies.'
+    : dimensionsSentence;
+  return `CIA Political Scorecards - 5-dimension weighted scoring model. ${fallbackSentence} ${questions} ${portal}${portalSuffix}`;
+}
+
 /**
  * Build dataFreshness and methodology strings based on whether voting data is available.
  * When voting stats are unavailable, the text accurately reflects that voting-based
  * dimensions use zero-based proxies rather than live data.
  */
-function buildInfluenceMetadata(votingDataAvailable: boolean): { dataFreshness: string; methodology: string } {
+function buildInfluenceMetadata(
+  votingDataAvailable: boolean,
+  dataSource: AssessMepInfluenceDataSource
+): { dataFreshness: string; methodology: string } {
   return {
-    dataFreshness: votingDataAvailable
-      ? 'Real-time EP API data — MEP voting statistics and committee memberships'
-      : 'Real-time EP API data — committee memberships only; voting statistics unavailable from EP API',
-    methodology: votingDataAvailable
-      ? 'CIA Political Scorecards - 5-dimension weighted scoring model using real EP Open Data. '
-        + 'Parliamentary questions fetched from /parliamentary-questions endpoint. '
-        + 'Data source: European Parliament Open Data Portal.'
-      : 'CIA Political Scorecards - 5-dimension weighted scoring model. '
-        + 'Voting statistics unavailable — voting and participation dimensions use zero-based proxies. '
-        + 'Parliamentary questions fetched from /parliamentary-questions endpoint. '
-        + 'Data source: European Parliament Open Data Portal.',
+    dataFreshness: buildDataFreshness(votingDataAvailable, dataSource),
+    methodology: buildMethodology(votingDataAvailable, dataSource),
   };
 }
 
@@ -345,6 +397,84 @@ function buildInfluenceMetadata(votingDataAvailable: boolean): { dataFreshness: 
  * Personal data (MEP profiles) access logged per GDPR Article 30.
  * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
  */
+interface VotingStats {
+  totalVotes: number;
+  votesFor: number;
+  votesAgainst: number;
+  abstentions: number;
+  attendanceRate: number;
+}
+
+interface MergedVotingInputs {
+  stats: VotingStats;
+  dataSource: AssessMepInfluenceDataSource;
+  doceoRcvVotes: number;
+  loyaltyScoreFromDoceo: number | null;
+  doceoFallback: boolean;
+}
+
+/**
+ * Merge the DOCEO aggregator result with the EP API placeholder statistics.
+ * DOCEO supplies RCV counts; EP API supplies attendanceRate when DOCEO has
+ * no inspected votes.
+ */
+function mergeVotingStats(
+  epApiStats: VotingStats,
+  doceoResult: Awaited<ReturnType<typeof computeMepVotingActivityFromDoceo>>
+): MergedVotingInputs {
+  const doceoFallback = doceoResult === null;
+  const doceoUsable = doceoResult !== null && doceoResult.rcvVotesInspected > 0;
+  if (!doceoUsable) {
+    return {
+      stats: epApiStats,
+      dataSource: 'EP_API',
+      doceoRcvVotes: doceoResult?.rcvVotesInspected ?? 0,
+      loyaltyScoreFromDoceo: null,
+      doceoFallback,
+    };
+  }
+  const attendanceRate = doceoResult.stats.attendanceRate > 0
+    ? doceoResult.stats.attendanceRate
+    : epApiStats.attendanceRate;
+  return {
+    stats: {
+      totalVotes: doceoResult.stats.totalVotes,
+      votesFor: doceoResult.stats.votesFor,
+      votesAgainst: doceoResult.stats.votesAgainst,
+      abstentions: doceoResult.stats.abstentions,
+      attendanceRate,
+    },
+    dataSource: epApiStats.totalVotes > 0 ? 'EP_API+DOCEO' : 'DOCEO',
+    doceoRcvVotes: doceoResult.rcvVotesInspected,
+    loyaltyScoreFromDoceo: doceoResult.stats.loyaltyScore,
+    doceoFallback: false,
+  };
+}
+
+function computeLoyaltyScore(stats: VotingStats, loyaltyFromDoceo: number | null): number {
+  if (loyaltyFromDoceo !== null) return loyaltyFromDoceo;
+  const totalDecisive = stats.votesFor + stats.votesAgainst;
+  if (totalDecisive === 0) return 0;
+  return Math.round((stats.votesFor / totalDecisive) * 100 * 100) / 100;
+}
+
+function buildSourceAttribution(dataSource: AssessMepInfluenceDataSource): string {
+  if (dataSource === 'EP_API') {
+    return 'European Parliament Open Data Portal - data.europarl.europa.eu';
+  }
+  return 'European Parliament Open Data Portal - data.europarl.europa.eu + DOCEO XML - europarl.europa.eu/doceo';
+}
+
+async function fetchQuestionCount(mepId: string): Promise<number> {
+  try {
+    const questions = await epClient.getParliamentaryQuestions({ author: mepId, limit: 100 });
+    return questions.data.length;
+  } catch (error: unknown) {
+    auditLogger.logError('assess_mep_influence.fetch_questions', { mepId }, toErrorMessage(error));
+    return 0;
+  }
+}
+
 export async function handleAssessMepInfluence(
   args: unknown
 ): Promise<ToolResult> {
@@ -352,25 +482,26 @@ export async function handleAssessMepInfluence(
 
   try {
     const mep = await epClient.getMEPDetails(params.mepId);
-    const stats = mep.votingStatistics ?? {
+    const epApiStats: VotingStats = mep.votingStatistics ?? {
       totalVotes: 0, votesFor: 0, votesAgainst: 0, abstentions: 0, attendanceRate: 0
     };
 
+    // Try DOCEO RCV enrichment first (bounded, cached). Falls back to EP API on failure.
+    const doceoResult = await computeMepVotingActivityFromDoceo(params.mepId, {
+      dateFrom: params.dateFrom,
+      dateTo: params.dateTo,
+      politicalGroup: mep.politicalGroup,
+    });
+    const merged = mergeVotingStats(epApiStats, doceoResult);
+    const { stats, dataSource, doceoRcvVotes, loyaltyScoreFromDoceo, doceoFallback } = merged;
     const votingDataAvailable = stats.totalVotes > 0;
 
-    let questionCount = 0;
-    try {
-      const questions = await epClient.getParliamentaryQuestions({
-        author: params.mepId,
-        limit: 100
-      });
-      questionCount = questions.data.length;
-    } catch (error: unknown) {
-      auditLogger.logError('assess_mep_influence.fetch_questions', { mepId: params.mepId }, toErrorMessage(error));
-    }
+    const questionCount = await fetchQuestionCount(params.mepId);
 
-    const dataQualityWarnings = collectDataQualityWarnings(votingDataAvailable, questionCount);
-    const { dataFreshness, methodology } = buildInfluenceMetadata(votingDataAvailable);
+    const dataQualityWarnings = collectDataQualityWarnings(
+      votingDataAvailable, questionCount, dataSource, doceoFallback
+    );
+    const { dataFreshness, methodology } = buildInfluenceMetadata(votingDataAvailable, dataSource);
 
     const votingDim = computeVotingActivityScore(stats);
     const legislativeDim = computeLegislativeOutputScore(mep.roles ?? [], mep.committees);
@@ -387,10 +518,7 @@ export async function handleAssessMepInfluence(
       dimensions.reduce((sum, d) => sum + d.weightedScore, 0) * 100
     ) / 100;
 
-    const totalDecisive = stats.votesFor + stats.votesAgainst;
-    const loyaltyScore = totalDecisive > 0
-      ? Math.round((stats.votesFor / totalDecisive) * 100 * 100) / 100
-      : 0;
+    const loyaltyScore = computeLoyaltyScore(stats, loyaltyScoreFromDoceo);
 
     const assessment: MepInfluenceAssessment = {
       mepId: params.mepId,
@@ -411,10 +539,11 @@ export async function handleAssessMepInfluence(
         effectivenessRatio: Math.round((votingDim.score + legislativeDim.score) / 2 * 100) / 100,
         leadershipIndicator: committeeDim.score
       },
-      confidenceLevel: getConfidenceLevel(stats.totalVotes),
+      confidenceLevel: getConfidenceLevel(doceoRcvVotes, epApiStats.totalVotes),
       votingDataAvailable,
       dataFreshness,
-      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
+      sourceAttribution: buildSourceAttribution(dataSource),
+      dataSource,
       methodology,
       dataQualityWarnings,
     };
