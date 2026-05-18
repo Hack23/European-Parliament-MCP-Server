@@ -95,8 +95,12 @@ interface CacheEntry {
   expiresAt: number;
 }
 
-let memoCache: CacheEntry | null = null;
-let inFlightBuild: Promise<LifecycleStatisticsModel> | null = null;
+// Cache + in-flight builds are keyed by `corpusSize` so that callers
+// requesting different sample sizes do not silently observe each other's
+// model. The map is bounded to one entry per distinct size used and is
+// expected to stay tiny in practice (production callers use the default).
+const memoCacheByCorpusSize = new Map<number, CacheEntry>();
+const inFlightBuildByCorpusSize = new Map<number, Promise<LifecycleStatisticsModel>>();
 
 /**
  * Normalize an EP event type to a stable stage key.
@@ -355,7 +359,8 @@ export function lookupStageStatistics(
  * The corpus is cached for {@link CACHE_TTL_MS}; subsequent callers within
  * the window receive the same model instance for free. Refreshing is lazy:
  * a stale cache is rebuilt on the next call rather than on a timer, so
- * idle processes pay no background cost.
+ * idle processes pay no background cost. Cache and in-flight builds are
+ * keyed by `corpusSize` so distinct sample sizes never share a model.
  *
  * @param options - Optional overrides
  * @param options.corpusSize - Number of procedures to sample (default: {@link CORPUS_SIZE})
@@ -371,14 +376,19 @@ export async function getLifecycleStatistics(options: {
   forceRefresh?: boolean;
 } = {}): Promise<LifecycleStatisticsModel> {
   const corpus = options.corpusSize ?? CORPUS_SIZE;
-  if (options.forceRefresh !== true && memoCache !== null && memoCache.expiresAt > Date.now()) {
-    return memoCache.model;
+  const cached = memoCacheByCorpusSize.get(corpus);
+  if (options.forceRefresh !== true && cached !== undefined && cached.expiresAt > Date.now()) {
+    return cached.model;
   }
 
-  // Concurrency-safe rebuild: share an in-flight promise so simultaneous
-  // callers don't each trigger a duplicate corpus-wide fetch.
-  if (inFlightBuild !== null && options.forceRefresh !== true) {
-    return inFlightBuild;
+  // Concurrency-safe rebuild: share an in-flight promise per corpusSize so
+  // simultaneous callers requesting the same sample size don't each trigger
+  // a duplicate corpus-wide fetch. Different corpusSize values get their own
+  // independent build so a small ad-hoc build cannot pollute the default
+  // production model.
+  const inFlight = inFlightBuildByCorpusSize.get(corpus);
+  if (inFlight !== undefined && options.forceRefresh !== true) {
+    return inFlight;
   }
 
   const buildPromise = (async (): Promise<LifecycleStatisticsModel> => {
@@ -386,13 +396,13 @@ export async function getLifecycleStatistics(options: {
       const procResp = await epClient.getProcedures({ limit: corpus });
       const events = await fetchEventsBounded(procResp.data, EVENT_FETCH_CONCURRENCY);
       const model = buildLifecycleStatistics(procResp.data, events);
-      memoCache = { model, expiresAt: Date.now() + CACHE_TTL_MS };
+      memoCacheByCorpusSize.set(corpus, { model, expiresAt: Date.now() + CACHE_TTL_MS });
       return model;
     } finally {
-      inFlightBuild = null;
+      inFlightBuildByCorpusSize.delete(corpus);
     }
   })();
-  inFlightBuild = buildPromise;
+  inFlightBuildByCorpusSize.set(corpus, buildPromise);
   return buildPromise;
 }
 
@@ -416,6 +426,6 @@ export function emptyLifecycleStatisticsModel(): LifecycleStatisticsModel {
  * Reset the in-memory cache. Intended for tests and forced refreshes.
  */
 export function resetLifecycleStatisticsCache(): void {
-  memoCache = null;
-  inFlightBuild = null;
+  memoCacheByCorpusSize.clear();
+  inFlightBuildByCorpusSize.clear();
 }

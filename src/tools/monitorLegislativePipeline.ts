@@ -32,6 +32,8 @@ import type { Procedure, EPEvent } from '../types/europeanParliament.js';
 import type { ToolResult } from './shared/types.js';
 import { withTimeout, TimeoutError } from '../utils/timeout.js';
 import { buildTimeoutResponse } from './shared/errorHandler.js';
+import { ToolError } from './shared/errors.js';
+import { APIError } from '../clients/ep/baseClient.js';
 import {
   getLifecycleStatistics,
   emptyLifecycleStatisticsModel,
@@ -712,9 +714,11 @@ function buildPipelineItems(
  * which under the EP API client's default 100 req/min rate limit cannot
  * always complete within {@link OPERATION_TIMEOUT_MS}. To keep the request
  * path responsive we race the rebuild against {@link LIFECYCLE_BUILD_BUDGET_MS}
- * and fall back to an empty model when the budget is exhausted (or any other
- * error occurs). With an empty model every per-procedure forecast degrades
- * to `INSUFFICIENT_DATA`, but the tool still returns a successful response.
+ * and fall back to an empty model on expected failure modes (budget exhaustion
+ * or upstream EP API errors). With an empty model every per-procedure forecast
+ * degrades to `INSUFFICIENT_DATA`, but the tool still returns a successful
+ * response. Unexpected (programming) errors are rethrown so they surface in
+ * monitoring instead of being silently masked.
  */
 async function loadLifecycleModelWithBudget(): Promise<LifecycleStatisticsModel> {
   try {
@@ -723,8 +727,18 @@ async function loadLifecycleModelWithBudget(): Promise<LifecycleStatisticsModel>
       LIFECYCLE_BUILD_BUDGET_MS,
       'lifecycle statistics build exceeded budget'
     );
-  } catch {
-    return emptyLifecycleStatisticsModel();
+  } catch (error: unknown) {
+    // Only swallow expected failure modes: timeouts and upstream EP API errors.
+    // Programming/unexpected errors must propagate so they are not hidden.
+    if (error instanceof TimeoutError || error instanceof APIError) {
+      console.error(
+        '[monitor_legislative_pipeline] Lifecycle model fallback engaged:',
+        error.name,
+        error instanceof Error ? error.message : ''
+      );
+      return emptyLifecycleStatisticsModel();
+    }
+    throw error;
   }
 }
 
@@ -827,8 +841,16 @@ export async function handleMonitorLegislativePipeline(
     if (error instanceof TimeoutError) {
       return buildTimeoutResponse('monitor_legislative_pipeline', OPERATION_TIMEOUT_MS);
     }
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to monitor legislative pipeline: ${errorMessage}`);
+    // Preserve the original error as `cause` for server-side diagnostics
+    // (logs/audit) while keeping the client-visible message generic so we
+    // don't leak upstream URLs, status text, or other internal details.
+    throw new ToolError({
+      toolName: 'monitor_legislative_pipeline',
+      operation: 'runPipelineOperation',
+      message: 'Failed to monitor legislative pipeline',
+      cause: error,
+      isRetryable: true,
+    });
   }
 }
 

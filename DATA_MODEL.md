@@ -432,7 +432,7 @@ erDiagram
 erDiagram
     PIPELINE_ITEM {
         string procedureId
-        string currentStage "Normalized stage from latest event (e.g. REFERRAL, COM_VOTE)"
+        string currentStage "Normalized stage from latest lifecycle event when available; falls back to procedure.stage / procedure.status / 'Unknown' when no usable events exist"
         number daysInCurrentStage "Delta between latest event and now"
         boolean isStalled
     }
