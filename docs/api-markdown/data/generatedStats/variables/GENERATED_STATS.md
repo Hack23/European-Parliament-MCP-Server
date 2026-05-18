@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.7**](../../../README.md)
+[**European Parliament MCP Server API v1.3.8**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **GENERATED\_STATS**: [`GeneratedStatsData`](../interfaces/GeneratedStatsData.md)
 
-Defined in: [data/generatedStats.ts:1212](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L1212)
+Defined in: [data/generatedStats.ts:1213](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/data/generatedStats.ts#L1213)
 
 Precomputed European Parliament activity dataset (2004-2026) used by
 the `get_all_generated_stats` MCP tool.
