@@ -731,10 +731,13 @@ async function loadLifecycleModelWithBudget(): Promise<LifecycleStatisticsModel>
     // Only swallow expected failure modes: timeouts and upstream EP API errors.
     // Programming/unexpected errors must propagate so they are not hidden.
     if (error instanceof TimeoutError || error instanceof APIError) {
+      // Log only structured identity (name + status) — never the raw message,
+      // which can carry upstream URLs or response snippets.
+      const statusCode = error instanceof APIError ? error.statusCode : undefined;
       console.error(
         '[monitor_legislative_pipeline] Lifecycle model fallback engaged:',
         error.name,
-        error instanceof Error ? error.message : ''
+        statusCode !== undefined ? `status=${String(statusCode)}` : ''
       );
       return emptyLifecycleStatisticsModel();
     }
