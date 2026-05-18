@@ -1286,6 +1286,28 @@ const votingStats = await client.callTool('generate_report', {
 Assess the influence of MEP with ID "124810" over the past year
 ```
 
+#### Data Source &amp; Confidence
+
+The response envelope includes a `dataSource` field that signals which underlying
+source(s) supplied the Voting Activity and Coalition Building dimensions:
+
+| `dataSource` value | Meaning |
+|--------------------|---------|
+| `EP_API` | Only the EP Open Data `MEPDetails.votingStatistics` placeholder was available (typically zeros). |
+| `DOCEO` | Per-MEP roll-call vote (RCV) data was aggregated from DOCEO XML; no EP API stats merged. |
+| `EP_API+DOCEO` | DOCEO supplied the RCV counts; EP API filled in fields DOCEO does not expose (e.g. `attendanceRate`). |
+
+`confidenceLevel` semantics:
+
+- `HIGH` — at least one real DOCEO RCV vote was observed for the MEP in the requested period.
+- `MEDIUM` — DOCEO data unavailable but EP API reported > 100 placeholder votes.
+- `LOW` — fallback path (no DOCEO observations and ≤ 100 EP API votes).
+
+When DOCEO is unreachable or returns no votes within the requested date window,
+the response degrades gracefully to `dataSource: 'EP_API'` and emits a
+`dataQualityWarning` (`"DOCEO RCV enrichment unavailable …"`); zero values are
+**never** silently returned without a warning.
+
 ---
 
 ### Tool: analyze_coalition_dynamics
