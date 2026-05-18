@@ -332,29 +332,34 @@ describe('assess_mep_influence Tool', () => {
       expect(vi.mocked(doceoClientModule.doceoClient.getLatestVotes)).toHaveBeenCalledTimes(1);
     });
 
-    it('should fall back to EP_API when DOCEO times out', async () => {
-      // Simulate a long-running DOCEO call by returning a promise that resolves after the timeout.
+    it('should fall back to EP_API when DOCEO times out at the tool level', async () => {
+      // Simulate a slow DOCEO call so the 2s aggregator timeout fires.
       vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockImplementation(
         async (params: { abortSignal?: AbortSignal } = {}) => {
           const signal = params.abortSignal;
-          await new Promise<void>((resolve, reject) => {
+          return new Promise<typeof emptyDoceoResponse>((resolve, reject) => {
             const onAbort = (): void => {
               if (signal !== undefined) signal.removeEventListener('abort', onAbort);
               reject(new Error('aborted'));
             };
             if (signal !== undefined) signal.addEventListener('abort', onAbort);
-            // Safety: resolve after 10s if abort never fires (should not happen in test).
-            setTimeout(() => { resolve(); }, 10_000);
+            // Safety: resolve after 10s if abort never fires.
+            setTimeout(() => { resolve(emptyDoceoResponse); }, 10_000);
           });
-          return emptyDoceoResponse;
         }
       );
 
-      // Override default 2s timeout to keep the test fast.
-      const { computeMepVotingActivityFromDoceo } = await import('../utils/doceoMepAggregator.js');
-      const result = await computeMepVotingActivityFromDoceo('MEP-1', { timeoutMs: 50 });
-      expect(result).toBeNull();
-    });
+      const result = await handleAssessMepInfluence({ mepId: 'MEP-1' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataSource: string;
+        confidenceLevel: string;
+        dataQualityWarnings: string[];
+      };
+
+      expect(data.dataSource).toBe('EP_API');
+      expect(data.confidenceLevel).toBe('MEDIUM');
+      expect(data.dataQualityWarnings.some(w => w.includes('DOCEO RCV enrichment unavailable'))).toBe(true);
+    }, 10_000);
 
     it('should expose dataSource field in the response envelope', async () => {
       const result = await handleAssessMepInfluence({ mepId: 'MEP-1' });
