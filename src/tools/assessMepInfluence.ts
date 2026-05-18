@@ -423,12 +423,12 @@ function mergeVotingStats(
   doceoResult: Awaited<ReturnType<typeof computeMepVotingActivityFromDoceo>>
 ): MergedVotingInputs {
   const doceoFallback = doceoResult === null;
-  const doceoUsable = doceoResult !== null && doceoResult.rcvVotesInspected > 0;
+  const doceoUsable = doceoResult !== null && doceoResult.stats.totalVotes > 0;
   if (!doceoUsable) {
     return {
       stats: epApiStats,
       dataSource: 'EP_API',
-      doceoRcvVotes: doceoResult?.rcvVotesInspected ?? 0,
+      doceoRcvVotes: doceoResult?.stats.totalVotes ?? 0,
       loyaltyScoreFromDoceo: null,
       doceoFallback,
     };
@@ -445,7 +445,7 @@ function mergeVotingStats(
       attendanceRate,
     },
     dataSource: epApiStats.totalVotes > 0 ? 'EP_API+DOCEO' : 'DOCEO',
-    doceoRcvVotes: doceoResult.rcvVotesInspected,
+    doceoRcvVotes: doceoResult.stats.totalVotes,
     loyaltyScoreFromDoceo: doceoResult.stats.loyaltyScore,
     doceoFallback: false,
   };

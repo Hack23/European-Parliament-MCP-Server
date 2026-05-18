@@ -10,7 +10,7 @@
  * Behaviour mirrors `computeCoalitionCohesionFromDoceo` in
  * `src/tools/analyzeCoalitionDynamics.ts`:
  * - bounded by `withTimeoutAndAbort` (default 2 s)
- * - results cached for 5 minutes per `${mepId}|${dateFrom}|${dateTo}`
+ * - results cached for 5 minutes per `${mepId}|${dateFrom}|${dateTo}|${politicalGroup}|${limit}`
  * - empty/failed results are also cached briefly to avoid storms
  *
  * Source: `doceoClient.getLatestVotes()` (EP DOCEO XML).
@@ -85,8 +85,14 @@ const aggregateCache = new Map<string, CacheEntry>();
 /** Cache size cap to bound memory usage. */
 const MAX_CACHE_ENTRIES = 1000;
 
-function makeCacheKey(mepId: string, dateFrom: string | undefined, dateTo: string | undefined): string {
-  return `${mepId}|${dateFrom ?? ''}|${dateTo ?? ''}`;
+function makeCacheKey(
+  mepId: string,
+  dateFrom: string | undefined,
+  dateTo: string | undefined,
+  politicalGroup: string | undefined,
+  limit: number | undefined
+): string {
+  return `${mepId}|${dateFrom ?? ''}|${dateTo ?? ''}|${politicalGroup ?? ''}|${limit !== undefined ? String(limit) : ''}`;
 }
 
 function readCache(key: string): DoceoMepAggregateResult | undefined {
@@ -182,6 +188,26 @@ function updateLoyalty(
   if (majority === position) agg.loyaltyAgreements += 1;
 }
 
+/**
+ * Resolve the breakdown row for a normalized group label, handling the case
+ * where DOCEO XML uses raw short labels (e.g. `RE`, `Verts/ALE`) while
+ * `normalizedGroup` is the canonical EP code (`Renew`, `Greens/EFA`).
+ * Mirrors the normalizeGroupBreakdown pattern used in analyzeCoalitionDynamics.
+ */
+function resolveGroupBreakdownRow(
+  breakdown: Record<string, { for: number; against: number; abstain: number }> | undefined,
+  normalizedGroup: string
+): { for: number; against: number; abstain: number } | undefined {
+  if (breakdown === undefined) return undefined;
+  // Fast path: direct key match (canonical key already in breakdown).
+  if (normalizedGroup in breakdown) return breakdown[normalizedGroup];
+  // Slow path: normalize each DOCEO raw key and compare.
+  for (const [rawKey, row] of Object.entries(breakdown)) {
+    if (normalizePoliticalGroup(rawKey) === normalizedGroup) return row;
+  }
+  return undefined;
+}
+
 function tallyVote(
   vote: LatestVoteRecord,
   mepId: string,
@@ -195,8 +221,7 @@ function tallyVote(
 
   // Loyalty: agreement of MEP's decisive vote with their group's majority.
   if (normalizedGroup === null || position === 'ABSTAIN') return;
-  if (vote.groupBreakdown === undefined) return;
-  updateLoyalty(position, vote.groupBreakdown[normalizedGroup], agg);
+  updateLoyalty(position, resolveGroupBreakdownRow(vote.groupBreakdown, normalizedGroup), agg);
 }
 
 function buildStats(agg: InternalAggregate): MepVotingAggregateStats {
@@ -271,7 +296,7 @@ export async function computeMepVotingActivityFromDoceo(
   options: ComputeMepVotingActivityOptions = {}
 ): Promise<DoceoMepAggregateResult | null> {
   const { dateFrom, dateTo, politicalGroup, timeoutMs, limit } = options;
-  const key = makeCacheKey(mepId, dateFrom, dateTo);
+  const key = makeCacheKey(mepId, dateFrom, dateTo, politicalGroup, limit);
   const cached = readCache(key);
   if (cached !== undefined) return cached;
 
@@ -284,6 +309,12 @@ export async function computeMepVotingActivityFromDoceo(
       (signal) => doceoClient.getLatestVotes({
         includeIndividualVotes: true,
         limit: limit ?? 100,
+        // Pass weekStart derived from the requested analysis period so that
+        // DOCEO fetches the plenary week containing the end (or start) of the
+        // range rather than always defaulting to the current week. Without this,
+        // historical dateFrom/dateTo ranges never match the fetched data and the
+        // tool silently falls back to EP_API placeholders for every historical query.
+        weekStart: dateTo ?? dateFrom,
         abortSignal: signal,
       }),
       timeoutMs ?? DOCEO_MEP_AGGREGATOR_TIMEOUT_MS,

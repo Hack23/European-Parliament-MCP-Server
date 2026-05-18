@@ -174,6 +174,22 @@ describe('computeMepVotingActivityFromDoceo', () => {
     expect(vi.mocked(doceoClientModule.doceoClient.getLatestVotes)).toHaveBeenCalledTimes(2);
   });
 
+  it('uses separate cache entries for different politicalGroup values', async () => {
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+      ...emptyResponse,
+      data: [baseVote],
+      total: 1,
+    });
+
+    const withGroup = await computeMepVotingActivityFromDoceo('MEP-1', { politicalGroup: 'EPP' });
+    const withoutGroup = await computeMepVotingActivityFromDoceo('MEP-1');
+
+    // Different politicalGroup → different cache key → two DOCEO fetches.
+    expect(vi.mocked(doceoClientModule.doceoClient.getLatestVotes)).toHaveBeenCalledTimes(2);
+    expect(withGroup?.cacheHit).toBe(false);
+    expect(withoutGroup?.cacheHit).toBe(false);
+  });
+
   it('returns null when DOCEO call exceeds the configured timeout', async () => {
     vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockImplementation(
       async (params: { abortSignal?: AbortSignal } = {}) => {
@@ -199,6 +215,69 @@ describe('computeMepVotingActivityFromDoceo', () => {
     expect(result?.stats.attendanceRate).toBe(0);
     expect(result?.stats.totalVotes).toBe(0);
     expect(result?.rcvVotesInspected).toBe(0);
+  });
+
+  it('passes weekStart derived from dateTo to the DOCEO client', async () => {
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue(emptyResponse);
+
+    await computeMepVotingActivityFromDoceo('MEP-1', {
+      dateFrom: '2024-01-01',
+      dateTo: '2024-12-31',
+    });
+
+    expect(vi.mocked(doceoClientModule.doceoClient.getLatestVotes)).toHaveBeenCalledWith(
+      expect.objectContaining({ weekStart: '2024-12-31' })
+    );
+  });
+
+  it('passes weekStart derived from dateFrom when only dateFrom is set', async () => {
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue(emptyResponse);
+
+    await computeMepVotingActivityFromDoceo('MEP-1', { dateFrom: '2024-05-01' });
+
+    expect(vi.mocked(doceoClientModule.doceoClient.getLatestVotes)).toHaveBeenCalledWith(
+      expect.objectContaining({ weekStart: '2024-05-01' })
+    );
+  });
+
+  it('returns totalVotes 0 when MEP is absent from all RCV rolls (does not inflate confidence)', async () => {
+    // rcvVotesInspected > 0 but the MEP never appears in mepVotes.
+    const voteWithoutMep = { ...baseVote, mepVotes: { 'OTHER-MEP': 'FOR' as const } };
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+      ...emptyResponse,
+      data: [voteWithoutMep, voteWithoutMep],
+      total: 2,
+    });
+
+    const result = await computeMepVotingActivityFromDoceo('MEP-1');
+    expect(result).not.toBeNull();
+    // rcvVotesInspected counts the inspected records, but totalVotes is 0.
+    expect(result?.rcvVotesInspected).toBe(2);
+    expect(result?.stats.totalVotes).toBe(0);
+  });
+
+  it('computes loyalty from raw DOCEO group labels (e.g. RE for Renew, Verts/ALE for Greens/EFA)', async () => {
+    // Simulate a DOCEO breakdown using the short raw label 'RE' for the Renew group.
+    const voteWithRawLabel = {
+      ...baseVote,
+      mepVotes: { 'MEP-1': 'FOR' as const },
+      groupBreakdown: {
+        // Raw DOCEO label that normalizes to 'Renew'.
+        RE: { for: 100, against: 10, abstain: 5 },
+      },
+    };
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+      ...emptyResponse,
+      data: [voteWithRawLabel],
+      total: 1,
+    });
+
+    // MEP belongs to the Renew group (full EP API label → normalizes to 'Renew').
+    const result = await computeMepVotingActivityFromDoceo('MEP-1', {
+      politicalGroup: 'Renew Europe Group',
+    });
+    // MEP-1 voted FOR; RE majority is FOR → 100% loyalty.
+    expect(result?.stats.loyaltyScore).toBe(100);
   });
 
   it('normalizes political group labels before computing loyalty', async () => {

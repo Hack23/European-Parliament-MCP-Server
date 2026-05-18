@@ -317,6 +317,31 @@ describe('assess_mep_influence Tool', () => {
       expect(data.dataSource).toBe('EP_API');
     });
 
+    it('should treat DOCEO as unusable and set EP_API when MEP is absent from all RCV rolls', async () => {
+      // DOCEO has records (rcvVotesInspected > 0) but MEP-1 does not appear in mepVotes.
+      // Before the fix, rcvVotesInspected > 0 would have produced HIGH confidence incorrectly.
+      const voteWithoutMep = {
+        ...doceoVoteWithMep,
+        mepVotes: { 'OTHER-MEP': 'FOR' as const },
+      };
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        ...emptyDoceoResponse,
+        data: [voteWithoutMep, voteWithoutMep],
+        total: 2,
+      });
+
+      const result = await handleAssessMepInfluence({ mepId: 'MEP-1' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataSource: string;
+        confidenceLevel: string;
+      };
+
+      // totalVotes === 0 even though rcvVotesInspected === 2, so DOCEO is treated as unusable.
+      expect(data.dataSource).toBe('EP_API');
+      // EP API mock returns 1250 totalVotes (>100) → MEDIUM.
+      expect(data.confidenceLevel).toBe('MEDIUM');
+    });
+
     it('should cache DOCEO results across repeated calls', async () => {
       vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
         ...emptyDoceoResponse,
