@@ -96,6 +96,7 @@ interface CacheEntry {
 }
 
 let memoCache: CacheEntry | null = null;
+let inFlightBuild: Promise<LifecycleStatisticsModel> | null = null;
 
 /**
  * Normalize an EP event type to a stable stage key.
@@ -374,12 +375,41 @@ export async function getLifecycleStatistics(options: {
     return memoCache.model;
   }
 
-  const procResp = await epClient.getProcedures({ limit: corpus });
-  const events = await fetchEventsBounded(procResp.data, EVENT_FETCH_CONCURRENCY);
-  const model = buildLifecycleStatistics(procResp.data, events);
+  // Concurrency-safe rebuild: share an in-flight promise so simultaneous
+  // callers don't each trigger a duplicate corpus-wide fetch.
+  if (inFlightBuild !== null && options.forceRefresh !== true) {
+    return inFlightBuild;
+  }
 
-  memoCache = { model, expiresAt: Date.now() + CACHE_TTL_MS };
-  return model;
+  const buildPromise = (async (): Promise<LifecycleStatisticsModel> => {
+    try {
+      const procResp = await epClient.getProcedures({ limit: corpus });
+      const events = await fetchEventsBounded(procResp.data, EVENT_FETCH_CONCURRENCY);
+      const model = buildLifecycleStatistics(procResp.data, events);
+      memoCache = { model, expiresAt: Date.now() + CACHE_TTL_MS };
+      return model;
+    } finally {
+      inFlightBuild = null;
+    }
+  })();
+  inFlightBuild = buildPromise;
+  return buildPromise;
+}
+
+/**
+ * An empty lifecycle model that callers can use as a fast fallback when the
+ * corpus rebuild fails or exceeds its time budget. With this model every
+ * lookup returns `undefined` so forecasts gracefully degrade to the
+ * `INSUFFICIENT_DATA` heuristic basis without aborting the request.
+ */
+export function emptyLifecycleStatisticsModel(): LifecycleStatisticsModel {
+  return {
+    byTypeAndStage: new Map(),
+    corpusSize: 0,
+    totalObservations: 0,
+    computationTimeMs: 0,
+    builtAt: Date.now(),
+  };
 }
 
 /**
@@ -387,4 +417,5 @@ export async function getLifecycleStatistics(options: {
  */
 export function resetLifecycleStatisticsCache(): void {
   memoCache = null;
+  inFlightBuild = null;
 }

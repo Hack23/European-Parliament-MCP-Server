@@ -18,6 +18,7 @@ import {
   lookupStageStatistics,
   getLifecycleStatistics,
   resetLifecycleStatisticsCache,
+  emptyLifecycleStatisticsModel,
   fetchEventsBounded,
   CORPUS_SIZE,
 } from './lifecycleStatistics.js';
@@ -336,5 +337,39 @@ describe('lifecycleStatistics - getLifecycleStatistics caching', () => {
     resetLifecycleStatisticsCache();
     await getLifecycleStatistics();
     expect(vi.mocked(epClientModule.epClient.getProcedures)).toHaveBeenCalledTimes(2);
+  });
+
+  it('concurrent callers share a single in-flight rebuild', async () => {
+    let resolveProcs: (v: unknown) => void = () => undefined;
+    const pending = new Promise((res) => { resolveProcs = res; });
+    vi.mocked(epClientModule.epClient.getProcedures).mockImplementation(
+      () => pending as ReturnType<typeof epClientModule.epClient.getProcedures>
+    );
+    vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue({
+      data: [], total: 0, limit: 50, offset: 0, hasMore: false,
+    });
+
+    const p1 = getLifecycleStatistics();
+    const p2 = getLifecycleStatistics();
+    const p3 = getLifecycleStatistics();
+
+    // Resolve the shared `getProcedures` promise — all three callers should
+    // observe the same build, not trigger a duplicate fetch each.
+    resolveProcs({ data: [procedure('P1')], total: 1, limit: CORPUS_SIZE, offset: 0, hasMore: false });
+
+    const [a, b, c] = await Promise.all([p1, p2, p3]);
+    expect(a).toBe(b);
+    expect(b).toBe(c);
+    expect(vi.mocked(epClientModule.epClient.getProcedures)).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('lifecycleStatistics - emptyLifecycleStatisticsModel', () => {
+  it('returns a model whose lookups always yield undefined', () => {
+    const m = emptyLifecycleStatisticsModel();
+    expect(m.corpusSize).toBe(0);
+    expect(m.totalObservations).toBe(0);
+    expect(m.byTypeAndStage.size).toBe(0);
+    expect(lookupStageStatistics(m, 'COD', 'REFERRAL')).toBeUndefined();
   });
 });

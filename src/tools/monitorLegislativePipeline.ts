@@ -34,6 +34,7 @@ import { withTimeout, TimeoutError } from '../utils/timeout.js';
 import { buildTimeoutResponse } from './shared/errorHandler.js';
 import {
   getLifecycleStatistics,
+  emptyLifecycleStatisticsModel,
   fetchEventsBounded,
   sortEventsChronologically,
   normalizeStageKey,
@@ -48,6 +49,16 @@ import {
  * intelligence tools and stay below the integration-test 120 s ceiling.
  */
 const OPERATION_TIMEOUT_MS = 30_000;
+
+/**
+ * Wall-clock budget (ms) for the lifecycle-statistics corpus build on the
+ * request path. On a cold cache the build can require many `/events` calls
+ * which, under the EP API client's default 100 req/min rate limit, may exceed
+ * the overall {@link OPERATION_TIMEOUT_MS}. If the build doesn't complete in
+ * this budget we fall back to an empty model and the per-procedure forecasts
+ * degrade to `INSUFFICIENT_DATA` instead of failing the entire request.
+ */
+const LIFECYCLE_BUILD_BUDGET_MS = 12_000;
 
 /** Forecast basis discriminator emitted in the response envelope. */
 export type ForecastBasis = 'HISTORICAL_MEDIAN' | 'INSUFFICIENT_DATA' | 'NOT_APPLICABLE';
@@ -142,14 +153,21 @@ const ACTIVE_RECENCY_YEARS = 10;
 const MIN_SAMPLE_SIZE_FOR_FORECAST = 3;
 
 /**
- * Calculate days between two date strings (or since a date).
+ * Calculate whole-day delta between two date strings (or between a date and
+ * "now" when `endStr` is omitted). Uses UTC day boundaries with `Math.floor`
+ * to match {@link import('../utils/lifecycleStatistics.js').daysBetween}, so
+ * the current-dwell value compared against `p95DwellDays` / `medianDwellDays`
+ * is computed on the same scale as the corpus statistics.
  */
 function daysBetween(dateStr: string, endStr?: string): number {
   const start = new Date(dateStr);
   const end = endStr !== undefined && endStr !== '' ? new Date(endStr) : new Date();
   if (isNaN(start.getTime())) return 0;
   if (isNaN(end.getTime())) return 0;
-  return Math.max(0, Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const startUtcDays = Math.floor(start.getTime() / msPerDay);
+  const endUtcDays = Math.floor(end.getTime() / msPerDay);
+  return Math.max(0, endUtcDays - startUtcDays);
 }
 
 /** Classify complexity from days in stage */
@@ -688,6 +706,29 @@ function buildPipelineItems(
 }
 
 /**
+ * Load the lifecycle statistics model with a strict wall-clock budget.
+ *
+ * On cold cache the corpus rebuild can require hundreds of `/events` calls,
+ * which under the EP API client's default 100 req/min rate limit cannot
+ * always complete within {@link OPERATION_TIMEOUT_MS}. To keep the request
+ * path responsive we race the rebuild against {@link LIFECYCLE_BUILD_BUDGET_MS}
+ * and fall back to an empty model when the budget is exhausted (or any other
+ * error occurs). With an empty model every per-procedure forecast degrades
+ * to `INSUFFICIENT_DATA`, but the tool still returns a successful response.
+ */
+async function loadLifecycleModelWithBudget(): Promise<LifecycleStatisticsModel> {
+  try {
+    return await withTimeout(
+      getLifecycleStatistics(),
+      LIFECYCLE_BUILD_BUDGET_MS,
+      'lifecycle statistics build exceeded budget'
+    );
+  } catch {
+    return emptyLifecycleStatisticsModel();
+  }
+}
+
+/**
  * Run the core pipeline-monitoring operation: load procedures + lifecycle
  * statistics, fetch per-procedure events, score each procedure, filter, and
  * assemble the response envelope.
@@ -698,7 +739,7 @@ async function runPipelineOperation(
   const ctx = resolveOperationContext(params);
   const [procedures, model] = await Promise.all([
     epClient.getProcedures({ limit: params.limit }),
-    getLifecycleStatistics(),
+    loadLifecycleModelWithBudget(),
   ]);
 
   const filteredProcs = applyDateFilters(procedures.data, ctx);
@@ -796,7 +837,7 @@ export async function handleMonitorLegislativePipeline(
  */
 export const monitorLegislativePipelineToolMetadata = {
   name: 'monitor_legislative_pipeline',
-  description: 'Monitor legislative pipeline status with lifecycle-driven bottleneck detection and timeline forecasting. Tracks procedures through their authoritative event sequence (REFERRAL → COM_VOTE → EP_ADOPTION → SIGNATURE / REJECTION). Returns pipeline health score, throughput rate, bottleneck index (procedures with dwell ≥ 95th percentile of historical distribution), stalled procedure rate, legislative momentum, per-procedure lifecycleEvents, and a forecastBasis discriminator (HISTORICAL_MEDIAN | INSUFFICIENT_DATA).',
+  description: 'Monitor legislative pipeline status with lifecycle-driven bottleneck detection and timeline forecasting. Tracks procedures through their authoritative event sequence (REFERRAL → COM_VOTE → EP_ADOPTION → SIGNATURE / REJECTION). Returns pipeline health score, throughput rate, bottleneck index (procedures with dwell ≥ 95th percentile of historical distribution), stalled procedure rate, legislative momentum, per-procedure lifecycleEvents, and a forecastBasis discriminator (HISTORICAL_MEDIAN | INSUFFICIENT_DATA | NOT_APPLICABLE — the last when every visible procedure is already completed).',
   inputSchema: {
     type: 'object' as const,
     properties: {

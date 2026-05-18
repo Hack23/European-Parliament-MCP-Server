@@ -1420,7 +1420,7 @@ Analyze the legislative effectiveness of the ENVI committee
   - `LOW` — otherwise
 - **`bottlenecks[]`** — aggregated only from procedures whose dwell is ≥ the historical 95th percentile (or the legacy `isStalled` heuristic when no statistics exist). Each entry exposes the `thresholdDays` used.
 - **`estimatedCompletionDays`** — historical median remaining-time at the current stage (`medianRemainingDays` − `daysInCurrentStage`, clamped to ≥0). When the matching `(type, stage)` cell has fewer than 3 observations the value falls back to a heuristic and the envelope reports `forecastBasis: 'INSUFFICIENT_DATA'`.
-- **`forecastBasis`** — `'HISTORICAL_MEDIAN'` when any procedure in scope used the historical forecast; otherwise `'INSUFFICIENT_DATA'`.
+- **`forecastBasis`** — `'HISTORICAL_MEDIAN'` when any visible procedure used the historical-median forecast; `'INSUFFICIENT_DATA'` when matching `(type, stage)` cells lacked enough samples; `'NOT_APPLICABLE'` when every visible procedure is already completed (no remaining-time to forecast).
 - **`lifecycleEvents[]`** — per-procedure echo of the underlying event timeline (date, normalised stage, raw event type, title) for traceability.
 - **`lifecycleCorpus`** — metadata about the corpus used for the distribution: `corpusSize`, `totalObservations`, `computationTimeMs`.
 
