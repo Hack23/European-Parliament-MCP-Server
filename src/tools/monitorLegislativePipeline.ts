@@ -438,6 +438,16 @@ interface BottleneckBucket {
  * at or above the historical 95th percentile. Procedures with no matching
  * statistics fall back to the legacy `isStalled` heuristic so the tool keeps
  * producing a useful list even when the corpus is empty.
+ *
+ * **Cross-type aggregation:** bottlenecks are keyed by **stage label only**
+ * (e.g. `"REFERRAL"`), not `(type, stage)`. This is intentional — callers
+ * looking at "which stage is stuck right now" want a single view across
+ * procedure types. The per-procedure `bottleneckRisk` field (and the
+ * underlying p95 cell) remains type-aware, so the precise threshold for an
+ * individual procedure is unaffected by cross-type aggregation here.
+ * `thresholdDays` reports the **maximum** p95 seen across the contributing
+ * `(type, stage)` cells — interpret it as a conservative high-water mark
+ * for the worst type in that stage bucket.
  */
 function detectBottlenecks(pipeline: PipelineItem[], model: LifecycleStatisticsModel): BottleneckInfo[] {
   const stageBuckets: Record<string, BottleneckBucket> = {};
@@ -647,14 +657,18 @@ function applyDateFilters(
 
 /**
  * Build per-procedure pipeline items and count event-fetch failures.
+ *
+ * Returns the forecast basis indexed by `procedureId` so downstream
+ * filtering can correlate items to their basis without relying on
+ * positional indices (which become misaligned after filtering).
  */
 function buildPipelineItems(
   filteredProcs: readonly Procedure[],
   eventsByProcedureId: ReadonlyMap<string, EPEvent[]>,
   model: LifecycleStatisticsModel,
-): { items: PipelineItem[]; bases: ForecastBasis[]; eventFetchFailures: number } {
+): { items: PipelineItem[]; basisByProcedureId: Map<string, ForecastBasis>; eventFetchFailures: number } {
   const items: PipelineItem[] = [];
-  const bases: ForecastBasis[] = [];
+  const basisByProcedureId = new Map<string, ForecastBasis>();
   let eventFetchFailures = 0;
   for (const proc of filteredProcs) {
     const rawEvents = eventsByProcedureId.get(proc.id);
@@ -664,9 +678,9 @@ function buildPipelineItems(
     const sortedEvents = sortEventsChronologically(rawEvents ?? []);
     const { item, basis } = procedureToPipelineItem(proc, sortedEvents, model);
     items.push(item);
-    bases.push(basis);
+    basisByProcedureId.set(proc.id, basis);
   }
-  return { items, bases, eventFetchFailures };
+  return { items, basisByProcedureId, eventFetchFailures };
 }
 
 /**
@@ -685,7 +699,7 @@ async function runPipelineOperation(
 
   const filteredProcs = applyDateFilters(procedures.data, ctx);
   const eventsByProcedureId = await fetchEventsBounded(filteredProcs);
-  const { items: allMappedItems, bases, eventFetchFailures } =
+  const { items: allMappedItems, basisByProcedureId, eventFetchFailures } =
     buildPipelineItems(filteredProcs, eventsByProcedureId, model);
 
   const unknownEnrichmentCount = params.status === 'ACTIVE'
@@ -697,10 +711,9 @@ async function runPipelineOperation(
     .filter((item) => matchesCommitteeFilter(item, params.committee));
 
   const pipeline = allItems.slice(0, params.limit);
-  const visibleBases = bases.slice(0, allMappedItems.length).filter((_, i) => {
-    const candidate = allMappedItems[i];
-    return candidate !== undefined && pipeline.includes(candidate);
-  });
+  const visibleBases: ForecastBasis[] = pipeline
+    .map((item) => basisByProcedureId.get(item.procedureId))
+    .filter((b): b is ForecastBasis => b !== undefined);
   const envelopeBasis = aggregateForecastBasis(visibleBases);
 
   return buildAnalysis({

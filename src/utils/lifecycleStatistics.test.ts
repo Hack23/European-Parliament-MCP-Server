@@ -76,8 +76,8 @@ describe('lifecycleStatistics - pure helpers', () => {
     it('returns 0 for empty input', () => {
       expect(percentile([], 95)).toBe(0);
     });
-    it('returns the first element when percentile<=0', () => {
-      expect(percentile([3, 1, 2], 0)).toBe(3); // value at index 0 of unsorted input
+    it('returns the minimum (sorted[0]) when percentile<=0', () => {
+      expect(percentile([3, 1, 2], 0)).toBe(1);
     });
     it('returns the maximum for p100', () => {
       expect(percentile([10, 20, 30, 40], 100)).toBe(40);

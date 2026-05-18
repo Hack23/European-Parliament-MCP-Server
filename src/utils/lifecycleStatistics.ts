@@ -147,16 +147,19 @@ export function median(values: readonly number[]): number {
  * Compute a percentile using nearest-rank with `Math.ceil`.
  *
  * Deterministic and tie-stable: identical fixture sets produce identical
- * percentiles regardless of insertion order.
+ * percentiles regardless of insertion order. Inputs are always sorted before
+ * the percentile rank is read so the return value is consistent for all
+ * inputs in the documented range.
  *
  * @param values - Numeric samples
- * @param percentile - Percentile in the range (0, 100]
+ * @param percentile - Percentile in the range [0, 100]. Values ≤ 0 return
+ *   the minimum (sorted[0]); values ≥ 100 return the maximum.
  * @returns The percentile value, or 0 for empty inputs
  */
 export function percentile(values: readonly number[], percentile: number): number {
   if (values.length === 0) return 0;
-  if (percentile <= 0) return values[0] ?? 0;
   const sorted = [...values].sort((a, b) => a - b);
+  if (percentile <= 0) return sorted[0] ?? 0;
   const rank = Math.min(sorted.length, Math.max(1, Math.ceil((percentile / 100) * sorted.length)));
   return sorted[rank - 1] ?? 0;
 }
