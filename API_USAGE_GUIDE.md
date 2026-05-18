@@ -1399,7 +1399,7 @@ Analyze the legislative effectiveness of the ENVI committee
 
 ### Tool: monitor_legislative_pipeline
 
-**Description**: Monitor real-time legislative pipeline status with bottleneck detection, timeline forecasting, and procedure progress tracking.
+**Description**: Monitor real-time legislative pipeline status with lifecycle-driven bottleneck detection and timeline forecasting. For every procedure in scope the authoritative event sequence is fetched from `/procedures/{id}/events` (bounded concurrency ≤8 parallel) and compared against a corpus-wide historical distribution.
 
 #### Parameters
 
@@ -1410,6 +1410,19 @@ Analyze the legislative effectiveness of the ENVI committee
 | dateFrom | string | No | - | Analysis start date (YYYY-MM-DD) |
 | dateTo | string | No | - | Analysis end date (YYYY-MM-DD) |
 | limit | number | No | 20 | Maximum results to return (1-100) |
+
+#### Methodology
+
+- **`daysInCurrentStage`** — precise delta in days between the most recent event from `/procedures/{id}/events` and `now`. Falls back to procedure-metadata dates when the event timeline is unavailable.
+- **`bottleneckRisk`** — percentile bucket of the current dwell vs. the historical distribution observed for the same `(procedureType, stage)` across the latest 500 procedures (30-minute cached corpus):
+  - `HIGH` — dwell ≥ 95th percentile (real stuck procedure)
+  - `MEDIUM` — dwell ≥ median
+  - `LOW` — otherwise
+- **`bottlenecks[]`** — aggregated only from procedures whose dwell is ≥ the historical 95th percentile (or the legacy `isStalled` heuristic when no statistics exist). Each entry exposes the `thresholdDays` used.
+- **`estimatedCompletionDays`** — historical median remaining-time at the current stage (`medianRemainingDays` − `daysInCurrentStage`, clamped to ≥0). When the matching `(type, stage)` cell has fewer than 3 observations the value falls back to a heuristic and the envelope reports `forecastBasis: 'INSUFFICIENT_DATA'`.
+- **`forecastBasis`** — `'HISTORICAL_MEDIAN'` when any procedure in scope used the historical forecast; otherwise `'INSUFFICIENT_DATA'`.
+- **`lifecycleEvents[]`** — per-procedure echo of the underlying event timeline (date, normalised stage, raw event type, title) for traceability.
+- **`lifecycleCorpus`** — metadata about the corpus used for the distribution: `corpusSize`, `totalObservations`, `computationTimeMs`.
 
 #### Example Usage
 

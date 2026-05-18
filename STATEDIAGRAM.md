@@ -373,4 +373,50 @@ stateDiagram-v2
 
 ---
 
+## 🏛️ Procedure Lifecycle States
+
+The `monitor_legislative_pipeline` and `track_legislation` tools project EP procedures onto an authoritative event-driven state machine sourced from `/procedures/{id}/events`. Each transition has a measurable dwell time used to compute percentile-based bottleneck risk and historical-median completion forecasts.
+
+```mermaid
+stateDiagram-v2
+    [*] --> REFERRAL: Procedure initiated
+    REFERRAL --> COM_VOTE: Committee adopts report
+    REFERRAL --> REJECTION: Withdrawn / rejected
+    COM_VOTE --> EP_ADOPTION: Plenary adopts position
+    COM_VOTE --> REJECTION: Plenary rejects
+    EP_ADOPTION --> SIGNATURE: Co-legislator agreement
+    EP_ADOPTION --> REJECTION: Council rejects
+    SIGNATURE --> [*]: Published in OJ
+    REJECTION --> [*]: Procedure closed
+
+    note right of REFERRAL
+        Stage key derived from
+        the normalized type of the
+        latest /procedures/{id}/events
+        entry (URI prefix stripped,
+        uppercased).
+    end note
+
+    note right of COM_VOTE
+        daysInCurrentStage =
+            now - latestEvent.date
+        bottleneckRisk:
+            HIGH if dwell ≥ p95
+            MEDIUM if dwell ≥ median
+            LOW otherwise
+    end note
+
+    note right of SIGNATURE
+        forecastBasis:
+            HISTORICAL_MEDIAN when
+            (type, stage) cell has
+            ≥3 samples in the corpus.
+            Otherwise INSUFFICIENT_DATA.
+    end note
+```
+
+The exact set of stage transitions depends on the EP API's event taxonomy (`def/ep-activities/*`). The diagram above shows the canonical happy-path lifecycle for `COD` procedures; `NLE`, `BUD`, and other types use the same machinery with their own observed stage distributions.
+
+---
+
 *See [FUTURE_STATEDIAGRAM.md](./FUTURE_STATEDIAGRAM.md) for planned state management enhancements including streaming response states, real-time subscription states, and OAuth session states.*
