@@ -435,6 +435,9 @@ erDiagram
         string currentStage "Normalized stage from latest event (e.g. REFERRAL, COM_VOTE)"
         number daysInCurrentStage "Delta between latest event and now"
         boolean isStalled
+    }
+
+    COMPUTED_ATTRIBUTES {
         string bottleneckRisk "HIGH if dwell >= p95, MEDIUM if >= median, LOW otherwise"
         number estimatedCompletionDays "Historical median remaining-time, or heuristic fallback"
     }
@@ -453,16 +456,17 @@ erDiagram
     }
 
     PIPELINE_ENVELOPE {
-        string forecastBasis "HISTORICAL_MEDIAN | INSUFFICIENT_DATA"
+        string forecastBasis "HISTORICAL_MEDIAN | INSUFFICIENT_DATA | NOT_APPLICABLE"
     }
 
     PIPELINE_ENVELOPE ||--o{ PIPELINE_ITEM : "pipeline[]"
+    PIPELINE_ITEM ||--|| COMPUTED_ATTRIBUTES : "computedAttributes"
     PIPELINE_ITEM ||--o{ LIFECYCLE_EVENT : "lifecycleEvents[]"
     PIPELINE_ENVELOPE ||--|| LIFECYCLE_CORPUS : "lifecycleCorpus"
 ```
 
 - **`lifecycleEvents`** — per-procedure chronological echo of the underlying event sequence for traceability. Includes normalised `stage` and original `rawType` to support both display and downstream analytics.
-- **`forecastBasis`** — discriminated union at the envelope level. Set to `HISTORICAL_MEDIAN` when at least one procedure in scope used the historical median forecast; `INSUFFICIENT_DATA` when every forecast fell back to the heuristic.
+- **`forecastBasis`** — discriminated union at the envelope level. Set to `HISTORICAL_MEDIAN` when at least one procedure in scope used the historical median forecast; `INSUFFICIENT_DATA` when every forecast fell back to the heuristic; `NOT_APPLICABLE` when all procedures are already completed.
 - **`lifecycleCorpus`** — metadata about the corpus used to build the dwell distributions (latest 500 procedures, cached 30 min). No PII is retained — only event types, dates, and procedure types.
 
 ### DataAvailability Enum

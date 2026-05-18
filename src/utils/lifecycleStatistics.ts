@@ -176,7 +176,10 @@ export function daysBetween(fromIso: string, toIso: string): number {
   const start = new Date(fromIso);
   const end = new Date(toIso);
   if (isNaN(start.getTime()) || isNaN(end.getTime())) return 0;
-  return Math.max(0, Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
+  // Use UTC day boundaries to avoid DST/time-of-day shifts
+  const startUtcDays = Math.floor(start.getTime() / (1000 * 60 * 60 * 24));
+  const endUtcDays = Math.floor(end.getTime() / (1000 * 60 * 60 * 24));
+  return Math.max(0, endUtcDays - startUtcDays);
 }
 
 /**
@@ -322,11 +325,11 @@ export function buildLifecycleStatistics(
 }
 
 /**
- * Lookup statistics for a `(procedureType, stage)` pair, with fallbacks.
+ * Lookup statistics for a `(procedureType, stage)` pair.
  *
- * Falls back to (type, anything) by averaging all stages of the same type
- * when an exact key is missing, then to a global `UNKNOWN` cell, then to
- * `undefined`. This makes per-procedure scoring resilient to corpus gaps.
+ * Performs an exact lookup by `lifecycleKey(procedureType, normalizedStage)`.
+ * Returns `undefined` when no matching cell exists or the cell has zero
+ * samples, so callers must handle the missing-data case explicitly.
  *
  * @param model - The lifecycle statistics model
  * @param procedureType - The procedure type (e.g. `COD`)

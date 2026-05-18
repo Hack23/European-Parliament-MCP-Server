@@ -50,7 +50,7 @@ import {
 const OPERATION_TIMEOUT_MS = 30_000;
 
 /** Forecast basis discriminator emitted in the response envelope. */
-export type ForecastBasis = 'HISTORICAL_MEDIAN' | 'INSUFFICIENT_DATA';
+export type ForecastBasis = 'HISTORICAL_MEDIAN' | 'INSUFFICIENT_DATA' | 'NOT_APPLICABLE';
 
 /** A single lifecycle event echoed for traceability. */
 export interface PipelineLifecycleEvent {
@@ -199,7 +199,8 @@ function classifyMomentum(healthScore: number): string {
  */
 function isStatusCompleted(status: string): boolean {
   const lower = status.toLowerCase();
-  return lower.includes('adopted') || lower.includes('completed');
+  return lower.includes('adopted') || lower.includes('completed') ||
+    lower.includes('rejected') || lower.includes('withdrawn') || lower.includes('closed');
 }
 
 /**
@@ -239,7 +240,7 @@ function forecastRemainingDays(
   daysInStage: number,
   stats: StageDwellStatistics | undefined
 ): { estimatedDays: number; basis: ForecastBasis } {
-  if (isCompleted) return { estimatedDays: 0, basis: 'HISTORICAL_MEDIAN' };
+  if (isCompleted) return { estimatedDays: 0, basis: 'NOT_APPLICABLE' };
   if (stats !== undefined && stats.sampleSize >= MIN_SAMPLE_SIZE_FOR_FORECAST) {
     const remaining = Math.max(0, stats.medianRemainingDays - daysInStage);
     return { estimatedDays: remaining, basis: 'HISTORICAL_MEDIAN' };
@@ -510,7 +511,10 @@ function computeHealthMetrics(pipeline: PipelineItem[], summary: ReturnType<type
  * `HISTORICAL_MEDIAN`; otherwise we report `INSUFFICIENT_DATA`.
  */
 function aggregateForecastBasis(perItemBases: readonly ForecastBasis[]): ForecastBasis {
-  return perItemBases.some((b) => b === 'HISTORICAL_MEDIAN')
+  // Exclude NOT_APPLICABLE (completed procedures) from the envelope-level determination
+  const actionable = perItemBases.filter((b) => b !== 'NOT_APPLICABLE');
+  if (actionable.length === 0) return 'NOT_APPLICABLE';
+  return actionable.some((b) => b === 'HISTORICAL_MEDIAN')
     ? 'HISTORICAL_MEDIAN'
     : 'INSUFFICIENT_DATA';
 }

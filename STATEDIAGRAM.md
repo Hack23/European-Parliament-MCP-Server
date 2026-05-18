@@ -375,7 +375,7 @@ stateDiagram-v2
 
 ## 🏛️ Procedure Lifecycle States
 
-The `monitor_legislative_pipeline` and `track_legislation` tools project EP procedures onto an authoritative event-driven state machine sourced from `/procedures/{id}/events`. Each transition has a measurable dwell time used to compute percentile-based bottleneck risk and historical-median completion forecasts.
+The `monitor_legislative_pipeline` tool projects EP procedures onto an authoritative event-driven state machine sourced from `/procedures/{id}/events`. Each transition has a measurable dwell time used to compute percentile-based bottleneck risk and historical-median completion forecasts. The `track_legislation` tool also enriches its timeline with `/events` data but does not compute dwell percentiles or forecasts.
 
 ```mermaid
 stateDiagram-v2
