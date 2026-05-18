@@ -161,9 +161,9 @@
     "vite": "8.0.10"
   },
   "devDependencies": {
-    "@types/node": "25.8.0",
-    "@typescript-eslint/eslint-plugin": "8.59.3",
-    "@typescript-eslint/parser": "8.59.3",
+    "@types/node": "25.9.0",
+    "@typescript-eslint/eslint-plugin": "8.59.4",
+    "@typescript-eslint/parser": "8.59.4",
     "@vitest/coverage-v8": "4.1.6",
     "@vitest/ui": "4.1.6",
     "eslint": "10.4.0",
@@ -171,13 +171,13 @@
     "knip": "6.14.1",
     "license-compliance": "3.0.1",
     "prettier": "3.8.3",
-    "tsx": "4.22.1",
+    "tsx": "4.22.2",
     "typedoc": "0.28.19",
     "typedoc-plugin-markdown": "4.11.0",
     "typedoc-plugin-mdn-links": "5.1.1",
     "typedoc-plugin-zod": "1.4.3",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.59.3",
+    "typescript-eslint": "8.59.4",
     "vitest": "4.1.6"
   }
 }
