@@ -271,12 +271,12 @@ Create `src/tools/myNewTool.test.ts` covering:
 
 #### No-silent-zero policy (OSINT tools)
 
-Every OSINT tool returns the [`OsintStandardOutput`](src/tools/shared/types.ts) envelope: `confidenceLevel`, `methodology`, `dataFreshness`, `sourceAttribution`, `dataQualityWarnings`. The policy: **no numeric field outside `dataQualityWarnings` may be silently zero because a data source was unavailable**. When a source is missing or empty, the tool MUST:
+Every OSINT tool returns the [`OsintStandardOutput`](src/tools/shared/types.ts) envelope: `confidenceLevel`, `methodology`, `dataFreshness`, `sourceAttribution`, `dataQualityWarnings`. The policy: **no numeric field outside `dataQualityWarnings` may be silently zero because a data source was unavailable**. When a source is missing or empty, the tool SHOULD either:
 
-1. Degrade `confidenceLevel` to `LOW` (or `MEDIUM`, never `HIGH`), AND
-2. Push a human-readable entry into `dataQualityWarnings` explaining the unavailability.
+1. Degrade `confidenceLevel` to `LOW` or `MEDIUM` **and** push a human-readable entry into `dataQualityWarnings` explaining the unavailability, OR
+2. Keep `confidenceLevel = HIGH` only when the remaining data is sufficient to fully back every non-warning numeric metric in the payload.
 
-The contract test fails if `confidenceLevel` is `LOW`/`MEDIUM` but `dataQualityWarnings` is empty. See `INTEGRATION_TESTING.md` § "OSINT QA Harness" for the full policy and golden-snapshot refresh procedure.
+The contract test enforces the observable invariant: if `confidenceLevel` is `LOW`/`MEDIUM`, `dataQualityWarnings` MUST be non-empty. A degraded confidence level with no warning fails the test. See `INTEGRATION_TESTING.md` § "OSINT QA Harness" for the full policy and golden-snapshot refresh procedure.
 
 ---
 

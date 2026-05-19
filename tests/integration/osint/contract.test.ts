@@ -29,7 +29,7 @@
  * @see src/server/toolRegistry.ts — `getToolMetadataArray()`
  */
 
-import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, afterEach, vi } from 'vitest';
 import { OsintStandardOutputSchema } from '../../../src/schemas/europeanParliament.js';
 import {
   osintPhase6MEPs,
@@ -112,8 +112,9 @@ function parseToolPayload(result: { content: { type: string; text: string }[] })
 }
 
 /**
- * Strip volatile fields that legitimately vary between runs so determinism
- * comparisons remain meaningful. Mutates the input object recursively.
+ * Return a deep copy of `value` with volatile keys removed recursively.
+ * Pure function — does NOT mutate the input; new arrays and objects are
+ * always allocated.
  *
  * Volatile keys recognised (timestamp / per-run identifier fields):
  *  `analysisTime`, `assessmentTime`, `generatedAt`, `timestamp`,
@@ -234,7 +235,17 @@ describe('OSINT contract suite (registry-driven)', () => {
     // Pin Date.now() to a deterministic instant so timestamp-derived fields
     // (e.g. analysisTime, dataFreshness "as-of" wording) are stable across
     // both determinism invocations within a single test.
+    //
+    // `vi.setSystemTime` requires fake timers; we fake ONLY `Date` so any
+    // setTimeout/setInterval/queueMicrotask used by tools or their HTTP
+    // stack continues to run on the real clock. `vi.useRealTimers()` in
+    // `afterEach` prevents mocked time from leaking into other suites.
+    vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(new Date('2024-06-15T12:00:00.000Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   for (const tool of OSINT_TOOLS) {

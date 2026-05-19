@@ -135,7 +135,7 @@ For every OSINT tool, with EP and DOCEO clients mocked deterministically:
 
 ### No-silent-zero policy — what it means
 
-If any numeric field outside `dataQualityWarnings` would be **zero because a data source is unavailable** (rather than because the underlying real-world count is actually zero), the tool MUST add a `dataQualityWarnings` entry explaining the unavailability. The contract test enforces this indirectly: if data is missing, confidence MUST degrade AND a warning MUST be emitted.
+If any numeric field outside `dataQualityWarnings` would be **zero because a data source is unavailable** (rather than because the underlying real-world count is actually zero), the tool MUST add a `dataQualityWarnings` entry explaining the unavailability. The contract test enforces the observable side of this policy: **whenever `confidenceLevel` is `LOW` or `MEDIUM`, `dataQualityWarnings` MUST be non-empty.** A degraded confidence level with no accompanying warning is treated as a silent-zero regression and fails the test. Tools whose remaining (per-MEP) data is sufficient to legitimately keep `confidenceLevel = HIGH` are allowed to do so without a warning.
 
 ### Running just the OSINT contract suite
 
