@@ -115,11 +115,13 @@ function parseToolPayload(result: { content: { type: string; text: string }[] })
  * Strip volatile fields that legitimately vary between runs so determinism
  * comparisons remain meaningful. Mutates the input object recursively.
  *
- * Volatile keys recognised:
- *  - any ISO-8601 timestamp string (rfc-3339)
- *  - keys named `analysisTime`, `assessmentTime`, `generatedAt`, `timestamp`,
- *    `correlationId`, `runId`, `timedOut`
- *  - per-run cache identifiers
+ * Volatile keys recognised (timestamp / per-run identifier fields):
+ *  `analysisTime`, `assessmentTime`, `generatedAt`, `timestamp`,
+ *  `correlationId`, `runId`, `requestId`, `computedAt`, `asOf`.
+ *
+ * Note: filtering is key-based only — embedded timestamp values inside
+ * non-volatile fields are not stripped. If a tool ever embeds a wall-clock
+ * timestamp in a non-volatile field, add the field name to {@link VOLATILE_KEYS}.
  */
 const VOLATILE_KEYS = new Set([
   'analysisTime',
@@ -266,7 +268,7 @@ describe('OSINT contract suite (registry-driven)', () => {
           expect(parsed.data.dataFreshness.length).toBeGreaterThan(0);
           expect(parsed.data.sourceAttribution.length).toBeGreaterThan(0);
           // sourceAttribution must reference the EP Open Data Portal.
-          expect(parsed.data.sourceAttribution.toLowerCase()).toContain('europ');
+          expect(parsed.data.sourceAttribution.toLowerCase()).toMatch(/europ(ean parliament|arl)/);
           // dataQualityWarnings is required to be an array (may be empty).
           expect(Array.isArray(parsed.data.dataQualityWarnings)).toBe(true);
         }
