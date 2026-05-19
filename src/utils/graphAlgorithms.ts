@@ -6,7 +6,7 @@
  * - {@link bfsLimited} — depth-bounded BFS ego-network extraction.
  * - {@link weightedDegree} — weighted-degree centrality per node.
  * - {@link betweennessCentrality} — Brandes' algorithm (weighted, O(V·E)).
- * - {@link labelPropagation} — deterministic label-propagation community detection.
+ * - {@link labelPropagation} — deterministic asynchronous label-propagation community detection.
  * - {@link modularity} — Newman's modularity Q for a partition.
  *
  * Algorithms are deterministic — every iteration orders nodes/edges by string
@@ -221,7 +221,13 @@ function runDijkstra(adj: AdjacencyMap, state: BrandesState, source: string): vo
     state.stack.push(v);
     const neighbours = adj.get(v);
     if (neighbours === undefined) continue;
-    for (const [w, weight] of neighbours) {
+    // Iterate neighbours in lex-sorted order so tie-breaking is fully
+    // deterministic regardless of the underlying Map insertion order
+    // (which depends on the input edge-list ordering).
+    const sortedNeighbours = [...neighbours.keys()].sort(lexCompare);
+    for (const w of sortedNeighbours) {
+      const weight = neighbours.get(w);
+      if (weight === undefined) continue;
       relaxEdge(state, queue, v, w, weight);
     }
   }
@@ -280,15 +286,23 @@ export function betweennessCentrality(
 }
 
 /**
- * Deterministic synchronous label propagation for community detection.
+ * Deterministic asynchronous label propagation for community detection.
  *
  * Each node is initialised with its own label (its id). On every iteration
- * each node adopts the label that maximises the **sum of edge weights** to
- * neighbours sharing that label, with ties broken by lexicographic label
- * order. Iteration terminates when no label changes or after `maxIterations`.
+ * each node — visited in sorted id order — adopts the label that maximises
+ * the **sum of edge weights** to neighbours sharing that label, with ties
+ * broken by lexicographic label order. Labels are updated **in place** so
+ * downstream nodes in the same sweep already see their predecessors'
+ * decisions. This asynchronous variant avoids the oscillation that pure
+ * synchronous label propagation exhibits on symmetric / bipartite graphs.
  *
- * Synchronous ordering of node updates (sorted by node id) plus deterministic
- * tie-breaking guarantees reproducible clusters across runs.
+ * As an additional safety bound the algorithm fingerprints the full label
+ * vector after each sweep and stops if either:
+ * - no label changed during the sweep (true convergence), or
+ * - the fingerprint matches the previous-previous sweep (2-cycle).
+ *
+ * Sorted-order traversal plus deterministic tie-breaking guarantees
+ * reproducible clusters across runs.
  *
  * @param nodeIds - Node universe.
  * @param edges - Weighted edges.
@@ -301,19 +315,26 @@ function runLabelIteration(
   labels: Map<string, string>
 ): boolean {
   let changed = false;
-  const nextLabels = new Map(labels);
+  // Asynchronous: update labels in place so each node in `sorted` sees the
+  // most recent labels assigned earlier in the same sweep.
   for (const node of sorted) {
     const neighbours = adj.get(node);
     if (neighbours === undefined || neighbours.size === 0) continue;
     const score = aggregateNeighbourLabels(neighbours, labels);
     const bestLabel = pickBestLabel(score);
     if (bestLabel !== undefined && bestLabel !== labels.get(node)) {
-      nextLabels.set(node, bestLabel);
+      labels.set(node, bestLabel);
       changed = true;
     }
   }
-  for (const [k, v] of nextLabels) labels.set(k, v);
   return changed;
+}
+
+/** Build a deterministic fingerprint of the current label vector. */
+function fingerprintLabels(sorted: readonly string[], labels: ReadonlyMap<string, string>): string {
+  const parts: string[] = [];
+  for (const id of sorted) parts.push(`${id}=${labels.get(id) ?? ''}`);
+  return parts.join('|');
 }
 
 export function labelPropagation(
@@ -325,8 +346,16 @@ export function labelPropagation(
   const adj = buildAdjacency(sorted, edges);
   const labels = new Map<string, string>();
   for (const id of sorted) labels.set(id, id);
+  // Track the previous two fingerprints to detect 2-cycles (label vector
+  // alternating between two states without converging).
+  let prevPrint = '';
+  let prevPrevPrint = '';
   for (let iter = 0; iter < maxIterations; iter++) {
     if (!runLabelIteration(sorted, adj, labels)) break;
+    const print = fingerprintLabels(sorted, labels);
+    if (print === prevPrevPrint) break;
+    prevPrevPrint = prevPrint;
+    prevPrint = print;
   }
   return labels;
 }

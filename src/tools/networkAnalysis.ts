@@ -152,6 +152,19 @@ const MAX_NETWORK_NODES = 900;
 const MAX_RESPONSE_EDGES = 200;
 
 /**
+ * Extract the numeric portion of an EP MEP id (e.g. `person/124810` → `124810`).
+ *
+ * `transformMEP()` normalises EP MEP ids to the `person/{numericId}` form,
+ * but DOCEO `mepVotes` is keyed by the bare numeric id. This helper produces
+ * the lookup key shared by both sources; ids without a `/` are returned
+ * unchanged so unit-test fixtures using bare ids (e.g. `MEP-1`) still match.
+ */
+function toNumericMepId(id: string): string {
+  const idx = id.lastIndexOf('/');
+  return idx >= 0 ? id.substring(idx + 1) : id;
+}
+
+/**
  * Compute network density of an undirected graph.
  */
 function computeNetworkDensity(edgeCount: number, nodeCount: number): number {
@@ -389,7 +402,11 @@ function buildEmptyResult(params: NetworkAnalysisParams): NetworkAnalysisResult 
  */
 function deriveSeeds(meps: MEPRecord[], mepId: number | undefined): string[] {
   if (mepId === undefined) return meps.map(m => m.id);
-  const focus = meps.find(m => m.id === String(mepId));
+  const target = String(mepId);
+  // EP records use `person/{numericId}` (see transformMEP), but historically /
+  // in tests the bare numeric id is also valid. Match both forms via the
+  // numeric-id projection so the BFS focus actually applies in production.
+  const focus = meps.find(m => m.id === target || toNumericMepId(m.id) === target);
   if (focus !== undefined) return [focus.id];
   // Unknown focus → degrade gracefully to full network.
   return meps.map(m => m.id);
@@ -451,11 +468,34 @@ async function fetchVotingEdges(
   rawMeps: readonly MEPRecord[],
   minSimilarity: number
 ): Promise<VotingResultInfo> {
-  const mepIdSet = new Set(rawMeps.map(m => m.id));
-  const votingResult = await computeNetworkVotingSimilarityFromDoceo(mepIdSet, { minSimilarity });
+  // DOCEO mepVotes uses bare numeric ids, but EP MEP ids are normalised to
+  // `person/{numericId}` (see transformMEP). Build a numeric→ep lookup so
+  // returned edges can be translated back to the EP id space used by every
+  // other code path in this module.
+  const numericToEpId = new Map<string, string>();
+  for (const m of rawMeps) {
+    const numeric = toNumericMepId(m.id);
+    // If two EP records collide on the same numeric id (should not happen
+    // for current MEPs but is defensive), prefer the lex-smallest EP id so
+    // the mapping remains deterministic.
+    const existing = numericToEpId.get(numeric);
+    if (existing === undefined || m.id < existing) numericToEpId.set(numeric, m.id);
+  }
+  const numericIdSet = new Set(numericToEpId.keys());
+  const votingResult = await computeNetworkVotingSimilarityFromDoceo(numericIdSet, { minSimilarity });
   if (votingResult === null) return { edges: [], rcvInspected: 0, available: false };
+  // Translate DOCEO numeric ids back to EP `person/{id}` ids for downstream
+  // graph algorithms. Edges whose endpoints are not in the EP node universe
+  // are dropped (defensive — should not happen given the numericIdSet input).
+  const translated: VotingSimilarityEdge[] = [];
+  for (const e of votingResult.edges) {
+    const src = numericToEpId.get(e.sourceId);
+    const tgt = numericToEpId.get(e.targetId);
+    if (src === undefined || tgt === undefined) continue;
+    translated.push({ ...e, sourceId: src, targetId: tgt });
+  }
   return {
-    edges: buildVotingEdges(votingResult.edges),
+    edges: buildVotingEdges(translated),
     rcvInspected: votingResult.rcvVotesInspected,
     available: true,
   };

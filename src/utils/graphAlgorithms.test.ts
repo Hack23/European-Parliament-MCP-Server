@@ -164,6 +164,54 @@ describe('graphAlgorithms', () => {
         expect(r2.get(id)).toBe(r1.get(id));
       }
     });
+
+    it('converges (does not oscillate) on a bipartite chain', () => {
+      // Synchronous label propagation oscillates indefinitely on a simple
+      // even-length chain because every node's best label flips each
+      // iteration. The asynchronous variant updates labels in place in
+      // sorted-id order so each sweep makes monotonic progress, and the
+      // optional 2-cycle fingerprint guard caps any residual flipping.
+      const nodes = ['n01', 'n02', 'n03', 'n04', 'n05', 'n06'];
+      const edges: WeightedEdge[] = [
+        { sourceId: 'n01', targetId: 'n02', weight: 1 },
+        { sourceId: 'n02', targetId: 'n03', weight: 1 },
+        { sourceId: 'n03', targetId: 'n04', weight: 1 },
+        { sourceId: 'n04', targetId: 'n05', weight: 1 },
+        { sourceId: 'n05', targetId: 'n06', weight: 1 },
+      ];
+      // With a tight `maxIterations` synchronous LP would return a
+      // parity-dependent partition; the asynchronous variant must converge
+      // to a single community (the chain is connected with uniform weights)
+      // well within the bound and produce a stable result independent of
+      // `maxIterations`.
+      const labelsFew = labelPropagation(nodes, edges, 3);
+      const labelsMany = labelPropagation(nodes, edges, 60);
+      for (const id of nodes) expect(labelsFew.get(id)).toBe(labelsMany.get(id));
+      const uniqueLabels = new Set(nodes.map(id => labelsMany.get(id)));
+      expect(uniqueLabels.size).toBe(1);
+    });
+  });
+
+  describe('determinism under edge re-ordering', () => {
+    it('betweennessCentrality is invariant to input edge order', () => {
+      // Add several equal-weight edges that create multiple equal-length
+      // shortest paths; the result must be identical whether the input is
+      // sorted ascending or descending.
+      const nodes = ['n1', 'n2', 'n3', 'n4', 'n5'];
+      const edgesAsc: WeightedEdge[] = [
+        { sourceId: 'n1', targetId: 'n2', weight: 1 },
+        { sourceId: 'n1', targetId: 'n3', weight: 1 },
+        { sourceId: 'n2', targetId: 'n4', weight: 1 },
+        { sourceId: 'n3', targetId: 'n4', weight: 1 },
+        { sourceId: 'n4', targetId: 'n5', weight: 1 },
+      ];
+      const edgesDesc = [...edgesAsc].reverse();
+      const bcAsc = betweennessCentrality(nodes, edgesAsc);
+      const bcDesc = betweennessCentrality(nodes, edgesDesc);
+      for (const id of nodes) {
+        expect(bcDesc.get(id)).toBe(bcAsc.get(id));
+      }
+    });
   });
 
   describe('modularity', () => {

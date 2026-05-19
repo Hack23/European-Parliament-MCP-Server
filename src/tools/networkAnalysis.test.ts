@@ -369,6 +369,72 @@ describe('network_analysis Tool', () => {
       // depth=3 reaches all 4 nodes along the chain.
       expect(count(d3)).toBe(4);
     });
+
+    it('matches the focus MEP when EP returns ids in the production `person/{id}` form', async () => {
+      // transformMEP() normalises EP MEP ids to `person/{numericId}`. The
+      // BFS focus must still apply when the user passes a bare numeric id.
+      const productionMEPs = linearMEPs.map(m => ({ ...m, id: `person/${m.id}` }));
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
+        data: productionMEPs, total: productionMEPs.length, limit: 50, offset: 0, hasMore: false,
+      });
+      const result = await handleNetworkAnalysis({ analysisType: 'committee', mepId: 101, depth: 1 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        networkNodes: { mepId: string }[];
+      };
+      const ids = new Set(data.networkNodes.map(n => n.mepId));
+      // Depth=1 from person/101 along chain C1 reaches only person/102.
+      expect(ids.has('person/101')).toBe(true);
+      expect(ids.has('person/102')).toBe(true);
+      expect(ids.has('person/103')).toBe(false);
+      expect(ids.has('person/104')).toBe(false);
+    });
+  });
+
+  describe('DOCEO id normalisation', () => {
+    it('voting edges are emitted when EP returns `person/{id}` ids and DOCEO uses numeric ids', async () => {
+      // Simulate the production wire format: EP MEPs use `person/{id}`,
+      // DOCEO mepVotes uses bare numeric ids. The voting-similarity edges
+      // must be translated back to EP `person/{id}` ids so node universes
+      // remain consistent across committee / voting / combined modes.
+      const productionMEPs = [
+        { id: 'person/501', name: 'P', country: 'DE', politicalGroup: 'EPP', committees: ['ENVI'], active: true, termStart: '2019-07-02' },
+        { id: 'person/502', name: 'Q', country: 'FR', politicalGroup: 'EPP', committees: ['ENVI'], active: true, termStart: '2019-07-02' },
+        { id: 'person/503', name: 'R', country: 'IT', politicalGroup: 'S&D', committees: ['LIBE'], active: true, termStart: '2019-07-02' },
+      ];
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
+        data: productionMEPs, total: productionMEPs.length, limit: 50, offset: 0, hasMore: false,
+      });
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        data: Array.from({ length: 4 }, (_, i) => ({
+          id: `v${String(i)}`, date: '2026-01-15', term: 10, subject: 's', reference: 'r',
+          votesFor: 2, votesAgainst: 1, abstentions: 0, result: 'ADOPTED' as const,
+          // Bare numeric ids — exactly what DOCEO returns in production.
+          mepVotes: { '501': 'FOR' as const, '502': 'FOR' as const, '503': 'AGAINST' as const },
+          sourceUrl: 'https://example/test', dataSource: 'RCV' as const,
+        })),
+        total: 4, datesAvailable: [], datesUnavailable: [],
+        source: { type: 'DOCEO_XML', term: 10, urls: [] },
+        limit: 100, offset: 0, hasMore: false,
+      });
+
+      const result = await handleNetworkAnalysis({ analysisType: 'voting', minSimilarity: 0.5 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        networkEdges: { sourceId: string; targetId: string }[];
+        networkNodes: { mepId: string }[];
+      };
+      // At least one voting edge must be emitted, and its endpoints must
+      // match the EP `person/{id}` ids used everywhere else in the graph.
+      expect(data.networkEdges.length).toBeGreaterThan(0);
+      const epIds = new Set(data.networkNodes.map(n => n.mepId));
+      for (const e of data.networkEdges) {
+        expect(epIds.has(e.sourceId)).toBe(true);
+        expect(epIds.has(e.targetId)).toBe(true);
+        // Specifically, MEP-501 and MEP-502 fully agree across all votes.
+      }
+      const involvedIds = data.networkEdges.flatMap(e => [e.sourceId, e.targetId]);
+      expect(involvedIds).toContain('person/501');
+      expect(involvedIds).toContain('person/502');
+    });
   });
 
   describe('Weighted centrality & deterministic clustering', () => {
@@ -404,13 +470,37 @@ describe('network_analysis Tool', () => {
     });
 
     it('identifies bridging MEPs across clusters when present', async () => {
+      // Construct a topology where two real communities exist:
+      //   Left cluster:  MEP-A1, MEP-A2, MEP-A3 share two committees pairwise
+      //     (strong weights → 0.6) and form a triangle.
+      //   Right cluster: MEP-B1, MEP-B2, MEP-B3 share two committees pairwise
+      //     (strong weights → 0.6) and form a triangle.
+      //   MEP-Broker is connected to each cluster via a single committee
+      //     (weak weights → 0.3) and bridges them.
+      // With deterministic asynchronous label propagation this yields two
+      // distinct communities with MEP-Broker as the cross-cluster broker.
+      const brokerMEPs = [
+        { id: 'MEP-A1', name: 'A1', country: 'DE', politicalGroup: 'EPP', committees: ['AGRI', 'ENVI'], active: true, termStart: '2019-07-02' },
+        { id: 'MEP-A2', name: 'A2', country: 'FR', politicalGroup: 'EPP', committees: ['AGRI', 'ENVI'], active: true, termStart: '2019-07-02' },
+        { id: 'MEP-A3', name: 'A3', country: 'IT', politicalGroup: 'EPP', committees: ['AGRI', 'ENVI'], active: true, termStart: '2019-07-02' },
+        { id: 'MEP-Broker', name: 'Broker', country: 'ES', politicalGroup: 'Renew', committees: ['ENVI', 'LIBE'], active: true, termStart: '2019-07-02' },
+        { id: 'MEP-B1', name: 'B1', country: 'NL', politicalGroup: 'S&D', committees: ['LIBE', 'ITRE'], active: true, termStart: '2019-07-02' },
+        { id: 'MEP-B2', name: 'B2', country: 'BE', politicalGroup: 'S&D', committees: ['LIBE', 'ITRE'], active: true, termStart: '2019-07-02' },
+        { id: 'MEP-B3', name: 'B3', country: 'SE', politicalGroup: 'S&D', committees: ['LIBE', 'ITRE'], active: true, termStart: '2019-07-02' },
+      ];
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
+        data: brokerMEPs, total: brokerMEPs.length, limit: 50, offset: 0, hasMore: false,
+      });
+
       const result = await handleNetworkAnalysis({ analysisType: 'committee' });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         bridgingMEPs: { mepId: string; connectsClusters: string[] }[];
+        clusterCount: number;
       };
       expect(Array.isArray(data.bridgingMEPs)).toBe(true);
-      // MEP-2 (S&D) bridges to EPP (MEP-1 via ENVI) and Renew (MEP-4 via ITRE).
-      const bridge = data.bridgingMEPs.find(b => b.mepId === 'MEP-2');
+      // The asymmetric topology must produce at least two communities.
+      expect(data.clusterCount).toBeGreaterThanOrEqual(2);
+      const bridge = data.bridgingMEPs.find(b => b.mepId === 'MEP-Broker');
       expect(bridge).toBeDefined();
     });
   });
