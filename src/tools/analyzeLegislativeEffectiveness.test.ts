@@ -366,6 +366,64 @@ describe('analyze_legislative_effectiveness Tool', () => {
     });
   });
 
+  describe('Multi-year adopted texts window', () => {
+    it('should fetch /adopted-texts per-year for multi-year date windows', async () => {
+      vi.mocked(epClientModule.epClient.getAdoptedTexts).mockResolvedValue(paged([]));
+
+      await handleAnalyzeLegislativeEffectiveness({
+        subjectType: 'MEP', subjectId: 'person/124810',
+        dateFrom: '2023-06-01', dateTo: '2025-06-30',
+      });
+
+      const calls = vi.mocked(epClientModule.epClient.getAdoptedTexts).mock.calls;
+      const years = calls.map((c) => c[0]?.year).filter((y): y is number => typeof y === 'number');
+      expect(new Set(years)).toEqual(new Set([2023, 2024, 2025]));
+    });
+
+    it('should fall back to unfiltered /adopted-texts when window > 5 years', async () => {
+      vi.mocked(epClientModule.epClient.getAdoptedTexts).mockResolvedValue(paged([]));
+
+      await handleAnalyzeLegislativeEffectiveness({
+        subjectType: 'MEP', subjectId: 'person/124810',
+        dateFrom: '2018-01-01', dateTo: '2025-12-31',
+      });
+
+      const calls = vi.mocked(epClientModule.epClient.getAdoptedTexts).mock.calls;
+      expect(calls).toHaveLength(1);
+      expect(calls[0]?.[0]?.year).toBeUndefined();
+    });
+
+    it('should deduplicate adopted texts by id across overlapping year fetches', async () => {
+      vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(paged([
+        {
+          id: 'P-DUP', title: '', reference: '2024/1(COD)', type: 'COD',
+          subjectMatter: '', stage: '', status: 'Ongoing',
+          dateInitiated: '2024-03-01', dateLastActivity: '2024-06-01',
+          responsibleCommittee: 'ENVI',
+          rapporteur: 'Rapporteur person/124810',
+          documents: [],
+        },
+      ]));
+      // Same TA-1 returned by every year fetch — must be counted once.
+      vi.mocked(epClientModule.epClient.getAdoptedTexts).mockResolvedValue(paged([
+        {
+          id: 'TA-1', title: '', reference: '', type: '',
+          dateAdopted: '2024-06-01', procedureReference: '2024/1(COD)', subjectMatter: '',
+        },
+      ]));
+
+      const result = await handleAnalyzeLegislativeEffectiveness({
+        subjectType: 'MEP', subjectId: 'person/124810',
+        dateFrom: '2024-01-01', dateTo: '2025-12-31',
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        metrics: { legislativeSuccessRate: number; reportsAuthored: number };
+      };
+      expect(data.metrics.reportsAuthored).toBe(1);
+      expect(data.metrics.legislativeSuccessRate).toBe(100);
+    });
+  });
+
   describe('Per-source contribution (real metrics)', () => {
     it('should compute reportsAuthored from /procedures rapporteur attribution', async () => {
       vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(paged([

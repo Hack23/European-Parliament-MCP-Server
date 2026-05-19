@@ -211,20 +211,58 @@ async function fetchProcedures(): Promise<SourceFetchResult<Procedure>> {
   });
 }
 
-async function fetchAdoptedTexts(dateFrom: string): Promise<SourceFetchResult<AdoptedText>> {
+/**
+ * Extract calendar years inclusive between `dateFrom` and `dateTo`. Bounded
+ * at 5 years to keep the per-source budget realistic; longer windows fall
+ * back to an unfiltered fetch (year=undefined) so the caller still gets
+ * partial coverage rather than no data.
+ */
+function yearsInWindow(dateFrom: string, dateTo: string): number[] {
+  const fromYear = parseYear(dateFrom);
+  const toYear = parseYear(dateTo);
+  if (fromYear === undefined || toYear === undefined) return [];
+  if (toYear < fromYear) return [];
+  const span = toYear - fromYear + 1;
+  if (span > 5) return [];
+  const years: number[] = [];
+  for (let y = fromYear; y <= toYear; y += 1) years.push(y);
+  return years;
+}
+
+function parseYear(date: string): number | undefined {
+  if (date.length < 4) return undefined;
+  const year = parseInt(date.slice(0, 4), 10);
+  if (!Number.isFinite(year) || year < 1900 || year >= 3000) return undefined;
+  return year;
+}
+
+async function fetchAdoptedTexts(
+  dateFrom: string,
+  dateTo: string,
+): Promise<SourceFetchResult<AdoptedText>> {
   return runSource<AdoptedText>('adoptedTexts', async () => {
-    // Date strings come from `resolveDefaultDateWindow` (always ISO-10) but
-    // guard against truncated values: only parse when the prefix is plausibly
-    // a 4-digit year, otherwise fall back to an unfiltered fetch.
-    let params: { year?: number; limit: number } = { limit: FETCH_PAGE_LIMIT };
-    if (dateFrom.length >= 4) {
-      const year = parseInt(dateFrom.slice(0, 4), 10);
-      if (Number.isFinite(year) && year > 1900 && year < 3000) {
-        params = { year, limit: FETCH_PAGE_LIMIT };
+    const years = yearsInWindow(dateFrom, dateTo);
+    if (years.length === 0) {
+      // Either invalid dates or a span > 5 years — fetch unfiltered and let
+      // the aggregator filter by `dateAdopted` against the window.
+      const resp = await epClient.getAdoptedTexts({ limit: FETCH_PAGE_LIMIT });
+      return Array.isArray(resp.data) ? resp.data : [];
+    }
+    // Parallel per-year fetches; flatten and dedupe by id.
+    const responses = await Promise.all(
+      years.map((year) => epClient.getAdoptedTexts({ year, limit: FETCH_PAGE_LIMIT })),
+    );
+    const seen = new Set<string>();
+    const merged: AdoptedText[] = [];
+    for (const resp of responses) {
+      if (!Array.isArray(resp.data)) continue;
+      for (const item of resp.data) {
+        if (seen.has(item.id)) continue;
+        seen.add(item.id);
+        merged.push(item);
       }
     }
-    const resp = await epClient.getAdoptedTexts(params);
-    return Array.isArray(resp.data) ? resp.data : [];
+    return merged;
   });
 }
 
@@ -411,7 +449,7 @@ async function fetchAllSources(args: BuildArgs, subject: SubjectInfo): Promise<{
 }> {
   const [procedures, adoptedTexts, plenaryDocumentItems, questions] = await Promise.all([
     fetchProcedures(),
-    fetchAdoptedTexts(args.dateFrom),
+    fetchAdoptedTexts(args.dateFrom, args.dateTo),
     fetchPlenaryDocumentItems(),
     fetchQuestions(
       args.subjectType === 'MEP' ? subject.authorParam : undefined,

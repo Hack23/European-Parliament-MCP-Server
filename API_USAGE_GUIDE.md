@@ -1394,7 +1394,7 @@ Compare EPP, S&D, and Renew Europe on voting cohesion and legislative output
 | Source | EP Endpoint | Populates | Per-source budget |
 |--------|-------------|-----------|-------------------|
 | procedures | `/procedures` | `metrics.reportsAuthored`, `metrics.opinionsDelivered` (rapporteur attribution) | 6 s |
-| adoptedTexts | `/adopted-texts` | `metrics.legislativeSuccessRate` (success denominator) | 6 s |
+| adoptedTexts | `/adopted-texts` | `metrics.legislativeSuccessRate` (success denominator) — fetched per calendar year in the window (parallel, deduped by id); windows > 5 years fall back to a single unfiltered fetch | 6 s |
 | plenaryDocumentItems | `/plenary-session-documents-items` | `metrics.amendmentsTabled`, `metrics.amendmentsAdopted` (author + status flag) | 6 s |
 | questions | `/parliamentary-questions` | `metrics.questionsAsked` (filtered by author) | 6 s |
 
