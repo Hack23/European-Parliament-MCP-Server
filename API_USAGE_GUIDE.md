@@ -1376,7 +1376,7 @@ FOR) for deterministic results. Each MEP vote is classified as `aligned`,
   "description": "string",
   "metrics": { "expectedValue": 0, "actualValue": 0, "deviation": 0 },
   "detectedDate": "YYYY-MM-DD",
-  "evidenceVoteIds": ["RCV-...", "..."]  // DOCEO vote IDs — drill down via get_latest_votes
+  "evidenceVoteIds": ["RCV-...", "..."]  // DOCEO LatestVoteRecord.id values — drill down via get_latest_votes (record.id)
 }
 ```
 

@@ -185,11 +185,13 @@ describe('detect_voting_anomalies Tool', () => {
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         confidenceLevel: string;
         dataSource: string;
+        dataAvailable?: boolean;
         dataQualityWarnings: string[];
         summary: { totalAnomalies: number };
       };
       expect(data.confidenceLevel).toBe('LOW');
-      expect(data.dataSource).toBe('NONE');
+      expect(data.dataSource).toBe('DOCEO');
+      expect(data.dataAvailable).toBe(false);
       expect(data.dataQualityWarnings.length).toBeGreaterThan(0);
       expect(data.summary.totalAnomalies).toBe(0);
     });
@@ -200,10 +202,12 @@ describe('detect_voting_anomalies Tool', () => {
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         confidenceLevel: string;
         dataSource: string;
+        dataAvailable?: boolean;
         dataQualityWarnings: string[];
       };
       expect(data.confidenceLevel).toBe('LOW');
-      expect(data.dataSource).toBe('NONE');
+      expect(data.dataSource).toBe('DOCEO');
+      expect(data.dataAvailable).toBe(false);
       expect(data.dataQualityWarnings.some(w => w.includes('DOCEO RCV source unavailable'))).toBe(true);
     });
   });

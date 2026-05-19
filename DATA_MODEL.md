@@ -107,11 +107,13 @@ interface VotingAnomaly {
   description: string;
   metrics: { expectedValue: number; actualValue: number; deviation: number };
   detectedDate: string;          // YYYY-MM-DD
-  evidenceVoteIds: string[];     // DOCEO LatestVoteRecord.voteId values
+  evidenceVoteIds: string[];     // DOCEO LatestVoteRecord.id values
 }
 ```
 
-`evidenceVoteIds` enables drill-down via `get_latest_votes`. Thresholds:
+`evidenceVoteIds` are the unique vote identifiers (`LatestVoteRecord.id`,
+e.g. `RCV-10-2026-01-15-001`) returned by `get_latest_votes` — use them to
+drill down to the contributing roll-call records. Thresholds:
 defection-rate z ≥ 1.5, abstention-rate z ≥ 1.5, week-over-week defection
 delta ≥ 20pp, non-home-group alignment share ≥ 60% in a weekly sub-window
 (min 3 decisive RCVs). Confidence reflects RCV coverage: HIGH ≥50, MEDIUM

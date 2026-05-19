@@ -294,7 +294,7 @@ describe('votingBaseline.findCrossPartyAlignmentWindows', () => {
     );
     const windows = findCrossPartyAlignmentWindows(buckets, 0.6);
     expect(windows).toHaveLength(1);
-    expect(windows[0]?.share).toBe(100);
+    expect(windows[0]?.sharePercent).toBe(100);
     expect(windows[0]?.decisive).toBe(10);
   });
 

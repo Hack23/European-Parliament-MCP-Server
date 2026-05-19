@@ -58,7 +58,11 @@ export const MIN_SUBWINDOW_DECISIVE_VOTES = 3;
  * Single MEP/RCV-vote classification.
  */
 export interface ClassifiedVote {
-  /** DOCEO vote identifier (used to populate {@link VotingAnomaly.evidenceVoteIds}). */
+  /**
+   * DOCEO unique vote identifier (`LatestVoteRecord.id` —
+   * e.g. `"RCV-10-2026-01-15-001"`). Used to populate
+   * {@link VotingAnomaly.evidenceVoteIds}.
+   */
   voteId: string;
   /** Sitting date in YYYY-MM-DD (falls back to `vote.date` when sittingDate is absent). */
   sittingDate: string;
@@ -91,7 +95,16 @@ export interface WeekBucket {
   defections: number;
   /** Votes where the MEP abstained. */
   abstentions: number;
-  /** Sub-window decisive votes where the MEP's position matched a non-home group's majority. */
+  /**
+   * Decisive defections where the MEP's position *also* matched at least one
+   * non-home group's plurality majority — i.e. a true cross-party signal.
+   *
+   * This count is intentionally narrower than "any decisive vote matching a
+   * non-home majority": when the MEP aligns with their home group, matching
+   * other groups voting the same way reflects consensus, not cross-party
+   * realignment. Only counted when the MEP both broke from home AND moved
+   * toward another bloc.
+   */
   crossPartyAlignments: number;
   /** DOCEO vote IDs in this bucket (preserving DOCEO order). */
   voteIds: string[];
@@ -127,7 +140,13 @@ export interface WoWShift {
 /** Resolved cross-party-alignment sub-window from {@link findCrossPartyAlignmentWindows}. */
 export interface CrossPartyWindow {
   weekStart: string;
-  share: number;
+  /**
+   * Share of decisive RCVs in this window where the MEP defected toward a
+   * non-home group's majority, expressed as a **percentage** (0–100).
+   * The input `share` threshold is a fraction (0–1); the returned value
+   * is rounded to two decimals.
+   */
+  sharePercent: number;
   decisive: number;
   voteIds: string[];
 }
@@ -294,9 +313,10 @@ export function isoWeekStart(date: string): string {
 /**
  * Bucket classified votes into ISO-week buckets keyed by Monday's date.
  *
- * Buckets are returned in chronological order (oldest first). Votes without a
- * valid sittingDate are bucketed under the empty-string key and placed at the
- * tail so they don't poison the chronological ordering.
+ * Buckets are returned in chronological order (oldest first). Votes without
+ * a valid sittingDate are bucketed under the empty-string key and *placed at
+ * the tail* (sorting empty-string ahead of real dates would otherwise
+ * distort week-over-week shift detection and baseline computations).
  *
  * @param votes - Sequence of classified MEP votes.
  * @returns Per-week aggregates with computed defection / abstention rates.
@@ -329,12 +349,21 @@ export function bucketByWeek(votes: ClassifiedVote[]): WeekBucket[] {
       bucket.decisive += 1;
       if (v.alignment === 'defected') {
         bucket.defections += 1;
+        // Only true cross-party signals: defections that also matched a
+        // non-home group's majority. See `WeekBucket.crossPartyAlignments`.
         if (v.matchingOtherGroups.length > 0) bucket.crossPartyAlignments += 1;
       }
     }
   }
   const buckets = [...byWeek.values()];
-  buckets.sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+  // Chronological sort that pushes the "no valid date" bucket (weekStart === '')
+  // to the tail instead of letting it sort first lexicographically.
+  buckets.sort((a, b) => {
+    if (a.weekStart === '' && b.weekStart === '') return 0;
+    if (a.weekStart === '') return 1;
+    if (b.weekStart === '') return -1;
+    return a.weekStart.localeCompare(b.weekStart);
+  });
   for (const b of buckets) {
     b.defectionRate = b.decisive > 0
       ? Math.round((b.defections / b.decisive) * 100 * 100) / 100
@@ -438,15 +467,22 @@ export function findWoWShifts(
 }
 
 /**
- * Find sub-windows (weeks) where the MEP voted with non-home-group majorities
- * on ≥ `share` of decisive RCVs.
+ * Find sub-windows (weeks) where the MEP defected toward non-home-group
+ * majorities on ≥ `share` of decisive RCVs.
  *
  * Skips weeks with fewer than {@link MIN_SUBWINDOW_DECISIVE_VOTES} decisive
  * votes to avoid spurious 100% windows on tiny samples.
  *
+ * Units: the `share` parameter is a **fraction** (0–1). The returned
+ * {@link CrossPartyWindow.sharePercent} field is converted to a
+ * **percentage** (0–100) for consumer ergonomics — keep this distinction in
+ * mind when wiring severity classifiers (e.g. `severityFromShare` expects
+ * percent input).
+ *
  * @param buckets - Output of {@link bucketByWeek}.
- * @param share - Minimum share (0–1) of decisive RCVs aligned with non-home
- *   group majorities (default {@link DEFAULT_CROSS_PARTY_SHARE}).
+ * @param share - Minimum share (0–1) of decisive RCVs where the MEP
+ *   defected toward non-home group majorities (default
+ *   {@link DEFAULT_CROSS_PARTY_SHARE}).
  * @returns Windows in chronological order.
  */
 export function findCrossPartyAlignmentWindows(
@@ -460,7 +496,7 @@ export function findCrossPartyAlignmentWindows(
     if (observed >= share) {
       windows.push({
         weekStart: b.weekStart,
-        share: Math.round(observed * 100 * 100) / 100,
+        sharePercent: Math.round(observed * 100 * 100) / 100,
         decisive: b.decisive,
         voteIds: [...b.voteIds],
       });
