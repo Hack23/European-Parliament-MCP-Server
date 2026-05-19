@@ -674,6 +674,42 @@ OSINT tools that consume the aggregator surface a `dataSource: 'EP_API' |
 
 ---
 
+### ADR-007: Graph Algorithms for `network_analysis`
+
+**Status:** Accepted (2026-05) — implemented in `src/utils/graphAlgorithms.ts`
+and `src/utils/networkVotingSimilarity.ts`.
+
+**Context:** The original `network_analysis` echoed the `analysisType` and
+`depth` parameters back without applying them, and used a placeholder for
+clusters/centrality. With DOCEO RCV now available, voting-similarity edges
+and depth-bounded ego-network traversal are feasible and unlock richer
+OSINT (cross-party brokers, hidden coalitions).
+
+**Decision:** Introduce a pure deterministic graph-algorithms utility
+(`src/utils/graphAlgorithms.ts`) exposing:
+- `buildAdjacency`, `bfsLimited` — adjacency map + depth-bounded BFS
+- `weightedDegree` — weighted-degree centrality
+- `betweennessCentrality` — Brandes' algorithm on weighted graphs
+  (similarity → distance via `1/weight`, normalised undirected)
+- `labelPropagation`, `modularity` — deterministic community detection +
+  Newman Q
+
+Plus a DOCEO helper `src/utils/networkVotingSimilarity.ts` exposing
+`computeNetworkVotingSimilarityFromDoceo(mepIdSubset, { minSimilarity })`
+that emits Jaccard-like agreement edges over decisive RCVs only.
+
+**Consequences:**
+- ✅ `analysisType: committee|voting|combined` and `depth: 1-3` are now
+  fully functional (no longer echoed)
+- ✅ New `minSimilarity` schema parameter (default 0.7) for the voting
+  threshold
+- ✅ Reproducible OSINT: deterministic ordering + tie-breaking guarantees
+  identical clusters/centralities across runs
+- ✅ Reusable utility — the same algorithms can power future tools
+  (e.g. `comparative_intelligence` cross-references)
+
+---
+
 ## 🔒 Security Architecture Summary
 
 The server implements a **4-layer security architecture**:
