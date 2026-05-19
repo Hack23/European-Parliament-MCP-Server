@@ -1733,14 +1733,24 @@ roster pagination is not performed to stay within API rate-limit budgets.
 
 ### Tool: sentiment_tracker
 
-**Description**: Track political group institutional-positioning scores based on seat-share proxy. Computes scores (-1 to +1), polarization index, and identifies consensus and divisive topics.
+**Description**: Track political-group sentiment over a configurable time window. Combines current EP API MEP composition with DOCEO roll-call vote (RCV) cohesion / defection data aggregated across `last_month` (~30d), `last_quarter` (~90d), or `last_year` (~365d). Returns per-group sentiment scores (-1 to +1), `IMPROVING/STABLE/DECLINING/VOLATILE` trends derived from half-window and sub-window DOCEO cohesion deltas, polarization index (`1 − seat-share-weighted mean cohesion`), and consensus/divisive vote subjects.
+
+Falls back to a seat-share-only proxy with `confidenceLevel: 'LOW'` when DOCEO has insufficient coverage in the requested window.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | groupId | string | No | - | Political group identifier (e.g., "EPP", "S&D"). Omit for all groups |
-| timeframe | string | No | last_quarter | Time window: `last_month`, `last_quarter`, or `last_year` |
+| timeframe | string | No | last_quarter | DOCEO RCV aggregation window: `last_month` (~30d), `last_quarter` (~90d), or `last_year` (~365d) |
+
+#### Scoring methodology
+
+- **sentimentScore** = `0.5 · DOCEO cohesion` (centred at 0.5) + `0.2 · inverse-dissent` + `0.3 · seat-share momentum`, clamped to `[-1, +1]`.
+- **trend** = half-window cohesion delta — `IMPROVING` when latest-half mean > earliest-half mean + 0.05, `DECLINING` when below by 0.05, otherwise `STABLE`. `VOLATILE` when cohesion variance across sub-windows > 0.1.
+- **polarizationIndex** = `1 − seat-share-weighted mean(cohesion)` across groups that have observed DOCEO data. Falls back to seat-share-score dispersion when no DOCEO coverage.
+- **consensusTopics / divisiveTopics**: DOCEO `LatestVoteRecord.subject` values whose per-vote group cohesion ≥0.95 (consensus) or ≤0.55 (divisive).
+- **confidenceLevel**: `HIGH` (≥40 RCVs in window), `MEDIUM` (10–39), `LOW` (<10, fallback to seat-share-only).
 
 #### Example Usage
 
@@ -1749,25 +1759,49 @@ roster pagination is not performed to stay within API rate-limit budgets.
 Track the institutional positioning sentiment for the EPP group over the last quarter
 ```
 
-**MCP Client - TypeScript:**
+**MCP Client - TypeScript (last_month / 30-day window):**
 ```typescript
 const result = await client.callTool('sentiment_tracker', {
   groupId: 'EPP',
+  timeframe: 'last_month'
+});
+```
+
+**MCP Client - TypeScript (last_quarter / 90-day window — default):**
+```typescript
+const result = await client.callTool('sentiment_tracker', {
   timeframe: 'last_quarter'
 });
 ```
 
-**Example Response** (abbreviated):
+**MCP Client - TypeScript (last_year / 365-day window, capped at 300 RCVs):**
+```typescript
+const result = await client.callTool('sentiment_tracker', {
+  timeframe: 'last_year'
+});
+```
+
+**Example Response** (abbreviated, with DOCEO coverage):
 ```json
 {
   "content": [{
     "type": "text",
-    "text": "{\"groupScores\":[{\"groupId\":\"EPP\",\"positioningScore\":0.72,\"trend\":\"stable\"}],\"polarizationIndex\":0.38,\"consensusTopics\":[\"defense\",\"trade\"],\"divisiveTopics\":[\"migration\",\"climate\"]}"
+    "text": "{\"timeframe\":\"last_quarter\",\"groupSentiments\":[{\"groupId\":\"EPP\",\"sentimentScore\":0.41,\"trend\":\"IMPROVING\",\"volatility\":0.07,\"memberCount\":180,\"cohesionProxy\":0.93}],\"polarizationIndex\":0.12,\"consensusTopics\":[\"Ukraine humanitarian aid\"],\"divisiveTopics\":[\"Migration enforcement directive\"],\"confidenceLevel\":\"HIGH\",\"methodology\":\"Sentiment score = 0.5 · DOCEO cohesion ... polarizationIndex = 1 − seat-share-weighted mean(cohesion)...\"}"
   }]
 }
 ```
 
-> **EP API Endpoints**: `/corporate-bodies`
+**Example Response** (abbreviated, fallback path with no DOCEO coverage):
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{\"timeframe\":\"last_month\",\"groupSentiments\":[{\"groupId\":\"EPP\",\"sentimentScore\":0.3,\"trend\":\"STABLE\",\"cohesionProxy\":0.59}],\"polarizationIndex\":0.36,\"consensusTopics\":[],\"divisiveTopics\":[],\"confidenceLevel\":\"LOW\",\"methodology\":\"FALLBACK PATH (no DOCEO RCV coverage in 30d window — 0 usable RCVs)...\"}"
+  }]
+}
+```
+
+> **EP API Endpoints**: `/meps` (composition) + DOCEO RCV XML (`https://www.europarl.europa.eu/doceo/document/PV-...`)
 
 ---
 
