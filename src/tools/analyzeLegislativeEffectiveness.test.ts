@@ -854,6 +854,19 @@ describe('analyze_legislative_effectiveness Tool', () => {
       const call = vi.mocked(epClientModule.epClient.getParliamentaryQuestions).mock.calls[0]?.[0];
       expect(call?.author).toBe('124810');
     });
+
+    it('should fall back to a non-empty token when subjectId ends with a delimiter', async () => {
+      // Defensive: a trailing slash leaves only `person` after the split;
+      // the normaliser must still return a non-empty `author` so the
+      // question client receives a usable filter token (better than an
+      // empty filter that would broaden the result set).
+      await handleAnalyzeLegislativeEffectiveness({
+        subjectType: 'MEP', subjectId: 'person/',
+        dateFrom: '2024-01-01', dateTo: '2024-12-31',
+      });
+      const call = vi.mocked(epClientModule.epClient.getParliamentaryQuestions).mock.calls[0]?.[0];
+      expect(call?.author).toBe('person');
+    });
   });
 
   describe('Procedures pagination', () => {

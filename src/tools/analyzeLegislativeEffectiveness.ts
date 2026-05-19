@@ -336,27 +336,36 @@ async function fetchAdoptedTexts(
     }
     // Parallel per-year fetches via `Promise.allSettled` so a single failing
     // year does not zero out the others — partial coverage is reported as a
-    // warning rather than a full `UNAVAILABLE` status.
-    const settled = await Promise.allSettled(
-      years.map((year) => epClient.getAdoptedTexts({ year, limit: FETCH_PAGE_LIMIT })),
+    // warning rather than a full `UNAVAILABLE` status. Each task carries its
+    // own `year` so the index/array bookkeeping stays explicit and the
+    // failure list is built without index gymnastics.
+    const settledByYear = await Promise.all(
+      years.map(async (year): Promise<
+        { year: number; ok: true; data: readonly AdoptedText[] }
+        | { year: number; ok: false }
+      > => {
+        try {
+          const resp = await epClient.getAdoptedTexts({ year, limit: FETCH_PAGE_LIMIT });
+          return { year, ok: true, data: Array.isArray(resp.data) ? resp.data : [] };
+        } catch {
+          return { year, ok: false };
+        }
+      }),
     );
     const seen = new Set<string>();
     const merged: AdoptedText[] = [];
     const failedYears: number[] = [];
-    settled.forEach((result, idx) => {
-      const year = years[idx];
-      if (result.status === 'rejected' || year === undefined) {
-        if (year !== undefined) failedYears.push(year);
-        return;
+    for (const result of settledByYear) {
+      if (!result.ok) {
+        failedYears.push(result.year);
+        continue;
       }
-      const data = result.value.data;
-      if (!Array.isArray(data)) return;
-      for (const item of data) {
+      for (const item of result.data) {
         if (seen.has(item.id)) continue;
         seen.add(item.id);
         merged.push(item);
       }
-    });
+    }
     // If every year failed, propagate the failure so the source is marked
     // UNAVAILABLE rather than EMPTY.
     if (failedYears.length === years.length) {
@@ -515,7 +524,8 @@ interface SubjectInfo {
  *
  * The question client applies the `author` filter client-side via
  * case-insensitive substring match against `q.author`, so the safest
- * portable token is the trailing numeric / final-segment id:
+ * portable token is the trailing non-empty segment after the last `/` or
+ * `-` delimiter:
  *
  *  - `person/124810` → `124810`
  *  - `MEP-124810`    → `124810`
@@ -523,24 +533,19 @@ interface SubjectInfo {
  *
  * Returning the bare id makes the filter robust to whichever upstream
  * formatting the EP API uses (`person/{id}` is the documented shape).
+ * Trailing delimiters are tolerated — the function returns the original
+ * trimmed input rather than an empty string.
  *
  * @internal
  */
 export function normaliseQuestionAuthorParam(subjectId: string): string {
   const trimmed = subjectId.trim();
   if (trimmed === '') return '';
-  // Strip the longest known prefix first so `person/MEP-124810` (defensive)
-  // still resolves to the trailing numeric id.
-  let rest = trimmed;
-  const slashIdx = rest.lastIndexOf('/');
-  if (slashIdx >= 0 && slashIdx < rest.length - 1) {
-    rest = rest.slice(slashIdx + 1);
-  }
-  const dashIdx = rest.lastIndexOf('-');
-  if (dashIdx >= 0 && dashIdx < rest.length - 1) {
-    rest = rest.slice(dashIdx + 1);
-  }
-  return rest;
+  // Take the trailing non-empty segment after the last `/` or `-`. If the
+  // input ends with a delimiter the segment is empty, so fall back to the
+  // original trimmed value rather than returning ''.
+  const tail = trimmed.split(/[/-]/).filter((seg) => seg !== '').pop();
+  return tail ?? trimmed;
 }
 
 async function resolveMepSubject(subjectId: string): Promise<SubjectInfo> {
