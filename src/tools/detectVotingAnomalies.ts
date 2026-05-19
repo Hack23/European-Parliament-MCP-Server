@@ -296,6 +296,12 @@ async function fetchDoceoRcvRecords(
       (signal) => doceoClient.getLatestVotes({
         includeIndividualVotes: true,
         limit: DOCEO_RCV_FETCH_LIMIT,
+        // `weekStart` selects the plenary week containing the supplied date.
+        // We pass the requested period's *end* date so DOCEO returns the most
+        // recent plenary week within the analysis window — mirrors the
+        // doceoMepAggregator pattern. Historical multi-week windows aren't
+        // fully covered by a single DOCEO request; that's a documented
+        // limitation of the upstream feed (≤200 most recent RCVs per call).
         weekStart: period.to,
         abortSignal: signal,
       }),
