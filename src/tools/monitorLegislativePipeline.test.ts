@@ -5,7 +5,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleMonitorLegislativePipeline } from './monitorLegislativePipeline.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
-import { resetLifecycleStatisticsCache } from '../utils/lifecycleStatistics.js';
+import { resetLifecycleStatisticsCache, getLifecycleStatistics } from '../utils/lifecycleStatistics.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
@@ -179,11 +179,18 @@ const mockFreshProceduresOnly = {
 };
 
 describe('monitor_legislative_pipeline Tool', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     resetLifecycleStatisticsCache();
     vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(mockProcedures);
     vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue(emptyEventsResponse());
+    // Pre-warm the lifecycle-statistics cache so the request path can read it.
+    // Production code reads from cache only on the request path to avoid the
+    // cold-cache corpus rebuild competing with the request's own rate-limited
+    // /events fan-out (see `loadCachedLifecycleModel` in the tool). The
+    // corpus would be warmed out-of-band in production (background scheduler);
+    // unit tests warm it explicitly here with the mocked default fixtures.
+    await getLifecycleStatistics({ forceRefresh: true });
   });
 
   describe('Input Validation', () => {
@@ -503,7 +510,7 @@ describe('monitor_legislative_pipeline Tool', () => {
      *   - The procedure under test (PROC-STUCK) is currently at REFERRAL with
      *     a dwell of 200 days (≥ p95).
      */
-    function setupHistoricalCorpus(): void {
+    async function setupHistoricalCorpus(): Promise<void> {
       const today = new Date();
       const corpus = Array.from({ length: 4 }, (_, i) => ({
         id: `HIST-${String(i)}`,
@@ -565,10 +572,15 @@ describe('monitor_legislative_pipeline Tool', () => {
           return Promise.resolve(emptyEventsResponse());
         }
       );
+      // Re-warm the lifecycle cache with the new mocks. The request path
+      // reads from cache only (see `loadCachedLifecycleModel` in the tool),
+      // so without an explicit re-warm here the test would observe an empty
+      // corpus from the previous (default) beforeEach warmup.
+      await getLifecycleStatistics({ forceRefresh: true });
     }
 
     it('should derive currentStage from the latest lifecycle event', async () => {
-      setupHistoricalCorpus();
+      await setupHistoricalCorpus();
       const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         pipeline: { procedureId: string; currentStage: string; lifecycleEvents: unknown[] }[];
@@ -580,7 +592,7 @@ describe('monitor_legislative_pipeline Tool', () => {
     });
 
     it('should compute daysInCurrentStage from latest event vs now', async () => {
-      setupHistoricalCorpus();
+      await setupHistoricalCorpus();
       const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         pipeline: { procedureId: string; daysInCurrentStage: number }[];
@@ -592,7 +604,7 @@ describe('monitor_legislative_pipeline Tool', () => {
     });
 
     it('should flag procedures with dwell ≥ 95th percentile as HIGH bottleneck risk', async () => {
-      setupHistoricalCorpus();
+      await setupHistoricalCorpus();
       const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         pipeline: { procedureId: string; computedAttributes: { bottleneckRisk: string } }[];
@@ -602,7 +614,7 @@ describe('monitor_legislative_pipeline Tool', () => {
     });
 
     it('should aggregate detected bottlenecks from p95-stuck procedures', async () => {
-      setupHistoricalCorpus();
+      await setupHistoricalCorpus();
       const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         bottlenecks: { stage: string; procedureCount: number; thresholdDays: number }[];
@@ -614,7 +626,7 @@ describe('monitor_legislative_pipeline Tool', () => {
     });
 
     it('should emit forecastBasis=HISTORICAL_MEDIAN when corpus has sufficient samples', async () => {
-      setupHistoricalCorpus();
+      await setupHistoricalCorpus();
       const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as { forecastBasis: string };
       expect(data.forecastBasis).toBe('HISTORICAL_MEDIAN');
@@ -633,11 +645,11 @@ describe('monitor_legislative_pipeline Tool', () => {
     });
 
     it('should be deterministic across runs with identical fixture data', async () => {
-      setupHistoricalCorpus();
+      await setupHistoricalCorpus();
       const a = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
       resetLifecycleStatisticsCache();
       // Re-arm mocks because clearAllMocks doesn't run between consecutive calls
-      setupHistoricalCorpus();
+      await setupHistoricalCorpus();
       const b = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
       const parsedA = JSON.parse(a.content[0]?.text ?? '{}') as Record<string, unknown>;
       const parsedB = JSON.parse(b.content[0]?.text ?? '{}') as Record<string, unknown>;
@@ -670,7 +682,7 @@ describe('monitor_legislative_pipeline Tool', () => {
     });
 
     it('should include lifecycleEvents echoing the raw event sequence', async () => {
-      setupHistoricalCorpus();
+      await setupHistoricalCorpus();
       const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         pipeline: { procedureId: string; lifecycleEvents: { stage: string; rawType: string; date: string; title: string }[] }[];
@@ -713,7 +725,7 @@ describe('monitor_legislative_pipeline Tool', () => {
     });
 
     it('should expose lifecycleCorpus metadata in the envelope', async () => {
-      setupHistoricalCorpus();
+      await setupHistoricalCorpus();
       const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
         lifecycleCorpus: { corpusSize: number; totalObservations: number; computationTimeMs: number };
