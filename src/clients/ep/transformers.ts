@@ -273,13 +273,14 @@ export function transformDocument(apiData: Record<string, unknown>): Legislative
   const date = extractDateValue(apiData['document_date'] ?? apiData['work_date_document'] ?? apiData['date_document'] ?? apiData['date']);
   const committeeValue = extractField(apiData, ['was_attributed_to', 'committee']);
   const mappedStatus = mapDocumentStatus(extractField(apiData, ['resource_legal_in-force', 'status']));
+  const authors = extractDocumentAuthors(apiData);
 
   const doc: LegislativeDocument = {
     id,
     type: mappedType,
     title: title !== '' ? title : `Document ${id}`,
     date,
-    authors: [],
+    authors,
     status: mappedStatus,
     summary: title,
   };
@@ -287,6 +288,36 @@ export function transformDocument(apiData: Record<string, unknown>): Legislative
     doc.committee = committeeValue;
   }
   return doc;
+}
+
+/**
+ * Extract author IDs from EP API document fields.
+ *
+ * EP API documents expose authors via `was_created_by`, `created_by`, or `author`
+ * fields. The value may be a single person URI string, an array of strings, or
+ * an array of objects with `@id` / `id` properties. We extract all person IDs
+ * and return them as a flat string array for downstream attribution matching.
+ */
+function extractDocumentAuthors(apiData: Record<string, unknown>): string[] {
+  const raw = apiData['was_created_by'] ?? apiData['created_by'] ?? apiData['author'];
+  if (raw === undefined || raw === null) return [];
+  if (typeof raw === 'string') return raw !== '' ? [raw] : [];
+  if (Array.isArray(raw)) return extractAuthorIdsFromArray(raw);
+  if (typeof raw === 'object') {
+    const id = extractAuthorId(raw);
+    return id !== '' ? [id] : [];
+  }
+  return [];
+}
+
+/** Extract author IDs from a mixed array of strings and objects. */
+function extractAuthorIdsFromArray(items: unknown[]): string[] {
+  const result: string[] = [];
+  for (const item of items) {
+    const id = extractAuthorId(item);
+    if (id !== '') result.push(id);
+  }
+  return result;
 }
 
 /**

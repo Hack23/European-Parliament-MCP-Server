@@ -112,6 +112,21 @@ describe('buildSubjectTokens', () => {
     expect(tokens).toContain('100');
     expect(tokens).toContain('200');
   });
+
+  it('includes name-based tokens for rapporteur matching when subjectName provided', () => {
+    const tokens = buildSubjectTokens('person/124810', undefined, 'Jane Andersson');
+    expect(tokens).toContain('124810');
+    expect(tokens).toContain('jane andersson');
+    expect(tokens).toContain('jane');
+    expect(tokens).toContain('andersson');
+  });
+
+  it('skips short name parts (< 3 chars) to avoid spurious matches', () => {
+    const tokens = buildSubjectTokens('person/100', undefined, 'Li Wu');
+    expect(tokens).not.toContain('li');
+    expect(tokens).not.toContain('wu');
+    expect(tokens).toContain('li wu');
+  });
 });
 
 describe('aggregateLegislativeEffectiveness', () => {
@@ -246,5 +261,36 @@ describe('aggregateLegislativeEffectiveness', () => {
     });
     expect(r.metrics.reportsAuthored).toBe(2);
     expect(r.attributions.reportProcedureIds).toEqual(['P-1', 'P-2']);
+  });
+
+  it('matches rapporteur by MEP name (human-readable) via subjectName tokens', () => {
+    const r = aggregateLegislativeEffectiveness({
+      ...baseInputs,
+      subjectName: 'Jane Andersson',
+      procedures: [
+        proc({ id: 'P-NAME', rapporteur: 'Rapporteur: Jane Andersson' }),
+        proc({ id: 'P-OTHER', rapporteur: 'Rapporteur: John Smith' }),
+      ],
+    });
+    expect(r.metrics.reportsAuthored).toBe(1);
+    expect(r.attributions.reportProcedureIds).toEqual(['P-NAME']);
+  });
+
+  it('excludes procedures/documents/questions with missing dates (out-of-window)', () => {
+    const r = aggregateLegislativeEffectiveness({
+      ...baseInputs,
+      procedures: [
+        proc({ id: 'P-NODATE', rapporteur: 'Rapporteur person/124810', dateInitiated: '', dateLastActivity: '' }),
+      ],
+      plenaryDocumentItems: [
+        doc({ id: 'D-NODATE', type: 'AMENDMENT', authors: ['person/124810'], date: '' }),
+      ],
+      questions: [
+        question({ id: 'Q-NODATE', author: 'person/124810', date: '' }),
+      ],
+    });
+    expect(r.metrics.reportsAuthored).toBe(0);
+    expect(r.metrics.amendmentsTabled).toBe(0);
+    expect(r.metrics.questionsAsked).toBe(0);
   });
 });

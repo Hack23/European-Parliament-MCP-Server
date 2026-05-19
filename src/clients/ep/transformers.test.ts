@@ -506,6 +506,26 @@ describe('transformDocument', () => {
     expect(doc.authors).toEqual([]);
     expect(doc.status).toBe('SUBMITTED');
   });
+
+  it('extracts authors from was_created_by string field', () => {
+    const doc = transformDocument({ work_id: 'DOC-A1', was_created_by: 'person/124810' });
+    expect(doc.authors).toEqual(['person/124810']);
+  });
+
+  it('extracts authors from was_created_by array field', () => {
+    const doc = transformDocument({ work_id: 'DOC-A2', was_created_by: ['person/100', 'person/200'] });
+    expect(doc.authors).toEqual(['person/100', 'person/200']);
+  });
+
+  it('extracts authors from created_by fallback field', () => {
+    const doc = transformDocument({ work_id: 'DOC-A3', created_by: 'person/999' });
+    expect(doc.authors).toEqual(['person/999']);
+  });
+
+  it('returns empty authors when no author fields present', () => {
+    const doc = transformDocument({ work_id: 'DOC-A4' });
+    expect(doc.authors).toEqual([]);
+  });
 });
 
 // ─── transformParliamentaryQuestion ────────────────────────────

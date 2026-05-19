@@ -133,12 +133,28 @@ export function matchesMep(candidate: string | undefined | null, mepTokens: stri
 
 /**
  * Build the set of identifier tokens that we treat as "authored by" the
- * subject. For an MEP this is just the MEP id; for a committee it is the
- * union of the committee's member IDs.
+ * subject. For an MEP this is the MEP id plus name tokens (so rapporteur
+ * name-based matching works); for a committee it is the union of the
+ * committee's member IDs.
  */
-export function buildSubjectTokens(subjectId: string, committeeMemberIds?: readonly string[]): string[] {
+export function buildSubjectTokens(
+  subjectId: string,
+  committeeMemberIds?: readonly string[],
+  subjectName?: string,
+): string[] {
   const result = new Set<string>();
   for (const token of normaliseMepIdTokens(subjectId)) result.add(token);
+  if (subjectName !== undefined && subjectName.trim() !== '') {
+    // Add the full name and individual name parts as match tokens.
+    // The rapporteur field in procedures contains human-readable names
+    // like "Jane Andersson" so we need name-based matching.
+    const fullName = subjectName.trim().toLowerCase();
+    result.add(fullName);
+    // Add individual name parts (≥3 chars) for substring matching
+    for (const part of fullName.split(/\s+/)) {
+      if (part.length >= 3) result.add(part);
+    }
+  }
   if (committeeMemberIds !== undefined) {
     for (const memberId of committeeMemberIds) {
       for (const token of normaliseMepIdTokens(memberId)) result.add(token);
@@ -151,9 +167,9 @@ export function buildSubjectTokens(subjectId: string, committeeMemberIds?: reado
 // Source filters
 // ---------------------------------------------------------------------------
 
-/** Inclusive ISO-date window check; missing/invalid dates are treated as in-window. */
+/** Inclusive ISO-date window check; missing/invalid dates are treated as out-of-window. */
 function inWindow(date: string | undefined | null, dateFrom: string, dateTo: string): boolean {
-  if (date === undefined || date === null || date === '') return true;
+  if (date === undefined || date === null || date === '') return false;
   const d = date.length >= 10 ? date.slice(0, 10) : date;
   return d >= dateFrom && d <= dateTo;
 }
@@ -233,6 +249,12 @@ function isDocumentAdopted(doc: LegislativeDocument): boolean {
 export interface AggregatorInputs {
   /** Subject identifier (MEP ID or committee abbreviation). */
   subjectId: string;
+  /**
+   * Optional human-readable subject name (e.g. MEP full name). When provided,
+   * enables rapporteur name-based matching against the procedure's `rapporteur`
+   * field (which carries human-readable text like "Jane Andersson").
+   */
+  subjectName?: string;
   /**
    * Optional list of committee member MEP IDs. When provided, the aggregator
    * treats any rapporteur/author hit against a member as a hit for the
@@ -367,7 +389,7 @@ function sortedAscending(items: ReadonlySet<string>): string[] {
 }
 
 export function aggregateLegislativeEffectiveness(inputs: AggregatorInputs): AggregationResult {
-  const tokens = buildSubjectTokens(inputs.subjectId, inputs.committeeMemberIds);
+  const tokens = buildSubjectTokens(inputs.subjectId, inputs.committeeMemberIds, inputs.subjectName);
 
   const { reportProcedures, opinionProcedures } = classifyProcedures(
     inputs.procedures, tokens, inputs.dateFrom, inputs.dateTo,

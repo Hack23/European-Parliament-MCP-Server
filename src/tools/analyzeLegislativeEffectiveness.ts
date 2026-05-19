@@ -204,8 +204,24 @@ async function runSource<T>(
 // Per-source fetchers
 // ---------------------------------------------------------------------------
 
+/**
+ * Throw if the provided AbortSignal has already been triggered.
+ * This short-circuits the EP client call when the per-source timeout has
+ * already fired (e.g. due to scheduling delays), preventing unnecessary
+ * network requests. Note: the underlying BaseEPClient.get() does not yet
+ * accept an external AbortSignal, so once a fetch starts it will run to
+ * completion or its own 60 s timeout; this guard prevents *starting* the
+ * request when the budget has already expired.
+ */
+function throwIfAborted(signal: AbortSignal): void {
+  if (signal.aborted) {
+    throw new TimeoutError('Per-source timeout already expired before EP client call');
+  }
+}
+
 async function fetchProcedures(): Promise<SourceFetchResult<Procedure>> {
-  return runSource<Procedure>('procedures', async () => {
+  return runSource<Procedure>('procedures', async (signal) => {
+    throwIfAborted(signal);
     const resp = await epClient.getProcedures({ limit: FETCH_PAGE_LIMIT });
     return Array.isArray(resp.data) ? resp.data : [];
   });
@@ -240,7 +256,8 @@ async function fetchAdoptedTexts(
   dateFrom: string,
   dateTo: string,
 ): Promise<SourceFetchResult<AdoptedText>> {
-  return runSource<AdoptedText>('adoptedTexts', async () => {
+  return runSource<AdoptedText>('adoptedTexts', async (signal) => {
+    throwIfAborted(signal);
     const years = yearsInWindow(dateFrom, dateTo);
     if (years.length === 0) {
       // Either invalid dates or a span > 5 years — fetch unfiltered and let
@@ -267,7 +284,8 @@ async function fetchAdoptedTexts(
 }
 
 async function fetchPlenaryDocumentItems(): Promise<SourceFetchResult<LegislativeDocument>> {
-  return runSource<LegislativeDocument>('plenaryDocumentItems', async () => {
+  return runSource<LegislativeDocument>('plenaryDocumentItems', async (signal) => {
+    throwIfAborted(signal);
     const resp = await epClient.getPlenarySessionDocumentItems({ limit: FETCH_PAGE_LIMIT });
     return Array.isArray(resp.data) ? resp.data : [];
   });
@@ -278,7 +296,8 @@ async function fetchQuestions(
   dateFrom: string,
   dateTo: string,
 ): Promise<SourceFetchResult<ParliamentaryQuestion>> {
-  return runSource<ParliamentaryQuestion>('questions', async () => {
+  return runSource<ParliamentaryQuestion>('questions', async (signal) => {
+    throwIfAborted(signal);
     const resp = await epClient.getParliamentaryQuestions({
       ...(authorId !== undefined ? { author: authorId } : {}),
       dateFrom,
@@ -528,6 +547,7 @@ async function buildAnalysis(args: BuildArgs): Promise<LegislativeEffectivenessA
 
   const aggregation = aggregateLegislativeEffectiveness({
     subjectId: args.subjectId,
+    subjectName: subject.subjectName,
     ...(subject.committeeMemberIds !== undefined ? { committeeMemberIds: subject.committeeMemberIds } : {}),
     dateFrom: args.dateFrom,
     dateTo: args.dateTo,
