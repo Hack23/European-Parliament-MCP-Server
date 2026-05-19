@@ -257,7 +257,7 @@ function ingestDoceoPage(
     if (vote.groupBreakdown === undefined) continue;
     const date = vote.sittingDate ?? vote.date;
     // Treat missing/empty dates as out-of-window (skip without stopping).
-    if (date === '' || date === undefined) continue;
+    if (date === '') continue;
     // Filter out pre-cutoff votes without stopping iteration.
     if (date < cutoff) continue;
     collected.push(vote);
