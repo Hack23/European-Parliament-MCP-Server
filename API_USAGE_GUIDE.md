@@ -1434,20 +1434,63 @@ Show the current legislative pipeline status and identify bottlenecks
 
 ### Tool: analyze_committee_activity
 
-**Description**: Analyze committee workload, document production, meeting frequency, and member engagement metrics. Provides intelligence on committee operational efficiency and policy focus areas.
+**Description**: Analyze committee workload, document production, meeting frequency, decisions adopted, and member engagement metrics. Provides intelligence on committee operational efficiency and policy focus areas. Fans out four EP sources in parallel under a 5 s per-source timeout and tags every metric with a per-source data-availability status so downstream tools can branch on real coverage.
 
 #### Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | committeeId | string | Yes | Committee identifier (e.g., "ENVI", "ITRE") |
-| dateFrom | string | No | Start date (ISO 8601) |
-| dateTo | string | No | End date (ISO 8601) |
+| dateFrom | string | No | Start date (YYYY-MM-DD). Defaults to trailing 6 months. |
+| dateTo | string | No | End date (YYYY-MM-DD). Defaults to today. |
+
+#### Data Sources
+
+| Source | EP Endpoint | Populates | Per-source budget |
+|--------|-------------|-----------|-------------------|
+| documents | `/committee-documents` | `workload.documentsProduced` | 5 s |
+| procedures | `/procedures` | `workload.activeLegislativeFiles` | 5 s |
+| meetings | `/meetings` | `workload.meetingsHeld` | 5 s |
+| decisions | `/meetings/{id}/decisions` (fan-out, capped at 8 sittings) | `workload.decisionsAdopted` | 5 s |
+
+Each source's status is reported in `dataSources: { documents, procedures, meetings, decisions }` as one of `OK | EMPTY | TIMEOUT | UNAVAILABLE`. A single failing source never zeros out the others — graceful per-field degradation is preserved via `Promise.allSettled`.
+
+#### Derived Metrics
+
+- `decisionsPerMeeting` = `decisionsAdopted / meetingsHeld`
+- `documentsPerMonth` = `documentsProduced / windowMonths`
+- `activeFilesPerMember` = `activeLegislativeFiles / totalMembers`
+
+#### Caching
+
+Results are cached in-memory for **10 minutes** keyed by `${committeeId}|${dateFrom}|${dateTo}` to keep within the <200 ms warm-path target.
 
 #### Example Usage
 
 ```
 Analyze the ENVI committee's activity, document output, and member engagement over the last 6 months
+```
+
+#### Example Worked Output (ENVI, trailing 6 months)
+
+```json
+{
+  "committeeId": "ENVI",
+  "committeeName": "Environment, Public Health and Food Safety",
+  "period": { "from": "2024-12-01", "to": "2025-05-31" },
+  "workload": {
+    "activeLegislativeFiles": 58,
+    "documentsProduced": 42,
+    "meetingsHeld": 11,
+    "decisionsAdopted": 37,
+    "opinionsIssued": 0
+  },
+  "memberEngagement": { "totalMembers": 88, "averageAttendance": 0, "activeContributors": 0 },
+  "legislativeOutput": { "reportsAdopted": 18, "amendmentsProcessed": 0, "successRate": 0.31 },
+  "derivedMetrics": { "decisionsPerMeeting": 3.36, "documentsPerMonth": 7, "activeFilesPerMember": 0.66 },
+  "dataSources": { "documents": "OK", "procedures": "OK", "meetings": "OK", "decisions": "OK" },
+  "confidenceLevel": "HIGH"
+}
 ```
 
 ---
