@@ -719,6 +719,11 @@ function buildPipelineItems(
  * that want warm statistics can invoke
  * {@link triggerLifecycleBackgroundRebuild} from a non-latency-sensitive
  * code path (e.g. server startup, scheduled maintenance).
+ *
+ * @returns A fresh cached {@link LifecycleStatisticsModel}, or an empty
+ *   model when the cache is cold. With an empty model, per-procedure
+ *   forecasts report `INSUFFICIENT_DATA` and `bottleneckRisk` falls back to
+ *   the heuristic `LOW` bucket, but the envelope shape is unchanged.
  */
 function resolveLifecycleModelFast(): LifecycleStatisticsModel {
   const cached = getCachedLifecycleStatistics();
