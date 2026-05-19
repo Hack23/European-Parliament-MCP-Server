@@ -165,6 +165,30 @@ function buildEdgesFromPairs(
   return edges;
 }
 
+function validateDoceoLimit(limit: number): void {
+  if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+    throw new RangeError(
+      `computeNetworkVotingSimilarityFromDoceo: options.limit must be an integer in [1, 100], received ${String(limit)}`
+    );
+  }
+}
+
+function tallyPairsFromResponse(
+  response: { data: readonly { dataSource: string; mepVotes?: Record<string, string> }[] },
+  mepIdSubset: ReadonlySet<string>
+): { pairs: Map<string, PairCounts>; rcvVotesInspected: number } {
+  const pairs = new Map<string, PairCounts>();
+  let rcvVotesInspected = 0;
+  for (const vote of response.data) {
+    if (vote.dataSource !== 'RCV') continue;
+    if (vote.mepVotes === undefined) continue;
+    rcvVotesInspected += 1;
+    const decisiveMeps = extractDecisiveMeps(vote.mepVotes as Record<string, 'FOR' | 'AGAINST' | 'ABSTAIN'>, mepIdSubset);
+    tallyPairs(decisiveMeps, pairs);
+  }
+  return { pairs, rcvVotesInspected };
+}
+
 export async function computeNetworkVotingSimilarityFromDoceo(
   mepIdSubset: ReadonlySet<string>,
   options: ComputeNetworkVotingSimilarityOptions = {}
@@ -176,11 +200,7 @@ export async function computeNetworkVotingSimilarityFromDoceo(
   // Validate `limit` *before* the try/catch so a misuse (e.g. caller-supplied
   // 0 or 200) surfaces as a RangeError instead of being swallowed and made
   // indistinguishable from a real DOCEO outage (which returns `null`).
-  if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
-    throw new RangeError(
-      `computeNetworkVotingSimilarityFromDoceo: options.limit must be an integer in [1, 100], received ${String(limit)}`
-    );
-  }
+  validateDoceoLimit(limit);
 
   if (mepIdSubset.size === 0) {
     return { edges: [], rcvVotesInspected: 0, dataSource: 'DOCEO' };
@@ -198,16 +218,7 @@ export async function computeNetworkVotingSimilarityFromDoceo(
       'Network voting similarity DOCEO fetch timed out'
     );
 
-    const pairs = new Map<string, PairCounts>();
-    let rcvVotesInspected = 0;
-    for (const vote of response.data) {
-      if (vote.dataSource !== 'RCV') continue;
-      if (vote.mepVotes === undefined) continue;
-      rcvVotesInspected += 1;
-      const decisiveMeps = extractDecisiveMeps(vote.mepVotes, mepIdSubset);
-      tallyPairs(decisiveMeps, pairs);
-    }
-
+    const { pairs, rcvVotesInspected } = tallyPairsFromResponse(response, mepIdSubset);
     const edges = buildEdgesFromPairs(pairs, minSimilarity);
     return { edges, rcvVotesInspected, dataSource: 'DOCEO' };
   } catch (error: unknown) {
