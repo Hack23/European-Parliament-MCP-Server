@@ -275,8 +275,10 @@ async function fetchProcedures(): Promise<SourceFetchResult<Procedure>> {
       }
       // Advance the offset by what the page actually returned, falling back
       // to the requested limit when the API returned an empty page with
-      // `hasMore=true` so we make forward progress (the page cap remains
-      // the ultimate safeguard).
+      // `hasMore=true` (a rare EP API pattern observed when a page contains
+      // only items filtered out by the API tier — defensive forward
+      // progress prevents an infinite-loop while the page cap remains the
+      // ultimate safeguard).
       offset += items.length > 0 ? items.length : FETCH_PAGE_LIMIT;
     }
     if (exhausted) {
@@ -347,7 +349,13 @@ async function fetchAdoptedTexts(
         try {
           const resp = await epClient.getAdoptedTexts({ year, limit: FETCH_PAGE_LIMIT });
           return { year, ok: true, data: Array.isArray(resp.data) ? resp.data : [] };
-        } catch {
+        } catch (err: unknown) {
+          // Intentional suppression: per-year failures are surfaced via the
+          // aggregated `failedYears` warning rather than thrown — partial
+          // outage must not zero out the other years. The error is audit-
+          // logged at the per-source level by `runSource()` if every year
+          // ends up failing.
+          void err;
           return { year, ok: false };
         }
       }),
@@ -543,8 +551,9 @@ export function normaliseQuestionAuthorParam(subjectId: string): string {
   if (trimmed === '') return '';
   // Take the trailing non-empty segment after the last `/` or `-`. If the
   // input ends with a delimiter the segment is empty, so fall back to the
-  // original trimmed value rather than returning ''.
-  const tail = trimmed.split(/[/-]/).filter((seg) => seg !== '').pop();
+  // original trimmed value rather than returning ''. `findLast` short-
+  // circuits without allocating an intermediate filtered array.
+  const tail = trimmed.split(/[/-]/).findLast((seg) => seg !== '');
   return tail ?? trimmed;
 }
 
