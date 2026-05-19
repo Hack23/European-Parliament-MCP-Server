@@ -11,12 +11,14 @@
  * historical median dwell statistics rather than heuristics.
  *
  * **Methodology:**
- * 1. Resolve the corpus-wide lifecycle model (`getCachedLifecycleStatistics`)
+ * 1. Load (or rebuild) the corpus-wide lifecycle model (`getLifecycleStatistics`)
  *    covering the latest 500 procedures, cached 30 minutes. Median +
- *    95th-percentile dwell are computed per `(procedureType, stage)`. To keep
- *    the request path responsive, a cold cache returns an empty model
- *    immediately and triggers a background rebuild — per-procedure forecasts
- *    degrade to `INSUFFICIENT_DATA` until the cache warms.
+ *    95th-percentile dwell are computed per `(procedureType, stage)`. The
+ *    rebuild is wrapped in a wall-clock budget (`LIFECYCLE_BUILD_BUDGET_MS`)
+ *    that cooperatively cancels the underlying `/events` fan-out when the
+ *    budget elapses, so a cold cache cannot starve the request's own
+ *    rate-limit budget. When the budget fires, the model is empty and
+ *    per-procedure forecasts degrade to `INSUFFICIENT_DATA`.
  * 2. For each procedure in scope, fetch its event timeline with bounded
  *    concurrency (≤8 parallel) and `Promise.allSettled`.
  * 3. `daysInCurrentStage` = days between the latest event and `now`.
@@ -36,8 +38,9 @@ import type { ToolResult } from './shared/types.js';
 import { withTimeout, TimeoutError } from '../utils/timeout.js';
 import { buildTimeoutResponse } from './shared/errorHandler.js';
 import { ToolError } from './shared/errors.js';
+import { APIError } from '../clients/ep/baseClient.js';
 import {
-  getCachedLifecycleStatistics,
+  getLifecycleStatistics,
   emptyLifecycleStatisticsModel,
   fetchEventsBounded,
   sortEventsChronologically,
@@ -53,6 +56,20 @@ import {
  * intelligence tools and stay below the integration-test 120 s ceiling.
  */
 const OPERATION_TIMEOUT_MS = 30_000;
+
+/**
+ * Wall-clock budget (ms) for the lifecycle-statistics corpus build on the
+ * request path. The corpus rebuild calls `/procedures` + up to 500
+ * `/procedures/{id}/events` and competes with the request's own events
+ * fetches for the EP API client's 100 req/min rate limit. With this budget
+ * the rebuild's events loop is cooperatively cancelled (via
+ * `getLifecycleStatistics({ deadline })`) once the budget elapses, so the
+ * remaining {@link OPERATION_TIMEOUT_MS} envelope is reserved for the
+ * request's own `/events` fan-out. On a cold integration run the rebuild
+ * will typically time out and the response falls back to `INSUFFICIENT_DATA`;
+ * on a warm cache the cached model is returned instantly.
+ */
+const LIFECYCLE_BUILD_BUDGET_MS = 8_000;
 
 /** Forecast basis discriminator emitted in the response envelope. */
 export type ForecastBasis = 'HISTORICAL_MEDIAN' | 'INSUFFICIENT_DATA' | 'NOT_APPLICABLE';
@@ -700,35 +717,50 @@ function buildPipelineItems(
 }
 
 /**
- * Resolve the lifecycle statistics model for the current request **without
- * blocking** the request path on a cold-cache corpus rebuild.
+ * Load the lifecycle statistics model with a strict wall-clock budget.
  *
- * Building the corpus can require many `/events` calls and, under the EP API
- * client's default 100 req/min rate limit, can easily exceed
- * {@link OPERATION_TIMEOUT_MS} on a cold cache. Even with a `withTimeout`
- * wrapper, the underlying rate-limited fetches keep running in the background
- * and consume the rate-limit budget that the actual pipeline fan-out needs —
- * which previously caused the integration test to receive a
- * {@link buildTimeoutResponse} envelope.
+ * On a cold cache the corpus rebuild calls `/procedures` plus up to
+ * {@link CORPUS_SIZE} `/procedures/{id}/events`. Under the EP API client's
+ * default 100 req/min rate limit this cannot complete inside
+ * {@link OPERATION_TIMEOUT_MS} and would also starve the request's own
+ * `/events` fan-out, which previously caused the integration test to
+ * receive a {@link buildTimeoutResponse} envelope.
  *
- * Strategy: only use the lifecycle corpus when it is **already cached**.
- * Otherwise return an empty model so every per-procedure forecast degrades
- * to `INSUFFICIENT_DATA`. The cache is intentionally **not** warmed from
- * this hot path — kicking off a 500-procedure corpus build here would still
- * starve the request's own EP API budget under the same rate limit. Callers
- * that want warm statistics can invoke
- * {@link triggerLifecycleBackgroundRebuild} from a non-latency-sensitive
- * code path (e.g. server startup, scheduled maintenance).
+ * Strategy:
+ *  - Pass a wall-clock `deadline` of `now + LIFECYCLE_BUILD_BUDGET_MS` to
+ *    {@link getLifecycleStatistics}. The internal `fetchEventsBounded` loop
+ *    stops queueing new batches once the deadline elapses, returning
+ *    whatever model could be built from the partial corpus (possibly empty).
+ *    This cooperatively cancels the rebuild so it no longer competes with
+ *    the request's own rate-limited calls.
+ *  - On expected failures ({@link TimeoutError}, {@link APIError}), fall
+ *    back to an empty model. Per-procedure forecasts degrade to
+ *    `INSUFFICIENT_DATA` but the response shape is unchanged.
+ *  - Unexpected/programming errors propagate so they surface in monitoring.
  *
- * @returns A fresh cached {@link LifecycleStatisticsModel}, or an empty
- *   model when the cache is cold. With an empty model, per-procedure
- *   forecasts report `INSUFFICIENT_DATA` and `bottleneckRisk` falls back to
- *   the heuristic `LOW` bucket, but the envelope shape is unchanged.
+ * In unit tests with mocked clients the deadline never fires (mocks resolve
+ * synchronously) and the full corpus is built from the fixture data.
  */
-function resolveLifecycleModelFast(): LifecycleStatisticsModel {
-  const cached = getCachedLifecycleStatistics();
-  if (cached !== undefined) return cached;
-  return emptyLifecycleStatisticsModel();
+async function loadLifecycleModelWithBudget(): Promise<LifecycleStatisticsModel> {
+  const deadline = Date.now() + LIFECYCLE_BUILD_BUDGET_MS;
+  try {
+    return await withTimeout(
+      getLifecycleStatistics({ deadline }),
+      LIFECYCLE_BUILD_BUDGET_MS + 500,
+      'lifecycle statistics build exceeded budget'
+    );
+  } catch (error: unknown) {
+    if (error instanceof TimeoutError || error instanceof APIError) {
+      const statusCode = error instanceof APIError ? error.statusCode : undefined;
+      console.error(
+        '[monitor_legislative_pipeline] Lifecycle model fallback engaged:',
+        error.name,
+        statusCode !== undefined ? `status=${String(statusCode)}` : ''
+      );
+      return emptyLifecycleStatisticsModel();
+    }
+    throw error;
+  }
 }
 
 /**
@@ -740,7 +772,12 @@ async function runPipelineOperation(
   params: ReturnType<typeof MonitorLegislativePipelineSchema.parse>
 ): Promise<LegislativePipelineAnalysis> {
   const ctx = resolveOperationContext(params);
-  const model = resolveLifecycleModelFast();
+  // Load the lifecycle model FIRST (with a wall-clock budget). This serialises
+  // the corpus rebuild ahead of the request's own /events fan-out so the two
+  // do not compete for the EP API rate limit. When the budget fires, the
+  // rebuild cooperatively cancels and yields the rate-limit budget back to
+  // the visible-procedure fetches that follow.
+  const model = await loadLifecycleModelWithBudget();
   const procedures = await epClient.getProcedures({ limit: params.limit });
 
   const filteredProcs = applyDateFilters(procedures.data, ctx);

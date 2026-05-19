@@ -249,15 +249,24 @@ function accumulateProcedure(
  *
  * @param procedures - Procedures to enrich with their event timeline
  * @param concurrency - Maximum parallel fetches (≤8 recommended)
- * @returns Map of process-id → events array (failed fetches are absent)
+ * @param deadline - Optional wall-clock deadline (epoch ms). If `Date.now()`
+ *   exceeds the deadline between batches, the loop short-circuits and the
+ *   partial result is returned. This is the corpus rebuild's cooperative
+ *   cancellation mechanism: when the request-path budget fires, this
+ *   function stops queueing further events fetches so it no longer competes
+ *   with the request's own rate-limited calls.
+ * @returns Map of process-id → events array (failed fetches are absent;
+ *   procedures whose batch never ran due to the deadline are also absent)
  */
 export async function fetchEventsBounded(
   procedures: readonly Procedure[],
-  concurrency: number = EVENT_FETCH_CONCURRENCY
+  concurrency: number = EVENT_FETCH_CONCURRENCY,
+  deadline?: number
 ): Promise<Map<string, EPEvent[]>> {
   const results = new Map<string, EPEvent[]>();
   const bound = Math.max(1, Math.min(concurrency, EVENT_FETCH_CONCURRENCY));
   for (let i = 0; i < procedures.length; i += bound) {
+    if (deadline !== undefined && Date.now() >= deadline) break;
     const slice = procedures.slice(i, i + bound);
     const settled = await Promise.allSettled(
       slice.map(async (proc) => {
@@ -365,7 +374,15 @@ export function lookupStageStatistics(
  * @param options - Optional overrides
  * @param options.corpusSize - Number of procedures to sample (default: {@link CORPUS_SIZE})
  * @param options.forceRefresh - Ignore cached model and rebuild
- * @returns The lifecycle statistics model
+ * @param options.deadline - Optional wall-clock deadline (epoch ms) for the
+ *   underlying {@link fetchEventsBounded} loop. When set, the rebuild stops
+ *   queueing additional events fetches once the deadline is reached and
+ *   builds the model from whatever was gathered (possibly empty). This is
+ *   how the request path keeps a cold-cache rebuild from starving its own
+ *   rate-limit budget. Concurrent callers that omit `deadline` still share
+ *   the same in-flight build, so the budget set by the first caller wins.
+ * @returns The lifecycle statistics model (possibly partial when `deadline`
+ *   fires before the full corpus has been fetched)
  *
  * @security The corpus contains only procedure types, event types, and dates —
  *   no PII. Bounded concurrency (≤8) prevents API rate-limit exhaustion.
@@ -374,6 +391,7 @@ export function lookupStageStatistics(
 export async function getLifecycleStatistics(options: {
   corpusSize?: number;
   forceRefresh?: boolean;
+  deadline?: number;
 } = {}): Promise<LifecycleStatisticsModel> {
   const corpus = options.corpusSize ?? CORPUS_SIZE;
   const cached = memoCacheByCorpusSize.get(corpus);
@@ -391,12 +409,19 @@ export async function getLifecycleStatistics(options: {
     return inFlight;
   }
 
+  const deadline = options.deadline;
   const buildPromise = (async (): Promise<LifecycleStatisticsModel> => {
     try {
       const procResp = await epClient.getProcedures({ limit: corpus });
-      const events = await fetchEventsBounded(procResp.data, EVENT_FETCH_CONCURRENCY);
+      const events = await fetchEventsBounded(procResp.data, EVENT_FETCH_CONCURRENCY, deadline);
       const model = buildLifecycleStatistics(procResp.data, events);
-      memoCacheByCorpusSize.set(corpus, { model, expiresAt: Date.now() + CACHE_TTL_MS });
+      // Only cache full builds. Partial builds (deadline-truncated) are
+      // returned to the caller but not memoized, so subsequent requests
+      // retry the rebuild instead of being stuck with a sparse model.
+      const isPartial = deadline !== undefined && events.size < procResp.data.length;
+      if (!isPartial) {
+        memoCacheByCorpusSize.set(corpus, { model, expiresAt: Date.now() + CACHE_TTL_MS });
+      }
       return model;
     } finally {
       inFlightBuildByCorpusSize.delete(corpus);
@@ -404,47 +429,6 @@ export async function getLifecycleStatistics(options: {
   })();
   inFlightBuildByCorpusSize.set(corpus, buildPromise);
   return buildPromise;
-}
-
-/**
- * Return the cached lifecycle statistics model **without** triggering a
- * rebuild. Use this on latency-sensitive request paths where waiting for a
- * cold-cache corpus build (potentially hundreds of `/events` calls) is not
- * acceptable. Returns `undefined` when no fresh entry is cached for the
- * requested corpus size.
- *
- * Callers that want the cache to warm in the background should additionally
- * invoke {@link triggerLifecycleBackgroundRebuild}.
- */
-export function getCachedLifecycleStatistics(
-  options: { corpusSize?: number } = {}
-): LifecycleStatisticsModel | undefined {
-  const corpus = options.corpusSize ?? CORPUS_SIZE;
-  const cached = memoCacheByCorpusSize.get(corpus);
-  if (cached !== undefined && cached.expiresAt > Date.now()) {
-    return cached.model;
-  }
-  return undefined;
-}
-
-/**
- * Kick off a background lifecycle-statistics rebuild without waiting for it.
- *
- * Fire-and-forget: errors are swallowed (logged) so they cannot escape into
- * the caller's promise chain. If a rebuild is already in flight for the same
- * `corpusSize`, this is a no-op. The result populates the cache for
- * subsequent calls to {@link getCachedLifecycleStatistics} /
- * {@link getLifecycleStatistics}.
- */
-export function triggerLifecycleBackgroundRebuild(
-  options: { corpusSize?: number } = {}
-): void {
-  const corpus = options.corpusSize ?? CORPUS_SIZE;
-  if (inFlightBuildByCorpusSize.has(corpus)) return;
-  void getLifecycleStatistics({ corpusSize: corpus }).catch((err: unknown) => {
-    const name = err instanceof Error ? err.name : 'UnknownError';
-    console.error('[lifecycleStatistics] Background rebuild failed:', name);
-  });
 }
 
 /**
