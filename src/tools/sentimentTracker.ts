@@ -71,6 +71,11 @@ interface GroupSentiment {
   cohesionProxy: number;
 }
 
+/** Internal type extending GroupSentiment with unrounded cohesion for aggregation. */
+interface InternalGroupSentiment extends GroupSentiment {
+  _rawCohesion: number;
+}
+
 interface SentimentShift {
   groupId: string;
   fromScore: number;
@@ -103,7 +108,7 @@ interface SentimentTrackerResult {
   dataQualityWarnings: string[];
 }
 
-const KNOWN_POLITICAL_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'PfE', 'ID', 'The Left', 'GUE/NGL', 'ESN', 'NI'];
+const KNOWN_POLITICAL_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'PfE', 'The Left', 'ESN', 'NI'];
 
 /** Per-timeframe DOCEO fetch and aggregation parameters. */
 const TIMEFRAME_CONFIG: Record<Timeframe, {
@@ -236,8 +241,10 @@ function resolveGroupRow(
 /**
  * Process a single DOCEO response page, filtering RCV records by date and
  * appending them to `collected` until the vote budget is reached.
- * Returns `{ stop: true }` when a record older than `cutoff` is encountered
- * (the iteration should terminate) or when the budget is exhausted.
+ * Returns `{ stop: true }` when the budget is exhausted.
+ * Records with missing/empty dates are treated as out-of-window and skipped.
+ * Pre-cutoff records are filtered out but do NOT terminate iteration (DOCEO
+ * responses are not guaranteed to be sorted newest→oldest within a week).
  */
 function ingestDoceoPage(
   response: { data: readonly LatestVoteRecord[] },
@@ -249,7 +256,10 @@ function ingestDoceoPage(
     if (vote.dataSource !== 'RCV') continue;
     if (vote.groupBreakdown === undefined) continue;
     const date = vote.sittingDate ?? vote.date;
-    if (date !== '' && date < cutoff) return { stop: true };
+    // Treat missing/empty dates as out-of-window (skip without stopping).
+    if (date === '' || date === undefined) continue;
+    // Filter out pre-cutoff votes without stopping iteration.
+    if (date < cutoff) continue;
     collected.push(vote);
     if (collected.length >= voteBudget) return { stop: true };
   }
@@ -518,20 +528,22 @@ interface BuildGroupSentimentArgs {
 }
 
 /** Build the per-group sentiment record using DOCEO data when available. */
-function buildGroupSentiment(args: BuildGroupSentimentArgs): GroupSentiment {
+function buildGroupSentiment(args: BuildGroupSentimentArgs): InternalGroupSentiment {
   const { groupId, memberCount, totalMEPs, doceo, hasDoceoCoverage } = args;
   const seatShare = totalMEPs > 0 ? memberCount / totalMEPs : 0;
   const stats = doceo.groupStats.get(groupId);
 
   if (!hasDoceoCoverage || stats === undefined) {
     const fallbackScore = fallbackSeatShareScore(memberCount, totalMEPs);
+    const rawCohesion = 0.5 + fallbackScore * 0.3;
     return {
       groupId,
       sentimentScore: round2(fallbackScore),
       trend: fallbackSeatShareTrend(seatShare),
       volatility: 0.12,
       memberCount,
-      cohesionProxy: round2(0.5 + fallbackScore * 0.3),
+      cohesionProxy: round2(rawCohesion),
+      _rawCohesion: rawCohesion,
     };
   }
 
@@ -550,6 +562,7 @@ function buildGroupSentiment(args: BuildGroupSentimentArgs): GroupSentiment {
     volatility: round2(Math.sqrt(variance)),
     memberCount,
     cohesionProxy: round2(cohesion),
+    _rawCohesion: cohesion,
   };
 }
 
@@ -562,7 +575,7 @@ function buildGroupSentiment(args: BuildGroupSentimentArgs): GroupSentiment {
  * remains a faithful measure of observed group cohesion.
  */
 function computePolarizationIndex(
-  sentiments: GroupSentiment[],
+  sentiments: InternalGroupSentiment[],
   totalMEPs: number,
   hasDoceoCoverage: boolean,
   doceo: DoceoWindowAggregate
@@ -574,7 +587,7 @@ function computePolarizationIndex(
     for (const g of sentiments) {
       if (!doceo.groupStats.has(g.groupId)) continue;
       const weight = g.memberCount / totalMEPs;
-      weightedCohesion += g.cohesionProxy * weight;
+      weightedCohesion += g._rawCohesion * weight;
       totalWeight += weight;
     }
     if (totalWeight === 0) return 0;
@@ -687,8 +700,11 @@ function buildSentimentComputedAttrs(
 function buildMethodology(timeframe: Timeframe, hasDoceoCoverage: boolean, rcvVoteCount: number): string {
   const window = `${String(TIMEFRAME_CONFIG[timeframe].days)}d`;
   if (!hasDoceoCoverage) {
+    const coverageNote = rcvVoteCount > 0
+      ? `insufficient DOCEO RCV coverage in ${window} window — only ${String(rcvVoteCount)} usable RCVs, minimum ${String(MIN_RCV_VOTES_FOR_MEDIUM)} required`
+      : `no DOCEO RCV votes found in ${window} window`;
     return [
-      `FALLBACK PATH (no DOCEO RCV coverage in ${window} window — ${String(rcvVoteCount)} usable RCVs).`,
+      `FALLBACK PATH (${coverageNote}).`,
       'Sentiment scores fall back to seat-share proxy (larger group → stronger institutional position).',
       'Trend defaults to seat-share band. polarizationIndex = std-dev of fallback scores.',
       'Data source (composition): https://data.europarl.europa.eu/api/v2/meps',
@@ -716,7 +732,7 @@ interface SentimentBuildContext {
 function buildSentimentScores(
   targetGroups: readonly string[],
   ctx: SentimentBuildContext
-): GroupSentiment[] {
+): InternalGroupSentiment[] {
   return targetGroups.map(gId => buildGroupSentiment({
     groupId: gId,
     memberCount: ctx.groupCounts.get(gId) ?? 0,
@@ -770,7 +786,7 @@ interface SentimentResultArgs {
   params: SentimentTrackerParams;
   fetchResult: { complete: boolean; failureOffset?: number | undefined };
   totalMEPs: number;
-  groupSentiments: GroupSentiment[];
+  groupSentiments: InternalGroupSentiment[];
   doceo: DoceoWindowAggregate;
   hasDoceoCoverage: boolean;
 }
@@ -786,10 +802,10 @@ function buildSentimentResult(args: SentimentResultArgs): SentimentTrackerResult
 
   return {
     timeframe: params.timeframe,
-    groupSentiments,
+    groupSentiments: groupSentiments.map(({ _rawCohesion: _, ...rest }) => rest),
     polarizationIndex,
-    consensusTopics: doceo.consensusTopics,
-    divisiveTopics: doceo.divisiveTopics,
+    consensusTopics: hasDoceoCoverage ? doceo.consensusTopics : [],
+    divisiveTopics: hasDoceoCoverage ? doceo.divisiveTopics : [],
     sentimentShifts: buildSentimentShifts(validSentiments, hasDoceoCoverage),
     overallParliamentSentiment: overallSentiment,
     computedAttributes: buildSentimentComputedAttrs(validSentiments, sentimentScores, overallSentiment),
