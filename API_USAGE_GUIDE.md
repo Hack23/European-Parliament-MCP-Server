@@ -1712,8 +1712,9 @@ within `depth` hops:
 - `depth=2` → adds friends-of-friends.
 - `depth=3` → ≤3 hops from the focus.
 
-When `mepId` is omitted the full MEP roster is analysed (depth is ignored)
-and clusters are detected globally.
+When `mepId` is omitted a representative sample of up to 100 current MEPs
+is analysed (depth is ignored) and clusters are detected globally. Full
+roster pagination is not performed to stay within API rate-limit budgets.
 
 #### Centrality & clusters
 

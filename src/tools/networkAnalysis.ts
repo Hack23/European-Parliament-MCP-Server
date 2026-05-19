@@ -44,7 +44,7 @@ import { auditLogger } from '../utils/auditLogger.js';
  * Schema for network_analysis tool input.
  *
  * The `analysisType` and `depth` parameters are fully implemented:
- * - `analysisType: 'committee'` builds unweighted shared-committee edges.
+ * - `analysisType: 'committee'` builds weighted shared-committee edges.
  * - `analysisType: 'voting'` builds DOCEO RCV similarity edges (Jaccard-like).
  * - `analysisType: 'combined'` merges both with the mean of normalised weights.
  * - `depth` bounds the BFS ego-network when `mepId` is provided.
@@ -171,7 +171,7 @@ function classifyNetworkType(density: number, nodeCount: number): string {
 }
 
 /**
- * Build unweighted shared-committee edges (legacy `committee` mode).
+ * Build weighted shared-committee edges (`committee` mode).
  *
  * Edge weight is `min(1, sharedCommittees × {@link SHARED_COMMITTEE_STRENGTH_FACTOR})`.
  */
@@ -293,6 +293,11 @@ function buildNodes(
     const degree = degCount.get(mep.id) ?? 0;
     const centralityScore = Math.round((wd * 0.6 + bc * 100 * 0.4) * 100) / 100;
     const clusterFromAlgo = clusterLabels.get(mep.id);
+    // Post-process: isolated nodes (degree-0) get a stable bloc fallback
+    // instead of a singleton self-label from label propagation.
+    const effectiveLabel = degree === 0
+      ? assignBlocLabel(mep.politicalGroup)
+      : (clusterFromAlgo ?? assignBlocLabel(mep.politicalGroup));
     return {
       mepId: mep.id,
       mepName: mep.name,
@@ -302,7 +307,7 @@ function buildNodes(
       weightedDegree: Math.round(wd * 10000) / 10000,
       betweennessCentrality: Math.round(bc * 10000) / 10000,
       degree,
-      clusterLabel: clusterFromAlgo ?? assignBlocLabel(mep.politicalGroup),
+      clusterLabel: effectiveLabel,
     };
   });
 }
@@ -420,7 +425,7 @@ function describeMethodology(
   const lines: string[] = [];
   lines.push(`Analysis type: ${analysisType}.`);
   if (analysisType === 'committee') {
-    lines.push('Edges: unweighted shared-committee membership (≥1 shared committee).');
+    lines.push('Edges: weighted shared-committee membership (weight = min(1, sharedCommittees × 0.3), ≥1 shared committee).');
   } else if (analysisType === 'voting') {
     lines.push('Edges: DOCEO RCV co-vote agreement (Jaccard-like, decisive votes only, ≥3 shared decisive votes).');
     if (!votingResultAvailable) warnings.push('DOCEO RCV data unavailable — voting-similarity edges could not be computed; result is empty for analysisType=voting');
@@ -490,12 +495,28 @@ function deriveConfidence(nodeCount: number, edgeCount: number): 'HIGH' | 'MEDIU
 }
 
 /**
+ * Derive the dataFreshness string from actual data sources consumed.
+ */
+function deriveDataFreshness(analysisType: string, doceoAvailable: boolean): string {
+  if (analysisType === 'committee') return 'Real-time EP API data (committee membership)';
+  if (analysisType === 'voting') {
+    return doceoAvailable ? 'DOCEO RCV XML (roll-call votes)' : 'DOCEO RCV data unavailable';
+  }
+  // combined
+  return doceoAvailable
+    ? 'Real-time EP API data + DOCEO RCV XML'
+    : 'Real-time EP API data (DOCEO unavailable — committee-only fallback)';
+}
+
+/**
  * Compute the MEP relationship network for the supplied parameters.
  */
 export async function networkAnalysis(params: NetworkAnalysisParams): Promise<ToolResult> {
   const startedAt = Date.now();
   try {
-    const mepResult = await epClient.getCurrentMEPs({ limit: 50 });
+    // Fetch up to MAX_NETWORK_NODES MEPs. The EP API returns a single page;
+    // full pagination is avoided to stay within rate-limit budget.
+    const mepResult = await epClient.getCurrentMEPs({ limit: 100 });
     if (mepResult.data.length === 0) return buildToolResponse(buildEmptyResult(params));
 
     let rawMeps = mepResult.data as MEPRecord[];
@@ -570,7 +591,7 @@ export async function networkAnalysis(params: NetworkAnalysisParams): Promise<To
       },
       dataAvailable: nodes.length > 0 && filteredEdges.length > 0,
       confidenceLevel: deriveConfidence(nodes.length, filteredEdges.length),
-      dataFreshness: 'Real-time EP API data + DOCEO RCV XML',
+      dataFreshness: deriveDataFreshness(params.analysisType, votingInfo.available),
       sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
       methodology,
       dataQualityWarnings: warnings,

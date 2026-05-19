@@ -150,7 +150,9 @@ function buildEdgesFromPairs(
   for (const [key, counts] of pairs) {
     if (counts.shared < MIN_SHARED_DECISIVE_VOTES) continue;
     const similarity = counts.agreements / counts.shared;
-    if (similarity < minSimilarity) continue;
+    // Exclude zero-similarity edges even when minSimilarity=0 to avoid
+    // 0-weight edges that cause inconsistencies in weighted algorithms.
+    if (similarity <= 0 || similarity < minSimilarity) continue;
     const [sourceId, targetId] = key.split('|') as [string, string];
     edges.push({
       sourceId,
