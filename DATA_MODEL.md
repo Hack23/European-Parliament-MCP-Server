@@ -294,6 +294,25 @@ erDiagram
         string[] agendaItems
     }
 
+    COMMITTEE_ACTIVITY {
+        string committeeId PK
+        DateString periodFrom
+        DateString periodTo
+        int activeLegislativeFiles "Filtered: /procedures by responsibleCommittee + status=ongoing + date window"
+        int documentsProduced "Filtered: /committee-documents by committee + date window"
+        int meetingsHeld "Filtered: /meetings by date window"
+        int decisionsAdopted "Fan-out: /meetings/{id}/decisions across up to 8 sittings"
+        int opinionsIssued "Not exposed by EP API — always 0"
+        float decisionsPerMeeting
+        float documentsPerMonth
+        float activeFilesPerMember
+        string documentsSourceStatus "OK | EMPTY | TIMEOUT | UNAVAILABLE"
+        string proceduresSourceStatus "OK | EMPTY | TIMEOUT | UNAVAILABLE"
+        string meetingsSourceStatus "OK | EMPTY | TIMEOUT | UNAVAILABLE"
+        string decisionsSourceStatus "OK | EMPTY | TIMEOUT | UNAVAILABLE"
+        string confidenceLevel "HIGH | MEDIUM | LOW"
+    }
+
     MEETING_ACTIVITY {
         string id PK
         string meetingRef FK
