@@ -663,4 +663,30 @@ private getCacheKey(endpoint: string, params?: Record<string, unknown>): string 
 
 ---
 
+## Derived Models — analyze_legislative_effectiveness
+
+The `analyze_legislative_effectiveness` MCP tool emits a derived envelope assembled from four EP Open Data Portal sources. Schema additions:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `metrics.reportsAuthored` | `number` | Procedures rapporteured by the subject (deduped by procedureId). |
+| `metrics.opinionsDelivered` | `number` | Procedures where the subject is a `shadow` / `opinion` rapporteur. |
+| `metrics.amendmentsTabled` | `number` | Plenary-session document items of type `AMENDMENT` authored by the subject. |
+| `metrics.amendmentsAdopted` | `number` | Subset of `amendmentsTabled` whose `status` includes `ADOPTED`. |
+| `metrics.questionsAsked` | `number` | Parliamentary questions filed by the subject within the window. |
+| `metrics.legislativeSuccessRate` | `number` | `100 × procedures-with-adopted-text / attributed-procedures` (0–100, 2 decimals). |
+| `attributions.reportProcedureIds` | `string[]` | Procedure IDs counted as reports authored, **sorted ascending**. |
+| `attributions.opinionProcedureIds` | `string[]` | Procedure IDs counted as opinions delivered, **sorted ascending**. |
+| `attributions.amendmentDocumentIds` | `string[]` | Document IDs counted as amendments tabled, **sorted ascending**. |
+| `attributions.amendmentAdoptedDocumentIds` | `string[]` | Document IDs counted as adopted amendments, **sorted ascending**. |
+| `attributions.questionIds` | `string[]` | Parliamentary question IDs, **sorted ascending**. |
+| `dataSources.procedures` | `'OK' \| 'EMPTY' \| 'TIMEOUT' \| 'UNAVAILABLE'` | Status of the `/procedures` fetch. |
+| `dataSources.adoptedTexts` | `'OK' \| 'EMPTY' \| 'TIMEOUT' \| 'UNAVAILABLE'` | Status of the `/adopted-texts` fetch. |
+| `dataSources.plenaryDocumentItems` | `'OK' \| 'EMPTY' \| 'TIMEOUT' \| 'UNAVAILABLE'` | Status of the `/plenary-session-documents-items` fetch. |
+| `dataSources.questions` | `'OK' \| 'EMPTY' \| 'TIMEOUT' \| 'UNAVAILABLE'` | Status of the `/parliamentary-questions` fetch. |
+
+Each source runs under an independent 6 s `AbortController` budget; failures are tagged in `dataSources` rather than bubbled. Lists in `attributions` are guaranteed sorted ascending so repeated runs are byte-identical.
+
+---
+
 *See [FUTURE_DATA_MODEL.md](./FUTURE_DATA_MODEL.md) for planned enhancements including graph database support and temporal data models.*

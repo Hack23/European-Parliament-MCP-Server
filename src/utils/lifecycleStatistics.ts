@@ -432,6 +432,33 @@ export async function getLifecycleStatistics(options: {
 }
 
 /**
+ * Returns the cached lifecycle-statistics model for the given corpus size if
+ * present and unexpired, otherwise `null`. Never triggers a rebuild and
+ * never blocks.
+ *
+ * Intended for request-path callers (e.g. `monitor_legislative_pipeline`) that
+ * need to avoid the cold-cache corpus rebuild competing with their own
+ * rate-limited `/events` fan-out. Out-of-band warmup (background jobs,
+ * sibling tools whose primary purpose is the corpus itself) should keep
+ * using {@link getLifecycleStatistics} which will rebuild on miss.
+ *
+ * @param corpusSize - Sample size to look up (default: {@link CORPUS_SIZE}).
+ * @returns The cached model, or `null` on cache miss / expiry.
+ *
+ * @security No network calls; safe to use inside tight request budgets.
+ * @since 0.8.0
+ */
+export function getCachedLifecycleStatistics(
+  corpusSize: number = CORPUS_SIZE,
+): LifecycleStatisticsModel | null {
+  const cached = memoCacheByCorpusSize.get(corpusSize);
+  if (cached !== undefined && cached.expiresAt > Date.now()) {
+    return cached.model;
+  }
+  return null;
+}
+
+/**
  * An empty lifecycle model that callers can use as a fast fallback when the
  * corpus rebuild fails or exceeds its time budget. With this model every
  * lookup returns `undefined` so forecasts gracefully degrade to the

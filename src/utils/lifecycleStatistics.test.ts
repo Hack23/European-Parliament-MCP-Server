@@ -17,6 +17,7 @@ import {
   buildLifecycleStatistics,
   lookupStageStatistics,
   getLifecycleStatistics,
+  getCachedLifecycleStatistics,
   resetLifecycleStatisticsCache,
   emptyLifecycleStatisticsModel,
   fetchEventsBounded,
@@ -361,6 +362,43 @@ describe('lifecycleStatistics - getLifecycleStatistics caching', () => {
     expect(a).toBe(b);
     expect(b).toBe(c);
     expect(vi.mocked(epClientModule.epClient.getProcedures)).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('lifecycleStatistics - getCachedLifecycleStatistics', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetLifecycleStatisticsCache();
+  });
+
+  it('returns null when the cache is empty', () => {
+    expect(getCachedLifecycleStatistics()).toBeNull();
+  });
+
+  it('returns the cached model after a warm-up build, never triggering a rebuild', async () => {
+    vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue({
+      data: [procedure('P1')], total: 1, limit: CORPUS_SIZE, offset: 0, hasMore: false,
+    });
+    vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue({
+      data: [event('A', '2024-01-01', 'REFERRAL')], total: 1, limit: 50, offset: 0, hasMore: false,
+    });
+    const built = await getLifecycleStatistics();
+    const cached = getCachedLifecycleStatistics();
+    expect(cached).toBe(built);
+    // Calling the cache-read helper does not trigger an additional fetch.
+    expect(vi.mocked(epClientModule.epClient.getProcedures)).toHaveBeenCalledTimes(1);
+  });
+
+  it('returns null after the cache is reset', async () => {
+    vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue({
+      data: [procedure('P1')], total: 1, limit: CORPUS_SIZE, offset: 0, hasMore: false,
+    });
+    vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue({
+      data: [], total: 0, limit: 50, offset: 0, hasMore: false,
+    });
+    await getLifecycleStatistics();
+    resetLifecycleStatisticsCache();
+    expect(getCachedLifecycleStatistics()).toBeNull();
   });
 });
 
