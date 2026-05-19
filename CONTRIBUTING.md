@@ -267,6 +267,17 @@ Create `src/tools/myNewTool.test.ts` covering:
 - ✅ Invalid/empty input → `ZodError` thrown
 - ✅ Default parameter values applied
 
+**OSINT tools only**: any tool registered with `category: 'osint'` is automatically enrolled in the cross-tool contract suite ([`tests/integration/osint/contract.test.ts`](tests/integration/osint/contract.test.ts)). Add a minimal-valid input entry to `TOOL_INPUTS` in that file, and ensure your tool follows the **no-silent-zero policy** (see below).
+
+#### No-silent-zero policy (OSINT tools)
+
+Every OSINT tool returns the [`OsintStandardOutput`](src/tools/shared/types.ts) envelope: `confidenceLevel`, `methodology`, `dataFreshness`, `sourceAttribution`, `dataQualityWarnings`. The policy: **no numeric field outside `dataQualityWarnings` may be silently zero because a data source was unavailable**. When a source is missing or empty, the tool SHOULD either:
+
+1. Degrade `confidenceLevel` to `LOW` or `MEDIUM` **and** push a human-readable entry into `dataQualityWarnings` explaining the unavailability, OR
+2. Keep `confidenceLevel = HIGH` only when the remaining data is sufficient to fully back every non-warning numeric metric in the payload.
+
+The contract test enforces the observable invariant: if `confidenceLevel` is `LOW`/`MEDIUM`, `dataQualityWarnings` MUST be non-empty. A degraded confidence level with no warning fails the test. See `INTEGRATION_TESTING.md` § "OSINT QA Harness" for the full policy and golden-snapshot refresh procedure.
+
 ---
 
 ## DI Container Pattern

@@ -327,6 +327,8 @@ The following five tools extend the OSINT capability with network analysis, sent
 - Input validation via Zod schemas with `.refine()` cross-field constraints and strict typing throughout
 - Standardized error handling via `ToolError` (toolName, operation, isRetryable) and `buildToolResponse()` for consistent response building
 
+**Contract enforcement:** All 15 OSINT tools are validated against the shared envelope by a registry-driven contract suite at [`tests/integration/osint/contract.test.ts`](tests/integration/osint/contract.test.ts). The suite drives off `getToolMetadataArray().filter(t => t.category === 'osint')`, parses every response against [`OsintStandardOutputSchema`](src/schemas/ep/analysis.ts), and enforces the **no-silent-zero policy** (numeric fields must never be silently zero when data is unavailable — a `dataQualityWarnings` entry must explain the unavailability) plus a determinism guard. See `INTEGRATION_TESTING.md` § "OSINT QA Harness".
+
 
 #### EP Data Access Tools (8)
 

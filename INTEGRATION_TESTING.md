@@ -115,6 +115,48 @@ Each tool includes comprehensive tests for:
 
 ---
 
+## 🛡️ OSINT QA Harness — Cross-Tool Contract Suite
+
+The 15 OSINT tools share a common metadata envelope ([`OsintStandardOutput`](src/tools/shared/types.ts) — `confidenceLevel`, `methodology`, `dataFreshness`, `sourceAttribution`, `dataQualityWarnings`). A single, registry-driven contract test enforces that envelope uniformly across every OSINT tool so regressions cannot land undetected.
+
+**Location:** [`tests/integration/osint/contract.test.ts`](tests/integration/osint/contract.test.ts)
+
+**Driver:** Iterates `getToolMetadataArray().filter(t => t.category === 'osint')`, so **adding a new OSINT tool automatically enrols it in the contract suite** (the only change required is a minimal-input entry in the test's `TOOL_INPUTS` map).
+
+### What the contract asserts
+
+For every OSINT tool, with EP and DOCEO clients mocked deterministically:
+
+1. **Envelope schema** — response payload parses against [`OsintStandardOutputSchema`](src/schemas/ep/analysis.ts).
+2. **Confidence level** — `confidenceLevel ∈ {HIGH, MEDIUM, LOW}` (per the schema).
+3. **Non-empty fields** — `methodology`, `dataFreshness`, `sourceAttribution` are non-empty strings; `sourceAttribution` references the EP Open Data Portal.
+4. **No-silent-zero policy** — when underlying data is unavailable (mocked-empty EP API) and the tool degrades `confidenceLevel` to `LOW` or `MEDIUM`, `dataQualityWarnings` MUST be non-empty so callers can see why numeric metrics are zero. Tools that silently emit zeros without warnings violate the data-quality intent of the envelope and fail this test.
+5. **Determinism** — invoking each tool twice with the same input yields byte-identical JSON payloads after stripping volatile fields (`analysisTime`, `assessmentTime`, `generatedAt`, `timestamp`, `correlationId`, `runId`, `requestId`, `computedAt`, `asOf`). Wall-clock is pinned via `vi.setSystemTime` to keep timestamp-derived envelope wording stable within a test.
+
+### No-silent-zero policy — what it means
+
+If any numeric field outside `dataQualityWarnings` would be **zero because a data source is unavailable** (rather than because the underlying real-world count is actually zero), the tool MUST add a `dataQualityWarnings` entry explaining the unavailability. The contract test enforces the observable side of this policy: **whenever `confidenceLevel` is `LOW` or `MEDIUM`, `dataQualityWarnings` MUST be non-empty.** A degraded confidence level with no accompanying warning is treated as a silent-zero regression and fails the test. Tools whose remaining (per-MEP) data is sufficient to legitimately keep `confidenceLevel = HIGH` are allowed to do so without a warning.
+
+### Running just the OSINT contract suite
+
+```bash
+# All 45 contract checks (15 tools × 3 scenarios), no network calls
+npx vitest run tests/integration/osint/contract.test.ts
+```
+
+The suite completes in ~1 s because it uses `vi.mock` to stub the EP and DOCEO clients with synthetic, redacted fixtures from `tests/fixtures/osintPhase6Fixtures.ts`. It runs automatically as part of `npm run test:integration` in the `Integration and E2E Tests` CI workflow.
+
+### Refreshing fixtures / adding a new OSINT tool
+
+1. Register the tool in [`src/server/toolRegistry.ts`](src/server/toolRegistry.ts) with `category: 'osint'`.
+2. Add the minimal-valid input for the tool in `TOOL_INPUTS` inside `tests/integration/osint/contract.test.ts`.
+3. Run `npx vitest run tests/integration/osint/contract.test.ts` — a failing `beforeAll` will list any registered OSINT tool that lacks a `TOOL_INPUTS` entry.
+4. If the new tool calls an EP API method not yet mocked in `installDefaultMocks()`, add a default mock there (use `emptyPaginated()` for list endpoints).
+
+---
+
+
+
 ## 🚀 Quick Start
 
 ### Prerequisites
