@@ -5,13 +5,22 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleMonitorLegislativePipeline } from './monitorLegislativePipeline.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
+import { resetLifecycleStatisticsCache } from '../utils/lifecycleStatistics.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
-    getProcedures: vi.fn()
+    getProcedures: vi.fn(),
+    getProcedureEvents: vi.fn()
   }
 }));
+
+/** Build a default getProcedureEvents mock that returns an empty timeline. */
+function emptyEventsResponse(): {
+  data: never[]; total: number; limit: number; offset: number; hasMore: boolean;
+} {
+  return { data: [], total: 0, limit: 50, offset: 0, hasMore: false };
+}
 
 // Dynamic dates to ensure procedures stay within the "not stalled" threshold
 function daysAgo(days: number): string {
@@ -172,7 +181,9 @@ const mockFreshProceduresOnly = {
 describe('monitor_legislative_pipeline Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    resetLifecycleStatisticsCache();
     vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(mockProcedures);
+    vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue(emptyEventsResponse());
   });
 
   describe('Input Validation', () => {
@@ -330,6 +341,7 @@ describe('monitor_legislative_pipeline Tool', () => {
   describe('ACTIVE filter — historical / incomplete record exclusion', () => {
     beforeEach(() => {
       vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(mockHistoricalProcedures);
+      vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue(emptyEventsResponse());
     });
 
     it('should exclude procedures with no date data from ACTIVE status', async () => {
@@ -453,6 +465,262 @@ describe('monitor_legislative_pipeline Tool', () => {
       };
       expect(parsed.period.from).toBe('2025-01-01');
       expect(parsed.period.to).toBe('2025-12-31');
+    });
+  });
+
+  describe('Lifecycle-driven stage detection (Issue: getProcedureEvents lifecycle)', () => {
+    /**
+     * Helper: build a synthetic event timeline for one procedure. Events are
+     * returned in EP API order; the tool is expected to sort them
+     * chronologically before computing the dwell.
+     */
+    function buildEvents(events: { date: string; type: string }[]): {
+      data: { id: string; title: string; date: string; endDate: string; type: string;
+        location: string; organizer: string; status: string }[];
+      total: number; limit: number; offset: number; hasMore: boolean;
+    } {
+      const data = events.map((e, i) => ({
+        id: `EVT-${String(i)}`,
+        title: `Event ${String(i)}`,
+        date: e.date,
+        endDate: '',
+        type: e.type,
+        location: '',
+        organizer: '',
+        status: '',
+      }));
+      return { data, total: data.length, limit: 50, offset: 0, hasMore: false };
+    }
+
+    function recentDate(daysAgoVal: number): string {
+      return daysAgo(daysAgoVal);
+    }
+
+    /**
+     * Build a deterministic corpus where:
+     *   - 4 historical COD procedures have a REFERRAL → COM_VOTE → EP_ADOPTION
+     *     pattern with consistent dwells: 30 d, 40 d, 50 d, 60 d at REFERRAL.
+     *   - The procedure under test (PROC-STUCK) is currently at REFERRAL with
+     *     a dwell of 200 days (≥ p95).
+     */
+    function setupHistoricalCorpus(): void {
+      const today = new Date();
+      const corpus = Array.from({ length: 4 }, (_, i) => ({
+        id: `HIST-${String(i)}`,
+        title: `Historical COD ${String(i)}`,
+        reference: `2024/000${String(i)}(COD)`,
+        type: 'COD',
+        subjectMatter: 'Digital',
+        stage: 'Adopted',
+        status: 'Adopted',
+        dateInitiated: '2024-01-01',
+        dateLastActivity: '2024-06-01',
+        responsibleCommittee: 'IMCO',
+        rapporteur: 'MEP',
+        documents: [],
+      }));
+      const stuck = {
+        id: 'PROC-STUCK',
+        title: 'Stuck procedure',
+        reference: '2025/0500(COD)',
+        type: 'COD',
+        subjectMatter: 'Digital',
+        stage: 'Committee consideration',
+        status: 'Ongoing',
+        dateInitiated: recentDate(220),
+        dateLastActivity: recentDate(200),
+        responsibleCommittee: 'IMCO',
+        rapporteur: 'MEP',
+        documents: [],
+      };
+      vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue({
+        data: [stuck, ...corpus],
+        total: 5, limit: 20, offset: 0, hasMore: false,
+      });
+
+      // Historical event sequences: dwell at REFERRAL of 30/40/50/60 days.
+      const dwellDays = [30, 40, 50, 60];
+      vi.mocked(epClientModule.epClient.getProcedureEvents).mockImplementation(
+        async (procId: string) => {
+          if (procId === 'PROC-STUCK') {
+            // Single REFERRAL event 200 days ago → 200 d dwell vs. p95=60.
+            const date = new Date(today);
+            date.setDate(date.getDate() - 200);
+            return Promise.resolve(buildEvents([
+              { date: date.toISOString().slice(0, 10), type: 'REFERRAL' },
+            ]));
+          }
+          const match = /^HIST-(\d+)$/.exec(procId);
+          if (match) {
+            const idx = parseInt(match[1] ?? '0', 10);
+            const dwell = dwellDays[idx] ?? 30;
+            return Promise.resolve(buildEvents([
+              { date: '2024-01-01', type: 'REFERRAL' },
+              { date: new Date(
+                new Date('2024-01-01').getTime() + dwell * 24 * 3600 * 1000
+              ).toISOString().slice(0, 10), type: 'COM_VOTE' },
+              { date: '2024-06-01', type: 'EP_ADOPTION' },
+            ]));
+          }
+          return Promise.resolve(emptyEventsResponse());
+        }
+      );
+    }
+
+    it('should derive currentStage from the latest lifecycle event', async () => {
+      setupHistoricalCorpus();
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        pipeline: { procedureId: string; currentStage: string; lifecycleEvents: unknown[] }[];
+      };
+      const stuck = data.pipeline.find(p => p.procedureId === 'PROC-STUCK');
+      expect(stuck).toBeDefined();
+      expect(stuck?.currentStage).toBe('REFERRAL');
+      expect(stuck?.lifecycleEvents.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('should compute daysInCurrentStage from latest event vs now', async () => {
+      setupHistoricalCorpus();
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        pipeline: { procedureId: string; daysInCurrentStage: number }[];
+      };
+      const stuck = data.pipeline.find(p => p.procedureId === 'PROC-STUCK');
+      // 200 ± 1 day tolerance for rounding around midnight
+      expect(stuck?.daysInCurrentStage ?? 0).toBeGreaterThanOrEqual(199);
+      expect(stuck?.daysInCurrentStage ?? 0).toBeLessThanOrEqual(201);
+    });
+
+    it('should flag procedures with dwell ≥ 95th percentile as HIGH bottleneck risk', async () => {
+      setupHistoricalCorpus();
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        pipeline: { procedureId: string; computedAttributes: { bottleneckRisk: string } }[];
+      };
+      const stuck = data.pipeline.find(p => p.procedureId === 'PROC-STUCK');
+      expect(stuck?.computedAttributes.bottleneckRisk).toBe('HIGH');
+    });
+
+    it('should aggregate detected bottlenecks from p95-stuck procedures', async () => {
+      setupHistoricalCorpus();
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        bottlenecks: { stage: string; procedureCount: number; thresholdDays: number }[];
+      };
+      const referral = data.bottlenecks.find(b => b.stage === 'REFERRAL');
+      expect(referral).toBeDefined();
+      expect(referral?.procedureCount).toBeGreaterThanOrEqual(1);
+      expect(referral?.thresholdDays).toBeGreaterThan(0);
+    });
+
+    it('should emit forecastBasis=HISTORICAL_MEDIAN when corpus has sufficient samples', async () => {
+      setupHistoricalCorpus();
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { forecastBasis: string };
+      expect(data.forecastBasis).toBe('HISTORICAL_MEDIAN');
+    });
+
+    it('should emit forecastBasis=INSUFFICIENT_DATA when no events are available', async () => {
+      vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(mockFreshProceduresOnly);
+      vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue(emptyEventsResponse());
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        forecastBasis: string;
+        dataQualityWarnings: string[];
+      };
+      expect(data.forecastBasis).toBe('INSUFFICIENT_DATA');
+      expect(data.dataQualityWarnings.some(w => w.includes('Forecast basis: insufficient'))).toBe(true);
+    });
+
+    it('should be deterministic across runs with identical fixture data', async () => {
+      setupHistoricalCorpus();
+      const a = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
+      resetLifecycleStatisticsCache();
+      // Re-arm mocks because clearAllMocks doesn't run between consecutive calls
+      setupHistoricalCorpus();
+      const b = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
+      const parsedA = JSON.parse(a.content[0]?.text ?? '{}') as Record<string, unknown>;
+      const parsedB = JSON.parse(b.content[0]?.text ?? '{}') as Record<string, unknown>;
+      // computationTimeMs depends on wall clock; strip before comparing.
+      type Parsed = { lifecycleCorpus: { computationTimeMs?: number } };
+      delete (parsedA as Parsed).lifecycleCorpus.computationTimeMs;
+      delete (parsedB as Parsed).lifecycleCorpus.computationTimeMs;
+      expect(JSON.stringify(parsedA.pipeline)).toBe(JSON.stringify(parsedB.pipeline));
+      expect(JSON.stringify(parsedA.bottlenecks)).toBe(JSON.stringify(parsedB.bottlenecks));
+    });
+
+    it('should fall back gracefully when individual getProcedureEvents calls reject', async () => {
+      vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(mockProcedures);
+      vi.mocked(epClientModule.epClient.getProcedureEvents).mockImplementation(
+        async (procId: string) => {
+          if (procId === 'PROC-001') return Promise.reject(new Error('500'));
+          return Promise.resolve(emptyEventsResponse());
+        }
+      );
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        pipeline: { procedureId: string }[];
+        dataQualityWarnings: string[];
+      };
+      // Tool must still return all procedures, falling back to metadata dates
+      // for procedures whose events fetch failed.
+      const ids = data.pipeline.map(p => p.procedureId);
+      expect(ids).toContain('PROC-001');
+      expect(data.dataQualityWarnings.some(w => w.includes('no lifecycle events'))).toBe(true);
+    });
+
+    it('should include lifecycleEvents echoing the raw event sequence', async () => {
+      setupHistoricalCorpus();
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        pipeline: { procedureId: string; lifecycleEvents: { stage: string; rawType: string; date: string; title: string }[] }[];
+      };
+      const hist = data.pipeline.find(p => p.procedureId === 'HIST-0');
+      expect(hist).toBeDefined();
+      expect(hist?.lifecycleEvents.map(e => e.stage)).toEqual(['REFERRAL', 'COM_VOTE', 'EP_ADOPTION']);
+      // rawType is preserved verbatim
+      expect(hist?.lifecycleEvents[0]?.rawType).toBe('REFERRAL');
+    });
+
+    it('should normalise URI-style event types (def/ep-activities/REFERRAL)', async () => {
+      const procs = {
+        data: [{
+          id: 'PROC-URI',
+          title: 'URI-style events',
+          reference: '2025/0001(COD)',
+          type: 'COD',
+          subjectMatter: 'Digital',
+          stage: 'Committee consideration',
+          status: 'Ongoing',
+          dateInitiated: recentDate(30),
+          dateLastActivity: recentDate(5),
+          responsibleCommittee: 'IMCO',
+          rapporteur: '',
+          documents: [],
+        }],
+        total: 1, limit: 20, offset: 0, hasMore: false,
+      };
+      vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(procs);
+      vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue(buildEvents([
+        { date: recentDate(10), type: 'def/ep-activities/REFERRAL' },
+      ]));
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        pipeline: { procedureId: string; currentStage: string }[];
+      };
+      const item = data.pipeline.find(p => p.procedureId === 'PROC-URI');
+      expect(item?.currentStage).toBe('REFERRAL');
+    });
+
+    it('should expose lifecycleCorpus metadata in the envelope', async () => {
+      setupHistoricalCorpus();
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        lifecycleCorpus: { corpusSize: number; totalObservations: number; computationTimeMs: number };
+      };
+      expect(data.lifecycleCorpus.corpusSize).toBeGreaterThanOrEqual(4);
+      expect(data.lifecycleCorpus.totalObservations).toBeGreaterThan(0);
+      expect(data.lifecycleCorpus.computationTimeMs).toBeGreaterThanOrEqual(0);
     });
   });
 });
