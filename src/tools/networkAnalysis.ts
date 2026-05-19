@@ -514,8 +514,8 @@ function deriveDataFreshness(analysisType: string, doceoAvailable: boolean): str
 export async function networkAnalysis(params: NetworkAnalysisParams): Promise<ToolResult> {
   const startedAt = Date.now();
   try {
-    // Fetch up to MAX_NETWORK_NODES MEPs. The EP API returns a single page;
-    // full pagination is avoided to stay within rate-limit budget.
+    // Fetch up to 100 MEPs (single API page). Full pagination is avoided
+    // to stay within rate-limit budget; MAX_NETWORK_NODES caps if needed.
     const mepResult = await epClient.getCurrentMEPs({ limit: 100 });
     if (mepResult.data.length === 0) return buildToolResponse(buildEmptyResult(params));
 
