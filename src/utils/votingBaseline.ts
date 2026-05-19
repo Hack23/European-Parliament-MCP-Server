@@ -126,6 +126,8 @@ export interface OutlierWeek {
   weekStart: string;
   value: number;
   z: number;
+  /** Baseline mean rate across all weeks (the "expected" value). */
+  baselineMean: number;
   voteIds: string[];
 }
 
@@ -134,6 +136,8 @@ export interface WoWShift {
   fromWeek: string;
   toWeek: string;
   delta: number;
+  /** Previous week's defection rate (the "expected" value before the shift). */
+  previousRate: number;
   voteIds: string[];
 }
 
@@ -427,6 +431,7 @@ export function findOutlierWeeks(
         weekStart: b.weekStart,
         value: b[rateKey],
         z: Math.round(z * 100) / 100,
+        baselineMean: Math.round(baseline.mean * 100) / 100,
         voteIds: [...b.voteIds],
       });
     }
@@ -459,6 +464,7 @@ export function findWoWShifts(
         fromWeek: prev.weekStart,
         toWeek: curr.weekStart,
         delta: Math.round(delta * 100) / 100,
+        previousRate: Math.round(prev.defectionRate * 100) / 100,
         voteIds: [...prev.voteIds, ...curr.voteIds],
       });
     }

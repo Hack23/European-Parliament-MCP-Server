@@ -1350,8 +1350,8 @@ Analyze coalition dynamics between EPP and S&D over the last 6 months
 #### Methodology
 
 Each anomaly is detected against the MEP's *own* rolling baseline derived from
-DOCEO roll-call (RCV) records bounded to the **200 most recent** votes in the
-requested period:
+DOCEO roll-call (RCV) records bounded to **up to 200** votes (2×100 paged
+fetching) in the requested period:
 
 | Anomaly Type | Trigger |
 |--------------|---------|

@@ -43,8 +43,11 @@ import type { ToolResult } from './shared/types.js';
 import type { LatestVoteRecord } from '../clients/ep/doceoXmlParser.js';
 import type { ClassifiedVote, WeekBucket } from '../utils/votingBaseline.js';
 
-/** Max DOCEO RCV records aggregated per request (per issue specification). */
+/** Max DOCEO RCV records aggregated per request (2 pages × 100 per page). */
 const DOCEO_RCV_FETCH_LIMIT = 200;
+
+/** Per-page limit for DOCEO getLatestVotes (API enforces ≤ 100). */
+const DOCEO_PAGE_LIMIT = 100;
 
 /** DOCEO call timeout, mirrors the shared aggregator guard. */
 const DOCEO_TIMEOUT_MS = 2_000;
@@ -184,7 +187,7 @@ function buildMethodologyDescription(
       + `${String(Math.round(DEFAULT_CROSS_PARTY_SHARE * 100))}% — `
       + `via sensitivityThreshold=${String(sensitivity)})`;
   return 'Per-MEP defection / abstention / cross-party alignment anomaly detection on DOCEO RCV '
-    + 'records (≤200 most recent). Per-vote group majority resolved by plurality with alphabetical '
+    + 'records (up to 200 via 2×100 paged fetching). Per-vote group majority resolved by plurality with alphabetical '
     + 'tie-breaking. Each MEP vote classified as aligned / defected / abstained / absent against their '
     + `home-group majority. Anomalies emitted when defection-rate z-score ≥ ${String(z)}, `
     + `abstention-rate z-score ≥ ${String(z)}, week-over-week defection delta ≥ ${String(wow)}pp, `
@@ -251,9 +254,9 @@ function detectMepAnomaliesFromDoceo(
       description: `Defection rate of ${String(outlier.value)}% during week of ${outlier.weekStart} `
         + `(z=${String(outlier.z)} vs ${mep.politicalGroup || 'home group'} majority on DOCEO RCVs)`,
       metrics: {
-        expectedValue: 0,
+        expectedValue: outlier.baselineMean,
         actualValue: outlier.value,
-        deviation: Math.round(outlier.value * 100) / 100,
+        deviation: Math.round((outlier.value - outlier.baselineMean) * 100) / 100,
       },
       detectedDate,
       evidenceVoteIds: outlier.voteIds,
@@ -269,9 +272,9 @@ function detectMepAnomaliesFromDoceo(
       description: `Abstention rate of ${String(outlier.value)}% during week of ${outlier.weekStart} `
         + `(z=${String(outlier.z)} vs MEP's own baseline)`,
       metrics: {
-        expectedValue: 0,
+        expectedValue: outlier.baselineMean,
         actualValue: outlier.value,
-        deviation: Math.round(outlier.value * 100) / 100,
+        deviation: Math.round((outlier.value - outlier.baselineMean) * 100) / 100,
       },
       detectedDate,
       evidenceVoteIds: outlier.voteIds,
@@ -287,8 +290,8 @@ function detectMepAnomaliesFromDoceo(
       description: `Week-over-week defection rate jumped by ${String(shift.delta)}pp `
         + `(${shift.fromWeek} → ${shift.toWeek})`,
       metrics: {
-        expectedValue: 0,
-        actualValue: shift.delta,
+        expectedValue: shift.previousRate,
+        actualValue: Math.round((shift.previousRate + shift.delta) * 100) / 100,
         deviation: shift.delta,
       },
       detectedDate,
@@ -297,6 +300,7 @@ function detectMepAnomaliesFromDoceo(
   }
 
   for (const window of findCrossPartyAlignmentWindows(buckets, thresholds.crossPartyShare)) {
+    const thresholdPct = Math.round(thresholds.crossPartyShare * 100);
     anomalies.push({
       type: 'CROSS_PARTY_ALIGNMENT_SHIFT',
       severity: severityFromShare(window.sharePercent),
@@ -305,9 +309,9 @@ function detectMepAnomaliesFromDoceo(
       description: `Voted with non-home group majorities on ${String(window.sharePercent)}% of `
         + `${String(window.decisive)} decisive RCVs during week of ${window.weekStart}`,
       metrics: {
-        expectedValue: 0,
+        expectedValue: thresholdPct,
         actualValue: window.sharePercent,
-        deviation: window.sharePercent,
+        deviation: Math.round((window.sharePercent - thresholdPct) * 100) / 100,
       },
       detectedDate,
       evidenceVoteIds: window.voteIds,
@@ -360,31 +364,54 @@ function mostRecentSittingDate(votes: LatestVoteRecord[]): Date | null {
 }
 
 /**
- * Fetch DOCEO RCV records covering the request window. Returns an empty
- * sentinel when DOCEO is unreachable so the caller can surface a graceful
- * `dataQualityWarning` instead of throwing.
+ * Fetch DOCEO RCV records covering the request window. Implements paged
+ * fetching (2 × 100) since the DOCEO client validates `limit ≤ 100`.
+ * Returns an empty sentinel when DOCEO is unreachable so the caller can
+ * surface a graceful `dataQualityWarning` instead of throwing.
  */
 async function fetchDoceoRcvRecords(
   period: { from: string; to: string }
 ): Promise<{ records: LatestVoteRecord[]; doceoAvailable: boolean }> {
   try {
-    const response = await withTimeoutAndAbort(
+    // Normalize period.to to an ISO date string for DOCEO weekStart.
+    // DOCEO `weekStart` selects the plenary week containing the supplied date;
+    // we use the period's *end* date to capture the most recent week in scope.
+    const firstPage = await withTimeoutAndAbort(
       (signal) => doceoClient.getLatestVotes({
         includeIndividualVotes: true,
-        limit: DOCEO_RCV_FETCH_LIMIT,
-        // `weekStart` selects the plenary week containing the supplied date.
-        // We pass the requested period's *end* date so DOCEO returns the most
-        // recent plenary week within the analysis window — mirrors the
-        // doceoMepAggregator pattern. Historical multi-week windows aren't
-        // fully covered by a single DOCEO request; that's a documented
-        // limitation of the upstream feed (≤200 most recent RCVs per call).
+        limit: DOCEO_PAGE_LIMIT,
+        offset: 0,
         weekStart: period.to,
         abortSignal: signal,
       }),
       DOCEO_TIMEOUT_MS,
-      'DOCEO RCV fetch timed out'
+      'DOCEO RCV fetch (page 1) timed out'
     );
-    const records = response.data.filter(v => v.dataSource === 'RCV');
+    let allRecords = firstPage.data;
+
+    // Second page if the first was full — up to DOCEO_RCV_FETCH_LIMIT total.
+    if (firstPage.data.length >= DOCEO_PAGE_LIMIT) {
+      try {
+        const secondPage = await withTimeoutAndAbort(
+          (signal) => doceoClient.getLatestVotes({
+            includeIndividualVotes: true,
+            limit: DOCEO_PAGE_LIMIT,
+            offset: DOCEO_PAGE_LIMIT,
+            weekStart: period.to,
+            abortSignal: signal,
+          }),
+          DOCEO_TIMEOUT_MS,
+          'DOCEO RCV fetch (page 2) timed out'
+        );
+        allRecords = [...allRecords, ...secondPage.data];
+      } catch {
+        // Second page failure is non-fatal; continue with first page only.
+      }
+    }
+
+    const records = allRecords
+      .filter(v => v.dataSource === 'RCV')
+      .slice(0, DOCEO_RCV_FETCH_LIMIT);
     return { records, doceoAvailable: true };
   } catch (error: unknown) {
     auditLogger.logError('detect_voting_anomalies.doceo_fetch', { from: period.from, to: period.to }, toErrorMessage(error));
@@ -427,7 +454,7 @@ function runDetectionForMeps(
     auditLogger.logDataAccess(
       'detect_voting_anomalies.mep_analysis',
       { mepId: mep.id, rcvVotesInspected: inspected },
-      anomalies.length
+      inspected
     );
   }
   // Worst-case coverage drives confidence; best-case is reported separately
