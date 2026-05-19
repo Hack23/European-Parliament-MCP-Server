@@ -5,6 +5,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleNetworkAnalysis } from './networkAnalysis.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
+import * as doceoClientModule from '../clients/ep/doceoClient.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
@@ -12,6 +13,13 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
     getCurrentMEPs: vi.fn(),
     getMEPDetails: vi.fn()
   }
+}));
+
+// Mock DOCEO client — default to empty so committee tests don't make network calls.
+vi.mock('../clients/ep/doceoClient.js', () => ({
+  doceoClient: {
+    getLatestVotes: vi.fn(),
+  },
 }));
 
 const mockMEPs = [
@@ -32,6 +40,17 @@ describe('network_analysis Tool', () => {
       limit: 50,
       offset: 0,
       hasMore: false
+    });
+
+    vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+      data: [],
+      total: 0,
+      datesAvailable: [],
+      datesUnavailable: [],
+      source: { type: 'DOCEO_XML', term: 10, urls: [] },
+      limit: 100,
+      offset: 0,
+      hasMore: false,
     });
   });
 
@@ -186,6 +205,213 @@ describe('network_analysis Tool', () => {
 
       const result = await handleNetworkAnalysis({});
       expect(result.isError).toBe(true);
+    });
+  });
+
+  describe('Schema additions', () => {
+    it('should accept minSimilarity param', async () => {
+      const result = await handleNetworkAnalysis({ minSimilarity: 0.5 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { minSimilarity: number };
+      expect(data.minSimilarity).toBe(0.5);
+    });
+
+    it('should reject minSimilarity > 1', async () => {
+      await expect(handleNetworkAnalysis({ minSimilarity: 1.5 })).rejects.toThrow();
+    });
+
+    it('should reject negative minSimilarity', async () => {
+      await expect(handleNetworkAnalysis({ minSimilarity: -0.1 })).rejects.toThrow();
+    });
+
+    it('should default minSimilarity to 0.7', async () => {
+      const result = await handleNetworkAnalysis({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as { minSimilarity: number };
+      expect(data.minSimilarity).toBe(0.7);
+    });
+  });
+
+  describe('analysisType modes', () => {
+    it('committee mode produces only committee edges and skips DOCEO call', async () => {
+      const result = await handleNetworkAnalysis({ analysisType: 'committee' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        networkEdges: { relationshipType: string }[];
+        analysisType: string;
+      };
+      expect(data.analysisType).toBe('committee');
+      expect(data.networkEdges.length).toBeGreaterThan(0);
+      for (const e of data.networkEdges) {
+        expect(e.relationshipType).toBe('committee_co_membership');
+      }
+      expect(doceoClientModule.doceoClient.getLatestVotes).not.toHaveBeenCalled();
+    });
+
+    it('voting mode produces voting edges from DOCEO RCV data', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        data: [
+          {
+            id: 'v1', date: '2026-01-15', term: 10, subject: 's', reference: 'r',
+            votesFor: 3, votesAgainst: 1, abstentions: 0, result: 'ADOPTED',
+            mepVotes: { 'MEP-1': 'FOR', 'MEP-2': 'FOR', 'MEP-3': 'FOR', 'MEP-4': 'AGAINST' },
+            sourceUrl: 'https://example/test', dataSource: 'RCV',
+          },
+          {
+            id: 'v2', date: '2026-01-16', term: 10, subject: 's', reference: 'r',
+            votesFor: 2, votesAgainst: 2, abstentions: 0, result: 'REJECTED',
+            mepVotes: { 'MEP-1': 'FOR', 'MEP-2': 'FOR', 'MEP-3': 'FOR', 'MEP-4': 'AGAINST' },
+            sourceUrl: 'https://example/test', dataSource: 'RCV',
+          },
+          {
+            id: 'v3', date: '2026-01-17', term: 10, subject: 's', reference: 'r',
+            votesFor: 3, votesAgainst: 1, abstentions: 0, result: 'ADOPTED',
+            mepVotes: { 'MEP-1': 'FOR', 'MEP-2': 'FOR', 'MEP-3': 'FOR', 'MEP-4': 'AGAINST' },
+            sourceUrl: 'https://example/test', dataSource: 'RCV',
+          },
+        ],
+        total: 3, datesAvailable: [], datesUnavailable: [],
+        source: { type: 'DOCEO_XML', term: 10, urls: [] },
+        limit: 100, offset: 0, hasMore: false,
+      });
+
+      const result = await handleNetworkAnalysis({ analysisType: 'voting' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        networkEdges: { relationshipType: string; sourceId: string; targetId: string }[];
+      };
+      expect(data.networkEdges.length).toBeGreaterThan(0);
+      for (const e of data.networkEdges) {
+        expect(e.relationshipType).toBe('voting_similarity');
+      }
+      // MEP-1 / MEP-2 / MEP-3 fully agree → pairs should be present.
+      const ids = data.networkEdges.flatMap(e => [e.sourceId, e.targetId]);
+      expect(ids).toContain('MEP-1');
+      expect(ids).toContain('MEP-2');
+    });
+
+    it('combined mode produces at least as many edges as committee mode', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        data: Array.from({ length: 5 }, (_, i) => ({
+          id: `v${String(i)}`, date: '2026-01-15', term: 10, subject: 's', reference: 'r',
+          votesFor: 4, votesAgainst: 1, abstentions: 0, result: 'ADOPTED' as const,
+          mepVotes: { 'MEP-1': 'FOR' as const, 'MEP-5': 'FOR' as const, 'MEP-2': 'FOR' as const, 'MEP-3': 'AGAINST' as const },
+          sourceUrl: 'https://example/test', dataSource: 'RCV' as const,
+        })),
+        total: 5, datesAvailable: [], datesUnavailable: [],
+        source: { type: 'DOCEO_XML', term: 10, urls: [] },
+        limit: 100, offset: 0, hasMore: false,
+      });
+
+      const committeeResult = await handleNetworkAnalysis({ analysisType: 'committee' });
+      const committeeData = JSON.parse(committeeResult.content[0]?.text ?? '{}') as {
+        networkEdges: unknown[]; computedAttributes: { totalEdges: number };
+      };
+
+      const combinedResult = await handleNetworkAnalysis({ analysisType: 'combined' });
+      const combinedData = JSON.parse(combinedResult.content[0]?.text ?? '{}') as {
+        networkEdges: { relationshipType: string }[];
+        computedAttributes: { totalEdges: number };
+      };
+
+      // Combined must include at least all committee-pair signals (committee_co_membership
+      // edges are preserved when DOCEO does not add a voting edge for the same pair).
+      expect(combinedData.computedAttributes.totalEdges)
+        .toBeGreaterThanOrEqual(committeeData.computedAttributes.totalEdges);
+      const types = new Set(combinedData.networkEdges.map(e => e.relationshipType));
+      // Contains at least one voting-derived edge (MEP-1↔MEP-5 are not committee peers).
+      expect(types.has('voting_similarity') || types.has('combined')).toBe(true);
+    });
+
+    it('combined mode falls back to committee edges when DOCEO unavailable', async () => {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockRejectedValue(new Error('DOCEO down'));
+      const result = await handleNetworkAnalysis({ analysisType: 'combined' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        networkEdges: { relationshipType: string }[];
+        dataQualityWarnings: string[];
+      };
+      expect(data.networkEdges.length).toBeGreaterThan(0);
+      expect(data.dataQualityWarnings.some(w => w.includes('DOCEO'))).toBe(true);
+    });
+  });
+
+  describe('Depth-bounded BFS ego network', () => {
+    const linearMEPs = [
+      { id: '101', name: 'A', country: 'DE', politicalGroup: 'EPP', committees: ['C1'], active: true, termStart: '2019-07-02' },
+      { id: '102', name: 'B', country: 'FR', politicalGroup: 'S&D', committees: ['C1', 'C2'], active: true, termStart: '2019-07-02' },
+      { id: '103', name: 'C', country: 'IT', politicalGroup: 'Renew', committees: ['C2', 'C3'], active: true, termStart: '2019-07-02' },
+      { id: '104', name: 'D', country: 'ES', politicalGroup: 'Greens/EFA', committees: ['C3'], active: true, termStart: '2019-07-02' },
+    ];
+
+    beforeEach(() => {
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
+        data: linearMEPs, total: linearMEPs.length, limit: 50, offset: 0, hasMore: false,
+      });
+    });
+
+    it('depth=1 returns only the direct neighbours of the focus MEP', async () => {
+      const result = await handleNetworkAnalysis({ analysisType: 'committee', mepId: 101, depth: 1 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        networkNodes: { mepId: string }[];
+      };
+      const ids = new Set(data.networkNodes.map(n => n.mepId));
+      // 101 is connected via C1 to 102 only.
+      expect(ids.has('101')).toBe(true);
+      expect(ids.has('102')).toBe(true);
+      expect(ids.has('103')).toBe(false);
+      expect(ids.has('104')).toBe(false);
+    });
+
+    it('depth=2 adds friends-of-friends, depth=3 covers the chain', async () => {
+      const d1 = await handleNetworkAnalysis({ analysisType: 'committee', mepId: 101, depth: 1 });
+      const d2 = await handleNetworkAnalysis({ analysisType: 'committee', mepId: 101, depth: 2 });
+      const d3 = await handleNetworkAnalysis({ analysisType: 'committee', mepId: 101, depth: 3 });
+      const count = (r: typeof d1): number =>
+        (JSON.parse(r.content[0]?.text ?? '{}') as { networkNodes: unknown[] }).networkNodes.length;
+      expect(count(d2)).toBeGreaterThanOrEqual(count(d1));
+      expect(count(d3)).toBeGreaterThanOrEqual(count(d2));
+      // depth=3 reaches all 4 nodes along the chain.
+      expect(count(d3)).toBe(4);
+    });
+  });
+
+  describe('Weighted centrality & deterministic clustering', () => {
+    it('exposes weightedDegree, betweennessCentrality, and modularityScore', async () => {
+      const result = await handleNetworkAnalysis({ analysisType: 'committee' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        networkNodes: { weightedDegree: number; betweennessCentrality: number }[];
+        modularityScore: number;
+      };
+      for (const n of data.networkNodes) {
+        expect(typeof n.weightedDegree).toBe('number');
+        expect(typeof n.betweennessCentrality).toBe('number');
+      }
+      expect(typeof data.modularityScore).toBe('number');
+    });
+
+    it('clusters and centralities are deterministic across runs', async () => {
+      const a = await handleNetworkAnalysis({ analysisType: 'committee' });
+      const b = await handleNetworkAnalysis({ analysisType: 'committee' });
+      type Run = {
+        modularityScore: number;
+        networkNodes: { mepId: string; clusterLabel: string; centralityScore: number }[];
+      };
+      const aData = JSON.parse(a.content[0]?.text ?? '{}') as Run;
+      const bData = JSON.parse(b.content[0]?.text ?? '{}') as Run;
+      expect(bData.modularityScore).toBe(aData.modularityScore);
+      const aMap = new Map(aData.networkNodes.map(n => [n.mepId, n] as const));
+      for (const n of bData.networkNodes) {
+        const peer = aMap.get(n.mepId);
+        expect(peer?.clusterLabel).toBe(n.clusterLabel);
+        expect(peer?.centralityScore).toBe(n.centralityScore);
+      }
+    });
+
+    it('identifies bridging MEPs across clusters when present', async () => {
+      const result = await handleNetworkAnalysis({ analysisType: 'committee' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        bridgingMEPs: { mepId: string; connectsClusters: string[] }[];
+      };
+      expect(Array.isArray(data.bridgingMEPs)).toBe(true);
+      // MEP-2 (S&D) bridges to EPP (MEP-1 via ENVI) and Renew (MEP-4 via ITRE).
+      const bridge = data.bridgingMEPs.find(b => b.mepId === 'MEP-2');
+      expect(bridge).toBeDefined();
     });
   });
 });

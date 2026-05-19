@@ -1669,43 +1669,64 @@ Generate a current political landscape overview including group sizes, coalition
 
 ### Tool: network_analysis
 
-**Description**: MEP relationship network mapping using committee co-membership. Computes centrality scores, cluster assignments, bridging MEPs, and network density metrics. Identifies informal power structures and cross-party collaboration pathways.
+**Description**: MEP relationship network mapping combining **committee co-membership** and **DOCEO roll-call voting similarity**. Computes weighted-degree + Brandes betweenness centrality, deterministic label-propagation clusters with Newman modularity Q, depth-bounded BFS ego networks, and cross-cluster bridging MEPs.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| mepId | number | No | - | Focus on ego network for a specific MEP |
-| analysisType | string | No | combined | Analysis type: `committee`, `voting`, or `combined` |
-| depth | number | No | 2 | Network depth (1-3 hops from focal node) |
+| mepId | number | No | - | Focus on ego network for a specific MEP (enables BFS depth limit) |
+| analysisType | string | No | combined | `committee` (shared-committee edges only), `voting` (DOCEO RCV similarity), or `combined` (mean of the two normalised weights) |
+| depth | number | No | 2 | BFS traversal depth (1-3 hops); applied to the ego network when `mepId` is provided |
+| minSimilarity | number | No | 0.7 | Minimum DOCEO co-vote agreement (0-1) to retain a voting-similarity edge |
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-Map the relationship network for MEP 124810 using committee co-membership data
+Map the immediate (depth 1) ego network for MEP 124810 combining committee + voting similarity, threshold 0.8
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('network_analysis', {
+// Committee-only network (legacy behaviour, fastest)
+await client.callTool('network_analysis', { analysisType: 'committee' });
+
+// Voting-similarity-only network (requires DOCEO RCV data)
+await client.callTool('network_analysis', { analysisType: 'voting', minSimilarity: 0.8 });
+
+// Depth-1 ego network around MEP 124810, combined edges
+await client.callTool('network_analysis', {
   mepId: 124810,
-  analysisType: 'committee',
-  depth: 2
+  analysisType: 'combined',
+  depth: 1,
+  minSimilarity: 0.7,
 });
 ```
 
-**Example Response** (abbreviated):
-```json
-{
-  "content": [{
-    "type": "text",
-    "text": "{\"networkMetrics\":{\"density\":0.34,\"avgCentrality\":0.45,\"clusters\":5},\"centralNodes\":[{\"mepId\":124810,\"centralityScore\":0.82,\"clusterAssignment\":1,\"bridgingScore\":0.67}],\"crossPartyEdges\":42}"
-  }]
-}
-```
+#### Depth semantics
 
-> **EP API Endpoints**: `/meps`, `/corporate-bodies`
+When `mepId` is provided the response is restricted to the ego subnetwork
+within `depth` hops:
+- `depth=1` → only direct neighbours of the focus MEP.
+- `depth=2` → adds friends-of-friends.
+- `depth=3` → ≤3 hops from the focus.
+
+When `mepId` is omitted the full MEP roster is analysed (depth is ignored)
+and clusters are detected globally.
+
+#### Centrality & clusters
+
+- `weightedDegree` — sum of incident edge weights per node.
+- `betweennessCentrality` — Brandes' algorithm on the weighted subgraph
+  (similarity converted to distance via `1 / weight`).
+- `centralityScore` — composite `0.6 × weightedDegree + 0.4 × 100 ×
+  betweennessCentrality` rounded to 2dp.
+- `modularityScore` — Newman Q for the label-propagation partition (`>0.3`
+  indicates meaningful community structure).
+
+> **EP API Endpoints**: `/meps`, `/corporate-bodies`, DOCEO RCV XML
+> (https://www.europarl.europa.eu/doceo/document/PV-.../RCV-...)
 
 ---
 
