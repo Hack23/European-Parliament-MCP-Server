@@ -88,10 +88,10 @@ describe('computeNetworkVotingSimilarityFromDoceo', () => {
   it('respects minSimilarity threshold', async () => {
     const data = [];
     for (let i = 0; i < 10; i++) {
-      // A & B agree 6/10 → similarity 0.6
-      const aPos: 'FOR' | 'AGAINST' = i < 6 ? 'FOR' : 'FOR';
+      // A always votes FOR; B votes FOR on the first 6 and AGAINST on the rest
+      // → 6/10 agreement → similarity 0.6.
       const bPos: 'FOR' | 'AGAINST' = i < 6 ? 'FOR' : 'AGAINST';
-      data.push(rcv(`v${String(i)}`, { A: aPos, B: bPos }));
+      data.push(rcv(`v${String(i)}`, { A: 'FOR', B: bPos }));
     }
     vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
       ...baseResp,
@@ -121,5 +121,15 @@ describe('computeNetworkVotingSimilarityFromDoceo', () => {
     vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockRejectedValue(new Error('boom'));
     const result = await computeNetworkVotingSimilarityFromDoceo(new Set(['A']));
     expect(result).toBeNull();
+  });
+
+  it('throws RangeError for an invalid limit instead of swallowing it as a DOCEO outage', async () => {
+    await expect(
+      computeNetworkVotingSimilarityFromDoceo(new Set(['A', 'B']), { limit: 0 })
+    ).rejects.toBeInstanceOf(RangeError);
+    await expect(
+      computeNetworkVotingSimilarityFromDoceo(new Set(['A', 'B']), { limit: 200 })
+    ).rejects.toBeInstanceOf(RangeError);
+    expect(doceoClientModule.doceoClient.getLatestVotes).not.toHaveBeenCalled();
   });
 });

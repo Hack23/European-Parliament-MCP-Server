@@ -453,7 +453,7 @@ function describeMethodology(
   lines.push('Centrality = 0.6 × weighted-degree + 0.4 × 100 × betweenness (Brandes, weighted shortest paths via 1/weight).');
   lines.push('Communities detected via deterministic asynchronous label propagation; modularityScore is Newman Q.');
   lines.push('BFS depth-bounded ego network when mepId is supplied.');
-  if (analysisType !== 'committee') {
+  if (analysisType !== 'committee' && votingResultAvailable) {
     lines.push(`DOCEO RCV records inspected: ${String(rcvInspected)}.`);
     lines.push('Data source: https://data.europarl.europa.eu/api/v2/meps + DOCEO XML.');
   } else {

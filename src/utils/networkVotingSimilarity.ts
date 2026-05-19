@@ -173,6 +173,15 @@ export async function computeNetworkVotingSimilarityFromDoceo(
   const limit = options.limit ?? DEFAULT_DOCEO_PAGE_SIZE;
   const timeoutMs = options.timeoutMs ?? NETWORK_VOTING_SIMILARITY_TIMEOUT_MS;
 
+  // Validate `limit` *before* the try/catch so a misuse (e.g. caller-supplied
+  // 0 or 200) surfaces as a RangeError instead of being swallowed and made
+  // indistinguishable from a real DOCEO outage (which returns `null`).
+  if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+    throw new RangeError(
+      `computeNetworkVotingSimilarityFromDoceo: options.limit must be an integer in [1, 100], received ${String(limit)}`
+    );
+  }
+
   if (mepIdSubset.size === 0) {
     return { edges: [], rcvVotesInspected: 0, dataSource: 'DOCEO' };
   }

@@ -5,7 +5,7 @@
  * - {@link buildAdjacency} — adjacency map from a weighted edge list.
  * - {@link bfsLimited} — depth-bounded BFS ego-network extraction.
  * - {@link weightedDegree} — weighted-degree centrality per node.
- * - {@link betweennessCentrality} — Brandes' algorithm (weighted, Dijkstra-based, O(V·(V+E)·log V)).
+ * - {@link betweennessCentrality} — Brandes' algorithm (weighted, Dijkstra-based, O(V²·log V) with the current array-backed priority queue).
  * - {@link labelPropagation} — deterministic asynchronous label-propagation community detection.
  * - {@link modularity} — Newman's modularity Q for a partition.
  *
@@ -144,7 +144,12 @@ export function weightedDegree(nodeIds: readonly string[], edges: readonly Weigh
  * converted to distance `1 / weight` so high-weight edges are "shorter"
  * and therefore preferred routes for brokers.
  *
- * Complexity: `O(V · (V + E) · log V)` worst case for weighted graphs.
+ * Complexity: `O(V² · log V)` per source with the current array-backed
+ * priority queue (each `popClosest` performs a full `Array.prototype.sort`
+ * and `relaxShorter` uses `Array.prototype.includes`). A binary-heap
+ * priority queue would lower this to the textbook `O(V · (V + E) · log V)`
+ * bound but is not required for the small graphs this module is designed
+ * for (V is capped at a few hundred nodes by the calling tool).
  *
  * The returned scores are normalised by `1 / ((V-1)(V-2))` for V≥3 (undirected
  * graph — each unordered pair is traversed twice during Brandes) so they
