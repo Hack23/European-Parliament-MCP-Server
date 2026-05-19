@@ -445,7 +445,7 @@ function describeMethodology(
     lines.push('Edges: weighted shared-committee membership (weight = min(1, sharedCommittees × 0.3), ≥1 shared committee).');
   } else if (analysisType === 'voting') {
     lines.push('Edges: DOCEO RCV co-vote agreement (Jaccard-like, decisive votes only, ≥3 shared decisive votes).');
-    if (!votingResultAvailable) warnings.push('DOCEO RCV data unavailable — voting-similarity edges could not be computed; result is empty for analysisType=voting');
+    if (!votingResultAvailable) warnings.push('DOCEO RCV data unavailable — voting-similarity edges could not be computed; edge set is empty but EP-sourced nodes are still returned for analysisType=voting');
   } else {
     lines.push('Edges: union of committee + DOCEO voting similarity. Shared pairs use the mean of the two normalised weights.');
     if (!votingResultAvailable) warnings.push('DOCEO RCV data unavailable — falling back to committee-only edges for analysisType=combined');

@@ -26,6 +26,8 @@
  */
 
 import { doceoClient } from '../clients/ep/doceoClient.js';
+import type { LatestVotesResponse } from '../clients/ep/doceoClient.js';
+import type { LatestVoteRecord } from '../clients/ep/doceoXmlParser.js';
 import { withTimeoutAndAbort } from './timeout.js';
 import { auditLogger, toErrorMessage } from './auditLogger.js';
 
@@ -174,16 +176,16 @@ function validateDoceoLimit(limit: number): void {
 }
 
 function tallyPairsFromResponse(
-  response: { data: readonly { dataSource: string; mepVotes?: Record<string, string> }[] },
+  response: LatestVotesResponse,
   mepIdSubset: ReadonlySet<string>
 ): { pairs: Map<string, PairCounts>; rcvVotesInspected: number } {
   const pairs = new Map<string, PairCounts>();
   let rcvVotesInspected = 0;
-  for (const vote of response.data) {
+  for (const vote of response.data satisfies readonly LatestVoteRecord[]) {
     if (vote.dataSource !== 'RCV') continue;
     if (vote.mepVotes === undefined) continue;
     rcvVotesInspected += 1;
-    const decisiveMeps = extractDecisiveMeps(vote.mepVotes as Record<string, 'FOR' | 'AGAINST' | 'ABSTAIN'>, mepIdSubset);
+    const decisiveMeps = extractDecisiveMeps(vote.mepVotes, mepIdSubset);
     tallyPairs(decisiveMeps, pairs);
   }
   return { pairs, rcvVotesInspected };

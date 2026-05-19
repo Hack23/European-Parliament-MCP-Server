@@ -425,10 +425,12 @@ export function modularity(
     }
   }
   // Expected-degree subtraction over all same-community pairs (including self).
-  for (const i of nodeIds) {
+  // Iterate in sorted order for deterministic floating-point accumulation.
+  const sortedNodeIds = [...nodeIds].sort();
+  for (const i of sortedNodeIds) {
     const li = labels.get(i);
     const ki = deg.get(i) ?? 0;
-    for (const j of nodeIds) {
+    for (const j of sortedNodeIds) {
       if (labels.get(j) !== li) continue;
       const kj = deg.get(j) ?? 0;
       q -= (ki * kj) / m2;
