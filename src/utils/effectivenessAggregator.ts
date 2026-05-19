@@ -158,6 +158,16 @@ function inWindow(date: string | undefined | null, dateFrom: string, dateTo: str
   return d >= dateFrom && d <= dateTo;
 }
 
+/**
+ * Round a number to 2 decimal places, returning `0` when the input is not
+ * finite. Used pervasively for percentage / ratio fields so the public
+ * envelope never emits `NaN` or `Infinity`.
+ */
+export function roundToTwoDecimals(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.round(value * 100) / 100;
+}
+
 /** Shadow / opinion rapporteur fingerprints. */
 const SHADOW_OR_OPINION_KEYWORDS = ['shadow', 'opinion'];
 
@@ -178,8 +188,12 @@ function classifyProcedureRole(
   procedure: Procedure,
   mepTokens: string[],
 ): 'report' | 'opinion' | null {
+  // Defensive: TypeScript types `rapporteur` as `string`, but runtime EP API
+  // payloads occasionally arrive with the field missing or null. Treat any
+  // falsy value as "no attribution" so the aggregator never crashes on a
+  // malformed item.
   const rapporteur = procedure.rapporteur;
-  if (rapporteur === '') return null;
+  if (!rapporteur) return null;
   const matched = matchesMep(rapporteur, mepTokens);
   if (!matched) return null;
   const lower = rapporteur.toLowerCase();
@@ -378,7 +392,7 @@ export function aggregateLegislativeEffectiveness(inputs: AggregatorInputs): Agg
 
   const attributedProcedureCount = attributedIds.size;
   const legislativeSuccessRate = attributedProcedureCount > 0
-    ? Math.round((proceduresWithAdoptedText / attributedProcedureCount) * 100 * 100) / 100
+    ? roundToTwoDecimals((proceduresWithAdoptedText / attributedProcedureCount) * 100)
     : 0;
 
   return {

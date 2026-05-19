@@ -11,6 +11,7 @@ import {
   buildSubjectTokens,
   matchesMep,
   normaliseMepIdTokens,
+  roundToTwoDecimals,
 } from './effectivenessAggregator.js';
 import type { Procedure, AdoptedText } from '../types/ep/activities.js';
 import type { LegislativeDocument } from '../types/ep/document.js';
@@ -49,6 +50,20 @@ function question(overrides: Partial<ParliamentaryQuestion> = {}): Parliamentary
     topic: '', questionText: '', status: 'PENDING', ...overrides,
   };
 }
+
+describe('roundToTwoDecimals', () => {
+  it('rounds to two decimal places', () => {
+    expect(roundToTwoDecimals(50)).toBe(50);
+    expect(roundToTwoDecimals(50.555)).toBe(50.56);
+    expect(roundToTwoDecimals(0.123)).toBe(0.12);
+  });
+
+  it('returns 0 for NaN / Infinity inputs (defense in depth)', () => {
+    expect(roundToTwoDecimals(Number.NaN)).toBe(0);
+    expect(roundToTwoDecimals(Number.POSITIVE_INFINITY)).toBe(0);
+    expect(roundToTwoDecimals(Number.NEGATIVE_INFINITY)).toBe(0);
+  });
+});
 
 describe('normaliseMepIdTokens', () => {
   it('returns empty array for empty/whitespace input', () => {
@@ -105,6 +120,20 @@ describe('aggregateLegislativeEffectiveness', () => {
     ...WINDOW,
     procedures: [], adoptedTexts: [], plenaryDocumentItems: [], questions: [],
   };
+
+  it('skips procedures with missing/empty rapporteur (defensive)', () => {
+    const r = aggregateLegislativeEffectiveness({
+      ...baseInputs,
+      procedures: [
+        proc({ id: 'P-EMPTY', rapporteur: '' }),
+        // Force a runtime-undefined rapporteur to verify defensive guard.
+        proc({ id: 'P-NULL', rapporteur: undefined as unknown as string }),
+        proc({ id: 'P-OK', rapporteur: 'Rapporteur person/124810' }),
+      ],
+    });
+    expect(r.metrics.reportsAuthored).toBe(1);
+    expect(r.attributions.reportProcedureIds).toEqual(['P-OK']);
+  });
 
   it('returns zero metrics for empty inputs', () => {
     const r = aggregateLegislativeEffectiveness(baseInputs);

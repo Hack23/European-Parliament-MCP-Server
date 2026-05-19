@@ -665,6 +665,10 @@ describe('analyze_legislative_effectiveness Tool', () => {
       const call = vi.mocked(epClientModule.epClient.getParliamentaryQuestions).mock.calls[0]?.[0];
       expect(call).toBeDefined();
       expect(call?.author).toBeUndefined();
+      // Date window must still be forwarded so the EP endpoint applies the
+      // same temporal filter for committees as for individual MEPs.
+      expect(call?.dateFrom).toBe('2024-01-01');
+      expect(call?.dateTo).toBe('2024-12-31');
     });
   });
 

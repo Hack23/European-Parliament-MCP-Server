@@ -25,6 +25,7 @@ import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 import { withTimeoutAndAbort, TimeoutError } from '../utils/timeout.js';
 import {
   aggregateLegislativeEffectiveness,
+  roundToTwoDecimals,
   type LegislativeMetrics,
   type AggregationResult,
 } from '../utils/effectivenessAggregator.js';
@@ -212,10 +213,16 @@ async function fetchProcedures(): Promise<SourceFetchResult<Procedure>> {
 
 async function fetchAdoptedTexts(dateFrom: string): Promise<SourceFetchResult<AdoptedText>> {
   return runSource<AdoptedText>('adoptedTexts', async () => {
-    const year = parseInt(dateFrom.substring(0, 4), 10);
-    const params = Number.isFinite(year)
-      ? { year, limit: FETCH_PAGE_LIMIT }
-      : { limit: FETCH_PAGE_LIMIT };
+    // Date strings come from `resolveDefaultDateWindow` (always ISO-10) but
+    // guard against truncated values: only parse when the prefix is plausibly
+    // a 4-digit year, otherwise fall back to an unfiltered fetch.
+    let params: { year?: number; limit: number } = { limit: FETCH_PAGE_LIMIT };
+    if (dateFrom.length >= 4) {
+      const year = parseInt(dateFrom.slice(0, 4), 10);
+      if (Number.isFinite(year) && year > 1900 && year < 3000) {
+        params = { year, limit: FETCH_PAGE_LIMIT };
+      }
+    }
     const resp = await epClient.getAdoptedTexts(params);
     return Array.isArray(resp.data) ? resp.data : [];
   });
@@ -286,13 +293,13 @@ function computeScores(metrics: LegislativeMetrics): LegislativeScores {
       + metrics.opinionsDelivered * 5
       + Math.min(metrics.questionsAsked, 50) * 0.5,
   );
-  const overallEffectiveness = Math.round(
-    (productivityScore * 0.35 + qualityScore * 0.35 + impactScore * 0.30) * 100,
-  ) / 100;
+  const overallEffectiveness = roundToTwoDecimals(
+    productivityScore * 0.35 + qualityScore * 0.35 + impactScore * 0.30,
+  );
   return {
-    productivityScore: Math.round(productivityScore * 100) / 100,
-    qualityScore: Math.round(qualityScore * 100) / 100,
-    impactScore: Math.round(impactScore * 100) / 100,
+    productivityScore: roundToTwoDecimals(productivityScore),
+    qualityScore: roundToTwoDecimals(qualityScore),
+    impactScore: roundToTwoDecimals(impactScore),
     overallEffectiveness,
   };
 }
@@ -443,14 +450,14 @@ function computeComputedAttributes(
 ): LegislativeEffectivenessAnalysis['computedAttributes'] {
   const months = monthsBetween(args.dateFrom, args.dateTo);
   const metrics = aggregation.metrics;
-  const outputPerMonth = Math.round(
-    ((metrics.reportsAuthored + metrics.amendmentsTabled) / months) * 100,
-  ) / 100;
+  const outputPerMonth = roundToTwoDecimals(
+    (metrics.reportsAuthored + metrics.amendmentsTabled) / months,
+  );
   const avgImpact = metrics.reportsAuthored > 0
-    ? Math.round((scores.impactScore / metrics.reportsAuthored) * 100) / 100
+    ? roundToTwoDecimals(scores.impactScore / metrics.reportsAuthored)
     : 0;
   const amendmentSuccessRate = metrics.amendmentsTabled > 0
-    ? Math.round((metrics.amendmentsAdopted / metrics.amendmentsTabled) * 100 * 100) / 100
+    ? roundToTwoDecimals((metrics.amendmentsAdopted / metrics.amendmentsTabled) * 100)
     : 0;
   const percentile = Math.min(99, Math.round(scores.overallEffectiveness * 1.1));
   return {
