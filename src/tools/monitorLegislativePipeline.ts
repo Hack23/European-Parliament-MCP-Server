@@ -11,9 +11,12 @@
  * historical median dwell statistics rather than heuristics.
  *
  * **Methodology:**
- * 1. Load a corpus-wide lifecycle model (`getLifecycleStatistics`) covering
- *    the latest 500 procedures, cached 30 minutes. Median + 95th-percentile
- *    dwell are computed per `(procedureType, stage)`.
+ * 1. Resolve the corpus-wide lifecycle model (`getCachedLifecycleStatistics`)
+ *    covering the latest 500 procedures, cached 30 minutes. Median +
+ *    95th-percentile dwell are computed per `(procedureType, stage)`. To keep
+ *    the request path responsive, a cold cache returns an empty model
+ *    immediately and triggers a background rebuild — per-procedure forecasts
+ *    degrade to `INSUFFICIENT_DATA` until the cache warms.
  * 2. For each procedure in scope, fetch its event timeline with bounded
  *    concurrency (≤8 parallel) and `Promise.allSettled`.
  * 3. `daysInCurrentStage` = days between the latest event and `now`.
@@ -33,9 +36,8 @@ import type { ToolResult } from './shared/types.js';
 import { withTimeout, TimeoutError } from '../utils/timeout.js';
 import { buildTimeoutResponse } from './shared/errorHandler.js';
 import { ToolError } from './shared/errors.js';
-import { APIError } from '../clients/ep/baseClient.js';
 import {
-  getLifecycleStatistics,
+  getCachedLifecycleStatistics,
   emptyLifecycleStatisticsModel,
   fetchEventsBounded,
   sortEventsChronologically,
@@ -51,16 +53,6 @@ import {
  * intelligence tools and stay below the integration-test 120 s ceiling.
  */
 const OPERATION_TIMEOUT_MS = 30_000;
-
-/**
- * Wall-clock budget (ms) for the lifecycle-statistics corpus build on the
- * request path. On a cold cache the build can require many `/events` calls
- * which, under the EP API client's default 100 req/min rate limit, may exceed
- * the overall {@link OPERATION_TIMEOUT_MS}. If the build doesn't complete in
- * this budget we fall back to an empty model and the per-procedure forecasts
- * degrade to `INSUFFICIENT_DATA` instead of failing the entire request.
- */
-const LIFECYCLE_BUILD_BUDGET_MS = 12_000;
 
 /** Forecast basis discriminator emitted in the response envelope. */
 export type ForecastBasis = 'HISTORICAL_MEDIAN' | 'INSUFFICIENT_DATA' | 'NOT_APPLICABLE';
@@ -708,41 +700,30 @@ function buildPipelineItems(
 }
 
 /**
- * Load the lifecycle statistics model with a strict wall-clock budget.
+ * Resolve the lifecycle statistics model for the current request **without
+ * blocking** the request path on a cold-cache corpus rebuild.
  *
- * On cold cache the corpus rebuild can require hundreds of `/events` calls,
- * which under the EP API client's default 100 req/min rate limit cannot
- * always complete within {@link OPERATION_TIMEOUT_MS}. To keep the request
- * path responsive we race the rebuild against {@link LIFECYCLE_BUILD_BUDGET_MS}
- * and fall back to an empty model on expected failure modes (budget exhaustion
- * or upstream EP API errors). With an empty model every per-procedure forecast
- * degrades to `INSUFFICIENT_DATA`, but the tool still returns a successful
- * response. Unexpected (programming) errors are rethrown so they surface in
- * monitoring instead of being silently masked.
+ * Building the corpus can require many `/events` calls and, under the EP API
+ * client's default 100 req/min rate limit, can easily exceed
+ * {@link OPERATION_TIMEOUT_MS} on a cold cache. Even with a `withTimeout`
+ * wrapper, the underlying rate-limited fetches keep running in the background
+ * and consume the rate-limit budget that the actual pipeline fan-out needs —
+ * which previously caused the integration test to receive a
+ * {@link buildTimeoutResponse} envelope.
+ *
+ * Strategy: only use the lifecycle corpus when it is **already cached**.
+ * Otherwise return an empty model so every per-procedure forecast degrades
+ * to `INSUFFICIENT_DATA`. The cache is intentionally **not** warmed from
+ * this hot path — kicking off a 500-procedure corpus build here would still
+ * starve the request's own EP API budget under the same rate limit. Callers
+ * that want warm statistics can invoke
+ * {@link triggerLifecycleBackgroundRebuild} from a non-latency-sensitive
+ * code path (e.g. server startup, scheduled maintenance).
  */
-async function loadLifecycleModelWithBudget(): Promise<LifecycleStatisticsModel> {
-  try {
-    return await withTimeout(
-      getLifecycleStatistics(),
-      LIFECYCLE_BUILD_BUDGET_MS,
-      'lifecycle statistics build exceeded budget'
-    );
-  } catch (error: unknown) {
-    // Only swallow expected failure modes: timeouts and upstream EP API errors.
-    // Programming/unexpected errors must propagate so they are not hidden.
-    if (error instanceof TimeoutError || error instanceof APIError) {
-      // Log only structured identity (name + status) — never the raw message,
-      // which can carry upstream URLs or response snippets.
-      const statusCode = error instanceof APIError ? error.statusCode : undefined;
-      console.error(
-        '[monitor_legislative_pipeline] Lifecycle model fallback engaged:',
-        error.name,
-        statusCode !== undefined ? `status=${String(statusCode)}` : ''
-      );
-      return emptyLifecycleStatisticsModel();
-    }
-    throw error;
-  }
+function resolveLifecycleModelFast(): LifecycleStatisticsModel {
+  const cached = getCachedLifecycleStatistics();
+  if (cached !== undefined) return cached;
+  return emptyLifecycleStatisticsModel();
 }
 
 /**
@@ -754,10 +735,8 @@ async function runPipelineOperation(
   params: ReturnType<typeof MonitorLegislativePipelineSchema.parse>
 ): Promise<LegislativePipelineAnalysis> {
   const ctx = resolveOperationContext(params);
-  const [procedures, model] = await Promise.all([
-    epClient.getProcedures({ limit: params.limit }),
-    loadLifecycleModelWithBudget(),
-  ]);
+  const model = resolveLifecycleModelFast();
+  const procedures = await epClient.getProcedures({ limit: params.limit });
 
   const filteredProcs = applyDateFilters(procedures.data, ctx);
   const eventsByProcedureId = await fetchEventsBounded(filteredProcs);

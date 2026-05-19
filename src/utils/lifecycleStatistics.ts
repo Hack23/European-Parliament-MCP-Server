@@ -407,6 +407,47 @@ export async function getLifecycleStatistics(options: {
 }
 
 /**
+ * Return the cached lifecycle statistics model **without** triggering a
+ * rebuild. Use this on latency-sensitive request paths where waiting for a
+ * cold-cache corpus build (potentially hundreds of `/events` calls) is not
+ * acceptable. Returns `undefined` when no fresh entry is cached for the
+ * requested corpus size.
+ *
+ * Callers that want the cache to warm in the background should additionally
+ * invoke {@link triggerLifecycleBackgroundRebuild}.
+ */
+export function getCachedLifecycleStatistics(
+  options: { corpusSize?: number } = {}
+): LifecycleStatisticsModel | undefined {
+  const corpus = options.corpusSize ?? CORPUS_SIZE;
+  const cached = memoCacheByCorpusSize.get(corpus);
+  if (cached !== undefined && cached.expiresAt > Date.now()) {
+    return cached.model;
+  }
+  return undefined;
+}
+
+/**
+ * Kick off a background lifecycle-statistics rebuild without waiting for it.
+ *
+ * Fire-and-forget: errors are swallowed (logged) so they cannot escape into
+ * the caller's promise chain. If a rebuild is already in flight for the same
+ * `corpusSize`, this is a no-op. The result populates the cache for
+ * subsequent calls to {@link getCachedLifecycleStatistics} /
+ * {@link getLifecycleStatistics}.
+ */
+export function triggerLifecycleBackgroundRebuild(
+  options: { corpusSize?: number } = {}
+): void {
+  const corpus = options.corpusSize ?? CORPUS_SIZE;
+  if (inFlightBuildByCorpusSize.has(corpus)) return;
+  void getLifecycleStatistics({ corpusSize: corpus }).catch((err: unknown) => {
+    const name = err instanceof Error ? err.name : 'UnknownError';
+    console.error('[lifecycleStatistics] Background rebuild failed:', name);
+  });
+}
+
+/**
  * An empty lifecycle model that callers can use as a fast fallback when the
  * corpus rebuild fails or exceeds its time budget. With this model every
  * lookup returns `undefined` so forecasts gracefully degrade to the
