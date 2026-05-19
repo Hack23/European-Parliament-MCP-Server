@@ -2,28 +2,84 @@
  * MCP Tool: detect_voting_anomalies
  *
  * Flag unusual voting patterns — party defections, sudden alignment shifts,
- * abstention spikes, and behavioral anomalies.
+ * abstention spikes, and cross-party movement signals — using authoritative
+ * DOCEO roll-call (RCV) records.
  *
- * **Intelligence Perspective:** Anomaly detection tool identifying deviations from
- * expected voting behavior—enables early warning for party splits, political
- * realignments, and emerging cross-party movements.
+ * **Intelligence Perspective:** Anomaly detection tool identifying deviations
+ * from each MEP's *own* historical voting baseline within the requested
+ * period. Surfaces early warning signals for party splits, political
+ * realignments, and emerging cross-party movements. Consumed by
+ * `correlate_intelligence` and `early_warning_system`.
  *
- * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege)
+ * **Data source:** EP DOCEO XML (`PV-{term}-{date}-RCV_{lang}.xml`) via the
+ * shared bounded/cached aggregator. Falls back gracefully to LOW confidence
+ * with `dataQualityWarnings` when DOCEO is unreachable.
+ *
+ * ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege),
+ *   AU-002 (Audit Logging). GDPR Article 5(1)(c)/(d) — minimisation & accuracy.
+ *
+ * @since 0.8.0
  */
 
 import { DetectVotingAnomaliesSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { doceoClient } from '../clients/ep/doceoClient.js';
+import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
+import { normalizePoliticalGroup } from '../utils/politicalGroupNormalization.js';
+import { withTimeoutAndAbort } from '../utils/timeout.js';
+import {
+  bucketByWeek,
+  classifyMepVote,
+  coverageConfidence,
+  findCrossPartyAlignmentWindows,
+  findOutlierWeeks,
+  findWoWShifts,
+  DEFAULT_CROSS_PARTY_SHARE,
+  DEFAULT_WOW_THRESHOLD_PP,
+  DEFAULT_Z_SCORE_THRESHOLD,
+} from '../utils/votingBaseline.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
+import type { LatestVoteRecord } from '../clients/ep/doceoXmlParser.js';
+import type { ClassifiedVote, WeekBucket } from '../utils/votingBaseline.js';
 
+/** Max DOCEO RCV records aggregated per request (2 pages × 100 per page). */
+const DOCEO_RCV_FETCH_LIMIT = 200;
+
+/** Per-page limit for DOCEO getLatestVotes (API enforces ≤ 100). */
+const DOCEO_PAGE_LIMIT = 100;
+
+/** DOCEO call timeout, mirrors the shared aggregator guard. */
+const DOCEO_TIMEOUT_MS = 2_000;
+
+/** Cap MEPs inspected per group/all-MEPs request to bound runtime. */
+const MAX_MEPS_PER_REQUEST = 50;
+
+/** Window (hours) for the NEAR_REALTIME freshness label. */
+const NEAR_REALTIME_WINDOW_HOURS = 72;
+
+/**
+ * Voting anomaly surface, preserves the schema consumed by
+ * `correlate_intelligence` and adds `evidenceVoteIds` for traceability.
+ */
 interface VotingAnomaly {
-  type: string;
-  severity: string;
+  type:
+    | 'PARTY_DEFECTION'
+    | 'ABSTENTION_SPIKE'
+    | 'ALIGNMENT_SHIFT'
+    | 'CROSS_PARTY_ALIGNMENT_SHIFT';
+  severity: 'HIGH' | 'MEDIUM' | 'LOW';
   mepId: string;
   mepName: string;
   description: string;
   metrics: { expectedValue: number; actualValue: number; deviation: number };
   detectedDate: string;
+  /**
+   * DOCEO `LatestVoteRecord.id` values supporting the anomaly.
+   * These are the unique vote identifiers returned by `get_latest_votes`
+   * (e.g. `"RCV-10-2026-01-15-001"`).
+   */
+  evidenceVoteIds: string[];
 }
 
 interface VotingAnomalyAnalysis {
@@ -39,47 +95,47 @@ interface VotingAnomalyAnalysis {
     riskLevel: string;
   };
   confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
+  /**
+   * Source of voting records consumed. Always `'DOCEO'` for this tool —
+   * matches the closed set used by sibling OSINT tools (`'EP_API' | 'DOCEO'
+   * | 'EP_API+DOCEO'`). Use {@link dataAvailable} = `false` to discriminate
+   * the "DOCEO unreachable / empty period" branch.
+   */
+  dataSource: 'DOCEO';
   dataFreshness: string;
   sourceAttribution: string;
   methodology: string;
   dataQualityWarnings: string[];
+  /**
+   * Minimum per-MEP RCV votes inspected across the analysed scope (worst-case
+   * coverage). Drives {@link confidenceLevel} so that group/all-MEP scopes
+   * are not inflated by a single MEP with high coverage.
+   */
+  rcvVotesInspected: number;
+  /**
+   * Maximum per-MEP RCV votes inspected across the analysed scope (best-case
+   * coverage). Surfaced for observability so callers can see the spread
+   * between the worst- and best-covered MEP.
+   */
+  rcvVotesInspectedMax: number;
+  mepsAnalyzed: number;
+  /**
+   * `false` when DOCEO was unreachable or returned no records for the
+   * requested period; absent / `true` otherwise. Replaces the previous
+   * `dataSource: 'NONE'` sentinel so the `dataSource` field stays a closed
+   * set across OSINT tools.
+   */
+  dataAvailable?: boolean;
 }
 
-/**
- * Classify attendance severity
- */
-function classifyAttendanceSeverity(rate: number): string {
-  return rate < 50 ? 'HIGH' : 'MEDIUM';
-}
-
-/**
- * Classify abstention severity
- */
-function classifyAbstentionSeverity(rate: number): string {
-  return rate > 30 ? 'HIGH' : 'MEDIUM';
-}
-
-/**
- * Classify defection severity
- */
-function classifyDefectionSeverity(rate: number): string {
-  if (rate > 40) return 'HIGH';
-  if (rate > 25) return 'MEDIUM';
-  return 'LOW';
-}
-
-/**
- * Classify defection trend
- */
+/** Trend assessment derived from high-severity counts. */
 function classifyDefectionTrend(highCount: number): string {
   if (highCount > 2) return 'INCREASING';
   if (highCount > 0) return 'STABLE';
   return 'DECREASING';
 }
 
-/**
- * Classify risk level
- */
+/** Risk-level classifier derived from high-severity counts. */
 function classifyRiskLevel(highCount: number): string {
   if (highCount > 3) return 'CRITICAL';
   if (highCount > 1) return 'ELEVATED';
@@ -87,153 +143,377 @@ function classifyRiskLevel(highCount: number): string {
   return 'LOW';
 }
 
-/**
- * Determine confidence based on data volume, not anomaly count
- */
-function getDataVolumeConfidence(scope: string, isSingleMep: boolean): 'HIGH' | 'MEDIUM' | 'LOW' {
-  if (isSingleMep) return 'MEDIUM';
-  if (scope === 'All MEPs') return 'HIGH';
-  return 'MEDIUM';
+/** Map z-score magnitude to severity (preserves prior HIGH/MEDIUM/LOW semantics). */
+function severityFromZ(z: number): 'HIGH' | 'MEDIUM' | 'LOW' {
+  if (z >= 3) return 'HIGH';
+  if (z >= 2) return 'MEDIUM';
+  return 'LOW';
+}
+
+/** Map percentage-point deltas to severity. */
+function severityFromDelta(delta: number): 'HIGH' | 'MEDIUM' | 'LOW' {
+  if (delta >= 40) return 'HIGH';
+  if (delta >= 30) return 'MEDIUM';
+  return 'LOW';
+}
+
+/** Map cross-party alignment share to severity. */
+function severityFromShare(share: number): 'HIGH' | 'MEDIUM' | 'LOW' {
+  if (share >= 90) return 'HIGH';
+  if (share >= 75) return 'MEDIUM';
+  return 'LOW';
 }
 
 /**
- * Check for low attendance anomaly
+ * Build the human-readable methodology string emitted alongside each
+ * response. Reports the *derived* thresholds actually applied for the
+ * request so callers that override `sensitivityThreshold` see the scaled
+ * values (not the spec defaults).
+ *
+ * @internal
  */
-function checkAttendanceAnomaly(
-  mep: { id: string; name: string; politicalGroup: string },
-  stats: { attendanceRate: number },
-  threshold: number,
-  detectedDate: string
-): VotingAnomaly | undefined {
-  const expectedAttendance = Math.round((1 - threshold) * 100 * 100) / 100;
+function buildMethodologyDescription(
+  thresholds: SensitivityThresholds,
+  sensitivity: number
+): string {
+  const z = Math.round(thresholds.zScore * 100) / 100;
+  const wow = Math.round(thresholds.wowDelta * 100) / 100;
+  const crossPct = Math.round(thresholds.crossPartyShare * 100);
+  const isDefault = sensitivity === 0.3;
+  const scalingNote = isDefault
+    ? '(spec defaults)'
+    : `(scaled from spec defaults — z≥${String(DEFAULT_Z_SCORE_THRESHOLD)}, WoW≥`
+      + `${String(DEFAULT_WOW_THRESHOLD_PP)}pp, cross-party≥`
+      + `${String(Math.round(DEFAULT_CROSS_PARTY_SHARE * 100))}% — `
+      + `via sensitivityThreshold=${String(sensitivity)})`;
+  return 'Per-MEP defection / abstention / cross-party alignment anomaly detection on DOCEO RCV '
+    + 'records (up to 200 via 2×100 paged fetching). Per-vote group majority resolved by plurality with alphabetical '
+    + 'tie-breaking. Each MEP vote classified as aligned / defected / abstained / absent against their '
+    + `home-group majority. Anomalies emitted when defection-rate z-score ≥ ${String(z)}, `
+    + `abstention-rate z-score ≥ ${String(z)}, week-over-week defection delta ≥ ${String(wow)}pp, `
+    + `or non-home-group alignment share ≥ ${String(crossPct)}% in a weekly sub-window `
+    + `${scalingNote}. Confidence reflects worst-case RCV coverage across analysed MEPs: `
+    + 'HIGH ≥50 votes inspected, MEDIUM 10–49, LOW <10. Source: EP DOCEO XML.';
+}
 
-  if (stats.attendanceRate < expectedAttendance) {
-    return {
-      type: 'LOW_ATTENDANCE',
-      severity: classifyAttendanceSeverity(stats.attendanceRate),
-      mepId: mep.id,
-      mepName: mep.name,
-      description: `Attendance rate ${String(stats.attendanceRate)}% below expected threshold of ${String(expectedAttendance)}% for ${mep.politicalGroup}`,
-      metrics: { expectedValue: expectedAttendance, actualValue: stats.attendanceRate, deviation: Math.round((expectedAttendance - stats.attendanceRate) * 100) / 100 },
-      detectedDate
-    };
-  }
-  return undefined;
+interface MepRef {
+  id: string;
+  name: string;
+  politicalGroup: string;
 }
 
 /**
- * Check for high abstention anomaly
+ * Per-request thresholds derived from `sensitivityThreshold`.
+ *
+ * Defaults match the issue specification: z ≥ 1.5, WoW ≥ 20pp, cross-party
+ * share ≥ 0.6. The sensitivity parameter scales these so lower values yield
+ * more anomalies (backward-compatible with prior callers).
  */
-function checkAbstentionAnomaly(
-  mep: { id: string; name: string },
-  stats: { abstentions: number; totalVotes: number },
-  threshold: number,
-  detectedDate: string
-): VotingAnomaly | undefined {
-  if (stats.totalVotes === 0) return undefined;
-  const rate = (stats.abstentions / stats.totalVotes) * 100;
-  if (rate > threshold * 50) {
-    return {
-      type: 'ABSTENTION_SPIKE',
-      severity: classifyAbstentionSeverity(rate),
-      mepId: mep.id,
-      mepName: mep.name,
-      description: `Abstention rate of ${String(Math.round(rate))}% significantly above group average`,
-      metrics: { expectedValue: 10, actualValue: Math.round(rate * 100) / 100, deviation: Math.round((rate - 10) * 100) / 100 },
-      detectedDate
-    };
-  }
-  return undefined;
+interface SensitivityThresholds {
+  zScore: number;
+  wowDelta: number;
+  crossPartyShare: number;
+}
+
+function deriveThresholds(sensitivity: number): SensitivityThresholds {
+  // Linear scale anchored at the default 0.3 → spec defaults.
+  const factor = sensitivity / 0.3;
+  return {
+    zScore: Math.max(0.5, DEFAULT_Z_SCORE_THRESHOLD * factor),
+    wowDelta: Math.max(5, DEFAULT_WOW_THRESHOLD_PP * factor),
+    crossPartyShare: Math.min(0.95, Math.max(0.3, DEFAULT_CROSS_PARTY_SHARE * factor)),
+  };
 }
 
 /**
- * Check for party defection anomaly
+ * Detect anomalies for a single MEP from the supplied DOCEO RCV records.
+ *
+ * @param mep - MEP reference (id/name/politicalGroup).
+ * @param votes - All DOCEO RCV records in the inspection window.
+ * @param thresholds - Sensitivity-adjusted detection thresholds.
+ * @param detectedDate - Period end date stamped onto anomaly records.
+ * @returns Detected anomalies and the per-MEP RCV inspection count.
  */
-function checkDefectionAnomaly(
-  mep: { id: string; name: string; politicalGroup: string },
-  stats: { votesFor: number; votesAgainst: number },
-  threshold: number,
+function detectMepAnomaliesFromDoceo(
+  mep: MepRef,
+  votes: LatestVoteRecord[],
+  thresholds: SensitivityThresholds,
   detectedDate: string
-): VotingAnomaly | undefined {
-  const decisive = stats.votesFor + stats.votesAgainst;
-  const rate = decisive > 0 ? (stats.votesAgainst / decisive) * 100 : 0;
-  if (rate > threshold * 60) {
-    return {
-      type: 'PARTY_DEFECTION',
-      severity: classifyDefectionSeverity(rate),
-      mepId: mep.id,
-      mepName: mep.name,
-      description: `Defection rate of ${String(Math.round(rate))}% — voting against ${mep.politicalGroup} party line`,
-      metrics: { expectedValue: 10, actualValue: Math.round(rate * 100) / 100, deviation: Math.round((rate - 10) * 100) / 100 },
-      detectedDate
-    };
-  }
-  return undefined;
-}
-
-/**
- * Detect anomalies from voting statistics
- */
-function detectMepAnomalies(
-  mep: { id: string; name: string; politicalGroup: string },
-  stats: { totalVotes: number; votesFor: number; votesAgainst: number; abstentions: number; attendanceRate: number } | undefined,
-  threshold: number,
-  detectedDate: string
-): VotingAnomaly[] {
-  if (stats === undefined || stats.totalVotes === 0) return [];
-
+): { anomalies: VotingAnomaly[]; classified: ClassifiedVote[]; buckets: WeekBucket[] } {
+  const homeGroup = mep.politicalGroup !== '' ? normalizePoliticalGroup(mep.politicalGroup) : null;
+  const classified = votes.map(v => classifyMepVote(v, mep.id, homeGroup));
+  const buckets = bucketByWeek(classified);
   const anomalies: VotingAnomaly[] = [];
-  const att = checkAttendanceAnomaly(mep, stats, threshold, detectedDate);
-  if (att !== undefined) anomalies.push(att);
-  const abs = checkAbstentionAnomaly(mep, stats, threshold, detectedDate);
-  if (abs !== undefined) anomalies.push(abs);
-  const def = checkDefectionAnomaly(mep, stats, threshold, detectedDate);
-  if (def !== undefined) anomalies.push(def);
-  return anomalies;
+
+  for (const outlier of findOutlierWeeks(buckets, 'defectionRate', thresholds.zScore)) {
+    anomalies.push({
+      type: 'PARTY_DEFECTION',
+      severity: severityFromZ(outlier.z),
+      mepId: mep.id,
+      mepName: mep.name,
+      description: `Defection rate of ${String(outlier.value)}% during week of ${outlier.weekStart} `
+        + `(z=${String(outlier.z)} vs ${mep.politicalGroup || 'home group'} majority on DOCEO RCVs)`,
+      metrics: {
+        expectedValue: outlier.baselineMean,
+        actualValue: outlier.value,
+        deviation: Math.round((outlier.value - outlier.baselineMean) * 100) / 100,
+      },
+      detectedDate,
+      evidenceVoteIds: outlier.voteIds,
+    });
+  }
+
+  for (const outlier of findOutlierWeeks(buckets, 'abstentionRate', thresholds.zScore)) {
+    anomalies.push({
+      type: 'ABSTENTION_SPIKE',
+      severity: severityFromZ(outlier.z),
+      mepId: mep.id,
+      mepName: mep.name,
+      description: `Abstention rate of ${String(outlier.value)}% during week of ${outlier.weekStart} `
+        + `(z=${String(outlier.z)} vs MEP's own baseline)`,
+      metrics: {
+        expectedValue: outlier.baselineMean,
+        actualValue: outlier.value,
+        deviation: Math.round((outlier.value - outlier.baselineMean) * 100) / 100,
+      },
+      detectedDate,
+      evidenceVoteIds: outlier.voteIds,
+    });
+  }
+
+  for (const shift of findWoWShifts(buckets, thresholds.wowDelta)) {
+    anomalies.push({
+      type: 'ALIGNMENT_SHIFT',
+      severity: severityFromDelta(shift.delta),
+      mepId: mep.id,
+      mepName: mep.name,
+      description: `Week-over-week defection rate jumped by ${String(shift.delta)}pp `
+        + `(${shift.fromWeek} → ${shift.toWeek})`,
+      metrics: {
+        expectedValue: shift.previousRate,
+        actualValue: Math.round((shift.previousRate + shift.delta) * 100) / 100,
+        deviation: shift.delta,
+      },
+      detectedDate,
+      evidenceVoteIds: shift.voteIds,
+    });
+  }
+
+  for (const window of findCrossPartyAlignmentWindows(buckets, thresholds.crossPartyShare)) {
+    const thresholdPct = Math.round(thresholds.crossPartyShare * 100);
+    anomalies.push({
+      type: 'CROSS_PARTY_ALIGNMENT_SHIFT',
+      severity: severityFromShare(window.sharePercent),
+      mepId: mep.id,
+      mepName: mep.name,
+      description: `Voted with non-home group majorities on ${String(window.sharePercent)}% of `
+        + `${String(window.decisive)} decisive RCVs during week of ${window.weekStart}`,
+      metrics: {
+        expectedValue: thresholdPct,
+        actualValue: window.sharePercent,
+        deviation: Math.round((window.sharePercent - thresholdPct) * 100) / 100,
+      },
+      detectedDate,
+      evidenceVoteIds: window.voteIds,
+    });
+  }
+
+  return { anomalies, classified, buckets };
+}
+
+/** Count RCV votes where the MEP actually appeared on the roll. */
+function countVotesInspected(classified: ClassifiedVote[]): number {
+  let n = 0;
+  for (const c of classified) if (c.alignment !== 'absent') n += 1;
+  return n;
 }
 
 /**
- * Detect anomalies for a single MEP
+ * Determine whether the DOCEO source can be labelled NEAR_REALTIME.
+ *
+ * NEAR_REALTIME requires at least one DOCEO record with a sitting date within
+ * the configured window (default 72h) of `referenceDate`.
+ */
+function isNearRealtime(votes: LatestVoteRecord[], referenceDate: Date): boolean {
+  const cutoff = referenceDate.getTime() - NEAR_REALTIME_WINDOW_HOURS * 3_600_000;
+  for (const v of votes) {
+    const date = v.sittingDate ?? v.date;
+    if (date === '') continue;
+    const ts = Date.parse(date);
+    if (!Number.isNaN(ts) && ts >= cutoff) return true;
+  }
+  return false;
+}
+
+/**
+ * Return the most recent valid sitting date in the supplied record list,
+ * or `null` when none of the records have a parseable date.
+ *
+ * @internal
+ */
+function mostRecentSittingDate(votes: LatestVoteRecord[]): Date | null {
+  let latest: number | null = null;
+  for (const v of votes) {
+    const date = v.sittingDate ?? v.date;
+    if (date === '') continue;
+    const ts = Date.parse(date);
+    if (Number.isNaN(ts)) continue;
+    if (latest === null || ts > latest) latest = ts;
+  }
+  return latest === null ? null : new Date(latest);
+}
+
+/**
+ * Fetch DOCEO RCV records covering the request window. Implements paged
+ * fetching (2 × 100) since the DOCEO client validates `limit ≤ 100`.
+ * Returns an empty sentinel when DOCEO is unreachable so the caller can
+ * surface a graceful `dataQualityWarning` instead of throwing.
+ */
+async function fetchDoceoRcvRecords(
+  period: { from: string; to: string }
+): Promise<{ records: LatestVoteRecord[]; doceoAvailable: boolean }> {
+  try {
+    // Normalize period.to to an ISO date string for DOCEO weekStart.
+    // DOCEO `weekStart` selects the plenary week containing the supplied date;
+    // we use the period's *end* date to capture the most recent week in scope.
+    const firstPage = await withTimeoutAndAbort(
+      (signal) => doceoClient.getLatestVotes({
+        includeIndividualVotes: true,
+        limit: DOCEO_PAGE_LIMIT,
+        offset: 0,
+        weekStart: period.to,
+        abortSignal: signal,
+      }),
+      DOCEO_TIMEOUT_MS,
+      'DOCEO RCV fetch (page 1) timed out'
+    );
+    let allRecords = firstPage.data;
+
+    // Second page if the first was full — up to DOCEO_RCV_FETCH_LIMIT total.
+    if (firstPage.data.length >= DOCEO_PAGE_LIMIT) {
+      try {
+        const secondPage = await withTimeoutAndAbort(
+          (signal) => doceoClient.getLatestVotes({
+            includeIndividualVotes: true,
+            limit: DOCEO_PAGE_LIMIT,
+            offset: DOCEO_PAGE_LIMIT,
+            weekStart: period.to,
+            abortSignal: signal,
+          }),
+          DOCEO_TIMEOUT_MS,
+          'DOCEO RCV fetch (page 2) timed out'
+        );
+        allRecords = [...allRecords, ...secondPage.data];
+      } catch {
+        // Second page failure is non-fatal; continue with first page only.
+      }
+    }
+
+    const records = allRecords
+      .filter(v => v.dataSource === 'RCV')
+      .slice(0, DOCEO_RCV_FETCH_LIMIT);
+    return { records, doceoAvailable: true };
+  } catch (error: unknown) {
+    auditLogger.logError('detect_voting_anomalies.doceo_fetch', { from: period.from, to: period.to }, toErrorMessage(error));
+    return { records: [], doceoAvailable: false };
+  }
+}
+
+interface DetectionResult {
+  scope: string;
+  anomalies: VotingAnomaly[];
+  /** Minimum per-MEP RCV votes inspected (worst-case coverage). */
+  rcvVotesInspected: number;
+  /** Maximum per-MEP RCV votes inspected (best-case coverage). */
+  rcvVotesInspectedMax: number;
+  mepsAnalyzed: number;
+}
+
+/**
+ * Aggregate per-MEP anomaly detection over a list of MEPs.
+ *
+ * Returns *minimum* and *maximum* RCV votes inspected across the MEP list.
+ * The minimum drives confidence/warnings so that group/all-MEP scopes are not
+ * inflated by a single high-coverage MEP — when most MEPs have few or zero
+ * inspected votes (e.g. broad scope, narrow DOCEO window) the response
+ * correctly reports LOW/MEDIUM confidence instead of HIGH.
+ */
+function runDetectionForMeps(
+  meps: MepRef[],
+  records: LatestVoteRecord[],
+  thresholds: SensitivityThresholds,
+  detectedDate: string
+): { anomalies: VotingAnomaly[]; rcvVotesInspected: number; rcvVotesInspectedMax: number } {
+  const allAnomalies: VotingAnomaly[] = [];
+  const perMepInspected: number[] = [];
+  for (const mep of meps) {
+    const { anomalies, classified } = detectMepAnomaliesFromDoceo(mep, records, thresholds, detectedDate);
+    const inspected = countVotesInspected(classified);
+    perMepInspected.push(inspected);
+    allAnomalies.push(...anomalies);
+    auditLogger.logDataAccess(
+      'detect_voting_anomalies.mep_analysis',
+      { mepId: mep.id, rcvVotesInspected: inspected },
+      inspected
+    );
+  }
+  // Worst-case coverage drives confidence; best-case is reported separately
+  // for observability. When no MEPs were analysed both values are 0.
+  const rcvVotesInspected = perMepInspected.length > 0 ? Math.min(...perMepInspected) : 0;
+  const rcvVotesInspectedMax = perMepInspected.length > 0 ? Math.max(...perMepInspected) : 0;
+  return { anomalies: allAnomalies, rcvVotesInspected, rcvVotesInspectedMax };
+}
+
+/**
+ * Detect anomalies for a single MEP.
+ *
+ * @internal Exported for unit testing.
  */
 async function detectSingleMepAnomalies(
-  mepId: string, threshold: number, period: { from: string; to: string }
-): Promise<{ scope: string; anomalies: VotingAnomaly[]; dataAvailable: boolean }> {
+  mepId: string,
+  thresholds: SensitivityThresholds,
+  period: { from: string; to: string },
+  records: LatestVoteRecord[]
+): Promise<DetectionResult> {
   const mep = await epClient.getMEPDetails(mepId);
-  const mepStats = mep.votingStatistics;
-  const dataAvailable = mepStats !== undefined && mepStats.totalVotes > 0;
-  const anomalies = detectMepAnomalies(
-    { id: mep.id, name: mep.name, politicalGroup: mep.politicalGroup },
-    mepStats,
-    threshold,
+  const { anomalies, rcvVotesInspected, rcvVotesInspectedMax } = runDetectionForMeps(
+    [{ id: mep.id, name: mep.name, politicalGroup: mep.politicalGroup }],
+    records,
+    thresholds,
     period.to
   );
-  return { scope: `MEP: ${mepId}`, anomalies, dataAvailable };
+  return { scope: `MEP: ${mepId}`, anomalies, rcvVotesInspected, rcvVotesInspectedMax, mepsAnalyzed: 1 };
 }
 
-/**
- * Detect anomalies for a group or all MEPs.
- * Note: The EP API /meps/{id} endpoint does not provide per-MEP voting
- * statistics, so group-level anomaly detection reports data unavailability
- * with LOW confidence rather than fabricating values.
- */
+/** Detect anomalies for a political group or all MEPs (bounded scan). */
 async function detectGroupAnomalies(
-  groupId: string | undefined, _threshold: number, _period: { from: string; to: string }
-): Promise<{ scope: string; anomalies: VotingAnomaly[]; mepCount: number }> {
+  groupId: string | undefined,
+  thresholds: SensitivityThresholds,
+  period: { from: string; to: string },
+  records: LatestVoteRecord[]
+): Promise<DetectionResult> {
   const groupFilter: { group?: string } = {};
-  if (groupId !== undefined) {
-    groupFilter.group = groupId;
-  }
+  if (groupId !== undefined) groupFilter.group = groupId;
   const scope = groupId !== undefined ? `Group: ${groupId}` : 'All MEPs';
-  const mepsResult = await epClient.getCurrentMEPs({ ...groupFilter, limit: 50 });
-  return { scope, anomalies: [], mepCount: mepsResult.data.length };
+  const mepsResult = await epClient.getCurrentMEPs({ ...groupFilter, limit: MAX_MEPS_PER_REQUEST });
+  const meps: MepRef[] = mepsResult.data.map(m => ({
+    id: m.id,
+    name: m.name,
+    politicalGroup: m.politicalGroup,
+  }));
+  const { anomalies, rcvVotesInspected, rcvVotesInspectedMax } =
+    runDetectionForMeps(meps, records, thresholds, period.to);
+  return { scope, anomalies, rcvVotesInspected, rcvVotesInspectedMax, mepsAnalyzed: meps.length };
 }
 
-/**
- * Build the anomaly analysis result object from anomaly detection results.
- */
-function buildAnomalySummary(
-  anomalies: VotingAnomaly[]
-): { highSeverity: number; mediumSeverity: number; lowSeverity: number; anomalyRate: number; severityIndex: number } {
+/** Roll up anomalies into severity counts and derived attributes. */
+function buildAnomalySummary(anomalies: VotingAnomaly[]): {
+  highSeverity: number;
+  mediumSeverity: number;
+  lowSeverity: number;
+  anomalyRate: number;
+  severityIndex: number;
+} {
   const highSeverity = anomalies.filter(a => a.severity === 'HIGH').length;
   const mediumSeverity = anomalies.filter(a => a.severity === 'MEDIUM').length;
   const lowSeverity = anomalies.filter(a => a.severity === 'LOW').length;
@@ -241,54 +521,77 @@ function buildAnomalySummary(
     ? Math.round((highSeverity / anomalies.length) * 100) / 100
     : 0;
   const severityIndex = anomalies.length > 0
-    ? Math.round((highSeverity * 3 + mediumSeverity * 2 + lowSeverity) / anomalies.length * 100) / 100
+    ? Math.round(((highSeverity * 3 + mediumSeverity * 2 + lowSeverity) / anomalies.length) * 100) / 100
     : 0;
   return { highSeverity, mediumSeverity, lowSeverity, anomalyRate, severityIndex };
 }
 
 /**
- * Resolve confidence level: MEDIUM when a single MEP has detectable anomalies
- * (indicating voting data was available and yielded results); LOW otherwise.
+ * Compute data-quality warnings for a given fetch outcome.
+ *
+ * @internal
  */
-function resolveConfidence(isSingleMep: boolean, scope: string, anomalyCount: number): 'HIGH' | 'MEDIUM' | 'LOW' {
-  if (isSingleMep && anomalyCount > 0) {
-    return getDataVolumeConfidence(scope, true);
+function collectDataQualityWarnings(
+  doceoAvailable: boolean,
+  recordCount: number,
+  rcvVotesInspected: number
+): string[] {
+  const warnings: string[] = [];
+  if (!doceoAvailable) {
+    warnings.push('DOCEO RCV source unavailable — anomaly detection deferred (LOW confidence).');
+  } else if (recordCount === 0) {
+    warnings.push('No DOCEO RCV records returned for the requested period.');
+  } else if (rcvVotesInspected < 10) {
+    warnings.push('Fewer than 10 RCV votes inspected — confidence reduced to LOW.');
   }
-  return 'LOW';
+  return warnings;
 }
 
 /**
- * Handles the detect_voting_anomalies MCP tool request.
+ * Resolve the data freshness label.
  *
- * Detects statistically unusual voting patterns for individual MEPs or entire
- * political groups, including cross-party defections, unusual abstention clusters,
- * and discipline breakdowns. Returns anomaly records graded by severity with a
- * group stability score and defection trend assessment.
+ * - `NEAR_REALTIME` when at least one DOCEO sitting falls within
+ *   {@link NEAR_REALTIME_WINDOW_HOURS} of "now".
+ * - Otherwise, surface the most recent sitting date and the actual age in
+ *   hours so consumers can reason about staleness without inflating the
+ *   window.
+ */
+function resolveDataFreshness(
+  dataAvailable: boolean,
+  records: LatestVoteRecord[]
+): string {
+  if (!dataAvailable) return 'No DOCEO RCV data available for the requested period';
+  const now = new Date();
+  if (isNearRealtime(records, now)) return 'NEAR_REALTIME';
+  const latest = mostRecentSittingDate(records);
+  if (latest === null) return `DOCEO RCV data — outside ${String(NEAR_REALTIME_WINDOW_HOURS)}h NEAR_REALTIME window`;
+  const ageMs = now.getTime() - latest.getTime();
+  const ageHours = Math.max(0, Math.round(ageMs / 3_600_000));
+  return `DOCEO RCV data — latest sitting ${String(ageHours)}h old (outside ${String(NEAR_REALTIME_WINDOW_HOURS)}h NEAR_REALTIME window)`;
+}
+
+/** Resolve the confidence level from the fetch outcome and coverage. */
+function resolveConfidenceLevel(
+  dataAvailable: boolean,
+  rcvVotesInspected: number
+): 'HIGH' | 'MEDIUM' | 'LOW' {
+  if (!dataAvailable) return 'LOW';
+  return coverageConfidence(rcvVotesInspected);
+}
+
+/**
+ * Handles the `detect_voting_anomalies` MCP tool request.
+ *
+ * See file-level JSDoc for methodology details. Each anomaly carries
+ * `evidenceVoteIds` referencing the contributing DOCEO RCV records.
  *
  * @param args - Raw tool arguments, validated against {@link DetectVotingAnomaliesSchema}
- * @returns MCP tool result containing detected anomalies with severity ratings,
- *   summary statistics, anomaly rate, severity index, and risk level classification
- * @throws - If `args` fails schema validation (e.g., missing required fields or invalid format)
- * - If the European Parliament API is unreachable or returns an error response
+ * @returns MCP tool result containing detected anomalies with evidence vote IDs
+ * @throws If `args` fails schema validation or the EP API is unreachable.
  *
- * @example
- * ```typescript
- * const result = await handleDetectVotingAnomalies({
- *   mepId: '124810',
- *   sensitivityThreshold: 0.7,
- *   dateFrom: '2024-01-01',
- *   dateTo: '2024-12-31'
- * });
- * // Returns anomaly list with severity ratings (HIGH/MEDIUM/LOW),
- * // anomaly rate, severity index, and group stability score
- * ```
- *
- * @security - Input is validated with Zod before any API call.
- * - Personal data in responses is minimised per GDPR Article 5(1)(c).
- * - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
+ * @security Input validated with Zod. Audit logs record only `mepId` and
+ *   sanitised counts (no MEP names or vote contents).
  * @since 0.8.0
- * @see {@link detectVotingAnomaliesToolMetadata} for MCP schema registration
- * @see {@link handleAnalyzeCoalitionDynamics} for coalition-level cohesion and stress analysis
  */
 export async function handleDetectVotingAnomalies(
   args: unknown
@@ -297,64 +600,47 @@ export async function handleDetectVotingAnomalies(
 
   try {
     const period = { from: params.dateFrom ?? '2024-01-01', to: params.dateTo ?? '2024-12-31' };
-    const mepId = params.mepId;
-    const isSingleMep = mepId !== undefined;
+    const thresholds = deriveThresholds(params.sensitivityThreshold);
 
-    const result = mepId !== undefined
-      ? await detectSingleMepAnomalies(mepId, params.sensitivityThreshold, period)
-      : await detectGroupAnomalies(params.groupId, params.sensitivityThreshold, period);
+    const { records, doceoAvailable } = await fetchDoceoRcvRecords(period);
 
-    if (isSingleMep && 'dataAvailable' in result && !result.dataAvailable) {
-      return buildToolResponse({
-        period,
-        targetScope: mepId,
-        anomalies: [],
-        summary: { totalAnomalies: 0, highSeverity: 0, mediumSeverity: 0, lowSeverity: 0 },
-        computedAttributes: {
-          anomalyRate: 0,
-          severityIndex: 0,
-          groupStabilityScore: 0,
-          defectionTrend: 'UNKNOWN',
-          riskLevel: 'UNKNOWN'
-        },
-        dataAvailable: false,
-        confidenceLevel: 'LOW',
-        dataFreshness: 'EP API data — voting statistics unavailable for this MEP',
-        sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-        methodology: 'The EP API /meps/{id} endpoint does not return voting statistics. '
-          + 'Anomaly detection requires voting data which is unavailable for this MEP. '
-          + 'Data source: European Parliament Open Data Portal.',
-        dataQualityWarnings: ['Voting statistics unavailable for this MEP — anomaly detection cannot be performed'],
-      });
-    }
+    const result = params.mepId !== undefined
+      ? await detectSingleMepAnomalies(params.mepId, thresholds, period, records)
+      : await detectGroupAnomalies(params.groupId, thresholds, period, records);
 
-    const { highSeverity, mediumSeverity, lowSeverity, anomalyRate, severityIndex } = buildAnomalySummary(result.anomalies);
-    const confidence = resolveConfidence(isSingleMep, result.scope, result.anomalies.length);
+    const summary = buildAnomalySummary(result.anomalies);
+    const dataAvailable = doceoAvailable && records.length > 0;
 
     const analysis: VotingAnomalyAnalysis = {
       period,
       targetScope: result.scope,
       anomalies: result.anomalies,
-      summary: { totalAnomalies: result.anomalies.length, highSeverity, mediumSeverity, lowSeverity },
-      computedAttributes: {
-        anomalyRate,
-        severityIndex,
-        groupStabilityScore: Math.round((1 - severityIndex / 3) * 100 * 100) / 100,
-        defectionTrend: classifyDefectionTrend(highSeverity),
-        riskLevel: classifyRiskLevel(highSeverity)
+      summary: {
+        totalAnomalies: result.anomalies.length,
+        highSeverity: summary.highSeverity,
+        mediumSeverity: summary.mediumSeverity,
+        lowSeverity: summary.lowSeverity,
       },
-      confidenceLevel: confidence,
-      dataFreshness: 'Real-time EP API data — voting statistics from MEP records',
-      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-      methodology: 'Heuristic statistical analysis using aggregated voting statistics and MEP metadata '
-        + 'from /meps/{id} on the European Parliament Open Data API. Vote-level records are not fetched; '
-        + 'many voting statistic fields may be zero or unavailable from the EP API. Group-level analysis '
-        + 'reflects data availability — detected anomalies are approximate and indicative only. '
-        + 'Data source: European Parliament Open Data Portal (MEP metadata endpoints).',
-      dataQualityWarnings: [
-        'Vote-level records not fetched — anomaly detection uses aggregated MEP metadata only',
-      ],
+      computedAttributes: {
+        anomalyRate: summary.anomalyRate,
+        severityIndex: summary.severityIndex,
+        groupStabilityScore: Math.round((1 - summary.severityIndex / 3) * 100 * 100) / 100,
+        defectionTrend: classifyDefectionTrend(summary.highSeverity),
+        riskLevel: classifyRiskLevel(summary.highSeverity),
+      },
+      confidenceLevel: resolveConfidenceLevel(dataAvailable, result.rcvVotesInspected),
+      dataSource: 'DOCEO',
+      dataFreshness: resolveDataFreshness(dataAvailable, records),
+      sourceAttribution: 'European Parliament DOCEO XML — europarl.europa.eu/doceo',
+      methodology: buildMethodologyDescription(thresholds, params.sensitivityThreshold),
+      dataQualityWarnings: collectDataQualityWarnings(doceoAvailable, records.length, result.rcvVotesInspected),
+      rcvVotesInspected: result.rcvVotesInspected,
+      rcvVotesInspectedMax: result.rcvVotesInspectedMax,
+      mepsAnalyzed: result.mepsAnalyzed,
     };
+    if (!dataAvailable) {
+      analysis.dataAvailable = false;
+    }
 
     return buildToolResponse(analysis);
   } catch (error: unknown) {
@@ -368,7 +654,7 @@ export async function handleDetectVotingAnomalies(
  */
 export const detectVotingAnomaliesToolMetadata = {
   name: 'detect_voting_anomalies',
-  description: 'Detect unusual voting patterns including party defections, abstention spikes, and low attendance anomalies. Configurable sensitivity threshold with severity classification (HIGH/MEDIUM/LOW). Returns anomaly details, group stability score, defection trend, and risk level assessment.',
+  description: 'Detect unusual voting patterns including party defections, abstention spikes, week-over-week alignment shifts, and cross-party movement signals. Uses DOCEO RCV roll-call records and per-MEP rolling baselines (defection z ≥1.5, abstention z ≥1.5, WoW Δ ≥20pp, cross-party share ≥60%). Returns anomalies with evidenceVoteIds, severity classification (HIGH/MEDIUM/LOW), group stability score, defection trend, and risk level.',
   inputSchema: {
     type: 'object' as const,
     properties: {
@@ -396,7 +682,7 @@ export const detectVotingAnomaliesToolMetadata = {
       },
       sensitivityThreshold: {
         type: 'number',
-        description: 'Anomaly sensitivity (0-1, lower = more anomalies detected)',
+        description: 'Anomaly sensitivity (0-1, lower = more anomalies detected). Default 0.3 matches the spec thresholds (z≥1.5, WoW≥20pp, cross-party≥60%).',
         minimum: 0,
         maximum: 1,
         default: 0.3

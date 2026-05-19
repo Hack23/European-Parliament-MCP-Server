@@ -88,6 +88,37 @@ bounded (≤ 2 s) and cached (5-minute TTL keyed by `${mepId}|${dateFrom}|${date
 OSINT tool responses surface a `dataSource: 'EP_API' | 'DOCEO' | 'EP_API+DOCEO'`
 field so consumers can distinguish placeholder data from real RCV-backed metrics.
 
+### VotingAnomaly (detect_voting_anomalies)
+
+`detect_voting_anomalies` builds its per-MEP defection / abstention /
+alignment baselines from the same DOCEO RCV records via
+`src/utils/votingBaseline.ts`. Each detected anomaly carries the following
+shape:
+
+```typescript
+interface VotingAnomaly {
+  type: 'PARTY_DEFECTION'
+      | 'ABSTENTION_SPIKE'
+      | 'ALIGNMENT_SHIFT'
+      | 'CROSS_PARTY_ALIGNMENT_SHIFT';
+  severity: 'HIGH' | 'MEDIUM' | 'LOW';
+  mepId: string;
+  mepName: string;
+  description: string;
+  metrics: { expectedValue: number; actualValue: number; deviation: number };
+  detectedDate: string;          // YYYY-MM-DD
+  evidenceVoteIds: string[];     // DOCEO LatestVoteRecord.id values
+}
+```
+
+`evidenceVoteIds` are the unique vote identifiers (`LatestVoteRecord.id`,
+e.g. `RCV-10-2026-01-15-001`) returned by `get_latest_votes` — use them to
+drill down to the contributing roll-call records. Thresholds:
+defection-rate z ≥ 1.5, abstention-rate z ≥ 1.5, week-over-week defection
+delta ≥ 20pp, non-home-group alignment share ≥ 60% in a weekly sub-window
+(min 3 decisive RCVs). Confidence reflects RCV coverage: HIGH ≥50, MEDIUM
+10–49, LOW <10 RCVs inspected.
+
 ---
 
 ## 🔗 Core Entity Relationships

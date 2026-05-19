@@ -1333,7 +1333,7 @@ Analyze coalition dynamics between EPP and S&D over the last 6 months
 
 ### Tool: detect_voting_anomalies
 
-**Description**: Detect unusual voting patterns including party defections, sudden alignment shifts, abstention spikes, and other anomalies.
+**Description**: Detect statistically unusual voting patterns from EP DOCEO RCV records — party defections, sudden alignment shifts, abstention spikes, and cross-party movement signals.
 
 #### Parameters
 
@@ -1343,9 +1343,53 @@ Analyze coalition dynamics between EPP and S&D over the last 6 months
 | groupId | string | No | - | Political group to analyze |
 | dateFrom | string | No | - | Analysis start date (YYYY-MM-DD) |
 | dateTo | string | No | - | Analysis end date (YYYY-MM-DD) |
-| sensitivityThreshold | number | No | 0.3 | Anomaly sensitivity (0-1, lower = more anomalies detected) |
+| sensitivityThreshold | number | No | 0.3 | Anomaly sensitivity (0-1, lower = more anomalies detected). Default 0.3 matches the spec thresholds (z ≥ 1.5, WoW ≥ 20pp, cross-party ≥ 60%). |
 
 > ⚠️ **Note:** Cannot specify both `mepId` and `groupId` — use one or neither.
+
+#### Methodology
+
+Each anomaly is detected against the MEP's *own* rolling baseline derived from
+DOCEO roll-call (RCV) records bounded to **up to 200** votes (2×100 paged
+fetching) in the requested period:
+
+| Anomaly Type | Trigger |
+|--------------|---------|
+| `PARTY_DEFECTION` | Weekly defection-rate z-score ≥ **1.5** vs MEP's own baseline |
+| `ABSTENTION_SPIKE` | Weekly abstention-rate z-score ≥ **1.5** vs MEP's own baseline |
+| `ALIGNMENT_SHIFT` | Week-over-week defection-rate increase ≥ **20 percentage points** |
+| `CROSS_PARTY_ALIGNMENT_SHIFT` | MEP voted with non-home group majorities on ≥ **60%** of decisive RCVs in a weekly sub-window (≥3 decisive votes) |
+
+Group majority on a vote is resolved by plurality of the DOCEO
+`groupBreakdown` row, with ties broken alphabetically (ABSTAIN < AGAINST <
+FOR) for deterministic results. Each MEP vote is classified as `aligned`,
+`defected`, `abstained`, or `absent` relative to their home-group majority.
+
+#### Anomaly Schema
+
+```jsonc
+{
+  "type": "PARTY_DEFECTION | ABSTENTION_SPIKE | ALIGNMENT_SHIFT | CROSS_PARTY_ALIGNMENT_SHIFT",
+  "severity": "HIGH | MEDIUM | LOW",
+  "mepId": "string",
+  "mepName": "string",
+  "description": "string",
+  "metrics": { "expectedValue": 0, "actualValue": 0, "deviation": 0 },
+  "detectedDate": "YYYY-MM-DD",
+  "evidenceVoteIds": ["RCV-...", "..."]  // DOCEO LatestVoteRecord.id values — drill down via get_latest_votes (record.id)
+}
+```
+
+#### Confidence Level
+
+Reflects RCV coverage (votes inspected on which the MEP appeared on the roll):
+
+- `HIGH` for ≥ **50** RCVs
+- `MEDIUM` for **10–49** RCVs
+- `LOW` for **< 10** RCVs, or when DOCEO is unreachable
+
+When DOCEO supplies at least one record with a sitting date within the last
+**72 hours**, `dataFreshness` is reported as `NEAR_REALTIME`.
 
 #### Example Usage
 
