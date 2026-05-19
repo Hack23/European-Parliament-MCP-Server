@@ -1378,22 +1378,76 @@ Compare EPP, S&D, and Renew Europe on voting cohesion and legislative output
 
 ### Tool: analyze_legislative_effectiveness
 
-**Description**: Score MEP or committee legislative effectiveness — bills passed, amendments adopted, report quality, and overall impact.
+**Description**: Score MEP or committee legislative effectiveness from real EP Open Data Portal sources — reports authored, opinions delivered, amendments tabled and adopted, parliamentary questions filed, and the resulting legislative success rate. Fans out four EP endpoints in parallel under independent 6 s timeouts and tags every metric with a per-source `dataSources` flag.
 
 #### Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | subjectType | string | Yes | Subject type: `MEP` or `COMMITTEE` |
-| subjectId | string | Yes | Subject identifier (MEP ID or committee abbreviation) |
-| dateFrom | string | No | Start date (YYYY-MM-DD) |
-| dateTo | string | No | End date (YYYY-MM-DD) |
+| subjectId | string | Yes | Subject identifier (MEP ID, e.g. `person/124810`, or committee abbreviation, e.g. `IMCO`) |
+| dateFrom | string | No | Start date (YYYY-MM-DD). Defaults to 1 January of the current year. |
+| dateTo | string | No | End date (YYYY-MM-DD). Defaults to today. |
+
+#### Data Sources
+
+| Source | EP Endpoint | Populates | Per-source budget |
+|--------|-------------|-----------|-------------------|
+| procedures | `/procedures` | `metrics.reportsAuthored`, `metrics.opinionsDelivered` (rapporteur attribution) | 6 s |
+| adoptedTexts | `/adopted-texts` | `metrics.legislativeSuccessRate` (success denominator) | 6 s |
+| plenaryDocumentItems | `/plenary-session-documents-items` | `metrics.amendmentsTabled`, `metrics.amendmentsAdopted` (author + status flag) | 6 s |
+| questions | `/parliamentary-questions` | `metrics.questionsAsked` (filtered by author) | 6 s |
+
+Each source's status is reported in `dataSources: { procedures, adoptedTexts, plenaryDocumentItems, questions }` as one of `OK | EMPTY | TIMEOUT | UNAVAILABLE`. A single failing source never zeros out the others — graceful per-field degradation is preserved via `Promise.allSettled`-equivalent (per-source try/catch in `withTimeoutAndAbort`).
+
+#### Methodology
+
+- **`reportsAuthored`** — procedures whose `rapporteur` field names the subject MEP (case-insensitive substring match against the normalised `person/{id}` and bare-id tokens) and that lacks a `shadow` / `opinion` qualifier in the same field.
+- **`opinionsDelivered`** — procedures where the same author match exists *and* the `rapporteur` field carries a `shadow` / `opinion` qualifier.
+- **`amendmentsTabled`** / **`amendmentsAdopted`** — plenary-session document items whose `type` includes `AMENDMENT`, whose `authors[]` contains the subject's id, and (for `Adopted`) whose `status` includes `ADOPTED`.
+- **`legislativeSuccessRate`** = `100 × procedures-with-adopted-text / attributed-procedures`. The numerator counts procedures whose `reference` (or `id`) appears as `procedureReference` in any `/adopted-texts` item within the date window. The denominator counts the union of `reportsAuthored` and `opinionsDelivered` procedure IDs (no double-counting).
+- **`questionsAsked`** — `/parliamentary-questions` filtered upstream by `author={subjectId}` (for MEPs) and re-verified client-side by the aggregator's token set. For committee subjects, questions are fetched unfiltered and matched against any member id.
+- **Committee aggregation** — for `subjectType: 'COMMITTEE'`, member MEP IDs are resolved from `/corporate-bodies` and folded into the aggregator's token set. All four metrics are summed across the committee's membership in a single pass; the per-MEP cache is reused so the same committee can be re-queried cheaply.
+- **Deterministic ordering** — every list under `attributions` is sorted ascending by stable `procedureId` / `documentId` / `questionId`, so repeated runs over the same input produce byte-identical output.
+
+#### Computed Attributes
+
+- `amendmentSuccessRate` = `100 × amendmentsAdopted / amendmentsTabled`
+- `legislativeOutputPerMonth` = `(reportsAuthored + amendmentsTabled) / months-in-window`
+- `peerComparisonPercentile` — heuristic; refined when corpus benchmarks become available.
+- `effectivenessRank` — `HIGHLY_EFFECTIVE` (≥70), `EFFECTIVE` (≥50), `MODERATE` (≥30), or `DEVELOPING` otherwise.
 
 #### Example Usage
 
+Analyse a known AI Act rapporteur for 2024:
+
+```jsonc
+{
+  "tool": "analyze_legislative_effectiveness",
+  "arguments": {
+    "subjectType": "MEP",
+    "subjectId": "person/124810",     // example MEP id
+    "dateFrom": "2024-01-01",
+    "dateTo": "2024-12-31"
+  }
+}
 ```
-Analyze the legislative effectiveness of the ENVI committee
+
+Aggregate the IMCO committee over the same window:
+
+```jsonc
+{
+  "tool": "analyze_legislative_effectiveness",
+  "arguments": {
+    "subjectType": "COMMITTEE",
+    "subjectId": "IMCO",
+    "dateFrom": "2024-01-01",
+    "dateTo": "2024-12-31"
+  }
+}
 ```
+
+The response envelope contains `metrics`, `scores`, `computedAttributes`, `attributions` (ID lists, sorted ascending), `dataSources` (per-source `OK | EMPTY | TIMEOUT | UNAVAILABLE`), `dataQualityWarnings`, and `methodology`. A 15-minute cache is keyed by `(subjectType, subjectId, dateFrom, dateTo)`.
 
 ---
 
