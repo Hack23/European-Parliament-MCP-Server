@@ -165,6 +165,64 @@ describe('network_analysis Tool', () => {
       const data = JSON.parse(result.content[0]?.text ?? '{}') as { sourceAttribution: string };
       expect(data.sourceAttribution).toBe('European Parliament Open Data Portal - data.europarl.europa.eu');
     });
+
+    it('returns a deterministic strongest-edge subset when the graph exceeds the response cap', async () => {
+      const makeGroup = (
+        prefix: string,
+        count: number,
+        committees: string[]
+      ): typeof mockMEPs => Array.from({ length: count }, (_, index) => ({
+        id: `${prefix}${String(index + 1).padStart(2, '0')}`,
+        name: `${prefix} ${String(index + 1)}`,
+        country: 'DE',
+        politicalGroup: 'EPP',
+        committees,
+        active: true,
+        termStart: '2019-07-02',
+      }));
+
+      const cappedMEPs = [
+        ...makeGroup('A', 14, ['A1', 'A2', 'A3', 'A4']),
+        ...makeGroup('B', 13, ['B1', 'B2', 'B3']),
+        ...makeGroup('C', 9, ['C1', 'C2']),
+      ];
+      vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
+        data: cappedMEPs,
+        total: cappedMEPs.length,
+        limit: 100,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleNetworkAnalysis({ analysisType: 'committee' });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        networkEdges: { sourceId: string; targetId: string; relationshipStrength: number }[];
+        computedAttributes: { totalEdges: number };
+      };
+
+      expect(data.computedAttributes.totalEdges).toBe(205);
+      expect(data.networkEdges).toHaveLength(200);
+
+      const expectedEdges = cappedMEPs.flatMap((a, index) =>
+        cappedMEPs.slice(index + 1).flatMap((b) => {
+          const shared = a.committees.filter(c => b.committees.includes(c)).length;
+          if (shared === 0) return [];
+          return [{
+            sourceId: a.id,
+            targetId: b.id,
+            relationshipStrength: Math.min(1, shared * 0.3),
+            relationshipType: 'committee_co_membership' as const,
+            sharedCommittees: shared,
+          }];
+        })
+      ).sort((a, b) =>
+        b.relationshipStrength - a.relationshipStrength
+        || a.sourceId.localeCompare(b.sourceId)
+        || a.targetId.localeCompare(b.targetId)
+      ).slice(0, 200);
+
+      expect(data.networkEdges).toEqual(expectedEdges);
+    });
   });
 
   describe('dataAvailable: false scenario', () => {

@@ -142,6 +142,16 @@ interface NetworkAnalysisResult {
   dataQualityWarnings: string[];
 }
 
+function compareNetworkEdges(a: NetworkEdge, b: NetworkEdge): number {
+  if (a.relationshipStrength !== b.relationshipStrength) {
+    return b.relationshipStrength - a.relationshipStrength;
+  }
+  if (a.sourceId !== b.sourceId) return a.sourceId < b.sourceId ? -1 : 1;
+  if (a.targetId !== b.targetId) return a.targetId < b.targetId ? -1 : 1;
+  if (a.relationshipType !== b.relationshipType) return a.relationshipType < b.relationshipType ? -1 : 1;
+  return 0;
+}
+
 /** Relationship strength multiplier per shared committee. */
 const SHARED_COMMITTEE_STRENGTH_FACTOR = 0.3;
 
@@ -619,7 +629,7 @@ export async function networkAnalysis(params: NetworkAnalysisParams): Promise<To
       depth: params.depth,
       minSimilarity: params.minSimilarity,
       networkNodes: nodes,
-      networkEdges: filteredEdges.slice(0, MAX_RESPONSE_EDGES),
+      networkEdges: [...filteredEdges].sort(compareNetworkEdges).slice(0, MAX_RESPONSE_EDGES),
       centralMEPs,
       clusterCount,
       modularityScore: q,

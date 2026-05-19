@@ -89,19 +89,8 @@ function makePairKey(a: string, b: string): { key: string; first: string; second
 }
 
 /**
- * Compute pairwise voting-similarity edges for the supplied MEP id set.
- *
- * Only MEP ids in `mepIdSubset` are considered, keeping the O(V²) inner loop
- * bounded by the caller's network size (≤ 900 MEPs).
- *
- * @param mepIdSubset - Set of MEP ids to score (typically the network nodes).
- * @param options - Optional bounds and timeout overrides.
- * @returns Edges with similarity ≥ `minSimilarity` (default 0.7) and
- *   ≥ {@link MIN_SHARED_DECISIVE_VOTES} co-participations, or `null` when
- *   DOCEO is unavailable.
- *
- * @security Errors are audit-logged as `network_voting_similarity.fetch` —
- *   only the inspected count and node count are logged; no PII.
+ * Extract only decisive MEP votes (FOR / AGAINST) that belong to the supplied
+ * subset. Abstentions and out-of-scope ids are excluded.
  */
 function extractDecisiveMeps(
   mepVotes: Record<string, 'FOR' | 'AGAINST' | 'ABSTAIN'>,
@@ -191,6 +180,21 @@ function tallyPairsFromResponse(
   return { pairs, rcvVotesInspected };
 }
 
+/**
+ * Compute pairwise voting-similarity edges for the supplied MEP id set.
+ *
+ * Only MEP ids in `mepIdSubset` are considered, keeping the O(V²) inner loop
+ * bounded by the caller's network size (≤ 900 MEPs).
+ *
+ * @param mepIdSubset - Set of MEP ids to score (typically the network nodes).
+ * @param options - Optional bounds and timeout overrides.
+ * @returns Edges with similarity ≥ `minSimilarity` (default 0.7) and
+ *   ≥ {@link MIN_SHARED_DECISIVE_VOTES} co-participations, or `null` when
+ *   DOCEO is unavailable.
+ *
+ * @security Errors are audit-logged as `network_voting_similarity.fetch` —
+ *   only the inspected count and node count are logged; no PII.
+ */
 export async function computeNetworkVotingSimilarityFromDoceo(
   mepIdSubset: ReadonlySet<string>,
   options: ComputeNetworkVotingSimilarityOptions = {}
