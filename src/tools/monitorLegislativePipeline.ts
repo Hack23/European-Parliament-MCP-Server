@@ -71,6 +71,16 @@ const OPERATION_TIMEOUT_MS = 30_000;
  */
 const LIFECYCLE_BUILD_BUDGET_MS = 8_000;
 
+/**
+ * Grace period (ms) added to the outer `withTimeout` wrapping the lifecycle
+ * rebuild. The wrapper must fire **after** the internal `deadline` so the
+ * rebuild has a chance to cooperatively cancel and resolve with its partial
+ * model; otherwise the outer timeout would reject before the rebuild
+ * returns and the (now-orphaned) in-flight build would continue consuming
+ * rate-limit tokens for the duration of the request.
+ */
+const LIFECYCLE_TIMEOUT_GRACE_MS = 500;
+
 /** Forecast basis discriminator emitted in the response envelope. */
 export type ForecastBasis = 'HISTORICAL_MEDIAN' | 'INSUFFICIENT_DATA' | 'NOT_APPLICABLE';
 
@@ -746,16 +756,18 @@ async function loadLifecycleModelWithBudget(): Promise<LifecycleStatisticsModel>
   try {
     return await withTimeout(
       getLifecycleStatistics({ deadline }),
-      LIFECYCLE_BUILD_BUDGET_MS + 500,
+      LIFECYCLE_BUILD_BUDGET_MS + LIFECYCLE_TIMEOUT_GRACE_MS,
       'lifecycle statistics build exceeded budget'
     );
   } catch (error: unknown) {
     if (error instanceof TimeoutError || error instanceof APIError) {
       const statusCode = error instanceof APIError ? error.statusCode : undefined;
+      const auditDetails = statusCode !== undefined
+        ? `${error.name} status=${String(statusCode)}`
+        : error.name;
       console.error(
         '[monitor_legislative_pipeline] Lifecycle model fallback engaged:',
-        error.name,
-        statusCode !== undefined ? `status=${String(statusCode)}` : ''
+        auditDetails
       );
       return emptyLifecycleStatisticsModel();
     }
