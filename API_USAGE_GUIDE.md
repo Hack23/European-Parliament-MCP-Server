@@ -1393,8 +1393,8 @@ Compare EPP, S&D, and Renew Europe on voting cohesion and legislative output
 
 | Source | EP Endpoint | Populates | Per-source budget |
 |--------|-------------|-----------|-------------------|
-| procedures | `/procedures` | `metrics.reportsAuthored`, `metrics.opinionsDelivered` (rapporteur attribution) | 6 s |
-| adoptedTexts | `/adopted-texts` | `metrics.legislativeSuccessRate` (success denominator) — fetched per calendar year in the window (parallel, deduped by id); windows > 5 years fall back to a single unfiltered fetch | 6 s |
+| procedures | `/procedures` | `metrics.reportsAuthored`, `metrics.opinionsDelivered` (rapporteur attribution) — paginated up to 5 pages (≤ 1000 items); a `dataQualityWarnings` entry is emitted when truncated | 6 s |
+| adoptedTexts | `/adopted-texts` | `metrics.legislativeSuccessRate` (success denominator) — fetched per calendar year in the window (parallel via `Promise.allSettled`, deduped by id); failed years are warned and skipped, all-year failures mark the source UNAVAILABLE; windows > 5 years fall back to a single unfiltered fetch | 6 s |
 | plenaryDocumentItems | `/plenary-session-documents-items` | `metrics.amendmentsTabled`, `metrics.amendmentsAdopted` (author + status flag) | 6 s |
 | questions | `/parliamentary-questions` | `metrics.questionsAsked` (filtered by author) | 6 s |
 
@@ -1407,7 +1407,7 @@ Each source's status is reported in `dataSources: { procedures, adoptedTexts, pl
 - **`amendmentsTabled`** / **`amendmentsAdopted`** — plenary-session document items whose `type` includes `AMENDMENT`, whose `authors[]` contains the subject's id, and (for `Adopted`) whose `status` includes `ADOPTED`.
 - **`legislativeSuccessRate`** = `100 × procedures-with-adopted-text / attributed-procedures`. The numerator counts procedures whose `reference` (or `id`) appears as `procedureReference` in any `/adopted-texts` item within the date window. The denominator counts the union of `reportsAuthored` and `opinionsDelivered` procedure IDs (no double-counting).
 - **`questionsAsked`** — `/parliamentary-questions` filtered upstream by `author={subjectId}` (for MEPs) and re-verified client-side by the aggregator's token set. For committee subjects, questions are fetched unfiltered and matched against any member id.
-- **Committee aggregation** — for `subjectType: 'COMMITTEE'`, member MEP IDs are resolved from `/corporate-bodies` and folded into the aggregator's token set. All four metrics are summed across the committee's membership in a single pass; the per-MEP cache is reused so the same committee can be re-queried cheaply.
+- **Committee aggregation** — for `subjectType: 'COMMITTEE'`, member MEP IDs are resolved from `/corporate-bodies` and folded into the aggregator's token set. All four metrics are summed across the committee's membership in a single pass over the shared per-source fetches; the analysis is cached for 15 minutes by `(subjectType, subjectId, dateFrom, dateTo)` so the same committee window can be re-queried cheaply, but there is no per-member cache reuse — switching to a different committee or window requires a fresh fan-out.
 - **Deterministic ordering** — every list under `attributions` is sorted ascending by stable `procedureId` / `documentId` / `questionId`, so repeated runs over the same input produce byte-identical output.
 
 #### Computed Attributes

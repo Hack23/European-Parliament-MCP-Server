@@ -99,6 +99,13 @@ interface LegislativeEffectivenessAnalysis {
 const SOURCE_TIMEOUT_MS = 6_000;
 /** Page size used for client-side filtering of bulk endpoints. */
 const FETCH_PAGE_LIMIT = 200;
+/**
+ * Maximum number of pages walked by `fetchProcedures()` per request.
+ * Bounds the worst-case cost at `MAX_PROCEDURE_PAGES * FETCH_PAGE_LIMIT`
+ * items so a deep result set cannot starve the 6 s per-source budget or
+ * exhaust the 100 req/min EP API rate-limit token bucket.
+ */
+const MAX_PROCEDURE_PAGES = 5;
 /** 15-minute cache TTL per (subjectType, subjectId, dateFrom, dateTo). */
 const CACHE_TTL_MS = 15 * 60 * 1000;
 /** Bound the in-memory analysis cache. */
@@ -157,24 +164,47 @@ interface SourceFetchResult<T> {
   status: DataSourceStatus;
   items: T[];
   error?: string;
+  /**
+   * Optional human-readable warnings emitted by the fetcher when partial
+   * data was returned (e.g. one year of a multi-year /adopted-texts fan-out
+   * failed, or `fetchProcedures` truncated pagination at the page cap).
+   * Surfaced in `dataQualityWarnings` so downstream tools can branch on
+   * partial coverage rather than treating the result as fully complete.
+   */
+  warnings?: string[];
+}
+
+/**
+ * Per-source fetch payload: items plus any partial-coverage warnings the
+ * fetcher wants to surface (e.g. "year 2024 fetch failed" or "pagination
+ * truncated at page cap").
+ */
+interface FetcherResult<T> {
+  items: T[];
+  warnings?: string[];
 }
 
 /**
  * Run a per-source fetch under the 6 s budget, mapping outcomes into a
  * `DataSourceStatus`. Per-source failures never bubble — callers see a
  * structured envelope so unrelated sources continue to populate values.
+ *
+ * The fetcher may return partial-coverage `warnings` (e.g. when one year of
+ * a multi-year fan-out fails but others succeed); these are forwarded to
+ * the response envelope without changing the source's `OK` status.
  */
 async function runSource<T>(
   source: keyof DataSources,
-  fetcher: (signal: AbortSignal) => Promise<T[]>,
+  fetcher: (signal: AbortSignal) => Promise<FetcherResult<T>>,
 ): Promise<SourceFetchResult<T>> {
   const startedAt = Date.now();
   try {
-    const items = await withTimeoutAndAbort(
+    const result = await withTimeoutAndAbort(
       fetcher,
       SOURCE_TIMEOUT_MS,
       `analyze_legislative_effectiveness:${source} timed out after ${String(SOURCE_TIMEOUT_MS)}ms`,
     );
+    const items = result.items;
     const count = items.length;
     auditLogger.logDataAccess(
       `analyze_legislative_effectiveness.${source}`,
@@ -182,7 +212,14 @@ async function runSource<T>(
       count,
       Date.now() - startedAt,
     );
-    return { status: count > 0 ? 'OK' : 'EMPTY', items };
+    const out: SourceFetchResult<T> = {
+      status: count > 0 ? 'OK' : 'EMPTY',
+      items,
+    };
+    if (result.warnings !== undefined && result.warnings.length > 0) {
+      out.warnings = result.warnings;
+    }
+    return out;
   } catch (error: unknown) {
     const message = toErrorMessage(error);
     const isTimeout = error instanceof TimeoutError;
@@ -222,8 +259,40 @@ function throwIfAborted(signal: AbortSignal): void {
 async function fetchProcedures(): Promise<SourceFetchResult<Procedure>> {
   return runSource<Procedure>('procedures', async (signal) => {
     throwIfAborted(signal);
-    const resp = await epClient.getProcedures({ limit: FETCH_PAGE_LIMIT });
-    return Array.isArray(resp.data) ? resp.data : [];
+    const aggregated: Procedure[] = [];
+    let offset = 0;
+    let page = 0;
+    let exhausted = false;
+    while (page < MAX_PROCEDURE_PAGES) {
+      throwIfAborted(signal);
+      const resp = await epClient.getProcedures({ limit: FETCH_PAGE_LIMIT, offset });
+      const items = Array.isArray(resp.data) ? resp.data : [];
+      aggregated.push(...items);
+      page += 1;
+      if (!resp.hasMore) {
+        exhausted = true;
+        break;
+      }
+      // Advance the offset by what the page actually returned, falling back
+      // to the requested limit when the API returned an empty page with
+      // `hasMore=true` so we make forward progress (the page cap remains
+      // the ultimate safeguard).
+      offset += items.length > 0 ? items.length : FETCH_PAGE_LIMIT;
+    }
+    if (exhausted) {
+      return { items: aggregated };
+    }
+    // Reached the page cap with `hasMore` still true — surface a warning so
+    // downstream tools know `reportsAuthored`/`opinionsDelivered` and the
+    // success-rate denominator may undercount.
+    return {
+      items: aggregated,
+      warnings: [
+        `procedures pagination truncated at ${String(MAX_PROCEDURE_PAGES)} pages `
+        + `(${String(MAX_PROCEDURE_PAGES * FETCH_PAGE_LIMIT)} items) — `
+        + 'reports/opinions/success-rate may undercount for broad windows',
+      ],
+    };
   });
 }
 
@@ -263,23 +332,46 @@ async function fetchAdoptedTexts(
       // Either invalid dates or a span > 5 years — fetch unfiltered and let
       // the aggregator filter by `dateAdopted` against the window.
       const resp = await epClient.getAdoptedTexts({ limit: FETCH_PAGE_LIMIT });
-      return Array.isArray(resp.data) ? resp.data : [];
+      return { items: Array.isArray(resp.data) ? resp.data : [] };
     }
-    // Parallel per-year fetches; flatten and dedupe by id.
-    const responses = await Promise.all(
+    // Parallel per-year fetches via `Promise.allSettled` so a single failing
+    // year does not zero out the others — partial coverage is reported as a
+    // warning rather than a full `UNAVAILABLE` status.
+    const settled = await Promise.allSettled(
       years.map((year) => epClient.getAdoptedTexts({ year, limit: FETCH_PAGE_LIMIT })),
     );
     const seen = new Set<string>();
     const merged: AdoptedText[] = [];
-    for (const resp of responses) {
-      if (!Array.isArray(resp.data)) continue;
-      for (const item of resp.data) {
+    const failedYears: number[] = [];
+    settled.forEach((result, idx) => {
+      const year = years[idx];
+      if (result.status === 'rejected' || year === undefined) {
+        if (year !== undefined) failedYears.push(year);
+        return;
+      }
+      const data = result.value.data;
+      if (!Array.isArray(data)) return;
+      for (const item of data) {
         if (seen.has(item.id)) continue;
         seen.add(item.id);
         merged.push(item);
       }
+    });
+    // If every year failed, propagate the failure so the source is marked
+    // UNAVAILABLE rather than EMPTY.
+    if (failedYears.length === years.length) {
+      throw new Error(
+        `adopted-texts fetch failed for all ${String(years.length)} year(s) in window`,
+      );
     }
-    return merged;
+    const warnings: string[] = [];
+    if (failedYears.length > 0) {
+      warnings.push(
+        `adopted-texts fetch failed for year(s) ${failedYears.join(', ')} — `
+        + 'legislativeSuccessRate may undercount procedures adopted in those years',
+      );
+    }
+    return warnings.length > 0 ? { items: merged, warnings } : { items: merged };
   });
 }
 
@@ -287,7 +379,7 @@ async function fetchPlenaryDocumentItems(): Promise<SourceFetchResult<Legislativ
   return runSource<LegislativeDocument>('plenaryDocumentItems', async (signal) => {
     throwIfAborted(signal);
     const resp = await epClient.getPlenarySessionDocumentItems({ limit: FETCH_PAGE_LIMIT });
-    return Array.isArray(resp.data) ? resp.data : [];
+    return { items: Array.isArray(resp.data) ? resp.data : [] };
   });
 }
 
@@ -304,7 +396,7 @@ async function fetchQuestions(
       dateTo,
       limit: FETCH_PAGE_LIMIT,
     });
-    return Array.isArray(resp.data) ? resp.data : [];
+    return { items: Array.isArray(resp.data) ? resp.data : [] };
   });
 }
 
@@ -417,11 +509,49 @@ interface SubjectInfo {
   committeeMemberIds?: string[];
 }
 
+/**
+ * Normalise an MEP identifier into the bare token that matches the EP API's
+ * `q.author` field for `/parliamentary-questions` (typically `person/{id}`).
+ *
+ * The question client applies the `author` filter client-side via
+ * case-insensitive substring match against `q.author`, so the safest
+ * portable token is the trailing numeric / final-segment id:
+ *
+ *  - `person/124810` → `124810`
+ *  - `MEP-124810`    → `124810`
+ *  - `124810`        → `124810`
+ *
+ * Returning the bare id makes the filter robust to whichever upstream
+ * formatting the EP API uses (`person/{id}` is the documented shape).
+ *
+ * @internal
+ */
+export function normaliseQuestionAuthorParam(subjectId: string): string {
+  const trimmed = subjectId.trim();
+  if (trimmed === '') return '';
+  // Strip the longest known prefix first so `person/MEP-124810` (defensive)
+  // still resolves to the trailing numeric id.
+  let rest = trimmed;
+  const slashIdx = rest.lastIndexOf('/');
+  if (slashIdx >= 0 && slashIdx < rest.length - 1) {
+    rest = rest.slice(slashIdx + 1);
+  }
+  const dashIdx = rest.lastIndexOf('-');
+  if (dashIdx >= 0 && dashIdx < rest.length - 1) {
+    rest = rest.slice(dashIdx + 1);
+  }
+  return rest;
+}
+
 async function resolveMepSubject(subjectId: string): Promise<SubjectInfo> {
   const mep = await epClient.getMEPDetails(subjectId);
   return {
     subjectName: mep.name,
-    authorParam: subjectId,
+    // EP question authors are returned as `person/{id}`; normalise the
+    // incoming subjectId to the bare numeric/final-segment id so callers
+    // can pass `MEP-124810`, `person/124810`, or `124810` interchangeably
+    // and the client-side substring filter still matches.
+    authorParam: normaliseQuestionAuthorParam(subjectId),
   };
 }
 
@@ -583,7 +713,13 @@ async function buildAnalysis(args: BuildArgs): Promise<LegislativeEffectivenessA
     dataFreshness: 'Real-time EP API data — procedures, adopted texts, plenary document items, parliamentary questions',
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
     methodology: METHODOLOGY,
-    dataQualityWarnings: buildQualityWarnings(dataSources),
+    dataQualityWarnings: [
+      ...buildQualityWarnings(dataSources),
+      ...(sources.procedures.warnings ?? []),
+      ...(sources.adoptedTexts.warnings ?? []),
+      ...(sources.plenaryDocumentItems.warnings ?? []),
+      ...(sources.questions.warnings ?? []),
+    ],
   };
 }
 
