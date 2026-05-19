@@ -451,10 +451,14 @@ function describeMethodology(
     if (!votingResultAvailable) warnings.push('DOCEO RCV data unavailable — falling back to committee-only edges for analysisType=combined');
   }
   lines.push('Centrality = 0.6 × weighted-degree + 0.4 × 100 × betweenness (Brandes, weighted shortest paths via 1/weight).');
-  lines.push('Communities detected via deterministic synchronous label propagation; modularityScore is Newman Q.');
+  lines.push('Communities detected via deterministic asynchronous label propagation; modularityScore is Newman Q.');
   lines.push('BFS depth-bounded ego network when mepId is supplied.');
-  lines.push(`DOCEO RCV records inspected: ${String(rcvInspected)}.`);
-  lines.push('Data source: https://data.europarl.europa.eu/api/v2/meps + DOCEO XML.');
+  if (analysisType !== 'committee') {
+    lines.push(`DOCEO RCV records inspected: ${String(rcvInspected)}.`);
+    lines.push('Data source: https://data.europarl.europa.eu/api/v2/meps + DOCEO XML.');
+  } else {
+    lines.push('Data source: https://data.europarl.europa.eu/api/v2/meps.');
+  }
   return { methodology: lines.join(' '), warnings };
 }
 
@@ -651,7 +655,7 @@ export async function networkAnalysis(params: NetworkAnalysisParams): Promise<To
  */
 export const networkAnalysisToolMetadata = {
   name: 'network_analysis',
-  description: 'MEP relationship network mapping using committee co-membership and DOCEO roll-call vote similarity. Computes weighted-degree + Brandes betweenness centrality, deterministic label-propagation clusters with Newman modularity Q, and identifies cross-cluster brokers. Supports depth-bounded ego networks when an mepId is supplied.',
+  description: 'MEP relationship network mapping using committee co-membership and DOCEO roll-call vote similarity. Computes weighted-degree + Brandes betweenness centrality, deterministic label-propagation clusters with Newman modularity Q, and identifies cross-cluster brokers. Supports depth-bounded ego networks when mepId is supplied.',
   inputSchema: {
     type: 'object' as const,
     properties: {

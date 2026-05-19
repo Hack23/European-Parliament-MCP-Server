@@ -5,7 +5,7 @@
  * - {@link buildAdjacency} — adjacency map from a weighted edge list.
  * - {@link bfsLimited} — depth-bounded BFS ego-network extraction.
  * - {@link weightedDegree} — weighted-degree centrality per node.
- * - {@link betweennessCentrality} — Brandes' algorithm (weighted, O(V·E)).
+ * - {@link betweennessCentrality} — Brandes' algorithm (weighted, Dijkstra-based, O(V·(V+E)·log V)).
  * - {@link labelPropagation} — deterministic asynchronous label-propagation community detection.
  * - {@link modularity} — Newman's modularity Q for a partition.
  *
