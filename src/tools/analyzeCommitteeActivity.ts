@@ -145,6 +145,9 @@ function readCache(key: string): CommitteeActivityAnalysis | undefined {
 
 function writeCache(key: string, value: CommitteeActivityAnalysis): void {
   if (analysisCache.size >= MAX_CACHE_ENTRIES) {
+    // FIFO eviction: Map iteration order is insertion order in JS, so the
+    // first key is the oldest insertion. Sufficient for a small bounded
+    // analysis cache; full LRU is not warranted at this scale.
     const firstKey = analysisCache.keys().next().value;
     if (firstKey !== undefined) analysisCache.delete(firstKey);
   }
@@ -200,7 +203,10 @@ function isWithinDateWindow(date: string | undefined | null, dateFrom: string, d
 const ONGOING_PROCEDURE_STATUSES = ['ongoing', 'open', 'in progress', 'awaiting', 'pending'];
 
 function isOngoingProcedure(status: string | undefined | null): boolean {
-  if (status === undefined || status === null || status === '') return true; // unknown → keep
+  // Unknown/missing status defaults to ongoing rather than filtered out:
+  // EP procedure payloads sometimes omit status, and dropping silently would
+  // under-count active legislative files for committees.
+  if (status === undefined || status === null || status === '') return true;
   const s = status.toLowerCase();
   return ONGOING_PROCEDURE_STATUSES.some((token) => s.includes(token));
 }
@@ -434,7 +440,10 @@ function round2(n: number): number {
 }
 
 /**
- * Compute the inclusive month span between two ISO dates, clamped to >= 1.
+ * Compute the approximate inclusive month span between two ISO dates,
+ * using a 30-day month approximation. Clamped to >= 1 to avoid division
+ * by zero in derived per-month metrics. Sufficient for window-length
+ * normalisation; not used where calendar accuracy is required.
  */
 function monthsBetween(dateFrom: string, dateTo: string): number {
   const from = new Date(dateFrom);
