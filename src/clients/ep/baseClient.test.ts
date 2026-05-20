@@ -970,8 +970,11 @@ describe('BaseEPClient.get() external AbortSignal', () => {
     const ctrl = new AbortController();
 
     // fetch returns a never-resolving promise that rejects when its signal aborts
-    mockFetch.mockImplementationOnce((_url: string, init: RequestInit) => {
-      return new Promise((_resolve, reject) => {
+    // async mock is required to register the abort listener on `init.signal` before
+    // returning; the rule is safe to disable for vitest mock factories.
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    mockFetch.mockImplementationOnce(async (_url: string, init: RequestInit): Promise<Response> => {
+      return new Promise<Response>((_resolve, reject) => {
         init.signal?.addEventListener('abort', () => {
           const err = new Error('aborted');
           err.name = 'AbortError';
@@ -1023,8 +1026,11 @@ describe('BaseEPClient.get() external AbortSignal', () => {
     const ctrl = new AbortController();
 
     // 4 concurrent requests, each blocking until its signal aborts.
-    mockFetch.mockImplementation((_url: string, init: RequestInit) => {
-      return new Promise((_resolve, reject) => {
+    // async mock is required to register the abort listener on `init.signal` before
+    // returning; the rule is safe to disable for vitest mock factories.
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    mockFetch.mockImplementation(async (_url: string, init: RequestInit): Promise<Response> => {
+      return new Promise<Response>((_resolve, reject) => {
         init.signal?.addEventListener('abort', () => {
           const err = new Error('aborted');
           err.name = 'AbortError';

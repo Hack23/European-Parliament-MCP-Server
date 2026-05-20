@@ -109,15 +109,17 @@ export class CommitteeClient extends BaseEPClient {
     abortSignal?: AbortSignal;
   }): Promise<Committee> {
     const action = 'get_committee_info';
+    // Audit params exclude `abortSignal` (not a property we want in audit logs).
+    const auditParams = { id: params.id, abbreviation: params.abbreviation };
     try {
       const searchTerm = params.abbreviation ?? params.id ?? '';
       const committee = await this.resolveCommittee(searchTerm, params.abortSignal);
-      auditLogger.logDataAccess(action, { id: params.id, abbreviation: params.abbreviation }, 1);
+      auditLogger.logDataAccess(action, auditParams, 1);
       return committee;
     } catch (error: unknown) {
       auditLogger.logError(
         action,
-        { id: params.id, abbreviation: params.abbreviation },
+        auditParams,
         error instanceof Error ? error.message : 'Unknown error'
       );
       throw error;
