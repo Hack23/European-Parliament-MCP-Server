@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **AnalyzeCommitteeActivitySchema**: `ZodObject`\<\{ `committeeId`: `ZodString`; `dateFrom`: `ZodOptional`\<`ZodString`\>; `dateTo`: `ZodOptional`\<`ZodString`\>; \}, `$strip`\>
 
-Defined in: [tools/analyzeCommitteeActivity.ts:25](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCommitteeActivity.ts#L25)
+Defined in: [tools/analyzeCommitteeActivity.ts:30](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCommitteeActivity.ts#L30)
 
 Schema for analyze_committee_activity tool input

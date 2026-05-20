@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../README.md)
+[**European Parliament MCP Server API v1.3.9**](../README.md)
 
 ***
 
@@ -333,6 +333,8 @@ The following five tools extend the OSINT capability with network analysis, sent
 - Input validation via Zod schemas with `.refine()` cross-field constraints and strict typing throughout
 - Standardized error handling via `ToolError` (toolName, operation, isRetryable) and `buildToolResponse()` for consistent response building
 
+**Contract enforcement:** All 15 OSINT tools are validated against the shared envelope by a registry-driven contract suite at [`tests/integration/osint/contract.test.ts`](../_media/contract.test.ts). The suite drives off `getToolMetadataArray().filter(t => t.category === 'osint')`, parses every response against [`OsintStandardOutputSchema`](../schemas/ep/analysis/README.md), and enforces the **no-silent-zero policy** (numeric fields must never be silently zero when data is unavailable — a `dataQualityWarnings` entry must explain the unavailability) plus a determinism guard. See `INTEGRATION_TESTING.md` § "OSINT QA Harness".
+
 #### EP Data Access Tools (8)
 
 | Tool | Function | Description |
@@ -643,6 +645,73 @@ MCP args (unknown) → Zod.parse() → typed input → EP API call
 - ✅ Data limitations are surfaced to end users via warnings array
 - ✅ Analytical transparency meets ISMS A.8.11 (data integrity) requirements
 - ⚠️ Slightly larger response payloads due to quality metadata
+
+---
+
+### ADR-006: Shared DOCEO RCV aggregator for per-MEP voting metrics
+
+**Status:** Accepted | **Date:** 2026-05-18
+
+**Context:** `MEPDetails.votingStatistics` from the EP Open Data API is a
+placeholder that frequently returns zeros, producing zero-valued OSINT
+metrics (loyalty, participation, coalition-building) for active MEPs. The
+DOCEO XML source already used by `analyze_coalition_dynamics` and
+`get_latest_votes` exposes real per-MEP RCV positions and political-group
+breakdowns.
+
+**Decision:** Introduce a shared utility `src/utils/doceoMepAggregator.ts`
+exposing `computeMepVotingActivityFromDoceo(mepId, options)` that:
+- aggregates per-MEP `totalVotes` / `votesFor` / `votesAgainst` / `abstentions`
+- computes a real `loyaltyScore` from group-majority alignment
+- is bounded by `withTimeoutAndAbort` (default 2 s)
+- caches results for 5 minutes keyed by `${mepId}|${dateFrom}|${dateTo}`
+- returns `null` on any failure so callers can degrade gracefully
+
+OSINT tools that consume the aggregator surface a `dataSource: 'EP_API' |
+'DOCEO' | 'EP_API+DOCEO'` field in their response envelope and emit a
+`dataQualityWarning` when DOCEO is unreachable.
+
+**Consequences:**
+- ✅ Real per-MEP voting metrics replace placeholder zeros for active MEPs
+- ✅ Single shared aggregator avoids duplicating DOCEO orchestration across tools
+- ✅ Graceful degradation: tool always returns a valid response even when DOCEO is down
+- ✅ Confidence levels are now grounded in observed RCV count, not placeholder counts
+
+---
+
+### ADR-007: Graph Algorithms for `network_analysis`
+
+**Status:** Accepted (2026-05) — implemented in `src/utils/graphAlgorithms.ts`
+and `src/utils/networkVotingSimilarity.ts`.
+
+**Context:** The original `network_analysis` echoed the `analysisType` and
+`depth` parameters back without applying them, and used a placeholder for
+clusters/centrality. With DOCEO RCV now available, voting-similarity edges
+and depth-bounded ego-network traversal are feasible and unlock richer
+OSINT (cross-party brokers, hidden coalitions).
+
+**Decision:** Introduce a pure deterministic graph-algorithms utility
+(`src/utils/graphAlgorithms.ts`) exposing:
+- `buildAdjacency`, `bfsLimited` — adjacency map + depth-bounded BFS
+- `weightedDegree` — weighted-degree centrality
+- `betweennessCentrality` — Brandes' algorithm on weighted graphs
+  (similarity → distance via `1/weight`, normalised undirected)
+- `labelPropagation`, `modularity` — deterministic community detection +
+  Newman Q
+
+Plus a DOCEO helper `src/utils/networkVotingSimilarity.ts` exposing
+`computeNetworkVotingSimilarityFromDoceo(mepIdSubset, { minSimilarity })`
+that emits Jaccard-like agreement edges over decisive RCVs only.
+
+**Consequences:**
+- ✅ `analysisType: committee|voting|combined` and `depth: 1-3` are now
+  fully functional (no longer echoed)
+- ✅ New `minSimilarity` schema parameter (default 0.7) for the voting
+  threshold
+- ✅ Reproducible OSINT: deterministic ordering + tie-breaking guarantees
+  identical clusters/centralities across runs
+- ✅ Reusable utility — the same algorithms can power future tools
+  (e.g. `comparative_intelligence` cross-references)
 
 ---
 

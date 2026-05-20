@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../../README.md)
 
 ***
 
@@ -8,15 +8,15 @@
 
 > **handleMonitorLegislativePipeline**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/monitorLegislativePipeline.ts:313](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/monitorLegislativePipeline.ts#L313)
+Defined in: [tools/monitorLegislativePipeline.ts:829](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/monitorLegislativePipeline.ts#L829)
 
 Handles the monitor_legislative_pipeline MCP tool request.
 
-Monitors the European Parliament's active legislative pipeline by fetching real
-procedures from the EP API and computing health metrics including bottleneck
-detection, stalled-procedure rate, throughput rate, and legislative momentum.
-All procedure data (title, type, stage, status, dates, committee) is sourced
-directly from the EP API; computed attributes are derived from real dates and stages.
+Monitors the European Parliament's active legislative pipeline by fetching
+real procedures and their authoritative event timelines from the EP API
+(`/procedures` + `/procedures/{id}/events`) and computing lifecycle-driven
+health metrics: percentile-based bottleneck detection, historical-median
+completion forecasts, and stage-aware dwell statistics.
 
 ## Parameters
 
@@ -30,14 +30,14 @@ Raw tool arguments, validated against [MonitorLegislativePipelineSchema](../../.
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-MCP tool result containing pipeline items with stage and status,
-  summary counts (active/stalled/completed), detected bottlenecks, pipeline health
-  score, throughput rate, bottleneck index, and legislative momentum classification
+MCP tool result containing pipeline items with stage, lifecycle events,
+  forecast basis, summary counts, detected bottlenecks (≥95th percentile dwell),
+  pipeline health score, throughput rate, bottleneck index, and legislative momentum.
 
 ## Throws
 
 - If `args` fails schema validation (e.g., missing required fields or invalid format)
-- If the European Parliament API is unreachable or returns an error response
+- If the European Parliament API is unreachable for the primary procedure list
 
 ## Example
 
@@ -50,13 +50,15 @@ const result = await handleMonitorLegislativePipeline({
   limit: 20
 });
 // Returns pipeline health score, stalled/active/completed counts,
-// bottleneck list, and legislative momentum assessment
+// bottleneck list, lifecycleEvents per procedure, and forecastBasis.
 ```
 
 ## Security
 
 - Input is validated with Zod before any API call.
 - Personal data in responses is minimised per GDPR Article 5(1)(c).
+- Bounded concurrency (≤8 parallel) on the event fan-out limits API load.
+- Lifecycle corpus is cached 30 min; only event types/dates are retained.
 - All requests are rate-limited and audit-logged per ISMS Policy AU-002.
 
 ## Since

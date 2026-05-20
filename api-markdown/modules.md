@@ -1,8 +1,8 @@
-[**European Parliament MCP Server API v1.3.8**](README.md)
+[**European Parliament MCP Server API v1.3.9**](README.md)
 
 ***
 
-# European Parliament MCP Server API v1.3.8
+# European Parliament MCP Server API v1.3.9
 
 ## Documents
 
@@ -157,8 +157,14 @@
 - [utils/auditLogger](utils/auditLogger/README.md)
 - [utils/auditSink](utils/auditSink/README.md)
 - [utils/credibilityCheck](utils/credibilityCheck/README.md)
+- [utils/doceoMepAggregator](utils/doceoMepAggregator/README.md)
+- [utils/effectivenessAggregator](utils/effectivenessAggregator/README.md)
+- [utils/graphAlgorithms](utils/graphAlgorithms/README.md)
+- [utils/lifecycleStatistics](utils/lifecycleStatistics/README.md)
 - [utils/mepFetcher](utils/mepFetcher/README.md)
+- [utils/networkVotingSimilarity](utils/networkVotingSimilarity/README.md)
 - [utils/performance](utils/performance/README.md)
 - [utils/politicalGroupNormalization](utils/politicalGroupNormalization/README.md)
 - [utils/rateLimiter](utils/rateLimiter/README.md)
 - [utils/timeout](utils/timeout/README.md)
+- [utils/votingBaseline](utils/votingBaseline/README.md)

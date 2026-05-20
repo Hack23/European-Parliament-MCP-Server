@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **transformSpeech**(`apiData`): [`Speech`](../../../../types/ep/activities/interfaces/Speech.md)
 
-Defined in: [clients/ep/transformers.ts:361](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L361)
+Defined in: [clients/ep/transformers.ts:392](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L392)
 
 Transforms EP API speech data to internal [Speech](../../../../types/ep/activities/interfaces/Speech.md) format.
 

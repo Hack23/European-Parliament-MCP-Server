@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../../README.md)
 
 ***
 
@@ -8,21 +8,22 @@
 
 > **sentimentTracker**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/sentimentTracker.ts:255](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L255)
+Defined in: [tools/sentimentTracker.ts:842](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L842)
 
-Compute political-group institutional-positioning sentiment scores.
+Compute political-group sentiment scores over a configurable time window.
 
-Implementation of the MCP `sentiment_tracker` tool. Aggregates current
-MEP group composition into per-group sentiment scores (seat-share
-proxies), computes a polarization index, derives consensus and
-divisive topics and returns an overall parliament sentiment score.
+Implementation of the MCP `sentiment_tracker` tool. Combines current EP API
+MEP composition with DOCEO roll-call vote (RCV) records inside the requested
+`timeframe` window to derive a per-group sentiment score, trend, volatility,
+polarization index, and consensus/divisive topic lists. Falls back to a
+seat-share-only proxy with `confidenceLevel: 'LOW'` and an explicit
+`methodology` note when DOCEO coverage is insufficient.
 
 ## Parameters
 
 ### params
 
-Validated tool parameters
-  (see [SentimentTrackerSchema](../variables/SentimentTrackerSchema.md))
+Validated tool parameters (see [SentimentTrackerSchema](../variables/SentimentTrackerSchema.md))
 
 #### timeframe
 
@@ -36,5 +37,5 @@ Validated tool parameters
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-A [ToolResult](../../shared/types/interfaces/ToolResult.md) containing the sentiment report or a
-  structured error response on failure
+A [ToolResult](../../shared/types/interfaces/ToolResult.md) containing the sentiment report or a structured
+  error response on failure.

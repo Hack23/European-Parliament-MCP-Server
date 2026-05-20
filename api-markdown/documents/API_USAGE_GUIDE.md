@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../README.md)
+[**European Parliament MCP Server API v1.3.9**](../README.md)
 
 ***
 
@@ -1292,6 +1292,28 @@ const votingStats = await client.callTool('generate_report', {
 Assess the influence of MEP with ID "124810" over the past year
 ```
 
+#### Data Source &amp; Confidence
+
+The response envelope includes a `dataSource` field that signals which underlying
+source(s) supplied the Voting Activity and Coalition Building dimensions:
+
+| `dataSource` value | Meaning |
+|--------------------|---------|
+| `EP_API` | Only the EP Open Data `MEPDetails.votingStatistics` placeholder was available (typically zeros). |
+| `DOCEO` | Per-MEP roll-call vote (RCV) data was aggregated from DOCEO XML; no EP API stats merged. |
+| `EP_API+DOCEO` | DOCEO supplied the RCV counts; EP API filled in fields DOCEO does not expose (e.g. `attendanceRate`). |
+
+`confidenceLevel` semantics:
+
+- `HIGH` — at least one real DOCEO RCV vote was observed for the MEP in the requested period.
+- `MEDIUM` — DOCEO data unavailable but EP API reported > 100 placeholder votes.
+- `LOW` — fallback path (no DOCEO observations and ≤ 100 EP API votes).
+
+When DOCEO is unreachable or returns no votes within the requested date window,
+the response degrades gracefully to `dataSource: 'EP_API'` and emits a
+`dataQualityWarning` (`"DOCEO RCV enrichment unavailable …"`); zero values are
+**never** silently returned without a warning.
+
 ---
 
 ### Tool: analyze_coalition_dynamics
@@ -1317,7 +1339,7 @@ Analyze coalition dynamics between EPP and S&D over the last 6 months
 
 ### Tool: detect_voting_anomalies
 
-**Description**: Detect unusual voting patterns including party defections, sudden alignment shifts, abstention spikes, and other anomalies.
+**Description**: Detect statistically unusual voting patterns from EP DOCEO RCV records — party defections, sudden alignment shifts, abstention spikes, and cross-party movement signals.
 
 #### Parameters
 
@@ -1327,9 +1349,53 @@ Analyze coalition dynamics between EPP and S&D over the last 6 months
 | groupId | string | No | - | Political group to analyze |
 | dateFrom | string | No | - | Analysis start date (YYYY-MM-DD) |
 | dateTo | string | No | - | Analysis end date (YYYY-MM-DD) |
-| sensitivityThreshold | number | No | 0.3 | Anomaly sensitivity (0-1, lower = more anomalies detected) |
+| sensitivityThreshold | number | No | 0.3 | Anomaly sensitivity (0-1, lower = more anomalies detected). Default 0.3 matches the spec thresholds (z ≥ 1.5, WoW ≥ 20pp, cross-party ≥ 60%). |
 
 > ⚠️ **Note:** Cannot specify both `mepId` and `groupId` — use one or neither.
+
+#### Methodology
+
+Each anomaly is detected against the MEP's *own* rolling baseline derived from
+DOCEO roll-call (RCV) records bounded to **up to 200** votes (2×100 paged
+fetching) in the requested period:
+
+| Anomaly Type | Trigger |
+|--------------|---------|
+| `PARTY_DEFECTION` | Weekly defection-rate z-score ≥ **1.5** vs MEP's own baseline |
+| `ABSTENTION_SPIKE` | Weekly abstention-rate z-score ≥ **1.5** vs MEP's own baseline |
+| `ALIGNMENT_SHIFT` | Week-over-week defection-rate increase ≥ **20 percentage points** |
+| `CROSS_PARTY_ALIGNMENT_SHIFT` | MEP voted with non-home group majorities on ≥ **60%** of decisive RCVs in a weekly sub-window (≥3 decisive votes) |
+
+Group majority on a vote is resolved by plurality of the DOCEO
+`groupBreakdown` row, with ties broken alphabetically (ABSTAIN < AGAINST <
+FOR) for deterministic results. Each MEP vote is classified as `aligned`,
+`defected`, `abstained`, or `absent` relative to their home-group majority.
+
+#### Anomaly Schema
+
+```jsonc
+{
+  "type": "PARTY_DEFECTION | ABSTENTION_SPIKE | ALIGNMENT_SHIFT | CROSS_PARTY_ALIGNMENT_SHIFT",
+  "severity": "HIGH | MEDIUM | LOW",
+  "mepId": "string",
+  "mepName": "string",
+  "description": "string",
+  "metrics": { "expectedValue": 0, "actualValue": 0, "deviation": 0 },
+  "detectedDate": "YYYY-MM-DD",
+  "evidenceVoteIds": ["RCV-...", "..."]  // DOCEO LatestVoteRecord.id values — drill down via get_latest_votes (record.id)
+}
+```
+
+#### Confidence Level
+
+Reflects RCV coverage (votes inspected on which the MEP appeared on the roll):
+
+- `HIGH` for ≥ **50** RCVs
+- `MEDIUM` for **10–49** RCVs
+- `LOW` for **< 10** RCVs, or when DOCEO is unreachable
+
+When DOCEO supplies at least one record with a sitting date within the last
+**72 hours**, `dataFreshness` is reported as `NEAR_REALTIME`.
 
 #### Example Usage
 
@@ -1362,28 +1428,82 @@ Compare EPP, S&D, and Renew Europe on voting cohesion and legislative output
 
 ### Tool: analyze_legislative_effectiveness
 
-**Description**: Score MEP or committee legislative effectiveness — bills passed, amendments adopted, report quality, and overall impact.
+**Description**: Score MEP or committee legislative effectiveness from real EP Open Data Portal sources — reports authored, opinions delivered, amendments tabled and adopted, parliamentary questions filed, and the resulting legislative success rate. Fans out four EP endpoints in parallel under independent 6 s timeouts and tags every metric with a per-source `dataSources` flag.
 
 #### Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | subjectType | string | Yes | Subject type: `MEP` or `COMMITTEE` |
-| subjectId | string | Yes | Subject identifier (MEP ID or committee abbreviation) |
-| dateFrom | string | No | Start date (YYYY-MM-DD) |
-| dateTo | string | No | End date (YYYY-MM-DD) |
+| subjectId | string | Yes | Subject identifier (MEP ID, e.g. `person/124810`, or committee abbreviation, e.g. `IMCO`) |
+| dateFrom | string | No | Start date (YYYY-MM-DD). Defaults to 1 January of the current year. |
+| dateTo | string | No | End date (YYYY-MM-DD). Defaults to today. |
+
+#### Data Sources
+
+| Source | EP Endpoint | Populates | Per-source budget |
+|--------|-------------|-----------|-------------------|
+| procedures | `/procedures` | `metrics.reportsAuthored`, `metrics.opinionsDelivered` (rapporteur attribution) — paginated up to 5 pages (≤ 1000 items); a `dataQualityWarnings` entry is emitted when truncated | 6 s |
+| adoptedTexts | `/adopted-texts` | `metrics.legislativeSuccessRate` (success denominator) — fetched per calendar year in the window (parallel via `Promise.allSettled`, deduped by id); failed years are warned and skipped, all-year failures mark the source UNAVAILABLE; windows > 5 years fall back to a single unfiltered fetch | 6 s |
+| plenaryDocumentItems | `/plenary-session-documents-items` | `metrics.amendmentsTabled`, `metrics.amendmentsAdopted` (author + status flag) | 6 s |
+| questions | `/parliamentary-questions` | `metrics.questionsAsked` (filtered by author) | 6 s |
+
+Each source's status is reported in `dataSources: { procedures, adoptedTexts, plenaryDocumentItems, questions }` as one of `OK | EMPTY | TIMEOUT | UNAVAILABLE`. A single failing source never zeros out the others — graceful per-field degradation is preserved via `Promise.allSettled`-equivalent (per-source try/catch in `withTimeoutAndAbort`).
+
+#### Methodology
+
+- **`reportsAuthored`** — procedures whose `rapporteur` field names the subject MEP (case-insensitive substring match against the normalised `person/{id}` and bare-id tokens) and that lacks a `shadow` / `opinion` qualifier in the same field.
+- **`opinionsDelivered`** — procedures where the same author match exists *and* the `rapporteur` field carries a `shadow` / `opinion` qualifier.
+- **`amendmentsTabled`** / **`amendmentsAdopted`** — plenary-session document items whose `type` includes `AMENDMENT`, whose `authors[]` contains the subject's id, and (for `Adopted`) whose `status` includes `ADOPTED`.
+- **`legislativeSuccessRate`** = `100 × procedures-with-adopted-text / attributed-procedures`. The numerator counts procedures whose `reference` (or `id`) appears as `procedureReference` in any `/adopted-texts` item within the date window. The denominator counts the union of `reportsAuthored` and `opinionsDelivered` procedure IDs (no double-counting).
+- **`questionsAsked`** — `/parliamentary-questions` filtered upstream by `author={subjectId}` (for MEPs) and re-verified client-side by the aggregator's token set. For committee subjects, questions are fetched unfiltered and matched against any member id.
+- **Committee aggregation** — for `subjectType: 'COMMITTEE'`, member MEP IDs are resolved from `/corporate-bodies` and folded into the aggregator's token set. All four metrics are summed across the committee's membership in a single pass over the shared per-source fetches; the analysis is cached for 15 minutes by `(subjectType, subjectId, dateFrom, dateTo)` so the same committee window can be re-queried cheaply, but there is no per-member cache reuse — switching to a different committee or window requires a fresh fan-out.
+- **Deterministic ordering** — every list under `attributions` is sorted ascending by stable `procedureId` / `documentId` / `questionId`, so repeated runs over the same input produce byte-identical output.
+
+#### Computed Attributes
+
+- `amendmentSuccessRate` = `100 × amendmentsAdopted / amendmentsTabled`
+- `legislativeOutputPerMonth` = `(reportsAuthored + amendmentsTabled) / months-in-window`
+- `peerComparisonPercentile` — heuristic; refined when corpus benchmarks become available.
+- `effectivenessRank` — `HIGHLY_EFFECTIVE` (≥70), `EFFECTIVE` (≥50), `MODERATE` (≥30), or `DEVELOPING` otherwise.
 
 #### Example Usage
 
+Analyse a known AI Act rapporteur for 2024:
+
+```jsonc
+{
+  "tool": "analyze_legislative_effectiveness",
+  "arguments": {
+    "subjectType": "MEP",
+    "subjectId": "person/124810",     // example MEP id
+    "dateFrom": "2024-01-01",
+    "dateTo": "2024-12-31"
+  }
+}
 ```
-Analyze the legislative effectiveness of the ENVI committee
+
+Aggregate the IMCO committee over the same window:
+
+```jsonc
+{
+  "tool": "analyze_legislative_effectiveness",
+  "arguments": {
+    "subjectType": "COMMITTEE",
+    "subjectId": "IMCO",
+    "dateFrom": "2024-01-01",
+    "dateTo": "2024-12-31"
+  }
+}
 ```
+
+The response envelope contains `metrics`, `scores`, `computedAttributes`, `attributions` (ID lists, sorted ascending), `dataSources` (per-source `OK | EMPTY | TIMEOUT | UNAVAILABLE`), `dataQualityWarnings`, and `methodology`. A 15-minute cache is keyed by `(subjectType, subjectId, dateFrom, dateTo)`.
 
 ---
 
 ### Tool: monitor_legislative_pipeline
 
-**Description**: Monitor real-time legislative pipeline status with bottleneck detection, timeline forecasting, and procedure progress tracking.
+**Description**: Monitor real-time legislative pipeline status with lifecycle-driven bottleneck detection and timeline forecasting. For every procedure in scope the authoritative event sequence is fetched from `/procedures/{id}/events` (bounded concurrency ≤8 parallel) and compared against a corpus-wide historical distribution.
 
 #### Parameters
 
@@ -1395,6 +1515,19 @@ Analyze the legislative effectiveness of the ENVI committee
 | dateTo | string | No | - | Analysis end date (YYYY-MM-DD) |
 | limit | number | No | 20 | Maximum results to return (1-100) |
 
+#### Methodology
+
+- **`daysInCurrentStage`** — precise delta in days between the most recent event from `/procedures/{id}/events` and `now`. Falls back to procedure-metadata dates when the event timeline is unavailable.
+- **`bottleneckRisk`** — percentile bucket of the current dwell vs. the historical distribution observed for the same `(procedureType, stage)` across the latest 500 procedures (30-minute cached corpus):
+  - `HIGH` — dwell ≥ 95th percentile (real stuck procedure)
+  - `MEDIUM` — dwell ≥ median
+  - `LOW` — otherwise
+- **`bottlenecks[]`** — aggregated only from procedures whose dwell is ≥ the historical 95th percentile (or the legacy `isStalled` heuristic when no statistics exist). Each entry exposes the `thresholdDays` used.
+- **`estimatedCompletionDays`** — historical median remaining-time at the current stage (`medianRemainingDays` − `daysInCurrentStage`, clamped to ≥0). When the matching `(type, stage)` cell has fewer than 3 observations the value falls back to a heuristic and the envelope reports `forecastBasis: 'INSUFFICIENT_DATA'`.
+- **`forecastBasis`** — `'HISTORICAL_MEDIAN'` when any visible procedure used the historical-median forecast; `'INSUFFICIENT_DATA'` when matching `(type, stage)` cells lacked enough samples; `'NOT_APPLICABLE'` when every visible procedure is already completed (no remaining-time to forecast).
+- **`lifecycleEvents[]`** — per-procedure echo of the underlying event timeline (date, normalised stage, raw event type, title) for traceability.
+- **`lifecycleCorpus`** — metadata about the corpus used for the distribution: `corpusSize`, `totalObservations`, `computationTimeMs`.
+
 #### Example Usage
 
 ```
@@ -1405,20 +1538,63 @@ Show the current legislative pipeline status and identify bottlenecks
 
 ### Tool: analyze_committee_activity
 
-**Description**: Analyze committee workload, document production, meeting frequency, and member engagement metrics. Provides intelligence on committee operational efficiency and policy focus areas.
+**Description**: Analyze committee workload, document production, meeting frequency, decisions adopted, and member engagement metrics. Provides intelligence on committee operational efficiency and policy focus areas. Fans out four EP sources in parallel under a 5 s per-source timeout and tags every metric with a per-source data-availability status so downstream tools can branch on real coverage.
 
 #### Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | committeeId | string | Yes | Committee identifier (e.g., "ENVI", "ITRE") |
-| dateFrom | string | No | Start date (ISO 8601) |
-| dateTo | string | No | End date (ISO 8601) |
+| dateFrom | string | No | Start date (YYYY-MM-DD). Defaults to trailing 6 months. |
+| dateTo | string | No | End date (YYYY-MM-DD). Defaults to today. |
+
+#### Data Sources
+
+| Source | EP Endpoint | Populates | Per-source budget |
+|--------|-------------|-----------|-------------------|
+| documents | `/committee-documents` | `workload.documentsProduced` | 5 s |
+| procedures | `/procedures` | `workload.activeLegislativeFiles` | 5 s |
+| meetings | `/meetings` | `workload.meetingsHeld` | 5 s |
+| decisions | `/meetings/{id}/decisions` (fan-out, capped at 8 sittings) | `workload.decisionsAdopted` | 5 s |
+
+Each source's status is reported in `dataSources: { documents, procedures, meetings, decisions }` as one of `OK | EMPTY | TIMEOUT | UNAVAILABLE`. A single failing source never zeros out the others — graceful per-field degradation is preserved via `Promise.allSettled`.
+
+#### Derived Metrics
+
+- `decisionsPerMeeting` = `decisionsAdopted / meetingsHeld`
+- `documentsPerMonth` = `documentsProduced / windowMonths`
+- `activeFilesPerMember` = `activeLegislativeFiles / totalMembers`
+
+#### Caching
+
+Results are cached in-memory for **10 minutes** keyed by `${committeeId}|${dateFrom}|${dateTo}` to keep within the <200 ms warm-path target.
 
 #### Example Usage
 
 ```
 Analyze the ENVI committee's activity, document output, and member engagement over the last 6 months
+```
+
+#### Example Worked Output (ENVI, trailing 6 months)
+
+```json
+{
+  "committeeId": "ENVI",
+  "committeeName": "Environment, Public Health and Food Safety",
+  "period": { "from": "2024-12-01", "to": "2025-05-31" },
+  "workload": {
+    "activeLegislativeFiles": 58,
+    "documentsProduced": 42,
+    "meetingsHeld": 11,
+    "decisionsAdopted": 37,
+    "opinionsIssued": 0
+  },
+  "memberEngagement": { "totalMembers": 88, "averageAttendance": 0, "activeContributors": 0 },
+  "legislativeOutput": { "reportsAdopted": 18, "amendmentsProcessed": 0, "successRate": 0.31 },
+  "derivedMetrics": { "decisionsPerMeeting": 3.36, "documentsPerMonth": 7, "activeFilesPerMember": 0.66 },
+  "dataSources": { "documents": "OK", "procedures": "OK", "meetings": "OK", "decisions": "OK" },
+  "confidenceLevel": "HIGH"
+}
 ```
 
 ---
@@ -1499,56 +1675,88 @@ Generate a current political landscape overview including group sizes, coalition
 
 ### Tool: network_analysis
 
-**Description**: MEP relationship network mapping using committee co-membership. Computes centrality scores, cluster assignments, bridging MEPs, and network density metrics. Identifies informal power structures and cross-party collaboration pathways.
+**Description**: MEP relationship network mapping combining **committee co-membership** and **DOCEO roll-call voting similarity**. Computes weighted-degree + Brandes betweenness centrality, deterministic label-propagation clusters with Newman modularity Q, depth-bounded BFS ego networks, and cross-cluster bridging MEPs.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| mepId | number | No | - | Focus on ego network for a specific MEP |
-| analysisType | string | No | combined | Analysis type: `committee`, `voting`, or `combined` |
-| depth | number | No | 2 | Network depth (1-3 hops from focal node) |
+| mepId | number | No | - | Focus on ego network for a specific MEP (enables BFS depth limit) |
+| analysisType | string | No | combined | `committee` (shared-committee edges only), `voting` (DOCEO RCV similarity), or `combined` (mean of the two normalised weights) |
+| depth | number | No | 2 | BFS traversal depth (1-3 hops); applied to the ego network when `mepId` is provided |
+| minSimilarity | number | No | 0.7 | Minimum DOCEO co-vote agreement (0-1) to retain a voting-similarity edge |
 
 #### Example Usage
 
 **Claude Desktop - Natural Language:**
 ```
-Map the relationship network for MEP 124810 using committee co-membership data
+Map the immediate (depth 1) ego network for MEP 124810 combining committee + voting similarity, threshold 0.8
 ```
 
 **MCP Client - TypeScript:**
 ```typescript
-const result = await client.callTool('network_analysis', {
+// Committee-only network (legacy behaviour, fastest)
+await client.callTool('network_analysis', { analysisType: 'committee' });
+
+// Voting-similarity-only network (requires DOCEO RCV data)
+await client.callTool('network_analysis', { analysisType: 'voting', minSimilarity: 0.8 });
+
+// Depth-1 ego network around MEP 124810, combined edges
+await client.callTool('network_analysis', {
   mepId: 124810,
-  analysisType: 'committee',
-  depth: 2
+  analysisType: 'combined',
+  depth: 1,
+  minSimilarity: 0.7,
 });
 ```
 
-**Example Response** (abbreviated):
-```json
-{
-  "content": [{
-    "type": "text",
-    "text": "{\"networkMetrics\":{\"density\":0.34,\"avgCentrality\":0.45,\"clusters\":5},\"centralNodes\":[{\"mepId\":124810,\"centralityScore\":0.82,\"clusterAssignment\":1,\"bridgingScore\":0.67}],\"crossPartyEdges\":42}"
-  }]
-}
-```
+#### Depth semantics
 
-> **EP API Endpoints**: `/meps`, `/corporate-bodies`
+When `mepId` is provided the response is restricted to the ego subnetwork
+within `depth` hops:
+- `depth=1` → only direct neighbours of the focus MEP.
+- `depth=2` → adds friends-of-friends.
+- `depth=3` → ≤3 hops from the focus.
+
+When `mepId` is omitted a representative sample of up to 100 current MEPs
+is analysed (depth is ignored) and clusters are detected globally. Full
+roster pagination is not performed to stay within API rate-limit budgets.
+
+#### Centrality & clusters
+
+- `weightedDegree` — sum of incident edge weights per node.
+- `betweennessCentrality` — Brandes' algorithm on the weighted subgraph
+  (similarity converted to distance via `1 / weight`).
+- `centralityScore` — composite `0.6 × weightedDegree + 0.4 × 100 ×
+  betweennessCentrality` rounded to 2dp.
+- `modularityScore` — Newman Q for the label-propagation partition (`>0.3`
+  indicates meaningful community structure).
+
+> **EP API Endpoints**: `/meps`, `/corporate-bodies`, DOCEO RCV XML
+> (https://www.europarl.europa.eu/doceo/document/PV-.../RCV-...)
 
 ---
 
 ### Tool: sentiment_tracker
 
-**Description**: Track political group institutional-positioning scores based on seat-share proxy. Computes scores (-1 to +1), polarization index, and identifies consensus and divisive topics.
+**Description**: Track political-group sentiment over a configurable time window. Combines current EP API MEP composition with DOCEO roll-call vote (RCV) cohesion / defection data aggregated across `last_month` (~30d), `last_quarter` (~90d), or `last_year` (~365d). Returns per-group sentiment scores (-1 to +1), `IMPROVING/STABLE/DECLINING/VOLATILE` trends derived from half-window and sub-window DOCEO cohesion deltas, polarization index (`1 − seat-share-weighted mean cohesion`), and consensus/divisive vote subjects.
+
+Falls back to a seat-share-only proxy with `confidenceLevel: 'LOW'` when DOCEO has insufficient coverage in the requested window.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | groupId | string | No | - | Political group identifier (e.g., "EPP", "S&D"). Omit for all groups |
-| timeframe | string | No | last_quarter | Time window: `last_month`, `last_quarter`, or `last_year` |
+| timeframe | string | No | last_quarter | DOCEO RCV aggregation window: `last_month` (~30d), `last_quarter` (~90d), or `last_year` (~365d) |
+
+#### Scoring methodology
+
+- **sentimentScore** = `0.5 · DOCEO cohesion` (centred at 0.5) + `0.2 · inverse-dissent` + `0.3 · seat-share momentum`, clamped to `[-1, +1]`.
+- **trend** = half-window cohesion delta — `IMPROVING` when latest-half mean > earliest-half mean + 0.05, `DECLINING` when below by 0.05, otherwise `STABLE`. `VOLATILE` when cohesion variance across sub-windows > 0.1.
+- **polarizationIndex** = `1 − seat-share-weighted mean(cohesion)` across groups that have observed DOCEO data. Falls back to seat-share-score dispersion when no DOCEO coverage.
+- **consensusTopics / divisiveTopics**: DOCEO `LatestVoteRecord.subject` values whose per-vote group cohesion ≥0.95 (consensus) or ≤0.55 (divisive).
+- **confidenceLevel**: `HIGH` (≥40 RCVs in window), `MEDIUM` (10–39), `LOW` (<10, fallback to seat-share-only).
 
 #### Example Usage
 
@@ -1557,25 +1765,49 @@ const result = await client.callTool('network_analysis', {
 Track the institutional positioning sentiment for the EPP group over the last quarter
 ```
 
-**MCP Client - TypeScript:**
+**MCP Client - TypeScript (last_month / 30-day window):**
 ```typescript
 const result = await client.callTool('sentiment_tracker', {
   groupId: 'EPP',
+  timeframe: 'last_month'
+});
+```
+
+**MCP Client - TypeScript (last_quarter / 90-day window — default):**
+```typescript
+const result = await client.callTool('sentiment_tracker', {
   timeframe: 'last_quarter'
 });
 ```
 
-**Example Response** (abbreviated):
+**MCP Client - TypeScript (last_year / 365-day window, capped at 300 RCVs):**
+```typescript
+const result = await client.callTool('sentiment_tracker', {
+  timeframe: 'last_year'
+});
+```
+
+**Example Response** (abbreviated, with DOCEO coverage):
 ```json
 {
   "content": [{
     "type": "text",
-    "text": "{\"groupScores\":[{\"groupId\":\"EPP\",\"positioningScore\":0.72,\"trend\":\"stable\"}],\"polarizationIndex\":0.38,\"consensusTopics\":[\"defense\",\"trade\"],\"divisiveTopics\":[\"migration\",\"climate\"]}"
+    "text": "{\"timeframe\":\"last_quarter\",\"groupSentiments\":[{\"groupId\":\"EPP\",\"sentimentScore\":0.41,\"trend\":\"IMPROVING\",\"volatility\":0.07,\"memberCount\":180,\"cohesionProxy\":0.93}],\"polarizationIndex\":0.12,\"consensusTopics\":[\"Ukraine humanitarian aid\"],\"divisiveTopics\":[\"Migration enforcement directive\"],\"confidenceLevel\":\"HIGH\",\"methodology\":\"Sentiment score = 0.5 · DOCEO cohesion ... polarizationIndex = 1 − seat-share-weighted mean(cohesion)...\"}"
   }]
 }
 ```
 
-> **EP API Endpoints**: `/corporate-bodies`
+**Example Response** (abbreviated, fallback path with no DOCEO coverage):
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{\"timeframe\":\"last_month\",\"groupSentiments\":[{\"groupId\":\"EPP\",\"sentimentScore\":0.3,\"trend\":\"STABLE\",\"cohesionProxy\":0.59}],\"polarizationIndex\":0.36,\"consensusTopics\":[],\"divisiveTopics\":[],\"confidenceLevel\":\"LOW\",\"methodology\":\"FALLBACK PATH (no DOCEO RCV coverage in 30d window — 0 usable RCVs)...\"}"
+  }]
+}
+```
+
+> **EP API Endpoints**: `/meps` (composition) + DOCEO RCV XML (`https://www.europarl.europa.eu/doceo/document/PV-...`)
 
 ---
 

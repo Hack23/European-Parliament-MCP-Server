@@ -1,10 +1,14 @@
-[**European Parliament MCP Server API v1.3.8**](../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../README.md)
 
 ***
 
 [European Parliament MCP Server API](../../modules.md) / tools/analyzeCommitteeActivity
 
 # tools/analyzeCommitteeActivity
+
+## Type Aliases
+
+- [DataSourceStatus](type-aliases/DataSourceStatus.md)
 
 ## Variables
 
@@ -13,4 +17,5 @@
 
 ## Functions
 
+- [clearAnalyzeCommitteeActivityCache](functions/clearAnalyzeCommitteeActivityCache.md)
 - [handleAnalyzeCommitteeActivity](functions/handleAnalyzeCommitteeActivity.md)

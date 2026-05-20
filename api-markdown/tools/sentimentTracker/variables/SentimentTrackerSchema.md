@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../../README.md)
 
 ***
 
@@ -8,9 +8,8 @@
 
 > `const` **SentimentTrackerSchema**: `ZodObject`\<[`SentimentTrackerParams`](../type-aliases/SentimentTrackerParams.md)\>
 
-Defined in: [tools/sentimentTracker.ts:39](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L39)
+Defined in: [tools/sentimentTracker.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L44)
 
 Zod input schema for the `sentiment_tracker` MCP tool. Optional
 `groupId` filters the analysis to a single political group; `timeframe`
-is an informational label (the current implementation always uses the
-latest available MEP composition data, not historical time series).
+selects the DOCEO RCV aggregation window (last 30 / 90 / 365 days).

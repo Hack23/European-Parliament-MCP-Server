@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **assessMepInfluenceToolMetadata**: `object`
 
-Defined in: [tools/assessMepInfluence.ts:432](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/assessMepInfluence.ts#L432)
+Defined in: [tools/assessMepInfluence.ts:561](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/assessMepInfluence.ts#L561)
 
 Tool metadata for MCP registration
 

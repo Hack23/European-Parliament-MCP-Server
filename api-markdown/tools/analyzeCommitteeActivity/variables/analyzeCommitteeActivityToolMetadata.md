@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **analyzeCommitteeActivityToolMetadata**: `object`
 
-Defined in: [tools/analyzeCommitteeActivity.ts:268](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCommitteeActivity.ts#L268)
+Defined in: [tools/analyzeCommitteeActivity.ts:752](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCommitteeActivity.ts#L752)
 
 Tool metadata for MCP listing
 
@@ -16,7 +16,7 @@ Tool metadata for MCP listing
 
 ### description
 
-> **description**: `string` = `'Analyze European Parliament committee workload, meeting frequency, document production, legislative output, and member engagement. Provides intelligence on committee productivity and policy impact.'`
+> **description**: `string` = `'Analyze European Parliament committee workload, meeting frequency, document production, decisions adopted, legislative output, and member engagement. Fans out four EP sources in parallel with per-source timeouts and reports data availability per source.'`
 
 ### inputSchema
 
@@ -44,7 +44,7 @@ Tool metadata for MCP listing
 
 #### inputSchema.properties.dateFrom.description
 
-> **description**: `string` = `'Start date (YYYY-MM-DD)'`
+> **description**: `string` = `'Start date (YYYY-MM-DD). Defaults to trailing 6 months.'`
 
 #### inputSchema.properties.dateFrom.type
 
@@ -56,7 +56,7 @@ Tool metadata for MCP listing
 
 #### inputSchema.properties.dateTo.description
 
-> **description**: `string` = `'End date (YYYY-MM-DD)'`
+> **description**: `string` = `'End date (YYYY-MM-DD). Defaults to today.'`
 
 #### inputSchema.properties.dateTo.type
 

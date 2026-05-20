@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **monitorLegislativePipelineToolMetadata**: `object`
 
-Defined in: [tools/monitorLegislativePipeline.ts:415](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/monitorLegislativePipeline.ts#L415)
+Defined in: [tools/monitorLegislativePipeline.ts:923](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/monitorLegislativePipeline.ts#L923)
 
 Tool metadata for MCP registration
 
@@ -16,7 +16,7 @@ Tool metadata for MCP registration
 
 ### description
 
-> **description**: `string` = `'Monitor legislative pipeline status with bottleneck detection and timeline forecasting. Tracks procedures through stages (proposal → committee → plenary → trilogue → adoption). Returns pipeline health score, throughput rate, bottleneck index, stalled procedure rate, and legislative momentum assessment.'`
+> **description**: `string` = 'Monitor legislative pipeline status with lifecycle-driven bottleneck detection and timeline forecasting. Tracks procedures through their authoritative event sequence (REFERRAL → COM\_VOTE → EP\_ADOPTION → SIGNATURE / REJECTION). Returns pipeline health score, throughput rate, bottleneck index (procedures with dwell ≥ 95th percentile of historical distribution), stalled procedure rate, legislative momentum, per-procedure lifecycleEvents, and a forecastBasis discriminator (HISTORICAL\_MEDIAN \| INSUFFICIENT\_DATA \| NOT\_APPLICABLE — the last when every visible procedure is already completed).'
 
 ### inputSchema
 

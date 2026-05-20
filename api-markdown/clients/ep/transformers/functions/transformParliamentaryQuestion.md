@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **transformParliamentaryQuestion**(`apiData`): [`ParliamentaryQuestion`](../../../../types/ep/question/interfaces/ParliamentaryQuestion.md)
 
-Defined in: [clients/ep/transformers.ts:295](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L295)
+Defined in: [clients/ep/transformers.ts:326](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L326)
 
 Transforms EP API parliamentary question data to internal [ParliamentaryQuestion](../../../../types/ep/question/interfaces/ParliamentaryQuestion.md) format.
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../../README.md)
 
 ***
 
@@ -8,17 +8,15 @@
 
 > `const` **networkAnalysisToolMetadata**: `object`
 
-Defined in: [tools/networkAnalysis.ts:476](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/networkAnalysis.ts#L476)
+Defined in: [tools/networkAnalysis.ts:666](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/networkAnalysis.ts#L666)
 
-MCP tool metadata for `network_analysis` (name, human-readable
-description, and JSON Schema for the tool's input). Consumed by the
-server's tool registry to advertise this tool in `ListTools` responses.
+MCP tool metadata for `network_analysis`.
 
 ## Type Declaration
 
 ### description
 
-> **description**: `string` = `'MEP relationship network mapping using committee co-membership. Computes centrality scores, cluster assignments, bridging MEPs, and network density metrics. Identifies informal power structures and cross-party collaboration pathways. NOTE: edges are derived from shared committee membership only; voting-similarity edges are reserved for a future version.'`
+> **description**: `string` = `'MEP relationship network mapping using committee co-membership and DOCEO roll-call vote similarity. Computes weighted-degree + Brandes betweenness centrality, deterministic label-propagation clusters with Newman modularity Q, and identifies cross-cluster brokers. Supports depth-bounded ego networks when mepId is supplied.'`
 
 ### inputSchema
 
@@ -38,7 +36,7 @@ server's tool registry to advertise this tool in `ListTools` responses.
 
 #### inputSchema.properties.analysisType.description
 
-> **description**: `string` = `'Preferred analysis mode (currently edges are always committee co-membership; reserved for future use)'`
+> **description**: `string` = `'Edge mode: committee, voting (DOCEO RCV), or combined (mean of both).'`
 
 #### inputSchema.properties.analysisType.enum
 
@@ -58,7 +56,7 @@ server's tool registry to advertise this tool in `ListTools` responses.
 
 #### inputSchema.properties.depth.description
 
-> **description**: `string` = `'Network traversal depth (1-3, default 2; reserved for future traversal-by-depth support)'`
+> **description**: `string` = `'BFS traversal depth applied to the ego network when mepId is provided (1-3, default 2).'`
 
 #### inputSchema.properties.depth.maximum
 
@@ -81,6 +79,30 @@ server's tool registry to advertise this tool in `ListTools` responses.
 > **description**: `string` = `'Optional MEP ID to focus the network analysis (ego network)'`
 
 #### inputSchema.properties.mepId.type
+
+> **type**: `string` = `'number'`
+
+#### inputSchema.properties.minSimilarity
+
+> **minSimilarity**: `object`
+
+#### inputSchema.properties.minSimilarity.default
+
+> **default**: `number` = `0.7`
+
+#### inputSchema.properties.minSimilarity.description
+
+> **description**: `string` = `'Minimum DOCEO co-vote agreement to retain a voting-similarity edge (0-1, default 0.7).'`
+
+#### inputSchema.properties.minSimilarity.maximum
+
+> **maximum**: `number` = `1`
+
+#### inputSchema.properties.minSimilarity.minimum
+
+> **minimum**: `number` = `0`
+
+#### inputSchema.properties.minSimilarity.type
 
 > **type**: `string` = `'number'`
 
