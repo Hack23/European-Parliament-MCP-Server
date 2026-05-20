@@ -64,6 +64,7 @@ export class LegislativeClient extends BaseEPClient {
   async getProcedures(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<Procedure>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -73,7 +74,7 @@ export class LegislativeClient extends BaseEPClient {
       limit,
     };
 
-    const response = await this.get<JSONLDResponse>('procedures', apiParams);
+    const response = await this.get<JSONLDResponse>('procedures', apiParams, undefined, params.abortSignal);
     const items = Array.isArray(response.data) ? response.data : [];
     const procedures = items.map((item) => this.transformProcedure(item));
     const hasMore = procedures.length === limit;
@@ -93,13 +94,15 @@ export class LegislativeClient extends BaseEPClient {
    *   `Procedure.reference` (`"YYYY/NNNN(COD)"`) fields.
    * @throws {APIError} When the procedure is not found (404)
    */
-  async getProcedureById(processId: string): Promise<Procedure> {
+  async getProcedureById(processId: string, options: { abortSignal?: AbortSignal } = {}): Promise<Procedure> {
     if (processId.trim() === '') {
       throw new APIError('Procedure process-id is required', 400);
     }
     const response = await this.get<Record<string, unknown>>(
       `procedures/${processId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal,
     );
     const dataArray = response['data'];
     if (Array.isArray(dataArray) && dataArray.length > 0) {
@@ -117,7 +120,7 @@ export class LegislativeClient extends BaseEPClient {
    */
   async getProcedureEvents(
     processId: string,
-    params: { limit?: number; offset?: number } = {}
+    params: { limit?: number; offset?: number; abortSignal?: AbortSignal } = {}
   ): Promise<PaginatedResponse<EPEvent>> {
     if (processId.trim() === '') {
       throw new APIError('Procedure process-id is required', 400);
@@ -127,7 +130,9 @@ export class LegislativeClient extends BaseEPClient {
 
     const response = await this.get<JSONLDResponse>(
       `procedures/${processId}/events`,
-      { format: 'application/ld+json', offset, limit }
+      { format: 'application/ld+json', offset, limit },
+      undefined,
+      params.abortSignal,
     );
 
     const items = Array.isArray(response.data) ? response.data : [];
@@ -146,6 +151,7 @@ export class LegislativeClient extends BaseEPClient {
     year?: number;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<AdoptedText>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -156,7 +162,7 @@ export class LegislativeClient extends BaseEPClient {
     };
     if (params.year !== undefined) apiParams['year'] = params.year;
 
-    const response = await this.get<JSONLDResponse>('adopted-texts', apiParams);
+    const response = await this.get<JSONLDResponse>('adopted-texts', apiParams, undefined, params.abortSignal);
     const items = Array.isArray(response.data) ? response.data : [];
     const texts = items.map((item) => this.transformAdoptedText(item));
     const hasMore = texts.length === limit;
@@ -176,13 +182,14 @@ export class LegislativeClient extends BaseEPClient {
     timeframe?: string;
     startDate?: string;
     processType?: string;
+    abortSignal?: AbortSignal;
   } = {}): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('procedures/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.processType !== undefined ? { 'process-type': params.processType } : {}),
-    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS, params.abortSignal);
   }
 
   /**
@@ -195,6 +202,7 @@ export class LegislativeClient extends BaseEPClient {
     timeframe?: string;
     startDate?: string;
     workType?: string;
+    abortSignal?: AbortSignal;
   } = {}): Promise<JSONLDResponse> {
     const minimumTimeout = params.timeframe === 'one-month'
       ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
@@ -204,7 +212,7 @@ export class LegislativeClient extends BaseEPClient {
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.workType !== undefined ? { 'work-type': params.workType } : {}),
-    }, minimumTimeout);
+    }, minimumTimeout, params.abortSignal);
   }
 
   /**
@@ -214,7 +222,11 @@ export class LegislativeClient extends BaseEPClient {
    * @param processId - Procedure process ID
    * @param eventId - Event identifier within the procedure
    */
-  async getProcedureEventById(processId: string, eventId: string): Promise<EPEvent> {
+  async getProcedureEventById(
+    processId: string,
+    eventId: string,
+    options: { abortSignal?: AbortSignal } = {},
+  ): Promise<EPEvent> {
     if (processId.trim() === '') {
       throw new APIError('Procedure process-id is required', 400);
     }
@@ -223,7 +235,9 @@ export class LegislativeClient extends BaseEPClient {
     }
     const response = await this.get<JSONLDResponse>(
       `procedures/${processId}/events/${eventId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal,
     );
     if (Array.isArray(response.data)) {
       if (response.data.length === 0) {
@@ -259,11 +273,11 @@ export class LegislativeClient extends BaseEPClient {
    *   - the upstream returns HTTP 200 but every transformable field is empty
    *     (the indexed-but-content-pending sentinel detected here).
    */
-  async getAdoptedTextById(docId: string): Promise<AdoptedText> {
+  async getAdoptedTextById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<AdoptedText> {
     if (docId.trim() === '') throw new APIError('Document ID is required', 400);
     const endpoint = `adopted-texts/${docId}`;
     const params = { format: 'application/ld+json' };
-    const response = await this.get<Record<string, unknown>>(endpoint, params);
+    const response = await this.get<Record<string, unknown>>(endpoint, params, undefined, options.abortSignal);
     const transformed = this.transformAdoptedText(response);
     if (isEmptyAdoptedText(transformed)) {
       this.evictFromCache(endpoint, params);

@@ -111,6 +111,7 @@ export class QuestionClient extends BaseEPClient {
     dateTo?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   }): Promise<PaginatedResponse<ParliamentaryQuestion>> {
     const action = 'get_parliamentary_questions';
     try {
@@ -123,7 +124,9 @@ export class QuestionClient extends BaseEPClient {
 
       const response = await this.get<JSONLDResponse>(
         'parliamentary-questions',
-        apiParams
+        apiParams,
+        undefined,
+        params.abortSignal,
       );
 
       const pageSize = response.data.length;
@@ -159,21 +162,23 @@ export class QuestionClient extends BaseEPClient {
    * Fixed-window feed — no `timeframe` parameter per OpenAPI spec.
    * Extended timeout applied (120 s minimum).
    */
-  async getParliamentaryQuestionsFeed(): Promise<JSONLDResponse> {
+  async getParliamentaryQuestionsFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('parliamentary-questions/feed', {
       format: 'application/ld+json',
-    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS, options.abortSignal);
   }
 
   /**
    * Returns a single parliamentary question by document ID.
    * **EP API Endpoint:** `GET /parliamentary-questions/{doc-id}`
    */
-  async getParliamentaryQuestionById(docId: string): Promise<ParliamentaryQuestion> {
+  async getParliamentaryQuestionById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<ParliamentaryQuestion> {
     if (docId.trim() === '') throw new APIError('Document ID is required', 400);
     const response = await this.get<Record<string, unknown>>(
       `parliamentary-questions/${docId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal,
     );
     return this.transformParliamentaryQuestion(response);
   }

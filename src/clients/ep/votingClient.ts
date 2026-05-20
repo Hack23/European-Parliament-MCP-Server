@@ -53,11 +53,14 @@ export class VotingClient extends BaseEPClient {
    */
   private async fetchVoteResultsForSession(
     sessionId: string,
-    apiParams: Record<string, unknown>
+    apiParams: Record<string, unknown>,
+    abortSignal?: AbortSignal,
   ): Promise<VotingRecord[]> {
     const response = await this.get<JSONLDResponse>(
       `meetings/${sessionId}/vote-results`,
-      apiParams
+      apiParams,
+      undefined,
+      abortSignal,
     );
     return response.data.map((item) => this.transformVoteResult(item, sessionId));
   }
@@ -69,13 +72,14 @@ export class VotingClient extends BaseEPClient {
   private async fetchVoteResultsFromRecentMeetings(params: {
     dateFrom?: string;
     limit?: number;
+    abortSignal?: AbortSignal;
   }): Promise<VotingRecord[]> {
     const meetingsParams: Record<string, unknown> = { limit: 5 };
     if (params.dateFrom !== undefined && params.dateFrom !== '') {
       meetingsParams['year'] = params.dateFrom.substring(0, 4);
     }
 
-    const meetingsResponse = await this.get<JSONLDResponse>('meetings', meetingsParams);
+    const meetingsResponse = await this.get<JSONLDResponse>('meetings', meetingsParams, undefined, params.abortSignal);
     const records: VotingRecord[] = [];
     const recordLimit = params.limit ?? 50;
 
@@ -89,7 +93,9 @@ export class VotingClient extends BaseEPClient {
       try {
         const voteResponse = await this.get<JSONLDResponse>(
           `meetings/${meetingId}/vote-results`,
-          { limit: recordLimit }
+          { limit: recordLimit },
+          undefined,
+          params.abortSignal,
         );
         const transformed = voteResponse.data.map((item) =>
           this.transformVoteResult(item, meetingId)
@@ -147,6 +153,7 @@ export class VotingClient extends BaseEPClient {
     dateTo?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   }): Promise<PaginatedResponse<VotingRecord>> {
     const action = 'get_voting_records';
 
@@ -159,7 +166,7 @@ export class VotingClient extends BaseEPClient {
       let records: VotingRecord[];
 
       if (effectiveSessionId !== '') {
-        records = await this.fetchVoteResultsForSession(effectiveSessionId, apiParams);
+        records = await this.fetchVoteResultsForSession(effectiveSessionId, apiParams, params.abortSignal);
       } else {
         records = await this.fetchVoteResultsFromRecentMeetings(params);
       }
@@ -206,6 +213,7 @@ export class VotingClient extends BaseEPClient {
     dateTo?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<Speech>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -218,7 +226,7 @@ export class VotingClient extends BaseEPClient {
     if (params.dateFrom !== undefined) apiParams['sitting-date'] = params.dateFrom;
     if (params.dateTo !== undefined) apiParams['sitting-date-end'] = params.dateTo;
 
-    const response = await this.get<JSONLDResponse>('speeches', apiParams);
+    const response = await this.get<JSONLDResponse>('speeches', apiParams, undefined, params.abortSignal);
     const items = Array.isArray(response.data) ? response.data : [];
     const speeches = items.map((item) => this.transformSpeech(item));
     const hasMore = speeches.length === limit;
@@ -229,13 +237,15 @@ export class VotingClient extends BaseEPClient {
    * Returns a single speech by ID.
    * **EP API Endpoint:** `GET /speeches/{speech-id}`
    */
-  async getSpeechById(speechId: string): Promise<Speech> {
+  async getSpeechById(speechId: string, options: { abortSignal?: AbortSignal } = {}): Promise<Speech> {
     if (speechId.trim() === '') {
       throw new APIError('Speech ID is required', 400);
     }
     const response = await this.get<Record<string, unknown>>(
       `speeches/${speechId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal,
     );
     return this.transformSpeech(response);
   }

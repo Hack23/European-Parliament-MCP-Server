@@ -739,4 +739,35 @@ See [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) for full details. For
 
 ---
 
+## 🛑 Cancellation Contract (Client Layer)
+
+Every method on `EuropeanParliamentClient` and its underlying typed clients
+(`mepClient`, `plenaryClient`, `votingClient`, `documentClient`,
+`legislativeClient`, `questionClient`, `vocabularyClient`, `committeeClient`,
+`doceoClient`) accepts an **optional** `abortSignal?: AbortSignal`. Inside
+`BaseEPClient.get()` the external signal is composed with the per-request
+timeout controller via `createLinkedAbortController()` so that:
+
+- **Pre-request**: an already-aborted signal short-circuits to `APIError(0)`
+  *before* any rate-limiter token or cache slot is consumed; no `fetch` is
+  issued. The abort is audit-logged with `phase: 'pre-request'`.
+- **In-flight**: aborting mid-flight cancels the underlying `undici` `fetch`
+  via the linked controller, surfaces a typed `APIError('… aborted', 0,
+  { cause: signal.reason })`, and is audit-logged with `phase: 'in-flight'`.
+- **No retry on abort**: aborted requests are never retried, even when
+  `enableRetry: true`.
+- **Listener hygiene**: `cleanup()` removes the external-signal listener in a
+  `finally` block to prevent leaks on long-lived OSINT budget signals.
+
+This contract unlocks **pre-emptive cancellation** across every OSINT tool
+that wraps its work in `withTimeoutAndAbort` — a single slow EP endpoint can
+no longer pin its per-source budget past expiry and starve sibling fan-out
+sources.
+
+**Backward compatibility**: `abortSignal` is optional everywhere; callers
+that omit it observe identical behaviour to the prior cooperative
+`throwIfAborted` pattern.
+
+---
+
 *See [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) for the architectural evolution roadmap.*

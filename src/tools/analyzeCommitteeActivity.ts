@@ -277,9 +277,10 @@ async function fetchDocumentsForCommittee(
   dateFrom: string,
   dateTo: string,
 ): Promise<SourceFetchResult<LegislativeDocument>> {
-  return runSource<LegislativeDocument>('documents', async () => {
+  return runSource<LegislativeDocument>('documents', async (signal) => {
     const response: PaginatedResponse<LegislativeDocument> = await epClient.getCommitteeDocuments({
       limit: FETCH_PAGE_LIMIT,
+      abortSignal: signal,
     });
     const items = Array.isArray(response.data) ? response.data : [];
     return items.filter((doc) =>
@@ -294,9 +295,10 @@ async function fetchActiveProceduresForCommittee(
   dateFrom: string,
   dateTo: string,
 ): Promise<SourceFetchResult<Procedure>> {
-  return runSource<Procedure>('procedures', async () => {
+  return runSource<Procedure>('procedures', async (signal) => {
     const response: PaginatedResponse<Procedure> = await epClient.getProcedures({
       limit: FETCH_PAGE_LIMIT,
+      abortSignal: signal,
     });
     const items = Array.isArray(response.data) ? response.data : [];
     return items.filter((proc) =>
@@ -312,11 +314,12 @@ async function fetchMeetingsInWindow(
   dateFrom: string,
   dateTo: string,
 ): Promise<SourceFetchResult<PlenarySession>> {
-  return runSource<PlenarySession>('meetings', async () => {
+  return runSource<PlenarySession>('meetings', async (signal) => {
     const response: PaginatedResponse<PlenarySession> = await epClient.getPlenarySessions({
       dateFrom,
       dateTo,
       limit: 100,
+      abortSignal: signal,
     });
     const items = Array.isArray(response.data) ? response.data : [];
     return items.filter((s) => isWithinDateWindow(s.date, dateFrom, dateTo));
@@ -338,7 +341,7 @@ async function fetchDecisionsForCommittee(
     const settled = await Promise.allSettled(
       targetMeetings.map(async (meeting): Promise<LegislativeDocument[]> => {
         if (signal.aborted) return [];
-        const resp = await epClient.getMeetingDecisions(meeting.id, { limit: 100 });
+        const resp = await epClient.getMeetingDecisions(meeting.id, { limit: 100, abortSignal: signal });
         const decisions = Array.isArray(resp.data) ? resp.data : [];
         // Filter by committee when the decision payload carries that metadata;
         // otherwise (most plenary decisions are EP-wide) keep all and rely on
@@ -373,7 +376,7 @@ async function fetchReportsAdoptedProxy(dateFrom: string): Promise<{ count: numb
   try {
     const year = parseInt(dateFrom.substring(0, 4), 10);
     const resp = await withTimeoutAndAbort(
-      () => epClient.getAdoptedTexts({ year, limit: 100 }),
+      (signal) => epClient.getAdoptedTexts({ year, limit: 100, abortSignal: signal }),
       SOURCE_TIMEOUT_MS,
       'analyze_committee_activity:reports_adopted timed out',
     );
