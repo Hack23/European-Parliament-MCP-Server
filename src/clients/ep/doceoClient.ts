@@ -13,6 +13,7 @@
 import { fetch } from 'undici';
 import { auditLogger, toErrorMessage } from '../../utils/auditLogger.js';
 import { USER_AGENT } from '../../config.js';
+import { createLinkedAbortController } from './abortUtils.js';
 import {
   parseRcvXml,
   parseVotXml,
@@ -32,34 +33,10 @@ const DOCEO_TIMEOUT_MS = 30_000;
 /** Maximum response size for XML documents (5 MiB) */
 const MAX_XML_RESPONSE_BYTES = 5_242_880;
 
-interface LinkedAbortController {
-  controller: AbortController;
-  cleanup: () => void;
-}
-
 function clearFetchTimeout(timeout: ReturnType<typeof setTimeout> | undefined): void {
   if (timeout !== undefined) {
     clearTimeout(timeout);
   }
-}
-
-function createLinkedAbortController(externalSignal?: AbortSignal): LinkedAbortController {
-  const controller = new AbortController();
-  if (externalSignal === undefined) {
-    return { controller, cleanup: () => undefined };
-  }
-
-  if (externalSignal.aborted) {
-    controller.abort();
-    return { controller, cleanup: () => undefined };
-  }
-
-  const abort = (): void => { controller.abort(); };
-  externalSignal.addEventListener('abort', abort, { once: true });
-  return {
-    controller,
-    cleanup: (): void => { externalSignal.removeEventListener('abort', abort); },
-  };
 }
 
 function isBodyTooLarge(text: string): boolean {

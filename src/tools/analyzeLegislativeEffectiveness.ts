@@ -265,7 +265,7 @@ async function fetchProcedures(): Promise<SourceFetchResult<Procedure>> {
     let exhausted = false;
     while (page < MAX_PROCEDURE_PAGES) {
       throwIfAborted(signal);
-      const resp = await epClient.getProcedures({ limit: FETCH_PAGE_LIMIT, offset });
+      const resp = await epClient.getProcedures({ limit: FETCH_PAGE_LIMIT, offset, abortSignal: signal });
       const items = Array.isArray(resp.data) ? resp.data : [];
       aggregated.push(...items);
       page += 1;
@@ -333,7 +333,7 @@ async function fetchAdoptedTexts(
     if (years.length === 0) {
       // Either invalid dates or a span > 5 years — fetch unfiltered and let
       // the aggregator filter by `dateAdopted` against the window.
-      const resp = await epClient.getAdoptedTexts({ limit: FETCH_PAGE_LIMIT });
+      const resp = await epClient.getAdoptedTexts({ limit: FETCH_PAGE_LIMIT, abortSignal: signal });
       return { items: Array.isArray(resp.data) ? resp.data : [] };
     }
     // Parallel per-year fetches via `Promise.allSettled` so a single failing
@@ -347,7 +347,7 @@ async function fetchAdoptedTexts(
         | { year: number; ok: false }
       > => {
         try {
-          const resp = await epClient.getAdoptedTexts({ year, limit: FETCH_PAGE_LIMIT });
+          const resp = await epClient.getAdoptedTexts({ year, limit: FETCH_PAGE_LIMIT, abortSignal: signal });
           return { year, ok: true, data: Array.isArray(resp.data) ? resp.data : [] };
         } catch (err: unknown) {
           // Intentional suppression: per-year failures are surfaced via the
@@ -395,7 +395,7 @@ async function fetchAdoptedTexts(
 async function fetchPlenaryDocumentItems(): Promise<SourceFetchResult<LegislativeDocument>> {
   return runSource<LegislativeDocument>('plenaryDocumentItems', async (signal) => {
     throwIfAborted(signal);
-    const resp = await epClient.getPlenarySessionDocumentItems({ limit: FETCH_PAGE_LIMIT });
+    const resp = await epClient.getPlenarySessionDocumentItems({ limit: FETCH_PAGE_LIMIT, abortSignal: signal });
     return { items: Array.isArray(resp.data) ? resp.data : [] };
   });
 }
@@ -412,6 +412,7 @@ async function fetchQuestions(
       dateFrom,
       dateTo,
       limit: FETCH_PAGE_LIMIT,
+      abortSignal: signal,
     });
     return { items: Array.isArray(resp.data) ? resp.data : [] };
   });

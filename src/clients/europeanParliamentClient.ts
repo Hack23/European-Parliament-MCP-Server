@@ -251,6 +251,7 @@ export class EuropeanParliamentClient {
     active?: boolean;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   }): Promise<PaginatedResponse<MEP>> {
     return this.mepClient.getMEPs(params);
   }
@@ -267,8 +268,8 @@ export class EuropeanParliamentClient {
    * @performance Cached: <100ms P50, <200ms P95. Uncached: <2s P99
    * @see https://data.europarl.europa.eu/api/v2/meps/{id}
    */
-  async getMEPDetails(id: string): Promise<MEPDetails> {
-    return this.mepClient.getMEPDetails(id);
+  async getMEPDetails(id: string, options: { abortSignal?: AbortSignal } = {}): Promise<MEPDetails> {
+    return this.mepClient.getMEPDetails(id, options);
   }
 
   /**
@@ -285,6 +286,7 @@ export class EuropeanParliamentClient {
     group?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<MEP>> {
     return this.mepClient.getCurrentMEPs(params);
   }
@@ -296,6 +298,7 @@ export class EuropeanParliamentClient {
   async getIncomingMEPs(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<MEP>> {
     return this.mepClient.getIncomingMEPs(params);
   }
@@ -307,6 +310,7 @@ export class EuropeanParliamentClient {
   async getOutgoingMEPs(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<MEP>> {
     return this.mepClient.getOutgoingMEPs(params);
   }
@@ -318,6 +322,7 @@ export class EuropeanParliamentClient {
   async getHomonymMEPs(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<MEP>> {
     return this.mepClient.getHomonymMEPs(params);
   }
@@ -331,6 +336,7 @@ export class EuropeanParliamentClient {
     year?: number;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<MEPDeclaration>> {
     return this.mepClient.getMEPDeclarations(params);
   }
@@ -340,8 +346,8 @@ export class EuropeanParliamentClient {
    * **EP API Endpoint:** `GET /meps-declarations/{doc-id}`
    * @gdpr Declarations contain personal financial data – access is audit-logged
    */
-  async getMEPDeclarationById(docId: string): Promise<MEPDeclaration> {
-    return this.mepClient.getMEPDeclarationById(docId);
+  async getMEPDeclarationById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<MEPDeclaration> {
+    return this.mepClient.getMEPDeclarationById(docId, options);
   }
 
   /**
@@ -351,6 +357,7 @@ export class EuropeanParliamentClient {
   async getMEPsFeed(params: {
     timeframe?: string;
     startDate?: string;
+    abortSignal?: AbortSignal;
   } = {}): Promise<JSONLDResponse> {
     return this.mepClient.getMEPsFeed(params);
   }
@@ -363,6 +370,7 @@ export class EuropeanParliamentClient {
     timeframe?: string;
     startDate?: string;
     workType?: string;
+    abortSignal?: AbortSignal;
   } = {}): Promise<JSONLDResponse> {
     return this.mepClient.getMEPDeclarationsFeed(params);
   }
@@ -382,6 +390,7 @@ export class EuropeanParliamentClient {
     location?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   }): Promise<PaginatedResponse<PlenarySession>> {
     return this.plenaryClient.getPlenarySessions(params);
   }
@@ -392,7 +401,7 @@ export class EuropeanParliamentClient {
    */
   async getMeetingActivities(
     sittingId: string,
-    params: { limit?: number; offset?: number } = {}
+    params: { limit?: number; offset?: number; abortSignal?: AbortSignal } = {}
   ): Promise<PaginatedResponse<MeetingActivity>> {
     return this.plenaryClient.getMeetingActivities(sittingId, params);
   }
@@ -403,7 +412,7 @@ export class EuropeanParliamentClient {
    */
   async getMeetingDecisions(
     sittingId: string,
-    params: { limit?: number; offset?: number } = {}
+    params: { limit?: number; offset?: number; abortSignal?: AbortSignal } = {}
   ): Promise<PaginatedResponse<LegislativeDocument>> {
     return this.plenaryClient.getMeetingDecisions(sittingId, params);
   }
@@ -414,7 +423,7 @@ export class EuropeanParliamentClient {
    */
   async getMeetingForeseenActivities(
     sittingId: string,
-    params: { limit?: number; offset?: number } = {}
+    params: { limit?: number; offset?: number; abortSignal?: AbortSignal } = {}
   ): Promise<PaginatedResponse<MeetingActivity>> {
     return this.plenaryClient.getMeetingForeseenActivities(sittingId, params);
   }
@@ -425,7 +434,7 @@ export class EuropeanParliamentClient {
    */
   async getMeetingPlenarySessionDocuments(
     sittingId: string,
-    params: { limit?: number; offset?: number } = {}
+    params: { limit?: number; offset?: number; abortSignal?: AbortSignal } = {}
   ): Promise<PaginatedResponse<LegislativeDocument>> {
     return this.plenaryClient.getMeetingPlenarySessionDocuments(sittingId, params);
   }
@@ -436,7 +445,7 @@ export class EuropeanParliamentClient {
    */
   async getMeetingPlenarySessionDocumentItems(
     sittingId: string,
-    params: { limit?: number; offset?: number } = {}
+    params: { limit?: number; offset?: number; abortSignal?: AbortSignal } = {}
   ): Promise<PaginatedResponse<LegislativeDocument>> {
     return this.plenaryClient.getMeetingPlenarySessionDocumentItems(sittingId, params);
   }
@@ -445,8 +454,8 @@ export class EuropeanParliamentClient {
    * Returns a single EP meeting by ID.
    * **EP API Endpoint:** `GET /meetings/{event-id}`
    */
-  async getMeetingById(eventId: string): Promise<PlenarySession> {
-    return this.plenaryClient.getMeetingById(eventId);
+  async getMeetingById(eventId: string, options: { abortSignal?: AbortSignal } = {}): Promise<PlenarySession> {
+    return this.plenaryClient.getMeetingById(eventId, options);
   }
 
   /**
@@ -459,6 +468,7 @@ export class EuropeanParliamentClient {
   async getEvents(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<EPEvent>> {
     return this.plenaryClient.getEvents(params);
   }
@@ -467,8 +477,8 @@ export class EuropeanParliamentClient {
    * Returns a single EP event by ID.
    * **EP API Endpoint:** `GET /events/{event-id}`
    */
-  async getEventById(eventId: string): Promise<EPEvent> {
-    return this.plenaryClient.getEventById(eventId);
+  async getEventById(eventId: string, options: { abortSignal?: AbortSignal } = {}): Promise<EPEvent> {
+    return this.plenaryClient.getEventById(eventId, options);
   }
 
   /**
@@ -479,6 +489,7 @@ export class EuropeanParliamentClient {
     timeframe?: string;
     startDate?: string;
     activityType?: string;
+    abortSignal?: AbortSignal;
   } = {}): Promise<JSONLDResponse> {
     return this.plenaryClient.getEventsFeed(params);
   }
@@ -502,6 +513,7 @@ export class EuropeanParliamentClient {
     dateTo?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   }): Promise<PaginatedResponse<VotingRecord>> {
     return this.votingClient.getVotingRecords(params);
   }
@@ -518,6 +530,7 @@ export class EuropeanParliamentClient {
     dateTo?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<Speech>> {
     return this.votingClient.getSpeeches(params);
   }
@@ -526,8 +539,8 @@ export class EuropeanParliamentClient {
    * Returns a single speech by ID.
    * **EP API Endpoint:** `GET /speeches/{speech-id}`
    */
-  async getSpeechById(speechId: string): Promise<Speech> {
-    return this.votingClient.getSpeechById(speechId);
+  async getSpeechById(speechId: string, options: { abortSignal?: AbortSignal } = {}): Promise<Speech> {
+    return this.votingClient.getSpeechById(speechId, options);
   }
 
   /**
@@ -542,6 +555,7 @@ export class EuropeanParliamentClient {
   async getCommitteeInfo(params: {
     id?: string;
     abbreviation?: string;
+    abortSignal?: AbortSignal;
   }): Promise<Committee> {
     return this.committeeClient.getCommitteeInfo(params);
   }
@@ -553,6 +567,7 @@ export class EuropeanParliamentClient {
   async getCurrentCorporateBodies(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<Committee>> {
     return this.committeeClient.getCurrentCorporateBodies(params);
   }
@@ -562,8 +577,8 @@ export class EuropeanParliamentClient {
    * **EP API Endpoint:** `GET /corporate-bodies/feed`
    * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async getCorporateBodiesFeed(): Promise<JSONLDResponse> {
-    return this.committeeClient.getCorporateBodiesFeed();
+  async getCorporateBodiesFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
+    return this.committeeClient.getCorporateBodiesFeed(options);
   }
 
   /**
@@ -583,6 +598,7 @@ export class EuropeanParliamentClient {
     committee?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   }): Promise<PaginatedResponse<LegislativeDocument>> {
     return this.documentClient.searchDocuments(params);
   }
@@ -595,6 +611,7 @@ export class EuropeanParliamentClient {
     year?: number;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
     return this.documentClient.getPlenaryDocuments(params);
   }
@@ -609,6 +626,7 @@ export class EuropeanParliamentClient {
   async getCommitteeDocuments(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
     return this.documentClient.getCommitteeDocuments(params);
   }
@@ -620,6 +638,7 @@ export class EuropeanParliamentClient {
   async getPlenarySessionDocuments(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
     return this.documentClient.getPlenarySessionDocuments(params);
   }
@@ -631,6 +650,7 @@ export class EuropeanParliamentClient {
   async getPlenarySessionDocumentItems(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
     return this.documentClient.getPlenarySessionDocumentItems(params);
   }
@@ -645,6 +665,7 @@ export class EuropeanParliamentClient {
   async getExternalDocuments(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
     return this.documentClient.getExternalDocuments(params);
   }
@@ -653,40 +674,40 @@ export class EuropeanParliamentClient {
    * Returns a single document by ID.
    * **EP API Endpoint:** `GET /documents/{doc-id}`
    */
-  async getDocumentById(docId: string): Promise<LegislativeDocument> {
-    return this.documentClient.getDocumentById(docId);
+  async getDocumentById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<LegislativeDocument> {
+    return this.documentClient.getDocumentById(docId, options);
   }
 
   /**
    * Returns a single plenary document by ID.
    * **EP API Endpoint:** `GET /plenary-documents/{doc-id}`
    */
-  async getPlenaryDocumentById(docId: string): Promise<LegislativeDocument> {
-    return this.documentClient.getPlenaryDocumentById(docId);
+  async getPlenaryDocumentById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<LegislativeDocument> {
+    return this.documentClient.getPlenaryDocumentById(docId, options);
   }
 
   /**
    * Returns a single plenary session document by ID.
    * **EP API Endpoint:** `GET /plenary-session-documents/{doc-id}`
    */
-  async getPlenarySessionDocumentById(docId: string): Promise<LegislativeDocument> {
-    return this.documentClient.getPlenarySessionDocumentById(docId);
+  async getPlenarySessionDocumentById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<LegislativeDocument> {
+    return this.documentClient.getPlenarySessionDocumentById(docId, options);
   }
 
   /**
    * Returns a single committee document by ID.
    * **EP API Endpoint:** `GET /committee-documents/{doc-id}`
    */
-  async getCommitteeDocumentById(docId: string): Promise<LegislativeDocument> {
-    return this.documentClient.getCommitteeDocumentById(docId);
+  async getCommitteeDocumentById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<LegislativeDocument> {
+    return this.documentClient.getCommitteeDocumentById(docId, options);
   }
 
   /**
    * Returns a single external document by ID.
    * **EP API Endpoint:** `GET /external-documents/{doc-id}`
    */
-  async getExternalDocumentById(docId: string): Promise<LegislativeDocument> {
-    return this.documentClient.getExternalDocumentById(docId);
+  async getExternalDocumentById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<LegislativeDocument> {
+    return this.documentClient.getExternalDocumentById(docId, options);
   }
 
   /**
@@ -694,8 +715,8 @@ export class EuropeanParliamentClient {
    * **EP API Endpoint:** `GET /documents/feed`
    * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async getDocumentsFeed(): Promise<JSONLDResponse> {
-    return this.documentClient.getDocumentsFeed();
+  async getDocumentsFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
+    return this.documentClient.getDocumentsFeed(options);
   }
 
   /**
@@ -703,8 +724,8 @@ export class EuropeanParliamentClient {
    * **EP API Endpoint:** `GET /plenary-documents/feed`
    * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async getPlenaryDocumentsFeed(): Promise<JSONLDResponse> {
-    return this.documentClient.getPlenaryDocumentsFeed();
+  async getPlenaryDocumentsFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
+    return this.documentClient.getPlenaryDocumentsFeed(options);
   }
 
   /**
@@ -712,8 +733,8 @@ export class EuropeanParliamentClient {
    * **EP API Endpoint:** `GET /committee-documents/feed`
    * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async getCommitteeDocumentsFeed(): Promise<JSONLDResponse> {
-    return this.documentClient.getCommitteeDocumentsFeed();
+  async getCommitteeDocumentsFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
+    return this.documentClient.getCommitteeDocumentsFeed(options);
   }
 
   /**
@@ -721,8 +742,8 @@ export class EuropeanParliamentClient {
    * **EP API Endpoint:** `GET /plenary-session-documents/feed`
    * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async getPlenarySessionDocumentsFeed(): Promise<JSONLDResponse> {
-    return this.documentClient.getPlenarySessionDocumentsFeed();
+  async getPlenarySessionDocumentsFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
+    return this.documentClient.getPlenarySessionDocumentsFeed(options);
   }
 
   /**
@@ -733,6 +754,7 @@ export class EuropeanParliamentClient {
     timeframe?: string;
     startDate?: string;
     workType?: string;
+    abortSignal?: AbortSignal;
   } = {}): Promise<JSONLDResponse> {
     return this.documentClient.getExternalDocumentsFeed(params);
   }
@@ -747,6 +769,7 @@ export class EuropeanParliamentClient {
   async getProcedures(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<Procedure>> {
     return this.legislativeClient.getProcedures(params);
   }
@@ -756,8 +779,8 @@ export class EuropeanParliamentClient {
    * **EP API Endpoint:** `GET /procedures/{process-id}`
    * @throws {APIError} When the procedure is not found (404)
    */
-  async getProcedureById(processId: string): Promise<Procedure> {
-    return this.legislativeClient.getProcedureById(processId);
+  async getProcedureById(processId: string, options: { abortSignal?: AbortSignal } = {}): Promise<Procedure> {
+    return this.legislativeClient.getProcedureById(processId, options);
   }
 
   /**
@@ -766,7 +789,7 @@ export class EuropeanParliamentClient {
    */
   async getProcedureEvents(
     processId: string,
-    params: { limit?: number; offset?: number } = {}
+    params: { limit?: number; offset?: number; abortSignal?: AbortSignal } = {}
   ): Promise<PaginatedResponse<EPEvent>> {
     return this.legislativeClient.getProcedureEvents(processId, params);
   }
@@ -779,6 +802,7 @@ export class EuropeanParliamentClient {
     year?: number;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<AdoptedText>> {
     return this.legislativeClient.getAdoptedTexts(params);
   }
@@ -787,8 +811,8 @@ export class EuropeanParliamentClient {
    * Returns a single adopted text by document ID.
    * **EP API Endpoint:** `GET /adopted-texts/{doc-id}`
    */
-  async getAdoptedTextById(docId: string): Promise<AdoptedText> {
-    return this.legislativeClient.getAdoptedTextById(docId);
+  async getAdoptedTextById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<AdoptedText> {
+    return this.legislativeClient.getAdoptedTextById(docId, options);
   }
 
   /**
@@ -799,6 +823,7 @@ export class EuropeanParliamentClient {
     timeframe?: string;
     startDate?: string;
     processType?: string;
+    abortSignal?: AbortSignal;
   } = {}): Promise<JSONLDResponse> {
     return this.legislativeClient.getProceduresFeed(params);
   }
@@ -811,6 +836,7 @@ export class EuropeanParliamentClient {
     timeframe?: string;
     startDate?: string;
     workType?: string;
+    abortSignal?: AbortSignal;
   } = {}): Promise<JSONLDResponse> {
     return this.legislativeClient.getAdoptedTextsFeed(params);
   }
@@ -822,8 +848,8 @@ export class EuropeanParliamentClient {
    * @param processId - Procedure process ID
    * @param eventId - Event identifier within the procedure
    */
-  async getProcedureEventById(processId: string, eventId: string): Promise<EPEvent> {
-    return this.legislativeClient.getProcedureEventById(processId, eventId);
+  async getProcedureEventById(processId: string, eventId: string, options: { abortSignal?: AbortSignal } = {}): Promise<EPEvent> {
+    return this.legislativeClient.getProcedureEventById(processId, eventId, options);
   }
 
   /**
@@ -844,6 +870,7 @@ export class EuropeanParliamentClient {
     dateTo?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   }): Promise<PaginatedResponse<ParliamentaryQuestion>> {
     return this.questionClient.getParliamentaryQuestions(params);
   }
@@ -853,9 +880,10 @@ export class EuropeanParliamentClient {
    * **EP API Endpoint:** `GET /parliamentary-questions/{doc-id}`
    */
   async getParliamentaryQuestionById(
-    docId: string
+    docId: string,
+    options: { abortSignal?: AbortSignal } = {},
   ): Promise<ParliamentaryQuestion> {
-    return this.questionClient.getParliamentaryQuestionById(docId);
+    return this.questionClient.getParliamentaryQuestionById(docId, options);
   }
 
   /**
@@ -863,8 +891,8 @@ export class EuropeanParliamentClient {
    * **EP API Endpoint:** `GET /parliamentary-questions/feed`
    * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async getParliamentaryQuestionsFeed(): Promise<JSONLDResponse> {
-    return this.questionClient.getParliamentaryQuestionsFeed();
+  async getParliamentaryQuestionsFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
+    return this.questionClient.getParliamentaryQuestionsFeed(options);
   }
 
   /**
@@ -874,6 +902,7 @@ export class EuropeanParliamentClient {
   async getControlledVocabularies(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<Record<string, unknown>>> {
     return this.vocabularyClient.getControlledVocabularies(params);
   }
@@ -883,9 +912,10 @@ export class EuropeanParliamentClient {
    * **EP API Endpoint:** `GET /controlled-vocabularies/{voc-id}`
    */
   async getControlledVocabularyById(
-    vocId: string
+    vocId: string,
+    options: { abortSignal?: AbortSignal } = {},
   ): Promise<Record<string, unknown>> {
-    return this.vocabularyClient.getControlledVocabularyById(vocId);
+    return this.vocabularyClient.getControlledVocabularyById(vocId, options);
   }
 
   /**
@@ -893,8 +923,8 @@ export class EuropeanParliamentClient {
    * **EP API Endpoint:** `GET /controlled-vocabularies/feed`
    * Fixed-window feed — no parameters per OpenAPI spec.
    */
-  async getControlledVocabulariesFeed(): Promise<JSONLDResponse> {
-    return this.vocabularyClient.getControlledVocabulariesFeed();
+  async getControlledVocabulariesFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
+    return this.vocabularyClient.getControlledVocabulariesFeed(options);
   }
 }
 

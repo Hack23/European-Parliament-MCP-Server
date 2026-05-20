@@ -41,9 +41,10 @@ class TestEPClient extends BaseEPClient {
   async testGet<T extends Record<string, unknown>>(
     endpoint: string,
     params?: Record<string, unknown>,
-    minimumTimeoutMs?: number
+    minimumTimeoutMs?: number,
+    abortSignal?: AbortSignal,
   ): Promise<T> {
-    return this.get<T>(endpoint, params, minimumTimeoutMs);
+    return this.get<T>(endpoint, params, minimumTimeoutMs, abortSignal);
   }
 }
 
@@ -909,5 +910,146 @@ describe('BaseEPClient.get() per-request minimum timeout', () => {
     expect(error).toBeInstanceOf(APIError);
     expect(error.statusCode).toBe(408);
     expect(error.message).toContain('50ms');
+  });
+});
+
+// ─── get() — external AbortSignal propagation ────────────────────────────────
+
+describe('BaseEPClient.get() external AbortSignal', () => {
+  let client: TestEPClient;
+
+  beforeEach(() => {
+    client = new TestEPClient({ enableRetry: false });
+    client.clearCache();
+    vi.clearAllMocks();
+  });
+
+  it('should reject immediately with APIError(0) when signal is already aborted (no fetch issued)', async () => {
+    const ctrl = new AbortController();
+    ctrl.abort(new Error('budget expired'));
+
+    let thrown: APIError | undefined;
+    try {
+      await client.testGet('meps', { limit: 10 }, undefined, ctrl.signal);
+    } catch (err: unknown) {
+      thrown = err as APIError;
+    }
+    expect(thrown).toBeInstanceOf(APIError);
+    expect(thrown?.statusCode).toBe(0);
+    expect(thrown?.message).toContain('aborted');
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it('should pass through to fetch when signal is undefined (preserves existing behaviour)', async () => {
+    const payload = { data: [], '@context': [] };
+    mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
+
+    const result = await client.testGet('meps', { limit: 10 }, undefined, undefined);
+
+    expect(result).toBeDefined();
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    // Verify the fetch received a signal (the internal timeout one), not undefined
+    const fetchInit = (mockFetch.mock.calls[0] as [string, RequestInit])[1];
+    expect(fetchInit.signal).toBeDefined();
+  });
+
+  it('should pass through to fetch when signal is not aborted and forward a linked signal', async () => {
+    const payload = { data: [], '@context': [] };
+    mockFetch.mockResolvedValueOnce(makeSuccessResponse(payload));
+    const ctrl = new AbortController();
+
+    await client.testGet('meps', { limit: 10 }, undefined, ctrl.signal);
+
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    const fetchInit = (mockFetch.mock.calls[0] as [string, RequestInit])[1];
+    expect(fetchInit.signal).toBeDefined();
+    expect(fetchInit.signal?.aborted).toBe(false);
+  });
+
+  it('should surface APIError(0) and abort fetch when external signal aborts mid-flight', async () => {
+    const ctrl = new AbortController();
+
+    // fetch returns a never-resolving promise that rejects when its signal aborts
+    mockFetch.mockImplementationOnce((_url: string, init: RequestInit) => {
+      return new Promise((_resolve, reject) => {
+        init.signal?.addEventListener('abort', () => {
+          const err = new Error('aborted');
+          err.name = 'AbortError';
+          reject(err);
+        });
+      });
+    });
+
+    const promise = client.testGet('meps', { limit: 10 }, undefined, ctrl.signal)
+      .catch((e: unknown) => e);
+
+    // Abort after the request has been issued
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    ctrl.abort(new Error('downstream cancellation'));
+
+    const err = await promise as APIError;
+    expect(err).toBeInstanceOf(APIError);
+    expect(err.statusCode).toBe(0);
+    expect(err.message).toContain('aborted');
+  });
+
+  it('should NOT retry aborted requests even when retry is enabled', async () => {
+    const retryClient = new TestEPClient({ enableRetry: true, maxRetries: 3 });
+    retryClient.clearCache();
+    const ctrl = new AbortController();
+    ctrl.abort(new Error('budget expired'));
+
+    await expect(
+      retryClient.testGet('meps', { limit: 10 }, undefined, ctrl.signal),
+    ).rejects.toBeInstanceOf(APIError);
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it('should propagate signal.reason as cause on APIError', async () => {
+    const ctrl = new AbortController();
+    const reason = new Error('per-source budget expired');
+    ctrl.abort(reason);
+
+    let thrown: APIError | undefined;
+    try {
+      await client.testGet('meps', {}, undefined, ctrl.signal);
+    } catch (err: unknown) {
+      thrown = err as APIError;
+    }
+    expect(thrown?.details).toEqual({ cause: reason });
+  });
+
+  it('fan-out cancellation: aborting outer signal cancels all in-flight typed-client calls', async () => {
+    const ctrl = new AbortController();
+
+    // 4 concurrent requests, each blocking until its signal aborts.
+    mockFetch.mockImplementation((_url: string, init: RequestInit) => {
+      return new Promise((_resolve, reject) => {
+        init.signal?.addEventListener('abort', () => {
+          const err = new Error('aborted');
+          err.name = 'AbortError';
+          reject(err);
+        });
+      });
+    });
+
+    const started = Date.now();
+    const promises = Array.from({ length: 4 }, (_, i) =>
+      client.testGet(`meps?p=${String(i)}`, {}, undefined, ctrl.signal).catch((e: unknown) => e),
+    );
+
+    // Allow requests to be issued, then abort outer signal
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    ctrl.abort(new Error('outer budget'));
+
+    const results = await Promise.all(promises);
+    const elapsed = Date.now() - started;
+
+    for (const r of results) {
+      expect(r).toBeInstanceOf(APIError);
+      expect((r as APIError).statusCode).toBe(0);
+    }
+    // Fan-out cancellation should complete within 100 ms
+    expect(elapsed).toBeLessThan(100);
   });
 });

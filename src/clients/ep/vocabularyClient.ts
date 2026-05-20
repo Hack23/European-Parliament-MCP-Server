@@ -36,6 +36,7 @@ export class VocabularyClient extends BaseEPClient {
   async getControlledVocabularies(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<Record<string, unknown>>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -44,7 +45,7 @@ export class VocabularyClient extends BaseEPClient {
       format: 'application/ld+json',
       offset,
       limit,
-    });
+    }, undefined, params.abortSignal);
 
     const items = Array.isArray(response.data) ? response.data : [];
     const hasMore = items.length === limit;
@@ -58,10 +59,10 @@ export class VocabularyClient extends BaseEPClient {
    * Fixed-window feed — no `timeframe` parameter per OpenAPI spec.
    * Returns HTTP 204 No Content when no updates exist (handled by baseClient).
    */
-  async getControlledVocabulariesFeed(): Promise<JSONLDResponse> {
+  async getControlledVocabulariesFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('controlled-vocabularies/feed', {
       format: 'application/ld+json',
-    });
+    }, undefined, options.abortSignal);
   }
 
   /**
@@ -72,14 +73,17 @@ export class VocabularyClient extends BaseEPClient {
    * @returns Single vocabulary entry
    */
   async getControlledVocabularyById(
-    vocId: string
+    vocId: string,
+    options: { abortSignal?: AbortSignal } = {},
   ): Promise<Record<string, unknown>> {
     if (vocId.trim() === '') {
       throw new APIError('Vocabulary ID is required', 400);
     }
     const response = await this.get<Record<string, unknown>>(
       `controlled-vocabularies/${vocId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal,
     );
     return response;
   }

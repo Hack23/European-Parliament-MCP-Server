@@ -20,7 +20,9 @@ import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../../utils/rateLimiter.js';
 import { withRetry, withTimeoutAndAbort, TimeoutError, DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 import { performanceMonitor } from '../../utils/performance.js';
+import { auditLogger } from '../../utils/auditLogger.js';
 import { DEFAULT_RATE_LIMIT_PER_MINUTE, DEFAULT_API_URL, USER_AGENT } from '../../config.js';
+import { createLinkedAbortController } from './abortUtils.js';
 
 /** Exact hostnames that must never be used as API endpoints. */
 const BLOCKED_HOSTS_EXACT = new Set(['localhost', '0.0.0.0', '::1']);
@@ -336,13 +338,15 @@ export class BaseEPClient {
    * - 5xx Server Errors (transient server failures)
    * - Network / unknown errors
    *
-   * Does NOT retry on 4xx client errors (except 429).
+   * Does NOT retry on 4xx client errors (except 429), nor on cancellation
+   * (statusCode 0 — an aborted request must never be re-issued).
    * @private
    */
   private shouldRetryRequest(error: unknown): boolean {
     if (error instanceof TimeoutError) return false;
     if (error instanceof APIError) {
       const code = error.statusCode ?? 500;
+      if (code === 0) return false;
       return code === 429 || code >= 500;
     }
     if (error instanceof SyntaxError) {
@@ -489,6 +493,59 @@ export class BaseEPClient {
   }
 
   /**
+   * Computes the effective per-request timeout, honouring an optional floor.
+   * @private
+   */
+  private effectiveTimeoutMs(minimumTimeoutMs?: number): number {
+    const validMinimum =
+      minimumTimeoutMs !== undefined &&
+      Number.isFinite(minimumTimeoutMs) &&
+      minimumTimeoutMs > 0
+        ? minimumTimeoutMs
+        : undefined;
+    return validMinimum !== undefined
+      ? Math.max(validMinimum, this.timeoutMs)
+      : this.timeoutMs;
+  }
+
+  /**
+   * Issues a single HTTP fetch under the linked-abort controller and
+   * processes the response (status, content-type, size, body).
+   * @private
+   */
+  private async issueRequest<T>(
+    url: URL,
+    linkedSignal: AbortSignal,
+  ): Promise<T> {
+    const response = await fetch(url.toString(), {
+      headers: {
+        Accept: 'application/ld+json',
+        'User-Agent': USER_AGENT,
+      },
+      signal: linkedSignal,
+    });
+
+    if (!response.ok) {
+      throw new APIError(
+        `EP API request failed: ${String(response.status)}${response.statusText ? ` ${response.statusText}` : ''}`,
+        response.status
+      );
+    }
+
+    if (response.status === 204) {
+      await response.body?.cancel();
+      return BaseEPClient.EMPTY_JSONLD as unknown as T;
+    }
+
+    BaseEPClient.validateContentType(response);
+
+    const clResult = await this.parseByContentLength<T>(response);
+    if (clResult !== undefined) return clResult;
+
+    return this.readStreamedBody<T>(response);
+  }
+
+  /**
    * Executes the HTTP fetch with timeout/abort support and response size guard.
    * @param url - Fully resolved request URL
    * @param endpoint - Relative endpoint path (for error messages)
@@ -496,46 +553,36 @@ export class BaseEPClient {
    *   When provided, the effective timeout is `Math.max(minimumTimeoutMs, this.timeoutMs)`,
    *   so it acts as a floor that the global timeout can still extend.
    *   Use for known slow EP API endpoints (e.g. `procedures/feed`).
+   * @param externalSignal - Optional caller-provided cancellation signal.
+   *   When this signal fires mid-flight, the underlying fetch is aborted and
+   *   {@link toAPIError} converts the cancellation to an `APIError` with
+   *   `statusCode: 0` (distinct from the timeout-driven 408 path).
    * @private
    */
-  private async fetchWithTimeout<T>(url: URL, endpoint: string, minimumTimeoutMs?: number): Promise<T> {
-    const validMinimum =
-      minimumTimeoutMs !== undefined &&
-      Number.isFinite(minimumTimeoutMs) &&
-      minimumTimeoutMs > 0
-        ? minimumTimeoutMs
-        : undefined;
-    const effectiveTimeout = validMinimum !== undefined
-      ? Math.max(validMinimum, this.timeoutMs)
-      : this.timeoutMs;
+  private async fetchWithTimeout<T>(
+    url: URL,
+    endpoint: string,
+    minimumTimeoutMs?: number,
+    externalSignal?: AbortSignal,
+  ): Promise<T> {
+    const effectiveTimeout = this.effectiveTimeoutMs(minimumTimeoutMs);
     return withTimeoutAndAbort(
       async (signal) => {
-        const response = await fetch(url.toString(), {
-          headers: {
-            Accept: 'application/ld+json',
-            'User-Agent': USER_AGENT,
-          },
-          signal,
-        });
-
-        if (!response.ok) {
-          throw new APIError(
-            `EP API request failed: ${String(response.status)}${response.statusText ? ` ${response.statusText}` : ''}`,
-            response.status
-          );
+        const linked = createLinkedAbortController(externalSignal);
+        // Forward the timeout-driven signal to the linked controller so that
+        // either source (timeout OR external cancellation) aborts the fetch.
+        const onInternalAbort = (): void => { linked.controller.abort(); };
+        if (signal.aborted) {
+          linked.controller.abort();
+        } else {
+          signal.addEventListener('abort', onInternalAbort, { once: true });
         }
-
-        if (response.status === 204) {
-          await response.body?.cancel();
-          return BaseEPClient.EMPTY_JSONLD as unknown as T;
+        try {
+          return await this.issueRequest<T>(url, linked.controller.signal);
+        } finally {
+          signal.removeEventListener('abort', onInternalAbort);
+          linked.cleanup();
         }
-
-        BaseEPClient.validateContentType(response);
-
-        const clResult = await this.parseByContentLength<T>(response);
-        if (clResult !== undefined) return clResult;
-
-        return this.readStreamedBody<T>(response);
       },
       effectiveTimeout,
       `EP API request to ${endpoint} timed out after ${String(effectiveTimeout)}ms`
@@ -547,11 +594,17 @@ export class BaseEPClient {
    * @param url - Fully resolved request URL
    * @param endpoint - Relative endpoint path (for error messages)
    * @param minimumTimeoutMs - Optional per-request minimum timeout (ms)
+   * @param externalSignal - Optional caller-provided cancellation signal
    * @private
    */
-  private async fetchWithRetry<T>(url: URL, endpoint: string, minimumTimeoutMs?: number): Promise<T> {
+  private async fetchWithRetry<T>(
+    url: URL,
+    endpoint: string,
+    minimumTimeoutMs?: number,
+    externalSignal?: AbortSignal,
+  ): Promise<T> {
     return withRetry(
-      () => this.fetchWithTimeout<T>(url, endpoint, minimumTimeoutMs),
+      () => this.fetchWithTimeout<T>(url, endpoint, minimumTimeoutMs, externalSignal),
       {
         maxRetries: this.enableRetry ? this.maxRetries : 0,
         retryDelayMs: DEFAULT_RETRY_BASE_DELAY_MS,
@@ -563,15 +616,35 @@ export class BaseEPClient {
 
   /**
    * Converts a caught error to a typed {@link APIError}.
-   * For timeout errors, the actual timeout value is read from the
-   * {@link TimeoutError} instance (which carries the effective value used
-   * by `withTimeoutAndAbort`), avoiding the need to re-validate or
-   * recompute the per-endpoint minimum here.
+   *
+   * - `TimeoutError` → `APIError(..., 408)` (the internal per-request
+   *   timeout fired before the response completed).
+   * - Cancellation triggered by an *external* `AbortSignal` →
+   *   `APIError(..., 0, { cause: <signal.reason> })`. Status 0 is distinct
+   *   from the timeout (408) and rate-limit (429) paths so callers can
+   *   distinguish budget cancellations from upstream failures and skip
+   *   retries via {@link shouldRetryRequest}.
+   *
    * @param error - The caught error
    * @param endpoint - Relative endpoint path (for error messages)
+   * @param externalSignal - The caller-provided signal (if any). When the
+   *   signal is already aborted at the time of catch, the error is treated
+   *   as a cancellation regardless of its concrete shape (some runtimes
+   *   surface a generic `AbortError` rather than re-throwing `signal.reason`).
    * @private
    */
-  private toAPIError(error: unknown, endpoint: string): APIError {
+  private toAPIError(
+    error: unknown,
+    endpoint: string,
+    externalSignal?: AbortSignal,
+  ): APIError {
+    if (externalSignal?.aborted === true) {
+      return new APIError(
+        `EP API request aborted: ${endpoint}`,
+        0,
+        { cause: externalSignal.reason as unknown }
+      );
+    }
     if (error instanceof TimeoutError) {
       const actualTimeout = error.timeoutMs ?? this.timeoutMs;
       return new APIError(
@@ -599,15 +672,35 @@ export class BaseEPClient {
    *   so the global timeout (set via `--timeout` or `EP_REQUEST_TIMEOUT_MS`) can still
    *   extend it beyond the per-endpoint minimum.
    *   Use for known slow EP API endpoints such as `procedures/feed`.
+   * @param abortSignal - Optional caller-provided cancellation signal. When
+   *   already aborted on entry the request is rejected immediately *before*
+   *   consuming a rate-limiter token (so a cancelled fan-out does not starve
+   *   the bucket). When aborted mid-flight, the underlying fetch is
+   *   cancelled and the rejection is surfaced as `APIError(..., 0, { cause })`.
    * @returns Promise resolving to the typed API response
-   * @throws {APIError} On HTTP errors, network failures, or parse failures
+   * @throws {APIError} On HTTP errors, network failures, parse failures, or
+   *   cancellation (statusCode 0). Aborts are NOT retried.
    * @protected
    */
   protected async get<T extends Record<string, unknown>>(
     endpoint: string,
     params?: Record<string, unknown>,
-    minimumTimeoutMs?: number
+    minimumTimeoutMs?: number,
+    abortSignal?: AbortSignal,
   ): Promise<T> {
+    if (abortSignal?.aborted === true) {
+      auditLogger.logDataAccess(
+        'ep_api_request_aborted',
+        { endpoint, phase: 'pre-request' },
+        0,
+      );
+      throw new APIError(
+        `EP API request aborted: ${endpoint}`,
+        0,
+        { cause: abortSignal.reason as unknown }
+      );
+    }
+
     const rlResult = await this.rateLimiter.removeTokens(1);
     if (!rlResult.allowed) {
       throw new APIError(
@@ -632,13 +725,22 @@ export class BaseEPClient {
     const requestStart = performance.now();
 
     try {
-      const data = await this.fetchWithRetry<T>(url, endpoint, minimumTimeoutMs);
+      const data = await this.fetchWithRetry<T>(url, endpoint, minimumTimeoutMs, abortSignal);
       performanceMonitor.recordDuration('ep_api_request', performance.now() - requestStart);
       this.cache.set(cacheKey, data);
       return data;
     } catch (error: unknown) {
       performanceMonitor.recordDuration('ep_api_request_failed', performance.now() - requestStart);
-      throw this.toAPIError(error, endpoint);
+      const apiError = this.toAPIError(error, endpoint, abortSignal);
+      if (apiError.statusCode === 0) {
+        auditLogger.logDataAccess(
+          'ep_api_request_aborted',
+          { endpoint, phase: 'in-flight' },
+          0,
+          performance.now() - requestStart,
+        );
+      }
+      throw apiError;
     }
   }
 

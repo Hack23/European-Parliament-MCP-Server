@@ -101,6 +101,7 @@ export class PlenaryClient extends BaseEPClient {
     location?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   }): Promise<PaginatedResponse<PlenarySession>> {
     const action = 'get_plenary_sessions';
     try {
@@ -111,7 +112,7 @@ export class PlenaryClient extends BaseEPClient {
       apiParams['limit'] = limit;
       apiParams['offset'] = offset;
 
-      const response = await this.get<JSONLDResponse>('meetings', apiParams);
+      const response = await this.get<JSONLDResponse>('meetings', apiParams, undefined, params.abortSignal);
       const pageSize = response.data.length;
       let sessions = response.data.map((item) => this.transformPlenarySession(item));
 
@@ -146,7 +147,7 @@ export class PlenaryClient extends BaseEPClient {
    */
   async getMeetingActivities(
     sittingId: string,
-    params: { limit?: number; offset?: number } = {}
+    params: { limit?: number; offset?: number; abortSignal?: AbortSignal } = {}
   ): Promise<PaginatedResponse<MeetingActivity>> {
     if (sittingId.trim() === '') {
       throw new APIError('Meeting sitting-id is required', 400);
@@ -159,7 +160,9 @@ export class PlenaryClient extends BaseEPClient {
 
     const response = await this.get<JSONLDResponse>(
       `meetings/${sittingId}/activities`,
-      { format: 'application/ld+json', offset, limit }
+      { format: 'application/ld+json', offset, limit },
+      undefined,
+      params.abortSignal,
     );
 
     const items = Array.isArray(response.data) ? response.data : [];
@@ -174,7 +177,7 @@ export class PlenaryClient extends BaseEPClient {
    */
   async getMeetingDecisions(
     sittingId: string,
-    params: { limit?: number; offset?: number } = {}
+    params: { limit?: number; offset?: number; abortSignal?: AbortSignal } = {}
   ): Promise<PaginatedResponse<LegislativeDocument>> {
     if (sittingId.trim() === '') {
       throw new APIError('Meeting sitting-id is required', 400);
@@ -187,7 +190,9 @@ export class PlenaryClient extends BaseEPClient {
 
     const response = await this.get<JSONLDResponse>(
       `meetings/${sittingId}/decisions`,
-      { format: 'application/ld+json', offset, limit }
+      { format: 'application/ld+json', offset, limit },
+      undefined,
+      params.abortSignal,
     );
 
     const items = Array.isArray(response.data) ? response.data : [];
@@ -202,7 +207,7 @@ export class PlenaryClient extends BaseEPClient {
    */
   async getMeetingForeseenActivities(
     sittingId: string,
-    params: { limit?: number; offset?: number } = {}
+    params: { limit?: number; offset?: number; abortSignal?: AbortSignal } = {}
   ): Promise<PaginatedResponse<MeetingActivity>> {
     if (sittingId.trim() === '') {
       throw new APIError('Meeting sitting-id is required', 400);
@@ -215,7 +220,9 @@ export class PlenaryClient extends BaseEPClient {
 
     const response = await this.get<JSONLDResponse>(
       `meetings/${sittingId}/foreseen-activities`,
-      { format: 'application/ld+json', offset, limit }
+      { format: 'application/ld+json', offset, limit },
+      undefined,
+      params.abortSignal,
     );
 
     const items = Array.isArray(response.data) ? response.data : [];
@@ -230,7 +237,7 @@ export class PlenaryClient extends BaseEPClient {
    */
   async getMeetingPlenarySessionDocuments(
     sittingId: string,
-    params: { limit?: number; offset?: number } = {}
+    params: { limit?: number; offset?: number; abortSignal?: AbortSignal } = {}
   ): Promise<PaginatedResponse<LegislativeDocument>> {
     if (sittingId.trim() === '') {
       throw new APIError('Meeting sitting-id is required', 400);
@@ -243,7 +250,9 @@ export class PlenaryClient extends BaseEPClient {
 
     const response = await this.get<JSONLDResponse>(
       `meetings/${sittingId}/plenary-session-documents`,
-      { format: 'application/ld+json', offset, limit }
+      { format: 'application/ld+json', offset, limit },
+      undefined,
+      params.abortSignal,
     );
 
     const items = Array.isArray(response.data) ? response.data : [];
@@ -258,7 +267,7 @@ export class PlenaryClient extends BaseEPClient {
    */
   async getMeetingPlenarySessionDocumentItems(
     sittingId: string,
-    params: { limit?: number; offset?: number } = {}
+    params: { limit?: number; offset?: number; abortSignal?: AbortSignal } = {}
   ): Promise<PaginatedResponse<LegislativeDocument>> {
     if (sittingId.trim() === '') {
       throw new APIError('Meeting sitting-id is required', 400);
@@ -271,7 +280,9 @@ export class PlenaryClient extends BaseEPClient {
 
     const response = await this.get<JSONLDResponse>(
       `meetings/${sittingId}/plenary-session-document-items`,
-      { format: 'application/ld+json', offset, limit }
+      { format: 'application/ld+json', offset, limit },
+      undefined,
+      params.abortSignal,
     );
 
     const items = Array.isArray(response.data) ? response.data : [];
@@ -284,13 +295,15 @@ export class PlenaryClient extends BaseEPClient {
    * Returns a single EP meeting by ID.
    * **EP API Endpoint:** `GET /meetings/{event-id}`
    */
-  async getMeetingById(eventId: string): Promise<PlenarySession> {
+  async getMeetingById(eventId: string, options: { abortSignal?: AbortSignal } = {}): Promise<PlenarySession> {
     if (eventId.trim() === '') {
       throw new APIError('Meeting event ID is required', 400);
     }
     const response = await this.get<Record<string, unknown>>(
       `meetings/${eventId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal,
     );
     return this.transformPlenarySession(response);
   }
@@ -306,6 +319,7 @@ export class PlenaryClient extends BaseEPClient {
   async getEvents(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<EPEvent>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -316,7 +330,7 @@ export class PlenaryClient extends BaseEPClient {
       limit,
     };
 
-    const response = await this.get<JSONLDResponse>('events', apiParams);
+    const response = await this.get<JSONLDResponse>('events', apiParams, undefined, params.abortSignal);
     const items = Array.isArray(response.data) ? response.data : [];
     const events = items.map((item) => this.transformEvent(item));
     const hasMore = events.length === limit;
@@ -340,26 +354,29 @@ export class PlenaryClient extends BaseEPClient {
     timeframe?: string;
     startDate?: string;
     activityType?: string;
+    abortSignal?: AbortSignal;
   } = {}): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('events/feed', {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.activityType !== undefined ? { 'activity-type': params.activityType } : {}),
-    });
+    }, undefined, params.abortSignal);
   }
 
   /**
    * Returns a single EP event by ID.
    * **EP API Endpoint:** `GET /events/{event-id}`
    */
-  async getEventById(eventId: string): Promise<EPEvent> {
+  async getEventById(eventId: string, options: { abortSignal?: AbortSignal } = {}): Promise<EPEvent> {
     if (eventId.trim() === '') {
       throw new APIError('Event ID is required', 400);
     }
     const response = await this.get<Record<string, unknown>>(
       `events/${eventId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal,
     );
     return this.transformEvent(response);
   }
