@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../README.md)
+[**European Parliament MCP Server API v1.3.9**](../README.md)
 
 ***
 
@@ -72,6 +72,58 @@ The EP MCP Server's data model reflects the structure of the **European Parliame
 - **Format**: JSON-LD (also supports RDF/XML)
 - **Authentication**: None required (public open data)
 - **Rate Limits**: 100 requests/minute (enforced server-side)
+
+### Secondary authoritative source — DOCEO RCV XML
+
+For **per-MEP roll-call vote (RCV) statistics**, the EP Open Data API exposes
+only the placeholder `MEPDetails.votingStatistics` shape and frequently returns
+no real per-MEP vote counts. The MCP server therefore enriches voting-related
+metrics from the **European Parliament DOCEO XML** source
+(`https://www.europarl.europa.eu/doceo/document/PV-{term}-{date}-RCV_EN.xml`).
+
+DOCEO XML is the authoritative near-real-time source for the following
+per-MEP fields consumed by `assess_mep_influence`, `detect_voting_anomalies`,
+and `comparative_intelligence`:
+
+- `totalVotes`, `votesFor`, `votesAgainst`, `abstentions`
+- `attendanceRate` (fraction of inspected RCVs the MEP appeared on)
+- `loyaltyScore` (% of decisive votes where the MEP voted with their political-group majority)
+
+The shared aggregator lives in `src/utils/doceoMepAggregator.ts` and is
+bounded (≤ 2 s) and cached (5-minute TTL keyed by `${mepId}|${dateFrom}|${dateTo}`).
+OSINT tool responses surface a `dataSource: 'EP_API' | 'DOCEO' | 'EP_API+DOCEO'`
+field so consumers can distinguish placeholder data from real RCV-backed metrics.
+
+### VotingAnomaly (detect_voting_anomalies)
+
+`detect_voting_anomalies` builds its per-MEP defection / abstention /
+alignment baselines from the same DOCEO RCV records via
+`src/utils/votingBaseline.ts`. Each detected anomaly carries the following
+shape:
+
+```typescript
+interface VotingAnomaly {
+  type: 'PARTY_DEFECTION'
+      | 'ABSTENTION_SPIKE'
+      | 'ALIGNMENT_SHIFT'
+      | 'CROSS_PARTY_ALIGNMENT_SHIFT';
+  severity: 'HIGH' | 'MEDIUM' | 'LOW';
+  mepId: string;
+  mepName: string;
+  description: string;
+  metrics: { expectedValue: number; actualValue: number; deviation: number };
+  detectedDate: string;          // YYYY-MM-DD
+  evidenceVoteIds: string[];     // DOCEO LatestVoteRecord.id values
+}
+```
+
+`evidenceVoteIds` are the unique vote identifiers (`LatestVoteRecord.id`,
+e.g. `RCV-10-2026-01-15-001`) returned by `get_latest_votes` — use them to
+drill down to the contributing roll-call records. Thresholds:
+defection-rate z ≥ 1.5, abstention-rate z ≥ 1.5, week-over-week defection
+delta ≥ 20pp, non-home-group alignment share ≥ 60% in a weekly sub-window
+(min 3 decisive RCVs). Confidence reflects RCV coverage: HIGH ≥50, MEDIUM
+10–49, LOW <10 RCVs inspected.
 
 ---
 
@@ -279,6 +331,25 @@ erDiagram
         string[] agendaItems
     }
 
+    COMMITTEE_ACTIVITY {
+        string committeeId PK
+        DateString periodFrom
+        DateString periodTo
+        int activeLegislativeFiles "Filtered: /procedures by responsibleCommittee + status=ongoing + date window"
+        int documentsProduced "Filtered: /committee-documents by committee + date window"
+        int meetingsHeld "Filtered: /meetings by date window"
+        int decisionsAdopted "Fan-out: /meetings/{id}/decisions across up to 8 sittings"
+        int opinionsIssued "Not exposed by EP API — always 0"
+        float decisionsPerMeeting
+        float documentsPerMonth
+        float activeFilesPerMember
+        string documentsSourceStatus "OK | EMPTY | TIMEOUT | UNAVAILABLE"
+        string proceduresSourceStatus "OK | EMPTY | TIMEOUT | UNAVAILABLE"
+        string meetingsSourceStatus "OK | EMPTY | TIMEOUT | UNAVAILABLE"
+        string decisionsSourceStatus "OK | EMPTY | TIMEOUT | UNAVAILABLE"
+        string confidenceLevel "HIGH | MEDIUM | LOW"
+    }
+
     MEETING_ACTIVITY {
         string id PK
         string meetingRef FK
@@ -408,6 +479,51 @@ erDiagram
 ```
 
 > **Note:** `dataQualityWarnings` is currently implemented as `string[]` (see `src/tools/shared/types.ts`). A structured warning type with `message`, `affectedMetric`, and `severity` fields is a future enhancement not yet implemented.
+
+### Lifecycle Pipeline Output Model
+
+`monitor_legislative_pipeline` extends the standard OSINT envelope with lifecycle-driven fields derived from the authoritative `/procedures/{id}/events` timeline:
+
+```mermaid
+erDiagram
+    PIPELINE_ITEM {
+        string procedureId
+        string currentStage "Normalized stage from latest lifecycle event when available; falls back to procedure.stage / procedure.status / 'Unknown' when no usable events exist"
+        number daysInCurrentStage "Delta between latest event and now"
+        boolean isStalled
+    }
+
+    COMPUTED_ATTRIBUTES {
+        string bottleneckRisk "HIGH if dwell >= p95, MEDIUM if >= median, LOW otherwise"
+        number estimatedCompletionDays "Historical median remaining-time, or heuristic fallback"
+    }
+
+    LIFECYCLE_EVENT {
+        string date "ISO date of the event"
+        string stage "Normalized stage key"
+        string rawType "Original EP API event type (e.g. def/ep-activities/REFERRAL)"
+        string title
+    }
+
+    LIFECYCLE_CORPUS {
+        number corpusSize "Procedures contributing to the distribution"
+        number totalObservations "Dwell samples across all (type, stage) cells"
+        number computationTimeMs
+    }
+
+    PIPELINE_ENVELOPE {
+        string forecastBasis "HISTORICAL_MEDIAN | INSUFFICIENT_DATA | NOT_APPLICABLE"
+    }
+
+    PIPELINE_ENVELOPE ||--o{ PIPELINE_ITEM : "pipeline[]"
+    PIPELINE_ITEM ||--|| COMPUTED_ATTRIBUTES : "computedAttributes"
+    PIPELINE_ITEM ||--o{ LIFECYCLE_EVENT : "lifecycleEvents[]"
+    PIPELINE_ENVELOPE ||--|| LIFECYCLE_CORPUS : "lifecycleCorpus"
+```
+
+- **`lifecycleEvents`** — per-procedure chronological echo of the underlying event sequence for traceability. Includes normalised `stage` and original `rawType` to support both display and downstream analytics.
+- **`forecastBasis`** — discriminated union at the envelope level. Set to `HISTORICAL_MEDIAN` when at least one procedure in scope used the historical median forecast; `INSUFFICIENT_DATA` when every forecast fell back to the heuristic; `NOT_APPLICABLE` when all procedures are already completed.
+- **`lifecycleCorpus`** — metadata about the corpus used to build the dwell distributions (latest 500 procedures, cached 30 min). No PII is retained — only event types, dates, and procedure types.
 
 ### DataAvailability Enum
 
@@ -581,6 +697,32 @@ private getCacheKey(endpoint: string, params?: Record<string, unknown>): string 
   return JSON.stringify({ endpoint, params: sortedParams });
 }
 ```
+
+---
+
+## Derived Models — analyze_legislative_effectiveness
+
+The `analyze_legislative_effectiveness` MCP tool emits a derived envelope assembled from four EP Open Data Portal sources. Schema additions:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `metrics.reportsAuthored` | `number` | Procedures rapporteured by the subject (deduped by procedureId). |
+| `metrics.opinionsDelivered` | `number` | Procedures where the subject is a `shadow` / `opinion` rapporteur. |
+| `metrics.amendmentsTabled` | `number` | Plenary-session document items of type `AMENDMENT` authored by the subject. |
+| `metrics.amendmentsAdopted` | `number` | Subset of `amendmentsTabled` whose `status` includes `ADOPTED`. |
+| `metrics.questionsAsked` | `number` | Parliamentary questions filed by the subject within the window. |
+| `metrics.legislativeSuccessRate` | `number` | `100 × procedures-with-adopted-text / attributed-procedures` (0–100, 2 decimals). |
+| `attributions.reportProcedureIds` | `string[]` | Procedure IDs counted as reports authored, **sorted ascending**. |
+| `attributions.opinionProcedureIds` | `string[]` | Procedure IDs counted as opinions delivered, **sorted ascending**. |
+| `attributions.amendmentDocumentIds` | `string[]` | Document IDs counted as amendments tabled, **sorted ascending**. |
+| `attributions.amendmentAdoptedDocumentIds` | `string[]` | Document IDs counted as adopted amendments, **sorted ascending**. |
+| `attributions.questionIds` | `string[]` | Parliamentary question IDs, **sorted ascending**. |
+| `dataSources.procedures` | `'OK' \| 'EMPTY' \| 'TIMEOUT' \| 'UNAVAILABLE'` | Status of the `/procedures` fetch. |
+| `dataSources.adoptedTexts` | `'OK' \| 'EMPTY' \| 'TIMEOUT' \| 'UNAVAILABLE'` | Status of the `/adopted-texts` fetch. |
+| `dataSources.plenaryDocumentItems` | `'OK' \| 'EMPTY' \| 'TIMEOUT' \| 'UNAVAILABLE'` | Status of the `/plenary-session-documents-items` fetch. |
+| `dataSources.questions` | `'OK' \| 'EMPTY' \| 'TIMEOUT' \| 'UNAVAILABLE'` | Status of the `/parliamentary-questions` fetch. |
+
+Each source runs under an independent 6 s `AbortController` budget; failures are tagged in `dataSources` rather than bubbled. Lists in `attributions` are guaranteed sorted ascending so repeated runs are byte-identical.
 
 ---
 

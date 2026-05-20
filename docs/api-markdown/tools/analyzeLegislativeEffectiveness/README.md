@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../README.md)
 
 ***
 
@@ -6,10 +6,20 @@
 
 # tools/analyzeLegislativeEffectiveness
 
+## Interfaces
+
+- [DataSources](interfaces/DataSources.md)
+
+## Type Aliases
+
+- [DataSourceStatus](type-aliases/DataSourceStatus.md)
+
 ## Variables
 
 - [analyzeLegislativeEffectivenessToolMetadata](variables/analyzeLegislativeEffectivenessToolMetadata.md)
 
 ## Functions
 
+- [clearAnalyzeLegislativeEffectivenessCache](functions/clearAnalyzeLegislativeEffectivenessCache.md)
 - [handleAnalyzeLegislativeEffectiveness](functions/handleAnalyzeLegislativeEffectiveness.md)
+- [normaliseQuestionAuthorParam](functions/normaliseQuestionAuthorParam.md)

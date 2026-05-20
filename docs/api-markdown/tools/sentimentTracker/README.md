@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../README.md)
 
 ***
 
@@ -17,5 +17,6 @@
 
 ## Functions
 
+- [clearSentimentTrackerDoceoCache](functions/clearSentimentTrackerDoceoCache.md)
 - [handleSentimentTracker](functions/handleSentimentTracker.md)
 - [sentimentTracker](functions/sentimentTracker.md)

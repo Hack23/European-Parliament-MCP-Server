@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../../README.md)
 
 ***
 
@@ -8,15 +8,15 @@
 
 > `const` **analyzeLegislativeEffectivenessToolMetadata**: `object`
 
-Defined in: [tools/analyzeLegislativeEffectiveness.ts:282](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeLegislativeEffectiveness.ts#L282)
+Defined in: [tools/analyzeLegislativeEffectiveness.ts:807](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeLegislativeEffectiveness.ts#L807)
 
-Tool metadata for MCP registration
+Tool metadata for MCP registration.
 
 ## Type Declaration
 
 ### description
 
-> **description**: `string` = `'Analyze legislative effectiveness of an MEP or committee. Computes productivity, quality, and impact scores from reports authored, amendments adopted, and voting participation. Returns effectiveness ranking, peer benchmarks, amendment success rate, output per month, and percentile comparison.'`
+> **description**: `string`
 
 ### inputSchema
 

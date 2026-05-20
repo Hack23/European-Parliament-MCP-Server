@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../../README.md)
 
 ***
 
@@ -8,14 +8,14 @@
 
 > **handleAnalyzeLegislativeEffectiveness**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/analyzeLegislativeEffectiveness.ts:222](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeLegislativeEffectiveness.ts#L222)
+Defined in: [tools/analyzeLegislativeEffectiveness.ts:777](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeLegislativeEffectiveness.ts#L777)
 
-Handles the analyze_legislative_effectiveness MCP tool request.
+Handles the `analyze_legislative_effectiveness` MCP tool request.
 
-Scores the legislative effectiveness of an MEP or committee by computing productivity
-(reports authored, amendments tabled), quality (amendment success rate, attendance),
-and impact (voting influence, rapporteurships, committee coverage) sub-scores, then
-aggregates them into an overall effectiveness rating with peer-benchmarking data.
+Fans out four EP Open Data Portal sources in parallel under independent
+6 s timeouts, then aggregates the results through
+[aggregateLegislativeEffectiveness](../../../utils/effectivenessAggregator/functions/aggregateLegislativeEffectiveness.md) to produce defensible
+effectiveness metrics for an MEP or committee.
 
 ## Parameters
 
@@ -23,48 +23,39 @@ aggregates them into an overall effectiveness rating with peer-benchmarking data
 
 `unknown`
 
-Raw tool arguments, validated against [AnalyzeLegislativeEffectivenessSchema](../../../schemas/ep/analysis/variables/AnalyzeLegislativeEffectivenessSchema.md)
+Raw tool arguments, validated against
+  [AnalyzeLegislativeEffectivenessSchema](../../../schemas/ep/analysis/variables/AnalyzeLegislativeEffectivenessSchema.md)
 
 ## Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-MCP tool result containing a LegislativeEffectivenessAnalysis object with
-  metrics, scores, computed attributes (percentile, output per month), benchmarks,
-  confidence level, and methodology note
-
-## Throws
-
-- If `args` fails schema validation (e.g., missing required `subjectType`
-  or `subjectId`, invalid `subjectType` value)
-- If the European Parliament API is unreachable or returns an error response
+MCP tool result with a LegislativeEffectivenessAnalysis
+  envelope that includes metrics, scores, per-source `dataSources` flags,
+  `dataQualityWarnings`, and full attribution lists sorted ascending.
 
 ## Example
 
 ```typescript
-// Analyse a specific MEP
-const mepResult = await handleAnalyzeLegislativeEffectiveness({
+const result = await handleAnalyzeLegislativeEffectiveness({
   subjectType: 'MEP',
-  subjectId: 'MEP-124810',
+  subjectId: 'person/124936',
   dateFrom: '2024-01-01',
-  dateTo: '2024-12-31'
+  dateTo: '2024-12-31',
 });
-// Returns productivity/quality/impact scores and effectiveness rank for MEP-124810
-
-// Analyse a committee
-const committeeResult = await handleAnalyzeLegislativeEffectiveness({
-  subjectType: 'COMMITTEE',
-  subjectId: 'ENVI'
-});
-// Returns legislative effectiveness scores for the ENVI committee
 ```
 
 ## Security
 
-- Input is validated with Zod before any API call.
-- Personal data in responses is minimised per GDPR Article 5(1)(c).
-- All requests are rate-limited and audit-logged per ISMS Policy AU-002.
-  Internal errors are wrapped before propagation to avoid leaking API details.
+Input is validated with Zod before any API call. Per-source
+  fetches are audit-logged with truncated counts (no MEP names beyond IDs).
+  Per-source 6 s timeouts use AbortController to prevent dangling fetches.
+
+## Performance
+
+Warm cache: <300 ms. Cold worst case: ≈6-8 s (parallel
+  sources). 15-minute cache keyed by (subjectType, subjectId, dateFrom,
+  dateTo).
 
 ## Since
 
@@ -72,5 +63,4 @@ const committeeResult = await handleAnalyzeLegislativeEffectiveness({
 
 ## See
 
- - [analyzeLegislativeEffectivenessToolMetadata](../variables/analyzeLegislativeEffectivenessToolMetadata.md) for MCP schema registration
- - handleAnalyzeVotingPatterns for detailed per-vote behaviour analysis
+[analyzeLegislativeEffectivenessToolMetadata](../variables/analyzeLegislativeEffectivenessToolMetadata.md)

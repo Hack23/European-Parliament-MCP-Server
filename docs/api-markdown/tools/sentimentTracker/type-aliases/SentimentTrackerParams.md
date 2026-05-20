@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.8**](../../../README.md)
+[**European Parliament MCP Server API v1.3.9**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **SentimentTrackerParams** = `object`
 
-Defined in: [tools/sentimentTracker.ts:55](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L55)
+Defined in: [tools/sentimentTracker.ts:60](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/sentimentTracker.ts#L60)
 
 Validated parameter type for the `sentiment_tracker` tool, inferred
 from [SentimentTrackerSchema](../variables/SentimentTrackerSchema.md).
