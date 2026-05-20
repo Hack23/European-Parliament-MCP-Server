@@ -689,10 +689,10 @@ export class BaseEPClient {
     abortSignal?: AbortSignal,
   ): Promise<T> {
     if (abortSignal?.aborted === true) {
-      auditLogger.logDataAccess(
+      auditLogger.logError(
         'ep_api_request_aborted',
         { endpoint, phase: 'pre-request' },
-        0,
+        `EP API request aborted: ${endpoint}`,
       );
       throw new APIError(
         `EP API request aborted: ${endpoint}`,
@@ -733,10 +733,10 @@ export class BaseEPClient {
       performanceMonitor.recordDuration('ep_api_request_failed', performance.now() - requestStart);
       const apiError = this.toAPIError(error, endpoint, abortSignal);
       if (apiError.statusCode === 0) {
-        auditLogger.logDataAccess(
+        auditLogger.logError(
           'ep_api_request_aborted',
           { endpoint, phase: 'in-flight' },
-          0,
+          apiError.message,
           performance.now() - requestStart,
         );
       }
