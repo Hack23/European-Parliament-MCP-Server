@@ -516,32 +516,19 @@ async function fetchSinglePlenaryWeek(
  * @internal
  */
 function sortRecordsDesc(records: LatestVoteRecord[]): LatestVoteRecord[] {
+  const toTs = (d: string | undefined): number => {
+    if (d === undefined || d === '' || !/^\d{4}-\d{2}-\d{2}$/.test(d)) return 0;
+    const ts = Date.parse(`${d}T00:00:00Z`);
+    return Number.isNaN(ts) ? 0 : ts;
+  };
   return [...records].sort((a, b) => {
-    const aDate = a.sittingDate ?? a.date;
-    const bDate = b.sittingDate ?? b.date;
-    if (aDate === bDate) return a.id.localeCompare(b.id);
-    return bDate.localeCompare(aDate);
+    const aTs = toTs(a.sittingDate ?? a.date);
+    const bTs = toTs(b.sittingDate ?? b.date);
+    if (bTs !== aTs) return bTs - aTs;
+    return a.id.localeCompare(b.id);
   });
 }
 
-/**
- * Build the multi-week DOCEO RCV corpus for the requested `[period.from,
- * period.to]` window.
- *
- * Replaces the prior single-week fetch (which silently dropped any votes
- * outside the latest plenary week before `period.to`, degenerating the
- * per-MEP baseline to a single-week sample with zero stdev — see
- * Hack23/European-Parliament-MCP-Server#462 follow-up). Now iterates every
- * plenary-week Monday between `from` and `to`, sequentially under the
- * existing rate limiter, deduplicates by `vote.id`, and caps the corpus at
- * {@link DOCEO_RCV_FETCH_LIMIT}.
- *
- * Resilience: per-week timeouts/errors are absorbed (the week is recorded as
- * non-contributing) so a single bad week does not invalidate the whole
- * request.
- *
- * @internal
- */
 /**
  * Detect whether the requested `[from, to]` window spans more plenary weeks
  * than {@link MAX_PLENARY_WEEKS}. Pure helper extracted to keep
@@ -550,15 +537,33 @@ function sortRecordsDesc(records: LatestVoteRecord[]): LatestVoteRecord[] {
  * @internal
  */
 function detectWindowTruncation(
-  period: { from: string; to: string },
-  enumeratedWeekCount: number
+  period: { from: string; to: string }
 ): boolean {
   const fromMs = Date.parse(`${period.from}T00:00:00Z`);
   const toMs = Date.parse(`${period.to}T00:00:00Z`);
   if (Number.isNaN(fromMs) || Number.isNaN(toMs) || fromMs > toMs) return false;
-  const spanWeeks = Math.floor((toMs - fromMs) / (7 * 24 * 3_600_000)) + 1;
-  return spanWeeks > MAX_PLENARY_WEEKS && enumeratedWeekCount === MAX_PLENARY_WEEKS;
+  // Count intersecting plenary weeks using the same Mon–Fri intersection logic
+  // as iteratePlenaryWeeks — stop early once we've confirmed more than
+  // MAX_PLENARY_WEEKS intersecting weeks exist so the result matches actual
+  // truncation rather than a raw day-span heuristic.
+  const DAY_MS = 24 * 3_600_000;
+  const WEEK_MS = 7 * DAY_MS;
+  const FRIDAY_OFFSET_MS = 4 * DAY_MS;
+  const endMonday = isoWeekStart(period.to);
+  let cursorMs = Date.parse(`${endMonday}T00:00:00Z`);
+  let intersectingCount = 0;
+  while (cursorMs + FRIDAY_OFFSET_MS >= fromMs) {
+    if (cursorMs <= toMs) {
+      intersectingCount += 1;
+      if (intersectingCount > MAX_PLENARY_WEEKS) return true;
+    }
+    cursorMs -= WEEK_MS;
+  }
+  return false;
 }
+
+/** Stop the corpus build after this many consecutive per-week fetch failures. */
+const MAX_CONSECUTIVE_FETCH_FAILURES = 3;
 
 /**
  * Run the per-week DOCEO fetch loop sequentially, deduplicating RCV records
@@ -579,9 +584,15 @@ async function fetchAndDedupWeeks(
   const dedup = new Map<string, LatestVoteRecord>();
   let anyWeekReached = false;
   let rawFetched = 0;
+  let consecutiveFailures = 0;
   for (const week of weeks) {
+    if (consecutiveFailures >= MAX_CONSECUTIVE_FETCH_FAILURES) break;
     const weekRecords = await fetchSinglePlenaryWeek(week, paginateWithinWeek);
-    if (weekRecords === null) continue;
+    if (weekRecords === null) {
+      consecutiveFailures += 1;
+      continue;
+    }
+    consecutiveFailures = 0;
     anyWeekReached = true;
     for (const v of weekRecords) {
       if (v.dataSource !== 'RCV') continue;
@@ -641,7 +652,7 @@ async function fetchDoceoRcvRecords(
   period: { from: string; to: string }
 ): Promise<DoceoCorpus> {
   const allWeeks = iteratePlenaryWeeks(period.from, period.to);
-  const weeksTruncated = detectWindowTruncation(period, allWeeks.length);
+  const weeksTruncated = detectWindowTruncation(period);
 
   // Single-week fallback: empty iteration (e.g. malformed dates) still hits
   // DOCEO at period.to to preserve the legacy "no [from,to]" path.
@@ -875,7 +886,7 @@ function collectDataQualityWarnings(
   if (weeksTruncated) {
     warnings.push(
       `Requested window exceeds the ${String(MAX_PLENARY_WEEKS)}-week cap — `
-      + 'fetched the most recent 26 plenary weeks only (weeksTruncated=true).'
+      + `fetched the most recent ${String(MAX_PLENARY_WEEKS)} plenary weeks only (weeksTruncated=true).`
     );
   }
   if (doceoAvailable && recordCount > 0 && weeksContributing < 3) {

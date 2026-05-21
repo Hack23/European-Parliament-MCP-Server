@@ -526,11 +526,29 @@ export function coverageConfidence(rcvVotesInspected: number): 'HIGH' | 'MEDIUM'
 
 /**
  * Hard cap on the number of plenary weeks enumerated by {@link iteratePlenaryWeeks}
- * — ~6 months of weekly fan-out per request. The 26th week is the last one
- * returned; callers can detect truncation by comparing the returned array
- * length against `26`.
+ * — ~6 months of weekly fan-out per request. The {@link MAX_PLENARY_WEEKS}th
+ * week is the last one returned; callers can detect truncation by comparing
+ * the returned array length against {@link MAX_PLENARY_WEEKS}.
  */
 export const MAX_PLENARY_WEEKS = 26;
+
+/**
+ * Parse and validate a `[from, to]` window for {@link iteratePlenaryWeeks}.
+ * Returns the parsed millisecond bounds, or `null` for empty/malformed/
+ * reversed inputs. Extracted to keep `iteratePlenaryWeeks` below the
+ * cyclomatic-complexity ceiling.
+ *
+ * @internal
+ */
+function parseIsoDateWindow(from: string, to: string): { fromMs: number; toMs: number } | null {
+  if (from === '' || to === '') return null;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) return null;
+  const fromMs = Date.parse(`${from}T00:00:00Z`);
+  const toMs = Date.parse(`${to}T00:00:00Z`);
+  if (Number.isNaN(fromMs) || Number.isNaN(toMs)) return null;
+  if (fromMs > toMs) return null;
+  return { fromMs, toMs };
+}
 
 /**
  * Enumerate the Monday (ISO-week start, UTC) of every plenary week whose
@@ -558,24 +576,6 @@ export const MAX_PLENARY_WEEKS = 26;
  * @param to - Inclusive period end (YYYY-MM-DD).
  * @returns Mondays of intersecting plenary weeks, oldest first.
  */
-/**
- * Parse and validate a `[from, to]` window for {@link iteratePlenaryWeeks}.
- * Returns the parsed millisecond bounds, or `null` for empty/malformed/
- * reversed inputs. Extracted to keep `iteratePlenaryWeeks` below the
- * cyclomatic-complexity ceiling.
- *
- * @internal
- */
-function parseIsoDateWindow(from: string, to: string): { fromMs: number; toMs: number } | null {
-  if (from === '' || to === '') return null;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) return null;
-  const fromMs = Date.parse(`${from}T00:00:00Z`);
-  const toMs = Date.parse(`${to}T00:00:00Z`);
-  if (Number.isNaN(fromMs) || Number.isNaN(toMs)) return null;
-  if (fromMs > toMs) return null;
-  return { fromMs, toMs };
-}
-
 export function iteratePlenaryWeeks(from: string, to: string): string[] {
   const bounds = parseIsoDateWindow(from, to);
   if (bounds === null) return [];
