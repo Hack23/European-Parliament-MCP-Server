@@ -18,7 +18,7 @@
  *    classification, and attribution code paths.
  *
  * All identifiers, names and metric values are deterministic and clearly
- * synthetic (MEP IDs `101`–`106`, names suffixed `(synthetic)`, vote IDs
+ * synthetic (MEP IDs `101`–`107`, names suffixed `(synthetic)`, vote IDs
  * prefixed `VOTE-`/`RCV-`). Dates are pinned to 2024 so the snapshots remain
  * stable against `vi.setSystemTime('2024-06-15T12:00:00.000Z')`.
  *
@@ -75,7 +75,7 @@ export const emptyDoceoResponse = {
 // Coverage is intentionally varied so:
 //   - MEP 101 (EPP/DE) appears in all three votes → high participation score
 //   - MEP 102 (S&D/FR) abstains once → drives anomaly + coalition diff
-//   - MEP 106 (Verts/SE) misses one vote → attendance drop signal
+//   - MEP 106 (S&D/PT) misses one vote → attendance drop signal
 
 /** Hot-path DOCEO voting records — substantive data for scoring/attribution. */
 export const hotPathDoceoVotes = [
