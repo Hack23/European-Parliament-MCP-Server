@@ -26,7 +26,23 @@ on:
   pull_request:
     branches: ["main"]
     paths:
-      - "src/tools/**"
+      # 15 OSINT tool files (5 DOCEO-touching + 10 non-DOCEO)
+      - "src/tools/assessMepInfluence.ts"
+      - "src/tools/detectVotingAnomalies.ts"
+      - "src/tools/sentimentTracker.ts"
+      - "src/tools/networkAnalysis.ts"
+      - "src/tools/analyzeCoalitionDynamics.ts"
+      - "src/tools/analyzeCommitteeActivity.ts"
+      - "src/tools/analyzeCountryDelegation.ts"
+      - "src/tools/analyzeLegislativeEffectiveness.ts"
+      - "src/tools/comparativeIntelligence.ts"
+      - "src/tools/comparePoliticalGroups.ts"
+      - "src/tools/correlateIntelligence.ts"
+      - "src/tools/earlyWarningSystem.ts"
+      - "src/tools/generatePoliticalLandscape.ts"
+      - "src/tools/monitorLegislativePipeline.ts"
+      - "src/tools/trackMepAttendance.ts"
+      # Shared utils the OSINT tools depend on
       - "src/utils/votingBaseline.ts"
       - "src/utils/graphAlgorithms.ts"
       - "src/utils/networkVotingSimilarity.ts"
@@ -34,6 +50,11 @@ on:
       - "src/utils/lifecycleStatistics.ts"
       - "src/utils/doceoMepAggregator.ts"
       - "src/utils/politicalGroupNormalization.ts"
+      # Registry and envelope files the contract suite depends on
+      - "src/server/toolRegistry.ts"
+      - "src/tools/shared/responseBuilder.ts"
+      - "src/tools/shared/errors.ts"
+      # Test and config infrastructure
       - "tests/integration/osint/**"
       - "stryker.config.json"
       - "vitest.config.ts"
