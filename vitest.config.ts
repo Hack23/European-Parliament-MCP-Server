@@ -24,10 +24,12 @@ export default defineConfig({
       // Function threshold set to 82% (up from 80%) — achievable with new mocked tests
       //
       // Per-file thresholds (Vitest 3+ `thresholds.<glob>` map syntax) enforce tighter
-      // gates on the 15 OSINT tools — ≥90 % for the 10 non-DOCEO tools, ≥95 % for the
-      // 5 DOCEO-touching tools that carry the highest correctness risk
-      // (assessMepInfluence, detectVotingAnomalies, sentimentTracker, networkAnalysis,
-      //  analyzeCoalitionDynamics). Follow-up to #461 / PR #474. ISMS: A.8.29.
+      // gates on the 15 OSINT tools:
+      //   • Non-DOCEO tools (10): lines ≥90, branches ≥78, functions ≥90, statements ≥88
+      //   • DOCEO-touching tools (5): lines ≥92, branches ≥78, functions ≥95, statements ≥90
+      //     (assessMepInfluence, detectVotingAnomalies, sentimentTracker, networkAnalysis,
+      //      analyzeCoalitionDynamics — carry the highest correctness risk)
+      // Follow-up to #461 / PR #474. ISMS: A.8.29.
       thresholds: {
         lines: 80,
         branches: 72,

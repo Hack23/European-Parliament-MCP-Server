@@ -6,8 +6,10 @@ name: OSINT QA Harness
 #
 #   1. osint-contract  — structural envelope + no-silent-zero + determinism
 #                        (tests/integration/osint/contract.test.ts).
-#   2. osint-coverage  — per-file coverage gate (≥90 % non-DOCEO, ≥95 % DOCEO)
-#                        enforced via vitest.config.ts thresholds map.
+#   2. osint-coverage  — per-file coverage gate (non-DOCEO: lines ≥90/branches ≥78/
+#                        functions ≥90/statements ≥88; DOCEO-touching: lines ≥92/
+#                        branches ≥78/functions ≥95/statements ≥90) enforced via
+#                        vitest.config.ts thresholds map.
 #   3. osint-mutation  — Stryker mutation testing on the 15 OSINT tool files +
 #                        7 shared utilities (stryker.config.json). Initially
 #                        non-blocking (`continue-on-error: true`) until baseline
@@ -23,6 +25,41 @@ name: OSINT QA Harness
 on:
   push:
     branches: ["main"]
+    paths:
+      # 15 OSINT tool files (5 DOCEO-touching + 10 non-DOCEO)
+      - "src/tools/assessMepInfluence.ts"
+      - "src/tools/detectVotingAnomalies.ts"
+      - "src/tools/sentimentTracker.ts"
+      - "src/tools/networkAnalysis.ts"
+      - "src/tools/analyzeCoalitionDynamics.ts"
+      - "src/tools/analyzeCommitteeActivity.ts"
+      - "src/tools/analyzeCountryDelegation.ts"
+      - "src/tools/analyzeLegislativeEffectiveness.ts"
+      - "src/tools/comparativeIntelligence.ts"
+      - "src/tools/comparePoliticalGroups.ts"
+      - "src/tools/correlateIntelligence.ts"
+      - "src/tools/earlyWarningSystem.ts"
+      - "src/tools/generatePoliticalLandscape.ts"
+      - "src/tools/monitorLegislativePipeline.ts"
+      - "src/tools/trackMepAttendance.ts"
+      # Shared utils the OSINT tools depend on
+      - "src/utils/votingBaseline.ts"
+      - "src/utils/graphAlgorithms.ts"
+      - "src/utils/networkVotingSimilarity.ts"
+      - "src/utils/effectivenessAggregator.ts"
+      - "src/utils/lifecycleStatistics.ts"
+      - "src/utils/doceoMepAggregator.ts"
+      - "src/utils/politicalGroupNormalization.ts"
+      # Registry and envelope files the contract suite depends on
+      - "src/server/toolRegistry.ts"
+      - "src/tools/shared/responseBuilder.ts"
+      - "src/tools/shared/errors.ts"
+      # Test and config infrastructure
+      - "tests/integration/osint/**"
+      - "stryker.config.json"
+      - "vitest.config.ts"
+      - "vitest.stryker.config.ts"
+      - ".github/workflows/osint-qa.yml"
   pull_request:
     branches: ["main"]
     paths:
@@ -150,8 +187,9 @@ jobs:
         run: npm ci
 
       - name: Run unit tests with per-file coverage gate
-        # The per-file thresholds in vitest.config.ts (≥90 % non-DOCEO, ≥95 %
-        # DOCEO-touching) cause Vitest to exit non-zero if any OSINT tool drops
+        # The per-file thresholds in vitest.config.ts (non-DOCEO: lines ≥90/branches ≥78/
+        # functions ≥90/statements ≥88; DOCEO-touching: lines ≥92/branches ≥78/functions ≥95/
+        # statements ≥90) cause Vitest to exit non-zero if any OSINT tool drops
         # below its assigned threshold. Offending files are printed in the
         # standard Vitest threshold-failure table.
         run: npm run test:coverage
