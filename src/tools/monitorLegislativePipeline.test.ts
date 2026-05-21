@@ -734,5 +734,23 @@ describe('monitor_legislative_pipeline Tool', () => {
       expect(data.lifecycleCorpus.totalObservations).toBeGreaterThan(0);
       expect(data.lifecycleCorpus.computationTimeMs).toBeGreaterThanOrEqual(0);
     });
+
+    it('should add a dataQualityWarnings entry pointing at get_server_health.lifecycleCache on a cold cache', async () => {
+      // Bypass the beforeEach pre-warm to simulate a genuinely cold cache.
+      resetLifecycleStatisticsCache();
+      vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(mockProcedures);
+      vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue(emptyEventsResponse());
+      const result = await handleMonitorLegislativePipeline({ status: 'ALL', limit: 20 });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataQualityWarnings: string[];
+        forecastBasis: string;
+      };
+      expect(data.dataQualityWarnings.some(w => w.includes('get_server_health.lifecycleCache'))).toBe(true);
+      expect(data.dataQualityWarnings.some(w => w.includes('cache is cold'))).toBe(true);
+      // Forecast still degrades to INSUFFICIENT_DATA but the cache-miss
+      // warning subsumes the generic "Forecast basis: insufficient" entry.
+      expect(data.forecastBasis).toBe('INSUFFICIENT_DATA');
+      expect(data.dataQualityWarnings.some(w => w.includes('Forecast basis: insufficient'))).toBe(false);
+    });
   });
 });

@@ -459,6 +459,68 @@ export function getCachedLifecycleStatistics(
 }
 
 /**
+ * Observable cache state, exposed via `get_server_health.lifecycleCache` and
+ * read by {@link getLifecycleCacheStatus} to surface warmup observability.
+ *
+ * | State   | Meaning |
+ * |---------|---------|
+ * | `WARM`  | Cache entry exists and is still within the {@link CACHE_TTL_MS} window |
+ * | `STALE` | Cache entry exists but its TTL has expired (next request will rebuild) |
+ * | `COLD`  | No cache entry has ever been produced for this corpus size |
+ */
+export type LifecycleCacheState = 'WARM' | 'STALE' | 'COLD';
+
+/**
+ * Diagnostic snapshot of the lifecycle-statistics cache for the given corpus
+ * size. Never triggers a rebuild and never blocks; intended for health
+ * endpoints and warmup-scheduler observability.
+ */
+export interface LifecycleCacheStatus {
+  /** Current cache state. */
+  state: LifecycleCacheState;
+  /**
+   * Age of the cached model in milliseconds (since `builtAt`). `null` when
+   * the cache is `COLD`.
+   */
+  ageMs: number | null;
+  /**
+   * `corpusSize` of the cached model. `null` when the cache is `COLD`.
+   */
+  corpusSize: number | null;
+}
+
+/**
+ * Return an observable snapshot of the lifecycle-statistics cache for the
+ * given corpus size. Never triggers a rebuild and never blocks.
+ *
+ * The function distinguishes the three states a cache entry can be in:
+ *  - `WARM`  — entry exists and is unexpired (`getCachedLifecycleStatistics`
+ *    would return the model)
+ *  - `STALE` — entry exists but its TTL has elapsed; the next request that
+ *    calls `getLifecycleStatistics` will trigger a rebuild
+ *  - `COLD`  — no entry has ever been produced for this corpus size
+ *
+ * @param corpusSize - Sample size to inspect (default: {@link CORPUS_SIZE})
+ * @returns Cache status snapshot
+ *
+ * @security No network calls; safe to use inside health endpoints and
+ *   tight request budgets.
+ * @since 0.9.0
+ */
+export function getLifecycleCacheStatus(
+  corpusSize: number = CORPUS_SIZE,
+): LifecycleCacheStatus {
+  const cached = memoCacheByCorpusSize.get(corpusSize);
+  if (cached === undefined) {
+    return { state: 'COLD', ageMs: null, corpusSize: null };
+  }
+  const ageMs = Math.max(0, Date.now() - cached.model.builtAt);
+  const state: LifecycleCacheState =
+    cached.expiresAt > Date.now() ? 'WARM' : 'STALE';
+  return { state, ageMs, corpusSize: cached.model.corpusSize };
+}
+
+/**
  * An empty lifecycle model that callers can use as a fast fallback when the
  * corpus rebuild fails or exceeds its time budget. With this model every
  * lookup returns `undefined` so forecasts gracefully degrade to the

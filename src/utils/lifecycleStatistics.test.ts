@@ -18,6 +18,7 @@ import {
   lookupStageStatistics,
   getLifecycleStatistics,
   getCachedLifecycleStatistics,
+  getLifecycleCacheStatus,
   resetLifecycleStatisticsCache,
   emptyLifecycleStatisticsModel,
   fetchEventsBounded,
@@ -409,5 +410,54 @@ describe('lifecycleStatistics - emptyLifecycleStatisticsModel', () => {
     expect(m.totalObservations).toBe(0);
     expect(m.byTypeAndStage.size).toBe(0);
     expect(lookupStageStatistics(m, 'COD', 'REFERRAL')).toBeUndefined();
+  });
+});
+
+describe('lifecycleStatistics - getLifecycleCacheStatus', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetLifecycleStatisticsCache();
+  });
+
+  it('reports COLD when no entry has ever been produced', () => {
+    const status = getLifecycleCacheStatus();
+    expect(status.state).toBe('COLD');
+    expect(status.ageMs).toBeNull();
+    expect(status.corpusSize).toBeNull();
+  });
+
+  it('reports WARM right after a successful build', async () => {
+    vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue({
+      data: [procedure('P1')], total: 1, limit: CORPUS_SIZE, offset: 0, hasMore: false,
+    });
+    vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue({
+      data: [event('A', '2024-01-01', 'REFERRAL')], total: 1, limit: 50, offset: 0, hasMore: false,
+    });
+    const built = await getLifecycleStatistics();
+    const status = getLifecycleCacheStatus();
+    expect(status.state).toBe('WARM');
+    expect(status.corpusSize).toBe(built.corpusSize);
+    expect(status.ageMs).not.toBeNull();
+    expect(status.ageMs as number).toBeGreaterThanOrEqual(0);
+  });
+
+  it('reports STALE once the entry TTL has elapsed but the entry is still memoised', async () => {
+    vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue({
+      data: [procedure('P1')], total: 1, limit: CORPUS_SIZE, offset: 0, hasMore: false,
+    });
+    vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue({
+      data: [event('A', '2024-01-01', 'REFERRAL')], total: 1, limit: 50, offset: 0, hasMore: false,
+    });
+    vi.useFakeTimers();
+    try {
+      await getLifecycleStatistics();
+      // Advance past the 30-minute TTL.
+      vi.advanceTimersByTime(31 * 60 * 1000);
+      const status = getLifecycleCacheStatus();
+      expect(status.state).toBe('STALE');
+      expect(status.corpusSize).not.toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

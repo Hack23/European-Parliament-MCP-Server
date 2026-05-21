@@ -545,8 +545,20 @@ function buildWarnings(
   envelopeBasis: ForecastBasis,
   unknownEnrichmentCount: number,
   eventFetchFailures: number,
+  lifecycleCacheMiss: boolean,
 ): string[] {
   const warnings: string[] = [];
+  if (lifecycleCacheMiss) {
+    // Surface the cold-cache condition explicitly so consumers know to
+    // consult `get_server_health.lifecycleCache` instead of treating the
+    // resulting `INSUFFICIENT_DATA` forecasts as a data-quality issue.
+    warnings.push(
+      'Lifecycle-statistics cache is cold — per-procedure forecasts degraded to '
+        + '`INSUFFICIENT_DATA`. The corpus is warmed out-of-band by the lifecycle '
+        + 'warmup scheduler (default every 25 min) or `npm run warmup:lifecycle`. '
+        + 'See `get_server_health.lifecycleCache` for current warmup status.',
+    );
+  }
   if (pipelineSize < 10) {
     warnings.push('Small procedure sample (< 10) — pipeline health metrics may not be statistically representative');
   }
@@ -556,7 +568,10 @@ function buildWarnings(
   if (eventFetchFailures > 0) {
     warnings.push(`${String(eventFetchFailures)} procedure(s) had no lifecycle events available — fell back to procedure-metadata dates for dwell computation`);
   }
-  if (envelopeBasis === 'INSUFFICIENT_DATA') {
+  if (envelopeBasis === 'INSUFFICIENT_DATA' && !lifecycleCacheMiss) {
+    // Suppress the generic "insufficient historical data" warning when the
+    // cache-miss-specific warning above has already explained *why* the
+    // forecast degraded — avoids a redundant pair of warnings on cold caches.
     warnings.push('Forecast basis: insufficient historical lifecycle data — `estimatedCompletionDays` uses a heuristic fallback');
   }
   return warnings;
@@ -571,6 +586,7 @@ interface BuildAnalysisInput {
   envelopeBasis: ForecastBasis;
   unknownEnrichmentCount: number;
   eventFetchFailures: number;
+  lifecycleCacheMiss: boolean;
 }
 
 /**
@@ -578,11 +594,17 @@ interface BuildAnalysisInput {
  */
 function buildAnalysis(input: BuildAnalysisInput): LegislativePipelineAnalysis {
   const { reportFrom, reportTo, params, pipeline, model, envelopeBasis,
-    unknownEnrichmentCount, eventFetchFailures } = input;
+    unknownEnrichmentCount, eventFetchFailures, lifecycleCacheMiss } = input;
   const summary = computePipelineSummary(pipeline);
   const bottlenecks = detectBottlenecks(pipeline, model);
   const health = computeHealthMetrics(pipeline, summary);
-  const warnings = buildWarnings(pipeline.length, envelopeBasis, unknownEnrichmentCount, eventFetchFailures);
+  const warnings = buildWarnings(
+    pipeline.length,
+    envelopeBasis,
+    unknownEnrichmentCount,
+    eventFetchFailures,
+    lifecycleCacheMiss,
+  );
   return {
     period: { from: reportFrom, to: reportTo },
     filter: { ...(params.committee !== undefined ? { committee: params.committee } : {}), status: params.status },
@@ -720,15 +742,21 @@ function buildPipelineItems(
  *
  * On a cache miss we therefore return {@link emptyLifecycleStatisticsModel}
  * synchronously and degrade per-procedure forecasts to `INSUFFICIENT_DATA`.
- * The corpus model is warmed out-of-band (e.g. by sibling tools or a
- * scheduled job) via {@link getLifecycleStatistics}; once cached, subsequent
- * requests pick it up immediately. This preserves the response shape on
- * cold integration runs while leaving the warm-path forecasts unchanged.
+ * The corpus model is warmed out-of-band (e.g. by the
+ * {@link import('../services/LifecycleWarmupScheduler.js')
+ * LifecycleWarmupScheduler} or the `npm run warmup:lifecycle` cron script)
+ * via {@link getLifecycleStatistics}; once cached, subsequent requests pick
+ * it up immediately. This preserves the response shape on cold integration
+ * runs while leaving the warm-path forecasts unchanged.
+ *
+ * @returns A tuple of `[model, cacheMiss]` so callers can emit a
+ *   `dataQualityWarnings` entry that points consumers at
+ *   `get_server_health.lifecycleCache` for warmup status.
  */
-function loadCachedLifecycleModel(): LifecycleStatisticsModel {
+function loadCachedLifecycleModel(): { model: LifecycleStatisticsModel; cacheMiss: boolean } {
   const cached = getCachedLifecycleStatistics();
   if (cached !== null) {
-    return cached;
+    return { model: cached, cacheMiss: false };
   }
   // Audit-friendly fallback so cold-runner runs are observable without
   // emitting a noisy error: per-procedure forecasts degrade to
@@ -737,7 +765,7 @@ function loadCachedLifecycleModel(): LifecycleStatisticsModel {
     '[monitor_legislative_pipeline] Lifecycle cache miss — using empty model;'
     + ' per-procedure forecasts will degrade to INSUFFICIENT_DATA',
   );
-  return emptyLifecycleStatisticsModel();
+  return { model: emptyLifecycleStatisticsModel(), cacheMiss: true };
 }
 
 /**
@@ -754,7 +782,7 @@ async function runPipelineOperation(
   // cache misses degrade per-procedure forecasts to `INSUFFICIENT_DATA` but
   // keep the response envelope intact and free the rate-limit budget for
   // the request's own `/procedures` + `fetchEventsBounded` calls.
-  const model = loadCachedLifecycleModel();
+  const { model, cacheMiss: lifecycleCacheMiss } = loadCachedLifecycleModel();
   const procedures = await epClient.getProcedures({ limit: params.limit });
 
   const filteredProcs = applyDateFilters(procedures.data, ctx);
@@ -785,6 +813,7 @@ async function runPipelineOperation(
     envelopeBasis,
     unknownEnrichmentCount,
     eventFetchFailures,
+    lifecycleCacheMiss,
   });
 }
 
