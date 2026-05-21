@@ -14,10 +14,10 @@
  * before the tool's own queries land. The scheduler runs the rebuild
  * independently of any request, giving the cache a steady-state warm window.
  *
- * **Concurrency.** The scheduler reuses {@link import('../utils/lifecycleStatistics.js')
- * getLifecycleStatistics}'s in-flight promise mutex, so a request-path caller
- * that arrives in the middle of a warmup share the rebuild rather than
- * triggering a second one.
+ * **Concurrency.** The scheduler deduplicates concurrent `refreshNow()` calls
+ * through its own `inFlight` promise so callers share a single warmup attempt.
+ * Each warmup uses `getLifecycleStatistics({ forceRefresh: true })` to rebuild
+ * the corpus out-of-band without relying on request-path cache misses.
  *
  * **Test hermeticity.** `start()` accepts a `{ disable: true }` flag so unit
  * tests can opt out of the interval timer entirely. Internally the timer is

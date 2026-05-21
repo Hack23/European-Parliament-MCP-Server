@@ -157,15 +157,13 @@ describe('LifecycleWarmupScheduler', () => {
   });
 
   describe('interval scheduling — deterministic clock', () => {
-    it('fires exactly three times across a simulated 60-minute run @ 25-min interval', async () => {
+    it('fires exactly three times across a simulated 75-minute run @ 25-min interval', async () => {
       vi.useFakeTimers();
       mockedGetLifecycleStatistics.mockResolvedValue(buildModel());
       const scheduler = new LifecycleWarmupScheduler(25 * 60 * 1000);
       scheduler.start();
 
-      // Advance 60 minutes. setInterval should fire at t=25, 50 (2 ticks)
-      // — the 75-minute tick is past the 60-min window, so we explicitly
-      // verify 25, 50, 75 ticks across a 75-min window.
+      // Advance 75 minutes. setInterval should fire at t=25, 50, 75.
       await vi.advanceTimersByTimeAsync(75 * 60 * 1000);
       expect(mockedGetLifecycleStatistics).toHaveBeenCalledTimes(3);
 
